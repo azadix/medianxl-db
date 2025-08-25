@@ -1,0 +1,13 @@
+{
+  "id": "antimass",
+  "category": "Spell",
+  "description": "Converts your mana to health\n65% of Mana restored as Life",
+  "scaling": [
+    {"level": 5, "cooldown": 16.1, "minimum_mana_cost": 55},
+    {"level": 6, "cooldown": 16, "minimum_mana_cost": 55},
+    {"level": 7, "cooldown": 15.9, "minimum_mana_cost": 55},
+    {"level": 8, "cooldown": 15.8, "minimum_mana_cost": 55},
+    {"level": 9, "cooldown": 15.7, "minimum_mana_cost": 55},
+    {"level": 10, "cooldown": 15.6, "minimum_mana_cost": 55}
+  ]
+}

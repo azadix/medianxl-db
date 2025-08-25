@@ -1,0 +1,13 @@
+.skill-detail {
+    position: relative;
+}
+
+.skill-image {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 8rem;
+    height: 8rem;
+    object-fit: contain;
+    border: 1px solid rgb(122, 122, 122);
+}

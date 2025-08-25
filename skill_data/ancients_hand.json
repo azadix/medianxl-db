@@ -1,0 +1,12 @@
+{
+  "id": "ancients_hand",
+  "category": "Attack",
+  "damage_type": "Fire",
+  "description": "Melee swing that unleashes a fiery blast in a straight line\n40% Weapon Damage\nConverts 100% Physical Damage to Fire Damage\nHits multiple times",
+  "restriction": "Requires a melee weapon",
+  "scaling": [
+    {"level": 13, "range": 14.6, "mana_cost": 49},
+    {"level": 14, "range": 15.2, "mana_cost": 52},
+    {"level": 15, "range": 15.9, "mana_cost": 55}
+  ]
+}

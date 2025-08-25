@@ -1,0 +1,19 @@
+{
+  "id": "deathgaze",
+  "category": "Attack",
+  "damage_type": "Cold",
+  "description": "A mighty swing that unleashes homing projectiles\n55% Weapon Damage\nConverts 50% Physical Damage to Cold",
+  "restriction": "Requires a melee weapon (excluding unarmed)",
+  "scaling": [
+    {"level": 16, "cold_damage_min": 49, "cold_damage_max": 62, "mana_cost": 30},
+    {"level": 17, "cold_damage_min": 65, "cold_damage_max": 82, "mana_cost": 31},
+    {"level": 18, "cold_damage_min": 82, "cold_damage_max": 103, "mana_cost": 32},
+    {"level": 19, "cold_damage_min": 98, "cold_damage_max": 123, "mana_cost": 33},
+    {"level": 20, "cold_damage_min": 114, "cold_damage_max": 143, "mana_cost": 34},
+    {"level": 21, "cold_damage_min": 131, "cold_damage_max": 164, "mana_cost": 35},
+    {"level": 22, "cold_damage_min": 147, "cold_damage_max": 184, "mana_cost": 36},
+    {"level": 23, "cold_damage_min": 171, "cold_damage_max": 215, "mana_cost": 37},
+    {"level": 24, "cold_damage_min": 196, "cold_damage_max": 245, "mana_cost": 38}
+
+  ]
+}

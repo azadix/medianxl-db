@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedianDB</title>
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/1.0.1/css/bulma.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.3.3/css/dataTables.bulma.min.css" />
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/2.3.3/js/dataTables.min.js"></script>   
+    <script src="https://cdn.datatables.net/2.3.3/js/dataTables.bulma.min.js"></script>
+    <script src="enums.js" defer></script>
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <header>
+        <div class="container" hidden>
+            <h1>MedianXL Database</h1>
+        </div>
+    </header>
+
+    <div class="container">
+        <nav class="breadcrumb" aria-label="breadcrumbs">
+            <ul>
+                <li><a href="#" id="breadcrumb-home">Home</a></li>
+                <li class="is-active"><a id="breadcrumb-current">All Skills</a></li>
+            </ul>
+        </nav>
+
+        <h2 class="title" id="page-title">All Skills</h2>
+        
+        <div id="content">
+            <!-- Content will be dynamically loaded here -->
+        </div>
+    </div>
+</body>
+</html>

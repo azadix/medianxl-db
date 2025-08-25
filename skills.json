@@ -1,0 +1,6894 @@
+{
+  "skills": [
+    {
+      "id": "abyss",
+      "name": "Abyss",
+      "class": -1,
+      "category": "Cold",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_46.png"
+    },
+    {
+      "id": "amatoxin",
+      "name": "Amatoxin",
+      "class": -1,
+      "category": "Poison",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "amplify_damage",
+      "name": "Amplify Damage",
+      "class": -1,
+      "category": "Buff/Debuff/Misc",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "ancients_hand",
+      "name": "Ancients' Hand",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_139.png"
+    },
+    {
+      "id": "apocalypse",
+      "name": "Apocalypse",
+      "class": -1,
+      "category": "Fire",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_35.png"
+    },
+    {
+      "id": "arcane_blast",
+      "name": "Arcane Blast",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_25.png"
+    },
+    {
+      "id": "arcane_swarm",
+      "name": "Arcane Swarm",
+      "class": -1,
+      "category": "Phys/Magic",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_16.png"
+    },
+    {
+      "id": "arrow",
+      "name": "Arrow",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "arrow_swarm",
+      "name": "Arrow Swarm",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_126.png"
+    },
+    {
+      "id": "arrowside",
+      "name": "Arrowside",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_126.png"
+    },
+    {
+      "id": "athuluas_wrath",
+      "name": "Athulua's Wrath",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "atmg_sentry",
+      "name": "ATMG Sentry",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_109.png"
+    },
+    {
+      "id": "attack",
+      "name": "Attack",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_3.png"
+    },
+    {
+      "id": "avalanche",
+      "name": "Avalanche",
+      "class": -1,
+      "category": "Cold",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_140.png"
+    },
+    {
+      "id": "azure_orb",
+      "name": "Azure Orb",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_178.png"
+    },
+    {
+      "id": "balefire",
+      "name": "Balefire",
+      "class": -1,
+      "category": "Phys/Magic",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_281.png"
+    },
+    {
+      "id": "banish",
+      "name": "Banish",
+      "class": -1,
+      "category": "Buff/Debuff/Misc",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_127.png"
+    },
+    {
+      "id": "bear_claw_nova",
+      "name": "Bear Claw Nova",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_240.png"
+    },
+    {
+      "id": "bend_the_shadows",
+      "name": "Bend the Shadows (Innate)",
+      "class": 2,
+      "category": "Buff/Debuff/Misc",
+      "tab": 99,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_248.png"
+    },
+    {
+      "id": "black_lotus_strike",
+      "name": "Black Lotus Strike",
+      "class": -1,
+      "category": "Poison",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_51.png"
+    },
+    {
+      "id": "blade_barrier",
+      "name": "Blade Barrier",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_128.png"
+    },
+    {
+      "id": "blade_spirits",
+      "name": "Blade Spirits",
+      "class": -1,
+      "category": "Summon",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_156.png"
+    },
+    {
+      "id": "blast_wave",
+      "name": "Blast Wave",
+      "class": -1,
+      "category": "Phys/Magic",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_96.png"
+    },
+    {
+      "id": "blindside",
+      "name": "Blindside",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "blizzard",
+      "name": "Blizzard",
+      "class": -1,
+      "category": "Cold",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_148.png"
+    },
+    {
+      "id": "blood_flash",
+      "name": "Blood Flash",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_52.png"
+    },
+    {
+      "id": "blood_fury",
+      "name": "Blood Fury",
+      "class": -1,
+      "category": "Buff/Debuff/Misc",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_162.png"
+    },
+    {
+      "id": "bloodbath",
+      "name": "Bloodbath (Innate)",
+      "class": 6,
+      "category": "Buff/Debuff/Misc",
+      "tab": 99,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_20.png"
+    },
+    {
+      "id": "bloodlust",
+      "name": "Bloodlust",
+      "class": -1,
+      "category": "Buff/Debuff/Misc",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_19.png"
+    },
+    {
+      "id": "bloodlust_innate",
+      "name": "Bloodlust (Innate)",
+      "class": 0,
+      "category": "Buff/Debuff/Misc",
+      "tab": 99,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_18.png"
+    },
+    {
+      "id": "bloodspeakers_mark",
+      "name": "Bloodspeaker's Mark",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_141.png"
+    },
+    {
+      "id": "bloodstar",
+      "name": "Bloodstar",
+      "class": -1,
+      "category": "Fire",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_53.png"
+    },
+    {
+      "id": "bloodstorm",
+      "name": "Bloodstorm",
+      "class": -1,
+      "category": "Fire",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_282.png"
+    },
+    {
+      "id": "body_of_the_savior",
+      "name": "Body of the Savior",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_129.png"
+    },
+    {
+      "id": "bolt",
+      "name": "Bolt",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "brimstone",
+      "name": "Brimstone",
+      "class": -1,
+      "category": "Fire",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_41.png"
+    },
+    {
+      "id": "burning_veil",
+      "name": "Burning Veil",
+      "class": -1,
+      "category": "Buff/Debuff/Misc",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_23.png"
+    },
+    {
+      "id": "call_treewarden",
+      "name": "Call Treewarden",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_54.png"
+    },
+    {
+      "id": "cataclysm",
+      "name": "Cataclysm",
+      "class": -1,
+      "category": "Fire",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_35.png"
+    },
+    {
+      "id": "cautious_strike",
+      "name": "Cautious Strike",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_55.png"
+    },
+    {
+      "id": "celerity",
+      "name": "Celerity",
+      "class": -1,
+      "category": "Buff/Debuff/Misc",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "champions_of_the_sun",
+      "name": "Champions of the Sun",
+      "class": -1,
+      "category": "Summon",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_142.png"
+    },
+    {
+      "id": "chaotic_spark",
+      "name": "Chaotic Spark",
+      "class": -1,
+      "category": "Lightning",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_225.png"
+    },
+    {
+      "id": "charged_bolt",
+      "name": "Charged Bolt",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "charged_strike",
+      "name": "Charged Strike",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_247.png"
+    },
+    {
+      "id": "charm",
+      "name": "Charm",
+      "class": -1,
+      "category": "Buff/Debuff/Misc",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_32.png"
+    },
+    {
+      "id": "cherubim",
+      "name": "Cherubim",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_190.png"
+    },
+    {
+      "id": "churel",
+      "name": "Churel",
+      "class": -1,
+      "category": "Cold",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_98.png"
+    },
+    {
+      "id": "claw_tornado",
+      "name": "Claw Tornado",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_83.png"
+    },
+    {
+      "id": "clear_mind",
+      "name": "Clear Mind",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_288.png"
+    },
+    {
+      "id": "clobber",
+      "name": "Clobber",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_143.png"
+    },
+    {
+      "id": "cluster_bomb",
+      "name": "Cluster Bomb",
+      "class": -1,
+      "category": "Fire",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_10.png"
+    },
+    {
+      "id": "cold_fear",
+      "name": "Cold Fear",
+      "class": -1,
+      "category": "Buff/Debuff/Misc",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_56.png"
+    },
+    {
+      "id": "cone_of_cold",
+      "name": "Cone of Cold",
+      "class": -1,
+      "category": "Cold",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_178.png"
+    },
+    {
+      "id": "conquest",
+      "name": "Conquest",
+      "class": -1,
+      "category": "Buff/Debuff/Misc",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_144.png"
+    },
+    {
+      "id": "corrupted_vines",
+      "name": "Corrupted Vines",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "countdown",
+      "name": "Countdown",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_163.png"
+    },
+    {
+      "id": "crane_stance",
+      "name": "Crane Stance",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_99.png"
+    },
+    {
+      "id": "crater",
+      "name": "Crater",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "cryo_beam",
+      "name": "Cryo Beam",
+      "class": -1,
+      "category": "Cold",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_100.png"
+    },
+    {
+      "id": "crystalline_arsenal",
+      "name": "Crystalline Arsenal",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_287.png"
+    },
+    {
+      "id": "cyclone",
+      "name": "Cyclone",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_222.png"
+    },
+    {
+      "id": "dark_power",
+      "name": "Dark Power",
+      "class": -1,
+      "category": "Buff/Debuff/Misc",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_57.png"
+    },
+    {
+      "id": "death_blossom",
+      "name": "Death Blossom",
+      "class": -1,
+      "category": "Fire",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_58.png"
+    },
+    {
+      "id": "death_coil",
+      "name": "Death Coil",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_60.png"
+    },
+    {
+      "id": "death_shards",
+      "name": "Death Shards",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_59.png"
+    },
+    {
+      "id": "death_spiral",
+      "name": "Death Spiral",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "death_star",
+      "name": "Death Star",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "deathgaze",
+      "name": "Deathgaze",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_0.png"
+    },
+    {
+      "id": "deathstrike",
+      "name": "Deathstrike",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_61.png"
+    },
+    {
+      "id": "demonic_speed",
+      "name": "Demonic Speed",
+      "class": -1,
+      "category": "Buff/Debuff/Misc",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_146.png"
+    },
+    {
+      "id": "detonate",
+      "name": "Detonate",
+      "class": -1,
+      "category": "Phys/Magic",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_21.png"
+    },
+    {
+      "id": "devastation",
+      "name": "Devastation",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "disco_inferno",
+      "name": "Disco Inferno",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_131.png"
+    },
+    {
+      "id": "diseased_cattle",
+      "name": "Diseased Cattle",
+      "class": -1,
+      "category": "Poison",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_46.png"
+    },
+    {
+      "id": "disintegrate",
+      "name": "Disintegrate",
+      "class": -1,
+      "category": "Phys/Magic",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_132.png"
+    },
+    {
+      "id": "dominate",
+      "name": "Dominate",
+      "class": -1,
+      "category": "Buff/Debuff/Misc",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_147.png"
+    },
+    {
+      "id": "electrobolt",
+      "name": "Electrobolt",
+      "class": -1,
+      "category": "Lightning",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_111.png"
+    },
+    {
+      "id": "elemental_totem",
+      "name": "Elemental Totem",
+      "class": -1,
+      "category": "Summon",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_49.png"
+    },
+    {
+      "id": "emerald_prison",
+      "name": "Emerald Prison",
+      "class": -1,
+      "category": "Poison",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_112.png"
+    },
+    {
+      "id": "energy_beam",
+      "name": "Energy Beam",
+      "class": -1,
+      "category": "Phys/Magic",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_133.png"
+    },
+    {
+      "id": "exorcism",
+      "name": "Exorcism",
+      "class": -1,
+      "category": "Phys/Magic",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_134.png"
+    },
+    {
+      "id": "feral_strike",
+      "name": "Feral Strike",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_191.png"
+    },
+    {
+      "id": "fire_bolt_nova",
+      "name": "Fire Bolt Nova",
+      "class": -1,
+      "category": "Fire",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_219.png"
+    },
+    {
+      "id": "fire_cannonade",
+      "name": "Fire Cannonade",
+      "class": -1,
+      "category": "Fire",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "fire_cascade",
+      "name": "Fire Cascade",
+      "class": -1,
+      "category": "Fire",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_84.png"
+    },
+    {
+      "id": "fire_fountain",
+      "name": "Fire Fountain",
+      "class": -1,
+      "category": "Fire",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_180.png"
+    },
+    {
+      "id": "fire_splash",
+      "name": "Fire Splash",
+      "class": -1,
+      "category": "Fire",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "flametail_shot",
+      "name": "Flametail Shot",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_92.png"
+    },
+    {
+      "id": "flash",
+      "name": "Flash",
+      "class": -1,
+      "category": "Lightning",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_62.png"
+    },
+    {
+      "id": "flurry_of_javelins",
+      "name": "Flurry of Javelins",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "fowl_fight",
+      "name": "Fowl Fight",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_181.png"
+    },
+    {
+      "id": "frostfire_wave",
+      "name": "Frostfire Wave",
+      "class": -1,
+      "category": "Cold",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_135.png"
+    },
+    {
+      "id": "frozen_breath",
+      "name": "Frozen Breath",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "frozen_crown",
+      "name": "Frozen Crown",
+      "class": -1,
+      "category": "Cold",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_85.png"
+    },
+    {
+      "id": "frozen_heart",
+      "name": "Frozen Heart",
+      "class": -1,
+      "category": "Cold",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_280.png"
+    },
+    {
+      "id": "frozen_orb",
+      "name": "Frozen Orb",
+      "class": -1,
+      "category": "Cold",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_178.png"
+    },
+    {
+      "id": "frozen_soul",
+      "name": "Frozen Soul",
+      "class": -1,
+      "category": "Cold",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_63.png"
+    },
+    {
+      "id": "funeral_pyre",
+      "name": "Funeral Pyre",
+      "class": -1,
+      "category": "Fire",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_125.png"
+    },
+    {
+      "id": "gamma_field",
+      "name": "Gamma Field",
+      "class": -1,
+      "category": "Poison",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_44.png"
+    },
+    {
+      "id": "gift_of_celerity",
+      "name": "Gift of Celerity",
+      "class": -1,
+      "category": "Buff/Debuff/Misc",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "gift_of_inner_fire",
+      "name": "Gift of Inner Fire",
+      "class": -1,
+      "category": "Buff/Debuff/Misc",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_24.png"
+    },
+    {
+      "id": "gift_of_the_wild",
+      "name": "Gift of the Wild",
+      "class": -1,
+      "category": "Buff/Debuff/Misc",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_101.png"
+    },
+    {
+      "id": "gift_of_vanquishing",
+      "name": "Gift of Vanquishing",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_113.png"
+    },
+    {
+      "id": "glacial_nova",
+      "name": "Glacial Nova",
+      "class": -1,
+      "category": "Cold",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_36.png"
+    },
+    {
+      "id": "goblin_glee",
+      "name": "Goblin Glee",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_289.png"
+    },
+    {
+      "id": "golden_calf",
+      "name": "Golden Calf",
+      "class": -1,
+      "category": "Summon",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_192.png"
+    },
+    {
+      "id": "gorefest",
+      "name": "Gorefest",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_193.png"
+    },
+    {
+      "id": "guard_tower",
+      "name": "Guard Tower",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_37.png"
+    },
+    {
+      "id": "guided_chain",
+      "name": "Guided Chain",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_79.png"
+    },
+    {
+      "id": "hail_of_stones",
+      "name": "Hail of Stones",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_183.png"
+    },
+    {
+      "id": "hailstorm",
+      "name": "Hailstorm",
+      "class": -1,
+      "category": "Cold",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_148.png"
+    },
+    {
+      "id": "hammertime",
+      "name": "Hammertime",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_224.png"
+    },
+    {
+      "id": "hamstring",
+      "name": "Hamstring",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_167.png"
+    },
+    {
+      "id": "hawk_talons",
+      "name": "Hawk Talons",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_64.png"
+    },
+    {
+      "id": "hellgate",
+      "name": "Hellgate",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "holybolt",
+      "name": "Holybolt",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_27.png"
+    },
+    {
+      "id": "hounfor",
+      "name": "Hounfor",
+      "class": -1,
+      "category": "Buff/Debuff/Misc",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_114.png"
+    },
+    {
+      "id": "hurricane",
+      "name": "Hurricane",
+      "class": -1,
+      "category": "Phys/Magic",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_286.png"
+    },
+    {
+      "id": "ice_beam",
+      "name": "Ice Beam",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_194.png"
+    },
+    {
+      "id": "ice_bolt_nova",
+      "name": "Ice Bolt Nova",
+      "class": -1,
+      "category": "Cold",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_195.png"
+    },
+    {
+      "id": "ice_lance",
+      "name": "Ice Lance",
+      "class": -1,
+      "category": "Cold",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_87.png"
+    },
+    {
+      "id": "ice_whirl",
+      "name": "Ice Whirl",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_196.png"
+    },
+    {
+      "id": "iceburst",
+      "name": "Iceburst",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_110.png"
+    },
+    {
+      "id": "ignis_fatuus",
+      "name": "Ignis Fatuus",
+      "class": -1,
+      "category": "Buff/Debuff/Misc",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_282.png"
+    },
+    {
+      "id": "immolation_bomb",
+      "name": "Immolation Bomb",
+      "class": -1,
+      "category": "Fire",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_65.png"
+    },
+    {
+      "id": "inner_fire",
+      "name": "Inner Fire",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_66.png"
+    },
+    {
+      "id": "javelin",
+      "name": "Javelin",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "javelin_nova",
+      "name": "Javelin Nova",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "jitans_gate",
+      "name": "Jitan's Gate",
+      "class": -1,
+      "category": "Buff/Debuff/Misc",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_8.png"
+    },
+    {
+      "id": "judgment_day",
+      "name": "Judgment Day",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "kick",
+      "name": "Kick",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_3.png"
+    },
+    {
+      "id": "knife_throw",
+      "name": "Knife Throw",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "kraken_stance",
+      "name": "Kraken Stance",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_102.png"
+    },
+    {
+      "id": "lamia",
+      "name": "Lamia",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_251.png"
+    },
+    {
+      "id": "laughing_ghost",
+      "name": "Laughing Ghost",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_110.png"
+    },
+    {
+      "id": "left_hand_swing",
+      "name": "Left Hand Swing",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_3.png"
+    },
+    {
+      "id": "left_hand_throw",
+      "name": "Left Hand Throw",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_5.png"
+    },
+    {
+      "id": "let_me_solo_him",
+      "name": "LET ME SOLO HIM",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_290.png"
+    },
+    {
+      "id": "lex_talionis",
+      "name": "Lex Talionis",
+      "class": -1,
+      "category": "Buff/Debuff/Misc",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_244.png"
+    },
+    {
+      "id": "liche_form",
+      "name": "Liche Form",
+      "class": -1,
+      "category": "Buff/Debuff/Misc",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_136.png"
+    },
+    {
+      "id": "life_spark",
+      "name": "Life Spark",
+      "class": -1,
+      "category": "Buff/Debuff/Misc",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "lifeblood",
+      "name": "Lifeblood",
+      "class": -1,
+      "category": "Buff/Debuff/Misc",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_115.png"
+    },
+    {
+      "id": "lightning_arena",
+      "name": "Lightning Arena",
+      "class": -1,
+      "category": "Lightning",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_184.png"
+    },
+    {
+      "id": "lightning_fury",
+      "name": "Lightning Fury",
+      "class": -1,
+      "category": "Lightning",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_254.png"
+    },
+    {
+      "id": "lightning_shield",
+      "name": "Lightning Shield",
+      "class": -1,
+      "category": "Buff/Debuff/Misc",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_168.png"
+    },
+    {
+      "id": "lightning_streak",
+      "name": "Lightning Streak",
+      "class": -1,
+      "category": "Lightning",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_116.png"
+    },
+    {
+      "id": "lightning_wall",
+      "name": "Lightning Wall",
+      "class": -1,
+      "category": "Lightning",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_39.png"
+    },
+    {
+      "id": "limpet_laser",
+      "name": "Limpet Laser",
+      "class": -1,
+      "category": "Cold",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_15.png"
+    },
+    {
+      "id": "maelstrom",
+      "name": "Maelstrom",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_67.png"
+    },
+    {
+      "id": "mana_coil",
+      "name": "Mana Coil",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_68.png"
+    },
+    {
+      "id": "mana_shield_innate",
+      "name": "Mana Shield (Innate)",
+      "class": 1,
+      "category": "Buff/Debuff/Misc",
+      "tab": 99,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_22.png"
+    },
+    {
+      "id": "mana_tide_totem",
+      "name": "Mana Tide Totem",
+      "class": -1,
+      "category": "Buff/Debuff/Misc",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_50.png"
+    },
+    {
+      "id": "mark_of_the_wild_innate",
+      "name": "Mark of the Wild (Innate)",
+      "class": 5,
+      "category": "Buff/Debuff/Misc",
+      "tab": 99,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_14.png"
+    },
+    {
+      "id": "medusa",
+      "name": "Medusa",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_117.png"
+    },
+    {
+      "id": "meteor_shower",
+      "name": "Meteor Shower",
+      "class": -1,
+      "category": "Fire",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_47.png"
+    },
+    {
+      "id": "mind_control",
+      "name": "Mind Control",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_165.png"
+    },
+    {
+      "id": "mirv",
+      "name": "MIRV",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "move_only",
+      "name": "Move Only",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_226.png"
+    },
+    {
+      "id": "nightmare",
+      "name": "Nightmare",
+      "class": -1,
+      "category": "Buff/Debuff/Misc",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_103.png"
+    },
+    {
+      "id": "nova",
+      "name": "Nova",
+      "class": -1,
+      "category": "Lightning",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_24.png"
+    },
+    {
+      "id": "nova_bomb",
+      "name": "Nova Bomb",
+      "class": -1,
+      "category": "Lightning",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_90.png"
+    },
+    {
+      "id": "nova_shot",
+      "name": "Nova Shot",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "ohman",
+      "name": "OHMAN",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_197.png"
+    },
+    {
+      "id": "orb_of_annihilation",
+      "name": "Orb of Annihilation",
+      "class": -1,
+      "category": "Phys/Magic",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_185.png"
+    },
+    {
+      "id": "overlord",
+      "name": "Overlord",
+      "class": -1,
+      "category": "Summon",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_122.png"
+    },
+    {
+      "id": "overpower",
+      "name": "Overpower",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_40.png"
+    },
+    {
+      "id": "pain_spirit",
+      "name": "Pain Spirit",
+      "class": -1,
+      "category": "Phys/Magic",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_88.png"
+    },
+    {
+      "id": "path_of_flames",
+      "name": "Path of Flames",
+      "class": -1,
+      "category": "Fire",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_198.png"
+    },
+    {
+      "id": "patriot_sentry",
+      "name": "Patriot Sentry",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_211.png"
+    },
+    {
+      "id": "pentagram",
+      "name": "Pentagram",
+      "class": -1,
+      "category": "Fire",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_186.png"
+    },
+    {
+      "id": "phoenix_wave",
+      "name": "Phoenix Wave",
+      "class": -1,
+      "category": "Fire",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_169.png"
+    },
+    {
+      "id": "powder_keg",
+      "name": "Powder Keg",
+      "class": -1,
+      "category": "Fire",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_208.png"
+    },
+    {
+      "id": "psicrown",
+      "name": "Psicrown",
+      "class": -1,
+      "category": "Phys/Magic",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_149.png"
+    },
+    {
+      "id": "punisher_barrage",
+      "name": "Punisher Barrage",
+      "class": -1,
+      "category": "Poison",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "punisher_bolt",
+      "name": "Punisher Bolt",
+      "class": -1,
+      "category": "Poison",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_69.png"
+    },
+    {
+      "id": "punishers",
+      "name": "Punishers",
+      "class": -1,
+      "category": "Poison",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_69.png"
+    },
+    {
+      "id": "purify",
+      "name": "Purify",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_9.png"
+    },
+    {
+      "id": "pyroclastic_flow",
+      "name": "Pyroclastic Flow",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_150.png"
+    },
+    {
+      "id": "rain_of_bombs",
+      "name": "Rain of Bombs",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_45.png"
+    },
+    {
+      "id": "rainbow_storm",
+      "name": "Rainbow Storm",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_164.png"
+    },
+    {
+      "id": "rampagor",
+      "name": "Rampagor",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_250.png"
+    },
+    {
+      "id": "ranged_blood_thorns",
+      "name": "Ranged Blood Thorns",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_241.png"
+    },
+    {
+      "id": "ranged_egg_trap",
+      "name": "Ranged Egg Trap",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_279.png"
+    },
+    {
+      "id": "rapid_wyrmshot",
+      "name": "Rapid Wyrmshot",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_236.png"
+    },
+    {
+      "id": "raven_flight",
+      "name": "Raven Flight",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_118.png"
+    },
+    {
+      "id": "raven_heart",
+      "name": "Raven Heart",
+      "class": -1,
+      "category": "Buff/Debuff/Misc",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_171.png"
+    },
+    {
+      "id": "ravenous_flames",
+      "name": "Ravenous Flames",
+      "class": -1,
+      "category": "Fire",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_245.png"
+    },
+    {
+      "id": "razor_spines",
+      "name": "Razor Spines",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_119.png"
+    },
+    {
+      "id": "rebound",
+      "name": "Rebound",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_284.png"
+    },
+    {
+      "id": "remorseless_winter",
+      "name": "Remorseless Winter",
+      "class": -1,
+      "category": "Buff/Debuff/Misc",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "respawner",
+      "name": "Respawner",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "ricochet",
+      "name": "Ricochet",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_44.png"
+    },
+    {
+      "id": "ring_of_flames",
+      "name": "Ring of Flames",
+      "class": -1,
+      "category": "Fire",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "ring_of_light",
+      "name": "Ring of Light",
+      "class": -1,
+      "category": "Fire",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_43.png"
+    },
+    {
+      "id": "rising_dawn",
+      "name": "Rising Dawn",
+      "class": -1,
+      "category": "Phys/Magic",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_91.png"
+    },
+    {
+      "id": "rock_shock",
+      "name": "Rock Shock",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_172.png"
+    },
+    {
+      "id": "rotting_flesh",
+      "name": "Rotting Flesh",
+      "class": -1,
+      "category": "Poison",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "rune_of_fire",
+      "name": "Rune of Fire",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_70.png"
+    },
+    {
+      "id": "rune_of_ice",
+      "name": "Rune of Ice",
+      "class": -1,
+      "category": "Cold",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_34.png"
+    },
+    {
+      "id": "rune_of_mana",
+      "name": "Rune of Mana",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_71.png"
+    },
+    {
+      "id": "rust_storm",
+      "name": "Rust Storm",
+      "class": -1,
+      "category": "Buff/Debuff/Misc",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "sandstorm",
+      "name": "Sandstorm",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_83.png"
+    },
+    {
+      "id": "scepter_mastery",
+      "name": "Scepter Mastery",
+      "class": -1,
+      "category": "Buff/Debuff/Misc",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "scream_of_tragoul",
+      "name": "Scream of Trag'Oul",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_30.png"
+    },
+    {
+      "id": "screaming_eagle",
+      "name": "Screaming Eagle",
+      "class": -1,
+      "category": "Buff/Debuff/Misc",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_278.png"
+    },
+    {
+      "id": "seal_of_fire",
+      "name": "Seal of Fire",
+      "class": -1,
+      "category": "Fire",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_187.png"
+    },
+    {
+      "id": "searing_glow",
+      "name": "Searing Glow",
+      "class": -1,
+      "category": "Fire",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_170.png"
+    },
+    {
+      "id": "searing_orb",
+      "name": "Searing Orb",
+      "class": -1,
+      "category": "Phys/Magic",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_72.png"
+    },
+    {
+      "id": "shackles_of_ice",
+      "name": "Shackles of Ice",
+      "class": -1,
+      "category": "Buff/Debuff/Misc",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_200.png"
+    },
+    {
+      "id": "shadow_avatar",
+      "name": "Shadow Avatar",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_120.png"
+    },
+    {
+      "id": "shadow_blade",
+      "name": "Shadow Blade",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_73.png"
+    },
+    {
+      "id": "shatter_the_flesh",
+      "name": "Shatter the Flesh",
+      "class": -1,
+      "category": "Cold",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_100.png"
+    },
+    {
+      "id": "shatterblade",
+      "name": "Shatterblade",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "shock_flower",
+      "name": "Shock Flower",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_188.png"
+    },
+    {
+      "id": "shockwave",
+      "name": "Shockwave",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "short_duration_superbeast",
+      "name": "Short Duration Superbeast",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_275.png"
+    },
+    {
+      "id": "shunpo",
+      "name": "Shunpo",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_189.png"
+    },
+    {
+      "id": "silver_dart",
+      "name": "Silver Dart",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_121.png"
+    },
+    {
+      "id": "singularity",
+      "name": "Singularity",
+      "class": -1,
+      "category": "Phys/Magic",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "skeletal_flayer",
+      "name": "Skeletal Flayer",
+      "class": -1,
+      "category": "Summon",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_249.png"
+    },
+    {
+      "id": "sky_siege",
+      "name": "Sky Siege",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_223.png"
+    },
+    {
+      "id": "slayer_bolt",
+      "name": "Slayer Bolt",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "slicer_blade",
+      "name": "Slicer Blade",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "smg",
+      "name": "SMG",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_153.png"
+    },
+    {
+      "id": "soulshatter",
+      "name": "Soulshatter",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_89.png"
+    },
+    {
+      "id": "spike_nova",
+      "name": "Spike Nova",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_285.png"
+    },
+    {
+      "id": "spike_rush",
+      "name": "Spike Rush",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "spiral_dance",
+      "name": "Spiral Dance",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_93.png"
+    },
+    {
+      "id": "split_arrow",
+      "name": "Split Arrow",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "splitfire",
+      "name": "Splitfire",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_137.png"
+    },
+    {
+      "id": "spore_shot",
+      "name": "Spore Shot",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "squall_gust",
+      "name": "Squall Gust",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_154.png"
+    },
+    {
+      "id": "squall_wave",
+      "name": "Squall Wave",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_214.png"
+    },
+    {
+      "id": "stampede_nova",
+      "name": "Stampede Nova",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "starfire",
+      "name": "Starfire",
+      "class": -1,
+      "category": "Buff/Debuff/Misc",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_106.png"
+    },
+    {
+      "id": "static_spike",
+      "name": "Static Spike",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_202.png"
+    },
+    {
+      "id": "stormblast",
+      "name": "Stormblast",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_60.png"
+    },
+    {
+      "id": "stormclash",
+      "name": "Stormclash",
+      "class": -1,
+      "category": "Lightning",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_204.png"
+    },
+    {
+      "id": "stormpike",
+      "name": "Stormpike",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "summon_bane_monster",
+      "name": "Summon Bane Monster",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_207.png"
+    },
+    {
+      "id": "summon_darklings",
+      "name": "Summon Darklings",
+      "class": -1,
+      "category": "Summon",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_145.png"
+    },
+    {
+      "id": "summon_daystar",
+      "name": "Summon Daystar",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_210.png"
+    },
+    {
+      "id": "summon_edyrem",
+      "name": "Summon Edyrem",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_4.png"
+    },
+    {
+      "id": "summon_fallen",
+      "name": "Summon Fallen",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_176.png"
+    },
+    {
+      "id": "summon_frostwalker",
+      "name": "Summon Frostwalker",
+      "class": -1,
+      "category": "Summon",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_160.png"
+    },
+    {
+      "id": "summon_glowing_fungus",
+      "name": "Summon Glowing Fungus",
+      "class": -1,
+      "category": "Summon",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_166.png"
+    },
+    {
+      "id": "summon_shock_beast",
+      "name": "Summon Shock Beast",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_213.png"
+    },
+    {
+      "id": "summon_shredder",
+      "name": "Summon Shredder",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_215.png"
+    },
+    {
+      "id": "summon_sinner",
+      "name": "Summon Sinner",
+      "class": -1,
+      "category": "Summon",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_151.png"
+    },
+    {
+      "id": "summon_thunder_bear",
+      "name": "Summon Thunder Bear",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_155.png"
+    },
+    {
+      "id": "sun_strike",
+      "name": "Sun Strike",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "sunspear",
+      "name": "Sunspear",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_107.png"
+    },
+    {
+      "id": "supernova",
+      "name": "Supernova",
+      "class": -1,
+      "category": "Lightning",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_38.png"
+    },
+    {
+      "id": "tantrum",
+      "name": "Tantrum",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_177.png"
+    },
+    {
+      "id": "telekinesis",
+      "name": "Telekinesis",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_182.png"
+    },
+    {
+      "id": "teleport",
+      "name": "Teleport",
+      "class": -1,
+      "category": "Buff/Debuff/Misc",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_31.png"
+    },
+    {
+      "id": "thorn_field",
+      "name": "Thorn Field",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_157.png"
+    },
+    {
+      "id": "throw",
+      "name": "Throw",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_5.png"
+    },
+    {
+      "id": "thunder_arena",
+      "name": "Thunder Arena",
+      "class": -1,
+      "category": "Lightning",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_184.png"
+    },
+    {
+      "id": "thunder_hammer",
+      "name": "Thunder Hammer",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "thunder_hammer_nova",
+      "name": "Thunder Hammer Nova",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "thunder_wave",
+      "name": "Thunder Wave",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "time_freeze",
+      "name": "Time Freeze",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "time_strike",
+      "name": "Time Strike",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_74.png"
+    },
+    {
+      "id": "time_warp",
+      "name": "Time Warp",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_283.png"
+    },
+    {
+      "id": "time_wave",
+      "name": "Time Wave",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_138.png"
+    },
+    {
+      "id": "timefield",
+      "name": "Timefield",
+      "class": -1,
+      "category": "Buff/Debuff/Misc",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_159.png"
+    },
+    {
+      "id": "titans_fortitude",
+      "name": "Titan's Fortitude",
+      "class": -1,
+      "category": "Buff/Debuff/Misc",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "4/30.jpg"
+    },
+    {
+      "id": "titans_fortitude_innate",
+      "name": "Titan's Fortitude (Innate)",
+      "class": 4,
+      "category": "Buff/Debuff/Misc",
+      "tab": 99,
+      "row": 0,
+      "col": 0,
+      "image": "4/icons-shared_13.png"
+    },
+    {
+      "id": "town_portal",
+      "name": "Town Portal",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_6.png"
+    },
+    {
+      "id": "treewarden_form",
+      "name": "Treewarden Form",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "tremor",
+      "name": "Tremor",
+      "class": -1,
+      "category": "Phys/Magic",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_29.png"
+    },
+    {
+      "id": "trinity_beam",
+      "name": "Trinity Beam",
+      "class": -1,
+      "category": "Tri-Elemental",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_255.png"
+    },
+    {
+      "id": "trinity_nova",
+      "name": "Trinity Nova",
+      "class": -1,
+      "category": "Tri-Elemental",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_220.png"
+    },
+    {
+      "id": "typhoon_sentry",
+      "name": "Typhoon Sentry",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_123.png"
+    },
+    {
+      "id": "ultimate_chaos",
+      "name": "Ultimate Chaos",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_104.png"
+    },
+    {
+      "id": "unholy_armor",
+      "name": "Unholy Armor",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_108.png"
+    },
+    {
+      "id": "unseelie_curse",
+      "name": "Unseelie Curse",
+      "class": -1,
+      "category": "Buff/Debuff/Misc",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "unsummon",
+      "name": "Unsummon",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_7.png"
+    },
+    {
+      "id": "vanquish",
+      "name": "Vanquish",
+      "class": -1,
+      "category": "Buff/Debuff/Misc",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_75.png"
+    },
+    {
+      "id": "veil_king_plague_grasp",
+      "name": "Veil King Plague Grasp",
+      "class": -1,
+      "category": "Summon",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "venomcloud_totem",
+      "name": "Venomcloud Totem",
+      "class": -1,
+      "category": "Poison",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_253.png"
+    },
+    {
+      "id": "venomous_aura",
+      "name": "Venomous Aura",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "venomous_spirit",
+      "name": "Venomous Spirit",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_94.png"
+    },
+    {
+      "id": "vindicate_innate",
+      "name": "Vindicate (Innate)",
+      "class": 3,
+      "category": "Buff/Debuff/Misc",
+      "tab": 99,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_17.png"
+    },
+    {
+      "id": "virulence",
+      "name": "Virulence",
+      "class": -1,
+      "category": "Poison",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_179.png"
+    },
+    {
+      "id": "vizjerei_rage",
+      "name": "Vizjerei Rage",
+      "class": -1,
+      "category": "Phys/Magic",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "void_archon",
+      "name": "Void Archon",
+      "class": -1,
+      "category": "Summon",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_252.png"
+    },
+    {
+      "id": "void_armor",
+      "name": "Void Armor",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_108.png"
+    },
+    {
+      "id": "voidstar",
+      "name": "Voidstar",
+      "class": -1,
+      "category": "Cold",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_105.png"
+    },
+    {
+      "id": "vortex",
+      "name": "Vortex",
+      "class": -1,
+      "category": "Lightning",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_76.png"
+    },
+    {
+      "id": "war_cry",
+      "name": "War Cry",
+      "class": -1,
+      "category": "Phys/Magic",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_246.png"
+    },
+    {
+      "id": "warp_crash",
+      "name": "Warp Crash",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": ""
+    },
+    {
+      "id": "whirlpool",
+      "name": "Whirlpool",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_124.png"
+    },
+    {
+      "id": "windform",
+      "name": "Windform",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_174.png"
+    },
+    {
+      "id": "winter_avatar",
+      "name": "Winter Avatar",
+      "class": -1,
+      "category": "Cold",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_42.png"
+    },
+    {
+      "id": "wraith_arrow",
+      "name": "Wraith Arrow",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_77.png"
+    },
+    {
+      "id": "wraithsword",
+      "name": "Wraithsword",
+      "class": -1,
+      "category": "",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_276.png"
+    },
+    {
+      "id": "wrath",
+      "name": "Wrath",
+      "class": -1,
+      "category": "Fire",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_78.png"
+    },
+    {
+      "id": "wyrd",
+      "name": "Wyrd",
+      "class": -1,
+      "category": "Weapon Damage",
+      "tab": 0,
+      "row": 0,
+      "col": 0,
+      "image": "-1/icons-shared_206.png"
+    },
+    {
+      "id": "askari_lightning",
+      "name": "Askari Lightning",
+      "class": 0,
+      "category": "",
+      "tab": 5,
+      "row": 3,
+      "col": 3,
+      "image": "0/118.jpg"
+    },
+    {
+      "id": "balance",
+      "name": "Balance",
+      "class": 0,
+      "category": "",
+      "tab": 1,
+      "row": 3,
+      "col": 2,
+      "image": "0/74.jpg"
+    },
+    {
+      "id": "barrage",
+      "name": "Barrage",
+      "class": 0,
+      "category": "",
+      "tab": 2,
+      "row": 2,
+      "col": 3,
+      "image": "0/116.jpg"
+    },
+    {
+      "id": "blast_radius",
+      "name": "Blast Radius",
+      "class": 0,
+      "category": "",
+      "tab": 6,
+      "row": 3,
+      "col": 1,
+      "image": "0/146.jpg"
+    },
+    {
+      "id": "blood_magic",
+      "name": "Blood Magic",
+      "class": 0,
+      "category": "",
+      "tab": 6,
+      "row": 1,
+      "col": 2,
+      "image": "0/132.jpg"
+    },
+    {
+      "id": "bulwark",
+      "name": "Bulwark",
+      "class": 0,
+      "category": "",
+      "tab": 3,
+      "row": 5,
+      "col": 1,
+      "image": "0/48.jpg"
+    },
+    {
+      "id": "chemistry",
+      "name": "Chemistry",
+      "class": 0,
+      "category": "",
+      "tab": 7,
+      "row": 5,
+      "col": 3,
+      "image": "0/6.jpg"
+    },
+    {
+      "id": "concentrated_effect",
+      "name": "Concentrated Effect",
+      "class": 0,
+      "category": "",
+      "tab": 6,
+      "row": 4,
+      "col": 1,
+      "image": "0/160.jpg"
+    },
+    {
+      "id": "conductivity",
+      "name": "Conductivity",
+      "class": 0,
+      "category": "",
+      "tab": 5,
+      "row": 5,
+      "col": 3,
+      "image": "0/130.jpg"
+    },
+    {
+      "id": "continuity",
+      "name": "Continuity",
+      "class": 0,
+      "category": "",
+      "tab": 7,
+      "row": 4,
+      "col": 3,
+      "image": "0/0.jpg"
+    },
+    {
+      "id": "crimson_rite",
+      "name": "Crimson Rite",
+      "class": 0,
+      "category": "",
+      "tab": 6,
+      "row": 5,
+      "col": 1,
+      "image": "0/148.jpg"
+    },
+    {
+      "id": "curare",
+      "name": "Curare",
+      "class": 0,
+      "category": "",
+      "tab": 8,
+      "row": 3,
+      "col": 1,
+      "image": "0/82.jpg"
+    },
+    {
+      "id": "deadly_dance",
+      "name": "Deadly Dance",
+      "class": 0,
+      "category": "",
+      "tab": 3,
+      "row": 1,
+      "col": 3,
+      "image": "0/36.jpg"
+    },
+    {
+      "id": "decoy",
+      "name": "Decoy",
+      "class": 0,
+      "category": "",
+      "tab": 2,
+      "row": 3,
+      "col": 1,
+      "image": "0/162.jpg"
+    },
+    {
+      "id": "defensive_harmony",
+      "name": "Defensive Harmony",
+      "class": 0,
+      "category": "",
+      "tab": 1,
+      "row": 4,
+      "col": 3,
+      "image": "0/70.jpg"
+    },
+    {
+      "id": "discharge",
+      "name": "Discharge",
+      "class": 0,
+      "category": "",
+      "tab": 5,
+      "row": 4,
+      "col": 2,
+      "image": "0/58.jpg"
+    },
+    {
+      "id": "dragonlore",
+      "name": "Dragonlore",
+      "class": 0,
+      "category": "",
+      "tab": 2,
+      "row": 2,
+      "col": 2,
+      "image": "0/92.jpg"
+    },
+    {
+      "id": "ecstatic_frenzy",
+      "name": "Ecstatic Frenzy",
+      "class": 0,
+      "category": "",
+      "tab": 1,
+      "row": 4,
+      "col": 1,
+      "image": "0/68.jpg"
+    },
+    {
+      "id": "eldritch_storm",
+      "name": "Eldritch Storm",
+      "class": 0,
+      "category": "",
+      "tab": 6,
+      "row": 2,
+      "col": 2,
+      "image": "0/64.jpg"
+    },
+    {
+      "id": "elemental_aegis",
+      "name": "Elemental Aegis",
+      "class": 0,
+      "category": "",
+      "tab": 3,
+      "row": 6,
+      "col": 2,
+      "image": "0/138.jpg"
+    },
+    {
+      "id": "elemental_command",
+      "name": "Elemental Command",
+      "class": 0,
+      "category": "",
+      "tab": 2,
+      "row": 4,
+      "col": 3,
+      "image": "0/120.jpg"
+    },
+    {
+      "id": "endurance",
+      "name": "Endurance",
+      "class": 0,
+      "category": "",
+      "tab": 7,
+      "row": 4,
+      "col": 2,
+      "image": "0/12.jpg"
+    },
+    {
+      "id": "entropy",
+      "name": "Entropy",
+      "class": 0,
+      "category": "",
+      "tab": 6,
+      "row": 3,
+      "col": 2,
+      "image": "0/150.jpg"
+    },
+    {
+      "id": "eviscerate",
+      "name": "Eviscerate",
+      "class": 0,
+      "category": "",
+      "tab": 3,
+      "row": 3,
+      "col": 2,
+      "image": "0/44.jpg"
+    },
+    {
+      "id": "fend",
+      "name": "Fend",
+      "class": 0,
+      "category": "",
+      "tab": 4,
+      "row": 6,
+      "col": 2,
+      "image": "0/42.jpg"
+    },
+    {
+      "id": "fire_at_will",
+      "name": "Fire at Will",
+      "class": 0,
+      "category": "",
+      "tab": 2,
+      "row": 4,
+      "col": 1,
+      "image": "0/122.jpg"
+    },
+    {
+      "id": "fire_elementals",
+      "name": "Fire Elementals",
+      "class": 0,
+      "category": "",
+      "tab": 6,
+      "row": 6,
+      "col": 1,
+      "image": "0/72.jpg"
+    },
+    {
+      "id": "forbidden_knowledge",
+      "name": "Forbidden Knowledge",
+      "class": 0,
+      "category": "",
+      "tab": 6,
+      "row": 5,
+      "col": 3,
+      "image": "0/152.jpg"
+    },
+    {
+      "id": "fortitude",
+      "name": "Fortitude",
+      "class": 0,
+      "category": "",
+      "tab": 1,
+      "row": 6,
+      "col": 1,
+      "image": "0/38.jpg"
+    },
+    {
+      "id": "freedom",
+      "name": "Freedom",
+      "class": 0,
+      "category": "",
+      "tab": 7,
+      "row": 2,
+      "col": 2,
+      "image": "0/16.jpg"
+    },
+    {
+      "id": "gemling",
+      "name": "Gemling",
+      "class": 0,
+      "category": "",
+      "tab": 3,
+      "row": 3,
+      "col": 3,
+      "image": "0/136.jpg"
+    },
+    {
+      "id": "great_hunt",
+      "name": "Great Hunt",
+      "class": 0,
+      "category": "",
+      "tab": 4,
+      "row": 1,
+      "col": 1,
+      "image": "0/102.jpg"
+    },
+    {
+      "id": "hammer_of_zerae",
+      "name": "Hammer of Zerae",
+      "class": 0,
+      "category": "",
+      "tab": 5,
+      "row": 2,
+      "col": 1,
+      "image": "0/110.jpg"
+    },
+    {
+      "id": "hungering_flames",
+      "name": "Hungering Flames",
+      "class": 0,
+      "category": "",
+      "tab": 6,
+      "row": 3,
+      "col": 3,
+      "image": "0/154.jpg"
+    },
+    {
+      "id": "hunters_prowess",
+      "name": "Hunter's Prowess",
+      "class": 0,
+      "category": "",
+      "tab": 4,
+      "row": 3,
+      "col": 1,
+      "image": "0/128.jpg"
+    },
+    {
+      "id": "hyena_strike",
+      "name": "Hyena Strike",
+      "class": 0,
+      "category": "",
+      "tab": 4,
+      "row": 2,
+      "col": 2,
+      "image": "0/104.jpg"
+    },
+    {
+      "id": "impale",
+      "name": "Impale",
+      "class": 0,
+      "category": "",
+      "tab": 3,
+      "row": 1,
+      "col": 2,
+      "image": "0/46.jpg"
+    },
+    {
+      "id": "indomitable",
+      "name": "Indomitable",
+      "class": 0,
+      "category": "",
+      "tab": 3,
+      "row": 5,
+      "col": 2,
+      "image": "0/32.jpg"
+    },
+    {
+      "id": "keen_sight",
+      "name": "Keen Sight",
+      "class": 0,
+      "category": "",
+      "tab": 2,
+      "row": 5,
+      "col": 2,
+      "image": "0/124.jpg"
+    },
+    {
+      "id": "lava_pit",
+      "name": "Lava Pit",
+      "class": 0,
+      "category": "",
+      "tab": 6,
+      "row": 2,
+      "col": 3,
+      "image": "0/98.jpg"
+    },
+    {
+      "id": "lioness",
+      "name": "Lioness",
+      "class": 0,
+      "category": "",
+      "tab": 4,
+      "row": 4,
+      "col": 3,
+      "image": "0/56.jpg"
+    },
+    {
+      "id": "magic_missiles",
+      "name": "Magic Missiles",
+      "class": 0,
+      "category": "",
+      "tab": 6,
+      "row": 2,
+      "col": 1,
+      "image": "0/66.jpg"
+    },
+    {
+      "id": "meditation",
+      "name": "Meditation",
+      "class": 0,
+      "category": "",
+      "tab": 7,
+      "row": 1,
+      "col": 1,
+      "image": "0/10.jpg"
+    },
+    {
+      "id": "melee_devotion",
+      "name": "Melee Devotion",
+      "class": 0,
+      "category": "",
+      "tab": 7,
+      "row": 1,
+      "col": 3,
+      "image": "0/2.jpg"
+    },
+    {
+      "id": "noxious_mastery",
+      "name": "Noxious Mastery",
+      "class": 0,
+      "category": "",
+      "tab": 3,
+      "row": 3,
+      "col": 1,
+      "image": "0/140.jpg"
+    },
+    {
+      "id": "paragon",
+      "name": "Paragon",
+      "class": 0,
+      "category": "",
+      "tab": 8,
+      "row": 3,
+      "col": 2,
+      "image": "0/84.jpg"
+    },
+    {
+      "id": "paragon_of_fate",
+      "name": "Paragon of Fate",
+      "class": 0,
+      "category": "",
+      "tab": 8,
+      "row": 5,
+      "col": 1,
+      "image": "0/18.jpg"
+    },
+    {
+      "id": "phalanx",
+      "name": "Phalanx",
+      "class": 0,
+      "category": "",
+      "tab": 2,
+      "row": 5,
+      "col": 1,
+      "image": "0/34.jpg"
+    },
+    {
+      "id": "pounce",
+      "name": "Pounce",
+      "class": 0,
+      "category": "",
+      "tab": 4,
+      "row": 5,
+      "col": 3,
+      "image": "0/100.jpg"
+    },
+    {
+      "id": "power_shift",
+      "name": "Power Shift",
+      "class": 0,
+      "category": "",
+      "tab": 5,
+      "row": 3,
+      "col": 1,
+      "image": "0/142.jpg"
+    },
+    {
+      "id": "purity",
+      "name": "Purity",
+      "class": 0,
+      "category": "",
+      "tab": 7,
+      "row": 1,
+      "col": 2,
+      "image": "0/4.jpg"
+    },
+    {
+      "id": "reckoning_of_zerae",
+      "name": "Reckoning of Zerae",
+      "class": 0,
+      "category": "",
+      "tab": 5,
+      "row": 5,
+      "col": 1,
+      "image": "0/143.jpg"
+    },
+    {
+      "id": "resistance",
+      "name": "Resistance",
+      "class": 0,
+      "category": "",
+      "tab": 5,
+      "row": 6,
+      "col": 2,
+      "image": "0/144.jpg"
+    },
+    {
+      "id": "scorpion_sting",
+      "name": "Scorpion Sting",
+      "class": 0,
+      "category": "",
+      "tab": 3,
+      "row": 1,
+      "col": 1,
+      "image": "0/40.jpg"
+    },
+    {
+      "id": "second_wind",
+      "name": "Second Wind",
+      "class": 0,
+      "category": "",
+      "tab": 3,
+      "row": 5,
+      "col": 3,
+      "image": "0/90.jpg"
+    },
+    {
+      "id": "shieldmaiden",
+      "name": "Shieldmaiden",
+      "class": 0,
+      "category": "",
+      "tab": 3,
+      "row": 4,
+      "col": 2,
+      "image": "0/126.jpg"
+    },
+    {
+      "id": "specialization",
+      "name": "Specialization",
+      "class": 0,
+      "category": "",
+      "tab": 7,
+      "row": 5,
+      "col": 1,
+      "image": "0/8.jpg"
+    },
+    {
+      "id": "spellbind",
+      "name": "Spellbind",
+      "class": 0,
+      "category": "",
+      "tab": 8,
+      "row": 1,
+      "col": 1,
+      "image": "0/80.jpg"
+    },
+    {
+      "id": "spirit_of_vengeance",
+      "name": "Spirit of Vengeance",
+      "class": 0,
+      "category": "",
+      "tab": 8,
+      "row": 3,
+      "col": 3,
+      "image": "0/86.jpg"
+    },
+    {
+      "id": "spiritual_invocation",
+      "name": "Spiritual Invocation",
+      "class": 0,
+      "category": "",
+      "tab": 6,
+      "row": 5,
+      "col": 2,
+      "image": "0/158.jpg"
+    },
+    {
+      "id": "stormcall",
+      "name": "Stormcall",
+      "class": 0,
+      "category": "",
+      "tab": 5,
+      "row": 2,
+      "col": 3,
+      "image": "0/108.jpg"
+    },
+    {
+      "id": "takedown",
+      "name": "Takedown",
+      "class": 0,
+      "category": "",
+      "tab": 4,
+      "row": 3,
+      "col": 2,
+      "image": "0/50.jpg"
+    },
+    {
+      "id": "tenacity",
+      "name": "Tenacity",
+      "class": 0,
+      "category": "",
+      "tab": 7,
+      "row": 4,
+      "col": 1,
+      "image": "0/14.jpg"
+    },
+    {
+      "id": "thundermaiden",
+      "name": "Thundermaiden",
+      "class": 0,
+      "category": "",
+      "tab": 5,
+      "row": 1,
+      "col": 2,
+      "image": "0/112.jpg"
+    },
+    {
+      "id": "trinity_arrow",
+      "name": "Trinity Arrow",
+      "class": 0,
+      "category": "",
+      "tab": 2,
+      "row": 1,
+      "col": 2,
+      "image": "0/30.jpg"
+    },
+    {
+      "id": "unstable_essence",
+      "name": "Unstable Essence",
+      "class": 0,
+      "category": "",
+      "tab": 6,
+      "row": 6,
+      "col": 3,
+      "image": "0/156.jpg"
+    },
+    {
+      "id": "war_spirit",
+      "name": "War Spirit",
+      "class": 0,
+      "category": "",
+      "tab": 8,
+      "row": 1,
+      "col": 3,
+      "image": "0/88.jpg"
+    },
+    {
+      "id": "wild_and_free",
+      "name": "Wild and Free",
+      "class": 0,
+      "category": "",
+      "tab": 1,
+      "row": 1,
+      "col": 2,
+      "image": "0/78.jpg"
+    },
+    {
+      "id": "wyrmshot",
+      "name": "Wyrmshot",
+      "class": 0,
+      "category": "",
+      "tab": 2,
+      "row": 4,
+      "col": 2,
+      "image": "0/96.jpg"
+    },
+    {
+      "id": "anathema",
+      "name": "Anathema",
+      "class": 6,
+      "category": "",
+      "tab": 3,
+      "row": 5,
+      "col": 1,
+      "image": "6/122.jpg"
+    },
+    {
+      "id": "apf-20_maelstrom_mki",
+      "name": "APF-20 'Maelstrom' MkI",
+      "class": 6,
+      "category": "",
+      "tab": 2,
+      "row": 3,
+      "col": 2,
+      "image": "6/66.jpg"
+    },
+    {
+      "id": "artifice_mastery",
+      "name": "Artifice Mastery",
+      "class": 6,
+      "category": "",
+      "tab": 5,
+      "row": 5,
+      "col": 2,
+      "image": "6/136.jpg"
+    },
+    {
+      "id": "backstab",
+      "name": "Backstab",
+      "class": 6,
+      "category": "",
+      "tab": 4,
+      "row": 4,
+      "col": 1,
+      "image": "6/132.jpg"
+    },
+    {
+      "id": "barrier_strike",
+      "name": "Barrier Strike",
+      "class": 6,
+      "category": "",
+      "tab": 4,
+      "row": 3,
+      "col": 2,
+      "image": "6/114.jpg"
+    },
+    {
+      "id": "batstrike",
+      "name": "Batstrike",
+      "class": 6,
+      "category": "",
+      "tab": 3,
+      "row": 3,
+      "col": 2,
+      "image": "6/30.jpg"
+    },
+    {
+      "id": "beacon",
+      "name": "Beacon",
+      "class": 6,
+      "category": "",
+      "tab": 8,
+      "row": 3,
+      "col": 3,
+      "image": "6/90.jpg"
+    },
+    {
+      "id": "blink",
+      "name": "Blink",
+      "class": 6,
+      "category": "",
+      "tab": 1,
+      "row": 1,
+      "col": 2,
+      "image": "6/70.jpg"
+    },
+    {
+      "id": "broadside",
+      "name": "Broadside",
+      "class": 6,
+      "category": "",
+      "tab": 2,
+      "row": 5,
+      "col": 2,
+      "image": "6/68.jpg"
+    },
+    {
+      "id": "catalyst_trap",
+      "name": "Catalyst Trap",
+      "class": 6,
+      "category": "",
+      "tab": 5,
+      "row": 2,
+      "col": 3,
+      "image": "6/126.jpg"
+    },
+    {
+      "id": "cognition",
+      "name": "Cognition",
+      "class": 6,
+      "category": "",
+      "tab": 6,
+      "row": 3,
+      "col": 2,
+      "image": "6/152.jpg"
+    },
+    {
+      "id": "crucify",
+      "name": "Crucify",
+      "class": 6,
+      "category": "",
+      "tab": 4,
+      "row": 1,
+      "col": 2,
+      "image": "6/32.jpg"
+    },
+    {
+      "id": "domain",
+      "name": "Domain",
+      "class": 6,
+      "category": "",
+      "tab": 1,
+      "row": 2,
+      "col": 3,
+      "image": "6/148.jpg"
+    },
+    {
+      "id": "doom",
+      "name": "Doom",
+      "class": 6,
+      "category": "",
+      "tab": 8,
+      "row": 3,
+      "col": 1,
+      "image": "6/38.jpg"
+    },
+    {
+      "id": "energize",
+      "name": "Energize",
+      "class": 6,
+      "category": "",
+      "tab": 6,
+      "row": 5,
+      "col": 2,
+      "image": "6/172.jpg"
+    },
+    {
+      "id": "enhanced_contraption",
+      "name": "Enhanced Contraption",
+      "class": 6,
+      "category": "",
+      "tab": 5,
+      "row": 4,
+      "col": 3,
+      "image": "6/154.jpg"
+    },
+    {
+      "id": "execution",
+      "name": "Execution",
+      "class": 6,
+      "category": "",
+      "tab": 4,
+      "row": 6,
+      "col": 1,
+      "image": "6/144.jpg"
+    },
+    {
+      "id": "forgers_hegemony",
+      "name": "Forger's Hegemony",
+      "class": 6,
+      "category": "",
+      "tab": 5,
+      "row": 6,
+      "col": 2,
+      "image": "6/158.jpg"
+    },
+    {
+      "id": "hades_gate",
+      "name": "Hades Gate",
+      "class": 6,
+      "category": "",
+      "tab": 4,
+      "row": 5,
+      "col": 2,
+      "image": "6/36.jpg"
+    },
+    {
+      "id": "incineration_trap",
+      "name": "Incineration Trap",
+      "class": 6,
+      "category": "",
+      "tab": 5,
+      "row": 3,
+      "col": 2,
+      "image": "6/112.jpg"
+    },
+    {
+      "id": "laserblade",
+      "name": "Laserblade",
+      "class": 6,
+      "category": "",
+      "tab": 4,
+      "row": 2,
+      "col": 1,
+      "image": "6/120.jpg"
+    },
+    {
+      "id": "lethal_incision",
+      "name": "Lethal Incision",
+      "class": 6,
+      "category": "",
+      "tab": 2,
+      "row": 4,
+      "col": 3,
+      "image": "6/160.jpg"
+    },
+    {
+      "id": "mind_ripple",
+      "name": "Mind Ripple",
+      "class": 6,
+      "category": "",
+      "tab": 6,
+      "row": 4,
+      "col": 1,
+      "image": "6/86.jpg"
+    },
+    {
+      "id": "momentum",
+      "name": "Momentum",
+      "class": 6,
+      "category": "",
+      "tab": 4,
+      "row": 6,
+      "col": 3,
+      "image": "6/142.jpg"
+    },
+    {
+      "id": "negative_charge",
+      "name": "Negative Charge",
+      "class": 6,
+      "category": "",
+      "tab": 5,
+      "row": 4,
+      "col": 1,
+      "image": "6/162.jpg"
+    },
+    {
+      "id": "noctule",
+      "name": "Noctule",
+      "class": 6,
+      "category": "",
+      "tab": 3,
+      "row": 1,
+      "col": 2,
+      "image": "6/130.jpg"
+    },
+    {
+      "id": "perfect_being",
+      "name": "Perfect Being",
+      "class": 6,
+      "category": "",
+      "tab": 1,
+      "row": 4,
+      "col": 3,
+      "image": "6/78.jpg"
+    },
+    {
+      "id": "pinnacle",
+      "name": "Pinnacle",
+      "class": 6,
+      "category": "",
+      "tab": 6,
+      "row": 2,
+      "col": 1,
+      "image": "6/116.jpg"
+    },
+    {
+      "id": "prismatic_cloak",
+      "name": "Prismatic Cloak",
+      "class": 6,
+      "category": "",
+      "tab": 8,
+      "row": 1,
+      "col": 1,
+      "image": "6/128.jpg"
+    },
+    {
+      "id": "psionic_scream",
+      "name": "Psionic Scream",
+      "class": 6,
+      "category": "",
+      "tab": 6,
+      "row": 2,
+      "col": 3,
+      "image": "6/54.jpg"
+    },
+    {
+      "id": "psionic_storm",
+      "name": "Psionic Storm",
+      "class": 6,
+      "category": "",
+      "tab": 6,
+      "row": 4,
+      "col": 3,
+      "image": "6/106.jpg"
+    },
+    {
+      "id": "queen_of_blades",
+      "name": "Queen of Blades",
+      "class": 6,
+      "category": "",
+      "tab": 1,
+      "row": 5,
+      "col": 2,
+      "image": "6/34.jpg"
+    },
+    {
+      "id": "scorpion_blade",
+      "name": "Scorpion Blade",
+      "class": 6,
+      "category": "",
+      "tab": 2,
+      "row": 2,
+      "col": 3,
+      "image": "6/60.jpg"
+    },
+    {
+      "id": "shadow_dancer",
+      "name": "Shadow Dancer",
+      "class": 6,
+      "category": "",
+      "tab": 3,
+      "row": 2,
+      "col": 1,
+      "image": "6/134.jpg"
+    },
+    {
+      "id": "shadow_refuge",
+      "name": "Shadow Refuge",
+      "class": 6,
+      "category": "",
+      "tab": 1,
+      "row": 3,
+      "col": 2,
+      "image": "6/42.jpg"
+    },
+    {
+      "id": "shadowrush",
+      "name": "Shadowrush",
+      "class": 6,
+      "category": "",
+      "tab": 1,
+      "row": 4,
+      "col": 1,
+      "image": "6/164.jpg"
+    },
+    {
+      "id": "shockwave_trap",
+      "name": "Shockwave Trap",
+      "class": 6,
+      "category": "",
+      "tab": 5,
+      "row": 2,
+      "col": 1,
+      "image": "6/110.jpg"
+    },
+    {
+      "id": "shuriken_flurry",
+      "name": "Shuriken Flurry",
+      "class": 6,
+      "category": "",
+      "tab": 6,
+      "row": 1,
+      "col": 2,
+      "image": "6/72.jpg"
+    },
+    {
+      "id": "storm_crows",
+      "name": "Storm Crows",
+      "class": 6,
+      "category": "",
+      "tab": 2,
+      "row": 1,
+      "col": 2,
+      "image": "6/62.jpg"
+    },
+    {
+      "id": "subterfuge",
+      "name": "Subterfuge",
+      "class": 6,
+      "category": "",
+      "tab": 5,
+      "row": 1,
+      "col": 2,
+      "image": "6/138.jpg"
+    },
+    {
+      "id": "summon_familiars",
+      "name": "Summon Familiars",
+      "class": 6,
+      "category": "",
+      "tab": 3,
+      "row": 4,
+      "col": 3,
+      "image": "6/146.jpg"
+    },
+    {
+      "id": "vampiric_icon",
+      "name": "Vampiric Icon",
+      "class": 6,
+      "category": "",
+      "tab": 8,
+      "row": 1,
+      "col": 3,
+      "image": "6/88.jpg"
+    },
+    {
+      "id": "vampiric_strike",
+      "name": "Vampiric Strike",
+      "class": 6,
+      "category": "",
+      "tab": 3,
+      "row": 6,
+      "col": 2,
+      "image": "6/150.jpg"
+    },
+    {
+      "id": "void_gazer",
+      "name": "Void Gazer",
+      "class": 6,
+      "category": "",
+      "tab": 2,
+      "row": 6,
+      "col": 1,
+      "image": "6/168.jpg"
+    },
+    {
+      "id": "way_of_the_gryphon",
+      "name": "Way of the Gryphon",
+      "class": 6,
+      "category": "",
+      "tab": 3,
+      "row": 1,
+      "col": 3,
+      "image": "6/84.jpg"
+    },
+    {
+      "id": "way_of_the_phoenix",
+      "name": "Way of the Phoenix",
+      "class": 6,
+      "category": "",
+      "tab": 4,
+      "row": 1,
+      "col": 3,
+      "image": "6/48.jpg"
+    },
+    {
+      "id": "way_of_the_raven",
+      "name": "Way of the Raven",
+      "class": 6,
+      "category": "",
+      "tab": 8,
+      "row": 3,
+      "col": 2,
+      "image": "6/98.jpg"
+    },
+    {
+      "id": "way_of_the_spider",
+      "name": "Way of the Spider",
+      "class": 6,
+      "category": "",
+      "tab": 2,
+      "row": 1,
+      "col": 3,
+      "image": "6/40.jpg"
+    },
+    {
+      "id": "winged_calamity",
+      "name": "Winged Calamity",
+      "class": 6,
+      "category": "",
+      "tab": 3,
+      "row": 5,
+      "col": 3,
+      "image": "6/170.jpg"
+    },
+    {
+      "id": "wychwind",
+      "name": "Wychwind",
+      "class": 6,
+      "category": "",
+      "tab": 2,
+      "row": 4,
+      "col": 1,
+      "image": "6/64.jpg"
+    },
+    {
+      "id": "aftermath",
+      "name": "Aftermath",
+      "class": 4,
+      "category": "",
+      "tab": 2,
+      "row": 6,
+      "col": 3,
+      "image": "4/98.jpg"
+    },
+    {
+      "id": "ancestral_endurance",
+      "name": "Ancestral Endurance",
+      "class": 4,
+      "category": "",
+      "tab": 6,
+      "row": 5,
+      "col": 3,
+      "image": "4/148.jpg"
+    },
+    {
+      "id": "ancient_blood",
+      "name": "Ancient Blood",
+      "class": 4,
+      "category": "",
+      "tab": 1,
+      "row": 2,
+      "col": 2,
+      "image": "4/40.jpg"
+    },
+    {
+      "id": "aptitude",
+      "name": "Aptitude",
+      "class": 4,
+      "category": "",
+      "tab": 5,
+      "row": 5,
+      "col": 1,
+      "image": "4/156.jpg"
+    },
+    {
+      "id": "bear_stance",
+      "name": "Bear Stance",
+      "class": 4,
+      "category": "",
+      "tab": 1,
+      "row": 4,
+      "col": 3,
+      "image": "4/46.jpg"
+    },
+    {
+      "id": "bloodthirst",
+      "name": "Bloodthirst",
+      "class": 4,
+      "category": "",
+      "tab": 5,
+      "row": 3,
+      "col": 2,
+      "image": "4/136.jpg"
+    },
+    {
+      "id": "citadel",
+      "name": "Citadel",
+      "class": 4,
+      "category": "",
+      "tab": 5,
+      "row": 6,
+      "col": 2,
+      "image": "4/134.jpg"
+    },
+    {
+      "id": "conflux",
+      "name": "Conflux",
+      "class": 4,
+      "category": "",
+      "tab": 4,
+      "row": 1,
+      "col": 2,
+      "image": "4/32.jpg"
+    },
+    {
+      "id": "deep_freeze",
+      "name": "Deep Freeze",
+      "class": 4,
+      "category": "",
+      "tab": 4,
+      "row": 4,
+      "col": 2,
+      "image": "4/92.jpg"
+    },
+    {
+      "id": "defender_spirit",
+      "name": "Defender Spirit",
+      "class": 4,
+      "category": "",
+      "tab": 6,
+      "row": 2,
+      "col": 2,
+      "image": "4/52.jpg"
+    },
+    {
+      "id": "eagle_stance",
+      "name": "Eagle Stance",
+      "class": 4,
+      "category": "",
+      "tab": 1,
+      "row": 5,
+      "col": 3,
+      "image": "4/48.jpg"
+    },
+    {
+      "id": "earthquake",
+      "name": "Earthquake",
+      "class": 4,
+      "category": "",
+      "tab": 2,
+      "row": 1,
+      "col": 3,
+      "image": "4/38.jpg"
+    },
+    {
+      "id": "elemental_overload",
+      "name": "Elemental Overload",
+      "class": 4,
+      "category": "",
+      "tab": 4,
+      "row": 3,
+      "col": 2,
+      "image": "4/132.jpg"
+    },
+    {
+      "id": "executioner",
+      "name": "Executioner",
+      "class": 4,
+      "category": "",
+      "tab": 3,
+      "row": 6,
+      "col": 1,
+      "image": "4/138.jpg"
+    },
+    {
+      "id": "fortress",
+      "name": "Fortress",
+      "class": 4,
+      "category": "",
+      "tab": 5,
+      "row": 6,
+      "col": 1,
+      "image": "4/64.jpg"
+    },
+    {
+      "id": "gale_force",
+      "name": "Gale Force",
+      "class": 4,
+      "category": "",
+      "tab": 3,
+      "row": 6,
+      "col": 2,
+      "image": "4/130.jpg"
+    },
+    {
+      "id": "galvanism",
+      "name": "Galvanism",
+      "class": 4,
+      "category": "",
+      "tab": 4,
+      "row": 2,
+      "col": 3,
+      "image": "4/144.jpg"
+    },
+    {
+      "id": "gladiators_dominance",
+      "name": "Gladiator's Dominance",
+      "class": 4,
+      "category": "",
+      "tab": 8,
+      "row": 3,
+      "col": 3,
+      "image": "4/118.jpg"
+    },
+    {
+      "id": "guardian_spirit",
+      "name": "Guardian Spirit",
+      "class": 4,
+      "category": "",
+      "tab": 6,
+      "row": 1,
+      "col": 2,
+      "image": "4/50.jpg"
+    },
+    {
+      "id": "heart_of_stone",
+      "name": "Heart of Stone",
+      "class": 4,
+      "category": "",
+      "tab": 2,
+      "row": 4,
+      "col": 1,
+      "image": "4/114.jpg"
+    },
+    {
+      "id": "hunters_mark",
+      "name": "Hunter's Mark",
+      "class": 4,
+      "category": "",
+      "tab": 1,
+      "row": 3,
+      "col": 1,
+      "image": "4/58.jpg"
+    },
+    {
+      "id": "immortal",
+      "name": "Immortal",
+      "class": 4,
+      "category": "",
+      "tab": 8,
+      "row": 1,
+      "col": 1,
+      "image": "4/104.jpg"
+    },
+    {
+      "id": "iron_spiral",
+      "name": "Iron Spiral",
+      "class": 4,
+      "category": "",
+      "tab": 4,
+      "row": 2,
+      "col": 2,
+      "image": "4/116.jpg"
+    },
+    {
+      "id": "leap",
+      "name": "Leap",
+      "class": 4,
+      "category": "",
+      "tab": 2,
+      "row": 3,
+      "col": 3,
+      "image": "4/94.jpg"
+    },
+    {
+      "id": "lifestealer",
+      "name": "Lifestealer",
+      "class": 4,
+      "category": "",
+      "tab": 3,
+      "row": 5,
+      "col": 3,
+      "image": "4/124.jpg"
+    },
+    {
+      "id": "lion_stance",
+      "name": "Lion Stance",
+      "class": 4,
+      "category": "",
+      "tab": 1,
+      "row": 1,
+      "col": 3,
+      "image": "4/42.jpg"
+    },
+    {
+      "id": "mighty_vigor",
+      "name": "Mighty Vigor",
+      "class": 4,
+      "category": "",
+      "tab": 5,
+      "row": 4,
+      "col": 1,
+      "image": "4/152.jpg"
+    },
+    {
+      "id": "mountain_king",
+      "name": "Mountain King",
+      "class": 4,
+      "category": "",
+      "tab": 1,
+      "row": 4,
+      "col": 2,
+      "image": "4/68.jpg"
+    },
+    {
+      "id": "nephalem_spirit",
+      "name": "Nephalem Spirit",
+      "class": 4,
+      "category": "",
+      "tab": 8,
+      "row": 3,
+      "col": 1,
+      "image": "4/106.jpg"
+    },
+    {
+      "id": "overkill",
+      "name": "Overkill",
+      "class": 4,
+      "category": "",
+      "tab": 5,
+      "row": 2,
+      "col": 3,
+      "image": "4/100.jpg"
+    },
+    {
+      "id": "pillage",
+      "name": "Pillage",
+      "class": 4,
+      "category": "",
+      "tab": 5,
+      "row": 5,
+      "col": 2,
+      "image": "4/146.jpg"
+    },
+    {
+      "id": "precision",
+      "name": "Precision",
+      "class": 4,
+      "category": "",
+      "tab": 3,
+      "row": 2,
+      "col": 1,
+      "image": "4/122.jpg"
+    },
+    {
+      "id": "primordial_hunt",
+      "name": "Primordial Hunt",
+      "class": 4,
+      "category": "",
+      "tab": 1,
+      "row": 6,
+      "col": 1,
+      "image": "4/78.jpg"
+    },
+    {
+      "id": "primordial_strike",
+      "name": "Primordial Strike",
+      "class": 4,
+      "category": "",
+      "tab": 4,
+      "row": 5,
+      "col": 2,
+      "image": "4/110.jpg"
+    },
+    {
+      "id": "protector_spirit",
+      "name": "Protector Spirit",
+      "class": 4,
+      "category": "",
+      "tab": 6,
+      "row": 3,
+      "col": 2,
+      "image": "4/54.jpg"
+    },
+    {
+      "id": "purifying_flame",
+      "name": "Purifying Flame",
+      "class": 4,
+      "category": "",
+      "tab": 4,
+      "row": 4,
+      "col": 3,
+      "image": "4/108.jpg"
+    },
+    {
+      "id": "runemaster",
+      "name": "Runemaster",
+      "class": 4,
+      "category": "",
+      "tab": 8,
+      "row": 3,
+      "col": 2,
+      "image": "4/84.jpg"
+    },
+    {
+      "id": "savagery",
+      "name": "Savagery",
+      "class": 4,
+      "category": "",
+      "tab": 3,
+      "row": 3,
+      "col": 3,
+      "image": "4/126.jpg"
+    },
+    {
+      "id": "shamanic_trance",
+      "name": "Shamanic Trance",
+      "class": 4,
+      "category": "",
+      "tab": 6,
+      "row": 4,
+      "col": 1,
+      "image": "4/86.jpg"
+    },
+    {
+      "id": "shower_of_rocks",
+      "name": "Shower of Rocks",
+      "class": 4,
+      "category": "",
+      "tab": 2,
+      "row": 5,
+      "col": 2,
+      "image": "4/36.jpg"
+    },
+    {
+      "id": "snake_bite",
+      "name": "Snake Bite",
+      "class": 4,
+      "category": "",
+      "tab": 5,
+      "row": 2,
+      "col": 1,
+      "image": "4/70.jpg"
+    },
+    {
+      "id": "snake_stance",
+      "name": "Snake Stance",
+      "class": 4,
+      "category": "",
+      "tab": 1,
+      "row": 3,
+      "col": 3,
+      "image": "4/44.jpg"
+    },
+    {
+      "id": "spirit_bond",
+      "name": "Spirit Bond",
+      "class": 4,
+      "category": "",
+      "tab": 6,
+      "row": 6,
+      "col": 3,
+      "image": "4/140.jpg"
+    },
+    {
+      "id": "spirit_reave",
+      "name": "Spirit Reave",
+      "class": 4,
+      "category": "",
+      "tab": 6,
+      "row": 4,
+      "col": 3,
+      "image": "4/88.jpg"
+    },
+    {
+      "id": "spirit_walk",
+      "name": "Spirit Walk",
+      "class": 4,
+      "category": "",
+      "tab": 6,
+      "row": 5,
+      "col": 2,
+      "image": "4/102.jpg"
+    },
+    {
+      "id": "stampede",
+      "name": "Stampede",
+      "class": 4,
+      "category": "",
+      "tab": 5,
+      "row": 1,
+      "col": 2,
+      "image": "4/72.jpg"
+    },
+    {
+      "id": "stoneskin",
+      "name": "Stoneskin",
+      "class": 4,
+      "category": "",
+      "tab": 3,
+      "row": 4,
+      "col": 1,
+      "image": "4/128.jpg"
+    },
+    {
+      "id": "tectonics",
+      "name": "Tectonics",
+      "class": 4,
+      "category": "",
+      "tab": 2,
+      "row": 5,
+      "col": 1,
+      "image": "4/142.jpg"
+    },
+    {
+      "id": "thunder_slam",
+      "name": "Thunder Slam",
+      "class": 4,
+      "category": "",
+      "tab": 2,
+      "row": 2,
+      "col": 2,
+      "image": "4/34.jpg"
+    },
+    {
+      "id": "thundergod",
+      "name": "Thundergod",
+      "class": 4,
+      "category": "",
+      "tab": 8,
+      "row": 1,
+      "col": 3,
+      "image": "4/90.jpg"
+    },
+    {
+      "id": "thunderstorm",
+      "name": "Thunderstorm",
+      "class": 4,
+      "category": "",
+      "tab": 4,
+      "row": 4,
+      "col": 1,
+      "image": "4/60.jpg"
+    },
+    {
+      "id": "unyielding",
+      "name": "Unyielding",
+      "class": 4,
+      "category": "",
+      "tab": 5,
+      "row": 4,
+      "col": 3,
+      "image": "4/154.jpg"
+    },
+    {
+      "id": "upheaval",
+      "name": "Upheaval",
+      "class": 4,
+      "category": "",
+      "tab": 2,
+      "row": 2,
+      "col": 1,
+      "image": "4/120.jpg"
+    },
+    {
+      "id": "warder",
+      "name": "Warder",
+      "class": 4,
+      "category": "",
+      "tab": 5,
+      "row": 5,
+      "col": 3,
+      "image": "4/150.jpg"
+    },
+    {
+      "id": "whirlwind",
+      "name": "Whirlwind",
+      "class": 4,
+      "category": "",
+      "tab": 3,
+      "row": 1,
+      "col": 2,
+      "image": "4/112.jpg"
+    },
+    {
+      "id": "wolf_companion",
+      "name": "Wolf Companion",
+      "class": 4,
+      "category": "",
+      "tab": 1,
+      "row": 1,
+      "col": 1,
+      "image": "4/96.jpg"
+    },
+    {
+      "id": "wolf_stance",
+      "name": "Wolf Stance",
+      "class": 4,
+      "category": "",
+      "tab": 1,
+      "row": 6,
+      "col": 3,
+      "image": "4/80.jpg"
+    },
+    {
+      "id": "wolven_guide",
+      "name": "Wolven Guide",
+      "class": 4,
+      "category": "",
+      "tab": 1,
+      "row": 5,
+      "col": 1,
+      "image": "4/66.jpg"
+    },
+    {
+      "id": "ancestral_force",
+      "name": "Ancestral Force",
+      "class": 5,
+      "category": "",
+      "tab": 2,
+      "row": 6,
+      "col": 3,
+      "image": "5/108.jpg"
+    },
+    {
+      "id": "ancestral_protection",
+      "name": "Ancestral Protection",
+      "class": 5,
+      "category": "",
+      "tab": 2,
+      "row": 5,
+      "col": 3,
+      "image": "5/38.jpg"
+    },
+    {
+      "id": "armageddon",
+      "name": "Armageddon",
+      "class": 5,
+      "category": "",
+      "tab": 6,
+      "row": 5,
+      "col": 1,
+      "image": "5/76.jpg"
+    },
+    {
+      "id": "barkskin",
+      "name": "Barkskin",
+      "class": 5,
+      "category": "",
+      "tab": 1,
+      "row": 3,
+      "col": 2,
+      "image": "5/106.jpg"
+    },
+    {
+      "id": "bear_companion",
+      "name": "Bear Companion",
+      "class": 5,
+      "category": "",
+      "tab": 5,
+      "row": 3,
+      "col": 2,
+      "image": "5/48.jpg"
+    },
+    {
+      "id": "bestial_potency",
+      "name": "Bestial Potency",
+      "class": 5,
+      "category": "",
+      "tab": 2,
+      "row": 2,
+      "col": 1,
+      "image": "5/34.jpg"
+    },
+    {
+      "id": "bloom",
+      "name": "Bloom",
+      "class": 5,
+      "category": "",
+      "tab": 1,
+      "row": 6,
+      "col": 1,
+      "image": "5/32.jpg"
+    },
+    {
+      "id": "cascade",
+      "name": "Cascade",
+      "class": 5,
+      "category": "",
+      "tab": 5,
+      "row": 2,
+      "col": 1,
+      "image": "5/42.jpg"
+    },
+    {
+      "id": "ceaseless_fury",
+      "name": "Ceaseless Fury",
+      "class": 5,
+      "category": "",
+      "tab": 3,
+      "row": 2,
+      "col": 1,
+      "image": "5/40.jpg"
+    },
+    {
+      "id": "charged_talons",
+      "name": "Charged Talons",
+      "class": 5,
+      "category": "",
+      "tab": 4,
+      "row": 2,
+      "col": 1,
+      "image": "5/64.jpg"
+    },
+    {
+      "id": "devouring_cloud",
+      "name": "Devouring Cloud",
+      "class": 5,
+      "category": "",
+      "tab": 1,
+      "row": 4,
+      "col": 3,
+      "image": "5/154.jpg"
+    },
+    {
+      "id": "earth_talons",
+      "name": "Earth Talons",
+      "class": 5,
+      "category": "",
+      "tab": 4,
+      "row": 1,
+      "col": 2,
+      "image": "5/128.jpg"
+    },
+    {
+      "id": "egg_trap",
+      "name": "Egg Trap",
+      "class": 5,
+      "category": "",
+      "tab": 4,
+      "row": 5,
+      "col": 2,
+      "image": "5/116.jpg"
+    },
+    {
+      "id": "ember_spirit",
+      "name": "Ember Spirit",
+      "class": 5,
+      "category": "",
+      "tab": 6,
+      "row": 1,
+      "col": 1,
+      "image": "5/50.jpg"
+    },
+    {
+      "id": "erupting_strike",
+      "name": "Erupting Strike",
+      "class": 5,
+      "category": "",
+      "tab": 5,
+      "row": 2,
+      "col": 2,
+      "image": "5/68.jpg"
+    },
+    {
+      "id": "faerie_fire",
+      "name": "Faerie Fire",
+      "class": 5,
+      "category": "",
+      "tab": 8,
+      "row": 3,
+      "col": 3,
+      "image": "5/84.jpg"
+    },
+    {
+      "id": "feed_the_pack",
+      "name": "Feed the Pack",
+      "class": 5,
+      "category": "",
+      "tab": 3,
+      "row": 3,
+      "col": 2,
+      "image": "5/58.jpg"
+    },
+    {
+      "id": "feral_escalation",
+      "name": "Feral Escalation",
+      "class": 5,
+      "category": "",
+      "tab": 3,
+      "row": 4,
+      "col": 3,
+      "image": "5/56.jpg"
+    },
+    {
+      "id": "ferocity",
+      "name": "Ferocity",
+      "class": 5,
+      "category": "",
+      "tab": 4,
+      "row": 2,
+      "col": 3,
+      "image": "5/90.jpg"
+    },
+    {
+      "id": "frigid_domain",
+      "name": "Frigid Domain",
+      "class": 5,
+      "category": "",
+      "tab": 6,
+      "row": 5,
+      "col": 3,
+      "image": "5/134.jpg"
+    },
+    {
+      "id": "growth",
+      "name": "Growth",
+      "class": 5,
+      "category": "",
+      "tab": 1,
+      "row": 6,
+      "col": 3,
+      "image": "5/30.jpg"
+    },
+    {
+      "id": "harbinger",
+      "name": "Harbinger",
+      "class": 5,
+      "category": "",
+      "tab": 3,
+      "row": 2,
+      "col": 2,
+      "image": "5/146.jpg"
+    },
+    {
+      "id": "harvest",
+      "name": "Harvest",
+      "class": 5,
+      "category": "",
+      "tab": 1,
+      "row": 1,
+      "col": 2,
+      "image": "5/100.jpg"
+    },
+    {
+      "id": "harvesters",
+      "name": "Harvesters",
+      "class": 5,
+      "category": "",
+      "tab": 1,
+      "row": 5,
+      "col": 2,
+      "image": "5/78.jpg"
+    },
+    {
+      "id": "heart_of_the_pack",
+      "name": "Heart of the Pack",
+      "class": 5,
+      "category": "",
+      "tab": 5,
+      "row": 4,
+      "col": 2,
+      "image": "5/70.jpg"
+    },
+    {
+      "id": "heartseeker",
+      "name": "Heartseeker",
+      "class": 5,
+      "category": "",
+      "tab": 5,
+      "row": 2,
+      "col": 3,
+      "image": "5/44.jpg"
+    },
+    {
+      "id": "howl_of_the_spirits",
+      "name": "Howl of the Spirits",
+      "class": 5,
+      "category": "",
+      "tab": 3,
+      "row": 6,
+      "col": 2,
+      "image": "5/150.jpg"
+    },
+    {
+      "id": "hunger",
+      "name": "Hunger",
+      "class": 5,
+      "category": "",
+      "tab": 2,
+      "row": 6,
+      "col": 1,
+      "image": "5/72.jpg"
+    },
+    {
+      "id": "hunting_banshee",
+      "name": "Hunting Banshee",
+      "class": 5,
+      "category": "",
+      "tab": 6,
+      "row": 2,
+      "col": 3,
+      "image": "5/52.jpg"
+    },
+    {
+      "id": "idol_of_scosglen",
+      "name": "Idol of Scosglen",
+      "class": 5,
+      "category": "",
+      "tab": 2,
+      "row": 5,
+      "col": 2,
+      "image": "5/136.jpg"
+    },
+    {
+      "id": "infected_roots",
+      "name": "Infected Roots",
+      "class": 5,
+      "category": "",
+      "tab": 1,
+      "row": 2,
+      "col": 1,
+      "image": "5/74.jpg"
+    },
+    {
+      "id": "mana_pulse",
+      "name": "Mana Pulse",
+      "class": 5,
+      "category": "",
+      "tab": 3,
+      "row": 1,
+      "col": 3,
+      "image": "5/144.jpg"
+    },
+    {
+      "id": "mythal",
+      "name": "Mythal",
+      "class": 5,
+      "category": "",
+      "tab": 8,
+      "row": 1,
+      "col": 1,
+      "image": "5/138.jpg"
+    },
+    {
+      "id": "pagan_rites",
+      "name": "Pagan Rites",
+      "class": 5,
+      "category": "",
+      "tab": 6,
+      "row": 3,
+      "col": 2,
+      "image": "5/54.jpg"
+    },
+    {
+      "id": "pathfinder",
+      "name": "Pathfinder",
+      "class": 5,
+      "category": "",
+      "tab": 5,
+      "row": 5,
+      "col": 2,
+      "image": "5/46.jpg"
+    },
+    {
+      "id": "primal_bond",
+      "name": "Primal Bond",
+      "class": 5,
+      "category": "",
+      "tab": 5,
+      "row": 3,
+      "col": 3,
+      "image": "5/156.jpg"
+    },
+    {
+      "id": "primal_dominance",
+      "name": "Primal Dominance",
+      "class": 5,
+      "category": "",
+      "tab": 2,
+      "row": 4,
+      "col": 1,
+      "image": "5/36.jpg"
+    },
+    {
+      "id": "progenys_blessing",
+      "name": "Progeny's Blessing",
+      "class": 5,
+      "category": "",
+      "tab": 4,
+      "row": 6,
+      "col": 2,
+      "image": "5/62.jpg"
+    },
+    {
+      "id": "raid",
+      "name": "Raid",
+      "class": 5,
+      "category": "",
+      "tab": 4,
+      "row": 3,
+      "col": 2,
+      "image": "5/122.jpg"
+    },
+    {
+      "id": "rain_of_fire",
+      "name": "Rain of Fire",
+      "class": 5,
+      "category": "",
+      "tab": 6,
+      "row": 4,
+      "col": 1,
+      "image": "5/94.jpg"
+    },
+    {
+      "id": "rend",
+      "name": "Rend",
+      "class": 5,
+      "category": "",
+      "tab": 2,
+      "row": 1,
+      "col": 2,
+      "image": "5/120.jpg"
+    },
+    {
+      "id": "spiritual_alignment",
+      "name": "Spiritual Alignment",
+      "class": 5,
+      "category": "",
+      "tab": 6,
+      "row": 4,
+      "col": 2,
+      "image": "5/82.jpg"
+    },
+    {
+      "id": "steady_shot",
+      "name": "Steady Shot",
+      "class": 5,
+      "category": "",
+      "tab": 5,
+      "row": 1,
+      "col": 2,
+      "image": "5/140.jpg"
+    },
+    {
+      "id": "steel_wings",
+      "name": "Steel Wings",
+      "class": 5,
+      "category": "",
+      "tab": 4,
+      "row": 5,
+      "col": 3,
+      "image": "5/66.jpg"
+    },
+    {
+      "id": "survival_instinct",
+      "name": "Survival Instinct",
+      "class": 5,
+      "category": "",
+      "tab": 8,
+      "row": 3,
+      "col": 2,
+      "image": "5/92.jpg"
+    },
+    {
+      "id": "symbiosis",
+      "name": "Symbiosis",
+      "class": 5,
+      "category": "",
+      "tab": 8,
+      "row": 1,
+      "col": 3,
+      "image": "5/104.jpg"
+    },
+    {
+      "id": "tracking",
+      "name": "Tracking",
+      "class": 5,
+      "category": "",
+      "tab": 5,
+      "row": 6,
+      "col": 2,
+      "image": "5/110.jpg"
+    },
+    {
+      "id": "twisted_claw",
+      "name": "Twisted Claw",
+      "class": 5,
+      "category": "",
+      "tab": 3,
+      "row": 4,
+      "col": 1,
+      "image": "5/148.jpg"
+    },
+    {
+      "id": "vine_companion",
+      "name": "Vine Companion",
+      "class": 5,
+      "category": "",
+      "tab": 8,
+      "row": 3,
+      "col": 1,
+      "image": "5/152.jpg"
+    },
+    {
+      "id": "werebear_morph",
+      "name": "Werebear Morph",
+      "class": 5,
+      "category": "",
+      "tab": 2,
+      "row": 1,
+      "col": 1,
+      "image": "5/88.jpg"
+    },
+    {
+      "id": "wereowl_form",
+      "name": "Wereowl Form",
+      "class": 5,
+      "category": "",
+      "tab": 4,
+      "row": 1,
+      "col": 3,
+      "image": "5/60.jpg"
+    },
+    {
+      "id": "werewolf_form",
+      "name": "Werewolf Form",
+      "class": 5,
+      "category": "",
+      "tab": 3,
+      "row": 1,
+      "col": 2,
+      "image": "5/142.jpg"
+    },
+    {
+      "id": "wildfire",
+      "name": "Wildfire",
+      "class": 5,
+      "category": "",
+      "tab": 2,
+      "row": 3,
+      "col": 3,
+      "image": "5/130.jpg"
+    },
+    {
+      "id": "abyss_knight",
+      "name": "Abyss Knight",
+      "class": 2,
+      "category": "",
+      "tab": 2,
+      "row": 3,
+      "col": 2,
+      "image": "2/156.jpg"
+    },
+    {
+      "id": "alchemical_preparation",
+      "name": "Alchemical Preparation",
+      "class": 2,
+      "category": "",
+      "tab": 4,
+      "row": 4,
+      "col": 3,
+      "image": "2/180.jpg"
+    },
+    {
+      "id": "angel_of_death",
+      "name": "Angel of Death",
+      "class": 2,
+      "category": "",
+      "tab": 3,
+      "row": 3,
+      "col": 2,
+      "image": "2/50.jpg"
+    },
+    {
+      "id": "apprenticeship",
+      "name": "Apprenticeship",
+      "class": 2,
+      "category": "",
+      "tab": 6,
+      "row": 2,
+      "col": 2,
+      "image": "2/192.jpg"
+    },
+    {
+      "id": "bane",
+      "name": "Bane",
+      "class": 2,
+      "category": "",
+      "tab": 1,
+      "row": 5,
+      "col": 2,
+      "image": "2/142.jpg"
+    },
+    {
+      "id": "blight_descent",
+      "name": "Blight Descent",
+      "class": 2,
+      "category": "",
+      "tab": 3,
+      "row": 4,
+      "col": 3,
+      "image": "2/198.jpg"
+    },
+    {
+      "id": "blood_skeleton",
+      "name": "Blood Skeleton",
+      "class": 2,
+      "category": "",
+      "tab": 2,
+      "row": 1,
+      "col": 2,
+      "image": "2/160.jpg"
+    },
+    {
+      "id": "brutal_effigy",
+      "name": "Brutal Effigy",
+      "class": 2,
+      "category": "",
+      "tab": 4,
+      "row": 4,
+      "col": 2,
+      "image": "2/202.jpg"
+    },
+    {
+      "id": "carnage",
+      "name": "Carnage",
+      "class": 2,
+      "category": "",
+      "tab": 3,
+      "row": 2,
+      "col": 2,
+      "image": "2/114.jpg"
+    },
+    {
+      "id": "catapult_shot",
+      "name": "Catapult Shot",
+      "class": 2,
+      "category": "",
+      "tab": 4,
+      "row": 1,
+      "col": 3,
+      "image": "2/132.jpg"
+    },
+    {
+      "id": "chaos_nova",
+      "name": "Chaos Nova",
+      "class": 2,
+      "category": "",
+      "tab": 2,
+      "row": 3,
+      "col": 3,
+      "image": "2/36.jpg"
+    },
+    {
+      "id": "dark_gathering",
+      "name": "Dark Gathering",
+      "class": 2,
+      "category": "",
+      "tab": 6,
+      "row": 3,
+      "col": 2,
+      "image": "2/172.jpg"
+    },
+    {
+      "id": "death_pact",
+      "name": "Death Pact",
+      "class": 2,
+      "category": "",
+      "tab": 1,
+      "row": 6,
+      "col": 1,
+      "image": "2/162.jpg"
+    },
+    {
+      "id": "death_ripple",
+      "name": "Death Ripple",
+      "class": 2,
+      "category": "",
+      "tab": 5,
+      "row": 1,
+      "col": 2,
+      "image": "2/146.jpg"
+    },
+    {
+      "id": "death_ward",
+      "name": "Death Ward",
+      "class": 2,
+      "category": "",
+      "tab": 1,
+      "row": 4,
+      "col": 1,
+      "image": "2/96.jpg"
+    },
+    {
+      "id": "deathlord",
+      "name": "Deathlord",
+      "class": 2,
+      "category": "",
+      "tab": 3,
+      "row": 5,
+      "col": 2,
+      "image": "2/110.jpg"
+    },
+    {
+      "id": "deathly_effigy",
+      "name": "Deathly Effigy",
+      "class": 2,
+      "category": "",
+      "tab": 4,
+      "row": 3,
+      "col": 1,
+      "image": "2/204.jpg"
+    },
+    {
+      "id": "debilitating_concoction",
+      "name": "Debilitating Concoction",
+      "class": 2,
+      "category": "",
+      "tab": 4,
+      "row": 5,
+      "col": 3,
+      "image": "2/100.jpg"
+    },
+    {
+      "id": "demonic_commune",
+      "name": "Demonic Commune",
+      "class": 2,
+      "category": "",
+      "tab": 3,
+      "row": 6,
+      "col": 1,
+      "image": "2/46.jpg"
+    },
+    {
+      "id": "dirge",
+      "name": "Dirge",
+      "class": 2,
+      "category": "",
+      "tab": 6,
+      "row": 5,
+      "col": 2,
+      "image": "2/194.jpg"
+    },
+    {
+      "id": "dream_eater",
+      "name": "Dream Eater",
+      "class": 2,
+      "category": "",
+      "tab": 5,
+      "row": 3,
+      "col": 1,
+      "image": "2/148.jpg"
+    },
+    {
+      "id": "embalming",
+      "name": "Embalming",
+      "class": 2,
+      "category": "",
+      "tab": 1,
+      "row": 1,
+      "col": 2,
+      "image": "2/134.jpg"
+    },
+    {
+      "id": "exile",
+      "name": "Exile",
+      "class": 2,
+      "category": "",
+      "tab": 5,
+      "row": 5,
+      "col": 2,
+      "image": "2/188.jpg"
+    },
+    {
+      "id": "famine",
+      "name": "Famine",
+      "class": 2,
+      "category": "",
+      "tab": 1,
+      "row": 4,
+      "col": 3,
+      "image": "2/102.jpg"
+    },
+    {
+      "id": "fireheart_totem",
+      "name": "Fireheart Totem",
+      "class": 2,
+      "category": "",
+      "tab": 6,
+      "row": 1,
+      "col": 1,
+      "image": "2/74.jpg"
+    },
+    {
+      "id": "flameburst_shot",
+      "name": "Flameburst Shot",
+      "class": 2,
+      "category": "",
+      "tab": 4,
+      "row": 3,
+      "col": 3,
+      "image": "2/182.jpg"
+    },
+    {
+      "id": "frostclaw_totem",
+      "name": "Frostclaw Totem",
+      "class": 2,
+      "category": "",
+      "tab": 6,
+      "row": 1,
+      "col": 3,
+      "image": "2/72.jpg"
+    },
+    {
+      "id": "graveyard",
+      "name": "Graveyard",
+      "class": 2,
+      "category": "",
+      "tab": 8,
+      "row": 1,
+      "col": 3,
+      "image": "2/98.jpg"
+    },
+    {
+      "id": "grim_vision",
+      "name": "Grim Vision",
+      "class": 2,
+      "category": "",
+      "tab": 2,
+      "row": 1,
+      "col": 3,
+      "image": "2/32.jpg"
+    },
+    {
+      "id": "iron_golem",
+      "name": "Iron Golem",
+      "class": 2,
+      "category": "",
+      "tab": 2,
+      "row": 4,
+      "col": 2,
+      "image": "2/164.jpg"
+    },
+    {
+      "id": "jinn",
+      "name": "Jinn",
+      "class": 2,
+      "category": "",
+      "tab": 8,
+      "row": 3,
+      "col": 3,
+      "image": "2/176.jpg"
+    },
+    {
+      "id": "life_from_death",
+      "name": "Life From Death",
+      "class": 2,
+      "category": "",
+      "tab": 4,
+      "row": 6,
+      "col": 2,
+      "image": "2/184.jpg"
+    },
+    {
+      "id": "metal_solace",
+      "name": "Metal Solace",
+      "class": 2,
+      "category": "",
+      "tab": 2,
+      "row": 4,
+      "col": 1,
+      "image": "2/38.jpg"
+    },
+    {
+      "id": "night_hawks",
+      "name": "Night Hawks",
+      "class": 2,
+      "category": "",
+      "tab": 2,
+      "row": 2,
+      "col": 2,
+      "image": "2/166.jpg"
+    },
+    {
+      "id": "nightwalker",
+      "name": "Nightwalker",
+      "class": 2,
+      "category": "",
+      "tab": 5,
+      "row": 2,
+      "col": 1,
+      "image": "2/150.jpg"
+    },
+    {
+      "id": "occult_path",
+      "name": "Occult Path",
+      "class": 2,
+      "category": "",
+      "tab": 5,
+      "row": 2,
+      "col": 2,
+      "image": "2/186.jpg"
+    },
+    {
+      "id": "ominous_vigor",
+      "name": "Ominous Vigor",
+      "class": 2,
+      "category": "",
+      "tab": 3,
+      "row": 6,
+      "col": 3,
+      "image": "2/44.jpg"
+    },
+    {
+      "id": "onslaught",
+      "name": "Onslaught",
+      "class": 2,
+      "category": "",
+      "tab": 3,
+      "row": 3,
+      "col": 1,
+      "image": "2/42.jpg"
+    },
+    {
+      "id": "parasite",
+      "name": "Parasite",
+      "class": 2,
+      "category": "",
+      "tab": 3,
+      "row": 1,
+      "col": 2,
+      "image": "2/128.jpg"
+    },
+    {
+      "id": "pestilence",
+      "name": "Pestilence",
+      "class": 2,
+      "category": "",
+      "tab": 5,
+      "row": 5,
+      "col": 3,
+      "image": "2/152.jpg"
+    },
+    {
+      "id": "rathmas_chosen",
+      "name": "Rathma's Chosen",
+      "class": 2,
+      "category": "",
+      "tab": 8,
+      "row": 3,
+      "col": 1,
+      "image": "2/84.jpg"
+    },
+    {
+      "id": "reaper",
+      "name": "Reaper",
+      "class": 2,
+      "category": "",
+      "tab": 3,
+      "row": 2,
+      "col": 3,
+      "image": "2/40.jpg"
+    },
+    {
+      "id": "resurgence",
+      "name": "Resurgence",
+      "class": 2,
+      "category": "",
+      "tab": 2,
+      "row": 6,
+      "col": 2,
+      "image": "2/168.jpg"
+    },
+    {
+      "id": "sacrifices",
+      "name": "Sacrifices",
+      "class": 2,
+      "category": "",
+      "tab": 1,
+      "row": 3,
+      "col": 2,
+      "image": "2/70.jpg"
+    },
+    {
+      "id": "soul_sever",
+      "name": "Soul Sever",
+      "class": 2,
+      "category": "",
+      "tab": 5,
+      "row": 6,
+      "col": 2,
+      "image": "2/144.jpg"
+    },
+    {
+      "id": "soulbond",
+      "name": "Soulbond",
+      "class": 2,
+      "category": "",
+      "tab": 6,
+      "row": 6,
+      "col": 1,
+      "image": "2/170.jpg"
+    },
+    {
+      "id": "soulchain",
+      "name": "Soulchain",
+      "class": 2,
+      "category": "",
+      "tab": 6,
+      "row": 6,
+      "col": 3,
+      "image": "2/196.jpg"
+    },
+    {
+      "id": "stormeye_totem",
+      "name": "Stormeye Totem",
+      "class": 2,
+      "category": "",
+      "tab": 6,
+      "row": 1,
+      "col": 2,
+      "image": "2/78.jpg"
+    },
+    {
+      "id": "talons_hold",
+      "name": "Talon's Hold",
+      "class": 2,
+      "category": "",
+      "tab": 8,
+      "row": 1,
+      "col": 1,
+      "image": "2/54.jpg"
+    },
+    {
+      "id": "terror",
+      "name": "Terror",
+      "class": 2,
+      "category": "",
+      "tab": 5,
+      "row": 5,
+      "col": 1,
+      "image": "2/190.jpg"
+    },
+    {
+      "id": "veil_king",
+      "name": "Veil King",
+      "class": 2,
+      "category": "",
+      "tab": 8,
+      "row": 3,
+      "col": 2,
+      "image": "2/178.jpg"
+    },
+    {
+      "id": "violent_immolation",
+      "name": "Violent Immolation",
+      "class": 2,
+      "category": "",
+      "tab": 2,
+      "row": 2,
+      "col": 1,
+      "image": "2/34.jpg"
+    },
+    {
+      "id": "voodoo_practice",
+      "name": "Voodoo Practice",
+      "class": 2,
+      "category": "",
+      "tab": 4,
+      "row": 5,
+      "col": 1,
+      "image": "2/200.jpg"
+    },
+    {
+      "id": "widowmaker",
+      "name": "Widowmaker",
+      "class": 2,
+      "category": "",
+      "tab": 4,
+      "row": 1,
+      "col": 1,
+      "image": "2/56.jpg"
+    },
+    {
+      "id": "absolution",
+      "name": "Absolution",
+      "class": 3,
+      "category": "",
+      "tab": 4,
+      "row": 3,
+      "col": 2,
+      "image": "3/132.jpg"
+    },
+    {
+      "id": "acumen",
+      "name": "Acumen",
+      "class": 3,
+      "category": "",
+      "tab": 6,
+      "row": 6,
+      "col": 3,
+      "image": "3/134.jpg"
+    },
+    {
+      "id": "annihilation",
+      "name": "Annihilation",
+      "class": 3,
+      "category": "",
+      "tab": 3,
+      "row": 5,
+      "col": 2,
+      "image": "3/116.jpg"
+    },
+    {
+      "id": "apex_predator",
+      "name": "Apex Predator",
+      "class": 3,
+      "category": "",
+      "tab": 3,
+      "row": 4,
+      "col": 1,
+      "image": "3/136.jpg"
+    },
+    {
+      "id": "blessed_life",
+      "name": "Blessed Life",
+      "class": 3,
+      "category": "",
+      "tab": 8,
+      "row": 1,
+      "col": 3,
+      "image": "3/38.jpg"
+    },
+    {
+      "id": "blood_thorns",
+      "name": "Blood Thorns",
+      "class": 3,
+      "category": "",
+      "tab": 5,
+      "row": 3,
+      "col": 2,
+      "image": "3/46.jpg"
+    },
+    {
+      "id": "colosseum",
+      "name": "Colosseum",
+      "class": 3,
+      "category": "",
+      "tab": 2,
+      "row": 6,
+      "col": 1,
+      "image": "3/110.jpg"
+    },
+    {
+      "id": "combustion",
+      "name": "Combustion",
+      "class": 3,
+      "category": "",
+      "tab": 3,
+      "row": 6,
+      "col": 3,
+      "image": "3/138.jpg"
+    },
+    {
+      "id": "conclave",
+      "name": "Conclave",
+      "class": 3,
+      "category": "",
+      "tab": 1,
+      "row": 6,
+      "col": 1,
+      "image": "3/140.jpg"
+    },
+    {
+      "id": "confluence",
+      "name": "Confluence",
+      "class": 3,
+      "category": "",
+      "tab": 6,
+      "row": 2,
+      "col": 1,
+      "image": "3/142.jpg"
+    },
+    {
+      "id": "consecration",
+      "name": "Consecration",
+      "class": 3,
+      "category": "",
+      "tab": 2,
+      "row": 2,
+      "col": 3,
+      "image": "3/144.jpg"
+    },
+    {
+      "id": "divine_apparition",
+      "name": "Divine Apparition",
+      "class": 3,
+      "category": "",
+      "tab": 8,
+      "row": 1,
+      "col": 1,
+      "image": "3/92.jpg"
+    },
+    {
+      "id": "divine_judgment",
+      "name": "Divine Judgment",
+      "class": 3,
+      "category": "",
+      "tab": 2,
+      "row": 2,
+      "col": 2,
+      "image": "3/100.jpg"
+    },
+    {
+      "id": "dragon_jaws",
+      "name": "Dragon Jaws",
+      "class": 3,
+      "category": "",
+      "tab": 3,
+      "row": 1,
+      "col": 1,
+      "image": "3/104.jpg"
+    },
+    {
+      "id": "dragonbone_armor",
+      "name": "Dragonbone Armor",
+      "class": 3,
+      "category": "",
+      "tab": 3,
+      "row": 3,
+      "col": 2,
+      "image": "3/160.jpg"
+    },
+    {
+      "id": "dragons_blessing",
+      "name": "Dragon's Blessing",
+      "class": 3,
+      "category": "",
+      "tab": 8,
+      "row": 3,
+      "col": 1,
+      "image": "3/98.jpg"
+    },
+    {
+      "id": "dragons_breath",
+      "name": "Dragon's Breath",
+      "class": 3,
+      "category": "",
+      "tab": 3,
+      "row": 5,
+      "col": 3,
+      "image": "3/96.jpg"
+    },
+    {
+      "id": "elemental_wisdom",
+      "name": "Elemental Wisdom",
+      "class": 3,
+      "category": "",
+      "tab": 1,
+      "row": 1,
+      "col": 2,
+      "image": "3/124.jpg"
+    },
+    {
+      "id": "fervor",
+      "name": "Fervor",
+      "class": 3,
+      "category": "",
+      "tab": 1,
+      "row": 6,
+      "col": 3,
+      "image": "3/148.jpg"
+    },
+    {
+      "id": "frostbite",
+      "name": "Frostbite",
+      "class": 3,
+      "category": "",
+      "tab": 5,
+      "row": 6,
+      "col": 1,
+      "image": "3/150.jpg"
+    },
+    {
+      "id": "grim_presence",
+      "name": "Grim Presence",
+      "class": 3,
+      "category": "",
+      "tab": 5,
+      "row": 1,
+      "col": 1,
+      "image": "3/40.jpg"
+    },
+    {
+      "id": "holy_fire",
+      "name": "Holy Fire",
+      "class": 3,
+      "category": "",
+      "tab": 2,
+      "row": 5,
+      "col": 2,
+      "image": "3/86.jpg"
+    },
+    {
+      "id": "lemures",
+      "name": "Lemures",
+      "class": 3,
+      "category": "",
+      "tab": 5,
+      "row": 2,
+      "col": 2,
+      "image": "3/44.jpg"
+    },
+    {
+      "id": "life_and_death",
+      "name": "Life and Death",
+      "class": 3,
+      "category": "",
+      "tab": 4,
+      "row": 2,
+      "col": 3,
+      "image": "3/118.jpg"
+    },
+    {
+      "id": "lionheart",
+      "name": "Lionheart",
+      "class": 3,
+      "category": "",
+      "tab": 2,
+      "row": 4,
+      "col": 1,
+      "image": "3/128.jpg"
+    },
+    {
+      "id": "mind_flay",
+      "name": "Mind Flay",
+      "class": 3,
+      "category": "",
+      "tab": 6,
+      "row": 1,
+      "col": 2,
+      "image": "3/62.jpg"
+    },
+    {
+      "id": "possession",
+      "name": "Possession",
+      "class": 3,
+      "category": "",
+      "tab": 5,
+      "row": 4,
+      "col": 1,
+      "image": "3/90.jpg"
+    },
+    {
+      "id": "resurrect",
+      "name": "Resurrect",
+      "class": 3,
+      "category": "",
+      "tab": 8,
+      "row": 3,
+      "col": 2,
+      "image": "3/82.jpg"
+    },
+    {
+      "id": "retaliate",
+      "name": "Retaliate",
+      "class": 3,
+      "category": "",
+      "tab": 2,
+      "row": 1,
+      "col": 2,
+      "image": "3/30.jpg"
+    },
+    {
+      "id": "reverence",
+      "name": "Reverence",
+      "class": 3,
+      "category": "",
+      "tab": 4,
+      "row": 4,
+      "col": 2,
+      "image": "3/152.jpg"
+    },
+    {
+      "id": "rite_of_the_restless",
+      "name": "Rite of the Restless",
+      "class": 3,
+      "category": "",
+      "tab": 5,
+      "row": 2,
+      "col": 3,
+      "image": "3/164.jpg"
+    },
+    {
+      "id": "rite_of_thorns",
+      "name": "Rite of Thorns",
+      "class": 3,
+      "category": "",
+      "tab": 5,
+      "row": 3,
+      "col": 3,
+      "image": "3/162.jpg"
+    },
+    {
+      "id": "sanctity",
+      "name": "Sanctity",
+      "class": 3,
+      "category": "",
+      "tab": 2,
+      "row": 2,
+      "col": 1,
+      "image": "3/122.jpg"
+    },
+    {
+      "id": "sanguine_covenant",
+      "name": "Sanguine Covenant",
+      "class": 3,
+      "category": "",
+      "tab": 5,
+      "row": 4,
+      "col": 3,
+      "image": "3/78.jpg"
+    },
+    {
+      "id": "scion",
+      "name": "Scion",
+      "class": 3,
+      "category": "",
+      "tab": 3,
+      "row": 3,
+      "col": 3,
+      "image": "3/154.jpg"
+    },
+    {
+      "id": "servants_of_valor",
+      "name": "Servants of Valor",
+      "class": 3,
+      "category": "",
+      "tab": 1,
+      "row": 5,
+      "col": 2,
+      "image": "3/94.jpg"
+    },
+    {
+      "id": "slayer",
+      "name": "Slayer",
+      "class": 3,
+      "category": "",
+      "tab": 6,
+      "row": 4,
+      "col": 2,
+      "image": "3/66.jpg"
+    },
+    {
+      "id": "solar_flare",
+      "name": "Solar Flare",
+      "class": 3,
+      "category": "",
+      "tab": 3,
+      "row": 2,
+      "col": 3,
+      "image": "3/130.jpg"
+    },
+    {
+      "id": "solstice_and_equinox",
+      "name": "Solstice and Equinox",
+      "class": 3,
+      "category": "",
+      "tab": 4,
+      "row": 2,
+      "col": 1,
+      "image": "3/74.jpg"
+    },
+    {
+      "id": "spark_of_hope",
+      "name": "Spark of Hope",
+      "class": 3,
+      "category": "",
+      "tab": 1,
+      "row": 3,
+      "col": 2,
+      "image": "3/72.jpg"
+    },
+    {
+      "id": "stormlord",
+      "name": "Stormlord",
+      "class": 3,
+      "category": "",
+      "tab": 6,
+      "row": 3,
+      "col": 3,
+      "image": "3/68.jpg"
+    },
+    {
+      "id": "superbeast",
+      "name": "Superbeast",
+      "class": 3,
+      "category": "",
+      "tab": 8,
+      "row": 3,
+      "col": 3,
+      "image": "3/84.jpg"
+    },
+    {
+      "id": "symphony_of_destruction",
+      "name": "Symphony of Destruction",
+      "class": 3,
+      "category": "",
+      "tab": 6,
+      "row": 5,
+      "col": 1,
+      "image": "3/114.jpg"
+    },
+    {
+      "id": "tainted_blood",
+      "name": "Tainted Blood",
+      "class": 3,
+      "category": "",
+      "tab": 6,
+      "row": 5,
+      "col": 3,
+      "image": "3/60.jpg"
+    },
+    {
+      "id": "transcendence",
+      "name": "Transcendence",
+      "class": 3,
+      "category": "",
+      "tab": 5,
+      "row": 6,
+      "col": 3,
+      "image": "3/156.jpg"
+    },
+    {
+      "id": "valiance",
+      "name": "Valiance",
+      "class": 3,
+      "category": "",
+      "tab": 1,
+      "row": 4,
+      "col": 3,
+      "image": "3/158.jpg"
+    },
+    {
+      "id": "veneration_of_justice",
+      "name": "Veneration of Justice",
+      "class": 3,
+      "category": "",
+      "tab": 1,
+      "row": 2,
+      "col": 2,
+      "image": "3/126.jpg"
+    },
+    {
+      "id": "vessel_of_judgement",
+      "name": "Vessel of Judgement",
+      "class": 3,
+      "category": "",
+      "tab": 4,
+      "row": 1,
+      "col": 3,
+      "image": "3/70.jpg"
+    },
+    {
+      "id": "vessel_of_retribution",
+      "name": "Vessel of Retribution",
+      "class": 3,
+      "category": "",
+      "tab": 4,
+      "row": 1,
+      "col": 1,
+      "image": "3/120.jpg"
+    },
+    {
+      "id": "ward_of_fate",
+      "name": "Ward of Fate",
+      "class": 3,
+      "category": "",
+      "tab": 1,
+      "row": 4,
+      "col": 2,
+      "image": "3/76.jpg"
+    },
+    {
+      "id": "antimass",
+      "name": "Antimass",
+      "class": 1,
+      "category": "",
+      "tab": 1,
+      "row": 5,
+      "col": 3,
+      "image": "1/152.jpg"
+    },
+    {
+      "id": "arachnomancy",
+      "name": "Arachnomancy",
+      "class": 1,
+      "category": "",
+      "tab": 5,
+      "row": 4,
+      "col": 2,
+      "image": "1/112.jpg"
+    },
+    {
+      "id": "arcane_fury",
+      "name": "Arcane Fury",
+      "class": 1,
+      "category": "",
+      "tab": 1,
+      "row": 6,
+      "col": 2,
+      "image": "1/116.jpg"
+    },
+    {
+      "id": "arcane_sustenance",
+      "name": "Arcane Sustenance",
+      "class": 1,
+      "category": "",
+      "tab": 6,
+      "row": 6,
+      "col": 1,
+      "image": "1/160.jpg"
+    },
+    {
+      "id": "arcane_torrent",
+      "name": "Arcane Torrent",
+      "class": 1,
+      "category": "",
+      "tab": 1,
+      "row": 2,
+      "col": 2,
+      "image": "1/74.jpg"
+    },
+    {
+      "id": "baneblade",
+      "name": "Baneblade",
+      "class": 1,
+      "category": "",
+      "tab": 9,
+      "row": 3,
+      "col": 3,
+      "image": "1/144.jpg"
+    },
+    {
+      "id": "bladestorm",
+      "name": "Bladestorm",
+      "class": 1,
+      "category": "",
+      "tab": 6,
+      "row": 2,
+      "col": 2,
+      "image": "1/134.jpg"
+    },
+    {
+      "id": "blight",
+      "name": "Blight",
+      "class": 1,
+      "category": "",
+      "tab": 5,
+      "row": 6,
+      "col": 2,
+      "image": "1/66.jpg"
+    },
+    {
+      "id": "chronofield",
+      "name": "Chronofield",
+      "class": 1,
+      "category": "",
+      "tab": 9,
+      "row": 3,
+      "col": 1,
+      "image": "1/42.jpg"
+    },
+    {
+      "id": "cold_blooded",
+      "name": "Cold Blooded",
+      "class": 1,
+      "category": "",
+      "tab": 6,
+      "row": 4,
+      "col": 3,
+      "image": "1/82.jpg"
+    },
+    {
+      "id": "crystalline_barrier",
+      "name": "Crystalline Barrier",
+      "class": 1,
+      "category": "",
+      "tab": 4,
+      "row": 2,
+      "col": 2,
+      "image": "1/38.jpg"
+    },
+    {
+      "id": "decay",
+      "name": "Decay",
+      "class": 1,
+      "category": "",
+      "tab": 5,
+      "row": 2,
+      "col": 1,
+      "image": "1/72.jpg"
+    },
+    {
+      "id": "determination",
+      "name": "Determination",
+      "class": 1,
+      "category": "",
+      "tab": 6,
+      "row": 3,
+      "col": 1,
+      "image": "1/162.jpg"
+    },
+    {
+      "id": "elucidation",
+      "name": "Elucidation",
+      "class": 1,
+      "category": "",
+      "tab": 5,
+      "row": 3,
+      "col": 3,
+      "image": "1/78.jpg"
+    },
+    {
+      "id": "entanglement",
+      "name": "Entanglement",
+      "class": 1,
+      "category": "",
+      "tab": 3,
+      "row": 6,
+      "col": 1,
+      "image": "1/36.jpg"
+    },
+    {
+      "id": "eye_of_the_storm",
+      "name": "Eye of the Storm",
+      "class": 1,
+      "category": "",
+      "tab": 3,
+      "row": 3,
+      "col": 1,
+      "image": "1/54.jpg"
+    },
+    {
+      "id": "fatal_focus",
+      "name": "Fatal Focus",
+      "class": 1,
+      "category": "",
+      "tab": 6,
+      "row": 4,
+      "col": 1,
+      "image": "1/80.jpg"
+    },
+    {
+      "id": "firedance",
+      "name": "Firedance",
+      "class": 1,
+      "category": "",
+      "tab": 8,
+      "row": 2,
+      "col": 3,
+      "image": "1/136.jpg"
+    },
+    {
+      "id": "flamefront",
+      "name": "Flamefront",
+      "class": 1,
+      "category": "",
+      "tab": 2,
+      "row": 1,
+      "col": 3,
+      "image": "1/92.jpg"
+    },
+    {
+      "id": "flamestrike",
+      "name": "Flamestrike",
+      "class": 1,
+      "category": "",
+      "tab": 2,
+      "row": 5,
+      "col": 3,
+      "image": "1/34.jpg"
+    },
+    {
+      "id": "force_blast",
+      "name": "Force Blast",
+      "class": 1,
+      "category": "",
+      "tab": 9,
+      "row": 1,
+      "col": 3,
+      "image": "1/146.jpg"
+    },
+    {
+      "id": "forked_lightning",
+      "name": "Forked Lightning",
+      "class": 1,
+      "category": "",
+      "tab": 3,
+      "row": 1,
+      "col": 3,
+      "image": "1/94.jpg"
+    },
+    {
+      "id": "frigid_nova",
+      "name": "Frigid Nova",
+      "class": 1,
+      "category": "",
+      "tab": 4,
+      "row": 1,
+      "col": 1,
+      "image": "1/40.jpg"
+    },
+    {
+      "id": "frostborn",
+      "name": "Frostborn",
+      "class": 1,
+      "category": "",
+      "tab": 4,
+      "row": 6,
+      "col": 2,
+      "image": "1/60.jpg"
+    },
+    {
+      "id": "fusillade",
+      "name": "Fusillade",
+      "class": 1,
+      "category": "",
+      "tab": 6,
+      "row": 5,
+      "col": 2,
+      "image": "1/148.jpg"
+    },
+    {
+      "id": "glacial_torrent",
+      "name": "Glacial Torrent",
+      "class": 1,
+      "category": "",
+      "tab": 4,
+      "row": 3,
+      "col": 2,
+      "image": "1/46.jpg"
+    },
+    {
+      "id": "havoc",
+      "name": "Havoc",
+      "class": 1,
+      "category": "",
+      "tab": 2,
+      "row": 6,
+      "col": 2,
+      "image": "1/158.jpg"
+    },
+    {
+      "id": "hive",
+      "name": "Hive",
+      "class": 1,
+      "category": "",
+      "tab": 8,
+      "row": 5,
+      "col": 3,
+      "image": "1/68.jpg"
+    },
+    {
+      "id": "hoar_frost",
+      "name": "Hoar Frost",
+      "class": 1,
+      "category": "",
+      "tab": 4,
+      "row": 5,
+      "col": 3,
+      "image": "1/62.jpg"
+    },
+    {
+      "id": "ice_elementals",
+      "name": "Ice Elementals",
+      "class": 1,
+      "category": "",
+      "tab": 8,
+      "row": 4,
+      "col": 3,
+      "image": "1/48.jpg"
+    },
+    {
+      "id": "immersion",
+      "name": "Immersion",
+      "class": 1,
+      "category": "",
+      "tab": 1,
+      "row": 1,
+      "col": 2,
+      "image": "1/154.jpg"
+    },
+    {
+      "id": "incineration",
+      "name": "Incineration",
+      "class": 1,
+      "category": "",
+      "tab": 2,
+      "row": 3,
+      "col": 1,
+      "image": "1/30.jpg"
+    },
+    {
+      "id": "living_flame",
+      "name": "Living Flame",
+      "class": 1,
+      "category": "",
+      "tab": 8,
+      "row": 2,
+      "col": 1,
+      "image": "1/132.jpg"
+    },
+    {
+      "id": "lorenado",
+      "name": "Lorenado",
+      "class": 1,
+      "category": "",
+      "tab": 5,
+      "row": 1,
+      "col": 3,
+      "image": "1/118.jpg"
+    },
+    {
+      "id": "mana_sweep",
+      "name": "Mana Sweep",
+      "class": 1,
+      "category": "",
+      "tab": 1,
+      "row": 5,
+      "col": 1,
+      "image": "1/76.jpg"
+    },
+    {
+      "id": "miasma",
+      "name": "Miasma",
+      "class": 1,
+      "category": "",
+      "tab": 5,
+      "row": 2,
+      "col": 2,
+      "image": "1/138.jpg"
+    },
+    {
+      "id": "mind_spark",
+      "name": "Mind Spark",
+      "class": 1,
+      "category": "",
+      "tab": 3,
+      "row": 5,
+      "col": 3,
+      "image": "1/58.jpg"
+    },
+    {
+      "id": "mooncall",
+      "name": "Mooncall",
+      "class": 1,
+      "category": "",
+      "tab": 6,
+      "row": 1,
+      "col": 2,
+      "image": "1/70.jpg"
+    },
+    {
+      "id": "nova_charge",
+      "name": "Nova Charge",
+      "class": 1,
+      "category": "",
+      "tab": 8,
+      "row": 3,
+      "col": 3,
+      "image": "1/102.jpg"
+    },
+    {
+      "id": "premonition",
+      "name": "Premonition",
+      "class": 1,
+      "category": "",
+      "tab": 6,
+      "row": 6,
+      "col": 3,
+      "image": "1/86.jpg"
+    },
+    {
+      "id": "primordial_might",
+      "name": "Primordial Might",
+      "class": 1,
+      "category": "",
+      "tab": 6,
+      "row": 3,
+      "col": 3,
+      "image": "1/84.jpg"
+    },
+    {
+      "id": "pyre",
+      "name": "Pyre",
+      "class": 1,
+      "category": "",
+      "tab": 2,
+      "row": 5,
+      "col": 1,
+      "image": "1/32.jpg"
+    },
+    {
+      "id": "pyroblast",
+      "name": "Pyroblast",
+      "class": 1,
+      "category": "",
+      "tab": 2,
+      "row": 3,
+      "col": 3,
+      "image": "1/98.jpg"
+    },
+    {
+      "id": "raven_familiar",
+      "name": "Raven Familiar",
+      "class": 1,
+      "category": "",
+      "tab": 1,
+      "row": 4,
+      "col": 2,
+      "image": "1/128.jpg"
+    },
+    {
+      "id": "rime",
+      "name": "Rime",
+      "class": 1,
+      "category": "",
+      "tab": 4,
+      "row": 5,
+      "col": 1,
+      "image": "1/64.jpg"
+    },
+    {
+      "id": "snow_queen",
+      "name": "Snow Queen",
+      "class": 1,
+      "category": "",
+      "tab": 8,
+      "row": 4,
+      "col": 1,
+      "image": "1/140.jpg"
+    },
+    {
+      "id": "superposition",
+      "name": "Superposition",
+      "class": 1,
+      "category": "",
+      "tab": 1,
+      "row": 5,
+      "col": 2,
+      "image": "1/36.jpg"
+    },
+    {
+      "id": "symbol_of_esu",
+      "name": "Symbol of Esu",
+      "class": 1,
+      "category": "",
+      "tab": 9,
+      "row": 1,
+      "col": 1,
+      "image": "1/122.jpg"
+    },
+    {
+      "id": "tempest",
+      "name": "Tempest",
+      "class": 1,
+      "category": "",
+      "tab": 3,
+      "row": 4,
+      "col": 3,
+      "image": "1/120.jpg"
+    },
+    {
+      "id": "thunderstone",
+      "name": "Thunderstone",
+      "class": 1,
+      "category": "",
+      "tab": 3,
+      "row": 2,
+      "col": 1,
+      "image": "1/52.jpg"
+    },
+    {
+      "id": "vengeful_power",
+      "name": "Vengeful Power",
+      "class": 1,
+      "category": "",
+      "tab": 8,
+      "row": 5,
+      "col": 1,
+      "image": "1/142.jpg"
+    },
+    {
+      "id": "warp_armor",
+      "name": "Warp Armor",
+      "class": 1,
+      "category": "",
+      "tab": 8,
+      "row": 3,
+      "col": 1,
+      "image": "1/96.jpg"
+    },
+    {
+      "id": "wintertide",
+      "name": "Wintertide",
+      "class": 1,
+      "category": "",
+      "tab": 4,
+      "row": 4,
+      "col": 2,
+      "image": "1/44.jpg"
+    },
+    {
+      "id": "witch_blood",
+      "name": "Witch Blood",
+      "class": 1,
+      "category": "",
+      "tab": 9,
+      "row": 3,
+      "col": 2,
+      "image": "1/56.jpg"
+    }
+  ]
+}

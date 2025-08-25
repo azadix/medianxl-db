@@ -1,0 +1,12 @@
+{
+  "id": "earthquake",
+  "category": "Attack",
+  "damage_type": "Physical",
+  "description": "Unleash a tremor followed by an aftershock\n80% Tremor Weapon Damage\n180% Aftershock Weapon Damage\n1.4 second Aftershock delay",
+  "restriction": "Requires a melee weapon, cannot be used with elemental weapons",
+  "scaling": [
+    {"level": 20, "physical_damage": "+30", "mana_cost": 22},
+    {"level": 21, "physical_damage": "+31", "mana_cost": 23},
+    {"level": 22, "physical_damage": "+32", "mana_cost": 24}
+  ]
+}
