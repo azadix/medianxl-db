@@ -75,7 +75,6 @@ async function initializeDataTable(skillsData) {
                 <th>Category</th>
                 <th>Class</th>
                 <th>Tab</th>
-                <th>Type</th>
             </tr>
         </thead>
         <tbody></tbody>
@@ -102,7 +101,6 @@ async function initializeDataTable(skillsData) {
                 <td>${skill.category || ''}</td>
                 <td>${Classes.getName(skill.class) || ''}</td>
                 <td>${ClassTabs.getTabName(skill.class, skill.tab) || ''}</td>
-                <td>TODO: Active/Passive</td>
             </tr>
         `);
     });
