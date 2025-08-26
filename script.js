@@ -1,19 +1,38 @@
 // DOM elements
 const contentElement = document.getElementById('content');
 const pageTitleElement = document.getElementById('page-title');
-const breadcrumbHomeElement = document.getElementById('breadcrumb-home');
-const breadcrumbCurrentElement = document.getElementById('breadcrumb-current');
-const homeLinkElement = document.getElementById('home-link');
-
-// Cache for available skill IDs with localStorage
-const SKILL_CACHE_KEY = 'availableSkillsCache';
-const CACHE_LIFETIME = 60 * 60 * 1000; // 60 minutes in milliseconds
 
 // Global variable for DataTable instance
 let skillsDataTable = null;
 
 // Global skills list
 let skillsList = [];
+
+// Function to get URL parameters
+function getUrlParams() {
+    const params = {};
+    const queryString = window.location.search.substring(1);
+    const regex = /([^&=]+)=([^&]*)/g;
+    let m;
+    
+    while (m = regex.exec(queryString)) {
+        params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+    }
+    
+    return params;
+}
+
+// Function to update URL without reloading the page
+function updateUrl(skillId = null) {
+    const baseUrl = window.location.origin + window.location.pathname;
+    let newUrl = baseUrl;
+    
+    if (skillId) {
+        newUrl += `?skill=${encodeURIComponent(skillId)}`;
+    }
+    
+    window.history.pushState({ skillId }, '', newUrl);
+}
 
 // Function to load skills list from JSON file
 async function loadSkillsList() {
@@ -37,71 +56,7 @@ function getSkillInfo(skillId) {
     return skillsList.find(skill => skill.id === skillId);
 }
 
-
-// Function to check multiple files in parallel with localStorage caching
-async function getAvailableSkillIds() {
-    const now = Date.now();
-    
-    // Try to get cached data from localStorage
-    try {
-        const cachedData = localStorage.getItem(SKILL_CACHE_KEY);
-        if (cachedData) {
-            const { data, timestamp } = JSON.parse(cachedData);
-            
-            // Return cached data if still valid
-            if (now - timestamp < CACHE_LIFETIME) {
-                return new Set(data);
-            }
-        }
-    } catch (error) {
-        console.warn('Failed to read cache from localStorage:', error);
-    }
-    
-    // Get all skill IDs that need to be checked
-    const skillIdsToCheck = skillsList.map(skill => skill.id).filter(Boolean);
-    
-    if (skillIdsToCheck.length === 0) {
-        return new Set();
-    }
-    
-    // Check all files in parallel with error suppression
-    const checks = skillIdsToCheck.map(async (skillId) => {
-        try {
-            const response = await fetch(`skill_data/${skillId}.json`, { 
-                method: 'HEAD',
-                // Add cache busting to avoid browser caching HEAD requests
-                headers: { 'Cache-Control': 'no-cache' }
-            });
-
-            return { skillId, exists: response.ok };
-        } catch (error) {
-            console.warn(`Unexpected error checking ${skillId}:`, error);
-            return { skillId, exists: false };
-        }
-    });
-    
-    const results = await Promise.all(checks);
-    const existingSkills = new Set();
-    
-    results.forEach(({ skillId, exists }) => {
-        if (exists) existingSkills.add(skillId);
-    });
-    
-    // Update cache in localStorage
-    try {
-        const cacheData = {
-            data: Array.from(existingSkills),
-            timestamp: now
-        };
-        localStorage.setItem(SKILL_CACHE_KEY, JSON.stringify(cacheData));
-    } catch (error) {
-        console.warn('Failed to save cache to localStorage:', error);
-    }
-    
-    return existingSkills;
-}
-
-// Updated initializeDataTable function
+// Updated initializeDataTable function - no file checking
 async function initializeDataTable(skillsData) {
     // Destroy existing DataTable if it exists
     if (skillsDataTable) {
@@ -120,27 +75,23 @@ async function initializeDataTable(skillsData) {
                 <th>Category</th>
                 <th>Class</th>
                 <th>Tab</th>
-                <th>Type</td>
+                <th>Type</th>
             </tr>
         </thead>
         <tbody></tbody>
     `);
     
-    // Get available skill IDs (with caching)
-    const availableSkills = await getAvailableSkillIds();
-    
-    // Populate table data
+    // Populate table data - create links for all skills
     const tbody = table.find('tbody');
     
     skillsData.forEach(skill => {
         const hasId = skill.id && skill.id.trim() !== '';
-        const hasFile = hasId && availableSkills.has(skill.id);
-        
         const imagePath = skill.image 
             ? skill.image
             : "-1/icons-shared_missing.png";
         
-        const nameCell = hasFile 
+        // Always create a link for every skill
+        const nameCell = hasId 
             ? `<a href="#" class="view-skill-btn" data-skill-id="${skill.id}">${skill.name}</a>`
             : skill.name;
         
@@ -188,7 +139,7 @@ async function loadSkillData(skillId) {
         return await response.json();
     } catch (error) {
         console.error('Error loading skill data:', error);
-        contentElement.innerHTML = '<p>Error loading skill data. Please try again later.</p>';
+        contentElement.innerHTML = `<p>There was an error while loading skill data (of there isn't any data to load)</p>`;
         return null;
     }
 }
@@ -196,8 +147,6 @@ async function loadSkillData(skillId) {
 // Updated displayAllSkills function
 async function displayAllSkills() {
     pageTitleElement.textContent = 'All Skills';
-    breadcrumbCurrentElement.textContent = 'All Skills';
-    
     if (skillsList.length === 0) {
         await loadSkillsList();
     }
@@ -219,12 +168,6 @@ async function displayAllSkills() {
     initializeDataTable(skillsList);
 }
 
-// Function to convert newlines to HTML line breaks
-function formatTextWithNewlines(text) {
-    if (!text) return '';
-    return text.replace(/\n/g, '<br>');
-}
-
 // Function to display a specific skill's details
 async function displaySkillDetail(skillId) {
     const skillInfo = getSkillInfo(skillId);
@@ -233,16 +176,60 @@ async function displaySkillDetail(skillId) {
     if (!skillInfo || !skillData) return;
     
     pageTitleElement.textContent = skillInfo.name;
-    breadcrumbCurrentElement.textContent = skillInfo.name;
     
-    // Create scaling table
-    let scalingTable = '';
-    if (skillData.scaling && skillData.scaling.length > 0) {
+    // Add skill image if available
+    const skillImage = skillInfo.image 
+        ? `<img src="icons/${skillInfo.image}" alt="${skillInfo.name}" class="skill-image">` 
+        : '';
+
+    let skillCategory = skillInfo.category
+        ? `<p><strong>Category:</strong></p><p>${skillInfo.category}</p><br>`
+        : '';
+    
+    // Convert description to paragraphs if it's an array
+    let descriptionHtml = '';
+    const isOrangeText = (skillInfo.class == Classes.OTHER && skillInfo.tab == 2)
+    if (Array.isArray(skillData.description)) {
+        descriptionHtml = `<p><strong>Description:</strong></p>`;
+        descriptionHtml += skillData.description.map(paragraph => 
+            `<p class="${isOrangeText ? 'has-text-warning' : ''}">${paragraph}</p>`
+        ).join('');
+    }
+
+    // Only show restriction if it exists
+    let restrictionHtml = '';
+    if (skillData.restriction) {
+        if (Array.isArray(skillData.restriction)) {
+            restrictionHtml = `
+                <p><strong>Restriction:</strong></p>
+                ${skillData.restriction.map(item => `<p><span class="has-text-danger">${item}</span></p>`).join('')}
+                <br>
+            `;
+        }
+    }
+
+        // Create scaling table
+    let scalingTable = `
+        <p class="is-size-4"><strong>Skill Scaling (only soft points):</strong></p>
+        <hr class="mt-0 mb-1">
+    `;
+
+    if (skillInfo.class == Classes.OTHER && skillInfo.tab == 2) {
+        // Orange text skills - show "Skill doesn't scale" message
+        scalingTable += `
+            <p class="has-text-danger">Skills coming from Orange text do not scale with skill levels :(</p>
+        `;
+    } else if (!skillData.scaling || skillData.scaling.length == 0) {
+        // Empty scaling array
+        scalingTable += `
+            <p class="has-text-danger">This skill does not scale with skill levels</p>
+        `;
+    } else {
+        // Regular skills with scaling data
         // Get the stat names from the first scaling entry
         const statNames = Object.keys(skillData.scaling[0]).filter(key => key !== 'level');
         
-        scalingTable = `
-            <p class="is-size-4">Skill Scaling (only soft points):</p>
+        scalingTable += `
             <table class="table is-hoverable is-fullwidth">
                 <thead>
                     <tr>
@@ -262,31 +249,20 @@ async function displaySkillDetail(skillId) {
         `;
     }
     
-    // Add skill image if available (now from skills.json)
-    const skillImage = skillInfo.image 
-        ? `<img src="icons/${skillInfo.image}" alt="${skillInfo.name}" class="skill-image">` 
-        : '';
-
-    // Only show restriction if it exists
-    const restrictionHtml = skillData.restriction 
-        ? `<p><strong>Restriction:</strong></p><p><span class="has-text-danger">${formatTextWithNewlines(skillData.restriction)}</span></p>`
-        : '';
-    
     contentElement.innerHTML = `
         <div class="skill-detail">
             <div class="skill-info">
                 ${skillImage}
-                <p><strong>Category:</strong></p>
-                <p>${skillInfo.category}</p>
-
+                ${skillCategory}
                 ${restrictionHtml}
-                
-                <p><strong>Description:</strong></p>
-                <p>${formatTextWithNewlines(skillData.description)}</p>
+                ${descriptionHtml}
             </div><br />
             ${scalingTable}
         </div>
     `;
+    
+    // Update URL with skill parameter
+    updateUrl(skillId);
 }
 
 // Helper function to format stat names for display
@@ -297,11 +273,6 @@ function formatStatName(stat) {
 }
 
 // Event listeners
-breadcrumbHomeElement.addEventListener('click', function(e) {
-    e.preventDefault();
-    displayAllSkills();
-});
-
 function attachViewSkillListeners() {
     $(document).on('click', '.view-skill-btn', function(e) {
         e.preventDefault();
@@ -310,8 +281,39 @@ function attachViewSkillListeners() {
     });
 }
 
-// Call this once during initialization (add to the end of your script)
-attachViewSkillListeners();
+// Handle browser back/forward navigation
+window.addEventListener('popstate', function(event) {
+    const params = getUrlParams();
+    if (params.skill) {
+        displaySkillDetail(params.skill);
+    } else {
+        displayAllSkills();
+    }
+});
 
-// Initialize the page
-displayAllSkills();
+// Initialize the page based on URL parameters
+async function initializePage() {
+    // Load skills list first
+    await loadSkillsList();
+    
+    // Check URL for skill parameter
+    const params = getUrlParams();
+    if (params.skill) {
+        // Check if the skill exists
+        const skillInfo = getSkillInfo(params.skill);
+        if (skillInfo) {
+            displaySkillDetail(params.skill);
+        } else {
+            // Fall back to all skills if skill not found
+            displayAllSkills();
+        }
+    } else {
+        displayAllSkills();
+    }
+    
+    // Attach event listeners
+    attachViewSkillListeners();
+}
+
+// Call initialize on page load
+initializePage();

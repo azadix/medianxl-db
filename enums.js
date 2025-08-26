@@ -22,7 +22,10 @@ const Classes = {
 
 const ClassTabs = {
     [Classes.OTHER]: [
-        { index: 0, name: "oSkill" }
+        { index: 0, name: "oSkill" },
+        { index: 1, name: "Proc" },
+        { index: 2, name: "Orange text"},
+        { index: 3, name: "Passive"}
     ],
     [Classes.AMAZON]: [
         { index: 1, name: "Divine" },

@@ -2,8 +2,13 @@
   "id": "angel_of_death",
   "category": "Warp Strike",
   "damage_type": "Poison",
-  "description": "Leap in the air and plunge to deliver a devastating blow\nCooldown: 4 seconds",
-  "restriction": "Requires a scythe or a dagger",
+  "description": [
+    "Leap in the air and plunge to deliver a devastating blow",
+    "Cooldown: 4 seconds"
+  ],
+  "restriction": [
+    "Requires a scythe or a dagger"
+  ],
   "scaling": [
     {"level": 3, "attack_rating": 50, "poison_damage_min": 212, "poison_damage_max": 330, "poison_duration": 0.9, "mana_cost": 80},
     {"level": 4, "attack_rating": 60, "poison_damage_min": 326, "poison_damage_max": 525, "poison_duration": 1.2, "mana_cost": 93},
