@@ -1,0 +1,9 @@
+{
+  "id": "town_portal",
+  "category": "Spell",
+  "description": [
+    "Create a magic portal to the nearest town",
+    "Cooldown: 10 seconds"
+  ],
+  "scaling": []
+}

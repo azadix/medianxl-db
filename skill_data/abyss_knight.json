@@ -1,0 +1,15 @@
+{
+  "id": "abyss_knight",
+  "category": "Summon",
+  "damage_type": "Magic",
+  "description": [
+    "Death knight with a ranged void blast",
+    "Always hits"
+  ],
+  "synergies": [
+    "+1 knight per 6 base levels"
+  ],
+  "scaling": [
+    { "level": 1, "knights": 1, "life": 1769, "magic_damage_min": 18, "magic_damage_max": 18, "mana_cost": 20 }
+  ]
+}

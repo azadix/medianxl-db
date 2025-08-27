@@ -1,0 +1,11 @@
+{
+  "id": "bloodstar",
+  "category": "",
+  "damage_type": "Fire",
+  "description": [
+    "Fires a deadly but slow moving missile of burning blood"
+  ],
+  "scaling": [
+    { "level": 60, "fire_damage_min": 431, "fire_damage_max": 595, "mana_cost": 98 }
+  ]
+}

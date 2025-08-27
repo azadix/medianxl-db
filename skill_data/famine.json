@@ -1,0 +1,29 @@
+{
+  "id": "famine",
+  "category": "Passive",
+  "description": [
+    "Increases damage and returns life when you hit",
+    "Adds 15% of Strength and Dexterity as Weapon Physical Damage"
+  ],
+  "synergies": [
+    "+1% Life Steal per base level",
+    "+50 Maximum Life per base level"
+  ],
+  "scaling": [
+    { "level": 1, "maximum_life": 100, "life_steal": 10 },
+    { "level": 2, "maximum_life": 150, "life_steal": 11 },
+    { "level": 3, "maximum_life": 200, "life_steal": 12 },
+    { "level": 4, "maximum_life": 250, "life_steal": 13 },
+    { "level": 5, "maximum_life": 300, "life_steal": 14 },
+    { "level": 6, "maximum_life": 350, "life_steal": 15 },
+    { "level": 7, "maximum_life": 400, "life_steal": 16 },
+    { "level": 8, "maximum_life": 450, "life_steal": 17 },
+    { "level": 9, "maximum_life": 500, "life_steal": 18 },
+    { "level": 10, "maximum_life": 550, "life_steal": 19 },
+    { "level": 11, "maximum_life": 600, "life_steal": 20 },
+    { "level": 12, "maximum_life": 650, "life_steal": 21 },
+    { "level": 13, "maximum_life": 700, "life_steal": 22 },
+    { "level": 14, "maximum_life": 750, "life_steal": 23 },
+    { "level": 15, "maximum_life": 800, "life_steal": 24 }
+  ]
+}

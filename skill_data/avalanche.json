@@ -1,0 +1,12 @@
+{
+  "id": "avalanche",
+  "category": "Spell",
+  "damage_type": "Cold",
+  "description": [
+    "Summon two parallel rolling clouds of frost and ice",
+    "Cloud radius doubles if you have at least 1250 Spell Focus"
+  ],
+  "scaling": [
+    { "level": 12, "cold_damage_min": 53, "cold_damage_max": 65, "mana_cost": 93 }
+  ]
+}

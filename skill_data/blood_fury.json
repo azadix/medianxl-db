@@ -1,0 +1,12 @@
+{
+  "id": "blood_fury",
+  "category": "Buff",
+  "description": [
+    "Increases spell damage at the cost of your well-being",
+    "Drains 50 percent life in 30 seconds",
+    "Duration: 30 seconds"
+  ],
+  "scaling": [
+    { "level": 6, "elemental_spell_damage": 23, "magic/physical_spell_damage": 23, "mana_cost": 687 }
+  ]
+}

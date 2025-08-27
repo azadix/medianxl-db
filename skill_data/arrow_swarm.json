@@ -1,0 +1,16 @@
+{
+  "id": "arrow_swarm",
+  "category": "Projectile",
+  "damage_type": "Weapon Damage",
+  "description": [
+    "Fire a blast of multiple zigzagging arrows in front of you",
+    "120% Weapon Damage",
+    "9 projectiles"
+  ],
+  "restriction": [
+    "Requires a bow or crossbow"
+  ],
+  "scaling": [
+    { "level": 7, "mana_cost": 22 }
+  ]
+}

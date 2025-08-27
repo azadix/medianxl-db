@@ -1,0 +1,11 @@
+{
+  "id": "orb_of_annihilation",
+  "category": "Spell",
+  "damage_type": "Magic",
+  "description": [
+    "Frags everyone near this death orb of deathful deathsome death"
+  ],
+  "scaling": [
+    { "level": 9, "magic_damage": 3000, "mana_cost": 4000 }
+  ]
+}

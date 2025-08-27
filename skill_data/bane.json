@@ -1,0 +1,11 @@
+{
+  "id": "bane",
+  "category": "Curse",
+  "description": [
+    "Enemies near target miniona are weaker to physical damage",
+    "Cooldown: 1 second"
+  ],
+  "scaling": [
+    { "level": 4, "duration": 10, "enemy_physical_resistance": -6, "mana_cost": 45 }
+  ]
+}

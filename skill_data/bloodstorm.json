@@ -1,0 +1,13 @@
+{
+  "id": "bloodstorm",
+  "category": "Spell",
+  "damage_type": "Fire",
+  "description": [
+    "Skull trap that fires blood stars at multiple enemies",
+    "Releases 8 bloodstars per shot",
+    "Duration: 4.5 seconds"
+  ],
+  "scaling": [
+    { "level": 20, "fire_damage_min": 114, "fire_damage_max": 129, "bloodstars_total": 18, "mana_cost": 248 }
+  ]
+}

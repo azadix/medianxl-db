@@ -1,0 +1,16 @@
+{
+  "id": "atmg_sentry",
+  "category": "Projectile",
+  "damage_type": "Weapon Damage",
+  "description": [
+    "Places a sentry at a fixed distance that fires an autotracking machine gun",
+    "Radius increases by 27% with 200, 500, 900 Base Dexterity (Max +81%)",
+    "Weapon Damage increases to 75% with 55% Deadly and Critical Strike Chance OR 55% Innate Elemental Damage",
+    "Weapon Damage increases to 95% with 85% Deadly and Critical Strike Chance OR 110% Innate Elemental Damage",
+    "60% Weapon Damage",
+    "Rate of Fire: 8.33 per second"
+  ],
+  "scaling": [
+    { "level": 3, "radius": 22, "duration": 2.1, "mana_cost": 34 }
+  ]
+}

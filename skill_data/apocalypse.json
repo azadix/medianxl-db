@@ -1,0 +1,17 @@
+{
+  "id": "apocalypse",
+  "category": "Spell",
+  "damage_type": "Fire",
+  "description": [
+    "Incinerates all enemies in a large area around you",
+    "While your Maximum Mana is higher than Maximum Life:",
+    "Total Apocalypse Damage increased by the precentage difference between them (up to 100%)"
+  ],
+  "restriction": [
+    "Cannot be cast if Skill level is lower than 62",
+    "Damage does not increase with Skill levels"
+  ],
+  "scaling": [
+    { "level": 11, "fire_damage": 497, "mana_cost": 250 }
+  ]
+}

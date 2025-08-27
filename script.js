@@ -56,6 +56,10 @@ function getSkillInfo(skillId) {
     return skillsList.find(skill => skill.id === skillId);
 }
 
+function checkSkillDetailPage(skillId) {
+    return skillsWithDetails[skillId] || false;
+}
+
 // Updated initializeDataTable function - no file checking
 async function initializeDataTable(skillsData) {
     // Destroy existing DataTable if it exists
@@ -85,20 +89,19 @@ async function initializeDataTable(skillsData) {
     
     skillsData.forEach(skill => {
         const hasId = skill.id && skill.id.trim() !== '';
-        const imagePath = skill.image 
-            ? skill.image
-            : "-1/icons-shared_missing.png";
+        const hasDetailPage = hasId ? checkSkillDetailPage(skill.id) : false;
+        const imagePath = skill.image || "-1/icons-shared_missing.png";
         
-        // Always create a link for every skill
-        const nameCell = hasId 
-            ? `<a href="#" class="view-skill-btn" data-skill-id="${skill.id}">${skill.name}</a>`
+        const nameCell = hasDetailPage 
+            ? `<a href="./?skill=${skill.id}" class="view-skill-btn" data-skill-id="${skill.id}">${skill.name}</a>`
             : skill.name;
         
+        //TODO skill.tag is an array of tags. currently only showing first
         tbody.append(`
-            <tr ${!hasId} data-has-id="${hasId}">
+            <tr data-skill-id="${skill.id}" data-has-page="${hasDetailPage}">
                 <td><img src="icons/${imagePath}" alt="${skill.name}" class="image is-48x48"></td>
                 <td>${nameCell}</td>
-                <td>${skill.category || ''}</td>
+                <td>${skill.tag[0] || ''}</td>
                 <td>${Classes.getName(skill.class) || ''}</td>
                 <td>${ClassTabs.getTabName(skill.class, skill.tab) || ''}</td>
             </tr>
@@ -118,7 +121,12 @@ async function initializeDataTable(skillsData) {
             }
         ],
         layout: {
-            topStart: "",
+            topStart: () => {
+                return `<div class="field">
+                    <input id="toggle-filter" type="checkbox">
+                    <label for="toggle-filter">Show skills with details</label>
+                </div>`
+            },
             bottomStart: "",
             bottomEnd: ""
         }
@@ -126,6 +134,11 @@ async function initializeDataTable(skillsData) {
         
     return skillsDataTable;
 }
+
+$(document).on('change', '#toggle-filter', function() {
+    showDetailedOnly = this.checked;
+    skillsDataTable.draw();
+});
 
 // Function to load a specific skill's data
 async function loadSkillData(skillId) {
@@ -180,18 +193,23 @@ async function displaySkillDetail(skillId) {
         ? `<img src="icons/${skillInfo.image}" alt="${skillInfo.name}" class="skill-image">` 
         : '';
 
-    let skillCategory = skillInfo.category
-        ? `<p><strong>Category:</strong></p><p>${skillInfo.category}</p><br>`
+    let skillCategory = skillData.category
+        ? `<p class="is-size-5"><strong>Category:</strong></p><p>${skillData.category}</p><br>`
+        : '';
+    
+    let skillDamageType = skillData.damage_type
+        ? `<p class="is-size-5"><strong>Damage type:</strong></p><p>${skillData.damage_type}</p><br>`
         : '';
     
     // Convert description to paragraphs if it's an array
     let descriptionHtml = '';
     const isOrangeText = (skillInfo.class == Classes.OTHER && skillInfo.tab == 2)
     if (Array.isArray(skillData.description)) {
-        descriptionHtml = `<p><strong>Description:</strong></p>`;
+        descriptionHtml = `<p class="is-size-5"><strong>Description:</strong></p>`;
         descriptionHtml += skillData.description.map(paragraph => 
             `<p class="${isOrangeText ? 'has-text-warning' : ''}">${paragraph}</p>`
         ).join('');
+        descriptionHtml += `<br>`;
     }
 
     // Only show restriction if it exists
@@ -199,17 +217,31 @@ async function displaySkillDetail(skillId) {
     if (skillData.restriction) {
         if (Array.isArray(skillData.restriction)) {
             restrictionHtml = `
-                <p><strong>Restriction:</strong></p>
+                <p class="is-size-5"><strong>Restriction:</strong></p>
                 ${skillData.restriction.map(item => `<p><span class="has-text-danger">${item}</span></p>`).join('')}
                 <br>
             `;
         }
     }
 
-        // Create scaling table
+    // Convert description to paragraphs if it's an array
+    let synergiesHtml = '';
+    if (Array.isArray(skillData.synergies)) {
+        synergiesHtml = `<p class="is-size-5"><strong>Synergies:</strong></p>`;
+        synergiesHtml += skillData.synergies.map(paragraph => 
+            `<p>${paragraph}</p>`
+        ).join('');
+        synergiesHtml += `<br>`;
+    }
+
+    // Create scaling table
     let scalingTable = `
-        <p class="is-size-4"><strong>Skill Scaling (only soft points):</strong></p>
-        <hr class="mt-0 mb-1">
+        <p class="is-size-4"><strong>Skill Scaling (only soft points):</strong>
+        <button class="button is-primary is-outlined" id="toggle-scaling">
+            Show
+        </button>
+        </p>
+        <div id="scaling-container" class="is-hidden">
     `;
 
     if (skillInfo.class == Classes.OTHER && skillInfo.tab == 2) {
@@ -252,15 +284,29 @@ async function displaySkillDetail(skillId) {
             <div class="skill-info">
                 ${skillImage}
                 ${skillCategory}
+                ${skillDamageType}
                 ${restrictionHtml}
                 ${descriptionHtml}
-            </div><br />
+                ${synergiesHtml}
+            </div>
             ${scalingTable}
+            <div>
         </div>
     `;
     
     // Update URL with skill parameter
     updateUrl(skillId);
+
+    const toggleBtn = document.getElementById('toggle-scaling');
+    const scalingContainer = document.getElementById('scaling-container');
+    if (toggleBtn && scalingContainer) {
+        toggleBtn.addEventListener('click', () => {
+            scalingContainer.classList.toggle('is-hidden');
+            toggleBtn.textContent = scalingContainer.classList.contains('is-hidden')
+                ? 'Show'
+                : 'Hide';
+        });
+    }
 }
 
 // Helper function to format stat names for display

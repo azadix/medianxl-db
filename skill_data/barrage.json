@@ -1,0 +1,16 @@
+{
+  "id": "barrage",
+  "category": "Projectile",
+  "damage_type": "Fire/Cold/Lightning/Physical",
+  "description": [
+    "Fires a storm of arrows in all directions around you",
+    "Converts 75% Physical Damage to Fire, Cold or Lightning",
+    "90% Weapon Damage"
+  ],
+  "restriction": [
+    "Requires a bow or crossbow"
+  ],
+  "scaling": [
+    { "level": 8, "bonus_fire,_cold,_or_lightning_damage": 39, "mana_cost": 17 }
+  ]
+}

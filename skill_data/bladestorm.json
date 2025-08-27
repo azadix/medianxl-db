@@ -1,0 +1,15 @@
+{
+  "id": "bladestorm",
+  "category": "Attack",
+  "damage_type": "Physical/Magic",
+  "description": [
+    "Unleash magical homing blades",
+    "50% Weapon Damage"
+  ],
+  "restriction": [
+    "Requires a staff, an orb or a sword"
+  ],
+  "scaling": [
+    { "level": 7, "bonus_magic_damage": 48, "converts_physical_damage_to_magic": 84, "mana_cost": 20 }
+  ]
+}

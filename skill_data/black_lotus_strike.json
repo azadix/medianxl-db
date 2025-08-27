@@ -1,0 +1,14 @@
+{
+  "id": "black_lotus_strike",
+  "category": "Attack",
+  "damage_type": "Poison",
+  "description": [
+    "Creates a wave of expanding poison"
+  ],
+  "restriction": [
+    "Requires a melee weapon"
+  ],
+  "scaling": [
+    { "level": 31, "poison_damage_min": 766, "posion_damage_max": 1079, "poison_duration": 2, "mana_cost": 80}
+  ]
+}

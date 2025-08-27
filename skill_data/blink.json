@@ -1,0 +1,12 @@
+{
+  "id": "blink",
+  "category": "Warp",
+  "description": [
+    "Teleport to a target, stunning enemies around you",
+    "Range: 12 yards",
+    "Stun length: 1 second"
+  ],
+  "scaling": [
+    { "level": 12, "cooldown": 4.4, "mana_cost": 47 }
+  ]
+}

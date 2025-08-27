@@ -1,0 +1,16 @@
+{
+  "id": "death_pact",
+  "category": "Passive",
+  "description": [
+    "Dark masteries increase your defense"
+  ],
+  "synergies": [
+    "+10% Bonus Defense per base level",
+    "+1% Chance to Avoid Damage per base level"
+  ],
+  "scaling": [
+    { "level": 1, "avoid_damage": 1, "bonus_defense": 6 },
+    { "level": 2, "avoid_damage": 2, "bonus_defense": 16 },
+    { "level": 3, "avoid_damage": 3, "bonus_defense": 26 }
+  ]
+}

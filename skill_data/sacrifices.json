@@ -1,0 +1,13 @@
+{
+  "id": "sacrifices",
+  "category": "Spell",
+  "description": [
+    "Summons sacrificial corpses to be of use"
+  ],
+  "synergies": [
+    "Cooldown reduced by 0.8 seconds per base level"
+  ],
+  "scaling": [
+    { "level": 1, "cooldown": 12, "mana_cost": 11 }
+  ]
+}

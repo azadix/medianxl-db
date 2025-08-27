@@ -1,0 +1,13 @@
+{
+  "id": "balefire",
+  "category": "Spell",
+  "damage_type": "Magic",
+  "description": [
+    "Tap into your life force to power a blast of green hellfire",
+    "Self-immolates while casting",
+    "Drains 10% of current life per second"
+  ],
+  "scaling": [
+    { "level": 15, "bonus_defense": 150, "magic_damage_min": 233, "magic_damage_max": 250, "mana_cost": 66 }
+  ]
+}
