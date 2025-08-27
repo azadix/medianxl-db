@@ -1,0 +1,14 @@
+{
+  "id": "clear_mind",
+  "category": "Spell",
+  "damage_type": "Magic",
+  "description": [
+    "Conjure magical ripples accross the landscape, empowered by your unspent skill points",
+    "Gains quadratically more damage per unspent skill point",
+    "Gains additional radius and hit rate every 25 unspent skill points",
+    "Cooldown: 1 second"
+  ],
+  "scaling": [
+    { "level": 67, "magic_damage_min": 440771, "magic_damage_max": 661156, "mana_cost": 1115 }
+  ]
+}

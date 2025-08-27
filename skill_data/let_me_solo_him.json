@@ -1,0 +1,18 @@
+{
+  "id": "let_me_solo_him",
+  "category": "Buff",
+  "description": [
+    "Withdraw your army to empower yourself",
+    "Unsummons and disables all your minions for 60 seconds",
+    "<br>",
+    "<p class='has-text-warning'>Spirit Reave<p>",
+    "+12% total damage for each Ancient Spirit in your army",
+    "Cooldown and duration set to 8 seconds",
+    "<br>",
+    "<p class='has-text-warning'>Ancestral Endurance<p>",
+    "+8% Grit if your army has at least 25 Ancient Spirits",
+    "<br>",
+    "<p class='has-text-warning'>Slain Monsters Rest in piece<p>"
+  ],
+  "scaling": []
+}

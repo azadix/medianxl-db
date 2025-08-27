@@ -5,9 +5,9 @@
   "description": [
     "Devastate enemies in front of you with arcane power",
     "Deals Magic Damage based on your Maximum Mana",
-    "Deals Feedback Damage based on your Current Mana",
+    "Deals Feedback Damage based on your Current Mana"
   ],
   "scaling": [
-    { "level": 21, "physical_damage_min": 389, "physical_damage_max": 486, "magic_damage_min": 330, "magic_damage_max": 428, "mana_cost" 135}
+    { "level": 21, "physical_damage_min": 389, "physical_damage_max": 486, "magic_damage_min": 330, "magic_damage_max": 428, "mana_cost": 135 }
   ]
 }

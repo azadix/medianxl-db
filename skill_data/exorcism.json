@@ -1,0 +1,17 @@
+{
+  "id": "exorcism",
+  "category": "Attack",
+  "damage_type": "Magic",
+  "description": [
+    "Melee attack that inflicts heavenly flames that spread to others",
+    "Gains half of your Energy as base Attack Rating",
+    "Hits 12 times per second"
+  ],
+  "restriction": [
+    "Requires a melee weapon",
+    "Requires a melee target"
+  ],
+  "scaling": [
+    { "level": 24, "magic_damage_min": 376, "magic_damage_max": 912, "duration": 14.6, "mana_cost": 804 }
+  ]
+}

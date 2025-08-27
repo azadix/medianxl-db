@@ -34,7 +34,10 @@ const skillsWithDetails = {
     "sacrifices": true,
     "scepter_mastery": true,
     "town_portal": true,
-    "treewarden_morph": true
+    "treewarden_morph": true,
+    "let_me_solo_him": true,
+    "clear_mind": true,
+    "exorcism": true
 }
 
 let showDetailedOnly = false;

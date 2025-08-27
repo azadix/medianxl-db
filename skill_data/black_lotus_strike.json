@@ -9,6 +9,6 @@
     "Requires a melee weapon"
   ],
   "scaling": [
-    { "level": 31, "poison_damage_min": 766, "posion_damage_max": 1079, "poison_duration": 2, "mana_cost": 80}
+    { "level": 31, "poison_damage_min": 766, "posion_damage_max": 1079, "poison_duration": 2, "mana_cost": 80 }
   ]
 }
