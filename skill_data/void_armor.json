@@ -1,0 +1,14 @@
+{
+  "id": "void_armor",
+  "category": "Buff",
+  "description": [
+    "Become invulnerable for a short duration",
+    "Duration: 3 seconds",
+    "Cooldown: 25 seconds",
+    "Mana cost: 2000"
+  ],
+  "restriction": [
+    "Only works in the Heart of Darkness"
+  ],
+  "scaling": []
+}

@@ -1,0 +1,11 @@
+{
+  "id": "demonic_speed",
+  "category": "Buff/Debuff",
+  "description": [
+    "Boosts movement speed but renders you vulnerable",
+    "-512 physical/elemental/magic damage taken"
+  ],
+  "scaling": [
+    { "level": 19, "movement_speed": 115, "duration": 92, "mana_cost": 71 }
+  ]
+}

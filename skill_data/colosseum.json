@@ -1,0 +1,19 @@
+{
+  "id": "colosseum",
+  "category": "Warp Strike",
+  "damage_type": "Weapon Damage/Debuff",
+  "description": [
+    "Crash into an enemy target weakening foes within the impact zone",
+    "100% Weapon Damage",
+    "Cooldown: 7 seconds",
+    "<br>",
+    "<p class='has-text-warning'>Are you not entertained?</p>",
+    "Enemy Defense: -50%",
+    "Enemy Movement Speed and Damage: -25%",
+    "Duration: 5 seconds",
+    "Enemy Physical Resistance: -10"
+  ],
+  "scaling": [
+    { "level": 5, "bonus_fire_damage_based_on_strength_or_dexterity": 48, "mana_cost": 73 }
+  ]
+}

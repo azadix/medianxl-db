@@ -1,0 +1,11 @@
+{
+  "id": "cone_of_cold",
+  "category": "Spell",
+  "damage_type": "Cold",
+  "description": [
+    "Casts a cone of ice and frost in front of you"
+  ],
+  "scaling": [
+    { "level": 43, "cold_damage_min": 153, "cold_damage_max": 203, "mana_cost": 142 }
+  ]
+}

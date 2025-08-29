@@ -1,0 +1,16 @@
+{
+  "id": "flameburst_shot",
+  "category": "Projectile",
+  "damage_type": "Weapon Damage/Fire",
+  "description": [
+    "Blasts out a short ranged spread of fire in front of you",
+    "Convert 100% Physical Damage to Fire",
+    "120% Weapon Damage"
+  ],
+  "restriction": [
+    "Requires a crossbow"
+  ],
+  "scaling": [
+    { "level": 4, "missiles": 15, "fire_damage_min": 9, "fire_damage_max": 11, "attack_rating": 80, "mana_cost": 10 }
+  ]
+}

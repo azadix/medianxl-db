@@ -1,0 +1,19 @@
+{
+  "id": "cherubim",
+  "category": "Projectile",
+  "damage_type": "Weapon Damage/Magic",
+  "description": [
+    "Summons an avenging avatar of justice",
+    "Converts 70% Physical Damage to Magic",
+    "110% Weapon Damage"
+  ],
+  "restriction": [
+    "Requires a melee weapon"
+  ],
+  "synergies": [
+    "Paladin: Adds 200-300 Magic Damage per base level of Consecration"
+  ],
+  "scaling": [
+    { "level": 11, "cooldown": 4.2, "mana_cost": 50 }
+  ]
+}

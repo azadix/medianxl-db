@@ -1,0 +1,14 @@
+{
+  "id": "death_ripple",
+  "category": "Projectile",
+  "damage_type": "Physical/Magic",
+  "description": [
+    "Conjure a deathly ghost lance that explodes on impact",
+    "<p class='has-text-success'>Missile pattern improves per Enhancement (up to 2)</p>",
+    "1 Enhancement: Bone Spear nova repeats",
+    "2 Enhancements: Releases a flurry of Bone Spears"
+  ],
+  "scaling": [
+    { "level": 4, "physical_damage_min": 79, "physical_damage_max": 96, "magic_damage_min": 79, "magic_damage_max": 96, "mana_cost": 13 }
+  ]
+}

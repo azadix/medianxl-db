@@ -1,0 +1,16 @@
+{
+  "id": "broadside",
+  "category": "Projectile",
+  "damage_type": "Weapon Damage",
+  "description": [
+    "Plants a mechanical device that fires a barrage of knives",
+    "90% Weapon Damage",
+    "Cooldown: 12 seconds"
+  ],
+  "restriction": [
+    "Requires a throwing knife or naginata"
+  ],
+  "scaling": [
+    { "level": 39, "knives_total": 294, "mana_cost": 252 }
+  ]
+}

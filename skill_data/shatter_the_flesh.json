@@ -1,0 +1,13 @@
+{
+  "id": "shatter_the_flesh",
+  "category": "Spell",
+  "damage_type": "Cold",
+  "description": [
+    "Shatter a corpse freezing all nearby enemies",
+    "Freeze duration: 0.8 seconds",
+    "Radius: 8 yards"
+  ],
+  "scaling": [
+    { "level": 30, "cold_damage_min": 384, "cold_damage_max": 552, "mana_cost": 99 }
+  ]
+}

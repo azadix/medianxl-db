@@ -37,7 +37,29 @@ const skillsWithDetails = {
     "treewarden_morph": true,
     "let_me_solo_him": true,
     "clear_mind": true,
-    "exorcism": true
+    "exorcism": true,
+    "void_armor": true,
+    "thorn_field": true,
+    "mooncall": true,
+    "embalming": true,
+    "disintegrate": true,
+    "demonic_speed": true,
+    "death_ward": true,
+    "champions_of_the_sun": true,
+    "bloodlust": true,
+    "amatoxin": true,
+    "arachnomancy": true,
+    "broadside": true,
+    "charged_strike": true,
+    "cherubim": true,
+    "churel": true,
+    "colosseum": true,
+    "cone_of_cold": true,
+    "crucify": true,
+    "death_ripple": true,
+    "flameburst_shot": true,
+    "shatter_the_flesh": true,
+    "split_arrow": true
 }
 
 let showDetailedOnly = false;

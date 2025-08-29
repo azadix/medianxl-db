@@ -1,0 +1,13 @@
+{
+  "id": "mooncall",
+  "category": "Buff",
+  "description": [
+    "Improves your melee combat prowess"
+  ],
+  "restriction": [
+    "Requires a melee weapon"
+  ],
+  "scaling": [
+    { "level": 44, "life_on_melee_attack_(scales_with_char_level)": 79, "weapon_physical_damage": 43, "duration": 25.4, "mana_cost": 109 }
+  ]
+}

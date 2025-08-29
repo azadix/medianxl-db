@@ -1,0 +1,13 @@
+{
+  "id": "disintegrate",
+  "category": "Spell",
+  "damage_type": "Physical/Magic",
+  "description": [
+    "Powerful energy wave that destroys everything nearby",
+    "<p class='has-text-info'>Can be used with Melee Devotion<p>",
+    "Cooldown lowers with Magic resistance: 25% for no cooldown"
+  ],
+  "scaling": [
+    { "level": 74, "physical_damage_min": 1985, "physical_damage_max": 4123, "magic_damage_min": 1985, "magic_damage_max": 4123, "mana_cost": 550 }
+  ]
+}

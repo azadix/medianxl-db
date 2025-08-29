@@ -1,0 +1,17 @@
+{
+  "id": "crucify",
+  "category": "Attack",
+  "damage_type": "Weapon Damage/Magic",
+  "description": [
+    "Impales the enemy with homing spikes",
+    "Converts 25% Physical Damage to Magic Damage",
+    "60% Weapon Damage",
+    "8-16 Spikes depending on nearby enemies"
+  ],
+  "restriction": [
+    "Requires a melee weapon"
+  ],
+  "scaling": [
+    { "level": 10, "bonus_magic_damage": 268, "mana_cost": 16 }
+  ]
+}

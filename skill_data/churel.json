@@ -1,0 +1,13 @@
+{
+  "id": "churel",
+  "category": "Spell",
+  "damage_type": "Cold",
+  "description": [
+    "Gravestone that periodically emits a seeking spirit of ice",
+    "Duration: 15 seconds",
+    "Cooldown: 12 seconds"
+  ],
+  "scaling": [
+    { "level": 16, "cold_spell_damage": 32, "cold_damage_min": 119, "cold_damage_max": 145, "mana_cost": 134 }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "id": "split_arrow",
+  "category": "Projectile",
+  "damage_type": "Weapon Damage/Magic",
+  "description": [
+    "Fires arrows at nearby enemies",
+    "75% Weapon Damage"
+  ],
+  "restriction": [
+    "Requires a bow or a crossbow"
+  ],
+  "scaling": [
+    { "level": 23, "bonus_magic_damage": 98, "max_projectiles_per_volley":22, "target_seek_range": 22.6, "mana_cost": 39 }
+  ]
+}

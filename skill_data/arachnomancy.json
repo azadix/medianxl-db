@@ -1,0 +1,11 @@
+{
+  "id": "arachnomancy",
+  "category": "Spell",
+  "damage_type": "Poison",
+  "description": [
+    "A mass of venomous spiders envelops the target"
+  ],
+  "scaling": [
+    { "level": 25, "poison_damage_min": 3779, "poison_damage_max": 4398, "poison_duration": 1.6, "mana_cost": 140 }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "id": "champions_of_the_sun",
+  "category": "Summon",
+  "description": [
+    "Summon golden spearwomen wih a powerful defensive aura"
+  ],
+  "scaling": [
+    { "level": 40, "attack_rating": 3900, "spearwomen": 20, "life": 105100, "damage_min": 273, "damage_max": 1516, "aura_increases_physical_resistance_by": 18, "aura_increases_elemental_resistances_by": 38, "mana_cost": 368 }
+  ]
+}

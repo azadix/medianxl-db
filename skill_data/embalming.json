@@ -1,0 +1,14 @@
+{
+  "id": "embalming",
+  "category": "Passive",
+  "description": [
+    "Ritual of the initiates fortifies you and your minions"
+  ],
+  "synergies": [
+    "+6% Minion Life per base level",
+    "+2.25% increased Maximum Life per base level"
+  ],
+  "scaling": [
+    { "level": 1, "max_life": 14, "minion_life": 30, "mana_regeneration_rate": 5 }
+  ]
+}

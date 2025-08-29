@@ -1,0 +1,17 @@
+{
+  "id": "charged_strike",
+  "category": "Attack",
+  "damage_type": "Weapon Damage/Lightning",
+  "description": [
+    "Release piercing charged bolts from your weapon",
+    "+1 additional bolt per 6 skill levels",
+    "110% Weapon Damage",
+    "<p class='has-text-warning'>7% increased Lightning Damage per 1% Innate Elemental Damage</p>"
+  ],
+  "restriction": [
+    "Requires a melee weapon"
+  ],
+  "scaling": [
+    { "level": 15, "charged_bolts": 4, "lightning_damage_min": 30, "lightning_damage_max": 66, "mana_cost": 51 }
+  ]
+}

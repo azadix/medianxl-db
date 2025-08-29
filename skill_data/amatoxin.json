@@ -1,0 +1,12 @@
+{
+  "id": "amatoxin",
+  "category": "Passive",
+  "damage_type": "Poison",
+  "description": [
+    "Adds deadly poison to all your weapon attacks",
+    "Duration: 2 seconds"
+  ],
+  "scaling": [
+    {"level": 1, "posion_damage_min": 500, "posion_damage_max": 1000}
+  ]
+}
