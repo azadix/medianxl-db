@@ -1,0 +1,11 @@
+{
+  "id": "defender_spirit",
+  "category": "Summon",
+  "description": [
+    "A spirit who attacks in melee and takes damage for you",
+    "Uses Retaliate"
+  ],
+  "scaling": [
+    { "level": 26, "ancient_spirits": 2, "life": 8376, "damage": 74, "attack_rating": 3200, "mana_cost": 98 }
+  ]
+}

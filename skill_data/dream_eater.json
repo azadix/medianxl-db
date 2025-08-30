@@ -1,0 +1,11 @@
+{
+  "id": "dream_eater",
+  "category": "Spell",
+  "damage_type": "Physical",
+  "description": [
+    "Target foe is consumed by horror"
+  ],
+  "scaling": [
+    { "level": 11, "steal_%_of_damage_as_life_based_on_character_level": 42, "physical_damage_min": 203, "physical_damage_max": 213, "mana_cost": 85 }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "id": "chaos_nova",
+  "category": "Upgrade",
+  "related_skill": "abyss_knight",
+  "damage_type": "Weapon Damage",
+  "description": [
+    "Knights proc a deadly nova on kill and when killed",
+    "130% Weapon Damage"
+  ],
+  "restriction": [
+    ""
+  ],
+  "synergies": [
+    "0.5% chance to cast Chaos Nova on Kill per base level",
+    "10% chance to cast Chaos Nova on Death per base level"
+  ],
+  "scaling": [
+    { "level": 1, "cast_on_kill": 0, "cast_on_death": 10, "mana_cost": 99 }
+  ]
+}

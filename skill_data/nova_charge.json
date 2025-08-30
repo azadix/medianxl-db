@@ -1,0 +1,14 @@
+{
+  "id": "nova_charge",
+  "category": "Buff",
+  "damage_type": "Lightning",
+  "description": [
+    "Periodically discharge static novas when near enemies",
+    "Damage increases with your highest elemental spell damage stat",
+    "20% of Base Dexterity added to Energy",
+    "2 yards scatter radius"
+  ],
+  "scaling": [
+    { "level": 2, "lightning_damage_min": 116, "lightning_damage_max": 149, "duration": 300, "mana_cost": 92 }
+  ]
+}

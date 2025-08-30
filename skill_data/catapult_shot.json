@@ -1,0 +1,17 @@
+{
+  "id": "catapult_shot",
+  "category": "Projectile",
+  "damage_type": "Weapon Damage/Fire",
+  "description": [
+    "Blanket the target area with a spread of volatile potions",
+    "70% Weapon Damage",
+    "Converts 100% Physical Damage to Fire"
+  ],
+  "restriction": [
+    "Requires a crossbow",
+    "Disabled Widowmaker"
+  ],
+  "scaling": [
+    { "level": 4, "missiles": 10, "fire_damage_min": 10, "fire_damage_max": 15, "attack_rating": 95, "mana_cost": 10 }
+  ]
+}

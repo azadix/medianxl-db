@@ -1,0 +1,21 @@
+{
+  "id": "impale",
+  "category": "Attack",
+  "damage_type": "Weapon Damage",
+  "description": [
+    "A powerful strike exposing your enemy's weakness",
+    "170% Weapon Damage",
+    "1% chance to Expose Weakness on attack",
+    "<br>",
+    "<p class='has-text-warning'>Expose Weakness</p>",
+    "Physical Resistance: -50%",
+    "Duration: 2 seconds",
+    ""
+  ],
+  "restriction": [
+    "Requires a javelin"
+  ],
+  "scaling": [
+    { "level": 6, "physical_damage_min": 181, "physical_damage_max": 192, "mana_cost": 20 }
+  ]
+}

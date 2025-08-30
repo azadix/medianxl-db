@@ -1,0 +1,10 @@
+{
+  "id": "trinity_nova",
+  "category": "Spell",
+  "damage_type": "Tri-Elemental",
+  "description": [
+    "Cast a powerful tri-elemental nova",
+    "Cooldown: 0.8 seconds"
+  ],
+  "scaling": []
+}

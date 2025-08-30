@@ -1,0 +1,14 @@
+{
+  "id": "pentagram",
+  "category": "Melee Spell",
+  "damage_type": "Fire",
+  "description": [
+    "Creates an expanding pentagram of fire around you",
+    "Cooldown reduced by 0.04 second per 20 unspent attributes (Max 300)",
+    "+2% to Physical Resistance for 2 seconds after casting per 20 unspent attributes (Max 300)",
+    "Cooldown: 1.6 seconds"
+  ],
+  "scaling": [
+    { "level": 17, "fire_damage_min": 569, "fire_damage_max": 684, "mana_cost": 280 }
+  ]
+}

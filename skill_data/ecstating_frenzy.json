@@ -1,0 +1,13 @@
+{
+  "id": "ecstating_frenzy",
+  "category": "Buff/Debuff",
+  "description": [
+    "Wild rite that drives you into a self-destructive frenzy",
+    "Attack Speed +150%",
+    "Total character defense = 0",
+    "Duration: 600 seconds"
+  ],
+  "scaling": [
+    { "level": 29, "magic_damage_to_attacks": 67, "mana_cost": 41 }
+  ]
+}

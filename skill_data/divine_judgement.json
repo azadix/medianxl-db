@@ -1,0 +1,15 @@
+{
+  "id": "divine_judgement",
+  "category": "Attack",
+  "damage_type": "Weapon Damage",
+  "description": [
+    "Invoke a cascade of heavenly power to purify enemies",
+    "110% Weapon Damage"
+  ],
+  "restriction": [
+    "Requires a melee weapon"
+  ],
+  "scaling": [
+    { "level": 12, "mana_cost": 32 }
+  ]
+}

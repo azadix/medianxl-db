@@ -1,0 +1,12 @@
+{
+  "id": "flamestrike",
+  "category": "Spell",
+  "damage_type": "Fire",
+  "description": [
+    "Calls down a massive pillar of flames from the sky",
+    "Up to 13 hits per cast"
+  ],
+  "scaling": [
+    { "level": 18, "fire_damage_min": 198, "fire_damage_max": 273, "mana_cost": 89 }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "id": "firedance",
+  "category": "Buff",
+  "description": [
+    "A circle of sacred fire that empowers spells and attacks",
+    "Cooldown: 6 seconds"
+  ],
+  "scaling": [
+    { "level": 8, "elemental_spell_damage": 30, "physical_damage": 54, "mana_cost": 217 }
+  ]
+}

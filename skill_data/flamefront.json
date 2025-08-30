@@ -1,0 +1,12 @@
+{
+  "id": "flamefront",
+  "category": "Spell",
+  "damage_type": "Fire",
+  "description": [
+    "Casts a wave of exploding firebolts in front of you",
+    "Firebolts: 6"
+  ],
+  "scaling": [
+    { "level": 20, "fire_damage_min": 151, "fire_damage_max": 190, "mana_cost": 40 }
+  ]
+}

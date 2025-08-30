@@ -1,0 +1,18 @@
+{
+  "id": "flash",
+  "category": "Spell",
+  "damage_type": "Lightning",
+  "description": [
+    "Electrocutes and blinds nearby enemies",
+    "<p class='has-text-info'>Can be used with Melee Devotion</p>",
+    "Gains 10% Total Damage per 1% Max Lightning Resist (Max 150%)",
+    "Hits 4 times",
+    "<br>",
+    "<p class='has-text-warning'>Blinding Effect</p>",
+    "Reduces enemy Attack Rating by 30% for 3 seconds",
+    "+1  to Radius of Blinding Effect per 2 Light Radius"
+  ],
+  "scaling": [
+    { "level": 38, "lightning_damage_min": 284, "lightning_damage_max": 303, "mana_cost": 124 }
+  ]
+}

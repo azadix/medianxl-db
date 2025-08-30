@@ -1,0 +1,17 @@
+{
+  "id": "feral_strike",
+  "category": "",
+  "damage_type": "Weapon Damage",
+  "description": [
+    "Melee attack that increases attack and movement speed",
+    "50% Weapon Damage",
+    "Duration: 10 seconds"
+  ],
+  "restriction": [
+    "Requires an axe, mace or sword",
+    "Only allows the use of melee, summoning and buff/debuff skills"
+  ],
+  "scaling": [
+    { "level": 16, "attack_rating": 275, "attack_speed": 200, "hit_recovery": 200, "mana_cost": 13.7 }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "id": "frigid_nova",
+  "category": "Melee Spell",
+  "damage_type": "Cold",
+  "description": [
+    "Emit a wave of creeeping frozen doom",
+    "Multiple explosions do not stack"
+  ],
+  "restriction": [
+    "Requires a scepter or an orb"
+  ],
+  "scaling": [
+    { "level": 27, "cold_damage_min": 180, "cold_damage_max": 226, "mana_cost": 89 }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "id": "frostclaw_totem",
+  "category": "Totem",
+  "damage_type": "Cold",
+  "description": [
+    "Casts an intense burst of cold at nearby enemies",
+    "Totems: 2"
+  ],
+  "scaling": [
+    { "level": 4, "cold_damage_min": 181, "cold_damage_min": 207, "mana_cost": 75 }
+  ]
+}

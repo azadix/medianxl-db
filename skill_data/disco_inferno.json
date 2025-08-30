@@ -1,0 +1,13 @@
+{
+  "id": "disco_inferno",
+  "category": "Spell",
+  "damage_type": "Weapon Damage",
+  "description": [
+    "Burn baby burn!",
+    "45% Weapon Damage",
+    "Duration: 4 seconds"
+  ],
+  "scaling": [
+    { "level": 34, "mana_cost": 325 }
+  ]
+}

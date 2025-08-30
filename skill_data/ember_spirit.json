@@ -1,0 +1,12 @@
+{
+  "id": "ember_spirit",
+  "category": "Spell",
+  "damage_type": "Fire",
+  "description": [
+    "Set the path for the blind charge of a fiery spirit",
+    "Spirits: 1"
+  ],
+  "scaling": [
+    { "level": 23, "average_fire_damage_per_second_min": 2105, "average_fire_damage_per_second_max": 2835 ,"mana_cost": 83 }
+  ]
+}

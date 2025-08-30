@@ -1,0 +1,12 @@
+{
+  "id": "fireheart_totem",
+  "category": "Totem",
+  "damage_type": "Fire",
+  "description": [
+    "Casts explosive fireballs at nearby enemies",
+    "Totems: 2"
+  ],
+  "scaling": [
+    { "level": 4, "fire_damage_min": 52, "fire_damage_max": 77, "mana_cost": 75 }
+  ]
+}

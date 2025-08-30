@@ -1,0 +1,14 @@
+{
+  "id": "lightning_arena",
+  "category": "Buff",
+  "damage_type": "Lightning",
+  "description": [
+    "Welcome to the thunderdome!",
+    "Arena duration: 2 seconds",
+    "Delay between activations: 6 seconds",
+    "Stun length: 0.6 seconds"
+  ],
+  "scaling": [
+    { "level": 2, "lightning_damage_min": 1, "lightning_damage_max": 3, "duration": 80, "mana_cost": 27 }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "id": "chaos_nova",
+  "category": "Spell",
+  "damage_type": "Lightning",
+  "description": [
+    "Casts multiple bolts of lightning to scorch your enemies",
+    "8 bolts"
+  ],
+  "scaling": [
+    { "level": 20, "lightning_damage_min": 99, "lightning_damage_max": 133, "mana_cost": 45 }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "id": "path_of_flames",
+  "category": "",
+  "damage_type": "Fire",
+  "description": [
+    "When activated, causes a lake of fire when approached",
+    "Activation range: 4 yards",
+    "Delay betwen blasts: 0.4 seconds",
+    "Hits multiple times"
+  ],
+  "scaling": [
+    { "level": 2, "average_fire_damage_per_second_min": 153, "average_fire_damage_per_second_min": 191, "duration": 90, "mana_cost": 55 }
+  ]
+}

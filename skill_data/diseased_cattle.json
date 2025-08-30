@@ -1,0 +1,12 @@
+{
+  "id": "diseased_cattle",
+  "category": "Spell",
+  "damage_type": "Poison",
+  "description": [
+    "Magically create hexed cwos that emit poison clouds",
+    "4 cows"
+  ],
+  "scaling": [
+    { "level": 20, "poison_damage_min": 124, "poison_damage_max": 199, "poison_duration": 1, "mana_cost": 56 }
+  ]
+}

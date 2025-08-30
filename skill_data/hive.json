@@ -1,0 +1,13 @@
+{
+  "id": "hive",
+  "category": "Buff",
+  "damage_type": "Poison",
+  "description": [
+    "Periodically unleash deadly insect swarms when near enemies",
+    "Damage increases with your highest elemental spell damage stat",
+    "Delay between swarms: 2 seconds"
+  ],
+  "scaling": [
+    { "level": 2, "poison_damage_min": 921, "poison_damage_max": 1458, "poison_duration": 2, "duration": 70, "mana_cost": 92 }
+  ]
+}

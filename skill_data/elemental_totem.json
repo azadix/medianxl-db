@@ -1,0 +1,11 @@
+{
+  "id": "elemental_totem",
+  "category": "Corpse Totem",
+  "description": [
+    "Increases elemental damage of the party",
+    "Totems: 4"
+  ],
+  "scaling": [
+    { "level": 4, "life": 295, "innate_elemental_damage": 14, "party_elemental_damage": 13, "mana_cost": 142 }
+  ]
+}

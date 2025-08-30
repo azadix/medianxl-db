@@ -1,0 +1,12 @@
+{
+  "id": "emerald_prison",
+  "category": "Spell",
+  "damage_type": "Poison",
+  "description": [
+    "Surrounds target enemy with poison-filled glass globules",
+    "Globule duration: 5 seconds"
+  ],
+  "scaling": [
+    { "level": 16, "poison_damage_min": 562, "poison_damage_max": 1124, "poison_duration": 2.2, "mana_cost": 51 }
+  ]
+}

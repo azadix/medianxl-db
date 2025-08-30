@@ -1,0 +1,10 @@
+{
+  "id": "dark_power",
+  "category": "Buff",
+  "description": [
+    "Summon dark forces, boosting the party's physical attacks"
+  ],
+  "scaling": [
+    { "level": 7, "chance_of_crushing_blow": 10, "physical_damage": 18, "magic_damage_toParty_weapons_min": 17, "magic_damage_toParty_weapons_max": 26, "attack_speed": 20, "duration": 26 }
+  ]
+}
