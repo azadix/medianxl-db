@@ -131,3 +131,38 @@ const ClassTabs = {
         return classTabs ? classTabs.map(tab => tab.index) : [];
     }
 };
+
+// Enum for skill tags
+const SkillTags = {
+    // Damage / Elemental types
+    PHYSICAL: "Physical",
+    FIRE: "Fire",
+    COLD: "Cold",
+    LIGHTNING: "Lightning",
+    POISON: "Poison",
+    MAGIC: "Magic",
+    TRI_ELE: "Tri Elemental",
+
+    // Action types
+    ATTACK: "Attack",
+    SPELL: "Spell",
+    TELEPORT: "Teleport",
+    PASSIVE: "Passive",
+
+    // Effects
+    AURA: "Aura",
+    SUMMON: "Summon",
+    BUFF: "Buff",
+    DEBUFF: "Debuff",
+    HEALING: "Healing",
+    CURSE: "Curse",
+
+    // Mechanics
+    DURATION: "Duration",
+    AOE: "AoE",
+
+    // Utility: get all tags
+    values: function() {
+        return Object.values(this).filter(v => typeof v === "string");
+    }
+};

@@ -96,12 +96,11 @@ async function initializeDataTable(skillsData) {
             ? `<a href="./?skill=${skill.id}" class="view-skill-btn" data-skill-id="${skill.id}">${skill.name}</a>`
             : skill.name;
         
-        //TODO skill.tag is an array of tags. currently only showing first
         tbody.append(`
             <tr data-skill-id="${skill.id}" data-has-page="${hasDetailPage}">
                 <td><img src="icons/${imagePath}" alt="${skill.name}" class="image is-48x48"></td>
                 <td>${nameCell}</td>
-                <td>${skill.tag[0] || ''}</td>
+                <td>${(skill.tag && skill.tag.length > 0) ? skill.tag.join(", ") : ''}</td>
                 <td>${Classes.getName(skill.class) || ''}</td>
                 <td>${ClassTabs.getTabName(skill.class, skill.tab) || ''}</td>
             </tr>

@@ -24,7 +24,7 @@
       "id": "amplify_damage",
       "name": "Amplify Damage",
       "class": -1,
-      "tag": [ "Buff/Debuff/Misc" ],
+      "tag": [ "Buff", "Debuff" ],
       "tab": 1,
       "row": 0,
       "col": 0,
