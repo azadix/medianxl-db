@@ -88,8 +88,8 @@ async function initializeDataTable(skillsData) {
     const tbody = table.find('tbody');
     
     skillsData.forEach(skill => {
-        const hasId = skill.id && skill.id.trim() !== '';
-        const hasDetailPage = hasId ? checkSkillDetailPage(skill.id) : false;
+        const hasDetailPage = checkSkillDetailPage(skill);
+
         const imagePath = skill.image || "-1/icons-shared_missing.png";
         
         const nameCell = hasDetailPage 
@@ -102,7 +102,7 @@ async function initializeDataTable(skillsData) {
                 <td>${nameCell}</td>
                 <td>${(skill.tag && skill.tag.length > 0) ? skill.tag.join(", ") : ''}</td>
                 <td>${Classes.getName(skill.class) || ''}</td>
-                <td>${ClassTabs.getTabName(skill.class, skill.tab) || ''}</td>
+                <td>${skill.tabName ? skill.tabName : ClassTabs.getTabName(skill.class, skill.tab) || ''}</td>
             </tr>
         `);
     });
@@ -357,6 +357,106 @@ async function initializePage() {
     // Attach event listeners
     attachViewSkillListeners();
 }
+
+// Add buttons for JSON/SQLite loading
+const buttonContainer = document.createElement('div');
+buttonContainer.classList.add('buttons', 'mb-4');
+
+const jsonBtn = document.createElement('button');
+jsonBtn.textContent = 'Load from JSON';
+jsonBtn.classList.add('button', 'is-link');
+buttonContainer.appendChild(jsonBtn);
+
+const sqliteBtn = document.createElement('button');
+sqliteBtn.textContent = 'Load from SQLite';
+sqliteBtn.classList.add('button', 'is-primary');
+buttonContainer.appendChild(sqliteBtn);
+
+contentElement.parentNode.insertBefore(buttonContainer, contentElement);
+
+// Global variables for SQLite
+let sqlDb = null;
+let SQL = null;
+
+// Load SQLite database
+async function loadSQLite(fileUrl) {
+    if (!SQL) {
+        SQL = await initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/${file}` });
+    }
+    const response = await fetch(fileUrl);
+    if (!response.ok) throw new Error('Failed to fetch SQLite file');
+    const buffer = await response.arrayBuffer();
+    sqlDb = new SQL.Database(new Uint8Array(buffer));
+    console.log('SQLite database loaded');
+}
+
+async function loadSkillsFromSQLite() {
+    try {
+        // Fetch SQLite file
+        const response = await fetch('skills.sqlite');
+        if (!response.ok) throw new Error('Failed to load SQLite file');
+
+        const buffer = await response.arrayBuffer();
+
+        // Initialize SQL.js
+        const SQL = await initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/${file}` });
+        const db = new SQL.Database(new Uint8Array(buffer));
+
+        // Query skills with tab names
+        const stmt = db.prepare(`
+            SELECT s.*,
+                   ct.name AS tab_name
+            FROM skills s
+            LEFT JOIN classTabs ct
+            ON s.tab_index = ct.id
+            ORDER BY s.class_id, ct.tab_index, s.row, s.col;
+        `);
+
+        const loadedSkills = [];
+        while (stmt.step()) {
+            const row = stmt.getAsObject();
+            loadedSkills.push({
+                id: row.name,
+                name: row.display_name,
+                class: row.class_id - 2,         // adjust DB class id
+                tab: row.tab_index,              // tab id from DB
+                tabName: row.tab_name || '',     // proper tab name
+                row: row.row,
+                col: row.col,
+                image: row.image || '-1/icons-shared_missing.png'
+            });
+        }
+        stmt.free();
+
+        skillsList = loadedSkills; // update global list
+    } catch (error) {
+        console.error('Error loading skills from SQLite:', error);
+        contentElement.innerHTML = `<p>Error loading skills from SQLite: ${error.message}</p>`;
+    }
+}
+
+// Button click handlers
+jsonBtn.addEventListener('click', async () => {
+    await loadSkillsList();
+    displayAllSkills();
+});
+
+sqliteBtn.addEventListener('click', async () => {
+    await loadSkillsFromSQLite();
+    displayAllSkills();
+});
+
+// Override getSkillInfo for SQLite mode
+function getSkillInfo(skillId) {
+    return skillsList.find(skill => skill.id == skillId);
+}
+
+function checkSkillDetailPage(skill) {
+    // skill can be full object
+    return skillsWithDetails[skill.id] || false;
+}
+
+
 
 // Call initialize on page load
 initializePage();

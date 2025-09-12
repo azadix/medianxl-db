@@ -1,0 +1,410 @@
+<!-- https://sql.js.org/examples/GUI/ -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Skill DB Editor</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/sql-wasm.js"></script>
+  <script src="enums.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/1.0.1/css/bulma.min.css" />
+  <style>
+    .tag-list { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 5px; }
+    .tag-list label { display: flex; align-items: center; gap: 4px; }
+    table { table-layout: fixed; word-wrap: break-word; }
+  </style>
+</head>
+<body class="section">
+<nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
+        <div class="navbar-menu">
+            <div class="navbar-start">
+                <a class="navbar-item" href="./" id="nav-all-skills">
+                    <strong>Skills</strong>
+                </a>
+                <a class="navbar-item" href="./db.html" id="nav-db">
+                    <strong>DB</strong>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+<div class="container">
+  <h1 class="title is-3">Skills Database (sql.js)</h1>
+
+  <form id="skill-form" class="box">
+    <div class="columns is-multiline">
+      <div class="column is-one-quarter">
+        <label class="label">Name</label>
+        <input class="input" type="text" id="name" required>
+      </div>
+
+      <div class="column is-one-quarter">
+        <label class="label">Display Name</label>
+        <input class="input" type="text" id="display_name" required>
+      </div>
+
+      <div class="column is-one-quarter">
+        <label class="label">Class</label>
+        <div class="select is-fullwidth">
+          <select id="class_id"></select>
+        </div>
+      </div>
+
+      <div class="column is-one-quarter">
+        <label class="label">Tab</label>
+        <div class="select is-fullwidth">
+          <select id="tab_index"></select>
+        </div>
+      </div>
+
+      <div class="column is-one-quarter">
+        <label class="label">Row</label>
+        <input class="input" type="number" id="row" value="0">
+      </div>
+
+      <div class="column is-one-quarter">
+        <label class="label">Col</label>
+        <input class="input" type="number" id="col" value="0">
+      </div>
+
+      <div class="column is-half">
+        <label class="label">Image Path</label>
+        <input class="input" type="text" id="image" value="-1/icons-shared_missing.png">
+      </div>
+
+      <div class="column is-full">
+        <label class="label">Tags</label>
+        <div id="tag-checkboxes" class="tag-list"></div>
+      </div>
+
+      <div class="column is-full">
+        <button class="button is-primary" type="submit">Insert Skill</button>
+      </div>
+    </div>
+  </form>
+
+  <div class="buttons">
+    <button class="button is-link" id="export-db">Export Database</button>
+    <div class="file has-name is-small" style="display:none;">
+      <input class="file-input" type="file" id="import-db" accept=".sqlite,.db">
+    </div>
+    <button class="button is-info" id="import-db-btn">Import Database</button>
+
+    <!-- New JSON Import -->
+    <input type="file" id="import-json" accept=".json" style="display:none;">
+    <button class="button is-success" id="import-json-btn">Import Skills JSON</button>
+  </div>
+
+  <h2 class="title is-4">Skills Table</h2>
+  <table class="table is-striped is-fullwidth" id="skills-table">
+    <thead>
+      <tr>
+        <th>ID</th><th>Name</th><th>Display Name</th>
+        <th>Class</th><th>Tab</th><th>Row</th><th>Col</th><th>Image</th><th>Tags</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<script>
+let db, SQL;
+
+initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/${file}` })
+  .then(sql => {
+    SQL = sql;
+    initDatabase();
+  });
+
+function initDatabase() {
+  db = new SQL.Database();
+
+  db.run(`
+    CREATE TABLE classes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL UNIQUE
+    );
+    CREATE TABLE classTabs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      class_id INTEGER NOT NULL,
+      tab_index INTEGER NOT NULL,
+      name TEXT NOT NULL,
+      FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE CASCADE,
+      UNIQUE(class_id, tab_index)
+    );
+    CREATE TABLE skilltags (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL UNIQUE
+    );
+    CREATE TABLE skills (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      display_name TEXT NOT NULL,
+      class_id INTEGER,
+      tab_index INTEGER,
+      row INTEGER,
+      col INTEGER,
+      image TEXT,
+      FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE SET NULL
+    );
+    CREATE TABLE skill_skilltags (
+      skill_id INTEGER NOT NULL,
+      tag_id INTEGER NOT NULL,
+      PRIMARY KEY (skill_id, tag_id),
+      FOREIGN KEY (skill_id) REFERENCES skills(id) ON DELETE CASCADE,
+      FOREIGN KEY (tag_id) REFERENCES skilltags(id) ON DELETE CASCADE
+    );
+  `);
+
+  //Insert default classes
+  const defaultClasses = ["Other", "Amazon", "Sorceress", "Necromancer", "Paladin", "Barbarian", "Druid", "Assassin"];
+  let stmt = db.prepare("INSERT INTO classes (name) VALUES (?)");
+  defaultClasses.forEach(c => stmt.run([c]));
+  stmt.free();
+
+  // Insert default tags
+  const defaultTags = [
+    "Physical", "Fire", "Cold", "Lightning", "Poison", "Magic", "Tri Elemental",
+    "Attack", "Spell", "Teleport", "Passive",
+    "Aura", "Summon", "Buff", "Debuff", "Healing", "Curse",
+    "Duration", "AoE"
+  ];
+  stmt = db.prepare("INSERT INTO skilltags (name) VALUES (?)");
+  defaultTags.forEach(tag => stmt.run([tag]));
+  stmt.free();
+
+  // Insert classTabs from enums.js
+  Object.keys(ClassTabs)
+    .filter(key => !isNaN(parseInt(key))) // Only numeric class indices
+    .forEach(enumIndex => {
+      const dbClassId = parseInt(enumIndex, 10) + 2; // map enum to DB ID
+      ClassTabs[enumIndex].forEach(tab => {
+        db.run(`
+          INSERT INTO classTabs (class_id, tab_index, name)
+          VALUES (?, ?, ?)
+        `, [dbClassId, tab.index, tab.name]);
+      });
+    });
+
+
+
+  populateClassSelect();
+  populateTagCheckboxes();
+  refreshSkillsTable();
+}
+
+function populateClassSelect() {
+  if (!db) return;
+  const res = db.exec("SELECT id, name FROM classes ORDER BY id");
+  const select = document.getElementById("class_id");
+  select.innerHTML = "";
+  if (!res[0]) return;
+
+  res[0].values.forEach(([id, name]) => {
+    const opt = document.createElement("option");
+    opt.value = id;
+    opt.textContent = name;
+    select.appendChild(opt);
+  });
+
+  if (res[0].values.length > 0) populateTabSelect(res[0].values[0][0]);
+
+  select.addEventListener("change", e => populateTabSelect(e.target.value));
+}
+
+function populateTabSelect(classId) {
+  if (!db) return;
+  const select = document.getElementById("tab_index");
+  select.innerHTML = "";
+
+  const stmt = db.prepare("SELECT tab_index, name FROM classTabs WHERE class_id = ? ORDER BY tab_index");
+  stmt.bind([classId]);
+
+  while (stmt.step()) {
+    const [index, name] = stmt.get();
+    const opt = document.createElement("option");
+    opt.value = index;
+    opt.textContent = name;
+    select.appendChild(opt);
+  }
+
+  stmt.free();
+}
+
+function populateTagCheckboxes() {
+  if (!db) return;
+  const res = db.exec("SELECT id, name FROM skilltags ORDER BY name");
+  const container = document.getElementById("tag-checkboxes");
+  container.innerHTML = "";
+  if (!res[0]) return;
+
+  res[0].values.forEach(([id, name]) => {
+    const label = document.createElement("label");
+    label.className = "checkbox";
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.value = id;
+    label.appendChild(checkbox);
+    label.appendChild(document.createTextNode(" " + name));
+    container.appendChild(label);
+  });
+}
+
+// Insert skill
+document.getElementById("skill-form").addEventListener("submit", e => {
+  e.preventDefault();
+  if (!db) return;
+
+  const name = document.getElementById("name").value.trim();
+  const display_name = document.getElementById("display_name").value.trim();
+  const class_id = document.getElementById("class_id").value;
+  const tab_index = parseInt(document.getElementById("tab_index").value, 10);
+  const row = parseInt(document.getElementById("row").value, 10);
+  const col = parseInt(document.getElementById("col").value, 10);
+  const image = document.getElementById("image").value.trim();
+
+  db.run(`
+    INSERT INTO skills (name, display_name, class_id, tab_index, row, col, image)
+    VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    [name, display_name, class_id, tab_index, row, col, image]
+  );
+
+  const skillId = db.exec("SELECT last_insert_rowid()")[0].values[0][0];
+
+  document.querySelectorAll("#tag-checkboxes input:checked").forEach(cb => {
+    db.run("INSERT INTO skill_skilltags (skill_id, tag_id) VALUES (?, ?)", [skillId, cb.value]);
+    cb.checked = false;
+  });
+
+  refreshSkillsTable();
+  e.target.reset();
+});
+
+function refreshSkillsTable() {
+  if (!db) return;
+  const tbody = document.querySelector("#skills-table tbody");
+  tbody.innerHTML = "";
+
+  const query = `
+    SELECT s.id, s.name, s.display_name, c.name as class_name, 
+           s.tab_index, s.row, s.col, s.image,
+           GROUP_CONCAT(t.name, ', ') as tags
+    FROM skills s
+    LEFT JOIN classes c ON s.class_id = c.id
+    LEFT JOIN skill_skilltags st ON s.id = st.skill_id
+    LEFT JOIN skilltags t ON st.tag_id = t.id
+    GROUP BY s.id
+    ORDER BY s.id;
+  `;
+
+  const res = db.exec(query);
+  if (res.length > 0) {
+    res[0].values.forEach(row => {
+      const tr = document.createElement("tr");
+      row.forEach(val => {
+        const td = document.createElement("td");
+        td.textContent = val;
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+  }
+}
+
+// Export/Import
+document.getElementById("export-db").addEventListener("click", () => {
+  if (!db) return;
+  const binaryArray = db.export();
+  const blob = new Blob([binaryArray], { type: "application/octet-stream" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "skills.sqlite";
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+document.getElementById("import-db-btn").addEventListener("click", () => {
+  const fileInput = document.getElementById("import-db");
+  fileInput.click(); // triggers the hidden file input
+});
+
+document.getElementById("import-db").addEventListener("change", () => {
+  const fileInput = document.getElementById("import-db");
+  if (!fileInput.files.length) { return; }
+
+  const reader = new FileReader();
+  reader.onload = function() {
+    const uInt8Array = new Uint8Array(reader.result);
+    db = new SQL.Database(uInt8Array);
+    populateClassSelect();
+    populateTagCheckboxes();
+    refreshSkillsTable();
+    fileInput.value = ""; // reset for next import
+  };
+  reader.readAsArrayBuffer(fileInput.files[0]);
+});
+
+// Import Skills from JSON
+document.getElementById("import-json-btn").addEventListener("click", () => {
+  document.getElementById("import-json").click();
+});
+
+document.getElementById("import-json").addEventListener("change", () => {
+  const fileInput = document.getElementById("import-json");
+  if (!fileInput.files.length) return;
+
+  const reader = new FileReader();
+  reader.onload = function() {
+    try {
+      const jsonData = JSON.parse(reader.result);
+      if (!jsonData.skills) {
+        alert("Invalid JSON structure: 'skills' array missing.");
+        return;
+      }
+
+      jsonData.skills.forEach(skill => {
+        const name = skill.id || "";
+        const display_name = skill.name || "";
+        const enumClassIndex = skill.class; // -1 to 6
+        const class_id = enumClassIndex + 2; // map enum to DB class_id (1-8)
+        const tab_index_enum = skill.tab;   // numeric tab index from JSON
+        const row = skill.row ?? 0;
+        const col = skill.col ?? 0;
+        const image = skill.image || "-1/icons-shared_missing.png";
+
+        // Look up the database tab_index by class_id and JSON tab index
+        let tab_index_db = 0; // fallback if not found
+        const stmt = db.prepare(`
+          SELECT id FROM classTabs
+          WHERE class_id = ? AND tab_index = ?
+        `);
+        stmt.bind([class_id, tab_index_enum]);
+        if (stmt.step()) {
+          tab_index_db = stmt.get()[0];
+        } else {
+          console.warn(`Tab not found for class_id=${class_id}, tab_index=${tab_index_enum}. Defaulting to 0.`);
+        }
+        stmt.free();
+
+        db.run(`
+          INSERT INTO skills (name, display_name, class_id, tab_index, row, col, image)
+          VALUES (?, ?, ?, ?, ?, ?, ?)
+        `, [name, display_name, class_id, tab_index_db, row, col, image]);
+      });
+
+      refreshSkillsTable();
+      alert("Skills imported successfully!");
+    } catch (e) {
+      alert("Error reading JSON: " + e.message);
+      console.error(e);
+    }
+    fileInput.value = ""; // reset
+  };
+
+  reader.readAsText(fileInput.files[0]);
+});
+
+</script>
+
+</body>
+</html>
