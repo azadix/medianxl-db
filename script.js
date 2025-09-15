@@ -75,7 +75,7 @@ async function initializeDataTable(skillsData) {
                 <td><img src="icons/${imagePath}" alt="${skill.name}" class="image is-48x48"></td>
                 <td>${nameCell}</td>
                 <td>${(skill.tags && skill.tags.length > 0) ? skill.tags.join(", ") : ''}</td>
-                <td>${Classes.getName(skill.class) || ''}</td>
+                <td>${skill.class}</td>
                 <td>${skill.tabName}</td>
             </tr>
         `);
@@ -145,7 +145,7 @@ async function displaySkillDetail(skillId) {
     let descriptionHtml = '';
 
     //TODO find better solution (tab_index 67 is 'Orange text')
-    const isOrangeText = (skillInfo.class == Classes.OTHER && skillInfo.tab == 67)
+    const isOrangeText = (skillInfo.class == "Other" && skillInfo.tab == 67)
     if (Array.isArray(skillData.description)) {
         descriptionHtml = `<p class="is-size-5"><strong>Description:</strong></p>`;
         descriptionHtml += skillData.description.map(paragraph => 
@@ -324,17 +324,20 @@ async function loadSkillsFromSQLite() {
         const buffer = await response.arrayBuffer();
 
         // Initialize SQL.js
-        const SQL = await initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/${file}` });
+        const SQL = await initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.13.0/${file}` });
         const db = new SQL.Database(new Uint8Array(buffer));
 
         // Query skills with correct tab join
         const stmt = db.prepare(`
             SELECT s.*,
                 ct.name AS tab_name,
+                c.name AS class_name,
                 GROUP_CONCAT(t.name, ', ') AS tags
             FROM skills s
             LEFT JOIN classTabs ct
                 ON s.tab_index = ct.id
+            LEFT JOIN classes c
+                ON s.class_id = c.id
             LEFT JOIN skill_skilltags st
                 ON s.id = st.skill_id
             LEFT JOIN skilltags t
@@ -349,7 +352,7 @@ async function loadSkillsFromSQLite() {
             loadedSkills.push({
                 id: row.name,
                 name: row.display_name,
-                class: row.class_id - 2,   // DB → enum
+                class: row.class_name || '',
                 tab: row.tab_index,        // numeric
                 tabName: row.tab_name || '', // proper tab name
                 tags: row.tags ? row.tags.split(', ') : [],
