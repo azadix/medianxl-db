@@ -1,7 +1,5 @@
 {
   "id": "pentagram",
-  "category": "Melee Spell",
-  "damage_type": "Fire",
   "description": [
     "Creates an expanding pentagram of fire around you",
     "Cooldown reduced by 0.04 second per 20 unspent attributes (Max 300)",

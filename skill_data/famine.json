@@ -1,6 +1,5 @@
 {
   "id": "famine",
-  "category": "Passive",
   "description": [
     "Increases damage and returns life when you hit",
     "Adds 15% of Strength and Dexterity as Weapon Physical Damage"

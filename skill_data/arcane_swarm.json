@@ -1,7 +1,5 @@
 {
   "id": "arcane_swarm",
-  "category": "Spell",
-  "damage_type": "Magic",
   "description": [
     "Shred enemies with crisscrossing magic arrows",
     "Skill damage increases with Fire, Cold, Lightning, Poison and Physical/Magic Spell Damage",

@@ -1,6 +1,5 @@
 {
   "id": "demonic_speed",
-  "category": "Buff/Debuff",
   "description": [
     "Boosts movement speed but renders you vulnerable",
     "-512 physical/elemental/magic damage taken"

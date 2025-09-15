@@ -1,7 +1,5 @@
 {
   "id": "hive",
-  "category": "Buff",
-  "damage_type": "Poison",
   "description": [
     "Periodically unleash deadly insect swarms when near enemies",
     "Damage increases with your highest elemental spell damage stat",

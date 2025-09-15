@@ -4,12 +4,10 @@
 <head>
   <meta charset="UTF-8">
   <title>Skill DB Editor</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/sql-wasm.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.13.0/sql-wasm.js"></script>
   <script src="enums.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/1.0.1/css/bulma.min.css" />
   <style>
-    .tag-list { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 5px; }
-    .tag-list label { display: flex; align-items: center; gap: 4px; }
     table { table-layout: fixed; word-wrap: break-word; }
   </style>
 </head>
@@ -29,6 +27,14 @@
 
 <div class="container">
   <h1 class="title is-3">Skills Database (sql.js)</h1>
+
+  <div class="buttons">
+    <div class="file has-name is-small" style="display:none;">
+      <input class="file-input" type="file" id="import-db" accept=".sqlite,.db">
+    </div>
+    <button class="button is-info" id="import-db-btn">Import Database</button>
+    <button class="button is-link" id="export-db">Export Database</button>
+  </div>
 
   <form id="skill-form" class="box">
     <div class="columns is-multiline">
@@ -73,7 +79,7 @@
 
       <div class="column is-full">
         <label class="label">Tags</label>
-        <div id="tag-checkboxes" class="tag-list"></div>
+        <div id="tag-checkboxes"></div>
       </div>
 
       <div class="column is-full">
@@ -82,24 +88,20 @@
     </div>
   </form>
 
-  <div class="buttons">
-    <button class="button is-link" id="export-db">Export Database</button>
-    <div class="file has-name is-small" style="display:none;">
-      <input class="file-input" type="file" id="import-db" accept=".sqlite,.db">
-    </div>
-    <button class="button is-info" id="import-db-btn">Import Database</button>
-
-    <!-- New JSON Import -->
-    <input type="file" id="import-json" accept=".json" style="display:none;">
-    <button class="button is-success" id="import-json-btn">Import Skills JSON</button>
-  </div>
-
   <h2 class="title is-4">Skills Table</h2>
-  <table class="table is-striped is-fullwidth" id="skills-table">
+  <table class="table is-striped is-fullwidth is-narrow" id="skills-table">
     <thead>
       <tr>
-        <th>ID</th><th>Name</th><th>Display Name</th>
-        <th>Class</th><th>Tab</th><th>Row</th><th>Col</th><th>Image</th><th>Tags</th>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Display Name</th>
+        <th>Class</th>
+        <th>Tab</th>
+        <th>Row</th>
+        <th>Col</th>
+        <th>Image</th>
+        <th>Tags</th>
+        <th>Actions</th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -108,12 +110,29 @@
 
 <script>
 let db, SQL;
+let editingSkillId = null;
 
-initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/${file}` })
-  .then(sql => {
-    SQL = sql;
-    initDatabase();
-  });
+initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.13.0/${file}` })
+.then(async sql => {
+  SQL = sql;
+  try {
+    // Try to auto-load existing skills.sqlite
+    const response = await fetch('skills.sqlite');
+    if (!response.ok) throw new Error("No saved database found");
+
+    const buffer = await response.arrayBuffer();
+    db = new SQL.Database(new Uint8Array(buffer));
+    console.log("Loaded skills.sqlite from server");
+
+    populateClassSelect();
+    populateTagCheckboxes();
+    refreshSkillsTable();
+  } catch (err) {
+    console.warn("Falling back to empty DB:", err.message);
+    initDatabase(); // fall back to new empty DB
+  }
+});
+
 
 function initDatabase() {
   db = new SQL.Database();
@@ -156,36 +175,34 @@ function initDatabase() {
   `);
 
   //Insert default classes
-  const defaultClasses = ["Other", "Amazon", "Sorceress", "Necromancer", "Paladin", "Barbarian", "Druid", "Assassin"];
-  let stmt = db.prepare("INSERT INTO classes (name) VALUES (?)");
-  defaultClasses.forEach(c => stmt.run([c]));
-  stmt.free();
+  // const defaultClasses = ["Other", "Amazon", "Sorceress", "Necromancer", "Paladin", "Barbarian", "Druid", "Assassin"];
+  // let stmt = db.prepare("INSERT INTO classes (name) VALUES (?)");
+  // defaultClasses.forEach(c => stmt.run([c]));
+  // stmt.free();
 
-  // Insert default tags
-  const defaultTags = [
-    "Physical", "Fire", "Cold", "Lightning", "Poison", "Magic", "Tri Elemental",
-    "Attack", "Spell", "Teleport", "Passive",
-    "Aura", "Summon", "Buff", "Debuff", "Healing", "Curse",
-    "Duration", "AoE"
-  ];
-  stmt = db.prepare("INSERT INTO skilltags (name) VALUES (?)");
-  defaultTags.forEach(tag => stmt.run([tag]));
-  stmt.free();
+  // // Insert default tags
+  // const defaultTags = [
+  //   "Physical", "Fire", "Cold", "Lightning", "Poison", "Magic", "Tri Elemental",
+  //   "Attack", "Spell", "Teleport", "Passive",
+  //   "Aura", "Summon", "Buff", "Debuff", "Healing", "Curse",
+  //   "Duration", "AoE", "Warp Strike"
+  // ];
+  // stmt = db.prepare("INSERT INTO skilltags (name) VALUES (?)");
+  // defaultTags.forEach(tag => stmt.run([tag]));
+  // stmt.free();
 
-  // Insert classTabs from enums.js
-  Object.keys(ClassTabs)
-    .filter(key => !isNaN(parseInt(key))) // Only numeric class indices
-    .forEach(enumIndex => {
-      const dbClassId = parseInt(enumIndex, 10) + 2; // map enum to DB ID
-      ClassTabs[enumIndex].forEach(tab => {
-        db.run(`
-          INSERT INTO classTabs (class_id, tab_index, name)
-          VALUES (?, ?, ?)
-        `, [dbClassId, tab.index, tab.name]);
-      });
-    });
-
-
+  // // Insert classTabs from enums.js
+  // Object.keys(ClassTabs)
+  //   .filter(key => !isNaN(parseInt(key))) // Only numeric class indices
+  //   .forEach(enumIndex => {
+  //     const dbClassId = parseInt(enumIndex, 10) + 2; // map enum to DB ID
+  //     ClassTabs[enumIndex].forEach(tab => {
+  //       db.run(`
+  //         INSERT INTO classTabs (class_id, tab_index, name)
+  //         VALUES (?, ?, ?)
+  //       `, [dbClassId, tab.index, tab.name]);
+  //     });
+  //   });
 
   populateClassSelect();
   populateTagCheckboxes();
@@ -216,17 +233,35 @@ function populateTabSelect(classId) {
   const select = document.getElementById("tab_index");
   select.innerHTML = "";
 
-  const stmt = db.prepare("SELECT tab_index, name FROM classTabs WHERE class_id = ? ORDER BY tab_index");
+  const stmt = db.prepare("SELECT id, name FROM classTabs WHERE class_id = ? ORDER BY tab_index");
   stmt.bind([classId]);
 
   while (stmt.step()) {
-    const [index, name] = stmt.get();
+    const [id, name] = stmt.get();
     const opt = document.createElement("option");
-    opt.value = index;
+    opt.value = id;   // store db id, not tab_index
     opt.textContent = name;
     select.appendChild(opt);
   }
 
+  stmt.free();
+}
+
+function setSkillTagCheckboxes(skillId) {
+  // Clear all first
+  document.querySelectorAll("#tag-checkboxes input[type=checkbox]").forEach(cb => {
+    cb.checked = false;
+  });
+
+  // Get tags for this skill
+  const stmt = db.prepare("SELECT tag_id FROM skill_skilltags WHERE skill_id = ?");
+  stmt.bind([skillId]);
+
+  while (stmt.step()) {
+    const tagId = stmt.get()[0];
+    const cb = document.querySelector(`#tag-checkboxes input[value='${tagId}']`);
+    if (cb) cb.checked = true;
+  }
   stmt.free();
 }
 
@@ -237,17 +272,80 @@ function populateTagCheckboxes() {
   container.innerHTML = "";
   if (!res[0]) return;
 
+  // Build a lookup of id → name
+  const tagMap = {};
   res[0].values.forEach(([id, name]) => {
-    const label = document.createElement("label");
-    label.className = "checkbox";
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.value = id;
-    label.appendChild(checkbox);
-    label.appendChild(document.createTextNode(" " + name));
-    container.appendChild(label);
+    tagMap[id] = name;
   });
+
+  // Track used IDs so we can later put leftovers into "Other"
+  const usedIds = new Set();
+
+  // Render each defined group
+  for (const [groupName, ids] of Object.entries(tagGroups)) {
+    const groupDiv = document.createElement("div");
+    groupDiv.className = "mb-2 is-fullwidth";
+
+    const title = document.createElement("p");
+    title.className = "has-text-weight-bold has-text-warning";
+    title.textContent = groupName;
+    groupDiv.appendChild(title);
+
+    const groupList = document.createElement("div");
+
+    // Sort alphabetically inside group
+    ids.map(id => [id, tagMap[id]])
+       .filter(([id, name]) => name) // skip invalid
+       .sort((a, b) => a[1].localeCompare(b[1]))
+       .forEach(([id, name]) => {
+         usedIds.add(id);
+
+         const label = document.createElement("label");
+         label.className = "checkbox pr-3";
+         const checkbox = document.createElement("input");
+         checkbox.type = "checkbox";
+         checkbox.value = id;
+         label.appendChild(checkbox);
+         label.appendChild(document.createTextNode(" " + name));
+         groupList.appendChild(label);
+       });
+
+    groupDiv.appendChild(groupList);
+    container.appendChild(groupDiv);
+  }
+
+  // Handle "Other" (all tags not explicitly grouped)
+  const leftover = Object.entries(tagMap)
+    .filter(([id]) => !usedIds.has(parseInt(id)))
+    .sort((a, b) => a[1].localeCompare(b[1]));
+
+  if (leftover.length > 0) {
+    const groupDiv = document.createElement("div");
+    groupDiv.className = "mb-2 is-fullwidth";
+
+    const title = document.createElement("p");
+    title.className = "has-text-weight-bold has-text-danger";
+    title.textContent = "Other";
+    groupDiv.appendChild(title);
+
+    const groupList = document.createElement("div");
+
+    leftover.forEach(([id, name]) => {
+      const label = document.createElement("label");
+      label.className = "checkbox pr-3";
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.value = id;
+      label.appendChild(checkbox);
+      label.appendChild(document.createTextNode(" " + name));
+      groupList.appendChild(label);
+    });
+
+    groupDiv.appendChild(groupList);
+    container.appendChild(groupDiv);
+  }
 }
+
 
 // Insert skill
 document.getElementById("skill-form").addEventListener("submit", e => {
@@ -257,27 +355,45 @@ document.getElementById("skill-form").addEventListener("submit", e => {
   const name = document.getElementById("name").value.trim();
   const display_name = document.getElementById("display_name").value.trim();
   const class_id = document.getElementById("class_id").value;
-  const tab_index = parseInt(document.getElementById("tab_index").value, 10);
+  const tab_id = parseInt(document.getElementById("tab_index").value, 10);
   const row = parseInt(document.getElementById("row").value, 10);
   const col = parseInt(document.getElementById("col").value, 10);
   const image = document.getElementById("image").value.trim();
 
-  db.run(`
-    INSERT INTO skills (name, display_name, class_id, tab_index, row, col, image)
-    VALUES (?, ?, ?, ?, ?, ?, ?)`,
-    [name, display_name, class_id, tab_index, row, col, image]
-  );
+  if (editingSkillId) {
+    // Update
+    db.run(`
+      UPDATE skills
+      SET name=?, display_name=?, class_id=?, tab_index=?, row=?, col=?, image=?
+      WHERE id=?
+    `, [name, display_name, class_id, tab_id, row, col, image, editingSkillId]);
 
-  const skillId = db.exec("SELECT last_insert_rowid()")[0].values[0][0];
+    // Update tags
+    db.run("DELETE FROM skill_skilltags WHERE skill_id=?", [editingSkillId]);
+    document.querySelectorAll("#tag-checkboxes input:checked").forEach(cb => {
+      db.run("INSERT INTO skill_skilltags (skill_id, tag_id) VALUES (?, ?)", [editingSkillId, cb.value]);
+    });
 
-  document.querySelectorAll("#tag-checkboxes input:checked").forEach(cb => {
-    db.run("INSERT INTO skill_skilltags (skill_id, tag_id) VALUES (?, ?)", [skillId, cb.value]);
-    cb.checked = false;
-  });
+    editingSkillId = null;
+    document.querySelector("#skill-form button[type=submit]").textContent = "Insert Skill";
+  } else {
+    // Insert
+    db.run(`
+      INSERT INTO skills (name, display_name, class_id, tab_index, row, col, image)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+    `, [name, display_name, class_id, tab_id, row, col, image]);
+
+    const skillId = db.exec("SELECT last_insert_rowid()")[0].values[0][0];
+    document.querySelectorAll("#tag-checkboxes input:checked").forEach(cb => {
+      db.run("INSERT INTO skill_skilltags (skill_id, tag_id) VALUES (?, ?)", [skillId, cb.value]);
+      cb.checked = false;
+    });
+  }
 
   refreshSkillsTable();
   e.target.reset();
 });
+
 
 function refreshSkillsTable() {
   if (!db) return;
@@ -286,12 +402,13 @@ function refreshSkillsTable() {
 
   const query = `
     SELECT s.id, s.name, s.display_name, c.name as class_name, 
-           s.tab_index, s.row, s.col, s.image,
+           ct.name as tab_name, s.row, s.col, s.image,
            GROUP_CONCAT(t.name, ', ') as tags
     FROM skills s
     LEFT JOIN classes c ON s.class_id = c.id
     LEFT JOIN skill_skilltags st ON s.id = st.skill_id
     LEFT JOIN skilltags t ON st.tag_id = t.id
+    LEFT JOIN classTabs ct ON s.tab_index = ct.id
     GROUP BY s.id
     ORDER BY s.id;
   `;
@@ -299,16 +416,90 @@ function refreshSkillsTable() {
   const res = db.exec(query);
   if (res.length > 0) {
     res[0].values.forEach(row => {
-      const tr = document.createElement("tr");
-      row.forEach(val => {
-        const td = document.createElement("td");
-        td.textContent = val;
-        tr.appendChild(td);
-      });
-      tbody.appendChild(tr);
+    const tr = document.createElement("tr");
+    row.forEach(val => {
+      const td = document.createElement("td");
+      td.textContent = val;
+      tr.appendChild(td);
     });
+
+    // Action buttons
+    const actionTd = document.createElement("td");
+    const buttonsWrapper = document.createElement("div");
+    buttonsWrapper.className = "buttons are-small"
+    const editBtn = document.createElement("button");
+    editBtn.className = "button is-warning";
+    editBtn.textContent = "Edit";
+    editBtn.onclick = () => editSkill(row[0]); // row[0] = id
+
+    const delBtn = document.createElement("button");
+    delBtn.className = "button is-danger";
+    delBtn.textContent = "Delete";
+    delBtn.onclick = () => deleteSkill(row[0]);
+
+
+    buttonsWrapper.appendChild(editBtn);
+    buttonsWrapper.appendChild(delBtn);
+    actionTd.appendChild(buttonsWrapper);
+    tr.appendChild(actionTd);
+
+    tbody.appendChild(tr);
+  });
   }
 }
+
+function editSkill(id) {
+  if (!db) return;
+  const stmt = db.prepare(`
+    SELECT s.id, s.name, s.display_name, s.class_id, s.tab_index,
+           s.row, s.col, s.image
+    FROM skills s
+    WHERE s.id = ?
+  `);
+  stmt.bind([id]);
+  if (stmt.step()) {
+    const [sid, name, display_name, class_id, tab_index, row, col, image] = stmt.get();
+    editingSkillId = sid;
+    document.getElementById("name").value = name;
+    document.getElementById("display_name").value = display_name;
+    document.getElementById("class_id").value = class_id;
+    populateTabSelect(class_id);
+    document.getElementById("tab_index").value = tab_index;
+    document.getElementById("row").value = row;
+    document.getElementById("col").value = col;
+    document.getElementById("image").value = image;
+
+    // Reset tags
+    document.querySelectorAll("#tag-checkboxes input").forEach(cb => cb.checked = false);
+    const tagStmt = db.prepare(`
+      SELECT id FROM classTabs
+      WHERE class_id = ? AND tab_index = ?
+    `);
+    tagStmt.bind([id]);
+    while (tagStmt.step()) {
+      const [tagId] = tagStmt.get();
+      const checkbox = document.querySelector(`#tag-checkboxes input[value="${tagId}"]`);
+      if (checkbox) checkbox.checked = true;
+    }
+    tagStmt.free();
+
+    setSkillTagCheckboxes(id);
+
+    // Change button text
+    document.querySelector("#skill-form button[type=submit]").textContent = "Save Skill";
+  }
+  stmt.free();
+}
+
+
+function deleteSkill(id) {
+  if (!db) return;
+  if (!confirm("Are you sure you want to delete this skill?")) return;
+  db.run("DELETE FROM skills WHERE id = ?", [id]);
+  refreshSkillsTable();
+}
+
+
 
 // Export/Import
 document.getElementById("export-db").addEventListener("click", () => {
@@ -343,67 +534,6 @@ document.getElementById("import-db").addEventListener("change", () => {
   };
   reader.readAsArrayBuffer(fileInput.files[0]);
 });
-
-// Import Skills from JSON
-document.getElementById("import-json-btn").addEventListener("click", () => {
-  document.getElementById("import-json").click();
-});
-
-document.getElementById("import-json").addEventListener("change", () => {
-  const fileInput = document.getElementById("import-json");
-  if (!fileInput.files.length) return;
-
-  const reader = new FileReader();
-  reader.onload = function() {
-    try {
-      const jsonData = JSON.parse(reader.result);
-      if (!jsonData.skills) {
-        alert("Invalid JSON structure: 'skills' array missing.");
-        return;
-      }
-
-      jsonData.skills.forEach(skill => {
-        const name = skill.id || "";
-        const display_name = skill.name || "";
-        const enumClassIndex = skill.class; // -1 to 6
-        const class_id = enumClassIndex + 2; // map enum to DB class_id (1-8)
-        const tab_index_enum = skill.tab;   // numeric tab index from JSON
-        const row = skill.row ?? 0;
-        const col = skill.col ?? 0;
-        const image = skill.image || "-1/icons-shared_missing.png";
-
-        // Look up the database tab_index by class_id and JSON tab index
-        let tab_index_db = 0; // fallback if not found
-        const stmt = db.prepare(`
-          SELECT id FROM classTabs
-          WHERE class_id = ? AND tab_index = ?
-        `);
-        stmt.bind([class_id, tab_index_enum]);
-        if (stmt.step()) {
-          tab_index_db = stmt.get()[0];
-        } else {
-          console.warn(`Tab not found for class_id=${class_id}, tab_index=${tab_index_enum}. Defaulting to 0.`);
-        }
-        stmt.free();
-
-        db.run(`
-          INSERT INTO skills (name, display_name, class_id, tab_index, row, col, image)
-          VALUES (?, ?, ?, ?, ?, ?, ?)
-        `, [name, display_name, class_id, tab_index_db, row, col, image]);
-      });
-
-      refreshSkillsTable();
-      alert("Skills imported successfully!");
-    } catch (e) {
-      alert("Error reading JSON: " + e.message);
-      console.error(e);
-    }
-    fileInput.value = ""; // reset
-  };
-
-  reader.readAsText(fileInput.files[0]);
-});
-
 </script>
 
 </body>

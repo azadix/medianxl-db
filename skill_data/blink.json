@@ -1,6 +1,5 @@
 {
   "id": "blink",
-  "category": "Warp",
   "description": [
     "Teleport to a target, stunning enemies around you",
     "Range: 12 yards",

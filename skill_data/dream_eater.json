@@ -1,7 +1,5 @@
 {
   "id": "dream_eater",
-  "category": "Spell",
-  "damage_type": "Physical",
   "description": [
     "Target foe is consumed by horror"
   ],

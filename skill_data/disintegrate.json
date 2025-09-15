@@ -1,7 +1,5 @@
 {
   "id": "disintegrate",
-  "category": "Spell",
-  "damage_type": "Physical/Magic",
   "description": [
     "Powerful energy wave that destroys everything nearby",
     "<p class='has-text-info'>Can be used with Melee Devotion<p>",

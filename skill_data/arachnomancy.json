@@ -1,7 +1,5 @@
 {
   "id": "arachnomancy",
-  "category": "Spell",
-  "damage_type": "Poison",
   "description": [
     "A mass of venomous spiders envelops the target"
   ],

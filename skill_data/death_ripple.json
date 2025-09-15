@@ -1,7 +1,5 @@
 {
   "id": "death_ripple",
-  "category": "Projectile",
-  "damage_type": "Physical/Magic",
   "description": [
     "Conjure a deathly ghost lance that explodes on impact",
     "<p class='has-text-success'>Missile pattern improves per Enhancement (up to 2)</p>",

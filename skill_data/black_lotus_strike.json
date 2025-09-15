@@ -1,7 +1,5 @@
 {
   "id": "black_lotus_strike",
-  "category": "Attack",
-  "damage_type": "Poison",
   "description": [
     "Creates a wave of expanding poison"
   ],

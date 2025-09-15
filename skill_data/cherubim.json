@@ -1,7 +1,5 @@
 {
   "id": "cherubim",
-  "category": "Projectile",
-  "damage_type": "Weapon Damage/Magic",
   "description": [
     "Summons an avenging avatar of justice",
     "Converts 70% Physical Damage to Magic",

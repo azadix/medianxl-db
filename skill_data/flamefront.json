@@ -1,7 +1,5 @@
 {
   "id": "flamefront",
-  "category": "Spell",
-  "damage_type": "Fire",
   "description": [
     "Casts a wave of exploding firebolts in front of you",
     "Firebolts: 6"

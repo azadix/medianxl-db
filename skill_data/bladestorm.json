@@ -1,7 +1,5 @@
 {
   "id": "bladestorm",
-  "category": "Attack",
-  "damage_type": "Physical/Magic",
   "description": [
     "Unleash magical homing blades",
     "50% Weapon Damage"

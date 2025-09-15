@@ -1,7 +1,5 @@
 {
   "id": "split_arrow",
-  "category": "Projectile",
-  "damage_type": "Weapon Damage/Magic",
   "description": [
     "Fires arrows at nearby enemies",
     "75% Weapon Damage"

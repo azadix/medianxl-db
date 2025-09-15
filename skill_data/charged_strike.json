@@ -1,7 +1,5 @@
 {
   "id": "charged_strike",
-  "category": "Attack",
-  "damage_type": "Weapon Damage/Lightning",
   "description": [
     "Release piercing charged bolts from your weapon",
     "+1 additional bolt per 6 skill levels",

@@ -1,7 +1,5 @@
 {
   "id": "ember_spirit",
-  "category": "Spell",
-  "damage_type": "Fire",
   "description": [
     "Set the path for the blind charge of a fiery spirit",
     "Spirits: 1"

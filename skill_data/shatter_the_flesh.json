@@ -1,7 +1,5 @@
 {
   "id": "shatter_the_flesh",
-  "category": "Spell",
-  "damage_type": "Cold",
   "description": [
     "Shatter a corpse freezing all nearby enemies",
     "Freeze duration: 0.8 seconds",

@@ -1,7 +1,5 @@
 {
   "id": "impale",
-  "category": "Attack",
-  "damage_type": "Weapon Damage",
   "description": [
     "A powerful strike exposing your enemy's weakness",
     "170% Weapon Damage",
@@ -9,8 +7,7 @@
     "<br>",
     "<p class='has-text-warning'>Expose Weakness</p>",
     "Physical Resistance: -50%",
-    "Duration: 2 seconds",
-    ""
+    "Duration: 2 seconds"
   ],
   "restriction": [
     "Requires a javelin"

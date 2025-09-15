@@ -1,7 +1,5 @@
 {
   "id": "lightning_arena",
-  "category": "Buff",
-  "damage_type": "Lightning",
   "description": [
     "Welcome to the thunderdome!",
     "Arena duration: 2 seconds",

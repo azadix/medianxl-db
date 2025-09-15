@@ -1,7 +1,5 @@
 {
   "id": "diseased_cattle",
-  "category": "Spell",
-  "damage_type": "Poison",
   "description": [
     "Magically create hexed cwos that emit poison clouds",
     "4 cows"

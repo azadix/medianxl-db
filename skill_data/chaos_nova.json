@@ -1,8 +1,6 @@
 {
   "id": "chaos_nova",
-  "category": "Upgrade",
   "related_skill": "abyss_knight",
-  "damage_type": "Weapon Damage",
   "description": [
     "Knights proc a deadly nova on kill and when killed",
     "130% Weapon Damage"

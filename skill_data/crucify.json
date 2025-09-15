@@ -1,7 +1,5 @@
 {
   "id": "crucify",
-  "category": "Attack",
-  "damage_type": "Weapon Damage/Magic",
   "description": [
     "Impales the enemy with homing spikes",
     "Converts 25% Physical Damage to Magic Damage",

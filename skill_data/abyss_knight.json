@@ -1,7 +1,5 @@
 {
   "id": "abyss_knight",
-  "category": "Summon",
-  "damage_type": "Magic",
   "description": [
     "Death knight with a ranged void blast",
     "Always hits"

@@ -1,7 +1,5 @@
 {
   "id": "cone_of_cold",
-  "category": "Spell",
-  "damage_type": "Cold",
   "description": [
     "Casts a cone of ice and frost in front of you"
   ],

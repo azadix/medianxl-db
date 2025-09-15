@@ -34,32 +34,6 @@ function updateUrl(skillId = null) {
     window.history.pushState({ skillId }, '', newUrl);
 }
 
-// Function to load skills list from JSON file
-async function loadSkillsList() {
-    try {
-        const response = await fetch('skills.json');
-        if (!response.ok) {
-            throw new Error('Failed to load skills list');
-        }
-        const data = await response.json();
-        skillsList = data.skills;
-        return skillsList;
-    } catch (error) {
-        console.error('Error loading skills list:', error);
-        contentElement.innerHTML = '<p>Error loading skills. Please try again later.</p>';
-        return [];
-    }
-}
-
-// Function to get skill info from the global skills list
-function getSkillInfo(skillId) {
-    return skillsList.find(skill => skill.id === skillId);
-}
-
-function checkSkillDetailPage(skillId) {
-    return skillsWithDetails[skillId] || false;
-}
-
 // Updated initializeDataTable function - no file checking
 async function initializeDataTable(skillsData) {
     // Destroy existing DataTable if it exists
@@ -76,7 +50,7 @@ async function initializeDataTable(skillsData) {
             <tr>
                 <th>Image</th>
                 <th>Name</th>
-                <th>Category</th>
+                <th>Tags</th>
                 <th>Class</th>
                 <th>Tab</th>
             </tr>
@@ -95,14 +69,14 @@ async function initializeDataTable(skillsData) {
         const nameCell = hasDetailPage 
             ? `<a href="./?skill=${skill.id}" class="view-skill-btn" data-skill-id="${skill.id}">${skill.name}</a>`
             : skill.name;
-        
+
         tbody.append(`
             <tr data-skill-id="${skill.id}" data-has-page="${hasDetailPage}">
                 <td><img src="icons/${imagePath}" alt="${skill.name}" class="image is-48x48"></td>
                 <td>${nameCell}</td>
-                <td>${(skill.tag && skill.tag.length > 0) ? skill.tag.join(", ") : ''}</td>
+                <td>${(skill.tags && skill.tags.length > 0) ? skill.tags.join(", ") : ''}</td>
                 <td>${Classes.getName(skill.class) || ''}</td>
-                <td>${skill.tabName ? skill.tabName : ClassTabs.getTabName(skill.class, skill.tab) || ''}</td>
+                <td>${skill.tabName}</td>
             </tr>
         `);
     });
@@ -154,30 +128,6 @@ async function loadSkillData(skillId) {
     }
 }
 
-// Updated displayAllSkills function
-async function displayAllSkills() {
-    pageTitleElement.textContent = 'All Skills';
-    if (skillsList.length === 0) {
-        await loadSkillsList();
-    }
-    
-    if (skillsList.length === 0) {
-        contentElement.innerHTML = '<p>No skills found.</p>';
-        return;
-    }
-
-    let html = `
-        <div class="skills-table-container">
-            <table id="skills-table" class="table is-hoverable is-fullwidth"></table>
-        </div>
-    `;
-    
-    contentElement.innerHTML = html;
-    
-    // Initialize DataTable
-    initializeDataTable(skillsList);
-}
-
 // Function to display a specific skill's details
 async function displaySkillDetail(skillId) {
     const skillInfo = getSkillInfo(skillId);
@@ -186,23 +136,16 @@ async function displaySkillDetail(skillId) {
     if (!skillInfo || !skillData) return;
     
     pageTitleElement.textContent = skillInfo.name;
-    
     // Add skill image if available
     const skillImage = skillInfo.image 
         ? `<img src="icons/${skillInfo.image}" alt="${skillInfo.name}" class="skill-image">` 
         : '';
-
-    let skillCategory = skillData.category
-        ? `<p class="is-size-5"><strong>Category:</strong></p><p>${skillData.category}</p><br>`
-        : '';
-    
-    let skillDamageType = skillData.damage_type
-        ? `<p class="is-size-5"><strong>Damage type:</strong></p><p>${skillData.damage_type}</p><br>`
-        : '';
     
     // Convert description to paragraphs if it's an array
     let descriptionHtml = '';
-    const isOrangeText = (skillInfo.class == Classes.OTHER && skillInfo.tab == 2)
+
+    //TODO find better solution (tab_index 67 is 'Orange text')
+    const isOrangeText = (skillInfo.class == Classes.OTHER && skillInfo.tab == 67)
     if (Array.isArray(skillData.description)) {
         descriptionHtml = `<p class="is-size-5"><strong>Description:</strong></p>`;
         descriptionHtml += skillData.description.map(paragraph => 
@@ -243,12 +186,7 @@ async function displaySkillDetail(skillId) {
         <div id="scaling-container" class="is-hidden">
     `;
 
-    if (skillInfo.class == Classes.OTHER && skillInfo.tab == 2) {
-        // Orange text skills - show "Skill doesn't scale" message
-        scalingTable += `
-            <p class="has-text-danger">Skills coming from Orange text do not scale with skill levels :(</p>
-        `;
-    } else if (!skillData.scaling || skillData.scaling.length == 0) {
+    if (!skillData.scaling || skillData.scaling.length == 0) {
         // Empty scaling array
         scalingTable += `
             <p class="has-text-danger">This skill does not scale with skill levels</p>
@@ -282,8 +220,6 @@ async function displaySkillDetail(skillId) {
         <div class="skill-detail">
             <div class="skill-info">
                 ${skillImage}
-                ${skillCategory}
-                ${skillDamageType}
                 ${restrictionHtml}
                 ${descriptionHtml}
                 ${synergiesHtml}
@@ -325,19 +261,19 @@ function attachViewSkillListeners() {
 }
 
 // Handle browser back/forward navigation
-window.addEventListener('popstate', function(event) {
+window.addEventListener('popstate', async function(event) {
     const params = getUrlParams();
     if (params.skill) {
         displaySkillDetail(params.skill);
     } else {
-        displayAllSkills();
+        await loadSkillsFromSQLite();
     }
 });
 
 // Initialize the page based on URL parameters
 async function initializePage() {
     // Load skills list first
-    await loadSkillsList();
+    await loadSkillsFromSQLite();
     
     // Check URL for skill parameter
     const params = getUrlParams();
@@ -348,46 +284,35 @@ async function initializePage() {
             displaySkillDetail(params.skill);
         } else {
             // Fall back to all skills if skill not found
-            displayAllSkills();
+            await loadSkillsFromSQLite();
         }
     } else {
-        displayAllSkills();
+        await loadSkillsFromSQLite();
     }
     
     // Attach event listeners
     attachViewSkillListeners();
 }
 
-// Add buttons for JSON/SQLite loading
-const buttonContainer = document.createElement('div');
-buttonContainer.classList.add('buttons', 'mb-4');
+// Function to display all skills
+function displayAllSkills() {
+    pageTitleElement.textContent = 'All Skills';
 
-const jsonBtn = document.createElement('button');
-jsonBtn.textContent = 'Load from JSON';
-jsonBtn.classList.add('button', 'is-link');
-buttonContainer.appendChild(jsonBtn);
-
-const sqliteBtn = document.createElement('button');
-sqliteBtn.textContent = 'Load from SQLite';
-sqliteBtn.classList.add('button', 'is-primary');
-buttonContainer.appendChild(sqliteBtn);
-
-contentElement.parentNode.insertBefore(buttonContainer, contentElement);
-
-// Global variables for SQLite
-let sqlDb = null;
-let SQL = null;
-
-// Load SQLite database
-async function loadSQLite(fileUrl) {
-    if (!SQL) {
-        SQL = await initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/${file}` });
+    if (skillsList.length === 0) {
+        contentElement.innerHTML = '<p>No skills found.</p>';
+        return;
     }
-    const response = await fetch(fileUrl);
-    if (!response.ok) throw new Error('Failed to fetch SQLite file');
-    const buffer = await response.arrayBuffer();
-    sqlDb = new SQL.Database(new Uint8Array(buffer));
-    console.log('SQLite database loaded');
+
+    let html = `
+        <div class="skills-table-container">
+            <table id="skills-table" class="table is-hoverable is-fullwidth"></table>
+        </div>
+    `;
+
+    contentElement.innerHTML = html;
+
+    // Initialize DataTable with the loaded skills
+    initializeDataTable(skillsList);
 }
 
 async function loadSkillsFromSQLite() {
@@ -402,14 +327,20 @@ async function loadSkillsFromSQLite() {
         const SQL = await initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/${file}` });
         const db = new SQL.Database(new Uint8Array(buffer));
 
-        // Query skills with tab names
+        // Query skills with correct tab join
         const stmt = db.prepare(`
             SELECT s.*,
-                   ct.name AS tab_name
+                ct.name AS tab_name,
+                GROUP_CONCAT(t.name, ', ') AS tags
             FROM skills s
             LEFT JOIN classTabs ct
-            ON s.tab_index = ct.id
-            ORDER BY s.class_id, ct.tab_index, s.row, s.col;
+                ON s.tab_index = ct.id
+            LEFT JOIN skill_skilltags st
+                ON s.id = st.skill_id
+            LEFT JOIN skilltags t
+                ON st.tag_id = t.id
+            GROUP BY s.id
+            ORDER BY s.class_id, s.tab_index, s.row, s.col;
         `);
 
         const loadedSkills = [];
@@ -418,33 +349,30 @@ async function loadSkillsFromSQLite() {
             loadedSkills.push({
                 id: row.name,
                 name: row.display_name,
-                class: row.class_id - 2,         // adjust DB class id
-                tab: row.tab_index,              // tab id from DB
-                tabName: row.tab_name || '',     // proper tab name
+                class: row.class_id - 2,   // DB → enum
+                tab: row.tab_index,        // numeric
+                tabName: row.tab_name || '', // proper tab name
+                tags: row.tags ? row.tags.split(', ') : [],
                 row: row.row,
                 col: row.col,
                 image: row.image || '-1/icons-shared_missing.png'
             });
+
+
         }
         stmt.free();
 
         skillsList = loadedSkills; // update global list
+
+        // Render table if no skill detail page is requested
+        displayAllSkills();
+
     } catch (error) {
         console.error('Error loading skills from SQLite:', error);
         contentElement.innerHTML = `<p>Error loading skills from SQLite: ${error.message}</p>`;
     }
 }
 
-// Button click handlers
-jsonBtn.addEventListener('click', async () => {
-    await loadSkillsList();
-    displayAllSkills();
-});
-
-sqliteBtn.addEventListener('click', async () => {
-    await loadSkillsFromSQLite();
-    displayAllSkills();
-});
 
 // Override getSkillInfo for SQLite mode
 function getSkillInfo(skillId) {
@@ -452,11 +380,8 @@ function getSkillInfo(skillId) {
 }
 
 function checkSkillDetailPage(skill) {
-    // skill can be full object
     return skillsWithDetails[skill.id] || false;
 }
-
-
 
 // Call initialize on page load
 initializePage();

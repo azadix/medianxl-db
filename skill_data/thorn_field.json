@@ -1,7 +1,5 @@
 {
   "id": "thorn_field",
-  "category": "Attack",
-  "damage_type": "Weapon Damage",
   "description": [
     "Unleashes a ripple of deadly spikes",
     "37% Weapon Damage"

@@ -1,7 +1,5 @@
 {
   "id": "flash",
-  "category": "Spell",
-  "damage_type": "Lightning",
   "description": [
     "Electrocutes and blinds nearby enemies",
     "<p class='has-text-info'>Can be used with Melee Devotion</p>",

@@ -1,7 +1,5 @@
 {
   "id": "arcane_torrent",
-  "category": "Spell",
-  "damage_type": "Magic/Feedback",
   "description": [
     "Devastate enemies in front of you with arcane power",
     "Deals Magic Damage based on your Maximum Mana",

@@ -1,6 +1,5 @@
 {
   "id": "antimass",
-  "category": "Spell",
   "description": [
     "Converts your mana to health",
     "65% of Mana restored as Life"

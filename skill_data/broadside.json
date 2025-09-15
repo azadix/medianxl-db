@@ -1,7 +1,5 @@
 {
   "id": "broadside",
-  "category": "Projectile",
-  "damage_type": "Weapon Damage",
   "description": [
     "Plants a mechanical device that fires a barrage of knives",
     "90% Weapon Damage",

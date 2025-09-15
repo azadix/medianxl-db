@@ -1,7 +1,5 @@
 {
   "id": "barrage",
-  "category": "Projectile",
-  "damage_type": "Fire/Cold/Lightning/Physical",
   "description": [
     "Fires a storm of arrows in all directions around you",
     "Converts 75% Physical Damage to Fire, Cold or Lightning",

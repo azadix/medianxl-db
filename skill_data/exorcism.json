@@ -1,7 +1,5 @@
 {
   "id": "exorcism",
-  "category": "Attack",
-  "damage_type": "Magic",
   "description": [
     "Melee attack that inflicts heavenly flames that spread to others",
     "Gains half of your Energy as base Attack Rating",

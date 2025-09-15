@@ -1,7 +1,5 @@
 {
   "id": "apocalypse",
-  "category": "Spell",
-  "damage_type": "Fire",
   "description": [
     "Incinerates all enemies in a large area around you",
     "While your Maximum Mana is higher than Maximum Life:",

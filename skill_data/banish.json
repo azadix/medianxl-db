@@ -1,6 +1,5 @@
 {
   "id": "banish",
-  "category": "Curse",
   "description": [
     "Renders target vulnerable to magic and elemental damage (+ flat damage per hit)",
     "Radius: 12 yards",

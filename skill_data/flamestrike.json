@@ -1,7 +1,5 @@
 {
   "id": "flamestrike",
-  "category": "Spell",
-  "damage_type": "Fire",
   "description": [
     "Calls down a massive pillar of flames from the sky",
     "Up to 13 hits per cast"

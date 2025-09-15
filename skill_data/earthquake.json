@@ -1,7 +1,5 @@
 {
   "id": "earthquake",
-  "category": "Attack",
-  "damage_type": "Physical",
   "description": [
     "Unleash a tremor followed by an aftershock",
     "80% Tremor Weapon Damage",

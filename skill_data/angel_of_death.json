@@ -1,7 +1,5 @@
 {
   "id": "angel_of_death",
-  "category": "Warp Strike",
-  "damage_type": "Poison",
   "description": [
     "Leap in the air and plunge to deliver a devastating blow",
     "Cooldown: 4 seconds"

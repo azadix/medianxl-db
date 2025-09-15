@@ -1,7 +1,5 @@
 {
   "id": "avalanche",
-  "category": "Spell",
-  "damage_type": "Cold",
   "description": [
     "Summon two parallel rolling clouds of frost and ice",
     "Cloud radius doubles if you have at least 1250 Spell Focus"

@@ -1,7 +1,5 @@
 {
   "id": "catapult_shot",
-  "category": "Projectile",
-  "damage_type": "Weapon Damage/Fire",
   "description": [
     "Blanket the target area with a spread of volatile potions",
     "70% Weapon Damage",

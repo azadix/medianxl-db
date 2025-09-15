@@ -1,7 +1,5 @@
 {
   "id": "clear_mind",
-  "category": "Spell",
-  "damage_type": "Magic",
   "description": [
     "Conjure magical ripples accross the landscape, empowered by your unspent skill points",
     "Gains quadratically more damage per unspent skill point",

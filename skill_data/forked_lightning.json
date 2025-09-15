@@ -1,7 +1,5 @@
 {
-  "id": "chaos_nova",
-  "category": "Spell",
-  "damage_type": "Lightning",
+  "id": "forked_lightning",
   "description": [
     "Casts multiple bolts of lightning to scorch your enemies",
     "8 bolts"

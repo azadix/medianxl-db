@@ -1,7 +1,5 @@
 {
   "id": "nova_charge",
-  "category": "Buff",
-  "damage_type": "Lightning",
   "description": [
     "Periodically discharge static novas when near enemies",
     "Damage increases with your highest elemental spell damage stat",

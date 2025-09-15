@@ -1,7 +1,5 @@
 {
   "id": "ancients_hand",
-  "category": "Attack",
-  "damage_type": "Fire",
   "description": [
     "Melee swing that unleashes a fiery blast in a straight line",
     "40% Weapon Damage",

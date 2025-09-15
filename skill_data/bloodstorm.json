@@ -1,7 +1,5 @@
 {
   "id": "bloodstorm",
-  "category": "Spell",
-  "damage_type": "Fire",
   "description": [
     "Skull trap that fires blood stars at multiple enemies",
     "Releases 8 bloodstars per shot",

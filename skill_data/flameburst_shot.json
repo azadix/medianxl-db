@@ -1,7 +1,6 @@
 {
   "id": "flameburst_shot",
-  "category": "Projectile",
-  "damage_type": "Weapon Damage/Fire",
+
   "description": [
     "Blasts out a short ranged spread of fire in front of you",
     "Convert 100% Physical Damage to Fire",

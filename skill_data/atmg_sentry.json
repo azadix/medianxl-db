@@ -1,7 +1,5 @@
 {
   "id": "atmg_sentry",
-  "category": "Projectile",
-  "damage_type": "Weapon Damage",
   "description": [
     "Places a sentry at a fixed distance that fires an autotracking machine gun",
     "Radius increases by 27% with 200, 500, 900 Base Dexterity (Max +81%)",
