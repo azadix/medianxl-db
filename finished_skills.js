@@ -87,7 +87,12 @@ const skillsWithDetails = {
     "flash": true,
     "flamestrike": true,
     "flamefront": true,
-    "fireheart_totem": true
+    "fireheart_totem": true,
+    "frozen_orb": true,
+    "funeral_pyre": true,
+    "glacial_nova": true,
+    "golden_calf": true,
+    "great_hunt": true
 }
 
 let showDetailedOnly = false;

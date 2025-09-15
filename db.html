@@ -193,7 +193,7 @@ async function initDatabase() {
   refreshSkillsTable();
 }
 
-function populateClassSelect(db) {
+function populateClassSelect() {
   if (!db) return;
   const res = db.exec("SELECT id, name FROM classes ORDER BY id");
   const select = document.getElementById("class_id");
