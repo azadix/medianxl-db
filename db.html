@@ -118,6 +118,7 @@ const tagGroups = {
     "Modifier": [19, 18]
 };
 
+let SQL;
 let db;
 
 async function initializePage() {
@@ -128,7 +129,7 @@ async function initializePage() {
   const buffer = await response.arrayBuffer();
 
   // Initialize SQL.js
-  const SQL = await initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.13.0/${file}` });
+  SQL = await initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.13.0/${file}` });
   db = new SQL.Database(new Uint8Array(buffer));
 
   try {
@@ -142,7 +143,6 @@ async function initializePage() {
 }
 
 async function initDatabase() {
-  const SQL = await initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.13.0/${file}` });
   db = new SQL.Database();
 
   db.run(`
@@ -187,30 +187,6 @@ async function initDatabase() {
   // let stmt = db.prepare("INSERT INTO classes (name) VALUES (?)");
   // defaultClasses.forEach(c => stmt.run([c]));
   // stmt.free();
-
-  // // Insert default tags
-  // const defaultTags = [
-  //   "Physical", "Fire", "Cold", "Lightning", "Poison", "Magic", "Tri Elemental",
-  //   "Attack", "Spell", "Teleport", "Passive",
-  //   "Aura", "Summon", "Buff", "Debuff", "Healing", "Curse",
-  //   "Duration", "AoE", "Warp Strike"
-  // ];
-  // stmt = db.prepare("INSERT INTO skilltags (name) VALUES (?)");
-  // defaultTags.forEach(tag => stmt.run([tag]));
-  // stmt.free();
-
-  // // Insert classTabs from enums.js
-  // Object.keys(ClassTabs)
-  //   .filter(key => !isNaN(parseInt(key))) // Only numeric class indices
-  //   .forEach(enumIndex => {
-  //     const dbClassId = parseInt(enumIndex, 10) + 2; // map enum to DB ID
-  //     ClassTabs[enumIndex].forEach(tab => {
-  //       db.run(`
-  //         INSERT INTO classTabs (class_id, tab_index, name)
-  //         VALUES (?, ?, ?)
-  //       `, [dbClassId, tab.index, tab.name]);
-  //     });
-  //   });
 
   populateClassSelect();
   populateTagCheckboxes();

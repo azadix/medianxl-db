@@ -144,8 +144,7 @@ async function displaySkillDetail(skillId) {
     // Convert description to paragraphs if it's an array
     let descriptionHtml = '';
 
-    //TODO find better solution (tab_index 67 is 'Orange text')
-    const isOrangeText = (skillInfo.class == "Other" && skillInfo.tab == 67)
+    const isOrangeText = (skillInfo.class == "Other" && skillInfo.tabName == "Orange text")
     if (Array.isArray(skillData.description)) {
         descriptionHtml = `<p class="is-size-5"><strong>Description:</strong></p>`;
         descriptionHtml += skillData.description.map(paragraph => 
