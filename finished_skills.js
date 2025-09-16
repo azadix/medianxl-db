@@ -92,7 +92,13 @@ const skillsWithDetails = {
     "funeral_pyre": true,
     "glacial_nova": true,
     "golden_calf": true,
-    "great_hunt": true
+    "great_hunt": true,
+    "guard_tower": true,
+    "guardian_spirit": true,
+    "hammer_of_zerae": true,
+    "hawk_talons": true,
+    "ward_of_fate": true,
+    "brimstone": true
 }
 
 let showDetailedOnly = false;

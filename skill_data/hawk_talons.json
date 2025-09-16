@@ -1,0 +1,15 @@
+{
+  "id": "hawk_talons",
+  "description": [
+    "Mechanical mine that sends out a flurry of axes when struck",
+    "100% Weapon Damage",
+    "Trap Duration: 10 seconds",
+    "Converts 31% Physical Damage to Lightning"
+  ],
+  "restrictions": [
+    "Requires a Throwing Axe"
+  ],
+  "scaling": [
+    { "level": 16, "bonus_magic_damage": 238, "mana_cost": 82 }
+  ]
+}

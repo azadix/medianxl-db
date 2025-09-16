@@ -8,7 +8,7 @@
     "<br>",
     "<p class='has-text-warning'>Blinding Effect</p>",
     "Reduces enemy Attack Rating by 30% for 3 seconds",
-    "+1  to Radius of Blinding Effect per 2 Light Radius"
+    "+1 to Radius of Blinding Effect per 2 Light Radius"
   ],
   "scaling": [
     { "level": 38, "lightning_damage_min": 284, "lightning_damage_max": 303, "mana_cost": 124 }

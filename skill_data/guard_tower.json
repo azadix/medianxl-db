@@ -1,0 +1,12 @@
+{
+  "id": "guard_tower",
+  "description": [
+    "A stationary tower shoots arrows at your enemies",
+    "100% Weapon Damage",
+    "+1 Arrpw per 11 skill levels",
+    "Converts 33% Physical damage to Magic"
+  ],
+  "scaling": [
+    { "level": 9, "target_seek_range": 12, "mana_cost": 37 }
+  ]
+}

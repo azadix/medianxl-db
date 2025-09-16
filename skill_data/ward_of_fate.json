@@ -1,0 +1,11 @@
+{
+  "id": "ward_of_fate",
+  "description": [
+    "Protect yourself with a glowing shield",
+    "Movement Speed: -40%",
+    "Magic Resistance: +10%"
+  ],
+  "scaling": [
+    { "level": 18, "regenerate_life_per_second": 161, "cooldown": 17, "duration": 4.3, "mana_cost": 390 }
+  ]
+}
