@@ -4,6 +4,7 @@ const pageTitleElement = document.getElementById('page-title');
 
 // Global variable for DataTable instance
 let skillsDataTable = null;
+let showDetailedOnly = false;
 
 // Global skills list
 let skillsList = [];
@@ -62,16 +63,14 @@ async function initializeDataTable(skillsData) {
     const tbody = table.find('tbody');
     
     skillsData.forEach(skill => {
-        const hasDetailPage = checkSkillDetailPage(skill);
-
         const imagePath = skill.image || "-1/icons-shared_missing.png";
         
-        const nameCell = hasDetailPage 
+        const nameCell = skill.hasDetails 
             ? `<a href="./?skill=${skill.id}" class="view-skill-btn" data-skill-id="${skill.id}">${skill.name}</a>`
             : skill.name;
 
         tbody.append(`
-            <tr data-skill-id="${skill.id}" data-has-page="${hasDetailPage}">
+            <tr data-skill-id="${skill.id}" data-has-page="${skill.hasDetails}">
                 <td><img src="icons/${imagePath}" alt="${skill.name}" class="image is-48x48"></td>
                 <td>${nameCell}</td>
                 <td>${(skill.tags && skill.tags.length > 0) ? skill.tags.join(", ") : ''}</td>
@@ -111,6 +110,14 @@ async function initializeDataTable(skillsData) {
 $(document).on('change', '#toggle-filter', function() {
     showDetailedOnly = this.checked;
     skillsDataTable.draw();
+});
+
+
+$.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+    if (!showDetailedOnly) return true;
+
+    const row = settings.aoData[dataIndex].nTr;
+    return $(row).attr("data-has-page") === "true";
 });
 
 // Function to load a specific skill's data
@@ -331,6 +338,7 @@ async function loadSkillsFromSQLite() {
             SELECT s.*,
                 ct.name AS tab_name,
                 c.name AS class_name,
+                s.has_details,
                 GROUP_CONCAT(t.name, ', ') AS tags
             FROM skills s
             LEFT JOIN classTabs ct
@@ -357,7 +365,8 @@ async function loadSkillsFromSQLite() {
                 tags: row.tags ? row.tags.split(', ') : [],
                 row: row.row,
                 col: row.col,
-                image: row.image || '-1/icons-shared_missing.png'
+                image: row.image || '-1/icons-shared_missing.png',
+                hasDetails: row.has_details === 1
             });
 
 
@@ -379,10 +388,6 @@ async function loadSkillsFromSQLite() {
 // Override getSkillInfo for SQLite mode
 function getSkillInfo(skillId) {
     return skillsList.find(skill => skill.id == skillId);
-}
-
-function checkSkillDetailPage(skill) {
-    return skillsWithDetails[skill.id] || false;
 }
 
 // Call initialize on page load
