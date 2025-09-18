@@ -1,0 +1,10 @@
+{
+  "id": "lightning_wall",
+  "description": [
+    "Creates a wall of static energy that explodes on trespassers",
+    "Duration: 5 seconds"
+  ],
+  "scaling": [
+    { "level": 18, "lightning_damage_min": 105, "lightning_damage_max": 131, "mana_cost": 64 }
+  ]
+}

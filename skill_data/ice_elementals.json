@@ -1,0 +1,14 @@
+{
+  "id": "ice_elementals",
+  "description": [
+    "Ice elementals with a freezing nova attack",
+    "Cast Ice Lance and Glacial Nova",
+    "<p class='has-text-warning'>Frost Essence Aura</p>",
+    "+20% to Total Defense",
+    "+5% Maximum Cold Resistance",
+    "50% of Minion Damage added as Cold Spell Damage (Max 100%)"
+  ],
+  "scaling": [
+    { "level": 24, "spirits": 1, "life": 14344, "damage_min": 314, "damage_max": 329, "attack_rating": 2960, "mana_cost": 182 }
+  ]
+}

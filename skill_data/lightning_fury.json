@@ -1,0 +1,15 @@
+{
+  "id": "lightning_fury",
+  "description": [
+    "Lightning bolt that splits on impact",
+    "100% Weapon Damage",
+    "Releases 9 bolts",
+    "(Lightning Damage increases with Spell Damage)"
+  ],
+  "restriction": [
+    "Requires a javelin"
+  ],
+  "scaling": [
+    { "level": 9, "lightning_damage_min": 0, "lightning_damage_max": 602, "mana_cost": 53 }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "id": "lightning_shield",
+  "description": [
+    "Casts a retaliatory shield of lightning on self and nearby allies",
+    "<p class='has-text-success'>Enemies killed by Reflected Damage do not trigger on-death effects</p>"
+  ],
+  "scaling": [
+    { "level": 12, "attacker_takes_bonus_lightning_damage": 262, "duration": 300, "mana_cost": 149 }
+  ]
+}

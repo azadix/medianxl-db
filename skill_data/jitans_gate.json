@@ -1,0 +1,10 @@
+{
+  "id": "jitans_gate",
+  "description": [
+    "Teleports you to the target location",
+    "Cooldown: 10 seconds"
+  ],
+  "scaling": [
+    { "level": 14, "range": 16.6, "mana_cost": 110 }
+  ]
+}

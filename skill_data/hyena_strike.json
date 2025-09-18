@@ -1,0 +1,13 @@
+{
+  "id": "hyena_strike",
+  "description": [
+    "Infectious strike that spreads damage to nearby enemies",
+    "10% of poison damage to weapon added as total damage multiplier"
+  ],
+  "restriction": [
+    "Requires a spear"
+  ],
+  "scaling": [
+    { "level": 26, "poison_damage_min": 1035, "poison_damage_max": 1388, "poison_duration": 10, "mana_cost": 43 }
+  ]
+}

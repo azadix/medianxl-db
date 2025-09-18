@@ -12,20 +12,19 @@
   </style>
 </head>
 <body class="section">
-<nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
-        <div class="navbar-menu">
-            <div class="navbar-start">
-                <a class="navbar-item" href="./" id="nav-all-skills">
-                    <strong>Skills</strong>
-                </a>
-                <a class="navbar-item" href="./db.html" id="nav-db">
-                    <strong>DB</strong>
-                </a>
-            </div>
-        </div>
-    </nav>
+  <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
+    <div class="navbar-menu">
+      <div class="navbar-start">
+          <a class="navbar-item" href="./" id="nav-all-skills">
+              <strong>Skills</strong>
+          </a>
+          <a class="navbar-item" href="./db.html" id="nav-db">
+              <strong>DB</strong>
+          </a>
+      </div>
+    </div>
+  </nav>
 
-<div class="container ">
   <h1 class="title mt-1 is-3">Skills Database (sql.js)</h1>
 
   <div class="buttons">
@@ -94,8 +93,9 @@
       </div>
     </div>
   </form>
-</div>
-<h2 class="title is-4">Skills Table</h2>
+
+  <h2 class="title is-4">Skills Table</h2>
+
   <table class="table is-striped is-fullwidth is-narrow" id="skills-table">
     <thead>
       <tr>
@@ -115,419 +115,418 @@
     <tbody></tbody>
   </table>
 
-<script>
-const SkillDB = {
-  db: null,
-  SQL: null,
-  editingSkillId: null,
-  tagGroups: {
-    "Skill Category": [8, 9, 11, 12, 13, 14, 15, 16, 17, 22, 25, 26, 27, 28],
-    "Damage": [1, 2, 3, 4, 5, 6, 7, 21, 23],
-    "Teleport": [10, 20, 24],
-    "Modifier": [19, 18]
-  }
-};
+  <script>
+  const SkillDB = {
+    db: null,
+    SQL: null,
+    editingSkillId: null,
+    tagGroups: {
+      "Skill Category": [8, 9, 11, 12, 13, 14, 15, 16, 17, 22, 25, 26, 27, 28, 29],
+      "Damage": [1, 2, 3, 4, 5, 6, 7, 21, 23],
+      "Teleport": [10, 20, 24],
+      "Modifier": [19, 18]
+    }
+  };
 
-async function initializePage() {
-  // Fetch SQLite file
-  const response = await fetch('skills.sqlite');
-  if (!response.ok) throw new Error('Failed to load SQLite file');
+  async function initializePage() {
+    // Fetch SQLite file
+    const response = await fetch('skills.sqlite');
+    if (!response.ok) throw new Error('Failed to load SQLite file');
 
-  const buffer = await response.arrayBuffer();
+    const buffer = await response.arrayBuffer();
 
-  // Initialize SQL.js
-  SkillDB.SQL = await initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.13.0/${file}` });
-  SkillDB.db = new SkillDB.SQL.Database(new Uint8Array(buffer));
-
-  try {
-    populateClassSelect();
-    populateTagCheckboxes();
-    refreshSkillsTable();
-  } catch (err) {
-    console.warn("Falling back to empty DB:", err.message);
-    initDatabase();
-  }
-}
-
-async function initDatabase() {
-  SkillDB.db = new SkillDB.SQL.Database();
-
-  SkillDB.db.run(`
-    CREATE TABLE classes (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL UNIQUE
-    );
-    CREATE TABLE classTabs (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      class_id INTEGER NOT NULL,
-      tab_index INTEGER NOT NULL,
-      name TEXT NOT NULL,
-      FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE CASCADE,
-      UNIQUE(class_id, tab_index)
-    );
-    CREATE TABLE skilltags (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL UNIQUE
-    );
-    CREATE TABLE skills (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL,
-      display_name TEXT NOT NULL,
-      class_id INTEGER,
-      tab_index INTEGER,
-      row INTEGER,
-      col INTEGER,
-      image TEXT,
-      has_details INTEGER DEFAULT 0,
-      FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE SET NULL
-    );
-    CREATE TABLE skill_skilltags (
-      skill_id INTEGER NOT NULL,
-      tag_id INTEGER NOT NULL,
-      PRIMARY KEY (skill_id, tag_id),
-      FOREIGN KEY (skill_id) REFERENCES skills(id) ON DELETE CASCADE,
-      FOREIGN KEY (tag_id) REFERENCES skilltags(id) ON DELETE CASCADE
-    );
-  `);
-
-  //Insert default classes
-  // const defaultClasses = ["Other", "Amazon", "Sorceress", "Necromancer", "Paladin", "Barbarian", "Druid", "Assassin"];
-  // let stmt = db.prepare("INSERT INTO classes (name) VALUES (?)");
-  // defaultClasses.forEach(c => stmt.run([c]));
-  // stmt.free();
-
-  populateClassSelect();
-  populateTagCheckboxes();
-  refreshSkillsTable();
-}
-
-function populateClassSelect() {
-  if (!SkillDB.db) return;
-  const res = SkillDB.db.exec("SELECT id, name FROM classes ORDER BY id");
-  const select = document.getElementById("class_id");
-  select.innerHTML = "";
-  if (!res[0]) return;
-
-  res[0].values.forEach(([id, name]) => {
-    const opt = document.createElement("option");
-    opt.value = id;
-    opt.textContent = name;
-    select.appendChild(opt);
-  });
-
-  if (res[0].values.length > 0) populateTabSelect(res[0].values[0][0]);
-
-  select.addEventListener("change", e => populateTabSelect(e.target.value));
-}
-
-function populateTabSelect(classId) {
-  if (!SkillDB.db) return;
-  const select = document.getElementById("tab_index");
-  select.innerHTML = "";
-
-  const stmt = SkillDB.db.prepare("SELECT id, name FROM classTabs WHERE class_id = ? ORDER BY tab_index");
-  stmt.bind([classId]);
-
-  while (stmt.step()) {
-    const [id, name] = stmt.get();
-    const opt = document.createElement("option");
-    opt.value = id;
-    opt.textContent = name;
-    select.appendChild(opt);
-  }
-
-  stmt.free();
-}
-
-function setSkillTagCheckboxes(skillId) {
-  if (!SkillDB.db) return;
-  // Clear all first
-  document.querySelectorAll("#tag-checkboxes input[type=checkbox]").forEach(cb => {
-    cb.checked = false;
-  });
-
-  // Get tags for this skill
-  const stmt = SkillDB.db.prepare("SELECT tag_id FROM skill_skilltags WHERE skill_id = ?");
-  stmt.bind([skillId]);
-
-  while (stmt.step()) {
-    const tagId = stmt.get()[0];
-    const cb = document.querySelector(`#tag-checkboxes input[value='${tagId}']`);
-    if (cb) cb.checked = true;
-  }
-  stmt.free();
-}
-
-function populateTagCheckboxes() {
-  if (!SkillDB.db) return;
-  const res = SkillDB.db.exec("SELECT id, name FROM skilltags ORDER BY name");
-  const container = document.getElementById("tag-checkboxes");
-  container.innerHTML = "";
-  if (!res[0]) return;
-
-  // Build a lookup of id → name
-  const tagMap = {};
-  res[0].values.forEach(([id, name]) => {
-    tagMap[id] = name;
-  });
-
-  // Track used IDs so we can later put leftovers into "Other"
-  const usedIds = new Set();
-
-  // Render each defined group
-  for (const [groupName, ids] of Object.entries(SkillDB.tagGroups)) {
-    const groupDiv = document.createElement("div");
-    groupDiv.className = "mb-2 is-fullwidth";
-
-    const title = document.createElement("p");
-    title.className = "has-text-weight-bold has-text-warning";
-    title.textContent = groupName;
-    groupDiv.appendChild(title);
-
-    const groupList = document.createElement("div");
-
-    // Sort alphabetically inside group
-    ids.map(id => [id, tagMap[id]])
-       .filter(([id, name]) => name) // skip invalid
-       .sort((a, b) => a[1].localeCompare(b[1]))
-       .forEach(([id, name]) => {
-         usedIds.add(id);
-
-         const label = document.createElement("label");
-         label.className = "checkbox pr-3";
-         const checkbox = document.createElement("input");
-         checkbox.type = "checkbox";
-         checkbox.value = id;
-         label.appendChild(checkbox);
-         label.appendChild(document.createTextNode(" " + name));
-         groupList.appendChild(label);
-       });
-
-    groupDiv.appendChild(groupList);
-    container.appendChild(groupDiv);
-  }
-
-  // Handle "Other" (all tags not explicitly grouped)
-  const leftover = Object.entries(tagMap)
-    .filter(([id]) => !usedIds.has(parseInt(id)))
-    .sort((a, b) => a[1].localeCompare(b[1]));
-
-  if (leftover.length > 0) {
-    const groupDiv = document.createElement("div");
-    groupDiv.className = "mb-2 is-fullwidth";
-
-    const title = document.createElement("p");
-    title.className = "has-text-weight-bold has-text-danger";
-    title.textContent = "Other";
-    groupDiv.appendChild(title);
-
-    const groupList = document.createElement("div");
-
-    leftover.forEach(([id, name]) => {
-      const label = document.createElement("label");
-      label.className = "checkbox pr-3";
-      const checkbox = document.createElement("input");
-      checkbox.type = "checkbox";
-      checkbox.value = id;
-      label.appendChild(checkbox);
-      label.appendChild(document.createTextNode(" " + name));
-      groupList.appendChild(label);
-    });
-
-    groupDiv.appendChild(groupList);
-    container.appendChild(groupDiv);
-  }
-}
-
-// Insert skill
-document.getElementById("skill-form").addEventListener("submit", e => {
-  e.preventDefault();
-  if (!SkillDB.db) return;
-
-  const name = document.getElementById("name").value.trim();
-  const display_name = document.getElementById("display_name").value.trim();
-  const class_id = document.getElementById("class_id").value;
-  const tab_id = parseInt(document.getElementById("tab_index").value, 10);
-  const row = parseInt(document.getElementById("row").value, 10);
-  const col = parseInt(document.getElementById("col").value, 10);
-  const image = document.getElementById("image").value.trim();
-  const has_details = document.getElementById("has_details").checked ? 1 : 0;
-
-  if (SkillDB.editingSkillId) {
-    // Update
-    SkillDB.db.run(`
-      UPDATE skills
-      SET name=?, display_name=?, class_id=?, tab_index=?, row=?, col=?, image=?, has_details=?
-      WHERE id=?
-    `, [name, display_name, class_id, tab_id, row, col, image, has_details, SkillDB.editingSkillId]);
-
-    // Update tags
-    SkillDB.db.run("DELETE FROM skill_skilltags WHERE skill_id=?", [SkillDB.editingSkillId]);
-    document.querySelectorAll("#tag-checkboxes input:checked").forEach(cb => {
-      SkillDB.db.run("INSERT INTO skill_skilltags (skill_id, tag_id) VALUES (?, ?)", [SkillDB.editingSkillId, cb.value]);
-    });
-
-    SkillDB.editingSkillId = null;
-    document.querySelector("#skill-form button[type=submit]").textContent = "Insert Skill";
-  } else {
-    // Insert
-    SkillDB.db.run(`
-      INSERT INTO skills (name, display_name, class_id, tab_index, row, col, image, has_details)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `, [name, display_name, class_id, tab_id, row, col, image, has_details]);
-
-    const skillId = SkillDB.db.exec("SELECT last_insert_rowid()")[0].values[0][0];
-    document.querySelectorAll("#tag-checkboxes input:checked").forEach(cb => {
-      SkillDB.db.run("INSERT INTO skill_skilltags (skill_id, tag_id) VALUES (?, ?)", [skillId, cb.value]);
-      cb.checked = false;
-    });
-  }
-
-  refreshSkillsTable();
-  e.target.reset();
-});
-
-function refreshSkillsTable() {
-  if (!SkillDB.db) return;
-  const tbody = document.querySelector("#skills-table tbody");
-  tbody.innerHTML = "";
-
-  const query = `
-    SELECT s.id, s.name, s.display_name, c.name as class_name, 
-           ct.name as tab_name, s.row, s.col, s.image,
-           GROUP_CONCAT(t.name, ', ') as tags,
-           s.has_details
-    FROM skills s
-    LEFT JOIN classes c ON s.class_id = c.id
-    LEFT JOIN skill_skilltags st ON s.id = st.skill_id
-    LEFT JOIN skilltags t ON st.tag_id = t.id
-    LEFT JOIN classTabs ct ON s.tab_index = ct.id
-    GROUP BY s.id
-    ORDER BY s.id;
-  `;
-
-  const res = SkillDB.db.exec(query);
-  if (res.length > 0) {
-    res[0].values.forEach(row => {
-    const tr = document.createElement("tr");
-    row.forEach(val => {
-      const td = document.createElement("td");
-      td.textContent = val;
-      tr.appendChild(td);
-    });
-
-    // Action buttons
-    const actionTd = document.createElement("td");
-    const buttonsWrapper = document.createElement("div");
-    buttonsWrapper.className = "buttons are-small"
-    const editBtn = document.createElement("button");
-    editBtn.className = "button is-warning";
-    editBtn.textContent = "Edit";
-    editBtn.onclick = () => editSkill(row[0]);
-
-    const delBtn = document.createElement("button");
-    delBtn.className = "button is-danger";
-    delBtn.textContent = "Delete";
-    delBtn.onclick = () => deleteSkill(row[0]);
-
-
-    buttonsWrapper.appendChild(editBtn);
-    buttonsWrapper.appendChild(delBtn);
-    actionTd.appendChild(buttonsWrapper);
-    tr.appendChild(actionTd);
-
-    tbody.appendChild(tr);
-  });
-  }
-}
-
-function editSkill(id) {
-  if (!SkillDB.db) return;
-  const stmt = SkillDB.db.prepare(`
-    SELECT s.id, s.name, s.display_name, s.class_id, s.tab_index,
-           s.row, s.col, s.image, s.has_details
-    FROM skills s
-    WHERE s.id = ?
-  `);
-  stmt.bind([id]);
-  if (stmt.step()) {
-    const [sid, name, display_name, class_id, tab_index, row, col, image, has_details] = stmt.get();
-
-    SkillDB.editingSkillId = sid;
-    document.getElementById("name").value = name;
-    document.getElementById("display_name").value = display_name;
-    document.getElementById("class_id").value = class_id;
-    populateTabSelect(class_id);
-    document.getElementById("tab_index").value = tab_index;
-    document.getElementById("row").value = row;
-    document.getElementById("col").value = col;
-    document.getElementById("image").value = image;
-    document.getElementById("has_details").checked = (has_details === 1);
-
-
-    // Reset tags
-    setSkillTagCheckboxes(id);
-
-    // Change button text
-    document.querySelector("#skill-form button[type=submit]").textContent = "Save Skill";
-  }
-  stmt.free();
-}
-
-function deleteSkill(id) {
-  if (!SkillDB.db) return;
-  if (!confirm("Are you sure you want to delete this skill?")) return;
-  SkillDB.db.run("DELETE FROM skills WHERE id = ?", [id]);
-  refreshSkillsTable();
-}
-
-// Export/Import
-document.getElementById("export-db-btn").addEventListener("click", async () => {
-  if (!SkillDB.db) return;
-
-  try {
-    const binaryArray = SkillDB.db.export();
-    const blob = new Blob([binaryArray], { type: "application/octet-stream" });
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "skills.sqlite";
-    a.click();
-
-    URL.revokeObjectURL(url);
-  } catch (err) {
-    console.error("Error exporting DB:", err);
-  }
-});
-
-
-document.getElementById("import-db-btn").addEventListener("click", () => {
-  const fileInput = document.getElementById("import-db");
-  fileInput.click(); // triggers the hidden file input
-});
-
-document.getElementById("import-db").addEventListener("change", async () => {
-  const fileInput = document.getElementById("import-db");
-  if (!fileInput.files.length) return;
-
-  try {
-    const file = fileInput.files[0];
-    const buffer = await file.arrayBuffer();
+    // Initialize SQL.js
+    SkillDB.SQL = await initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.13.0/${file}` });
     SkillDB.db = new SkillDB.SQL.Database(new Uint8Array(buffer));
 
+    try {
+      populateClassSelect();
+      populateTagCheckboxes();
+      refreshSkillsTable();
+    } catch (err) {
+      console.warn("Falling back to empty DB:", err.message);
+      initDatabase();
+    }
+  }
+
+  async function initDatabase() {
+    SkillDB.db = new SkillDB.SQL.Database();
+
+    SkillDB.db.run(`
+      CREATE TABLE classes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL UNIQUE
+      );
+      CREATE TABLE classTabs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        class_id INTEGER NOT NULL,
+        tab_index INTEGER NOT NULL,
+        name TEXT NOT NULL,
+        FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE CASCADE,
+        UNIQUE(class_id, tab_index)
+      );
+      CREATE TABLE skilltags (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL UNIQUE
+      );
+      CREATE TABLE skills (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        display_name TEXT NOT NULL,
+        class_id INTEGER,
+        tab_index INTEGER,
+        row INTEGER,
+        col INTEGER,
+        image TEXT,
+        has_details INTEGER DEFAULT 0,
+        FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE SET NULL
+      );
+      CREATE TABLE skill_skilltags (
+        skill_id INTEGER NOT NULL,
+        tag_id INTEGER NOT NULL,
+        PRIMARY KEY (skill_id, tag_id),
+        FOREIGN KEY (skill_id) REFERENCES skills(id) ON DELETE CASCADE,
+        FOREIGN KEY (tag_id) REFERENCES skilltags(id) ON DELETE CASCADE
+      );
+    `);
+
+    //Insert default classes
+    // const defaultClasses = ["Other", "Amazon", "Sorceress", "Necromancer", "Paladin", "Barbarian", "Druid", "Assassin"];
+    // let stmt = db.prepare("INSERT INTO classes (name) VALUES (?)");
+    // defaultClasses.forEach(c => stmt.run([c]));
+    // stmt.free();
+
     populateClassSelect();
     populateTagCheckboxes();
     refreshSkillsTable();
-    fileInput.value = "";
-  } catch (err) {
-    console.error("Error importing DB:", err);
   }
-});
+
+  function populateClassSelect() {
+    if (!SkillDB.db) return;
+    const res = SkillDB.db.exec("SELECT id, name FROM classes ORDER BY id");
+    const select = document.getElementById("class_id");
+    select.innerHTML = "";
+    if (!res[0]) return;
+
+    res[0].values.forEach(([id, name]) => {
+      const opt = document.createElement("option");
+      opt.value = id;
+      opt.textContent = name;
+      select.appendChild(opt);
+    });
+
+    if (res[0].values.length > 0) populateTabSelect(res[0].values[0][0]);
+
+    select.addEventListener("change", e => populateTabSelect(e.target.value));
+  }
+
+  function populateTabSelect(classId) {
+    if (!SkillDB.db) return;
+    const select = document.getElementById("tab_index");
+    select.innerHTML = "";
+
+    const stmt = SkillDB.db.prepare("SELECT id, name FROM classTabs WHERE class_id = ? ORDER BY tab_index");
+    stmt.bind([classId]);
+
+    while (stmt.step()) {
+      const [id, name] = stmt.get();
+      const opt = document.createElement("option");
+      opt.value = id;
+      opt.textContent = name;
+      select.appendChild(opt);
+    }
+
+    stmt.free();
+  }
+
+  function setSkillTagCheckboxes(skillId) {
+    if (!SkillDB.db) return;
+    // Clear all first
+    document.querySelectorAll("#tag-checkboxes input[type=checkbox]").forEach(cb => {
+      cb.checked = false;
+    });
+
+    // Get tags for this skill
+    const stmt = SkillDB.db.prepare("SELECT tag_id FROM skill_skilltags WHERE skill_id = ?");
+    stmt.bind([skillId]);
+
+    while (stmt.step()) {
+      const tagId = stmt.get()[0];
+      const cb = document.querySelector(`#tag-checkboxes input[value='${tagId}']`);
+      if (cb) cb.checked = true;
+    }
+    stmt.free();
+  }
+
+  function populateTagCheckboxes() {
+    if (!SkillDB.db) return;
+    const res = SkillDB.db.exec("SELECT id, name FROM skilltags ORDER BY name");
+    const container = document.getElementById("tag-checkboxes");
+    container.innerHTML = "";
+    if (!res[0]) return;
+
+    // Build a lookup of id → name
+    const tagMap = {};
+    res[0].values.forEach(([id, name]) => {
+      tagMap[id] = name;
+    });
+
+    // Track used IDs so we can later put leftovers into "Other"
+    const usedIds = new Set();
+
+    // Render each defined group
+    for (const [groupName, ids] of Object.entries(SkillDB.tagGroups)) {
+      const groupDiv = document.createElement("div");
+      groupDiv.className = "mb-2 is-fullwidth";
+
+      const title = document.createElement("p");
+      title.className = "has-text-weight-bold has-text-warning";
+      title.textContent = groupName;
+      groupDiv.appendChild(title);
+
+      const groupList = document.createElement("div");
+
+      // Sort alphabetically inside group
+      ids.map(id => [id, tagMap[id]])
+        .filter(([id, name]) => name) // skip invalid
+        .sort((a, b) => a[1].localeCompare(b[1]))
+        .forEach(([id, name]) => {
+          usedIds.add(id);
+
+          const label = document.createElement("label");
+          label.className = "checkbox pr-3";
+          const checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.value = id;
+          label.appendChild(checkbox);
+          label.appendChild(document.createTextNode(" " + name));
+          groupList.appendChild(label);
+        });
+
+      groupDiv.appendChild(groupList);
+      container.appendChild(groupDiv);
+    }
+
+    // Handle "Other" (all tags not explicitly grouped)
+    const leftover = Object.entries(tagMap)
+      .filter(([id]) => !usedIds.has(parseInt(id)))
+      .sort((a, b) => a[1].localeCompare(b[1]));
+
+    if (leftover.length > 0) {
+      const groupDiv = document.createElement("div");
+      groupDiv.className = "mb-2 is-fullwidth";
+
+      const title = document.createElement("p");
+      title.className = "has-text-weight-bold has-text-danger";
+      title.textContent = "Other";
+      groupDiv.appendChild(title);
+
+      const groupList = document.createElement("div");
+
+      leftover.forEach(([id, name]) => {
+        const label = document.createElement("label");
+        label.className = "checkbox pr-3";
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.value = id;
+        label.appendChild(checkbox);
+        label.appendChild(document.createTextNode(" " + name));
+        groupList.appendChild(label);
+      });
+
+      groupDiv.appendChild(groupList);
+      container.appendChild(groupDiv);
+    }
+  }
+
+  // Insert skill
+  document.getElementById("skill-form").addEventListener("submit", e => {
+    e.preventDefault();
+    if (!SkillDB.db) return;
+
+    const name = document.getElementById("name").value.trim();
+    const display_name = document.getElementById("display_name").value.trim();
+    const class_id = document.getElementById("class_id").value;
+    const tab_id = parseInt(document.getElementById("tab_index").value, 10);
+    const row = parseInt(document.getElementById("row").value, 10);
+    const col = parseInt(document.getElementById("col").value, 10);
+    const image = document.getElementById("image").value.trim();
+    const has_details = document.getElementById("has_details").checked ? 1 : 0;
+
+    if (SkillDB.editingSkillId) {
+      // Update
+      SkillDB.db.run(`
+        UPDATE skills
+        SET name=?, display_name=?, class_id=?, tab_index=?, row=?, col=?, image=?, has_details=?
+        WHERE id=?
+      `, [name, display_name, class_id, tab_id, row, col, image, has_details, SkillDB.editingSkillId]);
+
+      // Update tags
+      SkillDB.db.run("DELETE FROM skill_skilltags WHERE skill_id=?", [SkillDB.editingSkillId]);
+      document.querySelectorAll("#tag-checkboxes input:checked").forEach(cb => {
+        SkillDB.db.run("INSERT INTO skill_skilltags (skill_id, tag_id) VALUES (?, ?)", [SkillDB.editingSkillId, cb.value]);
+      });
+
+      SkillDB.editingSkillId = null;
+      document.querySelector("#skill-form button[type=submit]").textContent = "Insert Skill";
+    } else {
+      // Insert
+      SkillDB.db.run(`
+        INSERT INTO skills (name, display_name, class_id, tab_index, row, col, image, has_details)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      `, [name, display_name, class_id, tab_id, row, col, image, has_details]);
+
+      const skillId = SkillDB.db.exec("SELECT last_insert_rowid()")[0].values[0][0];
+      document.querySelectorAll("#tag-checkboxes input:checked").forEach(cb => {
+        SkillDB.db.run("INSERT INTO skill_skilltags (skill_id, tag_id) VALUES (?, ?)", [skillId, cb.value]);
+        cb.checked = false;
+      });
+    }
+
+    refreshSkillsTable();
+    e.target.reset();
+  });
+
+  function refreshSkillsTable() {
+    if (!SkillDB.db) return;
+    const tbody = document.querySelector("#skills-table tbody");
+    tbody.innerHTML = "";
+
+    const query = `
+      SELECT s.id, s.name, s.display_name, c.name as class_name, 
+            ct.name as tab_name, s.row, s.col, s.image,
+            GROUP_CONCAT(t.name, ', ') as tags,
+            s.has_details
+      FROM skills s
+      LEFT JOIN classes c ON s.class_id = c.id
+      LEFT JOIN skill_skilltags st ON s.id = st.skill_id
+      LEFT JOIN skilltags t ON st.tag_id = t.id
+      LEFT JOIN classTabs ct ON s.tab_index = ct.id
+      GROUP BY s.id
+      ORDER BY s.id;
+    `;
+
+    const res = SkillDB.db.exec(query);
+    if (res.length > 0) {
+      res[0].values.forEach(row => {
+      const tr = document.createElement("tr");
+      row.forEach(val => {
+        const td = document.createElement("td");
+        td.textContent = val;
+        tr.appendChild(td);
+      });
+
+      // Action buttons
+      const actionTd = document.createElement("td");
+      const buttonsWrapper = document.createElement("div");
+      buttonsWrapper.className = "buttons are-small"
+      const editBtn = document.createElement("button");
+      editBtn.className = "button is-warning";
+      editBtn.textContent = "Edit";
+      editBtn.onclick = () => editSkill(row[0]);
+
+      const delBtn = document.createElement("button");
+      delBtn.className = "button is-danger";
+      delBtn.textContent = "Delete";
+      delBtn.onclick = () => deleteSkill(row[0]);
 
 
-initializePage();
-</script>
+      buttonsWrapper.appendChild(editBtn);
+      buttonsWrapper.appendChild(delBtn);
+      actionTd.appendChild(buttonsWrapper);
+      tr.appendChild(actionTd);
 
+      tbody.appendChild(tr);
+    });
+    }
+  }
+
+  function editSkill(id) {
+    if (!SkillDB.db) return;
+    const stmt = SkillDB.db.prepare(`
+      SELECT s.id, s.name, s.display_name, s.class_id, s.tab_index,
+            s.row, s.col, s.image, s.has_details
+      FROM skills s
+      WHERE s.id = ?
+    `);
+    stmt.bind([id]);
+    if (stmt.step()) {
+      const [sid, name, display_name, class_id, tab_index, row, col, image, has_details] = stmt.get();
+
+      SkillDB.editingSkillId = sid;
+      document.getElementById("name").value = name;
+      document.getElementById("display_name").value = display_name;
+      document.getElementById("class_id").value = class_id;
+      populateTabSelect(class_id);
+      document.getElementById("tab_index").value = tab_index;
+      document.getElementById("row").value = row;
+      document.getElementById("col").value = col;
+      document.getElementById("image").value = image;
+      document.getElementById("has_details").checked = (has_details === 1);
+
+
+      // Reset tags
+      setSkillTagCheckboxes(id);
+
+      // Change button text
+      document.querySelector("#skill-form button[type=submit]").textContent = "Save Skill";
+    }
+    stmt.free();
+  }
+
+  function deleteSkill(id) {
+    if (!SkillDB.db) return;
+    if (!confirm("Are you sure you want to delete this skill?")) return;
+    SkillDB.db.run("DELETE FROM skills WHERE id = ?", [id]);
+    refreshSkillsTable();
+  }
+
+  // Export/Import
+  document.getElementById("export-db-btn").addEventListener("click", async () => {
+    if (!SkillDB.db) return;
+
+    try {
+      const binaryArray = SkillDB.db.export();
+      const blob = new Blob([binaryArray], { type: "application/octet-stream" });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "skills.sqlite";
+      a.click();
+
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("Error exporting DB:", err);
+    }
+  });
+
+
+  document.getElementById("import-db-btn").addEventListener("click", () => {
+    const fileInput = document.getElementById("import-db");
+    fileInput.click(); // triggers the hidden file input
+  });
+
+  document.getElementById("import-db").addEventListener("change", async () => {
+    const fileInput = document.getElementById("import-db");
+    if (!fileInput.files.length) return;
+
+    try {
+      const file = fileInput.files[0];
+      const buffer = await file.arrayBuffer();
+      SkillDB.db = new SkillDB.SQL.Database(new Uint8Array(buffer));
+
+      populateClassSelect();
+      populateTagCheckboxes();
+      refreshSkillsTable();
+      fileInput.value = "";
+    } catch (err) {
+      console.error("Error importing DB:", err);
+    }
+  });
+
+
+  initializePage();
+  </script>
 </body>
 </html>

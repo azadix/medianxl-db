@@ -1,0 +1,10 @@
+{
+  "id": "eldritch_storm",
+  "description": [
+    "Unleashes a twister of forbidden power",
+    "Hits multiple times"
+  ],
+  "scaling": [
+    { "level": 25, "fire_damage_min": 249, "fire_damage_max": 276, "mana_cost": 98 }
+  ]
+}

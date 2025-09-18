@@ -1,0 +1,10 @@
+{
+  "id": "magic_missiles",
+  "description": [
+    "Fires a wave of multiple homing magic bolts",
+    "Explosion Radius: 2 yards"
+  ],
+  "scaling": [
+    { "level": 22, "magic_damage_min": 168, "magic_damage_max": 224, "bolts": 10, "mana_cost": 61 }
+  ]
+}

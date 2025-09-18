@@ -1,0 +1,15 @@
+{
+  "id": "mana_sweep",
+  "description": [
+    "Steals Mana and damages nearby enemies based on lost Mana",
+    "Leeches Mana based on number of hits",
+    "Feedback Damage: 26-36% of lost Mana",
+    "(Capped at 40 000 Mana)"
+  ],
+  "restriction": [
+    "You cannot learn this skill if you have points in elemental proficiency skills"
+  ],
+  "scaling": [
+    { "level": 11, "cooldown": 20.8, "mana_cost": 0 }
+  ]
+}

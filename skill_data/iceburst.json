@@ -1,0 +1,18 @@
+{
+  "id": "iceburst",
+  "description": [
+    "Unleashes a chilling blast of arctic death",
+    "35% Weapon Damage",
+    "Converts 100% Physical Damage to Cold",
+    "Hits multiple times",
+    "<p class='has-text-warning'>Shell Shock</p>",
+    "Enemy movement speed: -50%",
+    "Enemy Cold Resistance: -3%"
+  ],
+  "restriction": [
+    "Requires a melee weapon"
+  ],
+  "scaling": [
+    { "level": 11, "mana_cost": 30 }
+  ]
+}

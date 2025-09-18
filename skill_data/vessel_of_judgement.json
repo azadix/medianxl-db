@@ -1,0 +1,11 @@
+{
+  "id": "vessel_of_judgement",
+  "description": [
+    "Periodically assaults enemies with righteous blasts",
+    "Target range: 10 yards",
+    "Delay between blasts: 0.32 seconds"
+  ],
+  "scaling": [
+    { "level": 10, "targets": 2, "physical_damage": 60, "duration": 570, "mana_cost": 34 }
+  ]
+}

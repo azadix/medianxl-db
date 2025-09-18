@@ -1,0 +1,14 @@
+{
+  "id": "hurricane",
+  "description": [
+    "Sustain ravenous raging winds around you",
+    "<p class='has-text-info'>Press and hold mouse button to channel</p>",
+    "Not affected by cast speed modifiers",
+    "50% Total Damage Reduction while channeling",
+    "Continuous channeling strengthens the winds and fatigues you",
+    "(Total Damage increases for each point of missing stamina)"
+  ],
+  "scaling": [
+    { "level": 13, "physical_damage_min": 320, "physical_damage_max": 366, "mana_cost": 19 }
+  ]
+}

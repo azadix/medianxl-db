@@ -1,0 +1,11 @@
+{
+  "id": "ice_bolt_nova",
+  "description": [
+    "Casts a nova of ice bolts",
+    "Damage increases with your uncapped cold resist",
+    "Cold length: 1 second"
+  ],
+  "scaling": [
+    { "level": 10, "cold_damage_min": 108, "cold_damage_max": 155, "mana_cost": 60 }
+  ]
+}
