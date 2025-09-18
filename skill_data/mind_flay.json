@@ -1,0 +1,10 @@
+{
+  "id": "mind_flay",
+  "description": [
+    "Chaotic beam of lightning that shocks your primaty target",
+    "Beams: 1"
+  ],
+  "scaling": [
+    { "level": 7, "physical_damage_min": 53, "physical_damage_max": 62, "lightning_damage_min": 103, "lightning_damage_max": 128, "mana_cost": 15 }
+  ]
+}

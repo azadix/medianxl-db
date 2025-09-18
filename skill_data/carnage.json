@@ -1,0 +1,15 @@
+{
+  "id": "carnage",
+  "description": [
+    "Channel a fiery shockwave through your weapon",
+    "145% Weapon Damage",
+    "Convert 20% Physical Damage to Fire"
+  ],
+  "restriction": [
+    "Requires a scythe or dagger",
+    "Requires a melee target"
+  ],
+  "scaling": [
+    { "level": 5, "cooldown": 2, "fire_damage": 80, "attack_rating": 42, "mana_cost": 15 }
+  ]
+}

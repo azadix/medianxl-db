@@ -1,0 +1,11 @@
+{
+  "id": "vessel_of_retribution",
+  "description": [
+    "Periodically blasts nearby threats with divine magic",
+    "Target range: 4 yards",
+    "Delay between blasts: 0.16 seconds"
+  ],
+  "scaling": [
+    { "level": 21, "targets": 2, "physical_damage": 103, "duration": 900, "mana_cost": 72 }
+  ]
+}

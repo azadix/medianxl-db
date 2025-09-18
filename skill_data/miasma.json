@@ -1,0 +1,13 @@
+{
+  "id": "miasma",
+  "description": [
+    "Field of living black magic that poisons and haunts enemies",
+    "<p class='has-text-warning'>Haunt</p>",
+    "Damage and Attack Rating: -33%",
+    "Movement Speed: -33%",
+    "Poison Resistance: -20%"
+  ],
+  "scaling": [
+    { "level": 17, "duration": 4.9, "poison_damage_min": 91, "poison_damage_max": 134, "poison_duration": 0.8, "mana_cost": 46 }
+  ]
+}
