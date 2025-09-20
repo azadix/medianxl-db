@@ -1,0 +1,11 @@
+{
+  "id": "nightmare",
+  "description": [
+    "Slows enemies and reduces their chance to hit you",
+    "<p class='has-text-success'>Prevents monserts from healing on hit/kill</p>",
+    "Duration: 10 seconds"
+  ],
+  "scaling": [
+    { "level": 9, "enemy_physical_resistance": -9, "enemy_movement_speed": -19, "radius": 8.6, "mana_cost": 35 }
+  ]
+}

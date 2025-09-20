@@ -1,0 +1,13 @@
+{
+  "id": "overkill",
+  "description": [
+    "Throw a massive shower of axes over a narrow area",
+    "110% Weapon Damage"
+  ],
+  "restriction": [
+    "Requires a Throwing Axe"
+  ],
+  "scaling": [
+    { "level": 16, "axes": 16, "attack_rating_percent": 85, "mana_cost": 22 }
+  ]
+}

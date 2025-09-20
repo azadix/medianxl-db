@@ -1,0 +1,11 @@
+{
+  "id": "pagan_rites",
+  "description": [
+    "Engulfs corpses in flames, healing you with each sacrifice",
+    "Cooldown: 2 seconds",
+    "Life healed per corpse: 3%"
+  ],
+  "scaling": [
+    { "level": 11, "mana_cost": 82 }
+  ]
+}

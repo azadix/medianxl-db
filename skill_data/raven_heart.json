@@ -1,0 +1,11 @@
+{
+  "id": "raven_heart",
+  "description": [
+    "Increases cond damage but slowly drains your life away",
+    "Duration: 30 seconds",
+    "Drains 100 percent Life in 30 seconds"
+  ],
+  "scaling": [
+    { "level": 7, "cold_damage_percent_bonus": 35, "mana_cost": 54 }
+  ]
+}

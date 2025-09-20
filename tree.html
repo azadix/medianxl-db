@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Skills UI</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/1.0.1/css/bulma.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.13.0/sql-wasm.js"></script>
+  <style>
+    .skills-grid {
+        gap: 1rem;
+        width: 50%;
+        margin: 0 auto;
+    }
+    .empty-skill-card {
+        padding: 0.5rem;
+        width: 100%;
+        height: 100px;
+    }
+
+    /* Uniform skill cards */
+    .skill-card {
+        background: #222222;
+        border: 1px solid #8a8a8a8a;
+        border-radius: 6px;
+        padding: 0.5rem;
+        text-align: center;
+        color: white;
+
+        /* Fix size */
+        width: 100%;
+        height: 100px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    .skill-card img {
+        max-width: 64px;
+        margin-bottom: 0.25rem;
+    }
+
+    .skill-card div {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 90%;
+        text-align: center;
+    }
+  </style>
+</head>
+<body class="section">
+    <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
+        <div class="navbar-menu">
+        <div class="navbar-start">
+            <a class="navbar-item" href="./" id="nav-all-skills">
+                <strong>Skills</strong>
+            </a>
+            <a class="navbar-item" href="./db.html" id="nav-db">
+                <strong>DB</strong>
+            </a>
+            <a class="navbar-item is-selected" href="./tree.html" id="nav-tree">
+                <strong>Tree</strong>
+            </a>
+        </div>
+        </div>
+    </nav>
+    
+    <div class="field pt-3">
+        <label class="label">Select Class</label>
+        <div class="control">
+        <div class="select">
+            <select id="classSelect"></select>
+        </div>
+        </div>
+    </div>
+
+    <div id="skillsContainer" class="mt-4"></div>
+    <script type="module">
+        let skillsList;
+        async function loadSkillsFromSQLite() {
+            try {
+                // Fetch SQLite file
+                const response = await fetch('skills.sqlite');
+                if (!response.ok) throw new Error('Failed to load SQLite file');
+
+                const buffer = await response.arrayBuffer();
+
+                // Initialize SQL.js
+                const SQL = await initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.13.0/${file}` });
+                const db = new SQL.Database(new Uint8Array(buffer));
+
+                // Query skills with correct tab join
+                const stmt = db.prepare(`
+                    SELECT s.*,
+                        ct.name AS tab_name,
+                        c.name AS class_name,
+                        s.has_details,
+                        GROUP_CONCAT(t.name, ', ') AS tags
+                    FROM skills s
+                    LEFT JOIN classTabs ct
+                        ON s.tab_index = ct.id
+                    LEFT JOIN classes c
+                        ON s.class_id = c.id
+                    LEFT JOIN skill_skilltags st
+                        ON s.id = st.skill_id
+                    LEFT JOIN skilltags t
+                        ON st.tag_id = t.id
+                    WHERE s.class_id != 1
+                    GROUP BY s.id
+                    ORDER BY s.class_id, s.tab_index, s.row, s.col;
+                `);
+
+                const loadedSkills = [];
+                while (stmt.step()) {
+                    const row = stmt.getAsObject();
+                    loadedSkills.push({
+                        id: row.name,
+                        name: row.display_name,
+                        class: row.class_name || '',
+                        tab: row.tab_index,        // numeric
+                        tabName: row.tab_name || '', // proper tab name
+                        tags: row.tags ? row.tags.split(', ') : [],
+                        row: row.row,
+                        col: row.col,
+                        image: row.image || '-1/icons-shared_missing.png',
+                        hasDetails: row.has_details === 1
+                    });
+
+
+                }
+                stmt.free();
+
+                // Hack to copy "Mastery" tab for every class (db only has amazon)
+                const masterySkills = loadedSkills.filter(skill => skill.tab === 7 && skill.class === "Amazon");
+                const allClasses = [...new Set(loadedSkills.map(s => s.class))];
+                allClasses.forEach(cls => {
+                    if (cls !== "Amazon") {
+                        masterySkills.forEach(skill => {
+                            loadedSkills.push({
+                                ...skill,
+                                class: cls
+                            });
+                        });
+                    }
+                });
+
+                return loadedSkills; // update global list
+            } catch (error) {
+                console.error('Error loading skills from SQLite:', error);
+                contentElement.innerHTML = `<p>Error loading skills from SQLite: ${error.message}</p>`;
+            }
+        }
+
+        // Main render function
+        function renderSkills(selectedClass) {
+            skillsContainer.innerHTML = "";
+
+            // Filter skills for this class
+            const classSkills = skillsList.filter(skill => skill.class === selectedClass);
+
+            // Group by tabName
+            const tabs = {};
+            classSkills.forEach(skill => {
+                if (!tabs[skill.tabName]) tabs[skill.tabName] = [];
+                tabs[skill.tabName].push(skill);
+            });
+
+            // Tabs nav
+            const tabNav = document.createElement('div');
+            tabNav.className = 'tabs';
+            const ul = document.createElement('ul');
+
+            const tabContent = document.createElement('div');
+            let first = true;
+
+            Object.keys(tabs).forEach(tabName => {
+                // Tab nav button
+                const li = document.createElement('li');
+                if (first) li.classList.add('is-active');
+                const a = document.createElement('a');
+                a.textContent = tabName;
+                a.dataset.tab = tabName;
+                li.appendChild(a);
+                ul.appendChild(li);
+
+                // Tab content grid
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'skills-grid';
+                contentDiv.id = `tab-${tabName}`;
+                contentDiv.style.display = first ? 'grid' : 'none';
+
+                const rows = tabs[tabName].map(s => s.row);
+                const cols = tabs[tabName].map(s => s.col);
+                const minRow = Math.min(...rows);
+                const maxRow = Math.max(...rows);
+                const minCol = Math.min(...cols);
+                const maxCol = Math.max(...cols);
+
+                contentDiv.style.gridTemplateRows = `repeat(${maxRow - minRow + 1}, auto)`;
+                contentDiv.style.gridTemplateColumns = `repeat(${maxCol - minCol + 1}, 1fr)`;
+
+                for (let r = minRow; r <= maxRow; r++) {
+                    for (let c = minCol; c <= maxCol; c++) {
+                        const skill = tabs[tabName].find(s => s.row === r && s.col === c);
+                        if (skill) {
+                            const card = document.createElement('div');
+                            card.className = 'skill-card';
+                            card.style.gridRow = r - minRow + 1;
+                            card.style.gridColumn = c - minCol + 1;
+
+                            let cardText = `
+                                <img src="./icons/${skill.image}" alt="${skill.name}">
+                                <div>
+                            `;
+                            if (skill.hasDetails) {
+                                cardText += `<a href="./?skill=${skill.id}">`
+                            }
+
+                            cardText += `${skill.name}</div>`;
+                            card.innerHTML = cardText
+                            contentDiv.appendChild(card);
+                        } else {
+                            const placeholder = document.createElement('div');
+                            placeholder.className = 'empty-skill-card';
+                            placeholder.style.gridRow = r - minRow + 1;
+                            placeholder.style.gridColumn = c - minCol + 1;
+                            contentDiv.appendChild(placeholder);
+                        }
+                    }
+                }
+
+                tabContent.appendChild(contentDiv);
+                first = false;
+            });
+
+            tabNav.appendChild(ul);
+            skillsContainer.appendChild(tabNav);
+            skillsContainer.appendChild(tabContent);
+
+            // Tab switching
+            ul.querySelectorAll('a').forEach(a => {
+                a.addEventListener('click', e => {
+                e.preventDefault();
+                ul.querySelectorAll('li').forEach(li => li.classList.remove('is-active'));
+                a.parentElement.classList.add('is-active');
+                tabContent.querySelectorAll('.skills-grid').forEach(div => div.style.display = 'none');
+                document.getElementById(`tab-${a.dataset.tab}`).style.display = 'grid';
+                });
+            });
+        }
+
+        // Initial render
+        async function main() {
+            skillsList = await loadSkillsFromSQLite(); // this updates global skillsList
+
+            // Populate selector
+            const classes = [...new Set(skillsList.map(skill => skill.class))];
+            classes.forEach(cls => {
+                const opt = document.createElement('option');
+                opt.value = cls;
+                opt.textContent = cls;
+                classSelect.appendChild(opt);
+            });
+
+            renderSkills(classes[0]);
+            classSelect.addEventListener('change', () => renderSkills(classSelect.value));
+
+        }
+        main();
+    </script>
+</body>
+</html>

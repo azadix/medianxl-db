@@ -1,0 +1,10 @@
+{
+  "id": "spike_nova",
+  "description": [
+    "Fire a ring of deadly spikes around you",
+    "100% Weapon Damage"
+  ],
+  "scaling": [
+    { "level": 11, "mana_cost": 0 }
+  ]
+}
