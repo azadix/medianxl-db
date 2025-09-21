@@ -1,0 +1,14 @@
+{
+  "id": "phalanx",
+  "description": [
+    "Create a legion of deadly archers to attack enemies",
+    "150% Weapon Damage",
+    "Wall width: 18 yards"
+  ],
+  "restriction": [
+    "Requires a bow or crossbow"
+  ],
+  "scaling": [
+    { "level": 2, "mana_cost": 45 }
+  ]
+}

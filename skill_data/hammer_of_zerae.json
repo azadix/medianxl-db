@@ -6,7 +6,7 @@
     "Converts 25% Physical Damage to Lightning"
   ],
   "restrictions": [
-    "Requires a Mace, Hammer, or Scepter"
+    "Requires a mace, hammer, or scepter"
   ],
   "scaling": [
     { "level": 14, "lightning_damage_min": 36, "lightning_damage_max": 53, "mana_cost": 27 }

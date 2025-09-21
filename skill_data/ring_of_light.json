@@ -1,0 +1,10 @@
+{
+  "id": "ring_of_light",
+  "description": [
+    "Creates a stationary ring of holy fire to burn nearby enemies",
+    "Duration: 3 seconds"
+  ],
+  "scaling": [
+    { "level": 5, "average_fire_damage_per_second_min": 557, "average_fire_damage_per_second_max": 757, "mana_cost": 34 }
+  ]
+}

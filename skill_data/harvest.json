@@ -1,0 +1,11 @@
+{
+  "id": "harvest",
+  "description": [
+    "Harvest the ground, poisoning enemies and restoring life",
+    "<p class='has-text-warning'>Can be used while Shapeshifted</p>",
+    "Restores +5% Life in 1 second"
+  ],
+  "scaling": [
+    { "level": 17, "poison_damage_min": 1587, "poison_damage_max": 2353, "poison_duration": 4, "mana_cost": 51 }
+  ]
+}

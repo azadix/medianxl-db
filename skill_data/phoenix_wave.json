@@ -1,0 +1,13 @@
+{
+  "id": "phoenix_wave",
+  "description": [
+    "Casts a wide flame wave in front of you",
+    "Fire Spell Damage efficiency: 190%",
+    "Cold/Lightning/Poison Spell Damage efficiency: -80%",
+    "Double healing if you are not a Paladin or a Sorceress",
+    "100% increased healing at 2800 Energy and again at 3600 Energy"
+  ],
+  "scaling": [
+    { "level": 16, "life_restored_per_cast": 31, "fire_damage_min": 94, "fire_damage_max": 117, "mana_cost": 95 }
+  ]
+}

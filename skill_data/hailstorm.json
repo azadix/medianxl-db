@@ -1,0 +1,10 @@
+{
+  "id": "hailstorm",
+  "description": [
+    "Uses target enemy as a focus for a storm of ice and frost",
+    "130% Weapon Damage"
+  ],
+  "scaling": [
+    { "level": 16, "cold_damage_min": 83, "cold_damage_max": 109, "duration": 6.4, "mana_cost": 85 }
+  ]
+}

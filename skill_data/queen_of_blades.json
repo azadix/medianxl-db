@@ -1,0 +1,11 @@
+{
+  "id": "queen_of_blades",
+  "description": [
+    "Spinning blades periodically strike at enemies within melee range",
+    "Triggers 'On Melee Attack' skill procs",
+    "100% Weapon Damage"
+  ],
+  "scaling": [
+    { "level": 15, "time_between_attacks": 1.2, "crushing_blow": 2, "attack_speed": 5, "duration": 260, "mana_cost": 117 }
+  ]
+}

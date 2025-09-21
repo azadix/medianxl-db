@@ -1,0 +1,15 @@
+{
+  "id": "eviscerate",
+  "description": [
+    "Throw hollow point javelins splitting into shrapnel on impact",
+    "90% Weapon Damage",
+    "Javelins: 1",
+    "Each Javelin splits into 5 projectiles on impact"
+  ],
+  "restriction": [
+    "Requires a javelin"
+  ],
+  "scaling": [
+    { "level": 17, "physical_damage_min": 28, "physical_damage_max": 29, "mana_cost": 17 }
+  ]
+}

@@ -7,7 +7,7 @@
     "Converts 31% Physical Damage to Lightning"
   ],
   "restrictions": [
-    "Requires a Throwing Axe"
+    "Requires a throwing axe"
   ],
   "scaling": [
     { "level": 16, "bonus_magic_damage": 238, "mana_cost": 82 }
