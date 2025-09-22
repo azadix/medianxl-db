@@ -1,0 +1,16 @@
+{
+  "id": "shower_of_rocks",
+  "description": [
+    "A cascade of rocks, damaging and weakening enemies",
+    "160% Weapon Damage",
+    "Cooldown: 2 seconds",
+    "Enemy Physical Resist: -10%",
+    "Enemy Attack Rating: -25%",
+    "Enemy Movement Speed: -25%"
+  ],
+  "restriction": [
+    "Requires a melee weapon",
+    "Requires a melee target"
+  ],
+  "scaling": []
+}

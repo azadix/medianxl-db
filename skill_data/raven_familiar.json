@@ -1,0 +1,14 @@
+{
+  "id": "raven_familiar",
+  "description": [
+    "Grants an aura which increases caster prowess",
+    "Raven damage increases with Total Energy",
+    "<p class='has-text-warning'>Zann Esu's Rite</p>",
+    "+25% Energy",
+    "+15% Cast Speed",
+    "+1 to All Skills"
+  ],
+  "scaling": [
+    { "level": 4, "damage_min": 40, "damage_max": 42, "mana_cost": 120 }
+  ]
+}

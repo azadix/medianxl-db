@@ -1,0 +1,13 @@
+{
+  "id": "screaming_eagle",
+  "description": [
+    "Throwing axe impacts at target point, weakening nearby enemies",
+    "Duration: 5 seconds"
+  ],
+  "restriction": [
+    "Requires a throwing axe"
+  ],
+  "scaling": [
+    { "level": 16, "elemental_magic_damage_bonus_flat": 192, "enemy_damage_and_movement_speed": -20, "mana_cost": 82 }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "id": "fusillade",
+  "description": [
+    "A mystic trap that spits waves of bladed steel",
+    "<p class='has-text-info'>Only allows the use of melee, summoning and buff/debuff skills</p>",
+    "140% Weapon Damage",
+    "Target seek range: 9 yards"
+  ],
+  "restriction": [
+    "Requires a staff, orb or crystal sword"
+  ],
+  "scaling": [
+    { "level": 5, "duration": 2.1, "cooldown": 4.1, "mana_cost": 90 }
+  ]
+}

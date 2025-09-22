@@ -1,0 +1,14 @@
+{
+  "id": "scorpion_blade",
+  "description": [
+    "Knives coated in deadly poison",
+    "Deals 100% of Way of the Spider's Damage per second (increases with Poison Spell Damage)",
+    "Detonates again 1 second after hit"
+  ],
+  "restriction": [
+    "Requires a throwin knife"
+  ],
+  "scaling": [
+    { "level": 12, "knives": 2, "poison_damage": 5, "poison_duration": 0.5, "mana_cost": 27 }
+  ]
+}

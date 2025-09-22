@@ -1,0 +1,11 @@
+{
+  "id": "solar_flare",
+  "description": [
+    "Burn and blind enemies in a large area around you",
+    "+1 to All Skills",
+    "Enemy Weapon Physical Damage and Attack Rating: -20%"
+  ],
+  "scaling": [
+    { "level": 22, "fire_damage_min": 225, "fire_damage_max": 257, "physical_damage_min": 244, "physical_damage_max": 302, "mana_cost": 102 }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "id": "stampede",
+  "description": [
+    "Throw multiple axes in a deadly volley",
+    "450% Weapon Damage",
+    "Converts 50% Physical Damage to Magic"
+  ],
+  "restriction": [
+    "Requires a throwing axe"
+  ],
+  "scaling": [
+    { "level": 22, "axes": 1, "mana_cost": 27 }
+  ]
+}

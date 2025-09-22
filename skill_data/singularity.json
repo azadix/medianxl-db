@@ -1,0 +1,11 @@
+{
+  "id": "singularity",
+  "description": [
+    "Focuses all psionic energies in a point to collapse nearby space",
+    "Damage is highest at the centre of the black hole",
+    "Cooldown: 2 seconds"
+  ],
+  "scaling": [
+    { "level": 10, "physical_damage_min": 119, "physical_damage_max": 178, "mana_cost": 403 }
+  ]
+}

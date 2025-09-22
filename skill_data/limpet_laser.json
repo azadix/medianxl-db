@@ -1,0 +1,12 @@
+{
+  "id": "limpet_laser",
+  "description": [
+    "Device that attaches to a wall and shoots freezing bolts",
+    "Limpet mine duration: 6 seconds",
+    "Shoots up to 18 times",
+    "Freezes for 0.4 seconds"
+  ],
+  "scaling": [
+    { "level": 9, "limpet_mines": 1, "cold_damage_min": 42, "cold_damage_max": 57, "mana_cost": 44 }
+  ]
+}
