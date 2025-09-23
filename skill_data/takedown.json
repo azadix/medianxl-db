@@ -1,0 +1,16 @@
+{
+  "id": "takedown",
+  "description": [
+    "Enter a state of fury and improve your combat abilities",
+    "<p class='has-text-warning'>Grants Fury on attack</p>",
+    "Heals 1% of Maximum Life per second per Fury charge",
+    "100% Weapon Damage",
+    "Duration 20 second"
+  ],
+  "restriction": [
+    "Requires a spear"
+  ],
+  "scaling": [
+    { "level": 10, "mana_cost": 14 }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "id": "summon_sinner",
+  "description": [
+    "Bend a powerful fire demon to your will",
+    "Gains 10 Spell Focus and 30 Energy per Skill Level",
+    "Gain 75% of your Minion Damage as Fire Spell Damage",
+    "Minion Fire Pierce is increased by your own",
+    "Summon an extra Sinner at character levels 120, 135 and 150"
+  ],
+  "restriction": [
+    "Cannot summon if you can summon Frostwalkers or Glowing Funguses"
+  ],
+  "scaling": [
+    { "level": 14, "fire_damage": 614, "life": 12640, "minions": 3, "mana_cost": 247 }
+  ]
+}

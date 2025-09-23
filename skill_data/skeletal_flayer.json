@@ -1,0 +1,13 @@
+{
+  "id": "skeletal_flayer",
+  "description": [
+    "Multiple undead fetish with an aura of blood",
+    "<p class='has-text-warning'>Demon Blood Aura</p>",
+    "Only affects players and Undead Minions",
+    "Maximum Life: +6%",
+    "Elemental Spell Damage: +13%"
+  ],
+  "scaling": [
+    { "level": 14, "flayers": 9, "life": 2174, "damage_min": 123, "damage_max": 133, "attack_rating": 850, "mana_cost": 57 }
+  ]
+}

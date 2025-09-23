@@ -1,0 +1,9 @@
+{
+  "id": "overlord",
+  "description": [
+    "A shadow overlord to lead your phantom army"
+  ],
+  "scaling": [
+    { "level": 7, "life": 13482, "damage_min": 66, "damage_max": 78, "attack_rating": 650, "mana_cost": 360 }
+  ]
+}

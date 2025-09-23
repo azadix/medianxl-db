@@ -1,0 +1,15 @@
+{
+  "id": "iron_golem",
+  "description": [
+    "Consume an item to forge a powerful living servant",
+    "<p class='has-text-warning'>Inherits all consumed item's properties</p>",
+    "<p class='has-text-info'>Not affected by minion resistance stat</p>",
+    "Casts Spike Rush on attack"
+  ],
+  "restriction": [
+    "Requires a metallic item on the ground"
+  ],
+  "scaling": [
+    { "level": 4, "life": 10236, "damage_min": 64, "damage_max": 74, "attack_rating": 2000, "mana_cost": 178 }
+  ]
+}

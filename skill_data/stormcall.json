@@ -1,0 +1,9 @@
+{
+  "id": "stormcall",
+  "description": [
+    "Lightning strikes the earth electrocuting nearby enemies"
+  ],
+  "scaling": [
+    { "level": 21, "lightning_damage_min": 255, "lightning_damage_max": 347, "mana_cost": 52 }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "id": "tantrum",
+  "description": [
+    "Blasts the surrounding area with shrapnel from your bow",
+    "<p class='has-text-info'>Can be used with Melee Devotion</p>",
+    "65% Weapon Damage",
+    "Fires 1 additional burst every 5 Levels"
+  ],
+  "restriction": [
+    "Requires a bow or crossbow"
+  ],
+  "scaling": [
+    { "level": 13, "bursts": 3, "mana_cost": 24 }
+  ]
+}
