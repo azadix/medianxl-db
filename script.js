@@ -58,7 +58,7 @@ function getIconHTML(imagePath, className = '') {
     const y = Math.floor(index / ICONS_PER_ROW) * ICON_SIZE;
 
     return `
-        <div class="skill-icon image ${className}"
+        <div class="image ${className}"
             style="
                 width:${ICON_SIZE}px;
                 height:${ICON_SIZE}px;
