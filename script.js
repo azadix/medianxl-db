@@ -9,31 +9,66 @@ let showDetailedOnly = false;
 // Global skills list
 let skillsList = [];
 
+const SkillDB = {
+    db: null,
+    SQL: null
+}
+
+// Atlas constants
+const ICON_SIZE = 48;    // px
+const ATLAS_SIZE = 912; // px
+const ICONS_PER_ROW = Math.floor(ATLAS_SIZE / ICON_SIZE);
+const MISSING_IMAGE_NAME = "icons-shared_missing.png"
+
 // Function to get URL parameters
 function getUrlParams() {
-    const params = {};
-    const queryString = window.location.search.substring(1);
-    const regex = /([^&=]+)=([^&]*)/g;
-    let m;
-    
-    while (m = regex.exec(queryString)) {
-        params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
-    }
-    
-    return params;
+    return Object.fromEntries(new URLSearchParams(window.location.search).entries());
 }
 
 // Function to update URL without reloading the page
 function updateUrl(skillId = null) {
-    const baseUrl = window.location.origin + window.location.pathname;
-    let newUrl = baseUrl;
-    
-    if (skillId) {
-        newUrl += `?skill=${encodeURIComponent(skillId)}`;
-    }
-    
-    window.history.pushState({ skillId }, '', newUrl);
+    const url = new URL(window.location.href);
+    if (skillId) url.searchParams.set('skill', skillId);
+    else url.searchParams.delete('skill');
+    window.history.pushState({ skillId }, '', url.toString());
 }
+
+function getIconHTML(imagePath, className = '') {
+    if (!imagePath) {
+        console.warn("Missing image path");
+        return "";
+    }
+
+    if (imagePath === MISSING_IMAGE_NAME) {
+        return `<img src="icons/${MISSING_IMAGE_NAME}" class="image ${className}" alt="missing icon">`;
+    }
+
+    // Match new naming convention: icons-prefix_index.png
+    const match = imagePath.match(/^icons-([a-z]+)_(\d+)\.png$/);
+    if (!match) {
+        console.warn("Unrecognized image path:", imagePath);
+        return `<img src="icons/${imagePath}" class="image ${className}">`; // fallback
+    }
+
+    const prefix = match[1];      // e.g. "bar", "sor", "shared"
+    const index = parseInt(match[2], 10);
+
+    // Compute offset in atlas
+    const x = (index % ICONS_PER_ROW) * ICON_SIZE;
+    const y = Math.floor(index / ICONS_PER_ROW) * ICON_SIZE;
+
+    return `
+        <div class="skill-icon image ${className}"
+            style="
+                width:${ICON_SIZE}px;
+                height:${ICON_SIZE}px;
+                background-image:url('icons/class-${prefix}.png');
+                background-position:-${x}px -${y}px;
+            ">
+        </div>
+    `;
+}
+
 
 // Updated initializeDataTable function - no file checking
 async function initializeDataTable(skillsData) {
@@ -63,15 +98,13 @@ async function initializeDataTable(skillsData) {
     const tbody = table.find('tbody');
     
     skillsData.forEach(skill => {
-        const imagePath = skill.image || "-1/icons-shared_missing.png";
-        
         const nameCell = skill.hasDetails 
             ? `<a href="./?skill=${skill.id}" class="view-skill-btn" data-skill-id="${skill.id}">${skill.name}</a>`
             : skill.name;
 
         tbody.append(`
             <tr data-skill-id="${skill.id}" data-has-page="${skill.hasDetails}">
-                <td><img src="icons/${imagePath}" alt="${skill.name}" class="image is-48x48"></td>
+                <td>${getIconHTML(skill.image, "is-48x48")}</td>
                 <td>${nameCell}</td>
                 <td>${(skill.tags && skill.tags.length > 0) ? skill.tags.join(", ") : ''}</td>
                 <td>${skill.class}</td>
@@ -96,7 +129,7 @@ async function initializeDataTable(skillsData) {
             topStart: () => {
                 return `<div class="field">
                     <input id="toggle-filter" type="checkbox">
-                    <label for="toggle-filter">Show skills with details</label>
+                    <label id="label-toggle-filter" for="toggle-filter">Show skills with details</label>
                 </div>`
             },
             bottomStart: "",
@@ -109,15 +142,16 @@ async function initializeDataTable(skillsData) {
 
 $(document).on('change', '#toggle-filter', function() {
     showDetailedOnly = this.checked;
-    skillsDataTable.draw();
+    if (skillsDataTable && typeof skillsDataTable.draw === 'function') skillsDataTable.draw();
 });
 
 
 $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
     if (!showDetailedOnly) return true;
-
-    const row = settings.aoData[dataIndex].nTr;
-    return $(row).attr("data-has-page") === "true";
+    const ao = settings && settings.aoData;
+    const rowNode = ao && ao[dataIndex] && ao[dataIndex].nTr;
+    if (!rowNode) return true;
+    return $(rowNode).attr("data-has-page") === "true";
 });
 
 // Function to load a specific skill's data
@@ -145,7 +179,7 @@ async function displaySkillDetail(skillId) {
     pageTitleElement.textContent = skillInfo.name;
     // Add skill image if available
     const skillImage = skillInfo.image 
-        ? `<img src="icons/${skillInfo.image}" alt="${skillInfo.name}" class="skill-image">` 
+        ? `${getIconHTML(skillInfo.image, "skill-image")}` 
         : '';
     
     // Convert description to paragraphs if it's an array
@@ -170,16 +204,6 @@ async function displaySkillDetail(skillId) {
                 <br>
             `;
         }
-    }
-
-    // Convert description to paragraphs if it's an array
-    let synergiesHtml = '';
-    if (Array.isArray(skillData.synergies)) {
-        synergiesHtml = `<p class="is-size-5"><strong>Synergies:</strong></p>`;
-        synergiesHtml += skillData.synergies.map(paragraph => 
-            `<p>${paragraph}</p>`
-        ).join('');
-        synergiesHtml += `<br>`;
     }
 
     // Create scaling table
@@ -219,6 +243,7 @@ async function displaySkillDetail(skillId) {
                     `).join('')}
                 </tbody>
             </table>
+            </div>
         `;
     }
     
@@ -228,10 +253,8 @@ async function displaySkillDetail(skillId) {
                 ${skillImage}
                 ${restrictionHtml}
                 ${descriptionHtml}
-                ${synergiesHtml}
             </div>
             ${scalingTable}
-            <div>
         </div>
     `;
     
@@ -255,15 +278,6 @@ function formatStatName(stat) {
     return stat.split('_').map(word => 
         word.charAt(0).toUpperCase() + word.slice(1)
     ).join(' ');
-}
-
-// Event listeners
-function attachViewSkillListeners() {
-    $(document).on('click', '.view-skill-btn', function(e) {
-        e.preventDefault();
-        const skillId = $(this).data('skill-id');
-        displaySkillDetail(skillId);
-    });
 }
 
 // Handle browser back/forward navigation
@@ -292,12 +306,13 @@ async function initializePage() {
             // Fall back to all skills if skill not found
             await loadSkillsFromSQLite();
         }
-    } else {
-        await loadSkillsFromSQLite();
     }
     
-    // Attach event listeners
-    attachViewSkillListeners();
+    $(document).on('click', '.view-skill-btn', function(e) {
+        e.preventDefault();
+        const skillId = $(this).data('skill-id');
+        displaySkillDetail(skillId);
+    });
 }
 
 // Function to display all skills
@@ -309,7 +324,23 @@ function displayAllSkills() {
         return;
     }
 
+    const skillCount = SkillDB.db.exec(`
+        SELECT 
+            SUM(CASE WHEN has_details = 1 THEN 1 ELSE 0 END) AS skills_with_details,
+            COUNT(*) AS total_skills,
+            ROUND(100.0 * SUM(CASE WHEN has_details = 1 THEN 1 ELSE 0 END) / COUNT(*), 2) AS percent_with_details
+        FROM skills;
+    `);
+
+    let [skillsWithDetails, totalSkills, percentWithDetails] =
+        skillCount.length > 0 ? skillCount[0].values[0] : [0, 0, 0];
+    
     let html = `
+        <label for="progress-bar">
+            Finished skills: ${skillsWithDetails} / ${totalSkills}
+        </label>
+        <progress id="progress-bar" class="progress is-normal" value=${percentWithDetails} max="100"></progress>
+
         <div class="skills-table-container">
             <table id="skills-table" class="table is-hoverable is-fullwidth"></table>
         </div>
@@ -330,14 +361,15 @@ async function loadSkillsFromSQLite() {
         const buffer = await response.arrayBuffer();
 
         // Initialize SQL.js
-        const SQL = await initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.13.0/${file}` });
-        const db = new SQL.Database(new Uint8Array(buffer));
+        SkillDB.SQL = await initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.13.0/${file}` });
+        SkillDB.db = new SkillDB.SQL.Database(new Uint8Array(buffer));
 
         // Query skills with correct tab join
-        const stmt = db.prepare(`
+        const stmt = SkillDB.db.prepare(`
             SELECT s.*,
                 ct.name AS tab_name,
                 c.name AS class_name,
+                c.image_prefix,
                 s.has_details,
                 GROUP_CONCAT(t.name, ', ') AS tags
             FROM skills s
@@ -365,11 +397,9 @@ async function loadSkillsFromSQLite() {
                 tags: row.tags ? row.tags.split(', ') : [],
                 row: row.row,
                 col: row.col,
-                image: row.image || '-1/icons-shared_missing.png',
+                image: row.image || MISSING_IMAGE_NAME,
                 hasDetails: row.has_details === 1
             });
-
-
         }
         stmt.free();
 
@@ -377,7 +407,6 @@ async function loadSkillsFromSQLite() {
 
         // Render table if no skill detail page is requested
         displayAllSkills();
-
     } catch (error) {
         console.error('Error loading skills from SQLite:', error);
         contentElement.innerHTML = `<p>Error loading skills from SQLite: ${error.message}</p>`;

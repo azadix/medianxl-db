@@ -37,7 +37,7 @@
     }
 
     .skill-card img {
-        max-width: 64px;
+        max-width: 48px;
         margin-bottom: 0.25rem;
     }
 
@@ -79,6 +79,49 @@
     <div id="skillsContainer" class="mt-4"></div>
     <script type="module">
         let skillsList;
+        
+        // Atlas constants
+        const ICON_SIZE = 48;    // px
+        const ATLAS_SIZE = 912; // px
+        const ICONS_PER_ROW = Math.floor(ATLAS_SIZE / ICON_SIZE);
+        const MISSING_IMAGE_NAME = "icons-shared_missing.png"
+
+        function getIconHTML(imagePath) {
+            if (!imagePath) {
+                console.warn("Missing image path");
+                return "";
+            }
+
+            if (imagePath === MISSING_IMAGE_NAME) {
+                return `<img src="icons/${MISSING_IMAGE_NAME}" class="image">`;
+            }
+
+            // Match new naming convention: icons-prefix_index.png
+            const match = imagePath.match(/^icons-([a-z]+)_(\d+)\.png$/);
+            if (!match) {
+                console.warn("Unrecognized image path:", imagePath);
+                return `<img src="icons/${imagePath}" class="image">`; // fallback
+            }
+
+            const prefix = match[1];      // e.g. "bar", "sor", "shared"
+            const index = parseInt(match[2], 10);
+
+            // Compute offset in atlas
+            const x = (index % ICONS_PER_ROW) * ICON_SIZE;
+            const y = Math.floor(index / ICONS_PER_ROW) * ICON_SIZE;
+
+            return `
+                <div class="skill-icon image"
+                    style="
+                        width:${ICON_SIZE}px;
+                        height:${ICON_SIZE}px;
+                        background-image:url('icons/class-${prefix}.png');
+                        background-position:-${x}px -${y}px;
+                    ">
+                </div>
+            `;
+        }
+
         async function loadSkillsFromSQLite() {
             try {
                 // Fetch SQLite file
@@ -124,7 +167,7 @@
                         tags: row.tags ? row.tags.split(', ') : [],
                         row: row.row,
                         col: row.col,
-                        image: row.image || '-1/icons-shared_missing.png',
+                        image: row.image || 'icons-shared_missing.png',
                         hasDetails: row.has_details === 1
                     });
 
@@ -149,7 +192,6 @@
                 return loadedSkills; // update global list
             } catch (error) {
                 console.error('Error loading skills from SQLite:', error);
-                contentElement.innerHTML = `<p>Error loading skills from SQLite: ${error.message}</p>`;
             }
         }
 
@@ -211,15 +253,15 @@
                             card.style.gridColumn = c - minCol + 1;
 
                             let cardText = `
-                                <img src="./icons/${skill.image}" alt="${skill.name}">
+                                ${getIconHTML(skill.image)}
                                 <div>
                             `;
                             if (skill.hasDetails) {
                                 cardText += `<a href="./?skill=${skill.id}">`
                             }
-
                             cardText += `${skill.name}</div>`;
-                            card.innerHTML = cardText
+                            card.innerHTML = cardText;
+
                             contentDiv.appendChild(card);
                         } else {
                             const placeholder = document.createElement('div');

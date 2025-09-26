@@ -1,17 +1,22 @@
 .skill-detail {
-    position: relative;
+  position: relative;
 }
 
 .skill-image {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 8rem;
-    height: 8rem;
-    object-fit: contain;
-    border: 1px solid rgb(122, 122, 122);
+  position: absolute;
+  top: 1rem;
+  right: 0;
+  border: 1px solid rgb(122, 122, 122);
+  scale: 3;
+  object-fit: contain;
 }
 
 .navbar {
-    border-bottom: 1px solid rgba(122, 122, 122, 122);
+  border-bottom: 1px solid rgba(122, 122, 122, 122);
+}
+
+.skill-icon {
+  display: inline-block;
+  background-repeat: no-repeat;
+  background-size: 1008px 1008px; /* ensures scaling matches atlas */
 }
