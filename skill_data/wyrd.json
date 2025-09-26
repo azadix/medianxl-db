@@ -1,0 +1,12 @@
+{
+  "id": "wyrd",
+  "description": [
+    "Cast your nephalem soul to destroy the wicked with holy energy",
+    "Deals 45% of your Magic Damage added to Weapon per Hit",
+    "Always hits",
+    "Damage increases by 50% of your Damage to Undead and Demon bonuses"
+  ],
+  "scaling": [
+    { "level": 11, "magic_damage": 33, "mana_cost": 110 }
+  ]
+}

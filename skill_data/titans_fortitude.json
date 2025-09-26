@@ -1,0 +1,9 @@
+{
+  "id": "titans_fortitude",
+  "description": [
+    "Booming shout that briefly turns you into mighty stone"
+  ],
+  "scaling": [
+    { "level": 4, "maximum_life_percent": 10, "defense_percent": 153, "duration": 120, "mana_cost": 0 }
+  ]
+}

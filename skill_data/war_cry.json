@@ -1,0 +1,18 @@
+{
+  "id": "war_cry",
+  "description": [
+    "Legends tell of elder shamans who were able to channel their shouts into devastating shockwaves",
+    "Critical Strike chance: 5%",
+    "Critical Strike damage: 130%",
+    "+3% Total War Cry damage per 100 Energy",
+    "Energy: +2% increased damage",
+    "<br>",
+    "Synergies:",
+    "+8% Critical damage per Ancient Blood Base level",
+    "+3% War Cry Total damage per Mountain King Base level",
+    "+4% Base Critical Chance per Wolf Companion Base level"
+  ],
+  "scaling": [
+    { "level": 14, "magic_damage_min": 116, "magic_damage_max": 127, "physical_damage_flat": 116, "mana_cost": 192 }
+  ]
+}

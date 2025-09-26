@@ -1,0 +1,16 @@
+{
+  "id": "widowmaker",
+  "description": [
+    "Unleash a barrage of homing bolts",
+    "50% Weapon Damage",
+    "Converts 70% Physical Damage to Magic",
+    "+6% of Total Strength gained as Extra Magic Damage"
+  ],
+  "restriction": [
+    "Requires a crossbow",
+    "Disables Catapult Shot"
+  ],
+  "scaling": [
+    { "level": 3, "total_bolts": 12, "mana_cost": 7 }
+  ]
+}

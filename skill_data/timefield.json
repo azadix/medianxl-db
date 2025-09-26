@@ -1,0 +1,9 @@
+{
+  "id": "timefield",
+  "description": [
+    "Conjure a field which slows all enemies entering it"
+  ],
+  "scaling": [
+    { "level": 1, "enemy_movement_speed": -24, "field_duration": 7.8, "mana_cost": 302 }
+  ]
+}

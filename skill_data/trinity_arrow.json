@@ -1,0 +1,14 @@
+{
+  "id": "trinity_arrow",
+  "description": [
+    "Ovehead shot endowed with elemental power",
+    "Converts 100% Physical damage to Fire, Cold, or Lightning",
+    "Up to 1450% total Weapon Damage at impact center"
+  ],
+  "restriction": [
+    "Requires a bow or crossbow"
+  ],
+  "scaling": [
+    { "level": 12, "projectiles": 18, "bonus_fire_cold_or_lightning_damage": 58, "mana_cost": 18 }
+  ]
+}

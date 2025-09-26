@@ -47,7 +47,7 @@ function getIconHTML(imagePath, className = '') {
     const match = imagePath.match(/^icons-([a-z]+)_(\d+)\.png$/);
     if (!match) {
         console.warn("Unrecognized image path:", imagePath);
-        return `<img src="icons/${imagePath}" class="image ${className}">`; // fallback
+        return `<img src="icons/${MISSING_IMAGE_NAME}" class="image ${className}" alt="missing icon">`; // fallback
     }
 
     const prefix = match[1];      // e.g. "bar", "sor", "shared"

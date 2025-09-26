@@ -1,0 +1,11 @@
+{
+  "id": "resurrect",
+  "description": [
+    "Revive target corpses as powerful holy revenants",
+    "Revenants gain 100 Life Regeneration per Resurrect skill level",
+    "Life cost: 10 percent of Maximum Life"
+  ],
+  "scaling": [
+    { "level": 15, "physical_damage_percent": 48, "spell_damage_percent": 48, "life_percent": 407, "mana_cost": 291 }
+  ]
+}

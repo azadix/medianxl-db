@@ -1,0 +1,10 @@
+{
+  "id": "time_wave",
+  "description": [
+    "Every nearby enemy is hit with a timed strike, causing delayed damage",
+    "150% Weapon Damage"
+  ],
+  "scaling": [
+    { "level": 8, "length_of_fuse": 1.6, "mana_cost": 55 }
+  ]
+}

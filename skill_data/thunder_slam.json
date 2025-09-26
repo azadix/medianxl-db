@@ -1,0 +1,14 @@
+{
+  "id": "thunder_slam",
+  "description": [
+    "Blast out a stunning thunderclap",
+    "100% Weapon Damage"
+  ],
+  "restriction": [
+    "Requires a melee weapon",
+    "Does not scale with skill levels"
+  ],
+  "scaling": [
+    { "level": 13, "cooldown": 2, "mana_cost": 0 }
+  ]
+}
