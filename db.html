@@ -87,6 +87,16 @@
       </div>
 
       <div class="column is-full">
+        <label class="label">Restriction</label>
+        <textarea class="textarea" id="restriction" rows="2"></textarea>
+      </div>
+
+      <div class="column is-full">
+        <label class="label">Description</label>
+        <textarea class="textarea" id="description" rows="4"></textarea>
+      </div>
+
+      <div class="column is-full">
         <label class="label">Tags</label>
         <div id="tag-checkboxes"></div>
       </div>
@@ -111,7 +121,9 @@
         <th style="width: 5%;">Col</th>
         <th>Image</th>
         <th>Tags</th>
-        <th style="width: 5%;">Details</th>
+        <th style="width: 5%;">Has Details</th>
+        <th style="width: 5%;">Has Descr</th>
+        <th style="width: 5%;">Has Restr</th>
         <th style="width: 10%;">Actions</th>
       </tr>
     </thead>
@@ -159,7 +171,8 @@
     SkillDB.db.run(`
       CREATE TABLE classes (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL UNIQUE
+        name TEXT NOT NULL UNIQUE,
+        image_prefix TEXT
       );
       CREATE TABLE classTabs (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -183,6 +196,8 @@
         col INTEGER,
         image TEXT,
         has_details INTEGER DEFAULT 0,
+        restriction TEXT,
+        description TEXT,
         FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE SET NULL
       );
       CREATE TABLE skill_skilltags (
@@ -264,83 +279,102 @@
 
   function populateTagCheckboxes() {
     if (!SkillDB.db) return;
-    const res = SkillDB.db.exec("SELECT id, name FROM skilltags ORDER BY name");
+    
+    const tags = fetchAllSkillTags();
+    if (tags.length === 0) return;
+    
     const container = document.getElementById("tag-checkboxes");
     container.innerHTML = "";
-    if (!res[0]) return;
+    
+    const tagMap = createTagMap(tags);
+    const usedIds = new Set();
+    
+    renderTagGroups(container, tagMap, usedIds);
+    renderLeftoverTags(container, tagMap, usedIds);
+  }
 
-    // Build a lookup of id → name
+  function fetchAllSkillTags() {
+    const result = SkillDB.db.exec("SELECT id, name FROM skilltags ORDER BY name");
+    return result[0] ? result[0].values : [];
+  }
+
+  function createTagMap(tags) {
     const tagMap = {};
-    res[0].values.forEach(([id, name]) => {
+    tags.forEach(([id, name]) => {
       tagMap[id] = name;
     });
+    return tagMap;
+  }
 
-    // Track used IDs so we can later put leftovers into "Other"
-    const usedIds = new Set();
-
-    // Render each defined group
-    for (const [groupName, ids] of Object.entries(SkillDB.tagGroups)) {
-      const groupDiv = document.createElement("div");
-      groupDiv.className = "mb-2 is-fullwidth";
-
-      const title = document.createElement("p");
-      title.className = "has-text-weight-bold has-text-warning";
-      title.textContent = groupName;
-      groupDiv.appendChild(title);
-
-      const groupList = document.createElement("div");
-
-      // Sort alphabetically inside group
-      ids.map(id => [id, tagMap[id]])
-        .filter(([id, name]) => name) // skip invalid
-        .sort((a, b) => a[1].localeCompare(b[1]))
-        .forEach(([id, name]) => {
+  function renderTagGroups(container, tagMap, usedIds) {
+    for (const [groupName, tagIds] of Object.entries(SkillDB.tagGroups)) {
+      const groupElement = createGroupElement(groupName, "has-text-weight-bold has-text-warning");
+      const tagsInGroup = getTagsForGroup(tagIds, tagMap, usedIds);
+      
+      if (tagsInGroup.length > 0) {
+        tagsInGroup.forEach(([id, name]) => {
+          groupElement.appendChild(createCheckboxLabel(id, name));
           usedIds.add(id);
-
-          const label = document.createElement("label");
-          label.className = "checkbox pr-3";
-          const checkbox = document.createElement("input");
-          checkbox.type = "checkbox";
-          checkbox.value = id;
-          label.appendChild(checkbox);
-          label.appendChild(document.createTextNode(" " + name));
-          groupList.appendChild(label);
         });
-
-      groupDiv.appendChild(groupList);
-      container.appendChild(groupDiv);
+        container.appendChild(groupElement);
+      }
     }
+  }
 
-    // Handle "Other" (all tags not explicitly grouped)
-    const leftover = Object.entries(tagMap)
+  function renderLeftoverTags(container, tagMap, usedIds) {
+    const leftoverTags = getLeftoverTags(tagMap, usedIds);
+    
+    if (leftoverTags.length > 0) {
+      const otherGroup = createGroupElement("Other", "has-text-weight-bold has-text-danger");
+      
+      leftoverTags.forEach(([id, name]) => {
+        otherGroup.appendChild(createCheckboxLabel(id, name));
+      });
+      
+      container.appendChild(otherGroup);
+    }
+  }
+
+  function createGroupElement(title, titleClass) {
+    const groupDiv = document.createElement("div");
+    groupDiv.className = "mb-2 is-fullwidth";
+    
+    const titleElement = document.createElement("p");
+    titleElement.className = titleClass;
+    titleElement.textContent = title;
+    groupDiv.appendChild(titleElement);
+    
+    const groupList = document.createElement("div");
+    groupDiv.appendChild(groupList);
+    
+    return groupDiv;
+  }
+
+  function getTagsForGroup(tagIds, tagMap, usedIds) {
+    return tagIds
+      .map(id => [id, tagMap[id]])
+      .filter(([id, name]) => name && !usedIds.has(id))
+      .sort((a, b) => a[1].localeCompare(b[1]));
+  }
+
+  function getLeftoverTags(tagMap, usedIds) {
+    return Object.entries(tagMap)
       .filter(([id]) => !usedIds.has(parseInt(id)))
       .sort((a, b) => a[1].localeCompare(b[1]));
+  }
 
-    if (leftover.length > 0) {
-      const groupDiv = document.createElement("div");
-      groupDiv.className = "mb-2 is-fullwidth";
-
-      const title = document.createElement("p");
-      title.className = "has-text-weight-bold has-text-danger";
-      title.textContent = "Other";
-      groupDiv.appendChild(title);
-
-      const groupList = document.createElement("div");
-
-      leftover.forEach(([id, name]) => {
-        const label = document.createElement("label");
-        label.className = "checkbox pr-3";
-        const checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        checkbox.value = id;
-        label.appendChild(checkbox);
-        label.appendChild(document.createTextNode(" " + name));
-        groupList.appendChild(label);
-      });
-
-      groupDiv.appendChild(groupList);
-      container.appendChild(groupDiv);
-    }
+  function createCheckboxLabel(id, name) {
+    const label = document.createElement("label");
+    label.className = "checkbox pr-3";
+    
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.value = id;
+    
+    label.appendChild(checkbox);
+    label.appendChild(document.createTextNode(" " + name));
+    
+    return label;
   }
 
   // Insert skill
@@ -356,14 +390,16 @@
     const col = parseInt(document.getElementById("col").value, 10);
     const image = document.getElementById("image").value.trim();
     const has_details = document.getElementById("has_details").checked ? 1 : 0;
+    const restriction = document.getElementById("restriction").value.trim();
+    const description = document.getElementById("description").value.trim();
 
     if (SkillDB.editingSkillId) {
       // Update
       SkillDB.db.run(`
         UPDATE skills
-        SET name=?, display_name=?, class_id=?, tab_index=?, row=?, col=?, image=?, has_details=?
+        SET name=?, display_name=?, class_id=?, tab_index=?, row=?, col=?, image=?, has_details=?, restriction=?, description=?
         WHERE id=?
-      `, [name, display_name, class_id, tab_id, row, col, image, has_details, SkillDB.editingSkillId]);
+      `, [name, display_name, class_id, tab_id, row, col, image, has_details, restriction, description, SkillDB.editingSkillId]);
 
       // Update tags
       SkillDB.db.run("DELETE FROM skill_skilltags WHERE skill_id=?", [SkillDB.editingSkillId]);
@@ -376,9 +412,9 @@
     } else {
       // Insert
       SkillDB.db.run(`
-        INSERT INTO skills (name, display_name, class_id, tab_index, row, col, image, has_details)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-      `, [name, display_name, class_id, tab_id, row, col, image, has_details]);
+        INSERT INTO skills (name, display_name, class_id, tab_index, row, col, image, has_details, restriction, description)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `, [name, display_name, class_id, tab_id, row, col, image, has_details, restriction, description]);
 
       const skillId = SkillDB.db.exec("SELECT last_insert_rowid()")[0].values[0][0];
       document.querySelectorAll("#tag-checkboxes input:checked").forEach(cb => {
@@ -400,7 +436,9 @@
       SELECT s.id, s.name, s.display_name, c.name as class_name, 
             ct.name as tab_name, s.row, s.col, s.image,
             GROUP_CONCAT(t.name, ', ') as tags,
-            s.has_details
+            s.has_details,
+            CASE WHEN s.description IS NOT NULL AND s.description != '' THEN 1 ELSE 0 END AS has_descr,
+            CASE WHEN s.restriction IS NOT NULL AND s.restriction != '' THEN 1 ELSE 0 END AS has_restr
       FROM skills s
       LEFT JOIN classes c ON s.class_id = c.id
       LEFT JOIN skill_skilltags st ON s.id = st.skill_id
@@ -413,35 +451,35 @@
     const res = SkillDB.db.exec(query);
     if (res.length > 0) {
       res[0].values.forEach(row => {
-      const tr = document.createElement("tr");
-      row.forEach(val => {
-        const td = document.createElement("td");
-        td.textContent = val;
-        tr.appendChild(td);
+        const tr = document.createElement("tr");
+        row.forEach(val => {
+          const td = document.createElement("td");
+          td.textContent = val;
+          tr.appendChild(td);
+        });
+
+        // Action buttons
+        const actionTd = document.createElement("td");
+        const buttonsWrapper = document.createElement("div");
+        buttonsWrapper.className = "buttons are-small"
+        const editBtn = document.createElement("button");
+        editBtn.className = "button is-warning";
+        editBtn.textContent = "Edit";
+        editBtn.onclick = () => editSkill(row[0]);
+
+        const delBtn = document.createElement("button");
+        delBtn.className = "button is-danger";
+        delBtn.textContent = "Delete";
+        delBtn.onclick = () => deleteSkill(row[0]);
+
+
+        buttonsWrapper.appendChild(editBtn);
+        buttonsWrapper.appendChild(delBtn);
+        actionTd.appendChild(buttonsWrapper);
+        tr.appendChild(actionTd);
+
+        tbody.appendChild(tr);
       });
-
-      // Action buttons
-      const actionTd = document.createElement("td");
-      const buttonsWrapper = document.createElement("div");
-      buttonsWrapper.className = "buttons are-small"
-      const editBtn = document.createElement("button");
-      editBtn.className = "button is-warning";
-      editBtn.textContent = "Edit";
-      editBtn.onclick = () => editSkill(row[0]);
-
-      const delBtn = document.createElement("button");
-      delBtn.className = "button is-danger";
-      delBtn.textContent = "Delete";
-      delBtn.onclick = () => deleteSkill(row[0]);
-
-
-      buttonsWrapper.appendChild(editBtn);
-      buttonsWrapper.appendChild(delBtn);
-      actionTd.appendChild(buttonsWrapper);
-      tr.appendChild(actionTd);
-
-      tbody.appendChild(tr);
-    });
     }
   }
 
@@ -449,13 +487,13 @@
     if (!SkillDB.db) return;
     const stmt = SkillDB.db.prepare(`
       SELECT s.id, s.name, s.display_name, s.class_id, s.tab_index,
-            s.row, s.col, s.image, s.has_details
+            s.row, s.col, s.image, s.has_details, s.restriction, s.description
       FROM skills s
       WHERE s.id = ?
     `);
     stmt.bind([id]);
     if (stmt.step()) {
-      const [sid, name, display_name, class_id, tab_index, row, col, image, has_details] = stmt.get();
+      const [sid, name, display_name, class_id, tab_index, row, col, image, has_details, restriction, description] = stmt.get();
 
       SkillDB.editingSkillId = sid;
       document.getElementById("name").value = name;
@@ -467,7 +505,8 @@
       document.getElementById("col").value = col;
       document.getElementById("image").value = image;
       document.getElementById("has_details").checked = (has_details === 1);
-
+      document.getElementById("restriction").value = restriction || "";
+      document.getElementById("description").value = description || "";
 
       // Reset tags
       setSkillTagCheckboxes(id);

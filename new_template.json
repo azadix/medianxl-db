@@ -1,12 +1,5 @@
 {
   "id": "chaos_nova",
-  "description": [
-    "Knights proc a deadly nova on kill and when killed",
-    "130% Weapon Damage"
-  ],
-  "restriction": [
-    ""
-  ],
   "scaling": [
     { "level": 1, "cast_on_kill": 0, "cast_on_death": 10, "mana_cost": 99 }
   ]

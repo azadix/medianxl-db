@@ -75,7 +75,7 @@ async function initializeDataTable(skillsData) {
     // Destroy existing DataTable if it exists
     if (skillsDataTable) {
         skillsDataTable.destroy();
-        $('#skills-table').empty();
+        skillsDataTable = null;
     }
     
     const table = $('#skills-table');
@@ -154,28 +154,20 @@ $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
     return $(rowNode).attr("data-has-page") === "true";
 });
 
-// Function to load a specific skill's data
-async function loadSkillData(skillId) {
-    try {
-        const response = await fetch(`skill_data/${skillId}.json`);
-        if (!response.ok) {
-            throw new Error('Failed to load skill data');
-        }
-        return await response.json();
-    } catch (error) {
-        console.error('Error loading skill data:', error);
-        contentElement.innerHTML = `<p>There was an error while loading skill data (of there isn't any data to load)</p>`;
-        return null;
-    }
+function sanitizeSkillId(skillId) {
+    return skillId.replace(/[^a-zA-Z0-9_-]/g, ''); // Only allow safe characters
 }
 
 // Function to display a specific skill's details
 async function displaySkillDetail(skillId) {
-    const skillInfo = getSkillInfo(skillId);
-    const skillData = await loadSkillData(skillId);
+    const safeSkillId = sanitizeSkillId(skillId);
+    const skillInfo = getSkillData(safeSkillId);
     
-    if (!skillInfo || !skillData) return;
-    
+    if (!skillInfo)  {
+        contentElement.innerHTML = `<p>There was an error while loading skill data (of there isn't any data to load)</p>`;
+        return;
+    }
+
     pageTitleElement.textContent = skillInfo.name;
     // Add skill image if available
     const skillImage = skillInfo.image 
@@ -185,68 +177,68 @@ async function displaySkillDetail(skillId) {
     // Convert description to paragraphs if it's an array
     let descriptionHtml = '';
 
-    const isOrangeText = (skillInfo.class == "Other" && skillInfo.tabName == "Orange text")
-    if (Array.isArray(skillData.description)) {
+    if (skillInfo.description) {
         descriptionHtml = `<p class="is-size-5"><strong>Description:</strong></p>`;
-        descriptionHtml += skillData.description.map(paragraph => 
-            `<p class="${isOrangeText ? 'has-text-warning' : ''}">${paragraph}</p>`
+        descriptionHtml += skillInfo.description.split('\n').map(
+            line => `<p>${line}</p>`
         ).join('');
         descriptionHtml += `<br>`;
     }
 
     // Only show restriction if it exists
     let restrictionHtml = '';
-    if (skillData.restriction) {
-        if (Array.isArray(skillData.restriction)) {
-            restrictionHtml = `
-                <p class="is-size-5"><strong>Restriction:</strong></p>
-                ${skillData.restriction.map(item => `<p><span class="has-text-danger">${item}</span></p>`).join('')}
-                <br>
-            `;
-        }
+    if (skillInfo.restriction) {
+        restrictionHtml = `<p class="is-size-5"><strong>Restriction:</strong></p>`;
+        restrictionHtml += skillInfo.restriction.split('\n').map(
+            line => `<p><span class="has-text-danger">${line}</span></p>`
+        ).join('');
+        restrictionHtml += `<br>`;
     }
 
-    // Create scaling table
-    let scalingTable = `
-        <p class="is-size-4"><strong>Skill Scaling (only soft points):</strong>
-        <button class="button is-primary is-outlined" id="toggle-scaling">
-            Show
-        </button>
-        </p>
-        <div id="scaling-container" class="is-hidden">
-    `;
+    // TODO implement scaling from db
 
-    if (!skillData.scaling || skillData.scaling.length == 0) {
-        // Empty scaling array
-        scalingTable += `
-            <p class="has-text-danger">This skill does not scale with skill levels</p>
-        `;
-    } else {
-        // Regular skills with scaling data
-        // Get the stat names from the first scaling entry
-        const statNames = Object.keys(skillData.scaling[0]).filter(key => key !== 'level');
+    // // Create scaling table
+    // let scalingTable = `
+    //     <p class="is-size-4"><strong>Skill Scaling (only soft points):</strong>
+    //     <button class="button is-primary is-outlined" id="toggle-scaling">
+    //         Show
+    //     </button>
+    //     </p>
+    //     <div id="scaling-container" class="is-hidden">
+    // `;
+
+    // if (!skillData.scaling || skillData.scaling.length == 0) {
+    //     // Empty scaling array
+    //     scalingTable += `
+    //         <p class="has-text-danger">This skill does not scale with skill levels</p>
+    //     `;
+    // } else {
+    //     // Regular skills with scaling data
+    //     // Get the stat names from the first scaling entry
+    //     const statNames = Object.keys(skillData.scaling[0]).filter(key => key !== 'level');
         
-        scalingTable += `
-            <table class="table is-hoverable is-fullwidth">
-                <thead>
-                    <tr>
-                        <th>Level</th>
-                        ${statNames.map(stat => `<th>${formatStatName(stat)}</th>`).join('')}
-                    </tr>
-                </thead>
-                <tbody>
-                    ${skillData.scaling.map(level => `
-                        <tr>
-                            <td>${level.level}</td>
-                            ${statNames.map(stat => `<td>${level[stat]}</td>`).join('')}
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-            </div>
-        `;
-    }
+    //     scalingTable += `
+    //         <table class="table is-hoverable is-fullwidth">
+    //             <thead>
+    //                 <tr>
+    //                     <th>Level</th>
+    //                     ${statNames.map(stat => `<th>${formatStatName(stat)}</th>`).join('')}
+    //                 </tr>
+    //             </thead>
+    //             <tbody>
+    //                 ${skillData.scaling.map(level => `
+    //                     <tr>
+    //                         <td>${level.level}</td>
+    //                         ${statNames.map(stat => `<td>${level[stat]}</td>`).join('')}
+    //                     </tr>
+    //                 `).join('')}
+    //             </tbody>
+    //         </table>
+    //         </div>
+    //     `;
+    // }
     
+    let scalingTable = '';
     contentElement.innerHTML = `
         <div class="skill-detail">
             <div class="skill-info">
@@ -284,7 +276,7 @@ function formatStatName(stat) {
 window.addEventListener('popstate', async function(event) {
     const params = getUrlParams();
     if (params.skill) {
-        displaySkillDetail(params.skill);
+        await displaySkillDetail(params.skill);
     } else {
         await loadSkillsFromSQLite();
     }
@@ -299,19 +291,19 @@ async function initializePage() {
     const params = getUrlParams();
     if (params.skill) {
         // Check if the skill exists
-        const skillInfo = getSkillInfo(params.skill);
+        const skillInfo = getSkillData(params.skill);
         if (skillInfo) {
-            displaySkillDetail(params.skill);
+            await displaySkillDetail(params.skill);
         } else {
             // Fall back to all skills if skill not found
             await loadSkillsFromSQLite();
         }
     }
     
-    $(document).on('click', '.view-skill-btn', function(e) {
+    $(document).on('click', '.view-skill-btn', async function(e) {
         e.preventDefault();
         const skillId = $(this).data('skill-id');
-        displaySkillDetail(skillId);
+        await displaySkillDetail(skillId);
     });
 }
 
@@ -398,7 +390,9 @@ async function loadSkillsFromSQLite() {
                 row: row.row,
                 col: row.col,
                 image: row.image || MISSING_IMAGE_NAME,
-                hasDetails: row.has_details === 1
+                hasDetails: row.has_details === 1,
+                restriction: row.restriction || null,
+                description: row.description || null
             });
         }
         stmt.free();
@@ -413,9 +407,7 @@ async function loadSkillsFromSQLite() {
     }
 }
 
-
-// Override getSkillInfo for SQLite mode
-function getSkillInfo(skillId) {
+function getSkillData(skillId) {
     return skillsList.find(skill => skill.id == skillId);
 }
 
