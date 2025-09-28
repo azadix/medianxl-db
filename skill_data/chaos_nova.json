@@ -1,14 +1,5 @@
 {
   "id": "chaos_nova",
-  "related_skill": "abyss_knight",
-  "description": [
-    "Knights proc a deadly nova on kill and when killed",
-    "130% Weapon Damage"
-  ],
-  "synergies": [
-    "0.5% chance to cast Chaos Nova on Kill per base level",
-    "10% chance to cast Chaos Nova on Death per base level"
-  ],
   "scaling": [
     { "level": 1, "cast_on_kill": 0, "cast_on_death": 10 },
     { "level": 2, "cast_on_kill": 1, "cast_on_death": 20 },

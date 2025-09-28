@@ -1,12 +1,5 @@
 {
   "id": "retaliate",
-  "description": [
-    "Strike back with a vengeance",
-    "140% Weapon Damage"
-  ],
-  "restriction": [
-    "Requires a melee weapon"
-  ],
   "scaling": [
     { "level": 14, "bonus_fire_damage_percent_of_strength_or_dexterity": 13, "mana_cost": 14 }
   ]

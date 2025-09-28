@@ -1,12 +1,5 @@
 {
   "id": "ohman",
-  "description": [
-    "Fires the legendary Orb of Homing Multishot Arrow Novas",
-    "15% Weapon Damage"
-  ],
-  "restriction": [
-    "Requires a bow or crossbow"
-  ],
   "scaling": [
     { "level": 7, "cooldown": 1.6, "mana_cost": 2750 }
   ]

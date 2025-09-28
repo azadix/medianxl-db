@@ -1,8 +1,5 @@
 {
   "id": "frozen_orb",
-  "description": [
-    "Creates a globe of frozen death"
-  ],
   "scaling": [
     { "level": 17, "cold_damage_min": 157, "cold_damage_max": 186, "mana_cost": 111 }
   ]

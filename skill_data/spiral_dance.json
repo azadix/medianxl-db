@@ -1,11 +1,5 @@
 {
   "id": "spiral_dance",
-  "description": [
-    "Unleash whirling warriors to strike an area",
-    "Converts 50% Physical Damage to Magic Damage",
-    "Area Effect delay: 1.2 seconds",
-    "750% Weapon Damage"
-  ],
   "scaling": [
     { "level": 1, "magic_damage": 472, "range": 15.3, "mana_cost": 44 }
   ]

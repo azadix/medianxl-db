@@ -1,9 +1,5 @@
 {
   "id": "servants_of_valor",
-  "description": [
-    "A zealous coven of followers shows no mercy to the enemy",
-    "25% chance to Avoid Damage"
-  ],
   "scaling": [
     { "level": 29, "current_servants": 2, "life": 4835, "damage_min": 365, "damage_max": 366, "attack_rationg": 10280, "mana_cost": 86 }
   ]

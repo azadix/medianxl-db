@@ -1,11 +1,5 @@
 {
   "id": "resurgence",
-  "description": [
-    "Your dark army grows stronger"
-  ],
-  "synergies": [
-    "+5% to Summoned Minion Damage per base level"
-  ],
   "scaling": [
     { "level": 1, "summoned_minion_attack_rating": 10, "summoned_minion_damage": 5 }
   ]

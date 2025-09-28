@@ -1,9 +1,5 @@
 {
   "id": "fortress",
-  "description": [
-    "Summons a ring of deadly axe thrower towers around you",
-    "100% Weapon Damage"
-  ],
   "scaling": [
     { "level": 13, "target_seek_range": 8.6, "fortress_duration": 6.4, "cooldown": 3.4, "mana_cost": 36 }
   ]

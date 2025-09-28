@@ -1,11 +1,5 @@
 {
   "id": "night_hawks",
-  "description": [
-    "Immolating hawks that seek their preys to deal focused damage",
-    "<p class='has-text-warning'>Inherits Grim Vision Aura</p>",
-    "Hits multiple times",
-    "Hawks per Cast: 3"
-  ],
   "scaling": [
     { "level": 4, "max_hawks": 3, "damage_min": 174, "damage_max": 193, "attack_rating": 2450, "mana_cost": 25 }
   ]

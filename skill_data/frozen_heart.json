@@ -1,15 +1,5 @@
 {
   "id": "frozen_heart",
-  "description": [
-    "Periodically freezes and damages nearby enemies",
-    "Delay between explosions: 1.2 seconds",
-    "4 yards scatter radius",
-    "Freeze duration: 0.8 seconds",
-    "Radius: 8 yards"
-  ],
-  "restriction": [
-    "Requires Hive, Nova Charge and Path of Flames relics"
-  ],
   "scaling": [
     { "level": 11, "cold_damage_min": 238, "cold_damage_max": 333, "duration": 360, "mana_cost": 447 }
   ]

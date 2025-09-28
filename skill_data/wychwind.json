@@ -1,14 +1,5 @@
 {
   "id": "wychwind",
-  "description": [
-    "Knife infused with a void spell that tears a rift field on hit",
-    "Throwing this knife weakens you, leaving you susceptible to damage",
-    "30% Weapon Damage",
-    "Vulnerability duration: 4 seconds"
-  ],
-  "restriction": [
-    "Requires a throwing knife"
-  ],
   "scaling": [
     { "level": 10, "rift_duration": 2.4, "vulnerability_physical_resist": -16, "mana_cost": 43 }
   ]

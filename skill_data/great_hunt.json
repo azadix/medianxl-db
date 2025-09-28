@@ -1,13 +1,5 @@
 {
   "id": "great_hunt",
-  "description": [
-    "Unleash Ban-Seth's spirits of the hunt",
-    "Converts 100% Physical damage to Magic",
-    "65% Weapon Damage"
-  ],
-  "restriction": [
-    "Requires a spear"
-  ],
   "scaling": [
     { "level": 6, "unleashes_spirits": 3, "bonus_magic_damage": 50, "mana_cost": 11 }
   ]

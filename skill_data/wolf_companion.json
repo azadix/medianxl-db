@@ -1,8 +1,5 @@
 {
   "id": "wolf_companion",
-  "description": [
-    "Hunt with your faithful wolves"
-  ],
   "scaling": [
     { "level": 23, "wolves": 1, "damage_min": 277, "damage_max": 278, "mana_cost": 30 }
   ]

@@ -1,16 +1,5 @@
 {
   "id": "pounce",
-  "description": [
-    "Blink on top of the target, damaging nearby monsters",
-    "90% Weapon Damage",
-    "Converts 25% Physical damage to Magic",
-    "Requires a monster as target",
-    "<p class='has-text-warning'>Fury</p>",
-    "Magic damage increased by 100% per Fury Charge"
-  ],
-  "restriction": [
-    "Requires a spear"
-  ],
   "scaling": [
     { "level": 8, "bonus_magic_damage_based_on_strength_and_dexterity": 32, "mana_cost": 13.7 }
   ]

@@ -1,8 +1,5 @@
 {
   "id": "shuriken_flurry",
-  "description": [
-    "Expels a set of shurikens physically driving them at nearby foes"
-  ],
   "scaling": [
     { "level": 20, "physical_damage_min": 81, "physical_damage_max": 108, "magic_damage_min": 154, "magic_damage_max": 177, "mana_cost": 65 }
   ]

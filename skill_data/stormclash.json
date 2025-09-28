@@ -1,9 +1,5 @@
 {
   "id": "stormclash",
-  "description": [
-    "Conjure lightning spears that explode on impact",
-    "+1 Lightning Spear per 25 Skill levels"
-  ],
   "scaling": [
     { "level": 11, "lightning_spears": 1, "lightning_damage_min": 42, "lightning_damage_max": 79, "mana_cost": 51 }
   ]

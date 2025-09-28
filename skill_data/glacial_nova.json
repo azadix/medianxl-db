@@ -1,10 +1,5 @@
 {
   "id": "glacial_nova",
-  "description": [
-    "Gigantic nova that freezes and damages nearby enemies",
-    "Cooldown: 3 seconds",
-    "Freezes for 2 seconds"
-  ],
   "scaling": [
     { "level": 20, "cold_damage_min": 130, "cold_damage_max": 174, "mana_cost": 154 }
   ]

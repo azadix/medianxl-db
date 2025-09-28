@@ -1,14 +1,5 @@
 {
   "id": "soulshatter",
-  "description": [
-    "Kills target minion and emit a shockwave around you",
-    "Hits 3 times",
-    "Stun length: 0.04 seconds",
-    "60% Weapon Damage"
-  ],
-  "restriction": [
-    "Requires a scythe or dagger"
-  ],
   "scaling": [
     { "level": 10, "mana_cost": 55 }
   ]

@@ -1,13 +1,5 @@
 {
   "id": "void_archon",
-  "description": [
-    "A mighty void spirit with an aura that weakens enemy attacks",
-    "Hits Blinds Target +2",
-    "Area Effect attack",
-    "<p class='has-text-warning'>Warp Field Aura</p>",
-    "Enemy Damage: -25%",
-    "Enemy Attack Speed: -20%"
-  ],
   "scaling": [
     { "level": 26, "life": 10342, "damage_min": 319, "damage_max": 329, "attack_rating": 2075, "mana_cost": 600 }
   ]

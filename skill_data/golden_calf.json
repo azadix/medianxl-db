@@ -1,9 +1,5 @@
 {
   "id": "golden_calf",
-  "description": [
-    "Summons a golden calf that forces enemies to attack it",
-    "<p class='has-text-success'>The golden calf may teleport randomly when struck</p>"
-  ],
   "scaling": [
     { "level": 11, "life": 13948, "blinds_attacker": 11, "mana_cost": 85 }
   ]

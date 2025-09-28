@@ -1,10 +1,5 @@
 {
   "id": "gamma_field",
-  "description": [
-    "Withering field of natural radioactivity that poisons foes",
-    "Duration: 3 seconds",
-    "Hits 3 times"
-  ],
   "scaling": [
     { "level": 19, "poison_damage_min": 1058, "poison_damage_max": 2215, "poison_duration": 7.1, "mana_cost": 53 }
   ]

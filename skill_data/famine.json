@@ -1,13 +1,5 @@
 {
   "id": "famine",
-  "description": [
-    "Increases damage and returns life when you hit",
-    "Adds 15% of Strength and Dexterity as Weapon Physical Damage"
-  ],
-  "synergies": [
-    "+1% Life Steal per base level",
-    "+50 Maximum Life per base level"
-  ],
   "scaling": [
     { "level": 1, "maximum_life": 100, "life_steal": 10 },
     { "level": 2, "maximum_life": 150, "life_steal": 11 },

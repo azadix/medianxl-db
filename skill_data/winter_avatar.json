@@ -1,13 +1,5 @@
 {
   "id": "winter_avatar",
-  "description": [
-    "Floating avatar that blasts the area with frost novas",
-    "Enemies closer to the Avatar receive more damage",
-    "Cooldown: 1 second"
-  ],
-  "restriction": [
-    "Requires a melee weapon"
-  ],
   "scaling": [
     { "level": 12, "cold_damage_min": 24, "cold_damage_max": 34, "mana_cost": 30 }
   ]

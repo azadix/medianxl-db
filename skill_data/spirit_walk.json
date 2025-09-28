@@ -1,10 +1,5 @@
 {
   "id": "spirit_walk",
-  "description": [
-    "Teleports you and your minions on target enemy, healing you",
-    "Cooldown: 9 seconds",
-    "Requires a Monster as a target"
-  ],
   "scaling": [
     { "level": 5, "restores_life_on_use_based_on_max_life": 394, "range": 14, "mana_cost": 34 }
   ]

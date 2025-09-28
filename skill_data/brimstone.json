@@ -1,10 +1,5 @@
 {
   "id": "brimstone",
-  "description": [
-    "Plants a holy seed that explodes after a short delay",
-    "Duration: 5 seconds",
-    "20 yards"
-  ],
   "scaling": [
     { "level": 16, "average_fire_damage_per_second_min": 214, "average_fire_damage_per_second_max": 325, "mana_cost": 80 }
   ]

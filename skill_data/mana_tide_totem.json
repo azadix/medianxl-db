@@ -1,8 +1,5 @@
 {
   "id": "mana_tide_totem",
-  "description": [
-    "Rapidly regenerates the party's mana"
-  ],
   "scaling": [
     { "level": 12, "life": 295, "party_mana_recovery_rate": 32, "mana_cost": 151 }
   ]

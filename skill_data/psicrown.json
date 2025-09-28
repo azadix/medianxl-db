@@ -1,9 +1,5 @@
 {
   "id": "psicrown",
-  "description": [
-    "Circle of bouncing psionic missiles whose damage is based on energy",
-    "Magic Feedback Damage: 20-28% of Total Energy"
-  ],
   "scaling": [
     { "level": 13, "mana_cost": 126 }
   ]

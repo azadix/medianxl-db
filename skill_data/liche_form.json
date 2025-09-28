@@ -1,14 +1,5 @@
 {
   "id": "liche_form",
-  "description": [
-    "Become resistant to physical damage and slay enemies without lifting a finger",
-    "<p class='has-text-success'>Duration of Liche Form scales with Poison Skill Duration</p>",
-    "Movement Speed -50%",
-    "Physical Resistance +25%",
-    "Punisher Attack Rate: EPIC",
-    "Cooldown: 30 seconds",
-    "Casts: Many Punishers"
-  ],
   "scaling": [
     { "level": 12, "duration": 6.1, "mana_cost": 725 }
   ]

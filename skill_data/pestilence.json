@@ -1,9 +1,5 @@
 {
   "id": "pestilence",
-  "description": [
-    "Summon up a vile storm of toxic wrath",
-    "Movement Speed: +10%"
-  ],
   "scaling": [
     { "level": 14, "duration": 19.2, "poison_damage_min": 644, "poison_damage_max": 815, "poison_duration": 1.6, "mana_cost": 392 }
   ]

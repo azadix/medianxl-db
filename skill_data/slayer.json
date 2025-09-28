@@ -1,11 +1,5 @@
 {
   "id": "slayer",
-  "description": [
-    "Summon a stationary phantom that electrocutes nearby enemies",
-    "Casts 25 times",
-    "Inherits your caster attributes",
-    "Cooldown: 1 second"
-  ],
   "scaling": [
     { "level": 17, "lightning_damage_min": 456, "lightning_damage_max": 568, "mana_cost": 59 }
   ]

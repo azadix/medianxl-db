@@ -1,8 +1,5 @@
 {
   "id": "pyroblast",
-  "description": [
-    "A massive boulder of fire that explodes on impact"
-  ],
   "scaling": [
     { "level": 21, "average_fire_damage_per_second_min": 1500, "average_fire_damage_per_second_max": 2198, "mana_cost": 60 }
   ]

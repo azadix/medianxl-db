@@ -1,14 +1,5 @@
 {
   "id": "whirlwind",
-  "description": [
-    "Become one with the wind in a dance of death",
-    "150% Weapon Damage",
-    "Weapon Physical Damage: +10%"
-  ],
-  "restriction": [
-    "Requires a melee weapon",
-    "You cannot learn this skill if you have points in Heart of Stone"
-  ],
   "scaling": [
     { "level": 14, "mana_cost": 0 }
   ]

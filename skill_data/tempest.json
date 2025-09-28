@@ -1,9 +1,5 @@
 {
   "id": "tempest",
-  "description": [
-    "Casts powerful lightning bolts at all nearby enemies",
-    "Releases 3 bolts"
-  ],
   "scaling": [
     { "level": 11, "lightning_damage_min": 98, "lightning_damage_max": 150, "mana_cost": 29 }
   ]

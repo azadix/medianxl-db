@@ -1,11 +1,5 @@
 {
   "id": "mythal",
-  "description": [
-    "Field of wild magic that pierces resistances",
-    "Cooldown: 10 seconds",
-    "Duration: 3.5 seconds",
-    "Enemy Elemental Resistances: -20%"
-  ],
   "scaling": [
     { "level": 11, "mana_cost": 241 }
   ]

@@ -1,9 +1,5 @@
 {
   "id": "funeral_pyre",
-  "description": [
-    "Spawn an undead horde to be incinerated in horrid flame",
-    "Duration: 5 seconds"
-  ],
   "scaling": [
     { "level": 20, "fire_damage_min": 228, "fire_damage_max": 275, "mana_cost": 119 }
   ]

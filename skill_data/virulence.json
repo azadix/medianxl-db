@@ -1,10 +1,5 @@
 {
   "id": "virulence",
-  "description": [
-    "Channel a toxic beam causing your enemies to wither",
-    "<p class='has-text-success'>Press and hold mouse button to channel</p>",
-    "Poison Skill Duration increases Poison Damage"
-  ],
   "scaling": [
     { "level": 17, "poison_damage": 2906, "poison_duration": 3, "mana_cost": 4.8 }
   ]

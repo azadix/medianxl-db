@@ -1,10 +1,5 @@
 {
   "id": "supernova",
-  "description": [
-    "Blasts out a gigantic nova of powerful lightning",
-    "<p class='has-text-sucess'>More damage at close range</p>",
-    "Hits multiple times"
-  ],
   "scaling": [
     { "level": 15, "lightning_damage_min": 9, "lightning_damage_max": 121, "mana_cost": 156 }
   ]

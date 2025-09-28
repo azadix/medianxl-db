@@ -1,10 +1,5 @@
 {
   "id": "thunderstone",
-  "description": [
-    "Throw a charged stone that emits charged bolts on impact",
-    "20 charged bolts",
-    "More accurate at close range"
-  ],
   "scaling": [
     { "level": 1, "lightning_damage_min": 69, "lightning_damage_max": 101, "mana_cost": 41 }
   ]

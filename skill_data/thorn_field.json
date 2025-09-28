@@ -1,9 +1,5 @@
 {
   "id": "thorn_field",
-  "description": [
-    "Unleashes a ripple of deadly spikes",
-    "37% Weapon Damage"
-  ],
   "scaling": [
     { "level": 27, "range": 27.3 }
   ]

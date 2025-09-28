@@ -1,8 +1,5 @@
 {
   "id": "orb_of_annihilation",
-  "description": [
-    "Frags everyone near this death orb of deathful deathsome death"
-  ],
   "scaling": [
     { "level": 9, "magic_damage": 3000, "mana_cost": 4000 }
   ]

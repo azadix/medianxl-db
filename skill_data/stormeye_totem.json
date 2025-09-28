@@ -1,9 +1,5 @@
 {
   "id": "stormeye_totem",
-  "description": [
-    "Casts a crackling discharge of lightning",
-    "Totems: 1"
-  ],
   "scaling": [
     { "level": 1, "lightning_damage_min": 62, "lightning_damage_max": 139, "mana_cost": 75 }
   ]

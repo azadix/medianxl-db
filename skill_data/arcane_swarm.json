@@ -1,13 +1,5 @@
 {
   "id": "arcane_swarm",
-  "description": [
-    "Shred enemies with crisscrossing magic arrows",
-    "Skill damage increases with Fire, Cold, Lightning, Poison and Physical/Magic Spell Damage",
-    "6 projectiles"
-  ],
-  "restriction": [
-    "Requires a bow or crossbow"
-  ],
   "scaling": [
     { "level": 4, "magic_damage_min": 37, "magic_damage_max": 44, "mana_cost": 36 }
   ]

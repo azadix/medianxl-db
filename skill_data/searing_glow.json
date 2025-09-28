@@ -1,14 +1,5 @@
 {
   "id": "searing_glow",
-  "description": [
-    "Target enemy explodes with a blast of holy light",
-    "If you have no successfully corrupted items equipped:",
-    "Enemy Attack Rating: -35%",
-    "Duration increased to 30 seconds",
-    "<br>",
-    "For each successfully corrupted item equipped:",
-    "Add 30% of Physical Damage as Fire"
-  ],
   "scaling": [
     { "level": 17, "physical_damage_min": 121, "physical_damage_max": 136, "mana_cost": 65 }
   ]

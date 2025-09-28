@@ -1,8 +1,5 @@
 {
   "id": "immersion",
-  "description": [
-    "An energy wave dealing damage based on lost mana"
-  ],
   "scaling": [
     { "level": 17, "feedback_damage_percent": 327, "mana_cost": 126 }
   ]

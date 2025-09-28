@@ -1,10 +1,5 @@
 {
   "id": "discharge",
-  "description": [
-    "Periodicall strike enemies with a burst of weakening energy",
-    "Thunder frequency: every 7 seconds",
-    "Debuff duration: 5 seconds"
-  ],
   "scaling": [
     { "level": 16, "enemy_lightning_resistance": -20, "duration": 270, "mana_cost": 300 }
   ]

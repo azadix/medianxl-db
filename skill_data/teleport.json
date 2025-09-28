@@ -1,10 +1,5 @@
 {
   "id": "teleport",
-  "description": [
-    "Teleport to target location",
-    "Cooldown: 3 seconds",
-    "Range: 16.6 yards"
-  ],
   "scaling": [
     { "level": 6, "mana_cost": 385 },
     { "level": 7, "mana_cost": 374 },

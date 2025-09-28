@@ -1,13 +1,5 @@
 {
   "id": "whirlpool",
-  "description": [
-    "Creates a devastating maelstrom of damage",
-    "60% Weapon Damage",
-    "Cooldown: 1 second"
-  ],
-  "restriction": [
-    "Requires a melee weapon"
-  ],
   "scaling": [
     { "level": 6, "magic_damage": 41, "mana_cost": 200 }
   ]

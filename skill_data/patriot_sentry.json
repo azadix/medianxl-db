@@ -1,13 +1,5 @@
 {
   "id": "patriot_sentry",
-  "description": [
-    "Sentry that fires a barrage of rockets at multiple targets",
-    "Converts 60% of Physical Weapon Damage to Fire",
-    "Every 5 skill levels: Gains 1 extra Fire Damage per Fire and Lightning Pierce, up to 199",
-    "120% Weapon Damage",
-    "Rate of Fire: 1 per second",
-    "Targets: Up to 4"
-  ],
   "scaling": [
     { "level": 6, "bonus_fire_damage": 1, "duration": 8, "mana_cost": 75 }
   ]

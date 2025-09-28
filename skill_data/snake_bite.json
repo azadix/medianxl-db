@@ -1,11 +1,5 @@
 {
   "id": "snake_bite",
-  "description": [
-    "Throwing axe attack that stuns and poisons"
-  ],
-  "restriction": [
-    "Requires a throwing axe"
-  ],
   "scaling": [
     { "level": 15, "poison_damage": 0, "poison_duration": 2, "stun_duration": 1.7, "mana_cost": 51 }
   ]

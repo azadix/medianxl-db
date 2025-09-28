@@ -1,14 +1,5 @@
 {
   "id": "wyrmshot",
-  "description": [
-    "Fire a dragon spirit that bombards nearby enemies with spines",
-    "Converts 25% Physical Damage to Fire, Cold, or Lightning",
-    "60% Weapon Damage",
-    "Attacks up to 3 targets"
-  ],
-  "restriction": [
-    "Requires a bow or crossbow"
-  ],
   "scaling": [
     { "level": 11, "target_seek_range": 12.6, "mana_cost": 24 }
   ]

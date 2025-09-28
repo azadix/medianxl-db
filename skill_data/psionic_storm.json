@@ -1,8 +1,5 @@
 {
   "id": "psionic_storm",
-  "description": [
-    "Creates a tempest of mental energy at the target point"
-  ],
   "scaling": [
     { "level": 1, "magic_feedback_damage_percent_of_total_energy": 92, "mana_cost": 68 }
   ]

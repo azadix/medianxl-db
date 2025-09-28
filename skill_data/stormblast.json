@@ -1,14 +1,5 @@
 {
   "id": "stormblast",
-  "description": [
-    "Unleashes a thundering blast of lightning",
-    "40% Weapon Damage",
-    "Converts 100% Physical Damage to Lightning",
-    "Hits multiple times"
-  ],
-  "restriction": [
-    "Requires a melee weapon"
-  ],
   "scaling": [
     { "level": 12, "attack_rating": 65, "mana_cost": 33 }
   ]

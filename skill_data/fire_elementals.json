@@ -1,10 +1,5 @@
 {
   "id": "fire_elementals",
-  "description": [
-    "Fire Elementals with a fiery healing spell",
-    "5% Chance to cast level 2 Inner Fire on Attack",
-    "25% Chance to cast level 3/13/23 Fire Cannonade on Death"
-  ],
   "scaling": [
     { "level": 16, "spirits": 15, "life": 3846, "attack_rating": 2450, "damage_min": 92, "damage_max": 102, "mana_cost": 85 }
   ]

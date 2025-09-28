@@ -1,10 +1,5 @@
 {
   "id": "spark_of_hope",
-  "description": [
-    "Temporarily raises all character speeds",
-    "<p class='has-text-warning'>Can be cast on other units</p>",
-    "Duration: 10 seconds"
-  ],
   "scaling": [
     { "level": 12, "attack_speed": 23, "cast_speed": 23, "hit_recovery": 23, "movement_speed": 20, "mana_cost": 52 }
   ]

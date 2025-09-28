@@ -1,15 +1,5 @@
 {
   "id": "summon_frostwalker",
-  "description": [
-    "Bend a powerful cold demon to your will",
-    "Gains 1.5 Spell Focus and 4 Energy per 1% Minion Life",
-    "Gain 75% of your Minion Damage as Cold Spell Damage",
-    "Minion Cold Pierce is increased by your own",
-    "Summon an extra Frostwalker at character levels 120, 135 and 150"
-  ],
-  "restriction": [
-    "Cannot summon if you can summon Sinners or Glowing Funguses"
-  ],
   "scaling": [
     { "level": 17, "ice_lance_level": 17, "cold_damage_min": 98, "cold_damage_max": 131, "life": 14608, "minions": 3, "mana_cost": 297 }
   ]

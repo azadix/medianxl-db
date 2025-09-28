@@ -1,9 +1,5 @@
 {
   "id": "guardian_spirit",
-  "description": [
-    "A spirit who attacks enemies with axe skills",
-    "Uses Axe Volley"
-  ],
   "scaling": [
     { "level": 28, "ancient_spirits": 2, "life": 4920, "damage": 179, "attack_rating": 4960, "mana_cost": 101 }
   ]

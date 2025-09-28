@@ -1,10 +1,5 @@
 {
   "id": "rebound",
-  "description": [
-    "Throwing axe that shatters on walls into homing shards",
-    "100% Weapon Damage",
-    "Converts 50% Physical Damage to Magic "
-  ],
   "scaling": [
     { "level": 23, "releases_axes": 10, "target_seek_range": 19.3, "bonus_magic_damage": 113, "mana_cost": 39 }
   ]

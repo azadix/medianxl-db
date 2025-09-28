@@ -1,12 +1,5 @@
 {
   "id": "storm_crows",
-  "description": [
-    "Throw a volley of randomly homing knives",
-    "130% Weapon Damage"
-  ],
-  "restriction": [
-    "Requires a throwing knife"
-  ],
   "scaling": [
     { "level": 22, "base_knives": 9, "mana_cost": 40 }
   ]
