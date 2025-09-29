@@ -1,12 +1,12 @@
 {
   "id": "banish",
   "scaling": [
-    { "level": 24, "elemental/magic_damage": 216 , "mana_cost": 122 },
-    { "level": 25, "elemental/magic_damage": 225 , "mana_cost": 126 },
-    { "level": 26, "elemental/magic_damage": 234 , "mana_cost": 130 },
-    { "level": 27, "elemental/magic_damage": 243 , "mana_cost": 134 },
-    { "level": 28, "elemental/magic_damage": 252 , "mana_cost": 138 },
-    { "level": 29, "elemental/magic_damage": 261 , "mana_cost": 142 },
-    { "level": 30, "elemental/magic_damage": 270 , "mana_cost": 144 }
+    { "level": 24, "elemental_magic_damage_bonus_flat": 216 , "mana_cost": 122 },
+    { "level": 25, "elemental_magic_damage_bonus_flat": 225 , "mana_cost": 126 },
+    { "level": 26, "elemental_magic_damage_bonus_flat": 234 , "mana_cost": 130 },
+    { "level": 27, "elemental_magic_damage_bonus_flat": 243 , "mana_cost": 134 },
+    { "level": 28, "elemental_magic_damage_bonus_flat": 252 , "mana_cost": 138 },
+    { "level": 29, "elemental_magic_damage_bonus_flat": 261 , "mana_cost": 142 },
+    { "level": 30, "elemental_magic_damage_bonus_flat": 270 , "mana_cost": 144 }
   ]
 }

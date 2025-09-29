@@ -1,6 +1,6 @@
 {
   "id": "barrage",
   "scaling": [
-    { "level": 8, "bonus_fire,_cold,_or_lightning_damage": 39, "mana_cost": 17 }
+    { "level": 8, "bonus_fire_cold,_or_lightning_damage": 39, "mana_cost": 17 }
   ]
 }

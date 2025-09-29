@@ -4,8 +4,9 @@
 <head>
   <meta charset="UTF-8">
   <title>Skill DB Editor</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.13.0/sql-wasm.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/1.0.1/css/bulma.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.13.0/sql-wasm.js"></script>
+  <script src="utils.js" type="module"></script>
   <style>
     table { table-layout: fixed; word-wrap: break-word; }
     .navbar { border-bottom: 1px solid rgba(122, 122, 122, 122); }
@@ -24,6 +25,9 @@
           <a class="navbar-item" href="./tree.html" id="nav-tree">
               <strong>Tree</strong>
           </a>
+          <a class="navbar-item" href="./stats.html" id="nav-stats">
+                <strong>Stats</strong>
+            </a>
       </div>
     </div>
   </nav>
@@ -206,6 +210,23 @@
         PRIMARY KEY (skill_id, tag_id),
         FOREIGN KEY (skill_id) REFERENCES skills(id) ON DELETE CASCADE,
         FOREIGN KEY (tag_id) REFERENCES skilltags(id) ON DELETE CASCADE
+      );
+      CREATE TABLE IF NOT EXISTS stats (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        key TEXT NOT NULL UNIQUE COLLATE NOCASE,
+        name TEXT NOT NULL,
+        description TEXT,
+        unit TEXT,
+        format TEXT DEFAULT "{name}: {value}"
+      );
+      CREATE TABLE IF NOT EXISTS skill_scaling (
+          skill_id INTEGER NOT NULL,
+          level INTEGER NOT NULL,
+          stat_id INTEGER NOT NULL,
+          value REAL NOT NULL,
+          PRIMARY KEY (skill_id, level, stat_id),
+          FOREIGN KEY (skill_id) REFERENCES skills(id),
+          FOREIGN KEY (stat_id) REFERENCES stats(id)
       );
     `);
 

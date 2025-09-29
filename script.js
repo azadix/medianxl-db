@@ -1,3 +1,5 @@
+import { loadDatabase, getUrlParams, updateUrl, sanitizeSkillId, formatStatName, getIconHTML } from './utils.js';
+
 // DOM elements
 const contentElement = document.getElementById('content');
 const pageTitleElement = document.getElementById('page-title');
@@ -13,62 +15,6 @@ const SkillDB = {
     db: null,
     SQL: null
 }
-
-// Atlas constants
-const ICON_SIZE = 48;    // px
-const ATLAS_SIZE = 912; // px
-const ICONS_PER_ROW = Math.floor(ATLAS_SIZE / ICON_SIZE);
-const MISSING_IMAGE_NAME = "icons-shared_missing.png"
-
-// Function to get URL parameters
-function getUrlParams() {
-    return Object.fromEntries(new URLSearchParams(window.location.search).entries());
-}
-
-// Function to update URL without reloading the page
-function updateUrl(skillId = null) {
-    const url = new URL(window.location.href);
-    if (skillId) url.searchParams.set('skill', skillId);
-    else url.searchParams.delete('skill');
-    window.history.pushState({ skillId }, '', url.toString());
-}
-
-function getIconHTML(imagePath, className = '') {
-    if (!imagePath) {
-        console.warn("Missing image path");
-        return "";
-    }
-
-    if (imagePath === MISSING_IMAGE_NAME) {
-        return `<img src="icons/${MISSING_IMAGE_NAME}" class="image ${className}" alt="missing icon">`;
-    }
-
-    // Match new naming convention: icons-prefix_index.png
-    const match = imagePath.match(/^icons-([a-z]+)_(\d+)\.png$/);
-    if (!match) {
-        console.warn("Unrecognized image path:", imagePath);
-        return `<img src="icons/${MISSING_IMAGE_NAME}" class="image ${className}" alt="missing icon">`; // fallback
-    }
-
-    const prefix = match[1];      // e.g. "bar", "sor", "shared"
-    const index = parseInt(match[2], 10);
-
-    // Compute offset in atlas
-    const x = (index % ICONS_PER_ROW) * ICON_SIZE;
-    const y = Math.floor(index / ICONS_PER_ROW) * ICON_SIZE;
-
-    return `
-        <div class="image ${className}"
-            style="
-                width:${ICON_SIZE}px;
-                height:${ICON_SIZE}px;
-                background-image:url('icons/class-${prefix}.png');
-                background-position:-${x}px -${y}px;
-            ">
-        </div>
-    `;
-}
-
 
 // Updated initializeDataTable function - no file checking
 async function initializeDataTable(skillsData) {
@@ -153,10 +99,6 @@ $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
     if (!rowNode) return true;
     return $(rowNode).attr("data-has-page") === "true";
 });
-
-function sanitizeSkillId(skillId) {
-    return skillId.replace(/[^a-zA-Z0-9_-]/g, ''); // Only allow safe characters
-}
 
 // Function to display a specific skill's details
 async function displaySkillDetail(skillId) {
@@ -263,13 +205,6 @@ async function displaySkillDetail(skillId) {
                 : 'Hide';
         });
     }
-}
-
-// Helper function to format stat names for display
-function formatStatName(stat) {
-    return stat.split('_').map(word => 
-        word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ');
 }
 
 // Handle browser back/forward navigation

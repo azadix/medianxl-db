@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Stats DB Editor</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.13.0/sql-wasm.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/1.0.1/css/bulma.min.css" />
+  <style>
+    table { table-layout: fixed; word-wrap: break-word; }
+    .navbar { border-bottom: 1px solid rgba(122, 122, 122, 122); }
+  </style>
+</head>
+<body class="section">
+  <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
+    <div class="navbar-menu">
+      <div class="navbar-start">
+          <a class="navbar-item" href="./" id="nav-all-skills"><strong>Skills</strong></a>
+          <a class="navbar-item" href="./db.html" id="nav-db"><strong>DB</strong></a>
+          <a class="navbar-item" href="./tree.html" id="nav-tree"><strong>Tree</strong></a>
+          <a class="navbar-item is-selected" href="./stats.html" id="nav-stats"><strong>Stats</strong></a>
+      </div>
+    </div>
+  </nav>
+
+  <h1 class="title mt-1 is-3">Stats Database (sql.js)</h1>
+
+  <div class="buttons">
+    <button class="button is-link" id="export-db-btn">Export Database</button>
+  </div>
+
+  <!-- Preview Section -->
+<h2 class="title is-4">Preview & Validation</h2>
+<div class="box">
+  <label class="label">Test Skill Description</label>
+  <textarea class="textarea" id="preview-input" rows="3" 
+    placeholder="Example: {{mana_cost:15}}, {{weapon_damage:55%}}, {{convert_phys_mag:50%}}"></textarea>
+  
+  <div class="mt-3">
+    <button class="button is-info" id="preview-btn">Render Preview</button>
+  </div>
+
+  <h3 class="subtitle is-5 mt-4">Rendered Output</h3>
+  <div id="preview-output" class="content has-background p-3"></div>
+
+  <h3 class="subtitle is-5 mt-4">Validation Report</h3>
+  <div id="validation-output" class="content has-background p-3"></div>
+</div>
+
+
+  <!-- Add/Edit form -->
+  <form id="stat-form" class="box">
+    <div class="columns is-multiline">
+      <div class="column is-one-quarter">
+        <label class="label">Key</label>
+        <input class="input" type="text" id="key" required placeholder="e.g. weapon_damage">
+      </div>
+
+      <div class="column is-one-quarter">
+        <label class="label">Name</label>
+        <input class="input" type="text" id="name" required placeholder="e.g. Weapon Damage">
+      </div>
+
+      <div class="column is-half">
+        <label class="label">Format</label>
+        <input class="input" type="text" id="format" required value="{name}: {value}">
+      </div>
+
+      <div class="column is-full">
+        <label class="label">Description</label>
+        <textarea class="textarea" id="description" rows="2"></textarea>
+      </div>
+
+      <div class="column is-full">
+        <button class="button is-primary" type="submit">Insert Stat</button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Table -->
+  <h2 class="title is-4">Stats Table</h2>
+  <table class="table is-striped is-fullwidth is-narrow" id="stats-table">
+    <thead>
+      <tr>
+        <th style="width: 5%;">ID</th>
+        <th style="width: 15%;">Key</th>
+        <th style="width: 20%;">Name</th>
+        <th>Description</th>
+        <th>Format</th>
+        <th style="width: 10%;">Actions</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+  const StatDB = {
+    db: null,
+    SQL: null,
+    editingStatId: null
+  };
+
+  async function initializePage() {
+    // Load SQLite
+    const response = await fetch('skills.sqlite');
+    const buffer = await response.arrayBuffer();
+
+    StatDB.SQL = await initSqlJs({ locateFile: f => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.13.0/${f}` });
+    StatDB.db = new StatDB.SQL.Database(new Uint8Array(buffer));
+
+    try {
+      refreshStatsTable();
+    } catch (err) {
+      console.warn("Falling back to empty DB:", err.message);
+      initDatabase();
+    }
+  }
+
+  function initDatabase() {
+    StatDB.db = new StatDB.SQL.Database();
+    refreshStatsTable();
+  }
+
+function validatePlaceholders(description) {
+  if (!description) return [];
+
+  const errors = [];
+  description.replace(/\{\{(.*?)\}\}/g, (match, token) => {
+    const [key] = token.split(':').map(s => s.trim().toLowerCase());
+    const stmt = StatDB.db.prepare("SELECT 1 FROM stats WHERE LOWER(key) = ?");
+    stmt.bind([key]);
+    const exists = stmt.step();
+    stmt.free();
+    if (!exists) errors.push(key);
+  });
+  return errors;
+}
+
+document.getElementById("preview-btn").addEventListener("click", () => {
+  const input = document.getElementById("preview-input").value;
+  
+  // Render preview
+  const rendered = renderPreview(input);
+  document.getElementById("preview-output").innerHTML = rendered;
+
+  // Show validation results
+  const errors = validatePlaceholders(input);
+  if (errors.length > 0) {
+    document.getElementById("validation-output").innerHTML = 
+      `<strong>Unknown stats:</strong> ${errors.join(", ")}`;
+  } else {
+    document.getElementById("validation-output").innerHTML = 
+      "<span class='has-text-success'>All stat references valid ✅</span>";
+  }
+});
+
+
+  // Insert/Update
+  document.getElementById("stat-form").addEventListener("submit", e => {
+    e.preventDefault();
+    if (!StatDB.db) return;
+
+    const key = document.getElementById("key").value.trim();
+    const name = document.getElementById("name").value.trim();
+    const format = document.getElementById("format").value.trim();
+    const description = document.getElementById("description").value.trim();
+
+    if (StatDB.editingStatId) {
+      StatDB.db.run(`
+        UPDATE stats
+        SET key=?, name=?, format=?, description=?
+        WHERE id=?
+      `, [key, name, format, description, StatDB.editingStatId]);
+
+      StatDB.editingStatId = null;
+      document.querySelector("#stat-form button[type=submit]").textContent = "Insert Stat";
+    } else {
+      StatDB.db.run(`
+        INSERT INTO stats (key, name, format, description)
+        VALUES (?, ?, ?, ?)
+      `, [key, name, format, description]);
+    }
+
+    refreshStatsTable();
+    e.target.reset();
+  });
+
+  function refreshStatsTable() {
+    if (!StatDB.db) return;
+    const tbody = document.querySelector("#stats-table tbody");
+    tbody.innerHTML = "";
+
+    const res = StatDB.db.exec(`SELECT id, key, name, description, format FROM stats ORDER BY id`);
+    if (res.length > 0) {
+      res[0].values.forEach(row => {
+        const tr = document.createElement("tr");
+        row.forEach(val => {
+          const td = document.createElement("td");
+          td.textContent = val;
+          tr.appendChild(td);
+        });
+
+        const actionTd = document.createElement("td");
+        const editBtn = document.createElement("button");
+        editBtn.className = "button is-warning is-small";
+        editBtn.textContent = "Edit";
+        editBtn.onclick = () => editStat(row[0]);
+
+        const delBtn = document.createElement("button");
+        delBtn.className = "button is-danger is-small";
+        delBtn.textContent = "Delete";
+        delBtn.onclick = () => deleteStat(row[0]);
+
+        actionTd.appendChild(editBtn);
+        actionTd.appendChild(delBtn);
+        tr.appendChild(actionTd);
+        tbody.appendChild(tr);
+      });
+    }
+  }
+
+  function editStat(id) {
+    const stmt = StatDB.db.prepare("SELECT id, key, name, format, description FROM stats WHERE id = ?");
+    stmt.bind([id]);
+    if (stmt.step()) {
+      const [sid, key, name, format, description] = stmt.get();
+
+      StatDB.editingStatId = sid;
+      document.getElementById("key").value = key;
+      document.getElementById("name").value = name;
+      document.getElementById("description").value = description || "";
+      document.getElementById("format").value = format || "";
+
+      document.querySelector("#stat-form button[type=submit]").textContent = "Save Stat";
+    }
+    stmt.free();
+  }
+
+  function deleteStat(id) {
+    if (!confirm("Delete this stat?")) return;
+    StatDB.db.run("DELETE FROM stats WHERE id = ?", [id]);
+    refreshStatsTable();
+  }
+
+  function renderStatPlaceholder(key, values = []) {
+    if (values.length > 3){
+        console.error("Array of values for stats supports only up to 4 variable stats")
+    } 
+    const stmt = StatDB.db.prepare("SELECT name, format FROM stats WHERE LOWER(key) = ?");
+    stmt.bind([key.toLowerCase()]);
+    let output = `[Unknown stat: ${key}]`;
+
+    if (stmt.step()) {
+        const [name, format] = stmt.get();
+        output = format
+        .replace("{name}", name)
+        .replace("{value}", values[0] || "")
+        .replace("{value1}", values[0] || "")
+        .replace("{value2}", values[1] || "")
+        .replace("{value3}", values[2] || "");
+    }
+
+    stmt.free();
+    return output;
+  }
+
+function renderPreview(description) {
+  if (!description) return "";
+
+  return description.replace(/\{\{(.*?)\}\}/g, (match, token) => {
+    const [key, rawValues] = token.split(':').map(s => s.trim());
+    const values = rawValues ? rawValues.split(',').map(v => v.trim()) : [];
+    return renderStatPlaceholder(key, values);
+  });
+}
+
+
+  // Export
+  document.getElementById("export-db-btn").addEventListener("click", () => {
+    if (!StatDB.db) return;
+    const binaryArray = StatDB.db.export();
+    const blob = new Blob([binaryArray], { type: "application/octet-stream" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "skills.sqlite";
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+
+  initializePage();
+  </script>
+</body>
+</html>

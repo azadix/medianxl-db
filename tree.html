@@ -3,18 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <title>Skills UI</title>
-  
-  <link rel="preload" as="image" href="icons/class-shared.png">
-  <link rel="preload" as="image" href="icons/class-ass.png">
-  <link rel="preload" as="image" href="icons/class-ama.png">
-  <link rel="preload" as="image" href="icons/class-bar.png">
-  <link rel="preload" as="image" href="icons/class-dru.png">
-  <link rel="preload" as="image" href="icons/class-nec.png">
-  <link rel="preload" as="image" href="icons/class-pal.png">
-  <link rel="preload" as="image" href="icons/class-sor.png">
-
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/1.0.1/css/bulma.min.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.13.0/sql-wasm.js"></script>
+  <script src="utils.js" type="module"></script>
   <style>
     .skills-grid {
         gap: 1rem;
@@ -73,6 +64,9 @@
             <a class="navbar-item is-selected" href="./tree.html" id="nav-tree">
                 <strong>Tree</strong>
             </a>
+            <a class="navbar-item" href="./stats.html" id="nav-stats">
+                <strong>Stats</strong>
+            </a>
         </div>
         </div>
     </nav>
@@ -88,50 +82,10 @@
 
     <div id="skillsContainer" class="mt-4"></div>
     <script type="module">
+        import { loadDatabase, getUrlParams, updateUrl, sanitizeSkillId, formatStatName, getIconHTML } from './utils.js';
+
         let skillsList;
         
-        // Atlas constants
-        const ICON_SIZE = 48;    // px
-        const ATLAS_SIZE = 912; // px
-        const ICONS_PER_ROW = Math.floor(ATLAS_SIZE / ICON_SIZE);
-        const MISSING_IMAGE_NAME = "icons-shared_missing.png"
-
-        function getIconHTML(imagePath) {
-            if (!imagePath) {
-                console.warn("Missing image path");
-                return "";
-            }
-
-            if (imagePath === MISSING_IMAGE_NAME) {
-                return `<img src="icons/${MISSING_IMAGE_NAME}" class="image">`;
-            }
-
-            // Match new naming convention: icons-prefix_index.png
-            const match = imagePath.match(/^icons-([a-z]+)_(\d+)\.png$/);
-            if (!match) {
-                console.warn("Unrecognized image path:", imagePath);
-                return `<img src="icons/${imagePath}" class="image">`; // fallback
-            }
-
-            const prefix = match[1];      // e.g. "bar", "sor", "shared"
-            const index = parseInt(match[2], 10);
-
-            // Compute offset in atlas
-            const x = (index % ICONS_PER_ROW) * ICON_SIZE;
-            const y = Math.floor(index / ICONS_PER_ROW) * ICON_SIZE;
-
-            return `
-                <div class="skill-icon image"
-                    style="
-                        width:${ICON_SIZE}px;
-                        height:${ICON_SIZE}px;
-                        background-image:url('icons/class-${prefix}.png');
-                        background-position:-${x}px -${y}px;
-                    ">
-                </div>
-            `;
-        }
-
         async function loadSkillsFromSQLite() {
             try {
                 // Fetch SQLite file
