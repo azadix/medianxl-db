@@ -1,6 +1,0 @@
-{
-  "id": "amatoxin",
-  "scaling": [
-    {"level": 1, "poison_damage_min": 500, "poison_damage_max": 1000}
-  ]
-}

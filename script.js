@@ -1,4 +1,4 @@
-import { loadDatabase, getUrlParams, updateUrl, sanitizeSkillId, formatStatName, getIconHTML, getSkillIconHTML, MISSING_IMAGE_NAME, expandPlaceholdersWithScaling } from './utils.js';
+import { getUrlParams, updateUrl, sanitizeSkillId, getSkillIconHTML, MISSING_IMAGE_NAME, expandPlaceholdersWithScaling } from './utils.js';
 
 // DOM elements
 const contentElement = document.getElementById('content');
@@ -300,9 +300,9 @@ function displayAllSkills() {
 
     const skillCount = SkillDB.db.exec(`
         SELECT 
-            SUM(CASE WHEN has_details = 1 THEN 1 ELSE 0 END) AS skills_with_details,
+            SUM(CASE WHEN description IS NOT NULL AND description != '' THEN 1 ELSE 0 END) AS skills_with_details,
             COUNT(*) AS total_skills,
-            ROUND(100.0 * SUM(CASE WHEN has_details = 1 THEN 1 ELSE 0 END) / COUNT(*), 2) AS percent_with_details
+            ROUND(100.0 * SUM(CASE WHEN description IS NOT NULL AND description != '' THEN 1 ELSE 0 END) / COUNT(*), 2) AS percent_with_details
         FROM skills;
     `);
 
@@ -344,7 +344,6 @@ async function loadSkillsFromSQLite() {
                 ct.name AS tab_name,
                 c.name AS class_name,
                 c.image_prefix,
-                s.has_details,
                 GROUP_CONCAT(t.name, ', ') AS tags
             FROM skills s
             LEFT JOIN classTabs ct
@@ -373,7 +372,7 @@ async function loadSkillsFromSQLite() {
                 row: row.row,
                 col: row.col,
                 image: row.image || MISSING_IMAGE_NAME,
-                hasDetails: row.has_details === 1,
+                hasDetails: row.description && row.description.trim().length > 0,
                 restriction: row.restriction || null,
                 description: row.description || null
             });

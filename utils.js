@@ -95,23 +95,6 @@ export function getSkillIconHTML(imageFileName, humanClassName, className = '') 
     return `<img src="${path}" class="image ${className}" alt="skill icon">`;
 }
 
-function renderSkillDescription(skill, level) {
-    return skill.description.replace(/\{\{(.*?)\}\}/g, (match, token) => {
-        const [key, constant] = token.split(':');
-        
-        if (constant) return constant; // static inline value
-
-        const stat = db.exec(`
-            SELECT value 
-            FROM skill_scaling 
-            WHERE skill_id=${skill.id} AND level=${level}
-              AND stat_id=(SELECT id FROM stats WHERE key='${key}')
-        `);
-
-        if (stat.length > 0) return stat[0].values[0][0]; // numeric value
-        return `[Unknown stat: ${key}]`; // fallback / typo detection
-    });
-}
 
 // --- Placeholder Expansion Utilities ---
 // Expand a description string using the stats table formatting and optional inline values
@@ -138,13 +121,11 @@ export function expandPlaceholders(db, description) {
             const w3 = `<span class="stat-val">${v3}</span>`;
             output = (format || '{name}: {value}')
                 .replace('{name}', name)
-                .replace('{value}', w1)
                 .replace('{value0}', w0)
                 .replace('{value1}', w1)
                 .replace('{value2}', w2)
                 .replace('{value3}', w3)
                 // also support %valueX% tokens
-                .replace(/%value%/g, w1)
                 .replace(/%value0%/g, w0)
                 .replace(/%value1%/g, w1)
                 .replace(/%value2%/g, w2)
@@ -184,12 +165,10 @@ export function expandPlaceholdersWithScaling(db, skillId, level, description) {
                     const w3 = `<span class=\"stat-val\">${v3}</span>`;
                 output = (format || '{name}: {value}')
                     .replace('{name}', name)
-                    .replace('{value}', w1)
                     .replace('{value0}', w0)
                     .replace('{value1}', w1)
                     .replace('{value2}', w2)
                     .replace('{value3}', w3)
-                    .replace(/%value%/g, w1)
                     .replace(/%value0%/g, w0)
                     .replace(/%value1%/g, w1)
                     .replace(/%value2%/g, w2)
@@ -221,12 +200,10 @@ export function expandPlaceholdersWithScaling(db, skillId, level, description) {
             const w3 = `<span class="stat-val">${sv3}</span>`;
             output = (format || '{name}: {value}')
                 .replace('{name}', name)
-                .replace('{value}', w1)
                 .replace('{value0}', w0)
                 .replace('{value1}', w1)
                 .replace('{value2}', w2)
                 .replace('{value3}', w3)
-                .replace(/%value%/g, w1)
                 .replace(/%value0%/g, w0)
                 .replace(/%value1%/g, w1)
                 .replace(/%value2%/g, w2)
@@ -243,12 +220,10 @@ export function expandPlaceholdersWithScaling(db, skillId, level, description) {
             const q = '<span class="stat-val">???</span>';
             const formatted = (format || '{name}: {value}')
                 .replace('{name}', name)
-                .replace('{value}', q)
                 .replace('{value0}', q)
                 .replace('{value1}', q)
                 .replace('{value2}', q)
                 .replace('{value3}', q)
-                .replace(/%value%/g, q)
                 .replace(/%value0%/g, q)
                 .replace(/%value1%/g, q)
                 .replace(/%value2%/g, q)

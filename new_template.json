@@ -1,6 +1,0 @@
-{
-  "id": "chaos_nova",
-  "scaling": [
-    { "level": 1, "cast_on_kill": 0, "cast_on_death": 10, "mana_cost": 99 }
-  ]
-}

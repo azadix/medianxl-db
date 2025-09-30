@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <title>Skill DB Editor</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/1.0.1/css/bulma.min.css" />
+  <link rel="stylesheet" href="dropdown-style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.13.0/sql-wasm.js"></script>
   <script src="utils.js" type="module"></script>
   <style>
@@ -91,13 +92,6 @@
         <input class="input" type="text" id="image" value="-1/icons-shared_missing.png">
       </div>
 
-      <div class="column is-one-quarter">
-        <label class="label">Has details page</label>
-        <label class="checkbox">
-          <input type="checkbox" id="has_details"> Finished
-        </label>
-      </div>
-
       <div class="column is-full">
         <label class="label">Restriction</label>
         <textarea class="textarea" id="restriction" rows="2"></textarea>
@@ -133,7 +127,6 @@
         <th style="width: 5%;">Col</th>
         <th>Image</th>
         <th>Tags</th>
-        <th style="width: 5%;">Details</th>
         <th style="width: 5%;">Has Descr</th>
         <th style="width: 5%;">Has Restr</th>
         <th style="width: 10%;">Actions</th>
@@ -322,15 +315,15 @@
 
     <div class="box">
       <div class="columns is-vcentered">
-        <div class="column is-one-third">
-          <div class="select is-fullwidth">
-            <select id="scaling-add-stat"></select>
-          </div>
+        <div class="column is-half">
+          <div id="scaling-add-stat-dd"></div>
+          <input type="hidden" id="scaling-add-stat-hidden" />
         </div>
         <div class="column is-one-quarter">
           <button class="button" id="scaling-add-stat-btn" type="button">Add Stat</button>
         </div>
       </div>
+      <div id="scaling-add-stat-desc" class="mb-3"></div>
 
       <table class="table is-striped is-fullwidth is-narrow" id="scaling-table">
         <thead>
@@ -351,7 +344,9 @@
     <p id="scaling-status" class="has-text-grey"></p>
   </div>
 
-  <script>
+  <script type="module">
+  import { DropdownList } from './DropdownList.js';
+
   const SkillDB = {
     db: null,
     SQL: null,
@@ -385,7 +380,6 @@
       refreshTabsClassSelect();
       refreshTabsTable();
       refreshStatsTable();
-      migrateSkillScalingTable();
       populateScalingSelectors();
     } catch (err) {
       console.warn("Falling back to empty DB:", err.message);
@@ -423,7 +417,6 @@
         row INTEGER,
         col INTEGER,
         image TEXT,
-        has_details INTEGER DEFAULT 0,
         restriction TEXT,
         description TEXT,
         FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE SET NULL
@@ -447,7 +440,10 @@
           skill_id INTEGER NOT NULL,
           level INTEGER NOT NULL,
           stat_id INTEGER NOT NULL,
-          value REAL NOT NULL,
+          value0 REAL NOT NULL,
+          value1 REAL NOT NULL,
+          value2 REAL NOT NULL,
+          value3 REAL NOT NULL,
           PRIMARY KEY (skill_id, level, stat_id),
           FOREIGN KEY (skill_id) REFERENCES skills(id),
           FOREIGN KEY (stat_id) REFERENCES stats(id)
@@ -1067,7 +1063,6 @@
     const row = parseInt(document.getElementById("row").value, 10);
     const col = parseInt(document.getElementById("col").value, 10);
     const image = document.getElementById("image").value.trim();
-    const has_details = document.getElementById("has_details").checked ? 1 : 0;
     const restriction = document.getElementById("restriction").value.trim();
     const description = document.getElementById("description").value.trim();
 
@@ -1075,9 +1070,9 @@
       // Update
       SkillDB.db.run(`
         UPDATE skills
-        SET name=?, display_name=?, class_id=?, tab_index=?, row=?, col=?, image=?, has_details=?, restriction=?, description=?
+        SET name=?, display_name=?, class_id=?, tab_index=?, row=?, col=?, image=?, restriction=?, description=?
         WHERE id=?
-      `, [name, display_name, class_id, tab_id, row, col, image, has_details, restriction, description, SkillDB.editingSkillId]);
+      `, [name, display_name, class_id, tab_id, row, col, image, restriction, description, SkillDB.editingSkillId]);
 
       // Update tags
       SkillDB.db.run("DELETE FROM skill_skilltags WHERE skill_id=?", [SkillDB.editingSkillId]);
@@ -1090,9 +1085,9 @@
     } else {
       // Insert
       SkillDB.db.run(`
-        INSERT INTO skills (name, display_name, class_id, tab_index, row, col, image, has_details, restriction, description)
+        INSERT INTO skills (name, display_name, class_id, tab_index, row, col, image, restriction, description)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `, [name, display_name, class_id, tab_id, row, col, image, has_details, restriction, description]);
+      `, [name, display_name, class_id, tab_id, row, col, image, restriction, description]);
 
       const skillId = SkillDB.db.exec("SELECT last_insert_rowid()")[0].values[0][0];
       document.querySelectorAll("#tag-checkboxes input:checked").forEach(cb => {
@@ -1114,7 +1109,6 @@
       SELECT s.id, s.name, s.display_name, c.name as class_name, 
             ct.name as tab_name, s.row, s.col, s.image,
             GROUP_CONCAT(t.name, ', ') as tags,
-            s.has_details,
             CASE WHEN s.description IS NOT NULL AND s.description != '' THEN 1 ELSE 0 END AS has_descr,
             CASE WHEN s.restriction IS NOT NULL AND s.restriction != '' THEN 1 ELSE 0 END AS has_restr
       FROM skills s
@@ -1165,13 +1159,13 @@
     if (!SkillDB.db) return;
     const stmt = SkillDB.db.prepare(`
       SELECT s.id, s.name, s.display_name, s.class_id, s.tab_index,
-            s.row, s.col, s.image, s.has_details, s.restriction, s.description
+            s.row, s.col, s.image, s.restriction, s.description
       FROM skills s
       WHERE s.id = ?
     `);
     stmt.bind([id]);
     if (stmt.step()) {
-      const [sid, name, display_name, class_id, tab_index, row, col, image, has_details, restriction, description] = stmt.get();
+      const [sid, name, display_name, class_id, tab_index, row, col, image, restriction, description] = stmt.get();
 
       SkillDB.editingSkillId = sid;
       document.getElementById("name").value = name;
@@ -1182,7 +1176,6 @@
       document.getElementById("row").value = row;
       document.getElementById("col").value = col;
       document.getElementById("image").value = image;
-      document.getElementById("has_details").checked = (has_details === 1);
       document.getElementById("restriction").value = restriction || "";
       document.getElementById("description").value = description || "";
 
@@ -1245,7 +1238,6 @@
       refreshTabsClassSelect();
       refreshTabsTable();
       refreshStatsTable();
-      migrateSkillScalingTable();
       populateScalingSelectors();
       fileInput.value = "";
     } catch (err) {
@@ -1253,31 +1245,7 @@
     }
   });
 
-  // --- Scaling Section ---
-  function migrateSkillScalingTable() {
-    // Add value1..3 if not present
-    const info = SkillDB.db.exec("PRAGMA table_info(skill_scaling)");
-    const cols = info.length ? info[0].values.map(r => r[1].toLowerCase()) : [];
-    const hasValue0 = cols.includes('value0');
-    const hasValue1 = cols.includes('value1');
-    const hasValue2 = cols.includes('value2');
-    const hasValue3 = cols.includes('value3');
-    // Store detection for later inserts
-    window.__SCALING_COLS__ = {
-      hasLegacyValue: cols.includes('value'),
-      hasValue0,
-      hasValue1,
-      hasValue2,
-      hasValue3
-    };
-    // Legacy single 'value' column may exist
-    if (!hasValue0) SkillDB.db.run("ALTER TABLE skill_scaling ADD COLUMN value0 REAL");
-    if (!hasValue1) SkillDB.db.run("ALTER TABLE skill_scaling ADD COLUMN value1 REAL");
-    if (!hasValue2) SkillDB.db.run("ALTER TABLE skill_scaling ADD COLUMN value2 REAL");
-    if (!hasValue3) SkillDB.db.run("ALTER TABLE skill_scaling ADD COLUMN value3 REAL");
-  }
-
-  function populateScalingSelectors() {
+  async function populateScalingSelectors() {
     // Skills
     const skillSelect = document.getElementById('scaling-skill');
     if (skillSelect) {
@@ -1292,19 +1260,31 @@
         });
       }
     }
-    // Stat add select
-    const addSelect = document.getElementById('scaling-add-stat');
-    if (addSelect) {
-      addSelect.innerHTML = '';
+    // Stat add dropdown using DropdownList.js
+    const ddContainer = document.getElementById('scaling-add-stat-dd');
+    const hiddenInput = document.getElementById('scaling-add-stat-hidden');
+    const descEl = document.getElementById('scaling-add-stat-desc');
+
+    if (ddContainer && hiddenInput && descEl) {
       const res = SkillDB.db.exec("SELECT id, key, name FROM stats ORDER BY name");
-      if (res[0]) {
-        res[0].values.forEach(([id, key, name]) => {
-          const opt = document.createElement('option');
-          opt.value = JSON.stringify({ id, key, name });
-          opt.textContent = `${name} (${key})`;
-          addSelect.appendChild(opt);
-        });
-      }
+      const items = res[0] ? res[0].values.map(([id, key, name]) => ({
+        value: JSON.stringify({ id, key, name }),
+        name: name,
+        desc: key
+      })) : [];
+      items.sort((a, b) => a.name.localeCompare(b.name));
+
+      const dropdown = new DropdownList(ddContainer, {
+        placeholder: 'Select stat...',
+        emptyListText: 'No results',
+        defaultHeaderText: 'Stats',
+        
+        onSelect: (item) => {
+          hiddenInput.value = item?.value || '';
+          descEl.innerHTML = item?.desc ? `<span class='has-text-weight-bold'>Key:</span> ${item.desc}` : '';
+        }
+      });
+      dropdown.setItems(items);
     }
   }
 
@@ -1337,17 +1317,31 @@
     const skillId = parseInt(document.getElementById('scaling-skill').value, 10);
     const level = parseInt(document.getElementById('scaling-level').value, 10);
     if (Number.isNaN(skillId) || Number.isNaN(level)) return;
+
     const res = SkillDB.db.exec(`
-      SELECT s.id AS stat_id, s.key, s.name, ss.value0, ss.value1, ss.value2, ss.value3, ss.value
+      SELECT s.id AS stat_id, s.key, s.name,
+            ss.value0, ss.value1, ss.value2, ss.value3
       FROM stats s
-      LEFT JOIN skill_scaling ss ON ss.stat_id = s.id AND ss.skill_id = ${skillId} AND ss.level = ${level}
+      LEFT JOIN skill_scaling ss
+        ON ss.stat_id = s.id
+      AND ss.skill_id = ${skillId}
+      AND ss.level = ${level}
       WHERE ss.stat_id IS NOT NULL
-      ORDER BY s.name`);
-    const rows = res[0] ? res[0].values.map(([stat_id, key, name, v0, v1, v2, v3, v]) => ({
-      stat_id, key, name, value0: v0 != null ? v0 : (v1 != null ? v1 : v), value1: v1 != null ? v1 : v, value2: v2, value3: v3
-    })) : [];
+      ORDER BY s.name
+    `);
+
+    const rows = res[0]
+      ? res[0].values.map(([stat_id, key, name, v0, v1, v2, v3]) => ({
+          stat_id, key, name, value0: v0, value1: v1, value2: v2, value3: v3
+        }))
+      : [];
+
     renderScalingRows(rows);
-    document.getElementById('scaling-status').textContent = rows.length > 0 ? `Loaded ${rows.length} stats for level ${level}` : 'No stats saved for this level yet';
+
+    document.getElementById('scaling-status').textContent =
+      rows.length > 0
+        ? `Loaded ${rows.length} stats for level ${level}`
+        : 'No stats saved for this level yet';
   }
 
   function suggestFromDescription() {
@@ -1389,9 +1383,9 @@
   }
 
   function addStatRow() {
-    const addSelect = document.getElementById('scaling-add-stat');
-    if (!addSelect || !addSelect.value) return;
-    const { id, key, name } = JSON.parse(addSelect.value);
+    const hidden = document.getElementById('scaling-add-stat-hidden');
+    if (!hidden || !hidden.value) return;
+    const { id, key, name } = JSON.parse(hidden.value);
     const existingKeys = new Set(Array.from(document.querySelectorAll('#scaling-table tbody tr')).map(tr => tr.children[0].textContent.trim().toLowerCase()));
     if (existingKeys.has(String(key).toLowerCase())) return;
     const current = Array.from(document.querySelectorAll('#scaling-table tbody tr')).map(tr => ({
@@ -1425,14 +1419,7 @@
         return;
       }
       SkillDB.db.run('DELETE FROM skill_scaling WHERE skill_id=? AND level=? AND stat_id=?', [skillId, level, r.stat_id]);
-      const cols = (window.__SCALING_COLS__) || { hasLegacyValue: false };
-      if (cols.hasLegacyValue) {
-        // If legacy NOT NULL value column exists, populate it from value1 (fallback to value2/value3/0)
-        const legacy = (r.value0 !== '' && r.value0 != null) ? r.value0 : ((r.value1 !== '' && r.value1 != null) ? r.value1 : ((r.value2 !== '' && r.value2 != null) ? r.value2 : ((r.value3 !== '' && r.value3 != null) ? r.value3 : 0)));
-        SkillDB.db.run('INSERT INTO skill_scaling (skill_id, level, stat_id, value, value0, value1, value2, value3) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', [skillId, level, r.stat_id, legacy, r.value0 || null, r.value1 || null, r.value2 || null, r.value3 || null]);
-      } else {
-        SkillDB.db.run('INSERT INTO skill_scaling (skill_id, level, stat_id, value0, value1, value2, value3) VALUES (?, ?, ?, ?, ?, ?, ?)', [skillId, level, r.stat_id, r.value0 || null, r.value1 || null, r.value2 || null, r.value3 || null]);
-      }
+      SkillDB.db.run('INSERT INTO skill_scaling (skill_id, level, stat_id, value0, value1, value2, value3) VALUES (?, ?, ?, ?, ?, ?, ?)', [skillId, level, r.stat_id, r.value0 || null, r.value1 || null, r.value2 || null, r.value3 || null]);
     });
     document.getElementById('scaling-status').textContent = `Saved ${rows.length} rows for level ${level}`;
   }

@@ -100,7 +100,7 @@
                     SELECT s.*,
                         ct.name AS tab_name,
                         c.name AS class_name,
-                        s.has_details,
+                        s.description,
                         GROUP_CONCAT(t.name, ', ') AS tags
                     FROM skills s
                     LEFT JOIN classTabs ct
@@ -129,7 +129,7 @@
                         row: row.row,
                         col: row.col,
                         image: row.image || 'icons-shared_missing.png',
-                        hasDetails: row.has_details === 1
+                        hasDetails: row.description && row.description.trim().length > 0
                     });
 
 
