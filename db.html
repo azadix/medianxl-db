@@ -25,9 +25,6 @@
           <a class="navbar-item" href="./tree.html" id="nav-tree">
               <strong>Tree</strong>
           </a>
-          <a class="navbar-item" href="./stats.html" id="nav-stats">
-                <strong>Stats</strong>
-            </a>
       </div>
     </div>
   </nav>
@@ -42,7 +39,18 @@
     <button class="button is-link" id="export-db-btn">Export Database</button>
   </div>
 
-  <form id="skill-form" class="box">
+  <h2 class="title is-4">Manage Data</h2>
+  <div class="buttons">
+    <button class="button is-light" data-section="skills-section">Skills</button>
+    <button class="button is-light" data-section="tags-section">Tags</button>
+    <button class="button is-light" data-section="classes-section">Classes</button>
+    <button class="button is-light" data-section="tabs-section">Class Tabs</button>
+    <button class="button is-light" data-section="stats-section">Stats</button>
+    <button class="button is-light" data-section="scaling-section">Scaling</button>
+  </div>
+
+  <div id="skills-section" class="box" style="display:block;">
+  <form id="skill-form" class="mb-3">
     <div class="columns is-multiline">
       <div class="column is-one-quarter">
         <label class="label">Name</label>
@@ -111,7 +119,7 @@
     </div>
   </form>
 
-  <h2 class="title is-4">Skills Table</h2>
+  <h2 class="title is-5">Skills Table</h2>
 
   <table class="table is-striped is-fullwidth is-narrow" id="skills-table">
     <thead>
@@ -133,6 +141,215 @@
     </thead>
     <tbody></tbody>
   </table>
+
+  </table>
+
+  </div>
+
+  <div id="tags-section" class="box" style="display:none;">
+  <h2 class="title is-5">Manage Tags</h2>
+  <form id="tag-form" class="box">
+    <div class="columns is-multiline">
+      <div class="column is-one-third">
+        <label class="label">New Tag Name</label>
+        <input class="input" type="text" id="new-tag-name" placeholder="e.g. Fire">
+      </div>
+      <div class="column is-one-third">
+        <button class="button is-primary mt-5" id="add-tag-btn" type="button">Add Tag</button>
+        <button class="button mt-5" id="tag-cancel" type="button" style="display:none;">Cancel</button>
+      </div>
+    </div>
+  </form>
+
+  <table class="table is-striped is-fullwidth is-narrow" id="tags-table">
+    <thead>
+      <tr>
+        <th style="width: 5%;">ID</th>
+        <th>Name</th>
+        <th style="width: 10%;">Actions</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  </div>
+
+  <div id="classes-section" class="box" style="display:none;">
+    <h3 class="title is-5">Classes</h3>
+    <form id="class-form" class="mb-3">
+      <div class="columns is-multiline">
+        <div class="column is-one-quarter">
+          <label class="label">Name</label>
+          <input class="input" type="text" id="class-name" placeholder="e.g. Amazon">
+        </div>
+        <div class="column is-one-quarter">
+          <label class="label">Image Prefix</label>
+          <input class="input" type="text" id="class-image-prefix" placeholder="e.g. ama">
+        </div>
+        <div class="column is-full">
+          <button class="button is-primary" id="class-save" type="button">Insert Class</button>
+          <button class="button" id="class-cancel" type="button" style="display:none;">Cancel</button>
+        </div>
+      </div>
+    </form>
+    <table class="table is-striped is-fullwidth is-narrow" id="classes-table">
+      <thead>
+        <tr>
+          <th style="width:5%">ID</th>
+          <th>Name</th>
+          <th>Image Prefix</th>
+          <th style="width:15%">Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div id="tabs-section" class="box" style="display:none;">
+    <h3 class="title is-5">Class Tabs</h3>
+    <form id="tab-form" class="mb-3">
+      <div class="columns is-multiline">
+        <div class="column is-one-quarter">
+          <label class="label">Class</label>
+          <div class="select is-fullwidth">
+            <select id="tab-class"></select>
+          </div>
+        </div>
+        <div class="column is-one-quarter">
+          <label class="label">Tab Index</label>
+          <input class="input" type="number" id="tab-index" placeholder="e.g. 0">
+        </div>
+        <div class="column is-one-quarter">
+          <label class="label">Tab Name</label>
+          <input class="input" type="text" id="tab-name" placeholder="e.g. Mastery">
+        </div>
+        <div class="column is-full">
+          <button class="button is-primary" id="tab-save" type="button">Insert Tab</button>
+          <button class="button" id="tab-cancel" type="button" style="display:none;">Cancel</button>
+        </div>
+      </div>
+    </form>
+    <table class="table is-striped is-fullwidth is-narrow" id="tabs-table">
+      <thead>
+        <tr>
+          <th style="width:5%">ID</th>
+          <th>Class</th>
+          <th>Index</th>
+          <th>Name</th>
+          <th style="width:15%">Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div id="stats-section" class="box" style="display:none;">
+    <h3 class="title is-5">Stats</h3>
+    <form id="stat-form" class="mb-3">
+      <div class="columns is-multiline">
+        <div class="column is-one-quarter">
+          <label class="label">Key</label>
+          <input class="input" type="text" id="stat-key" placeholder="e.g. weapon_damage">
+        </div>
+        <div class="column is-one-quarter">
+          <label class="label">Name</label>
+          <input class="input" type="text" id="stat-name" placeholder="e.g. Weapon Damage">
+        </div>
+        <div class="column is-one-quarter">
+          <label class="label">Format</label>
+          <input class="input" type="text" id="stat-format" value="{name}: {value}">
+        </div>
+        <div class="column is-full">
+          <label class="label">Description</label>
+          <textarea class="textarea" id="stat-description" rows="2"></textarea>
+        </div>
+        <div class="column is-full">
+          <button class="button is-primary" type="submit">Insert Stat</button>
+          <button class="button" id="stat-cancel" type="button" style="display:none;">Cancel</button>
+        </div>
+      </div>
+    </form>
+
+    <h4 class="title is-6">Preview & Validation</h4>
+    <div class="box">
+      <label class="label">Test Skill Description</label>
+      <textarea class="textarea" id="preview-input" rows="3" placeholder="Example: {{mana_cost:15}}, {{weapon_damage:55%}}, {{convert_phys_mag:50%}}"></textarea>
+      <div class="mt-3">
+        <button class="button is-info" id="preview-btn" type="button">Render Preview</button>
+      </div>
+      <h5 class="subtitle is-6 mt-4">Rendered Output</h5>
+      <div id="preview-output" class="content has-background p-3"></div>
+      <h5 class="subtitle is-6 mt-4">Validation Report</h5>
+      <div id="validation-output" class="content has-background p-3"></div>
+    </div>
+
+    <table class="table is-striped is-fullwidth is-narrow" id="stats-table">
+      <thead>
+        <tr>
+          <th style="width:5%">ID</th>
+          <th style="width:15%">Key</th>
+          <th style="width:20%">Name</th>
+          <th>Description</th>
+          <th>Format</th>
+          <th style="width:10%">Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div id="scaling-section" class="box" style="display:none;">
+    <h3 class="title is-5">Skill Scaling</h3>
+    <div class="columns is-multiline">
+      <div class="column is-one-third">
+        <label class="label">Skill</label>
+        <div class="select is-fullwidth">
+          <select id="scaling-skill"></select>
+        </div>
+      </div>
+      <div class="column is-one-quarter">
+        <label class="label">Level</label>
+        <input class="input" type="number" id="scaling-level" min="1" value="1">
+      </div>
+      <div class="column is-full">
+        <div class="buttons">
+          <button class="button" id="scaling-load" type="button">Load</button>
+          <button class="button is-primary" id="scaling-save" type="button">Save</button>
+          <button class="button is-danger is-light" id="scaling-clear" type="button">Clear Level</button>
+          <button class="button is-info is-light" id="scaling-suggest" type="button">Suggest From Description</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="box">
+      <div class="columns is-vcentered">
+        <div class="column is-one-third">
+          <div class="select is-fullwidth">
+            <select id="scaling-add-stat"></select>
+          </div>
+        </div>
+        <div class="column is-one-quarter">
+          <button class="button" id="scaling-add-stat-btn" type="button">Add Stat</button>
+        </div>
+      </div>
+
+      <table class="table is-striped is-fullwidth is-narrow" id="scaling-table">
+        <thead>
+          <tr>
+            <th style="width:18%">Stat Key</th>
+            <th style="width:18%">Name</th>
+            <th>Value0</th>
+            <th>Value1</th>
+            <th>Value2</th>
+            <th>Value3</th>
+            <th style="width:10%">Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <p id="scaling-status" class="has-text-grey"></p>
+  </div>
 
   <script>
   const SkillDB = {
@@ -163,6 +380,13 @@
       populateClassSelect();
       populateTagCheckboxes();
       refreshSkillsTable();
+      refreshTagsTable();
+      refreshClassesTable();
+      refreshTabsClassSelect();
+      refreshTabsTable();
+      refreshStatsTable();
+      migrateSkillScalingTable();
+      populateScalingSelectors();
     } catch (err) {
       console.warn("Falling back to empty DB:", err.message);
       initDatabase();
@@ -398,6 +622,439 @@
     return label;
   }
 
+  // Category toggles
+  document.querySelectorAll('[data-section]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.getAttribute('data-section');
+      document.querySelectorAll('#skills-section, #tags-section, #classes-section, #tabs-section, #stats-section, #scaling-section').forEach(div => {
+        div.style.display = (div.id === id) ? (div.style.display === 'none' ? 'block' : 'none') : 'none';
+      });
+    });
+  });
+
+  // --- Tag Management (minimal) ---
+  function refreshTagsTable() {
+    if (!SkillDB.db) return;
+    const tbody = document.querySelector("#tags-table tbody");
+    if (!tbody) return;
+    tbody.innerHTML = "";
+
+    const res = SkillDB.db.exec("SELECT id, name FROM skilltags ORDER BY name");
+    if (res[0]) {
+      res[0].values.forEach(([id, name]) => {
+        const tr = document.createElement("tr");
+        const tdId = document.createElement("td");
+        tdId.textContent = id;
+        const tdName = document.createElement("td");
+        tdName.textContent = name;
+        const tdActions = document.createElement("td");
+        const editBtn = document.createElement("button");
+        editBtn.className = "button is-warning is-small mr-2";
+        editBtn.textContent = "Edit";
+        editBtn.onclick = () => {
+          editingTagId = id;
+          const input = document.getElementById("new-tag-name");
+          input.value = name;
+          const addBtn = document.getElementById("add-tag-btn");
+          addBtn.textContent = "Save Tag";
+          document.getElementById("tag-cancel").style.display = "inline-block";
+        };
+
+        const delBtn = document.createElement("button");
+        delBtn.className = "button is-danger is-small";
+        delBtn.textContent = "Delete";
+        delBtn.onclick = () => {
+          if (!confirm("Delete this tag? It will be removed from all skills.")) return;
+          SkillDB.db.run("DELETE FROM skill_skilltags WHERE tag_id=?", [id]);
+          SkillDB.db.run("DELETE FROM skilltags WHERE id=?", [id]);
+          refreshTagsTable();
+          populateTagCheckboxes();
+        };
+        tdActions.appendChild(editBtn);
+        tdActions.appendChild(delBtn);
+        tr.appendChild(tdId);
+        tr.appendChild(tdName);
+        tr.appendChild(tdActions);
+        tbody.appendChild(tr);
+      });
+    }
+  }
+
+  let editingTagId = null;
+  const addTagBtn = document.getElementById("add-tag-btn");
+  if (addTagBtn) {
+    addTagBtn.addEventListener("click", () => {
+      if (!SkillDB.db) return;
+      const input = document.getElementById("new-tag-name");
+      const name = input.value.trim();
+      if (!name) return;
+      try {
+        if (editingTagId) {
+          SkillDB.db.run("UPDATE skilltags SET name=? WHERE id=?", [name, editingTagId]);
+          editingTagId = null;
+          addTagBtn.textContent = "Add Tag";
+          document.getElementById("tag-cancel").style.display = "none";
+        } else {
+          SkillDB.db.run("INSERT INTO skilltags (name) VALUES (?)", [name]);
+        }
+        input.value = "";
+        refreshTagsTable();
+        populateTagCheckboxes();
+      } catch (e) {
+        alert("Could not save tag (maybe duplicate name)");
+      }
+    });
+  }
+
+  const tagCancelBtn = document.getElementById("tag-cancel");
+  if (tagCancelBtn) {
+    tagCancelBtn.addEventListener("click", () => {
+      editingTagId = null;
+      document.getElementById("new-tag-name").value = "";
+      document.getElementById("add-tag-btn").textContent = "Add Tag";
+      tagCancelBtn.style.display = "none";
+    });
+  }
+
+  // --- Classes CRUD ---
+  let editingClassId = null;
+  function refreshClassesTable() {
+    if (!SkillDB.db) return;
+    const tbody = document.querySelector('#classes-table tbody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    const res = SkillDB.db.exec("SELECT id, name, image_prefix FROM classes ORDER BY id");
+    if (res[0]) {
+      res[0].values.forEach(([id, name, image_prefix]) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${id}</td>
+          <td>${name}</td>
+          <td>${image_prefix || ''}</td>
+          <td>
+            <div class="buttons are-small">
+              <button class="button is-warning" data-edit-class="${id}">Edit</button>
+              <button class="button is-danger" data-del-class="${id}">Delete</button>
+            </div>
+          </td>`;
+        tbody.appendChild(tr);
+      });
+    }
+    // Bind actions
+    tbody.querySelectorAll('[data-edit-class]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = parseInt(btn.getAttribute('data-edit-class'), 10);
+        const stmt = SkillDB.db.prepare('SELECT id, name, image_prefix FROM classes WHERE id = ?');
+        stmt.bind([id]);
+        if (stmt.step()) {
+          const [cid, cname, cprefix] = stmt.get();
+          editingClassId = cid;
+          document.getElementById('class-name').value = cname;
+          document.getElementById('class-image-prefix').value = cprefix || '';
+          document.getElementById('class-save').textContent = 'Save Class';
+          document.getElementById('class-cancel').style.display = 'inline-block';
+        }
+        stmt.free();
+      });
+    });
+    tbody.querySelectorAll('[data-del-class]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = parseInt(btn.getAttribute('data-del-class'), 10);
+        if (!confirm('Delete this class? This may affect tabs and skills.')) return;
+        SkillDB.db.run('DELETE FROM classes WHERE id = ?', [id]);
+        refreshClassesTable();
+        populateClassSelect();
+        refreshTabsTable();
+        refreshSkillsTable();
+      });
+    });
+  }
+
+  document.getElementById('class-save').addEventListener('click', () => {
+    if (!SkillDB.db) return;
+    const name = document.getElementById('class-name').value.trim();
+    const img = document.getElementById('class-image-prefix').value.trim() || null;
+    if (!name) return;
+    if (editingClassId) {
+      SkillDB.db.run('UPDATE classes SET name=?, image_prefix=? WHERE id=?', [name, img, editingClassId]);
+      editingClassId = null;
+      document.getElementById('class-save').textContent = 'Insert Class';
+      document.getElementById('class-cancel').style.display = 'none';
+    } else {
+      SkillDB.db.run('INSERT INTO classes (name, image_prefix) VALUES (?, ?)', [name, img]);
+    }
+    document.getElementById('class-form').reset();
+    refreshClassesTable();
+    populateClassSelect();
+    refreshTabsClassSelect();
+  });
+
+  document.getElementById('class-cancel').addEventListener('click', () => {
+    editingClassId = null;
+    document.getElementById('class-form').reset();
+    document.getElementById('class-save').textContent = 'Insert Class';
+    document.getElementById('class-cancel').style.display = 'none';
+  });
+
+  // --- Class Tabs CRUD ---
+  let editingTabId = null;
+  function refreshTabsClassSelect() {
+    if (!SkillDB.db) return;
+    const select = document.getElementById('tab-class');
+    if (!select) return;
+    select.innerHTML = '';
+    const res = SkillDB.db.exec('SELECT id, name FROM classes ORDER BY id');
+    if (res[0]) {
+      res[0].values.forEach(([id, name]) => {
+        const opt = document.createElement('option');
+        opt.value = id;
+        opt.textContent = name;
+        select.appendChild(opt);
+      });
+    }
+  }
+
+  function refreshTabsTable() {
+    if (!SkillDB.db) return;
+    const tbody = document.querySelector('#tabs-table tbody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    const res = SkillDB.db.exec(`
+      SELECT ct.id, c.name as class_name, ct.tab_index, ct.name
+      FROM classTabs ct
+      JOIN classes c ON c.id = ct.class_id
+      ORDER BY c.id, ct.tab_index`);
+    if (res[0]) {
+      res[0].values.forEach(([id, class_name, tab_index, name]) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${id}</td>
+          <td>${class_name}</td>
+          <td>${tab_index}</td>
+          <td>${name}</td>
+          <td>
+            <div class="buttons are-small">
+              <button class="button is-warning" data-edit-tab="${id}">Edit</button>
+              <button class="button is-danger" data-del-tab="${id}">Delete</button>
+            </div>
+          </td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Bind actions
+    tbody.querySelectorAll('[data-edit-tab]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = parseInt(btn.getAttribute('data-edit-tab'), 10);
+        const stmt = SkillDB.db.prepare('SELECT id, class_id, tab_index, name FROM classTabs WHERE id = ?');
+        stmt.bind([id]);
+        if (stmt.step()) {
+          const [tid, class_id, tab_index, name] = stmt.get();
+          editingTabId = tid;
+          document.getElementById('tab-class').value = class_id;
+          document.getElementById('tab-index').value = tab_index;
+          document.getElementById('tab-name').value = name;
+          document.getElementById('tab-save').textContent = 'Save Tab';
+          document.getElementById('tab-cancel').style.display = 'inline-block';
+        }
+        stmt.free();
+      });
+    });
+    tbody.querySelectorAll('[data-del-tab]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = parseInt(btn.getAttribute('data-del-tab'), 10);
+        if (!confirm('Delete this class tab?')) return;
+        SkillDB.db.run('DELETE FROM classTabs WHERE id = ?', [id]);
+        refreshTabsTable();
+        populateTabSelect(document.getElementById('class_id').value);
+      });
+    });
+  }
+
+  document.getElementById('tab-save').addEventListener('click', () => {
+    if (!SkillDB.db) return;
+    const classId = parseInt(document.getElementById('tab-class').value, 10);
+    const tabIndex = parseInt(document.getElementById('tab-index').value, 10);
+    const tabName = document.getElementById('tab-name').value.trim();
+    if (!tabName || Number.isNaN(classId) || Number.isNaN(tabIndex)) return;
+    if (editingTabId) {
+      SkillDB.db.run('UPDATE classTabs SET class_id=?, tab_index=?, name=? WHERE id=?', [classId, tabIndex, tabName, editingTabId]);
+      editingTabId = null;
+      document.getElementById('tab-save').textContent = 'Insert Tab';
+      document.getElementById('tab-cancel').style.display = 'none';
+    } else {
+      SkillDB.db.run('INSERT INTO classTabs (class_id, tab_index, name) VALUES (?, ?, ?)', [classId, tabIndex, tabName]);
+    }
+    document.getElementById('tab-form').reset();
+    refreshTabsTable();
+    populateTabSelect(document.getElementById('class_id').value);
+  });
+
+  document.getElementById('tab-cancel').addEventListener('click', () => {
+    editingTabId = null;
+    document.getElementById('tab-form').reset();
+    document.getElementById('tab-save').textContent = 'Insert Tab';
+    document.getElementById('tab-cancel').style.display = 'none';
+  });
+
+  // --- Stats CRUD (migrated from stats.html) ---
+  let editingStatId = null;
+  document.getElementById("stat-form").addEventListener("submit", e => {
+    e.preventDefault();
+    if (!SkillDB.db) return;
+
+    const key = document.getElementById("stat-key").value.trim();
+    const name = document.getElementById("stat-name").value.trim();
+    const format = document.getElementById("stat-format").value.trim();
+    const description = document.getElementById("stat-description").value.trim();
+
+    if (editingStatId) {
+      SkillDB.db.run(`
+        UPDATE stats
+        SET key=?, name=?, format=?, description=?
+        WHERE id=?
+      `, [key, name, format, description, editingStatId]);
+
+      editingStatId = null;
+      document.getElementById("stat-cancel").style.display = 'none';
+      document.querySelector("#stat-form button[type=submit]").textContent = "Insert Stat";
+    } else {
+      SkillDB.db.run(`
+        INSERT INTO stats (key, name, format, description)
+        VALUES (?, ?, ?, ?)
+      `, [key, name, format, description]);
+    }
+
+    refreshStatsTable();
+    e.target.reset();
+  });
+
+  function refreshStatsTable() {
+    if (!SkillDB.db) return;
+    const tbody = document.querySelector("#stats-table tbody");
+    if (!tbody) return;
+    tbody.innerHTML = "";
+
+    const res = SkillDB.db.exec(`SELECT id, key, name, description, format FROM stats ORDER BY id`);
+    if (res.length > 0) {
+      res[0].values.forEach(row => {
+        const tr = document.createElement("tr");
+        row.forEach(val => {
+          const td = document.createElement("td");
+          td.textContent = val;
+          tr.appendChild(td);
+        });
+
+        const actionTd = document.createElement("td");
+        const editBtn = document.createElement("button");
+        editBtn.className = "button is-warning is-small";
+        editBtn.textContent = "Edit";
+        editBtn.onclick = () => editStat(row[0]);
+
+        const delBtn = document.createElement("button");
+        delBtn.className = "button is-danger is-small";
+        delBtn.textContent = "Delete";
+        delBtn.onclick = () => deleteStat(row[0]);
+
+        actionTd.appendChild(editBtn);
+        actionTd.appendChild(delBtn);
+        tr.appendChild(actionTd);
+        tbody.appendChild(tr);
+      });
+    }
+  }
+
+  function editStat(id) {
+    const stmt = SkillDB.db.prepare("SELECT id, key, name, format, description FROM stats WHERE id = ?");
+    stmt.bind([id]);
+    if (stmt.step()) {
+      const [sid, key, name, format, description] = stmt.get();
+
+      editingStatId = sid;
+      document.getElementById("stat-key").value = key;
+      document.getElementById("stat-name").value = name;
+      document.getElementById("stat-description").value = description || "";
+      document.getElementById("stat-format").value = format || "";
+
+      document.querySelector("#stat-form button[type=submit]").textContent = "Save Stat";
+      document.getElementById('stat-cancel').style.display = 'inline-block';
+    }
+    stmt.free();
+  }
+
+  function deleteStat(id) {
+    if (!confirm("Delete this stat?")) return;
+    SkillDB.db.run("DELETE FROM stats WHERE id = ?", [id]);
+    refreshStatsTable();
+  }
+
+  document.getElementById('stat-cancel').addEventListener('click', () => {
+    editingStatId = null;
+    document.getElementById('stat-form').reset();
+    document.querySelector('#stat-form button[type=submit]').textContent = 'Insert Stat';
+    document.getElementById('stat-cancel').style.display = 'none';
+  });
+
+  function validatePlaceholders(description) {
+    if (!description) return [];
+    const errors = [];
+    description.replace(/\{\{(.*?)\}\}/g, (match, token) => {
+      const [key] = token.split(':').map(s => s.trim().toLowerCase());
+      const stmt = SkillDB.db.prepare("SELECT 1 FROM stats WHERE LOWER(key) = ?");
+      stmt.bind([key]);
+      const exists = stmt.step();
+      stmt.free();
+      if (!exists) errors.push(key);
+    });
+    return errors;
+  }
+
+  function renderStatPlaceholder(key, values = []) {
+    if (values.length > 3){
+      console.error("Array of values for stats supports only up to 4 variable stats")
+    }
+    const stmt = SkillDB.db.prepare("SELECT name, format FROM stats WHERE LOWER(key) = ?");
+    stmt.bind([key.toLowerCase()]);
+    let output = `[Unknown stat: ${key}]`;
+
+    if (stmt.step()) {
+      const [name, format] = stmt.get();
+      output = format
+        .replace("{name}", name)
+        .replace("{value}", values[0] || "")
+        .replace("{value1}", values[0] || "")
+        .replace("{value2}", values[1] || "")
+        .replace("{value3}", values[2] || "");
+    }
+
+    stmt.free();
+    return output;
+  }
+
+  function renderPreview(description) {
+    if (!description) return "";
+    return description.replace(/\{\{(.*?)\}\}/g, (match, token) => {
+      const [key, rawValues] = token.split(':').map(s => s.trim());
+      const values = rawValues ? rawValues.split(',').map(v => v.trim()) : [];
+      return renderStatPlaceholder(key, values);
+    });
+  }
+
+  const previewBtn = document.getElementById("preview-btn");
+  if (previewBtn) {
+    previewBtn.addEventListener("click", () => {
+      const input = document.getElementById("preview-input").value;
+      const rendered = renderPreview(input);
+      document.getElementById("preview-output").innerHTML = rendered;
+      const errors = validatePlaceholders(input);
+      if (errors.length > 0) {
+        document.getElementById("validation-output").innerHTML = `<strong>Unknown stats:</strong> ${errors.join(", ")}`;
+      } else {
+        document.getElementById("validation-output").innerHTML = "<span class='has-text-success'>All stat references valid ✅</span>";
+      }
+    });
+  }
+
   // Insert skill
   document.getElementById("skill-form").addEventListener("submit", e => {
     e.preventDefault();
@@ -583,14 +1240,225 @@
       populateClassSelect();
       populateTagCheckboxes();
       refreshSkillsTable();
+      refreshTagsTable();
+      refreshClassesTable();
+      refreshTabsClassSelect();
+      refreshTabsTable();
+      refreshStatsTable();
+      migrateSkillScalingTable();
+      populateScalingSelectors();
       fileInput.value = "";
     } catch (err) {
       console.error("Error importing DB:", err);
     }
   });
 
+  // --- Scaling Section ---
+  function migrateSkillScalingTable() {
+    // Add value1..3 if not present
+    const info = SkillDB.db.exec("PRAGMA table_info(skill_scaling)");
+    const cols = info.length ? info[0].values.map(r => r[1].toLowerCase()) : [];
+    const hasValue0 = cols.includes('value0');
+    const hasValue1 = cols.includes('value1');
+    const hasValue2 = cols.includes('value2');
+    const hasValue3 = cols.includes('value3');
+    // Store detection for later inserts
+    window.__SCALING_COLS__ = {
+      hasLegacyValue: cols.includes('value'),
+      hasValue0,
+      hasValue1,
+      hasValue2,
+      hasValue3
+    };
+    // Legacy single 'value' column may exist
+    if (!hasValue0) SkillDB.db.run("ALTER TABLE skill_scaling ADD COLUMN value0 REAL");
+    if (!hasValue1) SkillDB.db.run("ALTER TABLE skill_scaling ADD COLUMN value1 REAL");
+    if (!hasValue2) SkillDB.db.run("ALTER TABLE skill_scaling ADD COLUMN value2 REAL");
+    if (!hasValue3) SkillDB.db.run("ALTER TABLE skill_scaling ADD COLUMN value3 REAL");
+  }
+
+  function populateScalingSelectors() {
+    // Skills
+    const skillSelect = document.getElementById('scaling-skill');
+    if (skillSelect) {
+      skillSelect.innerHTML = '';
+      const res = SkillDB.db.exec("SELECT id, display_name FROM skills ORDER BY display_name");
+      if (res[0]) {
+        res[0].values.forEach(([id, name]) => {
+          const opt = document.createElement('option');
+          opt.value = id;
+          opt.textContent = name;
+          skillSelect.appendChild(opt);
+        });
+      }
+    }
+    // Stat add select
+    const addSelect = document.getElementById('scaling-add-stat');
+    if (addSelect) {
+      addSelect.innerHTML = '';
+      const res = SkillDB.db.exec("SELECT id, key, name FROM stats ORDER BY name");
+      if (res[0]) {
+        res[0].values.forEach(([id, key, name]) => {
+          const opt = document.createElement('option');
+          opt.value = JSON.stringify({ id, key, name });
+          opt.textContent = `${name} (${key})`;
+          addSelect.appendChild(opt);
+        });
+      }
+    }
+  }
+
+  function renderScalingRows(rows) {
+    const tbody = document.querySelector('#scaling-table tbody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    rows.forEach(r => {
+      const tr = document.createElement('tr');
+      tr.setAttribute('data-stat-id', r.stat_id);
+      tr.innerHTML = `
+        <td>${r.key}</td>
+        <td>${r.name}</td>
+        <td><input class="input" type="number" step="any" value="${r.value0 ?? ''}"></td>
+        <td><input class="input" type="number" step="any" value="${r.value1 ?? ''}"></td>
+        <td><input class="input" type="number" step="any" value="${r.value2 ?? ''}"></td>
+        <td><input class="input" type="number" step="any" value="${r.value3 ?? ''}"></td>
+        <td><button class="button is-small is-danger" data-remove-row>Remove</button></td>
+      `;
+      tbody.appendChild(tr);
+    });
+    tbody.querySelectorAll('[data-remove-row]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        btn.closest('tr').remove();
+      });
+    });
+  }
+
+  function loadScaling() {
+    const skillId = parseInt(document.getElementById('scaling-skill').value, 10);
+    const level = parseInt(document.getElementById('scaling-level').value, 10);
+    if (Number.isNaN(skillId) || Number.isNaN(level)) return;
+    const res = SkillDB.db.exec(`
+      SELECT s.id AS stat_id, s.key, s.name, ss.value0, ss.value1, ss.value2, ss.value3, ss.value
+      FROM stats s
+      LEFT JOIN skill_scaling ss ON ss.stat_id = s.id AND ss.skill_id = ${skillId} AND ss.level = ${level}
+      WHERE ss.stat_id IS NOT NULL
+      ORDER BY s.name`);
+    const rows = res[0] ? res[0].values.map(([stat_id, key, name, v0, v1, v2, v3, v]) => ({
+      stat_id, key, name, value0: v0 != null ? v0 : (v1 != null ? v1 : v), value1: v1 != null ? v1 : v, value2: v2, value3: v3
+    })) : [];
+    renderScalingRows(rows);
+    document.getElementById('scaling-status').textContent = rows.length > 0 ? `Loaded ${rows.length} stats for level ${level}` : 'No stats saved for this level yet';
+  }
+
+  function suggestFromDescription() {
+    const skillId = parseInt(document.getElementById('scaling-skill').value, 10);
+    if (Number.isNaN(skillId)) return;
+    const stmt = SkillDB.db.prepare('SELECT description FROM skills WHERE id = ?');
+    stmt.bind([skillId]);
+    let desc = '';
+    if (stmt.step()) desc = stmt.get()[0] || '';
+    stmt.free();
+    const keys = new Set();
+    desc.replace(/\{\{(.*?)\}\}/g, (m, token) => {
+      const [k] = token.split(':');
+      if (k) keys.add(k.trim().toLowerCase());
+    });
+    if (keys.size === 0) return;
+    // Fetch stat metadata
+    const all = SkillDB.db.exec('SELECT id, key, name FROM stats');
+    const map = new Map();
+    if (all[0]) all[0].values.forEach(([id, key, name]) => map.set(key.toLowerCase(), { id, key, name }));
+    // Existing rows
+    const existingKeys = new Set(Array.from(document.querySelectorAll('#scaling-table tbody tr')).map(tr => tr.children[0].textContent.trim().toLowerCase()));
+    const rows = [];
+    keys.forEach(k => {
+      if (!existingKeys.has(k) && map.has(k)) {
+        const s = map.get(k);
+        rows.push({ stat_id: s.id, key: s.key, name: s.name, value1: '', value2: '', value3: '' });
+      }
+    });
+    const current = Array.from(document.querySelectorAll('#scaling-table tbody tr')).map(tr => ({
+      stat_id: parseInt(tr.getAttribute('data-stat-id'), 10),
+      key: tr.children[0].textContent,
+      name: tr.children[1].textContent,
+      value1: tr.children[2].querySelector('input').value,
+      value2: tr.children[3].querySelector('input').value,
+      value3: tr.children[4].querySelector('input').value,
+    }));
+    renderScalingRows(current.concat(rows));
+  }
+
+  function addStatRow() {
+    const addSelect = document.getElementById('scaling-add-stat');
+    if (!addSelect || !addSelect.value) return;
+    const { id, key, name } = JSON.parse(addSelect.value);
+    const existingKeys = new Set(Array.from(document.querySelectorAll('#scaling-table tbody tr')).map(tr => tr.children[0].textContent.trim().toLowerCase()));
+    if (existingKeys.has(String(key).toLowerCase())) return;
+    const current = Array.from(document.querySelectorAll('#scaling-table tbody tr')).map(tr => ({
+      stat_id: parseInt(tr.getAttribute('data-stat-id'), 10),
+      key: tr.children[0].textContent,
+      name: tr.children[1].textContent,
+      value1: tr.children[2].querySelector('input').value,
+      value2: tr.children[3].querySelector('input').value,
+      value3: tr.children[4].querySelector('input').value,
+    }));
+    current.push({ stat_id: id, key, name, value1: '', value2: '', value3: '' });
+    renderScalingRows(current);
+  }
+
+  function saveScaling() {
+    const skillId = parseInt(document.getElementById('scaling-skill').value, 10);
+    const level = parseInt(document.getElementById('scaling-level').value, 10);
+    if (Number.isNaN(skillId) || Number.isNaN(level)) return;
+    const rows = Array.from(document.querySelectorAll('#scaling-table tbody tr')).map(tr => ({
+      stat_id: parseInt(tr.getAttribute('data-stat-id'), 10),
+      value0: tr.children[2].querySelector('input').value,
+      value1: tr.children[3].querySelector('input').value,
+      value2: tr.children[4].querySelector('input').value,
+      value3: tr.children[5].querySelector('input').value,
+    }));
+    // Upsert by delete+insert to keep logic simple
+    rows.forEach(r => {
+      // Skip empty rows (no values)
+      if ((r.value0 === '' || r.value0 == null) && (r.value1 === '' || r.value1 == null) && (r.value2 === '' || r.value2 == null) && (r.value3 === '' || r.value3 == null)) {
+        SkillDB.db.run('DELETE FROM skill_scaling WHERE skill_id=? AND level=? AND stat_id=?', [skillId, level, r.stat_id]);
+        return;
+      }
+      SkillDB.db.run('DELETE FROM skill_scaling WHERE skill_id=? AND level=? AND stat_id=?', [skillId, level, r.stat_id]);
+      const cols = (window.__SCALING_COLS__) || { hasLegacyValue: false };
+      if (cols.hasLegacyValue) {
+        // If legacy NOT NULL value column exists, populate it from value1 (fallback to value2/value3/0)
+        const legacy = (r.value0 !== '' && r.value0 != null) ? r.value0 : ((r.value1 !== '' && r.value1 != null) ? r.value1 : ((r.value2 !== '' && r.value2 != null) ? r.value2 : ((r.value3 !== '' && r.value3 != null) ? r.value3 : 0)));
+        SkillDB.db.run('INSERT INTO skill_scaling (skill_id, level, stat_id, value, value0, value1, value2, value3) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', [skillId, level, r.stat_id, legacy, r.value0 || null, r.value1 || null, r.value2 || null, r.value3 || null]);
+      } else {
+        SkillDB.db.run('INSERT INTO skill_scaling (skill_id, level, stat_id, value0, value1, value2, value3) VALUES (?, ?, ?, ?, ?, ?, ?)', [skillId, level, r.stat_id, r.value0 || null, r.value1 || null, r.value2 || null, r.value3 || null]);
+      }
+    });
+    document.getElementById('scaling-status').textContent = `Saved ${rows.length} rows for level ${level}`;
+  }
+
+  function clearScaling() {
+    const skillId = parseInt(document.getElementById('scaling-skill').value, 10);
+    const level = parseInt(document.getElementById('scaling-level').value, 10);
+    if (Number.isNaN(skillId) || Number.isNaN(level)) return;
+    SkillDB.db.run('DELETE FROM skill_scaling WHERE skill_id=? AND level=?', [skillId, level]);
+    renderScalingRows([]);
+    document.getElementById('scaling-status').textContent = `Cleared level ${level}`;
+  }
+
+  const scalingLoadBtn = document.getElementById('scaling-load');
+  if (scalingLoadBtn) scalingLoadBtn.addEventListener('click', loadScaling);
+  const scalingSaveBtn = document.getElementById('scaling-save');
+  if (scalingSaveBtn) scalingSaveBtn.addEventListener('click', saveScaling);
+  const scalingClearBtn = document.getElementById('scaling-clear');
+  if (scalingClearBtn) scalingClearBtn.addEventListener('click', clearScaling);
+  const scalingSuggestBtn = document.getElementById('scaling-suggest');
+  if (scalingSuggestBtn) scalingSuggestBtn.addEventListener('click', suggestFromDescription);
+  const scalingAddStatBtn = document.getElementById('scaling-add-stat-btn');
+  if (scalingAddStatBtn) scalingAddStatBtn.addEventListener('click', addStatRow);
 
   initializePage();
+  refreshTagsTable();
   </script>
 </body>
 </html>

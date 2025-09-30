@@ -64,9 +64,6 @@
             <a class="navbar-item is-selected" href="./tree.html" id="nav-tree">
                 <strong>Tree</strong>
             </a>
-            <a class="navbar-item" href="./stats.html" id="nav-stats">
-                <strong>Stats</strong>
-            </a>
         </div>
         </div>
     </nav>
@@ -82,7 +79,7 @@
 
     <div id="skillsContainer" class="mt-4"></div>
     <script type="module">
-        import { loadDatabase, getUrlParams, updateUrl, sanitizeSkillId, formatStatName, getIconHTML } from './utils.js';
+        import { loadDatabase, getUrlParams, updateUrl, sanitizeSkillId, formatStatName, getIconHTML, getSkillIconHTML } from './utils.js';
 
         let skillsList;
         
@@ -139,19 +136,29 @@
                 }
                 stmt.free();
 
-                // Hack to copy "Mastery" tab for every class (db only has amazon)
-                const masterySkills = loadedSkills.filter(skill => skill.tab === 7 && skill.class === "Amazon");
-                const allClasses = [...new Set(loadedSkills.map(s => s.class))];
-                allClasses.forEach(cls => {
-                    if (cls !== "Amazon") {
-                        masterySkills.forEach(skill => {
-                            loadedSkills.push({
-                                ...skill,
-                                class: cls
-                            });
-                        });
+                // Generalize Mastery tab replication: copy any tab named "Mastery" to classes missing it
+                const masteryByClass = new Map();
+                loadedSkills.forEach(s => {
+                    if (s.tabName === 'Mastery') {
+                        masteryByClass.set(s.class, true);
                     }
                 });
+
+                const masterySkills = loadedSkills.filter(s => s.tabName === 'Mastery');
+                const allClasses = [...new Set(loadedSkills.map(s => s.class))];
+                const prototypeClass = masterySkills.length > 0 ? masterySkills[0].class : null;
+                if (prototypeClass) {
+                    allClasses.forEach(cls => {
+                        if (!masteryByClass.get(cls)) {
+                            masterySkills.forEach(skill => {
+                                loadedSkills.push({
+                                    ...skill,
+                                    class: cls
+                                });
+                            });
+                        }
+                    });
+                }
 
                 return loadedSkills; // update global list
             } catch (error) {
@@ -217,7 +224,7 @@
                             card.style.gridColumn = c - minCol + 1;
 
                             let cardText = `
-                                ${getIconHTML(skill.image)}
+                                ${getSkillIconHTML(skill.image, skill.class)}
                                 <div>
                             `;
                             if (skill.hasDetails) {

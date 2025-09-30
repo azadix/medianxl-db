@@ -1,4 +1,4 @@
-import { loadDatabase, getUrlParams, updateUrl, sanitizeSkillId, formatStatName, getIconHTML } from './utils.js';
+import { loadDatabase, getUrlParams, updateUrl, sanitizeSkillId, formatStatName, getIconHTML, getSkillIconHTML, MISSING_IMAGE_NAME, expandPlaceholdersWithScaling } from './utils.js';
 
 // DOM elements
 const contentElement = document.getElementById('content');
@@ -50,7 +50,7 @@ async function initializeDataTable(skillsData) {
 
         tbody.append(`
             <tr data-skill-id="${skill.id}" data-has-page="${skill.hasDetails}">
-                <td>${getIconHTML(skill.image, "is-48x48")}</td>
+                <td>${getSkillIconHTML(skill.image, skill.class, "is-48x48")}</td>
                 <td>${nameCell}</td>
                 <td>${(skill.tags && skill.tags.length > 0) ? skill.tags.join(", ") : ''}</td>
                 <td>${skill.class}</td>
@@ -113,19 +113,45 @@ async function displaySkillDetail(skillId) {
     pageTitleElement.textContent = skillInfo.name;
     // Add skill image if available
     const skillImage = skillInfo.image 
-        ? `${getIconHTML(skillInfo.image, "skill-image")}` 
+        ? `${getSkillIconHTML(skillInfo.image, skillInfo.class, "skill-image")}` 
         : '';
     
-    // Convert description to paragraphs if it's an array
-    let descriptionHtml = '';
+    // Description with scaling expansion
+    // Discover available levels for this skill
+    let availableLevels = [];
+    try {
+        const lvlStmt = SkillDB.db.prepare(`SELECT DISTINCT level FROM skill_scaling WHERE skill_id = ? ORDER BY level`);
+        lvlStmt.bind([skillInfo.dbId]);
+        while (lvlStmt.step()) {
+            availableLevels.push(lvlStmt.get()[0]);
+        }
+        lvlStmt.free();
+    } catch {}
 
-    if (skillInfo.description) {
-        descriptionHtml = `<p class="is-size-5"><strong>Description:</strong></p>`;
-        descriptionHtml += skillInfo.description.split('\n').map(
-            line => `<p>${line}</p>`
-        ).join('');
-        descriptionHtml += `<br>`;
+    // Build level control only if there is scaling
+    const hasScaling = availableLevels.length > 0;
+    const initialLevel = hasScaling ? availableLevels[0] : 1;
+    const levelControl = hasScaling ? `
+        <div class="field is-grouped mb-3">
+            <div class="control">
+                <label class="label">Level</label>
+                <div class="select">
+                    <select id="skill-level" style="min-width:120px;">
+                        ${availableLevels.map(l => `<option value="${l}">${l}</option>`).join('')}
+                    </select>
+                </div>
+            </div>
+        </div>
+    ` : '';
+
+    function renderDescriptionAtLevel(level) {
+        if (!skillInfo.description) return '';
+        const expanded = expandPlaceholdersWithScaling(SkillDB.db, skillInfo.dbId, level, skillInfo.description);
+        const lines = expanded.split('\n').map(line => `<p>${line}</p>`).join('');
+        return `<p class="is-size-5"><strong>Description:</strong></p>${lines}<br>`;
     }
+
+    let descriptionHtml = renderDescriptionAtLevel(initialLevel);
 
     // Only show restriction if it exists
     let restrictionHtml = '';
@@ -185,6 +211,7 @@ async function displaySkillDetail(skillId) {
         <div class="skill-detail">
             <div class="skill-info">
                 ${skillImage}
+                ${levelControl}
                 ${restrictionHtml}
                 ${descriptionHtml}
             </div>
@@ -203,6 +230,26 @@ async function displaySkillDetail(skillId) {
             toggleBtn.textContent = scalingContainer.classList.contains('is-hidden')
                 ? 'Show'
                 : 'Hide';
+        });
+    }
+
+    const levelSelect = document.getElementById('skill-level');
+    if (levelSelect) {
+        levelSelect.addEventListener('change', () => {
+            const level = parseInt(levelSelect.value, 10) || initialLevel;
+            const newHtml = renderDescriptionAtLevel(level);
+            const container = document.querySelector('.skill-info');
+            if (container) {
+                container.innerHTML = `
+                    ${skillImage}
+                    ${levelControl}
+                    ${restrictionHtml}
+                    ${newHtml}
+                `;
+                // Re-bind after rerender
+                const newSelect = document.getElementById('skill-level');
+                if (newSelect) newSelect.addEventListener('change', arguments.callee);
+            }
         });
     }
 }
@@ -317,6 +364,7 @@ async function loadSkillsFromSQLite() {
             const row = stmt.getAsObject();
             loadedSkills.push({
                 id: row.name,
+                dbId: row.id,
                 name: row.display_name,
                 class: row.class_name || '',
                 tab: row.tab_index,        // numeric

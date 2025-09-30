@@ -2,7 +2,7 @@
 const ICON_SIZE = 48;
 const ATLAS_SIZE = 912;
 const ICONS_PER_ROW = Math.floor(ATLAS_SIZE / ICON_SIZE);
-const MISSING_IMAGE_NAME = "icons-shared_missing.png";
+export const MISSING_IMAGE_NAME = "icons-shared_missing.png";
 
 // --- SQL DB Loader ---
 export async function loadDatabase(file = 'skills.sqlite') {
@@ -42,7 +42,8 @@ export function getIconHTML(imagePath, className = '') {
         return `<img src="icons/${MISSING_IMAGE_NAME}" class="image ${className}" alt="missing icon">`;
     }
 
-    const match = imagePath.match(/^icons-([a-z]+)_(\d+)\.png$/);
+    // Support both "icons-<prefix>_<index>.png" and "image-<prefix>_<index>.png"
+    const match = imagePath.match(/^(?:icons|image)-([a-z]+)_(\d+)\.png$/);
     if (!match) {
         return `<img src="icons/${MISSING_IMAGE_NAME}" class="image ${className}" alt="missing icon">`;
     }
@@ -64,6 +65,36 @@ export function getIconHTML(imagePath, className = '') {
     `;
 }
 
+// --- Class-derived icon resolver ---
+// Accepts a raw image filename stored in DB (e.g., "image.png") and the human-readable class name
+// Maps the class to a directory prefix and returns an <img> element pointing to icons/<prefix>/<filename>
+// For class "Other", shared images are used (icons/shared)
+const CLASS_TO_PREFIX = {
+    "Amazon": "ama",
+    "Sorceress": "sor",
+    "Necromancer": "nec",
+    "Paladin": "pal",
+    "Barbarian": "bar",
+    "Druid": "dru",
+    "Assassin": "ass",
+    "Other": "shared"
+};
+
+export function getSkillIconHTML(imageFileName, humanClassName, className = '') {
+    const file = (imageFileName && imageFileName.trim().length > 0) ? imageFileName.trim() : MISSING_IMAGE_NAME;
+
+    // If atlas-style filename, render via atlas regardless of class (shared or class-specific handled by regex)
+    if (/^(?:icons|image)-[a-z]+_\d+\.png$/.test(file)) {
+        return getIconHTML(file, className);
+    }
+
+    // Otherwise, simple file path under class-derived directory; if name indicates shared, force shared
+    const isExplicitShared = /^shared\//.test(file) || /(^|-)shared(_|\.)/i.test(file);
+    const prefix = isExplicitShared ? 'shared' : (CLASS_TO_PREFIX[humanClassName] || 'shared');
+    const path = file === MISSING_IMAGE_NAME ? `icons/${MISSING_IMAGE_NAME}` : `icons/${prefix}/${file}`;
+    return `<img src="${path}" class="image ${className}" alt="skill icon">`;
+}
+
 function renderSkillDescription(skill, level) {
     return skill.description.replace(/\{\{(.*?)\}\}/g, (match, token) => {
         const [key, constant] = token.split(':');
@@ -79,6 +110,154 @@ function renderSkillDescription(skill, level) {
 
         if (stat.length > 0) return stat[0].values[0][0]; // numeric value
         return `[Unknown stat: ${key}]`; // fallback / typo detection
+    });
+}
+
+// --- Placeholder Expansion Utilities ---
+// Expand a description string using the stats table formatting and optional inline values
+// Example tokens: {{mana_cost:15}}, {{cold_damage:100,200}}, {{level:17}}
+export function expandPlaceholders(db, description) {
+    if (!description) return '';
+    return description.replace(/\{\{(.*?)\}\}/g, (match, token) => {
+        const [rawKey, rawValues] = token.split(':').map(s => s.trim());
+        const key = (rawKey || '').toLowerCase();
+        const values = rawValues ? rawValues.split(',').map(v => v.trim()) : [];
+
+        const stmt = db.prepare("SELECT name, format FROM stats WHERE LOWER(key) = ?");
+        stmt.bind([key]);
+        let output = `[Unknown stat: ${rawKey}]`;
+        if (stmt.step()) {
+            const [name, format] = stmt.get();
+            const v0 = values[0] || '';
+            const v1 = values[0] || '';
+            const v2 = values[1] || '';
+            const v3 = values[2] || '';
+            const w0 = `<span class="stat-val">${v0}</span>`;
+            const w1 = `<span class="stat-val">${v1}</span>`;
+            const w2 = `<span class="stat-val">${v2}</span>`;
+            const w3 = `<span class="stat-val">${v3}</span>`;
+            output = (format || '{name}: {value}')
+                .replace('{name}', name)
+                .replace('{value}', w1)
+                .replace('{value0}', w0)
+                .replace('{value1}', w1)
+                .replace('{value2}', w2)
+                .replace('{value3}', w3)
+                // also support %valueX% tokens
+                .replace(/%value%/g, w1)
+                .replace(/%value0%/g, w0)
+                .replace(/%value1%/g, w1)
+                .replace(/%value2%/g, w2)
+                .replace(/%value3%/g, w3);
+        }
+        stmt.free();
+        return output;
+    });
+}
+
+// Expand using values sourced from skill_scaling for a given skill and level.
+// If inline values are provided in the token, they take precedence; otherwise fetch by stat key.
+// Expected schema: stats(key TEXT UNIQUE), skill_scaling(skill_id, level, stat_id, value)
+export function expandPlaceholdersWithScaling(db, skillId, level, description) {
+    if (!description) return '';
+    return description.replace(/\{\{(.*?)\}\}/g, (match, token) => {
+        const [rawKey, rawValues] = token.split(':').map(s => s.trim());
+        const key = (rawKey || '').toLowerCase();
+
+        // If author provided inline concrete values (not placeholders like %value0%), use them
+        if (rawValues && rawValues.length > 0) {
+            const values = rawValues.split(',').map(v => v.trim());
+            const arePlaceholders = values.every(v => /%?value\d*%?/i.test(v));
+            if (!arePlaceholders) {
+            const stmt = db.prepare("SELECT name, format FROM stats WHERE LOWER(key) = ?");
+            stmt.bind([key]);
+            let output = `[Unknown stat: ${rawKey}]`;
+            if (stmt.step()) {
+                const [name, format] = stmt.get();
+            const v0 = values[0] || '';
+            const v1 = values[0] || '';
+            const v2 = values[1] || '';
+            const v3 = values[2] || '';
+                    const w0 = `<span class=\"stat-val\">${v0}</span>`;
+                    const w1 = `<span class=\"stat-val\">${v1}</span>`;
+                    const w2 = `<span class=\"stat-val\">${v2}</span>`;
+                    const w3 = `<span class=\"stat-val\">${v3}</span>`;
+                output = (format || '{name}: {value}')
+                    .replace('{name}', name)
+                    .replace('{value}', w1)
+                    .replace('{value0}', w0)
+                    .replace('{value1}', w1)
+                    .replace('{value2}', w2)
+                    .replace('{value3}', w3)
+                    .replace(/%value%/g, w1)
+                    .replace(/%value0%/g, w0)
+                    .replace(/%value1%/g, w1)
+                    .replace(/%value2%/g, w2)
+                    .replace(/%value3%/g, w3);
+            }
+            stmt.free();
+            return output;
+            }
+        }
+
+        // Otherwise, attempt to fetch value from scaling table
+        const stmt = db.prepare(`
+            SELECT s.name, s.format, ss.value0, ss.value1, ss.value2, ss.value3
+            FROM stats s
+            JOIN skill_scaling ss ON ss.stat_id = s.id
+            WHERE LOWER(s.key) = ? AND ss.skill_id = ? AND ss.level = ?
+        `);
+        stmt.bind([key, skillId, level]);
+        let output = `[Unknown stat: ${rawKey}]`;
+        if (stmt.step()) {
+            const [name, format, v0, v1, v2, v3] = stmt.get();
+            const sv0 = v0 ?? '';
+            const sv1 = v1 ?? '';
+            const sv2 = v2 ?? '';
+            const sv3 = v3 ?? '';
+            const w0 = `<span class="stat-val">${sv0}</span>`;
+            const w1 = `<span class="stat-val">${sv1}</span>`;
+            const w2 = `<span class="stat-val">${sv2}</span>`;
+            const w3 = `<span class="stat-val">${sv3}</span>`;
+            output = (format || '{name}: {value}')
+                .replace('{name}', name)
+                .replace('{value}', w1)
+                .replace('{value0}', w0)
+                .replace('{value1}', w1)
+                .replace('{value2}', w2)
+                .replace('{value3}', w3)
+                .replace(/%value%/g, w1)
+                .replace(/%value0%/g, w0)
+                .replace(/%value1%/g, w1)
+                .replace(/%value2%/g, w2)
+                .replace(/%value3%/g, w3);
+        }
+        stmt.free();
+        if (output !== `[Unknown stat: ${rawKey}]`) return output;
+
+        // If no scaling row for this level, but stat exists: show format with ??? placeholders
+        const s2 = db.prepare('SELECT name, format FROM stats WHERE LOWER(key) = ?');
+        s2.bind([key]);
+        if (s2.step()) {
+            const [name, format] = s2.get();
+            const q = '<span class="stat-val">???</span>';
+            const formatted = (format || '{name}: {value}')
+                .replace('{name}', name)
+                .replace('{value}', q)
+                .replace('{value0}', q)
+                .replace('{value1}', q)
+                .replace('{value2}', q)
+                .replace('{value3}', q)
+                .replace(/%value%/g, q)
+                .replace(/%value0%/g, q)
+                .replace(/%value1%/g, q)
+                .replace(/%value2%/g, q)
+                .replace(/%value3%/g, q);
+            s2.free();
+            return formatted;
+        }
+        s2.free();
+        return output;
     });
 }
 

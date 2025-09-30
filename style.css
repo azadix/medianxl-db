@@ -15,3 +15,7 @@
   border-bottom: 1px solid rgba(122, 122, 122, 122);
 }
 
+.stat-val {
+  color: #9ac8f8;
+  font-weight: 700;
+}
