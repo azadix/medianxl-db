@@ -134,11 +134,13 @@ async function displaySkillDetail(skillId) {
     const hasScaling = availableLevels.length > 0;
     const initialLevel = hasScaling ? availableLevels[0] : 1;
     const levelControl = hasScaling ? `
-        <div class="field is-grouped mb-3">
+        <div class="field is-grouped is-align-items-center mt-4">
             <div class="control">
-                <label class="label">Level</label>
+                <label class="label">Skill Level:</label>
+            </div>
+            <div class="control">
                 <div class="select">
-                    <select id="skill-level" style="min-width:120px;">
+                    <select id="skill-level">
                         ${availableLevels.map(l => `<option value="${l}">${l}</option>`).join('')}
                     </select>
                 </div>
@@ -168,11 +170,19 @@ async function displaySkillDetail(skillId) {
     let scalingTable = '';
     contentElement.innerHTML = `
         <div class="skill-detail">
-            <div class="skill-info">
-                ${skillImage}
-                ${levelControl}
-                ${restrictionHtml}
-                ${descriptionHtml}
+            <div class="columns">
+                <div class="column is-two-thirds">
+                    <div class="skill-info">
+                        ${restrictionHtml}
+                        <div class="skill-description">${descriptionHtml}</div>
+                        ${levelControl}
+                    </div>
+                </div>
+                <div class="column is-one-third">
+                    <div class="skill-image-container">
+                        ${skillImage}
+                    </div>
+                </div>
             </div>
             ${scalingTable}
         </div>
@@ -195,21 +205,15 @@ async function displaySkillDetail(skillId) {
     const levelSelect = document.getElementById('skill-level');
     if (levelSelect) {
         function handleLevelChange(event) {
-            // Get the level from the current select element (either the original or re-rendered one)
+            // Get the level from the current select element
             const currentSelect = event ? event.target : document.getElementById('skill-level');
             const level = parseInt(currentSelect.value, 10) || initialLevel;
             const newHtml = renderDescriptionAtLevel(level);
-            const container = document.querySelector('.skill-info');
-            if (container) {
-                container.innerHTML = `
-                    ${skillImage}
-                    ${levelControl}
-                    ${restrictionHtml}
-                    ${newHtml}
-                `;
-                // Re-bind after rerender
-                const newSelect = document.getElementById('skill-level');
-                if (newSelect) newSelect.addEventListener('change', handleLevelChange);
+            
+            // Update only the description part
+            const descriptionContainer = document.querySelector('.skill-description');
+            if (descriptionContainer) {
+                descriptionContainer.innerHTML = newHtml;
             }
         }
         levelSelect.addEventListener('change', handleLevelChange);

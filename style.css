@@ -2,10 +2,14 @@
   position: relative;
 }
 
+.skill-image-container {
+  position: sticky;
+  display: flex;
+  justify-content: center;
+  margin: 1rem 0;
+}
+
 .skill-image {
-  position: absolute;
-  top: 1rem;
-  right: 0;
   border: 1px solid rgb(122, 122, 122);
   scale: 3;
   object-fit: contain;
