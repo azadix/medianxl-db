@@ -26,12 +26,12 @@ bonus_defense
 physical_damage_flat
 radius
 minimum_mana_cost
+attack_speed
+
 
 //TODO
 //--------------------------
 ancient_spirits
-
-attack_speed
 attacker_takes_bonus_lightning_damage
 aura_increases_elemental_resistances_by
 aura_increases_physical_resistance_by

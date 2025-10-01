@@ -155,6 +155,95 @@ async function displaySkillDetail(skillId) {
         return `<p class="is-size-5"><strong>Description:</strong></p>${lines}<br>`;
     }
 
+    function createScalingGraphs(skillId) {
+        if (!hasScaling) return '';
+        
+        // Get all scaling data for this skill
+        const scalingData = [];
+        try {
+            const stmt = SkillDB.db.prepare(`
+                SELECT ss.level, s.key, s.name, ss.value0, ss.value1, ss.value2, ss.value3
+                FROM skill_scaling ss
+                JOIN stats s ON ss.stat_id = s.id
+                WHERE ss.skill_id = ?
+                ORDER BY ss.level, s.name
+            `);
+            stmt.bind([skillId]);
+            
+            while (stmt.step()) {
+                const [level, key, name, v0, v1, v2, v3] = stmt.get();
+                scalingData.push({ level, key, name, values: [v0, v1, v2, v3] });
+            }
+            stmt.free();
+        } catch (error) {
+            console.warn('Error fetching scaling data:', error.message);
+            return '';
+        }
+
+        if (scalingData.length === 0) return '';
+
+        // Check if we have at least 2 different levels
+        const uniqueLevels = new Set(scalingData.map(item => item.level));
+        if (uniqueLevels.size < 2) return '';
+
+        // Group data by stat
+        const statsMap = new Map();
+        scalingData.forEach(item => {
+            if (!statsMap.has(item.key)) {
+                statsMap.set(item.key, {
+                    name: item.name,
+                    key: item.key,
+                    data: []
+                });
+            }
+            statsMap.get(item.key).data.push({
+                level: item.level,
+                values: item.values
+            });
+        });
+
+        // Create individual graph containers for each stat
+        let graphsHtml = `
+            <div class="box mt-4">
+                <div class="is-flex is-justify-content-space-between is-align-items-center">
+                    <h3 class="title is-5 mb-0">Skill Scaling Graphs</h3>
+                    <button class="button is-small" id="toggle-graphs">
+                        Show Graphs
+                    </button>
+                </div>
+                <div class="is-hidden mt-4" id="graphs-container">
+                    <div class="columns is-multiline">
+        `;
+        
+        let chartIndex = 0;
+        statsMap.forEach((stat, key) => {
+            // Sort by level
+            stat.data.sort((a, b) => a.level - b.level);
+            
+            // Check if this stat has any non-null values
+            const hasValues = stat.data.some(d => d.values.some(v => v !== null && v !== ''));
+            if (!hasValues) return;
+            
+            graphsHtml += `
+                <div class="column is-half">
+                    <h4 class="title is-6">${stat.name}</h4>
+                    <div class="chart-container" style="position: relative; height: 300px;">
+                        <canvas id="scaling-chart-${chartIndex}"></canvas>
+                    </div>
+                </div>
+            `;
+            chartIndex++;
+        });
+        
+        graphsHtml += `
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        return graphsHtml;
+    }
+
     let descriptionHtml = renderDescriptionAtLevel(initialLevel);
 
     // Only show restriction if it exists
@@ -168,6 +257,7 @@ async function displaySkillDetail(skillId) {
     }
     
     let scalingTable = '';
+    const scalingGraphs = createScalingGraphs(skillInfo.dbId);
     contentElement.innerHTML = `
         <div class="skill-detail">
             <div class="columns">
@@ -184,6 +274,7 @@ async function displaySkillDetail(skillId) {
                     </div>
                 </div>
             </div>
+            ${scalingGraphs}
             ${scalingTable}
         </div>
     `;
@@ -218,6 +309,154 @@ async function displaySkillDetail(skillId) {
         }
         levelSelect.addEventListener('change', handleLevelChange);
     }
+
+    // Initialize the scaling charts if they exist
+    if (scalingGraphs && hasScaling) {
+        initializeScalingCharts(skillInfo.dbId);
+        
+        // Add toggle functionality for graphs
+        const toggleBtn = document.getElementById('toggle-graphs');
+        const graphsContainer = document.getElementById('graphs-container');
+        
+        if (toggleBtn && graphsContainer) {
+            toggleBtn.addEventListener('click', () => {
+                graphsContainer.classList.toggle('is-hidden');
+                const isHidden = graphsContainer.classList.contains('is-hidden');
+                
+                if (isHidden) {
+                    toggleBtn.textContent = 'Show Graphs';
+                } else {
+                    toggleBtn.textContent = 'Hide Graphs';
+                }
+            });
+        }
+    }
+}
+
+function initializeScalingCharts(skillId) {
+    // Get all scaling data for this skill
+    const scalingData = [];
+    try {
+        const stmt = SkillDB.db.prepare(`
+            SELECT ss.level, s.key, s.name, ss.value0, ss.value1, ss.value2, ss.value3
+            FROM skill_scaling ss
+            JOIN stats s ON ss.stat_id = s.id
+            WHERE ss.skill_id = ?
+            ORDER BY ss.level, s.name
+        `);
+        stmt.bind([skillId]);
+        
+        while (stmt.step()) {
+            const [level, key, name, v0, v1, v2, v3] = stmt.get();
+            scalingData.push({ level, key, name, values: [v0, v1, v2, v3] });
+        }
+        stmt.free();
+    } catch (error) {
+        console.warn('Error fetching scaling data for charts:', error.message);
+        return;
+    }
+
+    if (scalingData.length === 0) return;
+
+    // Check if we have at least 2 different levels
+    const uniqueLevels = new Set(scalingData.map(item => item.level));
+    if (uniqueLevels.size < 2) return;
+
+    // Group data by stat
+    const statsMap = new Map();
+    scalingData.forEach(item => {
+        if (!statsMap.has(item.key)) {
+            statsMap.set(item.key, {
+                name: item.name,
+                key: item.key,
+                data: []
+            });
+        }
+        statsMap.get(item.key).data.push({
+            level: item.level,
+            values: item.values
+        });
+    });
+
+    // Create individual charts for each stat
+    let chartIndex = 0;
+    const colors = [
+        '#3273dc', '#ff3860', '#00d1b2', '#ffdd57', 
+        '#ff470f', '#b86bff', '#48c774', '#f14668'
+    ];
+    
+    statsMap.forEach((stat, key) => {
+        // Sort by level
+        stat.data.sort((a, b) => a.level - b.level);
+        
+        // Check if this stat has any non-null values
+        const hasValues = stat.data.some(d => d.values.some(v => v !== null && v !== ''));
+        if (!hasValues) return;
+        
+        const canvas = document.getElementById(`scaling-chart-${chartIndex}`);
+        if (!canvas) return;
+        
+        // Create datasets for this stat
+        const datasets = [];
+        const values = stat.data[0].values;
+        
+        for (let i = 0; i < values.length; i++) {
+            if (values[i] !== null && values[i] !== '') {
+                const label = values.length > 1 ? `Value ${i}` : 'Value';
+                datasets.push({
+                    label: label,
+                    data: stat.data.map(d => ({ x: d.level, y: d.values[i] })),
+                    borderColor: colors[i % colors.length],
+                    backgroundColor: colors[i % colors.length] + '20',
+                    tension: 0.1,
+                    fill: false,
+                    pointRadius: 4,
+                    pointHoverRadius: 6
+                });
+            }
+        }
+
+        if (datasets.length === 0) return;
+
+        // Create the chart for this stat
+        new Chart(canvas, {
+            type: 'line',
+            data: {
+                datasets: datasets
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
+                        title: {
+                            display: true,
+                            text: 'Skill Level'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Value'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                }
+            }
+        });
+        
+        chartIndex++;
+    });
 }
 
 // Handle browser back/forward navigation

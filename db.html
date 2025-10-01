@@ -269,16 +269,6 @@
       </div>
     </form>
 
-    <h4 class="title is-5">Preview & Validation</h4>
-    <label class="label">Test Skill Description</label>
-    <textarea class="textarea" id="preview-input" rows="3" placeholder="Example: {{mana_cost}}, {{cold_damage}}, {{fire_damage:100,200}} (auto-expands simple {{stat}} tokens)"></textarea>
-    <div class="mt-3">
-      <button class="button is-info" id="preview-btn" type="button">Render Preview</button>
-    </div>
-    <h5 class="subtitle is-6 mt-4">Rendered Output</h5>
-    <div id="preview-output" class="content has-background p-3"></div>
-    <h5 class="subtitle is-6 mt-4">Validation Report</h5>
-    <div id="validation-output" class="content has-background p-3"></div>
 
     <table class="table is-striped is-fullwidth is-narrow" id="stats-table">
       <thead>
@@ -300,9 +290,8 @@
     <div class="columns is-multiline">
       <div class="column is-one-third">
         <label class="label">Skill</label>
-        <div class="select is-fullwidth">
-          <select id="scaling-skill"></select>
-        </div>
+        <div id="scaling-skill-dd"></div>
+        <input type="hidden" id="scaling-skill-hidden" />
       </div>
       <div class="column is-one-quarter">
         <label class="label">Level</label>
@@ -317,39 +306,37 @@
       </div>
       <div class="column is-full">
         <div class="buttons">
-          <button class="button is-danger is-light" id="scaling-clear" type="button">Clear Level</button>
-          <button class="button is-info is-light" id="scaling-suggest" type="button">Suggest From Description</button>
+          <button class="button is-danger is-outlined" id="scaling-clear" type="button">Clear Level</button>
+          <button class="button is-info is-outlined" id="scaling-suggest" type="button">Suggest From Description</button>
           <button class="button is-primary" id="scaling-save" type="button">Save</button>
         </div>
       </div>
     </div>
-
-    <div class="box">
-      <div class="columns is-vcentered">
-        <div class="column is-half">
-          <div id="scaling-add-stat-dd"></div>
-          <input type="hidden" id="scaling-add-stat-hidden" />
-        </div>
-        <div class="column is-one-quarter">
-          <button class="button" id="scaling-add-stat-btn" type="button">Add Stat</button>
-        </div>
+    
+    <div class="columns is-vcentered">
+      <div class="column is-half">
+        <div id="scaling-add-stat-dd"></div>
+        <input type="hidden" id="scaling-add-stat-hidden" />
       </div>
-
-      <table class="table is-striped is-fullwidth is-narrow" id="scaling-table">
-        <thead>
-          <tr>
-            <th style="width:18%">Stat Key</th>
-            <th style="width:18%">Name</th>
-            <th>Value0</th>
-            <th>Value1</th>
-            <th>Value2</th>
-            <th>Value3</th>
-            <th style="width:10%">Actions</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+      <div class="column is-one-quarter">
+        <button class="button" id="scaling-add-stat-btn" type="button">Add Stat</button>
+      </div>
     </div>
+
+    <table class="table is-striped is-fullwidth is-narrow" id="scaling-table">
+      <thead>
+        <tr>
+          <th style="width:18%">Stat Key</th>
+          <th style="width:18%">Name</th>
+          <th>Value0</th>
+          <th>Value1</th>
+          <th>Value2</th>
+          <th>Value3</th>
+          <th style="width:10%">Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
 
     <p id="scaling-status" class="has-text-grey"></p>
   </div>
@@ -1036,19 +1023,6 @@
     document.getElementById('stat-cancel').style.display = 'none';
   });
 
-  function validatePlaceholders(description) {
-    if (!description) return [];
-    const errors = [];
-    description.replace(/\{\{(.*?)\}\}/g, (match, token) => {
-      const [key] = token.split(':').map(s => s.trim().toLowerCase());
-      const stmt = SkillDB.db.prepare("SELECT 1 FROM stats WHERE LOWER(key) = ?");
-      stmt.bind([key]);
-      const exists = stmt.step();
-      stmt.free();
-      if (!exists) errors.push(key);
-    });
-    return errors;
-  }
 
   function renderStatPlaceholder(key, values = []) {
     if (values.length > 3){
@@ -1072,65 +1046,8 @@
     return output;
   }
 
-  function renderPreview(description) {
-    if (!description) return "";
-    return description.replace(/\{\{(.*?)\}\}/g, (match, token) => {
-      const [rawKey, rawValues] = token.split(':').map(s => s.trim());
-      const key = (rawKey || '').toLowerCase();
-      
-      // If no values provided, auto-expand based on stat format
-      let values = [];
-      if (!rawValues) {
-        const paramCount = getStatParameterCount(key);
-        if (paramCount > 0) {
-          values = Array.from({length: paramCount}, (_, i) => `%value${i}%`);
-        }
-      } else {
-        values = rawValues.split(',').map(v => v.trim());
-      }
-      
-      return renderStatPlaceholder(key, values);
-    });
-  }
 
-  // Helper function to detect how many parameters a stat format needs
-  function getStatParameterCount(statKey) {
-    const stmt = SkillDB.db.prepare("SELECT format FROM stats WHERE LOWER(key) = ?");
-    stmt.bind([statKey.toLowerCase()]);
-    let paramCount = 0;
-    if (stmt.step()) {
-      const format = stmt.get()[0] || '{name}: {value}';
-      // Count how many value placeholders are in the format
-      const valueMatches = format.match(/\{value\d*\}/g) || [];
-      const percentMatches = format.match(/%value\d*%/g) || [];
-      paramCount = Math.max(valueMatches.length, percentMatches.length);
-    }
-    stmt.free();
-    return paramCount;
-  }
 
-  const previewBtn = document.getElementById("preview-btn");
-  if (previewBtn) {
-    previewBtn.addEventListener("click", () => {
-      const input = document.getElementById("preview-input");
-      const output = document.getElementById("preview-output");
-      const validation = document.getElementById("validation-output");
-      
-      if (!input || !output || !validation) {
-        console.error("Preview elements not found");
-        return;
-      }
-      
-      const rendered = renderPreview(input.value);
-      output.innerHTML = rendered;
-      const errors = validatePlaceholders(input.value);
-      if (errors.length > 0) {
-        validation.innerHTML = `<strong>Unknown stats:</strong> ${errors.join(", ")}`;
-      } else {
-        validation.innerHTML = "<span class='has-text-success'>All stat references valid ✅</span>";
-      }
-    });
-  }
 
   // Insert skill
   const skillForm = document.getElementById("skill-form");
@@ -1283,6 +1200,9 @@
 
       // Change button text
       document.querySelector("#skill-form button[type=submit]").textContent = "Save Skill";
+      
+      // Scroll to top of page
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
     stmt.free();
   }
@@ -1345,19 +1265,34 @@
   });
 
   async function populateScalingSelectors() {
-    // Skills
-    const skillSelect = document.getElementById('scaling-skill');
-    if (skillSelect) {
-      skillSelect.innerHTML = '';
+    // Skills dropdown using DropdownList
+    const skillDdContainer = document.getElementById('scaling-skill-dd');
+    const skillHiddenInput = document.getElementById('scaling-skill-hidden');
+
+    if (skillDdContainer && skillHiddenInput) {
       const res = SkillDB.db.exec("SELECT id, display_name FROM skills ORDER BY display_name");
-      if (res[0]) {
-        res[0].values.forEach(([id, name]) => {
-          const opt = document.createElement('option');
-          opt.value = id;
-          opt.textContent = name;
-          skillSelect.appendChild(opt);
-        });
-      }
+      const skillItems = res[0] ? res[0].values.map(([id, name]) => ({
+        value: id,
+        name: name,
+        desc: `Skill ID: ${id}`
+      })) : [];
+      
+      const skillDropdown = new DropdownList(skillDdContainer, {
+        placeholder: 'Select skill...',
+        emptyListText: 'No skills found',
+        defaultHeaderText: 'Skills',
+        
+        onSelect: (item) => {
+          skillHiddenInput.value = item?.value || '';
+          // Auto-load scaling data when skill is selected
+          if (item?.value) {
+            document.getElementById('scaling-level').value = 1;
+            loadScaling();
+            updateLevelIndicator();
+          }
+        }
+      });
+      skillDropdown.setItems(skillItems);
     }
     // Stat add dropdown using DropdownList.js
     const ddContainer = document.getElementById('scaling-add-stat-dd');
@@ -1452,7 +1387,7 @@
   }
 
   function loadScaling() {
-    const skillId = parseInt(document.getElementById('scaling-skill').value, 10);
+    const skillId = parseInt(document.getElementById('scaling-skill-hidden').value, 10);
     const level = parseInt(document.getElementById('scaling-level').value, 10);
     if (Number.isNaN(skillId) || Number.isNaN(level)) return;
 
@@ -1483,7 +1418,7 @@
   }
 
   function suggestFromDescription() {
-    const skillId = parseInt(document.getElementById('scaling-skill').value, 10);
+    const skillId = parseInt(document.getElementById('scaling-skill-hidden').value, 10);
     if (Number.isNaN(skillId)) return;
     const stmt = SkillDB.db.prepare('SELECT description FROM skills WHERE id = ?');
     stmt.bind([skillId]);
@@ -1561,7 +1496,7 @@
   }
 
   function saveScaling() {
-    const skillId = parseInt(document.getElementById('scaling-skill').value, 10);
+    const skillId = parseInt(document.getElementById('scaling-skill-hidden').value, 10);
     const level = parseInt(document.getElementById('scaling-level').value, 10);
     if (Number.isNaN(skillId) || Number.isNaN(level)) return;
     
@@ -1592,7 +1527,7 @@
   }
 
   function clearScaling() {
-    const skillId = parseInt(document.getElementById('scaling-skill').value, 10);
+    const skillId = parseInt(document.getElementById('scaling-skill-hidden').value, 10);
     const level = parseInt(document.getElementById('scaling-level').value, 10);
     if (Number.isNaN(skillId) || Number.isNaN(level)) return;
     SkillDB.db.run('DELETE FROM skill_scaling WHERE skill_id=? AND level=?', [skillId, level]);
@@ -1602,15 +1537,15 @@
   }
 
   function updateLevelIndicator() {
-    const skillSelect = document.getElementById('scaling-skill');
+    const skillHiddenInput = document.getElementById('scaling-skill-hidden');
     const statusEl = document.getElementById('scaling-status');
     
-    if (!skillSelect || !statusEl) {
+    if (!skillHiddenInput || !statusEl) {
       console.error("Scaling elements not found");
       return;
     }
     
-    const skillId = parseInt(skillSelect.value, 10);
+    const skillId = parseInt(skillHiddenInput.value, 10);
     if (Number.isNaN(skillId)) return;
     
     // Get all levels that exist for this skill
@@ -1640,25 +1575,11 @@
   const scalingAddStatBtn = document.getElementById('scaling-add-stat-btn');
   if (scalingAddStatBtn) scalingAddStatBtn.addEventListener('click', addStatRow);
 
-  // Auto-load when skill is selected
-  const scalingSkillSelect = document.getElementById('scaling-skill');
-  if (scalingSkillSelect) {
-    scalingSkillSelect.addEventListener('change', () => {
-      const skillId = parseInt(scalingSkillSelect.value, 10);
-      if (!Number.isNaN(skillId)) {
-        // Set level to 1 and auto-load
-        document.getElementById('scaling-level').value = 1;
-        loadScaling();
-        updateLevelIndicator();
-      }
-    });
-  }
-
   // Auto-load when level changes
   const scalingLevelInput = document.getElementById('scaling-level');
   if (scalingLevelInput) {
     scalingLevelInput.addEventListener('change', () => {
-      const skillId = parseInt(document.getElementById('scaling-skill').value, 10);
+      const skillId = parseInt(document.getElementById('scaling-skill-hidden').value, 10);
       if (!Number.isNaN(skillId)) {
         loadScaling();
         updateLevelIndicator();
@@ -1666,8 +1587,308 @@
     });
   }
 
+  function initializeDescriptionAutocomplete() {
+    const descriptionField = document.getElementById('description');
+    if (!descriptionField) return;
+
+    let autocompleteDropdown = null;
+    let currentMatches = [];
+    let selectedIndex = -1;
+
+    descriptionField.addEventListener('input', function(e) {
+      const cursorPos = e.target.selectionStart;
+      const text = e.target.value;
+      
+      // Find the current {{}} block the cursor is in
+      const beforeCursor = text.substring(0, cursorPos);
+      const afterCursor = text.substring(cursorPos);
+      
+      // Look for the last {{ before cursor
+      const lastOpen = beforeCursor.lastIndexOf('{{');
+      
+      if (lastOpen !== -1) {
+        // Check if we're inside an open {{ block
+        const contentAfterOpen = beforeCursor.substring(lastOpen + 2);
+        const nextClose = afterCursor.indexOf('}}');
+        
+        // If there's no closing }} or cursor is before it, we're inside the block
+        if (nextClose === -1 || cursorPos <= lastOpen + 2 + nextClose) {
+          const innerContent = contentAfterOpen;
+          
+          // Show autocomplete immediately after {{ or with any content
+          showAutocomplete(innerContent, lastOpen, cursorPos);
+        } else {
+          hideAutocomplete();
+        }
+      } else {
+        hideAutocomplete();
+      }
+    });
+
+    descriptionField.addEventListener('keydown', function(e) {
+      if (!autocompleteDropdown || autocompleteDropdown.style.display === 'none') return;
+
+      switch(e.key) {
+        case 'ArrowDown':
+          e.preventDefault();
+          selectedIndex = Math.min(selectedIndex + 1, currentMatches.length - 1);
+          updateSelection();
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          selectedIndex = Math.max(selectedIndex - 1, 0);
+          updateSelection();
+          break;
+        case 'Tab':
+          e.preventDefault();
+          if (selectedIndex >= 0 && selectedIndex < currentMatches.length && currentMatches[selectedIndex]) {
+            completeStat(currentMatches[selectedIndex]);
+          }
+          break;
+        case 'Escape':
+          hideAutocomplete();
+          break;
+      }
+    });
+
+    // Hide autocomplete when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!descriptionField.contains(e.target) && (!autocompleteDropdown || !autocompleteDropdown.contains(e.target))) {
+        hideAutocomplete();
+      }
+    });
+
+    function fuzzyFilter(stats, query) {
+      if (!query) return stats.slice(0, 10); // Return first 10 if no query
+      
+      const results = [];
+      
+      for (const stat of stats) {
+        const key = stat.key.toLowerCase();
+        const name = stat.name.toLowerCase();
+        let score = 0;
+        
+        // Exact match gets highest score
+        if (key === query) {
+          score = 1000;
+        }
+        // Starts with query gets high score
+        else if (key.startsWith(query)) {
+          score = 500 + (key.length - query.length);
+        }
+        // Contains query gets medium score
+        else if (key.includes(query)) {
+          score = 200 + (key.length - key.indexOf(query) - query.length);
+        }
+        // Name contains query gets lower score
+        else if (name.includes(query)) {
+          score = 100 + (name.length - name.indexOf(query) - query.length);
+        }
+        // Fuzzy match - check if all query characters appear in order
+        else {
+          let keyIndex = 0;
+          let queryIndex = 0;
+          let consecutiveMatches = 0;
+          let maxConsecutive = 0;
+          
+          while (keyIndex < key.length && queryIndex < query.length) {
+            if (key[keyIndex] === query[queryIndex]) {
+              consecutiveMatches++;
+              maxConsecutive = Math.max(maxConsecutive, consecutiveMatches);
+              queryIndex++;
+            } else {
+              consecutiveMatches = 0;
+            }
+            keyIndex++;
+          }
+          
+          // If all query characters were found in order
+          if (queryIndex === query.length) {
+            score = 50 + maxConsecutive * 10 - (keyIndex - query.length);
+          }
+        }
+        
+        if (score > 0) {
+          results.push({ ...stat, score });
+        }
+      }
+      
+      // Sort by score (highest first) and return top 10
+      return results
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 10)
+        .map(({ score, ...stat }) => stat); // Remove score from final result
+    }
+
+    function showAutocomplete(query, startPos, endPos) {
+      if (!SkillDB.db) return;
+
+      // Get all stats
+      const stmt = SkillDB.db.prepare("SELECT key, name FROM stats ORDER BY key");
+      const allStats = [];
+      while (stmt.step()) {
+        const [key, name] = stmt.get();
+        allStats.push({ key, name });
+      }
+      stmt.free();
+
+      // Fuzzy filter the stats
+      currentMatches = fuzzyFilter(allStats, query.toLowerCase());
+
+      if (currentMatches.length === 0) {
+        hideAutocomplete();
+        return;
+      }
+
+      // Create or update dropdown
+      if (!autocompleteDropdown) {
+        autocompleteDropdown = document.createElement('div');
+        autocompleteDropdown.className = 'autocomplete-dropdown dropdown-list';
+        autocompleteDropdown.style.cssText = `
+          position: absolute;
+          left: 0;
+          top: 100%;
+          transform: none;
+          min-width: 90%;
+          max-height: 200px;
+          overflow-y: auto;
+          z-index: 1000;
+          display: none;
+          margin-top: 4px;
+          background-color: var(--bg-color, #14161A);
+          color: var(--text-color, #FAFAFA);
+          border: 1px solid var(--border-color, #3D4451);
+          border-radius: 3px;
+        `;
+        document.body.appendChild(autocompleteDropdown);
+      }
+
+      // Populate dropdown
+      autocompleteDropdown.innerHTML = '';
+      currentMatches.forEach((match, index) => {
+        const item = document.createElement('div');
+        item.className = 'autocomplete-item dropdown-list-item';
+        item.style.cssText = `
+          background-color: var(--bg-color, #14161A);
+          color: var(--text-color, #FAFAFA);
+        `;
+        
+        // Create strong element with proper color inheritance
+        const strong = document.createElement('strong');
+        strong.textContent = match.key;
+        strong.style.color = 'inherit';
+        
+        item.appendChild(strong);
+        item.appendChild(document.createTextNode(` - ${match.name}`));
+        
+        item.addEventListener('click', () => {
+          completeStat(match);
+        });
+        
+        item.addEventListener('mouseenter', () => {
+          selectedIndex = index;
+          updateSelection();
+        });
+        
+        autocompleteDropdown.appendChild(item);
+      });
+
+      // Position dropdown
+      const rect = descriptionField.getBoundingClientRect();
+      autocompleteDropdown.style.left = rect.left + 'px';
+      autocompleteDropdown.style.top = (rect.bottom + window.scrollY) + 'px';
+      autocompleteDropdown.style.width = rect.width + 'px';
+      autocompleteDropdown.style.display = 'block';
+      
+      selectedIndex = 0;
+      updateSelection();
+    }
+
+    function updateSelection() {
+      if (!autocompleteDropdown) return;
+      
+      const items = autocompleteDropdown.querySelectorAll('.autocomplete-item');
+      
+      // Ensure selectedIndex is within bounds
+      if (selectedIndex < 0 || selectedIndex >= items.length) {
+        selectedIndex = Math.max(0, Math.min(selectedIndex, items.length - 1));
+      }
+      
+      items.forEach((item, index) => {
+        const strong = item.querySelector('strong');
+        
+        if (index === selectedIndex) {
+          item.style.backgroundColor = 'var(--hover-bg-color, #F4AD08)';
+          item.style.color = 'var(--hover-text-color, #0A0A0A)';
+          if (strong) strong.style.color = 'inherit';
+          
+          // Scroll the selected item into view
+          item.scrollIntoView({
+            behavior: 'smooth',
+            block: 'nearest'
+          });
+        } else {
+          item.style.backgroundColor = '';
+          item.style.color = '';
+          if (strong) strong.style.color = 'inherit';
+        }
+      });
+    }
+
+    function completeStat(match) {
+      const cursorPos = descriptionField.selectionStart;
+      const text = descriptionField.value;
+      
+      const beforeCursor = text.substring(0, cursorPos);
+      const afterCursor = text.substring(cursorPos);
+      
+      const lastOpen = beforeCursor.lastIndexOf('{{');
+      
+      if (lastOpen !== -1) {
+        const contentAfterOpen = beforeCursor.substring(lastOpen + 2);
+        const nextClose = afterCursor.indexOf('}}');
+        
+        // If there's a closing }} after cursor, replace the content between {{ and }}
+        if (nextClose !== -1 && cursorPos <= lastOpen + 2 + nextClose) {
+          const beforeMatch = text.substring(0, lastOpen);
+          const afterMatch = text.substring(cursorPos + nextClose + 2);
+          const newText = beforeMatch + `{{${match.key}}}` + afterMatch;
+          
+          descriptionField.value = newText;
+          
+          // Set cursor position after the completed stat
+          const newCursorPos = beforeMatch.length + match.key.length + 4;
+          descriptionField.setSelectionRange(newCursorPos, newCursorPos);
+        } else {
+          // No closing }}, just replace the content after {{
+          const beforeMatch = text.substring(0, lastOpen + 2);
+          const afterMatch = text.substring(cursorPos);
+          const newText = beforeMatch + match.key + '}}' + afterMatch;
+          
+          descriptionField.value = newText;
+          
+          // Set cursor position after the completed stat
+          const newCursorPos = beforeMatch.length + match.key.length + 2;
+          descriptionField.setSelectionRange(newCursorPos, newCursorPos);
+        }
+        
+        hideAutocomplete();
+      }
+    }
+
+    function hideAutocomplete() {
+      if (autocompleteDropdown) {
+        autocompleteDropdown.style.display = 'none';
+        selectedIndex = -1;
+      }
+    }
+  }
+
   initializePage();
   refreshTagsTable();
+  
+  // Initialize description autocomplete
+  initializeDescriptionAutocomplete();
   </script>
 </body>
 </html>

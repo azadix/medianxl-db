@@ -1,19 +1,20 @@
 # MedianXL Skills Database Project - Development Summary
 
 ## Project Overview
-This is a web-based skills database editor for MedianXL (Diablo 2 mod) that allows users to manage skills, stats, classes, tags, and skill scaling data through a SQLite database interface.
+This is a web-based skills database editor for MedianXL (Diablo 2 mod) that allows users to manage skills, stats, classes, tags, and skill scaling data through a SQLite database interface. The project includes both a database editor and a skills viewer with advanced features like scaling graphs and autocomplete.
 
 ## Current Architecture
 
 ### Core Files
-- **`db.html`** - Main database editor interface (1,624 lines)
-- **`script.js`** - Skills viewer and detail display (400 lines)
+- **`db.html`** - Main database editor interface (1,977 lines)
+- **`script.js`** - Skills viewer with scaling graphs and detail display (602 lines)
 - **`utils.js`** - Utility functions for placeholder expansion and icon handling (286 lines)
 - **`DropdownList.js`** - Custom dropdown component (238 lines)
 - **`dropdown-style.css`** - Styling for dropdown components (72 lines)
 - **`skills.sqlite`** - SQLite database containing all skills data
-- **`index.html`** - Skills listing page with DataTable integration
+- **`index.html`** - Skills listing page with DataTable integration and Chart.js
 - **`tree.html`** - Skills tree visualization
+- **`style.css`** - Additional styling for skill details and graphs
 
 ### Database Schema
 ```sql
@@ -31,7 +32,51 @@ skill_scaling (skill_id, level, stat_id, value0, value1, value2, value3)
 
 ## Recent Major Features Implemented
 
-### 1. Automatic Parameter Expansion System
+### 1. Skills Viewer with Scaling Graphs
+**Location**: `script.js` (lines 158-433)
+
+**Features**:
+- **Wikipedia-style layout**: Skill image positioned in top-right corner
+- **Level selector**: Dropdown below description for easy access
+- **Individual scaling graphs**: Separate charts for each stat in 2-column layout
+- **Collapsible graphs**: Graphs section starts collapsed to reduce visual noise
+- **Chart.js integration**: Interactive line charts showing scaling progression
+- **Minimum level validation**: Only shows graphs when skill has 2+ levels of data
+
+**Key Functions**:
+- `createScalingGraphs()` - Generates individual graph containers
+- `initializeScalingCharts()` - Creates Chart.js instances for each stat
+- `fuzzyFilter()` - Advanced filtering for stat autocomplete
+
+### 2. Advanced Autocomplete System
+**Location**: `db.html` (lines 1672-1947)
+
+**Features**:
+- **Immediate activation**: Starts after typing `{{` without needing closing braces
+- **Fuzzy filtering**: Finds stats even with partial or out-of-order characters
+- **Smart completion**: Handles both `{{stat}}` and `{{stat:value}}` formats
+- **Dark theme integration**: Uses dropdown-style.css for consistent theming
+- **Keyboard navigation**: Arrow keys, Tab completion, Escape to close
+- **Auto-scrolling**: Selected items scroll into view automatically
+
+**Scoring System**:
+- Exact match: 1000 points
+- Starts with query: 500+ points  
+- Contains query: 200+ points
+- Name contains query: 100+ points
+- Fuzzy match: 50+ points
+
+### 3. Enhanced Database Editor
+**Location**: `db.html` (lines 1349-1378)
+
+**Improvements**:
+- **DropdownList integration**: Skill select in scaling section uses searchable dropdown
+- **Auto-loading**: Automatically loads scaling data when skill is selected
+- **Scroll-to-top**: Edit skill button scrolls to top of page
+- **Removed preview/validation**: Cleaned up unused preview system
+- **Better button styling**: Updated to use outlined buttons for better visual hierarchy
+
+### 4. Automatic Parameter Expansion System
 **Location**: `utils.js` (lines 101-125, 130-174, 180-237)
 
 **Problem Solved**: Users had to manually specify parameter counts like `{{mana_cost:%value0%}}` instead of just `{{mana_cost}}`.
@@ -43,7 +88,7 @@ skill_scaling (skill_id, level, stat_id, value0, value1, value2, value3)
 
 **Usage**: Now supports both `{{mana_cost}}` (auto-expands) and `{{mana_cost:15}}` (explicit values)
 
-### 2. Enhanced Skill Scaling Interface
+### 5. Enhanced Skill Scaling Interface
 **Location**: `db.html` (lines 1319-1384, 1520-1560)
 
 **Features**:
@@ -58,25 +103,7 @@ skill_scaling (skill_id, level, stat_id, value0, value1, value2, value3)
 - `updateLevelIndicator()` - Shows existing levels for current skill
 - Auto-load event listeners for skill select and level input
 
-### 3. Improved Navigation System
-**Location**: `db.html` (lines 621-646)
-
-**Features**:
-- **Visual active state**: Active section button shows with `is-primary` class
-- **Prevent re-clicking**: Active section cannot be clicked again (prevents accidental hiding)
-- **Proper state management**: Only one section active at a time
-
-### 4. UI/UX Improvements
-**Location**: Various sections in `db.html`
-
-**Changes**:
-- **Tag form alignment**: Fixed button alignment with input fields using proper Bulma structure
-- **Class/Tab forms**: Added proper label spacing and button alignment
-- **Scaling level input**: Connected input and load button using `has-addons` field
-- **Removed redundant elements**: Eliminated `scaling-add-stat-desc` element
-- **Dropdown positioning**: Fixed dropdown centering using `transform: translateY(-50%)`
-
-### 5. Data Extraction Tools
+### 6. Data Extraction Tools
 **File**: `extract_placeholder_skills.py`
 
 **Purpose**: Extracts skills that use `{{*}}` placeholder format from database
@@ -88,6 +115,24 @@ skill_scaling (skill_id, level, stat_id, value0, value1, value2, value3)
 - Most common: `mana_cost` (4 times), `poison_dot` (2 times)
 
 ## Technical Implementation Details
+
+### Skills Viewer Architecture
+```javascript
+// Wikipedia-style layout with scaling graphs
+displaySkillDetail() → createScalingGraphs() → initializeScalingCharts()
+```
+
+### Chart.js Integration
+- **Individual stat graphs**: Each stat gets its own chart in 2-column layout
+- **Interactive features**: Hover tooltips, legend toggles, smooth animations
+- **Data processing**: Groups scaling data by stat and sorts by level
+- **Color coding**: Each stat gets a unique color from predefined palette
+
+### Autocomplete System
+```javascript
+// Fuzzy filtering with scoring
+fuzzyFilter(stats, query) → scoring algorithm → top 10 results
+```
 
 ### Placeholder Expansion Logic
 ```javascript
@@ -107,7 +152,7 @@ The scaling table dynamically adjusts based on stat formats:
 - Uses SQL.js for client-side SQLite operations
 - Supports import/export of database files
 - Real-time validation of stat references
-- Preview system for testing placeholder expansion
+- Chart.js for interactive data visualization
 
 ## Development Environment
 
@@ -115,6 +160,7 @@ The scaling table dynamically adjusts based on stat formats:
 - **SQL.js**: Client-side SQLite database
 - **Bulma CSS**: UI framework
 - **DataTables**: Skills listing table
+- **Chart.js**: Interactive charts for scaling graphs
 - **Python 3.9+**: For data extraction scripts
 
 ### File Structure
@@ -156,22 +202,33 @@ medianxl-db/
 - Event-driven architecture for UI interactions
 
 ### Key Functions to Understand
+- `displaySkillDetail()` - Main skill detail display with Wikipedia layout
+- `createScalingGraphs()` - Generates individual stat graph containers
+- `initializeScalingCharts()` - Creates Chart.js instances for scaling visualization
+- `fuzzyFilter()` - Advanced autocomplete filtering with scoring
 - `expandPlaceholders()` - Core placeholder expansion logic
 - `renderScalingRows()` - Dynamic table generation
 - `updateLevelIndicator()` - Level status display
 - `populateScalingSelectors()` - Dropdown initialization
 
 ### Testing
-- Use the preview system in Stats section to test placeholder expansion
+- Test skills viewer with different skills to see scaling graphs
+- Test autocomplete in description field with various stat names
 - Test scaling interface with different stat formats
 - Verify auto-expansion works with various placeholder patterns
 
 ## Getting Started for New Developers
 
-1. **Setup**: Open `db.html` in a web server (Python `http.server` works)
+1. **Setup**: Open `index.html` for skills viewer or `db.html` for database editor in a web server
 2. **Database**: Ensure `skills.sqlite` is present and accessible
-3. **Testing**: Use the Stats section preview to test placeholder expansion
-4. **Development**: Focus on `utils.js` for core logic, `db.html` for UI changes
+3. **Testing**: 
+   - Test skills viewer with different skills to see scaling graphs
+   - Test autocomplete in description field with various stat names
+   - Test scaling interface with different stat formats
+4. **Development**: 
+   - `script.js` for skills viewer and graph functionality
+   - `db.html` for database editor and autocomplete
+   - `utils.js` for core placeholder expansion logic
 
 ---
-*Last updated: Current session - All major features implemented and tested*
+*Last updated: Current session - Skills viewer with graphs, autocomplete system, and cleaned up preview/validation*
