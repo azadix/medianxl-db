@@ -97,14 +97,51 @@ export function getSkillIconHTML(imageFileName, humanClassName, className = '') 
 
 
 // --- Placeholder Expansion Utilities ---
+
+// Helper function to detect how many parameters a stat format needs
+function getStatParameterCount(db, statKey) {
+    const stmt = db.prepare("SELECT format FROM stats WHERE LOWER(key) = ?");
+    stmt.bind([statKey.toLowerCase()]);
+    let paramCount = 0;
+    if (stmt.step()) {
+        const format = stmt.get()[0] || '{name}: {value}';
+        // Count how many value placeholders are in the format
+        const valueMatches = format.match(/\{value\d*\}/g) || [];
+        const percentMatches = format.match(/%value\d*%/g) || [];
+        paramCount = Math.max(valueMatches.length, percentMatches.length);
+    }
+    stmt.free();
+    return paramCount;
+}
+
+// Helper function to auto-expand simple {{stat}} tokens to include parameter placeholders
+function autoExpandStatToken(db, statKey) {
+    const paramCount = getStatParameterCount(db, statKey);
+    if (paramCount === 0) return `{{${statKey}}}`;
+    
+    // Generate parameter placeholders based on count
+    const params = Array.from({length: paramCount}, (_, i) => `%value${i}%`).join(',');
+    return `{{${statKey}:${params}}}`;
+}
+
 // Expand a description string using the stats table formatting and optional inline values
 // Example tokens: {{mana_cost:15}}, {{cold_damage:100,200}}, {{level:17}}
+// Now also supports simple {{mana_cost}} which auto-expands to {{mana_cost:%value0%}} based on format
 export function expandPlaceholders(db, description) {
     if (!description) return '';
     return description.replace(/\{\{(.*?)\}\}/g, (match, token) => {
         const [rawKey, rawValues] = token.split(':').map(s => s.trim());
         const key = (rawKey || '').toLowerCase();
-        const values = rawValues ? rawValues.split(',').map(v => v.trim()) : [];
+        
+        // If no values provided, auto-expand based on stat format
+        let values = [];
+        if (!rawValues) {
+            const expandedToken = autoExpandStatToken(db, rawKey);
+            const [, expandedValues] = expandedToken.split(':').map(s => s.trim());
+            values = expandedValues ? expandedValues.split(',').map(v => v.trim()) : [];
+        } else {
+            values = rawValues.split(',').map(v => v.trim());
+        }
 
         const stmt = db.prepare("SELECT name, format FROM stats WHERE LOWER(key) = ?");
         stmt.bind([key]);
@@ -139,15 +176,25 @@ export function expandPlaceholders(db, description) {
 // Expand using values sourced from skill_scaling for a given skill and level.
 // If inline values are provided in the token, they take precedence; otherwise fetch by stat key.
 // Expected schema: stats(key TEXT UNIQUE), skill_scaling(skill_id, level, stat_id, value)
+// Now also supports simple {{mana_cost}} which auto-expands to {{mana_cost:%value0%}} based on format
 export function expandPlaceholdersWithScaling(db, skillId, level, description) {
     if (!description) return '';
     return description.replace(/\{\{(.*?)\}\}/g, (match, token) => {
         const [rawKey, rawValues] = token.split(':').map(s => s.trim());
         const key = (rawKey || '').toLowerCase();
+        
+        // If no values provided, auto-expand based on stat format
+        let values = [];
+        if (!rawValues) {
+            const expandedToken = autoExpandStatToken(db, rawKey);
+            const [, expandedValues] = expandedToken.split(':').map(s => s.trim());
+            values = expandedValues ? expandedValues.split(',').map(v => v.trim()) : [];
+        } else {
+            values = rawValues.split(',').map(v => v.trim());
+        }
 
         // If author provided inline concrete values (not placeholders like %value0%), use them
         if (rawValues && rawValues.length > 0) {
-            const values = rawValues.split(',').map(v => v.trim());
             const arePlaceholders = values.every(v => /%?value\d*%?/i.test(v));
             if (!arePlaceholders) {
             const stmt = db.prepare("SELECT name, format FROM stats WHERE LOWER(key) = ?");

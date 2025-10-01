@@ -235,8 +235,10 @@ async function displaySkillDetail(skillId) {
 
     const levelSelect = document.getElementById('skill-level');
     if (levelSelect) {
-        levelSelect.addEventListener('change', () => {
-            const level = parseInt(levelSelect.value, 10) || initialLevel;
+        function handleLevelChange(event) {
+            // Get the level from the current select element (either the original or re-rendered one)
+            const currentSelect = event ? event.target : document.getElementById('skill-level');
+            const level = parseInt(currentSelect.value, 10) || initialLevel;
             const newHtml = renderDescriptionAtLevel(level);
             const container = document.querySelector('.skill-info');
             if (container) {
@@ -248,9 +250,10 @@ async function displaySkillDetail(skillId) {
                 `;
                 // Re-bind after rerender
                 const newSelect = document.getElementById('skill-level');
-                if (newSelect) newSelect.addEventListener('change', arguments.callee);
+                if (newSelect) newSelect.addEventListener('change', handleLevelChange);
             }
-        });
+        }
+        levelSelect.addEventListener('change', handleLevelChange);
     }
 }
 

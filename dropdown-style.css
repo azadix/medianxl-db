@@ -27,8 +27,9 @@
 .dropdown-list {
     position: absolute;
     left: 100%;
-    top: -30vh;
-    min-width: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    min-width: 75%;
     width: auto;
     max-height: 60vh;
     overflow-y: auto;
@@ -37,7 +38,6 @@
     border: 1px solid var(--border-color);
     border-radius: 3px;
     z-index: 999;
-    transform-origin: top center;
     margin-inline-start: 0 !important; 
 }
 

@@ -42,7 +42,7 @@
 
   <h2 class="title is-4">Manage Data</h2>
   <div class="buttons">
-    <button class="button is-light" data-section="skills-section">Skills</button>
+    <button class="button is-primary" data-section="skills-section">Skills</button>
     <button class="button is-light" data-section="tags-section">Tags</button>
     <button class="button is-light" data-section="classes-section">Classes</button>
     <button class="button is-light" data-section="tabs-section">Class Tabs</button>
@@ -141,15 +141,20 @@
 
   <div id="tags-section" class="box" style="display:none;">
   <h2 class="title is-5">Manage Tags</h2>
-  <form id="tag-form" class="box">
+  <form id="tag-form">
     <div class="columns is-multiline">
       <div class="column is-one-third">
         <label class="label">New Tag Name</label>
         <input class="input" type="text" id="new-tag-name" placeholder="e.g. Fire">
       </div>
       <div class="column is-one-third">
-        <button class="button is-primary mt-5" id="add-tag-btn" type="button">Add Tag</button>
-        <button class="button mt-5" id="tag-cancel" type="button" style="display:none;">Cancel</button>
+        <label class="label">&nbsp;</label>
+        <div class="field is-grouped">
+          <div class="control">
+            <button class="button is-primary" id="add-tag-btn" type="button">Add Tag</button>
+            <button class="button" id="tag-cancel" type="button" style="display:none;">Cancel</button>
+          </div>
+        </div>
       </div>
     </div>
   </form>
@@ -178,7 +183,8 @@
           <label class="label">Image Prefix</label>
           <input class="input" type="text" id="class-image-prefix" placeholder="e.g. ama">
         </div>
-        <div class="column is-full">
+        <div class="column is-two-quarter">
+          <label class="label">&nbsp;</label>
           <button class="button is-primary" id="class-save" type="button">Insert Class</button>
           <button class="button" id="class-cancel" type="button" style="display:none;">Cancel</button>
         </div>
@@ -215,7 +221,8 @@
           <label class="label">Tab Name</label>
           <input class="input" type="text" id="tab-name" placeholder="e.g. Mastery">
         </div>
-        <div class="column is-full">
+        <div class="column is-two-quarter">
+          <label class="label">&nbsp;</label>
           <button class="button is-primary" id="tab-save" type="button">Insert Tab</button>
           <button class="button" id="tab-cancel" type="button" style="display:none;">Cancel</button>
         </div>
@@ -249,7 +256,7 @@
         </div>
         <div class="column is-one-quarter">
           <label class="label">Format</label>
-          <input class="input" type="text" id="stat-format" value="{name}: {value}">
+          <input class="input" type="text" id="stat-format" value="{name}: {value0}">
         </div>
         <div class="column is-full">
           <label class="label">Description</label>
@@ -262,18 +269,16 @@
       </div>
     </form>
 
-    <h4 class="title is-6">Preview & Validation</h4>
-    <div class="box">
-      <label class="label">Test Skill Description</label>
-      <textarea class="textarea" id="preview-input" rows="3" placeholder="Example: {{mana_cost:15}}, {{weapon_damage:55%}}, {{convert_phys_mag:50%}}"></textarea>
-      <div class="mt-3">
-        <button class="button is-info" id="preview-btn" type="button">Render Preview</button>
-      </div>
-      <h5 class="subtitle is-6 mt-4">Rendered Output</h5>
-      <div id="preview-output" class="content has-background p-3"></div>
-      <h5 class="subtitle is-6 mt-4">Validation Report</h5>
-      <div id="validation-output" class="content has-background p-3"></div>
+    <h4 class="title is-5">Preview & Validation</h4>
+    <label class="label">Test Skill Description</label>
+    <textarea class="textarea" id="preview-input" rows="3" placeholder="Example: {{mana_cost}}, {{cold_damage}}, {{fire_damage:100,200}} (auto-expands simple {{stat}} tokens)"></textarea>
+    <div class="mt-3">
+      <button class="button is-info" id="preview-btn" type="button">Render Preview</button>
     </div>
+    <h5 class="subtitle is-6 mt-4">Rendered Output</h5>
+    <div id="preview-output" class="content has-background p-3"></div>
+    <h5 class="subtitle is-6 mt-4">Validation Report</h5>
+    <div id="validation-output" class="content has-background p-3"></div>
 
     <table class="table is-striped is-fullwidth is-narrow" id="stats-table">
       <thead>
@@ -301,14 +306,20 @@
       </div>
       <div class="column is-one-quarter">
         <label class="label">Level</label>
-        <input class="input" type="number" id="scaling-level" min="1" value="1">
+        <div class="field has-addons">
+          <div class="control">
+            <input class="input" type="number" id="scaling-level" min="1" value="1">
+          </div>
+          <div class="control">
+            <button class="button" id="scaling-load" type="button">Load</button>
+          </div>
+        </div>
       </div>
       <div class="column is-full">
         <div class="buttons">
-          <button class="button" id="scaling-load" type="button">Load</button>
-          <button class="button is-primary" id="scaling-save" type="button">Save</button>
           <button class="button is-danger is-light" id="scaling-clear" type="button">Clear Level</button>
           <button class="button is-info is-light" id="scaling-suggest" type="button">Suggest From Description</button>
+          <button class="button is-primary" id="scaling-save" type="button">Save</button>
         </div>
       </div>
     </div>
@@ -323,7 +334,6 @@
           <button class="button" id="scaling-add-stat-btn" type="button">Add Stat</button>
         </div>
       </div>
-      <div id="scaling-add-stat-desc" class="mb-3"></div>
 
       <table class="table is-striped is-fullwidth is-narrow" id="scaling-table">
         <thead>
@@ -622,8 +632,26 @@
   document.querySelectorAll('[data-section]').forEach(btn => {
     btn.addEventListener('click', () => {
       const id = btn.getAttribute('data-section');
+      
+      // Check if this section is already active
+      const isCurrentlyActive = btn.classList.contains('is-primary');
+      if (isCurrentlyActive) {
+        return; // Don't do anything if already active
+      }
+      
+      // Remove active state from all buttons
+      document.querySelectorAll('[data-section]').forEach(b => {
+        b.classList.remove('is-primary');
+        b.classList.add('is-light');
+      });
+      
+      // Add active state to clicked button
+      btn.classList.remove('is-light');
+      btn.classList.add('is-primary');
+      
+      // Show/hide sections
       document.querySelectorAll('#skills-section, #tags-section, #classes-section, #tabs-section, #stats-section, #scaling-section').forEach(div => {
-        div.style.display = (div.id === id) ? (div.style.display === 'none' ? 'block' : 'none') : 'none';
+        div.style.display = (div.id === id) ? 'block' : 'none';
       });
     });
   });
@@ -1030,10 +1058,38 @@
   function renderPreview(description) {
     if (!description) return "";
     return description.replace(/\{\{(.*?)\}\}/g, (match, token) => {
-      const [key, rawValues] = token.split(':').map(s => s.trim());
-      const values = rawValues ? rawValues.split(',').map(v => v.trim()) : [];
+      const [rawKey, rawValues] = token.split(':').map(s => s.trim());
+      const key = (rawKey || '').toLowerCase();
+      
+      // If no values provided, auto-expand based on stat format
+      let values = [];
+      if (!rawValues) {
+        const paramCount = getStatParameterCount(key);
+        if (paramCount > 0) {
+          values = Array.from({length: paramCount}, (_, i) => `%value${i}%`);
+        }
+      } else {
+        values = rawValues.split(',').map(v => v.trim());
+      }
+      
       return renderStatPlaceholder(key, values);
     });
+  }
+
+  // Helper function to detect how many parameters a stat format needs
+  function getStatParameterCount(statKey) {
+    const stmt = SkillDB.db.prepare("SELECT format FROM stats WHERE LOWER(key) = ?");
+    stmt.bind([statKey.toLowerCase()]);
+    let paramCount = 0;
+    if (stmt.step()) {
+      const format = stmt.get()[0] || '{name}: {value}';
+      // Count how many value placeholders are in the format
+      const valueMatches = format.match(/\{value\d*\}/g) || [];
+      const percentMatches = format.match(/%value\d*%/g) || [];
+      paramCount = Math.max(valueMatches.length, percentMatches.length);
+    }
+    stmt.free();
+    return paramCount;
   }
 
   const previewBtn = document.getElementById("preview-btn");
@@ -1263,9 +1319,8 @@
     // Stat add dropdown using DropdownList.js
     const ddContainer = document.getElementById('scaling-add-stat-dd');
     const hiddenInput = document.getElementById('scaling-add-stat-hidden');
-    const descEl = document.getElementById('scaling-add-stat-desc');
 
-    if (ddContainer && hiddenInput && descEl) {
+    if (ddContainer && hiddenInput) {
       const res = SkillDB.db.exec("SELECT id, key, name FROM stats ORDER BY name");
       const items = res[0] ? res[0].values.map(([id, key, name]) => ({
         value: JSON.stringify({ id, key, name }),
@@ -1281,7 +1336,6 @@
         
         onSelect: (item) => {
           hiddenInput.value = item?.value || '';
-          descEl.innerHTML = item?.desc ? `<span class='has-text-weight-bold'>Key:</span> ${item.desc}` : '';
         }
       });
       dropdown.setItems(items);
@@ -1292,20 +1346,61 @@
     const tbody = document.querySelector('#scaling-table tbody');
     if (!tbody) return;
     tbody.innerHTML = '';
+    
+    // Get stat formats for dynamic column generation
+    const statFormats = new Map();
+    if (rows.length > 0) {
+      const statIds = rows.map(r => r.stat_id);
+      const stmt = SkillDB.db.prepare(`SELECT id, format FROM stats WHERE id IN (${statIds.map(() => '?').join(',')})`);
+      stmt.bind(statIds);
+      while (stmt.step()) {
+        const [id, format] = stmt.get();
+        statFormats.set(id, format || '{name}: {value}');
+      }
+      stmt.free();
+    }
+    
+    // Always show all 4 value columns for consistent layout
+    const maxParams = 4;
+    
+    // Update table header
+    const thead = document.querySelector('#scaling-table thead tr');
+    thead.innerHTML = `
+      <th style="width:20%">Name</th>
+      <th style="width:30%">Format</th>
+      <th>Value0</th>
+      <th>Value1</th>
+      <th>Value2</th>
+      <th>Value3</th>
+      <th style="width:10%">Actions</th>
+    `;
+    
     rows.forEach(r => {
       const tr = document.createElement('tr');
       tr.setAttribute('data-stat-id', r.stat_id);
+      
+      const format = statFormats.get(r.stat_id) || '{name}: {value}';
+      const valueMatches = format.match(/\{value\d*\}/g) || [];
+      const percentMatches = format.match(/%value\d*%/g) || [];
+      const paramCount = Math.max(valueMatches.length, percentMatches.length);
+      
+      const valueInputs = Array.from({length: maxParams}, (_, i) => {
+        const isNeeded = i < paramCount;
+        const value = r[`value${i}`] ?? '';
+        return `<td>
+          <input class="input" type="number" step="any" value="${value}" ${!isNeeded ? 'disabled placeholder="N/A"' : ''}>
+        </td>`;
+      }).join('');
+      
       tr.innerHTML = `
-        <td>${r.key}</td>
         <td>${r.name}</td>
-        <td><input class="input" type="number" step="any" value="${r.value0 ?? ''}"></td>
-        <td><input class="input" type="number" step="any" value="${r.value1 ?? ''}"></td>
-        <td><input class="input" type="number" step="any" value="${r.value2 ?? ''}"></td>
-        <td><input class="input" type="number" step="any" value="${r.value3 ?? ''}"></td>
+        <td><code class="has-text-info">${format}</code></td>
+        ${valueInputs}
         <td><button class="button is-small is-danger" data-remove-row>Remove</button></td>
       `;
       tbody.appendChild(tr);
     });
+    
     tbody.querySelectorAll('[data-remove-row]').forEach(btn => {
       btn.addEventListener('click', () => {
         btn.closest('tr').remove();
@@ -1362,23 +1457,32 @@
     const all = SkillDB.db.exec('SELECT id, key, name FROM stats');
     const map = new Map();
     if (all[0]) all[0].values.forEach(([id, key, name]) => map.set(key.toLowerCase(), { id, key, name }));
-    // Existing rows
-    const existingKeys = new Set(Array.from(document.querySelectorAll('#scaling-table tbody tr')).map(tr => tr.children[0].textContent.trim().toLowerCase()));
+    // Existing rows - need to get the stat key from the data attribute since we're now showing name in first column
+    const existingStatIds = new Set(Array.from(document.querySelectorAll('#scaling-table tbody tr')).map(tr => parseInt(tr.getAttribute('data-stat-id'), 10)));
     const rows = [];
     keys.forEach(k => {
-      if (!existingKeys.has(k) && map.has(k)) {
+      if (map.has(k)) {
         const s = map.get(k);
-        rows.push({ stat_id: s.id, key: s.key, name: s.name, value1: '', value2: '', value3: '' });
+        if (!existingStatIds.has(s.id)) {
+          rows.push({ stat_id: s.id, key: s.key, name: s.name, value0: '', value1: '', value2: '', value3: '' });
+        }
       }
     });
-    const current = Array.from(document.querySelectorAll('#scaling-table tbody tr')).map(tr => ({
-      stat_id: parseInt(tr.getAttribute('data-stat-id'), 10),
-      key: tr.children[0].textContent,
-      name: tr.children[1].textContent,
-      value1: tr.children[2].querySelector('input').value,
-      value2: tr.children[3].querySelector('input').value,
-      value3: tr.children[4].querySelector('input').value,
-    }));
+    const current = Array.from(document.querySelectorAll('#scaling-table tbody tr')).map(tr => {
+      const inputs = tr.querySelectorAll('input[type="number"]:not([disabled])');
+      const statId = parseInt(tr.getAttribute('data-stat-id'), 10);
+      // Get the stat info from the map using the stat ID
+      const statInfo = Array.from(map.values()).find(s => s.id === statId);
+      return {
+        stat_id: statId,
+        key: statInfo?.key || '',
+        name: tr.children[0].textContent, // This is now the name
+        value0: inputs[0]?.value || '',
+        value1: inputs[1]?.value || '',
+        value2: inputs[2]?.value || '',
+        value3: inputs[3]?.value || '',
+      };
+    });
     renderScalingRows(current.concat(rows));
   }
 
@@ -1386,17 +1490,30 @@
     const hidden = document.getElementById('scaling-add-stat-hidden');
     if (!hidden || !hidden.value) return;
     const { id, key, name } = JSON.parse(hidden.value);
-    const existingKeys = new Set(Array.from(document.querySelectorAll('#scaling-table tbody tr')).map(tr => tr.children[0].textContent.trim().toLowerCase()));
-    if (existingKeys.has(String(key).toLowerCase())) return;
-    const current = Array.from(document.querySelectorAll('#scaling-table tbody tr')).map(tr => ({
-      stat_id: parseInt(tr.getAttribute('data-stat-id'), 10),
-      key: tr.children[0].textContent,
-      name: tr.children[1].textContent,
-      value1: tr.children[2].querySelector('input').value,
-      value2: tr.children[3].querySelector('input').value,
-      value3: tr.children[4].querySelector('input').value,
-    }));
-    current.push({ stat_id: id, key, name, value1: '', value2: '', value3: '' });
+    const existingStatIds = new Set(Array.from(document.querySelectorAll('#scaling-table tbody tr')).map(tr => parseInt(tr.getAttribute('data-stat-id'), 10)));
+    if (existingStatIds.has(id)) return;
+    const current = Array.from(document.querySelectorAll('#scaling-table tbody tr')).map(tr => {
+      const inputs = tr.querySelectorAll('input[type="number"]:not([disabled])');
+      const statId = parseInt(tr.getAttribute('data-stat-id'), 10);
+      // Get the stat info from the database
+      const stmt = SkillDB.db.prepare('SELECT key, name FROM stats WHERE id = ?');
+      stmt.bind([statId]);
+      let statKey = '', statName = '';
+      if (stmt.step()) {
+        [statKey, statName] = stmt.get();
+      }
+      stmt.free();
+      return {
+        stat_id: statId,
+        key: statKey,
+        name: tr.children[0].textContent, // This is now the name
+        value0: inputs[0]?.value || '',
+        value1: inputs[1]?.value || '',
+        value2: inputs[2]?.value || '',
+        value3: inputs[3]?.value || '',
+      };
+    });
+    current.push({ stat_id: id, key, name, value0: '', value1: '', value2: '', value3: '' });
     renderScalingRows(current);
   }
 
@@ -1404,13 +1521,19 @@
     const skillId = parseInt(document.getElementById('scaling-skill').value, 10);
     const level = parseInt(document.getElementById('scaling-level').value, 10);
     if (Number.isNaN(skillId) || Number.isNaN(level)) return;
-    const rows = Array.from(document.querySelectorAll('#scaling-table tbody tr')).map(tr => ({
-      stat_id: parseInt(tr.getAttribute('data-stat-id'), 10),
-      value0: tr.children[2].querySelector('input').value,
-      value1: tr.children[3].querySelector('input').value,
-      value2: tr.children[4].querySelector('input').value,
-      value3: tr.children[5].querySelector('input').value,
-    }));
+    
+    const rows = Array.from(document.querySelectorAll('#scaling-table tbody tr')).map(tr => {
+      const statId = parseInt(tr.getAttribute('data-stat-id'), 10);
+      const inputs = tr.querySelectorAll('input[type="number"]:not([disabled])');
+      const values = {
+        stat_id: statId,
+        value0: inputs[0]?.value || '',
+        value1: inputs[1]?.value || '',
+        value2: inputs[2]?.value || '',
+        value3: inputs[3]?.value || '',
+      };
+      return values;
+    });
     // Upsert by delete+insert to keep logic simple
     rows.forEach(r => {
       // Skip empty rows (no values)
@@ -1422,6 +1545,7 @@
       SkillDB.db.run('INSERT INTO skill_scaling (skill_id, level, stat_id, value0, value1, value2, value3) VALUES (?, ?, ?, ?, ?, ?, ?)', [skillId, level, r.stat_id, r.value0 || null, r.value1 || null, r.value2 || null, r.value3 || null]);
     });
     document.getElementById('scaling-status').textContent = `Saved ${rows.length} rows for level ${level}`;
+    updateLevelIndicator();
   }
 
   function clearScaling() {
@@ -1431,6 +1555,28 @@
     SkillDB.db.run('DELETE FROM skill_scaling WHERE skill_id=? AND level=?', [skillId, level]);
     renderScalingRows([]);
     document.getElementById('scaling-status').textContent = `Cleared level ${level}`;
+    updateLevelIndicator();
+  }
+
+  function updateLevelIndicator() {
+    const skillId = parseInt(document.getElementById('scaling-skill').value, 10);
+    if (Number.isNaN(skillId)) return;
+    
+    // Get all levels that exist for this skill
+    const stmt = SkillDB.db.prepare('SELECT DISTINCT level FROM skill_scaling WHERE skill_id = ? ORDER BY level');
+    stmt.bind([skillId]);
+    const existingLevels = [];
+    while (stmt.step()) {
+      existingLevels.push(stmt.get()[0]);
+    }
+    stmt.free();
+    
+    const statusEl = document.getElementById('scaling-status');
+    if (existingLevels.length > 0) {
+      statusEl.innerHTML = `Existing levels: <span class="tag is-info">${existingLevels.join('</span> <span class="tag is-info">')}</span>`;
+    } else {
+      statusEl.textContent = 'No levels saved for this skill yet';
+    }
   }
 
   const scalingLoadBtn = document.getElementById('scaling-load');
@@ -1443,6 +1589,32 @@
   if (scalingSuggestBtn) scalingSuggestBtn.addEventListener('click', suggestFromDescription);
   const scalingAddStatBtn = document.getElementById('scaling-add-stat-btn');
   if (scalingAddStatBtn) scalingAddStatBtn.addEventListener('click', addStatRow);
+
+  // Auto-load when skill is selected
+  const scalingSkillSelect = document.getElementById('scaling-skill');
+  if (scalingSkillSelect) {
+    scalingSkillSelect.addEventListener('change', () => {
+      const skillId = parseInt(scalingSkillSelect.value, 10);
+      if (!Number.isNaN(skillId)) {
+        // Set level to 1 and auto-load
+        document.getElementById('scaling-level').value = 1;
+        loadScaling();
+        updateLevelIndicator();
+      }
+    });
+  }
+
+  // Auto-load when level changes
+  const scalingLevelInput = document.getElementById('scaling-level');
+  if (scalingLevelInput) {
+    scalingLevelInput.addEventListener('change', () => {
+      const skillId = parseInt(document.getElementById('scaling-skill').value, 10);
+      if (!Number.isNaN(skillId)) {
+        loadScaling();
+        updateLevelIndicator();
+      }
+    });
+  }
 
   initializePage();
   refreshTagsTable();
