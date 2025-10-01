@@ -13,6 +13,7 @@ poison_duration
 lightning_damage_max
 lightning_damage_min
 range
+attack_rating_percent
 attack_rating
 cooldown
 magic_damage
@@ -24,11 +25,12 @@ physical_damage_min
 bonus_defense
 physical_damage_flat
 radius
+minimum_mana_cost
 
 //TODO
 //--------------------------
 ancient_spirits
-attack_rating_percent
+
 attack_speed
 attacker_takes_bonus_lightning_damage
 aura_increases_elemental_resistances_by
@@ -105,7 +107,6 @@ max_hawks
 max_projectiles_per_volley
 maximum_life
 maximum_life_percent
-minimum_mana_cost
 minion_life
 minions
 missiles

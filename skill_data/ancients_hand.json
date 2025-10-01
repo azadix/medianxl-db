@@ -1,8 +1,0 @@
-{
-  "id": "ancients_hand",
-  "scaling": [
-    {"level": 13, "range": 14.6, "mana_cost": 49},
-    {"level": 14, "range": 15.2, "mana_cost": 52},
-    {"level": 15, "range": 15.9, "mana_cost": 55}
-  ]
-}
