@@ -393,7 +393,12 @@
       populateScalingSelectors();
     } catch (err) {
       console.warn("Falling back to empty DB:", err.message);
-      initDatabase();
+      try {
+        initDatabase();
+      } catch (initErr) {
+        console.error("Failed to initialize empty database:", initErr.message);
+        alert("Failed to initialize database. Please refresh the page.");
+      }
     }
   }
 
@@ -766,7 +771,7 @@
     }
     // Bind actions
     tbody.querySelectorAll('[data-edit-class]').forEach(btn => {
-      btn.addEventListener('click', () => {
+      const handleEditClass = () => {
         const id = parseInt(btn.getAttribute('data-edit-class'), 10);
         const stmt = SkillDB.db.prepare('SELECT id, name, image_prefix FROM classes WHERE id = ?');
         stmt.bind([id]);
@@ -779,10 +784,13 @@
           document.getElementById('class-cancel').style.display = 'inline-block';
         }
         stmt.free();
-      });
+      };
+      btn.addEventListener('click', handleEditClass);
+      // Store reference for potential cleanup
+      btn._editHandler = handleEditClass;
     });
     tbody.querySelectorAll('[data-del-class]').forEach(btn => {
-      btn.addEventListener('click', () => {
+      const handleDeleteClass = () => {
         const id = parseInt(btn.getAttribute('data-del-class'), 10);
         if (!confirm('Delete this class? This may affect tabs and skills.')) return;
         SkillDB.db.run('DELETE FROM classes WHERE id = ?', [id]);
@@ -790,7 +798,10 @@
         populateClassSelect();
         refreshTabsTable();
         refreshSkillsTable();
-      });
+      };
+      btn.addEventListener('click', handleDeleteClass);
+      // Store reference for potential cleanup
+      btn._deleteHandler = handleDeleteClass;
     });
   }
 
@@ -868,7 +879,7 @@
 
     // Bind actions
     tbody.querySelectorAll('[data-edit-tab]').forEach(btn => {
-      btn.addEventListener('click', () => {
+      const handleEditTab = () => {
         const id = parseInt(btn.getAttribute('data-edit-tab'), 10);
         const stmt = SkillDB.db.prepare('SELECT id, class_id, tab_index, name FROM classTabs WHERE id = ?');
         stmt.bind([id]);
@@ -882,16 +893,22 @@
           document.getElementById('tab-cancel').style.display = 'inline-block';
         }
         stmt.free();
-      });
+      };
+      btn.addEventListener('click', handleEditTab);
+      // Store reference for potential cleanup
+      btn._editHandler = handleEditTab;
     });
     tbody.querySelectorAll('[data-del-tab]').forEach(btn => {
-      btn.addEventListener('click', () => {
+      const handleDeleteTab = () => {
         const id = parseInt(btn.getAttribute('data-del-tab'), 10);
         if (!confirm('Delete this class tab?')) return;
         SkillDB.db.run('DELETE FROM classTabs WHERE id = ?', [id]);
         refreshTabsTable();
         populateTabSelect(document.getElementById('class_id').value);
-      });
+      };
+      btn.addEventListener('click', handleDeleteTab);
+      // Store reference for potential cleanup
+      btn._deleteHandler = handleDeleteTab;
     });
   }
 
@@ -1095,32 +1112,57 @@
   const previewBtn = document.getElementById("preview-btn");
   if (previewBtn) {
     previewBtn.addEventListener("click", () => {
-      const input = document.getElementById("preview-input").value;
-      const rendered = renderPreview(input);
-      document.getElementById("preview-output").innerHTML = rendered;
-      const errors = validatePlaceholders(input);
+      const input = document.getElementById("preview-input");
+      const output = document.getElementById("preview-output");
+      const validation = document.getElementById("validation-output");
+      
+      if (!input || !output || !validation) {
+        console.error("Preview elements not found");
+        return;
+      }
+      
+      const rendered = renderPreview(input.value);
+      output.innerHTML = rendered;
+      const errors = validatePlaceholders(input.value);
       if (errors.length > 0) {
-        document.getElementById("validation-output").innerHTML = `<strong>Unknown stats:</strong> ${errors.join(", ")}`;
+        validation.innerHTML = `<strong>Unknown stats:</strong> ${errors.join(", ")}`;
       } else {
-        document.getElementById("validation-output").innerHTML = "<span class='has-text-success'>All stat references valid ✅</span>";
+        validation.innerHTML = "<span class='has-text-success'>All stat references valid ✅</span>";
       }
     });
   }
 
   // Insert skill
-  document.getElementById("skill-form").addEventListener("submit", e => {
-    e.preventDefault();
-    if (!SkillDB.db) return;
+  const skillForm = document.getElementById("skill-form");
+  if (skillForm) {
+    skillForm.addEventListener("submit", e => {
+      e.preventDefault();
+      if (!SkillDB.db) return;
 
-    const name = document.getElementById("name").value.trim();
-    const display_name = document.getElementById("display_name").value.trim();
-    const class_id = document.getElementById("class_id").value;
-    const tab_id = parseInt(document.getElementById("tab_index").value, 10);
-    const row = parseInt(document.getElementById("row").value, 10);
-    const col = parseInt(document.getElementById("col").value, 10);
-    const image = document.getElementById("image").value.trim();
-    const restriction = document.getElementById("restriction").value.trim();
-    const description = document.getElementById("description").value.trim();
+      const nameEl = document.getElementById("name");
+      const displayNameEl = document.getElementById("display_name");
+      const classIdEl = document.getElementById("class_id");
+      const tabIdEl = document.getElementById("tab_index");
+      const rowEl = document.getElementById("row");
+      const colEl = document.getElementById("col");
+      const imageEl = document.getElementById("image");
+      const restrictionEl = document.getElementById("restriction");
+      const descriptionEl = document.getElementById("description");
+
+      if (!nameEl || !displayNameEl || !classIdEl || !tabIdEl || !rowEl || !colEl || !imageEl || !restrictionEl || !descriptionEl) {
+        console.error("Required form elements not found");
+        return;
+      }
+
+      const name = nameEl.value.trim();
+      const display_name = displayNameEl.value.trim();
+      const class_id = classIdEl.value;
+      const tab_id = parseInt(tabIdEl.value, 10);
+      const row = parseInt(rowEl.value, 10);
+      const col = parseInt(colEl.value, 10);
+      const image = imageEl.value.trim();
+      const restriction = restrictionEl.value.trim();
+      const description = descriptionEl.value.trim();
 
     if (SkillDB.editingSkillId) {
       // Update
@@ -1152,9 +1194,10 @@
       });
     }
 
-    refreshSkillsTable();
-    e.target.reset();
-  });
+      refreshSkillsTable();
+      e.target.reset();
+    });
+  }
 
   function refreshSkillsTable() {
     if (!SkillDB.db) return;
@@ -1559,7 +1602,15 @@
   }
 
   function updateLevelIndicator() {
-    const skillId = parseInt(document.getElementById('scaling-skill').value, 10);
+    const skillSelect = document.getElementById('scaling-skill');
+    const statusEl = document.getElementById('scaling-status');
+    
+    if (!skillSelect || !statusEl) {
+      console.error("Scaling elements not found");
+      return;
+    }
+    
+    const skillId = parseInt(skillSelect.value, 10);
     if (Number.isNaN(skillId)) return;
     
     // Get all levels that exist for this skill
@@ -1571,7 +1622,6 @@
     }
     stmt.free();
     
-    const statusEl = document.getElementById('scaling-status');
     if (existingLevels.length > 0) {
       statusEl.innerHTML = `Existing levels: <span class="tag is-info">${existingLevels.join('</span> <span class="tag is-info">')}</span>`;
     } else {

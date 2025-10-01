@@ -126,7 +126,9 @@ async function displaySkillDetail(skillId) {
             availableLevels.push(lvlStmt.get()[0]);
         }
         lvlStmt.free();
-    } catch {}
+    } catch (error) {
+      console.warn('No scaling data available for this skill:', error.message);
+    }
 
     // Build level control only if there is scaling
     const hasScaling = availableLevels.length > 0;
@@ -162,49 +164,6 @@ async function displaySkillDetail(skillId) {
         ).join('');
         restrictionHtml += `<br>`;
     }
-
-    // TODO implement scaling from db
-
-    // // Create scaling table
-    // let scalingTable = `
-    //     <p class="is-size-4"><strong>Skill Scaling (only soft points):</strong>
-    //     <button class="button is-primary is-outlined" id="toggle-scaling">
-    //         Show
-    //     </button>
-    //     </p>
-    //     <div id="scaling-container" class="is-hidden">
-    // `;
-
-    // if (!skillData.scaling || skillData.scaling.length == 0) {
-    //     // Empty scaling array
-    //     scalingTable += `
-    //         <p class="has-text-danger">This skill does not scale with skill levels</p>
-    //     `;
-    // } else {
-    //     // Regular skills with scaling data
-    //     // Get the stat names from the first scaling entry
-    //     const statNames = Object.keys(skillData.scaling[0]).filter(key => key !== 'level');
-        
-    //     scalingTable += `
-    //         <table class="table is-hoverable is-fullwidth">
-    //             <thead>
-    //                 <tr>
-    //                     <th>Level</th>
-    //                     ${statNames.map(stat => `<th>${formatStatName(stat)}</th>`).join('')}
-    //                 </tr>
-    //             </thead>
-    //             <tbody>
-    //                 ${skillData.scaling.map(level => `
-    //                     <tr>
-    //                         <td>${level.level}</td>
-    //                         ${statNames.map(stat => `<td>${level[stat]}</td>`).join('')}
-    //                     </tr>
-    //                 `).join('')}
-    //             </tbody>
-    //         </table>
-    //         </div>
-    //     `;
-    // }
     
     let scalingTable = '';
     contentElement.innerHTML = `
