@@ -1,6 +1,0 @@
-{
-  "id": "arcane_torrent",
-  "scaling": [
-    { "level": 21, "physical_damage_min": 389, "physical_damage_max": 486, "magic_damage_min": 330, "magic_damage_max": 428, "mana_cost": 135 }
-  ]
-}

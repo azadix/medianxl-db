@@ -1,6 +1,0 @@
-{
-  "id": "black_lotus_strike",
-  "scaling": [
-    { "level": 31, "poison_damage_min": 766, "poison_damage_max": 1079, "poison_duration": 2, "mana_cost": 80 }
-  ]
-}

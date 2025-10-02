@@ -1,6 +1,0 @@
-{
-  "id": "balefire",
-  "scaling": [
-    { "level": 15, "bonus_defense": 150, "magic_damage_min": 233, "magic_damage_max": 250, "mana_cost": 66 }
-  ]
-}

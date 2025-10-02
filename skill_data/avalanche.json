@@ -1,6 +1,0 @@
-{
-  "id": "avalanche",
-  "scaling": [
-    { "level": 12, "cold_damage_min": 53, "cold_damage_max": 65, "mana_cost": 93 }
-  ]
-}

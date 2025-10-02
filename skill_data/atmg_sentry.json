@@ -1,6 +1,0 @@
-{
-  "id": "atmg_sentry",
-  "scaling": [
-    { "level": 3, "radius": 22, "duration": 2.1, "mana_cost": 34 }
-  ]
-}

@@ -1,6 +1,0 @@
-{
-  "id": "bane",
-  "scaling": [
-    { "level": 4, "duration": 10, "enemy_physical_resistance": -6, "mana_cost": 45 }
-  ]
-}

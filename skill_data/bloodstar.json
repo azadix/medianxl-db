@@ -1,6 +1,0 @@
-{
-  "id": "bloodstar",
-  "scaling": [
-    { "level": 60, "fire_damage_min": 431, "fire_damage_max": 595, "mana_cost": 98 }
-  ]
-}

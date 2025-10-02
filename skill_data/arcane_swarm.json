@@ -1,6 +1,0 @@
-{
-  "id": "arcane_swarm",
-  "scaling": [
-    { "level": 4, "magic_damage_min": 37, "magic_damage_max": 44, "mana_cost": 36 }
-  ]
-}
