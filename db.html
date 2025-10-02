@@ -1036,10 +1036,10 @@
       const [name, format] = stmt.get();
       output = format
         .replace("{name}", name)
-        .replace("{value}", values[0] || "")
-        .replace("{value1}", values[0] || "")
-        .replace("{value2}", values[1] || "")
-        .replace("{value3}", values[2] || "");
+        .replace("{value0}", values[0] || "")
+        .replace("{value1}", values[1] || "")
+        .replace("{value2}", values[2] || "")
+        .replace("{value3}", values[3] || "");
     }
 
     stmt.free();
@@ -1101,7 +1101,7 @@
       // Insert
       SkillDB.db.run(`
         INSERT INTO skills (name, display_name, class_id, tab_index, row, col, image, restriction, description)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
       `, [name, display_name, class_id, tab_id, row, col, image, restriction, description]);
 
       const skillId = SkillDB.db.exec("SELECT last_insert_rowid()")[0].values[0][0];
@@ -1391,20 +1391,26 @@
     const level = parseInt(document.getElementById('scaling-level').value, 10);
     if (Number.isNaN(skillId) || Number.isNaN(level)) return;
 
-    const res = SkillDB.db.exec(`
+    const stmt = SkillDB.db.prepare(`
       SELECT s.id AS stat_id, s.key, s.name,
             ss.value0, ss.value1, ss.value2, ss.value3
       FROM stats s
       LEFT JOIN skill_scaling ss
         ON ss.stat_id = s.id
-      AND ss.skill_id = ${skillId}
-      AND ss.level = ${level}
+      AND ss.skill_id = ?
+      AND ss.level = ?
       WHERE ss.stat_id IS NOT NULL
       ORDER BY s.name
     `);
+    stmt.bind([skillId, level]);
+    const res = [];
+    while (stmt.step()) {
+      res.push(stmt.get());
+    }
+    stmt.free();
 
-    const rows = res[0]
-      ? res[0].values.map(([stat_id, key, name, v0, v1, v2, v3]) => ({
+    const rows = res.length > 0
+      ? res.map(([stat_id, key, name, v0, v1, v2, v3]) => ({
           stat_id, key, name, value0: v0, value1: v1, value2: v2, value3: v3
         }))
       : [];
