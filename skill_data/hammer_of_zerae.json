@@ -1,6 +1,0 @@
-{
-  "id": "hammer_of_zerae",
-  "scaling": [
-    { "level": 14, "lightning_damage_min": 36, "lightning_damage_max": 53, "mana_cost": 27 }
-  ]
-}

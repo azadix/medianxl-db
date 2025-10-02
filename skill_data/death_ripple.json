@@ -1,6 +1,0 @@
-{
-  "id": "death_ripple",
-  "scaling": [
-    { "level": 4, "physical_damage_min": 79, "physical_damage_max": 96, "magic_damage_min": 79, "magic_damage_max": 96, "mana_cost": 13 }
-  ]
-}

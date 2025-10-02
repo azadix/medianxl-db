@@ -1,6 +1,0 @@
-{
-  "id": "flash",
-  "scaling": [
-    { "level": 38, "lightning_damage_min": 284, "lightning_damage_max": 303, "mana_cost": 124 }
-  ]
-}

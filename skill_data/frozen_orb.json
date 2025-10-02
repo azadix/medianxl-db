@@ -1,6 +1,0 @@
-{
-  "id": "frozen_orb",
-  "scaling": [
-    { "level": 17, "cold_damage_min": 157, "cold_damage_max": 186, "mana_cost": 111 }
-  ]
-}

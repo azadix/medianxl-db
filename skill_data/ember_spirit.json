@@ -1,6 +1,0 @@
-{
-  "id": "ember_spirit",
-  "scaling": [
-    { "level": 23, "average_fire_damage_per_second_min": 2105, "average_fire_damage_per_second_max": 2835 ,"mana_cost": 83 }
-  ]
-}

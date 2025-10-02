@@ -1,6 +1,0 @@
-{
-  "id": "funeral_pyre",
-  "scaling": [
-    { "level": 20, "fire_damage_min": 228, "fire_damage_max": 275, "mana_cost": 119 }
-  ]
-}

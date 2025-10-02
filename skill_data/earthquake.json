@@ -1,8 +1,0 @@
-{
-  "id": "earthquake",
-  "scaling": [
-    { "level": 20, "physical_damage": 30, "mana_cost": 22 },
-    { "level": 21, "physical_damage": 31, "mana_cost": 23 },
-    { "level": 22, "physical_damage": 32, "mana_cost": 24 }
-  ]
-}

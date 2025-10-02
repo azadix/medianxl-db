@@ -1,6 +1,0 @@
-{
-  "id": "churel",
-  "scaling": [
-    { "level": 16, "cold_spell_damage": 32, "cold_damage_min": 119, "cold_damage_max": 145, "mana_cost": 134 }
-  ]
-}

@@ -1,6 +1,0 @@
-{
-  "id": "great_hunt",
-  "scaling": [
-    { "level": 6, "unleashes_spirits": 3, "bonus_magic_damage": 50, "mana_cost": 11 }
-  ]
-}

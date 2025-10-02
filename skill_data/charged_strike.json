@@ -1,6 +1,0 @@
-{
-  "id": "charged_strike",
-  "scaling": [
-    { "level": 15, "charged_bolts": 4, "lightning_damage_min": 30, "lightning_damage_max": 66, "mana_cost": 51 }
-  ]
-}

@@ -1,6 +1,0 @@
-{
-  "id": "guard_tower",
-  "scaling": [
-    { "level": 9, "target_seek_range": 12, "mana_cost": 37 }
-  ]
-}

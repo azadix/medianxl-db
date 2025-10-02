@@ -1,6 +1,0 @@
-{
-  "id": "crucify",
-  "scaling": [
-    { "level": 10, "bonus_magic_damage": 268, "mana_cost": 16 }
-  ]
-}

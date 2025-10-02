@@ -1,6 +1,0 @@
-{
-  "id": "colosseum",
-  "scaling": [
-    { "level": 5, "bonus_fire_damage_based_on_strength_or_dexterity": 48, "mana_cost": 73 }
-  ]
-}

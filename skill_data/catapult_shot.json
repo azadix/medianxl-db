@@ -1,6 +1,0 @@
-{
-  "id": "catapult_shot",
-  "scaling": [
-    { "level": 4, "missiles": 10, "fire_damage_min": 10, "fire_damage_max": 15, "attack_rating": 95, "mana_cost": 10 }
-  ]
-}

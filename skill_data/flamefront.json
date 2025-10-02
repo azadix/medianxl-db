@@ -1,6 +1,0 @@
-{
-  "id": "flamefront",
-  "scaling": [
-    { "level": 20, "fire_damage_min": 151, "fire_damage_max": 190, "mana_cost": 40 }
-  ]
-}

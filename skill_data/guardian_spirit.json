@@ -1,6 +1,0 @@
-{
-  "id": "guardian_spirit",
-  "scaling": [
-    { "level": 28, "ancient_spirits": 2, "life": 4920, "damage": 179, "attack_rating": 4960, "mana_cost": 101 }
-  ]
-}

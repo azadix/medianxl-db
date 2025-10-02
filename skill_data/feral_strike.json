@@ -1,6 +1,0 @@
-{
-  "id": "feral_strike",
-  "scaling": [
-    { "level": 16, "attack_rating": 275, "attack_speed": 200, "hit_recovery": 200, "mana_cost": 13.7 }
-  ]
-}

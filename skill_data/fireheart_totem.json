@@ -1,6 +1,0 @@
-{
-  "id": "fireheart_totem",
-  "scaling": [
-    { "level": 4, "fire_damage_min": 52, "fire_damage_max": 77, "mana_cost": 75 }
-  ]
-}

@@ -1,6 +1,0 @@
-{
-  "id": "flamestrike",
-  "scaling": [
-    { "level": 18, "fire_damage_min": 198, "fire_damage_max": 273, "mana_cost": 89 }
-  ]
-}

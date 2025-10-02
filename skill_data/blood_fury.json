@@ -1,6 +1,0 @@
-{
-  "id": "blood_fury",
-  "scaling": [
-    { "level": 6, "elemental_spell_damage": 23, "physical_magic_spell_damage": 23, "mana_cost": 687 }
-  ]
-}

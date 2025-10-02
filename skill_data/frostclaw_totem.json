@@ -1,6 +1,0 @@
-{
-  "id": "frostclaw_totem",
-  "scaling": [
-    { "level": 4, "cold_damage_min": 181, "cold_damage_max": 207, "mana_cost": 75 }
-  ]
-}

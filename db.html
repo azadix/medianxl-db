@@ -31,23 +31,21 @@
   </nav>
 
   <h1 class="title mt-1 is-3">Skills Database (sql.js)</h1>
-
-  <div class="buttons">
-    <div class="file has-name is-small" style="display:none;">
-      <input class="file-input" type="file" id="import-db" accept=".sqlite">
+  <div class="field">
+    <div class="buttons">
+      <button class="button is-primary" data-section="skills-section">Skills</button>
+      <button class="button is-light" data-section="tags-section">Tags</button>
+      <button class="button is-light" data-section="classes-section">Classes</button>
+      <button class="button is-light" data-section="tabs-section">Class Tabs</button>
+      <button class="button is-light" data-section="stats-section">Stats</button>
+      <button class="button is-light" data-section="scaling-section">Scaling</button>
+      
+      <div class="file has-name is-small ml-auto" style="display:none;">
+        <input class="file-input" type="file" id="import-db" accept=".sqlite">
+      </div>
+      <button class="button is-info ml-auto" id="import-db-btn">Import Database</button>
+      <button class="button is-link" id="export-db-btn">Export Database</button>
     </div>
-    <button class="button is-info" id="import-db-btn">Import Database</button>
-    <button class="button is-link" id="export-db-btn">Export Database</button>
-  </div>
-
-  <h2 class="title is-4">Manage Data</h2>
-  <div class="buttons">
-    <button class="button is-primary" data-section="skills-section">Skills</button>
-    <button class="button is-light" data-section="tags-section">Tags</button>
-    <button class="button is-light" data-section="classes-section">Classes</button>
-    <button class="button is-light" data-section="tabs-section">Class Tabs</button>
-    <button class="button is-light" data-section="stats-section">Stats</button>
-    <button class="button is-light" data-section="scaling-section">Scaling</button>
   </div>
 
   <div id="skills-section" class="box" style="display:block;">
@@ -94,12 +92,12 @@
 
       <div class="column is-full">
         <label class="label">Restriction</label>
-        <textarea class="textarea" id="restriction" rows="2"></textarea>
+        <textarea class="textarea" id="restriction" rows="1"></textarea>
       </div>
 
       <div class="column is-full">
         <label class="label">Description</label>
-        <textarea class="textarea" id="description" rows="4"></textarea>
+        <textarea class="textarea" id="description" rows="5"></textarea>
       </div>
 
       <div class="column is-full">
