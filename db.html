@@ -1598,6 +1598,7 @@
     let autocompleteDropdown = null;
     let currentMatches = [];
     let selectedIndex = -1;
+    let statUsageCounts = {};
 
     descriptionField.addEventListener('input', function(e) {
       const cursorPos = e.target.selectionStart;
@@ -1670,6 +1671,7 @@
       for (const stat of stats) {
         const key = stat.key.toLowerCase();
         const name = stat.name.toLowerCase();
+        const usageCount = stat.usage_count || 0;
         let score = 0;
         
         // Exact match gets highest score
@@ -1712,7 +1714,10 @@
           }
         }
         
+        // Add usage count bonus to score (up to 50 points for heavily used stats)
         if (score > 0) {
+          const usageBonus = Math.min(usageCount * 2, 50);
+          score += usageBonus;
           results.push({ ...stat, score });
         }
       }
@@ -1727,14 +1732,28 @@
     function showAutocomplete(query, startPos, endPos) {
       if (!SkillDB.db) return;
 
-      // Get all stats
+      // Initialize usage counts on first use
+      if (Object.keys(statUsageCounts).length === 0) {
+        statUsageCounts = countStatUsageInDescriptions();
+      }
+
+      // Get all stats ordered by usage count (most used first), then by key
       const stmt = SkillDB.db.prepare("SELECT key, name FROM stats ORDER BY key");
       const allStats = [];
       while (stmt.step()) {
         const [key, name] = stmt.get();
-        allStats.push({ key, name });
+        const usage_count = statUsageCounts[key.toLowerCase()] || 0;
+        allStats.push({ key, name, usage_count });
       }
       stmt.free();
+      
+      // Sort by usage count (most used first), then by key
+      allStats.sort((a, b) => {
+        if (b.usage_count !== a.usage_count) {
+          return b.usage_count - a.usage_count;
+        }
+        return a.key.localeCompare(b.key);
+      });
 
       // Fuzzy filter the stats
       currentMatches = fuzzyFilter(allStats, query.toLowerCase());
@@ -1783,7 +1802,10 @@
         strong.style.color = 'inherit';
         
         item.appendChild(strong);
-        item.appendChild(document.createTextNode(` - ${match.name}`));
+        
+        // Add usage count if available
+        const usageText = match.usage_count > 0 ? ` (${match.usage_count})` : '';
+        item.appendChild(document.createTextNode(` - ${match.name}${usageText}`));
         
         item.addEventListener('click', () => {
           completeStat(match);
@@ -1876,8 +1898,45 @@
           descriptionField.setSelectionRange(newCursorPos, newCursorPos);
         }
         
+        
         hideAutocomplete();
       }
+    }
+
+    function countStatUsageInDescriptions() {
+      if (!SkillDB.db) return {};
+      
+      const usageCounts = {};
+      
+      try {
+        // Get all skill descriptions that contain placeholders
+        const stmt = SkillDB.db.prepare(`
+          SELECT description 
+          FROM skills 
+          WHERE description IS NOT NULL 
+          AND description != '' 
+          AND description LIKE '%{{%}}%'
+        `);
+        
+        while (stmt.step()) {
+          const description = stmt.get()[0];
+          
+          // Find all {{...}} placeholders in this description
+          const matches = description.match(/\{\{([^}]+)\}\}/g);
+          if (matches) {
+            matches.forEach(match => {
+              // Extract the stat key (part before colon if present)
+              const statKey = match.replace(/\{\{|\}\}/g, '').split(':')[0].trim().toLowerCase();
+              usageCounts[statKey] = (usageCounts[statKey] || 0) + 1;
+            });
+          }
+        }
+        stmt.free();
+      } catch (error) {
+        console.warn('Failed to count stat usage in descriptions:', error);
+      }
+      
+      return usageCounts;
     }
 
     function hideAutocomplete() {
