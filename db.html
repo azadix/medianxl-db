@@ -305,21 +305,11 @@
       <div class="column is-full">
         <div class="buttons">
           <button class="button is-danger is-outlined" id="scaling-clear" type="button">Clear Level</button>
-          <button class="button is-info is-outlined" id="scaling-suggest" type="button">Suggest From Description</button>
           <button class="button is-primary" id="scaling-save" type="button">Save</button>
         </div>
       </div>
     </div>
     
-    <div class="columns is-vcentered">
-      <div class="column is-half">
-        <div id="scaling-add-stat-dd"></div>
-        <input type="hidden" id="scaling-add-stat-hidden" />
-      </div>
-      <div class="column is-one-quarter">
-        <button class="button" id="scaling-add-stat-btn" type="button">Add Stat</button>
-      </div>
-    </div>
 
     <table class="table is-striped is-fullwidth is-narrow" id="scaling-table">
       <thead>
@@ -1291,34 +1281,12 @@
             document.getElementById('scaling-level').value = 1;
             loadScaling();
             updateLevelIndicator();
+            // Automatically suggest scaling from description
+            suggestFromDescription();
           }
         }
       });
       skillDropdown.setItems(skillItems);
-    }
-    // Stat add dropdown using DropdownList.js
-    const ddContainer = document.getElementById('scaling-add-stat-dd');
-    const hiddenInput = document.getElementById('scaling-add-stat-hidden');
-
-    if (ddContainer && hiddenInput) {
-      const res = SkillDB.db.exec("SELECT id, key, name FROM stats ORDER BY name");
-      const items = res[0] ? res[0].values.map(([id, key, name]) => ({
-        value: JSON.stringify({ id, key, name }),
-        name: name,
-        desc: key
-      })) : [];
-      items.sort((a, b) => a.name.localeCompare(b.name));
-
-      const dropdown = new DropdownList(ddContainer, {
-        placeholder: 'Select stat...',
-        emptyListText: 'No results',
-        defaultHeaderText: 'Stats',
-        
-        onSelect: (item) => {
-          hiddenInput.value = item?.value || '';
-        }
-      });
-      dropdown.setItems(items);
     }
   }
 
@@ -1472,36 +1440,6 @@
     renderScalingRows(current.concat(rows));
   }
 
-  function addStatRow() {
-    const hidden = document.getElementById('scaling-add-stat-hidden');
-    if (!hidden || !hidden.value) return;
-    const { id, key, name } = JSON.parse(hidden.value);
-    const existingStatIds = new Set(Array.from(document.querySelectorAll('#scaling-table tbody tr')).map(tr => parseInt(tr.getAttribute('data-stat-id'), 10)));
-    if (existingStatIds.has(id)) return;
-    const current = Array.from(document.querySelectorAll('#scaling-table tbody tr')).map(tr => {
-      const inputs = tr.querySelectorAll('input[type="number"]:not([disabled])');
-      const statId = parseInt(tr.getAttribute('data-stat-id'), 10);
-      // Get the stat info from the database
-      const stmt = SkillDB.db.prepare('SELECT key, name FROM stats WHERE id = ?');
-      stmt.bind([statId]);
-      let statKey = '', statName = '';
-      if (stmt.step()) {
-        [statKey, statName] = stmt.get();
-      }
-      stmt.free();
-      return {
-        stat_id: statId,
-        key: statKey,
-        name: tr.children[0].textContent, // This is now the name
-        value0: inputs[0]?.value || '',
-        value1: inputs[1]?.value || '',
-        value2: inputs[2]?.value || '',
-        value3: inputs[3]?.value || '',
-      };
-    });
-    current.push({ stat_id: id, key, name, value0: '', value1: '', value2: '', value3: '' });
-    renderScalingRows(current);
-  }
 
   function saveScaling() {
     const skillId = parseInt(document.getElementById('scaling-skill-hidden').value, 10);
@@ -1578,12 +1516,8 @@
   if (scalingSaveBtn) scalingSaveBtn.addEventListener('click', saveScaling);
   const scalingClearBtn = document.getElementById('scaling-clear');
   if (scalingClearBtn) scalingClearBtn.addEventListener('click', clearScaling);
-  const scalingSuggestBtn = document.getElementById('scaling-suggest');
-  if (scalingSuggestBtn) scalingSuggestBtn.addEventListener('click', suggestFromDescription);
-  const scalingAddStatBtn = document.getElementById('scaling-add-stat-btn');
-  if (scalingAddStatBtn) scalingAddStatBtn.addEventListener('click', addStatRow);
 
-  // Auto-load when level changes
+  // Auto-load and suggest scaling when level changes
   const scalingLevelInput = document.getElementById('scaling-level');
   if (scalingLevelInput) {
     scalingLevelInput.addEventListener('change', () => {
@@ -1591,6 +1525,8 @@
       if (!Number.isNaN(skillId)) {
         loadScaling();
         updateLevelIndicator();
+        // Automatically suggest scaling from description
+        suggestFromDescription();
       }
     });
   }
