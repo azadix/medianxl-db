@@ -1,6 +1,0 @@
-{
-  "id": "night_hawks",
-  "scaling": [
-    { "level": 4, "max_hawks": 3, "damage_min": 174, "damage_max": 193, "attack_rating": 2450, "mana_cost": 25 }
-  ]
-}

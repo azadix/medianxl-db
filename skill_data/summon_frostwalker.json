@@ -1,6 +1,0 @@
-{
-  "id": "summon_frostwalker",
-  "scaling": [
-    { "level": 17, "ice_lance_level": 17, "cold_damage_min": 98, "cold_damage_max": 131, "life": 14608, "minions": 3, "mana_cost": 297 }
-  ]
-}

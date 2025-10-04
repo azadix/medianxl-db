@@ -1,6 +1,0 @@
-{
-  "id": "discharge",
-  "scaling": [
-    { "level": 16, "enemy_lightning_resistance": -20, "duration": 270, "mana_cost": 300 }
-  ]
-}

@@ -1,6 +1,0 @@
-{
-  "id": "raven_heart",
-  "scaling": [
-    { "level": 7, "cold_damage_percent_bonus": 35, "mana_cost": 54 }
-  ]
-}

@@ -1,6 +1,0 @@
-{
-  "id": "spark_of_hope",
-  "scaling": [
-    { "level": 12, "attack_speed": 23, "cast_speed": 23, "hit_recovery": 23, "movement_speed": 20, "mana_cost": 52 }
-  ]
-}

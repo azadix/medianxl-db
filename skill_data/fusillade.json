@@ -1,6 +1,0 @@
-{
-  "id": "fusillade",
-  "scaling": [
-    { "level": 5, "duration": 2.1, "cooldown": 4.1, "mana_cost": 90 }
-  ]
-}

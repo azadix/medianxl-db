@@ -1,6 +1,0 @@
-{
-  "id": "ice_elementals",
-  "scaling": [
-    { "level": 24, "spirits": 1, "life": 14344, "damage_min": 314, "damage_max": 329, "attack_rating": 2960, "mana_cost": 182 }
-  ]
-}

@@ -1,6 +1,0 @@
-{
-  "id": "hurricane",
-  "scaling": [
-    { "level": 13, "physical_damage_min": 320, "physical_damage_max": 366, "mana_cost": 19 }
-  ]
-}

@@ -1,6 +1,0 @@
-{
-  "id": "scorpion_blade",
-  "scaling": [
-    { "level": 12, "knives": 2, "poison_damage": 5, "poison_duration": 0.5, "mana_cost": 27 }
-  ]
-}

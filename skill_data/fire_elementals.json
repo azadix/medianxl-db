@@ -1,6 +1,0 @@
-{
-  "id": "fire_elementals",
-  "scaling": [
-    { "level": 16, "spirits": 15, "life": 3846, "attack_rating": 2450, "damage_min": 92, "damage_max": 102, "mana_cost": 85 }
-  ]
-}

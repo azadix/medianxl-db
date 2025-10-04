@@ -1,6 +1,0 @@
-{
-  "id": "frigid_nova",
-  "scaling": [
-    { "level": 27, "cold_damage_min": 180, "cold_damage_max": 226, "mana_cost": 89 }
-  ]
-}

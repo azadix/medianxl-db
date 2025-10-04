@@ -1,6 +1,0 @@
-{
-  "id": "phoenix_wave",
-  "scaling": [
-    { "level": 16, "life_restored_per_cast": 31, "fire_damage_min": 94, "fire_damage_max": 117, "mana_cost": 95 }
-  ]
-}

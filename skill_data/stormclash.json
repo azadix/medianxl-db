@@ -1,6 +1,0 @@
-{
-  "id": "stormclash",
-  "scaling": [
-    { "level": 11, "lightning_spears": 1, "lightning_damage_min": 42, "lightning_damage_max": 79, "mana_cost": 51 }
-  ]
-}

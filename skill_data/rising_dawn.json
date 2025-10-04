@@ -1,6 +1,0 @@
-{
-  "id": "rising_dawn",
-  "scaling": [
-    { "level": 11, "magic_damage_min": 522, "magic_damage_max": 633, "mana_cost": 220 }
-  ]
-}

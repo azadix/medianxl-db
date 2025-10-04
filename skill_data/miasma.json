@@ -1,6 +1,0 @@
-{
-  "id": "miasma",
-  "scaling": [
-    { "level": 17, "duration": 4.9, "poison_damage_min": 91, "poison_damage_max": 134, "poison_duration": 0.8, "mana_cost": 46 }
-  ]
-}

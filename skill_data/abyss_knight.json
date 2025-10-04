@@ -1,6 +1,0 @@
-{
-  "id": "abyss_knight",
-  "scaling": [
-    { "level": 1, "knights": 1, "life": 1769, "magic_damage_min": 18, "magic_damage_max": 18, "mana_cost": 20 }
-  ]
-}

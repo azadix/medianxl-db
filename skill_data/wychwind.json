@@ -1,6 +1,0 @@
-{
-  "id": "wychwind",
-  "scaling": [
-    { "level": 10, "rift_duration": 2.4, "vulnerability_physical_resist": -16, "mana_cost": 43 }
-  ]
-}

@@ -1,6 +1,0 @@
-{
-  "id": "nightmare",
-  "scaling": [
-    { "level": 9, "enemy_physical_resistance": -9, "enemy_movement_speed": -19, "radius": 8.6, "mana_cost": 35 }
-  ]
-}

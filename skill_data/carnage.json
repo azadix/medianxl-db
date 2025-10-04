@@ -1,6 +1,0 @@
-{
-  "id": "carnage",
-  "scaling": [
-    { "level": 5, "cooldown": 2, "fire_damage": 80, "attack_rating": 42, "mana_cost": 15 }
-  ]
-}

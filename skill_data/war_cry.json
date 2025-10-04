@@ -1,6 +1,0 @@
-{
-  "id": "war_cry",
-  "scaling": [
-    { "level": 14, "magic_damage_min": 116, "magic_damage_max": 127, "physical_damage_flat": 116, "mana_cost": 192 }
-  ]
-}

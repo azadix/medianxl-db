@@ -1,6 +1,0 @@
-{
-  "id": "resurrect",
-  "scaling": [
-    { "level": 15, "physical_damage_percent": 48, "spell_damage_percent": 48, "life_percent": 407, "mana_cost": 291 }
-  ]
-}

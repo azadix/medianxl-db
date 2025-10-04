@@ -1,6 +1,0 @@
-{
-  "id": "ice_bolt_nova",
-  "scaling": [
-    { "level": 10, "cold_damage_min": 108, "cold_damage_max": 155, "mana_cost": 60 }
-  ]
-}

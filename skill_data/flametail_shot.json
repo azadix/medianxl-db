@@ -1,6 +1,0 @@
-{
-  "id": "flametail_shot",
-  "scaling": [
-    { "level": 14, "physical_damage_min": 6, "physical_damage_max": 8, "attack_rating": 49, "mana_cost": 29 }
-  ]
-}

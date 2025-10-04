@@ -1,6 +1,0 @@
-{
-  "id": "solar_flare",
-  "scaling": [
-    { "level": 22, "fire_damage_min": 225, "fire_damage_max": 257, "physical_damage_min": 244, "physical_damage_max": 302, "mana_cost": 102 }
-  ]
-}

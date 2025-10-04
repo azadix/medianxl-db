@@ -1,6 +1,0 @@
-{
-  "id": "titans_fortitude",
-  "scaling": [
-    { "level": 4, "maximum_life_percent": 10, "defense_percent": 153, "duration": 120, "mana_cost": 0 }
-  ]
-}

@@ -1,6 +1,0 @@
-{
-  "id": "stormeye_totem",
-  "scaling": [
-    { "level": 1, "lightning_damage_min": 62, "lightning_damage_max": 139, "mana_cost": 75 }
-  ]
-}

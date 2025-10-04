@@ -1,6 +1,0 @@
-{
-  "id": "lightning_fury",
-  "scaling": [
-    { "level": 9, "lightning_damage_min": 0, "lightning_damage_max": 602, "mana_cost": 53 }
-  ]
-}

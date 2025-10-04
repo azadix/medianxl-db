@@ -1,6 +1,0 @@
-{
-  "id": "brimstone",
-  "scaling": [
-    { "level": 16, "average_fire_damage_per_second_min": 214, "average_fire_damage_per_second_max": 325, "mana_cost": 80 }
-  ]
-}

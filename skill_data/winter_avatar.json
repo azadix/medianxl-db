@@ -1,6 +1,0 @@
-{
-  "id": "winter_avatar",
-  "scaling": [
-    { "level": 12, "cold_damage_min": 24, "cold_damage_max": 34, "mana_cost": 30 }
-  ]
-}

@@ -1,6 +1,0 @@
-{
-  "id": "vessel_of_judgement",
-  "scaling": [
-    { "level": 10, "targets": 2, "physical_damage": 60, "duration": 570, "mana_cost": 34 }
-  ]
-}

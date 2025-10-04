@@ -1,6 +1,0 @@
-{
-  "id": "limpet_laser",
-  "scaling": [
-    { "level": 9, "limpet_mines": 1, "cold_damage_min": 42, "cold_damage_max": 57, "mana_cost": 44 }
-  ]
-}

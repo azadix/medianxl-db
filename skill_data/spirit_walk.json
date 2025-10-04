@@ -1,6 +1,0 @@
-{
-  "id": "spirit_walk",
-  "scaling": [
-    { "level": 5, "restores_life_on_use_based_on_max_life": 394, "range": 14, "mana_cost": 34 }
-  ]
-}

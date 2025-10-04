@@ -1,6 +1,0 @@
-{
-  "id": "hunting_banshee",
-  "scaling": [
-    { "level": 19, "cold_damage_min": 248, "cold_damage_max": 313, "wraiths": 1 ,"mana_cost": 80 }
-  ]
-}

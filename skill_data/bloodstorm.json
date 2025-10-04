@@ -1,6 +1,0 @@
-{
-  "id": "bloodstorm",
-  "scaling": [
-    { "level": 20, "fire_damage_min": 114, "fire_damage_max": 129, "bloodstars_total": 18, "mana_cost": 248 }
-  ]
-}

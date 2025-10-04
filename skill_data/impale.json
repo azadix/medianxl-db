@@ -1,6 +1,0 @@
-{
-  "id": "impale",
-  "scaling": [
-    { "level": 6, "physical_damage_min": 181, "physical_damage_max": 192, "mana_cost": 20 }
-  ]
-}

@@ -1,6 +1,0 @@
-{
-  "id": "ward_of_fate",
-  "scaling": [
-    { "level": 18, "regenerate_life_per_second": 161, "cooldown": 17, "duration": 4.3, "mana_cost": 390 }
-  ]
-}

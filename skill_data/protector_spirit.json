@@ -1,6 +1,0 @@
-{
-  "id": "protector_spirit",
-  "scaling": [
-    { "level": 16, "ancient_spirits": 2, "life": 4020, "damage": 58, "attack_rating": 2000, "bloodlust_damage": 32, "bloodlust_elemental_damage": 25, "mana_cost": 64 }
-  ]
-}

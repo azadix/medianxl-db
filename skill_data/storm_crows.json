@@ -1,6 +1,0 @@
-{
-  "id": "storm_crows",
-  "scaling": [
-    { "level": 22, "base_knives": 9, "mana_cost": 40 }
-  ]
-}

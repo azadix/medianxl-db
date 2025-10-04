@@ -1,6 +1,0 @@
-{
-  "id": "patriot_sentry",
-  "scaling": [
-    { "level": 6, "bonus_fire_damage": 1, "duration": 8, "mana_cost": 75 }
-  ]
-}

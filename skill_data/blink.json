@@ -1,6 +1,0 @@
-{
-  "id": "blink",
-  "scaling": [
-    { "level": 12, "cooldown": 4.4, "mana_cost": 47 }
-  ]
-}

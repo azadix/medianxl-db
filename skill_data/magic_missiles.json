@@ -1,6 +1,0 @@
-{
-  "id": "magic_missiles",
-  "scaling": [
-    { "level": 22, "magic_damage_min": 168, "magic_damage_max": 224, "bolts": 10, "mana_cost": 61 }
-  ]
-}

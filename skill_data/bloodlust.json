@@ -1,7 +1,0 @@
-{
-  "id": "bloodlust",
-  "scaling": [
-    { "level": 14, "physical_damage": 37, "elemental_spell_damage": 14, "physical_magic_spell_damage": 14, "duration": 133 },
-    { "level": 41, "physical_damage": 74, "elemental_spell_damage": 24, "physical_magic_spell_damage": 24, "duration": 300 }
-  ]
-}

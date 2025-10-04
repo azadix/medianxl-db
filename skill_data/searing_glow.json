@@ -1,6 +1,0 @@
-{
-  "id": "searing_glow",
-  "scaling": [
-    { "level": 17, "physical_damage_min": 121, "physical_damage_max": 136, "mana_cost": 65 }
-  ]
-}

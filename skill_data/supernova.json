@@ -1,6 +1,0 @@
-{
-  "id": "supernova",
-  "scaling": [
-    { "level": 15, "lightning_damage_min": 9, "lightning_damage_max": 121, "mana_cost": 156 }
-  ]
-}

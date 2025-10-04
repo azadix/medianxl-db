@@ -1,6 +1,0 @@
-{
-  "id": "path_of_flames",
-  "scaling": [
-    { "level": 2, "average_fire_damage_per_second_min": 153, "average_fire_damage_per_second_max": 191, "duration": 90, "mana_cost": 55 }
-  ]
-}

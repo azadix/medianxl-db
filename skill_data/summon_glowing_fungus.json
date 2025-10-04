@@ -1,6 +1,0 @@
-{
-  "id": "summon_glowing_fungus",
-  "scaling": [
-    { "level": 12, "chaotic_spark_level": 12, "lightning_damage_min": 94, "lightning_damage_max": 124, "life": 11328, "minions": 3, "mana_cost": 214 }
-  ]
-}

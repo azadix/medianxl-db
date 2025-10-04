@@ -1,6 +1,0 @@
-{
-  "id": "lightning_shield",
-  "scaling": [
-    { "level": 12, "attacker_takes_bonus_lightning_damage": 262, "duration": 300, "mana_cost": 149 }
-  ]
-}

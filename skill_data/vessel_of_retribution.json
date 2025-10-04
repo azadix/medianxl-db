@@ -1,6 +1,0 @@
-{
-  "id": "vessel_of_retribution",
-  "scaling": [
-    { "level": 21, "targets": 2, "physical_damage": 103, "duration": 900, "mana_cost": 72 }
-  ]
-}

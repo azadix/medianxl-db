@@ -1,6 +1,0 @@
-{
-  "id": "pounce",
-  "scaling": [
-    { "level": 8, "bonus_magic_damage_based_on_strength_and_dexterity": 32, "mana_cost": 13.7 }
-  ]
-}

@@ -1,6 +1,0 @@
-{
-  "id": "resurgence",
-  "scaling": [
-    { "level": 1, "summoned_minion_attack_rating": 10, "summoned_minion_damage": 5 }
-  ]
-}

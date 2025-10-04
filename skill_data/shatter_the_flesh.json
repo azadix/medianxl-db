@@ -1,6 +1,0 @@
-{
-  "id": "shatter_the_flesh",
-  "scaling": [
-    { "level": 30, "cold_damage_min": 384, "cold_damage_max": 552, "mana_cost": 99 }
-  ]
-}

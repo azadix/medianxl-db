@@ -1,6 +1,0 @@
-{
-  "id": "demonic_speed",
-  "scaling": [
-    { "level": 19, "movement_speed": 115, "duration": 92, "mana_cost": 71 }
-  ]
-}

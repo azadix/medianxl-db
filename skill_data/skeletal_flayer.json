@@ -1,6 +1,0 @@
-{
-  "id": "skeletal_flayer",
-  "scaling": [
-    { "level": 14, "flayers": 9, "life": 2174, "damage_min": 123, "damage_max": 133, "attack_rating": 850, "mana_cost": 57 }
-  ]
-}

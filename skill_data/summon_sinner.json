@@ -1,6 +1,0 @@
-{
-  "id": "summon_sinner",
-  "scaling": [
-    { "level": 14, "fire_damage": 614, "life": 12640, "minions": 3, "mana_cost": 247 }
-  ]
-}

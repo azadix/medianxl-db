@@ -1,6 +1,0 @@
-{
-  "id": "rebound",
-  "scaling": [
-    { "level": 23, "releases_axes": 10, "target_seek_range": 19.3, "bonus_magic_damage": 113, "mana_cost": 39 }
-  ]
-}

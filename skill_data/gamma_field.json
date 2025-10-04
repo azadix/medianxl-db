@@ -1,6 +1,0 @@
-{
-  "id": "gamma_field",
-  "scaling": [
-    { "level": 19, "poison_damage_min": 1058, "poison_damage_max": 2215, "poison_duration": 7.1, "mana_cost": 53 }
-  ]
-}

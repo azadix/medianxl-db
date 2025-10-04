@@ -1,6 +1,0 @@
-{
-  "id": "lightning_arena",
-  "scaling": [
-    { "level": 2, "lightning_damage_min": 1, "lightning_damage_max": 3, "duration": 80, "mana_cost": 27 }
-  ]
-}

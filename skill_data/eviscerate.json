@@ -1,6 +1,0 @@
-{
-  "id": "eviscerate",
-  "scaling": [
-    { "level": 17, "physical_damage_min": 28, "physical_damage_max": 29, "mana_cost": 17 }
-  ]
-}

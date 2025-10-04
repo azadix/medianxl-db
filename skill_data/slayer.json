@@ -1,6 +1,0 @@
-{
-  "id": "slayer",
-  "scaling": [
-    { "level": 17, "lightning_damage_min": 456, "lightning_damage_max": 568, "mana_cost": 59 }
-  ]
-}

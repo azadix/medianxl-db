@@ -1,6 +1,0 @@
-{
-  "id": "mark_of_the_wild",
-  "scaling": [
-    { "level": 9, "attack_speed": 20, "physical_damage_percent": 10, "elemental_spell_damage_percent": 13, "duration": 112, "mana_cost": 55 }
-  ]
-}

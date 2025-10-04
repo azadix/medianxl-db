@@ -972,6 +972,9 @@
         });
 
         const actionTd = document.createElement("td");
+        const divWrapper = document.createElement("div");
+        divWrapper.className = "buttons are-small";
+
         const editBtn = document.createElement("button");
         editBtn.className = "button is-warning is-small";
         editBtn.textContent = "Edit";
@@ -982,8 +985,9 @@
         delBtn.textContent = "Delete";
         delBtn.onclick = () => deleteStat(row[0]);
 
-        actionTd.appendChild(editBtn);
-        actionTd.appendChild(delBtn);
+        divWrapper.appendChild(editBtn);
+        divWrapper.appendChild(delBtn);
+        actionTd.appendChild(divWrapper);
         tr.appendChild(actionTd);
         tbody.appendChild(tr);
       });

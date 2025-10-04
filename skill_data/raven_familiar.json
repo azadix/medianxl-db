@@ -1,6 +1,0 @@
-{
-  "id": "raven_familiar",
-  "scaling": [
-    { "level": 4, "damage_min": 40, "damage_max": 42, "mana_cost": 120 }
-  ]
-}

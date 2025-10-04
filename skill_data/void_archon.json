@@ -1,6 +1,0 @@
-{
-  "id": "void_archon",
-  "scaling": [
-    { "level": 26, "life": 10342, "damage_min": 319, "damage_max": 329, "attack_rating": 2075, "mana_cost": 600 }
-  ]
-}

@@ -1,6 +1,0 @@
-{
-  "id": "trinity_arrow",
-  "scaling": [
-    { "level": 12, "projectiles": 18, "bonus_fire_cold_or_lightning_damage": 58, "mana_cost": 18 }
-  ]
-}

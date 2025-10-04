@@ -1,6 +1,0 @@
-{
-  "id": "apf-20_maelstrom_mki",
-  "scaling": [
-    { "level": 14, "magic_damage": 373, "magic_damage_based_on_dexterity": 34, "mana_cost": 31 }
-  ]
-}

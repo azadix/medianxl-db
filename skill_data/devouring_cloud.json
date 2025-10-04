@@ -1,6 +1,0 @@
-{
-  "id": "devouring_cloud",
-  "scaling": [
-    { "level": 20, "poison_damage_min": 1013, "poison_damage_max": 1202, "poison_duration": 1, "mana_cost": 75 }
-  ]
-}

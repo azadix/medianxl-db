@@ -1,6 +1,0 @@
-{
-  "id": "lightning_wall",
-  "scaling": [
-    { "level": 18, "lightning_damage_min": 105, "lightning_damage_max": 131, "mana_cost": 64 }
-  ]
-}

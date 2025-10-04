@@ -1,6 +1,0 @@
-{
-  "id": "hyena_strike",
-  "scaling": [
-    { "level": 26, "poison_damage_min": 1035, "poison_damage_max": 1388, "poison_duration": 10, "mana_cost": 43 }
-  ]
-}

@@ -1,6 +1,0 @@
-{
-  "id": "embalming",
-  "scaling": [
-    { "level": 1, "maximum_life": 14, "minion_life": 30, "mana_regeneration_rate": 5 }
-  ]
-}

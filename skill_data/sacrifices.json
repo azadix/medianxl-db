@@ -1,6 +1,0 @@
-{
-  "id": "sacrifices",
-  "scaling": [
-    { "level": 1, "cooldown": 12, "mana_cost": 11 }
-  ]
-}

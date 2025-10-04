@@ -1,6 +1,0 @@
-{
-  "id": "stormcall",
-  "scaling": [
-    { "level": 21, "lightning_damage_min": 255, "lightning_damage_max": 347, "mana_cost": 52 }
-  ]
-}

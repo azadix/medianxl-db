@@ -1,6 +1,0 @@
-{
-  "id": "glacial_nova",
-  "scaling": [
-    { "level": 20, "cold_damage_min": 130, "cold_damage_max": 174, "mana_cost": 154 }
-  ]
-}

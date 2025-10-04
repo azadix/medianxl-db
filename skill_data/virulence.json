@@ -1,6 +1,0 @@
-{
-  "id": "virulence",
-  "scaling": [
-    { "level": 17, "poison_damage": 2906, "poison_duration": 3, "mana_cost": 4.8 }
-  ]
-}

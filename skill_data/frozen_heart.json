@@ -1,6 +1,0 @@
-{
-  "id": "frozen_heart",
-  "scaling": [
-    { "level": 11, "cold_damage_min": 238, "cold_damage_max": 333, "duration": 360, "mana_cost": 447 }
-  ]
-}

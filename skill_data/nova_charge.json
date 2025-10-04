@@ -1,6 +1,0 @@
-{
-  "id": "nova_charge",
-  "scaling": [
-    { "level": 2, "lightning_damage_min": 116, "lightning_damage_max": 149, "duration": 300, "mana_cost": 92 }
-  ]
-}

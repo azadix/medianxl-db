@@ -1,6 +1,0 @@
-{
-  "id": "searing_orb",
-  "scaling": [
-    { "level": 18, "fire_damage_min": 130, "fire_damage_max": 161, "mana_cost": 48 }
-  ]
-}

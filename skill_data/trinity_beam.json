@@ -1,6 +1,0 @@
-{
-  "id": "trinity_beam",
-  "scaling": [
-    { "level": 5, "total_damage_per_hit_min": 105, "total_damage_per_hit_max": 125, "mana_cost": 176 }
-  ]
-}

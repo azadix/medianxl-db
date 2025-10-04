@@ -1,6 +1,0 @@
-{
-  "id": "spike_nova",
-  "scaling": [
-    { "level": 11, "mana_cost": 0 }
-  ]
-}

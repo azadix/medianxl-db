@@ -1,6 +1,0 @@
-{
-  "id": "blood_skeleton",
-  "scaling": [
-    { "level": 4, "skeletons": 2, "life": 1026, "damage_min": 8, "damage_max": 18, "attack_rating": 500, "mana_cost": 17 }
-  ]
-}

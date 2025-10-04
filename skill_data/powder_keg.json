@@ -1,6 +1,0 @@
-{
-  "id": "powder_keg",
-  "scaling": [
-    { "level": 17, "physical_damage_min": 114, "physical_damage_max": 157, "fire_damage_min": 114, "fire_damage_max": 157, "mana_cost": 57 }
-  ]
-}

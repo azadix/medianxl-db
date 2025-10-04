@@ -5,8 +5,8 @@ import os
 import re
 
 ICON_SIZE = 48
-ICONS_PER_ROW = 19
-ATLAS_SIZE = ICONS_PER_ROW * ICON_SIZE
+ATLAS_SIZE = 912
+ICONS_PER_ROW = ATLAS_SIZE / ICON_SIZE
 
 # Regex to extract prefix + index from "icons-bar_84.png"
 ICON_RE = re.compile(r"icons-([a-z]+)_(\d+)\.\w+$")

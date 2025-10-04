@@ -1,6 +1,0 @@
-{
-  "id": "eldritch_storm",
-  "scaling": [
-    { "level": 25, "fire_damage_min": 249, "fire_damage_max": 276, "mana_cost": 98 }
-  ]
-}

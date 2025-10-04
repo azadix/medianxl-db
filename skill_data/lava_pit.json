@@ -1,6 +1,0 @@
-{
-  "id": "lava_pit",
-  "scaling": [
-    { "level": 22, "fire_damage_per_second_min": 2185, "fire_damage_per_second_max": 2725, "mana_cost": 122 }
-  ]
-}

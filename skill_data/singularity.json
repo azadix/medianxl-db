@@ -1,6 +1,0 @@
-{
-  "id": "singularity",
-  "scaling": [
-    { "level": 10, "physical_damage_min": 119, "physical_damage_max": 178, "mana_cost": 403 }
-  ]
-}

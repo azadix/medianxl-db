@@ -1,6 +1,0 @@
-{
-  "id": "pentagram",
-  "scaling": [
-    { "level": 17, "fire_damage_min": 569, "fire_damage_max": 684, "mana_cost": 280 }
-  ]
-}

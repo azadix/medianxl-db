@@ -1,6 +1,0 @@
-{
-  "id": "thunderstone",
-  "scaling": [
-    { "level": 1, "lightning_damage_min": 69, "lightning_damage_max": 101, "mana_cost": 41 }
-  ]
-}

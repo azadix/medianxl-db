@@ -1,6 +1,0 @@
-{
-  "id": "harvesters",
-  "scaling": [
-    { "level": 24, "harvesters": 1, "life": 21958, "damage_min": 468, "damage_max": 483, "attack_rating": 1925, "mana_cost": 237 }
-  ]
-}

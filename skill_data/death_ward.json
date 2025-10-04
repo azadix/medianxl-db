@@ -1,8 +1,0 @@
-{
-  "id": "death_ward",
-  "scaling": [
-    { "level": 1, "chance_to_avoid_damage": 1, "bonus_defense": 6 },
-    { "level": 2, "chance_to_avoid_damage": 2, "bonus_defense": 16 },
-    { "level": 3, "chance_to_avoid_damage": 3, "bonus_defense": 26 }
-  ]
-}

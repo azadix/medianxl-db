@@ -1,6 +1,0 @@
-{
-  "id": "exorcism",
-  "scaling": [
-    { "level": 24, "magic_damage_min": 376, "magic_damage_max": 912, "duration": 14.6, "mana_cost": 804 }
-  ]
-}

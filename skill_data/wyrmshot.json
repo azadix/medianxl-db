@@ -1,6 +1,0 @@
-{
-  "id": "wyrmshot",
-  "scaling": [
-    { "level": 11, "target_seek_range": 12.6, "mana_cost": 24 }
-  ]
-}

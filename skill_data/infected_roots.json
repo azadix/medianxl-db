@@ -1,6 +1,0 @@
-{
-  "id": "infected_roots",
-  "scaling": [
-    { "level": 19, "poison_damage_min": 1859, "poison_damage_max": 2347, "poison_duration": 1.1, "mana_cost": 84 }
-  ]
-}

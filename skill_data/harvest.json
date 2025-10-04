@@ -1,6 +1,0 @@
-{
-  "id": "harvest",
-  "scaling": [
-    { "level": 17, "poison_damage_min": 1587, "poison_damage_max": 2353, "poison_duration": 4, "mana_cost": 51 }
-  ]
-}

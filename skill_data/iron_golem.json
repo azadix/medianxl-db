@@ -1,6 +1,0 @@
-{
-  "id": "iron_golem",
-  "scaling": [
-    { "level": 4, "life": 10236, "damage_min": 64, "damage_max": 74, "attack_rating": 2000, "mana_cost": 178 }
-  ]
-}

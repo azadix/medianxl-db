@@ -1,6 +1,0 @@
-{
-  "id": "shuriken_flurry",
-  "scaling": [
-    { "level": 20, "physical_damage_min": 81, "physical_damage_max": 108, "magic_damage_min": 154, "magic_damage_max": 177, "mana_cost": 65 }
-  ]
-}

@@ -1,6 +1,0 @@
-{
-  "id": "venomcloud_totem",
-  "scaling": [
-    { "level": 16, "poison_damage_min": 605, "poison_damage_max": 942, "poison_duration": 2, "mana_cost": 306 }
-  ]
-}

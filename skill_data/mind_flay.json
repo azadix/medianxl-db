@@ -1,6 +1,0 @@
-{
-  "id": "mind_flay",
-  "scaling": [
-    { "level": 7, "physical_damage_min": 53, "physical_damage_max": 62, "lightning_damage_min": 103, "lightning_damage_max": 128, "mana_cost": 15 }
-  ]
-}

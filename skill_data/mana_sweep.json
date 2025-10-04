@@ -1,6 +1,0 @@
-{
-  "id": "mana_sweep",
-  "scaling": [
-    { "level": 11, "cooldown": 20.8, "mana_cost": 0 }
-  ]
-}

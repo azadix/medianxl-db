@@ -1,6 +1,0 @@
-{
-  "id": "cherubim",
-  "scaling": [
-    { "level": 11, "cooldown": 4.2, "mana_cost": 50 }
-  ]
-}

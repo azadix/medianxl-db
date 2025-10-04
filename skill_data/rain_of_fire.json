@@ -1,6 +1,0 @@
-{
-  "id": "rain_of_fire",
-  "scaling": [
-    { "level": 31, "fire_damage_min": 377, "fire_damage_max": 494, "mana_cost": 251 }
-  ]
-}

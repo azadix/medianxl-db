@@ -1,6 +1,0 @@
-{
-  "id": "lorenado",
-  "scaling": [
-    { "level": 12, "poison_damage_min": 444, "poison_damage_max": 553, "poison_duration": 1.2, "mana_cost": 27 }
-  ]
-}
