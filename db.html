@@ -2104,6 +2104,10 @@
                      [skillId, baseMaxLevel, canBeEnhanced, canAddPoints]);
     }
     
+    // Clear form fields to show successful save
+    document.getElementById('max-level-form').reset();
+    document.getElementById('max-level-skill-hidden').value = '';
+    
     refreshMaxLevelsTable();
   });
 

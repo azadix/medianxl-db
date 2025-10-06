@@ -23,7 +23,7 @@
         background: #222222;
         border: 1px solid #8a8a8a8a;
         border-radius: 6px;
-        padding: 0.5rem;
+        padding: 0.25rem;
         text-align: center;
         color: white;
 
@@ -32,14 +32,15 @@
         height: 100px;
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: flex-start;
         align-items: center;
         overflow: hidden;
     }
 
-    .skill-card img {
-        max-width: 48px;
-        margin-bottom: 0.25rem;
+    .skill-card .image {
+        height: 48px;
+        width: 48px;
+        flex-shrink: 0;
     }
 
     .skill-card div {
@@ -48,6 +49,7 @@
         text-overflow: ellipsis;
         max-width: 90%;
         text-align: center;
+        flex-shrink: 1;
     }
   </style>
 </head>
@@ -168,6 +170,26 @@
                     });
                 }
 
+                // Generalize Paragon of Fate replication: copy to all classes
+                const paragonSkills = loadedSkills.filter(s => s.id === 'paragon_of_fate');
+                if (paragonSkills.length > 0) {
+                    const paragonByClass = new Map();
+                    paragonSkills.forEach(s => {
+                        paragonByClass.set(s.class, true);
+                    });
+
+                    allClasses.forEach(cls => {
+                        if (!paragonByClass.get(cls)) {
+                            paragonSkills.forEach(skill => {
+                                loadedSkills.push({
+                                    ...skill,
+                                    class: cls
+                                });
+                            });
+                        }
+                    });
+                }
+
                 return loadedSkills; // update global list
             } catch (error) {
                 console.error('Error loading skills from SQLite:', error);
@@ -188,6 +210,28 @@
                 tabs[skill.tabName].push(skill);
             });
 
+            // Sort tabs with Mastery positioned 3rd from the end
+            const tabNames = Object.keys(tabs);
+            const sortedTabNames = tabNames.sort((a, b) => {
+                // Define the desired order: Mastery should be 3rd from the end
+                const order = ['Mastery', 'Reward', 'Innate'];
+                
+                const aIndex = order.indexOf(a);
+                const bIndex = order.indexOf(b);
+                
+                // If both are in the order array, sort by their position in the array
+                if (aIndex !== -1 && bIndex !== -1) {
+                    return aIndex - bIndex;
+                }
+                
+                // If only one is in the order array, put it at the end
+                if (aIndex !== -1) return 1;
+                if (bIndex !== -1) return -1;
+                
+                // If neither is in the order array, sort alphabetically
+                return a.localeCompare(b);
+            });
+
             // Tabs nav
             const tabNav = document.createElement('div');
             tabNav.className = 'tabs';
@@ -196,7 +240,7 @@
             const tabContent = document.createElement('div');
             let first = true;
 
-            Object.keys(tabs).forEach(tabName => {
+            sortedTabNames.forEach(tabName => {
                 // Tab nav button
                 const li = document.createElement('li');
                 if (first) li.classList.add('is-active');
