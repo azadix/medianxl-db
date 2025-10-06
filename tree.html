@@ -287,23 +287,139 @@
             // Calculate rotation angle (point from prerequisite to dependent skill)
             const angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
             
-            // Use a simple arrow symbol
-            const arrowSymbol = '→';
-
-            // Create arrow element
+            // Create SVG line with arrowhead
             const arrow = document.createElement('div');
             arrow.className = 'overlay-arrow';
             arrow.style.position = 'absolute';
-            arrow.style.left = `${arrowX}px`;
-            arrow.style.top = `${arrowY}px`;
-            arrow.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
-            arrow.style.lineHeight = '1';
-            arrow.style.display = 'flex';
-            arrow.style.alignItems = 'center';
-            arrow.style.justifyContent = 'center';
+            arrow.style.left = '0';
+            arrow.style.top = '0';
+            arrow.style.width = '100%';
+            arrow.style.height = '100%';
             arrow.style.pointerEvents = 'none';
             arrow.style.zIndex = '10';
-            arrow.textContent = arrowSymbol;
+
+            // Create SVG element
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.style.width = '100%';
+            svg.style.height = '100%';
+            svg.style.position = 'absolute';
+            svg.style.left = '0';
+            svg.style.top = '0';
+
+            // Calculate intersection points with card edges
+            const cardWidth = 210;
+            const cardHeight = 105;
+            const halfWidth = cardWidth / 2;
+            const halfHeight = cardHeight / 2;
+
+            // Calculate direction vector
+            const dx = toX - fromX;
+            const dy = toY - fromY;
+            const length = Math.sqrt(dx * dx + dy * dy);
+            const unitX = dx / length;
+            const unitY = dy / length;
+
+            // Find intersection points with card boundaries
+            function getIntersectionPoint(centerX, centerY, targetX, targetY, cardWidth, cardHeight) {
+                const dx = targetX - centerX;
+                const dy = targetY - centerY;
+                const length = Math.sqrt(dx * dx + dy * dy);
+                const unitX = dx / length;
+                const unitY = dy / length;
+
+                // Calculate intersection with card rectangle
+                const halfW = cardWidth / 2;
+                const halfH = cardHeight / 2;
+
+                // Check intersections with each edge
+                const intersections = [];
+
+                // Top edge
+                if (unitY !== 0) {
+                    const t = (centerY - halfH - centerY) / unitY;
+                    const x = centerX + t * unitX;
+                    if (x >= centerX - halfW && x <= centerX + halfW && t > 0) {
+                        intersections.push({ x, y: centerY - halfH, t });
+                    }
+                }
+
+                // Bottom edge
+                if (unitY !== 0) {
+                    const t = (centerY + halfH - centerY) / unitY;
+                    const x = centerX + t * unitX;
+                    if (x >= centerX - halfW && x <= centerX + halfW && t > 0) {
+                        intersections.push({ x, y: centerY + halfH, t });
+                    }
+                }
+
+                // Left edge
+                if (unitX !== 0) {
+                    const t = (centerX - halfW - centerX) / unitX;
+                    const y = centerY + t * unitY;
+                    if (y >= centerY - halfH && y <= centerY + halfH && t > 0) {
+                        intersections.push({ x: centerX - halfW, y, t });
+                    }
+                }
+
+                // Right edge
+                if (unitX !== 0) {
+                    const t = (centerX + halfW - centerX) / unitX;
+                    const y = centerY + t * unitY;
+                    if (y >= centerY - halfH && y <= centerY + halfH && t > 0) {
+                        intersections.push({ x: centerX + halfW, y, t });
+                    }
+                }
+
+                // Return the closest intersection point
+                if (intersections.length > 0) {
+                    const closest = intersections.reduce((min, curr) => curr.t < min.t ? curr : min);
+                    return { x: closest.x, y: closest.y };
+                }
+
+                return { x: centerX, y: centerY }; // Fallback to center
+            }
+
+            const startPoint = getIntersectionPoint(fromX, fromY, toX, toY, cardWidth, cardHeight);
+            const endPoint = getIntersectionPoint(toX, toY, fromX, fromY, cardWidth, cardHeight);
+
+            const startX = startPoint.x;
+            const startY = startPoint.y;
+            const endX = endPoint.x;
+            const endY = endPoint.y;
+
+            // Create line
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', startX);
+            line.setAttribute('y1', startY);
+            line.setAttribute('x2', endX);
+            line.setAttribute('y2', endY);
+            line.setAttribute('stroke', '#8a8a8a');
+            line.setAttribute('stroke-width', '2.25');
+            line.setAttribute('stroke-linecap', 'round');
+
+            // Create arrowhead marker
+            const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+            const marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
+            marker.setAttribute('id', `arrowhead-${Date.now()}-${Math.random()}`);
+            marker.setAttribute('markerWidth', '7.5');
+            marker.setAttribute('markerHeight', '5.25');
+            marker.setAttribute('refX', '6.75');
+            marker.setAttribute('refY', '2.625');
+            marker.setAttribute('orient', 'auto');
+
+            const polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+            polygon.setAttribute('points', '0 0, 7.5 2.625, 0 5.25');
+            polygon.setAttribute('fill', '#8a8a8a');
+
+            marker.appendChild(polygon);
+            defs.appendChild(marker);
+            svg.appendChild(defs);
+
+            // Add arrowhead to line
+            line.setAttribute('marker-end', `url(#${marker.getAttribute('id')})`);
+
+            svg.appendChild(line);
+            arrow.appendChild(svg);
 
             contentDiv.appendChild(arrow);
             console.log('Arrow added to DOM:', arrow);
