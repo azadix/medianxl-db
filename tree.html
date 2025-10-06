@@ -16,6 +16,7 @@
         gap: 1rem;
         width: 50%;
         margin: 0 auto;
+        position: relative; /* Enable absolute positioning for overlay arrows */
     }
     .empty-skill-card {
         padding: 0.5rem;
@@ -31,6 +32,7 @@
         padding: 0.25rem;
         text-align: center;
         color: white;
+        position: relative; /* Enable absolute positioning for prerequisites */
 
         /* Fix size */
         width: 100%;
@@ -55,6 +57,24 @@
         max-width: 90%;
         text-align: center;
         flex-shrink: 1;
+    }
+
+    /* Arrow cards for showing skill prerequisites */
+    .arrow-card {
+        background: transparent;
+        border: none;
+        width: 100%;
+        height: 105px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .arrow {
+        font-size: 2rem;
+        color: #4A9EFF;
+        text-shadow: 0 0 3px rgba(74, 158, 255, 0.5);
+        font-weight: bold;
     }
   </style>
 </head>
@@ -90,6 +110,213 @@
 
         let skillsList;
         
+        // Helper functions for arrow direction calculation
+        function getArrowDirection(row, col, skillsInTab) {
+            // Look for skills with prerequisites in the current tab
+            const skillsWithPrereqs = skillsInTab.filter(skill => 
+                skill.prerequisites && skill.prerequisites.length > 0
+            );
+
+            for (const skill of skillsWithPrereqs) {
+                // Check if this empty position is between a prerequisite skill and the dependent skill
+                for (const prereq of skill.prerequisites) {
+                    const [type, value, target] = prereq.split(':');
+                    
+                    if (type === 'skill_level' && target) {
+                        // Find the prerequisite skill in the same tab
+                        const prereqSkill = skillsInTab.find(s => s.name === target);
+                        if (prereqSkill) {
+                            // Check if this empty position is on the path between them
+                            const direction = getDirectionBetweenSkills(prereqSkill, skill, row, col);
+                            if (direction) return direction;
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        function getDirectionBetweenSkills(fromSkill, toSkill, emptyRow, emptyCol) {
+            const fromRow = fromSkill.row;
+            const fromCol = fromSkill.col;
+            const toRow = toSkill.row;
+            const toCol = toSkill.col;
+
+            // Check if empty position is on a direct line between the skills
+            if (fromRow === toRow) {
+                // Horizontal line
+                if (emptyRow === fromRow && 
+                    ((fromCol < emptyCol && emptyCol < toCol) || (toCol < emptyCol && emptyCol < fromCol))) {
+                    return fromCol < toCol ? 'right' : 'left';
+                }
+            } else if (fromCol === toCol) {
+                // Vertical line
+                if (emptyCol === fromCol && 
+                    ((fromRow < emptyRow && emptyRow < toRow) || (toRow < emptyRow && emptyRow < fromRow))) {
+                    return fromRow < toRow ? 'down' : 'up';
+                }
+            } else {
+                // Diagonal line - check if empty position is on the path
+                const rowDiff = toRow - fromRow;
+                const colDiff = toCol - fromCol;
+                const steps = Math.max(Math.abs(rowDiff), Math.abs(colDiff));
+                
+                for (let i = 1; i < steps; i++) {
+                    const checkRow = fromRow + Math.round((rowDiff * i) / steps);
+                    const checkCol = fromCol + Math.round((colDiff * i) / steps);
+                    
+                    if (checkRow === emptyRow && checkCol === emptyCol) {
+                        // Determine diagonal direction
+                        if (rowDiff > 0 && colDiff > 0) return 'down-right';
+                        if (rowDiff > 0 && colDiff < 0) return 'down-left';
+                        if (rowDiff < 0 && colDiff > 0) return 'up-right';
+                        if (rowDiff < 0 && colDiff < 0) return 'up-left';
+                    }
+                }
+            }
+            return null;
+        }
+
+        function getArrowSymbol(direction) {
+            const arrows = {
+                'up': '↑',
+                'down': '↓',
+                'left': '←',
+                'right': '→',
+                'up-right': '↗',
+                'up-left': '↖',
+                'down-right': '↘',
+                'down-left': '↙'
+            };
+            return arrows[direction] || '→';
+        }
+
+        function addOverlayArrows(contentDiv, skillsInTab, minRow, minCol) {
+            // Find skills with prerequisites
+            const skillsWithPrereqs = skillsInTab.filter(skill => 
+                skill.prerequisites && skill.prerequisites.length > 0
+            );
+
+            skillsWithPrereqs.forEach(skill => {
+                skill.prerequisites.forEach(prereq => {
+                    const [type, value, target] = prereq.split(':');
+                    
+                    if (type === 'skill_level' && target) {
+                        // Find the prerequisite skill in the same tab
+                        const prereqSkill = skillsInTab.find(s => s.name === target);
+                        if (prereqSkill) {
+                            createOverlayArrow(contentDiv, prereqSkill, skill, minRow, minCol, skillsInTab);
+                        }
+                    }
+                });
+            });
+        }
+
+        function createOverlayArrow(contentDiv, fromSkill, toSkill, minRow, minCol, skillsInTab) {
+            // Calculate positions relative to the grid
+            const fromRow = fromSkill.row - minRow + 1;
+            const fromCol = fromSkill.col - minCol + 1;
+            const toRow = toSkill.row - minRow + 1;
+            const toCol = toSkill.col - minCol + 1;
+
+            console.log(`Creating arrow: ${fromSkill.name}(${fromRow},${fromCol}) → ${toSkill.name}(${toRow},${toCol})`);
+
+            // Find skill cards by looking for elements with the correct grid position
+            const allCards = contentDiv.querySelectorAll('.skill-card, .empty-skill-card');
+            let fromCard = null;
+            let toCard = null;
+            
+            allCards.forEach(card => {
+                // Check if using grid-area format (e.g., "1 / 2")
+                const gridArea = card.style.gridArea;
+                let gridRow, gridCol;
+                
+                if (gridArea && gridArea.includes('/')) {
+                    const parts = gridArea.split('/');
+                    gridRow = parseInt(parts[0].trim());
+                    gridCol = parseInt(parts[1].trim());
+                } else {
+                    // Fallback to grid-row and grid-column
+                    gridRow = parseInt(card.style.gridRow);
+                    gridCol = parseInt(card.style.gridColumn);
+                }
+                
+                if (gridRow === fromRow && gridCol === fromCol) {
+                    fromCard = card;
+                }
+                if (gridRow === toRow && gridCol === toCol) {
+                    toCard = card;
+                }
+            });
+            
+            console.log('From card found:', fromCard);
+            console.log('To card found:', toCard);
+            console.log('All cards:', allCards.length);
+            
+            if (!fromCard || !toCard) {
+                console.log('Cards not found, skipping arrow');
+                return;
+            }
+            
+            // Get the actual positions of the skill cards
+            const fromRect = fromCard.getBoundingClientRect();
+            const toRect = toCard.getBoundingClientRect();
+            const gridRect = contentDiv.getBoundingClientRect();
+            
+            console.log('From rect:', fromRect);
+            console.log('To rect:', toRect);
+            console.log('Grid rect:', gridRect);
+            
+            // Calculate center positions relative to the grid container
+            const fromX = fromRect.left + fromRect.width / 2 - gridRect.left;
+            const fromY = fromRect.top + fromRect.height / 2 - gridRect.top;
+            const toX = toRect.left + toRect.width / 2 - gridRect.left;
+            const toY = toRect.top + toRect.height / 2 - gridRect.top;
+            
+            console.log('Calculated positions:', {fromX, fromY, toX, toY});
+
+            // Calculate arrow direction and position
+            const deltaX = toX - fromX;
+            const deltaY = toY - fromY;
+            const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+            
+            console.log('Distance calculated:', distance);
+            
+            // Only show arrow if skills are reasonably close (not too far apart)
+            if (distance > 500) {
+                console.log('Arrow skipped - distance too far:', distance);
+                return; // Skip very long arrows
+            }
+            
+            // Calculate arrow position (midpoint between skills)
+            const arrowX = (fromX + toX) / 2;
+            const arrowY = (fromY + toY) / 2;
+            
+            // Calculate rotation angle (point from prerequisite to dependent skill)
+            const angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
+            
+            // Use a simple arrow symbol
+            const arrowSymbol = '→';
+
+            // Create arrow element
+            const arrow = document.createElement('div');
+            arrow.className = 'overlay-arrow';
+            arrow.style.position = 'absolute';
+            arrow.style.left = `${arrowX}px`;
+            arrow.style.top = `${arrowY}px`;
+            arrow.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
+            arrow.style.fontSize = '1.5rem';
+            arrow.style.color = '#4A9EFF';
+            arrow.style.textShadow = '0 0 3px rgba(74, 158, 255, 0.5)';
+            arrow.style.fontWeight = 'bold';
+            arrow.style.pointerEvents = 'none';
+            arrow.style.zIndex = '10';
+            arrow.textContent = arrowSymbol;
+
+            contentDiv.appendChild(arrow);
+            console.log('Arrow added to DOM:', arrow);
+        }
+
         async function loadSkillsFromSQLite() {
             try {
                 // Fetch SQLite file
@@ -111,7 +338,8 @@
                         GROUP_CONCAT(t.name, ', ') AS tags,
                         sml.base_max_level,
                         sml.can_be_enhanced,
-                        sml.can_add_points
+                        sml.can_add_points,
+                        GROUP_CONCAT(sp.requirement_type || ':' || sp.requirement_value || ':' || COALESCE(ts.display_name, ct2.name, ''), '; ') AS prerequisites
                     FROM skills s
                     LEFT JOIN classTabs ct
                         ON s.tab_index = ct.id
@@ -123,6 +351,12 @@
                         ON st.tag_id = t.id
                     LEFT JOIN skill_max_levels sml
                         ON s.id = sml.skill_id
+                    LEFT JOIN skill_prerequisites sp
+                        ON s.id = sp.skill_id
+                    LEFT JOIN skills ts
+                        ON sp.target_skill_id = ts.id
+                    LEFT JOIN classTabs ct2
+                        ON sp.target_tab_id = ct2.id
                     WHERE s.class_id != 1
                     GROUP BY s.id
                     ORDER BY s.class_id, s.tab_index, s.row, s.col;
@@ -144,7 +378,8 @@
                         hasDetails: row.description && row.description.trim().length > 0,
                         baseMaxLevel: row.base_max_level || 0,
                         canBeEnhanced: row.can_be_enhanced === 1,
-                        canAddPoints: row.can_add_points === 1
+                        canAddPoints: row.can_add_points === 1,
+                        prerequisites: row.prerequisites ? row.prerequisites.split('; ').filter(p => p.trim()) : []
                     });
 
 
@@ -175,25 +410,26 @@
                     });
                 }
 
-                // Generalize Paragon of Fate replication: copy to all classes
-                const paragonSkills = loadedSkills.filter(s => s.id === 'paragon_of_fate');
-                if (paragonSkills.length > 0) {
-                    const paragonByClass = new Map();
-                    paragonSkills.forEach(s => {
-                        paragonByClass.set(s.class, true);
-                    });
+            // Generalize Paragon of Fate replication: copy to all classes
+            const paragonSkills = loadedSkills.filter(s => s.id === 'paragon_of_fate');
+            if (paragonSkills.length > 0) {
+                const paragonByClass = new Map();
+                paragonSkills.forEach(s => {
+                    paragonByClass.set(s.class, true);
+                });
 
-                    allClasses.forEach(cls => {
-                        if (!paragonByClass.get(cls)) {
-                            paragonSkills.forEach(skill => {
-                                loadedSkills.push({
-                                    ...skill,
-                                    class: cls
-                                });
+                allClasses.forEach(cls => {
+                    if (!paragonByClass.get(cls)) {
+                        paragonSkills.forEach(skill => {
+                            loadedSkills.push({
+                                ...skill,
+                                class: cls
                             });
-                        }
-                    });
-                }
+                        });
+                    }
+                });
+            }
+
 
                 return loadedSkills; // update global list
             } catch (error) {
@@ -271,6 +507,8 @@
                 contentDiv.style.gridTemplateRows = `repeat(${maxRow - minRow + 1}, auto)`;
                 contentDiv.style.gridTemplateColumns = `repeat(${maxCol - minCol + 1}, 1fr)`;
 
+                const skillsInTab = tabs[tabName]; // Define skillsInTab for arrow calculations
+
                 for (let r = minRow; r <= maxRow; r++) {
                     for (let c = minCol; c <= maxCol; c++) {
                         const skill = tabs[tabName].find(s => s.row === r && s.col === c);
@@ -279,6 +517,19 @@
                             card.className = 'skill-card';
                             card.style.gridRow = r - minRow + 1;
                             card.style.gridColumn = c - minCol + 1;
+
+                            // Parse prerequisites to find level requirements
+                            let levelRequirement = null;
+                            let hasPrerequisites = false;
+                            if (skill.prerequisites && skill.prerequisites.length > 0) {
+                                hasPrerequisites = true;
+                                skill.prerequisites.forEach(prereq => {
+                                    const [type, value, target] = prereq.split(':');
+                                    if (type === 'character_level' || type === 'class_level') {
+                                        levelRequirement = value;
+                                    }
+                                });
+                            }
 
                             let cardText = `
                                 ${getSkillIconHTML(skill.image, skill.class)}
@@ -290,6 +541,11 @@
                                 cardText += `${skill.name}`;
                             }
                             cardText += `</div>`;
+                            
+                            // Add level requirement at top right if present
+                            if (levelRequirement) {
+                                cardText += `<div class="has-text-danger is-size-7" style="position: absolute; top: 2px; right: 2px;">Lv.${levelRequirement}</div>`;
+                            }
                             
                             // Add skill level info under skill name (orange value if skill reached max possible level)
                             if (skill.canAddPoints) {
@@ -322,6 +578,12 @@
                 }
 
                 tabContent.appendChild(contentDiv);
+                
+                // Add overlay arrows for skill prerequisites after a small delay to ensure DOM is rendered
+                setTimeout(() => {
+                    addOverlayArrows(contentDiv, skillsInTab, minRow, minCol);
+                }, 100);
+                
                 first = false;
             });
 

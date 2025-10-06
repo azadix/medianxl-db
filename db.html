@@ -40,6 +40,7 @@
       <button class="button is-light" data-section="stats-section">Stats</button>
       <button class="button is-light" data-section="scaling-section">Scaling</button>
       <button class="button is-light" data-section="max-levels-section">Max Levels</button>
+      <button class="button is-light" data-section="prerequisites-section">Prerequisites</button>
       
       <div class="file has-name is-small ml-auto" style="display:none;">
         <input class="file-input" type="file" id="import-db" accept=".sqlite">
@@ -378,6 +379,65 @@
     </table>
   </div>
 
+  <div id="prerequisites-section" class="box" style="display:none;">
+    <h3 class="title is-5">Skill Prerequisites</h3>
+    <form id="prerequisite-form" class="mb-3">
+      <div class="columns is-multiline">
+        <div class="column is-one-third">
+          <label class="label">Target Skill</label>
+          <div id="prerequisite-skill-dd"></div>
+          <input type="hidden" id="prerequisite-skill-hidden" />
+        </div>
+        <div class="column is-one-quarter">
+          <label class="label">Requirement Type</label>
+          <div class="select is-fullwidth">
+            <select id="prerequisite-type">
+              <option value="skill_level">Skill Level</option>
+              <option value="points_spent">Points Spent</option>
+              <option value="tree_points">Tree Points</option>
+              <option value="character_level">Character Level</option>
+            </select>
+          </div>
+        </div>
+        <div class="column is-one-quarter">
+          <label class="label">Requirement Value</label>
+          <input class="input" type="number" id="prerequisite-value" min="1" value="1">
+        </div>
+        <div class="column is-one-third">
+          <label class="label">Target Skill (for skill_level)</label>
+          <div id="prerequisite-target-skill-dd"></div>
+          <input type="hidden" id="prerequisite-target-skill-hidden" />
+        </div>
+        <div class="column is-one-third">
+          <label class="label">Target Tab (for tree_points)</label>
+          <div id="prerequisite-target-tab-dd"></div>
+          <input type="hidden" id="prerequisite-target-tab-hidden" />
+        </div>
+        <div class="column is-full">
+          <label class="label">Description</label>
+          <textarea class="textarea" id="prerequisite-description" rows="2" placeholder="e.g. Requires 5 points in Fireball or Requires 10 points in Combat tree"></textarea>
+        </div>
+        <div class="column is-full">
+          <button class="button is-primary" id="prerequisite-save" type="button">Save Prerequisite</button>
+          <button class="button" id="prerequisite-cancel" type="button" style="display:none;">Cancel</button>
+        </div>
+      </div>
+    </form>
+
+    <table class="table is-striped is-fullwidth is-narrow" id="prerequisites-table">
+      <thead>
+        <tr>
+          <th style="width:20%">Target Skill</th>
+          <th style="width:15%">Type</th>
+          <th style="width:10%">Value</th>
+          <th style="width:15%">Target</th>
+          <th style="width:30%">Description</th>
+          <th style="width:10%">Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
 
   <script type="module">
   import { DropdownList } from './DropdownList.js';
@@ -418,6 +478,8 @@
       populateScalingSelectors();
       populateMaxLevelSelectors();
       refreshMaxLevelsTable();
+      populatePrerequisiteSelectors();
+      refreshPrerequisitesTable();
     } catch (err) {
       console.warn("Falling back to empty DB:", err.message);
       try {
@@ -497,6 +559,18 @@
           can_add_points BOOLEAN NOT NULL DEFAULT 1,
           PRIMARY KEY (skill_id),
           FOREIGN KEY (skill_id) REFERENCES skills(id) ON DELETE CASCADE
+      );
+      CREATE TABLE IF NOT EXISTS skill_prerequisites (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          skill_id INTEGER NOT NULL,
+          requirement_type TEXT NOT NULL, -- 'skill_level', 'points_spent', 'tree_points' 'character_level'
+          requirement_value INTEGER NOT NULL,
+          target_skill_id INTEGER, -- For skill_level requirements
+          target_tab_id INTEGER, -- For tree_points requirements
+          description TEXT NOT NULL,
+          FOREIGN KEY (skill_id) REFERENCES skills(id) ON DELETE CASCADE,
+          FOREIGN KEY (target_skill_id) REFERENCES skills(id) ON DELETE CASCADE,
+          FOREIGN KEY (target_tab_id) REFERENCES classTabs(id) ON DELETE CASCADE
       );
     `);
 
@@ -690,7 +764,7 @@
       btn.classList.add('is-primary');
       
       // Show/hide sections
-      document.querySelectorAll('#skills-section, #tags-section, #classes-section, #tabs-section, #stats-section, #scaling-section, #max-levels-section').forEach(div => {
+      document.querySelectorAll('#skills-section, #tags-section, #classes-section, #tabs-section, #stats-section, #scaling-section, #max-levels-section, #prerequisites-section').forEach(div => {
         div.style.display = (div.id === id) ? 'block' : 'none';
       });
     });
@@ -1312,6 +1386,8 @@
       populateScalingSelectors();
       populateMaxLevelSelectors();
       refreshMaxLevelsTable();
+      populatePrerequisiteSelectors();
+      refreshPrerequisitesTable();
       fileInput.value = "";
     } catch (err) {
       console.error("Error importing DB:", err);
@@ -2116,6 +2192,243 @@
     document.getElementById('max-level-form').reset();
     document.getElementById('max-level-save').textContent = 'Save Max Level';
     document.getElementById('max-level-cancel').style.display = 'none';
+  });
+
+  // --- Prerequisites Management ---
+  let editingPrerequisiteId = null;
+
+  async function populatePrerequisiteSelectors() {
+    // Target skill dropdown
+    const skillDdContainer = document.getElementById('prerequisite-skill-dd');
+    const skillHiddenInput = document.getElementById('prerequisite-skill-hidden');
+
+    if (skillDdContainer && skillHiddenInput) {
+      const res = SkillDB.db.exec("SELECT id, display_name FROM skills ORDER BY display_name");
+      const skillItems = res[0] ? res[0].values.map(([id, name]) => ({
+        value: id,
+        name: name,
+        desc: `Skill ID: ${id}`
+      })) : [];
+      
+      const skillDropdown = new DropdownList(skillDdContainer, {
+        placeholder: 'Select target skill...',
+        emptyListText: 'No skills found',
+        defaultHeaderText: 'Target Skills',
+        onSelect: (item) => {
+          skillHiddenInput.value = item?.value || '';
+        }
+      });
+      skillDropdown.setItems(skillItems);
+    }
+
+    // Target skill dropdown (for skill_level requirements)
+    const targetSkillDdContainer = document.getElementById('prerequisite-target-skill-dd');
+    const targetSkillHiddenInput = document.getElementById('prerequisite-target-skill-hidden');
+
+    if (targetSkillDdContainer && targetSkillHiddenInput) {
+      const res = SkillDB.db.exec("SELECT id, display_name FROM skills ORDER BY display_name");
+      const skillItems = res[0] ? res[0].values.map(([id, name]) => ({
+        value: id,
+        name: name,
+        desc: `Skill ID: ${id}`
+      })) : [];
+      
+      const targetSkillDropdown = new DropdownList(targetSkillDdContainer, {
+        placeholder: 'Select target skill...',
+        emptyListText: 'No skills found',
+        defaultHeaderText: 'Target Skills',
+        onSelect: (item) => {
+          targetSkillHiddenInput.value = item?.value || '';
+        }
+      });
+      targetSkillDropdown.setItems(skillItems);
+    }
+
+    // Target tab dropdown (for tree_points requirements)
+    const targetTabDdContainer = document.getElementById('prerequisite-target-tab-dd');
+    const targetTabHiddenInput = document.getElementById('prerequisite-target-tab-hidden');
+
+    if (targetTabDdContainer && targetTabHiddenInput) {
+      const res = SkillDB.db.exec("SELECT id, name FROM classTabs ORDER BY name");
+      const tabItems = res[0] ? res[0].values.map(([id, name]) => ({
+        value: id,
+        name: name,
+        desc: `Tab ID: ${id}`
+      })) : [];
+      
+      const targetTabDropdown = new DropdownList(targetTabDdContainer, {
+        placeholder: 'Select target tab...',
+        emptyListText: 'No tabs found',
+        defaultHeaderText: 'Target Tabs',
+        onSelect: (item) => {
+          targetTabHiddenInput.value = item?.value || '';
+        }
+      });
+      targetTabDropdown.setItems(tabItems);
+    }
+  }
+
+  function refreshPrerequisitesTable() {
+    if (!SkillDB.db) return;
+    const tbody = document.querySelector('#prerequisites-table tbody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    const res = SkillDB.db.exec(`
+      SELECT sp.id, s.display_name, sp.requirement_type, sp.requirement_value,
+             ts.display_name, ct.name, sp.description
+      FROM skill_prerequisites sp
+      JOIN skills s ON sp.skill_id = s.id
+      LEFT JOIN skills ts ON sp.target_skill_id = ts.id
+      LEFT JOIN classTabs ct ON sp.target_tab_id = ct.id
+      ORDER BY s.display_name, sp.requirement_type
+    `);
+
+    if (res[0]) {
+      res[0].values.forEach(([id, targetSkill, type, value, targetSkillName, targetTabName, description]) => {
+        const tr = document.createElement('tr');
+        let targetDisplay = '';
+        if (type === 'skill_level' && targetSkillName) {
+          targetDisplay = targetSkillName;
+        } else if (type === 'tree_points' && targetTabName) {
+          targetDisplay = targetTabName;
+        } else {
+          targetDisplay = 'N/A';
+        }
+
+        tr.innerHTML = `
+          <td>${targetSkill}</td>
+          <td>${type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}</td>
+          <td>${value}</td>
+          <td>${targetDisplay}</td>
+          <td>${description}</td>
+          <td>
+            <div class="buttons are-small">
+              <button class="button is-warning" data-edit-prerequisite="${id}">Edit</button>
+              <button class="button is-danger" data-del-prerequisite="${id}">Delete</button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Bind edit actions
+    tbody.querySelectorAll('[data-edit-prerequisite]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const prerequisiteId = btn.getAttribute('data-edit-prerequisite');
+        editPrerequisite(prerequisiteId);
+      });
+    });
+
+    // Bind delete actions
+    tbody.querySelectorAll('[data-del-prerequisite]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const prerequisiteId = btn.getAttribute('data-del-prerequisite');
+        deletePrerequisite(prerequisiteId);
+      });
+    });
+  }
+
+  function editPrerequisite(prerequisiteId) {
+    const stmt = SkillDB.db.prepare(`
+      SELECT sp.skill_id, sp.requirement_type, sp.requirement_value, 
+             sp.target_skill_id, sp.target_tab_id, sp.description,
+             s.display_name, ts.display_name, ct.name
+      FROM skill_prerequisites sp
+      JOIN skills s ON sp.skill_id = s.id
+      LEFT JOIN skills ts ON sp.target_skill_id = ts.id
+      LEFT JOIN classTabs ct ON sp.target_tab_id = ct.id
+      WHERE sp.id = ?
+    `);
+    stmt.bind([prerequisiteId]);
+    
+    if (stmt.step()) {
+      const [skillId, type, value, targetSkillId, targetTabId, description, targetName, targetSkillName, targetTabName] = stmt.get();
+      editingPrerequisiteId = prerequisiteId;
+      
+      // Set form values
+      document.getElementById('prerequisite-skill-hidden').value = skillId;
+      document.getElementById('prerequisite-type').value = type;
+      document.getElementById('prerequisite-value').value = value;
+      document.getElementById('prerequisite-target-skill-hidden').value = targetSkillId || '';
+      document.getElementById('prerequisite-target-tab-hidden').value = targetTabId || '';
+      document.getElementById('prerequisite-description').value = description;
+      
+      // Update dropdowns
+      const targetDropdown = document.querySelector('#prerequisite-skill-dd .dropdown-list-item');
+      if (targetDropdown) targetDropdown.textContent = targetName;
+      
+      const targetSkillDropdown = document.querySelector('#prerequisite-target-skill-dd .dropdown-list-item');
+      if (targetSkillDropdown) targetSkillDropdown.textContent = targetSkillName || '';
+      
+      const targetTabDropdown = document.querySelector('#prerequisite-target-tab-dd .dropdown-list-item');
+      if (targetTabDropdown) targetTabDropdown.textContent = targetTabName || '';
+      
+      document.getElementById('prerequisite-save').textContent = 'Update Prerequisite';
+      document.getElementById('prerequisite-cancel').style.display = 'inline-block';
+    }
+    stmt.free();
+  }
+
+  function deletePrerequisite(prerequisiteId) {
+    if (!confirm('Delete this prerequisite?')) return;
+    SkillDB.db.run('DELETE FROM skill_prerequisites WHERE id = ?', [prerequisiteId]);
+    refreshPrerequisitesTable();
+  }
+
+  // Prerequisite form handlers
+  document.getElementById('prerequisite-save').addEventListener('click', () => {
+    if (!SkillDB.db) return;
+    
+    const skillId = parseInt(document.getElementById('prerequisite-skill-hidden').value, 10);
+    const type = document.getElementById('prerequisite-type').value;
+    const value = parseInt(document.getElementById('prerequisite-value').value, 10);
+    const targetSkillId = document.getElementById('prerequisite-target-skill-hidden').value || null;
+    const targetTabId = document.getElementById('prerequisite-target-tab-hidden').value || null;
+    const description = document.getElementById('prerequisite-description').value.trim();
+    
+    if (Number.isNaN(skillId)) {
+      alert('Please select a skill');
+      return;
+    }
+
+    if (editingPrerequisiteId) {
+      SkillDB.db.run(`
+        UPDATE skill_prerequisites 
+        SET skill_id = ?, requirement_type = ?, requirement_value = ?, 
+            target_skill_id = ?, target_tab_id = ?, description = ?
+        WHERE id = ?
+      `, [skillId, type, value, targetSkillId, targetTabId, description, editingPrerequisiteId]);
+      
+      editingPrerequisiteId = null;
+      document.getElementById('prerequisite-save').textContent = 'Save Prerequisite';
+      document.getElementById('prerequisite-cancel').style.display = 'none';
+    } else {
+      SkillDB.db.run(`
+        INSERT INTO skill_prerequisites 
+        (skill_id, requirement_type, requirement_value, target_skill_id, target_tab_id, description)
+        VALUES (?, ?, ?, ?, ?, ?)
+      `, [skillId, type, value, targetSkillId, targetTabId, description]);
+    }
+    
+    // Clear form fields to show successful save
+    document.getElementById('prerequisite-form').reset();
+    document.getElementById('prerequisite-skill-hidden').value = '';
+    document.getElementById('prerequisite-target-skill-hidden').value = '';
+    document.getElementById('prerequisite-target-tab-hidden').value = '';
+    
+    refreshPrerequisitesTable();
+  });
+
+  document.getElementById('prerequisite-cancel').addEventListener('click', () => {
+    editingPrerequisiteId = null;
+    document.getElementById('prerequisite-form').reset();
+    document.getElementById('prerequisite-skill-hidden').value = '';
+    document.getElementById('prerequisite-target-skill-hidden').value = '';
+    document.getElementById('prerequisite-target-tab-hidden').value = '';
+    document.getElementById('prerequisite-save').textContent = 'Save Prerequisite';
+    document.getElementById('prerequisite-cancel').style.display = 'none';
   });
 
   </script>
