@@ -7,6 +7,11 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.13.0/sql-wasm.js"></script>
   <script src="utils.js" type="module"></script>
   <style>
+    html {
+        overflow: hidden;
+        height: 100vh;
+    }
+    
     .skills-grid {
         gap: 1rem;
         width: 50%;
@@ -29,7 +34,7 @@
 
         /* Fix size */
         width: 100%;
-        height: 100px;
+        height: 105px;
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
@@ -79,7 +84,7 @@
         </div>
     </div>
 
-    <div id="skillsContainer" class="mt-4"></div>
+    <div id="skillsContainer"></div>
     <script type="module">
         import { loadDatabase, getUrlParams, updateUrl, sanitizeSkillId, formatStatName, getIconHTML, getSkillIconHTML } from './utils.js';
 
@@ -213,23 +218,23 @@
             // Sort tabs with Mastery positioned 3rd from the end
             const tabNames = Object.keys(tabs);
             const sortedTabNames = tabNames.sort((a, b) => {
-                // Define the desired order: Mastery should be 3rd from the end
-                const order = ['Mastery', 'Reward', 'Innate'];
+                // Define the special tabs that should be at the end
+                const specialTabs = ['Mastery', 'Reward', 'Innate'];
                 
-                const aIndex = order.indexOf(a);
-                const bIndex = order.indexOf(b);
+                const aIsSpecial = specialTabs.includes(a);
+                const bIsSpecial = specialTabs.includes(b);
                 
-                // If both are in the order array, sort by their position in the array
-                if (aIndex !== -1 && bIndex !== -1) {
-                    return aIndex - bIndex;
+                // If both are special tabs, sort by their position in the specialTabs array
+                if (aIsSpecial && bIsSpecial) {
+                    return specialTabs.indexOf(a) - specialTabs.indexOf(b);
                 }
                 
-                // If only one is in the order array, put it at the end
-                if (aIndex !== -1) return 1;
-                if (bIndex !== -1) return -1;
+                // If only one is special, put it at the end
+                if (aIsSpecial) return 1;
+                if (bIsSpecial) return -1;
                 
-                // If neither is in the order array, sort alphabetically
-                return a.localeCompare(b);
+                // If neither is special, maintain original order (don't sort alphabetically)
+                return 0;
             });
 
             // Tabs nav
@@ -289,14 +294,14 @@
                             // Add skill level info under skill name (always grey, not a link)
                             if (skill.canAddPoints) {
                                 // Regular skills that can have points added
-                                let maxLevelText = skill.baseMaxLevel;
                                 if (skill.canBeEnhanced) {
-                                    maxLevelText += '+';
+                                    cardText += `<div class="has-text-grey is-size-6">0 / <span class="has-text-warning">${skill.baseMaxLevel}</span></div>`;
+                                } else {
+                                    cardText += `<div class="has-text-grey is-size-6">0 / ${skill.baseMaxLevel}</div>`;
                                 }
-                                cardText += `<div class="has-text-grey is-size-7 mt-1">0 / ${maxLevelText}</div>`;
                             } else {
                                 // Skills that cannot have points added
-                                cardText += `<div class="has-text-grey is-size-7 mt-1">0 / 0</div>`;
+                                cardText += `<div class="has-text-grey is-size-6">0 / 0</div>`;
                             }
                             
                             card.innerHTML = cardText;
