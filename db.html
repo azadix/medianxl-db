@@ -393,7 +393,6 @@
           <div class="select is-fullwidth">
             <select id="prerequisite-type">
               <option value="skill_level">Skill Level</option>
-              <option value="points_spent">Points Spent</option>
               <option value="tree_points">Tree Points</option>
               <option value="character_level">Character Level</option>
             </select>
@@ -563,7 +562,7 @@
       CREATE TABLE IF NOT EXISTS skill_prerequisites (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           skill_id INTEGER NOT NULL,
-          requirement_type TEXT NOT NULL, -- 'skill_level', 'points_spent', 'tree_points' 'character_level'
+          requirement_type TEXT NOT NULL, -- 'skill_level', 'tree_points' 'character_level'
           requirement_value INTEGER NOT NULL,
           target_skill_id INTEGER, -- For skill_level requirements
           target_tab_id INTEGER, -- For tree_points requirements

@@ -13,15 +13,17 @@
     }
     
     .skills-grid {
-        gap: 1rem;
+        gap: 1.25rem 0.5rem;
         width: 50%;
         margin: 0 auto;
         position: relative; /* Enable absolute positioning for overlay arrows */
+        justify-items: center;
+        align-items: center;
     }
     .empty-skill-card {
         padding: 0.5rem;
-        width: 100%;
-        height: 100px;
+        width: 210px;
+        height: 105px;
     }
 
     /* Uniform skill cards */
@@ -34,8 +36,8 @@
         color: white;
         position: relative; /* Enable absolute positioning for prerequisites */
 
-        /* Fix size */
-        width: 100%;
+        /* 2:1 rectangle size */
+        width: 210px;
         height: 105px;
         display: flex;
         flex-direction: column;
@@ -59,21 +61,11 @@
         flex-shrink: 1;
     }
 
-    /* Arrow cards for showing skill prerequisites */
-    .arrow-card {
-        background: transparent;
-        border: none;
-        width: 100%;
-        height: 105px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .arrow {
+    /* Arrow styling for skill prerequisites */
+    .overlay-arrow {
         font-size: 2rem;
-        color: #4A9EFF;
-        text-shadow: 0 0 3px rgba(74, 158, 255, 0.5);
+        color: #8a8a8a8a;
+        text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
         font-weight: bold;
     }
   </style>
@@ -305,10 +297,10 @@
             arrow.style.left = `${arrowX}px`;
             arrow.style.top = `${arrowY}px`;
             arrow.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
-            arrow.style.fontSize = '1.5rem';
-            arrow.style.color = '#4A9EFF';
-            arrow.style.textShadow = '0 0 3px rgba(74, 158, 255, 0.5)';
-            arrow.style.fontWeight = 'bold';
+            arrow.style.lineHeight = '1';
+            arrow.style.display = 'flex';
+            arrow.style.alignItems = 'center';
+            arrow.style.justifyContent = 'center';
             arrow.style.pointerEvents = 'none';
             arrow.style.zIndex = '10';
             arrow.textContent = arrowSymbol;
@@ -579,10 +571,12 @@
 
                 tabContent.appendChild(contentDiv);
                 
-                // Add overlay arrows for skill prerequisites after a small delay to ensure DOM is rendered
-                setTimeout(() => {
-                    addOverlayArrows(contentDiv, skillsInTab, minRow, minCol);
-                }, 100);
+                // Only add arrows for the first (active) tab initially
+                if (first) {
+                    setTimeout(() => {
+                        addOverlayArrows(contentDiv, skillsInTab, minRow, minCol);
+                    }, 100);
+                }
                 
                 first = false;
             });
@@ -591,16 +585,44 @@
             skillsContainer.appendChild(tabNav);
             skillsContainer.appendChild(tabContent);
 
-            // Tab switching
-            ul.querySelectorAll('a').forEach(a => {
-                a.addEventListener('click', e => {
-                e.preventDefault();
-                ul.querySelectorAll('li').forEach(li => li.classList.remove('is-active'));
-                a.parentElement.classList.add('is-active');
-                tabContent.querySelectorAll('.skills-grid').forEach(div => div.style.display = 'none');
-                document.getElementById(`tab-${a.dataset.tab}`).style.display = 'grid';
-                });
+            // Add tab switching functionality
+            ul.addEventListener('click', (e) => {
+                if (e.target.tagName === 'A') {
+                    const clickedTab = e.target.dataset.tab;
+                    
+                    // Remove active class from all tabs
+                    ul.querySelectorAll('li').forEach(li => li.classList.remove('is-active'));
+                    e.target.parentElement.classList.add('is-active');
+                    
+                    // Hide all tab contents
+                    document.querySelectorAll('.skills-grid').forEach(grid => {
+                        grid.style.display = 'none';
+                    });
+                    
+                    // Show clicked tab content
+                    const targetGrid = document.getElementById(`tab-${clickedTab}`);
+                    if (targetGrid) {
+                        targetGrid.style.display = 'grid';
+                        
+                        // Clear existing arrows and recreate them for the active tab
+                        targetGrid.querySelectorAll('.overlay-arrow').forEach(arrow => arrow.remove());
+                        
+                        // Find the skills for this tab and recreate arrows
+                        const tabSkills = skillsList.filter(skill => skill.tabName === clickedTab);
+                        if (tabSkills.length > 0) {
+                            const rows = tabSkills.map(s => s.row);
+                            const cols = tabSkills.map(s => s.col);
+                            const minRow = Math.min(...rows);
+                            const minCol = Math.min(...cols);
+                            
+                            setTimeout(() => {
+                                addOverlayArrows(targetGrid, tabSkills, minRow, minCol);
+                            }, 50);
+                        }
+                    }
+                }
             });
+
         }
 
         // Initial render
