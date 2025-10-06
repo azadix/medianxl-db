@@ -255,6 +255,36 @@ async function displaySkillDetail(skillId) {
         ).join('');
         restrictionHtml += `<br>`;
     }
+
+    // Add max level information
+    let maxLevelHtml = '';
+    try {
+        const maxLevelStmt = SkillDB.db.prepare(`
+            SELECT base_max_level, can_be_enhanced, can_add_points
+            FROM skill_max_levels
+            WHERE skill_id = ?
+        `);
+        maxLevelStmt.bind([skillInfo.dbId]);
+        
+        if (maxLevelStmt.step()) {
+            const [baseMaxLevel, canBeEnhanced, canAddPoints] = maxLevelStmt.get();
+            maxLevelHtml = `<p class="is-size-5"><strong>Max Level:</strong></p>`;
+            
+            if (canAddPoints) {
+                maxLevelHtml += `<p>Base: ${baseMaxLevel}`;
+                if (canBeEnhanced) {
+                    maxLevelHtml += ` (can be enhanced)`;
+                }
+                maxLevelHtml += `</p>`;
+            } else {
+                maxLevelHtml += `<p>Innate skill (no points can be added)</p>`;
+            }
+            maxLevelHtml += `<br>`;
+        }
+        maxLevelStmt.free();
+    } catch (error) {
+        console.warn('No max level data available for this skill:', error.message);
+    }
     
     let scalingTable = '';
     const scalingGraphs = createScalingGraphs(skillInfo.dbId);
@@ -264,6 +294,7 @@ async function displaySkillDetail(skillId) {
                 <div class="column is-two-thirds">
                     <div class="skill-info">
                         ${restrictionHtml}
+                        ${maxLevelHtml}
                         <div class="skill-description">${descriptionHtml}</div>
                         ${levelControl}
                     </div>

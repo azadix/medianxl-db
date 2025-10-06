@@ -39,6 +39,7 @@
       <button class="button is-light" data-section="tabs-section">Class Tabs</button>
       <button class="button is-light" data-section="stats-section">Stats</button>
       <button class="button is-light" data-section="scaling-section">Scaling</button>
+      <button class="button is-light" data-section="max-levels-section">Max Levels</button>
       
       <div class="file has-name is-small ml-auto" style="display:none;">
         <input class="file-input" type="file" id="import-db" accept=".sqlite">
@@ -329,6 +330,55 @@
     <p id="scaling-status" class="has-text-grey"></p>
   </div>
 
+  <div id="max-levels-section" class="box" style="display:none;">
+    <h3 class="title is-5">Skill Max Levels</h3>
+    <form id="max-level-form" class="mb-3">
+      <div class="columns is-multiline">
+        <div class="column is-one-third">
+          <label class="label">Skill</label>
+          <div id="max-level-skill-dd"></div>
+          <input type="hidden" id="max-level-skill-hidden" />
+        </div>
+        <div class="column is-one-fifth">
+          <label class="label">Base Max Level</label>
+          <input class="input" type="number" id="max-level-base" min="1" value="1">
+        </div>
+        <div class="column is-one-fifth">
+          <label class="label">Can Be Enhanced</label>
+          <div class="field">
+            <input class="checkbox" type="checkbox" id="max-level-enhanced">
+            <label for="max-level-enhanced">Yes</label>
+          </div>
+        </div>
+        <div class="column is-one-fifth">
+          <label class="label">Can Add Points</label>
+          <div class="field">
+            <input class="checkbox" type="checkbox" id="max-level-add-points" checked>
+            <label for="max-level-add-points">Yes</label>
+          </div>
+        </div>
+        <div class="column is-full">
+          <button class="button is-primary" id="max-level-save" type="button">Save Max Level</button>
+          <button class="button" id="max-level-cancel" type="button" style="display:none;">Cancel</button>
+        </div>
+      </div>
+    </form>
+
+    <table class="table is-striped is-fullwidth is-narrow" id="max-levels-table">
+      <thead>
+        <tr>
+          <th style="width:25%">Skill</th>
+          <th style="width:15%">Base Max Level</th>
+          <th style="width:15%">Can Be Enhanced</th>
+          <th style="width:15%">Can Add Points</th>
+          <th style="width:30%">Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+
   <script type="module">
   import { DropdownList } from './DropdownList.js';
 
@@ -366,6 +416,8 @@
       refreshTabsTable();
       refreshStatsTable();
       populateScalingSelectors();
+      populateMaxLevelSelectors();
+      refreshMaxLevelsTable();
     } catch (err) {
       console.warn("Falling back to empty DB:", err.message);
       try {
@@ -437,6 +489,14 @@
           PRIMARY KEY (skill_id, level, stat_id),
           FOREIGN KEY (skill_id) REFERENCES skills(id),
           FOREIGN KEY (stat_id) REFERENCES stats(id)
+      );
+      CREATE TABLE IF NOT EXISTS skill_max_levels (
+          skill_id INTEGER NOT NULL,
+          base_max_level INTEGER NOT NULL DEFAULT 1,
+          can_be_enhanced BOOLEAN NOT NULL DEFAULT 0,
+          can_add_points BOOLEAN NOT NULL DEFAULT 1,
+          PRIMARY KEY (skill_id),
+          FOREIGN KEY (skill_id) REFERENCES skills(id) ON DELETE CASCADE
       );
     `);
 
@@ -630,7 +690,7 @@
       btn.classList.add('is-primary');
       
       // Show/hide sections
-      document.querySelectorAll('#skills-section, #tags-section, #classes-section, #tabs-section, #stats-section, #scaling-section').forEach(div => {
+      document.querySelectorAll('#skills-section, #tags-section, #classes-section, #tabs-section, #stats-section, #scaling-section, #max-levels-section').forEach(div => {
         div.style.display = (div.id === id) ? 'block' : 'none';
       });
     });
@@ -1250,6 +1310,8 @@
       refreshTabsTable();
       refreshStatsTable();
       populateScalingSelectors();
+      populateMaxLevelSelectors();
+      refreshMaxLevelsTable();
       fileInput.value = "";
     } catch (err) {
       console.error("Error importing DB:", err);
@@ -1892,6 +1954,166 @@
   
   // Initialize description autocomplete
   initializeDescriptionAutocomplete();
+
+  // --- Max Levels Management ---
+  let editingMaxLevelId = null;
+
+  async function populateMaxLevelSelectors() {
+    const skillDdContainer = document.getElementById('max-level-skill-dd');
+    const skillHiddenInput = document.getElementById('max-level-skill-hidden');
+
+    if (skillDdContainer && skillHiddenInput) {
+      const res = SkillDB.db.exec("SELECT id, display_name FROM skills ORDER BY display_name");
+      const skillItems = res[0] ? res[0].values.map(([id, name]) => ({
+        value: id,
+        name: name,
+        desc: `Skill ID: ${id}`
+      })) : [];
+      
+      const skillDropdown = new DropdownList(skillDdContainer, {
+        placeholder: 'Select skill...',
+        emptyListText: 'No skills found',
+        defaultHeaderText: 'Skills',
+        onSelect: (item) => {
+          skillHiddenInput.value = item?.value || '';
+          if (item?.value) {
+            loadMaxLevelData(item.value);
+          }
+        }
+      });
+      skillDropdown.setItems(skillItems);
+    }
+  }
+
+  function loadMaxLevelData(skillId) {
+    const stmt = SkillDB.db.prepare('SELECT base_max_level, can_be_enhanced, can_add_points FROM skill_max_levels WHERE skill_id = ?');
+    stmt.bind([skillId]);
+    
+    if (stmt.step()) {
+      const [baseMaxLevel, canBeEnhanced, canAddPoints] = stmt.get();
+      document.getElementById('max-level-base').value = baseMaxLevel;
+      document.getElementById('max-level-enhanced').checked = canBeEnhanced === 1;
+      document.getElementById('max-level-add-points').checked = canAddPoints === 1;
+    } else {
+      // Default values for new skills
+      document.getElementById('max-level-base').value = 1;
+      document.getElementById('max-level-enhanced').checked = false;
+      document.getElementById('max-level-add-points').checked = true;
+    }
+    stmt.free();
+  }
+
+  function refreshMaxLevelsTable() {
+    if (!SkillDB.db) return;
+    const tbody = document.querySelector('#max-levels-table tbody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    const res = SkillDB.db.exec(`
+      SELECT s.id, s.display_name, sml.base_max_level, sml.can_be_enhanced, sml.can_add_points
+      FROM skills s
+      LEFT JOIN skill_max_levels sml ON s.id = sml.skill_id
+      ORDER BY s.display_name
+    `);
+
+    if (res[0]) {
+      res[0].values.forEach(([id, name, baseMaxLevel, canBeEnhanced, canAddPoints]) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${name}</td>
+          <td>${baseMaxLevel || 1}</td>
+          <td>${canBeEnhanced ? 'Yes' : 'No'}</td>
+          <td>${canAddPoints ? 'Yes' : 'No'}</td>
+          <td>
+            <div class="buttons are-small">
+              <button class="button is-warning" data-edit-max-level="${id}">Edit</button>
+              <button class="button is-danger" data-del-max-level="${id}">Delete</button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Bind edit actions
+    tbody.querySelectorAll('[data-edit-max-level]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const skillId = btn.getAttribute('data-edit-max-level');
+        editMaxLevel(skillId);
+      });
+    });
+
+    // Bind delete actions
+    tbody.querySelectorAll('[data-del-max-level]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const skillId = btn.getAttribute('data-del-max-level');
+        deleteMaxLevel(skillId);
+      });
+    });
+  }
+
+  function editMaxLevel(skillId) {
+    const stmt = SkillDB.db.prepare('SELECT display_name FROM skills WHERE id = ?');
+    stmt.bind([skillId]);
+    if (stmt.step()) {
+      const [name] = stmt.get();
+      editingMaxLevelId = skillId;
+      
+      // Set the dropdown to this skill
+      const skillDropdown = document.querySelector('#max-level-skill-dd .dropdown-list-item');
+      if (skillDropdown) {
+        skillDropdown.textContent = name;
+        document.getElementById('max-level-skill-hidden').value = skillId;
+      }
+      
+      loadMaxLevelData(skillId);
+      document.getElementById('max-level-save').textContent = 'Update Max Level';
+      document.getElementById('max-level-cancel').style.display = 'inline-block';
+    }
+    stmt.free();
+  }
+
+  function deleteMaxLevel(skillId) {
+    if (!confirm('Delete max level data for this skill?')) return;
+    SkillDB.db.run('DELETE FROM skill_max_levels WHERE skill_id = ?', [skillId]);
+    refreshMaxLevelsTable();
+  }
+
+  // Max level form handlers
+  document.getElementById('max-level-save').addEventListener('click', () => {
+    if (!SkillDB.db) return;
+    
+    const skillId = parseInt(document.getElementById('max-level-skill-hidden').value, 10);
+    const baseMaxLevel = parseInt(document.getElementById('max-level-base').value, 10);
+    const canBeEnhanced = document.getElementById('max-level-enhanced').checked ? 1 : 0;
+    const canAddPoints = document.getElementById('max-level-add-points').checked ? 1 : 0;
+    
+    if (Number.isNaN(skillId) || Number.isNaN(baseMaxLevel)) {
+      alert('Please select a skill and enter a valid max level');
+      return;
+    }
+
+    if (editingMaxLevelId) {
+      SkillDB.db.run('UPDATE skill_max_levels SET base_max_level = ?, can_be_enhanced = ?, can_add_points = ? WHERE skill_id = ?', 
+                     [baseMaxLevel, canBeEnhanced, canAddPoints, editingMaxLevelId]);
+      editingMaxLevelId = null;
+      document.getElementById('max-level-save').textContent = 'Save Max Level';
+      document.getElementById('max-level-cancel').style.display = 'none';
+    } else {
+      SkillDB.db.run('INSERT OR REPLACE INTO skill_max_levels (skill_id, base_max_level, can_be_enhanced, can_add_points) VALUES (?, ?, ?, ?)', 
+                     [skillId, baseMaxLevel, canBeEnhanced, canAddPoints]);
+    }
+    
+    refreshMaxLevelsTable();
+  });
+
+  document.getElementById('max-level-cancel').addEventListener('click', () => {
+    editingMaxLevelId = null;
+    document.getElementById('max-level-form').reset();
+    document.getElementById('max-level-save').textContent = 'Save Max Level';
+    document.getElementById('max-level-cancel').style.display = 'none';
+  });
+
   </script>
 </body>
 </html>

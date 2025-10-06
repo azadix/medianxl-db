@@ -101,7 +101,10 @@
                         ct.name AS tab_name,
                         c.name AS class_name,
                         s.description,
-                        GROUP_CONCAT(t.name, ', ') AS tags
+                        GROUP_CONCAT(t.name, ', ') AS tags,
+                        sml.base_max_level,
+                        sml.can_be_enhanced,
+                        sml.can_add_points
                     FROM skills s
                     LEFT JOIN classTabs ct
                         ON s.tab_index = ct.id
@@ -111,6 +114,8 @@
                         ON s.id = st.skill_id
                     LEFT JOIN skilltags t
                         ON st.tag_id = t.id
+                    LEFT JOIN skill_max_levels sml
+                        ON s.id = sml.skill_id
                     WHERE s.class_id != 1
                     GROUP BY s.id
                     ORDER BY s.class_id, s.tab_index, s.row, s.col;
@@ -129,7 +134,10 @@
                         row: row.row,
                         col: row.col,
                         image: row.image || 'icons-shared_missing.png',
-                        hasDetails: row.description && row.description.trim().length > 0
+                        hasDetails: row.description && row.description.trim().length > 0,
+                        baseMaxLevel: row.base_max_level || 0,
+                        canBeEnhanced: row.can_be_enhanced === 1,
+                        canAddPoints: row.can_add_points === 1
                     });
 
 
@@ -228,9 +236,25 @@
                                 <div>
                             `;
                             if (skill.hasDetails) {
-                                cardText += `<a href="./?skill=${skill.id}">`
+                                cardText += `<a href="./?skill=${skill.id}">${skill.name}</a>`;
+                            } else {
+                                cardText += `${skill.name}`;
                             }
-                            cardText += `${skill.name}</div>`;
+                            cardText += `</div>`;
+                            
+                            // Add skill level info under skill name (always grey, not a link)
+                            if (skill.canAddPoints) {
+                                // Regular skills that can have points added
+                                let maxLevelText = skill.baseMaxLevel;
+                                if (skill.canBeEnhanced) {
+                                    maxLevelText += '+';
+                                }
+                                cardText += `<div class="has-text-grey is-size-7 mt-1">0 / ${maxLevelText}</div>`;
+                            } else {
+                                // Innate skills that cannot have points added
+                                cardText += `<div class="has-text-grey is-size-7 mt-1">Innate</div>`;
+                            }
+                            
                             card.innerHTML = cardText;
 
                             contentDiv.appendChild(card);
