@@ -68,6 +68,7 @@
         text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
         font-weight: bold;
     }
+
   </style>
 </head>
 <body class="section">
@@ -211,7 +212,6 @@
             const toRow = toSkill.row - minRow + 1;
             const toCol = toSkill.col - minCol + 1;
 
-            console.log(`Creating arrow: ${fromSkill.name}(${fromRow},${fromCol}) → ${toSkill.name}(${toRow},${toCol})`);
 
             // Find skill cards by looking for elements with the correct grid position
             const allCards = contentDiv.querySelectorAll('.skill-card, .empty-skill-card');
@@ -241,12 +241,8 @@
                 }
             });
             
-            console.log('From card found:', fromCard);
-            console.log('To card found:', toCard);
-            console.log('All cards:', allCards.length);
             
             if (!fromCard || !toCard) {
-                console.log('Cards not found, skipping arrow');
                 return;
             }
             
@@ -255,9 +251,6 @@
             const toRect = toCard.getBoundingClientRect();
             const gridRect = contentDiv.getBoundingClientRect();
             
-            console.log('From rect:', fromRect);
-            console.log('To rect:', toRect);
-            console.log('Grid rect:', gridRect);
             
             // Calculate center positions relative to the grid container
             const fromX = fromRect.left + fromRect.width / 2 - gridRect.left;
@@ -265,18 +258,15 @@
             const toX = toRect.left + toRect.width / 2 - gridRect.left;
             const toY = toRect.top + toRect.height / 2 - gridRect.top;
             
-            console.log('Calculated positions:', {fromX, fromY, toX, toY});
 
             // Calculate arrow direction and position
             const deltaX = toX - fromX;
             const deltaY = toY - fromY;
             const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
             
-            console.log('Distance calculated:', distance);
             
             // Only show arrow if skills are reasonably close (not too far apart)
             if (distance > 500) {
-                console.log('Arrow skipped - distance too far:', distance);
                 return; // Skip very long arrows
             }
             
@@ -422,7 +412,6 @@
             arrow.appendChild(svg);
 
             contentDiv.appendChild(arrow);
-            console.log('Arrow added to DOM:', arrow);
         }
 
         async function loadSkillsFromSQLite() {
@@ -447,7 +436,11 @@
                         sml.base_max_level,
                         sml.can_be_enhanced,
                         sml.can_add_points,
-                        GROUP_CONCAT(sp.requirement_type || ':' || sp.requirement_value || ':' || COALESCE(ts.display_name, ct2.name, ''), '; ') AS prerequisites
+                        (SELECT GROUP_CONCAT(sp2.requirement_type || ':' || sp2.requirement_value || ':' || COALESCE(ts2.display_name, ct3.name, ''), '; ')
+                         FROM skill_prerequisites sp2
+                         LEFT JOIN skills ts2 ON sp2.target_skill_id = ts2.id
+                         LEFT JOIN classTabs ct3 ON sp2.target_tab_id = ct3.id
+                         WHERE sp2.skill_id = s.id) AS prerequisites
                     FROM skills s
                     LEFT JOIN classTabs ct
                         ON s.tab_index = ct.id
@@ -459,12 +452,6 @@
                         ON st.tag_id = t.id
                     LEFT JOIN skill_max_levels sml
                         ON s.id = sml.skill_id
-                    LEFT JOIN skill_prerequisites sp
-                        ON s.id = sp.skill_id
-                    LEFT JOIN skills ts
-                        ON sp.target_skill_id = ts.id
-                    LEFT JOIN classTabs ct2
-                        ON sp.target_tab_id = ct2.id
                     WHERE s.class_id != 1
                     GROUP BY s.id
                     ORDER BY s.class_id, s.tab_index, s.row, s.col;
@@ -473,6 +460,7 @@
                 const loadedSkills = [];
                 while (stmt.step()) {
                     const row = stmt.getAsObject();
+                    const prerequisites = row.prerequisites ? row.prerequisites.split('; ').filter(p => p.trim()) : [];
                     loadedSkills.push({
                         id: row.name,
                         name: row.display_name,
@@ -487,7 +475,7 @@
                         baseMaxLevel: row.base_max_level || 0,
                         canBeEnhanced: row.can_be_enhanced === 1,
                         canAddPoints: row.can_add_points === 1,
-                        prerequisites: row.prerequisites ? row.prerequisites.split('; ').filter(p => p.trim()) : []
+                        prerequisites: prerequisites
                     });
 
 
@@ -626,17 +614,29 @@
                             card.style.gridRow = r - minRow + 1;
                             card.style.gridColumn = c - minCol + 1;
 
-                            // Parse prerequisites to find level requirements
+                            // Parse prerequisites to find level requirements and tooltip content
                             let levelRequirement = null;
                             let hasPrerequisites = false;
+                            let tooltipContent = '';
                             if (skill.prerequisites && skill.prerequisites.length > 0) {
                                 hasPrerequisites = true;
+                                const tooltipParts = [];
+                                
                                 skill.prerequisites.forEach(prereq => {
                                     const [type, value, target] = prereq.split(':');
+                                    
                                     if (type === 'character_level' || type === 'class_level') {
                                         levelRequirement = value;
+                                    } else if (type === 'tree_points') {
+                                        tooltipParts.push(`Requires ${value} points in ${target}`);
+                                    } else if (type === 'skill_level') {
+                                        tooltipParts.push(`Requires ${target} at level ${value}`);
                                     }
                                 });
+                                if (tooltipParts.length > 0) {
+                                    tooltipContent = tooltipParts.join('\n');
+                                    
+                                }
                             }
 
                             let cardText = `
@@ -653,6 +653,11 @@
                             // Add level requirement at top right if present
                             if (levelRequirement) {
                                 cardText += `<div class="has-text-danger is-size-7" style="position: absolute; top: 2px; right: 2px;">Lv.${levelRequirement}</div>`;
+                            }
+                            
+                            // Add tooltip at bottom right if present
+                            if (tooltipContent) {
+                                cardText += `<div class="has-text-info is-size-6 has-text-weight-bold" style="position: absolute; bottom: 3px; right: 8px;" title="${tooltipContent}">!</div>`;
                             }
                             
                             // Add skill level info under skill name (orange value if skill reached max possible level)

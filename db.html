@@ -2248,10 +2248,15 @@
     const targetTabHiddenInput = document.getElementById('prerequisite-target-tab-hidden');
 
     if (targetTabDdContainer && targetTabHiddenInput) {
-      const res = SkillDB.db.exec("SELECT id, name FROM classTabs ORDER BY name");
-      const tabItems = res[0] ? res[0].values.map(([id, name]) => ({
+      const res = SkillDB.db.exec(`
+        SELECT ct.id, ct.name, c.name as class_name 
+        FROM classTabs ct 
+        JOIN classes c ON ct.class_id = c.id 
+        ORDER BY c.name, ct.name
+      `);
+      const tabItems = res[0] ? res[0].values.map(([id, name, class_name]) => ({
         value: id,
-        name: name,
+        name: `${name} (${class_name})`,
         desc: `Tab ID: ${id}`
       })) : [];
       
@@ -2275,22 +2280,23 @@
 
     const res = SkillDB.db.exec(`
       SELECT sp.id, s.display_name, sp.requirement_type, sp.requirement_value,
-             ts.display_name, ct.name, sp.description
+             ts.display_name, ct.name, c.name as class_name, sp.description
       FROM skill_prerequisites sp
       JOIN skills s ON sp.skill_id = s.id
       LEFT JOIN skills ts ON sp.target_skill_id = ts.id
       LEFT JOIN classTabs ct ON sp.target_tab_id = ct.id
+      LEFT JOIN classes c ON ct.class_id = c.id
       ORDER BY s.display_name, sp.requirement_type
     `);
 
     if (res[0]) {
-      res[0].values.forEach(([id, targetSkill, type, value, targetSkillName, targetTabName, description]) => {
+      res[0].values.forEach(([id, targetSkill, type, value, targetSkillName, targetTabName, class_name, description]) => {
         const tr = document.createElement('tr');
         let targetDisplay = '';
         if (type === 'skill_level' && targetSkillName) {
           targetDisplay = targetSkillName;
         } else if (type === 'tree_points' && targetTabName) {
-          targetDisplay = targetTabName;
+          targetDisplay = `${targetTabName} (${class_name})`;
         } else {
           targetDisplay = 'N/A';
         }
