@@ -299,64 +299,65 @@
             // Calculate intersection points with card edges
             const cardWidth = 210;
             const cardHeight = 105;
-            const halfWidth = cardWidth / 2;
-            const halfHeight = cardHeight / 2;
 
-            // Calculate direction vector
-            const dx = toX - fromX;
-            const dy = toY - fromY;
-            const length = Math.sqrt(dx * dx + dy * dy);
-            const unitX = dx / length;
-            const unitY = dy / length;
-
-            // Find intersection points with card boundaries
             function getIntersectionPoint(centerX, centerY, targetX, targetY, cardWidth, cardHeight) {
                 const dx = targetX - centerX;
                 const dy = targetY - centerY;
                 const length = Math.sqrt(dx * dx + dy * dy);
+                
+                if (length === 0) {
+                    return { x: centerX, y: centerY };
+                }
+                
                 const unitX = dx / length;
                 const unitY = dy / length;
 
-                // Calculate intersection with card rectangle
                 const halfW = cardWidth / 2;
                 const halfH = cardHeight / 2;
 
-                // Check intersections with each edge
                 const intersections = [];
 
-                // Top edge
+                // Top edge (y = centerY - halfH)
                 if (unitY !== 0) {
-                    const t = (centerY - halfH - centerY) / unitY;
-                    const x = centerX + t * unitX;
-                    if (x >= centerX - halfW && x <= centerX + halfW && t > 0) {
-                        intersections.push({ x, y: centerY - halfH, t });
+                    const t = (-halfH) / unitY;
+                    if (t > 0) {
+                        const x = centerX + t * unitX;
+                        if (x >= centerX - halfW && x <= centerX + halfW) {
+                            intersections.push({ x, y: centerY - halfH, t });
+                        }
                     }
                 }
 
-                // Bottom edge
+                // Bottom edge (y = centerY + halfH)
                 if (unitY !== 0) {
-                    const t = (centerY + halfH - centerY) / unitY;
-                    const x = centerX + t * unitX;
-                    if (x >= centerX - halfW && x <= centerX + halfW && t > 0) {
-                        intersections.push({ x, y: centerY + halfH, t });
+                    const t = (halfH) / unitY;
+                    if (t > 0) {
+                        const x = centerX + t * unitX;
+                        if (x >= centerX - halfW && x <= centerX + halfW) {
+                            intersections.push({ x, y: centerY + halfH, t });
+                        }
                     }
                 }
 
-                // Left edge
+                // Left edge (x = centerX - halfW)
                 if (unitX !== 0) {
-                    const t = (centerX - halfW - centerX) / unitX;
-                    const y = centerY + t * unitY;
-                    if (y >= centerY - halfH && y <= centerY + halfH && t > 0) {
-                        intersections.push({ x: centerX - halfW, y, t });
+                    const t = (-halfW) / unitX;
+                    if (t > 0) {
+                        const y = centerY + t * unitY;
+                        if (y >= centerY - halfH && y <= centerY + halfH) {
+                            intersections.push({ x: centerX - halfW, y, t });
+                        }
                     }
                 }
 
-                // Right edge
+                // Right edge (x = centerX + halfW)
                 if (unitX !== 0) {
-                    const t = (centerX + halfW - centerX) / unitX;
-                    const y = centerY + t * unitY;
-                    if (y >= centerY - halfH && y <= centerY + halfH && t > 0) {
-                        intersections.push({ x: centerX + halfW, y, t });
+                    const t = (halfW) / unitX;
+                    if (t > 0) {
+                        const y = centerY + t * unitY;
+                        if (y >= centerY - halfH && y <= centerY + halfH) {
+                            intersections.push({ x: centerX + halfW, y, t });
+                        }
                     }
                 }
 
@@ -366,7 +367,8 @@
                     return { x: closest.x, y: closest.y };
                 }
 
-                return { x: centerX, y: centerY }; // Fallback to center
+                // Fallback to center if no intersection found
+                return { x: centerX, y: centerY };
             }
 
             const startPoint = getIntersectionPoint(fromX, fromY, toX, toY, cardWidth, cardHeight);
@@ -376,6 +378,7 @@
             const startY = startPoint.y;
             const endX = endPoint.x;
             const endY = endPoint.y;
+
 
             // Create line
             const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
