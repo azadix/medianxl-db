@@ -56,19 +56,9 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        max-width: 90%;
         text-align: center;
         flex-shrink: 1;
     }
-
-    /* Arrow styling for skill prerequisites */
-    .overlay-arrow {
-        font-size: 2rem;
-        color: #8a8a8a8a;
-        text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
-        font-weight: bold;
-    }
-
   </style>
 </head>
 <body class="section">
@@ -184,7 +174,7 @@
             return arrows[direction] || '→';
         }
 
-        function addOverlayArrows(contentDiv, skillsInTab, minRow, minCol) {
+        function addOverlayArrows(contentDiv, skillsInTab, minRow, minCol, allClassSkills) {
             // Find skills with prerequisites
             const skillsWithPrereqs = skillsInTab.filter(skill => 
                 skill.prerequisites && skill.prerequisites.length > 0
@@ -195,8 +185,8 @@
                     const [type, value, target] = prereq.split(':');
                     
                     if (type === 'skill_level' && target) {
-                        // Find the prerequisite skill in the same tab
-                        const prereqSkill = skillsInTab.find(s => s.name === target);
+                        // Find the prerequisite skill in the same class (across all tabs)
+                        const prereqSkill = allClassSkills.find(s => s.name === target && s.class === skill.class);
                         if (prereqSkill) {
                             createOverlayArrow(contentDiv, prereqSkill, skill, minRow, minCol, skillsInTab);
                         }
@@ -258,18 +248,11 @@
             const toX = toRect.left + toRect.width / 2 - gridRect.left;
             const toY = toRect.top + toRect.height / 2 - gridRect.top;
             
-
             // Calculate arrow direction and position
             const deltaX = toX - fromX;
             const deltaY = toY - fromY;
             const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-            
-            
-            // Only show arrow if skills are reasonably close (not too far apart)
-            if (distance > 500) {
-                return; // Skip very long arrows
-            }
-            
+                        
             // Calculate arrow position (midpoint between skills)
             const arrowX = (fromX + toX) / 2;
             const arrowY = (fromY + toY) / 2;
@@ -698,7 +681,7 @@
                 // Only add arrows for the first (active) tab initially
                 if (first) {
                     setTimeout(() => {
-                        addOverlayArrows(contentDiv, skillsInTab, minRow, minCol);
+                        addOverlayArrows(contentDiv, skillsInTab, minRow, minCol, classSkills);
                     }, 100);
                 }
                 
@@ -732,7 +715,7 @@
                         targetGrid.querySelectorAll('.overlay-arrow').forEach(arrow => arrow.remove());
                         
                         // Find the skills for this tab and recreate arrows
-                        const tabSkills = skillsList.filter(skill => skill.tabName === clickedTab);
+                        const tabSkills = classSkills.filter(skill => skill.tabName === clickedTab);
                         if (tabSkills.length > 0) {
                             const rows = tabSkills.map(s => s.row);
                             const cols = tabSkills.map(s => s.col);
@@ -740,7 +723,7 @@
                             const minCol = Math.min(...cols);
                             
                             setTimeout(() => {
-                                addOverlayArrows(targetGrid, tabSkills, minRow, minCol);
+                                addOverlayArrows(targetGrid, tabSkills, minRow, minCol, classSkills);
                             }, 50);
                         }
                     }

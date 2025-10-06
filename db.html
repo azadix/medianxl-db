@@ -403,7 +403,7 @@
           <input class="input" type="number" id="prerequisite-value" min="1" value="1">
         </div>
         <div class="column is-one-third">
-          <label class="label">Target Skill (for skill_level)</label>
+          <label class="label">Required Skill (for skill_level)</label>
           <div id="prerequisite-target-skill-dd"></div>
           <input type="hidden" id="prerequisite-target-skill-hidden" />
         </div>
@@ -2395,6 +2395,11 @@
     
     if (Number.isNaN(skillId)) {
       alert('Please select a skill');
+      return;
+    }
+
+    if (type === 'tree_points' && !targetTabId) {
+      alert('Please select a target tab for tree_points requirement');
       return;
     }
 
