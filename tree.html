@@ -291,17 +291,21 @@
                             }
                             cardText += `</div>`;
                             
-                            // Add skill level info under skill name (always grey, not a link)
+                            // Add skill level info under skill name (orange value if skill reached max possible level)
                             if (skill.canAddPoints) {
                                 // Regular skills that can have points added
                                 if (skill.canBeEnhanced) {
-                                    cardText += `<div class="has-text-grey is-size-6">0 / <span class="has-text-warning">${skill.baseMaxLevel}</span></div>`;
-                                } else {
                                     cardText += `<div class="has-text-grey is-size-6">0 / ${skill.baseMaxLevel}</div>`;
+                                } else {
+                                    cardText += `<div class="has-text-grey is-size-6">0 / <span class="has-text-warning">${skill.baseMaxLevel}</span></div>`;
                                 }
                             } else {
                                 // Skills that cannot have points added
-                                cardText += `<div class="has-text-grey is-size-6">0 / 0</div>`;
+                                if (skill.tabName == "Innate") {
+                                    cardText += `<div class="has-text-grey is-size-6">0 / 0</div>`;
+                                } else {
+                                    cardText += `<div class="has-text-grey is-size-6">? / ?</div>`;
+                                }
                             }
                             
                             card.innerHTML = cardText;
