@@ -185,8 +185,15 @@ async function displaySkillDetail(skillId) {
     function renderDescriptionAtLevel(level) {
         if (!skillInfo.description) return '';
         const expanded = expandPlaceholdersWithScaling(SkillDB.db, skillInfo.dbId, level, skillInfo.description);
-        const lines = expanded.split('\n').map(line => `<p>${line}</p>`).join('');
-        return `<p class="is-size-5"><strong>Description:</strong></p>${lines}<br>`;
+        const lines = expanded.split('\n');
+        
+        // Add extra newline after first line if there are multiple lines
+        if (lines.length > 1) {
+            lines.splice(1, 0, ''); // Insert empty string at index 1 (after first line)
+        }
+        
+        const htmlLines = lines.map(line => `${line}<br>`).join('');
+        return `<p class="is-size-5"><strong>Description:</strong></p>${htmlLines}<br>`;
     }
 
     function createScalingGraphs(skillId) {
@@ -506,11 +513,6 @@ function initializeScalingCharts(skillId) {
                             display: true,
                             text: 'Value'
                         }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        position: 'top',
                     }
                 },
                 interaction: {
