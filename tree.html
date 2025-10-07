@@ -28,6 +28,15 @@
     <div class="columns pt-3" style="height: 95vh;">
         <div class="column is-one-fifth px-0" style="overflow-y: auto;">
             <div class="pr-2" style="height: 100%; border-right: 1px solid var(--bulma-border);">
+                <div class="field">
+                    <label class="label">Skill Points</label>
+                    <div class="box has-background-dark p-2">
+                        <p id="skillPointsDisplay" class="has-text-centered">
+                            <span class="has-text-weight-bold" id="spentPoints">0</span> / <span id="availablePoints">167</span>
+                        </p>
+                    </div>
+                </div>
+                
                 <h3 class="title is-5">Character Info</h3>
                 
                 <div class="field">
@@ -45,15 +54,6 @@
                         <input class="input" type="number" id="characterLevel">
                     </div>
                     <p class="help" id="characterLevelHelp"></p>
-                </div>
-                
-                <div class="field">
-                    <label class="label">Skill Points</label>
-                    <div class="box has-background-dark" style="padding: 0.75rem;">
-                        <p id="skillPointsDisplay" class="has-text-centered">
-                            <span class="has-text-weight-bold" id="spentPoints">0</span> / <span id="availablePoints">167</span>
-                        </p>
-                    </div>
                 </div>
             </div>
         </div>

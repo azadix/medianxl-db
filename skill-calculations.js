@@ -105,11 +105,12 @@ const MAX_LEVEL_MODIFIERS = [
     type: 'affects_multiple_skills_by_character_level',
     targetSkillNames: ['trinity_arrow', 'barrage'], // Trinity Arrow and Barrage
     characterLevelDivisor: 4, // +1 max level for every 4 character levels
+    maxBonus: 20, // Maximum of 20 bonus levels
     description: 'When active, increases Trinity Arrow and Barrage max level by 1 for every 4 character levels',
     calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = CHARACTER_CONFIG.DEFAULT_LEVEL) {
       // Only applies if Elemental Command has at least 1 point invested
       if (sourceSkillLevel > 0 && this.targetSkillNames.includes(targetSkillData.skill_name)) {
-        return Math.floor(characterLevel / this.characterLevelDivisor);
+        return Math.min(Math.floor(characterLevel / this.characterLevelDivisor), this.maxBonus);;
       }
       return 0;
     }

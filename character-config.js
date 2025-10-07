@@ -20,13 +20,16 @@ export const CHARACTER_CONFIG = {
   // Skill points
   BASE_SKILL_POINTS: 149, // Base skill points available (level 1-150)
   
-  // Quest skill point rewards (1 per difficulty for each quest)
+  // Quest skill point rewards
   QUEST_SKILL_POINTS: {
     'den_of_evil': { normal: 1, nightmare: 1, hell: 1 },
     'radament': { normal: 1, nightmare: 1, hell: 1 },
     'izual': { normal: 2, nightmare: 2, hell: 2 },
     'inquisitor_of_the_triune': { hell: 2}
-  }
+  },
+  
+  // Skill restrictions
+  MAX_MASTERY_SKILLS: 3 // Maximum number of different Mastery skills that can have points
 };
 
 /**

@@ -18,6 +18,9 @@ function updateSkillCards(selectedClass, skillsList, characterLevel) {
     // Get all skill cards
     const allCards = document.querySelectorAll('.skill-card');
     
+    // Track which tabs have points
+    const tabsWithPoints = new Set();
+    
     allCards.forEach(card => {
         // Get skill ID from the card's button (if it exists)
         const plusBtn = card.querySelector('.skill-plus-btn');
@@ -29,6 +32,11 @@ function updateSkillCards(selectedClass, skillsList, characterLevel) {
         
         // Get current points
         const currentPoints = getSkillPoints(skillId);
+        
+        // Track tabs with points
+        if (currentPoints > 0 && skill.tabName) {
+            tabsWithPoints.add(skill.tabName);
+        }
         
         // Update the level display
         const levelDisplay = card.querySelector('.is-size-6');
@@ -50,12 +58,13 @@ function updateSkillCards(selectedClass, skillsList, characterLevel) {
             const skillLevels = getAllSkillPoints();
             const effectiveMaxLevel = db ? calculateMaxLevel(skill.skillId, skillLevels, characterLevel, db) : skill.baseMaxLevel;
             
-            // Check prerequisites and ultimate restrictions
+            // Check prerequisites, ultimate, and mastery restrictions
             const prereqCheck = checkPrerequisites(skill, currentSkillsList);
             const ultimateRestriction = checkUltimateSkillBlock(skill, currentSkillsList);
-            const canAddPoint = (prereqCheck.met && !ultimateRestriction.blocked) || currentPoints > 0;
+            const masteryRestriction = checkMasterySkillBlock(skill, currentSkillsList);
+            const canAddPoint = (prereqCheck.met && !ultimateRestriction.blocked && !masteryRestriction.blocked) || currentPoints > 0;
             
-            // Build tooltip
+            // Build tooltip (don't show Mastery restriction in tooltip - just disable)
             let tooltipMessage = '';
             if (!prereqCheck.met && currentPoints === 0) {
                 tooltipMessage = prereqCheck.reasons.join(', ');
@@ -73,6 +82,29 @@ function updateSkillCards(selectedClass, skillsList, characterLevel) {
             const minusDisabled = currentPoints === 0;
             minusBtn.disabled = minusDisabled;
             minusBtn.className = `button is-outlined is-small ${minusDisabled ? 'is-ghost' : 'is-danger'} skill-minus-btn`;
+        }
+    });
+    
+    // Update tab colors based on points allocated
+    updateTabColors(tabsWithPoints);
+}
+
+/**
+ * Update tab colors to highlight tabs with skill points
+ * @param {Set} tabsWithPoints - Set of tab names that have points allocated
+ */
+function updateTabColors(tabsWithPoints) {
+    // Get all tab links
+    const tabLinks = document.querySelectorAll('.tabs a');
+    
+    tabLinks.forEach(link => {
+        const tabName = link.dataset.tab;
+        if (tabName) {
+            if (tabsWithPoints.has(tabName)) {
+                link.classList.add('has-text-info');
+            } else {
+                link.classList.remove('has-text-info');
+            }
         }
     });
 }
@@ -190,6 +222,15 @@ export function renderSkills(selectedClass, skillsList, skillsContainer, charact
     skillsContainer.appendChild(tabNav);
     skillsContainer.appendChild(tabContent);
     
+    // Update tab colors on initial render
+    const tabsWithPoints = new Set();
+    classSkills.forEach(skill => {
+        if (getSkillPoints(skill.id) > 0 && skill.tabName) {
+            tabsWithPoints.add(skill.tabName);
+        }
+    });
+    updateTabColors(tabsWithPoints);
+    
     // Add arrows for the active tab after DOM is appended
     const activeTabName = preserveTab || sortedTabNames[0];
     const activeGrid = document.getElementById(`tab-${activeTabName}`);
@@ -256,32 +297,16 @@ function createSkillCard(skill, currentTab, characterLevel = CHARACTER_CONFIG.DE
     const card = document.createElement('div');
     card.className = 'skill-card';
 
-    // Parse prerequisites to find level requirements and tooltip content
+    // Parse prerequisites to find level requirements
     let levelRequirement = null;
-    let hasPrerequisites = false;
-    let tooltipContent = '';
     if (skill.prerequisites && skill.prerequisites.length > 0) {
-        hasPrerequisites = true;
-        const tooltipParts = [];
-        
         skill.prerequisites.forEach(prereq => {
-            const [type, value, target] = prereq.split(':');
+            const [type, value] = prereq.split(':');
             
             if (type === 'character_level' || type === 'class_level') {
                 levelRequirement = value;
-            } else if (type === 'tree_points') {
-                tooltipParts.push(`Requires ${value} points in ${target}`);
-            } else if (type === 'skill_level') {
-                if (value == 1) {
-                    tooltipParts.push(`Requires ${target}`);
-                } else {
-                    tooltipParts.push(`Requires ${target} at level ${value}`);
-                }
             }
         });
-        if (tooltipParts.length > 0) {
-            tooltipContent = tooltipParts.join('\n');
-        }
     }
 
     // Get current skill points
@@ -359,10 +384,13 @@ function createSkillCard(skill, currentTab, characterLevel = CHARACTER_CONFIG.DE
         // Check Ultimate skill restriction
         const ultimateRestriction = checkUltimateSkillBlock(skill, currentSkillsList);
         
-        // Can add point if: prereqs met AND (not blocked by Ultimate restriction OR already has points)
-        const canAddPoint = (prereqCheck.met && !ultimateRestriction.blocked) || currentPoints > 0;
+        // Check Mastery skill restriction
+        const masteryRestriction = checkMasterySkillBlock(skill, currentSkillsList);
         
-        // Build tooltip message
+        // Can add point if: prereqs met AND (not blocked by Ultimate OR Mastery restrictions OR already has points)
+        const canAddPoint = (prereqCheck.met && !ultimateRestriction.blocked && !masteryRestriction.blocked) || currentPoints > 0;
+        
+        // Build tooltip message (don't show Mastery restriction in tooltip - just disable)
         let tooltipMessage = '';
         if (!prereqCheck.met && currentPoints === 0) {
             tooltipMessage = prereqCheck.reasons.join(', ');
@@ -458,6 +486,45 @@ function checkUltimateSkillBlock(skill, allSkills) {
                 };
             }
         }
+    }
+    
+    return { blocked: false, reason: '' };
+}
+
+/**
+ * Check if a Mastery skill is blocked by the 3-skill limit
+ * @param {Object} skill - Skill to check
+ * @param {Array} allSkills - Array of all skills
+ * @returns {Object} { blocked: boolean, reason: string }
+ */
+function checkMasterySkillBlock(skill, allSkills) {
+    // Check if this skill is in the Mastery tab
+    const isMastery = skill.tabName === 'Mastery';
+    
+    if (!isMastery) {
+        return { blocked: false, reason: '' };
+    }
+    
+    // If this skill already has points, it's not blocked
+    const currentPoints = getSkillPoints(skill.id);
+    if (currentPoints > 0) {
+        return { blocked: false, reason: '' };
+    }
+    
+    // Count how many different Mastery skills have points
+    const masterySkillsWithPoints = allSkills.filter(s => 
+        s.tabName === 'Mastery' && 
+        s.class === skill.class &&
+        getSkillPoints(s.id) > 0
+    );
+    
+    // Check if we've reached the limit
+    const maxMasterySkills = 3; // CHARACTER_CONFIG.MAX_MASTERY_SKILLS
+    if (masterySkillsWithPoints.length >= maxMasterySkills) {
+        return { 
+            blocked: true, 
+            reason: `Cannot allocate points to more than ${maxMasterySkills} different Mastery skills.` 
+        };
     }
     
     return { blocked: false, reason: '' };

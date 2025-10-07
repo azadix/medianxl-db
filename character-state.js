@@ -134,7 +134,20 @@ export function checkPrerequisites(skill, allSkills = []) {
       const currentPoints = getSkillPoints(targetSkillName);
       
       if (currentPoints < requiredPoints) {
-        reasons.push(`Requires ${requiredPoints} point${requiredPoints > 1 ? 's' : ''} in ${target}`);
+        if (requiredPoints === 1) {
+          reasons.push(`Requires ${target}`);
+        } else {
+          reasons.push(`Requires ${requiredPoints} points in ${target}`);
+        }
+      }
+    } else if (type === 'skill_blocked_by') {
+      // Blocked if target skill has more than specified points (typically 0)
+      const maxAllowedPoints = parseInt(value, 10);
+      const targetSkillName = target.toLowerCase().replace(/['\s]/g, '_').replace(/_+/g, '_');
+      const currentPoints = getSkillPoints(targetSkillName);
+      
+      if (currentPoints > maxAllowedPoints) {
+        reasons.push(`Cannot allocate points while ${target} has points`);
       }
     } else if (type === 'tree_points') {
       // Tree points check - requires counting points spent in a specific tab
@@ -213,6 +226,45 @@ function checkUltimateRestriction(skill, allSkills) {
 }
 
 /**
+ * Check if adding a point to a Mastery skill is allowed
+ * Maximum 3 different Mastery skills can have points
+ * @param {Object} skill - Skill to check
+ * @param {Array} allSkills - Array of all skills
+ * @returns {Object} { allowed: boolean, reason: string }
+ */
+function checkMasteryRestriction(skill, allSkills) {
+  // Check if this skill is in the Mastery tab
+  const isMastery = skill.tabName === 'Mastery';
+  
+  if (!isMastery) {
+    return { allowed: true, reason: '' };
+  }
+  
+  // If this skill already has points, it's allowed to add more
+  const currentPoints = getSkillPoints(skill.id);
+  if (currentPoints > 0) {
+    return { allowed: true, reason: '' };
+  }
+  
+  // Count how many different Mastery skills have points
+  const masterySkillsWithPoints = allSkills.filter(s => 
+    s.tabName === 'Mastery' && 
+    s.class === skill.class &&
+    getSkillPoints(s.id) > 0
+  );
+  
+  // Check if we've reached the limit
+  if (masterySkillsWithPoints.length >= CHARACTER_CONFIG.MAX_MASTERY_SKILLS) {
+    return { 
+      allowed: false, 
+      reason: `Cannot allocate points to more than ${CHARACTER_CONFIG.MAX_MASTERY_SKILLS} different Mastery skills.` 
+    };
+  }
+  
+  return { allowed: true, reason: '' };
+}
+
+/**
  * Add a point to a skill
  * @param {string} skillName - Skill name
  * @param {Object} skill - Skill object with prerequisites
@@ -245,6 +297,12 @@ export function addSkillPoint(skillName, skill, maxLevel, allSkills = []) {
     const ultimateCheck = checkUltimateRestriction(skill, allSkills);
     if (!ultimateCheck.allowed) {
       return { success: false, reason: ultimateCheck.reason };
+    }
+    
+    // Check Mastery skill restriction (only when adding first point)
+    const masteryCheck = checkMasteryRestriction(skill, allSkills);
+    if (!masteryCheck.allowed) {
+      return { success: false, reason: masteryCheck.reason };
     }
   }
   
