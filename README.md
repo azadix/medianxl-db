@@ -6,7 +6,7 @@ This is a web-based skills database editor for MedianXL (Diablo 2 mod) that allo
 ## Current Architecture
 
 ### Core Files
-- **`db.html`** - Main database editor interface (1,977 lines)
+- **`edit.html`** - Main database editor interface
 - **`script.js`** - Skills viewer with scaling graphs and detail display (602 lines)
 - **`utils.js`** - Utility functions for placeholder expansion and icon handling (286 lines)
 - **`DropdownList.js`** - Custom dropdown component (238 lines)
@@ -49,7 +49,7 @@ skill_scaling (skill_id, level, stat_id, value0, value1, value2, value3)
 - `fuzzyFilter()` - Advanced filtering for stat autocomplete
 
 ### 2. Advanced Autocomplete System
-**Location**: `db.html` (lines 1672-1947)
+**Location**: `edit/edit-autocomplete.js`
 
 **Features**:
 - **Immediate activation**: Starts after typing `{{` without needing closing braces
@@ -67,7 +67,7 @@ skill_scaling (skill_id, level, stat_id, value0, value1, value2, value3)
 - Fuzzy match: 50+ points
 
 ### 3. Enhanced Database Editor
-**Location**: `db.html` (lines 1349-1378)
+**Location**: `edit/edit-scaling.js`
 
 **Improvements**:
 - **DropdownList integration**: Skill select in scaling section uses searchable dropdown
@@ -89,7 +89,7 @@ skill_scaling (skill_id, level, stat_id, value0, value1, value2, value3)
 **Usage**: Users simply type `{{mana_cost}}` and the system automatically expands it to the correct format based on the stat's parameter requirements
 
 ### 5. Enhanced Skill Scaling Interface
-**Location**: `db.html` (lines 1319-1384, 1520-1560)
+**Location**: `edit/edit-prerequisites.js`
 
 **Features**:
 - **Dynamic input fields**: Only shows value inputs needed based on stat format
@@ -161,7 +161,7 @@ The scaling table dynamically adjusts based on stat formats:
 ### File Structure
 ```
 medianxl-db/
-├── db.html              # Main editor interface
+├── edit.html            # Main editor interface
 ├── script.js            # Skills viewer
 ├── utils.js             # Utility functions
 ├── DropdownList.js      # Custom dropdown
@@ -214,7 +214,7 @@ medianxl-db/
 
 ## Getting Started for New Developers
 
-1. **Setup**: Open `index.html` for skills viewer or `db.html` for database editor in a web server
+1. **Setup**: Open `index.html` for skills viewer or `edit.html` for database editor in a web server
 2. **Database**: Ensure `skills.sqlite` is present and accessible
 3. **Testing**: 
    - Test skills viewer with different skills to see scaling graphs
@@ -222,7 +222,7 @@ medianxl-db/
    - Test scaling interface with different stat formats
 4. **Development**: 
    - `script.js` for skills viewer and graph functionality
-   - `db.html` for database editor and autocomplete
+   - `edit.html` for database editor and autocomplete
    - `utils.js` for core placeholder expansion logic
 
 ---
