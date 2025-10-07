@@ -1,6 +1,7 @@
 // Skills rendering and grid layout functionality
 import { getSkillIconHTML } from '../utils.js';
 import { addOverlayArrows } from './tree-arrows.js';
+import { setCurrentTab } from './tree-core.js';
 
 // Main render function
 export function renderSkills(selectedClass, skillsList, skillsContainer) {
@@ -47,14 +48,18 @@ export function renderSkills(selectedClass, skillsList, skillsContainer) {
     let first = true;
 
     sortedTabNames.forEach(tabName => {
-        // Tab nav button
-        const li = document.createElement('li');
-        if (first) li.classList.add('is-active');
-        const a = document.createElement('a');
-        a.textContent = tabName;
-        a.dataset.tab = tabName;
-        li.appendChild(a);
-        ul.appendChild(li);
+                // Tab nav button
+                const li = document.createElement('li');
+                if (first) {
+                    li.classList.add('is-active');
+                    // Set the current tab when rendering the first tab
+                    setCurrentTab(tabName);
+                }
+                const a = document.createElement('a');
+                a.textContent = tabName;
+                a.dataset.tab = tabName;
+                li.appendChild(a);
+                ul.appendChild(li);
 
         // Tab content grid
         const contentDiv = document.createElement('div');
@@ -77,12 +82,12 @@ export function renderSkills(selectedClass, skillsList, skillsContainer) {
         for (let r = minRow; r <= maxRow; r++) {
             for (let c = minCol; c <= maxCol; c++) {
                 const skill = tabs[tabName].find(s => s.row === r && s.col === c);
-                if (skill) {
-                    const card = createSkillCard(skill);
-                    card.style.gridRow = r - minRow + 1;
-                    card.style.gridColumn = c - minCol + 1;
-                    contentDiv.appendChild(card);
-                } else {
+                        if (skill) {
+                            const card = createSkillCard(skill, tabName);
+                            card.style.gridRow = r - minRow + 1;
+                            card.style.gridColumn = c - minCol + 1;
+                            contentDiv.appendChild(card);
+                        } else {
                     const placeholder = document.createElement('div');
                     placeholder.className = 'empty-skill-card';
                     placeholder.style.gridRow = r - minRow + 1;
@@ -108,47 +113,50 @@ export function renderSkills(selectedClass, skillsList, skillsContainer) {
     skillsContainer.appendChild(tabNav);
     skillsContainer.appendChild(tabContent);
 
-    // Add tab switching functionality
-    ul.addEventListener('click', (e) => {
-        if (e.target.tagName === 'A') {
-            const clickedTab = e.target.dataset.tab;
-            
-            // Remove active class from all tabs
-            ul.querySelectorAll('li').forEach(li => li.classList.remove('is-active'));
-            e.target.parentElement.classList.add('is-active');
-            
-            // Hide all tab contents
-            document.querySelectorAll('.skills-grid').forEach(grid => {
-                grid.style.display = 'none';
-            });
-            
-            // Show clicked tab content
-            const targetGrid = document.getElementById(`tab-${clickedTab}`);
-            if (targetGrid) {
-                targetGrid.style.display = 'grid';
-                
-                // Clear existing arrows and recreate them for the active tab
-                targetGrid.querySelectorAll('.overlay-arrow').forEach(arrow => arrow.remove());
-                
-                // Find the skills for this tab and recreate arrows
-                const tabSkills = classSkills.filter(skill => skill.tabName === clickedTab);
-                if (tabSkills.length > 0) {
-                    const rows = tabSkills.map(s => s.row);
-                    const cols = tabSkills.map(s => s.col);
-                    const minRow = Math.min(...rows);
-                    const minCol = Math.min(...cols);
+            // Add tab switching functionality
+            ul.addEventListener('click', (e) => {
+                if (e.target.tagName === 'A') {
+                    const clickedTab = e.target.dataset.tab;
                     
-                    setTimeout(() => {
-                        addOverlayArrows(targetGrid, tabSkills, minRow, minCol, classSkills);
-                    }, 50);
+                    // Update URL state with selected tab
+                    setCurrentTab(clickedTab);
+                    
+                    // Remove active class from all tabs
+                    ul.querySelectorAll('li').forEach(li => li.classList.remove('is-active'));
+                    e.target.parentElement.classList.add('is-active');
+                    
+                    // Hide all tab contents
+                    document.querySelectorAll('.skills-grid').forEach(grid => {
+                        grid.style.display = 'none';
+                    });
+                    
+                    // Show clicked tab content
+                    const targetGrid = document.getElementById(`tab-${clickedTab}`);
+                    if (targetGrid) {
+                        targetGrid.style.display = 'grid';
+                        
+                        // Clear existing arrows and recreate them for the active tab
+                        targetGrid.querySelectorAll('.overlay-arrow').forEach(arrow => arrow.remove());
+                        
+                        // Find the skills for this tab and recreate arrows
+                        const tabSkills = classSkills.filter(skill => skill.tabName === clickedTab);
+                        if (tabSkills.length > 0) {
+                            const rows = tabSkills.map(s => s.row);
+                            const cols = tabSkills.map(s => s.col);
+                            const minRow = Math.min(...rows);
+                            const minCol = Math.min(...cols);
+                            
+                            setTimeout(() => {
+                                addOverlayArrows(targetGrid, tabSkills, minRow, minCol, classSkills);
+                            }, 50);
+                        }
+                    }
                 }
-            }
-        }
-    });
+            });
 }
 
 // Create a skill card element
-function createSkillCard(skill) {
+function createSkillCard(skill, currentTab) {
     const card = document.createElement('div');
     card.className = 'skill-card';
 
@@ -181,7 +189,18 @@ function createSkillCard(skill) {
         <div>
     `;
     if (skill.hasDetails) {
-        cardText += `<a href="./?skill=${skill.id}">${skill.name}</a>`;
+        // Get current URL parameters to preserve state
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentClass = urlParams.get('class');
+        // Use the passed currentTab parameter instead of reading from URL
+        const tabToUse = currentTab || urlParams.get('tab');
+        
+        // Build skill link with preserved state
+        let skillUrl = `./?skill=${skill.id}`;
+        if (currentClass) skillUrl += `&class=${currentClass}`;
+        if (tabToUse) skillUrl += `&tab=${tabToUse}`;
+        
+        cardText += `<a href="${skillUrl}">${skill.name}</a>`;
     } else {
         cardText += `${skill.name}`;
     }

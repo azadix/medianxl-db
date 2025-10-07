@@ -11,6 +11,24 @@ let filterState = 'all'; // 'all', 'with_details', 'without_details'
 // Global skills list
 let skillsList = [];
 
+// Initialize filter state from URL
+function initializeFilterState() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const savedFilter = urlParams.get('filter');
+    
+    if (savedFilter && ['all', 'with_details', 'without_details'].includes(savedFilter)) {
+        filterState = savedFilter;
+    }
+}
+
+// Update URL with current filter state
+function updateFilterState(newFilterState) {
+    filterState = newFilterState;
+    const url = new URL(window.location);
+    url.searchParams.set('filter', filterState);
+    window.history.replaceState({}, '', url);
+}
+
 const SkillDB = {
     db: null,
     SQL: null
@@ -44,9 +62,19 @@ async function initializeDataTable(skillsData) {
     const tbody = table.find('tbody');
     
     skillsData.forEach(skill => {
-        const nameCell = skill.hasDetails 
-            ? `<a href="./?skill=${skill.id}" class="view-skill-btn" data-skill-id="${skill.id}">${skill.name}</a>`
-            : skill.name;
+        let skillLink = '';
+        if (skill.hasDetails) {
+            // Get current URL parameters to preserve state
+            const urlParams = new URLSearchParams(window.location.search);
+            const currentFilter = urlParams.get('filter');
+            
+            // Build skill link with preserved filter state
+            let skillUrl = `./?skill=${skill.id}`;
+            if (currentFilter) skillUrl += `&filter=${currentFilter}`;
+            
+            skillLink = `<a href="${skillUrl}" class="view-skill-btn" data-skill-id="${skill.id}">${skill.name}</a>`;
+        }
+        const nameCell = skillLink || skill.name;
 
         tbody.append(`
             <tr data-skill-id="${skill.id}" data-has-page="${skill.hasDetails}">
@@ -84,31 +112,64 @@ async function initializeDataTable(skillsData) {
         }
     }));
         
+    // Restore filter button state after DataTable is initialized
+    setTimeout(() => {
+        restoreFilterButtonState();
+    }, 100);
+    
     return skillsDataTable;
+}
+
+// Restore filter button state based on current filterState
+function restoreFilterButtonState() {
+    const filterButton = document.getElementById('filter-toggle');
+    if (filterButton) {
+        switch(filterState) {
+            case 'all':
+                filterButton.textContent = 'Show all';
+                filterButton.classList.remove('is-primary', 'is-success');
+                filterButton.classList.add('is-info');
+                break;
+            case 'with_details':
+                filterButton.textContent = 'Show only with details';
+                filterButton.classList.remove('is-info', 'is-success');
+                filterButton.classList.add('is-primary');
+                break;
+            case 'without_details':
+                filterButton.textContent = 'Show only without details';
+                filterButton.classList.remove('is-primary', 'is-info');
+                filterButton.classList.add('is-success');
+                break;
+        }
+    }
 }
 
 $(document).on('click', '#filter-toggle', function() {
     // Cycle through the 3 states
+    let newFilterState;
     switch(filterState) {
         case 'all':
-            filterState = 'with_details';
+            newFilterState = 'with_details';
             this.textContent = 'Show only with details';
             this.classList.remove('is-info', 'is-success');
             this.classList.add('is-primary');
             break;
         case 'with_details':
-            filterState = 'without_details';
+            newFilterState = 'without_details';
             this.textContent = 'Show only without details';
             this.classList.remove('is-primary', 'is-info');
             this.classList.add('is-success');
             break;
         case 'without_details':
-            filterState = 'all';
+            newFilterState = 'all';
             this.textContent = 'Show all';
             this.classList.remove('is-success', 'is-primary');
             this.classList.add('is-info');
             break;
     }
+    
+    // Update URL state
+    updateFilterState(newFilterState);
     
     if (skillsDataTable && typeof skillsDataTable.draw === 'function') {
         skillsDataTable.draw();
@@ -329,8 +390,33 @@ async function displaySkillDetail(skillId) {
     
     let scalingTable = '';
     const scalingGraphs = createScalingGraphs(skillInfo.dbId);
+    // Create back button that preserves state
+    const urlParams = new URLSearchParams(window.location.search);
+    const treeClass = urlParams.get('class');
+    const treeTab = urlParams.get('tab');
+    const filter = urlParams.get('filter');
+    
+    let backUrl = './';
+    if (treeClass || treeTab) {
+        backUrl = `./tree.html?class=${treeClass || ''}&tab=${treeTab || ''}`;
+    } else if (filter) {
+        backUrl = `./?filter=${filter}`;
+    }
+    
+    const backButton = `
+        <div class="mb-4">
+            <a href="${backUrl}" class="button is-light">
+                <span class="icon">
+                    <i class="fas fa-arrow-left"></i>
+                </span>
+                <span>Back to ${treeClass || treeTab ? 'Tree' : 'Skills'}</span>
+            </a>
+        </div>
+    `;
+    
     contentElement.innerHTML = `
         <div class="skill-detail">
+            ${backButton}
             <div class="columns">
                 <div class="column is-two-thirds">
                     <div class="skill-info">
@@ -528,6 +614,9 @@ function initializeScalingCharts(skillId) {
 
 // Handle browser back/forward navigation
 window.addEventListener('popstate', async function(event) {
+    // Re-initialize filter state from URL
+    initializeFilterState();
+    
     const params = getUrlParams();
     if (params.skill) {
         await displaySkillDetail(params.skill);
@@ -538,6 +627,9 @@ window.addEventListener('popstate', async function(event) {
 
 // Initialize the page based on URL parameters
 async function initializePage() {
+    // Initialize filter state from URL
+    initializeFilterState();
+    
     // Load skills list first
     await loadSkillsFromSQLite();
     

@@ -20,8 +20,16 @@ export function getUrlParams() {
 
 export function updateUrl(skillId = null) {
     const url = new URL(window.location.href);
-    if (skillId) url.searchParams.set('skill', skillId);
-    else url.searchParams.delete('skill');
+    if (skillId) {
+        url.searchParams.set('skill', skillId);
+        // Preserve filter state when navigating to skill detail
+        const currentFilter = url.searchParams.get('filter');
+        if (currentFilter) {
+            // Filter is already in URL, keep it
+        }
+    } else {
+        url.searchParams.delete('skill');
+    }
     window.history.pushState({ skillId }, '', url.toString());
 }
 
