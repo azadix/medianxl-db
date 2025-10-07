@@ -1,0 +1,366 @@
+/**
+ * Character State Management
+ * Manages character build including skill points, level, and prerequisites
+ */
+
+import { CHARACTER_CONFIG } from './character-config.js';
+
+// Character state
+const characterState = {
+  level: CHARACTER_CONFIG.DEFAULT_LEVEL,
+  className: null,
+  skillPoints: {}, // Map of skill_name -> points allocated
+  maxLevels: {}, // Cached max levels for skills
+  questsCompleted: { // Map of quest_id -> {normal, nightmare, hell}
+    'den_of_evil': { normal: true, nightmare: true, hell: true },
+    'radament': { normal: true, nightmare: true, hell: true },
+    'izual': { normal: true, nightmare: true, hell: true },
+    'inquisitor_of_the_triune': { hell: true}
+  }
+};
+
+/**
+ * Initialize character state for a class
+ * @param {string} className - Class name
+ * @param {number} level - Character level
+ */
+export function initializeCharacter(className, level = CHARACTER_CONFIG.DEFAULT_LEVEL) {
+  characterState.level = level;
+  characterState.className = className;
+  characterState.skillPoints = {};
+  characterState.maxLevels = {};
+}
+
+/**
+ * Set character level
+ * @param {number} level - New character level
+ */
+export function setCharacterLevel(level) {
+  characterState.level = level;
+  characterState.maxLevels = {}; // Clear cache
+}
+
+/**
+ * Get current character level
+ * @returns {number} Character level
+ */
+export function getCharacterLevel() {
+  return characterState.level;
+}
+
+/**
+ * Get skill points for a skill
+ * @param {string} skillName - Skill name
+ * @returns {number} Points allocated
+ */
+export function getSkillPoints(skillName) {
+  return characterState.skillPoints[skillName] || 0;
+}
+
+/**
+ * Get all skill points
+ * @returns {Object} Map of skill_name -> points
+ */
+export function getAllSkillPoints() {
+  return { ...characterState.skillPoints };
+}
+
+/**
+ * Calculate total available skill points based on quests completed
+ * @returns {number} Total available skill points
+ */
+export function getAvailableSkillPoints() {
+  let total = CHARACTER_CONFIG.BASE_SKILL_POINTS;
+  
+  // Add quest bonuses
+  for (const [questId, difficulties] of Object.entries(characterState.questsCompleted)) {
+    const questRewards = CHARACTER_CONFIG.QUEST_SKILL_POINTS[questId];
+    if (questRewards) {
+      if (difficulties.normal) total += questRewards.normal;
+      if (difficulties.nightmare) total += questRewards.nightmare;
+      if (difficulties.hell) total += questRewards.hell;
+    }
+  }
+  
+  return total;
+}
+
+/**
+ * Calculate total spent skill points
+ * @returns {number} Total points spent
+ */
+export function getSpentSkillPoints() {
+  let total = 0;
+  for (const points of Object.values(characterState.skillPoints)) {
+    total += points;
+  }
+  return total;
+}
+
+/**
+ * Calculate remaining skill points
+ * @returns {number} Points remaining to spend
+ */
+export function getRemainingSkillPoints() {
+  return getAvailableSkillPoints() - getSpentSkillPoints();
+}
+
+/**
+ * Check if prerequisites are met for a skill
+ * @param {Object} skill - Skill object with prerequisites array
+ * @param {Array} allSkills - Optional array of all skills for tree points validation
+ * @returns {Object} { met: boolean, reasons: string[] }
+ */
+export function checkPrerequisites(skill, allSkills = []) {
+  if (!skill.prerequisites || skill.prerequisites.length === 0) {
+    return { met: true, reasons: [] };
+  }
+
+  const reasons = [];
+  
+  for (const prereq of skill.prerequisites) {
+    const [type, value, target] = prereq.split(':');
+    
+    if (type === 'character_level' || type === 'class_level') {
+      const requiredLevel = parseInt(value, 10);
+      if (characterState.level < requiredLevel) {
+        reasons.push(`Requires character level ${requiredLevel}`);
+      }
+    } else if (type === 'skill_level') {
+      const requiredPoints = parseInt(value, 10);
+      // Target is the display name, we need to find the skill_name
+      // For now, we'll convert display name to lowercase with underscores
+      const targetSkillName = target.toLowerCase().replace(/['\s]/g, '_').replace(/_+/g, '_');
+      const currentPoints = getSkillPoints(targetSkillName);
+      
+      if (currentPoints < requiredPoints) {
+        reasons.push(`Requires ${requiredPoints} point${requiredPoints > 1 ? 's' : ''} in ${target}`);
+      }
+    } else if (type === 'tree_points') {
+      // Tree points check - requires counting points spent in a specific tab
+      const requiredPoints = parseInt(value, 10);
+      const targetTabName = target; // e.g., "Warmonger"
+      
+      const pointsInTab = countPointsInTab(targetTabName, allSkills);
+      
+      if (pointsInTab < requiredPoints) {
+        reasons.push(`Requires ${requiredPoints} point${requiredPoints > 1 ? 's' : ''} in ${targetTabName} tree`);
+      }
+    }
+  }
+
+  return { met: reasons.length === 0, reasons };
+}
+
+/**
+ * Count total points spent in a specific tab/tree
+ * @param {string} tabName - Name of the tab (e.g., "Warmonger")
+ * @param {Array} allSkills - Array of all skills
+ * @returns {number} Total points spent in the tab
+ */
+function countPointsInTab(tabName, allSkills) {
+  let totalPoints = 0;
+  
+  // Iterate through all allocated skill points
+  for (const [skillName, points] of Object.entries(characterState.skillPoints)) {
+    // Find the skill in allSkills to get its tab
+    const skill = allSkills.find(s => s.id === skillName);
+    
+    if (skill && skill.tabName === tabName) {
+      totalPoints += points;
+    }
+  }
+  
+  return totalPoints;
+}
+
+/**
+ * Check if adding a point to an Ultimate skill is allowed
+ * Only one Ultimate skill per class can have points
+ * @param {Object} skill - Skill to check
+ * @param {Array} allSkills - Array of all skills
+ * @returns {Object} { allowed: boolean, reason: string }
+ */
+function checkUltimateRestriction(skill, allSkills) {
+  // Check if this skill has the Ultimate tag
+  const isUltimate = skill.tags && skill.tags.includes('Ultimate');
+  
+  if (!isUltimate) {
+    return { allowed: true, reason: '' };
+  }
+  
+  // Find all Ultimate skills from the same class
+  const classUltimateSkills = allSkills.filter(s => 
+    s.class === skill.class && 
+    s.tags && 
+    s.tags.includes('Ultimate')
+  );
+  
+  // Check if any other Ultimate skill from this class has points
+  for (const ultimateSkill of classUltimateSkills) {
+    if (ultimateSkill.id !== skill.id) {
+      const points = getSkillPoints(ultimateSkill.id);
+      if (points > 0) {
+        return { 
+          allowed: false, 
+          reason: `Cannot add points to multiple Ultimate skills. ${ultimateSkill.name} already has points allocated.` 
+        };
+      }
+    }
+  }
+  
+  return { allowed: true, reason: '' };
+}
+
+/**
+ * Add a point to a skill
+ * @param {string} skillName - Skill name
+ * @param {Object} skill - Skill object with prerequisites
+ * @param {number} maxLevel - Maximum level for this skill
+ * @param {Array} allSkills - Array of all skills for prerequisite validation
+ * @returns {Object} { success: boolean, reason: string }
+ */
+export function addSkillPoint(skillName, skill, maxLevel, allSkills = []) {
+  const currentPoints = getSkillPoints(skillName);
+  
+  // Check if at max level
+  if (currentPoints >= maxLevel) {
+    return { success: false, reason: 'Skill is at maximum level' };
+  }
+  
+  // Check if we have skill points available
+  const remainingPoints = getRemainingSkillPoints();
+  if (remainingPoints <= 0) {
+    return { success: false, reason: 'No skill points remaining' };
+  }
+  
+  // Check prerequisites (only for first point)
+  if (currentPoints === 0) {
+    const prereqCheck = checkPrerequisites(skill, allSkills);
+    if (!prereqCheck.met) {
+      return { success: false, reason: prereqCheck.reasons.join(', ') };
+    }
+    
+    // Check Ultimate skill restriction (only when adding first point)
+    const ultimateCheck = checkUltimateRestriction(skill, allSkills);
+    if (!ultimateCheck.allowed) {
+      return { success: false, reason: ultimateCheck.reason };
+    }
+  }
+  
+  // Add the point
+  characterState.skillPoints[skillName] = currentPoints + 1;
+  characterState.maxLevels = {}; // Clear cache as max levels may change
+  
+  return { success: true, reason: '' };
+}
+
+/**
+ * Remove a point from a skill
+ * @param {string} skillName - Skill name
+ * @param {Array} allSkills - Array of all skills to check dependencies
+ * @returns {Object} { success: boolean, reason: string }
+ */
+export function removeSkillPoint(skillName, allSkills = []) {
+  const currentPoints = getSkillPoints(skillName);
+  
+  if (currentPoints === 0) {
+    return { success: false, reason: 'No points to remove' };
+  }
+  
+  // Check if removing this point would break any dependent skills
+  const minRequiredPoints = getMinimumRequiredPoints(skillName, allSkills);
+  
+  if (currentPoints - 1 < minRequiredPoints) {
+    return { 
+      success: false, 
+      reason: `Cannot remove: other skills require ${minRequiredPoints} point${minRequiredPoints > 1 ? 's' : ''} in this skill` 
+    };
+  }
+  
+  // Remove the point
+  characterState.skillPoints[skillName] = currentPoints - 1;
+  if (characterState.skillPoints[skillName] === 0) {
+    delete characterState.skillPoints[skillName];
+  }
+  
+  characterState.maxLevels = {}; // Clear cache as max levels may change
+  
+  return { success: true, reason: '' };
+}
+
+/**
+ * Get minimum required points in a skill based on dependent skills
+ * @param {string} skillName - Skill name to check
+ * @param {Array} allSkills - Array of all skills to check
+ * @returns {number} Minimum points required
+ */
+function getMinimumRequiredPoints(skillName, allSkills) {
+  let minRequired = 0;
+  
+  // Check all skills that have points allocated
+  for (const [allocatedSkillName, points] of Object.entries(characterState.skillPoints)) {
+    if (points === 0) continue;
+    
+    // Find the skill object
+    const skill = allSkills.find(s => s.id === allocatedSkillName);
+    if (!skill || !skill.prerequisites) continue;
+    
+    // Check if this skill depends on the skill we're checking
+    for (const prereq of skill.prerequisites) {
+      const [type, value, target] = prereq.split(':');
+      
+      if (type === 'skill_level') {
+        // Convert target display name to skill_name format
+        const targetSkillName = target.toLowerCase().replace(/['\s]/g, '_').replace(/_+/g, '_');
+        
+        if (targetSkillName === skillName) {
+          const requiredPoints = parseInt(value, 10);
+          minRequired = Math.max(minRequired, requiredPoints);
+        }
+      }
+    }
+  }
+  
+  return minRequired;
+}
+
+/**
+ * Reset all skill points
+ */
+export function resetAllSkillPoints() {
+  characterState.skillPoints = {};
+  characterState.maxLevels = {};
+}
+
+/**
+ * Get total skill points allocated
+ * @returns {number} Total points
+ */
+export function getTotalSkillPoints() {
+  return Object.values(characterState.skillPoints).reduce((sum, points) => sum + points, 0);
+}
+
+/**
+ * Export character state for saving
+ * @returns {Object} Character state
+ */
+export function exportCharacterState() {
+  return {
+    level: characterState.level,
+    className: characterState.className,
+    skillPoints: { ...characterState.skillPoints }
+  };
+}
+
+/**
+ * Import character state from save
+ * @param {Object} state - Saved character state
+ */
+export function importCharacterState(state) {
+  characterState.level = state.level || CHARACTER_CONFIG.DEFAULT_LEVEL;
+  characterState.className = state.className || null;
+  characterState.skillPoints = { ...state.skillPoints } || {};
+  characterState.maxLevels = {};
+}
+

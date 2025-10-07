@@ -349,13 +349,13 @@
         </div>
         <div class="column is-one-quarter">
           <label class="label">Base Max Level</label>
-          <input class="input" type="number" id="max-level-base" value="1" min="1" required>
+          <input class="input" type="number" id="max-level-base" value="1" min="0" required>
         </div>
         <div class="column is-one-quarter">
-          <label class="label">Can Be Enhanced</label>
+          <label class="label">Affected by Specialization</label>
           <div class="field">
             <input type="checkbox" id="max-level-enhanced" class="is-checkradio">
-            <label for="max-level-enhanced">Enhanced</label>
+            <label for="max-level-enhanced">Affected</label>
           </div>
         </div>
         <div class="column is-one-quarter">
@@ -378,7 +378,7 @@
           <th style="width:30%">Skill</th>
           <th style="width:10%">Class</th>
           <th style="width:15%">Base Max Level</th>
-          <th style="width:10%">Can Be Enhanced</th>
+          <th style="width:10%">Affected by Spec</th>
           <th style="width:10%">Can Add Points</th>
           <th style="width:10%">Actions</th>
         </tr>
@@ -432,10 +432,17 @@
           <input class="input" type="number" id="prerequisite-tree-points" min="1" placeholder="Points">
         </div>
       </div>
+      
+      <!-- Description Row -->
+      <div class="columns">
         <div class="column is-full">
           <label class="label">Description</label>
           <textarea class="textarea" id="prerequisite-description" rows="2" placeholder="e.g. Requires 5 points in Fireball or Requires 10 points in Combat tree"></textarea>
         </div>
+      </div>
+      
+      <!-- Action Buttons Row -->
+      <div class="columns">
         <div class="column is-full">
           <button class="button is-primary" type="submit">Insert Prerequisite</button>
           <button class="button is-light" id="prerequisite-cancel" type="button" style="display:none;">Cancel</button>

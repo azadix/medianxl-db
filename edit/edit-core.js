@@ -101,7 +101,7 @@ export async function initDatabase() {
     CREATE TABLE skill_max_levels (
       skill_id INTEGER NOT NULL,
       base_max_level INTEGER NOT NULL DEFAULT 1,
-      can_be_enhanced BOOLEAN NOT NULL DEFAULT 0,
+      affected_by_specialization BOOLEAN NOT NULL DEFAULT 0,
       can_add_points BOOLEAN NOT NULL DEFAULT 1,
       PRIMARY KEY (skill_id),
       FOREIGN KEY (skill_id) REFERENCES skills(id) ON DELETE CASCADE

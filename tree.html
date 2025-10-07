@@ -8,7 +8,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.13.0/sql-wasm.js"></script>
   <script src="utils.js" type="module"></script>
 </head>
-<body class="section">
+<body class="section px-5">
     <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
         <div class="navbar-menu">
         <div class="navbar-start">
@@ -25,19 +25,96 @@
         </div>
     </nav>
     
-    <div class="field pt-3">
-        <label class="label">Select Class</label>
-        <div class="control">
-        <div class="select">
-            <select id="classSelect"></select>
+    <div class="columns pt-3" style="height: 95vh;">
+        <div class="column is-one-fifth px-0" style="overflow-y: auto;">
+            <div class="pr-2" style="height: 100%; border-right: 1px solid var(--bulma-border);">
+                <h3 class="title is-5">Character Info</h3>
+                
+                <div class="field">
+                    <label class="label">Class</label>
+                    <div class="control">
+                        <div class="select is-fullwidth">
+                            <select id="classSelect"></select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="field">
+                    <label class="label">Level</label>
+                    <div class="control">
+                        <input class="input" type="number" id="characterLevel">
+                    </div>
+                    <p class="help" id="characterLevelHelp"></p>
+                </div>
+                
+                <div class="field">
+                    <label class="label">Skill Points</label>
+                    <div class="box has-background-dark" style="padding: 0.75rem;">
+                        <p id="skillPointsDisplay" class="has-text-centered">
+                            <span class="has-text-weight-bold" id="spentPoints">0</span> / <span id="availablePoints">167</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
+        
+        <div class="column is-four-fifths" style="overflow-y: auto;">
+            <div id="skillsContainer"></div>
         </div>
     </div>
-
-    <div id="skillsContainer"></div>
     <script type="module">
         import { initializeTreePage } from './tree/tree-core.js';
-        document.addEventListener('DOMContentLoaded', initializeTreePage);
+        import { CHARACTER_CONFIG, clampCharacterLevel } from './character-config.js';
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeTreePage();
+            
+            // Handle character level input validation and clamping
+            const levelInput = document.getElementById('characterLevel');
+            const levelHelp = document.getElementById('characterLevelHelp');
+            
+            if (levelInput && levelHelp) {
+                // Set initial values from config
+                levelInput.min = CHARACTER_CONFIG.MIN_LEVEL;
+                levelInput.max = CHARACTER_CONFIG.MAX_LEVEL;
+                levelInput.value = CHARACTER_CONFIG.DEFAULT_LEVEL;
+                levelHelp.textContent = `Character level (${CHARACTER_CONFIG.MIN_LEVEL}-${CHARACTER_CONFIG.MAX_LEVEL})`;
+                
+                // Only allow numbers
+                levelInput.addEventListener('keypress', (e) => {
+                    if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') {
+                        e.preventDefault();
+                    }
+                });
+                
+                // Clamp value on input change
+                levelInput.addEventListener('input', () => {
+                    // Remove non-numeric characters
+                    levelInput.value = levelInput.value.replace(/[^0-9]/g, '');
+                    
+                    // Don't clamp while typing (allow empty or partial input)
+                    if (levelInput.value === '') return;
+                });
+                
+                // Clamp value when focus is lost and trigger recalculation
+                levelInput.addEventListener('blur', () => {
+                    let value = parseInt(levelInput.value, 10);
+                    levelInput.value = clampCharacterLevel(value);
+                    
+                    // Trigger recalculation of skill max levels
+                    window.dispatchEvent(new CustomEvent('characterLevelChanged', {
+                        detail: { level: parseInt(levelInput.value, 10) }
+                    }));
+                });
+                
+                // Also trigger on Enter key
+                levelInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        levelInput.blur(); // This will trigger the blur event above
+                    }
+                });
+            }
+        });
     </script>
 </body>
 </html>

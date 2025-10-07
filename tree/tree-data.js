@@ -1,5 +1,8 @@
 // Data loading and SQLite operations for the skills tree
 
+// Store database instance globally for use in calculations
+let dbInstance = null;
+
 // Load skills data from SQLite
 export async function loadSkillsFromSQLite() {
     try {
@@ -12,6 +15,9 @@ export async function loadSkillsFromSQLite() {
         // Initialize SQL.js
         const SQL = await initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.13.0/${file}` });
         const db = new SQL.Database(new Uint8Array(buffer));
+        
+        // Store database instance
+        dbInstance = db;
 
         // Query skills with correct tab join
         const stmt = db.prepare(`
@@ -21,7 +27,7 @@ export async function loadSkillsFromSQLite() {
                 s.description,
                 GROUP_CONCAT(t.name, ', ') AS tags,
                 sml.base_max_level,
-                sml.can_be_enhanced,
+                sml.affected_by_specialization,
                 sml.can_add_points,
                 (SELECT GROUP_CONCAT(sp2.requirement_type || ':' || sp2.requirement_value || ':' || COALESCE(ts2.display_name, ct3.name, ''), '; ')
                  FROM skill_prerequisites sp2
@@ -50,6 +56,7 @@ export async function loadSkillsFromSQLite() {
             const prerequisites = row.prerequisites ? row.prerequisites.split('; ').filter(p => p.trim()) : [];
             loadedSkills.push({
                 id: row.name,
+                skillId: row.id,  // numeric database ID
                 name: row.display_name,
                 class: row.class_name || '',
                 tab: row.tab_index,        // numeric
@@ -60,7 +67,7 @@ export async function loadSkillsFromSQLite() {
                 image: row.image || 'icons-shared_missing.png',
                 hasDetails: row.description && row.description.trim().length > 0,
                 baseMaxLevel: row.base_max_level || 0,
-                canBeEnhanced: row.can_be_enhanced === 1,
+                affectedBySpecialization: row.affected_by_specialization === 1,
                 canAddPoints: row.can_add_points === 1,
                 prerequisites: prerequisites
             });
@@ -116,4 +123,9 @@ export async function loadSkillsFromSQLite() {
         console.error('Error loading skills from SQLite:', error);
         return [];
     }
+}
+
+// Export database instance getter
+export function getDatabase() {
+    return dbInstance;
 }

@@ -49,16 +49,16 @@ function loadMaxLevelData(skillId) {
   if (!SkillDB.db) return;
   
   const stmt = SkillDB.db.prepare(`
-    SELECT base_max_level, can_be_enhanced, can_add_points
+    SELECT base_max_level, affected_by_specialization, can_add_points
     FROM skill_max_levels
     WHERE skill_id = ?
   `);
   stmt.bind([skillId]);
   
   if (stmt.step()) {
-    const [baseMaxLevel, canBeEnhanced, canAddPoints] = stmt.get();
+    const [baseMaxLevel, affectedBySpecialization, canAddPoints] = stmt.get();
     document.getElementById('max-level-base').value = baseMaxLevel;
-    document.getElementById('max-level-enhanced').checked = canBeEnhanced;
+    document.getElementById('max-level-enhanced').checked = affectedBySpecialization;
     document.getElementById('max-level-add-points').checked = canAddPoints;
   } else {
     // Set defaults
@@ -77,7 +77,7 @@ function refreshMaxLevelsTable() {
   
   const res = SkillDB.db.exec(`
     SELECT s.id, s.display_name, c.name as class_name,
-           sml.base_max_level, sml.can_be_enhanced, sml.can_add_points
+           sml.base_max_level, sml.affected_by_specialization, sml.can_add_points
     FROM skills s
     LEFT JOIN classes c ON s.class_id = c.id
     LEFT JOIN skill_max_levels sml ON s.id = sml.skill_id
@@ -85,13 +85,13 @@ function refreshMaxLevelsTable() {
   `);
   
   if (res.length > 0) {
-    res[0].values.forEach(([skillId, skillName, className, baseMaxLevel, canBeEnhanced, canAddPoints]) => {
+    res[0].values.forEach(([skillId, skillName, className, baseMaxLevel, affectedBySpecialization, canAddPoints]) => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td>${skillName || 'Unknown'}</td>
         <td>${className || 'Unknown'}</td>
         <td>${baseMaxLevel || 1}</td>
-        <td>${canBeEnhanced ? 'Yes' : 'No'}</td>
+        <td>${affectedBySpecialization ? 'Yes' : 'No'}</td>
         <td>${canAddPoints ? 'Yes' : 'No'}</td>
         <td>
           <div class="buttons are-small">
@@ -158,7 +158,7 @@ function deleteMaxLevel(skillId) {
 function saveMaxLevel() {
   const skillId = parseInt(document.getElementById('max-level-skill-hidden').value, 10);
   const baseMaxLevel = parseInt(document.getElementById('max-level-base').value, 10);
-  const canBeEnhanced = document.getElementById('max-level-enhanced').checked;
+  const affectedBySpecialization = document.getElementById('max-level-enhanced').checked;
   const canAddPoints = document.getElementById('max-level-add-points').checked;
   
   if (Number.isNaN(skillId)) {
@@ -166,17 +166,17 @@ function saveMaxLevel() {
     return;
   }
   
-  if (Number.isNaN(baseMaxLevel) || baseMaxLevel < 1) {
-    alert('Base max level must be at least 1');
+  if (Number.isNaN(baseMaxLevel) || baseMaxLevel < 0) {
+    alert('Base max level must be at least 0');
     return;
   }
   
   // Upsert the max level data
   SkillDB.db.run('DELETE FROM skill_max_levels WHERE skill_id = ?', [skillId]);
   SkillDB.db.run(`
-    INSERT INTO skill_max_levels (skill_id, base_max_level, can_be_enhanced, can_add_points)
+    INSERT INTO skill_max_levels (skill_id, base_max_level, affected_by_specialization, can_add_points)
     VALUES (?, ?, ?, ?)
-  `, [skillId, baseMaxLevel, canBeEnhanced ? 1 : 0, canAddPoints ? 1 : 0]);
+  `, [skillId, baseMaxLevel, affectedBySpecialization ? 1 : 0, canAddPoints ? 1 : 0]);
   
   // Reset form
   document.getElementById('max-level-form').reset();
