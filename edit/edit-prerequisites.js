@@ -40,6 +40,97 @@ function updatePrerequisiteFields() {
   }
 }
 
+function loadPrerequisitesForSkill(skillId) {
+  if (!SkillDB.db || !skillId) return;
+  
+  // Query all prerequisites for this skill
+  const stmt = SkillDB.db.prepare(`
+    SELECT requirement_type, requirement_value, target_skill_id, target_tab_id, description
+    FROM skill_prerequisites
+    WHERE skill_id = ?
+  `);
+  stmt.bind([skillId]);
+  
+  // Reset all requirement value fields
+  document.getElementById('prerequisite-skill-level').value = '';
+  document.getElementById('prerequisite-tree-points').value = '';
+  document.getElementById('prerequisite-character-level').value = '';
+  document.getElementById('prerequisite-target-skill-hidden').value = '';
+  document.getElementById('prerequisite-target-tab-hidden').value = '';
+  document.getElementById('prerequisite-description').value = '';
+  
+  // Reset dropdown displays
+  if (prerequisiteTargetSkillDropdown) {
+    prerequisiteTargetSkillDropdown.value = null;
+  }
+  if (prerequisiteTargetTabDropdown) {
+    prerequisiteTargetTabDropdown.value = null;
+  }
+  
+  let targetSkillId = null;
+  let targetTabId = null;
+  let description = '';
+  let hasExistingPrerequisites = false;
+  
+  // Process all prerequisites for this skill
+  while (stmt.step()) {
+    hasExistingPrerequisites = true;
+    const [requirementType, requirementValue, reqTargetSkillId, reqTargetTabId, reqDescription] = stmt.get();
+    
+    // Set values based on requirement type
+    switch (requirementType) {
+      case 'skill_level':
+        document.getElementById('prerequisite-skill-level').value = requirementValue;
+        if (reqTargetSkillId) targetSkillId = reqTargetSkillId;
+        break;
+      case 'tree_points':
+        document.getElementById('prerequisite-tree-points').value = requirementValue;
+        if (reqTargetTabId) targetTabId = reqTargetTabId;
+        break;
+      case 'character_level':
+        document.getElementById('prerequisite-character-level').value = requirementValue;
+        break;
+    }
+    
+    // Use the first description found
+    if (reqDescription && !description) {
+      description = reqDescription;
+    }
+  }
+  stmt.free();
+  
+  // Set target skill and tab values
+  if (targetSkillId) {
+    document.getElementById('prerequisite-target-skill-hidden').value = targetSkillId;
+    if (prerequisiteTargetSkillDropdown) {
+      prerequisiteTargetSkillDropdown.value = targetSkillId;
+    }
+  }
+  
+  if (targetTabId) {
+    document.getElementById('prerequisite-target-tab-hidden').value = targetTabId;
+    if (prerequisiteTargetTabDropdown) {
+      prerequisiteTargetTabDropdown.value = targetTabId;
+    }
+  }
+  
+  // Set the description
+  if (description) {
+    document.getElementById('prerequisite-description').value = description;
+  }
+  
+  // Update form state if we found existing prerequisites
+  if (hasExistingPrerequisites) {
+    window.editingPrerequisiteId = skillId;
+    document.querySelector('#prerequisite-form button[type="submit"]').textContent = 'Save Prerequisite';
+    document.getElementById('prerequisite-cancel').style.display = 'inline-block';
+  } else {
+    window.editingPrerequisiteId = null;
+    document.querySelector('#prerequisite-form button[type="submit"]').textContent = 'Insert Prerequisite';
+    document.getElementById('prerequisite-cancel').style.display = 'none';
+  }
+}
+
 async function populatePrerequisiteSelectors() {
   // Skills dropdown using DropdownList
   const skillDdContainer = document.getElementById('prerequisite-skill-dd');
@@ -60,6 +151,10 @@ async function populatePrerequisiteSelectors() {
       
       onSelect: (item) => {
         skillHiddenInput.value = item?.value || '';
+        // Automatically load existing prerequisites for this skill
+        if (item?.value) {
+          loadPrerequisitesForSkill(item.value);
+        }
       }
     });
     prerequisiteSkillDropdown.setItems(skillItems);

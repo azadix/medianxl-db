@@ -176,7 +176,11 @@ function createSkillCard(skill, currentTab) {
             } else if (type === 'tree_points') {
                 tooltipParts.push(`Requires ${value} points in ${target}`);
             } else if (type === 'skill_level') {
-                tooltipParts.push(`Requires ${target} at level ${value}`);
+                if (value == 1) {
+                    tooltipParts.push(`Requires ${target}`);
+                } else {
+                    tooltipParts.push(`Requires ${target} at level ${value}`);
+                }
             }
         });
         if (tooltipParts.length > 0) {
