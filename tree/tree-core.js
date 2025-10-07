@@ -1,8 +1,9 @@
 // Core functionality for the skills tree viewer
-import { loadSkillsFromSQLite } from './tree-data.js';
+import { loadSkillsFromSQLite, getDatabase } from './tree-data.js';
 import { renderSkills } from './tree-render.js';
 import { CHARACTER_CONFIG } from '../character-config.js';
-import { initializeCharacter, setCharacterLevel, getSpentSkillPoints, getAvailableSkillPoints } from '../character-state.js';
+import { initializeCharacter, setCharacterLevel, getSpentSkillPoints, getAvailableSkillPoints, getAllSkillPoints } from '../character-state.js';
+import { getCurrentDevotion, getDevotionDisplayName } from '../skill-calculations.js';
 
 // Global variables
 let skillsList;
@@ -56,6 +57,9 @@ async function main() {
         // Update skill points display
         updateSkillPointsDisplay();
         
+        // Update devotion display
+        updateDevotionDisplay();
+        
         // Update URL if we have a saved tab
         if (savedTab) {
             updateUrlState(selectedClass, savedTab);
@@ -72,6 +76,9 @@ async function main() {
             initializeCharacter(newClass, currentCharacterLevel);
             
             renderSkills(newClass, skillsList, skillsContainer, currentCharacterLevel);
+            
+            // Update devotion display
+            updateDevotionDisplay();
         });
         
         // Add event listener for character level changes
@@ -99,6 +106,9 @@ async function main() {
             
             // Update skill points display
             updateSkillPointsDisplay();
+            
+            // Update devotion display
+            updateDevotionDisplay();
         });
     } catch (error) {
         console.error('Error initializing tree page:', error);
@@ -140,6 +150,51 @@ function updateSkillPointsDisplay() {
         } else {
             spentEl.classList.remove('has-text-danger', 'has-text-success');
         }
+    }
+}
+
+// Update devotion display (for Paladin only)
+function updateDevotionDisplay() {
+    const devotionField = document.getElementById('devotionField');
+    const devotionDisplay = document.getElementById('devotionDisplay');
+    const currentClass = classSelect ? classSelect.value : null;
+    
+    if (!devotionField || !devotionDisplay) return;
+    
+    // Only show for Paladin
+    if (currentClass === 'Paladin') {
+        const db = getDatabase();
+        if (db) {
+            const skillLevels = getAllSkillPoints();
+            const currentDevotion = getCurrentDevotion(skillLevels, db);
+            const devotionName = getDevotionDisplayName(currentDevotion);
+            
+            // Hide field if no devotion selected
+            if (currentDevotion === 'none') {
+                devotionField.style.display = 'none';
+            } else {
+                devotionField.style.display = 'block';
+                devotionDisplay.textContent = devotionName;
+                
+                // Add color based on devotion
+                devotionDisplay.className = 'has-text-centered has-text-weight-bold';
+                if (currentDevotion === 'holy') {
+                    devotionDisplay.classList.add('has-text-warning');
+                } else if (currentDevotion === 'neutral') {
+                    devotionDisplay.classList.add('has-text-white');
+                } else if (currentDevotion === 'unholy') {
+                    devotionDisplay.classList.add('has-text-purple');
+                }
+            }
+            
+            // Console log for debugging
+            console.log('=== DEVOTION STATUS ===');
+            console.log('Current Devotion:', devotionName);
+            console.log('Devotion Type:', currentDevotion);
+            console.log('=======================');
+        }
+    } else {
+        devotionField.style.display = 'none';
     }
 }
 

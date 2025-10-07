@@ -252,3 +252,163 @@ export function formatMaxLevelDisplay(baseMaxLevel, effectiveMaxLevel) {
   return `${baseMaxLevel} (+${effectiveMaxLevel - baseMaxLevel}) = ${effectiveMaxLevel}`;
 }
 
+/**
+ * Paladin Devotion System
+ * Devotions are mutually exclusive paths for Paladins
+ */
+
+// Define devotion types
+export const DEVOTION_TYPES = {
+  NONE: 'none',
+  HOLY: 'holy',
+  NEUTRAL: 'neutral',
+  UNHOLY: 'unholy'
+};
+
+// Define which tabs belong to which devotion
+const DEVOTION_TABS = {
+  [DEVOTION_TYPES.HOLY]: [30, 31],     // Templar (30), Incarnation (31)
+  [DEVOTION_TYPES.NEUTRAL]: [32],      // Nephalem (32)
+  [DEVOTION_TYPES.UNHOLY]: [33, 34]    // Ritualist (33), Warlock (34)
+};
+
+// Define which ultimate skills belong to which devotion
+const DEVOTION_ULTIMATE_SKILLS = {
+  'dragons_blessing': DEVOTION_TYPES.HOLY,
+  'resurrect': DEVOTION_TYPES.NEUTRAL,
+  'superbeast': DEVOTION_TYPES.UNHOLY
+};
+
+/**
+ * Get the devotion type for a skill based on its tab or name
+ * @param {number} skillId - The skill ID
+ * @param {Object} db - SQL.js database instance
+ * @returns {string} The devotion type (DEVOTION_TYPES constant)
+ */
+export function getSkillDevotion(skillId, db = null) {
+  if (!db) return DEVOTION_TYPES.NONE;
+
+  // Get skill data
+  const stmt = db.prepare(`
+    SELECT s.name, s.tab_index, s.class_id
+    FROM skills s
+    WHERE s.id = ?
+  `);
+  stmt.bind([skillId]);
+  
+  if (!stmt.step()) {
+    stmt.free();
+    return DEVOTION_TYPES.NONE;
+  }
+  
+  const [skillName, tabIndex, classId] = stmt.get();
+  stmt.free();
+  
+  // Only apply devotion system to Paladin (class_id = 5)
+  if (classId !== 5) {
+    return DEVOTION_TYPES.NONE;
+  }
+
+  // Check if this is an ultimate skill
+  if (DEVOTION_ULTIMATE_SKILLS[skillName]) {
+    return DEVOTION_ULTIMATE_SKILLS[skillName];
+  }
+
+  // Check if the tab belongs to a devotion
+  for (const [devotion, tabs] of Object.entries(DEVOTION_TABS)) {
+    if (tabs.includes(tabIndex)) {
+      return devotion;
+    }
+  }
+
+  return DEVOTION_TYPES.NONE;
+}
+
+/**
+ * Determine the current devotion based on allocated skills
+ * @param {Object} skillLevels - Object mapping skill_name to current skill level
+ * @param {Object} db - SQL.js database instance
+ * @returns {string} The current devotion type (DEVOTION_TYPES constant)
+ */
+export function getCurrentDevotion(skillLevels = {}, db = null) {
+  if (!db) return DEVOTION_TYPES.NONE;
+
+  // Check all skills with points allocated
+  for (const [skillName, level] of Object.entries(skillLevels)) {
+    if (level > 0) {
+      // Get skill ID from name
+      const stmt = db.prepare(`
+        SELECT id FROM skills WHERE name = ?
+      `);
+      stmt.bind([skillName]);
+      
+      if (stmt.step()) {
+        const [skillId] = stmt.get();
+        stmt.free();
+        
+        const devotion = getSkillDevotion(skillId, db);
+        if (devotion !== DEVOTION_TYPES.NONE) {
+          return devotion; // First devotion found locks the character
+        }
+      } else {
+        stmt.free();
+      }
+    }
+  }
+
+  return DEVOTION_TYPES.NONE;
+}
+
+/**
+ * Check if a skill can be allocated based on devotion restrictions
+ * @param {number} skillId - The skill ID to check
+ * @param {Object} skillLevels - Object mapping skill_name to current skill level
+ * @param {Object} db - SQL.js database instance
+ * @returns {Object} { canAllocate: boolean, reason: string }
+ */
+export function checkDevotionRestriction(skillId, skillLevels = {}, db = null) {
+  if (!db) {
+    return { canAllocate: true, reason: '' };
+  }
+
+  const currentDevotion = getCurrentDevotion(skillLevels, db);
+  const skillDevotion = getSkillDevotion(skillId, db);
+
+  // If no devotion is active or skill has no devotion, allow allocation
+  if (currentDevotion === DEVOTION_TYPES.NONE || skillDevotion === DEVOTION_TYPES.NONE) {
+    return { canAllocate: true, reason: '' };
+  }
+
+  // If devotions match, allow allocation
+  if (currentDevotion === skillDevotion) {
+    return { canAllocate: true, reason: '' };
+  }
+
+  // Devotions conflict - prevent allocation
+  const devotionNames = {
+    [DEVOTION_TYPES.HOLY]: 'Holy Devotion',
+    [DEVOTION_TYPES.NEUTRAL]: 'Neutral Devotion',
+    [DEVOTION_TYPES.UNHOLY]: 'Unholy Devotion'
+  };
+
+  return {
+    canAllocate: false,
+    reason: `Cannot allocate skill: You are locked into ${devotionNames[currentDevotion]}. This skill requires ${devotionNames[skillDevotion]}.`
+  };
+}
+
+/**
+ * Get the devotion name for display
+ * @param {string} devotionType - The devotion type constant
+ * @returns {string} Display name
+ */
+export function getDevotionDisplayName(devotionType) {
+  const names = {
+    [DEVOTION_TYPES.NONE]: 'No Devotion',
+    [DEVOTION_TYPES.HOLY]: 'Holy Devotion',
+    [DEVOTION_TYPES.NEUTRAL]: 'Neutral Devotion',
+    [DEVOTION_TYPES.UNHOLY]: 'Unholy Devotion'
+  };
+  return names[devotionType] || 'Unknown';
+}
+

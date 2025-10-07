@@ -2,7 +2,7 @@
 import { getSkillIconHTML } from '../utils.js';
 import { addOverlayArrows } from './tree-arrows.js';
 import { setCurrentTab } from './tree-core.js';
-import { calculateMaxLevel } from '../skill-calculations.js';
+import { calculateMaxLevel, checkDevotionRestriction, getCurrentDevotion, getDevotionDisplayName } from '../skill-calculations.js';
 import { getDatabase } from './tree-data.js';
 import { CHARACTER_CONFIG } from '../character-config.js';
 import { getSkillPoints, addSkillPoint, removeSkillPoint, checkPrerequisites, getAllSkillPoints } from '../character-state.js';
@@ -58,11 +58,12 @@ function updateSkillCards(selectedClass, skillsList, characterLevel) {
             const skillLevels = getAllSkillPoints();
             const effectiveMaxLevel = db ? calculateMaxLevel(skill.skillId, skillLevels, characterLevel, db) : skill.baseMaxLevel;
             
-            // Check prerequisites, ultimate, and mastery restrictions
+            // Check prerequisites, ultimate, mastery, and devotion restrictions
             const prereqCheck = checkPrerequisites(skill, currentSkillsList);
             const ultimateRestriction = checkUltimateSkillBlock(skill, currentSkillsList);
             const masteryRestriction = checkMasterySkillBlock(skill, currentSkillsList);
-            const canAddPoint = (prereqCheck.met && !ultimateRestriction.blocked && !masteryRestriction.blocked) || currentPoints > 0;
+            const devotionRestriction = checkDevotionRestriction(skill.skillId, skillLevels, db);
+            const canAddPoint = (prereqCheck.met && !ultimateRestriction.blocked && !masteryRestriction.blocked && devotionRestriction.canAllocate) || currentPoints > 0;
             
             // Build tooltip (don't show Mastery restriction in tooltip - just disable)
             let tooltipMessage = '';
@@ -70,6 +71,8 @@ function updateSkillCards(selectedClass, skillsList, characterLevel) {
                 tooltipMessage = prereqCheck.reasons.join(', ');
             } else if (ultimateRestriction.blocked && currentPoints === 0) {
                 tooltipMessage = ultimateRestriction.reason;
+            } else if (!devotionRestriction.canAllocate && currentPoints === 0) {
+                tooltipMessage = devotionRestriction.reason;
             }
             
             // Update + button
@@ -387,8 +390,11 @@ function createSkillCard(skill, currentTab, characterLevel = CHARACTER_CONFIG.DE
         // Check Mastery skill restriction
         const masteryRestriction = checkMasterySkillBlock(skill, currentSkillsList);
         
-        // Can add point if: prereqs met AND (not blocked by Ultimate OR Mastery restrictions OR already has points)
-        const canAddPoint = (prereqCheck.met && !ultimateRestriction.blocked && !masteryRestriction.blocked) || currentPoints > 0;
+        // Check Devotion restriction (for Paladin)
+        const devotionRestriction = checkDevotionRestriction(skill.skillId, skillLevels, db);
+        
+        // Can add point if: prereqs met AND (not blocked by Ultimate, Mastery, or Devotion restrictions OR already has points)
+        const canAddPoint = (prereqCheck.met && !ultimateRestriction.blocked && !masteryRestriction.blocked && devotionRestriction.canAllocate) || currentPoints > 0;
         
         // Build tooltip message (don't show Mastery restriction in tooltip - just disable)
         let tooltipMessage = '';
@@ -396,6 +402,8 @@ function createSkillCard(skill, currentTab, characterLevel = CHARACTER_CONFIG.DE
             tooltipMessage = prereqCheck.reasons.join(', ');
         } else if (ultimateRestriction.blocked && currentPoints === 0) {
             tooltipMessage = ultimateRestriction.reason;
+        } else if (!devotionRestriction.canAllocate && currentPoints === 0) {
+            tooltipMessage = devotionRestriction.reason;
         }
         
         const buttonsContainer = card.querySelector('.skill-buttons-container');

@@ -4,6 +4,8 @@
  */
 
 import { CHARACTER_CONFIG } from './character-config.js';
+import { checkDevotionRestriction } from './skill-calculations.js';
+import { getDatabase } from './tree/tree-data.js';
 
 // Character state
 const characterState = {
@@ -303,6 +305,15 @@ export function addSkillPoint(skillName, skill, maxLevel, allSkills = []) {
     const masteryCheck = checkMasteryRestriction(skill, allSkills);
     if (!masteryCheck.allowed) {
       return { success: false, reason: masteryCheck.reason };
+    }
+    
+    // Check Devotion restriction (only when adding first point, Paladin only)
+    const db = getDatabase();
+    if (db) {
+      const devotionCheck = checkDevotionRestriction(skill.skillId, characterState.skillPoints, db);
+      if (!devotionCheck.canAllocate) {
+        return { success: false, reason: devotionCheck.reason };
+      }
     }
   }
   

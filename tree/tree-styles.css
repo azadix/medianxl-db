@@ -51,3 +51,7 @@ html {
     text-align: center;
     flex-shrink: 1;
 }
+
+.has-text-purple {
+    color: rgb(190, 0, 210);
+}
