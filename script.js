@@ -6,7 +6,7 @@ const pageTitleElement = document.getElementById('page-title');
 
 // Global variable for DataTable instance
 let skillsDataTable = null;
-let showDetailedOnly = false;
+let filterState = 'all'; // 'all', 'with_details', 'without_details'
 
 // Global skills list
 let skillsList = [];
@@ -74,8 +74,9 @@ async function initializeDataTable(skillsData) {
         layout: {
             topStart: () => {
                 return `<div class="field">
-                    <input id="toggle-filter" type="checkbox">
-                    <label id="label-toggle-filter" for="toggle-filter">Show skills with details</label>
+                    <button id="filter-toggle" class="button is-small filter-toggle is-info">
+                        Show all
+                    </button>
                 </div>`
             },
             bottomStart: "",
@@ -86,18 +87,51 @@ async function initializeDataTable(skillsData) {
     return skillsDataTable;
 }
 
-$(document).on('change', '#toggle-filter', function() {
-    showDetailedOnly = this.checked;
-    if (skillsDataTable && typeof skillsDataTable.draw === 'function') skillsDataTable.draw();
+$(document).on('click', '#filter-toggle', function() {
+    // Cycle through the 3 states
+    switch(filterState) {
+        case 'all':
+            filterState = 'with_details';
+            this.textContent = 'Show only with details';
+            this.classList.remove('is-info', 'is-success');
+            this.classList.add('is-primary');
+            break;
+        case 'with_details':
+            filterState = 'without_details';
+            this.textContent = 'Show only without details';
+            this.classList.remove('is-primary', 'is-info');
+            this.classList.add('is-success');
+            break;
+        case 'without_details':
+            filterState = 'all';
+            this.textContent = 'Show all';
+            this.classList.remove('is-success', 'is-primary');
+            this.classList.add('is-info');
+            break;
+    }
+    
+    if (skillsDataTable && typeof skillsDataTable.draw === 'function') {
+        skillsDataTable.draw();
+    }
 });
 
 
 $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-    if (!showDetailedOnly) return true;
+    if (filterState === 'all') return true;
+    
     const ao = settings && settings.aoData;
     const rowNode = ao && ao[dataIndex] && ao[dataIndex].nTr;
     if (!rowNode) return true;
-    return $(rowNode).attr("data-has-page") === "true";
+    
+    const hasPage = $(rowNode).attr("data-has-page") === "true";
+    
+    if (filterState === 'with_details') {
+        return hasPage;
+    } else if (filterState === 'without_details') {
+        return !hasPage;
+    }
+    
+    return true;
 });
 
 // Function to display a specific skill's details
