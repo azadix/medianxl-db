@@ -1,0 +1,53 @@
+html {
+    overflow: hidden;
+    height: 100vh;
+}
+
+.skills-grid {
+    gap: 1.25rem 0.5rem;
+    width: 50%;
+    margin: 0 auto;
+    position: relative; /* Enable absolute positioning for overlay arrows */
+    justify-items: center;
+    align-items: center;
+}
+
+.empty-skill-card {
+    padding: 0.5rem;
+    width: 210px;
+    height: 105px;
+}
+
+/* Uniform skill cards */
+.skill-card {
+    background: #222222;
+    border: 1px solid #8a8a8a8a;
+    border-radius: 6px;
+    padding: 0.25rem;
+    text-align: center;
+    color: white;
+    position: relative; /* Enable absolute positioning for prerequisites */
+
+    /* 2:1 rectangle size */
+    width: 210px;
+    height: 105px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    overflow: hidden;
+}
+
+.skill-card .image {
+    height: 48px;
+    width: 48px;
+    flex-shrink: 0;
+}
+
+.skill-card div {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+    flex-shrink: 1;
+}
