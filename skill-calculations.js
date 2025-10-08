@@ -33,6 +33,8 @@ const MAX_LEVEL_MODIFIERS = [
     calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = CHARACTER_CONFIG.DEFAULT_LEVEL) {
       // Only affects itself, based on character level only
       if (targetSkillData.skill_name === this.targetSkillName) {
+        // BUG: i think that this skill is bugged in game since the scaling starts counting from level 1 and not 10
+        // should be copied from other ones when the mod fixes a bug
         return Math.floor(characterLevel / this.characterLevelDivisor);
       }
       return 0;
@@ -106,11 +108,13 @@ const MAX_LEVEL_MODIFIERS = [
     targetSkillNames: ['trinity_arrow', 'barrage'], // Trinity Arrow and Barrage
     characterLevelDivisor: 4, // +1 max level for every 4 character levels
     maxBonus: 20, // Maximum of 20 bonus levels
+    startLevel: 15, // Skill becomes available at level 15
     description: 'When active, increases Trinity Arrow and Barrage max level by 1 for every 4 character levels',
     calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = CHARACTER_CONFIG.DEFAULT_LEVEL) {
       // Only applies if Elemental Command has at least 1 point invested
       if (sourceSkillLevel > 0 && this.targetSkillNames.includes(targetSkillData.skill_name)) {
-        return Math.min(Math.floor(characterLevel / this.characterLevelDivisor), this.maxBonus);;
+        const effectiveLevel = Math.max(0, characterLevel - this.startLevel);
+        return Math.min(Math.floor(effectiveLevel / this.characterLevelDivisor), this.maxBonus);;
       }
       return 0;
     }
@@ -125,8 +129,6 @@ const MAX_LEVEL_MODIFIERS = [
     calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = CHARACTER_CONFIG.DEFAULT_LEVEL) {
       // Only affects itself, based on character level only
       if (targetSkillData.skill_name === this.targetSkillName) {
-        // BUG: i think that this skill is bugged in game since the scaling starts counting from level 15 and not 1
-        // should be copied from barkskin since that one is correct when the mod fixes a bug
         const effectiveLevel = Math.max(0, characterLevel - this.startLevel);
         return Math.floor(1 + effectiveLevel / this.characterLevelDivisor);
       }
