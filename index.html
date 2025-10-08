@@ -27,12 +27,20 @@
                 <a class="navbar-item" href="./tree.html" id="nav-tree">
                     <strong>Tree</strong>
                 </a>
-                <a class="navbar-item" href="./edit.html" id="nav-db">
+                <a class="navbar-item" href="./edit.html" id="nav-db" style="display: none;">
                     <strong>Edit panel</strong>
                 </a>
             </div>
         </div>
     </nav>
+    
+    <script type="module">
+        import { isLocalhost } from './utils.js';
+        // Show edit panel only on localhost/local development
+        if (isLocalhost()) {
+            document.getElementById('nav-db').style.display = '';
+        }
+    </script>
 
     <div class="container">
         <h2 class="title mt-1 mb-2" id="page-title">All Skills</h2>

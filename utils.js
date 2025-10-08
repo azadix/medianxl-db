@@ -291,3 +291,12 @@ export function expandPlaceholdersWithScaling(db, skillId, level, description) {
     });
 }
 
+/**
+ * Check if the page is running on localhost (for development vs production)
+ * @returns {boolean} True if running on localhost, false if on GitHub Pages or other hosting
+ */
+export function isLocalhost() {
+    return window.location.hostname === 'localhost' || 
+           window.location.hostname === '127.0.0.1' || 
+           window.location.hostname === '';
+}
