@@ -1,7 +1,7 @@
 // Core functionality for the skills tree viewer
 import { loadSkillsFromSQLite, getDatabase } from './tree-data.js';
 import { renderSkills, renderDifficultyCheckboxes } from './tree-render.js';
-import { CHARACTER_CONFIG } from '../character-config.js';
+import { CHARACTER_CONFIG, clampCharacterLevel } from '../character-config.js';
 import { initializeCharacter, setCharacterLevel, getSpentSkillPoints, getAvailableSkillPoints, getAllSkillPoints, updateQuestCompletion, getQuestCompletion } from '../character-state.js';
 import { getCurrentDevotion, getDevotionDisplayName } from '../skill-calculations.js';
 
@@ -62,6 +62,9 @@ async function main() {
         
         // Initialize difficulty checkboxes
         initializeDifficultyCheckboxes();
+        
+        // Initialize level input
+        initializeLevelInput();
         
         // Update URL if we have a saved tab
         if (savedTab) {
@@ -317,4 +320,54 @@ function updateQuestsFromDifficulty() {
     
     // Trigger skill points update
     window.dispatchEvent(new CustomEvent('skillPointsChanged'));
+}
+
+/**
+ * Initialize level input field and its event handlers
+ */
+function initializeLevelInput() {
+    const levelInput = document.getElementById('characterLevel');
+    const levelHelp = document.getElementById('characterLevelHelp');
+    
+    if (!levelInput || !levelHelp) return;
+    
+    // Set initial values from config
+    levelInput.min = CHARACTER_CONFIG.MIN_LEVEL;
+    levelInput.max = CHARACTER_CONFIG.MAX_LEVEL;
+    levelInput.value = CHARACTER_CONFIG.DEFAULT_LEVEL;
+    levelHelp.textContent = `Character level (${CHARACTER_CONFIG.MIN_LEVEL}-${CHARACTER_CONFIG.MAX_LEVEL})`;
+    
+    // Only allow numbers
+    levelInput.addEventListener('keypress', (e) => {
+        if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') {
+            e.preventDefault();
+        }
+    });
+    
+    // Clamp value on input change
+    levelInput.addEventListener('input', () => {
+        // Remove non-numeric characters
+        levelInput.value = levelInput.value.replace(/[^0-9]/g, '');
+        
+        // Don't clamp while typing (allow empty or partial input)
+        if (levelInput.value === '') return;
+    });
+    
+    // Clamp value when focus is lost and trigger recalculation
+    levelInput.addEventListener('blur', () => {
+        let value = parseInt(levelInput.value, 10);
+        levelInput.value = clampCharacterLevel(value);
+        
+        // Trigger recalculation of skill max levels
+        window.dispatchEvent(new CustomEvent('characterLevelChanged', {
+            detail: { level: parseInt(levelInput.value, 10) }
+        }));
+    });
+    
+    // Also trigger on Enter key
+    levelInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            levelInput.blur(); // This will trigger the blur event above
+        }
+    });
 }
