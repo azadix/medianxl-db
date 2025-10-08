@@ -8,7 +8,8 @@ let prerequisiteTargetSkillDropdown = null;
 let prerequisiteBlockedSkillDropdown = null;
 let prerequisiteTargetTabDropdown = null;
 
-// Store multiple blocked skills
+// Store multiple required and blocked skills
+let selectedRequiredSkills = [];
 let selectedBlockedSkills = [];
 
 export async function initializePrerequisites() {
@@ -21,7 +22,8 @@ export async function initializePrerequisites() {
     savePrerequisite();
   });
   
-  // Initialize blocked skills display
+  // Initialize skills displays
+  updateRequiredSkillsDisplay();
   updateBlockedSkillsDisplay();
   
   // Show all fields by default since we now support multiple requirement types
@@ -53,6 +55,68 @@ function updatePrerequisiteFields() {
     prerequisiteTargetTabDropdown.container.style.opacity = '1';
   }
 }
+
+// Add a required skill to the list
+function addRequiredSkill(skillId, skillName, level = null) {
+  // Check if already added
+  if (selectedRequiredSkills.some(s => s.id === skillId)) {
+    alert('This skill is already in the required skills list');
+    return;
+  }
+  
+  // Use provided level or get from input
+  const skillLevel = level !== null ? level : (parseInt(document.getElementById('prerequisite-skill-level').value) || 1);
+  
+  selectedRequiredSkills.push({ id: skillId, name: skillName, level: skillLevel });
+  updateRequiredSkillsDisplay();
+  
+  // Update hidden field with comma-separated IDs
+  document.getElementById('prerequisite-target-skill-hidden').value = 
+    selectedRequiredSkills.map(s => s.id).join(',');
+  
+  // Clear dropdown selection so user can select another skill
+  if (prerequisiteTargetSkillDropdown) {
+    prerequisiteTargetSkillDropdown.value = null;
+  }
+}
+
+// Remove a required skill from the list
+function removeRequiredSkill(skillId) {
+  selectedRequiredSkills = selectedRequiredSkills.filter(s => s.id !== skillId);
+  updateRequiredSkillsDisplay();
+  
+  // Update hidden field
+  document.getElementById('prerequisite-target-skill-hidden').value = 
+    selectedRequiredSkills.map(s => s.id).join(',');
+}
+
+// Update the display of selected required skills
+function updateRequiredSkillsDisplay() {
+  const container = document.getElementById('required-skills-list');
+  if (!container) {
+    console.warn('required-skills-list container not found');
+    return;
+  }
+  
+  if (selectedRequiredSkills.length === 0) {
+    container.innerHTML = '<p class="help has-text-grey-light">No required skills selected</p>';
+    return;
+  }
+  
+  const html = selectedRequiredSkills.map(skill => `
+<div class="tags has-addons" style="display: inline-flex; margin: 0.25rem;">
+  <span class="tag is-success">${skill.name} (${skill.level})</span>
+  <a class="tag is-delete" onclick="window.removeRequiredSkillFromUI(${skill.id})"></a>
+</div>
+  `).join('');
+
+  container.innerHTML = html;
+}
+
+// Export function to window for onclick handlers
+window.removeRequiredSkillFromUI = function(skillId) {
+  removeRequiredSkill(skillId);
+};
 
 // Add a blocked skill to the list
 function addBlockedSkill(skillId, skillName) {
@@ -99,9 +163,9 @@ function updateBlockedSkillsDisplay() {
   }
   
   const html = selectedBlockedSkills.map(skill => `
-<div style="display: inline-block; margin: 0.25rem;">
+<div class="tags has-addons" style="display: inline-flex; margin: 0.25rem;">
   <span class="tag is-info">${skill.name}</span>
-  <button type="button" class="delete is-small" onclick="window.removeBlockedSkillFromUI(${skill.id})" style="vertical-align: middle; margin-left: -5px;"></button>
+  <a class="tag is-delete" onclick="window.removeBlockedSkillFromUI(${skill.id})"></a>
 </div>
   `).join('');
 
@@ -145,10 +209,11 @@ function loadPrerequisitesForSkill(skillId) {
     prerequisiteTargetTabDropdown.value = null;
   }
   
-  // Reset blocked skills array
+  // Reset skills arrays
+  selectedRequiredSkills = [];
   selectedBlockedSkills = [];
   
-  let targetSkillId = null;
+  let skillLevelValue = null;
   let targetTabId = null;
   let description = '';
   let hasExistingPrerequisites = false;
@@ -162,8 +227,22 @@ function loadPrerequisitesForSkill(skillId) {
     // Set values based on requirement type
     switch (requirementType) {
       case 'skill_level':
-        document.getElementById('prerequisite-skill-level').value = requirementValue;
-        if (reqTargetSkillId) targetSkillId = reqTargetSkillId;
+        // Store the level value (should be same for all required skills)
+        if (skillLevelValue === null) {
+          skillLevelValue = requirementValue;
+          document.getElementById('prerequisite-skill-level').value = requirementValue;
+        }
+        // Add to required skills array
+        if (reqTargetSkillId) {
+          // Get skill name
+          const nameStmt = SkillDB.db.prepare('SELECT display_name FROM skills WHERE id = ?');
+          nameStmt.bind([reqTargetSkillId]);
+          if (nameStmt.step()) {
+            const skillName = nameStmt.get()[0];
+            selectedRequiredSkills.push({ id: reqTargetSkillId, name: skillName, level: requirementValue });
+          }
+          nameStmt.free();
+        }
         break;
       case 'skill_blocked_by':
         // Store the max points value (should be same for all blocked skills)
@@ -199,12 +278,11 @@ function loadPrerequisitesForSkill(skillId) {
   }
   stmt.free();
   
-  // Set target skill and tab values
-  if (targetSkillId) {
-    document.getElementById('prerequisite-target-skill-hidden').value = targetSkillId;
-    if (prerequisiteTargetSkillDropdown) {
-      prerequisiteTargetSkillDropdown.value = targetSkillId;
-    }
+  // Update required skills display
+  if (selectedRequiredSkills.length > 0) {
+    document.getElementById('prerequisite-target-skill-hidden').value = 
+      selectedRequiredSkills.map(s => s.id).join(',');
+    updateRequiredSkillsDisplay();
   }
   
   // Update blocked skills display
@@ -286,12 +364,14 @@ async function populatePrerequisiteSelectors() {
     })) : [];
     
     prerequisiteTargetSkillDropdown = new DropdownList(targetSkillDdContainer, {
-      placeholder: 'Select target skill...',
+      placeholder: 'Select required skill...',
       emptyListText: 'No skills found',
-      defaultHeaderText: 'Target Skills',
+      defaultHeaderText: 'Required Skills',
       
       onSelect: (item) => {
-        targetSkillHiddenInput.value = item?.value || '';
+        if (item) {
+          addRequiredSkill(item.value, item.name);
+        }
       }
     });
     prerequisiteTargetSkillDropdown.setItems(skillItems);
@@ -396,7 +476,8 @@ function refreshPrerequisitesTable() {
       if (prerequisiteType === 'skill_blocked_by' && targetSkillName) {
         grouped[key].targets.push(targetSkillName);
       } else if (prerequisiteType === 'skill_level' && targetSkillName) {
-        grouped[key].targets.push(targetSkillName);
+        // For skill_level, include the level requirement with each skill
+        grouped[key].targets.push(`${targetSkillName} (${prerequisiteValue})`);
       } else if (prerequisiteType === 'tree_points' && targetTabName) {
         grouped[key].targets.push(targetTabName);
       } else if (prerequisiteType === 'character_level') {
@@ -416,10 +497,13 @@ function refreshPrerequisitesTable() {
       // Join targets with commas if multiple
       const targetDisplay = group.targets.join(', ');
       
+      // For skill_level type, don't show value column since it's in the target
+      const valueDisplay = group.prerequisiteType === 'skill_level' ? '-' : group.prerequisiteValue;
+      
       tr.innerHTML = `
         <td>${group.skillName || 'Unknown'}</td>
         <td>${typeDisplay}</td>
-        <td>${group.prerequisiteValue}</td>
+        <td>${valueDisplay}</td>
         <td>${targetDisplay}</td>
         <td>${group.description || ''}</td>
         <td>
@@ -563,7 +647,6 @@ function savePrerequisite() {
   const skillBlockedByValue = parseInt(document.getElementById('prerequisite-skill-blocked-by').value, 10);
   const treePointsValue = parseInt(document.getElementById('prerequisite-tree-points').value || 0, 10);
   const characterLevelValue = parseInt(document.getElementById('prerequisite-character-level').value || 0, 10);
-  const targetSkillId = parseInt(document.getElementById('prerequisite-target-skill-hidden')?.value || 0, 10);
   const targetTabId = parseInt(document.getElementById('prerequisite-target-tab-hidden')?.value || 0, 10);
   const description = document.getElementById('prerequisite-description')?.value.trim() || '';
   
@@ -573,20 +656,10 @@ function savePrerequisite() {
   }
   
   // Validate that at least one requirement type is specified
+  const hasRequiredSkills = selectedRequiredSkills.length > 0;
   const hasBlockedBy = !Number.isNaN(skillBlockedByValue) && skillBlockedByValue >= 0 && selectedBlockedSkills.length > 0;
-  if (skillLevelValue < 1 && !hasBlockedBy && treePointsValue < 1 && characterLevelValue < 1) {
+  if (!hasRequiredSkills && !hasBlockedBy && treePointsValue < 1 && characterLevelValue < 1) {
     alert('Please specify at least one requirement (skill level, blocked by, tree points, or character level)');
-    return;
-  }
-  
-  // Validate required fields for each requirement type
-  if (skillLevelValue >= 1 && (Number.isNaN(targetSkillId) || targetSkillId === 0)) {
-    alert('Please select a target skill for skill level prerequisite');
-    return;
-  }
-  
-  if (!Number.isNaN(skillBlockedByValue) && skillBlockedByValue >= 0 && selectedBlockedSkills.length === 0) {
-    alert('Please select at least one skill for blocked by prerequisite');
     return;
   }
   
@@ -602,11 +675,14 @@ function savePrerequisite() {
   }
   
   // Insert prerequisites for each requirement type that has a value
-  if (skillLevelValue >= 1) {
-    SkillDB.db.run(`
-      INSERT INTO skill_prerequisites (skill_id, requirement_type, requirement_value, target_skill_id, target_tab_id, description)
-      VALUES (?, 'skill_level', ?, ?, ?, ?)
-    `, [skillId, skillLevelValue, targetSkillId, null, description]);
+  if (selectedRequiredSkills.length > 0) {
+    // Insert a prerequisite for each required skill with its own level
+    selectedRequiredSkills.forEach(skill => {
+      SkillDB.db.run(`
+        INSERT INTO skill_prerequisites (skill_id, requirement_type, requirement_value, target_skill_id, target_tab_id, description)
+        VALUES (?, 'skill_level', ?, ?, ?, ?)
+      `, [skillId, skill.level, skill.id, null, description]);
+    });
   }
   
   // Insert a separate prerequisite entry for each blocked skill
@@ -636,7 +712,9 @@ function savePrerequisite() {
   // Reset form
   document.getElementById('prerequisite-form').reset();
   document.getElementById('prerequisite-skill-hidden').value = '';
+  selectedRequiredSkills = [];
   selectedBlockedSkills = [];
+  updateRequiredSkillsDisplay();
   updateBlockedSkillsDisplay();
   
   if (window.editingPrerequisiteId) {
@@ -655,6 +733,8 @@ document.getElementById('prerequisite-cancel').addEventListener('click', () => {
   document.querySelector('#prerequisite-form button[type="submit"]').textContent = 'Insert Prerequisite';
   document.getElementById('prerequisite-cancel').style.display = 'none';
   document.getElementById('prerequisite-skill-hidden').value = '';
+  selectedRequiredSkills = [];
   selectedBlockedSkills = [];
+  updateRequiredSkillsDisplay();
   updateBlockedSkillsDisplay();
 });

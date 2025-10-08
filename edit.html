@@ -418,13 +418,21 @@
       <!-- Required Skill Row -->
       <div class="columns">
         <div class="column is-one-third">
-          <label class="label">Required Skill</label>
+          <label class="label">Required Skills (Multiple)</label>
           <div id="prerequisite-target-skill-dd"></div>
           <input type="hidden" id="prerequisite-target-skill-hidden" />
+          <p class="help">Select multiple skills that are required</p>
         </div>
         <div class="column is-one-third">
           <label class="label">Level Required</label>
           <input class="input" type="number" id="prerequisite-skill-level" min="1" placeholder="Level">
+          <p class="help">Minimum level required for each selected skill</p>
+        </div>
+        <div class="column is-one-third">
+          <label class="label m-0">Selected Required Skills</label>
+          <div id="required-skills-list" style="min-height: 80px; max-height: 200px; overflow-y: auto; padding: 1rem;">
+            <p class="help has-text-grey">No required skills selected</p>
+          </div>
         </div>
       </div>
       
