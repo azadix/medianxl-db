@@ -7,6 +7,14 @@ import { CHARACTER_CONFIG, getBaseSkillPoints } from './character-config.js';
 import { checkDevotionRestriction, calculateMaxLevel } from './skill-calculations.js';
 import { getDatabase } from './tree/tree-data.js';
 
+// Skills that use OR logic for skill_level prerequisites (instead of AND)
+// Format: skill display name
+const OR_PREREQUISITE_SKILLS = [
+  // Add skill display names here that require only ONE of their skill prerequisites
+  // Example: 'Artifice Mastery' requires ONE of: Incineration Trap OR Shockwave Trap OR Catalyst Trap
+  "Life From Death"
+];
+
 // Character state
 const characterState = {
   level: CHARACTER_CONFIG.DEFAULT_LEVEL,
@@ -68,6 +76,15 @@ export function getAllSkillPoints() {
 }
 
 /**
+ * Set all skill points (used for loading builds)
+ * @param {Object} skillPoints - Map of skill_name -> points
+ */
+export function setAllSkillPoints(skillPoints) {
+  characterState.skillPoints = { ...skillPoints };
+  characterState.maxLevels = {}; // Clear cache
+}
+
+/**
  * Calculate total available skill points based on character level and quests completed
  * @returns {number} Total available skill points
  */
@@ -119,28 +136,29 @@ export function checkPrerequisites(skill, allSkills = []) {
   }
 
   const reasons = [];
+  const useOrLogic = OR_PREREQUISITE_SKILLS.includes(skill.name);
+  
+  // Separate skill_level prerequisites from others
+  const skillLevelPrereqs = [];
+  const otherPrereqs = [];
   
   for (const prereq of skill.prerequisites) {
+    const [type] = prereq.split(':');
+    if (type === 'skill_level') {
+      skillLevelPrereqs.push(prereq);
+    } else {
+      otherPrereqs.push(prereq);
+    }
+  }
+  
+  // Check non-skill_level prerequisites (always use AND logic)
+  for (const prereq of otherPrereqs) {
     const [type, value, target] = prereq.split(':');
     
     if (type === 'character_level' || type === 'class_level') {
       const requiredLevel = parseInt(value, 10);
       if (characterState.level < requiredLevel) {
         reasons.push(`Requires character level ${requiredLevel}`);
-      }
-    } else if (type === 'skill_level') {
-      const requiredPoints = parseInt(value, 10);
-      // Target is the display name, we need to find the skill_name
-      // For now, we'll convert display name to lowercase with underscores
-      const targetSkillName = target.toLowerCase().replace(/['\s]/g, '_').replace(/_+/g, '_');
-      const currentPoints = getSkillPoints(targetSkillName);
-      
-      if (currentPoints < requiredPoints) {
-        if (requiredPoints === 1) {
-          reasons.push(`Requires ${target}`);
-        } else {
-          reasons.push(`Requires ${requiredPoints} points in ${target}`);
-        }
       }
     } else if (type === 'skill_blocked_by') {
       // Blocked if target skill has more than specified points (typically 0)
@@ -160,6 +178,53 @@ export function checkPrerequisites(skill, allSkills = []) {
       
       if (pointsInTab < requiredPoints) {
         reasons.push(`Requires ${requiredPoints} point${requiredPoints > 1 ? 's' : ''} in ${targetTabName} tree`);
+      }
+    }
+  }
+  
+  // Check skill_level prerequisites
+  if (skillLevelPrereqs.length > 0) {
+    if (useOrLogic) {
+      // OR logic: At least ONE prerequisite must be met
+      let anyMet = false;
+      const orReasons = [];
+      
+      for (const prereq of skillLevelPrereqs) {
+        const [, value, target] = prereq.split(':');
+        const requiredPoints = parseInt(value, 10);
+        const targetSkillName = target.toLowerCase().replace(/['\s]/g, '_').replace(/_+/g, '_');
+        const currentPoints = getSkillPoints(targetSkillName);
+        
+        if (currentPoints >= requiredPoints) {
+          anyMet = true;
+          break;
+        } else {
+          if (requiredPoints === 1) {
+            orReasons.push(`${target}`);
+          } else {
+            orReasons.push(`${requiredPoints} points in ${target}`);
+          }
+        }
+      }
+      
+      if (!anyMet) {
+        reasons.push(`Requires one of: ${orReasons.join(' OR ')}`);
+      }
+    } else {
+      // AND logic: ALL prerequisites must be met (default)
+      for (const prereq of skillLevelPrereqs) {
+        const [, value, target] = prereq.split(':');
+        const requiredPoints = parseInt(value, 10);
+        const targetSkillName = target.toLowerCase().replace(/['\s]/g, '_').replace(/_+/g, '_');
+        const currentPoints = getSkillPoints(targetSkillName);
+        
+        if (currentPoints < requiredPoints) {
+          if (requiredPoints === 1) {
+            reasons.push(`Requires ${target}`);
+          } else {
+            reasons.push(`Requires ${requiredPoints} points in ${target}`);
+          }
+        }
       }
     }
   }

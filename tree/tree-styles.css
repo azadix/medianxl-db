@@ -10,7 +10,7 @@ html {
 .skills-grid {
     gap: 1.25rem 1rem;
     width: 50%;
-    margin: 0 10%;
+    margin: 0 5%;
     position: relative; /* Enable absolute positioning for overlay arrows */
     justify-items: center;
     align-items: center;

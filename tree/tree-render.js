@@ -228,6 +228,17 @@ export function renderSkills(selectedClass, skillsList, skillsContainer, charact
         first = false;
     });
 
+    // Add skill points display to the right side of tabs
+    const skillPointsLi = document.createElement('li');
+    skillPointsLi.style.marginLeft = 'auto';
+    skillPointsLi.style.pointerEvents = 'none'; // Not clickable
+    const skillPointsSpan = document.createElement('span');
+    skillPointsSpan.id = 'tabSkillPointsDisplay';
+    skillPointsSpan.className = 'has-text-light has-text-weight-bold';
+    skillPointsSpan.style.padding = '0.5em 1em';
+    skillPointsLi.appendChild(skillPointsSpan);
+    ul.appendChild(skillPointsLi);
+    
     tabNav.appendChild(ul);
     skillsContainer.appendChild(tabNav);
     skillsContainer.appendChild(tabContent);
