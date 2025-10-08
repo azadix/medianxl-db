@@ -1,8 +1,8 @@
 // Core functionality for the skills tree viewer
 import { loadSkillsFromSQLite, getDatabase } from './tree-data.js';
-import { renderSkills } from './tree-render.js';
+import { renderSkills, renderDifficultyCheckboxes } from './tree-render.js';
 import { CHARACTER_CONFIG } from '../character-config.js';
-import { initializeCharacter, setCharacterLevel, getSpentSkillPoints, getAvailableSkillPoints, getAllSkillPoints } from '../character-state.js';
+import { initializeCharacter, setCharacterLevel, getSpentSkillPoints, getAvailableSkillPoints, getAllSkillPoints, updateQuestCompletion, getQuestCompletion } from '../character-state.js';
 import { getCurrentDevotion, getDevotionDisplayName } from '../skill-calculations.js';
 
 // Global variables
@@ -60,6 +60,9 @@ async function main() {
         // Update devotion display
         updateDevotionDisplay();
         
+        // Initialize difficulty checkboxes
+        initializeDifficultyCheckboxes();
+        
         // Update URL if we have a saved tab
         if (savedTab) {
             updateUrlState(selectedClass, savedTab);
@@ -94,6 +97,12 @@ async function main() {
             
             // Re-render without redrawing arrows (just update cards)
             renderSkills(currentClass, skillsList, skillsContainer, currentCharacterLevel, savedTab, false);
+            
+            // Update skill points display
+            updateSkillPointsDisplay();
+            
+            // Update devotion display
+            updateDevotionDisplay();
         });
         
         // Add event listener for skill point changes
@@ -186,47 +195,126 @@ function updateDevotionDisplay() {
                     devotionDisplay.classList.add('has-text-purple');
                 }
             }
-            
-            // Console log for debugging
-            console.log('=== DEVOTION STATUS ===');
-            console.log('Current Devotion:', devotionName);
-            console.log('Devotion Type:', currentDevotion);
-            console.log('=======================');
         }
     } else {
         devotionField.style.display = 'none';
     }
 }
 
-// Restore tab selection
-function restoreTabSelection(tabName) {
-    const tabLink = document.querySelector(`[data-tab="${tabName}"]`);
-    if (tabLink) {
-        // Trigger the tab switch manually instead of clicking
-        const ul = tabLink.closest('ul');
-        
-        // Remove active class from all tabs
-        ul.querySelectorAll('li').forEach(li => li.classList.remove('is-active'));
-        tabLink.parentElement.classList.add('is-active');
-        
-        // Hide all tab contents
-        document.querySelectorAll('.skills-grid').forEach(grid => {
-            grid.style.display = 'none';
-        });
-        
-        // Show clicked tab content
-        const targetGrid = document.getElementById(`tab-${tabName}`);
-        if (targetGrid) {
-            targetGrid.style.display = 'grid';
-        }
-        
-        currentTab = tabName;
-        updateUrlState(classSelect.value, tabName);
-    }
-}
 
 // Export function to update tab state (called from render module)
 export function setCurrentTab(tabName) {
     currentTab = tabName;
     updateUrlState(classSelect.value, tabName);
+}
+
+/**
+ * Initialize difficulty checkboxes and their event handlers
+ */
+function initializeDifficultyCheckboxes() {
+    // Render the checkboxes
+    const questState = getCurrentQuestState();
+    renderDifficultyCheckboxes(questState);
+    
+    // Add event listeners
+    setupDifficultyEventListeners();
+}
+
+/**
+ * Get current quest state for difficulty checkboxes
+ * @returns {Object} Quest state with hasNormal, hasNightmare, hasHell
+ */
+function getCurrentQuestState() {
+    const hasNormal = getQuestCompletion('den_of_evil').normal || 
+                     getQuestCompletion('radament').normal || 
+                     getQuestCompletion('izual').normal;
+    
+    const hasNightmare = getQuestCompletion('den_of_evil').nightmare || 
+                        getQuestCompletion('radament').nightmare || 
+                        getQuestCompletion('izual').nightmare;
+    
+    const hasHell = getQuestCompletion('den_of_evil').hell || 
+                   getQuestCompletion('radament').hell || 
+                   getQuestCompletion('izual').hell ||
+                   getQuestCompletion('inquisitor_of_the_triune').hell;
+    
+    return { hasNormal, hasNightmare, hasHell };
+}
+
+/**
+ * Setup event listeners for difficulty checkboxes
+ */
+function setupDifficultyEventListeners() {
+    const normalCheckbox = document.getElementById('difficultyNormal');
+    const nightmareCheckbox = document.getElementById('difficultyNightmare');
+    const hellCheckbox = document.getElementById('difficultyHell');
+    
+    if (!normalCheckbox || !nightmareCheckbox || !hellCheckbox) return;
+    
+    // Hell checkbox: checking enables nightmare and normal
+    hellCheckbox.addEventListener('change', () => {
+        if (hellCheckbox.checked) {
+            nightmareCheckbox.checked = true;
+            normalCheckbox.checked = true;
+        }
+        updateQuestsFromDifficulty();
+    });
+    
+    // Nightmare checkbox: checking enables normal, unchecking disables hell
+    nightmareCheckbox.addEventListener('change', () => {
+        if (nightmareCheckbox.checked) {
+            normalCheckbox.checked = true;
+        } else {
+            hellCheckbox.checked = false;
+        }
+        updateQuestsFromDifficulty();
+    });
+    
+    // Normal checkbox: unchecking disables nightmare and hell
+    normalCheckbox.addEventListener('change', () => {
+        if (!normalCheckbox.checked) {
+            nightmareCheckbox.checked = false;
+            hellCheckbox.checked = false;
+        }
+        updateQuestsFromDifficulty();
+    });
+}
+
+/**
+ * Update quest completion based on difficulty selection
+ */
+function updateQuestsFromDifficulty() {
+    const normalCheckbox = document.getElementById('difficultyNormal');
+    const nightmareCheckbox = document.getElementById('difficultyNightmare');
+    const hellCheckbox = document.getElementById('difficultyHell');
+    
+    if (!normalCheckbox || !nightmareCheckbox || !hellCheckbox) return;
+    
+    // Update each quest based on difficulty selection
+    updateQuestCompletion('den_of_evil', {
+        normal: normalCheckbox.checked,
+        nightmare: nightmareCheckbox.checked,
+        hell: hellCheckbox.checked
+    });
+    
+    updateQuestCompletion('radament', {
+        normal: normalCheckbox.checked,
+        nightmare: nightmareCheckbox.checked,
+        hell: hellCheckbox.checked
+    });
+    
+    updateQuestCompletion('izual', {
+        normal: normalCheckbox.checked,
+        nightmare: nightmareCheckbox.checked,
+        hell: hellCheckbox.checked
+    });
+    
+    updateQuestCompletion('inquisitor_of_the_triune', {
+        normal: false, // This quest only has hell difficulty
+        nightmare: false,
+        hell: hellCheckbox.checked
+    });
+    
+    // Trigger skill points update
+    window.dispatchEvent(new CustomEvent('skillPointsChanged'));
 }

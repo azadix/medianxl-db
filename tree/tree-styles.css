@@ -55,3 +55,37 @@ html {
 .has-text-purple {
     color: rgb(190, 0, 210);
 }
+
+/* Toast container positioning */
+.toast-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-end;
+}
+
+.toast-container .notification {
+    padding: 1rem;
+    cursor: pointer;
+    margin: 0.5rem !important;
+}
+
+/* Custom skill tree tab styling / Bulma overrides */
+.tabs li.is-active a {
+    border-bottom-color: white !important;
+    color: white !important;
+}
+
+.tabs a:hover {
+    border-bottom-color: transparent !important;
+    color: white !important;
+}
+
+/* Override Bulma box shadow to make it 50% smaller */
+.box {
+    --bulma-shadow: 0 0.25em 0.5em -0.0625em hsla(var(--bulma-shadow-h),var(--bulma-shadow-s),var(--bulma-shadow-l),0.1),0 0px 0 0.5px hsla(var(--bulma-shadow-h),var(--bulma-shadow-s),var(--bulma-shadow-l),0.02) !important;
+}

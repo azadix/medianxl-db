@@ -6,9 +6,13 @@ import { calculateMaxLevel, checkDevotionRestriction, getCurrentDevotion, getDev
 import { getDatabase } from './tree-data.js';
 import { CHARACTER_CONFIG } from '../character-config.js';
 import { getSkillPoints, addSkillPoint, removeSkillPoint, checkPrerequisites, getAllSkillPoints } from '../character-state.js';
+import { ToastManager } from './ToastManager.js';
 
 // Store current skills list for dependency checking
 let currentSkillsList = [];
+
+// Initialize ToastManager
+const toastManager = new ToastManager();
 
 /**
  * Update skill cards without redrawing arrows
@@ -621,8 +625,7 @@ function handleSkillPointChange(skill, delta, characterLevel) {
                 if (pointsChanged > 0) {
                     break; // Some points were added/removed successfully
                 } else {
-                    alert(result.reason);
-                    return;
+                    toastManager.showToast(result.reason, true);
                 }
             }
             pointsChanged++;
@@ -647,10 +650,63 @@ function handleSkillPointChange(skill, delta, characterLevel) {
     }
     
     if (!result.success) {
-        alert(result.reason);
-        return;
+        toastManager.showToast(result.reason, true);
     }
     
     // Trigger re-render to update all skills
     window.dispatchEvent(new CustomEvent('skillPointsChanged'));
+}
+
+/**
+ * Render difficulty checkboxes
+ * @param {Object} questState - Current quest completion state
+ */
+export function renderDifficultyCheckboxes(questState = null) {
+    const container = document.querySelector('.field:has(#characterLevel)');
+    if (!container) return;
+    
+    // Find or create difficulty field
+    let difficultyField = container.nextElementSibling;
+    if (!difficultyField || !difficultyField.querySelector('#difficultyNormal')) {
+        // Create difficulty field if it doesn't exist
+        difficultyField = document.createElement('div');
+        difficultyField.className = 'field';
+        difficultyField.innerHTML = `
+            <label class="label">Difficulty</label>
+            <div class="columns mx-1">
+                <div class="column">
+                    <label class="checkbox">
+                        <input type="checkbox" id="difficultyNormal" checked>
+                        Normal
+                    </label>
+                </div>
+                <div class="column">
+                    <label class="checkbox">
+                        <input type="checkbox" id="difficultyNightmare" checked>
+                        Nightmare
+                    </label>
+                </div>
+                <div class="column">
+                    <label class="checkbox">
+                        <input type="checkbox" id="difficultyHell" checked>
+                        Hell
+                    </label>
+                </div>
+            </div>
+        `;
+        container.parentNode.insertBefore(difficultyField, container.nextElementSibling);
+    }
+    
+    // Update checkbox states if quest state is provided
+    if (questState) {
+        const normalCheckbox = difficultyField.querySelector('#difficultyNormal');
+        const nightmareCheckbox = difficultyField.querySelector('#difficultyNightmare');
+        const hellCheckbox = difficultyField.querySelector('#difficultyHell');
+        
+        if (normalCheckbox && nightmareCheckbox && hellCheckbox) {
+            normalCheckbox.checked = questState.hasNormal;
+            nightmareCheckbox.checked = questState.hasNightmare;
+            hellCheckbox.checked = questState.hasHell;
+        }
+    }
 }

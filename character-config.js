@@ -18,7 +18,7 @@ export const CHARACTER_CONFIG = {
   DEFAULT_BASE_MAX_LEVEL: 1,
   
   // Skill points
-  BASE_SKILL_POINTS: 149, // Base skill points available (level 1-150)
+  // Base skill points are calculated as (level - 1) where level 1 = 0 points, level 150 = 149 points
   
   // Quest skill point rewards
   QUEST_SKILL_POINTS: {
@@ -61,5 +61,15 @@ export function clampCharacterLevel(level) {
  */
 export function isValidCharacterLevel(level) {
   return !isNaN(level) && level >= CHARACTER_CONFIG.MIN_LEVEL && level <= CHARACTER_CONFIG.MAX_LEVEL;
+}
+
+/**
+ * Calculate base skill points based on character level
+ * @param {number} level - Character level
+ * @returns {number} Base skill points (level 1 = 0, level 150 = 149)
+ */
+export function getBaseSkillPoints(level) {
+  const clampedLevel = clampCharacterLevel(level);
+  return Math.max(0, clampedLevel - 1);
 }
 

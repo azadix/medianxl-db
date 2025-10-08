@@ -3,7 +3,7 @@
  * Manages character build including skill points, level, and prerequisites
  */
 
-import { CHARACTER_CONFIG } from './character-config.js';
+import { CHARACTER_CONFIG, getBaseSkillPoints } from './character-config.js';
 import { checkDevotionRestriction, calculateMaxLevel } from './skill-calculations.js';
 import { getDatabase } from './tree/tree-data.js';
 
@@ -68,11 +68,11 @@ export function getAllSkillPoints() {
 }
 
 /**
- * Calculate total available skill points based on quests completed
+ * Calculate total available skill points based on character level and quests completed
  * @returns {number} Total available skill points
  */
 export function getAvailableSkillPoints() {
-  let total = CHARACTER_CONFIG.BASE_SKILL_POINTS;
+  let total = getBaseSkillPoints(characterState.level);
   
   // Add quest bonuses
   for (const [questId, difficulties] of Object.entries(characterState.questsCompleted)) {
@@ -437,12 +437,13 @@ export function removeSkillPoint(skillName, allSkills = []) {
   }
   
   // Check if removing this point would break any dependent skills
-  const minRequiredPoints = getMinimumRequiredPoints(skillName, allSkills);
+  const blockingInfo = getMinimumRequiredPointsWithBlockingSkills(skillName, allSkills);
   
-  if (currentPoints - 1 < minRequiredPoints) {
+  if (currentPoints - 1 < blockingInfo.minRequired) {
+    const skillNames = blockingInfo.blockingSkills.join(', ');
     return { 
       success: false, 
-      reason: `Cannot remove: other skills require ${minRequiredPoints} point${minRequiredPoints > 1 ? 's' : ''} in this skill` 
+      reason: `Cannot remove: ${skillNames} require${blockingInfo.blockingSkills.length > 1 ? '' : 's'} at least ${blockingInfo.minRequired} point${blockingInfo.minRequired > 1 ? 's' : ''} in this skill` 
     };
   }
   
@@ -500,6 +501,50 @@ function getMinimumRequiredPoints(skillName, allSkills) {
 }
 
 /**
+ * Get minimum required points and which skills are blocking removal
+ * @param {string} skillName - Skill to check
+ * @param {Array} allSkills - All available skills
+ * @returns {Object} {minRequired: number, blockingSkills: Array}
+ */
+function getMinimumRequiredPointsWithBlockingSkills(skillName, allSkills) {
+  let minRequired = 0;
+  const blockingSkills = [];
+  
+  // Check all skills that have points allocated
+  for (const [allocatedSkillName, points] of Object.entries(characterState.skillPoints)) {
+    if (points === 0) continue;
+    
+    // Find the skill object
+    const skill = allSkills.find(s => s.id === allocatedSkillName);
+    if (!skill || !skill.prerequisites) continue;
+    
+    // Check if this skill depends on the skill we're checking
+    for (const prereq of skill.prerequisites) {
+      const [type, value, target] = prereq.split(':');
+      
+      if (type === 'skill_level') {
+        // Convert target display name to skill_name format
+        const targetSkillName = target.toLowerCase().replace(/['\s]/g, '_').replace(/_+/g, '_');
+        
+        if (targetSkillName === skillName) {
+          const requiredPoints = parseInt(value, 10);
+          if (requiredPoints > minRequired) {
+            minRequired = requiredPoints;
+            // Clear previous blocking skills since we found a higher requirement
+            blockingSkills.length = 0;
+          }
+          if (requiredPoints === minRequired) {
+            blockingSkills.push(skill.name || allocatedSkillName);
+          }
+        }
+      }
+    }
+  }
+  
+  return { minRequired, blockingSkills };
+}
+
+/**
  * Reset all skill points
  */
 export function resetAllSkillPoints() {
@@ -525,6 +570,32 @@ export function exportCharacterState() {
     className: characterState.className,
     skillPoints: { ...characterState.skillPoints }
   };
+}
+
+/**
+ * Update quest completion status
+ * @param {string} questId - Quest identifier
+ * @param {Object} difficulties - Object with normal, nightmare, hell boolean values
+ */
+export function updateQuestCompletion(questId, difficulties) {
+  if (!characterState.questsCompleted[questId]) {
+    characterState.questsCompleted[questId] = {};
+  }
+  
+  characterState.questsCompleted[questId] = {
+    normal: difficulties.normal || false,
+    nightmare: difficulties.nightmare || false,
+    hell: difficulties.hell || false
+  };
+}
+
+/**
+ * Get quest completion status
+ * @param {string} questId - Quest identifier
+ * @returns {Object} Object with normal, nightmare, hell boolean values
+ */
+export function getQuestCompletion(questId) {
+  return characterState.questsCompleted[questId] || { normal: false, nightmare: false, hell: false };
 }
 
 /**
