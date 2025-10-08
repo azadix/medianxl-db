@@ -93,8 +93,6 @@ function updateBlockedSkillsDisplay() {
     return;
   }
   
-  console.log('Updating blocked skills display:', selectedBlockedSkills);
-  
   if (selectedBlockedSkills.length === 0) {
     container.innerHTML = '<p class="help has-text-grey-light">No blocked skills selected</p>';
     return;
@@ -106,8 +104,7 @@ function updateBlockedSkillsDisplay() {
   <button type="button" class="delete is-small" onclick="window.removeBlockedSkillFromUI(${skill.id})" style="vertical-align: middle; margin-left: -5px;"></button>
 </div>
   `).join('');
-  
-  console.log('Setting HTML:', html);
+
   container.innerHTML = html;
 }
 

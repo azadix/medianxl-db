@@ -90,7 +90,7 @@ function refreshMaxLevelsTable() {
       tr.innerHTML = `
         <td>${skillName || 'Unknown'}</td>
         <td>${className || 'Unknown'}</td>
-        <td>${baseMaxLevel || 1}</td>
+        <td>${baseMaxLevel ?? 1}</td>
         <td>${affectedBySpecialization ? 'Yes' : 'No'}</td>
         <td>${canAddPoints ? 'Yes' : 'No'}</td>
         <td>

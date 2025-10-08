@@ -160,10 +160,10 @@ export function expandPlaceholders(db, description) {
             const v1 = values[1] || '';
             const v2 = values[2] || '';
             const v3 = values[3] || '';
-            const w0 = `<span class="stat-val">${v0}</span>`;
-            const w1 = `<span class="stat-val">${v1}</span>`;
-            const w2 = `<span class="stat-val">${v2}</span>`;
-            const w3 = `<span class="stat-val">${v3}</span>`;
+            const w0 = `<span class="has-text-primary">${v0}</span>`;
+            const w1 = `<span class="has-text-primary">${v1}</span>`;
+            const w2 = `<span class="has-text-primary">${v2}</span>`;
+            const w3 = `<span class="has-text-primary">${v3}</span>`;
             output = (format || '{name}: {value}')
                 .replace('{name}', name)
                 .replace('{value0}', w0)
@@ -214,10 +214,10 @@ export function expandPlaceholdersWithScaling(db, skillId, level, description) {
             const v1 = values[1] || '';
             const v2 = values[2] || '';
             const v3 = values[3] || '';
-                    const w0 = `<span class=\"stat-val\">${v0}</span>`;
-                    const w1 = `<span class=\"stat-val\">${v1}</span>`;
-                    const w2 = `<span class=\"stat-val\">${v2}</span>`;
-                    const w3 = `<span class=\"stat-val\">${v3}</span>`;
+                    const w0 = `<span class=\"has-text-primary\">${v0}</span>`;
+                    const w1 = `<span class=\"has-text-primary\">${v1}</span>`;
+                    const w2 = `<span class=\"has-text-primary\">${v2}</span>`;
+                    const w3 = `<span class=\"has-text-primary\">${v3}</span>`;
                 output = (format || '{name}: {value}')
                     .replace('{name}', name)
                     .replace('{value0}', w0)
@@ -249,10 +249,10 @@ export function expandPlaceholdersWithScaling(db, skillId, level, description) {
             const sv1 = v1 ?? '';
             const sv2 = v2 ?? '';
             const sv3 = v3 ?? '';
-            const w0 = `<span class="stat-val">${sv0}</span>`;
-            const w1 = `<span class="stat-val">${sv1}</span>`;
-            const w2 = `<span class="stat-val">${sv2}</span>`;
-            const w3 = `<span class="stat-val">${sv3}</span>`;
+            const w0 = `<span class="has-text-primary">${sv0}</span>`;
+            const w1 = `<span class="has-text-primary">${sv1}</span>`;
+            const w2 = `<span class="has-text-primary">${sv2}</span>`;
+            const w3 = `<span class="has-text-primary">${sv3}</span>`;
             output = (format || '{name}: {value}')
                 .replace('{name}', name)
                 .replace('{value0}', w0)
@@ -272,7 +272,7 @@ export function expandPlaceholdersWithScaling(db, skillId, level, description) {
         s2.bind([key]);
         if (s2.step()) {
             const [name, format] = s2.get();
-            const q = '<span class="stat-val">???</span>';
+            const q = '<span class="has-text-primary">???</span>';
             const formatted = (format || '{name}: {value}')
                 .replace('{name}', name)
                 .replace('{value0}', q)

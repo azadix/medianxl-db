@@ -1,5 +1,6 @@
 // Skills management functionality
 import { SkillDB } from './edit-core.js';
+import { validateSkillTemplates, displayValidationErrors, removeValidationErrors } from './edit-validation.js';
 
 export function initializeSkills() {
   populateClassSelect();
@@ -321,6 +322,21 @@ function saveSkill() {
   const image = document.getElementById('image').value.trim();
   const restriction = document.getElementById('restriction').value.trim();
   const description = document.getElementById('description').value.trim();
+  
+  // Validate template syntax
+  const validationResult = validateSkillTemplates(description, restriction);
+  if (!validationResult.valid) {
+    displayValidationErrors(validationResult);
+    // Scroll to the first error
+    const firstError = document.querySelector('.template-validation-error');
+    if (firstError) {
+      firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    return; // Don't save if there are validation errors
+  }
+  
+  // Clear any existing validation errors
+  removeValidationErrors();
 
   if (window.editingSkillId) {
     // Update existing skill

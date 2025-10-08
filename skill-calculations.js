@@ -32,7 +32,7 @@ const MAX_LEVEL_MODIFIERS = [
     description: 'Increases its own max level by 1 for every 4 character levels',
     calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = CHARACTER_CONFIG.DEFAULT_LEVEL) {
       // Only affects itself, based on character level only
-      if (targetSkillData.skill_name === 'barkskin') {
+      if (targetSkillData.skill_name === this.targetSkillName) {
         return Math.floor(characterLevel / this.characterLevelDivisor);
       }
       return 0;
@@ -46,7 +46,7 @@ const MAX_LEVEL_MODIFIERS = [
     description: 'Increases Curare max level by 1 for each 2 points',
     calculateBonus: function(sourceSkillLevel, targetSkillData) {
       // Only affects Curare
-      if (targetSkillData.skill_name === 'curare') {
+      if (targetSkillData.skill_name === this.targetSkillName) {
         return Math.floor(sourceSkillLevel / this.pointsDivisor);
       }
       return 0;
@@ -61,7 +61,7 @@ const MAX_LEVEL_MODIFIERS = [
     description: 'Increases its own max level by 1 for every 5 character levels (max +5)',
     calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = CHARACTER_CONFIG.DEFAULT_LEVEL) {
       // Only affects itself, based on character level only
-      if (targetSkillData.skill_name === 'sanctity') {
+      if (targetSkillData.skill_name === this.targetSkillName) {
         const bonus = Math.floor(characterLevel / this.characterLevelDivisor);
         return Math.min(bonus, this.maxBonus);
       }
@@ -77,7 +77,7 @@ const MAX_LEVEL_MODIFIERS = [
     description: 'Increases its own max level by 1 for every 5 character levels (max +5)',
     calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = CHARACTER_CONFIG.DEFAULT_LEVEL) {
       // Only affects itself, based on character level only
-      if (targetSkillData.skill_name === 'consecration') {
+      if (targetSkillData.skill_name === this.targetSkillName) {
         const bonus = Math.floor(characterLevel / this.characterLevelDivisor);
         return Math.min(bonus, this.maxBonus);
       }
@@ -93,7 +93,7 @@ const MAX_LEVEL_MODIFIERS = [
     description: 'Increases its own max level by 1 for every 2 character levels (max +25)',
     calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = CHARACTER_CONFIG.DEFAULT_LEVEL) {
       // Only affects itself, based on character level only
-      if (targetSkillData.skill_name === 'holy_fire') {
+      if (targetSkillData.skill_name === this.targetSkillName) {
         const bonus = Math.floor(characterLevel / this.characterLevelDivisor);
         return Math.min(bonus, this.maxBonus);
       }
@@ -114,7 +114,25 @@ const MAX_LEVEL_MODIFIERS = [
       }
       return 0;
     }
-  }
+  },
+  {
+    sourceSkillName: null, // Spiritual Alignment doesn't need a source skill
+    type: 'self_character_level',
+    targetSkillName: 'spiritual_alignment', // itself
+    characterLevelDivisor: 4, // +1 max level for every 4 character levels
+    startLevel: 15, // Skill becomes available at level 15
+    description: 'Increases its own max level by 1 for every 4 character levels (starting from level 15)',
+    calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = CHARACTER_CONFIG.DEFAULT_LEVEL) {
+      // Only affects itself, based on character level only
+      if (targetSkillData.skill_name === this.targetSkillName) {
+        // BUG: i think that this skill is bugged in game since the scaling starts counting from level 15 and not 1
+        // should be copied from barkskin since that one is correct when the mod fixes a bug
+        const effectiveLevel = Math.max(0, characterLevel - this.startLevel);
+        return Math.floor(1 + effectiveLevel / this.characterLevelDivisor);
+      }
+      return 0;
+    }
+  },
 ];
 
 /**

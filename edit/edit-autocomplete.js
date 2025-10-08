@@ -239,33 +239,36 @@ export function initializeAutocomplete() {
     if (lastOpen !== -1) {
       // Check if we're inside an open {{ block
       const contentAfterOpen = beforeCursor.substring(lastOpen + 2);
-      const nextClose = afterCursor.indexOf('}}');
       
-      // If there's no closing }}, just replace the content after {{ up to the next newline
-      if (nextClose === -1) {
-        const beforeMatch = text.substring(0, lastOpen + 2);
-        const afterCursor = text.substring(cursorPos);
-        const nextNewline = afterCursor.indexOf('\n');
-        const afterMatch = nextNewline !== -1 ? afterCursor.substring(nextNewline) : afterCursor;
-        const newText = beforeMatch + match.key + '}}' + afterMatch;
-
-        descriptionField.value = newText;
-
-        // Set cursor position after the completed stat
-        const newCursorPos = beforeMatch.length + match.key.length + 2;
-        descriptionField.setSelectionRange(newCursorPos, newCursorPos);
-      } else {
-        // Replace the content between {{ and }}
-        const beforeMatch = text.substring(0, lastOpen + 2);
-        const afterMatch = text.substring(lastOpen + 2 + contentAfterOpen.length + nextClose);
-        const newText = beforeMatch + match.key + '}}' + afterMatch;
-
-        descriptionField.value = newText;
-
-        // Set cursor position after the completed stat
-        const newCursorPos = beforeMatch.length + match.key.length + 2;
-        descriptionField.setSelectionRange(newCursorPos, newCursorPos);
+      // Look for the next }} but make sure it's not part of another placeholder
+      // by checking if there's a {{ before the }}
+      let nextClose = afterCursor.indexOf('}}');
+      const nextOpen = afterCursor.indexOf('{{');
+      
+      // If there's a {{ before the next }}, then the }} belongs to a different placeholder
+      // In that case, treat it as if there's no closing }}
+      if (nextOpen !== -1 && nextOpen < nextClose) {
+        nextClose = -1;
       }
+      
+      // Build the new text
+      const beforeMatch = text.substring(0, lastOpen + 2);
+      let afterMatch;
+      
+      if (nextClose === -1) {
+        // No closing }}, so just keep everything after cursor as-is
+        afterMatch = afterCursor;
+      } else {
+        // There's a closing }}, skip past it (cursor + nextClose + 2)
+        afterMatch = afterCursor.substring(nextClose + 2);
+      }
+      
+      const newText = beforeMatch + match.key + '}}' + afterMatch;
+      descriptionField.value = newText;
+
+      // Set cursor position after the completed stat
+      const newCursorPos = beforeMatch.length + match.key.length + 2;
+      descriptionField.setSelectionRange(newCursorPos, newCursorPos);
     }
     
     hideAutocomplete();

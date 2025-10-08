@@ -119,10 +119,10 @@ function renderStatPlaceholder(key, values = []) {
     const v1 = values[1] || '';
     const v2 = values[2] || '';
     const v3 = values[3] || '';
-    const w0 = `<span class="stat-val">${v0}</span>`;
-    const w1 = `<span class="stat-val">${v1}</span>`;
-    const w2 = `<span class="stat-val">${v2}</span>`;
-    const w3 = `<span class="stat-val">${v3}</span>`;
+    const w0 = `<span class="has-text-primary">${v0}</span>`;
+    const w1 = `<span class="has-text-primary">${v1}</span>`;
+    const w2 = `<span class="has-text-primary">${v2}</span>`;
+    const w3 = `<span class="has-text-primary">${v3}</span>`;
     output = (format || '{name}: {value}')
       .replace('{name}', name)
       .replace('{value0}', w0)

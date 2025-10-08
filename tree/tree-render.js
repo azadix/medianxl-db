@@ -306,6 +306,7 @@ export function renderSkills(selectedClass, skillsList, skillsContainer, charact
 function createSkillCard(skill, currentTab, characterLevel = CHARACTER_CONFIG.DEFAULT_LEVEL) {
     const card = document.createElement('div');
     card.className = 'skill-card';
+    card.dataset.skillId = skill.id; // Add skill ID as data attribute for tooltip
 
     // Parse prerequisites to find level requirements
     let levelRequirement = null;
@@ -322,17 +323,17 @@ function createSkillCard(skill, currentTab, characterLevel = CHARACTER_CONFIG.DE
     // Get current skill points
     const currentPoints = getSkillPoints(skill.id);
     
-    // Section 1: Top row with 3 columns (buttons | icon | empty space)
+    // Section 1: Top row with 3 columns (empty space | icon | buttons)
     let cardText = `<div style="display: grid; grid-template-columns: auto 1fr auto; gap: 4px; align-items: center; width: 100%;">`;
     
-    // Column 1: +/- buttons (will be added later if canAddPoints)
-    cardText += `<div class="skill-buttons-container" style="min-width: 32px;"></div>`;
+    // Column 1: Empty (keeping grid structure but no content)
+    cardText += `<div style="min-width: 32px;"></div>`;
     
     // Column 2: Icon
     cardText += `<div style="display: flex; justify-content: center;">${getSkillIconHTML(skill.image, skill.class)}</div>`;
     
-    // Column 3: Empty (keeping grid structure but no content)
-    cardText += `<div style="min-width: 32px;"></div>`;
+    // Column 3: +/- buttons (will be added later if canAddPoints)
+    cardText += `<div class="skill-buttons-container" style="min-width: 32px;"></div>`;
     
     cardText += `</div>`; // End section 1
     

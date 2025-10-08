@@ -8,9 +8,9 @@ html {
 }
 
 .skills-grid {
-    gap: 1.25rem 0.5rem;
+    gap: 1.25rem 1rem;
     width: 50%;
-    margin: 0 auto;
+    margin: 0 10%;
     position: relative; /* Enable absolute positioning for overlay arrows */
     justify-items: center;
     align-items: center;
@@ -89,7 +89,71 @@ html {
     color: white !important;
 }
 
-/* Override Bulma box shadow to make it 50% smaller */
 .box {
     --bulma-shadow: 0 0.25em 0.5em -0.0625em hsla(var(--bulma-shadow-h),var(--bulma-shadow-s),var(--bulma-shadow-l),0.1),0 0px 0 0.5px hsla(var(--bulma-shadow-h),var(--bulma-shadow-s),var(--bulma-shadow-l),0.02) !important;
+}
+
+.skill-tooltip {
+    position: fixed;
+    z-index: 10000;
+    background: #1a1a1a;
+    border: 2px solid #8a8a8a;
+    border-radius: 6px;
+    padding: 12px;
+    max-width: 50vw;
+    min-width: 300px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+    color: white;
+    pointer-events: none;
+    font-size: 1rem;
+    line-height: 1.4;
+}
+
+.tooltip-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.tooltip-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #444;
+}
+
+.tooltip-icon .image {
+    width: 64px;
+    height: 64px;
+}
+
+.tooltip-name {
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+.tooltip-restriction {
+    padding: 6px 8px;
+    background: rgba(255, 0, 0, 0.1);
+    border-left: 3px solid #ff3860;
+    border-radius: 3px;
+}
+
+.tooltip-max-level {
+    padding: 4px 0;
+    font-size: 13px;
+    color: #ddd;
+}
+
+.tooltip-level-indicator {
+    font-size: 14px;
+    color: #aaa;
+    font-style: italic;
+    margin-bottom: 4px;
+}
+
+.tooltip-description {
+    padding: 6px 0;
+    color: #eee;
 }

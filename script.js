@@ -369,12 +369,12 @@ async function displaySkillDetail(skillId) {
         maxLevelStmt.bind([skillInfo.dbId]);
         
         if (maxLevelStmt.step()) {
-            const [baseMaxLevel, canBeEnhanced, canAddPoints] = maxLevelStmt.get();
+            const [baseMaxLevel, affectedBySpecialization, canAddPoints] = maxLevelStmt.get();
             maxLevelHtml = `<p class="is-size-5"><strong>Max Level:</strong></p>`;
             
             if (canAddPoints) {
                 maxLevelHtml += `<p>Base: ${baseMaxLevel}`;
-                if (canBeEnhanced) {
+                if (affectedBySpecialization) {
                     maxLevelHtml += ` (can be enhanced)`;
                 }
                 maxLevelHtml += `</p>`;

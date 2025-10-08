@@ -4,6 +4,7 @@ import { renderSkills, renderDifficultyCheckboxes } from './tree-render.js';
 import { CHARACTER_CONFIG, clampCharacterLevel } from '../character-config.js';
 import { initializeCharacter, setCharacterLevel, getSpentSkillPoints, getAvailableSkillPoints, getAllSkillPoints, updateQuestCompletion, getQuestCompletion } from '../character-state.js';
 import { getCurrentDevotion, getDevotionDisplayName } from '../skill-calculations.js';
+import { initializeTooltip } from './tree-tooltip.js';
 
 // Global variables
 let skillsList;
@@ -65,6 +66,9 @@ async function main() {
         
         // Initialize level input
         initializeLevelInput();
+        
+        // Initialize tooltip functionality
+        initializeTooltip();
         
         // Update URL if we have a saved tab
         if (savedTab) {
