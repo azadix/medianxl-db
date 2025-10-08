@@ -29,7 +29,11 @@ export const CHARACTER_CONFIG = {
   },
   
   // Skill restrictions
-  MAX_MASTERY_SKILLS: 3 // Maximum number of different Mastery skills that can have points
+  MAX_MASTERY_SKILLS: 3, // Maximum number of different Mastery skills that can have points
+  MAX_COVEN_SKILLS: 2, // Maximum number of different Coven skills that can have points (Sorceress)
+  
+  // Specific Coven skills that are mutually exclusive (pick 2 of 4)
+  COVEN_EXCLUSIVE_SKILLS: ['living_flame', 'warp_armor', 'snow_queen', 'vengeful_power']
 };
 
 /**

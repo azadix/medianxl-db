@@ -4,7 +4,7 @@
  */
 
 import { CHARACTER_CONFIG } from './character-config.js';
-import { checkDevotionRestriction } from './skill-calculations.js';
+import { checkDevotionRestriction, calculateMaxLevel } from './skill-calculations.js';
 import { getDatabase } from './tree/tree-data.js';
 
 // Character state
@@ -267,6 +267,45 @@ function checkMasteryRestriction(skill, allSkills) {
 }
 
 /**
+ * Check if adding a point to a Coven skill is allowed
+ * Maximum 2 different exclusive Coven skills can have points (Sorceress only)
+ * Only applies to: Living Flame, Warp Armor, Snow Queen, Vengeful Power
+ * @param {Object} skill - Skill to check
+ * @param {Array} allSkills - Array of all skills
+ * @returns {Object} { allowed: boolean, reason: string }
+ */
+function checkCovenRestriction(skill, allSkills) {
+  // Check if this skill is one of the exclusive Coven skills
+  const isExclusiveCoven = CHARACTER_CONFIG.COVEN_EXCLUSIVE_SKILLS.includes(skill.id);
+  
+  if (!isExclusiveCoven) {
+    return { allowed: true, reason: '' };
+  }
+  
+  // If this skill already has points, it's allowed to add more
+  const currentPoints = getSkillPoints(skill.id);
+  if (currentPoints > 0) {
+    return { allowed: true, reason: '' };
+  }
+  
+  // Count how many different exclusive Coven skills have points
+  const exclusiveCovenSkillsWithPoints = allSkills.filter(s => 
+    CHARACTER_CONFIG.COVEN_EXCLUSIVE_SKILLS.includes(s.id) &&
+    getSkillPoints(s.id) > 0
+  );
+  
+  // Check if we've reached the limit
+  if (exclusiveCovenSkillsWithPoints.length >= CHARACTER_CONFIG.MAX_COVEN_SKILLS) {
+    return { 
+      allowed: false, 
+      reason: `Cannot allocate points to more than ${CHARACTER_CONFIG.MAX_COVEN_SKILLS} of these Coven skills: Living Flame, Warp Armor, Snow Queen, Vengeful Power.` 
+    };
+  }
+  
+  return { allowed: true, reason: '' };
+}
+
+/**
  * Add a point to a skill
  * @param {string} skillName - Skill name
  * @param {Object} skill - Skill object with prerequisites
@@ -307,6 +346,12 @@ export function addSkillPoint(skillName, skill, maxLevel, allSkills = []) {
       return { success: false, reason: masteryCheck.reason };
     }
     
+    // Check Coven skill restriction (only when adding first point, Sorceress only)
+    const covenCheck = checkCovenRestriction(skill, allSkills);
+    if (!covenCheck.allowed) {
+      return { success: false, reason: covenCheck.reason };
+    }
+    
     // Check Devotion restriction (only when adding first point, Paladin only)
     const db = getDatabase();
     if (db) {
@@ -322,6 +367,60 @@ export function addSkillPoint(skillName, skill, maxLevel, allSkills = []) {
   characterState.maxLevels = {}; // Clear cache as max levels may change
   
   return { success: true, reason: '' };
+}
+
+/**
+ * Check if removing a point from a skill would cause other skills to exceed their max level
+ * This prevents removing points from skills like Specialization when it would break other skills
+ * @param {string} skillName - Skill name being removed
+ * @param {Array} allSkills - Array of all skills
+ * @returns {Object} { allowed: boolean, reason: string }
+ */
+function checkMaxLevelDependencies(skillName, allSkills = []) {
+  // Skills that affect max levels: specialization, noxious_mastery, elemental_command
+  const maxLevelAffectingSkills = ['specialization', 'noxious_mastery', 'elemental_command'];
+  
+  if (!maxLevelAffectingSkills.includes(skillName)) {
+    return { allowed: true, reason: '' };
+  }
+  
+  const db = getDatabase();
+  if (!db) {
+    return { allowed: true, reason: '' };
+  }
+  
+  // Simulate removing the point
+  const simulatedSkillPoints = { ...characterState.skillPoints };
+  const currentPoints = simulatedSkillPoints[skillName] || 0;
+  if (currentPoints > 1) {
+    simulatedSkillPoints[skillName] = currentPoints - 1;
+  } else {
+    delete simulatedSkillPoints[skillName];
+  }
+  
+  // Check all skills that have points allocated
+  for (const [allocatedSkillName, allocatedPoints] of Object.entries(characterState.skillPoints)) {
+    if (allocatedPoints === 0) continue;
+    
+    // Find the skill object
+    const skill = allSkills.find(s => s.id === allocatedSkillName);
+    if (!skill) continue;
+    
+    // Calculate what the new max level would be with the simulated removal
+    const newMaxLevel = calculateMaxLevel(skill.skillId, simulatedSkillPoints, characterState.level, db);
+    
+    // Check if current points would exceed new max
+    if (allocatedPoints > newMaxLevel) {
+      // Find the skill display name for better error message
+      const skillDisplayName = skill.name || allocatedSkillName;
+      return {
+        allowed: false,
+        reason: `Cannot remove: ${skillDisplayName} has ${allocatedPoints} point${allocatedPoints > 1 ? 's' : ''} but would have max of ${newMaxLevel}`
+      };
+    }
+  }
+  
+  return { allowed: true, reason: '' };
 }
 
 /**
@@ -345,6 +444,12 @@ export function removeSkillPoint(skillName, allSkills = []) {
       success: false, 
       reason: `Cannot remove: other skills require ${minRequiredPoints} point${minRequiredPoints > 1 ? 's' : ''} in this skill` 
     };
+  }
+  
+  // Check if this skill affects max levels of other skills
+  const maxLevelCheck = checkMaxLevelDependencies(skillName, allSkills);
+  if (!maxLevelCheck.allowed) {
+    return { success: false, reason: maxLevelCheck.reason };
   }
   
   // Remove the point

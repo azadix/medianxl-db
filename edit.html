@@ -423,14 +423,21 @@
       <!-- Blocked By Skill Row -->
       <div class="columns">
         <div class="column is-one-third">
-          <label class="label">Blocked By Skill</label>
+          <label class="label">Blocked By Skills (Multiple)</label>
           <div id="prerequisite-blocked-skill-dd"></div>
           <input type="hidden" id="prerequisite-blocked-skill-hidden" />
+          <p class="help">Select multiple skills that block this skill</p>
         </div>
         <div class="column is-one-third">
           <label class="label">Max Points Allowed</label>
           <input class="input" type="number" id="prerequisite-skill-blocked-by" min="0" value="0" placeholder="0">
           <p class="help">Blocks if target skill has more than this many points (typically 0)</p>
+        </div>
+        <div class="column is-one-third">
+          <label class="label m-0">Selected Blocked Skills</label>
+          <div id="blocked-skills-list" style="min-height: 80px; max-height: 200px; overflow-y: auto; padding: 1rem;">
+            <p class="help has-text-grey">No blocked skills selected</p>
+          </div>
         </div>
       </div>
       

@@ -58,19 +58,22 @@ function updateSkillCards(selectedClass, skillsList, characterLevel) {
             const skillLevels = getAllSkillPoints();
             const effectiveMaxLevel = db ? calculateMaxLevel(skill.skillId, skillLevels, characterLevel, db) : skill.baseMaxLevel;
             
-            // Check prerequisites, ultimate, mastery, and devotion restrictions
+            // Check prerequisites, ultimate, mastery, coven, and devotion restrictions
             const prereqCheck = checkPrerequisites(skill, currentSkillsList);
             const ultimateRestriction = checkUltimateSkillBlock(skill, currentSkillsList);
             const masteryRestriction = checkMasterySkillBlock(skill, currentSkillsList);
+            const covenRestriction = checkCovenSkillBlock(skill, currentSkillsList);
             const devotionRestriction = checkDevotionRestriction(skill.skillId, skillLevels, db);
-            const canAddPoint = (prereqCheck.met && !ultimateRestriction.blocked && !masteryRestriction.blocked && devotionRestriction.canAllocate) || currentPoints > 0;
+            const canAddPoint = (prereqCheck.met && !ultimateRestriction.blocked && !masteryRestriction.blocked && !covenRestriction.blocked && devotionRestriction.canAllocate) || currentPoints > 0;
             
-            // Build tooltip (don't show Mastery restriction in tooltip - just disable)
+            // Build tooltip (show Coven restriction, but not Mastery)
             let tooltipMessage = '';
             if (!prereqCheck.met && currentPoints === 0) {
                 tooltipMessage = prereqCheck.reasons.join(', ');
             } else if (ultimateRestriction.blocked && currentPoints === 0) {
                 tooltipMessage = ultimateRestriction.reason;
+            } else if (covenRestriction.blocked && currentPoints === 0) {
+                tooltipMessage = covenRestriction.reason;
             } else if (!devotionRestriction.canAllocate && currentPoints === 0) {
                 tooltipMessage = devotionRestriction.reason;
             }
@@ -390,18 +393,23 @@ function createSkillCard(skill, currentTab, characterLevel = CHARACTER_CONFIG.DE
         // Check Mastery skill restriction
         const masteryRestriction = checkMasterySkillBlock(skill, currentSkillsList);
         
+        // Check Coven skill restriction (Sorceress)
+        const covenRestriction = checkCovenSkillBlock(skill, currentSkillsList);
+        
         // Check Devotion restriction (for Paladin)
         const devotionRestriction = checkDevotionRestriction(skill.skillId, skillLevels, db);
         
-        // Can add point if: prereqs met AND (not blocked by Ultimate, Mastery, or Devotion restrictions OR already has points)
-        const canAddPoint = (prereqCheck.met && !ultimateRestriction.blocked && !masteryRestriction.blocked && devotionRestriction.canAllocate) || currentPoints > 0;
+        // Can add point if: prereqs met AND (not blocked by Ultimate, Mastery, Coven, or Devotion restrictions OR already has points)
+        const canAddPoint = (prereqCheck.met && !ultimateRestriction.blocked && !masteryRestriction.blocked && !covenRestriction.blocked && devotionRestriction.canAllocate) || currentPoints > 0;
         
-        // Build tooltip message (don't show Mastery restriction in tooltip - just disable)
+        // Build tooltip message (show Coven restriction, but not Mastery)
         let tooltipMessage = '';
         if (!prereqCheck.met && currentPoints === 0) {
             tooltipMessage = prereqCheck.reasons.join(', ');
         } else if (ultimateRestriction.blocked && currentPoints === 0) {
             tooltipMessage = ultimateRestriction.reason;
+        } else if (covenRestriction.blocked && currentPoints === 0) {
+            tooltipMessage = covenRestriction.reason;
         } else if (!devotionRestriction.canAllocate && currentPoints === 0) {
             tooltipMessage = devotionRestriction.reason;
         }
@@ -427,9 +435,14 @@ function createSkillCard(skill, currentTab, characterLevel = CHARACTER_CONFIG.DE
                     e.preventDefault();
                     // Shift-click: add maximum points, normal click: add 1 point
                     if (e.shiftKey) {
+                        // Recalculate effective max level at click time (don't use cached value)
+                        const db = getDatabase();
+                        const skillLevels = getAllSkillPoints();
+                        const currentEffectiveMaxLevel = db ? calculateMaxLevel(skill.skillId, skillLevels, characterLevel, db) : skill.baseMaxLevel;
+                        
                         // Get current points fresh from state
                         const currentPointsNow = getSkillPoints(skill.id);
-                        const pointsToAdd = effectiveMaxLevel - currentPointsNow;
+                        const pointsToAdd = currentEffectiveMaxLevel - currentPointsNow;
                         handleSkillPointChange(skill, pointsToAdd, characterLevel);
                     } else {
                         handleSkillPointChange(skill, 1, characterLevel);
@@ -506,36 +519,78 @@ function checkUltimateSkillBlock(skill, allSkills) {
  * @returns {Object} { blocked: boolean, reason: string }
  */
 function checkMasterySkillBlock(skill, allSkills) {
-    // Check if this skill is in the Mastery tab
-    const isMastery = skill.tabName === 'Mastery';
-    
-    if (!isMastery) {
-        return { blocked: false, reason: '' };
-    }
-    
-    // If this skill already has points, it's not blocked
-    const currentPoints = getSkillPoints(skill.id);
-    if (currentPoints > 0) {
-        return { blocked: false, reason: '' };
-    }
-    
-    // Count how many different Mastery skills have points
-    const masterySkillsWithPoints = allSkills.filter(s => 
-        s.tabName === 'Mastery' && 
-        s.class === skill.class &&
-        getSkillPoints(s.id) > 0
-    );
-    
-    // Check if we've reached the limit
-    const maxMasterySkills = 3; // CHARACTER_CONFIG.MAX_MASTERY_SKILLS
-    if (masterySkillsWithPoints.length >= maxMasterySkills) {
-        return { 
-            blocked: true, 
-            reason: `Cannot allocate points to more than ${maxMasterySkills} different Mastery skills.` 
-        };
-    }
-    
+  // Check if this skill is in the Mastery tab
+  const isMastery = skill.tabName === 'Mastery';
+  
+  if (!isMastery) {
     return { blocked: false, reason: '' };
+  }
+  
+  // If this skill already has points, it's not blocked
+  const currentPoints = getSkillPoints(skill.id);
+  if (currentPoints > 0) {
+    return { blocked: false, reason: '' };
+  }
+  
+  // Count how many different Mastery skills have points
+  const masterySkillsWithPoints = allSkills.filter(s => 
+    s.tabName === 'Mastery' && 
+    s.class === skill.class &&
+    getSkillPoints(s.id) > 0
+  );
+  
+  // Check if we've reached the limit
+  const maxMasterySkills = 3; // CHARACTER_CONFIG.MAX_MASTERY_SKILLS
+  if (masterySkillsWithPoints.length >= maxMasterySkills) {
+    return { 
+      blocked: true, 
+      reason: `Cannot allocate points to more than ${maxMasterySkills} different Mastery skills.` 
+    };
+  }
+  
+  return { blocked: false, reason: '' };
+}
+
+/**
+ * Check if a Coven skill is blocked by the 2-skill limit
+ * Only applies to 4 exclusive skills: Living Flame, Warp Armor, Snow Queen, Vengeful Power
+ * @param {Object} skill - Skill to check
+ * @param {Array} allSkills - Array of all skills
+ * @returns {Object} { blocked: boolean, reason: string }
+ */
+function checkCovenSkillBlock(skill, allSkills) {
+  // List of exclusive Coven skills (skill names)
+  const exclusiveCovenSkills = ['living_flame', 'warp_armor', 'snow_queen', 'vengeful_power'];
+  
+  // Check if this skill is one of the exclusive Coven skills
+  const isExclusiveCoven = exclusiveCovenSkills.includes(skill.id);
+  
+  if (!isExclusiveCoven) {
+    return { blocked: false, reason: '' };
+  }
+  
+  // If this skill already has points, it's not blocked
+  const currentPoints = getSkillPoints(skill.id);
+  if (currentPoints > 0) {
+    return { blocked: false, reason: '' };
+  }
+  
+  // Count how many different exclusive Coven skills have points
+  const exclusiveCovenSkillsWithPoints = allSkills.filter(s => 
+    exclusiveCovenSkills.includes(s.id) &&
+    getSkillPoints(s.id) > 0
+  );
+  
+  // Check if we've reached the limit (2 out of 4)
+  const maxCovenSkills = 2; // CHARACTER_CONFIG.MAX_COVEN_SKILLS
+  if (exclusiveCovenSkillsWithPoints.length >= maxCovenSkills) {
+    return { 
+      blocked: true, 
+      reason: `Cannot allocate points to more than ${maxCovenSkills} of these Coven skills: Living Flame, Warp Armor, Snow Queen, Vengeful Power.` 
+    };
+  }
+  
+  return { blocked: false, reason: '' };
 }
 
 /**
