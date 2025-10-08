@@ -2,6 +2,9 @@
 import { SkillDB } from './edit-core.js';
 import { DropdownList } from './DropdownList.js';
 
+// Store locked values: Map<statId, {value0, value1, value2, value3}>
+const lockedValues = new Map();
+
 export async function initializeScaling() {
   await populateScalingSelectors();
   
@@ -122,6 +125,31 @@ function renderScalingTable(rows) {
     formatTd.appendChild(formatCode);
     tr.appendChild(formatTd);
     
+    // Lock checkbox column
+    const lockTd = document.createElement('td');
+    lockTd.style.textAlign = 'center';
+    const lockCheckbox = document.createElement('input');
+    lockCheckbox.type = 'checkbox';
+    lockCheckbox.className = 'lock-checkbox';
+    lockCheckbox.checked = lockedValues.has(row.stat_id);
+    lockCheckbox.addEventListener('change', () => {
+      if (lockCheckbox.checked) {
+        // Save current values when locking
+        const inputs = tr.querySelectorAll('input[type="number"]:not([disabled])');
+        lockedValues.set(row.stat_id, {
+          value0: inputs[0]?.value || '',
+          value1: inputs[1]?.value || '',
+          value2: inputs[2]?.value || '',
+          value3: inputs[3]?.value || ''
+        });
+      } else {
+        // Remove from locked values when unlocking
+        lockedValues.delete(row.stat_id);
+      }
+    });
+    lockTd.appendChild(lockCheckbox);
+    tr.appendChild(lockTd);
+    
     // Value columns - determine which ones are used based on format
     const formatStr = format.toLowerCase();
     const hasValue0 = formatStr.includes('{value0}') || formatStr.includes('{value}');
@@ -129,12 +157,16 @@ function renderScalingTable(rows) {
     const hasValue2 = formatStr.includes('{value2}');
     const hasValue3 = formatStr.includes('{value3}');
     
+    // Check if this stat has locked values
+    const locked = lockedValues.get(row.stat_id);
+    
     for (let i = 0; i < 4; i++) {
       const valueTd = document.createElement('td');
       const input = document.createElement('input');
       input.type = 'number';
       input.className = 'input is-small';
-      input.value = row[`value${i}`] || '';
+      // Use locked value if available, otherwise use row value
+      input.value = locked ? (locked[`value${i}`] || '') : (row[`value${i}`] || '');
       input.step = 'any';
       
       // Disable inputs that aren't used in the format
@@ -145,6 +177,15 @@ function renderScalingTable(rows) {
         input.disabled = true;
         input.placeholder = 'N/A';
       }
+      
+      // Update locked values when input changes (if locked)
+      input.addEventListener('input', () => {
+        if (lockedValues.has(row.stat_id)) {
+          const currentLocked = lockedValues.get(row.stat_id);
+          currentLocked[`value${i}`] = input.value;
+          lockedValues.set(row.stat_id, currentLocked);
+        }
+      });
       
       valueTd.appendChild(input);
       tr.appendChild(valueTd);
