@@ -273,27 +273,43 @@ export function formatMaxLevelDisplay(baseMaxLevel, effectiveMaxLevel) {
 }
 
 /**
- * Paladin Devotion System
- * Devotions are mutually exclusive paths for Paladins
+ * Devotion System
+ * Devotions are mutually exclusive paths for Paladin and Amazon
  */
 
 // Define devotion types
 export const DEVOTION_TYPES = {
   NONE: 'none',
+  // Paladin devotions
   HOLY: 'holy',
   NEUTRAL: 'neutral',
-  UNHOLY: 'unholy'
+  UNHOLY: 'unholy',
+  // Amazon devotions
+  BOW: 'bow',
+  JAVELIN: 'javelin',
+  SPEAR: 'spear',
+  STORM: 'storm',
+  BLOOD: 'blood'
 };
 
-// Define which tabs belong to which devotion
-const DEVOTION_TABS = {
+// Define which tabs belong to which devotion for Paladin (class_id = 5)
+const PALADIN_DEVOTION_TABS = {
   [DEVOTION_TYPES.HOLY]: [30, 31],     // Templar (30), Incarnation (31)
   [DEVOTION_TYPES.NEUTRAL]: [32],      // Nephalem (32)
   [DEVOTION_TYPES.UNHOLY]: [33, 34]    // Ritualist (33), Warlock (34)
 };
 
-// Define which ultimate skills belong to which devotion
-const DEVOTION_ULTIMATE_SKILLS = {
+// Define which tabs belong to which devotion for Amazon (class_id = 2)
+const AMAZON_DEVOTION_TABS = {
+  [DEVOTION_TYPES.BOW]: [2],           // Bow (2)
+  [DEVOTION_TYPES.JAVELIN]: [3],       // Javelin (3)
+  [DEVOTION_TYPES.SPEAR]: [4],         // Spear (4)
+  [DEVOTION_TYPES.STORM]: [5],         // Storm (5)
+  [DEVOTION_TYPES.BLOOD]: [6]          // Blood (6)
+};
+
+// Define which ultimate skills belong to which devotion (Paladin only)
+const PALADIN_DEVOTION_ULTIMATE_SKILLS = {
   'dragons_blessing': DEVOTION_TYPES.HOLY,
   'resurrect': DEVOTION_TYPES.NEUTRAL,
   'superbeast': DEVOTION_TYPES.UNHOLY
@@ -324,21 +340,30 @@ export function getSkillDevotion(skillId, db = null) {
   const [skillName, tabIndex, classId] = stmt.get();
   stmt.free();
   
-  // Only apply devotion system to Paladin (class_id = 5)
-  if (classId !== 5) {
-    return DEVOTION_TYPES.NONE;
-  }
-
-  // Check if this is an ultimate skill
-  if (DEVOTION_ULTIMATE_SKILLS[skillName]) {
-    return DEVOTION_ULTIMATE_SKILLS[skillName];
-  }
-
-  // Check if the tab belongs to a devotion
-  for (const [devotion, tabs] of Object.entries(DEVOTION_TABS)) {
-    if (tabs.includes(tabIndex)) {
-      return devotion;
+  // Handle Paladin devotion system (class_id = 5)
+  if (classId === 5) {
+    // Check if this is a Paladin ultimate skill
+    if (PALADIN_DEVOTION_ULTIMATE_SKILLS[skillName]) {
+      return PALADIN_DEVOTION_ULTIMATE_SKILLS[skillName];
     }
+
+    // Check if the tab belongs to a Paladin devotion
+    for (const [devotion, tabs] of Object.entries(PALADIN_DEVOTION_TABS)) {
+      if (tabs.includes(tabIndex)) {
+        return devotion;
+      }
+    }
+  }
+  
+  // Handle Amazon devotion system (class_id = 2)
+  if (classId === 2) {
+    // Check if the tab belongs to an Amazon devotion
+    for (const [devotion, tabs] of Object.entries(AMAZON_DEVOTION_TABS)) {
+      if (tabs.includes(tabIndex)) {
+        return devotion;
+      }
+    }
+    // Note: Amazon ultimates are NOT restricted by devotion
   }
 
   return DEVOTION_TYPES.NONE;
@@ -408,7 +433,12 @@ export function checkDevotionRestriction(skillId, skillLevels = {}, db = null) {
   const devotionNames = {
     [DEVOTION_TYPES.HOLY]: 'Holy Devotion',
     [DEVOTION_TYPES.NEUTRAL]: 'Neutral Devotion',
-    [DEVOTION_TYPES.UNHOLY]: 'Unholy Devotion'
+    [DEVOTION_TYPES.UNHOLY]: 'Unholy Devotion',
+    [DEVOTION_TYPES.BOW]: 'Bow Devotion',
+    [DEVOTION_TYPES.JAVELIN]: 'Javelin Devotion',
+    [DEVOTION_TYPES.SPEAR]: 'Spear Devotion',
+    [DEVOTION_TYPES.STORM]: 'Storm Devotion',
+    [DEVOTION_TYPES.BLOOD]: 'Blood Devotion'
   };
 
   return {
@@ -427,7 +457,12 @@ export function getDevotionDisplayName(devotionType) {
     [DEVOTION_TYPES.NONE]: 'No Devotion',
     [DEVOTION_TYPES.HOLY]: 'Holy Devotion',
     [DEVOTION_TYPES.NEUTRAL]: 'Neutral Devotion',
-    [DEVOTION_TYPES.UNHOLY]: 'Unholy Devotion'
+    [DEVOTION_TYPES.UNHOLY]: 'Unholy Devotion',
+    [DEVOTION_TYPES.BOW]: 'Bow Devotion',
+    [DEVOTION_TYPES.JAVELIN]: 'Javelin Devotion',
+    [DEVOTION_TYPES.SPEAR]: 'Spear Devotion',
+    [DEVOTION_TYPES.STORM]: 'Storm Devotion',
+    [DEVOTION_TYPES.BLOOD]: 'Blood Devotion'
   };
   return names[devotionType] || 'Unknown';
 }

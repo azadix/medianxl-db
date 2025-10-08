@@ -352,7 +352,7 @@ export function addSkillPoint(skillName, skill, maxLevel, allSkills = []) {
       return { success: false, reason: covenCheck.reason };
     }
     
-    // Check Devotion restriction (only when adding first point, Paladin only)
+    // Check Devotion restriction (only when adding first point, Paladin and Amazon)
     const db = getDatabase();
     if (db) {
       const devotionCheck = checkDevotionRestriction(skill.skillId, characterState.skillPoints, db);

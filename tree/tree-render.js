@@ -401,7 +401,7 @@ function createSkillCard(skill, currentTab, characterLevel = CHARACTER_CONFIG.DE
         // Check Coven skill restriction (Sorceress)
         const covenRestriction = checkCovenSkillBlock(skill, currentSkillsList);
         
-        // Check Devotion restriction (for Paladin)
+        // Check Devotion restriction (for Paladin and Amazon)
         const devotionRestriction = checkDevotionRestriction(skill.skillId, skillLevels, db);
         
         // Can add point if: prereqs met AND (not blocked by Ultimate, Mastery, Coven, or Devotion restrictions OR already has points)

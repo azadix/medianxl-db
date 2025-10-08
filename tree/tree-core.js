@@ -169,7 +169,7 @@ function updateSkillPointsDisplay() {
     }
 }
 
-// Update devotion display (for Paladin only)
+// Update devotion display (for Paladin and Amazon)
 function updateDevotionDisplay() {
     const devotionField = document.getElementById('devotionField');
     const devotionDisplay = document.getElementById('devotionDisplay');
@@ -177,8 +177,8 @@ function updateDevotionDisplay() {
     
     if (!devotionField || !devotionDisplay) return;
     
-    // Only show for Paladin
-    if (currentClass === 'Paladin') {
+    // Show for Paladin and Amazon
+    if (currentClass === 'Paladin' || currentClass === 'Amazon') {
         const db = getDatabase();
         if (db) {
             const skillLevels = getAllSkillPoints();
@@ -194,12 +194,26 @@ function updateDevotionDisplay() {
                 
                 // Add color based on devotion
                 devotionDisplay.className = 'has-text-centered has-text-weight-bold';
+                
+                // Paladin devotions
                 if (currentDevotion === 'holy') {
                     devotionDisplay.classList.add('has-text-warning');
                 } else if (currentDevotion === 'neutral') {
                     devotionDisplay.classList.add('has-text-white');
                 } else if (currentDevotion === 'unholy') {
                     devotionDisplay.classList.add('has-text-purple');
+                }
+                // Amazon devotions
+                else if (currentDevotion === 'bow') {
+                    devotionDisplay.classList.add('has-text-white');
+                } else if (currentDevotion === 'javelin') {
+                    devotionDisplay.classList.add('has-text-white');
+                } else if (currentDevotion === 'spear') {
+                    devotionDisplay.classList.add('has-text-white');
+                } else if (currentDevotion === 'storm') {
+                    devotionDisplay.classList.add('has-text-white');
+                } else if (currentDevotion === 'blood') {
+                    devotionDisplay.classList.add('has-text-white');
                 }
             }
         }
