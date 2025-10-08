@@ -2,10 +2,12 @@
 import { loadSkillsFromSQLite, getDatabase } from './tree-data.js';
 import { renderSkills, renderDifficultyCheckboxes } from './tree-render.js';
 import { CHARACTER_CONFIG, clampCharacterLevel } from '../character-config.js';
-import { initializeCharacter, setCharacterLevel, getSpentSkillPoints, getAvailableSkillPoints, getAllSkillPoints, setAllSkillPoints, updateQuestCompletion, getQuestCompletion } from '../character-state.js';
+import { initializeCharacter, setCharacterLevel, getSpentSkillPoints, getAvailableSkillPoints, getAllSkillPoints, setAllSkillPoints, updateQuestCompletion, getQuestCompletion, getSkillPoints } from '../character-state.js';
 import { getCurrentDevotion, getDevotionDisplayName } from '../skill-calculations.js';
 import { initializeTooltip } from './tree-tooltip.js';
 import { ToastManager } from './ToastManager.js';
+import { expandPlaceholdersWithScaling, getSkillIconHTML } from '../utils.js';
+import { DropdownList } from '../edit/DropdownList.js';
 
 // Global variables
 let skillsList;
@@ -15,6 +17,8 @@ let currentTab = null;
 let currentCharacterLevel = CHARACTER_CONFIG.DEFAULT_LEVEL; // Default character level
 let treeInitialized = false; // Track if tree has been initialized
 let currentBuildIndex = null; // Track currently loaded build index for saving
+let oSkillsDropdown = null; // Dropdown for oSkills
+let oSkills = []; // Array of {skillId, skillName, points}
 
 // Initialize ToastManager
 const toastManager = new ToastManager();
@@ -91,6 +95,7 @@ async function main() {
         // Update devotion display
         updateDevotionDisplay();
         
+        
         // Initialize difficulty checkboxes with default values
         const questState = {
             hasNormal: defaults.difficulties.normal,
@@ -124,6 +129,9 @@ async function main() {
         // Initialize tooltip functionality
         initializeTooltip();
         
+        // Initialize oSkills dropdown
+        initializeOSkillsDropdown();
+        
         // Update URL if we have a saved tab
         if (savedTab) {
             updateUrlState(selectedClass, savedTab);
@@ -136,6 +144,22 @@ async function main() {
             currentTab = null;
             updateUrlState(newClass, null);
             
+            // Clear oSkills when switching classes (like resetBuild but without confirmation)
+            oSkills = [];
+            window.oSkills = oSkills; // Update window reference
+            
+            // Reset oSkills dropdown input
+            const oskillDropdown = document.querySelector('#oskill-dropdown .dropdown-list-input');
+            if (oskillDropdown) {
+                oskillDropdown.value = '';
+            }
+            
+            // Clear any filtered dropdown results
+            const oskillDropdownList = document.querySelector('#oskill-dropdown .dropdown-list');
+            if (oskillDropdownList && window.oskillDropdownInstance) {
+                window.oskillDropdownInstance.renderItems(); // Re-render all items
+            }
+            
             // Reinitialize character state for new class
             initializeCharacter(newClass, currentCharacterLevel);
             
@@ -144,6 +168,7 @@ async function main() {
             // Update displays
             updateSkillPointsDisplay();
             updateDevotionDisplay();
+            updateOSkillsDisplay();
         });
         
         // Add event listener for character level changes
@@ -664,7 +689,6 @@ function getDefaultSettings() {
         }
     } else {
         // Return default values
-        console.log('No saved defaults, using hardcoded defaults');
         defaults = {
             defaultLevel: CHARACTER_CONFIG.DEFAULT_LEVEL,
             difficulties: {
@@ -744,6 +768,22 @@ function resetBuild(showToast = true) {
     currentBuildIndex = null;
     updateSaveButtonVisibility();
     
+    // Clear oSkills
+    oSkills = [];
+    window.oSkills = oSkills; // Update window reference
+    updateOSkillsDisplay();
+    
+    // Reset oSkills dropdown input
+    const oskillDropdown = document.querySelector('#oskill-dropdown .dropdown-list-input');
+    if (oskillDropdown) {
+        oskillDropdown.value = '';
+    }
+    
+    // Clear any filtered dropdown results
+    if (window.oskillDropdownInstance) {
+        window.oskillDropdownInstance.renderItems(); // Re-render all items
+    }
+    
     // Update displays
     updateSkillPointsDisplay();
     updateDevotionDisplay();
@@ -804,6 +844,7 @@ function updateCurrentBuild() {
         spentPoints: spentPoints,
         skillPoints: skillPoints,
         difficulties: difficulties,
+        oSkills: oSkills, // Save oSkills
         savedAt: new Date().toISOString()
     };
     
@@ -834,6 +875,7 @@ function saveBuild(buildName) {
         spentPoints: spentPoints,
         skillPoints: skillPoints,
         difficulties: difficulties,
+        oSkills: oSkills, // Save oSkills
         savedAt: new Date().toISOString()
     };
     
@@ -968,6 +1010,11 @@ function loadBuild(index) {
     // Load skill points
     setAllSkillPoints(build.skillPoints);
     
+    // Load oSkills
+    oSkills = build.oSkills || [];
+    window.oSkills = oSkills; // Update window reference
+    // Don't call updateOSkillsDisplay here - it will be called after renderSkills
+    
     // Load difficulties
     updateQuestCompletion('den_of_evil', build.difficulties);
     updateQuestCompletion('radament', build.difficulties);
@@ -976,7 +1023,9 @@ function loadBuild(index) {
     
     // Render skills first (this creates the difficulty checkboxes)
     if (skillsList) {
-        renderSkills(build.class, skillsList, skillsContainer, build.level);
+        // If build has oSkills, switch to oSkills tab after rendering
+        const hasOSkills = build.oSkills && build.oSkills.length > 0;
+        renderSkills(build.class, skillsList, skillsContainer, build.level, hasOSkills ? 'oSkills' : null);
     }
     
     // Re-render difficulty checkboxes AFTER renderSkills so they exist
@@ -990,6 +1039,9 @@ function loadBuild(index) {
     // Update displays
     updateSkillPointsDisplay();
     updateDevotionDisplay();
+    
+    // Update oSkills display after everything is rendered
+    updateOSkillsDisplay();
     
     // Set current build index so "Save" button works
     currentBuildIndex = index;
@@ -1025,4 +1077,221 @@ function deleteBuild(index) {
         renderSavedBuildsList();
         toastManager.showToast(`Build "${buildName}" deleted.`, true, 'info');
     }
+}
+
+
+// oSkills Management
+function initializeOSkillsDropdown() {
+    const db = getDatabase();
+    if (!db) return;
+    
+    // Initialize sidebar dropdown only
+    const sidebarDropdownContainer = document.getElementById('oskill-dropdown');
+    const sidebarHiddenInput = document.getElementById('oskill-hidden');
+    
+    // Check if dropdown already exists
+    if (sidebarDropdownContainer && sidebarDropdownContainer.querySelector('.dropdown-list-container')) {
+        return;
+    }
+    
+    
+    // Get all skills for dropdown
+    const res = db.exec(`
+        SELECT s.id, s.name, s.display_name, s.image, c.name as class_name
+        FROM skills s
+        LEFT JOIN classes c ON s.class_id = c.id
+        ORDER BY c.name, s.display_name
+    `);
+    
+    const skillItems = res[0] ? res[0].values.map(([id, name, displayName, image, className]) => ({
+        value: id,
+        name: displayName,
+        skillName: name,
+        image: image,
+        className: className,
+        desc: `${className || 'No Class'}`
+    })) : [];
+    
+    // Initialize sidebar dropdown
+    if (sidebarDropdownContainer && sidebarHiddenInput) {
+        const sidebarDropdown = new DropdownList(sidebarDropdownContainer, {
+            placeholder: 'Select skill...',
+            emptyListText: 'No skills found',
+            defaultHeaderText: 'All Skills',
+            onSelect: (item) => {
+                if (item) {
+                    addOSkill(item.value, item.name, item.skillName, item.image, item.className);
+                    sidebarDropdown.value = null;
+                }
+            }
+        });
+        sidebarDropdown.setItems(skillItems);
+        
+        // Store reference for later access
+        window.oskillDropdownInstance = sidebarDropdown;
+    }
+}
+
+function addOSkill(skillId, displayName, skillName, image, className) {
+    // Check if already exists (by skillName for consistency with regular skills)
+    const existing = oSkills.find(s => s.skillName === skillName);
+    if (existing) {
+        existing.points++;
+    } else {
+        oSkills.push({ 
+            skillId: skillId, 
+            displayName: displayName,
+            skillName: skillName,
+            image: image,
+            className: className,
+            points: 1 
+        });
+    }
+    
+    updateOSkillsDisplay();
+}
+
+function removeOSkill(skillName) {
+    const index = oSkills.findIndex(s => s.skillName === skillName);
+    if (index > -1) {
+        oSkills.splice(index, 1);
+        updateOSkillsDisplay();
+    }
+}
+
+function incrementOSkill(skillName) {
+    const skill = oSkills.find(s => s.skillName === skillName);
+    if (skill) {
+        skill.points++;
+        updateOSkillsDisplay();
+    }
+}
+
+function decrementOSkill(skillName) {
+    const skill = oSkills.find(s => s.skillName === skillName);
+    if (skill) {
+        skill.points--;
+        if (skill.points <= 0) {
+            removeOSkill(skillName);
+        } else {
+            updateOSkillsDisplay();
+        }
+    }
+}
+
+function updateOSkillsDisplay() {
+    // Update window reference for other modules (like tree-render.js)
+    window.oSkills = oSkills;
+    updateOSkillsTab();
+    
+    // Trigger tab color update
+    const currentClass = classSelect ? classSelect.value : null;
+    if (currentClass && skillsList) {
+        const savedTab = currentTab;
+        renderSkills(currentClass, skillsList, skillsContainer, currentCharacterLevel, savedTab, false);
+    }
+}
+
+// Flag to prevent dropdown recreation during rendering
+let isRenderingSkills = false;
+
+function updateOSkillsTab() {
+    const container = document.getElementById('tab-oSkills');
+    if (!container) {
+        return;
+    }
+    
+    // Clear container and hide any active tooltips for removed skills
+    container.innerHTML = '';
+    
+    // Force hide any active tooltips immediately
+    const tooltipElement = document.querySelector('.skill-tooltip');
+    if (tooltipElement && tooltipElement.style.display !== 'none') {
+        tooltipElement.style.display = 'none';
+    }
+    
+    // Dispatch event to notify tooltip system that DOM has changed
+    window.dispatchEvent(new CustomEvent('oskillsUpdated'));
+    
+    if (oSkills.length === 0) {
+        return;
+    }
+    
+    // Calculate grid size based on number of skills
+    const cols = 3; // 3 skills per row
+    const rows = Math.ceil(oSkills.length / cols);
+    
+    container.style.gridTemplateRows = `repeat(${rows}, auto)`;
+    container.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+    
+    // Render each oSkill as a card
+    oSkills.forEach((oskill, index) => {
+        const row = Math.floor(index / cols) + 1;
+        const col = (index % cols) + 1;
+        
+        const card = createOSkillCard(oskill);
+        card.style.gridArea = `${row} / ${col}`;
+        container.appendChild(card);
+    });
+}
+
+function createOSkillCard(oskill) {
+    const card = document.createElement('div');
+    card.className = 'skill-card';
+    card.dataset.skillId = oskill.skillName; // Add for tooltip support (uses internal name)
+    
+    // Use proper icon loading function
+    const iconHTML = getSkillIconHTML(oskill.image, oskill.className);
+    
+    // Section 1: Top row with icon and buttons
+    let cardText = `<div style="display: grid; grid-template-columns: auto 1fr auto; gap: 4px; align-items: center; width: 100%;">`;
+    cardText += `<div style="min-width: 32px;"></div>`;
+    cardText += `<div style="display: flex; justify-content: center;">${iconHTML}</div>`;
+    cardText += `<div class="skill-buttons-container" style="min-width: 32px;"></div>`;
+    cardText += `</div>`;
+    
+    // Section 2: Skill name
+    cardText += `<div style="text-align: center;">`;
+    cardText += `<div style="font-size: 0.85rem; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${oskill.displayName}</div>`;
+    cardText += `</div>`;
+    
+    // Section 3: Points display (like level display in regular cards)
+    cardText += `<div style="text-align: center;">`;
+    cardText += `<div class="has-text-info is-size-6">${oskill.points} / ∞</div>`;
+    cardText += `</div>`;
+    
+    card.innerHTML = cardText;
+    
+    // Add +/- buttons with event listeners (matching regular skill cards)
+    const buttonsContainer = card.querySelector('.skill-buttons-container');
+    if (buttonsContainer) {
+        buttonsContainer.innerHTML = `
+            <div style="display: flex; flex-direction: column; gap: 2px; padding: 2px;">
+                <button class="button is-outlined is-small is-success skill-plus-btn" data-skill="${oskill.skillName}" style="padding: 0; font-size: 1rem; width: 26px; height: 22px; border-width: 1px; line-height: 1;">+</button>
+                <button class="button is-outlined is-small is-danger skill-minus-btn" data-skill="${oskill.skillName}" style="padding: 0; font-size: 1rem; width: 26px; height: 22px; border-width: 1px; line-height: 1;">−</button>
+            </div>
+        `;
+        
+        // Add event listeners
+        const plusBtn = buttonsContainer.querySelector('.skill-plus-btn');
+        const minusBtn = buttonsContainer.querySelector('.skill-minus-btn');
+        
+        if (plusBtn) {
+            plusBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                incrementOSkill(oskill.skillName);
+            });
+        }
+        
+        if (minusBtn) {
+            minusBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                decrementOSkill(oskill.skillName);
+            });
+        }
+    }
+    
+    return card;
 }

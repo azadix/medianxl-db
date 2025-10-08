@@ -37,7 +37,7 @@
     background-color: var(--bg-color);
     border: 1px solid var(--border-color);
     border-radius: 3px;
-    z-index: 999;
+    z-index: 9999;
     margin-inline-start: 0 !important; 
 }
 

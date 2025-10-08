@@ -26,6 +26,11 @@ function updateSkillCards(selectedClass, skillsList, characterLevel) {
     const tabsWithPoints = new Set();
     
     allCards.forEach(card => {
+        // Skip oSkills tab cards - they have their own unrestricted logic
+        if (card.closest('#tab-oSkills')) {
+            return;
+        }
+        
         // Get skill ID from the card's button (if it exists)
         const plusBtn = card.querySelector('.skill-plus-btn');
         if (!plusBtn) return;
@@ -94,6 +99,12 @@ function updateSkillCards(selectedClass, skillsList, characterLevel) {
             minusBtn.className = `button is-outlined is-small ${minusDisabled ? 'is-ghost' : 'is-danger'} skill-minus-btn`;
         }
     });
+    
+    // Check if oSkills tab should be highlighted
+    // Access oSkills from tree-core.js if available
+    if (window.oSkills && window.oSkills.length > 0) {
+        tabsWithPoints.add('oSkills');
+    }
     
     // Update tab colors based on points allocated
     updateTabColors(tabsWithPoints);
@@ -227,6 +238,27 @@ export function renderSkills(selectedClass, skillsList, skillsContainer, charact
         
         first = false;
     });
+    
+    // Add oSkills tab
+    const oSkillsLi = document.createElement('li');
+    const isOSkillsActive = preserveTab === 'oSkills';
+    if (isOSkillsActive) {
+        oSkillsLi.classList.add('is-active');
+        // Set current tab for the active tab
+        setCurrentTab('oSkills');
+    }
+    const oSkillsA = document.createElement('a');
+    oSkillsA.textContent = 'oSkills';
+    oSkillsA.dataset.tab = 'oSkills';
+    oSkillsLi.appendChild(oSkillsA);
+    ul.appendChild(oSkillsLi);
+    
+    // Create oSkills tab content (grid like regular tabs)
+    const oSkillsContent = document.createElement('div');
+    oSkillsContent.className = 'skills-grid';
+    oSkillsContent.id = 'tab-oSkills';
+    oSkillsContent.style.display = isOSkillsActive ? 'grid' : 'none';
+    tabContent.appendChild(oSkillsContent);
 
     // Add skill points display to the right side of tabs
     const skillPointsLi = document.createElement('li');
@@ -250,6 +282,12 @@ export function renderSkills(selectedClass, skillsList, skillsContainer, charact
             tabsWithPoints.add(skill.tabName);
         }
     });
+    
+    // Check if oSkills tab should be highlighted
+    if (window.oSkills && window.oSkills.length > 0) {
+        tabsWithPoints.add('oSkills');
+    }
+    
     updateTabColors(tabsWithPoints);
     
     // Add arrows for the active tab after DOM is appended
@@ -270,6 +308,12 @@ export function renderSkills(selectedClass, skillsList, skillsContainer, charact
             }, 100);
         }
     }
+    
+    // Show oSkills panel if oSkills tab is active on initial load
+    const oskillPanel = document.getElementById('oskillPanel');
+    if (oskillPanel && activeTabName === 'oSkills') {
+        oskillPanel.style.display = 'block';
+    }
 
             // Add tab switching functionality
             ul.addEventListener('click', (e) => {
@@ -287,6 +331,13 @@ export function renderSkills(selectedClass, skillsList, skillsContainer, charact
                     document.querySelectorAll('.skills-grid').forEach(grid => {
                         grid.style.display = 'none';
                     });
+                    
+                    // Show/hide oSkills panel based on active tab
+                    const oskillPanel = document.getElementById('oskillPanel');
+                    if (oskillPanel) {
+                        const shouldShow = clickedTab === 'oSkills';
+                        oskillPanel.style.display = shouldShow ? 'block' : 'none';
+                    }
                     
                     // Show clicked tab content
                     const targetGrid = document.getElementById(`tab-${clickedTab}`);

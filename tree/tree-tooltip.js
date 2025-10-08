@@ -25,6 +25,9 @@ export function initializeTooltip() {
     
     // Listen for skill point changes to update tooltip if it's showing
     window.addEventListener('skillPointsChanged', handleSkillPointsChanged);
+    
+    // Listen for oSkills updates to hide tooltip if skill was removed
+    window.addEventListener('oskillsUpdated', handleOSkillsUpdated);
 }
 
 /**
@@ -95,6 +98,21 @@ function handleSkillPointsChanged() {
         
         tooltipElement.innerHTML = content;
     }
+}
+
+/**
+ * Handle oSkills updated event to hide tooltip if skill card was removed
+ */
+function handleOSkillsUpdated() {
+    // Always hide tooltip when oSkills are updated and clear any pending timeouts
+    if (tooltipHideTimeout) {
+        clearTimeout(tooltipHideTimeout);
+        tooltipHideTimeout = null;
+    }
+    
+    // Force hide tooltip immediately
+    hideTooltip();
+    currentHoveredSkill = null;
 }
 
 /**
@@ -303,4 +321,5 @@ export function destroyTooltip() {
     document.removeEventListener('mouseout', handleMouseOut);
     document.removeEventListener('mousemove', handleMouseMove);
     window.removeEventListener('skillPointsChanged', handleSkillPointsChanged);
+    window.removeEventListener('oskillsUpdated', handleOSkillsUpdated);
 }

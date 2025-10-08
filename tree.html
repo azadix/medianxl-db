@@ -5,6 +5,7 @@
   <title>Skills UI</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/1.0.1/css/bulma.min.css" />
   <link rel="stylesheet" href="tree/tree-styles.css">
+  <link rel="stylesheet" href="edit/dropdown-style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.13.0/sql-wasm.js"></script>
   <script src="utils.js" type="module"></script>
 </head>
@@ -45,7 +46,7 @@
                     
                     <button class="button is-large is-fullwidth" id="menuEditDefaultsBtn">
                         <span class="icon-text">
-                            <span>Edit Defaults</span>
+                            <span>Edit defaults</span>
                         </span>
                     </button>
                 </div>
@@ -101,10 +102,18 @@
                                 </p>
                             </div>
                         </div>
+                        
+                        <div id="oskillPanel" style="display: none;">
+                            <div class="field">
+                                <label class="label is-small">Add an oSkill</label>
+                                <div id="oskill-dropdown" class="oskill-dropdown-wrapper"></div>
+                                <input type="hidden" id="oskill-hidden" />
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
-                <div class="column is-four-fifths" style="overflow-y: auto;">
+                <div class="column" style="overflow-y: auto; overflow-x: hidden; position: relative;">
                     <div id="skillsContainer"></div>
                 </div>
             </div>

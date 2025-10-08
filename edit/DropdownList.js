@@ -117,6 +117,10 @@ export class DropdownList {
             loadingItem.className = 'dropdown-list-item empty';
             loadingItem.textContent = this.options.loadingText;
             this.list.appendChild(loadingItem);
+            // Reposition if this is an oSkills dropdown
+            if (this.isOSkillsDropdown) {
+                setTimeout(() => this.positionOSkillsDropdown(), 0);
+            }
             return;
         }
         
@@ -127,6 +131,10 @@ export class DropdownList {
             emptyItem.className = 'dropdown-list-item empty';
             emptyItem.textContent = this.options.emptyListText;
             this.list.appendChild(emptyItem);
+            // Reposition if this is an oSkills dropdown
+            if (this.isOSkillsDropdown) {
+                setTimeout(() => this.positionOSkillsDropdown(), 0);
+            }
             return;
         }
 
@@ -174,6 +182,11 @@ export class DropdownList {
                 this.list.appendChild(li);
             });
         });
+        
+        // Reposition if this is an oSkills dropdown after rendering
+        if (this.isOSkillsDropdown) {
+            setTimeout(() => this.positionOSkillsDropdown(), 0);
+        }
     }
 
     selectItem(item) {
@@ -187,6 +200,29 @@ export class DropdownList {
 
     showList() {
         this.list.style.display = 'block';
+        
+        // Check if this is the oSkills dropdown by looking up the DOM tree
+        let currentElement = this.container;
+        let isOSkillsDropdown = false;
+        
+        // Trace up the DOM tree to find oskill-dropdown element or oskillPanel
+        while (currentElement && currentElement !== document.body) {
+            if (currentElement.id === 'oskill-dropdown' || 
+                currentElement.classList.contains('oskill-dropdown-wrapper') ||
+                currentElement.id === 'oskillPanel') {
+                isOSkillsDropdown = true;
+                break;
+            }
+            currentElement = currentElement.parentElement;
+        }
+        
+        
+        if (isOSkillsDropdown) {
+            // Store reference to this dropdown for later updates
+            this.isOSkillsDropdown = true;
+            this.positionOSkillsDropdown();
+        }
+        
         if (this.shouldRenderOnShow) {
             if (this.input.value && !this.options.doNotFilterElement) {
                 this.filterItems(this.input.value);
@@ -195,6 +231,29 @@ export class DropdownList {
             }
             this.shouldRenderOnShow = false;
         }
+    }
+
+    positionOSkillsDropdown() {
+        if (!this.isOSkillsDropdown) return;
+        
+        // Get input position
+        const inputRect = this.input.getBoundingClientRect();
+        
+        // Position dropdown below input, aligned to left, but don't go off-screen
+        this.list.style.position = 'fixed';
+        this.list.style.transform = 'none';
+        this.list.style.minWidth = inputRect.width + 'px';
+
+        
+        // Get actual dropdown height after rendering
+        const dropdownHeight = this.list.clientHeight ;
+        
+        // Calculate position to center dropdown relative to input
+        let leftPos = inputRect.left + inputRect.width;
+        let topPos = inputRect.bottom - Math.floor(dropdownHeight / 2 + inputRect.height / 2);
+        
+        this.list.style.left = leftPos + 'px';
+        this.list.style.top = topPos + 'px';
     }
 
     hideList() {
