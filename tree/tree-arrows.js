@@ -92,8 +92,8 @@ export function addOverlayArrows(contentDiv, skillsInTab, minRow, minCol, allCla
             const [type, value, target] = prereq.split(':');
             
             if (type === 'skill_level' && target) {
-                // Find the prerequisite skill in the same class (across all tabs)
-                const prereqSkill = allClassSkills.find(s => s.name === target && s.class === skill.class);
+                // Find the prerequisite skill in the same class AND same tab
+                const prereqSkill = allClassSkills.find(s => s.name === target && s.class === skill.class && s.tab === skill.tab);
                 if (prereqSkill) {
                     createOverlayArrow(contentDiv, prereqSkill, skill, minRow, minCol, skillsInTab);
                 }
