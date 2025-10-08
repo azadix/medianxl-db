@@ -415,7 +415,7 @@ async function displaySkillDetail(skillId) {
     `;
     
     contentElement.innerHTML = `
-        <div class="skill-detail">
+        <div class="skill-detail" style="position: relative;">
             ${backButton}
             <div class="columns">
                 <div class="column is-two-thirds">

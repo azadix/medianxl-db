@@ -132,54 +132,6 @@ function autoExpandStatToken(db, statKey) {
     return `{{${statKey}:${params}}}`;
 }
 
-// Expand a description string using the stats table formatting and optional inline values
-// Example tokens: {{mana_cost:15}}, {{cold_damage:100,200}}, {{level:17}}
-// Now also supports simple {{mana_cost}} which auto-expands to {{mana_cost:%value0%}} based on format
-export function expandPlaceholders(db, description) {
-    if (!description) return '';
-    return description.replace(/\{\{(.*?)\}\}/g, (match, token) => {
-        const [rawKey, rawValues] = token.split(':').map(s => s.trim());
-        const key = (rawKey || '').toLowerCase();
-        
-        // If no values provided, auto-expand based on stat format
-        let values = [];
-        if (!rawValues) {
-            const expandedToken = autoExpandStatToken(db, rawKey);
-            const [, expandedValues] = expandedToken.split(':').map(s => s.trim());
-            values = expandedValues ? expandedValues.split(',').map(v => v.trim()) : [];
-        } else {
-            values = rawValues.split(',').map(v => v.trim());
-        }
-
-        const stmt = db.prepare("SELECT name, format FROM stats WHERE LOWER(key) = ?");
-        stmt.bind([key]);
-        let output = `[Unknown stat: ${rawKey}]`;
-        if (stmt.step()) {
-            const [name, format] = stmt.get();
-            const v0 = values[0] || '';
-            const v1 = values[1] || '';
-            const v2 = values[2] || '';
-            const v3 = values[3] || '';
-            const w0 = `<span class="has-text-primary">${v0}</span>`;
-            const w1 = `<span class="has-text-primary">${v1}</span>`;
-            const w2 = `<span class="has-text-primary">${v2}</span>`;
-            const w3 = `<span class="has-text-primary">${v3}</span>`;
-            output = (format || '{name}: {value}')
-                .replace('{name}', name)
-                .replace('{value0}', w0)
-                .replace('{value1}', w1)
-                .replace('{value2}', w2)
-                .replace('{value3}', w3)
-                // also support %valueX% tokens
-                .replace(/%value0%/g, w0)
-                .replace(/%value1%/g, w1)
-                .replace(/%value2%/g, w2)
-                .replace(/%value3%/g, w3);
-        }
-        stmt.free();
-        return output;
-    });
-}
 
 // Expand using values sourced from skill_scaling for a given skill and level.
 // If inline values are provided in the token, they take precedence; otherwise fetch by stat key.

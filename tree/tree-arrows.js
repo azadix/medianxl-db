@@ -1,85 +1,9 @@
-// Arrow rendering and direction calculations for skill prerequisites
-
-// Helper functions for arrow direction calculation
-export function getArrowDirection(row, col, skillsInTab) {
-    // Look for skills with prerequisites in the current tab
-    const skillsWithPrereqs = skillsInTab.filter(skill => 
-        skill.prerequisites && skill.prerequisites.length > 0
-    );
-
-    for (const skill of skillsWithPrereqs) {
-        // Check if this empty position is between a prerequisite skill and the dependent skill
-        for (const prereq of skill.prerequisites) {
-            const [type, value, target] = prereq.split(':');
-            
-            if (type === 'skill_level' && target) {
-                // Find the prerequisite skill in the same tab
-                const prereqSkill = skillsInTab.find(s => s.name === target);
-                if (prereqSkill) {
-                    // Check if this empty position is on the path between them
-                    const direction = getDirectionBetweenSkills(prereqSkill, skill, row, col);
-                    if (direction) return direction;
-                }
-            }
-        }
-    }
-    return null;
-}
-
-function getDirectionBetweenSkills(fromSkill, toSkill, emptyRow, emptyCol) {
-    const fromRow = fromSkill.row;
-    const fromCol = fromSkill.col;
-    const toRow = toSkill.row;
-    const toCol = toSkill.col;
-
-    // Check if empty position is on a direct line between the skills
-    if (fromRow === toRow) {
-        // Horizontal line
-        if (emptyRow === fromRow && 
-            ((fromCol < emptyCol && emptyCol < toCol) || (toCol < emptyCol && emptyCol < fromCol))) {
-            return fromCol < toCol ? 'right' : 'left';
-        }
-    } else if (fromCol === toCol) {
-        // Vertical line
-        if (emptyCol === fromCol && 
-            ((fromRow < emptyRow && emptyRow < toRow) || (toRow < emptyRow && emptyRow < fromRow))) {
-            return fromRow < toRow ? 'down' : 'up';
-        }
-    } else {
-        // Diagonal line - check if empty position is on the path
-        const rowDiff = toRow - fromRow;
-        const colDiff = toCol - fromCol;
-        const steps = Math.max(Math.abs(rowDiff), Math.abs(colDiff));
-        
-        for (let i = 1; i < steps; i++) {
-            const checkRow = fromRow + Math.round((rowDiff * i) / steps);
-            const checkCol = fromCol + Math.round((colDiff * i) / steps);
-            
-            if (checkRow === emptyRow && checkCol === emptyCol) {
-                // Determine diagonal direction
-                if (rowDiff > 0 && colDiff > 0) return 'down-right';
-                if (rowDiff > 0 && colDiff < 0) return 'down-left';
-                if (rowDiff < 0 && colDiff > 0) return 'up-right';
-                if (rowDiff < 0 && colDiff < 0) return 'up-left';
-            }
-        }
-    }
-    return null;
-}
-
-export function getArrowSymbol(direction) {
-    const arrows = {
-        'up': '↑',
-        'down': '↓',
-        'left': '←',
-        'right': '→',
-        'up-right': '↗',
-        'up-left': '↖',
-        'down-right': '↘',
-        'down-left': '↙'
-    };
-    return arrows[direction] || '→';
-}
+// Arrow exclusions: arrows that should NOT be drawn
+// Format: { from: 'source_skill_display_name', to: 'target_skill_display_name' }
+const ARROW_EXCLUSIONS = [
+    { from: 'Shockwave Trap', to: 'Artifice Mastery' },
+    { from: 'Catalyst Trap', to: 'Artifice Mastery' }
+];
 
 export function addOverlayArrows(contentDiv, skillsInTab, minRow, minCol, allClassSkills) {
     // Find skills with prerequisites
@@ -95,7 +19,14 @@ export function addOverlayArrows(contentDiv, skillsInTab, minRow, minCol, allCla
                 // Find the prerequisite skill in the same class AND same tab
                 const prereqSkill = allClassSkills.find(s => s.name === target && s.class === skill.class && s.tab === skill.tab);
                 if (prereqSkill) {
-                    createOverlayArrow(contentDiv, prereqSkill, skill, minRow, minCol, skillsInTab);
+                    // Check if this arrow is excluded
+                    const isExcluded = ARROW_EXCLUSIONS.some(exclusion => 
+                        exclusion.from === prereqSkill.name && exclusion.to === skill.name
+                    );
+                    
+                    if (!isExcluded) {
+                        createOverlayArrow(contentDiv, prereqSkill, skill, minRow, minCol, skillsInTab);
+                    }
                 }
             }
         });

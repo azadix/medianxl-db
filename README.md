@@ -249,7 +249,7 @@ medianxl-db/
 - `completeStat()` - Handles stat completion and insertion
 
 ### Database Operations
-- `expandPlaceholders()` - Core placeholder expansion logic
+- `expandPlaceholdersWithScaling()` - Core placeholder expansion logic
 - `renderScalingRows()` - Dynamic table generation
 - `updateLevelIndicator()` - Level status display
 - `populatePrerequisiteSelectors()` - Dropdown initialization
