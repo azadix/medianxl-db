@@ -319,7 +319,7 @@ function buildTooltipContent(skillData, level, db, warningMessage = '') {
     // Warning message (if any) - for prerequisites, devotion, etc.
     if (warningMessage) {
         html += '<div class="tooltip-restriction">';
-        const warningLines = warningMessage.split(',');
+        const warningLines = warningMessage.split('\n');
         warningLines.forEach(line => {
             html += `<div class="has-text-danger">${line}</div>`;
         });

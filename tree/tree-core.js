@@ -92,10 +92,8 @@ async function main() {
         // Render skills with saved tab if specified
         renderSkills(selectedClass, skillsList, skillsContainer, currentCharacterLevel, savedTab);
         
-        // Update skill points display
+        // Update displays
         updateSkillPointsDisplay();
-        
-        // Update devotion display
         updateDevotionDisplay();
         
         
@@ -122,7 +120,7 @@ async function main() {
             if (hellCheckbox) hellCheckbox.checked = defaults.difficulties.hell;
             if (levelInput) levelInput.value = defaults.defaultLevel;
             
-            // Update skill points display after setting difficulties
+            // Update displays after setting difficulties
             updateSkillPointsDisplay();
         }, 0);
         
@@ -174,7 +172,7 @@ async function main() {
             updateOSkillsDisplay();
         });
         
-        // Add event listener for character level changes
+        // Add event listener for character level changes (manual input)
         window.addEventListener('characterLevelChanged', (e) => {
             currentCharacterLevel = e.detail.level;
             const currentClass = classSelect.value;
@@ -185,13 +183,11 @@ async function main() {
             // Save which tab is currently visible before re-rendering
             const savedTab = currentTab;
             
-            // Re-render without redrawing arrows (just update cards)
+            // Re-render without redrawing arrows (just update cards for max level changes)
             renderSkills(currentClass, skillsList, skillsContainer, currentCharacterLevel, savedTab, false);
             
-            // Update skill points display
+            // Update displays
             updateSkillPointsDisplay();
-            
-            // Update devotion display
             updateDevotionDisplay();
         });
         
@@ -203,10 +199,8 @@ async function main() {
             // Re-render without redrawing arrows (just update cards)
             renderSkills(currentClass, skillsList, skillsContainer, currentCharacterLevel, savedTab, false);
             
-            // Update skill points display
+            // Update displays
             updateSkillPointsDisplay();
-            
-            // Update devotion display
             updateDevotionDisplay();
         });
         
@@ -243,6 +237,7 @@ function updateSkillPointsDisplay() {
         tabDisplayEl.textContent = `Skill points: ${spentPoints} / ${availablePoints}`;
     }
 }
+
 
 // Update devotion display (for Paladin and Amazon)
 function updateDevotionDisplay() {
@@ -451,9 +446,13 @@ function initializeLevelInput() {
         let value = parseInt(levelInput.value, 10);
         levelInput.value = clampCharacterLevel(value);
         
+        // Update character level for max level calculations
+        currentCharacterLevel = parseInt(levelInput.value, 10);
+        setCharacterLevel(currentCharacterLevel);
+        
         // Trigger recalculation of skill max levels
         window.dispatchEvent(new CustomEvent('characterLevelChanged', {
-            detail: { level: parseInt(levelInput.value, 10) }
+            detail: { level: currentCharacterLevel }
         }));
     });
     
@@ -598,16 +597,16 @@ function initializeDefaults() {
     // Setup default level input clamping
     const defaultLevelInput = document.getElementById('defaultCharacterLevel');
     if (defaultLevelInput) {
-        // Only allow numbers
+    // Only allow numbers
         defaultLevelInput.addEventListener('keypress', (e) => {
-            if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') {
-                e.preventDefault();
-            }
-        });
-        
-        // Clamp value on input change
+        if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') {
+            e.preventDefault();
+        }
+    });
+    
+    // Clamp value on input change
         defaultLevelInput.addEventListener('input', () => {
-            // Remove non-numeric characters
+        // Remove non-numeric characters
             defaultLevelInput.value = defaultLevelInput.value.replace(/[^0-9]/g, '');
         });
         
@@ -832,7 +831,7 @@ function updateCurrentBuild() {
     }
     
     const currentClass = classSelect ? classSelect.value : null;
-    const currentLevel = parseInt(document.getElementById('characterLevel')?.value) || 1;
+    const currentLevel = parseInt(document.getElementById('characterLevel')?.value) || CHARACTER_CONFIG.DEFAULT_LEVEL;
     const skillPoints = getAllSkillPoints();
     const spentPoints = getSpentSkillPoints();
     
@@ -864,7 +863,7 @@ function updateCurrentBuild() {
 
 function saveBuild(buildName) {
     const currentClass = classSelect ? classSelect.value : null;
-    const currentLevel = parseInt(document.getElementById('characterLevel')?.value) || 1;
+    const currentLevel = parseInt(document.getElementById('characterLevel')?.value) || CHARACTER_CONFIG.DEFAULT_LEVEL;
     const skillPoints = getAllSkillPoints();
     const spentPoints = getSpentSkillPoints();
     

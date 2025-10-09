@@ -33,7 +33,7 @@ const characterState = {
 /**
  * Initialize character state for a class
  * @param {string} className - Class name
- * @param {number} level - Character level
+ * @param {number} level - Character level (for max level calculations and skill point pool)
  */
 export function initializeCharacter(className, level = CHARACTER_CONFIG.DEFAULT_LEVEL) {
   characterState.level = level;
@@ -86,13 +86,12 @@ export function setAllSkillPoints(skillPoints) {
 }
 
 /**
- * Calculate total available skill points based on character level and quests completed
- * @returns {number} Total available skill points
+ * Calculate total quest skill points from completed quests
+ * @returns {number} Total quest skill points
  */
-export function getAvailableSkillPoints() {
-  let total = getBaseSkillPoints(characterState.level);
+export function getTotalQuestSkillPoints() {
+  let total = 0;
   
-  // Add quest bonuses
   for (const [questId, difficulties] of Object.entries(characterState.questsCompleted)) {
     const questRewards = CHARACTER_CONFIG.QUEST_SKILL_POINTS[questId];
     if (questRewards) {
@@ -102,6 +101,17 @@ export function getAvailableSkillPoints() {
     }
   }
   
+  return total;
+}
+
+/**
+ * Calculate total available skill points based on max level and quests completed
+ * Note: Always uses MAX_LEVEL for skill point pool, not the user's character level input
+ * @returns {number} Total available skill points
+ */
+export function getAvailableSkillPoints() {
+  let total = getBaseSkillPoints(CHARACTER_CONFIG.MAX_LEVEL);
+  total += getTotalQuestSkillPoints();
   return total;
 }
 
@@ -156,11 +166,10 @@ export function checkPrerequisites(skill, allSkills = []) {
   for (const prereq of otherPrereqs) {
     const [type, value, target] = prereq.split(':');
     
+    // Skip character level checks - users can freely allocate points
+    // Character level only affects max level calculations, not allocation
     if (type === 'character_level' || type === 'class_level') {
-      const requiredLevel = parseInt(value, 10);
-      if (characterState.level < requiredLevel) {
-        reasons.push(`Requires character level ${requiredLevel}`);
-      }
+      continue; // Skip level requirement checks
     } else if (type === 'skill_blocked_by') {
       // Blocked if target skill has more than specified points (typically 0)
       const maxAllowedPoints = parseInt(value, 10);

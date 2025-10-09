@@ -76,12 +76,14 @@ function updateSkillCards(selectedClass, skillsList, characterLevel) {
             const devotionRestriction = checkDevotionRestriction(skill.skillId, skillLevels, db);
             const canAddPoint = (prereqCheck.met && !ultimateRestriction.blocked && !masteryRestriction.blocked && !covenRestriction.blocked && devotionRestriction.canAllocate) || currentPoints > 0;
             
-            // Build tooltip (show Coven restriction, but not Mastery)
+            // Build tooltip message
             let tooltipMessage = '';
             if (!prereqCheck.met && currentPoints === 0) {
-                tooltipMessage = prereqCheck.reasons.join(', ');
+                tooltipMessage = prereqCheck.reasons.join('\n');
             } else if (ultimateRestriction.blocked && currentPoints === 0) {
                 tooltipMessage = ultimateRestriction.reason;
+            } else if (masteryRestriction.blocked && currentPoints === 0) {
+                tooltipMessage = masteryRestriction.reason;
             } else if (covenRestriction.blocked && currentPoints === 0) {
                 tooltipMessage = covenRestriction.reason;
             } else if (!devotionRestriction.canAllocate && currentPoints === 0) {
@@ -452,9 +454,11 @@ function createSkillCard(skill, currentTab, characterLevel = CHARACTER_CONFIG.DE
         // Build tooltip message
         let tooltipMessage = '';
         if (!prereqCheck.met && currentPoints === 0) {
-            tooltipMessage = prereqCheck.reasons.join(', ');
+            tooltipMessage = prereqCheck.reasons.join('\n');
         } else if (ultimateRestriction.blocked && currentPoints === 0) {
             tooltipMessage = ultimateRestriction.reason;
+        } else if (masteryRestriction.blocked && currentPoints === 0) {
+            tooltipMessage = masteryRestriction.reason;
         } else if (covenRestriction.blocked && currentPoints === 0) {
             tooltipMessage = covenRestriction.reason;
         } else if (!devotionRestriction.canAllocate && currentPoints === 0) {
@@ -624,7 +628,7 @@ function checkCovenSkillBlock(skill, allSkills) {
   if (exclusiveCovenSkillsWithPoints.length >= maxCovenSkills) {
     return { 
       blocked: true, 
-      reason: `Cannot allocate points to more than ${maxCovenSkills} of these Coven skills: Living Flame, Warp Armor, Snow Queen, Vengeful Power.` 
+      reason: `Cannot allocate points to more than ${maxCovenSkills} of these Coven skills:\n- Living Flame\n- Warp Armor\n- Snow Queen\n- Vengeful Power` 
     };
   }
   

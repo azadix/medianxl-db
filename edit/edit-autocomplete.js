@@ -209,6 +209,7 @@ export function initializeAutocomplete() {
     if (autocompleteDropdown) {
       autocompleteDropdown.style.display = 'none';
       selectedIndex = -1;
+      currentMatches = []; // Clear matches when hiding
     }
   }
 
@@ -286,17 +287,23 @@ export function initializeAutocomplete() {
     const lastOpen = beforeCursor.lastIndexOf('{{');
     
     if (lastOpen !== -1) {
-      // Check if we're inside an open {{ block
-      const contentAfterOpen = beforeCursor.substring(lastOpen + 2);
-      const nextClose = afterCursor.indexOf('}}');
+      // Check if there's a closing }} after the {{
+      const textAfterOpen = text.substring(lastOpen);
+      const closeIndex = textAfterOpen.indexOf('}}');
       
-      // If there's no closing }} or cursor is before it, we're inside the block
-      if (nextClose === -1 || cursorPos <= lastOpen + 2 + nextClose) {
-        const innerContent = contentAfterOpen;
-        
-        // Show autocomplete immediately after {{ or with any content
+      // Only show autocomplete if:
+      // 1. There's no closing }} yet, OR
+      // 2. Cursor is between {{ and }}
+      if (closeIndex === -1) {
+        // No closing }} - we're inside an open block
+        const innerContent = beforeCursor.substring(lastOpen + 2);
+        showAutocomplete(innerContent, lastOpen, cursorPos);
+      } else if (cursorPos > lastOpen && cursorPos < lastOpen + closeIndex) {
+        // Cursor is between {{ and }}
+        const innerContent = beforeCursor.substring(lastOpen + 2);
         showAutocomplete(innerContent, lastOpen, cursorPos);
       } else {
+        // Cursor is outside the {{ }} block
         hideAutocomplete();
       }
     } else {
@@ -318,15 +325,29 @@ export function initializeAutocomplete() {
         selectedIndex = Math.max(selectedIndex - 1, 0);
         updateSelection();
         break;
-      case 'Enter':
       case 'Tab':
-        e.preventDefault();
+        // Tab: autocomplete if something is selected
         if (selectedIndex >= 0 && selectedIndex < currentMatches.length && currentMatches[selectedIndex]) {
+          e.preventDefault();
           completeStat(currentMatches[selectedIndex]);
         }
         break;
       case 'Escape':
+        e.preventDefault();
         hideAutocomplete();
+        break;
+      case 'Enter':
+        // Enter: only autocomplete if user explicitly selected an item (not on first item by default)
+        // This allows typing custom stats and pressing Enter to insert newline
+        if (selectedIndex > 0 && selectedIndex < currentMatches.length && currentMatches[selectedIndex]) {
+          e.preventDefault();
+          completeStat(currentMatches[selectedIndex]);
+        } else {
+          // Let Enter work normally (insert newline or submit form)
+          hideAutocomplete();
+          currentMatches = []; // Clear matches to prevent Tab from autocompleting
+          selectedIndex = -1;
+        }
         break;
     }
   });
@@ -336,5 +357,12 @@ export function initializeAutocomplete() {
     if (!descriptionField.contains(e.target) && (!autocompleteDropdown || !autocompleteDropdown.contains(e.target))) {
       hideAutocomplete();
     }
+  });
+  
+  // Hide autocomplete when field loses focus (with small delay for clicks)
+  descriptionField.addEventListener('blur', function() {
+    setTimeout(() => {
+      hideAutocomplete();
+    }, 200);
   });
 }

@@ -124,13 +124,13 @@ const MAX_LEVEL_MODIFIERS = [
     type: 'self_character_level',
     targetSkillName: 'spiritual_alignment', // itself
     characterLevelDivisor: 4, // +1 max level for every 4 character levels
-    startLevel: 15, // Skill becomes available at level 15
+    startLevel: 11, // Skill becomes available at level 15
     description: 'Increases its own max level by 1 for every 4 character levels (starting from level 15)',
     calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = CHARACTER_CONFIG.DEFAULT_LEVEL) {
       // Only affects itself, based on character level only
       if (targetSkillData.skill_name === this.targetSkillName) {
         const effectiveLevel = Math.max(0, characterLevel - this.startLevel);
-        return Math.floor(1 + effectiveLevel / this.characterLevelDivisor);
+        return Math.floor(effectiveLevel / this.characterLevelDivisor);
       }
       return 0;
     }
