@@ -10,7 +10,9 @@ export function initializeAutocomplete() {
   let currentMatches = [];
   let selectedIndex = -1;
   let statUsageCounts = {};
+  let skillUsageCounts = {};
   let activeField = null; // Track which field is currently active
+  let activeAutocompleteType = null; // Track if we're autocompleting stats or skills
 
   function countStatUsageInDescriptions() {
     if (!SkillDB.db) return {};
@@ -48,15 +50,51 @@ export function initializeAutocomplete() {
     return usageCounts;
   }
 
-  function fuzzyFilter(stats, query) {
-    if (!query) return stats.slice(0, 10); // Return first 10 if no query
+  function countSkillUsageInDescriptions() {
+    if (!SkillDB.db) return {};
+    
+    const usageCounts = {};
+    
+    try {
+      // Get all skill descriptions that contain skill name placeholders
+      const stmt = SkillDB.db.prepare(`
+        SELECT description, restriction
+        FROM skills 
+        WHERE (description IS NOT NULL AND description != '' AND description LIKE '%[[%]]%')
+        OR (restriction IS NOT NULL AND restriction != '' AND restriction LIKE '%[[%]]%')
+      `);
+      
+      while (stmt.step()) {
+        const [description, restriction] = stmt.get();
+        const text = (description || '') + ' ' + (restriction || '');
+        
+        // Find all [[...]] placeholders in this description
+        const matches = text.match(/\[\[([^\]]+)\]\]/g);
+        if (matches) {
+          matches.forEach(match => {
+            // Extract the skill name
+            const skillName = match.replace(/\[\[|\]\]/g, '').trim().toLowerCase();
+            usageCounts[skillName] = (usageCounts[skillName] || 0) + 1;
+          });
+        }
+      }
+      stmt.free();
+    } catch (error) {
+      console.warn('Failed to count skill usage in descriptions:', error);
+    }
+    
+    return usageCounts;
+  }
+
+  function fuzzyFilter(items, query, itemType = 'stats') {
+    if (!query) return items.slice(0, 10); // Return first 10 if no query
     
     const results = [];
     
-    for (const stat of stats) {
-      const key = stat.key.toLowerCase();
-      const name = stat.name.toLowerCase();
-      const usageCount = stat.usage_count || 0;
+    for (const item of items) {
+      const key = itemType === 'stats' ? item.key.toLowerCase() : item.name.toLowerCase();
+      const name = itemType === 'stats' ? item.name.toLowerCase() : item.display_name.toLowerCase();
+      const usageCount = item.usage_count || 0;
       let score = 0;
       
       // Exact match gets highest score
@@ -96,7 +134,7 @@ export function initializeAutocomplete() {
       score += Math.min(usageCount * 5, 100);
       
       if (score > 0) {
-        results.push({ ...stat, score });
+        results.push({ ...item, score });
       }
     }
     
@@ -106,34 +144,63 @@ export function initializeAutocomplete() {
     return results.slice(0, 10);
   }
 
-  function showAutocomplete(query, startPos, endPos) {
+  function showAutocomplete(query, startPos, endPos, type = 'stat') {
     if (!SkillDB.db) return;
 
-    // Initialize usage counts on first use
-    if (Object.keys(statUsageCounts).length === 0) {
-      statUsageCounts = countStatUsageInDescriptions();
-    }
+    activeAutocompleteType = type;
+    let allItems = [];
 
-    // Get all stats ordered by usage count (most used first), then by key
-    const stmt = SkillDB.db.prepare("SELECT key, name FROM stats ORDER BY key");
-    const allStats = [];
-    while (stmt.step()) {
-      const [key, name] = stmt.get();
-      const usage_count = statUsageCounts[key.toLowerCase()] || 0;
-      allStats.push({ key, name, usage_count });
-    }
-    stmt.free();
-    
-    // Sort by usage count (most used first), then by key
-    allStats.sort((a, b) => {
-      if (b.usage_count !== a.usage_count) {
-        return b.usage_count - a.usage_count;
+    if (type === 'stat') {
+      // Initialize usage counts on first use
+      if (Object.keys(statUsageCounts).length === 0) {
+        statUsageCounts = countStatUsageInDescriptions();
       }
-      return a.key.localeCompare(b.key);
-    });
 
-    // Fuzzy filter the stats
-    currentMatches = fuzzyFilter(allStats, query.toLowerCase());
+      // Get all stats ordered by usage count (most used first), then by key
+      const stmt = SkillDB.db.prepare("SELECT key, name FROM stats ORDER BY key");
+      while (stmt.step()) {
+        const [key, name] = stmt.get();
+        const usage_count = statUsageCounts[key.toLowerCase()] || 0;
+        allItems.push({ key, name, usage_count });
+      }
+      stmt.free();
+      
+      // Sort by usage count (most used first), then by key
+      allItems.sort((a, b) => {
+        if (b.usage_count !== a.usage_count) {
+          return b.usage_count - a.usage_count;
+        }
+        return a.key.localeCompare(b.key);
+      });
+
+      // Fuzzy filter the stats
+      currentMatches = fuzzyFilter(allItems, query.toLowerCase(), 'stats');
+    } else if (type === 'skill') {
+      // Initialize skill usage counts on first use
+      if (Object.keys(skillUsageCounts).length === 0) {
+        skillUsageCounts = countSkillUsageInDescriptions();
+      }
+
+      // Get all skills ordered by usage count (most used first), then by name
+      const stmt = SkillDB.db.prepare("SELECT name, display_name FROM skills ORDER BY name");
+      while (stmt.step()) {
+        const [name, display_name] = stmt.get();
+        const usage_count = skillUsageCounts[name.toLowerCase()] || 0;
+        allItems.push({ name, display_name, usage_count });
+      }
+      stmt.free();
+      
+      // Sort by usage count (most used first), then by name
+      allItems.sort((a, b) => {
+        if (b.usage_count !== a.usage_count) {
+          return b.usage_count - a.usage_count;
+        }
+        return a.name.localeCompare(b.name);
+      });
+
+      // Fuzzy filter the skills
+      currentMatches = fuzzyFilter(allItems, query.toLowerCase(), 'skills');
+    }
 
     if (currentMatches.length === 0) {
       hideAutocomplete();
@@ -175,17 +242,26 @@ export function initializeAutocomplete() {
       
       // Create strong element with proper color inheritance
       const strong = document.createElement('strong');
-      strong.textContent = match.key;
+      if (type === 'stat') {
+        strong.textContent = match.key;
+      } else {
+        strong.textContent = match.name;
+      }
       strong.style.color = 'inherit';
       
       item.appendChild(strong);
       
       // Add usage count if available
       const usageText = match.usage_count > 0 ? ` (${match.usage_count})` : '';
-      item.appendChild(document.createTextNode(` - ${match.name}${usageText}`));
+      const displayText = type === 'stat' ? match.name : match.display_name;
+      item.appendChild(document.createTextNode(` - ${displayText}${usageText}`));
       
       item.addEventListener('click', () => {
-        completeStat(match);
+        if (type === 'stat') {
+          completeStat(match);
+        } else {
+          completeSkill(match);
+        }
       });
       
       item.addEventListener('mouseenter', () => {
@@ -279,6 +355,55 @@ export function initializeAutocomplete() {
     hideAutocomplete();
   }
 
+  function completeSkill(match) {
+    if (!activeField) return;
+    
+    const text = activeField.value;
+    const cursorPos = activeField.selectionStart;
+    
+    // Find the last [[ before cursor
+    const beforeCursor = text.substring(0, cursorPos);
+    const afterCursor = text.substring(cursorPos);
+    const lastOpen = beforeCursor.lastIndexOf('[[');
+    
+    if (lastOpen !== -1) {
+      // Check if we're inside an open [[ block
+      const contentAfterOpen = beforeCursor.substring(lastOpen + 2);
+      
+      // Look for the next ]] but make sure it's not part of another placeholder
+      // by checking if there's a [[ before the ]]
+      let nextClose = afterCursor.indexOf(']]');
+      const nextOpen = afterCursor.indexOf('[[');
+      
+      // If there's a [[ before the next ]], then the ]] belongs to a different placeholder
+      // In that case, treat it as if there's no closing ]]
+      if (nextOpen !== -1 && nextOpen < nextClose) {
+        nextClose = -1;
+      }
+      
+      // Build the new text
+      const beforeMatch = text.substring(0, lastOpen + 2);
+      let afterMatch;
+      
+      if (nextClose === -1) {
+        // No closing ]], so just keep everything after cursor as-is
+        afterMatch = afterCursor;
+      } else {
+        // There's a closing ]], skip past it (cursor + nextClose + 2)
+        afterMatch = afterCursor.substring(nextClose + 2);
+      }
+      
+      const newText = beforeMatch + match.name + ']]' + afterMatch;
+      activeField.value = newText;
+
+      // Set cursor position after the completed skill name
+      const newCursorPos = beforeMatch.length + match.name.length + 2;
+      activeField.setSelectionRange(newCursorPos, newCursorPos);
+    }
+    
+    hideAutocomplete();
+  }
+
   // Helper function to attach autocomplete to a field
   function attachAutocompleteToField(field) {
     field.addEventListener('input', function(e) {
@@ -286,31 +411,40 @@ export function initializeAutocomplete() {
       const cursorPos = e.target.selectionStart;
       const text = e.target.value;
       
-      // Find the current {{}} block the cursor is in
+      // Find the current {{}} or [[]] block the cursor is in
       const beforeCursor = text.substring(0, cursorPos);
       const afterCursor = text.substring(cursorPos);
       
-      // Look for the last {{ before cursor
-      const lastOpen = beforeCursor.lastIndexOf('{{');
+      // Look for the last {{ or [[ before cursor
+      const lastStatOpen = beforeCursor.lastIndexOf('{{');
+      const lastSkillOpen = beforeCursor.lastIndexOf('[[');
       
-      if (lastOpen !== -1) {
-        // Check if there's a closing }} after the {{
+      // Determine which delimiter we're inside (if any)
+      if (lastStatOpen !== -1 || lastSkillOpen !== -1) {
+        // We're potentially inside a placeholder
+        const useSkill = lastSkillOpen > lastStatOpen;
+        const lastOpen = useSkill ? lastSkillOpen : lastStatOpen;
+        const closeDelim = useSkill ? ']]' : '}}';
+        const openDelim = useSkill ? '[[' : '{{';
+        const type = useSkill ? 'skill' : 'stat';
+        
+        // Check if there's a closing delimiter after the opening delimiter
         const textAfterOpen = text.substring(lastOpen);
-        const closeIndex = textAfterOpen.indexOf('}}');
+        const closeIndex = textAfterOpen.indexOf(closeDelim);
         
         // Only show autocomplete if:
-        // 1. There's no closing }} yet, OR
-        // 2. Cursor is between {{ and }}
+        // 1. There's no closing delimiter yet, OR
+        // 2. Cursor is between opening and closing delimiters
         if (closeIndex === -1) {
-          // No closing }} - we're inside an open block
+          // No closing delimiter - we're inside an open block
           const innerContent = beforeCursor.substring(lastOpen + 2);
-          showAutocomplete(innerContent, lastOpen, cursorPos);
+          showAutocomplete(innerContent, lastOpen, cursorPos, type);
         } else if (cursorPos > lastOpen && cursorPos < lastOpen + closeIndex) {
-          // Cursor is between {{ and }}
+          // Cursor is between delimiters
           const innerContent = beforeCursor.substring(lastOpen + 2);
-          showAutocomplete(innerContent, lastOpen, cursorPos);
+          showAutocomplete(innerContent, lastOpen, cursorPos, type);
         } else {
-          // Cursor is outside the {{ }} block
+          // Cursor is outside the block
           hideAutocomplete();
         }
       } else {
@@ -336,7 +470,11 @@ export function initializeAutocomplete() {
           // Tab: autocomplete if something is selected
           if (selectedIndex >= 0 && selectedIndex < currentMatches.length && currentMatches[selectedIndex]) {
             e.preventDefault();
-            completeStat(currentMatches[selectedIndex]);
+            if (activeAutocompleteType === 'skill') {
+              completeSkill(currentMatches[selectedIndex]);
+            } else {
+              completeStat(currentMatches[selectedIndex]);
+            }
           }
           break;
         case 'Escape':
@@ -348,7 +486,11 @@ export function initializeAutocomplete() {
           // This allows typing custom stats and pressing Enter to insert newline
           if (selectedIndex > 0 && selectedIndex < currentMatches.length && currentMatches[selectedIndex]) {
             e.preventDefault();
-            completeStat(currentMatches[selectedIndex]);
+            if (activeAutocompleteType === 'skill') {
+              completeSkill(currentMatches[selectedIndex]);
+            } else {
+              completeStat(currentMatches[selectedIndex]);
+            }
           } else {
             // Let Enter work normally (insert newline or submit form)
             hideAutocomplete();

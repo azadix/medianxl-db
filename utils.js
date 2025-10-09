@@ -137,9 +137,35 @@ function autoExpandStatToken(db, statKey) {
 // If inline values are provided in the token, they take precedence; otherwise fetch by stat key.
 // Expected schema: stats(key TEXT UNIQUE), skill_scaling(skill_id, level, stat_id, value)
 // Now also supports simple {{mana_cost}} which auto-expands to {{mana_cost:%value0%}} based on format
+// Also supports [[skill_name]] which expands to skill's display_name in success color
 export function expandPlaceholdersWithScaling(db, skillId, level, description) {
     if (!description) return '';
-    return description.replace(/\{\{(.*?)\}\}/g, (match, token) => {
+    
+    // First, expand skill name placeholders [[skill_name]]
+    let expandedDescription = description.replace(/\[\[(.*?)\]\]/g, (match, skillName) => {
+        const trimmedSkillName = skillName.trim();
+        if (!trimmedSkillName) return match;
+        
+        try {
+            const stmt = db.prepare("SELECT display_name FROM skills WHERE name = ?");
+            stmt.bind([trimmedSkillName]);
+            
+            if (stmt.step()) {
+                const displayName = stmt.get()[0];
+                stmt.free();
+                return `<p class='has-text-success'>${displayName}</p>`;
+            }
+            stmt.free();
+        } catch (error) {
+            console.warn('Error expanding skill name placeholder:', error);
+        }
+        
+        // If skill not found, return original match
+        return match;
+    });
+    
+    // Then, expand stat placeholders {{stat_key}}
+    return expandedDescription.replace(/\{\{(.*?)\}\}/g, (match, token) => {
         const [rawKey, rawValues] = token.split(':').map(s => s.trim());
         const key = (rawKey || '').toLowerCase();
         
