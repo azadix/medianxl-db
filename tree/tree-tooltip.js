@@ -2,7 +2,7 @@
 import { getSkillIconHTML, expandPlaceholdersWithScaling } from '../utils.js';
 import { getDatabase } from './tree-data.js';
 import { getSkillPoints, getOSkillPoints } from '../character-state.js';
-import { SKILL_CATEGORY_TAG_IDS } from '../tag-constants.js';
+import { SKILL_CATEGORY_TAG_IDS, SUMMON_TAG_IDS, TELEPORT_TAG_IDS } from '../tag-constants.js';
 
 let tooltipElement = null;
 let currentHoveredSkill = null;
@@ -335,11 +335,14 @@ function getSkillCategoryTags(db, skillId) {
     if (!db) return [];
     
     try {
+        // Combine all relevant tag IDs
+        const allTagIds = [...SKILL_CATEGORY_TAG_IDS, ...SUMMON_TAG_IDS, ...TELEPORT_TAG_IDS];
+        
         const res = db.exec(`
             SELECT st.name
             FROM skill_skilltags sst
             JOIN skilltags st ON sst.tag_id = st.id
-            WHERE sst.skill_id = ? AND st.id IN (${SKILL_CATEGORY_TAG_IDS.join(',')})
+            WHERE sst.skill_id = ? AND st.id IN (${allTagIds.join(',')})
             ORDER BY st.name
         `, [skillId]);
         
