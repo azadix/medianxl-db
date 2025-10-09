@@ -138,8 +138,42 @@ function handleOSkillsUpdated() {
         const isOSkill = skillCard && skillCard.closest('#tab-oSkills');
         
         if (isOSkill) {
-            // Skill still exists, refresh tooltip
-            refreshTooltip();
+            // Skill still exists, refresh tooltip (same logic as handleSkillPointsChanged)
+            const db = getDatabase();
+            if (!db) return;
+            
+            const skillData = getSkillDataFromDB(db, currentHoveredSkill);
+            if (!skillData) return;
+            
+            // Check if this is an oSkill
+            const allSkillCards = document.querySelectorAll(`.skill-card[data-skill-id="${currentHoveredSkill}"]`);
+            let activeSkillCard = null;
+            let isOSkillCard = false;
+            
+            // Find the correct card - prefer oSkills tab if it exists there
+            allSkillCards.forEach(card => {
+                if (card.closest('#tab-oSkills')) {
+                    activeSkillCard = card;
+                    isOSkillCard = true;
+                } else if (!activeSkillCard) {
+                    activeSkillCard = card;
+                }
+            });
+            
+            const currentLevel = isOSkillCard 
+                ? Math.max(1, getOSkillPoints(currentHoveredSkill))
+                : Math.max(1, getSkillPoints(currentHoveredSkill));
+            
+            // Get warning message from the skill card's plus button (if any)
+            // Skip warning for oSkills (they have no restrictions)
+            let warningMessage = '';
+            if (!isOSkillCard) {
+                const plusBtn = activeSkillCard?.querySelector('.skill-plus-btn');
+                warningMessage = plusBtn?.dataset?.warningMessage || '';
+            }
+            
+            const content = buildTooltipContent(skillData, currentLevel, db, warningMessage);
+            tooltipElement.innerHTML = content;
             return;
         }
     }
