@@ -1,11 +1,10 @@
 // Skills rendering and grid layout functionality
-import { getSkillIconHTML } from '../utils.js';
 import { addOverlayArrows } from './tree-arrows.js';
 import { setCurrentTab } from './tree-core.js';
-import { calculateMaxLevel, checkDevotionRestriction, getCurrentDevotion, getDevotionDisplayName } from '../skill-calculations.js';
+import { calculateMaxLevel, checkDevotionRestriction } from '../skill-calculations.js';
 import { getDatabase } from './tree-data.js';
 import { CHARACTER_CONFIG } from '../character-config.js';
-import { getSkillPoints, addSkillPoint, removeSkillPoint, checkPrerequisites, getAllSkillPoints } from '../character-state.js';
+import { getSkillPoints, addSkillPoint, removeSkillPoint, checkPrerequisites, getAllSkillPoints, checkMasteryRestriction, checkCovenRestriction } from '../character-state.js';
 import { ToastManager } from './ToastManager.js';
 import { renderSkillCard, getSkillIcon } from './tree-card-renderer.js';
 
@@ -71,10 +70,10 @@ function updateSkillCards(selectedClass, skillsList, characterLevel) {
             // Check prerequisites, ultimate, mastery, coven, and devotion restrictions
             const prereqCheck = checkPrerequisites(skill, currentSkillsList);
             const ultimateRestriction = checkUltimateSkillBlock(skill, currentSkillsList);
-            const masteryRestriction = checkMasterySkillBlock(skill, currentSkillsList);
-            const covenRestriction = checkCovenSkillBlock(skill, currentSkillsList);
+            const masteryRestriction = checkMasteryRestriction(skill, currentSkillsList);
+            const covenRestriction = checkCovenRestriction(skill, currentSkillsList);
             const devotionRestriction = checkDevotionRestriction(skill.skillId, skillLevels, db);
-            const canAddPoint = (prereqCheck.met && !ultimateRestriction.blocked && !masteryRestriction.blocked && !covenRestriction.blocked && devotionRestriction.canAllocate) || currentPoints > 0;
+            const canAddPoint = (prereqCheck.met && !ultimateRestriction.blocked && masteryRestriction.allowed && covenRestriction.allowed && devotionRestriction.canAllocate) || currentPoints > 0;
             
             // Build tooltip message
             let tooltipMessage = '';
@@ -82,9 +81,9 @@ function updateSkillCards(selectedClass, skillsList, characterLevel) {
                 tooltipMessage = prereqCheck.reasons.join('\n');
             } else if (ultimateRestriction.blocked && currentPoints === 0) {
                 tooltipMessage = ultimateRestriction.reason;
-            } else if (masteryRestriction.blocked && currentPoints === 0) {
+            } else if (!masteryRestriction.allowed && currentPoints === 0) {
                 tooltipMessage = masteryRestriction.reason;
-            } else if (covenRestriction.blocked && currentPoints === 0) {
+            } else if (!covenRestriction.allowed && currentPoints === 0) {
                 tooltipMessage = covenRestriction.reason;
             } else if (!devotionRestriction.canAllocate && currentPoints === 0) {
                 tooltipMessage = devotionRestriction.reason;
@@ -432,12 +431,12 @@ function createSkillCard(skill, currentTab, characterLevel = CHARACTER_CONFIG.DE
         // Check all restrictions
         const prereqCheck = checkPrerequisites(skill, currentSkillsList);
         const ultimateRestriction = checkUltimateSkillBlock(skill, currentSkillsList);
-        const masteryRestriction = checkMasterySkillBlock(skill, currentSkillsList);
-        const covenRestriction = checkCovenSkillBlock(skill, currentSkillsList);
+        const masteryRestriction = checkMasteryRestriction(skill, currentSkillsList);
+        const covenRestriction = checkCovenRestriction(skill, currentSkillsList);
         const devotionRestriction = checkDevotionRestriction(skill.skillId, skillLevels, db);
         
         // Can add point if: prereqs met AND (not blocked by restrictions OR already has points)
-        const canAddPoint = (prereqCheck.met && !ultimateRestriction.blocked && !masteryRestriction.blocked && !covenRestriction.blocked && devotionRestriction.canAllocate) || currentPoints > 0;
+        const canAddPoint = (prereqCheck.met && !ultimateRestriction.blocked && masteryRestriction.allowed && covenRestriction.allowed && devotionRestriction.canAllocate) || currentPoints > 0;
         
         // Build tooltip message
         let tooltipMessage = '';
@@ -445,9 +444,9 @@ function createSkillCard(skill, currentTab, characterLevel = CHARACTER_CONFIG.DE
             tooltipMessage = prereqCheck.reasons.join('\n');
         } else if (ultimateRestriction.blocked && currentPoints === 0) {
             tooltipMessage = ultimateRestriction.reason;
-        } else if (masteryRestriction.blocked && currentPoints === 0) {
+        } else if (!masteryRestriction.allowed && currentPoints === 0) {
             tooltipMessage = masteryRestriction.reason;
-        } else if (covenRestriction.blocked && currentPoints === 0) {
+        } else if (!covenRestriction.allowed && currentPoints === 0) {
             tooltipMessage = covenRestriction.reason;
         } else if (!devotionRestriction.canAllocate && currentPoints === 0) {
             tooltipMessage = devotionRestriction.reason;
@@ -540,87 +539,6 @@ function checkUltimateSkillBlock(skill, allSkills) {
     }
     
     return { blocked: false, reason: '' };
-}
-
-/**
- * Check if a Mastery skill is blocked by the 3-skill limit
- * @param {Object} skill - Skill to check
- * @param {Array} allSkills - Array of all skills
- * @returns {Object} { blocked: boolean, reason: string }
- */
-function checkMasterySkillBlock(skill, allSkills) {
-  // Check if this skill is in the Mastery tab
-  const isMastery = skill.tabName === 'Mastery';
-  
-  if (!isMastery) {
-    return { blocked: false, reason: '' };
-  }
-  
-  // If this skill already has points, it's not blocked
-  const currentPoints = getSkillPoints(skill.id);
-  if (currentPoints > 0) {
-    return { blocked: false, reason: '' };
-  }
-  
-  // Count how many different Mastery skills have points
-  const masterySkillsWithPoints = allSkills.filter(s => 
-    s.tabName === 'Mastery' && 
-    s.class === skill.class &&
-    getSkillPoints(s.id) > 0
-  );
-  
-  // Check if we've reached the limit
-  const maxMasterySkills = 3; // CHARACTER_CONFIG.MAX_MASTERY_SKILLS
-  if (masterySkillsWithPoints.length >= maxMasterySkills) {
-    return { 
-      blocked: true, 
-      reason: `Cannot allocate points to more than ${maxMasterySkills} different Mastery skills.` 
-    };
-  }
-  
-  return { blocked: false, reason: '' };
-}
-
-/**
- * Check if a Coven skill is blocked by the 2-skill limit
- * Only applies to 4 exclusive skills: Living Flame, Warp Armor, Snow Queen, Vengeful Power
- * @param {Object} skill - Skill to check
- * @param {Array} allSkills - Array of all skills
- * @returns {Object} { blocked: boolean, reason: string }
- */
-function checkCovenSkillBlock(skill, allSkills) {
-  // List of exclusive Coven skills (skill names)
-  const exclusiveCovenSkills = ['living_flame', 'warp_armor', 'snow_queen', 'vengeful_power'];
-  
-  // Check if this skill is one of the exclusive Coven skills
-  const isExclusiveCoven = exclusiveCovenSkills.includes(skill.id);
-  
-  if (!isExclusiveCoven) {
-    return { blocked: false, reason: '' };
-  }
-  
-  // If this skill already has points, it's not blocked
-  const currentPoints = getSkillPoints(skill.id);
-  if (currentPoints > 0) {
-    return { blocked: false, reason: '' };
-  }
-  
-  // Count how many different exclusive Coven skills have points
-  const exclusiveCovenSkillsWithPoints = allSkills.filter(s => 
-    exclusiveCovenSkills.includes(s.id) &&
-    getSkillPoints(s.id) > 0
-  );
-  
-  // Check if we've reached the limit (2 out of 4)
-  const maxCovenSkills = 2; // CHARACTER_CONFIG.MAX_COVEN_SKILLS
-  if (exclusiveCovenSkillsWithPoints.length >= maxCovenSkills) {
-    return { 
-      blocked: true, 
-      reason: `Cannot allocate points to more than ${maxCovenSkills} of these Coven skills:\n- Living Flame\n- Warp Armor\n- Snow Queen\n- Vengeful Power` 
-    };
-  }
-  
-  return { blocked: false, reason: '' };
 }
 
 /**

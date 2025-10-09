@@ -15,6 +15,14 @@ const OR_PREREQUISITE_SKILLS = [
   "Life From Death"
 ];
 
+// Prerequisite display order (lower number = shown first)
+const PREREQUISITE_ORDER = {
+  'skill_level': 1,        // Required skills (e.g., "Requires Fire Bolt (5)")
+  'skill_blocked_by': 2,   // Blocked by skills (e.g., "Cannot allocate while X has points")
+  'tree_points': 3,        // Tab points (e.g., "Requires 10 points in Warmonger tree")
+  'character_level': 4     // Character level (currently skipped)
+};
+
 // Character state
 const characterState = {
   level: CHARACTER_CONFIG.DEFAULT_LEVEL,
@@ -146,7 +154,8 @@ export function checkPrerequisites(skill, allSkills = []) {
     return { met: true, reasons: [] };
   }
 
-  const reasons = [];
+  // Collect reasons with their types for sorting
+  const reasonsWithTypes = [];
   const useOrLogic = OR_PREREQUISITE_SKILLS.includes(skill.name);
   
   // Separate skill_level prerequisites from others
@@ -168,7 +177,7 @@ export function checkPrerequisites(skill, allSkills = []) {
     
     // Skip character level checks - users can freely allocate points
     // Character level only affects max level calculations, not allocation
-    if (type === 'character_level' || type === 'class_level') {
+    if (type === 'character_level') {
       continue; // Skip level requirement checks
     } else if (type === 'skill_blocked_by') {
       // Blocked if target skill has more than specified points (typically 0)
@@ -177,7 +186,10 @@ export function checkPrerequisites(skill, allSkills = []) {
       const currentPoints = getSkillPoints(targetSkillName);
       
       if (currentPoints > maxAllowedPoints) {
-        reasons.push(`Cannot allocate points while ${target} has points`);
+        reasonsWithTypes.push({
+          type: 'skill_blocked_by',
+          message: `You cannot learn this skill if you have points in ${target}.`
+        });
       }
     } else if (type === 'tree_points') {
       // Tree points check - requires counting points spent in a specific tab
@@ -187,7 +199,10 @@ export function checkPrerequisites(skill, allSkills = []) {
       const pointsInTab = countPointsInTab(targetTabName, allSkills);
       
       if (pointsInTab < requiredPoints) {
-        reasons.push(`Requires ${requiredPoints} point${requiredPoints > 1 ? 's' : ''} in ${targetTabName} tree`);
+        reasonsWithTypes.push({
+          type: 'tree_points',
+          message: `Requires ${requiredPoints} point${requiredPoints > 1 ? 's' : ''} in ${targetTabName} tree`
+        });
       }
     }
   }
@@ -218,7 +233,10 @@ export function checkPrerequisites(skill, allSkills = []) {
       }
       
       if (!anyMet) {
-        reasons.push(`Requires one of: ${orReasons.join(' OR ')}`);
+        reasonsWithTypes.push({
+          type: 'skill_level',
+          message: `Requires one of: ${orReasons.join(' OR ')}`
+        });
       }
     } else {
       // AND logic: ALL prerequisites must be met (default)
@@ -229,16 +247,29 @@ export function checkPrerequisites(skill, allSkills = []) {
         const currentPoints = getSkillPoints(targetSkillName);
         
         if (currentPoints < requiredPoints) {
-          if (requiredPoints === 1) {
-            reasons.push(`Requires ${target}`);
-          } else {
-            reasons.push(`Requires ${requiredPoints} points in ${target}`);
-          }
+          const message = requiredPoints === 1 
+            ? `Requires ${target}` 
+            : `Requires ${requiredPoints} points in ${target}`;
+          
+          reasonsWithTypes.push({
+            type: 'skill_level',
+            message: message
+          });
         }
       }
     }
   }
-
+  
+  // Sort reasons by prerequisite order
+  reasonsWithTypes.sort((a, b) => {
+    const orderA = PREREQUISITE_ORDER[a.type] || 999;
+    const orderB = PREREQUISITE_ORDER[b.type] || 999;
+    return orderA - orderB;
+  });
+  
+  // Extract just the messages
+  const reasons = reasonsWithTypes.map(r => r.message);
+  
   return { met: reasons.length === 0, reasons };
 }
 
@@ -309,7 +340,7 @@ function checkUltimateRestriction(skill, allSkills) {
  * @param {Array} allSkills - Array of all skills
  * @returns {Object} { allowed: boolean, reason: string }
  */
-function checkMasteryRestriction(skill, allSkills) {
+export function checkMasteryRestriction(skill, allSkills) {
   // Check if this skill is in the Mastery tab
   const isMastery = skill.tabName === 'Mastery';
   
@@ -349,7 +380,7 @@ function checkMasteryRestriction(skill, allSkills) {
  * @param {Array} allSkills - Array of all skills
  * @returns {Object} { allowed: boolean, reason: string }
  */
-function checkCovenRestriction(skill, allSkills) {
+export function checkCovenRestriction(skill, allSkills) {
   // Check if this skill is one of the exclusive Coven skills
   const isExclusiveCoven = CHARACTER_CONFIG.COVEN_EXCLUSIVE_SKILLS.includes(skill.id);
   
@@ -373,7 +404,7 @@ function checkCovenRestriction(skill, allSkills) {
   if (exclusiveCovenSkillsWithPoints.length >= CHARACTER_CONFIG.MAX_COVEN_SKILLS) {
     return { 
       allowed: false, 
-      reason: `Cannot allocate points to more than ${CHARACTER_CONFIG.MAX_COVEN_SKILLS} of these Coven skills: Living Flame, Warp Armor, Snow Queen, Vengeful Power.` 
+      reason: `Cannot allocate points to more than ${CHARACTER_CONFIG.MAX_COVEN_SKILLS} of these Coven skills:\n- Living Flame\n- Warp Armor\n- Snow Queen\n- Vengeful Power` 
     };
   }
   
