@@ -176,3 +176,4 @@ def validate_skills(db_path='skills.sqlite'):
 if __name__ == '__main__':
     exit_code = validate_skills()
     sys.exit(exit_code)
+

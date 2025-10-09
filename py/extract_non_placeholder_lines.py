@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
 Extract all text lines that are NOT template placeholders from skill descriptions and restrictions.
-Saves output to lines.txt
 """
 
 import sqlite3
@@ -30,7 +29,7 @@ def is_placeholder_line(line):
     return False
 
 
-def extract_non_placeholder_lines(db_path='skills.sqlite', output_file='lines.txt'):
+def extract_non_placeholder_lines(db_path='skills.sqlite'):
     """
     Extract all non-placeholder text lines from skill descriptions and restrictions.
     """
@@ -91,43 +90,31 @@ def extract_non_placeholder_lines(db_path='skills.sqlite', output_file='lines.tx
     
     print(f"Found {len(sorted_lines)} unique non-placeholder text lines\n")
     
-    # Write to file
-    with open(output_file, 'w', encoding='utf-8') as f:
-        f.write("=" * 80 + "\n")
-        f.write("NON-PLACEHOLDER TEXT LINES FROM SKILL DESCRIPTIONS AND RESTRICTIONS\n")
-        f.write("Sorted by occurrence count (most common first)\n")
-        f.write("=" * 80 + "\n\n")
-        f.write(f"Total unique lines: {len(sorted_lines)}\n")
-        f.write(f"Extracted from {len(skills)} skills\n\n")
-        f.write("=" * 80 + "\n\n")
+    # Output to stdout
+    print("=" * 80)
+    print("NON-PLACEHOLDER TEXT LINES FROM SKILL DESCRIPTIONS AND RESTRICTIONS")
+    print("Sorted by occurrence count (most common first)")
+    print("=" * 80)
+    print()
+    print(f"Total unique lines: {len(sorted_lines)}")
+    print(f"Extracted from {len(skills)} skills")
+    print()
+    print("=" * 80)
+    print()
+    
+    for line in sorted_lines:
+        skills_using = skill_line_map.get(line, [])
+        occurrence_count = len(skills_using)
         
-        for line in sorted_lines:
-            skills_using = skill_line_map.get(line, [])
-            occurrence_count = len(skills_using)
-            
-            f.write(f"[{occurrence_count}x] {line}\n")
-            
-            # Show which skills use this line (limit to first 5)
-            if skills_using:
-                for skill_name, location, class_name in skills_using[:5]:
-                    f.write(f"  └─ {skill_name} ({class_name}) - {location}\n")
-                if len(skills_using) > 5:
-                    f.write(f"  └─ ... and {len(skills_using) - 5} more\n")
-            f.write("\n")
-    
-    print(f"Results saved to {output_file}")
-    print()
-    
-    # Show sample
-    print("Sample lines (first 10):")
-    print("-" * 80)
-    for line in sorted_lines[:10]:
-        print(f"  {line}")
-    
-    if len(sorted_lines) > 10:
-        print(f"  ... and {len(sorted_lines) - 10} more")
-    
-    print()
+        print(f"[{occurrence_count}x] {line}")
+        
+        # Show which skills use this line (limit to first 5)
+        if skills_using:
+            for skill_name, location, class_name in skills_using[:5]:
+                print(f"  - {skill_name} ({class_name}) - {location}")
+            if len(skills_using) > 5:
+                print(f"  - ... and {len(skills_using) - 5} more")
+        print()
     
     conn.close()
     return 0

@@ -5,8 +5,6 @@ from the skills.sqlite database.
 """
 
 import sqlite3
-import re
-import sys
 from pathlib import Path
 
 def extract_skills_without_placeholders(db_path='skills.sqlite'):
@@ -51,20 +49,6 @@ def extract_skills_without_placeholders(db_path='skills.sqlite'):
     except Exception as e:
         print(f"Error: {e}")
         return []
-
-def has_placeholders(description):
-    """
-    Check if a description contains any placeholder patterns.
-    
-    Args:
-        description (str): The skill description
-        
-    Returns:
-        bool: True if placeholders are found, False otherwise
-    """
-    # Pattern to match {{...}} placeholders
-    pattern = r'\{\{[^}]+\}\}'
-    return bool(re.search(pattern, description))
 
 def main():
     """Main function to run the extraction and display results."""
@@ -122,3 +106,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
