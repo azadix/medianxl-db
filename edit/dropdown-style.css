@@ -1,4 +1,4 @@
-.dropdown-list-container {
+:root {
     --bg-color: #FAFAFA;
     --text-color: #14161A;
     --border-color: #3D4451;
@@ -9,12 +9,14 @@
 }
 
 @media (prefers-color-scheme: dark) {
-    .dropdown-list-container {
+    :root {
         --bg-color: #14161A;
         --text-color: #FAFAFA;
         --border-color: #3D4451;
 	--header-bg-color: #F5F5F5;
 	--header-text-color: #666666;
+	--hover-bg-color: #F4AD08;
+	--hover-text-color: #0A0A0A;
     }
 }
 

@@ -2,6 +2,14 @@
 
 /**
  * Check for template syntax errors in text
+ * Validates both stat placeholders {{stat}} and skill placeholders [[skill]]
+ * 
+ * Checks for:
+ * - Triple braces {{{ }}} or brackets [[[ ]]]
+ * - Mismatched opening/closing pairs
+ * - Unclosed placeholders
+ * - Single braces/brackets that might be typos
+ * 
  * @param {string} text - The text to validate
  * @returns {Array} - Array of error messages, empty if no errors
  */
@@ -12,12 +20,16 @@ export function validateTemplateSyntax(text) {
         return errors;
     }
     
-    // Check for triple braces
+    // Check for triple braces (common typo)
     if (text.includes('{{{') || text.includes('}}}')) {
-        errors.push('Triple braces {{{ or }}} found. Use double braces {{}} for placeholders.');
+        errors.push('Triple {{{ or }}} found. Use double braces {{}} for stat placeholders.');
+    }
+
+    if (text.includes('[[[') || text.includes(']]]')) {
+        errors.push('Triple [[[ or ]]] found. Use double square brackets [[]] for skill placeholders.');
     }
     
-    // Check for unclosed double braces
+    // Check for mismatched double braces
     const doubleOpenCount = (text.match(/\{\{/g) || []).length;
     const doubleCloseCount = (text.match(/\}\}/g) || []).length;
     
@@ -25,20 +37,44 @@ export function validateTemplateSyntax(text) {
         errors.push(`Mismatched {{ }} braces: ${doubleOpenCount} opening vs ${doubleCloseCount} closing.`);
     }
     
-    // Find all properly formed {{ }} placeholders
-    const placeholderPattern = /\{\{([^}]*)\}\}/g;
-    const placeholders = [...text.matchAll(placeholderPattern)];
+    // Check for mismatched double square brackets
+    const doubleSquareOpenCount = (text.match(/\[\[/g) || []).length;
+    const doubleSquareCloseCount = (text.match(/\]\]/g) || []).length;
+    
+    if (doubleSquareOpenCount !== doubleSquareCloseCount) {
+        errors.push(`Mismatched [[ ]] square brackets: ${doubleSquareOpenCount} opening vs ${doubleSquareCloseCount} closing.`);
+    }
+    
+    // Find all properly formed {{ }} stat placeholders
+    const statPlaceholderPattern = /\{\{([^}]*)\}\}/g;
+    const statPlaceholders = [...text.matchAll(statPlaceholderPattern)];
     
     // Check for {{ without closing }} by removing valid placeholders and checking if {{ remains
-    let tempText = text;
-    placeholders.forEach(match => {
-        tempText = tempText.replace(match[0], '', 1);
+    let tempTextStats = text;
+    statPlaceholders.forEach(match => {
+        tempTextStats = tempTextStats.replace(match[0], '', 1);
     });
     
-    if (tempText.includes('{{')) {
-        const pos = tempText.indexOf('{{');
-        const context = tempText.substring(Math.max(0, pos - 20), Math.min(tempText.length, pos + 50));
+    if (tempTextStats.includes('{{')) {
+        const pos = tempTextStats.indexOf('{{');
+        const context = tempTextStats.substring(Math.max(0, pos - 20), Math.min(tempTextStats.length, pos + 50));
         errors.push(`Unclosed {{ found near: ...${context}...`);
+    }
+    
+    // Find all properly formed [[ ]] skill placeholders
+    const skillPlaceholderPattern = /\[\[([^\]]*)\]\]/g;
+    const skillPlaceholders = [...text.matchAll(skillPlaceholderPattern)];
+    
+    // Check for [[ without closing ]] by removing valid placeholders and checking if [[ remains
+    let tempTextSkills = text;
+    skillPlaceholders.forEach(match => {
+        tempTextSkills = tempTextSkills.replace(match[0], '', 1);
+    });
+    
+    if (tempTextSkills.includes('[[')) {
+        const pos = tempTextSkills.indexOf('[[');
+        const context = tempTextSkills.substring(Math.max(0, pos - 20), Math.min(tempTextSkills.length, pos + 50));
+        errors.push(`Unclosed [[ found near: ...${context}...`);
     }
     
     // Check for single braces that might be typos
@@ -51,6 +87,19 @@ export function validateTemplateSyntax(text) {
         // Only warn if it looks like a placeholder (has : or contains letters)
         if (content.includes(':') || /[a-zA-Z]/.test(content)) {
             errors.push(`Single braces found (might be typo): {${content}}`);
+        }
+    });
+    
+    // Check for single square brackets that might be typos
+    // Only warn if it looks like it might be a skill placeholder attempt
+    const singleSquareBracketPattern = /(?<!\[)\[(?!\[)([^\]]*)\](?!\])/g;
+    const singleSquareBrackets = [...text.matchAll(singleSquareBracketPattern)];
+    
+    singleSquareBrackets.forEach(match => {
+        const content = match[1];
+        // Only warn if it looks like a skill placeholder (contains letters)
+        if (/[a-zA-Z]/.test(content)) {
+            errors.push(`Single square brackets found (might be typo): [${content}]`);
         }
     });
     

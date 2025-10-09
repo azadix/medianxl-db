@@ -87,7 +87,7 @@ export function initializeAutocomplete() {
   }
 
   function fuzzyFilter(items, query, itemType = 'stats') {
-    if (!query) return items.slice(0, 10); // Return first 10 if no query
+    if (!query) return items.slice(0, 20); // Return first 20 if no query
     
     const results = [];
     
@@ -222,9 +222,9 @@ export function initializeAutocomplete() {
         z-index: 1000;
         display: none;
         margin-top: 4px;
-        background-color: var(--bg-color, #14161A);
-        color: var(--text-color, #FAFAFA);
-        border: 1px solid var(--border-color, #3D4451);
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        border: 1px solid var(--border-color);
         border-radius: 3px;
       `;
       document.body.appendChild(autocompleteDropdown);
@@ -236,8 +236,8 @@ export function initializeAutocomplete() {
       const item = document.createElement('div');
       item.className = 'autocomplete-item dropdown-list-item';
       item.style.cssText = `
-        background-color: var(--bg-color, #14161A);
-        color: var(--text-color, #FAFAFA);
+        background-color: var(--bg-color);
+        color: var(--text-color);
       `;
       
       // Create strong element with proper color inheritance
@@ -297,11 +297,18 @@ export function initializeAutocomplete() {
     const items = autocompleteDropdown.querySelectorAll('.autocomplete-item');
     items.forEach((item, index) => {
       if (index === selectedIndex) {
-        item.style.backgroundColor = 'var(--accent-color, #4A9EFF)';
-        item.style.color = 'var(--bg-color, #14161A)';
+        item.style.backgroundColor = 'var(--hover-bg-color)';
+        item.style.color = 'var(--hover-text-color)';
+        
+        // Scroll the selected item into view
+        item.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+          inline: 'nearest'
+        });
       } else {
-        item.style.backgroundColor = 'var(--bg-color, #14161A)';
-        item.style.color = 'var(--text-color, #FAFAFA)';
+        item.style.backgroundColor = 'var(--bg-color)';
+        item.style.color = 'var(--text-color)';
       }
     });
   }
