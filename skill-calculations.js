@@ -34,7 +34,7 @@ const MAX_LEVEL_MODIFIERS = [
       // Only affects itself, based on character level only
       if (targetSkillData.skill_name === this.targetSkillName) {
         // BUG: i think that this skill is bugged in game since the scaling starts counting from level 1 and not 10
-        // should be copied from other ones when the mod fixes a bug
+        // should be copied from other ones when the mod fixes it
         return Math.floor(characterLevel / this.characterLevelDivisor);
       }
       return 0;

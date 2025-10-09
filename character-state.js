@@ -11,7 +11,7 @@ import { getDatabase } from './tree/tree-data.js';
 // Format: skill display name
 const OR_PREREQUISITE_SKILLS = [
   // Add skill display names here that require only ONE of their skill prerequisites
-  // Example: 'Artifice Mastery' requires ONE of: Incineration Trap OR Shockwave Trap OR Catalyst Trap
+  // Example: 'Life From Death' requires ONE of: Voodoo Practice OR Debilitating Concoction
   "Life From Death"
 ];
 

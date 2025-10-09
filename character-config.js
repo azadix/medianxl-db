@@ -7,7 +7,7 @@ export const CHARACTER_CONFIG = {
   // Level constraints
   MIN_LEVEL: 1,
   MAX_LEVEL: 150,
-  DEFAULT_LEVEL: 150,
+  DEFAULT_LEVEL: 1,
   
   // Skill constraints
   MIN_SKILL_LEVEL: 0,
@@ -16,9 +16,6 @@ export const CHARACTER_CONFIG = {
   // Max level constraints
   MIN_BASE_MAX_LEVEL: 0,
   DEFAULT_BASE_MAX_LEVEL: 1,
-  
-  // Skill points
-  // Base skill points are calculated as (level - 1) where level 1 = 0 points, level 150 = 149 points
   
   // Quest skill point rewards
   QUEST_SKILL_POINTS: {
