@@ -1,6 +1,7 @@
 // Skills management functionality
 import { SkillDB } from './edit-core.js';
 import { validateSkillTemplates, displayValidationErrors, removeValidationErrors } from './edit-validation.js';
+import { TAG_GROUPS } from '../tag-constants.js';
 
 export function initializeSkills() {
   populateClassSelect();
@@ -114,15 +115,7 @@ function createTagMap(tags) {
 }
 
 function renderTagGroups(container, tagMap, usedIds) {
-  const tagGroups = {
-    "Skill Category": [8, 9, 11, 12, 14, 15, 16, 17, 22, 25, 26, 27, 28, 29, 32, 35, 36],
-    "Damage": [1, 2, 3, 4, 5, 6, 7, 21, 23],
-    "Summon": [13, 30, 31],
-    "Teleport": [10, 20, 24],
-    "Modifier": [19, 18]
-  };
-
-  Object.entries(tagGroups).forEach(([groupName, tagIds]) => {
+  Object.entries(TAG_GROUPS).forEach(([groupName, tagIds]) => {
     const groupEl = createGroupElement(groupName, 'has-text-warning mb-0');
     const tags = getTagsForGroup(tagIds, tagMap, usedIds);
     

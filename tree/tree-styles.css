@@ -174,11 +174,6 @@ html {
     height: 64px;
 }
 
-.tooltip-name {
-    font-size: 1.25rem;
-    font-weight: bold;
-}
-
 .tooltip-restriction {
     padding: 6px 8px;
     background: rgba(255, 0, 0, 0.1);
@@ -195,14 +190,13 @@ html {
 
 .tooltip-max-level {
     padding: 4px 0;
-    font-size: 13px;
+    font-size: 0.9rem;
     color: #ddd;
 }
 
 .tooltip-level-indicator {
-    font-size: 14px;
+    font-size: 0.9rem;
     color: #aaa;
-    font-style: italic;
     margin-bottom: 4px;
 }
 

@@ -937,10 +937,10 @@ function renderSavedBuildsList() {
         columns.className = 'columns is-vcentered';
         
         const infoColumn = document.createElement('div');
-        infoColumn.className = 'column px-0';
+        infoColumn.className = 'column py-0';
         
         const title = document.createElement('p');
-        title.className = 'title is-5 mb-2';
+        title.className = 'title is-4 has-text-weight-bold mb-2';
         title.textContent = build.name; // Safe: uses textContent
         
         const subtitle = document.createElement('p');

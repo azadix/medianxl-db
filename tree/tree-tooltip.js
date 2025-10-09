@@ -2,6 +2,7 @@
 import { getSkillIconHTML, expandPlaceholdersWithScaling } from '../utils.js';
 import { getDatabase } from './tree-data.js';
 import { getSkillPoints, getOSkillPoints } from '../character-state.js';
+import { SKILL_CATEGORY_TAG_IDS } from '../tag-constants.js';
 
 let tooltipElement = null;
 let currentHoveredSkill = null;
@@ -325,6 +326,34 @@ function getSkillDataFromDB(db, skillId) {
 }
 
 /**
+ * Get skill category tags for a skill
+ * @param {Object} db - Database instance
+ * @param {number} skillId - Skill database ID
+ * @returns {Array<string>} Array of tag names
+ */
+function getSkillCategoryTags(db, skillId) {
+    if (!db) return [];
+    
+    try {
+        const res = db.exec(`
+            SELECT st.name
+            FROM skill_skilltags sst
+            JOIN skilltags st ON sst.tag_id = st.id
+            WHERE sst.skill_id = ? AND st.id IN (${SKILL_CATEGORY_TAG_IDS.join(',')})
+            ORDER BY st.name
+        `, [skillId]);
+        
+        if (res[0] && res[0].values.length > 0) {
+            return res[0].values.map(row => row[0]);
+        }
+    } catch (error) {
+        console.warn('Error fetching skill tags:', error);
+    }
+    
+    return [];
+}
+
+/**
  * Build tooltip HTML content
  * @param {Object} skillData - Skill data from database
  * @param {number} level - Current skill level
@@ -337,9 +366,53 @@ function buildTooltipContent(skillData, level, db, warningMessage = '') {
     // Skill name and icon
     html += '<div class="tooltip-header">';
     html += `<div class="tooltip-icon">${getSkillIconHTML(skillData.image, skillData.className, 'is-64x64')}</div>`;
-    html += `<div class="tooltip-name">${skillData.displayName}</div>`;
+    
+    // Skill category tags (if any)
+    let tagsHtml = ''
+    const tags = getSkillCategoryTags(db, skillData.dbId);
+    if (tags.length > 0) {
+        tagsHtml += '<p class="is-size-7 has-text-weight-bold has-text-grey-lighter">';
+        tagsHtml += tags.join(', ');
+        tagsHtml += '</p>';
+    }
+
+    html += `<div class="is-size-4 has-text-weight-bold">
+                ${skillData.displayName}
+                ${tagsHtml}
+            </div>
+    `;
     html += '</div>';
     
+    // Description with scaling
+    if (skillData.description) {
+        html += '<div class="tooltip-description p-0">';
+        
+        // Check if skill has scaling data
+        const hasScaling = checkSkillHasScaling(db, skillData.dbId);
+        
+        if (hasScaling) {
+            html += `<div class="tooltip-level-indicator is-italic">Level ${level} values:</div>`;
+        }
+        
+        const expandedDesc = expandPlaceholdersWithScaling(db, skillData.dbId, level, skillData.description);
+        const lines = expandedDesc.split('\n');
+        
+        // Add extra newline after first line if there are multiple lines
+        if (lines.length > 1) {
+            lines.splice(1, 0, '');
+        }
+        
+        lines.forEach(line => {
+            if (line.trim()) {
+                html += `<div>${line}</div>`;
+            } else {
+                html += '<div>&nbsp;</div>';
+            }
+        });
+        
+        html += '</div>';
+    }
+
     // Restriction (if any)
     if (skillData.restriction) {
         html += '<div class="tooltip-warning">';
@@ -359,36 +432,6 @@ function buildTooltipContent(skillData, level, db, warningMessage = '') {
         warningLines.forEach(line => {
             html += `<div class="has-text-danger">${line}</div>`;
         });
-        html += '</div>';
-    }
-    
-    // Description with scaling
-    if (skillData.description) {
-        html += '<div class="tooltip-description p-0">';
-        
-        // Check if skill has scaling data
-        const hasScaling = checkSkillHasScaling(db, skillData.dbId);
-        
-        if (hasScaling) {
-            html += `<div class="tooltip-level-indicator">Level ${level} values:</div>`;
-        }
-        
-        const expandedDesc = expandPlaceholdersWithScaling(db, skillData.dbId, level, skillData.description);
-        const lines = expandedDesc.split('\n');
-        
-        // Add extra newline after first line if there are multiple lines
-        if (lines.length > 1) {
-            lines.splice(1, 0, '');
-        }
-        
-        lines.forEach(line => {
-            if (line.trim()) {
-                html += `<div>${line}</div>`;
-            } else {
-                html += '<div>&nbsp;</div>';
-            }
-        });
-        
         html += '</div>';
     }
     
