@@ -1,7 +1,7 @@
 // Tooltip functionality for skill tree
 import { getSkillIconHTML, expandPlaceholdersWithScaling } from '../utils.js';
 import { getDatabase } from './tree-data.js';
-import { getSkillPoints } from '../character-state.js';
+import { getSkillPoints, getOSkillPoints } from '../character-state.js';
 
 let tooltipElement = null;
 let currentHoveredSkill = null;
@@ -49,7 +49,7 @@ function handleMouseOver(e) {
     }
     
     currentHoveredSkill = skillId;
-    showTooltip(skillId, e.clientX, e.clientY);
+    showTooltip(skillId, e.clientX, e.clientY, skillCard);
 }
 
 /**
@@ -93,32 +93,75 @@ function handleSkillPointsChanged() {
         const skillData = getSkillDataFromDB(db, currentHoveredSkill);
         if (!skillData) return;
         
-        const currentLevel = Math.max(1, getSkillPoints(currentHoveredSkill));
-        const content = buildTooltipContent(skillData, currentLevel, db);
+        // Check if this is an oSkill
+        // Note: There might be multiple cards with same skill ID (regular tree + oSkills)
+        const allSkillCards = document.querySelectorAll(`.skill-card[data-skill-id="${currentHoveredSkill}"]`);
+        let skillCard = null;
+        let isOSkill = false;
+        
+        // Find the correct card - prefer oSkills tab if it exists there
+        allSkillCards.forEach(card => {
+            if (card.closest('#tab-oSkills')) {
+                skillCard = card;
+                isOSkill = true;
+            } else if (!skillCard) {
+                // Use regular skill card as fallback
+                skillCard = card;
+            }
+        });
+        
+        const currentLevel = isOSkill 
+            ? Math.max(1, getOSkillPoints(currentHoveredSkill))
+            : Math.max(1, getSkillPoints(currentHoveredSkill));
+        
+        // Get warning message from the skill card's plus button (if any)
+        // Skip warning for oSkills (they have no restrictions)
+        let warningMessage = '';
+        if (!isOSkill) {
+            const plusBtn = skillCard?.querySelector('.skill-plus-btn');
+            warningMessage = plusBtn?.dataset?.warningMessage || '';
+        }
+        
+        const content = buildTooltipContent(skillData, currentLevel, db, warningMessage);
         
         tooltipElement.innerHTML = content;
     }
 }
 
 /**
- * Handle oSkills updated event to hide tooltip if skill card was removed
+ * Handle oSkills updated event to refresh or hide tooltip
  */
 function handleOSkillsUpdated() {
-    // Always hide tooltip when oSkills are updated and clear any pending timeouts
+    // If we're hovering over an oSkill, refresh the tooltip to show updated values
+    if (currentHoveredSkill && tooltipElement && tooltipElement.style.display !== 'none') {
+        const skillCard = document.querySelector(`.skill-card[data-skill-id="${currentHoveredSkill}"]`);
+        const isOSkill = skillCard && skillCard.closest('#tab-oSkills');
+        
+        if (isOSkill) {
+            // Skill still exists, refresh tooltip
+            refreshTooltip();
+            return;
+        }
+    }
+    
+    // Otherwise, hide tooltip (skill was removed or not an oSkill)
     if (tooltipHideTimeout) {
         clearTimeout(tooltipHideTimeout);
         tooltipHideTimeout = null;
     }
     
-    // Force hide tooltip immediately
     hideTooltip();
     currentHoveredSkill = null;
 }
 
 /**
  * Show tooltip for a skill
+ * @param {string} skillId - Internal skill name
+ * @param {number} mouseX - Mouse X position
+ * @param {number} mouseY - Mouse Y position
+ * @param {HTMLElement} hoveredCard - The actual card element being hovered (optional)
  */
-function showTooltip(skillId, mouseX, mouseY) {
+function showTooltip(skillId, mouseX, mouseY, hoveredCard = null) {
     const db = getDatabase();
     if (!db) {
         console.warn('Tooltip: Database not loaded yet');
@@ -132,11 +175,29 @@ function showTooltip(skillId, mouseX, mouseY) {
         return;
     }
     
-    // Get current skill level (or 1 if no points allocated)
-    const currentLevel = Math.max(1, getSkillPoints(skillId));
+    // Use the provided card or search for it
+    let skillCard = hoveredCard;
+    if (!skillCard) {
+        skillCard = document.querySelector(`.skill-card[data-skill-id="${skillId}"]`);
+    }
+    
+    // Check if this is an oSkill
+    const isOSkill = skillCard && skillCard.closest('#tab-oSkills');
+    
+    const currentLevel = isOSkill 
+        ? Math.max(1, getOSkillPoints(skillId))
+        : Math.max(1, getSkillPoints(skillId));
+    
+    // Get warning message from the skill card's plus button (if any)
+    // Skip warning for oSkills (they have no restrictions)
+    let warningMessage = '';
+    if (!isOSkill) {
+        const plusBtn = skillCard?.querySelector('.skill-plus-btn');
+        warningMessage = plusBtn?.dataset?.warningMessage || '';
+    }
     
     // Build tooltip content
-    const content = buildTooltipContent(skillData, currentLevel, db);
+    const content = buildTooltipContent(skillData, currentLevel, db, warningMessage);
     
     // Update tooltip
     tooltipElement.innerHTML = content;
@@ -231,21 +292,35 @@ function getSkillDataFromDB(db, skillId) {
 
 /**
  * Build tooltip HTML content
+ * @param {Object} skillData - Skill data from database
+ * @param {number} level - Current skill level
+ * @param {Object} db - Database instance
+ * @param {string} warningMessage - Optional warning message (e.g., prerequisite not met)
  */
-function buildTooltipContent(skillData, level, db) {
+function buildTooltipContent(skillData, level, db, warningMessage = '') {
     let html = '<div class="tooltip-content">';
     
     // Skill name and icon
     html += '<div class="tooltip-header">';
     html += `<div class="tooltip-icon">${getSkillIconHTML(skillData.image, skillData.className, 'is-64x64')}</div>`;
-    html += `<div class="tooltip-name has-text-warning">${skillData.displayName}</div>`;
+    html += `<div class="tooltip-name">${skillData.displayName}</div>`;
     html += '</div>';
     
     // Restriction (if any)
     if (skillData.restriction) {
-        html += '<div class="tooltip-restriction">';
+        html += '<div class="tooltip-warning">';
         const restrictionLines = skillData.restriction.split('\n');
         restrictionLines.forEach(line => {
+            html += `<div class="has-text-warning">${line}</div>`;
+        });
+        html += '</div>';
+    }
+    
+    // Warning message (if any) - for prerequisites, devotion, etc.
+    if (warningMessage) {
+        html += '<div class="tooltip-restriction">';
+        const warningLines = warningMessage.split(',');
+        warningLines.forEach(line => {
             html += `<div class="has-text-danger">${line}</div>`;
         });
         html += '</div>';

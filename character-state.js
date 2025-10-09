@@ -26,7 +26,8 @@ const characterState = {
     'radament': { normal: true, nightmare: true, hell: true },
     'izual': { normal: true, nightmare: true, hell: true },
     'inquisitor_of_the_triune': { hell: true}
-  }
+  },
+  oSkills: [] // Array of {skillId, skillName, displayName, image, className, points}
 };
 
 /**
@@ -672,5 +673,103 @@ export function importCharacterState(state) {
   characterState.className = state.className || null;
   characterState.skillPoints = { ...state.skillPoints } || {};
   characterState.maxLevels = {};
+}
+
+/**
+ * oSkills Management
+ * oSkills are virtual skills (from items/gear) with no restrictions
+ */
+
+/**
+ * Get all oSkills
+ * @returns {Array} Array of oSkill objects
+ */
+export function getAllOSkills() {
+  return characterState.oSkills;
+}
+
+/**
+ * Get points for a specific oSkill
+ * @param {string} skillName - Internal skill name
+ * @returns {number} Points allocated (0 if not found)
+ */
+export function getOSkillPoints(skillName) {
+  const oskill = characterState.oSkills.find(s => s.skillName === skillName);
+  return oskill ? oskill.points : 0;
+}
+
+/**
+ * Add an oSkill or increment if it exists
+ * @param {number} skillId - Database skill ID
+ * @param {string} displayName - Display name
+ * @param {string} skillName - Internal skill name
+ * @param {string} image - Image filename
+ * @param {string} className - Class name
+ */
+export function addOSkill(skillId, displayName, skillName, image, className) {
+  const existing = characterState.oSkills.find(s => s.skillName === skillName);
+  if (existing) {
+    existing.points++;
+  } else {
+    characterState.oSkills.push({
+      skillId,
+      displayName,
+      skillName,
+      image,
+      className,
+      points: 1
+    });
+  }
+  
+  // Dispatch event for UI updates
+  window.dispatchEvent(new CustomEvent('oskillsUpdated'));
+}
+
+/**
+ * Remove an oSkill
+ * @param {string} skillName - Internal skill name
+ */
+export function removeOSkill(skillName) {
+  const index = characterState.oSkills.findIndex(s => s.skillName === skillName);
+  if (index > -1) {
+    characterState.oSkills.splice(index, 1);
+    window.dispatchEvent(new CustomEvent('oskillsUpdated'));
+  }
+}
+
+/**
+ * Change oSkill points (positive to add, negative to remove)
+ * @param {string} skillName - Internal skill name
+ * @param {number} amount - Amount to change (can be negative)
+ */
+export function changeOSkillPoints(skillName, amount) {
+  const skill = characterState.oSkills.find(s => s.skillName === skillName);
+  if (!skill) return;
+  
+  skill.points += amount;
+  
+  // Remove skill if points drop to 0 or below
+  if (skill.points <= 0) {
+    removeOSkill(skillName);
+  } else {
+    window.dispatchEvent(new CustomEvent('oskillsUpdated'));
+  }
+}
+
+/**
+ * Clear all oSkills
+ */
+export function clearOSkills() {
+  characterState.oSkills = [];
+  window.dispatchEvent(new CustomEvent('oskillsUpdated'));
+}
+
+/**
+ * Set all oSkills (for loading builds)
+ * @param {Array} oSkills - Array of oSkill objects
+ */
+export function setAllOSkills(oSkills) {
+  characterState.oSkills = oSkills || [];
+  window.dispatchEvent(new CustomEvent('oskillsUpdated'));
 }
 

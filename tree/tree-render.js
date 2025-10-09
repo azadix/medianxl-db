@@ -7,6 +7,7 @@ import { getDatabase } from './tree-data.js';
 import { CHARACTER_CONFIG } from '../character-config.js';
 import { getSkillPoints, addSkillPoint, removeSkillPoint, checkPrerequisites, getAllSkillPoints } from '../character-state.js';
 import { ToastManager } from './ToastManager.js';
+import { renderSkillCard, getSkillIcon } from './tree-card-renderer.js';
 
 // Store current skills list for dependency checking
 let currentSkillsList = [];
@@ -91,7 +92,8 @@ function updateSkillCards(selectedClass, skillsList, characterLevel) {
             const plusDisabled = !canAddPoint || currentPoints >= effectiveMaxLevel;
             plusBtn.disabled = plusDisabled;
             plusBtn.className = `button is-outlined is-small ${plusDisabled ? 'is-ghost' : 'is-success'} skill-plus-btn`;
-            plusBtn.title = tooltipMessage;
+            // Store tooltip message as data attribute instead of title (to avoid double display)
+            plusBtn.dataset.warningMessage = tooltipMessage;
             
             // Update - button
             const minusDisabled = currentPoints === 0;
@@ -114,7 +116,7 @@ function updateSkillCards(selectedClass, skillsList, characterLevel) {
  * Update tab colors to highlight tabs with skill points
  * @param {Set} tabsWithPoints - Set of tab names that have points allocated
  */
-function updateTabColors(tabsWithPoints) {
+export function updateTabColors(tabsWithPoints) {
     // Get all tab links
     const tabLinks = document.querySelectorAll('.tabs a');
     
@@ -366,110 +368,88 @@ export function renderSkills(selectedClass, skillsList, skillsContainer, charact
 
 // Create a skill card element
 function createSkillCard(skill, currentTab, characterLevel = CHARACTER_CONFIG.DEFAULT_LEVEL) {
-    const card = document.createElement('div');
-    card.className = 'skill-card';
-    card.dataset.skillId = skill.id; // Add skill ID as data attribute for tooltip
-
-    // Parse prerequisites to find level requirements
-    let levelRequirement = null;
-    if (skill.prerequisites && skill.prerequisites.length > 0) {
-        skill.prerequisites.forEach(prereq => {
-            const [type, value] = prereq.split(':');
-            
-            if (type === 'character_level' || type === 'class_level') {
-                levelRequirement = value;
-            }
-        });
-    }
-
     // Get current skill points
     const currentPoints = getSkillPoints(skill.id);
     
-    // Section 1: Top row with 3 columns (empty space | icon | buttons)
-    let cardText = `<div style="display: grid; grid-template-columns: auto 1fr auto; gap: 4px; align-items: center; width: 100%;">`;
+    // Prepare card data
+    let cardData;
     
-    // Column 1: Empty (keeping grid structure but no content)
-    cardText += `<div style="min-width: 32px;"></div>`;
-    
-    // Column 2: Icon
-    cardText += `<div style="display: flex; justify-content: center;">${getSkillIconHTML(skill.image, skill.class)}</div>`;
-    
-    // Column 3: +/- buttons (will be added later if canAddPoints)
-    cardText += `<div class="skill-buttons-container" style="min-width: 32px;"></div>`;
-    
-    cardText += `</div>`; // End section 1
-    
-    // Section 2: Skill name
-    cardText += `<div style="text-align: center;">`;
-    if (skill.hasDetails) {
-        // Get current URL parameters to preserve state
-        const urlParams = new URLSearchParams(window.location.search);
-        const currentClass = urlParams.get('class');
-        // Use the passed currentTab parameter instead of reading from URL
-        const tabToUse = currentTab || urlParams.get('tab');
-        
-        // Build skill link with preserved state
-        let skillUrl = `./?skill=${skill.id}`;
-        if (currentClass) skillUrl += `&class=${currentClass}`;
-        if (tabToUse) skillUrl += `&tab=${tabToUse}`;
-        
-        cardText += `<a href="${skillUrl}">${skill.name}</a>`;
-    } else {
-        cardText += `${skill.name}`;
-    }
-    cardText += `</div>`; // End section 2
-    
-    // Section 3: Skill level display
     if (skill.canAddPoints) {
         const db = getDatabase();
         const skillLevels = getAllSkillPoints();
         const effectiveMaxLevel = db ? calculateMaxLevel(skill.skillId, skillLevels, characterLevel, db) : skill.baseMaxLevel;
         const isMaxed = currentPoints >= effectiveMaxLevel;
         
-        // Apply warning color only when maxed, otherwise grey
-        const levelColor = isMaxed ? 'has-text-warning' : 'has-text-grey';
+        // Determine skill name link
+        let nameLink = null;
+        if (skill.hasDetails) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const currentClass = urlParams.get('class');
+            const tabToUse = currentTab || urlParams.get('tab');
+            
+            nameLink = `./?skill=${skill.id}`;
+            if (currentClass) nameLink += `&class=${currentClass}`;
+            if (tabToUse) nameLink += `&tab=${tabToUse}`;
+        }
         
-        cardText += `<div style="text-align: center;">`;
-        cardText += `<div class="${levelColor} is-size-6">${currentPoints} / ${effectiveMaxLevel}</div>`;
-        cardText += `</div>`; // End section 3
+        cardData = {
+            skillId: skill.id,
+            iconHTML: getSkillIcon(skill.image, skill.class),
+            displayName: skill.name,
+            nameLink: nameLink,
+            currentPoints: currentPoints,
+            maxPoints: effectiveMaxLevel,
+            levelColor: isMaxed ? 'has-text-warning' : 'has-text-grey',
+            buttons: {
+                show: true,
+                plusDisabled: false, // Will be set below
+                minusDisabled: currentPoints === 0,
+                plusTooltip: '',
+                dataSkill: skill.id
+            }
+        };
     } else {
         // Skills that cannot have points added
-        cardText += `<div style="text-align: center;">`;
-        if (skill.tabName == "Innate") {
-            cardText += `<div class="has-text-grey is-size-6">0 / 0</div>`;
-        } else {
-            cardText += `<div class="has-text-grey is-size-6">? / ?</div>`;
-        }
-        cardText += `</div>`; // End section 3
+        const maxDisplay = skill.tabName === "Innate" ? "0" : "?";
+        
+        cardData = {
+            skillId: skill.id,
+            iconHTML: getSkillIcon(skill.image, skill.class),
+            displayName: skill.name,
+            nameLink: null,
+            currentPoints: skill.tabName === "Innate" ? 0 : "?",
+            maxPoints: maxDisplay,
+            levelColor: 'has-text-grey',
+            buttons: {
+                show: false,
+                plusDisabled: true,
+                minusDisabled: true,
+                plusTooltip: '',
+                dataSkill: skill.id
+            }
+        };
     }
     
-    card.innerHTML = cardText;
+    // Render card using shared renderer
+    const card = renderSkillCard(cardData);
     
-    // Add +/- buttons to the container if skill can have points
+    // Add restriction checks and event listeners if skill can have points
     if (skill.canAddPoints) {
         const db = getDatabase();
         const skillLevels = getAllSkillPoints();
         const effectiveMaxLevel = db ? calculateMaxLevel(skill.skillId, skillLevels, characterLevel, db) : skill.baseMaxLevel;
         
-        // Check if prerequisites are met
+        // Check all restrictions
         const prereqCheck = checkPrerequisites(skill, currentSkillsList);
-        
-        // Check Ultimate skill restriction
         const ultimateRestriction = checkUltimateSkillBlock(skill, currentSkillsList);
-        
-        // Check Mastery skill restriction
         const masteryRestriction = checkMasterySkillBlock(skill, currentSkillsList);
-        
-        // Check Coven skill restriction (Sorceress)
         const covenRestriction = checkCovenSkillBlock(skill, currentSkillsList);
-        
-        // Check Devotion restriction (for Paladin and Amazon)
         const devotionRestriction = checkDevotionRestriction(skill.skillId, skillLevels, db);
         
-        // Can add point if: prereqs met AND (not blocked by Ultimate, Mastery, Coven, or Devotion restrictions OR already has points)
+        // Can add point if: prereqs met AND (not blocked by restrictions OR already has points)
         const canAddPoint = (prereqCheck.met && !ultimateRestriction.blocked && !masteryRestriction.blocked && !covenRestriction.blocked && devotionRestriction.canAllocate) || currentPoints > 0;
         
-        // Build tooltip message (show Coven restriction, but not Mastery)
+        // Build tooltip message
         let tooltipMessage = '';
         if (!prereqCheck.met && currentPoints === 0) {
             tooltipMessage = prereqCheck.reasons.join(', ');
@@ -481,55 +461,46 @@ function createSkillCard(skill, currentTab, characterLevel = CHARACTER_CONFIG.DE
             tooltipMessage = devotionRestriction.reason;
         }
         
-        const buttonsContainer = card.querySelector('.skill-buttons-container');
-        if (buttonsContainer) {
+        // Update button states
+        const plusBtn = card.querySelector('.skill-plus-btn');
+        const minusBtn = card.querySelector('.skill-minus-btn');
+        
+        if (plusBtn && minusBtn) {
             const plusDisabled = !canAddPoint || currentPoints >= effectiveMaxLevel;
-            const minusDisabled = currentPoints === 0;
             
-            buttonsContainer.innerHTML = `
-                <div style="display: flex; flex-direction: column; gap: 2px; padding: 2px;">
-                    <button class="button is-outlined is-small ${plusDisabled ? 'is-ghost' : 'is-success'} skill-plus-btn" data-skill="${skill.id}" style="padding: 0; font-size: 1rem; width: 26px; height: 22px; border-width: 1px; line-height: 1;" ${plusDisabled ? 'disabled' : ''} title="${tooltipMessage}">+</button>
-                    <button class="button is-outlined is-small ${minusDisabled ? 'is-ghost' : 'is-danger'} skill-minus-btn" data-skill="${skill.id}" style="padding: 0; font-size: 1rem; width: 26px; height: 22px; border-width: 1px; line-height: 1;" ${minusDisabled ? 'disabled' : ''}>-</button>
-                </div>
-            `;
+            plusBtn.disabled = plusDisabled;
+            plusBtn.className = `button is-outlined is-small ${plusDisabled ? 'is-ghost' : 'is-success'} skill-plus-btn`;
+            // Store tooltip message as data attribute instead of title (to avoid double display)
+            plusBtn.dataset.warningMessage = tooltipMessage;
             
             // Add event listeners
-            const plusBtn = buttonsContainer.querySelector('.skill-plus-btn');
-            const minusBtn = buttonsContainer.querySelector('.skill-minus-btn');
+            plusBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (e.shiftKey) {
+                    // Shift-click: add 25 points
+                    handleSkillPointChange(skill, 25, characterLevel);
+                } else if (e.ctrlKey) {
+                    // Ctrl-click: add 5 points
+                    handleSkillPointChange(skill, 5, characterLevel);
+                } else {
+                    // Normal click: add 1 point
+                    handleSkillPointChange(skill, 1, characterLevel);
+                }
+            });
             
-            if (plusBtn) {
-                plusBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    // Shift-click: add maximum points, normal click: add 1 point
-                    if (e.shiftKey) {
-                        // Recalculate effective max level at click time (don't use cached value)
-                        const db = getDatabase();
-                        const skillLevels = getAllSkillPoints();
-                        const currentEffectiveMaxLevel = db ? calculateMaxLevel(skill.skillId, skillLevels, characterLevel, db) : skill.baseMaxLevel;
-                        
-                        // Get current points fresh from state
-                        const currentPointsNow = getSkillPoints(skill.id);
-                        const pointsToAdd = currentEffectiveMaxLevel - currentPointsNow;
-                        handleSkillPointChange(skill, pointsToAdd, characterLevel);
-                    } else {
-                        handleSkillPointChange(skill, 1, characterLevel);
-                    }
-                });
-            }
-            
-            if (minusBtn) {
-                minusBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    // Shift-click: remove all points, normal click: remove 1 point
-                    if (e.shiftKey) {
-                        // Get current points fresh from state
-                        const currentPointsNow = getSkillPoints(skill.id);
-                        handleSkillPointChange(skill, -currentPointsNow, characterLevel);
-                    } else {
-                        handleSkillPointChange(skill, -1, characterLevel);
-                    }
-                });
-            }
+            minusBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (e.shiftKey) {
+                    // Shift-click: remove 25 points
+                    handleSkillPointChange(skill, -25, characterLevel);
+                } else if (e.ctrlKey) {
+                    // Ctrl-click: remove 5 points
+                    handleSkillPointChange(skill, -5, characterLevel);
+                } else {
+                    // Normal click: remove 1 point
+                    handleSkillPointChange(skill, -1, characterLevel);
+                }
+            });
         }
     }
     

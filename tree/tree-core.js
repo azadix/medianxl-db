@@ -1,13 +1,14 @@
 // Core functionality for the skills tree viewer
 import { loadSkillsFromSQLite, getDatabase } from './tree-data.js';
-import { renderSkills, renderDifficultyCheckboxes } from './tree-render.js';
+import { renderSkills, renderDifficultyCheckboxes, updateTabColors } from './tree-render.js';
 import { CHARACTER_CONFIG, clampCharacterLevel } from '../character-config.js';
-import { initializeCharacter, setCharacterLevel, getSpentSkillPoints, getAvailableSkillPoints, getAllSkillPoints, setAllSkillPoints, updateQuestCompletion, getQuestCompletion, getSkillPoints } from '../character-state.js';
+import { initializeCharacter, setCharacterLevel, getSpentSkillPoints, getAvailableSkillPoints, getAllSkillPoints, setAllSkillPoints, updateQuestCompletion, getQuestCompletion, getSkillPoints, getAllOSkills, getOSkillPoints, addOSkill, changeOSkillPoints, clearOSkills, setAllOSkills } from '../character-state.js';
 import { getCurrentDevotion, getDevotionDisplayName } from '../skill-calculations.js';
 import { initializeTooltip } from './tree-tooltip.js';
 import { ToastManager } from './ToastManager.js';
 import { expandPlaceholdersWithScaling, getSkillIconHTML } from '../utils.js';
 import { DropdownList } from '../edit/DropdownList.js';
+import { renderSkillCard, getSkillIcon } from './tree-card-renderer.js';
 
 // Global variables
 let skillsList;
@@ -18,13 +19,15 @@ let currentCharacterLevel = CHARACTER_CONFIG.DEFAULT_LEVEL; // Default character
 let treeInitialized = false; // Track if tree has been initialized
 let currentBuildIndex = null; // Track currently loaded build index for saving
 let oSkillsDropdown = null; // Dropdown for oSkills
-let oSkills = []; // Array of {skillId, skillName, points}
 
 // Initialize ToastManager
 const toastManager = new ToastManager();
 
 // Build version
 const TREE_VERSION = '2.11';
+
+// Export function to get oSkill points (for tooltip) - now just re-exports from character-state
+export { getOSkillPoints } from '../character-state.js';
 
 // Main initialization function
 export function initializeTreePage() {
@@ -145,8 +148,8 @@ async function main() {
             updateUrlState(newClass, null);
             
             // Clear oSkills when switching classes (like resetBuild but without confirmation)
-            oSkills = [];
-            window.oSkills = oSkills; // Update window reference
+            clearOSkills();
+            window.oSkills = getAllOSkills(); // Update window reference
             
             // Reset oSkills dropdown input
             const oskillDropdown = document.querySelector('#oskill-dropdown .dropdown-list-input');
@@ -205,6 +208,11 @@ async function main() {
             
             // Update devotion display
             updateDevotionDisplay();
+        });
+        
+        // Add event listener for oSkills changes
+        window.addEventListener('oskillsUpdated', () => {
+            updateOSkillsDisplay();
         });
     } catch (error) {
         console.error('Error initializing tree page:', error);
@@ -769,8 +777,8 @@ function resetBuild(showToast = true) {
     updateSaveButtonVisibility();
     
     // Clear oSkills
-    oSkills = [];
-    window.oSkills = oSkills; // Update window reference
+    clearOSkills();
+    window.oSkills = getAllOSkills(); // Update window reference
     updateOSkillsDisplay();
     
     // Reset oSkills dropdown input
@@ -844,7 +852,7 @@ function updateCurrentBuild() {
         spentPoints: spentPoints,
         skillPoints: skillPoints,
         difficulties: difficulties,
-        oSkills: oSkills, // Save oSkills
+        oSkills: getAllOSkills(), // Save oSkills
         savedAt: new Date().toISOString()
     };
     
@@ -875,7 +883,7 @@ function saveBuild(buildName) {
         spentPoints: spentPoints,
         skillPoints: skillPoints,
         difficulties: difficulties,
-        oSkills: oSkills, // Save oSkills
+        oSkills: getAllOSkills(), // Save oSkills
         savedAt: new Date().toISOString()
     };
     
@@ -1011,8 +1019,8 @@ function loadBuild(index) {
     setAllSkillPoints(build.skillPoints);
     
     // Load oSkills
-    oSkills = build.oSkills || [];
-    window.oSkills = oSkills; // Update window reference
+    setAllOSkills(build.oSkills || []);
+    window.oSkills = getAllOSkills(); // Update window reference
     // Don't call updateOSkillsDisplay here - it will be called after renderSkills
     
     // Load difficulties
@@ -1132,64 +1140,39 @@ function initializeOSkillsDropdown() {
     }
 }
 
-function addOSkill(skillId, displayName, skillName, image, className) {
-    // Check if already exists (by skillName for consistency with regular skills)
-    const existing = oSkills.find(s => s.skillName === skillName);
-    if (existing) {
-        existing.points++;
-    } else {
-        oSkills.push({ 
-            skillId: skillId, 
-            displayName: displayName,
-            skillName: skillName,
-            image: image,
-            className: className,
-            points: 1 
-        });
-    }
-    
-    updateOSkillsDisplay();
-}
+// oSkills management is now handled by character-state.js
+// These are just thin wrappers for backwards compatibility
 
-function removeOSkill(skillName) {
-    const index = oSkills.findIndex(s => s.skillName === skillName);
-    if (index > -1) {
-        oSkills.splice(index, 1);
-        updateOSkillsDisplay();
-    }
-}
-
-function incrementOSkill(skillName) {
-    const skill = oSkills.find(s => s.skillName === skillName);
-    if (skill) {
-        skill.points++;
-        updateOSkillsDisplay();
-    }
-}
-
-function decrementOSkill(skillName) {
-    const skill = oSkills.find(s => s.skillName === skillName);
-    if (skill) {
-        skill.points--;
-        if (skill.points <= 0) {
-            removeOSkill(skillName);
-        } else {
-            updateOSkillsDisplay();
-        }
-    }
+function handleOSkillPointChange(skillName, amount) {
+    changeOSkillPoints(skillName, amount);
 }
 
 function updateOSkillsDisplay() {
     // Update window reference for other modules (like tree-render.js)
-    window.oSkills = oSkills;
+    window.oSkills = getAllOSkills();
+    
+    // Update the oSkills tab
     updateOSkillsTab();
     
-    // Trigger tab color update
-    const currentClass = classSelect ? classSelect.value : null;
-    if (currentClass && skillsList) {
-        const savedTab = currentTab;
-        renderSkills(currentClass, skillsList, skillsContainer, currentCharacterLevel, savedTab, false);
+    // Update tab colors (lightweight - just updates CSS classes)
+    const tabsWithPoints = new Set();
+    
+    // Check regular skills for points
+    const skillPoints = getAllSkillPoints();
+    if (skillsList) {
+        skillsList.forEach(skill => {
+            if (skillPoints[skill.id] > 0 && skill.tabName) {
+                tabsWithPoints.add(skill.tabName);
+            }
+        });
     }
+    
+    // Check if oSkills tab should be highlighted
+    if (window.oSkills && window.oSkills.length > 0) {
+        tabsWithPoints.add('oSkills');
+    }
+    
+    updateTabColors(tabsWithPoints);
 }
 
 // Flag to prevent dropdown recreation during rendering
@@ -1210,9 +1193,7 @@ function updateOSkillsTab() {
         tooltipElement.style.display = 'none';
     }
     
-    // Dispatch event to notify tooltip system that DOM has changed
-    window.dispatchEvent(new CustomEvent('oskillsUpdated'));
-    
+    const oSkills = getAllOSkills();
     if (oSkills.length === 0) {
         return;
     }
@@ -1236,61 +1217,63 @@ function updateOSkillsTab() {
 }
 
 function createOSkillCard(oskill) {
-    const card = document.createElement('div');
-    card.className = 'skill-card';
-    card.dataset.skillId = oskill.skillName; // Add for tooltip support (uses internal name)
-    
-    // Use proper icon loading function
-    const iconHTML = getSkillIconHTML(oskill.image, oskill.className);
-    
-    // Section 1: Top row with icon and buttons
-    let cardText = `<div style="display: grid; grid-template-columns: auto 1fr auto; gap: 4px; align-items: center; width: 100%;">`;
-    cardText += `<div style="min-width: 32px;"></div>`;
-    cardText += `<div style="display: flex; justify-content: center;">${iconHTML}</div>`;
-    cardText += `<div class="skill-buttons-container" style="min-width: 32px;"></div>`;
-    cardText += `</div>`;
-    
-    // Section 2: Skill name
-    cardText += `<div style="text-align: center;">`;
-    cardText += `<div style="font-size: 0.85rem; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${oskill.displayName}</div>`;
-    cardText += `</div>`;
-    
-    // Section 3: Points display (like level display in regular cards)
-    cardText += `<div style="text-align: center;">`;
-    cardText += `<div class="has-text-info is-size-6">${oskill.points} / ∞</div>`;
-    cardText += `</div>`;
-    
-    card.innerHTML = cardText;
-    
-    // Add +/- buttons with event listeners (matching regular skill cards)
-    const buttonsContainer = card.querySelector('.skill-buttons-container');
-    if (buttonsContainer) {
-        buttonsContainer.innerHTML = `
-            <div style="display: flex; flex-direction: column; gap: 2px; padding: 2px;">
-                <button class="button is-outlined is-small is-success skill-plus-btn" data-skill="${oskill.skillName}" style="padding: 0; font-size: 1rem; width: 26px; height: 22px; border-width: 1px; line-height: 1;">+</button>
-                <button class="button is-outlined is-small is-danger skill-minus-btn" data-skill="${oskill.skillName}" style="padding: 0; font-size: 1rem; width: 26px; height: 22px; border-width: 1px; line-height: 1;">−</button>
-            </div>
-        `;
-        
-        // Add event listeners
-        const plusBtn = buttonsContainer.querySelector('.skill-plus-btn');
-        const minusBtn = buttonsContainer.querySelector('.skill-minus-btn');
-        
-        if (plusBtn) {
-            plusBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                incrementOSkill(oskill.skillName);
-            });
+    // Prepare card data
+    const cardData = {
+        skillId: oskill.skillName,
+        iconHTML: getSkillIcon(oskill.image, oskill.className),
+        displayName: oskill.displayName,
+        nameLink: null, // oSkills don't have detail pages
+        currentPoints: oskill.points,
+        maxPoints: '∞',
+        levelColor: 'has-text-info',
+        buttons: {
+            show: true,
+            plusDisabled: false, // oSkills never disable plus button
+            minusDisabled: oskill.points === 0,
+            plusTooltip: '',
+            dataSkill: oskill.skillName
         }
-        
-        if (minusBtn) {
-            minusBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                decrementOSkill(oskill.skillName);
-            });
-        }
+    };
+    
+    // Render card using shared renderer
+    const card = renderSkillCard(cardData);
+    
+    // Add oSkill-specific event listeners
+    const plusBtn = card.querySelector('.skill-plus-btn');
+    const minusBtn = card.querySelector('.skill-minus-btn');
+    
+    if (plusBtn) {
+        plusBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (e.shiftKey) {
+                // Shift-click: add 25 points
+                handleOSkillPointChange(oskill.skillName, 25);
+            } else if (e.ctrlKey) {
+                // Ctrl-click: add 5 points
+                handleOSkillPointChange(oskill.skillName, 5);
+            } else {
+                // Normal click: add 1 point
+                handleOSkillPointChange(oskill.skillName, 1);
+            }
+        });
+    }
+    
+    if (minusBtn) {
+        minusBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (e.shiftKey) {
+                // Shift-click: remove 25 points
+                handleOSkillPointChange(oskill.skillName, -25);
+            } else if (e.ctrlKey) {
+                // Ctrl-click: remove 5 points
+                handleOSkillPointChange(oskill.skillName, -5);
+            } else {
+                // Normal click: remove 1 point
+                handleOSkillPointChange(oskill.skillName, -1);
+            }
+        });
     }
     
     return card;

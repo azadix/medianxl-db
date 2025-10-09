@@ -56,6 +56,53 @@ html {
     flex-shrink: 1;
 }
 
+/* Skill card internal structure */
+.skill-card-header {
+    display: grid;
+    grid-template-columns: 32px 1fr 32px;
+    gap: 4px;
+    align-items: center;
+    width: 100%;
+    padding: 0 4px;
+}
+
+.skill-card-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.skill-buttons-container {
+    min-width: 32px;
+}
+
+.skill-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 2px;
+}
+
+.skill-buttons .button {
+    padding: 0;
+    font-size: 1rem;
+    width: 26px;
+    height: 22px;
+    border-width: 1px;
+    line-height: 1;
+}
+
+.skill-card-name {
+    text-align: center;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0 4px;
+}
+
+.skill-card-level {
+    text-align: center;
+}
+
 .has-text-purple {
     color: rgb(190, 0, 210);
 }
@@ -137,6 +184,13 @@ html {
     padding: 6px 8px;
     background: rgba(255, 0, 0, 0.1);
     border-left: 3px solid #ff3860;
+    border-radius: 3px;
+}
+
+.tooltip-warning {
+    padding: 6px 8px;
+    background: rgba(255, 193, 0, 0.1);
+    border-left: 3px solid #ffdd57;
     border-radius: 3px;
 }
 
