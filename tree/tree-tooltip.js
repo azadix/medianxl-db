@@ -309,7 +309,9 @@ function buildTooltipContent(skillData, level, db, warningMessage = '') {
     // Restriction (if any)
     if (skillData.restriction) {
         html += '<div class="tooltip-warning">';
-        const restrictionLines = skillData.restriction.split('\n');
+        // Expand placeholders in restriction text
+        const expandedRestriction = expandPlaceholdersWithScaling(db, skillData.dbId, level, skillData.restriction);
+        const restrictionLines = expandedRestriction.split('\n');
         restrictionLines.forEach(line => {
             html += `<div class="has-text-warning">${line}</div>`;
         });

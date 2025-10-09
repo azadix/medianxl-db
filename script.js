@@ -102,7 +102,7 @@ async function initializeDataTable(skillsData) {
         layout: {
             topStart: () => {
                 return `<div class="field">
-                    <button id="filter-toggle" class="button is-small filter-toggle is-info">
+                    <button id="filter-toggle" class="button is-outlined filter-toggle is-info">
                         Show all
                     </button>
                 </div>`
@@ -253,8 +253,30 @@ async function displaySkillDetail(skillId) {
             lines.splice(1, 0, ''); // Insert empty string at index 1 (after first line)
         }
         
-        const htmlLines = lines.map(line => `${line}<br>`).join('');
-        return `<p class="is-size-5"><strong>Description:</strong></p>${htmlLines}<br>`;
+        let html = `<p class="is-size-5"><strong>Description:</strong></p>`;
+        lines.forEach(line => {
+            if (line.trim()) {
+                html += `<div>${line}</div>`;
+            } else {
+                html += '<div>&nbsp;</div>';
+            }
+        });
+        
+        return html;
+    }
+    
+    function renderRestrictionAtLevel(level) {
+        if (!skillInfo.restriction) return '';
+        
+        let html = `<p class="is-size-5"><strong>Restriction:</strong></p>`;
+        // Expand placeholders in restriction text
+        const expandedRestriction = expandPlaceholdersWithScaling(SkillDB.db, skillInfo.dbId, level, skillInfo.restriction);
+        html += expandedRestriction.split('\n').map(
+            line => `<p><span class="has-text-danger">${line}</span></p>`
+        ).join('');
+        html += `<br>`;
+        
+        return html;
     }
 
     function createScalingGraphs(skillId) {
@@ -347,16 +369,7 @@ async function displaySkillDetail(skillId) {
     }
 
     let descriptionHtml = renderDescriptionAtLevel(initialLevel);
-
-    // Only show restriction if it exists
-    let restrictionHtml = '';
-    if (skillInfo.restriction) {
-        restrictionHtml = `<p class="is-size-5"><strong>Restriction:</strong></p>`;
-        restrictionHtml += skillInfo.restriction.split('\n').map(
-            line => `<p><span class="has-text-danger">${line}</span></p>`
-        ).join('');
-        restrictionHtml += `<br>`;
-    }
+    let restrictionHtml = renderRestrictionAtLevel(initialLevel);
 
     // Add max level information
     let maxLevelHtml = '';
@@ -420,7 +433,7 @@ async function displaySkillDetail(skillId) {
             <div class="columns">
                 <div class="column is-two-thirds">
                     <div class="skill-info">
-                        ${restrictionHtml}
+                        <div class="skill-restriction">${restrictionHtml}</div>
                         ${maxLevelHtml}
                         <div class="skill-description">${descriptionHtml}</div>
                         ${levelControl}
@@ -457,12 +470,19 @@ async function displaySkillDetail(skillId) {
             // Get the level from the current select element
             const currentSelect = event ? event.target : document.getElementById('skill-level');
             const level = parseInt(currentSelect.value, 10) || initialLevel;
-            const newHtml = renderDescriptionAtLevel(level);
             
-            // Update only the description part
+            // Update description
+            const newDescHtml = renderDescriptionAtLevel(level);
             const descriptionContainer = document.querySelector('.skill-description');
             if (descriptionContainer) {
-                descriptionContainer.innerHTML = newHtml;
+                descriptionContainer.innerHTML = newDescHtml;
+            }
+            
+            // Update restriction (if it has placeholders)
+            const newRestHtml = renderRestrictionAtLevel(level);
+            const restrictionContainer = document.querySelector('.skill-restriction');
+            if (restrictionContainer) {
+                restrictionContainer.innerHTML = newRestHtml;
             }
         }
         levelSelect.addEventListener('change', handleLevelChange);

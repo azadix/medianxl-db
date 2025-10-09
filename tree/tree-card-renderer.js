@@ -9,7 +9,7 @@ import { getSkillIconHTML } from '../utils.js';
  * @param {string} cardData.skillId - Internal skill name for data-skill-id
  * @param {string} cardData.iconHTML - HTML for skill icon
  * @param {string} cardData.displayName - Display name of the skill
- * @param {string|null} cardData.nameLink - Optional link URL for skill name
+ * @param {boolean} cardData.hasDescription - Whether skill has description (for styling)
  * @param {number} cardData.currentPoints - Current allocated points
  * @param {number|string} cardData.maxPoints - Max points (number or '∞')
  * @param {string} cardData.levelColor - CSS class for level display color
@@ -38,11 +38,9 @@ export function renderSkillCard(cardData) {
     
     // Section 2: Skill name
     html += '<div class="skill-card-name">';
-    if (cardData.nameLink) {
-        html += `<a href="${cardData.nameLink}">${cardData.displayName}</a>`;
-    } else {
-        html += cardData.displayName;
-    }
+    // Style name as link if skill has description, but don't make it clickable
+    const nameClass = cardData.hasDescription ? 'has-text-info' : '';
+    html += `<span class="${nameClass}">${cardData.displayName}</span>`;
     html += '</div>';
     
     // Section 3: Level display

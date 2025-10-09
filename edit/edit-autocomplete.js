@@ -3,12 +3,14 @@ import { SkillDB } from './edit-core.js';
 
 export function initializeAutocomplete() {
   const descriptionField = document.getElementById('description');
+  const restrictionField = document.getElementById('restriction');
   if (!descriptionField) return;
 
   let autocompleteDropdown = null;
   let currentMatches = [];
   let selectedIndex = -1;
   let statUsageCounts = {};
+  let activeField = null; // Track which field is currently active
 
   function countStatUsageInDescriptions() {
     if (!SkillDB.db) return {};
@@ -194,8 +196,8 @@ export function initializeAutocomplete() {
       autocompleteDropdown.appendChild(item);
     });
 
-    // Position dropdown
-    const rect = descriptionField.getBoundingClientRect();
+    // Position dropdown relative to active field
+    const rect = activeField.getBoundingClientRect();
     autocompleteDropdown.style.left = rect.left + 'px';
     autocompleteDropdown.style.top = (rect.bottom + window.scrollY) + 'px';
     autocompleteDropdown.style.width = rect.width + 'px';
@@ -229,8 +231,10 @@ export function initializeAutocomplete() {
   }
 
   function completeStat(match) {
-    const text = descriptionField.value;
-    const cursorPos = descriptionField.selectionStart;
+    if (!activeField) return;
+    
+    const text = activeField.value;
+    const cursorPos = activeField.selectionStart;
     
     // Find the last {{ before cursor
     const beforeCursor = text.substring(0, cursorPos);
@@ -265,104 +269,120 @@ export function initializeAutocomplete() {
       }
       
       const newText = beforeMatch + match.key + '}}' + afterMatch;
-      descriptionField.value = newText;
+      activeField.value = newText;
 
       // Set cursor position after the completed stat
       const newCursorPos = beforeMatch.length + match.key.length + 2;
-      descriptionField.setSelectionRange(newCursorPos, newCursorPos);
+      activeField.setSelectionRange(newCursorPos, newCursorPos);
     }
     
     hideAutocomplete();
   }
 
-  descriptionField.addEventListener('input', function(e) {
-    const cursorPos = e.target.selectionStart;
-    const text = e.target.value;
-    
-    // Find the current {{}} block the cursor is in
-    const beforeCursor = text.substring(0, cursorPos);
-    const afterCursor = text.substring(cursorPos);
-    
-    // Look for the last {{ before cursor
-    const lastOpen = beforeCursor.lastIndexOf('{{');
-    
-    if (lastOpen !== -1) {
-      // Check if there's a closing }} after the {{
-      const textAfterOpen = text.substring(lastOpen);
-      const closeIndex = textAfterOpen.indexOf('}}');
+  // Helper function to attach autocomplete to a field
+  function attachAutocompleteToField(field) {
+    field.addEventListener('input', function(e) {
+      activeField = field;
+      const cursorPos = e.target.selectionStart;
+      const text = e.target.value;
       
-      // Only show autocomplete if:
-      // 1. There's no closing }} yet, OR
-      // 2. Cursor is between {{ and }}
-      if (closeIndex === -1) {
-        // No closing }} - we're inside an open block
-        const innerContent = beforeCursor.substring(lastOpen + 2);
-        showAutocomplete(innerContent, lastOpen, cursorPos);
-      } else if (cursorPos > lastOpen && cursorPos < lastOpen + closeIndex) {
-        // Cursor is between {{ and }}
-        const innerContent = beforeCursor.substring(lastOpen + 2);
-        showAutocomplete(innerContent, lastOpen, cursorPos);
+      // Find the current {{}} block the cursor is in
+      const beforeCursor = text.substring(0, cursorPos);
+      const afterCursor = text.substring(cursorPos);
+      
+      // Look for the last {{ before cursor
+      const lastOpen = beforeCursor.lastIndexOf('{{');
+      
+      if (lastOpen !== -1) {
+        // Check if there's a closing }} after the {{
+        const textAfterOpen = text.substring(lastOpen);
+        const closeIndex = textAfterOpen.indexOf('}}');
+        
+        // Only show autocomplete if:
+        // 1. There's no closing }} yet, OR
+        // 2. Cursor is between {{ and }}
+        if (closeIndex === -1) {
+          // No closing }} - we're inside an open block
+          const innerContent = beforeCursor.substring(lastOpen + 2);
+          showAutocomplete(innerContent, lastOpen, cursorPos);
+        } else if (cursorPos > lastOpen && cursorPos < lastOpen + closeIndex) {
+          // Cursor is between {{ and }}
+          const innerContent = beforeCursor.substring(lastOpen + 2);
+          showAutocomplete(innerContent, lastOpen, cursorPos);
+        } else {
+          // Cursor is outside the {{ }} block
+          hideAutocomplete();
+        }
       } else {
-        // Cursor is outside the {{ }} block
         hideAutocomplete();
       }
-    } else {
-      hideAutocomplete();
-    }
-  });
+    });
 
-  descriptionField.addEventListener('keydown', function(e) {
-    if (!autocompleteDropdown || autocompleteDropdown.style.display === 'none') return;
+    field.addEventListener('keydown', function(e) {
+      if (!autocompleteDropdown || autocompleteDropdown.style.display === 'none') return;
 
-    switch(e.key) {
-      case 'ArrowDown':
-        e.preventDefault();
-        selectedIndex = Math.min(selectedIndex + 1, currentMatches.length - 1);
-        updateSelection();
-        break;
-      case 'ArrowUp':
-        e.preventDefault();
-        selectedIndex = Math.max(selectedIndex - 1, 0);
-        updateSelection();
-        break;
-      case 'Tab':
-        // Tab: autocomplete if something is selected
-        if (selectedIndex >= 0 && selectedIndex < currentMatches.length && currentMatches[selectedIndex]) {
+      switch(e.key) {
+        case 'ArrowDown':
           e.preventDefault();
-          completeStat(currentMatches[selectedIndex]);
-        }
-        break;
-      case 'Escape':
-        e.preventDefault();
-        hideAutocomplete();
-        break;
-      case 'Enter':
-        // Enter: only autocomplete if user explicitly selected an item (not on first item by default)
-        // This allows typing custom stats and pressing Enter to insert newline
-        if (selectedIndex > 0 && selectedIndex < currentMatches.length && currentMatches[selectedIndex]) {
+          selectedIndex = Math.min(selectedIndex + 1, currentMatches.length - 1);
+          updateSelection();
+          break;
+        case 'ArrowUp':
           e.preventDefault();
-          completeStat(currentMatches[selectedIndex]);
-        } else {
-          // Let Enter work normally (insert newline or submit form)
+          selectedIndex = Math.max(selectedIndex - 1, 0);
+          updateSelection();
+          break;
+        case 'Tab':
+          // Tab: autocomplete if something is selected
+          if (selectedIndex >= 0 && selectedIndex < currentMatches.length && currentMatches[selectedIndex]) {
+            e.preventDefault();
+            completeStat(currentMatches[selectedIndex]);
+          }
+          break;
+        case 'Escape':
+          e.preventDefault();
           hideAutocomplete();
-          currentMatches = []; // Clear matches to prevent Tab from autocompleting
-          selectedIndex = -1;
-        }
-        break;
-    }
-  });
+          break;
+        case 'Enter':
+          // Enter: only autocomplete if user explicitly selected an item (not on first item by default)
+          // This allows typing custom stats and pressing Enter to insert newline
+          if (selectedIndex > 0 && selectedIndex < currentMatches.length && currentMatches[selectedIndex]) {
+            e.preventDefault();
+            completeStat(currentMatches[selectedIndex]);
+          } else {
+            // Let Enter work normally (insert newline or submit form)
+            hideAutocomplete();
+            currentMatches = []; // Clear matches to prevent Tab from autocompleting
+            selectedIndex = -1;
+          }
+          break;
+      }
+    });
+
+    // Hide autocomplete when field loses focus (with small delay for clicks)
+    field.addEventListener('blur', function() {
+      setTimeout(() => {
+        hideAutocomplete();
+      }, 200);
+    });
+  }
+  
+  // Attach autocomplete to description field
+  attachAutocompleteToField(descriptionField);
+  
+  // Attach autocomplete to restriction field if it exists
+  if (restrictionField) {
+    attachAutocompleteToField(restrictionField);
+  }
 
   // Hide autocomplete when clicking outside
   document.addEventListener('click', function(e) {
-    if (!descriptionField.contains(e.target) && (!autocompleteDropdown || !autocompleteDropdown.contains(e.target))) {
+    const isDescriptionField = descriptionField.contains(e.target);
+    const isRestrictionField = restrictionField && restrictionField.contains(e.target);
+    const isDropdown = autocompleteDropdown && autocompleteDropdown.contains(e.target);
+    
+    if (!isDescriptionField && !isRestrictionField && !isDropdown) {
       hideAutocomplete();
     }
-  });
-  
-  // Hide autocomplete when field loses focus (with small delay for clicks)
-  descriptionField.addEventListener('blur', function() {
-    setTimeout(() => {
-      hideAutocomplete();
-    }, 200);
   });
 }

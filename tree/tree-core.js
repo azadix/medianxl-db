@@ -1221,7 +1221,7 @@ function createOSkillCard(oskill) {
         skillId: oskill.skillName,
         iconHTML: getSkillIcon(oskill.image, oskill.className),
         displayName: oskill.displayName,
-        nameLink: null, // oSkills don't have detail pages
+        hasDescription: false, // oSkills don't have detail pages
         currentPoints: oskill.points,
         maxPoints: '∞',
         levelColor: 'has-text-info',

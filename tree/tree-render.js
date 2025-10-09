@@ -382,23 +382,11 @@ function createSkillCard(skill, currentTab, characterLevel = CHARACTER_CONFIG.DE
         const effectiveMaxLevel = db ? calculateMaxLevel(skill.skillId, skillLevels, characterLevel, db) : skill.baseMaxLevel;
         const isMaxed = currentPoints >= effectiveMaxLevel;
         
-        // Determine skill name link
-        let nameLink = null;
-        if (skill.hasDetails) {
-            const urlParams = new URLSearchParams(window.location.search);
-            const currentClass = urlParams.get('class');
-            const tabToUse = currentTab || urlParams.get('tab');
-            
-            nameLink = `./?skill=${skill.id}`;
-            if (currentClass) nameLink += `&class=${currentClass}`;
-            if (tabToUse) nameLink += `&tab=${tabToUse}`;
-        }
-        
         cardData = {
             skillId: skill.id,
             iconHTML: getSkillIcon(skill.image, skill.class),
             displayName: skill.name,
-            nameLink: nameLink,
+            hasDescription: skill.hasDetails || false,
             currentPoints: currentPoints,
             maxPoints: effectiveMaxLevel,
             levelColor: isMaxed ? 'has-text-warning' : 'has-text-grey',
@@ -418,7 +406,7 @@ function createSkillCard(skill, currentTab, characterLevel = CHARACTER_CONFIG.DE
             skillId: skill.id,
             iconHTML: getSkillIcon(skill.image, skill.class),
             displayName: skill.name,
-            nameLink: null,
+            hasDescription: skill.hasDetails || false,
             currentPoints: skill.tabName === "Innate" ? 0 : "?",
             maxPoints: maxDisplay,
             levelColor: 'has-text-grey',
