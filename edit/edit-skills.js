@@ -168,11 +168,14 @@ function createGroupElement(title, titleClass) {
 function getTagsForGroup(tagIds, tagMap, usedIds) {
   return tagIds
     .filter(id => tagMap.has(id) && !usedIds.has(id))
-    .map(id => tagMap.get(id));
+    .map(id => tagMap.get(id))
+    .sort((a, b) => a.name.localeCompare(b.name));
 }
 
 function getLeftoverTags(tagMap, usedIds) {
-  return Array.from(tagMap.values()).filter(tag => !usedIds.has(tag.id));
+  return Array.from(tagMap.values())
+    .filter(tag => !usedIds.has(tag.id))
+    .sort((a, b) => a.name.localeCompare(b.name));
 }
 
 function createCheckboxLabel(id, name) {
