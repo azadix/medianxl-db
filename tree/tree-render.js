@@ -547,6 +547,10 @@ function checkUltimateSkillBlock(skill, allSkills) {
 function handleSkillPointChange(skill, delta, characterLevel) {
     const db = getDatabase();
     
+    // Get current character level from input (not the closure variable)
+    const levelInput = document.getElementById('characterLevel');
+    const actualCharacterLevel = levelInput ? parseInt(levelInput.value) || CHARACTER_CONFIG.DEFAULT_LEVEL : characterLevel;
+    
     // Handle multiple points
     if (Math.abs(delta) > 1) {
         let pointsChanged = 0;
@@ -554,8 +558,10 @@ function handleSkillPointChange(skill, delta, characterLevel) {
         const targetPoints = Math.abs(delta);
         
         for (let i = 0; i < targetPoints; i++) {
+            // Recalculate max level for each point (important for self-scaling skills)
             const skillLevels = getAllSkillPoints();
-            const effectiveMaxLevel = db ? calculateMaxLevel(skill.skillId, skillLevels, characterLevel, db) : skill.baseMaxLevel;
+            const currentSkillPoints = skillLevels[skill.id] || 0;
+            const effectiveMaxLevel = db ? calculateMaxLevel(skill.skillId, skillLevels, actualCharacterLevel, db) : skill.baseMaxLevel;
             
             let result;
             if (direction > 0) {
@@ -571,6 +577,7 @@ function handleSkillPointChange(skill, delta, characterLevel) {
                 } else {
                     toastManager.showToast(result.reason, true);
                 }
+                break; // Stop the loop
             }
             pointsChanged++;
         }
@@ -581,8 +588,10 @@ function handleSkillPointChange(skill, delta, characterLevel) {
     }
     
     // Handle single point
+    // Recalculate max level with current points (important for self-scaling skills)
     const skillLevels = getAllSkillPoints();
-    const effectiveMaxLevel = db ? calculateMaxLevel(skill.skillId, skillLevels, characterLevel, db) : skill.baseMaxLevel;
+    const currentSkillPoints = skillLevels[skill.id] || 0;
+    const effectiveMaxLevel = db ? calculateMaxLevel(skill.skillId, skillLevels, actualCharacterLevel, db) : skill.baseMaxLevel;
     
     let result;
     if (delta > 0) {

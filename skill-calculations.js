@@ -135,6 +135,26 @@ const MAX_LEVEL_MODIFIERS = [
       return 0;
     }
   },
+  {
+    sourceSkillName: null, // Lioness doesn't need a source skill
+    type: 'self_tab_points',
+    targetSkillName: 'lioness', // itself
+    tabSkills: ['fend', 'great_hunt', 'hunters_prowess', 'hyena_strike', 'pounce', 'takedown'], // All Spear tab skills except Lioness
+    pointsDivisor: 3, // +1 max level for every 3 points in Spear tab
+    description: 'Increases its own max level by 1 for every 3 points spent on other skills in Spear tab',
+    calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = CHARACTER_CONFIG.DEFAULT_LEVEL, skillLevels = {}) {
+      // Only affects Lioness itself
+      if (targetSkillData.skill_name === this.targetSkillName) {
+        // Count total points in Spear tab (excluding Lioness)
+        let totalTabPoints = 0;
+        for (const skillName of this.tabSkills) {
+          totalTabPoints += skillLevels[skillName] || 0;
+        }
+        return Math.floor(totalTabPoints / this.pointsDivisor);
+      }
+      return 0;
+    }
+  },
 ];
 
 /**
@@ -183,7 +203,7 @@ export function calculateMaxLevel(skillId, skillLevels = {}, characterLevel = CH
     const sourceSkillLevel = modifier.sourceSkillName ? (skillLevels[modifier.sourceSkillName] || 0) : 0;
     
     // Calculate bonus from this modifier
-    const bonus = modifier.calculateBonus(sourceSkillLevel, targetSkillData, characterLevel);
+    const bonus = modifier.calculateBonus(sourceSkillLevel, targetSkillData, characterLevel, skillLevels);
     effectiveMaxLevel += bonus;
   }
 

@@ -423,7 +423,7 @@ function initializeLevelInput() {
     levelInput.min = CHARACTER_CONFIG.MIN_LEVEL;
     levelInput.max = CHARACTER_CONFIG.MAX_LEVEL;
     levelInput.value = CHARACTER_CONFIG.DEFAULT_LEVEL;
-    levelHelp.textContent = `Character level (${CHARACTER_CONFIG.MIN_LEVEL}-${CHARACTER_CONFIG.MAX_LEVEL})`;
+    levelHelp.textContent = `Only used for calculating skills that scale with character level`;
     
     // Only allow numbers
     levelInput.addEventListener('keypress', (e) => {

@@ -6,14 +6,14 @@ This is a web-based skills database editor for MedianXL (Diablo 2 mod) that allo
 ## Current Architecture
 
 ### Core Files
-- **`index.html`** - Skills listing page with DataTable integration and Chart.js
+- **`index.html`** - Skills listing page with DataTable integration
 - **`edit.html`** - Main database editor interface
 - **`tree.html`** - Skills tree visualization with class/tab navigation
-- **`script.js`** - Skills viewer with scaling graphs and detail display (761 lines)
-- **`utils.js`** - Utility functions for placeholder expansion and icon handling (294 lines)
-- **`DropdownList.js`** - Custom dropdown component (238 lines)
-- **`dropdown-style.css`** - Styling for dropdown components (72 lines)
-- **`style.css`** - Additional styling for skill details and graphs
+- **`script.js`** - Skills viewer with detail display
+- **`utils.js`** - Utility functions for placeholder expansion and icon handling
+- **`DropdownList.js`** - Custom dropdown component
+- **`dropdown-style.css`** - Styling for dropdown components
+- **`style.css`** - Additional styling for skill details
 - **`skills.sqlite`** - SQLite database containing all skills data
 
 ### Modular Structure
@@ -55,15 +55,12 @@ skill_prerequisites (skill_id, requirement_type, requirement_value, target_skill
 
 ## Major Features
 
-### 1. Skills Viewer with Scaling Graphs
+### 1. Skills Viewer
 **Location**: `script.js`
 
 **Features**:
 - **Wikipedia-style layout**: Skill image positioned in top-right corner
 - **Level selector**: Dropdown below description for easy access
-- **Individual scaling graphs**: Separate charts for each stat in 2-column layout
-- **Collapsible graphs**: Graphs section starts collapsed to reduce visual noise
-- **Chart.js integration**: Interactive line charts showing scaling progression
 - **Smart back navigation**: Preserves filter state and tree navigation state
 - **URL state management**: Remembers filter settings when navigating back
 
@@ -144,15 +141,9 @@ skill_prerequisites (skill_id, requirement_type, requirement_value, target_skill
 
 ### Skills Viewer Architecture
 ```javascript
-// Wikipedia-style layout with scaling graphs
-displaySkillDetail() → createScalingGraphs() → initializeScalingCharts()
+// Wikipedia-style layout
+displaySkillDetail() → renderDescriptionAtLevel() → renderRestrictionAtLevel()
 ```
-
-### Chart.js Integration
-- **Individual stat graphs**: Each stat gets its own chart in 2-column layout
-- **Interactive features**: Hover tooltips, legend toggles, smooth animations
-- **Data processing**: Groups scaling data by stat and sorts by level
-- **Color coding**: Each stat gets a unique color from predefined palette
 
 ### Autocomplete System
 ```javascript
@@ -184,7 +175,6 @@ The scaling table dynamically adjusts based on stat formats:
 - Uses SQL.js for client-side SQLite operations
 - Supports import/export of database files
 - Real-time validation of stat references
-- Chart.js for interactive data visualization
 
 ## Development Environment
 
@@ -192,7 +182,6 @@ The scaling table dynamically adjusts based on stat formats:
 - **SQL.js**: Client-side SQLite database
 - **Bulma CSS**: UI framework
 - **DataTables**: Skills listing table
-- **Chart.js**: Interactive charts for scaling graphs
 - **Font Awesome**: Icons for navigation
 - **Python 3.9+**: For data extraction scripts
 
@@ -232,8 +221,6 @@ medianxl-db/
 
 ### Skills Viewer
 - `displaySkillDetail()` - Main skill detail display with Wikipedia layout
-- `createScalingGraphs()` - Generates individual stat graph containers
-- `initializeScalingCharts()` - Creates Chart.js instances for scaling visualization
 - `initializeFilterState()` - Reads and applies filter state from URL
 - `updateFilterState()` - Updates URL with current filter state
 

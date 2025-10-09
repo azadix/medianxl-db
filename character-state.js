@@ -422,7 +422,8 @@ export function checkCovenRestriction(skill, allSkills) {
 export function addSkillPoint(skillName, skill, maxLevel, allSkills = []) {
   const currentPoints = getSkillPoints(skillName);
   
-  // Check if at max level
+  // Check if at max level BEFORE adding the point
+  // Note: For self-scaling skills, the caller should recalculate maxLevel in the loop
   if (currentPoints >= maxLevel) {
     return { success: false, reason: 'Skill is at maximum level' };
   }
