@@ -12,7 +12,8 @@ import { getDatabase } from './tree/tree-data.js';
 const OR_PREREQUISITE_SKILLS = [
   // Add skill display names here that require only ONE of their skill prerequisites
   // Example: 'Life From Death' requires ONE of: Voodoo Practice OR Debilitating Concoction
-  "Life From Death"
+  "Life From Death",
+  "Bloodthirst"
 ];
 
 // Prerequisite display order (lower number = shown first)
@@ -412,6 +413,45 @@ export function checkCovenRestriction(skill, allSkills) {
 }
 
 /**
+ * Check if adding a point to a Proficiency skill is allowed
+ * Maximum 2 different exclusive Proficiency skills can have points (Barbarian only)
+ * Only applies to: Mighty Vigor, Aptitude, Pillage, Warder, Unyielding
+ * @param {Object} skill - Skill to check
+ * @param {Array} allSkills - Array of all skills
+ * @returns {Object} { allowed: boolean, reason: string }
+ */
+export function checkProficiencyRestriction(skill, allSkills) {
+  // Check if this skill is one of the exclusive Proficiency skills
+  const isExclusiveProficiency = CHARACTER_CONFIG.PROFICIENCY_EXCLUSIVE_SKILLS.includes(skill.id);
+  
+  if (!isExclusiveProficiency) {
+    return { allowed: true, reason: '' };
+  }
+  
+  // If this skill already has points, it's allowed to add more
+  const currentPoints = getSkillPoints(skill.id);
+  if (currentPoints > 0) {
+    return { allowed: true, reason: '' };
+  }
+  
+  // Count how many different exclusive Proficiency skills have points
+  const exclusiveProficiencySkillsWithPoints = allSkills.filter(s => 
+    CHARACTER_CONFIG.PROFICIENCY_EXCLUSIVE_SKILLS.includes(s.id) &&
+    getSkillPoints(s.id) > 0
+  );
+  
+  // Check if we've reached the limit
+  if (exclusiveProficiencySkillsWithPoints.length >= CHARACTER_CONFIG.MAX_PROFICIENCY_SKILLS) {
+    return { 
+      allowed: false, 
+      reason: `Cannot allocate points to more than ${CHARACTER_CONFIG.MAX_PROFICIENCY_SKILLS} of these Proficiency skills:\n- Mighty Vigor\n- Aptitude\n- Pillage\n- Warder\n- Unyielding` 
+    };
+  }
+  
+  return { allowed: true, reason: '' };
+}
+
+/**
  * Add a point to a skill
  * @param {string} skillName - Skill name
  * @param {Object} skill - Skill object with prerequisites
@@ -457,6 +497,12 @@ export function addSkillPoint(skillName, skill, maxLevel, allSkills = []) {
     const covenCheck = checkCovenRestriction(skill, allSkills);
     if (!covenCheck.allowed) {
       return { success: false, reason: covenCheck.reason };
+    }
+    
+    // Check Proficiency skill restriction (only when adding first point, Barbarian only)
+    const proficiencyCheck = checkProficiencyRestriction(skill, allSkills);
+    if (!proficiencyCheck.allowed) {
+      return { success: false, reason: proficiencyCheck.reason };
     }
     
     // Check Devotion restriction (only when adding first point, Paladin and Amazon)

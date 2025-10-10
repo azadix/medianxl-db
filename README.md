@@ -186,6 +186,12 @@ skill_prerequisites (skill_id, requirement_type, requirement_value, target_skill
 - **OR logic support**: Some skills require only ONE of multiple prerequisites
 - **State persistence**: Saves to localStorage
 
+**Class-Specific Restrictions**:
+- **Coven (Sorceress)**: Pick 2 of 4 exclusive skills (Living Flame, Warp Armor, Snow Queen, Vengeful Power)
+- **Proficiency (Barbarian)**: Pick 2 of 5 exclusive skills (Mighty Vigor, Aptitude, Pillage, Warder, Unyielding)
+- **Mastery**: Maximum 3 different Mastery skills across all classes
+- Tooltips display restriction messages when attempting to allocate beyond limits
+
 ### 9. Dynamic Skill Calculations
 **Location**: `skill-calculations.js`
 

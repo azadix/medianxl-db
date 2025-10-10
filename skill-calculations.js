@@ -155,6 +155,26 @@ const MAX_LEVEL_MODIFIERS = [
       return 0;
     }
   },
+  {
+    sourceSkillName: 'galvanism', // Galvanism needs at least 1 point to activate
+    type: 'affects_specific_skill_by_character_level',
+    targetSkillName: 'iron_spiral', // Iron Spiral
+    characterLevelThreshold: 90, // Start counting above level 90
+    characterLevelDivisor: 5, // +2 max levels for every 5 character levels above 90
+    bonusPerIncrement: 2, // +2 max levels per increment
+    description: 'When active, increases Iron Spiral max level by 2 for every 5 character levels above 90',
+    calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = CHARACTER_CONFIG.DEFAULT_LEVEL) {
+      // Only applies if Galvanism has at least 1 point invested
+      if (sourceSkillLevel > 0 && targetSkillData.skill_name === this.targetSkillName) {
+        if (characterLevel > this.characterLevelThreshold) {
+          const effectiveLevel = characterLevel - this.characterLevelThreshold;
+          const increments = Math.floor(effectiveLevel / this.characterLevelDivisor);
+          return increments * this.bonusPerIncrement;
+        }
+      }
+      return 0;
+    }
+  },
 ];
 
 /**

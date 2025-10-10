@@ -4,7 +4,7 @@ import { setCurrentTab } from './tree-core.js';
 import { calculateMaxLevel, checkDevotionRestriction } from '../skill-calculations.js';
 import { getDatabase } from './tree-data.js';
 import { CHARACTER_CONFIG } from '../character-config.js';
-import { getSkillPoints, addSkillPoint, removeSkillPoint, checkPrerequisites, getAllSkillPoints, checkMasteryRestriction, checkCovenRestriction } from '../character-state.js';
+import { getSkillPoints, addSkillPoint, removeSkillPoint, checkPrerequisites, getAllSkillPoints, checkMasteryRestriction, checkCovenRestriction, checkProficiencyRestriction } from '../character-state.js';
 import { ToastManager } from './ToastManager.js';
 import { renderSkillCard, getSkillIcon } from './tree-card-renderer.js';
 
@@ -67,13 +67,14 @@ function updateSkillCards(selectedClass, skillsList, characterLevel) {
             const skillLevels = getAllSkillPoints();
             const effectiveMaxLevel = db ? calculateMaxLevel(skill.skillId, skillLevels, characterLevel, db) : skill.baseMaxLevel;
             
-            // Check prerequisites, ultimate, mastery, coven, and devotion restrictions
+            // Check prerequisites, ultimate, mastery, coven, proficiency, and devotion restrictions
             const prereqCheck = checkPrerequisites(skill, currentSkillsList);
             const ultimateRestriction = checkUltimateSkillBlock(skill, currentSkillsList);
             const masteryRestriction = checkMasteryRestriction(skill, currentSkillsList);
             const covenRestriction = checkCovenRestriction(skill, currentSkillsList);
+            const proficiencyRestriction = checkProficiencyRestriction(skill, currentSkillsList);
             const devotionRestriction = checkDevotionRestriction(skill.skillId, skillLevels, db);
-            const canAddPoint = (prereqCheck.met && !ultimateRestriction.blocked && masteryRestriction.allowed && covenRestriction.allowed && devotionRestriction.canAllocate) || currentPoints > 0;
+            const canAddPoint = (prereqCheck.met && !ultimateRestriction.blocked && masteryRestriction.allowed && covenRestriction.allowed && proficiencyRestriction.allowed && devotionRestriction.canAllocate) || currentPoints > 0;
             
             // Build tooltip message
             let tooltipMessage = '';
@@ -85,6 +86,8 @@ function updateSkillCards(selectedClass, skillsList, characterLevel) {
                 tooltipMessage = masteryRestriction.reason;
             } else if (!covenRestriction.allowed && currentPoints === 0) {
                 tooltipMessage = covenRestriction.reason;
+            } else if (!proficiencyRestriction.allowed && currentPoints === 0) {
+                tooltipMessage = proficiencyRestriction.reason;
             } else if (!devotionRestriction.canAllocate && currentPoints === 0) {
                 tooltipMessage = devotionRestriction.reason;
             }
@@ -433,10 +436,11 @@ function createSkillCard(skill, currentTab, characterLevel = CHARACTER_CONFIG.DE
         const ultimateRestriction = checkUltimateSkillBlock(skill, currentSkillsList);
         const masteryRestriction = checkMasteryRestriction(skill, currentSkillsList);
         const covenRestriction = checkCovenRestriction(skill, currentSkillsList);
+        const proficiencyRestriction = checkProficiencyRestriction(skill, currentSkillsList);
         const devotionRestriction = checkDevotionRestriction(skill.skillId, skillLevels, db);
         
         // Can add point if: prereqs met AND (not blocked by restrictions OR already has points)
-        const canAddPoint = (prereqCheck.met && !ultimateRestriction.blocked && masteryRestriction.allowed && covenRestriction.allowed && devotionRestriction.canAllocate) || currentPoints > 0;
+        const canAddPoint = (prereqCheck.met && !ultimateRestriction.blocked && masteryRestriction.allowed && covenRestriction.allowed && proficiencyRestriction.allowed && devotionRestriction.canAllocate) || currentPoints > 0;
         
         // Build tooltip message
         let tooltipMessage = '';
@@ -448,6 +452,8 @@ function createSkillCard(skill, currentTab, characterLevel = CHARACTER_CONFIG.DE
             tooltipMessage = masteryRestriction.reason;
         } else if (!covenRestriction.allowed && currentPoints === 0) {
             tooltipMessage = covenRestriction.reason;
+        } else if (!proficiencyRestriction.allowed && currentPoints === 0) {
+            tooltipMessage = proficiencyRestriction.reason;
         } else if (!devotionRestriction.canAllocate && currentPoints === 0) {
             tooltipMessage = devotionRestriction.reason;
         }

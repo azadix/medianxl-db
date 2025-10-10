@@ -2,7 +2,8 @@
 // Format: { from: 'source_skill_display_name', to: 'target_skill_display_name' }
 const ARROW_EXCLUSIONS = [
     { from: 'Shockwave Trap', to: 'Artifice Mastery' },
-    { from: 'Catalyst Trap', to: 'Artifice Mastery' }
+    { from: 'Catalyst Trap', to: 'Artifice Mastery' },
+    { from: 'Heart of Stone', to: 'Aftermath' }
 ];
 
 export function addOverlayArrows(contentDiv, skillsInTab, minRow, minCol, allClassSkills) {
