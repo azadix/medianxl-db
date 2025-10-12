@@ -632,25 +632,19 @@ export function renderDifficultyCheckboxes(questState = null) {
         difficultyField.className = 'field';
         difficultyField.innerHTML = `
             <label class="label">Difficulty</label>
-            <div class="columns mx-1">
-                <div class="column">
-                    <label class="checkbox">
-                        <input type="checkbox" id="difficultyNormal" checked>
-                        Normal
-                    </label>
-                </div>
-                <div class="column">
-                    <label class="checkbox">
-                        <input type="checkbox" id="difficultyNightmare" checked>
-                        Nightmare
-                    </label>
-                </div>
-                <div class="column">
-                    <label class="checkbox">
-                        <input type="checkbox" id="difficultyHell" checked>
-                        Hell
-                    </label>
-                </div>
+            <div class="control difficulty-checkboxes">
+                <label class="checkbox">
+                    <input type="checkbox" id="difficultyNormal" checked>
+                    Normal
+                </label>
+                <label class="checkbox">
+                    <input type="checkbox" id="difficultyNightmare" checked>
+                    Nightmare
+                </label>
+                <label class="checkbox">
+                    <input type="checkbox" id="difficultyHell" checked>
+                    Hell
+                </label>
             </div>
         `;
         container.parentNode.insertBefore(difficultyField, container.nextElementSibling);

@@ -204,3 +204,66 @@ html {
     padding: 6px 0;
     color: #eee;
 }
+
+/* Mobile responsive styles */
+@media screen and (max-width: 768px) {
+    /* Fix scrolling on mobile */
+    .columns .column {
+        overflow-y: auto;
+        max-height: 70vh;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Make skills grid full width on mobile */
+    .skills-grid {
+        width: 95%;
+        margin: 0 2.5%;
+    }
+    
+    /* Adjust skill cards for mobile */
+    .skill-card {
+        width: 100%;
+        min-width: 200px;
+    }
+    
+    /* Increase button sizes for touch */
+    .skill-buttons .button {
+        min-width: 44px !important;
+        min-height: 44px !important;
+        font-size: 1.25rem;
+        padding: 0.5rem !important;
+    }
+    
+    .skill-buttons-container {
+        min-width: 44px;
+    }
+    
+    /* Adjust tooltip for mobile */
+    .skill-tooltip {
+        max-width: 90vw;
+        min-width: 250px;
+    }
+}
+
+/* Difficulty checkboxes layout - horizontal on desktop, vertical on smaller screens */
+.difficulty-checkboxes {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+}
+
+.difficulty-checkboxes .checkbox {
+    display: inline-block;
+}
+
+/* Stack difficulty checkboxes vertically on tablet and mobile */
+@media screen and (max-width: 1023px) {
+    .difficulty-checkboxes {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .difficulty-checkboxes .checkbox {
+        display: block;
+    }
+}

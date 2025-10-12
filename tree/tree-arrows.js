@@ -193,10 +193,20 @@ function createOverlayArrow(contentDiv, fromSkill, toSkill, minRow, minCol, skil
     const startPoint = getIntersectionPoint(fromX, fromY, toX, toY, cardWidth, cardHeight);
     const endPoint = getIntersectionPoint(toX, toY, fromX, fromY, cardWidth, cardHeight);
 
+    // Adjust for stroke width and arrowhead
+    const dx = endPoint.x - startPoint.x;
+    const dy = endPoint.y - startPoint.y;
+    const length = Math.sqrt(dx * dx + dy * dy);
+    const unitX = dx / length;
+    const unitY = dy / length;
+
+    // Don't adjust start point (let it touch the card edge)
     const startX = startPoint.x;
     const startY = startPoint.y;
-    const endX = endPoint.x;
-    const endY = endPoint.y;
+    // Pull end point inward more to account for arrowhead and stroke width
+    const endPadding = 4; // pixels to account for 3.75px stroke + arrowhead
+    const endX = endPoint.x - unitX * endPadding;
+    const endY = endPoint.y - unitY * endPadding;
 
     // Create line
     const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
@@ -205,21 +215,21 @@ function createOverlayArrow(contentDiv, fromSkill, toSkill, minRow, minCol, skil
     line.setAttribute('x2', endX);
     line.setAttribute('y2', endY);
     line.setAttribute('stroke', '#8a8a8a');
-    line.setAttribute('stroke-width', '1.25');
+    line.setAttribute('stroke-width', '3.75');
     line.setAttribute('stroke-linecap', 'round');
 
-    // Create arrowhead marker
+    // Create arrowhead marker (wider to match thicker lines, shorter height)
     const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
     const marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
     marker.setAttribute('id', `arrowhead-${Date.now()}-${Math.random()}`);
-    marker.setAttribute('markerWidth', '7.5');
-    marker.setAttribute('markerHeight', '5.25');
-    marker.setAttribute('refX', '6.75');
-    marker.setAttribute('refY', '2.625');
+    marker.setAttribute('markerWidth', '5');
+    marker.setAttribute('markerHeight', '4');
+    marker.setAttribute('refX', '3.5');
+    marker.setAttribute('refY', '2');
     marker.setAttribute('orient', 'auto');
 
     const polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
-    polygon.setAttribute('points', '0 0, 7.5 2.625, 0 5.25');
+    polygon.setAttribute('points', '0 0, 5 2, 0 4');
     polygon.setAttribute('fill', '#8a8a8a');
 
     marker.appendChild(polygon);

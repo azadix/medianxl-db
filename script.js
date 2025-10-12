@@ -42,6 +42,19 @@ async function initializeDataTable(skillsData) {
         skillsDataTable = null;
     }
     
+    // Get classes from database for filter dropdown
+    let classOptions = '<option value="">All Classes</option>';
+    try {
+        const stmt = SkillDB.db.prepare('SELECT DISTINCT name FROM classes ORDER BY name');
+        while (stmt.step()) {
+            const className = stmt.get()[0];
+            classOptions += `<option value="${className}">${className}</option>`;
+        }
+        stmt.free();
+    } catch (error) {
+        console.warn('Could not load classes from database:', error);
+    }
+    
     const table = $('#skills-table');
     
     // Add table structure
@@ -76,11 +89,16 @@ async function initializeDataTable(skillsData) {
         }
         const nameCell = skillLink || skill.name;
 
+        // Render tags as Bulma tag elements
+        const tagsHtml = (skill.tags && skill.tags.length > 0) 
+            ? `<div class="tags">${skill.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>`
+            : '';
+        
         tbody.append(`
             <tr data-skill-id="${skill.id}" data-has-page="${skill.hasDetails}">
                 <td>${getSkillIconHTML(skill.image, skill.class, "is-48x48")}</td>
                 <td>${nameCell}</td>
-                <td>${(skill.tags && skill.tags.length > 0) ? skill.tags.join(", ") : ''}</td>
+                <td>${tagsHtml}</td>
                 <td>${skill.class}</td>
                 <td>${skill.tabName}</td>
             </tr>
@@ -91,22 +109,39 @@ async function initializeDataTable(skillsData) {
     skillsDataTable = new DataTable('#skills-table',({
         paging: false,
         responsive: true,
-        autoWidth: true,
+        autoWidth: false,
         compact: true,
         order: [[1, 'asc']],
         columnDefs: [
             {
                 targets: 0, orderable: false
+            },
+            {
+                targets: [2, 4],
+                className: 'none',
+                responsivePriority: 2
             }
         ],
         layout: {
             topStart: () => {
-                return `<div class="field">
-                    <button id="filter-toggle" class="button is-outlined filter-toggle is-info">
-                        Show all
-                    </button>
-                </div>`
+                return `
+                <div class="field is-grouped is-grouped-multiline">
+                    <div class="control">
+                        <div class="select">
+                            <select id="class-filter">
+                                ${classOptions}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="control">
+                        <button id="filter-toggle" class="button is-outlined filter-toggle is-info">
+                            Show all
+                        </button>
+                    </div>
+                </div>
+                `
             },
+            topEnd: 'search',
             bottomStart: "",
             bottomEnd: ""
         }
@@ -176,20 +211,31 @@ $(document).on('click', '#filter-toggle', function() {
     }
 });
 
+// Class filter event handler
+$(document).on('change', '#class-filter', function() {
+    if (skillsDataTable && typeof skillsDataTable.draw === 'function') {
+        skillsDataTable.draw();
+    }
+});
+
 
 $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-    if (filterState === 'all') return true;
-    
     const ao = settings && settings.aoData;
     const rowNode = ao && ao[dataIndex] && ao[dataIndex].nTr;
     if (!rowNode) return true;
     
-    const hasPage = $(rowNode).attr("data-has-page") === "true";
+    // Filter by detail state
+    if (filterState !== 'all') {
+        const hasPage = $(rowNode).attr("data-has-page") === "true";
+        if (filterState === 'with_details' && !hasPage) return false;
+        if (filterState === 'without_details' && hasPage) return false;
+    }
     
-    if (filterState === 'with_details') {
-        return hasPage;
-    } else if (filterState === 'without_details') {
-        return !hasPage;
+    // Filter by class
+    const selectedClass = $('#class-filter').val();
+    if (selectedClass) {
+        const rowClass = data[3]; // Class column index
+        if (rowClass !== selectedClass) return false;
     }
     
     return true;
@@ -341,8 +387,8 @@ async function displaySkillDetail(skillId) {
     contentElement.innerHTML = `
         <div class="skill-detail" style="position: relative;">
             ${backButton}
-            <div class="columns">
-                <div class="column is-two-thirds">
+            <div class="columns is-mobile is-multiline">
+                <div class="column is-full-mobile is-two-thirds-tablet order-2-mobile">
                     <div class="skill-info">
                         <div class="skill-restriction">${restrictionHtml}</div>
                         ${maxLevelHtml}
@@ -350,7 +396,7 @@ async function displaySkillDetail(skillId) {
                         ${levelControl}
                     </div>
                 </div>
-                <div class="column is-one-third">
+                <div class="column is-full-mobile is-one-third-tablet order-1-mobile">
                     <div class="skill-image-container">
                         ${skillImage}
                     </div>

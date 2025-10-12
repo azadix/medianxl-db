@@ -18,6 +18,13 @@
 </head>
 <body>
     <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
         <div class="navbar-menu">
             <div class="navbar-start">
                 <a class="navbar-item is-selected" href="./" id="nav-all-skills">
@@ -39,6 +46,17 @@
         if (isLocalhost()) {
             document.getElementById('nav-db').style.display = '';
         }
+        
+        // Navbar burger toggle
+        document.addEventListener('DOMContentLoaded', () => {
+            const burger = document.querySelector('.navbar-burger');
+            const menu = document.querySelector('.navbar-menu');
+            
+            burger?.addEventListener('click', () => {
+                burger.classList.toggle('is-active');
+                menu.classList.toggle('is-active');
+            });
+        });
     </script>
 
     <div class="container">

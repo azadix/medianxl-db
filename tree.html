@@ -11,6 +11,13 @@
 </head>
 <body>
     <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
         <div class="navbar-menu">
         <div class="navbar-start">
             <a class="navbar-item" href="./" id="nav-all-skills">
@@ -103,7 +110,7 @@
                         
                         <div id="oskillPanel" style="display: none;">
                             <div class="field">
-                                <label class="label is-small">Add an oSkill</label>
+                                <label class="label">Add an oSkill</label>
                                 <div id="oskill-dropdown" class="oskill-dropdown-wrapper"></div>
                                 <input type="hidden" id="oskill-hidden" />
                             </div>
@@ -197,6 +204,15 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
+            // Navbar burger toggle
+            const burger = document.querySelector('.navbar-burger');
+            const menu = document.querySelector('.navbar-menu');
+            
+            burger?.addEventListener('click', () => {
+                burger.classList.toggle('is-active');
+                menu.classList.toggle('is-active');
+            });
+            
             initializeTreePage();
         });
     </script>

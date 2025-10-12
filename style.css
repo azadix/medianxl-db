@@ -19,3 +19,44 @@
   transition: all 0.3s ease;
   min-width: 15rem;
 }
+
+/* Mobile responsive styles */
+@media screen and (max-width: 768px) {
+  /* Fix skill detail layout - image at top on mobile */
+  .skill-detail .columns {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .order-1-mobile {
+    order: 1;
+  }
+  
+  .order-2-mobile {
+    order: 2;
+  }
+  
+  .skill-image-container {
+    position: static;
+    margin: 1rem auto;
+    text-align: center;
+  }
+  
+  /* Make DataTables more readable on mobile */
+  #skills-table {
+    font-size: 0.875rem;
+  }
+  
+  #skills-table td, 
+  #skills-table th {
+    padding: 0.5rem 0.25rem;
+  }
+  
+  /* Ensure tags wrap properly on mobile */
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    margin: 0;
+  }
+}

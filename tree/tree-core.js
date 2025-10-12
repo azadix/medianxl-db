@@ -54,8 +54,21 @@ async function main() {
         skillsList = await loadSkillsFromSQLite();
         treeInitialized = true;
         
-        // Populate class selector
-        const classes = [...new Set(skillsList.map(skill => skill.class))];
+        // Populate class selector from database
+        const db = getDatabase();
+        const classes = [];
+        try {
+            const stmt = db.prepare('SELECT name FROM classes WHERE name NOT IN ("Other") ORDER BY name');
+            while (stmt.step()) {
+                classes.push(stmt.get()[0]);
+            }
+            stmt.free();
+        } catch (error) {
+            console.warn('Could not load classes from database, falling back to skill list:', error);
+            // Fallback to extracting from skills
+            classes.push(...[...new Set(skillsList.map(skill => skill.class))].filter(c => c !== 'Other'));
+        }
+        
         classes.forEach(cls => {
             const opt = document.createElement('option');
             opt.value = cls;
