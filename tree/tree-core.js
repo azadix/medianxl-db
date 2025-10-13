@@ -2,13 +2,13 @@
 import { loadSkillsFromSQLite, getDatabase } from './tree-data.js';
 import { renderSkills, renderDifficultyCheckboxes, updateTabColors } from './tree-render.js';
 import { CHARACTER_CONFIG, clampCharacterLevel } from '../character-config.js';
-import { initializeCharacter, setCharacterLevel, getSpentSkillPoints, getAvailableSkillPoints, getAllSkillPoints, setAllSkillPoints, updateQuestCompletion, getQuestCompletion, getSkillPoints, getAllOSkills, getOSkillPoints, addOSkill, changeOSkillPoints, clearOSkills, setAllOSkills } from '../character-state.js';
+import { initializeCharacter, setCharacterLevel, getSpentSkillPoints, getAvailableSkillPoints, getAllSkillPoints, setAllSkillPoints, updateQuestCompletion, getQuestCompletion, getAllOSkills, addOSkill, changeOSkillPoints, clearOSkills, setAllOSkills } from '../character-state.js';
 import { getCurrentDevotion, getDevotionDisplayName } from '../skill-calculations.js';
 import { initializeTooltip } from './tree-tooltip.js';
 import { ToastManager } from './ToastManager.js';
-import { expandPlaceholdersWithScaling, getSkillIconHTML } from '../utils.js';
 import { DropdownList } from '../edit/DropdownList.js';
 import { renderSkillCard, getSkillIcon } from './tree-card-renderer.js';
+import { getCurrentVersion, versionToString } from '../version-config.js';
 
 // Global variables
 let skillsList;
@@ -22,9 +22,6 @@ let oSkillsDropdown = null; // Dropdown for oSkills
 
 // Initialize ToastManager
 const toastManager = new ToastManager();
-
-// Build version
-const TREE_VERSION = '2.11';
 
 // Export function to get oSkill points (for tooltip) - now just re-exports from character-state
 export { getOSkillPoints } from '../character-state.js';
@@ -858,7 +855,7 @@ function updateCurrentBuild() {
     // Update existing build
     builds[currentBuildIndex] = {
         name: builds[currentBuildIndex].name, // Keep original name
-        version: TREE_VERSION,
+        version: versionToString(getCurrentVersion()),
         class: currentClass,
         level: currentLevel,
         spentPoints: spentPoints,
@@ -889,7 +886,7 @@ function saveBuild(buildName) {
     
     const build = {
         name: buildName,
-        version: TREE_VERSION,
+        version: versionToString(getCurrentVersion()),
         class: currentClass,
         level: currentLevel,
         spentPoints: spentPoints,

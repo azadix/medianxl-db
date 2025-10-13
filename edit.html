@@ -16,10 +16,15 @@
 <body class="section">
   <script type="module">
     import { isLocalhost } from './utils.js';
+    import { initializeVersionSelector } from './version-config.js';
+    
     // Redirect to home page if not on localhost
     if (!isLocalhost()) {
         window.location.href = './';
     }
+    
+    // Initialize version selector
+    initializeVersionSelector(document.getElementById('version-selector'));
     
     // Navbar burger toggle
     document.addEventListener('DOMContentLoaded', () => {
@@ -52,6 +57,26 @@
           <a class="navbar-item is-selected" href="./edit.html" id="nav-db">
             <strong>Editor</strong>
         </a>
+      </div>
+      <div class="navbar-end">
+        <div class="navbar-item">
+          <div class="field is-horizontal is-align-items-center">
+            <div class="field-label">
+              <label class="label">Version:</label>
+            </div>
+            <div class="field-body">
+              <div class="field">
+                <div class="control">
+                  <div class="select">
+                    <select id="version-selector">
+                      <!-- Populated by JavaScript -->
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </nav>

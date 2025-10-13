@@ -5,7 +5,13 @@ const ICONS_PER_ROW = Math.floor(ATLAS_SIZE / ICON_SIZE);
 export const MISSING_IMAGE_NAME = "icons-shared_missing.png";
 
 // --- SQL DB Loader ---
-export async function loadDatabase(file = 'skills.sqlite') {
+export async function loadDatabase(file = null) {
+    // If no file specified, use version-aware default
+    if (!file) {
+        const { getDatabaseFile } = await import('./version-config.js');
+        file = getDatabaseFile();
+    }
+    
     const SQL = await initSqlJs({ locateFile: f => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.13.0/${f}` });
     const response = await fetch(file);
     if (!response.ok) throw new Error("Failed to load database");

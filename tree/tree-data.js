@@ -6,8 +6,12 @@ let dbInstance = null;
 // Load skills data from SQLite
 export async function loadSkillsFromSQLite() {
     try {
+        // Get version-aware database file
+        const { getDatabaseFile } = await import('../version-config.js');
+        const dbFile = getDatabaseFile();
+        
         // Fetch SQLite file
-        const response = await fetch('skills.sqlite');
+        const response = await fetch(dbFile);
         if (!response.ok) throw new Error('Failed to load SQLite file');
 
         const buffer = await response.arrayBuffer();
