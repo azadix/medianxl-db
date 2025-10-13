@@ -1,8 +1,8 @@
 // Core functionality for the skills tree viewer
 import { loadSkillsFromSQLite, getDatabase } from './tree-data.js';
 import { renderSkills, renderDifficultyCheckboxes, updateTabColors } from './tree-render.js';
-import { CHARACTER_CONFIG, clampCharacterLevel } from '../character-config.js';
-import { initializeCharacter, setCharacterLevel, getSpentSkillPoints, getAvailableSkillPoints, getAllSkillPoints, setAllSkillPoints, updateQuestCompletion, getQuestCompletion, getAllOSkills, addOSkill, changeOSkillPoints, clearOSkills, setAllOSkills, getMinimumRequiredLevel, getTotalQuestSkillPoints, getBaseSkillPoints } from '../character-state.js';
+import { CHARACTER_CONFIG } from '../character-config.js';
+import { initializeCharacter, setCharacterLevel, getSpentSkillPoints, getAllSkillPoints, setAllSkillPoints, updateQuestCompletion, getQuestCompletion, getAllOSkills, addOSkill, changeOSkillPoints, clearOSkills, setAllOSkills, getMinimumRequiredLevel, getTotalQuestSkillPoints, getBaseSkillPoints } from '../character-state.js';
 import { getCurrentDevotion, getDevotionDisplayName } from '../skill-calculations.js';
 import { initializeTooltip } from './tree-tooltip.js';
 import { ToastManager } from './ToastManager.js';
@@ -286,7 +286,7 @@ function updateMinimumLevelDisplay() {
     minLevelDisplay.textContent = `Level ${minLevel}`;
     
     // Update breakdown with base/quest points
-    minLevelBreakdown.textContent = `Base points: ${availableBasePoints} + Quest points: ${availableQuestPoints}`;
+    minLevelBreakdown.textContent = `(Base points: ${availableBasePoints} + Quest points: ${availableQuestPoints})`;
     
     // Update help text with spent/total information only
     minLevelHelp.textContent = `${spentPoints} spent / ${totalAvailablePoints} available`;
