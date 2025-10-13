@@ -4,6 +4,9 @@
  */
 
 import { CHARACTER_CONFIG, getBaseSkillPoints } from './character-config.js';
+
+// Re-export getBaseSkillPoints for use in other modules
+export { getBaseSkillPoints };
 import { checkDevotionRestriction, calculateMaxLevel } from './skill-calculations.js';
 import { getDatabase } from './tree/tree-data.js';
 
@@ -96,17 +99,30 @@ export function setAllSkillPoints(skillPoints) {
 
 /**
  * Calculate total quest skill points from completed quests
+ * @param {number} characterLevel - Character level to check against quest requirements
  * @returns {number} Total quest skill points
  */
-export function getTotalQuestSkillPoints() {
+export function getTotalQuestSkillPoints(characterLevel = CHARACTER_CONFIG.MAX_LEVEL) {
   let total = 0;
   
   for (const [questId, difficulties] of Object.entries(characterState.questsCompleted)) {
     const questRewards = CHARACTER_CONFIG.QUEST_SKILL_POINTS[questId];
     if (questRewards) {
-      if (difficulties.normal) total += questRewards.normal;
-      if (difficulties.nightmare) total += questRewards.nightmare;
-      if (difficulties.hell) total += questRewards.hell;
+      if (difficulties.normal && questRewards.normal) {
+        if (characterLevel >= questRewards.normal.requiredLevel) {
+          total += questRewards.normal.points;
+        }
+      }
+      if (difficulties.nightmare && questRewards.nightmare) {
+        if (characterLevel >= questRewards.nightmare.requiredLevel) {
+          total += questRewards.nightmare.points;
+        }
+      }
+      if (difficulties.hell && questRewards.hell) {
+        if (characterLevel >= questRewards.hell.requiredLevel) {
+          total += questRewards.hell.points;
+        }
+      }
     }
   }
   
@@ -116,11 +132,12 @@ export function getTotalQuestSkillPoints() {
 /**
  * Calculate total available skill points based on max level and quests completed
  * Note: Always uses MAX_LEVEL for skill point pool, not the user's character level input
+ * @param {number} characterLevel - Character level to check quest requirements against
  * @returns {number} Total available skill points
  */
-export function getAvailableSkillPoints() {
+export function getAvailableSkillPoints(characterLevel = CHARACTER_CONFIG.MAX_LEVEL) {
   let total = getBaseSkillPoints(CHARACTER_CONFIG.MAX_LEVEL);
-  total += getTotalQuestSkillPoints();
+  total += getTotalQuestSkillPoints(characterLevel);
   return total;
 }
 
@@ -142,6 +159,77 @@ export function getSpentSkillPoints() {
  */
 export function getRemainingSkillPoints() {
   return getAvailableSkillPoints() - getSpentSkillPoints();
+}
+
+/**
+ * Calculate minimum character level required for current skill allocation
+ * Takes into account spent skill points, quest rewards, and skill prerequisites
+ * @param {Object} db - SQL.js database instance (optional)
+ * @returns {number} Minimum character level needed
+ */
+export function getMinimumRequiredLevel(db = null) {
+  const spentPoints = getSpentSkillPoints();
+  
+  // We need to find the minimum level that provides enough skill points
+  // This requires checking different character levels to find the minimum
+  let minLevel = CHARACTER_CONFIG.MIN_LEVEL;
+  
+  // Check each level from 1 to 150 to find the minimum that works
+  for (let testLevel = CHARACTER_CONFIG.MIN_LEVEL; testLevel <= CHARACTER_CONFIG.MAX_LEVEL; testLevel++) {
+    const questPoints = getTotalQuestSkillPoints(testLevel);
+    const basePoints = getBaseSkillPoints(testLevel);
+    const totalAvailable = basePoints + questPoints;
+    
+    if (totalAvailable >= spentPoints) {
+      minLevel = testLevel;
+      break;
+    }
+  }
+  
+  // Check skill prerequisites for character level requirements
+  let minLevelFromPrerequisites = CHARACTER_CONFIG.MIN_LEVEL;
+  
+  if (db && spentPoints > 0) {
+    // Get all skills that have points allocated
+    const skillLevels = getAllSkillPoints();
+    const allocatedSkillIds = [];
+    
+    // Convert skill names to IDs
+    for (const [skillName, points] of Object.entries(skillLevels)) {
+      if (points > 0) {
+        const stmt = db.prepare('SELECT id FROM skills WHERE name = ?');
+        stmt.bind([skillName]);
+        if (stmt.step()) {
+          allocatedSkillIds.push(stmt.get()[0]);
+        }
+        stmt.free();
+      }
+    }
+    
+    // Check character level prerequisites for allocated skills
+    if (allocatedSkillIds.length > 0) {
+      const placeholders = allocatedSkillIds.map(() => '?').join(',');
+      const stmt = db.prepare(`
+        SELECT requirement_value 
+        FROM skill_prerequisites 
+        WHERE skill_id IN (${placeholders}) 
+        AND requirement_type = 'character_level'
+      `);
+      stmt.bind(allocatedSkillIds);
+      
+      while (stmt.step()) {
+        const requiredLevel = stmt.get()[0];
+        minLevelFromPrerequisites = Math.max(minLevelFromPrerequisites, requiredLevel);
+      }
+      stmt.free();
+    }
+  }
+  
+  // Take the maximum of both requirements
+  const finalMinLevel = Math.max(minLevel, minLevelFromPrerequisites);
+  
+  // Clamp to valid range
+  return Math.max(CHARACTER_CONFIG.MIN_LEVEL, Math.min(CHARACTER_CONFIG.MAX_LEVEL, finalMinLevel));
 }
 
 /**

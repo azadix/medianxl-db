@@ -4,7 +4,7 @@ import { setCurrentTab } from './tree-core.js';
 import { calculateMaxLevel, checkDevotionRestriction } from '../skill-calculations.js';
 import { getDatabase } from './tree-data.js';
 import { CHARACTER_CONFIG } from '../character-config.js';
-import { getSkillPoints, addSkillPoint, removeSkillPoint, checkPrerequisites, getAllSkillPoints, checkMasteryRestriction, checkCovenRestriction, checkProficiencyRestriction } from '../character-state.js';
+import { getSkillPoints, addSkillPoint, removeSkillPoint, checkPrerequisites, getAllSkillPoints, checkMasteryRestriction, checkCovenRestriction, checkProficiencyRestriction, getMinimumRequiredLevel } from '../character-state.js';
 import { ToastManager } from './ToastManager.js';
 import { renderSkillCard, getSkillIcon } from './tree-card-renderer.js';
 
@@ -18,7 +18,7 @@ const toastManager = new ToastManager();
  * Update skill cards without redrawing arrows
  * This is more efficient for character level changes and skill point updates
  */
-function updateSkillCards(selectedClass, skillsList, characterLevel) {
+function updateSkillCards(selectedClass, skillsList) {
     // Get all skill cards
     const allCards = document.querySelectorAll('.skill-card');
     
@@ -52,7 +52,8 @@ function updateSkillCards(selectedClass, skillsList, characterLevel) {
         if (levelDisplay && skill.canAddPoints) {
             const db = getDatabase();
             const skillLevels = getAllSkillPoints();
-            const effectiveMaxLevel = db ? calculateMaxLevel(skill.skillId, skillLevels, characterLevel, db) : skill.baseMaxLevel;
+            const minLevel = getMinimumRequiredLevel(db);
+            const effectiveMaxLevel = db ? calculateMaxLevel(skill.skillId, skillLevels, minLevel, db) : skill.baseMaxLevel;
             const isMaxed = currentPoints >= effectiveMaxLevel;
             const levelColor = isMaxed ? 'has-text-warning' : 'has-text-grey';
             
@@ -65,7 +66,8 @@ function updateSkillCards(selectedClass, skillsList, characterLevel) {
         if (plusBtn && minusBtn && skill.canAddPoints) {
             const db = getDatabase();
             const skillLevels = getAllSkillPoints();
-            const effectiveMaxLevel = db ? calculateMaxLevel(skill.skillId, skillLevels, characterLevel, db) : skill.baseMaxLevel;
+            const minLevel = getMinimumRequiredLevel(db);
+            const effectiveMaxLevel = db ? calculateMaxLevel(skill.skillId, skillLevels, minLevel, db) : skill.baseMaxLevel;
             
             // Check prerequisites, ultimate, mastery, coven, proficiency, and devotion restrictions
             const prereqCheck = checkPrerequisites(skill, currentSkillsList);
@@ -137,13 +139,13 @@ export function updateTabColors(tabsWithPoints) {
 }
 
 // Main render function
-export function renderSkills(selectedClass, skillsList, skillsContainer, characterLevel = CHARACTER_CONFIG.DEFAULT_LEVEL, preserveTab = null, redrawArrows = true) {
+export function renderSkills(selectedClass, skillsList, skillsContainer, preserveTab = null, redrawArrows = true) {
     // Store skills list for dependency checking
     currentSkillsList = skillsList;
     
     // If not redrawing arrows, just update existing cards
     if (!redrawArrows && skillsContainer.children.length > 0) {
-        updateSkillCards(selectedClass, skillsList, characterLevel);
+        updateSkillCards(selectedClass, skillsList);
         return;
     }
     
@@ -226,7 +228,7 @@ export function renderSkills(selectedClass, skillsList, skillsContainer, charact
             for (let c = minCol; c <= maxCol; c++) {
                 const skill = tabs[tabName].find(s => s.row === r && s.col === c);
                         if (skill) {
-                            const card = createSkillCard(skill, tabName, characterLevel);
+                            const card = createSkillCard(skill, tabName);
                             card.style.gridRow = r - minRow + 1;
                             card.style.gridColumn = c - minCol + 1;
                             contentDiv.appendChild(card);
@@ -266,16 +268,6 @@ export function renderSkills(selectedClass, skillsList, skillsContainer, charact
     oSkillsContent.style.display = isOSkillsActive ? 'grid' : 'none';
     tabContent.appendChild(oSkillsContent);
 
-    // Add skill points display to the right side of tabs
-    const skillPointsLi = document.createElement('li');
-    skillPointsLi.style.marginLeft = 'auto';
-    skillPointsLi.style.pointerEvents = 'none'; // Not clickable
-    const skillPointsSpan = document.createElement('span');
-    skillPointsSpan.id = 'tabSkillPointsDisplay';
-    skillPointsSpan.className = 'has-text-light has-text-weight-bold';
-    skillPointsSpan.style.padding = '0.5em 1em';
-    skillPointsLi.appendChild(skillPointsSpan);
-    ul.appendChild(skillPointsLi);
     
     tabNav.appendChild(ul);
     skillsContainer.appendChild(tabNav);
@@ -371,7 +363,7 @@ export function renderSkills(selectedClass, skillsList, skillsContainer, charact
 }
 
 // Create a skill card element
-function createSkillCard(skill, currentTab, characterLevel = CHARACTER_CONFIG.DEFAULT_LEVEL) {
+function createSkillCard(skill, currentTab) {
     // Get current skill points
     const currentPoints = getSkillPoints(skill.id);
     
@@ -381,7 +373,8 @@ function createSkillCard(skill, currentTab, characterLevel = CHARACTER_CONFIG.DE
     if (skill.canAddPoints) {
         const db = getDatabase();
         const skillLevels = getAllSkillPoints();
-        const effectiveMaxLevel = db ? calculateMaxLevel(skill.skillId, skillLevels, characterLevel, db) : skill.baseMaxLevel;
+        const minLevel = getMinimumRequiredLevel(db);
+        const effectiveMaxLevel = db ? calculateMaxLevel(skill.skillId, skillLevels, minLevel, db) : skill.baseMaxLevel;
         const isMaxed = currentPoints >= effectiveMaxLevel;
         
         cardData = {
@@ -429,7 +422,8 @@ function createSkillCard(skill, currentTab, characterLevel = CHARACTER_CONFIG.DE
     if (skill.canAddPoints) {
         const db = getDatabase();
         const skillLevels = getAllSkillPoints();
-        const effectiveMaxLevel = db ? calculateMaxLevel(skill.skillId, skillLevels, characterLevel, db) : skill.baseMaxLevel;
+        const minLevel = getMinimumRequiredLevel(db);
+        const effectiveMaxLevel = db ? calculateMaxLevel(skill.skillId, skillLevels, minLevel, db) : skill.baseMaxLevel;
         
         // Check all restrictions
         const prereqCheck = checkPrerequisites(skill, currentSkillsList);
@@ -475,13 +469,13 @@ function createSkillCard(skill, currentTab, characterLevel = CHARACTER_CONFIG.DE
                 e.preventDefault();
                 if (e.shiftKey) {
                     // Shift-click: add 25 points
-                    handleSkillPointChange(skill, 25, characterLevel);
+                    handleSkillPointChange(skill, 25);
                 } else if (e.ctrlKey) {
                     // Ctrl-click: add 5 points
-                    handleSkillPointChange(skill, 5, characterLevel);
+                    handleSkillPointChange(skill, 5);
                 } else {
                     // Normal click: add 1 point
-                    handleSkillPointChange(skill, 1, characterLevel);
+                    handleSkillPointChange(skill, 1);
                 }
             });
             
@@ -489,13 +483,13 @@ function createSkillCard(skill, currentTab, characterLevel = CHARACTER_CONFIG.DE
                 e.preventDefault();
                 if (e.shiftKey) {
                     // Shift-click: remove 25 points
-                    handleSkillPointChange(skill, -25, characterLevel);
+                    handleSkillPointChange(skill, -25);
                 } else if (e.ctrlKey) {
                     // Ctrl-click: remove 5 points
-                    handleSkillPointChange(skill, -5, characterLevel);
+                    handleSkillPointChange(skill, -5);
                 } else {
                     // Normal click: remove 1 point
-                    handleSkillPointChange(skill, -1, characterLevel);
+                    handleSkillPointChange(skill, -1);
                 }
             });
         }
@@ -550,12 +544,11 @@ function checkUltimateSkillBlock(skill, allSkills) {
 /**
  * Handle skill point changes (add or remove)
  */
-function handleSkillPointChange(skill, delta, characterLevel) {
+function handleSkillPointChange(skill, delta) {
     const db = getDatabase();
     
-    // Get current character level from input (not the closure variable)
-    const levelInput = document.getElementById('characterLevel');
-    const actualCharacterLevel = levelInput ? parseInt(levelInput.value) || CHARACTER_CONFIG.DEFAULT_LEVEL : characterLevel;
+    // Use minimum required level for max level calculations
+    const actualCharacterLevel = getMinimumRequiredLevel(db);
     
     // Handle multiple points
     if (Math.abs(delta) > 1) {
@@ -632,7 +625,7 @@ export function renderDifficultyCheckboxes(questState = null) {
         difficultyField.className = 'field';
         difficultyField.innerHTML = `
             <label class="label">Difficulty</label>
-            <div class="control difficulty-checkboxes">
+            <div class="control difficulty-checkboxes ml-1">
                 <label class="checkbox">
                     <input type="checkbox" id="difficultyNormal" checked>
                     Normal

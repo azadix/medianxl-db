@@ -192,7 +192,6 @@ function loadPrerequisitesForSkill(skillId) {
   document.getElementById('prerequisite-skill-level').value = '';
   document.getElementById('prerequisite-skill-blocked-by').value = '0';
   document.getElementById('prerequisite-tree-points').value = '';
-  document.getElementById('prerequisite-character-level').value = '';
   document.getElementById('prerequisite-target-skill-hidden').value = '';
   document.getElementById('prerequisite-blocked-skill-hidden').value = '';
   document.getElementById('prerequisite-target-tab-hidden').value = '';
@@ -265,9 +264,6 @@ function loadPrerequisitesForSkill(skillId) {
       case 'tree_points':
         document.getElementById('prerequisite-tree-points').value = requirementValue;
         if (reqTargetTabId) targetTabId = reqTargetTabId;
-        break;
-      case 'character_level':
-        document.getElementById('prerequisite-character-level').value = requirementValue;
         break;
     }
     
@@ -480,9 +476,6 @@ function refreshPrerequisitesTable() {
         grouped[key].targets.push(`${targetSkillName} (${prerequisiteValue})`);
       } else if (prerequisiteType === 'tree_points' && targetTabName) {
         grouped[key].targets.push(targetTabName);
-      } else if (prerequisiteType === 'character_level') {
-        grouped[key].targets.push('Character Level');
-      }
     });
     
     // Display grouped prerequisites
@@ -572,7 +565,6 @@ function editPrerequisite(prerequisiteId) {
     // Reset all requirement value fields
     document.getElementById('prerequisite-skill-level').value = '';
     document.getElementById('prerequisite-tree-points').value = '';
-    document.getElementById('prerequisite-character-level').value = '';
     
     let targetSkillId = null;
     let targetTabId = null;
@@ -591,9 +583,6 @@ function editPrerequisite(prerequisiteId) {
         case 'tree_points':
           document.getElementById('prerequisite-tree-points').value = requirementValue;
           if (reqTargetTabId) targetTabId = reqTargetTabId;
-          break;
-        case 'character_level':
-          document.getElementById('prerequisite-character-level').value = requirementValue;
           break;
       }
       
@@ -646,7 +635,6 @@ function savePrerequisite() {
   const skillLevelValue = parseInt(document.getElementById('prerequisite-skill-level').value || 0, 10);
   const skillBlockedByValue = parseInt(document.getElementById('prerequisite-skill-blocked-by').value, 10);
   const treePointsValue = parseInt(document.getElementById('prerequisite-tree-points').value || 0, 10);
-  const characterLevelValue = parseInt(document.getElementById('prerequisite-character-level').value || 0, 10);
   const targetTabId = parseInt(document.getElementById('prerequisite-target-tab-hidden')?.value || 0, 10);
   const description = document.getElementById('prerequisite-description')?.value.trim() || '';
   
@@ -658,8 +646,8 @@ function savePrerequisite() {
   // Validate that at least one requirement type is specified
   const hasRequiredSkills = selectedRequiredSkills.length > 0;
   const hasBlockedBy = !Number.isNaN(skillBlockedByValue) && skillBlockedByValue >= 0 && selectedBlockedSkills.length > 0;
-  if (!hasRequiredSkills && !hasBlockedBy && treePointsValue < 1 && characterLevelValue < 1) {
-    alert('Please specify at least one requirement (skill level, blocked by, tree points, or character level)');
+  if (!hasRequiredSkills && !hasBlockedBy && treePointsValue < 1) {
+    alert('Please specify at least one requirement (skill level, blocked by, or tree points)');
     return;
   }
   
@@ -702,12 +690,6 @@ function savePrerequisite() {
     `, [skillId, treePointsValue, null, targetTabId, description]);
   }
   
-  if (characterLevelValue >= 1) {
-    SkillDB.db.run(`
-      INSERT INTO skill_prerequisites (skill_id, requirement_type, requirement_value, target_skill_id, target_tab_id, description)
-      VALUES (?, 'character_level', ?, ?, ?, ?)
-    `, [skillId, characterLevelValue, null, null, description]);
-  }
   
   // Reset form
   document.getElementById('prerequisite-form').reset();

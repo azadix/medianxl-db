@@ -2,7 +2,7 @@
 import { loadSkillsFromSQLite, getDatabase } from './tree-data.js';
 import { renderSkills, renderDifficultyCheckboxes, updateTabColors } from './tree-render.js';
 import { CHARACTER_CONFIG, clampCharacterLevel } from '../character-config.js';
-import { initializeCharacter, setCharacterLevel, getSpentSkillPoints, getAvailableSkillPoints, getAllSkillPoints, setAllSkillPoints, updateQuestCompletion, getQuestCompletion, getAllOSkills, addOSkill, changeOSkillPoints, clearOSkills, setAllOSkills } from '../character-state.js';
+import { initializeCharacter, setCharacterLevel, getSpentSkillPoints, getAvailableSkillPoints, getAllSkillPoints, setAllSkillPoints, updateQuestCompletion, getQuestCompletion, getAllOSkills, addOSkill, changeOSkillPoints, clearOSkills, setAllOSkills, getMinimumRequiredLevel, getTotalQuestSkillPoints, getBaseSkillPoints } from '../character-state.js';
 import { getCurrentDevotion, getDevotionDisplayName } from '../skill-calculations.js';
 import { initializeTooltip } from './tree-tooltip.js';
 import { ToastManager } from './ToastManager.js';
@@ -15,7 +15,6 @@ let skillsList;
 let skillsContainer;
 let classSelect;
 let currentTab = null;
-let currentCharacterLevel = CHARACTER_CONFIG.DEFAULT_LEVEL; // Default character level
 let treeInitialized = false; // Track if tree has been initialized
 let currentBuildIndex = null; // Track currently loaded build index for saving
 let oSkillsDropdown = null; // Dropdown for oSkills
@@ -84,14 +83,9 @@ async function main() {
 
         // Apply default settings
         const defaults = getDefaultSettings();
-        currentCharacterLevel = defaults.defaultLevel;
-        const levelInput = document.getElementById('characterLevel');
-        if (levelInput) {
-            levelInput.value = defaults.defaultLevel;
-        }
 
         // Initialize character state
-        initializeCharacter(selectedClass, currentCharacterLevel);
+        initializeCharacter(selectedClass);
         
         // Apply difficulty defaults
         updateQuestCompletion('den_of_evil', defaults.difficulties);
@@ -100,7 +94,7 @@ async function main() {
         updateQuestCompletion('inquisitor_of_the_triune', { normal: false, nightmare: false, hell: defaults.difficulties.hell });
 
         // Render skills with saved tab if specified
-        renderSkills(selectedClass, skillsList, skillsContainer, currentCharacterLevel, savedTab);
+        renderSkills(selectedClass, skillsList, skillsContainer, savedTab);
         
         // Update displays
         updateSkillPointsDisplay();
@@ -123,19 +117,15 @@ async function main() {
             const normalCheckbox = document.getElementById('difficultyNormal');
             const nightmareCheckbox = document.getElementById('difficultyNightmare');
             const hellCheckbox = document.getElementById('difficultyHell');
-            const levelInput = document.getElementById('characterLevel');
-            
             if (normalCheckbox) normalCheckbox.checked = defaults.difficulties.normal;
             if (nightmareCheckbox) nightmareCheckbox.checked = defaults.difficulties.nightmare;
             if (hellCheckbox) hellCheckbox.checked = defaults.difficulties.hell;
-            if (levelInput) levelInput.value = defaults.defaultLevel;
             
             // Update displays after setting difficulties
             updateSkillPointsDisplay();
         }, 0);
         
         // Initialize level input
-        initializeLevelInput();
         
         // Initialize tooltip functionality
         initializeTooltip();
@@ -172,9 +162,9 @@ async function main() {
             }
             
             // Reinitialize character state for new class
-            initializeCharacter(newClass, currentCharacterLevel);
+            initializeCharacter(newClass);
             
-            renderSkills(newClass, skillsList, skillsContainer, currentCharacterLevel);
+            renderSkills(newClass, skillsList, skillsContainer);
             
             // Update displays
             updateSkillPointsDisplay();
@@ -182,24 +172,6 @@ async function main() {
             updateOSkillsDisplay();
         });
         
-        // Add event listener for character level changes (manual input)
-        window.addEventListener('characterLevelChanged', (e) => {
-            currentCharacterLevel = e.detail.level;
-            const currentClass = classSelect.value;
-            
-            // Update character state
-            setCharacterLevel(currentCharacterLevel);
-            
-            // Save which tab is currently visible before re-rendering
-            const savedTab = currentTab;
-            
-            // Re-render without redrawing arrows (just update cards for max level changes)
-            renderSkills(currentClass, skillsList, skillsContainer, currentCharacterLevel, savedTab, false);
-            
-            // Update displays
-            updateSkillPointsDisplay();
-            updateDevotionDisplay();
-        });
         
         // Add event listener for skill point changes
         window.addEventListener('skillPointsChanged', () => {
@@ -207,7 +179,7 @@ async function main() {
             const savedTab = currentTab;
             
             // Re-render without redrawing arrows (just update cards)
-            renderSkills(currentClass, skillsList, skillsContainer, currentCharacterLevel, savedTab, false);
+            renderSkills(currentClass, skillsList, skillsContainer, savedTab, false);
             
             // Update displays
             updateSkillPointsDisplay();
@@ -237,15 +209,8 @@ function updateUrlState(selectedClass, selectedTab) {
 
 // Update skill points display
 function updateSkillPointsDisplay() {
-    const spentPoints = getSpentSkillPoints();
-    const availablePoints = getAvailableSkillPoints();
-    const remainingPoints = availablePoints - spentPoints;
-    
-    // Update tab navbar display
-    const tabDisplayEl = document.getElementById('tabSkillPointsDisplay');
-    if (tabDisplayEl) {
-        tabDisplayEl.textContent = `Skill points: ${spentPoints} / ${availablePoints}`;
-    }
+    // Update minimum level display (which now includes available skill points)
+    updateMinimumLevelDisplay();
 }
 
 
@@ -302,6 +267,30 @@ function updateDevotionDisplay() {
     }
 }
 
+// Update minimum level display
+function updateMinimumLevelDisplay() {
+    const minLevelField = document.getElementById('minLevelField');
+    const minLevelDisplay = document.getElementById('minLevelDisplay');
+    const minLevelBreakdown = document.getElementById('minLevelBreakdown');
+    const minLevelHelp = document.getElementById('minLevelHelp');
+    
+    if (!minLevelField || !minLevelDisplay || !minLevelBreakdown || !minLevelHelp) return;
+    
+    const spentPoints = getSpentSkillPoints();
+    const db = getDatabase();
+    const minLevel = spentPoints > 0 ? getMinimumRequiredLevel(db) : CHARACTER_CONFIG.DEFAULT_LEVEL;
+    const availableQuestPoints = getTotalQuestSkillPoints(minLevel);
+    const availableBasePoints = getBaseSkillPoints(minLevel);
+    const totalAvailablePoints = availableBasePoints + availableQuestPoints;
+    
+    minLevelDisplay.textContent = `Level ${minLevel}`;
+    
+    // Update breakdown with base/quest points
+    minLevelBreakdown.textContent = `Base points: ${availableBasePoints} + Quest points: ${availableQuestPoints}`;
+    
+    // Update help text with spent/total information only
+    minLevelHelp.textContent = `${spentPoints} spent / ${totalAvailablePoints} available`;
+}
 
 // Export function to update tab state (called from render module)
 export function setCurrentTab(tabName) {
@@ -420,59 +409,6 @@ function updateQuestsFromDifficulty() {
     window.dispatchEvent(new CustomEvent('skillPointsChanged'));
 }
 
-/**
- * Initialize level input field and its event handlers
- */
-function initializeLevelInput() {
-    const levelInput = document.getElementById('characterLevel');
-    const levelHelp = document.getElementById('characterLevelHelp');
-    
-    if (!levelInput || !levelHelp) return;
-    
-    // Set initial values from config
-    levelInput.min = CHARACTER_CONFIG.MIN_LEVEL;
-    levelInput.max = CHARACTER_CONFIG.MAX_LEVEL;
-    levelInput.value = CHARACTER_CONFIG.DEFAULT_LEVEL;
-    levelHelp.textContent = `Only used for calculating skills that scale with character level`;
-    
-    // Only allow numbers
-    levelInput.addEventListener('keypress', (e) => {
-        if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') {
-            e.preventDefault();
-        }
-    });
-    
-    // Clamp value on input change
-    levelInput.addEventListener('input', () => {
-        // Remove non-numeric characters
-        levelInput.value = levelInput.value.replace(/[^0-9]/g, '');
-        
-        // Don't clamp while typing (allow empty or partial input)
-        if (levelInput.value === '') return;
-    });
-    
-    // Clamp value when focus is lost and trigger recalculation
-    levelInput.addEventListener('blur', () => {
-        let value = parseInt(levelInput.value, 10);
-        levelInput.value = clampCharacterLevel(value);
-        
-        // Update character level for max level calculations
-        currentCharacterLevel = parseInt(levelInput.value, 10);
-        setCharacterLevel(currentCharacterLevel);
-        
-        // Trigger recalculation of skill max levels
-        window.dispatchEvent(new CustomEvent('characterLevelChanged', {
-            detail: { level: currentCharacterLevel }
-        }));
-    });
-    
-    // Also trigger on Enter key
-    levelInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            levelInput.blur(); // This will trigger the blur event above
-        }
-    });
-}
 
 // Initialize menu buttons functionality
 function initializeMenuButtons() {
@@ -604,35 +540,6 @@ function initializeDefaults() {
     // Load defaults only populates the form, doesn't need to be called here
     // The form will be populated when user opens the defaults section
     
-    // Setup default level input clamping
-    const defaultLevelInput = document.getElementById('defaultCharacterLevel');
-    if (defaultLevelInput) {
-    // Only allow numbers
-        defaultLevelInput.addEventListener('keypress', (e) => {
-        if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') {
-            e.preventDefault();
-        }
-    });
-    
-    // Clamp value on input change
-        defaultLevelInput.addEventListener('input', () => {
-        // Remove non-numeric characters
-            defaultLevelInput.value = defaultLevelInput.value.replace(/[^0-9]/g, '');
-        });
-        
-        // Clamp value when focus is lost
-        defaultLevelInput.addEventListener('blur', () => {
-            let value = parseInt(defaultLevelInput.value, 10);
-            defaultLevelInput.value = clampCharacterLevel(value);
-        });
-        
-        // Also trigger on Enter key
-        defaultLevelInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                defaultLevelInput.blur();
-            }
-        });
-    }
     
     // Save defaults button
     const saveBtn = document.getElementById('saveDefaultsBtn');
@@ -659,7 +566,6 @@ function loadDefaults() {
     const defaults = getDefaultSettings();
     
     // Populate defaults form
-    document.getElementById('defaultCharacterLevel').value = defaults.defaultLevel;
     document.getElementById('normalCompleted').checked = defaults.difficulties.normal;
     document.getElementById('nightmareCompleted').checked = defaults.difficulties.nightmare;
     document.getElementById('hellCompleted').checked = defaults.difficulties.hell;
@@ -667,20 +573,13 @@ function loadDefaults() {
 
 // Save defaults to localStorage
 function saveDefaults() {
-    const inputLevel = parseInt(document.getElementById('defaultCharacterLevel').value) || CHARACTER_CONFIG.DEFAULT_LEVEL;
-    const clampedLevel = clampCharacterLevel(inputLevel);
-    
     const defaults = {
-        defaultLevel: clampedLevel,
         difficulties: {
             normal: document.getElementById('normalCompleted').checked,
             nightmare: document.getElementById('nightmareCompleted').checked,
             hell: document.getElementById('hellCompleted').checked
         }
     };
-    
-    // Update the input to show clamped value
-    document.getElementById('defaultCharacterLevel').value = clampedLevel;
     
     localStorage.setItem('medianxl-defaults', JSON.stringify(defaults));
 }
@@ -696,7 +595,6 @@ function getDefaultSettings() {
         } catch (e) {
             console.error('Error parsing defaults:', e);
             defaults = {
-                defaultLevel: CHARACTER_CONFIG.DEFAULT_LEVEL,
                 difficulties: {
                     normal: true,
                     nightmare: true,
@@ -707,7 +605,6 @@ function getDefaultSettings() {
     } else {
         // Return default values
         defaults = {
-            defaultLevel: CHARACTER_CONFIG.DEFAULT_LEVEL,
             difficulties: {
                 normal: true,
                 nightmare: true,
@@ -731,12 +628,6 @@ function resetBuild(showToast = true) {
     // Get defaults first
     const defaults = getDefaultSettings();
     
-    // Reset to default level
-    currentCharacterLevel = defaults.defaultLevel;
-    const levelInput = document.getElementById('characterLevel');
-    if (levelInput) {
-        levelInput.value = defaults.defaultLevel;
-    }
     
     // Reset to first class
     if (classSelect && skillsList) {
@@ -746,10 +637,9 @@ function resetBuild(showToast = true) {
         }
     }
     
-    // Clear all skill points (must happen after setting level)
+    // Clear all skill points
     const currentClass = classSelect ? classSelect.value : null;
-    initializeCharacter(currentClass, defaults.defaultLevel);
-    setCharacterLevel(defaults.defaultLevel);
+    initializeCharacter(currentClass);
     
     // Update difficulties
     updateQuestCompletion('den_of_evil', defaults.difficulties);
@@ -759,7 +649,7 @@ function resetBuild(showToast = true) {
     
     // Re-render skills for the first class (this creates the difficulty checkboxes)
     if (currentClass && skillsList) {
-        renderSkills(currentClass, skillsList, skillsContainer, currentCharacterLevel);
+        renderSkills(currentClass, skillsList, skillsContainer);
     }
     
     // Re-render difficulty checkboxes AFTER renderSkills so they exist
@@ -841,7 +731,7 @@ function updateCurrentBuild() {
     }
     
     const currentClass = classSelect ? classSelect.value : null;
-    const currentLevel = parseInt(document.getElementById('characterLevel')?.value) || CHARACTER_CONFIG.DEFAULT_LEVEL;
+    const currentLevel = getMinimumRequiredLevel();
     const skillPoints = getAllSkillPoints();
     const spentPoints = getSpentSkillPoints();
     
@@ -873,7 +763,7 @@ function updateCurrentBuild() {
 
 function saveBuild(buildName) {
     const currentClass = classSelect ? classSelect.value : null;
-    const currentLevel = parseInt(document.getElementById('characterLevel')?.value) || CHARACTER_CONFIG.DEFAULT_LEVEL;
+    const currentLevel = getMinimumRequiredLevel();
     const skillPoints = getAllSkillPoints();
     const spentPoints = getSpentSkillPoints();
     
@@ -1014,15 +904,10 @@ function loadBuild(index) {
     }
     
     // Set level
-    currentCharacterLevel = build.level;
-    const levelInput = document.getElementById('characterLevel');
-    if (levelInput) {
-        levelInput.value = build.level;
-    }
     setCharacterLevel(build.level);
     
     // Initialize character with loaded class and level
-    initializeCharacter(build.class, build.level);
+    initializeCharacter(build.class);
     
     // Load skill points
     setAllSkillPoints(build.skillPoints);
@@ -1042,7 +927,7 @@ function loadBuild(index) {
     if (skillsList) {
         // If build has oSkills, switch to oSkills tab after rendering
         const hasOSkills = build.oSkills && build.oSkills.length > 0;
-        renderSkills(build.class, skillsList, skillsContainer, build.level, hasOSkills ? 'oSkills' : null);
+        renderSkills(build.class, skillsList, skillsContainer, hasOSkills ? 'oSkills' : null);
     }
     
     // Re-render difficulty checkboxes AFTER renderSkills so they exist
