@@ -2,7 +2,7 @@
 import { loadSkillsFromSQLite, getDatabase } from './tree-data.js';
 import { renderSkills, renderDifficultyCheckboxes, updateTabColors } from './tree-render.js';
 import { CHARACTER_CONFIG } from '../character-config.js';
-import { initializeCharacter, setCharacterLevel, getSpentSkillPoints, getAllSkillPoints, setAllSkillPoints, updateQuestCompletion, getQuestCompletion, getAllOSkills, addOSkill, changeOSkillPoints, clearOSkills, setAllOSkills, getMinimumRequiredLevel, getTotalQuestSkillPoints, getBaseSkillPoints } from '../character-state.js';
+import { initializeCharacter, setCharacterLevel, getSpentSkillPoints, getAllSkillPoints, setAllSkillPoints, updateQuestCompletion, getQuestCompletion, getAllOSkills, addOSkill, changeOSkillPoints, clearOSkills, setAllOSkills, getMinimumRequiredLevel, getTotalQuestSkillPoints, getBaseSkillPoints, checkSkillsExceedingMaxLevel } from '../character-state.js';
 import { getCurrentDevotion, getDevotionDisplayName } from '../skill-calculations.js';
 import { initializeTooltip } from './tree-tooltip.js';
 import { ToastManager } from './ToastManager.js';
@@ -36,7 +36,6 @@ export function initializeTreePage() {
     }
     
     initializeMenuButtons();
-    initializeDefaults();
 }
 
 // Main application entry point
@@ -81,17 +80,8 @@ async function main() {
         const selectedClass = savedClass && classes.includes(savedClass) ? savedClass : classes[0];
         classSelect.value = selectedClass;
 
-        // Apply default settings
-        const defaults = getDefaultSettings();
-
-        // Initialize character state
+        // Initialize character state (quests are already set to defaults in characterState)
         initializeCharacter(selectedClass);
-        
-        // Apply difficulty defaults
-        updateQuestCompletion('den_of_evil', defaults.difficulties);
-        updateQuestCompletion('radament', defaults.difficulties);
-        updateQuestCompletion('izual', defaults.difficulties);
-        updateQuestCompletion('inquisitor_of_the_triune', { normal: false, nightmare: false, hell: defaults.difficulties.hell });
 
         // Render skills with saved tab if specified
         renderSkills(selectedClass, skillsList, skillsContainer, savedTab);
@@ -103,9 +93,9 @@ async function main() {
         
         // Initialize difficulty checkboxes with default values
         const questState = {
-            hasNormal: defaults.difficulties.normal,
-            hasNightmare: defaults.difficulties.nightmare,
-            hasHell: defaults.difficulties.hell
+            hasNormal: true,
+            hasNightmare: true,
+            hasHell: true
         };
         renderDifficultyCheckboxes(questState);
         
@@ -117,9 +107,9 @@ async function main() {
             const normalCheckbox = document.getElementById('difficultyNormal');
             const nightmareCheckbox = document.getElementById('difficultyNightmare');
             const hellCheckbox = document.getElementById('difficultyHell');
-            if (normalCheckbox) normalCheckbox.checked = defaults.difficulties.normal;
-            if (nightmareCheckbox) nightmareCheckbox.checked = defaults.difficulties.nightmare;
-            if (hellCheckbox) hellCheckbox.checked = defaults.difficulties.hell;
+            if (normalCheckbox) normalCheckbox.checked = true;
+            if (nightmareCheckbox) nightmareCheckbox.checked = true;
+            if (hellCheckbox) hellCheckbox.checked = true;
             
             // Update displays after setting difficulties
             updateSkillPointsDisplay();
@@ -283,6 +273,7 @@ function updateMinimumLevelDisplay() {
     const availableBasePoints = getBaseSkillPoints(minLevel);
     const totalAvailablePoints = availableBasePoints + availableQuestPoints;
     
+    
     minLevelDisplay.textContent = `Level ${minLevel}`;
     
     // Update breakdown with base/quest points
@@ -444,14 +435,6 @@ function initializeMenuButtons() {
         });
     }
     
-    // Menu: Edit Defaults button
-    const editDefaultsBtn = document.getElementById('menuEditDefaultsBtn');
-    if (editDefaultsBtn) {
-        editDefaultsBtn.addEventListener('click', () => {
-            showSection('defaults');
-        });
-    }
-    
     // Back to Menu buttons
     const backToMenuBtn = document.getElementById('backToMenuBtn');
     if (backToMenuBtn) {
@@ -461,16 +444,7 @@ function initializeMenuButtons() {
             showSection('menu');
         });
     }
-    
-    const backToMenuFromDefaultsBtn = document.getElementById('backToMenuFromDefaultsBtn');
-    if (backToMenuFromDefaultsBtn) {
-        backToMenuFromDefaultsBtn.addEventListener('click', () => {
-            // Clear URL params
-            window.history.replaceState({}, '', window.location.pathname);
-            showSection('menu');
-        });
-    }
-    
+
     // Reset Build button
     const resetBtn = document.getElementById('resetBuildBtn');
     if (resetBtn) {
@@ -485,6 +459,11 @@ function initializeMenuButtons() {
     const saveBuildBtn = document.getElementById('saveBuildBtn');
     if (saveBuildBtn) {
         saveBuildBtn.addEventListener('click', () => {
+            // Validate build before saving
+            if (!validateBuildBeforeSave()) {
+                return;
+            }
+            
             if (currentBuildIndex !== null) {
                 updateCurrentBuild();
             }
@@ -531,104 +510,12 @@ function showSection(sectionName) {
         renderSavedBuildsList();
     } else if (sectionName === 'defaults' && defaultsSection) {
         defaultsSection.style.display = 'block';
-        loadDefaults(); // Populate form when showing defaults section
     }
 }
 
-// Initialize defaults functionality
-function initializeDefaults() {
-    // Load defaults only populates the form, doesn't need to be called here
-    // The form will be populated when user opens the defaults section
-    
-    
-    // Save defaults button
-    const saveBtn = document.getElementById('saveDefaultsBtn');
-    if (saveBtn) {
-        saveBtn.addEventListener('click', () => {
-            saveDefaults();
-            toastManager.showToast('Defaults saved successfully!', true, 'success');
-        });
-    }
-    
-    // Reset defaults button
-    const resetBtn = document.getElementById('resetDefaultsBtn');
-    if (resetBtn) {
-        resetBtn.addEventListener('click', () => {
-            if (confirm('Reset to default values?')) {
-                resetDefaults();
-            }
-        });
-    }
-}
-
-// Load defaults from localStorage
-function loadDefaults() {
-    const defaults = getDefaultSettings();
-    
-    // Populate defaults form
-    document.getElementById('normalCompleted').checked = defaults.difficulties.normal;
-    document.getElementById('nightmareCompleted').checked = defaults.difficulties.nightmare;
-    document.getElementById('hellCompleted').checked = defaults.difficulties.hell;
-}
-
-// Save defaults to localStorage
-function saveDefaults() {
-    const defaults = {
-        difficulties: {
-            normal: document.getElementById('normalCompleted').checked,
-            nightmare: document.getElementById('nightmareCompleted').checked,
-            hell: document.getElementById('hellCompleted').checked
-        }
-    };
-    
-    localStorage.setItem('medianxl-defaults', JSON.stringify(defaults));
-}
-
-// Get default settings (from localStorage or defaults)
-function getDefaultSettings() {
-    const stored = localStorage.getItem('medianxl-defaults');
-    
-    let defaults;
-    if (stored) {
-        try {
-            defaults = JSON.parse(stored);
-        } catch (e) {
-            console.error('Error parsing defaults:', e);
-            defaults = {
-                difficulties: {
-                    normal: true,
-                    nightmare: true,
-                    hell: true
-                }
-            };
-        }
-    } else {
-        // Return default values
-        defaults = {
-            difficulties: {
-                normal: true,
-                nightmare: true,
-                hell: true
-            }
-        };
-    }
-    
-    return defaults;
-}
-
-// Reset defaults to system defaults
-function resetDefaults() {
-    localStorage.removeItem('medianxl-defaults');
-    loadDefaults();
-    toastManager.showToast('Defaults reset successfully!', true, 'info');
-}
 
 // Reset current build
 function resetBuild(showToast = true) {
-    // Get defaults first
-    const defaults = getDefaultSettings();
-    
-    
     // Reset to first class
     if (classSelect && skillsList) {
         const classes = [...new Set(skillsList.map(skill => skill.class))];
@@ -637,15 +524,9 @@ function resetBuild(showToast = true) {
         }
     }
     
-    // Clear all skill points
+    // Clear all skill points and reset quest completion to defaults
     const currentClass = classSelect ? classSelect.value : null;
     initializeCharacter(currentClass);
-    
-    // Update difficulties
-    updateQuestCompletion('den_of_evil', defaults.difficulties);
-    updateQuestCompletion('radament', defaults.difficulties);
-    updateQuestCompletion('izual', defaults.difficulties);
-    updateQuestCompletion('inquisitor_of_the_triune', { normal: false, nightmare: false, hell: defaults.difficulties.hell });
     
     // Re-render skills for the first class (this creates the difficulty checkboxes)
     if (currentClass && skillsList) {
@@ -654,9 +535,9 @@ function resetBuild(showToast = true) {
     
     // Re-render difficulty checkboxes AFTER renderSkills so they exist
     const questState = {
-        hasNormal: defaults.difficulties.normal,
-        hasNightmare: defaults.difficulties.nightmare,
-        hasHell: defaults.difficulties.hell
+        hasNormal: true,
+        hasNightmare: true,
+        hasHell: true
     };
     renderDifficultyCheckboxes(questState);
     
@@ -666,9 +547,9 @@ function resetBuild(showToast = true) {
         const nightmareCheckbox = document.getElementById('difficultyNightmare');
         const hellCheckbox = document.getElementById('difficultyHell');
         
-        if (normalCheckbox) normalCheckbox.checked = defaults.difficulties.normal;
-        if (nightmareCheckbox) nightmareCheckbox.checked = defaults.difficulties.nightmare;
-        if (hellCheckbox) hellCheckbox.checked = defaults.difficulties.hell;
+        if (normalCheckbox) normalCheckbox.checked = true;
+        if (nightmareCheckbox) nightmareCheckbox.checked = true;
+        if (hellCheckbox) hellCheckbox.checked = true;
     }, 0);
     
     // Clear current build index (this is a new build)
@@ -710,7 +591,30 @@ function updateSaveButtonVisibility() {
     }
 }
 
+function validateBuildBeforeSave() {
+    // Check for skills exceeding max level BEFORE any save operation
+    const exceedingSkills = checkSkillsExceedingMaxLevel(skillsList);
+    if (exceedingSkills.length > 0) {
+        const skillList = exceedingSkills
+            .map(skill => `${skill.skillName} (${skill.currentPoints}/${skill.maxLevel})`)
+            .join(', ');
+        
+        toastManager.showToast(
+            `Cannot save build: Skills exceed maximum level: ${skillList}. Please fix these skills before saving.`,
+            false,
+            'danger'
+        );
+        return false; // Validation failed
+    }
+    return true; // Validation passed
+}
+
 function promptAndSaveBuild() {
+    // Validate build before showing prompt
+    if (!validateBuildBeforeSave()) {
+        return;
+    }
+    
     const buildName = prompt('Enter a name for this build:');
     if (!buildName || buildName.trim() === '') {
         return;
@@ -786,6 +690,7 @@ function saveBuild(buildName) {
         savedAt: new Date().toISOString()
     };
     
+    
     // Get existing builds
     const builds = getSavedBuilds();
     
@@ -836,12 +741,25 @@ function renderSavedBuildsList() {
         const columns = document.createElement('div');
         columns.className = 'columns is-vcentered';
         
+        // Add class image column
+        const imageColumn = document.createElement('div');
+        imageColumn.className = 'column is-narrow py-0';
+        
+        const classImage = document.createElement('img');
+        
+        classImage.src = `icons/gifs/${build.class}.gif`;
+        classImage.alt = build.class;
+        classImage.className = 'image is-64x64';
+        classImage.style.objectFit = 'contain';
+        
+        imageColumn.appendChild(classImage);
+        
         const infoColumn = document.createElement('div');
-        infoColumn.className = 'column py-0';
+        infoColumn.className = 'column p-0';
         
         const title = document.createElement('p');
         title.className = 'title is-4 has-text-weight-bold mb-2';
-        title.textContent = build.name; // Safe: uses textContent
+        title.textContent = build.name;
         
         const subtitle = document.createElement('p');
         subtitle.className = 'subtitle is-6 mb-1';
@@ -861,12 +779,16 @@ function renderSavedBuildsList() {
                 <button class="button is-primary is-outlined" data-load-build="${index}">
                     Load
                 </button>
+                <button class="button is-info is-outlined" data-rename-build="${index}">
+                    Rename
+                </button>
                 <button class="button is-danger is-outlined" data-delete-build="${index}">
                     Delete
                 </button>
             </div>
         `;
         
+        columns.appendChild(imageColumn);
         columns.appendChild(infoColumn);
         columns.appendChild(buttonsColumn);
         buildCard.appendChild(columns);
@@ -878,6 +800,13 @@ function renderSavedBuildsList() {
         btn.addEventListener('click', () => {
             const index = parseInt(btn.getAttribute('data-load-build'));
             loadBuild(index);
+        });
+    });
+    
+    container.querySelectorAll('[data-rename-build]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const index = parseInt(btn.getAttribute('data-rename-build'));
+            renameBuild(index);
         });
     });
     
@@ -911,6 +840,7 @@ function loadBuild(index) {
     
     // Load skill points
     setAllSkillPoints(build.skillPoints);
+    
     
     // Load oSkills
     setAllOSkills(build.oSkills || []);
@@ -952,7 +882,21 @@ function loadBuild(index) {
     // Show tree section
     showSection('tree');
     
-    toastManager.showToast(`Build "${build.name}" loaded successfully!`, true, 'success');
+    // Check for skills exceeding max level
+    const exceedingSkills = checkSkillsExceedingMaxLevel(skillsList);
+    if (exceedingSkills.length > 0) {
+        const skillList = exceedingSkills
+            .map(skill => `${skill.skillName} (${skill.currentPoints}/${skill.maxLevel})`)
+            .join(', ');
+        
+        toastManager.showToast(
+            `Warning: Skills exceed maximum level: ${skillList}. Build loaded but may be invalid.`,
+            false,
+            'danger'
+        );
+    } else {
+        toastManager.showToast(`Build "${build.name}" loaded successfully!`, true, 'success');
+    }
 }
 
 function deleteBuild(index) {
@@ -981,6 +925,37 @@ function deleteBuild(index) {
     }
 }
 
+function renameBuild(index) {
+    const builds = getSavedBuilds();
+    if (index < 0 || index >= builds.length) {
+        return;
+    }
+    
+    const currentBuild = builds[index];
+    const newName = prompt(`Enter new name for build "${currentBuild.name}":`, currentBuild.name);
+    
+    if (!newName || newName.trim() === '') {
+        return;
+    }
+    
+    const trimmedName = newName.trim();
+    
+    // Check if name already exists (excluding current build)
+    const nameExists = builds.some((build, i) => i !== index && build.name === trimmedName);
+    if (nameExists) {
+        toastManager.showToast(`Build name "${trimmedName}" already exists!`, true, 'danger');
+        return;
+    }
+    
+    // Update the build name
+    builds[index].name = trimmedName;
+    localStorage.setItem('medianxl-builds', JSON.stringify(builds));
+    
+    // Re-render the list to show the new name
+    renderSavedBuildsList();
+    
+    toastManager.showToast(`Build renamed to "${trimmedName}"!`, true, 'success');
+}
 
 // oSkills Management
 function initializeOSkillsDropdown() {

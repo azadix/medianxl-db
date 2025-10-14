@@ -59,8 +59,10 @@ export function initializeCharacter(className, level = CHARACTER_CONFIG.DEFAULT_
  * @param {number} level - New character level
  */
 export function setCharacterLevel(level) {
+  const oldLevel = characterState.level;
   characterState.level = level;
   characterState.maxLevels = {}; // Clear cache
+  
 }
 
 /**
@@ -703,6 +705,47 @@ export function removeSkillPoint(skillName, allSkills = []) {
   characterState.maxLevels = {}; // Clear cache as max levels may change
   
   return { success: true, reason: '' };
+}
+
+
+/**
+ * Check for skills that exceed their maximum level
+ * @param {Array} allSkills - Array of all skills to check
+ * @returns {Array} Array of skills that exceed their max level
+ */
+export function checkSkillsExceedingMaxLevel(allSkills = []) {
+  const db = getDatabase();
+  if (!db) return [];
+  
+  // Use minimum required level instead of characterState.level to ensure we have the correct level
+  const actualCharacterLevel = getMinimumRequiredLevel(db);
+  const skillLevels = getAllSkillPoints();
+  const exceedingSkills = [];
+  
+  // Check each skill that has points allocated
+  for (const [skillName, currentPoints] of Object.entries(characterState.skillPoints)) {
+    if (currentPoints === 0) continue;
+    
+    // Find the skill object
+    const skill = allSkills.find(s => s.id === skillName);
+    if (!skill) continue;
+    
+    // Calculate the current maximum level for this skill
+    const effectiveMaxLevel = calculateMaxLevel(skill.skillId, skillLevels, actualCharacterLevel, db);
+    
+    
+    // If current points exceed the maximum, add to list
+    if (currentPoints > effectiveMaxLevel) {
+      exceedingSkills.push({
+        skillName: skill.name || skillName,
+        currentPoints,
+        maxLevel: effectiveMaxLevel,
+        excess: currentPoints - effectiveMaxLevel
+      });
+    }
+  }
+  
+  return exceedingSkills;
 }
 
 /**

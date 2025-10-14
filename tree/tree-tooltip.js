@@ -66,11 +66,9 @@ function handleMouseOut(e) {
         return; // Still hovering within the same skill card
     }
     
-    // Delay hiding to prevent flicker when moving between elements
-    tooltipHideTimeout = setTimeout(() => {
-        hideTooltip();
-        currentHoveredSkill = null;
-    }, 100);
+    // Hide tooltip immediately
+    hideTooltip();
+    currentHoveredSkill = null;
 }
 
 /**
@@ -402,7 +400,7 @@ function buildTooltipContent(skillData, level, db, warningMessage = '') {
         // Render main description
         if (skillData.description) {
             const expandedDesc = expandPlaceholdersWithScaling(db, skillData.dbId, level, skillData.description);
-            html += `<div class="tooltip-main-desc">${expandedDesc}</div>`;
+            html += `<div class="tooltip-main-desc has-text-centered mb-2">${expandedDesc}</div>`;
         }
         
         // Render skill effect

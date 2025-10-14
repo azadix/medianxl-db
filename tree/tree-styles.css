@@ -205,9 +205,6 @@ html {
     color: #eee;
 }
 
-.tooltip-main-desc {
-    margin-bottom: 0.75rem;
-}
 /* Mobile responsive styles */
 @media screen and (max-width: 768px) {
     /* Fix scrolling on mobile */

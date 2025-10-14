@@ -200,6 +200,7 @@ export function calculateMaxLevel(skillId, skillLevels = {}, characterLevel = CH
   stmt.bind([skillId]);
   
   if (!stmt.step()) {
+    console.log(`calculateMaxLevel: No max level data found for skillId ${skillId}`);
     stmt.free();
     return 0; // No max level data found
   }
@@ -227,6 +228,7 @@ export function calculateMaxLevel(skillId, skillLevels = {}, characterLevel = CH
     effectiveMaxLevel += bonus;
   }
 
+  
   return effectiveMaxLevel;
 }
 
