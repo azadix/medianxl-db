@@ -26,9 +26,9 @@ export { getOSkillPoints } from '../character-state.js';
 
 /**
  * Calculate armor image number based on spent skill points
- * Maps 0 to max available skill points to 1-14 image numbers
+ * Maps 0 to max available skill points to 1-10 image numbers
  * @param {number} spentPoints - Total skill points spent
- * @returns {number} - Image number (1-14)
+ * @returns {number} - Image number (1-10)
  */
 function calculateArmorImageNumber(spentPoints) {
     // Get maximum available skill points from character config
@@ -37,15 +37,15 @@ function calculateArmorImageNumber(spentPoints) {
     // Clamp spent points to valid range (0 to max available)
     const clampedPoints = Math.max(0, Math.min(maxSkillPoints, spentPoints));
     
-    // Map 0 to max points to 1-14 images
-    // Formula: Math.ceil((points / maxPoints) * 14) ensures:
+    // Map 0 to max points to 1-10 images
+    // Formula: Math.ceil((points / maxPoints) * 10) ensures:
     // - 0 points = 1.gif
-    // - max points = 14.gif
+    // - max points = 10.gif
     // - Even distribution across the range
-    const imageNumber = Math.ceil((clampedPoints / maxSkillPoints) * 14);
+    const imageNumber = Math.ceil((clampedPoints / maxSkillPoints) * 10);
     
-    // Ensure result is within valid range (1-14)
-    return Math.max(1, Math.min(14, imageNumber));
+    // Ensure result is within valid range (1-10)
+    return Math.max(1, Math.min(10, imageNumber));
 }
 
 /**
@@ -802,7 +802,7 @@ function renderSavedBuildsList() {
         
         const classImage = document.createElement('img');
         
-        // Calculate armor image number based on spent skill points (0 to max available points maps to 1-14.gif)
+        // Calculate armor image number based on spent skill points (maps to 1-10.gif)
         const armorImageNumber = calculateArmorImageNumber(build.spentPoints);
         classImage.src = `icons/portraits/${build.class}/${armorImageNumber}.gif`;
         classImage.alt = build.class;
