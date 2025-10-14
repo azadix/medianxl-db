@@ -18,25 +18,25 @@ export const CHARACTER_CONFIG = {
   DEFAULT_BASE_MAX_LEVEL: 1,
   
   // Quest skill point rewards with level requirements
-  // Format: { quest_id: { difficulty: { points: number, requiredLevel: number } } }
+  // Format: { quest_id: { difficulty: { points: number, expectedLevel: number } } }
   QUEST_SKILL_POINTS: {
     'den_of_evil': { 
-      normal: { points: 1, requiredLevel: 5 },
-      nightmare: { points: 1, requiredLevel: 60 },
-      hell: { points: 1, requiredLevel: 105 }
+      normal: { points: 1, expectedLevel: 5 },
+      nightmare: { points: 1, expectedLevel: 60 },
+      hell: { points: 1, expectedLevel: 105 }
     },
     'radament': { 
-      normal: { points: 1, requiredLevel: 10 },
-      nightmare: { points: 1, requiredLevel: 70 },
-      hell: { points: 1, requiredLevel: 107 }
+      normal: { points: 1, expectedLevel: 10 },
+      nightmare: { points: 1, expectedLevel: 70 },
+      hell: { points: 1, expectedLevel: 107 }
     },
     'izual': { 
-      normal: { points: 2, requiredLevel: 20 },
-      nightmare: { points: 2, requiredLevel: 90 },
-      hell: { points: 2, requiredLevel: 110 }
+      normal: { points: 2, expectedLevel: 20 },
+      nightmare: { points: 2, expectedLevel: 90 },
+      hell: { points: 2, expectedLevel: 110 }
     },
     'inquisitor_of_the_triune': { 
-      hell: { points: 2, requiredLevel: 115 }
+      hell: { points: 2, expectedLevel: 115 }
     }
   },
   

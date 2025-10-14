@@ -109,17 +109,17 @@ export function getTotalQuestSkillPoints(characterLevel = CHARACTER_CONFIG.MAX_L
     const questRewards = CHARACTER_CONFIG.QUEST_SKILL_POINTS[questId];
     if (questRewards) {
       if (difficulties.normal && questRewards.normal) {
-        if (characterLevel >= questRewards.normal.requiredLevel) {
+        if (characterLevel >= questRewards.normal.expectedLevel) {
           total += questRewards.normal.points;
         }
       }
       if (difficulties.nightmare && questRewards.nightmare) {
-        if (characterLevel >= questRewards.nightmare.requiredLevel) {
+        if (characterLevel >= questRewards.nightmare.expectedLevel) {
           total += questRewards.nightmare.points;
         }
       }
       if (difficulties.hell && questRewards.hell) {
-        if (characterLevel >= questRewards.hell.requiredLevel) {
+        if (characterLevel >= questRewards.hell.expectedLevel) {
           total += questRewards.hell.points;
         }
       }
