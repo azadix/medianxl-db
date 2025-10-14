@@ -412,7 +412,7 @@ function buildTooltipContent(skillData, level, db, warningMessage = '') {
             
             lines.forEach(line => {
                 if (line.trim()) {
-                    html += `<div class="tooltip-effect">${line}</div>`;
+                    html += `<div class="tooltip-effect has-text-centered">${line}</div>`;
                 } else {
                     html += '<div>&nbsp;</div>';
                 }
