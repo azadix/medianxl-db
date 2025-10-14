@@ -25,6 +25,7 @@ export function initializeSkills() {
     document.getElementById('skill-form').reset();
     document.querySelector('#skill-form button[type="submit"]').textContent = 'Insert Skill';
     document.getElementById('skill-cancel').style.display = 'none';
+    removeValidationErrors();
   });
 }
 
@@ -270,14 +271,14 @@ function editSkill(id) {
   if (!SkillDB.db) return;
   const stmt = SkillDB.db.prepare(`
     SELECT s.id, s.name, s.display_name, s.class_id, s.tab_index,
-          s.row, s.col, s.image, s.restriction, s.description
+          s.row, s.col, s.image, s.restriction, s.description, s.skill_effect
     FROM skills s
     WHERE s.id = ?
   `);
   stmt.bind([id]);
   
   if (stmt.step()) {
-    const [skillId, name, displayName, classId, tabIndex, row, col, image, restriction, description] = stmt.get();
+    const [skillId, name, displayName, classId, tabIndex, row, col, image, restriction, description, skillEffect] = stmt.get();
     
     document.getElementById('name').value = name;
     document.getElementById('display_name').value = displayName;
@@ -289,6 +290,7 @@ function editSkill(id) {
     document.getElementById('image').value = image;
     document.getElementById('restriction').value = restriction || '';
     document.getElementById('description').value = description || '';
+    document.getElementById('skill_effect').value = skillEffect || '';
     
     setSkillTagCheckboxes(skillId);
     
@@ -318,9 +320,10 @@ function saveSkill() {
   const image = document.getElementById('image').value.trim();
   const restriction = document.getElementById('restriction').value.trim();
   const description = document.getElementById('description').value.trim();
+  const skillEffect = document.getElementById('skill_effect').value.trim();
   
   // Validate template syntax
-  const validationResult = validateSkillTemplates(description, restriction);
+  const validationResult = validateSkillTemplates(description, restriction, skillEffect);
   if (!validationResult.valid) {
     displayValidationErrors(validationResult);
     // Scroll to the first error
@@ -338,9 +341,9 @@ function saveSkill() {
     // Update existing skill
     SkillDB.db.run(`
       UPDATE skills 
-      SET name=?, display_name=?, class_id=?, tab_index=?, row=?, col=?, image=?, restriction=?, description=?
+      SET name=?, display_name=?, class_id=?, tab_index=?, row=?, col=?, image=?, restriction=?, description=?, skill_effect=?
       WHERE id=?
-    `, [name, displayName, classId, tabIndex, row, col, image, restriction, description, window.editingSkillId]);
+    `, [name, displayName, classId, tabIndex, row, col, image, restriction, description, skillEffect, window.editingSkillId]);
     
     // Update tags
     SkillDB.db.run('DELETE FROM skill_skilltags WHERE skill_id = ?', [window.editingSkillId]);
@@ -355,10 +358,10 @@ function saveSkill() {
   } else {
     // Insert new skill
     const stmt = SkillDB.db.prepare(`
-      INSERT INTO skills (name, display_name, class_id, tab_index, row, col, image, restriction, description)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO skills (name, display_name, class_id, tab_index, row, col, image, restriction, description, skill_effect)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
-    stmt.run([name, displayName, classId, tabIndex, row, col, image, restriction, description]);
+    stmt.run([name, displayName, classId, tabIndex, row, col, image, restriction, description, skillEffect]);
     const skillId = SkillDB.db.exec("SELECT last_insert_rowid()")[0].values[0][0];
     stmt.free();
     

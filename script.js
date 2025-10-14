@@ -290,23 +290,29 @@ async function displaySkillDetail(skillId) {
     ` : '';
 
     function renderDescriptionAtLevel(level) {
-        if (!skillInfo.description) return '';
-        const expanded = expandPlaceholdersWithScaling(SkillDB.db, skillInfo.dbId, level, skillInfo.description);
-        const lines = expanded.split('\n');
+        let html = '';
         
-        // Add extra newline after first line if there are multiple lines
-        if (lines.length > 1) {
-            lines.splice(1, 0, ''); // Insert empty string at index 1 (after first line)
+        // Render main description
+        if (skillInfo.description) {
+            const expanded = expandPlaceholdersWithScaling(SkillDB.db, skillInfo.dbId, level, skillInfo.description);
+            html += `<p class="is-size-5"><strong>Description:</strong></p>`;
+            html += `<div>${expanded}</div>`;
         }
         
-        let html = `<p class="is-size-5"><strong>Description:</strong></p>`;
-        lines.forEach(line => {
-            if (line.trim()) {
-                html += `<div>${line}</div>`;
-            } else {
-                html += '<div>&nbsp;</div>';
-            }
-        });
+        // Render skill effect
+        if (skillInfo.skillEffect) {
+            const expandedEffect = expandPlaceholdersWithScaling(SkillDB.db, skillInfo.dbId, level, skillInfo.skillEffect);
+            const lines = expandedEffect.split('\n');
+            
+            html += `<p class="is-size-5 mt-4"><strong>Skill Effect:</strong></p>`;
+            lines.forEach(line => {
+                if (line.trim()) {
+                    html += `<div>${line}</div>`;
+                } else {
+                    html += '<div>&nbsp;</div>';
+                }
+            });
+        }
         
         return html;
     }
@@ -574,9 +580,10 @@ async function loadSkillsFromSQLite() {
                 row: row.row,
                 col: row.col,
                 image: row.image || MISSING_IMAGE_NAME,
-                hasDetails: row.description && row.description.trim().length > 0,
+                hasDetails: (row.description && row.description.trim().length > 0) || (row.skill_effect && row.skill_effect.trim().length > 0),
                 restriction: row.restriction || null,
-                description: row.description || null
+                description: row.description || null,
+                skillEffect: row.skill_effect || null
             });
         }
         stmt.free();

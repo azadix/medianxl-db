@@ -73,6 +73,7 @@ export async function initDatabase() {
       image TEXT,
       restriction TEXT,
       description TEXT,
+      skill_effect TEXT,
       FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE SET NULL
     );
     CREATE TABLE skill_skilltags (

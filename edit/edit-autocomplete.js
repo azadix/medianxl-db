@@ -4,6 +4,7 @@ import { SkillDB } from './edit-core.js';
 export function initializeAutocomplete() {
   const descriptionField = document.getElementById('description');
   const restrictionField = document.getElementById('restriction');
+  const skillEffectField = document.getElementById('skill_effect');
   if (!descriptionField) return;
 
   let autocompleteDropdown = null;
@@ -20,20 +21,20 @@ export function initializeAutocomplete() {
     const usageCounts = {};
     
     try {
-      // Get all skill descriptions that contain placeholders
+      // Get all skill descriptions and skill effects that contain placeholders
       const stmt = SkillDB.db.prepare(`
-        SELECT description 
+        SELECT description, skill_effect 
         FROM skills 
-        WHERE description IS NOT NULL 
-        AND description != '' 
-        AND description LIKE '%{{%}}%'
+        WHERE (description IS NOT NULL AND description != '' AND description LIKE '%{{%}}%')
+        OR (skill_effect IS NOT NULL AND skill_effect != '' AND skill_effect LIKE '%{{%}}%')
       `);
       
       while (stmt.step()) {
-        const description = stmt.get()[0];
+        const [description, skillEffect] = stmt.get();
+        const text = (description || '') + ' ' + (skillEffect || '');
         
-        // Find all {{...}} placeholders in this description
-        const matches = description.match(/\{\{([^}]+)\}\}/g);
+        // Find all {{...}} placeholders in this text
+        const matches = text.match(/\{\{([^}]+)\}\}/g);
         if (matches) {
           matches.forEach(match => {
             // Extract the stat key (part before colon if present)
@@ -44,7 +45,7 @@ export function initializeAutocomplete() {
       }
       stmt.free();
     } catch (error) {
-      console.warn('Failed to count stat usage in descriptions:', error);
+      console.warn('Failed to count stat usage in descriptions and skill effects:', error);
     }
     
     return usageCounts;
@@ -56,17 +57,18 @@ export function initializeAutocomplete() {
     const usageCounts = {};
     
     try {
-      // Get all skill descriptions that contain skill name placeholders
+      // Get all skill descriptions, skill effects, and restrictions that contain skill name placeholders
       const stmt = SkillDB.db.prepare(`
-        SELECT description, restriction
+        SELECT description, skill_effect, restriction
         FROM skills 
         WHERE (description IS NOT NULL AND description != '' AND description LIKE '%[[%]]%')
+        OR (skill_effect IS NOT NULL AND skill_effect != '' AND skill_effect LIKE '%[[%]]%')
         OR (restriction IS NOT NULL AND restriction != '' AND restriction LIKE '%[[%]]%')
       `);
       
       while (stmt.step()) {
-        const [description, restriction] = stmt.get();
-        const text = (description || '') + ' ' + (restriction || '');
+        const [description, skillEffect, restriction] = stmt.get();
+        const text = (description || '') + ' ' + (skillEffect || '') + ' ' + (restriction || '');
         
         // Find all [[...]] placeholders in this description
         const matches = text.match(/\[\[([^\]]+)\]\]/g);
@@ -516,21 +518,23 @@ export function initializeAutocomplete() {
     });
   }
   
-  // Attach autocomplete to description field
-  attachAutocompleteToField(descriptionField);
-  
   // Attach autocomplete to restriction field if it exists
   if (restrictionField) {
     attachAutocompleteToField(restrictionField);
   }
+  
+  // Attach autocomplete to skill effect field if it exists
+  if (skillEffectField) {
+    attachAutocompleteToField(skillEffectField);
+  }
 
   // Hide autocomplete when clicking outside
   document.addEventListener('click', function(e) {
-    const isDescriptionField = descriptionField.contains(e.target);
     const isRestrictionField = restrictionField && restrictionField.contains(e.target);
+    const isSkillEffectField = skillEffectField && skillEffectField.contains(e.target);
     const isDropdown = autocompleteDropdown && autocompleteDropdown.contains(e.target);
     
-    if (!isDescriptionField && !isRestrictionField && !isDropdown) {
+    if (!isRestrictionField && !isSkillEffectField && !isDropdown) {
       hideAutocomplete();
     }
   });

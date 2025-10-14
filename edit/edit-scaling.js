@@ -39,10 +39,14 @@ function suggestFromDescription() {
   const skillId = parseInt(document.getElementById('scaling-skill-hidden').value, 10);
   if (Number.isNaN(skillId)) return;
   
-  const stmt = SkillDB.db.prepare('SELECT description FROM skills WHERE id = ?');
+  const stmt = SkillDB.db.prepare('SELECT description, skill_effect FROM skills WHERE id = ?');
   stmt.bind([skillId]);
   let desc = '';
-  if (stmt.step()) desc = stmt.get()[0] || '';
+  let skillEffect = '';
+  if (stmt.step()) {
+    const [description, effect] = stmt.get();
+    desc = (description || '') + ' ' + (effect || '');
+  }
   stmt.free();
   
   const keys = new Set();
@@ -274,12 +278,14 @@ function loadScaling() {
   const level = parseInt(document.getElementById('scaling-level').value, 10);
   if (Number.isNaN(skillId) || Number.isNaN(level)) return;
 
-  // First, get the skill description to find which stats are used
-  const skillStmt = SkillDB.db.prepare('SELECT description FROM skills WHERE id = ?');
+  // First, get the skill description and skill_effect to find which stats are used
+  const skillStmt = SkillDB.db.prepare('SELECT description, skill_effect FROM skills WHERE id = ?');
   skillStmt.bind([skillId]);
   let description = '';
+  let skillEffect = '';
   if (skillStmt.step()) {
-    description = skillStmt.get()[0] || '';
+    const [desc, effect] = skillStmt.get();
+    description = (desc || '') + ' ' + (effect || '');
   }
   skillStmt.free();
 

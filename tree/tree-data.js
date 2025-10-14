@@ -69,7 +69,7 @@ export async function loadSkillsFromSQLite() {
                 row: row.row,
                 col: row.col,
                 image: row.image || 'icons-shared_missing.png',
-                hasDetails: row.description && row.description.trim().length > 0,
+                hasDetails: (row.description && row.description.trim().length > 0) || (row.skill_effect && row.skill_effect.trim().length > 0),
                 baseMaxLevel: row.base_max_level ?? 0,
                 affectedBySpecialization: row.affected_by_specialization === 1,
                 canAddPoints: row.can_add_points === 1,

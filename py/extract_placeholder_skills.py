@@ -9,7 +9,7 @@ import re
 import sys
 from pathlib import Path
 
-def extract_skills_with_placeholders(db_path='skills.sqlite'):
+def extract_skills_with_placeholders(db_path='../skills-2.11.sqlite'):
     """
     Extract skills that contain {{*}} placeholder format in their descriptions.
     
@@ -28,14 +28,13 @@ def extract_skills_with_placeholders(db_path='skills.sqlite'):
         conn = sqlite3.connect(db_path)
         cursor = conn.cursor()
         
-        # Query to get all skills with descriptions that contain {{*}} format
+        # Query to get all skills with descriptions or skill effects that contain {{*}} format
         query = """
-        SELECT s.id, s.name, s.display_name, s.description, c.name as class_name
+        SELECT s.id, s.name, s.display_name, s.description, s.skill_effect, c.name as class_name
         FROM skills s
         LEFT JOIN classes c ON s.class_id = c.id
-        WHERE s.description IS NOT NULL 
-        AND s.description != ''
-        AND s.description LIKE '%{{%}}%'
+        WHERE ((s.description IS NOT NULL AND s.description != '' AND s.description LIKE '%{{%}}%')
+           OR (s.skill_effect IS NOT NULL AND s.skill_effect != '' AND s.skill_effect LIKE '%{{%}}%'))
         ORDER BY c.name, s.display_name
         """
         
@@ -85,7 +84,7 @@ def main():
     current_class = None
     placeholder_stats = {}
     
-    for skill_id, skill_name, display_name, description, class_name in skills:
+    for skill_id, skill_name, display_name, description, skill_effect, class_name in skills:
         # Print class header if it changed
         if class_name != current_class:
             if current_class is not None:
@@ -94,8 +93,9 @@ def main():
             print("-" * 40)
             current_class = class_name
         
-        # Find placeholders in this skill's description
-        placeholders = analyze_placeholders(description)
+        # Find placeholders in this skill's description and skill effect
+        all_text = (description or '') + ' ' + (skill_effect or '')
+        placeholders = analyze_placeholders(all_text)
         
         # Count placeholder types for statistics
         for placeholder in placeholders:

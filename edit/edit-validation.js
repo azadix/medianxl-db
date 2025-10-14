@@ -107,22 +107,25 @@ export function validateTemplateSyntax(text) {
 }
 
 /**
- * Validate both description and restriction fields
+ * Validate description, restriction, and skill_effect fields
  * @param {string} description - Description field value
  * @param {string} restriction - Restriction field value
- * @returns {Object} - {valid: boolean, errors: {description: [], restriction: []}}
+ * @param {string} skillEffect - Skill effect field value
+ * @returns {Object} - {valid: boolean, errors: {description: [], restriction: [], skill_effect: []}}
  */
-export function validateSkillTemplates(description, restriction) {
+export function validateSkillTemplates(description, restriction, skillEffect = '') {
     const result = {
         valid: true,
         errors: {
             description: [],
-            restriction: []
+            restriction: [],
+            skill_effect: []
         }
     };
     
     const descErrors = validateTemplateSyntax(description);
     const restrErrors = validateTemplateSyntax(restriction);
+    const effectErrors = validateTemplateSyntax(skillEffect);
     
     if (descErrors.length > 0) {
         result.valid = false;
@@ -132,6 +135,11 @@ export function validateSkillTemplates(description, restriction) {
     if (restrErrors.length > 0) {
         result.valid = false;
         result.errors.restriction = restrErrors;
+    }
+    
+    if (effectErrors.length > 0) {
+        result.valid = false;
+        result.errors.skill_effect = effectErrors;
     }
     
     return result;
@@ -164,6 +172,14 @@ export function displayValidationErrors(validationResult) {
         restrField.parentNode.insertBefore(errorDiv, restrField.nextSibling);
         restrField.classList.add('is-danger');
     }
+    
+    // Display skill effect errors
+    if (validationResult.errors.skill_effect.length > 0) {
+        const effectField = document.getElementById('skill_effect');
+        const errorDiv = createErrorDiv('Skill Effect Template Errors:', validationResult.errors.skill_effect);
+        effectField.parentNode.insertBefore(errorDiv, effectField.nextSibling);
+        effectField.classList.add('is-danger');
+    }
 }
 
 /**
@@ -173,6 +189,7 @@ export function removeValidationErrors() {
     document.querySelectorAll('.template-validation-error').forEach(el => el.remove());
     document.getElementById('description')?.classList.remove('is-danger');
     document.getElementById('restriction')?.classList.remove('is-danger');
+    document.getElementById('skill_effect')?.classList.remove('is-danger');
 }
 
 /**

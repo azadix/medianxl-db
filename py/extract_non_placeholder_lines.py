@@ -29,7 +29,7 @@ def is_placeholder_line(line):
     return False
 
 
-def extract_non_placeholder_lines(db_path='skills.sqlite'):
+def extract_non_placeholder_lines(db_path='../skills-2.11.sqlite'):
     """
     Extract all non-placeholder text lines from skill descriptions and restrictions.
     """
@@ -41,13 +41,14 @@ def extract_non_placeholder_lines(db_path='skills.sqlite'):
     print("=" * 80)
     print()
     
-    # Get all skills with descriptions or restrictions
+    # Get all skills with descriptions, skill effects, or restrictions
     cursor.execute("""
         SELECT s.id, s.name, s.display_name, c.name as class_name,
-               s.description, s.restriction
+               s.description, s.skill_effect, s.restriction
         FROM skills s
         LEFT JOIN classes c ON s.class_id = c.id
         WHERE (s.description IS NOT NULL AND s.description != '')
+           OR (s.skill_effect IS NOT NULL AND s.skill_effect != '')
            OR (s.restriction IS NOT NULL AND s.restriction != '')
         ORDER BY c.name, s.display_name
     """)
@@ -60,7 +61,7 @@ def extract_non_placeholder_lines(db_path='skills.sqlite'):
     all_lines = set()
     skill_line_map = {}  # Map line -> list of (skill_name, location)
     
-    for skill_id, skill_name, display_name, class_name, description, restriction in skills:
+    for skill_id, skill_name, display_name, class_name, description, skill_effect, restriction in skills:
         # Check description
         if description:
             lines = description.split('\n')
@@ -72,6 +73,18 @@ def extract_non_placeholder_lines(db_path='skills.sqlite'):
                     if clean_line not in skill_line_map:
                         skill_line_map[clean_line] = []
                     skill_line_map[clean_line].append((display_name, 'Description', class_name or 'No Class'))
+        
+        # Check skill effect
+        if skill_effect:
+            lines = skill_effect.split('\n')
+            for line in lines:
+                if not is_placeholder_line(line):
+                    clean_line = line.strip()
+                    all_lines.add(clean_line)
+                    
+                    if clean_line not in skill_line_map:
+                        skill_line_map[clean_line] = []
+                    skill_line_map[clean_line].append((display_name, 'Skill Effect', class_name or 'No Class'))
         
         # Check restriction
         if restriction:
@@ -92,7 +105,7 @@ def extract_non_placeholder_lines(db_path='skills.sqlite'):
     
     # Output to stdout
     print("=" * 80)
-    print("NON-PLACEHOLDER TEXT LINES FROM SKILL DESCRIPTIONS AND RESTRICTIONS")
+    print("NON-PLACEHOLDER TEXT LINES FROM SKILL DESCRIPTIONS, SKILL EFFECTS, AND RESTRICTIONS")
     print("Sorted by occurrence count (most common first)")
     print("=" * 80)
     print()

@@ -7,7 +7,7 @@ from the skills.sqlite database.
 import sqlite3
 from pathlib import Path
 
-def extract_skills_without_placeholders(db_path='skills.sqlite'):
+def extract_skills_without_placeholders(db_path='../skills-2.11.sqlite'):
     """
     Extract skills that have descriptions but do NOT contain {{*}} placeholder format.
     
@@ -26,14 +26,15 @@ def extract_skills_without_placeholders(db_path='skills.sqlite'):
         conn = sqlite3.connect(db_path)
         cursor = conn.cursor()
         
-        # Query to get all skills with descriptions that do NOT contain {{*}} format
+        # Query to get all skills with descriptions or skill effects that do NOT contain {{*}} format
         query = """
-        SELECT s.id, s.name, s.display_name, s.description, c.name as class_name
+        SELECT s.id, s.name, s.display_name, s.description, s.skill_effect, c.name as class_name
         FROM skills s
         LEFT JOIN classes c ON s.class_id = c.id
-        WHERE s.description IS NOT NULL 
-        AND s.description != ''
-        AND s.description NOT LIKE '%{{%}}%'
+        WHERE ((s.description IS NOT NULL AND s.description != '')
+           OR (s.skill_effect IS NOT NULL AND s.skill_effect != ''))
+        AND (s.description IS NULL OR s.description = '' OR s.description NOT LIKE '%{{%}}%')
+        AND (s.skill_effect IS NULL OR s.skill_effect = '' OR s.skill_effect NOT LIKE '%{{%}}%')
         ORDER BY c.name, s.display_name
         """
         
@@ -68,7 +69,7 @@ def main():
     current_class = None
     class_counts = {}
     
-    for skill_id, skill_name, display_name, description, class_name in skills:
+    for skill_id, skill_name, display_name, description, skill_effect, class_name in skills:
         # Count skills per class
         class_counts[class_name or 'No Class'] = class_counts.get(class_name or 'No Class', 0) + 1
         
@@ -85,8 +86,14 @@ def main():
         print(f"    Key: {skill_name}")
         
         # Show first 100 characters of description
-        desc_preview = description[:100] + "..." if len(description) > 100 else description
-        print(f"    Description: {desc_preview}")
+        if description:
+            desc_preview = description[:100] + "..." if len(description) > 100 else description
+            print(f"    Description: {desc_preview}")
+        
+        # Show first 100 characters of skill effect
+        if skill_effect:
+            effect_preview = skill_effect[:100] + "..." if len(skill_effect) > 100 else skill_effect
+            print(f"    Skill Effect: {effect_preview}")
         print()
     
     # Print statistics

@@ -291,7 +291,7 @@ function updateTooltipPosition(mouseX, mouseY) {
 function getSkillDataFromDB(db, skillId) {
     try {
         const stmt = db.prepare(`
-            SELECT s.id, s.name, s.display_name, s.description, s.restriction, s.image,
+            SELECT s.id, s.name, s.display_name, s.description, s.skill_effect, s.restriction, s.image,
                    c.name AS class_name,
                    sml.base_max_level, sml.affected_by_specialization, sml.can_add_points
             FROM skills s
@@ -310,6 +310,7 @@ function getSkillDataFromDB(db, skillId) {
                 id: row.name,
                 displayName: row.display_name,
                 description: row.description,
+                skillEffect: row.skill_effect,
                 restriction: row.restriction,
                 image: row.image,
                 className: row.class_name,
@@ -387,7 +388,8 @@ function buildTooltipContent(skillData, level, db, warningMessage = '') {
     html += '</div>';
     
     // Description with scaling
-    if (skillData.description) {
+    // Render description and skill effect
+    if (skillData.description || skillData.skillEffect) {
         html += '<div class="tooltip-description p-0">';
         
         // Check if skill has scaling data
@@ -397,21 +399,25 @@ function buildTooltipContent(skillData, level, db, warningMessage = '') {
             html += `<div class="tooltip-level-indicator is-italic">Level ${level} values:</div>`;
         }
         
-        const expandedDesc = expandPlaceholdersWithScaling(db, skillData.dbId, level, skillData.description);
-        const lines = expandedDesc.split('\n');
-        
-        // Add extra newline after first line if there are multiple lines
-        if (lines.length > 1) {
-            lines.splice(1, 0, '');
+        // Render main description
+        if (skillData.description) {
+            const expandedDesc = expandPlaceholdersWithScaling(db, skillData.dbId, level, skillData.description);
+            html += `<div class="tooltip-main-desc">${expandedDesc}</div>`;
         }
         
-        lines.forEach(line => {
-            if (line.trim()) {
-                html += `<div>${line}</div>`;
-            } else {
-                html += '<div>&nbsp;</div>';
-            }
-        });
+        // Render skill effect
+        if (skillData.skillEffect) {
+            const expandedEffect = expandPlaceholdersWithScaling(db, skillData.dbId, level, skillData.skillEffect);
+            const lines = expandedEffect.split('\n');
+            
+            lines.forEach(line => {
+                if (line.trim()) {
+                    html += `<div class="tooltip-effect">${line}</div>`;
+                } else {
+                    html += '<div>&nbsp;</div>';
+                }
+            });
+        }
         
         html += '</div>';
     }

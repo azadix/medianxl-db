@@ -476,6 +476,7 @@ function refreshPrerequisitesTable() {
         grouped[key].targets.push(`${targetSkillName} (${prerequisiteValue})`);
       } else if (prerequisiteType === 'tree_points' && targetTabName) {
         grouped[key].targets.push(targetTabName);
+      }
     });
     
     // Display grouped prerequisites

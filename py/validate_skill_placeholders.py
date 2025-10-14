@@ -78,24 +78,26 @@ def check_placeholder_validity(cursor, skill_id, skill_name, description):
                 # Inline concrete values - these are always OK
                 continue
         
-        # Check if scaling data exists for this skill and stat
-        cursor.execute("""
-            SELECT COUNT(*) 
-            FROM skill_scaling 
-            WHERE skill_id = ? AND stat_id = ?
-        """, (skill_id, stat_id))
-        
-        scaling_count = cursor.fetchone()[0]
-        
-        if scaling_count == 0:
-            # No scaling data - check if inline values were provided
-            if len(parts) == 1:
-                issues.append(f"No scaling data for stat '{parts[0].strip()}'")
+        # Only check for scaling data if the stat format contains {value} placeholders
+        if stat_format and '{value' in stat_format:
+            # Check if scaling data exists for this skill and stat
+            cursor.execute("""
+                SELECT COUNT(*) 
+                FROM skill_scaling 
+                WHERE skill_id = ? AND stat_id = ?
+            """, (skill_id, stat_id))
+            
+            scaling_count = cursor.fetchone()[0]
+            
+            if scaling_count == 0:
+                # No scaling data - check if inline values were provided
+                if len(parts) == 1:
+                    issues.append(f"No scaling data for stat '{parts[0].strip()}'")
     
     return issues
 
 
-def validate_skills(db_path='skills.sqlite'):
+def validate_skills(db_path='../skills-2.11.sqlite'):
     """
     Main validation function.
     """
@@ -111,11 +113,13 @@ def validate_skills(db_path='skills.sqlite'):
     print("      placeholder content against the database.")
     print()
     
-    # Get all skills with descriptions
+    # Get all skills with descriptions, skill effects, or restrictions
     cursor.execute("""
-        SELECT s.id, s.name, s.display_name, s.description, s.restriction
+        SELECT s.id, s.name, s.display_name, s.description, s.skill_effect, s.restriction
         FROM skills s
-        WHERE s.description IS NOT NULL AND s.description != ''
+        WHERE (s.description IS NOT NULL AND s.description != '')
+           OR (s.skill_effect IS NOT NULL AND s.skill_effect != '')
+           OR (s.restriction IS NOT NULL AND s.restriction != '')
         ORDER BY s.name
     """)
     
@@ -125,13 +129,22 @@ def validate_skills(db_path='skills.sqlite'):
     placeholder_errors = defaultdict(list)
     total_placeholder_issues = 0
     
-    for skill_id, skill_name, display_name, description, restriction in skills:
+    for skill_id, skill_name, display_name, description, skill_effect, restriction in skills:
         # Check description
-        desc_placeholder_issues = check_placeholder_validity(cursor, skill_id, display_name, description)
+        if description:
+            desc_placeholder_issues = check_placeholder_validity(cursor, skill_id, display_name, description)
+            
+            if desc_placeholder_issues:
+                placeholder_errors[display_name].extend([f"[Description] {issue}" for issue in desc_placeholder_issues])
+                total_placeholder_issues += len(desc_placeholder_issues)
         
-        if desc_placeholder_issues:
-            placeholder_errors[display_name].extend([f"[Description] {issue}" for issue in desc_placeholder_issues])
-            total_placeholder_issues += len(desc_placeholder_issues)
+        # Check skill effect
+        if skill_effect:
+            effect_placeholder_issues = check_placeholder_validity(cursor, skill_id, display_name, skill_effect)
+            
+            if effect_placeholder_issues:
+                placeholder_errors[display_name].extend([f"[Skill Effect] {issue}" for issue in effect_placeholder_issues])
+                total_placeholder_issues += len(effect_placeholder_issues)
         
         # Check restriction if it exists
         if restriction:
