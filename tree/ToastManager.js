@@ -13,7 +13,7 @@ export class ToastManager {
         toast.classList.add(`is-${toastBgClass}`);
         
         if (autoRemove) {
-            timeoutId = setTimeout(() => this.fadeOutAndRemove(toast), 5000);
+            timeoutId = setTimeout(() => this.fadeOutAndRemove(toast), 4000);
         } else {
             toast.innerHTML += '<div class="has-text-white">Click to dismiss</div>';
         }

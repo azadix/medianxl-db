@@ -921,7 +921,7 @@ function deleteBuild(index) {
         }
         
         renderSavedBuildsList();
-        toastManager.showToast(`Build "${buildName}" deleted.`, true, 'info');
+        toastManager.showToast(`Build "${buildName}" deleted.`, true);
     }
 }
 
