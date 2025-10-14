@@ -2,7 +2,7 @@
 import { loadSkillsFromSQLite, getDatabase } from './tree-data.js';
 import { renderSkills, renderDifficultyCheckboxes, updateTabColors } from './tree-render.js';
 import { CHARACTER_CONFIG } from '../character-config.js';
-import { initializeCharacter, setCharacterLevel, getSpentSkillPoints, getAllSkillPoints, setAllSkillPoints, updateQuestCompletion, getQuestCompletion, getAllOSkills, addOSkill, changeOSkillPoints, clearOSkills, setAllOSkills, getMinimumRequiredLevel, getTotalQuestSkillPoints, getBaseSkillPoints, checkSkillsExceedingMaxLevel } from '../character-state.js';
+import { initializeCharacter, setCharacterLevel, getSpentSkillPoints, getAllSkillPoints, setAllSkillPoints, updateQuestCompletion, getQuestCompletion, getAllOSkills, addOSkill, changeOSkillPoints, clearOSkills, setAllOSkills, getMinimumRequiredLevel, getTotalQuestSkillPoints, getBaseSkillPoints, checkSkillsExceedingMaxLevel, getAvailableSkillPoints } from '../character-state.js';
 import { getCurrentDevotion, getDevotionDisplayName } from '../skill-calculations.js';
 import { initializeTooltip } from './tree-tooltip.js';
 import { ToastManager } from './ToastManager.js';
@@ -17,13 +17,63 @@ let classSelect;
 let currentTab = null;
 let treeInitialized = false; // Track if tree has been initialized
 let currentBuildIndex = null; // Track currently loaded build index for saving
-let oSkillsDropdown = null; // Dropdown for oSkills
 
 // Initialize ToastManager
 const toastManager = new ToastManager();
 
 // Export function to get oSkill points (for tooltip) - now just re-exports from character-state
 export { getOSkillPoints } from '../character-state.js';
+
+/**
+ * Calculate armor image number based on spent skill points
+ * Maps 0 to max available skill points to 1-14 image numbers
+ * @param {number} spentPoints - Total skill points spent
+ * @returns {number} - Image number (1-14)
+ */
+function calculateArmorImageNumber(spentPoints) {
+    // Get maximum available skill points from character config
+    const maxSkillPoints = getAvailableSkillPoints();
+    
+    // Clamp spent points to valid range (0 to max available)
+    const clampedPoints = Math.max(0, Math.min(maxSkillPoints, spentPoints));
+    
+    // Map 0 to max points to 1-14 images
+    // Formula: Math.ceil((points / maxPoints) * 14) ensures:
+    // - 0 points = 1.gif
+    // - max points = 14.gif
+    // - Even distribution across the range
+    const imageNumber = Math.ceil((clampedPoints / maxSkillPoints) * 14);
+    
+    // Ensure result is within valid range (1-14)
+    return Math.max(1, Math.min(14, imageNumber));
+}
+
+/**
+ * Update build list images based on current skill points
+ * This is called when skill points change to update the current build's image
+ */
+function updateBuildListImages() {
+    const container = document.getElementById('saved-builds-list');
+    if (!container) return;
+    
+    // Only update if we're currently viewing the load section
+    const loadSection = document.getElementById('load-section');
+    if (!loadSection || loadSection.style.display === 'none') return;
+    
+    // Get current spent points
+    const currentSpentPoints = getSpentSkillPoints();
+    const currentClass = classSelect.value;
+    
+    // Find the current build in the list and update its image
+    const buildImages = container.querySelectorAll('img[alt]');
+    buildImages.forEach(img => {
+        // Check if this is the current class and update the image
+        if (img.alt === currentClass) {
+            const armorImageNumber = calculateArmorImageNumber(currentSpentPoints);
+            img.src = `icons/portraits/${currentClass}/${armorImageNumber}.gif`;
+        }
+    });
+}
 
 // Main initialization function
 export function initializeTreePage() {
@@ -174,6 +224,9 @@ async function main() {
             // Update displays
             updateSkillPointsDisplay();
             updateDevotionDisplay();
+            
+            // Update build list images if we're currently viewing the load section
+            updateBuildListImages();
         });
         
         // Add event listener for oSkills changes
@@ -749,7 +802,9 @@ function renderSavedBuildsList() {
         
         const classImage = document.createElement('img');
         
-        classImage.src = `icons/gifs/${build.class}.gif`;
+        // Calculate armor image number based on spent skill points (0 to max available points maps to 1-14.gif)
+        const armorImageNumber = calculateArmorImageNumber(build.spentPoints);
+        classImage.src = `icons/portraits/${build.class}/${armorImageNumber}.gif`;
         classImage.alt = build.class;
         classImage.className = 'image is-64x64';
         classImage.style.objectFit = 'contain';
