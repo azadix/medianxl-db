@@ -197,6 +197,12 @@ function createOverlayArrow(contentDiv, fromSkill, toSkill, minRow, minCol, skil
     const dx = endPoint.x - startPoint.x;
     const dy = endPoint.y - startPoint.y;
     const length = Math.sqrt(dx * dx + dy * dy);
+    
+    // Check for zero length (same start and end points) - skip arrow creation
+    if (length === 0) {
+        return;
+    }
+    
     const unitX = dx / length;
     const unitY = dy / length;
 

@@ -439,6 +439,8 @@ function initializeMenuButtons() {
     const backToMenuBtn = document.getElementById('backToMenuBtn');
     if (backToMenuBtn) {
         backToMenuBtn.addEventListener('click', () => {
+            // Clear any visible toasts
+            toastManager.cleanUpToastMessages();
             // Clear URL params
             window.history.replaceState({}, '', window.location.pathname);
             showSection('menu');
