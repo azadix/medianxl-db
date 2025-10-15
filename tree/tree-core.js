@@ -37,11 +37,7 @@ function calculateArmorImageNumber(spentPoints) {
     // Clamp spent points to valid range (0 to max available)
     const clampedPoints = Math.max(0, Math.min(maxSkillPoints, spentPoints));
     
-    // Map 0 to max points to 1-10 images
-    // Formula: Math.ceil((points / maxPoints) * 10) ensures:
-    // - 0 points = 1.gif
-    // - max points = 10.gif
-    // - Even distribution across the range
+    // Map 0 to max points to 1-10 images with even distribution across the range
     const imageNumber = Math.ceil((clampedPoints / maxSkillPoints) * 10);
     
     // Ensure result is within valid range (1-10)

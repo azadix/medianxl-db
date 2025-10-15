@@ -106,7 +106,7 @@ export function getSkillIconHTML(imageFileName, humanClassName, className = '') 
     const isExplicitShared = /^shared\//.test(file) || /(^|-)shared(_|\.)/i.test(file);
     const prefix = isExplicitShared ? 'shared' : (CLASS_TO_PREFIX[humanClassName] || 'shared');
     const path = file === MISSING_IMAGE_NAME ? `icons/${MISSING_IMAGE_NAME}` : `icons/${prefix}/${file}`;
-    return `<img src="${path}" class="image ${className}" alt="skill icon">`;
+    return `<img src="${path}" class="image ${className}">`;
 }
 
 
