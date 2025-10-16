@@ -200,8 +200,25 @@ export function calculateMaxLevel(skillId, skillLevels = {}, characterLevel = CH
   stmt.bind([skillId]);
   
   if (!stmt.step()) {
-    console.log(`calculateMaxLevel: No max level data found for skillId ${skillId}`);
     stmt.free();
+    
+    // Check if this skill is innate by looking at the skill name
+    // Innate skills shouldn't have max level data, so this is expected
+    const skillStmt = db.prepare('SELECT name FROM skills WHERE id = ?');
+    skillStmt.bind([skillId]);
+    if (skillStmt.step()) {
+      const skillName = skillStmt.get()[0];
+      skillStmt.free();
+      
+      // Only log if it's not an innate skill (innate skills shouldn't have max level data)
+      if (!skillName.includes('innate') && !skillName.includes('Innate')) {
+        console.log(`calculateMaxLevel: No max level data found for skillId ${skillId} (${skillName})`);
+      }
+    } else {
+      skillStmt.free();
+      console.log(`calculateMaxLevel: Skill ${skillId} does not exist`);
+    }
+    
     return 0; // No max level data found
   }
   

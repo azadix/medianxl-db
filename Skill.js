@@ -132,34 +132,6 @@ export default class Skill {
     }
 
     /**
-     * Calculate maximum level with modifiers
-     * @param {Object} options - Options object
-     * @param {number} options.characterLevel - Character level
-     * @param {Object} options.skillLevels - Object mapping skill names to current levels
-     * @param {Object} options.db - Database instance
-     * @returns {number} Calculated max level
-     */
-    getMaxLevel(options = {}) {
-        const { characterLevel, skillLevels = {}, db } = options;
-        
-        // If no database provided, return base max level
-        if (!db) {
-            return this.baseMaxLevel;
-        }
-        
-        // Import and use the existing calculateMaxLevel function
-        // Note: This is a dynamic import to avoid circular dependencies
-        try {
-            // For now, return base max level since we can't easily import here
-            // The existing code already handles this calculation properly
-            return this.baseMaxLevel;
-        } catch (error) {
-            console.warn('Error calculating max level for skill:', this.name, error);
-            return this.baseMaxLevel;
-        }
-    }
-
-    /**
      * Check if skill prerequisites are met for given character state
      * @param {Object} characterState - Character state object
      * @param {Object} characterState.skillLevels - Object mapping skill names to current levels
@@ -247,22 +219,6 @@ export default class Skill {
         return this.tags.includes(tagName);
     }
 
-    /**
-     * Check if this is an oskill (skill available to all classes)
-     * @returns {boolean} True if this is an oskill
-     */
-    isOSkill() {
-        // oSkills are typically skills with class_id = 1 (excluded from class-specific trees)
-        return this.classId === 1 ;
-    }
-
-    /**
-     * Check if skill is innate (cannot add points)
-     * @returns {boolean} True if skill is innate
-     */
-    isInnate() {
-        return !this.canAddPoints;
-    }
 
     /**
      * Validate if a skill level is within valid range

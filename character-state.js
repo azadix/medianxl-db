@@ -9,6 +9,9 @@ import { CHARACTER_CONFIG, getBaseSkillPoints } from './character-config.js';
 export { getBaseSkillPoints };
 import { checkDevotionRestriction, calculateMaxLevel } from './skill-calculations.js';
 import { getDatabase } from './tree/tree-data.js';
+import Mastery from './Mastery.js';
+import Coven from './Coven.js';
+import Proficiency from './Proficiency.js';
 
 // Skills that use OR logic for skill_level prerequisites (instead of AND)
 // Format: skill display name
@@ -431,35 +434,15 @@ function checkUltimateRestriction(skill, allSkills) {
  * @returns {Object} { allowed: boolean, reason: string }
  */
 export function checkMasteryRestriction(skill, allSkills) {
-  // Check if this skill is in the Mastery tab
-  const isMastery = skill.tabName === 'Mastery';
-  
-  if (!isMastery) {
-    return { allowed: true, reason: '' };
-  }
-  
   // If this skill already has points, it's allowed to add more
   const currentPoints = getSkillPoints(skill.id);
   if (currentPoints > 0) {
     return { allowed: true, reason: '' };
   }
   
-  // Count how many different Mastery skills have points
-  const masterySkillsWithPoints = allSkills.filter(s => 
-    s.tabName === 'Mastery' && 
-    s.class === skill.class &&
-    getSkillPoints(s.id) > 0
-  );
-  
-  // Check if we've reached the limit
-  if (masterySkillsWithPoints.length >= CHARACTER_CONFIG.MAX_MASTERY_SKILLS) {
-    return { 
-      allowed: false, 
-      reason: `Cannot allocate points to more than ${CHARACTER_CONFIG.MAX_MASTERY_SKILLS} different Mastery skills.` 
-    };
-  }
-  
-  return { allowed: true, reason: '' };
+  // Use Mastery class method for restriction checking
+  const masterySkill = new Mastery(skill);
+  return masterySkill.checkRestriction(allSkills);
 }
 
 /**
@@ -471,34 +454,15 @@ export function checkMasteryRestriction(skill, allSkills) {
  * @returns {Object} { allowed: boolean, reason: string }
  */
 export function checkCovenRestriction(skill, allSkills) {
-  // Check if this skill is one of the exclusive Coven skills
-  const isExclusiveCoven = CHARACTER_CONFIG.COVEN_EXCLUSIVE_SKILLS.includes(skill.id);
-  
-  if (!isExclusiveCoven) {
-    return { allowed: true, reason: '' };
-  }
-  
   // If this skill already has points, it's allowed to add more
   const currentPoints = getSkillPoints(skill.id);
   if (currentPoints > 0) {
     return { allowed: true, reason: '' };
   }
   
-  // Count how many different exclusive Coven skills have points
-  const exclusiveCovenSkillsWithPoints = allSkills.filter(s => 
-    CHARACTER_CONFIG.COVEN_EXCLUSIVE_SKILLS.includes(s.id) &&
-    getSkillPoints(s.id) > 0
-  );
-  
-  // Check if we've reached the limit
-  if (exclusiveCovenSkillsWithPoints.length >= CHARACTER_CONFIG.MAX_COVEN_SKILLS) {
-    return { 
-      allowed: false, 
-      reason: `Cannot allocate points to more than ${CHARACTER_CONFIG.MAX_COVEN_SKILLS} of these Coven skills:\n- Living Flame\n- Warp Armor\n- Snow Queen\n- Vengeful Power` 
-    };
-  }
-  
-  return { allowed: true, reason: '' };
+  // Use Coven class method for restriction checking
+  const covenSkill = new Coven(skill);
+  return covenSkill.checkRestriction(allSkills);
 }
 
 /**
@@ -510,34 +474,15 @@ export function checkCovenRestriction(skill, allSkills) {
  * @returns {Object} { allowed: boolean, reason: string }
  */
 export function checkProficiencyRestriction(skill, allSkills) {
-  // Check if this skill is one of the exclusive Proficiency skills
-  const isExclusiveProficiency = CHARACTER_CONFIG.PROFICIENCY_EXCLUSIVE_SKILLS.includes(skill.id);
-  
-  if (!isExclusiveProficiency) {
-    return { allowed: true, reason: '' };
-  }
-  
   // If this skill already has points, it's allowed to add more
   const currentPoints = getSkillPoints(skill.id);
   if (currentPoints > 0) {
     return { allowed: true, reason: '' };
   }
   
-  // Count how many different exclusive Proficiency skills have points
-  const exclusiveProficiencySkillsWithPoints = allSkills.filter(s => 
-    CHARACTER_CONFIG.PROFICIENCY_EXCLUSIVE_SKILLS.includes(s.id) &&
-    getSkillPoints(s.id) > 0
-  );
-  
-  // Check if we've reached the limit
-  if (exclusiveProficiencySkillsWithPoints.length >= CHARACTER_CONFIG.MAX_PROFICIENCY_SKILLS) {
-    return { 
-      allowed: false, 
-      reason: `Cannot allocate points to more than ${CHARACTER_CONFIG.MAX_PROFICIENCY_SKILLS} of these Proficiency skills:\n- Mighty Vigor\n- Aptitude\n- Pillage\n- Warder\n- Unyielding` 
-    };
-  }
-  
-  return { allowed: true, reason: '' };
+  // Use Proficiency class method for restriction checking
+  const proficiencySkill = new Proficiency(skill);
+  return proficiencySkill.checkRestriction(allSkills);
 }
 
 /**

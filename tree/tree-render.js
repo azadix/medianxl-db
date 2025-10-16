@@ -2,8 +2,9 @@
 import { addOverlayArrows } from './tree-arrows.js';
 import { setCurrentTab } from './tree-core.js';
 import { calculateMaxLevel, checkDevotionRestriction } from '../skill-calculations.js';
+import Ultimate from '../Ultimate.js';
+import Innate from '../Innate.js';
 import { getDatabase } from './tree-data.js';
-import { CHARACTER_CONFIG } from '../character-config.js';
 import { getSkillPoints, addSkillPoint, removeSkillPoint, checkPrerequisites, getAllSkillPoints, checkMasteryRestriction, checkCovenRestriction, checkProficiencyRestriction, getMinimumRequiredLevel } from '../character-state.js';
 import { ToastManager } from './ToastManager.js';
 import { renderSkillCard, getSkillIcon } from './tree-card-renderer.js';
@@ -49,7 +50,7 @@ function updateSkillCards(selectedClass, skillsList) {
         
         // Update the level display
         const levelDisplay = card.querySelector('.is-size-6');
-        if (levelDisplay && !skill.isInnate()) {
+        if (levelDisplay && !Innate.isInnateSkill(skill)) {
             const db = getDatabase();
             const skillLevels = getAllSkillPoints();
             const minLevel = getMinimumRequiredLevel(db);
@@ -63,7 +64,7 @@ function updateSkillCards(selectedClass, skillsList) {
         
         // Update button states
         const minusBtn = card.querySelector('.skill-minus-btn');
-        if (plusBtn && minusBtn && !skill.isInnate()) {
+        if (plusBtn && minusBtn && !Innate.isInnateSkill(skill)) {
             const db = getDatabase();
             const skillLevels = getAllSkillPoints();
             const minLevel = getMinimumRequiredLevel(db);
@@ -370,7 +371,7 @@ function createSkillCard(skill, currentTab) {
     // Prepare card data
     let cardData;
     
-    if (!skill.isInnate()) {
+    if (!Innate.isInnateSkill(skill)) {
         const db = getDatabase();
         const skillLevels = getAllSkillPoints();
         const minLevel = getMinimumRequiredLevel(db);
@@ -395,14 +396,14 @@ function createSkillCard(skill, currentTab) {
         };
     } else {
         // Skills that cannot have points added
-        const maxDisplay = skill.isInnate() ? "0" : "?";
+        const maxDisplay = Innate.isInnateSkill(skill) ? "0" : "?";
         
         cardData = {
             skillId: skill.id,
             iconHTML: getSkillIcon(skill.image, skill.class),
             displayName: skill.name,
             hasDescription: skill.hasDetails || false,
-            currentPoints: skill.isInnate() ? 0 : "?",
+            currentPoints: Innate.isInnateSkill(skill) ? 0 : "?",
             maxPoints: maxDisplay,
             levelColor: 'has-text-grey',
             buttons: {
@@ -419,7 +420,7 @@ function createSkillCard(skill, currentTab) {
     const card = renderSkillCard(cardData);
     
     // Add restriction checks and event listeners if skill can have points
-    if (!skill.isInnate()) {
+    if (!Innate.isInnateSkill(skill)) {
         const db = getDatabase();
         const skillLevels = getAllSkillPoints();
         const minLevel = getMinimumRequiredLevel(db);
@@ -505,39 +506,15 @@ function createSkillCard(skill, currentTab) {
  * @returns {Object} { blocked: boolean, reason: string }
  */
 function checkUltimateSkillBlock(skill, allSkills) {
-    // Check if this skill has the Ultimate tag
-    const isUltimate = skill.hasTag('Ultimate');
-    
-    if (!isUltimate) {
-        return { blocked: false, reason: '' };
-    }
-    
     // If this skill already has points, it's not blocked
     const currentPoints = getSkillPoints(skill.id);
     if (currentPoints > 0) {
         return { blocked: false, reason: '' };
     }
     
-    // Find all Ultimate skills from the same class
-    const classUltimateSkills = allSkills.filter(s => 
-        s.class === skill.class && 
-        s.hasTag('Ultimate')
-    );
-    
-    // Check if any other Ultimate skill from this class has points
-    for (const ultimateSkill of classUltimateSkills) {
-        if (ultimateSkill.id !== skill.id) {
-            const points = getSkillPoints(ultimateSkill.id);
-            if (points > 0) {
-                return { 
-                    blocked: true, 
-                    reason: `${ultimateSkill.name} already has points. Only one Ultimate skill per class is allowed.` 
-                };
-            }
-        }
-    }
-    
-    return { blocked: false, reason: '' };
+    // Use Ultimate class method for restriction checking
+    const ultimateSkill = new Ultimate(skill);
+    return ultimateSkill.checkRestriction(allSkills);
 }
 
 /**
