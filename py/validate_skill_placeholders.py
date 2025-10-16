@@ -14,6 +14,7 @@ by the edit page's client-side validation before saving.
 import sqlite3
 import re
 import sys
+import argparse
 from collections import defaultdict
 
 
@@ -36,7 +37,7 @@ def get_stat_parameter_count(cursor, stat_key):
     return max(len(value_matches), len(percent_matches))
 
 
-def check_placeholder_validity(cursor, skill_id, skill_name, description):
+def check_placeholder_validity(cursor, skill_id, skill_name, description, show_no_scaling_warnings=True):
     """
     Check if placeholders in the description are valid and can be expanded.
     Returns a list of issues found.
@@ -91,13 +92,13 @@ def check_placeholder_validity(cursor, skill_id, skill_name, description):
             
             if scaling_count == 0:
                 # No scaling data - check if inline values were provided
-                if len(parts) == 1:
+                if len(parts) == 1 and show_no_scaling_warnings:
                     issues.append(f"No scaling data for stat '{parts[0].strip()}'")
     
     return issues
 
 
-def validate_skills(db_path='../skills-2.11.sqlite'):
+def validate_skills(db_path='../skills-2.11.sqlite', show_no_scaling_warnings=True):
     """
     Main validation function.
     """
@@ -132,7 +133,7 @@ def validate_skills(db_path='../skills-2.11.sqlite'):
     for skill_id, skill_name, display_name, description, skill_effect, restriction in skills:
         # Check description
         if description:
-            desc_placeholder_issues = check_placeholder_validity(cursor, skill_id, display_name, description)
+            desc_placeholder_issues = check_placeholder_validity(cursor, skill_id, display_name, description, show_no_scaling_warnings)
             
             if desc_placeholder_issues:
                 placeholder_errors[display_name].extend([f"[Description] {issue}" for issue in desc_placeholder_issues])
@@ -140,7 +141,7 @@ def validate_skills(db_path='../skills-2.11.sqlite'):
         
         # Check skill effect
         if skill_effect:
-            effect_placeholder_issues = check_placeholder_validity(cursor, skill_id, display_name, skill_effect)
+            effect_placeholder_issues = check_placeholder_validity(cursor, skill_id, display_name, skill_effect, show_no_scaling_warnings)
             
             if effect_placeholder_issues:
                 placeholder_errors[display_name].extend([f"[Skill Effect] {issue}" for issue in effect_placeholder_issues])
@@ -148,7 +149,7 @@ def validate_skills(db_path='../skills-2.11.sqlite'):
         
         # Check restriction if it exists
         if restriction:
-            rest_placeholder_issues = check_placeholder_validity(cursor, skill_id, display_name, restriction)
+            rest_placeholder_issues = check_placeholder_validity(cursor, skill_id, display_name, restriction, show_no_scaling_warnings)
             
             if rest_placeholder_issues:
                 placeholder_errors[display_name].extend([f"[Restriction] {issue}" for issue in rest_placeholder_issues])
@@ -187,6 +188,15 @@ def validate_skills(db_path='../skills-2.11.sqlite'):
 
 
 if __name__ == '__main__':
-    exit_code = validate_skills()
+    parser = argparse.ArgumentParser(description='Validate skill placeholders in the skills database')
+    parser.add_argument('--db-path', default='../skills-2.11.sqlite', 
+                       help='Path to the SQLite database file (default: ../skills-2.11.sqlite)')
+    parser.add_argument('--no-scaling', action='store_true',
+                       help='Hide "No scaling data for stat X" warnings')
+    
+    args = parser.parse_args()
+    
+    show_no_scaling_warnings = not args.no_scaling
+    exit_code = validate_skills(args.db_path, show_no_scaling_warnings)
     sys.exit(exit_code)
 
