@@ -1,4 +1,5 @@
 import { getUrlParams, updateUrl, sanitizeSkillId, getSkillIconHTML, MISSING_IMAGE_NAME, expandPlaceholdersWithScaling } from './utils.js';
+import Skill from './Skill.js';
 
 // DOM elements
 const contentElement = document.getElementById('content');
@@ -114,12 +115,25 @@ async function initializeDataTable(skillsData) {
         order: [[1, 'asc']],
         columnDefs: [
             {
-                targets: 0, orderable: false
+                targets: 0, 
+                orderable: false,
+                width: "60px"
             },
             {
-                targets: [2, 4],
+                targets: 1, 
+                width: "150px"
+            },
+            {
+                targets: [3, 4],
                 className: 'none',
-                responsivePriority: 2
+                responsivePriority: 2,
+                width: "120px"
+            },
+            {
+                targets: 2,
+                className: 'none',
+                responsivePriority: 2,
+                width: "300px"
             }
         ],
         layout: {
@@ -208,6 +222,10 @@ $(document).on('click', '#filter-toggle', function() {
     
     if (skillsDataTable && typeof skillsDataTable.draw === 'function') {
         skillsDataTable.draw();
+        // Force column width recalculation after filtering
+        setTimeout(() => {
+            skillsDataTable.columns.adjust().draw(false);
+        }, 50);
     }
 });
 
@@ -215,6 +233,10 @@ $(document).on('click', '#filter-toggle', function() {
 $(document).on('change', '#class-filter', function() {
     if (skillsDataTable && typeof skillsDataTable.draw === 'function') {
         skillsDataTable.draw();
+        // Force column width recalculation after filtering
+        setTimeout(() => {
+            skillsDataTable.columns.adjust().draw(false);
+        }, 50);
     }
 });
 
@@ -569,22 +591,8 @@ async function loadSkillsFromSQLite() {
         const loadedSkills = [];
         while (stmt.step()) {
             const row = stmt.getAsObject();
-            loadedSkills.push({
-                id: row.name,
-                dbId: row.id,
-                name: row.display_name,
-                class: row.class_name || '',
-                tab: row.tab_index,        // numeric
-                tabName: row.tab_name || '', // proper tab name
-                tags: row.tags ? row.tags.split(', ') : [],
-                row: row.row,
-                col: row.col,
-                image: row.image || MISSING_IMAGE_NAME,
-                hasDetails: (row.description && row.description.trim().length > 0) || (row.skill_effect && row.skill_effect.trim().length > 0),
-                restriction: row.restriction || null,
-                description: row.description || null,
-                skillEffect: row.skill_effect || null
-            });
+            // Use Skill class factory method to create instances
+            loadedSkills.push(Skill.fromDatabaseRow(row));
         }
         stmt.free();
 

@@ -1,7 +1,7 @@
 // Skills management functionality
 import { SkillDB } from './edit-core.js';
 import { validateSkillTemplates, displayValidationErrors, removeValidationErrors } from './edit-validation.js';
-import { TAG_GROUPS } from '../tag-constants.js';
+import { TAG_GROUPS } from '../utils.js';
 
 export function initializeSkills() {
   populateClassSelect();

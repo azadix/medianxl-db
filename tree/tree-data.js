@@ -1,4 +1,5 @@
 // Data loading and SQLite operations for the skills tree
+import Skill from '../Skill.js';
 
 // Store database instance globally for use in calculations
 let dbInstance = null;
@@ -57,24 +58,8 @@ export async function loadSkillsFromSQLite() {
         const loadedSkills = [];
         while (stmt.step()) {
             const row = stmt.getAsObject();
-            const prerequisites = row.prerequisites ? row.prerequisites.split('; ').filter(p => p.trim()) : [];
-            loadedSkills.push({
-                id: row.name,
-                skillId: row.id,  // numeric database ID
-                name: row.display_name,
-                class: row.class_name || '',
-                tab: row.tab_index,        // numeric
-                tabName: row.tab_name || '', // proper tab name
-                tags: row.tags ? row.tags.split(', ') : [],
-                row: row.row,
-                col: row.col,
-                image: row.image || 'icons-shared_missing.png',
-                hasDetails: (row.description && row.description.trim().length > 0) || (row.skill_effect && row.skill_effect.trim().length > 0),
-                baseMaxLevel: row.base_max_level ?? 0,
-                affectedBySpecialization: row.affected_by_specialization === 1,
-                canAddPoints: row.can_add_points === 1,
-                prerequisites: prerequisites
-            });
+            // Use Skill class factory method to create instances
+            loadedSkills.push(Skill.fromDatabaseRow(row));
         }
         stmt.free();
 
@@ -93,10 +78,10 @@ export async function loadSkillsFromSQLite() {
             allClasses.forEach(cls => {
                 if (!masteryByClass.get(cls)) {
                     masterySkills.forEach(skill => {
-                        loadedSkills.push({
-                            ...skill,
-                            class: cls
-                        });
+                        // Clone the skill and update the class
+                        const clonedSkill = skill.clone();
+                        clonedSkill.class = cls;
+                        loadedSkills.push(clonedSkill);
                     });
                 }
             });
@@ -113,10 +98,10 @@ export async function loadSkillsFromSQLite() {
             allClasses.forEach(cls => {
                 if (!paragonByClass.get(cls)) {
                     paragonSkills.forEach(skill => {
-                        loadedSkills.push({
-                            ...skill,
-                            class: cls
-                        });
+                        // Clone the skill and update the class
+                        const clonedSkill = skill.clone();
+                        clonedSkill.class = cls;
+                        loadedSkills.push(clonedSkill);
                     });
                 }
             });

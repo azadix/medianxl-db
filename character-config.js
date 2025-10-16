@@ -9,13 +9,6 @@ export const CHARACTER_CONFIG = {
   MAX_LEVEL: 150,
   DEFAULT_LEVEL: 1,
   
-  // Skill constraints
-  MIN_SKILL_LEVEL: 0,
-  MAX_SKILL_LEVEL: 99,
-  
-  // Max level constraints
-  MIN_BASE_MAX_LEVEL: 0,
-  DEFAULT_BASE_MAX_LEVEL: 1,
   
   // Quest skill point rewards with level requirements
   // Format: { quest_id: { difficulty: { points: number, expectedLevel: number } } }

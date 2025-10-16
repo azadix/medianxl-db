@@ -395,7 +395,7 @@ function countPointsInTab(tabName, allSkills) {
  */
 function checkUltimateRestriction(skill, allSkills) {
   // Check if this skill has the Ultimate tag
-  const isUltimate = skill.tags && skill.tags.includes('Ultimate');
+  const isUltimate = skill.hasTag('Ultimate');
   
   if (!isUltimate) {
     return { allowed: true, reason: '' };
@@ -404,8 +404,7 @@ function checkUltimateRestriction(skill, allSkills) {
   // Find all Ultimate skills from the same class
   const classUltimateSkills = allSkills.filter(s => 
     s.class === skill.class && 
-    s.tags && 
-    s.tags.includes('Ultimate')
+    s.hasTag('Ultimate')
   );
   
   // Check if any other Ultimate skill from this class has points
@@ -746,42 +745,6 @@ export function checkSkillsExceedingMaxLevel(allSkills = []) {
   }
   
   return exceedingSkills;
-}
-
-/**
- * Get minimum required points in a skill based on dependent skills
- * @param {string} skillName - Skill name to check
- * @param {Array} allSkills - Array of all skills to check
- * @returns {number} Minimum points required
- */
-function getMinimumRequiredPoints(skillName, allSkills) {
-  let minRequired = 0;
-  
-  // Check all skills that have points allocated
-  for (const [allocatedSkillName, points] of Object.entries(characterState.skillPoints)) {
-    if (points === 0) continue;
-    
-    // Find the skill object
-    const skill = allSkills.find(s => s.id === allocatedSkillName);
-    if (!skill || !skill.prerequisites) continue;
-    
-    // Check if this skill depends on the skill we're checking
-    for (const prereq of skill.prerequisites) {
-      const [type, value, target] = prereq.split(':');
-      
-      if (type === 'skill_level') {
-        // Convert target display name to skill_name format
-        const targetSkillName = target.toLowerCase().replace(/['\s]/g, '_').replace(/_+/g, '_');
-        
-        if (targetSkillName === skillName) {
-          const requiredPoints = parseInt(value, 10);
-          minRequired = Math.max(minRequired, requiredPoints);
-        }
-      }
-    }
-  }
-  
-  return minRequired;
 }
 
 /**

@@ -49,7 +49,7 @@ function updateSkillCards(selectedClass, skillsList) {
         
         // Update the level display
         const levelDisplay = card.querySelector('.is-size-6');
-        if (levelDisplay && skill.canAddPoints) {
+        if (levelDisplay && !skill.isInnate()) {
             const db = getDatabase();
             const skillLevels = getAllSkillPoints();
             const minLevel = getMinimumRequiredLevel(db);
@@ -63,7 +63,7 @@ function updateSkillCards(selectedClass, skillsList) {
         
         // Update button states
         const minusBtn = card.querySelector('.skill-minus-btn');
-        if (plusBtn && minusBtn && skill.canAddPoints) {
+        if (plusBtn && minusBtn && !skill.isInnate()) {
             const db = getDatabase();
             const skillLevels = getAllSkillPoints();
             const minLevel = getMinimumRequiredLevel(db);
@@ -370,7 +370,7 @@ function createSkillCard(skill, currentTab) {
     // Prepare card data
     let cardData;
     
-    if (skill.canAddPoints) {
+    if (!skill.isInnate()) {
         const db = getDatabase();
         const skillLevels = getAllSkillPoints();
         const minLevel = getMinimumRequiredLevel(db);
@@ -395,14 +395,14 @@ function createSkillCard(skill, currentTab) {
         };
     } else {
         // Skills that cannot have points added
-        const maxDisplay = skill.tabName === "Innate" ? "0" : "?";
+        const maxDisplay = skill.isInnate() ? "0" : "?";
         
         cardData = {
             skillId: skill.id,
             iconHTML: getSkillIcon(skill.image, skill.class),
             displayName: skill.name,
             hasDescription: skill.hasDetails || false,
-            currentPoints: skill.tabName === "Innate" ? 0 : "?",
+            currentPoints: skill.isInnate() ? 0 : "?",
             maxPoints: maxDisplay,
             levelColor: 'has-text-grey',
             buttons: {
@@ -419,7 +419,7 @@ function createSkillCard(skill, currentTab) {
     const card = renderSkillCard(cardData);
     
     // Add restriction checks and event listeners if skill can have points
-    if (skill.canAddPoints) {
+    if (!skill.isInnate()) {
         const db = getDatabase();
         const skillLevels = getAllSkillPoints();
         const minLevel = getMinimumRequiredLevel(db);
@@ -506,7 +506,7 @@ function createSkillCard(skill, currentTab) {
  */
 function checkUltimateSkillBlock(skill, allSkills) {
     // Check if this skill has the Ultimate tag
-    const isUltimate = skill.tags && skill.tags.includes('Ultimate');
+    const isUltimate = skill.hasTag('Ultimate');
     
     if (!isUltimate) {
         return { blocked: false, reason: '' };
@@ -521,8 +521,7 @@ function checkUltimateSkillBlock(skill, allSkills) {
     // Find all Ultimate skills from the same class
     const classUltimateSkills = allSkills.filter(s => 
         s.class === skill.class && 
-        s.tags && 
-        s.tags.includes('Ultimate')
+        s.hasTag('Ultimate')
     );
     
     // Check if any other Ultimate skill from this class has points
