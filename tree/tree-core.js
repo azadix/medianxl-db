@@ -22,7 +22,7 @@ let currentBuildIndex = null; // Track currently loaded build index for saving
 const toastManager = new ToastManager();
 
 // Export function to get oSkill points (for tooltip) - now just re-exports from character-state
-export { getOSkillPoints } from '../character-state.js';
+export { getOSkillPoints } from '../character/character-state.js';
 
 /**
  * Calculate armor image number based on spent skill points
