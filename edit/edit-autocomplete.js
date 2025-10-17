@@ -159,11 +159,11 @@ export function initializeAutocomplete() {
       }
 
       // Get all stats ordered by usage count (most used first), then by key
-      const stmt = SkillDB.db.prepare("SELECT key, name FROM stats ORDER BY key");
+      const stmt = SkillDB.db.prepare("SELECT key, name, format FROM stats ORDER BY key");
       while (stmt.step()) {
-        const [key, name] = stmt.get();
+        const [key, name, format] = stmt.get();
         const usage_count = statUsageCounts[key.toLowerCase()] || 0;
-        allItems.push({ key, name, usage_count });
+        allItems.push({ key, name, format, usage_count });
       }
       stmt.free();
       
@@ -240,23 +240,66 @@ export function initializeAutocomplete() {
       item.style.cssText = `
         background-color: var(--bg-color);
         color: var(--text-color);
+        display: flex;
+        align-items: center;
+        padding: 8px 12px;
+        gap: 12px;
       `;
       
-      // Create strong element with proper color inheritance
-      const strong = document.createElement('strong');
+      // Create key element (10% width)
+      const keyElement = document.createElement('div');
+      keyElement.style.cssText = `
+        flex: 0 0 25%;
+        font-weight: bold;
+        color: inherit;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      `;
       if (type === 'stat') {
-        strong.textContent = match.key;
+        keyElement.textContent = match.key;
       } else {
-        strong.textContent = match.name;
+        keyElement.textContent = match.name;
       }
-      strong.style.color = 'inherit';
+      item.appendChild(keyElement);
       
-      item.appendChild(strong);
+      // Create name element (20% width) with usage count
+      const nameElement = document.createElement('div');
+      nameElement.style.cssText = `
+        flex: 0 0 35%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      `;
+      let nameText;
+      if (type === 'stat') {
+        nameText = match.name;
+      } else {
+        nameText = match.display_name;
+      }
       
-      // Add usage count if available
-      const usageText = match.usage_count > 0 ? ` (${match.usage_count})` : '';
-      const displayText = type === 'stat' ? match.name : match.display_name;
-      item.appendChild(document.createTextNode(` - ${displayText}${usageText}`));
+      // Add usage count right after the name
+      if (match.usage_count > 0) {
+        nameText += ` (${match.usage_count})`;
+      }
+      nameElement.textContent = nameText;
+      item.appendChild(nameElement);
+      
+      // Create format/description element (remaining width)
+      const formatElement = document.createElement('div');
+      formatElement.style.cssText = `
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: var(--text-color-secondary, #888);
+      `;
+      if (type === 'stat') {
+        formatElement.textContent = match.format || '{name}: {value}';
+      } else {
+        formatElement.textContent = ''; // Skills don't have format
+      }
+      item.appendChild(formatElement);
       
       item.addEventListener('click', () => {
         if (type === 'stat') {
@@ -302,6 +345,12 @@ export function initializeAutocomplete() {
         item.style.backgroundColor = 'var(--hover-bg-color)';
         item.style.color = 'var(--hover-text-color)';
         
+        // Make format column (3rd child) more readable when selected
+        const formatElement = item.children[2]; // Format column is the 3rd child
+        if (formatElement) {
+          formatElement.style.color = '#000000'; // Black text for better readability
+        }
+        
         // Scroll the selected item into view
         item.scrollIntoView({
           behavior: 'smooth',
@@ -311,6 +360,12 @@ export function initializeAutocomplete() {
       } else {
         item.style.backgroundColor = 'var(--bg-color)';
         item.style.color = 'var(--text-color)';
+        
+        // Reset format column color when not selected
+        const formatElement = item.children[2]; // Format column is the 3rd child
+        if (formatElement) {
+          formatElement.style.color = 'var(--text-color-secondary, #888)';
+        }
       }
     });
   }
