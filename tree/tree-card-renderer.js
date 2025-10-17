@@ -11,7 +11,7 @@ import { getSkillIconHTML } from '../utils.js';
  * @param {string} cardData.displayName - Display name of the skill
  * @param {boolean} cardData.hasDescription - Whether skill has description (for styling)
  * @param {number} cardData.currentPoints - Current allocated points
- * @param {number|string} cardData.maxPoints - Max points (number or '∞')
+ * @param {number} cardData.maxPoints - Max points (number, capped at 150)
  * @param {string} cardData.levelColor - CSS class for level display color
  * @param {Object} cardData.buttons - Button configuration
  * @param {boolean} cardData.buttons.show - Whether to show buttons

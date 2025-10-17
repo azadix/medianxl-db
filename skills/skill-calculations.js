@@ -237,7 +237,8 @@ export function calculateMaxLevel(skillId, skillLevels = {}, characterLevel = Ch
     effectiveMaxLevel += bonus;
   }
 
-  return effectiveMaxLevel;
+  // Apply hard cap of 150 for all skills
+  return Math.min(effectiveMaxLevel, 150);
 }
 
 /**

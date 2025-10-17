@@ -407,7 +407,14 @@ export default class Character {
     const skill = this.oSkills.find(s => s.skillName === skillName);
     if (!skill) return;
     
-    skill.points += amount;
+    const newPoints = skill.points + amount;
+    
+    // Apply 150 level cap for oSkills
+    if (newPoints > 150) {
+      skill.points = 150;
+    } else {
+      skill.points = newPoints;
+    }
     
     // Remove skill if points drop to 0 or below
     if (skill.points <= 0) {

@@ -31,7 +31,7 @@ function updateSkillCards(selectedClass, skillsList) {
     const tabsWithPoints = new Set();
     
     allCards.forEach(card => {
-        // Skip oSkills tab cards - they have their own unrestricted logic
+        // Skip oSkills tab cards - they have their own logic (150 level cap)
         if (card.closest('#tab-oSkills')) {
             return;
         }

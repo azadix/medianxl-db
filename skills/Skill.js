@@ -15,7 +15,7 @@
 export default class Skill {
     // Skill level constraints
     static MIN_SKILL_LEVEL = 0;
-    static MAX_SKILL_LEVEL = 99;
+    static MAX_SKILL_LEVEL = 150;
     
     // Max level constraints
     static MIN_BASE_MAX_LEVEL = 0;

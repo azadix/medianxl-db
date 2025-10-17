@@ -714,7 +714,7 @@ export function importCharacterState(state) {
 
 /**
  * oSkills Management
- * oSkills are virtual skills (from items/gear) with no restrictions
+ * oSkills are virtual skills (from items/gear) with 150 level cap
  */
 
 /**

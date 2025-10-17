@@ -113,7 +113,7 @@ function handleSkillPointsChanged() {
             : Math.max(1, getSkillPoints(currentHoveredSkill));
         
         // Get warning message from the skill card's plus button (if any)
-        // Skip warning for oSkills (they have no restrictions)
+        // Skip warning for oSkills (they only have 150 level cap)
         let warningMessage = '';
         if (!isOSkill) {
             const plusBtn = skillCard?.querySelector('.skill-plus-btn');
@@ -163,7 +163,7 @@ function handleOSkillsUpdated() {
                 : Math.max(1, getSkillPoints(currentHoveredSkill));
             
             // Get warning message from the skill card's plus button (if any)
-            // Skip warning for oSkills (they have no restrictions)
+            // Skip warning for oSkills (they only have 150 level cap)
             let warningMessage = '';
             if (!isOSkillCard) {
                 const plusBtn = activeSkillCard?.querySelector('.skill-plus-btn');
@@ -221,7 +221,7 @@ function showTooltip(skillId, mouseX, mouseY, hoveredCard = null) {
         : Math.max(1, getSkillPoints(skillId));
     
     // Get warning message from the skill card's plus button (if any)
-    // Skip warning for oSkills (they have no restrictions)
+    // Skip warning for oSkills (they only have 150 level cap)
     let warningMessage = '';
     if (!isOSkill) {
         const plusBtn = skillCard?.querySelector('.skill-plus-btn');

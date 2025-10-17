@@ -171,6 +171,11 @@ function saveMaxLevel() {
     return;
   }
   
+  if (baseMaxLevel > 150) {
+    alert('Base max level cannot exceed 150 (hard cap for all skills)');
+    return;
+  }
+  
   // Upsert the max level data
   SkillDB.db.run('DELETE FROM skill_max_levels WHERE skill_id = ?', [skillId]);
   SkillDB.db.run(`

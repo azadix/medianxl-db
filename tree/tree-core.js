@@ -1152,13 +1152,13 @@ function createOSkillCard(oskill) {
         displayName: oskill.displayName,
         hasDescription: hasDescription,
         currentPoints: oskill.points,
-        maxPoints: '∞',
-        levelColor: 'has-text-grey',
+        maxPoints: 150,
+        levelColor: oskill.points >= 150 ? 'has-text-warning' : 'has-text-grey',
         buttons: {
             show: true,
-            plusDisabled: false, // oSkills never disable plus button
+            plusDisabled: oskill.points >= 150, // Disable plus button at 150
             minusDisabled: oskill.points === 0,
-            plusTooltip: '',
+            plusTooltip: oskill.points >= 150 ? 'Maximum level reached (150)' : '',
             dataSkill: oskill.skillName
         }
     };
