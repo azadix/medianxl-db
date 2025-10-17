@@ -3,7 +3,7 @@
  * Handles dynamic calculations for skill max levels and other modifiers
  */
 
-import { CHARACTER_CONFIG } from './character-config.js';
+import Character from './Character.js';
 
 /**
  * Max Level Modifier Rules
@@ -30,7 +30,7 @@ const MAX_LEVEL_MODIFIERS = [
     targetSkillName: 'barkskin', // itself
     characterLevelDivisor: 5, // +1 max level for every 5 character levels
     description: 'Increases its own max level by 1 for every 4 character levels',
-    calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = CHARACTER_CONFIG.DEFAULT_LEVEL) {
+    calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = Character.DEFAULT_LEVEL) {
       // Only affects itself, based on character level only
       if (targetSkillData.skill_name === this.targetSkillName) {
         // BUG: i think that this skill is bugged in game since the scaling starts counting from level 1 and not 10
@@ -61,7 +61,7 @@ const MAX_LEVEL_MODIFIERS = [
     characterLevelDivisor: 5, // +1 max level for every 5 character levels
     maxBonus: 5, // Maximum of 5 bonus levels
     description: 'Increases its own max level by 1 for every 5 character levels (max +5)',
-    calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = CHARACTER_CONFIG.DEFAULT_LEVEL) {
+    calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = Character.DEFAULT_LEVEL) {
       // Only affects itself, based on character level only
       if (targetSkillData.skill_name === this.targetSkillName) {
         const bonus = Math.floor(characterLevel / this.characterLevelDivisor);
@@ -77,7 +77,7 @@ const MAX_LEVEL_MODIFIERS = [
     characterLevelDivisor: 5, // +1 max level for every 5 character levels
     maxBonus: 5, // Maximum of 5 bonus levels
     description: 'Increases its own max level by 1 for every 5 character levels (max +5)',
-    calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = CHARACTER_CONFIG.DEFAULT_LEVEL) {
+    calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = Character.DEFAULT_LEVEL) {
       // Only affects itself, based on character level only
       if (targetSkillData.skill_name === this.targetSkillName) {
         const bonus = Math.floor(characterLevel / this.characterLevelDivisor);
@@ -93,7 +93,7 @@ const MAX_LEVEL_MODIFIERS = [
     characterLevelDivisor: 2, // +1 max level for every 2 character levels
     maxBonus: 25, // Maximum of 25 bonus levels
     description: 'Increases its own max level by 1 for every 2 character levels (max +25)',
-    calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = CHARACTER_CONFIG.DEFAULT_LEVEL) {
+    calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = Character.DEFAULT_LEVEL) {
       // Only affects itself, based on character level only
       if (targetSkillData.skill_name === this.targetSkillName) {
         const bonus = Math.floor(characterLevel / this.characterLevelDivisor);
@@ -110,7 +110,7 @@ const MAX_LEVEL_MODIFIERS = [
     maxBonus: 20, // Maximum of 20 bonus levels
     startLevel: 15, // Skill becomes available at level 15
     description: 'When active, increases Trinity Arrow and Barrage max level by 1 for every 4 character levels',
-    calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = CHARACTER_CONFIG.DEFAULT_LEVEL) {
+    calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = Character.DEFAULT_LEVEL) {
       // Only applies if Elemental Command has at least 1 point invested
       if (sourceSkillLevel > 0 && this.targetSkillNames.includes(targetSkillData.skill_name)) {
         const effectiveLevel = Math.max(0, characterLevel - this.startLevel);
@@ -126,7 +126,7 @@ const MAX_LEVEL_MODIFIERS = [
     characterLevelDivisor: 4, // +1 max level for every 4 character levels
     startLevel: 11, // Skill becomes available at level 15
     description: 'Increases its own max level by 1 for every 4 character levels (starting from level 15)',
-    calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = CHARACTER_CONFIG.DEFAULT_LEVEL) {
+    calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = Character.DEFAULT_LEVEL) {
       // Only affects itself, based on character level only
       if (targetSkillData.skill_name === this.targetSkillName) {
         const effectiveLevel = Math.max(0, characterLevel - this.startLevel);
@@ -163,7 +163,7 @@ const MAX_LEVEL_MODIFIERS = [
     characterLevelDivisor: 5, // +2 max levels for every 5 character levels above 90
     bonusPerIncrement: 2, // +2 max levels per increment
     description: 'When active, increases Iron Spiral max level by 2 for every 5 character levels above 90',
-    calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = CHARACTER_CONFIG.DEFAULT_LEVEL) {
+    calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = Character.DEFAULT_LEVEL) {
       // Only applies if Galvanism has at least 1 point invested
       if (sourceSkillLevel > 0 && targetSkillData.skill_name === this.targetSkillName) {
         if (characterLevel > this.characterLevelThreshold) {
@@ -185,7 +185,7 @@ const MAX_LEVEL_MODIFIERS = [
  * @param {Object} db - SQL.js database instance
  * @returns {number} The calculated max level
  */
-export function calculateMaxLevel(skillId, skillLevels = {}, characterLevel = CHARACTER_CONFIG.DEFAULT_LEVEL, db = null) {
+export function calculateMaxLevel(skillId, skillLevels = {}, characterLevel = Character.DEFAULT_LEVEL, db = null) {
   if (!db) {
     return 0;
   }

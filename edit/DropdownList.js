@@ -246,7 +246,7 @@ export class DropdownList {
 
         
         // Get actual dropdown height after rendering
-        const dropdownHeight = this.list.clientHeight ;
+        const dropdownHeight = this.list.clientHeight;
         
         // Calculate position to center dropdown relative to input
         let leftPos = inputRect.left + inputRect.width;

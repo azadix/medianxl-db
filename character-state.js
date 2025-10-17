@@ -3,10 +3,10 @@
  * Manages character build including skill points, level, and prerequisites
  */
 
-import { CHARACTER_CONFIG, getBaseSkillPoints } from './character-config.js';
+import Character from './Character.js';
 
 // Re-export getBaseSkillPoints for use in other modules
-export { getBaseSkillPoints };
+export { Character };
 import { checkDevotionRestriction, calculateMaxLevel } from './skill-calculations.js';
 import { getDatabase } from './tree/tree-data.js';
 import Mastery from './Mastery.js';
@@ -32,7 +32,7 @@ const PREREQUISITE_ORDER = {
 
 // Character state
 const characterState = {
-  level: CHARACTER_CONFIG.DEFAULT_LEVEL,
+  level: Character.DEFAULT_LEVEL,
   className: null,
   skillPoints: {}, // Map of skill_name -> points allocated
   maxLevels: {}, // Cached max levels for skills
@@ -50,7 +50,7 @@ const characterState = {
  * @param {string} className - Class name
  * @param {number} level - Character level (for max level calculations and skill point pool)
  */
-export function initializeCharacter(className, level = CHARACTER_CONFIG.DEFAULT_LEVEL) {
+export function initializeCharacter(className, level = Character.DEFAULT_LEVEL) {
   characterState.level = level;
   characterState.className = className;
   characterState.skillPoints = {};
@@ -106,11 +106,11 @@ export function setAllSkillPoints(skillPoints) {
  * @param {number} characterLevel - Character level to check against quest requirements
  * @returns {number} Total quest skill points
  */
-export function getTotalQuestSkillPoints(characterLevel = CHARACTER_CONFIG.MAX_LEVEL) {
+export function getTotalQuestSkillPoints(characterLevel = Character.MAX_LEVEL) {
   let total = 0;
   
   for (const [questId, difficulties] of Object.entries(characterState.questsCompleted)) {
-    const questRewards = CHARACTER_CONFIG.QUEST_SKILL_POINTS[questId];
+    const questRewards = Character.QUEST_SKILL_POINTS[questId];
     if (questRewards) {
       if (difficulties.normal && questRewards.normal) {
         if (characterLevel >= questRewards.normal.expectedLevel) {
@@ -139,8 +139,8 @@ export function getTotalQuestSkillPoints(characterLevel = CHARACTER_CONFIG.MAX_L
  * @param {number} characterLevel - Character level to check quest requirements against
  * @returns {number} Total available skill points
  */
-export function getAvailableSkillPoints(characterLevel = CHARACTER_CONFIG.MAX_LEVEL) {
-  let total = getBaseSkillPoints(CHARACTER_CONFIG.MAX_LEVEL);
+export function getAvailableSkillPoints(characterLevel = Character.MAX_LEVEL) {
+  let total = Character.getBaseSkillPoints(Character.MAX_LEVEL);
   total += getTotalQuestSkillPoints(characterLevel);
   return total;
 }
@@ -175,14 +175,14 @@ export function getMinimumRequiredLevel(db = null) {
   const spentPoints = getSpentSkillPoints();
 
   // Use binary search to find minimum level efficiently
-  let minLevel = CHARACTER_CONFIG.MIN_LEVEL;
-  let left = CHARACTER_CONFIG.MIN_LEVEL;
-  let right = CHARACTER_CONFIG.MAX_LEVEL;
+  let minLevel = Character.MIN_LEVEL;
+  let left = Character.MIN_LEVEL;
+  let right = Character.MAX_LEVEL;
   
   while (left <= right) {
     const mid = Math.floor((left + right) / 2);
     const questPoints = getTotalQuestSkillPoints(mid);
-    const basePoints = getBaseSkillPoints(mid);
+    const basePoints = Character.getBaseSkillPoints(mid);
     const totalAvailable = basePoints + questPoints;
     
     if (totalAvailable >= spentPoints) {
@@ -194,7 +194,7 @@ export function getMinimumRequiredLevel(db = null) {
   }
   
   // Check skill prerequisites for character level requirements
-  let minLevelFromPrerequisites = CHARACTER_CONFIG.MIN_LEVEL;
+  let minLevelFromPrerequisites = Character.MIN_LEVEL;
   
   if (db && spentPoints > 0) {
     // Get all skills that have points allocated
@@ -232,7 +232,7 @@ export function getMinimumRequiredLevel(db = null) {
   const finalMinLevel = Math.max(minLevel, minLevelFromPrerequisites);
   
   // Clamp to valid range
-  return Math.max(CHARACTER_CONFIG.MIN_LEVEL, Math.min(CHARACTER_CONFIG.MAX_LEVEL, finalMinLevel));
+  return Math.max(Character.MIN_LEVEL, Math.min(Character.MAX_LEVEL, finalMinLevel));
 }
 
 /**
@@ -649,7 +649,6 @@ export function removeSkillPoint(skillName, allSkills = []) {
   return { success: true, reason: '' };
 }
 
-
 /**
  * Check for skills that exceed their maximum level
  * @param {Array} allSkills - Array of all skills to check
@@ -674,7 +673,6 @@ export function checkSkillsExceedingMaxLevel(allSkills = []) {
     
     // Calculate the current maximum level for this skill
     const effectiveMaxLevel = calculateMaxLevel(skill.skillId, skillLevels, actualCharacterLevel, db);
-    
     
     // If current points exceed the maximum, add to list
     if (currentPoints > effectiveMaxLevel) {
@@ -793,7 +791,7 @@ export function getQuestCompletion(questId) {
  * @param {Object} state - Saved character state
  */
 export function importCharacterState(state) {
-  characterState.level = state.level || CHARACTER_CONFIG.DEFAULT_LEVEL;
+  characterState.level = state.level || Character.DEFAULT_LEVEL;
   characterState.className = state.className || null;
   characterState.skillPoints = { ...state.skillPoints } || {};
   characterState.maxLevels = {};

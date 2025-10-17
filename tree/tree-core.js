@@ -1,8 +1,8 @@
 // Core functionality for the skills tree viewer
 import { loadSkillsFromSQLite, getDatabase } from './tree-data.js';
 import { renderSkills, renderDifficultyCheckboxes, updateTabColors } from './tree-render.js';
-import { CHARACTER_CONFIG } from '../character-config.js';
-import { initializeCharacter, setCharacterLevel, getSpentSkillPoints, getAllSkillPoints, setAllSkillPoints, updateQuestCompletion, getQuestCompletion, getAllOSkills, addOSkill, changeOSkillPoints, clearOSkills, setAllOSkills, getMinimumRequiredLevel, getTotalQuestSkillPoints, getBaseSkillPoints, checkSkillsExceedingMaxLevel, getAvailableSkillPoints } from '../character-state.js';
+import Character from '../Character.js';
+import { initializeCharacter, setCharacterLevel, getSpentSkillPoints, getAllSkillPoints, setAllSkillPoints, updateQuestCompletion, getQuestCompletion, getAllOSkills, addOSkill, changeOSkillPoints, clearOSkills, setAllOSkills, getMinimumRequiredLevel, getTotalQuestSkillPoints, checkSkillsExceedingMaxLevel, getAvailableSkillPoints } from '../character-state.js';
 import { getCurrentDevotion, getDevotionDisplayName } from '../skill-calculations.js';
 import { initializeTooltip } from './tree-tooltip.js';
 import { ToastManager } from './ToastManager.js';
@@ -317,9 +317,9 @@ function updateMinimumLevelDisplay() {
     
     const spentPoints = getSpentSkillPoints();
     const db = getDatabase();
-    const minLevel = spentPoints > 0 ? getMinimumRequiredLevel(db) : CHARACTER_CONFIG.DEFAULT_LEVEL;
+    const minLevel = spentPoints > 0 ? getMinimumRequiredLevel(db) : Character.DEFAULT_LEVEL;
     const availableQuestPoints = getTotalQuestSkillPoints(minLevel);
-    const availableBasePoints = getBaseSkillPoints(minLevel);
+    const availableBasePoints = Character.getBaseSkillPoints(minLevel);
     const totalAvailablePoints = availableBasePoints + availableQuestPoints;
     
     
