@@ -19,17 +19,7 @@ export default class Innate extends Skill {
      * @returns {boolean} True if the skill is innate
      */
     static isInnateSkill(skill) {
-        return !skill.canAddPoints || 
-               skill.name.toLowerCase().includes('innate') ||
-               skill.id.toLowerCase().includes('innate');
+        return !skill.canAddPoints || skill.name.toLowerCase().includes('innate');
     }
 
-    /**
-     * Override getMaxLevel to always return 0 for innate skills
-     * @param {Object} options - Options object (ignored for innate skills)
-     * @returns {number} Always returns 0
-     */
-    getMaxLevel(options = {}) {
-        return 0; // Innate skills cannot have points added
-    }
 }

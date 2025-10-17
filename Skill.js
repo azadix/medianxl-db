@@ -11,11 +11,6 @@
  * 
  * // Create from plain object
  * const skill = Skill.fromPlainObject(skillData);
- * 
- * // Use helper methods
- * if (skill.hasTag('passive')) {
- *   console.log('This is a passive skill');
- * }
  */
 export default class Skill {
     // Skill level constraints

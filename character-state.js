@@ -62,7 +62,6 @@ export function initializeCharacter(className, level = CHARACTER_CONFIG.DEFAULT_
  * @param {number} level - New character level
  */
 export function setCharacterLevel(level) {
-  const oldLevel = characterState.level;
   characterState.level = level;
   characterState.maxLevels = {}; // Clear cache
   
@@ -174,20 +173,23 @@ export function getRemainingSkillPoints() {
  */
 export function getMinimumRequiredLevel(db = null) {
   const spentPoints = getSpentSkillPoints();
-  
-  // We need to find the minimum level that provides enough skill points
-  // This requires checking different character levels to find the minimum
+
+  // Use binary search to find minimum level efficiently
   let minLevel = CHARACTER_CONFIG.MIN_LEVEL;
+  let left = CHARACTER_CONFIG.MIN_LEVEL;
+  let right = CHARACTER_CONFIG.MAX_LEVEL;
   
-  // Check each level from 1 to 150 to find the minimum that works
-  for (let testLevel = CHARACTER_CONFIG.MIN_LEVEL; testLevel <= CHARACTER_CONFIG.MAX_LEVEL; testLevel++) {
-    const questPoints = getTotalQuestSkillPoints(testLevel);
-    const basePoints = getBaseSkillPoints(testLevel);
+  while (left <= right) {
+    const mid = Math.floor((left + right) / 2);
+    const questPoints = getTotalQuestSkillPoints(mid);
+    const basePoints = getBaseSkillPoints(mid);
     const totalAvailable = basePoints + questPoints;
     
     if (totalAvailable >= spentPoints) {
-      minLevel = testLevel;
-      break;
+      minLevel = mid;
+      right = mid - 1; // Try lower levels
+    } else {
+      left = mid + 1; // Need higher level
     }
   }
   
@@ -197,30 +199,26 @@ export function getMinimumRequiredLevel(db = null) {
   if (db && spentPoints > 0) {
     // Get all skills that have points allocated
     const skillLevels = getAllSkillPoints();
-    const allocatedSkillIds = [];
+    const allocatedSkillNames = [];
     
-    // Convert skill names to IDs
+    // Collect skill names that have points allocated
     for (const [skillName, points] of Object.entries(skillLevels)) {
       if (points > 0) {
-        const stmt = db.prepare('SELECT id FROM skills WHERE name = ?');
-        stmt.bind([skillName]);
-        if (stmt.step()) {
-          allocatedSkillIds.push(stmt.get()[0]);
-        }
-        stmt.free();
+        allocatedSkillNames.push(skillName);
       }
     }
     
-    // Check character level prerequisites for allocated skills
-    if (allocatedSkillIds.length > 0) {
-      const placeholders = allocatedSkillIds.map(() => '?').join(',');
+    // Check character level prerequisites for allocated skills in a single query
+    if (allocatedSkillNames.length > 0) {
+      const placeholders = allocatedSkillNames.map(() => '?').join(',');
       const stmt = db.prepare(`
-        SELECT requirement_value 
-        FROM skill_prerequisites 
-        WHERE skill_id IN (${placeholders}) 
-        AND requirement_type = 'character_level'
+        SELECT sp.requirement_value 
+        FROM skill_prerequisites sp
+        JOIN skills s ON sp.skill_id = s.id
+        WHERE s.name IN (${placeholders}) 
+        AND sp.requirement_type = 'character_level'
       `);
-      stmt.bind(allocatedSkillIds);
+      stmt.bind(allocatedSkillNames);
       
       while (stmt.step()) {
         const requiredLevel = stmt.get()[0];
@@ -832,19 +830,24 @@ export function getOSkillPoints(skillName) {
  * @param {string} image - Image filename
  * @param {string} className - Class name
  */
-export function addOSkill(skillId, displayName, skillName, image, className) {
+export function addOSkill(skillId, displayName, skillName, image, className, hasDetails = false, description = null, skillEffect = null) {
   const existing = characterState.oSkills.find(s => s.skillName === skillName);
   if (existing) {
     existing.points++;
   } else {
-    characterState.oSkills.push({
+    const oskillData = {
       skillId,
       displayName,
       skillName,
       image,
       className,
-      points: 1
-    });
+      points: 1,
+      hasDetails,
+      description,
+      skillEffect
+    };
+    
+    characterState.oSkills.push(oskillData);
   }
   
   // Dispatch event for UI updates

@@ -1027,19 +1027,22 @@ function initializeOSkillsDropdown() {
     
     // Get all skills for dropdown
     const res = db.exec(`
-        SELECT s.id, s.name, s.display_name, s.image, c.name as class_name
+        SELECT s.id, s.name, s.display_name, s.image, c.name as class_name, s.description, s.skill_effect
         FROM skills s
         LEFT JOIN classes c ON s.class_id = c.id
         ORDER BY c.name, s.display_name
     `);
     
-    const skillItems = res[0] ? res[0].values.map(([id, name, displayName, image, className]) => ({
+    const skillItems = res[0] ? res[0].values.map(([id, name, displayName, image, className, description, skillEffect]) => ({
         value: id,
         name: displayName,
         skillName: name,
         image: image,
         className: className,
-        desc: `${className || 'No Class'}`
+        desc: `${className || 'No Class'}`,
+        hasDetails: (description && description.trim().length > 0) || (skillEffect && skillEffect.trim().length > 0),
+        description: description,
+        skillEffect: skillEffect
     })) : [];
     
     // Initialize sidebar dropdown
@@ -1050,7 +1053,7 @@ function initializeOSkillsDropdown() {
             defaultHeaderText: 'All Skills',
             onSelect: (item) => {
                 if (item) {
-                    addOSkill(item.value, item.name, item.skillName, item.image, item.className);
+                    addOSkill(item.value, item.name, item.skillName, item.image, item.className, item.hasDetails, item.description, item.skillEffect);
                     sidebarDropdown.value = null;
                 }
             }
@@ -1139,15 +1142,18 @@ function updateOSkillsTab() {
 }
 
 function createOSkillCard(oskill) {
+    // Check if oSkill has description data (it should, since oSkills are real skills)
+    const hasDescription = oskill.hasDetails || oskill.description || false;
+    
     // Prepare card data
     const cardData = {
         skillId: oskill.skillName,
         iconHTML: getSkillIcon(oskill.image, oskill.className),
         displayName: oskill.displayName,
-        hasDescription: false, // oSkills don't have detail pages
+        hasDescription: hasDescription,
         currentPoints: oskill.points,
         maxPoints: '∞',
-        levelColor: 'has-text-info',
+        levelColor: 'has-text-grey',
         buttons: {
             show: true,
             plusDisabled: false, // oSkills never disable plus button

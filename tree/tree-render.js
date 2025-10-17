@@ -23,6 +23,10 @@ function updateSkillCards(selectedClass, skillsList) {
     // Get all skill cards
     const allCards = document.querySelectorAll('.skill-card');
     
+    // Calculate minimum required level once for all cards
+    const db = getDatabase();
+    const minLevel = getMinimumRequiredLevel(db);
+    
     // Track which tabs have points
     const tabsWithPoints = new Set();
     
@@ -51,9 +55,7 @@ function updateSkillCards(selectedClass, skillsList) {
         // Update the level display
         const levelDisplay = card.querySelector('.is-size-6');
         if (levelDisplay && !Innate.isInnateSkill(skill)) {
-            const db = getDatabase();
             const skillLevels = getAllSkillPoints();
-            const minLevel = getMinimumRequiredLevel(db);
             const effectiveMaxLevel = db ? calculateMaxLevel(skill.skillId, skillLevels, minLevel, db) : skill.baseMaxLevel;
             const isMaxed = currentPoints >= effectiveMaxLevel;
             const levelColor = isMaxed ? 'has-text-warning' : 'has-text-grey';
@@ -65,9 +67,7 @@ function updateSkillCards(selectedClass, skillsList) {
         // Update button states
         const minusBtn = card.querySelector('.skill-minus-btn');
         if (plusBtn && minusBtn && !Innate.isInnateSkill(skill)) {
-            const db = getDatabase();
             const skillLevels = getAllSkillPoints();
-            const minLevel = getMinimumRequiredLevel(db);
             const effectiveMaxLevel = db ? calculateMaxLevel(skill.skillId, skillLevels, minLevel, db) : skill.baseMaxLevel;
             
             // Check prerequisites, ultimate, mastery, coven, proficiency, and devotion restrictions
@@ -368,13 +368,15 @@ function createSkillCard(skill, currentTab) {
     // Get current skill points
     const currentPoints = getSkillPoints(skill.id);
     
+    // Calculate minimum required level once for this card
+    const db = getDatabase();
+    const minLevel = getMinimumRequiredLevel(db);
+    
     // Prepare card data
     let cardData;
     
     if (!Innate.isInnateSkill(skill)) {
-        const db = getDatabase();
         const skillLevels = getAllSkillPoints();
-        const minLevel = getMinimumRequiredLevel(db);
         const effectiveMaxLevel = db ? calculateMaxLevel(skill.skillId, skillLevels, minLevel, db) : skill.baseMaxLevel;
         const isMaxed = currentPoints >= effectiveMaxLevel;
         
@@ -421,9 +423,7 @@ function createSkillCard(skill, currentTab) {
     
     // Add restriction checks and event listeners if skill can have points
     if (!Innate.isInnateSkill(skill)) {
-        const db = getDatabase();
         const skillLevels = getAllSkillPoints();
-        const minLevel = getMinimumRequiredLevel(db);
         const effectiveMaxLevel = db ? calculateMaxLevel(skill.skillId, skillLevels, minLevel, db) : skill.baseMaxLevel;
         
         // Check all restrictions

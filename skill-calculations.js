@@ -190,40 +190,32 @@ export function calculateMaxLevel(skillId, skillLevels = {}, characterLevel = CH
     return 0;
   }
 
-  // Get base max level data and skill name for the target skill
+  // Get skill name and max level data in a single query using LEFT JOIN
   const stmt = db.prepare(`
     SELECT s.name, sml.base_max_level, sml.affected_by_specialization, sml.can_add_points
-    FROM skill_max_levels sml
-    JOIN skills s ON s.id = sml.skill_id
-    WHERE sml.skill_id = ?
+    FROM skills s
+    LEFT JOIN skill_max_levels sml ON s.id = sml.skill_id
+    WHERE s.id = ?
   `);
   stmt.bind([skillId]);
   
   if (!stmt.step()) {
     stmt.free();
-    
-    // Check if this skill is innate by looking at the skill name
-    // Innate skills shouldn't have max level data, so this is expected
-    const skillStmt = db.prepare('SELECT name FROM skills WHERE id = ?');
-    skillStmt.bind([skillId]);
-    if (skillStmt.step()) {
-      const skillName = skillStmt.get()[0];
-      skillStmt.free();
-      
-      // Only log if it's not an innate skill (innate skills shouldn't have max level data)
-      if (!skillName.includes('innate') && !skillName.includes('Innate')) {
-        console.log(`calculateMaxLevel: No max level data found for skillId ${skillId} (${skillName})`);
-      }
-    } else {
-      skillStmt.free();
-      console.log(`calculateMaxLevel: Skill ${skillId} does not exist`);
-    }
-    
-    return 0; // No max level data found
+    console.warn(`calculateMaxLevel: Skill ${skillId} does not exist`);
+    return 0; // Skill doesn't exist
   }
   
   const [skill_name, base_max_level, affected_by_specialization, can_add_points] = stmt.get();
   stmt.free();
+  
+  // Check if this skill has max level data
+  if (base_max_level === null) {
+    // Only log if it's not an innate skill (innate skills shouldn't have max level data)
+    if (!skill_name.includes('innate') && !skill_name.includes('Innate')) {
+      console.warn(`calculateMaxLevel: No max level data found for skillId ${skillId} (${skill_name})`);
+    }
+    return 0; // No max level data found
+  }
   
   const targetSkillData = {
     skill_name,
@@ -245,7 +237,6 @@ export function calculateMaxLevel(skillId, skillLevels = {}, characterLevel = CH
     effectiveMaxLevel += bonus;
   }
 
-  
   return effectiveMaxLevel;
 }
 
