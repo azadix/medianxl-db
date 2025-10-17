@@ -1,7 +1,7 @@
 // Tooltip functionality for skill tree
 import { getSkillIconHTML, expandPlaceholdersWithScaling, SKILL_CATEGORY_TAG_IDS, SUMMON_TAG_IDS, TELEPORT_TAG_IDS } from '../utils.js';
 import { getDatabase } from './tree-data.js';
-import { getSkillPoints, getOSkillPoints } from '../character-state.js';
+import { getSkillPoints, getOSkillPoints } from '../character/character-state.js';
 
 let tooltipElement = null;
 let currentHoveredSkill = null;

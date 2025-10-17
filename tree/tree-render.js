@@ -1,11 +1,11 @@
 // Skills rendering and grid layout functionality
 import { addOverlayArrows } from './tree-arrows.js';
 import { setCurrentTab } from './tree-core.js';
-import { calculateMaxLevel, checkDevotionRestriction } from '../skill-calculations.js';
-import Ultimate from '../Ultimate.js';
-import Innate from '../Innate.js';
+import { calculateMaxLevel, checkDevotionRestriction } from '../skills/skill-calculations.js';
+import Ultimate from '../skills/Ultimate.js';
+import Innate from '../skills/Innate.js';
 import { getDatabase } from './tree-data.js';
-import { getSkillPoints, addSkillPoint, removeSkillPoint, checkPrerequisites, getAllSkillPoints, checkMasteryRestriction, checkCovenRestriction, checkProficiencyRestriction, getMinimumRequiredLevel } from '../character-state.js';
+import { getSkillPoints, addSkillPoint, removeSkillPoint, checkPrerequisites, getAllSkillPoints, checkMasteryRestriction, checkCovenRestriction, checkProficiencyRestriction, getMinimumRequiredLevel } from '../character/character-state.js';
 import { ToastManager } from './ToastManager.js';
 import { renderSkillCard, getSkillIcon } from './tree-card-renderer.js';
 

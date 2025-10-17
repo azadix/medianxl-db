@@ -55,11 +55,9 @@ Shadow Blade
 Shatterblade
 Shockwave
 Sky Siege
-Snow Queen
 Spike Rush
 Squall Wave
 Starfire
-Steady Shot
 Stormpike
 Sun Strike
 Superbeast
@@ -73,11 +71,9 @@ Ultimate Chaos
 Unseelie Curse
 Vampiric Icon
 Veil King
-Veil King plague grasp
+Veil King Plague Grasp
 Venomous Spirit
-Vengeful Power
 Vizjerei Rage
 Voidstar
 Vortex
-Witch Blood
 Wrath

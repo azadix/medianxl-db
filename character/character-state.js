@@ -7,11 +7,11 @@ import Character from './Character.js';
 
 // Re-export getBaseSkillPoints for use in other modules
 export { Character };
-import { checkDevotionRestriction, calculateMaxLevel } from './skill-calculations.js';
-import { getDatabase } from './tree/tree-data.js';
-import Mastery from './Mastery.js';
-import Coven from './Coven.js';
-import Proficiency from './Proficiency.js';
+import { checkDevotionRestriction, calculateMaxLevel } from '../skills/skill-calculations.js';
+import { getDatabase } from '../tree/tree-data.js';
+import Mastery from '../skills/Mastery.js';
+import Coven from '../skills/Coven.js';
+import Proficiency from '../skills/Proficiency.js';
 
 // Skills that use OR logic for skill_level prerequisites (instead of AND)
 // Format: skill display name
@@ -30,20 +30,8 @@ const PREREQUISITE_ORDER = {
   'character_level': 4     // Character level (currently skipped)
 };
 
-// Character state
-const characterState = {
-  level: Character.DEFAULT_LEVEL,
-  className: null,
-  skillPoints: {}, // Map of skill_name -> points allocated
-  maxLevels: {}, // Cached max levels for skills
-  questsCompleted: { // Map of quest_id -> {normal, nightmare, hell}
-    'den_of_evil': { normal: true, nightmare: true, hell: true },
-    'radament': { normal: true, nightmare: true, hell: true },
-    'izual': { normal: true, nightmare: true, hell: true },
-    'inquisitor_of_the_triune': { hell: true}
-  },
-  oSkills: [] // Array of {skillId, skillName, displayName, image, className, points}
-};
+// Character instance (singleton)
+let characterInstance = null;
 
 /**
  * Initialize character state for a class
@@ -51,10 +39,16 @@ const characterState = {
  * @param {number} level - Character level (for max level calculations and skill point pool)
  */
 export function initializeCharacter(className, level = Character.DEFAULT_LEVEL) {
-  characterState.level = level;
-  characterState.className = className;
-  characterState.skillPoints = {};
-  characterState.maxLevels = {};
+  characterInstance = new Character(className, level);
+  return characterInstance;
+}
+
+/**
+ * Get the current character instance
+ * @returns {Character|null} Character instance
+ */
+export function getCharacterInstance() {
+  return characterInstance;
 }
 
 /**
@@ -62,9 +56,7 @@ export function initializeCharacter(className, level = Character.DEFAULT_LEVEL) 
  * @param {number} level - New character level
  */
 export function setCharacterLevel(level) {
-  characterState.level = level;
-  characterState.maxLevels = {}; // Clear cache
-  
+  return characterInstance.setCharacterLevel(level);
 }
 
 /**
@@ -72,7 +64,7 @@ export function setCharacterLevel(level) {
  * @returns {number} Character level
  */
 export function getCharacterLevel() {
-  return characterState.level;
+  return characterInstance ? characterInstance.level : Character.DEFAULT_LEVEL;
 }
 
 /**
@@ -81,7 +73,7 @@ export function getCharacterLevel() {
  * @returns {number} Points allocated
  */
 export function getSkillPoints(skillName) {
-  return characterState.skillPoints[skillName] || 0;
+  return characterInstance ? characterInstance.getSkillPoints(skillName) : 0;
 }
 
 /**
@@ -89,7 +81,7 @@ export function getSkillPoints(skillName) {
  * @returns {Object} Map of skill_name -> points
  */
 export function getAllSkillPoints() {
-  return { ...characterState.skillPoints };
+  return characterInstance ? characterInstance.getAllSkillPoints() : {};
 }
 
 /**
@@ -97,8 +89,9 @@ export function getAllSkillPoints() {
  * @param {Object} skillPoints - Map of skill_name -> points
  */
 export function setAllSkillPoints(skillPoints) {
-  characterState.skillPoints = { ...skillPoints };
-  characterState.maxLevels = {}; // Clear cache
+  if (characterInstance) {
+    characterInstance.setAllSkillPoints(skillPoints);
+  }
 }
 
 /**
@@ -107,30 +100,7 @@ export function setAllSkillPoints(skillPoints) {
  * @returns {number} Total quest skill points
  */
 export function getTotalQuestSkillPoints(characterLevel = Character.MAX_LEVEL) {
-  let total = 0;
-  
-  for (const [questId, difficulties] of Object.entries(characterState.questsCompleted)) {
-    const questRewards = Character.QUEST_SKILL_POINTS[questId];
-    if (questRewards) {
-      if (difficulties.normal && questRewards.normal) {
-        if (characterLevel >= questRewards.normal.expectedLevel) {
-          total += questRewards.normal.points;
-        }
-      }
-      if (difficulties.nightmare && questRewards.nightmare) {
-        if (characterLevel >= questRewards.nightmare.expectedLevel) {
-          total += questRewards.nightmare.points;
-        }
-      }
-      if (difficulties.hell && questRewards.hell) {
-        if (characterLevel >= questRewards.hell.expectedLevel) {
-          total += questRewards.hell.points;
-        }
-      }
-    }
-  }
-  
-  return total;
+  return characterInstance ? characterInstance.getTotalQuestSkillPoints(characterLevel) : 0;
 }
 
 /**
@@ -140,9 +110,7 @@ export function getTotalQuestSkillPoints(characterLevel = Character.MAX_LEVEL) {
  * @returns {number} Total available skill points
  */
 export function getAvailableSkillPoints(characterLevel = Character.MAX_LEVEL) {
-  let total = Character.getBaseSkillPoints(Character.MAX_LEVEL);
-  total += getTotalQuestSkillPoints(characterLevel);
-  return total;
+  return characterInstance ? characterInstance.getAvailableSkillPoints(characterLevel) : 0;
 }
 
 /**
@@ -150,11 +118,7 @@ export function getAvailableSkillPoints(characterLevel = Character.MAX_LEVEL) {
  * @returns {number} Total points spent
  */
 export function getSpentSkillPoints() {
-  let total = 0;
-  for (const points of Object.values(characterState.skillPoints)) {
-    total += points;
-  }
-  return total;
+  return characterInstance ? characterInstance.getSpentSkillPoints() : 0;
 }
 
 /**
@@ -162,7 +126,7 @@ export function getSpentSkillPoints() {
  * @returns {number} Points remaining to spend
  */
 export function getRemainingSkillPoints() {
-  return getAvailableSkillPoints() - getSpentSkillPoints();
+  return characterInstance ? characterInstance.getRemainingSkillPoints() : 0;
 }
 
 /**
@@ -172,67 +136,7 @@ export function getRemainingSkillPoints() {
  * @returns {number} Minimum character level needed
  */
 export function getMinimumRequiredLevel(db = null) {
-  const spentPoints = getSpentSkillPoints();
-
-  // Use binary search to find minimum level efficiently
-  let minLevel = Character.MIN_LEVEL;
-  let left = Character.MIN_LEVEL;
-  let right = Character.MAX_LEVEL;
-  
-  while (left <= right) {
-    const mid = Math.floor((left + right) / 2);
-    const questPoints = getTotalQuestSkillPoints(mid);
-    const basePoints = Character.getBaseSkillPoints(mid);
-    const totalAvailable = basePoints + questPoints;
-    
-    if (totalAvailable >= spentPoints) {
-      minLevel = mid;
-      right = mid - 1; // Try lower levels
-    } else {
-      left = mid + 1; // Need higher level
-    }
-  }
-  
-  // Check skill prerequisites for character level requirements
-  let minLevelFromPrerequisites = Character.MIN_LEVEL;
-  
-  if (db && spentPoints > 0) {
-    // Get all skills that have points allocated
-    const skillLevels = getAllSkillPoints();
-    const allocatedSkillNames = [];
-    
-    // Collect skill names that have points allocated
-    for (const [skillName, points] of Object.entries(skillLevels)) {
-      if (points > 0) {
-        allocatedSkillNames.push(skillName);
-      }
-    }
-    
-    // Check character level prerequisites for allocated skills in a single query
-    if (allocatedSkillNames.length > 0) {
-      const placeholders = allocatedSkillNames.map(() => '?').join(',');
-      const stmt = db.prepare(`
-        SELECT sp.requirement_value 
-        FROM skill_prerequisites sp
-        JOIN skills s ON sp.skill_id = s.id
-        WHERE s.name IN (${placeholders}) 
-        AND sp.requirement_type = 'character_level'
-      `);
-      stmt.bind(allocatedSkillNames);
-      
-      while (stmt.step()) {
-        const requiredLevel = stmt.get()[0];
-        minLevelFromPrerequisites = Math.max(minLevelFromPrerequisites, requiredLevel);
-      }
-      stmt.free();
-    }
-  }
-  
-  // Take the maximum of both requirements
-  const finalMinLevel = Math.max(minLevel, minLevelFromPrerequisites);
-  
-  // Clamp to valid range
-  return Math.max(Character.MIN_LEVEL, Math.min(Character.MAX_LEVEL, finalMinLevel));
+  return characterInstance ? characterInstance.getMinimumRequiredLevel(db) : Character.MIN_LEVEL;
 }
 
 /**
@@ -374,8 +278,10 @@ export function checkPrerequisites(skill, allSkills = []) {
 function countPointsInTab(tabName, allSkills) {
   let totalPoints = 0;
   
+  if (!characterInstance) return totalPoints;
+  
   // Iterate through all allocated skill points
-  for (const [skillName, points] of Object.entries(characterState.skillPoints)) {
+  for (const [skillName, points] of Object.entries(characterInstance.skillPoints)) {
     // Find the skill in allSkills to get its tab
     const skill = allSkills.find(s => s.id === skillName);
     
@@ -544,8 +450,8 @@ export function addSkillPoint(skillName, skill, maxLevel, allSkills = []) {
     
     // Check Devotion restriction (only when adding first point, Paladin and Amazon)
     const db = getDatabase();
-    if (db) {
-      const devotionCheck = checkDevotionRestriction(skill.skillId, characterState.skillPoints, db);
+    if (db && characterInstance) {
+      const devotionCheck = checkDevotionRestriction(skill.skillId, characterInstance.skillPoints, db);
       if (!devotionCheck.canAllocate) {
         return { success: false, reason: devotionCheck.reason };
       }
@@ -553,8 +459,10 @@ export function addSkillPoint(skillName, skill, maxLevel, allSkills = []) {
   }
   
   // Add the point
-  characterState.skillPoints[skillName] = currentPoints + 1;
-  characterState.maxLevels = {}; // Clear cache as max levels may change
+  if (characterInstance) {
+    characterInstance.skillPoints[skillName] = currentPoints + 1;
+    characterInstance.maxLevels = {}; // Clear cache as max levels may change
+  }
   
   return { success: true, reason: '' };
 }
@@ -579,8 +487,10 @@ function checkMaxLevelDependencies(skillName, allSkills = []) {
     return { allowed: true, reason: '' };
   }
   
+  if (!characterInstance) return { allowed: true, reason: '' };
+  
   // Simulate removing the point
-  const simulatedSkillPoints = { ...characterState.skillPoints };
+  const simulatedSkillPoints = { ...characterInstance.skillPoints };
   const currentPoints = simulatedSkillPoints[skillName] || 0;
   if (currentPoints > 1) {
     simulatedSkillPoints[skillName] = currentPoints - 1;
@@ -589,7 +499,7 @@ function checkMaxLevelDependencies(skillName, allSkills = []) {
   }
   
   // Check all skills that have points allocated
-  for (const [allocatedSkillName, allocatedPoints] of Object.entries(characterState.skillPoints)) {
+  for (const [allocatedSkillName, allocatedPoints] of Object.entries(characterInstance.skillPoints)) {
     if (allocatedPoints === 0) continue;
     
     // Find the skill object
@@ -597,7 +507,7 @@ function checkMaxLevelDependencies(skillName, allSkills = []) {
     if (!skill) continue;
     
     // Calculate what the new max level would be with the simulated removal
-    const newMaxLevel = calculateMaxLevel(skill.skillId, simulatedSkillPoints, characterState.level, db);
+    const newMaxLevel = calculateMaxLevel(skill.skillId, simulatedSkillPoints, characterInstance.level, db);
     
     // Check if current points would exceed new max
     if (allocatedPoints > newMaxLevel) {
@@ -644,12 +554,14 @@ export function removeSkillPoint(skillName, allSkills = []) {
   }
   
   // Remove the point
-  characterState.skillPoints[skillName] = currentPoints - 1;
-  if (characterState.skillPoints[skillName] === 0) {
-    delete characterState.skillPoints[skillName];
+  if (characterInstance) {
+    characterInstance.skillPoints[skillName] = currentPoints - 1;
+    if (characterInstance.skillPoints[skillName] === 0) {
+      delete characterInstance.skillPoints[skillName];
+    }
+    
+    characterInstance.maxLevels = {}; // Clear cache as max levels may change
   }
-  
-  characterState.maxLevels = {}; // Clear cache as max levels may change
   
   return { success: true, reason: '' };
 }
@@ -663,13 +575,15 @@ export function checkSkillsExceedingMaxLevel(allSkills = []) {
   const db = getDatabase();
   if (!db) return [];
   
-  // Use minimum required level instead of characterState.level to ensure we have the correct level
+  if (!characterInstance) return [];
+  
+  // Use minimum required level instead of characterInstance.level to ensure we have the correct level
   const actualCharacterLevel = getMinimumRequiredLevel(db);
   const skillLevels = getAllSkillPoints();
   const exceedingSkills = [];
   
   // Check each skill that has points allocated
-  for (const [skillName, currentPoints] of Object.entries(characterState.skillPoints)) {
+  for (const [skillName, currentPoints] of Object.entries(characterInstance.skillPoints)) {
     if (currentPoints === 0) continue;
     
     // Find the skill object
@@ -703,8 +617,10 @@ function getMinimumRequiredPointsWithBlockingSkills(skillName, allSkills) {
   let minRequired = 0;
   const blockingSkills = [];
   
+  if (!characterInstance) return { minRequired: 0, blockingSkills: [] };
+  
   // Check all skills that have points allocated
-  for (const [allocatedSkillName, points] of Object.entries(characterState.skillPoints)) {
+  for (const [allocatedSkillName, points] of Object.entries(characterInstance.skillPoints)) {
     if (points === 0) continue;
     
     // Find the skill object
@@ -741,8 +657,9 @@ function getMinimumRequiredPointsWithBlockingSkills(skillName, allSkills) {
  * Reset all skill points
  */
 export function resetAllSkillPoints() {
-  characterState.skillPoints = {};
-  characterState.maxLevels = {};
+  if (characterInstance) {
+    characterInstance.resetAllSkillPoints();
+  }
 }
 
 /**
@@ -750,7 +667,7 @@ export function resetAllSkillPoints() {
  * @returns {number} Total points
  */
 export function getTotalSkillPoints() {
-  return Object.values(characterState.skillPoints).reduce((sum, points) => sum + points, 0);
+  return characterInstance ? characterInstance.getTotalSkillPoints() : 0;
 }
 
 /**
@@ -758,10 +675,10 @@ export function getTotalSkillPoints() {
  * @returns {Object} Character state
  */
 export function exportCharacterState() {
-  return {
-    level: characterState.level,
-    className: characterState.className,
-    skillPoints: { ...characterState.skillPoints }
+  return characterInstance ? characterInstance.exportState() : {
+    level: Character.DEFAULT_LEVEL,
+    className: null,
+    skillPoints: {}
   };
 }
 
@@ -771,15 +688,9 @@ export function exportCharacterState() {
  * @param {Object} difficulties - Object with normal, nightmare, hell boolean values
  */
 export function updateQuestCompletion(questId, difficulties) {
-  if (!characterState.questsCompleted[questId]) {
-    characterState.questsCompleted[questId] = {};
+  if (characterInstance) {
+    characterInstance.updateQuestCompletion(questId, difficulties);
   }
-  
-  characterState.questsCompleted[questId] = {
-    normal: difficulties.normal || false,
-    nightmare: difficulties.nightmare || false,
-    hell: difficulties.hell || false
-  };
 }
 
 /**
@@ -788,7 +699,7 @@ export function updateQuestCompletion(questId, difficulties) {
  * @returns {Object} Object with normal, nightmare, hell boolean values
  */
 export function getQuestCompletion(questId) {
-  return characterState.questsCompleted[questId] || { normal: false, nightmare: false, hell: false };
+  return characterInstance ? characterInstance.getQuestCompletion(questId) : { normal: false, nightmare: false, hell: false };
 }
 
 /**
@@ -796,10 +707,9 @@ export function getQuestCompletion(questId) {
  * @param {Object} state - Saved character state
  */
 export function importCharacterState(state) {
-  characterState.level = state.level || Character.DEFAULT_LEVEL;
-  characterState.className = state.className || null;
-  characterState.skillPoints = { ...state.skillPoints } || {};
-  characterState.maxLevels = {};
+  if (characterInstance) {
+    characterInstance.importState(state);
+  }
 }
 
 /**
@@ -812,7 +722,7 @@ export function importCharacterState(state) {
  * @returns {Array} Array of oSkill objects
  */
 export function getAllOSkills() {
-  return characterState.oSkills;
+  return characterInstance ? characterInstance.getAllOSkills() : [];
 }
 
 /**
@@ -821,8 +731,7 @@ export function getAllOSkills() {
  * @returns {number} Points allocated (0 if not found)
  */
 export function getOSkillPoints(skillName) {
-  const oskill = characterState.oSkills.find(s => s.skillName === skillName);
-  return oskill ? oskill.points : 0;
+  return characterInstance ? characterInstance.getOSkillPoints(skillName) : 0;
 }
 
 /**
@@ -834,27 +743,9 @@ export function getOSkillPoints(skillName) {
  * @param {string} className - Class name
  */
 export function addOSkill(skillId, displayName, skillName, image, className, hasDetails = false, description = null, skillEffect = null) {
-  const existing = characterState.oSkills.find(s => s.skillName === skillName);
-  if (existing) {
-    existing.points++;
-  } else {
-    const oskillData = {
-      skillId,
-      displayName,
-      skillName,
-      image,
-      className,
-      points: 1,
-      hasDetails,
-      description,
-      skillEffect
-    };
-    
-    characterState.oSkills.push(oskillData);
+  if (characterInstance) {
+    characterInstance.addOSkill(skillId, displayName, skillName, image, className, hasDetails, description, skillEffect);
   }
-  
-  // Dispatch event for UI updates
-  window.dispatchEvent(new CustomEvent('oskillsUpdated'));
 }
 
 /**
@@ -862,10 +753,8 @@ export function addOSkill(skillId, displayName, skillName, image, className, has
  * @param {string} skillName - Internal skill name
  */
 export function removeOSkill(skillName) {
-  const index = characterState.oSkills.findIndex(s => s.skillName === skillName);
-  if (index > -1) {
-    characterState.oSkills.splice(index, 1);
-    window.dispatchEvent(new CustomEvent('oskillsUpdated'));
+  if (characterInstance) {
+    characterInstance.removeOSkill(skillName);
   }
 }
 
@@ -875,16 +764,8 @@ export function removeOSkill(skillName) {
  * @param {number} amount - Amount to change (can be negative)
  */
 export function changeOSkillPoints(skillName, amount) {
-  const skill = characterState.oSkills.find(s => s.skillName === skillName);
-  if (!skill) return;
-  
-  skill.points += amount;
-  
-  // Remove skill if points drop to 0 or below
-  if (skill.points <= 0) {
-    removeOSkill(skillName);
-  } else {
-    window.dispatchEvent(new CustomEvent('oskillsUpdated'));
+  if (characterInstance) {
+    characterInstance.changeOSkillPoints(skillName, amount);
   }
 }
 
@@ -892,8 +773,9 @@ export function changeOSkillPoints(skillName, amount) {
  * Clear all oSkills
  */
 export function clearOSkills() {
-  characterState.oSkills = [];
-  window.dispatchEvent(new CustomEvent('oskillsUpdated'));
+  if (characterInstance) {
+    characterInstance.clearOSkills();
+  }
 }
 
 /**
@@ -901,6 +783,7 @@ export function clearOSkills() {
  * @param {Array} oSkills - Array of oSkill objects
  */
 export function setAllOSkills(oSkills) {
-  characterState.oSkills = oSkills || [];
-  window.dispatchEvent(new CustomEvent('oskillsUpdated'));
+  if (characterInstance) {
+    characterInstance.setAllOSkills(oSkills);
+  }
 }

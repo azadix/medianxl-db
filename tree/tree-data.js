@@ -1,5 +1,5 @@
 // Data loading and SQLite operations for the skills tree
-import Skill from '../Skill.js';
+import Skill from '../skills/Skill.js';
 
 // Store database instance globally for use in calculations
 let dbInstance = null;

@@ -1,5 +1,5 @@
 import { getUrlParams, updateUrl, sanitizeSkillId, getSkillIconHTML, MISSING_IMAGE_NAME, expandPlaceholdersWithScaling } from './utils.js';
-import Skill from './Skill.js';
+import Skill from './skills/Skill.js';
 
 // DOM elements
 const contentElement = document.getElementById('content');

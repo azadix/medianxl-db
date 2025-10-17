@@ -1,9 +1,9 @@
 // Core functionality for the skills tree viewer
 import { loadSkillsFromSQLite, getDatabase } from './tree-data.js';
 import { renderSkills, renderDifficultyCheckboxes, updateTabColors } from './tree-render.js';
-import Character from '../Character.js';
-import { initializeCharacter, setCharacterLevel, getSpentSkillPoints, getAllSkillPoints, setAllSkillPoints, updateQuestCompletion, getQuestCompletion, getAllOSkills, addOSkill, changeOSkillPoints, clearOSkills, setAllOSkills, getMinimumRequiredLevel, getTotalQuestSkillPoints, checkSkillsExceedingMaxLevel, getAvailableSkillPoints } from '../character-state.js';
-import { getCurrentDevotion, getDevotionDisplayName } from '../skill-calculations.js';
+import Character from '../character/Character.js';
+import { initializeCharacter, setCharacterLevel, getSpentSkillPoints, getAllSkillPoints, setAllSkillPoints, updateQuestCompletion, getQuestCompletion, getAllOSkills, addOSkill, changeOSkillPoints, clearOSkills, setAllOSkills, getMinimumRequiredLevel, getTotalQuestSkillPoints, checkSkillsExceedingMaxLevel, getAvailableSkillPoints } from '../character/character-state.js';
+import { getCurrentDevotion, getDevotionDisplayName } from '../skills/skill-calculations.js';
 import { initializeTooltip } from './tree-tooltip.js';
 import { ToastManager } from './ToastManager.js';
 import { DropdownList } from '../edit/DropdownList.js';
@@ -629,7 +629,7 @@ function resetBuild(showToast = true) {
     
     // Show toast notification if requested
     if (showToast) {
-        toastManager.showToast('Build reset successfully!', true, 'success');
+        toastManager.showToast('Build reset successfully!', true, 'info');
     }
 }
 
@@ -713,7 +713,7 @@ function updateCurrentBuild() {
     // Save to localStorage
     localStorage.setItem('medianxl-builds', JSON.stringify(builds));
     
-    toastManager.showToast(`Build "${builds[currentBuildIndex].name}" updated!`, true, 'success');
+    toastManager.showToast(`Build "${builds[currentBuildIndex].name}" updated!`, true, 'info');
 }
 
 function saveBuild(buildName) {
@@ -755,7 +755,7 @@ function saveBuild(buildName) {
     currentBuildIndex = builds.length - 1;
     updateSaveButtonVisibility();
     
-    toastManager.showToast(`Build "${buildName}" saved successfully!`, true, 'success');
+    toastManager.showToast(`Build "${buildName}" saved successfully!`, true, 'info');
 }
 
 function getSavedBuilds() {
@@ -948,7 +948,7 @@ function loadBuild(index) {
             'danger'
         );
     } else {
-        toastManager.showToast(`Build "${build.name}" loaded successfully!`, true, 'success');
+        toastManager.showToast(`Build "${build.name}" loaded successfully!`, true, 'info');
     }
 }
 
@@ -974,7 +974,7 @@ function deleteBuild(index) {
         }
         
         renderSavedBuildsList();
-        toastManager.showToast(`Build "${buildName}" deleted.`, true);
+        toastManager.showToast(`Build "${buildName}" deleted.`, true, 'info');
     }
 }
 
@@ -1007,7 +1007,7 @@ function renameBuild(index) {
     // Re-render the list to show the new name
     renderSavedBuildsList();
     
-    toastManager.showToast(`Build renamed to "${trimmedName}"!`, true, 'success');
+    toastManager.showToast(`Build renamed to "${trimmedName}"!`, true, 'info');
 }
 
 // oSkills Management

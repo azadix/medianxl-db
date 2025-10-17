@@ -3,7 +3,7 @@
  * Represents exclusive Coven skills with restriction checking
  */
 import Skill from './Skill.js';
-import { getSkillPoints } from './character-state.js';
+import { getSkillPoints } from '../character/character-state.js';
 
 export default class Coven extends Skill {
     static MAX_DIFFERENT_SKILLS = 2;

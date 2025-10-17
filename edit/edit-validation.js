@@ -200,7 +200,7 @@ export function removeValidationErrors() {
  */
 function createErrorDiv(title, errors) {
     const div = document.createElement('div');
-    div.className = 'notification is-danger is-light mt-2 template-validation-error';
+    div.className = 'notification is-danger mt-2 template-validation-error';
     
     const titleEl = document.createElement('p');
     titleEl.className = 'has-text-weight-bold';

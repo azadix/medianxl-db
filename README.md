@@ -11,12 +11,52 @@ This is a web-based skills database editor and interactive skill tree calculator
 - **`tree.html`** - Interactive skills tree with character build planning
 - **`script.js`** - Skills viewer with detail display
 - **`utils.js`** - Utility functions for placeholder expansion and icon handling
-- **`character-state.js`** - Character build state management (skill points, level, prerequisites)
-- **`character-config.js`** - Character configuration constants
-- **`skill-calculations.js`** - Dynamic skill calculations (max levels, modifiers)
-- **`tag-constants.js`** - Centralized skill tag group definitions
 - **`style.css`** - Main styling
 - **`skills.sqlite`** - SQLite database containing all skills data
+
+### Character Management (`character/` folder)
+- **`Character.js`** - Character class with instance-based state management
+- **`character-state.js`** - Character state wrapper functions and validation logic
+
+### Skills System (`skills/` folder)
+- **`Skill.js`** - Base skill class with common functionality
+- **`Coven.js`** - Coven skill class with restriction checking
+- **`Mastery.js`** - Mastery skill class with restriction checking
+- **`Proficiency.js`** - Proficiency skill class with restriction checking
+- **`Ultimate.js`** - Ultimate skill class with restriction checking
+- **`Innate.js`** - Innate skill class (skills that cannot have points added)
+- **`OSkill.js`** - oSkill class for skills from other classes
+- **`skill-calculations.js`** - Dynamic skill calculations (max levels, modifiers)
+
+### Project Structure
+The project is organized into logical folders for better maintainability:
+
+```
+medianxl-db/
+├── index.html              # Skills listing page
+├── edit.html               # Database editor interface
+├── tree.html               # Interactive skill tree
+├── script.js               # Skills viewer functionality
+├── utils.js                # Utility functions
+├── style.css               # Main styling
+├── skills.sqlite           # SQLite database
+├── character/              # Character management
+│   ├── Character.js        # Character class and state management
+│   └── character-state.js  # Character state wrapper functions
+├── skills/                 # Skills system
+│   ├── Skill.js            # Base skill class
+│   ├── Coven.js            # Coven skill class
+│   ├── Mastery.js          # Mastery skill class
+│   ├── Proficiency.js      # Proficiency skill class
+│   ├── Ultimate.js         # Ultimate skill class
+│   ├── Innate.js           # Innate skill class
+│   ├── OSkill.js           # oSkill class
+│   └── skill-calculations.js # Dynamic skill calculations
+├── edit/                   # Edit panel modules
+├── tree/                   # Skill tree modules
+├── py/                     # Python utilities
+└── icons/                  # Skill icons and portraits
+```
 
 ### Modular Structure
 The project is organized into modular JavaScript files for better maintainability:
@@ -174,22 +214,32 @@ skill_prerequisites (skill_id, requirement_type, requirement_value, target_skill
 - Displayed in tree tooltips for quick skill type identification
 
 ### 8. Character State Management
-**Location**: `character-state.js`, `character-config.js`
+**Location**: `Character.js`, `character-state.js`
 
-**Features**:
-- **Skill point allocation**: Track points spent in each skill
-- **Level management**: Character level affects skill points and max levels
-- **Quest tracking**: Toggle quest completions for bonus points
-- **Max level caching**: Efficient calculation of dynamic max levels
-- **Prerequisite validation**: Real-time checking of skill/level/tree requirements
+**Architecture**:
+- **Instance-based design**: Character class holds all state and behavior
+- **Singleton pattern**: Single character instance managed by character-state.js
+- **Backward compatibility**: Wrapper functions maintain existing API
+- **Modular validation**: Specialized skill classes handle restriction logic
+
+**Character Class Features**:
+- **Instance properties**: level, className, skillPoints, maxLevels, questsCompleted, oSkills
+- **Quest management**: Calculate quest points based on character level and completion status
+- **Skill point calculations**: Available, spent, and remaining points with efficient caching
+- **State management**: Export/import for build saving and loading
 - **oSkills management**: Add skills from other classes to your build
+
+**Validation System**:
+- **Prerequisite validation**: Real-time checking of skill/level/tree requirements
+- **Class-specific restrictions**: Coven, Proficiency, Mastery, and Ultimate skill limits
 - **OR logic support**: Some skills require only ONE of multiple prerequisites
-- **State persistence**: Saves to localStorage
+- **Dynamic max levels**: Efficient calculation with caching and dependency tracking
 
 **Class-Specific Restrictions**:
 - **Coven (Sorceress)**: Pick 2 of 4 exclusive skills (Living Flame, Warp Armor, Snow Queen, Vengeful Power)
 - **Proficiency (Barbarian)**: Pick 2 of 5 exclusive skills (Mighty Vigor, Aptitude, Pillage, Warder, Unyielding)
 - **Mastery**: Maximum 3 different Mastery skills across all classes
+- **Ultimate**: Only one Ultimate skill per class allowed
 - Tooltips display restriction messages when attempting to allocate beyond limits
 
 ### 9. Dynamic Skill Calculations

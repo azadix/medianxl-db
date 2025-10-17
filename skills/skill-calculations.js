@@ -3,7 +3,7 @@
  * Handles dynamic calculations for skill max levels and other modifiers
  */
 
-import Character from './Character.js';
+import Character from '../character/Character.js';
 
 /**
  * Max Level Modifier Rules

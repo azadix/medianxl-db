@@ -56,6 +56,6 @@ export class ToastManager {
 
     fadeOutAndRemove(toast) {
         toast.style.opacity = 0;
-        setTimeout(() => toast.remove(), 500);
+        setTimeout(() => toast.remove(), 250);
     }
 }
