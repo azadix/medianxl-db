@@ -17,12 +17,12 @@ export default class Character {
       hell: { points: 1, expectedLevel: 105 }
     },
     'radament': { 
-      normal: { points: 1, expectedLevel: 10 },
+      normal: { points: 1, expectedLevel: 18 },
       nightmare: { points: 1, expectedLevel: 70 },
       hell: { points: 1, expectedLevel: 107 }
     },
     'izual': { 
-      normal: { points: 2, expectedLevel: 20 },
+      normal: { points: 2, expectedLevel: 35 },
       nightmare: { points: 2, expectedLevel: 90 },
       hell: { points: 2, expectedLevel: 110 }
     },
