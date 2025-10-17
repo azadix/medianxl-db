@@ -432,6 +432,11 @@ function checkUltimateRestriction(skill, allSkills) {
  * @returns {Object} { allowed: boolean, reason: string }
  */
 export function checkMasteryRestriction(skill, allSkills) {
+  // Only apply mastery restrictions to mastery skills
+  if (!Mastery.isMasterySkill(skill)) {
+    return { allowed: true, reason: '' };
+  }
+  
   // If this skill already has points, it's allowed to add more
   const currentPoints = getSkillPoints(skill.id);
   if (currentPoints > 0) {
@@ -899,4 +904,3 @@ export function setAllOSkills(oSkills) {
   characterState.oSkills = oSkills || [];
   window.dispatchEvent(new CustomEvent('oskillsUpdated'));
 }
-
