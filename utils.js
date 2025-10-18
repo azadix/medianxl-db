@@ -4,6 +4,9 @@ const ATLAS_SIZE = 912;
 const ICONS_PER_ROW = Math.floor(ATLAS_SIZE / ICON_SIZE);
 export const MISSING_IMAGE_NAME = "icons-shared_missing.png";
 
+// Import Skill class for scaling values
+import Skill from './skills/Skill.js';
+
 // --- SQL DB Loader ---
 export async function loadDatabase(file = null) {
     // If no file specified, use version-aware default
@@ -144,7 +147,7 @@ function autoExpandStatToken(db, statKey) {
 // Expected schema: stats(key TEXT UNIQUE), skill_scaling(skill_id, level, stat_id, value)
 // Now also supports simple {{mana_cost}} which auto-expands to {{mana_cost:%value0%}} based on format
 // Also supports [[skill_name]] which expands to skill's display_name in success color
-export function expandPlaceholdersWithScaling(db, skillId, level, description) {
+export async function expandPlaceholdersWithScaling(db, skillId, level, description, skillName = null) {
     if (!description) return '';
     
     // First, expand skill name placeholders [[skill_name]]
@@ -218,37 +221,70 @@ export function expandPlaceholdersWithScaling(db, skillId, level, description) {
             }
         }
 
-        // Otherwise, attempt to fetch value from scaling table
-        const stmt = db.prepare(`
-            SELECT s.name, s.format, ss.value0, ss.value1, ss.value2, ss.value3
-            FROM stats s
-            JOIN skill_scaling ss ON ss.stat_id = s.id
-            WHERE LOWER(s.key) = ? AND ss.skill_id = ? AND ss.level = ?
-        `);
-        stmt.bind([key, skillId, level]);
+        // Otherwise, attempt to fetch value using Skill class (includes constants)
+        // First get the stat info
+        const statStmt = db.prepare("SELECT name, format FROM stats WHERE LOWER(key) = ?");
+        statStmt.bind([key]);
         let output = `[Unknown stat: ${rawKey}]`;
-        if (stmt.step()) {
-            const [name, format, v0, v1, v2, v3] = stmt.get();
-            const sv0 = v0 ?? '';
-            const sv1 = v1 ?? '';
-            const sv2 = v2 ?? '';
-            const sv3 = v3 ?? '';
-            const w0 = `<span class="has-text-primary">${sv0}</span>`;
-            const w1 = `<span class="has-text-primary">${sv1}</span>`;
-            const w2 = `<span class="has-text-primary">${sv2}</span>`;
-            const w3 = `<span class="has-text-primary">${sv3}</span>`;
-            output = (format || '{name}: {value}')
-                .replace('{name}', name)
-                .replace('{value0}', w0)
-                .replace('{value1}', w1)
-                .replace('{value2}', w2)
-                .replace('{value3}', w3)
-                .replace(/%value0%/g, w0)
-                .replace(/%value1%/g, w1)
-                .replace(/%value2%/g, w2)
-                .replace(/%value3%/g, w3);
+        if (statStmt.step()) {
+            const [name, format] = statStmt.get();
+            statStmt.free();
+            
+            // Use Skill class to get scaling values (includes constants)
+            let actualSkillName = skillName;
+            if (!actualSkillName) {
+                // If skillName not provided, get it from database ID
+                const skillStmt = db.prepare("SELECT name FROM skills WHERE id = ?");
+                skillStmt.bind([skillId]);
+                if (skillStmt.step()) {
+                    actualSkillName = skillStmt.get()[0];
+                }
+                skillStmt.free();
+            }
+            
+            if (actualSkillName) {
+                // Get the display name for the skill
+                const displayNameStmt = db.prepare("SELECT display_name FROM skills WHERE name = ?");
+                displayNameStmt.bind([actualSkillName]);
+                let displayName = actualSkillName; // fallback to skill name
+                if (displayNameStmt.step()) {
+                    displayName = displayNameStmt.get()[0] || actualSkillName;
+                }
+                displayNameStmt.free();
+                
+                const skill = new Skill({ id: actualSkillName, name: displayName, skillId: skillId });
+                const scalingValues = skill.getScalingValues(db, level, key);
+                
+                if (scalingValues) {
+                    const v0 = scalingValues.value0 ?? '';
+                    const v1 = scalingValues.value1 ?? '';
+                    const v2 = scalingValues.value2 ?? '';
+                    const v3 = scalingValues.value3 ?? '';
+                    
+                    // Use different styling for constant vs level-specific values
+                    const w0 = `<span class="${scalingValues.value0_constant ? 'has-text-warning' : 'has-text-primary'}">${v0}</span>`;
+                    const w1 = `<span class="${scalingValues.value1_constant ? 'has-text-warning' : 'has-text-primary'}">${v1}</span>`;
+                    const w2 = `<span class="${scalingValues.value2_constant ? 'has-text-warning' : 'has-text-primary'}">${v2}</span>`;
+                    const w3 = `<span class="${scalingValues.value3_constant ? 'has-text-warning' : 'has-text-primary'}">${v3}</span>`;
+                    
+                    output = (format || '{name}: {value}')
+                        .replace('{name}', name)
+                        .replace('{value0}', w0)
+                        .replace('{value1}', w1)
+                        .replace('{value2}', w2)
+                        .replace('{value3}', w3)
+                        .replace(/%value0%/g, w0)
+                        .replace(/%value1%/g, w1)
+                        .replace(/%value2%/g, w2)
+                        .replace(/%value3%/g, w3);
+                }
+            } else {
+                skillStmt.free();
+                output = `[${name}: ???]`;
+            }
+        } else {
+            statStmt.free();
         }
-        stmt.free();
         if (output !== `[Unknown stat: ${rawKey}]`) return output;
 
         // If no scaling row for this level, but stat exists: show format with ??? placeholders

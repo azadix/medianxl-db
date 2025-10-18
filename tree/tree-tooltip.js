@@ -33,7 +33,7 @@ export function initializeTooltip() {
 /**
  * Handle mouse over events on skill images
  */
-function handleMouseOver(e) {
+async function handleMouseOver(e) {
     // Check if hovering over a skill card or its children
     const skillCard = e.target.closest('.skill-card');
     if (!skillCard) return;
@@ -49,7 +49,7 @@ function handleMouseOver(e) {
     }
     
     currentHoveredSkill = skillId;
-    showTooltip(skillId, e.clientX, e.clientY, skillCard);
+    await showTooltip(skillId, e.clientX, e.clientY, skillCard);
 }
 
 /**
@@ -82,7 +82,7 @@ function handleMouseMove(e) {
 /**
  * Handle skill points changed event to update tooltip if showing
  */
-function handleSkillPointsChanged() {
+async function handleSkillPointsChanged() {
     // If tooltip is showing for a skill, refresh it
     if (currentHoveredSkill && tooltipElement && tooltipElement.style.display !== 'none') {
         const db = getDatabase();
@@ -120,7 +120,7 @@ function handleSkillPointsChanged() {
             warningMessage = plusBtn?.dataset?.warningMessage || '';
         }
         
-        const content = buildTooltipContent(skillData, currentLevel, db, warningMessage);
+        const content = await buildTooltipContent(skillData, currentLevel, db, warningMessage);
         
         tooltipElement.innerHTML = content;
     }
@@ -129,7 +129,7 @@ function handleSkillPointsChanged() {
 /**
  * Handle oSkills updated event to refresh or hide tooltip
  */
-function handleOSkillsUpdated() {
+async function handleOSkillsUpdated() {
     // If we're hovering over an oSkill, refresh the tooltip to show updated values
     if (currentHoveredSkill && tooltipElement && tooltipElement.style.display !== 'none') {
         const skillCard = document.querySelector(`.skill-card[data-skill-id="${currentHoveredSkill}"]`);
@@ -170,7 +170,7 @@ function handleOSkillsUpdated() {
                 warningMessage = plusBtn?.dataset?.warningMessage || '';
             }
             
-            const content = buildTooltipContent(skillData, currentLevel, db, warningMessage);
+            const content = await buildTooltipContent(skillData, currentLevel, db, warningMessage);
             tooltipElement.innerHTML = content;
             return;
         }
@@ -193,7 +193,7 @@ function handleOSkillsUpdated() {
  * @param {number} mouseY - Mouse Y position
  * @param {HTMLElement} hoveredCard - The actual card element being hovered (optional)
  */
-function showTooltip(skillId, mouseX, mouseY, hoveredCard = null) {
+async function showTooltip(skillId, mouseX, mouseY, hoveredCard = null) {
     const db = getDatabase();
     if (!db) {
         console.warn('Tooltip: Database not loaded yet');
@@ -229,7 +229,7 @@ function showTooltip(skillId, mouseX, mouseY, hoveredCard = null) {
     }
     
     // Build tooltip content
-    const content = buildTooltipContent(skillData, currentLevel, db, warningMessage);
+    const content = await buildTooltipContent(skillData, currentLevel, db, warningMessage);
     
     // Update tooltip
     tooltipElement.innerHTML = content;
@@ -361,7 +361,7 @@ function getSkillCategoryTags(db, skillId) {
  * @param {Object} db - Database instance
  * @param {string} warningMessage - Optional warning message (e.g., prerequisite not met)
  */
-function buildTooltipContent(skillData, level, db, warningMessage = '') {
+async function buildTooltipContent(skillData, level, db, warningMessage = '') {
     let html = '<div class="tooltip-content">';
     
     // Skill name and icon
@@ -398,13 +398,13 @@ function buildTooltipContent(skillData, level, db, warningMessage = '') {
         
         // Render main description
         if (skillData.description) {
-            const expandedDesc = expandPlaceholdersWithScaling(db, skillData.dbId, level, skillData.description);
+            const expandedDesc = await expandPlaceholdersWithScaling(db, skillData.dbId, level, skillData.description, skillData.id);
             html += `<div class="tooltip-main-desc has-text-centered mb-2">${expandedDesc}</div>`;
         }
         
         // Render skill effect
         if (skillData.skillEffect) {
-            const expandedEffect = expandPlaceholdersWithScaling(db, skillData.dbId, level, skillData.skillEffect);
+            const expandedEffect = await expandPlaceholdersWithScaling(db, skillData.dbId, level, skillData.skillEffect, skillData.id);
             const lines = expandedEffect.split('\n');
             
             lines.forEach(line => {
@@ -423,7 +423,7 @@ function buildTooltipContent(skillData, level, db, warningMessage = '') {
     if (skillData.restriction) {
         html += '<div class="tooltip-warning">';
         // Expand placeholders in restriction text
-        const expandedRestriction = expandPlaceholdersWithScaling(db, skillData.dbId, level, skillData.restriction);
+        const expandedRestriction = await expandPlaceholdersWithScaling(db, skillData.dbId, level, skillData.restriction, skillData.id);
         const restrictionLines = expandedRestriction.split('\n');
         restrictionLines.forEach(line => {
             html += `<div class="has-text-warning">${line}</div>`;

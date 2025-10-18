@@ -110,6 +110,7 @@ skill_skilltags (skill_id, tag_id) -- Many-to-many relationship
 -- Stats and scaling system
 stats (id, key, name, description, format)
 skill_scaling (skill_id, level, stat_id, value0, value1, value2, value3)
+skill_scaling_constants (skill_id, stat_id, value0, value1, value2, value3, value0_constant, value1_constant, value2_constant, value3_constant)
 skill_max_levels (skill_id, base_max_level, affected_by_specialization, can_add_points)
 skill_prerequisites (id, skill_id, requirement_type, requirement_value, target_skill_id, target_tab_id, description)
 ```

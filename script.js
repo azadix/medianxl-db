@@ -311,19 +311,19 @@ async function displaySkillDetail(skillId) {
         </div>
     ` : '';
 
-    function renderDescriptionAtLevel(level) {
+    async function renderDescriptionAtLevel(level) {
         let html = '';
         
         // Render main description
         if (skillInfo.description) {
-            const expanded = expandPlaceholdersWithScaling(SkillDB.db, skillInfo.dbId, level, skillInfo.description);
+            const expanded = await expandPlaceholdersWithScaling(SkillDB.db, skillInfo.dbId, level, skillInfo.description);
             html += `<p class="is-size-5"><strong>Description:</strong></p>`;
             html += `<div>${expanded}</div>`;
         }
         
         // Render skill effect
         if (skillInfo.skillEffect) {
-            const expandedEffect = expandPlaceholdersWithScaling(SkillDB.db, skillInfo.dbId, level, skillInfo.skillEffect);
+            const expandedEffect = await expandPlaceholdersWithScaling(SkillDB.db, skillInfo.dbId, level, skillInfo.skillEffect);
             const lines = expandedEffect.split('\n');
             
             html += `<p class="is-size-5 mt-4"><strong>Skill Effect:</strong></p>`;
@@ -339,12 +339,12 @@ async function displaySkillDetail(skillId) {
         return html;
     }
     
-    function renderRestrictionAtLevel(level) {
+    async function renderRestrictionAtLevel(level) {
         if (!skillInfo.restriction) return '';
         
         let html = `<p class="is-size-5"><strong>Restriction:</strong></p>`;
         // Expand placeholders in restriction text
-        const expandedRestriction = expandPlaceholdersWithScaling(SkillDB.db, skillInfo.dbId, level, skillInfo.restriction);
+        const expandedRestriction = await expandPlaceholdersWithScaling(SkillDB.db, skillInfo.dbId, level, skillInfo.restriction);
         html += expandedRestriction.split('\n').map(
             line => `<p><span class="has-text-danger">${line}</span></p>`
         ).join('');
@@ -354,14 +354,14 @@ async function displaySkillDetail(skillId) {
     }
 
 
-    let descriptionHtml = renderDescriptionAtLevel(initialLevel);
-    let restrictionHtml = renderRestrictionAtLevel(initialLevel);
+    let descriptionHtml = await renderDescriptionAtLevel(initialLevel);
+    let restrictionHtml = await renderRestrictionAtLevel(initialLevel);
 
     // Add max level information
     let maxLevelHtml = '';
     try {
         const maxLevelStmt = SkillDB.db.prepare(`
-            SELECT base_max_level, can_be_enhanced, can_add_points
+            SELECT base_max_level, affected_by_specialization, can_add_points
             FROM skill_max_levels
             WHERE skill_id = ?
         `);
@@ -450,20 +450,20 @@ async function displaySkillDetail(skillId) {
 
     const levelSelect = document.getElementById('skill-level');
     if (levelSelect) {
-        function handleLevelChange(event) {
+        async function handleLevelChange(event) {
             // Get the level from the current select element
             const currentSelect = event ? event.target : document.getElementById('skill-level');
             const level = parseInt(currentSelect.value, 10) || initialLevel;
             
             // Update description
-            const newDescHtml = renderDescriptionAtLevel(level);
+            const newDescHtml = await renderDescriptionAtLevel(level);
             const descriptionContainer = document.querySelector('.skill-description');
             if (descriptionContainer) {
                 descriptionContainer.innerHTML = newDescHtml;
             }
             
             // Update restriction (if it has placeholders)
-            const newRestHtml = renderRestrictionAtLevel(level);
+            const newRestHtml = await renderRestrictionAtLevel(level);
             const restrictionContainer = document.querySelector('.skill-restriction');
             if (restrictionContainer) {
                 restrictionContainer.innerHTML = newRestHtml;

@@ -177,28 +177,79 @@ export default class Skill {
         if (!db || !this.skillId || !statKey) return null;
         
         try {
-            const stmt = db.prepare(`
+            // First check for constant values
+            const constantStmt = db.prepare(`
+                SELECT value0, value1, value2, value3, 
+                       value0_constant, value1_constant, value2_constant, value3_constant,
+                       s.name as stat_name, s.format
+                FROM skill_scaling_constants ssc
+                JOIN stats s ON s.id = ssc.stat_id
+                WHERE ssc.skill_id = ? AND LOWER(s.key) = ?
+            `);
+            constantStmt.bind([this.skillId, statKey.toLowerCase()]);
+            
+            let constantValues = null;
+            if (constantStmt.step()) {
+                const [value0, value1, value2, value3, 
+                       value0_constant, value1_constant, value2_constant, value3_constant,
+                       statName, format] = constantStmt.get();
+                constantValues = {
+                    value0, value1, value2, value3,
+                    value0_constant, value1_constant, value2_constant, value3_constant,
+                    statName, format
+                };
+            }
+            constantStmt.free();
+            
+            // Then get level-specific values
+            const scalingStmt = db.prepare(`
                 SELECT ss.value0, ss.value1, ss.value2, ss.value3, s.name as stat_name, s.format
                 FROM skill_scaling ss
                 JOIN stats s ON s.id = ss.stat_id
                 WHERE ss.skill_id = ? AND ss.level = ? AND LOWER(s.key) = ?
             `);
-            stmt.bind([this.skillId, level, statKey.toLowerCase()]);
+            scalingStmt.bind([this.skillId, level, statKey.toLowerCase()]);
             
-            if (stmt.step()) {
-                const [value0, value1, value2, value3, statName, format] = stmt.get();
-                stmt.free();
-                return {
-                    value0: value0 || 0,
-                    value1: value1 || 0,
-                    value2: value2 || 0,
-                    value3: value3 || 0,
-                    statName,
-                    format
+            let result = null;
+            if (scalingStmt.step()) {
+                const [value0, value1, value2, value3, statName, format] = scalingStmt.get();
+                result = { 
+                    value0, value1, value2, value3, statName, format,
+                    value0_constant: false, value1_constant: false, value2_constant: false, value3_constant: false
                 };
             }
-            stmt.free();
-            return null;
+            scalingStmt.free();
+            
+            // Merge: use constant values where marked, level-specific otherwise
+            if (constantValues) {
+                if (!result) {
+                    result = { 
+                        statName: constantValues.statName, 
+                        format: constantValues.format,
+                        value0: 0, value1: 0, value2: 0, value3: 0,
+                        value0_constant: false, value1_constant: false, value2_constant: false, value3_constant: false
+                    };
+                }
+                
+                if (constantValues.value0_constant) {
+                    result.value0 = constantValues.value0 || 0;
+                    result.value0_constant = true;
+                }
+                if (constantValues.value1_constant) {
+                    result.value1 = constantValues.value1 || 0;
+                    result.value1_constant = true;
+                }
+                if (constantValues.value2_constant) {
+                    result.value2 = constantValues.value2 || 0;
+                    result.value2_constant = true;
+                }
+                if (constantValues.value3_constant) {
+                    result.value3 = constantValues.value3 || 0;
+                    result.value3_constant = true;
+                }
+            }
+            
+            return result;
         } catch (error) {
             console.warn('Error getting scaling values for skill:', this.name, error);
             return null;
