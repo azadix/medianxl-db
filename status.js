@@ -36,7 +36,7 @@ async function loadStatusPage() {
         `);
 
         let html = `
-            <div class="box">
+            <div class="mb-6">
                 <h3 class="title is-4 mb-4">
                     <i class="fas fa-chart-line"></i> Overall Progress
                 </h3>
@@ -61,7 +61,7 @@ async function loadStatusPage() {
                 <progress class="progress is-large is-primary" value="${percentCompleted}" max="100">${percentCompleted}%</progress>
             </div>
 
-            <div class="box">
+            <div>
                 <h3 class="title is-4 mb-4">
                     <i class="fas fa-users"></i> Progress by Class
                 </h3>
