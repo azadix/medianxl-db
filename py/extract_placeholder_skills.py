@@ -17,24 +17,29 @@ def extract_skills_with_placeholders(db_path='../skills-2.11.sqlite'):
         db_path (str): Path to the SQLite database file
         
     Returns:
-        list: List of tuples containing (skill_id, skill_name, display_name, description)
+        tuple: (skills_list, all_stat_keys) where skills_list contains skill data and all_stat_keys contains all available stat keys
     """
     if not Path(db_path).exists():
         print(f"Error: Database file '{db_path}' not found!")
-        return []
+        return [], []
     
     try:
         # Connect to the database
         conn = sqlite3.connect(db_path)
         cursor = conn.cursor()
         
-        # Query to get all skills with descriptions or skill effects that contain {{*}} format
+        # First, get all stat keys from the stats table
+        cursor.execute("SELECT key FROM stats ORDER BY key")
+        all_stat_keys = [row[0] for row in cursor.fetchall()]
+        
+        # Query to get all skills with descriptions, skill effects, or restrictions that contain {{*}} format
         query = """
-        SELECT s.id, s.name, s.display_name, s.description, s.skill_effect, c.name as class_name
+        SELECT s.id, s.name, s.display_name, s.description, s.skill_effect, s.restriction, c.name as class_name
         FROM skills s
         LEFT JOIN classes c ON s.class_id = c.id
         WHERE ((s.description IS NOT NULL AND s.description != '' AND s.description LIKE '%{{%}}%')
-           OR (s.skill_effect IS NOT NULL AND s.skill_effect != '' AND s.skill_effect LIKE '%{{%}}%'))
+           OR (s.skill_effect IS NOT NULL AND s.skill_effect != '' AND s.skill_effect LIKE '%{{%}}%')
+           OR (s.restriction IS NOT NULL AND s.restriction != '' AND s.restriction LIKE '%{{%}}%'))
         ORDER BY c.name, s.display_name
         """
         
@@ -42,14 +47,14 @@ def extract_skills_with_placeholders(db_path='../skills-2.11.sqlite'):
         results = cursor.fetchall()
         
         conn.close()
-        return results
+        return results, all_stat_keys
         
     except sqlite3.Error as e:
         print(f"Database error: {e}")
-        return []
+        return [], []
     except Exception as e:
         print(f"Error: {e}")
-        return []
+        return [], []
 
 def analyze_placeholders(description):
     """
@@ -71,8 +76,8 @@ def main():
     print("Extracting skills with {{*}} placeholder format...")
     print("=" * 60)
     
-    # Extract skills with placeholders
-    skills = extract_skills_with_placeholders()
+    # Extract skills with placeholders and get all stat keys
+    skills, all_stat_keys = extract_skills_with_placeholders()
     
     if not skills:
         print("No skills found with {{*}} placeholder format in descriptions.")
@@ -84,7 +89,11 @@ def main():
     current_class = None
     placeholder_stats = {}
     
-    for skill_id, skill_name, display_name, description, skill_effect, class_name in skills:
+    # Initialize all stat keys with 0 usage
+    for stat_key in all_stat_keys:
+        placeholder_stats[stat_key] = 0
+    
+    for skill_id, skill_name, display_name, description, skill_effect, restriction, class_name in skills:
         # Print class header if it changed
         if class_name != current_class:
             if current_class is not None:
@@ -93,15 +102,16 @@ def main():
             print("-" * 40)
             current_class = class_name
         
-        # Find placeholders in this skill's description and skill effect
-        all_text = (description or '') + ' ' + (skill_effect or '')
+        # Find placeholders in this skill's description, skill effect, and restriction
+        all_text = (description or '') + ' ' + (skill_effect or '') + ' ' + (restriction or '')
         placeholders = analyze_placeholders(all_text)
         
         # Count placeholder types for statistics
         for placeholder in placeholders:
             # Extract the stat key (part before colon if present)
             stat_key = placeholder.replace('{{', '').replace('}}', '').split(':')[0].strip()
-            placeholder_stats[stat_key] = placeholder_stats.get(stat_key, 0) + 1
+            if stat_key in placeholder_stats:
+                placeholder_stats[stat_key] += 1
         
         # Print skill info
         print(f"  - {display_name} (ID: {skill_id})")
@@ -114,16 +124,21 @@ def main():
         print("=" * 60)
         print("PLACEHOLDER STATISTICS")
         print("=" * 60)
-        print("Most commonly used stat keys:")
+        print("All stat keys and their usage count:")
         
-        # Sort by usage count (descending)
-        sorted_stats = sorted(placeholder_stats.items(), key=lambda x: x[1], reverse=True)
+        # Sort by usage count (descending), then by stat key
+        sorted_stats = sorted(placeholder_stats.items(), key=lambda x: (-x[1], x[0]))
         
         for stat_key, count in sorted_stats:
             print(f"  {stat_key}: {count} times")
     
+    used_stats = sum(1 for count in placeholder_stats.values() if count > 0)
+    unused_stats = sum(1 for count in placeholder_stats.values() if count == 0)
+    
     print(f"\n[SUCCESS] Total skills with placeholders: {len(skills)}")
-    print(f"[SUCCESS] Total unique stat keys used: {len(placeholder_stats)}")
+    print(f"[SUCCESS] Total stat keys in database: {len(all_stat_keys)}")
+    print(f"[SUCCESS] Stat keys used: {used_stats}")
+    print(f"[SUCCESS] Stat keys unused: {unused_stats}")
 
 if __name__ == "__main__":
     main()

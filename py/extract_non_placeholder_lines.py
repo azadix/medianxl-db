@@ -19,6 +19,9 @@ def is_placeholder_line(line):
     # Remove all {{...}} placeholders
     without_placeholders = re.sub(r'\{\{[^}]+\}\}', '', line)
     
+    # Remove all [[...]] skill representations
+    without_placeholders = re.sub(r'\[\[[^\]]+\]\]', '', without_placeholders)
+    
     # Check if there's any meaningful text left (not just whitespace/punctuation)
     remaining = without_placeholders.strip()
     
