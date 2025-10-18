@@ -3,18 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skills - MedianDB</title>
+    <title>Status - MedianDB</title>
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/1.0.1/css/bulma.min.css" />
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.3.3/css/dataTables.bulma.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <style>
+        .progress-container {
+            position: relative;
+        }
+        .overlay-progress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+        }
+        .overlay-progress::-webkit-progress-bar {
+            background-color: transparent;
+        }
+    </style>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.datatables.net/2.3.3/js/dataTables.min.js"></script>   
-    <script src="https://cdn.datatables.net/2.3.3/js/dataTables.bulma.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.13.0/sql-wasm.js"></script>
     <script src="utils.js" type="module"></script>
-    <script src="script.js" type="module" defer></script>
+    <script src="version-config.js" type="module"></script>
+    <script src="status.js" type="module" defer></script>
 </head>
 <body>
     <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
@@ -27,13 +39,13 @@
         </div>
         <div class="navbar-menu">
             <div class="navbar-start">
-                <a class="navbar-item is-selected" href="./" id="nav-all-skills">
+                <a class="navbar-item" href="./" id="nav-all-skills">
                     <strong>Skills</strong>
                 </a>
                 <a class="navbar-item" href="./tree.html" id="nav-tree">
                     <strong>Planner</strong>
                 </a>
-                <a class="navbar-item" href="./status.html" id="nav-status">
+                <a class="navbar-item is-selected" href="./status.html" id="nav-status">
                     <strong>Status</strong>
                 </a>
                 <a class="navbar-item" href="./edit.html" id="nav-db" style="display: none;">
@@ -88,7 +100,7 @@
     </script>
 
     <div class="container">
-        <h2 class="title mt-1 mb-2" id="page-title">All Skills</h2>
+        <h2 class="title mt-1 mb-2" id="page-title">Skills Completion Status</h2>
         <div id="content">
             <!-- Content will be dynamically loaded here -->
         </div>

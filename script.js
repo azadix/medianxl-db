@@ -524,23 +524,7 @@ function displayAllSkills() {
         return;
     }
 
-    const skillCount = SkillDB.db.exec(`
-        SELECT 
-            SUM(CASE WHEN description IS NOT NULL AND description != '' THEN 1 ELSE 0 END) AS skills_with_details,
-            COUNT(*) AS total_skills,
-            ROUND(100.0 * SUM(CASE WHEN description IS NOT NULL AND description != '' THEN 1 ELSE 0 END) / COUNT(*), 2) AS percent_with_details
-        FROM skills;
-    `);
-
-    let [skillsWithDetails, totalSkills, percentWithDetails] =
-        skillCount.length > 0 ? skillCount[0].values[0] : [0, 0, 0];
-    
     let html = `
-        <label for="progress-bar">
-            Finished skills: ${skillsWithDetails} / ${totalSkills}
-        </label>
-        <progress id="progress-bar" class="progress is-normal" value=${percentWithDetails} max="100"></progress>
-
         <div class="skills-table-container">
             <table id="skills-table" class="table is-hoverable is-fullwidth"></table>
         </div>
