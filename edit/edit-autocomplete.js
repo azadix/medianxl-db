@@ -21,17 +21,18 @@ export function initializeAutocomplete() {
     const usageCounts = {};
     
     try {
-      // Get all skill descriptions and skill effects that contain placeholders
+      // Get all skill descriptions, skill effects, and restrictions that contain placeholders
       const stmt = SkillDB.db.prepare(`
-        SELECT description, skill_effect 
+        SELECT description, skill_effect, restriction
         FROM skills 
         WHERE (description IS NOT NULL AND description != '' AND description LIKE '%{{%}}%')
         OR (skill_effect IS NOT NULL AND skill_effect != '' AND skill_effect LIKE '%{{%}}%')
+        OR (restriction IS NOT NULL AND restriction != '' AND restriction LIKE '%{{%}}%')
       `);
       
       while (stmt.step()) {
-        const [description, skillEffect] = stmt.get();
-        const text = (description || '') + ' ' + (skillEffect || '');
+        const [description, skillEffect, restriction] = stmt.get();
+        const text = (description || '') + ' ' + (skillEffect || '') + ' ' + (restriction || '');
         
         // Find all {{...}} placeholders in this text
         const matches = text.match(/\{\{([^}]+)\}\}/g);
@@ -45,7 +46,7 @@ export function initializeAutocomplete() {
       }
       stmt.free();
     } catch (error) {
-      console.warn('Failed to count stat usage in descriptions and skill effects:', error);
+      console.warn('Failed to count stat usage in descriptions, skill effects, and restrictions:', error);
     }
     
     return usageCounts;
@@ -242,8 +243,8 @@ export function initializeAutocomplete() {
         color: var(--text-color);
         display: flex;
         align-items: center;
-        padding: 8px 12px;
-        gap: 12px;
+        padding: 4px 8px;
+        gap: 8px;
       `;
       
       // Create key element (10% width)
