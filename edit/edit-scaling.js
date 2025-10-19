@@ -6,8 +6,6 @@ import { ToastManager } from '../tree/ToastManager.js';
 // Initialize ToastManager
 const toastManager = new ToastManager();
 
-// Store locked values: Map<statId, {value0, value1, value2, value3}>
-const lockedValues = new Map();
 
 // Extract stats from skill_effect in appearance order with occurrence tracking
 function extractStatsInOrder(skillEffect) {
@@ -174,30 +172,6 @@ function renderScalingTable(rows) {
     formatTd.appendChild(formatCode);
     tr.appendChild(formatTd);
     
-    // Lock checkbox column
-    const lockTd = document.createElement('td');
-    lockTd.style.textAlign = 'center';
-    const lockCheckbox = document.createElement('input');
-    lockCheckbox.type = 'checkbox';
-    lockCheckbox.className = 'lock-checkbox';
-    lockCheckbox.checked = lockedValues.has(row.stat_id);
-    lockCheckbox.addEventListener('change', () => {
-      if (lockCheckbox.checked) {
-        // Save current values when locking
-        const inputs = tr.querySelectorAll('input[type="number"]:not([disabled])');
-        lockedValues.set(row.stat_id, {
-          value0: inputs[0]?.value || '',
-          value1: inputs[1]?.value || '',
-          value2: inputs[2]?.value || '',
-          value3: inputs[3]?.value || ''
-        });
-      } else {
-        // Remove from locked values when unlocking
-        lockedValues.delete(row.stat_id);
-      }
-    });
-    lockTd.appendChild(lockCheckbox);
-    tr.appendChild(lockTd);
     
     // Value columns - determine which ones are used based on format
     const formatStr = format.toLowerCase();
@@ -206,9 +180,8 @@ function renderScalingTable(rows) {
     const hasValue2 = formatStr.includes('{value2}');
     const hasValue3 = formatStr.includes('{value3}');
     
-    // Check if this stat has locked values
-    const locked = lockedValues.get(row.stat_id);
-    const constantData = constants.get(row.stat_id);
+    // Check if this stat has constant values
+    const constantData = constants.get(`${row.stat_id}:${row.occurrence_index || 0}`);
     
     for (let i = 0; i < 4; i++) {
       const valueTd = document.createElement('td');
@@ -223,8 +196,8 @@ function renderScalingTable(rows) {
         input.className = 'input is-small is-static';
         input.title = 'This value is constant (set below)';
       } else {
-        // Use locked value if available, otherwise use row value
-        input.value = locked ? (locked[`value${i}`] || '') : (row[`value${i}`] || '');
+        // Use row value
+        input.value = row[`value${i}`] || '';
         input.step = 'any';
         
         // Disable inputs that aren't used in the format
@@ -236,14 +209,6 @@ function renderScalingTable(rows) {
           input.placeholder = 'N/A';
         }
         
-        // Update locked values when input changes (if locked)
-        input.addEventListener('input', () => {
-          if (lockedValues.has(row.stat_id)) {
-            const currentLocked = lockedValues.get(row.stat_id);
-            currentLocked[`value${i}`] = input.value;
-            lockedValues.set(row.stat_id, currentLocked);
-          }
-        });
       }
       
       valueTd.appendChild(input);
@@ -422,7 +387,18 @@ function loadScaling() {
 function saveScaling() {
   const skillId = parseInt(document.getElementById('scaling-skill-hidden').value, 10);
   const level = parseInt(document.getElementById('scaling-level').value, 10);
-  if (Number.isNaN(skillId) || Number.isNaN(level)) return;
+  
+  // Validate that a skill is selected
+  if (Number.isNaN(skillId) || skillId <= 0) {
+    toastManager.showToast('Please select a skill before saving scaling values', true, 'error');
+    return;
+  }
+  
+  // Validate that a level is selected
+  if (Number.isNaN(level) || level <= 0) {
+    toastManager.showToast('Please select a level before saving scaling values', true, 'error');
+    return;
+  }
   
   const constants = loadConstants(skillId);
   
@@ -470,7 +446,18 @@ function saveScaling() {
 function clearScaling() {
   const skillId = parseInt(document.getElementById('scaling-skill-hidden').value, 10);
   const level = parseInt(document.getElementById('scaling-level').value, 10);
-  if (Number.isNaN(skillId) || Number.isNaN(level)) return;
+  
+  // Validate that a skill is selected
+  if (Number.isNaN(skillId) || skillId <= 0) {
+    toastManager.showToast('Please select a skill before clearing scaling values', true, 'error');
+    return;
+  }
+  
+  // Validate that a level is selected
+  if (Number.isNaN(level) || level <= 0) {
+    toastManager.showToast('Please select a level before clearing scaling values', true, 'error');
+    return;
+  }
   SkillDB.db.run('DELETE FROM skill_scaling WHERE skill_id=? AND level=?', [skillId, level]);
   renderScalingTable([]);
   document.getElementById('scaling-status').textContent = `Cleared level ${level}`;
@@ -582,8 +569,13 @@ function createConstantRow(row) {
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.className = 'checkbox';
-    checkbox.checked = row[`value${i}_constant`] == 1;
     checkbox.setAttribute('data-constant', i);
+    
+    // Set the checked state without triggering events
+    const isChecked = row[`value${i}_constant`] == 1;
+    checkbox.checked = isChecked;
+    
+    // Add event listener after setting the state
     checkbox.addEventListener('change', saveConstants);
     
     // Disable checkboxes for unused fields
@@ -624,7 +616,12 @@ function createConstantRow(row) {
 
 function saveConstants() {
   const skillId = parseInt(document.getElementById('scaling-skill-hidden').value, 10);
-  if (Number.isNaN(skillId)) return;
+  
+  // Validate that a skill is selected
+  if (Number.isNaN(skillId) || skillId <= 0) {
+    toastManager.showToast('Please select a skill before saving constant values', true, 'error');
+    return;
+  }
   
   // Get all rows from constants table
   const rows = document.querySelectorAll('#scaling-constants-table tbody tr');
@@ -668,7 +665,12 @@ function saveConstants() {
 
 function moveToConstants(statId, statName, statFormat) {
   const skillId = parseInt(document.getElementById('scaling-skill-hidden').value, 10);
-  if (Number.isNaN(skillId)) return;
+  
+  // Validate that a skill is selected
+  if (Number.isNaN(skillId) || skillId <= 0) {
+    toastManager.showToast('Please select a skill before moving to constants', true, 'error');
+    return;
+  }
   
   // Get the occurrence index from the current row
   const currentRow = document.querySelector(`#scaling-table tbody tr[data-stat-id="${statId}"]`);

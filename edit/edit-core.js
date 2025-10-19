@@ -200,7 +200,7 @@ export function initializeNavigation() {
   });
 
   // Export database
-  document.getElementById('export-db-btn').addEventListener('click', () => {
+  document.getElementById('export-db-btn').addEventListener('click', async () => {
     if (!SkillDB.db) return;
 
     try {
@@ -208,9 +208,13 @@ export function initializeNavigation() {
       const blob = new Blob([binaryArray], { type: "application/octet-stream" });
       const url = URL.createObjectURL(blob);
 
+      // Get the version-aware database filename for export
+      const { getDatabaseFile } = await import('../version-config.js');
+      const dbFileName = getDatabaseFile().split('/').pop(); // Get just the filename from the path
+
       const a = document.createElement("a");
       a.href = url;
-      a.download = "skills.sqlite";
+      a.download = dbFileName;
       a.click();
 
       URL.revokeObjectURL(url);
