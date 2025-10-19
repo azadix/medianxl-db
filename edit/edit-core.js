@@ -193,9 +193,9 @@ export function initializeNavigation() {
       
       // Update button states
       document.querySelectorAll('[data-section]').forEach(b => {
-        b.className = 'button is-light';
+        b.className = 'button is-light is-outlined';
       });
-      btn.className = 'button is-primary';
+      btn.className = 'button is-primary is-outlined';
     });
   });
 

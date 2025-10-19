@@ -502,8 +502,8 @@ function refreshPrerequisitesTable() {
         <td>${group.description || ''}</td>
         <td>
           <div class="buttons are-small">
-            <button class="button is-warning" data-edit-prerequisite="${group.ids[0]}">Edit</button>
-            <button class="button is-danger" data-del-skill-prereqs="${group.skillId}" data-prereq-type="${group.prerequisiteType}">Delete</button>
+            <button class="button is-warning is-outlined" data-edit-prerequisite="${group.ids[0]}">Edit</button>
+            <button class="button is-danger is-outlined" data-del-skill-prereqs="${group.skillId}" data-prereq-type="${group.prerequisiteType}">Delete</button>
           </div>
         </td>
       `;

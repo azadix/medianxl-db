@@ -35,8 +35,8 @@ function refreshClassesTable() {
         <td>${image_prefix}</td>
         <td>
           <div class="buttons are-small">
-            <button class="button is-warning" data-edit-class="${id}">Edit</button>
-            <button class="button is-danger" data-del-class="${id}">Delete</button>
+            <button class="button is-warning is-outlined" data-edit-class="${id}">Edit</button>
+            <button class="button is-danger is-outlined" data-del-class="${id}">Delete</button>
           </div>
         </td>
       `;
@@ -135,8 +135,8 @@ function refreshTabsTable() {
         <td>${name}</td>
         <td>
           <div class="buttons are-small">
-            <button class="button is-warning" data-edit-tab="${id}">Edit</button>
-            <button class="button is-danger" data-del-tab="${id}">Delete</button>
+            <button class="button is-warning is-outlined" data-edit-tab="${id}">Edit</button>
+            <button class="button is-danger is-outlined" data-del-tab="${id}">Delete</button>
           </div>
         </td>`;
       tbody.appendChild(tr);

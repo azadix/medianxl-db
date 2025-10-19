@@ -221,7 +221,7 @@ function renderScalingTable(rows) {
     // Const button - only show if this stat doesn't already have constants
     if (!constantData) {
       const constBtn = document.createElement('button');
-      constBtn.className = 'button is-warning is-small';
+      constBtn.className = 'button is-warning is-outlined is-small';
       constBtn.textContent = 'Const';
       constBtn.title = 'Move to constants table';
       constBtn.addEventListener('click', () => {
@@ -231,7 +231,7 @@ function renderScalingTable(rows) {
     }
     
     const deleteBtn = document.createElement('button');
-    deleteBtn.className = 'button is-danger is-small';
+    deleteBtn.className = 'button is-danger is-outlined is-small';
     deleteBtn.textContent = 'Delete';
     deleteBtn.addEventListener('click', () => {
       tr.remove();
@@ -566,6 +566,9 @@ function createConstantRow(row) {
     
     const checkboxControl = document.createElement('div');
     checkboxControl.className = 'control';
+    checkboxControl.style.display = 'flex';
+    checkboxControl.style.alignItems = 'center';
+    checkboxControl.style.marginLeft = '0.5rem';
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.className = 'checkbox';
@@ -598,7 +601,7 @@ function createConstantRow(row) {
   const actionsTd = document.createElement('td');
   
   const deleteBtn = document.createElement('button');
-  deleteBtn.className = 'button is-danger is-small';
+  deleteBtn.className = 'button is-danger is-outlined is-small';
   deleteBtn.textContent = 'Delete';
   deleteBtn.addEventListener('click', () => {
     const skillId = parseInt(document.getElementById('scaling-skill-hidden').value, 10);

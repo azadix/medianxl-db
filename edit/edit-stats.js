@@ -33,7 +33,7 @@ function refreshStatsTable() {
       divWrapper.className = "buttons are-small";
 
       const editBtn = document.createElement("button");
-      editBtn.className = "button is-warning is-small";
+      editBtn.className = "button is-warning is-outlined is-small";
       editBtn.textContent = "Edit";
       editBtn.onclick = () => {
         editStat(row[0]);
@@ -41,7 +41,7 @@ function refreshStatsTable() {
       };
 
       const delBtn = document.createElement("button");
-      delBtn.className = "button is-danger is-small";
+      delBtn.className = "button is-danger is-outlined is-small";
       delBtn.textContent = "Delete";
       delBtn.onclick = () => deleteStat(row[0]);
 

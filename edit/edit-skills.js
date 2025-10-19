@@ -245,7 +245,7 @@ function refreshSkillsTable() {
       const buttonsWrapper = document.createElement("div");
       buttonsWrapper.className = "buttons are-small"
       const editBtn = document.createElement("button");
-      editBtn.className = "button is-warning";
+      editBtn.className = "button is-warning is-outlined";
       editBtn.textContent = "Edit";
       editBtn.onclick = () => {
         editSkill(row[0]);
@@ -253,7 +253,7 @@ function refreshSkillsTable() {
       };
 
       const delBtn = document.createElement("button");
-      delBtn.className = "button is-danger";
+      delBtn.className = "button is-danger is-outlined";
       delBtn.textContent = "Delete";
       delBtn.onclick = () => deleteSkill(row[0]);
 

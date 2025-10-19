@@ -103,20 +103,20 @@
   <h1 class="title mt-3 is-3">Skills Database</h1>
   <div class="field">
     <div class="buttons">
-      <button class="button is-primary" data-section="skills-section">Skills</button>
-      <button class="button is-light" data-section="tags-section">Tags</button>
-      <button class="button is-light" data-section="classes-section">Classes</button>
-      <button class="button is-light" data-section="tabs-section">Class Tabs</button>
-      <button class="button is-light" data-section="stats-section">Stats</button>
-      <button class="button is-light" data-section="scaling-section">Scaling</button>
-      <button class="button is-light" data-section="max-levels-section">Max Levels</button>
-      <button class="button is-light" data-section="prerequisites-section">Prerequisites</button>
+      <button class="button is-primary is-outlined" data-section="skills-section">Skills</button>
+      <button class="button is-light is-outlined" data-section="tags-section">Tags</button>
+      <button class="button is-light is-outlined" data-section="classes-section">Classes</button>
+      <button class="button is-light is-outlined" data-section="tabs-section">Class Tabs</button>
+      <button class="button is-light is-outlined" data-section="stats-section">Stats</button>
+      <button class="button is-light is-outlined" data-section="scaling-section">Scaling</button>
+      <button class="button is-light is-outlined" data-section="max-levels-section">Max Levels</button>
+      <button class="button is-light is-outlined" data-section="prerequisites-section">Prerequisites</button>
       
       <div class="file has-name is-small ml-auto" style="display:none;">
         <input class="file-input" type="file" id="import-db" accept=".sqlite">
       </div>
-      <button class="button is-info ml-auto" id="import-db-btn">Import Database</button>
-      <button class="button is-link" id="export-db-btn">Export Database</button>
+      <button class="button is-info is-outlined ml-auto" id="import-db-btn">Import Database</button>
+      <button class="button is-link is-outlined" id="export-db-btn">Export Database</button>
     </div>
   </div>
 
@@ -183,8 +183,8 @@
       </div>
 
       <div class="column is-full">
-        <button class="button is-primary" type="submit">Insert Skill</button>
-        <button class="button is-light" type="button" id="skill-cancel" style="display:none;">Cancel</button>
+        <button class="button is-primary is-outlined" type="submit">Insert Skill</button>
+        <button class="button is-light is-outlined" type="button" id="skill-cancel" style="display:none;">Cancel</button>
       </div>
     </div>
   </form>
@@ -218,10 +218,10 @@
           <input class="input" type="text" id="tag-name" placeholder="Tag name" required>
       </div>
           <div class="control">
-            <button class="button is-primary" id="add-tag-btn" type="button">Add Tag</button>
+            <button class="button is-primary is-outlined" id="add-tag-btn" type="button">Add Tag</button>
           </div>
         <div class="control">
-          <button class="button is-light" id="tag-cancel" type="button" style="display:none;">Cancel</button>
+          <button class="button is-light is-outlined" id="tag-cancel" type="button" style="display:none;">Cancel</button>
       </div>
     </div>
   </form>
@@ -254,10 +254,10 @@
           <label class="label">&nbsp;</label>
            <div class="field is-grouped">
              <div class="control">
-               <button class="button is-primary" id="class-save" type="submit">Insert Class</button>
+               <button class="button is-primary is-outlined" id="class-save" type="submit">Insert Class</button>
              </div>
              <div class="control">
-               <button class="button is-light" id="class-cancel" type="button" style="display:none;">Cancel</button>
+               <button class="button is-light is-outlined" id="class-cancel" type="button" style="display:none;">Cancel</button>
              </div>
            </div>
         </div>
@@ -299,10 +299,10 @@
           <label class="label">&nbsp;</label>
            <div class="field is-grouped">
              <div class="control">
-               <button class="button is-primary" id="tab-save" type="submit">Insert Tab</button>
+               <button class="button is-primary is-outlined" id="tab-save" type="submit">Insert Tab</button>
              </div>
              <div class="control">
-               <button class="button is-light" id="tab-cancel" type="button" style="display:none;">Cancel</button>
+               <button class="button is-light is-outlined" id="tab-cancel" type="button" style="display:none;">Cancel</button>
              </div>
            </div>
         </div>
@@ -343,10 +343,10 @@
            <label class="label">&nbsp;</label>
            <div class="field is-grouped">
              <div class="control">
-               <button class="button is-primary" type="submit">Insert Stat</button>
+               <button class="button is-primary is-outlined" type="submit">Insert Stat</button>
              </div>
              <div class="control">
-               <button class="button is-light" id="stat-cancel" type="button" style="display:none;">Cancel</button>
+               <button class="button is-light is-outlined" id="stat-cancel" type="button" style="display:none;">Cancel</button>
              </div>
            </div>
         </div>
@@ -386,9 +386,9 @@
       <div class="column is-one-half">
         <label class="label">Actions</label>
         <div class="buttons">
-          <button class="button is-info" id="scaling-load">Load</button>
-          <button class="button is-success" id="scaling-save">Save</button>
-          <button class="button is-danger" id="scaling-clear">Clear</button>
+          <button class="button is-info is-outlined" id="scaling-load">Load</button>
+          <button class="button is-success is-outlined" id="scaling-save">Save</button>
+          <button class="button is-danger is-outlined" id="scaling-clear">Clear</button>
         </div>
       </div>
     </div>
@@ -458,8 +458,8 @@
           </div>
         </div>
         <div class="column is-full">
-          <button class="button is-primary" type="submit">Insert Max Level</button>
-          <button class="button is-light" id="max-level-cancel" type="button" style="display:none;">Cancel</button>
+          <button class="button is-primary is-outlined" type="submit">Insert Max Level</button>
+          <button class="button is-light is-outlined" id="max-level-cancel" type="button" style="display:none;">Cancel</button>
         </div>
       </div>
     </form>
@@ -558,8 +558,8 @@
       <!-- Action Buttons Row -->
       <div class="columns">
         <div class="column is-full">
-          <button class="button is-primary" type="submit">Insert Prerequisite</button>
-          <button class="button is-light" id="prerequisite-cancel" type="button" style="display:none;">Cancel</button>
+          <button class="button is-primary is-outlined" type="submit">Insert Prerequisite</button>
+          <button class="button is-light is-outlined" id="prerequisite-cancel" type="button" style="display:none;">Cancel</button>
         </div>
       </div>
     </form>

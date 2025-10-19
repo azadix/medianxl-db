@@ -46,8 +46,8 @@ function refreshTagsTable() {
         <td>${name}</td>
         <td>
           <div class="buttons are-small">
-            <button class="button is-warning" data-edit-tag="${id}">Edit</button>
-            <button class="button is-danger" data-del-tag="${id}">Delete</button>
+            <button class="button is-warning is-outlined" data-edit-tag="${id}">Edit</button>
+            <button class="button is-danger is-outlined" data-del-tag="${id}">Delete</button>
           </div>
         </td>
       `;

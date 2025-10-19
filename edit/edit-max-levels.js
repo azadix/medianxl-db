@@ -95,8 +95,8 @@ function refreshMaxLevelsTable() {
         <td>${canAddPoints ? 'Yes' : 'No'}</td>
         <td>
           <div class="buttons are-small">
-            <button class="button is-warning" data-edit-max-level="${skillId}">Edit</button>
-            <button class="button is-danger" data-del-max-level="${skillId}">Delete</button>
+            <button class="button is-warning is-outlined" data-edit-max-level="${skillId}">Edit</button>
+            <button class="button is-danger is-outlined" data-del-max-level="${skillId}">Delete</button>
           </div>
         </td>
       `;
