@@ -1,4 +1,4 @@
-import { getUrlParams, updateUrl, sanitizeSkillId, getSkillIconHTML, MISSING_IMAGE_NAME, expandPlaceholdersWithScaling } from './utils.js';
+import { getUrlParams, updateUrl, sanitizeSkillId, getSkillIconHTML, MISSING_IMAGE_NAME, expandPlaceholdersWithScaling, showDatabaseError } from './utils.js';
 import Skill from './skills/Skill.js';
 
 // DOM elements
@@ -544,7 +544,9 @@ async function loadSkillsFromSQLite() {
         
         // Fetch SQLite file
         const response = await fetch(dbFile);
-        if (!response.ok) throw new Error('Failed to load SQLite file');
+        if (!response.ok) {
+            throw new Error(`Failed to load database file: ${dbFile}`);
+        }
 
         const buffer = await response.arrayBuffer();
 
@@ -586,9 +588,10 @@ async function loadSkillsFromSQLite() {
         displayAllSkills();
     } catch (error) {
         console.error('Error loading skills from SQLite:', error);
-        contentElement.innerHTML = `<p>Error loading skills from SQLite: ${error.message}</p>`;
+        showDatabaseError(error.message);
     }
 }
+
 
 function getSkillData(skillId) {
     return skillsList.find(skill => skill.id == skillId);

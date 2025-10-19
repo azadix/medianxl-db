@@ -1,4 +1,4 @@
-import { loadDatabase } from './utils.js';
+import { loadDatabase, showDatabaseError } from './utils.js';
 
 let db = null;
 
@@ -129,13 +129,10 @@ async function loadStatusPage() {
 
     } catch (error) {
         console.error('Error loading status page:', error);
-        contentElement.innerHTML = `
-            <div class="notification is-danger">
-                <p><strong>Error loading status:</strong> ${error.message}</p>
-            </div>
-        `;
+        showDatabaseError(error.message);
     }
 }
+
 
 // Load the status page when the DOM is ready
 document.addEventListener('DOMContentLoaded', loadStatusPage);

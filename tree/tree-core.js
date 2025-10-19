@@ -72,7 +72,7 @@ function updateBuildListImages() {
 }
 
 // Main initialization function
-export function initializeTreePage() {
+export async function initializeTreePage() {
     skillsContainer = document.getElementById('skillsContainer');
     classSelect = document.getElementById('classSelect');
     
@@ -81,16 +81,7 @@ export function initializeTreePage() {
         return;
     }
     
-    initializeMenuButtons();
-}
-
-// Main application entry point
-async function main() {
-    // Prevent multiple initializations
-    if (treeInitialized) {
-        return;
-    }
-    
+    // Load database immediately when page loads
     try {
         skillsList = await loadSkillsFromSQLite();
         treeInitialized = true;
@@ -116,14 +107,35 @@ async function main() {
             opt.textContent = cls;
             classSelect.appendChild(opt);
         });
+        
+    } catch (error) {
+        console.error('Error loading database on page initialization:', error);
+        // Error will be shown by loadSkillsFromSQLite function
+        return;
+    }
+    
+    initializeMenuButtons();
+}
+
+// Main application entry point
+async function main() {
+    try {
+        // Database should already be loaded during page initialization
+        if (!treeInitialized) {
+            console.error('Database not initialized. This should not happen.');
+            return;
+        }
 
         // Get state from URL parameters
         const urlParams = new URLSearchParams(window.location.search);
         const savedClass = urlParams.get('class');
         const savedTab = urlParams.get('tab');
         
+        // Get available classes from the select element
+        const availableClasses = Array.from(classSelect.options).map(option => option.value);
+        
         // Use saved class or default to first class
-        const selectedClass = savedClass && classes.includes(savedClass) ? savedClass : classes[0];
+        const selectedClass = savedClass && availableClasses.includes(savedClass) ? savedClass : availableClasses[0];
         classSelect.value = selectedClass;
 
         // Initialize character state (quests are already set to defaults in characterState)
@@ -458,16 +470,16 @@ function initializeMenuButtons() {
         newBuildBtn.addEventListener('click', async () => {
             showSection('tree');
             
-            // Initialize tree if not yet done
+            // Database should already be loaded, just reset to new build
             if (!treeInitialized) {
-                // Clear current build index for new build
-                currentBuildIndex = null;
-                await main();
-                updateSaveButtonVisibility();
-            } else {
-                // Reset to new build with defaults (no toast from menu)
-                resetBuild(false);
+                console.error('Database not initialized. Cannot create new build.');
+                return;
             }
+            
+            // Clear current build index for new build
+            currentBuildIndex = null;
+            await main();
+            updateSaveButtonVisibility();
         });
     }
     

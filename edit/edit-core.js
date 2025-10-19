@@ -1,4 +1,6 @@
 // Core database functionality and initialization
+import { showDatabaseError } from '../utils.js';
+
 export const SkillDB = {
   db: null,
   SQL: null
@@ -6,21 +8,24 @@ export const SkillDB = {
 
 // Initialize the database and populate all sections
 export async function initializePage() {
-  // Get version-aware database file
-  const { getDatabaseFile } = await import('../version-config.js');
-  const dbFile = getDatabaseFile();
-  
-  // Fetch SQLite file
-  const response = await fetch(dbFile);
-  if (!response.ok) throw new Error('Failed to load SQLite file');
-
-  const buffer = await response.arrayBuffer();
-
-  // Initialize SQL.js
-  SkillDB.SQL = await initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.13.0/${file}` });
-  SkillDB.db = new SkillDB.SQL.Database(new Uint8Array(buffer));
-
   try {
+    // Get version-aware database file
+    const { getDatabaseFile } = await import('../version-config.js');
+    const dbFile = getDatabaseFile();
+    
+    // Fetch SQLite file
+    const response = await fetch(dbFile);
+    if (!response.ok) {
+      throw new Error(`Failed to load database file: ${dbFile}`);
+    }
+
+    const buffer = await response.arrayBuffer();
+
+    // Initialize SQL.js
+    SkillDB.SQL = await initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.13.0/${file}` });
+    SkillDB.db = new SkillDB.SQL.Database(new Uint8Array(buffer));
+
+    // Initialize all sections
     await import('./edit-skills.js').then(m => m.initializeSkills());
     await import('./edit-tags.js').then(m => m.initializeTags());
     await import('./edit-classes.js').then(m => m.initializeClasses());
@@ -29,16 +34,31 @@ export async function initializePage() {
     await import('./edit-max-levels.js').then(m => m.initializeMaxLevels());
     await import('./edit-prerequisites.js').then(m => m.initializePrerequisites());
     await import('./edit-autocomplete.js').then(m => m.initializeAutocomplete());
+    
   } catch (err) {
-    console.warn("Falling back to empty DB:", err.message);
-    try {
-      initDatabase();
-    } catch (initErr) {
-      console.error("Failed to initialize empty database:", initErr.message);
-      alert("Failed to initialize database. Please refresh the page.");
-    }
+    console.error("Database initialization failed:", err.message);
+    
+    // Show error toast and disable the interface
+    showDatabaseStatusToast(`Failed to load database: ${err.message}`, 'error');
+    showDatabaseError(err.message);
+    
+    // Don't try to fall back to empty database - if we can't load the real one, 
+    // the app shouldn't run with empty data
+    throw err;
   }
 }
+
+// Show toast notification for database status
+function showDatabaseStatusToast(message, type) {
+  // Try to use ToastManager if available
+  if (window.toastManager) {
+    window.toastManager.showToast(message, true, type);
+  } else {
+    // Fallback to alert if ToastManager not available
+    alert(message);
+  }
+}
+
 
 // Initialize empty database with schema
 export async function initDatabase() {

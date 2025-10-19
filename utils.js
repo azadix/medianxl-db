@@ -17,9 +17,36 @@ export async function loadDatabase(file = null) {
     
     const SQL = await initSqlJs({ locateFile: f => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.13.0/${f}` });
     const response = await fetch(file);
-    if (!response.ok) throw new Error("Failed to load database");
+    if (!response.ok) {
+        throw new Error(`Failed to load database file: ${file}`);
+    }
     const buffer = await response.arrayBuffer();
     return new SQL.Database(new Uint8Array(buffer));
+}
+
+// --- Database Error Display ---
+export function showDatabaseError(errorMessage, contentElement = null) {
+    const targetElement = contentElement || document.getElementById('content');
+    if (!targetElement) {
+        console.error('No content element found for database error display');
+        return;
+    }
+    
+    targetElement.innerHTML = `
+        <div class="box">
+            <div class="content">
+                <h3 class="title is-4 has-text-danger">Database Error</h3>
+                <p>Unable to load the skills database. Please check:</p>
+                <ul>
+                    <li>Database file exists and is accessible</li>
+                    <li>You have an active internet connection</li>
+                    <li>Try refreshing the page</li>
+                </ul>
+                <p class="has-text-danger"><strong>Error:</strong> ${errorMessage}</p>
+                <button class="button is-danger" onclick="location.reload()">Refresh Page</button>
+            </div>
+        </div>
+    `;
 }
 
 // --- URL Helpers ---
@@ -115,6 +142,7 @@ export function getSkillIconHTML(imageFileName, humanClassName, className = '', 
         } catch (error) {
             console.warn('Error getting class prefix from database:', error);
             // If database query fails, we're already in a bad state - just use 'shared' fallback
+            // This should rarely happen since the app shouldn't run without a proper database
         }
     }
     

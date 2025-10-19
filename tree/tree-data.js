@@ -1,5 +1,6 @@
 // Data loading and SQLite operations for the skills tree
 import Skill from '../skills/Skill.js';
+import { showDatabaseError } from '../utils.js';
 
 // Store database instance globally for use in calculations
 let dbInstance = null;
@@ -13,7 +14,9 @@ export async function loadSkillsFromSQLite() {
         
         // Fetch SQLite file
         const response = await fetch(dbFile);
-        if (!response.ok) throw new Error('Failed to load SQLite file');
+        if (!response.ok) {
+            throw new Error(`Failed to load database file: ${dbFile}`);
+        }
 
         const buffer = await response.arrayBuffer();
 
@@ -110,9 +113,12 @@ export async function loadSkillsFromSQLite() {
         return loadedSkills;
     } catch (error) {
         console.error('Error loading skills from SQLite:', error);
+        // Show error message to user
+        showDatabaseError(error.message, document.querySelector('.container'));
         return [];
     }
 }
+
 
 // Export database instance getter
 export function getDatabase() {

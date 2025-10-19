@@ -591,7 +591,20 @@
     import './edit/edit-prerequisites.js';
     import './edit/edit-autocomplete.js';
     import { SkillDB } from './edit/edit-core.js'; // Import SkillDB from edit-core.js
-    document.addEventListener('DOMContentLoaded', SkillDB.initializePage);
+    import { ToastManager } from './tree/ToastManager.js'; // Import ToastManager
+    
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Initialize ToastManager globally
+      window.toastManager = new ToastManager();
+      
+      // Initialize the database and page
+      try {
+        await SkillDB.initializePage();
+      } catch (error) {
+        console.error('Failed to initialize page:', error);
+        // Error handling is done in initializePage()
+      }
+    });
   </script>
 </body>
 </html>
