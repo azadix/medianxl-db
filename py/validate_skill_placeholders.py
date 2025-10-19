@@ -102,7 +102,8 @@ def validate_skills(db_path='../skills-2.11.sqlite', show_no_scaling_warnings=Tr
     """
     Main validation function.
     """
-    conn = sqlite3.connect(db_path)
+    db_full_path = f'../{db_path}' if not db_path.startswith('/') and not db_path.startswith('../') else db_path
+    conn = sqlite3.connect(db_full_path)
     cursor = conn.cursor()
     
     print("=" * 80)
@@ -189,8 +190,7 @@ def validate_skills(db_path='../skills-2.11.sqlite', show_no_scaling_warnings=Tr
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Validate skill placeholders in the skills database')
-    parser.add_argument('--db-path', default='../skills-2.11.sqlite', 
-                       help='Path to the SQLite database file (default: ../skills-2.11.sqlite)')
+    parser.add_argument('db_path', help='Path to the SQLite database file (e.g., skills-2.11.sqlite)')
     parser.add_argument('--no-scaling', action='store_true',
                        help='Hide "No scaling data for stat X" warnings')
     

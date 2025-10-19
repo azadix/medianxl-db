@@ -7,6 +7,7 @@ from the skills.sqlite database.
 import sqlite3
 import re
 import sys
+import argparse
 from pathlib import Path
 
 def extract_skills_with_placeholders(db_path='../skills-2.11.sqlite'):
@@ -19,13 +20,14 @@ def extract_skills_with_placeholders(db_path='../skills-2.11.sqlite'):
     Returns:
         tuple: (skills_list, all_stat_keys) where skills_list contains skill data and all_stat_keys contains all available stat keys
     """
-    if not Path(db_path).exists():
-        print(f"Error: Database file '{db_path}' not found!")
+    db_full_path = f'../{db_path}' if not db_path.startswith('/') and not db_path.startswith('../') else db_path
+    if not Path(db_full_path).exists():
+        print(f"Error: Database file '{db_full_path}' not found!")
         return [], []
     
     try:
         # Connect to the database
-        conn = sqlite3.connect(db_path)
+        conn = sqlite3.connect(db_full_path)
         cursor = conn.cursor()
         
         # First, get all stat keys from the stats table
@@ -73,11 +75,16 @@ def analyze_placeholders(description):
 
 def main():
     """Main function to run the extraction and display results."""
+    parser = argparse.ArgumentParser(description='Extract skills that contain {{*}} placeholder format in their descriptions')
+    parser.add_argument('db_path', help='Path to the SQLite database file (e.g., skills-2.11.sqlite)')
+    
+    args = parser.parse_args()
+    
     print("Extracting skills with {{*}} placeholder format...")
     print("=" * 60)
     
     # Extract skills with placeholders and get all stat keys
-    skills, all_stat_keys = extract_skills_with_placeholders()
+    skills, all_stat_keys = extract_skills_with_placeholders(args.db_path)
     
     if not skills:
         print("No skills found with {{*}} placeholder format in descriptions.")

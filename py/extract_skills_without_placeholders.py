@@ -5,6 +5,7 @@ from the skills.sqlite database.
 """
 
 import sqlite3
+import argparse
 from pathlib import Path
 
 def extract_skills_without_placeholders(db_path='../skills-2.11.sqlite'):
@@ -17,13 +18,14 @@ def extract_skills_without_placeholders(db_path='../skills-2.11.sqlite'):
     Returns:
         list: List of tuples containing (skill_id, skill_name, display_name, description, class_name)
     """
-    if not Path(db_path).exists():
-        print(f"Error: Database file '{db_path}' not found!")
+    db_full_path = f'../{db_path}' if not db_path.startswith('/') and not db_path.startswith('../') else db_path
+    if not Path(db_full_path).exists():
+        print(f"Error: Database file '{db_full_path}' not found!")
         return []
     
     try:
         # Connect to the database
-        conn = sqlite3.connect(db_path)
+        conn = sqlite3.connect(db_full_path)
         cursor = conn.cursor()
         
         # Query to get all skills with descriptions or skill effects that do NOT contain {{*}} format
@@ -53,11 +55,16 @@ def extract_skills_without_placeholders(db_path='../skills-2.11.sqlite'):
 
 def main():
     """Main function to run the extraction and display results."""
+    parser = argparse.ArgumentParser(description='Extract skills that have descriptions but do NOT contain {{*}} placeholder format')
+    parser.add_argument('db_path', help='Path to the SQLite database file (e.g., skills-2.11.sqlite)')
+    
+    args = parser.parse_args()
+    
     print("Extracting skills with descriptions but NO {{*}} placeholder format...")
     print("=" * 70)
     
     # Extract skills without placeholders
-    skills = extract_skills_without_placeholders()
+    skills = extract_skills_without_placeholders(args.db_path)
     
     if not skills:
         print("No skills found with descriptions but no placeholder format.")

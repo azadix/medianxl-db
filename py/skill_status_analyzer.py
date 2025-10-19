@@ -1,6 +1,7 @@
 import sqlite3
+import argparse
 
-def analyze_skill_status():
+def analyze_skill_status(db_path):
     """
     Analyzes the status of skills from missingskills.md against the database.
     Categorizes skills into three lists:
@@ -14,7 +15,8 @@ def analyze_skill_status():
         todo_skills = [line.strip() for line in f.readlines() if line.strip()]
 
     # Connect to database
-    conn = sqlite3.connect('../skills-2.11.sqlite')
+    db_full_path = f'../{db_path}' if not db_path.startswith('/') and not db_path.startswith('../') else db_path
+    conn = sqlite3.connect(db_full_path)
     cursor = conn.cursor()
     
     # Get all skills with their display names and descriptions
@@ -86,5 +88,12 @@ def analyze_skill_status():
     print(f"Skills needing description: {len(in_db_no_desc)}")
     print(f"Skills needing to be added: {len(not_in_db)}")
 
+def main():
+    parser = argparse.ArgumentParser(description='Analyze the status of skills from missingskills.md against the database')
+    parser.add_argument('db_path', help='Path to the SQLite database file (e.g., skills-2.11.sqlite)')
+    
+    args = parser.parse_args()
+    analyze_skill_status(args.db_path)
+
 if __name__ == "__main__":
-    analyze_skill_status()
+    main()
