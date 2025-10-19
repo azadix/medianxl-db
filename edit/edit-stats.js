@@ -80,6 +80,23 @@ function editStat(id) {
 
 function deleteStat(id) {
   if (!confirm("Delete this stat?")) return;
+  
+  // Check if this stat is used in constants or scaling
+  const constantsCheck = SkillDB.db.prepare('SELECT COUNT(*) FROM skill_scaling_constants WHERE stat_id = ?');
+  constantsCheck.bind([id]);
+  const constantsCount = constantsCheck.step() ? constantsCheck.get()[0] : 0;
+  constantsCheck.free();
+  
+  const scalingCheck = SkillDB.db.prepare('SELECT COUNT(*) FROM skill_scaling WHERE stat_id = ?');
+  scalingCheck.bind([id]);
+  const scalingCount = scalingCheck.step() ? scalingCheck.get()[0] : 0;
+  scalingCheck.free();
+  
+  if (constantsCount > 0 || scalingCount > 0) {
+    alert(`Cannot delete stat: It is used in ${constantsCount} constants and ${scalingCount} scaling entries. Please remove these references first.`);
+    return;
+  }
+  
   SkillDB.db.run("DELETE FROM stats WHERE id = ?", [id]);
   refreshStatsTable();
 }

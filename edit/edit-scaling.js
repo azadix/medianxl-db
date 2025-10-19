@@ -109,23 +109,40 @@ function suggestFromDescription() {
     }
   });
   
-  const current = Array.from(document.querySelectorAll('#scaling-table tbody tr')).map(tr => {
-    const inputs = tr.querySelectorAll('input[type="number"]:not([disabled])');
-    const statId = parseInt(tr.getAttribute('data-stat-id'), 10);
-    const occurrenceIndex = parseInt(tr.getAttribute('data-occurrence-index') || '0', 10);
-    // Get the stat info from the map using the stat ID
-    const statInfo = Array.from(map.values()).find(s => s.id === statId);
-    return {
-      stat_id: statId,
-      key: statInfo?.key || '',
-      name: statInfo?.name || '',
-      occurrence_index: occurrenceIndex,
-      value0: inputs[0]?.value || '',
-      value1: inputs[1]?.value || '',
-      value2: inputs[2]?.value || '',
-      value3: inputs[3]?.value || '',
-    };
-  });
+  // Don't read from DOM - this causes stale data issues
+  // Instead, get fresh data from the database for the current skill and level
+  const currentSkillId = parseInt(document.getElementById('scaling-skill-hidden').value, 10);
+  const level = parseInt(document.getElementById('scaling-level').value, 10);
+  
+  const current = [];
+  if (!Number.isNaN(currentSkillId) && !Number.isNaN(level)) {
+    // Get fresh scaling data from database
+    statOrder.forEach(({ statKey, occurrenceIndex }) => {
+      const statInfo = map.get(statKey);
+      if (statInfo) {
+        const scalingStmt = SkillDB.db.prepare(`
+          SELECT value0, value1, value2, value3
+          FROM skill_scaling
+          WHERE skill_id = ? AND level = ? AND stat_id = ? AND occurrence_index = ?
+        `);
+        scalingStmt.bind([currentSkillId, level, statInfo.id, occurrenceIndex]);
+        
+        let v0 = null, v1 = null, v2 = null, v3 = null;
+        if (scalingStmt.step()) {
+          [v0, v1, v2, v3] = scalingStmt.get();
+        }
+        scalingStmt.free();
+        
+        current.push({
+          stat_id: statInfo.id,
+          key: statInfo.key,
+          name: statInfo.name,
+          occurrence_index: occurrenceIndex,
+          value0: v0, value1: v1, value2: v2, value3: v3
+        });
+      }
+    });
+  }
   
   renderScalingTable(current.concat(rows));
 }
@@ -329,6 +346,7 @@ function loadScaling() {
   // If no stats are used in description, show empty table
   if (statOrder.length === 0) {
     renderScalingTable([]);
+    renderConstantsTable(); // Make sure to clear constants table too
     document.getElementById('scaling-status').textContent = 'No stats found in skill description';
     return;
   }
@@ -475,13 +493,17 @@ function loadConstants(skillId) {
   `);
   stmt.bind([skillId]);
   
+  let constantCount = 0;
   while (stmt.step()) {
     const [stat_id, occurrence_index, value0, value1, value2, value3, 
            value0_constant, value1_constant, value2_constant, value3_constant] = stmt.get();
-    constants.set(`${stat_id}:${occurrence_index}`, {
+    const key = `${stat_id}:${occurrence_index}`;
+    const constantData = {
       value0, value1, value2, value3,
       value0_constant, value1_constant, value2_constant, value3_constant
-    });
+    };
+    constants.set(key, constantData);
+    constantCount++;
   }
   stmt.free();
   return constants;
