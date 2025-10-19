@@ -16,11 +16,17 @@ export async function initializePrerequisites() {
   await populatePrerequisiteSelectors();
   refreshPrerequisitesTable();
   
-  // Prerequisites form submission
-  document.getElementById('prerequisite-form').addEventListener('submit', (e) => {
-    e.preventDefault();
-    savePrerequisite();
-  });
+  // Prerequisites form button click handler
+  const prerequisiteForm = document.getElementById('prerequisite-form');
+  if (!prerequisiteForm.hasAttribute('data-initialized')) {
+    prerequisiteForm.setAttribute('data-initialized', 'true');
+    prerequisiteForm.addEventListener('click', (e) => {
+      if (e.target.type === 'submit') {
+        e.preventDefault();
+        savePrerequisite();
+      }
+    });
+  }
   
   // Initialize skills displays
   updateRequiredSkillsDisplay();

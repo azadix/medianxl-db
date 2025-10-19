@@ -286,9 +286,6 @@ function editSkill(id) {
   if (stmt.step()) {
     const [skillId, name, displayName, classId, tabIndex, row, col, image, restriction, description, skillEffect] = stmt.get();
     
-    // Debug: log the retrieved values
-    console.log('Editing skill:', { skillId, name, displayName, classId, tabIndex, row, col, image, restriction, description, skillEffect });
-    
     // Check if name is null and handle it properly
     if (name === null || name === undefined) {
       console.error('Skill has null name in database:', skillId);
@@ -448,6 +445,7 @@ function saveSkill() {
     });
   }
   
+  // Clear form and refresh table
   document.getElementById('skill-form').reset();
   refreshSkillsTable();
 }

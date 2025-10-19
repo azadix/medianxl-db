@@ -4,11 +4,17 @@ import { SkillDB } from './edit-core.js';
 export function initializeStats() {
   refreshStatsTable();
   
-  // Stats form submission
-  document.getElementById('stat-form').addEventListener('submit', (e) => {
-    e.preventDefault();
-    saveStat();
-  });
+  // Stats form button click handler
+  const statForm = document.getElementById('stat-form');
+  if (!statForm.hasAttribute('data-initialized')) {
+    statForm.setAttribute('data-initialized', 'true');
+    statForm.addEventListener('click', (e) => {
+      if (e.target.type === 'submit') {
+        e.preventDefault();
+        saveStat();
+      }
+    });
+  }
 
 }
 
@@ -121,8 +127,9 @@ function saveStat() {
     `, [key, name, format, description]);
   }
 
-  refreshStatsTable();
+  // Clear form and refresh table
   document.getElementById('stat-form').reset();
+  refreshStatsTable();
 }
 
 function renderStatPlaceholder(key, values = []) {

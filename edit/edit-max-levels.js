@@ -6,11 +6,17 @@ export async function initializeMaxLevels() {
   await populateMaxLevelSelectors();
   refreshMaxLevelsTable();
   
-  // Max levels form submission
-  document.getElementById('max-level-form').addEventListener('submit', (e) => {
-    e.preventDefault();
-    saveMaxLevel();
-  });
+  // Max levels form button click handler
+  const maxLevelForm = document.getElementById('max-level-form');
+  if (!maxLevelForm.hasAttribute('data-initialized')) {
+    maxLevelForm.setAttribute('data-initialized', 'true');
+    maxLevelForm.addEventListener('click', (e) => {
+      if (e.target.type === 'submit') {
+        e.preventDefault();
+        saveMaxLevel();
+      }
+    });
+  }
 }
 
 // Store dropdown reference for updating
