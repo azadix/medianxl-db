@@ -590,7 +590,7 @@
     import './edit/edit-max-levels.js';
     import './edit/edit-prerequisites.js';
     import './edit/edit-autocomplete.js';
-    import { SkillDB } from './edit/edit-core.js'; // Import SkillDB from edit-core.js
+    import { SkillDB, initializePage } from './edit/edit-core.js'; // Import SkillDB and initializePage from edit-core.js
     import { ToastManager } from './tree/ToastManager.js'; // Import ToastManager
     
     document.addEventListener('DOMContentLoaded', async () => {
@@ -599,7 +599,7 @@
       
       // Initialize the database and page
       try {
-        await SkillDB.initializePage();
+        await initializePage();
       } catch (error) {
         console.error('Failed to initialize page:', error);
         // Error handling is done in initializePage()

@@ -599,7 +599,15 @@ function editPrerequisite(prerequisiteId) {
     if (targetSkillField && targetSkillId) {
       targetSkillField.value = targetSkillId;
       if (prerequisiteTargetSkillDropdown) {
+        // Temporarily disable the onSelect callback to avoid triggering addRequiredSkill
+        const originalCallback = prerequisiteTargetSkillDropdown.options.onSelect;
+        prerequisiteTargetSkillDropdown.options.onSelect = null;
+        
+        // Set the dropdown value
         prerequisiteTargetSkillDropdown.value = targetSkillId;
+        
+        // Restore the callback
+        prerequisiteTargetSkillDropdown.options.onSelect = originalCallback;
       }
     }
     
