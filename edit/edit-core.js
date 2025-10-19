@@ -155,7 +155,6 @@ export async function initDatabase() {
       requirement_value INTEGER NOT NULL,
       target_skill_id INTEGER,
       target_tab_id INTEGER,
-      description TEXT NOT NULL,
       FOREIGN KEY (skill_id) REFERENCES skills(id) ON DELETE CASCADE,
       FOREIGN KEY (target_skill_id) REFERENCES skills(id) ON DELETE CASCADE,
       FOREIGN KEY (target_tab_id) REFERENCES classTabs(id) ON DELETE CASCADE

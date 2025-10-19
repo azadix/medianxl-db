@@ -188,7 +188,7 @@ function loadPrerequisitesForSkill(skillId) {
   
   // Query all prerequisites for this skill
   const stmt = SkillDB.db.prepare(`
-    SELECT requirement_type, requirement_value, target_skill_id, target_tab_id, description
+    SELECT requirement_type, requirement_value, target_skill_id, target_tab_id
     FROM skill_prerequisites
     WHERE skill_id = ?
   `);
@@ -201,7 +201,6 @@ function loadPrerequisitesForSkill(skillId) {
   document.getElementById('prerequisite-target-skill-hidden').value = '';
   document.getElementById('prerequisite-blocked-skill-hidden').value = '';
   document.getElementById('prerequisite-target-tab-hidden').value = '';
-  document.getElementById('prerequisite-description').value = '';
   
   // Reset dropdown displays
   if (prerequisiteTargetSkillDropdown) {
@@ -220,14 +219,13 @@ function loadPrerequisitesForSkill(skillId) {
   
   let skillLevelValue = null;
   let targetTabId = null;
-  let description = '';
   let hasExistingPrerequisites = false;
   let skillBlockedByValue = null;
   
   // Process all prerequisites for this skill
   while (stmt.step()) {
     hasExistingPrerequisites = true;
-    const [requirementType, requirementValue, reqTargetSkillId, reqTargetTabId, reqDescription] = stmt.get();
+    const [requirementType, requirementValue, reqTargetSkillId, reqTargetTabId] = stmt.get();
     
     // Set values based on requirement type
     switch (requirementType) {
@@ -272,11 +270,6 @@ function loadPrerequisitesForSkill(skillId) {
         if (reqTargetTabId) targetTabId = reqTargetTabId;
         break;
     }
-    
-    // Use the first description found
-    if (reqDescription && !description) {
-      description = reqDescription;
-    }
   }
   stmt.free();
   
@@ -299,11 +292,6 @@ function loadPrerequisitesForSkill(skillId) {
     if (prerequisiteTargetTabDropdown) {
       prerequisiteTargetTabDropdown.value = targetTabId;
     }
-  }
-  
-  // Set the description
-  if (description) {
-    document.getElementById('prerequisite-description').value = description;
   }
   
   // Update form state if we found existing prerequisites
@@ -449,7 +437,7 @@ function refreshPrerequisitesTable() {
   
   const res = SkillDB.db.exec(`
     SELECT sp.id, s.id as skill_id, s.display_name, sp.requirement_type, sp.requirement_value,
-           sp.target_skill_id, sp.target_tab_id, sp.description,
+           sp.target_skill_id, sp.target_tab_id,
            ts.display_name as target_skill_name, ct.name as target_tab_name
     FROM skill_prerequisites sp
     JOIN skills s ON sp.skill_id = s.id
@@ -461,7 +449,7 @@ function refreshPrerequisitesTable() {
   if (res.length > 0) {
     // Group prerequisites by skill and type
     const grouped = {};
-    res[0].values.forEach(([prerequisiteId, skillId, skillName, prerequisiteType, prerequisiteValue, targetSkillId, targetTabId, description, targetSkillName, targetTabName]) => {
+    res[0].values.forEach(([prerequisiteId, skillId, skillName, prerequisiteType, prerequisiteValue, targetSkillId, targetTabId, targetSkillName, targetTabName]) => {
       const key = `${skillId}_${prerequisiteType}`;
       if (!grouped[key]) {
         grouped[key] = {
@@ -469,7 +457,6 @@ function refreshPrerequisitesTable() {
           skillName,
           prerequisiteType,
           prerequisiteValue,
-          description,
           targets: [],
           ids: []
         };
@@ -505,7 +492,6 @@ function refreshPrerequisitesTable() {
         <td>${typeDisplay}</td>
         <td>${valueDisplay}</td>
         <td>${targetDisplay}</td>
-        <td>${group.description || ''}</td>
         <td>
           <div class="buttons are-small">
             <button class="button is-warning is-outlined" data-edit-prerequisite="${group.ids[0]}">Edit</button>
@@ -555,7 +541,7 @@ function editPrerequisite(prerequisiteId) {
     
     // Load all prerequisites for this skill
     const allStmt = SkillDB.db.prepare(`
-      SELECT requirement_type, requirement_value, target_skill_id, target_tab_id, description
+      SELECT requirement_type, requirement_value, target_skill_id, target_tab_id
       FROM skill_prerequisites
       WHERE skill_id = ?
     `);
@@ -571,65 +557,102 @@ function editPrerequisite(prerequisiteId) {
     
     // Reset all requirement value fields
     document.getElementById('prerequisite-skill-level').value = '';
+    document.getElementById('prerequisite-skill-blocked-by').value = '0';
     document.getElementById('prerequisite-tree-points').value = '';
+    document.getElementById('prerequisite-target-skill-hidden').value = '';
+    document.getElementById('prerequisite-blocked-skill-hidden').value = '';
+    document.getElementById('prerequisite-target-tab-hidden').value = '';
     
-    let targetSkillId = null;
+    // Reset dropdown displays
+    if (prerequisiteTargetSkillDropdown) {
+      prerequisiteTargetSkillDropdown.value = null;
+    }
+    if (prerequisiteBlockedSkillDropdown) {
+      prerequisiteBlockedSkillDropdown.value = null;
+    }
+    if (prerequisiteTargetTabDropdown) {
+      prerequisiteTargetTabDropdown.value = null;
+    }
+    
+    // Reset skills arrays
+    selectedRequiredSkills = [];
+    selectedBlockedSkills = [];
+    
+    let skillLevelValue = null;
     let targetTabId = null;
-    let description = '';
+    let skillBlockedByValue = null;
     
     // Process all prerequisites for this skill
     while (allStmt.step()) {
-      const [requirementType, requirementValue, reqTargetSkillId, reqTargetTabId, reqDescription] = allStmt.get();
+      const [requirementType, requirementValue, reqTargetSkillId, reqTargetTabId] = allStmt.get();
       
       // Set values based on requirement type
       switch (requirementType) {
         case 'skill_level':
-          document.getElementById('prerequisite-skill-level').value = requirementValue;
-          if (reqTargetSkillId) targetSkillId = reqTargetSkillId;
+          // Store the level value (should be same for all required skills)
+          if (skillLevelValue === null) {
+            skillLevelValue = requirementValue;
+            document.getElementById('prerequisite-skill-level').value = requirementValue;
+          }
+          // Add to required skills array
+          if (reqTargetSkillId) {
+            // Get skill name
+            const nameStmt = SkillDB.db.prepare('SELECT display_name FROM skills WHERE id = ?');
+            nameStmt.bind([reqTargetSkillId]);
+            if (nameStmt.step()) {
+              const skillName = nameStmt.get()[0];
+              selectedRequiredSkills.push({ id: reqTargetSkillId, name: skillName, level: requirementValue });
+            }
+            nameStmt.free();
+          }
+          break;
+        case 'skill_blocked_by':
+          // Store the max points value (should be same for all blocked skills)
+          if (skillBlockedByValue === null) {
+            skillBlockedByValue = requirementValue;
+            document.getElementById('prerequisite-skill-blocked-by').value = requirementValue;
+          }
+          // Add to blocked skills array
+          if (reqTargetSkillId) {
+            // Get skill name
+            const nameStmt = SkillDB.db.prepare('SELECT display_name FROM skills WHERE id = ?');
+            nameStmt.bind([reqTargetSkillId]);
+            if (nameStmt.step()) {
+              const skillName = nameStmt.get()[0];
+              selectedBlockedSkills.push({ id: reqTargetSkillId, name: skillName });
+            }
+            nameStmt.free();
+          }
           break;
         case 'tree_points':
           document.getElementById('prerequisite-tree-points').value = requirementValue;
           if (reqTargetTabId) targetTabId = reqTargetTabId;
           break;
       }
-      
-      // Use the first description found (they should all be the same for a skill)
-      if (reqDescription && !description) {
-        description = reqDescription;
-      }
     }
     allStmt.free();
     
-    // Set target skill and tab values
-    const targetSkillField = document.getElementById('prerequisite-target-skill-hidden');
-    if (targetSkillField && targetSkillId) {
-      targetSkillField.value = targetSkillId;
-      if (prerequisiteTargetSkillDropdown) {
-        // Temporarily disable the onSelect callback to avoid triggering addRequiredSkill
-        const originalCallback = prerequisiteTargetSkillDropdown.options.onSelect;
-        prerequisiteTargetSkillDropdown.options.onSelect = null;
-        
-        // Set the dropdown value
-        prerequisiteTargetSkillDropdown.value = targetSkillId;
-        
-        // Restore the callback
-        prerequisiteTargetSkillDropdown.options.onSelect = originalCallback;
-      }
+    // Update required skills display
+    if (selectedRequiredSkills.length > 0) {
+      document.getElementById('prerequisite-target-skill-hidden').value = 
+        selectedRequiredSkills.map(s => s.id).join(',');
+      updateRequiredSkillsDisplay();
     }
     
-    const targetTabField = document.getElementById('prerequisite-target-tab-hidden');
-    if (targetTabField && targetTabId) {
-      targetTabField.value = targetTabId;
+    // Update blocked skills display
+    if (selectedBlockedSkills.length > 0) {
+      document.getElementById('prerequisite-blocked-skill-hidden').value = 
+        selectedBlockedSkills.map(s => s.id).join(',');
+      updateBlockedSkillsDisplay();
+    }
+    
+    if (targetTabId) {
+      document.getElementById('prerequisite-target-tab-hidden').value = targetTabId;
       if (prerequisiteTargetTabDropdown) {
         prerequisiteTargetTabDropdown.value = targetTabId;
       }
     }
     
-    // Set the description
-    const descriptionField = document.getElementById('prerequisite-description');
-    if (descriptionField) {
-      descriptionField.value = description;
-    }
     
     // Update form state
     document.querySelector('#prerequisite-form button[type="submit"]').textContent = 'Save Prerequisite';
@@ -651,7 +674,6 @@ function savePrerequisite() {
   const skillBlockedByValue = parseInt(document.getElementById('prerequisite-skill-blocked-by').value, 10);
   const treePointsValue = parseInt(document.getElementById('prerequisite-tree-points').value || 0, 10);
   const targetTabId = parseInt(document.getElementById('prerequisite-target-tab-hidden')?.value || 0, 10);
-  const description = document.getElementById('prerequisite-description')?.value.trim() || '';
   
   if (Number.isNaN(skillId)) {
     alert('Please select a skill');
@@ -682,9 +704,9 @@ function savePrerequisite() {
     // Insert a prerequisite for each required skill with its own level
     selectedRequiredSkills.forEach(skill => {
       SkillDB.db.run(`
-        INSERT INTO skill_prerequisites (skill_id, requirement_type, requirement_value, target_skill_id, target_tab_id, description)
-        VALUES (?, 'skill_level', ?, ?, ?, ?)
-      `, [skillId, skill.level, skill.id, null, description]);
+        INSERT INTO skill_prerequisites (skill_id, requirement_type, requirement_value, target_skill_id, target_tab_id)
+        VALUES (?, 'skill_level', ?, ?, ?)
+      `, [skillId, skill.level, skill.id, null]);
     });
   }
   
@@ -692,17 +714,17 @@ function savePrerequisite() {
   if (!Number.isNaN(skillBlockedByValue) && skillBlockedByValue >= 0 && selectedBlockedSkills.length > 0) {
     selectedBlockedSkills.forEach(blockedSkill => {
       SkillDB.db.run(`
-        INSERT INTO skill_prerequisites (skill_id, requirement_type, requirement_value, target_skill_id, target_tab_id, description)
-        VALUES (?, 'skill_blocked_by', ?, ?, ?, ?)
-      `, [skillId, skillBlockedByValue, blockedSkill.id, null, description]);
+        INSERT INTO skill_prerequisites (skill_id, requirement_type, requirement_value, target_skill_id, target_tab_id)
+        VALUES (?, 'skill_blocked_by', ?, ?, ?)
+      `, [skillId, skillBlockedByValue, blockedSkill.id, null]);
     });
   }
   
   if (treePointsValue >= 1) {
     SkillDB.db.run(`
-      INSERT INTO skill_prerequisites (skill_id, requirement_type, requirement_value, target_skill_id, target_tab_id, description)
-      VALUES (?, 'tree_points', ?, ?, ?, ?)
-    `, [skillId, treePointsValue, null, targetTabId, description]);
+      INSERT INTO skill_prerequisites (skill_id, requirement_type, requirement_value, target_skill_id, target_tab_id)
+      VALUES (?, 'tree_points', ?, ?, ?)
+    `, [skillId, treePointsValue, null, targetTabId]);
   }
   
   
