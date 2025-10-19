@@ -1,6 +1,10 @@
 // Scaling management functionality
 import { SkillDB } from './edit-core.js';
 import { DropdownList } from './DropdownList.js';
+import { ToastManager } from '../tree/ToastManager.js';
+
+// Initialize ToastManager
+const toastManager = new ToastManager();
 
 // Store locked values: Map<statId, {value0, value1, value2, value3}>
 const lockedValues = new Map();
@@ -412,6 +416,7 @@ function saveScaling() {
   });
   document.getElementById('scaling-status').textContent = `Saved ${rows.length} rows for level ${level}`;
   updateLevelIndicator();
+  toastManager.showToast('Skill was saved', true, 'success');
 }
 
 function clearScaling() {
@@ -603,6 +608,7 @@ function saveConstants() {
   
   // Reload the regular scaling table to show locked fields
   loadScaling();
+  toastManager.showToast('Constant values were saved', true, 'success');
 }
 
 function moveToConstants(statId, statName, statFormat) {
