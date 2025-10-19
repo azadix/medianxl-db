@@ -143,7 +143,7 @@ function renderLeftoverTags(container, tagMap, usedIds) {
 
 function createGroupElement(title, titleClass) {
   const groupEl = document.createElement('div');
-  groupEl.className = 'field';
+  groupEl.className = 'field mb-0';
   
   const label = document.createElement('label');
   label.className = `label ${titleClass}`;

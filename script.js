@@ -97,7 +97,7 @@ async function initializeDataTable(skillsData) {
         
         tbody.append(`
             <tr data-skill-id="${skill.id}" data-has-page="${skill.hasDetails}">
-                <td>${getSkillIconHTML(skill.image, skill.class, "is-48x48")}</td>
+                <td>${getSkillIconHTML(skill.image, skill.class, "is-48x48", SkillDB?.db)}</td>
                 <td>${nameCell}</td>
                 <td>${tagsHtml}</td>
                 <td>${skill.class}</td>
@@ -276,7 +276,7 @@ async function displaySkillDetail(skillId) {
     pageTitleElement.textContent = skillInfo.name;
     // Add skill image if available
     const skillImage = skillInfo.image 
-        ? `${getSkillIconHTML(skillInfo.image, skillInfo.class, "skill-image")}` 
+        ? `${getSkillIconHTML(skillInfo.image, skillInfo.class, "skill-image", SkillDB?.db)}` 
         : '';
     
     // Description with scaling expansion

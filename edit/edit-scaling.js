@@ -9,6 +9,27 @@ const toastManager = new ToastManager();
 // Store locked values: Map<statId, {value0, value1, value2, value3}>
 const lockedValues = new Map();
 
+// Extract stats from skill_effect in appearance order with occurrence tracking
+function extractStatsInOrder(skillEffect) {
+  const statOrder = [];
+  const statCounts = new Map();
+  
+  if (!skillEffect) return statOrder;
+  
+  skillEffect.replace(/\{\{(.*?)\}\}/g, (match, token) => {
+    const [key] = token.split(':').map(s => s.trim());
+    if (key) {
+      const statKey = key.toLowerCase();
+      const occurrenceIndex = statCounts.get(statKey) || 0;
+      statOrder.push({ statKey, occurrenceIndex });
+      statCounts.set(statKey, occurrenceIndex + 1);
+    }
+    return match; // Don't replace, just track
+  });
+  
+  return statOrder;
+}
+
 export async function initializeScaling() {
   await populateScalingSelectors();
   
@@ -52,31 +73,40 @@ function suggestFromDescription() {
   if (stmt.step()) {
     const [description, effect] = stmt.get();
     desc = (description || '') + ' ' + (effect || '');
+    skillEffect = effect || '';
   }
   stmt.free();
   
-  const keys = new Set();
-  desc.replace(/\{\{(.*?)\}\}/g, (m, token) => {
-    const [k] = token.split(':');
-    if (k) keys.add(k.trim().toLowerCase());
-  });
+  // Extract stats in order with occurrence tracking
+  const statOrder = extractStatsInOrder(skillEffect);
   
-  if (keys.size === 0) return;
+  if (statOrder.length === 0) return;
   
   // Fetch stat metadata
   const all = SkillDB.db.exec('SELECT id, key, name FROM stats');
   const map = new Map();
   if (all[0]) all[0].values.forEach(([id, key, name]) => map.set(key.toLowerCase(), { id, key, name }));
   
-  // Existing rows - get the stat ID from the data attribute
-  const existingStatIds = new Set(Array.from(document.querySelectorAll('#scaling-table tbody tr')).map(tr => parseInt(tr.getAttribute('data-stat-id'), 10)));
+  // Existing rows - get the stat ID and occurrence index from the data attribute
+  const existingRows = new Set(Array.from(document.querySelectorAll('#scaling-table tbody tr')).map(tr => {
+    const statId = parseInt(tr.getAttribute('data-stat-id'), 10);
+    const occurrenceIndex = parseInt(tr.getAttribute('data-occurrence-index') || '0', 10);
+    return `${statId}:${occurrenceIndex}`;
+  }));
   
   const rows = [];
-  keys.forEach(k => {
-    if (map.has(k)) {
-      const s = map.get(k);
-      if (!existingStatIds.has(s.id)) {
-        rows.push({ stat_id: s.id, key: s.key, name: s.name, value0: '', value1: '', value2: '', value3: '' });
+  statOrder.forEach(({ statKey, occurrenceIndex }) => {
+    if (map.has(statKey)) {
+      const s = map.get(statKey);
+      const rowKey = `${s.id}:${occurrenceIndex}`;
+      if (!existingRows.has(rowKey)) {
+        rows.push({ 
+          stat_id: s.id, 
+          key: s.key, 
+          name: s.name, 
+          occurrence_index: occurrenceIndex,
+          value0: '', value1: '', value2: '', value3: '' 
+        });
       }
     }
   });
@@ -84,12 +114,14 @@ function suggestFromDescription() {
   const current = Array.from(document.querySelectorAll('#scaling-table tbody tr')).map(tr => {
     const inputs = tr.querySelectorAll('input[type="number"]:not([disabled])');
     const statId = parseInt(tr.getAttribute('data-stat-id'), 10);
+    const occurrenceIndex = parseInt(tr.getAttribute('data-occurrence-index') || '0', 10);
     // Get the stat info from the map using the stat ID
     const statInfo = Array.from(map.values()).find(s => s.id === statId);
     return {
       stat_id: statId,
       key: statInfo?.key || '',
       name: statInfo?.name || '',
+      occurrence_index: occurrenceIndex,
       value0: inputs[0]?.value || '',
       value1: inputs[1]?.value || '',
       value2: inputs[2]?.value || '',
@@ -124,10 +156,14 @@ function renderScalingTable(rows) {
   rows.forEach(row => {
     const tr = document.createElement('tr');
     tr.setAttribute('data-stat-id', row.stat_id);
+    tr.setAttribute('data-occurrence-index', row.occurrence_index || 0);
     
-    // Name column
+    // Name column - show occurrence indicator for duplicates
     const nameTd = document.createElement('td');
-    nameTd.textContent = row.name;
+    const displayName = (row.occurrence_index && row.occurrence_index > 0) 
+      ? `${row.name} #${row.occurrence_index + 1}` 
+      : row.name;
+    nameTd.textContent = displayName;
     tr.appendChild(nameTd);
     
     // Format column (displayed as code)
@@ -318,50 +354,60 @@ function loadScaling() {
   if (skillStmt.step()) {
     const [desc, effect] = skillStmt.get();
     description = (desc || '') + ' ' + (effect || '');
+    skillEffect = effect || '';
   }
   skillStmt.free();
 
-  // Extract stat keys from description
-  const usedStatKeys = new Set();
-  description.replace(/\{\{(.*?)\}\}/g, (m, token) => {
-    const [key] = token.split(':');
-    if (key) usedStatKeys.add(key.trim().toLowerCase());
-  });
+  // Extract stats in order with occurrence tracking
+  const statOrder = extractStatsInOrder(skillEffect);
 
   // If no stats are used in description, show empty table
-  if (usedStatKeys.size === 0) {
+  if (statOrder.length === 0) {
     renderScalingTable([]);
     document.getElementById('scaling-status').textContent = 'No stats found in skill description';
     return;
   }
 
-  // Get stats that are used in the description and their scaling values
-  const statKeysArray = Array.from(usedStatKeys);
+  // Create a map of stat keys to their info for quick lookup
+  const statInfoMap = new Map();
+  const statKeysArray = statOrder.map(s => s.statKey);
   const placeholders = statKeysArray.map(() => '?').join(',');
   
-  const stmt = SkillDB.db.prepare(`
-    SELECT s.id AS stat_id, s.key, s.name,
-          ss.value0, ss.value1, ss.value2, ss.value3
-    FROM stats s
-    LEFT JOIN skill_scaling ss
-      ON ss.stat_id = s.id
-      AND ss.skill_id = ?
-      AND ss.level = ?
-    WHERE LOWER(s.key) IN (${placeholders})
-    ORDER BY s.name
-  `);
-  stmt.bind([skillId, level, ...statKeysArray]);
-  const res = [];
-  while (stmt.step()) {
-    res.push(stmt.get());
+  const statStmt = SkillDB.db.prepare(`SELECT id, key, name FROM stats WHERE LOWER(key) IN (${placeholders})`);
+  statStmt.bind(statKeysArray);
+  while (statStmt.step()) {
+    const [id, key, name] = statStmt.get();
+    statInfoMap.set(key.toLowerCase(), { id, key, name });
   }
-  stmt.free();
+  statStmt.free();
 
-  const rows = res.length > 0
-    ? res.map(([stat_id, key, name, v0, v1, v2, v3]) => ({
-        stat_id, key, name, value0: v0, value1: v1, value2: v2, value3: v3
-      }))
-    : [];
+  // Get scaling values for each stat occurrence
+  const rows = [];
+  statOrder.forEach(({ statKey, occurrenceIndex }) => {
+    const statInfo = statInfoMap.get(statKey);
+    if (statInfo) {
+      const scalingStmt = SkillDB.db.prepare(`
+        SELECT value0, value1, value2, value3
+        FROM skill_scaling
+        WHERE skill_id = ? AND level = ? AND stat_id = ? AND occurrence_index = ?
+      `);
+      scalingStmt.bind([skillId, level, statInfo.id, occurrenceIndex]);
+      
+      let v0 = null, v1 = null, v2 = null, v3 = null;
+      if (scalingStmt.step()) {
+        [v0, v1, v2, v3] = scalingStmt.get();
+      }
+      scalingStmt.free();
+      
+      rows.push({
+        stat_id: statInfo.id,
+        key: statInfo.key,
+        name: statInfo.name,
+        occurrence_index: occurrenceIndex,
+        value0: v0, value1: v1, value2: v2, value3: v3
+      });
+    }
+  });
 
   renderScalingTable(rows);
   renderConstantsTable();
@@ -382,11 +428,13 @@ function saveScaling() {
   
   const rows = Array.from(document.querySelectorAll('#scaling-table tbody tr')).map(tr => {
     const statId = parseInt(tr.getAttribute('data-stat-id'), 10);
+    const occurrenceIndex = parseInt(tr.getAttribute('data-occurrence-index') || '0', 10);
     const inputs = tr.querySelectorAll('input[type="number"]:not([disabled])');
-    const constantData = constants.get(statId);
+    const constantData = constants.get(`${statId}:${occurrenceIndex}`);
     
     const values = {
       stat_id: statId,
+      occurrence_index: occurrenceIndex,
       value0: inputs[0]?.value || '',
       value1: inputs[1]?.value || '',
       value2: inputs[2]?.value || '',
@@ -408,11 +456,11 @@ function saveScaling() {
   rows.forEach(r => {
     // Skip empty rows (no values) or rows where all values are constant
     if ((r.value0 === '' || r.value0 == null) && (r.value1 === '' || r.value1 == null) && (r.value2 === '' || r.value2 == null) && (r.value3 === '' || r.value3 == null)) {
-      SkillDB.db.run('DELETE FROM skill_scaling WHERE skill_id=? AND level=? AND stat_id=?', [skillId, level, r.stat_id]);
+      SkillDB.db.run('DELETE FROM skill_scaling WHERE skill_id=? AND level=? AND stat_id=? AND occurrence_index=?', [skillId, level, r.stat_id, r.occurrence_index]);
       return;
     }
-    SkillDB.db.run('DELETE FROM skill_scaling WHERE skill_id=? AND level=? AND stat_id=?', [skillId, level, r.stat_id]);
-    SkillDB.db.run('INSERT INTO skill_scaling (skill_id, level, stat_id, value0, value1, value2, value3) VALUES (?, ?, ?, ?, ?, ?, ?)', [skillId, level, r.stat_id, r.value0 || null, r.value1 || null, r.value2 || null, r.value3 || null]);
+    SkillDB.db.run('DELETE FROM skill_scaling WHERE skill_id=? AND level=? AND stat_id=? AND occurrence_index=?', [skillId, level, r.stat_id, r.occurrence_index]);
+    SkillDB.db.run('INSERT INTO skill_scaling (skill_id, level, stat_id, occurrence_index, value0, value1, value2, value3) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', [skillId, level, r.stat_id, r.occurrence_index, r.value0 || null, r.value1 || null, r.value2 || null, r.value3 || null]);
   });
   document.getElementById('scaling-status').textContent = `Saved ${rows.length} rows for level ${level}`;
   updateLevelIndicator();
@@ -433,7 +481,7 @@ function clearScaling() {
 function loadConstants(skillId) {
   const constants = new Map();
   const stmt = SkillDB.db.prepare(`
-    SELECT stat_id, value0, value1, value2, value3,
+    SELECT stat_id, occurrence_index, value0, value1, value2, value3,
            value0_constant, value1_constant, value2_constant, value3_constant
     FROM skill_scaling_constants
     WHERE skill_id = ?
@@ -441,9 +489,9 @@ function loadConstants(skillId) {
   stmt.bind([skillId]);
   
   while (stmt.step()) {
-    const [stat_id, value0, value1, value2, value3, 
+    const [stat_id, occurrence_index, value0, value1, value2, value3, 
            value0_constant, value1_constant, value2_constant, value3_constant] = stmt.get();
-    constants.set(stat_id, {
+    constants.set(`${stat_id}:${occurrence_index}`, {
       value0, value1, value2, value3,
       value0_constant, value1_constant, value2_constant, value3_constant
     });
@@ -465,6 +513,7 @@ function renderConstantsTable() {
     FROM skill_scaling_constants ssc
     JOIN stats s ON s.id = ssc.stat_id
     WHERE ssc.skill_id = ?
+    ORDER BY ssc.stat_id, ssc.occurrence_index
   `);
   stmt.bind([skillId]);
   
@@ -479,10 +528,14 @@ function renderConstantsTable() {
 function createConstantRow(row) {
   const tr = document.createElement('tr');
   tr.setAttribute('data-stat-id', row.stat_id);
+  tr.setAttribute('data-occurrence-index', row.occurrence_index || 0);
   
-  // Name column
+  // Name column - show occurrence indicator for duplicates
   const nameTd = document.createElement('td');
-  nameTd.textContent = row.name;
+  const displayName = (row.occurrence_index && row.occurrence_index > 0) 
+    ? `${row.name} #${row.occurrence_index + 1}` 
+    : row.name;
+  nameTd.textContent = displayName;
   tr.appendChild(nameTd);
   
   // Format column
@@ -558,7 +611,8 @@ function createConstantRow(row) {
   deleteBtn.addEventListener('click', () => {
     const skillId = parseInt(document.getElementById('scaling-skill-hidden').value, 10);
     const statId = row.stat_id;
-    SkillDB.db.run('DELETE FROM skill_scaling_constants WHERE skill_id = ? AND stat_id = ?', [skillId, statId]);
+    const occurrenceIndex = row.occurrence_index || 0;
+    SkillDB.db.run('DELETE FROM skill_scaling_constants WHERE skill_id = ? AND stat_id = ? AND occurrence_index = ?', [skillId, statId, occurrenceIndex]);
     renderConstantsTable();
     loadScaling(); // Refresh main table to remove locks
   });
@@ -577,6 +631,7 @@ function saveConstants() {
   
   rows.forEach(row => {
     const statId = row.getAttribute('data-stat-id');
+    const occurrenceIndex = parseInt(row.getAttribute('data-occurrence-index') || '0', 10);
     const values = {
       value0: row.querySelector('[data-value="0"]').value,
       value1: row.querySelector('[data-value="1"]').value,
@@ -589,18 +644,18 @@ function saveConstants() {
     };
     
     // Delete existing constant entry
-    SkillDB.db.run('DELETE FROM skill_scaling_constants WHERE skill_id = ? AND stat_id = ?', 
-                   [skillId, statId]);
+    SkillDB.db.run('DELETE FROM skill_scaling_constants WHERE skill_id = ? AND stat_id = ? AND occurrence_index = ?', 
+                   [skillId, statId, occurrenceIndex]);
     
     // Insert new constant entry (only if at least one value is marked constant)
     if (values.value0_constant || values.value1_constant || 
         values.value2_constant || values.value3_constant) {
       SkillDB.db.run(`
         INSERT INTO skill_scaling_constants 
-        (skill_id, stat_id, value0, value1, value2, value3, 
+        (skill_id, stat_id, occurrence_index, value0, value1, value2, value3, 
          value0_constant, value1_constant, value2_constant, value3_constant)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `, [skillId, statId, values.value0, values.value1, values.value2, values.value3,
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `, [skillId, statId, occurrenceIndex, values.value0, values.value1, values.value2, values.value3,
           values.value0_constant, values.value1_constant, 
           values.value2_constant, values.value3_constant]);
     }
@@ -615,24 +670,28 @@ function moveToConstants(statId, statName, statFormat) {
   const skillId = parseInt(document.getElementById('scaling-skill-hidden').value, 10);
   if (Number.isNaN(skillId)) return;
   
-  // Check if already exists in constants
-  const checkStmt = SkillDB.db.prepare('SELECT COUNT(*) FROM skill_scaling_constants WHERE skill_id = ? AND stat_id = ?');
-  checkStmt.bind([skillId, statId]);
+  // Get the occurrence index from the current row
+  const currentRow = document.querySelector(`#scaling-table tbody tr[data-stat-id="${statId}"]`);
+  const occurrenceIndex = parseInt(currentRow?.getAttribute('data-occurrence-index') || '0', 10);
+  
+  // Check if already exists in constants for this occurrence
+  const checkStmt = SkillDB.db.prepare('SELECT COUNT(*) FROM skill_scaling_constants WHERE skill_id = ? AND stat_id = ? AND occurrence_index = ?');
+  checkStmt.bind([skillId, statId, occurrenceIndex]);
   const exists = checkStmt.step() ? checkStmt.get()[0] : 0;
   checkStmt.free();
   
   if (exists > 0) {
-    alert('This stat already has constant values');
+    alert('This stat occurrence already has constant values');
     return;
   }
   
   // Save to database first
   SkillDB.db.run(`
     INSERT INTO skill_scaling_constants 
-    (skill_id, stat_id, value0, value1, value2, value3, 
+    (skill_id, stat_id, occurrence_index, value0, value1, value2, value3, 
      value0_constant, value1_constant, value2_constant, value3_constant)
-    VALUES (?, ?, 0, 0, 0, 0, 0, 0, 0, 0)
-  `, [skillId, statId]);
+    VALUES (?, ?, ?, 0, 0, 0, 0, 0, 0, 0, 0)
+  `, [skillId, statId, occurrenceIndex]);
   
   // Refresh both tables
   loadScaling();

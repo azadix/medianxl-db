@@ -171,9 +171,10 @@ export default class Skill {
      * @param {Object} db - Database instance
      * @param {number} level - Skill level
      * @param {string} statKey - Stat key to get values for
+     * @param {number} occurrenceIndex - Occurrence index for duplicate stats (default: 0)
      * @returns {Object|null} Scaling values object or null if not found
      */
-    getScalingValues(db, level, statKey) {
+    getScalingValues(db, level, statKey, occurrenceIndex = 0) {
         if (!db || !this.skillId || !statKey) return null;
         
         try {
@@ -184,9 +185,9 @@ export default class Skill {
                        s.name as stat_name, s.format
                 FROM skill_scaling_constants ssc
                 JOIN stats s ON s.id = ssc.stat_id
-                WHERE ssc.skill_id = ? AND LOWER(s.key) = ?
+                WHERE ssc.skill_id = ? AND LOWER(s.key) = ? AND ssc.occurrence_index = ?
             `);
-            constantStmt.bind([this.skillId, statKey.toLowerCase()]);
+            constantStmt.bind([this.skillId, statKey.toLowerCase(), occurrenceIndex]);
             
             let constantValues = null;
             if (constantStmt.step()) {
@@ -206,9 +207,9 @@ export default class Skill {
                 SELECT ss.value0, ss.value1, ss.value2, ss.value3, s.name as stat_name, s.format
                 FROM skill_scaling ss
                 JOIN stats s ON s.id = ss.stat_id
-                WHERE ss.skill_id = ? AND ss.level = ? AND LOWER(s.key) = ?
+                WHERE ss.skill_id = ? AND ss.level = ? AND LOWER(s.key) = ? AND ss.occurrence_index = ?
             `);
-            scalingStmt.bind([this.skillId, level, statKey.toLowerCase()]);
+            scalingStmt.bind([this.skillId, level, statKey.toLowerCase(), occurrenceIndex]);
             
             let result = null;
             if (scalingStmt.step()) {

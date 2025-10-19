@@ -95,11 +95,28 @@ export async function initDatabase() {
       skill_id INTEGER NOT NULL,
       level INTEGER NOT NULL,
       stat_id INTEGER NOT NULL,
+      occurrence_index INTEGER NOT NULL DEFAULT 0,
       value0 REAL NOT NULL,
       value1 REAL NOT NULL,
       value2 REAL NOT NULL,
       value3 REAL NOT NULL,
-      PRIMARY KEY (skill_id, level, stat_id),
+      PRIMARY KEY (skill_id, level, stat_id, occurrence_index),
+      FOREIGN KEY (skill_id) REFERENCES skills(id),
+      FOREIGN KEY (stat_id) REFERENCES stats(id)
+    );
+    CREATE TABLE skill_scaling_constants (
+      skill_id INTEGER NOT NULL,
+      stat_id INTEGER NOT NULL,
+      occurrence_index INTEGER NOT NULL DEFAULT 0,
+      value0 REAL DEFAULT 0,
+      value1 REAL DEFAULT 0,
+      value2 REAL DEFAULT 0,
+      value3 REAL DEFAULT 0,
+      value0_constant BOOLEAN DEFAULT 0,
+      value1_constant BOOLEAN DEFAULT 0,
+      value2_constant BOOLEAN DEFAULT 0,
+      value3_constant BOOLEAN DEFAULT 0,
+      PRIMARY KEY (skill_id, stat_id, occurrence_index),
       FOREIGN KEY (skill_id) REFERENCES skills(id),
       FOREIGN KEY (stat_id) REFERENCES stats(id)
     );
@@ -126,7 +143,7 @@ export async function initDatabase() {
   `);
 
   // Initialize with some basic data
-  SkillDB.db.run(`INSERT INTO classes (name, image_prefix) VALUES ('Amazon', 'ama'), ('Assassin', 'ass'), ('Barbarian', 'bar'), ('Druid', 'dru'), ('Necromancer', 'nec'), ('Paladin', 'pal'), ('Sorceress', 'sor'), ('Shared', 'shared')`);
+  SkillDB.db.run(`INSERT INTO classes (name, image_prefix) VALUES ('Amazon', 'ama'), ('Assassin', 'ass'), ('Barbarian', 'bar'), ('Druid', 'dru'), ('Necromancer', 'nec'), ('Paladin', 'pal'), ('Sorceress', 'sor'), ('Other', 'shared')`);
   
   // Initialize sections
   await import('./edit-skills.js').then(m => m.initializeSkills());

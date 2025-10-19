@@ -101,7 +101,7 @@ medianxl-db/
 ### Database Schema
 ```sql
 -- Core tables
-classes (id, name, image_prefix)
+classes (id, name, image_prefix) -- image_prefix stores just the prefix (ama, bar, shared, etc.)
 classTabs (id, class_id, tab_index, name)
 skills (id, name, display_name, class_id, tab_index, row, col, image, restriction, description, skill_effect)
 skilltags (id, name)
@@ -109,8 +109,8 @@ skill_skilltags (skill_id, tag_id) -- Many-to-many relationship
 
 -- Stats and scaling system
 stats (id, key, name, description, format)
-skill_scaling (skill_id, level, stat_id, value0, value1, value2, value3)
-skill_scaling_constants (skill_id, stat_id, value0, value1, value2, value3, value0_constant, value1_constant, value2_constant, value3_constant)
+skill_scaling (skill_id, level, stat_id, occurrence_index, value0, value1, value2, value3)
+skill_scaling_constants (skill_id, stat_id, occurrence_index, value0, value1, value2, value3, value0_constant, value1_constant, value2_constant, value3_constant)
 skill_max_levels (skill_id, base_max_level, affected_by_specialization, can_add_points)
 skill_prerequisites (id, skill_id, requirement_type, requirement_value, target_skill_id, target_tab_id, description)
 ```
@@ -188,16 +188,57 @@ skill_prerequisites (id, skill_id, requirement_type, requirement_value, target_s
 - **Auto-loading**: Automatically loads data when selections change
 - **Level indicators**: Visual tags showing existing scaling levels
 - **Template validation**: Real-time syntax checking
+- **Multi-instance scaling**: Support for multiple instances of the same stat with separate scaling values
+- **Ordered stat display**: Stats appear in scaling section in the order they appear in skill descriptions
 
-### 6. Tag System
-**Location**: `tag-constants.js`
+### 6. Multi-Instance Scaling System
+**Location**: `edit/edit-scaling.js`, `utils.js`, `skills/Skill.js`
+
+**Problem Solved**:
+- Previously, skills with multiple instances of the same stat (e.g., three `{{damage}}` lines) would share the same scaling values
+- Stats appeared alphabetically in the scaling editor instead of in description order
+
+**Solution**:
+- **Occurrence Tracking**: Each stat instance gets a unique `occurrence_index` (0, 1, 2, etc.)
+- **Separate Scaling Values**: Each instance can have completely different scaling values
+- **Visual Indicators**: Duplicate stats display as "Damage #2", "Damage #3" etc.
+- **Order Preservation**: Stats appear in scaling section in the exact order they appear in skill descriptions
+
+**Database Schema Changes**:
+- Added `occurrence_index` column to `skill_scaling` and `skill_scaling_constants` tables
+- Updated PRIMARY KEY to include `occurrence_index` for proper uniqueness
+- Default value of 0 maintains backward compatibility
+
+**Implementation Details**:
+- **Stat Order Extraction**: Parses `skill_effect` to find stats in appearance order with occurrence tracking
+- **Placeholder Expansion**: Each `{{stat}}` placeholder gets its correct scaling values based on occurrence index
+- **Constants Support**: Constants can be set for specific occurrences of duplicate stats
+- **Automatic Migration**: Existing databases are automatically migrated to support the new schema
+
+**Example Usage**:
+```
+Skill Effect:
+Deals {{damage}} physical damage
+Also deals {{damage}} fire damage  
+And {{damage}} cold damage
+
+Scaling Section will show:
+- Damage (first instance)
+- Damage #2 (second instance) 
+- Damage #3 (third instance)
+
+Each can have completely different scaling values.
+```
+
+### 7. Tag System
+**Location**: `utils.js`
 
 **Tag Groups**:
-- **Skill Category**: 17 tags
+- **Skill Category**: 16 tags
 - **Damage**: 9 tags
 - **Summon**: 3 tags
 - **Teleport**: 3 tags
-- **Modifier**: 2 tags
+- **Custom**: 6 tags
 
 **Features**:
 - Centralized tag definitions shared across the application
@@ -233,7 +274,7 @@ skill_prerequisites (id, skill_id, requirement_type, requirement_value, target_s
 - **Ultimate**: Only one Ultimate skill per class allowed
 - Tooltips display restriction messages when attempting to allocate beyond limits
 
-### 8. Dynamic Skill Calculations
+### 9. Dynamic Skill Calculations
 **Location**: `skill-calculations.js`
 
 **Max Level Modifiers**:
@@ -246,7 +287,7 @@ skill_prerequisites (id, skill_id, requirement_type, requirement_value, target_s
 - Prevents allocation of groups of skills when devotion is active
 - Real-time checking as skills are allocated
 
-### 9. Python Data Validation Suite
+### 10. Python Data Validation Suite
 **Location**: `py/` folder
 
 **Scripts**:

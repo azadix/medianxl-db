@@ -84,6 +84,6 @@ export function renderSkillCard(cardData) {
  * @returns {string} HTML for the skill icon
  */
 export function getSkillIcon(image, className) {
-    return getSkillIconHTML(image, className);
+    return getSkillIconHTML(image, className, '', window.SkillDB?.db);
 }
 

@@ -123,61 +123,61 @@
   <div id="skills-section" class="box" style="display:block;">
   <form id="skill-form" class="mb-3">
     <div class="columns is-multiline">
-      <div class="column is-one-quarter">
+      <div class="column py-1 is-one-quarter">
         <label class="label">Name</label>
         <input class="input" type="text" id="name" required>
       </div>
 
-      <div class="column is-one-quarter">
+      <div class="column py-1 is-one-quarter">
         <label class="label">Display Name</label>
         <input class="input" type="text" id="display_name" required>
       </div>
 
-      <div class="column is-one-quarter">
+      <div class="column py-1 is-one-quarter">
         <label class="label">Class</label>
         <div class="select is-fullwidth">
           <select id="class_id"></select>
         </div>
       </div>
 
-      <div class="column is-one-quarter">
+      <div class="column py-1 is-one-quarter">
         <label class="label">Tab</label>
         <div class="select is-fullwidth">
           <select id="tab_index"></select>
         </div>
       </div>
 
-      <div class="column is-one-quarter">
+      <div class="column py-1 is-one-fifth">
         <label class="label">Row</label>
         <input class="input" type="number" id="row" value="0">
       </div>
 
-      <div class="column is-one-quarter">
+      <div class="column py-1 is-one-fifth">
         <label class="label">Col</label>
         <input class="input" type="number" id="col" value="0">
       </div>
 
-      <div class="column is-one-quarter">
+      <div class="column py-1 is-one-fifth">
         <label class="label">Image Path</label>
         <input class="input" type="text" id="image" value="icons-shared_missing.png">
       </div>
 
-      <div class="column is-half">
-        <label class="label">Restriction</label>
-        <textarea class="textarea" id="restriction" rows="1" placeholder="Optional restriction text (one per line)"></textarea>
-      </div>
-
-      <div class="column is-half">
+      <div class="column py-1 is-two-fifths">
         <label class="label">Description</label>
         <textarea class="textarea" id="description" rows="1" placeholder="Main skill description (first line only)"></textarea>
       </div>
 
-      <div class="column is-full">
+      <div class="column py-1 is-full">
+        <label class="label">Restriction</label>
+        <textarea class="textarea" id="restriction" rows="1" placeholder="Optional restriction text (one per line)"></textarea>
+      </div>
+
+      <div class="column py-1 is-full">
         <label class="label">Skill Effect</label>
         <textarea class="textarea" id="skill_effect" rows="4" placeholder="Detailed skill effects with {{stat}} and [[skill]] placeholders"></textarea>
       </div>
 
-      <div class="column is-full">
+      <div class="column py-2 is-full">
         <label class="label">Tags</label>
         <div id="tag-checkboxes"></div>
       </div>

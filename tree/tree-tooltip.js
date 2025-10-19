@@ -366,7 +366,7 @@ async function buildTooltipContent(skillData, level, db, warningMessage = '') {
     
     // Skill name and icon
     html += '<div class="tooltip-header">';
-    html += `<div class="tooltip-icon">${getSkillIconHTML(skillData.image, skillData.className, 'is-64x64')}</div>`;
+    html += `<div class="tooltip-icon">${getSkillIconHTML(skillData.image, skillData.className, 'is-64x64', window.SkillDB?.db)}</div>`;
     
     // Skill category tags (if any)
     let tagsHtml = ''

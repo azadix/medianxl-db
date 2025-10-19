@@ -86,18 +86,8 @@ export function getIconHTML(imagePath, className = '') {
 // Accepts a raw image filename stored in DB (e.g., "image.png") and the human-readable class name
 // Maps the class to a directory prefix and returns an <img> element pointing to icons/<prefix>/<filename>
 // For class "Other", shared images are used (icons/shared)
-const CLASS_TO_PREFIX = {
-    "Amazon": "ama",
-    "Sorceress": "sor",
-    "Necromancer": "nec",
-    "Paladin": "pal",
-    "Barbarian": "bar",
-    "Druid": "dru",
-    "Assassin": "ass",
-    "Other": "shared"
-};
 
-export function getSkillIconHTML(imageFileName, humanClassName, className = '') {
+export function getSkillIconHTML(imageFileName, humanClassName, className = '', db = null) {
     const file = (imageFileName && imageFileName.trim().length > 0) ? imageFileName.trim() : MISSING_IMAGE_NAME;
 
     // If atlas-style filename, render via atlas regardless of class (shared or class-specific handled by regex)
@@ -107,7 +97,27 @@ export function getSkillIconHTML(imageFileName, humanClassName, className = '') 
 
     // Otherwise, simple file path under class-derived directory; if name indicates shared, force shared
     const isExplicitShared = /^shared\//.test(file) || /(^|-)shared(_|\.)/i.test(file);
-    const prefix = isExplicitShared ? 'shared' : (CLASS_TO_PREFIX[humanClassName] || 'shared');
+    
+    let prefix = 'shared'; // default fallback
+    
+    if (!isExplicitShared && humanClassName && db) {
+        // Get prefix from database
+        try {
+            const stmt = db.prepare('SELECT image_prefix FROM classes WHERE name = ?');
+            stmt.bind([humanClassName]);
+            if (stmt.step()) {
+                const dbPrefix = stmt.get()[0];
+                if (dbPrefix) {
+                    prefix = dbPrefix; // Database stores just the prefix (ama, bar, etc.)
+                }
+            }
+            stmt.free();
+        } catch (error) {
+            console.warn('Error getting class prefix from database:', error);
+            // If database query fails, we're already in a bad state - just use 'shared' fallback
+        }
+    }
+    
     const path = file === MISSING_IMAGE_NAME ? `icons/${MISSING_IMAGE_NAME}` : `icons/${prefix}/${file}`;
     return `<img src="${path}" class="image ${className}">`;
 }
@@ -144,11 +154,14 @@ function autoExpandStatToken(db, statKey) {
 
 // Expand using values sourced from skill_scaling for a given skill and level.
 // If inline values are provided in the token, they take precedence; otherwise fetch by stat key.
-// Expected schema: stats(key TEXT UNIQUE), skill_scaling(skill_id, level, stat_id, value)
+// Expected schema: stats(key TEXT UNIQUE), skill_scaling(skill_id, level, stat_id, occurrence_index, value)
 // Now also supports simple {{mana_cost}} which auto-expands to {{mana_cost:%value0%}} based on format
 // Also supports [[skill_name]] which expands to skill's display_name in success color
 export async function expandPlaceholdersWithScaling(db, skillId, level, description, skillName = null) {
     if (!description) return '';
+    
+    // Track occurrence counts for each stat key to maintain order
+    const occurrenceCounts = new Map();
     
     // First, expand skill name placeholders [[skill_name]]
     let expandedDescription = description.replace(/\[\[(.*?)\]\]/g, (match, skillName) => {
@@ -177,6 +190,10 @@ export async function expandPlaceholdersWithScaling(db, skillId, level, descript
     return expandedDescription.replace(/\{\{(.*?)\}\}/g, (match, token) => {
         const [rawKey, rawValues] = token.split(':').map(s => s.trim());
         const key = (rawKey || '').toLowerCase();
+        
+        // Track occurrence index for this stat key
+        const occurrenceIndex = occurrenceCounts.get(key) || 0;
+        occurrenceCounts.set(key, occurrenceIndex + 1);
         
         // If no values provided, auto-expand based on stat format
         let values = [];
@@ -253,7 +270,7 @@ export async function expandPlaceholdersWithScaling(db, skillId, level, descript
                 displayNameStmt.free();
                 
                 const skill = new Skill({ id: actualSkillName, name: displayName, skillId: skillId });
-                const scalingValues = skill.getScalingValues(db, level, key);
+                const scalingValues = skill.getScalingValues(db, level, key, occurrenceIndex);
                 
                 if (scalingValues) {
                     const v0 = scalingValues.value0 ?? '';
@@ -326,11 +343,11 @@ export function isLocalhost() {
  * Shared across the application for consistent tag categorization
  */
 export const TAG_GROUPS = {
-    "Skill Category": [8, 9, 11, 12, 14, 15, 16, 17, 22, 25, 26, 27, 28, 29, 32, 35, 36],
+    "Skill Category": [8, 9, 11, 12, 14, 15, 17, 22, 25, 26, 27, 28, 29, 32, 35, 36],
     "Damage": [1, 2, 3, 4, 5, 6, 7, 21, 23],
     "Summon": [13, 30, 31],
     "Teleport": [10, 20, 24],
-    "Modifier": [19, 18]
+    "Custom": [16, 18, 19, 33, 34, 37]
 };
 
 // Export individual groups for convenience
@@ -338,4 +355,4 @@ export const SKILL_CATEGORY_TAG_IDS = TAG_GROUPS["Skill Category"];
 export const DAMAGE_TAG_IDS = TAG_GROUPS["Damage"];
 export const SUMMON_TAG_IDS = TAG_GROUPS["Summon"];
 export const TELEPORT_TAG_IDS = TAG_GROUPS["Teleport"];
-export const MODIFIER_TAG_IDS = TAG_GROUPS["Modifier"];
+export const MODIFIER_TAG_IDS = TAG_GROUPS["Custom"];
