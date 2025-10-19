@@ -8,7 +8,7 @@ def export_database_to_json(db_name):
     """Export all tables from the SQLite database to separate JSON files"""
     
     # Database path
-    db_path = f'../{db_name}'
+    db_path = f'../db/{db_name}'
     
     if not os.path.exists(db_path):
         print(f"Database file not found: {db_path}")
@@ -91,7 +91,7 @@ def build_database_from_json(db_name):
         return
     
     # Database path
-    db_path = f'../{db_name}'
+    db_path = f'../db/{db_name}'
     
     # Remove existing database if it exists
     if os.path.exists(db_path):

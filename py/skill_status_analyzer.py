@@ -15,7 +15,7 @@ def analyze_skill_status(db_path):
         todo_skills = [line.strip() for line in f.readlines() if line.strip()]
 
     # Connect to database
-    db_full_path = f'../{db_path}' if not db_path.startswith('/') and not db_path.startswith('../') else db_path
+    db_full_path = f'../db/{db_path}' if not db_path.startswith('/') and not db_path.startswith('../') else db_path
     conn = sqlite3.connect(db_full_path)
     cursor = conn.cursor()
     

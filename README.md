@@ -22,7 +22,8 @@ medianxl-db/
 ├── script.js               # Skills viewer functionality
 ├── utils.js                # Utility functions
 ├── style.css               # Main styling
-├── skills.sqlite           # SQLite database
+├── db/                     # Database files
+│   └── 2.11.sqlite        # SQLite database (version 2.11)
 ├── character/              # Character management
 │   ├── Character.js        # Character class and state management
 │   └── character-state.js  # Character state wrapper functions
@@ -50,7 +51,7 @@ medianxl-db/
 - **`script.js`** - Skills viewer with detail display
 - **`utils.js`** - Utility functions for placeholder expansion and icon handling
 - **`style.css`** - Main styling
-- **`skills-%VERSION%.sqlite`** - SQLite database containing all skills data
+- **`db/%VERSION%.sqlite`** - SQLite database containing all skills data
 
 #### Character Management (`character/` folder)
 - **`Character.js`** - Character class with instance-based state management

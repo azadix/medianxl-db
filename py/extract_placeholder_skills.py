@@ -10,7 +10,7 @@ import sys
 import argparse
 from pathlib import Path
 
-def extract_skills_with_placeholders(db_path='../skills-2.11.sqlite'):
+def extract_skills_with_placeholders(db_path='../db/2.11.sqlite'):
     """
     Extract skills that contain {{*}} placeholder format in their descriptions.
     
@@ -20,7 +20,7 @@ def extract_skills_with_placeholders(db_path='../skills-2.11.sqlite'):
     Returns:
         tuple: (skills_list, all_stat_keys) where skills_list contains skill data and all_stat_keys contains all available stat keys
     """
-    db_full_path = f'../{db_path}' if not db_path.startswith('/') and not db_path.startswith('../') else db_path
+    db_full_path = f'../db/{db_path}' if not db_path.startswith('/') and not db_path.startswith('../') else db_path
     if not Path(db_full_path).exists():
         print(f"Error: Database file '{db_full_path}' not found!")
         return [], []

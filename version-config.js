@@ -86,7 +86,7 @@ export function setCurrentVersion(version) {
  */
 export function getDatabaseFile() {
     const version = getCurrentVersion();
-    return `skills-${versionToString(version)}.sqlite`;
+    return `db/${versionToString(version)}.sqlite`;
 }
 
 /**

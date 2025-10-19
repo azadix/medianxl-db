@@ -98,11 +98,11 @@ def check_placeholder_validity(cursor, skill_id, skill_name, description, show_n
     return issues
 
 
-def validate_skills(db_path='../skills-2.11.sqlite', show_no_scaling_warnings=True):
+def validate_skills(db_path='../db/2.11.sqlite', show_no_scaling_warnings=True):
     """
     Main validation function.
     """
-    db_full_path = f'../{db_path}' if not db_path.startswith('/') and not db_path.startswith('../') else db_path
+    db_full_path = f'../db/{db_path}' if not db_path.startswith('/') and not db_path.startswith('../') else db_path
     conn = sqlite3.connect(db_full_path)
     cursor = conn.cursor()
     

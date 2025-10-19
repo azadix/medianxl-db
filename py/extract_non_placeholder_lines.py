@@ -33,11 +33,11 @@ def is_placeholder_line(line):
     return False
 
 
-def extract_non_placeholder_lines(db_path='../skills-2.11.sqlite'):
+def extract_non_placeholder_lines(db_path='2.11.sqlite'):
     """
     Extract all non-placeholder text lines from skill descriptions and restrictions.
     """
-    db_full_path = f'../{db_path}' if not db_path.startswith('/') and not db_path.startswith('../') else db_path
+    db_full_path = f'../db/{db_path}' if not db_path.startswith('/') and not db_path.startswith('../') else db_path
     conn = sqlite3.connect(db_full_path)
     cursor = conn.cursor()
     

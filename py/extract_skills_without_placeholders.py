@@ -8,7 +8,7 @@ import sqlite3
 import argparse
 from pathlib import Path
 
-def extract_skills_without_placeholders(db_path='../skills-2.11.sqlite'):
+def extract_skills_without_placeholders(db_path='../db/2.11.sqlite'):
     """
     Extract skills that have descriptions but do NOT contain {{*}} placeholder format.
     
@@ -18,7 +18,7 @@ def extract_skills_without_placeholders(db_path='../skills-2.11.sqlite'):
     Returns:
         list: List of tuples containing (skill_id, skill_name, display_name, description, class_name)
     """
-    db_full_path = f'../{db_path}' if not db_path.startswith('/') and not db_path.startswith('../') else db_path
+    db_full_path = f'../db/{db_path}' if not db_path.startswith('/') and not db_path.startswith('../') else db_path
     if not Path(db_full_path).exists():
         print(f"Error: Database file '{db_full_path}' not found!")
         return []
