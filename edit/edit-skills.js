@@ -8,11 +8,17 @@ export function initializeSkills() {
   populateTagCheckboxes();
   refreshSkillsTable();
   
-  // Skills form submission
-  document.getElementById('skill-form').addEventListener('submit', (e) => {
-    e.preventDefault();
-    saveSkill();
-  });
+  // Skills form button click handler
+  const skillForm = document.getElementById('skill-form');
+  if (!skillForm.hasAttribute('data-initialized')) {
+    skillForm.setAttribute('data-initialized', 'true');
+    skillForm.addEventListener('click', (e) => {
+      if (e.target.type === 'submit') {
+        e.preventDefault();
+        saveSkill();
+      }
+    });
+  }
   
   // Class selection change handler
   document.getElementById('class_id').addEventListener('change', function() {
@@ -280,7 +286,25 @@ function editSkill(id) {
   if (stmt.step()) {
     const [skillId, name, displayName, classId, tabIndex, row, col, image, restriction, description, skillEffect] = stmt.get();
     
+    // Debug: log the retrieved values
+    console.log('Editing skill:', { skillId, name, displayName, classId, tabIndex, row, col, image, restriction, description, skillEffect });
+    
+    // Check if name is null and handle it properly
+    if (name === null || name === undefined) {
+      console.error('Skill has null name in database:', skillId);
+      alert('Error: Skill name is required.');
+      return;
+    }
+    
     document.getElementById('name').value = name;
+    
+    // Check if displayName is null and handle it properly
+    if (displayName === null || displayName === undefined) {
+      console.error('Skill has null display_name in database:', skillId);
+      alert('Error: Skill display name is required.');
+      return;
+    }
+    
     document.getElementById('display_name').value = displayName;
     document.getElementById('class_id').value = classId;
     populateTabSelect(classId);

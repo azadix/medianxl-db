@@ -84,6 +84,16 @@ function saveStat() {
   const format = document.getElementById("stat-format").value.trim();
   const description = document.getElementById("stat-description").value.trim();
 
+  // Validate required fields
+  if (!key || key === '') {
+    alert('Error: Stat key cannot be empty');
+    return;
+  }
+  if (!name || name === '') {
+    alert('Error: Stat name cannot be empty');
+    return;
+  }
+
   if (window.editingStatId) {
     SkillDB.db.run(`
       UPDATE stats
@@ -95,6 +105,16 @@ function saveStat() {
     document.getElementById("stat-cancel").style.display = 'none';
     document.querySelector("#stat-form button[type=submit]").textContent = "Insert Stat";
   } else {
+    // Check if stat key already exists
+    const checkStmt = SkillDB.db.prepare('SELECT id FROM stats WHERE key = ?');
+    checkStmt.bind([key]);
+    if (checkStmt.step()) {
+      alert('Error: A stat with this key already exists');
+      checkStmt.free();
+      return;
+    }
+    checkStmt.free();
+    
     SkillDB.db.run(`
       INSERT INTO stats (key, name, format, description)
       VALUES (?, ?, ?, ?)
