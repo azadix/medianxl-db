@@ -6,6 +6,7 @@ Extract all text lines that are NOT template placeholders from skill description
 import sqlite3
 import re
 import sys
+import os
 import argparse
 
 
@@ -38,6 +39,11 @@ def extract_non_placeholder_lines(db_path='2.11.sqlite'):
     Extract all non-placeholder text lines from skill descriptions and restrictions.
     """
     db_full_path = f'../db/{db_path}' if not db_path.startswith('/') and not db_path.startswith('../') else db_path
+    
+    if not os.path.exists(db_full_path):
+        print(f"Error: Database file not found: {db_full_path}")
+        sys.exit(1)
+    
     conn = sqlite3.connect(db_full_path)
     cursor = conn.cursor()
     

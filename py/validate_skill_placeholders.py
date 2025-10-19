@@ -14,6 +14,7 @@ by the edit page's client-side validation before saving.
 import sqlite3
 import re
 import sys
+import os
 import argparse
 from collections import defaultdict
 
@@ -103,6 +104,11 @@ def validate_skills(db_path='../db/2.11.sqlite', show_no_scaling_warnings=True):
     Main validation function.
     """
     db_full_path = f'../db/{db_path}' if not db_path.startswith('/') and not db_path.startswith('../') else db_path
+    
+    if not os.path.exists(db_full_path):
+        print(f"Error: Database file not found: {db_full_path}")
+        sys.exit(1)
+    
     conn = sqlite3.connect(db_full_path)
     cursor = conn.cursor()
     

@@ -7,6 +7,7 @@ from the skills.sqlite database.
 import sqlite3
 import re
 import sys
+import os
 import argparse
 from pathlib import Path
 
@@ -21,8 +22,9 @@ def extract_skills_with_placeholders(db_path='../db/2.11.sqlite'):
         tuple: (skills_list, all_stat_keys) where skills_list contains skill data and all_stat_keys contains all available stat keys
     """
     db_full_path = f'../db/{db_path}' if not db_path.startswith('/') and not db_path.startswith('../') else db_path
-    if not Path(db_full_path).exists():
-        print(f"Error: Database file '{db_full_path}' not found!")
+    
+    if not os.path.exists(db_full_path):
+        print(f"Error: Database file not found: {db_full_path}")
         return [], []
     
     try:

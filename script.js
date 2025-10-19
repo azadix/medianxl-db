@@ -37,6 +37,12 @@ const SkillDB = {
 
 // Updated initializeDataTable function - no file checking
 async function initializeDataTable(skillsData) {
+    // Use DataTable's built-in filtering instead of recreating if it already exists
+    if (skillsDataTable) {
+        skillsDataTable.draw();
+        return;
+    }
+    
     // Destroy existing DataTable if it exists
     if (skillsDataTable) {
         skillsDataTable.destroy();

@@ -322,6 +322,58 @@ function saveSkill() {
   const description = document.getElementById('description').value.trim();
   const skillEffect = document.getElementById('skill_effect').value.trim();
   
+  // Validate empty skill names
+  if (!name || name.trim() === '') {
+    alert('Error: Skill name cannot be empty');
+    return;
+  }
+  if (!displayName || displayName.trim() === '') {
+    alert('Error: Display name cannot be empty');
+    return;
+  }
+  
+  // Validate foreign key constraint for class_id
+  const classCheck = SkillDB.db.exec('SELECT id FROM classes WHERE id = ?', [classId]);
+  if (!classCheck || classCheck.length === 0 || classCheck[0].values.length === 0) {
+    alert('Error: Invalid class selected');
+    return;
+  }
+  
+  // Validate maximum length
+  const maxLengths = {
+    name: 100,
+    displayName: 100,
+    image: 50,
+    restriction: 250,
+    description: 500,
+    skillEffect: 1000
+  };
+
+  if (name.length > maxLengths.name) {
+    alert(`Error: Skill name too long (max ${maxLengths.name} characters)`);
+    return;
+  }
+  if (displayName.length > maxLengths.displayName) {
+    alert(`Error: Display name too long (max ${maxLengths.displayName} characters)`);
+    return;
+  }
+  if (image.length > maxLengths.image) {
+    alert(`Error: Image path too long (max ${maxLengths.image} characters)`);
+    return;
+  }
+  if (restriction.length > maxLengths.restriction) {
+    alert(`Error: Restriction too long (max ${maxLengths.restriction} characters)`);
+    return;
+  }
+  if (description.length > maxLengths.description) {
+    alert(`Error: Description too long (max ${maxLengths.description} characters)`);
+    return;
+  }
+  if (skillEffect.length > maxLengths.skillEffect) {
+    alert(`Error: Skill effect too long (max ${maxLengths.skillEffect} characters)`);
+    return;
+  }
+  
   // Validate template syntax
   const validationResult = validateSkillTemplates(description, restriction, skillEffect);
   if (!validationResult.valid) {

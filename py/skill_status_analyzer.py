@@ -1,4 +1,6 @@
 import sqlite3
+import os
+import sys
 import argparse
 
 def analyze_skill_status(db_path):
@@ -16,6 +18,11 @@ def analyze_skill_status(db_path):
 
     # Connect to database
     db_full_path = f'../db/{db_path}' if not db_path.startswith('/') and not db_path.startswith('../') else db_path
+    
+    if not os.path.exists(db_full_path):
+        print(f"Error: Database file not found: {db_full_path}")
+        sys.exit(1)
+    
     conn = sqlite3.connect(db_full_path)
     cursor = conn.cursor()
     
