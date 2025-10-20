@@ -227,7 +227,7 @@ export default class Skill {
                     result = { 
                         statName: constantValues.statName, 
                         format: constantValues.format,
-                        value0: 0, value1: 0, value2: 0, value3: 0,
+                        value0: '???', value1: '???', value2: '???', value3: '???',
                         value0_constant: false, value1_constant: false, value2_constant: false, value3_constant: false
                     };
                 }
