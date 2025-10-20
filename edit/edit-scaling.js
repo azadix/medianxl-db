@@ -2,6 +2,7 @@
 import { SkillDB } from './edit-core.js';
 import { DropdownList } from './DropdownList.js';
 import { ToastManager } from '../tree/ToastManager.js';
+import { formulaEvaluator } from '../skills/formula-evaluator.js';
 
 // Initialize ToastManager
 const toastManager = new ToastManager();
@@ -43,8 +44,6 @@ export async function initializeScaling() {
   
   // Scaling clear button
   document.getElementById('scaling-clear').addEventListener('click', clearScaling);
-  
-  // Remove the add-constant-stat button handler since we're using move buttons instead
   
   // Auto-load and suggest scaling when level changes
   const scalingLevelInput = document.getElementById('scaling-level');
@@ -202,20 +201,30 @@ function renderScalingTable(rows) {
     
     for (let i = 0; i < 4; i++) {
       const valueTd = document.createElement('td');
+      
+      // Create container for input + checkbox
+      const container = document.createElement('div');
+      container.className = 'field has-addons mb-0';
+      
+      const inputControl = document.createElement('div');
+      inputControl.className = 'control is-expanded';
+      
       const input = document.createElement('input');
-      input.type = 'number';
+      input.type = 'text';
       input.className = 'input is-small';
+      input.placeholder = `Value${i} or formula`;
+      input.title = 'Enter number or formula using blvl, slvl, clvl. Functions: floor(), ceil(), min(), max()';
+      input.setAttribute('data-value-index', i);
       
       // Check if this specific value is marked as constant
       if (constantData && constantData[`value${i}_constant`]) {
         input.value = constantData[`value${i}`] || '';
-        input.disabled = true;
-        input.className = 'input is-small is-static';
-        input.title = 'This value is constant (set below)';
+        input.classList.add('is-warning'); // Visual indicator
+        input.setAttribute('data-is-constant', 'true');
       } else {
-        // Use row value
         input.value = row[`value${i}`] || '';
         input.step = 'any';
+      }
         
         // Disable inputs that aren't used in the format
         if ((i === 0 && !hasValue0) || 
@@ -226,26 +235,55 @@ function renderScalingTable(rows) {
           input.placeholder = 'N/A';
         }
         
+      inputControl.appendChild(input);
+      
+      // Create checkbox for constant marking
+      const checkboxControl = document.createElement('div');
+      checkboxControl.className = 'control';
+      checkboxControl.style.display = 'flex';
+      checkboxControl.style.alignItems = 'center';
+      checkboxControl.style.marginLeft = '0.25rem';
+      
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.className = 'checkbox';
+      checkbox.setAttribute('data-constant-checkbox', i);
+      checkbox.title = 'Lock as constant (same value for all levels)';
+      
+      // Set checked state if constant
+      if (constantData && constantData[`value${i}_constant`]) {
+        checkbox.checked = true;
       }
       
-      valueTd.appendChild(input);
+      // Disable checkbox for unused fields
+      if ((i === 0 && !hasValue0) || 
+          (i === 1 && !hasValue1) || 
+          (i === 2 && !hasValue2) || 
+          (i === 3 && !hasValue3)) {
+        checkbox.disabled = true;
+      } else {
+        // Add event listener for checkbox toggle
+        checkbox.addEventListener('change', (e) => {
+          if (e.target.checked) {
+            input.classList.add('is-warning');
+            input.setAttribute('data-is-constant', 'true');
+          } else {
+            input.classList.remove('is-warning');
+            input.removeAttribute('data-is-constant');
+          }
+        });
+      }
+      
+      checkboxControl.appendChild(checkbox);
+      
+      container.appendChild(inputControl);
+      container.appendChild(checkboxControl);
+      valueTd.appendChild(container);
       tr.appendChild(valueTd);
     }
     
     // Actions column
     const actionsTd = document.createElement('td');
-    
-    // Const button - only show if this stat doesn't already have constants
-    if (!constantData) {
-      const constBtn = document.createElement('button');
-      constBtn.className = 'button is-warning is-outlined is-small';
-      constBtn.textContent = 'Const';
-      constBtn.title = 'Move to constants table';
-      constBtn.addEventListener('click', () => {
-        moveToConstants(row.stat_id, row.name, statFormats.get(row.stat_id));
-      });
-      actionsTd.appendChild(constBtn);
-    }
     
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'button is-danger is-outlined is-small';
@@ -346,7 +384,6 @@ function loadScaling() {
   // If no stats are used in description, show empty table
   if (statOrder.length === 0) {
     renderScalingTable([]);
-    renderConstantsTable(); // Make sure to clear constants table too
     document.getElementById('scaling-status').textContent = 'No stats found in skill description';
     return;
   }
@@ -393,7 +430,6 @@ function loadScaling() {
   });
 
   renderScalingTable(rows);
-  renderConstantsTable();
 
   document.getElementById('scaling-status').textContent =
     rows.length > 0
@@ -406,56 +442,98 @@ function saveScaling() {
   const skillId = parseInt(document.getElementById('scaling-skill-hidden').value, 10);
   const level = parseInt(document.getElementById('scaling-level').value, 10);
   
-  // Validate that a skill is selected
   if (Number.isNaN(skillId) || skillId <= 0) {
-    toastManager.showToast('Please select a skill before saving scaling values', true, 'error');
+    toastManager.showToast('Please select a skill before saving', true, 'error');
     return;
   }
   
-  // Validate that a level is selected
   if (Number.isNaN(level) || level <= 0) {
-    toastManager.showToast('Please select a level before saving scaling values', true, 'error');
+    toastManager.showToast('Please select a level before saving', true, 'error');
     return;
   }
   
-  const constants = loadConstants(skillId);
+  // Validate all formulas
+  const validationErrors = validateAllFormulas();
+  if (validationErrors.length > 0) {
+    toastManager.showToast(`Formula validation failed: ${validationErrors.join(', ')}`, true, 'error');
+    return;
+  }
   
   const rows = Array.from(document.querySelectorAll('#scaling-table tbody tr')).map(tr => {
     const statId = parseInt(tr.getAttribute('data-stat-id'), 10);
     const occurrenceIndex = parseInt(tr.getAttribute('data-occurrence-index') || '0', 10);
-    const inputs = tr.querySelectorAll('input[type="number"]:not([disabled])');
-    const constantData = constants.get(`${statId}:${occurrenceIndex}`);
+    const inputs = tr.querySelectorAll('input[data-value-index]');
+    const checkboxes = tr.querySelectorAll('input[data-constant-checkbox]');
     
-    const values = {
+    const rowData = {
       stat_id: statId,
       occurrence_index: occurrenceIndex,
-      value0: inputs[0]?.value || '',
-      value1: inputs[1]?.value || '',
-      value2: inputs[2]?.value || '',
-      value3: inputs[3]?.value || '',
+      scalingValues: {},
+      constantValues: {},
+      constantFlags: {}
     };
     
-    // Set constant values to null so they don't get saved to skill_scaling
-    if (constantData) {
-      if (constantData.value0_constant) values.value0 = null;
-      if (constantData.value1_constant) values.value1 = null;
-      if (constantData.value2_constant) values.value2 = null;
-      if (constantData.value3_constant) values.value3 = null;
+    // Collect values and constant flags
+    for (let i = 0; i < 4; i++) {
+      const input = inputs[i];
+      const checkbox = checkboxes[i];
+      const value = input?.value || '';
+      const isConstant = checkbox?.checked || false;
+      
+      rowData.constantFlags[`value${i}_constant`] = isConstant ? 1 : 0;
+      
+      if (isConstant) {
+        // Save to constants
+        rowData.constantValues[`value${i}`] = value;
+        rowData.scalingValues[`value${i}`] = null; // Don't save to scaling
+      } else {
+        // Save to scaling
+        rowData.scalingValues[`value${i}`] = value;
+      }
     }
     
-    return values;
+    return rowData;
   });
   
-  // Upsert by delete+insert to keep logic simple
+  // Save scaling values
   rows.forEach(r => {
-    // Skip empty rows (no values) or rows where all values are constant
-    if ((r.value0 === '' || r.value0 == null) && (r.value1 === '' || r.value1 == null) && (r.value2 === '' || r.value2 == null) && (r.value3 === '' || r.value3 == null)) {
-      SkillDB.db.run('DELETE FROM skill_scaling WHERE skill_id=? AND level=? AND stat_id=? AND occurrence_index=?', [skillId, level, r.stat_id, r.occurrence_index]);
-      return;
+    const hasScalingData = Object.values(r.scalingValues).some(v => v !== null && v !== '');
+    
+    if (hasScalingData) {
+      SkillDB.db.run('DELETE FROM skill_scaling WHERE skill_id=? AND level=? AND stat_id=? AND occurrence_index=?', 
+                     [skillId, level, r.stat_id, r.occurrence_index]);
+      SkillDB.db.run('INSERT INTO skill_scaling (skill_id, level, stat_id, occurrence_index, value0, value1, value2, value3) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', 
+                     [skillId, level, r.stat_id, r.occurrence_index, 
+                      r.scalingValues.value0 || null, r.scalingValues.value1 || null, 
+                      r.scalingValues.value2 || null, r.scalingValues.value3 || null]);
+    } else {
+      // No scaling data, remove if exists
+      SkillDB.db.run('DELETE FROM skill_scaling WHERE skill_id=? AND level=? AND stat_id=? AND occurrence_index=?', 
+                     [skillId, level, r.stat_id, r.occurrence_index]);
     }
-    SkillDB.db.run('DELETE FROM skill_scaling WHERE skill_id=? AND level=? AND stat_id=? AND occurrence_index=?', [skillId, level, r.stat_id, r.occurrence_index]);
-    SkillDB.db.run('INSERT INTO skill_scaling (skill_id, level, stat_id, occurrence_index, value0, value1, value2, value3) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', [skillId, level, r.stat_id, r.occurrence_index, r.value0 || null, r.value1 || null, r.value2 || null, r.value3 || null]);
   });
+  
+  // Save constants
+  rows.forEach(r => {
+    const hasConstantData = Object.values(r.constantFlags).some(v => v === 1);
+    
+    // Delete existing constant entry
+    SkillDB.db.run('DELETE FROM skill_scaling_constants WHERE skill_id=? AND stat_id=? AND occurrence_index=?', 
+                   [skillId, r.stat_id, r.occurrence_index]);
+    
+    if (hasConstantData) {
+      SkillDB.db.run(`INSERT INTO skill_scaling_constants 
+                     (skill_id, stat_id, occurrence_index, value0, value1, value2, value3, 
+                      value0_constant, value1_constant, value2_constant, value3_constant)
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                     [skillId, r.stat_id, r.occurrence_index,
+                      r.constantValues.value0 || '', r.constantValues.value1 || '',
+                      r.constantValues.value2 || '', r.constantValues.value3 || '',
+                      r.constantFlags.value0_constant, r.constantFlags.value1_constant,
+                      r.constantFlags.value2_constant, r.constantFlags.value3_constant]);
+    }
+  });
+  
   document.getElementById('scaling-status').textContent = `Saved ${rows.length} rows for level ${level}`;
   updateLevelIndicator();
   toastManager.showToast('Skill was saved', true, 'success');
@@ -509,217 +587,40 @@ function loadConstants(skillId) {
   return constants;
 }
 
-function renderConstantsTable() {
-  const skillId = parseInt(document.getElementById('scaling-skill-hidden').value, 10);
-  if (Number.isNaN(skillId)) return;
-  
-  const tbody = document.getElementById('scaling-constants-table').querySelector('tbody');
-  tbody.innerHTML = '';
-  
-  // Load all constants for this skill
-  const stmt = SkillDB.db.prepare(`
-    SELECT ssc.*, s.name, s.format
-    FROM skill_scaling_constants ssc
-    JOIN stats s ON s.id = ssc.stat_id
-    WHERE ssc.skill_id = ?
-    ORDER BY ssc.stat_id, ssc.occurrence_index
-  `);
-  stmt.bind([skillId]);
-  
-  while (stmt.step()) {
-    const row = stmt.getAsObject();
-    const tr = createConstantRow(row);
-    tbody.appendChild(tr);
-  }
-  stmt.free();
-}
 
-function createConstantRow(row) {
-  const tr = document.createElement('tr');
-  tr.setAttribute('data-stat-id', row.stat_id);
-  tr.setAttribute('data-occurrence-index', row.occurrence_index || 0);
-  
-  // Name column - show occurrence indicator for duplicates
-  const nameTd = document.createElement('td');
-  const displayName = (row.occurrence_index && row.occurrence_index > 0) 
-    ? `${row.name} #${row.occurrence_index + 1}` 
-    : row.name;
-  nameTd.textContent = displayName;
-  tr.appendChild(nameTd);
-  
-  // Format column
-  const formatTd = document.createElement('td');
-  const formatCode = document.createElement('code');
-  formatCode.textContent = row.format || '{name}: {value}';
-  formatTd.appendChild(formatCode);
-  tr.appendChild(formatTd);
-  
-  // Value columns with checkboxes - determine which ones are used based on format
-  const formatStr = (row.format || '{name}: {value}').toLowerCase();
-  const hasValue0 = formatStr.includes('{value0}') || formatStr.includes('{value}');
-  const hasValue1 = formatStr.includes('{value1}');
-  const hasValue2 = formatStr.includes('{value2}');
-  const hasValue3 = formatStr.includes('{value3}');
-  
-  for (let i = 0; i < 4; i++) {
-    const valueTd = document.createElement('td');
-    const container = document.createElement('div');
-    container.className = 'field has-addons';
-    
-    const inputControl = document.createElement('div');
-    inputControl.className = 'control';
-    const input = document.createElement('input');
-    input.type = 'number';
-    input.className = 'input is-small';
-    input.value = row[`value${i}`] || '';
-    input.step = 'any';
-    input.setAttribute('data-value', i);
-    
-    // Disable inputs that aren't used in the format
-    if ((i === 0 && !hasValue0) || 
-        (i === 1 && !hasValue1) || 
-        (i === 2 && !hasValue2) || 
-        (i === 3 && !hasValue3)) {
-      input.disabled = true;
-      input.placeholder = 'N/A';
-    }
-    
-    inputControl.appendChild(input);
-    
-    const checkboxControl = document.createElement('div');
-    checkboxControl.className = 'control';
-    checkboxControl.style.display = 'flex';
-    checkboxControl.style.alignItems = 'center';
-    checkboxControl.style.marginLeft = '0.5rem';
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    checkbox.className = 'checkbox';
-    checkbox.setAttribute('data-constant', i);
-    
-    // Set the checked state without triggering events
-    const isChecked = row[`value${i}_constant`] == 1;
-    checkbox.checked = isChecked;
-    
-    // Add event listener after setting the state
-    checkbox.addEventListener('change', saveConstants);
-    
-    // Disable checkboxes for unused fields
-    if ((i === 0 && !hasValue0) || 
-        (i === 1 && !hasValue1) || 
-        (i === 2 && !hasValue2) || 
-        (i === 3 && !hasValue3)) {
-      checkbox.disabled = true;
-    }
-    
-    checkboxControl.appendChild(checkbox);
-    
-    container.appendChild(inputControl);
-    container.appendChild(checkboxControl);
-    valueTd.appendChild(container);
-    tr.appendChild(valueTd);
-  }
-  
-  // Actions column
-  const actionsTd = document.createElement('td');
-  
-  const deleteBtn = document.createElement('button');
-  deleteBtn.className = 'button is-danger is-outlined is-small';
-  deleteBtn.textContent = 'Delete';
-  deleteBtn.addEventListener('click', () => {
-    const skillId = parseInt(document.getElementById('scaling-skill-hidden').value, 10);
-    const statId = row.stat_id;
-    const occurrenceIndex = row.occurrence_index || 0;
-    SkillDB.db.run('DELETE FROM skill_scaling_constants WHERE skill_id = ? AND stat_id = ? AND occurrence_index = ?', [skillId, statId, occurrenceIndex]);
-    renderConstantsTable();
-    loadScaling(); // Refresh main table to remove locks
-  });
-  actionsTd.appendChild(deleteBtn);
-  tr.appendChild(actionsTd);
-  
-  return tr;
-}
 
-function saveConstants() {
-  const skillId = parseInt(document.getElementById('scaling-skill-hidden').value, 10);
+
+
+// Formulas work automatically - no mode toggle needed
+
+
+// Note: Formulas are now saved directly in the value fields, no separate table needed
+
+function validateAllFormulas() {
+  const errors = [];
+  const rows = document.querySelectorAll('#scaling-table tbody tr');
   
-  // Validate that a skill is selected
-  if (Number.isNaN(skillId) || skillId <= 0) {
-    toastManager.showToast('Please select a skill before saving constant values', true, 'error');
-    return;
-  }
-  
-  // Get all rows from constants table
-  const rows = document.querySelectorAll('#scaling-constants-table tbody tr');
-  
-  rows.forEach(row => {
-    const statId = row.getAttribute('data-stat-id');
-    const occurrenceIndex = parseInt(row.getAttribute('data-occurrence-index') || '0', 10);
-    const values = {
-      value0: row.querySelector('[data-value="0"]').value,
-      value1: row.querySelector('[data-value="1"]').value,
-      value2: row.querySelector('[data-value="2"]').value,
-      value3: row.querySelector('[data-value="3"]').value,
-      value0_constant: row.querySelector('[data-constant="0"]').checked ? 1 : 0,
-      value1_constant: row.querySelector('[data-constant="1"]').checked ? 1 : 0,
-      value2_constant: row.querySelector('[data-constant="2"]').checked ? 1 : 0,
-      value3_constant: row.querySelector('[data-constant="3"]').checked ? 1 : 0,
-    };
+  rows.forEach((row, rowIndex) => {
+    const inputs = row.querySelectorAll('input[data-value-index]:not([disabled])');
     
-    // Delete existing constant entry
-    SkillDB.db.run('DELETE FROM skill_scaling_constants WHERE skill_id = ? AND stat_id = ? AND occurrence_index = ?', 
-                   [skillId, statId, occurrenceIndex]);
-    
-    // Insert new constant entry (only if at least one value is marked constant)
-    if (values.value0_constant || values.value1_constant || 
-        values.value2_constant || values.value3_constant) {
-      SkillDB.db.run(`
-        INSERT INTO skill_scaling_constants 
-        (skill_id, stat_id, occurrence_index, value0, value1, value2, value3, 
-         value0_constant, value1_constant, value2_constant, value3_constant)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `, [skillId, statId, occurrenceIndex, values.value0, values.value1, values.value2, values.value3,
-          values.value0_constant, values.value1_constant, 
-          values.value2_constant, values.value3_constant]);
-    }
+    inputs.forEach((input) => {
+      const value = input.value.trim();
+      const valueIndex = input.getAttribute('data-value-index');
+      
+      if (value) {
+        // Check if it's a number (valid)
+        if (isNaN(value)) {
+          // It's not a number, so it should be a formula
+          const parseResult = formulaEvaluator.parseFormula(value);
+          if (!parseResult.success) {
+            const statName = row.querySelector('td:first-child').textContent;
+            errors.push(`${statName}, Value${valueIndex}: ${parseResult.error}`);
+          }
+        }
+      }
+    });
   });
   
-  // Reload the regular scaling table to show locked fields
-  loadScaling();
-  toastManager.showToast('Constant values were saved', true, 'success');
+  return errors;
 }
 
-function moveToConstants(statId, statName, statFormat) {
-  const skillId = parseInt(document.getElementById('scaling-skill-hidden').value, 10);
-  
-  // Validate that a skill is selected
-  if (Number.isNaN(skillId) || skillId <= 0) {
-    toastManager.showToast('Please select a skill before moving to constants', true, 'error');
-    return;
-  }
-  
-  // Get the occurrence index from the current row
-  const currentRow = document.querySelector(`#scaling-table tbody tr[data-stat-id="${statId}"]`);
-  const occurrenceIndex = parseInt(currentRow?.getAttribute('data-occurrence-index') || '0', 10);
-  
-  // Check if already exists in constants for this occurrence
-  const checkStmt = SkillDB.db.prepare('SELECT COUNT(*) FROM skill_scaling_constants WHERE skill_id = ? AND stat_id = ? AND occurrence_index = ?');
-  checkStmt.bind([skillId, statId, occurrenceIndex]);
-  const exists = checkStmt.step() ? checkStmt.get()[0] : 0;
-  checkStmt.free();
-  
-  if (exists > 0) {
-    alert('This stat occurrence already has constant values');
-    return;
-  }
-  
-  // Save to database first
-  SkillDB.db.run(`
-    INSERT INTO skill_scaling_constants 
-    (skill_id, stat_id, occurrence_index, value0, value1, value2, value3, 
-     value0_constant, value1_constant, value2_constant, value3_constant)
-    VALUES (?, ?, ?, 0, 0, 0, 0, 0, 0, 0, 0)
-  `, [skillId, statId, occurrenceIndex]);
-  
-  // Refresh both tables
-  loadScaling();
-}

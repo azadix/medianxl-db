@@ -395,6 +395,10 @@
     
     <div class="mb-3">
       <div id="scaling-status" class="has-text-weight-medium">Select a skill to view level data</div>
+      <div class="help has-text-grey">
+        <strong>Tip:</strong> You can enter either numbers (e.g., 50) or formulas (e.g., 50 + 15*blvl) in any value field. 
+        Variables: blvl, slvl, clvl | Functions: floor(), ceil(), min(), max()
+      </div>
     </div>
 
     <table id="scaling-table" class="table is-striped is-fullwidth">
@@ -412,22 +416,6 @@
       <tbody></tbody>
     </table>
 
-    <h4 class="title is-6 mt-5">Constant Values (Level-Independent)</h4>
-    <p class="help mb-3">Set values that remain constant across all levels. These will appear as locked fields in the scaling table above. Use the "Const" button in the regular table to move stats here.</p>
-    <table id="scaling-constants-table" class="table is-striped is-fullwidth">
-      <thead>
-        <tr>
-          <th style="width:25%">Name</th>
-          <th style="width:25%">Format</th>
-          <th>Value0</th>
-          <th>Value1</th>
-          <th>Value2</th>
-          <th>Value3</th>
-          <th style="width:8%">Actions</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
   </div>
 
   <div id="max-levels-section" class="box" style="display:none;">

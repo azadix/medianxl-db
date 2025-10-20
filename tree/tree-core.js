@@ -2,7 +2,7 @@
 import { loadSkillsFromSQLite, getDatabase } from './tree-data.js';
 import { renderSkills, renderDifficultyCheckboxes, updateTabColors } from './tree-render.js';
 import Character from '../character/Character.js';
-import { initializeCharacter, setCharacterLevel, getSpentSkillPoints, getAllSkillPoints, setAllSkillPoints, updateQuestCompletion, getQuestCompletion, getAllOSkills, addOSkill, changeOSkillPoints, clearOSkills, setAllOSkills, getMinimumRequiredLevel, getTotalQuestSkillPoints, checkSkillsExceedingMaxLevel, getAvailableSkillPoints } from '../character/character-state.js';
+import { initializeCharacter, setCharacterLevel, getSpentSkillPoints, getAllSkillPoints, setAllSkillPoints, updateQuestCompletion, getQuestCompletion, getAllOSkills, addOSkill, changeOSkillPoints, clearOSkills, setAllOSkills, getMinimumRequiredLevel, getTotalQuestSkillPoints, checkSkillsExceedingMaxLevel, getAvailableSkillPoints, getCharacterInstance, getCharacterLevel } from '../character/character-state.js';
 import { getCurrentDevotion, getDevotionDisplayName } from '../skills/skill-calculations.js';
 import { initializeTooltip } from './tree-tooltip.js';
 import { ToastManager } from './ToastManager.js';
@@ -31,8 +31,24 @@ export { getOSkillPoints } from '../character/character-state.js';
  * @returns {number} - Image number (1-10)
  */
 function calculateArmorImageNumber(spentPoints) {
+    // Safety check for invalid spent points
+    if (isNaN(spentPoints) || spentPoints < 0) {
+        console.warn('calculateArmorImageNumber: Invalid spentPoints, using 0');
+        spentPoints = 0;
+    }
+    
     // Get maximum available skill points from character config
     const maxSkillPoints = getAvailableSkillPoints();
+    
+    // If character not initialized or invalid maxSkillPoints, use a reasonable default
+    if (!maxSkillPoints || maxSkillPoints <= 0 || isNaN(maxSkillPoints)) {
+        // Use a reasonable default based on typical character level 150
+        // Level 150 = 149 base points + ~14 quest points = ~163 total
+        const defaultMaxPoints = 163;
+        const clampedPoints = Math.max(0, Math.min(defaultMaxPoints, spentPoints));
+        const imageNumber = Math.ceil((clampedPoints / defaultMaxPoints) * 10);
+        return Math.max(1, Math.min(10, imageNumber));
+    }
     
     // Clamp spent points to valid range (0 to max available)
     const clampedPoints = Math.max(0, Math.min(maxSkillPoints, spentPoints));
@@ -117,6 +133,30 @@ export async function initializeTreePage() {
     initializeMenuButtons();
 }
 
+/**
+ * Handle skill points changed event
+ * Updates the UI when skill points are added or removed
+ */
+function handleSkillPointsChanged() {
+    const currentClass = classSelect.value;
+    const savedTab = currentTab;
+    
+    // Re-render without redrawing arrows (just update cards)
+    renderSkills(currentClass, skillsList, skillsContainer, savedTab, false);
+    
+    // Update displays
+    updateSkillPointsDisplay();
+    updateDevotionDisplay();
+    
+    // Update build list images if we're currently viewing the load section
+    updateBuildListImages();
+    
+    // Trigger tooltip refresh after a small delay to ensure minLevelDisplay is updated
+    setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('tooltipRefresh'));
+    }, 10);
+}
+
 // Main application entry point
 async function main() {
     try {
@@ -173,8 +213,6 @@ async function main() {
             updateSkillPointsDisplay();
         }, 0);
         
-        // Initialize level input
-        
         // Initialize tooltip functionality
         initializeTooltip();
         
@@ -222,20 +260,7 @@ async function main() {
         
         
         // Add event listener for skill point changes
-        window.addEventListener('skillPointsChanged', () => {
-            const currentClass = classSelect.value;
-            const savedTab = currentTab;
-            
-            // Re-render without redrawing arrows (just update cards)
-            renderSkills(currentClass, skillsList, skillsContainer, savedTab, false);
-            
-            // Update displays
-            updateSkillPointsDisplay();
-            updateDevotionDisplay();
-            
-            // Update build list images if we're currently viewing the load section
-            updateBuildListImages();
-        });
+        window.addEventListener('skillPointsChanged', handleSkillPointsChanged);
         
         // Add event listener for oSkills changes
         window.addEventListener('oskillsUpdated', () => {
@@ -787,6 +812,14 @@ function renderSavedBuildsList() {
     const container = document.getElementById('saved-builds-list');
     if (!container) return;
     
+    // Ensure character is initialized before rendering build list
+    const characterInstance = getCharacterInstance();
+    if (!characterInstance) {
+        // Initialize with a default class if none is selected
+        const defaultClass = classSelect ? classSelect.value : 'Amazon';
+        initializeCharacter(defaultClass);
+    }
+    
     const builds = getSavedBuilds();
     
     if (builds.length === 0) {
@@ -897,11 +930,8 @@ function loadBuild(index) {
         classSelect.value = build.class;
     }
     
-    // Set level
-    setCharacterLevel(build.level);
-    
-    // Initialize character with loaded class and level
-    initializeCharacter(build.class);
+    // Initialize character with loaded class and level first
+    initializeCharacter(build.class, build.level);
     
     // Load skill points
     setAllSkillPoints(build.skillPoints);
@@ -918,6 +948,12 @@ function loadBuild(index) {
     updateQuestCompletion('izual', build.difficulties);
     updateQuestCompletion('inquisitor_of_the_triune', { normal: false, nightmare: false, hell: build.difficulties.hell });
     
+    // Initialize tooltip functionality (needed for skill tooltips to work)
+    initializeTooltip();
+    
+    // Initialize oSkills dropdown
+    initializeOSkillsDropdown();
+    
     // Render skills first (this creates the difficulty checkboxes)
     if (skillsList) {
         // If build has oSkills, switch to oSkills tab after rendering
@@ -932,6 +968,14 @@ function loadBuild(index) {
         hasHell: build.difficulties.hell
     };
     renderDifficultyCheckboxes(questState);
+    
+    // Setup difficulty event listeners (needed for difficulty checkboxes to work)
+    setupDifficultyEventListeners();
+    
+    // Add event listener for skill point changes (needed for UI updates)
+    // Remove any existing listener first to avoid duplicates
+    window.removeEventListener('skillPointsChanged', handleSkillPointsChanged);
+    window.addEventListener('skillPointsChanged', handleSkillPointsChanged);
     
     // Update displays
     updateSkillPointsDisplay();

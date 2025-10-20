@@ -56,6 +56,10 @@ export function getCharacterInstance() {
  * @param {number} level - New character level
  */
 export function setCharacterLevel(level) {
+  if (!characterInstance) {
+    console.warn('setCharacterLevel: Character instance not initialized');
+    return false;
+  }
   return characterInstance.setCharacterLevel(level);
 }
 

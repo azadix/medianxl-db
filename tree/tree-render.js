@@ -5,7 +5,7 @@ import { calculateMaxLevel, checkDevotionRestriction } from '../skills/skill-cal
 import Ultimate from '../skills/Ultimate.js';
 import Innate from '../skills/Innate.js';
 import { getDatabase } from './tree-data.js';
-import { getSkillPoints, addSkillPoint, removeSkillPoint, checkPrerequisites, getAllSkillPoints, checkMasteryRestriction, checkCovenRestriction, checkProficiencyRestriction, getMinimumRequiredLevel } from '../character/character-state.js';
+import { getSkillPoints, addSkillPoint, removeSkillPoint, checkPrerequisites, getAllSkillPoints, checkMasteryRestriction, checkCovenRestriction, checkProficiencyRestriction, getMinimumRequiredLevel, getCharacterLevel } from '../character/character-state.js';
 import { ToastManager } from './ToastManager.js';
 import { renderSkillCard, getSkillIcon } from './tree-card-renderer.js';
 
@@ -25,7 +25,7 @@ function updateSkillCards(selectedClass, skillsList) {
     
     // Calculate minimum required level once for all cards
     const db = getDatabase();
-    const minLevel = getMinimumRequiredLevel(db);
+    const minLevel = getCharacterLevel();
     
     // Track which tabs have points
     const tabsWithPoints = new Set();
@@ -370,7 +370,7 @@ function createSkillCard(skill, currentTab) {
     
     // Calculate minimum required level once for this card
     const db = getDatabase();
-    const minLevel = getMinimumRequiredLevel(db);
+    const minLevel = getCharacterLevel();
     
     // Prepare card data
     let cardData;
@@ -523,8 +523,8 @@ function checkUltimateSkillBlock(skill, allSkills) {
 function handleSkillPointChange(skill, delta) {
     const db = getDatabase();
     
-    // Use minimum required level for max level calculations
-    const actualCharacterLevel = getMinimumRequiredLevel(db);
+    // Use actual character level for max level calculations
+    const actualCharacterLevel = getCharacterLevel();
     
     // Handle multiple points
     if (Math.abs(delta) > 1) {

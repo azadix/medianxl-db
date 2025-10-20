@@ -204,7 +204,7 @@ function autoExpandStatToken(db, statKey) {
 // Expected schema: stats(key TEXT UNIQUE), skill_scaling(skill_id, level, stat_id, occurrence_index, value)
 // Now also supports simple {{mana_cost}} which auto-expands to {{mana_cost:%value0%}} based on format
 // Also supports [[skill_name]] which expands to skill's display_name in success color
-export async function expandPlaceholdersWithScaling(db, skillId, level, description, skillName = null) {
+export async function expandPlaceholdersWithScaling(db, skillId, level, description, skillName = null, characterState = null) {
     if (!description) return '';
     
     // Track occurrence counts for each stat key to maintain order
@@ -234,7 +234,14 @@ export async function expandPlaceholdersWithScaling(db, skillId, level, descript
     });
     
     // Then, expand stat placeholders {{stat_key}}
-    return expandedDescription.replace(/\{\{(.*?)\}\}/g, (match, token) => {
+    const placeholderMatches = expandedDescription.match(/\{\{(.*?)\}\}/g);
+    if (!placeholderMatches) {
+        return expandedDescription;
+    }
+    
+    let result = expandedDescription;
+    for (const match of placeholderMatches) {
+        const token = match.slice(2, -2); // Remove {{ and }}
         const [rawKey, rawValues] = token.split(':').map(s => s.trim());
         const key = (rawKey || '').toLowerCase();
         
@@ -256,32 +263,33 @@ export async function expandPlaceholdersWithScaling(db, skillId, level, descript
         if (rawValues && rawValues.length > 0) {
             const arePlaceholders = values.every(v => /%?value\d*%?/i.test(v));
             if (!arePlaceholders) {
-            const stmt = db.prepare("SELECT name, format FROM stats WHERE LOWER(key) = ?");
-            stmt.bind([key]);
-            let output = `[Unknown stat: ${rawKey}]`;
-            if (stmt.step()) {
-                const [name, format] = stmt.get();
-            const v0 = values[0] || '';
-            const v1 = values[1] || '';
-            const v2 = values[2] || '';
-            const v3 = values[3] || '';
+                const stmt = db.prepare("SELECT name, format FROM stats WHERE LOWER(key) = ?");
+                stmt.bind([key]);
+                let output = `[Unknown stat: ${rawKey}]`;
+                if (stmt.step()) {
+                    const [name, format] = stmt.get();
+                    const v0 = values[0] || '';
+                    const v1 = values[1] || '';
+                    const v2 = values[2] || '';
+                    const v3 = values[3] || '';
                     const w0 = `<span class=\"has-text-primary\">${v0}</span>`;
                     const w1 = `<span class=\"has-text-primary\">${v1}</span>`;
                     const w2 = `<span class=\"has-text-primary\">${v2}</span>`;
                     const w3 = `<span class=\"has-text-primary\">${v3}</span>`;
-                output = (format || '{name}: {value}')
-                    .replace('{name}', name)
-                    .replace('{value0}', w0)
-                    .replace('{value1}', w1)
-                    .replace('{value2}', w2)
-                    .replace('{value3}', w3)
-                    .replace(/%value0%/g, w0)
-                    .replace(/%value1%/g, w1)
-                    .replace(/%value2%/g, w2)
-                    .replace(/%value3%/g, w3);
-            }
-            stmt.free();
-            return output;
+                    output = (format || '{name}: {value}')
+                        .replace('{name}', name)
+                        .replace('{value0}', w0)
+                        .replace('{value1}', w1)
+                        .replace('{value2}', w2)
+                        .replace('{value3}', w3)
+                        .replace(/%value0%/g, w0)
+                        .replace(/%value1%/g, w1)
+                        .replace(/%value2%/g, w2)
+                        .replace(/%value3%/g, w3);
+                }
+                stmt.free();
+                result = result.replace(match, output);
+                continue;
             }
         }
 
@@ -317,7 +325,7 @@ export async function expandPlaceholdersWithScaling(db, skillId, level, descript
                 displayNameStmt.free();
                 
                 const skill = new Skill({ id: actualSkillName, name: displayName, skillId: skillId });
-                const scalingValues = skill.getScalingValues(db, level, key, occurrenceIndex);
+                const scalingValues = await skill.getScalingValues(db, level, key, occurrenceIndex, characterState, characterState?.level);
                 
                 if (scalingValues) {
                     const v0 = scalingValues.value0 ?? '';
@@ -325,11 +333,19 @@ export async function expandPlaceholdersWithScaling(db, skillId, level, descript
                     const v2 = scalingValues.value2 ?? '';
                     const v3 = scalingValues.value3 ?? '';
                     
-                    // Use different styling for constant vs level-specific values
-                    const w0 = `<span class="${scalingValues.value0_constant ? 'has-text-warning' : 'has-text-primary'}">${v0}</span>`;
-                    const w1 = `<span class="${scalingValues.value1_constant ? 'has-text-warning' : 'has-text-primary'}">${v1}</span>`;
-                    const w2 = `<span class="${scalingValues.value2_constant ? 'has-text-warning' : 'has-text-primary'}">${v2}</span>`;
-                    const w3 = `<span class="${scalingValues.value3_constant ? 'has-text-warning' : 'has-text-primary'}">${v3}</span>`;
+                    // Use different styling: formulas=link, constants=warning, scaling=primary
+                    const getValueClass = (valueIndex) => {
+                        const isFormula = scalingValues[`value${valueIndex}_formula`];
+                        const isConstant = scalingValues[`value${valueIndex}_constant`];
+                        if (isFormula) return 'has-text-danger';
+                        if (isConstant) return 'has-text-warning';
+                        return 'has-text-primary';
+                    };
+                    
+                    const w0 = `<span class="${getValueClass(0)}">${v0}</span>`;
+                    const w1 = `<span class="${getValueClass(1)}">${v1}</span>`;
+                    const w2 = `<span class="${getValueClass(2)}">${v2}</span>`;
+                    const w3 = `<span class="${getValueClass(3)}">${v3}</span>`;
                     
                     output = (format || '{name}: {value}')
                         .replace('{name}', name)
@@ -342,37 +358,34 @@ export async function expandPlaceholdersWithScaling(db, skillId, level, descript
                         .replace(/%value2%/g, w2)
                         .replace(/%value3%/g, w3);
                 }
-            } else {
-                skillStmt.free();
-                output = `[${name}: ???]`;
             }
-        } else {
-            statStmt.free();
         }
-        if (output !== `[Unknown stat: ${rawKey}]`) return output;
 
         // If no scaling row for this level, but stat exists: show format with ??? placeholders
-        const s2 = db.prepare('SELECT name, format FROM stats WHERE LOWER(key) = ?');
-        s2.bind([key]);
-        if (s2.step()) {
-            const [name, format] = s2.get();
-            const q = '<span class="has-text-primary">???</span>';
-            const formatted = (format || '{name}: {value}')
-                .replace('{name}', name)
-                .replace('{value0}', q)
-                .replace('{value1}', q)
-                .replace('{value2}', q)
-                .replace('{value3}', q)
-                .replace(/%value0%/g, q)
-                .replace(/%value1%/g, q)
-                .replace(/%value2%/g, q)
-                .replace(/%value3%/g, q);
+        if (output === `[Unknown stat: ${rawKey}]`) {
+            const s2 = db.prepare('SELECT name, format FROM stats WHERE LOWER(key) = ?');
+            s2.bind([key]);
+            if (s2.step()) {
+                const [name, format] = s2.get();
+                const q = '<span class="has-text-primary">???</span>';
+                output = (format || '{name}: {value}')
+                    .replace('{name}', name)
+                    .replace('{value0}', q)
+                    .replace('{value1}', q)
+                    .replace('{value2}', q)
+                    .replace('{value3}', q)
+                    .replace(/%value0%/g, q)
+                    .replace(/%value1%/g, q)
+                    .replace(/%value2%/g, q)
+                    .replace(/%value3%/g, q);
+            }
             s2.free();
-            return formatted;
         }
-        s2.free();
-        return output;
-    });
+        
+        result = result.replace(match, output);
+    }
+    
+    return result;
 }
 
 /**

@@ -1,7 +1,7 @@
 // Tooltip functionality for skill tree
 import { getSkillIconHTML, expandPlaceholdersWithScaling, SKILL_CATEGORY_TAG_IDS, SUMMON_TAG_IDS, TELEPORT_TAG_IDS } from '../utils.js';
 import { getDatabase } from './tree-data.js';
-import { getSkillPoints, getOSkillPoints } from '../character/character-state.js';
+import { getSkillPoints, getOSkillPoints, getCharacterInstance, getCharacterLevel, getAllSkillPoints, getAllOSkills } from '../character/character-state.js';
 
 let tooltipElement = null;
 let currentHoveredSkill = null;
@@ -25,6 +25,9 @@ export function initializeTooltip() {
     
     // Listen for skill point changes to update tooltip if it's showing
     window.addEventListener('skillPointsChanged', handleSkillPointsChanged);
+    
+    // Listen for tooltip refresh events (triggered after minLevelDisplay is updated)
+    window.addEventListener('tooltipRefresh', handleSkillPointsChanged);
     
     // Listen for oSkills updates to hide tooltip if skill was removed
     window.addEventListener('oskillsUpdated', handleOSkillsUpdated);
@@ -384,6 +387,27 @@ async function buildTooltipContent(skillData, level, db, warningMessage = '') {
     `;
     html += '</div>';
     
+    // Get character state for formula evaluation (needed for all tooltip content)
+    const characterInstance = getCharacterInstance();
+    const allSkillPoints = getAllSkillPoints();
+    
+    // Get character level from minimum level display (this is what clvl should use)
+    const minLevelDisplay = document.getElementById('minLevelDisplay');
+    let characterLevel = 1; // fallback
+    if (minLevelDisplay) {
+        const levelText = minLevelDisplay.textContent;
+        const levelMatch = levelText.match(/Level (\d+)/);
+        if (levelMatch) {
+            characterLevel = parseInt(levelMatch[1], 10);
+        }
+    }
+    
+    const characterState = {
+        level: characterLevel,
+        blvl: allSkillPoints,
+        slvl: allSkillPoints
+    };
+    
     // Description with scaling
     // Render description and skill effect
     if (skillData.description || skillData.skillEffect) {
@@ -398,13 +422,13 @@ async function buildTooltipContent(skillData, level, db, warningMessage = '') {
         
         // Render main description
         if (skillData.description) {
-            const expandedDesc = await expandPlaceholdersWithScaling(db, skillData.dbId, level, skillData.description, skillData.id);
+            const expandedDesc = await expandPlaceholdersWithScaling(db, skillData.dbId, level, skillData.description, skillData.id, characterState);
             html += `<div class="tooltip-main-desc has-text-centered mb-2">${expandedDesc}</div>`;
         }
         
         // Render skill effect
         if (skillData.skillEffect) {
-            const expandedEffect = await expandPlaceholdersWithScaling(db, skillData.dbId, level, skillData.skillEffect, skillData.id);
+            const expandedEffect = await expandPlaceholdersWithScaling(db, skillData.dbId, level, skillData.skillEffect, skillData.id, characterState);
             const lines = expandedEffect.split('\n');
             
             lines.forEach(line => {
@@ -423,7 +447,7 @@ async function buildTooltipContent(skillData, level, db, warningMessage = '') {
     if (skillData.restriction) {
         html += '<div class="tooltip-warning">';
         // Expand placeholders in restriction text
-        const expandedRestriction = await expandPlaceholdersWithScaling(db, skillData.dbId, level, skillData.restriction, skillData.id);
+        const expandedRestriction = await expandPlaceholdersWithScaling(db, skillData.dbId, level, skillData.restriction, skillData.id, characterState);
         const restrictionLines = expandedRestriction.split('\n');
         restrictionLines.forEach(line => {
             html += `<div class="has-text-warning">${line}</div>`;
@@ -481,5 +505,6 @@ export function destroyTooltip() {
     document.removeEventListener('mouseout', handleMouseOut);
     document.removeEventListener('mousemove', handleMouseMove);
     window.removeEventListener('skillPointsChanged', handleSkillPointsChanged);
+    window.removeEventListener('tooltipRefresh', handleSkillPointsChanged);
     window.removeEventListener('oskillsUpdated', handleOSkillsUpdated);
 }
