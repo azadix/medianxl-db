@@ -150,9 +150,9 @@ export default class Character {
    * @returns {number} Points remaining to spend
    */
   getRemainingSkillPoints() {
-    // Use current character level for quest calculations, but MAX_LEVEL for base skill points
+    // Use MAX_LEVEL for both base and quest calculations to get maximum available points
     const basePoints = Character.getBaseSkillPoints(Character.MAX_LEVEL);
-    const questPoints = this.getTotalQuestSkillPoints(this.level);
+    const questPoints = this.getTotalQuestSkillPoints(Character.MAX_LEVEL);
     const totalAvailable = basePoints + questPoints;
     return totalAvailable - this.getSpentSkillPoints();
   }

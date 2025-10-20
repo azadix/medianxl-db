@@ -179,7 +179,7 @@ async function main() {
         classSelect.value = selectedClass;
 
         // Initialize character state (quests are already set to defaults in characterState)
-        initializeCharacter(selectedClass);
+        initializeCharacter(selectedClass, Character.MAX_LEVEL);
 
         // Render skills with saved tab if specified
         renderSkills(selectedClass, skillsList, skillsContainer, savedTab);
@@ -248,7 +248,7 @@ async function main() {
             }
             
             // Reinitialize character state for new class
-            initializeCharacter(newClass);
+            initializeCharacter(newClass, Character.MAX_LEVEL);
             
             renderSkills(newClass, skillsList, skillsContainer);
             
@@ -614,7 +614,7 @@ function resetBuild(showToast = true) {
     
     // Clear all skill points and reset quest completion to defaults
     const currentClass = classSelect ? classSelect.value : null;
-    initializeCharacter(currentClass);
+    initializeCharacter(currentClass, Character.MAX_LEVEL);
     
     // Re-render skills for the first class (this creates the difficulty checkboxes)
     if (currentClass && skillsList) {
@@ -817,7 +817,7 @@ function renderSavedBuildsList() {
     if (!characterInstance) {
         // Initialize with a default class if none is selected
         const defaultClass = classSelect ? classSelect.value : 'Amazon';
-        initializeCharacter(defaultClass);
+        initializeCharacter(defaultClass, Character.MAX_LEVEL);
     }
     
     const builds = getSavedBuilds();
