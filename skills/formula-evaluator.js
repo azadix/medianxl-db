@@ -16,9 +16,9 @@ export class FormulaEvaluator {
     this.registerFunction('max', Math.max);
     
     // Register default variables
-    this.registerVariable('blvl');
-    this.registerVariable('slvl');
-    this.registerVariable('clvl');
+    this.registerVariable('blvl'); // base skill level
+    this.registerVariable('lvl'); // all skills
+    this.registerVariable('clvl'); // character level
   }
 
   /**
@@ -105,7 +105,7 @@ export class FormulaEvaluator {
   /**
    * Evaluate a formula with given variables
    * @param {string} formula - The formula to evaluate
-   * @param {Object} variables - Variable values (blvl, slvl, clvl, etc.)
+   * @param {Object} variables - Variable values (blvl, lvl, clvl, etc.)
    * @returns {Object} Evaluation result with success flag, value, and error message
    */
   evaluate(formula, variables = {}) {

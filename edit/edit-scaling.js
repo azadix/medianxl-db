@@ -213,7 +213,7 @@ function renderScalingTable(rows) {
       input.type = 'text';
       input.className = 'input is-small';
       input.placeholder = `Value${i} or formula`;
-      input.title = 'Enter number or formula using blvl, slvl, clvl. Functions: floor(), ceil(), min(), max()';
+      input.title = 'Enter number or formula using blvl, lvl, clvl. Functions: floor(), ceil(), min(), max()';
       input.setAttribute('data-value-index', i);
       
       // Check if this specific value is marked as constant

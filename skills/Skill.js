@@ -205,7 +205,7 @@ export default class Skill {
             if (result && characterState) {
                 const variables = {
                     blvl: characterState.blvl?.[this.id] || 0,
-                    slvl: characterState.slvl?.[this.id] || 0,
+                    lvl: characterState.lvl?.[this.id] || 0,
                     clvl: characterLevel || 1
                 };
                 
@@ -267,7 +267,7 @@ export default class Skill {
                         // This looks like a formula, try to evaluate it
                         const variables = {
                             blvl: characterState.blvl?.[this.id] || 0,
-                            slvl: characterState.slvl?.[this.id] || 0,
+                            lvl: characterState.lvl?.[this.id] || 0,
                             clvl: characterLevel || 1
                         };
                         const evalResult = formulaEvaluator.evaluate(value0, variables);
@@ -287,7 +287,7 @@ export default class Skill {
                         // This looks like a formula, try to evaluate it
                         const variables = {
                             blvl: characterState.blvl?.[this.id] || 0,
-                            slvl: characterState.slvl?.[this.id] || 0,
+                            lvl: characterState.lvl?.[this.id] || 0,
                             clvl: characterLevel || 1
                         };
                         const evalResult = formulaEvaluator.evaluate(value1, variables);
@@ -307,7 +307,7 @@ export default class Skill {
                         // This looks like a formula, try to evaluate it
                         const variables = {
                             blvl: characterState.blvl?.[this.id] || 0,
-                            slvl: characterState.slvl?.[this.id] || 0,
+                            lvl: characterState.lvl?.[this.id] || 0,
                             clvl: characterLevel || 1
                         };
                         const evalResult = formulaEvaluator.evaluate(value2, variables);
@@ -327,7 +327,7 @@ export default class Skill {
                         // This looks like a formula, try to evaluate it
                         const variables = {
                             blvl: characterState.blvl?.[this.id] || 0,
-                            slvl: characterState.slvl?.[this.id] || 0,
+                            lvl: characterState.lvl?.[this.id] || 0,
                             clvl: characterLevel || 1
                         };
                         const evalResult = formulaEvaluator.evaluate(value3, variables);

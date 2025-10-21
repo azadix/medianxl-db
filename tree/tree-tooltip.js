@@ -123,7 +123,7 @@ async function handleSkillPointsChanged() {
             warningMessage = plusBtn?.dataset?.warningMessage || '';
         }
         
-        const content = await buildTooltipContent(skillData, currentLevel, db, warningMessage);
+        const content = await buildTooltipContent(skillData, currentLevel, db, warningMessage, isOSkill);
         
         tooltipElement.innerHTML = content;
     }
@@ -173,7 +173,7 @@ async function handleOSkillsUpdated() {
                 warningMessage = plusBtn?.dataset?.warningMessage || '';
             }
             
-            const content = await buildTooltipContent(skillData, currentLevel, db, warningMessage);
+            const content = await buildTooltipContent(skillData, currentLevel, db, warningMessage, isOSkillCard);
             tooltipElement.innerHTML = content;
             return;
         }
@@ -232,7 +232,7 @@ async function showTooltip(skillId, mouseX, mouseY, hoveredCard = null) {
     }
     
     // Build tooltip content
-    const content = await buildTooltipContent(skillData, currentLevel, db, warningMessage);
+    const content = await buildTooltipContent(skillData, currentLevel, db, warningMessage, isOSkill);
     
     // Update tooltip
     tooltipElement.innerHTML = content;
@@ -364,7 +364,7 @@ function getSkillCategoryTags(db, skillId) {
  * @param {Object} db - Database instance
  * @param {string} warningMessage - Optional warning message (e.g., prerequisite not met)
  */
-async function buildTooltipContent(skillData, level, db, warningMessage = '') {
+async function buildTooltipContent(skillData, level, db, warningMessage = '', isOSkill = false) {
     let html = '<div class="tooltip-content">';
     
     // Skill name and icon
@@ -390,6 +390,7 @@ async function buildTooltipContent(skillData, level, db, warningMessage = '') {
     // Get character state for formula evaluation (needed for all tooltip content)
     const characterInstance = getCharacterInstance();
     const allSkillPoints = getAllSkillPoints();
+    const allOSkills = getAllOSkills();
     
     // Get character level from minimum level display (this is what clvl should use)
     const minLevelDisplay = document.getElementById('minLevelDisplay');
@@ -402,11 +403,22 @@ async function buildTooltipContent(skillData, level, db, warningMessage = '') {
         }
     }
     
+    // Create base character state with tree skill points
     const characterState = {
         level: characterLevel,
         blvl: allSkillPoints,
-        slvl: allSkillPoints
+        lvl: allSkillPoints
     };
+    
+    // If this is an OSkill, modify the character state to use OSkill levels
+    if (isOSkill) {
+        // For OSkills, lvl should be the actual OSkill level, not tree points
+        const oskillLevels = {};
+        allOSkills.forEach(oskill => {
+            oskillLevels[oskill.skillName] = oskill.points;
+        });
+        characterState.lvl = oskillLevels;
+    }
     
     // Description with scaling
     // Render description and skill effect
