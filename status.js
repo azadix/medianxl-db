@@ -26,9 +26,35 @@ async function loadStatusPage() {
                 c.name as class_name,
                 COUNT(*) AS total_skills,
                 SUM(CASE WHEN s.description IS NOT NULL AND s.description != '' THEN 1 ELSE 0 END) AS skills_with_description,
-                SUM(CASE WHEN EXISTS(SELECT 1 FROM skill_scaling ss WHERE ss.skill_id = s.id) THEN 1 ELSE 0 END) AS skills_with_scaling,
+                SUM(CASE WHEN (
+                    EXISTS(SELECT 1 FROM skill_scaling ss WHERE ss.skill_id = s.id AND (
+                        (ss.value0 IS NOT NULL AND ss.value0 != '' AND ss.value0 GLOB '*[^0-9.]*') OR
+                        (ss.value1 IS NOT NULL AND ss.value1 != '' AND ss.value1 GLOB '*[^0-9.]*') OR
+                        (ss.value2 IS NOT NULL AND ss.value2 != '' AND ss.value2 GLOB '*[^0-9.]*') OR
+                        (ss.value3 IS NOT NULL AND ss.value3 != '' AND ss.value3 GLOB '*[^0-9.]*')
+                    )) OR
+                    EXISTS(SELECT 1 FROM skill_scaling_constants ssc WHERE ssc.skill_id = s.id AND (
+                        (ssc.value0 IS NOT NULL AND ssc.value0 != '' AND ssc.value0 GLOB '*[^0-9.]*') OR
+                        (ssc.value1 IS NOT NULL AND ssc.value1 != '' AND ssc.value1 GLOB '*[^0-9.]*') OR
+                        (ssc.value2 IS NOT NULL AND ssc.value2 != '' AND ssc.value2 GLOB '*[^0-9.]*') OR
+                        (ssc.value3 IS NOT NULL AND ssc.value3 != '' AND ssc.value3 GLOB '*[^0-9.]*')
+                    ))
+                ) THEN 1 ELSE 0 END) AS skills_with_scaling,
                 ROUND(100.0 * SUM(CASE WHEN s.description IS NOT NULL AND s.description != '' THEN 1 ELSE 0 END) / COUNT(*), 1) AS percent_with_description,
-                ROUND(100.0 * SUM(CASE WHEN EXISTS(SELECT 1 FROM skill_scaling ss WHERE ss.skill_id = s.id) THEN 1 ELSE 0 END) / COUNT(*), 1) AS percent_with_scaling
+                ROUND(100.0 * SUM(CASE WHEN (
+                    EXISTS(SELECT 1 FROM skill_scaling ss WHERE ss.skill_id = s.id AND (
+                        (ss.value0 IS NOT NULL AND ss.value0 != '' AND ss.value0 GLOB '*[^0-9.]*') OR
+                        (ss.value1 IS NOT NULL AND ss.value1 != '' AND ss.value1 GLOB '*[^0-9.]*') OR
+                        (ss.value2 IS NOT NULL AND ss.value2 != '' AND ss.value2 GLOB '*[^0-9.]*') OR
+                        (ss.value3 IS NOT NULL AND ss.value3 != '' AND ss.value3 GLOB '*[^0-9.]*')
+                    )) OR
+                    EXISTS(SELECT 1 FROM skill_scaling_constants ssc WHERE ssc.skill_id = s.id AND (
+                        (ssc.value0 IS NOT NULL AND ssc.value0 != '' AND ssc.value0 GLOB '*[^0-9.]*') OR
+                        (ssc.value1 IS NOT NULL AND ssc.value1 != '' AND ssc.value1 GLOB '*[^0-9.]*') OR
+                        (ssc.value2 IS NOT NULL AND ssc.value2 != '' AND ssc.value2 GLOB '*[^0-9.]*') OR
+                        (ssc.value3 IS NOT NULL AND ssc.value3 != '' AND ssc.value3 GLOB '*[^0-9.]*')
+                    ))
+                ) THEN 1 ELSE 0 END) / COUNT(*), 1) AS percent_with_scaling
             FROM skills s
             LEFT JOIN classes c ON s.class_id = c.id
             GROUP BY s.class_id, c.name
@@ -95,13 +121,8 @@ async function loadStatusPage() {
                                         </div>
                                     </div>
                                 </div>
-
-                                <div class="progress-container">
-                                    <progress class="progress m-0" value="${percentDesc}" max="100">${percentDesc}%</progress>
-                                    <progress class="progress is-warning overlay-progress" value="${percentScaling}" max="100">${percentScaling}%</progress>
-                                </div>  
-
-                                <div class="level mt-1">
+                                
+                                <div class="level mb-1">
                                     <div class="level-left">
                                         <div class="level-item">
                                             <span class="tag">Scaling</span>
@@ -113,6 +134,11 @@ async function loadStatusPage() {
                                         </div>
                                     </div>
                                 </div>
+
+                                <div class="progress-container">
+                                    <progress class="progress m-0" value="${percentDesc}" max="100">${percentDesc}%</progress>
+                                    <progress class="progress is-warning overlay-progress" value="${percentScaling}" max="100">${percentScaling}%</progress>
+                                </div>  
                             </div>
                         </div>
                     </div>
