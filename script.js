@@ -320,16 +320,24 @@ async function displaySkillDetail(skillId) {
     async function renderDescriptionAtLevel(level) {
         let html = '';
         
+        // Create a default character state for formula evaluation
+        // This allows formulas to be evaluated even without a specific character build
+        const defaultCharacterState = {
+            level: level,
+            blvl: { [skillInfo.id]: level }, // Assume skill level equals the scaling level
+            lvl: { [skillInfo.id]: level }   // Same for lvl (all skills effect)
+        };
+        
         // Render main description
         if (skillInfo.description) {
-            const expanded = await expandPlaceholdersWithScaling(SkillDB.db, skillInfo.dbId, level, skillInfo.description);
+            const expanded = await expandPlaceholdersWithScaling(SkillDB.db, skillInfo.dbId, level, skillInfo.description, skillInfo.id, defaultCharacterState);
             html += `<p class="is-size-5"><strong>Description:</strong></p>`;
             html += `<div>${expanded}</div>`;
         }
         
         // Render skill effect
         if (skillInfo.skillEffect) {
-            const expandedEffect = await expandPlaceholdersWithScaling(SkillDB.db, skillInfo.dbId, level, skillInfo.skillEffect);
+            const expandedEffect = await expandPlaceholdersWithScaling(SkillDB.db, skillInfo.dbId, level, skillInfo.skillEffect, skillInfo.id, defaultCharacterState);
             const lines = expandedEffect.split('\n');
             
             html += `<p class="is-size-5 mt-4"><strong>Skill Effect:</strong></p>`;
@@ -348,9 +356,16 @@ async function displaySkillDetail(skillId) {
     async function renderRestrictionAtLevel(level) {
         if (!skillInfo.restriction) return '';
         
+        // Create a default character state for formula evaluation
+        const defaultCharacterState = {
+            level: level,
+            blvl: { [skillInfo.id]: level }, // Assume skill level equals the scaling level
+            lvl: { [skillInfo.id]: level }   // Same for lvl (all skills effect)
+        };
+        
         let html = `<p class="is-size-5"><strong>Restriction:</strong></p>`;
         // Expand placeholders in restriction text
-        const expandedRestriction = await expandPlaceholdersWithScaling(SkillDB.db, skillInfo.dbId, level, skillInfo.restriction);
+        const expandedRestriction = await expandPlaceholdersWithScaling(SkillDB.db, skillInfo.dbId, level, skillInfo.restriction, skillInfo.id, defaultCharacterState);
         html += expandedRestriction.split('\n').map(
             line => `<p><span class="has-text-danger">${line}</span></p>`
         ).join('');

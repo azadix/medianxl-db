@@ -203,10 +203,15 @@ export default class Skill {
             
             // Check if any values are formulas and evaluate them
             if (result && characterState) {
+                // Pass both individual skill values and full objects for skill references
                 const variables = {
+                    // Individual skill values (for backward compatibility)
                     blvl: characterState.blvl?.[this.id] || 0,
                     lvl: characterState.lvl?.[this.id] || 0,
-                    clvl: characterLevel || 1
+                    clvl: characterLevel || 1,
+                    // Full objects for skill references
+                    _blvl: characterState.blvl, // Full blvl object for skill references
+                    _lvl: characterState.lvl    // Full lvl object for skill references
                 };
                 
                 // Check each value to see if it's a formula
@@ -266,9 +271,13 @@ export default class Skill {
                     if (characterState && typeof value0 === 'string' && isNaN(value0)) {
                         // This looks like a formula, try to evaluate it
                         const variables = {
+                            // Individual skill values (for backward compatibility)
                             blvl: characterState.blvl?.[this.id] || 0,
                             lvl: characterState.lvl?.[this.id] || 0,
-                            clvl: characterLevel || 1
+                            clvl: characterLevel || 1,
+                            // Full objects for skill references
+                            _blvl: characterState.blvl, // Full blvl object for skill references
+                            _lvl: characterState.lvl    // Full lvl object for skill references
                         };
                         const evalResult = formulaEvaluator.evaluate(value0, variables);
                         if (evalResult.success) {
@@ -286,9 +295,13 @@ export default class Skill {
                     if (characterState && typeof value1 === 'string' && isNaN(value1)) {
                         // This looks like a formula, try to evaluate it
                         const variables = {
+                            // Individual skill values (for backward compatibility)
                             blvl: characterState.blvl?.[this.id] || 0,
                             lvl: characterState.lvl?.[this.id] || 0,
-                            clvl: characterLevel || 1
+                            clvl: characterLevel || 1,
+                            // Full objects for skill references
+                            _blvl: characterState.blvl, // Full blvl object for skill references
+                            _lvl: characterState.lvl    // Full lvl object for skill references
                         };
                         const evalResult = formulaEvaluator.evaluate(value1, variables);
                         if (evalResult.success) {
@@ -306,9 +319,13 @@ export default class Skill {
                     if (characterState && typeof value2 === 'string' && isNaN(value2)) {
                         // This looks like a formula, try to evaluate it
                         const variables = {
+                            // Individual skill values (for backward compatibility)
                             blvl: characterState.blvl?.[this.id] || 0,
                             lvl: characterState.lvl?.[this.id] || 0,
-                            clvl: characterLevel || 1
+                            clvl: characterLevel || 1,
+                            // Full objects for skill references
+                            _blvl: characterState.blvl, // Full blvl object for skill references
+                            _lvl: characterState.lvl    // Full lvl object for skill references
                         };
                         const evalResult = formulaEvaluator.evaluate(value2, variables);
                         if (evalResult.success) {
@@ -326,9 +343,13 @@ export default class Skill {
                     if (characterState && typeof value3 === 'string' && isNaN(value3)) {
                         // This looks like a formula, try to evaluate it
                         const variables = {
+                            // Individual skill values (for backward compatibility)
                             blvl: characterState.blvl?.[this.id] || 0,
                             lvl: characterState.lvl?.[this.id] || 0,
-                            clvl: characterLevel || 1
+                            clvl: characterLevel || 1,
+                            // Full objects for skill references
+                            _blvl: characterState.blvl, // Full blvl object for skill references
+                            _lvl: characterState.lvl    // Full lvl object for skill references
                         };
                         const evalResult = formulaEvaluator.evaluate(value3, variables);
                         if (evalResult.success) {

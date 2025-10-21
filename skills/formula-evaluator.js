@@ -12,6 +12,10 @@ export class FormulaEvaluator {
     // Register default functions
     this.registerFunction('floor', Math.floor);
     this.registerFunction('ceil', Math.ceil);
+    this.registerFunction('round', (value, decimals = 0) => {
+      const factor = Math.pow(10, decimals);
+      return Math.round(value * factor) / factor;
+    });
     this.registerFunction('min', Math.min);
     this.registerFunction('max', Math.max);
     
@@ -90,8 +94,8 @@ export class FormulaEvaluator {
         return { success: false, error: 'Unmatched opening parenthesis' };
       }
 
-      // Check for valid characters
-      const validChars = /^[0-9+\-*/.(),a-zA-Z_\s]+$/;
+      // Check for valid characters (including square brackets for skill references)
+      const validChars = /^[0-9+\-*/.(),a-zA-Z_\[\]\s]+$/;
       if (!validChars.test(trimmed)) {
         return { success: false, error: 'Formula contains invalid characters' };
       }
@@ -163,7 +167,10 @@ export class FormulaEvaluator {
   replaceVariables(formula, context) {
     let processed = formula;
     
-    // Replace function calls first
+    // Replace skill name references first (e.g., [[bear_companion]] -> blvl of that skill)
+    processed = this.replaceSkillReferences(processed, context);
+    
+    // Replace function calls
     for (const funcName of this.functionRegistry.keys()) {
       const regex = new RegExp(`\\b${funcName}\\b`, 'g');
       processed = processed.replace(regex, `context.${funcName}`);
@@ -181,11 +188,33 @@ export class FormulaEvaluator {
   }
 
   /**
+   * Replace skill name references with their blvl values
+   * Syntax: [[skill_name]] -> blvl of that skill
+   */
+  replaceSkillReferences(formula, context) {
+    // Match [[skill_name]] pattern
+    const skillRefPattern = /\[\[([a-zA-Z_][a-zA-Z0-9_]*)\]\]/g;
+    
+    return formula.replace(skillRefPattern, (match, skillName) => {
+      // Get blvl for the referenced skill from the full _blvl object
+      if (context._blvl && context._blvl[skillName] !== undefined) {
+        return String(context._blvl[skillName]);
+      }
+      
+      // If skill not found, return 0
+      return '0';
+    });
+  }
+
+  /**
    * Check if formula contains unreplaced variables
    */
   containsUnreplacedVariables(formula) {
+    // First, remove skill references since they're handled separately
+    const withoutSkillRefs = formula.replace(/\[\[[a-zA-Z_][a-zA-Z0-9_]*\]\]/g, '0');
+    
     const variablePattern = /\b[a-zA-Z_][a-zA-Z0-9_]*\b/g;
-    const matches = formula.match(variablePattern);
+    const matches = withoutSkillRefs.match(variablePattern);
     
     if (!matches) return false;
     

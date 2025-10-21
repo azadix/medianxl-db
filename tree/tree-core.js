@@ -4,7 +4,7 @@ import { renderSkills, renderDifficultyCheckboxes, updateTabColors } from './tre
 import Character from '../character/Character.js';
 import { initializeCharacter, setCharacterLevel, getSpentSkillPoints, getAllSkillPoints, setAllSkillPoints, updateQuestCompletion, getQuestCompletion, getAllOSkills, addOSkill, changeOSkillPoints, clearOSkills, setAllOSkills, getMinimumRequiredLevel, getTotalQuestSkillPoints, checkSkillsExceedingMaxLevel, getAvailableSkillPoints, getCharacterInstance, getCharacterLevel } from '../character/character-state.js';
 import { getCurrentDevotion, getDevotionDisplayName } from '../skills/skill-calculations.js';
-import { initializeTooltip } from './tree-tooltip.js';
+import { initializeTooltip, refreshCurrentTooltip } from './tree-tooltip.js';
 import { ToastManager } from './ToastManager.js';
 import { DropdownList } from '../edit/DropdownList.js';
 import { renderSkillCard, getSkillIcon } from './tree-card-renderer.js';
@@ -131,6 +131,31 @@ export async function initializeTreePage() {
     }
     
     initializeMenuButtons();
+    
+    // Set up global event listeners (only once during initialization)
+    setupGlobalEventListeners();
+}
+
+/**
+ * Set up global event listeners that should only be added once
+ */
+function setupGlobalEventListeners() {
+    // Add event listener for skill point changes
+    window.addEventListener('skillPointsChanged', handleSkillPointsChanged);
+    
+    // Add event listener for oSkills changes
+    window.addEventListener('oskillsUpdated', () => {
+        updateOSkillsDisplay();
+    });
+    
+    // Add event listener for All Skills bonus changes
+    const allSkillsBonusInput = document.getElementById('allSkillsBonus');
+    if (allSkillsBonusInput) {
+        allSkillsBonusInput.addEventListener('input', () => {
+            // Refresh tooltip if one is currently shown
+            refreshCurrentTooltip();
+        });
+    }
 }
 
 /**
@@ -259,13 +284,7 @@ async function main() {
         });
         
         
-        // Add event listener for skill point changes
-        window.addEventListener('skillPointsChanged', handleSkillPointsChanged);
-        
-        // Add event listener for oSkills changes
-        window.addEventListener('oskillsUpdated', () => {
-            updateOSkillsDisplay();
-        });
+        // Event listeners will be set up in initializeTreePage()
     } catch (error) {
         console.error('Error initializing tree page:', error);
     }
@@ -1075,9 +1094,10 @@ function initializeOSkillsDropdown() {
     const sidebarDropdownContainer = document.getElementById('oskill-dropdown');
     const sidebarHiddenInput = document.getElementById('oskill-hidden');
     
-    // Check if dropdown already exists
-    if (sidebarDropdownContainer && sidebarDropdownContainer.querySelector('.dropdown-list-container')) {
-        return;
+    // Always re-initialize the dropdown to ensure event handlers are properly attached
+    // Clear any existing dropdown first
+    if (sidebarDropdownContainer) {
+        sidebarDropdownContainer.innerHTML = '';
     }
     
     
@@ -1132,6 +1152,7 @@ function updateOSkillsDisplay() {
     // Update window reference for other modules (like tree-render.js)
     window.oSkills = getAllOSkills();
     
+    
     // Update the oSkills tab
     updateOSkillsTab();
     
@@ -1165,6 +1186,7 @@ function updateOSkillsTab() {
         return;
     }
     
+    
     // Clear container and hide any active tooltips for removed skills
     container.innerHTML = '';
     
@@ -1175,6 +1197,7 @@ function updateOSkillsTab() {
     }
     
     const oSkills = getAllOSkills();
+    
     if (oSkills.length === 0) {
         return;
     }

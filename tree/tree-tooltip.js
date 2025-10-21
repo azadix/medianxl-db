@@ -5,6 +5,8 @@ import { getSkillPoints, getOSkillPoints, getCharacterInstance, getCharacterLeve
 
 let tooltipElement = null;
 let currentHoveredSkill = null;
+let lastMouseX = 0;
+let lastMouseY = 0;
 let tooltipHideTimeout = null;
 
 /**
@@ -197,6 +199,9 @@ async function handleOSkillsUpdated() {
  * @param {HTMLElement} hoveredCard - The actual card element being hovered (optional)
  */
 async function showTooltip(skillId, mouseX, mouseY, hoveredCard = null) {
+    // Store mouse coordinates for potential tooltip refresh
+    lastMouseX = mouseX;
+    lastMouseY = mouseY;
     const db = getDatabase();
     if (!db) {
         console.warn('Tooltip: Database not loaded yet');
@@ -246,6 +251,15 @@ async function showTooltip(skillId, mouseX, mouseY, hoveredCard = null) {
 function hideTooltip() {
     if (tooltipElement) {
         tooltipElement.style.display = 'none';
+    }
+}
+
+/**
+ * Refresh current tooltip (useful when All Skills bonus changes)
+ */
+export function refreshCurrentTooltip() {
+    if (currentHoveredSkill) {
+        showTooltip(currentHoveredSkill, lastMouseX, lastMouseY);
     }
 }
 
@@ -392,6 +406,7 @@ async function buildTooltipContent(skillData, level, db, warningMessage = '', is
     const allSkillPoints = getAllSkillPoints();
     const allOSkills = getAllOSkills();
     
+    
     // Get character level from minimum level display (this is what clvl should use)
     const minLevelDisplay = document.getElementById('minLevelDisplay');
     let characterLevel = 1; // fallback
@@ -403,22 +418,28 @@ async function buildTooltipContent(skillData, level, db, warningMessage = '', is
         }
     }
     
+    // Get All Skills bonus from input
+    const allSkillsBonusInput = document.getElementById('allSkillsBonus');
+    const allSkillsBonus = allSkillsBonusInput ? Math.max(0, parseInt(allSkillsBonusInput.value) || 0) : 0;
+    
     // Create base character state with tree skill points
     const characterState = {
         level: characterLevel,
         blvl: allSkillPoints,
-        lvl: allSkillPoints
+        lvl: {} // Will be populated below
     };
     
-    // If this is an OSkill, modify the character state to use OSkill levels
-    if (isOSkill) {
-        // For OSkills, lvl should be the actual OSkill level, not tree points
-        const oskillLevels = {};
-        allOSkills.forEach(oskill => {
-            oskillLevels[oskill.skillName] = oskill.points;
-        });
-        characterState.lvl = oskillLevels;
+    
+    // Calculate lvl for each skill (blvl + allSkillsBonus for tree skills)
+    for (const [skillName, points] of Object.entries(allSkillPoints)) {
+        characterState.lvl[skillName] = points + allSkillsBonus;
     }
+    
+    // Add OSkill levels to character state (with All Skills bonus applied)
+    allOSkills.forEach(oskill => {
+        // For OSkills, lvl = OSkill points + All Skills bonus
+        characterState.lvl[oskill.skillName] = oskill.points + allSkillsBonus;
+    });
     
     // Description with scaling
     // Render description and skill effect

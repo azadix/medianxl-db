@@ -749,6 +749,8 @@ export function getOSkillPoints(skillName) {
 export function addOSkill(skillId, displayName, skillName, image, className, hasDetails = false, description = null, skillEffect = null) {
   if (characterInstance) {
     characterInstance.addOSkill(skillId, displayName, skillName, image, className, hasDetails, description, skillEffect);
+  } else {
+    console.error('[OSkills] No character instance available!');
   }
 }
 
