@@ -168,6 +168,173 @@ export default class Skill {
     }
 
     /**
+     * Build variables object for formula evaluation
+     * @param {Object} characterState - Character state object
+     * @param {number} characterLevel - Character level
+     * @returns {Object} Variables object for formula evaluation
+     */
+    _buildFormulaVariables(characterState, characterLevel) {
+        if (!characterState) return null;
+        
+        return {
+            // Individual skill values (for backward compatibility)
+            blvl: characterState.blvl?.[this.id] || 0,
+            lvl: characterState.lvl?.[this.id] || 0,
+            clvl: characterLevel || 1,
+            // Full objects for skill references
+            _blvl: characterState.blvl, // Full blvl object for skill references
+            _lvl: characterState.lvl    // Full lvl object for skill references
+        };
+    }
+
+    /**
+     * Evaluate a single value if it's a formula
+     * @param {*} value - Value to evaluate
+     * @param {Object} formulaEvaluator - Formula evaluator instance
+     * @param {Object} variables - Variables for formula evaluation
+     * @returns {Object} Result with evaluated value and formula flag
+     */
+    _evaluateValue(value, formulaEvaluator, variables) {
+        if (!variables || !value || typeof value !== 'string' || !isNaN(value)) {
+            return { value, wasFormula: false };
+        }
+        
+        const evalResult = formulaEvaluator.evaluate(value, variables);
+        if (evalResult.success) {
+            return { value: evalResult.value, wasFormula: true };
+        }
+        
+        return { value, wasFormula: false };
+    }
+
+    /**
+     * Process all 4 values (value0-3) for formulas
+     * @param {Object} result - Result object to modify
+     * @param {Object} formulaEvaluator - Formula evaluator instance
+     * @param {Object} variables - Variables for formula evaluation
+     */
+    _processValuesForFormulas(result, formulaEvaluator, variables) {
+        if (!variables) return;
+        
+        ['value0', 'value1', 'value2', 'value3'].forEach(valueKey => {
+            const { value, wasFormula } = this._evaluateValue(
+                result[valueKey], 
+                formulaEvaluator, 
+                variables
+            );
+            result[valueKey] = value;
+            if (wasFormula) {
+                result[`${valueKey}_formula`] = true;
+            }
+        });
+    }
+
+    /**
+     * Query scaling table for level-specific values
+     * @param {Object} db - Database instance
+     * @param {number} level - Skill level
+     * @param {string} statKey - Stat key to get values for
+     * @param {number} occurrenceIndex - Occurrence index for duplicate stats
+     * @returns {Object|null} Scaling values object or null if not found
+     */
+    _getScalingRow(db, level, statKey, occurrenceIndex) {
+        const scalingStmt = db.prepare(`
+            SELECT ss.value0, ss.value1, ss.value2, ss.value3, s.name as stat_name, s.format
+            FROM skill_scaling ss
+            JOIN stats s ON s.id = ss.stat_id
+            WHERE ss.skill_id = ? AND ss.level = ? AND LOWER(s.key) = ? AND ss.occurrence_index = ?
+        `);
+        scalingStmt.bind([this.skillId, level, statKey.toLowerCase(), occurrenceIndex]);
+        
+        let result = null;
+        if (scalingStmt.step()) {
+            const [value0, value1, value2, value3, statName, format] = scalingStmt.get();
+            result = { 
+                value0, value1, value2, value3, statName, format,
+                value0_constant: false, value1_constant: false, value2_constant: false, value3_constant: false
+            };
+        }
+        scalingStmt.free();
+        
+        return result;
+    }
+
+    /**
+     * Query constants table for constant values
+     * @param {Object} db - Database instance
+     * @param {string} statKey - Stat key to get values for
+     * @param {number} occurrenceIndex - Occurrence index for duplicate stats
+     * @returns {Object|null} Constant values object or null if not found
+     */
+    _getConstantsRow(db, statKey, occurrenceIndex) {
+        const constantStmt = db.prepare(`
+            SELECT value0, value1, value2, value3, 
+                   value0_constant, value1_constant, value2_constant, value3_constant,
+                   s.name as stat_name, s.format
+            FROM skill_scaling_constants ssc
+            JOIN stats s ON s.id = ssc.stat_id
+            WHERE ssc.skill_id = ? AND LOWER(s.key) = ? AND ssc.occurrence_index = ?
+        `);
+        constantStmt.bind([this.skillId, statKey.toLowerCase(), occurrenceIndex]);
+        
+        let constantValues = null;
+        if (constantStmt.step()) {
+            const [value0, value1, value2, value3, 
+                   value0_constant, value1_constant, value2_constant, value3_constant,
+                   statName, format] = constantStmt.get();
+            constantValues = {
+                value0, value1, value2, value3,
+                value0_constant, value1_constant, value2_constant, value3_constant,
+                statName, format
+            };
+        }
+        constantStmt.free();
+        
+        return constantValues;
+    }
+
+    /**
+     * Merge constant values with scaling values
+     * @param {Object} result - Current result object
+     * @param {Object} constantValues - Constant values from database
+     * @param {Object} formulaEvaluator - Formula evaluator instance
+     * @param {Object} variables - Variables for formula evaluation
+     * @returns {Object} Merged result object
+     */
+    _mergeConstants(result, constantValues, formulaEvaluator, variables) {
+        if (!constantValues) return result;
+        
+        if (!result) {
+            result = { 
+                statName: constantValues.statName, 
+                format: constantValues.format,
+                value0: '???', value1: '???', value2: '???', value3: '???',
+                value0_constant: false, value1_constant: false, value2_constant: false, value3_constant: false
+            };
+        }
+        
+        // Process each constant value
+        ['value0', 'value1', 'value2', 'value3'].forEach(valueKey => {
+            const constantKey = `${valueKey}_constant`;
+            if (constantValues[constantKey]) {
+                const { value, wasFormula } = this._evaluateValue(
+                    constantValues[valueKey] || 0,
+                    formulaEvaluator,
+                    variables
+                );
+                
+                result[valueKey] = value;
+                result[constantKey] = true;
+                if (wasFormula) {
+                    result[`${valueKey}_formula`] = true;
+                }
+            }
+        });
+        
+        return result;
+    }
+
+    /**
      * Get scaling values for a specific stat at a given level
      * @param {Object} db - Database instance
      * @param {number} level - Skill level
@@ -178,189 +345,24 @@ export default class Skill {
     async getScalingValues(db, level, statKey, occurrenceIndex = 0, characterState = null, characterLevel = null) {
         if (!db || !this.skillId || !statKey) return null;
         
-        // Import formula evaluator once for the entire function
         const { formulaEvaluator } = await import('./formula-evaluator.js');
         
         try {
-            // Get level-specific values first
-            const scalingStmt = db.prepare(`
-                SELECT ss.value0, ss.value1, ss.value2, ss.value3, s.name as stat_name, s.format
-                FROM skill_scaling ss
-                JOIN stats s ON s.id = ss.stat_id
-                WHERE ss.skill_id = ? AND ss.level = ? AND LOWER(s.key) = ? AND ss.occurrence_index = ?
-            `);
-            scalingStmt.bind([this.skillId, level, statKey.toLowerCase(), occurrenceIndex]);
+            // Build variables for formula evaluation
+            const variables = this._buildFormulaVariables(characterState, characterLevel);
             
-            let result = null;
-            if (scalingStmt.step()) {
-                const [value0, value1, value2, value3, statName, format] = scalingStmt.get();
-                result = { 
-                    value0, value1, value2, value3, statName, format,
-                    value0_constant: false, value1_constant: false, value2_constant: false, value3_constant: false
-                };
-            }
-            scalingStmt.free();
+            // Get level-specific values
+            let result = this._getScalingRow(db, level, statKey, occurrenceIndex);
             
-            // Check if any values are formulas and evaluate them
-            if (result && characterState) {
-                // Pass both individual skill values and full objects for skill references
-                const variables = {
-                    // Individual skill values (for backward compatibility)
-                    blvl: characterState.blvl?.[this.id] || 0,
-                    lvl: characterState.lvl?.[this.id] || 0,
-                    clvl: characterLevel || 1,
-                    // Full objects for skill references
-                    _blvl: characterState.blvl, // Full blvl object for skill references
-                    _lvl: characterState.lvl    // Full lvl object for skill references
-                };
-                
-                // Check each value to see if it's a formula
-                ['value0', 'value1', 'value2', 'value3'].forEach(valueKey => {
-                    const value = result[valueKey];
-                    if (value && typeof value === 'string' && isNaN(value)) {
-                        // This looks like a formula (not a number), try to evaluate it
-                        const evalResult = formulaEvaluator.evaluate(value, variables);
-                        if (evalResult.success) {
-                            result[valueKey] = evalResult.value;
-                            result[`${valueKey}_formula`] = true;
-                        }
-                    }
-                });
+            // Evaluate formulas in scaling values if character state available
+            if (result && variables) {
+                this._processValuesForFormulas(result, formulaEvaluator, variables);
             }
             
-            // Then get constant values
-            const constantStmt = db.prepare(`
-                SELECT value0, value1, value2, value3, 
-                       value0_constant, value1_constant, value2_constant, value3_constant,
-                       s.name as stat_name, s.format
-                FROM skill_scaling_constants ssc
-                JOIN stats s ON s.id = ssc.stat_id
-                WHERE ssc.skill_id = ? AND LOWER(s.key) = ? AND ssc.occurrence_index = ?
-            `);
-            constantStmt.bind([this.skillId, statKey.toLowerCase(), occurrenceIndex]);
-            
-            let constantValues = null;
-            if (constantStmt.step()) {
-                const [value0, value1, value2, value3, 
-                       value0_constant, value1_constant, value2_constant, value3_constant,
-                       statName, format] = constantStmt.get();
-                constantValues = {
-                    value0, value1, value2, value3,
-                    value0_constant, value1_constant, value2_constant, value3_constant,
-                    statName, format
-                };
-            }
-            constantStmt.free();
-            
-            
-            // Merge: use constant values where marked, level-specific otherwise
+            // Get and merge constant values
+            const constantValues = this._getConstantsRow(db, statKey, occurrenceIndex);
             if (constantValues) {
-                if (!result) {
-                    result = { 
-                        statName: constantValues.statName, 
-                        format: constantValues.format,
-                        value0: '???', value1: '???', value2: '???', value3: '???',
-                        value0_constant: false, value1_constant: false, value2_constant: false, value3_constant: false
-                    };
-                }
-                
-                // Evaluate constant formulas if character state is available
-                if (constantValues.value0_constant) {
-                    let value0 = constantValues.value0 || 0;
-                    let wasFormula = false;
-                    if (characterState && typeof value0 === 'string' && isNaN(value0)) {
-                        // This looks like a formula, try to evaluate it
-                        const variables = {
-                            // Individual skill values (for backward compatibility)
-                            blvl: characterState.blvl?.[this.id] || 0,
-                            lvl: characterState.lvl?.[this.id] || 0,
-                            clvl: characterLevel || 1,
-                            // Full objects for skill references
-                            _blvl: characterState.blvl, // Full blvl object for skill references
-                            _lvl: characterState.lvl    // Full lvl object for skill references
-                        };
-                        const evalResult = formulaEvaluator.evaluate(value0, variables);
-                        if (evalResult.success) {
-                            value0 = evalResult.value;
-                            wasFormula = true;
-                        }
-                    }
-                    result.value0 = value0;
-                    result.value0_constant = true;
-                    result.value0_formula = wasFormula;
-                }
-                if (constantValues.value1_constant) {
-                    let value1 = constantValues.value1 || 0;
-                    let wasFormula = false;
-                    if (characterState && typeof value1 === 'string' && isNaN(value1)) {
-                        // This looks like a formula, try to evaluate it
-                        const variables = {
-                            // Individual skill values (for backward compatibility)
-                            blvl: characterState.blvl?.[this.id] || 0,
-                            lvl: characterState.lvl?.[this.id] || 0,
-                            clvl: characterLevel || 1,
-                            // Full objects for skill references
-                            _blvl: characterState.blvl, // Full blvl object for skill references
-                            _lvl: characterState.lvl    // Full lvl object for skill references
-                        };
-                        const evalResult = formulaEvaluator.evaluate(value1, variables);
-                        if (evalResult.success) {
-                            value1 = evalResult.value;
-                            wasFormula = true;
-                        }
-                    }
-                    result.value1 = value1;
-                    result.value1_constant = true;
-                    result.value1_formula = wasFormula;
-                }
-                if (constantValues.value2_constant) {
-                    let value2 = constantValues.value2 || 0;
-                    let wasFormula = false;
-                    if (characterState && typeof value2 === 'string' && isNaN(value2)) {
-                        // This looks like a formula, try to evaluate it
-                        const variables = {
-                            // Individual skill values (for backward compatibility)
-                            blvl: characterState.blvl?.[this.id] || 0,
-                            lvl: characterState.lvl?.[this.id] || 0,
-                            clvl: characterLevel || 1,
-                            // Full objects for skill references
-                            _blvl: characterState.blvl, // Full blvl object for skill references
-                            _lvl: characterState.lvl    // Full lvl object for skill references
-                        };
-                        const evalResult = formulaEvaluator.evaluate(value2, variables);
-                        if (evalResult.success) {
-                            value2 = evalResult.value;
-                            wasFormula = true;
-                        }
-                    }
-                    result.value2 = value2;
-                    result.value2_constant = true;
-                    result.value2_formula = wasFormula;
-                }
-                if (constantValues.value3_constant) {
-                    let value3 = constantValues.value3 || 0;
-                    let wasFormula = false;
-                    if (characterState && typeof value3 === 'string' && isNaN(value3)) {
-                        // This looks like a formula, try to evaluate it
-                        const variables = {
-                            // Individual skill values (for backward compatibility)
-                            blvl: characterState.blvl?.[this.id] || 0,
-                            lvl: characterState.lvl?.[this.id] || 0,
-                            clvl: characterLevel || 1,
-                            // Full objects for skill references
-                            _blvl: characterState.blvl, // Full blvl object for skill references
-                            _lvl: characterState.lvl    // Full lvl object for skill references
-                        };
-                        const evalResult = formulaEvaluator.evaluate(value3, variables);
-                        if (evalResult.success) {
-                            value3 = evalResult.value;
-                            wasFormula = true;
-                        }
-                    }
-                    result.value3 = value3;
-                    result.value3_constant = true;
-                    result.value3_formula = wasFormula;
-                }
+                result = this._mergeConstants(result, constantValues, formulaEvaluator, variables);
             }
             
             return result;

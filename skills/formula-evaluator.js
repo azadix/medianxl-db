@@ -10,42 +10,48 @@ export class FormulaEvaluator {
     this.variableRegistry = new Set();
     
     // Register default functions
-    this.registerFunction('floor', Math.floor);
-    this.registerFunction('ceil', Math.ceil);
+    this.registerFunction('floor', Math.floor, 'Rounds down to the nearest integer', 'floor(5.7) → 5');
+    this.registerFunction('ceil', Math.ceil, 'Rounds up to the nearest integer', 'ceil(5.2) → 6');
     this.registerFunction('round', (value, decimals = 0) => {
       const factor = Math.pow(10, decimals);
       return Math.round(value * factor) / factor;
-    });
-    this.registerFunction('min', Math.min);
-    this.registerFunction('max', Math.max);
+    }, 'Rounds to specified decimal places (default: 0)', 'round(5.678, 2) → 5.68');
+    this.registerFunction('min', Math.min, 'Returns the smallest of the given numbers', 'min(5, 10, 3) → 3');
+    this.registerFunction('max', Math.max, 'Returns the largest of the given numbers', 'max(5, 10, 3) → 10');
+    this.registerFunction('abs', Math.abs, 'Returns absolute value (removes negative sign)', 'abs(-5) → 5');
+    this.registerFunction('sqrt', Math.sqrt, 'Returns square root', 'sqrt(25) → 5');
     
-    // Register default variables
-    this.registerVariable('blvl'); // base skill level
-    this.registerVariable('lvl'); // all skills
-    this.registerVariable('clvl'); // character level
+    // Register default variables with descriptions and examples
+    this.registerVariable('blvl', 'Base skill level (points invested in this skill)', '50 + 15*blvl');
+    this.registerVariable('lvl', 'All skills bonus (coming from the "+# to All Skills" field)', '100 + 5*lvl');
+    this.registerVariable('clvl', 'Character level', '25 + clvl');
   }
 
   /**
    * Register a new function that can be used in formulas
    * @param {string} name - Function name
    * @param {Function} func - Function implementation
+   * @param {string} description - Optional description of what the function does
+   * @param {string} example - Optional example of how to use the function
    */
-  registerFunction(name, func) {
+  registerFunction(name, func, description = '', example = '') {
     if (typeof func !== 'function') {
       throw new Error(`Cannot register ${name}: not a function`);
     }
-    this.functionRegistry.set(name, func);
+    this.functionRegistry.set(name, { func, description, example });
   }
   
   /**
    * Register a new variable that can be used in formulas
    * @param {string} name - Variable name
+   * @param {string} description - Optional description of what the variable represents
+   * @param {string} example - Optional example of how to use the variable
    */
-  registerVariable(name) {
+  registerVariable(name, description = '', example = '') {
     if (typeof name !== 'string' || !name.match(/^[a-zA-Z_][a-zA-Z0-9_]*$/)) {
       throw new Error(`Invalid variable name: ${name}`);
     }
-    this.variableRegistry.add(name);
+    this.variableRegistry.add({ name, description, example });
   }
   
   /**
@@ -57,11 +63,47 @@ export class FormulaEvaluator {
   }
   
   /**
+   * Get function information including description and example
+   * @returns {Array<Object>} Array of function objects with name, description, and example
+   */
+  getFunctionInfo() {
+    return Array.from(this.functionRegistry.entries()).map(([name, info]) => ({
+      name,
+      description: info.description || 'No description available',
+      example: info.example || 'No example available'
+    }));
+  }
+  
+  /**
    * Get all registered variables
    * @returns {Array<string>} Array of variable names
    */
   getRegisteredVariables() {
-    return Array.from(this.variableRegistry);
+    return Array.from(this.variableRegistry).map(v => v.name);
+  }
+  
+  /**
+   * Get variable information including description and example
+   * @returns {Array<Object>} Array of variable objects with name, description, and example
+   */
+  getVariableInfo() {
+    return Array.from(this.variableRegistry).map(v => ({
+      name: v.name,
+      description: v.description || 'No description available',
+      example: v.example || 'No example available'
+    }));
+  }
+  
+  /**
+   * Get skill reference information for the modal
+   * @returns {Array<Object>} Array of skill reference objects with name, description, and example
+   */
+  getSkillReferenceInfo() {
+    return [{
+      name: '[[skill_name]]',
+      description: 'Reference another skill\'s blvl in formulas',
+      example: '5 + [[barrage]] * 2'
+    }];
   }
 
   /**
@@ -154,8 +196,8 @@ export class FormulaEvaluator {
     const context = { ...variables };
     
     // Add all registered functions
-    for (const [name, func] of this.functionRegistry) {
-      context[name] = func;
+    for (const [name, info] of this.functionRegistry) {
+      context[name] = info.func;
     }
     
     return context;
@@ -233,8 +275,8 @@ export class FormulaEvaluator {
   safeEvaluate(formula) {
     try {
       const context = {};
-      for (const [name, func] of this.functionRegistry) {
-        context[name] = func;
+      for (const [name, info] of this.functionRegistry) {
+        context[name] = info.func;
       }
       
       const func = new Function('context', `return ${formula}`);

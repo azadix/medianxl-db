@@ -4,6 +4,12 @@ const ATLAS_SIZE = 912;
 const ICONS_PER_ROW = Math.floor(ATLAS_SIZE / ICON_SIZE);
 export const MISSING_IMAGE_NAME = "icons-shared_missing.png";
 
+const SKILL_STYLE = "has-text-success";
+const FORMULA_STYLE = "has-text-warning";
+const CONSTANTS_STYLE = "has-text-primary";
+const DEFAULT_STYLE = "has-text-white";
+const UNKNOWN_STYLE = "has-text-danger";
+
 /**
  * Skill Tag Group Constants
  * Shared across the application for consistent tag categorization
@@ -202,7 +208,7 @@ function autoExpandStatToken(db, statKey) {
 // Expand using values sourced from skill_scaling for a given skill and level.
 // If inline values are provided in the token, they take precedence; otherwise fetch by stat key.
 // Expected schema: stats(key TEXT UNIQUE), skill_scaling(skill_id, level, stat_id, occurrence_index, value)
-// Now also supports simple {{mana_cost}} which auto-expands to {{mana_cost:%value0%}} based on format
+
 // Also supports [[skill_name]] which expands to skill's display_name in success color
 export async function expandPlaceholdersWithScaling(db, skillId, level, description, skillName = null, characterState = null) {
     if (!description) return '';
@@ -222,7 +228,7 @@ export async function expandPlaceholdersWithScaling(db, skillId, level, descript
             if (stmt.step()) {
                 const displayName = stmt.get()[0];
                 stmt.free();
-                return `<p class='has-text-success'>${displayName}</p>`;
+                return `<p class='${SKILL_STYLE}'>${displayName}</p>`;
             }
             stmt.free();
         } catch (error) {
@@ -259,39 +265,6 @@ export async function expandPlaceholdersWithScaling(db, skillId, level, descript
             values = rawValues.split(',').map(v => v.trim());
         }
 
-        // If author provided inline concrete values (not placeholders like %value0%), use them
-        if (rawValues && rawValues.length > 0) {
-            const arePlaceholders = values.every(v => /%?value\d*%?/i.test(v));
-            if (!arePlaceholders) {
-                const stmt = db.prepare("SELECT name, format FROM stats WHERE LOWER(key) = ?");
-                stmt.bind([key]);
-                let output = `[Unknown stat: ${rawKey}]`;
-                if (stmt.step()) {
-                    const [name, format] = stmt.get();
-                    const v0 = values[0] || '';
-                    const v1 = values[1] || '';
-                    const v2 = values[2] || '';
-                    const v3 = values[3] || '';
-                    const w0 = `<span class=\"has-text-primary\">${v0}</span>`;
-                    const w1 = `<span class=\"has-text-primary\">${v1}</span>`;
-                    const w2 = `<span class=\"has-text-primary\">${v2}</span>`;
-                    const w3 = `<span class=\"has-text-primary\">${v3}</span>`;
-                    output = (format || '{name}: {value}')
-                        .replace('{name}', name)
-                        .replace('{value0}', w0)
-                        .replace('{value1}', w1)
-                        .replace('{value2}', w2)
-                        .replace('{value3}', w3)
-                        .replace(/%value0%/g, w0)
-                        .replace(/%value1%/g, w1)
-                        .replace(/%value2%/g, w2)
-                        .replace(/%value3%/g, w3);
-                }
-                stmt.free();
-                result = result.replace(match, output);
-                continue;
-            }
-        }
 
         // Otherwise, attempt to fetch value using Skill class (includes constants)
         // First get the stat info
@@ -337,9 +310,9 @@ export async function expandPlaceholdersWithScaling(db, skillId, level, descript
                     const getValueClass = (valueIndex) => {
                         const isFormula = scalingValues[`value${valueIndex}_formula`];
                         const isConstant = scalingValues[`value${valueIndex}_constant`];
-                        if (isFormula) return 'has-text-danger';
-                        if (isConstant) return 'has-text-warning';
-                        return 'has-text-primary';
+                        if (isFormula) return FORMULA_STYLE;
+                        if (isConstant) return CONSTANTS_STYLE;
+                        return DEFAULT_STYLE;
                     };
                     
                     const w0 = `<span class="${getValueClass(0)}">${v0}</span>`;
@@ -352,11 +325,7 @@ export async function expandPlaceholdersWithScaling(db, skillId, level, descript
                         .replace('{value0}', w0)
                         .replace('{value1}', w1)
                         .replace('{value2}', w2)
-                        .replace('{value3}', w3)
-                        .replace(/%value0%/g, w0)
-                        .replace(/%value1%/g, w1)
-                        .replace(/%value2%/g, w2)
-                        .replace(/%value3%/g, w3);
+                        .replace('{value3}', w3);
                 }
             }
         }
@@ -367,17 +336,13 @@ export async function expandPlaceholdersWithScaling(db, skillId, level, descript
             s2.bind([key]);
             if (s2.step()) {
                 const [name, format] = s2.get();
-                const q = '<span class="has-text-primary">???</span>';
+                const q = `<span class="${UNKNOWN_STYLE}">???</span>`;
                 output = (format || '{name}: {value}')
                     .replace('{name}', name)
                     .replace('{value0}', q)
                     .replace('{value1}', q)
                     .replace('{value2}', q)
-                    .replace('{value3}', q)
-                    .replace(/%value0%/g, q)
-                    .replace(/%value1%/g, q)
-                    .replace(/%value2%/g, q)
-                    .replace(/%value3%/g, q);
+                    .replace('{value3}', q);
             }
             s2.free();
         }

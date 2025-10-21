@@ -282,7 +282,7 @@ function createStatUsageModal(statName, statKey, skills) {
           }
         </section>
         <footer class="modal-card-foot p-4">
-          <button class="button" onclick="closeStatUsageModal()">Close</button>
+          <button class="button is-white is-outlined" onclick="closeStatUsageModal()">Close</button>
         </footer>
       </div>
     </div>

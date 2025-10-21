@@ -389,6 +389,7 @@
           <button class="button is-info is-outlined" id="scaling-load">Load</button>
           <button class="button is-success is-outlined" id="scaling-save">Save</button>
           <button class="button is-danger is-outlined" id="scaling-clear">Clear</button>
+          <button class="button is-light is-outlined" id="list-functions-btn">List Functions</button>
         </div>
       </div>
     </div>
@@ -397,7 +398,7 @@
       <div id="scaling-status" class="has-text-weight-medium">Select a skill to view level data</div>
       <div class="help has-text-grey">
         <strong>Tip:</strong> You can enter either numbers (e.g., 50) or formulas (e.g., 50 + 15*blvl) in any value field. 
-        Variables: blvl, lvl, clvl | Functions: floor(), ceil(), min(), max()
+        Click "List Functions" to see all available variables and functions.
       </div>
     </div>
 
@@ -585,5 +586,59 @@
       }
     });
   </script>
+
+  <!-- Functions and Variables Help Modal -->
+  <div id="functionsModal" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card" style="width: 80%; max-width: 1000px;">
+      <header class="modal-card-head px-4">
+        <p class="modal-card-title">Formula Functions & Variables</p>
+      </header>
+      <section class="modal-card-body p-4">
+        <div class="tabs is-centered">
+          <ul>
+            <li class="is-active" id="functionsTab"><a>Functions</a></li>
+            <li id="variablesTab"><a>Variables</a></li>
+          </ul>
+        </div>
+        
+        <!-- Functions Tab Content -->
+        <div id="functionsContent" class="content">
+          <table class="table is-fullwidth is-striped">
+            <thead>
+              <tr>
+                <th style="width: 20%;">Function</th>
+                <th>Description</th>
+                <th style="width: 30%;">Example</th>
+              </tr>
+            </thead>
+            <tbody id="functionsTableBody">
+              <!-- Functions will be populated here -->
+            </tbody>
+          </table>
+        </div>
+        
+        <!-- Variables Tab Content -->
+        <div id="variablesContent" class="content" style="display: none;">
+          <table class="table is-fullwidth is-striped">
+            <thead>
+              <tr>
+                <th style="width: 20%;">Variable</th>
+                <th>Description</th>
+                <th style="width: 30%;">Example</th>
+              </tr>
+            </thead>
+            <tbody id="variablesTableBody">
+              <!-- Variables will be populated here -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <footer class="modal-card-foot p-4">
+        <button class="button is-white is-outlined" id="closeFunctionsModalBtn">Close</button>
+      </footer>
+    </div>
+  </div>
+
 </body>
 </html>

@@ -213,7 +213,7 @@ function renderScalingTable(rows) {
       input.type = 'text';
       input.className = 'input is-small';
       input.placeholder = `Value${i} or formula`;
-      input.title = 'Enter number or formula using blvl, lvl, clvl. Functions: floor(), ceil(), min(), max()';
+      input.title = 'Enter number or formula. Click "List Functions" for help.';
       input.setAttribute('data-value-index', i);
       
       // Check if this specific value is marked as constant
@@ -623,4 +623,123 @@ function validateAllFormulas() {
   
   return errors;
 }
+
+// Functions and Variables Modal functionality
+async function initializeFunctionsModal() {
+  const listFunctionsBtn = document.getElementById('list-functions-btn');
+  const functionsModal = document.getElementById('functionsModal');
+  const closeFunctionsModalBtn = document.getElementById('closeFunctionsModalBtn');
+  const functionsTab = document.getElementById('functionsTab');
+  const variablesTab = document.getElementById('variablesTab');
+  const functionsContent = document.getElementById('functionsContent');
+  const variablesContent = document.getElementById('variablesContent');
+  
+  if (!listFunctionsBtn || !functionsModal) {
+    console.warn('Functions modal elements not found');
+    return;
+  }
+  
+  // Import and initialize formula evaluator
+  const { FormulaEvaluator } = await import('../skills/formula-evaluator.js');
+  const evaluator = new FormulaEvaluator();
+  
+  // Populate functions table
+  function populateFunctionsTable() {
+    const functionsTableBody = document.getElementById('functionsTableBody');
+    if (!functionsTableBody) return;
+    
+    functionsTableBody.innerHTML = '';
+    const functions = evaluator.getFunctionInfo();
+    
+    functions.forEach(func => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td><code>${func.name}()</code></td>
+        <td>${func.description}</td>
+        <td><code>${func.example}</code></td>
+      `;
+      functionsTableBody.appendChild(row);
+    });
+  }
+  
+  // Populate variables table
+  function populateVariablesTable() {
+    const variablesTableBody = document.getElementById('variablesTableBody');
+    if (!variablesTableBody) return;
+    
+    variablesTableBody.innerHTML = '';
+    const variables = evaluator.getVariableInfo();
+    const skillReferences = evaluator.getSkillReferenceInfo();
+    
+    // Add regular variables
+    variables.forEach(variable => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td><code>${variable.name}</code></td>
+        <td>${variable.description}</td>
+        <td><code>${variable.example}</code></td>
+      `;
+      variablesTableBody.appendChild(row);
+    });
+    
+    // Add skill references
+    skillReferences.forEach(skillRef => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td><code>${skillRef.name}</code></td>
+        <td>${skillRef.description}</td>
+        <td><code>${skillRef.example}</code></td>
+      `;
+      variablesTableBody.appendChild(row);
+    });
+  }
+  
+  // Tab switching functionality
+  functionsTab.addEventListener('click', () => {
+    functionsTab.classList.add('is-active');
+    variablesTab.classList.remove('is-active');
+    functionsContent.style.display = 'block';
+    variablesContent.style.display = 'none';
+  });
+  
+  variablesTab.addEventListener('click', () => {
+    variablesTab.classList.add('is-active');
+    functionsTab.classList.remove('is-active');
+    variablesContent.style.display = 'block';
+    functionsContent.style.display = 'none';
+  });
+  
+  // Modal open/close functionality
+  listFunctionsBtn.addEventListener('click', () => {
+    populateFunctionsTable();
+    populateVariablesTable();
+    functionsModal.classList.add('is-active');
+  });
+  
+  const closeModal = () => {
+    functionsModal.classList.remove('is-active');
+  };
+  
+  closeFunctionsModalBtn.addEventListener('click', closeModal);
+  
+  // Close modal when clicking background
+  functionsModal.addEventListener('click', (e) => {
+    // Check if click is on the modal background (not the modal card)
+    if (e.target === functionsModal || e.target.classList.contains('modal-background')) {
+      closeModal();
+    }
+  });
+  
+  // Close modal with Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && functionsModal.classList.contains('is-active')) {
+      closeModal();
+    }
+  });
+}
+
+// Initialize the modal when the DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  initializeFunctionsModal().catch(console.error);
+});
 
