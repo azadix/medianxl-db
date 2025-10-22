@@ -10,48 +10,103 @@ export class FormulaEvaluator {
     this.variableRegistry = new Set();
     
     // Register default functions
-    this.registerFunction('floor', Math.floor, 'Rounds down to the nearest integer', 'floor(5.7) → 5');
-    this.registerFunction('ceil', Math.ceil, 'Rounds up to the nearest integer', 'ceil(5.2) → 6');
-    this.registerFunction('round', (value, decimals = 0) => {
-      const factor = Math.pow(10, decimals);
-      return Math.round(value * factor) / factor;
-    }, 'Rounds to specified decimal places (default: 0)', 'round(5.678, 2) → 5.68');
-    this.registerFunction('min', Math.min, 'Returns the smallest of the given numbers', 'min(5, 10, 3) → 3');
-    this.registerFunction('max', Math.max, 'Returns the largest of the given numbers', 'max(5, 10, 3) → 10');
-    this.registerFunction('abs', Math.abs, 'Returns absolute value (removes negative sign)', 'abs(-5) → 5');
-    this.registerFunction('sqrt', Math.sqrt, 'Returns square root', 'sqrt(25) → 5');
+    this.registerFunction({
+      keyword: 'floor',
+      function: Math.floor,
+      description: 'Rounds down to the nearest integer',
+      example: 'floor(5.7) == 5'
+    });
+    this.registerFunction({
+      keyword: 'ceil',
+      function: Math.ceil,
+      description: 'Rounds up to the nearest integer',
+      example: 'ceil(5.2) == 6'
+    });
+    this.registerFunction({
+      keyword: 'round',
+      function: (value, decimals = 0) => {
+        const factor = Math.pow(10, decimals);
+        return Math.round(value * factor) / factor;
+      },
+      description: 'Rounds to specified decimal places (default: 0)',
+      example: 'round(5.678, 2) == 5.68'
+    });
+    this.registerFunction({
+      keyword: 'min',
+      function: Math.min,
+      description: 'Returns the smallest of the given numbers',
+      example: 'min(5, 10, 3) == 3'
+    });
+    this.registerFunction({
+      keyword: 'max',
+      function: Math.max,
+      description: 'Returns the largest of the given numbers',
+      example: 'max(5, 10, 3) == 10'
+    });
+    this.registerFunction({
+      keyword: 'abs',
+      function: Math.abs,
+      description: 'Returns absolute value (removes negative sign)',
+      example: 'abs(-5) == 5'
+    });
+    this.registerFunction({
+      keyword: 'sqrt',
+      function: Math.sqrt,
+      description: 'Returns square root',
+      example: 'sqrt(25) == 5'
+    });
     
     // Register default variables with descriptions and examples
-    this.registerVariable('blvl', 'Base skill level (points invested in this skill)', '50 + 15*blvl');
-    this.registerVariable('lvl', 'All skills bonus (coming from the "+# to All Skills" field)', '100 + 5*lvl');
-    this.registerVariable('clvl', 'Character level', '25 + clvl');
+    this.registerVariable({
+      keyword: 'blvl',
+      description: 'Base skill level (points invested in this skill)',
+      example: '50 + 15*blvl'
+    });
+    this.registerVariable({
+      keyword: 'lvl',
+      description: 'All skills bonus (coming from the "+# to All Skills" field)',
+      example: '100 + 5*lvl'
+    });
+    this.registerVariable({
+      keyword: 'clvl',
+      description: 'Character level',
+      example: '25 + clvl'
+    });
   }
 
   /**
    * Register a new function that can be used in formulas
-   * @param {string} name - Function name
-   * @param {Function} func - Function implementation
-   * @param {string} description - Optional description of what the function does
-   * @param {string} example - Optional example of how to use the function
+   * @param {Object} options - Function registration options
+   * @param {string} options.keyword - Function name (required)
+   * @param {Function} options.function - Function implementation (required)
+   * @param {string} options.description - Optional description of what the function does
+   * @param {string} options.example - Optional example of how to use the function
    */
-  registerFunction(name, func, description = '', example = '') {
-    if (typeof func !== 'function') {
-      throw new Error(`Cannot register ${name}: not a function`);
+  registerFunction({ keyword, function: func, description = '', example = '' }) {
+    if (!keyword) {
+      throw new Error('Function keyword is required');
     }
-    this.functionRegistry.set(name, { func, description, example });
+    if (!func || typeof func !== 'function') {
+      throw new Error(`Cannot register ${keyword}: function is required and must be a function`);
+    }
+    this.functionRegistry.set(keyword, { func, description, example });
   }
   
   /**
    * Register a new variable that can be used in formulas
-   * @param {string} name - Variable name
-   * @param {string} description - Optional description of what the variable represents
-   * @param {string} example - Optional example of how to use the variable
+   * @param {Object} options - Variable registration options
+   * @param {string} options.keyword - Variable name (required)
+   * @param {string} options.description - Optional description of what the variable represents
+   * @param {string} options.example - Optional example of how to use the variable
    */
-  registerVariable(name, description = '', example = '') {
-    if (typeof name !== 'string' || !name.match(/^[a-zA-Z_][a-zA-Z0-9_]*$/)) {
-      throw new Error(`Invalid variable name: ${name}`);
+  registerVariable({ keyword, description = '', example = '' }) {
+    if (!keyword) {
+      throw new Error('Variable keyword is required');
     }
-    this.variableRegistry.add({ name, description, example });
+    if (typeof keyword !== 'string' || !keyword.match(/^[a-zA-Z_][a-zA-Z0-9_]*$/)) {
+      throw new Error(`Invalid variable name: ${keyword}`);
+    }
+    this.variableRegistry.add({ name: keyword, description, example });
   }
   
   /**
