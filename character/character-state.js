@@ -89,6 +89,44 @@ export function getAllSkillPoints() {
 }
 
 /**
+ * Get all skill points with skill IDs as keys (for saving builds)
+ * @returns {Object} Map of skill_id -> points
+ */
+export function getAllSkillPointsById() {
+  if (!characterInstance) return {};
+  
+  const skillPoints = characterInstance.getAllSkillPoints();
+  const skillPointsById = {};
+  
+  // Convert skill names to skill IDs
+  const db = getDatabase();
+  if (db) {
+    for (const [skillName, points] of Object.entries(skillPoints)) {
+      if (points > 0) {
+        try {
+          const stmt = db.prepare('SELECT id FROM skills WHERE name = ?');
+          stmt.bind([skillName]);
+          if (stmt.step()) {
+            const skillId = stmt.get()[0];
+            skillPointsById[skillId] = points;
+          }
+          stmt.free();
+        } catch (error) {
+          console.warn('Could not look up skill ID for:', skillName);
+          // Fallback: use skill name as key
+          skillPointsById[skillName] = points;
+        }
+      }
+    }
+  } else {
+    // Fallback: use skill names as keys if database not available
+    return skillPoints;
+  }
+  
+  return skillPointsById;
+}
+
+/**
  * Set all skill points (used for loading builds)
  * @param {Object} skillPoints - Map of skill_name -> points
  */
@@ -96,6 +134,48 @@ export function setAllSkillPoints(skillPoints) {
   if (characterInstance) {
     characterInstance.setAllSkillPoints(skillPoints);
   }
+}
+
+/**
+ * Set all skill points from skill IDs (used for loading builds)
+ * @param {Object} skillPointsById - Map of skill_id -> points
+ */
+export function setAllSkillPointsById(skillPointsById) {
+  if (!characterInstance) return;
+  
+  const skillPoints = {};
+  
+  // Convert skill IDs to skill names
+  const db = getDatabase();
+  if (db) {
+    for (const [skillIdOrName, points] of Object.entries(skillPointsById)) {
+      if (points > 0) {
+        // Check if this is a numeric skill ID or a skill name
+        if (/^\d+$/.test(skillIdOrName)) {
+          // It's a skill ID, look up the skill name
+          try {
+            const stmt = db.prepare('SELECT name FROM skills WHERE id = ?');
+            stmt.bind([parseInt(skillIdOrName)]);
+            if (stmt.step()) {
+              const skillName = stmt.get()[0];
+              skillPoints[skillName] = points;
+            }
+            stmt.free();
+          } catch (error) {
+            console.warn('Could not look up skill name for ID:', skillIdOrName);
+          }
+        } else {
+          // It's a skill name, use it directly (backward compatibility)
+          skillPoints[skillIdOrName] = points;
+        }
+      }
+    }
+  } else {
+    // Fallback: use the data as-is if database not available
+    skillPoints = skillPointsById;
+  }
+  
+  characterInstance.setAllSkillPoints(skillPoints);
 }
 
 /**

@@ -304,6 +304,10 @@ function updateTooltipPosition(mouseX, mouseY) {
  */
 function getSkillDataFromDB(db, skillId) {
     try {
+        // Check if skillId is numeric (skill ID) or string (skill name)
+        const isNumericId = /^\d+$/.test(skillId);
+        const whereClause = isNumericId ? 'WHERE s.id = ?' : 'WHERE s.name = ?';
+        
         const stmt = db.prepare(`
             SELECT s.id, s.name, s.display_name, s.description, s.skill_effect, s.restriction, s.image,
                    c.name AS class_name,
@@ -311,10 +315,10 @@ function getSkillDataFromDB(db, skillId) {
             FROM skills s
             LEFT JOIN classes c ON s.class_id = c.id
             LEFT JOIN skill_max_levels sml ON s.id = sml.skill_id
-            WHERE s.name = ?
+            ${whereClause}
         `);
         
-        stmt.bind([skillId]);
+        stmt.bind([isNumericId ? parseInt(skillId) : skillId]);
         
         if (stmt.step()) {
             const row = stmt.getAsObject();
@@ -379,6 +383,11 @@ function getSkillCategoryTags(db, skillId) {
  * @param {string} warningMessage - Optional warning message (e.g., prerequisite not met)
  */
 async function buildTooltipContent(skillData, level, db, warningMessage = '', isOSkill = false) {
+    // Get All Skills bonus for effective level calculation (used in multiple places)
+    const allSkillsBonusInput = document.getElementById('allSkillsBonus');
+    const allSkillsBonus = allSkillsBonusInput ? Math.max(0, parseInt(allSkillsBonusInput.value) || 0) : 0;
+    const effectiveLevel = level + allSkillsBonus;
+    
     let html = '<div class="tooltip-content">';
     
     // Skill name and icon
@@ -394,9 +403,22 @@ async function buildTooltipContent(skillData, level, db, warningMessage = '', is
         tagsHtml += '</p>';
     }
 
-    html += `<div class="is-size-4 has-text-weight-bold">
-                ${skillData.displayName}
-                ${tagsHtml}
+    html += `<div class="tooltip-name-container">
+                <div class="tooltip-name-section">
+                    <div class="is-size-4 has-text-weight-bold">
+                        ${skillData.displayName}
+                        ${tagsHtml}
+                    </div>
+                </div>
+                <div class="tooltip-level-section">
+                    <div class="is-size-6 has-text-weight-bold has-text-info">
+                        Level ${effectiveLevel}
+                    </div>
+                    <div class="is-size-7 has-text-grey">
+                        ${level} from points<br>
+                        ${allSkillsBonus > 0 ? `${allSkillsBonus} from all skills` : ''}
+                    </div>
+                </div>
             </div>
     `;
     html += '</div>';
@@ -418,9 +440,7 @@ async function buildTooltipContent(skillData, level, db, warningMessage = '', is
         }
     }
     
-    // Get All Skills bonus from input
-    const allSkillsBonusInput = document.getElementById('allSkillsBonus');
-    const allSkillsBonus = allSkillsBonusInput ? Math.max(0, parseInt(allSkillsBonusInput.value) || 0) : 0;
+    // All Skills bonus already calculated at the top of the function
     
     // Create base character state with tree skill points
     const characterState = {
@@ -436,10 +456,34 @@ async function buildTooltipContent(skillData, level, db, warningMessage = '', is
     }
     
     // Add OSkill levels to character state (with All Skills bonus applied)
-    allOSkills.forEach(oskill => {
-        // For OSkills, lvl = OSkill points + All Skills bonus
-        characterState.lvl[oskill.skillName] = oskill.points + allSkillsBonus;
-    });
+    if (Array.isArray(allOSkills)) {
+        // Old format: array of objects
+        allOSkills.forEach(oskill => {
+            characterState.lvl[oskill.skillName] = oskill.points + allSkillsBonus;
+        });
+    } else {
+        // New format: object with skill IDs or names as keys
+        Object.entries(allOSkills).forEach(([skillIdOrName, points]) => {
+            let skillName = skillIdOrName;
+            
+            // If it's a skill ID, look up the skill name from database
+            if (/^\d+$/.test(skillIdOrName)) {
+                try {
+                    const stmt = db.prepare('SELECT name FROM skills WHERE id = ?');
+                    stmt.bind([parseInt(skillIdOrName)]);
+                    if (stmt.step()) {
+                        skillName = stmt.get()[0];
+                    }
+                    stmt.free();
+                } catch (error) {
+                    console.warn('Could not look up skill name for ID:', skillIdOrName);
+                    skillName = skillIdOrName; // Fallback to ID
+                }
+            }
+            
+            characterState.lvl[skillName] = points + allSkillsBonus;
+        });
+    }
     
     // Description with scaling
     // Render description and skill effect

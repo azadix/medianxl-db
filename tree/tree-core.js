@@ -2,7 +2,7 @@
 import { loadSkillsFromSQLite, getDatabase } from './tree-data.js';
 import { renderSkills, renderDifficultyCheckboxes, updateTabColors } from './tree-render.js';
 import Character from '../character/Character.js';
-import { initializeCharacter, setCharacterLevel, getSpentSkillPoints, getAllSkillPoints, setAllSkillPoints, updateQuestCompletion, getQuestCompletion, getAllOSkills, addOSkill, changeOSkillPoints, clearOSkills, setAllOSkills, getMinimumRequiredLevel, getTotalQuestSkillPoints, checkSkillsExceedingMaxLevel, getAvailableSkillPoints, getCharacterInstance, getCharacterLevel } from '../character/character-state.js';
+import { initializeCharacter, setCharacterLevel, getSpentSkillPoints, getAllSkillPoints, getAllSkillPointsById, setAllSkillPoints, setAllSkillPointsById, updateQuestCompletion, getQuestCompletion, getAllOSkills, addOSkill, changeOSkillPoints, clearOSkills, setAllOSkills, getMinimumRequiredLevel, getTotalQuestSkillPoints, checkSkillsExceedingMaxLevel, getAvailableSkillPoints, getCharacterInstance, getCharacterLevel } from '../character/character-state.js';
 import { getCurrentDevotion, getDevotionDisplayName } from '../skills/skill-calculations.js';
 import { initializeTooltip, refreshCurrentTooltip } from './tree-tooltip.js';
 import { ToastManager } from './ToastManager.js';
@@ -114,19 +114,31 @@ function loadBuildData(build, buildIndex = null) {
     // Initialize character with loaded class and level first
     initializeCharacter(build.class, build.level);
     
-    // Load skill points
-    setAllSkillPoints(build.skillPoints);
+    // Load skill points (handle both old format with names and new format with IDs)
+    if (build.skillPoints) {
+        // Check if the first key is numeric (skill ID) or string (skill name)
+        const firstKey = Object.keys(build.skillPoints)[0];
+        if (firstKey && /^\d+$/.test(firstKey)) {
+            // New format: skill IDs
+            setAllSkillPointsById(build.skillPoints);
+        } else {
+            // Old format: skill names (backward compatibility)
+            setAllSkillPoints(build.skillPoints);
+        }
+    }
     
     // Load oSkills
     setAllOSkills(build.oSkills || []);
     window.oSkills = getAllOSkills(); // Update window reference
     // Don't call updateOSkillsDisplay here - it will be called after renderSkills
     
-    // Load difficulties
-    updateQuestCompletion('den_of_evil', build.difficulties);
-    updateQuestCompletion('radament', build.difficulties);
-    updateQuestCompletion('izual', build.difficulties);
-    updateQuestCompletion('inquisitor_of_the_triune', { normal: false, nightmare: false, hell: build.difficulties.hell });
+    // Load All Skills bonus
+    if (build.allSkillsBonus !== undefined) {
+        setAllSkillsBonus(build.allSkillsBonus);
+    }
+    
+    // Quest completion is automatically determined by character level
+    // No need to load difficulties as they're calculated based on level
     
     // Initialize tooltip functionality (needed for skill tooltips to work)
     initializeTooltip();
@@ -137,17 +149,15 @@ function loadBuildData(build, buildIndex = null) {
     // Render skills first (this creates the difficulty checkboxes)
     if (skillsList) {
         // If build has oSkills, switch to oSkills tab after rendering
-        const hasOSkills = build.oSkills && build.oSkills.length > 0;
+        const hasOSkills = build.oSkills && (
+            Array.isArray(build.oSkills) ? build.oSkills.length > 0 : Object.keys(build.oSkills).length > 0
+        );
         renderSkills(build.class, skillsList, skillsContainer, hasOSkills ? 'oSkills' : null);
     }
     
     // Re-render difficulty checkboxes AFTER renderSkills so they exist
-    const questState = {
-        hasNormal: build.difficulties.normal,
-        hasNightmare: build.difficulties.nightmare,
-        hasHell: build.difficulties.hell
-    };
-    renderDifficultyCheckboxes(questState);
+    // Quest completion is automatically determined by character level
+    renderDifficultyCheckboxes();
     
     // Setup difficulty event listeners (needed for difficulty checkboxes to work)
     setupDifficultyEventListeners();
@@ -501,7 +511,7 @@ function updateDevotionDisplay() {
             if (currentDevotion === 'none') {
                 devotionField.style.display = 'none';
             } else {
-                devotionField.style.display = 'block';
+                devotionField.style.display = 'flex';
                 devotionDisplay.textContent = devotionName;
                 
                 // Add color based on devotion
@@ -597,6 +607,18 @@ function getCurrentQuestState() {
                    getQuestCompletion('inquisitor_of_the_triune').hell;
     
     return { hasNormal, hasNightmare, hasHell };
+}
+
+function getAllSkillsBonus() {
+    const allSkillsBonusInput = document.getElementById('allSkillsBonus');
+    return allSkillsBonusInput ? Math.max(0, parseInt(allSkillsBonusInput.value) || 0) : 0;
+}
+
+function setAllSkillsBonus(value) {
+    const allSkillsBonusInput = document.getElementById('allSkillsBonus');
+    if (allSkillsBonusInput) {
+        allSkillsBonusInput.value = Math.max(0, parseInt(value) || 0);
+    }
 }
 
 /**
@@ -709,6 +731,19 @@ function initializeMenuButtons() {
             }
             
             showSection('load');
+        });
+    }
+    
+    // Menu: Import Build button
+    const importBuildBtn = document.getElementById('menuImportBuildBtn');
+    if (importBuildBtn) {
+        importBuildBtn.addEventListener('click', async () => {
+            // Initialize tree if not yet done (needed for importing builds)
+            if (!treeInitialized) {
+                await main();
+            }
+            
+            promptAndImportBuild();
         });
     }
     
@@ -899,7 +934,126 @@ function promptAndSaveBuild() {
         return;
     }
     
-    saveBuild(buildName.trim());
+    // Clean the build name: trim whitespace and remove newlines
+    const cleanBuildName = buildName.trim().replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ');
+    
+    saveBuild(cleanBuildName);
+}
+
+function promptAndImportBuild() {
+    const jsonString = prompt('Paste the build JSON string:');
+    if (!jsonString || jsonString.trim() === '') {
+        return;
+    }
+    
+    try {
+        // Parse the JSON string
+        const buildData = JSON.parse(jsonString.trim());
+        
+        // Validate the build data structure
+        if (!validateBuildData(buildData)) {
+            return;
+        }
+        
+        // Import the build
+        importBuild(buildData);
+        
+    } catch (error) {
+        toastManager.showToast(`Invalid JSON: ${error.message}`, false, 'danger');
+    }
+}
+
+/**
+ * Validate build data structure
+ * @param {Object} buildData - The build data to validate
+ * @returns {boolean} True if valid, false otherwise
+ */
+function validateBuildData(buildData) {
+    // Check required fields
+    const requiredFields = ['name', 'class', 'level', 'skillPoints'];
+    for (const field of requiredFields) {
+        if (!buildData[field]) {
+            toastManager.showToast(`Missing required field: ${field}`, 'danger');
+            return false;
+        }
+    }
+    
+    // Validate data types
+    if (typeof buildData.name !== 'string') {
+        toastManager.showToast('Build name must be a string', 'danger');
+        return false;
+    }
+    
+    if (typeof buildData.class !== 'string') {
+        toastManager.showToast('Build class must be a string', 'danger');
+        return false;
+    }
+    
+    if (typeof buildData.level !== 'number' || buildData.level < 1 || buildData.level > 150) {
+        toastManager.showToast('Build level must be a number between 1 and 150', 'danger');
+        return false;
+    }
+    
+    if (typeof buildData.skillPoints !== 'object' || Array.isArray(buildData.skillPoints)) {
+        toastManager.showToast('Skill points must be an object', 'danger');
+        return false;
+    }
+    
+    // Validate oSkills if present
+    if (buildData.oSkills !== undefined) {
+        if (typeof buildData.oSkills !== 'object') {
+            toastManager.showToast('oSkills must be an object', 'danger');
+            return false;
+        }
+    }
+    
+    // allSkillsBonus is optional (for backward compatibility)
+    if (buildData.allSkillsBonus !== undefined) {
+        if (typeof buildData.allSkillsBonus !== 'number' || buildData.allSkillsBonus < 0) {
+            toastManager.showToast('allSkillsBonus must be a non-negative number', 'danger');
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+/**
+ * Import a build from build data
+ * @param {Object} buildData - The build data to import
+ */
+function importBuild(buildData) {
+    try {
+        // Check if build version differs from current version
+        const currentVersion = getCurrentVersion();
+        const currentVersionString = versionToString(currentVersion);
+        
+        if (buildData.version && buildData.version !== currentVersionString) {
+            // Parse build version
+            const buildVersion = parseVersionString(buildData.version);
+            
+            // Show toast message explaining version switch
+            toastManager.showToast(
+                `Build was saved for game version ${buildData.version}. Switching to version ${buildData.version} for compatibility.`,
+                false,
+                'warning'
+            );
+            
+            // Switch to the build's version
+            setCurrentVersion(buildVersion);
+            
+            // Silently reload database and load build
+            reloadDatabaseAndLoadBuild(buildData, null);
+            return;
+        }
+        
+        // Load build data directly (same version)
+        loadBuildData(buildData, null);
+        
+    } catch (error) {
+        console.error('Failed to import build:', error);
+        toastManager.showToast(`Failed to import build: ${error.message}`,true,  'danger');
+    }
 }
 
 function updateCurrentBuild() {
@@ -918,13 +1072,6 @@ function updateCurrentBuild() {
     const skillPoints = getAllSkillPoints();
     const spentPoints = getSpentSkillPoints();
     
-    // Get quest completions
-    const difficulties = {
-        normal: getQuestCompletion('den_of_evil').normal || false,
-        nightmare: getQuestCompletion('den_of_evil').nightmare || false,
-        hell: getQuestCompletion('den_of_evil').hell || false
-    };
-    
     // Update existing build
     builds[currentBuildIndex] = {
         name: builds[currentBuildIndex].name, // Keep original name
@@ -932,9 +1079,9 @@ function updateCurrentBuild() {
         class: currentClass,
         level: currentLevel,
         spentPoints: spentPoints,
-        skillPoints: skillPoints,
-        difficulties: difficulties,
-        oSkills: getAllOSkills(), // Save oSkills
+        skillPoints: getAllSkillPointsById(), // Use skill IDs instead of names
+        oSkills: getAllOSkills(), // Save oSkills (now with skill IDs)
+        allSkillsBonus: getAllSkillsBonus(), // Save All Skills bonus
         savedAt: new Date().toISOString()
     };
     
@@ -947,15 +1094,8 @@ function updateCurrentBuild() {
 function saveBuild(buildName) {
     const currentClass = classSelect ? classSelect.value : null;
     const currentLevel = getMinimumRequiredLevel();
-    const skillPoints = getAllSkillPoints();
+    const skillPoints = getAllSkillPointsById(); // Use skill IDs instead of names
     const spentPoints = getSpentSkillPoints();
-    
-    // Get quest completions
-    const difficulties = {
-        normal: getQuestCompletion('den_of_evil').normal || false,
-        nightmare: getQuestCompletion('den_of_evil').nightmare || false,
-        hell: getQuestCompletion('den_of_evil').hell || false
-    };
     
     const build = {
         name: buildName,
@@ -964,8 +1104,8 @@ function saveBuild(buildName) {
         level: currentLevel,
         spentPoints: spentPoints,
         skillPoints: skillPoints,
-        difficulties: difficulties,
-        oSkills: getAllOSkills(), // Save oSkills
+        oSkills: getAllOSkills(), // Save oSkills (now with skill IDs)
+        allSkillsBonus: getAllSkillsBonus(), // Save All Skills bonus
         savedAt: new Date().toISOString()
     };
     
@@ -1068,6 +1208,9 @@ function renderSavedBuildsList() {
                 <button class="button is-primary is-outlined" data-load-build="${index}">
                     Load
                 </button>
+                <button class="button is-success is-outlined" data-export-build="${index}">
+                    Export
+                </button>
                 <button class="button is-info is-outlined" data-rename-build="${index}">
                     Rename
                 </button>
@@ -1092,6 +1235,13 @@ function renderSavedBuildsList() {
         });
     });
     
+    container.querySelectorAll('[data-export-build]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const index = parseInt(btn.getAttribute('data-export-build'));
+            exportBuild(index);
+        });
+    });
+    
     container.querySelectorAll('[data-rename-build]').forEach(btn => {
         btn.addEventListener('click', () => {
             const index = parseInt(btn.getAttribute('data-rename-build'));
@@ -1105,6 +1255,159 @@ function renderSavedBuildsList() {
             deleteBuild(index);
         });
     });
+}
+
+/**
+ * Export build as raw JSON text
+ * @param {number} index - The index of the build to export
+ */
+function exportBuild(index) {
+    const builds = getSavedBuilds();
+    if (index < 0 || index >= builds.length) {
+        toastManager.showToast('Build not found!', true, 'danger');
+        return;
+    }
+    
+    const build = builds[index];
+    
+    // Convert build to single-line JSON
+    const buildJson = JSON.stringify(build);
+    
+    // Try modern clipboard API first
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(buildJson).then(() => {
+            toastManager.showToast(`Build "${build.name}" exported to clipboard!`, true, 'success');
+        }).catch(() => {
+            // Fallback to legacy method
+            fallbackCopyToClipboard(buildJson, build.name);
+        });
+    } else {
+        // Fallback to legacy method
+        fallbackCopyToClipboard(buildJson, build.name);
+    }
+}
+
+/**
+ * Fallback method for copying to clipboard when modern API fails
+ * @param {string} text - Text to copy
+ * @param {string} buildName - Name of the build for user feedback
+ */
+function fallbackCopyToClipboard(text, buildName) {
+    // Create a temporary textarea to allow copying
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.left = '-999999px';
+    textarea.style.top = '-999999px';
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+    
+    try {
+        const successful = document.execCommand('copy');
+        if (successful) {
+            toastManager.showToast(`Build "${buildName}" exported to clipboard!`, true, 'success');
+        } else {
+            // Show modal dialog as final fallback
+            showExportModal(text, buildName);
+        }
+    } catch (err) {
+        // Show modal dialog as final fallback
+        showExportModal(text, buildName);
+    }
+    
+    document.body.removeChild(textarea);
+}
+
+/**
+ * Show a modal dialog with the export data for manual copying
+ * @param {string} jsonText - The JSON text to display
+ * @param {string} buildName - Name of the build
+ */
+function showExportModal(jsonText, buildName) {
+    // Create modal overlay
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    `;
+    
+    // Create modal content
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        max-width: 80%;
+        max-height: 80%;
+        overflow: auto;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    `;
+    
+    modal.innerHTML = `
+        <h3 style="margin-top: 0; color: #333;">Export Build: ${buildName}</h3>
+        <p style="color: #666; margin-bottom: 15px;">Copy the JSON text below:</p>
+        <textarea readonly style="
+            width: 100%;
+            height: 200px;
+            font-family: monospace;
+            font-size: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            resize: vertical;
+            background: #f8f8f8;
+        ">${jsonText}</textarea>
+        <div style="margin-top: 15px; text-align: right;">
+            <button id="closeExportModal" style="
+                background: #3273dc;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 4px;
+                cursor: pointer;
+            ">Close</button>
+        </div>
+    `;
+    
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+    
+    // Focus and select the textarea
+    const textarea = modal.querySelector('textarea');
+    textarea.focus();
+    textarea.select();
+    
+    // Close modal when clicking close button
+    modal.querySelector('#closeExportModal').addEventListener('click', () => {
+        document.body.removeChild(overlay);
+    });
+    
+    // Close modal when clicking overlay
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+            document.body.removeChild(overlay);
+        }
+    });
+    
+    // Close modal with Escape key
+    const handleEscape = (e) => {
+        if (e.key === 'Escape') {
+            document.body.removeChild(overlay);
+            document.removeEventListener('keydown', handleEscape);
+        }
+    };
+    document.addEventListener('keydown', handleEscape);
+    
+    toastManager.showToast(`Build "${buildName}" export shown in dialog - copy manually`, false, 'info');
 }
 
 function loadBuild(index) {
@@ -1293,7 +1596,9 @@ function updateOSkillsDisplay() {
     }
     
     // Check if oSkills tab should be highlighted
-    if (window.oSkills && window.oSkills.length > 0) {
+    if (window.oSkills && (
+        Array.isArray(window.oSkills) ? window.oSkills.length > 0 : Object.keys(window.oSkills).length > 0
+    )) {
         tabsWithPoints.add('oSkills');
     }
     
@@ -1321,47 +1626,124 @@ function updateOSkillsTab() {
     
     const oSkills = getAllOSkills();
     
-    if (oSkills.length === 0) {
+    const oSkillsCount = Array.isArray(oSkills) ? oSkills.length : Object.keys(oSkills).length;
+    if (oSkillsCount === 0) {
         return;
     }
     
     // Calculate grid size based on number of skills
     const cols = 3; // 3 skills per row
-    const rows = Math.ceil(oSkills.length / cols);
+    const rows = Math.ceil(oSkillsCount / cols);
     
     container.style.gridTemplateRows = `repeat(${rows}, auto)`;
     container.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
     
     // Render each oSkill as a card
-    oSkills.forEach((oskill, index) => {
-        const row = Math.floor(index / cols) + 1;
-        const col = (index % cols) + 1;
-        
-        const card = createOSkillCard(oskill);
-        card.style.gridArea = `${row} / ${col}`;
-        container.appendChild(card);
-    });
+    let index = 0;
+    if (Array.isArray(oSkills)) {
+        // Old format: array of objects
+        oSkills.forEach((oskill) => {
+            const row = Math.floor(index / cols) + 1;
+            const col = (index % cols) + 1;
+            
+            const card = createOSkillCard(oskill);
+            card.style.gridArea = `${row} / ${col}`;
+            container.appendChild(card);
+            index++;
+        });
+    } else {
+        // New format: object with skill IDs as keys
+        Object.entries(oSkills).forEach(([skillIdOrName, points]) => {
+            if (points > 0) {
+                const row = Math.floor(index / cols) + 1;
+                const col = (index % cols) + 1;
+                
+                // Create a simplified oSkill object for rendering
+                const oskill = { 
+                    skillId: /^\d+$/.test(skillIdOrName) ? parseInt(skillIdOrName) : null,
+                    skillName: /^\d+$/.test(skillIdOrName) ? null : skillIdOrName,
+                    points 
+                };
+                const card = createOSkillCard(oskill);
+                card.style.gridArea = `${row} / ${col}`;
+                container.appendChild(card);
+                index++;
+            }
+        });
+    }
 }
 
 function createOSkillCard(oskill) {
-    // Check if oSkill has description data (it should, since oSkills are real skills)
-    const hasDescription = oskill.hasDetails || oskill.description || false;
+    // If we have full oSkill data (old format), use it directly
+    // Otherwise, look up the skill data from the database
+    let skillData = oskill;
+    
+    if (!oskill.displayName && !oskill.image) {
+        // New format: have skillId or skillName and points, need to look up skill data
+        const db = getDatabase();
+        if (db) {
+            try {
+                let stmt;
+                if (oskill.skillId) {
+                    // Look up by skill ID
+                    stmt = db.prepare('SELECT * FROM skills WHERE id = ?');
+                    stmt.bind([oskill.skillId]);
+                } else if (oskill.skillName) {
+                    // Look up by skill name (backward compatibility)
+                    stmt = db.prepare('SELECT * FROM skills WHERE name = ?');
+                    stmt.bind([oskill.skillName]);
+                } else {
+                    throw new Error('No skillId or skillName provided');
+                }
+                
+                if (stmt.step()) {
+                    const row = stmt.getAsObject();
+                    skillData = {
+                        skillId: oskill.skillId,
+                        skillName: oskill.skillName || row.name,
+                        points: oskill.points,
+                        displayName: row.display_name || row.name,
+                        image: row.image || 'icons-shared_missing.png',
+                        className: 'Other',
+                        hasDetails: true,
+                        description: row.description
+                    };
+                }
+                stmt.free();
+            } catch (error) {
+                console.warn('Could not look up oSkill data for:', oskill.skillId || oskill.skillName);
+                // Fallback to basic data
+                skillData = {
+                    skillId: oskill.skillId,
+                    skillName: oskill.skillName,
+                    points: oskill.points,
+                    displayName: oskill.skillName || `Skill ${oskill.skillId}`,
+                    image: 'icons-shared_missing.png',
+                    className: 'Other',
+                    hasDetails: false
+                };
+            }
+        }
+    }
+    
+    // Check if oSkill has description data
+    const hasDescription = skillData.hasDetails || skillData.description || false;
     
     // Prepare card data
     const cardData = {
-        skillId: oskill.skillName,
-        iconHTML: getSkillIcon(oskill.image, oskill.className),
-        displayName: oskill.displayName,
+        skillId: skillData.skillId || skillData.skillName, // Use skill ID if available, otherwise skill name
+        iconHTML: getSkillIcon(skillData.image, skillData.className),
+        displayName: skillData.displayName,
         hasDescription: hasDescription,
-        currentPoints: oskill.points,
+        currentPoints: skillData.points,
         maxPoints: 150,
-        levelColor: oskill.points >= 150 ? 'has-text-warning' : 'has-text-grey',
+        levelColor: skillData.points >= 150 ? 'has-text-warning' : 'has-text-grey',
         buttons: {
             show: true,
-            plusDisabled: oskill.points >= 150, // Disable plus button at 150
-            minusDisabled: oskill.points === 0,
-            plusTooltip: oskill.points >= 150 ? 'Maximum level reached (150)' : '',
-            dataSkill: oskill.skillName
+            plusDisabled: skillData.points >= 150, // Disable plus button at 150
+            minusDisabled: skillData.points === 0,
+            plusTooltip: skillData.points >= 150 ? 'Maximum level reached (150)' : '',
+            dataSkill: skillData.skillId || skillData.skillName // Use skill ID if available, otherwise skill name
         }
     };
     
@@ -1376,15 +1758,16 @@ function createOSkillCard(oskill) {
         plusBtn.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
+            const skillIdentifier = oskill.skillId || oskill.skillName;
             if (e.shiftKey) {
                 // Shift-click: add 25 points
-                handleOSkillPointChange(oskill.skillName, 25);
+                handleOSkillPointChange(skillIdentifier, 25);
             } else if (e.ctrlKey) {
                 // Ctrl-click: add 5 points
-                handleOSkillPointChange(oskill.skillName, 5);
+                handleOSkillPointChange(skillIdentifier, 5);
             } else {
                 // Normal click: add 1 point
-                handleOSkillPointChange(oskill.skillName, 1);
+                handleOSkillPointChange(skillIdentifier, 1);
             }
         });
     }
@@ -1393,15 +1776,16 @@ function createOSkillCard(oskill) {
         minusBtn.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
+            const skillIdentifier = oskill.skillId || oskill.skillName;
             if (e.shiftKey) {
                 // Shift-click: remove 25 points
-                handleOSkillPointChange(oskill.skillName, -25);
+                handleOSkillPointChange(skillIdentifier, -25);
             } else if (e.ctrlKey) {
                 // Ctrl-click: remove 5 points
-                handleOSkillPointChange(oskill.skillName, -5);
+                handleOSkillPointChange(skillIdentifier, -5);
             } else {
                 // Normal click: remove 1 point
-                handleOSkillPointChange(oskill.skillName, -1);
+                handleOSkillPointChange(skillIdentifier, -1);
             }
         });
     }

@@ -169,6 +169,37 @@ html {
     border-bottom: 1px solid #444;
 }
 
+.tooltip-name-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex: 1;
+    gap: 12px;
+}
+
+.tooltip-name-section {
+    flex: 1;
+}
+
+.tooltip-level-section {
+    text-align: right;
+    flex-shrink: 0;
+}
+
+/* Control field label width to prevent wrapping - each label sizes itself */
+.field.is-horizontal .field-label.is-normal {
+    flex-basis: auto;
+    flex-grow: 0;
+    flex-shrink: 0;
+    margin-right: 1.5rem;
+    text-align: right;
+    width: fit-content;
+}
+
+.field.is-horizontal .field-label.is-normal .label {
+    white-space: nowrap;
+}
+
 .tooltip-icon .image {
     width: 64px;
     height: 64px;

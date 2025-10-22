@@ -66,10 +66,16 @@
                             <span>New Build</span>
                         </span>
                     </button>
-                    
+                                        
+                    <button class="button is-large is-fullwidth" id="menuImportBuildBtn">
+                        <span class="icon-text">
+                            <span>Import Build</span>
+                        </span>
+                    </button>
+
                     <button class="button is-large is-fullwidth" id="menuLoadBuildBtn">
                         <span class="icon-text">
-                            <span>Load Build</span>
+                            <span>Load/Export Build</span>
                         </span>
                     </button>
                 </div>
@@ -125,43 +131,60 @@
                             <hr class="my-1">
                         </div>
                         
-                        <div class="field">
-                            <label class="label">Class</label>
-                            <div class="control">
-                                <div class="select is-fullwidth">
-                                    <select id="classSelect"></select>
+                        <div class="field is-horizontal">
+                            <div class="field-label is-normal">
+                                <label class="label">Class</label>
+                            </div>
+                            <div class="field-body">
+                                <div class="field">
+                                    <div class="control">
+                                        <div class="select is-fullwidth">
+                                            <select id="classSelect"></select>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <hr class="my-1">
                         </div>
 
-                        <div class="field">
-                            <label class="label">+# to All Skills</label>
-                            <div class="control">
-                                <input type="number" id="allSkillsBonus" class="input" min="0" value="0" placeholder="0">
+                        <div class="field is-horizontal">
+                            <div class="field-label is-normal">
+                                <label class="label">+# to All Skills</label>
                             </div>
-                            <p class="help">Bonus added to all tree skills for 'lvl' variable in formulas</p>
-                            <hr class="my-1">
-                        </div>
-
-                        
-                        <div class="field" id="devotionField" style="display: none;">
-                            <label class="label">Devotion</label>
-                            <div class="box has-background-dark p-2">
-                                <p id="devotionDisplay" class="has-text-centered has-text-weight-bold">
-                                    None
-                                </p>
+                            <div class="field-body">
+                                <div class="field">
+                                    <div class="control">
+                                        <input type="number" id="allSkillsBonus" class="input" min="0" value="0" placeholder="0">
+                                    </div>
+                                </div>
                             </div>
-                            <hr class="my-1">
                         </div>
                         
-                        <div id="oskillPanel" style="display: none;">
-                            <div class="field">
+                        <div class="field is-horizontal" id="oskillPanel" style="display: none;">
+                            <div class="field-label is-normal">
                                 <label class="label">Add an oSkill</label>
-                                <div id="oskill-dropdown" class="oskill-dropdown-wrapper"></div>
-                                <input type="hidden" id="oskill-hidden" />
                             </div>
-                            <hr class="my-1">
+                            <div class="field-body">
+                                <div class="field">
+                                    <div id="oskill-dropdown" class="oskill-dropdown-wrapper"></div>
+                                    <input type="hidden" id="oskill-hidden" />
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="field is-horizontal" id="devotionField" style="display: none;">
+                            <div class="field-label is-normal">
+                                <label class="label">Devotion</label>
+                            </div>
+                            <div class="field-body">
+                                <div class="field">
+                                    <div class="box has-background-dark p-2">
+                                        <p id="devotionDisplay" class="has-text-centered has-text-weight-bold">
+                                            None
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

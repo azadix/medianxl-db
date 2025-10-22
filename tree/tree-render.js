@@ -111,7 +111,9 @@ function updateSkillCards(selectedClass, skillsList) {
     
     // Check if oSkills tab should be highlighted
     // Access oSkills from tree-core.js if available
-    if (window.oSkills && window.oSkills.length > 0) {
+    if (window.oSkills && (
+        Array.isArray(window.oSkills) ? window.oSkills.length > 0 : Object.keys(window.oSkills).length > 0
+    )) {
         tabsWithPoints.add('oSkills');
     }
     
@@ -283,7 +285,9 @@ export function renderSkills(selectedClass, skillsList, skillsContainer, preserv
     });
     
     // Check if oSkills tab should be highlighted
-    if (window.oSkills && window.oSkills.length > 0) {
+    if (window.oSkills && (
+        Array.isArray(window.oSkills) ? window.oSkills.length > 0 : Object.keys(window.oSkills).length > 0
+    )) {
         tabsWithPoints.add('oSkills');
     }
     
@@ -311,7 +315,7 @@ export function renderSkills(selectedClass, skillsList, skillsContainer, preserv
     // Show oSkills panel if oSkills tab is active on initial load
     const oskillPanel = document.getElementById('oskillPanel');
     if (oskillPanel && activeTabName === 'oSkills') {
-        oskillPanel.style.display = 'block';
+        oskillPanel.style.display = 'flex';
     }
 
             // Add tab switching functionality
@@ -335,7 +339,7 @@ export function renderSkills(selectedClass, skillsList, skillsContainer, preserv
                     const oskillPanel = document.getElementById('oskillPanel');
                     if (oskillPanel) {
                         const shouldShow = clickedTab === 'oSkills';
-                        oskillPanel.style.display = shouldShow ? 'block' : 'none';
+                        oskillPanel.style.display = shouldShow ? 'flex' : 'none';
                     }
                     
                     // Show clicked tab content

@@ -39,7 +39,7 @@ export default class Character {
   constructor(className = null, level = Character.DEFAULT_LEVEL) {
     this.level = level;
     this.className = className;
-    this.skillPoints = {}; // Map of skill_name -> points allocated
+    this.skillPoints = {}; // Map of skill_id -> points allocated
     this.maxLevels = {}; // Cached max levels for skills
     this.questsCompleted = { // Map of quest_id -> {normal, nightmare, hell}
       'den_of_evil': { normal: true, nightmare: true, hell: true },
@@ -57,6 +57,7 @@ export default class Character {
   static getDefaultLevel() {
     return Character.DEFAULT_LEVEL;
   }
+
 
   /**
    * Clamp a character level to valid range
@@ -265,8 +266,17 @@ export default class Character {
   }
 
   /**
+   * Get skill points by skill ID
+   * @param {number} skillId - The skill ID
+   * @returns {number} Points allocated
+   */
+  getSkillPointsById(skillId) {
+    return this.skillPoints[skillId] || 0;
+  }
+
+  /**
    * Get all skill points
-   * @returns {Object} Map of skill_name -> points
+   * @returns {Object} Map of skill_id -> points
    */
   getAllSkillPoints() {
     return { ...this.skillPoints };
@@ -274,7 +284,7 @@ export default class Character {
 
   /**
    * Set all skill points (used for loading builds)
-   * @param {Object} skillPoints - Map of skill_name -> points
+   * @param {Object} skillPoints - Map of skill_name or skill_id -> points
    */
   setAllSkillPoints(skillPoints) {
     this.skillPoints = { ...skillPoints };
@@ -334,11 +344,17 @@ export default class Character {
   // ===== OSKILLS MANAGEMENT METHODS =====
 
   /**
-   * Get all oSkills
-   * @returns {Array} Array of oSkill objects
+   * Get all oSkills in simplified format (ID and points only)
+   * @returns {Object} Object with skill IDs as keys and points as values
    */
   getAllOSkills() {
-    return this.oSkills;
+    const oSkillsObj = {};
+    this.oSkills.forEach(oskill => {
+      // Use skillId if available, otherwise fall back to skillName
+      const key = oskill.skillId || oskill.skillName;
+      oSkillsObj[key] = oskill.points;
+    });
+    return oSkillsObj;
   }
 
   /**
@@ -346,8 +362,10 @@ export default class Character {
    * @param {string} skillName - Internal skill name
    * @returns {number} Points allocated (0 if not found)
    */
-  getOSkillPoints(skillName) {
-    const oskill = this.oSkills.find(s => s.skillName === skillName);
+  getOSkillPoints(skillIdOrName) {
+    const oskill = this.oSkills.find(s => 
+      s.skillId === parseInt(skillIdOrName) || s.skillName === skillIdOrName
+    );
     return oskill ? oskill.points : 0;
   }
 
@@ -390,8 +408,10 @@ export default class Character {
    * Remove an oSkill
    * @param {string} skillName - Internal skill name
    */
-  removeOSkill(skillName) {
-    const index = this.oSkills.findIndex(s => s.skillName === skillName);
+  removeOSkill(skillIdOrName) {
+    const index = this.oSkills.findIndex(s => 
+      s.skillId === parseInt(skillIdOrName) || s.skillName === skillIdOrName
+    );
     if (index > -1) {
       this.oSkills.splice(index, 1);
       window.dispatchEvent(new CustomEvent('oskillsUpdated'));
@@ -403,8 +423,11 @@ export default class Character {
    * @param {string} skillName - Internal skill name
    * @param {number} amount - Amount to change (can be negative)
    */
-  changeOSkillPoints(skillName, amount) {
-    const skill = this.oSkills.find(s => s.skillName === skillName);
+  changeOSkillPoints(skillIdOrName, amount) {
+    // Find skill by ID or name
+    const skill = this.oSkills.find(s => 
+      s.skillId === parseInt(skillIdOrName) || s.skillName === skillIdOrName
+    );
     if (!skill) return;
     
     const newPoints = skill.points + amount;
@@ -418,7 +441,7 @@ export default class Character {
     
     // Remove skill if points drop to 0 or below
     if (skill.points <= 0) {
-      this.removeOSkill(skillName);
+      this.removeOSkill(skillIdOrName);
     } else {
       window.dispatchEvent(new CustomEvent('oskillsUpdated'));
     }
@@ -434,10 +457,27 @@ export default class Character {
 
   /**
    * Set all oSkills (for loading builds)
-   * @param {Array} oSkills - Array of oSkill objects
+   * @param {Array|Object} oSkills - Array of oSkill objects (old format) or Object with skill IDs/names as keys (new format)
    */
   setAllOSkills(oSkills) {
-    this.oSkills = oSkills || [];
+    if (!oSkills) {
+      this.oSkills = [];
+    } else if (Array.isArray(oSkills)) {
+      // Old format: array of objects with full metadata
+      this.oSkills = oSkills;
+    } else if (typeof oSkills === 'object') {
+      // New format: object with skill IDs or names as keys and points as values
+      this.oSkills = [];
+      Object.entries(oSkills).forEach(([skillIdOrName, points]) => {
+        if (points > 0) {
+          this.oSkills.push({
+            skillId: /^\d+$/.test(skillIdOrName) ? parseInt(skillIdOrName) : null,
+            skillName: /^\d+$/.test(skillIdOrName) ? null : skillIdOrName,
+            points
+          });
+        }
+      });
+    }
     window.dispatchEvent(new CustomEvent('oskillsUpdated'));
   }
 }
