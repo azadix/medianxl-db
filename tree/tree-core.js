@@ -8,7 +8,7 @@ import { initializeTooltip, refreshCurrentTooltip } from './tree-tooltip.js';
 import { ToastManager } from './ToastManager.js';
 import { DropdownList } from '../edit/DropdownList.js';
 import { renderSkillCard, getSkillIcon } from './tree-card-renderer.js';
-import { getCurrentVersion, versionToString } from '../version-config.js';
+import { getCurrentVersion, versionToString, setCurrentVersion } from '../version-config.js';
 
 // Global variables
 let skillsList;
@@ -17,6 +17,178 @@ let classSelect;
 let currentTab = null;
 let treeInitialized = false; // Track if tree has been initialized
 let currentBuildIndex = null; // Track currently loaded build index for saving
+
+/**
+ * Parse version string to version object
+ * @param {string} versionString - Version string like "2.11"
+ * @returns {{ major: number, minor: number }} Version object
+ */
+function parseVersionString(versionString) {
+    const parts = versionString.split('.');
+    return {
+        major: parseInt(parts[0]) || 0,
+        minor: parseInt(parts[1]) || 0
+    };
+}
+
+/**
+ * Update the version selector dropdown to reflect the current version
+ */
+function updateVersionSelector() {
+    const versionSelector = document.getElementById('version-selector');
+    if (!versionSelector) return;
+    
+    const currentVersion = getCurrentVersion();
+    const currentVersionString = versionToString(currentVersion);
+    
+    // Find and select the current version option
+    const options = versionSelector.querySelectorAll('option');
+    options.forEach(option => {
+        const optionVersion = JSON.parse(option.value);
+        if (optionVersion.major === currentVersion.major && 
+            optionVersion.minor === currentVersion.minor) {
+            option.selected = true;
+        } else {
+            option.selected = false;
+        }
+    });
+}
+
+/**
+ * Silently reload database and reinitialize tree with new version
+ * @param {Object} build - The build to load after database reload
+ * @param {number} buildIndex - The index of the build in the saved builds array
+ */
+async function reloadDatabaseAndLoadBuild(build, buildIndex) {
+    try {
+        // Reload skills from SQLite with new version
+        skillsList = await loadSkillsFromSQLite();
+        
+        // Update version selector
+        updateVersionSelector();
+        
+        // Re-populate class selector from new database
+        const db = getDatabase();
+        const classes = [];
+        try {
+            const stmt = db.prepare('SELECT name FROM classes WHERE name NOT IN ("Other") ORDER BY name');
+            while (stmt.step()) {
+                classes.push(stmt.get()[0]);
+            }
+            stmt.free();
+        } catch (error) {
+            console.warn('Could not load classes from database, falling back to skill list:', error);
+            classes.push(...[...new Set(skillsList.map(skill => skill.class))].filter(c => c !== 'Other'));
+        }
+        
+        // Clear and repopulate class selector
+        if (classSelect) {
+            classSelect.innerHTML = '';
+            classes.forEach(cls => {
+                const opt = document.createElement('option');
+                opt.value = cls;
+                opt.textContent = cls;
+                classSelect.appendChild(opt);
+            });
+        }
+        
+        // Now load the build with the new database
+        loadBuildData(build, buildIndex);        
+    } catch (error) {
+        console.error('Failed to reload database:', error);
+        toastManager.showToast(`Failed to reload database: ${error.message}`, false, 'danger');
+    }
+}
+
+/**
+ * Load build data without version checking (used after database reload)
+ * @param {Object} build - The build object to load
+ * @param {number} buildIndex - The index of the build in the saved builds array
+ */
+function loadBuildData(build, buildIndex = null) {
+    // Set class
+    if (classSelect) {
+        classSelect.value = build.class;
+    }
+    
+    // Initialize character with loaded class and level first
+    initializeCharacter(build.class, build.level);
+    
+    // Load skill points
+    setAllSkillPoints(build.skillPoints);
+    
+    // Load oSkills
+    setAllOSkills(build.oSkills || []);
+    window.oSkills = getAllOSkills(); // Update window reference
+    // Don't call updateOSkillsDisplay here - it will be called after renderSkills
+    
+    // Load difficulties
+    updateQuestCompletion('den_of_evil', build.difficulties);
+    updateQuestCompletion('radament', build.difficulties);
+    updateQuestCompletion('izual', build.difficulties);
+    updateQuestCompletion('inquisitor_of_the_triune', { normal: false, nightmare: false, hell: build.difficulties.hell });
+    
+    // Initialize tooltip functionality (needed for skill tooltips to work)
+    initializeTooltip();
+    
+    // Initialize oSkills dropdown
+    initializeOSkillsDropdown();
+    
+    // Render skills first (this creates the difficulty checkboxes)
+    if (skillsList) {
+        // If build has oSkills, switch to oSkills tab after rendering
+        const hasOSkills = build.oSkills && build.oSkills.length > 0;
+        renderSkills(build.class, skillsList, skillsContainer, hasOSkills ? 'oSkills' : null);
+    }
+    
+    // Re-render difficulty checkboxes AFTER renderSkills so they exist
+    const questState = {
+        hasNormal: build.difficulties.normal,
+        hasNightmare: build.difficulties.nightmare,
+        hasHell: build.difficulties.hell
+    };
+    renderDifficultyCheckboxes(questState);
+    
+    // Setup difficulty event listeners (needed for difficulty checkboxes to work)
+    setupDifficultyEventListeners();
+    
+    // Add event listener for skill point changes (needed for UI updates)
+    // Remove any existing listener first to avoid duplicates
+    window.removeEventListener('skillPointsChanged', handleSkillPointsChanged);
+    window.addEventListener('skillPointsChanged', handleSkillPointsChanged);
+    
+    // Update displays
+    updateSkillPointsDisplay();
+    updateDevotionDisplay();
+    
+    // Update oSkills display after everything is rendered
+    updateOSkillsDisplay();
+    
+    // Set current build index so "Save" button works
+    if (buildIndex !== null) {
+        currentBuildIndex = buildIndex;
+    }
+    updateSaveButtonVisibility();
+    
+    // Show tree section
+    showSection('tree');
+    
+    // Check for skills exceeding max level
+    const exceedingSkills = checkSkillsExceedingMaxLevel(skillsList);
+    if (exceedingSkills.length > 0) {
+        const skillList = exceedingSkills
+            .map(skill => `${skill.skillName} (${skill.currentPoints}/${skill.maxLevel})`)
+            .join(', ');
+        
+        toastManager.showToast(
+            `Warning: Skills exceed maximum level: ${skillList}. Build loaded but may be invalid.`,
+            false,
+            'danger'
+        );
+    } else {
+        toastManager.showToast(`Build "${build.name}" loaded successfully!`, true, 'info');
+    }
+}
 
 // Initialize ToastManager
 const toastManager = new ToastManager();
@@ -883,7 +1055,7 @@ function renderSavedBuildsList() {
         subtitle.innerHTML = `
             <span class="tag has-text-info">Level ${build.level} ${build.class}</span>
             <span class="tag">${build.spentPoints} points spent</span>
-            <span class="tag">v${build.version}</span>
+            <span class="tag">v${build.version || 'unknown'}</span>
         `;
         
         infoColumn.appendChild(title);
@@ -944,87 +1116,38 @@ function loadBuild(index) {
     
     const build = builds[index];
     
-    // Set class
-    if (classSelect) {
-        classSelect.value = build.class;
-    }
+    // Check if build version differs from current version
+    const currentVersion = getCurrentVersion();
+    const currentVersionString = versionToString(currentVersion);
     
-    // Initialize character with loaded class and level first
-    initializeCharacter(build.class, build.level);
-    
-    // Load skill points
-    setAllSkillPoints(build.skillPoints);
-    
-    
-    // Load oSkills
-    setAllOSkills(build.oSkills || []);
-    window.oSkills = getAllOSkills(); // Update window reference
-    // Don't call updateOSkillsDisplay here - it will be called after renderSkills
-    
-    // Load difficulties
-    updateQuestCompletion('den_of_evil', build.difficulties);
-    updateQuestCompletion('radament', build.difficulties);
-    updateQuestCompletion('izual', build.difficulties);
-    updateQuestCompletion('inquisitor_of_the_triune', { normal: false, nightmare: false, hell: build.difficulties.hell });
-    
-    // Initialize tooltip functionality (needed for skill tooltips to work)
-    initializeTooltip();
-    
-    // Initialize oSkills dropdown
-    initializeOSkillsDropdown();
-    
-    // Render skills first (this creates the difficulty checkboxes)
-    if (skillsList) {
-        // If build has oSkills, switch to oSkills tab after rendering
-        const hasOSkills = build.oSkills && build.oSkills.length > 0;
-        renderSkills(build.class, skillsList, skillsContainer, hasOSkills ? 'oSkills' : null);
-    }
-    
-    // Re-render difficulty checkboxes AFTER renderSkills so they exist
-    const questState = {
-        hasNormal: build.difficulties.normal,
-        hasNightmare: build.difficulties.nightmare,
-        hasHell: build.difficulties.hell
-    };
-    renderDifficultyCheckboxes(questState);
-    
-    // Setup difficulty event listeners (needed for difficulty checkboxes to work)
-    setupDifficultyEventListeners();
-    
-    // Add event listener for skill point changes (needed for UI updates)
-    // Remove any existing listener first to avoid duplicates
-    window.removeEventListener('skillPointsChanged', handleSkillPointsChanged);
-    window.addEventListener('skillPointsChanged', handleSkillPointsChanged);
-    
-    // Update displays
-    updateSkillPointsDisplay();
-    updateDevotionDisplay();
-    
-    // Update oSkills display after everything is rendered
-    updateOSkillsDisplay();
-    
-    // Set current build index so "Save" button works
-    currentBuildIndex = index;
-    updateSaveButtonVisibility();
-    
-    // Show tree section
-    showSection('tree');
-    
-    // Check for skills exceeding max level
-    const exceedingSkills = checkSkillsExceedingMaxLevel(skillsList);
-    if (exceedingSkills.length > 0) {
-        const skillList = exceedingSkills
-            .map(skill => `${skill.skillName} (${skill.currentPoints}/${skill.maxLevel})`)
-            .join(', ');
+    if (build.version && build.version !== currentVersionString) {
+        // Parse build version
+        const buildVersion = parseVersionString(build.version);
         
+        // Show toast message explaining version switch
         toastManager.showToast(
-            `Warning: Skills exceed maximum level: ${skillList}. Build loaded but may be invalid.`,
+            `Build was saved for game version ${build.version}. Switching to version ${build.version} for compatibility.`,
             false,
-            'danger'
+            'warning'
         );
-    } else {
-        toastManager.showToast(`Build "${build.name}" loaded successfully!`, true, 'info');
+        
+        // Switch to the build's version
+        setCurrentVersion(buildVersion);
+        
+        // Silently reload database and load build
+        reloadDatabaseAndLoadBuild(build, index);
+        return;
+    } else if (!build.version) {
+        // Handle builds without version information (older saves)
+        toastManager.showToast(
+            `Build was saved before version tracking was implemented. Loading with current version ${currentVersionString}.`,
+            false,
+            'info'
+        );
     }
+    
+    // Load build data directly (same version)
+    loadBuildData(build, index);
 }
 
 function deleteBuild(index) {
