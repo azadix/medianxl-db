@@ -93,7 +93,8 @@ async function reloadDatabaseAndLoadBuild(build, buildIndex) {
         }
         
         // Now load the build with the new database
-        loadBuildData(build, buildIndex);        
+        loadBuildData(build, buildIndex);
+        
     } catch (error) {
         console.error('Failed to reload database:', error);
         toastManager.showToast(`Failed to reload database: ${error.message}`, false, 'danger');
@@ -314,6 +315,56 @@ export async function initializeTreePage() {
     
     initializeMenuButtons();
     
+    // Set up class change event listener
+    if (!classSelect) {
+        console.error('classSelect is null when trying to add event listener!');
+        return;
+    }
+    
+    classSelect.addEventListener('change', () => {
+        const newClass = classSelect.value;
+        
+        // Reset tab when class changes - will be set to first tab by renderSkills
+        currentTab = null;
+        updateUrlState(newClass, null);
+        
+        // Clear oSkills when switching classes (like resetBuild but without confirmation)
+        clearOSkills();
+        window.oSkills = getAllOSkills(); // Update window reference
+        
+        // Reset oSkills dropdown input
+        const oskillDropdown = document.querySelector('#oskill-dropdown .dropdown-list-input');
+        if (oskillDropdown) {
+            oskillDropdown.value = '';
+        }
+        
+        // Clear any filtered dropdown results
+        const oskillDropdownList = document.querySelector('#oskill-dropdown .dropdown-list');
+        if (oskillDropdownList && window.oskillDropdownInstance) {
+            window.oskillDropdownInstance.renderItems(); // Re-render all items
+        }
+        
+        // Reinitialize character state for new class, preserving current level
+        const currentLevel = getCharacterLevel();
+        initializeCharacter(newClass, currentLevel);
+        
+        // Get current references to ensure we have the latest data
+        const currentSkillsList = skillsList;
+        const currentSkillsContainer = document.getElementById('skillsContainer');
+        
+        if (!currentSkillsList || !currentSkillsContainer) {
+            console.error('Missing skillsList or skillsContainer:', { currentSkillsList, currentSkillsContainer });
+            return;
+        }
+        
+        renderSkills(newClass, currentSkillsList, currentSkillsContainer);
+        
+        // Update displays
+        updateSkillPointsDisplay();
+        updateDevotionDisplay();
+        updateOSkillsDisplay();
+    });
+    
     // Set up global event listeners (only once during initialization)
     setupGlobalEventListeners();
 }
@@ -431,42 +482,6 @@ async function main() {
             updateUrlState(selectedClass, savedTab);
         }
         
-        // Add event listener for class changes
-        classSelect.addEventListener('change', () => {
-            const newClass = classSelect.value;
-            // Reset tab when class changes - will be set to first tab by renderSkills
-            currentTab = null;
-            updateUrlState(newClass, null);
-            
-            // Clear oSkills when switching classes (like resetBuild but without confirmation)
-            clearOSkills();
-            window.oSkills = getAllOSkills(); // Update window reference
-            
-            // Reset oSkills dropdown input
-            const oskillDropdown = document.querySelector('#oskill-dropdown .dropdown-list-input');
-            if (oskillDropdown) {
-                oskillDropdown.value = '';
-            }
-            
-            // Clear any filtered dropdown results
-            const oskillDropdownList = document.querySelector('#oskill-dropdown .dropdown-list');
-            if (oskillDropdownList && window.oskillDropdownInstance) {
-                window.oskillDropdownInstance.renderItems(); // Re-render all items
-            }
-            
-            // Reinitialize character state for new class
-            initializeCharacter(newClass, Character.MAX_LEVEL);
-            
-            renderSkills(newClass, skillsList, skillsContainer);
-            
-            // Update displays
-            updateSkillPointsDisplay();
-            updateDevotionDisplay();
-            updateOSkillsDisplay();
-        });
-        
-        
-        // Event listeners will be set up in initializeTreePage()
     } catch (error) {
         console.error('Error initializing tree page:', error);
     }
@@ -1643,12 +1658,12 @@ function updateOSkillsTab() {
     if (Array.isArray(oSkills)) {
         // Old format: array of objects
         oSkills.forEach((oskill) => {
-            const row = Math.floor(index / cols) + 1;
-            const col = (index % cols) + 1;
-            
-            const card = createOSkillCard(oskill);
-            card.style.gridArea = `${row} / ${col}`;
-            container.appendChild(card);
+        const row = Math.floor(index / cols) + 1;
+        const col = (index % cols) + 1;
+        
+        const card = createOSkillCard(oskill);
+        card.style.gridArea = `${row} / ${col}`;
+        container.appendChild(card);
             index++;
         });
     } else {
