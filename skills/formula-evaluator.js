@@ -80,6 +80,15 @@ export class FormulaEvaluator {
       description: 'Converts feet to yards with 1/3 feet precision',
       example: 'range(3) == 1.0, range(4) == 1.3'
     });
+    this.registerFunction({
+      keyword: 'bool',
+      function: (value) => {
+        // Returns 0 if value is 0, 1 if value is different than 0
+        return value === 0 ? 0 : 1;
+      },
+      description: 'Returns 0 if value is 0, 1 if value is different than 0',
+      example: 'bool(0) == 0, bool(5) == 1'
+    });
     
     // Register default variables with descriptions and examples
     this.registerVariable({
