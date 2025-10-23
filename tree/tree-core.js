@@ -138,9 +138,6 @@ function loadBuildData(build, buildIndex = null) {
         setAllSkillsBonus(build.allSkillsBonus);
     }
     
-    // Quest completion is automatically determined by character level
-    // No need to load difficulties as they're calculated based on level
-    
     // Initialize tooltip functionality (needed for skill tooltips to work)
     initializeTooltip();
     

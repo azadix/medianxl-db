@@ -55,6 +55,31 @@ export class FormulaEvaluator {
       description: 'Returns square root',
       example: 'sqrt(25) == 5'
     });
+    this.registerFunction({
+      keyword: 'pow',
+      function: Math.pow,
+      description: 'Raises base to the power of exponent',
+      example: 'pow(2, 3) == 8'
+    });
+    this.registerFunction({
+      keyword: 'seconds',
+      function: (frames) => {
+        // Convert frames to seconds (25 frames per second) with 0.1 rounding
+        return Math.round((frames / 25) * 10) / 10;
+      },
+      description: 'Converts frame count to seconds (25 frames = 1 second) with 0.1 rounding',
+      example: 'seconds(25) == 1.0, seconds(6) == 0.2'
+    });
+    this.registerFunction({
+      keyword: 'range',
+      function: (feet) => {
+        // Convert feet to yards with 1/3 feet precision
+        // Pattern: 1=0.3, 2=0.6, 3=1.0, 4=1.3, 5=1.6, 6=2.0, etc.
+        return Math.round((feet * 0.3 + Math.floor(feet / 3) * 0.1) * 10) / 10;
+      },
+      description: 'Converts feet to yards with 1/3 feet precision',
+      example: 'range(3) == 1.0, range(4) == 1.3'
+    });
     
     // Register default variables with descriptions and examples
     this.registerVariable({
@@ -127,14 +152,6 @@ export class FormulaEvaluator {
       description: info.description || 'No description available',
       example: info.example || 'No example available'
     }));
-  }
-  
-  /**
-   * Get all registered variables
-   * @returns {Array<string>} Array of variable names
-   */
-  getRegisteredVariables() {
-    return Array.from(this.variableRegistry).map(v => v.name);
   }
   
   /**
