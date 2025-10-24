@@ -93,12 +93,12 @@ export class FormulaEvaluator {
     // Register default variables with descriptions and examples
     this.registerVariable({
       keyword: 'blvl',
-      description: 'Base skill level (points invested in this skill)',
+      description: 'Base skill level (points invested in this skill from tree)',
       example: '50 + 15*blvl'
     });
     this.registerVariable({
       keyword: 'lvl',
-      description: 'All skills bonus (coming from the "+# to All Skills" field)',
+      description: 'All skills bonus (from "+# to All Skills" input field only)',
       example: '100 + 5*lvl'
     });
     this.registerVariable({

@@ -445,21 +445,28 @@ async function buildTooltipContent(skillData, level, db, warningMessage = '', is
     // Create base character state with tree skill points
     const characterState = {
         level: characterLevel,
-        blvl: allSkillPoints,
+        blvl: { ...allSkillPoints }, // Copy to avoid modifying original
         lvl: {} // Will be populated below
     };
     
+    // Ensure current skill is included in blvl (even if 0 points)
+    if (!characterState.blvl[skillData.id]) {
+        characterState.blvl[skillData.id] = getSkillPoints(skillData.id);
+    }
     
-    // Calculate lvl for each skill (blvl + allSkillsBonus for tree skills)
-    for (const [skillName, points] of Object.entries(allSkillPoints)) {
-        characterState.lvl[skillName] = points + allSkillsBonus;
+    // Calculate lvl for each skill (only allSkillsBonus, not including base points)
+    for (const [skillName, points] of Object.entries(characterState.blvl)) {
+        characterState.lvl[skillName] = allSkillsBonus;
     }
     
     // Add OSkill levels to character state (with All Skills bonus applied)
     if (Array.isArray(allOSkills)) {
         // Old format: array of objects
         allOSkills.forEach(oskill => {
-            characterState.lvl[oskill.skillName] = oskill.points + allSkillsBonus;
+            // Add oSkill to blvl (base points)
+            characterState.blvl[oskill.skillName] = oskill.points;
+            // Add oSkill to lvl (only all skills bonus)
+            characterState.lvl[oskill.skillName] = allSkillsBonus;
         });
     } else {
         // New format: object with skill IDs or names as keys
@@ -481,7 +488,10 @@ async function buildTooltipContent(skillData, level, db, warningMessage = '', is
                 }
             }
             
-            characterState.lvl[skillName] = points + allSkillsBonus;
+            // Add oSkill to blvl (base points)
+            characterState.blvl[skillName] = points;
+            // Add oSkill to lvl (only all skills bonus)
+            characterState.lvl[skillName] = allSkillsBonus;
         });
     }
     
