@@ -1,7 +1,7 @@
 // Tooltip functionality for skill tree
 import { getSkillIconHTML, expandPlaceholdersWithScaling, SKILL_CATEGORY_TAG_IDS, SUMMON_TAG_IDS, TELEPORT_TAG_IDS } from '../utils.js';
 import { getDatabase } from './tree-data.js';
-import { getSkillPoints, getOSkillPoints, getCharacterInstance, getCharacterLevel, getAllSkillPoints, getAllOSkills } from '../character/character-state.js';
+import { getSkillPoints, getOSkillPoints, getAllSkillPoints, getAllOSkills } from '../character/character-state.js';
 
 let tooltipElement = null;
 let currentHoveredSkill = null;
@@ -424,7 +424,6 @@ async function buildTooltipContent(skillData, level, db, warningMessage = '', is
     html += '</div>';
     
     // Get character state for formula evaluation (needed for all tooltip content)
-    const characterInstance = getCharacterInstance();
     const allSkillPoints = getAllSkillPoints();
     const allOSkills = getAllOSkills();
     

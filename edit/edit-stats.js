@@ -194,9 +194,9 @@ function showStatUsage(statId, statKey, statName) {
     FROM skills s
     JOIN classes c ON s.class_id = c.id
     LEFT JOIN classTabs ct ON s.tab_index = ct.id
-    WHERE s.skill_effect LIKE '%{{' || ? || '%'
-       OR s.restriction LIKE '%{{' || ? || '%'
-       OR s.description LIKE '%{{' || ? || '%'
+    WHERE s.skill_effect LIKE '%{{' || ? || '}}%'
+       OR s.restriction LIKE '%{{' || ? || '}}%'
+       OR s.description LIKE '%{{' || ? || '}}%'
     ORDER BY c.name, s.display_name
   `);
   textStmt.bind([statKey, statKey, statKey]);
