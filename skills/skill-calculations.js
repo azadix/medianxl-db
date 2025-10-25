@@ -4,6 +4,8 @@
  */
 
 import Character from '../character/Character.js';
+import { getDatabase } from '../tree/tree-data.js';
+import { getCurrentVersionId } from '../version-config.js';
 
 /**
  * Max Level Modifier Rules
@@ -29,14 +31,21 @@ const MAX_LEVEL_MODIFIERS = [
     type: 'self_character_level',
     targetSkillName: 'barkskin', // itself
     characterLevelDivisor: 5, // +1 max level for every 5 character levels
-    description: 'Increases its own max level by 1 for every 4 character levels',
+    description: 'Increases its own max level by 1 for every 5 character levels',
+    startLevel: 10,
     calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = Character.DEFAULT_LEVEL) {
       // Only affects itself, based on character level only
       if (targetSkillData.skill_name === this.targetSkillName) {
-        // BUG: i think that this skill is bugged in game since the scaling starts counting from level 1 and not 10
-        // should be copied from other ones when the mod fixes it
+        // BUG: i think that this skill is bugged in game since the scaling starts counting from level 1
+        // and not 10. Should use the one below, when the mod fixes it
         return Math.floor(characterLevel / this.characterLevelDivisor);
       }
+
+      // Correct behaviour
+      // if (targetSkillData.skill_name === this.targetSkillName) {
+      //   const effectiveLevel = Math.max(0, characterLevel - this.startLevel);
+      //   return Math.floor(effectiveLevel / this.characterLevelDivisor);
+      // }
       return 0;
     }
   },
@@ -187,17 +196,24 @@ const MAX_LEVEL_MODIFIERS = [
  */
 export function calculateMaxLevel(skillId, skillLevels = {}, characterLevel = Character.DEFAULT_LEVEL, db = null) {
   if (!db) {
-    return 0;
+    db = getDatabase();
   }
 
-  // Get skill name and max level data in a single query using LEFT JOIN
+  // Get version ID for filtering
+  const versionId = getCurrentVersionId(db);
+  if (!versionId) {
+    console.warn(`calculateMaxLevel: No active version found`);
+    return 0;
+  }
+  
+  // Get skill name and max level data in a single query using LEFT JOIN, filtered by version_id
   const stmt = db.prepare(`
     SELECT s.name, sml.base_max_level, sml.affected_by_specialization, sml.can_add_points
     FROM skills s
-    LEFT JOIN skill_max_levels sml ON s.id = sml.skill_id
-    WHERE s.id = ?
+    LEFT JOIN skill_max_levels sml ON s.id = sml.skill_id AND sml.version_id = ?
+    WHERE s.id = ? AND s.version_id = ?
   `);
-  stmt.bind([skillId]);
+  stmt.bind([versionId, skillId, versionId]);
   
   if (!stmt.step()) {
     stmt.free();
@@ -229,9 +245,9 @@ export function calculateMaxLevel(skillId, skillLevels = {}, characterLevel = Ch
 
   // Apply all applicable modifiers
   for (const modifier of MAX_LEVEL_MODIFIERS) {
+
     // For character-level based modifiers, sourceSkillName can be null
     const sourceSkillLevel = modifier.sourceSkillName ? (skillLevels[modifier.sourceSkillName] || 0) : 0;
-    
     // Calculate bonus from this modifier
     const bonus = modifier.calculateBonus(sourceSkillLevel, targetSkillData, characterLevel, skillLevels);
     effectiveMaxLevel += bonus;

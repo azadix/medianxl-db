@@ -13,6 +13,30 @@
  * // Create from plain object
  * const skill = Skill.fromPlainObject(skillData);
  */
+
+// Import version config functions - will be dynamically imported when needed
+// to avoid circular dependencies
+let getCurrentVersionIdCache = null;
+let importPromise = null;
+
+// Async version for cases where we need to ensure the import has completed
+async function getVersionIdFnAsync(db) {
+    if (!getCurrentVersionIdCache) {
+        if (!importPromise) {
+            importPromise = import('../version-config.js').then(versionConfig => {
+                getCurrentVersionIdCache = versionConfig.getCurrentVersionId;
+                return versionConfig.getCurrentVersionId;
+            });
+        }
+        await importPromise;
+    }
+    if (!getCurrentVersionIdCache) {
+        console.error('Failed to load getCurrentVersionId from version-config.js');
+        return null;
+    }
+    return getCurrentVersionIdCache(db);
+}
+
 export default class Skill {
     // Skill level constraints
     static MIN_SKILL_LEVEL = 0;
@@ -89,12 +113,15 @@ export default class Skill {
      * @param {Object} db - Database instance
      * @returns {boolean} True if scaling data exists
      */
-    hasScalingData(db) {
+    async hasScalingData(db) {
         if (!db || !this.skillId) return false;
         
         try {
-            const stmt = db.prepare('SELECT COUNT(*) FROM skill_scaling WHERE skill_id = ?');
-            stmt.bind([this.skillId]);
+            const versionId = await getVersionIdFnAsync(db);
+            if (!versionId) return false;
+            
+            const stmt = db.prepare('SELECT COUNT(*) FROM skill_scaling WHERE skill_id = ? AND version_id = ?');
+            stmt.bind([this.skillId, versionId]);
             const count = stmt.step() ? stmt.get()[0] : 0;
             stmt.free();
             return count > 0;
@@ -109,12 +136,15 @@ export default class Skill {
      * @param {Object} db - Database instance
      * @returns {number[]} Array of levels with scaling data
      */
-    getAvailableLevels(db) {
+    async getAvailableLevels(db) {
         if (!db || !this.skillId) return [];
         
         try {
-            const stmt = db.prepare('SELECT DISTINCT level FROM skill_scaling WHERE skill_id = ? ORDER BY level');
-            stmt.bind([this.skillId]);
+            const versionId = await getVersionIdFnAsync(db);
+            if (!versionId) return [];
+            
+            const stmt = db.prepare('SELECT DISTINCT level FROM skill_scaling WHERE skill_id = ? AND version_id = ? ORDER BY level');
+            stmt.bind([this.skillId, versionId]);
             const levels = [];
             while (stmt.step()) {
                 levels.push(stmt.get()[0]);
@@ -176,15 +206,28 @@ export default class Skill {
     _buildFormulaVariables(characterState, characterLevel) {
         if (!characterState) return null;
         
-        return {
-            // Individual skill values (for backward compatibility)
-            blvl: characterState.blvl?.[this.id] || 0,
-            lvl: characterState.lvl?.[this.id] || 0,
-            clvl: characterLevel || 1,
+        const blvl = characterState.blvl?.[this.id] || 0;
+        const slvl = characterState.lvl?.[this.id] || 0; // All skills bonus
+        const lvl = blvl + slvl; // Total effective skill level
+        
+        // Build variables object
+        const variables = {
+            // Individual skill values
+            blvl: blvl,
+            slvl: slvl,
+            lvl: lvl,
+            ulvl: characterLevel || 1,
             // Full objects for skill references
             _blvl: characterState.blvl, // Full blvl object for skill references
-            _lvl: characterState.lvl    // Full lvl object for skill references
+            _lvl: characterState.lvl,   // Full lvl object for skill references (All Skills bonus)
+            // Pass full character state for tree() function
+            characterState: characterState
         };
+        
+        // Note: Character stats are handled via {statName} syntax in formulas
+        // They are replaced in FormulaEvaluator.replaceStatReferences()
+        
+        return variables;
     }
 
     /**
@@ -195,16 +238,44 @@ export default class Skill {
      * @returns {Object} Result with evaluated value and formula flag
      */
     _evaluateValue(value, formulaEvaluator, variables) {
-        if (!variables || !value || typeof value !== 'string' || !isNaN(value)) {
-            return { value, wasFormula: false };
+        // Convert value to string for processing
+        const stringValue = value != null ? String(value).trim() : '';
+        
+        // If no variables or empty value, return as-is
+        if (!variables || !stringValue) {
+            return { value: stringValue || value, wasFormula: false };
         }
         
-        const evalResult = formulaEvaluator.evaluate(value, variables);
+        // Check if it's a pure number (not a formula)
+        // Use a regex to check if it's ONLY a number (integer or decimal)
+        const isPureNumber = /^-?\d+(\.\d+)?$/.test(stringValue);
+        if (isPureNumber) {
+            // It's a number, return as-is
+            return { value: stringValue, wasFormula: false };
+        }
+        
+        // Try to evaluate as formula
+        const evalResult = formulaEvaluator.evaluate(stringValue, variables);
         if (evalResult.success) {
-            return { value: evalResult.value, wasFormula: true };
+            // Format number: remove trailing zeros for whole numbers, preserve decimals otherwise
+            const numValue = evalResult.value;
+            const formattedValue = Number.isInteger(numValue) ? String(numValue) : String(numValue).replace(/\.?0+$/, '');
+            return { value: formattedValue, wasFormula: true };
         }
         
-        return { value, wasFormula: false };
+        // Formula evaluation failed, return original value
+        // Only warn if it's not an "undefined variables" error for what looks like a skill name
+        // (skill names typically start with capital letters and aren't valid formula variables)
+        if (evalResult.error) {
+            const isUndefinedVarError = evalResult.error.includes('undefined variables');
+            const looksLikeSkillName = /^[A-Z][a-zA-Z0-9_]*$/.test(stringValue.trim());
+            
+            // Suppress warnings for skill names that aren't properly formatted as [[skill_name]]
+            if (!(isUndefinedVarError && looksLikeSkillName)) {
+                console.warn(`Formula evaluation failed for "${stringValue}":`, evalResult.error);
+            }
+        }
+        return { value: stringValue, wasFormula: false };
     }
 
     /**
@@ -213,16 +284,39 @@ export default class Skill {
      * @param {Object} formulaEvaluator - Formula evaluator instance
      * @param {Object} variables - Variables for formula evaluation
      */
-    _processValuesForFormulas(result, formulaEvaluator, variables) {
-        if (!variables) return;
+    _processValuesForFormulas(result, formulaEvaluator, variables, showFormulas = false) {
+        if (!variables || !result) return;
         
         ['value0', 'value1', 'value2', 'value3'].forEach(valueKey => {
+            const originalValue = result[valueKey];
+            // Convert to string if needed, handle null/undefined
+            const stringValue = originalValue != null ? String(originalValue).trim() : '';
+            
+            // Skip if empty
+            if (!stringValue) {
+                return;
+            }
+            
+            // Store original formula string before evaluation (for Alt-key display)
+            const isPureNumber = /^-?\d+(\.\d+)?$/.test(stringValue);
+            if (!isPureNumber && showFormulas) {
+                // Store original formula string
+                result[`${valueKey}_original`] = stringValue;
+            }
+            
             const { value, wasFormula } = this._evaluateValue(
-                result[valueKey], 
+                stringValue, 
                 formulaEvaluator, 
                 variables
             );
-            result[valueKey] = value;
+            
+            if (showFormulas && wasFormula) {
+                // Show original formula instead of evaluated value
+                result[valueKey] = stringValue;
+            } else {
+                result[valueKey] = value;
+            }
+            
             if (wasFormula) {
                 result[`${valueKey}_formula`] = true;
             }
@@ -237,22 +331,57 @@ export default class Skill {
      * @param {number} occurrenceIndex - Occurrence index for duplicate stats
      * @returns {Object|null} Scaling values object or null if not found
      */
-    _getScalingRow(db, level, statKey, occurrenceIndex) {
+    async _getScalingRow(db, level, statKey, occurrenceIndex) {
+        const versionId = await getVersionIdFnAsync(db);
+        if (!versionId) {
+            console.warn(`_getScalingRow: No version ID found for skill ${this.skillId}, level ${level}, stat ${statKey}`);
+            return null;
+        }
+        
         const scalingStmt = db.prepare(`
             SELECT ss.value0, ss.value1, ss.value2, ss.value3, s.name as stat_name, s.format
             FROM skill_scaling ss
             JOIN stats s ON s.id = ss.stat_id
-            WHERE ss.skill_id = ? AND ss.level = ? AND LOWER(s.key) = ? AND ss.occurrence_index = ?
+            WHERE ss.skill_id = ? AND ss.level = ? AND LOWER(s.key) = ? AND ss.occurrence_index = ? AND ss.version_id = ?
         `);
-        scalingStmt.bind([this.skillId, level, statKey.toLowerCase(), occurrenceIndex]);
+        scalingStmt.bind([this.skillId, level, statKey.toLowerCase(), occurrenceIndex, versionId]);
         
         let result = null;
         if (scalingStmt.step()) {
             const [value0, value1, value2, value3, statName, format] = scalingStmt.get();
             result = { 
-                value0, value1, value2, value3, statName, format,
+                value0: value0 != null ? String(value0) : null, 
+                value1: value1 != null ? String(value1) : null, 
+                value2: value2 != null ? String(value2) : null, 
+                value3: value3 != null ? String(value3) : null, 
+                statName, 
+                format,
                 value0_constant: false, value1_constant: false, value2_constant: false, value3_constant: false
             };
+        } else {
+            // Debug: check if row exists without version filter
+            const debugStmt = db.prepare(`
+                SELECT COUNT(*) FROM skill_scaling 
+                WHERE skill_id = ? AND level = ? AND stat_id IN (
+                    SELECT id FROM stats WHERE LOWER(key) = ?
+                ) AND occurrence_index = ?
+            `);
+            const statIdStmt = db.prepare('SELECT id FROM stats WHERE LOWER(key) = ?');
+            statIdStmt.bind([statKey.toLowerCase()]);
+            if (statIdStmt.step()) {
+                const statId = statIdStmt.get()[0];
+                statIdStmt.free();
+                debugStmt.bind([this.skillId, level, statId, occurrenceIndex]);
+                if (debugStmt.step()) {
+                    const count = debugStmt.get()[0];
+                    if (count > 0) {
+                        console.warn(`_getScalingRow: Found ${count} row(s) without version filter, but none with version_id=${versionId} for skill ${this.skillId}, level ${level}, stat ${statKey}`);
+                    }
+                }
+                debugStmt.free();
+            } else {
+                statIdStmt.free();
+            }
         }
         scalingStmt.free();
         
@@ -266,16 +395,35 @@ export default class Skill {
      * @param {number} occurrenceIndex - Occurrence index for duplicate stats
      * @returns {Object|null} Constant values object or null if not found
      */
-    _getConstantsRow(db, statKey, occurrenceIndex) {
+    async _getConstantsRow(db, statKey, occurrenceIndex) {
+        const versionId = await getVersionIdFnAsync(db);
+        if (!versionId) {
+            console.warn(`_getConstantsRow: No version ID found for skill ${this.skillId}`);
+            return null;
+        }
+        
+        // First check if stat exists
+        const statCheckStmt = db.prepare('SELECT id FROM stats WHERE LOWER(key) = ?');
+        statCheckStmt.bind([statKey.toLowerCase()]);
+        let statId = null;
+        if (statCheckStmt.step()) {
+            statId = statCheckStmt.get()[0];
+        }
+        statCheckStmt.free();
+        
+        if (!statId) {
+            return null;
+        }
+        
         const constantStmt = db.prepare(`
             SELECT value0, value1, value2, value3, 
                    value0_constant, value1_constant, value2_constant, value3_constant,
                    s.name as stat_name, s.format
             FROM skill_scaling_constants ssc
             JOIN stats s ON s.id = ssc.stat_id
-            WHERE ssc.skill_id = ? AND LOWER(s.key) = ? AND ssc.occurrence_index = ?
+            WHERE ssc.skill_id = ? AND LOWER(s.key) = ? AND ssc.occurrence_index = ? AND ssc.version_id = ?
         `);
-        constantStmt.bind([this.skillId, statKey.toLowerCase(), occurrenceIndex]);
+        constantStmt.bind([this.skillId, statKey.toLowerCase(), occurrenceIndex, versionId]);
         
         let constantValues = null;
         if (constantStmt.step()) {
@@ -283,8 +431,14 @@ export default class Skill {
                    value0_constant, value1_constant, value2_constant, value3_constant,
                    statName, format] = constantStmt.get();
             constantValues = {
-                value0, value1, value2, value3,
-                value0_constant, value1_constant, value2_constant, value3_constant,
+                value0: value0 != null ? String(value0) : '', 
+                value1: value1 != null ? String(value1) : '', 
+                value2: value2 != null ? String(value2) : '', 
+                value3: value3 != null ? String(value3) : '',
+                value0_constant: Boolean(value0_constant), 
+                value1_constant: Boolean(value1_constant), 
+                value2_constant: Boolean(value2_constant), 
+                value3_constant: Boolean(value3_constant),
                 statName, format
             };
         }
@@ -301,32 +455,100 @@ export default class Skill {
      * @param {Object} variables - Variables for formula evaluation
      * @returns {Object} Merged result object
      */
-    _mergeConstants(result, constantValues, formulaEvaluator, variables) {
+    _mergeConstants(result, constantValues, formulaEvaluator, variables, showFormulas = false) {
         if (!constantValues) return result;
         
         if (!result) {
+            // Create new result with empty values, not '???' - let constants populate them
             result = { 
                 statName: constantValues.statName, 
                 format: constantValues.format,
-                value0: '???', value1: '???', value2: '???', value3: '???',
+                value0: null, value1: null, value2: null, value3: null,
                 value0_constant: false, value1_constant: false, value2_constant: false, value3_constant: false
             };
         }
         
         // Process each constant value
+        // If valueX_constant flag is 1, use constant value and evaluate formulas
+        // If flag is 0 but value exists and looks like a formula, still evaluate it
         ['value0', 'value1', 'value2', 'value3'].forEach(valueKey => {
             const constantKey = `${valueKey}_constant`;
-            if (constantValues[constantKey]) {
-                const { value, wasFormula } = this._evaluateValue(
-                    constantValues[valueKey] || 0,
-                    formulaEvaluator,
-                    variables
-                );
-                
-                result[valueKey] = value;
-                result[constantKey] = true;
-                if (wasFormula) {
-                    result[`${valueKey}_formula`] = true;
+            const constantValue = constantValues[valueKey];
+            const isConstantFlag = constantValues[constantKey];
+            
+            // Convert to string if needed, handle null/undefined
+            const stringValue = constantValue != null ? String(constantValue).trim() : '';
+            
+            // If constant flag is set, process this value
+            if (isConstantFlag) {
+                if (stringValue) {
+                    const { value, wasFormula } = this._evaluateValue(
+                        stringValue,
+                        formulaEvaluator,
+                        variables
+                    );
+                    
+                    if (showFormulas && wasFormula) {
+                        // Show original formula instead of evaluated value
+                        result[valueKey] = stringValue;
+                    } else {
+                        // Format numeric values: remove trailing zeros for whole numbers
+                        const numValue = Number(value);
+                        if (!isNaN(numValue) && isFinite(numValue)) {
+                            result[valueKey] = Number.isInteger(numValue) ? String(numValue) : String(numValue).replace(/\.?0+$/, '');
+                        } else {
+                            result[valueKey] = value;
+                        }
+                    }
+                    result[constantKey] = true;
+                    if (wasFormula) {
+                        result[`${valueKey}_formula`] = true;
+                    }
+                } else {
+                    // Empty constant value - mark as constant with empty value so it shows as ???
+                    // Only set if result doesn't already have a value (don't override scaling values)
+                    if (!result[valueKey] || result[valueKey] === null) {
+                        result[valueKey] = '';
+                    }
+                    result[constantKey] = true;
+                }
+            } else if (stringValue) {
+                // Flag is 0, but value exists - check if we should use it
+                // Only use if result doesn't have this value yet (don't override scaling values)
+                if (!result[valueKey] || result[valueKey] === null) {
+                    // Check if it looks like a formula and evaluate it
+                    const looksLikeFormula = /[a-zA-Z_]+|\+|\-|\*|\//.test(stringValue);
+                    if (looksLikeFormula && variables) {
+                        const { value, wasFormula } = this._evaluateValue(
+                            stringValue,
+                            formulaEvaluator,
+                            variables
+                        );
+                        
+                        if (wasFormula || (!isNaN(stringValue) && stringValue !== '')) {
+                            if (showFormulas && wasFormula) {
+                                // Show original formula instead of evaluated value
+                                result[valueKey] = stringValue;
+                            } else {
+                                // Format numeric values: remove trailing zeros for whole numbers
+                                const numValue = Number(value);
+                                if (!isNaN(numValue) && isFinite(numValue)) {
+                                    result[valueKey] = Number.isInteger(numValue) ? String(numValue) : String(numValue).replace(/\.?0+$/, '');
+                                } else {
+                                    result[valueKey] = value;
+                                }
+                            }
+                            if (wasFormula) {
+                                result[`${valueKey}_formula`] = true;
+                            }
+                        }
+                    } else if (!isNaN(stringValue) && stringValue !== '') {
+                        // It's a number, use it
+                        result[valueKey] = stringValue;
+                    } else if (stringValue) {
+                        // Even if not a formula, if it's a string value, use it
+                        result[valueKey] = stringValue;
+                    }
                 }
             }
         });
@@ -342,8 +564,10 @@ export default class Skill {
      * @param {number} occurrenceIndex - Occurrence index for duplicate stats (default: 0)
      * @returns {Object|null} Scaling values object or null if not found
      */
-    async getScalingValues(db, level, statKey, occurrenceIndex = 0, characterState = null, characterLevel = null) {
-        if (!db || !this.skillId || !statKey) return null;
+    async getScalingValues(db, level, statKey, occurrenceIndex = 0, characterState = null, characterLevel = null, showFormulas = false) {
+        if (!db || !this.skillId || !statKey) {
+            return null;
+        }
         
         const { formulaEvaluator } = await import('./formula-evaluator.js');
         
@@ -352,22 +576,25 @@ export default class Skill {
             const variables = this._buildFormulaVariables(characterState, characterLevel);
             
             // Get level-specific values
-            let result = this._getScalingRow(db, level, statKey, occurrenceIndex);
+            let result = await this._getScalingRow(db, level, statKey, occurrenceIndex);
             
-            // Evaluate formulas in scaling values if character state available
-            if (result && variables) {
-                this._processValuesForFormulas(result, formulaEvaluator, variables);
+            // Get and merge constant values (constants might have formulas too)
+            const constantValues = await this._getConstantsRow(db, statKey, occurrenceIndex);
+            
+            if (constantValues) {
+                result = this._mergeConstants(result, constantValues, formulaEvaluator, variables, showFormulas);
             }
             
-            // Get and merge constant values
-            const constantValues = this._getConstantsRow(db, statKey, occurrenceIndex);
-            if (constantValues) {
-                result = this._mergeConstants(result, constantValues, formulaEvaluator, variables);
+            // Evaluate formulas in ALL values (scaling + constants) if character state available
+            // Do this AFTER merging constants so we evaluate all formulas, including those in constants
+            if (result && variables) {
+                this._processValuesForFormulas(result, formulaEvaluator, variables, showFormulas);
             }
             
             return result;
         } catch (error) {
-            console.warn('Error getting scaling values for skill:', this.name, error);
+            console.warn('[getScalingValues] Error getting scaling values for skill:', this.name, error);
+            console.error(error);
             return null;
         }
     }

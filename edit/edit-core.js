@@ -25,6 +25,9 @@ export async function initializePage() {
     SkillDB.SQL = await initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.13.0/${file}` });
     SkillDB.db = new SkillDB.SQL.Database(new Uint8Array(buffer));
 
+    // Run migration if needed
+    await migrateDatabaseToVersions();
+
     // Initialize all sections
     await import('./edit-skills.js').then(m => m.initializeSkills());
     await import('./edit-tags.js').then(m => m.initializeTags());
@@ -34,6 +37,7 @@ export async function initializePage() {
     await import('./edit-max-levels.js').then(m => m.initializeMaxLevels());
     await import('./edit-prerequisites.js').then(m => m.initializePrerequisites());
     await import('./edit-autocomplete.js').then(m => m.initializeAutocomplete());
+    await import('./edit-versions.js').then(m => m.initializeVersions());
     
   } catch (err) {
     console.error("Database initialization failed:", err.message);
@@ -65,6 +69,14 @@ export async function initDatabase() {
   SkillDB.db = new SkillDB.SQL.Database();
 
   SkillDB.db.run(`
+    CREATE TABLE versions (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      major INTEGER NOT NULL,
+      minor INTEGER NOT NULL,
+      name TEXT NOT NULL,
+      is_active BOOLEAN NOT NULL DEFAULT 1,
+      UNIQUE(major, minor)
+    );
     CREATE TABLE classes (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL UNIQUE,
@@ -94,7 +106,9 @@ export async function initDatabase() {
       restriction TEXT,
       description TEXT,
       skill_effect TEXT,
-      FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE SET NULL
+      version_id INTEGER NOT NULL,
+      FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE SET NULL,
+      FOREIGN KEY (version_id) REFERENCES versions(id) ON DELETE CASCADE
     );
     CREATE TABLE skill_skilltags (
       skill_id INTEGER NOT NULL,
@@ -116,37 +130,43 @@ export async function initDatabase() {
       level INTEGER NOT NULL,
       stat_id INTEGER NOT NULL,
       occurrence_index INTEGER NOT NULL DEFAULT 0,
-      value0 REAL NOT NULL,
-      value1 REAL NOT NULL,
-      value2 REAL NOT NULL,
-      value3 REAL NOT NULL,
-      PRIMARY KEY (skill_id, level, stat_id, occurrence_index),
+      value0 TEXT NOT NULL,
+      value1 TEXT NOT NULL,
+      value2 TEXT NOT NULL,
+      value3 TEXT NOT NULL,
+      version_id INTEGER NOT NULL,
+      PRIMARY KEY (skill_id, level, stat_id, occurrence_index, version_id),
       FOREIGN KEY (skill_id) REFERENCES skills(id),
-      FOREIGN KEY (stat_id) REFERENCES stats(id)
+      FOREIGN KEY (stat_id) REFERENCES stats(id),
+      FOREIGN KEY (version_id) REFERENCES versions(id) ON DELETE CASCADE
     );
     CREATE TABLE skill_scaling_constants (
       skill_id INTEGER NOT NULL,
       stat_id INTEGER NOT NULL,
       occurrence_index INTEGER NOT NULL DEFAULT 0,
-      value0 REAL DEFAULT 0,
-      value1 REAL DEFAULT 0,
-      value2 REAL DEFAULT 0,
-      value3 REAL DEFAULT 0,
+      value0 TEXT DEFAULT '',
+      value1 TEXT DEFAULT '',
+      value2 TEXT DEFAULT '',
+      value3 TEXT DEFAULT '',
       value0_constant BOOLEAN DEFAULT 0,
       value1_constant BOOLEAN DEFAULT 0,
       value2_constant BOOLEAN DEFAULT 0,
       value3_constant BOOLEAN DEFAULT 0,
-      PRIMARY KEY (skill_id, stat_id, occurrence_index),
+      version_id INTEGER NOT NULL,
+      PRIMARY KEY (skill_id, stat_id, occurrence_index, version_id),
       FOREIGN KEY (skill_id) REFERENCES skills(id),
-      FOREIGN KEY (stat_id) REFERENCES stats(id)
+      FOREIGN KEY (stat_id) REFERENCES stats(id),
+      FOREIGN KEY (version_id) REFERENCES versions(id) ON DELETE CASCADE
     );
     CREATE TABLE skill_max_levels (
       skill_id INTEGER NOT NULL,
       base_max_level INTEGER NOT NULL DEFAULT 1,
       affected_by_specialization BOOLEAN NOT NULL DEFAULT 0,
       can_add_points BOOLEAN NOT NULL DEFAULT 1,
-      PRIMARY KEY (skill_id),
-      FOREIGN KEY (skill_id) REFERENCES skills(id) ON DELETE CASCADE
+      version_id INTEGER NOT NULL,
+      PRIMARY KEY (skill_id, version_id),
+      FOREIGN KEY (skill_id) REFERENCES skills(id) ON DELETE CASCADE,
+      FOREIGN KEY (version_id) REFERENCES versions(id) ON DELETE CASCADE
     );
     CREATE TABLE skill_prerequisites (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -155,14 +175,23 @@ export async function initDatabase() {
       requirement_value INTEGER NOT NULL,
       target_skill_id INTEGER,
       target_tab_id INTEGER,
+      version_id INTEGER NOT NULL,
       FOREIGN KEY (skill_id) REFERENCES skills(id) ON DELETE CASCADE,
       FOREIGN KEY (target_skill_id) REFERENCES skills(id) ON DELETE CASCADE,
-      FOREIGN KEY (target_tab_id) REFERENCES classTabs(id) ON DELETE CASCADE
+      FOREIGN KEY (target_tab_id) REFERENCES classTabs(id) ON DELETE CASCADE,
+      FOREIGN KEY (version_id) REFERENCES versions(id) ON DELETE CASCADE
     );
   `);
 
   // Initialize with some basic data
   SkillDB.db.run(`INSERT INTO classes (name, image_prefix) VALUES ('Amazon', 'ama'), ('Assassin', 'ass'), ('Barbarian', 'bar'), ('Druid', 'dru'), ('Necromancer', 'nec'), ('Paladin', 'pal'), ('Sorceress', 'sor'), ('Other', 'shared')`);
+  
+  // Create default version
+  // Note: Database is empty at this point (no versions table yet), so use DEFAULT_VERSION
+  const { getCurrentVersion, versionToString } = await import('../version-config.js');
+  const defaultVersion = getCurrentVersion(null); // Pass null since database doesn't have versions table yet
+  SkillDB.db.run(`INSERT INTO versions (major, minor, name, is_active) VALUES (?, ?, ?, 1)`, 
+    [defaultVersion.major, defaultVersion.minor, versionToString(defaultVersion)]);
   
   // Initialize sections
   await import('./edit-skills.js').then(m => m.initializeSkills());
@@ -173,6 +202,187 @@ export async function initDatabase() {
   await import('./edit-max-levels.js').then(m => m.initializeMaxLevels());
   await import('./edit-prerequisites.js').then(m => m.initializePrerequisites());
   await import('./edit-autocomplete.js').then(m => m.initializeAutocomplete());
+  await import('./edit-versions.js').then(m => m.initializeVersions());
+}
+
+/**
+ * Migrate existing database to add version support
+ * Run this once to upgrade databases created before versioning system
+ */
+export async function migrateDatabaseToVersions() {
+  if (!SkillDB.db) {
+    throw new Error('Database not initialized');
+  }
+
+  try {
+    // Check if versions table exists
+    const checkStmt = SkillDB.db.prepare(`SELECT name FROM sqlite_master WHERE type='table' AND name='versions'`);
+    const hasVersions = checkStmt.step();
+    checkStmt.free();
+
+    if (hasVersions) {
+      console.log('Database already has version support');
+      return;
+    }
+
+    console.log('Migrating database to version support...');
+
+    // Start transaction
+    SkillDB.db.run('BEGIN TRANSACTION');
+
+    // Create versions table
+    SkillDB.db.run(`
+      CREATE TABLE versions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        major INTEGER NOT NULL,
+        minor INTEGER NOT NULL,
+        name TEXT NOT NULL,
+        is_active BOOLEAN NOT NULL DEFAULT 1,
+        UNIQUE(major, minor)
+      )
+    `);
+
+    // Create default version from current version config
+    const { getCurrentVersion, versionToString } = await import('../version-config.js');
+    // Use database version if available, otherwise fall back to default
+    const defaultVersion = getCurrentVersion(SkillDB.db);
+    SkillDB.db.run(`INSERT INTO versions (major, minor, name, is_active) VALUES (?, ?, ?, 1)`, 
+      [defaultVersion.major, defaultVersion.minor, versionToString(defaultVersion)]);
+    
+    const versionIdStmt = SkillDB.db.prepare('SELECT id FROM versions WHERE major = ? AND minor = ?');
+    versionIdStmt.bind([defaultVersion.major, defaultVersion.minor]);
+    const defaultVersionId = versionIdStmt.step() ? versionIdStmt.get()[0] : null;
+    versionIdStmt.free();
+
+    if (!defaultVersionId) {
+      throw new Error('Failed to create default version');
+    }
+
+    // Alter tables to add version_id
+    // SQLite doesn't support ALTER TABLE ADD COLUMN with NOT NULL and DEFAULT in one step
+    // So we'll create new tables and copy data
+    
+    // 1. Skills table
+    SkillDB.db.run(`
+      CREATE TABLE skills_new (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        display_name TEXT NOT NULL,
+        class_id INTEGER,
+        tab_index INTEGER,
+        row INTEGER,
+        col INTEGER,
+        image TEXT,
+        restriction TEXT,
+        description TEXT,
+        skill_effect TEXT,
+        version_id INTEGER NOT NULL DEFAULT ?,
+        FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE SET NULL,
+        FOREIGN KEY (version_id) REFERENCES versions(id) ON DELETE CASCADE
+      )
+    `, [defaultVersionId]);
+    
+    SkillDB.db.run(`INSERT INTO skills_new SELECT *, ? FROM skills`, [defaultVersionId]);
+    SkillDB.db.run('DROP TABLE skills');
+    SkillDB.db.run('ALTER TABLE skills_new RENAME TO skills');
+
+    // 2. skill_scaling table - change value columns to TEXT and add version_id
+    SkillDB.db.run(`
+      CREATE TABLE skill_scaling_new (
+        skill_id INTEGER NOT NULL,
+        level INTEGER NOT NULL,
+        stat_id INTEGER NOT NULL,
+        occurrence_index INTEGER NOT NULL DEFAULT 0,
+        value0 TEXT NOT NULL,
+        value1 TEXT NOT NULL,
+        value2 TEXT NOT NULL,
+        value3 TEXT NOT NULL,
+        version_id INTEGER NOT NULL DEFAULT ?,
+        PRIMARY KEY (skill_id, level, stat_id, occurrence_index, version_id),
+        FOREIGN KEY (skill_id) REFERENCES skills(id),
+        FOREIGN KEY (stat_id) REFERENCES stats(id),
+        FOREIGN KEY (version_id) REFERENCES versions(id) ON DELETE CASCADE
+      )
+    `, [defaultVersionId]);
+    
+    SkillDB.db.run(`INSERT INTO skill_scaling_new SELECT *, ? FROM skill_scaling`, [defaultVersionId]);
+    SkillDB.db.run('DROP TABLE skill_scaling');
+    SkillDB.db.run('ALTER TABLE skill_scaling_new RENAME TO skill_scaling');
+
+    // 3. skill_scaling_constants table
+    SkillDB.db.run(`
+      CREATE TABLE skill_scaling_constants_new (
+        skill_id INTEGER NOT NULL,
+        stat_id INTEGER NOT NULL,
+        occurrence_index INTEGER NOT NULL DEFAULT 0,
+        value0 TEXT DEFAULT '',
+        value1 TEXT DEFAULT '',
+        value2 TEXT DEFAULT '',
+        value3 TEXT DEFAULT '',
+        value0_constant BOOLEAN DEFAULT 0,
+        value1_constant BOOLEAN DEFAULT 0,
+        value2_constant BOOLEAN DEFAULT 0,
+        value3_constant BOOLEAN DEFAULT 0,
+        version_id INTEGER NOT NULL DEFAULT ?,
+        PRIMARY KEY (skill_id, stat_id, occurrence_index, version_id),
+        FOREIGN KEY (skill_id) REFERENCES skills(id),
+        FOREIGN KEY (stat_id) REFERENCES stats(id),
+        FOREIGN KEY (version_id) REFERENCES versions(id) ON DELETE CASCADE
+      )
+    `, [defaultVersionId]);
+    
+    SkillDB.db.run(`INSERT INTO skill_scaling_constants_new SELECT *, ? FROM skill_scaling_constants`, [defaultVersionId]);
+    SkillDB.db.run('DROP TABLE skill_scaling_constants');
+    SkillDB.db.run('ALTER TABLE skill_scaling_constants_new RENAME TO skill_scaling_constants');
+
+    // 4. skill_max_levels table
+    SkillDB.db.run(`
+      CREATE TABLE skill_max_levels_new (
+        skill_id INTEGER NOT NULL,
+        base_max_level INTEGER NOT NULL DEFAULT 1,
+        affected_by_specialization BOOLEAN NOT NULL DEFAULT 0,
+        can_add_points BOOLEAN NOT NULL DEFAULT 1,
+        version_id INTEGER NOT NULL DEFAULT ?,
+        PRIMARY KEY (skill_id, version_id),
+        FOREIGN KEY (skill_id) REFERENCES skills(id) ON DELETE CASCADE,
+        FOREIGN KEY (version_id) REFERENCES versions(id) ON DELETE CASCADE
+      )
+    `, [defaultVersionId]);
+    
+    SkillDB.db.run(`INSERT INTO skill_max_levels_new SELECT *, ? FROM skill_max_levels`, [defaultVersionId]);
+    SkillDB.db.run('DROP TABLE skill_max_levels');
+    SkillDB.db.run('ALTER TABLE skill_max_levels_new RENAME TO skill_max_levels');
+
+    // 5. skill_prerequisites table
+    SkillDB.db.run(`
+      CREATE TABLE skill_prerequisites_new (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        skill_id INTEGER NOT NULL,
+        requirement_type TEXT NOT NULL,
+        requirement_value INTEGER NOT NULL,
+        target_skill_id INTEGER,
+        target_tab_id INTEGER,
+        version_id INTEGER NOT NULL DEFAULT ?,
+        FOREIGN KEY (skill_id) REFERENCES skills(id) ON DELETE CASCADE,
+        FOREIGN KEY (target_skill_id) REFERENCES skills(id) ON DELETE CASCADE,
+        FOREIGN KEY (target_tab_id) REFERENCES classTabs(id) ON DELETE CASCADE,
+        FOREIGN KEY (version_id) REFERENCES versions(id) ON DELETE CASCADE
+      )
+    `, [defaultVersionId]);
+    
+    SkillDB.db.run(`INSERT INTO skill_prerequisites_new SELECT *, ? FROM skill_prerequisites`, [defaultVersionId]);
+    SkillDB.db.run('DROP TABLE skill_prerequisites');
+    SkillDB.db.run('ALTER TABLE skill_prerequisites_new RENAME TO skill_prerequisites');
+
+    // Commit transaction
+    SkillDB.db.run('COMMIT');
+    
+    console.log('Database migration completed successfully');
+  } catch (error) {
+    SkillDB.db.run('ROLLBACK');
+    console.error('Migration failed:', error);
+    throw error;
+  }
 }
 
 // Initialize navigation and UI controls
@@ -228,7 +438,7 @@ export function initializeNavigation() {
     fileInput.click();
   });
 
-  document.getElementById("import-db").addEventListener("change", async () => {
+    document.getElementById("import-db").addEventListener("change", async () => {
     const fileInput = document.getElementById("import-db");
     if (!fileInput.files.length) return;
 
@@ -236,6 +446,9 @@ export function initializeNavigation() {
       const file = fileInput.files[0];
       const buffer = await file.arrayBuffer();
       SkillDB.db = new SkillDB.SQL.Database(new Uint8Array(buffer));
+
+      // Run migration if needed
+      await migrateDatabaseToVersions();
 
       // Reinitialize all sections
       await import('./edit-skills.js').then(m => m.initializeSkills());
@@ -246,6 +459,7 @@ export function initializeNavigation() {
       await import('./edit-max-levels.js').then(m => m.initializeMaxLevels());
       await import('./edit-prerequisites.js').then(m => m.initializePrerequisites());
       await import('./edit-autocomplete.js').then(m => m.initializeAutocomplete());
+      await import('./edit-versions.js').then(m => m.initializeVersions());
       
       fileInput.value = "";
     } catch (err) {

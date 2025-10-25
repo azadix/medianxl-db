@@ -210,8 +210,13 @@ function autoExpandStatToken(db, statKey) {
 // Expected schema: stats(key TEXT UNIQUE), skill_scaling(skill_id, level, stat_id, occurrence_index, value)
 
 // Also supports [[skill_name]] which expands to skill's display_name in success color
-export async function expandPlaceholdersWithScaling(db, skillId, level, description, skillName = null, characterState = null) {
+export async function expandPlaceholdersWithScaling(db, skillId, level, description, skillName = null, characterState = null, showFormulas = false) {
     if (!description) return '';
+    
+    // Get version ID once at the start
+    const { getCurrentVersionId } = await import('./version-config.js');
+    const versionId = getCurrentVersionId(db);
+    if (!versionId) return description;
     
     // Track occurrence counts for each stat key to maintain order
     const occurrenceCounts = new Map();
@@ -222,8 +227,8 @@ export async function expandPlaceholdersWithScaling(db, skillId, level, descript
         if (!trimmedSkillName) return match;
         
         try {
-            const stmt = db.prepare("SELECT display_name FROM skills WHERE name = ?");
-            stmt.bind([trimmedSkillName]);
+            const stmt = db.prepare("SELECT display_name FROM skills WHERE name = ? AND version_id = ?");
+            stmt.bind([trimmedSkillName, versionId]);
             
             if (stmt.step()) {
                 const displayName = stmt.get()[0];
@@ -251,6 +256,15 @@ export async function expandPlaceholdersWithScaling(db, skillId, level, descript
         const [rawKey, rawValues] = token.split(':').map(s => s.trim());
         const key = (rawKey || '').toLowerCase();
         
+        // Check if this is a character stat reference (not a skill stat scaling placeholder)
+        // Character stats are stored in characterState.stats object
+        if (characterState && characterState.stats && characterState.stats.hasOwnProperty(key)) {
+            // This is a character stat, not a skill stat placeholder
+            const statValue = characterState.stats[key];
+            result = result.replace(match, statValue.toString());
+            continue;
+        }
+        
         // Track occurrence index for this stat key
         const occurrenceIndex = occurrenceCounts.get(key) || 0;
         occurrenceCounts.set(key, occurrenceIndex + 1);
@@ -277,10 +291,11 @@ export async function expandPlaceholdersWithScaling(db, skillId, level, descript
             
             // Use Skill class to get scaling values (includes constants)
             let actualSkillName = skillName;
+            
             if (!actualSkillName) {
                 // If skillName not provided, get it from database ID
-                const skillStmt = db.prepare("SELECT name FROM skills WHERE id = ?");
-                skillStmt.bind([skillId]);
+                const skillStmt = db.prepare("SELECT name FROM skills WHERE id = ? AND version_id = ?");
+                skillStmt.bind([skillId, versionId]);
                 if (skillStmt.step()) {
                     actualSkillName = skillStmt.get()[0];
                 }
@@ -289,8 +304,8 @@ export async function expandPlaceholdersWithScaling(db, skillId, level, descript
             
             if (actualSkillName) {
                 // Get the display name for the skill
-                const displayNameStmt = db.prepare("SELECT display_name FROM skills WHERE name = ?");
-                displayNameStmt.bind([actualSkillName]);
+                const displayNameStmt = db.prepare("SELECT display_name FROM skills WHERE name = ? AND version_id = ?");
+                displayNameStmt.bind([actualSkillName, versionId]);
                 let displayName = actualSkillName; // fallback to skill name
                 if (displayNameStmt.step()) {
                     displayName = displayNameStmt.get()[0] || actualSkillName;
@@ -298,13 +313,18 @@ export async function expandPlaceholdersWithScaling(db, skillId, level, descript
                 displayNameStmt.free();
                 
                 const skill = new Skill({ id: actualSkillName, name: displayName, skillId: skillId });
-                const scalingValues = await skill.getScalingValues(db, level, key, occurrenceIndex, characterState, characterState?.level);
+                const scalingValues = await skill.getScalingValues(db, level, key, occurrenceIndex, characterState, characterState?.level, showFormulas);
                 
                 if (scalingValues) {
                     const v0 = scalingValues.value0 ?? '';
                     const v1 = scalingValues.value1 ?? '';
                     const v2 = scalingValues.value2 ?? '';
                     const v3 = scalingValues.value3 ?? '';
+                    
+                    // Check if any constants exist for this stat
+                    // If constants exist but only some values are filled, empty ones should show ???
+                    const hasAnyConstants = scalingValues.value0_constant || scalingValues.value1_constant || 
+                                           scalingValues.value2_constant || scalingValues.value3_constant;
                     
                     // Use different styling: formulas=link, constants=warning, scaling=primary
                     const getValueClass = (valueIndex) => {
@@ -315,10 +335,27 @@ export async function expandPlaceholdersWithScaling(db, skillId, level, descript
                         return DEFAULT_STYLE;
                     };
                     
-                    const w0 = `<span class="${getValueClass(0)}">${v0}</span>`;
-                    const w1 = `<span class="${getValueClass(1)}">${v1}</span>`;
-                    const w2 = `<span class="${getValueClass(2)}">${v2}</span>`;
-                    const w3 = `<span class="${getValueClass(3)}">${v3}</span>`;
+                    // Check if values are empty and should show ??? for formulas/constants
+                    const getDisplayHtml = (valueIndex, defaultValue) => {
+                        const isEmpty = defaultValue === '' || defaultValue === null || defaultValue === undefined;
+                        const isFormula = scalingValues[`value${valueIndex}_formula`];
+                        const isConstant = scalingValues[`value${valueIndex}_constant`];
+                        
+                        // Show ??? if value is empty AND:
+                        // 1. It's marked as a formula/constant, OR
+                        // 2. Constants exist for this stat (if constants are present but only some values filled, empty ones show ???)
+                        //    This handles the case where only 1 of X fields is filled - empty ones show ???
+                        if (isEmpty && (isFormula || isConstant || hasAnyConstants)) {
+                            return `<span class="${UNKNOWN_STYLE}">???</span>`;
+                        }
+                        // Use the appropriate style class for the value
+                        return `<span class="${getValueClass(valueIndex)}">${defaultValue || ''}</span>`;
+                    };
+                    
+                    const w0 = getDisplayHtml(0, v0);
+                    const w1 = getDisplayHtml(1, v1);
+                    const w2 = getDisplayHtml(2, v2);
+                    const w3 = getDisplayHtml(3, v3);
                     
                     output = (format || '{name}: {value}')
                         .replace('{name}', name)
@@ -326,6 +363,15 @@ export async function expandPlaceholdersWithScaling(db, skillId, level, descript
                         .replace('{value1}', w1)
                         .replace('{value2}', w2)
                         .replace('{value3}', w3);
+                } else {
+                    // No scaling values found at all - show ??? for all values
+                    const q = `<span class="${UNKNOWN_STYLE}">???</span>`;
+                    output = (format || '{name}: {value}')
+                        .replace('{name}', name)
+                        .replace('{value0}', q)
+                        .replace('{value1}', q)
+                        .replace('{value2}', q)
+                        .replace('{value3}', q);
                 }
             }
         }

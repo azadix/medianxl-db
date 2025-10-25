@@ -1,6 +1,8 @@
 // Data loading and SQLite operations for the skills tree
 import Skill from '../skills/Skill.js';
 import { showDatabaseError } from '../utils.js';
+import { buildTreeSkillsCache } from '../character/character-state.js';
+import { getCurrentVersionId } from '../version-config.js';
 
 // Store database instance globally for use in calculations
 let dbInstance = null;
@@ -27,7 +29,16 @@ export async function loadSkillsFromSQLite() {
         // Store database instance
         dbInstance = db;
 
-        // Query skills with correct tab join
+        // Build tree skills cache for tree() function
+        buildTreeSkillsCache(db);
+
+        // Get active version ID
+        const versionId = getCurrentVersionId(db);
+        if (!versionId) {
+            throw new Error('No active version found in database');
+        }
+
+        // Query skills with correct tab join, filtered by version_id
         const stmt = db.prepare(`
             SELECT s.*,
                 ct.name AS tab_name,
@@ -41,7 +52,7 @@ export async function loadSkillsFromSQLite() {
                  FROM skill_prerequisites sp2
                  LEFT JOIN skills ts2 ON sp2.target_skill_id = ts2.id
                  LEFT JOIN classTabs ct3 ON sp2.target_tab_id = ct3.id
-                 WHERE sp2.skill_id = s.id) AS prerequisites
+                 WHERE sp2.skill_id = s.id AND sp2.version_id = ?) AS prerequisites
             FROM skills s
             LEFT JOIN classTabs ct
                 ON s.tab_index = ct.id
@@ -52,11 +63,12 @@ export async function loadSkillsFromSQLite() {
             LEFT JOIN skilltags t
                 ON st.tag_id = t.id
             LEFT JOIN skill_max_levels sml
-                ON s.id = sml.skill_id
-            WHERE s.class_id != 1
+                ON s.id = sml.skill_id AND sml.version_id = ?
+            WHERE s.class_id != 1 AND s.version_id = ?
             GROUP BY s.id
             ORDER BY s.class_id, s.tab_index, s.row, s.col;
         `);
+        stmt.bind([versionId, versionId, versionId]);
 
         const loadedSkills = [];
         while (stmt.step()) {
@@ -90,8 +102,8 @@ export async function loadSkillsFromSQLite() {
             });
         }
 
-        // Generalize Paragon of Fate replication: copy to all classes
-        const paragonSkills = loadedSkills.filter(s => s.id === 'paragon_of_fate');
+        // Generalize Paragon skills replication: copy to all classes
+        const paragonSkills = loadedSkills.filter(s => s.id === 'paragon_of_fate' || s.id === 'paragon_of_sanctity');
         if (paragonSkills.length > 0) {
             const paragonByClass = new Map();
             paragonSkills.forEach(s => {

@@ -48,16 +48,8 @@ export default class Character {
       'inquisitor_of_the_triune': { hell: true}
     };
     this.oSkills = []; // Array of {skillId, skillName, displayName, image, className, points}
+    this.stats = {}; // Map of stat_key -> value
   }
-
-  /**
-   * Get the default character level
-   * @returns {number} Default character level
-   */
-  static getDefaultLevel() {
-    return Character.DEFAULT_LEVEL;
-  }
-
 
   /**
    * Clamp a character level to valid range
@@ -238,11 +230,19 @@ export default class Character {
       this.questsCompleted[questId] = {};
     }
     
+    const oldState = { ...this.questsCompleted[questId] };
     this.questsCompleted[questId] = {
       normal: difficulties.normal || false,
       nightmare: difficulties.nightmare || false,
       hell: difficulties.hell || false
     };
+    
+    // Dispatch event if quest completion changed
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('questCompletionChanged', { 
+        detail: { questId, oldState, newState: this.questsCompleted[questId] } 
+      }));
+    }
   }
 
   /**
@@ -314,8 +314,16 @@ export default class Character {
    * @param {number} level - New character level
    */
   setCharacterLevel(level) {
+    const oldLevel = this.level;
     this.level = level;
     this.maxLevels = {}; // Clear cache
+    
+    // Dispatch event if level changed
+    if (oldLevel !== level && typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('characterLevelChanged', { 
+        detail: { oldLevel, newLevel: level } 
+      }));
+    }
   }
 
   /**
@@ -326,7 +334,8 @@ export default class Character {
     return {
       level: this.level,
       className: this.className,
-      skillPoints: { ...this.skillPoints }
+      skillPoints: { ...this.skillPoints },
+      stats: { ...this.stats } // Include stats in export
     };
   }
 
@@ -339,6 +348,7 @@ export default class Character {
     this.className = state.className || null;
     this.skillPoints = { ...state.skillPoints } || {};
     this.maxLevels = {};
+    this.stats = { ...state.stats } || {}; // Import stats
   }
 
   // ===== OSKILLS MANAGEMENT METHODS =====
@@ -422,8 +432,9 @@ export default class Character {
    * Change oSkill points (positive to add, negative to remove)
    * @param {string} skillName - Internal skill name
    * @param {number} amount - Amount to change (can be negative)
+   * @param {number} allSkillsBonus - Current "+# to All Skills" bonus value
    */
-  changeOSkillPoints(skillIdOrName, amount) {
+  changeOSkillPoints(skillIdOrName, amount, allSkillsBonus = 0) {
     // Find skill by ID or name
     const skill = this.oSkills.find(s => 
       s.skillId === parseInt(skillIdOrName) || s.skillName === skillIdOrName
@@ -432,7 +443,8 @@ export default class Character {
     
     const newPoints = skill.points + amount;
     
-    // Apply 150 level cap for oSkills
+    // Apply 150 hard cap on points only (not considering bonus here)
+    // The bonus will be applied on top in calculations, and effective level will be capped at 150
     if (newPoints > 150) {
       skill.points = 150;
     } else {
@@ -445,6 +457,18 @@ export default class Character {
     } else {
       window.dispatchEvent(new CustomEvent('oskillsUpdated'));
     }
+  }
+  
+  /**
+   * Enforce 150 hard cap on all oSkills based on current allSkillsBonus
+   * Note: Points are not reduced - the cap only applies to effective level (points + bonus).
+   * This function is kept for backward compatibility but no longer modifies points.
+   * @param {number} allSkillsBonus - Current "+# to All Skills" bonus value
+   */
+  enforceOSkillHardCap(allSkillsBonus = 0) {
+    // Points are not reduced - effective level capping is handled in calculations
+    // Points can be up to 150, and bonus is applied on top
+    // The effective level will be capped at 150 when calculated in tooltips/formulas
   }
 
   /**
@@ -479,5 +503,122 @@ export default class Character {
       });
     }
     window.dispatchEvent(new CustomEvent('oskillsUpdated'));
+  }
+
+  // ===== STATS MANAGEMENT METHODS =====
+
+  /**
+   * Get stat value for a given stat key
+   * @param {string} statKey - Stat key (e.g., 'strength', 'dexterity')
+   * @returns {number} Stat value, or 0 if not set
+   */
+  getStat(statKey) {
+    return this.stats[statKey] || 0;
+  }
+
+  /**
+   * Set stat value for a given stat key
+   * @param {string} statKey - Stat key (e.g., 'strength', 'dexterity')
+   * @param {number} value - Stat value
+   */
+  setStat(statKey, value) {
+    const numValue = parseFloat(value);
+    if (isNaN(numValue)) {
+      throw new Error(`Invalid stat value: ${value} for key: ${statKey}`);
+    }
+    this.stats[statKey] = numValue;
+  }
+
+  /**
+   * Get all stats
+   * @returns {Object} Map of stat_key -> value
+   */
+  getAllStats() {
+    return { ...this.stats };
+  }
+
+  /**
+   * Set all stats (used for loading builds)
+   * @param {Object} stats - Map of stat_key -> value
+   */
+  setAllStats(stats) {
+    const oldStats = { ...this.stats };
+    this.stats = { ...stats };
+    
+    // Dispatch event if stats changed
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('characterStatsChanged', { 
+        detail: { oldStats, newStats: this.stats } 
+      }));
+    }
+  }
+
+  /**
+   * Clear all stats
+   */
+  clearAllStats() {
+    const oldStats = { ...this.stats };
+    this.stats = {};
+    
+    // Dispatch event if stats changed
+    if (typeof window !== 'undefined' && Object.keys(oldStats).length > 0) {
+      window.dispatchEvent(new CustomEvent('characterStatsChanged', { 
+        detail: { oldStats, newStats: {} } 
+      }));
+    }
+  }
+
+  /**
+   * Parse and set stats from a text field (one stat per line)
+   * Format: {{statKey}}=value or statKey=value
+   * @param {string} text - Text containing stat definitions (one per line)
+   * @returns {Array} Array of error messages, empty if no errors
+   */
+  parseStatsFromText(text) {
+    const errors = [];
+    
+    // First, clear all existing stats to handle removal
+    this.clearAllStats();
+    
+    const lines = text.split('\n');
+    
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (!line) continue; // Skip empty lines
+      
+      // Remove {{ }} if present
+      const cleanedLine = line.replace(/\{\{|\}\}/g, '');
+      
+      // Parse stat key and value
+      const match = cleanedLine.match(/^\s*(\w+)\s*=\s*(\d+(?:\.\d+)?)\s*$/);
+      if (!match) {
+        errors.push(`Line ${i + 1}: Invalid format. Expected: statKey=value (e.g., strength=30)`);
+        continue;
+      }
+      
+      const [, statKey, value] = match;
+      const numValue = parseFloat(value);
+      
+      if (isNaN(numValue)) {
+        errors.push(`Line ${i + 1}: Invalid value for ${statKey}`);
+        continue;
+      }
+      
+      this.setStat(statKey, numValue);
+    }
+    
+    return errors;
+  }
+
+  /**
+   * Export stats to text format (one stat per line)
+   * Format: {{statKey}}=value
+   * @returns {string} Text representation of stats
+   */
+  exportStatsToText() {
+    const lines = Object.entries(this.stats)
+      .map(([key, value]) => `{{${key}}}=${value}`)
+      .sort();
+    return lines.join('\n');
   }
 }

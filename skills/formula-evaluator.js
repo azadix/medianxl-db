@@ -1,13 +1,26 @@
 /**
  * Formula evaluator for skill scaling calculations
  * Supports basic arithmetic, functions, and character state variables
+ * 
+ * Integer Math Note:
+ * - All formula results are truncated to integer values (using Math.trunc)
+ * - For proper integer math, ensure operators are written in the correct order
+ * - GOOD: "lvl/3" (division happens first, then multiplication if any)
+ * - BAD: "1/3*lvl" (division on constant truncates to 0 first, then *lvl gives 0)
+ * - Example: If lvl=10, "lvl/3" = 3 but "1/3*lvl" = 0
  */
 
 export class FormulaEvaluator {
-  constructor() {
+  constructor(characterState = null) {
     // Use registries instead of hardcoded maps
     this.functionRegistry = new Map();
     this.variableRegistry = new Set();
+    
+    // Store character state reference for tree() function
+    this.characterState = characterState;
+    
+    // Store tree skills cache
+    this.treeSkillsCache = characterState?.treeSkillsCache || {};
     
     // Register default functions
     this.registerFunction({
@@ -44,38 +57,26 @@ export class FormulaEvaluator {
       example: 'max(5, 10, 3) == 10'
     });
     this.registerFunction({
-      keyword: 'abs',
-      function: Math.abs,
-      description: 'Returns absolute value (removes negative sign)',
-      example: 'abs(-5) == 5'
-    });
-    this.registerFunction({
-      keyword: 'sqrt',
-      function: Math.sqrt,
-      description: 'Returns square root',
-      example: 'sqrt(25) == 5'
-    });
-    this.registerFunction({
       keyword: 'pow',
       function: Math.pow,
       description: 'Raises base to the power of exponent',
       example: 'pow(2, 3) == 8'
     });
     this.registerFunction({
-      keyword: 'seconds',
+      keyword: 'frames',
       function: (frames) => {
-        // Convert frames to seconds (25 frames per second) with 0.1 rounding
-        return Math.round((frames / 25) * 10) / 10;
+        // Convert frames to seconds (25 frames per second) with 0.01 rounding
+        return Math.floor((frames / 25) * 100) / 100;
       },
-      description: 'Converts frame count to seconds (25 frames = 1 second) with 0.1 rounding',
-      example: 'seconds(25) == 1.0, seconds(6) == 0.2'
+      description: 'Converts frame count to seconds (25 frames = 1 second) with 0.01 rounding',
+      example: 'frames(25) == 1.0, frames(1) == 0.04'
     });
     this.registerFunction({
       keyword: 'range',
       function: (feet) => {
         // Convert feet to yards with 1/3 feet precision
         // Pattern: 1=0.3, 2=0.6, 3=1.0, 4=1.3, 5=1.6, 6=2.0, etc.
-        return Math.round((feet * 0.3 + Math.floor(feet / 3) * 0.1) * 10) / 10;
+        return Math.floor((feet * 0.3 + Math.floor(feet / 3) * 0.1) * 1000) / 1000;
       },
       description: 'Converts feet to yards with 1/3 feet precision',
       example: 'range(3) == 1.0, range(4) == 1.3'
@@ -89,6 +90,15 @@ export class FormulaEvaluator {
       description: 'Returns 0 if value is 0, 1 if value is different than 0',
       example: 'bool(0) == 0, bool(5) == 1'
     });
+    this.registerFunction({
+      keyword: 'tree',
+      function: (tabId) => {
+        // Get character state from variables passed to evaluate()
+        return this.calculateTreePoints(tabId);
+      },
+      description: 'Returns total skill points spent in the specified skill tree',
+      example: 'tree(1) returns points in tab ID 1'
+    });
     
     // Register default variables with descriptions and examples
     this.registerVariable({
@@ -97,14 +107,19 @@ export class FormulaEvaluator {
       example: '50 + 15*blvl'
     });
     this.registerVariable({
-      keyword: 'lvl',
+      keyword: 'slvl',
       description: 'All skills bonus (from "+# to All Skills" input field only)',
+      example: '100 + 5*slvl'
+    });
+    this.registerVariable({
+      keyword: 'lvl',
+      description: 'Total effective skill level (slvl + blvl combined)',
       example: '100 + 5*lvl'
     });
     this.registerVariable({
-      keyword: 'clvl',
+      keyword: 'ulvl',
       description: 'Character level',
-      example: '25 + clvl'
+      example: '25 + ulvl'
     });
   }
 
@@ -180,11 +195,27 @@ export class FormulaEvaluator {
    * @returns {Array<Object>} Array of skill reference objects with name, description, and example
    */
   getSkillReferenceInfo() {
-    return [{
-      name: '[[skill_name]]',
-      description: 'Reference another skill\'s blvl in formulas',
-      example: '5 + [[barrage]] * 2'
-    }];
+    return [
+      {
+        name: '[[skill_name]]',
+        description: 'Reference another skill\'s blvl (base points) in formulas',
+        example: '5 + [[barrage]] * 2'
+      },
+    ];
+  }
+
+  /**
+   * Get stat reference information character stat references in formulas
+   * @returns {Array<Object>} Array of stat reference objects with name, description, and example
+   */
+  getStatReferenceInfo() {
+    return [
+      {
+        name: '{{stat_name}}',
+        description: 'Reference character stat value in formulas (e.g., strength, dexterity, vitality, energy)',
+        example: '50 + {{strength}} * 2'
+      },
+    ];
   }
 
   /**
@@ -217,10 +248,16 @@ export class FormulaEvaluator {
         return { success: false, error: 'Unmatched opening parenthesis' };
       }
 
-      // Check for valid characters (including square brackets for skill references)
-      const validChars = /^[0-9+\-*/.(),a-zA-Z_\[\]\s]+$/;
+      // Check for valid characters (including square brackets for skill references and braces for stat references)
+      const validChars = /^[0-9+\-*/.(),a-zA-Z_\[\]\{\}\s]+$/;
       if (!validChars.test(trimmed)) {
         return { success: false, error: 'Formula contains invalid characters' };
+      }
+
+      // Check for problematic integer math patterns (1/3*lvl style)
+      const integerMathWarning = this.checkIntegerMathIssues(trimmed);
+      if (integerMathWarning) {
+        return { success: true, warning: integerMathWarning };
       }
 
       return { success: true };
@@ -230,9 +267,39 @@ export class FormulaEvaluator {
   }
 
   /**
+   * Check for problematic integer math patterns
+   * Detects patterns like "1/3*lvl" which will truncate to 0 in integer math
+   * @param {string} formula - The formula to check
+   * @returns {string|null} Warning message if issue found, null otherwise
+   */
+  checkIntegerMathIssues(formula) {
+    // Pattern: number/number*variable or number/number*number (fraction times something)
+    // This will truncate to 0 in integer math
+    const badPattern = /(\d+\s*\/\s*\d+)\s*\*/g;
+    
+    const matches = formula.match(badPattern);
+    if (matches) {
+      for (const match of matches) {
+        const fraction = match.replace(/\s*\*/g, '').trim();
+        try {
+          const [num, den] = fraction.split('/').map(n => parseFloat(n.trim()));
+          if (num < den && den > 1) {
+            // This is a fraction less than 1, will truncate to 0
+            return `Warning: "${fraction}*..." will evaluate to 0 in integer math. Use ".../${den}" instead.`;
+          }
+        } catch (e) {
+          // Skip if we can't parse
+        }
+      }
+    }
+    
+    return null;
+  }
+
+  /**
    * Evaluate a formula with given variables
    * @param {string} formula - The formula to evaluate
-   * @param {Object} variables - Variable values (blvl, lvl, clvl, etc.)
+   * @param {Object} variables - Variable values (blvl, lvl, ulvl, etc.)
    * @returns {Object} Evaluation result with success flag, value, and error message
    */
   evaluate(formula, variables = {}) {
@@ -240,6 +307,11 @@ export class FormulaEvaluator {
       const parseResult = this.parseFormula(formula);
       if (!parseResult.success) {
         return parseResult;
+      }
+
+      // Set temporary character state for tree() function if character state is in variables
+      if (variables.characterState) {
+        this.setTempCharacterState(variables.characterState);
       }
 
       // Create a safe evaluation context
@@ -256,6 +328,9 @@ export class FormulaEvaluator {
       // Evaluate the formula safely
       const result = this.safeEvaluate(processedFormula);
       
+      // Clear temporary character state
+      this.tempCharacterState = null;
+      
       if (isNaN(result)) {
         return { success: false, error: 'Formula evaluation resulted in NaN' };
       }
@@ -266,6 +341,8 @@ export class FormulaEvaluator {
 
       return { success: true, value: result };
     } catch (error) {
+      // Clear temporary character state on error
+      this.tempCharacterState = null;
       return { success: false, error: `Evaluation error: ${error.message}` };
     }
   }
@@ -290,7 +367,10 @@ export class FormulaEvaluator {
   replaceVariables(formula, context) {
     let processed = formula;
     
-    // Replace skill name references first (e.g., [[bear_companion]] -> blvl of that skill)
+    // Replace character stat references first (e.g., {{strength}} -> stat value)
+    processed = this.replaceStatReferences(processed, context);
+    
+    // Replace skill name references (e.g., [[bear_companion]] -> blvl of that skill)
     processed = this.replaceSkillReferences(processed, context);
     
     // Replace function calls
@@ -311,11 +391,52 @@ export class FormulaEvaluator {
   }
 
   /**
+   * Replace character stat references with their values
+   * Syntax: {{statName}} -> stat value (defaults to 0 if not set)
+   */
+  replaceStatReferences(formula, context) {
+    // Match {{statName}} patterns (double braces)
+    const statRefPattern = /\{\{([a-zA-Z_][a-zA-Z0-9_]*)\}\}/g;
+    
+    return formula.replace(statRefPattern, (match, statName) => {
+      // Get stat value from character state stats
+      if (context.characterState && context.characterState.stats && context.characterState.stats[statName] !== undefined) {
+        return String(context.characterState.stats[statName]);
+      }
+      
+      // If stat not found, return 0
+      return '0';
+    });
+  }
+
+  /**
+   * Extract stat references from a formula
+   * Returns an array of unique stat names used in the formula
+   * @param {string} formula - The formula to analyze
+   * @returns {Array<string>} Array of stat names
+   */
+  extractStatReferences(formula) {
+    if (!formula || typeof formula !== 'string') {
+      return [];
+    }
+    
+    const statRefPattern = /\{\{([a-zA-Z_][a-zA-Z0-9_]*)\}\}/g;
+    const stats = new Set();
+    let match;
+    
+    while ((match = statRefPattern.exec(formula)) !== null) {
+      stats.add(match[1]);
+    }
+    
+    return Array.from(stats);
+  }
+
+  /**
    * Replace skill name references with their blvl values
    * Syntax: [[skill_name]] -> blvl of that skill
    */
   replaceSkillReferences(formula, context) {
-    // Match [[skill_name]] pattern
+    // Match [[skill_name]] patterns
     const skillRefPattern = /\[\[([a-zA-Z_][a-zA-Z0-9_]*)\]\]/g;
     
     return formula.replace(skillRefPattern, (match, skillName) => {
@@ -334,7 +455,7 @@ export class FormulaEvaluator {
    */
   containsUnreplacedVariables(formula) {
     // First, remove skill references since they're handled separately
-    const withoutSkillRefs = formula.replace(/\[\[[a-zA-Z_][a-zA-Z0-9_]*\]\]/g, '0');
+    const withoutSkillRefs = formula.replace(/\[\[[a-zA-Z_][a-zA-Z0-9_]*(?::[a-zA-Z_][a-zA-Z0-9_]*)?\]\]/g, '0');
     
     const variablePattern = /\b[a-zA-Z_][a-zA-Z0-9_]*\b/g;
     const matches = withoutSkillRefs.match(variablePattern);
@@ -352,19 +473,66 @@ export class FormulaEvaluator {
 
   /**
    * Safely evaluate the processed formula
+   * Note: The final result is truncated to integer (matches Diablo 2's integer-only behavior)
+   * However, if the formula contains frames() or range() functions, decimal precision is preserved
    */
   safeEvaluate(formula) {
     try {
       const context = {};
+      
+      // Add all registered functions to context
       for (const [name, info] of this.functionRegistry) {
         context[name] = info.func;
       }
       
       const func = new Function('context', `return ${formula}`);
-      return func(context);
+      const result = func(context);
+      
+      // Check if formula contains decimal-preserving functions (frames or range)
+      const hasDecimalFunction = /context\.(frames|range)\(/g.test(formula);
+      
+      if (hasDecimalFunction) {
+        // Preserve decimal precision for formulas using frames() or range()
+        return Math.round(result * 100) / 100;
+      } else {
+        // Truncate to integer for all other formulas (matches Diablo 2's integer-only behavior)
+        return Math.trunc(result);
+      }
     } catch (error) {
       throw new Error(`Formula evaluation failed: ${error.message}`);
     }
+  }
+
+  /**
+   * Calculate total skill points spent in a specific skill tree
+   * @param {number} tabId - ID from classTabs table identifying the skill tree
+   * @returns {number} Total points spent in the tree
+   */
+  calculateTreePoints(tabId) {
+    // Get character state from the evaluation context
+    // This is accessed via closure from the function wrapper
+    if (!this.tempCharacterState || !this.tempCharacterState.blvl) {
+      return 0;
+    }
+    
+    // Get tree skills cache from character state
+    const treeSkillsCache = this.tempCharacterState.treeSkillsCache || this.treeSkillsCache;
+    const treeSkills = treeSkillsCache[tabId] || [];
+    
+    let totalPoints = 0;
+    for (const skillName of treeSkills) {
+      totalPoints += this.tempCharacterState.blvl[skillName] || 0;
+    }
+    
+    return totalPoints;
+  }
+  
+  /**
+   * Set temporary character state for evaluation
+   * This is used when tree() is called
+   */
+  setTempCharacterState(characterState) {
+    this.tempCharacterState = characterState;
   }
 
   /**
@@ -396,4 +564,8 @@ export function parseFormula(formula) {
 
 export function evaluateFormula(formula, variables) {
   return formulaEvaluator.evaluate(formula, variables);
+}
+
+export function extractStatReferences(formula) {
+  return formulaEvaluator.extractStatReferences(formula);
 }

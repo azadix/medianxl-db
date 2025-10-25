@@ -2,6 +2,7 @@
 import { SkillDB } from './edit-core.js';
 import { validateSkillTemplates, displayValidationErrors, removeValidationErrors } from './edit-validation.js';
 import { TAG_GROUPS } from '../utils.js';
+import { getCurrentVersionId } from '../version-config.js';
 
 export function initializeSkills() {
   populateClassSelect();
@@ -201,6 +202,13 @@ function refreshSkillsTable() {
   if (!tbody) return;
   tbody.innerHTML = '';
 
+  // Get current version ID
+  const versionId = getCurrentVersionId(SkillDB.db);
+  if (!versionId) {
+    tbody.innerHTML = '<tr><td colspan="10">No active version found</td></tr>';
+    return;
+  }
+  
   const query = `
     SELECT s.id, s.name, s.display_name, c.name as class_name,
            ct.name as tab_name, s.row, s.col, s.image,
@@ -212,11 +220,12 @@ function refreshSkillsTable() {
     LEFT JOIN skill_skilltags st ON s.id = st.skill_id
     LEFT JOIN skilltags t ON st.tag_id = t.id
     LEFT JOIN classTabs ct ON s.tab_index = ct.id
+    WHERE s.version_id = ?
     GROUP BY s.id
     ORDER BY s.id;
   `;
 
-  const res = SkillDB.db.exec(query);
+  const res = SkillDB.db.exec(query, [versionId]);
   if (res.length > 0) {
     res[0].values.forEach(row => {
       const tr = document.createElement("tr");
@@ -275,13 +284,18 @@ function refreshSkillsTable() {
 
 function editSkill(id) {
   if (!SkillDB.db) return;
+  const versionId = getCurrentVersionId(SkillDB.db);
+  if (!versionId) {
+    alert('No active version found. Please select a version first.');
+    return;
+  }
   const stmt = SkillDB.db.prepare(`
     SELECT s.id, s.name, s.display_name, s.class_id, s.tab_index,
           s.row, s.col, s.image, s.restriction, s.description, s.skill_effect
     FROM skills s
-    WHERE s.id = ?
+    WHERE s.id = ? AND s.version_id = ?
   `);
-  stmt.bind([id]);
+  stmt.bind([id, versionId]);
   
   if (stmt.step()) {
     const [skillId, name, displayName, classId, tabIndex, row, col, image, restriction, description, skillEffect] = stmt.get();
@@ -325,7 +339,12 @@ function editSkill(id) {
 
 function deleteSkill(id) {
   if (!confirm('Delete this skill?')) return;
-  SkillDB.db.run('DELETE FROM skills WHERE id = ?', [id]);
+  const versionId = getCurrentVersionId(SkillDB.db);
+  if (!versionId) {
+    alert('No active version found. Please select a version first.');
+    return;
+  }
+  SkillDB.db.run('DELETE FROM skills WHERE id = ? AND version_id = ?', [id, versionId]);
   refreshSkillsTable();
 }
 
@@ -410,13 +429,20 @@ function saveSkill() {
   // Clear any existing validation errors
   removeValidationErrors();
 
+  // Get current version ID
+  const versionId = getCurrentVersionId(SkillDB.db);
+  if (!versionId) {
+    alert('No active version found. Please select a version first.');
+    return;
+  }
+  
   if (window.editingSkillId) {
     // Update existing skill
     SkillDB.db.run(`
       UPDATE skills 
       SET name=?, display_name=?, class_id=?, tab_index=?, row=?, col=?, image=?, restriction=?, description=?, skill_effect=?
-      WHERE id=?
-    `, [name, displayName, classId, tabIndex, row, col, image, restriction, description, skillEffect, window.editingSkillId]);
+      WHERE id=? AND version_id=?
+    `, [name, displayName, classId, tabIndex, row, col, image, restriction, description, skillEffect, window.editingSkillId, versionId]);
     
     // Update tags
     SkillDB.db.run('DELETE FROM skill_skilltags WHERE skill_id = ?', [window.editingSkillId]);
@@ -431,10 +457,10 @@ function saveSkill() {
   } else {
     // Insert new skill
     const stmt = SkillDB.db.prepare(`
-      INSERT INTO skills (name, display_name, class_id, tab_index, row, col, image, restriction, description, skill_effect)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO skills (name, display_name, class_id, tab_index, row, col, image, restriction, description, skill_effect, version_id)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
-    stmt.run([name, displayName, classId, tabIndex, row, col, image, restriction, description, skillEffect]);
+    stmt.run([name, displayName, classId, tabIndex, row, col, image, restriction, description, skillEffect, versionId]);
     const skillId = SkillDB.db.exec("SELECT last_insert_rowid()")[0].values[0][0];
     stmt.free();
     

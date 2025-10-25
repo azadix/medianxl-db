@@ -3,6 +3,7 @@ import { SkillDB } from './edit-core.js';
 import { DropdownList } from './DropdownList.js';
 import { ToastManager } from '../tree/ToastManager.js';
 import { formulaEvaluator } from '../skills/formula-evaluator.js';
+import { getCurrentVersionId } from '../version-config.js';
 
 // Initialize ToastManager
 const toastManager = new ToastManager();
@@ -311,8 +312,9 @@ function updateLevelIndicator() {
   if (Number.isNaN(skillId)) return;
   
   // Get all levels that exist for this skill
-  const stmt = SkillDB.db.prepare('SELECT DISTINCT level FROM skill_scaling WHERE skill_id = ? ORDER BY level');
-  stmt.bind([skillId]);
+  const versionId = getCurrentVersionId(SkillDB.db);
+  const stmt = SkillDB.db.prepare('SELECT DISTINCT level FROM skill_scaling WHERE skill_id = ? AND version_id = ? ORDER BY level');
+  stmt.bind([skillId, versionId]);
   const existingLevels = [];
   while (stmt.step()) {
     existingLevels.push(stmt.get()[0]);
@@ -406,12 +408,13 @@ function loadScaling() {
   statOrder.forEach(({ statKey, occurrenceIndex }) => {
     const statInfo = statInfoMap.get(statKey);
     if (statInfo) {
+      const versionId = getCurrentVersionId(SkillDB.db);
       const scalingStmt = SkillDB.db.prepare(`
         SELECT value0, value1, value2, value3
         FROM skill_scaling
-        WHERE skill_id = ? AND level = ? AND stat_id = ? AND occurrence_index = ?
+        WHERE skill_id = ? AND level = ? AND stat_id = ? AND occurrence_index = ? AND version_id = ?
       `);
-      scalingStmt.bind([skillId, level, statInfo.id, occurrenceIndex]);
+      scalingStmt.bind([skillId, level, statInfo.id, occurrenceIndex, versionId]);
       
       let v0 = null, v1 = null, v2 = null, v3 = null;
       if (scalingStmt.step()) {
@@ -441,6 +444,7 @@ function loadScaling() {
 function saveScaling() {
   const skillId = parseInt(document.getElementById('scaling-skill-hidden').value, 10);
   const level = parseInt(document.getElementById('scaling-level').value, 10);
+  const versionId = getCurrentVersionId(SkillDB.db);
   
   if (Number.isNaN(skillId) || skillId <= 0) {
     toastManager.showToast('Please select a skill before saving', true, 'error');
@@ -449,6 +453,11 @@ function saveScaling() {
   
   if (Number.isNaN(level) || level <= 0) {
     toastManager.showToast('Please select a level before saving', true, 'error');
+    return;
+  }
+  
+  if (!versionId) {
+    toastManager.showToast('No active version found', true, 'error');
     return;
   }
   
@@ -500,16 +509,16 @@ function saveScaling() {
     const hasScalingData = Object.values(r.scalingValues).some(v => v !== null && v !== '');
     
     if (hasScalingData) {
-      SkillDB.db.run('DELETE FROM skill_scaling WHERE skill_id=? AND level=? AND stat_id=? AND occurrence_index=?', 
-                     [skillId, level, r.stat_id, r.occurrence_index]);
-      SkillDB.db.run('INSERT INTO skill_scaling (skill_id, level, stat_id, occurrence_index, value0, value1, value2, value3) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', 
+      SkillDB.db.run('DELETE FROM skill_scaling WHERE skill_id=? AND level=? AND stat_id=? AND occurrence_index=? AND version_id=?', 
+                     [skillId, level, r.stat_id, r.occurrence_index, versionId]);
+      SkillDB.db.run('INSERT INTO skill_scaling (skill_id, level, stat_id, occurrence_index, value0, value1, value2, value3, version_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', 
                      [skillId, level, r.stat_id, r.occurrence_index, 
                       r.scalingValues.value0 || null, r.scalingValues.value1 || null, 
-                      r.scalingValues.value2 || null, r.scalingValues.value3 || null]);
+                      r.scalingValues.value2 || null, r.scalingValues.value3 || null, versionId]);
     } else {
       // No scaling data, remove if exists
-      SkillDB.db.run('DELETE FROM skill_scaling WHERE skill_id=? AND level=? AND stat_id=? AND occurrence_index=?', 
-                     [skillId, level, r.stat_id, r.occurrence_index]);
+      SkillDB.db.run('DELETE FROM skill_scaling WHERE skill_id=? AND level=? AND stat_id=? AND occurrence_index=? AND version_id=?', 
+                     [skillId, level, r.stat_id, r.occurrence_index, versionId]);
     }
   });
   
@@ -518,19 +527,19 @@ function saveScaling() {
     const hasConstantData = Object.values(r.constantFlags).some(v => v === 1);
     
     // Delete existing constant entry
-    SkillDB.db.run('DELETE FROM skill_scaling_constants WHERE skill_id=? AND stat_id=? AND occurrence_index=?', 
-                   [skillId, r.stat_id, r.occurrence_index]);
+    SkillDB.db.run('DELETE FROM skill_scaling_constants WHERE skill_id=? AND stat_id=? AND occurrence_index=? AND version_id=?', 
+                   [skillId, r.stat_id, r.occurrence_index, versionId]);
     
     if (hasConstantData) {
       SkillDB.db.run(`INSERT INTO skill_scaling_constants 
                      (skill_id, stat_id, occurrence_index, value0, value1, value2, value3, 
-                      value0_constant, value1_constant, value2_constant, value3_constant)
-                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                      value0_constant, value1_constant, value2_constant, value3_constant, version_id)
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                      [skillId, r.stat_id, r.occurrence_index,
                       r.constantValues.value0 || '', r.constantValues.value1 || '',
                       r.constantValues.value2 || '', r.constantValues.value3 || '',
                       r.constantFlags.value0_constant, r.constantFlags.value1_constant,
-                      r.constantFlags.value2_constant, r.constantFlags.value3_constant]);
+                      r.constantFlags.value2_constant, r.constantFlags.value3_constant, versionId]);
     }
   });
   
@@ -554,7 +563,14 @@ function clearScaling() {
     toastManager.showToast('Please select a level before clearing scaling values', true, 'error');
     return;
   }
-  SkillDB.db.run('DELETE FROM skill_scaling WHERE skill_id=? AND level=?', [skillId, level]);
+  
+  const versionId = getCurrentVersionId(SkillDB.db);
+  if (!versionId) {
+    toastManager.showToast('No active version found', true, 'error');
+    return;
+  }
+  
+  SkillDB.db.run('DELETE FROM skill_scaling WHERE skill_id=? AND level=? AND version_id=?', [skillId, level, versionId]);
   renderScalingTable([]);
   document.getElementById('scaling-status').textContent = `Cleared level ${level}`;
   updateLevelIndicator();
@@ -563,13 +579,14 @@ function clearScaling() {
 // Constants functionality
 function loadConstants(skillId) {
   const constants = new Map();
+  const versionId = getCurrentVersionId(SkillDB.db);
   const stmt = SkillDB.db.prepare(`
     SELECT stat_id, occurrence_index, value0, value1, value2, value3,
            value0_constant, value1_constant, value2_constant, value3_constant
     FROM skill_scaling_constants
-    WHERE skill_id = ?
+    WHERE skill_id = ? AND version_id = ?
   `);
-  stmt.bind([skillId]);
+  stmt.bind([skillId, versionId]);
   
   let constantCount = 0;
   while (stmt.step()) {
@@ -670,6 +687,7 @@ async function initializeFunctionsModal() {
     variablesTableBody.innerHTML = '';
     const variables = evaluator.getVariableInfo();
     const skillReferences = evaluator.getSkillReferenceInfo();
+    const statReferences = evaluator.getStatReferenceInfo();
     
     // Add regular variables
     variables.forEach(variable => {
@@ -689,6 +707,17 @@ async function initializeFunctionsModal() {
         <td><code>${skillRef.name}</code></td>
         <td>${skillRef.description}</td>
         <td><code>${skillRef.example}</code></td>
+      `;
+      variablesTableBody.appendChild(row);
+    });
+    
+    // Add stat references
+    statReferences.forEach(statRef => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td><code>${statRef.name}</code></td>
+        <td>${statRef.description}</td>
+        <td><code>${statRef.example}</code></td>
       `;
       variablesTableBody.appendChild(row);
     });

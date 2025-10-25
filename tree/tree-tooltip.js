@@ -1,13 +1,16 @@
 // Tooltip functionality for skill tree
-import { getSkillIconHTML, expandPlaceholdersWithScaling, SKILL_CATEGORY_TAG_IDS, SUMMON_TAG_IDS, TELEPORT_TAG_IDS } from '../utils.js';
+import { getSkillIconHTML, expandPlaceholdersWithScaling, SKILL_CATEGORY_TAG_IDS, SUMMON_TAG_IDS, TELEPORT_TAG_IDS, isLocalhost } from '../utils.js';
 import { getDatabase } from './tree-data.js';
-import { getSkillPoints, getOSkillPoints, getAllSkillPoints, getAllOSkills } from '../character/character-state.js';
+import { getSkillPoints, getOSkillPoints, getAllSkillPoints, getAllOSkills, getTreeSkillsCache, getAllStats } from '../character/character-state.js';
+import { getCurrentVersionId } from '../version-config.js';
+import Innate from '../skills/Innate.js';
 
 let tooltipElement = null;
 let currentHoveredSkill = null;
 let lastMouseX = 0;
 let lastMouseY = 0;
 let tooltipHideTimeout = null;
+let ctrlKeyPressed = false;
 
 /**
  * Initialize tooltip functionality
@@ -24,6 +27,47 @@ export function initializeTooltip() {
     document.addEventListener('mouseover', handleMouseOver);
     document.addEventListener('mouseout', handleMouseOut);
     document.addEventListener('mousemove', handleMouseMove);
+    
+    // Track Ctrl key for formula display (localhost only)
+    // Using Ctrl to avoid conflicts with browser shortcuts (Alt+click, Alt+Tab, etc.)
+    if (isLocalhost()) {
+        document.addEventListener('keydown', (e) => {
+            // Track Ctrl key (either left or right)
+            if (e.key === 'Control' || e.ctrlKey) {
+                if (!ctrlKeyPressed) {
+                    ctrlKeyPressed = true;
+                    // Refresh tooltip if showing
+                    if (currentHoveredSkill && tooltipElement && tooltipElement.style.display !== 'none') {
+                        handleSkillPointsChanged();
+                    }
+                }
+            }
+        });
+        
+        document.addEventListener('keyup', (e) => {
+            // Track Ctrl key release
+            if (e.key === 'Control' || (!e.ctrlKey && ctrlKeyPressed)) {
+                if (ctrlKeyPressed) {
+                    ctrlKeyPressed = false;
+                    // Refresh tooltip if showing
+                    if (currentHoveredSkill && tooltipElement && tooltipElement.style.display !== 'none') {
+                        handleSkillPointsChanged();
+                    }
+                }
+            }
+        });
+        
+        // Handle window blur (when Alt+Tab switches windows)
+        window.addEventListener('blur', () => {
+            if (ctrlKeyPressed) {
+                ctrlKeyPressed = false;
+                // Refresh tooltip if showing
+                if (currentHoveredSkill && tooltipElement && tooltipElement.style.display !== 'none') {
+                    handleSkillPointsChanged();
+                }
+            }
+        });
+    }
     
     // Listen for skill point changes to update tooltip if it's showing
     window.addEventListener('skillPointsChanged', handleSkillPointsChanged);
@@ -46,6 +90,11 @@ async function handleMouseOver(e) {
     // Get skill ID from the card's data attribute
     const skillId = skillCard.dataset.skillId;
     if (!skillId) return;
+    
+    // Update Ctrl key state from mouse event (localhost only)
+    if (isLocalhost()) {
+        ctrlKeyPressed = e.ctrlKey;
+    }
     
     // Clear any pending hide timeout
     if (tooltipHideTimeout) {
@@ -81,6 +130,20 @@ function handleMouseOut(e) {
 function handleMouseMove(e) {
     if (tooltipElement && tooltipElement.style.display !== 'none') {
         updateTooltipPosition(e.clientX, e.clientY);
+        
+        // Check if Ctrl key state changed and refresh tooltip if needed (localhost only)
+        if (isLocalhost()) {
+            const wasCtrlPressed = ctrlKeyPressed;
+            const isCtrlPressedNow = e.ctrlKey;
+            
+            // If Ctrl state changed, refresh the tooltip
+            if (wasCtrlPressed !== isCtrlPressedNow) {
+                ctrlKeyPressed = isCtrlPressedNow;
+                if (currentHoveredSkill) {
+                    handleSkillPointsChanged();
+                }
+            }
+        }
     }
 }
 
@@ -113,9 +176,14 @@ async function handleSkillPointsChanged() {
             }
         });
         
+        // Check if this is an innate skill (they're always level 1)
+        const isInnate = skillCard && skillData && Innate.isInnateSkill({ name: skillData.id, canAddPoints: skillData.canAddPoints });
+        
         const currentLevel = isOSkill 
             ? Math.max(1, getOSkillPoints(currentHoveredSkill))
-            : Math.max(1, getSkillPoints(currentHoveredSkill));
+            : isInnate
+            ? 1
+            : getSkillPoints(currentHoveredSkill);
         
         // Get warning message from the skill card's plus button (if any)
         // Skip warning for oSkills (they only have 150 level cap)
@@ -163,9 +231,14 @@ async function handleOSkillsUpdated() {
                 }
             });
             
+            // Check if this is an innate skill (they're always level 1)
+            const isInnate = activeSkillCard && skillData && Innate.isInnateSkill({ name: skillData.id, canAddPoints: skillData.canAddPoints });
+            
             const currentLevel = isOSkillCard 
                 ? Math.max(1, getOSkillPoints(currentHoveredSkill))
-                : Math.max(1, getSkillPoints(currentHoveredSkill));
+                : isInnate
+                ? 1
+                : getSkillPoints(currentHoveredSkill);
             
             // Get warning message from the skill card's plus button (if any)
             // Skip warning for oSkills (they only have 150 level cap)
@@ -224,9 +297,14 @@ async function showTooltip(skillId, mouseX, mouseY, hoveredCard = null) {
     // Check if this is an oSkill
     const isOSkill = skillCard && skillCard.closest('#tab-oSkills');
     
+    // Check if this is an innate skill (they're always level 1)
+    const isInnate = skillCard && Innate.isInnateSkill({ name: skillData.id, canAddPoints: skillData.canAddPoints });
+    
     const currentLevel = isOSkill 
         ? Math.max(1, getOSkillPoints(skillId))
-        : Math.max(1, getSkillPoints(skillId));
+        : isInnate
+        ? 1
+        : getSkillPoints(skillId);
     
     // Get warning message from the skill card's plus button (if any)
     // Skip warning for oSkills (they only have 150 level cap)
@@ -304,9 +382,16 @@ function updateTooltipPosition(mouseX, mouseY) {
  */
 function getSkillDataFromDB(db, skillId) {
     try {
+        // Get active version ID
+        const versionId = getCurrentVersionId(db);
+        if (!versionId) {
+            console.error('No active version found');
+            return null;
+        }
+        
         // Check if skillId is numeric (skill ID) or string (skill name)
         const isNumericId = /^\d+$/.test(skillId);
-        const whereClause = isNumericId ? 'WHERE s.id = ?' : 'WHERE s.name = ?';
+        const whereClause = isNumericId ? 'WHERE s.id = ? AND s.version_id = ?' : 'WHERE s.name = ? AND s.version_id = ?';
         
         const stmt = db.prepare(`
             SELECT s.id, s.name, s.display_name, s.description, s.skill_effect, s.restriction, s.image,
@@ -314,11 +399,11 @@ function getSkillDataFromDB(db, skillId) {
                    sml.base_max_level, sml.affected_by_specialization, sml.can_add_points
             FROM skills s
             LEFT JOIN classes c ON s.class_id = c.id
-            LEFT JOIN skill_max_levels sml ON s.id = sml.skill_id
+            LEFT JOIN skill_max_levels sml ON s.id = sml.skill_id AND sml.version_id = ?
             ${whereClause}
         `);
         
-        stmt.bind([isNumericId ? parseInt(skillId) : skillId]);
+        stmt.bind([versionId, isNumericId ? parseInt(skillId) : skillId, versionId]);
         
         if (stmt.step()) {
             const row = stmt.getAsObject();
@@ -386,7 +471,10 @@ async function buildTooltipContent(skillData, level, db, warningMessage = '', is
     // Get All Skills bonus for effective level calculation (used in multiple places)
     const allSkillsBonusInput = document.getElementById('allSkillsBonus');
     const allSkillsBonus = allSkillsBonusInput ? Math.max(0, parseInt(allSkillsBonusInput.value) || 0) : 0;
-    const effectiveLevel = level + allSkillsBonus;
+    // For oSkills, cap effective level at 150 (points + bonus combined)
+    const effectiveLevel = isOSkill 
+        ? Math.min(150, level + allSkillsBonus)
+        : level + allSkillsBonus;
     
     let html = '<div class="tooltip-content">';
     
@@ -428,7 +516,7 @@ async function buildTooltipContent(skillData, level, db, warningMessage = '', is
     const allOSkills = getAllOSkills();
     
     
-    // Get character level from minimum level display (this is what clvl should use)
+    // Get character level from minimum level display (this is what ulvl should use)
     const minLevelDisplay = document.getElementById('minLevelDisplay');
     let characterLevel = 1; // fallback
     if (minLevelDisplay) {
@@ -441,39 +529,23 @@ async function buildTooltipContent(skillData, level, db, warningMessage = '', is
     
     // All Skills bonus already calculated at the top of the function
     
-    // Create base character state with tree skill points
-    const characterState = {
-        level: characterLevel,
-        blvl: { ...allSkillPoints }, // Copy to avoid modifying original
-        lvl: {} // Will be populated below
-    };
+    // Get character stats
+    const characterStats = getAllStats();
     
-    // Ensure current skill is included in blvl (even if 0 points)
-    if (!characterState.blvl[skillData.id]) {
-        characterState.blvl[skillData.id] = getSkillPoints(skillData.id);
-    }
-    
-    // Calculate lvl for each skill (only allSkillsBonus, not including base points)
-    for (const [skillName, points] of Object.entries(characterState.blvl)) {
-        characterState.lvl[skillName] = allSkillsBonus;
-    }
-    
-    // Add OSkill levels to character state (with All Skills bonus applied)
+    // Build oSkills lookup map (skill name -> points) for efficient checking
+    const oSkillsMap = new Map();
     if (Array.isArray(allOSkills)) {
-        // Old format: array of objects
         allOSkills.forEach(oskill => {
-            // Add oSkill to blvl (base points)
-            characterState.blvl[oskill.skillName] = oskill.points;
-            // Add oSkill to lvl (only all skills bonus)
-            characterState.lvl[oskill.skillName] = allSkillsBonus;
+            if (oskill.skillName) {
+                oSkillsMap.set(oskill.skillName, oskill.points);
+            }
         });
-    } else {
-        // New format: object with skill IDs or names as keys
+    } else if (typeof allOSkills === 'object') {
         Object.entries(allOSkills).forEach(([skillIdOrName, points]) => {
             let skillName = skillIdOrName;
             
             // If it's a skill ID, look up the skill name from database
-            if (/^\d+$/.test(skillIdOrName)) {
+            if (/^\d+$/.test(skillIdOrName) && db) {
                 try {
                     const stmt = db.prepare('SELECT name FROM skills WHERE id = ?');
                     stmt.bind([parseInt(skillIdOrName)]);
@@ -487,12 +559,85 @@ async function buildTooltipContent(skillData, level, db, warningMessage = '', is
                 }
             }
             
-            // Add oSkill to blvl (base points)
-            characterState.blvl[skillName] = points;
-            // Add oSkill to lvl (only all skills bonus)
-            characterState.lvl[skillName] = allSkillsBonus;
+            oSkillsMap.set(skillName, points);
         });
     }
+    
+    // Create base character state with tree skill points
+    // For regular skills: exclude oSkills from blvl (they shouldn't affect regular skill formulas)
+    // For oSkills: exclude regular skill points for this specific skill, but keep other regular skills for references
+    const characterState = {
+        level: characterLevel,
+        blvl: {}, // Will be populated below
+        lvl: {}, // Will be populated below
+        treeSkillsCache: getTreeSkillsCache(), // Add tree skills cache for tree() function
+        stats: { ...characterStats } // Add character stats for formula evaluation
+    };
+    
+    // skillData.id is always the skill name (internal identifier) from getSkillDataFromDB
+    // skillData.dbId is the numeric database ID
+    const currentSkillName = skillData.id; // This is the skill name used in blvl
+    
+    // Populate blvl based on whether this is a regular skill or oSkill
+    if (isOSkill) {
+        // For oSkills: use oSkill points for this skill, but regular skill points for all other skills
+        // This allows oSkill formulas to reference other regular skills via [[skill_name]]
+        for (const [skillName, points] of Object.entries(allSkillPoints)) {
+            // Exclude this skill's regular points (we'll use oSkill points instead)
+            // Also exclude any other skills that are oSkills
+            if (skillName !== currentSkillName && !oSkillsMap.has(skillName)) {
+                characterState.blvl[skillName] = points;
+            }
+        }
+        
+        // Add oSkill points for this specific skill (from oSkills)
+        // oSkillsMap uses skill names as keys (after conversion from IDs if needed)
+        const currentOSkillPoints = oSkillsMap.get(currentSkillName) || 0;
+        characterState.blvl[currentSkillName] = currentOSkillPoints;
+        
+        // Also add other oSkills (for references in formulas like [[other_oskill]])
+        oSkillsMap.forEach((points, skillName) => {
+            if (skillName !== currentSkillName) {
+                characterState.blvl[skillName] = points;
+            }
+        });
+    } else {
+        // For regular skills: only use regular skill points, exclude all oSkills
+        // This ensures regular skill formulas don't use oSkill points
+        for (const [skillName, points] of Object.entries(allSkillPoints)) {
+            // Exclude oSkills - they shouldn't affect regular skill formulas
+            if (!oSkillsMap.has(skillName)) {
+                characterState.blvl[skillName] = points;
+            }
+        }
+        
+        // Ensure current skill is included in blvl (even if 0 points)
+        if (!characterState.blvl[currentSkillName]) {
+            characterState.blvl[currentSkillName] = getSkillPoints(currentSkillName);
+        }
+    }
+    
+    // Calculate lvl for each skill (only allSkillsBonus, not including base points)
+    // For oSkills, cap effective level (blvl + bonus) at 150, giving priority to bonus
+    for (const [skillName, points] of Object.entries(characterState.blvl)) {
+        if (isOSkill && skillName === currentSkillName) {
+            // For oSkills: cap effective level at 150, but ensure bonus takes priority
+            // If blvl + bonus > 150, cap blvl down so that blvl + bonus = 150 (bonus takes priority)
+            const effectiveLevel = points + allSkillsBonus;
+            if (effectiveLevel > 150) {
+                // Cap blvl so that blvl + bonus = 150 (bonus takes priority)
+                characterState.blvl[skillName] = Math.max(0, 150 - allSkillsBonus);
+                characterState.lvl[skillName] = allSkillsBonus;
+            } else {
+                characterState.lvl[skillName] = allSkillsBonus;
+            }
+        } else {
+            characterState.lvl[skillName] = allSkillsBonus;
+        }
+    }
+    
+    // Check if Ctrl key is pressed (for formula display, localhost only)
+    const showFormulas = isLocalhost() && ctrlKeyPressed;
     
     // Description with scaling
     // Render description and skill effect
@@ -508,13 +653,13 @@ async function buildTooltipContent(skillData, level, db, warningMessage = '', is
         
         // Render main description
         if (skillData.description) {
-            const expandedDesc = await expandPlaceholdersWithScaling(db, skillData.dbId, level, skillData.description, skillData.id, characterState);
+            const expandedDesc = await expandPlaceholdersWithScaling(db, skillData.dbId, level, skillData.description, skillData.id, characterState, showFormulas);
             html += `<div class="tooltip-main-desc has-text-centered mb-2">${expandedDesc}</div>`;
         }
         
         // Render skill effect
         if (skillData.skillEffect) {
-            const expandedEffect = await expandPlaceholdersWithScaling(db, skillData.dbId, level, skillData.skillEffect, skillData.id, characterState);
+            const expandedEffect = await expandPlaceholdersWithScaling(db, skillData.dbId, level, skillData.skillEffect, skillData.id, characterState, showFormulas);
             const lines = expandedEffect.split('\n');
             
             lines.forEach(line => {
@@ -533,7 +678,7 @@ async function buildTooltipContent(skillData, level, db, warningMessage = '', is
     if (skillData.restriction) {
         html += '<div class="tooltip-warning">';
         // Expand placeholders in restriction text
-        const expandedRestriction = await expandPlaceholdersWithScaling(db, skillData.dbId, level, skillData.restriction, skillData.id, characterState);
+        const expandedRestriction = await expandPlaceholdersWithScaling(db, skillData.dbId, level, skillData.restriction, skillData.id, characterState, showFormulas);
         const restrictionLines = expandedRestriction.split('\n');
         restrictionLines.forEach(line => {
             html += `<div class="has-text-warning">${line}</div>`;
@@ -593,4 +738,9 @@ export function destroyTooltip() {
     window.removeEventListener('skillPointsChanged', handleSkillPointsChanged);
     window.removeEventListener('tooltipRefresh', handleSkillPointsChanged);
     window.removeEventListener('oskillsUpdated', handleOSkillsUpdated);
+    
+    // Reset Ctrl key state
+    if (isLocalhost()) {
+        ctrlKeyPressed = false;
+    }
 }

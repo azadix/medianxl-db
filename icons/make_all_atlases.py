@@ -6,7 +6,7 @@ import re
 
 ICON_SIZE = 48
 ATLAS_SIZE = 912
-ICONS_PER_ROW = ATLAS_SIZE / ICON_SIZE
+ICONS_PER_ROW = ATLAS_SIZE // ICON_SIZE
 
 # Regex to extract prefix + index from "icons-bar_84.png"
 ICON_RE = re.compile(r"icons-([a-z]+)_(\d+)\.\w+$")
@@ -17,7 +17,7 @@ def make_atlas(input_dir, output_file):
 
     files = [f for f in os.listdir(input_dir) if ICON_RE.match(f)]
     if not files:
-        print(f"⚠️ No valid icons in {input_dir}")
+        print(f"WARNING: No valid icons in {input_dir}")
         return
 
     # Sort by numeric index
@@ -43,17 +43,18 @@ def make_atlas(input_dir, output_file):
         atlas.paste(icon, (x, y))
 
     atlas.save(output_file)
-    print(f"✅ Atlas saved: {output_file}")
+    print(f"SUCCESS: Atlas saved: {output_file}")
 
 
 if __name__ == "__main__":
-    current_dir = os.getcwd()
+    # Get the directory where this script is located
+    script_dir = os.path.dirname(os.path.abspath(__file__))
 
     for class_id in ["shared", "ama", "ass", "bar", "dru", "nec", "pal", "sor"]:
-        input_dir = os.path.join(current_dir, class_id)
+        input_dir = os.path.join(script_dir, class_id)
         if not os.path.isdir(input_dir):
-            print(f"⚠️ Skipping {class_id} (no folder)")
+            print(f"WARNING: Skipping {class_id} (no folder at {input_dir})")
             continue
 
-        output_file = os.path.join(current_dir, f"class-{class_id}.png")
+        output_file = os.path.join(script_dir, f"class-{class_id}.png")
         make_atlas(input_dir, output_file)

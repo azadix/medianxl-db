@@ -12,6 +12,52 @@ import { getDatabase } from '../tree/tree-data.js';
 import Mastery from '../skills/Mastery.js';
 import Coven from '../skills/Coven.js';
 import Proficiency from '../skills/Proficiency.js';
+import Ultimate from '../skills/Ultimate.js';
+import Paragon from '../skills/Paragon.js';
+
+// Tree skills cache: maps tab_index (from classTabs.id) to array of skill names
+let treeSkillsCache = {};
+
+/**
+ * Build cache of skills per tree for efficient tree() function
+ * This maps tab_index values to arrays of skill names in that tree
+ * @param {Object} db - SQL.js database instance
+ */
+export function buildTreeSkillsCache(db) {
+  treeSkillsCache = {};
+  
+  if (!db) return;
+  
+  try {
+    const stmt = db.prepare(`
+      SELECT s.name, s.tab_index
+      FROM skills s
+      WHERE s.tab_index IS NOT NULL
+    `);
+    
+    while (stmt.step()) {
+      const row = stmt.get();
+      const skillName = row[0];
+      const tabIndex = row[1];
+      
+      if (!treeSkillsCache[tabIndex]) {
+        treeSkillsCache[tabIndex] = [];
+      }
+      treeSkillsCache[tabIndex].push(skillName);
+    }
+    stmt.free();
+  } catch (error) {
+    console.error('Error building tree skills cache:', error);
+  }
+}
+
+/**
+ * Get the tree skills cache
+ * @returns {Object} Cache mapping tab_index to array of skill names
+ */
+export function getTreeSkillsCache() {
+  return treeSkillsCache;
+}
 
 // Skills that use OR logic for skill_level prerequisites (instead of AND)
 // Format: skill display name
@@ -19,7 +65,8 @@ const OR_PREREQUISITE_SKILLS = [
   // Add skill display names here that require only ONE of their skill prerequisites
   // Example: 'Life From Death' requires ONE of: Voodoo Practice OR Debilitating Concoction
   "Life From Death",
-  "Bloodthirst"
+  "Bloodthirst",
+  "Nightwalker"
 ];
 
 // Prerequisite display order (lower number = shown first)
@@ -81,11 +128,22 @@ export function getSkillPoints(skillName) {
 }
 
 /**
- * Get all skill points
+ * Get all skill points (regular skills only, excludes oSkills)
  * @returns {Object} Map of skill_name -> points
  */
 export function getAllSkillPoints() {
   return characterInstance ? characterInstance.getAllSkillPoints() : {};
+}
+
+/**
+ * Get all regular skill points explicitly (excludes oSkills)
+ * This ensures oSkills never affect regular skill calculations
+ * @returns {Object} Map of skill_name -> points (regular skills only)
+ */
+export function getRegularSkillPoints() {
+  // getAllSkillPoints already excludes oSkills since they're stored separately
+  // But this function makes the intent explicit
+  return getAllSkillPoints();
 }
 
 /**
@@ -262,7 +320,7 @@ export function checkPrerequisites(skill, allSkills = []) {
     } else if (type === 'skill_blocked_by') {
       // Blocked if target skill has more than specified points (typically 0)
       const maxAllowedPoints = parseInt(value, 10);
-      const targetSkillName = target.toLowerCase().replace(/['\s]/g, '_').replace(/_+/g, '_');
+      const targetSkillName = target.toLowerCase().replace(/'/g, '').replace(/\s+/g, '_');
       const currentPoints = getSkillPoints(targetSkillName);
       
       if (currentPoints > maxAllowedPoints) {
@@ -297,7 +355,7 @@ export function checkPrerequisites(skill, allSkills = []) {
       for (const prereq of skillLevelPrereqs) {
         const [, value, target] = prereq.split(':');
         const requiredPoints = parseInt(value, 10);
-        const targetSkillName = target.toLowerCase().replace(/['\s]/g, '_').replace(/_+/g, '_');
+        const targetSkillName = target.toLowerCase().replace(/'/g, '').replace(/\s+/g, '_');
         const currentPoints = getSkillPoints(targetSkillName);
         
         if (currentPoints >= requiredPoints) {
@@ -323,7 +381,7 @@ export function checkPrerequisites(skill, allSkills = []) {
       for (const prereq of skillLevelPrereqs) {
         const [, value, target] = prereq.split(':');
         const requiredPoints = parseInt(value, 10);
-        const targetSkillName = target.toLowerCase().replace(/['\s]/g, '_').replace(/_+/g, '_');
+        const targetSkillName = target.toLowerCase().replace(/'/g, '').replace(/\s+/g, '_');
         const currentPoints = getSkillPoints(targetSkillName);
         
         if (currentPoints < requiredPoints) {
@@ -486,7 +544,7 @@ export function checkProficiencyRestriction(skill, allSkills) {
  * @param {Array} allSkills - Array of all skills for prerequisite validation
  * @returns {Object} { success: boolean, reason: string }
  */
-export function addSkillPoint(skillName, skill, maxLevel, allSkills = []) {
+export function addSkillPoint(skillName, skill, maxLevel, allSkills = [], skipEvent = false) {
   const currentPoints = getSkillPoints(skillName);
   
   // Check if at max level BEFORE adding the point
@@ -546,9 +604,110 @@ export function addSkillPoint(skillName, skill, maxLevel, allSkills = []) {
   if (characterInstance) {
     characterInstance.skillPoints[skillName] = currentPoints + 1;
     characterInstance.maxLevels = {}; // Clear cache as max levels may change
+    
+    // Auto-add required stats to input field
+    autoAddStatsToInput(skill.skillId);
+    
+    // Dispatch event for UI updates (unless skipped for batch operations)
+    if (!skipEvent) {
+      window.dispatchEvent(new CustomEvent('skillPointsChanged', { 
+        detail: { skillName, action: 'add' } 
+      }));
+    }
   }
   
   return { success: true, reason: '' };
+}
+
+/**
+ * Add multiple skill points at once (for batch operations like shift-click)
+ * @param {string} skillName - Skill name
+ * @param {Object} skill - Skill object
+ * @param {number} amount - Number of points to add
+ * @param {Array} allSkills - Array of all skills
+ * @param {Function} getMaxLevelFn - Function to get current max level (may change during batch)
+ * @returns {Object} { success: boolean, pointsAdded: number, reason: string }
+ */
+export function addSkillPointsBatch(skillName, skill, amount, allSkills = [], getMaxLevelFn = null) {
+  if (!characterInstance) {
+    return { success: false, pointsAdded: 0, reason: 'Character not initialized' };
+  }
+  
+  let pointsAdded = 0;
+  const db = getDatabase();
+  
+  for (let i = 0; i < amount; i++) {
+    const currentPoints = getSkillPoints(skillName);
+    
+    // Get current max level (may change for self-scaling skills)
+    const maxLevel = getMaxLevelFn ? getMaxLevelFn() : (skill.baseMaxLevel || 150);
+    
+    // Check if at max level
+    if (currentPoints >= maxLevel) {
+      break; // Can't add more points
+    }
+    
+    // Check if we have skill points available
+    const remainingPoints = getRemainingSkillPoints();
+    if (remainingPoints <= 0) {
+      break; // No more skill points available
+    }
+    
+    // Check prerequisites and restrictions (only for first point)
+    if (currentPoints === 0) {
+      const prereqCheck = checkPrerequisites(skill, allSkills);
+      if (!prereqCheck.met) {
+        return { success: pointsAdded > 0, pointsAdded, reason: prereqCheck.reasons.join(', ') };
+      }
+      
+      const ultimateCheck = checkUltimateRestriction(skill, allSkills);
+      if (!ultimateCheck.allowed) {
+        return { success: pointsAdded > 0, pointsAdded, reason: ultimateCheck.reason };
+      }
+      
+      const masteryCheck = checkMasteryRestriction(skill, allSkills);
+      if (!masteryCheck.allowed) {
+        return { success: pointsAdded > 0, pointsAdded, reason: masteryCheck.reason };
+      }
+      
+      const covenCheck = checkCovenRestriction(skill, allSkills);
+      if (!covenCheck.allowed) {
+        return { success: pointsAdded > 0, pointsAdded, reason: covenCheck.reason };
+      }
+      
+      const proficiencyCheck = checkProficiencyRestriction(skill, allSkills);
+      if (!proficiencyCheck.allowed) {
+        return { success: pointsAdded > 0, pointsAdded, reason: proficiencyCheck.reason };
+      }
+      
+      if (db) {
+        const devotionCheck = checkDevotionRestriction(skill.skillId, characterInstance.skillPoints, db);
+        if (!devotionCheck.canAllocate) {
+          return { success: pointsAdded > 0, pointsAdded, reason: devotionCheck.reason };
+        }
+      }
+    }
+    
+    // Add the point (skip event dispatch during batch)
+    characterInstance.skillPoints[skillName] = currentPoints + 1;
+    characterInstance.maxLevels = {}; // Clear cache as max levels may change
+    
+    // Auto-add required stats to input field (only need to do this once)
+    if (pointsAdded === 0) {
+      autoAddStatsToInput(skill.skillId);
+    }
+    
+    pointsAdded++;
+  }
+  
+  // Dispatch single event after all points are added
+  if (pointsAdded > 0) {
+    window.dispatchEvent(new CustomEvent('skillPointsChanged', { 
+      detail: { skillName, action: 'add', amount: pointsAdded } 
+    }));
+  }
+  
+  return { success: pointsAdded > 0, pointsAdded, reason: pointsAdded === 0 ? 'No points could be added' : '' };
 }
 
 /**
@@ -613,7 +772,7 @@ function checkMaxLevelDependencies(skillName, allSkills = []) {
  * @param {Array} allSkills - Array of all skills to check dependencies
  * @returns {Object} { success: boolean, reason: string }
  */
-export function removeSkillPoint(skillName, allSkills = []) {
+export function removeSkillPoint(skillName, allSkills = [], skipEvent = false) {
   const currentPoints = getSkillPoints(skillName);
   
   if (currentPoints === 0) {
@@ -645,9 +804,81 @@ export function removeSkillPoint(skillName, allSkills = []) {
     }
     
     characterInstance.maxLevels = {}; // Clear cache as max levels may change
+    
+    // Dispatch event for UI updates (unless skipped for batch operations)
+    if (!skipEvent) {
+      window.dispatchEvent(new CustomEvent('skillPointsChanged', { 
+        detail: { skillName, action: 'remove' } 
+      }));
+    }
   }
   
   return { success: true, reason: '' };
+}
+
+/**
+ * Remove multiple skill points at once (for batch operations like shift-click)
+ * @param {string} skillName - Skill name
+ * @param {number} amount - Number of points to remove
+ * @param {Array} allSkills - Array of all skills
+ * @returns {Object} { success: boolean, pointsRemoved: number, reason: string }
+ */
+export function removeSkillPointsBatch(skillName, amount, allSkills = []) {
+  if (!characterInstance) {
+    return { success: false, pointsRemoved: 0, reason: 'Character not initialized' };
+  }
+  
+  let pointsRemoved = 0;
+  
+  for (let i = 0; i < amount; i++) {
+    const currentPoints = getSkillPoints(skillName);
+    
+    if (currentPoints === 0) {
+      break; // No more points to remove
+    }
+    
+    // Check if removing this point would break any dependent skills
+    const blockingInfo = getMinimumRequiredPointsWithBlockingSkills(skillName, allSkills);
+    
+    if (currentPoints - 1 < blockingInfo.minRequired) {
+      if (pointsRemoved === 0) {
+        const skillNames = blockingInfo.blockingSkills.join(', ');
+        return { 
+          success: false, 
+          pointsRemoved: 0,
+          reason: `Cannot remove: ${skillNames} require${blockingInfo.blockingSkills.length > 1 ? '' : 's'} at least ${blockingInfo.minRequired} point${blockingInfo.minRequired > 1 ? 's' : ''} in this skill` 
+        };
+      }
+      break; // Some points were removed successfully
+    }
+    
+    // Check if this skill affects max levels of other skills (only check on first removal)
+    if (pointsRemoved === 0) {
+      const maxLevelCheck = checkMaxLevelDependencies(skillName, allSkills);
+      if (!maxLevelCheck.allowed) {
+        return { success: false, pointsRemoved: 0, reason: maxLevelCheck.reason };
+      }
+    }
+    
+    // Remove the point (skip event dispatch during batch)
+    characterInstance.skillPoints[skillName] = currentPoints - 1;
+    if (characterInstance.skillPoints[skillName] === 0) {
+      delete characterInstance.skillPoints[skillName];
+    }
+    
+    characterInstance.maxLevels = {}; // Clear cache as max levels may change
+    
+    pointsRemoved++;
+  }
+  
+  // Dispatch single event after all points are removed
+  if (pointsRemoved > 0) {
+    window.dispatchEvent(new CustomEvent('skillPointsChanged', { 
+      detail: { skillName, action: 'remove', amount: pointsRemoved } 
+    }));
+  }
+  
+  return { success: pointsRemoved > 0, pointsRemoved, reason: pointsRemoved === 0 ? 'No points could be removed' : '' };
 }
 
 /**
@@ -717,7 +948,7 @@ function getMinimumRequiredPointsWithBlockingSkills(skillName, allSkills) {
       
       if (type === 'skill_level') {
         // Convert target display name to skill_name format
-        const targetSkillName = target.toLowerCase().replace(/['\s]/g, '_').replace(/_+/g, '_');
+        const targetSkillName = target.toLowerCase().replace(/'/g, '').replace(/\s+/g, '_');
         
         if (targetSkillName === skillName) {
           const requiredPoints = parseInt(value, 10);
@@ -851,7 +1082,11 @@ export function removeOSkill(skillName) {
  */
 export function changeOSkillPoints(skillName, amount) {
   if (characterInstance) {
-    characterInstance.changeOSkillPoints(skillName, amount);
+    // Get current allSkillsBonus for hard cap enforcement
+    const allSkillsBonusInput = document.getElementById('allSkillsBonus');
+    const allSkillsBonus = allSkillsBonusInput ? Math.max(0, parseInt(allSkillsBonusInput.value) || 0) : 0;
+    
+    characterInstance.changeOSkillPoints(skillName, amount, allSkillsBonus);
   }
 }
 
@@ -872,4 +1107,385 @@ export function setAllOSkills(oSkills) {
   if (characterInstance) {
     characterInstance.setAllOSkills(oSkills);
   }
+}
+
+/**
+ * Stats Management
+ * Character stats that can be referenced in skill calculations
+ */
+
+/**
+ * Get stat value for a given stat key
+ * @param {string} statKey - Stat key (e.g., 'strength', 'dexterity')
+ * @returns {number} Stat value, or 0 if not set
+ */
+export function getStat(statKey) {
+  return characterInstance ? characterInstance.getStat(statKey) : 0;
+}
+
+/**
+ * Set stat value for a given stat key
+ * @param {string} statKey - Stat key (e.g., 'strength', 'dexterity')
+ * @param {number} value - Stat value
+ */
+export function setStat(statKey, value) {
+  if (characterInstance) {
+    characterInstance.setStat(statKey, value);
+  }
+}
+
+/**
+ * Get all stats
+ * @returns {Object} Map of stat_key -> value
+ */
+export function getAllStats() {
+  return characterInstance ? characterInstance.getAllStats() : {};
+}
+
+/**
+ * Set all stats (used for loading builds)
+ * @param {Object} stats - Map of stat_key -> value
+ */
+export function setAllStats(stats) {
+  if (characterInstance) {
+    characterInstance.setAllStats(stats);
+  }
+}
+
+/**
+ * Clear all stats
+ */
+export function clearAllStats() {
+  if (characterInstance) {
+    characterInstance.clearAllStats();
+  }
+}
+
+/**
+ * Parse and set stats from a text field (one stat per line)
+ * Format: {{statKey}}=value or statKey=value
+ * @param {string} text - Text containing stat definitions (one per line)
+ * @returns {Array} Array of error messages, empty if no errors
+ */
+export function parseStatsFromText(text) {
+  if (!characterInstance) return ['Character not initialized'];
+  return characterInstance.parseStatsFromText(text);
+}
+
+/**
+ * Export stats to text format (one stat per line)
+ * Format: {{statKey}}=value
+ * @returns {string} Text representation of stats
+ */
+export function exportStatsToText() {
+  return characterInstance ? characterInstance.exportStatsToText() : '';
+}
+
+/**
+ * Get all formulas used by a skill for auto-adding stats
+ * @param {number} skillId - Database skill ID
+ * @returns {Array<string>} Array of formula strings
+ */
+async function getSkillFormulas(skillId) {
+  const db = getDatabase();
+  if (!db) return [];
+  
+  const formulas = [];
+  
+  try {
+    // Get formulas from skill_scaling table
+    const stmt = db.prepare(`
+      SELECT DISTINCT value0, value1, value2, value3
+      FROM skill_scaling
+      WHERE skill_id = ?
+    `);
+    stmt.bind([skillId]);
+    
+    while (stmt.step()) {
+      const [v0, v1, v2, v3] = stmt.get();
+      if (v0) formulas.push(v0);
+      if (v1) formulas.push(v1);
+      if (v2) formulas.push(v2);
+      if (v3) formulas.push(v3);
+    }
+    stmt.free();
+    
+    // Get formulas from skill_scaling_constants table
+    const constantsStmt = db.prepare(`
+      SELECT DISTINCT value0, value1, value2, value3
+      FROM skill_scaling_constants
+      WHERE skill_id = ?
+    `);
+    constantsStmt.bind([skillId]);
+    
+    while (constantsStmt.step()) {
+      const [v0, v1, v2, v3] = constantsStmt.get();
+      if (v0) formulas.push(v0);
+      if (v1) formulas.push(v1);
+      if (v2) formulas.push(v2);
+      if (v3) formulas.push(v3);
+    }
+    constantsStmt.free();
+  } catch (error) {
+    console.warn('Error getting skill formulas:', error);
+  }
+  
+  return formulas;
+}
+
+/**
+ * Add required stats to Character Stats input field
+ * @param {number} skillId - Skill ID to get formulas from
+ */
+async function autoAddStatsToInput(skillId) {
+  // Get all formulas for this skill
+  const formulas = await getSkillFormulas(skillId);
+  if (formulas.length === 0) return;
+  
+  // Import the extractStatReferences function
+  const { extractStatReferences } = await import('../skills/formula-evaluator.js');
+  
+  // Extract all stat references from all formulas
+  const statRefsSet = new Set();
+  for (const formula of formulas) {
+    const stats = extractStatReferences(formula);
+    stats.forEach(stat => statRefsSet.add(stat));
+  }
+  
+  if (statRefsSet.size === 0) return; // No stat references found
+  
+  const characterStatsInput = document.getElementById('characterStats');
+  if (!characterStatsInput) return;
+  
+  // Get current stats from character instance
+  const currentStats = characterInstance?.stats || {};
+  
+  // Find stats that need to be added
+  const statsToAdd = Array.from(statRefsSet).filter(statName => !currentStats.hasOwnProperty(statName));
+  
+  if (statsToAdd.length === 0) return; // All stats already exist
+  
+  // Get all stats text
+  const currentText = characterStatsInput.value;
+  
+  // Add new stats to the text field
+  const newStats = statsToAdd.map(statName => `{{${statName}}}=0`).join('\n');
+  
+  // Append to existing text (with newline if not empty)
+  const updatedText = currentText ? `${currentText}\n${newStats}` : newStats;
+  characterStatsInput.value = updatedText;
+  
+  // Parse the updated text to update character instance
+  if (characterInstance) {
+    const errors = characterInstance.parseStatsFromText(updatedText);
+    if (errors.length > 0) {
+      console.warn('Stats parsing errors:', errors);
+    }
+  }
+}
+
+/**
+ * Filter skill levels to exclude oSkills
+ * Ensures oSkill points never affect regular skill calculations
+ * @param {Object} skillLevels - Object mapping skill_name/ID to points
+ * @param {Object} db - SQL.js database instance
+ * @returns {Object} Filtered skill levels with only regular skills
+ */
+function filterRegularSkillsOnly(skillLevels, db) {
+  if (!db) {
+    return skillLevels; // Can't filter without database
+  }
+
+  const oSkills = getAllOSkills();
+  const oSkillKeys = new Set();
+
+  // Collect oSkill identifiers (both IDs and names)
+  if (Array.isArray(oSkills)) {
+    oSkills.forEach(oskill => {
+      if (oskill.skillName) oSkillKeys.add(oskill.skillName);
+      if (oskill.skillId) oSkillKeys.add(oskill.skillId.toString());
+    });
+  } else if (typeof oSkills === 'object') {
+    // oSkills is an object with skill IDs/names as keys
+    Object.keys(oSkills).forEach(key => {
+      oSkillKeys.add(key);
+    });
+  }
+
+  // Filter out oSkills from skillLevels
+  const filtered = {};
+  for (const [key, value] of Object.entries(skillLevels)) {
+    // Skip if this key matches any oSkill identifier
+    if (!oSkillKeys.has(key)) {
+      filtered[key] = value;
+    }
+  }
+
+  return filtered;
+}
+
+/**
+ * Calculate effective max level for a skill (works for both regular skills and oSkills)
+ * Consolidated from SkillService
+ * @param {number} skillId - Skill ID (database ID for regular, identifier for oSkill)
+ * @param {string} skillType - 'regular' | 'oskill'
+ * @param {Object} skillLevels - Object mapping skill_name to current skill level (should only contain regular skills, not oSkills)
+ * @param {number} characterLevel - Current character level
+ * @param {Object} db - SQL.js database instance (optional)
+ * @returns {number} Effective max level (capped at 150)
+ */
+export function calculateEffectiveMaxLevel(skillId, skillType, skillLevels = {}, characterLevel = Character.DEFAULT_LEVEL, db = null) {
+  // oSkills always have a hard cap of 150
+  if (skillType === 'oskill') {
+    return 150;
+  }
+
+  // For regular skills, ensure we only use regular skill points (not oSkills)
+  const regularSkillLevels = filterRegularSkillsOnly(skillLevels, db);
+
+  // For regular skills, use the calculation system
+  if (!db) {
+    db = getDatabase();
+  }
+
+  if (!db) {
+    console.warn('calculateEffectiveMaxLevel: Database not available for max level calculation');
+    return 0;
+  }
+
+  return calculateMaxLevel(skillId, regularSkillLevels, characterLevel, db);
+}
+
+/**
+ * Get all restrictions for a skill
+ * Consolidated from SkillValidationService
+ * @param {Object} skill - Skill object (for regular skills) or skill metadata (for oSkills)
+ * @param {string} skillType - 'regular' | 'oskill'
+ * @param {number} currentPoints - Current points allocated
+ * @param {Array} allSkills - Array of all skills (for regular skills only)
+ * @param {Object} skillLevels - Object mapping skill_name to current skill level (should exclude oSkills for regular skills)
+ * @param {Object} db - SQL.js database instance
+ * @returns {Array} Array of {type: string, reason: string} restriction objects
+ */
+export function getSkillRestrictions(skill, skillType, currentPoints, allSkills = [], skillLevels = {}, db = null) {
+  const restrictions = [];
+
+  // oSkills don't have prerequisites or most restrictions - they're simpler
+  if (skillType === 'oskill') {
+    return restrictions;
+  }
+
+  // For regular skills, ensure skillLevels excludes oSkills
+  const regularSkillLevels = filterRegularSkillsOnly(skillLevels, db);
+
+  // Skip all checks if skill already has points (can always add more)
+  if (currentPoints > 0) {
+    return restrictions;
+  }
+
+  // Check prerequisites
+  const prereqCheck = checkPrerequisites(skill, allSkills);
+  if (!prereqCheck.met) {
+    prereqCheck.reasons.forEach(reason => {
+      restrictions.push({
+        type: 'prerequisite',
+        reason: reason
+      });
+    });
+  }
+
+  // Check Ultimate restriction (use Ultimate class)
+  const currentPointsCheck = getSkillPoints(skill.id);
+  if (currentPointsCheck === 0) {
+    const ultimateSkill = new Ultimate(skill);
+    const ultimateRestriction = ultimateSkill.checkRestriction(allSkills);
+    if (ultimateRestriction.blocked) {
+      restrictions.push({
+        type: 'ultimate',
+        reason: ultimateRestriction.reason
+      });
+    }
+
+    // Check Paragon restriction (use Paragon class)
+    const paragonSkill = new Paragon(skill);
+    const paragonRestriction = paragonSkill.checkRestriction(allSkills);
+    if (paragonRestriction.blocked) {
+      restrictions.push({
+        type: 'paragon',
+        reason: paragonRestriction.reason
+      });
+    }
+  }
+
+  // Check Mastery restriction
+  const masteryRestriction = checkMasteryRestriction(skill, allSkills);
+  if (!masteryRestriction.allowed) {
+    restrictions.push({
+      type: 'mastery',
+      reason: masteryRestriction.reason
+    });
+  }
+
+  // Check Coven restriction
+  const covenRestriction = checkCovenRestriction(skill, allSkills);
+  if (!covenRestriction.allowed) {
+    restrictions.push({
+      type: 'coven',
+      reason: covenRestriction.reason
+    });
+  }
+
+  // Check Proficiency restriction
+  const proficiencyRestriction = checkProficiencyRestriction(skill, allSkills);
+  if (!proficiencyRestriction.allowed) {
+    restrictions.push({
+      type: 'proficiency',
+      reason: proficiencyRestriction.reason
+    });
+  }
+
+  // Check Devotion restriction (use filtered skill levels)
+  const devotionRestriction = checkDevotionRestriction(skill.skillId, regularSkillLevels, db);
+  if (!devotionRestriction.canAllocate) {
+    restrictions.push({
+      type: 'devotion',
+      reason: devotionRestriction.reason
+    });
+  }
+
+  return restrictions;
+}
+
+/**
+ * Check if a skill can have points allocated
+ * Consolidated from SkillService/SkillValidationService
+ * @param {Object} skill - Skill object or skill metadata
+ * @param {string} skillType - 'regular' | 'oskill'
+ * @param {number} currentPoints - Current points allocated
+ * @param {number} maxPoints - Maximum points allowed
+ * @param {Array} allSkills - Array of all skills (for regular skills only)
+ * @param {Object} skillLevels - Object mapping skill_name to current skill level
+ * @param {Object} db - SQL.js database instance
+ * @returns {boolean} True if skill can have points allocated
+ */
+export function canAllocateSkillPoints(skill, skillType, currentPoints, maxPoints, allSkills = [], skillLevels = {}, db = null) {
+  // Check if already at max
+  if (currentPoints >= maxPoints) {
+    return false;
+  }
+
+  // If skill already has points, it can always add more
+  if (currentPoints > 0) {
+    return true;
+  }
+
+  // For oSkills, only check max level (handled above)
+  if (skillType === 'oskill') {
+    return true;
+  }
+
+  // For regular skills, check restrictions
+  const regularSkillLevels = filterRegularSkillsOnly(skillLevels, db);
+  const restrictions = getSkillRestrictions(skill, skillType, currentPoints, allSkills, regularSkillLevels, db);
+  return restrictions.length === 0;
 }

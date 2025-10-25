@@ -1,4 +1,4 @@
-import { getUrlParams, updateUrl, sanitizeSkillId, getSkillIconHTML, MISSING_IMAGE_NAME, expandPlaceholdersWithScaling, showDatabaseError } from './utils.js';
+import { getUrlParams, updateUrl, sanitizeSkillId, getSkillIconHTML, expandPlaceholdersWithScaling, showDatabaseError } from './utils.js';
 import Skill from './skills/Skill.js';
 
 // DOM elements
@@ -322,10 +322,12 @@ async function displaySkillDetail(skillId) {
         
         // Create a default character state for formula evaluation
         // This allows formulas to be evaluated even without a specific character build
+        const { getTreeSkillsCache } = await import('./character/character-state.js');
         const defaultCharacterState = {
             level: level,
             blvl: { [skillInfo.id]: level }, // Assume skill level equals the scaling level
-            lvl: { [skillInfo.id]: level }   // Same for lvl (all skills effect)
+            lvl: { [skillInfo.id]: level },  // Same for lvl (all skills effect)
+            treeSkillsCache: getTreeSkillsCache() // Add tree skills cache for tree() function
         };
         
         // Render main description
@@ -357,10 +359,12 @@ async function displaySkillDetail(skillId) {
         if (!skillInfo.restriction) return '';
         
         // Create a default character state for formula evaluation
+        const { getTreeSkillsCache } = await import('./character/character-state.js');
         const defaultCharacterState = {
             level: level,
             blvl: { [skillInfo.id]: level }, // Assume skill level equals the scaling level
-            lvl: { [skillInfo.id]: level }   // Same for lvl (all skills effect)
+            lvl: { [skillInfo.id]: level },  // Same for lvl (all skills effect)
+            treeSkillsCache: getTreeSkillsCache() // Add tree skills cache for tree() function
         };
         
         let html = `<p class="is-size-5"><strong>Restriction:</strong></p>`;

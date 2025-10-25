@@ -1,14 +1,15 @@
 // Core functionality for the skills tree viewer
 import { loadSkillsFromSQLite, getDatabase } from './tree-data.js';
-import { renderSkills, renderDifficultyCheckboxes, updateTabColors } from './tree-render.js';
+import { renderSkills, renderDifficultyCheckboxes, updateTabColors, buildOSkillCardData } from './tree-render.js';
 import Character from '../character/Character.js';
-import { initializeCharacter, setCharacterLevel, getSpentSkillPoints, getAllSkillPoints, getAllSkillPointsById, setAllSkillPoints, setAllSkillPointsById, updateQuestCompletion, getQuestCompletion, getAllOSkills, addOSkill, changeOSkillPoints, clearOSkills, setAllOSkills, getMinimumRequiredLevel, getTotalQuestSkillPoints, checkSkillsExceedingMaxLevel, getAvailableSkillPoints, getCharacterInstance, getCharacterLevel } from '../character/character-state.js';
+import { initializeCharacter, getSpentSkillPoints, getAllSkillPoints, getAllSkillPointsById, setAllSkillPoints, setAllSkillPointsById, updateQuestCompletion, getQuestCompletion, getAllOSkills, addOSkill, changeOSkillPoints, clearOSkills, setAllOSkills, getMinimumRequiredLevel, getTotalQuestSkillPoints, checkSkillsExceedingMaxLevel, getAvailableSkillPoints, getCharacterInstance, getCharacterLevel, parseStatsFromText, exportStatsToText, clearAllStats } from '../character/character-state.js';
 import { getCurrentDevotion, getDevotionDisplayName } from '../skills/skill-calculations.js';
 import { initializeTooltip, refreshCurrentTooltip } from './tree-tooltip.js';
 import { ToastManager } from './ToastManager.js';
 import { DropdownList } from '../edit/DropdownList.js';
-import { renderSkillCard, getSkillIcon } from './tree-card-renderer.js';
-import { getCurrentVersion, versionToString, setCurrentVersion } from '../version-config.js';
+import { renderSkillCard, getSkillIcon } from './tree-render.js';
+import { getCurrentVersion, versionToString, setBuildVersionOverride } from '../version-config.js';
+import { isLocalhost } from '../utils.js';
 
 // Global variables
 let skillsList;
@@ -38,7 +39,9 @@ function updateVersionSelector() {
     const versionSelector = document.getElementById('version-selector');
     if (!versionSelector) return;
     
-    const currentVersion = getCurrentVersion();
+    // Get database if available
+    const db = getDatabase();
+    const currentVersion = getCurrentVersion(db);
     const currentVersionString = versionToString(currentVersion);
     
     // Find and select the current version option
@@ -136,6 +139,19 @@ function loadBuildData(build, buildIndex = null) {
     // Load All Skills bonus
     if (build.allSkillsBonus !== undefined) {
         setAllSkillsBonus(build.allSkillsBonus);
+    }
+    
+    // Load Character Stats
+    if (build.stats) {
+        const characterStatsInput = document.getElementById('characterStats');
+        if (characterStatsInput) {
+            characterStatsInput.value = build.stats;
+            // Parse stats to set them in character instance
+            const errors = parseStatsFromText(build.stats);
+            if (errors.length > 0) {
+                console.warn('Stats parsing errors when loading build:', errors);
+            }
+        }
     }
     
     // Initialize tooltip functionality (needed for skill tooltips to work)
@@ -345,6 +361,15 @@ export async function initializeTreePage() {
         const currentLevel = getCharacterLevel();
         initializeCharacter(newClass, currentLevel);
         
+        // Clear character stats when switching classes
+        clearAllStats();
+        
+        // Clear character stats input field
+        const characterStatsInput = document.getElementById('characterStats');
+        if (characterStatsInput) {
+            characterStatsInput.value = '';
+        }
+        
         // Get current references to ensure we have the latest data
         const currentSkillsList = skillsList;
         const currentSkillsContainer = document.getElementById('skillsContainer');
@@ -378,38 +403,93 @@ function setupGlobalEventListeners() {
         updateOSkillsDisplay();
     });
     
+    // Add event listener for character level changes
+    window.addEventListener('characterLevelChanged', () => {
+        handleSkillPointsChanged(); // Re-render to update max levels
+    });
+    
+    // Add event listener for quest completion changes
+    window.addEventListener('questCompletionChanged', () => {
+        handleSkillPointsChanged(); // Re-render to update available skill points
+    });
+    
+    // Add event listener for character stats changes
+    window.addEventListener('characterStatsChanged', () => {
+        // Refresh tooltip if one is currently shown (stats affect tooltip calculations)
+        refreshCurrentTooltip();
+    });
+    
     // Add event listener for All Skills bonus changes
     const allSkillsBonusInput = document.getElementById('allSkillsBonus');
     if (allSkillsBonusInput) {
         allSkillsBonusInput.addEventListener('input', () => {
+            // Enforce 150 hard cap on oSkills when allSkillsBonus changes
+            const characterInstance = getCharacterInstance();
+            if (characterInstance && characterInstance.enforceOSkillHardCap) {
+                const allSkillsBonus = getAllSkillsBonus();
+                characterInstance.enforceOSkillHardCap(allSkillsBonus);
+            }
+            
+            // Refresh tooltip if one is currently shown
+            refreshCurrentTooltip();
+        });
+    }
+
+    // Add event listener for Character Stats input changes (text field)
+    const characterStatsInput = document.getElementById('characterStats');
+    if (characterStatsInput) {
+        characterStatsInput.addEventListener('input', (e) => {
+            const text = e.target.value;
+            const errors = parseStatsFromText(text);
+            
+            // Show errors if any
+            if (errors.length > 0) {
+                console.warn('Stats parsing errors:', errors);
+                // Optionally show errors to the user
+                // For now, we'll just parse valid stats and ignore errors
+            }
+            
             // Refresh tooltip if one is currently shown
             refreshCurrentTooltip();
         });
     }
 }
 
+// Debounce timer for skill card updates
+let skillCardUpdateTimer = null;
+
 /**
  * Handle skill points changed event
  * Updates the UI when skill points are added or removed
+ * Uses debouncing to avoid excessive updates during rapid changes
  */
 function handleSkillPointsChanged() {
-    const currentClass = classSelect.value;
-    const savedTab = currentTab;
+    // Debounce rapid updates - only update after 50ms of no changes
+    if (skillCardUpdateTimer) {
+        clearTimeout(skillCardUpdateTimer);
+    }
     
-    // Re-render without redrawing arrows (just update cards)
-    renderSkills(currentClass, skillsList, skillsContainer, savedTab, false);
-    
-    // Update displays
-    updateSkillPointsDisplay();
-    updateDevotionDisplay();
-    
-    // Update build list images if we're currently viewing the load section
-    updateBuildListImages();
-    
-    // Trigger tooltip refresh after a small delay to ensure minLevelDisplay is updated
-    setTimeout(() => {
-        window.dispatchEvent(new CustomEvent('tooltipRefresh'));
-    }, 10);
+    skillCardUpdateTimer = setTimeout(() => {
+        const currentClass = classSelect.value;
+        const savedTab = currentTab;
+        
+        // Re-render without redrawing arrows (just update cards)
+        renderSkills(currentClass, skillsList, skillsContainer, savedTab, false);
+        
+        // Update displays
+        updateSkillPointsDisplay();
+        updateDevotionDisplay();
+        
+        // Update build list images if we're currently viewing the load section
+        updateBuildListImages();
+        
+        // Trigger tooltip refresh after a small delay to ensure minLevelDisplay is updated
+        setTimeout(() => {
+            window.dispatchEvent(new CustomEvent('tooltipRefresh'));
+        }, 10);
+        
+        skillCardUpdateTimer = null;
+    }, 50);
 }
 
 // Main application entry point
@@ -434,7 +514,7 @@ async function main() {
         classSelect.value = selectedClass;
 
         // Initialize character state (quests are already set to defaults in characterState)
-        initializeCharacter(selectedClass, Character.MAX_LEVEL);
+        initializeCharacter(selectedClass, Character.DEFAULT_LEVEL);
 
         // Render skills with saved tab if specified
         renderSkills(selectedClass, skillsList, skillsContainer, savedTab);
@@ -630,6 +710,13 @@ function setAllSkillsBonus(value) {
     const allSkillsBonusInput = document.getElementById('allSkillsBonus');
     if (allSkillsBonusInput) {
         allSkillsBonusInput.value = Math.max(0, parseInt(value) || 0);
+        
+        // Enforce 150 hard cap on oSkills when allSkillsBonus is set
+        const characterInstance = getCharacterInstance();
+        if (characterInstance && characterInstance.enforceOSkillHardCap) {
+            const allSkillsBonus = getAllSkillsBonus();
+            characterInstance.enforceOSkillHardCap(allSkillsBonus);
+        }
     }
 }
 
@@ -759,6 +846,14 @@ function initializeMenuButtons() {
         });
     }
     
+    // Menu: Help button
+    const helpBtn = document.getElementById('menuHelpBtn');
+    if (helpBtn) {
+        helpBtn.addEventListener('click', () => {
+            showHelpModal();
+        });
+    }
+    
     // Back to Menu buttons
     const backToMenuBtn = document.getElementById('backToMenuBtn');
     if (backToMenuBtn) {
@@ -852,7 +947,7 @@ function resetBuild(showToast = true) {
     
     // Clear all skill points and reset quest completion to defaults
     const currentClass = classSelect ? classSelect.value : null;
-    initializeCharacter(currentClass, Character.MAX_LEVEL);
+    initializeCharacter(currentClass, Character.DEFAULT_LEVEL);
     
     // Re-render skills for the first class (this creates the difficulty checkboxes)
     if (currentClass && skillsList) {
@@ -1037,7 +1132,8 @@ function validateBuildData(buildData) {
 function importBuild(buildData) {
     try {
         // Check if build version differs from current version
-        const currentVersion = getCurrentVersion();
+        const db = getDatabase();
+        const currentVersion = getCurrentVersion(db);
         const currentVersionString = versionToString(currentVersion);
         
         if (buildData.version && buildData.version !== currentVersionString) {
@@ -1051,8 +1147,8 @@ function importBuild(buildData) {
                 'warning'
             );
             
-            // Switch to the build's version
-            setCurrentVersion(buildVersion);
+            // Switch to the build's version (temporary override)
+            setBuildVersionOverride(buildVersion);
             
             // Silently reload database and load build
             reloadDatabaseAndLoadBuild(buildData, null);
@@ -1085,15 +1181,17 @@ function updateCurrentBuild() {
     const spentPoints = getSpentSkillPoints();
     
     // Update existing build
+    const db = getDatabase();
     builds[currentBuildIndex] = {
         name: builds[currentBuildIndex].name, // Keep original name
-        version: versionToString(getCurrentVersion()),
+        version: versionToString(getCurrentVersion(db)),
         class: currentClass,
         level: currentLevel,
         spentPoints: spentPoints,
         skillPoints: getAllSkillPointsById(), // Use skill IDs instead of names
         oSkills: getAllOSkills(), // Save oSkills (now with skill IDs)
         allSkillsBonus: getAllSkillsBonus(), // Save All Skills bonus
+        stats: exportStatsToText(), // Save stats as text
         savedAt: new Date().toISOString()
     };
     
@@ -1109,15 +1207,17 @@ function saveBuild(buildName) {
     const skillPoints = getAllSkillPointsById(); // Use skill IDs instead of names
     const spentPoints = getSpentSkillPoints();
     
+    const db = getDatabase();
     const build = {
         name: buildName,
-        version: versionToString(getCurrentVersion()),
+        version: versionToString(getCurrentVersion(db)),
         class: currentClass,
         level: currentLevel,
         spentPoints: spentPoints,
         skillPoints: skillPoints,
         oSkills: getAllOSkills(), // Save oSkills (now with skill IDs)
         allSkillsBonus: getAllSkillsBonus(), // Save All Skills bonus
+        stats: exportStatsToText(), // Save stats as text
         savedAt: new Date().toISOString()
     };
     
@@ -1160,7 +1260,7 @@ function renderSavedBuildsList() {
     if (!characterInstance) {
         // Initialize with a default class if none is selected
         const defaultClass = classSelect ? classSelect.value : 'Amazon';
-        initializeCharacter(defaultClass, Character.MAX_LEVEL);
+        initializeCharacter(defaultClass, Character.DEFAULT_LEVEL);
     }
     
     const builds = getSavedBuilds();
@@ -1422,6 +1522,97 @@ function showExportModal(jsonText, buildName) {
     toastManager.showToast(`Build "${buildName}" export shown in dialog - copy manually`, false, 'info');
 }
 
+/**
+ * Show help modal with keyboard shortcuts and tips
+ */
+function showHelpModal() {
+    // Create modal overlay
+    const overlay = document.createElement('div');
+    overlay.className = 'modal is-active';
+    overlay.style.cssText = 'z-index: 10000;';
+    
+    // Create modal background
+    const modalBackground = document.createElement('div');
+    modalBackground.className = 'modal-background';
+    
+    // Create modal content
+    const modal = document.createElement('div');
+    modal.className = 'modal-card';
+    modal.style.cssText = 'max-width: 80vw; max-height: 80vh;';
+    
+    const formulaHelpText = isLocalhost() 
+        ? '<li><strong>Ctrl + Hover:</strong> Hold Ctrl and hover over a skill to see the raw formula instead of the calculated value (localhost only)</li>'
+        : '';
+    
+    modal.innerHTML = `
+        <header class="modal-card-head px-4">
+            <p class="modal-card-title">Planner Help</p>
+        </header>
+        <section class="modal-card-body p-4">
+            <div class="content">
+                <h4 class="title is-5 has-text-primary mb-3">Keyboard Shortcuts</h4>
+                <ul>
+                    <li><strong>Click:</strong> Add or remove 1 skill point</li>
+                    <li><strong>Shift + Click:</strong> Add or remove 25 skill points at once</li>
+                    ${formulaHelpText}
+                </ul>
+                
+                <h4 class="title is-5 has-text-primary mb-3 mt-5">Tips</h4>
+                <ul>
+                    <li>Hover over skill cards to see detailed tooltips with scaling values</li>
+                    <li>Use the "+# to All Skills" input to apply bonuses to all skills</li>
+                    <li>Character stats can be entered in the "Character Stats" textarea using the format: <code>{{statName}}=value</code></li>
+                    <li>Arrows between skills show prerequisite relationships</li>
+                    <li>Skills that are maxed out are highlighted in yellow</li>
+                    <li>You can save multiple builds and switch between them using "Load/Export Build"</li>
+                </ul>
+                
+                <h4 class="title is-5 has-text-primary mb-3 mt-5">Stat Colors</h4>
+                <p>Stat values in skill tooltips are color-coded to indicate their type:</p>
+                <ul>
+                    <li><span class="has-text-white">is-white</span> - Plain text</li>
+                    <li><span class="has-text-danger">is-danger</span> - Unknown value (displayed when a stat value cannot be determined)</li>
+                    <li><span class="has-text-primary">is-primary</span> - Constant (indicates a constant value that does not change with skill level)</li>
+                    <li><span class="has-text-warning">is-warning</span> - Function outcome (shown when a stat value is calculated from a formula or function)</li>
+                </ul>
+                
+                <h4 class="title is-5 has-text-primary mb-3 mt-5">Character Stats Format</h4>
+                <p>Enter stats one per line in the following format:</p>
+                <pre class="p-3 mb-3">{{strength}}=30
+{{dexterity}}=30
+{{vitality}}=30
+{{energy}}=30</pre>
+                <p>These stats can then be used in skill formulas using the <code>{{stat_name}}</code> syntax. Stats are automatically added to your character when a skill uses them in its formulas.</p>
+            </div>
+        </section>
+        <footer class="modal-card-foot p-4">
+            <button class="button is-primary" id="closeHelpModalBtn">Close</button>
+        </footer>
+    `;
+    
+    overlay.appendChild(modalBackground);
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+    
+    // Close modal handlers
+    const closeModal = () => {
+        document.body.removeChild(overlay);
+        document.removeEventListener('keydown', handleEscape);
+    };
+    
+    // Close modal when clicking close button or background
+    modal.querySelector('#closeHelpModalBtn').addEventListener('click', closeModal);
+    modalBackground.addEventListener('click', closeModal);
+    
+    // Close modal with Escape key
+    const handleEscape = (e) => {
+        if (e.key === 'Escape') {
+            closeModal();
+        }
+    };
+    document.addEventListener('keydown', handleEscape);
+}
+
 function loadBuild(index) {
     const builds = getSavedBuilds();
     if (index < 0 || index >= builds.length) {
@@ -1432,7 +1623,8 @@ function loadBuild(index) {
     const build = builds[index];
     
     // Check if build version differs from current version
-    const currentVersion = getCurrentVersion();
+    const db = getDatabase();
+    const currentVersion = getCurrentVersion(db);
     const currentVersionString = versionToString(currentVersion);
     
     if (build.version && build.version !== currentVersionString) {
@@ -1446,8 +1638,8 @@ function loadBuild(index) {
             'warning'
         );
         
-        // Switch to the build's version
-        setCurrentVersion(buildVersion);
+        // Switch to the build's version (temporary override)
+        setBuildVersionOverride(buildVersion);
         
         // Silently reload database and load build
         reloadDatabaseAndLoadBuild(build, index);
@@ -1738,31 +1930,13 @@ function createOSkillCard(oskill) {
         }
     }
     
-    // Check if oSkill has description data
-    const hasDescription = skillData.hasDetails || skillData.description || false;
+    // Build card data for oSkill
+    const cardData = buildOSkillCardData(skillData, getSkillIcon);
     
-    // Prepare card data
-    const cardData = {
-        skillId: skillData.skillId || skillData.skillName, // Use skill ID if available, otherwise skill name
-        iconHTML: getSkillIcon(skillData.image, skillData.className),
-        displayName: skillData.displayName,
-        hasDescription: hasDescription,
-        currentPoints: skillData.points,
-        maxPoints: 150,
-        levelColor: skillData.points >= 150 ? 'has-text-warning' : 'has-text-grey',
-        buttons: {
-            show: true,
-            plusDisabled: skillData.points >= 150, // Disable plus button at 150
-            minusDisabled: skillData.points === 0,
-            plusTooltip: skillData.points >= 150 ? 'Maximum level reached (150)' : '',
-            dataSkill: skillData.skillId || skillData.skillName // Use skill ID if available, otherwise skill name
-        }
-    };
-    
-    // Render card using shared renderer
+    // Render card
     const card = renderSkillCard(cardData);
     
-    // Add oSkill-specific event listeners
+    // Add oSkill-specific event listeners (same as regular skills)
     const plusBtn = card.querySelector('.skill-plus-btn');
     const minusBtn = card.querySelector('.skill-minus-btn');
     
@@ -1774,9 +1948,6 @@ function createOSkillCard(oskill) {
             if (e.shiftKey) {
                 // Shift-click: add 25 points
                 handleOSkillPointChange(skillIdentifier, 25);
-            } else if (e.ctrlKey) {
-                // Ctrl-click: add 5 points
-                handleOSkillPointChange(skillIdentifier, 5);
             } else {
                 // Normal click: add 1 point
                 handleOSkillPointChange(skillIdentifier, 1);
@@ -1792,9 +1963,6 @@ function createOSkillCard(oskill) {
             if (e.shiftKey) {
                 // Shift-click: remove 25 points
                 handleOSkillPointChange(skillIdentifier, -25);
-            } else if (e.ctrlKey) {
-                // Ctrl-click: remove 5 points
-                handleOSkillPointChange(skillIdentifier, -5);
             } else {
                 // Normal click: remove 1 point
                 handleOSkillPointChange(skillIdentifier, -1);

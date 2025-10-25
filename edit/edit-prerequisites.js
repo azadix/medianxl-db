@@ -1,6 +1,7 @@
 // Prerequisites management functionality
 import { SkillDB } from './edit-core.js';
 import { DropdownList } from './DropdownList.js';
+import { getCurrentVersionId } from '../version-config.js';
 
 // Store dropdown references for updating
 let prerequisiteSkillDropdown = null;
@@ -269,6 +270,9 @@ function loadPrerequisitesForSkill(skillId) {
         document.getElementById('prerequisite-tree-points').value = requirementValue;
         if (reqTargetTabId) targetTabId = reqTargetTabId;
         break;
+      case 'character_level':
+        document.getElementById('prerequisite-character-level').value = requirementValue;
+        break;
     }
   }
   stmt.free();
@@ -307,17 +311,30 @@ function loadPrerequisitesForSkill(skillId) {
 }
 
 async function populatePrerequisiteSelectors() {
+  // Get current version ID for filtering
+  const versionId = getCurrentVersionId(SkillDB.db);
+  if (!versionId) {
+    console.warn('populatePrerequisiteSelectors: No active version found');
+    return;
+  }
+
   // Skills dropdown using DropdownList
   const skillDdContainer = document.getElementById('prerequisite-skill-dd');
   const skillHiddenInput = document.getElementById('prerequisite-skill-hidden');
 
   if (skillDdContainer && skillHiddenInput) {
-    const res = SkillDB.db.exec("SELECT id, display_name FROM skills ORDER BY display_name");
-    const skillItems = res[0] ? res[0].values.map(([id, name]) => ({
-      value: id,
-      name: name,
-      desc: `Skill ID: ${id}`
-    })) : [];
+    const stmt = SkillDB.db.prepare("SELECT id, display_name FROM skills WHERE version_id = ? ORDER BY display_name");
+    stmt.bind([versionId]);
+    const skillItems = [];
+    while (stmt.step()) {
+      const [id, name] = stmt.get();
+      skillItems.push({
+        value: id,
+        name: name,
+        desc: `Skill ID: ${id}`
+      });
+    }
+    stmt.free();
     
     prerequisiteSkillDropdown = new DropdownList(skillDdContainer, {
       placeholder: 'Select skill...',
@@ -340,18 +357,25 @@ async function populatePrerequisiteSelectors() {
   const targetSkillHiddenInput = document.getElementById('prerequisite-target-skill-hidden');
 
   if (targetSkillDdContainer && targetSkillHiddenInput) {
-    const res = SkillDB.db.exec(`
+    const stmt = SkillDB.db.prepare(`
       SELECT s.id, s.display_name, c.name as class_name, ct.name as tab_name
       FROM skills s
       LEFT JOIN classes c ON s.class_id = c.id
       LEFT JOIN classTabs ct ON s.tab_index = ct.id
+      WHERE s.version_id = ?
       ORDER BY c.name, ct.tab_index, s.display_name
     `);
-    const skillItems = res[0] ? res[0].values.map(([id, name, className, tabName]) => ({
-      value: id,
-      name: name,
-      desc: `${className || 'No Class'} - ${tabName || 'No Tab'} (ID: ${id})`
-    })) : [];
+    stmt.bind([versionId]);
+    const skillItems = [];
+    while (stmt.step()) {
+      const [id, name, className, tabName] = stmt.get();
+      skillItems.push({
+        value: id,
+        name: name,
+        desc: `${className || 'No Class'} - ${tabName || 'No Tab'} (ID: ${id})`
+      });
+    }
+    stmt.free();
     
     prerequisiteTargetSkillDropdown = new DropdownList(targetSkillDdContainer, {
       placeholder: 'Select required skill...',
@@ -372,18 +396,25 @@ async function populatePrerequisiteSelectors() {
   const blockedSkillHiddenInput = document.getElementById('prerequisite-blocked-skill-hidden');
 
   if (blockedSkillDdContainer && blockedSkillHiddenInput) {
-    const res = SkillDB.db.exec(`
+    const stmt = SkillDB.db.prepare(`
       SELECT s.id, s.display_name, c.name as class_name, ct.name as tab_name
       FROM skills s
       LEFT JOIN classes c ON s.class_id = c.id
       LEFT JOIN classTabs ct ON s.tab_index = ct.id
+      WHERE s.version_id = ?
       ORDER BY c.name, ct.tab_index, s.display_name
     `);
-    const skillItems = res[0] ? res[0].values.map(([id, name, className, tabName]) => ({
-      value: id,
-      name: name,
-      desc: `${className || 'No Class'} - ${tabName || 'No Tab'} (ID: ${id})`
-    })) : [];
+    stmt.bind([versionId]);
+    const skillItems = [];
+    while (stmt.step()) {
+      const [id, name, className, tabName] = stmt.get();
+      skillItems.push({
+        value: id,
+        name: name,
+        desc: `${className || 'No Class'} - ${tabName || 'No Tab'} (ID: ${id})`
+      });
+    }
+    stmt.free();
     
     prerequisiteBlockedSkillDropdown = new DropdownList(blockedSkillDdContainer, {
       placeholder: 'Select blocked skill...',
@@ -469,6 +500,9 @@ function refreshPrerequisitesTable() {
         grouped[key].targets.push(`${targetSkillName} (${prerequisiteValue})`);
       } else if (prerequisiteType === 'tree_points' && targetTabName) {
         grouped[key].targets.push(targetTabName);
+      } else if (prerequisiteType === 'character_level') {
+        // For character_level, show the level requirement
+        grouped[key].targets.push(`Level ${prerequisiteValue}`);
       }
     });
     
@@ -484,8 +518,8 @@ function refreshPrerequisitesTable() {
       // Join targets with commas if multiple
       const targetDisplay = group.targets.join(', ');
       
-      // For skill_level type, don't show value column since it's in the target
-      const valueDisplay = group.prerequisiteType === 'skill_level' ? '-' : group.prerequisiteValue;
+      // For skill_level and character_level types, don't show value column since it's in the target
+      const valueDisplay = (group.prerequisiteType === 'skill_level' || group.prerequisiteType === 'character_level') ? '-' : group.prerequisiteValue;
       
       tr.innerHTML = `
         <td>${group.skillName || 'Unknown'}</td>
@@ -559,6 +593,7 @@ function editPrerequisite(prerequisiteId) {
     document.getElementById('prerequisite-skill-level').value = '';
     document.getElementById('prerequisite-skill-blocked-by').value = '0';
     document.getElementById('prerequisite-tree-points').value = '';
+    document.getElementById('prerequisite-character-level').value = '';
     document.getElementById('prerequisite-target-skill-hidden').value = '';
     document.getElementById('prerequisite-blocked-skill-hidden').value = '';
     document.getElementById('prerequisite-target-tab-hidden').value = '';
@@ -628,6 +663,9 @@ function editPrerequisite(prerequisiteId) {
           document.getElementById('prerequisite-tree-points').value = requirementValue;
           if (reqTargetTabId) targetTabId = reqTargetTabId;
           break;
+        case 'character_level':
+          document.getElementById('prerequisite-character-level').value = requirementValue;
+          break;
       }
     }
     allStmt.free();
@@ -670,9 +708,9 @@ function deletePrerequisite(prerequisiteId) {
 
 function savePrerequisite() {
   const skillId = parseInt(document.getElementById('prerequisite-skill-hidden').value, 10);
-  const skillLevelValue = parseInt(document.getElementById('prerequisite-skill-level').value || 0, 10);
   const skillBlockedByValue = parseInt(document.getElementById('prerequisite-skill-blocked-by').value, 10);
   const treePointsValue = parseInt(document.getElementById('prerequisite-tree-points').value || 0, 10);
+  const characterLevelValue = parseInt(document.getElementById('prerequisite-character-level').value || 0, 10);
   const targetTabId = parseInt(document.getElementById('prerequisite-target-tab-hidden')?.value || 0, 10);
   
   if (Number.isNaN(skillId)) {
@@ -683,8 +721,9 @@ function savePrerequisite() {
   // Validate that at least one requirement type is specified
   const hasRequiredSkills = selectedRequiredSkills.length > 0;
   const hasBlockedBy = !Number.isNaN(skillBlockedByValue) && skillBlockedByValue >= 0 && selectedBlockedSkills.length > 0;
-  if (!hasRequiredSkills && !hasBlockedBy && treePointsValue < 1) {
-    alert('Please specify at least one requirement (skill level, blocked by, or tree points)');
+  const hasCharacterLevel = !Number.isNaN(characterLevelValue) && characterLevelValue > 0;
+  if (!hasRequiredSkills && !hasBlockedBy && treePointsValue < 1 && !hasCharacterLevel) {
+    alert('Please specify at least one requirement (skill level, blocked by, tree points, or character level)');
     return;
   }
   
@@ -693,10 +732,17 @@ function savePrerequisite() {
     return;
   }
   
+  // Get current version ID
+  const versionId = getCurrentVersionId(SkillDB.db);
+  if (!versionId) {
+    alert('No active version found. Please select a version first.');
+    return;
+  }
+  
   if (window.editingPrerequisiteId) {
     // For editing, we'll delete existing prerequisites for this skill and recreate them
     // This ensures clean state when editing
-    SkillDB.db.run('DELETE FROM skill_prerequisites WHERE skill_id = ?', [skillId]);
+    SkillDB.db.run('DELETE FROM skill_prerequisites WHERE skill_id = ? AND version_id = ?', [skillId, versionId]);
   }
   
   // Insert prerequisites for each requirement type that has a value
@@ -704,9 +750,9 @@ function savePrerequisite() {
     // Insert a prerequisite for each required skill with its own level
     selectedRequiredSkills.forEach(skill => {
       SkillDB.db.run(`
-        INSERT INTO skill_prerequisites (skill_id, requirement_type, requirement_value, target_skill_id, target_tab_id)
-        VALUES (?, 'skill_level', ?, ?, ?)
-      `, [skillId, skill.level, skill.id, null]);
+        INSERT INTO skill_prerequisites (skill_id, requirement_type, requirement_value, target_skill_id, target_tab_id, version_id)
+        VALUES (?, 'skill_level', ?, ?, ?, ?)
+      `, [skillId, skill.level, skill.id, null, versionId]);
     });
   }
   
@@ -714,17 +760,25 @@ function savePrerequisite() {
   if (!Number.isNaN(skillBlockedByValue) && skillBlockedByValue >= 0 && selectedBlockedSkills.length > 0) {
     selectedBlockedSkills.forEach(blockedSkill => {
       SkillDB.db.run(`
-        INSERT INTO skill_prerequisites (skill_id, requirement_type, requirement_value, target_skill_id, target_tab_id)
-        VALUES (?, 'skill_blocked_by', ?, ?, ?)
-      `, [skillId, skillBlockedByValue, blockedSkill.id, null]);
+        INSERT INTO skill_prerequisites (skill_id, requirement_type, requirement_value, target_skill_id, target_tab_id, version_id)
+        VALUES (?, 'skill_blocked_by', ?, ?, ?, ?)
+      `, [skillId, skillBlockedByValue, blockedSkill.id, null, versionId]);
     });
   }
   
   if (treePointsValue >= 1) {
     SkillDB.db.run(`
-      INSERT INTO skill_prerequisites (skill_id, requirement_type, requirement_value, target_skill_id, target_tab_id)
-      VALUES (?, 'tree_points', ?, ?, ?)
-    `, [skillId, treePointsValue, null, targetTabId]);
+      INSERT INTO skill_prerequisites (skill_id, requirement_type, requirement_value, target_skill_id, target_tab_id, version_id)
+      VALUES (?, 'tree_points', ?, ?, ?, ?)
+    `, [skillId, treePointsValue, null, targetTabId, versionId]);
+  }
+  
+  // Insert character level prerequisite
+  if (characterLevelValue >= 1) {
+    SkillDB.db.run(`
+      INSERT INTO skill_prerequisites (skill_id, requirement_type, requirement_value, target_skill_id, target_tab_id, version_id)
+      VALUES (?, 'character_level', ?, ?, ?, ?)
+    `, [skillId, characterLevelValue, null, null, versionId]);
   }
   
   

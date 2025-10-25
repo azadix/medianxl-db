@@ -78,6 +78,12 @@
                             <span>Load/Export Build</span>
                         </span>
                     </button>
+
+                    <button class="button is-large is-fullwidth is-inverted is-info" id="menuHelpBtn">
+                        <span class="icon-text">
+                            <span>Help</span>
+                        </span>
+                    </button>
                 </div>
                 
                 <!-- WIP Warning -->
@@ -185,6 +191,17 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="label">Character Stats</label>
+                            <div class="control">
+                                <textarea id="characterStats" class="textarea is-small" rows="8" 
+                                    placeholder="{{strength}}=30&#10;{{dexterity}}=30&#10;{{vitality}}=30&#10;{{energy}}=30&#10;..."></textarea>
+                            </div>
+                            <p class="help is-size-7">
+                                Format: {{statKey}}=value (one per line)
+                            </p>
                         </div>
                     </div>
                 </div>

@@ -1,6 +1,7 @@
 // Max levels management functionality
 import { SkillDB } from './edit-core.js';
 import { DropdownList } from './DropdownList.js';
+import { getCurrentVersionId } from '../version-config.js';
 
 export async function initializeMaxLevels() {
   await populateMaxLevelSelectors();
@@ -28,7 +29,14 @@ async function populateMaxLevelSelectors() {
   const skillHiddenInput = document.getElementById('max-level-skill-hidden');
 
   if (skillDdContainer && skillHiddenInput) {
-    const res = SkillDB.db.exec("SELECT id, display_name FROM skills ORDER BY display_name");
+    // Get current version ID
+    const versionId = getCurrentVersionId(SkillDB.db);
+    if (!versionId) {
+      console.warn('No active version found, cannot populate skill selector');
+      return;
+    }
+    
+    const res = SkillDB.db.exec("SELECT id, display_name FROM skills WHERE version_id = ? ORDER BY display_name", [versionId]);
     const skillItems = res[0] ? res[0].values.map(([id, name]) => ({
       value: id,
       name: name,
@@ -53,13 +61,15 @@ async function populateMaxLevelSelectors() {
 
 function loadMaxLevelData(skillId) {
   if (!SkillDB.db) return;
+  const versionId = getCurrentVersionId(SkillDB.db);
+  if (!versionId) return;
   
   const stmt = SkillDB.db.prepare(`
     SELECT base_max_level, affected_by_specialization, can_add_points
     FROM skill_max_levels
-    WHERE skill_id = ?
+    WHERE skill_id = ? AND version_id = ?
   `);
-  stmt.bind([skillId]);
+  stmt.bind([skillId, versionId]);
   
   if (stmt.step()) {
     const [baseMaxLevel, affectedBySpecialization, canAddPoints] = stmt.get();
@@ -81,14 +91,22 @@ function refreshMaxLevelsTable() {
   if (!tbody) return;
   tbody.innerHTML = '';
   
+  // Get current version ID
+  const versionId = getCurrentVersionId(SkillDB.db);
+  if (!versionId) {
+    tbody.innerHTML = '<tr><td colspan="6">No active version found</td></tr>';
+    return;
+  }
+  
   const res = SkillDB.db.exec(`
     SELECT s.id, s.display_name, c.name as class_name,
            sml.base_max_level, sml.affected_by_specialization, sml.can_add_points
     FROM skills s
     LEFT JOIN classes c ON s.class_id = c.id
-    LEFT JOIN skill_max_levels sml ON s.id = sml.skill_id
+    LEFT JOIN skill_max_levels sml ON s.id = sml.skill_id AND sml.version_id = ?
+    WHERE s.version_id = ?
     ORDER BY c.name, s.display_name
-  `);
+  `, [versionId, versionId]);
   
   if (res.length > 0) {
     res[0].values.forEach(([skillId, skillName, className, baseMaxLevel, affectedBySpecialization, canAddPoints]) => {
@@ -128,9 +146,16 @@ function refreshMaxLevelsTable() {
 }
 
 function editMaxLevel(skillId) {
+  // Get current version ID
+  const versionId = getCurrentVersionId(SkillDB.db);
+  if (!versionId) {
+    alert('No active version found. Please select a version first.');
+    return;
+  }
+  
   // Get skill info
-  const skillStmt = SkillDB.db.prepare('SELECT display_name FROM skills WHERE id = ?');
-  skillStmt.bind([skillId]);
+  const skillStmt = SkillDB.db.prepare('SELECT display_name FROM skills WHERE id = ? AND version_id = ?');
+  skillStmt.bind([skillId, versionId]);
   
   if (skillStmt.step()) {
     const [skillName] = skillStmt.get();
@@ -157,7 +182,12 @@ function editMaxLevel(skillId) {
 
 function deleteMaxLevel(skillId) {
   if (!confirm('Delete max level data for this skill?')) return;
-  SkillDB.db.run('DELETE FROM skill_max_levels WHERE skill_id = ?', [skillId]);
+  const versionId = getCurrentVersionId(SkillDB.db);
+  if (!versionId) {
+    alert('No active version found. Please select a version first.');
+    return;
+  }
+  SkillDB.db.run('DELETE FROM skill_max_levels WHERE skill_id = ? AND version_id = ?', [skillId, versionId]);
   refreshMaxLevelsTable();
 }
 
@@ -182,12 +212,19 @@ function saveMaxLevel() {
     return;
   }
   
+  // Get current version ID
+  const versionId = getCurrentVersionId(SkillDB.db);
+  if (!versionId) {
+    alert('No active version found. Please select a version first.');
+    return;
+  }
+  
   // Upsert the max level data
-  SkillDB.db.run('DELETE FROM skill_max_levels WHERE skill_id = ?', [skillId]);
+  SkillDB.db.run('DELETE FROM skill_max_levels WHERE skill_id = ? AND version_id = ?', [skillId, versionId]);
   SkillDB.db.run(`
-    INSERT INTO skill_max_levels (skill_id, base_max_level, affected_by_specialization, can_add_points)
-    VALUES (?, ?, ?, ?)
-  `, [skillId, baseMaxLevel, affectedBySpecialization ? 1 : 0, canAddPoints ? 1 : 0]);
+    INSERT INTO skill_max_levels (skill_id, base_max_level, affected_by_specialization, can_add_points, version_id)
+    VALUES (?, ?, ?, ?, ?)
+  `, [skillId, baseMaxLevel, affectedBySpecialization ? 1 : 0, canAddPoints ? 1 : 0, versionId]);
   
   // Reset form
   document.getElementById('max-level-form').reset();

@@ -111,6 +111,7 @@
       <button class="button is-light is-outlined" data-section="scaling-section">Scaling</button>
       <button class="button is-light is-outlined" data-section="max-levels-section">Max Levels</button>
       <button class="button is-light is-outlined" data-section="prerequisites-section">Prerequisites</button>
+      <button class="button is-light is-outlined" data-section="versions-section">Version</button>
       
       <div class="file has-name is-small ml-auto" style="display:none;">
         <input class="file-input" type="file" id="import-db" accept=".sqlite">
@@ -405,13 +406,13 @@
     <table id="scaling-table" class="table is-striped is-fullwidth">
       <thead>
         <tr>
-          <th style="width:25%">Name</th>
-          <th style="width:25%">Format</th>
+          <th style="width:15%">Name</th>
+          <th style="width:20%">Format</th>
           <th>Value0</th>
           <th>Value1</th>
           <th>Value2</th>
           <th>Value3</th>
-          <th style="width:8%">Actions</th>
+          <th style="width:5%">Actions</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -462,6 +463,42 @@
           <th style="width:10%">Affected by Spec</th>
           <th style="width:10%">Can Add Points</th>
           <th style="width:10%">Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div id="versions-section" class="box" style="display:none;">
+    <h3 class="title is-5">Version Management</h3>
+    <form id="version-form" class="mb-3">
+      <div class="columns">
+        <div class="column is-one-third">
+          <label class="label">Major Version</label>
+          <input class="input" type="number" id="version-major" min="0" required>
+        </div>
+        <div class="column is-one-third">
+          <label class="label">Minor Version</label>
+          <input class="input" type="number" id="version-minor" min="0" required>
+        </div>
+        <div class="column is-one-third">
+          <label class="label">&nbsp;</label>
+          <div>
+            <button class="button is-primary is-outlined" type="submit">Create Version</button>
+            <button class="button is-light is-outlined" type="button" id="version-cancel" style="display:none;">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <table id="versions-table" class="table is-striped is-fullwidth">
+      <thead>
+        <tr>
+          <th style="width:5%">ID</th>
+          <th style="width:15%">Version</th>
+          <th style="width:15%">Name</th>
+          <th style="width:10%">Active</th>
+          <th style="width:55%">Actions</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -534,6 +571,10 @@
           <label class="label">Tree Points</label>
           <input class="input" type="number" id="prerequisite-tree-points" min="1" placeholder="Points">
         </div>
+        <div class="column is-one-third">
+          <label class="label">Character Level</label>
+          <input class="input" type="number" id="prerequisite-character-level" min="1" placeholder="Level">
+        </div>
       </div>
       
       
@@ -569,6 +610,7 @@
     import './edit/edit-scaling.js';
     import './edit/edit-max-levels.js';
     import './edit/edit-prerequisites.js';
+    import './edit/edit-versions.js';
     import './edit/edit-autocomplete.js';
     import { SkillDB, initializePage } from './edit/edit-core.js'; // Import SkillDB and initializePage from edit-core.js
     import { ToastManager } from './tree/ToastManager.js'; // Import ToastManager
