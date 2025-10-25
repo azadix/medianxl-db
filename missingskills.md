@@ -1,3 +1,5 @@
+probably more but not sure, refer to the main skill list for missing data
+
 PROC ONLY:
 Amplify Damage
 Athulua's Wrath
