@@ -17,7 +17,7 @@ def analyze_skill_status(db_path):
         todo_skills = [line.strip() for line in f.readlines() if line.strip()]
 
     # Connect to database
-    db_full_path = f'../db/{db_path}' if not db_path.startswith('/') and not db_path.startswith('../') else db_path
+    db_full_path = db_path if db_path.startswith('/') or db_path.startswith('../') else f'../{db_path}'
     
     if not os.path.exists(db_full_path):
         print(f"Error: Database file not found: {db_full_path}")
@@ -97,7 +97,7 @@ def analyze_skill_status(db_path):
 
 def main():
     parser = argparse.ArgumentParser(description='Analyze the status of skills from missingskills.md against the database')
-    parser.add_argument('db_path', help='Path to the SQLite database file (e.g., skills-2.11.sqlite)')
+    parser.add_argument('db_path', nargs='?', default='../skills.sqlite', help='Path to the SQLite database file (default: ../skills.sqlite)')
     
     args = parser.parse_args()
     analyze_skill_status(args.db_path)

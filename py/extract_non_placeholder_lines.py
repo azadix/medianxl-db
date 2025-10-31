@@ -34,11 +34,11 @@ def is_placeholder_line(line):
     return False
 
 
-def extract_non_placeholder_lines(db_path='2.11.sqlite'):
+def extract_non_placeholder_lines(db_path='../skills.sqlite'):
     """
     Extract all non-placeholder text lines from skill descriptions and restrictions.
     """
-    db_full_path = f'../db/{db_path}' if not db_path.startswith('/') and not db_path.startswith('../') else db_path
+    db_full_path = db_path if db_path.startswith('/') or db_path.startswith('../') else f'../{db_path}'
     
     if not os.path.exists(db_full_path):
         print(f"Error: Database file not found: {db_full_path}")
@@ -146,7 +146,7 @@ def extract_non_placeholder_lines(db_path='2.11.sqlite'):
 
 def main():
     parser = argparse.ArgumentParser(description='Extract all text lines that are NOT template placeholders from skill descriptions and restrictions')
-    parser.add_argument('db_path', help='Path to the SQLite database file (e.g., skills-2.11.sqlite)')
+    parser.add_argument('db_path', nargs='?', default='../skills.sqlite', help='Path to the SQLite database file (default: ../skills.sqlite)')
     
     args = parser.parse_args()
     

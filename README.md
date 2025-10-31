@@ -8,7 +8,7 @@ This is a web-based skills database editor and interactive skill tree calculator
 1. **Database**: Ensure `.sqlite` file for a relevant version is present
 2. **Usage**: 
    - Open `index.html` for skills listing
-   - Open `tree.html` for interactive skill tree and build planning
+   - Open `planner.html` for interactive skill tree and build planning
    - Open `edit.html` for database editing (only enabled on localhost)
 
 ### Project Structure
@@ -18,7 +18,7 @@ The project is organized into logical folders for better maintainability:
 medianxl-db/
 ├── index.html              # Skills listing page
 ├── edit.html               # Database editor interface
-├── tree.html               # Interactive skill tree
+├── planner.html            # Interactive skill tree
 ├── script.js               # Skills viewer functionality
 ├── utils.js                # Utility functions
 ├── style.css               # Main styling
@@ -47,7 +47,7 @@ medianxl-db/
 #### Core Files
 - **`index.html`** - Skills listing page with DataTable integration
 - **`edit.html`** - Main database editor interface
-- **`tree.html`** - Interactive skills tree with character build planning
+- **`planner.html`** - Interactive skills tree with character build planning
 - **`script.js`** - Skills viewer with detail display
 - **`utils.js`** - Utility functions for placeholder expansion and icon handling
 - **`style.css`** - Main styling

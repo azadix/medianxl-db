@@ -421,7 +421,7 @@ async function displaySkillDetail(skillId) {
     
     let backUrl = './';
     if (treeClass || treeTab) {
-        backUrl = `./tree.html?class=${treeClass || ''}&tab=${treeTab || ''}`;
+        backUrl = `./planner.html?class=${treeClass || ''}&tab=${treeTab || ''}`;
     } else if (filter) {
         backUrl = `./?filter=${filter}`;
     }

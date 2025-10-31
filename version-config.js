@@ -139,26 +139,12 @@ export function setCurrentVersion(version) {
 }
 
 /**
- * Get the database filename for the current version
- * Note: This is called BEFORE database loads, so it checks build override or uses default
+ * Get the database filename
+ * Note: Versioning is now handled in the database itself, so we always use skills.sqlite
  * @returns {string} The database filename
  */
 export function getDatabaseFile() {
-    // Don't pass db parameter - this is called before database is loaded
-    // Check for build override first, then fall back to default
-    const buildOverride = localStorage.getItem(BUILD_VERSION_OVERRIDE_KEY);
-    if (buildOverride) {
-        try {
-            const overrideVersion = JSON.parse(buildOverride);
-            if (overrideVersion && typeof overrideVersion.major === 'number' && typeof overrideVersion.minor === 'number') {
-                return `db/${versionToString(overrideVersion)}.sqlite`;
-            }
-        } catch (e) {
-            // Invalid JSON, fall through to default
-        }
-    }
-    // Fall back to default version (before database loads, we can't determine latest)
-    return `db/${versionToString(DEFAULT_VERSION)}.sqlite`;
+    return 'skills.sqlite';
 }
 
 /**

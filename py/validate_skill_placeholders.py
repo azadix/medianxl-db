@@ -99,11 +99,11 @@ def check_placeholder_validity(cursor, skill_id, skill_name, description, show_n
     return issues
 
 
-def validate_skills(db_path='../db/2.11.sqlite', show_no_scaling_warnings=True):
+def validate_skills(db_path='../skills.sqlite', show_no_scaling_warnings=True):
     """
     Main validation function.
     """
-    db_full_path = f'../db/{db_path}' if not db_path.startswith('/') and not db_path.startswith('../') else db_path
+    db_full_path = db_path if db_path.startswith('/') or db_path.startswith('../') else f'../{db_path}'
     
     if not os.path.exists(db_full_path):
         print(f"Error: Database file not found: {db_full_path}")
@@ -196,7 +196,7 @@ def validate_skills(db_path='../db/2.11.sqlite', show_no_scaling_warnings=True):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Validate skill placeholders in the skills database')
-    parser.add_argument('db_path', help='Path to the SQLite database file (e.g., skills-2.11.sqlite)')
+    parser.add_argument('db_path', nargs='?', default='../skills.sqlite', help='Path to the SQLite database file (default: ../skills.sqlite)')
     parser.add_argument('--no-scaling', action='store_true',
                        help='Hide "No scaling data for stat X" warnings')
     

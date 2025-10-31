@@ -65,11 +65,6 @@ function loadVersions() {
     versionTd.textContent = `${version.major}.${version.minor}`;
     tr.appendChild(versionTd);
     
-    // Name
-    const nameTd = document.createElement('td');
-    nameTd.textContent = version.name;
-    tr.appendChild(nameTd);
-    
     // Active status
     const activeTd = document.createElement('td');
     if (version.is_active) {
@@ -129,7 +124,7 @@ function loadVersions() {
   if (versions.length === 0) {
     const tr = document.createElement('tr');
     const td = document.createElement('td');
-    td.colSpan = 5;
+    td.colSpan = 4;
     td.className = 'has-text-centered has-text-grey';
     td.textContent = 'No versions found';
     tr.appendChild(td);

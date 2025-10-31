@@ -1538,7 +1538,7 @@ function showHelpModal() {
     // Create modal content
     const modal = document.createElement('div');
     modal.className = 'modal-card';
-    modal.style.cssText = 'max-width: 80vw; max-height: 80vh;';
+    modal.style.cssText = 'min-width: 50%; max-height: 80vh;';
     
     const formulaHelpText = isLocalhost() 
         ? '<li><strong>Ctrl + Hover:</strong> Hold Ctrl and hover over a skill to see the raw formula instead of the calculated value (localhost only)</li>'
@@ -1550,14 +1550,23 @@ function showHelpModal() {
         </header>
         <section class="modal-card-body p-4">
             <div class="content">
-                <h4 class="title is-5 has-text-primary mb-3">Keyboard Shortcuts</h4>
+                <h4 class="title is-5 mb-3">Keyboard Shortcuts</h4>
                 <ul>
                     <li><strong>Click:</strong> Add or remove 1 skill point</li>
                     <li><strong>Shift + Click:</strong> Add or remove 25 skill points at once</li>
                     ${formulaHelpText}
                 </ul>
-                
-                <h4 class="title is-5 has-text-primary mb-3 mt-5">Tips</h4>
+                                
+                <h4 class="title is-5 mb-3 mt-5">Stat Colors</h4>
+                <p>Stat values in skill tooltips are color-coded to indicate their type:</p>
+                <ul>
+                    <li><span class="has-text-white">is-white</span> - Plain text</li>
+                    <li><span class="has-text-danger">is-danger</span> - Unknown value (displayed when a stat value cannot be determined)</li>
+                    <li><span class="has-text-primary">is-primary</span> - Constant (indicates a constant value that does not change with skill level)</li>
+                    <li><span class="has-text-warning">is-warning</span> - Function outcome (shown when a stat value is calculated from a formula or function)</li>
+                </ul>
+
+                <h4 class="title is-5 mb-3 mt-5">Tips</h4>
                 <ul>
                     <li>Hover over skill cards to see detailed tooltips with scaling values</li>
                     <li>Use the "+# to All Skills" input to apply bonuses to all skills</li>
@@ -1567,16 +1576,7 @@ function showHelpModal() {
                     <li>You can save multiple builds and switch between them using "Load/Export Build"</li>
                 </ul>
                 
-                <h4 class="title is-5 has-text-primary mb-3 mt-5">Stat Colors</h4>
-                <p>Stat values in skill tooltips are color-coded to indicate their type:</p>
-                <ul>
-                    <li><span class="has-text-white">is-white</span> - Plain text</li>
-                    <li><span class="has-text-danger">is-danger</span> - Unknown value (displayed when a stat value cannot be determined)</li>
-                    <li><span class="has-text-primary">is-primary</span> - Constant (indicates a constant value that does not change with skill level)</li>
-                    <li><span class="has-text-warning">is-warning</span> - Function outcome (shown when a stat value is calculated from a formula or function)</li>
-                </ul>
-                
-                <h4 class="title is-5 has-text-primary mb-3 mt-5">Character Stats Format</h4>
+                <h4 class="title is-5 mb-3 mt-5">Character Stats Format</h4>
                 <p>Enter stats one per line in the following format:</p>
                 <pre class="p-3 mb-3">{{strength}}=30
 {{dexterity}}=30
