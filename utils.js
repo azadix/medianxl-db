@@ -194,6 +194,38 @@ function getStatParameterCount(db, statKey) {
     return paramCount;
 }
 
+/**
+ * Calculate mana cost from mana, lvlmana, manashift parameters
+ * @param {number|string} mana - Base mana cost at level 1 (value0)
+ * @param {number|string} lvlmana - Change in mana cost per skill level (value1)
+ * @param {number|string} manashift - Bitwise shift multiplier for precision (value2)
+ * @param {number} level - Current skill level
+ * @returns {number} Calculated mana cost (truncated to integer)
+ */
+function calculateManaCost(mana, lvlmana, manashift, level) {
+    // Ensure level is at least 1
+    const effectiveLevel = Math.max(1, level || 1);
+    
+    // Convert to numbers, defaulting to 0 if invalid
+    const manaNum = parseFloat(mana) || 0;
+    const lvlmanaNum = parseFloat(lvlmana) || 0;
+    const manashiftNum = parseFloat(manashift) || 0;
+    
+    // Truncate mana and lvlmana before adding
+    const truncatedMana = Math.trunc(manaNum);
+    const truncatedLvlmana = Math.trunc(lvlmanaNum);
+    
+    // Calculate base mana: trunc(mana) + trunc(lvlmana) * (level - 1)
+    const baseMana = truncatedMana + truncatedLvlmana * (effectiveLevel - 1);
+    
+    // Apply manashift: (baseMana * (2^manashift)) / 256
+    const shiftMultiplier = Math.pow(2, manashiftNum);
+    const totalMana256ths = (baseMana * shiftMultiplier) / 256;
+    
+    // Truncate final result
+    return Math.trunc(totalMana256ths);
+}
+
 // Helper function to auto-expand simple {{stat}} tokens to include parameter placeholders
 function autoExpandStatToken(db, statKey) {
     const paramCount = getStatParameterCount(db, statKey);
@@ -316,53 +348,139 @@ export async function expandPlaceholdersWithScaling(db, skillId, level, descript
                 const scalingValues = await skill.getScalingValues(db, level, key, occurrenceIndex, characterState, characterState?.level, showFormulas);
                 
                 if (scalingValues) {
-                    const v0 = scalingValues.value0 ?? '';
-                    const v1 = scalingValues.value1 ?? '';
-                    const v2 = scalingValues.value2 ?? '';
-                    const v3 = scalingValues.value3 ?? '';
-                    
-                    // Check if any constants exist for this stat
-                    // If constants exist but only some values are filled, empty ones should show ???
-                    const hasAnyConstants = scalingValues.value0_constant || scalingValues.value1_constant || 
-                                           scalingValues.value2_constant || scalingValues.value3_constant;
-                    
-                    // Use different styling: formulas=link, constants=warning, scaling=primary
-                    const getValueClass = (valueIndex) => {
-                        const isFormula = scalingValues[`value${valueIndex}_formula`];
-                        const isConstant = scalingValues[`value${valueIndex}_constant`];
-                        if (isFormula) return FORMULA_STYLE;
-                        if (isConstant) return CONSTANTS_STYLE;
-                        return DEFAULT_STYLE;
-                    };
-                    
-                    // Check if values are empty and should show ??? for formulas/constants
-                    const getDisplayHtml = (valueIndex, defaultValue) => {
-                        const isEmpty = defaultValue === '' || defaultValue === null || defaultValue === undefined;
-                        const isFormula = scalingValues[`value${valueIndex}_formula`];
-                        const isConstant = scalingValues[`value${valueIndex}_constant`];
+                    // Special handling for mana_cost: calculate single value from 3 parameters
+                    if (key === 'mana_cost') {
+                        const v0 = scalingValues.value0 ?? ''; // mana
+                        const v1 = scalingValues.value1 ?? ''; // lvlmana
+                        const v2 = scalingValues.value2 ?? ''; // manashift
                         
-                        // Show ??? if value is empty AND:
-                        // 1. It's marked as a formula/constant, OR
-                        // 2. Constants exist for this stat (if constants are present but only some values filled, empty ones show ???)
-                        //    This handles the case where only 1 of X fields is filled - empty ones show ???
-                        if (isEmpty && (isFormula || isConstant || hasAnyConstants)) {
-                            return `<span class="${UNKNOWN_STYLE}">???</span>`;
+                        // Check if any values are missing
+                        const hasMissingValues = v0 === '' || v0 === null || v0 === undefined ||
+                                               v1 === '' || v1 === null || v1 === undefined ||
+                                               v2 === '' || v2 === null || v2 === undefined;
+                        
+                        if (hasMissingValues) {
+                            // Show ??? if any required values are missing
+                            const q = `<span class="${UNKNOWN_STYLE}">???</span>`;
+                            output = (format || '{name}: {value}')
+                                .replace('{name}', name)
+                                .replace('{value0}', q)
+                                .replace('{value1}', q)
+                                .replace('{value2}', q)
+                                .replace('{value3}', q);
+                        } else {
+                            // Values are already evaluated by getScalingValues() when showFormulas is false
+                            // If showFormulas is true or evaluation failed, values might be formula strings
+                            // Try to parse as numbers first, and if that fails, try to evaluate as formulas
+                            const { formulaEvaluator } = await import('./skills/formula-evaluator.js');
+                            const evaluator = formulaEvaluator;
+                            
+                            // Helper to parse or evaluate a value
+                            const parseOrEvaluate = (value) => {
+                                const strValue = String(value).trim();
+                                // Check if it's a pure number (already evaluated)
+                                const isPureNumber = /^-?\d+(\.\d+)?$/.test(strValue);
+                                if (isPureNumber) {
+                                    return parseFloat(strValue) || 0;
+                                }
+                                
+                                // If characterState is available, try to evaluate as formula
+                                if (characterState) {
+                                    const blvl = characterState.blvl?.[actualSkillName] || 0;
+                                    const slvl = characterState.lvl?.[actualSkillName] || 0;
+                                    const lvl = blvl + slvl;
+                                    
+                                    const variables = {
+                                        blvl,
+                                        slvl,
+                                        lvl,
+                                        ulvl: characterState.level || 1,
+                                        _blvl: characterState.blvl || {},
+                                        characterState: characterState
+                                    };
+                                    
+                                    const evalResult = evaluator.evaluate(strValue, variables);
+                                    if (evalResult.success) {
+                                        return evalResult.value;
+                                    }
+                                }
+                                
+                                // If evaluation fails or no characterState, return 0
+                                return 0;
+                            };
+                            
+                            const mana = parseOrEvaluate(v0);
+                            const lvlmana = parseOrEvaluate(v1);
+                            const manashift = parseOrEvaluate(v2);
+
+                            const blvl = characterState.blvl?.[actualSkillName] || 0;
+                            const slvl = characterState.lvl?.[actualSkillName] || 0;
+                            const lvl = blvl + slvl;
+
+                            // Calculate mana cost
+                            const calculatedMana = calculateManaCost(mana, lvlmana, manashift, lvl);
+                            
+                            // Format as single value
+                            const calculatedValueHtml = `<span class="${DEFAULT_STYLE}">${calculatedMana}</span>`;
+                            
+                            // Replace all value placeholders with the calculated value
+                            output = (format || '{name}: {value}')
+                                .replace('{name}', name)
+                                .replace('{value0}', calculatedValueHtml)
+                                .replace('{value1}', "")
+                                .replace('{value2}', "")
+                                .replace('{value3}', "");
                         }
-                        // Use the appropriate style class for the value
-                        return `<span class="${getValueClass(valueIndex)}">${defaultValue || ''}</span>`;
-                    };
-                    
-                    const w0 = getDisplayHtml(0, v0);
-                    const w1 = getDisplayHtml(1, v1);
-                    const w2 = getDisplayHtml(2, v2);
-                    const w3 = getDisplayHtml(3, v3);
-                    
-                    output = (format || '{name}: {value}')
-                        .replace('{name}', name)
-                        .replace('{value0}', w0)
-                        .replace('{value1}', w1)
-                        .replace('{value2}', w2)
-                        .replace('{value3}', w3);
+                    } else {
+                        // Regular stat handling (non-mana_cost)
+                        const v0 = scalingValues.value0 ?? '';
+                        const v1 = scalingValues.value1 ?? '';
+                        const v2 = scalingValues.value2 ?? '';
+                        const v3 = scalingValues.value3 ?? '';
+                        
+                        // Check if any constants exist for this stat
+                        // If constants exist but only some values are filled, empty ones should show ???
+                        const hasAnyConstants = scalingValues.value0_constant || scalingValues.value1_constant || 
+                                               scalingValues.value2_constant || scalingValues.value3_constant;
+                        
+                        // Use different styling: formulas=link, constants=warning, scaling=primary
+                        const getValueClass = (valueIndex) => {
+                            const isFormula = scalingValues[`value${valueIndex}_formula`];
+                            const isConstant = scalingValues[`value${valueIndex}_constant`];
+                            if (isFormula) return FORMULA_STYLE;
+                            if (isConstant) return CONSTANTS_STYLE;
+                            return DEFAULT_STYLE;
+                        };
+                        
+                        // Check if values are empty and should show ??? for formulas/constants
+                        const getDisplayHtml = (valueIndex, defaultValue) => {
+                            const isEmpty = defaultValue === '' || defaultValue === null || defaultValue === undefined;
+                            const isFormula = scalingValues[`value${valueIndex}_formula`];
+                            const isConstant = scalingValues[`value${valueIndex}_constant`];
+                            
+                            // Show ??? if value is empty AND:
+                            // 1. It's marked as a formula/constant, OR
+                            // 2. Constants exist for this stat (if constants are present but only some values filled, empty ones show ???)
+                            //    This handles the case where only 1 of X fields is filled - empty ones show ???
+                            if (isEmpty && (isFormula || isConstant || hasAnyConstants)) {
+                                return `<span class="${UNKNOWN_STYLE}">???</span>`;
+                            }
+                            // Use the appropriate style class for the value
+                            return `<span class="${getValueClass(valueIndex)}">${defaultValue || ''}</span>`;
+                        };
+                        
+                        const w0 = getDisplayHtml(0, v0);
+                        const w1 = getDisplayHtml(1, v1);
+                        const w2 = getDisplayHtml(2, v2);
+                        const w3 = getDisplayHtml(3, v3);
+                        
+                        output = (format || '{name}: {value}')
+                            .replace('{name}', name)
+                            .replace('{value0}', w0)
+                            .replace('{value1}', w1)
+                            .replace('{value2}', w2)
+                            .replace('{value3}', w3);
+                    }
                 } else {
                     // No scaling values found at all - show ??? for all values
                     const q = `<span class="${UNKNOWN_STYLE}">???</span>`;

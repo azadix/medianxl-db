@@ -99,6 +99,17 @@ export class FormulaEvaluator {
       description: 'Returns total skill points spent in the specified skill tree',
       example: 'tree(1) returns points in tab ID 1'
     });
+    this.registerFunction({
+      keyword: 'if',
+      function: (condition, trueValue, falseValue) => {
+        // Condition is evaluated by JavaScript before being passed here
+        // Handle boolean, number (0 = false, non-zero = true), or truthy/falsy values
+        const conditionResult = Boolean(condition);
+        return conditionResult ? trueValue : falseValue;
+      },
+      description: 'Conditional: returns trueValue if condition is true, otherwise falseValue. Supports comparisons: ==, !=, <, <=, >, >=',
+      example: 'if(lvl <= 22, 5*slvl, 0) - returns 5*slvl if level <= 22, otherwise 0'
+    });
     
     // Register default variables with descriptions and examples
     this.registerVariable({
@@ -248,10 +259,16 @@ export class FormulaEvaluator {
         return { success: false, error: 'Unmatched opening parenthesis' };
       }
 
-      // Check for valid characters (including square brackets for skill references and braces for stat references)
-      const validChars = /^[0-9+\-*/.(),a-zA-Z_\[\]\{\}\s]+$/;
+      // Check for valid characters (including square brackets for skill references, braces for stat references, and comparison operators for if())
+      const validChars = /^[0-9+\-*/.(),a-zA-Z_\[\]\{\}\s=<>!]+$/;
       if (!validChars.test(trimmed)) {
         return { success: false, error: 'Formula contains invalid characters' };
+      }
+      
+      // Validate if() function syntax (must have exactly 3 arguments)
+      const ifValidation = this.validateIfSyntax(trimmed);
+      if (!ifValidation.success) {
+        return ifValidation;
       }
 
       // Check for problematic integer math patterns (1/3*lvl style)
@@ -294,6 +311,75 @@ export class FormulaEvaluator {
     }
     
     return null;
+  }
+
+  /**
+   * Validate if() function syntax
+   * Checks that all if() calls have exactly 3 arguments
+   * @param {string} formula - The formula to validate
+   * @returns {Object} Validation result with success flag and error message
+   */
+  validateIfSyntax(formula) {
+    // Find all if() function calls (case-insensitive word boundary)
+    const ifPattern = /\bif\s*\(/gi;
+    let match;
+    
+    while ((match = ifPattern.exec(formula)) !== null) {
+      const startPos = match.index + match[0].length - 1; // Position of opening parenthesis
+      
+      // Find the matching closing parenthesis and count arguments
+      let parenCount = 0;
+      let argumentCount = 1; // Start with 1 (we count commas)
+      let inString = false;
+      let stringChar = null;
+      
+      for (let i = startPos; i < formula.length; i++) {
+        const char = formula[i];
+        
+        // Track string literals (though formulas typically don't have them)
+        if ((char === '"' || char === "'") && (i === 0 || formula[i - 1] !== '\\')) {
+          if (!inString) {
+            inString = true;
+            stringChar = char;
+          } else if (char === stringChar) {
+            inString = false;
+            stringChar = null;
+          }
+          continue;
+        }
+        
+        if (inString) continue;
+        
+        if (char === '(') {
+          parenCount++;
+        } else if (char === ')') {
+          parenCount--;
+          if (parenCount === 0) {
+            // Found the closing parenthesis for this if()
+            if (argumentCount !== 3) {
+              return { 
+                success: false, 
+                error: `if() function requires exactly 3 arguments (condition, trueValue, falseValue), found ${argumentCount}` 
+              };
+            }
+            break; // Move to next if() call
+          }
+        } else if (char === ',' && parenCount === 1) {
+          // Comma at the top level of if() arguments
+          argumentCount++;
+        }
+      }
+      
+      // If we didn't find a closing parenthesis, it's an error
+      if (parenCount !== 0) {
+        return { 
+          success: false, 
+          error: 'if() function call has unmatched parentheses' 
+        };
+      }
+    }
+    
+    return { success: true };
   }
 
   /**
