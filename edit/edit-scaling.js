@@ -471,8 +471,6 @@ function saveScaling() {
   const rows = Array.from(document.querySelectorAll('#scaling-table tbody tr')).map(tr => {
     const statId = parseInt(tr.getAttribute('data-stat-id'), 10);
     const occurrenceIndex = parseInt(tr.getAttribute('data-occurrence-index') || '0', 10);
-    const inputs = tr.querySelectorAll('input[data-value-index]');
-    const checkboxes = tr.querySelectorAll('input[data-constant-checkbox]');
     
     const rowData = {
       stat_id: statId,
@@ -482,10 +480,10 @@ function saveScaling() {
       constantFlags: {}
     };
     
-    // Collect values and constant flags
+    // Collect values and constant flags - query each input by its data-value-index attribute
     for (let i = 0; i < 4; i++) {
-      const input = inputs[i];
-      const checkbox = checkboxes[i];
+      const input = tr.querySelector(`input[data-value-index="${i}"]`);
+      const checkbox = tr.querySelector(`input[data-constant-checkbox="${i}"]`);
       const value = input?.value || '';
       const isConstant = checkbox?.checked || false;
       
