@@ -483,13 +483,23 @@ export async function expandPlaceholdersWithScaling(db, skillId, level, descript
                     }
                 } else {
                     // No scaling values found at all - show ??? for all values
-                    const q = `<span class="${UNKNOWN_STYLE}">???</span>`;
-                    output = (format || '{name}: {value}')
-                        .replace('{name}', name)
-                        .replace('{value0}', q)
-                        .replace('{value1}', q)
-                        .replace('{value2}', q)
-                        .replace('{value3}', q);
+                    if (key === 'mana_cost') {
+                        const q = `<span class="${UNKNOWN_STYLE}">???</span>`;
+                        output = (format || '{name}: {value}')
+                            .replace('{name}', name)
+                            .replace('{value0}', q)
+                            .replace('{value1}', "")
+                            .replace('{value2}', "")
+                            .replace('{value3}', "");
+                    } else {
+                        const q = `<span class="${UNKNOWN_STYLE}">???</span>`;
+                        output = (format || '{name}: {value}')
+                            .replace('{name}', name)
+                            .replace('{value0}', q)
+                            .replace('{value1}', q)
+                            .replace('{value2}', q)
+                            .replace('{value3}', q);
+                    }
                 }
             }
         }
