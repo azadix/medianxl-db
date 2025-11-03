@@ -423,13 +423,6 @@ function setupGlobalEventListeners() {
     const allSkillsBonusInput = document.getElementById('allSkillsBonus');
     if (allSkillsBonusInput) {
         allSkillsBonusInput.addEventListener('input', () => {
-            // Enforce 150 hard cap on oSkills when allSkillsBonus changes
-            const characterInstance = getCharacterInstance();
-            if (characterInstance && characterInstance.enforceOSkillHardCap) {
-                const allSkillsBonus = getAllSkillsBonus();
-                characterInstance.enforceOSkillHardCap(allSkillsBonus);
-            }
-            
             // Refresh tooltip if one is currently shown
             refreshCurrentTooltip();
         });
@@ -710,13 +703,6 @@ function setAllSkillsBonus(value) {
     const allSkillsBonusInput = document.getElementById('allSkillsBonus');
     if (allSkillsBonusInput) {
         allSkillsBonusInput.value = Math.max(0, parseInt(value) || 0);
-        
-        // Enforce 150 hard cap on oSkills when allSkillsBonus is set
-        const characterInstance = getCharacterInstance();
-        if (characterInstance && characterInstance.enforceOSkillHardCap) {
-            const allSkillsBonus = getAllSkillsBonus();
-            characterInstance.enforceOSkillHardCap(allSkillsBonus);
-        }
     }
 }
 

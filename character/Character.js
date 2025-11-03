@@ -440,7 +440,7 @@ export default class Character {
       s.skillId === parseInt(skillIdOrName) || s.skillName === skillIdOrName
     );
     if (!skill) return;
-    
+
     const newPoints = skill.points + amount;
     
     // Apply 150 hard cap on points only (not considering bonus here)
@@ -457,18 +457,6 @@ export default class Character {
     } else {
       window.dispatchEvent(new CustomEvent('oskillsUpdated'));
     }
-  }
-  
-  /**
-   * Enforce 150 hard cap on all oSkills based on current allSkillsBonus
-   * Note: Points are not reduced - the cap only applies to effective level (points + bonus).
-   * This function is kept for backward compatibility but no longer modifies points.
-   * @param {number} allSkillsBonus - Current "+# to All Skills" bonus value
-   */
-  enforceOSkillHardCap(allSkillsBonus = 0) {
-    // Points are not reduced - effective level capping is handled in calculations
-    // Points can be up to 150, and bonus is applied on top
-    // The effective level will be capped at 150 when calculated in tooltips/formulas
   }
 
   /**
@@ -592,7 +580,7 @@ export default class Character {
       // Parse stat key and value
       const match = cleanedLine.match(/^\s*(\w+)\s*=\s*(\d+(?:\.\d+)?)\s*$/);
       if (!match) {
-        errors.push(`Line ${i + 1}: Invalid format. Expected: statKey=value (e.g., strength=30)`);
+        errors.push(`Line ${i + 1}: Invalid format. Expected: statKey=value (e.g., {{strength}}=30)`);
         continue;
       }
       

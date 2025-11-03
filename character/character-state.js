@@ -1060,6 +1060,7 @@ export function getOSkillPoints(skillName) {
 export function addOSkill(skillId, displayName, skillName, image, className, hasDetails = false, description = null, skillEffect = null) {
   if (characterInstance) {
     characterInstance.addOSkill(skillId, displayName, skillName, image, className, hasDetails, description, skillEffect);
+    autoAddStatsToInput(skillId)
   } else {
     console.error('[OSkills] No character instance available!');
   }
@@ -1085,7 +1086,6 @@ export function changeOSkillPoints(skillName, amount) {
     // Get current allSkillsBonus for hard cap enforcement
     const allSkillsBonusInput = document.getElementById('allSkillsBonus');
     const allSkillsBonus = allSkillsBonusInput ? Math.max(0, parseInt(allSkillsBonusInput.value) || 0) : 0;
-    
     characterInstance.changeOSkillPoints(skillName, amount, allSkillsBonus);
   }
 }
@@ -1241,7 +1241,7 @@ async function autoAddStatsToInput(skillId) {
   // Get all formulas for this skill
   const formulas = await getSkillFormulas(skillId);
   if (formulas.length === 0) return;
-  
+
   // Import the extractStatReferences function
   const { extractStatReferences } = await import('../skills/formula-evaluator.js');
   
