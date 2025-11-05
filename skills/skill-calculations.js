@@ -14,7 +14,7 @@ import { getCurrentVersionId } from '../version-config.js';
  */
 const MAX_LEVEL_MODIFIERS = [
   {
-    sourceSkillName: 'specialization', // Specialization
+    sourceSkillName: 'specialization',
     type: 'affected_by_specialization',
     pointsDivisor: 2, // +1 max level for every 2 points
     description: 'Increases max level of all Active Skills by 1 for each 2 points',
@@ -27,14 +27,13 @@ const MAX_LEVEL_MODIFIERS = [
     }
   },
   {
-    sourceSkillName: null, // Barkskin doesn't need a source skill
+    sourceSkillName: null,
     type: 'self_character_level',
-    targetSkillName: 'barkskin', // itself
+    targetSkillName: 'barkskin',
     characterLevelDivisor: 5, // +1 max level for every 5 character levels
     description: 'Increases its own max level by 1 for every 5 character levels',
     startLevel: 10,
     calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = Character.DEFAULT_LEVEL) {
-      // Only affects itself, based on character level only
       if (targetSkillData.skill_name === this.targetSkillName) {
         // BUG: i think that this skill is bugged in game since the scaling starts counting from level 1
         // and not 10. Should use the one below, when the mod fixes it
@@ -50,9 +49,9 @@ const MAX_LEVEL_MODIFIERS = [
     }
   },
   {
-    sourceSkillName: 'noxious_mastery', // Noxious Mastery
+    sourceSkillName: 'noxious_mastery',
     type: 'affects_specific_skill',
-    targetSkillName: 'curare', // Curare
+    targetSkillName: 'curare',
     pointsDivisor: 2, // +1 max level for each 2 points
     description: 'Increases Curare max level by 1 for each 2 points',
     calculateBonus: function(sourceSkillLevel, targetSkillData) {
@@ -64,14 +63,13 @@ const MAX_LEVEL_MODIFIERS = [
     }
   },
   {
-    sourceSkillName: null, // Sanctity doesn't need a source skill
+    sourceSkillName: null,
     type: 'self_character_level',
-    targetSkillName: 'sanctity', // itself
+    targetSkillName: 'sanctity',
     characterLevelDivisor: 5, // +1 max level for every 5 character levels
-    maxBonus: 5, // Maximum of 5 bonus levels
+    maxBonus: 5,
     description: 'Increases its own max level by 1 for every 5 character levels (max +5)',
     calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = Character.DEFAULT_LEVEL) {
-      // Only affects itself, based on character level only
       if (targetSkillData.skill_name === this.targetSkillName) {
         const bonus = Math.floor(characterLevel / this.characterLevelDivisor);
         return Math.min(bonus, this.maxBonus);
@@ -80,14 +78,13 @@ const MAX_LEVEL_MODIFIERS = [
     }
   },
   {
-    sourceSkillName: null, // Consecration doesn't need a source skill
+    sourceSkillName: null,
     type: 'self_character_level',
-    targetSkillName: 'consecration', // itself
+    targetSkillName: 'consecration',
     characterLevelDivisor: 5, // +1 max level for every 5 character levels
-    maxBonus: 5, // Maximum of 5 bonus levels
+    maxBonus: 5,
     description: 'Increases its own max level by 1 for every 5 character levels (max +5)',
     calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = Character.DEFAULT_LEVEL) {
-      // Only affects itself, based on character level only
       if (targetSkillData.skill_name === this.targetSkillName) {
         const bonus = Math.floor(characterLevel / this.characterLevelDivisor);
         return Math.min(bonus, this.maxBonus);
@@ -96,14 +93,13 @@ const MAX_LEVEL_MODIFIERS = [
     }
   },
   {
-    sourceSkillName: null, // Holy Fire doesn't need a source skill
+    sourceSkillName: null,
     type: 'self_character_level',
-    targetSkillName: 'holy_fire', // itself
+    targetSkillName: 'holy_fire',
     characterLevelDivisor: 2, // +1 max level for every 2 character levels
-    maxBonus: 25, // Maximum of 25 bonus levels
+    maxBonus: 25,
     description: 'Increases its own max level by 1 for every 2 character levels (max +25)',
     calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = Character.DEFAULT_LEVEL) {
-      // Only affects itself, based on character level only
       if (targetSkillData.skill_name === this.targetSkillName) {
         const bonus = Math.floor(characterLevel / this.characterLevelDivisor);
         return Math.min(bonus, this.maxBonus);
@@ -112,31 +108,29 @@ const MAX_LEVEL_MODIFIERS = [
     }
   },
   {
-    sourceSkillName: 'elemental_command', // Elemental Command needs at least 1 point to activate
+    sourceSkillName: 'elemental_command',
     type: 'affects_multiple_skills_by_character_level',
-    targetSkillNames: ['trinity_arrow', 'barrage'], // Trinity Arrow and Barrage
+    targetSkillNames: ['trinity_arrow', 'barrage'],
     characterLevelDivisor: 4, // +1 max level for every 4 character levels
-    maxBonus: 20, // Maximum of 20 bonus levels
-    startLevel: 15, // Skill becomes available at level 15
+    maxBonus: 20,
+    startLevel: 15,
     description: 'When active, increases Trinity Arrow and Barrage max level by 1 for every 4 character levels',
     calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = Character.DEFAULT_LEVEL) {
-      // Only applies if Elemental Command has at least 1 point invested
       if (sourceSkillLevel > 0 && this.targetSkillNames.includes(targetSkillData.skill_name)) {
         const effectiveLevel = Math.max(0, characterLevel - this.startLevel);
-        return Math.min(Math.floor(effectiveLevel / this.characterLevelDivisor), this.maxBonus);;
+        return Math.min(Math.floor(effectiveLevel / this.characterLevelDivisor), this.maxBonus);
       }
       return 0;
     }
   },
   {
-    sourceSkillName: null, // Spiritual Alignment doesn't need a source skill
+    sourceSkillName: null,
     type: 'self_character_level',
-    targetSkillName: 'spiritual_alignment', // itself
+    targetSkillName: 'spiritual_alignment',
     characterLevelDivisor: 4, // +1 max level for every 4 character levels
     startLevel: 11, // Skill becomes available at level 15
     description: 'Increases its own max level by 1 for every 4 character levels (starting from level 15)',
     calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = Character.DEFAULT_LEVEL) {
-      // Only affects itself, based on character level only
       if (targetSkillData.skill_name === this.targetSkillName) {
         const effectiveLevel = Math.max(0, characterLevel - this.startLevel);
         return Math.floor(effectiveLevel / this.characterLevelDivisor);
@@ -145,14 +139,13 @@ const MAX_LEVEL_MODIFIERS = [
     }
   },
   {
-    sourceSkillName: null, // Lioness doesn't need a source skill
+    sourceSkillName: null,
     type: 'self_tab_points',
-    targetSkillName: 'lioness', // itself
+    targetSkillName: 'lioness',
     tabSkills: ['fend', 'great_hunt', 'hunters_prowess', 'hyena_strike', 'pounce', 'takedown'], // All Spear tab skills except Lioness
     pointsDivisor: 3, // +1 max level for every 3 points in Spear tab
     description: 'Increases its own max level by 1 for every 3 points spent on other skills in Spear tab',
     calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = CHARACTER_CONFIG.DEFAULT_LEVEL, skillLevels = {}) {
-      // Only affects Lioness itself
       if (targetSkillData.skill_name === this.targetSkillName) {
         // Count total points in Spear tab (excluding Lioness)
         let totalTabPoints = 0;
@@ -165,21 +158,32 @@ const MAX_LEVEL_MODIFIERS = [
     }
   },
   {
-    sourceSkillName: 'galvanism', // Galvanism needs at least 1 point to activate
+    sourceSkillName: 'galvanism',
     type: 'affects_specific_skill_by_character_level',
-    targetSkillName: 'iron_spiral', // Iron Spiral
-    characterLevelThreshold: 90, // Start counting above level 90
+    targetSkillName: 'iron_spiral',
+    characterLevelThreshold: 90,
     characterLevelDivisor: 5, // +2 max levels for every 5 character levels above 90
     bonusPerIncrement: 2, // +2 max levels per increment
     description: 'When active, increases Iron Spiral max level by 2 for every 5 character levels above 90',
     calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = Character.DEFAULT_LEVEL) {
-      // Only applies if Galvanism has at least 1 point invested
       if (sourceSkillLevel > 0 && targetSkillData.skill_name === this.targetSkillName) {
         if (characterLevel > this.characterLevelThreshold) {
           const effectiveLevel = characterLevel - this.characterLevelThreshold;
           const increments = Math.floor(effectiveLevel / this.characterLevelDivisor);
           return increments * this.bonusPerIncrement;
         }
+      }
+      return 0;
+    }
+  },
+  {
+    sourceSkillName: 'soulchain', // Elemental Command needs at least 1 point to activate
+    type: 'affects_multiple_skills',
+    targetSkillNames: ['fireheart_totem', 'stormeye_totem', 'frostclaw_totem', 'dark_gathering'],
+    description: 'When active, increases Soulchained totems and Dark Gathering max level by 1 for each base level',
+    calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = Character.DEFAULT_LEVEL) {
+      if (sourceSkillLevel > 0 && this.targetSkillNames.includes(targetSkillData.skill_name)) {
+        return sourceSkillLevel;
       }
       return 0;
     }
