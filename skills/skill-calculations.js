@@ -188,6 +188,21 @@ const MAX_LEVEL_MODIFIERS = [
       return 0;
     }
   },
+  {
+    sourceSkillName: null,
+    type: 'self_character_level',
+    targetSkillName: 'aptitude',
+    characterLevelDivisor: 5, // +1 max level for every 5 character levels
+    startLevel: 115, // Skill becomes available at level 120
+    description: 'Increases its own max level by 1 for every 5 character levels (starting from level 120)',
+    calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = Character.DEFAULT_LEVEL) {
+      if (targetSkillData.skill_name === this.targetSkillName) {
+        const effectiveLevel = Math.max(0, characterLevel - this.startLevel);
+        return Math.floor(effectiveLevel / this.characterLevelDivisor);
+      }
+      return 0;
+    }
+  },
 ];
 
 /**

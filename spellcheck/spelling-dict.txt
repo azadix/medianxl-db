@@ -1483,3 +1483,6 @@ totem
 totemancy
 totems
 voodoo
+effective
+experience
+rune

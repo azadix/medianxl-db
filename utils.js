@@ -6,8 +6,8 @@ export const MISSING_IMAGE_NAME = "icons-shared_missing.png";
 
 const SKILL_STYLE = "has-text-success";
 const FORMULA_STYLE = "has-text-warning";
-const CONSTANTS_STYLE = "has-text-primary";
-const DEFAULT_STYLE = "has-text-white";
+const DEFAULT_STYLE = "has-text-primary";
+const CONSTANTS_STYLE = "has-text-white";
 const UNKNOWN_STYLE = "has-text-danger";
 
 /**
