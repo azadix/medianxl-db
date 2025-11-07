@@ -6,7 +6,6 @@
 }
 
 .skill-image {
-  border: 1px solid rgb(122, 122, 122);
   scale: 3;
   object-fit: contain;
 }

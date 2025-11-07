@@ -342,7 +342,7 @@ async function displaySkillDetail(skillId) {
             const expandedEffect = await expandPlaceholdersWithScaling(SkillDB.db, skillInfo.dbId, level, skillInfo.skillEffect, skillInfo.id, defaultCharacterState);
             const lines = expandedEffect.split('\n');
             
-            html += `<p class="is-size-5 mt-4"><strong>Skill Effect:</strong></p>`;
+            html += `<p class="is-size-5 mt-4"><strong>Skill Effect (Level 1):</strong></p>`;
             lines.forEach(line => {
                 if (line.trim()) {
                     html += `<div>${line}</div>`;
@@ -399,8 +399,13 @@ async function displaySkillDetail(skillId) {
             if (canAddPoints) {
                 maxLevelHtml += `<p>Base: ${baseMaxLevel}`;
                 if (affectedBySpecialization) {
-                    maxLevelHtml += ` (can be enhanced)`;
+                    maxLevelHtml += ` (affected by Specialization)`;
                 }
+
+                if (baseMaxLevel == 0) {
+                    maxLevelHtml += ` (increased by other sources)`;
+                }
+
                 maxLevelHtml += `</p>`;
             } else {
                 maxLevelHtml += `<p>Innate skill (no points can be added)</p>`;
