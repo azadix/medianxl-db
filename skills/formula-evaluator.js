@@ -10,6 +10,10 @@
  * - Example: If lvl=10, "lvl/3" = 3 but "1/3*lvl" = 0
  */
 
+const lvlBreakpoints = [[0, 1], [1, 8], [8, 16], [16, 22], [22, 28], [28, null]];
+const lengthLvlBreakpoints = [[0, 1], [1, 8], [8, 16], [16, null]];
+const framesPerSecond = 25;
+
 export class FormulaEvaluator {
   constructor(characterState = null) {
     // Use registries instead of hardcoded maps
@@ -65,11 +69,11 @@ export class FormulaEvaluator {
     this.registerFunction({
       keyword: 'frames',
       function: (frames) => {
-        // Convert frames to seconds (25 frames per second) with 0.01 rounding
-        return Math.floor((frames / 25) * 100) / 100;
+        // Convert frames to seconds with 0.01 rounding
+        return Math.floor((frames / framesPerSecond) * 100) / 100;
       },
-      description: 'Converts frame count to seconds (25 frames = 1 second) with 0.01 rounding',
-      example: 'frames(25) == 1.0, frames(1) == 0.04'
+      description: `Converts frame count to seconds (${framesPerSecond} frames = 1 second) with 0.01 rounding`,
+      example: `frames(${framesPerSecond}) == 1.0, frames(1) == ${1/framesPerSecond}`
     });
     this.registerFunction({
       keyword: 'range',
