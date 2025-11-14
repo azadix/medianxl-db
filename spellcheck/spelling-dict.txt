@@ -1486,5 +1486,7 @@ voodoo
 effective
 experience
 rune
-leastresurrected
+last
+resurrected
+tormenting
 you've
