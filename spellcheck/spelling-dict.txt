@@ -1,4 +1,3 @@
-# Ignore dictionary - words that should be skipped during spelling checks
 # Add one word per line (case-insensitive)
 
 abbey
