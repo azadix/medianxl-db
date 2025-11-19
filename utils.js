@@ -421,7 +421,7 @@ export async function expandPlaceholdersWithScaling(db, skillId, level, descript
                             const calculatedMana = calculateManaCost(mana, lvlmana, manashift, lvl);
                             
                             // Format as single value
-                            const calculatedValueHtml = `<span class="${DEFAULT_STYLE}">${calculatedMana}</span>`;
+                            const calculatedValueHtml = `<span class="${FORMULA_STYLE}">${calculatedMana}</span>`;
                             
                             // Replace all value placeholders with the calculated value
                             output = (format || '{name}: {value}')
