@@ -28,37 +28,24 @@ export function initializeTooltip() {
     document.addEventListener('mouseout', handleMouseOut);
     document.addEventListener('mousemove', handleMouseMove);
     
-    // Track Ctrl key for formula display (localhost only)
+    // Track Ctrl key for formula display
     // Using Ctrl to avoid conflicts with browser shortcuts (Alt+click, Alt+Tab, etc.)
-    if (isLocalhost()) {
-        document.addEventListener('keydown', (e) => {
-            // Track Ctrl key (either left or right)
-            if (e.key === 'Control' || e.ctrlKey) {
-                if (!ctrlKeyPressed) {
-                    ctrlKeyPressed = true;
-                    // Refresh tooltip if showing
-                    if (currentHoveredSkill && tooltipElement && tooltipElement.style.display !== 'none') {
-                        handleSkillPointsChanged();
-                    }
+    document.addEventListener('keydown', (e) => {
+        // Track Ctrl key (either left or right)
+        if (e.key === 'Control' || e.ctrlKey) {
+            if (!ctrlKeyPressed) {
+                ctrlKeyPressed = true;
+                // Refresh tooltip if showing
+                if (currentHoveredSkill && tooltipElement && tooltipElement.style.display !== 'none') {
+                    handleSkillPointsChanged();
                 }
             }
-        });
-        
-        document.addEventListener('keyup', (e) => {
-            // Track Ctrl key release
-            if (e.key === 'Control' || (!e.ctrlKey && ctrlKeyPressed)) {
-                if (ctrlKeyPressed) {
-                    ctrlKeyPressed = false;
-                    // Refresh tooltip if showing
-                    if (currentHoveredSkill && tooltipElement && tooltipElement.style.display !== 'none') {
-                        handleSkillPointsChanged();
-                    }
-                }
-            }
-        });
-        
-        // Handle window blur (when Alt+Tab switches windows)
-        window.addEventListener('blur', () => {
+        }
+    });
+    
+    document.addEventListener('keyup', (e) => {
+        // Track Ctrl key release
+        if (e.key === 'Control' || (!e.ctrlKey && ctrlKeyPressed)) {
             if (ctrlKeyPressed) {
                 ctrlKeyPressed = false;
                 // Refresh tooltip if showing
@@ -66,8 +53,19 @@ export function initializeTooltip() {
                     handleSkillPointsChanged();
                 }
             }
-        });
-    }
+        }
+    });
+    
+    // Handle window blur (when Alt+Tab switches windows)
+    window.addEventListener('blur', () => {
+        if (ctrlKeyPressed) {
+            ctrlKeyPressed = false;
+            // Refresh tooltip if showing
+            if (currentHoveredSkill && tooltipElement && tooltipElement.style.display !== 'none') {
+                handleSkillPointsChanged();
+            }
+        }
+    });
     
     // Listen for skill point changes to update tooltip if it's showing
     window.addEventListener('skillPointsChanged', handleSkillPointsChanged);
@@ -91,10 +89,8 @@ async function handleMouseOver(e) {
     const skillId = skillCard.dataset.skillId;
     if (!skillId) return;
     
-    // Update Ctrl key state from mouse event (localhost only)
-    if (isLocalhost()) {
-        ctrlKeyPressed = e.ctrlKey;
-    }
+    // Update Ctrl key state from mouse event
+    ctrlKeyPressed = e.ctrlKey;
     
     // Clear any pending hide timeout
     if (tooltipHideTimeout) {
@@ -131,17 +127,15 @@ function handleMouseMove(e) {
     if (tooltipElement && tooltipElement.style.display !== 'none') {
         updateTooltipPosition(e.clientX, e.clientY);
         
-        // Check if Ctrl key state changed and refresh tooltip if needed (localhost only)
-        if (isLocalhost()) {
-            const wasCtrlPressed = ctrlKeyPressed;
-            const isCtrlPressedNow = e.ctrlKey;
-            
-            // If Ctrl state changed, refresh the tooltip
-            if (wasCtrlPressed !== isCtrlPressedNow) {
-                ctrlKeyPressed = isCtrlPressedNow;
-                if (currentHoveredSkill) {
-                    handleSkillPointsChanged();
-                }
+        // Check if Ctrl key state changed and refresh tooltip if needed
+        const wasCtrlPressed = ctrlKeyPressed;
+        const isCtrlPressedNow = e.ctrlKey;
+        
+        // If Ctrl state changed, refresh the tooltip
+        if (wasCtrlPressed !== isCtrlPressedNow) {
+            ctrlKeyPressed = isCtrlPressedNow;
+            if (currentHoveredSkill) {
+                handleSkillPointsChanged();
             }
         }
     }
@@ -636,8 +630,8 @@ async function buildTooltipContent(skillData, level, db, warningMessage = '', is
         }
     }
     
-    // Check if Ctrl key is pressed (for formula display, localhost only)
-    const showFormulas = isLocalhost() && ctrlKeyPressed;
+    // Check if Ctrl key is pressed (for formula display)
+    const showFormulas = ctrlKeyPressed;
     
     // Description with scaling
     // Render description and skill effect
@@ -740,7 +734,5 @@ export function destroyTooltip() {
     window.removeEventListener('oskillsUpdated', handleOSkillsUpdated);
     
     // Reset Ctrl key state
-    if (isLocalhost()) {
-        ctrlKeyPressed = false;
-    }
+    ctrlKeyPressed = false;
 }

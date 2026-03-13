@@ -1,7 +1,9 @@
 # MedianXL Skills Database Project
 
 ## Project Overview
-This is a web-based skills database editor and interactive skill tree calculator for MedianXL (Diablo 2 mod). It allows users to manage skills, stats, classes, tags, and skill scaling data through a SQLite database interface, while also providing a fully functional skill tree with character build planning capabilities.
+This is a web-based skills database, editor and interactive skill tree calculator/planner for MedianXL (Diablo 2 mod).
+Editor allows users to manage skill parameters like classes, tags, max level and scaling data through a SQLite database interface.
+Planner provides a fully functional skill tree with character build planning capabilities for different versions of modification (current version: 2.12).
 
 ## Getting Started
 
@@ -10,141 +12,57 @@ This is a web-based skills database editor and interactive skill tree calculator
    - Open `index.html` for skills listing
    - Open `planner.html` for interactive skill tree and build planning
    - Open `edit.html` for database editing (only enabled on localhost)
+   - Open `status.html` for current progress display
 
 ### Project Structure
-The project is organized into logical folders for better maintainability:
-
 ```
 medianxl-db/
 ├── index.html              # Skills listing page
 ├── edit.html               # Database editor interface
 ├── planner.html            # Interactive skill tree
+├── status.html             # Progress status page
 ├── script.js               # Skills viewer functionality
 ├── utils.js                # Utility functions
 ├── style.css               # Main styling
-├── db/                     # Database files
-│   └── 2.11.sqlite        # SQLite database (version 2.11)
+├── skills.sqlite     	    # SQLite database
 ├── character/              # Character management
-│   ├── Character.js        # Character class and state management
-│   └── character-state.js  # Character state wrapper functions
-├── skills/                 # Skills system
-│   ├── Skill.js            # Base skill class
-│   ├── Coven.js            # Coven skill class
-│   ├── Mastery.js          # Mastery skill class
-│   ├── Proficiency.js      # Proficiency skill class
-│   ├── Ultimate.js         # Ultimate skill class
-│   ├── Innate.js           # Innate skill class
-│   ├── OSkill.js           # oSkill class
-│   └── skill-calculations.js # Dynamic skill calculations
+├── skills/                 # Skills management/classes
 ├── edit/                   # Edit panel modules
 ├── tree/                   # Skill tree modules
 ├── py/                     # Python utilities
+├── spellcheck/             # Python spellchecker
 └── icons/                  # Skill icons and portraits
 ```
 
-### File Details
-
-#### Core Files
-- **`index.html`** - Skills listing page with DataTable integration
-- **`edit.html`** - Main database editor interface
-- **`planner.html`** - Interactive skills tree with character build planning
-- **`script.js`** - Skills viewer with detail display
-- **`utils.js`** - Utility functions for placeholder expansion and icon handling
-- **`style.css`** - Main styling
-- **`db/%VERSION%.sqlite`** - SQLite database containing all skills data
-
-#### Character Management (`character/` folder)
-- **`Character.js`** - Character class with instance-based state management
-- **`character-state.js`** - Character state wrapper functions and validation logic
-
-#### Skills System (`skills/` folder)
-- **`Skill.js`** - Base skill class with common functionality
-- **`Coven.js`** - Coven skill class with restriction checking
-- **`Mastery.js`** - Mastery skill class with restriction checking
-- **`Proficiency.js`** - Proficiency skill class with restriction checking
-- **`Ultimate.js`** - Ultimate skill class with restriction checking
-- **`Innate.js`** - Innate skill class (skills that cannot have points added)
-- **`OSkill.js`** - oSkill class for skills from other classes
-- **`skill-calculations.js`** - Dynamic skill calculations (max levels, modifiers)
-
-
-#### Edit Panel (`edit/` folder)
-- **`edit-core.js`** - Core database functionality and initialization
-- **`edit-skills.js`** - Skills management (CRUD operations)
-- **`edit-tags.js`** - Tags management
-- **`edit-classes.js`** - Classes and tabs management
-- **`edit-stats.js`** - Stats management
-- **`edit-scaling.js`** - Skill scaling data management
-- **`edit-max-levels.js`** - Maximum levels management
-- **`edit-prerequisites.js`** - Skill prerequisites management
-- **`edit-autocomplete.js`** - Advanced autocomplete functionality
-- **`edit-validation.js`** - Template syntax validation
-- **`DropdownList.js`** - Custom dropdown component
-- **`dropdown-style.css`** - Styling for dropdown components
-
-#### Tree Viewer (`tree/` folder)
-- **`tree-core.js`** - Core tree functionality, state management, and skill point allocation
-- **`tree-data.js`** - Data loading from SQLite
-- **`tree-render.js`** - Tree rendering and UI management
-- **`tree-card-renderer.js`** - Skill card rendering with allocation controls
-- **`tree-arrows.js`** - Prerequisite arrows rendering
-- **`tree-tooltip.js`** - Interactive skill tooltips with level-based scaling
-- **`tree-styles.css`** - Tree-specific styling
-- **`ToastManager.js`** - Toast notification system
-
-#### Python Scripts (`py/` folder)
+### Python Scripts (`py/` folder)
 - **`validate_skill_placeholders.py`** - Validates skill description placeholders against the database
 - **`extract_placeholder_skills.py`** - Lists skills that use placeholders in their descriptions
 - **`extract_skills_without_placeholders.py`** - Lists skills missing any placeholder usage
 - **`extract_non_placeholder_lines.py`** - Extracts plain text (non-placeholder) lines from descriptions
-- **`skill_status_analyzer.py`** - Analyzes the completion status of skill data from missingskills.md
+- **`db_to_json.py`** - Extracts database to json files
+- **`calculate_mana_params.py`** - Calculates 3 mana cost params based on level:mana_cost input
 
 ### Database Schema
 ```sql
 -- Core tables
 classes (id, name, image_prefix) -- image_prefix stores just the prefix (ama, bar, shared, etc.)
 classTabs (id, class_id, tab_index, name)
-skills (id, name, display_name, class_id, tab_index, row, col, image, restriction, description, skill_effect)
+skills (id, name, display_name, class_id, tab_index, row, col, image, restriction, description, skill_effect, version_id)
 skilltags (id, name)
 skill_skilltags (skill_id, tag_id) -- Many-to-many relationship
+versions (id, major, minor, name, is_active)
 
 -- Stats and scaling system
 stats (id, key, name, description, format)
-skill_scaling (skill_id, level, stat_id, occurrence_index, value0, value1, value2, value3)
-skill_scaling_constants (skill_id, stat_id, occurrence_index, value0, value1, value2, value3, value0_constant, value1_constant, value2_constant, value3_constant)
-skill_max_levels (skill_id, base_max_level, affected_by_specialization, can_add_points)
-skill_prerequisites (id, skill_id, requirement_type, requirement_value, target_skill_id, target_tab_id)
+skill_scaling (skill_id, level, stat_id, occurrence_index, value0, value1, value2, value3, version_id)
+skill_scaling_constants (skill_id, stat_id, occurrence_index, value0, value1, value2, value3, value0_constant, value1_constant, value2_constant, value3_constant, version_id)
+skill_max_levels (skill_id, base_max_level, affected_by_specialization, can_add_points, version_id)
+skill_prerequisites (id, skill_id, requirement_type, requirement_value, target_skill_id, target_tab_id, version_id)
 ```
 
-## Major Features
+## Skill Editor Features
 
-### 1. Interactive Skill Tree & Build Planner
-**Location**: `tree/` folder
-
-**Features**:
-- **Character build planning**: Allocate and remove skill points with +/- buttons
-- **Real-time validation**: Prerequisite checking (character level, skill level, tree points)
-- **Dynamic max levels**: Skills affected by Specialization and other modifiers
-- **Skill point pool**: Tracks base points, quest rewards, and remaining points
-- **oSkills tab**: Add and manage oskills (skills from other classes)
-- **Interactive tooltips**: Hover over skills to see descriptions with current level values
-- **Visual prerequisites**: Arrow connections showing skill dependencies
-- **State persistence**: Builds saved to localStorage
-- **Quest tracking**: Den of Evil, Radament, Izual, and Inquisitor of the Triune
-
-**Character Management**:
-- Quest completion toggles for bonus skill points
-- Class-specific trees with tab navigation
-- Import/export build functionality
-
-### 2. Skills Viewer
-**Location**: `script.js`
-
-**Features**:
-- **Level selector**: Dropdown below description for easy access
-- **Placeholder expansion**: Automatically displays scaled values at selected level
-
-### 3. Advanced Autocomplete System
+### 1. Autocomplete System
 **Location**: `edit/edit-autocomplete.js`
 
 **Features**:
@@ -162,7 +80,7 @@ skill_prerequisites (id, skill_id, requirement_type, requirement_value, target_s
 - Name contains query: 100+ points
 - Fuzzy match: 50+ points
 
-### 4. Template Validation System
+### 2. Template Validation System
 **Location**: `edit/edit-validation.js`
 
 **Features**:
@@ -177,76 +95,49 @@ skill_prerequisites (id, skill_id, requirement_type, requirement_value, target_s
 - No unclosed placeholders
 - Warns about single braces that look like typos
 
-### 5. Enhanced Database Editor
-**Location**: `edit/` folder
-
-**Features**:
-- **Modular architecture**: Separated into focused JavaScript modules
-- **DropdownList integration**: Searchable dropdowns throughout the interface
-- **Scroll-to-top**: Edit buttons scroll to top of page for better UX
-- **Dynamic form fields**: Fields show/hide based on context
-- **Multiple prerequisites**: Support for multiple requirement types per skill
-- **Auto-loading**: Automatically loads data when selections change
-- **Level indicators**: Visual tags showing existing scaling levels
-- **Template validation**: Real-time syntax checking
-- **Multi-instance scaling**: Support for multiple instances of the same stat with separate scaling values
-- **Ordered stat display**: Stats appear in scaling section in the order they appear in skill descriptions
-
-### 6. Multi-Instance Scaling System
+### 3. Multi-Instance Scaling System
 **Location**: `edit/edit-scaling.js`, `utils.js`, `skills/Skill.js`
-
-**Problem Solved**:
-- Previously, skills with multiple instances of the same stat (e.g., three `{{damage}}` lines) would share the same scaling values
-- Stats appeared alphabetically in the scaling editor instead of in description order
-
-**Solution**:
-- **Occurrence Tracking**: Each stat instance gets a unique `occurrence_index` (0, 1, 2, etc.)
-- **Separate Scaling Values**: Each instance can have completely different scaling values
-- **Visual Indicators**: Duplicate stats display as "Damage #2", "Damage #3" etc.
-- **Order Preservation**: Stats appear in scaling section in the exact order they appear in skill descriptions
-
-**Database Schema Changes**:
-- Added `occurrence_index` column to `skill_scaling` and `skill_scaling_constants` tables
-- Updated PRIMARY KEY to include `occurrence_index` for proper uniqueness
-- Default value of 0 maintains backward compatibility
 
 **Implementation Details**:
 - **Stat Order Extraction**: Parses `skill_effect` to find stats in appearance order with occurrence tracking
 - **Placeholder Expansion**: Each `{{stat}}` placeholder gets its correct scaling values based on occurrence index
 - **Constants Support**: Constants can be set for specific occurrences of duplicate stats
-- **Automatic Migration**: Existing databases are automatically migrated to support the new schema
+- **Occurrence Tracking**: Each stat instance gets a unique `occurrence_index` (0, 1, 2, etc.)
+- **Separate Scaling Values**: Each instance can have completely different scaling values
+- **Visual Indicators**: Duplicate stats display as "Damage #2", "Damage #3" etc.
+- **Order Preservation**: Stats appear in scaling section in the exact order they appear in skill descriptions
 
 **Example Usage**:
 ```
 Skill Effect:
-Deals {{damage}} physical damage
-Also deals {{damage}} fire damage  
-And {{damage}} cold damage
+{{range}}
+Some text/Subskill
+{{range}}
 
 Scaling Section will show:
-- Damage (first instance)
-- Damage #2 (second instance) 
-- Damage #3 (third instance)
+- Range: X yards (first instance)
+- Some text/Subskill
+- Range: X yards (second instance)
 
 Each can have completely different scaling values.
 ```
 
-### 7. Tag System
+### 4. Tag System
 **Location**: `utils.js`
 
 **Tag Groups**:
-- **Skill Category**: 16 tags
-- **Damage**: 9 tags
-- **Summon**: 3 tags
-- **Teleport**: 3 tags
-- **Custom**: 6 tags
+- Skill Category
+- Damage
+- Summon
+- Teleport
+- Custom
 
 **Features**:
 - Centralized tag definitions shared across the application
 - Used for filtering, tooltips, and skill categorization
 - Displayed in tree tooltips for quick skill type identification
 
-### 7. Character State Management
+### 5. Character State Management
 **Location**: `Character.js`, `character-state.js`
 
 **Architecture**:
@@ -275,20 +166,21 @@ Each can have completely different scaling values.
 - **Ultimate**: Only one Ultimate skill per class allowed
 - Tooltips display restriction messages when attempting to allocate beyond limits
 
-### 9. Dynamic Skill Calculations
+### 6. Dynamic Skill Calculations
 **Location**: `skill-calculations.js`
 
-**Max Level Modifiers**:
+**Example Max Level Modifiers**:
 - **Specialization**: +1 max level per 2 points for active skills
 - **Barkskin**: +1 max level per 5 character levels (self-scaling)
 - **Noxious Mastery**: +1 Curare max level per 2 points
+- **Lioness**: +1 max level per 3 points in Spear tree (self-scaling based on points spent)
 
 **Devotion Checking**:
-- Validates Melee Devotion restrictions
+- Validates Devotion restrictions (Paladin, Amazon)
 - Prevents allocation of groups of skills when devotion is active
 - Real-time checking as skills are allocated
 
-### 10. Python Data Validation Suite
+### 7. Python Data Validation Suite
 **Location**: `py/` folder
 
 **Scripts**:
@@ -299,7 +191,7 @@ Each can have completely different scaling values.
    - Outputs error and summary reports
 
 2. **`extract_placeholder_skills.py`**
-   - Extracts skills using `{{placeholder}}` in descriptions/restrictions
+   - Extracts skills with `{{stat}}` or `[[skill]]` in descriptions/restrictions
    - Counts placeholder and stat usages
    - Groups output by class and category
 
@@ -311,10 +203,15 @@ Each can have completely different scaling values.
    - Extracts all non-placeholder description/restriction text lines
    - Useful for finding standard phrases, warnings, or static lines
 
-5. **`validate_effect_csv.py`**
-   - Checks `effect.csv` for placeholder/scaling correctness
-   - Validates icon, formula, and parameter fields
-   - Finds references to missing or deprecated stat keys
+5. **`db_to_json.py`**
+   - Extracts all data from database and saves it as json format
+
+6. **`calculate_mana_params.py`**
+   - Calculates the 3 required parameters for `{{mana_cost}}` stat based on in game level and cost mapping
+   - Requires the data to be passed in one of 2 different ways:
+	- Command line parameter in this format `"[level1: cost1], [level2: cost2], [level3: cost3]"` eg. "[1: 10], [2: 12], [3: 14]"
+	- CSV file with name `mana_cost_input.csv`, columns: 'lvl' and 'cost', columns separated with "," and rows with "\n" 
+   - Output are 3 values per potential solution: "min_mana", "lvl_mana" and "shift"
 
 ## Technical Implementation Details
 
@@ -336,23 +233,15 @@ showTooltip() → getSkillCategoryTags() → buildTooltipContent() → expandPla
 // Skill placeholders reference other skills by their internal name
 ```
 
-### Dynamic Table Generation
-The scaling table dynamically adjusts based on stat formats:
-- Analyzes format strings to count required parameters
-- Shows only needed input fields
-- Disables unused fields with "N/A" placeholder
-- Maintains consistent 4-column layout for button positioning
-
-
 ### Database Integration
 - Uses SQL.js for client-side SQLite operations
 - Supports import/export of database files
 - Real-time validation of stat references
-- Efficient caching of frequently accessed data
 
 ### Dependencies
-- **SQL.js**: Client-side SQLite database
-- **Bulma CSS**: UI framework
-- **DataTables**: Skills listing table
-- **Font Awesome**: Icons for navigation
+- **SQL.js 1.13.0**: Client-side SQLite database
+- **Bulma CSS 1.0.1**: UI framework
+- **jQuery 3.7.1**: DataTables prerequisite
+- **DataTables 2.3.3**: Skills listing table
+- **Font Awesome 6.0.0**: Icons for navigation
 - **Python 3.9+**: For data extraction and validation scripts

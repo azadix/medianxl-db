@@ -16,7 +16,8 @@ const ARROW_EXCLUSIONS = [
     { from: 'Catalyst Trap', to: 'Artifice Mastery' },
     { from: 'Heart of Stone', to: 'Aftermath' },
     { from: 'Blood Magic', to: 'Fire Elementals' },
-    { from: 'Blood Magic', to: 'Crimson Rite' }
+    { from: 'Blood Magic', to: 'Crimson Rite' },
+    { from: 'Pinnacle', to: 'Cognition' }
 ];
 
 // Initialize ToastManager

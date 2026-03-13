@@ -9,7 +9,6 @@ import { ToastManager } from './ToastManager.js';
 import { DropdownList } from '../edit/DropdownList.js';
 import { renderSkillCard, getSkillIcon } from './tree-render.js';
 import { getCurrentVersion, versionToString, setBuildVersionOverride } from '../version-config.js';
-import { isLocalhost } from '../utils.js';
 
 // Global variables
 let skillsList;
@@ -1526,10 +1525,6 @@ function showHelpModal() {
     modal.className = 'modal-card';
     modal.style.cssText = 'min-width: 50%; max-height: 80vh;';
     
-    const formulaHelpText = isLocalhost() 
-        ? '<li><strong>Ctrl + Hover:</strong> Hold Ctrl and hover over a skill to see the raw formula instead of the calculated value (localhost only)</li>'
-        : '';
-    
     modal.innerHTML = `
         <header class="modal-card-head px-4">
             <p class="modal-card-title">Planner Help</p>
@@ -1540,7 +1535,7 @@ function showHelpModal() {
                 <ul>
                     <li><strong>Click:</strong> Add or remove 1 skill point</li>
                     <li><strong>Shift + Click:</strong> Add or remove 25 skill points at once</li>
-                    ${formulaHelpText}
+                    '<li><strong>Ctrl + Hover:</strong> Hold Ctrl and hover over a skill to see the raw formula instead of the calculated value (localhost only)</li>'
                 </ul>
                                 
                 <h4 class="title is-5 mb-3 mt-5">Stat Colors</h4>
