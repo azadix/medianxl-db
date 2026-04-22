@@ -57,6 +57,19 @@ import {
           This skill planner is currently under development. Saved builds might not load properly or may be lost during updates. Please use with caution.
         </div>
       </div>
+
+      <div class="notification mt-4">
+        <div class="has-text-danger mt-2">
+          <div class="has-text-danger has-text-weight-bold">Known issues:</div>
+          <ul>
+            <li>- Many skills are missing descriptions</li>
+            <li>- Quest completion panel is broken and gives incorrect values</li>
+            <li>- Skill damage and most of mana cost formulas are not implemented</li>
+            <li>- War Spirit synergies based on devotion are not filled in</li>
+            <li>- Storm Crows mana cost shows 0 on lvl 1 but should show 1</li>
+          </ul>
+        </div>
+      </div>
     </div>
   </section>
 </template>
