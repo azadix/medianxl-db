@@ -25,6 +25,18 @@ const MAX_CROSS_SKILL_DEPTH = 12;
 function looksLikePlainTextScalingConstant(s) {
     const t = s.trim();
     if (!t) return false;
+    // Avoid treating common formula variables as labels (e.g. "blvl" is a real variable).
+    const lower = t.toLowerCase();
+    if (
+        lower === 'blvl' ||
+        lower === 'slvl' ||
+        lower === 'lvl' ||
+        lower === 'ulvl' ||
+        lower === 'calc' ||
+        /^calc[1-6]$/.test(lower)
+    ) {
+        return false;
+    }
     if (/^[A-Z][a-zA-Z0-9_]*$/.test(t)) return true;
     if (!/\s/.test(t)) {
         // Slash-separated labels without spaces (e.g. "Attack/Kill/Death"); reject if digits (e.g. "lvl/3").
