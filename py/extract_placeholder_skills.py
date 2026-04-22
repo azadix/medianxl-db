@@ -1,154 +1,145 @@
 #!/usr/bin/env python3
 """
-Script to extract skills that contain {{*}} placeholder format in their descriptions
-from the skills.sqlite database.
+Extract skills that contain {{...}} placeholders in description, skill_effect, or restriction
+from tree_data JSON (skills.json).
 """
 
-import sqlite3
+import argparse
 import re
 import sys
-import os
-import argparse
 from pathlib import Path
 
-def extract_skills_with_placeholders(db_path='../skills.sqlite'):
+_PY = Path(__file__).resolve().parent
+if str(_PY) not in sys.path:
+    sys.path.insert(0, str(_PY))
+
+from tree_data_loader import (
+    load_merged_skills,
+    load_stats_json,
+    resolve_data_dir,
+    text_has_placeholder,
+)
+
+
+def extract_skills_with_placeholders(data_dir):
     """
-    Extract skills that contain {{*}} placeholder format in their descriptions.
-    
-    Args:
-        db_path (str): Path to the SQLite database file
-        
     Returns:
-        tuple: (skills_list, all_stat_keys) where skills_list contains skill data and all_stat_keys contains all available stat keys
+        tuple: (skills_list, all_stat_keys)
     """
-    db_full_path = db_path if db_path.startswith('/') or db_path.startswith('../') else f'../{db_path}'
-    
-    if not os.path.exists(db_full_path):
-        print(f"Error: Database file not found: {db_full_path}")
+    data_dir = resolve_data_dir(data_dir)
+    if not data_dir.is_dir():
+        print(f"Error: Data directory not found: {data_dir}")
         return [], []
-    
+
     try:
-        # Connect to the database
-        conn = sqlite3.connect(db_full_path)
-        cursor = conn.cursor()
-        
-        # First, get all stat keys from the stats table
-        cursor.execute("SELECT key FROM stats ORDER BY key")
-        all_stat_keys = [row[0] for row in cursor.fetchall()]
-        
-        # Query to get all skills with descriptions, skill effects, or restrictions that contain {{*}} format
-        query = """
-        SELECT s.id, s.name, s.display_name, s.description, s.skill_effect, s.restriction, c.name as class_name
-        FROM skills s
-        LEFT JOIN classes c ON s.class_id = c.id
-        WHERE ((s.description IS NOT NULL AND s.description != '' AND s.description LIKE '%{{%}}%')
-           OR (s.skill_effect IS NOT NULL AND s.skill_effect != '' AND s.skill_effect LIKE '%{{%}}%')
-           OR (s.restriction IS NOT NULL AND s.restriction != '' AND s.restriction LIKE '%{{%}}%'))
-        ORDER BY c.name, s.display_name
-        """
-        
-        cursor.execute(query)
-        results = cursor.fetchall()
-        
-        conn.close()
-        return results, all_stat_keys
-        
-    except sqlite3.Error as e:
-        print(f"Database error: {e}")
-        return [], []
+        merged = load_merged_skills(data_dir)
     except Exception as e:
         print(f"Error: {e}")
         return [], []
 
+    stats = load_stats_json()
+    all_stat_keys = sorted(str(r.get("key", "")) for r in stats if r.get("key"))
+
+    out = []
+    for row in merged:
+        desc = row["description"] or ""
+        eff = row["skill_effect"] or ""
+        rest = row["restriction"] or ""
+        if not (
+            text_has_placeholder(desc)
+            or text_has_placeholder(eff)
+            or text_has_placeholder(rest)
+        ):
+            continue
+        out.append(
+            (
+                row["numeric_id"],
+                row["name"],
+                row["display_name"],
+                desc,
+                eff,
+                rest,
+                row["class_name"],
+            )
+        )
+    return out, all_stat_keys
+
+
 def analyze_placeholders(description):
-    """
-    Analyze the description to find all placeholder patterns.
-    
-    Args:
-        description (str): The skill description
-        
-    Returns:
-        list: List of found placeholder patterns
-    """
-    # Pattern to match {{...}} placeholders
-    pattern = r'\{\{[^}]+\}\}'
-    matches = re.findall(pattern, description)
-    return matches
+    pattern = r"\{\{[^}]+\}\}"
+    return re.findall(pattern, description)
+
 
 def main():
-    """Main function to run the extraction and display results."""
-    parser = argparse.ArgumentParser(description='Extract skills that contain {{*}} placeholder format in their descriptions')
-    parser.add_argument('db_path', nargs='?', default='../skills.sqlite', help='Path to the SQLite database file (default: ../skills.sqlite)')
-    
+    parser = argparse.ArgumentParser(
+        description="Extract skills that contain {{...}} placeholder format"
+    )
+    parser.add_argument(
+        "data_dir",
+        nargs="?",
+        default=None,
+        help="tree_data version folder (required), e.g. public/tree_data/2_12",
+    )
+
     args = parser.parse_args()
-    
-    print("Extracting skills with {{*}} placeholder format...")
+
+    print("Extracting skills with {{...}} placeholder format...")
     print("=" * 60)
-    
-    # Extract skills with placeholders and get all stat keys
-    skills, all_stat_keys = extract_skills_with_placeholders(args.db_path)
-    
+
+    skills, all_stat_keys = extract_skills_with_placeholders(args.data_dir)
+
     if not skills:
-        print("No skills found with {{*}} placeholder format in descriptions.")
+        print("No skills found with {{...}} placeholder format in descriptions.")
         return
-    
+
     print(f"Found {len(skills)} skills with placeholder format:\n")
-    
-    # Group by class for better organization
+
     current_class = None
-    placeholder_stats = {}
-    
-    # Initialize all stat keys with 0 usage
-    for stat_key in all_stat_keys:
-        placeholder_stats[stat_key] = 0
-    
+    placeholder_stats = {str(k).lower(): 0 for k in all_stat_keys if k}
+
     for skill_id, skill_name, display_name, description, skill_effect, restriction, class_name in skills:
-        # Print class header if it changed
         if class_name != current_class:
             if current_class is not None:
-                print()  # Add spacing between classes
+                print()
             print(f"[CLASS] {class_name or 'No Class'}")
             print("-" * 40)
             current_class = class_name
-        
-        # Find placeholders in this skill's description, skill effect, and restriction
-        all_text = (description or '') + ' ' + (skill_effect or '') + ' ' + (restriction or '')
+
+        all_text = f"{description or ''} {skill_effect or ''} {restriction or ''}"
         placeholders = analyze_placeholders(all_text)
-        
-        # Count placeholder types for statistics
+
         for placeholder in placeholders:
-            # Extract the stat key (part before colon if present)
-            stat_key = placeholder.replace('{{', '').replace('}}', '').split(':')[0].strip()
+            stat_key = (
+                placeholder.replace("{{", "").replace("}}", "").split(":")[0].strip().lower()
+            )
             if stat_key in placeholder_stats:
                 placeholder_stats[stat_key] += 1
-        
-        # Print skill info
+
         print(f"  - {display_name} (ID: {skill_id})")
         print(f"    Key: {skill_name}")
         print(f"    Placeholders: {', '.join(placeholders)}")
         print()
-    
-    # Print statistics
+
     if placeholder_stats:
         print("=" * 60)
         print("PLACEHOLDER STATISTICS")
         print("=" * 60)
         print("All stat keys and their usage count:")
-        
-        # Sort by usage count (descending), then by stat key
+
         sorted_stats = sorted(placeholder_stats.items(), key=lambda x: (-x[1], x[0]))
-        
+
         for stat_key, count in sorted_stats:
             print(f"  {stat_key}: {count} times")
-    
+
     used_stats = sum(1 for count in placeholder_stats.values() if count > 0)
     unused_stats = sum(1 for count in placeholder_stats.values() if count == 0)
-    
+
     print(f"\n[SUCCESS] Total skills with placeholders: {len(skills)}")
-    print(f"[SUCCESS] Total stat keys in database: {len(all_stat_keys)}")
+    print(f"[SUCCESS] Total stat keys in stats.json: {len(all_stat_keys)}")
     print(f"[SUCCESS] Stat keys used: {used_stats}")
     print(f"[SUCCESS] Stat keys unused: {unused_stats}")
+    print(f"Data: {resolve_data_dir(args.data_dir)}")
+
 
 if __name__ == "__main__":
     main()
-

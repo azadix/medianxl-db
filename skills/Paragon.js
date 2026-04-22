@@ -26,31 +26,26 @@ export default class Paragon extends Skill {
     /**
      * Check if this Paragon skill can be allocated based on restrictions
      * @param {Array} allSkills - Array of all skills
-     * @returns {Object} { blocked: boolean, reason: string }
+     * @returns {{ allowed: boolean, reason: string }}
      */
     checkRestriction(allSkills) {
-        // Check if this skill has the Paragon tag
-        const isParagon = Paragon.isParagonSkill(this);
-        
-        if (!isParagon) {
-            return { blocked: false, reason: '' };
+        if (!Paragon.isParagonSkill(this)) {
+            return { allowed: true, reason: '' };
         }
 
-        // Find all Paragon skills from the same class
         const classParagonSkills = allSkills.filter(skill => 
             skill.class === this.class && Paragon.isParagonSkill(skill)
         );
         
-        // Check if any other Paragon skill from this class has points
         for (const paragonSkill of classParagonSkills) {
             if (paragonSkill.id !== this.id && getSkillPoints(paragonSkill.id) > 0) {
                 return { 
-                    blocked: true, 
+                    allowed: false, 
                     reason: `${paragonSkill.name} already has points. Only one Paragon skill per class is allowed.` 
                 };
             }
         }
 
-        return { blocked: false, reason: '' };
+        return { allowed: true, reason: '' };
     }
 }

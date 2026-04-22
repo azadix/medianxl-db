@@ -31,6 +31,13 @@ export default class Mastery extends Skill {
      * @returns {Object} { allowed: boolean, reason: string }
      */
     checkRestriction(allSkills) {
+        if (!Mastery.isMasterySkill(this)) {
+            return { allowed: true, reason: '' };
+        }
+        if (getSkillPoints(this.id) > 0) {
+            return { allowed: true, reason: '' };
+        }
+
         // Find all Mastery skills from the same class with points allocated
         const masterySkillsWithPoints = allSkills.filter(skill => {
             return Mastery.isMasterySkill(skill) && 

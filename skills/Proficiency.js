@@ -32,10 +32,10 @@ export default class Proficiency extends Skill {
      * @returns {Object} { allowed: boolean, reason: string }
      */
     checkRestriction(allSkills) {
-        // Check if this skill is one of the exclusive Proficiency skills
-        const isExclusiveProficiency = Proficiency.isProficiencySkill(this);
-
-        if (!isExclusiveProficiency) {
+        if (!Proficiency.isProficiencySkill(this)) {
+            return { allowed: true, reason: '' };
+        }
+        if (getSkillPoints(this.id) > 0) {
             return { allowed: true, reason: '' };
         }
 

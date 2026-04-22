@@ -1,0 +1,97 @@
+.editor-page {
+    padding-bottom: 3rem;
+}
+
+.editor-toast {
+    position: fixed;
+    top: 4.5rem;
+    right: 1rem;
+    z-index: 100;
+    max-width: 24rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+.editor-skills-table .skill-id-cell {
+    font-family: ui-monospace, monospace;
+    font-size: 0.85em;
+}
+
+.f-tags-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.f-tags-group {
+    display: block;
+}
+
+.f-tags-group-title {
+    color: #f5a623;
+}
+
+.f-tags-checkbox-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+    align-items: center;
+}
+
+.f-tags-checkbox-grid .f-tag-cb-label {
+    margin: 0;
+    white-space: nowrap;
+}
+
+/* Token autocomplete ({{ stat }} / [[ skill ]]) — overrides tree/dropdown-style absolute panel */
+.editor-token-dropdown {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+    border-radius: 3px;
+    overflow: visible;
+    max-height: none;
+}
+
+/* Single scroll: only the ul scrolls (not the wrapper — avoids double scrollbars). */
+.editor-token-dropdown .dropdown-list {
+    position: relative;
+    left: auto;
+    top: auto;
+    transform: none;
+    margin: 0;
+    min-width: 100%;
+    display: block;
+    max-height: 20vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.editor-stat-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.editor-stat-key {
+    flex: 0 0 28%;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.editor-stat-name {
+    flex: 0 0 32%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.editor-stat-format {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.85em;
+    opacity: 0.85;
+}

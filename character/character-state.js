@@ -4,50 +4,78 @@
  */
 
 import Character from './Character.js';
+import { normalizePlannerStatValue, isPlannerBaseStatKey } from './planner-stats-config.js';
+import {
+  getClassPlannerStatDefaults,
+  computeClassDerivedLifeMana
+} from './class-baselines.js';
 
 // Re-export getBaseSkillPoints for use in other modules
 export { Character };
+import { recomputePlannerStatsFromSkillAllocations } from './planner-stat-modifiers.js';
 import { checkDevotionRestriction, calculateMaxLevel } from '../skills/skill-calculations.js';
-import { getDatabase } from '../tree/tree-data.js';
-import Mastery from '../skills/Mastery.js';
-import Coven from '../skills/Coven.js';
-import Proficiency from '../skills/Proficiency.js';
-import Ultimate from '../skills/Ultimate.js';
-import Paragon from '../skills/Paragon.js';
+import { extractStatReferences } from '../skills/formula-evaluator.js';
+import { getFileSkillStore } from '../tree/skill-data-store.js';
+import {
+  checkUltimateRestriction,
+  checkParagonRestriction,
+  checkMasteryRestriction,
+  checkCovenRestriction,
+  checkProficiencyRestriction
+} from '../skills/skill-restrictions.js';
+import {
+  normalizePrereqSkillTargetKey,
+  displayNameForPrereqSkillTarget
+} from './prereq-utils.js';
+
+export {
+  checkUltimateRestriction,
+  checkParagonRestriction,
+  checkMasteryRestriction,
+  checkCovenRestriction,
+  checkProficiencyRestriction
+};
+
+/** Last planner skill list from tree load (for min-level / character_level prereqs without threading arrays everywhere). */
+let plannerSkillsSnapshot = [];
+
+export function setPlannerSkillsSnapshot(skills) {
+  plannerSkillsSnapshot = Array.isArray(skills) ? skills : [];
+}
+
+export function getPlannerSkillsSnapshot() {
+  return plannerSkillsSnapshot;
+}
 
 // Tree skills cache: maps tab_index (from classTabs.id) to array of skill names
 let treeSkillsCache = {};
 
 /**
- * Build cache of skills per tree for efficient tree() function
- * This maps tab_index values to arrays of skill names in that tree
- * @param {Object} db - SQL.js database instance
+ * Legacy no-op: tab cache is built via {@link buildTreeSkillsCacheFromLoadedSkills}.
  */
-export function buildTreeSkillsCache(db) {
+export function buildTreeSkillsCache() {
   treeSkillsCache = {};
-  
-  if (!db) return;
-  
+}
+
+/**
+ * Build cache from planner-loaded Skill rows (supports merged cross-patch lists).
+ * @param {Array<{ id: string, tab: number }>} skills
+ */
+export function buildTreeSkillsCacheFromLoadedSkills(skills) {
+  treeSkillsCache = {};
+  if (!skills || skills.length === 0) return;
   try {
-    const stmt = db.prepare(`
-      SELECT s.name, s.tab_index
-      FROM skills s
-      WHERE s.tab_index IS NOT NULL
-    `);
-    
-    while (stmt.step()) {
-      const row = stmt.get();
-      const skillName = row[0];
-      const tabIndex = row[1];
-      
+    for (const s of skills) {
+      const name = s.id;
+      const tabIndex = s.tab;
+      if (tabIndex == null || name == null) continue;
       if (!treeSkillsCache[tabIndex]) {
         treeSkillsCache[tabIndex] = [];
       }
-      treeSkillsCache[tabIndex].push(skillName);
+      treeSkillsCache[tabIndex].push(name);
     }
-    stmt.free();
   } catch (error) {
-    console.error('Error building tree skills cache:', error);
+    console.error('Error building tree skills cache from loaded skills:', error);
   }
 }
 
@@ -80,6 +108,12 @@ const PREREQUISITE_ORDER = {
 // Character instance (singleton)
 let characterInstance = null;
 
+function notifyPlannerStateChanged(detail = {}) {
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('plannerStateChanged', { detail }));
+  }
+}
+
 /**
  * Initialize character state for a class
  * @param {string} className - Class name
@@ -87,7 +121,68 @@ let characterInstance = null;
  */
 export function initializeCharacter(className, level = Character.DEFAULT_LEVEL) {
   characterInstance = new Character(className, level);
+  notifyPlannerStateChanged({ source: 'initializeCharacter' });
   return characterInstance;
+}
+
+/**
+ * Invoked when skill allocations change (debounced in tree). Extensible for skill-driven stat deltas.
+ */
+export function onPlannerSkillAllocationChanged() {
+  recomputePlannerStatsFromSkillAllocations();
+}
+
+/**
+ * Planner level for life/mana scaling: matches sidebar "Level N" (min required when skills are spent).
+ */
+export function getEffectivePlannerLevel() {
+  if (!characterInstance) return Character.DEFAULT_LEVEL;
+  const spent = characterInstance.getSpentSkillPoints();
+  if (spent <= 0) return Character.DEFAULT_LEVEL;
+  return characterInstance.getMinimumRequiredLevel(getPlannerSkillsSnapshot());
+}
+
+/**
+ * Set planner core stats from game_meta classes: attributes from base_*; life/mana from scaling.
+ * @param {string} className
+ */
+export function applyClassBaselineStatsToCharacter(className) {
+  if (!characterInstance || !className) return;
+  const row = getClassPlannerStatDefaults(className);
+  if (!row) return;
+  const level = getEffectivePlannerLevel();
+  const next = { ...characterInstance.getAllStats() };
+  next.strength = normalizePlannerStatValue('strength', row.strength);
+  next.dexterity = normalizePlannerStatValue('dexterity', row.dexterity);
+  next.energy = normalizePlannerStatValue('energy', row.energy);
+  next.vitality = normalizePlannerStatValue('vitality', row.vitality);
+  const { life, mana } = computeClassDerivedLifeMana(level, next.vitality, next.energy, row);
+  const lifeBonus = characterInstance.getTotalQuestLifeBonus();
+  next.life = normalizePlannerStatValue('life', life + lifeBonus);
+  next.mana = normalizePlannerStatValue('mana', mana);
+  characterInstance.setAllStats(next);
+}
+
+/**
+ * Recompute life/mana from class scaling only (keeps str/dex/ene/vit and other stats as-is).
+ */
+export function recomputeClassDerivedLifeMana() {
+  if (!characterInstance) return;
+  const className = characterInstance.className;
+  if (!className) return;
+  const row = getClassPlannerStatDefaults(className);
+  if (!row) return;
+  const level = getEffectivePlannerLevel();
+  const vit = characterInstance.getStat('vitality');
+  const ene = characterInstance.getStat('energy');
+  const { life, mana } = computeClassDerivedLifeMana(level, vit, ene, row);
+  const lifeBonus = characterInstance.getTotalQuestLifeBonus();
+  characterInstance.setStat('life', normalizePlannerStatValue('life', life + lifeBonus));
+  characterInstance.setStat('mana', normalizePlannerStatValue('mana', mana));
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('plannerStatsPanelRefresh'));
+    window.dispatchEvent(new CustomEvent('characterStatsChanged', { detail: { derivedLifeMana: true } }));
+  }
 }
 
 /**
@@ -107,7 +202,9 @@ export function setCharacterLevel(level) {
     console.warn('setCharacterLevel: Character instance not initialized');
     return false;
   }
-  return characterInstance.setCharacterLevel(level);
+  const ok = characterInstance.setCharacterLevel(level);
+  if (ok) notifyPlannerStateChanged({ source: 'setCharacterLevel' });
+  return ok;
 }
 
 /**
@@ -156,31 +253,17 @@ export function getAllSkillPointsById() {
   const skillPoints = characterInstance.getAllSkillPoints();
   const skillPointsById = {};
   
-  // Convert skill names to skill IDs
-  const db = getDatabase();
-  if (db) {
-    for (const [skillName, points] of Object.entries(skillPoints)) {
-      if (points > 0) {
-        try {
-          const stmt = db.prepare('SELECT id FROM skills WHERE name = ?');
-          stmt.bind([skillName]);
-          if (stmt.step()) {
-            const skillId = stmt.get()[0];
-            skillPointsById[skillId] = points;
-          }
-          stmt.free();
-        } catch (error) {
-          console.warn('Could not look up skill ID for:', skillName);
-          // Fallback: use skill name as key
-          skillPointsById[skillName] = points;
-        }
+  const store = getFileSkillStore();
+  for (const [skillName, points] of Object.entries(skillPoints)) {
+    if (points > 0) {
+      const cat = store?.catalog?.find((c) => c.id === skillName);
+      if (cat) {
+        skillPointsById[cat.numericId] = points;
+      } else {
+        skillPointsById[skillName] = points;
       }
     }
-  } else {
-    // Fallback: use skill names as keys if database not available
-    return skillPoints;
   }
-  
   return skillPointsById;
 }
 
@@ -191,6 +274,7 @@ export function getAllSkillPointsById() {
 export function setAllSkillPoints(skillPoints) {
   if (characterInstance) {
     characterInstance.setAllSkillPoints(skillPoints);
+    notifyPlannerStateChanged({ source: 'setAllSkillPoints' });
   }
 }
 
@@ -200,45 +284,32 @@ export function setAllSkillPoints(skillPoints) {
  */
 export function setAllSkillPointsById(skillPointsById) {
   if (!characterInstance) return;
-  
-  const skillPoints = {};
-  
-  // Convert skill IDs to skill names
-  const db = getDatabase();
-  if (db) {
-    for (const [skillIdOrName, points] of Object.entries(skillPointsById)) {
-      if (points > 0) {
-        // Check if this is a numeric skill ID or a skill name
-        if (/^\d+$/.test(skillIdOrName)) {
-          // It's a skill ID, look up the skill name
-          try {
-            const stmt = db.prepare('SELECT name FROM skills WHERE id = ?');
-            stmt.bind([parseInt(skillIdOrName)]);
-            if (stmt.step()) {
-              const skillName = stmt.get()[0];
-              skillPoints[skillName] = points;
-            }
-            stmt.free();
-          } catch (error) {
-            console.warn('Could not look up skill name for ID:', skillIdOrName);
-          }
-        } else {
-          // It's a skill name, use it directly (backward compatibility)
-          skillPoints[skillIdOrName] = points;
+
+  let skillPoints = {};
+
+  const store = getFileSkillStore();
+  for (const [skillIdOrName, points] of Object.entries(skillPointsById)) {
+    if (points > 0) {
+      if (/^\d+$/.test(skillIdOrName)) {
+        const cat = store?.catalog?.find(
+          (c) => c.numericId === parseInt(skillIdOrName, 10)
+        );
+        if (cat) {
+          skillPoints[cat.id] = points;
         }
+      } else {
+        skillPoints[skillIdOrName] = points;
       }
     }
-  } else {
-    // Fallback: use the data as-is if database not available
-    skillPoints = skillPointsById;
   }
-  
+
   characterInstance.setAllSkillPoints(skillPoints);
+  notifyPlannerStateChanged({ source: 'setAllSkillPointsById' });
 }
 
 /**
- * Calculate total quest skill points from completed quests
- * @param {number} characterLevel - Character level to check against quest requirements
+ * Total quest skill points from Config quest completion (no level gate).
+ * @param {number} [characterLevel] - ignored; kept for compatibility
  * @returns {number} Total quest skill points
  */
 export function getTotalQuestSkillPoints(characterLevel = Character.MAX_LEVEL) {
@@ -246,9 +317,8 @@ export function getTotalQuestSkillPoints(characterLevel = Character.MAX_LEVEL) {
 }
 
 /**
- * Calculate total available skill points based on max level and quests completed
- * Note: Always uses MAX_LEVEL for skill point pool, not the user's character level input
- * @param {number} characterLevel - Character level to check quest requirements against
+ * Total available skill points: base at max level plus full quest total from Config.
+ * @param {number} [characterLevel] - passed through to quest total (quest total does not depend on level)
  * @returns {number} Total available skill points
  */
 export function getAvailableSkillPoints(characterLevel = Character.MAX_LEVEL) {
@@ -274,11 +344,14 @@ export function getRemainingSkillPoints() {
 /**
  * Calculate minimum character level required for current skill allocation
  * Takes into account spent skill points, quest rewards, and skill prerequisites
- * @param {Object} db - SQL.js database instance (optional)
+ * @param {Array|null} [allSkills] - when non-empty, used for character_level prerequisites instead of planner snapshot
  * @returns {number} Minimum character level needed
  */
-export function getMinimumRequiredLevel(db = null) {
-  return characterInstance ? characterInstance.getMinimumRequiredLevel(db) : Character.MIN_LEVEL;
+export function getMinimumRequiredLevel(allSkills = null) {
+  if (!characterInstance) return Character.MIN_LEVEL;
+  const skills =
+    Array.isArray(allSkills) && allSkills.length > 0 ? allSkills : getPlannerSkillsSnapshot();
+  return characterInstance.getMinimumRequiredLevel(skills);
 }
 
 /**
@@ -320,13 +393,14 @@ export function checkPrerequisites(skill, allSkills = []) {
     } else if (type === 'skill_blocked_by') {
       // Blocked if target skill has more than specified points (typically 0)
       const maxAllowedPoints = parseInt(value, 10);
-      const targetSkillName = target.toLowerCase().replace(/'/g, '').replace(/\s+/g, '_');
+      const targetSkillName = normalizePrereqSkillTargetKey(target);
       const currentPoints = getSkillPoints(targetSkillName);
       
       if (currentPoints > maxAllowedPoints) {
+        const targetLabel = displayNameForPrereqSkillTarget(target, allSkills);
         reasonsWithTypes.push({
           type: 'skill_blocked_by',
-          message: `You cannot learn this skill if you have points in ${target}.`
+          message: `You cannot learn this skill if you have points in ${targetLabel}.`
         });
       }
     } else if (type === 'tree_points') {
@@ -355,17 +429,18 @@ export function checkPrerequisites(skill, allSkills = []) {
       for (const prereq of skillLevelPrereqs) {
         const [, value, target] = prereq.split(':');
         const requiredPoints = parseInt(value, 10);
-        const targetSkillName = target.toLowerCase().replace(/'/g, '').replace(/\s+/g, '_');
+        const targetSkillName = normalizePrereqSkillTargetKey(target);
         const currentPoints = getSkillPoints(targetSkillName);
+        const targetLabel = displayNameForPrereqSkillTarget(target, allSkills);
         
         if (currentPoints >= requiredPoints) {
           anyMet = true;
           break;
         } else {
           if (requiredPoints === 1) {
-            orReasons.push(`${target}`);
+            orReasons.push(`${targetLabel}`);
           } else {
-            orReasons.push(`${requiredPoints} points in ${target}`);
+            orReasons.push(`${requiredPoints} points in ${targetLabel}`);
           }
         }
       }
@@ -381,13 +456,14 @@ export function checkPrerequisites(skill, allSkills = []) {
       for (const prereq of skillLevelPrereqs) {
         const [, value, target] = prereq.split(':');
         const requiredPoints = parseInt(value, 10);
-        const targetSkillName = target.toLowerCase().replace(/'/g, '').replace(/\s+/g, '_');
+        const targetSkillName = normalizePrereqSkillTargetKey(target);
         const currentPoints = getSkillPoints(targetSkillName);
+        const targetLabel = displayNameForPrereqSkillTarget(target, allSkills);
         
         if (currentPoints < requiredPoints) {
           const message = requiredPoints === 1 
-            ? `Requires ${target}` 
-            : `Requires ${requiredPoints} points in ${target}`;
+            ? `Requires ${targetLabel}` 
+            : `Requires ${requiredPoints} points in ${targetLabel}`;
           
           reasonsWithTypes.push({
             type: 'skill_level',
@@ -433,107 +509,6 @@ function countPointsInTab(tabName, allSkills) {
   }
   
   return totalPoints;
-}
-
-/**
- * Check if adding a point to an Ultimate skill is allowed
- * Only one Ultimate skill per class can have points
- * @param {Object} skill - Skill to check
- * @param {Array} allSkills - Array of all skills
- * @returns {Object} { allowed: boolean, reason: string }
- */
-function checkUltimateRestriction(skill, allSkills) {
-  // Check if this skill has the Ultimate tag
-  const isUltimate = skill.hasTag('Ultimate');
-  
-  if (!isUltimate) {
-    return { allowed: true, reason: '' };
-  }
-  
-  // Find all Ultimate skills from the same class
-  const classUltimateSkills = allSkills.filter(s => 
-    s.class === skill.class && 
-    s.hasTag('Ultimate')
-  );
-  
-  // Check if any other Ultimate skill from this class has points
-  for (const ultimateSkill of classUltimateSkills) {
-    if (ultimateSkill.id !== skill.id) {
-      const points = getSkillPoints(ultimateSkill.id);
-      if (points > 0) {
-        return { 
-          allowed: false, 
-          reason: `Cannot add points to multiple Ultimate skills. ${ultimateSkill.name} already has points allocated.` 
-        };
-      }
-    }
-  }
-  
-  return { allowed: true, reason: '' };
-}
-
-/**
- * Check if adding a point to a Mastery skill is allowed
- * Maximum 3 different Mastery skills can have points
- * @param {Object} skill - Skill to check
- * @param {Array} allSkills - Array of all skills
- * @returns {Object} { allowed: boolean, reason: string }
- */
-export function checkMasteryRestriction(skill, allSkills) {
-  // Only apply mastery restrictions to mastery skills
-  if (!Mastery.isMasterySkill(skill)) {
-    return { allowed: true, reason: '' };
-  }
-  
-  // If this skill already has points, it's allowed to add more
-  const currentPoints = getSkillPoints(skill.id);
-  if (currentPoints > 0) {
-    return { allowed: true, reason: '' };
-  }
-  
-  // Use Mastery class method for restriction checking
-  const masterySkill = new Mastery(skill);
-  return masterySkill.checkRestriction(allSkills);
-}
-
-/**
- * Check if adding a point to a Coven skill is allowed
- * Maximum 2 different exclusive Coven skills can have points (Sorceress only)
- * Only applies to: Living Flame, Warp Armor, Snow Queen, Vengeful Power
- * @param {Object} skill - Skill to check
- * @param {Array} allSkills - Array of all skills
- * @returns {Object} { allowed: boolean, reason: string }
- */
-export function checkCovenRestriction(skill, allSkills) {
-  // If this skill already has points, it's allowed to add more
-  const currentPoints = getSkillPoints(skill.id);
-  if (currentPoints > 0) {
-    return { allowed: true, reason: '' };
-  }
-  
-  // Use Coven class method for restriction checking
-  const covenSkill = new Coven(skill);
-  return covenSkill.checkRestriction(allSkills);
-}
-
-/**
- * Check if adding a point to a Proficiency skill is allowed
- * Maximum 2 different exclusive Proficiency skills can have points (Barbarian only)
- * Only applies to: Mighty Vigor, Aptitude, Pillage, Warder, Unyielding
- * @param {Object} skill - Skill to check
- * @param {Array} allSkills - Array of all skills
- * @returns {Object} { allowed: boolean, reason: string }
- */
-export function checkProficiencyRestriction(skill, allSkills) {
-  // If this skill already has points, it's allowed to add more
-  const currentPoints = getSkillPoints(skill.id);
-  if (currentPoints > 0) {
-    return { allowed: true, reason: '' };
-  }
-  
-  // Use Proficiency class method for restriction checking
-  const proficiencySkill = new Proficiency(skill);
-  return proficiencySkill.checkRestriction(allSkills);
 }
 
 /**
@@ -591,9 +566,8 @@ export function addSkillPoint(skillName, skill, maxLevel, allSkills = [], skipEv
     }
     
     // Check Devotion restriction (only when adding first point, Paladin and Amazon)
-    const db = getDatabase();
-    if (db && characterInstance) {
-      const devotionCheck = checkDevotionRestriction(skill.skillId, characterInstance.skillPoints, db);
+    if (characterInstance) {
+      const devotionCheck = checkDevotionRestriction(skill.skillId, characterInstance.skillPoints);
       if (!devotionCheck.canAllocate) {
         return { success: false, reason: devotionCheck.reason };
       }
@@ -634,8 +608,7 @@ export function addSkillPointsBatch(skillName, skill, amount, allSkills = [], ge
   }
   
   let pointsAdded = 0;
-  const db = getDatabase();
-  
+
   for (let i = 0; i < amount; i++) {
     const currentPoints = getSkillPoints(skillName);
     
@@ -680,11 +653,9 @@ export function addSkillPointsBatch(skillName, skill, amount, allSkills = [], ge
         return { success: pointsAdded > 0, pointsAdded, reason: proficiencyCheck.reason };
       }
       
-      if (db) {
-        const devotionCheck = checkDevotionRestriction(skill.skillId, characterInstance.skillPoints, db);
-        if (!devotionCheck.canAllocate) {
-          return { success: pointsAdded > 0, pointsAdded, reason: devotionCheck.reason };
-        }
+      const devotionCheck = checkDevotionRestriction(skill.skillId, characterInstance.skillPoints);
+      if (!devotionCheck.canAllocate) {
+        return { success: pointsAdded > 0, pointsAdded, reason: devotionCheck.reason };
       }
     }
     
@@ -725,11 +696,6 @@ function checkMaxLevelDependencies(skillName, allSkills = []) {
     return { allowed: true, reason: '' };
   }
   
-  const db = getDatabase();
-  if (!db) {
-    return { allowed: true, reason: '' };
-  }
-  
   if (!characterInstance) return { allowed: true, reason: '' };
   
   // Simulate removing the point
@@ -750,7 +716,7 @@ function checkMaxLevelDependencies(skillName, allSkills = []) {
     if (!skill) continue;
     
     // Calculate what the new max level would be with the simulated removal
-    const newMaxLevel = calculateMaxLevel(skill.skillId, simulatedSkillPoints, characterInstance.level, db);
+    const newMaxLevel = calculateMaxLevel(skill.skillId, simulatedSkillPoints, characterInstance.level);
     
     // Check if current points would exceed new max
     if (allocatedPoints > newMaxLevel) {
@@ -887,13 +853,9 @@ export function removeSkillPointsBatch(skillName, amount, allSkills = []) {
  * @returns {Array} Array of skills that exceed their max level
  */
 export function checkSkillsExceedingMaxLevel(allSkills = []) {
-  const db = getDatabase();
-  if (!db) return [];
-  
   if (!characterInstance) return [];
-  
-  // Use minimum required level instead of characterInstance.level to ensure we have the correct level
-  const actualCharacterLevel = getMinimumRequiredLevel(db);
+
+  const actualCharacterLevel = getMinimumRequiredLevel(allSkills);
   const skillLevels = getAllSkillPoints();
   const exceedingSkills = [];
   
@@ -906,7 +868,7 @@ export function checkSkillsExceedingMaxLevel(allSkills = []) {
     if (!skill) continue;
     
     // Calculate the current maximum level for this skill
-    const effectiveMaxLevel = calculateMaxLevel(skill.skillId, skillLevels, actualCharacterLevel, db);
+    const effectiveMaxLevel = calculateMaxLevel(skill.skillId, skillLevels, actualCharacterLevel);
     
     // If current points exceed the maximum, add to list
     if (currentPoints > effectiveMaxLevel) {
@@ -947,8 +909,7 @@ function getMinimumRequiredPointsWithBlockingSkills(skillName, allSkills) {
       const [type, value, target] = prereq.split(':');
       
       if (type === 'skill_level') {
-        // Convert target display name to skill_name format
-        const targetSkillName = target.toLowerCase().replace(/'/g, '').replace(/\s+/g, '_');
+        const targetSkillName = normalizePrereqSkillTargetKey(target);
         
         if (targetSkillName === skillName) {
           const requiredPoints = parseInt(value, 10);
@@ -974,6 +935,7 @@ function getMinimumRequiredPointsWithBlockingSkills(skillName, allSkills) {
 export function resetAllSkillPoints() {
   if (characterInstance) {
     characterInstance.resetAllSkillPoints();
+    notifyPlannerStateChanged({ source: 'resetAllSkillPoints' });
   }
 }
 
@@ -990,11 +952,17 @@ export function getTotalSkillPoints() {
  * @returns {Object} Character state
  */
 export function exportCharacterState() {
-  return characterInstance ? characterInstance.exportState() : {
-    level: Character.DEFAULT_LEVEL,
-    className: null,
-    skillPoints: {}
-  };
+  return characterInstance
+    ? characterInstance.exportState()
+    : {
+        level: Character.DEFAULT_LEVEL,
+        className: null,
+        skillPoints: {},
+        stats: {},
+        questsCompleted: Character.createDefaultQuestsCompleted(),
+        questCompletionOptOut: Character.createDefaultQuestCompletionOptOut(),
+        statAllocation: Character.createEmptyStatAllocation()
+      };
 }
 
 /**
@@ -1005,6 +973,7 @@ export function exportCharacterState() {
 export function updateQuestCompletion(questId, difficulties) {
   if (characterInstance) {
     characterInstance.updateQuestCompletion(questId, difficulties);
+    notifyPlannerStateChanged({ source: 'updateQuestCompletion' });
   }
 }
 
@@ -1018,12 +987,120 @@ export function getQuestCompletion(questId) {
 }
 
 /**
+ * @param {number} [characterLevel]
+ * @returns {number}
+ */
+export function getTotalQuestStatPoints(characterLevel = Character.MAX_LEVEL) {
+  return characterInstance
+    ? characterInstance.getTotalQuestStatPoints(characterLevel)
+    : 0;
+}
+
+export function getSpentStatPoints() {
+  return characterInstance ? characterInstance.getSpentStatPoints() : 0;
+}
+
+/**
+ * Stat points shown as "allocated": sum over str/dex/vit/ene of (current - class baseline).
+ * Falls back to {@link Character#getSpentStatPoints} when no class / no game_meta row.
+ * @returns {number}
+ */
+export function getAllocatedStatPointsFromPanel() {
+  if (!characterInstance) return 0;
+  const row = getClassPlannerStatDefaults(characterInstance.className);
+  const attrs = ['strength', 'dexterity', 'vitality', 'energy'];
+  if (!row) {
+    return characterInstance.getSpentStatPoints();
+  }
+  let sum = 0;
+  for (const k of attrs) {
+    const base = Math.floor(Number(row[k]) || 0);
+    const cur = Math.floor(Number(characterInstance.getStat(k)) || 0);
+    sum += Math.max(0, cur - base);
+  }
+  return sum;
+}
+
+/**
+ * @param {number} [characterLevel]
+ * @returns {number}
+ */
+export function getTotalAvailableStatPoints(characterLevel = Character.MAX_LEVEL) {
+  return characterInstance
+    ? characterInstance.getTotalAvailableStatPoints(characterLevel)
+    : 0;
+}
+
+/**
+ * @param {number} [characterLevel]
+ * @returns {number}
+ */
+export function getRemainingStatPoints(characterLevel = Character.MAX_LEVEL) {
+  if (!characterInstance) return 0;
+  const total = characterInstance.getTotalAvailableStatPoints(characterLevel);
+  const spent = getAllocatedStatPointsFromPanel();
+  return Math.max(0, total - spent);
+}
+
+export function getStatAllocation() {
+  return characterInstance
+    ? { ...characterInstance.statAllocation }
+    : Character.createEmptyStatAllocation();
+}
+
+export function setStatAllocation(allocation) {
+  if (characterInstance) {
+    characterInstance.setStatAllocation(allocation);
+    notifyPlannerStateChanged({ source: 'setStatAllocation' });
+  }
+}
+
+/**
+ * Apply quest completion from a saved build (merges with defaults for unknown keys).
+ * @param {Record<string, { normal?: boolean, nightmare?: boolean, hell?: boolean }>} quests
+ */
+export function importQuestsCompleted(quests, questCompletionOptOut) {
+  if (characterInstance) {
+    characterInstance.importQuestsCompleted(quests, questCompletionOptOut);
+    notifyPlannerStateChanged({ source: 'importQuestsCompleted' });
+  }
+}
+
+/**
+ * Snapshot for build JSON.
+ * @returns {Record<string, { normal: boolean, nightmare: boolean, hell: boolean }>}
+ */
+export function getQuestsCompletedForSave() {
+  return characterInstance
+    ? JSON.parse(JSON.stringify(characterInstance.questsCompleted))
+    : {};
+}
+
+/**
+ * Per-difficulty "leave unchecked" flags for auto level-based completion (saved with builds).
+ * @returns {Record<string, { normal?: boolean, nightmare?: boolean, hell?: boolean }>}
+ */
+export function getQuestCompletionOptOutForSave() {
+  return characterInstance
+    ? JSON.parse(JSON.stringify(characterInstance.questCompletionOptOut || {}))
+    : {};
+}
+
+export function completeAllQuests() {
+  if (characterInstance) {
+    characterInstance.completeAllQuests();
+    notifyPlannerStateChanged({ source: 'completeAllQuests' });
+  }
+}
+
+/**
  * Import character state from save
  * @param {Object} state - Saved character state
  */
 export function importCharacterState(state) {
   if (characterInstance) {
     characterInstance.importState(state);
+    notifyPlannerStateChanged({ source: 'importCharacterState' });
   }
 }
 
@@ -1051,7 +1128,7 @@ export function getOSkillPoints(skillName) {
 
 /**
  * Add an oSkill or increment if it exists
- * @param {number} skillId - Database skill ID
+ * @param {number} skillId - Numeric catalog skill id
  * @param {string} displayName - Display name
  * @param {string} skillName - Internal skill name
  * @param {string} image - Image filename
@@ -1060,7 +1137,8 @@ export function getOSkillPoints(skillName) {
 export function addOSkill(skillId, displayName, skillName, image, className, hasDetails = false, description = null, skillEffect = null) {
   if (characterInstance) {
     characterInstance.addOSkill(skillId, displayName, skillName, image, className, hasDetails, description, skillEffect);
-    autoAddStatsToInput(skillId)
+    autoAddStatsToInput(skillId);
+    notifyPlannerStateChanged({ source: 'addOSkill' });
   } else {
     console.error('[OSkills] No character instance available!');
   }
@@ -1073,6 +1151,7 @@ export function addOSkill(skillId, displayName, skillName, image, className, has
 export function removeOSkill(skillName) {
   if (characterInstance) {
     characterInstance.removeOSkill(skillName);
+    notifyPlannerStateChanged({ source: 'removeOSkill' });
   }
 }
 
@@ -1087,6 +1166,7 @@ export function changeOSkillPoints(skillName, amount) {
     const allSkillsBonusInput = document.getElementById('allSkillsBonus');
     const allSkillsBonus = allSkillsBonusInput ? Math.max(0, parseInt(allSkillsBonusInput.value) || 0) : 0;
     characterInstance.changeOSkillPoints(skillName, amount, allSkillsBonus);
+    notifyPlannerStateChanged({ source: 'changeOSkillPoints' });
   }
 }
 
@@ -1096,6 +1176,7 @@ export function changeOSkillPoints(skillName, amount) {
 export function clearOSkills() {
   if (characterInstance) {
     characterInstance.clearOSkills();
+    notifyPlannerStateChanged({ source: 'clearOSkills' });
   }
 }
 
@@ -1106,6 +1187,7 @@ export function clearOSkills() {
 export function setAllOSkills(oSkills) {
   if (characterInstance) {
     characterInstance.setAllOSkills(oSkills);
+    notifyPlannerStateChanged({ source: 'setAllOSkills' });
   }
 }
 
@@ -1183,53 +1265,40 @@ export function exportStatsToText() {
 
 /**
  * Get all formulas used by a skill for auto-adding stats
- * @param {number} skillId - Database skill ID
+ * @param {number} skillId - Numeric catalog skill id
  * @returns {Array<string>} Array of formula strings
  */
 async function getSkillFormulas(skillId) {
-  const db = getDatabase();
-  if (!db) return [];
-  
+  const store = getFileSkillStore();
+  if (!store) return [];
+  const internal = store.internalNameByNumericId(skillId);
+  if (!internal) return [];
   const formulas = [];
-  
   try {
-    // Get formulas from skill_scaling table
-    const stmt = db.prepare(`
-      SELECT DISTINCT value0, value1, value2, value3
-      FROM skill_scaling
-      WHERE skill_id = ?
-    `);
-    stmt.bind([skillId]);
-    
-    while (stmt.step()) {
-      const [v0, v1, v2, v3] = stmt.get();
-      if (v0) formulas.push(v0);
-      if (v1) formulas.push(v1);
-      if (v2) formulas.push(v2);
-      if (v3) formulas.push(v3);
+    await store.loadSkillBalance(internal);
+    const bal = store.getSkillBalanceSync(internal);
+    for (const r of bal?.scaling || []) {
+      for (const k of ['value0', 'value1', 'value2', 'value3']) {
+        if (r[k]) formulas.push(String(r[k]));
+      }
     }
-    stmt.free();
-    
-    // Get formulas from skill_scaling_constants table
-    const constantsStmt = db.prepare(`
-      SELECT DISTINCT value0, value1, value2, value3
-      FROM skill_scaling_constants
-      WHERE skill_id = ?
-    `);
-    constantsStmt.bind([skillId]);
-    
-    while (constantsStmt.step()) {
-      const [v0, v1, v2, v3] = constantsStmt.get();
-      if (v0) formulas.push(v0);
-      if (v1) formulas.push(v1);
-      if (v2) formulas.push(v2);
-      if (v3) formulas.push(v3);
+    for (const r of bal?.scalingConstants || []) {
+      for (const k of ['value0', 'value1', 'value2', 'value3']) {
+        if (r[k]) formulas.push(String(r[k]));
+      }
     }
-    constantsStmt.free();
+    const det = store.getSkillDetail(internal);
+    if (det) {
+      for (let j = 1; j <= 6; j++) {
+        const c = det[`calc${j}`];
+        if (c != null && String(c).trim() !== '') {
+          formulas.push(String(c));
+        }
+      }
+    }
   } catch (error) {
-    console.warn('Error getting skill formulas:', error);
+    console.warn('Error getting skill formulas (file):', error);
   }
-  
   return formulas;
 }
 
@@ -1242,9 +1311,6 @@ async function autoAddStatsToInput(skillId) {
   const formulas = await getSkillFormulas(skillId);
   if (formulas.length === 0) return;
 
-  // Import the extractStatReferences function
-  const { extractStatReferences } = await import('../skills/formula-evaluator.js');
-  
   // Extract all stat references from all formulas
   const statRefsSet = new Set();
   for (const formula of formulas) {
@@ -1253,34 +1319,25 @@ async function autoAddStatsToInput(skillId) {
   }
   
   if (statRefsSet.size === 0) return; // No stat references found
-  
-  const characterStatsInput = document.getElementById('characterStats');
-  if (!characterStatsInput) return;
-  
-  // Get current stats from character instance
-  const currentStats = characterInstance?.stats || {};
-  
-  // Find stats that need to be added
-  const statsToAdd = Array.from(statRefsSet).filter(statName => !currentStats.hasOwnProperty(statName));
-  
-  if (statsToAdd.length === 0) return; // All stats already exist
-  
-  // Get all stats text
-  const currentText = characterStatsInput.value;
-  
-  // Add new stats to the text field
-  const newStats = statsToAdd.map(statName => `{{${statName}}}=0`).join('\n');
-  
-  // Append to existing text (with newline if not empty)
-  const updatedText = currentText ? `${currentText}\n${newStats}` : newStats;
-  characterStatsInput.value = updatedText;
-  
-  // Parse the updated text to update character instance
-  if (characterInstance) {
-    const errors = characterInstance.parseStatsFromText(updatedText);
-    if (errors.length > 0) {
-      console.warn('Stats parsing errors:', errors);
+
+  if (!characterInstance) return;
+
+  const next = { ...characterInstance.getAllStats() };
+  let added = false;
+  for (const statName of statRefsSet) {
+    const k = String(statName).toLowerCase();
+    if (!isPlannerBaseStatKey(k)) continue;
+    if (!Object.prototype.hasOwnProperty.call(next, k)) {
+      next[k] = normalizePlannerStatValue(k, 0);
+      added = true;
     }
+  }
+  if (!added) return;
+
+  characterInstance.setAllStats(next);
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('plannerStatsPanelRefresh'));
+    window.dispatchEvent(new CustomEvent('characterStatsChanged', { detail: { autoStats: true } }));
   }
 }
 
@@ -1288,14 +1345,9 @@ async function autoAddStatsToInput(skillId) {
  * Filter skill levels to exclude oSkills
  * Ensures oSkill points never affect regular skill calculations
  * @param {Object} skillLevels - Object mapping skill_name/ID to points
- * @param {Object} db - SQL.js database instance
  * @returns {Object} Filtered skill levels with only regular skills
  */
-function filterRegularSkillsOnly(skillLevels, db) {
-  if (!db) {
-    return skillLevels; // Can't filter without database
-  }
-
+function filterRegularSkillsOnly(skillLevels) {
   const oSkills = getAllOSkills();
   const oSkillKeys = new Set();
 
@@ -1327,33 +1379,27 @@ function filterRegularSkillsOnly(skillLevels, db) {
 /**
  * Calculate effective max level for a skill (works for both regular skills and oSkills)
  * Consolidated from SkillService
- * @param {number} skillId - Skill ID (database ID for regular, identifier for oSkill)
+ * @param {number} skillId - Numeric catalog id for regular skills, or oSkill identifier
  * @param {string} skillType - 'regular' | 'oskill'
  * @param {Object} skillLevels - Object mapping skill_name to current skill level (should only contain regular skills, not oSkills)
  * @param {number} characterLevel - Current character level
- * @param {Object} db - SQL.js database instance (optional)
  * @returns {number} Effective max level (capped at 150)
  */
-export function calculateEffectiveMaxLevel(skillId, skillType, skillLevels = {}, characterLevel = Character.DEFAULT_LEVEL, db = null) {
+export function calculateEffectiveMaxLevel(skillId, skillType, skillLevels = {}, characterLevel = Character.DEFAULT_LEVEL) {
   // oSkills always have a hard cap of 150
   if (skillType === 'oskill') {
     return 150;
   }
 
   // For regular skills, ensure we only use regular skill points (not oSkills)
-  const regularSkillLevels = filterRegularSkillsOnly(skillLevels, db);
+  const regularSkillLevels = filterRegularSkillsOnly(skillLevels);
 
-  // For regular skills, use the calculation system
-  if (!db) {
-    db = getDatabase();
-  }
-
-  if (!db) {
-    console.warn('calculateEffectiveMaxLevel: Database not available for max level calculation');
+  if (!getFileSkillStore()) {
+    console.warn('calculateEffectiveMaxLevel: No file skill store for max level calculation');
     return 0;
   }
 
-  return calculateMaxLevel(skillId, regularSkillLevels, characterLevel, db);
+  return calculateMaxLevel(skillId, regularSkillLevels, characterLevel);
 }
 
 /**
@@ -1364,10 +1410,9 @@ export function calculateEffectiveMaxLevel(skillId, skillType, skillLevels = {},
  * @param {number} currentPoints - Current points allocated
  * @param {Array} allSkills - Array of all skills (for regular skills only)
  * @param {Object} skillLevels - Object mapping skill_name to current skill level (should exclude oSkills for regular skills)
- * @param {Object} db - SQL.js database instance
  * @returns {Array} Array of {type: string, reason: string} restriction objects
  */
-export function getSkillRestrictions(skill, skillType, currentPoints, allSkills = [], skillLevels = {}, db = null) {
+export function getSkillRestrictions(skill, skillType, currentPoints, allSkills = [], skillLevels = {}) {
   const restrictions = [];
 
   // oSkills don't have prerequisites or most restrictions - they're simpler
@@ -1376,7 +1421,7 @@ export function getSkillRestrictions(skill, skillType, currentPoints, allSkills 
   }
 
   // For regular skills, ensure skillLevels excludes oSkills
-  const regularSkillLevels = filterRegularSkillsOnly(skillLevels, db);
+  const regularSkillLevels = filterRegularSkillsOnly(skillLevels);
 
   // Skip all checks if skill already has points (can always add more)
   if (currentPoints > 0) {
@@ -1394,27 +1439,20 @@ export function getSkillRestrictions(skill, skillType, currentPoints, allSkills 
     });
   }
 
-  // Check Ultimate restriction (use Ultimate class)
-  const currentPointsCheck = getSkillPoints(skill.id);
-  if (currentPointsCheck === 0) {
-    const ultimateSkill = new Ultimate(skill);
-    const ultimateRestriction = ultimateSkill.checkRestriction(allSkills);
-    if (ultimateRestriction.blocked) {
-      restrictions.push({
-        type: 'ultimate',
-        reason: ultimateRestriction.reason
-      });
-    }
+  const ultimateRestriction = checkUltimateRestriction(skill, allSkills);
+  if (!ultimateRestriction.allowed) {
+    restrictions.push({
+      type: 'ultimate',
+      reason: ultimateRestriction.reason
+    });
+  }
 
-    // Check Paragon restriction (use Paragon class)
-    const paragonSkill = new Paragon(skill);
-    const paragonRestriction = paragonSkill.checkRestriction(allSkills);
-    if (paragonRestriction.blocked) {
-      restrictions.push({
-        type: 'paragon',
-        reason: paragonRestriction.reason
-      });
-    }
+  const paragonRestriction = checkParagonRestriction(skill, allSkills);
+  if (!paragonRestriction.allowed) {
+    restrictions.push({
+      type: 'paragon',
+      reason: paragonRestriction.reason
+    });
   }
 
   // Check Mastery restriction
@@ -1445,7 +1483,7 @@ export function getSkillRestrictions(skill, skillType, currentPoints, allSkills 
   }
 
   // Check Devotion restriction (use filtered skill levels)
-  const devotionRestriction = checkDevotionRestriction(skill.skillId, regularSkillLevels, db);
+  const devotionRestriction = checkDevotionRestriction(skill.skillId, regularSkillLevels);
   if (!devotionRestriction.canAllocate) {
     restrictions.push({
       type: 'devotion',
@@ -1465,10 +1503,9 @@ export function getSkillRestrictions(skill, skillType, currentPoints, allSkills 
  * @param {number} maxPoints - Maximum points allowed
  * @param {Array} allSkills - Array of all skills (for regular skills only)
  * @param {Object} skillLevels - Object mapping skill_name to current skill level
- * @param {Object} db - SQL.js database instance
  * @returns {boolean} True if skill can have points allocated
  */
-export function canAllocateSkillPoints(skill, skillType, currentPoints, maxPoints, allSkills = [], skillLevels = {}, db = null) {
+export function canAllocateSkillPoints(skill, skillType, currentPoints, maxPoints, allSkills = [], skillLevels = {}) {
   // Check if already at max
   if (currentPoints >= maxPoints) {
     return false;
@@ -1485,7 +1522,7 @@ export function canAllocateSkillPoints(skill, skillType, currentPoints, maxPoint
   }
 
   // For regular skills, check restrictions
-  const regularSkillLevels = filterRegularSkillsOnly(skillLevels, db);
-  const restrictions = getSkillRestrictions(skill, skillType, currentPoints, allSkills, regularSkillLevels, db);
+  const regularSkillLevels = filterRegularSkillsOnly(skillLevels);
+  const restrictions = getSkillRestrictions(skill, skillType, currentPoints, allSkills, regularSkillLevels);
   return restrictions.length === 0;
 }

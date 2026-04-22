@@ -1,33 +1,110 @@
 // Tooltip functionality for skill tree
-import { getSkillIconHTML, expandPlaceholdersWithScaling, SKILL_CATEGORY_TAG_IDS, SUMMON_TAG_IDS, TELEPORT_TAG_IDS, isLocalhost } from '../utils.js';
-import { getDatabase } from './tree-data.js';
-import { getSkillPoints, getOSkillPoints, getAllSkillPoints, getAllOSkills, getTreeSkillsCache, getAllStats } from '../character/character-state.js';
-import { getCurrentVersionId } from '../version-config.js';
+import { getSkillIconHTML, expandPlaceholdersWithScaling } from '../utils.js';
+import { getSkillPoints, getOSkillPoints, getAllSkillPoints, getAllOSkills, getTreeSkillsCache, getAllStats, getCharacterInstance } from '../character/character-state.js';
+import { resolveVariantKeyForTooltip, formatDisplayNameWithVariantHtml } from './skill-variants.js';
+import { getCurrentVersion, versionToTreeAssetFolder } from '../version-config.js';
+import { getFileSkillStore } from './skill-data-store.js';
 import Innate from '../skills/Innate.js';
+import { getMaxLevelModifierDescriptionsForSkill } from '../skills/skill-calculations.js';
 
 let tooltipElement = null;
 let currentHoveredSkill = null;
+/** Last skill card hovered (disambiguates duplicate data-skill-id nodes after re-render). */
+let lastHoveredSkillCard = null;
 let lastMouseX = 0;
 let lastMouseY = 0;
 let tooltipHideTimeout = null;
+/** When pointer leaves the hovered card without a clean mouseout, hide after this delay (ms). */
+let pointerAwayHideTimeout = null;
+const POINTER_AWAY_HIDE_MS = 1000;
 let ctrlKeyPressed = false;
+
+function tooltipDataSourceReady() {
+    return Boolean(getFileSkillStore());
+}
+
+function clearPointerAwayHideTimer() {
+    if (pointerAwayHideTimeout) {
+        clearTimeout(pointerAwayHideTimeout);
+        pointerAwayHideTimeout = null;
+    }
+}
+
+function onTooltipRefreshEvent(e) {
+    handleSkillPointsChanged(e.detail?.skillCard ?? null);
+}
+
+function onSkillPointsChangedForTooltip() {
+    handleSkillPointsChanged(null);
+}
+
+function cardMatchesCurrentHover(card) {
+    return Boolean(card && currentHoveredSkill != null && card.dataset?.skillId === currentHoveredSkill);
+}
+
+function isCardInDocument(card) {
+    return Boolean(card && typeof card.isConnected === 'boolean' && card.isConnected);
+}
+
+/**
+ * Prefer the card the user interacted with / hovered; avoid a stale detached node after re-render.
+ */
+function pickSkillCardForTooltip(preferredCard) {
+    if (cardMatchesCurrentHover(preferredCard) && isCardInDocument(preferredCard)) {
+        return preferredCard;
+    }
+    if (cardMatchesCurrentHover(lastHoveredSkillCard) && isCardInDocument(lastHoveredSkillCard)) {
+        return lastHoveredSkillCard;
+    }
+    const allSkillCards = document.querySelectorAll(`.skill-card[data-skill-id="${currentHoveredSkill}"]`);
+    let skillCard = null;
+    allSkillCards.forEach((c) => {
+        if (c.closest('#tab-oSkills')) {
+            skillCard = c;
+        } else if (!skillCard) {
+            skillCard = c;
+        }
+    });
+    return skillCard;
+}
+
+function parseClassIdDataset(raw) {
+    if (raw == null || String(raw).trim() === '') return null;
+    const n = parseInt(String(raw), 10);
+    return Number.isNaN(n) ? null : n;
+}
+
+function parseSkillNumericIdDataset(raw) {
+    if (raw == null || String(raw).trim() === '') return null;
+    const n = parseInt(String(raw), 10);
+    return Number.isNaN(n) ? null : n;
+}
 
 /**
  * Initialize tooltip functionality
  * Creates the tooltip element and attaches event listeners
  */
+let tooltipInitialized = false;
+
 export function initializeTooltip() {
-    // Create tooltip element
-    tooltipElement = document.createElement('div');
-    tooltipElement.className = 'skill-tooltip';
-    tooltipElement.style.display = 'none';
-    document.body.appendChild(tooltipElement);
+    if (tooltipInitialized) return;
+    tooltipInitialized = true;
+    // Prefer Vue Teleport host (#skill-tooltip-portal) when present; else create a legacy node.
+    tooltipElement = document.getElementById('skill-tooltip-portal');
+    if (!tooltipElement) {
+        tooltipElement = document.createElement('div');
+        tooltipElement.id = 'skill-tooltip-portal';
+        tooltipElement.className = 'skill-tooltip';
+        tooltipElement.style.display = 'none';
+        document.body.appendChild(tooltipElement);
+    }
 
     // Add event delegation for skill card images
     document.addEventListener('mouseover', handleMouseOver);
     document.addEventListener('mouseout', handleMouseOut);
     document.addEventListener('mousemove', handleMouseMove);
-    
+    window.addEventListener('scroll', onWindowScrollForTooltip, true);
+
     // Track Ctrl key for formula display
     // Using Ctrl to avoid conflicts with browser shortcuts (Alt+click, Alt+Tab, etc.)
     document.addEventListener('keydown', (e) => {
@@ -37,7 +114,7 @@ export function initializeTooltip() {
                 ctrlKeyPressed = true;
                 // Refresh tooltip if showing
                 if (currentHoveredSkill && tooltipElement && tooltipElement.style.display !== 'none') {
-                    handleSkillPointsChanged();
+                    handleSkillPointsChanged(null);
                 }
             }
         }
@@ -50,7 +127,7 @@ export function initializeTooltip() {
                 ctrlKeyPressed = false;
                 // Refresh tooltip if showing
                 if (currentHoveredSkill && tooltipElement && tooltipElement.style.display !== 'none') {
-                    handleSkillPointsChanged();
+                    handleSkillPointsChanged(null);
                 }
             }
         }
@@ -62,16 +139,16 @@ export function initializeTooltip() {
             ctrlKeyPressed = false;
             // Refresh tooltip if showing
             if (currentHoveredSkill && tooltipElement && tooltipElement.style.display !== 'none') {
-                handleSkillPointsChanged();
+                handleSkillPointsChanged(null);
             }
         }
     });
     
     // Listen for skill point changes to update tooltip if it's showing
-    window.addEventListener('skillPointsChanged', handleSkillPointsChanged);
+    window.addEventListener('skillPointsChanged', onSkillPointsChangedForTooltip);
     
     // Listen for tooltip refresh events (triggered after minLevelDisplay is updated)
-    window.addEventListener('tooltipRefresh', handleSkillPointsChanged);
+    window.addEventListener('tooltipRefresh', onTooltipRefreshEvent);
     
     // Listen for oSkills updates to hide tooltip if skill was removed
     window.addEventListener('oskillsUpdated', handleOSkillsUpdated);
@@ -97,8 +174,10 @@ async function handleMouseOver(e) {
         clearTimeout(tooltipHideTimeout);
         tooltipHideTimeout = null;
     }
-    
+    clearPointerAwayHideTimer();
+
     currentHoveredSkill = skillId;
+    lastHoveredSkillCard = skillCard;
     await showTooltip(skillId, e.clientX, e.clientY, skillCard);
 }
 
@@ -114,8 +193,34 @@ function handleMouseOut(e) {
     if (relatedTarget && skillCard.contains(relatedTarget)) {
         return; // Still hovering within the same skill card
     }
-    
-    // Hide tooltip immediately
+
+    // Browsers often set relatedTarget to null during rapid clicks or in-place DOM updates
+    // (e.g. + button state). Re-check pointer position before hiding to avoid flicker.
+    if (relatedTarget == null) {
+        const skillId = skillCard.dataset.skillId;
+        if (!skillId) return;
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                if (currentHoveredSkill !== skillId) return;
+                let el;
+                try {
+                    el = document.elementFromPoint(lastMouseX, lastMouseY);
+                } catch {
+                    return;
+                }
+                const card = el && el.closest('.skill-card');
+                if (card && String(card.dataset.skillId) === String(skillId)) {
+                    return;
+                }
+                hideTooltip();
+                if (currentHoveredSkill === skillId) {
+                    currentHoveredSkill = null;
+                }
+            });
+        });
+        return;
+    }
+
     hideTooltip();
     currentHoveredSkill = null;
 }
@@ -125,8 +230,10 @@ function handleMouseOut(e) {
  */
 function handleMouseMove(e) {
     if (tooltipElement && tooltipElement.style.display !== 'none') {
+        lastMouseX = e.clientX;
+        lastMouseY = e.clientY;
         updateTooltipPosition(e.clientX, e.clientY);
-        
+
         // Check if Ctrl key state changed and refresh tooltip if needed
         const wasCtrlPressed = ctrlKeyPressed;
         const isCtrlPressedNow = e.ctrlKey;
@@ -135,40 +242,31 @@ function handleMouseMove(e) {
         if (wasCtrlPressed !== isCtrlPressedNow) {
             ctrlKeyPressed = isCtrlPressedNow;
             if (currentHoveredSkill) {
-                handleSkillPointsChanged();
+                handleSkillPointsChanged(null);
             }
         }
+
+        scheduleTooltipHideWhenPointerLeavesCard(e.clientX, e.clientY);
     }
 }
 
 /**
  * Handle skill points changed event to update tooltip if showing
+ * @param {HTMLElement|null} preferredCard - Card from variant menu or other explicit UI
  */
-async function handleSkillPointsChanged() {
+async function handleSkillPointsChanged(preferredCard = null) {
     // If tooltip is showing for a skill, refresh it
     if (currentHoveredSkill && tooltipElement && tooltipElement.style.display !== 'none') {
-        const db = getDatabase();
-        if (!db) return;
-        
-        const skillData = getSkillDataFromDB(db, currentHoveredSkill);
+        if (!tooltipDataSourceReady()) return;
+
+        const skillCardPick = pickSkillCardForTooltip(preferredCard);
+        const classIdNum = parseClassIdDataset(skillCardPick?.dataset?.classId);
+        const cardNumericId = parseSkillNumericIdDataset(skillCardPick?.dataset?.skillNumericId);
+        const skillData = getSkillDataFromStore(currentHoveredSkill, classIdNum, cardNumericId);
         if (!skillData) return;
         
-        // Check if this is an oSkill
-        // Note: There might be multiple cards with same skill ID (regular tree + oSkills)
-        const allSkillCards = document.querySelectorAll(`.skill-card[data-skill-id="${currentHoveredSkill}"]`);
-        let skillCard = null;
-        let isOSkill = false;
-        
-        // Find the correct card - prefer oSkills tab if it exists there
-        allSkillCards.forEach(card => {
-            if (card.closest('#tab-oSkills')) {
-                skillCard = card;
-                isOSkill = true;
-            } else if (!skillCard) {
-                // Use regular skill card as fallback
-                skillCard = card;
-            }
-        });
+        const skillCard = skillCardPick;
+        const isOSkill = Boolean(skillCard && skillCard.closest('#tab-oSkills'));
         
         // Check if this is an innate skill (they're always level 1)
         const isInnate = skillCard && skillData && Innate.isInnateSkill({ name: skillData.id, canAddPoints: skillData.canAddPoints });
@@ -187,9 +285,12 @@ async function handleSkillPointsChanged() {
             warningMessage = plusBtn?.dataset?.warningMessage || '';
         }
         
-        const content = await buildTooltipContent(skillData, currentLevel, db, warningMessage, isOSkill);
+        const variantKey = resolveVariantKeyForTooltip(skillData.id, skillCard);
+        applySkillVariantTextOverrides(skillData, variantKey);
+        const content = await buildTooltipContent(skillData, currentLevel, warningMessage, isOSkill, variantKey);
         
         tooltipElement.innerHTML = content;
+        updateTooltipPosition(lastMouseX, lastMouseY);
     }
 }
 
@@ -204,26 +305,15 @@ async function handleOSkillsUpdated() {
         
         if (isOSkill) {
             // Skill still exists, refresh tooltip (same logic as handleSkillPointsChanged)
-            const db = getDatabase();
-            if (!db) return;
-            
-            const skillData = getSkillDataFromDB(db, currentHoveredSkill);
+            if (!tooltipDataSourceReady()) return;
+
+            const activeSkillCard = pickSkillCardForTooltip(null);
+            const classIdOs = parseClassIdDataset(activeSkillCard?.dataset?.classId);
+            const cardNumericIdOs = parseSkillNumericIdDataset(activeSkillCard?.dataset?.skillNumericId);
+            const skillData = getSkillDataFromStore(currentHoveredSkill, classIdOs, cardNumericIdOs);
             if (!skillData) return;
             
-            // Check if this is an oSkill
-            const allSkillCards = document.querySelectorAll(`.skill-card[data-skill-id="${currentHoveredSkill}"]`);
-            let activeSkillCard = null;
-            let isOSkillCard = false;
-            
-            // Find the correct card - prefer oSkills tab if it exists there
-            allSkillCards.forEach(card => {
-                if (card.closest('#tab-oSkills')) {
-                    activeSkillCard = card;
-                    isOSkillCard = true;
-                } else if (!activeSkillCard) {
-                    activeSkillCard = card;
-                }
-            });
+            const isOSkillCard = Boolean(activeSkillCard && activeSkillCard.closest('#tab-oSkills'));
             
             // Check if this is an innate skill (they're always level 1)
             const isInnate = activeSkillCard && skillData && Innate.isInnateSkill({ name: skillData.id, canAddPoints: skillData.canAddPoints });
@@ -242,8 +332,11 @@ async function handleOSkillsUpdated() {
                 warningMessage = plusBtn?.dataset?.warningMessage || '';
             }
             
-            const content = await buildTooltipContent(skillData, currentLevel, db, warningMessage, isOSkillCard);
+            const variantKeyOs = resolveVariantKeyForTooltip(skillData.id, activeSkillCard);
+            applySkillVariantTextOverrides(skillData, variantKeyOs);
+            const content = await buildTooltipContent(skillData, currentLevel, warningMessage, isOSkillCard, variantKeyOs);
             tooltipElement.innerHTML = content;
+            updateTooltipPosition(lastMouseX, lastMouseY);
             return;
         }
     }
@@ -266,28 +359,31 @@ async function handleOSkillsUpdated() {
  * @param {HTMLElement} hoveredCard - The actual card element being hovered (optional)
  */
 async function showTooltip(skillId, mouseX, mouseY, hoveredCard = null) {
+    clearPointerAwayHideTimer();
     // Store mouse coordinates for potential tooltip refresh
     lastMouseX = mouseX;
     lastMouseY = mouseY;
-    const db = getDatabase();
-    if (!db) {
-        console.warn('Tooltip: Database not loaded yet');
+    if (!tooltipDataSourceReady()) {
+        console.warn('Tooltip: Skill data not loaded yet');
         return;
     }
-    
-    // Get skill data from database
-    const skillData = getSkillDataFromDB(db, skillId);
-    if (!skillData) {
-        console.warn('Tooltip: No skill data found for', skillId);
-        return;
-    }
-    
-    // Use the provided card or search for it
+
     let skillCard = hoveredCard;
     if (!skillCard) {
         skillCard = document.querySelector(`.skill-card[data-skill-id="${skillId}"]`);
     }
-    
+    if (skillCard) {
+        lastHoveredSkillCard = skillCard;
+    }
+
+    const classIdNum = parseClassIdDataset(skillCard?.dataset?.classId);
+    const cardNumericId = parseSkillNumericIdDataset(skillCard?.dataset?.skillNumericId);
+    const skillData = getSkillDataFromStore(skillId, classIdNum, cardNumericId);
+    if (!skillData) {
+        console.warn('Tooltip: No skill data found for', skillId);
+        return;
+    }
+
     // Check if this is an oSkill
     const isOSkill = skillCard && skillCard.closest('#tab-oSkills');
     
@@ -308,8 +404,9 @@ async function showTooltip(skillId, mouseX, mouseY, hoveredCard = null) {
         warningMessage = plusBtn?.dataset?.warningMessage || '';
     }
     
-    // Build tooltip content
-    const content = await buildTooltipContent(skillData, currentLevel, db, warningMessage, isOSkill);
+    const variantKey = resolveVariantKeyForTooltip(skillData.id, skillCard);
+    applySkillVariantTextOverrides(skillData, variantKey);
+    const content = await buildTooltipContent(skillData, currentLevel, warningMessage, isOSkill, variantKey);
     
     // Update tooltip
     tooltipElement.innerHTML = content;
@@ -321,9 +418,58 @@ async function showTooltip(skillId, mouseX, mouseY, hoveredCard = null) {
  * Hide tooltip
  */
 function hideTooltip() {
+    clearPointerAwayHideTimer();
     if (tooltipElement) {
         tooltipElement.style.display = 'none';
     }
+    lastHoveredSkillCard = null;
+}
+
+/**
+ * Call before replacing skill grid DOM (innerHTML etc.). Removed nodes do not reliably emit mouseout.
+ */
+export function notifySkillGridDomReset() {
+    if (tooltipHideTimeout) {
+        clearTimeout(tooltipHideTimeout);
+        tooltipHideTimeout = null;
+    }
+    hideTooltip();
+    currentHoveredSkill = null;
+}
+
+/**
+ * If the pointer is not over the same skill card as the tooltip, start a 1s timer to dismiss
+ * (fast hovers often skip mouseout; immediate hide was too aggressive).
+ */
+function scheduleTooltipHideWhenPointerLeavesCard(clientX, clientY) {
+    if (!currentHoveredSkill || !tooltipElement || tooltipElement.style.display === 'none') {
+        return;
+    }
+    let el;
+    try {
+        el = document.elementFromPoint(clientX, clientY);
+    } catch {
+        return;
+    }
+    const card = el && el.closest('.skill-card');
+    const overSameCard =
+        card && String(card.dataset.skillId) === String(currentHoveredSkill);
+
+    if (overSameCard) {
+        clearPointerAwayHideTimer();
+        return;
+    }
+
+    if (!pointerAwayHideTimeout) {
+        pointerAwayHideTimeout = setTimeout(() => {
+            pointerAwayHideTimeout = null;
+            notifySkillGridDomReset();
+        }, POINTER_AWAY_HIDE_MS);
+    }
+}
+
+function onWindowScrollForTooltip() {
+    scheduleTooltipHideWhenPointerLeavesCard(lastMouseX, lastMouseY);
 }
 
 /**
@@ -331,7 +477,11 @@ function hideTooltip() {
  */
 export function refreshCurrentTooltip() {
     if (currentHoveredSkill) {
-        showTooltip(currentHoveredSkill, lastMouseX, lastMouseY);
+        const card =
+            cardMatchesCurrentHover(lastHoveredSkillCard) && isCardInDocument(lastHoveredSkillCard)
+                ? lastHoveredSkillCard
+                : null;
+        showTooltip(currentHoveredSkill, lastMouseX, lastMouseY, card);
     }
 }
 
@@ -372,51 +522,73 @@ function updateTooltipPosition(mouseX, mouseY) {
 }
 
 /**
- * Get skill data from database
+ * Apply optional description / effect / restriction overrides from skill_variants (mutates skillData).
  */
-function getSkillDataFromDB(db, skillId) {
+function applySkillVariantTextOverrides(skillData, variantKey) {
+    if (!skillData || !variantKey) return;
+    const o = getFileSkillStore()?.getVariantTextOverrides(skillData.numericId, variantKey);
+    if (!o) return;
+    if (o.description != null && String(o.description).trim() !== '') skillData.description = o.description;
+    if (o.skill_effect != null && String(o.skill_effect).trim() !== '') skillData.skillEffect = o.skill_effect;
+    if (o.restriction != null && String(o.restriction).trim() !== '') skillData.restriction = o.restriction;
+}
+
+function getSkillDataFromFileStore(skillId, classIdNum = null, cardNumericId = null) {
+    const store = getFileSkillStore();
+    if (!store?.gameMeta) return null;
+
+    let internal = null;
+    if (cardNumericId != null && Number.isFinite(cardNumericId)) {
+        internal = store.internalNameByNumericId(cardNumericId);
+    } else if (/^\d+$/.test(String(skillId))) {
+        internal = store.lookupSkillNameAndDisplayByNumericId(parseInt(String(skillId), 10))?.name ?? null;
+    } else {
+        internal = String(skillId);
+    }
+    if (!internal) return null;
+
+    const cat =
+        cardNumericId != null && Number.isFinite(cardNumericId)
+            ? store.catalog.find((c) => c.numericId === cardNumericId)
+            : store.catalog.find((c) => c.id === internal);
+    if (!cat) return null;
+
+    if (classIdNum != null && Number.isFinite(classIdNum)) {
+        const matchesClass = store.catalogRowMatchesPlannerClass(cat, classIdNum);
+        const sameRowAsCard =
+            cardNumericId != null &&
+            Number.isFinite(cardNumericId) &&
+            cat.numericId === cardNumericId;
+        if (!matchesClass && !sameRowAsCard) return null;
+    }
+
+    const det = store.getSkillDetail(internal);
+    if (!det) return null;
+
+    return {
+        numericId: cat.numericId,
+        id: internal,
+        displayName: det.display_name || cat.displayName || internal,
+        description: det.description,
+        skillEffect: det.skill_effect,
+        restriction: det.restriction,
+        image: det.image,
+        className: det.className || store.primaryClassDisplayName(cat) || '',
+        baseMaxLevel: cat.baseMaxLevel,
+        affectedBySpecialization: cat.affectedBySpecialization ? 1 : 0,
+        canAddPoints: cat.canAddPoints ? 1 : 0
+    };
+}
+
+/**
+ * Resolve tooltip skill fields from the file skill store.
+ * @param {string} skillId - Internal skill name (e.g. impale) or numeric catalog id as string
+ * @param {number|null} classIdNum - class id from the hovered card (merged planner row disambiguation)
+ * @param {number|null} cardNumericId - catalog numericId from the card (disambiguates cloned Mastery/Paragon rows)
+ */
+function getSkillDataFromStore(skillId, classIdNum = null, cardNumericId = null) {
     try {
-        // Get active version ID
-        const versionId = getCurrentVersionId(db);
-        if (!versionId) {
-            console.error('No active version found');
-            return null;
-        }
-        
-        // Check if skillId is numeric (skill ID) or string (skill name)
-        const isNumericId = /^\d+$/.test(skillId);
-        const whereClause = isNumericId ? 'WHERE s.id = ? AND s.version_id = ?' : 'WHERE s.name = ? AND s.version_id = ?';
-        
-        const stmt = db.prepare(`
-            SELECT s.id, s.name, s.display_name, s.description, s.skill_effect, s.restriction, s.image,
-                   c.name AS class_name,
-                   sml.base_max_level, sml.affected_by_specialization, sml.can_add_points
-            FROM skills s
-            LEFT JOIN classes c ON s.class_id = c.id
-            LEFT JOIN skill_max_levels sml ON s.id = sml.skill_id AND sml.version_id = ?
-            ${whereClause}
-        `);
-        
-        stmt.bind([versionId, isNumericId ? parseInt(skillId) : skillId, versionId]);
-        
-        if (stmt.step()) {
-            const row = stmt.getAsObject();
-            stmt.free();
-            return {
-                dbId: row.id,
-                id: row.name,
-                displayName: row.display_name,
-                description: row.description,
-                skillEffect: row.skill_effect,
-                restriction: row.restriction,
-                image: row.image,
-                className: row.class_name,
-                baseMaxLevel: row.base_max_level,
-                affectedBySpecialization: row.affected_by_specialization === 1,
-                canAddPoints: row.can_add_points === 1
-            };
-        }
-        stmt.free();
+        return getSkillDataFromFileStore(skillId, classIdNum, cardNumericId);
     } catch (error) {
         console.error('Error fetching skill data for tooltip:', error);
     }
@@ -425,43 +597,32 @@ function getSkillDataFromDB(db, skillId) {
 
 /**
  * Get skill category tags for a skill
- * @param {Object} db - Database instance
- * @param {number} skillId - Skill database ID
+ * @param {number} numericId - catalog numericId
  * @returns {Array<string>} Array of tag names
  */
-function getSkillCategoryTags(db, skillId) {
-    if (!db) return [];
-    
-    try {
-        // Combine all relevant tag IDs
-        const allTagIds = [...SKILL_CATEGORY_TAG_IDS, ...SUMMON_TAG_IDS, ...TELEPORT_TAG_IDS];
-        
-        const res = db.exec(`
-            SELECT st.name
-            FROM skill_skilltags sst
-            JOIN skilltags st ON sst.tag_id = st.id
-            WHERE sst.skill_id = ? AND st.id IN (${allTagIds.join(',')})
-            ORDER BY st.name
-        `, [skillId]);
-        
-        if (res[0] && res[0].values.length > 0) {
-            return res[0].values.map(row => row[0]);
+function getSkillCategoryTags(numericId) {
+    const store = getFileSkillStore();
+    const internal = store?.internalNameByNumericId(numericId);
+    if (!internal) return [];
+    const det = store.getSkillDetail(internal);
+    const nameLc = new Set((det?.tags || []).map((t) => String(t).toLowerCase()));
+
+    const out = [];
+    for (const t of store.gameMeta.skilltags || []) {
+        if (nameLc.has(String(t.name).toLowerCase())) {
+            out.push(t.name);
         }
-    } catch (error) {
-        console.warn('Error fetching skill tags:', error);
     }
-    
-    return [];
+    return out.sort();
 }
 
 /**
  * Build tooltip HTML content
- * @param {Object} skillData - Skill data from database
+ * @param {Object} skillData - Skill fields from the file store
  * @param {number} level - Current skill level
- * @param {Object} db - Database instance
  * @param {string} warningMessage - Optional warning message (e.g., prerequisite not met)
  */
-async function buildTooltipContent(skillData, level, db, warningMessage = '', isOSkill = false) {
+async function buildTooltipContent(skillData, level, warningMessage = '', isOSkill = false, variantKey = null) {
     // Get All Skills bonus for effective level calculation (used in multiple places)
     const allSkillsBonusInput = document.getElementById('allSkillsBonus');
     const allSkillsBonus = allSkillsBonusInput ? Math.max(0, parseInt(allSkillsBonusInput.value) || 0) : 0;
@@ -474,11 +635,12 @@ async function buildTooltipContent(skillData, level, db, warningMessage = '', is
     
     // Skill name and icon
     html += '<div class="tooltip-header">';
-    html += `<div class="tooltip-icon">${getSkillIconHTML(skillData.image, skillData.className, 'is-64x64', window.SkillDB?.db)}</div>`;
+    const iconFolder = versionToTreeAssetFolder(getCurrentVersion());
+    html += `<div class="tooltip-icon">${getSkillIconHTML(skillData.image, skillData.className, 'is-64x64', iconFolder)}</div>`;
     
     // Skill category tags (if any)
     let tagsHtml = ''
-    const tags = getSkillCategoryTags(db, skillData.dbId);
+    const tags = getSkillCategoryTags(skillData.numericId);
     if (tags.length > 0) {
         tagsHtml += '<p class="is-size-7 has-text-weight-bold has-text-grey-lighter">';
         tagsHtml += tags.join(', ');
@@ -488,7 +650,7 @@ async function buildTooltipContent(skillData, level, db, warningMessage = '', is
     html += `<div class="tooltip-name-container">
                 <div class="tooltip-name-section">
                     <div class="is-size-4 has-text-weight-bold">
-                        ${skillData.displayName}
+                        ${formatDisplayNameWithVariantHtml(skillData.displayName, skillData.numericId, variantKey)}
                         ${tagsHtml}
                     </div>
                 </div>
@@ -538,19 +700,11 @@ async function buildTooltipContent(skillData, level, db, warningMessage = '', is
         Object.entries(allOSkills).forEach(([skillIdOrName, points]) => {
             let skillName = skillIdOrName;
             
-            // If it's a skill ID, look up the skill name from database
-            if (/^\d+$/.test(skillIdOrName) && db) {
-                try {
-                    const stmt = db.prepare('SELECT name FROM skills WHERE id = ?');
-                    stmt.bind([parseInt(skillIdOrName)]);
-                    if (stmt.step()) {
-                        skillName = stmt.get()[0];
-                    }
-                    stmt.free();
-                } catch (error) {
-                    console.warn('Could not look up skill name for ID:', skillIdOrName);
-                    skillName = skillIdOrName; // Fallback to ID
-                }
+            if (/^\d+$/.test(skillIdOrName)) {
+                const internal = getFileSkillStore()?.internalNameByNumericId(
+                    parseInt(skillIdOrName, 10)
+                );
+                if (internal) skillName = internal;
             }
             
             oSkillsMap.set(skillName, points);
@@ -562,14 +716,15 @@ async function buildTooltipContent(skillData, level, db, warningMessage = '', is
     // For oSkills: exclude regular skill points for this specific skill, but keep other regular skills for references
     const characterState = {
         level: characterLevel,
+        className: getCharacterInstance()?.className ?? null,
         blvl: {}, // Will be populated below
         lvl: {}, // Will be populated below
         treeSkillsCache: getTreeSkillsCache(), // Add tree skills cache for tree() function
         stats: { ...characterStats } // Add character stats for formula evaluation
     };
     
-    // skillData.id is always the skill name (internal identifier) from getSkillDataFromDB
-    // skillData.dbId is the numeric database ID
+    // skillData.id is always the skill name (internal identifier) from getSkillDataFromStore
+    // skillData.numericId is the catalog numeric id (skills.json)
     const currentSkillName = skillData.id; // This is the skill name used in blvl
     
     // Populate blvl based on whether this is a regular skill or oSkill
@@ -639,7 +794,7 @@ async function buildTooltipContent(skillData, level, db, warningMessage = '', is
         html += '<div class="tooltip-description p-0">';
         
         // Check if skill has scaling data
-        const hasScaling = checkSkillHasScaling(db, skillData.dbId);
+        const hasScaling = checkSkillHasScaling(skillData.numericId);
         
         if (hasScaling) {
             html += `<div class="tooltip-level-indicator is-italic">Level ${level} values:</div>`;
@@ -647,13 +802,13 @@ async function buildTooltipContent(skillData, level, db, warningMessage = '', is
         
         // Render main description
         if (skillData.description) {
-            const expandedDesc = await expandPlaceholdersWithScaling(db, skillData.dbId, level, skillData.description, skillData.id, characterState, showFormulas);
+            const expandedDesc = await expandPlaceholdersWithScaling(skillData.numericId, level, skillData.description, skillData.id, characterState, showFormulas, variantKey);
             html += `<div class="tooltip-main-desc has-text-centered mb-2">${expandedDesc}</div>`;
         }
         
         // Render skill effect
         if (skillData.skillEffect) {
-            const expandedEffect = await expandPlaceholdersWithScaling(db, skillData.dbId, level, skillData.skillEffect, skillData.id, characterState, showFormulas);
+            const expandedEffect = await expandPlaceholdersWithScaling(skillData.numericId, level, skillData.skillEffect, skillData.id, characterState, showFormulas, variantKey);
             const lines = expandedEffect.split('\n');
             
             lines.forEach(line => {
@@ -672,7 +827,7 @@ async function buildTooltipContent(skillData, level, db, warningMessage = '', is
     if (skillData.restriction) {
         html += '<div class="tooltip-warning">';
         // Expand placeholders in restriction text
-        const expandedRestriction = await expandPlaceholdersWithScaling(db, skillData.dbId, level, skillData.restriction, skillData.id, characterState, showFormulas);
+        const expandedRestriction = await expandPlaceholdersWithScaling(skillData.numericId, level, skillData.restriction, skillData.id, characterState, showFormulas, variantKey);
         const restrictionLines = expandedRestriction.split('\n');
         restrictionLines.forEach(line => {
             html += `<div class="has-text-warning">${line}</div>`;
@@ -689,6 +844,27 @@ async function buildTooltipContent(skillData, level, db, warningMessage = '', is
         });
         html += '</div>';
     }
+
+    // Max-level scaling (MAX_LEVEL_MODIFIERS descriptions) — bottom section, info styling
+    if (skillData.numericId != null) {
+        const scalingLines = getMaxLevelModifierDescriptionsForSkill(
+            skillData.numericId,
+            characterState.blvl,
+            characterLevel
+        );
+        if (scalingLines.length > 0) {
+            html += '<div class="tooltip-scaling">';
+            scalingLines.forEach((line) => {
+                const safe = String(line)
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;');
+                html += `<div class="has-text-info">${safe}</div>`;
+            });
+            html += '</div>';
+        }
+    }
     
     html += '</div>';
     return html;
@@ -697,21 +873,13 @@ async function buildTooltipContent(skillData, level, db, warningMessage = '', is
 /**
  * Check if a skill has scaling data
  */
-function checkSkillHasScaling(db, skillDbId) {
+function checkSkillHasScaling(numericId) {
     try {
-        const stmt = db.prepare(`
-            SELECT COUNT(*) as count
-            FROM skill_scaling
-            WHERE skill_id = ?
-        `);
-        stmt.bind([skillDbId]);
-        
-        if (stmt.step()) {
-            const count = stmt.get()[0];
-            stmt.free();
-            return count > 0;
-        }
-        stmt.free();
+        const store = getFileSkillStore();
+        if (!store || numericId == null) return false;
+        const internal = store.internalNameByNumericId(numericId);
+        if (!internal) return false;
+        return store.hasScalingData(internal, store.getBalanceVersionIds());
     } catch (error) {
         console.error('Error checking scaling data:', error);
     }
@@ -722,6 +890,7 @@ function checkSkillHasScaling(db, skillDbId) {
  * Clean up tooltip (call when page is unloaded)
  */
 export function destroyTooltip() {
+    clearPointerAwayHideTimer();
     if (tooltipElement) {
         tooltipElement.remove();
         tooltipElement = null;
@@ -729,8 +898,9 @@ export function destroyTooltip() {
     document.removeEventListener('mouseover', handleMouseOver);
     document.removeEventListener('mouseout', handleMouseOut);
     document.removeEventListener('mousemove', handleMouseMove);
-    window.removeEventListener('skillPointsChanged', handleSkillPointsChanged);
-    window.removeEventListener('tooltipRefresh', handleSkillPointsChanged);
+    window.removeEventListener('scroll', onWindowScrollForTooltip, true);
+    window.removeEventListener('skillPointsChanged', onSkillPointsChangedForTooltip);
+    window.removeEventListener('tooltipRefresh', onTooltipRefreshEvent);
     window.removeEventListener('oskillsUpdated', handleOSkillsUpdated);
     
     // Reset Ctrl key state

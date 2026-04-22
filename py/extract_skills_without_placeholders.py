@@ -1,125 +1,121 @@
 #!/usr/bin/env python3
 """
-Script to extract skills that have descriptions but do NOT contain {{*}} placeholder format
-from the skills.sqlite database.
+Extract skills that have descriptions or skill effects but do NOT contain {{...}} placeholders
+from tree_data JSON (skills.json).
 """
 
-import sqlite3
-import os
 import argparse
+import sys
 from pathlib import Path
 
-def extract_skills_without_placeholders(db_path='../skills.sqlite'):
+_PY = Path(__file__).resolve().parent
+if str(_PY) not in sys.path:
+    sys.path.insert(0, str(_PY))
+
+from tree_data_loader import resolve_data_dir, load_merged_skills, text_has_placeholder
+
+
+def extract_skills_without_placeholders(data_dir):
     """
-    Extract skills that have descriptions but do NOT contain {{*}} placeholder format.
-    
-    Args:
-        db_path (str): Path to the SQLite database file
-        
     Returns:
-        list: List of tuples containing (skill_id, skill_name, display_name, description, class_name)
+        list of tuples (numeric_id, skill_name, display_name, description, skill_effect, class_name)
     """
-    db_full_path = db_path if db_path.startswith('/') or db_path.startswith('../') else f'../{db_path}'
-    
-    if not os.path.exists(db_full_path):
-        print(f"Error: Database file not found: {db_full_path}")
+    data_dir = resolve_data_dir(data_dir)
+    if not data_dir.is_dir():
+        print(f"Error: Data directory not found: {data_dir}")
         return []
-    
+
     try:
-        # Connect to the database
-        conn = sqlite3.connect(db_full_path)
-        cursor = conn.cursor()
-        
-        # Query to get all skills with descriptions or skill effects that do NOT contain {{*}} format
-        query = """
-        SELECT s.id, s.name, s.display_name, s.description, s.skill_effect, c.name as class_name
-        FROM skills s
-        LEFT JOIN classes c ON s.class_id = c.id
-        WHERE ((s.description IS NOT NULL AND s.description != '')
-           OR (s.skill_effect IS NOT NULL AND s.skill_effect != ''))
-        AND (s.description IS NULL OR s.description = '' OR s.description NOT LIKE '%{{%}}%')
-        AND (s.skill_effect IS NULL OR s.skill_effect = '' OR s.skill_effect NOT LIKE '%{{%}}%')
-        ORDER BY c.name, s.display_name
-        """
-        
-        cursor.execute(query)
-        results = cursor.fetchall()
-        
-        conn.close()
-        return results
-        
-    except sqlite3.Error as e:
-        print(f"Database error: {e}")
-        return []
+        merged = load_merged_skills(data_dir)
     except Exception as e:
         print(f"Error: {e}")
         return []
 
+    results = []
+    for row in merged:
+        desc = row["description"] or ""
+        eff = row["skill_effect"] or ""
+        if not (desc.strip() or eff.strip()):
+            continue
+        if text_has_placeholder(desc) or text_has_placeholder(eff):
+            continue
+        results.append(
+            (
+                row["numeric_id"],
+                row["name"],
+                row["display_name"],
+                desc,
+                eff,
+                row["class_name"],
+            )
+        )
+    return results
+
+
 def main():
-    """Main function to run the extraction and display results."""
-    parser = argparse.ArgumentParser(description='Extract skills that have descriptions but do NOT contain {{*}} placeholder format')
-    parser.add_argument('db_path', nargs='?', default='../skills.sqlite', help='Path to the SQLite database file (default: ../skills.sqlite)')
-    
+    parser = argparse.ArgumentParser(
+        description="Extract skills with description/effect but no {{...}} placeholders"
+    )
+    parser.add_argument(
+        "data_dir",
+        nargs="?",
+        default=None,
+        help="tree_data version folder (required), e.g. public/tree_data/2_12",
+    )
+
     args = parser.parse_args()
-    
-    print("Extracting skills with descriptions but NO {{*}} placeholder format...")
+    data_dir_arg = args.data_dir
+
+    print("Extracting skills with descriptions but NO {{...}} placeholder format...")
     print("=" * 70)
-    
-    # Extract skills without placeholders
-    skills = extract_skills_without_placeholders(args.db_path)
-    
+
+    skills = extract_skills_without_placeholders(data_dir_arg)
+
     if not skills:
         print("No skills found with descriptions but no placeholder format.")
         return
-    
+
     print(f"Found {len(skills)} skills with descriptions but no placeholders:\n")
-    
-    # Group by class for better organization
+
     current_class = None
     class_counts = {}
-    
+
     for skill_id, skill_name, display_name, description, skill_effect, class_name in skills:
-        # Count skills per class
-        class_counts[class_name or 'No Class'] = class_counts.get(class_name or 'No Class', 0) + 1
-        
-        # Print class header if it changed
+        class_counts[class_name or "No Class"] = class_counts.get(class_name or "No Class", 0) + 1
+
         if class_name != current_class:
             if current_class is not None:
-                print()  # Add spacing between classes
+                print()
             print(f"[CLASS] {class_name or 'No Class'}")
             print("-" * 50)
             current_class = class_name
-        
-        # Print skill info
+
         print(f"  - {display_name} (ID: {skill_id})")
         print(f"    Key: {skill_name}")
-        
-        # Show first 100 characters of description
+
         if description:
             desc_preview = description[:100] + "..." if len(description) > 100 else description
             print(f"    Description: {desc_preview}")
-        
-        # Show first 100 characters of skill effect
+
         if skill_effect:
             effect_preview = skill_effect[:100] + "..." if len(skill_effect) > 100 else skill_effect
             print(f"    Skill Effect: {effect_preview}")
         print()
-    
-    # Print statistics
+
     print("=" * 70)
     print("STATISTICS")
     print("=" * 70)
     print("Skills per class:")
-    
-    # Sort classes by count (descending)
+
     sorted_classes = sorted(class_counts.items(), key=lambda x: x[1], reverse=True)
-    
+
     for class_name, count in sorted_classes:
         print(f"  {class_name}: {count} skills")
-    
+
     print(f"\n[SUCCESS] Total skills with descriptions but no placeholders: {len(skills)}")
     print(f"[SUCCESS] Total classes represented: {len(class_counts)}")
+    print(f"Data: {resolve_data_dir(data_dir_arg)}")
+
 
 if __name__ == "__main__":
     main()
-

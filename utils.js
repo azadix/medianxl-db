@@ -6,8 +6,6 @@ export const MISSING_IMAGE_NAME = "icons-shared_missing.png";
 
 const SKILL_STYLE = "has-text-success";
 const FORMULA_STYLE = "has-text-warning";
-const DEFAULT_STYLE = "has-text-primary";
-const CONSTANTS_STYLE = "has-text-white";
 const UNKNOWN_STYLE = "has-text-danger";
 
 /**
@@ -22,53 +20,47 @@ export const TAG_GROUPS = {
     "Custom": [16, 18, 19, 33, 34, 37]
 };
 
-// Export individual groups for convenience
-export const SKILL_CATEGORY_TAG_IDS = TAG_GROUPS["Skill Category"];
-export const DAMAGE_TAG_IDS = TAG_GROUPS["Damage"];
-export const SUMMON_TAG_IDS = TAG_GROUPS["Summon"];
-export const TELEPORT_TAG_IDS = TAG_GROUPS["Teleport"];
-export const MODIFIER_TAG_IDS = TAG_GROUPS["Custom"];
-
 // Import Skill class for scaling values
 import Skill from './skills/Skill.js';
+import {
+    lookupMergedDisplayNameByInternalName,
+    lookupSkillNameAndDisplayByNumericId,
+    getFileSkillStore
+} from './tree/skill-data-store.js';
+import { formulaEvaluator } from './skills/formula-evaluator.js';
+import { formatScalingValuesToDescriptionHtml } from './skills/scaling-display-html.js';
 
-// --- SQL DB Loader ---
-export async function loadDatabase(file = null) {
-    // If no file specified, use version-aware default
-    if (!file) {
-        const { getDatabaseFile } = await import('./version-config.js');
-        file = getDatabaseFile();
-    }
-    
-    const SQL = await initSqlJs({ locateFile: f => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.13.0/${f}` });
-    const response = await fetch(file);
-    if (!response.ok) {
-        throw new Error(`Failed to load database file: ${file}`);
-    }
-    const buffer = await response.arrayBuffer();
-    return new SQL.Database(new Uint8Array(buffer));
+// --- Skill data (tree_data JSON) load error ---
+function escapeHtmlText(s) {
+    return String(s)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
 }
 
-// --- Database Error Display ---
-export function showDatabaseError(errorMessage, contentElement = null) {
+export function showSkillDataLoadError(errorMessage, contentElement = null) {
     const targetElement = contentElement || document.getElementById('content');
     if (!targetElement) {
-        console.error('No content element found for database error display');
+        console.error('No content element found for skill data error display');
         return;
     }
-    
+
+    const safeMsg = escapeHtmlText(errorMessage ?? 'Unknown error');
+
     targetElement.innerHTML = `
         <div class="box">
             <div class="content">
-                <h3 class="title is-4 has-text-danger">Database Error</h3>
-                <p>Unable to load the skills database. Please check:</p>
+                <h3 class="title is-4 has-text-danger">Could not load skill data</h3>
+                <p>Skill trees and descriptions are loaded from <code>tree_data/</code> (JSON). Something went wrong while fetching or parsing those files.</p>
+                <p>Try:</p>
                 <ul>
-                    <li>Database file exists and is accessible</li>
-                    <li>You have an active internet connection</li>
-                    <li>Try refreshing the page</li>
+                    <li>Refresh the page (or hard refresh if assets were cached)</li>
+                    <li>Confirm you are opening the site from a server or path where <code>tree_data/</code> is deployed</li>
+                    <li>Check your network connection if this is hosted remotely</li>
                 </ul>
-                <p class="has-text-danger"><strong>Error:</strong> ${errorMessage}</p>
-                <button class="button is-danger" onclick="location.reload()">Refresh Page</button>
+                <p class="has-text-danger"><strong>Details:</strong> ${safeMsg}</p>
+                <button class="button is-danger" onclick="location.reload()">Refresh page</button>
             </div>
         </div>
     `;
@@ -105,7 +97,13 @@ export function formatStatName(stat) {
     ).join(' ');
 }
 
-export function getIconHTML(imagePath, className = '') {
+// When no patch folder is passed, use this tree_data subdirectory (underscore major_minor).
+const ATLAS_DEFAULT_VERSION_FOLDER = '2_13';
+
+/**
+ * @param {string} gameVersionFolder - e.g. "2_12"; atlas URL is tree_data/<folder>/class-<prefix>.png; if omitted, uses ATLAS_DEFAULT_VERSION_FOLDER.
+ */
+export function getIconHTML(imagePath, className = '', gameVersionFolder = null) {
     if (!imagePath) return "";
     if (imagePath === MISSING_IMAGE_NAME) {
         return `<img src="icons/${MISSING_IMAGE_NAME}" class="image ${className}" alt="missing icon">`;
@@ -122,12 +120,17 @@ export function getIconHTML(imagePath, className = '') {
     const x = (index % ICONS_PER_ROW) * ICON_SIZE;
     const y = Math.floor(index / ICONS_PER_ROW) * ICON_SIZE;
 
+    const folder = (gameVersionFolder && String(gameVersionFolder).trim())
+        ? String(gameVersionFolder).trim()
+        : ATLAS_DEFAULT_VERSION_FOLDER;
+    const atlasPath = `tree_data/${folder}/class-${prefix}.png`;
+
     return `
         <div class="image ${className}"
             style="
                 width:${ICON_SIZE}px;
                 height:${ICON_SIZE}px;
-                background-image:url('icons/class-${prefix}.png');
+                background-image:url('${atlasPath}');
                 background-position:-${x}px -${y}px;
             ">
         </div>
@@ -135,64 +138,47 @@ export function getIconHTML(imagePath, className = '') {
 }
 
 // --- Class-derived icon resolver ---
-// Accepts a raw image filename stored in DB (e.g., "image.png") and the human-readable class name
+// Accepts a raw image filename (e.g., "image.png") and the human-readable class name
 // Maps the class to a directory prefix and returns an <img> element pointing to icons/<prefix>/<filename>
 // For class "Other", shared images are used (icons/shared)
 
-export function getSkillIconHTML(imageFileName, humanClassName, className = '', db = null) {
+/**
+ * @param {string|null|undefined} imageFileName - raw filename from data (e.g. "image.png")
+ * @param {string|null|undefined} humanClassName - class display name for prefix lookup
+ * @param {string} [className] - extra CSS class on the img element
+ * @param {string|null|undefined} gameVersionFolder - e.g. "2_12"; only atlas-style names (icons-*_n.png / image-*_n.png).
+ * Those load sprites from tree_data/<folder>/class-<prefix>.png. Loose PNGs use icons/<prefix>/<file> (not versioned).
+ */
+export function getSkillIconHTML(imageFileName, humanClassName, className = '', gameVersionFolder = null) {
     const file = (imageFileName && imageFileName.trim().length > 0) ? imageFileName.trim() : MISSING_IMAGE_NAME;
+    const atlasVersionFolder = gameVersionFolder && String(gameVersionFolder).trim().length > 0
+        ? String(gameVersionFolder).trim()
+        : null;
 
-    // If atlas-style filename, render via atlas regardless of class (shared or class-specific handled by regex)
+    // Atlas-style: version-specific sprite sheets (tree_data/<major>_<minor>/class-*.png).
     if (/^(?:icons|image)-[a-z]+_\d+\.png$/.test(file)) {
-        return getIconHTML(file, className);
+        return getIconHTML(file, className, atlasVersionFolder);
     }
 
-    // Otherwise, simple file path under class-derived directory; if name indicates shared, force shared
+    // Loose PNGs: shared across patches; keep sources for building atlases in your asset pipeline, not under version folders here.
     const isExplicitShared = /^shared\//.test(file) || /(^|-)shared(_|\.)/i.test(file);
-    
-    let prefix = 'shared'; // default fallback
-    
-    if (!isExplicitShared && humanClassName && db) {
-        // Get prefix from database
-        try {
-            const stmt = db.prepare('SELECT image_prefix FROM classes WHERE name = ?');
-            stmt.bind([humanClassName]);
-            if (stmt.step()) {
-                const dbPrefix = stmt.get()[0];
-                if (dbPrefix) {
-                    prefix = dbPrefix; // Database stores just the prefix (ama, bar, etc.)
-                }
-            }
-            stmt.free();
-        } catch (error) {
-            console.warn('Error getting class prefix from database:', error);
-            // If database query fails, we're already in a bad state - just use 'shared' fallback
-            // This should rarely happen since the app shouldn't run without a proper database
+
+    let prefix = 'shared';
+
+    if (!isExplicitShared && humanClassName) {
+        const store = getFileSkillStore();
+        const row = store?.gameMeta?.classes?.find((c) => c.name === humanClassName);
+        if (row?.image_prefix) {
+            prefix = row.image_prefix;
         }
     }
-    
+
     const path = file === MISSING_IMAGE_NAME ? `icons/${MISSING_IMAGE_NAME}` : `icons/${prefix}/${file}`;
     return `<img src="${path}" class="image ${className}">`;
 }
 
 
 // --- Placeholder Expansion Utilities ---
-
-// Helper function to detect how many parameters a stat format needs
-function getStatParameterCount(db, statKey) {
-    const stmt = db.prepare("SELECT format FROM stats WHERE LOWER(key) = ?");
-    stmt.bind([statKey.toLowerCase()]);
-    let paramCount = 0;
-    if (stmt.step()) {
-        const format = stmt.get()[0] || '{name}: {value}';
-        // Count how many value placeholders are in the format
-        const valueMatches = format.match(/\{value\d*\}/g) || [];
-        const percentMatches = format.match(/%value\d*%/g) || [];
-        paramCount = Math.max(valueMatches.length, percentMatches.length);
-    }
-    stmt.free();
-    return paramCount;
-}
 
 /**
  * Calculate mana cost from mana, lvlmana, manashift parameters
@@ -226,54 +212,60 @@ function calculateManaCost(mana, lvlmana, manashift, level) {
     return Math.trunc(totalMana256ths);
 }
 
-// Helper function to auto-expand simple {{stat}} tokens to include parameter placeholders
-function autoExpandStatToken(db, statKey) {
-    const paramCount = getStatParameterCount(db, statKey);
-    if (paramCount === 0) return `{{${statKey}}}`;
-    
-    // Generate parameter placeholders based on count
-    const params = Array.from({length: paramCount}, (_, i) => `%value${i}%`).join(',');
-    return `{{${statKey}:${params}}}`;
-}
-
-
 // Expand using values sourced from skill_scaling for a given skill and level.
 // If inline values are provided in the token, they take precedence; otherwise fetch by stat key.
-// Expected schema: stats(key TEXT UNIQUE), skill_scaling(skill_id, level, stat_id, occurrence_index, value)
-
-// Also supports [[skill_name]] which expands to skill's display_name in success color
-export async function expandPlaceholdersWithScaling(db, skillId, level, description, skillName = null, characterState = null, showFormulas = false) {
+// Also supports [[internal_name]] or [[id:123]] which expand to display_name in success color
+export async function expandPlaceholdersWithScaling(numericId, level, description, skillName = null, characterState = null, showFormulas = false, variantKey = null) {
     if (!description) return '';
     
-    // Get version ID once at the start
-    const { getCurrentVersionId } = await import('./version-config.js');
-    const versionId = getCurrentVersionId(db);
-    if (!versionId) return description;
+    if (!getFileSkillStore()) return description;
     
     // Track occurrence counts for each stat key to maintain order
     const occurrenceCounts = new Map();
+
+    const crossSkillDotStatRe =
+        /\[\[([a-zA-Z_][a-zA-Z0-9_]*|id:\d+)\]\]\.\{\{([a-zA-Z_][a-zA-Z0-9_]*)\}\}/gi;
+
+    let expandedDescription = description;
+    if (characterState) {
+        const charLevel = characterState.level ?? 1;
+        expandedDescription = await Skill.expandCrossSkillCompoundPlaceholdersHtml(
+            expandedDescription,
+            characterState,
+            charLevel,
+            showFormulas,
+            0
+        );
+    } else {
+        expandedDescription = expandedDescription.replace(
+            crossSkillDotStatRe,
+            '<span class="has-text-grey">[set character to preview]</span>'
+        );
+    }
     
-    // First, expand skill name placeholders [[skill_name]]
-    let expandedDescription = description.replace(/\[\[(.*?)\]\]/g, (match, skillName) => {
-        const trimmedSkillName = skillName.trim();
-        if (!trimmedSkillName) return match;
-        
+    // First, expand [[internal_name]] or [[id:123]] (id is catalog numericId)
+    expandedDescription = expandedDescription.replace(/\[\[(.*?)\]\]/g, (match, inner) => {
+        const trimmed = inner.trim();
+        if (!trimmed) return match;
+
         try {
-            const stmt = db.prepare("SELECT display_name FROM skills WHERE name = ? AND version_id = ?");
-            stmt.bind([trimmedSkillName, versionId]);
-            
-            if (stmt.step()) {
-                const displayName = stmt.get()[0];
-                stmt.free();
+            const idRef = trimmed.match(/^id:(\d+)$/i);
+            if (idRef) {
+                const row = lookupSkillNameAndDisplayByNumericId(idRef[1]);
+                if (row) {
+                    return `<p class='${SKILL_STYLE}'>${row.displayName}</p>`;
+                }
+                return `<span class="${UNKNOWN_STYLE}">[unknown skill id:${idRef[1]}]</span>`;
+            }
+            const displayName = lookupMergedDisplayNameByInternalName(trimmed);
+            if (displayName) {
                 return `<p class='${SKILL_STYLE}'>${displayName}</p>`;
             }
-            stmt.free();
+            return `<span class="${UNKNOWN_STYLE}">[unknown skill:${trimmed}]</span>`;
         } catch (error) {
             console.warn('Error expanding skill name placeholder:', error);
+            return `<span class="${UNKNOWN_STYLE}">[skill placeholder error]</span>`;
         }
-        
-        // If skill not found, return original match
-        return match;
     });
     
     // Then, expand stat placeholders {{stat_key}}
@@ -285,67 +277,36 @@ export async function expandPlaceholdersWithScaling(db, skillId, level, descript
     let result = expandedDescription;
     for (const match of placeholderMatches) {
         const token = match.slice(2, -2); // Remove {{ and }}
-        const [rawKey, rawValues] = token.split(':').map(s => s.trim());
+        const [rawKey, _rawValues] = token.split(':').map(s => s.trim());
         const key = (rawKey || '').toLowerCase();
-        
-        // Check if this is a character stat reference (not a skill stat scaling placeholder)
-        // Character stats are stored in characterState.stats object
-        if (characterState && characterState.stats && characterState.stats.hasOwnProperty(key)) {
-            // This is a character stat, not a skill stat placeholder
-            const statValue = characterState.stats[key];
-            result = result.replace(match, statValue.toString());
-            continue;
-        }
         
         // Track occurrence index for this stat key
         const occurrenceIndex = occurrenceCounts.get(key) || 0;
         occurrenceCounts.set(key, occurrenceIndex + 1);
-        
-        // If no values provided, auto-expand based on stat format
-        let values = [];
-        if (!rawValues) {
-            const expandedToken = autoExpandStatToken(db, rawKey);
-            const [, expandedValues] = expandedToken.split(':').map(s => s.trim());
-            values = expandedValues ? expandedValues.split(',').map(v => v.trim()) : [];
-        } else {
-            values = rawValues.split(',').map(v => v.trim());
+
+        let output = `[Unknown stat: ${rawKey}]`;
+        let name = null;
+        let format = null;
+        let actualSkillName = skillName;
+
+        const store = getFileSkillStore();
+        const st = store?.getStatByKeyLower(key);
+        if (st) {
+            name = st.name;
+            format = st.format;
+        }
+        if (!actualSkillName && store) {
+            const resolved = store.lookupSkillNameAndDisplayByNumericId(numericId);
+            if (resolved) actualSkillName = resolved.name;
         }
 
-
-        // Otherwise, attempt to fetch value using Skill class (includes constants)
-        // First get the stat info
-        const statStmt = db.prepare("SELECT name, format FROM stats WHERE LOWER(key) = ?");
-        statStmt.bind([key]);
-        let output = `[Unknown stat: ${rawKey}]`;
-        if (statStmt.step()) {
-            const [name, format] = statStmt.get();
-            statStmt.free();
-            
-            // Use Skill class to get scaling values (includes constants)
-            let actualSkillName = skillName;
-            
-            if (!actualSkillName) {
-                // If skillName not provided, get it from database ID
-                const skillStmt = db.prepare("SELECT name FROM skills WHERE id = ? AND version_id = ?");
-                skillStmt.bind([skillId, versionId]);
-                if (skillStmt.step()) {
-                    actualSkillName = skillStmt.get()[0];
-                }
-                skillStmt.free();
-            }
-            
+        if (name != null) {
             if (actualSkillName) {
-                // Get the display name for the skill
-                const displayNameStmt = db.prepare("SELECT display_name FROM skills WHERE name = ? AND version_id = ?");
-                displayNameStmt.bind([actualSkillName, versionId]);
-                let displayName = actualSkillName; // fallback to skill name
-                if (displayNameStmt.step()) {
-                    displayName = displayNameStmt.get()[0] || actualSkillName;
-                }
-                displayNameStmt.free();
+                const mergedDisplay = lookupMergedDisplayNameByInternalName(actualSkillName);
+                const displayName = mergedDisplay || actualSkillName;
                 
-                const skill = new Skill({ id: actualSkillName, name: displayName, skillId: skillId });
-                const scalingValues = await skill.getScalingValues(db, level, key, occurrenceIndex, characterState, characterState?.level, showFormulas);
+                const skill = new Skill({ id: actualSkillName, name: displayName, skillId: numericId });
+                const scalingValues = await skill.getScalingValues(level, key, occurrenceIndex, characterState, characterState?.level, showFormulas, 0, variantKey);
                 
                 if (scalingValues) {
                     // Special handling for mana_cost: calculate single value from 3 parameters
@@ -372,7 +333,6 @@ export async function expandPlaceholdersWithScaling(db, skillId, level, descript
                             // Values are already evaluated by getScalingValues() when showFormulas is false
                             // If showFormulas is true or evaluation failed, values might be formula strings
                             // Try to parse as numbers first, and if that fails, try to evaluate as formulas
-                            const { formulaEvaluator } = await import('./skills/formula-evaluator.js');
                             const evaluator = formulaEvaluator;
                             
                             // Helper to parse or evaluate a value
@@ -432,54 +392,7 @@ export async function expandPlaceholdersWithScaling(db, skillId, level, descript
                                 .replace('{value3}', "");
                         }
                     } else {
-                        // Regular stat handling (non-mana_cost)
-                        const v0 = scalingValues.value0 ?? '';
-                        const v1 = scalingValues.value1 ?? '';
-                        const v2 = scalingValues.value2 ?? '';
-                        const v3 = scalingValues.value3 ?? '';
-                        
-                        // Check if any constants exist for this stat
-                        // If constants exist but only some values are filled, empty ones should show ???
-                        const hasAnyConstants = scalingValues.value0_constant || scalingValues.value1_constant || 
-                                               scalingValues.value2_constant || scalingValues.value3_constant;
-                        
-                        // Use different styling: formulas=link, constants=warning, scaling=primary
-                        const getValueClass = (valueIndex) => {
-                            const isFormula = scalingValues[`value${valueIndex}_formula`];
-                            const isConstant = scalingValues[`value${valueIndex}_constant`];
-                            if (isFormula) return FORMULA_STYLE;
-                            if (isConstant) return CONSTANTS_STYLE;
-                            return DEFAULT_STYLE;
-                        };
-                        
-                        // Check if values are empty and should show ??? for formulas/constants
-                        const getDisplayHtml = (valueIndex, defaultValue) => {
-                            const isEmpty = defaultValue === '' || defaultValue === null || defaultValue === undefined;
-                            const isFormula = scalingValues[`value${valueIndex}_formula`];
-                            const isConstant = scalingValues[`value${valueIndex}_constant`];
-                            
-                            // Show ??? if value is empty AND:
-                            // 1. It's marked as a formula/constant, OR
-                            // 2. Constants exist for this stat (if constants are present but only some values filled, empty ones show ???)
-                            //    This handles the case where only 1 of X fields is filled - empty ones show ???
-                            if (isEmpty && (isFormula || isConstant || hasAnyConstants)) {
-                                return `<span class="${UNKNOWN_STYLE}">???</span>`;
-                            }
-                            // Use the appropriate style class for the value
-                            return `<span class="${getValueClass(valueIndex)}">${defaultValue || ''}</span>`;
-                        };
-                        
-                        const w0 = getDisplayHtml(0, v0);
-                        const w1 = getDisplayHtml(1, v1);
-                        const w2 = getDisplayHtml(2, v2);
-                        const w3 = getDisplayHtml(3, v3);
-                        
-                        output = (format || '{name}: {value}')
-                            .replace('{name}', name)
-                            .replace('{value0}', w0)
-                            .replace('{value1}', w1)
-                            .replace('{value2}', w2)
-                            .replace('{value3}', w3);
+                        output = formatScalingValuesToDescriptionHtml(scalingValues, key);
                     }
                 } else {
                     // No scaling values found at all - show ??? for all values
@@ -506,19 +419,37 @@ export async function expandPlaceholdersWithScaling(db, skillId, level, descript
 
         // If no scaling row for this level, but stat exists: show format with ??? placeholders
         if (output === `[Unknown stat: ${rawKey}]`) {
-            const s2 = db.prepare('SELECT name, format FROM stats WHERE LOWER(key) = ?');
-            s2.bind([key]);
-            if (s2.step()) {
-                const [name, format] = s2.get();
+            let n2 = null;
+            let f2 = null;
+            const st2 = getFileSkillStore()?.getStatByKeyLower(key);
+            if (st2) {
+                n2 = st2.name;
+                f2 = st2.format;
+            }
+            if (n2 != null) {
                 const q = `<span class="${UNKNOWN_STYLE}">???</span>`;
-                output = (format || '{name}: {value}')
-                    .replace('{name}', name)
+                output = (f2 || '{name}: {value}')
+                    .replace('{name}', n2)
                     .replace('{value0}', q)
                     .replace('{value1}', q)
                     .replace('{value2}', q)
                     .replace('{value3}', q);
             }
-            s2.free();
+        }
+
+        // Character panel stats (life, resistances, etc.) must NOT override skill_scaling for the
+        // hovered skill — keys often collide (e.g. {{cold_resistance}} on Warmth is the skill bonus,
+        // not the planner's cold_resistance). Only substitute from characterState.stats when skill
+        // data did not resolve this placeholder at all.
+        if (
+            output === `[Unknown stat: ${rawKey}]` &&
+            characterState &&
+            characterState.stats &&
+            Object.prototype.hasOwnProperty.call(characterState.stats, key)
+        ) {
+            const statValue = characterState.stats[key];
+            output =
+                statValue === undefined || statValue === null ? '' : String(statValue);
         }
         
         result = result.replace(match, output);

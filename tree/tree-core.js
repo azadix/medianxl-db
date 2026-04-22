@@ -1,22 +1,62 @@
 // Core functionality for the skills tree viewer
-import { loadSkillsFromSQLite, getDatabase } from './tree-data.js';
-import { renderSkills, renderDifficultyCheckboxes, updateTabColors, buildOSkillCardData } from './tree-render.js';
+import { loadPlannerSkillsFromTreeData } from './tree-data.js';
+import { renderSkills, updateTabColors } from './tree-render.js';
+import { getCurrentTab, setCurrentTabState } from './tree-tab-state.js';
+import { updatePlannerUrlTab } from './tree-url-sync.js';
+import Tree from '../character/Tree.js';
 import Character from '../character/Character.js';
-import { initializeCharacter, getSpentSkillPoints, getAllSkillPoints, getAllSkillPointsById, setAllSkillPoints, setAllSkillPointsById, updateQuestCompletion, getQuestCompletion, getAllOSkills, addOSkill, changeOSkillPoints, clearOSkills, setAllOSkills, getMinimumRequiredLevel, getTotalQuestSkillPoints, checkSkillsExceedingMaxLevel, getAvailableSkillPoints, getCharacterInstance, getCharacterLevel, parseStatsFromText, exportStatsToText, clearAllStats } from '../character/character-state.js';
+import { initializeCharacter, applyClassBaselineStatsToCharacter, recomputeClassDerivedLifeMana, onPlannerSkillAllocationChanged, getSpentSkillPoints, getAllSkillPoints, getAllSkillPointsById, setAllSkillPoints, setAllSkillPointsById, importQuestsCompleted, setStatAllocation, getAllOSkills, addOSkill, clearOSkills, setAllOSkills, getMinimumRequiredLevel, getTotalQuestSkillPoints, checkSkillsExceedingMaxLevel, getAvailableSkillPoints, getCharacterInstance, getCharacterLevel, getEffectivePlannerLevel, parseStatsFromText, exportStatsToText, clearAllStats, getQuestsCompletedForSave, getQuestCompletionOptOutForSave, getStatAllocation } from '../character/character-state.js';
+import { refreshPlannerStatsPanelFromCharacter } from '../character/planner-stats-panel.js';
+import { initPlannerConfigPanel } from '../character/planner-config-panel.js';
+import { setPlannerSectionFromLegacy } from '../src/planner/planner-section-bridge.js';
+import {
+    getSavedBuilds,
+    setSavedBuilds,
+    notifySavedBuildsListRefresh,
+} from '../src/planner/saved-builds-storage.js';
 import { getCurrentDevotion, getDevotionDisplayName } from '../skills/skill-calculations.js';
-import { initializeTooltip, refreshCurrentTooltip } from './tree-tooltip.js';
+import { initializeTooltip, refreshCurrentTooltip, notifySkillGridDomReset } from './tree-tooltip.js';
 import { ToastManager } from './ToastManager.js';
-import { DropdownList } from '../edit/DropdownList.js';
-import { renderSkillCard, getSkillIcon } from './tree-render.js';
-import { getCurrentVersion, versionToString, setBuildVersionOverride } from '../version-config.js';
+import { DropdownList } from './DropdownList.js';
+import {
+    getCurrentVersion,
+    versionToString,
+    setBuildVersionOverride,
+    initializeVersionSelector
+} from '../version-config.js';
+import { getFileSkillStore } from './skill-data-store.js';
+import { clearSkillVariants, applySkillVariantDefaultsForClass } from './skill-variants.js';
+
+export { getSavedBuilds, notifySavedBuildsListRefresh };
+
+/**
+ * Class names for the planner from {@link getFileSkillStore} game_meta, else derived from skills.
+ * @param {Array<{ class?: string }>} skillsListFallback - used when game_meta has no classes
+ * @returns {string[]}
+ */
+function loadPlannerClassNames(skillsListFallback) {
+    const names = (getFileSkillStore()?.gameMeta?.classes || [])
+        .map((c) => c.name)
+        .filter((n) => n && n !== 'Other');
+    if (names.length) {
+        names.sort((a, b) => String(a).localeCompare(String(b)));
+        return names;
+    }
+    return [...new Set(skillsListFallback.map((skill) => skill.class))]
+        .filter((c) => c !== 'Other')
+        .sort((a, b) => String(a).localeCompare(String(b)));
+}
 
 // Global variables
 let skillsList;
+/** @type {Tree|null} */
+let plannerTree = null;
 let skillsContainer;
 let classSelect;
-let currentTab = null;
 let treeInitialized = false; // Track if tree has been initialized
 let currentBuildIndex = null; // Track currently loaded build index for saving
+/** Window listeners from setupGlobalEventListeners survive route changes; attach once. */
+let plannerTreeGlobalListenersAttached = false;
 
 /**
  * Parse version string to version object
@@ -38,11 +78,8 @@ function updateVersionSelector() {
     const versionSelector = document.getElementById('version-selector');
     if (!versionSelector) return;
     
-    // Get database if available
-    const db = getDatabase();
-    const currentVersion = getCurrentVersion(db);
-    const currentVersionString = versionToString(currentVersion);
-    
+    const currentVersion = getCurrentVersion();
+
     // Find and select the current version option
     const options = versionSelector.querySelectorAll('option');
     options.forEach(option => {
@@ -57,31 +94,19 @@ function updateVersionSelector() {
 }
 
 /**
- * Silently reload database and reinitialize tree with new version
- * @param {Object} build - The build to load after database reload
+ * Reload tree_data for the selected version and reinitialize the tree with a build.
+ * @param {Object} build - Build to load after skill data reload
  * @param {number} buildIndex - The index of the build in the saved builds array
  */
-async function reloadDatabaseAndLoadBuild(build, buildIndex) {
+async function reloadSkillDataAndLoadBuild(build, buildIndex) {
     try {
-        // Reload skills from SQLite with new version
-        skillsList = await loadSkillsFromSQLite();
+        skillsList = await loadPlannerSkillsFromTreeData();
+        plannerTree = new Tree(skillsList);
         
         // Update version selector
         updateVersionSelector();
         
-        // Re-populate class selector from new database
-        const db = getDatabase();
-        const classes = [];
-        try {
-            const stmt = db.prepare('SELECT name FROM classes WHERE name NOT IN ("Other") ORDER BY name');
-            while (stmt.step()) {
-                classes.push(stmt.get()[0]);
-            }
-            stmt.free();
-        } catch (error) {
-            console.warn('Could not load classes from database, falling back to skill list:', error);
-            classes.push(...[...new Set(skillsList.map(skill => skill.class))].filter(c => c !== 'Other'));
-        }
+        const classes = loadPlannerClassNames(skillsList);
         
         // Clear and repopulate class selector
         if (classSelect) {
@@ -94,17 +119,17 @@ async function reloadDatabaseAndLoadBuild(build, buildIndex) {
             });
         }
         
-        // Now load the build with the new database
+        // Now load the build with the reloaded skill data
         loadBuildData(build, buildIndex);
         
     } catch (error) {
-        console.error('Failed to reload database:', error);
-        toastManager.showToast(`Failed to reload database: ${error.message}`, false, 'danger');
+        console.error('Failed to reload skill data:', error);
+        toastManager.showToast(`Failed to reload skill data: ${error.message}`, false, 'danger');
     }
 }
 
 /**
- * Load build data without version checking (used after database reload)
+ * Load build data without version checking (used after skill data reload)
  * @param {Object} build - The build object to load
  * @param {number} buildIndex - The index of the build in the saved builds array
  */
@@ -116,6 +141,13 @@ function loadBuildData(build, buildIndex = null) {
     
     // Initialize character with loaded class and level first
     initializeCharacter(build.class, build.level);
+
+    if (build.questsCompleted && typeof build.questsCompleted === 'object') {
+        importQuestsCompleted(build.questsCompleted, build.questCompletionOptOut);
+    }
+    if (build.statAllocation && typeof build.statAllocation === 'object') {
+        setStatAllocation(build.statAllocation);
+    }
     
     // Load skill points (handle both old format with names and new format with IDs)
     if (build.skillPoints) {
@@ -140,18 +172,21 @@ function loadBuildData(build, buildIndex = null) {
         setAllSkillsBonus(build.allSkillsBonus);
     }
     
-    // Load Character Stats
-    if (build.stats) {
-        const characterStatsInput = document.getElementById('characterStats');
-        if (characterStatsInput) {
-            characterStatsInput.value = build.stats;
-            // Parse stats to set them in character instance
-            const errors = parseStatsFromText(build.stats);
-            if (errors.length > 0) {
-                console.warn('Stats parsing errors when loading build:', errors);
-            }
+    // Load Character Stats (panel + optional advanced textarea stay in sync via refresh)
+    const statsText = build.stats != null ? String(build.stats).trim() : '';
+    if (statsText) {
+        const errors = parseStatsFromText(build.stats);
+        if (errors.length > 0) {
+            console.warn('Stats parsing errors when loading build:', errors);
         }
+    } else if (build.class) {
+        applyClassBaselineStatsToCharacter(build.class);
     }
+    refreshPlannerStatsPanelFromCharacter();
+    window.dispatchEvent(new CustomEvent('characterStatsChanged', { detail: { buildLoad: true } }));
+    
+    clearSkillVariants();
+    applySkillVariantDefaultsForClass(build.class);
     
     // Initialize tooltip functionality (needed for skill tooltips to work)
     initializeTooltip();
@@ -159,7 +194,7 @@ function loadBuildData(build, buildIndex = null) {
     // Initialize oSkills dropdown
     initializeOSkillsDropdown();
     
-    // Render skills first (this creates the difficulty checkboxes)
+    // Render skills
     if (skillsList) {
         // If build has oSkills, switch to oSkills tab after rendering
         const hasOSkills = build.oSkills && (
@@ -167,13 +202,8 @@ function loadBuildData(build, buildIndex = null) {
         );
         renderSkills(build.class, skillsList, skillsContainer, hasOSkills ? 'oSkills' : null);
     }
-    
-    // Re-render difficulty checkboxes AFTER renderSkills so they exist
-    // Quest completion is automatically determined by character level
-    renderDifficultyCheckboxes();
-    
-    // Setup difficulty event listeners (needed for difficulty checkboxes to work)
-    setupDifficultyEventListeners();
+
+    window.dispatchEvent(new CustomEvent('plannerConfigRefresh'));
     
     // Add event listener for skill point changes (needed for UI updates)
     // Remove any existing listener first to avoid duplicates
@@ -225,7 +255,7 @@ export { getOSkillPoints } from '../character/character-state.js';
  * @param {number} spentPoints - Total skill points spent
  * @returns {number} - Image number (1-10)
  */
-function calculateArmorImageNumber(spentPoints) {
+export function calculateArmorImageNumber(spentPoints) {
     // Safety check for invalid spent points
     if (isNaN(spentPoints) || spentPoints < 0) {
         console.warn('calculateArmorImageNumber: Invalid spentPoints, using 0');
@@ -256,30 +286,44 @@ function calculateArmorImageNumber(spentPoints) {
 }
 
 /**
- * Update build list images based on current skill points
- * This is called when skill points change to update the current build's image
+ * After skill data and DOM nodes exist: restore the Vue skill grid when a planner session
+ * is already in memory (e.g. user left /planner for / and came back). Otherwise match main()
+ * for deep-linked /planner?class= when there is no character yet.
  */
-function updateBuildListImages() {
-    const container = document.getElementById('saved-builds-list');
-    if (!container) return;
-    
-    // Only update if we're currently viewing the load section
-    const loadSection = document.getElementById('load-section');
-    if (!loadSection || loadSection.style.display === 'none') return;
-    
-    // Get current spent points
-    const currentSpentPoints = getSpentSkillPoints();
-    const currentClass = classSelect.value;
-    
-    // Find the current build in the list and update its image
-    const buildImages = container.querySelectorAll('img[alt]');
-    buildImages.forEach(img => {
-        // Check if this is the current class and update the image
-        if (img.alt === currentClass) {
-            const armorImageNumber = calculateArmorImageNumber(currentSpentPoints);
-            img.src = `icons/portraits/${currentClass}/${armorImageNumber}.gif`;
+async function finalizePlannerPageAfterLoad() {
+    if (!treeInitialized || !skillsList || !classSelect || !skillsContainer) {
+        return;
+    }
+    const availableClasses = Array.from(classSelect.options).map((option) => option.value);
+    if (!availableClasses.length) {
+        return;
+    }
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlClass = urlParams.get('class');
+    const existingCharacter = getCharacterInstance();
+
+    if (existingCharacter) {
+        let selectedClass = availableClasses[0];
+        if (urlClass && availableClasses.includes(urlClass)) {
+            selectedClass = urlClass;
+        } else if (existingCharacter.className && availableClasses.includes(existingCharacter.className)) {
+            selectedClass = existingCharacter.className;
         }
-    });
+        classSelect.value = selectedClass;
+
+        const urlTab = urlParams.get('tab');
+        const savedTab = urlTab || getCurrentTab();
+
+        renderSkills(selectedClass, skillsList, skillsContainer, savedTab);
+        updateSkillPointsDisplay();
+        updateDevotionDisplay();
+        updateOSkillsDisplay();
+        window.dispatchEvent(new CustomEvent('plannerConfigRefresh'));
+        initializeTooltip();
+        initializeOSkillsDropdown();
+    } else if (urlClass && availableClasses.includes(urlClass)) {
+        await main();
+    }
 }
 
 // Main initialization function
@@ -292,25 +336,13 @@ export async function initializeTreePage() {
         return;
     }
     
-    // Load database immediately when page loads
+    // Load skill JSON immediately when page loads
     try {
-        skillsList = await loadSkillsFromSQLite();
+        skillsList = await loadPlannerSkillsFromTreeData();
+        plannerTree = new Tree(skillsList);
         treeInitialized = true;
-        
-        // Populate class selector from database
-        const db = getDatabase();
-        const classes = [];
-        try {
-            const stmt = db.prepare('SELECT name FROM classes WHERE name NOT IN ("Other") ORDER BY name');
-            while (stmt.step()) {
-                classes.push(stmt.get()[0]);
-            }
-            stmt.free();
-        } catch (error) {
-            console.warn('Could not load classes from database, falling back to skill list:', error);
-            // Fallback to extracting from skills
-            classes.push(...[...new Set(skillsList.map(skill => skill.class))].filter(c => c !== 'Other'));
-        }
+
+        const classes = loadPlannerClassNames(skillsList);
         
         classes.forEach(cls => {
             const opt = document.createElement('option');
@@ -318,14 +350,17 @@ export async function initializeTreePage() {
             opt.textContent = cls;
             classSelect.appendChild(opt);
         });
-        
+
+        const versionSelector = document.getElementById('version-selector');
+        if (versionSelector) {
+            versionSelector.innerHTML = '';
+            await initializeVersionSelector(versionSelector);
+        }
+
     } catch (error) {
-        console.error('Error loading database on page initialization:', error);
-        // Error will be shown by loadSkillsFromSQLite function
+        console.error('Error loading skill data on page initialization:', error);
         return;
     }
-    
-    initializeMenuButtons();
     
     // Set up class change event listener
     if (!classSelect) {
@@ -333,11 +368,11 @@ export async function initializeTreePage() {
         return;
     }
     
-    classSelect.addEventListener('change', () => {
+    classSelect.addEventListener('change', function onPlannerClassSelectChange() {
         const newClass = classSelect.value;
         
         // Reset tab when class changes - will be set to first tab by renderSkills
-        currentTab = null;
+        setCurrentTabState(null);
         updateUrlState(newClass, null);
         
         // Clear oSkills when switching classes (like resetBuild but without confirmation)
@@ -360,14 +395,13 @@ export async function initializeTreePage() {
         const currentLevel = getCharacterLevel();
         initializeCharacter(newClass, currentLevel);
         
-        // Clear character stats when switching classes
+        // Clear character stats when switching classes, then apply class defaults from DB
         clearAllStats();
-        
-        // Clear character stats input field
-        const characterStatsInput = document.getElementById('characterStats');
-        if (characterStatsInput) {
-            characterStatsInput.value = '';
-        }
+        applyClassBaselineStatsToCharacter(newClass);
+        clearSkillVariants();
+        applySkillVariantDefaultsForClass(newClass);
+        refreshPlannerStatsPanelFromCharacter();
+        window.dispatchEvent(new CustomEvent('characterStatsChanged', { detail: { classChange: true } }));
         
         // Get current references to ensure we have the latest data
         const currentSkillsList = skillsList;
@@ -384,16 +418,26 @@ export async function initializeTreePage() {
         updateSkillPointsDisplay();
         updateDevotionDisplay();
         updateOSkillsDisplay();
+
+        window.dispatchEvent(new CustomEvent('plannerConfigRefresh'));
     });
     
     // Set up global event listeners (only once during initialization)
     setupGlobalEventListeners();
+
+    initPlannerConfigPanel();
+
+    await finalizePlannerPageAfterLoad();
 }
 
 /**
  * Set up global event listeners that should only be added once
  */
 function setupGlobalEventListeners() {
+    if (plannerTreeGlobalListenersAttached) {
+        return;
+    }
+    plannerTreeGlobalListenersAttached = true;
     // Add event listener for skill point changes
     window.addEventListener('skillPointsChanged', handleSkillPointsChanged);
     
@@ -427,24 +471,6 @@ function setupGlobalEventListeners() {
         });
     }
 
-    // Add event listener for Character Stats input changes (text field)
-    const characterStatsInput = document.getElementById('characterStats');
-    if (characterStatsInput) {
-        characterStatsInput.addEventListener('input', (e) => {
-            const text = e.target.value;
-            const errors = parseStatsFromText(text);
-            
-            // Show errors if any
-            if (errors.length > 0) {
-                console.warn('Stats parsing errors:', errors);
-                // Optionally show errors to the user
-                // For now, we'll just parse valid stats and ignore errors
-            }
-            
-            // Refresh tooltip if one is currently shown
-            refreshCurrentTooltip();
-        });
-    }
 }
 
 // Debounce timer for skill card updates
@@ -463,7 +489,7 @@ function handleSkillPointsChanged() {
     
     skillCardUpdateTimer = setTimeout(() => {
         const currentClass = classSelect.value;
-        const savedTab = currentTab;
+        const savedTab = getCurrentTab();
         
         // Re-render without redrawing arrows (just update cards)
         renderSkills(currentClass, skillsList, skillsContainer, savedTab, false);
@@ -471,15 +497,13 @@ function handleSkillPointsChanged() {
         // Update displays
         updateSkillPointsDisplay();
         updateDevotionDisplay();
-        
-        // Update build list images if we're currently viewing the load section
-        updateBuildListImages();
-        
+        onPlannerSkillAllocationChanged();
+
         // Trigger tooltip refresh after a small delay to ensure minLevelDisplay is updated
         setTimeout(() => {
             window.dispatchEvent(new CustomEvent('tooltipRefresh'));
         }, 10);
-        
+
         skillCardUpdateTimer = null;
     }, 50);
 }
@@ -487,9 +511,9 @@ function handleSkillPointsChanged() {
 // Main application entry point
 async function main() {
     try {
-        // Database should already be loaded during page initialization
+        // Skill file store should already be initialized during page load
         if (!treeInitialized) {
-            console.error('Database not initialized. This should not happen.');
+            console.error('Skill data not initialized. This should not happen.');
             return;
         }
 
@@ -507,6 +531,11 @@ async function main() {
 
         // Initialize character state (quests are already set to defaults in characterState)
         initializeCharacter(selectedClass, Character.DEFAULT_LEVEL);
+        applyClassBaselineStatsToCharacter(selectedClass);
+        refreshPlannerStatsPanelFromCharacter();
+
+        clearSkillVariants();
+        applySkillVariantDefaultsForClass(selectedClass);
 
         // Render skills with saved tab if specified
         renderSkills(selectedClass, skillsList, skillsContainer, savedTab);
@@ -514,31 +543,8 @@ async function main() {
         // Update displays
         updateSkillPointsDisplay();
         updateDevotionDisplay();
-        
-        
-        // Initialize difficulty checkboxes with default values
-        const questState = {
-            hasNormal: true,
-            hasNightmare: true,
-            hasHell: true
-        };
-        renderDifficultyCheckboxes(questState);
-        
-        // Setup difficulty event listeners
-        setupDifficultyEventListeners();
-        
-        // Force update the checkboxes and level input directly as a fallback
-        setTimeout(() => {
-            const normalCheckbox = document.getElementById('difficultyNormal');
-            const nightmareCheckbox = document.getElementById('difficultyNightmare');
-            const hellCheckbox = document.getElementById('difficultyHell');
-            if (normalCheckbox) normalCheckbox.checked = true;
-            if (nightmareCheckbox) nightmareCheckbox.checked = true;
-            if (hellCheckbox) hellCheckbox.checked = true;
-            
-            // Update displays after setting difficulties
-            updateSkillPointsDisplay();
-        }, 0);
+
+        window.dispatchEvent(new CustomEvent('plannerConfigRefresh'));
         
         // Initialize tooltip functionality
         initializeTooltip();
@@ -558,14 +564,7 @@ async function main() {
 
 // Update URL with current state
 function updateUrlState(selectedClass, selectedTab) {
-    const url = new URL(window.location);
-    url.searchParams.set('class', selectedClass);
-    if (selectedTab) {
-        url.searchParams.set('tab', selectedTab);
-    } else {
-        url.searchParams.delete('tab');
-    }
-    window.history.replaceState({}, '', url);
+    updatePlannerUrlTab(selectedClass, selectedTab);
 }
 
 // Update skill points display
@@ -585,42 +584,34 @@ function updateDevotionDisplay() {
     
     // Show for Paladin and Amazon
     if (currentClass === 'Paladin' || currentClass === 'Amazon') {
-        const db = getDatabase();
-        if (db) {
-            const skillLevels = getAllSkillPoints();
-            const currentDevotion = getCurrentDevotion(skillLevels, db);
-            const devotionName = getDevotionDisplayName(currentDevotion);
-            
-            // Hide field if no devotion selected
-            if (currentDevotion === 'none') {
-                devotionField.style.display = 'none';
-            } else {
-                devotionField.style.display = 'flex';
-                devotionDisplay.textContent = devotionName;
-                
-                // Add color based on devotion
-                devotionDisplay.className = 'has-text-centered has-text-weight-bold';
-                
-                // Paladin devotions
-                if (currentDevotion === 'holy') {
-                    devotionDisplay.classList.add('has-text-warning');
-                } else if (currentDevotion === 'neutral') {
-                    devotionDisplay.classList.add('has-text-white');
-                } else if (currentDevotion === 'unholy') {
-                    devotionDisplay.classList.add('has-text-purple');
-                }
-                // Amazon devotions
-                else if (currentDevotion === 'bow') {
-                    devotionDisplay.classList.add('has-text-white');
-                } else if (currentDevotion === 'javelin') {
-                    devotionDisplay.classList.add('has-text-white');
-                } else if (currentDevotion === 'spear') {
-                    devotionDisplay.classList.add('has-text-white');
-                } else if (currentDevotion === 'storm') {
-                    devotionDisplay.classList.add('has-text-white');
-                } else if (currentDevotion === 'blood') {
-                    devotionDisplay.classList.add('has-text-white');
-                }
+        const skillLevels = getAllSkillPoints();
+        const currentDevotion = getCurrentDevotion(skillLevels);
+        const devotionName = getDevotionDisplayName(currentDevotion);
+
+        if (currentDevotion === 'none') {
+            devotionField.style.display = 'none';
+        } else {
+            devotionField.style.display = 'flex';
+            devotionDisplay.textContent = devotionName;
+
+            devotionDisplay.className = 'has-text-centered has-text-weight-bold';
+
+            if (currentDevotion === 'holy') {
+                devotionDisplay.classList.add('has-text-warning');
+            } else if (currentDevotion === 'neutral') {
+                devotionDisplay.classList.add('has-text-white');
+            } else if (currentDevotion === 'unholy') {
+                devotionDisplay.classList.add('has-text-purple');
+            } else if (currentDevotion === 'bow') {
+                devotionDisplay.classList.add('has-text-white');
+            } else if (currentDevotion === 'javelin') {
+                devotionDisplay.classList.add('has-text-white');
+            } else if (currentDevotion === 'spear') {
+                devotionDisplay.classList.add('has-text-white');
+            } else if (currentDevotion === 'storm') {
+                devotionDisplay.classList.add('has-text-white');
+            } else if (currentDevotion === 'blood') {
+                devotionDisplay.classList.add('has-text-white');
             }
         }
     } else {
@@ -638,59 +629,25 @@ function updateMinimumLevelDisplay() {
     if (!minLevelField || !minLevelDisplay || !minLevelBreakdown || !minLevelHelp) return;
     
     const spentPoints = getSpentSkillPoints();
-    const db = getDatabase();
-    const minLevel = spentPoints > 0 ? getMinimumRequiredLevel(db) : Character.DEFAULT_LEVEL;
-    const availableQuestPoints = getTotalQuestSkillPoints(minLevel);
-    const availableBasePoints = Character.getBaseSkillPoints(minLevel);
+    // Same level for title, breakdown, and total: min. level for this build (1 with no skills, else prerequisite level).
+    const effectiveLevel = getEffectivePlannerLevel();
+    const availableBasePoints = Character.getBaseSkillPoints(effectiveLevel);
+    const availableQuestPoints = getTotalQuestSkillPoints(effectiveLevel);
     const totalAvailablePoints = availableBasePoints + availableQuestPoints;
-    
-    
-    minLevelDisplay.textContent = `Level ${minLevel}`;
-    
-    // Update breakdown with base/quest points
-    minLevelBreakdown.textContent = `(Base points: ${availableBasePoints} + Quest points: ${availableQuestPoints})`;
-    
-    // Update help text with spent/total information only
+
+    minLevelDisplay.textContent = `Level ${effectiveLevel}`;
+
+    minLevelBreakdown.textContent = `(Base skill points: ${availableBasePoints} + Quest skill points: ${availableQuestPoints})`;
+
     minLevelHelp.textContent = `${spentPoints} spent / ${totalAvailablePoints} available`;
+
+    recomputeClassDerivedLifeMana();
 }
 
 // Export function to update tab state (called from render module)
 export function setCurrentTab(tabName) {
-    currentTab = tabName;
-    updateUrlState(classSelect.value, tabName);
-}
-
-/**
- * Initialize difficulty checkboxes and their event handlers
- */
-function initializeDifficultyCheckboxes() {
-    // Render the checkboxes
-    const questState = getCurrentQuestState();
-    renderDifficultyCheckboxes(questState);
-    
-    // Add event listeners
-    setupDifficultyEventListeners();
-}
-
-/**
- * Get current quest state for difficulty checkboxes
- * @returns {Object} Quest state with hasNormal, hasNightmare, hasHell
- */
-function getCurrentQuestState() {
-    const hasNormal = getQuestCompletion('den_of_evil').normal || 
-                     getQuestCompletion('radament').normal || 
-                     getQuestCompletion('izual').normal;
-    
-    const hasNightmare = getQuestCompletion('den_of_evil').nightmare || 
-                        getQuestCompletion('radament').nightmare || 
-                        getQuestCompletion('izual').nightmare;
-    
-    const hasHell = getQuestCompletion('den_of_evil').hell || 
-                   getQuestCompletion('radament').hell || 
-                   getQuestCompletion('izual').hell ||
-                   getQuestCompletion('inquisitor_of_the_triune').hell;
-    
-    return { hasNormal, hasNightmare, hasHell };
+    setCurrentTabState(tabName);
+    updatePlannerUrlTab(classSelect ? classSelect.value : '', tabName);
 }
 
 function getAllSkillsBonus() {
@@ -702,220 +659,75 @@ function setAllSkillsBonus(value) {
     const allSkillsBonusInput = document.getElementById('allSkillsBonus');
     if (allSkillsBonusInput) {
         allSkillsBonusInput.value = Math.max(0, parseInt(value) || 0);
+        allSkillsBonusInput.dispatchEvent(new Event('input', { bubbles: true }));
     }
 }
 
-/**
- * Setup event listeners for difficulty checkboxes
- */
-function setupDifficultyEventListeners() {
-    const normalCheckbox = document.getElementById('difficultyNormal');
-    const nightmareCheckbox = document.getElementById('difficultyNightmare');
-    const hellCheckbox = document.getElementById('difficultyHell');
-    
-    if (!normalCheckbox || !nightmareCheckbox || !hellCheckbox) return;
-    
-    // Hell checkbox: checking enables nightmare and normal
-    hellCheckbox.addEventListener('change', () => {
-        if (hellCheckbox.checked) {
-            nightmareCheckbox.checked = true;
-            normalCheckbox.checked = true;
-        }
-        updateQuestsFromDifficulty();
-    });
-    
-    // Nightmare checkbox: checking enables normal, unchecking disables hell
-    nightmareCheckbox.addEventListener('change', () => {
-        if (nightmareCheckbox.checked) {
-            normalCheckbox.checked = true;
-        } else {
-            hellCheckbox.checked = false;
-        }
-        updateQuestsFromDifficulty();
-    });
-    
-    // Normal checkbox: unchecking disables nightmare and hell
-    normalCheckbox.addEventListener('change', () => {
-        if (!normalCheckbox.checked) {
-            nightmareCheckbox.checked = false;
-            hellCheckbox.checked = false;
-        }
-        updateQuestsFromDifficulty();
-    });
+/** Menu / sidebar / load actions (wired from Vue components). */
+export async function plannerMenuNewBuild() {
+    showSection('tree');
+    if (!treeInitialized) {
+        console.error('Skill data not initialized. Cannot create new build.');
+        return;
+    }
+    currentBuildIndex = null;
+    await main();
+    updateSaveButtonVisibility();
 }
 
-/**
- * Update quest completion based on difficulty selection
- */
-function updateQuestsFromDifficulty() {
-    const normalCheckbox = document.getElementById('difficultyNormal');
-    const nightmareCheckbox = document.getElementById('difficultyNightmare');
-    const hellCheckbox = document.getElementById('difficultyHell');
-    
-    if (!normalCheckbox || !nightmareCheckbox || !hellCheckbox) return;
-    
-    // Update each quest based on difficulty selection
-    updateQuestCompletion('den_of_evil', {
-        normal: normalCheckbox.checked,
-        nightmare: nightmareCheckbox.checked,
-        hell: hellCheckbox.checked
-    });
-    
-    updateQuestCompletion('radament', {
-        normal: normalCheckbox.checked,
-        nightmare: nightmareCheckbox.checked,
-        hell: hellCheckbox.checked
-    });
-    
-    updateQuestCompletion('izual', {
-        normal: normalCheckbox.checked,
-        nightmare: nightmareCheckbox.checked,
-        hell: hellCheckbox.checked
-    });
-    
-    updateQuestCompletion('inquisitor_of_the_triune', {
-        normal: false, // This quest only has hell difficulty
-        nightmare: false,
-        hell: hellCheckbox.checked
-    });
-    
-    // Trigger skill points update
-    window.dispatchEvent(new CustomEvent('skillPointsChanged'));
+export async function plannerMenuOpenLoadSection() {
+    if (!treeInitialized) {
+        await main();
+    }
+    showSection('load');
 }
 
+export async function plannerMenuImportBuild() {
+    if (!treeInitialized) {
+        await main();
+    }
+    promptAndImportBuild();
+}
 
-// Initialize menu buttons functionality
-function initializeMenuButtons() {
-    // Menu: New Build button
-    const newBuildBtn = document.getElementById('menuNewBuildBtn');
-    if (newBuildBtn) {
-        newBuildBtn.addEventListener('click', async () => {
-            showSection('tree');
-            
-            // Database should already be loaded, just reset to new build
-            if (!treeInitialized) {
-                console.error('Database not initialized. Cannot create new build.');
-                return;
-            }
-            
-            // Clear current build index for new build
-            currentBuildIndex = null;
-            await main();
-            updateSaveButtonVisibility();
-        });
-    }
-    
-    // Menu: Load Build button
-    const loadBuildBtn = document.getElementById('menuLoadBuildBtn');
-    if (loadBuildBtn) {
-        loadBuildBtn.addEventListener('click', async () => {
-            // Initialize tree if not yet done (needed for loading builds)
-            if (!treeInitialized) {
-                await main();
-            }
-            
-            showSection('load');
-        });
-    }
-    
-    // Menu: Import Build button
-    const importBuildBtn = document.getElementById('menuImportBuildBtn');
-    if (importBuildBtn) {
-        importBuildBtn.addEventListener('click', async () => {
-            // Initialize tree if not yet done (needed for importing builds)
-            if (!treeInitialized) {
-                await main();
-            }
-            
-            promptAndImportBuild();
-        });
-    }
-    
-    // Menu: Help button
-    const helpBtn = document.getElementById('menuHelpBtn');
-    if (helpBtn) {
-        helpBtn.addEventListener('click', () => {
-            showHelpModal();
-        });
-    }
-    
-    // Back to Menu buttons
-    const backToMenuBtn = document.getElementById('backToMenuBtn');
-    if (backToMenuBtn) {
-        backToMenuBtn.addEventListener('click', () => {
-            // Clear any visible toasts
-            toastManager.cleanUpToastMessages();
-            // Clear URL params
-            window.history.replaceState({}, '', window.location.pathname);
-            showSection('menu');
-        });
-    }
+export function plannerMenuOpenHelp() {
+    showHelpModal();
+}
 
-    // Reset Build button
-    const resetBtn = document.getElementById('resetBuildBtn');
-    if (resetBtn) {
-        resetBtn.addEventListener('click', () => {
-            if (confirm('Are you sure you want to reset this build? All skill points will be lost.')) {
-                resetBuild();
-            }
-        });
-    }
-    
-    // Save Build button (updates current build)
-    const saveBuildBtn = document.getElementById('saveBuildBtn');
-    if (saveBuildBtn) {
-        saveBuildBtn.addEventListener('click', () => {
-            // Validate build before saving
-            if (!validateBuildBeforeSave()) {
-                return;
-            }
-            
-            if (currentBuildIndex !== null) {
-                updateCurrentBuild();
-            }
-        });
-    }
-    
-    // Save As Build button (creates new build)
-    const saveAsBuildBtn = document.getElementById('saveAsBuildBtn');
-    if (saveAsBuildBtn) {
-        saveAsBuildBtn.addEventListener('click', () => {
-            promptAndSaveBuild();
-        });
-    }
-    
-    // Back to Menu from Load section
-    const backToMenuFromLoadBtn = document.getElementById('backToMenuFromLoadBtn');
-    if (backToMenuFromLoadBtn) {
-        backToMenuFromLoadBtn.addEventListener('click', () => {
-            // Clear URL params
-            window.history.replaceState({}, '', window.location.pathname);
-            showSection('menu');
-        });
+export function plannerBackToMenuFromTree() {
+    toastManager.cleanUpToastMessages();
+    window.history.replaceState({}, '', window.location.pathname);
+    showSection('menu');
+}
+
+export function plannerBackToMenuFromLoad() {
+    window.history.replaceState({}, '', window.location.pathname);
+    showSection('menu');
+}
+
+export function plannerResetBuildClick() {
+    if (confirm('Are you sure you want to reset this build? All skill points will be lost.')) {
+        resetBuild();
     }
 }
 
-// Show/hide sections
+export function plannerSaveBuildClick() {
+    if (!validateBuildBeforeSave()) {
+        return;
+    }
+    if (currentBuildIndex !== null) {
+        updateCurrentBuild();
+    }
+}
+
+export function plannerSaveAsBuildClick() {
+    promptAndSaveBuild();
+}
+
+// Show/hide sections (visibility owned by Vue / Pinia via planner-section-bridge.js)
 function showSection(sectionName) {
-    const menuSection = document.getElementById('menu-section');
-    const treeSection = document.getElementById('tree-section');
-    const loadSection = document.getElementById('load-section');
-    const defaultsSection = document.getElementById('defaults-section');
-    
-    if (menuSection) menuSection.style.display = 'none';
-    if (treeSection) treeSection.style.display = 'none';
-    if (loadSection) loadSection.style.display = 'none';
-    if (defaultsSection) defaultsSection.style.display = 'none';
-    
-    if (sectionName === 'menu' && menuSection) {
-        menuSection.style.display = 'block';
-    } else if (sectionName === 'tree' && treeSection) {
-        treeSection.style.display = 'block';
-    } else if (sectionName === 'load' && loadSection) {
-        loadSection.style.display = 'block';
-        renderSavedBuildsList();
-    } else if (sectionName === 'defaults' && defaultsSection) {
-        defaultsSection.style.display = 'block';
+    setPlannerSectionFromLegacy(sectionName);
+    if (sectionName === 'load') {
+        notifySavedBuildsListRefresh();
     }
 }
 
@@ -933,30 +745,20 @@ function resetBuild(showToast = true) {
     // Clear all skill points and reset quest completion to defaults
     const currentClass = classSelect ? classSelect.value : null;
     initializeCharacter(currentClass, Character.DEFAULT_LEVEL);
+    applyClassBaselineStatsToCharacter(currentClass);
+
+    refreshPlannerStatsPanelFromCharacter();
+    window.dispatchEvent(new CustomEvent('characterStatsChanged', { detail: { reset: true } }));
+    setAllSkillsBonus(0);
+
+    clearSkillVariants();
+    applySkillVariantDefaultsForClass(currentClass);
     
-    // Re-render skills for the first class (this creates the difficulty checkboxes)
     if (currentClass && skillsList) {
         renderSkills(currentClass, skillsList, skillsContainer);
     }
-    
-    // Re-render difficulty checkboxes AFTER renderSkills so they exist
-    const questState = {
-        hasNormal: true,
-        hasNightmare: true,
-        hasHell: true
-    };
-    renderDifficultyCheckboxes(questState);
-    
-    // Force update the checkboxes directly as a fallback
-    setTimeout(() => {
-        const normalCheckbox = document.getElementById('difficultyNormal');
-        const nightmareCheckbox = document.getElementById('difficultyNightmare');
-        const hellCheckbox = document.getElementById('difficultyHell');
-        
-        if (normalCheckbox) normalCheckbox.checked = true;
-        if (nightmareCheckbox) nightmareCheckbox.checked = true;
-        if (hellCheckbox) hellCheckbox.checked = true;
-    }, 0);
+
+    window.dispatchEvent(new CustomEvent('plannerConfigRefresh'));
     
     // Clear current build index (this is a new build)
     currentBuildIndex = null;
@@ -1106,6 +908,27 @@ function validateBuildData(buildData) {
             return false;
         }
     }
+
+    if (buildData.questsCompleted !== undefined) {
+        if (typeof buildData.questsCompleted !== 'object' || buildData.questsCompleted === null || Array.isArray(buildData.questsCompleted)) {
+            toastManager.showToast('questsCompleted must be an object', 'danger');
+            return false;
+        }
+    }
+
+    if (buildData.questCompletionOptOut !== undefined) {
+        if (typeof buildData.questCompletionOptOut !== 'object' || buildData.questCompletionOptOut === null || Array.isArray(buildData.questCompletionOptOut)) {
+            toastManager.showToast('questCompletionOptOut must be an object', 'danger');
+            return false;
+        }
+    }
+
+    if (buildData.statAllocation !== undefined) {
+        if (typeof buildData.statAllocation !== 'object' || buildData.statAllocation === null || Array.isArray(buildData.statAllocation)) {
+            toastManager.showToast('statAllocation must be an object', 'danger');
+            return false;
+        }
+    }
     
     return true;
 }
@@ -1117,26 +940,21 @@ function validateBuildData(buildData) {
 function importBuild(buildData) {
     try {
         // Check if build version differs from current version
-        const db = getDatabase();
-        const currentVersion = getCurrentVersion(db);
+        const currentVersion = getCurrentVersion();
         const currentVersionString = versionToString(currentVersion);
-        
+
         if (buildData.version && buildData.version !== currentVersionString) {
-            // Parse build version
             const buildVersion = parseVersionString(buildData.version);
-            
-            // Show toast message explaining version switch
+
             toastManager.showToast(
                 `Build was saved for game version ${buildData.version}. Switching to version ${buildData.version} for compatibility.`,
                 false,
                 'warning'
             );
-            
-            // Switch to the build's version (temporary override)
+
             setBuildVersionOverride(buildVersion);
-            
-            // Silently reload database and load build
-            reloadDatabaseAndLoadBuild(buildData, null);
+
+            reloadSkillDataAndLoadBuild(buildData, null);
             return;
         }
         
@@ -1162,14 +980,12 @@ function updateCurrentBuild() {
     
     const currentClass = classSelect ? classSelect.value : null;
     const currentLevel = getMinimumRequiredLevel();
-    const skillPoints = getAllSkillPoints();
     const spentPoints = getSpentSkillPoints();
     
     // Update existing build
-    const db = getDatabase();
     builds[currentBuildIndex] = {
         name: builds[currentBuildIndex].name, // Keep original name
-        version: versionToString(getCurrentVersion(db)),
+        version: versionToString(getCurrentVersion()),
         class: currentClass,
         level: currentLevel,
         spentPoints: spentPoints,
@@ -1177,11 +993,14 @@ function updateCurrentBuild() {
         oSkills: getAllOSkills(), // Save oSkills (now with skill IDs)
         allSkillsBonus: getAllSkillsBonus(), // Save All Skills bonus
         stats: exportStatsToText(), // Save stats as text
+        questsCompleted: getQuestsCompletedForSave(),
+        questCompletionOptOut: getQuestCompletionOptOutForSave(),
+        statAllocation: getStatAllocation(),
         savedAt: new Date().toISOString()
     };
     
-    // Save to localStorage
-    localStorage.setItem('medianxl-builds', JSON.stringify(builds));
+    setSavedBuilds(builds);
+    notifySavedBuildsListRefresh();
     
     toastManager.showToast(`Build "${builds[currentBuildIndex].name}" updated!`, true, 'info');
 }
@@ -1192,10 +1011,9 @@ function saveBuild(buildName) {
     const skillPoints = getAllSkillPointsById(); // Use skill IDs instead of names
     const spentPoints = getSpentSkillPoints();
     
-    const db = getDatabase();
     const build = {
         name: buildName,
-        version: versionToString(getCurrentVersion(db)),
+        version: versionToString(getCurrentVersion()),
         class: currentClass,
         level: currentLevel,
         spentPoints: spentPoints,
@@ -1203,6 +1021,9 @@ function saveBuild(buildName) {
         oSkills: getAllOSkills(), // Save oSkills (now with skill IDs)
         allSkillsBonus: getAllSkillsBonus(), // Save All Skills bonus
         stats: exportStatsToText(), // Save stats as text
+        questsCompleted: getQuestsCompletedForSave(),
+        questCompletionOptOut: getQuestCompletionOptOutForSave(),
+        statAllocation: getStatAllocation(),
         savedAt: new Date().toISOString()
     };
     
@@ -1213,8 +1034,8 @@ function saveBuild(buildName) {
     // Add new build
     builds.push(build);
     
-    // Save to localStorage
-    localStorage.setItem('medianxl-builds', JSON.stringify(builds));
+    setSavedBuilds(builds);
+    notifySavedBuildsListRefresh();
     
     // Set current build index to the newly saved build
     currentBuildIndex = builds.length - 1;
@@ -1223,142 +1044,26 @@ function saveBuild(buildName) {
     toastManager.showToast(`Build "${buildName}" saved successfully!`, true, 'info');
 }
 
-function getSavedBuilds() {
-    const stored = localStorage.getItem('medianxl-builds');
-    if (stored) {
-        try {
-            return JSON.parse(stored);
-        } catch (e) {
-            console.error('Error parsing saved builds:', e);
-            return [];
-        }
-    }
-    return [];
-}
-
-function renderSavedBuildsList() {
-    const container = document.getElementById('saved-builds-list');
-    if (!container) return;
-    
-    // Ensure character is initialized before rendering build list
+export function ensureCharacterForBuildList() {
     const characterInstance = getCharacterInstance();
     if (!characterInstance) {
-        // Initialize with a default class if none is selected
         const defaultClass = classSelect ? classSelect.value : 'Amazon';
         initializeCharacter(defaultClass, Character.DEFAULT_LEVEL);
+        applyClassBaselineStatsToCharacter(defaultClass);
     }
-    
-    const builds = getSavedBuilds();
-    
-    if (builds.length === 0) {
-        container.innerHTML = '<p class="has-text-grey-light">No saved builds found</p>';
-        return;
-    }
-    
-    container.innerHTML = '';
-    
-    builds.forEach((build, index) => {
-        const buildCard = document.createElement('div');
-        buildCard.className = 'box mb-3';
-        
-        // Create structure safely
-        const columns = document.createElement('div');
-        columns.className = 'columns is-vcentered';
-        
-        // Add class image column
-        const imageColumn = document.createElement('div');
-        imageColumn.className = 'column is-narrow py-0';
-        
-        const classImage = document.createElement('img');
-        
-        // Calculate armor image number based on spent skill points (maps to 1-10.gif)
-        const armorImageNumber = calculateArmorImageNumber(build.spentPoints);
-        classImage.src = `icons/portraits/${build.class}/${armorImageNumber}.gif`;
-        classImage.alt = build.class;
-        classImage.className = 'image is-64x64';
-        classImage.style.objectFit = 'contain';
-        
-        imageColumn.appendChild(classImage);
-        
-        const infoColumn = document.createElement('div');
-        infoColumn.className = 'column p-0';
-        
-        const title = document.createElement('p');
-        title.className = 'title is-4 has-text-weight-bold mb-2';
-        title.textContent = build.name;
-        
-        const subtitle = document.createElement('p');
-        subtitle.className = 'subtitle is-6 mb-1';
-        subtitle.innerHTML = `
-            <span class="tag has-text-info">Level ${build.level} ${build.class}</span>
-            <span class="tag">${build.spentPoints} points spent</span>
-            <span class="tag">v${build.version || 'unknown'}</span>
-        `;
-        
-        infoColumn.appendChild(title);
-        infoColumn.appendChild(subtitle);
-        
-        const buttonsColumn = document.createElement('div');
-        buttonsColumn.className = 'column is-narrow';
-        buttonsColumn.innerHTML = `
-            <div class="buttons">
-                <button class="button is-primary is-outlined" data-load-build="${index}">
-                    Load
-                </button>
-                <button class="button is-success is-outlined" data-export-build="${index}">
-                    Export
-                </button>
-                <button class="button is-info is-outlined" data-rename-build="${index}">
-                    Rename
-                </button>
-                <button class="button is-danger is-outlined" data-delete-build="${index}">
-                    Delete
-                </button>
-            </div>
-        `;
-        
-        columns.appendChild(imageColumn);
-        columns.appendChild(infoColumn);
-        columns.appendChild(buttonsColumn);
-        buildCard.appendChild(columns);
-        container.appendChild(buildCard);
-    });
-    
-    // Add event listeners
-    container.querySelectorAll('[data-load-build]').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const index = parseInt(btn.getAttribute('data-load-build'));
-            loadBuild(index);
-        });
-    });
-    
-    container.querySelectorAll('[data-export-build]').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const index = parseInt(btn.getAttribute('data-export-build'));
-            exportBuild(index);
-        });
-    });
-    
-    container.querySelectorAll('[data-rename-build]').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const index = parseInt(btn.getAttribute('data-rename-build'));
-            renameBuild(index);
-        });
-    });
-    
-    container.querySelectorAll('[data-delete-build]').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const index = parseInt(btn.getAttribute('data-delete-build'));
-            deleteBuild(index);
-        });
-    });
+}
+
+/** Legacy name: Vue list listens for `savedBuildsListRefresh`; this still ensures character then notifies. */
+export function renderSavedBuildsList() {
+    ensureCharacterForBuildList();
+    notifySavedBuildsListRefresh();
 }
 
 /**
  * Export build as raw JSON text
  * @param {number} index - The index of the build to export
  */
-function exportBuild(index) {
+export function exportBuild(index) {
     const builds = getSavedBuilds();
     if (index < 0 || index >= builds.length) {
         toastManager.showToast('Build not found!', true, 'danger');
@@ -1535,7 +1240,7 @@ function showHelpModal() {
                 <ul>
                     <li><strong>Click:</strong> Add or remove 1 skill point</li>
                     <li><strong>Shift + Click:</strong> Add or remove 25 skill points at once</li>
-                    '<li><strong>Ctrl + Hover:</strong> Hold Ctrl and hover over a skill to see the raw formula instead of the calculated value (localhost only)</li>'
+                    <li><strong>Ctrl + Hover:</strong> Hold Ctrl and hover over a skill to see the raw formula instead of the calculated value</li>
                 </ul>
                                 
                 <h4 class="title is-5 mb-3 mt-5">Stat Colors</h4>
@@ -1551,19 +1256,15 @@ function showHelpModal() {
                 <ul>
                     <li>Hover over skill cards to see detailed tooltips with scaling values</li>
                     <li>Use the "+# to All Skills" input to apply bonuses to all skills</li>
-                    <li>Character stats can be entered in the "Character Stats" textarea using the format: <code>{{statName}}=value</code></li>
+                    <li>Character stats: use Life, Mana, Str, Dex, Energy, Vitality fields; skills can add extra stats. Life and Mana cannot go below 0.</li>
                     <li>Arrows between skills show prerequisite relationships</li>
                     <li>Skills that are maxed out are highlighted in yellow</li>
                     <li>You can save multiple builds and switch between them using "Load/Export Build"</li>
                 </ul>
                 
-                <h4 class="title is-5 mb-3 mt-5">Character Stats Format</h4>
-                <p>Enter stats one per line in the following format:</p>
-                <pre class="p-3 mb-3">{{strength}}=30
-{{dexterity}}=30
-{{vitality}}=30
-{{energy}}=30</pre>
-                <p>These stats can then be used in skill formulas using the <code>{{stat_name}}</code> syntax. Stats are automatically added to your character when a skill uses them in its formulas.</p>
+                <h4 class="title is-5 mb-3 mt-5">Character Stats</h4>
+                <p>The sidebar lists core attributes as numeric fields. Extra stats appear when a skill formula references them; use &times; to remove unused extras.</p>
+                <p>Advanced: paste multiple lines under &quot;raw stat lines&quot; using <code>{{stat_key}}=value</code>. Saved builds store the same text format as before.</p>
             </div>
         </section>
         <footer class="modal-card-foot p-4">
@@ -1594,7 +1295,7 @@ function showHelpModal() {
     document.addEventListener('keydown', handleEscape);
 }
 
-function loadBuild(index) {
+export function loadBuild(index) {
     const builds = getSavedBuilds();
     if (index < 0 || index >= builds.length) {
         toastManager.showToast('Build not found!', true, 'danger');
@@ -1604,26 +1305,21 @@ function loadBuild(index) {
     const build = builds[index];
     
     // Check if build version differs from current version
-    const db = getDatabase();
-    const currentVersion = getCurrentVersion(db);
+    const currentVersion = getCurrentVersion();
     const currentVersionString = versionToString(currentVersion);
-    
+
     if (build.version && build.version !== currentVersionString) {
-        // Parse build version
         const buildVersion = parseVersionString(build.version);
-        
-        // Show toast message explaining version switch
+
         toastManager.showToast(
             `Build was saved for game version ${build.version}. Switching to version ${build.version} for compatibility.`,
             false,
             'warning'
         );
-        
-        // Switch to the build's version (temporary override)
+
         setBuildVersionOverride(buildVersion);
-        
-        // Silently reload database and load build
-        reloadDatabaseAndLoadBuild(build, index);
+
+        reloadSkillDataAndLoadBuild(build, index);
         return;
     } else if (!build.version) {
         // Handle builds without version information (older saves)
@@ -1638,7 +1334,7 @@ function loadBuild(index) {
     loadBuildData(build, index);
 }
 
-function deleteBuild(index) {
+export function deleteBuild(index) {
     const builds = getSavedBuilds();
     if (index < 0 || index >= builds.length) {
         return;
@@ -1648,7 +1344,7 @@ function deleteBuild(index) {
     
     if (confirm(`Delete build "${buildName}"?`)) {
         builds.splice(index, 1);
-        localStorage.setItem('medianxl-builds', JSON.stringify(builds));
+        setSavedBuilds(builds);
         
         // If we deleted the currently loaded build, clear the index
         if (currentBuildIndex === index) {
@@ -1659,12 +1355,12 @@ function deleteBuild(index) {
             currentBuildIndex--;
         }
         
-        renderSavedBuildsList();
+        notifySavedBuildsListRefresh();
         toastManager.showToast(`Build "${buildName}" deleted.`, true, 'info');
     }
 }
 
-function renameBuild(index) {
+export function renameBuild(index) {
     const builds = getSavedBuilds();
     if (index < 0 || index >= builds.length) {
         return;
@@ -1688,51 +1384,50 @@ function renameBuild(index) {
     
     // Update the build name
     builds[index].name = trimmedName;
-    localStorage.setItem('medianxl-builds', JSON.stringify(builds));
+    setSavedBuilds(builds);
     
-    // Re-render the list to show the new name
-    renderSavedBuildsList();
+    notifySavedBuildsListRefresh();
     
     toastManager.showToast(`Build renamed to "${trimmedName}"!`, true, 'info');
 }
 
 // oSkills Management
 function initializeOSkillsDropdown() {
-    const db = getDatabase();
-    if (!db) return;
-    
-    // Initialize sidebar dropdown only
     const sidebarDropdownContainer = document.getElementById('oskill-dropdown');
     const sidebarHiddenInput = document.getElementById('oskill-hidden');
-    
-    // Always re-initialize the dropdown to ensure event handlers are properly attached
-    // Clear any existing dropdown first
+
     if (sidebarDropdownContainer) {
         sidebarDropdownContainer.innerHTML = '';
     }
-    
-    
-    // Get all skills for dropdown
-    const res = db.exec(`
-        SELECT s.id, s.name, s.display_name, s.image, c.name as class_name, s.description, s.skill_effect
-        FROM skills s
-        LEFT JOIN classes c ON s.class_id = c.id
-        ORDER BY c.name, s.display_name
-    `);
-    
-    const skillItems = res[0] ? res[0].values.map(([id, name, displayName, image, className, description, skillEffect]) => ({
-        value: id,
-        name: displayName,
-        skillName: name,
-        image: image,
-        className: className,
-        desc: `${className || 'No Class'}`,
-        hasDetails: (description && description.trim().length > 0) || (skillEffect && skillEffect.trim().length > 0),
-        description: description,
-        skillEffect: skillEffect
-    })) : [];
-    
-    // Initialize sidebar dropdown
+
+    const store = getFileSkillStore();
+    if (!store?.catalog?.length) return;
+    const skillItems = [];
+    for (const row of store.catalog) {
+        const det = store.getSkillDetail(row.id);
+        if (!det) continue;
+        const description = det.description || '';
+        const skillEffect = det.skill_effect || '';
+        const className = det.className || store.primaryClassDisplayName(row) || 'Other';
+        skillItems.push({
+            value: row.numericId,
+            name: row.displayName,
+            skillName: row.id,
+            image: det.image,
+            className,
+            desc: `${className || 'No Class'}`,
+            hasDetails:
+                (description && description.trim().length > 0) ||
+                (skillEffect && skillEffect.trim().length > 0),
+            description,
+            skillEffect
+        });
+    }
+    skillItems.sort((a, b) => {
+        const c = String(a.className || '').localeCompare(String(b.className || ''));
+        if (c !== 0) return c;
+        return String(a.name || '').localeCompare(String(b.name || ''));
+    });
     if (sidebarDropdownContainer && sidebarHiddenInput) {
         const sidebarDropdown = new DropdownList(sidebarDropdownContainer, {
             placeholder: 'Select skill...',
@@ -1740,24 +1435,27 @@ function initializeOSkillsDropdown() {
             defaultHeaderText: 'All Skills',
             onSelect: (item) => {
                 if (item) {
-                    addOSkill(item.value, item.name, item.skillName, item.image, item.className, item.hasDetails, item.description, item.skillEffect);
+                    addOSkill(
+                        item.value,
+                        item.name,
+                        item.skillName,
+                        item.image,
+                        item.className,
+                        item.hasDetails,
+                        item.description,
+                        item.skillEffect
+                    );
                     sidebarDropdown.value = null;
                 }
             }
         });
         sidebarDropdown.setItems(skillItems);
-        
-        // Store reference for later access
         window.oskillDropdownInstance = sidebarDropdown;
     }
 }
 
 // oSkills management is now handled by character-state.js
 // These are just thin wrappers for backwards compatibility
-
-function handleOSkillPointChange(skillName, amount) {
-    changeOSkillPoints(skillName, amount);
-}
 
 function updateOSkillsDisplay() {
     // Update window reference for other modules (like tree-render.js)
@@ -1790,166 +1488,18 @@ function updateOSkillsDisplay() {
     updateTabColors(tabsWithPoints);
 }
 
-// Flag to prevent dropdown recreation during rendering
-let isRenderingSkills = false;
-
 function updateOSkillsTab() {
     const container = document.getElementById('tab-oSkills');
     if (!container) {
         return;
     }
-    
-    
-    // Clear container and hide any active tooltips for removed skills
-    container.innerHTML = '';
-    
-    // Force hide any active tooltips immediately
-    const tooltipElement = document.querySelector('.skill-tooltip');
-    if (tooltipElement && tooltipElement.style.display !== 'none') {
-        tooltipElement.style.display = 'none';
-    }
-    
-    const oSkills = getAllOSkills();
-    
-    const oSkillsCount = Array.isArray(oSkills) ? oSkills.length : Object.keys(oSkills).length;
-    if (oSkillsCount === 0) {
-        return;
-    }
-    
-    // Calculate grid size based on number of skills
-    const cols = 3; // 3 skills per row
-    const rows = Math.ceil(oSkillsCount / cols);
-    
-    container.style.gridTemplateRows = `repeat(${rows}, auto)`;
-    container.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
-    
-    // Render each oSkill as a card
-    let index = 0;
-    if (Array.isArray(oSkills)) {
-        // Old format: array of objects
-        oSkills.forEach((oskill) => {
-        const row = Math.floor(index / cols) + 1;
-        const col = (index % cols) + 1;
-        
-        const card = createOSkillCard(oskill);
-        card.style.gridArea = `${row} / ${col}`;
-        container.appendChild(card);
-            index++;
-        });
-    } else {
-        // New format: object with skill IDs as keys
-        Object.entries(oSkills).forEach(([skillIdOrName, points]) => {
-            if (points > 0) {
-                const row = Math.floor(index / cols) + 1;
-                const col = (index % cols) + 1;
-                
-                // Create a simplified oSkill object for rendering
-                const oskill = { 
-                    skillId: /^\d+$/.test(skillIdOrName) ? parseInt(skillIdOrName) : null,
-                    skillName: /^\d+$/.test(skillIdOrName) ? null : skillIdOrName,
-                    points 
-                };
-                const card = createOSkillCard(oskill);
-                card.style.gridArea = `${row} / ${col}`;
-                container.appendChild(card);
-                index++;
-            }
-        });
-    }
+    notifySkillGridDomReset();
 }
 
-function createOSkillCard(oskill) {
-    // If we have full oSkill data (old format), use it directly
-    // Otherwise, look up the skill data from the database
-    let skillData = oskill;
-    
-    if (!oskill.displayName && !oskill.image) {
-        // New format: have skillId or skillName and points, need to look up skill data
-        const db = getDatabase();
-        if (db) {
-            try {
-                let stmt;
-                if (oskill.skillId) {
-                    // Look up by skill ID
-                    stmt = db.prepare('SELECT * FROM skills WHERE id = ?');
-                    stmt.bind([oskill.skillId]);
-                } else if (oskill.skillName) {
-                    // Look up by skill name (backward compatibility)
-                    stmt = db.prepare('SELECT * FROM skills WHERE name = ?');
-                    stmt.bind([oskill.skillName]);
-                } else {
-                    throw new Error('No skillId or skillName provided');
-                }
-                
-                if (stmt.step()) {
-                    const row = stmt.getAsObject();
-                    skillData = {
-                        skillId: oskill.skillId,
-                        skillName: oskill.skillName || row.name,
-                        points: oskill.points,
-                        displayName: row.display_name || row.name,
-                        image: row.image || 'icons-shared_missing.png',
-                        className: 'Other',
-                        hasDetails: true,
-                        description: row.description
-                    };
-                }
-                stmt.free();
-            } catch (error) {
-                console.warn('Could not look up oSkill data for:', oskill.skillId || oskill.skillName);
-                // Fallback to basic data
-                skillData = {
-                    skillId: oskill.skillId,
-                    skillName: oskill.skillName,
-                    points: oskill.points,
-                    displayName: oskill.skillName || `Skill ${oskill.skillId}`,
-                    image: 'icons-shared_missing.png',
-                    className: 'Other',
-                    hasDetails: false
-                };
-            }
-        }
-    }
-    
-    // Build card data for oSkill
-    const cardData = buildOSkillCardData(skillData, getSkillIcon);
-    
-    // Render card
-    const card = renderSkillCard(cardData);
-    
-    // Add oSkill-specific event listeners (same as regular skills)
-    const plusBtn = card.querySelector('.skill-plus-btn');
-    const minusBtn = card.querySelector('.skill-minus-btn');
-    
-    if (plusBtn) {
-        plusBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            const skillIdentifier = oskill.skillId || oskill.skillName;
-            if (e.shiftKey) {
-                // Shift-click: add 25 points
-                handleOSkillPointChange(skillIdentifier, 25);
-            } else {
-                // Normal click: add 1 point
-                handleOSkillPointChange(skillIdentifier, 1);
-            }
-        });
-    }
-    
-    if (minusBtn) {
-        minusBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            const skillIdentifier = oskill.skillId || oskill.skillName;
-            if (e.shiftKey) {
-                // Shift-click: remove 25 points
-                handleOSkillPointChange(skillIdentifier, -25);
-            } else {
-                // Normal click: remove 1 point
-                handleOSkillPointChange(skillIdentifier, -1);
-            }
-        });
-    }
-    
-    return card;
+/**
+ * Current planner skill tree wrapper (Skill rows for loaded version/class list).
+ * @returns {Tree|null}
+ */
+export function getPlannerTree() {
+    return plannerTree;
 }

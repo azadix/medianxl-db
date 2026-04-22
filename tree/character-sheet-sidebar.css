@@ -1,0 +1,85 @@
+/* Sidebar column: Other / Stats + character sheet (planner.html) */
+
+.sidebar-column {
+  overflow-y: auto;
+  max-height: 95vh;
+}
+
+.sidebar-column-inner {
+  height: 100%;
+  border-right: 1px solid var(--bulma-border);
+  min-height: 0;
+}
+
+/* Equal-width Overview / Stats / Config */
+.sidebar-view-tabs.tabs ul {
+  display: flex;
+  width: 100%;
+}
+
+.sidebar-view-tabs.tabs li {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.sidebar-view-tabs.tabs li a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.sidebar-view-tabs.tabs.is-toggle a {
+  border-color: hsl(0, 0%, 29%);
+  color: #b5b5b5;
+}
+
+.sidebar-view-tabs.tabs.is-toggle li.is-active a {
+  background-color: hsl(217, 71%, 53%);
+  border-color: hsl(217, 71%, 53%);
+  color: #fff;
+}
+
+.sidebar-view-tabs.tabs.is-toggle a:hover {
+  border-color: hsl(217, 71%, 60%);
+  color: #eee;
+}
+
+#sidebarPaneStats {
+  padding-bottom: 0;
+}
+
+.character-sheet-body .label {
+  color: #dbdbdb;
+}
+
+.character-sheet-body .planner-stats-panel {
+  border: 1px solid hsl(0, 0%, 25%);
+  padding-bottom: 0;
+}
+
+.character-sheet-body .planner-stats-registry-scroll {
+  max-height: min(70vh, 520px);
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+/* Config tab: quest rows — border only (no filled notification background) */
+.planner-config-quest-row {
+  border-style: solid;
+  border-width: 2px;
+  border-radius: 0.375rem;
+  background: transparent;
+}
+
+.planner-config-quest-row.planner-quest-outline-none {
+  border-color: hsla(348, 86%, 61%, 0.75);
+}
+
+.planner-config-quest-row.planner-quest-outline-partial {
+  border-color: hsla(44, 100%, 48%, 0.75);
+}
+
+.planner-config-quest-row.planner-quest-outline-complete {
+  border-color: hsla(153, 47%, 49%, 0.75);
+}

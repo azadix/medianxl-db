@@ -1,12 +1,8 @@
-html {
-    overflow: hidden;
-    height: 100vh;
-}
-
-.navbar {
-    border-bottom: 1px solid rgba(122, 122, 122, 122);
-}
-
+:root {
+    --color-life: #ff0000;
+    --color-mana: #3080ff;
+  }
+  
 .skills-grid {
     gap: 1.25rem 1rem;
     width: 50%;
@@ -42,6 +38,11 @@ html {
     overflow: hidden;
 }
 
+.skill-card.skill-card--variants {
+    overflow: visible;
+    z-index: 1;
+}
+
 .skill-card .image {
     height: 48px;
     width: 48px;
@@ -64,6 +65,13 @@ html {
     align-items: center;
     width: 100%;
     padding: 0 4px;
+}
+
+/* Override .skill-card div { overflow: hidden } so variant menu is not clipped */
+.skill-card .skill-card-header,
+.skill-card .skill-card-variant-wrap,
+.skill-card .skill-variant-panel {
+    overflow: visible;
 }
 
 .skill-card-icon {
@@ -219,6 +227,14 @@ html {
     border-radius: 3px;
 }
 
+.tooltip-scaling {
+    padding: 6px 8px;
+    background:  rgba(50, 152, 220, 0.12);
+    border-left: 3px solid rgb(50, 152, 220);
+    border-radius: 3px;
+    word-wrap: break-word;
+}
+
 .tooltip-max-level {
     padding: 4px 0;
     font-size: 0.9rem;
@@ -297,4 +313,232 @@ html {
     .difficulty-checkboxes .checkbox {
         display: block;
     }
+}
+
+.skill-card-variant-wrap {
+    position: relative;
+    z-index: 3;
+    min-width: 0;
+    max-width: 100%;
+    overflow: visible;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.skill-variant-trigger {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    margin: 0;
+    line-height: 1;
+    font-size: 1.1rem;
+    color: #ccc;
+    background: #1a1a1a;
+    border: 1px solid #666;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.skill-variant-trigger:hover {
+    background: #2a2a2a;
+    color: #fff;
+}
+
+.skill-variant-panel {
+    position: absolute;
+    left: 0;
+    top: calc(100% + 2px);
+    z-index: 100;
+    min-width: 9rem;
+    max-width: 12rem;
+    background: #2a2a2a;
+    border: 1px solid #666;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+    padding: 0.25rem 0;
+}
+
+.skill-variant-option {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 0.35rem 0.6rem;
+    border: none;
+    background: transparent;
+    color: #eee;
+    font-size: 0.7rem;
+    line-height: 1.2;
+    cursor: pointer;
+}
+
+.skill-variant-option:hover {
+    background: #444;
+}
+
+.skill-variant-option--default {
+    border-bottom: 1px solid #555;
+    margin-bottom: 0.15rem;
+    padding-bottom: 0.45rem;
+    color: #bbb;
+}
+
+/* Planner character stats (numeric inputs, Maxroll-style +/- ) */
+.planner-stats-panel .planner-stat-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.35rem;
+    margin-bottom: 0;
+    padding-bottom: 0;
+    cursor: help;
+}
+
+.planner-stats-panel .planner-stat-row + .planner-stat-row {
+    border-top: 1px solid hsl(0, 0%, 28%);
+}
+
+.planner-stats-panel .planner-stats-extra .planner-stat-row-extra:first-child {
+    border-top: 1px solid hsl(0, 0%, 28%);
+    margin-top: 0.35rem;
+    padding-top: 0.35rem;
+}
+
+.planner-stats-panel .planner-stat-life .planner-stat-input,
+.planner-stats-panel .planner-stat-mana .planner-stat-input {
+    cursor: help;
+    background-color: hsl(0, 0%, 14%);
+    color: #e8e8e8;
+    border-color: hsl(0, 0%, 32%);
+}
+
+/* Floating breakdown (hover any stat row) */
+.planner-stat-tooltip {
+    position: fixed;
+    z-index: 12000;
+    width: max-content;
+    max-width: min(46rem, calc(100vw - 1rem));
+    padding: 0.65rem 0.75rem;
+    background: #1e1e24;
+    border: 1px solid #4a4a55;
+    border-radius: 4px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+    font-size: 0.9375rem;
+    line-height: 1.35;
+    color: #e8e8e8;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.12s ease;
+}
+
+.planner-stat-tooltip.is-active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.planner-stat-tooltip-title {
+    font-weight: 700;
+    font-size: 1.0625rem;
+}
+
+.planner-stat-tooltip-meta {
+    font-size: 0.8125rem;
+    color: #9a9aa8;
+}
+
+.planner-stat-tooltip-h {
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #b5b5c0;
+    margin-bottom: 0.25rem;
+}
+
+.planner-stat-tooltip-total-num {
+    font-size: 1.125rem;
+    font-weight: 700;
+}
+
+.planner-stat-tooltip-list {
+    margin: 0;
+    padding-left: 1rem;
+    list-style: disc;
+}
+
+.planner-stat-tooltip-list li {
+    margin-bottom: 0.2rem;
+}
+
+.planner-stat-tooltip-k {
+    color: #ddd;
+}
+
+.planner-stat-tooltip-v {
+    font-weight: 600;
+    color: #fff;
+}
+
+.planner-stat-tooltip-d {
+    margin-top: 0.1rem;
+    margin-left: 0;
+    color: #9a9aa8;
+    font-size: 0.8125rem;
+}
+
+.planner-stat-tooltip-empty {
+    margin: 0;
+}
+
+.planner-stats-panel .planner-stat-label {
+    flex: 1;
+    min-width: 0;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #e8e8e8;
+}
+
+.planner-stats-panel .planner-stat-life .planner-stat-label {
+    color: var(--color-life);
+}
+
+.planner-stats-panel .planner-stat-mana .planner-stat-label {
+    color: var(--color-mana);
+}
+
+.planner-stats-panel .planner-stat-key {
+    font-weight: 500;
+    font-family: ui-monospace, monospace;
+    font-size: 0.72rem;
+    word-break: break-all;
+}
+
+.planner-stats-panel .planner-stat-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+    flex-shrink: 0;
+}
+
+.planner-stats-panel .planner-stat-controls .planner-stat-input {
+    width: 5rem;
+    text-align: center;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+}
+
+.planner-stats-panel .planner-stat-remove {
+    min-width: 1.75rem;
+    padding-left: 0.2rem;
+    padding-right: 0.2rem;
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.planner-stats-advanced summary {
+    user-select: none;
 }

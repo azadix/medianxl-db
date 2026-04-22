@@ -1,0 +1,376 @@
+/**
+ * Autocomplete for description / skillEffect / restriction when typing {{ (stats) or [[ (skills).
+ */
+
+/** @typedef {{ id?: number, key: string, name: string, format?: string }} StatRow */
+/** @typedef {{ id: string, displayName?: string|null, numericId?: number|null }} SkillRow */
+
+/**
+ * @param {string} textBeforeCursor
+ * @returns {{ kind: 'stat', partial: string, tokenStart: number } | { kind: 'skill', partial: string, tokenStart: number } | null}
+ */
+function parseOpenToken(textBeforeCursor) {
+    const mStat = textBeforeCursor.match(/\{\{([a-zA-Z_][a-zA-Z0-9_]*)?$/);
+    if (mStat) {
+        return {
+            kind: 'stat',
+            partial: mStat[1] || '',
+            tokenStart: textBeforeCursor.length - mStat[0].length
+        };
+    }
+    const mSkill = textBeforeCursor.match(/\[\[((?:id:[0-9]*|[a-zA-Z_][a-zA-Z0-9_]*)?)$/);
+    if (mSkill) {
+        return {
+            kind: 'skill',
+            partial: mSkill[1] || '',
+            tokenStart: textBeforeCursor.length - mSkill[0].length
+        };
+    }
+    return null;
+}
+
+/**
+ * @param {SkillRow} r
+ * @param {string} partial
+ */
+function skillRefForInsert(r, partial) {
+    const p = partial.toLowerCase();
+    if (p.startsWith('id:')) {
+        const rest = p.slice(3).trim();
+        if (rest !== '' && /^\d+$/.test(rest)) {
+            const n = parseInt(rest, 10);
+            if (Number.isFinite(n) && r.numericId === n) {
+                return `[[id:${n}]]`;
+            }
+        }
+    }
+    return `[[${r.id}]]`;
+}
+
+/**
+ * @param {string} partial
+ * @param {() => SkillRow[]} getSkillRows
+ */
+function filterSkillRows(partial, getSkillRows) {
+    const rows = getSkillRows() || [];
+    const p = partial.toLowerCase();
+    if (!p) {
+        return [...rows].sort((a, b) => String(a.id).localeCompare(String(b.id)));
+    }
+    if (p.startsWith('id:')) {
+        const num = p.slice(3).trim();
+        if (num === '') {
+            return [...rows].sort((a, b) => (a.numericId || 0) - (b.numericId || 0));
+        }
+        const n = parseInt(num, 10);
+        if (!Number.isFinite(n)) return [];
+        return rows.filter((r) => r.numericId === n);
+    }
+    return rows
+        .filter((r) => {
+            const id = String(r.id).toLowerCase();
+            const dn = String(r.displayName || '').toLowerCase();
+            return id.includes(p) || dn.includes(p) || id.startsWith(p);
+        })
+        .sort((a, b) => String(a.id).localeCompare(String(b.id)));
+}
+
+/**
+ * @param {StatRow[]} statsRows
+ * @param {string} partial
+ * @param {() => Record<string, number>} getUsageCounts
+ */
+function filterStats(statsRows, partial, getUsageCounts) {
+    const rows = statsRows || [];
+    const counts = getUsageCounts() || {};
+    const p = partial.toLowerCase();
+    let out;
+    if (!p) {
+        out = [...rows];
+    } else {
+        out = rows.filter((s) => {
+            const k = String(s.key || '').toLowerCase();
+            const n = String(s.name || '').toLowerCase();
+            const f = String(s.format || '').toLowerCase();
+            return k.includes(p) || k.startsWith(p) || n.includes(p) || f.includes(p);
+        });
+    }
+    out.sort((a, b) => {
+        const ka = String(a.key || '').toLowerCase();
+        const kb = String(b.key || '').toLowerCase();
+        const ca = counts[ka] || 0;
+        const cb = counts[kb] || 0;
+        if (cb !== ca) return cb - ca;
+        return String(a.key).localeCompare(String(b.key));
+    });
+    return out.slice(0, 200);
+}
+
+/**
+ * @param {HTMLTextAreaElement[]} textareas
+ * @param {{ getStatsRows: () => StatRow[], getStatUsageCounts?: () => Record<string, number>, getSkillRows: () => SkillRow[] }} options
+ * @returns {{ destroy: () => void }}
+ */
+export function attachEditorTextareaAutocomplete(textareas, options) {
+    const getStatsRows = options.getStatsRows || (() => []);
+    const getStatUsageCounts = options.getStatUsageCounts || (() => ({}));
+    const { getSkillRows } = options;
+
+    const root = document.createElement('div');
+    root.className = 'editor-token-dropdown';
+    root.setAttribute('role', 'listbox');
+    root.style.display = 'none';
+    root.innerHTML = '<ul class="dropdown-list"></ul>';
+    document.body.appendChild(root);
+    const list = root.querySelector('.dropdown-list');
+
+    let activeEl = null;
+    let parsed = null;
+    /** @type {HTMLElement[]} scrollable ancestors that need scroll listeners */
+    let scrollParentNodes = [];
+
+    function detachScrollListeners() {
+        for (const node of scrollParentNodes) {
+            node.removeEventListener('scroll', repositionIfOpen);
+        }
+        scrollParentNodes = [];
+        window.removeEventListener('scroll', repositionIfOpen);
+        window.removeEventListener('resize', repositionIfOpen);
+    }
+
+    function attachScrollListeners(el) {
+        detachScrollListeners();
+        let p = el.parentElement;
+        while (p && p !== document.documentElement) {
+            const st = getComputedStyle(p);
+            if (
+                /(auto|scroll|overlay)/.test(st.overflowY) ||
+                /(auto|scroll|overlay)/.test(st.overflowX) ||
+                /(auto|scroll|overlay)/.test(st.overflow)
+            ) {
+                p.addEventListener('scroll', repositionIfOpen, { passive: true });
+                scrollParentNodes.push(p);
+            }
+            p = p.parentElement;
+        }
+        window.addEventListener('scroll', repositionIfOpen, { passive: true });
+        window.addEventListener('resize', repositionIfOpen, { passive: true });
+    }
+
+    function repositionIfOpen() {
+        if (root.style.display === 'none' || !activeEl) return;
+        positionBelowActiveField(activeEl);
+    }
+
+    function hide() {
+        detachScrollListeners();
+        root.style.display = 'none';
+        list.innerHTML = '';
+        activeEl = null;
+        parsed = null;
+    }
+
+    /**
+     * Same approach as legacy edit/edit-autocomplete.js: anchor to the textarea
+     * (getBoundingClientRect), not the caret.
+     */
+    function positionBelowActiveField(el) {
+        const rect = el.getBoundingClientRect();
+        root.style.position = 'fixed';
+        root.style.left = `${rect.left}px`;
+        root.style.width = `${rect.width}px`;
+        root.style.transform = 'none';
+        root.style.zIndex = '10050';
+        root.style.overflow = 'visible';
+        root.style.display = 'block';
+
+        const gap = 4;
+        let top = rect.bottom + gap;
+        root.style.top = `${top}px`;
+        requestAnimationFrame(() => {
+            const h = root.offsetHeight;
+            const vh = window.innerHeight;
+            if (top + h > vh - 8 && rect.top - h - gap > 8) {
+                top = rect.top - h - gap;
+                root.style.top = `${top}px`;
+            }
+        });
+    }
+
+    function renderStats(partial) {
+        const statsRows = filterStats(getStatsRows(), partial, getStatUsageCounts);
+        const counts = getStatUsageCounts() || {};
+        list.innerHTML = '';
+        if (statsRows.length === 0) {
+            const li = document.createElement('li');
+            li.className = 'dropdown-list-item empty';
+            li.textContent =
+                (getStatsRows() || []).length === 0
+                    ? 'No stats loaded (tree_data/stats.json)'
+                    : 'No matching stats';
+            list.appendChild(li);
+            return;
+        }
+        const header = document.createElement('li');
+        header.className = 'dropdown-list-header';
+        header.innerHTML =
+            '<span class="dropdown-header-text">Stats</span><span class="dropdown-header-count"></span>';
+        list.appendChild(header);
+
+        for (const s of statsRows) {
+            const key = String(s.key || '').trim();
+            if (!key) continue;
+            const li = document.createElement('li');
+            li.className = 'dropdown-list-item editor-stat-item';
+            li.dataset.insert = `{{${key}}}`;
+            const row = document.createElement('div');
+            row.className = 'editor-stat-row';
+            const keyEl = document.createElement('div');
+            keyEl.className = 'editor-stat-key';
+            keyEl.textContent = key;
+            const nameEl = document.createElement('div');
+            nameEl.className = 'editor-stat-name';
+            const cnt = counts[key.toLowerCase()] || 0;
+            const baseName = s.name != null ? String(s.name) : '';
+            nameEl.textContent = cnt > 0 ? `${baseName} (${cnt})` : baseName;
+            const fmtEl = document.createElement('div');
+            fmtEl.className = 'editor-stat-format';
+            fmtEl.textContent = s.format != null ? String(s.format) : '';
+            row.appendChild(keyEl);
+            row.appendChild(nameEl);
+            row.appendChild(fmtEl);
+            li.appendChild(row);
+            list.appendChild(li);
+        }
+    }
+
+    function renderSkills(partial) {
+        const rows = filterSkillRows(partial, getSkillRows);
+        list.innerHTML = '';
+        if (rows.length === 0) {
+            const li = document.createElement('li');
+            li.className = 'dropdown-list-item empty';
+            li.textContent = 'No matching skills';
+            list.appendChild(li);
+            return;
+        }
+        const header = document.createElement('li');
+        header.className = 'dropdown-list-header';
+        header.innerHTML =
+            '<span class="dropdown-header-text">Skills</span><span class="dropdown-header-count"></span>';
+        list.appendChild(header);
+
+        for (const r of rows.slice(0, 200)) {
+            const li = document.createElement('li');
+            li.className = 'dropdown-list-item';
+            const id = String(r.id);
+            const dn = r.displayName != null && String(r.displayName).trim() !== '' ? String(r.displayName) : '';
+            const ref = skillRefForInsert(r, partial);
+            li.textContent = dn || id;
+            li.dataset.insert = ref;
+            list.appendChild(li);
+        }
+        if (rows.length > 200) {
+            const note = document.createElement('li');
+            note.className = 'dropdown-list-item empty';
+            note.textContent = `…and ${rows.length - 200} more (type to filter)`;
+            list.appendChild(note);
+        }
+    }
+
+    function refreshDropdown(el) {
+        const pos = el.selectionStart ?? 0;
+        const textBefore = el.value.slice(0, pos);
+        const p = parseOpenToken(textBefore);
+        if (!p) {
+            hide();
+            return;
+        }
+        activeEl = el;
+        parsed = p;
+        if (p.kind === 'stat') {
+            renderStats(p.partial);
+        } else {
+            renderSkills(p.partial);
+        }
+        positionBelowActiveField(el);
+        attachScrollListeners(el);
+    }
+
+    function applyInsert(insertText) {
+        if (!activeEl || !parsed) return;
+        const el = activeEl;
+        const pos = el.selectionStart ?? 0;
+        const v = el.value;
+        const start = parsed.tokenStart;
+        const end = pos;
+        const next = v.slice(0, start) + insertText + v.slice(end);
+        el.value = next;
+        const caret = start + insertText.length;
+        el.setSelectionRange(caret, caret);
+        el.focus();
+        hide();
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+
+    function onInput(e) {
+        const t = e.target;
+        if (!(t instanceof HTMLTextAreaElement)) return;
+        refreshDropdown(t);
+    }
+
+    function onKeyDown(e) {
+        if (root.style.display === 'none') return;
+        if (e.key === 'Escape') {
+            e.preventDefault();
+            hide();
+            return;
+        }
+        if ((e.key === 'Enter' || e.key === 'Tab') && root.style.display !== 'none') {
+            const first = list.querySelector('.dropdown-list-item[data-insert]');
+            if (first) {
+                e.preventDefault();
+                applyInsert(first.dataset.insert);
+            }
+        }
+    }
+
+    list.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        const li = e.target.closest('.dropdown-list-item');
+        if (li && li.dataset.insert) {
+            applyInsert(li.dataset.insert);
+        }
+    });
+
+    document.addEventListener('mousedown', (e) => {
+        if (root.style.display === 'none') return;
+        if (root.contains(e.target)) return;
+        if (textareas.some((ta) => ta === e.target || ta.contains(e.target))) return;
+        hide();
+    });
+
+    function onSelectionChange() {
+        const ae = document.activeElement;
+        if (!textareas.includes(ae)) return;
+        refreshDropdown(ae);
+    }
+
+    for (const ta of textareas) {
+        ta.addEventListener('input', onInput);
+        ta.addEventListener('keydown', onKeyDown);
+    }
+    document.addEventListener('selectionchange', onSelectionChange);
+
+    function destroy() {
+        detachScrollListeners();
+        for (const ta of textareas) {
+            ta.removeEventListener('input', onInput);
+            ta.removeEventListener('keydown', onKeyDown);
+        }
+        document.removeEventListener('selectionchange', onSelectionChange);
+        root.remove();
+    }
+
+    return { destroy, hide };
+}

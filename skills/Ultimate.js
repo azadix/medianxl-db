@@ -26,31 +26,26 @@ export default class Ultimate extends Skill {
     /**
      * Check if this Ultimate skill can be allocated based on restrictions
      * @param {Array} allSkills - Array of all skills
-     * @returns {Object} { blocked: boolean, reason: string }
+     * @returns {{ allowed: boolean, reason: string }}
      */
     checkRestriction(allSkills) {
-        // Check if this skill has the Ultimate tag
-        const isUltimate = Ultimate.isUltimateSkill(this);
-        
-        if (!isUltimate) {
-            return { blocked: false, reason: '' };
+        if (!Ultimate.isUltimateSkill(this)) {
+            return { allowed: true, reason: '' };
         }
 
-        // Find all Ultimate skills from the same class
         const classUltimateSkills = allSkills.filter(skill => 
             skill.class === this.class && Ultimate.isUltimateSkill(skill)
         );
         
-        // Check if any other Ultimate skill from this class has points
         for (const ultimateSkill of classUltimateSkills) {
             if (ultimateSkill.id !== this.id && getSkillPoints(ultimateSkill.id) > 0) {
                 return { 
-                    blocked: true, 
+                    allowed: false, 
                     reason: `${ultimateSkill.name} already has points. Only one Ultimate skill per class is allowed.` 
                 };
             }
         }
 
-        return { blocked: false, reason: '' };
+        return { allowed: true, reason: '' };
     }
 }

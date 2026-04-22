@@ -1,173 +1,156 @@
 #!/usr/bin/env python3
 """
-Validate skill placeholders in the skills database.
+Validate skill placeholders against tree_data JSON (stats.json + merged skills).
 
-This script checks:
-1. Whether placeholders expand properly or result in "unknown stat"
-2. Whether stats referenced in placeholders exist in the database
-3. Whether scaling data exists for placeholders that need it
-
-Note: Template syntax validation (unclosed braces, etc.) is now handled
-by the edit page's client-side validation before saving.
+Checks:
+1. Placeholder stat keys exist in stats.json
+2. For stats whose format uses {value...}, scalingConstants exists for that skill+stat
 """
 
-import sqlite3
+import argparse
 import re
 import sys
-import os
-import argparse
 from collections import defaultdict
+from pathlib import Path
+
+_PY = Path(__file__).resolve().parent
+if str(_PY) not in sys.path:
+    sys.path.insert(0, str(_PY))
+
+from tree_data_loader import (
+    load_merged_skills,
+    load_stats_json,
+    resolve_data_dir,
+    skill_has_stat_scaling,
+    stats_by_key_lower,
+)
 
 
-def get_stat_parameter_count(cursor, stat_key):
-    """
-    Get the number of parameters a stat format needs.
-    """
-    cursor.execute("SELECT format FROM stats WHERE LOWER(key) = ?", (stat_key.lower(),))
-    row = cursor.fetchone()
-    
-    if not row:
-        return 0
-    
-    format_str = row[0] or '{name}: {value}'
-    
-    # Count value placeholders
-    value_matches = re.findall(r'\{value\d*\}', format_str)
-    percent_matches = re.findall(r'%value\d*%', format_str)
-    
-    return max(len(value_matches), len(percent_matches))
-
-
-def check_placeholder_validity(cursor, skill_id, skill_name, description, show_no_scaling_warnings=True):
-    """
-    Check if placeholders in the description are valid and can be expanded.
-    Returns a list of issues found.
-    """
+def check_placeholder_validity(
+    stats_by_key_lower_map, skill_row, display_name, description, show_no_scaling_warnings=True
+):
     issues = []
-    
+
     if not description:
         return issues
-    
-    # Find all placeholders
-    placeholder_pattern = r'\{\{([^}]+)\}\}'
+
+    placeholder_pattern = r"\{\{([^}]+)\}\}"
     placeholders = re.findall(placeholder_pattern, description)
-    
+
     for placeholder in placeholders:
-        # Parse placeholder
-        parts = placeholder.split(':')
+        parts = placeholder.split(":")
         if len(parts) < 1:
             continue
-        
+
         stat_key = parts[0].strip().lower()
-        
-        # Check if stat exists
-        cursor.execute("SELECT id, name, format FROM stats WHERE LOWER(key) = ?", (stat_key,))
-        stat_row = cursor.fetchone()
-        
+
+        stat_row = stats_by_key_lower_map.get(stat_key)
         if not stat_row:
-            issues.append(f"Unknown stat key: '{parts[0].strip()}' in placeholder {{{{{placeholder}}}}}")
+            issues.append(
+                f"Unknown stat key: '{parts[0].strip()}' in placeholder {{{{{placeholder}}}}}"
+            )
             continue
-        
-        stat_id, stat_name, stat_format = stat_row
-        
-        # If there are inline values (not placeholders like %value0%), that's OK
+
+        stat_format = stat_row.get("format") or ""
+
         if len(parts) > 1:
-            values = [v.strip() for v in parts[1].split(',')]
-            # Check if these are placeholder tokens or actual values
-            has_placeholders = any(re.match(r'%?value\d*%?', v, re.IGNORECASE) for v in values)
-            
+            values = [v.strip() for v in parts[1].split(",")]
+            has_placeholders = any(
+                re.match(r"%?value\d*%?", v, re.IGNORECASE) for v in values
+            )
+
             if not has_placeholders:
-                # Inline concrete values - these are always OK
                 continue
-        
-        # Only check for scaling data if the stat format contains {value} placeholders
-        if stat_format and '{value' in stat_format:
-            # Check if scaling data exists for this skill and stat
-            cursor.execute("""
-                SELECT COUNT(*) 
-                FROM skill_scaling 
-                WHERE skill_id = ? AND stat_id = ?
-            """, (skill_id, stat_id))
-            
-            scaling_count = cursor.fetchone()[0]
-            
-            if scaling_count == 0:
-                # No scaling data - check if inline values were provided
+
+        if stat_format and "{value" in stat_format:
+            if not skill_has_stat_scaling(skill_row, stat_key):
                 if len(parts) == 1 and show_no_scaling_warnings:
                     issues.append(f"No scaling data for stat '{parts[0].strip()}'")
-    
+
     return issues
 
 
-def validate_skills(db_path='../skills.sqlite', show_no_scaling_warnings=True):
-    """
-    Main validation function.
-    """
-    db_full_path = db_path if db_path.startswith('/') or db_path.startswith('../') else f'../{db_path}'
-    
-    if not os.path.exists(db_full_path):
-        print(f"Error: Database file not found: {db_full_path}")
-        sys.exit(1)
-    
-    conn = sqlite3.connect(db_full_path)
-    cursor = conn.cursor()
-    
+def validate_skills(data_dir=None, show_no_scaling_warnings=True):
+    data_dir = resolve_data_dir(data_dir)
+    if not data_dir.is_dir():
+        print(f"Error: Data directory not found: {data_dir}")
+        return 1
+
+    try:
+        merged = load_merged_skills(data_dir)
+    except Exception as e:
+        print(f"Error: {e}")
+        return 1
+
+    stats_list = load_stats_json()
+    sk_map = stats_by_key_lower(stats_list)
+
     print("=" * 80)
-    print("SKILL PLACEHOLDER VALIDATION")
+    print("SKILL PLACEHOLDER VALIDATION (tree_data JSON)")
     print("=" * 80)
     print()
-    print("Note: Template syntax errors (unclosed braces, etc.) are now checked")
-    print("      by the edit page before saving. This script only validates")
-    print("      placeholder content against the database.")
+    print("Note: This validates placeholder content against stats.json and skill balance rows;")
+    print("      fix template syntax (unclosed braces, etc.) in your editor.")
     print()
-    
-    # Get all skills with descriptions, skill effects, or restrictions
-    cursor.execute("""
-        SELECT s.id, s.name, s.display_name, s.description, s.skill_effect, s.restriction
-        FROM skills s
-        WHERE (s.description IS NOT NULL AND s.description != '')
-           OR (s.skill_effect IS NOT NULL AND s.skill_effect != '')
-           OR (s.restriction IS NOT NULL AND s.restriction != '')
-        ORDER BY s.name
-    """)
-    
-    skills = cursor.fetchall()
-    print(f"Found {len(skills)} skills with descriptions\n")
-    
+    print(f"Data: {data_dir}")
+    print()
+
+    with_text = [
+        r
+        for r in merged
+        if (r["description"] or "").strip()
+        or (r["skill_effect"] or "").strip()
+        or (r["restriction"] or "").strip()
+    ]
+    with_text.sort(key=lambda r: r["name"] or "")
+
+    print(f"Found {len(with_text)} skills with description, skill_effect, or restriction\n")
+
     placeholder_errors = defaultdict(list)
     total_placeholder_issues = 0
-    
-    for skill_id, skill_name, display_name, description, skill_effect, restriction in skills:
-        # Check description
+
+    for row in with_text:
+        display_name = row["display_name"]
+
+        description = row["description"] or ""
         if description:
-            desc_placeholder_issues = check_placeholder_validity(cursor, skill_id, display_name, description, show_no_scaling_warnings)
-            
-            if desc_placeholder_issues:
-                placeholder_errors[display_name].extend([f"[Description] {issue}" for issue in desc_placeholder_issues])
-                total_placeholder_issues += len(desc_placeholder_issues)
-        
-        # Check skill effect
+            desc_issues = check_placeholder_validity(
+                sk_map, row, display_name, description, show_no_scaling_warnings
+            )
+            if desc_issues:
+                placeholder_errors[display_name].extend(
+                    [f"[Description] {issue}" for issue in desc_issues]
+                )
+                total_placeholder_issues += len(desc_issues)
+
+        skill_effect = row["skill_effect"] or ""
         if skill_effect:
-            effect_placeholder_issues = check_placeholder_validity(cursor, skill_id, display_name, skill_effect, show_no_scaling_warnings)
-            
-            if effect_placeholder_issues:
-                placeholder_errors[display_name].extend([f"[Skill Effect] {issue}" for issue in effect_placeholder_issues])
-                total_placeholder_issues += len(effect_placeholder_issues)
-        
-        # Check restriction if it exists
+            eff_issues = check_placeholder_validity(
+                sk_map, row, display_name, skill_effect, show_no_scaling_warnings
+            )
+            if eff_issues:
+                placeholder_errors[display_name].extend(
+                    [f"[Skill Effect] {issue}" for issue in eff_issues]
+                )
+                total_placeholder_issues += len(eff_issues)
+
+        restriction = row["restriction"] or ""
         if restriction:
-            rest_placeholder_issues = check_placeholder_validity(cursor, skill_id, display_name, restriction, show_no_scaling_warnings)
-            
-            if rest_placeholder_issues:
-                placeholder_errors[display_name].extend([f"[Restriction] {issue}" for issue in rest_placeholder_issues])
-                total_placeholder_issues += len(rest_placeholder_issues)
-    
+            rest_issues = check_placeholder_validity(
+                sk_map, row, display_name, restriction, show_no_scaling_warnings
+            )
+            if rest_issues:
+                placeholder_errors[display_name].extend(
+                    [f"[Restriction] {issue}" for issue in rest_issues]
+                )
+                total_placeholder_issues += len(rest_issues)
+
     if placeholder_errors:
         print("=" * 80)
         print("PLACEHOLDER VALIDATION ERRORS")
         print("=" * 80)
         print()
-        
+
         for skill_name, issues in sorted(placeholder_errors.items()):
             print(f"[X] {skill_name}")
             for issue in issues:
@@ -176,33 +159,35 @@ def validate_skills(db_path='../skills.sqlite', show_no_scaling_warnings=True):
     else:
         print("[OK] No placeholder validation errors found!")
         print()
-    
-    # Summary
+
     print("=" * 80)
     print("SUMMARY")
     print("=" * 80)
-    print(f"Total skills checked: {len(skills)}")
+    print(f"Total skills checked: {len(with_text)}")
     print(f"Skills with placeholder errors: {len(placeholder_errors)}")
     print(f"Total placeholder issues: {total_placeholder_issues}")
     print()
-    
-    conn.close()
-    
-    # Return non-zero exit code if errors were found
-    if placeholder_errors:
-        return 1
-    return 0
+
+    return 1 if placeholder_errors else 0
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Validate skill placeholders in the skills database')
-    parser.add_argument('db_path', nargs='?', default='../skills.sqlite', help='Path to the SQLite database file (default: ../skills.sqlite)')
-    parser.add_argument('--no-scaling', action='store_true',
-                       help='Hide "No scaling data for stat X" warnings')
-    
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="Validate skill placeholders against tree_data JSON"
+    )
+    parser.add_argument(
+        "data_dir",
+        nargs="?",
+        default=None,
+        help="tree_data version folder (required), e.g. public/tree_data/2_12",
+    )
+    parser.add_argument(
+        "--no-scaling",
+        action="store_true",
+        help='Hide "No scaling data for stat X" warnings',
+    )
+
     args = parser.parse_args()
-    
-    show_no_scaling_warnings = not args.no_scaling
-    exit_code = validate_skills(args.db_path, show_no_scaling_warnings)
-    sys.exit(exit_code)
 
+    show_no_scaling_warnings = not args.no_scaling
+    sys.exit(validate_skills(args.data_dir, show_no_scaling_warnings))

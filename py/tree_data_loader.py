@@ -1,0 +1,115 @@
+"""
+Load skill text + balance from tree_data JSON (skills.json, stats.json; game_meta for non-skill data if needed).
+Scripts run with cwd typically `py/`; paths are resolved from repo root.
+"""
+
+from __future__ import annotations
+
+import json
+import re
+import sys
+from pathlib import Path
+
+_REPO_ROOT = Path(__file__).resolve().parent.parent
+
+
+def repo_root() -> Path:
+    return _REPO_ROOT
+
+
+def default_data_dir() -> Path:
+    """Repo-relative default version folder name (2_12); use for examples or explicit callers."""
+    return _REPO_ROOT / "tree_data" / "2_12"
+
+
+def resolve_data_dir(arg: str | None) -> Path:
+    """
+    Resolve CLI path to an absolute tree_data version directory.
+    Accepts e.g. public/tree_data/2_12, ../public/tree_data/2_12 (from py/).
+    """
+    if arg is None or arg == "":
+        ex = default_data_dir().relative_to(_REPO_ROOT)
+        print(
+            f"Error: specify the tree_data version directory (example: {ex} or public/tree_data/2_12).",
+            file=sys.stderr,
+        )
+        raise SystemExit(1)
+    p = Path(arg)
+    if not p.is_absolute():
+        p = (Path.cwd() / p).resolve()
+    return p
+
+
+def load_stats_json() -> list[dict]:
+    path = _REPO_ROOT / "tree_data" / "stats.json"
+    if not path.is_file():
+        return []
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def stats_by_key_lower(stats: list[dict]) -> dict[str, dict]:
+    out: dict[str, dict] = {}
+    for row in stats:
+        k = str(row.get("key", "")).lower()
+        if k:
+            out[k] = row
+    return out
+
+
+_PLACEHOLDER_RE = re.compile(r"\{\{[^}]+\}\}")
+
+
+def text_has_placeholder(text: str | None) -> bool:
+    if not text:
+        return False
+    return bool(_PLACEHOLDER_RE.search(text))
+
+
+def load_merged_skills(data_dir: Path) -> list[dict]:
+    """
+    One row per skills.json catalog entry (definition + balance in one file).
+
+    Each row: numeric_id, name (internal), display_name, description, skill_effect, restriction,
+    class_name, scalingConstants
+    """
+    cat_path = data_dir / "skills.json"
+    if not cat_path.is_file():
+        raise FileNotFoundError(f"Missing skills.json: {cat_path}")
+
+    catalog = json.loads(cat_path.read_text(encoding="utf-8"))
+    if not isinstance(catalog, list):
+        raise ValueError("skills.json must be a JSON array")
+
+    rows: list[dict] = []
+    for row in catalog:
+        if not isinstance(row, dict):
+            continue
+        iid = row.get("id")
+        if iid is None:
+            continue
+        se = row.get("skillEffect")
+        if se is None:
+            se = row.get("skill_effect")
+        rows.append(
+            {
+                "numeric_id": row.get("numericId"),
+                "name": str(iid),
+                "display_name": row.get("displayName") or str(iid),
+                "description": (row.get("description") or "") or "",
+                "skill_effect": (se or "") or "",
+                "restriction": (row.get("restriction") or "") or "",
+                "class_name": row.get("class"),
+                "scalingConstants": list(row.get("scalingConstants") or []),
+            }
+        )
+    rows.sort(key=lambda r: (r["class_name"] or "", r["display_name"] or ""))
+    return rows
+
+
+def skill_has_stat_scaling(row: dict, stat_key_lower: str) -> bool:
+    """True if scalingConstants include this stat key (any version)."""
+    sk = stat_key_lower.lower()
+    for r in row.get("scalingConstants") or []:
+        if str(r.get("statKey", "")).lower() == sk:
+            return True
+    return False

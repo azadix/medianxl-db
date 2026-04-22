@@ -1,0 +1,16 @@
+[
+  {
+    "id": 3,
+    "major": 2,
+    "minor": 13,
+    "name": "2.13",
+    "is_active": 1
+  },
+  {
+    "id": 1,
+    "major": 2,
+    "minor": 12,
+    "name": "2.12",
+    "is_active": 0
+  }
+]

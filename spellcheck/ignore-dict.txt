@@ -5,3 +5,8 @@ has-text-info
 has-text-success
 has-text-warning
 has-text-danger
+
+
+# Skill related words
+apf
+mkv

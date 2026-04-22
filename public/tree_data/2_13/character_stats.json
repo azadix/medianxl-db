@@ -1,0 +1,1911 @@
+[
+  {
+    "id": 0,
+    "key": "strength",
+    "label": "+# to Strength",
+    "min": null,
+    "max": null,
+    "allowNegative": false,
+    "alwaysVisible": true,
+    "sortOrder": 2
+  },
+  {
+    "id": 1,
+    "key": "energy",
+    "label": "+# to Energy",
+    "min": null,
+    "max": null,
+    "allowNegative": false,
+    "alwaysVisible": true,
+    "sortOrder": 5
+  },
+  {
+    "id": 2,
+    "key": "dexterity",
+    "label": "+# to Dexterity",
+    "min": null,
+    "max": null,
+    "allowNegative": false,
+    "alwaysVisible": true,
+    "sortOrder": 3
+  },
+  {
+    "id": 3,
+    "key": "vitality",
+    "label": "+# to Vitality",
+    "min": null,
+    "max": null,
+    "allowNegative": false,
+    "alwaysVisible": true,
+    "sortOrder": 4
+  },
+  {
+    "id": 6,
+    "key": "life",
+    "label": "Life",
+    "min": null,
+    "max": null,
+    "allowNegative": false,
+    "alwaysVisible": true,
+    "sortOrder": 0
+  },
+  {
+    "id": 7,
+    "key": "base_life",
+    "label": "Base Life",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 8,
+    "key": "mana",
+    "label": "Mana",
+    "min": null,
+    "max": null,
+    "allowNegative": false,
+    "alwaysVisible": true,
+    "sortOrder": 1
+  },
+  {
+    "id": 9,
+    "key": "base_mana",
+    "label": "Base Mana",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 10,
+    "key": "current_stamina",
+    "label": "Current Stamina",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 11,
+    "key": "maximum_stamina",
+    "label": "Maximum Stamina",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 12,
+    "key": "character_level",
+    "label": "Character level",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 13,
+    "key": "current_experience",
+    "label": "Current Experience",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 14,
+    "key": "gold_on_character",
+    "label": "Gold amount on character",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 15,
+    "key": "gold_in_stash",
+    "label": "Gold amount in stash",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 16,
+    "key": "enhanced_defense",
+    "label": "+#% Enhanced Defense",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 17,
+    "key": "enhanced_damage",
+    "label": "+#% Enhanced Damage",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 19,
+    "key": "attack_rating",
+    "label": "+# to Attack rating",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 20,
+    "key": "base_block_chance",
+    "label": "+#% Base block chance",
+    "min": null,
+    "max": null,
+    "sortOrder": 17
+  },
+  {
+    "id": 21,
+    "key": "minimum_1_handed_damage",
+    "label": "+# to Minimum 1-handed damage",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 22,
+    "key": "maximum_1_handed_damage",
+    "label": "+# to Maximum 1-handed damage",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 23,
+    "key": "minimum_2_handed_damage",
+    "label": "+# to Minimum 2-handed damage",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 24,
+    "key": "maximum_2_handed_damage",
+    "label": "+# to Maximum 2-handed damage",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 25,
+    "key": "enhanced_weapon_damage",
+    "label": "+#% to Enhanced Weapon Damage",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 27,
+    "key": "regenerate_mana",
+    "label": "Regenerate Mana #%",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 28,
+    "key": "heal_stamina",
+    "label": "Heal Stamina #%",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 31,
+    "key": "defense",
+    "label": "+# Defense",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 32,
+    "key": "defense_vs_missile",
+    "label": "+# Defense vs. Missile",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 33,
+    "key": "defense_vs_melee",
+    "label": "+# Defense vs. Melee",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 34,
+    "key": "physical_damage_taken_reduced",
+    "label": "Physical Damage taken reduced by #",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 35,
+    "key": "elemental_magic_damage_taken_reduced",
+    "label": "Elemental/Magic Damage taken reduced by #",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 36,
+    "key": "physical_resistance",
+    "label": "Physical Resist +#%",
+    "min": null,
+    "max": null,
+    "alwaysVisible": true,
+    "sortOrder": 14
+  },
+  {
+    "id": 37,
+    "key": "magic_resistance",
+    "label": "Magic Resist +#%",
+    "min": null,
+    "max": null,
+    "alwaysVisible": true,
+    "sortOrder": 15
+  },
+  {
+    "id": 38,
+    "key": "maximum_magic_resistance",
+    "label": "+#% to Maximum Magic Resist",
+    "min": null,
+    "max": null,
+    "sortOrder": 16
+  },
+  {
+    "id": 39,
+    "key": "fire_resistance",
+    "label": "Fire Resist +#%",
+    "min": null,
+    "max": null,
+    "alwaysVisible": true,
+    "sortOrder": 6
+  },
+  {
+    "id": 40,
+    "key": "maximum_fire_resistance",
+    "label": "+#% to Maximum Fire Resist",
+    "min": null,
+    "max": null,
+    "sortOrder": 7
+  },
+  {
+    "id": 41,
+    "key": "lightning_resistance",
+    "label": "Lightning Resist +#%",
+    "min": null,
+    "max": null,
+    "alwaysVisible": true,
+    "sortOrder": 10
+  },
+  {
+    "id": 42,
+    "key": "maximum_lightning_resistance",
+    "label": "+#% to Maximum Lightning Resist",
+    "min": null,
+    "max": null,
+    "sortOrder": 11
+  },
+  {
+    "id": 43,
+    "key": "cold_resistance",
+    "label": "Cold Resist +#%",
+    "min": null,
+    "max": null,
+    "alwaysVisible": true,
+    "sortOrder": 8
+  },
+  {
+    "id": 44,
+    "key": "maximum_cold_resistance",
+    "label": "+#% to Maximum Cold Resist",
+    "min": null,
+    "max": null,
+    "sortOrder": 9
+  },
+  {
+    "id": 45,
+    "key": "poison_resistance",
+    "label": "Poison Resist +#%",
+    "min": null,
+    "max": null,
+    "alwaysVisible": true,
+    "sortOrder": 12
+  },
+  {
+    "id": 46,
+    "key": "maximum_poison_resist",
+    "label": "+#% to Maximum Poison Resist",
+    "min": null,
+    "max": null,
+    "sortOrder": 13
+  },
+  {
+    "id": 48,
+    "key": "minimum_fire_damage",
+    "label": "+# to Minimum Fire Damage",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 49,
+    "key": "maximum_fire_damage",
+    "label": "+# to Maximum Fire Damage",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 50,
+    "key": "minimum_lightning_damage",
+    "label": "+# to Minimum Lightning Damage",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 51,
+    "key": "maximum_lightning_damage",
+    "label": "+# to Maximum Lightning Damage",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 52,
+    "key": "minimum_magic_damage",
+    "label": "+# to Minimum Magic Damage",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 53,
+    "key": "maximum_magic_damage",
+    "label": "+# to Maximum Magic Damage",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 54,
+    "key": "minimum_cold_damage",
+    "label": "+# to Minimum Cold Damage",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 55,
+    "key": "maximum_cold_damage",
+    "label": "+# to Maximum Cold Damage",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 57,
+    "key": "minimum_poison_damage_second",
+    "label": "+# to Minimum Poison Damage / second",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 58,
+    "key": "maximum_poison_damage_second",
+    "label": "+# to Maximum Poison Damage / second",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 60,
+    "key": "life_stolen_per_hit",
+    "label": "#% Life Stolen Per Hit",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 62,
+    "key": "mana_stolen_per_hit",
+    "label": "#% Mana Stolen Per Hit",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 64,
+    "key": "stamina_stolen_per_hit",
+    "label": "#% Stamina Stolen Per Hit",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 66,
+    "key": "stun_attack",
+    "label": "Stun Attack",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 67,
+    "key": "skill_faster_run_walk",
+    "label": "Skill Faster Run Walk +#%",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 68,
+    "key": "skill_attack_speed",
+    "label": "Skill Attack Speed +#%",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 70,
+    "key": "quiver_throwing_weapon_quantity_amount",
+    "label": "Quiver/Throwing weapon quantity amount",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 71,
+    "key": "equipped_items_value",
+    "label": "Equipped items value",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 72,
+    "key": "equipped_items_total_durability",
+    "label": "Equipped items total Durability",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 73,
+    "key": "flat_maximum_durability",
+    "label": "+# Maximum Durability",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 74,
+    "key": "life_regenerated_per_second",
+    "label": "Life regenerated per second",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 75,
+    "key": "maximum_durability",
+    "label": "Increase Maximum Durability #%",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 76,
+    "key": "maximum_life",
+    "label": "Increase Maximum Life #%",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 77,
+    "key": "maximum_mana",
+    "label": "Increase Maximum Mana #%",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 78,
+    "key": "attacker_takes_damage",
+    "label": "Attacker Takes Damage of #",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 79,
+    "key": "gold_find",
+    "label": "#% Gold Find",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 80,
+    "key": "magic_find",
+    "label": "#% Magic Find",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 81,
+    "key": "knockback",
+    "label": "Knockback",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 83,
+    "key": "class_skill_levels",
+    "label": "+# to [CLASS] skill levels",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 84,
+    "key": "all_classes_skill_levels",
+    "label": "+# to [ALL_CLASSES] skill levels",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 85,
+    "key": "experience_gained",
+    "label": "#% To Experience Gained",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 86,
+    "key": "life_after_each_kill",
+    "label": "+# Life After Each Kill",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 87,
+    "key": "all_vendor_prices",
+    "label": "+#% to All Vendor prices",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 89,
+    "key": "light_radius",
+    "label": "+# to Light Radius",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 91,
+    "key": "requirements",
+    "label": "Requirements #%",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 92,
+    "key": "required_level",
+    "label": "+# Required level",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 93,
+    "key": "attack_speed",
+    "label": "#% Attack Speed",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 96,
+    "key": "movement_speed",
+    "label": "#% Movement Speed",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 97,
+    "key": "oskill",
+    "label": "+# to [OSKILL]",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 99,
+    "key": "hit_recovery",
+    "label": "#% Hit Recovery",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 102,
+    "key": "block_speed",
+    "label": "#% Block Speed",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 105,
+    "key": "cast_speed",
+    "label": "#% Cast Speed",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 107,
+    "key": "class_skill",
+    "label": "+# to [CLASS_SKILL]",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 108,
+    "key": "slain_monsters_rest_in_peace",
+    "label": "Slain Monsters Rest In Peace (0/1)",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 109,
+    "key": "curse_length_reduction",
+    "label": "Curse Length Reduction: #%",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 110,
+    "key": "poison_length_reduction",
+    "label": "Poison Length Reduction: #%",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 111,
+    "key": "damage",
+    "label": "Damage +#",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 112,
+    "key": "hit_causes_monsters_to_flee",
+    "label": "Hit Causes Monsters to Flee #%",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 113,
+    "key": "hit_blinds_target",
+    "label": "Hit Blinds Target +#",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 114,
+    "key": "damage_taken_goes_to_mana",
+    "label": "#% Damage Taken Goes to Mana",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 115,
+    "key": "ignore_target_defense",
+    "label": "Ignore Target Defense",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 116,
+    "key": "target_defense",
+    "label": "#% Target Defense",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 117,
+    "key": "prevent_monster_heal",
+    "label": "Prevent Monster Heal",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 118,
+    "key": "half_freeze_duration",
+    "label": "Half Freeze Duration (0/1)",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 119,
+    "key": "percent_attack_rating",
+    "label": "#% Bonus to Attack Rating",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 120,
+    "key": "monster_defense_per_hit",
+    "label": "# to Monster Defense Per Hit",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 121,
+    "key": "damage_to_demons",
+    "label": "+#% Damage to Demons",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 122,
+    "key": "damage_to_undead",
+    "label": "+#% Damage to Undead",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 123,
+    "key": "attack_rating_against_demons",
+    "label": "+# to Attack Rating against Demons",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 124,
+    "key": "attack_rating_against_undead",
+    "label": "+# to Attack Rating against Undead",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 125,
+    "key": "throwable",
+    "label": "Throwable",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 127,
+    "key": "all_skills",
+    "label": "+# to All Skills",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 128,
+    "key": "attacker_takes_lightning_damage",
+    "label": "Attacker Takes Lightning Damage of #",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 131,
+    "key": "damage_reflected",
+    "label": "+#% Damage reflected",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 134,
+    "key": "freezes_target",
+    "label": "Freezes Target +#",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 135,
+    "key": "chance_of_open_wounds",
+    "label": "#% Chance of Open Wounds",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 136,
+    "key": "chance_of_crushing_blow",
+    "label": "#% Chance of Crushing Blow",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 137,
+    "key": "kick_damage",
+    "label": "+# Kick Damage",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 138,
+    "key": "mana_after_each_kill",
+    "label": "+# to Mana After Each Kill",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 139,
+    "key": "life_after_each_demon_kill",
+    "label": "+# Life after each Demon Kill",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 140,
+    "key": "extra_blood",
+    "label": "Extra Blood (Invisible)",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 141,
+    "key": "deadly_strike",
+    "label": "#% Deadly Strike",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 142,
+    "key": "fire_absorb",
+    "label": "Fire Absorb #%",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 143,
+    "key": "flat_fire_absorb",
+    "label": "+# Fire Absorb",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 144,
+    "key": "lightning_absorb",
+    "label": "Lightning Absorb #%",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 145,
+    "key": "flat_lightning_absorb",
+    "label": "+# Lightning Absorb",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 146,
+    "key": "magic_absorb",
+    "label": "Magic Absorb #%",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 147,
+    "key": "flat_magic_absorb",
+    "label": "+# Magic Absorb",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 148,
+    "key": "cold_absorb",
+    "label": "Cold Absorb #%",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 149,
+    "key": "flat_cold_absorb",
+    "label": "+# Cold Absorb",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 150,
+    "key": "slows_target_by",
+    "label": "Slows Target by #%",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 151,
+    "key": "random_movement_speed_bonus",
+    "label": "Random movement speed bonus (0/1)",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 152,
+    "key": "indestructible",
+    "label": "Indestructible (0/1)",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 153,
+    "key": "cannot_be_frozen",
+    "label": "Cannot Be Frozen",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 154,
+    "key": "slower_stamina_drain",
+    "label": "#% Slower Stamina Drain",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 155,
+    "key": "reanimate_as_monster_name",
+    "label": "#% Reanimate as [MONSTER_NAME]",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 156,
+    "key": "piercing_attack",
+    "label": "Piercing Attack",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 157,
+    "key": "fires_magic_arrows",
+    "label": "Fires Magic Arrows",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 158,
+    "key": "fires_explosive_arrows_or_bolts",
+    "label": "Fires Explosive Arrows or Bolts",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 159,
+    "key": "minimum_throw_damage",
+    "label": "+# to Minimum Throw Damage",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 160,
+    "key": "maximum_throw_damage",
+    "label": "+# to Maximum Throw Damage",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 164,
+    "key": "uniterruptable_attack",
+    "label": "+#% Uniterruptable Attack",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 171,
+    "key": "total_character_defense",
+    "label": "+#% Total Character Defense",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 180,
+    "key": "damage_vs_monster",
+    "label": "+#% Damage vs. [MONSTER]",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 182,
+    "key": "defense_bonus_multiplier",
+    "label": "#% Defense bonus multiplier (Mostly 'Total character defense = 0' and Runemaster)",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 183,
+    "key": "craft_points",
+    "label": "Craft points",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 184,
+    "key": "grit",
+    "label": "#% Damage reduction from all sources",
+    "min": null,
+    "max": null,
+    "sortOrder": 19
+  },
+  {
+    "id": 185,
+    "key": "signets_of_learning_used",
+    "label": "Signets of Learning used",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 186,
+    "key": "signets_of_skill_used",
+    "label": "Signets of Skill used",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 187,
+    "key": "barbarian_stance",
+    "label": "Barbarian Stance (0-None, 1-Lion, 2-Bear, 3-Snake, 4-Eagle, 5-Wolf)",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 194,
+    "key": "equipped_items_socket_amount",
+    "label": "Equipped items socket amount",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 195,
+    "key": "chance_to_cast_skill_on_melee_attack",
+    "label": "#% Chance to cast [SKILL] on melee attack",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 196,
+    "key": "chance_to_cast_skill_on_kill",
+    "label": "#% Chance to cast [SKILL] on kill",
+    "min": null,
+    "max": null,
+    "allowNegative": true
+  },
+  {
+    "id": 197,
+    "key": "chance_to_cast_skill_when_you_die",
+    "label": "#% Chance to cast [SKILL] when you die",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 198,
+    "key": "chance_to_cast_skill_on_striking",
+    "label": "#% Chance to cast [SKILL] on striking",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 199,
+    "key": "chance_to_cast_skill_when_you_level_up",
+    "label": "#% Chance to cast [SKILL] when you level-up",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 200,
+    "key": "mega_impact_amount",
+    "label": "Mega Impact amount",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 201,
+    "key": "chance_to_cast_skill_when_struck",
+    "label": "#% Chance to cast [SKILL] when struck",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 208,
+    "key": "life_on_striking",
+    "label": "+# Life on striking",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 209,
+    "key": "mana_on_striking",
+    "label": "+# Mana on striking",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 210,
+    "key": "life_on_melee_attack",
+    "label": "+# Life on melee attack",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 211,
+    "key": "disable_non_melee_skills_flag",
+    "label": "Disable non-melee skills flag (0/1)",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 213,
+    "key": "max_block_chance",
+    "label": "#% Max block chance modifier",
+    "min": null,
+    "max": null,
+    "sortOrder": 18
+  },
+  {
+    "id": 214,
+    "key": "defense_based_on_character_level",
+    "label": "+# Defense (Based on Character Level) [(value / 32) * [LEVEL]]",
+    "min": null,
+    "max": null,
+    "allowNegative": true
+  },
+  {
+    "id": 215,
+    "key": "enhanced_defense_based_on_character_level",
+    "label": "+#% Enhanced Defense (Based on Character Level) [(value / 32) * [LEVEL]]",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 216,
+    "key": "life_based_on_character_level",
+    "label": "+# to Life (Based on Character Level) [(value / 32) * [LEVEL]]",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 217,
+    "key": "mana_based_on_character_level",
+    "label": "+# to Mana (Based on Character Level) [(value / 32) * [LEVEL]]",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 218,
+    "key": "maximum_damage_based_on_character_level",
+    "label": "+# to Maximum damage (Based on Character Level) [(value / 32) * [LEVEL]]",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 219,
+    "key": "shrine_blessed_amount",
+    "label": "Shrine Blessed amount",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 259,
+    "key": "charges",
+    "label": "Charges: #",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 266,
+    "key": "area_effect_attack_amount",
+    "label": "Area Effect Attack amount",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 270,
+    "key": "summon_edyrem_skill",
+    "label": "Summon Edyrem skill (0/1)",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 271,
+    "key": "chance_to_cast_skill_when_you_die_2",
+    "label": "#% Chance to cast [SKILL] when you die",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 273,
+    "key": "chance_to_crush_attacker",
+    "label": "#% Chance to Crush attacker",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 275,
+    "key": "cannot_be_disenchanted",
+    "label": "Cannot be Disenchanted",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 276,
+    "key": "stun_attack_amount",
+    "label": "Stun Attack amount",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 277,
+    "key": "area_effect_attack_amount_2",
+    "label": "Area Effect Attack amount",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 278,
+    "key": "strength_factor",
+    "label": "Strength Factor +#",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 283,
+    "key": "chance_to_cast_skill_when_attacked",
+    "label": "#% Chance to cast [SKILL] when attacked",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 284,
+    "key": "chance_to_cast_skill_when_struck_by_a_missile",
+    "label": "#% Chance to cast [SKILL] when struck by a missile",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 288,
+    "key": "orb_effects_applied_to_this_item_are_quadrupled",
+    "label": "Orb effects applied to this item are quadrupled",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 289,
+    "key": "orb_effects_applied_to_this_item_are_doubled",
+    "label": "Orb effects applied to this item are doubled (amount * 2)",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 290,
+    "key": "mystic_orb_used_amount",
+    "label": "Mystic orb used amount",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 292,
+    "key": "chance_to_cast_skill_on_death_blow",
+    "label": "#% Chance to cast [SKILL] on death blow",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 295,
+    "key": "mana_on_melee_attack",
+    "label": "+# Mana on melee attack",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 297,
+    "key": "mana_drain",
+    "label": "Mana drain -#%",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 329,
+    "key": "fire_spell_damage",
+    "label": "#% To Fire Spell Damage",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 330,
+    "key": "lightning_spell_damage",
+    "label": "#% To Lightning Spell Damage",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 331,
+    "key": "cold_spell_damage",
+    "label": "#% To Cold Spell Damage",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 332,
+    "key": "poison_spell_damage",
+    "label": "#% To Poison Spell Damage",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 333,
+    "key": "enemy_fire_resistance",
+    "label": "-#% To Enemy Fire Resistance",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 334,
+    "key": "enemy_lightning_resistance",
+    "label": "-#% To Enemy Lightning Resistance",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 335,
+    "key": "enemy_cold_resistance",
+    "label": "-#% To Enemy Cold Resistance",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 336,
+    "key": "enemy_poison_resistance",
+    "label": "-#% To Enemy Poison Resistance",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 337,
+    "key": "critical_strike_for_barbarian",
+    "label": "#% Critical Strike (for Barbarian)",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 338,
+    "key": "dodge_chance",
+    "label": "Dodge +#% (Chance to avoid melee attack while standing)",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 339,
+    "key": "avoid_chance",
+    "label": "Avoid +#% (Chance to avoid projectile attack while standing)",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 340,
+    "key": "evade_chance",
+    "label": "Evade +#% (Chance to avoid any attack while moving)",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 344,
+    "key": "critical_strike",
+    "label": "+#% Critical Strike",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 348,
+    "key": "chance_to_block_attacks_and_spells_while_wielding_two_claws",
+    "label": "#% Chance to block attacks and spells while wielding two claws",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 356,
+    "key": "charms_amount",
+    "label": "Charms (amount * 2) (for explanation see 'Basic' tab)",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 357,
+    "key": "physical_magic_spell_damage",
+    "label": "+#% to Physical/Magic spell damage",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 358,
+    "key": "enemy_physical_magic_resistance",
+    "label": "-#% To Enemy Physical/Magic Resistance",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 359,
+    "key": "percent_strength",
+    "label": "Strength +#%",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 360,
+    "key": "percent_dexterity",
+    "label": "Dexterity +#%",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 361,
+    "key": "percent_energy",
+    "label": "Energy +#%",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 362,
+    "key": "percent_vitality",
+    "label": "Vitality +#%",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 363,
+    "key": "slows_attacker",
+    "label": "Slows Attacker +#%",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 364,
+    "key": "attacker_flees_after_striking",
+    "label": "Attacker flees after striking +#%",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 365,
+    "key": "freezes_attacker",
+    "label": "Freezes Attacker +#",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 366,
+    "key": "blinds_attacker",
+    "label": "Blinds Attacker +#",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 367,
+    "key": "attacker_takes_cold_damage",
+    "label": "Attacker Takes Cold Damage of #",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 368,
+    "key": "attacker_takes_fire_damage",
+    "label": "Attacker Takes Fire Damage of #",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 371,
+    "key": "amazing_grace_amount",
+    "label": "Amazing Grace amount",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 372,
+    "key": "equipped_runeword_amount",
+    "label": "Equipped runeword amount",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 376,
+    "key": "slows_melee_target",
+    "label": "Slows Melee Target +#%",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 380,
+    "key": "bonus_damage_to_bloodlust",
+    "label": "+#% Bonus Damage to Bloodlust",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 381,
+    "key": "bonus_elemental_damage_to_bloodlust",
+    "label": "+#% Bonus Elemental damage to Bloodlust",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 383,
+    "key": "base_weapon_innate_element_type_damage",
+    "label": "Base weapon Innate [ELEMENT_TYPE] damage #%",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 387,
+    "key": "bonus_damage_to_mark_of_the_wild",
+    "label": "+#% Bonus Damage to Mark of the Wild",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 388,
+    "key": "bonus_elemental_damage_to_mark_of_the_wild",
+    "label": "+#% Bonus Elemental Damage to Mark of the Wild",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 389,
+    "key": "duration_bonus_to_mark_of_the_wild",
+    "label": "+#% Duration Bonus to Mark of the Wild",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 390,
+    "key": "already_enchanted_amount",
+    "label": "Already enchanted amount",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 391,
+    "key": "mirrored_amount",
+    "label": "Mirrored amount",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 396,
+    "key": "continuity_unlock",
+    "label": "Continuity unlock (0/1)",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 397,
+    "key": "specialization_unlock",
+    "label": "Specialization unlock (0/1)",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 398,
+    "key": "valthek_set_aura",
+    "label": "Valthek set aura flag (0/1)",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 410,
+    "key": "prefixes",
+    "label": "# Prefixes",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 411,
+    "key": "suffixes",
+    "label": "# Suffixes",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 414,
+    "key": "bonus_to_summoned_edyrem_life",
+    "label": "+#% Bonus to summoned Edyrem life",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 415,
+    "key": "innate_damage",
+    "label": "#% Innate Damage",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 420,
+    "key": "after_blocking_taking_weapon_damage_effect_active",
+    "label": "After blocking/taking weapon damage effect active",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 423,
+    "key": "bone_chimes_dtu_dtd_added_as_stat_name_bonus",
+    "label": "Bone Chimes - [DtU + DtD]% added as [STAT_NAME] +#% Bonus",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 427,
+    "key": "activation_frequency",
+    "label": "Activation Frequency",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 428,
+    "key": "maximum_exodia_minions",
+    "label": "+# to Maximum Exodia minions",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 429,
+    "key": "maximum_paladin_minions",
+    "label": "+# to Maximum Paladin minions",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 431,
+    "key": "bonus_to_poison_skill_duration",
+    "label": "+#% Bonus to Poison skill duration",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 439,
+    "key": "life_when_struck_by_an_enemy",
+    "label": "+# Life when struck by an enemy",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 440,
+    "key": "mana_when_struck_by_an_enemy",
+    "label": "+# Mana when struck by an enemy",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 441,
+    "key": "maximum_necromancer_minions",
+    "label": "+# to Maximum Necromancer minions",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 443,
+    "key": "already_upgraded_amount",
+    "label": "Already upgraded amount",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 444,
+    "key": "summoned_minion_life",
+    "label": "Summoned minion life +#%",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 445,
+    "key": "maximum_barbarian_minions",
+    "label": "+# to Maximum Barbarian minions",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 446,
+    "key": "damage_from_protector_spirit_bloodlust",
+    "label": "+#% Damage from Protector Spirit Bloodlust",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 447,
+    "key": "restored_amount",
+    "label": "Restored amount",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 448,
+    "key": "increased_healing_from_potions",
+    "label": "#% increased Healing from Potions",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 450,
+    "key": "trophy_amount",
+    "label": "Trophy amount",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 452,
+    "key": "cube_upgrade_1",
+    "label": "Cube upgrade 1 ???",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 453,
+    "key": "cube_upgrade_2",
+    "label": "Cube upgrade 2 ???",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 454,
+    "key": "cube_upgrade_3",
+    "label": "Cube upgrade 3 ???",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 455,
+    "key": "sunstone_of_the_twin_seas_resist_scroll_and_dulra_aegis_upgrade_amount",
+    "label": "Sunstone of the Twin Seas resist scroll amount (0-3), Dulra Aegis upgrade amount (0-3)",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 462,
+    "key": "bonus_damage_to_vessel_of_judgement",
+    "label": "+#% Bonus damage to Vessel of Judgement",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 466,
+    "key": "unused_essence_slots_amount_umbaru_treasure",
+    "label": "Unused Essence slots amount (Umbaru Treasure)",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 468,
+    "key": "bonus_damage_to_vessel_of_retribution",
+    "label": "+#% Bonus damage to Vessel of Retribution",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 469,
+    "key": "vessels_extra_targets",
+    "label": "+# to Vessels Extra Targets",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 470,
+    "key": "summoned_minion_damage",
+    "label": "Summoned minion damage +#%",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 473,
+    "key": "ennead_skill_unlock",
+    "label": "Ennead skill unlock (0/1)",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 474,
+    "key": "black_road_unlock",
+    "label": "Black Road unlock (0/1)",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 478,
+    "key": "socketed_jewels",
+    "label": "Socketed jewels",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 479,
+    "key": "maximum_skill_level",
+    "label": "Maximum Skill level +#",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 480,
+    "key": "vitality_per_socketed_gem",
+    "label": "+# to Vitality per Socketed Gem",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 481,
+    "key": "runemaster_defense_bonus",
+    "label": "+# to Runemaster Defense Bonus",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 482,
+    "key": "total_vitality_bonus_from_paragon",
+    "label": "Total Vitality bonus from Paragon",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 483,
+    "key": "socketed_runes",
+    "label": "Socketed runes (amount * 32)",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 484,
+    "key": "innate_elemental_damage",
+    "label": "Innate Elemental damage +#%",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 485,
+    "key": "spell_focus",
+    "label": "+# Spell Focus",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 487,
+    "key": "summoned_minion_resistances",
+    "label": "Summoned minion resistances +#%",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 488,
+    "key": "percent_spell_focus",
+    "label": "+#% Spell Focus (from items/runes)",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 489,
+    "key": "target_takes_additional_damage",
+    "label": "Target takes additional damage +#",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 493,
+    "key": "slows_ranged_attacker",
+    "label": "Slows Ranged Attacker +#%",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 497,
+    "key": "corrupted_items_amount",
+    "label": "Corrupted items amount",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 500,
+    "key": "summoned_minion_attack_rating",
+    "label": "Summoned minion attack rating +#%",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 505,
+    "key": "life_regenerated_per_second_based_on_character_level",
+    "label": "+# Life Regenerated per Second (Based on Character Level) [(value / 32) * [LEVEL]]",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 508,
+    "key": "runes_contributing_to_gematria",
+    "label": "Runes contributing to Gematria",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 510,
+    "key": "chance_to_cast_skill_on_block",
+    "label": "#% Chance to cast [SKILL] on block",
+    "min": null,
+    "max": null
+  },
+  {
+    "id": 904,
+    "key": "combined_percent_spell_focus",
+    "label": "Spell Focus cap (max 100%)",
+    "min": null,
+    "max": null
+  }
+]

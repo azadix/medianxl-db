@@ -1,40 +1,43 @@
 
 /**
- * Skill class represents a skill in the Median XL database
- * 
- * This class encapsulates skill data and provides helper methods for common operations.
- * It focuses on data representation and business logic, keeping database operations 
- * and rendering separate.
- * 
- * @example
- * // Create from database row
- * const skill = Skill.fromDatabaseRow(dbRow);
- * 
- * // Create from plain object
- * const skill = Skill.fromPlainObject(skillData);
+ * Skill class represents one catalog row (skills.json + detail/balance files).
+ *
+ * @see skill-restrictions.js — how Mastery / Ultimate / Paragon / Coven / Proficiency subclasses
+ *   plug into first-point allocation and where to register new rules.
  */
 
-// Import version config functions - will be dynamically imported when needed
-// to avoid circular dependencies
-let getCurrentVersionIdCache = null;
-let importPromise = null;
+import { getBalanceVersionIdsForFallback } from '../version-config.js';
+import { getFileSkillStore } from '../tree/skill-data-store.js';
+import { normalizePrereqSkillTargetKey } from '../character/prereq-utils.js';
+import { getCalcBucketIndex } from './calc-buckets.js';
+import { formulaEvaluator } from './formula-evaluator.js';
+import { formatScalingValuesToDescriptionHtml } from './scaling-display-html.js';
 
-// Async version for cases where we need to ensure the import has completed
-async function getVersionIdFnAsync(db) {
-    if (!getCurrentVersionIdCache) {
-        if (!importPromise) {
-            importPromise = import('../version-config.js').then(versionConfig => {
-                getCurrentVersionIdCache = versionConfig.getCurrentVersionId;
-                return versionConfig.getCurrentVersionId;
-            });
-        }
-        await importPromise;
+/** [[internal_name]].{{stat}} or [[id:123]].{{stat}} in formulas and descriptions (not plain {{stat}} on current skill). */
+const CROSS_SKILL_DOT_STAT_PATTERN =
+    /\[\[([a-zA-Z_][a-zA-Z0-9_]*|id:\d+)\]\]\.\{\{([a-zA-Z_][a-zA-Z0-9_]*)\}\}/gi;
+const MAX_CROSS_SKILL_DEPTH = 12;
+
+/**
+ * True if a scaling value is probably display text (monster names, labels), not a mis-typed formula.
+ * Used to avoid console warnings when evaluate() hits "undefined variables" on plaintext.
+ */
+function looksLikePlainTextScalingConstant(s) {
+    const t = s.trim();
+    if (!t) return false;
+    if (/^[A-Z][a-zA-Z0-9_]*$/.test(t)) return true;
+    if (!/\s/.test(t)) {
+        // Slash-separated labels without spaces (e.g. "Attack/Kill/Death"); reject if digits (e.g. "lvl/3").
+        if (!/\d/.test(t) && /^[A-Za-z][A-Za-z/'-]+$/.test(t)) return true;
+        return false;
     }
-    if (!getCurrentVersionIdCache) {
-        console.error('Failed to load getCurrentVersionId from version-config.js');
-        return null;
-    }
-    return getCurrentVersionIdCache(db);
+    if (/[[\]{}()]/.test(t)) return false;
+    // `/` is common in UI labels ("Kill/Death Blow") but was listed here with *+ and wrongly excluded them.
+    if (/[+*=<>!]/.test(t)) return false;
+    if (/\s-\s/.test(t)) return false;
+    const tokens = t.split(/\s+/);
+    if (tokens.some((tok) => /^\d+\.?\d*$/.test(tok))) return false;
+    return /^[\w\s'\-.,:/]+$/u.test(t);
 }
 
 export default class Skill {
@@ -49,7 +52,7 @@ export default class Skill {
      * Creates a new Skill instance
      * @param {Object} data - Skill data object
      * @param {string} data.id - Skill name (internal key)
-     * @param {number} data.skillId - Numeric database ID
+     * @param {number} data.skillId - Numeric catalog id (`numericId` in skills.json)
      * @param {string} data.name - Display name shown to users
      * @param {string} data.class - Class the skill belongs to
      * @param {number} data.classId - Numeric class ID
@@ -75,20 +78,19 @@ export default class Skill {
         
         // Core identification
         this.id = data.id;                           // skill name (internal key)
-        this.skillId = data.skillId || data.dbId;    // numeric database ID
-        this.dbId = this.skillId;                    // alias for backward compatibility
+        this.skillId = data.skillId;                 // numeric catalog id
         this.name = data.name;                       // display name shown to users
         
         // Class and tab information
         this.class = data.class || data.class_name || '';    // class name
         this.classId = data.classId || data.class_id;        // numeric class ID
-        this.tab = data.tab || data.tab_index;               // numeric tab index
+        this.tab = data.tab ?? data.tab_index ?? 0;          // classTabs.id (FK on skill row)
         this.tabName = data.tabName || data.tab_name || '';  // human-readable tab name
         
         // Metadata
         this.tags = data.tags || [];                 // array of tag strings
-        this.row = data.row || 0;                    // grid row position
-        this.col = data.col || 0;                    // grid column position
+        this.row = data.row ?? 0;                    // grid row position (0 is valid)
+        this.col = data.col ?? 0;                    // grid column position (0 is valid)
         this.image = data.image || 'icons-shared_missing.png'; // icon filename
         
         // Text content
@@ -106,25 +108,177 @@ export default class Skill {
         
         // Prerequisites
         this.prerequisites = data.prerequisites || [];
+
+        // D2-style calc slots (formula strings; evaluated before scaling)
+        for (let i = 1; i <= 6; i++) {
+            const k = `calc${i}`;
+            const v = data[k] ?? data[`calc_${i}`];
+            this[k] = v != null && String(v).trim() !== '' ? String(v) : '';
+        }
     }
 
     /**
-     * Check if this skill has scaling data in the database
-     * @param {Object} db - Database instance
-     * @returns {boolean} True if scaling data exists
+     * @param {string} refToken - internal skill name or `id:123` (skills.id)
+     * @param {number[]} versionIds - balance patches to try by name
+     * @returns {{ skillId: number, internalName: string, displayName: string }|null}
      */
-    async hasScalingData(db) {
-        if (!db || !this.skillId) return false;
-        
+    static _resolveCrossSkillRef(refToken, versionIds) {
+        const store = getFileSkillStore();
+        if (!store) return null;
+        return store.resolveCrossSkillRef(refToken, versionIds);
+    }
+
+    /**
+     * First numeric slot from evaluated scaling row (for formulas).
+     * @param {Object|null} scaling
+     * @returns {number}
+     */
+    static _primaryNumericFromScalingValues(scaling) {
+        if (!scaling) return 0;
+        for (const k of ['value0', 'value1', 'value2', 'value3']) {
+            const v = scaling[k];
+            if (v === '' || v == null) continue;
+            const s = String(v).trim();
+            if (!s) continue;
+            const n = parseFloat(s.replace(/%$/g, ''));
+            if (!Number.isNaN(n) && Number.isFinite(n)) return n;
+        }
+        return 0;
+    }
+
+    /**
+     * Replace [[ref]].{{stat}} with numeric literals for formula evaluation.
+     */
+    static async _resolveCrossSkillStatPlaceholdersInFormula(formula, characterState, characterLevel, crossSkillDepth) {
+        if (!formula || typeof formula !== 'string') return formula;
+        if (crossSkillDepth > MAX_CROSS_SKILL_DEPTH) {
+            CROSS_SKILL_DOT_STAT_PATTERN.lastIndex = 0;
+            return formula.replace(CROSS_SKILL_DOT_STAT_PATTERN, '0');
+        }
+        if (!getFileSkillStore() || !characterState) return formula;
+
+        CROSS_SKILL_DOT_STAT_PATTERN.lastIndex = 0;
+        const matches = [...formula.matchAll(CROSS_SKILL_DOT_STAT_PATTERN)];
+        if (matches.length === 0) return formula;
+
+        const versionIds = getBalanceVersionIdsForFallback();
+        let out = formula;
+        for (const m of matches) {
+            const full = m[0];
+            const refToken = m[1];
+            const statKey = m[2].toLowerCase();
+
+            const resolved = Skill._resolveCrossSkillRef(refToken, versionIds);
+            if (!resolved) {
+                out = out.split(full).join('0');
+                continue;
+            }
+            const { skillId, internalName } = resolved;
+            const blvl = characterState.blvl?.[internalName] ?? 0;
+            const slvl = characterState.lvl?.[internalName] ?? 0;
+            const refLvl = blvl + slvl;
+            if (refLvl < 1) {
+                out = out.split(full).join('0');
+                continue;
+            }
+            const other = new Skill({ id: internalName, name: resolved.displayName, skillId });
+            const scaling = await other.getScalingValues(
+                refLvl,
+                statKey,
+                0,
+                characterState,
+                characterLevel,
+                false,
+                crossSkillDepth + 1
+            );
+            const num = Skill._primaryNumericFromScalingValues(scaling);
+            out = out.split(full).join(String(num));
+        }
+        return out;
+    }
+
+    /**
+     * Tooltip/description HTML for one [[ref]].{{stat}} token (matches utils styling).
+     */
+    static _crossSkillScalingToDescriptionHtml(scaling, statKey) {
+        return formatScalingValuesToDescriptionHtml(scaling, statKey);
+    }
+
+    /**
+     * Expand [[ref]].{{stat}} in description/effect text (call before standalone [[ref]] coloring).
+     */
+    static async expandCrossSkillCompoundPlaceholdersHtml(
+        text,
+        characterState,
+        characterLevel,
+        showFormulas,
+        crossSkillDepth = 0
+    ) {
+        if (!text || !characterState || crossSkillDepth > MAX_CROSS_SKILL_DEPTH) return text;
+        if (!getFileSkillStore()) return text;
+
+        CROSS_SKILL_DOT_STAT_PATTERN.lastIndex = 0;
+        const matches = [...text.matchAll(CROSS_SKILL_DOT_STAT_PATTERN)];
+        if (matches.length === 0) return text;
+
+        const versionIds = getBalanceVersionIdsForFallback();
+        let out = text;
+        for (const m of matches) {
+            const full = m[0];
+            const refToken = m[1];
+            const statKey = m[2].toLowerCase();
+
+            const resolved = Skill._resolveCrossSkillRef(refToken, versionIds);
+            if (!resolved) {
+                const label = /^id:\d+$/i.test(String(refToken).trim()) ? refToken : `${refToken}?`;
+                out = out.split(full).join(`<span class="has-text-danger">[${label}]</span>`);
+                continue;
+            }
+
+            const { skillId, internalName, displayName } = resolved;
+            const blvl = characterState.blvl?.[internalName] ?? 0;
+            const slvl = characterState.lvl?.[internalName] ?? 0;
+            const refLvl = blvl + slvl;
+            if (refLvl < 1) {
+                out = out.split(full).join('<span class="has-text-danger">0</span>');
+                continue;
+            }
+
+            const skill = new Skill({ id: internalName, name: displayName, skillId });
+            const scaling = await skill.getScalingValues(
+                refLvl,
+                statKey,
+                0,
+                characterState,
+                characterLevel,
+                showFormulas,
+                crossSkillDepth + 1
+            );
+            const html = Skill._crossSkillScalingToDescriptionHtml(scaling, statKey);
+            out = out.split(full).join(html);
+        }
+        return out;
+    }
+
+    /**
+     * Load balance JSON for this skill into the file store cache.
+     */
+    async _ensureFileBalance() {
+        const s = getFileSkillStore();
+        if (s) await s.loadSkillBalance(this.id);
+    }
+
+    async hasScalingData() {
+        if (!this.skillId) return false;
+        if (!getFileSkillStore()) return false;
+
         try {
-            const versionId = await getVersionIdFnAsync(db);
-            if (!versionId) return false;
-            
-            const stmt = db.prepare('SELECT COUNT(*) FROM skill_scaling WHERE skill_id = ? AND version_id = ?');
-            stmt.bind([this.skillId, versionId]);
-            const count = stmt.step() ? stmt.get()[0] : 0;
-            stmt.free();
-            return count > 0;
+            await this._ensureFileBalance();
+            const versionIds = getBalanceVersionIdsForFallback();
+            if (versionIds.length === 0) return false;
+
+            const store = getFileSkillStore();
+            return store ? store.hasScalingData(this.id, versionIds) : false;
         } catch (error) {
             console.warn('Error checking scaling data for skill:', this.name, error);
             return false;
@@ -133,24 +287,20 @@ export default class Skill {
 
     /**
      * Get array of levels that have scaling data
-     * @param {Object} db - Database instance
      * @returns {number[]} Array of levels with scaling data
      */
-    async getAvailableLevels(db) {
-        if (!db || !this.skillId) return [];
-        
+    async getAvailableLevels() {
+        if (!this.skillId) return [];
+        if (!getFileSkillStore()) return [];
+
         try {
-            const versionId = await getVersionIdFnAsync(db);
-            if (!versionId) return [];
-            
-            const stmt = db.prepare('SELECT DISTINCT level FROM skill_scaling WHERE skill_id = ? AND version_id = ? ORDER BY level');
-            stmt.bind([this.skillId, versionId]);
-            const levels = [];
-            while (stmt.step()) {
-                levels.push(stmt.get()[0]);
+            await this._ensureFileBalance();
+            const versionIds = getBalanceVersionIdsForFallback();
+            if (versionIds.length === 0) {
+                return [];
             }
-            stmt.free();
-            return levels;
+            const store = getFileSkillStore();
+            return store ? store.getAvailableLevels(this.id, versionIds) : [];
         } catch (error) {
             console.warn('Error getting available levels for skill:', this.name, error);
             return [];
@@ -171,7 +321,7 @@ export default class Skill {
         
         // Basic prerequisite checking - for full validation, use the existing checkPrerequisites function
         // This is a simplified version that just checks if prerequisites exist
-        const { skillLevels = {}, allSkills = [] } = characterState;
+        const { skillLevels = {} } = characterState;
         
         // Check if any prerequisites exist that would block the skill
         for (const prereq of this.prerequisites) {
@@ -179,13 +329,15 @@ export default class Skill {
             
             if (type === 'skill_level') {
                 const requiredLevel = parseInt(value, 10);
-                const currentLevel = skillLevels[target] || 0;
+                const targetKey = normalizePrereqSkillTargetKey(target);
+                const currentLevel = skillLevels[targetKey] || 0;
                 if (currentLevel < requiredLevel) {
                     return false;
                 }
             } else if (type === 'skill_blocked_by') {
                 const maxAllowedPoints = parseInt(value, 10);
-                const currentPoints = skillLevels[target] || 0;
+                const targetKey = normalizePrereqSkillTargetKey(target);
+                const currentPoints = skillLevels[targetKey] || 0;
                 if (currentPoints > maxAllowedPoints) {
                     return false;
                 }
@@ -231,15 +383,56 @@ export default class Skill {
     }
 
     /**
+     * Evaluate calc1..calc6 in order, then set `calc` from the active lvl bucket.
+     * @param {Object} formulaEvaluator
+     * @param {Object} baseVariables - from _buildFormulaVariables (no calc* yet)
+     * @param {number} crossSkillDepth
+     * @returns {Promise<Object>} baseVariables plus numeric calc1..calc6 and calc
+     */
+    async _mergeCalcSlotVariables(formulaEvaluator, baseVariables, crossSkillDepth = 0) {
+        if (!baseVariables) return null;
+        const ctx = { ...baseVariables };
+        for (let i = 1; i <= 6; i++) {
+            const key = `calc${i}`;
+            const raw = this[key];
+            const str = raw != null ? String(raw).trim() : '';
+            let num = 0;
+            if (str) {
+                const { value, wasFormula } = await this._evaluateValue(
+                    str,
+                    formulaEvaluator,
+                    ctx,
+                    crossSkillDepth,
+                    true
+                );
+                if (wasFormula) {
+                    const n = parseFloat(String(value), 10);
+                    num = Number.isFinite(n) ? n : 0;
+                } else if (/^-?\d+(\.\d+)?$/.test(str.trim())) {
+                    num = parseFloat(str.trim()) || 0;
+                } else {
+                    num = 0;
+                }
+            }
+            ctx[key] = num;
+        }
+        const bucket = getCalcBucketIndex(ctx.lvl);
+        ctx.calc = ctx[`calc${bucket}`] ?? 0;
+        return ctx;
+    }
+
+    /**
      * Evaluate a single value if it's a formula
      * @param {*} value - Value to evaluate
      * @param {Object} formulaEvaluator - Formula evaluator instance
      * @param {Object} variables - Variables for formula evaluation
-     * @returns {Object} Result with evaluated value and formula flag
+     * @param {number} crossSkillDepth - recursion guard for cross-skill stat tokens
+     * @param {boolean} silentWarn - if true, omit console.warn on evaluation failure
+     * @returns {Promise<Object>} Result with evaluated value and formula flag
      */
-    _evaluateValue(value, formulaEvaluator, variables) {
+    async _evaluateValue(value, formulaEvaluator, variables, crossSkillDepth = 0, silentWarn = false) {
         // Convert value to string for processing
-        const stringValue = value != null ? String(value).trim() : '';
+        let stringValue = value != null ? String(value).trim() : '';
         
         // If no variables or empty value, return as-is
         if (!variables || !stringValue) {
@@ -253,6 +446,21 @@ export default class Skill {
             // It's a number, return as-is
             return { value: stringValue, wasFormula: false };
         }
+
+        if (looksLikePlainTextScalingConstant(stringValue)) {
+            return { value: stringValue, wasFormula: false };
+        }
+
+        CROSS_SKILL_DOT_STAT_PATTERN.lastIndex = 0;
+        if (getFileSkillStore() && variables.characterState && CROSS_SKILL_DOT_STAT_PATTERN.test(stringValue)) {
+            CROSS_SKILL_DOT_STAT_PATTERN.lastIndex = 0;
+            stringValue = await Skill._resolveCrossSkillStatPlaceholdersInFormula(
+                stringValue,
+                variables.characterState,
+                variables.ulvl ?? 1,
+                crossSkillDepth
+            );
+        }
         
         // Try to evaluate as formula
         const evalResult = formulaEvaluator.evaluate(stringValue, variables);
@@ -264,14 +472,13 @@ export default class Skill {
         }
         
         // Formula evaluation failed, return original value
-        // Only warn if it's not an "undefined variables" error for what looks like a skill name
-        // (skill names typically start with capital letters and aren't valid formula variables)
+        // Only warn if it's not an "undefined variables" error for display text (skill names, monster names, etc.)
         if (evalResult.error) {
             const isUndefinedVarError = evalResult.error.includes('undefined variables');
-            const looksLikeSkillName = /^[A-Z][a-zA-Z0-9_]*$/.test(stringValue.trim());
-            
-            // Suppress warnings for skill names that aren't properly formatted as [[skill_name]]
-            if (!(isUndefinedVarError && looksLikeSkillName)) {
+            const treatAsPlainText =
+                isUndefinedVarError && looksLikePlainTextScalingConstant(stringValue);
+
+            if (!silentWarn && !treatAsPlainText) {
                 console.warn(`Formula evaluation failed for "${stringValue}":`, evalResult.error);
             }
         }
@@ -284,17 +491,17 @@ export default class Skill {
      * @param {Object} formulaEvaluator - Formula evaluator instance
      * @param {Object} variables - Variables for formula evaluation
      */
-    _processValuesForFormulas(result, formulaEvaluator, variables, showFormulas = false) {
+    async _processValuesForFormulas(result, formulaEvaluator, variables, showFormulas = false, crossSkillDepth = 0) {
         if (!variables || !result) return;
         
-        ['value0', 'value1', 'value2', 'value3'].forEach(valueKey => {
+        for (const valueKey of ['value0', 'value1', 'value2', 'value3']) {
             const originalValue = result[valueKey];
             // Convert to string if needed, handle null/undefined
             const stringValue = originalValue != null ? String(originalValue).trim() : '';
             
             // Skip if empty
             if (!stringValue) {
-                return;
+                continue;
             }
             
             // Store original formula string before evaluation (for Alt-key display)
@@ -304,10 +511,12 @@ export default class Skill {
                 result[`${valueKey}_original`] = stringValue;
             }
             
-            const { value, wasFormula } = this._evaluateValue(
-                stringValue, 
-                formulaEvaluator, 
-                variables
+            const { value, wasFormula } = await this._evaluateValue(
+                stringValue,
+                formulaEvaluator,
+                variables,
+                crossSkillDepth,
+                false
             );
             
             if (showFormulas && wasFormula) {
@@ -320,142 +529,64 @@ export default class Skill {
             if (wasFormula) {
                 result[`${valueKey}_formula`] = true;
             }
-        });
+        }
     }
 
     /**
      * Query scaling table for level-specific values
-     * @param {Object} db - Database instance
      * @param {number} level - Skill level
      * @param {string} statKey - Stat key to get values for
      * @param {number} occurrenceIndex - Occurrence index for duplicate stats
      * @returns {Object|null} Scaling values object or null if not found
      */
-    async _getScalingRow(db, level, statKey, occurrenceIndex) {
-        const versionId = await getVersionIdFnAsync(db);
-        if (!versionId) {
-            console.warn(`_getScalingRow: No version ID found for skill ${this.skillId}, level ${level}, stat ${statKey}`);
+    async _getScalingRow(level, statKey, occurrenceIndex, variantKey = null) {
+        await this._ensureFileBalance();
+        const versionIds = getBalanceVersionIdsForFallback();
+        if (versionIds.length === 0) {
+            console.warn(`_getScalingRow: No balance version IDs for skill ${this.skillId}, level ${level}, stat ${statKey}`);
             return null;
         }
-        
-        const scalingStmt = db.prepare(`
-            SELECT ss.value0, ss.value1, ss.value2, ss.value3, s.name as stat_name, s.format
-            FROM skill_scaling ss
-            JOIN stats s ON s.id = ss.stat_id
-            WHERE ss.skill_id = ? AND ss.level = ? AND LOWER(s.key) = ? AND ss.occurrence_index = ? AND ss.version_id = ?
-        `);
-        scalingStmt.bind([this.skillId, level, statKey.toLowerCase(), occurrenceIndex, versionId]);
-        
-        let result = null;
-        if (scalingStmt.step()) {
-            const [value0, value1, value2, value3, statName, format] = scalingStmt.get();
-            result = { 
-                value0: value0 != null ? String(value0) : null, 
-                value1: value1 != null ? String(value1) : null, 
-                value2: value2 != null ? String(value2) : null, 
-                value3: value3 != null ? String(value3) : null, 
-                statName, 
-                format,
-                value0_constant: false, value1_constant: false, value2_constant: false, value3_constant: false
-            };
-        } else {
-            // Debug: check if row exists without version filter
-            const debugStmt = db.prepare(`
-                SELECT COUNT(*) FROM skill_scaling 
-                WHERE skill_id = ? AND level = ? AND stat_id IN (
-                    SELECT id FROM stats WHERE LOWER(key) = ?
-                ) AND occurrence_index = ?
-            `);
-            const statIdStmt = db.prepare('SELECT id FROM stats WHERE LOWER(key) = ?');
-            statIdStmt.bind([statKey.toLowerCase()]);
-            if (statIdStmt.step()) {
-                const statId = statIdStmt.get()[0];
-                statIdStmt.free();
-                debugStmt.bind([this.skillId, level, statId, occurrenceIndex]);
-                if (debugStmt.step()) {
-                    const count = debugStmt.get()[0];
-                    if (count > 0) {
-                        console.warn(`_getScalingRow: Found ${count} row(s) without version filter, but none with version_id=${versionId} for skill ${this.skillId}, level ${level}, stat ${statKey}`);
-                    }
-                }
-                debugStmt.free();
-            } else {
-                statIdStmt.free();
-            }
-        }
-        scalingStmt.free();
-        
-        return result;
+
+        const store = getFileSkillStore();
+        if (!store) return null;
+        return store.findScalingRow(
+            this.id,
+            versionIds,
+            level,
+            statKey,
+            occurrenceIndex,
+            variantKey
+        );
     }
 
     /**
      * Query constants table for constant values
-     * @param {Object} db - Database instance
      * @param {string} statKey - Stat key to get values for
      * @param {number} occurrenceIndex - Occurrence index for duplicate stats
      * @returns {Object|null} Constant values object or null if not found
      */
-    async _getConstantsRow(db, statKey, occurrenceIndex) {
-        const versionId = await getVersionIdFnAsync(db);
-        if (!versionId) {
-            console.warn(`_getConstantsRow: No version ID found for skill ${this.skillId}`);
+    async _getConstantsRow(statKey, occurrenceIndex, variantKey = null) {
+        await this._ensureFileBalance();
+        const versionIds = getBalanceVersionIdsForFallback();
+        if (versionIds.length === 0) {
+            console.warn(`_getConstantsRow: No balance version IDs for skill ${this.skillId}`);
             return null;
         }
-        
-        // First check if stat exists
-        const statCheckStmt = db.prepare('SELECT id FROM stats WHERE LOWER(key) = ?');
-        statCheckStmt.bind([statKey.toLowerCase()]);
-        let statId = null;
-        if (statCheckStmt.step()) {
-            statId = statCheckStmt.get()[0];
-        }
-        statCheckStmt.free();
-        
-        if (!statId) {
-            return null;
-        }
-        
-        const constantStmt = db.prepare(`
-            SELECT value0, value1, value2, value3, 
-                   value0_constant, value1_constant, value2_constant, value3_constant,
-                   s.name as stat_name, s.format
-            FROM skill_scaling_constants ssc
-            JOIN stats s ON s.id = ssc.stat_id
-            WHERE ssc.skill_id = ? AND LOWER(s.key) = ? AND ssc.occurrence_index = ? AND ssc.version_id = ?
-        `);
-        constantStmt.bind([this.skillId, statKey.toLowerCase(), occurrenceIndex, versionId]);
-        
-        let constantValues = null;
-        if (constantStmt.step()) {
-            const [value0, value1, value2, value3, 
-                   value0_constant, value1_constant, value2_constant, value3_constant,
-                   statName, format] = constantStmt.get();
-            constantValues = {
-                value0: value0 != null ? String(value0) : '', 
-                value1: value1 != null ? String(value1) : '', 
-                value2: value2 != null ? String(value2) : '', 
-                value3: value3 != null ? String(value3) : '',
-                value0_constant: Boolean(value0_constant), 
-                value1_constant: Boolean(value1_constant), 
-                value2_constant: Boolean(value2_constant), 
-                value3_constant: Boolean(value3_constant),
-                statName, format
-            };
-        }
-        constantStmt.free();
-        
-        return constantValues;
+
+        const store = getFileSkillStore();
+        if (!store || !store.getStatByKeyLower(statKey)) return null;
+        return store.findConstantsRow(this.id, versionIds, statKey, occurrenceIndex, variantKey);
     }
 
     /**
      * Merge constant values with scaling values
      * @param {Object} result - Current result object
-     * @param {Object} constantValues - Constant values from database
+     * @param {Object} constantValues - Constant values from skill data
      * @param {Object} formulaEvaluator - Formula evaluator instance
      * @param {Object} variables - Variables for formula evaluation
-     * @returns {Object} Merged result object
+     * @returns {Promise<Object>} Merged result object
      */
-    _mergeConstants(result, constantValues, formulaEvaluator, variables, showFormulas = false) {
+    async _mergeConstants(result, constantValues, formulaEvaluator, variables, showFormulas = false, crossSkillDepth = 0) {
         if (!constantValues) return result;
         
         if (!result) {
@@ -471,7 +602,7 @@ export default class Skill {
         // Process each constant value
         // If valueX_constant flag is 1, use constant value and evaluate formulas
         // If flag is 0 but value exists and looks like a formula, still evaluate it
-        ['value0', 'value1', 'value2', 'value3'].forEach(valueKey => {
+        for (const valueKey of ['value0', 'value1', 'value2', 'value3']) {
             const constantKey = `${valueKey}_constant`;
             const constantValue = constantValues[valueKey];
             const isConstantFlag = constantValues[constantKey];
@@ -482,10 +613,12 @@ export default class Skill {
             // If constant flag is set, process this value
             if (isConstantFlag) {
                 if (stringValue) {
-                    const { value, wasFormula } = this._evaluateValue(
+                    const { value, wasFormula } = await this._evaluateValue(
                         stringValue,
                         formulaEvaluator,
-                        variables
+                        variables,
+                        crossSkillDepth,
+                        false
                     );
                     
                     if (showFormulas && wasFormula) {
@@ -516,13 +649,17 @@ export default class Skill {
                 // Flag is 0, but value exists - check if we should use it
                 // Only use if result doesn't have this value yet (don't override scaling values)
                 if (!result[valueKey] || result[valueKey] === null) {
-                    // Check if it looks like a formula and evaluate it
-                    const looksLikeFormula = /[a-zA-Z_]+|\+|\-|\*|\//.test(stringValue);
+                    // Check if it looks like a formula and evaluate it (skip slash-separated labels etc.)
+                    const looksLikeFormula =
+                        !looksLikePlainTextScalingConstant(stringValue) &&
+                        /[a-zA-Z_]+|\+|-|\*|\//.test(stringValue);
                     if (looksLikeFormula && variables) {
-                        const { value, wasFormula } = this._evaluateValue(
+                        const { value, wasFormula } = await this._evaluateValue(
                             stringValue,
                             formulaEvaluator,
-                            variables
+                            variables,
+                            crossSkillDepth,
+                            false
                         );
                         
                         if (wasFormula || (!isNaN(stringValue) && stringValue !== '')) {
@@ -551,44 +688,73 @@ export default class Skill {
                     }
                 }
             }
-        });
+        }
         
         return result;
     }
 
     /**
      * Get scaling values for a specific stat at a given level
-     * @param {Object} db - Database instance
      * @param {number} level - Skill level
      * @param {string} statKey - Stat key to get values for
      * @param {number} occurrenceIndex - Occurrence index for duplicate stats (default: 0)
      * @returns {Object|null} Scaling values object or null if not found
      */
-    async getScalingValues(db, level, statKey, occurrenceIndex = 0, characterState = null, characterLevel = null, showFormulas = false) {
-        if (!db || !this.skillId || !statKey) {
+    async getScalingValues(
+        level,
+        statKey,
+        occurrenceIndex = 0,
+        characterState = null,
+        characterLevel = null,
+        showFormulas = false,
+        crossSkillDepth = 0,
+        variantKey = null
+    ) {
+        if (!this.skillId || !statKey) {
             return null;
         }
-        
-        const { formulaEvaluator } = await import('./formula-evaluator.js');
-        
+        if (!getFileSkillStore()) {
+            return null;
+        }
+
         try {
-            // Build variables for formula evaluation
-            const variables = this._buildFormulaVariables(characterState, characterLevel);
+            const baseVariables = this._buildFormulaVariables(characterState, characterLevel);
+            const variables =
+                baseVariables != null
+                    ? await this._mergeCalcSlotVariables(
+                          formulaEvaluator,
+                          baseVariables,
+                          crossSkillDepth
+                      )
+                    : null;
             
             // Get level-specific values
-            let result = await this._getScalingRow(db, level, statKey, occurrenceIndex);
+            let result = await this._getScalingRow(level, statKey, occurrenceIndex, variantKey);
             
             // Get and merge constant values (constants might have formulas too)
-            const constantValues = await this._getConstantsRow(db, statKey, occurrenceIndex);
+            const constantValues = await this._getConstantsRow(statKey, occurrenceIndex, variantKey);
             
             if (constantValues) {
-                result = this._mergeConstants(result, constantValues, formulaEvaluator, variables, showFormulas);
+                result = await this._mergeConstants(
+                    result,
+                    constantValues,
+                    formulaEvaluator,
+                    variables,
+                    showFormulas,
+                    crossSkillDepth
+                );
             }
             
             // Evaluate formulas in ALL values (scaling + constants) if character state available
             // Do this AFTER merging constants so we evaluate all formulas, including those in constants
             if (result && variables) {
-                this._processValuesForFormulas(result, formulaEvaluator, variables, showFormulas);
+                await this._processValuesForFormulas(
+                    result,
+                    formulaEvaluator,
+                    variables,
+                    showFormulas,
+                    crossSkillDepth
+                );
             }
             
             return result;
@@ -661,16 +827,22 @@ export default class Skill {
             baseMaxLevel: this.baseMaxLevel,
             affectedBySpecialization: this.affectedBySpecialization,
             canAddPoints: this.canAddPoints,
-            prerequisites: [...this.prerequisites]
+            prerequisites: [...this.prerequisites],
+            calc1: this.calc1,
+            calc2: this.calc2,
+            calc3: this.calc3,
+            calc4: this.calc4,
+            calc5: this.calc5,
+            calc6: this.calc6
         });
     }
 
     /**
-     * Factory method to create Skill from database row
-     * @param {Object} row - Database row object
+     * Factory method to create Skill from a catalog row shape (legacy SQL row field names).
+     * @param {Object} row - Row-like object (`name`, `display_name`, `id` as numeric id, etc.)
      * @returns {Skill} New Skill instance
      */
-    static fromDatabaseRow(row) {
+    static fromCatalogRow(row) {
         return new Skill({
             id: row.name,
             skillId: row.id,

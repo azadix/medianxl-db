@@ -4,8 +4,9 @@
  */
 
 import Character from '../character/Character.js';
-import { getDatabase } from '../tree/tree-data.js';
-import { getCurrentVersionId } from '../version-config.js';
+import { getFileSkillStore } from '../tree/skill-data-store.js';
+
+export { D2_CALC_BUCKETS, getCalcBucketIndex } from './calc-buckets.js';
 
 /**
  * Max Level Modifier Rules
@@ -35,7 +36,8 @@ const MAX_LEVEL_MODIFIERS = [
     startLevel: 10,
     calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = Character.DEFAULT_LEVEL) {
       if (targetSkillData.skill_name === this.targetSkillName) {
-        // BUG: i think that this skill is bugged in game since the scaling starts counting from level 1
+        // BUG:
+        // this skill is bugged in game since the scaling starts counting from level 1
         // and not 10. Should use the one below, when the mod fixes it
         return Math.floor(characterLevel / this.characterLevelDivisor);
       }
@@ -114,7 +116,7 @@ const MAX_LEVEL_MODIFIERS = [
     characterLevelDivisor: 4, // +1 max level for every 4 character levels
     maxBonus: 20,
     startLevel: 15,
-    description: 'When active, increases Trinity Arrow and Barrage max level by 1 for every 4 character levels',
+    description: 'Increases Trinity Arrow and Barrage max level by 1 for every 4 character levels',
     calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = Character.DEFAULT_LEVEL) {
       if (sourceSkillLevel > 0 && this.targetSkillNames.includes(targetSkillData.skill_name)) {
         const effectiveLevel = Math.max(0, characterLevel - this.startLevel);
@@ -145,7 +147,7 @@ const MAX_LEVEL_MODIFIERS = [
     tabSkills: ['fend', 'great_hunt', 'hunters_prowess', 'hyena_strike', 'pounce', 'takedown'], // All Spear tab skills except Lioness
     pointsDivisor: 3, // +1 max level for every 3 points in Spear tab
     description: 'Increases its own max level by 1 for every 3 points spent on other skills in Spear tab',
-    calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = CHARACTER_CONFIG.DEFAULT_LEVEL, skillLevels = {}) {
+    calculateBonus: function(sourceSkillLevel, targetSkillData, _characterLevel = Character.DEFAULT_LEVEL, skillLevels = {}) {
       if (targetSkillData.skill_name === this.targetSkillName) {
         // Count total points in Spear tab (excluding Lioness)
         let totalTabPoints = 0;
@@ -164,7 +166,7 @@ const MAX_LEVEL_MODIFIERS = [
     characterLevelThreshold: 90,
     characterLevelDivisor: 5, // +2 max levels for every 5 character levels above 90
     bonusPerIncrement: 2, // +2 max levels per increment
-    description: 'When active, increases Iron Spiral max level by 2 for every 5 character levels above 90',
+    description: 'Increases Iron Spiral max level by 2 for every 5 character levels above 90',
     calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = Character.DEFAULT_LEVEL) {
       if (sourceSkillLevel > 0 && targetSkillData.skill_name === this.targetSkillName) {
         if (characterLevel > this.characterLevelThreshold) {
@@ -180,8 +182,8 @@ const MAX_LEVEL_MODIFIERS = [
     sourceSkillName: 'soulchain', // Elemental Command needs at least 1 point to activate
     type: 'affects_multiple_skills',
     targetSkillNames: ['fireheart_totem', 'stormeye_totem', 'frostclaw_totem', 'dark_gathering'],
-    description: 'When active, increases Soulchained totems and Dark Gathering max level by 1 for each base level',
-    calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = Character.DEFAULT_LEVEL) {
+    description: 'Increases Soulchained totems and Dark Gathering max level by 1 for each base level',
+    calculateBonus: function(sourceSkillLevel, targetSkillData, _characterLevel = Character.DEFAULT_LEVEL) {
       if (sourceSkillLevel > 0 && this.targetSkillNames.includes(targetSkillData.skill_name)) {
         return sourceSkillLevel;
       }
@@ -217,77 +219,137 @@ const MAX_LEVEL_MODIFIERS = [
       }
       return 0;
     }
+  },
+  {
+    sourceSkillName: null,
+    type: 'self_character_level',
+    targetSkillName: 'warmth',
+    characterLevelDivisor: 4, // +1 max level for every 4 character levels
+    startLevel: 1, // Skill becomes available at level 5
+    description: 'Increases its own max level by 1 for every 4 character levels (starting from level 5)',
+    calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = Character.DEFAULT_LEVEL) {
+      if (targetSkillData.skill_name === this.targetSkillName) {
+        const effectiveLevel = Math.max(0, characterLevel - this.startLevel);
+        return Math.floor(effectiveLevel / this.characterLevelDivisor);
+      }
+      return 0;
+    }
   }
 ];
+
+/**
+ * Descriptions from {@link MAX_LEVEL_MODIFIERS} for tooltips.
+ * If `sourceSkillName` is set, that description is shown only on that skill’s tooltip.
+ * Otherwise the description is shown for the skill(s) the rule applies to (target / bonus).
+ * @param {number} numericId - catalog numeric id for the skill
+ * @param {Record<string, number>} skillLevels
+ * @param {number} characterLevel
+ * @returns {string[]}
+ */
+export function getMaxLevelModifierDescriptionsForSkill(
+  numericId,
+  skillLevels = {},
+  characterLevel = Character.DEFAULT_LEVEL
+) {
+  const store = getFileSkillStore();
+  if (!store) return [];
+  const internal = store.internalNameByNumericId(numericId);
+  const cat = store.catalog?.find((c) => c.numericId === numericId);
+  if (!internal || !cat) return [];
+
+  const targetSkillData = {
+    skill_name: internal,
+    base_max_level: cat.baseMaxLevel,
+    affected_by_specialization: Boolean(cat.affectedBySpecialization),
+    can_add_points: Boolean(cat.canAddPoints)
+  };
+
+  const out = [];
+  const seen = new Set();
+
+  for (const modifier of MAX_LEVEL_MODIFIERS) {
+    if (!modifier.description) continue;
+
+    if (modifier.sourceSkillName) {
+      if (internal !== modifier.sourceSkillName) continue;
+      if (!seen.has(modifier.description)) {
+        seen.add(modifier.description);
+        out.push(modifier.description);
+      }
+      continue;
+    }
+
+    const sourceSkillLevel = 0;
+    const bonus = modifier.calculateBonus(
+      sourceSkillLevel,
+      targetSkillData,
+      characterLevel,
+      skillLevels
+    );
+
+    let include = bonus !== 0;
+    if (!include) {
+      if (modifier.targetSkillName === internal) {
+        include = true;
+      } else if (Array.isArray(modifier.targetSkillNames) && modifier.targetSkillNames.includes(internal)) {
+        include = true;
+      }
+    }
+
+    if (include && !seen.has(modifier.description)) {
+      seen.add(modifier.description);
+      out.push(modifier.description);
+    }
+  }
+
+  return out;
+}
 
 /**
  * Calculate the effective max level for a skill
  * @param {number} skillId - The skill ID to calculate max level for
  * @param {Object} skillLevels - Object mapping skill_name to current skill level
  * @param {number} characterLevel - Current character level (by default we assume max level)
- * @param {Object} db - SQL.js database instance
  * @returns {number} The calculated max level
  */
-export function calculateMaxLevel(skillId, skillLevels = {}, characterLevel = Character.DEFAULT_LEVEL, db = null) {
-  if (!db) {
-    db = getDatabase();
-  }
-
-  // Get version ID for filtering
-  const versionId = getCurrentVersionId(db);
-  if (!versionId) {
-    console.warn(`calculateMaxLevel: No active version found`);
+export function calculateMaxLevel(skillId, skillLevels = {}, characterLevel = Character.DEFAULT_LEVEL) {
+  const store = getFileSkillStore();
+  if (!store) {
+    console.warn('calculateMaxLevel: Skill data store not initialized');
     return 0;
   }
-  
-  // Get skill name and max level data in a single query using LEFT JOIN, filtered by version_id
-  const stmt = db.prepare(`
-    SELECT s.name, sml.base_max_level, sml.affected_by_specialization, sml.can_add_points
-    FROM skills s
-    LEFT JOIN skill_max_levels sml ON s.id = sml.skill_id AND sml.version_id = ?
-    WHERE s.id = ? AND s.version_id = ?
-  `);
-  stmt.bind([versionId, skillId, versionId]);
-  
-  if (!stmt.step()) {
-    stmt.free();
+  const internal = store.internalNameByNumericId(skillId);
+  const cat = store.catalog?.find((c) => c.numericId === skillId);
+  if (!internal || !cat) {
     console.warn(`calculateMaxLevel: Skill ${skillId} does not exist`);
-    return 0; // Skill doesn't exist
+    return 0;
   }
-  
-  const [skill_name, base_max_level, affected_by_specialization, can_add_points] = stmt.get();
-  stmt.free();
-  
-  // Check if this skill has max level data
-  if (base_max_level === null) {
-    // Only log if it's not an innate skill (innate skills shouldn't have max level data)
-    if (!skill_name.includes('innate') && !skill_name.includes('Innate')) {
-      console.warn(`calculateMaxLevel: No max level data found for skillId ${skillId} (${skill_name})`);
+  const base_max_level = cat.baseMaxLevel;
+  if (base_max_level == null) {
+    if (!internal.includes('innate') && !internal.includes('Innate')) {
+      console.warn(`calculateMaxLevel: No max level data found for skillId ${skillId} (${internal})`);
     }
-    return 0; // No max level data found
+    return 0;
   }
-  
   const targetSkillData = {
-    skill_name,
+    skill_name: internal,
     base_max_level,
-    affected_by_specialization: affected_by_specialization === 1,
-    can_add_points: can_add_points === 1
+    affected_by_specialization: Boolean(cat.affectedBySpecialization),
+    can_add_points: Boolean(cat.canAddPoints)
   };
-
-  // Start with base max level
   let effectiveMaxLevel = base_max_level;
-
-  // Apply all applicable modifiers
   for (const modifier of MAX_LEVEL_MODIFIERS) {
-
-    // For character-level based modifiers, sourceSkillName can be null
-    const sourceSkillLevel = modifier.sourceSkillName ? (skillLevels[modifier.sourceSkillName] || 0) : 0;
-    // Calculate bonus from this modifier
-    const bonus = modifier.calculateBonus(sourceSkillLevel, targetSkillData, characterLevel, skillLevels);
+    const sourceSkillLevel = modifier.sourceSkillName
+      ? skillLevels[modifier.sourceSkillName] || 0
+      : 0;
+    const bonus = modifier.calculateBonus(
+      sourceSkillLevel,
+      targetSkillData,
+      characterLevel,
+      skillLevels
+    );
     effectiveMaxLevel += bonus;
   }
-
-  // Apply hard cap of 150 for all skills
   return Math.min(effectiveMaxLevel, 150);
 }
 
@@ -337,89 +399,54 @@ const PALADIN_DEVOTION_ULTIMATE_SKILLS = {
 /**
  * Get the devotion type for a skill based on its tab or name
  * @param {number} skillId - The skill ID
- * @param {Object} db - SQL.js database instance
  * @returns {string} The devotion type (DEVOTION_TYPES constant)
  */
-export function getSkillDevotion(skillId, db = null) {
-  if (!db) return DEVOTION_TYPES.NONE;
-
-  // Get skill data
-  const stmt = db.prepare(`
-    SELECT s.name, s.tab_index, s.class_id
-    FROM skills s
-    WHERE s.id = ?
-  `);
-  stmt.bind([skillId]);
-  
-  if (!stmt.step()) {
-    stmt.free();
-    return DEVOTION_TYPES.NONE;
-  }
-  
-  const [skillName, tabIndex, classId] = stmt.get();
-  stmt.free();
-  
-  // Handle Paladin devotion system (class_id = 5)
+export function getSkillDevotion(skillId) {
+  const store = getFileSkillStore();
+  const internal = store?.internalNameByNumericId(skillId);
+  const det = internal ? store.getSkillDetail(internal) : null;
+  if (!det) return DEVOTION_TYPES.NONE;
+  const skillName = internal;
+  const tabIndex = det.tabIndex;
+  const classId = det.classId;
   if (classId === 5) {
-    // Check if this is a Paladin ultimate skill
     if (PALADIN_DEVOTION_ULTIMATE_SKILLS[skillName]) {
       return PALADIN_DEVOTION_ULTIMATE_SKILLS[skillName];
     }
-
-    // Check if the tab belongs to a Paladin devotion
     for (const [devotion, tabs] of Object.entries(PALADIN_DEVOTION_TABS)) {
       if (tabs.includes(tabIndex)) {
         return devotion;
       }
     }
   }
-  
-  // Handle Amazon devotion system (class_id = 2)
   if (classId === 2) {
-    // Check if the tab belongs to an Amazon devotion
     for (const [devotion, tabs] of Object.entries(AMAZON_DEVOTION_TABS)) {
       if (tabs.includes(tabIndex)) {
         return devotion;
       }
     }
-    // Note: Amazon ultimates are NOT restricted by devotion
   }
-
   return DEVOTION_TYPES.NONE;
 }
 
 /**
  * Determine the current devotion based on allocated skills
  * @param {Object} skillLevels - Object mapping skill_name to current skill level
- * @param {Object} db - SQL.js database instance
  * @returns {string} The current devotion type (DEVOTION_TYPES constant)
  */
-export function getCurrentDevotion(skillLevels = {}, db = null) {
-  if (!db) return DEVOTION_TYPES.NONE;
-
-  // Check all skills with points allocated
+export function getCurrentDevotion(skillLevels = {}) {
+  const store = getFileSkillStore();
   for (const [skillName, level] of Object.entries(skillLevels)) {
     if (level > 0) {
-      // Get skill ID from name
-      const stmt = db.prepare(`
-        SELECT id FROM skills WHERE name = ?
-      `);
-      stmt.bind([skillName]);
-      
-      if (stmt.step()) {
-        const [skillId] = stmt.get();
-        stmt.free();
-        
-        const devotion = getSkillDevotion(skillId, db);
+      const cat = store?.catalog?.find((c) => c.id === skillName);
+      if (cat) {
+        const devotion = getSkillDevotion(cat.numericId);
         if (devotion !== DEVOTION_TYPES.NONE) {
-          return devotion; // First devotion found locks the character
+          return devotion;
         }
-      } else {
-        stmt.free();
       }
     }
   }
-
   return DEVOTION_TYPES.NONE;
 }
 
@@ -427,28 +454,17 @@ export function getCurrentDevotion(skillLevels = {}, db = null) {
  * Check if a skill can be allocated based on devotion restrictions
  * @param {number} skillId - The skill ID to check
  * @param {Object} skillLevels - Object mapping skill_name to current skill level
- * @param {Object} db - SQL.js database instance
  * @returns {Object} { canAllocate: boolean, reason: string }
  */
-export function checkDevotionRestriction(skillId, skillLevels = {}, db = null) {
-  if (!db) {
-    return { canAllocate: true, reason: '' };
-  }
-
-  const currentDevotion = getCurrentDevotion(skillLevels, db);
-  const skillDevotion = getSkillDevotion(skillId, db);
-
-  // If no devotion is active or skill has no devotion, allow allocation
+export function checkDevotionRestriction(skillId, skillLevels = {}) {
+  const currentDevotion = getCurrentDevotion(skillLevels);
+  const skillDevotion = getSkillDevotion(skillId);
   if (currentDevotion === DEVOTION_TYPES.NONE || skillDevotion === DEVOTION_TYPES.NONE) {
     return { canAllocate: true, reason: '' };
   }
-
-  // If devotions match, allow allocation
   if (currentDevotion === skillDevotion) {
     return { canAllocate: true, reason: '' };
   }
-
-  // Devotions conflict - prevent allocation
   const devotionNames = {
     [DEVOTION_TYPES.HOLY]: 'Holy Devotion',
     [DEVOTION_TYPES.NEUTRAL]: 'Neutral Devotion',
@@ -459,7 +475,6 @@ export function checkDevotionRestriction(skillId, skillLevels = {}, db = null) {
     [DEVOTION_TYPES.STORM]: 'Storm Devotion',
     [DEVOTION_TYPES.BLOOD]: 'Blood Devotion'
   };
-
   return {
     canAllocate: false,
     reason: `Cannot allocate skill: You are locked into ${devotionNames[currentDevotion]}. This skill requires ${devotionNames[skillDevotion]}.`

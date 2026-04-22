@@ -1,97 +1,15 @@
 <!DOCTYPE html>
 <html lang="en" class="has-navbar-fixed-top" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skills - MedianDB</title>
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/1.0.1/css/bulma.min.css" />
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.3.3/css/dataTables.bulma.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
-
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.datatables.net/2.3.3/js/dataTables.min.js"></script>   
-    <script src="https://cdn.datatables.net/2.3.3/js/dataTables.bulma.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.13.0/sql-wasm.js"></script>
-    <script src="utils.js" type="module"></script>
-    <script src="script.js" type="module" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <base href="/medianxl-db/" />
+  <title>MedianDB</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/1.0.1/css/bulma.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
-        <div class="navbar-brand">
-            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
-                <span aria-hidden="true"></span>
-                <span aria-hidden="true"></span>
-                <span aria-hidden="true"></span>
-            </a>
-        </div>
-        <div class="navbar-menu">
-            <div class="navbar-start">
-                <a class="navbar-item is-selected" href="./" id="nav-all-skills">
-                    <strong>Skills</strong>
-                </a>
-                <a class="navbar-item" href="./planner.html" id="nav-tree">
-                    <strong>Planner</strong>
-                </a>
-                <a class="navbar-item" href="./status.html" id="nav-status">
-                    <strong>Status</strong>
-                </a>
-                <a class="navbar-item" href="./edit.html" id="nav-db" style="display: none;">
-                    <strong>Editor</strong>
-                </a>
-            </div>
-            <div class="navbar-end">
-                <div class="navbar-item">
-                    <div class="field is-horizontal is-align-items-center">
-                        <div class="field-label">
-                            <label class="label">Version:</label>
-                        </div>
-                        <div class="field-body">
-                            <div class="field">
-                                <div class="control">
-                                    <div class="select">
-                                        <select id="version-selector">
-                                            <!-- Populated by JavaScript -->
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </nav>
-    
-    <script type="module">
-        import { isLocalhost } from './utils.js';
-        import { initializeVersionSelector } from './version-config.js';
-        
-        // Show edit panel only on localhost/local development
-        if (isLocalhost()) {
-            document.getElementById('nav-db').style.display = '';
-        }
-        
-        // Initialize version selector
-        initializeVersionSelector(document.getElementById('version-selector'));
-        
-        // Navbar burger toggle
-        document.addEventListener('DOMContentLoaded', () => {
-            const burger = document.querySelector('.navbar-burger');
-            const menu = document.querySelector('.navbar-menu');
-            
-            burger?.addEventListener('click', () => {
-                burger.classList.toggle('is-active');
-                menu.classList.toggle('is-active');
-            });
-        });
-    </script>
-
-    <div class="container">
-        <h2 class="title mt-3 mb-2" id="page-title">All Skills</h2>
-        <div id="content">
-            <!-- Content will be dynamically loaded here -->
-        </div>
-    </div>
+  <div id="app"></div>
+  <script type="module" src="/src/main.js"></script>
 </body>
 </html>

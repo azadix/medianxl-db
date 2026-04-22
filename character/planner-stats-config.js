@@ -1,0 +1,250 @@
+/**
+ * Planner character stats: loaded from tree_data/{version}/character_stats.json via SkillFileStore.
+ * Strict registry: only these keys exist on the character; unknown keys are rejected.
+ */
+
+import { getFileSkillStore } from '../tree/skill-data-store.js';
+
+/**
+ * @typedef {{
+ *   id?: number,
+ *   key: string,
+ *   label: string,
+ *   min: number|null,
+ *   max: number|null,
+ *   allowNegative?: boolean,
+ *   default?: number,
+ *   alwaysVisible?: boolean,
+ *   sortOrder?: number
+ * }} PlannerCharacterStatDef
+ */
+
+/** Minimal registry before SkillFileStore init (tests / early load). */
+const FALLBACK_REGISTRY = /** @type {PlannerCharacterStatDef[]} */ ([
+  { key: 'life', label: 'Life', min: 0, max: null, allowNegative: false, alwaysVisible: true, sortOrder: 0 },
+  { key: 'mana', label: 'Mana', min: 0, max: null, allowNegative: false, alwaysVisible: true, sortOrder: 1 },
+  { key: 'strength', label: 'Strength', min: 0, max: null, allowNegative: false, alwaysVisible: true, sortOrder: 2 },
+  { key: 'dexterity', label: 'Dexterity', min: 0, max: null, allowNegative: false, alwaysVisible: true, sortOrder: 3 },
+  { key: 'energy', label: 'Energy', min: 0, max: null, allowNegative: false, alwaysVisible: true, sortOrder: 4 },
+  { key: 'vitality', label: 'Vitality', min: 0, max: null, allowNegative: false, alwaysVisible: true, sortOrder: 5 },
+  { key: 'fire_resistance', label: 'Fire Resistance', min: null, max: null, allowNegative: true, alwaysVisible: true, sortOrder: 6 },
+  { key: 'cold_resistance', label: 'Cold Resistance', min: null, max: null, allowNegative: true, alwaysVisible: true, sortOrder: 7 },
+  { key: 'lightning_resistance', label: 'Lightning Resistance', min: null, max: null, allowNegative: true, alwaysVisible: true, sortOrder: 8 },
+  { key: 'poison_resistance', label: 'Poison Resistance', min: null, max: null, allowNegative: true, alwaysVisible: true, sortOrder: 9 },
+  { key: 'magic_resistance', label: 'Magic Resistance', min: null, max: null, allowNegative: true, alwaysVisible: true, sortOrder: 10 },
+  { key: 'physical_resistance', label: 'Physical Resistance', min: null, max: null, allowNegative: true, alwaysVisible: true, sortOrder: 11 }
+]);
+
+/** @type {Map<string, PlannerCharacterStatDef>|null} */
+let _fallbackByKey = null;
+
+function fallbackByKeyMap() {
+  if (!_fallbackByKey) {
+    _fallbackByKey = new Map(FALLBACK_REGISTRY.map((r) => [r.key.toLowerCase(), r]));
+  }
+  return _fallbackByKey;
+}
+
+/**
+ * Raw rows from JSON -> normalized defs (labels + flags).
+ * @param {object[]} rows
+ * @returns {PlannerCharacterStatDef[]}
+ */
+function normalizeRegistryRows(rows) {
+  const out = [];
+  for (const r of rows || []) {
+    if (!r || typeof r.key !== 'string' || !r.key.trim()) continue;
+    const key = String(r.key).trim().toLowerCase();
+    const soRaw = r.sortOrder;
+    const sortOrderNum =
+      soRaw != null && soRaw !== '' ? Number(soRaw) : Number.NaN;
+    const def = {
+      id: r.id,
+      key,
+      label: typeof r.label === 'string' && r.label.trim() ? r.label.trim() : key,
+      min: r.min != null && r.min !== '' ? Number(r.min) : null,
+      max: r.max != null && r.max !== '' ? Number(r.max) : null,
+      allowNegative: !!r.allowNegative,
+      default: r.default != null ? Number(r.default) : 0,
+      alwaysVisible: !!r.alwaysVisible
+    };
+    if (Number.isFinite(sortOrderNum)) {
+      def.sortOrder = sortOrderNum;
+    }
+    if (def.min != null && Number.isNaN(def.min)) def.min = null;
+    if (def.max != null && Number.isNaN(def.max)) def.max = null;
+    if (def.default != null && Number.isNaN(def.default)) def.default = 0;
+    out.push(def);
+  }
+  return out;
+}
+
+/**
+ * Lower `sortOrder` appears first. Stats without `sortOrder` sort after all that have it, by `id` then `key`.
+ * @param {PlannerCharacterStatDef[]} defs
+ * @returns {PlannerCharacterStatDef[]}
+ */
+export function sortPlannerStatDefsForDisplay(defs) {
+  const list = defs.slice();
+  const NO_ID = 1e12;
+  list.sort((a, b) => {
+    const oa = a.sortOrder;
+    const ob = b.sortOrder;
+    const ha = oa != null && Number.isFinite(oa);
+    const hb = ob != null && Number.isFinite(ob);
+    if (ha !== hb) {
+      return ha ? -1 : 1;
+    }
+    if (ha && hb && oa !== ob) {
+      return oa - ob;
+    }
+    const ida = a.id != null && Number.isFinite(Number(a.id)) ? Number(a.id) : NO_ID;
+    const idb = b.id != null && Number.isFinite(Number(b.id)) ? Number(b.id) : NO_ID;
+    if (ida !== idb) return ida - idb;
+    return a.key.localeCompare(b.key);
+  });
+  return list;
+}
+
+/**
+ * @returns {PlannerCharacterStatDef[]}
+ */
+export function getPlannerCharacterStatDefs() {
+  const store = getFileSkillStore();
+  const raw = store?.characterStatRegistry;
+  if (raw && raw.length) {
+    return sortPlannerStatDefsForDisplay(normalizeRegistryRows(raw));
+  }
+  return sortPlannerStatDefsForDisplay([...FALLBACK_REGISTRY]);
+}
+
+/**
+ * @returns {string[]}
+ */
+export function getPlannerBaseStatKeys() {
+  return getPlannerCharacterStatDefs().map((s) => s.key);
+}
+
+/**
+ * @param {string} key
+ * @returns {PlannerCharacterStatDef|undefined}
+ */
+export function getPlannerStatDef(key) {
+  const k = String(key || '').toLowerCase();
+  const store = getFileSkillStore();
+  if (store?.characterStatByKeyLower?.size) {
+    const row = store.characterStatByKeyLower.get(k);
+    if (!row) return undefined;
+    const [def] = normalizeRegistryRows([row]);
+    return def;
+  }
+  return fallbackByKeyMap().get(k);
+}
+
+/**
+ * Registered character stat (for backwards import name `isPlannerBaseStatKey`).
+ * @param {string} key
+ */
+export function isPlannerBaseStatKey(key) {
+  return getPlannerStatDef(key) !== undefined;
+}
+
+/**
+ * @param {string} key
+ */
+export function isPlannerNegativeAllowedBaseStat(key) {
+  const d = getPlannerStatDef(key);
+  return !!(d && d.allowNegative);
+}
+
+/**
+ * @param {string} key
+ * @returns {string}
+ */
+export function getPlannerStatLabel(key) {
+  const d = getPlannerStatDef(key);
+  return d ? d.label : String(key || '');
+}
+
+/**
+ * @returns {Record<string, number>}
+ */
+export function createEmptyRegisteredStatsObject() {
+  const o = {};
+  for (const d of getPlannerCharacterStatDefs()) {
+    o[d.key] = 0;
+  }
+  return o;
+}
+
+/**
+ * @param {number} raw
+ * @param {PlannerCharacterStatDef} meta
+ * @returns {number}
+ */
+function applyMinMax(raw, meta) {
+  let v = raw;
+  if (meta.min != null && Number.isFinite(meta.min)) {
+    v = Math.max(meta.min, v);
+  }
+  if (meta.max != null && Number.isFinite(meta.max)) {
+    v = Math.min(meta.max, v);
+  }
+  return v;
+}
+
+/**
+ * @param {string} key
+ * @param {unknown} raw
+ * @returns {number}
+ */
+export function normalizePlannerStatValue(key, raw) {
+  const k = String(key || '').toLowerCase();
+  const meta = getPlannerStatDef(k);
+  const num = typeof raw === 'number' ? raw : parseFloat(String(raw).trim());
+  if (Number.isNaN(num)) return 0;
+  if (!meta) return num;
+
+  let v = num;
+  if (!meta.allowNegative) {
+    const floor = meta.min != null && Number.isFinite(meta.min) ? Math.max(0, meta.min) : 0;
+    v = Math.max(floor, v);
+  }
+  v = applyMinMax(v, meta);
+  if (k === 'life' || k === 'mana') {
+    v = Math.floor(v);
+  }
+  return v;
+}
+
+/**
+ * Export lines: only values that differ from default (usually 0).
+ * @param {Record<string, number>} stats
+ * @returns {string[]}
+ */
+export function plannerStatsToTextLines(stats) {
+  const s = stats && typeof stats === 'object' ? stats : {};
+  const lines = [];
+  for (const d of getPlannerCharacterStatDefs()) {
+    const k = d.key;
+    let v = s[k];
+    if (v != null && v !== '') {
+      v = Number(v);
+      if (Number.isNaN(v)) v = 0;
+    } else {
+      v = 0;
+    }
+    const normalized = normalizePlannerStatValue(k, v);
+    const defVal = d.default != null && !Number.isNaN(d.default) ? d.default : 0;
+    if (normalized !== defVal) {
+      lines.push(`{{${k}}}=${normalized}`);
+    }
+  }
+  return lines;
+}
+
+/** @deprecated Use getPlannerCharacterStatDefs */
+export const PLANNER_BASE_STATS = FALLBACK_REGISTRY;
+
+/** @deprecated Use getPlannerBaseStatKeys() after store init */
+export const PLANNER_BASE_STAT_KEYS = FALLBACK_REGISTRY.map((x) => x.key);

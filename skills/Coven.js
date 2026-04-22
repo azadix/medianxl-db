@@ -32,10 +32,10 @@ export default class Coven extends Skill {
      * @returns {Object} { allowed: boolean, reason: string }
      */
     checkRestriction(allSkills) {
-        // Check if this skill is one of the exclusive Coven skills
-        const isExclusiveCoven = Coven.isCovenSkill(this);
-
-        if (!isExclusiveCoven) {
+        if (!Coven.isCovenSkill(this)) {
+            return { allowed: true, reason: '' };
+        }
+        if (getSkillPoints(this.id) > 0) {
             return { allowed: true, reason: '' };
         }
 

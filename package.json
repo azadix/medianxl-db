@@ -1,0 +1,25 @@
+{
+  "name": "medianxl-db",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "spellcheck": "node scripts/run-spellcheck.mjs",
+    "lint": "eslint .",
+    "build": "npm run lint && node scripts/run-spellcheck.mjs && vite build && node scripts/copy-spa-404.mjs",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "pinia": "^3.0.1",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "eslint": "^10.2.1",
+    "eslint-plugin-vue": "^10.8.0",
+    "globals": "^17.5.0",
+    "vite": "^6.0.7"
+  }
+}

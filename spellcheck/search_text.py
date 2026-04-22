@@ -1,42 +1,46 @@
-import sqlite3
 import sys
-import os
 from pathlib import Path
 
-search_text = sys.argv[1] if len(sys.argv) > 1 else 'bein'
+_REPO = Path(__file__).resolve().parent.parent
+if str(_REPO / "py") not in sys.path:
+    sys.path.insert(0, str(_REPO / "py"))
 
-# Find database file (could be in root or one level up from py/)
-script_dir = Path(__file__).parent
-db_path = script_dir.parent / 'skills.sqlite'
-if not db_path.exists():
-    db_path = script_dir / 'skills.sqlite'
+from tree_data_loader import resolve_data_dir, load_merged_skills
 
-conn = sqlite3.connect(str(db_path))
-cursor = conn.cursor()
+search_text = sys.argv[1] if len(sys.argv) > 1 else "bein"
+data_dir_arg = sys.argv[2] if len(sys.argv) > 2 else None
 
-cursor.execute("""
-    SELECT id, name, display_name, description, restriction, skill_effect 
-    FROM skills 
-    WHERE description LIKE ? OR restriction LIKE ? OR skill_effect LIKE ?
-""", (f'%{search_text}%', f'%{search_text}%', f'%{search_text}%'))
+data_dir = resolve_data_dir(data_dir_arg)
+rows = load_merged_skills(data_dir)
 
-results = cursor.fetchall()
+needle = search_text.lower()
+matches = []
 
-if results:
-    print(f"Found {len(results)} skill(s) containing '{search_text}':\n")
-    for r in results:
-        print(f"ID: {r[0]}")
-        print(f"Name: {r[1]}")
-        print(f"Display Name: {r[2]}")
-        if r[3] and search_text.lower() in r[3].lower():
-            print(f"Description: {r[3]}")
-        if r[4] and search_text.lower() in r[4].lower():
-            print(f"Restriction: {r[4]}")
-        if r[5] and search_text.lower() in r[5].lower():
-            print(f"Skill Effect: {r[5]}")
+for r in rows:
+    desc = (r.get("description") or "").lower()
+    rest = (r.get("restriction") or "").lower()
+    eff = (r.get("skill_effect") or "").lower()
+    if needle in desc or needle in rest or needle in eff:
+        matches.append(r)
+
+if matches:
+    print(f"Found {len(matches)} skill(s) containing '{search_text}':\n")
+    for r in matches:
+        nid = r.get("numeric_id")
+        name = r.get("name")
+        dname = r.get("display_name")
+        print(f"ID: {nid}")
+        print(f"Name: {name}")
+        print(f"Display Name: {dname}")
+        full_desc = r.get("description") or ""
+        full_rest = r.get("restriction") or ""
+        full_eff = r.get("skill_effect") or ""
+        if full_desc and needle in full_desc.lower():
+            print(f"Description: {full_desc}")
+        if full_rest and needle in full_rest.lower():
+            print(f"Restriction: {full_rest}")
+        if full_eff and needle in full_eff.lower():
+            print(f"Skill Effect: {full_eff}")
         print("---")
 else:
     print(f"No skills found containing '{search_text}'")
-
-conn.close()
-

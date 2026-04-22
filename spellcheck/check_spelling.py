@@ -1,9 +1,13 @@
-import sqlite3
-import os
 import sys
 import re
 import argparse
 from pathlib import Path
+
+_REPO = Path(__file__).resolve().parent.parent
+if str(_REPO / "py") not in sys.path:
+    sys.path.insert(0, str(_REPO / "py"))
+
+from tree_data_loader import resolve_data_dir, load_merged_skills
 
 # Default dictionary files to load automatically
 DEFAULT_DICT_FILES = [
@@ -127,12 +131,26 @@ def extract_words(text):
     
     return [word.lower() for word in words if len(word) > 1]  # Ignore single characters
 
-def check_spelling(db_path, dict_files, ignore_files=None, min_word_length=2):
+def _text_value_to_string(v):
     """
-    Check spelling in database fields against dictionary files.
-    
+    skills.json text fields may be:
+      - string (legacy)
+      - list[str] (new: one entry per row/line)
+      - null
+    Normalize to a single string for spellchecking.
+    """
+    if v is None:
+        return ""
+    if isinstance(v, list):
+        return "\n".join("" if x is None else str(x) for x in v)
+    return str(v)
+
+def check_spelling(data_dir_arg, dict_files, ignore_files=None, min_word_length=2):
+    """
+    Check spelling in skill text fields (tree_data) against dictionary files.
+
     Args:
-        db_path (str): Path to SQLite database
+        data_dir_arg: tree_data version directory path (required; None exits via resolve_data_dir)
         dict_files (list): List of dictionary file paths
         ignore_files (list): List of ignore dictionary file paths (optional)
         min_word_length (int): Minimum word length to check (default: 2)
@@ -150,35 +168,31 @@ def check_spelling(db_path, dict_files, ignore_files=None, min_word_length=2):
         sys.exit(1)
     
     print(f"\nTotal unique words in dictionary: {len(known_words)}")
-    print(f"Checking database: {db_path}\n")
-    
-    # Connect to database
-    db_full_path = db_path if db_path.startswith('/') or db_path.startswith('../') else f'../{db_path}'
-    
-    if not os.path.exists(db_full_path):
-        print(f"Error: Database file not found: {db_full_path}")
-        sys.exit(1)
-    
-    conn = sqlite3.connect(db_full_path)
-    cursor = conn.cursor()
-    
-    # Get all skills with description, restriction, or skill_effect
-    cursor.execute("""
-        SELECT id, name, display_name, description, restriction, skill_effect
-        FROM skills
-        WHERE (description IS NOT NULL AND description != '')
-           OR (restriction IS NOT NULL AND restriction != '')
-           OR (skill_effect IS NOT NULL AND skill_effect != '')
-        ORDER BY display_name
-    """)
-    
-    skills = cursor.fetchall()
+
+    data_dir = resolve_data_dir(data_dir_arg)
+    print(f"Checking tree_data: {data_dir}\n")
+
+    skills = load_merged_skills(data_dir)
+    skills = [
+        s
+        for s in skills
+        if _text_value_to_string(s.get("description")).strip()
+        or _text_value_to_string(s.get("restriction")).strip()
+        or _text_value_to_string(s.get("skill_effect")).strip()
+    ]
+    skills.sort(key=lambda r: (r.get("display_name") or "", r.get("name") or ""))
     print(f"Found {len(skills)} skills to check\n")
     
     errors = []
     checked_words_count = 0
     
-    for skill_id, name, display_name, description, restriction, skill_effect in skills:
+    for row in skills:
+        skill_id = row.get("numeric_id")
+        name = row.get("name") or ""
+        display_name = row.get("display_name") or name
+        description = _text_value_to_string(row.get("description"))
+        restriction = _text_value_to_string(row.get("restriction"))
+        skill_effect = _text_value_to_string(row.get("skill_effect"))
         skill_errors = []
         
         # Check description
@@ -224,9 +238,7 @@ def check_spelling(db_path, dict_files, ignore_files=None, min_word_length=2):
                 'display_name': display_name,
                 'errors': skill_errors
             })
-    
-    conn.close()
-    
+
     # Report results
     print("=" * 80)
     print("SPELLING CHECK RESULTS")
@@ -264,9 +276,15 @@ def check_spelling(db_path, dict_files, ignore_files=None, min_word_length=2):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Check spelling in skills database against dictionary files')
-    parser.add_argument('db_path', nargs='?', default='../skills.sqlite', 
-                       help='Path to the SQLite database file (default: ../skills.sqlite)')
+    parser = argparse.ArgumentParser(
+        description="Check spelling in tree_data skill text against dictionary files"
+    )
+    parser.add_argument(
+        "data_dir",
+        nargs="?",
+        default=None,
+        help="tree_data version folder (required), e.g. public/tree_data/2_12",
+    )
     parser.add_argument('--dict', nargs='+', default=None,
                        help='Path(s) to additional dictionary file(s) (can specify multiple). Default files are loaded automatically.')
     parser.add_argument('--ignore', nargs='+', default=None,
@@ -308,7 +326,7 @@ def main():
     # Convert to None if empty list (so it's treated as optional)
     ignore_files = ignore_files if ignore_files else None
     
-    exit_code = check_spelling(args.db_path, dict_files, ignore_files, args.min_length)
+    exit_code = check_spelling(args.data_dir, dict_files, ignore_files, args.min_length)
     sys.exit(0 if exit_code == 0 else 1)
 
 

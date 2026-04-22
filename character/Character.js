@@ -2,34 +2,238 @@
  * Character class
  * Central place for character-related default values, constants, and instance management
  */
+import {
+  normalizePlannerStatValue,
+  plannerStatsToTextLines,
+  isPlannerBaseStatKey,
+  createEmptyRegisteredStatsObject
+} from './planner-stats-config.js';
+import { getPlannerSkillsSnapshot } from './character-state.js';
+
 export default class Character {
   // Level constraints
   static MIN_LEVEL = 1;
   static MAX_LEVEL = 150;
   static DEFAULT_LEVEL = 1;
   
-  // Quest skill point rewards with level requirements
-  // Format: { quest_id: { difficulty: { points: number, expectedLevel: number } } }
-  static QUEST_SKILL_POINTS = {
-    'den_of_evil': { 
-      normal: { points: 1, expectedLevel: 5 },
-      nightmare: { points: 1, expectedLevel: 60 },
-      hell: { points: 1, expectedLevel: 105 }
+  /**
+   * All planner quests: `type` selects behavior; `reward` lists per-difficulty `amount` (and `expectedLevel` for reference).
+   * @type {Record<string, { type: 'skill_point'|'stat_points'|'signet_cap'|'flat_life', reward: Record<string, { amount: number, expectedLevel: number }> }>}
+   */
+  static QUESTS = {
+    den_of_evil: {
+      type: 'skill_point',
+      reward: {
+        normal: { amount: 1, expectedLevel: 5 },
+        nightmare: { amount: 1, expectedLevel: 60 },
+        hell: { amount: 1, expectedLevel: 105 }
+      }
     },
-    'radament': { 
-      normal: { points: 1, expectedLevel: 18 },
-      nightmare: { points: 1, expectedLevel: 70 },
-      hell: { points: 1, expectedLevel: 107 }
+    radament: {
+      type: 'skill_point',
+      reward: {
+        normal: { amount: 1, expectedLevel: 18 },
+        nightmare: { amount: 1, expectedLevel: 70 },
+        hell: { amount: 1, expectedLevel: 107 }
+      }
     },
-    'izual': { 
-      normal: { points: 2, expectedLevel: 35 },
-      nightmare: { points: 2, expectedLevel: 90 },
-      hell: { points: 2, expectedLevel: 110 }
+    izual: {
+      type: 'skill_point',
+      reward: {
+        normal: { amount: 2, expectedLevel: 35 },
+        nightmare: { amount: 2, expectedLevel: 90 },
+        hell: { amount: 2, expectedLevel: 110 }
+      }
     },
-    'inquisitor_of_the_triune': { 
-      hell: { points: 2, expectedLevel: 115 }
+    inquisitor_of_the_triune: {
+      type: 'skill_point',
+      reward: {
+        hell: { amount: 2, expectedLevel: 115 }
+      }
+    },
+    "lam_essen's_tome": {
+      type: 'stat_points',
+      reward: {
+        normal: { amount: 10, expectedLevel: 25 },
+        nightmare: { amount: 10, expectedLevel: 80 },
+        hell: { amount: 10, expectedLevel: 107 }
+      }
+    },
+    justicar_signet: {
+      type: 'signet_cap',
+      reward: {
+        hell: { amount: 50, expectedLevel: 115 }
+      }
+    },
+    golden_bird: {
+      type: 'flat_life',
+      reward: {
+        normal: { amount: 50, expectedLevel: 25 },
+        nightmare: { amount: 50, expectedLevel: 80 },
+        hell: { amount: 50, expectedLevel: 107 }
+      }
     }
   };
+
+  static STAT_ALLOCATION_KEYS = ['strength', 'dexterity', 'vitality', 'energy'];
+
+  /**
+   * Sum `amount` for a quest definition. If `diffState` is set, only count difficulties where `diffState[diff]` is true.
+   * If `diffState` is null/undefined, sum every defined difficulty.
+   * @param {{ reward?: Record<string, { amount?: number }> }} def
+   * @param {{ normal?: boolean, nightmare?: boolean, hell?: boolean } | null | undefined} diffState
+   * @returns {number}
+   */
+  static sumQuestRewardAmounts(def, diffState) {
+    let sum = 0;
+    if (!def?.reward) return 0;
+    for (const diff of ['normal', 'nightmare', 'hell']) {
+      const slot = def.reward[diff];
+      if (!slot || typeof slot.amount !== 'number') continue;
+      if (diffState != null && !diffState[diff]) continue;
+      sum += slot.amount;
+    }
+    return sum;
+  }
+
+  /**
+   * @returns {string[]}
+   */
+  static getQuestRewardQuestIds() {
+    return Object.keys(Character.QUESTS);
+  }
+
+  /**
+   * Total flat life from completed flat_life quests.
+   * @returns {number}
+   */
+  getTotalQuestLifeBonus() {
+    let total = 0;
+    for (const [questId, def] of Object.entries(Character.QUESTS)) {
+      if (def.type !== 'flat_life') continue;
+      total += Character.sumQuestRewardAmounts(def, this.questsCompleted[questId] || {});
+    }
+    return total;
+  }
+
+  /**
+   * Saves without `questCompletionOptOut`: if a difficulty is still incomplete but level meets expectedLevel,
+   * treat it as manually declined so loading does not auto-check over the saved state.
+   * @param {number} level
+   * @param {Record<string, { normal?: boolean, nightmare?: boolean, hell?: boolean }>} questsCompleted
+   * @param {Record<string, { normal?: boolean, nightmare?: boolean, hell?: boolean }>} targetOptOut mutated in place
+   */
+  static migrateQuestOptOutFromLegacySave(level, questsCompleted, targetOptOut) {
+    const L = Character.clampLevel(level);
+    for (const [questId, def] of Object.entries(Character.QUESTS)) {
+      if (!def.reward) continue;
+      for (const diff of ['normal', 'nightmare', 'hell']) {
+        const slot = def.reward[diff];
+        if (!slot || typeof slot.amount !== 'number' || typeof slot.expectedLevel !== 'number') continue;
+        const qc = questsCompleted[questId] || {};
+        if (!qc[diff] && L >= slot.expectedLevel) {
+          if (!targetOptOut[questId]) targetOptOut[questId] = {};
+          targetOptOut[questId][diff] = true;
+        }
+      }
+    }
+  }
+
+  /**
+   * Apply level-based auto completion: sets a difficulty to completed when level >= expectedLevel,
+   * unless that slot is opted out (user unchecked it).
+   * @param {number} level
+   * @returns {boolean} true if any quest checkbox changed
+   */
+  applyAutoQuestCompletionForLevel(level) {
+    const L = Character.clampLevel(level);
+    if (!this.questCompletionOptOut) this.questCompletionOptOut = {};
+    let changed = false;
+    for (const [questId, def] of Object.entries(Character.QUESTS)) {
+      if (!def.reward) continue;
+      if (!this.questsCompleted[questId]) {
+        this.questsCompleted[questId] = { normal: false, nightmare: false, hell: false };
+      }
+      for (const diff of ['normal', 'nightmare', 'hell']) {
+        const slot = def.reward[diff];
+        if (!slot || typeof slot.amount !== 'number' || typeof slot.expectedLevel !== 'number') continue;
+        if (L < slot.expectedLevel) continue;
+        if (this.questCompletionOptOut[questId]?.[diff]) continue;
+        if (!this.questsCompleted[questId][diff]) {
+          this.questsCompleted[questId][diff] = true;
+          changed = true;
+        }
+      }
+    }
+    if (changed) {
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(
+          new CustomEvent('questCompletionChanged', { detail: { questId: null, auto: true } })
+        );
+      }
+    }
+    return changed;
+  }
+
+  /**
+   * Mark every reward difficulty complete and clear opt-outs (manual "complete everything").
+   */
+  completeAllQuests() {
+    for (const questId of Character.getQuestRewardQuestIds()) {
+      const def = Character.QUESTS[questId];
+      if (!def?.reward) continue;
+      if (!this.questsCompleted[questId]) {
+        this.questsCompleted[questId] = { normal: false, nightmare: false, hell: false };
+      }
+      for (const diff of ['normal', 'nightmare', 'hell']) {
+        if (def.reward[diff] && typeof def.reward[diff].amount === 'number') {
+          this.questsCompleted[questId][diff] = true;
+        }
+      }
+    }
+    this.questCompletionOptOut = Character.createDefaultQuestCompletionOptOut();
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('questCompletionChanged', { detail: { questId: null, completeAll: true } }));
+    }
+  }
+
+  /**
+   * Default quest completion: nothing completed until auto (level) or manual check.
+   * @returns {Record<string, { normal: boolean, nightmare: boolean, hell: boolean }>}
+   */
+  static createDefaultQuestsCompleted() {
+    const o = {};
+    for (const id of Character.getQuestRewardQuestIds()) {
+      o[id] = { normal: false, nightmare: false, hell: false };
+    }
+    return o;
+  }
+
+  /**
+   * When true for a difficulty, auto-completion will not force that checkbox on (user left it off).
+   * @returns {Record<string, { normal?: boolean, nightmare?: boolean, hell?: boolean }>}
+   */
+  static createDefaultQuestCompletionOptOut() {
+    return {};
+  }
+
+  static createEmptyStatAllocation() {
+    const o = {};
+    for (const k of Character.STAT_ALLOCATION_KEYS) {
+      o[k] = 0;
+    }
+    return o;
+  }
+
+  /**
+   * Stat points from leveling: 5 per level-up from level 1 through 149 (character levels 2..150).
+   * @param {number} level
+   * @returns {number}
+   */
+  static getBaseStatPoints(level) {
+    const L = Character.clampLevel(level);
+    return 5 * Math.max(0, Math.min(L, Character.MAX_LEVEL) - 1);
+  }
 
   /**
    * Create a new Character instance
@@ -41,14 +245,12 @@ export default class Character {
     this.className = className;
     this.skillPoints = {}; // Map of skill_id -> points allocated
     this.maxLevels = {}; // Cached max levels for skills
-    this.questsCompleted = { // Map of quest_id -> {normal, nightmare, hell}
-      'den_of_evil': { normal: true, nightmare: true, hell: true },
-      'radament': { normal: true, nightmare: true, hell: true },
-      'izual': { normal: true, nightmare: true, hell: true },
-      'inquisitor_of_the_triune': { hell: true}
-    };
+    this.questsCompleted = Character.createDefaultQuestsCompleted();
+    this.questCompletionOptOut = Character.createDefaultQuestCompletionOptOut();
+    this.statAllocation = Character.createEmptyStatAllocation();
     this.oSkills = []; // Array of {skillId, skillName, displayName, image, className, points}
-    this.stats = {}; // Map of stat_key -> value
+    this.stats = createEmptyRegisteredStatsObject();
+    this.applyAutoQuestCompletionForLevel(this.level);
   }
 
   /**
@@ -83,35 +285,138 @@ export default class Character {
   // ===== QUEST MANAGEMENT METHODS =====
 
   /**
-   * Calculate total quest skill points from completed quests
-   * @param {number} characterLevel - Character level to check against quest requirements
+   * Calculate total quest skill points from completed quests (Config checkboxes only; no level gate).
+   * @param {number} [_characterLevel] - unused; kept for call-site compatibility
    * @returns {number} Total quest skill points
    */
-  getTotalQuestSkillPoints(characterLevel = Character.MAX_LEVEL) {
+  getTotalQuestSkillPoints(_characterLevel = Character.MAX_LEVEL) {
     let total = 0;
-    
     for (const [questId, difficulties] of Object.entries(this.questsCompleted)) {
-      const questRewards = Character.QUEST_SKILL_POINTS[questId];
-      if (questRewards) {
-        if (difficulties.normal && questRewards.normal) {
-          if (characterLevel >= questRewards.normal.expectedLevel) {
-            total += questRewards.normal.points;
-          }
-        }
-        if (difficulties.nightmare && questRewards.nightmare) {
-          if (characterLevel >= questRewards.nightmare.expectedLevel) {
-            total += questRewards.nightmare.points;
-          }
-        }
-        if (difficulties.hell && questRewards.hell) {
-          if (characterLevel >= questRewards.hell.expectedLevel) {
-            total += questRewards.hell.points;
-          }
-        }
+      const def = Character.QUESTS[questId];
+      if (!def || def.type !== 'skill_point') continue;
+      total += Character.sumQuestRewardAmounts(def, difficulties);
+    }
+    return total;
+  }
+
+  /**
+   * Total stat points from completed stat_points quests (no level gate).
+   * @param {number} [_characterLevel] - unused; kept for call-site compatibility
+   * @returns {number}
+   */
+  getTotalQuestStatPoints(_characterLevel = Character.MAX_LEVEL) {
+    let total = 0;
+    for (const [questId, difficulties] of Object.entries(this.questsCompleted)) {
+      const def = Character.QUESTS[questId];
+      if (!def || def.type !== 'stat_points') continue;
+      total += Character.sumQuestRewardAmounts(def, difficulties);
+    }
+    return total;
+  }
+
+  /**
+   * Sum of stat points spent on strength/dexterity/vitality/energy allocation.
+   * @returns {number}
+   */
+  getSpentStatPoints() {
+    let total = 0;
+    for (const k of Character.STAT_ALLOCATION_KEYS) {
+      total += Math.max(0, Math.floor(Number(this.statAllocation[k]) || 0));
+    }
+    return total;
+  }
+
+  /**
+   * Total stat points available before spending (level-based pool only; quest stat rewards and signets are not applied).
+   * @param {number} characterLevel
+   * @returns {number}
+   */
+  getTotalAvailableStatPoints(characterLevel = Character.MAX_LEVEL) {
+    const L = Character.clampLevel(characterLevel);
+    return Character.getBaseStatPoints(L);
+  }
+
+  /**
+   * Unspent stat points from the pool.
+   * @param {number} characterLevel
+   * @returns {number}
+   */
+  getRemainingStatPoints(characterLevel = Character.MAX_LEVEL) {
+    return Math.max(0, this.getTotalAvailableStatPoints(characterLevel) - this.getSpentStatPoints());
+  }
+
+  /**
+   * @param {Record<string, number>} allocation
+   */
+  setStatAllocation(allocation) {
+    const next = Character.createEmptyStatAllocation();
+    for (const k of Character.STAT_ALLOCATION_KEYS) {
+      if (allocation && typeof allocation === 'object' && allocation[k] != null) {
+        next[k] = Math.max(0, Math.floor(Number(allocation[k]) || 0));
       }
     }
-    
-    return total;
+    this.statAllocation = next;
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('statAllocationChanged', { detail: { ...next } }));
+    }
+  }
+
+  /** Old quest keys from prior planner versions -> {@link QUESTS} keys. */
+  static LEGACY_QUEST_ID_ALIASES = {
+    // Old `QUEST_SIGNET_CAP_BONUSES` used a broken string key that evaluated to this id.
+    justicars_signet: 'justicar_signet'
+  };
+
+  /**
+   * Merge saved quest state with current defaults (new quest IDs get defaults).
+   * @param {Record<string, { normal?: boolean, nightmare?: boolean, hell?: boolean }>} quests
+   * @param {Record<string, { normal?: boolean, nightmare?: boolean, hell?: boolean }>} [optOutFromSave]
+   */
+  importQuestsCompleted(quests, optOutFromSave) {
+    const defaults = Character.createDefaultQuestsCompleted();
+    this.questsCompleted = { ...defaults };
+    const raw = { ...(quests || {}) };
+    for (const [legacyId, canonicalId] of Object.entries(Character.LEGACY_QUEST_ID_ALIASES)) {
+      const src = raw[legacyId];
+      if (!src || typeof src !== 'object') continue;
+      const cur = raw[canonicalId];
+      if (!cur) {
+        raw[canonicalId] = { ...src };
+      } else {
+        raw[canonicalId] = {
+          normal: !!(cur.normal || src.normal),
+          nightmare: !!(cur.nightmare || src.nightmare),
+          hell: !!(cur.hell || src.hell)
+        };
+      }
+    }
+    for (const [questId, diff] of Object.entries(raw)) {
+      if (!this.questsCompleted[questId]) {
+        this.questsCompleted[questId] = { normal: false, nightmare: false, hell: false };
+      }
+      if (diff && typeof diff === 'object') {
+        if (diff.normal !== undefined) this.questsCompleted[questId].normal = !!diff.normal;
+        if (diff.nightmare !== undefined) this.questsCompleted[questId].nightmare = !!diff.nightmare;
+        if (diff.hell !== undefined) this.questsCompleted[questId].hell = !!diff.hell;
+      }
+    }
+    if (optOutFromSave && typeof optOutFromSave === 'object') {
+      this.questCompletionOptOut = { ...optOutFromSave };
+      for (const qid of Object.keys(this.questCompletionOptOut)) {
+        const o = this.questCompletionOptOut[qid];
+        if (o && typeof o === 'object') {
+          this.questCompletionOptOut[qid] = {
+            normal: !!o.normal,
+            nightmare: !!o.nightmare,
+            hell: !!o.hell
+          };
+        }
+      }
+    } else {
+      this.questCompletionOptOut = Character.createDefaultQuestCompletionOptOut();
+      Character.migrateQuestOptOutFromLegacySave(this.level, this.questsCompleted, this.questCompletionOptOut);
+    }
+    this.applyAutoQuestCompletionForLevel(this.level);
   }
 
   /**
@@ -153,10 +458,10 @@ export default class Character {
   /**
    * Calculate minimum character level required for current skill allocation
    * Takes into account spent skill points, quest rewards, and skill prerequisites
-   * @param {Object} db - SQL.js database instance (optional)
+   * @param {Array|null} [allSkills] - when non-empty, used for character_level prerequisites instead of planner snapshot
    * @returns {number} Minimum character level needed
    */
-  getMinimumRequiredLevel(db = null) {
+  getMinimumRequiredLevel(allSkills = null) {
     const spentPoints = this.getSpentSkillPoints();
 
     // Use binary search to find minimum level efficiently
@@ -181,35 +486,45 @@ export default class Character {
     // Check skill prerequisites for character level requirements
     let minLevelFromPrerequisites = Character.MIN_LEVEL;
     
-    if (db && spentPoints > 0) {
-      // Get all skills that have points allocated
+    if (spentPoints > 0) {
       const skillLevels = this.getAllSkillPoints();
       const allocatedSkillNames = [];
       
-      // Collect skill names that have points allocated
       for (const [skillName, points] of Object.entries(skillLevels)) {
         if (points > 0) {
           allocatedSkillNames.push(skillName);
         }
       }
       
-      // Check character level prerequisites for allocated skills in a single query
       if (allocatedSkillNames.length > 0) {
-        const placeholders = allocatedSkillNames.map(() => '?').join(',');
-        const stmt = db.prepare(`
-          SELECT sp.requirement_value 
-          FROM skill_prerequisites sp
-          JOIN skills s ON sp.skill_id = s.id
-          WHERE s.name IN (${placeholders}) 
-          AND sp.requirement_type = 'character_level'
-        `);
-        stmt.bind(allocatedSkillNames);
-        
-        while (stmt.step()) {
-          const requiredLevel = stmt.get()[0];
-          minLevelFromPrerequisites = Math.max(minLevelFromPrerequisites, requiredLevel);
+        const skillsForPrereq =
+          Array.isArray(allSkills) && allSkills.length > 0 ? allSkills : getPlannerSkillsSnapshot();
+        if (skillsForPrereq.length > 0) {
+          const className = this.className;
+          for (const name of allocatedSkillNames) {
+            let sk = null;
+            if (className) {
+              sk =
+                skillsForPrereq.find((s) => s.id === name && s.class === className) ??
+                null;
+            }
+            if (!sk) {
+              sk = skillsForPrereq.find((s) => s.id === name) ?? null;
+            }
+            if (!sk || !sk.prerequisites || !sk.prerequisites.length) continue;
+            for (const prereq of sk.prerequisites) {
+              const parts = String(prereq).split(':');
+              if (parts[0] !== 'character_level') continue;
+              const requiredLevel = parseInt(parts[1], 10);
+              if (Number.isFinite(requiredLevel)) {
+                minLevelFromPrerequisites = Math.max(
+                  minLevelFromPrerequisites,
+                  requiredLevel
+                );
+              }
+            }
+          }
         }
-        stmt.free();
       }
     }
     
@@ -227,21 +542,32 @@ export default class Character {
    */
   updateQuestCompletion(questId, difficulties) {
     if (!this.questsCompleted[questId]) {
-      this.questsCompleted[questId] = {};
+      this.questsCompleted[questId] = { normal: false, nightmare: false, hell: false };
     }
-    
+    if (!this.questCompletionOptOut) this.questCompletionOptOut = {};
+    if (!this.questCompletionOptOut[questId]) this.questCompletionOptOut[questId] = {};
+
     const oldState = { ...this.questsCompleted[questId] };
-    this.questsCompleted[questId] = {
-      normal: difficulties.normal || false,
-      nightmare: difficulties.nightmare || false,
-      hell: difficulties.hell || false
+    const next = {
+      normal: !!(difficulties && difficulties.normal),
+      nightmare: !!(difficulties && difficulties.nightmare),
+      hell: !!(difficulties && difficulties.hell)
     };
-    
-    // Dispatch event if quest completion changed
+    for (const diff of ['normal', 'nightmare', 'hell']) {
+      if (next[diff]) {
+        this.questCompletionOptOut[questId][diff] = false;
+      } else {
+        this.questCompletionOptOut[questId][diff] = true;
+      }
+    }
+    this.questsCompleted[questId] = next;
+
     if (typeof window !== 'undefined') {
-      window.dispatchEvent(new CustomEvent('questCompletionChanged', { 
-        detail: { questId, oldState, newState: this.questsCompleted[questId] } 
-      }));
+      window.dispatchEvent(
+        new CustomEvent('questCompletionChanged', {
+          detail: { questId, oldState, newState: this.questsCompleted[questId] }
+        })
+      );
     }
   }
 
@@ -314,15 +640,18 @@ export default class Character {
    * @param {number} level - New character level
    */
   setCharacterLevel(level) {
+    const L = Character.clampLevel(level);
     const oldLevel = this.level;
-    this.level = level;
+    this.level = L;
     this.maxLevels = {}; // Clear cache
-    
-    // Dispatch event if level changed
-    if (oldLevel !== level && typeof window !== 'undefined') {
-      window.dispatchEvent(new CustomEvent('characterLevelChanged', { 
-        detail: { oldLevel, newLevel: level } 
-      }));
+    this.applyAutoQuestCompletionForLevel(L);
+
+    if (oldLevel !== L && typeof window !== 'undefined') {
+      window.dispatchEvent(
+        new CustomEvent('characterLevelChanged', {
+          detail: { oldLevel, newLevel: L }
+        })
+      );
     }
   }
 
@@ -335,7 +664,10 @@ export default class Character {
       level: this.level,
       className: this.className,
       skillPoints: { ...this.skillPoints },
-      stats: { ...this.stats } // Include stats in export
+      stats: { ...this.stats },
+      questsCompleted: JSON.parse(JSON.stringify(this.questsCompleted)),
+      questCompletionOptOut: JSON.parse(JSON.stringify(this.questCompletionOptOut || {})),
+      statAllocation: { ...this.statAllocation }
     };
   }
 
@@ -346,9 +678,21 @@ export default class Character {
   importState(state) {
     this.level = state.level || Character.DEFAULT_LEVEL;
     this.className = state.className || null;
-    this.skillPoints = { ...state.skillPoints } || {};
+    this.skillPoints = state.skillPoints ? { ...state.skillPoints } : {};
     this.maxLevels = {};
-    this.stats = { ...state.stats } || {}; // Import stats
+    this.setAllStats(state.stats || {});
+    if (state.questsCompleted && typeof state.questsCompleted === 'object') {
+      this.importQuestsCompleted(state.questsCompleted, state.questCompletionOptOut);
+    } else {
+      this.questsCompleted = Character.createDefaultQuestsCompleted();
+      this.questCompletionOptOut = Character.createDefaultQuestCompletionOptOut();
+      this.applyAutoQuestCompletionForLevel(this.level);
+    }
+    if (state.statAllocation && typeof state.statAllocation === 'object') {
+      this.setStatAllocation(state.statAllocation);
+    } else {
+      this.statAllocation = Character.createEmptyStatAllocation();
+    }
   }
 
   // ===== OSKILLS MANAGEMENT METHODS =====
@@ -381,7 +725,7 @@ export default class Character {
 
   /**
    * Add an oSkill or increment if it exists
-   * @param {number} skillId - Database skill ID
+   * @param {number} skillId - Numeric catalog skill id
    * @param {string} displayName - Display name
    * @param {string} skillName - Internal skill name
    * @param {string} image - Image filename
@@ -432,9 +776,9 @@ export default class Character {
    * Change oSkill points (positive to add, negative to remove)
    * @param {string} skillName - Internal skill name
    * @param {number} amount - Amount to change (can be negative)
-   * @param {number} allSkillsBonus - Current "+# to All Skills" bonus value
+   * @param {number} _allSkillsBonus - Reserved; "+# to All Skills" is applied elsewhere in calculations
    */
-  changeOSkillPoints(skillIdOrName, amount, allSkillsBonus = 0) {
+  changeOSkillPoints(skillIdOrName, amount, _allSkillsBonus = 0) {
     // Find skill by ID or name
     const skill = this.oSkills.find(s => 
       s.skillId === parseInt(skillIdOrName) || s.skillName === skillIdOrName
@@ -501,7 +845,8 @@ export default class Character {
    * @returns {number} Stat value, or 0 if not set
    */
   getStat(statKey) {
-    return this.stats[statKey] || 0;
+    const k = String(statKey || '').toLowerCase();
+    return this.stats[k] || 0;
   }
 
   /**
@@ -510,11 +855,19 @@ export default class Character {
    * @param {number} value - Stat value
    */
   setStat(statKey, value) {
-    const numValue = parseFloat(value);
-    if (isNaN(numValue)) {
-      throw new Error(`Invalid stat value: ${value} for key: ${statKey}`);
-    }
-    this.stats[statKey] = numValue;
+    const k = String(statKey || '').trim().toLowerCase();
+    if (!k || !isPlannerBaseStatKey(k)) return;
+    const numValue = normalizePlannerStatValue(k, value);
+    this.stats[k] = numValue;
+  }
+
+  /**
+   * Remove a non-baseline stat (baseline keys are always shown in the planner).
+   * @param {string} statKey
+   */
+  removeStat(statKey) {
+    void statKey;
+    // Strict registry: stats cannot be removed, only reset via clearAllStats or parse/export.
   }
 
   /**
@@ -531,7 +884,13 @@ export default class Character {
    */
   setAllStats(stats) {
     const oldStats = { ...this.stats };
-    this.stats = { ...stats };
+    const normalized = createEmptyRegisteredStatsObject();
+    for (const [k, v] of Object.entries(stats || {})) {
+      const key = String(k).trim().toLowerCase();
+      if (!key || !isPlannerBaseStatKey(key)) continue;
+      normalized[key] = normalizePlannerStatValue(key, v);
+    }
+    this.stats = normalized;
     
     // Dispatch event if stats changed
     if (typeof window !== 'undefined') {
@@ -546,12 +905,12 @@ export default class Character {
    */
   clearAllStats() {
     const oldStats = { ...this.stats };
-    this.stats = {};
+    this.stats = createEmptyRegisteredStatsObject();
     
     // Dispatch event if stats changed
     if (typeof window !== 'undefined' && Object.keys(oldStats).length > 0) {
-      window.dispatchEvent(new CustomEvent('characterStatsChanged', { 
-        detail: { oldStats, newStats: {} } 
+      window.dispatchEvent(new CustomEvent('characterStatsChanged', {
+        detail: { oldStats, newStats: { ...this.stats } }
       }));
     }
   }
@@ -564,37 +923,47 @@ export default class Character {
    */
   parseStatsFromText(text) {
     const errors = [];
-    
-    // First, clear all existing stats to handle removal
-    this.clearAllStats();
-    
+    const next = createEmptyRegisteredStatsObject();
     const lines = text.split('\n');
-    
+
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i].trim();
-      if (!line) continue; // Skip empty lines
-      
-      // Remove {{ }} if present
+      if (!line) continue;
+
       const cleanedLine = line.replace(/\{\{|\}\}/g, '');
-      
-      // Parse stat key and value
-      const match = cleanedLine.match(/^\s*(\w+)\s*=\s*(\d+(?:\.\d+)?)\s*$/);
+      const match = cleanedLine.match(/^\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*(.*)$/);
       if (!match) {
         errors.push(`Line ${i + 1}: Invalid format. Expected: statKey=value (e.g., {{strength}}=30)`);
         continue;
       }
-      
-      const [, statKey, value] = match;
-      const numValue = parseFloat(value);
-      
-      if (isNaN(numValue)) {
-        errors.push(`Line ${i + 1}: Invalid value for ${statKey}`);
+
+      const [, statKey, rawValue] = match;
+      const k = String(statKey).trim().toLowerCase();
+      if (!isPlannerBaseStatKey(k)) {
+        errors.push(`Line ${i + 1}: Unknown stat "${statKey}" (not in character_stats registry)`);
         continue;
       }
-      
-      this.setStat(statKey, numValue);
+
+      const valueTrim = (rawValue || '').trim();
+      let numValue;
+      if (valueTrim === '') {
+        numValue = 0;
+      } else {
+        numValue = parseFloat(valueTrim);
+        if (Number.isNaN(numValue)) {
+          errors.push(`Line ${i + 1}: Invalid value for ${statKey}`);
+          continue;
+        }
+      }
+
+      next[k] = normalizePlannerStatValue(k, numValue);
     }
-    
+
+    for (const k of Object.keys(next)) {
+      next[k] = normalizePlannerStatValue(k, next[k]);
+    }
+    this.stats = next;
+
     return errors;
   }
 
@@ -604,9 +973,6 @@ export default class Character {
    * @returns {string} Text representation of stats
    */
   exportStatsToText() {
-    const lines = Object.entries(this.stats)
-      .map(([key, value]) => `{{${key}}}=${value}`)
-      .sort();
-    return lines.join('\n');
+    return plannerStatsToTextLines(this.stats).join('\n');
   }
 }

@@ -1,0 +1,733 @@
+{
+  "exportMajor": 2,
+  "exportMinor": 12,
+  "classes": [
+    {
+      "id": 2,
+      "name": "Amazon",
+      "image_prefix": "ama",
+      "base_life": 70,
+      "base_mana": 15,
+      "base_strength": 25,
+      "base_dexterity": 25,
+      "base_energy": 15,
+      "base_vitality": 20,
+      "life_per_level": 25.0,
+      "mana_per_level": 7.5,
+      "life_per_vitality": 2.25,
+      "mana_per_energy": 2.25
+    },
+    {
+      "id": 8,
+      "name": "Assassin",
+      "image_prefix": "ass",
+      "base_life": 65,
+      "base_mana": 15,
+      "base_strength": 20,
+      "base_dexterity": 35,
+      "base_energy": 15,
+      "base_vitality": 15,
+      "life_per_level": 30.0,
+      "mana_per_level": 7.5,
+      "life_per_vitality": 2.25,
+      "mana_per_energy": 2.25
+    },
+    {
+      "id": 6,
+      "name": "Barbarian",
+      "image_prefix": "bar",
+      "base_life": 80,
+      "base_mana": 5,
+      "base_strength": 30,
+      "base_dexterity": 20,
+      "base_energy": 5,
+      "base_vitality": 30,
+      "life_per_level": 30.0,
+      "mana_per_level": 5.0,
+      "life_per_vitality": 2.75,
+      "mana_per_energy": 1.5
+    },
+    {
+      "id": 7,
+      "name": "Druid",
+      "image_prefix": "dru",
+      "base_life": 65,
+      "base_mana": 25,
+      "base_strength": 25,
+      "base_dexterity": 20,
+      "base_energy": 25,
+      "base_vitality": 15,
+      "life_per_level": 25.0,
+      "mana_per_level": 10.0,
+      "life_per_vitality": 2.25,
+      "mana_per_energy": 3.0
+    },
+    {
+      "id": 4,
+      "name": "Necromancer",
+      "image_prefix": "nec",
+      "base_life": 70,
+      "base_mana": 25,
+      "base_strength": 15,
+      "base_dexterity": 25,
+      "base_energy": 25,
+      "base_vitality": 20,
+      "life_per_level": 25.0,
+      "mana_per_level": 10.0,
+      "life_per_vitality": 1.5,
+      "mana_per_energy": 3.0
+    },
+    {
+      "id": 1,
+      "name": "Other",
+      "image_prefix": "shared",
+      "base_life": 0,
+      "base_mana": 0,
+      "base_strength": 0,
+      "base_dexterity": 0,
+      "base_energy": 0,
+      "base_vitality": 0,
+      "life_per_level": 0.0,
+      "mana_per_level": 0.0,
+      "life_per_vitality": 0.0,
+      "mana_per_energy": 0.0
+    },
+    {
+      "id": 5,
+      "name": "Paladin",
+      "image_prefix": "pal",
+      "base_life": 75,
+      "base_mana": 15,
+      "base_strength": 25,
+      "base_dexterity": 20,
+      "base_energy": 15,
+      "base_vitality": 25,
+      "life_per_level": 35.0,
+      "mana_per_level": 5.0,
+      "life_per_vitality": 2.75,
+      "mana_per_energy": 1.5
+    },
+    {
+      "id": 3,
+      "name": "Sorceress",
+      "image_prefix": "sor",
+      "base_life": 65,
+      "base_mana": 35,
+      "base_strength": 10,
+      "base_dexterity": 25,
+      "base_energy": 35,
+      "base_vitality": 15,
+      "life_per_level": 35.0,
+      "mana_per_level": 10.0,
+      "life_per_vitality": 2.25,
+      "mana_per_energy": 2.5
+    }
+  ],
+  "classTabs": [
+    {
+      "id": 65,
+      "class_id": 1,
+      "tab_index": 0,
+      "name": "oSkill"
+    },
+    {
+      "id": 66,
+      "class_id": 1,
+      "tab_index": 1,
+      "name": "Proc"
+    },
+    {
+      "id": 67,
+      "class_id": 1,
+      "tab_index": 2,
+      "name": "Orange text"
+    },
+    {
+      "id": 68,
+      "class_id": 1,
+      "tab_index": 3,
+      "name": "Passive"
+    },
+    {
+      "id": 1,
+      "class_id": 2,
+      "tab_index": 1,
+      "name": "Divine"
+    },
+    {
+      "id": 2,
+      "class_id": 2,
+      "tab_index": 2,
+      "name": "Bow"
+    },
+    {
+      "id": 3,
+      "class_id": 2,
+      "tab_index": 3,
+      "name": "Javelin"
+    },
+    {
+      "id": 4,
+      "class_id": 2,
+      "tab_index": 4,
+      "name": "Spear"
+    },
+    {
+      "id": 5,
+      "class_id": 2,
+      "tab_index": 5,
+      "name": "Storm"
+    },
+    {
+      "id": 6,
+      "class_id": 2,
+      "tab_index": 6,
+      "name": "Blood"
+    },
+    {
+      "id": 7,
+      "class_id": 2,
+      "tab_index": 7,
+      "name": "Mastery"
+    },
+    {
+      "id": 8,
+      "class_id": 2,
+      "tab_index": 8,
+      "name": "Reward"
+    },
+    {
+      "id": 9,
+      "class_id": 2,
+      "tab_index": 99,
+      "name": "Innate"
+    },
+    {
+      "id": 10,
+      "class_id": 3,
+      "tab_index": 1,
+      "name": "Arcane"
+    },
+    {
+      "id": 11,
+      "class_id": 3,
+      "tab_index": 2,
+      "name": "Fire"
+    },
+    {
+      "id": 12,
+      "class_id": 3,
+      "tab_index": 3,
+      "name": "Lightning"
+    },
+    {
+      "id": 13,
+      "class_id": 3,
+      "tab_index": 4,
+      "name": "Cold"
+    },
+    {
+      "id": 14,
+      "class_id": 3,
+      "tab_index": 5,
+      "name": "Poison"
+    },
+    {
+      "id": 15,
+      "class_id": 3,
+      "tab_index": 6,
+      "name": "Melee"
+    },
+    {
+      "id": 16,
+      "class_id": 3,
+      "tab_index": 7,
+      "name": "Mastery"
+    },
+    {
+      "id": 17,
+      "class_id": 3,
+      "tab_index": 8,
+      "name": "Coven"
+    },
+    {
+      "id": 18,
+      "class_id": 3,
+      "tab_index": 9,
+      "name": "Reward"
+    },
+    {
+      "id": 19,
+      "class_id": 3,
+      "tab_index": 99,
+      "name": "Innate"
+    },
+    {
+      "id": 20,
+      "class_id": 4,
+      "tab_index": 1,
+      "name": "Deathspeaker"
+    },
+    {
+      "id": 21,
+      "class_id": 4,
+      "tab_index": 2,
+      "name": "Summon"
+    },
+    {
+      "id": 22,
+      "class_id": 4,
+      "tab_index": 3,
+      "name": "Melee"
+    },
+    {
+      "id": 23,
+      "class_id": 4,
+      "tab_index": 4,
+      "name": "Crossbow"
+    },
+    {
+      "id": 24,
+      "class_id": 4,
+      "tab_index": 5,
+      "name": "Malice"
+    },
+    {
+      "id": 25,
+      "class_id": 4,
+      "tab_index": 6,
+      "name": "Totem"
+    },
+    {
+      "id": 26,
+      "class_id": 4,
+      "tab_index": 7,
+      "name": "Mastery"
+    },
+    {
+      "id": 27,
+      "class_id": 4,
+      "tab_index": 8,
+      "name": "Reward"
+    },
+    {
+      "id": 28,
+      "class_id": 4,
+      "tab_index": 99,
+      "name": "Innate"
+    },
+    {
+      "id": 29,
+      "class_id": 5,
+      "tab_index": 1,
+      "name": "Aspects"
+    },
+    {
+      "id": 30,
+      "class_id": 5,
+      "tab_index": 2,
+      "name": "Templar"
+    },
+    {
+      "id": 31,
+      "class_id": 5,
+      "tab_index": 3,
+      "name": "Incarnation"
+    },
+    {
+      "id": 32,
+      "class_id": 5,
+      "tab_index": 4,
+      "name": "Nephalem"
+    },
+    {
+      "id": 33,
+      "class_id": 5,
+      "tab_index": 5,
+      "name": "Ritualist"
+    },
+    {
+      "id": 34,
+      "class_id": 5,
+      "tab_index": 6,
+      "name": "Warlock"
+    },
+    {
+      "id": 35,
+      "class_id": 5,
+      "tab_index": 7,
+      "name": "Mastery"
+    },
+    {
+      "id": 36,
+      "class_id": 5,
+      "tab_index": 8,
+      "name": "Reward"
+    },
+    {
+      "id": 37,
+      "class_id": 5,
+      "tab_index": 99,
+      "name": "Innate"
+    },
+    {
+      "id": 38,
+      "class_id": 6,
+      "tab_index": 1,
+      "name": "Nomad"
+    },
+    {
+      "id": 39,
+      "class_id": 6,
+      "tab_index": 2,
+      "name": "Earthshaker"
+    },
+    {
+      "id": 40,
+      "class_id": 6,
+      "tab_index": 3,
+      "name": "Windcarver"
+    },
+    {
+      "id": 41,
+      "class_id": 6,
+      "tab_index": 4,
+      "name": "Elementalist"
+    },
+    {
+      "id": 42,
+      "class_id": 6,
+      "tab_index": 5,
+      "name": "Warmonger"
+    },
+    {
+      "id": 43,
+      "class_id": 6,
+      "tab_index": 6,
+      "name": "Shaman"
+    },
+    {
+      "id": 44,
+      "class_id": 6,
+      "tab_index": 7,
+      "name": "Mastery"
+    },
+    {
+      "id": 45,
+      "class_id": 6,
+      "tab_index": 8,
+      "name": "Reward"
+    },
+    {
+      "id": 46,
+      "class_id": 6,
+      "tab_index": 99,
+      "name": "Innate"
+    },
+    {
+      "id": 47,
+      "class_id": 7,
+      "tab_index": 1,
+      "name": "Nature"
+    },
+    {
+      "id": 48,
+      "class_id": 7,
+      "tab_index": 2,
+      "name": "Werebear"
+    },
+    {
+      "id": 49,
+      "class_id": 7,
+      "tab_index": 3,
+      "name": "Werewolf"
+    },
+    {
+      "id": 50,
+      "class_id": 7,
+      "tab_index": 4,
+      "name": "Wereowl"
+    },
+    {
+      "id": 51,
+      "class_id": 7,
+      "tab_index": 5,
+      "name": "Hunter"
+    },
+    {
+      "id": 52,
+      "class_id": 7,
+      "tab_index": 6,
+      "name": "Seer"
+    },
+    {
+      "id": 53,
+      "class_id": 7,
+      "tab_index": 7,
+      "name": "Mastery"
+    },
+    {
+      "id": 54,
+      "class_id": 7,
+      "tab_index": 8,
+      "name": "Reward"
+    },
+    {
+      "id": 55,
+      "class_id": 7,
+      "tab_index": 99,
+      "name": "Innate"
+    },
+    {
+      "id": 56,
+      "class_id": 8,
+      "tab_index": 1,
+      "name": "Ninja"
+    },
+    {
+      "id": 57,
+      "class_id": 8,
+      "tab_index": 2,
+      "name": "Throwing"
+    },
+    {
+      "id": 58,
+      "class_id": 8,
+      "tab_index": 3,
+      "name": "Claw"
+    },
+    {
+      "id": 59,
+      "class_id": 8,
+      "tab_index": 4,
+      "name": "Naginata"
+    },
+    {
+      "id": 60,
+      "class_id": 8,
+      "tab_index": 5,
+      "name": "Traps"
+    },
+    {
+      "id": 61,
+      "class_id": 8,
+      "tab_index": 6,
+      "name": "Psionic"
+    },
+    {
+      "id": 62,
+      "class_id": 8,
+      "tab_index": 7,
+      "name": "Mastery"
+    },
+    {
+      "id": 63,
+      "class_id": 8,
+      "tab_index": 8,
+      "name": "Reward"
+    },
+    {
+      "id": 64,
+      "class_id": 8,
+      "tab_index": 99,
+      "name": "Innate"
+    }
+  ],
+  "skilltags": [
+    {
+      "id": 19,
+      "name": "AoE"
+    },
+    {
+      "id": 8,
+      "name": "Attack"
+    },
+    {
+      "id": 12,
+      "name": "Aura"
+    },
+    {
+      "id": 14,
+      "name": "Buff"
+    },
+    {
+      "id": 29,
+      "name": "Channeled"
+    },
+    {
+      "id": 3,
+      "name": "Cold"
+    },
+    {
+      "id": 26,
+      "name": "Corpse Totem"
+    },
+    {
+      "id": 17,
+      "name": "Curse"
+    },
+    {
+      "id": 15,
+      "name": "Debuff"
+    },
+    {
+      "id": 18,
+      "name": "Duration"
+    },
+    {
+      "id": 31,
+      "name": "Exodia Summon"
+    },
+    {
+      "id": 21,
+      "name": "Feedback"
+    },
+    {
+      "id": 2,
+      "name": "Fire"
+    },
+    {
+      "id": 16,
+      "name": "Healing"
+    },
+    {
+      "id": 4,
+      "name": "Lightning"
+    },
+    {
+      "id": 6,
+      "name": "Magic"
+    },
+    {
+      "id": 28,
+      "name": "Melee Spell"
+    },
+    {
+      "id": 36,
+      "name": "Morph"
+    },
+    {
+      "id": 34,
+      "name": "Paragon"
+    },
+    {
+      "id": 11,
+      "name": "Passive"
+    },
+    {
+      "id": 1,
+      "name": "Physical"
+    },
+    {
+      "id": 5,
+      "name": "Poison"
+    },
+    {
+      "id": 22,
+      "name": "Projectile"
+    },
+    {
+      "id": 37,
+      "name": "Self Debuff"
+    },
+    {
+      "id": 32,
+      "name": "Special"
+    },
+    {
+      "id": 30,
+      "name": "Special Summon"
+    },
+    {
+      "id": 9,
+      "name": "Spell"
+    },
+    {
+      "id": 35,
+      "name": "Stance"
+    },
+    {
+      "id": 13,
+      "name": "Summon"
+    },
+    {
+      "id": 10,
+      "name": "Teleport"
+    },
+    {
+      "id": 27,
+      "name": "Totem"
+    },
+    {
+      "id": 38,
+      "name": "Trap"
+    },
+    {
+      "id": 7,
+      "name": "Tri Elemental"
+    },
+    {
+      "id": 33,
+      "name": "Ultimate"
+    },
+    {
+      "id": 25,
+      "name": "Upgrade"
+    },
+    {
+      "id": 24,
+      "name": "Warp"
+    },
+    {
+      "id": 20,
+      "name": "Warp Strike"
+    },
+    {
+      "id": 23,
+      "name": "Weapon Damage"
+    }
+  ],
+  "skillVariantDefaultsByClass": {
+    "Necromancer": {
+      "endurance": "necromancer"
+    }
+  },
+  "skillVariants": {
+    "endurance": [
+      {
+        "variant_key": "necromancer",
+        "label": "Necromancer",
+        "sort_order": 0,
+        "description_override": null,
+        "skill_effect_override": null,
+        "restriction_override": null
+      }
+    ],
+    "stampede": [
+      {
+        "variant_key": "snake_stance",
+        "label": "Snake stance",
+        "sort_order": 0,
+        "description_override": null,
+        "skill_effect_override": "{{weapon_damage}}\n{{axes}}\n{{snake_stance_damage_multiplier}}\n{{mana_cost}}",
+        "restriction_override": null
+      },
+      {
+        "variant_key": "eagle_stance",
+        "label": "Eagle stance",
+        "sort_order": 1,
+        "description_override": null,
+        "skill_effect_override": "{{weapon_damage}}\n{{axes}}\n{{converts_phys_to_magic}}\n{{lightning_damage}}\n{{mana_cost}}",
+        "restriction_override": null
+      },
+      {
+        "variant_key": "wolf_stance",
+        "label": "Wolf stance",
+        "sort_order": 2,
+        "description_override": null,
+        "skill_effect_override": "{{weapon_damage}}\n{{axes}}\n{{physical_damage}}\n{{converts_phys_to_magic}}\n{{mana_cost}}",
+        "restriction_override": null
+      }
+    ]
+  }
+}

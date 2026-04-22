@@ -1,0 +1,2048 @@
+[
+  {
+    "id": 1,
+    "key": "weapon_damage",
+    "name": "Weapon Damage",
+    "format": "{value0}% Weapon Damage"
+  },
+  {
+    "id": 2,
+    "key": "mana_cost",
+    "name": "Mana cost",
+    "format": "Mana cost: {value0} {value1} {value2}"
+  },
+  {
+    "id": 4,
+    "key": "cold_damage",
+    "name": "Cold Damage",
+    "format": "Cold Damage: {value0}-{value1}"
+  },
+  {
+    "id": 5,
+    "key": "fire_damage",
+    "name": "Fire Damage",
+    "format": "Fire Damage: {value0}-{value1}"
+  },
+  {
+    "id": 7,
+    "key": "lightning_damage",
+    "name": "Lightning Damage",
+    "format": "Lightning Damage: {value0}-{value1}"
+  },
+  {
+    "id": 8,
+    "key": "poison_dot",
+    "name": "Poison Damage over time",
+    "format": "Poison Damage: {value0}-{value1} over {value2} seconds"
+  },
+  {
+    "id": 9,
+    "key": "range",
+    "name": "Range",
+    "format": "Range: {value0} yards"
+  },
+  {
+    "id": 10,
+    "key": "attack_rating_percent",
+    "name": "Attack Rating percent",
+    "format": "Attack Rating: {value0}%"
+  },
+  {
+    "id": 11,
+    "key": "cooldown",
+    "name": "Cooldown",
+    "format": "Cooldown: {value0} seconds"
+  },
+  {
+    "id": 12,
+    "key": "magic_damage",
+    "name": "Magic damage",
+    "format": "Magic Damage: {value0}-{value1}"
+  },
+  {
+    "id": 13,
+    "key": "physical_damage",
+    "name": "Physical damage",
+    "format": "Physical Damage: {value0}-{value1}"
+  },
+  {
+    "id": 14,
+    "key": "bonus_defense",
+    "name": "Bonus Defense",
+    "format": "Bonus Defense: {value0}%"
+  },
+  {
+    "id": 15,
+    "key": "bonus_physical_damage",
+    "name": "Added flat Physical damage",
+    "format": "Physical Damage: {value0}"
+  },
+  {
+    "id": 16,
+    "key": "attack_rating",
+    "name": "Attack Rating",
+    "format": "Attack Rating: {value0}"
+  },
+  {
+    "id": 17,
+    "key": "minimum_mana_cost",
+    "name": "Minimum Mana cost",
+    "format": "Minimum Mana cost: {value0}"
+  },
+  {
+    "id": 18,
+    "key": "percent_mana_restored_as_life",
+    "name": "% Mana Restored as Life",
+    "format": "{value0}% Mana Restored as Life"
+  },
+  {
+    "id": 19,
+    "key": "attack_speed",
+    "name": "Attack Speed",
+    "format": "Attack Speed: {value0}%"
+  },
+  {
+    "id": 20,
+    "key": "projectiles",
+    "name": "Projectiles",
+    "format": "{value0} Projectiles"
+  },
+  {
+    "id": 21,
+    "key": "radius",
+    "name": "Radius",
+    "format": "Radius: {value0} yards"
+  },
+  {
+    "id": 22,
+    "key": "duration",
+    "name": "Duration",
+    "format": "Duration: {value0} seconds"
+  },
+  {
+    "id": 23,
+    "key": "enemy_physical_resistance",
+    "name": "Enemy Physical Resistance",
+    "format": "Enemy Physical Resistance: {value0}%"
+  },
+  {
+    "id": 24,
+    "key": "converts_phys_to_fire_cold_or_lightning",
+    "name": "Convert to Fire/Cold/Lightning",
+    "format": "Converts {value0}% Physical Damage to Fire, Cold, or Lightning"
+  },
+  {
+    "id": 25,
+    "key": "bonus_fire_cold_or_lightning",
+    "name": "Bonus flat Fire/Cold/Lightning",
+    "format": "{value0} Bonus Fire, Cold, or Lightning damage"
+  },
+  {
+    "id": 26,
+    "key": "total_bloodstars",
+    "name": "Max Bloodstars released",
+    "format": "{value0} Bloodstars total"
+  },
+  {
+    "id": 27,
+    "key": "converts_phys_to_magic",
+    "name": "Convert to Magic",
+    "format": "Converts {value0}% Physical Damage to Magic"
+  },
+  {
+    "id": 28,
+    "key": "bonus_magic_damage",
+    "name": "Bonus flat Magic damage",
+    "format": "{value0} Bonus Magic damage"
+  },
+  {
+    "id": 29,
+    "key": "stun_length",
+    "name": "Stun length",
+    "format": "Stun length: {value0} seconds"
+  },
+  {
+    "id": 30,
+    "key": "elemental_spell_damage",
+    "name": "Elemental Spell damage",
+    "format": "Elemental Spell Damage: {value0}%"
+  },
+  {
+    "id": 31,
+    "key": "pmsd",
+    "name": "Physical/Magic Spell damage",
+    "format": "Physical/Magic Spell Damage: {value0}%"
+  },
+  {
+    "id": 32,
+    "key": "drains_life",
+    "name": "Drains % of Maximum Life over time",
+    "format": "Drains {value0}% of Maximum Life over {value1} seconds"
+  },
+  {
+    "id": 33,
+    "key": "total_knives",
+    "name": "Max Knives released",
+    "format": "{value0} Knives total"
+  },
+  {
+    "id": 34,
+    "key": "converts_phys_to_fire",
+    "name": "Convert to Fire",
+    "format": "Converts {value0}% Physical Damage to Fire"
+  },
+  {
+    "id": 35,
+    "key": "missiles",
+    "name": "Missiles",
+    "format": "{value0} Missiles"
+  },
+  {
+    "id": 36,
+    "key": "target_seek_range",
+    "name": "Target seek range",
+    "format": "Target seek range: {value0} yards"
+  },
+  {
+    "id": 37,
+    "key": "projectiles_per_volley",
+    "name": "Max Projectiles per volley",
+    "format": "Up to {value0} projectiles per volley"
+  },
+  {
+    "id": 38,
+    "key": "spearwomen",
+    "name": "Spearwomen",
+    "format": "Spearwomen: {value0}"
+  },
+  {
+    "id": 39,
+    "key": "life",
+    "name": "Life flat",
+    "format": "Life: {value0} hit points"
+  },
+  {
+    "id": 40,
+    "key": "damage",
+    "name": "Damage",
+    "format": "Damage: {value0}-{value1}"
+  },
+  {
+    "id": 41,
+    "key": "aura_physical_resistance",
+    "name": "Aura increases Physical Resistance",
+    "format": "Aura increases Physical Resistance by {value0}%"
+  },
+  {
+    "id": 42,
+    "key": "aura_elemental_resistances",
+    "name": "Aura increases Elemental Resistances",
+    "format": "Aura increases Elemental Resistances: {value0}%"
+  },
+  {
+    "id": 43,
+    "key": "charged_bolts",
+    "name": "Charged bolts",
+    "format": "Charged bolts: {value0}"
+  },
+  {
+    "id": 44,
+    "key": "cold_spell_damage",
+    "name": "Cold Spell Damage",
+    "format": "Cold Spell Damage: {value0}%"
+  },
+  {
+    "id": 45,
+    "key": "freeze_duration",
+    "name": "Freeze duration",
+    "format": "Freeze duration: {value0} seconds"
+  },
+  {
+    "id": 46,
+    "key": "enemy_defense",
+    "name": "Enemy Defense",
+    "format": "Enemy Defense: {value0}%"
+  },
+  {
+    "id": 48,
+    "key": "bonus_fire_damage_based_on_str_or_dex",
+    "name": "Bonus Fire Damage based on % Strength or Dexterity",
+    "format": "Bonus Fire Damage: {value0}% of Strength or Dexterity"
+  },
+  {
+    "id": 49,
+    "key": "crushing_blow",
+    "name": "Crushing Blow",
+    "format": "Chance of Crushing Blow: {value0}%"
+  },
+  {
+    "id": 50,
+    "key": "physical_damage_percent",
+    "name": "Physical Damage percent",
+    "format": "Physical Damage: {value0}%"
+  },
+  {
+    "id": 51,
+    "key": "magic_damage_to_party_weapons",
+    "name": "Magic damage to party weapons",
+    "format": "Magic damage to party weapons: {value0}-{value1}"
+  },
+  {
+    "id": 54,
+    "key": "average_fire_dot",
+    "name": "Average Fire Damage per second",
+    "format": "Average Fire Damage: {value0} per second"
+  },
+  {
+    "id": 55,
+    "key": "totems",
+    "name": "Totems",
+    "format": "Totems: {value0}"
+  },
+  {
+    "id": 56,
+    "key": "innate_elemental_damage",
+    "name": "Innate Elemental Damage",
+    "format": "Innate Elemental Damage: {value0}%"
+  },
+  {
+    "id": 57,
+    "key": "party_elemental_spell_damage",
+    "name": "Party Elemental Spell damage",
+    "format": "Party Elemental Spell damage: {value0}%"
+  },
+  {
+    "id": 59,
+    "key": "hit_recovery",
+    "name": "Hit Recovery",
+    "format": "Hit Recovery: {value0}%"
+  },
+  {
+    "id": 60,
+    "key": "firebolts",
+    "name": "Firebolts",
+    "format": "Firebolts: {value0}"
+  },
+  {
+    "id": 61,
+    "key": "bolts",
+    "name": "Bolts",
+    "format": "{value0} Bolts"
+  },
+  {
+    "id": 62,
+    "key": "fortress_duration",
+    "name": "Fortress duration",
+    "format": "Fortress duration: {value0} seconds"
+  },
+  {
+    "id": 63,
+    "key": "blinds_attacker",
+    "name": "Blinds attacker",
+    "format": "Blinds attacker {value0}"
+  },
+  {
+    "id": 64,
+    "key": "total_bolts",
+    "name": "Total Bolts",
+    "format": "Total Bolts: {value0}"
+  },
+  {
+    "id": 65,
+    "key": "percent_str_gained_as_extra_magic_damage",
+    "name": "Percent Strength gained as Extra Magic damage",
+    "format": "{value0}% of total Strength gained as extra Magic damage"
+  },
+  {
+    "id": 66,
+    "key": "arrows",
+    "name": "Arrows",
+    "format": "Arrows: {value0}"
+  },
+  {
+    "id": 67,
+    "key": "converts_phys_to_lightning",
+    "name": "Convert to Lightning",
+    "format": "Converts {value0}% Physical Damage to Lightning"
+  },
+  {
+    "id": 68,
+    "key": "trap_duration",
+    "name": "Trap duration",
+    "format": "Trap duration: {value0} seconds"
+  },
+  {
+    "id": 69,
+    "key": "converts_phys_to_cold",
+    "name": "Convert to Cold",
+    "format": "Converts {value0}% Physical Damage to Cold"
+  },
+  {
+    "id": 70,
+    "key": "movement_speed",
+    "name": "Movement Speed",
+    "format": "Movement Speed: {value0}%"
+  },
+  {
+    "id": 71,
+    "key": "magic_resistance",
+    "name": "Magic Resistance",
+    "format": "Magic Resistance: {value0}%"
+  },
+  {
+    "id": 72,
+    "key": "regenerate_life",
+    "name": "Life Regeneration per second",
+    "format": "{value0} Life Regeneration per second"
+  },
+  {
+    "id": 73,
+    "key": "wraiths",
+    "name": "Wraiths",
+    "format": "Wraiths: {value0}"
+  },
+  {
+    "id": 74,
+    "key": "max_cold_resistance",
+    "name": "Maximum Cold Resistance",
+    "format": "{value0}% to Maximum Cold Resistance"
+  },
+  {
+    "id": 75,
+    "key": "max_fire_resistance",
+    "name": "Maximum Fire Resistance",
+    "format": "{value0}% to Maximum Fire Resistance"
+  },
+  {
+    "id": 76,
+    "key": "max_lightning_resistance",
+    "name": "Maximum Lightning Resistance",
+    "format": "{value0}% to Maximum Lightning Resistance"
+  },
+  {
+    "id": 77,
+    "key": "enemy_cold_resistance",
+    "name": "Enemy Cold Resistance",
+    "format": "Enemy Cold Resistance: {value0}%"
+  },
+  {
+    "id": 78,
+    "key": "enemy_fire_resistance",
+    "name": "Enemy Fire Resistance",
+    "format": "Enemy Fire Resistance: {value0}%"
+  },
+  {
+    "id": 79,
+    "key": "enemy_lightning_resistance",
+    "name": "Enemy Lightning Resistance",
+    "format": "Enemy Lightning Resistance: {value0}%"
+  },
+  {
+    "id": 80,
+    "key": "enemy_movement_speed",
+    "name": "Enemy Movement Speed",
+    "format": "Enemy Movement Speed: {value0}%"
+  },
+  {
+    "id": 81,
+    "key": "feedback_damage_percent",
+    "name": "Feedback Damage % of lost Mana",
+    "format": "Feedback Damage: {value0}% of lost Mana"
+  },
+  {
+    "id": 82,
+    "key": "delay_between_blasts",
+    "name": "Delay between blasts",
+    "format": "Delay between blasts: {value0} seconds"
+  },
+  {
+    "id": 83,
+    "key": "targets",
+    "name": "Targets",
+    "format": "Targets: {value0}"
+  },
+  {
+    "id": 84,
+    "key": "lava_pit_radius",
+    "name": "Lava Pit Radius",
+    "format": "Lava Pit Radius: {value0} yards"
+  },
+  {
+    "id": 85,
+    "key": "fire_dot",
+    "name": "Fire damage per second",
+    "format": "Fire damage per second: {value0}-{value1}"
+  },
+  {
+    "id": 86,
+    "key": "physical_resistance",
+    "name": "Physical Resistance",
+    "format": "Physical Resistance: {value0}%"
+  },
+  {
+    "id": 87,
+    "key": "arena_duration",
+    "name": "Arena duration",
+    "format": "Arena duration: {value0} seconds"
+  },
+  {
+    "id": 88,
+    "key": "delay_between_activations",
+    "name": "Delay between activations",
+    "format": "Delay between activations: {value0} seconds"
+  },
+  {
+    "id": 89,
+    "key": "releases_bolts",
+    "name": "Releases # Bolts",
+    "format": "Releases {value0} Bolts"
+  },
+  {
+    "id": 90,
+    "key": "attacker_takes_lightning_damage",
+    "name": "Attacker takes Lightning damage",
+    "format": "Attacker takes {value0} bonus Lightning damage"
+  },
+  {
+    "id": 92,
+    "key": "percent_dex_gained_as_extra_magic_damage",
+    "name": "Percent Dexterity gained as Extra Magic damage",
+    "format": "{value0}% of total Dexterity gained as extra Magic damage"
+  },
+  {
+    "id": 93,
+    "key": "explosion_radius",
+    "name": "Explosion radius",
+    "format": "Explosion radius: {value0} yards"
+  },
+  {
+    "id": 94,
+    "key": "feedback_damage_range_percent",
+    "name": "Feedback Damage #-#% of lost Mana",
+    "format": "Feedback Damage: {value0}-{value1}% of lost Mana"
+  },
+  {
+    "id": 95,
+    "key": "party_mana_recovery_rate",
+    "name": "Party Mana Recovery Rate",
+    "format": "Party Mana Recovery Rate: {value0}%"
+  },
+  {
+    "id": 96,
+    "key": "enemy_poison_resistance",
+    "name": "Enemy Poison Resistance",
+    "format": "Enemy Poison Resistance: {value0}%"
+  },
+  {
+    "id": 99,
+    "key": "weapon_physical_damage",
+    "name": "Weapon Physical Damage",
+    "format": "Weapon Physical Damage: {value0}%"
+  },
+  {
+    "id": 100,
+    "key": "loma_per_character_level",
+    "name": "Life on Melee Attack (Scales with Character Level)",
+    "format": "{value0} Life on Melee Attack (Scales with Character Level)"
+  },
+  {
+    "id": 101,
+    "key": "enemy_elemental_resistances",
+    "name": "Enemy Elemental Resistances",
+    "format": "Enemy Elemental Resistances: {value0}%"
+  },
+  {
+    "id": 102,
+    "key": "delay_between_explosions",
+    "name": "Delay between explosions",
+    "format": "Delay between explosions: {value0} seconds"
+  },
+  {
+    "id": 103,
+    "key": "scatter_radius",
+    "name": "Scatter radius",
+    "format": "{value0} yards Scatter radius"
+  },
+  {
+    "id": 104,
+    "key": "base_dex_added_to_ene",
+    "name": "Percent of base Dexterity added to Energy",
+    "format": "{value0}% of Base Dexterity added to Energy"
+  },
+  {
+    "id": 105,
+    "key": "cold_damage_percent",
+    "name": "Cold Damage percent",
+    "format": "Cold Damage: {value0}%"
+  },
+  {
+    "id": 106,
+    "key": "axes",
+    "name": "Axes",
+    "format": "{value0} Axes"
+  },
+  {
+    "id": 107,
+    "key": "life_healed_per_corpse",
+    "name": "Life healed per Corpse",
+    "format": "Life healed per Corpse: {value0}%"
+  },
+  {
+    "id": 108,
+    "key": "attacks_targets",
+    "name": "Attacks up to # targets",
+    "format": "Attacks up to {value0} targets"
+  },
+  {
+    "id": 109,
+    "key": "activation_range",
+    "name": "Activation range",
+    "format": "Activation range: {value0} yards"
+  },
+  {
+    "id": 110,
+    "key": "wall_width",
+    "name": "Wall width",
+    "format": "Wall width: {value0} yards"
+  },
+  {
+    "id": 111,
+    "key": "bloodlust_elemental_damage",
+    "name": "Bloodlust Elemental Damage",
+    "format": "Bloodlust Elemental Damage: {value0}%"
+  },
+  {
+    "id": 112,
+    "key": "bloodlust_damage",
+    "name": "Bloodlust Damage",
+    "format": "Bloodlust Damage: {value0}%"
+  },
+  {
+    "id": 113,
+    "key": "magic_feedback_damage_percent",
+    "name": "Magic Feedback Damage #-# % of Total Energy",
+    "format": "Magic Feedback Damage: {value0}-{value1}% of Total Energy"
+  },
+  {
+    "id": 114,
+    "key": "total_damage_per_hit",
+    "name": "Total Damage per hit",
+    "format": "Total Damage per hit: {value0}-{value1}"
+  },
+  {
+    "id": 115,
+    "key": "cast_speed",
+    "name": "Cast Speed",
+    "format": "Cast Speed: {value0}%"
+  },
+  {
+    "id": 116,
+    "key": "javelins",
+    "name": "Javelins",
+    "format": "Javelins: {value0}"
+  },
+  {
+    "id": 117,
+    "key": "rockets",
+    "name": "Rockets",
+    "format": "Rockets: {value0}"
+  },
+  {
+    "id": 119,
+    "key": "avoid_damage",
+    "name": "Chance to Avoid Damage",
+    "format": "{value0}% Chance to Avoid Damage"
+  },
+  {
+    "id": 120,
+    "key": "bonus_elemental_magic_damage",
+    "name": "Elemental/Magic Damage # per hit",
+    "format": "Elemental/Magic Damage: {value0} per hit"
+  },
+  {
+    "id": 121,
+    "key": "limpet_mines",
+    "name": "Limpet Mines",
+    "format": "Limpet Mines: {value0}"
+  },
+  {
+    "id": 122,
+    "key": "limpet_mine_duration",
+    "name": "Limpet Mine duration",
+    "format": "Limpet Mine duration: {value0} seconds"
+  },
+  {
+    "id": 123,
+    "key": "shoots_times",
+    "name": "Shoots up to # times",
+    "format": "Shoots up to {value0} times"
+  },
+  {
+    "id": 124,
+    "key": "enemy_attack_rating",
+    "name": "Enemy Attack Rating",
+    "format": "Enemy Attack Rating: {value0}%"
+  },
+  {
+    "id": 125,
+    "key": "restores_life_on_use_based_on_max_life",
+    "name": "Restores Life on use based on Max Life",
+    "format": "Restores {value0} Life on use (Based on Max Life)"
+  },
+  {
+    "id": 126,
+    "key": "lightning_spears",
+    "name": "Lightning Spears",
+    "format": "Lightning Spears: {value0}"
+  },
+  {
+    "id": 129,
+    "key": "minions",
+    "name": "Minions",
+    "format": "{value0}: {value1}"
+  },
+  {
+    "id": 131,
+    "key": "hawks",
+    "name": "Hawks",
+    "format": "Hawks: {value0}"
+  },
+  {
+    "id": 132,
+    "key": "hawks_per_cast",
+    "name": "Hawks per cast",
+    "format": "Hawks per cast: {value0}"
+  },
+  {
+    "id": 134,
+    "key": "maximum_life",
+    "name": "Maximum Life",
+    "format": "Maximum Life: {value0}%"
+  },
+  {
+    "id": 135,
+    "key": "blinds_target",
+    "name": "Blinds Target",
+    "format": "Blinds Target +{value0}"
+  },
+  {
+    "id": 136,
+    "key": "enemy_damage",
+    "name": "Enemy Damage",
+    "format": "Enemy Damage: {value0}%"
+  },
+  {
+    "id": 137,
+    "key": "enemy_attack_speed",
+    "name": "Enemy Attack Speed",
+    "format": "Enemy Attack Speed: {value0}%"
+  },
+  {
+    "id": 138,
+    "key": "delay_between_swarms",
+    "name": "Delay between Swarms",
+    "format": "Delay between Swarms: {value0} seconds"
+  },
+  {
+    "id": 139,
+    "key": "bursts",
+    "name": "Bursts",
+    "format": "Bursts: {value0}"
+  },
+  {
+    "id": 140,
+    "key": "length_of_fuse",
+    "name": "Length of fuse",
+    "format": "Length of fuse: {value0} seconds"
+  },
+  {
+    "id": 141,
+    "key": "field_duration",
+    "name": "Field duration",
+    "format": "Field duration: {value0} seconds"
+  },
+  {
+    "id": 142,
+    "key": "bonus_magic_damage_based_on_str_and_dex",
+    "name": "Bonus Magic Damage based on % Strength and Dexterity",
+    "format": "Bonus Magic Damage: {value0}% of Strength and Dexterity"
+  },
+  {
+    "id": 143,
+    "key": "spell_damage",
+    "name": "Spell Damage",
+    "format": "Spell Damage: {value0}%"
+  },
+  {
+    "id": 144,
+    "key": "minion_life_percent",
+    "name": "Minion Life %",
+    "format": "Minion Life: {value0}%"
+  },
+  {
+    "id": 146,
+    "key": "rift_duration",
+    "name": "Rift duration",
+    "format": "Rift duration: {value0} seconds"
+  },
+  {
+    "id": 147,
+    "key": "vulnerability_duration",
+    "name": "Vulnerability duration",
+    "format": "Vulnerability duration: {value0} seconds"
+  },
+  {
+    "id": 148,
+    "key": "vulnerability_physical_resist",
+    "name": "Vulnerability Physical Resistance",
+    "format": "Vulnerability Physical Resistance: {value0}%"
+  },
+  {
+    "id": 149,
+    "key": "percent_magic_damage_added_to_weapon",
+    "name": "Deals #% of your Magic Damage added to Weapon per Hit",
+    "format": "Deals {value0}% of your Magic Damage added to Weapon per Hit"
+  },
+  {
+    "id": 150,
+    "key": "mana_regeneration_rate",
+    "name": "Mana Regeneration Rate",
+    "format": "Mana Regeneration Rate: {value0}%"
+  },
+  {
+    "id": 151,
+    "key": "summoned_minion_attack_rating",
+    "name": "Summoned Minion Attack Rating",
+    "format": "{value0}% to Summoned Minion Attack Rating"
+  },
+  {
+    "id": 152,
+    "key": "summoned_minion_damage",
+    "name": "Summoned Minion Damage",
+    "format": "{value0}% to Summoned Minion Damage"
+  },
+  {
+    "id": 153,
+    "key": "maximum_life_flat",
+    "name": "Maximum Life flat",
+    "format": "{value0} Maximum Life"
+  },
+  {
+    "id": 154,
+    "key": "life_steal",
+    "name": "Life Steal",
+    "format": "Life Steal: {value0}%"
+  },
+  {
+    "id": 155,
+    "key": "maximum_mana",
+    "name": "Maximum Mana",
+    "format": "{value0}% Maximum Mana"
+  },
+  {
+    "id": 156,
+    "key": "curse_length_reduction",
+    "name": "Curse length reduction",
+    "format": "Curse length reduction: {value0}%"
+  },
+  {
+    "id": 157,
+    "key": "poison_length_reduction",
+    "name": "Poison length reduction",
+    "format": "Poison length reduction: {value0}%"
+  },
+  {
+    "id": 158,
+    "key": "block_speed",
+    "name": "Block Speed",
+    "format": "Block Speed: {value0}%"
+  },
+  {
+    "id": 159,
+    "key": "skill_duration",
+    "name": "Skill duration",
+    "format": "{value0}% Skill duration"
+  },
+  {
+    "id": 160,
+    "key": "healing_from_potions",
+    "name": "Healing from Potions",
+    "format": "{value0}% Healing from Potions"
+  },
+  {
+    "id": 161,
+    "key": "mana_from_potions",
+    "name": "Mana Restored from Potions",
+    "format": "{value0}% Mana Restored from Potions"
+  },
+  {
+    "id": 162,
+    "key": "vitality_bonus_per_gem",
+    "name": "Vitality bonus per Gem",
+    "format": "Vitality bonus per Gem: {value0}"
+  },
+  {
+    "id": 163,
+    "key": "max_poison_resistance",
+    "name": "Maximum Poison Resistance",
+    "format": "{value0}% to Maximum Poison Resistance"
+  },
+  {
+    "id": 164,
+    "key": "lightning_spell_damage",
+    "name": "Lightning Spell Damage",
+    "format": "Lightning Spell Damage: {value0}%"
+  },
+  {
+    "id": 165,
+    "key": "fire_spell_damage",
+    "name": "Fire Spell Damage",
+    "format": "Fire Spell Damage: {value0}%"
+  },
+  {
+    "id": 166,
+    "key": "enemy_magic_resistance",
+    "name": "Enemy Magic Resistance",
+    "format": "{value0}% Enemy Magic Resistance"
+  },
+  {
+    "id": 167,
+    "key": "maximum_elemental_resistances",
+    "name": "Maximum Elemental Resistances",
+    "format": "{value0}% to Maximum Elemental Resistances"
+  },
+  {
+    "id": 168,
+    "key": "grit",
+    "name": "Grit",
+    "format": "Grit: {value0}%"
+  },
+  {
+    "id": 169,
+    "key": "javelin_physical_damage",
+    "name": "Javelin Physical Damage",
+    "format": "{value0}% Javelin Physical Damage"
+  },
+  {
+    "id": 170,
+    "key": "poison_pierce",
+    "name": "Poison Pierce",
+    "format": "Poison Pierce: {value0}%"
+  },
+  {
+    "id": 171,
+    "key": "deadly_strike",
+    "name": "Deadly Strike",
+    "format": "{value0}% Deadly Strike"
+  },
+  {
+    "id": 172,
+    "key": "crushing_blow_added_as_deadly_strike",
+    "name": "Crushing Blow added as Deadly Strike",
+    "format": "{value0}% of Crushing Blow added as Deadly Strike"
+  },
+  {
+    "id": 173,
+    "key": "defense_flat",
+    "name": "Defense flat",
+    "format": "{value0} Defense"
+  },
+  {
+    "id": 174,
+    "key": "maximum_stamina",
+    "name": "Maximum Stamina",
+    "format": "{value0} Maximum Stamina"
+  },
+  {
+    "id": 175,
+    "key": "damage_dot",
+    "name": "Damage over time",
+    "format": "Damage: {value0}-{value1} over {value2} seconds"
+  },
+  {
+    "id": 176,
+    "key": "enemy_weapon_damage",
+    "name": "Enemy Weapon Damage",
+    "format": "Enemy Weapon Damage: {value0}%"
+  },
+  {
+    "id": 177,
+    "key": "enemy_cast_speed",
+    "name": "Enemy Cast Speed",
+    "format": "Enemy Cast Speed: {value0}%"
+  },
+  {
+    "id": 178,
+    "key": "enemy_elemental_damage",
+    "name": "Enemy Elemental Damage",
+    "format": "Enemy Elemental Damage: {value0}%"
+  },
+  {
+    "id": 179,
+    "key": "all_attributes_percent",
+    "name": "Strength, Dexterity, Vitality and Energy percent",
+    "format": "Strength, Dexterity, Vitality and Energy: {value0}%"
+  },
+  {
+    "id": 180,
+    "key": "physical_damage_reduced_flat",
+    "name": "Physical Damage reduced by #",
+    "format": "Physical Damage reduced by {value0}"
+  },
+  {
+    "id": 181,
+    "key": "healing_rate_from_apples",
+    "name": "Increased Healing Rate from Apples",
+    "format": "{value0}% increased Healing Rate from Apples"
+  },
+  {
+    "id": 182,
+    "key": "bonus_magic_damage_based_on_str_range",
+    "name": "Bonus Magic Damage based on #-#% Strength",
+    "format": "Magic Damage: {value0}-{value1}% of Base Strength"
+  },
+  {
+    "id": 183,
+    "key": "frequency",
+    "name": "Frequency",
+    "format": "Frequency: {value0} seconds"
+  },
+  {
+    "id": 184,
+    "key": "maximum_block_chance",
+    "name": "Maximum Block chance",
+    "format": "{value0}% Maximum Block chance"
+  },
+  {
+    "id": 185,
+    "key": "enemy_feedback_resistance",
+    "name": "Enemy Feedback Resistance",
+    "format": "Enemy Feedback Resistance: {value0}%"
+  },
+  {
+    "id": 186,
+    "key": "summoned_minion_resistances",
+    "name": "Summoned Minion Resistances",
+    "format": "{value0}% to Summoned Minion Resistances"
+  },
+  {
+    "id": 187,
+    "key": "life_after_each_kill",
+    "name": "Life after each kill",
+    "format": "{value0} Life after each kill"
+  },
+  {
+    "id": 188,
+    "key": "total_quills",
+    "name": "Total Quills",
+    "format": "{value0} Quills total"
+  },
+  {
+    "id": 189,
+    "key": "regenerates_percent_life_over_time",
+    "name": "Regenerates % Life in # seconds",
+    "format": "Regenerates {value0}% Life in {value1} seconds"
+  },
+  {
+    "id": 190,
+    "key": "slows_target",
+    "name": "Slows target",
+    "format": "Slows target by {value0}%"
+  },
+  {
+    "id": 191,
+    "key": "revenants",
+    "name": "Revenants",
+    "format": "Revenants: {value0}"
+  },
+  {
+    "id": 192,
+    "key": "spell_focus",
+    "name": "Spell Focus",
+    "format": "{value0} to Spell Focus"
+  },
+  {
+    "id": 193,
+    "key": "poison_resistance",
+    "name": "Poison Resistance",
+    "format": "Poison Resistance: {value0}%"
+  },
+  {
+    "id": 194,
+    "key": "melee_devotion",
+    "name": "Melee Devotion",
+    "format": "Only allows the use of Melee, Summoning and Buff/Debuff skills"
+  },
+  {
+    "id": 195,
+    "key": "bonus_fire_damage_to_weapons",
+    "name": "Bonus Fire Damage to weapons",
+    "format": "Bonus Fire Damage to weapons: {value0}-{value1}"
+  },
+  {
+    "id": 196,
+    "key": "bonus_cold_damage_to_weapons",
+    "name": "Bonus Cold Damage to weapons",
+    "format": "Bonus Cold Damage to weapons: {value0}-{value1}"
+  },
+  {
+    "id": 197,
+    "key": "flee_duration",
+    "name": "Monster Flee duration",
+    "format": "Monster flee duration: {value0} seconds"
+  },
+  {
+    "id": 198,
+    "key": "can_be_used_with_melee_devotion",
+    "name": "Can be used with Melee Devotion",
+    "format": "<p class='has-text-info'>Can be used with Melee Devotion</p>"
+  },
+  {
+    "id": 199,
+    "key": "slows_attacker",
+    "name": "Slows attackers",
+    "format": "Slows attackers by {value0}%"
+  },
+  {
+    "id": 200,
+    "key": "life_when_struck",
+    "name": "Life when struck by an enemy",
+    "format": "Life when struck by an enemy: {value0}"
+  },
+  {
+    "id": 201,
+    "key": "wyrmshot_seek_range",
+    "name": "Wyrmshot seek range",
+    "format": "Wyrmshot seek range: {value0} yards"
+  },
+  {
+    "id": 202,
+    "key": "critical_strike_chance",
+    "name": "Critical Strike chance",
+    "format": "Critical Strike chance: {value0}%"
+  },
+  {
+    "id": 203,
+    "key": "ctc_askari_lightning_on_stormcall",
+    "name": "Chance to Cast Askari Lightning on Stormcall hit",
+    "format": "{value0}% Chance to Cast Askari Lightning on Stormcall hit"
+  },
+  {
+    "id": 204,
+    "key": "regenerate_life_percent",
+    "name": "#% Maximum Life Regenerated per second",
+    "format": "{value0}% Maximum Life Regenerated per second"
+  },
+  {
+    "id": 205,
+    "key": "summoned_minion_life",
+    "name": "Summoned Minion Life",
+    "format": "{value0}% to Summoned Minion Life"
+  },
+  {
+    "id": 206,
+    "key": "extra_targets",
+    "name": "Extra Targets",
+    "format": "{value0} Extra Targets"
+  },
+  {
+    "id": 207,
+    "key": "chance_to_dodge_projectiles",
+    "name": "Chance to Dodge projectiles",
+    "format": "Chance to Dodge projectiles: {value0}%"
+  },
+  {
+    "id": 208,
+    "key": "loma",
+    "name": "Life on melee attack",
+    "format": "{value0} Life on melee attack"
+  },
+  {
+    "id": 209,
+    "key": "all_attributes",
+    "name": "Strength, Dexterity, Vitality and Energy flat",
+    "format": "Strength, Dexterity, Vitality and Energy: {value0}"
+  },
+  {
+    "id": 210,
+    "key": "loma_based_on_maximum_life",
+    "name": "Life on Melee Attack (Based on Maximum Life)",
+    "format": "{value0} Life on Melee Attack (Based on Maximum Life)"
+  },
+  {
+    "id": 211,
+    "key": "bonus_maximum_damage",
+    "name": "Bonus to Maximum Damage flat",
+    "format": "{value0} to Maximum Damage"
+  },
+  {
+    "id": 212,
+    "key": "malice_skill_damage",
+    "name": "Malice Skill Damage",
+    "format": "{value0}% Malice Skill Damage"
+  },
+  {
+    "id": 213,
+    "key": "steals_damage_as_life_based_on_character_level",
+    "name": "Steals #% of Damage as Life (Based on Character level)",
+    "format": "Steals {value0}% of Damage as Life (Based on Character level)"
+  },
+  {
+    "id": 214,
+    "key": "twisters",
+    "name": "Twisters",
+    "format": "{value0} Twisters"
+  },
+  {
+    "id": 215,
+    "key": "bonus_physical_damage_range",
+    "name": "Added #-# flat Physical Damage",
+    "format": "Bonus Physical Damage: {value0}-{value1}"
+  },
+  {
+    "id": 216,
+    "key": "vitality",
+    "name": "Vitality flat",
+    "format": "Vitality: {value0}"
+  },
+  {
+    "id": 217,
+    "key": "energy",
+    "name": "Energy flat",
+    "format": "Energy: {value0}"
+  },
+  {
+    "id": 218,
+    "key": "target_takes_additional_damage",
+    "name": "Target takes additional Damage per hit",
+    "format": "Target takes additional Damage: {value0} per hit"
+  },
+  {
+    "id": 219,
+    "key": "bonus_magic_damage_based_on_str_or_dex",
+    "name": "Bonus Magic Damage based on % Strength or Dexterity",
+    "format": "Bonus Magic Damage: {value0}% of Strength or Dexterity"
+  },
+  {
+    "id": 220,
+    "key": "flee_distance",
+    "name": "Monster Flees for # yards",
+    "format": "Monster Flees for {value0} yards"
+  },
+  {
+    "id": 221,
+    "key": "punishers",
+    "name": "Punishers",
+    "format": "Punishers: {value0}"
+  },
+  {
+    "id": 222,
+    "key": "fire_resistance",
+    "name": "Fire Resistance",
+    "format": "Fire Resistance: {value0}%"
+  },
+  {
+    "id": 223,
+    "key": "thorns_damage",
+    "name": "Thorns Damage",
+    "format": "Thorns Damage: {value0}"
+  },
+  {
+    "id": 225,
+    "key": "carapace_reduces_damage_by",
+    "name": "Carapace reduces Damage by #",
+    "format": "Carapace reduces Damage by {value0}"
+  },
+  {
+    "id": 228,
+    "key": "hammers_per_cast",
+    "name": "Hammers per cast",
+    "format": "Hammers per cast: {value0}"
+  },
+  {
+    "id": 229,
+    "key": "delay_between_novas",
+    "name": "Delay between novas",
+    "format": "Delay betwen Novas: {value0} seconds"
+  },
+  {
+    "id": 230,
+    "key": "minion_resistances_added_as_poison_spell_damage",
+    "name": "#% of your Minion Resistances added as Poison Spell Damage",
+    "format": "{value0}% of your Minion Resistances added as Poison Spell Damage"
+  },
+  {
+    "id": 231,
+    "key": "vitality_percent",
+    "name": "Vitality percent",
+    "format": "Vitality: {value0}%"
+  },
+  {
+    "id": 232,
+    "key": "strength_percent",
+    "name": "Strength percent",
+    "format": "Strength: {value0}%"
+  },
+  {
+    "id": 233,
+    "key": "attack_rating_based_on_vitality",
+    "name": "Attack Rating flat (based on Vitality)",
+    "format": "Attack Rating: {value0} (Based on Vitality)"
+  },
+  {
+    "id": 234,
+    "key": "bonus_defense_in_stone_form",
+    "name": "Bonus Defense in Stone Form",
+    "format": "Bonus Defense in Stone Form: {value0}%"
+  },
+  {
+    "id": 235,
+    "key": "base_block_chance",
+    "name": "Base Block chance",
+    "format": "{value0}% Base chance to Block"
+  },
+  {
+    "id": 236,
+    "key": "bonus_fire_damage_percent",
+    "name": "Bonus Fire Damage percent",
+    "format": "Bonus Fire Damage: {value0}%"
+  },
+  {
+    "id": 237,
+    "key": "weapon_physical_damage_per_minion_resist",
+    "name": "Weapon Physical Damage per Summoned Minion Resist",
+    "format": "{value0}% Weapon Physical Damage per 1% Summoned Minion Resistances (Max +600%))"
+  },
+  {
+    "id": 238,
+    "key": "chance_to_cast_heart_of_the_pack",
+    "name": "Chance to Cast Heart of the Pack on attack",
+    "format": "{value0}% Chance to Cast Heart of the Pack on attack"
+  },
+  {
+    "id": 239,
+    "key": "slows_nearby_enemies",
+    "name": "Slows nearby enemies",
+    "format": "Slows nearby enemies by {value0}%"
+  },
+  {
+    "id": 240,
+    "key": "bonus_cold_damage_based_on_str_and_dex",
+    "name": "Bonus Cold Damage to weapons based on % Strength and Dexterity",
+    "format": "Bonus Cold Damage to weapons: {value0}% of Strength and Dexterity"
+  },
+  {
+    "id": 241,
+    "key": "petrify",
+    "name": "Petrify",
+    "format": "Petrify: {value0} seconds"
+  },
+  {
+    "id": 242,
+    "key": "energy_percent",
+    "name": "Energy percent",
+    "format": "Energy: {value0}%"
+  },
+  {
+    "id": 243,
+    "key": "life_restored_per_cast",
+    "name": "Life Restored per cast (Based on Maximum Life)",
+    "format": "{value0} Life Restored per cast (Based on Maximum Life)"
+  },
+  {
+    "id": 244,
+    "key": "bolt_per_energy",
+    "name": "+# Bolt per # Energy",
+    "format": "+{value0} Bolt per {value1} Energy"
+  },
+  {
+    "id": 245,
+    "key": "maximum_tempest_bolts",
+    "name": "Maximum Tempest Bolts",
+    "format": "{value0} Maximum Tempest Bolts"
+  },
+  {
+    "id": 246,
+    "key": "lorenado_per_poison_skill_duration",
+    "name": "+# Lorenado per #% Poison Skill Duration",
+    "format": "+{value0} Lorenado per {value1}% Poison Skill Duration"
+  },
+  {
+    "id": 247,
+    "key": "damage_to_sorceress_elemental_skills",
+    "name": "#% Total Damage to Sorceress Elemental spells",
+    "format": "{value0}% Total Damage to Sorceress Elemental spells"
+  },
+  {
+    "id": 248,
+    "key": "sorceress_spells_damage_after_being_hit",
+    "name": "Sorceress spells % Damage after being hit",
+    "format": "Sorceress spells {value0}% Damage for 5 seconds after being hit"
+  },
+  {
+    "id": 249,
+    "key": "crushes_attacker",
+    "name": "Crushes attacker",
+    "format": "Crushes attacker: {value0}%"
+  },
+  {
+    "id": 250,
+    "key": "elemental_spell_damage_when_above_80_percent_life",
+    "name": "Total Elemental Spell Damage when above 80% Life",
+    "format": "Total Elemental Spell Damage when above 80% Life: {value0}%"
+  },
+  {
+    "id": 251,
+    "key": "fire_absorb",
+    "name": "Fire Absorb",
+    "format": "Fire Absorb: {value0}%"
+  },
+  {
+    "id": 252,
+    "key": "cold_absorb",
+    "name": "Cold Absorb",
+    "format": "Cold Absorb: {value0}%"
+  },
+  {
+    "id": 253,
+    "key": "lightning_absorb",
+    "name": "Lightning Absorb",
+    "format": "Lightning Absorb: {value0}%"
+  },
+  {
+    "id": 254,
+    "key": "edyrems",
+    "name": "Edyrems",
+    "format": "Edyrems: {value0}"
+  },
+  {
+    "id": 255,
+    "key": "stance_affects_you",
+    "name": "This stance only affects you",
+    "format": "<p class='has-text-info'>This stance only affects you</p>"
+  },
+  {
+    "id": 256,
+    "key": "stance_affects_you_and_spirits",
+    "name": "This stance affects you and your Ancient Spirits",
+    "format": "<p class='has-text-info'>This stance affects you and your Ancient Spirits</p>"
+  },
+  {
+    "id": 257,
+    "key": "melee_devotion_no_summons",
+    "name": "Melee Devotion no Summons",
+    "format": "Only allows the use of Melee and Buff/Debuff skills"
+  },
+  {
+    "id": 258,
+    "key": "melee_devotion_special_summons",
+    "name": "Melee Devotion with Special Summon",
+    "format": "Only allows the use of Melee, Special Summon and Buff/Debuff skills"
+  },
+  {
+    "id": 259,
+    "key": "cast_again_to_turn_off",
+    "name": "Cast again to turn off",
+    "format": "<p class='has-text-warning'>(Cast again to turn off)</p>"
+  },
+  {
+    "id": 260,
+    "key": "base_defense_percent_of_str_and_dex",
+    "name": "Base Defense: #% of Total Strength and Dexterity",
+    "format": "Base Defense: {value0}% of Total Strength and Dexterity"
+  },
+  {
+    "id": 261,
+    "key": "dexterity",
+    "name": "Dexterity flat",
+    "format": "Dexterity: {value0}"
+  },
+  {
+    "id": 262,
+    "key": "strength",
+    "name": "Strength flat",
+    "format": "Strength: {value0}"
+  },
+  {
+    "id": 263,
+    "key": "does_not_scale",
+    "name": "Does not scale with skill levels",
+    "format": "Does not scale with skill levels"
+  },
+  {
+    "id": 264,
+    "key": "chance_to_cast_chaos_nova_on_death",
+    "name": "Chance to Cast Chaos Nova on Death",
+    "format": "{value0}% Chance to Cast Chaos Nova on Death"
+  },
+  {
+    "id": 266,
+    "key": "chance_to_cast_chaos_nova_on_kill",
+    "name": "Chance to Cast Chaos Nova on Kill",
+    "format": "{value0}% Chance to Cast Chaos Nova on Kill"
+  },
+  {
+    "id": 267,
+    "key": "maximum_warp_distance",
+    "name": "Maximum Warp distance",
+    "format": "Maximum Warp distance: {value0} yards"
+  },
+  {
+    "id": 268,
+    "key": "poison_spell_damage",
+    "name": "Poison Spell Damage",
+    "format": "Poison Spell Damage: {value0}%"
+  },
+  {
+    "id": 269,
+    "key": "knives",
+    "name": "Knives",
+    "format": "Knives: {value0}"
+  },
+  {
+    "id": 270,
+    "key": "melee_devotion_traps",
+    "name": "Melee Devotion Traps",
+    "format": "Only allows the use of Traps, Melee and Buff/Debuff skills"
+  },
+  {
+    "id": 271,
+    "key": "trap_damage",
+    "name": "Trap Damage",
+    "format": "Trap Damage: {value0}%"
+  },
+  {
+    "id": 272,
+    "key": "fire_pierce",
+    "name": "Fire Pierce",
+    "format": "Fire Pierce: {value0}%"
+  },
+  {
+    "id": 273,
+    "key": "cold_pierce",
+    "name": "Cold Pierce",
+    "format": "Cold Pierce: {value0}%"
+  },
+  {
+    "id": 274,
+    "key": "lightning_pierce",
+    "name": "Lightning Pierce",
+    "format": "Lightning Pierce: {value0}%"
+  },
+  {
+    "id": 275,
+    "key": "magic_pierce",
+    "name": "Magic Pierce",
+    "format": "Magic Pierce: {value0}%"
+  },
+  {
+    "id": 276,
+    "key": "physical_pierce",
+    "name": "Physical Pierce",
+    "format": "Physical Pierce: {value0}%"
+  },
+  {
+    "id": 277,
+    "key": "arming_time",
+    "name": "Arming time",
+    "format": "Arming time: {value0} seconds"
+  },
+  {
+    "id": 278,
+    "key": "maximum_traps",
+    "name": "Maximum Traps",
+    "format": "Maximum Traps: {value0}"
+  },
+  {
+    "id": 279,
+    "key": "total_damage",
+    "name": "#% Total Damage",
+    "format": "{value0}% Total Damage"
+  },
+  {
+    "id": 280,
+    "key": "chance_to_convert",
+    "name": "Chance to Convert enemy",
+    "format": "Chance to Convert: {value0}%"
+  },
+  {
+    "id": 281,
+    "key": "all_skills",
+    "name": "+# to All Skills",
+    "format": "{value0} to All Skills"
+  },
+  {
+    "id": 282,
+    "key": "elemental_magic_damage_reduced_flat",
+    "name": "Elemental/Magic Damage reduced by #",
+    "format": "Elemental/Magic Damage reduced by {value0}"
+  },
+  {
+    "id": 283,
+    "key": "plr_as_bonus_defense",
+    "name": "Poison Length Reduction as Bonus Defense",
+    "format": "{value0}% Poison Length Reduction as Bonus Defense"
+  },
+  {
+    "id": 284,
+    "key": "reanimate",
+    "name": "Reanimate as MONSTER: #%",
+    "format": "Reanimate as {value0}: {value1}%"
+  },
+  {
+    "id": 285,
+    "key": "poison_damage",
+    "name": "Poison Damage",
+    "format": "Poison Damage: {value0}-{value1}"
+  },
+  {
+    "id": 286,
+    "key": "pure_damage",
+    "name": "Pure Damage over time",
+    "format": "Pure Damage: {value0} over {value1} seconds (Ignores Immunity)"
+  },
+  {
+    "id": 287,
+    "key": "earth_link_efficiency",
+    "name": "Earth Link #% Efficiency",
+    "format": "Earth Link: {value0}% Efficiency"
+  },
+  {
+    "id": 288,
+    "key": "mana_flat",
+    "name": "Bonus flat Mana",
+    "format": "{value0} to Mana"
+  },
+  {
+    "id": 289,
+    "key": "bounces",
+    "name": "Bounces # times",
+    "format": "Bounces {value0} times"
+  },
+  {
+    "id": 290,
+    "key": "life_lost_while_ravaging",
+    "name": "-# Life lost per second while Ravaging",
+    "format": "-{value0} Life lost per second while Ravaging"
+  },
+  {
+    "id": 291,
+    "key": "average_fire_dot_range",
+    "name": "Average Fire Damage: #-# per second",
+    "format": "Average Fire Damage: {value0}-{value1} per second"
+  },
+  {
+    "id": 292,
+    "key": "physical_resist_per_mana_regen",
+    "name": "#% Physical Resistance per #% Bonus to Mana Regen",
+    "format": "{value0}% Physical Resistance per {value1}% Bonus to Mana Regen"
+  },
+  {
+    "id": 293,
+    "key": "up_to_X_mana",
+    "name": "Up to # Maximum Mana",
+    "format": "Up to {value0} Maximum Mana"
+  },
+  {
+    "id": 294,
+    "key": "wall_duration",
+    "name": "Wall duration",
+    "format": "Wall duration: {value0} seconds"
+  },
+  {
+    "id": 295,
+    "key": "enrage_duration",
+    "name": "Enrage duration",
+    "format": "Enrage duration: {value0} seconds"
+  },
+  {
+    "id": 296,
+    "key": "base_physical_damage_to_thunderslam",
+    "name": "+# base Physical Damage to Thunderslam",
+    "format": "{value0} base Physical Damage to Thunderslam"
+  },
+  {
+    "id": 297,
+    "key": "power_per_strength",
+    "name": "1 Power per # Strength",
+    "format": "1 Power per {value0} Strength"
+  },
+  {
+    "id": 298,
+    "key": "power_per_wpd",
+    "name": "1 Power per # Weapon Physical Damage",
+    "format": "1 Power per {value0} Weapon Physical Damage"
+  },
+  {
+    "id": 299,
+    "key": "percent_strength_added_as_magic_to_shower_of_rocks",
+    "name": "#% of Strength added as Magic Damage to Shower of Rocks",
+    "format": "{value0}% of Strength added as Magic Damage to Shower of Rocks"
+  },
+  {
+    "id": 300,
+    "key": "confuse_duration",
+    "name": "Enemy Confuse duration",
+    "format": "Enemy Confuse duration: {value0} seconds"
+  },
+  {
+    "id": 301,
+    "key": "cooldown_reduced_by",
+    "name": "Cooldown reduced by # seconds",
+    "format": "Cooldown reduced by {value0} seconds"
+  },
+  {
+    "id": 302,
+    "key": "burning_damage",
+    "name": "Burning Damage",
+    "format": "Burning Damage: {value0}"
+  },
+  {
+    "id": 303,
+    "key": "fireballs",
+    "name": "# Fireballs",
+    "format": "{value0} Fireballs"
+  },
+  {
+    "id": 304,
+    "key": "percent_life_restored_per_cast",
+    "name": "#% Life Restored per cast",
+    "format": "{value0}% Life Restored per cast"
+  },
+  {
+    "id": 305,
+    "key": "hits_per_second",
+    "name": "# hits per second",
+    "format": "{value0} hits per second"
+  },
+  {
+    "id": 306,
+    "key": "attack_rating_per_strength",
+    "name": "# Attack Rating per # base Strength",
+    "format": "{value0} Attack Rating per {value1} points of base Strength"
+  },
+  {
+    "id": 307,
+    "key": "chance_to_spawn_corpse_on_striking",
+    "name": "Chance to spawn a corpse on striking",
+    "format": "{value0}% Chance to spawn a corpse on striking"
+  },
+  {
+    "id": 308,
+    "key": "healing_rate_from_potions",
+    "name": "#% increased healing from potions",
+    "format": "{value0}% increased healing from potions"
+  },
+  {
+    "id": 309,
+    "key": "healing_potions_additional_seconds",
+    "name": "Healing potions last # additional seconds",
+    "format": "Healing potions last {value0} additional seconds"
+  },
+  {
+    "id": 310,
+    "key": "adds_percent_str_and_dex_as_wpd",
+    "name": "Adds #% of Strength and Dexterity as Weapon Physical Damage",
+    "format": "Adds {value0}% of Strength and Dexterity as Weapon Physical Damage (Current Bonus: {value1}%)"
+  },
+  {
+    "id": 311,
+    "key": "totem_avoid_damage",
+    "name": "Totem chance to avoid damage",
+    "format": "Totem Chance to Avoid Damage: {value0}%"
+  },
+  {
+    "id": 312,
+    "key": "totem_life",
+    "name": "Totem Life",
+    "format": "Totem Life: {value0} hit points"
+  },
+  {
+    "id": 313,
+    "key": "ctc_empowered_spell_on_death",
+    "name": "#% Chance to cast Empowered Spell on death",
+    "format": "{value0}% Chance to cast Empowered Spell on death"
+  },
+  {
+    "id": 314,
+    "key": "ctc_empowered_spell_on_death_blow",
+    "name": "#% Chance to cast Empowered Spell on Death Blow",
+    "format": "{value0}% Chance to cast Empowered Spell on Death Blow"
+  },
+  {
+    "id": 315,
+    "key": "totem_spell_damage",
+    "name": "Totem Spell Damage",
+    "format": "Totem Spell Damage: {value0}%"
+  },
+  {
+    "id": 316,
+    "key": "percent_of_base_stat",
+    "name": "#-#% of base # stat",
+    "format": "{value0}-{value1}% of base {value2}"
+  },
+  {
+    "id": 317,
+    "key": "skill_affects_you_and_spirits",
+    "name": "This skill affects you and your Ancient Spirits",
+    "format": "<p class='has-text-info'>This skill affects you and your Ancient Spirits</p>"
+  },
+  {
+    "id": 318,
+    "key": "defense_bonus_multiplier_per_socketed_rune",
+    "name": "Defense bonus multiplier per socketed rune",
+    "format": "Defense bonus multiplier per socketed rune: {value0}%"
+  },
+  {
+    "id": 319,
+    "key": "class_poison_skill_duration",
+    "name": "Class Poison skill duration",
+    "format": "Class Poison skill duration: {value0}%"
+  },
+  {
+    "id": 320,
+    "key": "physical_resistance_after_taking_weapon_damage",
+    "name": "#% Physical Resistance after taking Weapon Damage",
+    "format": "{value0}% Physical Resistance after taking Weapon Damage"
+  },
+  {
+    "id": 321,
+    "key": "life_steal_per_strength",
+    "name": "#% Life Steal per # Strength",
+    "format": "{value0}% Life Steal per {value1} Strength"
+  },
+  {
+    "id": 322,
+    "key": "damage_multiplier_on_stampede",
+    "name": "Damage multiplier on Stampede",
+    "format": "Damage multiplier on Stampede: {value0}%"
+  },
+  {
+    "id": 323,
+    "key": "drains_life_while_active",
+    "name": "Drains % of Maximum Life per second while active",
+    "format": "Drains {value0}% of Maximum Life per second while active"
+  },
+  {
+    "id": 324,
+    "key": "necromancer_minions_damage",
+    "name": "Necromancer Minions: #% Total Damage",
+    "format": "Necromancer Minions: {value0}% Total Damage"
+  },
+  {
+    "id": 325,
+    "key": "useable_under_melee_locks",
+    "name": "Useable under melee locks",
+    "format": "<p class='has-text-info'>Useable under melee locks</p>"
+  },
+  {
+    "id": 326,
+    "key": "heals_percent_life",
+    "name": "Heals #% of Maximum Life",
+    "format": "Heals {value0}% of Maximum Life"
+  },
+  {
+    "id": 327,
+    "key": "cognition",
+    "name": "Cognition",
+    "format": "Cognition: {value0}"
+  },
+  {
+    "id": 328,
+    "key": "magic_damage_to_wychwind",
+    "name": "Flat Magic Damage to Wychwind",
+    "format": "{value0} Magic Damage to Wychwind"
+  },
+  {
+    "id": 329,
+    "key": "claw_physical_damage",
+    "name": "Claw Physical Damage #%",
+    "format": "Claw Physical Damage: {value0}%"
+  },
+  {
+    "id": 330,
+    "key": "can_be_cast_on_other_units",
+    "name": "Can be cast on other units",
+    "format": "<p class='has-text-warning'>Can be cast on other units</p>"
+  },
+  {
+    "id": 331,
+    "key": "hits_times",
+    "name": "Hits # times",
+    "format": "Hits {value0} times"
+  },
+  {
+    "id": 332,
+    "key": "cooldown_increased_by",
+    "name": "Cooldown increased by # seconds",
+    "format": "Cooldown increased by {value0} seconds"
+  },
+  {
+    "id": 333,
+    "key": "snake_stance_damage_multiplier",
+    "name": "Snake stance damage multiplier after using Stampede",
+    "format": "Snake stance gains damage for a short time after using Stampede<br>(Damage multiplier: {value0}%)"
+  },
+  {
+    "id": 334,
+    "key": "heat_loss_rate",
+    "name": "Heat loss rate",
+    "format": "Heat loss rate: {value0}"
+  },
+  {
+    "id": 335,
+    "key": "cold_resistance",
+    "name": "Cold Resistance",
+    "format": "Cold Resistance: {value0}%"
+  },
+  {
+    "id": 336,
+    "key": "global_fire_activation_frequency",
+    "name": "Activation Frequency of Periodic Fire Skills: #%",
+    "format": "Activation Frequency of Periodic Fire Skills: {value0}%"
+  },
+  {
+    "id": 337,
+    "key": "lorenado_damage_per_poison_skill_duration",
+    "name": "+1% Damage Multiplier per #% Poison Skill Duration",
+    "format": "+1% Damage Multiplier per {value0}% Poison Skill Duration"
+  },
+  {
+    "id": 338,
+    "key": "poison_spell_damage_for_seconds",
+    "name": "+#% Poison Spell Damage for # seconds",
+    "format": "+{value0}% Poison Spell Damage for {value1} seconds"
+  },
+  {
+    "id": 339,
+    "key": "percent_energy_as_cold_damage",
+    "name": "#% of Energy added as Cold Damage",
+    "format": "{value0}% of Energy added as Cold Damage"
+  },
+  {
+    "id": 340,
+    "key": "activation_frequency_effectiveness",
+    "name": "Activation Frequency Effectiveness: #%",
+    "format": "Activation Frequency Effectiveness: {value0}%"
+  },
+  {
+    "id": 341,
+    "key": "maximum_steady_aim_charges",
+    "name": "Maximum Steady Aim charges",
+    "format": "Maximum Steady Aim charges: {value0}"
+  },
+  {
+    "id": 342,
+    "key": "stead_aim_gained_per_shot",
+    "name": "# Steady Aim charges gained per shot",
+    "format": "{value0} Steady Aim charges gained per shot"
+  },
+  {
+    "id": 343,
+    "key": "increased_potion_effectiveness",
+    "name": "#% increased effectiveness of potions",
+    "format": "{value0}% increased effectiveness of potions"
+  },
+  {
+    "id": 344,
+    "key": "feedback_damage_percent_of_energy",
+    "name": "Feedback Damage #-# % of Total Energy",
+    "format": "Feedback Damage: {value0}-{value1}% of Total Energy"
+  },
+  {
+    "id": 345,
+    "key": "base_cold_damage_based_on_uncapped_cold_resistance",
+    "name": "Deals #% of your uncapped Cold Resistance as Base Cold Damage",
+    "format": "Deals {value0}% of your uncapped Cold Resistance as Base Cold Damage"
+  },
+  {
+    "id": 346,
+    "key": "minions_inherit_proc_chance",
+    "name": "Minions inherit #% of your (on Attack/Kill/Death Blow) triggers",
+    "format": "Minions inherit {value0}% of your on {value1} triggers"
+  },
+  {
+    "id": 347,
+    "key": "fires_shrapnel_at_targets",
+    "name": "Fires shrapnel at: # Targets",
+    "format": "Fires shrapnel at: {value0} Targets"
+  },
+  {
+    "id": 348,
+    "key": "elemental_or_physical_damage_to_weapon_as_magic",
+    "name": "Deals #% of Your Weapon Fire, Lightning, and Cold, or Physical Damage as Magic Damage",
+    "format": "Deals {value0}% of Your Weapon Fire, Lightning, and Cold, or Physical Damage as Magic Damage"
+  },
+  {
+    "id": 349,
+    "key": "life_and_mana_on_striking",
+    "name": "+# Life and Mana on striking",
+    "format": "+{value0} Life and Mana on striking"
+  },
+  {
+    "id": 350,
+    "key": "global_lightning_activation_frequency",
+    "name": "Activation Frequency of Periodic Lightning Skills: #%",
+    "format": "Activation Frequency of Periodic Lightning Skills: {value0}%"
+  },
+  {
+    "id": 351,
+    "key": "thunder_frequency",
+    "name": "Thunder Frequency: Every # seconds",
+    "format": "Thunder Frequency: Every{value0} seconds"
+  },
+  {
+    "id": 352,
+    "key": "deadly_strike_per_strength",
+    "name": "#% Deadly Strike per # Strength",
+    "format": "{value0}% Deadly Strike per {value1} Strength"
+  },
+  {
+    "id": 353,
+    "key": "percent_str_or_dex_added_as_vitality",
+    "name": "#% of Strength or Dexterity added as Vitality",
+    "format": "{value0}% of Strength or Dexterity added as Vitality"
+  },
+  {
+    "id": 354,
+    "key": "grit_while_unmorphed",
+    "name": "+#% Grit while unmorphed",
+    "format": "+{value0}% Grit while unmorphed"
+  },
+  {
+    "id": 355,
+    "key": "delay_between_detonations",
+    "name": "Delay between detonations",
+    "format": "Delay between detonations: {value0} seconds"
+  },
+  {
+    "id": 356,
+    "key": "standing_near_cataclyst_increases_blast_damage",
+    "name": "Standing near the Cataclyst before detonation increases total blast damage by #%",
+    "format": "Standing near the Cataclyst before detonation increases total blast damage by {value0}%"
+  },
+  {
+    "id": 357,
+    "key": "fire_and_physical_damage_per_blast",
+    "name": "Total Fire and Physical Damage per Blast",
+    "format": "Total Fire and Physical Damage per Blast: {value0}"
+  },
+  {
+    "id": 358,
+    "key": "percent_energy_as_poison_spell_damage",
+    "name": "#% of Energy added as Poison Spell Damage",
+    "format": "{value0}% of Energy added as Poison Spell Damage"
+  },
+  {
+    "id": 359,
+    "key": "percent_energy_as_movement_speed",
+    "name": "#% of Energy added as Movement Speed",
+    "format": "{value0}% of Energy added as Movement Speed"
+  },
+  {
+    "id": 360,
+    "key": "delay_between_shockwaves",
+    "name": "Delay between shockwaves",
+    "format": "Delay between shockwaves: {value0} seconds"
+  }
+]

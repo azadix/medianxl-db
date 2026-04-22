@@ -10,8 +10,6 @@
  * - Example: If lvl=10, "lvl/3" = 3 but "1/3*lvl" = 0
  */
 
-const lvlBreakpoints = [[0, 1], [1, 8], [8, 16], [16, 22], [22, 28], [28, null]];
-const lengthLvlBreakpoints = [[0, 1], [1, 8], [8, 16], [16, null]];
 const framesPerSecond = 25;
 
 export class FormulaEvaluator {
@@ -114,6 +112,18 @@ export class FormulaEvaluator {
       description: 'Conditional: returns trueValue if condition is true, otherwise falseValue. Supports comparisons: ==, !=, <, <=, >, >=',
       example: 'if(lvl <= 22, 5*slvl, 0) - returns 5*slvl if level <= 22, otherwise 0'
     });
+    this.registerFunction({
+      keyword: 'ln',
+      function: (a, b, lvl) => this.linearFromParams(a, b, lvl),
+      description: 'Linear param curve: a + b * (lvl - 1) (ln12)',
+      example: 'ln(calc1, calc2, lvl) with numeric calc1/calc2 or literals'
+    });
+    this.registerFunction({
+      keyword: 'dm',
+      function: (a, b, lvl) => this.diminishingFromParams(a, b, lvl),
+      description: 'Diminishing param curve (dm12)',
+      example: 'dm(calc1, calc2, lvl)'
+    });
     
     // Register default variables with descriptions and examples
     this.registerVariable({
@@ -136,6 +146,18 @@ export class FormulaEvaluator {
       description: 'Character level',
       example: '25 + ulvl'
     });
+    this.registerVariable({
+      keyword: 'calc',
+      description: 'Numeric result of the calc slot for your current lvl bucket (same as calc1..calc6 by band: 0–1, 2–8, 9–16, 17–22, 23–28, 29+)',
+      example: 'calc*blvl'
+    });
+    for (let i = 1; i <= 6; i++) {
+      this.registerVariable({
+        keyword: `calc${i}`,
+        description: `D2-style calc slot ${i} (formula on the skill row; evaluated before scaling). Result is a number.`,
+        example: i === 1 ? 'Scaling: calc1*blvl with calc1 = lvl*5' : `Use calc${i} in formulas`
+      });
+    }
   }
 
   /**
@@ -216,6 +238,12 @@ export class FormulaEvaluator {
         description: 'Reference another skill\'s blvl (base points) in formulas',
         example: '5 + [[barrage]] * 2'
       },
+      {
+        name: '[[skill_name]].{{stat_key}}',
+        description:
+          'Numeric value of a stat on another skill at that skill\'s current level (blvl + all-skills). Resolved before {{character stats}}.',
+        example: '[[continuity]].{{skill_duration}}'
+      },
     ];
   }
 
@@ -264,7 +292,7 @@ export class FormulaEvaluator {
       }
 
       // Check for valid characters (including square brackets for skill references, braces for stat references, and comparison operators for if())
-      const validChars = /^[0-9+\-*/.(),a-zA-Z_\[\]\{\}\s=<>!]+$/;
+      const validChars = /^[0-9+\-*/.(),a-zA-Z_[\]{}()\s=<>!]+$/;
       if (!validChars.test(trimmed)) {
         return { success: false, error: 'Formula contains invalid characters' };
       }
@@ -315,6 +343,38 @@ export class FormulaEvaluator {
     }
     
     return null;
+  }
+
+  /**
+   * Linear param curve: a + b * (lvl - 1) (ln12 like).
+   * @param {number} a
+   * @param {number} b
+   * @param {number} lvl
+   * @returns {number}
+   */
+  linearFromParams(a, b, lvl) {
+    const lv = Number(lvl);
+    const level = Number.isFinite(lv) ? lv : 1;
+    const aa = Number(a) || 0;
+    const bb = Number(b) || 0;
+    
+    return aa + bb * (level - 1);
+  }
+
+  /**
+   * Diminishing param curve (dm12 like).
+   * @param {number} a
+   * @param {number} b
+   * @param {number} lvl
+   * @returns {number}
+   */
+  diminishingFromParams(a, b, lvl) {
+    const lv = Number(lvl);
+    const level = Number.isFinite(lv) ? lv : 1;
+    const aa = Number(a) || 0;
+    const bb = Number(b) || 0;
+
+    return Math.floor(aa + ((110 * level) * (bb - aa)) / (100 * (level + 6)));
   }
 
   /**
@@ -489,9 +549,10 @@ export class FormulaEvaluator {
     const statRefPattern = /\{\{([a-zA-Z_][a-zA-Z0-9_]*)\}\}/g;
     
     return formula.replace(statRefPattern, (match, statName) => {
-      // Get stat value from character state stats
-      if (context.characterState && context.characterState.stats && context.characterState.stats[statName] !== undefined) {
-        return String(context.characterState.stats[statName]);
+      const k = String(statName).toLowerCase();
+      // Get stat value from character state stats (keys stored lowercase)
+      if (context.characterState && context.characterState.stats && context.characterState.stats[k] !== undefined) {
+        return String(context.characterState.stats[k]);
       }
       
       // If stat not found, return 0
@@ -500,8 +561,8 @@ export class FormulaEvaluator {
   }
 
   /**
-   * Extract stat references from a formula
-   * Returns an array of unique stat names used in the formula
+   * Extract character stat references from a formula (for auto-fill of Character Stats field).
+   * Does not include tokens inside [[skill_name]].{{stat_key}} — those resolve from the other skill, not character.
    * @param {string} formula - The formula to analyze
    * @returns {Array<string>} Array of stat names
    */
@@ -509,15 +570,15 @@ export class FormulaEvaluator {
     if (!formula || typeof formula !== 'string') {
       return [];
     }
-    
-    const statRefPattern = /\{\{([a-zA-Z_][a-zA-Z0-9_]*)\}\}/g;
+
+    const statRefPattern = /(?<!\]\]\.)\{\{([a-zA-Z_][a-zA-Z0-9_]*)\}\}/g;
     const stats = new Set();
     let match;
-    
+
     while ((match = statRefPattern.exec(formula)) !== null) {
       stats.add(match[1]);
     }
-    
+
     return Array.from(stats);
   }
 
@@ -544,8 +605,13 @@ export class FormulaEvaluator {
    * Check if formula contains unreplaced variables
    */
   containsUnreplacedVariables(formula) {
-    // First, remove skill references since they're handled separately
-    const withoutSkillRefs = formula.replace(/\[\[[a-zA-Z_][a-zA-Z0-9_]*(?::[a-zA-Z_][a-zA-Z0-9_]*)?\]\]/g, '0');
+    // Cross-skill stat tokens are resolved in Skill before evaluate (numeric literals)
+    let withoutSkillRefs = formula.replace(
+      /\[\[[a-zA-Z_][a-zA-Z0-9_]*\]\]\.\{\{[a-zA-Z_][a-zA-Z0-9_]*\}\}/g,
+      '0'
+    );
+    // Plain skill references (blvl)
+    withoutSkillRefs = withoutSkillRefs.replace(/\[\[[a-zA-Z_][a-zA-Z0-9_]*(?::[a-zA-Z_][a-zA-Z0-9_]*)?\]\]/g, '0');
     
     const variablePattern = /\b[a-zA-Z_][a-zA-Z0-9_]*\b/g;
     const matches = withoutSkillRefs.match(variablePattern);
@@ -589,7 +655,7 @@ export class FormulaEvaluator {
         return Math.trunc(result);
       }
     } catch (error) {
-      throw new Error(`Formula evaluation failed: ${error.message}`);
+      throw new Error(`Formula evaluation failed: ${error.message}`, { cause: error });
     }
   }
 
