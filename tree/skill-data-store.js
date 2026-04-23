@@ -156,7 +156,7 @@ export class SkillFileStore {
 
     /**
      * Row from stats.json for a scaling stat key (`key` lowercased).
-     * Optional `pairedStat`: `[{ valueIndex: 0..3, stat|plannerKey }]` routes value slots to planner character_stats keys (see planner-stat-modifiers).
+     * Optional `pairedStat`: `[{ valueIndex: 0..3, stat|plannerKey }, ...]` routes value slots to planner character_stats keys; multiple entries per slot are allowed (see planner-stat-modifiers).
      */
     getStatByKeyLower(key) {
         return this.statsByKeyLower.get(String(key).toLowerCase()) ?? null;

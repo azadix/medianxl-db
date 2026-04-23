@@ -91,15 +91,15 @@ function resolvePairedStatTargetToPlannerKey(store, tokenLower) {
 
 /**
  * Validated entries from stats.json `pairedStat` (optional array on the scaling-stat row).
- * Later entries for the same valueIndex override earlier ones.
+ * Every valid object is kept: multiple rows may share the same valueIndex so one slot updates several planner stats.
  * @param {import('../tree/skill-data-store.js').SkillFileStore|null} store
  * @param {unknown} raw
  * @returns {{ valueIndex: number, plannerKey: string }[]}
  */
 function normalizePairedStatList(store, raw) {
   if (!Array.isArray(raw) || raw.length === 0 || !store) return [];
-  /** @type {Map<number, { valueIndex: number, plannerKey: string }>} */
-  const bySlot = new Map();
+  /** @type {{ valueIndex: number, plannerKey: string }[]} */
+  const out = [];
   for (const entry of raw) {
     if (!entry || typeof entry !== 'object') continue;
     const viRaw = entry.valueIndex ?? entry.value_index ?? entry.slot;
@@ -120,9 +120,9 @@ function normalizePairedStatList(store, raw) {
       }
       continue;
     }
-    bySlot.set(n, { valueIndex: n, plannerKey });
+    out.push({ valueIndex: n, plannerKey });
   }
-  return [...bySlot.values()].sort((a, b) => a.valueIndex - b.valueIndex);
+  return out;
 }
 
 /**
