@@ -1,8 +1,7 @@
 import { computed, watch } from 'vue';
 import { usePlannerStore } from '../stores/planner.js';
 import {
-  buildSkillCardData,
-  buildOSkillCardData,
+  buildPlannerSkillCardData,
   updateTabColors,
   getSkillIcon
 } from '../../tree/tree-render.js';
@@ -12,7 +11,8 @@ import Innate from '../../skills/Innate.js';
 import {
   getAllOSkills,
   changeOSkillPoints,
-  getSkillPoints
+  getSkillPoints,
+  hasAnyOSkillAllocations
 } from '../../character/character-state.js';
 import { enrichOskillForDisplay } from '../../tree/oskill-display.js';
 
@@ -54,7 +54,11 @@ export function usePlannerSkillsTree({ payload, classSkills, activeTab, gridRang
           variants: []
         };
       }
-      const data = buildSkillCardData(skill, list, getSkillIcon);
+      const data = buildPlannerSkillCardData(skill, {
+        skillType: 'regular',
+        allSkills: list,
+        getIconFn: getSkillIcon
+      });
       data.variants = variants;
       return data;
     } catch (e) {
@@ -89,7 +93,13 @@ export function usePlannerSkillsTree({ payload, classSkills, activeTab, gridRang
         points
       };
       const enriched = enrichOskillForDisplay(rawRow);
-      out.push(buildOSkillCardData(enriched, getSkillIcon));
+      out.push(
+        buildPlannerSkillCardData(enriched, {
+          skillType: 'oskill',
+          allSkills: [],
+          getIconFn: getSkillIcon
+        })
+      );
     }
     return out;
   });
@@ -156,9 +166,7 @@ export function usePlannerSkillsTree({ payload, classSkills, activeTab, gridRang
         s.add(skill.tabName);
       }
     }
-    const raw = getAllOSkills();
-    const hasO = raw && Object.values(raw).some((p) => p > 0);
-    if (hasO) s.add('oSkills');
+    if (hasAnyOSkillAllocations()) s.add('oSkills');
     return s;
   });
 

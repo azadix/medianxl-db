@@ -1,6 +1,6 @@
 // Core functionality for the skills tree viewer
 import { loadPlannerSkillsFromTreeData } from './tree-data.js';
-import { renderSkills, updateTabColors } from './tree-render.js';
+import { renderSkills } from './tree-render.js';
 import { getCurrentTab, setCurrentTabState } from './tree-tab-state.js';
 import { updatePlannerUrlTab } from './tree-url-sync.js';
 import Tree from '../character/Tree.js';
@@ -164,8 +164,6 @@ function loadBuildData(build, buildIndex = null) {
     
     // Load oSkills
     setAllOSkills(build.oSkills || []);
-    window.oSkills = getAllOSkills(); // Update window reference
-    // Don't call updateOSkillsDisplay here - it will be called after renderSkills
     
     // Load All Skills bonus
     if (build.allSkillsBonus !== undefined) {
@@ -213,9 +211,6 @@ function loadBuildData(build, buildIndex = null) {
     // Update displays
     updateSkillPointsDisplay();
     updateDevotionDisplay();
-    
-    // Update oSkills display after everything is rendered
-    updateOSkillsDisplay();
     
     // Set current build index so "Save" button works
     if (buildIndex !== null) {
@@ -317,7 +312,6 @@ async function finalizePlannerPageAfterLoad() {
         renderSkills(selectedClass, skillsList, skillsContainer, savedTab);
         updateSkillPointsDisplay();
         updateDevotionDisplay();
-        updateOSkillsDisplay();
         window.dispatchEvent(new CustomEvent('plannerConfigRefresh'));
         initializeTooltip();
         initializeOSkillsDropdown();
@@ -377,7 +371,6 @@ export async function initializeTreePage() {
         
         // Clear oSkills when switching classes (like resetBuild but without confirmation)
         clearOSkills();
-        window.oSkills = getAllOSkills(); // Update window reference
         
         // Reset oSkills dropdown input
         const oskillDropdown = document.querySelector('#oskill-dropdown .dropdown-list-input');
@@ -417,7 +410,6 @@ export async function initializeTreePage() {
         // Update displays
         updateSkillPointsDisplay();
         updateDevotionDisplay();
-        updateOSkillsDisplay();
 
         window.dispatchEvent(new CustomEvent('plannerConfigRefresh'));
     });
@@ -440,11 +432,6 @@ function setupGlobalEventListeners() {
     plannerTreeGlobalListenersAttached = true;
     // Add event listener for skill point changes
     window.addEventListener('skillPointsChanged', handleSkillPointsChanged);
-    
-    // Add event listener for oSkills changes
-    window.addEventListener('oskillsUpdated', () => {
-        updateOSkillsDisplay();
-    });
     
     // Add event listener for character level changes
     window.addEventListener('characterLevelChanged', () => {
@@ -768,8 +755,6 @@ function resetBuild(showToast = true) {
     
     // Clear oSkills
     clearOSkills();
-    window.oSkills = getAllOSkills(); // Update window reference
-    updateOSkillsDisplay();
     
     // Reset oSkills dropdown input
     const oskillDropdown = document.querySelector('#oskill-dropdown .dropdown-list-input');
@@ -1454,36 +1439,6 @@ function initializeOSkillsDropdown() {
         sidebarDropdown.setItems(skillItems);
         window.oskillDropdownInstance = sidebarDropdown;
     }
-}
-
-// oSkills management is now handled by character-state.js
-// These are just thin wrappers for backwards compatibility
-
-function updateOSkillsDisplay() {
-    // Update window reference for other modules (like tree-render.js)
-    window.oSkills = getAllOSkills();
-
-    // Update tab colors (lightweight - just updates CSS classes)
-    const tabsWithPoints = new Set();
-    
-    // Check regular skills for points
-    const skillPoints = getAllSkillPoints();
-    if (skillsList) {
-        skillsList.forEach(skill => {
-            if (skillPoints[skill.id] > 0 && skill.tabName) {
-                tabsWithPoints.add(skill.tabName);
-            }
-        });
-    }
-    
-    // Check if oSkills tab should be highlighted
-    if (window.oSkills && (
-        Array.isArray(window.oSkills) ? window.oSkills.length > 0 : Object.keys(window.oSkills).length > 0
-    )) {
-        tabsWithPoints.add('oSkills');
-    }
-    
-    updateTabColors(tabsWithPoints);
 }
 
 /**

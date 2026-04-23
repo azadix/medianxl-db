@@ -16,6 +16,7 @@ export default class Character {
   static MIN_LEVEL = 1;
   static MAX_LEVEL = 150;
   static DEFAULT_LEVEL = 1;
+  static OSKILL_MAX_POINTS = 150;
   
   /**
    * All planner quests: `type` selects behavior; `reward` lists per-difficulty `amount` (and `expectedLevel` for reference).
@@ -750,7 +751,7 @@ export default class Character {
   addOSkill(skillId, displayName, skillName, image, className, hasDetails = false, description = null, skillEffect = null) {
     const existing = this.oSkills.find(s => s.skillName === skillName);
     if (existing) {
-      existing.points++;
+      existing.points = Character.clampOSkillPoints(existing.points + 1);
     } else {
       const oskillData = {
         skillId,
@@ -766,9 +767,6 @@ export default class Character {
       
       this.oSkills.push(oskillData);
     }
-    
-    // Dispatch event for UI updates
-    window.dispatchEvent(new CustomEvent('oskillsUpdated'));
   }
 
   /**
@@ -781,7 +779,6 @@ export default class Character {
     );
     if (index > -1) {
       this.oSkills.splice(index, 1);
-      window.dispatchEvent(new CustomEvent('oskillsUpdated'));
     }
   }
 
@@ -789,9 +786,8 @@ export default class Character {
    * Change oSkill points (positive to add, negative to remove)
    * @param {string} skillName - Internal skill name
    * @param {number} amount - Amount to change (can be negative)
-   * @param {number} _allSkillsBonus - Reserved; "+# to All Skills" is applied elsewhere in calculations
    */
-  changeOSkillPoints(skillIdOrName, amount, _allSkillsBonus = 0) {
+  changeOSkillPoints(skillIdOrName, amount) {
     // Find skill by ID or name
     const skill = this.oSkills.find(s => 
       s.skillId === parseInt(skillIdOrName) || s.skillName === skillIdOrName
@@ -800,19 +796,11 @@ export default class Character {
 
     const newPoints = skill.points + amount;
     
-    // Apply 150 hard cap on points only (not considering bonus here)
-    // The bonus will be applied on top in calculations, and effective level will be capped at 150
-    if (newPoints > 150) {
-      skill.points = 150;
-    } else {
-      skill.points = newPoints;
-    }
+    skill.points = Character.clampOSkillPoints(newPoints);
     
     // Remove skill if points drop to 0 or below
     if (skill.points <= 0) {
       this.removeOSkill(skillIdOrName);
-    } else {
-      window.dispatchEvent(new CustomEvent('oskillsUpdated'));
     }
   }
 
@@ -821,7 +809,6 @@ export default class Character {
    */
   clearOSkills() {
     this.oSkills = [];
-    window.dispatchEvent(new CustomEvent('oskillsUpdated'));
   }
 
   /**
@@ -833,21 +820,31 @@ export default class Character {
       this.oSkills = [];
     } else if (Array.isArray(oSkills)) {
       // Old format: array of objects with full metadata
-      this.oSkills = oSkills;
+      this.oSkills = oSkills
+        .map((row) => ({
+          ...row,
+          points: Character.clampOSkillPoints(row?.points ?? 0)
+        }))
+        .filter((row) => row.points > 0);
     } else if (typeof oSkills === 'object') {
       // New format: object with skill IDs or names as keys and points as values
       this.oSkills = [];
       Object.entries(oSkills).forEach(([skillIdOrName, points]) => {
-        if (points > 0) {
+        const clampedPoints = Character.clampOSkillPoints(points);
+        if (clampedPoints > 0) {
           this.oSkills.push({
             skillId: /^\d+$/.test(skillIdOrName) ? parseInt(skillIdOrName) : null,
             skillName: /^\d+$/.test(skillIdOrName) ? null : skillIdOrName,
-            points
+            points: clampedPoints
           });
         }
       });
     }
-    window.dispatchEvent(new CustomEvent('oskillsUpdated'));
+  }
+
+  static clampOSkillPoints(points) {
+    const normalized = Math.floor(Number(points) || 0);
+    return Math.max(0, Math.min(Character.OSKILL_MAX_POINTS, normalized));
   }
 
   // ===== STATS MANAGEMENT METHODS =====

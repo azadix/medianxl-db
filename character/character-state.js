@@ -114,6 +114,19 @@ function notifyPlannerStateChanged(detail = {}) {
   }
 }
 
+function notifyOSkillPointsChanged(skillNameOrId, action = 'update') {
+  if (typeof window === 'undefined') return;
+  window.dispatchEvent(
+    new CustomEvent('skillPointsChanged', {
+      detail: {
+        skillName: skillNameOrId != null ? String(skillNameOrId) : null,
+        action,
+        skillType: 'oskill'
+      }
+    })
+  );
+}
+
 /**
  * Initialize character state for a class
  * @param {string} className - Class name
@@ -1156,6 +1169,7 @@ export function addOSkill(skillId, displayName, skillName, image, className, has
   if (characterInstance) {
     characterInstance.addOSkill(skillId, displayName, skillName, image, className, hasDetails, description, skillEffect);
     autoAddStatsToInput(skillId);
+    notifyOSkillPointsChanged(skillName || skillId, 'add');
     notifyPlannerStateChanged({ source: 'addOSkill' });
   } else {
     console.error('[OSkills] No character instance available!');
@@ -1169,6 +1183,7 @@ export function addOSkill(skillId, displayName, skillName, image, className, has
 export function removeOSkill(skillName) {
   if (characterInstance) {
     characterInstance.removeOSkill(skillName);
+    notifyOSkillPointsChanged(skillName, 'remove');
     notifyPlannerStateChanged({ source: 'removeOSkill' });
   }
 }
@@ -1180,10 +1195,8 @@ export function removeOSkill(skillName) {
  */
 export function changeOSkillPoints(skillName, amount) {
   if (characterInstance) {
-    // Get current allSkillsBonus for hard cap enforcement
-    const allSkillsBonusInput = document.getElementById('allSkillsBonus');
-    const allSkillsBonus = allSkillsBonusInput ? Math.max(0, parseInt(allSkillsBonusInput.value) || 0) : 0;
-    characterInstance.changeOSkillPoints(skillName, amount, allSkillsBonus);
+    characterInstance.changeOSkillPoints(skillName, amount);
+    notifyOSkillPointsChanged(skillName, amount > 0 ? 'add' : 'remove');
     notifyPlannerStateChanged({ source: 'changeOSkillPoints' });
   }
 }
@@ -1194,6 +1207,7 @@ export function changeOSkillPoints(skillName, amount) {
 export function clearOSkills() {
   if (characterInstance) {
     characterInstance.clearOSkills();
+    notifyOSkillPointsChanged(null, 'clear');
     notifyPlannerStateChanged({ source: 'clearOSkills' });
   }
 }
@@ -1205,6 +1219,8 @@ export function clearOSkills() {
 export function setAllOSkills(oSkills) {
   if (characterInstance) {
     characterInstance.setAllOSkills(oSkills);
+    scheduleAutoStatsForAllOSkills();
+    notifyOSkillPointsChanged(null, 'set');
     notifyPlannerStateChanged({ source: 'setAllOSkills' });
   }
 }
@@ -1286,6 +1302,12 @@ export function exportStatsToText() {
  * @param {number} skillId - Numeric catalog skill id
  * @returns {Array<string>} Array of formula strings
  */
+function pushStatKeyAsFormula(formulas, statKey) {
+  const sk = String(statKey || '').trim();
+  if (!sk) return;
+  formulas.push(`{{${sk}}}`);
+}
+
 async function getSkillFormulas(skillId) {
   const store = getFileSkillStore();
   if (!store) return [];
@@ -1296,17 +1318,25 @@ async function getSkillFormulas(skillId) {
     await store.loadSkillBalance(internal);
     const bal = store.getSkillBalanceSync(internal);
     for (const r of bal?.scaling || []) {
+      if (r?.statKey) pushStatKeyAsFormula(formulas, r.statKey);
       for (const k of ['value0', 'value1', 'value2', 'value3']) {
         if (r[k]) formulas.push(String(r[k]));
       }
     }
     for (const r of bal?.scalingConstants || []) {
+      if (r?.statKey) pushStatKeyAsFormula(formulas, r.statKey);
       for (const k of ['value0', 'value1', 'value2', 'value3']) {
         if (r[k]) formulas.push(String(r[k]));
       }
     }
     const det = store.getSkillDetail(internal);
     if (det) {
+      for (const field of ['description', 'skill_effect', 'restriction']) {
+        const t = det[field];
+        if (t != null && String(t).trim() !== '') {
+          formulas.push(String(t));
+        }
+      }
       for (let j = 1; j <= 6; j++) {
         const c = det[`calc${j}`];
         if (c != null && String(c).trim() !== '') {
@@ -1318,6 +1348,27 @@ async function getSkillFormulas(skillId) {
     console.warn('Error getting skill formulas (file):', error);
   }
   return formulas;
+}
+
+/**
+ * Register planner stats referenced by each allocated oSkill (load/import and balance-only statKey rows).
+ */
+function scheduleAutoStatsForAllOSkills() {
+  if (!characterInstance) return;
+  const store = getFileSkillStore();
+  const seen = new Set();
+  for (const row of characterInstance.oSkills || []) {
+    let nid = row.skillId;
+    if ((nid == null || !Number.isFinite(Number(nid))) && row.skillName && store?.catalog) {
+      const cat = store.catalog.find((c) => c.id === row.skillName);
+      nid = cat?.numericId ?? null;
+    }
+    if (nid == null || !Number.isFinite(Number(nid))) continue;
+    const n = Number(nid);
+    if (seen.has(n)) continue;
+    seen.add(n);
+    void autoAddStatsToInput(n);
+  }
 }
 
 /**
@@ -1365,22 +1416,54 @@ async function autoAddStatsToInput(skillId) {
  * @param {Object} skillLevels - Object mapping skill_name/ID to points
  * @returns {Object} Filtered skill levels with only regular skills
  */
-function filterRegularSkillsOnly(skillLevels) {
+const OSKILL_HARD_CAP = 150;
+
+const SKILL_PROFILES = {
+  regular: {
+    maxLevel(skillId, skillLevels, characterLevel) {
+      return calculateMaxLevel(skillId, skillLevels, characterLevel);
+    },
+    includeRestrictions: true
+  },
+  oskill: {
+    maxLevel() {
+      return OSKILL_HARD_CAP;
+    },
+    includeRestrictions: false
+  }
+};
+
+export function getSkillProfile(skillType = 'regular') {
+  return SKILL_PROFILES[skillType] || SKILL_PROFILES.regular;
+}
+
+export function getOSkillIdentifierSet() {
   const oSkills = getAllOSkills();
   const oSkillKeys = new Set();
 
-  // Collect oSkill identifiers (both IDs and names)
   if (Array.isArray(oSkills)) {
-    oSkills.forEach(oskill => {
-      if (oskill.skillName) oSkillKeys.add(oskill.skillName);
-      if (oskill.skillId) oSkillKeys.add(oskill.skillId.toString());
+    oSkills.forEach((oskill) => {
+      if (oskill.skillName) oSkillKeys.add(String(oskill.skillName));
+      if (oskill.skillId != null) oSkillKeys.add(String(oskill.skillId));
     });
-  } else if (typeof oSkills === 'object') {
-    // oSkills is an object with skill IDs/names as keys
-    Object.keys(oSkills).forEach(key => {
-      oSkillKeys.add(key);
-    });
+    return oSkillKeys;
   }
+
+  if (oSkills && typeof oSkills === 'object') {
+    Object.keys(oSkills).forEach((key) => oSkillKeys.add(String(key)));
+  }
+
+  return oSkillKeys;
+}
+
+export function hasAnyOSkillAllocations() {
+  const allOSkills = getAllOSkills();
+  if (!allOSkills || typeof allOSkills !== 'object') return false;
+  return Object.values(allOSkills).some((points) => Number(points) > 0);
+}
+
+function filterRegularSkillsOnly(skillLevels) {
+  const oSkillKeys = getOSkillIdentifierSet();
 
   // Filter out oSkills from skillLevels
   const filtered = {};
@@ -1404,20 +1487,16 @@ function filterRegularSkillsOnly(skillLevels) {
  * @returns {number} Effective max level (capped at 150)
  */
 export function calculateEffectiveMaxLevel(skillId, skillType, skillLevels = {}, characterLevel = Character.DEFAULT_LEVEL) {
-  // oSkills always have a hard cap of 150
-  if (skillType === 'oskill') {
-    return 150;
-  }
+  const profile = getSkillProfile(skillType);
+  const effectiveSkillLevels =
+    profile.includeRestrictions ? filterRegularSkillsOnly(skillLevels) : skillLevels;
 
-  // For regular skills, ensure we only use regular skill points (not oSkills)
-  const regularSkillLevels = filterRegularSkillsOnly(skillLevels);
-
-  if (!getFileSkillStore()) {
+  if (profile.includeRestrictions && !getFileSkillStore()) {
     console.warn('calculateEffectiveMaxLevel: No file skill store for max level calculation');
     return 0;
   }
 
-  return calculateMaxLevel(skillId, regularSkillLevels, characterLevel);
+  return profile.maxLevel(skillId, effectiveSkillLevels, characterLevel);
 }
 
 /**
@@ -1431,10 +1510,10 @@ export function calculateEffectiveMaxLevel(skillId, skillType, skillLevels = {},
  * @returns {Array} Array of {type: string, reason: string} restriction objects
  */
 export function getSkillRestrictions(skill, skillType, currentPoints, allSkills = [], skillLevels = {}) {
+  const profile = getSkillProfile(skillType);
   const restrictions = [];
 
-  // oSkills don't have prerequisites or most restrictions - they're simpler
-  if (skillType === 'oskill') {
+  if (!profile.includeRestrictions) {
     return restrictions;
   }
 
@@ -1524,6 +1603,7 @@ export function getSkillRestrictions(skill, skillType, currentPoints, allSkills 
  * @returns {boolean} True if skill can have points allocated
  */
 export function canAllocateSkillPoints(skill, skillType, currentPoints, maxPoints, allSkills = [], skillLevels = {}) {
+  const profile = getSkillProfile(skillType);
   // Check if already at max
   if (currentPoints >= maxPoints) {
     return false;
@@ -1535,7 +1615,7 @@ export function canAllocateSkillPoints(skill, skillType, currentPoints, maxPoint
   }
 
   // For oSkills, only check max level (handled above)
-  if (skillType === 'oskill') {
+  if (!profile.includeRestrictions) {
     return true;
   }
 

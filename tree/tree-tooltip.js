@@ -149,9 +149,6 @@ export function initializeTooltip() {
     
     // Listen for tooltip refresh events (triggered after minLevelDisplay is updated)
     window.addEventListener('tooltipRefresh', onTooltipRefreshEvent);
-    
-    // Listen for oSkills updates to hide tooltip if skill was removed
-    window.addEventListener('oskillsUpdated', handleOSkillsUpdated);
 }
 
 /**
@@ -259,79 +256,24 @@ async function handleSkillPointsChanged(preferredCard = null) {
     if (currentHoveredSkill && tooltipElement && tooltipElement.style.display !== 'none') {
         if (!tooltipDataSourceReady()) return;
 
-        const skillCardPick = pickSkillCardForTooltip(preferredCard);
-        const classIdNum = parseClassIdDataset(skillCardPick?.dataset?.classId);
-        const cardNumericId = parseSkillNumericIdDataset(skillCardPick?.dataset?.skillNumericId);
+        const skillCard = pickSkillCardForTooltip(preferredCard);
+        const classIdNum = parseClassIdDataset(skillCard?.dataset?.classId);
+        const cardNumericId = parseSkillNumericIdDataset(skillCard?.dataset?.skillNumericId);
         const skillData = getSkillDataFromStore(currentHoveredSkill, classIdNum, cardNumericId);
         if (!skillData) return;
-        
-        const skillCard = skillCardPick;
-        const isOSkill = Boolean(skillCard && skillCard.closest('#tab-oSkills'));
-        
-        // Check if this is an innate skill (they're always level 1)
-        const isInnate = skillCard && skillData && Innate.isInnateSkill({ name: skillData.id, canAddPoints: skillData.canAddPoints });
-        
-        const currentLevel = isOSkill 
-            ? Math.max(1, getOSkillPoints(currentHoveredSkill))
-            : isInnate
-            ? 1
-            : getSkillPoints(currentHoveredSkill);
-        
-        // Get warning message from the skill card's plus button (if any)
-        // Skip warning for oSkills (they only have 150 level cap)
-        let warningMessage = '';
-        if (!isOSkill) {
-            const plusBtn = skillCard?.querySelector('.skill-plus-btn');
-            warningMessage = plusBtn?.dataset?.warningMessage || '';
-        }
-        
-        const variantKey = resolveVariantKeyForTooltip(skillData.id, skillCard);
-        applySkillVariantTextOverrides(skillData, variantKey);
-        const content = await buildTooltipContent(skillData, currentLevel, warningMessage, isOSkill, variantKey);
+        const context = resolveTooltipContext(skillCard, skillData, currentHoveredSkill);
+        applySkillVariantTextOverrides(skillData, context.variantKey);
+        const content = await buildTooltipContent(
+            skillData,
+            context.currentLevel,
+            context.warningMessage,
+            context.isOSkill,
+            context.variantKey
+        );
         
         tooltipElement.innerHTML = content;
         updateTooltipPosition(lastMouseX, lastMouseY);
     }
-}
-
-/**
- * Handle oSkills updated event to refresh or hide tooltip
- */
-async function handleOSkillsUpdated() {
-    // If we're hovering over an oSkill, refresh the tooltip to show updated values
-    if (currentHoveredSkill && tooltipElement && tooltipElement.style.display !== 'none') {
-        // querySelector returns the first matching card in DOM order (often the class tree), not the
-        // oSkill card when both share data-skill-id; match handleSkillPointsChanged via pickSkillCardForTooltip.
-        const activeSkillCard = pickSkillCardForTooltip(null);
-        const isOSkillCard = Boolean(activeSkillCard && activeSkillCard.closest('#tab-oSkills'));
-
-        if (isOSkillCard) {
-            if (!tooltipDataSourceReady()) return;
-
-            const classIdOs = parseClassIdDataset(activeSkillCard?.dataset?.classId);
-            const cardNumericIdOs = parseSkillNumericIdDataset(activeSkillCard?.dataset?.skillNumericId);
-            const skillData = getSkillDataFromStore(currentHoveredSkill, classIdOs, cardNumericIdOs);
-            if (!skillData) return;
-
-            const currentLevel = Math.max(1, getOSkillPoints(currentHoveredSkill));
-
-            const variantKeyOs = resolveVariantKeyForTooltip(skillData.id, activeSkillCard);
-            applySkillVariantTextOverrides(skillData, variantKeyOs);
-            const content = await buildTooltipContent(skillData, currentLevel, '', true, variantKeyOs);
-            tooltipElement.innerHTML = content;
-            updateTooltipPosition(lastMouseX, lastMouseY);
-            return;
-        }
-    }
-    
-    // Otherwise, hide tooltip (skill was removed or not an oSkill)
-    if (tooltipHideTimeout) {
-        clearTimeout(tooltipHideTimeout);
-        tooltipHideTimeout = null;
-    }
-    
-    hideTooltip();
-    currentHoveredSkill = null;
 }
 
 /**
@@ -367,29 +309,15 @@ async function showTooltip(skillId, mouseX, mouseY, hoveredCard = null) {
         return;
     }
 
-    // Check if this is an oSkill
-    const isOSkill = skillCard && skillCard.closest('#tab-oSkills');
-    
-    // Check if this is an innate skill (they're always level 1)
-    const isInnate = skillCard && Innate.isInnateSkill({ name: skillData.id, canAddPoints: skillData.canAddPoints });
-    
-    const currentLevel = isOSkill 
-        ? Math.max(1, getOSkillPoints(skillId))
-        : isInnate
-        ? 1
-        : getSkillPoints(skillId);
-    
-    // Get warning message from the skill card's plus button (if any)
-    // Skip warning for oSkills (they only have 150 level cap)
-    let warningMessage = '';
-    if (!isOSkill) {
-        const plusBtn = skillCard?.querySelector('.skill-plus-btn');
-        warningMessage = plusBtn?.dataset?.warningMessage || '';
-    }
-    
-    const variantKey = resolveVariantKeyForTooltip(skillData.id, skillCard);
-    applySkillVariantTextOverrides(skillData, variantKey);
-    const content = await buildTooltipContent(skillData, currentLevel, warningMessage, isOSkill, variantKey);
+    const context = resolveTooltipContext(skillCard, skillData, skillId);
+    applySkillVariantTextOverrides(skillData, context.variantKey);
+    const content = await buildTooltipContent(
+        skillData,
+        context.currentLevel,
+        context.warningMessage,
+        context.isOSkill,
+        context.variantKey
+    );
     
     // Update tooltip
     tooltipElement.innerHTML = content;
@@ -613,6 +541,7 @@ async function buildTooltipContent(skillData, level, warningMessage = '', isOSki
     const effectiveLevel = isOSkill 
         ? Math.min(150, level + allSkillsBonus)
         : level + allSkillsBonus;
+    const scalingLevel = isOSkill ? effectiveLevel : level;
     
     let html = '<div class="tooltip-content">';
     
@@ -750,19 +679,11 @@ async function buildTooltipContent(skillData, level, warningMessage = '', isOSki
     }
     
     // Calculate lvl for each skill (only allSkillsBonus, not including base points)
-    // For oSkills, cap effective level (blvl + bonus) at 150, giving priority to bonus
     for (const [skillName, points] of Object.entries(characterState.blvl)) {
         if (isOSkill && skillName === currentSkillName) {
-            // For oSkills: cap effective level at 150, but ensure bonus takes priority
-            // If blvl + bonus > 150, cap blvl down so that blvl + bonus = 150 (bonus takes priority)
-            const effectiveLevel = points + allSkillsBonus;
-            if (effectiveLevel > 150) {
-                // Cap blvl so that blvl + bonus = 150 (bonus takes priority)
-                characterState.blvl[skillName] = Math.max(0, 150 - allSkillsBonus);
-                characterState.lvl[skillName] = allSkillsBonus;
-            } else {
-                characterState.lvl[skillName] = allSkillsBonus;
-            }
+            // Keep formulas and level-table lookups aligned for oSkills by using a capped effective level.
+            characterState.blvl[skillName] = Math.min(150, points + allSkillsBonus);
+            characterState.lvl[skillName] = 0;
         } else {
             characterState.lvl[skillName] = allSkillsBonus;
         }
@@ -780,18 +701,18 @@ async function buildTooltipContent(skillData, level, warningMessage = '', isOSki
         const hasScaling = checkSkillHasScaling(skillData.numericId);
         
         if (hasScaling) {
-            html += `<div class="tooltip-level-indicator is-italic">Level ${level} values:</div>`;
+            html += `<div class="tooltip-level-indicator is-italic">Level ${scalingLevel} values:</div>`;
         }
         
         // Render main description
         if (skillData.description) {
-            const expandedDesc = await expandPlaceholdersWithScaling(skillData.numericId, level, skillData.description, skillData.id, characterState, showFormulas, variantKey);
+            const expandedDesc = await expandPlaceholdersWithScaling(skillData.numericId, scalingLevel, skillData.description, skillData.id, characterState, showFormulas, variantKey);
             html += `<div class="tooltip-main-desc has-text-centered mb-2">${expandedDesc}</div>`;
         }
         
         // Render skill effect
         if (skillData.skillEffect) {
-            const expandedEffect = await expandPlaceholdersWithScaling(skillData.numericId, level, skillData.skillEffect, skillData.id, characterState, showFormulas, variantKey);
+            const expandedEffect = await expandPlaceholdersWithScaling(skillData.numericId, scalingLevel, skillData.skillEffect, skillData.id, characterState, showFormulas, variantKey);
             const lines = expandedEffect.split('\n');
             
             lines.forEach(line => {
@@ -810,7 +731,7 @@ async function buildTooltipContent(skillData, level, warningMessage = '', isOSki
     if (skillData.restriction) {
         html += '<div class="tooltip-warning">';
         // Expand placeholders in restriction text
-        const expandedRestriction = await expandPlaceholdersWithScaling(skillData.numericId, level, skillData.restriction, skillData.id, characterState, showFormulas, variantKey);
+        const expandedRestriction = await expandPlaceholdersWithScaling(skillData.numericId, scalingLevel, skillData.restriction, skillData.id, characterState, showFormulas, variantKey);
         const restrictionLines = expandedRestriction.split('\n');
         restrictionLines.forEach(line => {
             html += `<div class="has-text-warning">${line}</div>`;
@@ -829,7 +750,7 @@ async function buildTooltipContent(skillData, level, warningMessage = '', isOSki
     }
 
     // Max-level scaling (MAX_LEVEL_MODIFIERS descriptions) — bottom section, info styling
-    if (skillData.numericId != null) {
+    if (!isOSkill && skillData.numericId != null) {
         const scalingLines = getMaxLevelModifierDescriptionsForSkill(
             skillData.numericId,
             characterState.blvl,
@@ -884,8 +805,26 @@ export function destroyTooltip() {
     window.removeEventListener('scroll', onWindowScrollForTooltip, true);
     window.removeEventListener('skillPointsChanged', onSkillPointsChangedForTooltip);
     window.removeEventListener('tooltipRefresh', onTooltipRefreshEvent);
-    window.removeEventListener('oskillsUpdated', handleOSkillsUpdated);
     
     // Reset Ctrl key state
     ctrlKeyPressed = false;
+}
+
+function resolveTooltipContext(skillCard, skillData, skillId) {
+    const isOSkill = Boolean(skillCard && skillCard.closest('#tab-oSkills'));
+    const isInnate = Boolean(
+        skillCard &&
+        skillData &&
+        Innate.isInnateSkill({ name: skillData.id, canAddPoints: skillData.canAddPoints })
+    );
+    const currentLevel = isOSkill
+        ? Math.max(1, getOSkillPoints(skillId))
+        : isInnate
+            ? 1
+            : getSkillPoints(skillId);
+    const warningMessage = isOSkill
+        ? ''
+        : (skillCard?.querySelector('.skill-plus-btn')?.dataset?.warningMessage || '');
+    const variantKey = resolveVariantKeyForTooltip(skillData.id, skillCard);
+    return { isOSkill, currentLevel, warningMessage, variantKey };
 }

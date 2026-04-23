@@ -115,118 +115,105 @@ export function handleSkillPointChange(skill, delta, allSkills = []) {
 }
 
 /**
- * Build card data for a regular skill (consolidated from SkillTreeController)
- * @param {Object} skill - Skill object
- * @param {Array} allSkills - Array of all skills
- * @param {Function} getIconFn - Function to get icon HTML
- * @returns {Object} Card data object
+ * Build planner card data for both regular skills and oSkills.
+ * @param {Object} skillEntry
+ * @param {{ skillType?: 'regular'|'oskill', allSkills?: Array, getIconFn?: Function }} opts
+ * @returns {Object}
  */
-export function buildSkillCardData(skill, allSkills = [], getIconFn = null) {
-    const currentPoints = getSkillPoints(skill.id);
-    const minLevel = getMinimumRequiredLevel(allSkills);
+export function buildPlannerSkillCardData(skillEntry, opts = {}) {
+    const skillType = opts.skillType || 'regular';
+    const allSkills = Array.isArray(opts.allSkills) ? opts.allSkills : [];
+    const getIconFn = opts.getIconFn || null;
     const skillLevels = getAllSkillPoints();
+    const minLevel = getMinimumRequiredLevel(allSkills);
+    const isOSkill = skillType === 'oskill';
 
-    const effectiveMaxLevel = calculateEffectiveMaxLevel(
-        skill.skillId,
-        'regular',
+    const currentPoints = isOSkill
+        ? (skillEntry.points || 0)
+        : getSkillPoints(skillEntry.id);
+    const maxPoints = calculateEffectiveMaxLevel(
+        isOSkill ? (skillEntry.skillId || skillEntry.skillName) : skillEntry.skillId,
+        skillType,
         skillLevels,
         minLevel
-    ) || skill.baseMaxLevel;
-
+    ) || skillEntry.baseMaxLevel;
     const restrictions = getSkillRestrictions(
-        skill,
-        'regular',
+        skillEntry,
+        skillType,
         currentPoints,
         allSkills,
         skillLevels
     );
-
     const canAllocate = canAllocateSkillPoints(
-        skill,
-        'regular',
-        currentPoints,
-        effectiveMaxLevel,
-        allSkills,
-        skillLevels
-    );
-    
-    return {
-        skillId: skill.id,
-        numericId: skill.skillId,
-        classId: skill.classId,
-        displayName: skill.name,
-        iconHTML: getIconFn ? getIconFn(skill.image, skill.class) : '',
-        hasDescription: skill.hasDetails || false,
-        currentPoints: currentPoints,
-        maxPoints: effectiveMaxLevel,
-        canAllocate: canAllocate,
-        restrictions: restrictions,
-        isInnate: false
-    };
-}
-
-/**
- * Build card data for an oSkill (consolidated from SkillTreeController)
- * @param {Object} oskill - oSkill object
- * @param {Function} getIconFn - Function to get icon HTML
- * @returns {Object} Card data object
- */
-export function buildOSkillCardData(oskill, getIconFn = null) {
-    const skillLevels = {};
-    const currentPoints = oskill.points || 0;
-
-    const maxPoints = calculateEffectiveMaxLevel(
-        oskill.skillId || oskill.skillName,
-        'oskill',
-        skillLevels,
-        1
-    );
-
-    const restrictions = getSkillRestrictions(
-        oskill,
-        'oskill',
-        currentPoints,
-        [],
-        skillLevels
-    );
-
-    const canAllocate = canAllocateSkillPoints(
-        oskill,
-        'oskill',
+        skillEntry,
+        skillType,
         currentPoints,
         maxPoints,
-        [],
+        allSkills,
         skillLevels
     );
 
+    if (!isOSkill) {
+        return {
+            skillId: skillEntry.id,
+            numericId: skillEntry.skillId,
+            classId: skillEntry.classId,
+            displayName: skillEntry.name,
+            iconHTML: getIconFn ? getIconFn(skillEntry.image, skillEntry.class) : '',
+            hasDescription: skillEntry.hasDetails || false,
+            currentPoints,
+            maxPoints,
+            canAllocate,
+            restrictions,
+            isInnate: false
+        };
+    }
+
     const numericId =
-        typeof oskill.numericId === 'number'
-            ? oskill.numericId
-            : typeof oskill.skillId === 'number'
-              ? oskill.skillId
-              : null;
+        typeof skillEntry.numericId === 'number'
+            ? skillEntry.numericId
+            : typeof skillEntry.skillId === 'number'
+                ? skillEntry.skillId
+                : null;
     let variantStateKey =
-        oskill.skillName && String(oskill.skillName).trim() !== '' ? oskill.skillName : null;
+        skillEntry.skillName && String(skillEntry.skillName).trim() !== ''
+            ? skillEntry.skillName
+            : null;
     if (!variantStateKey && numericId != null) {
         const internal = getFileSkillStore()?.internalNameByNumericId(numericId);
         if (internal) variantStateKey = internal;
     }
-    const variants = numericId != null ? listSkillVariants(numericId) : [];
 
     return {
-        skillId: oskill.skillId || oskill.skillName,
+        skillId: skillEntry.skillId || skillEntry.skillName,
         numericId,
         variantStateKey: variantStateKey || undefined,
-        displayName: oskill.displayName || oskill.skillName || `Skill ${oskill.skillId}`,
-        iconHTML: getIconFn ? getIconFn(oskill.image, oskill.className) : '',
-        hasDescription: oskill.hasDetails || false,
-        currentPoints: currentPoints,
-        maxPoints: maxPoints,
-        canAllocate: canAllocate,
-        restrictions: restrictions,
+        displayName: skillEntry.displayName || skillEntry.skillName || `Skill ${skillEntry.skillId}`,
+        iconHTML: getIconFn ? getIconFn(skillEntry.image, skillEntry.className) : '',
+        hasDescription: skillEntry.hasDetails || false,
+        currentPoints,
+        maxPoints,
+        canAllocate,
+        restrictions,
         isInnate: false,
-        variants
+        variants: numericId != null ? listSkillVariants(numericId) : []
     };
+}
+
+export function buildSkillCardData(skill, allSkills = [], getIconFn = null) {
+    return buildPlannerSkillCardData(skill, {
+        skillType: 'regular',
+        allSkills,
+        getIconFn
+    });
+}
+
+export function buildOSkillCardData(oskill, getIconFn = null) {
+    return buildPlannerSkillCardData(oskill, {
+        skillType: 'oskill',
+        allSkills: [],
+        getIconFn
+    });
 }
 
 /**
