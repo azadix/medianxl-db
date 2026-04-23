@@ -26,7 +26,9 @@ onMounted(() => {
           data-pool-base="0"
           data-pool-quest="0"
           data-pool-level="1"
-          >0 available</span>
+        >
+          0 available
+        </span>
       </p>
       <hr class="my-1" />
     </div>

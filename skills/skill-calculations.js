@@ -36,13 +36,13 @@ const MAX_LEVEL_MODIFIERS = [
     startLevel: 10,
     calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = Character.DEFAULT_LEVEL) {
       if (targetSkillData.skill_name === this.targetSkillName) {
-        // BUG:
-        // this skill is bugged in game since the scaling starts counting from level 1
-        // and not 10. Should use the one below, when the mod fixes it
+        // Intentionally matches in-game Barkskin: max-level bonus uses full character level / divisor
+        // (starts from level 1), not (level - startLevel) / divisor. When the mod matches the intended
+        // design, switch to the commented block below.
         return Math.floor(characterLevel / this.characterLevelDivisor);
       }
 
-      // Correct behaviour
+      // Intended design (not used until game data matches):
       // if (targetSkillData.skill_name === this.targetSkillName) {
       //   const effectiveLevel = Math.max(0, characterLevel - this.startLevel);
       //   return Math.floor(effectiveLevel / this.characterLevelDivisor);

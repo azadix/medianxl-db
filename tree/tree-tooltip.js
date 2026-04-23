@@ -300,41 +300,24 @@ async function handleSkillPointsChanged(preferredCard = null) {
 async function handleOSkillsUpdated() {
     // If we're hovering over an oSkill, refresh the tooltip to show updated values
     if (currentHoveredSkill && tooltipElement && tooltipElement.style.display !== 'none') {
-        const skillCard = document.querySelector(`.skill-card[data-skill-id="${currentHoveredSkill}"]`);
-        const isOSkill = skillCard && skillCard.closest('#tab-oSkills');
-        
-        if (isOSkill) {
-            // Skill still exists, refresh tooltip (same logic as handleSkillPointsChanged)
+        // querySelector returns the first matching card in DOM order (often the class tree), not the
+        // oSkill card when both share data-skill-id; match handleSkillPointsChanged via pickSkillCardForTooltip.
+        const activeSkillCard = pickSkillCardForTooltip(null);
+        const isOSkillCard = Boolean(activeSkillCard && activeSkillCard.closest('#tab-oSkills'));
+
+        if (isOSkillCard) {
             if (!tooltipDataSourceReady()) return;
 
-            const activeSkillCard = pickSkillCardForTooltip(null);
             const classIdOs = parseClassIdDataset(activeSkillCard?.dataset?.classId);
             const cardNumericIdOs = parseSkillNumericIdDataset(activeSkillCard?.dataset?.skillNumericId);
             const skillData = getSkillDataFromStore(currentHoveredSkill, classIdOs, cardNumericIdOs);
             if (!skillData) return;
-            
-            const isOSkillCard = Boolean(activeSkillCard && activeSkillCard.closest('#tab-oSkills'));
-            
-            // Check if this is an innate skill (they're always level 1)
-            const isInnate = activeSkillCard && skillData && Innate.isInnateSkill({ name: skillData.id, canAddPoints: skillData.canAddPoints });
-            
-            const currentLevel = isOSkillCard 
-                ? Math.max(1, getOSkillPoints(currentHoveredSkill))
-                : isInnate
-                ? 1
-                : getSkillPoints(currentHoveredSkill);
-            
-            // Get warning message from the skill card's plus button (if any)
-            // Skip warning for oSkills (they only have 150 level cap)
-            let warningMessage = '';
-            if (!isOSkillCard) {
-                const plusBtn = activeSkillCard?.querySelector('.skill-plus-btn');
-                warningMessage = plusBtn?.dataset?.warningMessage || '';
-            }
-            
+
+            const currentLevel = Math.max(1, getOSkillPoints(currentHoveredSkill));
+
             const variantKeyOs = resolveVariantKeyForTooltip(skillData.id, activeSkillCard);
             applySkillVariantTextOverrides(skillData, variantKeyOs);
-            const content = await buildTooltipContent(skillData, currentLevel, warningMessage, isOSkillCard, variantKeyOs);
+            const content = await buildTooltipContent(skillData, currentLevel, '', true, variantKeyOs);
             tooltipElement.innerHTML = content;
             updateTooltipPosition(lastMouseX, lastMouseY);
             return;

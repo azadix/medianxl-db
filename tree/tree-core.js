@@ -15,7 +15,7 @@ import {
     notifySavedBuildsListRefresh,
 } from '../src/planner/saved-builds-storage.js';
 import { getCurrentDevotion, getDevotionDisplayName } from '../skills/skill-calculations.js';
-import { initializeTooltip, refreshCurrentTooltip, notifySkillGridDomReset } from './tree-tooltip.js';
+import { initializeTooltip, refreshCurrentTooltip } from './tree-tooltip.js';
 import { ToastManager } from './ToastManager.js';
 import { DropdownList } from './DropdownList.js';
 import {
@@ -1462,11 +1462,7 @@ function initializeOSkillsDropdown() {
 function updateOSkillsDisplay() {
     // Update window reference for other modules (like tree-render.js)
     window.oSkills = getAllOSkills();
-    
-    
-    // Update the oSkills tab
-    updateOSkillsTab();
-    
+
     // Update tab colors (lightweight - just updates CSS classes)
     const tabsWithPoints = new Set();
     
@@ -1488,14 +1484,6 @@ function updateOSkillsDisplay() {
     }
     
     updateTabColors(tabsWithPoints);
-}
-
-function updateOSkillsTab() {
-    const container = document.getElementById('tab-oSkills');
-    if (!container) {
-        return;
-    }
-    notifySkillGridDomReset();
 }
 
 /**

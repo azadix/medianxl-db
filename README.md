@@ -123,9 +123,9 @@ python spellcheck/search_text.py "mana cost"
 
 | Library | Role |
 |---------|------|
-| [Vue](https://vuejs.org/) 3 | UI framework |
+| [Vue 3](https://vuejs.org/) | UI framework |
 | [Vue Router](https://router.vuejs.org/) | Client-side routing |
-| [Pinia](https://pinia.vuejs.org/) | State |
+| [Pinia](https://pinia.vuejs.org/) | Store |
 | [Vite](https://vitejs.dev/) | Dev server and production bundle |
 
 **CDN** (see root **`index.html`**): [Bulma](https://bulma.io/) 1.0.1, [Font Awesome](https://fontawesome.com/) 6 (free).
@@ -136,4 +136,4 @@ python spellcheck/search_text.py "mana cost"
 |------|------|
 | [ESLint](https://eslint.org/) + `eslint-plugin-vue` | Lint (`npm run lint`) |
 | [Python](https://www.python.org/) 3.9+ | Scripts under `py/`, `spellcheck/`, `atlas_generation/` |
-| [Pillow](https://python-pillow.org/) | `atlas_generation/make_all_atlases.py` |
+| [Pillow](https://pypi.org/project/pillow/) | `atlas_generation/make_all_atlases.py` |

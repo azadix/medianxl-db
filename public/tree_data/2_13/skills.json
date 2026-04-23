@@ -11342,7 +11342,14 @@
     "affectedBySpecialization": false,
     "canAddPoints": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "spell_focus",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "5*lvl"
+      }
+    ],
     "description": [
       "Infuse your spells and weapons with fiery power"
     ],
