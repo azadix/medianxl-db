@@ -7,6 +7,15 @@ export const MISSING_IMAGE_NAME = "icons-shared_missing.png";
 const SKILL_STYLE = "has-text-success";
 const FORMULA_STYLE = "has-text-warning";
 const UNKNOWN_STYLE = "has-text-danger";
+const MISSING_STAT_STYLE = "has-text-danger";
+
+function escapeHtmlAttr(s) {
+    return String(s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+}
 
 /**
  * Skill Tag Group Constants
@@ -453,15 +462,21 @@ export async function expandPlaceholdersWithScaling(numericId, level, descriptio
                     .replace('{value1}', q)
                     .replace('{value2}', q)
                     .replace('{value3}', q);
+            } else if (actualSkillName) {
+                // Skill text used {{stat}} not in stats.json (e.g. typo vs activation_frequency_effectiveness).
+                // Do not fall through to planner characterState.stats — keys like activation_frequency exist there as 0.
+                const esc = escapeHtmlAttr(rawKey);
+                output = `<span class="${MISSING_STAT_STYLE}">MISSING STAT - {{${esc}}}</span>`;
             }
         }
 
         // Character panel stats (life, resistances, etc.) must NOT override skill_scaling for the
         // hovered skill — keys often collide (e.g. {{cold_resistance}} on Warmth is the skill bonus,
         // not the planner's cold_resistance). Only substitute from characterState.stats when skill
-        // data did not resolve this placeholder at all.
+        // data did not resolve this placeholder at all, and not when expanding a skill's own text.
         if (
             output === `[Unknown stat: ${rawKey}]` &&
+            !actualSkillName &&
             characterState &&
             characterState.stats &&
             Object.prototype.hasOwnProperty.call(characterState.stats, key)

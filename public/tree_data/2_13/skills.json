@@ -8591,7 +8591,7 @@
     "restriction": [],
     "skillEffect": [
       "{{slows_nearby_enemies}} (Effect scales with Cold Spell damage)",
-      "{{activation_frequency}}",
+      "{{delay_between_activations}}",
       "{{activation_frequency_effectiveness}}",
       "{{cold_damage}}",
       "{{duration}}",
