@@ -96,6 +96,18 @@ function variantOverrideLinesToString(raw) {
     return raw.map((line) => String(line)).join('\n');
 }
 
+/**
+ * Optional minimum mana for `mana_cost` scaling/constants: `min_mana` (preferred) or `value3`.
+ * @param {{ statKey?: string, min_mana?: unknown, value3?: unknown }} hit
+ * @returns {string|null}
+ */
+function manaCostMinManaFromRow(hit) {
+    if (String(hit?.statKey || '').toLowerCase() !== 'mana_cost') return null;
+    if (hit.min_mana != null && String(hit.min_mana).trim() !== '') return String(hit.min_mana).trim();
+    if (hit.value3 != null && String(hit.value3).trim() !== '') return String(hit.value3).trim();
+    return null;
+}
+
 /** Balance slice expected by findScalingRow (from merged skills.json row). */
 function balanceObjectFromMergedRow(row) {
     return {
@@ -350,6 +362,10 @@ export class SkillFileStore {
     _formatScalingHit(hit) {
         const st = this.getStatByKeyLower(hit.statKey);
         const slot = (n) => {
+            if (n === 3 && String(hit.statKey || '').toLowerCase() === 'mana_cost') {
+                const mm = manaCostMinManaFromRow(hit);
+                return mm == null ? null : mm;
+            }
             const k = `value${n}`;
             if (!Object.prototype.hasOwnProperty.call(hit, k) || hit[k] == null) return null;
             const s = String(hit[k]).trim();
@@ -403,12 +419,19 @@ export class SkillFileStore {
     _formatConstHit(hit) {
         const st = this.getStatByKeyLower(hit.statKey);
         const slotStr = (n) => {
+            if (n === 3 && String(hit.statKey || '').toLowerCase() === 'mana_cost') {
+                const mm = manaCostMinManaFromRow(hit);
+                return mm == null ? '' : mm;
+            }
             const k = `value${n}`;
             if (!Object.prototype.hasOwnProperty.call(hit, k) || hit[k] == null) return '';
             return String(hit[k]).trim();
         };
         /** JSON may omit *_constant; then non-empty value slots are treated as constants. */
         const inferConst = (n) => {
+            if (n === 3 && String(hit.statKey || '').toLowerCase() === 'mana_cost') {
+                return manaCostMinManaFromRow(hit) != null;
+            }
             const ck = `value${n}_constant`;
             if (Object.prototype.hasOwnProperty.call(hit, ck)) {
                 const v = hit[ck];

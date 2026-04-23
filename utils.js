@@ -186,9 +186,10 @@ export function getSkillIconHTML(imageFileName, humanClassName, className = '', 
  * @param {number|string} lvlmana - Change in mana cost per skill level (value1)
  * @param {number|string} manashift - Bitwise shift multiplier for precision (value2)
  * @param {number} level - Current skill level
+ * @param {number|string|undefined|null} [minMana] - Optional floor from `mana_cost` min_mana / value3; omitted means cost may be 0
  * @returns {number} Calculated mana cost (truncated to integer)
  */
-function calculateManaCost(mana, lvlmana, manashift, level) {
+function calculateManaCost(mana, lvlmana, manashift, level, minMana) {
     // Ensure level is at least 1
     const effectiveLevel = Math.max(1, level || 1);
     
@@ -208,8 +209,16 @@ function calculateManaCost(mana, lvlmana, manashift, level) {
     const shiftMultiplier = Math.pow(2, manashiftNum);
     const totalMana256ths = (baseMana * shiftMultiplier) / 256;
     
-    // Truncate final result
-    return Math.trunc(totalMana256ths);
+    let cost = Math.trunc(totalMana256ths);
+    const useMin =
+        minMana !== undefined &&
+        minMana !== null &&
+        !(typeof minMana === 'string' && minMana.trim() === '');
+    if (useMin) {
+        const minFloor = Math.max(0, Math.trunc(parseFloat(minMana) || 0));
+        cost = Math.max(minFloor, cost);
+    }
+    return cost;
 }
 
 // Expand using values sourced from skill_scaling for a given skill and level.
@@ -372,13 +381,23 @@ export async function expandPlaceholdersWithScaling(numericId, level, descriptio
                             const mana = parseOrEvaluate(v0);
                             const lvlmana = parseOrEvaluate(v1);
                             const manashift = parseOrEvaluate(v2);
+                            const v3 = scalingValues.value3 ?? '';
+                            const hasMinMana =
+                                v3 !== '' && v3 !== null && v3 !== undefined;
+                            const minManaNum = hasMinMana ? parseOrEvaluate(v3) : undefined;
 
                             const blvl = characterState.blvl?.[actualSkillName] || 0;
                             const slvl = characterState.lvl?.[actualSkillName] || 0;
                             const lvl = blvl + slvl;
 
                             // Calculate mana cost
-                            const calculatedMana = calculateManaCost(mana, lvlmana, manashift, lvl);
+                            const calculatedMana = calculateManaCost(
+                                mana,
+                                lvlmana,
+                                manashift,
+                                lvl,
+                                hasMinMana ? minManaNum : undefined
+                            );
                             
                             // Format as single value
                             const calculatedValueHtml = `<span class="${FORMULA_STYLE}">${calculatedMana}</span>`;

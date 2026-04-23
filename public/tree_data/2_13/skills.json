@@ -20403,7 +20403,8 @@
         "variantKey": "",
         "value0": "5",
         "value1": "15",
-        "value2": "5"
+        "value2": "5",
+        "min_mana": 1
       }
     ],
     "description": [
