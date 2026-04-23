@@ -135,14 +135,128 @@ function notifyOSkillPointsChanged(skillNameOrId, action = 'update') {
 export function initializeCharacter(className, level = Character.DEFAULT_LEVEL) {
   characterInstance = new Character(className, level);
   notifyPlannerStateChanged({ source: 'initializeCharacter' });
+  runPlannerSkillStatRecompute({ immediate: true });
   return characterInstance;
+}
+
+/** @type {ReturnType<typeof setTimeout>|null} */
+let _plannerSkillStatRecomputeTimer = null;
+
+/**
+ * Resolve merged skill levels (internal id -> points) for passive stat aggregation.
+ * Regular tree skills exclude oSkill keys; oSkills override same internal id with max points.
+ * @param {Character} character
+ * @returns {Record<string, number>}
+ */
+export function buildMergedSkillLevelsForStatRecompute(character) {
+  if (!character) return {};
+  const store = getFileSkillStore();
+  const regular = filterRegularSkillsOnly(character.getAllSkillPoints());
+
+  /** @type {Record<string, number>} */
+  const byInternal = {};
+
+  function addPoints(skillKey, pts) {
+    const n = Math.max(0, Math.floor(Number(pts) || 0));
+    if (n <= 0) return;
+    let internal = String(skillKey).trim();
+    if (store) {
+      const row =
+        store.catalogByInternalId?.get(internal) ??
+        (/^\d+$/.test(internal)
+          ? store.catalog?.find((r) => Number(r?.numericId) === Number(internal))
+          : null) ??
+        store.catalogByInternalId?.get(
+          internal.toLowerCase().replace(/'/g, '').replace(/\s+/g, '_')
+        ) ??
+        store.catalog?.find(
+          (r) => String(r?.displayName || '').trim().toLowerCase() === internal.toLowerCase()
+        );
+      if (row?.id) internal = String(row.id);
+    }
+    byInternal[internal] = (byInternal[internal] || 0) + n;
+  }
+
+  for (const [k, v] of Object.entries(regular)) {
+    addPoints(k, v);
+  }
+
+  for (const row of character.oSkills || []) {
+    const p = Character.clampOSkillPoints(row?.points ?? 0);
+    if (p <= 0) continue;
+    if (row.skillName) {
+      const rowHit = store?.catalogByInternalId?.get(String(row.skillName).trim());
+      const id = rowHit?.id ? String(rowHit.id) : String(row.skillName).trim();
+      const cur = byInternal[id] || 0;
+      byInternal[id] = Math.max(cur, p);
+      continue;
+    }
+    if (row.skillId != null && store) {
+      const hit = store.lookupSkillNameAndDisplayByNumericId(row.skillId);
+      if (hit?.name) {
+        const id = String(hit.name);
+        const cur = byInternal[id] || 0;
+        byInternal[id] = Math.max(cur, p);
+      }
+    }
+  }
+
+  return byInternal;
+}
+
+async function runPlannerSkillStatRecomputeImpl() {
+  if (!characterInstance) return;
+  const mergedBlvl = buildMergedSkillLevelsForStatRecompute(characterInstance);
+  let allSkillsBonus = 0;
+  if (typeof document !== 'undefined') {
+    const inp = document.getElementById('allSkillsBonus');
+    if (inp instanceof HTMLInputElement) {
+      allSkillsBonus = Math.max(0, Math.floor(parseInt(inp.value, 10) || 0));
+    }
+  }
+  await recomputePlannerStatsFromSkillAllocations(characterInstance, {
+    effectiveLevel: getEffectivePlannerLevel(),
+    treeSkillsCache: getTreeSkillsCache(),
+    allSkillsBonus,
+    mergedBlvl
+  });
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('plannerStatsPanelRefresh'));
+  }
+}
+
+/**
+ * Debounced passive stat recompute from allocated skills (scalingConstants).
+ * @param {{ immediate?: boolean }} [options]
+ */
+export function runPlannerSkillStatRecompute(options = {}) {
+  if (!characterInstance) return;
+  if (options.immediate === true) {
+    if (_plannerSkillStatRecomputeTimer != null && typeof window !== 'undefined') {
+      window.clearTimeout(_plannerSkillStatRecomputeTimer);
+      _plannerSkillStatRecomputeTimer = null;
+    }
+    void runPlannerSkillStatRecomputeImpl();
+    return;
+  }
+  if (typeof window === 'undefined') {
+    void runPlannerSkillStatRecomputeImpl();
+    return;
+  }
+  if (_plannerSkillStatRecomputeTimer != null) {
+    window.clearTimeout(_plannerSkillStatRecomputeTimer);
+  }
+  _plannerSkillStatRecomputeTimer = window.setTimeout(() => {
+    _plannerSkillStatRecomputeTimer = null;
+    void runPlannerSkillStatRecomputeImpl();
+  }, 55);
 }
 
 /**
  * Invoked when skill allocations change (debounced in tree). Extensible for skill-driven stat deltas.
  */
 export function onPlannerSkillAllocationChanged() {
-  recomputePlannerStatsFromSkillAllocations();
+  runPlannerSkillStatRecompute();
 }
 
 /**
@@ -164,7 +278,7 @@ export function applyClassBaselineStatsToCharacter(className) {
   const row = getClassPlannerStatDefaults(className);
   if (!row) return;
   const level = getEffectivePlannerLevel();
-  const next = { ...characterInstance.getAllStats() };
+  const next = { ...characterInstance.getAllRawStats() };
   next.strength = normalizePlannerStatValue('strength', row.strength);
   next.dexterity = normalizePlannerStatValue('dexterity', row.dexterity);
   next.energy = normalizePlannerStatValue('energy', row.energy);
@@ -186,12 +300,12 @@ export function recomputeClassDerivedLifeMana() {
   const row = getClassPlannerStatDefaults(className);
   if (!row) return;
   const level = getEffectivePlannerLevel();
-  const vit = characterInstance.getStat('vitality');
-  const ene = characterInstance.getStat('energy');
+  const vit = characterInstance.getRawStat('vitality');
+  const ene = characterInstance.getRawStat('energy');
   const { life, mana } = computeClassDerivedLifeMana(level, vit, ene, row);
   const lifeBonus = characterInstance.getTotalQuestLifeBonus();
-  characterInstance.setStat('life', normalizePlannerStatValue('life', life + lifeBonus));
-  characterInstance.setStat('mana', normalizePlannerStatValue('mana', mana));
+  characterInstance.setRawStat('life', normalizePlannerStatValue('life', life + lifeBonus));
+  characterInstance.setRawStat('mana', normalizePlannerStatValue('mana', mana));
   if (typeof window !== 'undefined') {
     window.dispatchEvent(new CustomEvent('plannerStatsPanelRefresh'));
     window.dispatchEvent(new CustomEvent('characterStatsChanged', { detail: { derivedLifeMana: true } }));
@@ -1046,7 +1160,7 @@ export function getAllocatedStatPointsFromPanel() {
   let sum = 0;
   for (const k of attrs) {
     const base = Math.floor(Number(row[k]) || 0);
-    const cur = Math.floor(Number(characterInstance.getStat(k)) || 0);
+    const cur = Math.floor(Number(characterInstance.getRawStat(k)) || 0);
     sum += Math.max(0, cur - base);
   }
   return sum;
@@ -1265,6 +1379,7 @@ export function getAllStats() {
 export function setAllStats(stats) {
   if (characterInstance) {
     characterInstance.setAllStats(stats);
+    runPlannerSkillStatRecompute({ immediate: true });
   }
 }
 
@@ -1274,6 +1389,7 @@ export function setAllStats(stats) {
 export function clearAllStats() {
   if (characterInstance) {
     characterInstance.clearAllStats();
+    runPlannerSkillStatRecompute({ immediate: true });
   }
 }
 
@@ -1285,7 +1401,11 @@ export function clearAllStats() {
  */
 export function parseStatsFromText(text) {
   if (!characterInstance) return ['Character not initialized'];
-  return characterInstance.parseStatsFromText(text);
+  const errors = characterInstance.parseStatsFromText(text);
+  if (errors.length === 0) {
+    runPlannerSkillStatRecompute({ immediate: true });
+  }
+  return errors;
 }
 
 /**
@@ -1391,7 +1511,7 @@ async function autoAddStatsToInput(skillId) {
 
   if (!characterInstance) return;
 
-  const next = { ...characterInstance.getAllStats() };
+  const next = { ...characterInstance.getAllRawStats() };
   let added = false;
   for (const statName of statRefsSet) {
     const k = String(statName).toLowerCase();

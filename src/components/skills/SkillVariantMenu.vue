@@ -5,6 +5,7 @@ import {
   setSkillVariantKey,
   variantBracketSuffixFromList,
 } from '../../../tree/skill-variants.js';
+import { runPlannerSkillStatRecompute } from '../../../character/character-state.js';
 
 const props = defineProps({
   variantMapKey: { type: String, required: true },
@@ -67,6 +68,7 @@ function chooseDefault(e) {
   e.stopPropagation();
   setSkillVariantKey(props.variantMapKey, null);
   syncLabel();
+  runPlannerSkillStatRecompute({ immediate: true });
   emit('refresh-tooltip');
   panelOpen.value = false;
   if (panelEl.value) panelEl.value.style.display = 'none';
@@ -76,6 +78,7 @@ function chooseVariant(key, e) {
   e.stopPropagation();
   setSkillVariantKey(props.variantMapKey, key);
   syncLabel();
+  runPlannerSkillStatRecompute({ immediate: true });
   emit('refresh-tooltip');
   panelOpen.value = false;
   if (panelEl.value) panelEl.value.style.display = 'none';

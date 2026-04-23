@@ -93,8 +93,8 @@ export function buildPlannerStatBreakdownHtml(statKey) {
   const sections = [];
 
   if ((key === 'life' || key === 'mana') && row) {
-    const vit = Number(ch.getStat('vitality')) || 0;
-    const ene = Number(ch.getStat('energy')) || 0;
+    const vit = Number(ch.getRawStat('vitality')) || 0;
+    const ene = Number(ch.getRawStat('energy')) || 0;
     const b = computeClassDerivedLifeManaBreakdown(level, vit, ene, row);
 
     if (key === 'life') {
@@ -133,12 +133,9 @@ export function buildPlannerStatBreakdownHtml(statKey) {
         });
       }
 
-      const questFlatTotal = ch.getTotalQuestLifeBonus();
-      const rawTotal = b.lifeFromClassFormula + questFlatTotal;
-      const totalRounded = normalizePlannerStatValue('life', rawTotal);
       sections.push({
         title: 'Total',
-        rows: [{ label: fmt(totalRounded), value: undefined }]
+        rows: [{ label: fmt(displayedNum), value: undefined }]
       });
     } else {
       const classRows = [
@@ -166,15 +163,14 @@ export function buildPlannerStatBreakdownHtml(statKey) {
         });
       }
 
-      const totalRounded = normalizePlannerStatValue('mana', b.manaFromClassFormula);
       sections.push({
         title: 'Total',
-        rows: [{ label: fmt(totalRounded), value: undefined }]
+        rows: [{ label: fmt(displayedNum), value: undefined }]
       });
     }
   } else if (['strength', 'dexterity', 'vitality', 'energy'].includes(key) && row) {
     const baseline = Math.floor(Number(row[key]) || 0);
-    const current = Math.floor(displayedNum);
+    const current = Math.floor(ch.getRawStat(key));
     const above = Math.max(0, current - baseline);
     const alloc = Math.max(0, Math.floor(Number(ch.statAllocation?.[key]) || 0));
 
@@ -198,35 +194,50 @@ export function buildPlannerStatBreakdownHtml(statKey) {
       });
     }
   } else if (isPlannerNegativeAllowedBaseStat(key)) {
-    sections.push({
-      title: 'Resistance',
-      rows: [
-        {
-          label: 'Value (can be negative)',
-          value: fmt(displayedNum)
-        }
-      ]
-    });
+    const rawOnly = ch.getRawStat(key);
     const mods = getPlannerStatSkillModifiers(key);
+    sections.push({
+      title: 'Manual / saved',
+      rows: [{ label: 'Manually edited value: ', value: fmt(rawOnly) }]
+    });
     if (mods.length > 0) {
       sections.push({
-        title: 'Skills (bonuses)',
+        title: 'Skills (passives)',
         rows: mods.map((m) => ({
           label: m.displayName,
           value: m.description
         }))
       });
     }
-  } else {
     sections.push({
-      title: 'Info',
+      title: 'Total',
+      rows: [{ label: fmt(displayedNum), value: undefined }]
+    });
+  } else {
+    const rawOnly = ch.getRawStat(key);
+    const mods = getPlannerStatSkillModifiers(key);
+    sections.push({
+      title: 'Manual / saved',
       rows: [
         {
-          label: row ? 'Value' : 'No class row in game_meta',
-          value: fmt(displayedNum),
+          label: row ? 'Manually edited value: ' : 'No class row in game_meta',
+          value: fmt(rawOnly),
           detail: row ? undefined : 'Select a class for baseline breakdowns.'
         }
       ]
+    });
+    if (mods.length > 0) {
+      sections.push({
+        title: 'Skills (passives)',
+        rows: mods.map((m) => ({
+          label: m.displayName,
+          value: m.description
+        }))
+      });
+    }
+    sections.push({
+      title: 'Total',
+      rows: [{ label: fmt(displayedNum), value: undefined }]
     });
   }
 

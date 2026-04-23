@@ -1,7 +1,7 @@
 /**
  * Planner stats: tooltip wiring + helpers for {@link PlannerStatsPanel.vue}.
  */
-import { getCharacterInstance, recomputeClassDerivedLifeMana } from './character-state.js';
+import { getCharacterInstance, recomputeClassDerivedLifeMana, runPlannerSkillStatRecompute } from './character-state.js';
 import { buildPlannerStatBreakdownHtml } from './planner-stat-breakdown.js';
 
 /** @type {HTMLElement | null} */
@@ -290,6 +290,7 @@ export function applyPlannerStatInput(statKey, raw) {
   if (statKey === 'vitality' || statKey === 'energy') {
     recomputeClassDerivedLifeMana();
   }
+  runPlannerSkillStatRecompute();
   syncAdvancedTextarea();
   if (typeof window !== 'undefined') {
     window.dispatchEvent(new CustomEvent('characterStatsChanged', { detail: { statKey } }));

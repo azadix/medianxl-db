@@ -252,6 +252,8 @@ export default class Character {
     this.statAllocation = Character.createEmptyStatAllocation();
     this.oSkills = []; // Array of {skillId, skillName, displayName, image, className, points}
     this.stats = createEmptyRegisteredStatsObject();
+    /** @type {Record<string, number>} Sum of passive planner stats from allocated skills (not persisted). */
+    this._plannerSkillStatBonuses = {};
     this.applyAutoQuestCompletionForLevel(this.level);
   }
 
@@ -850,25 +852,72 @@ export default class Character {
   // ===== STATS MANAGEMENT METHODS =====
 
   /**
+   * Stored stat only (manual / saved / class-written), without passive skill bonuses.
+   * @param {string} statKey
+   * @returns {number}
+   */
+  getRawStat(statKey) {
+    const k = String(statKey || '').toLowerCase();
+    if (!isPlannerBaseStatKey(k)) return 0;
+    const raw = this.stats[k];
+    const n = typeof raw === 'number' ? raw : parseFloat(String(raw ?? '').trim());
+    return Number.isFinite(n) ? n : 0;
+  }
+
+  /**
    * Get stat value for a given stat key
    * @param {string} statKey - Stat key (e.g., 'strength', 'dexterity')
    * @returns {number} Stat value, or 0 if not set
    */
   getStat(statKey) {
     const k = String(statKey || '').toLowerCase();
-    return this.stats[k] || 0;
+    if (!isPlannerBaseStatKey(k)) return 0;
+    const raw = this.getRawStat(k);
+    const bonus = Number(this._plannerSkillStatBonuses?.[k]) || 0;
+    return normalizePlannerStatValue(k, raw + bonus);
   }
 
   /**
-   * Set stat value for a given stat key
+   * Set stored stat from a **displayed** value (panel input): underlying save excludes passive skill bonuses.
    * @param {string} statKey - Stat key (e.g., 'strength', 'dexterity')
-   * @param {number} value - Stat value
+   * @param {number|string} value - Value shown in the planner
    */
   setStat(statKey, value) {
     const k = String(statKey || '').trim().toLowerCase();
     if (!k || !isPlannerBaseStatKey(k)) return;
+    const bonus = Number(this._plannerSkillStatBonuses?.[k]) || 0;
+    const displayNum = typeof value === 'number' ? value : parseFloat(String(value).trim());
+    const storedBase = Number.isFinite(displayNum) ? displayNum - bonus : 0;
+    this.stats[k] = normalizePlannerStatValue(k, storedBase);
+  }
+
+  /**
+   * Set stored stat directly (life/mana from class scaling, import, etc.).
+   * @param {string} statKey
+   * @param {number|string} value
+   */
+  setRawStat(statKey, value) {
+    const k = String(statKey || '').trim().toLowerCase();
+    if (!k || !isPlannerBaseStatKey(k)) return;
     const numValue = normalizePlannerStatValue(k, value);
     this.stats[k] = numValue;
+  }
+
+  /**
+   * Replace passive skill stat bonuses (recomputed when allocations change).
+   * @param {Record<string, number>} bonuses
+   */
+  setPlannerSkillStatBonuses(bonuses) {
+    /** @type {Record<string, number>} */
+    const next = {};
+    for (const [k0, v] of Object.entries(bonuses || {})) {
+      const k = String(k0 || '').trim().toLowerCase();
+      if (!k || !isPlannerBaseStatKey(k)) continue;
+      const n = Number(v);
+      if (!Number.isFinite(n) || n === 0) continue;
+      next[k] = n;
+    }
+    this._plannerSkillStatBonuses = next;
   }
 
   /**
@@ -885,6 +934,19 @@ export default class Character {
    * @returns {Object} Map of stat_key -> value
    */
   getAllStats() {
+    const out = { ...this.stats };
+    for (const k of Object.keys(out)) {
+      if (!isPlannerBaseStatKey(k)) continue;
+      out[k] = this.getStat(k);
+    }
+    return out;
+  }
+
+  /**
+   * All stored stats without passive skill bonuses (for merging baselines / export consistency).
+   * @returns {Record<string, number>}
+   */
+  getAllRawStats() {
     return { ...this.stats };
   }
 
@@ -916,7 +978,8 @@ export default class Character {
   clearAllStats() {
     const oldStats = { ...this.stats };
     this.stats = createEmptyRegisteredStatsObject();
-    
+    this._plannerSkillStatBonuses = {};
+
     // Dispatch event if stats changed
     if (typeof window !== 'undefined' && Object.keys(oldStats).length > 0) {
       window.dispatchEvent(new CustomEvent('characterStatsChanged', {

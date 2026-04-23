@@ -7652,7 +7652,7 @@
     "skillEffect": [
       "{{cooldown}}",
       "{{elemental_spell_damage}}",
-      "{{physical_damage}}",
+      "{{physical_damage_percent}}",
       "{{mana_cost}}"
     ],
     "image": "icons-sor_136.png"
@@ -16264,7 +16264,7 @@
         "statKey": "all_skills",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "1"
+        "value0": "1+blvl/4"
       }
     ],
     "description": [

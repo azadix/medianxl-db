@@ -5,7 +5,7 @@ import { getCurrentTab, setCurrentTabState } from './tree-tab-state.js';
 import { updatePlannerUrlTab } from './tree-url-sync.js';
 import Tree from '../character/Tree.js';
 import Character from '../character/Character.js';
-import { initializeCharacter, applyClassBaselineStatsToCharacter, recomputeClassDerivedLifeMana, onPlannerSkillAllocationChanged, getSpentSkillPoints, getAllSkillPoints, getAllSkillPointsById, setAllSkillPoints, setAllSkillPointsById, importQuestsCompleted, setStatAllocation, getAllOSkills, addOSkill, clearOSkills, setAllOSkills, getMinimumRequiredLevel, getTotalQuestSkillPoints, checkSkillsExceedingMaxLevel, getAvailableSkillPoints, getCharacterInstance, getCharacterLevel, getEffectivePlannerLevel, parseStatsFromText, exportStatsToText, clearAllStats, getQuestsCompletedForSave, getQuestCompletionOptOutForSave, getStatAllocation } from '../character/character-state.js';
+import { initializeCharacter, applyClassBaselineStatsToCharacter, recomputeClassDerivedLifeMana, onPlannerSkillAllocationChanged, runPlannerSkillStatRecompute, getSpentSkillPoints, getAllSkillPoints, getAllSkillPointsById, setAllSkillPoints, setAllSkillPointsById, importQuestsCompleted, setStatAllocation, getAllOSkills, addOSkill, clearOSkills, setAllOSkills, getMinimumRequiredLevel, getTotalQuestSkillPoints, checkSkillsExceedingMaxLevel, getAvailableSkillPoints, getCharacterInstance, getCharacterLevel, getEffectivePlannerLevel, parseStatsFromText, exportStatsToText, clearAllStats, getQuestsCompletedForSave, getQuestCompletionOptOutForSave, getStatAllocation } from '../character/character-state.js';
 import { refreshPlannerStatsPanelFromCharacter } from '../character/planner-stats-panel.js';
 import { initPlannerConfigPanel } from '../character/planner-config-panel.js';
 import { setPlannerSectionFromLegacy } from '../src/planner/planner-section-bridge.js';
@@ -455,6 +455,7 @@ function setupGlobalEventListeners() {
         allSkillsBonusInput.addEventListener('input', () => {
             // Refresh tooltip if one is currently shown
             refreshCurrentTooltip();
+            runPlannerSkillStatRecompute();
         });
     }
 

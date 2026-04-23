@@ -4395,7 +4395,8 @@
           "row": 1,
           "col": 2,
           "prerequisites": [
-            "character_level:1:"
+            "character_level:1:",
+            "skill_blocked_by:0:entanglement"
           ]
         },
         {
@@ -4498,6 +4499,7 @@
           "prerequisites": [
             "skill_level:1:tempest",
             "skill_blocked_by:0:mana_sweep",
+            "skill_blocked_by:0:molten_core",
             "tree_points:50:Lightning",
             "character_level:100:"
           ]

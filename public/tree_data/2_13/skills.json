@@ -7927,7 +7927,7 @@
         "value0": "20+1.5*blvl"
       },
       {
-        "statKey": "physical_damage",
+        "statKey": "physical_damage_percent",
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "30+3,5*blvl"
@@ -7940,7 +7940,7 @@
     "skillEffect": [
       "{{cooldown}}",
       "{{elemental_spell_damage}}",
-      "{{physical_damage}}",
+      "{{physical_damage_percent}}",
       "{{mana_cost}}"
     ],
     "image": "icons-sor_136.png"
@@ -16970,7 +16970,7 @@
         "statKey": "all_skills",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "1"
+        "value0": "1+blvl/4"
       }
     ],
     "description": [
@@ -23025,7 +23025,7 @@
         "statKey": "physical_resistance",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "2*blvl"
+        "value0": "min(2*blvl,20)"
       },
       {
         "statKey": "crushes_attacker",
