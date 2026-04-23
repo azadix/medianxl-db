@@ -10,7 +10,6 @@ import { getPlannerStatSkillModifiers } from './planner-stat-modifiers.js';
 import {
   isPlannerBaseStatKey,
   isPlannerNegativeAllowedBaseStat,
-  normalizePlannerStatValue,
   getPlannerStatLabel
 } from './planner-stats-config.js';
 import { getCharacterInstance, getEffectivePlannerLevel } from './character-state.js';
