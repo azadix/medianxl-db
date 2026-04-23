@@ -31,8 +31,62 @@ function hideStatBreakdownTooltip() {
   }
 }
 
-function positionStatBreakdownTooltip(el, row) {
-  const rect = row.getBoundingClientRect();
+/** @type {HTMLElement | null} */
+let minLevelPoolTooltipEl = null;
+/** @type {HTMLElement | null} */
+let minLevelPoolHoveredAnchor = null;
+let minLevelPoolTooltipSetup = false;
+
+function escapeHtmlSkillPool(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+/**
+ * @param {number|string} basePoints
+ * @param {number|string} questPoints
+ * @param {number|string} effectiveLevel
+ */
+function buildMinLevelSkillPoolTooltipHtml(basePoints, questPoints, effectiveLevel) {
+  const base = Math.max(0, Math.floor(Number(basePoints) || 0));
+  const quest = Math.max(0, Math.floor(Number(questPoints) || 0));
+  const lvl = Math.max(1, Math.floor(Number(effectiveLevel) || 1));
+  const total = base + quest;
+  return `<div class="planner-stat-tooltip-body">
+  <p class="planner-stat-tooltip-title mb-2">Available skill points</p>
+  <p class="planner-stat-tooltip-meta mb-2">At level ${escapeHtmlSkillPool(lvl)} (minimum required for this allocation).</p>
+  <ul class="planner-stat-tooltip-list">
+    <li><span class="planner-stat-tooltip-k">Base skill points</span> <span class="planner-stat-tooltip-v">+${escapeHtmlSkillPool(base)}</span></li>
+    <li><span class="planner-stat-tooltip-k">Quest skill points</span> <span class="planner-stat-tooltip-v">+${escapeHtmlSkillPool(quest)}</span></li>
+  </ul>
+  <p class="planner-stat-tooltip-meta mb-0">Total: ${escapeHtmlSkillPool(total)}</p>
+</div>`;
+}
+
+function ensureMinLevelPoolTooltip() {
+  if (!minLevelPoolTooltipEl) {
+    minLevelPoolTooltipEl = document.createElement('div');
+    minLevelPoolTooltipEl.className = 'planner-stat-tooltip';
+    minLevelPoolTooltipEl.setAttribute('role', 'tooltip');
+    minLevelPoolTooltipEl.setAttribute('aria-live', 'polite');
+    document.body.appendChild(minLevelPoolTooltipEl);
+  }
+  return minLevelPoolTooltipEl;
+}
+
+function hideMinLevelPoolTooltip() {
+  minLevelPoolHoveredAnchor = null;
+  if (minLevelPoolTooltipEl) {
+    minLevelPoolTooltipEl.classList.remove('is-active');
+    minLevelPoolTooltipEl.innerHTML = '';
+  }
+}
+
+function positionPlannerTooltip(el, anchor) {
+  const rect = anchor.getBoundingClientRect();
   const gap = 10;
   const margin = 8;
   el.style.left = '0';
@@ -53,7 +107,38 @@ function positionStatBreakdownTooltip(el, row) {
   el.style.top = `${top}px`;
 }
 
+function readSkillPoolFromAnchor(anchor) {
+  const base = anchor.dataset.poolBase ?? '0';
+  const quest = anchor.dataset.poolQuest ?? '0';
+  const level = anchor.dataset.poolLevel ?? '1';
+  return { base, quest, level };
+}
+
+function showMinLevelPoolTooltip(anchor) {
+  if (!(anchor instanceof HTMLElement)) return;
+  hideStatBreakdownTooltip();
+  minLevelPoolHoveredAnchor = anchor;
+  const { base, quest, level } = readSkillPoolFromAnchor(anchor);
+  const el = ensureMinLevelPoolTooltip();
+  el.innerHTML = buildMinLevelSkillPoolTooltipHtml(base, quest, level);
+  el.classList.add('is-active');
+  requestAnimationFrame(() => positionPlannerTooltip(el, anchor));
+}
+
+function resyncMinLevelPoolTooltipIfOpen() {
+  const anchor = minLevelPoolHoveredAnchor;
+  if (!anchor || !minLevelPoolTooltipEl?.classList.contains('is-active')) return;
+  if (!document.body.contains(anchor)) {
+    hideMinLevelPoolTooltip();
+    return;
+  }
+  const { base, quest, level } = readSkillPoolFromAnchor(anchor);
+  minLevelPoolTooltipEl.innerHTML = buildMinLevelSkillPoolTooltipHtml(base, quest, level);
+  requestAnimationFrame(() => positionPlannerTooltip(minLevelPoolTooltipEl, anchor));
+}
+
 function showStatBreakdownTooltip(row) {
+  hideMinLevelPoolTooltip();
   const key = row.dataset.statKey;
   if (!key) return;
   statBreakdownHoverKey = key;
@@ -61,7 +146,7 @@ function showStatBreakdownTooltip(row) {
   const el = ensureStatBreakdownTooltip();
   el.innerHTML = buildPlannerStatBreakdownHtml(key);
   el.classList.add('is-active');
-  requestAnimationFrame(() => positionStatBreakdownTooltip(el, row));
+  requestAnimationFrame(() => positionPlannerTooltip(el, row));
 }
 
 /**
@@ -108,7 +193,10 @@ export function setupPlannerStatRowTooltips(root) {
     true
   );
 
-  const onScrollOrResize = () => hideStatBreakdownTooltip();
+  const onScrollOrResize = () => {
+    hideStatBreakdownTooltip();
+    hideMinLevelPoolTooltip();
+  };
   window.addEventListener('scroll', onScrollOrResize, true);
   window.addEventListener('resize', onScrollOrResize);
 
@@ -119,6 +207,62 @@ export function setupPlannerStatRowTooltips(root) {
   window.addEventListener('characterStatsChanged', refreshOpenTooltip);
   window.addEventListener('questCompletionChanged', refreshOpenTooltip);
   window.addEventListener('plannerStatsPanelRefresh', refreshOpenTooltip);
+}
+
+/**
+ * Hover target: {@link PlannerSidebarOverview} `#minLevelAvailPart`.
+ */
+export function setupPlannerMinLevelSkillPoolTooltips() {
+  if (minLevelPoolTooltipSetup) return;
+  const root = document.getElementById('minLevelField');
+  if (!root) return;
+  minLevelPoolTooltipSetup = true;
+
+  let hideTimer = 0;
+  const clearHide = () => {
+    if (hideTimer) {
+      window.clearTimeout(hideTimer);
+      hideTimer = 0;
+    }
+  };
+  const scheduleHide = () => {
+    clearHide();
+    hideTimer = window.setTimeout(() => hideMinLevelPoolTooltip(), 80);
+  };
+
+  root.addEventListener(
+    'mouseover',
+    (e) => {
+      const t = e.target;
+      if (!(t instanceof Element)) return;
+      const anchor = t.closest('.planner-skill-pool-tooltip-target');
+      if (!anchor || !root.contains(anchor)) return;
+      clearHide();
+      if (minLevelPoolHoveredAnchor === anchor) return;
+      showMinLevelPoolTooltip(anchor);
+    },
+    true
+  );
+
+  root.addEventListener(
+    'mouseout',
+    (e) => {
+      const t = e.target;
+      if (!(t instanceof Element)) return;
+      const anchor = t.closest('.planner-skill-pool-tooltip-target');
+      if (!anchor || !root.contains(anchor)) return;
+      const rel = e.relatedTarget;
+      if (rel instanceof Node && anchor.contains(rel)) return;
+      scheduleHide();
+    },
+    true
+  );
+
+  const refreshPoolTooltip = () => resyncMinLevelPoolTooltipIfOpen();
+  window.addEventListener('skillPointsChanged', refreshPoolTooltip);
+  window.addEventListener('questCompletionChanged', refreshPoolTooltip);
+  window.addEventListener('characterLevelChanged', refreshPoolTooltip);
+  window.addEventListener('plannerStateChanged', refreshPoolTooltip);
 }
 
 function resyncStatBreakdownTooltipAfterPanelRefresh(root) {

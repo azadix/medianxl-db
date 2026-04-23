@@ -415,6 +415,13 @@
     border-color: hsl(0, 0%, 32%);
 }
 
+/* Character info: skill point total + "available" segment (same breakdown as stat tooltips) */
+.planner-skill-pool-tooltip-target {
+    cursor: help;
+    text-decoration: underline dotted;
+    text-underline-offset: 2px;
+}
+
 /* Floating breakdown (hover any stat row) */
 .planner-stat-tooltip {
     position: fixed;

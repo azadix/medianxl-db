@@ -1,15 +1,33 @@
+<script setup>
+import { onMounted, nextTick } from 'vue';
+import { setupPlannerMinLevelSkillPoolTooltips } from '../../../character/planner-stats-panel.js';
+
+onMounted(() => {
+  nextTick(() => {
+    setupPlannerMinLevelSkillPoolTooltips();
+  });
+});
+</script>
+
 <template>
   <div id="sidebarPaneOther">
     <h3 class="title is-5 mb-3">Character Info</h3>
 
     <div id="minLevelField" class="field">
-      <p>
-        <span id="minLevelDisplay" class="has-text-warning has-text-weight-bold pr-1"> Level 1 </span>
-        <span id="minLevelBreakdown" class="tooltip has-text-grey-light is-size-7">
-          (Base skill points: 0 + Quest skill points: 0)
-        </span>
+      <p class="mb-1">
+        <span id="minLevelDisplay" class="has-text-warning has-text-weight-bold is-size-5">Level 1</span>
       </p>
-      <p id="minLevelHelp" class="help is-size-6">Minimum level needed for current skill allocation</p>
+      <p id="minLevelHelp" class="help is-size-6 mb-0">
+        <span id="minLevelSpentPart">0 spent</span>
+        <span class="has-text-grey"> / </span>
+        <span
+          id="minLevelAvailPart"
+          class="planner-skill-pool-tooltip-target has-text-grey"
+          data-pool-base="0"
+          data-pool-quest="0"
+          data-pool-level="1"
+          >0 available</span>
+      </p>
       <hr class="my-1" />
     </div>
 

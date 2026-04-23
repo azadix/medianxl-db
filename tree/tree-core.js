@@ -623,23 +623,25 @@ function updateDevotionDisplay() {
 function updateMinimumLevelDisplay() {
     const minLevelField = document.getElementById('minLevelField');
     const minLevelDisplay = document.getElementById('minLevelDisplay');
-    const minLevelBreakdown = document.getElementById('minLevelBreakdown');
-    const minLevelHelp = document.getElementById('minLevelHelp');
-    
-    if (!minLevelField || !minLevelDisplay || !minLevelBreakdown || !minLevelHelp) return;
-    
+    const minLevelSpentPart = document.getElementById('minLevelSpentPart');
+    const minLevelAvailPart = document.getElementById('minLevelAvailPart');
+
+    if (!minLevelField || !minLevelDisplay || !minLevelSpentPart || !minLevelAvailPart) return;
+
     const spentPoints = getSpentSkillPoints();
-    // Same level for title, breakdown, and total: min. level for this build (1 with no skills, else prerequisite level).
+    // Same level for title and available total: min. level for this build (1 with no skills, else prerequisite level).
     const effectiveLevel = getEffectivePlannerLevel();
     const availableBasePoints = Character.getBaseSkillPoints(effectiveLevel);
     const availableQuestPoints = getTotalQuestSkillPoints(effectiveLevel);
-    const totalAvailablePoints = availableBasePoints + availableQuestPoints;
+    const totalAvailable = availableBasePoints + availableQuestPoints;
 
     minLevelDisplay.textContent = `Level ${effectiveLevel}`;
 
-    minLevelBreakdown.textContent = `(Base skill points: ${availableBasePoints} + Quest skill points: ${availableQuestPoints})`;
-
-    minLevelHelp.textContent = `${spentPoints} spent / ${totalAvailablePoints} available`;
+    minLevelSpentPart.textContent = `${spentPoints} spent`;
+    minLevelAvailPart.textContent = `${totalAvailable} available`;
+    minLevelAvailPart.dataset.poolBase = String(availableBasePoints);
+    minLevelAvailPart.dataset.poolQuest = String(availableQuestPoints);
+    minLevelAvailPart.dataset.poolLevel = String(effectiveLevel);
 
     recomputeClassDerivedLifeMana();
 }
