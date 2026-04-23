@@ -9,6 +9,7 @@ import {
   createEmptyRegisteredStatsObject
 } from './planner-stats-config.js';
 import { getPlannerSkillsSnapshot } from './character-state.js';
+import { minCharacterLevelForAllocatedSkillPoints } from '../skills/skill-calculations.js';
 
 export default class Character {
   // Level constraints
@@ -511,7 +512,19 @@ export default class Character {
             if (!sk) {
               sk = skillsForPrereq.find((s) => s.id === name) ?? null;
             }
-            if (!sk || !sk.prerequisites || !sk.prerequisites.length) continue;
+            if (!sk) continue;
+
+            const pointsInSkill = skillLevels[name] || 0;
+            if (sk.skillId != null && Number.isFinite(Number(sk.skillId)) && pointsInSkill > 0) {
+              const dynMin = minCharacterLevelForAllocatedSkillPoints(
+                Number(sk.skillId),
+                skillLevels,
+                pointsInSkill
+              );
+              minLevelFromPrerequisites = Math.max(minLevelFromPrerequisites, dynMin);
+            }
+
+            if (!sk.prerequisites || !sk.prerequisites.length) continue;
             for (const prereq of sk.prerequisites) {
               const parts = String(prereq).split(':');
               if (parts[0] !== 'character_level') continue;

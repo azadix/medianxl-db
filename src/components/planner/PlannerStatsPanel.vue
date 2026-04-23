@@ -157,7 +157,7 @@ onUnmounted(() => {
 <template>
   <div id="sidebarPaneStats">
     <div class="character-sheet-body">
-      <label class="label">Character stats</label>
+      <h3 class="title is-5 mb-3">Character stats</h3>
       <div
         id="plannerStatsPanel"
         ref="panelRoot"

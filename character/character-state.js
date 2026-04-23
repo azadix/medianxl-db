@@ -355,6 +355,18 @@ export function getMinimumRequiredLevel(allSkills = null) {
 }
 
 /**
+ * Raise planner character level so the build meets minimum level (skill point pool + prereqs).
+ * @param {Array|null} allSkills
+ */
+function bumpCharacterLevelToMinimumRequired(allSkills = null) {
+  if (!characterInstance) return;
+  const needed = getMinimumRequiredLevel(allSkills);
+  if (characterInstance.level < needed) {
+    setCharacterLevel(needed);
+  }
+}
+
+/**
  * Check if prerequisites are met for a skill
  * @param {Object} skill - Skill object with prerequisites array
  * @param {Array} allSkills - Optional array of all skills for tree points validation
@@ -578,18 +590,20 @@ export function addSkillPoint(skillName, skill, maxLevel, allSkills = [], skipEv
   if (characterInstance) {
     characterInstance.skillPoints[skillName] = currentPoints + 1;
     characterInstance.maxLevels = {}; // Clear cache as max levels may change
-    
+
+    bumpCharacterLevelToMinimumRequired(allSkills);
+
     // Auto-add required stats to input field
     autoAddStatsToInput(skill.skillId);
-    
+
     // Dispatch event for UI updates (unless skipped for batch operations)
     if (!skipEvent) {
-      window.dispatchEvent(new CustomEvent('skillPointsChanged', { 
-        detail: { skillName, action: 'add' } 
+      window.dispatchEvent(new CustomEvent('skillPointsChanged', {
+        detail: { skillName, action: 'add' }
       }));
     }
   }
-  
+
   return { success: true, reason: '' };
 }
 
@@ -670,14 +684,18 @@ export function addSkillPointsBatch(skillName, skill, amount, allSkills = [], ge
     
     pointsAdded++;
   }
-  
+
+  if (pointsAdded > 0) {
+    bumpCharacterLevelToMinimumRequired(allSkills);
+  }
+
   // Dispatch single event after all points are added
   if (pointsAdded > 0) {
-    window.dispatchEvent(new CustomEvent('skillPointsChanged', { 
-      detail: { skillName, action: 'add', amount: pointsAdded } 
+    window.dispatchEvent(new CustomEvent('skillPointsChanged', {
+      detail: { skillName, action: 'add', amount: pointsAdded }
     }));
   }
-  
+
   return { success: pointsAdded > 0, pointsAdded, reason: pointsAdded === 0 ? 'No points could be added' : '' };
 }
 

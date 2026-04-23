@@ -261,7 +261,7 @@ export function getMaxLevelModifierDescriptionsForSkill(
     skill_name: internal,
     base_max_level: cat.baseMaxLevel,
     affected_by_specialization: Boolean(cat.affectedBySpecialization),
-    can_add_points: Boolean(cat.canAddPoints)
+    can_add_points: cat.canAddPoints !== false && cat.can_add_points !== false
   };
 
   const out = [];
@@ -306,6 +306,89 @@ export function getMaxLevelModifierDescriptionsForSkill(
 }
 
 /**
+ * Raw max skill level at a given character level (ulvl), before planner "use max at 150" aggregation.
+ * @param {number} skillId - Catalog numeric id
+ * @param {Record<string, number>} skillLevels - internal skill name -> points
+ * @param {number} ulvl - Character level passed into max-level modifiers
+ * @returns {number}
+ */
+export function computeMaxSkillLevelAtUlvl(skillId, skillLevels = {}, ulvl = Character.DEFAULT_LEVEL) {
+  const store = getFileSkillStore();
+  if (!store) return 0;
+  const internal = store.internalNameByNumericId(skillId);
+  const cat = store.catalog?.find((c) => c.numericId === skillId);
+  if (!internal || !cat) return 0;
+  const base_max_level = cat.baseMaxLevel;
+  if (base_max_level == null) return 0;
+
+  const targetSkillData = {
+    skill_name: internal,
+    base_max_level,
+    affected_by_specialization: Boolean(cat.affectedBySpecialization),
+    can_add_points: cat.canAddPoints !== false && cat.can_add_points !== false
+  };
+  const u = Character.clampLevel(ulvl);
+  let v = base_max_level;
+  for (const modifier of MAX_LEVEL_MODIFIERS) {
+    const sourceSkillLevel = modifier.sourceSkillName
+      ? skillLevels[modifier.sourceSkillName] || 0
+      : 0;
+    const bonus = modifier.calculateBonus(
+      sourceSkillLevel,
+      targetSkillData,
+      u,
+      skillLevels
+    );
+    v += bonus;
+  }
+  return Math.min(v, 150);
+}
+
+/**
+ * True when {@link calculateMaxLevel} uses the ulvl-150 invest cap (max grows with character level).
+ * @param {number} skillId
+ * @param {Record<string, number>} skillLevels
+ */
+export function skillMaxLevelScalesWithCharacterLevel(skillId, skillLevels = {}) {
+  const store = getFileSkillStore();
+  if (!store) return false;
+  const cat = store.catalog?.find((c) => c.numericId === skillId);
+  if (!cat) return false;
+  const canAddPoints = cat.canAddPoints !== false && cat.can_add_points !== false;
+  const a = computeMaxSkillLevelAtUlvl(skillId, skillLevels, Character.MIN_LEVEL);
+  const b = computeMaxSkillLevelAtUlvl(skillId, skillLevels, Character.MAX_LEVEL);
+  return canAddPoints && b > a;
+}
+
+/**
+ * Minimum character level (ulvl) needed to legally hold `points` in this skill, from max-level modifiers only.
+ * Returns {@link Character.MIN_LEVEL} when the skill does not scale max with ulvl.
+ * @param {number} skillId
+ * @param {Record<string, number>} skillLevels
+ * @param {number} points - Allocated points (blvl) in this skill
+ */
+export function minCharacterLevelForAllocatedSkillPoints(skillId, skillLevels = {}, points = 0) {
+  const p = Math.floor(Number(points) || 0);
+  if (p <= 0) return Character.MIN_LEVEL;
+  if (!skillMaxLevelScalesWithCharacterLevel(skillId, skillLevels)) return Character.MIN_LEVEL;
+
+  let lo = Character.MIN_LEVEL;
+  let hi = Character.MAX_LEVEL;
+  let ans = Character.MAX_LEVEL + 1;
+  while (lo <= hi) {
+    const mid = Math.floor((lo + hi) / 2);
+    const cap = computeMaxSkillLevelAtUlvl(skillId, skillLevels, mid);
+    if (cap >= p) {
+      ans = mid;
+      hi = mid - 1;
+    } else {
+      lo = mid + 1;
+    }
+  }
+  return ans <= Character.MAX_LEVEL ? ans : Character.MAX_LEVEL;
+}
+
+/**
  * Calculate the effective max level for a skill
  * @param {number} skillId - The skill ID to calculate max level for
  * @param {Object} skillLevels - Object mapping skill_name to current skill level
@@ -331,26 +414,22 @@ export function calculateMaxLevel(skillId, skillLevels = {}, characterLevel = Ch
     }
     return 0;
   }
-  const targetSkillData = {
-    skill_name: internal,
-    base_max_level,
-    affected_by_specialization: Boolean(cat.affectedBySpecialization),
-    can_add_points: Boolean(cat.canAddPoints)
-  };
-  let effectiveMaxLevel = base_max_level;
-  for (const modifier of MAX_LEVEL_MODIFIERS) {
-    const sourceSkillLevel = modifier.sourceSkillName
-      ? skillLevels[modifier.sourceSkillName] || 0
-      : 0;
-    const bonus = modifier.calculateBonus(
-      sourceSkillLevel,
-      targetSkillData,
-      characterLevel,
-      skillLevels
-    );
-    effectiveMaxLevel += bonus;
+  const canAddPoints = cat.canAddPoints !== false && cat.can_add_points !== false;
+
+  const maxAtMinUlvl = computeMaxSkillLevelAtUlvl(skillId, skillLevels, Character.MIN_LEVEL);
+  const maxAtMaxUlvl = computeMaxSkillLevelAtUlvl(skillId, skillLevels, Character.MAX_LEVEL);
+  const maxAtCurrentUlvl = computeMaxSkillLevelAtUlvl(skillId, skillLevels, characterLevel);
+
+  // Skills whose max grows with character level (ulvl): planner cap matches level 150, not current ulvl.
+  if (canAddPoints && maxAtMaxUlvl > maxAtMinUlvl) {
+    return maxAtMaxUlvl;
   }
-  return Math.min(effectiveMaxLevel, 150);
+
+  let effectiveMaxLevel = maxAtCurrentUlvl;
+  if (effectiveMaxLevel < 1 && canAddPoints) {
+    effectiveMaxLevel = 1;
+  }
+  return effectiveMaxLevel;
 }
 
 /**
