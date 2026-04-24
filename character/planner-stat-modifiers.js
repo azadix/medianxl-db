@@ -319,8 +319,7 @@ export async function recomputePlannerStatsFromSkillAllocations(character, ctx) 
             plannerKey,
             slotVal,
             internalId,
-            displayName,
-            `value${valueIndex} from ${statKey}`
+            displayName
           );
         }
         if (isPlannerBaseStatKey(statKey)) {

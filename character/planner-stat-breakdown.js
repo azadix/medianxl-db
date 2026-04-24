@@ -176,7 +176,7 @@ export function buildPlannerStatBreakdownHtml(statKey) {
     const attrRows = [{ label: 'Class baseline', value: fmt(baseline) }];
     if (above > 0) {
       attrRows.push({
-        label: 'Points above baseline (manual edits & future skill bonuses)',
+        label: 'Points above baseline (manual edits)',
         value: `+${fmt(above)}`
       });
     }
@@ -201,7 +201,7 @@ export function buildPlannerStatBreakdownHtml(statKey) {
     });
     if (mods.length > 0) {
       sections.push({
-        title: 'Skills (passives)',
+        title: 'Skills',
         rows: mods.map((m) => ({
           label: m.displayName,
           value: m.description
@@ -227,7 +227,7 @@ export function buildPlannerStatBreakdownHtml(statKey) {
     });
     if (mods.length > 0) {
       sections.push({
-        title: 'Skills (passives)',
+        title: 'Skills',
         rows: mods.map((m) => ({
           label: m.displayName,
           value: m.description
