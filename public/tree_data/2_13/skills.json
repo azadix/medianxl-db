@@ -15105,18 +15105,25 @@
     ],
     "restriction": [],
     "skillEffect": [
-      "Level 130: Drop rate of Heavenly Souls greatly increased",
-      "Level 133: Increased drop rate of Angelic items in Library of Fate 133+",
-      "Level 135: While in the Heroic Library of Fate",
+      "<p class='has-text-info'>Level 130:</p>",
+      "Drop rate of Heavenly Souls greatly increased",
+      "<p class='has-text-info'>Level 133:</p>",
+      "Increased drop rate of Angelic items in Library of Fate 133+",
+      "<p class='has-text-info'>Level 135:</p>",
+      "(While in the Heroic Library of Fate)",
       "{{physical_resistance}}",
       "{{maximum_elemental_resistances}}",
-      "Level 139: Find Soulforged Mystic Orbs in Library of Fate 133+",
-      "Level 141: Transmute Heavenly Soul + Angelic item to reroll affixes",
-      "Level 143: Mark of the Angiris chase item can drop in Library of Fate 139+",
-      "Level 145:",
+      "<p class='has-text-info'>Level 139:</p>",
+      "Find Soulforged Mystic Orbs in Library of Fate 133+",
+      "<p class='has-text-info'>Level 141:</p>",
+      "Transmute Heavenly Soul + Angelic item to reroll affixes",
+      "<p class='has-text-info'>Level 143:</p>",
+      "Mark of the Angiris chase item can drop in Library of Fate 139+",
+      "<p class='has-text-info'>Level 145:</p>",
       "{{maximum_life}}",
       "{{enemy_magic_resistance}}",
-      "Level 147: Invitations to the Trial of the Angiris can drop in Library of Fate 139+"
+      "<p class='has-text-info'>Level 147:</p>",
+      "Invitations to the Trial of the Angiris can drop in Library of Fate 139+"
     ],
     "image": "icons-ama_18.png"
   },
@@ -15143,6 +15150,20 @@
         "variantKey": "",
         "minCharacterLevel": 143,
         "value0": "4"
+      },
+      {
+        "statKey": "magic_resistance",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "minCharacterLevel": 132,
+        "value0": "20"
+      },
+      {
+        "statKey": "magic_resistance",
+        "occurrenceIndex": 1,
+        "variantKey": "",
+        "minCharacterLevel": 138,
+        "value0": "20"
       }
     ],
     "description": [
@@ -15150,19 +15171,28 @@
     ],
     "restriction": [],
     "skillEffect": [
-      "Level 130: Use Sacred Unique (105) creation altars in Duncraig 130+",
-      "Level 132: +20% Magic Resistance in Duncraig 130+",
-      "Level 134:",
+      "<p class='has-text-info'>Level 130:</p>",
+      "Use Sacred Unique (105) creation altars in Duncraig 130+",
+      "<p class='has-text-info'>Level 132:</p>",
+      "{{magic_resistance}} in Duncraig 130+",
+      "<p class='has-text-info'>Level 134:</p>",
       "Use Assur's Bane upgrade altars (Tier 1) in Duncraig 134+",
       "Use Sacred Unique (120) stat reroll altars in Duncraig",
-      "Level 136: Purify and Holybolt Damage increased by 20%",
-      "Level 138: +20% Magic Resistance in Duncraig 130+",
-      "Level 139:",
+      "<p class='has-text-info'>Level 136:</p>",
+      "[[purify]]",
+      "[[holybolt]]",
+      "Damage increased by 20%",
+      "<p class='has-text-info'>Level 138:</p>",
+      "{{magic_resistance}} in Duncraig 130+",
+      "<p class='has-text-info'>Level 139:</p>",
       "Use Assur's Bane upgrade altars (Tier 2) in Duncraig 139+",
       "Use Sacred Unique (105-130) reroll altars in Duncraig",
-      "Level 140: Use Sacred Unique double corruption altars in Duncraig 139+",
-      "Level 143: {{grit}}",
-      "Level 145: Enter Assur's Realm using trophies from his fallen minions"
+      "<p class='has-text-info'>Level 140:</p>",
+      "Use Sacred Unique double corruption altars in Duncraig 139+",
+      "<p class='has-text-info'>Level 143:</p>",
+      "{{grit}}",
+      "<p class='has-text-info'>Level 145:</p>",
+      "Enter Assur's Realm using trophies from his fallen minions"
     ],
     "image": "icons-ama_20.png"
   },
