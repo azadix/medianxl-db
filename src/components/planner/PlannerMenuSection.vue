@@ -35,7 +35,7 @@ import {
           @click="plannerMenuOpenLoadSection"
         >
           <span class="icon-text">
-            <span>Load/Export Build</span>
+            <span>Load build</span>
           </span>
         </button>
 

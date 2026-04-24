@@ -216,8 +216,6 @@ function loadBuildData(build, buildIndex = null) {
     if (buildIndex !== null) {
         currentBuildIndex = buildIndex;
     }
-    updateSaveButtonVisibility();
-    
     // Show tree section
     showSection('tree');
     
@@ -234,7 +232,7 @@ function loadBuildData(build, buildIndex = null) {
             'danger'
         );
     } else {
-        toastManager.showToast(`Build "${build.name}" loaded successfully!`, true, 'info');
+        toastManager.showToast(`Build "${exportLabelForToast(build.name)}" loaded successfully!`, true, 'info');
     }
 }
 
@@ -662,7 +660,6 @@ export async function plannerMenuNewBuild() {
     }
     currentBuildIndex = null;
     await main();
-    updateSaveButtonVisibility();
 }
 
 export async function plannerMenuOpenLoadSection() {
@@ -706,11 +703,202 @@ export function plannerSaveBuildClick() {
     }
     if (currentBuildIndex !== null) {
         updateCurrentBuild();
+    } else {
+        promptAndSaveBuild();
     }
 }
 
 export function plannerSaveAsBuildClick() {
     promptAndSaveBuild();
+}
+
+/**
+ * Sanitize user-entered build name for JSON/export storage (control chars stripped; empty becomes default).
+ * @param {unknown} raw
+ * @returns {string}
+ */
+function sanitizeBuildNameForExportStorage(raw) {
+    let s = String(raw ?? '')
+        .trim()
+        .replace(/[\r\n]+/g, ' ')
+        .replace(/\s+/g, ' ');
+    let out = '';
+    for (let i = 0; i < s.length; i++) {
+        const code = s.charCodeAt(i);
+        if (code >= 32 && code !== 127) {
+            out += s[i];
+        }
+    }
+    s = out.trim();
+    return s !== '' ? s : 'Unnamed Build';
+}
+
+/**
+ * Modal to set build name before toolbar export (no native prompt/confirm).
+ * @param {{ onConfirm: (name: string) => void }} opts
+ */
+function showExportBuildNameModal(opts) {
+    const { onConfirm } = opts;
+    const builds = getSavedBuilds();
+    const defaultPrefill =
+        currentBuildIndex !== null &&
+        currentBuildIndex >= 0 &&
+        currentBuildIndex < builds.length
+            ? String(builds[currentBuildIndex].name ?? '')
+            : '';
+
+    const overlay = document.createElement('div');
+    overlay.className = 'modal is-active';
+    overlay.style.cssText = 'z-index: 10001;';
+
+    const modalBackground = document.createElement('div');
+    modalBackground.className = 'modal-background';
+
+    const card = document.createElement('div');
+    card.className = 'modal-card';
+    card.style.cssText = 'max-width: 28rem;';
+
+    const head = document.createElement('header');
+    head.className = 'modal-card-head py-3 px-3';
+    const title = document.createElement('p');
+    title.className = 'modal-card-title mb-0';
+    title.textContent = 'Export build';
+    head.appendChild(title);
+
+    const body = document.createElement('section');
+    body.className = 'modal-card-body py-3 px-3';
+    const intro = document.createElement('p');
+    intro.className = 'mb-3 py-2';
+    intro.textContent =
+        'This name is stored in the exported JSON as the build name. Leave the field empty to use the default name.';
+    body.appendChild(intro);
+
+    const label = document.createElement('label');
+    label.className = 'label py-2 mb-2';
+    label.htmlFor = 'exportBuildNameInput';
+    label.textContent = 'Build name';
+    body.appendChild(label);
+
+    const input = document.createElement('input');
+    input.id = 'exportBuildNameInput';
+    input.className = 'input py-2';
+    input.type = 'text';
+    input.setAttribute('placeholder', 'Unnamed Build');
+    input.setAttribute('autocomplete', 'off');
+    input.value = defaultPrefill;
+    body.appendChild(input);
+
+    const foot = document.createElement('footer');
+    foot.className = 'modal-card-foot py-3 px-3';
+    foot.style.cssText =
+        'display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 0.5rem; flex-wrap: wrap;';
+    const btnExport = document.createElement('button');
+    btnExport.className = 'button is-primary py-2';
+    btnExport.type = 'button';
+    btnExport.textContent = 'Export build';
+    const btnCancel = document.createElement('button');
+    btnCancel.className = 'button py-2';
+    btnCancel.type = 'button';
+    btnCancel.textContent = 'Cancel';
+    foot.appendChild(btnExport);
+    foot.appendChild(btnCancel);
+
+    card.appendChild(head);
+    card.appendChild(body);
+    card.appendChild(foot);
+
+    overlay.appendChild(modalBackground);
+    overlay.appendChild(card);
+    document.body.appendChild(overlay);
+
+    const closeModal = () => {
+        document.body.removeChild(overlay);
+        document.removeEventListener('keydown', handleEscape);
+    };
+
+    const handleEscape = (e) => {
+        if (e.key === 'Escape') {
+            closeModal();
+        }
+    };
+    document.addEventListener('keydown', handleEscape);
+
+    modalBackground.addEventListener('click', closeModal);
+    btnCancel.addEventListener('click', closeModal);
+
+    const submit = () => {
+        const name = sanitizeBuildNameForExportStorage(input.value);
+        closeModal();
+        onConfirm(name);
+    };
+
+    btnExport.addEventListener('click', submit);
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            submit();
+        }
+    });
+
+    setTimeout(() => input.focus(), 0);
+}
+
+export function plannerExportBuildClick() {
+    if (!validateBuildBeforeSave()) {
+        return;
+    }
+    showExportBuildNameModal({
+        onConfirm(name) {
+            const snap = buildCurrentBuildSnapshot(name);
+            exportBuildJsonString(JSON.stringify(snap), exportLabelForToast(name));
+        },
+    });
+}
+
+/** @param {unknown} name */
+function exportLabelForToast(name) {
+    if (name == null) return '(unnamed)';
+    const t = String(name).trim();
+    return t !== '' ? t : '(unnamed)';
+}
+
+/** @param {string} name Build name (may be empty string) */
+function buildCurrentBuildSnapshot(name) {
+    const currentClass = classSelect ? classSelect.value : null;
+    const currentLevel = getMinimumRequiredLevel();
+    return {
+        name: name != null ? String(name) : '',
+        version: versionToString(getCurrentVersion()),
+        class: currentClass,
+        level: currentLevel,
+        spentPoints: getSpentSkillPoints(),
+        skillPoints: getAllSkillPointsById(),
+        oSkills: getAllOSkills(),
+        allSkillsBonus: getAllSkillsBonus(),
+        stats: exportStatsToText(),
+        questsCompleted: getQuestsCompletedForSave(),
+        questCompletionOptOut: getQuestCompletionOptOutForSave(),
+        statAllocation: getStatAllocation(),
+        savedAt: new Date().toISOString()
+    };
+}
+
+/**
+ * @param {string} jsonString
+ * @param {string} labelForUi Label for toasts/modal (not necessarily JSON name field)
+ */
+function exportBuildJsonString(jsonString, labelForUi) {
+    const label =
+        labelForUi != null && String(labelForUi).trim() !== '' ? String(labelForUi).trim() : '(unnamed)';
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(jsonString).then(() => {
+            toastManager.showToast(`Build "${label}" exported to clipboard!`, true, 'success');
+        }).catch(() => {
+            fallbackCopyToClipboard(jsonString, label);
+        });
+    } else {
+        fallbackCopyToClipboard(jsonString, label);
+    }
 }
 
 // Show/hide sections (visibility owned by Vue / Pinia via planner-section-bridge.js)
@@ -752,8 +940,7 @@ function resetBuild(showToast = true) {
     
     // Clear current build index (this is a new build)
     currentBuildIndex = null;
-    updateSaveButtonVisibility();
-    
+
     // Clear oSkills
     clearOSkills();
     
@@ -779,14 +966,6 @@ function resetBuild(showToast = true) {
 }
 
 // Build Save/Load System
-function updateSaveButtonVisibility() {
-    const saveBuildBtn = document.getElementById('saveBuildBtn');
-    if (saveBuildBtn) {
-        // Show "Save" button only when a build is loaded
-        saveBuildBtn.style.display = currentBuildIndex !== null ? 'block' : 'none';
-    }
-}
-
 function validateBuildBeforeSave() {
     // Check for skills exceeding max level BEFORE any save operation
     const exceedingSkills = checkSkillsExceedingMaxLevel(skillsList);
@@ -812,12 +991,12 @@ function promptAndSaveBuild() {
     }
     
     const buildName = prompt('Enter a name for this build:');
-    if (!buildName || buildName.trim() === '') {
+    if (buildName === null) {
         return;
     }
     
-    // Clean the build name: trim whitespace and remove newlines
-    const cleanBuildName = buildName.trim().replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ');
+    // Clean the build name: trim whitespace and remove newlines (empty allowed)
+    const cleanBuildName = String(buildName).trim().replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ');
     
     saveBuild(cleanBuildName);
 }
@@ -851,19 +1030,17 @@ function promptAndImportBuild() {
  * @returns {boolean} True if valid, false otherwise
  */
 function validateBuildData(buildData) {
-    // Check required fields
-    const requiredFields = ['name', 'class', 'level', 'skillPoints'];
-    for (const field of requiredFields) {
-        if (!buildData[field]) {
-            toastManager.showToast(`Missing required field: ${field}`, 'danger');
-            return false;
-        }
-    }
-    
-    // Validate data types
     if (typeof buildData.name !== 'string') {
         toastManager.showToast('Build name must be a string', 'danger');
         return false;
+    }
+
+    const requiredFields = ['class', 'level', 'skillPoints'];
+    for (const field of requiredFields) {
+        if (buildData[field] === undefined || buildData[field] === null) {
+            toastManager.showToast(`Missing required field: ${field}`, 'danger');
+            return false;
+        }
     }
     
     if (typeof buildData.class !== 'string') {
@@ -966,55 +1143,17 @@ function updateCurrentBuild() {
         return;
     }
     
-    const currentClass = classSelect ? classSelect.value : null;
-    const currentLevel = getMinimumRequiredLevel();
-    const spentPoints = getSpentSkillPoints();
-    
-    // Update existing build
-    builds[currentBuildIndex] = {
-        name: builds[currentBuildIndex].name, // Keep original name
-        version: versionToString(getCurrentVersion()),
-        class: currentClass,
-        level: currentLevel,
-        spentPoints: spentPoints,
-        skillPoints: getAllSkillPointsById(), // Use skill IDs instead of names
-        oSkills: getAllOSkills(), // Save oSkills (now with skill IDs)
-        allSkillsBonus: getAllSkillsBonus(), // Save All Skills bonus
-        stats: exportStatsToText(), // Save stats as text
-        questsCompleted: getQuestsCompletedForSave(),
-        questCompletionOptOut: getQuestCompletionOptOutForSave(),
-        statAllocation: getStatAllocation(),
-        savedAt: new Date().toISOString()
-    };
+    const keptName = builds[currentBuildIndex].name;
+    builds[currentBuildIndex] = buildCurrentBuildSnapshot(keptName);
     
     setSavedBuilds(builds);
     notifySavedBuildsListRefresh();
     
-    toastManager.showToast(`Build "${builds[currentBuildIndex].name}" updated!`, true, 'info');
+    toastManager.showToast(`Build "${exportLabelForToast(builds[currentBuildIndex].name)}" updated!`, true, 'info');
 }
 
 function saveBuild(buildName) {
-    const currentClass = classSelect ? classSelect.value : null;
-    const currentLevel = getMinimumRequiredLevel();
-    const skillPoints = getAllSkillPointsById(); // Use skill IDs instead of names
-    const spentPoints = getSpentSkillPoints();
-    
-    const build = {
-        name: buildName,
-        version: versionToString(getCurrentVersion()),
-        class: currentClass,
-        level: currentLevel,
-        spentPoints: spentPoints,
-        skillPoints: skillPoints,
-        oSkills: getAllOSkills(), // Save oSkills (now with skill IDs)
-        allSkillsBonus: getAllSkillsBonus(), // Save All Skills bonus
-        stats: exportStatsToText(), // Save stats as text
-        questsCompleted: getQuestsCompletedForSave(),
-        questCompletionOptOut: getQuestCompletionOptOutForSave(),
-        statAllocation: getStatAllocation(),
-        savedAt: new Date().toISOString()
-    };
-    
+    const build = buildCurrentBuildSnapshot(buildName);
     
     // Get existing builds
     const builds = getSavedBuilds();
@@ -1027,9 +1166,8 @@ function saveBuild(buildName) {
     
     // Set current build index to the newly saved build
     currentBuildIndex = builds.length - 1;
-    updateSaveButtonVisibility();
-    
-    toastManager.showToast(`Build "${buildName}" saved successfully!`, true, 'info');
+
+    toastManager.showToast(`Build "${exportLabelForToast(buildName)}" saved successfully!`, true, 'info');
 }
 
 export function ensureCharacterForBuildList() {
@@ -1059,22 +1197,7 @@ export function exportBuild(index) {
     }
     
     const build = builds[index];
-    
-    // Convert build to single-line JSON
-    const buildJson = JSON.stringify(build);
-    
-    // Try modern clipboard API first
-    if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(buildJson).then(() => {
-            toastManager.showToast(`Build "${build.name}" exported to clipboard!`, true, 'success');
-        }).catch(() => {
-            // Fallback to legacy method
-            fallbackCopyToClipboard(buildJson, build.name);
-        });
-    } else {
-        // Fallback to legacy method
-        fallbackCopyToClipboard(buildJson, build.name);
-    }
+    exportBuildJsonString(JSON.stringify(build), exportLabelForToast(build.name));
 }
 
 /**
@@ -1247,7 +1370,7 @@ function showHelpModal() {
                     <li>Character stats: use Life, Mana, Str, Dex, Energy, Vitality fields; skills can add extra stats. Life and Mana cannot go below 0.</li>
                     <li>Arrows between skills show prerequisite relationships</li>
                     <li>Skills that are maxed out are highlighted in yellow</li>
-                    <li>You can save multiple builds and switch between them using "Load/Export Build"</li>
+                    <li>Use "Load build" to open the saved-builds list; use Export (next to Save) on the planner toolbar to open a dialog where you set the build name stored in the JSON (default Unnamed Build if you leave the name empty)</li>
                 </ul>
                 
                 <h4 class="title is-5 mb-3 mt-5">Character Stats</h4>
@@ -1329,22 +1452,22 @@ export function deleteBuild(index) {
     }
     
     const buildName = builds[index].name;
+    const label = exportLabelForToast(buildName);
     
-    if (confirm(`Delete build "${buildName}"?`)) {
+    if (confirm(`Delete build "${label}"?`)) {
         builds.splice(index, 1);
         setSavedBuilds(builds);
         
         // If we deleted the currently loaded build, clear the index
         if (currentBuildIndex === index) {
             currentBuildIndex = null;
-            updateSaveButtonVisibility();
         } else if (currentBuildIndex !== null && currentBuildIndex > index) {
             // Adjust index if we deleted a build before the current one
             currentBuildIndex--;
         }
         
         notifySavedBuildsListRefresh();
-        toastManager.showToast(`Build "${buildName}" deleted.`, true, 'info');
+        toastManager.showToast(`Build "${label}" deleted.`, true, 'info');
     }
 }
 
@@ -1355,16 +1478,19 @@ export function renameBuild(index) {
     }
     
     const currentBuild = builds[index];
-    const newName = prompt(`Enter new name for build "${currentBuild.name}":`, currentBuild.name);
+    const defaultLabel = exportLabelForToast(currentBuild.name);
+    const newName = prompt(`Enter new name for build "${defaultLabel}":`, currentBuild.name ?? '');
     
-    if (!newName || newName.trim() === '') {
+    if (newName === null) {
         return;
     }
     
     const trimmedName = newName.trim();
     
-    // Check if name already exists (excluding current build)
-    const nameExists = builds.some((build, i) => i !== index && build.name === trimmedName);
+    // Check if name already exists (excluding current build); empty names can repeat
+    const nameExists =
+        trimmedName !== '' &&
+        builds.some((build, i) => i !== index && build.name === trimmedName);
     if (nameExists) {
         toastManager.showToast(`Build name "${trimmedName}" already exists!`, true, 'danger');
         return;

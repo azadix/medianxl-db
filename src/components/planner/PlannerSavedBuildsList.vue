@@ -8,7 +8,6 @@ import {
   loadBuild,
   deleteBuild,
   renameBuild,
-  exportBuild,
   ensureCharacterForBuildList,
 } from '../../../tree/tree-core.js';
 import { getSpentSkillPoints } from '../../../character/character-state.js';
@@ -79,7 +78,10 @@ watch(activeSection, (s) => {
           />
         </div>
         <div class="column p-0">
-          <p class="title is-4 has-text-weight-bold mb-2">{{ build.name }}</p>
+          <p class="title is-4 has-text-weight-bold mb-2">
+            <span v-if="String(build.name || '').trim() !== ''">{{ build.name }}</span>
+            <span v-else class="has-text-grey">Unnamed build</span>
+          </p>
           <p class="subtitle is-6 mb-1">
             <span class="tag has-text-info">Level {{ build.level }} {{ build.class }}</span>
             <span class="tag">{{ build.spentPoints }} points spent</span>
@@ -94,13 +96,6 @@ watch(activeSection, (s) => {
               @click="loadBuild(index)"
             >
               Load
-            </button>
-            <button
-              type="button"
-              class="button is-success is-outlined"
-              @click="exportBuild(index)"
-            >
-              Export
             </button>
             <button
               type="button"
