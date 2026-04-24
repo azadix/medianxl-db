@@ -277,6 +277,20 @@ export async function recomputePlannerStatsFromSkillAllocations(character, ctx) 
           : 0;
       const variantKey = rowVariantKey;
 
+      const minCharLevelRaw = scRow.minCharacterLevel;
+      const minCharLevel =
+        minCharLevelRaw != null && String(minCharLevelRaw).trim() !== ''
+          ? Math.floor(Number(minCharLevelRaw))
+          : null;
+      if (
+        minCharLevel != null &&
+        Number.isFinite(minCharLevel) &&
+        minCharLevel > 0 &&
+        ulvl < minCharLevel
+      ) {
+        continue;
+      }
+
       let scalingValues;
       try {
         scalingValues = await skill.getScalingValues(
