@@ -15075,24 +15075,28 @@
         "statKey": "physical_resistance",
         "occurrenceIndex": 0,
         "variantKey": "",
+        "minCharacterLevel": 135,
         "value0": "10"
       },
       {
         "statKey": "maximum_life",
         "occurrenceIndex": 0,
         "variantKey": "",
+        "minCharacterLevel": 145,
         "value0": "5"
       },
       {
         "statKey": "enemy_magic_resistance",
         "occurrenceIndex": 0,
         "variantKey": "",
+        "minCharacterLevel": 145,
         "value0": "-5"
       },
       {
         "statKey": "maximum_elemental_resistances",
         "occurrenceIndex": 0,
         "variantKey": "",
+        "minCharacterLevel": 135,
         "value0": "1"
       }
     ],
@@ -15137,6 +15141,7 @@
         "statKey": "grit",
         "occurrenceIndex": 0,
         "variantKey": "",
+        "minCharacterLevel": 143,
         "value0": "4"
       }
     ],

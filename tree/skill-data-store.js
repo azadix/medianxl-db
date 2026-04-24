@@ -444,6 +444,11 @@ export class SkillFileStore {
             }
             return slotStr(n).length > 0;
         };
+        let minCharacterLevel;
+        if (Object.prototype.hasOwnProperty.call(hit, 'minCharacterLevel')) {
+            const n = Number(hit.minCharacterLevel);
+            if (Number.isFinite(n) && n > 0) minCharacterLevel = Math.floor(n);
+        }
         return {
             value0: slotStr(0),
             value1: slotStr(1),
@@ -454,7 +459,8 @@ export class SkillFileStore {
             value2_constant: inferConst(2),
             value3_constant: inferConst(3),
             statName: st?.name ?? hit.statKey,
-            format: st?.format
+            format: st?.format,
+            ...(minCharacterLevel !== undefined ? { minCharacterLevel } : {})
         };
     }
 

@@ -742,11 +742,25 @@ export default class Skill {
             
             // Get level-specific values
             let result = await this._getScalingRow(level, statKey, occurrenceIndex, variantKey);
-            
+
             // Get and merge constant values (constants might have formulas too)
             const constantValues = await this._getConstantsRow(statKey, occurrenceIndex, variantKey);
-            
-            if (constantValues) {
+            const minClvl = constantValues?.minCharacterLevel;
+            const ul =
+                characterLevel != null && Number.isFinite(Number(characterLevel))
+                    ? Math.floor(Number(characterLevel))
+                    : null;
+            const constantsGatedByClvl =
+                minClvl != null &&
+                minClvl > 0 &&
+                ul != null &&
+                ul < minClvl;
+
+            if (constantsGatedByClvl && !result) {
+                return null;
+            }
+
+            if (constantValues && !constantsGatedByClvl) {
                 result = await this._mergeConstants(
                     result,
                     constantValues,

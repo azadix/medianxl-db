@@ -2647,7 +2647,7 @@
     "id": 351,
     "key": "thunder_frequency",
     "name": "Thunder Frequency: Every # seconds",
-    "format": "Thunder Frequency: Every{value0} seconds"
+    "format": "Thunder Frequency: Every {value0} seconds"
   },
   {
     "id": 352,
