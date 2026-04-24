@@ -219,7 +219,7 @@
     "skillEffect": [
       "{{poison_dot}}"
     ],
-    "image": "icons-shared_missing.png"
+    "image": "icons-shared_303.png"
   },
   {
     "id": "amplify_damage",
@@ -14995,7 +14995,7 @@
         "statKey": "cooldown",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(50-5*blvl)"
+        "value0": "max(frames(50-5*blvl),0)"
       }
     ],
     "description": [
