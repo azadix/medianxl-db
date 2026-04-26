@@ -23597,13 +23597,13 @@
         "statKey": "hit_recovery",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "2*[[black_wind]]"
+        "value0": "2*blvl"
       },
       {
         "statKey": "movement_speed",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "2*[[black_wind]]"
+        "value0": "2*blvl"
       },
       {
         "statKey": "maximum_block_chance",
