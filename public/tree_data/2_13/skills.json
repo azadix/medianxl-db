@@ -5923,7 +5923,7 @@
       "Warp"
     ],
     "baseMaxLevel": 15,
-    "affectedBySpecialization": true,
+    "affectedBySpecialization": false,
     "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
@@ -8270,7 +8270,7 @@
       "Duration"
     ],
     "baseMaxLevel": 5,
-    "affectedBySpecialization": true,
+    "affectedBySpecialization": false,
     "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
@@ -9689,7 +9689,7 @@
         "statKey": "summoned_minion_resistances",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "10*5*max(blvl-1,0)+3*[[vine_companion]]"
+        "value0": "10+5*max(blvl-1,0)+3*[[vine_companion]]"
       }
     ],
     "description": [
@@ -12092,7 +12092,7 @@
       "Duration"
     ],
     "baseMaxLevel": 15,
-    "affectedBySpecialization": true,
+    "affectedBySpecialization": false,
     "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
@@ -14138,7 +14138,7 @@
       "Duration"
     ],
     "baseMaxLevel": 10,
-    "affectedBySpecialization": true,
+    "affectedBySpecialization": false,
     "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
@@ -19671,7 +19671,7 @@
       "Curse"
     ],
     "baseMaxLevel": 15,
-    "affectedBySpecialization": true,
+    "affectedBySpecialization": false,
     "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
@@ -21253,7 +21253,7 @@
       "Duration"
     ],
     "baseMaxLevel": 15,
-    "affectedBySpecialization": true,
+    "affectedBySpecialization": false,
     "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
@@ -21966,7 +21966,7 @@
       "Duration"
     ],
     "baseMaxLevel": 15,
-    "affectedBySpecialization": true,
+    "affectedBySpecialization": false,
     "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
@@ -22877,7 +22877,7 @@
     "tabName": "Reward",
     "tags": [],
     "baseMaxLevel": 15,
-    "affectedBySpecialization": true,
+    "affectedBySpecialization": false,
     "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
