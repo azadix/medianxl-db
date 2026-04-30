@@ -5762,7 +5762,7 @@
         "statKey": "thunder_frequency",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "max(185-12.5*blvl,50)"
+        "value0": "frames(max(185-12.5*blvl,50))"
       },
       {
         "statKey": "lightning_damage",
