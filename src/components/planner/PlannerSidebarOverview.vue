@@ -1,94 +1,86 @@
 <script setup>
-import { onMounted, nextTick } from 'vue';
+import { nextTick, onMounted, onUnmounted, ref } from 'vue';
 import { setupPlannerMinLevelSkillPoolTooltips } from '../../../character/planner-stats-panel.js';
+import {
+  getEffectivePlannerLevel,
+  getSpentSkillPoints,
+  getTotalQuestSkillPoints,
+} from '../../../character/character-state.js';
+import Character from '../../../character/Character.js';
+
+const spentPoints = ref(0);
+const effectiveLevel = ref(1);
+const availablePoints = ref(0);
+
+function refreshSummary() {
+  spentPoints.value = getSpentSkillPoints();
+  effectiveLevel.value = getEffectivePlannerLevel();
+  availablePoints.value =
+    Character.getBaseSkillPoints(effectiveLevel.value) + getTotalQuestSkillPoints(effectiveLevel.value);
+}
+
+function onRefresh() {
+  nextTick(refreshSummary);
+}
 
 onMounted(() => {
   nextTick(() => {
     setupPlannerMinLevelSkillPoolTooltips();
+    refreshSummary();
   });
+  window.addEventListener('plannerStateChanged', onRefresh);
+  window.addEventListener('skillPointsChanged', onRefresh);
+  window.addEventListener('characterStatsChanged', onRefresh);
+  window.addEventListener('questCompletionChanged', onRefresh);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('plannerStateChanged', onRefresh);
+  window.removeEventListener('skillPointsChanged', onRefresh);
+  window.removeEventListener('characterStatsChanged', onRefresh);
+  window.removeEventListener('questCompletionChanged', onRefresh);
 });
 </script>
 
 <template>
   <div id="sidebarPaneOther">
-    <h3 class="title is-5 mb-3">Character Info</h3>
-
-    <div id="minLevelField" class="field">
-      <p class="mb-1">
-        <span id="minLevelDisplay" class="has-text-warning has-text-weight-bold is-size-5">Level 1</span>
-      </p>
-      <p id="minLevelHelp" class="help is-size-6 mb-0">
-        <span id="minLevelSpentPart">0 spent</span>
-        <span class="has-text-grey"> / </span>
-        <span
-          id="minLevelAvailPart"
-          class="planner-skill-pool-tooltip-target has-text-grey"
-          data-pool-base="0"
-          data-pool-quest="0"
-          data-pool-level="1"
-        >
-          0 available
-        </span>
-      </p>
-      <hr class="my-1" />
-    </div>
-
-    <div class="field is-horizontal">
-      <div class="field-label is-normal">
-        <label class="label">Class</label>
-      </div>
-      <div class="field-body">
-        <div class="field">
-          <div class="control">
-            <div class="select is-fullwidth">
-              <select id="classSelect"></select>
-            </div>
-          </div>
+    <section class="planner-card planner-character-card">
+      <div class="planner-character-card__body">
+        <span class="planner-card__eyebrow">Character</span>
+        <div class="select is-fullwidth">
+          <select id="classSelect"></select>
         </div>
+        <p class="planner-character-card__meta">
+          <span>Level {{ effectiveLevel }}</span>
+          <span>{{ spentPoints }} / {{ availablePoints }} points</span>
+        </p>
       </div>
-      <hr class="my-1" />
-    </div>
+    </section>
 
-    <div class="field is-horizontal">
-      <div class="field-label is-normal">
-        <label class="label">+# to All Skills</label>
-      </div>
-      <div class="field-body">
-        <div class="field">
-          <div class="control">
-            <input id="allSkillsBonus" type="number" class="input" min="0" value="0" placeholder="0" />
-          </div>
+    <section class="planner-card">
+      <div class="planner-card-row">
+        <div>
+          <span class="planner-card__eyebrow">Skill bonuses</span>
+          <label class="label mb-0" for="allSkillsBonus">+# to All Skills</label>
         </div>
+        <input id="allSkillsBonus" type="number" class="input planner-compact-number" min="0" value="0" placeholder="0" />
       </div>
-    </div>
+    </section>
 
-    <div id="oskillPanel" class="field is-horizontal" style="display: none">
-      <div class="field-label is-normal">
-        <label class="label">Add an oSkill</label>
-      </div>
-      <div class="field-body">
-        <div class="field">
-          <div id="oskill-dropdown" class="oskill-dropdown-wrapper"></div>
-          <input id="oskill-hidden" type="hidden" />
-        </div>
-      </div>
-    </div>
+    <section id="oskillPanel" class="planner-card" style="display: none">
+      <span class="planner-card__eyebrow">oSkills</span>
+      <label class="label" for="oskill-hidden">Add an oSkill</label>
+      <div id="oskill-dropdown" class="oskill-dropdown-wrapper"></div>
+      <input id="oskill-hidden" type="hidden" />
+      <p class="help is-size-7 mt-2 mb-0">Add item-granted skills to compare them beside your tree skills.</p>
+    </section>
 
-    <div id="devotionField" class="field is-horizontal" style="display: none">
-      <div class="field-label is-normal">
-        <label class="label">Devotion</label>
-      </div>
-      <div class="field-body">
-        <div class="field">
-          <div class="box has-background-dark p-2">
-            <p id="devotionDisplay" class="has-text-centered has-text-weight-bold">None</p>
-          </div>
-        </div>
+    <div id="devotionField" class="planner-card" style="display: none">
+      <span class="planner-card__eyebrow">Devotion</span>
+      <div class="planner-card-row">
+        <label class="label mb-0">Current devotion</label>
+        <p id="devotionDisplay" class="planner-devotion-pill">None</p>
       </div>
     </div>
-    <p class="is-size-7 has-text-grey mb-0">
-      Skill points, class, and oSkills are edited here. Open <strong>Stats</strong> for the attribute sheet or
-      <strong>Config</strong> for quest completion.
-    </p>
   </div>
 </template>

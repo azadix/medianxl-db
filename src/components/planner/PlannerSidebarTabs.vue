@@ -18,16 +18,19 @@ function selectPane(pane) {
     <ul>
       <li id="sidebarTabOverviewLi" :class="{ 'is-active': props.modelValue === 'overview' }">
         <a id="sidebarTabOverview" href="#" @click.prevent="selectPane('overview')">
+          <span class="icon is-small"><i class="fa-solid fa-user"></i></span>
           <span>Overview</span>
         </a>
       </li>
       <li id="sidebarTabStatsLi" :class="{ 'is-active': props.modelValue === 'stats' }">
         <a id="sidebarTabStats" href="#" @click.prevent="selectPane('stats')">
+          <span class="icon is-small"><i class="fa-solid fa-chart-bar"></i></span>
           <span>Stats</span>
         </a>
       </li>
       <li id="sidebarTabConfigLi" :class="{ 'is-active': props.modelValue === 'config' }">
         <a id="sidebarTabConfig" href="#" @click.prevent="selectPane('config')">
+          <span class="icon is-small"><i class="fa-solid fa-list-check"></i></span>
           <span>Config</span>
         </a>
       </li>

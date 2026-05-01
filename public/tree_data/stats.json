@@ -1213,7 +1213,7 @@
     "pairedStat":[
       {
         "valueIndex": 0,
-        "plannerKey": "enemy_magic_resistance"
+        "plannerKey": "enemy_physical_magic_resistance"
       }
     ]
   },

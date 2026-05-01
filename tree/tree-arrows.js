@@ -90,9 +90,6 @@ function createOverlayArrow(contentDiv, fromSkill, toSkill, minRow, minCol) {
   svg.style.left = '0';
   svg.style.top = '0';
 
-  const cardWidth = 210;
-  const cardHeight = 105;
-
   function getIntersectionPoint(centerX, centerY, targetX, targetY, cw, ch) {
     const dx = targetX - centerX;
     const dy = targetY - centerY;
@@ -158,8 +155,8 @@ function createOverlayArrow(contentDiv, fromSkill, toSkill, minRow, minCol) {
     return { x: centerX, y: centerY };
   }
 
-  const startPoint = getIntersectionPoint(fromX, fromY, toX, toY, cardWidth, cardHeight);
-  const endPoint = getIntersectionPoint(toX, toY, fromX, fromY, cardWidth, cardHeight);
+  const startPoint = getIntersectionPoint(fromX, fromY, toX, toY, fromRect.width, fromRect.height);
+  const endPoint = getIntersectionPoint(toX, toY, fromX, fromY, toRect.width, toRect.height);
 
   const edx = endPoint.x - startPoint.x;
   const edy = endPoint.y - startPoint.y;

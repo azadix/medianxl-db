@@ -49,7 +49,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="planner-route section px-5 py-0">
+  <div class="planner-route section px-1 py-0">
     <SkillTooltipHost />
     <PlannerMenuSection v-show="activeSection === 'menu'" />
     <PlannerTreeSection v-show="activeSection === 'tree'" />

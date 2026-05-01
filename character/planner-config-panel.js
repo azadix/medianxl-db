@@ -44,39 +44,22 @@ export function formatQuestRewardBracket(questId) {
   if (entries.length === 0) return '';
   const allSame = entries.every((e) => e.amount === entries[0].amount);
 
-  const trackingOnly = ' (NOT IMPLEMENTED)';
-
   switch (q.type) {
     case 'signet_cap':
-      if (allSame) return `[+${entries[0].amount} max signet cap]${trackingOnly}`;
-      return `[${entries.map((e) => `${e.name} +${e.amount}`).join(', ')} max signet cap]${trackingOnly}`;
+      if (allSame) return `[+${entries[0].amount} signet cap]`;
+      return `[${entries.map((e) => `${e.name} +${e.amount}`).join(', ')} signet cap]`;
     case 'flat_life':
       if (allSame) return `[+${entries[0].amount} Life]`;
       return `[${entries.map((e) => `${e.name} +${e.amount}`).join(', ')} Life]`;
     case 'stat_points':
-      if (allSame) return `[+${entries[0].amount} Stat Point(s)]${trackingOnly}`;
-      return `[${entries.map((e) => `${e.name} +${e.amount}`).join(', ')} Stat Point(s)]${trackingOnly}`;
+      if (allSame) return `[+${entries[0].amount} Stat Point(s)]`;
+      return `[${entries.map((e) => `${e.name} +${e.amount}`).join(', ')} Stat Point(s)]`;
     case 'skill_point':
       if (allSame) return `[+${entries[0].amount} Skill Point(s)]`;
       return `[${entries.map((e) => `${e.name} +${e.amount}`).join(', ')} Skill Point(s)]`;
     default:
       return '';
   }
-}
-
-/**
- * Border style for a quest row: none checked (red), partial (amber), all (green).
- * @param {Record<string, boolean>} q
- * @param {string[]} diffs
- * @returns {'planner-quest-outline-none'|'planner-quest-outline-partial'|'planner-quest-outline-complete'}
- */
-export function questRowOutlineClass(q, diffs) {
-  const n = diffs.length;
-  if (n === 0) return 'planner-quest-outline-none';
-  const done = diffs.filter((d) => q[d]).length;
-  if (done === 0) return 'planner-quest-outline-none';
-  if (done === n) return 'planner-quest-outline-complete';
-  return 'planner-quest-outline-partial';
 }
 
 let plannerConfigRefreshWired = false;

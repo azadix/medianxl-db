@@ -75,8 +75,22 @@ let skillsContainer;
 let classSelect;
 let treeInitialized = false; // Track if tree has been initialized
 let currentBuildIndex = null; // Track currently loaded build index for saving
+let currentBuildDisplayName = '';
 /** Window listeners from setupGlobalEventListeners survive route changes; attach once. */
 let plannerTreeGlobalListenersAttached = false;
+
+function normalizeBuildDisplayName(name) {
+    return String(name ?? '').trim().replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ');
+}
+
+function setCurrentBuildDisplayName(name) {
+    currentBuildDisplayName = normalizeBuildDisplayName(name);
+    window.dispatchEvent(new CustomEvent('plannerBuildNameChanged', { detail: { name: currentBuildDisplayName } }));
+}
+
+export function getCurrentBuildDisplayName() {
+    return currentBuildDisplayName;
+}
 
 /**
  * Parse version string to version object
@@ -154,6 +168,7 @@ async function reloadSkillDataAndLoadBuild(build, buildIndex) {
  * @param {number} buildIndex - The index of the build in the saved builds array
  */
 function loadBuildData(build, buildIndex = null) {
+    setCurrentBuildDisplayName(build.name || '');
     // Set class
     if (classSelect) {
         classSelect.value = build.class;
@@ -694,6 +709,7 @@ export async function plannerMenuNewBuild() {
         return;
     }
     currentBuildIndex = null;
+    setCurrentBuildDisplayName('');
     await main();
 }
 
@@ -1009,6 +1025,7 @@ function resetBuild(showToast = true) {
     
     // Clear current build index (this is a new build)
     currentBuildIndex = null;
+    setCurrentBuildDisplayName('');
 
     // Clear oSkills
     clearOSkills();
@@ -1233,6 +1250,7 @@ function updateCurrentBuild() {
     }
     
     const keptName = builds[currentBuildIndex].name;
+    setCurrentBuildDisplayName(keptName || '');
     builds[currentBuildIndex] = buildCurrentBuildSnapshot(keptName);
     
     setSavedBuilds(builds);
@@ -1242,6 +1260,7 @@ function updateCurrentBuild() {
 }
 
 function saveBuild(buildName) {
+    setCurrentBuildDisplayName(buildName || '');
     const build = buildCurrentBuildSnapshot(buildName);
     
     // Get existing builds

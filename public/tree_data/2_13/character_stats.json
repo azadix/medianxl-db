@@ -1392,8 +1392,8 @@
   },
   {
     "id": 358,
-    "key": "enemy_physical_magic_resistance",
-    "label": "-#% To Enemy Physical/Magic Resistance",
+    "key": "enemy_magic_resistance",
+    "label": "-#% To Enemy Magic Resistance",
     "min": null,
     "max": null
   },

@@ -6,19 +6,24 @@ import { setupPlannerStatRowTooltips, applyPlannerStatInput } from '../../../cha
 import { getFileSkillStore } from '../../../tree/skill-data-store.js';
 import { usePlannerSkillReferencedStats } from '../../composables/usePlannerSkillReferencedStats.js';
 
-const charStatsPlaceholder =
-  'Only stats that differ from default are saved. Example:\n{{strength}}=120\n{{fire_resistance}}=30';
-
 const panelRoot = ref(null);
 /** @type {import('vue').Ref<{ key: string, label: string, min: number|null, max: number|null, allowNegative?: boolean, default?: number, alwaysVisible?: boolean, sortOrder?: number }[]>} */
 const statDefs = ref(getPlannerCharacterStatDefs());
 /** @type {import('vue').Ref<Record<string, number>>} */
 const stats = ref({});
-const syncingFromTextarea = ref(false);
 /** Stat row whose input is focused (keeps row visible while editing down to default). */
 const activeStatKey = ref(/** @type {string|null} */ (null));
 /** Bump to force recompute of non-reactive derived data (skill store load, skill point changes). */
 const refreshTick = ref(0);
+const statFilter = ref('all');
+
+const statFilters = [
+  { id: 'all', label: 'All' },
+  { id: 'attributes', label: 'Attributes' },
+  { id: 'resists', label: 'Resists' },
+  { id: 'damage', label: 'Damage' },
+  { id: 'misc', label: 'Misc' },
+];
 
 const { skillReferencedStatKeys } = usePlannerSkillReferencedStats(refreshTick);
 
@@ -31,6 +36,7 @@ function defaultStatValue(def) {
 
 const visibleStatDefs = computed(() => {
   return statDefs.value.filter((def) => {
+    if (def.key === 'life' || def.key === 'mana') return false;
     if (def.alwaysVisible) return true;
     if (skillReferencedStatKeys.value.has(def.key)) return true;
     if (activeStatKey.value === def.key) return true;
@@ -39,6 +45,24 @@ const visibleStatDefs = computed(() => {
     if (Number.isNaN(v)) v = 0;
     return v !== defaultStatValue(def);
   });
+});
+
+const vitals = computed(() => [
+  { key: 'life', label: 'Life', value: Math.floor(Number(stats.value.life) || 0) },
+  { key: 'mana', label: 'Mana', value: Math.floor(Number(stats.value.mana) || 0) },
+]);
+
+function statCategory(def) {
+  const key = String(def.key || '').toLowerCase();
+  if (['strength', 'dexterity', 'energy', 'vitality'].includes(key)) return 'attributes';
+  if (key.includes('resistance') || key.endsWith('_res')) return 'resists';
+  if (key.includes('damage') || key.includes('spell') || key.includes('attack')) return 'damage';
+  return 'misc';
+}
+
+const filteredStatDefs = computed(() => {
+  if (statFilter.value === 'all') return visibleStatDefs.value;
+  return visibleStatDefs.value.filter((def) => statCategory(def) === statFilter.value);
 });
 
 /** @param {{ allowNegative?: boolean, min: number|null }} def */
@@ -61,15 +85,6 @@ function pullStats() {
   }
   const ch = getCharacterInstance();
   stats.value = ch ? { ...ch.getAllStats() } : {};
-  syncTextareaFromCharacter();
-}
-
-function syncTextareaFromCharacter() {
-  const ta = document.getElementById('characterStats');
-  const ch = getCharacterInstance();
-  if (!ta || !ch) return;
-  if (document.activeElement === ta) return;
-  ta.value = ch.exportStatsToText();
 }
 
 function onStatInput(statKey, e) {
@@ -92,26 +107,6 @@ function onStatRowBlur(key) {
   if (activeStatKey.value === key) {
     activeStatKey.value = null;
   }
-}
-
-function onTextareaInput(e) {
-  if (syncingFromTextarea.value) return;
-  const ta = e.target;
-  if (!(ta instanceof HTMLTextAreaElement)) return;
-  const ch = getCharacterInstance();
-  if (!ch) return;
-  ch.parseStatsFromText(ta.value);
-  syncingFromTextarea.value = true;
-  try {
-    pullStats();
-  } finally {
-    syncingFromTextarea.value = false;
-  }
-  window.dispatchEvent(new CustomEvent('characterStatsChanged', { detail: { fromTextarea: true } }));
-}
-
-function onTextareaBlur() {
-  pullStats();
 }
 
 const refreshHandler = () => {
@@ -156,16 +151,37 @@ onUnmounted(() => {
 
 <template>
   <div id="sidebarPaneStats">
-    <div class="character-sheet-body">
-      <h3 class="title is-5 mb-3">Character stats</h3>
+    <div class="character-sheet-body planner-stats-layout">
+      <section class="planner-card planner-vitals-card">
+        <div class="planner-vitals-grid">
+          <div v-for="vital in vitals" :key="vital.key" class="planner-vital-tile" :class="'is-' + vital.key">
+            <span>{{ vital.label }}</span>
+            <strong>{{ vital.value }}</strong>
+          </div>
+        </div>
+      </section>
+
+      <div class="planner-filter-chips">
+        <button
+          v-for="filter in statFilters"
+          :key="filter.id"
+          type="button"
+          class="button is-small planner-filter-chip"
+          :class="{ 'is-active': statFilter === filter.id }"
+          @click="statFilter = filter.id"
+        >
+          {{ filter.label }}
+        </button>
+      </div>
+
       <div
         id="plannerStatsPanel"
         ref="panelRoot"
-        class="planner-stats-panel box has-background-dark p-3 mb-2"
+        class="planner-stats-panel planner-card mb-2"
       >
         <div class="planner-stats-baseline planner-stats-registry-scroll">
           <div
-            v-for="def in visibleStatDefs"
+            v-for="def in filteredStatDefs"
             :key="def.key"
             class="planner-stat-row"
             :class="{
@@ -195,22 +211,6 @@ onUnmounted(() => {
           </div>
         </div>
       </div>
-      <details class="planner-stats-advanced mt-1">
-        <summary class="is-size-7 has-text-grey is-clickable">Advanced: paste or edit raw stat lines</summary>
-        <div class="control mt-2">
-          <textarea
-            id="characterStats"
-            class="textarea is-small"
-            rows="5"
-            :placeholder="charStatsPlaceholder"
-            @input="onTextareaInput"
-            @blur="onTextareaBlur"
-          ></textarea>
-        </div>
-        <p class="help is-size-7">
-          One per line: stat_key=value. Only registered keys are accepted. Export omits default (zero) values.
-        </p>
-      </details>
     </div>
   </div>
 </template>

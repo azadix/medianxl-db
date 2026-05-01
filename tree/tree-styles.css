@@ -1,12 +1,29 @@
 :root {
     --color-life: #ff0000;
     --color-mana: #3080ff;
+    --planner-header-h: 3rem;
+    --planner-sidebar-w: clamp(21rem, 28vw, 28rem);
   }
+
+#tree-section {
+    height: calc(100vh - 3.25rem);
+    overflow: hidden;
+}
+
+.planner-tree-layout {
+    height: calc(100% - var(--planner-header-h));
+    margin-top: 0;
+}
+
+.planner-skills-tab-panels {
+    width: 100%;
+}
   
 .skills-grid {
-    gap: 1.25rem 1rem;
+    gap: 1.3rem 1rem;
     width: 50%;
-    margin: 0 5%;
+    margin: 0 auto;
+    transform: translateX(calc(var(--planner-sidebar-w) / -2));
     position: relative; /* Enable absolute positioning for overlay arrows */
     justify-items: center;
     align-items: center;
@@ -133,6 +150,23 @@
 }
 
 /* Custom skill tree tab styling / Bulma overrides */
+.planner-skills-tree-inner > .tabs {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.planner-skills-tree-inner > .tabs > ul {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.planner-tab-points {
+    flex: 0 0 auto;
+    margin-left: auto;
+    margin-right: 0.5rem;
+}
+
 .tabs li.is-active a {
     border-bottom-color: white !important;
     color: white !important;
@@ -265,6 +299,7 @@
     .skills-grid {
         width: 95%;
         margin: 0 2.5%;
+        transform: none;
     }
     
     /* Adjust skill cards for mobile */

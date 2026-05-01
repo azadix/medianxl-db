@@ -11,9 +11,11 @@ import { updatePlannerUrlTab } from '../../../tree/tree-url-sync.js';
 import { handleSkillPointChange } from '../../../tree/tree-render.js';
 import SkillCard from '../skills/SkillCard.vue';
 import { usePlannerSkillsTree } from '../../composables/usePlannerSkillsTree.js';
+import PlannerSkillPointsBadge from './PlannerSkillPointsBadge.vue';
 
 const store = usePlannerStore();
 let unbindWindow = () => {};
+let resizeFrame = 0;
 
 function syncTabToUrl(tabName) {
   setCurrentTabState(tabName);
@@ -178,16 +180,32 @@ function onPlannerLight() {
   onLightUpdate();
 }
 
+function onWindowResize() {
+  if (resizeFrame) {
+    window.cancelAnimationFrame(resizeFrame);
+  }
+  resizeFrame = window.requestAnimationFrame(() => {
+    resizeFrame = 0;
+    nextTick(() => scheduleArrows());
+  });
+}
+
 onMounted(() => {
   unbindWindow = store.attachWindowSync();
   window.addEventListener('plannerSkillsRenderRequested', onPlannerRenderRequested);
   window.addEventListener('plannerSkillsLightUpdate', onPlannerLight);
+  window.addEventListener('resize', onWindowResize, { passive: true });
 });
 
 onUnmounted(() => {
+  if (resizeFrame) {
+    window.cancelAnimationFrame(resizeFrame);
+    resizeFrame = 0;
+  }
   unbindWindow();
   window.removeEventListener('plannerSkillsRenderRequested', onPlannerRenderRequested);
   window.removeEventListener('plannerSkillsLightUpdate', onPlannerLight);
+  window.removeEventListener('resize', onWindowResize);
 });
 </script>
 
@@ -206,6 +224,7 @@ onUnmounted(() => {
           <a href="#" data-tab="oSkills" @click.prevent="switchTab('oSkills')">oSkills</a>
         </li>
       </ul>
+      <PlannerSkillPointsBadge />
     </div>
     <div class="planner-skills-tab-panels">
       <div

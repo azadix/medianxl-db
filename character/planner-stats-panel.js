@@ -210,11 +210,11 @@ export function setupPlannerStatRowTooltips(root) {
 }
 
 /**
- * Hover target: {@link PlannerSidebarOverview} `#minLevelAvailPart`.
+ * Hover target: `#minLevelAvailPart` in the planner header.
  */
 export function setupPlannerMinLevelSkillPoolTooltips() {
   if (minLevelPoolTooltipSetup) return;
-  const root = document.getElementById('minLevelField');
+  const root = document.getElementById('tree-section') || document.body;
   if (!root) return;
   minLevelPoolTooltipSetup = true;
 

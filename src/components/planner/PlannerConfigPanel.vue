@@ -11,13 +11,82 @@ import {
   formatQuestLabel,
   difficultiesForQuest,
   formatQuestRewardBracket,
-  questRowOutlineClass,
   QUEST_DIFF_NAMES,
 } from '../../../character/planner-config-panel.js';
 
 const refreshKey = ref(0);
 
 const questIds = computed(() => Character.getQuestRewardQuestIds());
+
+const questActLabels = {
+  den_of_evil: 'Act 1',
+  radament: 'Act 2',
+  golden_bird: 'Act 3',
+  "lam_essen's_tome": 'Act 3',
+  izual: 'Act 4',
+  justicar_signet: 'Endgame',
+  inquisitor_of_the_triune: 'Endgame',
+};
+
+const questActOrder = {
+  'Act 1': 1,
+  'Act 2': 2,
+  'Act 3': 3,
+  'Act 4': 4,
+  'Act 5': 5,
+  Other: 90,
+  Endgame: 100,
+};
+
+const questRows = computed(() =>
+  questIds.value
+    .filter((questId) => difficultiesForQuest(questId).length > 0)
+    .map((questId) => ({
+      questId,
+      act: questActLabels[questId] || 'Other',
+      diffs: difficultiesForQuest(questId),
+    }))
+    .sort((a, b) => {
+      const orderA = questActOrder[a.act] ?? questActOrder.Other;
+      const orderB = questActOrder[b.act] ?? questActOrder.Other;
+      if (orderA !== orderB) return orderA - orderB;
+      return formatQuestLabel(a.questId).localeCompare(formatQuestLabel(b.questId));
+    })
+);
+
+const questGroups = computed(() => {
+  const groups = [];
+  const byAct = new Map();
+  for (const row of questRows.value) {
+    if (!byAct.has(row.act)) {
+      byAct.set(row.act, []);
+      groups.push({ act: row.act, rows: byAct.get(row.act) });
+    }
+    byAct.get(row.act).push(row);
+  }
+  return groups;
+});
+
+const questSummary = computed(() => {
+  void refreshKey.value;
+  let total = 0;
+  let done = 0;
+  let skillPoints = 0;
+  for (const questId of questIds.value) {
+    const q = Character.QUESTS[questId];
+    const state = completion(questId);
+    for (const d of difficultiesForQuest(questId)) {
+      total++;
+      if (state[d]) {
+        done++;
+        if (q?.type === 'skill_point') {
+          skillPoints += q.reward?.[d]?.amount || 0;
+        }
+      }
+    }
+  }
+  return { done, total, skillPoints };
+});
 
 function completion(questId) {
   return getQuestCompletion(questId);
@@ -43,6 +112,16 @@ function onQuestChange(questId) {
 
 function onCompleteAll() {
   completeAllQuests();
+  window.dispatchEvent(new CustomEvent('skillPointsChanged'));
+  refreshKey.value++;
+}
+
+function onClearAll() {
+  if (!getCharacterInstance()) return;
+  for (const questId of questIds.value) {
+    updateQuestCompletion(questId, { normal: false, nightmare: false, hell: false });
+  }
+  window.dispatchEvent(new CustomEvent('skillPointsChanged'));
   refreshKey.value++;
 }
 
@@ -61,53 +140,67 @@ onUnmounted(() => {
 
 <template>
   <div id="sidebarPaneConfig">
-    <h3 class="title is-5 mb-3">Config</h3>
-    <p class="is-size-7 has-text-grey mb-3">
-      Quest rewards for skill points (and optional tracking for other rewards). Stat point pool uses level only.
-    </p>
-    <div class="is-flex is-justify-content-space-between is-align-items-center mb-2">
-      <label class="label mb-0">Quest completion</label>
-      <button id="plannerQuestCompleteAllBtn" type="button" class="button is-small" @click="onCompleteAll">
-        Complete all
-      </button>
-    </div>
-    <div id="plannerConfigQuests" class="mb-3" :key="refreshKey">
+    <section class="planner-card planner-config-summary">
+      <span class="planner-card__eyebrow">Quest completion</span>
+      <div class="planner-config-summary__numbers">
+        <div>
+          <strong>{{ questSummary.done }} / {{ questSummary.total }}</strong>
+          <span>rewards done</span>
+        </div>
+        <div>
+          <strong>+{{ questSummary.skillPoints }}</strong>
+          <span>skill points</span>
+        </div>
+      </div>
+      <div class="buttons are-small mt-3 mb-0">
+        <button id="plannerQuestCompleteAllBtn" type="button" class="button is-success is-outlined" @click="onCompleteAll">
+          Complete all
+        </button>
+        <button type="button" class="button is-danger is-outlined" @click="onClearAll">
+          Clear all
+        </button>
+      </div>
+    </section>
+
+    <div id="plannerConfigQuests" :key="refreshKey">
       <p v-if="questIds.length === 0" class="is-size-7 has-text-grey">No quest rewards configured.</p>
-      <div v-else class="content is-small">
-        <template v-for="questId in questIds" :key="questId">
+      <div v-else class="planner-quest-groups">
+        <section v-for="group in questGroups" :key="group.act" class="planner-quest-group">
+          <h4 class="planner-quest-group__title">{{ group.act }}</h4>
           <div
-            v-if="difficultiesForQuest(questId).length > 0"
-            class="mb-2 planner-config-quest-row py-2 px-3"
-            :class="questRowOutlineClass(completion(questId), difficultiesForQuest(questId))"
-            :data-quest="questId"
+            v-for="row in group.rows"
+            :key="row.questId"
+            class="planner-config-quest-row"
+            :data-quest="row.questId"
           >
-            <p class="is-size-7 has-text-weight-semibold mb-2 has-text-white">
-              <template v-if="formatQuestRewardBracket(questId)">
-                {{ formatQuestLabel(questId) }}
-                <span class="has-text-weight-normal has-text-white">{{ formatQuestRewardBracket(questId) }}</span>
+            <p class="planner-quest-title">
+              <template v-if="formatQuestRewardBracket(row.questId)">
+                {{ formatQuestLabel(row.questId) }}
+                <span>{{ formatQuestRewardBracket(row.questId) }}</span>
               </template>
-              <template v-else>{{ formatQuestLabel(questId) }}</template>
+              <template v-else>{{ formatQuestLabel(row.questId) }}</template>
             </p>
-            <div class="ml-1">
+            <div class="planner-quest-difficulty-pills">
               <label
-                v-for="d in ['normal', 'nightmare', 'hell'].filter((x) => difficultiesForQuest(questId).includes(x))"
-                :key="`${questId}-${d}`"
-                class="checkbox mr-3 is-size-7 has-text-white"
+                v-for="d in ['normal', 'nightmare', 'hell'].filter((x) => row.diffs.includes(x))"
+                :key="`${row.questId}-${d}`"
+                class="planner-quest-pill"
+                :class="{ 'is-checked': completion(row.questId)[d] }"
               >
                 <input
-                  :id="`quest_${questId}_${d}`"
+                  :id="`quest_${row.questId}_${d}`"
                   type="checkbox"
                   class="planner-quest-cb"
-                  :data-quest="questId"
+                  :data-quest="row.questId"
                   :data-diff="d"
-                  :checked="completion(questId)[d]"
-                  @change="onQuestChange(questId)"
+                  :checked="completion(row.questId)[d]"
+                  @change="onQuestChange(row.questId)"
                 />
                 {{ QUEST_DIFF_NAMES[d] }}
               </label>
             </div>
           </div>
-        </template>
+        </section>
       </div>
     </div>
   </div>
