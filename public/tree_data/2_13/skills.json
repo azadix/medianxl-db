@@ -6391,7 +6391,7 @@
       "90% Tremor Weapon Damage",
       "145% Aftershock Weapon Damage",
       "1.4 second Aftershock delay",
-      "{{bonus_magic_damage}}}}",
+      "{{bonus_magic_damage}}",
       "{{mana_cost}}"
     ],
     "image": "icons-bar_38.png"
@@ -10888,7 +10888,7 @@
     "skillEffect": [
       "[[wolf_companion]]",
       "{{bonus_physical_damage}}",
-      "(Applies only if you deal the appropriate damage source}",
+      "(Applies only if you deal the appropriate damage source)",
       "{{radius}}"
     ],
     "image": "icons-bar_58.png"
