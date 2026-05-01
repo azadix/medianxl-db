@@ -1,4 +1,4 @@
-/** URL query sync for planner class/tab (no dependency on tree-core). */
+/** URL query sync for planner class/tab/build (no dependency on tree-core). */
 
 export function updatePlannerUrlTab(selectedClass, selectedTab) {
   const url = new URL(window.location.href);
@@ -10,5 +10,11 @@ export function updatePlannerUrlTab(selectedClass, selectedTab) {
   } else {
     url.searchParams.delete('tab');
   }
+  window.history.replaceState({}, '', url);
+}
+
+export function setBuildUrlParam(encoded) {
+  const url = new URL(window.location.href);
+  url.searchParams.set('build', encoded);
   window.history.replaceState({}, '', url);
 }

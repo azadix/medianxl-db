@@ -2,10 +2,10 @@
 import { loadPlannerSkillsFromTreeData } from './tree-data.js';
 import { renderSkills } from './tree-render.js';
 import { getCurrentTab, setCurrentTabState } from './tree-tab-state.js';
-import { updatePlannerUrlTab } from './tree-url-sync.js';
+import { updatePlannerUrlTab, setBuildUrlParam } from './tree-url-sync.js';
 import Tree from '../character/Tree.js';
 import Character from '../character/Character.js';
-import { initializeCharacter, applyClassBaselineStatsToCharacter, recomputeClassDerivedLifeMana, onPlannerSkillAllocationChanged, runPlannerSkillStatRecompute, getSpentSkillPoints, getAllSkillPoints, getAllSkillPointsById, setAllSkillPoints, setAllSkillPointsById, importQuestsCompleted, setStatAllocation, getAllOSkills, addOSkill, clearOSkills, setAllOSkills, getMinimumRequiredLevel, getTotalQuestSkillPoints, checkSkillsExceedingMaxLevel, getAvailableSkillPoints, getCharacterInstance, getCharacterLevel, getEffectivePlannerLevel, parseStatsFromText, exportStatsToText, clearAllStats, getQuestsCompletedForSave, getQuestCompletionOptOutForSave, getStatAllocation } from '../character/character-state.js';
+import { initializeCharacter, applyClassBaselineStatsToCharacter, recomputeClassDerivedLifeMana, onPlannerSkillAllocationChanged, runPlannerSkillStatRecompute, getSpentSkillPoints, getAllSkillPoints, getAllSkillPointsById, setAllSkillPoints, setAllSkillPointsById, importQuestsCompleted, getAllOSkills, addOSkill, clearOSkills, setAllOSkills, getMinimumRequiredLevel, getTotalQuestSkillPoints, checkSkillsExceedingMaxLevel, getAvailableSkillPoints, getCharacterInstance, getCharacterLevel, getEffectivePlannerLevel, parseStatsFromText, exportStatsToText, clearAllStats, getQuestsCompletedForSave, getQuestCompletionOptOutForSave } from '../character/character-state.js';
 import { refreshPlannerStatsPanelFromCharacter } from '../character/planner-stats-panel.js';
 import { initPlannerConfigPanel } from '../character/planner-config-panel.js';
 import { setPlannerSectionFromLegacy } from '../src/planner/planner-section-bridge.js';
@@ -28,6 +28,26 @@ import { getFileSkillStore } from './skill-data-store.js';
 import { clearSkillVariants, applySkillVariantDefaultsForClass } from './skill-variants.js';
 
 export { getSavedBuilds, notifySavedBuildsListRefresh };
+
+async function compressBuildToUrlParam(jsonStr) {
+    const stream = new CompressionStream('deflate-raw');
+    const writer = stream.writable.getWriter();
+    writer.write(new TextEncoder().encode(jsonStr));
+    writer.close();
+    const bytes = new Uint8Array(await new Response(stream.readable).arrayBuffer());
+    return btoa(String.fromCharCode(...bytes))
+        .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+}
+
+async function decompressBuildFromUrlParam(encoded) {
+    const b64 = encoded.replace(/-/g, '+').replace(/_/g, '/');
+    const bytes = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+    const stream = new DecompressionStream('deflate-raw');
+    const writer = stream.writable.getWriter();
+    writer.write(bytes);
+    writer.close();
+    return JSON.parse(await new Response(stream.readable).text());
+}
 
 /**
  * Class names for the planner from {@link getFileSkillStore} game_meta, else derived from skills.
@@ -144,9 +164,6 @@ function loadBuildData(build, buildIndex = null) {
 
     if (build.questsCompleted && typeof build.questsCompleted === 'object') {
         importQuestsCompleted(build.questsCompleted, build.questCompletionOptOut);
-    }
-    if (build.statAllocation && typeof build.statAllocation === 'object') {
-        setStatAllocation(build.statAllocation);
     }
     
     // Load skill points (handle both old format with names and new format with IDs)
@@ -293,7 +310,13 @@ async function finalizePlannerPageAfterLoad() {
     }
     const urlParams = new URLSearchParams(window.location.search);
     const urlClass = urlParams.get('class');
+    const buildParam = urlParams.get('build');
     const existingCharacter = getCharacterInstance();
+
+    if (buildParam) {
+        await main();
+        return;
+    }
 
     if (existingCharacter) {
         let selectedClass = availableClasses[0];
@@ -507,7 +530,19 @@ async function main() {
         const urlParams = new URLSearchParams(window.location.search);
         const savedClass = urlParams.get('class');
         const savedTab = urlParams.get('tab');
-        
+        const buildParam = urlParams.get('build');
+
+        // If a shared build is encoded in the URL, load it and skip default init
+        if (buildParam) {
+            try {
+                const buildData = await decompressBuildFromUrlParam(buildParam);
+                importBuild(buildData);
+                return;
+            } catch (e) {
+                console.warn('Invalid build URL param, ignoring.', e);
+            }
+        }
+
         // Get available classes from the select element
         const availableClasses = Array.from(classSelect.options).map(option => option.value);
         
@@ -796,11 +831,16 @@ function showExportBuildNameModal(opts) {
     btnExport.className = 'button is-primary py-2';
     btnExport.type = 'button';
     btnExport.textContent = 'Export build';
+    const btnShare = document.createElement('button');
+    btnShare.className = 'button is-info py-2';
+    btnShare.type = 'button';
+    btnShare.textContent = 'Share';
     const btnCancel = document.createElement('button');
     btnCancel.className = 'button py-2';
     btnCancel.type = 'button';
     btnCancel.textContent = 'Cancel';
     foot.appendChild(btnExport);
+    foot.appendChild(btnShare);
     foot.appendChild(btnCancel);
 
     card.appendChild(head);
@@ -831,6 +871,22 @@ function showExportBuildNameModal(opts) {
         closeModal();
         onConfirm(name);
     };
+
+    btnShare.addEventListener('click', async () => {
+        const name = sanitizeBuildNameForExportStorage(input.value);
+        closeModal();
+        const snap = buildCurrentBuildSnapshot(name);
+        const encoded = await compressBuildToUrlParam(JSON.stringify(snap));
+        setBuildUrlParam(encoded);
+        const shareUrl = window.location.href;
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(shareUrl)
+                .then(() => toastManager.showToast('Share link copied to clipboard!', true, 'success'))
+                .catch(() => fallbackCopyToClipboard(shareUrl, 'share link'));
+        } else {
+            fallbackCopyToClipboard(shareUrl, 'share link');
+        }
+    });
 
     btnExport.addEventListener('click', submit);
     input.addEventListener('keydown', (e) => {
@@ -866,7 +922,9 @@ function exportLabelForToast(name) {
 function buildCurrentBuildSnapshot(name) {
     const currentClass = classSelect ? classSelect.value : null;
     const currentLevel = getMinimumRequiredLevel();
-    return {
+    const questsCompleted = getQuestsCompletedForSave();
+    const questCompletionOptOut = getQuestCompletionOptOutForSave();
+    const snap = {
         name: name != null ? String(name) : '',
         version: versionToString(getCurrentVersion()),
         class: currentClass,
@@ -876,11 +934,22 @@ function buildCurrentBuildSnapshot(name) {
         oSkills: getAllOSkills(),
         allSkillsBonus: getAllSkillsBonus(),
         stats: exportStatsToText(),
-        questsCompleted: getQuestsCompletedForSave(),
-        questCompletionOptOut: getQuestCompletionOptOutForSave(),
-        statAllocation: getStatAllocation(),
+        questsCompleted,
+        questCompletionOptOut,
         savedAt: new Date().toISOString()
     };
+    if (Character.isDefaultQuestState(getCharacterLevel(), snap.questsCompleted, snap.questCompletionOptOut)) {
+        delete snap.questsCompleted;
+        delete snap.questCompletionOptOut;
+    } else {
+        const qc = Character.compactQuestDifficultiesForSave(questsCompleted);
+        const qo = Character.compactQuestDifficultiesForSave(questCompletionOptOut);
+        snap.questsCompleted = qc;
+        snap.questCompletionOptOut = qo;
+        if (Object.keys(qc).length === 0) delete snap.questsCompleted;
+        if (Object.keys(qo).length === 0) delete snap.questCompletionOptOut;
+    }
+    return snap;
 }
 
 /**
@@ -1025,6 +1094,21 @@ function promptAndImportBuild() {
 }
 
 /**
+ * Legacy quest objects or compact [normal, nightmare, hell] with 0/1.
+ * @param {unknown} v
+ * @returns {boolean}
+ */
+function isValidSavedQuestDifficultyValue(v) {
+    if (Array.isArray(v)) {
+        return (
+            v.length === 3 &&
+            v.every((x) => typeof x === 'number' || typeof x === 'boolean')
+        );
+    }
+    return Boolean(v && typeof v === 'object' && !Array.isArray(v));
+}
+
+/**
  * Validate build data structure
  * @param {Object} buildData - The build data to validate
  * @returns {boolean} True if valid, false otherwise
@@ -1079,6 +1163,12 @@ function validateBuildData(buildData) {
             toastManager.showToast('questsCompleted must be an object', 'danger');
             return false;
         }
+        for (const q of Object.values(buildData.questsCompleted)) {
+            if (!isValidSavedQuestDifficultyValue(q)) {
+                toastManager.showToast('questsCompleted entries must be objects or [n,n,n] arrays', 'danger');
+                return false;
+            }
+        }
     }
 
     if (buildData.questCompletionOptOut !== undefined) {
@@ -1086,12 +1176,11 @@ function validateBuildData(buildData) {
             toastManager.showToast('questCompletionOptOut must be an object', 'danger');
             return false;
         }
-    }
-
-    if (buildData.statAllocation !== undefined) {
-        if (typeof buildData.statAllocation !== 'object' || buildData.statAllocation === null || Array.isArray(buildData.statAllocation)) {
-            toastManager.showToast('statAllocation must be an object', 'danger');
-            return false;
+        for (const q of Object.values(buildData.questCompletionOptOut)) {
+            if (!isValidSavedQuestDifficultyValue(q)) {
+                toastManager.showToast('questCompletionOptOut entries must be objects or [n,n,n] arrays', 'danger');
+                return false;
+            }
         }
     }
     

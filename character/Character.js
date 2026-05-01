@@ -219,6 +219,38 @@ export default class Character {
     return {};
   }
 
+  /**
+   * Returns true when the given quest state matches what applyAutoQuestCompletionForLevel
+   * would produce for the given level on a fresh character (no manual changes).
+   * @param {number} level
+   * @param {Record<string, { normal: boolean, nightmare: boolean, hell: boolean }>} questsCompleted
+   * @param {Record<string, object>} questCompletionOptOut
+   * @returns {boolean}
+   */
+  static isDefaultQuestState(level, questsCompleted, questCompletionOptOut) {
+    if (questCompletionOptOut && Object.keys(questCompletionOptOut).length > 0) return false;
+
+    const expected = Character.createDefaultQuestsCompleted();
+    const L = Character.clampLevel(level);
+    for (const [questId, def] of Object.entries(Character.QUESTS)) {
+      if (!def.reward) continue;
+      for (const diff of ['normal', 'nightmare', 'hell']) {
+        const slot = def.reward[diff];
+        if (!slot || typeof slot.amount !== 'number' || typeof slot.expectedLevel !== 'number') continue;
+        if (L < slot.expectedLevel) continue;
+        expected[questId][diff] = true;
+      }
+    }
+
+    for (const [questId, diffs] of Object.entries(expected)) {
+      const actual = (questsCompleted && questsCompleted[questId]) || {};
+      for (const diff of ['normal', 'nightmare', 'hell']) {
+        if (!!actual[diff] !== !!diffs[diff]) return false;
+      }
+    }
+    return true;
+  }
+
   static createEmptyStatAllocation() {
     const o = {};
     for (const k of Character.STAT_ALLOCATION_KEYS) {
@@ -372,14 +404,61 @@ export default class Character {
   };
 
   /**
+   * Wire format: per-difficulty flags as [normal, nightmare, hell] with 0/1; omit all-zero rows in saves.
+   * @param {unknown} val - Legacy object or compact [n,n,n] array
+   * @returns {{ normal: boolean, nightmare: boolean, hell: boolean }|null}
+   */
+  static normalizeQuestDifficultiesFromSave(val) {
+    if (Array.isArray(val) && val.length === 3) {
+      return {
+        normal: !!Number(val[0]),
+        nightmare: !!Number(val[1]),
+        hell: !!Number(val[2]),
+      };
+    }
+    if (val && typeof val === 'object' && !Array.isArray(val)) {
+      return {
+        normal: !!val.normal,
+        nightmare: !!val.nightmare,
+        hell: !!val.hell,
+      };
+    }
+    return null;
+  }
+
+  /**
+   * Build JSON / URL compact form: questId -> [0|1, 0|1, 0|1] for normal, nightmare, hell; skips [0,0,0].
+   * @param {Record<string, { normal?: boolean, nightmare?: boolean, hell?: boolean }>} record
+   * @returns {Record<string, [number, number, number]>}
+   */
+  static compactQuestDifficultiesForSave(record) {
+    const out = {};
+    if (!record || typeof record !== 'object') return out;
+    for (const [questId, diff] of Object.entries(record)) {
+      const n = !!(diff && diff.normal);
+      const nm = !!(diff && diff.nightmare);
+      const h = !!(diff && diff.hell);
+      if (!n && !nm && !h) continue;
+      out[questId] = [n ? 1 : 0, nm ? 1 : 0, h ? 1 : 0];
+    }
+    return out;
+  }
+
+  /**
    * Merge saved quest state with current defaults (new quest IDs get defaults).
-   * @param {Record<string, { normal?: boolean, nightmare?: boolean, hell?: boolean }>} quests
-   * @param {Record<string, { normal?: boolean, nightmare?: boolean, hell?: boolean }>} [optOutFromSave]
+   * Accepts legacy objects or compact arrays [normal, nightmare, hell] per quest id.
+   * @param {Record<string, unknown>} quests
+   * @param {Record<string, unknown>} [optOutFromSave]
    */
   importQuestsCompleted(quests, optOutFromSave) {
     const defaults = Character.createDefaultQuestsCompleted();
     this.questsCompleted = { ...defaults };
     const raw = { ...(quests || {}) };
+    for (const key of Object.keys(raw)) {
+      const norm = Character.normalizeQuestDifficultiesFromSave(raw[key]);
+      if (norm) raw[key] = norm;
+      else delete raw[key];
+    }
     for (const [legacyId, canonicalId] of Object.entries(Character.LEGACY_QUEST_ID_ALIASES)) {
       const src = raw[legacyId];
       if (!src || typeof src !== 'object') continue;
@@ -405,16 +484,10 @@ export default class Character {
       }
     }
     if (optOutFromSave && typeof optOutFromSave === 'object') {
-      this.questCompletionOptOut = { ...optOutFromSave };
-      for (const qid of Object.keys(this.questCompletionOptOut)) {
-        const o = this.questCompletionOptOut[qid];
-        if (o && typeof o === 'object') {
-          this.questCompletionOptOut[qid] = {
-            normal: !!o.normal,
-            nightmare: !!o.nightmare,
-            hell: !!o.hell
-          };
-        }
+      this.questCompletionOptOut = {};
+      for (const [qid, val] of Object.entries(optOutFromSave)) {
+        const norm = Character.normalizeQuestDifficultiesFromSave(val);
+        if (norm) this.questCompletionOptOut[qid] = norm;
       }
     } else {
       this.questCompletionOptOut = Character.createDefaultQuestCompletionOptOut();
