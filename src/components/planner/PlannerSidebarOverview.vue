@@ -67,18 +67,25 @@ onUnmounted(() => {
       </div>
     </section>
 
-    <section id="oskillPanel" class="planner-card" style="display: none">
-      <span class="planner-card__eyebrow">oSkills</span>
-      <label class="label" for="oskill-hidden">Add an oSkill</label>
-      <div id="oskill-dropdown" class="oskill-dropdown-wrapper"></div>
-      <input id="oskill-hidden" type="hidden" />
-      <p class="help is-size-7 mt-2 mb-0">Add item-granted skills to compare them beside your tree skills.</p>
+    <section id="oskillPanel" class="planner-card planner-inline-card" style="display: none">
+      <div class="planner-card-row">
+        <div>
+          <span class="planner-card__eyebrow">oSkills</span>
+          <label class="label mb-0" for="oskill-hidden">Add an oSkill</label>
+        </div>
+        <div class="planner-card-control planner-oskill-control">
+          <div id="oskill-dropdown" class="oskill-dropdown-wrapper"></div>
+          <input id="oskill-hidden" type="hidden" />
+        </div>
+      </div>
     </section>
 
-    <div id="devotionField" class="planner-card" style="display: none">
-      <span class="planner-card__eyebrow">Devotion</span>
+    <div id="devotionField" class="planner-card planner-inline-card" style="display: none">
       <div class="planner-card-row">
-        <label class="label mb-0">Current devotion</label>
+        <div>
+          <span class="planner-card__eyebrow">Devotion</span>
+          <label class="label mb-0">Current devotion</label>
+        </div>
         <p id="devotionDisplay" class="planner-devotion-pill">None</p>
       </div>
     </div>
