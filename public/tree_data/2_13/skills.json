@@ -627,7 +627,7 @@
     ],
     "restriction": [],
     "skillEffect": [
-      "{{useable_under_melee_locks}}",
+      "{{usable_under_melee_locks}}",
       "{{percent_mana_restored_as_life}}",
       "{{cooldown}}",
       "{{minimum_mana_cost}}"
@@ -4660,7 +4660,7 @@
       "A protective shield freezing melee attackers"
     ],
     "restriction": [
-      "Requires a scepter, staff or an orb",
+      "Requires an orb or scepter",
       "Disables Mooncall damage bonuses"
     ],
     "skillEffect": [],
@@ -5902,7 +5902,7 @@
     ],
     "restriction": [],
     "skillEffect": [
-      "{{useable_under_melee_locks}}",
+      "{{usable_under_melee_locks}}",
       "Cooldown lowers with Magic Resistance: 25% for no cooldown",
       "{{cooldown}}",
       "{{physical_damage}}",
@@ -8620,7 +8620,7 @@
       "Emit a wave of creeeping frozen doom"
     ],
     "restriction": [
-      "Requires a scepter, staff or an orb"
+      "Requires an orb or scepter"
     ],
     "skillEffect": [
       "Multiple explosions do not stack",
@@ -9319,7 +9319,7 @@
       "Unleash a freezing cascade through your weapon"
     ],
     "restriction": [
-      "Requires a scepter or an orb"
+      "Requires an orb or scepter"
     ],
     "skillEffect": [
       "{{cold_damage}}",
@@ -10207,7 +10207,7 @@
     "restriction": [],
     "skillEffect": [
       "<p class='has-text-warning'>Can be used while Shapeshifted</p>",
-      "{{useable_under_melee_locks}}",
+      "{{usable_under_melee_locks}}",
       "{{regenerates_percent_life_over_time}}",
       "{{poison_dot}}",
       "{{mana_cost}}"
@@ -12411,9 +12411,9 @@
     "image": "icons-pal_44.png"
   },
   {
-    "id": "let_me_solo_him",
+    "id": "the_last_warchief",
     "numericId": 132,
-    "displayName": "LET ME SOLO HIM",
+    "displayName": "The Last Warchief",
     "classId": 1,
     "tab": 65,
     "class": "Other",
@@ -12945,7 +12945,7 @@
     ],
     "restriction": [],
     "skillEffect": [
-      "{{useable_under_melee_locks}}",
+      "{{usable_under_melee_locks}}",
       "{{limpet_mine_duration}}",
       "{{shoots_times}}",
       "{{limpet_mines}}",
@@ -13735,7 +13735,7 @@
     ],
     "restriction": [],
     "skillEffect": [
-      "{{useable_under_melee_locks}}",
+      "{{usable_under_melee_locks}}",
       "{{cooldown}}",
       "{{field_duration}}",
       "<p class='has-text-warning'>Haunt</p>",
@@ -15265,7 +15265,8 @@
     "tabName": "oSkill",
     "tags": [
       "Fire",
-      "Duration"
+      "Duration",
+      "Buff"
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
@@ -15292,7 +15293,7 @@
       }
     ],
     "description": [
-      "When activated, causes a lake of fire when approached"
+      "While active, causes a lake of fire when approached"
     ],
     "restriction": [],
     "skillEffect": [
@@ -15521,7 +15522,7 @@
     ],
     "restriction": [],
     "skillEffect": [
-      "{{useable_under_melee_locks}}",
+      "{{usable_under_melee_locks}}",
       "{{movement_speed}}",
       "{{duration}}",
       "{{poison_dot}}",
@@ -17338,9 +17339,9 @@
     "numericId": 183,
     "displayName": "Remorseless Winter",
     "classId": 1,
-    "tab": 67,
+    "tab": 68,
     "class": "Other",
-    "tabName": "Orange text",
+    "tabName": "Passive",
     "tags": [
       "Passive"
     ],
@@ -18142,9 +18143,9 @@
     "numericId": 195,
     "displayName": "Scepter Mastery",
     "classId": 1,
-    "tab": 67,
+    "tab": 68,
     "class": "Other",
-    "tabName": "Orange text",
+    "tabName": "Passive",
     "tags": [
       "Passive"
     ],
@@ -19418,7 +19419,7 @@
     ],
     "restriction": [],
     "skillEffect": [
-      "{{useable_under_melee_locks}}",
+      "{{usable_under_melee_locks}}",
       "{{all_skills}}",
       "Enemy Weapon Physical Damage: -20%",
       "{{enemy_attack_rating}}",
@@ -22416,7 +22417,7 @@
     "variants": [],
     "scalingConstants": [],
     "description": [
-      "The expertise of an hunter traces your path to greater heights"
+      "The expertise of a hunter traces your path to greater heights"
     ],
     "restriction": [],
     "skillEffect": [
@@ -22923,17 +22924,18 @@
     "variants": [],
     "scalingConstants": [],
     "description": [
-      "Temporarily grants a huge damage boost to self or target ally"
+      "Quickly vanquish as many foes as you can to gain power"
     ],
     "restriction": [],
     "skillEffect": [
-      "{{can_be_cast_on_other_units}}",
+      "Kill as many enemies as you can during primary buff",
+      "Gain a secondary buff afterwards with bonuses proportional to number of foes vanquished",
+      "(4% Weapon Physical Damage per Kill)",
       "{{cooldown}}",
       "{{duration}}",
-      "{{physical_damage_percent}}",
       "{{mana_cost}}"
     ],
-    "image": "icons-shared_75.png"
+    "image": "icons-shared_299.png"
   },
   {
     "id": "veil_king",
@@ -24569,7 +24571,9 @@
     "variants": [],
     "scalingConstants": [],
     "description": [],
-    "restriction": [],
+    "restriction": [
+      "Requires an orb or scepter"
+    ],
     "skillEffect": [],
     "image": "icons-sor_44.png"
   },
@@ -25226,5 +25230,50 @@
       "{{cooldown}}"
     ],
     "image": "icons-shared_296.png"
+  },
+  {
+    "id": "coronation",
+    "numericId": 707,
+    "displayName": "Coronation",
+    "classId": 1,
+    "tab": 65,
+    "class": "Other",
+    "tabName": "oSkill",
+    "tags": [
+      "Buff",
+      "Cold",
+      "AoE",
+      "Duration"
+    ],
+    "baseMaxLevel": 1,
+    "affectedBySpecialization": false,
+    "canAddPoints": false,
+    "variants": [],
+    "scalingConstants": [
+      {
+        "statKey": "delay_between_activations",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(50)"
+      },
+      {
+        "statKey": "activation_frequency_effectiveness",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100"
+      }
+    ],
+    "description": [
+      "Periodically triggers Frozen Crowns around you"
+    ],
+    "restriction": [],
+    "skillEffect": [
+      "{{delay_between_activations}}",
+      "{{activation_frequency_effectiveness}}",
+      "{{cold_damage}}",
+      "{{duration}}",
+      "{{mana_cost}}"
+    ],
+    "image": "icons-shared_295.png"
   }
 ]

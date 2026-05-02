@@ -5705,7 +5705,7 @@
     ],
     "restriction": [],
     "skillEffect": [
-      "{{useable_under_melee_locks}}",
+      "{{usable_under_melee_locks}}",
       "Cooldown lowers with Magic Resistance: 25% for no cooldown",
       "{{cooldown}}",
       "{{physical_damage}}",
@@ -12465,7 +12465,7 @@
     ],
     "restriction": [],
     "skillEffect": [
-      "{{useable_under_melee_locks}}",
+      "{{usable_under_melee_locks}}",
       "{{limpet_mine_duration}}",
       "{{shoots_times}}",
       "{{limpet_mines}}",
@@ -14816,7 +14816,7 @@
     ],
     "restriction": [],
     "skillEffect": [
-      "{{useable_under_melee_locks}}",
+      "{{usable_under_melee_locks}}",
       "{{movement_speed}}",
       "{{duration}}",
       "{{poison_dot}}",
@@ -18611,7 +18611,7 @@
     ],
     "restriction": [],
     "skillEffect": [
-      "{{useable_under_melee_locks}}",
+      "{{usable_under_melee_locks}}",
       "{{all_skills}}",
       "Enemy Weapon Physical Damage: -20%",
       "{{enemy_attack_rating}}",

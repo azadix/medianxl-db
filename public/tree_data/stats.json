@@ -2455,9 +2455,9 @@
   },
   {
     "id": 325,
-    "key": "useable_under_melee_locks",
-    "name": "Useable under melee locks",
-    "format": "<p class='has-text-info'>Useable under melee locks</p>"
+    "key": "usable_under_melee_locks",
+    "name": "Usable under melee locks",
+    "format": "<p class='has-text-info'>Usable under melee locks</p>"
   },
   {
     "id": 326,
