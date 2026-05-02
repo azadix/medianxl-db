@@ -238,15 +238,18 @@ export function canAddPoints(canAllocate, currentPoints, maxPoints) {
 }
 
 /**
- * Get restriction message from restrictions array
- * @param {Array} restrictions - Array of restriction objects
- * @returns {string} Restriction message
+ * Get restriction text from restrictions array (all reasons, for tooltip / native title).
+ * @param {Array<{ reason?: string }>|undefined|null} restrictions
+ * @returns {string} Non-empty reasons joined by newlines
  */
 export function getRestrictionMessage(restrictions) {
-    if (restrictions && restrictions.length > 0) {
-        return restrictions[0].reason || '';
+    if (!restrictions || restrictions.length === 0) {
+        return '';
     }
-    return '';
+    return restrictions
+        .map((r) => String(r?.reason ?? '').trim())
+        .filter(Boolean)
+        .join('\n');
 }
 
 /**
