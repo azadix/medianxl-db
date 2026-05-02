@@ -65,6 +65,7 @@ import {
             <li>- Many skills are missing descriptions</li>
             <li>- Skill damage and most of mana cost formulas are not implemented</li>
             <li>- War Spirit synergies based on devotion are not filled in</li>
+            <li>- Incorrect calculation for Warmth passive</li>
           </ul>
         </div>
       </div>
