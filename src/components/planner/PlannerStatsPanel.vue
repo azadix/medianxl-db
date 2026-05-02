@@ -6,7 +6,7 @@ import { setupPlannerStatRowTooltips, applyPlannerStatInput } from '../../../cha
 import { getFileSkillStore } from '../../../tree/skill-data-store.js';
 import { usePlannerSkillReferencedStats } from '../../composables/usePlannerSkillReferencedStats.js';
 
-const panelRoot = ref(null);
+const statTooltipRoot = ref(null);
 /** @type {import('vue').Ref<{ key: string, label: string, min: number|null, max: number|null, allowNegative?: boolean, default?: number, alwaysVisible?: boolean, sortOrder?: number }[]>} */
 const statDefs = ref(getPlannerCharacterStatDefs());
 /** @type {import('vue').Ref<Record<string, number>>} */
@@ -131,8 +131,8 @@ onMounted(() => {
   };
   pollStoreReady();
   nextTick(() => {
-    if (panelRoot.value) {
-      setupPlannerStatRowTooltips(panelRoot.value);
+    if (statTooltipRoot.value) {
+      setupPlannerStatRowTooltips(statTooltipRoot.value);
     }
   });
   window.addEventListener('characterStatsChanged', refreshHandler);
@@ -151,10 +151,20 @@ onUnmounted(() => {
 
 <template>
   <div id="sidebarPaneStats">
-    <div class="character-sheet-body planner-stats-layout">
+    <div
+      id="plannerStatBreakdownRoot"
+      ref="statTooltipRoot"
+      class="character-sheet-body planner-stats-layout"
+    >
       <section class="planner-card planner-vitals-card">
         <div class="planner-vitals-grid">
-          <div v-for="vital in vitals" :key="vital.key" class="planner-vital-tile" :class="'is-' + vital.key">
+          <div
+            v-for="vital in vitals"
+            :key="vital.key"
+            class="planner-vital-tile"
+            :class="'is-' + vital.key"
+            :data-stat-key="vital.key"
+          >
             <span>{{ vital.label }}</span>
             <strong>{{ vital.value }}</strong>
           </div>
@@ -174,11 +184,7 @@ onUnmounted(() => {
         </button>
       </div>
 
-      <div
-        id="plannerStatsPanel"
-        ref="panelRoot"
-        class="planner-stats-panel planner-card mb-2"
-      >
+      <div id="plannerStatsPanel" class="planner-stats-panel planner-card mb-2">
         <div class="planner-stats-baseline planner-stats-registry-scroll">
           <div
             v-for="def in filteredStatDefs"

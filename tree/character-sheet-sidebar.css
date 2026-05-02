@@ -249,6 +249,7 @@
   border: 1px solid hsl(0, 0%, 24%);
   border-radius: 0.45rem;
   background: hsl(0, 0%, 8%);
+  cursor: help;
 }
 
 .planner-vital-tile span {

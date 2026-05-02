@@ -784,79 +784,133 @@ function sanitizeBuildNameForExportStorage(raw) {
     return s !== '' ? s : 'Unnamed Build';
 }
 
-/**
- * Modal to set build name before toolbar export (no native prompt/confirm).
- * @param {{ onConfirm: (name: string) => void }} opts
- */
-function showExportBuildNameModal(opts) {
-    const { onConfirm } = opts;
+function getCurrentBuildNamePrefill() {
     const builds = getSavedBuilds();
-    const defaultPrefill =
-        currentBuildIndex !== null &&
-        currentBuildIndex >= 0 &&
-        currentBuildIndex < builds.length
-            ? String(builds[currentBuildIndex].name ?? '')
-            : '';
+    if (currentBuildIndex !== null && currentBuildIndex >= 0 && currentBuildIndex < builds.length) {
+        return String(builds[currentBuildIndex].name ?? '');
+    }
+    return currentBuildDisplayName;
+}
+
+/**
+ * Shared modal for planner build name actions.
+ * @param {{
+ *   title: string,
+ *   titleId: string,
+ *   subtitle: string,
+ *   iconClass: string,
+ *   helpText: string,
+ *   primaryText: string,
+ *   primaryIconClass: string,
+ *   onConfirm: (name: string) => void,
+ *   secondaryAction?: { text: string, iconClass: string, className: string, onClick: (name: string, closeModal: () => void) => void | Promise<void> },
+ * }} opts
+ */
+function showBuildNameModal(opts) {
+    const {
+        title: modalTitle,
+        titleId,
+        subtitle: modalSubtitle,
+        iconClass,
+        helpText,
+        primaryText,
+        primaryIconClass,
+        onConfirm,
+        secondaryAction,
+    } = opts;
 
     const overlay = document.createElement('div');
-    overlay.className = 'modal is-active';
-    overlay.style.cssText = 'z-index: 10001;';
+    overlay.className = 'modal is-active planner-export-modal';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('aria-labelledby', titleId);
 
     const modalBackground = document.createElement('div');
     modalBackground.className = 'modal-background';
 
     const card = document.createElement('div');
-    card.className = 'modal-card';
-    card.style.cssText = 'max-width: 28rem;';
+    card.className = 'modal-card planner-export-modal__card';
 
     const head = document.createElement('header');
-    head.className = 'modal-card-head py-3 px-3';
+    head.className = 'modal-card-head planner-export-modal__head p-4';
+    const headerIcon = document.createElement('span');
+    headerIcon.className = 'icon planner-export-modal__icon';
+    headerIcon.innerHTML = `<i class="fa-solid ${iconClass}"></i>`;
+    head.appendChild(headerIcon);
+
+    const titleWrap = document.createElement('div');
+    titleWrap.className = 'planner-export-modal__title';
     const title = document.createElement('p');
+    title.id = titleId;
     title.className = 'modal-card-title mb-0';
-    title.textContent = 'Export build';
-    head.appendChild(title);
+    title.textContent = modalTitle;
+    const subtitle = document.createElement('p');
+    subtitle.className = 'is-size-7 has-text-grey-light mb-0';
+    subtitle.textContent = modalSubtitle;
+    titleWrap.appendChild(title);
+    titleWrap.appendChild(subtitle);
+    head.appendChild(titleWrap);
+
+    const btnClose = document.createElement('button');
+    btnClose.className = 'delete';
+    btnClose.type = 'button';
+    btnClose.setAttribute('aria-label', 'Close');
+    head.appendChild(btnClose);
 
     const body = document.createElement('section');
-    body.className = 'modal-card-body py-3 px-3';
-    const intro = document.createElement('p');
-    intro.className = 'mb-3 py-2';
-    intro.textContent =
-        'This name is stored in the exported JSON as the build name. Leave the field empty to use the default name.';
-    body.appendChild(intro);
+    body.className = 'modal-card-body planner-export-modal__body p-4';
 
+    const field = document.createElement('div');
+    field.className = 'field';
     const label = document.createElement('label');
-    label.className = 'label py-2 mb-2';
+    label.className = 'label';
     label.htmlFor = 'exportBuildNameInput';
     label.textContent = 'Build name';
-    body.appendChild(label);
+    field.appendChild(label);
 
+    const control = document.createElement('div');
+    control.className = 'control has-icons-left';
     const input = document.createElement('input');
     input.id = 'exportBuildNameInput';
-    input.className = 'input py-2';
+    input.className = 'input';
     input.type = 'text';
     input.setAttribute('placeholder', 'Unnamed Build');
     input.setAttribute('autocomplete', 'off');
-    input.value = defaultPrefill;
-    body.appendChild(input);
+    input.value = getCurrentBuildNamePrefill();
+    control.appendChild(input);
+
+    const inputIcon = document.createElement('span');
+    inputIcon.className = 'icon is-small is-left';
+    inputIcon.innerHTML = '<i class="fa-solid fa-signature"></i>';
+    control.appendChild(inputIcon);
+    field.appendChild(control);
+
+    const help = document.createElement('p');
+    help.className = 'help';
+    help.textContent = helpText;
+    field.appendChild(help);
+    body.appendChild(field);
 
     const foot = document.createElement('footer');
-    foot.className = 'modal-card-foot py-3 px-3';
-    foot.style.cssText =
-        'display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 0.5rem; flex-wrap: wrap;';
-    const btnExport = document.createElement('button');
-    btnExport.className = 'button is-primary py-2';
-    btnExport.type = 'button';
-    btnExport.textContent = 'Export build';
-    const btnShare = document.createElement('button');
-    btnShare.className = 'button is-info py-2';
-    btnShare.type = 'button';
-    btnShare.textContent = 'Share';
+    foot.className = 'modal-card-foot planner-export-modal__foot p-4';
+    const btnPrimary = document.createElement('button');
+    btnPrimary.className = 'button is-primary is-inverted is-outlined';
+    btnPrimary.type = 'button';
+    btnPrimary.innerHTML = `<span class="icon"><i class="fa-solid ${primaryIconClass}"></i></span><span>${primaryText}</span>`;
+    const btnSecondary = secondaryAction ? document.createElement('button') : null;
+    if (btnSecondary) {
+        btnSecondary.className = secondaryAction.className;
+        btnSecondary.type = 'button';
+        btnSecondary.innerHTML = `<span class="icon"><i class="fa-solid ${secondaryAction.iconClass}"></i></span><span>${secondaryAction.text}</span>`;
+    }
     const btnCancel = document.createElement('button');
-    btnCancel.className = 'button py-2';
+    btnCancel.className = 'button';
     btnCancel.type = 'button';
     btnCancel.textContent = 'Cancel';
-    foot.appendChild(btnExport);
-    foot.appendChild(btnShare);
+    foot.appendChild(btnPrimary);
+    if (btnSecondary) {
+        foot.appendChild(btnSecondary);
+    }
     foot.appendChild(btnCancel);
 
     card.appendChild(head);
@@ -868,7 +922,9 @@ function showExportBuildNameModal(opts) {
     document.body.appendChild(overlay);
 
     const closeModal = () => {
-        document.body.removeChild(overlay);
+        if (overlay.parentNode) {
+            document.body.removeChild(overlay);
+        }
         document.removeEventListener('keydown', handleEscape);
     };
 
@@ -880,6 +936,7 @@ function showExportBuildNameModal(opts) {
     document.addEventListener('keydown', handleEscape);
 
     modalBackground.addEventListener('click', closeModal);
+    btnClose.addEventListener('click', closeModal);
     btnCancel.addEventListener('click', closeModal);
 
     const submit = () => {
@@ -888,23 +945,14 @@ function showExportBuildNameModal(opts) {
         onConfirm(name);
     };
 
-    btnShare.addEventListener('click', async () => {
-        const name = sanitizeBuildNameForExportStorage(input.value);
-        closeModal();
-        const snap = buildCurrentBuildSnapshot(name);
-        const encoded = await compressBuildToUrlParam(JSON.stringify(snap));
-        setBuildUrlParam(encoded);
-        const shareUrl = window.location.href;
-        if (navigator.clipboard && window.isSecureContext) {
-            navigator.clipboard.writeText(shareUrl)
-                .then(() => toastManager.showToast('Share link copied to clipboard!', true, 'success'))
-                .catch(() => fallbackCopyToClipboard(shareUrl, 'share link'));
-        } else {
-            fallbackCopyToClipboard(shareUrl, 'share link');
-        }
-    });
+    if (btnSecondary) {
+        btnSecondary.addEventListener('click', () => {
+            const name = sanitizeBuildNameForExportStorage(input.value);
+            secondaryAction.onClick(name, closeModal);
+        });
+    }
 
-    btnExport.addEventListener('click', submit);
+    btnPrimary.addEventListener('click', submit);
     input.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
@@ -913,6 +961,42 @@ function showExportBuildNameModal(opts) {
     });
 
     setTimeout(() => input.focus(), 0);
+}
+
+/**
+ * Modal to set build name before toolbar export (no native prompt/confirm).
+ * @param {{ onConfirm: (name: string) => void }} opts
+ */
+function showExportBuildNameModal(opts) {
+    showBuildNameModal({
+        title: 'Export build',
+        titleId: 'exportBuildModalTitle',
+        subtitle: 'Copy a JSON backup or create a shareable planner link.',
+        iconClass: 'fa-arrow-up-from-bracket',
+        helpText: 'Stored inside the exported build. Empty names become "Unnamed Build".',
+        primaryText: 'Export JSON',
+        primaryIconClass: 'fa-copy',
+        onConfirm: opts.onConfirm,
+        secondaryAction: {
+            text: 'Share link',
+            iconClass: 'fa-link',
+            className: 'button is-info is-outlined',
+            async onClick(name, closeModal) {
+                closeModal();
+                const snap = buildCurrentBuildSnapshot(name);
+                const encoded = await compressBuildToUrlParam(JSON.stringify(snap));
+                setBuildUrlParam(encoded);
+                const shareUrl = window.location.href;
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(shareUrl)
+                        .then(() => toastManager.showToast('Share link copied to clipboard!', true, 'success'))
+                        .catch(() => fallbackCopyToClipboard(shareUrl, 'share link'));
+                } else {
+                    fallbackCopyToClipboard(shareUrl, 'share link');
+                }
+            },
+        },
+    });
 }
 
 export function plannerExportBuildClick() {
@@ -924,6 +1008,32 @@ export function plannerExportBuildClick() {
             const snap = buildCurrentBuildSnapshot(name);
             exportBuildJsonString(JSON.stringify(snap), exportLabelForToast(name));
         },
+    });
+}
+
+function renameCurrentBuild(name) {
+    setCurrentBuildDisplayName(name);
+
+    const builds = getSavedBuilds();
+    if (currentBuildIndex !== null && currentBuildIndex >= 0 && currentBuildIndex < builds.length) {
+        builds[currentBuildIndex].name = name;
+        setSavedBuilds(builds);
+        notifySavedBuildsListRefresh();
+    }
+
+    toastManager.showToast(`Build renamed to "${exportLabelForToast(name)}".`, true, 'info');
+}
+
+export function plannerRenameBuildClick() {
+    showBuildNameModal({
+        title: 'Rename build',
+        titleId: 'renameBuildModalTitle',
+        subtitle: 'Update the name shown in the planner header.',
+        iconClass: 'fa-pen-to-square',
+        helpText: 'Used for the current planner build. Empty names become "Unnamed Build".',
+        primaryText: 'Rename build',
+        primaryIconClass: 'fa-check',
+        onConfirm: renameCurrentBuild,
     });
 }
 
@@ -1346,88 +1456,93 @@ function fallbackCopyToClipboard(text, buildName) {
  * @param {string} buildName - Name of the build
  */
 function showExportModal(jsonText, buildName) {
-    // Create modal overlay
     const overlay = document.createElement('div');
-    overlay.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 10000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    `;
-    
-    // Create modal content
-    const modal = document.createElement('div');
-    modal.style.cssText = `
-        background: white;
-        border-radius: 8px;
-        padding: 20px;
-        max-width: 80%;
-        max-height: 80%;
-        overflow: auto;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    `;
-    
-    modal.innerHTML = `
-        <h3 style="margin-top: 0; color: #333;">Export Build: ${buildName}</h3>
-        <p style="color: #666; margin-bottom: 15px;">Copy the JSON text below:</p>
-        <textarea readonly style="
-            width: 100%;
-            height: 200px;
-            font-family: monospace;
-            font-size: 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 10px;
-            resize: vertical;
-            background: #f8f8f8;
-        ">${jsonText}</textarea>
-        <div style="margin-top: 15px; text-align: right;">
-            <button id="closeExportModal" style="
-                background: #3273dc;
-                color: white;
-                border: none;
-                padding: 8px 16px;
-                border-radius: 4px;
-                cursor: pointer;
-            ">Close</button>
-        </div>
-    `;
-    
-    overlay.appendChild(modal);
+    overlay.className = 'modal is-active planner-export-modal';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('aria-labelledby', 'manualExportModalTitle');
+
+    const modalBackground = document.createElement('div');
+    modalBackground.className = 'modal-background';
+
+    const card = document.createElement('div');
+    card.className = 'modal-card planner-export-modal__card planner-export-modal__card--wide';
+
+    const head = document.createElement('header');
+    head.className = 'modal-card-head planner-export-modal__head p-4';
+    const headerIcon = document.createElement('span');
+    headerIcon.className = 'icon planner-export-modal__icon';
+    headerIcon.innerHTML = '<i class="fa-solid fa-file-code"></i>';
+    head.appendChild(headerIcon);
+
+    const titleWrap = document.createElement('div');
+    titleWrap.className = 'planner-export-modal__title';
+    const title = document.createElement('p');
+    title.id = 'manualExportModalTitle';
+    title.className = 'modal-card-title mb-0';
+    title.textContent = `Export Build: ${buildName}`;
+    const subtitle = document.createElement('p');
+    subtitle.className = 'is-size-7 has-text-grey-light mb-0';
+    subtitle.textContent = 'Clipboard access failed, so copy the JSON manually.';
+    titleWrap.appendChild(title);
+    titleWrap.appendChild(subtitle);
+    head.appendChild(titleWrap);
+
+    const btnClose = document.createElement('button');
+    btnClose.className = 'delete';
+    btnClose.type = 'button';
+    btnClose.setAttribute('aria-label', 'Close');
+    head.appendChild(btnClose);
+
+    const body = document.createElement('section');
+    body.className = 'modal-card-body planner-export-modal__body p-4';
+    const copyHelp = document.createElement('p');
+    copyHelp.className = 'mb-3';
+    copyHelp.textContent = 'Select the text below and copy it into a file or import dialog.';
+    body.appendChild(copyHelp);
+
+    const textarea = document.createElement('textarea');
+    textarea.className = 'textarea planner-export-modal__textarea';
+    textarea.readOnly = true;
+    textarea.value = jsonText;
+    body.appendChild(textarea);
+
+    const foot = document.createElement('footer');
+    foot.className = 'modal-card-foot planner-export-modal__foot p-4';
+    const closeButton = document.createElement('button');
+    closeButton.className = 'button is-primary is-inverted is-outlined';
+    closeButton.type = 'button';
+    closeButton.textContent = 'Close';
+    foot.appendChild(closeButton);
+
+    card.appendChild(head);
+    card.appendChild(body);
+    card.appendChild(foot);
+
+    overlay.appendChild(modalBackground);
+    overlay.appendChild(card);
     document.body.appendChild(overlay);
-    
-    // Focus and select the textarea
-    const textarea = modal.querySelector('textarea');
+
     textarea.focus();
     textarea.select();
-    
-    // Close modal when clicking close button
-    modal.querySelector('#closeExportModal').addEventListener('click', () => {
-        document.body.removeChild(overlay);
-    });
-    
-    // Close modal when clicking overlay
-    overlay.addEventListener('click', (e) => {
-        if (e.target === overlay) {
+
+    const closeModal = () => {
+        if (overlay.parentNode) {
             document.body.removeChild(overlay);
         }
-    });
-    
-    // Close modal with Escape key
+        document.removeEventListener('keydown', handleEscape);
+    };
+
     const handleEscape = (e) => {
         if (e.key === 'Escape') {
-            document.body.removeChild(overlay);
-            document.removeEventListener('keydown', handleEscape);
+            closeModal();
         }
     };
     document.addEventListener('keydown', handleEscape);
-    
+    modalBackground.addEventListener('click', closeModal);
+    btnClose.addEventListener('click', closeModal);
+    closeButton.addEventListener('click', closeModal);
+
     toastManager.showToast(`Build "${buildName}" export shown in dialog - copy manually`, false, 'info');
 }
 

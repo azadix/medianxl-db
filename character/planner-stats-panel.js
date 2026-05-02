@@ -137,16 +137,43 @@ function resyncMinLevelPoolTooltipIfOpen() {
   requestAnimationFrame(() => positionPlannerTooltip(minLevelPoolTooltipEl, anchor));
 }
 
-function showStatBreakdownTooltip(row) {
+function showStatBreakdownTooltip(anchor) {
   hideMinLevelPoolTooltip();
-  const key = row.dataset.statKey;
+  const key = anchor.dataset.statKey;
   if (!key) return;
   statBreakdownHoverKey = key;
-  statBreakdownHoveredRow = row;
+  statBreakdownHoveredRow = anchor;
   const el = ensureStatBreakdownTooltip();
   el.innerHTML = buildPlannerStatBreakdownHtml(key);
   el.classList.add('is-active');
-  requestAnimationFrame(() => positionPlannerTooltip(el, row));
+  requestAnimationFrame(() => positionPlannerTooltip(el, anchor));
+}
+
+/**
+ * @param {HTMLElement} root
+ * @param {string} key
+ * @returns {HTMLElement | null}
+ */
+function findStatBreakdownAnchorForKey(root, key) {
+  const esc =
+    typeof CSS !== 'undefined' && typeof CSS.escape === 'function' ? CSS.escape(key) : key;
+  const row = root.querySelector(`.planner-stat-row[data-stat-key="${esc}"]`);
+  if (row) return row;
+  return root.querySelector(`.planner-vital-tile[data-stat-key="${esc}"]`);
+}
+
+/**
+ * @param {EventTarget | null} t
+ * @param {HTMLElement} root
+ * @returns {HTMLElement | null}
+ */
+function statBreakdownHoverAnchorFromTarget(t, root) {
+  if (!(t instanceof Element)) return null;
+  const row = t.closest('.planner-stat-row');
+  if (row && row.dataset.statKey && root.contains(row)) return row;
+  const vital = t.closest('.planner-vital-tile[data-stat-key]');
+  if (vital && root.contains(vital)) return vital;
+  return null;
 }
 
 /**
@@ -169,12 +196,11 @@ export function setupPlannerStatRowTooltips(root) {
     'mouseover',
     (e) => {
       const t = e.target;
-      if (!(t instanceof Element)) return;
-      const row = t.closest('.planner-stat-row');
-      if (!row || !root.contains(row)) return;
+      const anchor = statBreakdownHoverAnchorFromTarget(t, root);
+      if (!anchor) return;
       clearHide();
-      if (statBreakdownHoveredRow === row) return;
-      showStatBreakdownTooltip(row);
+      if (statBreakdownHoveredRow === anchor) return;
+      showStatBreakdownTooltip(anchor);
     },
     true
   );
@@ -183,11 +209,10 @@ export function setupPlannerStatRowTooltips(root) {
     'mouseout',
     (e) => {
       const t = e.target;
-      if (!(t instanceof Element)) return;
-      const row = t.closest('.planner-stat-row');
-      if (!row || !root.contains(row)) return;
+      const anchor = statBreakdownHoverAnchorFromTarget(t, root);
+      if (!anchor) return;
       const rel = e.relatedTarget;
-      if (rel instanceof Node && row.contains(rel)) return;
+      if (rel instanceof Node && anchor.contains(rel)) return;
       scheduleHide();
     },
     true
@@ -201,8 +226,10 @@ export function setupPlannerStatRowTooltips(root) {
   window.addEventListener('resize', onScrollOrResize);
 
   const refreshOpenTooltip = () => {
-    const panel = document.getElementById('plannerStatsPanel');
-    if (panel) resyncStatBreakdownTooltipAfterPanelRefresh(panel);
+    const hoverRoot =
+      document.getElementById('plannerStatBreakdownRoot') ||
+      document.getElementById('plannerStatsPanel');
+    if (hoverRoot) resyncStatBreakdownTooltipAfterPanelRefresh(hoverRoot);
   };
   window.addEventListener('characterStatsChanged', refreshOpenTooltip);
   window.addEventListener('questCompletionChanged', refreshOpenTooltip);
@@ -267,13 +294,9 @@ export function setupPlannerMinLevelSkillPoolTooltips() {
 
 function resyncStatBreakdownTooltipAfterPanelRefresh(root) {
   if (!statBreakdownHoverKey || !root) return;
-  const esc =
-    typeof CSS !== 'undefined' && typeof CSS.escape === 'function'
-      ? CSS.escape(statBreakdownHoverKey)
-      : statBreakdownHoverKey;
-  const newRow = root.querySelector(`.planner-stat-row[data-stat-key="${esc}"]`);
-  if (newRow) {
-    showStatBreakdownTooltip(newRow);
+  const newAnchor = findStatBreakdownAnchorForKey(root, statBreakdownHoverKey);
+  if (newAnchor) {
+    showStatBreakdownTooltip(newAnchor);
   } else {
     hideStatBreakdownTooltip();
   }

@@ -145,7 +145,7 @@ onUnmounted(() => {
       <div class="planner-config-summary__numbers">
         <div>
           <strong>{{ questSummary.done }} / {{ questSummary.total }}</strong>
-          <span>rewards done</span>
+          <span>quests completed</span>
         </div>
         <div>
           <strong>+{{ questSummary.skillPoints }}</strong>

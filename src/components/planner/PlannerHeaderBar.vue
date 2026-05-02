@@ -5,6 +5,7 @@ import {
   getCurrentBuildDisplayName,
   plannerBackToMenuFromTree,
   plannerExportBuildClick,
+  plannerRenameBuildClick,
   plannerResetBuildClick,
   plannerSaveAsBuildClick,
   plannerSaveBuildClick,
@@ -37,14 +38,6 @@ function refreshHeaderState() {
 
 function onRefresh() {
   nextTick(refreshHeaderState);
-}
-
-function renameBuildLabel() {
-  const currentName = buildName.value === 'Untitled build' ? '' : buildName.value;
-  const nextName = prompt('Rename build:', currentName);
-  if (nextName === null) return;
-  const cleanName = String(nextName).trim().replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ');
-  buildName.value = cleanName || 'Untitled build';
 }
 
 function setBuildNameLabel(name) {
@@ -104,7 +97,7 @@ onUnmounted(() => {
           <i v-else class="fa-solid fa-user"></i>
         </div>
         <div class="planner-header-title">
-          <button class="planner-build-name-button" type="button" @click="renameBuildLabel">
+          <button class="planner-build-name-button" type="button" @click="plannerRenameBuildClick">
             {{ buildName }}
           </button>
           <div class="planner-header-meta">
