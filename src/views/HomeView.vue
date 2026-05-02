@@ -3,6 +3,8 @@ import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { mountSkillsIndex, unmountSkillsIndex, syncSkillsIndexFromRoute } from '../skills/skillsIndex.js';
 import SkillsBrowseTable from '../components/skills/SkillsBrowseTable.vue';
+import '../../tree/tree-styles.css';
+import '../../tree/character-sheet-sidebar.css';
 
 const skillsList = ref([]);
 const skillIconFolder = ref(null);
@@ -90,50 +92,162 @@ watch(
 </template>
 
 <style scoped>
-.skill-image-container {
-  position: sticky;
-  display: flex;
-  justify-content: center;
-  margin: 1rem 0;
-}
-
-:deep(.skill-image) {
-  scale: 3;
-  object-fit: contain;
-  transform-origin: center center;
-}
-
 .filter-toggle {
   transition: all 0.3s ease;
   min-width: 15rem;
 }
 
-:deep(.home-skill-meta) {
-  padding-top: 1.25rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
+:deep(.skill-detail-page) {
+  padding-bottom: 2rem;
 }
 
-:deep(.home-skill-meta-section .content) {
-  margin-top: 0.35rem;
+:deep(.skill-detail-toolbar) {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 0.75rem;
 }
 
-:deep(.home-skill-meta-value) {
-  font-size: 1.05rem;
+:deep(.skill-detail-shell) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(18rem, 24rem);
+  gap: 1rem;
+  align-items: start;
+}
+
+:deep(.skill-detail-main),
+:deep(.skill-info) {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+:deep(.skill-detail-hero) {
+  background: linear-gradient(135deg, hsl(0, 0%, 14%), hsl(0, 0%, 9%));
+}
+
+:deep(.skill-detail-page-name) {
+  margin-bottom: 0.75rem;
+  color: #fff;
+}
+
+:deep(.skill-detail-formula-hint) {
+  margin-bottom: 0;
+  color: #9a9aa8;
+  font-size: 0.82rem;
+}
+
+:deep(.skill-detail-section-head) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.85rem;
+}
+
+:deep(.skill-effect-level-row) {
+  flex-wrap: nowrap;
+}
+
+:deep(.skill-effect-level-row .label),
+:deep(.skill-effect-level-row .input) {
+  color: #f1f1f1;
+}
+
+:deep(.skill-detail-copy),
+:deep(.skill-effect-body) {
+  color: #e8e8e8;
   line-height: 1.55;
 }
 
+:deep(.skill-detail-infobox) {
+  position: sticky;
+  top: calc(var(--planner-header-h, 3rem) + 0.75rem);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+:deep(.skill-detail-image-card) {
+  text-align: center;
+}
+
+:deep(.skill-image-container) {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-top: 0.6rem;
+  border: 1px solid hsl(0, 0%, 24%);
+  border-radius: 0.5rem;
+  background: radial-gradient(circle at 50% 25%, hsl(0, 0%, 20%), hsl(0, 0%, 7%));
+  overflow: hidden;
+}
+
+:deep(.skill-image-container img.skill-image) {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+:deep(.skill-image-container div.skill-image) {
+  flex: 0 0 auto;
+  transform: scale(5);
+  transform-origin: center;
+  image-rendering: pixelated;
+}
+
+:deep(.skill-detail-info-card) {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+:deep(.skill-detail-info-row) {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.55rem 0;
+  border-top: 1px solid hsl(0, 0%, 20%);
+}
+
+:deep(.skill-detail-info-row span) {
+  color: #9a9aa8;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+:deep(.skill-detail-info-row strong) {
+  color: #f1f1f1;
+  text-align: right;
+}
+
+:deep(.home-skill-meta) {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
 :deep(.home-skill-meta-calc) {
-  margin-top: 0.25rem;
+  margin-top: 0.45rem;
   padding: 0.75rem 1rem;
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 4px;
+  border: 1px solid hsl(0, 0%, 24%);
+  border-radius: 0.35rem;
+  background: hsl(0, 0%, 7%);
+  color: #e8e8e8;
   font-size: 0.85rem;
   line-height: 1.45;
   overflow-x: auto;
 }
 
 @media screen and (max-width: 768px) {
-  :deep(.skill-detail .columns) {
+  :deep(.skill-detail-shell) {
     display: flex;
     flex-direction: column;
   }
@@ -148,8 +262,20 @@ watch(
 
   :deep(.skill-image-container) {
     position: static;
-    margin: 1rem auto;
-    text-align: center;
+  }
+
+  :deep(.skill-detail-infobox) {
+    position: static;
+    width: 100%;
+  }
+
+  :deep(.skill-detail-section-head) {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  :deep(.skill-effect-level-row) {
+    width: 100%;
   }
 }
 </style>

@@ -124,6 +124,7 @@ async function displaySkillDetail(skillId) {
   const skillImage = skillInfo.image
     ? `${getSkillIconHTML(skillInfo.image, skillInfo.class, 'skill-image', skillIconGameVersionFolder)}`
     : '';
+  const skillTags = Array.isArray(skillInfo.tags) ? skillInfo.tags.filter(Boolean) : [];
 
   const formulaState = { showFormulas: false };
 
@@ -144,7 +145,7 @@ async function displaySkillDetail(skillId) {
       defaultCharacterState(level),
       showFormulas
     );
-    return `<p class="is-size-5"><strong>Description</strong></p><div class="content">${expanded}</div>`;
+    return `<span class="planner-card__eyebrow">Description</span><div class="content skill-detail-copy">${expanded}</div>`;
   }
 
   async function renderSkillEffectBodyAtLevel(level, showFormulas) {
@@ -181,7 +182,7 @@ async function displaySkillDetail(skillId) {
       defaultCharacterState(level),
       showFormulas
     );
-    let html = `<p class="is-size-5"><strong>Restriction</strong></p>`;
+    let html = `<span class="planner-card__eyebrow">Restriction</span>`;
     html += expandedRestriction
       .split('\n')
       .map((line) => `<p><span class="has-text-danger">${line}</span></p>`)
@@ -189,59 +190,48 @@ async function displaySkillDetail(skillId) {
     return html;
   }
 
-  function buildMetaHtml() {
+  function buildInfoBoxRowsHtml() {
     const store = getFileSkillStore();
     const catRow = store?.catalogByInternalId?.get(String(skillInfo.id));
 
-    const sections = [];
-    const addSection = (title, bodyInnerHtml) => {
-      sections.push(
-        `<section class="home-skill-meta-section mb-4"><p class="is-size-5"><strong>${escapeHtml(title)}</strong></p><div class="content">${bodyInnerHtml}</div></section>`
-      );
-    };
-
-    addSection(
-      'Class',
-      `<p class="home-skill-meta-value mb-0">${escapeHtml(String(skillInfo.class || '—'))}</p>`
-    );
-    addSection(
-      'Tab',
-      `<p class="home-skill-meta-value mb-0">${escapeHtml(String(skillInfo.tabName || '—'))}</p>`
-    );
-    if (skillInfo.tags && skillInfo.tags.length) {
-      addSection(
-        'Tags',
-        `<p class="home-skill-meta-value mb-0">${escapeHtml(skillInfo.tags.join(', '))}</p>`
-      );
-    }
+    const rows = [
+      ['Class', skillInfo.class || 'None'],
+      ['Tab', skillInfo.tabName || 'None'],
+    ];
+    if (skillTags.length) rows.push(['Tags', skillTags.join(', ')]);
     if (catRow?.variants?.length) {
-      addSection(
-        'Variant count',
-        `<p class="home-skill-meta-value mb-0">${escapeHtml(String(catRow.variants.length))}</p>`
-      );
+      rows.push(['Variants', String(catRow.variants.length)]);
     }
-    let maxLine = 'Innate (no hard points)';
-    if (skillInfo.canAddPoints) {
-      maxLine = `Base max: ${skillInfo.baseMaxLevel}`;
-      if (skillInfo.affectedBySpecialization) maxLine += ' (affected by Specialization)';
-      if (skillInfo.baseMaxLevel === 0) maxLine += ' (raised by other sources)';
-    }
-    addSection(
-      'Hard-point cap',
-      `<p class="home-skill-meta-value mb-0">${escapeHtml(maxLine)}</p>`
-    );
+
+    return rows
+      .map(
+        ([label, value]) => `
+          <div class="skill-detail-info-row">
+            <span>${escapeHtml(label)}</span>
+            <strong>${escapeHtml(value)}</strong>
+          </div>
+        `
+      )
+      .join('');
+  }
+
+  function buildCalcBlocksHtml() {
+    const blocks = [];
 
     for (let i = 1; i <= 6; i++) {
       const v = skillInfo[`calc${i}`];
       if (v && String(v).trim()) {
-        addSection(
-          `calc${i}`,
-          `<pre class="home-skill-meta-calc"><code>${escapeHtml(String(v))}</code></pre>`
+        blocks.push(
+          `<section class="home-skill-meta-section">
+            <span class="planner-card__eyebrow">calc${i}</span>
+            <pre class="home-skill-meta-calc"><code>${escapeHtml(String(v))}</code></pre>
+          </section>`
         );
       }
     }
 
-    return `<div class="home-skill-meta mt-5">${sections.join('')}</div>`;
+    if (blocks.length === 0) return '';
+    return `<div class="home-skill-meta">${blocks.join('')}</div>`;
   }
 
   const r = getRouter();
@@ -263,46 +253,70 @@ async function displaySkillDetail(skillId) {
 
   const backLabel = treeClass || treeTab ? 'Tree' : 'Skills';
   const backButton = `
-        <div class="mb-3">
-            <a href="${backHref}" class="button is-light">
+        <div class="skill-detail-toolbar">
+            <a href="${escapeHtml(backHref)}" class="button is-light is-outlined">
                 <span class="icon">
                     <i class="fas fa-arrow-left"></i>
                 </span>
-                <span>Back to ${backLabel}</span>
+                <span>Back to ${escapeHtml(backLabel)}</span>
             </a>
         </div>
     `;
 
-  const metaHtml = buildMetaHtml();
+  const infoRowsHtml = buildInfoBoxRowsHtml();
+  const calcBlocksHtml = buildCalcBlocksHtml();
+  const restrictionHtml = skillInfo.restriction
+    ? '<section class="planner-card skill-restriction"></section>'
+    : '';
+  const descriptionHtml = skillInfo.description
+    ? '<section class="planner-card skill-description"></section>'
+    : '';
 
   host.innerHTML = `
-        <div class="skill-detail" style="position: relative;">
+        <div class="skill-detail skill-detail-page">
             ${backButton}
-            <h2 class="title is-4 skill-detail-page-name mb-3">${escapeHtml(skillInfo.name)}</h2>
-            <p class="is-size-7 has-text-grey mb-3">Hold Ctrl to show raw formulae (same as planner tooltips). Release Ctrl to hide them.</p>
-            <div class="columns is-mobile is-multiline">
-                <div class="column is-full-mobile is-two-thirds-tablet order-2-mobile">
+            <div class="skill-detail-shell">
+                <main class="skill-detail-main order-2-mobile">
+                    <section class="skill-detail-hero planner-card">
+                        <span class="planner-card__eyebrow">Skill</span>
+                        <h2 class="title is-3 skill-detail-page-name">${escapeHtml(skillInfo.name)}</h2>
+                        <p class="skill-detail-formula-hint">Hold Ctrl to show raw formulae. Release Ctrl to hide them.</p>
+                    </section>
+
                     <div class="skill-info">
-                        <div class="skill-restriction"></div>
-                        <div class="skill-description"></div>
-                        <div class="skill-effect-panel mt-4">
-                            <p class="is-size-5 mb-3"><strong>Skill effect</strong></p>
-                            <div class="field is-grouped is-align-items-center mb-3 skill-effect-level-row">
-                                <label class="label mb-0 mr-3" for="skill-level-input">Base level:</label>
-                                <div class="control">
-                                    <input class="input" type="number" id="skill-level-input" min="1" max="${maxPreview}" value="${initialLevel}" style="max-width: 9rem" />
+                        ${restrictionHtml}
+                        ${descriptionHtml}
+                        <section class="skill-effect-panel planner-card">
+                            <div class="skill-detail-section-head">
+                                <div>
+                                    <span class="planner-card__eyebrow">Scaling Preview</span>
+                                    <h3 class="title is-5 mb-0">Skill effect</h3>
+                                </div>
+                                <div class="field is-grouped is-align-items-center skill-effect-level-row mb-0">
+                                    <label class="label mb-0 mr-3" for="skill-level-input">Base level</label>
+                                    <div class="control">
+                                        <input class="input planner-compact-number" type="number" id="skill-level-input" min="1" max="${maxPreview}" value="${initialLevel}" />
+                                    </div>
                                 </div>
                             </div>
                             <div class="skill-effect-body content"></div>
+                        </section>
+                        ${calcBlocksHtml}
+                    </div>
+                </main>
+
+                <aside class="skill-detail-infobox order-1-mobile">
+                    <section class="planner-card skill-detail-image-card">
+                        <span class="planner-card__eyebrow">Skill Image</span>
+                        <div class="skill-image-container">
+                            ${skillImage || '<span class="has-text-grey is-italic">No image</span>'}
                         </div>
-                        ${metaHtml}
-                    </div>
-                </div>
-                <div class="column is-full-mobile is-one-third-tablet order-1-mobile">
-                    <div class="skill-image-container">
-                        ${skillImage}
-                    </div>
-                </div>
+                    </section>
+                    <section class="planner-card skill-detail-info-card">
+                        <span class="planner-card__eyebrow">Information</span>
+                        ${infoRowsHtml}
+                    </section>
+                </aside>
             </div>
         </div>
     `;
