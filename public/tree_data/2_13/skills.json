@@ -23927,13 +23927,13 @@
         "statKey": "cold_resistance",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "2*blvl+0.5*lvl"
+        "value0": "2*blvl+0.5*slvl"
       },
       {
         "statKey": "mana_regeneration_rate",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "2*blvl+3*lvl"
+        "value0": "2*blvl+3*slvl"
       }
     ],
     "description": [
