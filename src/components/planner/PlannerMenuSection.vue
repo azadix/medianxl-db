@@ -1,10 +1,32 @@
 <script setup>
+import { onMounted, ref } from 'vue';
 import {
   plannerMenuNewBuild,
   plannerMenuOpenLoadSection,
   plannerMenuImportBuild,
   plannerMenuOpenHelp,
 } from '../../../tree/tree-core.js';
+const knownIssuesLines = ref(/** @type {string[]} */ ([]));
+const knownIssuesLoadError = ref('');
+const knownIssuesFetched = ref(false);
+
+onMounted(async () => {
+  try {
+    const url = new URL('known_issues.txt', window.location.origin + import.meta.env.BASE_URL).href;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(String(res.status));
+    const text = await res.text();
+    knownIssuesLines.value = text
+      .replace(/\r\n/g, '\n')
+      .split('\n')
+      .map((line) => line.trim())
+      .filter(Boolean);
+  } catch {
+    knownIssuesLoadError.value = 'Could not load known issues.';
+  } finally {
+    knownIssuesFetched.value = true;
+  }
+});
 </script>
 
 <template>
@@ -59,12 +81,12 @@ import {
       </div>
 
       <div class="notification mt-4">
-        <div class="has-text-danger mt-2">
-          <div class="has-text-danger has-text-weight-bold">Known issues:</div>
-          <ul>
-            <li>- Many skills are missing descriptions</li>
-            <li>- Skill damage and most of mana cost formulas are not implemented</li>
-            <li>- War Spirit synergies based on devotion are not filled in</li>
+        <div v-if="knownIssuesLoadError" class="has-text-danger">{{ knownIssuesLoadError }}</div>
+        <div v-else-if="!knownIssuesFetched" class="has-text-grey">Loading known issues</div>
+        <div v-else class="content has-text-danger mt-2">
+          <div class="has-text-weight-bold mb-2">Known issues</div>
+          <ul v-if="knownIssuesLines.length">
+            <li v-for="(line, i) in knownIssuesLines" :key="i">{{ line }}</li>
           </ul>
         </div>
       </div>
