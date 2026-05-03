@@ -171,6 +171,17 @@
           </div>
           <div class="level-right">
             <div class="level-item">
+              <div class="select is-small">
+                <select
+                  id="editor-scaling-stat-add"
+                  aria-label="Append scalingConstants row for a stat in description or skillEffect"
+                  title="Append row for a stat referenced as {{stat}} in description or skillEffect"
+                >
+                  <option value="">Add row for stat in text fields…</option>
+                </select>
+              </div>
+            </div>
+            <div class="level-item">
               <button type="button" class="button is-small is-light" id="btn-add-scaling-constant-row">
                 Add scalingConstants row
               </button>

@@ -132,6 +132,129 @@ function getStatUsageCounts() {
     return statUsageCountsCache;
 }
 
+const VALUE_SLOT_RE = /\{value(\d+)\}/gi;
+
+/**
+ * @param {string|undefined|null} format
+ * @returns {number}
+ */
+function countValueSlotsFromFormat(format) {
+    const s = format != null ? String(format) : '';
+    let max = -1;
+    VALUE_SLOT_RE.lastIndex = 0;
+    let m;
+    while ((m = VALUE_SLOT_RE.exec(s)) !== null) {
+        const n = parseInt(m[1], 10);
+        if (Number.isFinite(n) && n > max) max = n;
+    }
+    return max >= 0 ? max + 1 : 1;
+}
+
+/**
+ * @param {string} statKeyLower
+ * @returns {{ id?: number, key: string, name: string, format?: string }|null}
+ */
+function lookupStatCatalogRow(statKeyLower) {
+    const k = String(statKeyLower || '').toLowerCase();
+    if (!k) return null;
+    for (const row of statsCatalog) {
+        if (String(row.key || '').toLowerCase() === k) return row;
+    }
+    return null;
+}
+
+/**
+ * @param {string} statKey
+ */
+function buildScalingConstantRowForStat(statKey) {
+    const kLower = String(statKey || '').trim().toLowerCase();
+    const row = lookupStatCatalogRow(kLower);
+    const canonicalKey = row?.key != null ? String(row.key).trim() : String(statKey || '').trim();
+    const nSlots = countValueSlotsFromFormat(row?.format);
+    /** @type {Record<string, unknown>} */
+    const out = {
+        statKey: canonicalKey,
+        occurrenceIndex: 0,
+        variantKey: ''
+    };
+    for (let i = 0; i < nSlots; i++) {
+        out[`value${i}`] = '';
+    }
+    return out;
+}
+
+/**
+ * @param {string} text
+ * @returns {string[]}
+ */
+function collectStatPlaceholderKeysFromText(text) {
+    /** @type {Set<string>} */
+    const keys = new Set();
+    const re = /\{\{([^}]+)\}\}/g;
+    const t = String(text || '');
+    let m;
+    while ((m = re.exec(t)) !== null) {
+        const inner = m[1].trim();
+        const colon = inner.indexOf(':');
+        const statKey = (colon === -1 ? inner : inner.slice(0, colon)).trim().toLowerCase();
+        if (statKey) keys.add(statKey);
+    }
+    return [...keys].sort((a, b) => a.localeCompare(b));
+}
+
+function refreshEditorScalingStatSelect() {
+    const sel = document.getElementById('editor-scaling-stat-add');
+    if (!sel) return;
+    const descTa = document.getElementById('f-description');
+    const effectTa = document.getElementById('f-skillEffect');
+    const keys = [
+        ...new Set([
+            ...collectStatPlaceholderKeysFromText(descTa?.value ?? ''),
+            ...collectStatPlaceholderKeysFromText(effectTa?.value ?? '')
+        ])
+    ].sort((a, b) => a.localeCompare(b));
+    const saved = sel.value;
+    sel.innerHTML = '';
+    const ph = document.createElement('option');
+    ph.value = '';
+    ph.textContent = 'Add row for stat in text fields…';
+    sel.appendChild(ph);
+    for (const k of keys) {
+        const row = lookupStatCatalogRow(k);
+        const opt = document.createElement('option');
+        opt.value = row?.key != null ? String(row.key) : k;
+        opt.textContent = row?.name ? `${row.key} — ${row.name}` : opt.value;
+        sel.appendChild(opt);
+    }
+    if (saved && [...sel.options].some((o) => o.value === saved)) sel.value = saved;
+    else sel.value = '';
+}
+
+function appendScalingConstantRowForDescriptionStat(statKey) {
+    if (!statKey) return;
+    const ta = document.getElementById('f-scalingConstants');
+    if (!ta) return;
+    const parsed = parseJsonField('f-scalingConstants', 'err-scalingConstants', []);
+    if (parsed === Symbol('invalid')) {
+        showToast('Fix scalingConstants JSON before adding a row.', true);
+        return;
+    }
+    if (!Array.isArray(parsed)) {
+        showFieldError('scalingConstants', 'Must be a JSON array');
+        showToast('scalingConstants must be a JSON array.', true);
+        return;
+    }
+    parsed.push(buildScalingConstantRowForStat(statKey));
+    ta.value = JSON.stringify(parsed, null, 2);
+    ta.classList.remove('is-danger');
+    const err = document.getElementById('err-scalingConstants');
+    if (err) {
+        err.textContent = '';
+        err.classList.add('is-hidden');
+    }
+    showToast('Appended scalingConstants row for stat. Edit JSON then Apply.');
+}
+
 function showToast(message, isDanger = false) {
     const el = document.getElementById('editor-toast');
     if (!el) return;
@@ -546,6 +669,7 @@ function populateForm(s) {
     });
 
     document.getElementById('edit-heading').textContent = `Edit: ${s.displayName || s.id || '(skill)'}`;
+    refreshEditorScalingStatSelect();
 }
 
 function parseJsonField(textareaId, errId, emptyFallback) {
@@ -873,6 +997,21 @@ export async function mountEditor(opts = {}) {
         appendDefaultScalingConstantRowToForm();
     });
 
+    document.getElementById('f-description')?.addEventListener('input', () => {
+        refreshEditorScalingStatSelect();
+    });
+    document.getElementById('f-skillEffect')?.addEventListener('input', () => {
+        refreshEditorScalingStatSelect();
+    });
+    document.getElementById('editor-scaling-stat-add')?.addEventListener('change', (e) => {
+        const t = e.target;
+        if (!(t instanceof HTMLSelectElement)) return;
+        const v = t.value;
+        if (!v) return;
+        appendScalingConstantRowForDescriptionStat(v);
+        t.value = '';
+    });
+
     document.getElementById('f-class-select')?.addEventListener('change', onClassSelectChange);
     document.getElementById('f-tab-select')?.addEventListener('change', syncPlacementReadonlyFromSelects);
 
@@ -898,9 +1037,11 @@ export async function mountEditor(opts = {}) {
         try {
             const raw = await fetchJson(`${TREE_DATA}/stats.json`);
             statsCatalog = Array.isArray(raw) ? raw : [];
+            refreshEditorScalingStatSelect();
         } catch (e) {
             console.warn('Could not load tree_data/stats.json for {{}} autocomplete:', e);
             statsCatalog = [];
+            refreshEditorScalingStatSelect();
         }
         const selEl = document.getElementById('version-selector');
         if (!selEl?.value) {

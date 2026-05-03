@@ -64,6 +64,12 @@
     overflow-x: hidden;
 }
 
+/* Keyboard-selected row (matches tree/dropdown-style hover intent) */
+.editor-token-dropdown .dropdown-list-item[data-insert].is-active {
+    background-color: var(--hover-bg-color, #f4ad08);
+    color: var(--hover-text-color, #0a0a0a);
+}
+
 .editor-stat-row {
     display: flex;
     align-items: center;

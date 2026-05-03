@@ -129,6 +129,39 @@ export function attachEditorTextareaAutocomplete(textareas, options) {
     /** @type {HTMLElement[]} scrollable ancestors that need scroll listeners */
     let scrollParentNodes = [];
 
+    function getSelectableItems() {
+        return [...list.querySelectorAll('.dropdown-list-item[data-insert]')];
+    }
+
+    function clearActiveHighlight() {
+        for (const li of list.querySelectorAll('.dropdown-list-item.is-active')) {
+            li.classList.remove('is-active');
+        }
+    }
+
+    /**
+     * @param {number} index
+     */
+    function setActiveHighlight(index) {
+        const items = getSelectableItems();
+        clearActiveHighlight();
+        if (items.length === 0) return;
+        const i = Math.max(0, Math.min(index, items.length - 1));
+        const li = items[i];
+        li.classList.add('is-active');
+        li.scrollIntoView({ block: 'nearest' });
+    }
+
+    /** @param {number} delta */
+    function moveActiveHighlight(delta) {
+        const items = getSelectableItems();
+        if (items.length === 0) return;
+        let idx = items.findIndex((li) => li.classList.contains('is-active'));
+        if (idx < 0) idx = 0;
+        idx = (idx + delta + items.length) % items.length;
+        setActiveHighlight(idx);
+    }
+
     function detachScrollListeners() {
         for (const node of scrollParentNodes) {
             node.removeEventListener('scroll', repositionIfOpen);
@@ -242,6 +275,7 @@ export function attachEditorTextareaAutocomplete(textareas, options) {
             li.appendChild(row);
             list.appendChild(li);
         }
+        setActiveHighlight(0);
     }
 
     function renderSkills(partial) {
@@ -276,6 +310,7 @@ export function attachEditorTextareaAutocomplete(textareas, options) {
             note.textContent = `…and ${rows.length - 200} more (type to filter)`;
             list.appendChild(note);
         }
+        setActiveHighlight(0);
     }
 
     function refreshDropdown(el) {
@@ -297,13 +332,34 @@ export function attachEditorTextareaAutocomplete(textareas, options) {
         attachScrollListeners(el);
     }
 
+    /**
+     * If caret is inside an already completed token, replace the trailing
+     * token fragment too (prevents duplicating suffix like `a_cost}}`).
+     * @param {string} fullText
+     * @param {number} caretPos
+     * @param {'stat'|'skill'} kind
+     * @returns {number}
+     */
+    function computeReplaceEnd(fullText, caretPos, kind) {
+        let end = caretPos;
+        const bodyRe = kind === 'stat' ? /[a-zA-Z0-9_]/ : /[a-zA-Z0-9_:]/;
+        while (end < fullText.length && bodyRe.test(fullText[end])) {
+            end += 1;
+        }
+        const closing = kind === 'stat' ? '}}' : ']]';
+        if (fullText.slice(end, end + 2) === closing) {
+            end += 2;
+        }
+        return end;
+    }
+
     function applyInsert(insertText) {
         if (!activeEl || !parsed) return;
         const el = activeEl;
         const pos = el.selectionStart ?? 0;
         const v = el.value;
         const start = parsed.tokenStart;
-        const end = pos;
+        const end = computeReplaceEnd(v, pos, parsed.kind);
         const next = v.slice(0, start) + insertText + v.slice(end);
         el.value = next;
         const caret = start + insertText.length;
@@ -326,11 +382,28 @@ export function attachEditorTextareaAutocomplete(textareas, options) {
             hide();
             return;
         }
-        if ((e.key === 'Enter' || e.key === 'Tab') && root.style.display !== 'none') {
-            const first = list.querySelector('.dropdown-list-item[data-insert]');
-            if (first) {
+        if (e.key === 'ArrowDown') {
+            const items = getSelectableItems();
+            if (items.length) {
                 e.preventDefault();
-                applyInsert(first.dataset.insert);
+                moveActiveHighlight(1);
+            }
+            return;
+        }
+        if (e.key === 'ArrowUp') {
+            const items = getSelectableItems();
+            if (items.length) {
+                e.preventDefault();
+                moveActiveHighlight(-1);
+            }
+            return;
+        }
+        if ((e.key === 'Enter' || e.key === 'Tab') && root.style.display !== 'none') {
+            const active = list.querySelector('.dropdown-list-item[data-insert].is-active');
+            const chosen = active || list.querySelector('.dropdown-list-item[data-insert]');
+            if (chosen && chosen.dataset.insert) {
+                e.preventDefault();
+                applyInsert(chosen.dataset.insert);
             }
         }
     }
