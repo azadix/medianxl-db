@@ -107,14 +107,6 @@
             </label>
           </div>
         </div>
-        <div class="column is-one-quarter">
-          <div class="field">
-            <label class="checkbox mt-5">
-              <input type="checkbox" id="f-canAddPoints" />
-              canAddPoints
-            </label>
-          </div>
-        </div>
       </div>
 
       <div class="field">

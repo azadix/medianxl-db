@@ -80,7 +80,6 @@ export default class Skill {
      * @param {boolean} data.hasDetails - Whether skill has description/effect
      * @param {number} data.baseMaxLevel - Base maximum level
      * @param {boolean} data.affectedBySpecialization - Whether affected by specialization
-     * @param {boolean} data.canAddPoints - Whether points can be added to this skill
      * @param {Array} data.prerequisites - Array of prerequisite objects
      */
     constructor(data) {
@@ -116,8 +115,7 @@ export default class Skill {
         // Level and scaling information
         this.baseMaxLevel = data.baseMaxLevel || data.base_max_level || 0;
         this.affectedBySpecialization = data.affectedBySpecialization || data.can_be_enhanced || false;
-        this.canAddPoints = data.canAddPoints || data.can_add_points !== false; // default true
-        
+
         // Prerequisites
         this.prerequisites = data.prerequisites || [];
 
@@ -840,7 +838,6 @@ export default class Skill {
             hasDetails: this.hasDetails,
             baseMaxLevel: this.baseMaxLevel,
             affectedBySpecialization: this.affectedBySpecialization,
-            canAddPoints: this.canAddPoints,
             prerequisites: [...this.prerequisites],
             calc1: this.calc1,
             calc2: this.calc2,
@@ -876,7 +873,6 @@ export default class Skill {
                        (row.skill_effect && row.skill_effect.trim().length > 0),
             baseMaxLevel: row.base_max_level || 0,
             affectedBySpecialization: row.affected_by_specialization === 1,
-            canAddPoints: row.can_add_points !== 0,
             prerequisites: row.prerequisites ? row.prerequisites.split('; ').filter(p => p.trim()) : []
         });
     }

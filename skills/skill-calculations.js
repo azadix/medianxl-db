@@ -5,6 +5,7 @@
 
 import Character from '../character/Character.js';
 import { getFileSkillStore } from '../tree/skill-data-store.js';
+import Innate from './Innate.js';
 
 export { D2_CALC_BUCKETS, getCalcBucketIndex } from './calc-buckets.js';
 
@@ -260,8 +261,7 @@ export function getMaxLevelModifierDescriptionsForSkill(
   const targetSkillData = {
     skill_name: internal,
     base_max_level: cat.baseMaxLevel,
-    affected_by_specialization: Boolean(cat.affectedBySpecialization),
-    can_add_points: cat.canAddPoints !== false && cat.can_add_points !== false
+    affected_by_specialization: Boolean(cat.affectedBySpecialization)
   };
 
   const out = [];
@@ -324,8 +324,7 @@ export function computeMaxSkillLevelAtUlvl(skillId, skillLevels = {}, ulvl = Cha
   const targetSkillData = {
     skill_name: internal,
     base_max_level,
-    affected_by_specialization: Boolean(cat.affectedBySpecialization),
-    can_add_points: cat.canAddPoints !== false && cat.can_add_points !== false
+    affected_by_specialization: Boolean(cat.affectedBySpecialization)
   };
   const u = Character.clampLevel(ulvl);
   let v = base_max_level;
@@ -352,12 +351,13 @@ export function computeMaxSkillLevelAtUlvl(skillId, skillLevels = {}, ulvl = Cha
 export function skillMaxLevelScalesWithCharacterLevel(skillId, skillLevels = {}) {
   const store = getFileSkillStore();
   if (!store) return false;
+  const internal = store.internalNameByNumericId(skillId);
+  if (!internal || Innate.isInnateSkill({ id: internal })) return false;
   const cat = store.catalog?.find((c) => c.numericId === skillId);
   if (!cat) return false;
-  const canAddPoints = cat.canAddPoints !== false && cat.can_add_points !== false;
   const a = computeMaxSkillLevelAtUlvl(skillId, skillLevels, Character.MIN_LEVEL);
   const b = computeMaxSkillLevelAtUlvl(skillId, skillLevels, Character.MAX_LEVEL);
-  return canAddPoints && b > a;
+  return b > a;
 }
 
 /**
@@ -414,19 +414,19 @@ export function calculateMaxLevel(skillId, skillLevels = {}, characterLevel = Ch
     }
     return 0;
   }
-  const canAddPoints = cat.canAddPoints !== false && cat.can_add_points !== false;
+  const nonInnate = !Innate.isInnateSkill({ id: internal });
 
   const maxAtMinUlvl = computeMaxSkillLevelAtUlvl(skillId, skillLevels, Character.MIN_LEVEL);
   const maxAtMaxUlvl = computeMaxSkillLevelAtUlvl(skillId, skillLevels, Character.MAX_LEVEL);
   const maxAtCurrentUlvl = computeMaxSkillLevelAtUlvl(skillId, skillLevels, characterLevel);
 
   // Skills whose max grows with character level (ulvl): planner cap matches level 150, not current ulvl.
-  if (canAddPoints && maxAtMaxUlvl > maxAtMinUlvl) {
+  if (nonInnate && maxAtMaxUlvl > maxAtMinUlvl) {
     return maxAtMaxUlvl;
   }
 
   let effectiveMaxLevel = maxAtCurrentUlvl;
-  if (effectiveMaxLevel < 1 && canAddPoints) {
+  if (effectiveMaxLevel < 1 && nonInnate) {
     effectiveMaxLevel = 1;
   }
   return effectiveMaxLevel;

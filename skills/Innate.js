@@ -19,7 +19,14 @@ export default class Innate extends Skill {
      * @returns {boolean} True if the skill is innate
      */
     static isInnateSkill(skill) {
-        return !skill.canAddPoints || skill.name.toLowerCase().includes('innate');
+        if (!skill) return false;
+        const internal =
+            typeof skill.id === 'string' && skill.id.trim() !== ''
+                ? skill.id
+                : typeof skill.name === 'string'
+                  ? skill.name
+                  : '';
+        return internal.toLowerCase().includes('innate');
     }
 
 }

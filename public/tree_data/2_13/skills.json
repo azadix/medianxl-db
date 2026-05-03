@@ -10,7 +10,6 @@
     "tags": [],
     "baseMaxLevel": 1,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -32,7 +31,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -61,7 +59,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -112,7 +109,6 @@
     "tags": [],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -133,7 +129,6 @@
     ],
     "baseMaxLevel": 5,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -166,7 +161,6 @@
     ],
     "baseMaxLevel": 20,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -200,7 +194,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -232,7 +225,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -254,7 +246,6 @@
     ],
     "baseMaxLevel": 20,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -332,7 +323,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -373,7 +363,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -423,7 +412,6 @@
     ],
     "baseMaxLevel": 5,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -457,7 +445,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -493,7 +480,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -537,7 +523,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -586,7 +571,6 @@
     "tags": [],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -607,7 +591,6 @@
     ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -646,7 +629,6 @@
     "tags": [],
     "baseMaxLevel": 4,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -669,7 +651,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -715,7 +696,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -746,7 +726,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -774,7 +753,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -827,7 +805,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -861,7 +838,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -889,7 +865,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -923,7 +898,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -952,7 +926,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -984,7 +957,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -1015,7 +987,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -1055,7 +1026,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -1077,7 +1047,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -1114,7 +1083,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -1141,7 +1109,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -1166,7 +1133,6 @@
     "tags": [],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -1185,7 +1151,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -1208,7 +1173,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -1268,7 +1232,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -1292,7 +1255,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -1317,7 +1279,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -1336,7 +1297,6 @@
     "tags": [],
     "baseMaxLevel": 20,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -1357,7 +1317,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -1383,7 +1342,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -1413,7 +1371,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -1464,7 +1421,6 @@
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -1500,7 +1456,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -1526,7 +1481,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -1583,7 +1537,6 @@
     ],
     "baseMaxLevel": 5,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -1624,7 +1577,6 @@
     "tags": [],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -1647,7 +1599,6 @@
     ],
     "baseMaxLevel": 20,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -1701,7 +1652,6 @@
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -1755,7 +1705,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -1776,7 +1725,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -1822,7 +1770,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -1850,7 +1797,7 @@
     "image": "icons-bar_46.png"
   },
   {
-    "id": "bend_the_shadows",
+    "id": "bend_the_shadows_innate",
     "numericId": 19,
     "displayName": "Bend the Shadows (Innate)",
     "classId": 4,
@@ -1862,7 +1809,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -1912,7 +1858,6 @@
     ],
     "baseMaxLevel": 5,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -1953,7 +1898,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -1986,7 +1930,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -2007,7 +1950,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -2046,7 +1988,6 @@
     ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -2083,7 +2024,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -2117,7 +2057,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -2146,7 +2085,6 @@
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -2173,7 +2111,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -2211,7 +2148,6 @@
     "tags": [],
     "baseMaxLevel": 5,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -2230,7 +2166,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -2251,7 +2186,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -2292,7 +2226,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -2311,7 +2244,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -2334,7 +2266,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -2378,7 +2309,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -2406,7 +2336,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -2466,7 +2395,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -2483,7 +2411,7 @@
     "image": "icons-pal_46.png"
   },
   {
-    "id": "bloodbath",
+    "id": "bloodbath_innate",
     "numericId": 28,
     "displayName": "Bloodbath (Innate)",
     "classId": 8,
@@ -2496,7 +2424,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -2533,7 +2460,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -2562,7 +2488,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -2615,7 +2540,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -2636,7 +2560,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -2664,7 +2587,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -2693,7 +2615,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -2721,7 +2642,6 @@
     ],
     "baseMaxLevel": 11,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -2767,7 +2687,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -2797,7 +2716,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -2820,7 +2738,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -2862,7 +2779,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -2920,7 +2836,6 @@
     ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -2961,7 +2876,6 @@
     ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -2993,7 +2907,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -3027,7 +2940,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -3050,7 +2962,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -3112,7 +3023,6 @@
     ],
     "baseMaxLevel": 20,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -3169,7 +3079,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -3192,7 +3101,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -3251,7 +3159,6 @@
     ],
     "baseMaxLevel": 20,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -3318,7 +3225,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -3351,7 +3257,6 @@
     ],
     "baseMaxLevel": 6,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -3377,7 +3282,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -3414,7 +3318,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -3453,7 +3356,6 @@
     ],
     "baseMaxLevel": 5,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -3502,7 +3404,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -3534,7 +3435,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -3573,7 +3473,6 @@
     ],
     "baseMaxLevel": 6,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -3610,7 +3509,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -3644,7 +3542,6 @@
     ],
     "baseMaxLevel": 5,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -3692,7 +3589,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -3738,7 +3634,6 @@
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -3769,7 +3664,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -3811,7 +3705,6 @@
     ],
     "baseMaxLevel": 5,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -3846,7 +3739,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -3871,7 +3763,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -3893,7 +3784,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -3919,7 +3809,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -3976,7 +3865,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -4008,7 +3896,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -4039,7 +3926,6 @@
     ],
     "baseMaxLevel": 20,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -4108,7 +3994,6 @@
     "tags": [],
     "baseMaxLevel": 5,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -4129,7 +4014,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -4156,7 +4040,6 @@
     ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -4182,7 +4065,6 @@
     ],
     "baseMaxLevel": 7,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -4216,7 +4098,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -4242,7 +4123,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -4269,7 +4149,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -4317,7 +4196,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -4365,7 +4243,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -4386,7 +4263,6 @@
     ],
     "baseMaxLevel": 6,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -4416,7 +4292,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -4435,7 +4310,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -4457,7 +4331,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -4485,7 +4358,6 @@
     ],
     "baseMaxLevel": 20,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -4529,7 +4401,6 @@
     ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -4571,7 +4442,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -4595,7 +4465,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -4655,7 +4524,6 @@
     ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -4683,7 +4551,6 @@
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -4729,7 +4596,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -4750,7 +4616,6 @@
     ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -4796,7 +4661,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -4832,7 +4696,6 @@
     ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -4872,7 +4735,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -4898,7 +4760,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -4919,7 +4780,6 @@
     ],
     "baseMaxLevel": 13,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -4986,7 +4846,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -5023,7 +4882,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -5045,7 +4903,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -5074,7 +4931,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -5115,7 +4971,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -5159,7 +5014,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -5211,7 +5065,6 @@
     ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -5267,7 +5120,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -5298,7 +5150,6 @@
     ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -5362,7 +5213,6 @@
     ],
     "baseMaxLevel": 5,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -5396,7 +5246,6 @@
     "tags": [],
     "baseMaxLevel": 10,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -5415,7 +5264,6 @@
     "tags": [],
     "baseMaxLevel": 5,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -5436,7 +5284,6 @@
     ],
     "baseMaxLevel": 20,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -5481,7 +5328,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -5520,7 +5366,6 @@
     ],
     "baseMaxLevel": 6,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -5556,7 +5401,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -5604,7 +5448,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -5629,7 +5472,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -5648,7 +5490,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -5670,7 +5511,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -5704,7 +5544,6 @@
     ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -5745,7 +5584,6 @@
     ],
     "baseMaxLevel": 6,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -5804,7 +5642,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -5853,7 +5690,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -5889,7 +5725,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -5926,7 +5761,6 @@
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -5956,7 +5790,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -5998,7 +5831,6 @@
     ],
     "baseMaxLevel": 3,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -6033,7 +5865,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -6063,7 +5894,6 @@
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -6097,7 +5927,6 @@
     "tags": [],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -6116,7 +5945,6 @@
     "tags": [],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -6137,7 +5965,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -6177,7 +6004,6 @@
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -6214,7 +6040,6 @@
     "tags": [],
     "baseMaxLevel": 8,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -6233,7 +6058,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -6255,7 +6079,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -6291,7 +6114,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -6340,7 +6162,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -6379,7 +6200,6 @@
     ],
     "baseMaxLevel": 20,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -6413,7 +6233,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -6457,7 +6276,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -6515,7 +6333,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -6542,7 +6359,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -6566,7 +6382,6 @@
     "tags": [],
     "baseMaxLevel": 8,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -6587,7 +6402,6 @@
     ],
     "baseMaxLevel": 5,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -6613,7 +6427,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -6649,7 +6462,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -6686,7 +6498,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -6714,7 +6525,6 @@
     ],
     "baseMaxLevel": 5,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -6747,7 +6557,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -6776,7 +6585,6 @@
     ],
     "baseMaxLevel": 20,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -6823,7 +6631,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -6858,7 +6665,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -6902,7 +6708,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -6943,7 +6748,6 @@
     ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [
       {
         "variant_key": "necromancer",
@@ -6991,7 +6795,6 @@
     ],
     "baseMaxLevel": 4,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -7026,7 +6829,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -7047,7 +6849,6 @@
     ],
     "baseMaxLevel": 5,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -7081,7 +6882,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -7113,7 +6913,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -7148,7 +6947,6 @@
     ],
     "baseMaxLevel": 5,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -7185,7 +6983,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -7221,7 +7018,6 @@
     "tags": [],
     "baseMaxLevel": 10,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -7242,7 +7038,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -7270,7 +7065,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -7302,7 +7096,6 @@
     ],
     "baseMaxLevel": 4,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -7333,7 +7126,6 @@
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -7376,7 +7168,6 @@
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -7423,7 +7214,6 @@
     ],
     "baseMaxLevel": 8,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -7462,7 +7252,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -7505,7 +7294,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -7568,7 +7356,6 @@
     ],
     "baseMaxLevel": 7,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -7608,7 +7395,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -7672,7 +7458,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -7706,7 +7491,6 @@
     "tags": [],
     "baseMaxLevel": 20,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -7727,7 +7511,6 @@
     ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -7771,7 +7554,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -7793,7 +7575,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": false,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -7817,7 +7598,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -7840,7 +7620,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -7892,7 +7671,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -7913,7 +7691,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -7961,7 +7738,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -8013,7 +7789,6 @@
     ],
     "baseMaxLevel": 20,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -8079,7 +7854,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [
       {
         "variant_key": "non_sorceress",
@@ -8119,7 +7893,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [
       {
         "variant_key": "non_sorceress",
@@ -8162,7 +7935,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -8202,7 +7974,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -8232,7 +8003,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -8251,7 +8021,6 @@
     "tags": [],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -8273,7 +8042,6 @@
     ],
     "baseMaxLevel": 5,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -8323,7 +8091,6 @@
     ],
     "baseMaxLevel": 5,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -8386,7 +8153,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -8413,7 +8179,6 @@
     ],
     "baseMaxLevel": 6,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -8447,7 +8212,6 @@
     ],
     "baseMaxLevel": 20,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -8496,7 +8260,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -8522,7 +8285,6 @@
     ],
     "baseMaxLevel": 5,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -8565,7 +8327,6 @@
     ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -8616,7 +8377,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -8644,7 +8404,6 @@
     "tags": [],
     "baseMaxLevel": 20,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -8665,7 +8424,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -8696,7 +8454,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -8747,7 +8504,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -8774,7 +8530,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -8804,7 +8559,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -8871,7 +8625,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -8895,7 +8648,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -8918,7 +8670,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -8954,7 +8705,6 @@
     ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -8995,7 +8745,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -9030,7 +8779,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -9060,7 +8808,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -9095,7 +8842,6 @@
     ],
     "baseMaxLevel": 5,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -9127,7 +8873,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -9168,7 +8913,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -9206,7 +8950,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -9232,7 +8975,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -9258,7 +9000,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -9280,7 +9021,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -9322,7 +9062,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -9351,7 +9090,6 @@
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -9420,7 +9158,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -9460,7 +9197,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -9493,7 +9229,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -9516,7 +9251,6 @@
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -9568,7 +9302,6 @@
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -9613,7 +9346,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -9644,7 +9376,6 @@
     ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -9692,7 +9423,6 @@
     ],
     "baseMaxLevel": 7,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -9727,7 +9457,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -9776,7 +9505,6 @@
     ],
     "baseMaxLevel": 20,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -9823,7 +9551,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -9892,7 +9619,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -9927,7 +9653,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -9975,7 +9700,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -9998,7 +9722,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -10028,7 +9751,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -10072,7 +9794,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -10118,7 +9839,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -10141,7 +9861,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -10194,7 +9913,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -10237,7 +9955,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -10284,7 +10001,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -10321,7 +10037,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -10363,7 +10078,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -10393,7 +10107,6 @@
     ],
     "baseMaxLevel": 4,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -10445,7 +10158,6 @@
     ],
     "baseMaxLevel": 20,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -10492,7 +10204,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -10542,7 +10253,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -10592,7 +10302,6 @@
     ],
     "baseMaxLevel": 5,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -10626,7 +10335,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -10661,7 +10369,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -10706,7 +10413,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -10737,7 +10443,6 @@
     ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -10814,7 +10519,6 @@
     ],
     "baseMaxLevel": 20,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -10847,7 +10551,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -10882,7 +10585,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -10917,7 +10619,6 @@
     ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -10966,7 +10667,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -11004,7 +10704,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -11050,7 +10749,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -11085,7 +10783,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -11108,7 +10805,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -11138,7 +10834,6 @@
     ],
     "baseMaxLevel": 20,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -11190,7 +10885,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -11218,7 +10912,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -11243,7 +10936,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -11294,7 +10986,6 @@
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -11351,7 +11042,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -11386,7 +11076,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -11436,7 +11125,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -11460,7 +11148,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -11481,7 +11168,6 @@
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -11510,7 +11196,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -11562,7 +11247,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -11593,7 +11277,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -11650,7 +11333,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -11676,7 +11358,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -11711,7 +11392,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -11752,7 +11432,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -11802,7 +11481,6 @@
     ],
     "baseMaxLevel": 5,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -11843,7 +11521,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -11862,7 +11539,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -11885,7 +11561,6 @@
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -11936,7 +11611,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -11984,7 +11658,6 @@
     ],
     "baseMaxLevel": 8,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -12023,7 +11696,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -12044,7 +11716,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -12063,7 +11734,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -12082,7 +11752,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -12105,7 +11774,6 @@
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -12191,7 +11859,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -12228,7 +11895,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -12274,7 +11940,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -12315,7 +11980,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -12357,7 +12021,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -12381,7 +12044,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -12405,7 +12067,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -12435,7 +12096,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -12467,7 +12127,6 @@
     "tags": [],
     "baseMaxLevel": 10,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -12489,7 +12148,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -12528,7 +12186,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -12579,7 +12236,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -12606,7 +12262,6 @@
     ],
     "baseMaxLevel": 20,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -12663,7 +12318,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -12691,7 +12345,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -12712,7 +12365,6 @@
     ],
     "baseMaxLevel": 5,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -12741,7 +12393,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -12800,7 +12451,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -12840,7 +12490,6 @@
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -12887,7 +12536,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -12910,7 +12558,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -12945,7 +12592,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -12990,7 +12636,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -13038,7 +12683,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -13069,7 +12713,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -13101,7 +12744,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -13128,7 +12770,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -13170,7 +12811,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -13219,7 +12859,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -13252,7 +12891,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -13275,7 +12913,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -13320,7 +12957,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -13357,7 +12993,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -13386,7 +13021,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -13422,7 +13056,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -13460,7 +13093,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -13515,7 +13147,6 @@
     ],
     "baseMaxLevel": 3,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -13551,7 +13182,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -13605,7 +13235,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -13632,7 +13261,6 @@
     ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -13674,7 +13302,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -13705,7 +13332,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -13781,7 +13407,6 @@
     ],
     "baseMaxLevel": 5,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -13814,7 +13439,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -13861,7 +13485,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -13919,7 +13542,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -13969,7 +13591,6 @@
     ],
     "baseMaxLevel": 4,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -13996,7 +13617,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -14042,7 +13662,6 @@
     ],
     "baseMaxLevel": 5,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -14076,7 +13695,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -14106,7 +13724,6 @@
     ],
     "baseMaxLevel": 20,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -14136,7 +13753,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -14160,7 +13776,6 @@
     ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -14188,7 +13803,6 @@
     ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -14222,7 +13836,6 @@
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -14284,7 +13897,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -14344,7 +13956,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -14381,7 +13992,6 @@
     ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -14422,7 +14032,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -14457,7 +14066,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -14479,7 +14087,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -14509,7 +14116,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -14583,7 +14189,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -14611,7 +14216,6 @@
     ],
     "baseMaxLevel": 5,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -14659,7 +14263,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -14702,7 +14305,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -14746,7 +14348,6 @@
     ],
     "baseMaxLevel": 5,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -14792,7 +14393,6 @@
     ],
     "baseMaxLevel": 4,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -14826,7 +14426,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -14863,7 +14462,6 @@
     ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -14914,7 +14512,6 @@
     ],
     "baseMaxLevel": 20,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -14963,7 +14560,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -14989,7 +14585,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -15011,7 +14606,6 @@
     ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -15043,7 +14637,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -15065,7 +14658,6 @@
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -15091,7 +14683,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -15164,7 +14755,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -15235,7 +14825,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -15293,7 +14882,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -15344,7 +14932,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -15394,7 +14981,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -15447,7 +15033,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -15476,7 +15061,6 @@
     ],
     "baseMaxLevel": 20,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -15511,7 +15095,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -15568,7 +15151,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -15612,7 +15194,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -15642,7 +15223,6 @@
     ],
     "baseMaxLevel": 5,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -15671,7 +15251,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -15727,7 +15306,6 @@
     ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -15760,7 +15338,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -15808,7 +15385,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -15837,7 +15413,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -15869,7 +15444,6 @@
     ],
     "baseMaxLevel": 8,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -15902,7 +15476,6 @@
     ],
     "baseMaxLevel": 5,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -15935,7 +15508,6 @@
     ],
     "baseMaxLevel": 8,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -15967,7 +15539,6 @@
     ],
     "baseMaxLevel": 6,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -16007,7 +15578,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -16034,7 +15604,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -16065,7 +15634,6 @@
     ],
     "baseMaxLevel": 5,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -16094,7 +15662,6 @@
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -16121,7 +15688,6 @@
     ],
     "baseMaxLevel": 7,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -16171,7 +15737,6 @@
     ],
     "baseMaxLevel": 20,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -16220,7 +15785,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -16256,7 +15820,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -16306,7 +15869,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -16346,7 +15908,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -16365,7 +15926,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -16384,7 +15944,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -16405,7 +15964,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -16443,7 +16001,6 @@
     "tags": [],
     "baseMaxLevel": 5,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -16464,7 +16021,6 @@
     ],
     "baseMaxLevel": 4,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -16503,7 +16059,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -16532,7 +16087,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -16556,7 +16110,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -16579,7 +16132,6 @@
     ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -16658,7 +16210,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -16706,7 +16257,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -16728,7 +16278,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -16752,7 +16301,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -16771,7 +16319,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -16790,7 +16337,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -16809,7 +16355,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -16835,7 +16380,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -16901,7 +16445,6 @@
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -16961,7 +16504,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -17012,7 +16554,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -17060,7 +16601,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -17083,7 +16623,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -17132,7 +16671,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -17209,7 +16747,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -17230,7 +16767,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -17259,7 +16795,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -17300,7 +16835,6 @@
     "tags": [],
     "baseMaxLevel": 20,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -17321,7 +16855,6 @@
     ],
     "baseMaxLevel": 6,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -17372,7 +16905,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -17400,7 +16932,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -17434,7 +16965,6 @@
     "tags": [],
     "baseMaxLevel": 7,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -17455,7 +16985,6 @@
     ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -17495,7 +17024,6 @@
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -17545,7 +17073,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -17579,7 +17106,6 @@
     "tags": [],
     "baseMaxLevel": 1,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -17598,7 +17124,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -17617,7 +17142,6 @@
     "tags": [],
     "baseMaxLevel": 4,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -17636,7 +17160,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -17659,7 +17182,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -17694,7 +17216,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -17722,7 +17243,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -17749,7 +17269,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -17778,7 +17297,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -17807,7 +17325,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -17826,7 +17343,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -17845,7 +17361,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -17864,7 +17379,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -17886,7 +17400,6 @@
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -17937,7 +17450,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -17981,7 +17493,6 @@
     ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -18020,7 +17531,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -18044,7 +17554,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -18113,7 +17622,6 @@
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -18143,7 +17651,6 @@
     ],
     "baseMaxLevel": 8,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -18176,7 +17683,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -18197,7 +17703,6 @@
     "tags": [],
     "baseMaxLevel": 4,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -18219,7 +17724,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -18250,7 +17754,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -18287,7 +17790,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -18312,7 +17814,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -18348,7 +17849,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -18372,7 +17872,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -18412,7 +17911,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -18437,7 +17935,6 @@
     "tags": [],
     "baseMaxLevel": 10,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -18459,7 +17956,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -18510,7 +18006,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -18559,7 +18054,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -18578,7 +18072,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -18597,7 +18090,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -18618,7 +18110,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -18642,7 +18133,7 @@
       "{{critical_strike_chance}}",
       "{{claw_physical_damage}}",
       "",
-      "[[bloodbath]]",
+      "[[bloodbath_innate]]",
       "{{duration}}"
     ],
     "image": "icons-ass_134.png"
@@ -18661,7 +18152,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -18703,7 +18193,6 @@
     ],
     "baseMaxLevel": 6,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -18736,7 +18225,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -18767,7 +18255,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -18806,7 +18293,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -18825,7 +18311,6 @@
     "tags": [],
     "baseMaxLevel": 10,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -18844,7 +18329,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -18863,7 +18347,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -18886,7 +18369,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -18917,7 +18399,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -18947,7 +18428,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -19014,7 +18494,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -19047,7 +18526,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -19085,7 +18563,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -19117,7 +18594,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -19153,7 +18629,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -19193,7 +18668,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -19236,7 +18710,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -19270,7 +18743,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -19293,7 +18765,6 @@
     ],
     "baseMaxLevel": 20,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -19330,7 +18801,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -19371,7 +18841,6 @@
     ],
     "baseMaxLevel": 20,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -19423,7 +18892,6 @@
     ],
     "baseMaxLevel": 20,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -19467,7 +18935,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -19494,7 +18961,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -19531,7 +18997,6 @@
     ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -19592,7 +19057,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -19642,7 +19106,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -19673,7 +19136,6 @@
     ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -19698,7 +19160,6 @@
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -19775,7 +19236,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -19805,7 +19265,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -19828,7 +19287,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -19871,7 +19329,6 @@
     ],
     "baseMaxLevel": 2,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -19898,7 +19355,6 @@
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -19932,7 +19388,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -19985,7 +19440,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -20021,7 +19475,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -20060,7 +19513,6 @@
     ],
     "baseMaxLevel": 5,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -20095,7 +19547,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -20131,7 +19582,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -20150,7 +19600,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -20169,7 +19618,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -20192,7 +19640,6 @@
     ],
     "baseMaxLevel": 20,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [
       {
         "variant_key": "snake_stance",
@@ -20281,7 +19728,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -20300,7 +19746,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -20323,7 +19768,6 @@
     ],
     "baseMaxLevel": 20,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -20382,7 +19826,6 @@
     ],
     "baseMaxLevel": 5,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -20422,7 +19865,6 @@
     ],
     "baseMaxLevel": 8,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -20456,7 +19898,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -20503,7 +19944,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -20548,7 +19988,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -20575,7 +20014,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -20604,7 +20042,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -20654,7 +20091,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -20677,7 +20113,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -20698,7 +20133,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -20725,7 +20159,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -20746,7 +20179,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -20781,7 +20213,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -20802,7 +20233,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -20838,7 +20268,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -20857,7 +20286,6 @@
     "tags": [],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -20880,7 +20308,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -20924,7 +20351,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -20966,7 +20392,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -21000,7 +20425,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -21023,7 +20447,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -21062,7 +20485,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -21085,7 +20507,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -21134,7 +20555,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -21155,7 +20575,6 @@
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -21176,7 +20595,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -21204,7 +20622,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -21232,7 +20649,6 @@
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -21280,7 +20696,6 @@
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -21327,7 +20742,6 @@
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -21378,7 +20792,6 @@
     "tags": [],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -21400,7 +20813,6 @@
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -21432,7 +20844,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -21476,7 +20887,6 @@
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -21517,7 +20927,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -21555,7 +20964,6 @@
     ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -21597,7 +21005,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -21618,7 +21025,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -21667,7 +21073,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -21694,7 +21099,6 @@
     ],
     "baseMaxLevel": 5,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -21727,7 +21131,6 @@
     ],
     "baseMaxLevel": 6,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -21776,7 +21179,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -21803,7 +21205,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -21829,7 +21230,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -21883,7 +21283,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -21902,7 +21301,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -21924,7 +21322,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -21971,7 +21368,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -21994,7 +21390,6 @@
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -22051,7 +21446,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -22091,7 +21485,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -22117,7 +21510,6 @@
     "tags": [],
     "baseMaxLevel": 5,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -22136,7 +21528,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -22157,7 +21548,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -22203,7 +21593,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -22244,7 +21633,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -22280,7 +21668,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -22315,7 +21702,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -22352,7 +21738,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -22386,7 +21771,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -22407,7 +21791,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -22439,7 +21822,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -22462,7 +21844,6 @@
     "tags": [],
     "baseMaxLevel": 5,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -22483,7 +21864,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -22506,7 +21886,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -22532,7 +21911,6 @@
     ],
     "baseMaxLevel": 5,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -22571,7 +21949,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -22598,7 +21975,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -22632,7 +22008,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -22666,7 +22041,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -22685,7 +22059,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -22704,7 +22077,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -22723,7 +22095,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -22744,7 +22115,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -22777,7 +22147,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -22801,7 +22170,6 @@
     ],
     "baseMaxLevel": 5,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -22840,7 +22208,6 @@
     ],
     "baseMaxLevel": 5,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -22874,7 +22241,6 @@
     ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -22905,7 +22271,6 @@
     "tags": [],
     "baseMaxLevel": 15,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -22924,7 +22289,6 @@
     "tags": [],
     "baseMaxLevel": 5,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -22946,7 +22310,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -22977,7 +22340,6 @@
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -23029,7 +22391,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -23051,7 +22412,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -23081,7 +22441,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -23135,7 +22494,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -23184,7 +22542,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -23225,7 +22582,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -23265,7 +22621,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -23304,7 +22659,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -23343,7 +22697,6 @@
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -23407,7 +22760,6 @@
     ],
     "baseMaxLevel": 6,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -23448,7 +22800,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -23483,7 +22834,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -23509,7 +22859,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -23531,7 +22880,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -23584,7 +22932,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -23634,7 +22981,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -23700,7 +23046,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -23721,7 +23066,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -23766,7 +23110,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -23788,7 +23131,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -23826,7 +23168,6 @@
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -23871,7 +23212,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -23915,7 +23255,6 @@
     ],
     "baseMaxLevel": 5,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -23963,7 +23302,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -24002,7 +23340,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -24036,7 +23373,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -24070,7 +23406,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -24105,7 +23440,6 @@
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -24140,7 +23474,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -24174,7 +23507,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -24223,7 +23555,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -24265,7 +23596,6 @@
     ],
     "baseMaxLevel": 20,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -24310,7 +23640,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -24350,7 +23679,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -24388,7 +23716,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -24452,7 +23779,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -24479,7 +23805,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -24517,7 +23842,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -24544,7 +23868,6 @@
     "tags": [],
     "baseMaxLevel": 10,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -24566,7 +23889,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -24610,7 +23932,6 @@
     "tags": [],
     "baseMaxLevel": 10,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -24634,7 +23955,6 @@
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -24674,7 +23994,6 @@
     ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -24717,7 +24036,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -24766,7 +24084,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -24807,7 +24124,6 @@
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [],
@@ -24829,7 +24145,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -24857,7 +24172,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -24887,7 +24201,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": false,
     "variants": [],
     "scalingConstants": [
       {
@@ -24948,7 +24261,6 @@
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -24982,7 +24294,6 @@
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -25038,7 +24349,6 @@
     ],
     "baseMaxLevel": 5,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [],
     "description": [
@@ -25069,7 +24379,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -25107,7 +24416,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -25153,7 +24461,6 @@
     ],
     "baseMaxLevel": 20,
     "affectedBySpecialization": true,
-    "canAddPoints": true,
     "variants": [],
     "scalingConstants": [
       {
@@ -25199,7 +24506,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": false,
     "variants": [],
     "scalingConstants": [
       {
@@ -25244,7 +24550,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": false,
     "variants": [],
     "scalingConstants": [
       {
@@ -25290,7 +24595,6 @@
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
-    "canAddPoints": false,
     "variants": [],
     "scalingConstants": [
       {

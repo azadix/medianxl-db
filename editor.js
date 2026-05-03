@@ -639,7 +639,6 @@ function populateForm(s) {
 
     document.getElementById('f-baseMaxLevel').value = s.baseMaxLevel != null ? String(s.baseMaxLevel) : '';
     document.getElementById('f-affectedBySpecialization').checked = Boolean(s.affectedBySpecialization);
-    document.getElementById('f-canAddPoints').checked = Boolean(s.canAddPoints);
 
     setTagsFormFromSkill(s);
 
@@ -769,7 +768,6 @@ function applyFormToWorkingSkill() {
 
     s.baseMaxLevel = readInt('f-baseMaxLevel');
     s.affectedBySpecialization = document.getElementById('f-affectedBySpecialization').checked;
-    s.canAddPoints = document.getElementById('f-canAddPoints').checked;
 
     s.tags = readTagsFromForm();
 
@@ -893,7 +891,6 @@ function makeNewSkillSkeleton() {
         tags: [],
         baseMaxLevel: 1,
         affectedBySpecialization: false,
-        canAddPoints: true,
         variants: [],
         scalingConstants: [],
         description: [],

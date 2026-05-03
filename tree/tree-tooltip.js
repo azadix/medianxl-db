@@ -486,8 +486,7 @@ function getSkillDataFromFileStore(skillId, classIdNum = null, cardNumericId = n
         image: det.image,
         className: det.className || store.primaryClassDisplayName(cat) || '',
         baseMaxLevel: cat.baseMaxLevel,
-        affectedBySpecialization: cat.affectedBySpecialization ? 1 : 0,
-        canAddPoints: cat.canAddPoints ? 1 : 0
+        affectedBySpecialization: cat.affectedBySpecialization ? 1 : 0
     };
 }
 
@@ -815,7 +814,7 @@ function resolveTooltipContext(skillCard, skillData, skillId) {
     const isInnate = Boolean(
         skillCard &&
         skillData &&
-        Innate.isInnateSkill({ name: skillData.id, canAddPoints: skillData.canAddPoints })
+        Innate.isInnateSkill({ id: skillData.id })
     );
     const currentLevel = isOSkill
         ? Math.max(1, getOSkillPoints(skillId))
