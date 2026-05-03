@@ -8456,6 +8456,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "range(12)"
+      },
+      {
+        "statKey": "delay_between",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "explosions",
+        "value1": "frames(50)"
       }
     ],
     "description": [
@@ -8465,7 +8472,7 @@
       "Requires Hive, Nova Charge and Path of Flames relics"
     ],
     "skillEffect": [
-      "{{delay_between_explosions}}",
+      "{{delay_between}}",
       "{{scatter_radius}}",
       "{{freeze_duration}}",
       "{{radius}}",
@@ -10136,10 +10143,11 @@
         "value2": "frames(50)"
       },
       {
-        "statKey": "delay_between_swarms",
+        "statKey": "delay_between",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(50)"
+        "value0": "swarms",
+        "value1": "frames(50)"
       }
     ],
     "description": [
@@ -10148,7 +10156,7 @@
     "restriction": [],
     "skillEffect": [
       "Damage increases with your highest elemental spell damage stat",
-      "{{delay_between_swarms}}",
+      "{{delay_between}}",
       "{{poison_dot}}",
       "{{duration}}",
       "{{mana_cost}}"
@@ -12008,13 +12016,21 @@
     "affectedBySpecialization": false,
     "canAddPoints": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "delay_between",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "novas",
+        "value1": "frames(50)"
+      }
+    ],
     "description": [
       "Enemies near you trigger special retaliate novas that multi-hit"
     ],
     "restriction": [],
     "skillEffect": [
-      "{{delay_between_novas}}",
+      "{{delay_between}}",
       "{{duration}}",
       "{{mana_cost}}"
     ],
@@ -12265,10 +12281,11 @@
         "value0": "frames(50)"
       },
       {
-        "statKey": "delay_between_activations",
+        "statKey": "delay_between",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(150)"
+        "value0": "activations",
+        "value1": "frames(150)"
       }
     ],
     "description": [
@@ -12277,7 +12294,7 @@
     "restriction": [],
     "skillEffect": [
       "{{arena_duration}}",
-      "{{delay_between_activations}}",
+      "{{delay_between}}",
       "{{stun_length}}",
       "{{lightning_damage}}",
       "{{duration}}",
@@ -14575,10 +14592,11 @@
     "variants": [],
     "scalingConstants": [
       {
-        "statKey": "delay_between_blasts",
+        "statKey": "delay_between",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(10)"
+        "value0": "blasts",
+        "value1": "frames(10)"
       },
       {
         "statKey": "activation_range",
@@ -14593,7 +14611,7 @@
     "restriction": [],
     "skillEffect": [
       "{{activation_range}}",
-      "{{delay_between_blasts}}",
+      "{{delay_between}}",
       "{{average_fire_dot}}",
       "Hits multiple times",
       "{{duration}}",
@@ -15861,10 +15879,11 @@
         "value0": "2*blvl"
       },
       {
-        "statKey": "delay_between_activations",
+        "statKey": "delay_between",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(30-blvl)"
+        "value0": "activations",
+        "value1": "frames(30-blvl)"
       }
     ],
     "description": [
@@ -15873,7 +15892,7 @@
     "restriction": [],
     "skillEffect": [
       "Triggers 'On Melee Attack' skill procs",
-      "{{delay_between_activations}}",
+      "{{delay_between}}",
       "{{weapon_damage}}",
       "{{crushing_blow}}",
       "{{attack_speed}}",
@@ -20977,10 +20996,11 @@
         "value0": "frames(75)"
       },
       {
-        "statKey": "delay_between_activations",
+        "statKey": "delay_between",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(150)"
+        "value0": "activations",
+        "value1": "frames(150)"
       }
     ],
     "description": [
@@ -20989,7 +21009,7 @@
     "restriction": [],
     "skillEffect": [
       "{{arena_duration}}",
-      "{{delay_between_activations}}",
+      "{{delay_between}}",
       "{{stun_length}}",
       "{{lightning_damage}}",
       "{{duration}}",
@@ -22289,14 +22309,22 @@
     "affectedBySpecialization": true,
     "canAddPoints": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "delay_between",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "blasts",
+        "value1": "frames(10)"
+      }
+    ],
     "description": [
       "Periodically assaults enemies with righteous blasts"
     ],
     "restriction": [],
     "skillEffect": [
       "{{target_seek_range}}",
-      "{{delay_between_blasts}}",
+      "{{delay_between}}",
       "{{targets}}",
       "{{bonus_physical_damage}}",
       "{{duration}}",
@@ -22321,14 +22349,22 @@
     "affectedBySpecialization": true,
     "canAddPoints": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "delay_between",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "blasts",
+        "value1": "frames(10)"
+      }
+    ],
     "description": [
       "Periodically blasts nearby threats with divine magic"
     ],
     "restriction": [],
     "skillEffect": [
       "{{target_seek_range}}",
-      "{{delay_between_blasts}}",
+      "{{delay_between}}",
       "{{targets}}",
       "{{bonus_physical_damage}}",
       "{{duration}}",

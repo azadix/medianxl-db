@@ -70,7 +70,7 @@
     "key": "bonus_defense",
     "name": "Bonus Defense",
     "format": "Bonus Defense: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "enhanced_defense"
@@ -88,7 +88,7 @@
     "key": "attack_rating",
     "name": "Attack Rating",
     "format": "Attack Rating: {value0}",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "attack_rating"
@@ -112,7 +112,7 @@
     "key": "attack_speed",
     "name": "Attack Speed",
     "format": "Attack Speed: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "attack_speed"
@@ -190,7 +190,7 @@
     "key": "pmsd",
     "name": "Physical/Magic Spell damage",
     "format": "Physical/Magic Spell Damage: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "physical_magic_spell_damage"
@@ -256,7 +256,7 @@
     "key": "aura_physical_resistance",
     "name": "Aura increases Physical Resistance",
     "format": "Aura increases Physical Resistance by {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "physical_resistance"
@@ -268,7 +268,7 @@
     "key": "aura_elemental_resistances",
     "name": "Aura increases Elemental Resistances",
     "format": "Aura increases Elemental Resistances: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "fire_resistance"
@@ -298,7 +298,7 @@
     "key": "cold_spell_damage",
     "name": "Cold Spell Damage",
     "format": "Cold Spell Damage: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "cold_spell_damage"
@@ -328,7 +328,7 @@
     "key": "crushing_blow",
     "name": "Crushing Blow",
     "format": "Chance of Crushing Blow: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "chance_of_crushing_blow"
@@ -364,7 +364,7 @@
     "key": "innate_elemental_damage",
     "name": "Innate Elemental Damage",
     "format": "Innate Elemental Damage: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "innate_elemental_damage"
@@ -382,7 +382,7 @@
     "key": "hit_recovery",
     "name": "Hit Recovery",
     "format": "Hit Recovery: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "hit_recovery"
@@ -454,7 +454,7 @@
     "key": "movement_speed",
     "name": "Movement Speed",
     "format": "Movement Speed: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "movement_speed"
@@ -466,7 +466,7 @@
     "key": "magic_resistance",
     "name": "Magic Resistance",
     "format": "Magic Resistance: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "magic_resistance"
@@ -478,7 +478,7 @@
     "key": "regenerate_life",
     "name": "Life Regeneration per second",
     "format": "{value0} Life Regeneration per second",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "life_regenerated_per_second"
@@ -496,7 +496,7 @@
     "key": "max_cold_resistance",
     "name": "Maximum Cold Resistance",
     "format": "{value0}% to Maximum Cold Resistance",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "maximum_cold_resistance"
@@ -508,7 +508,7 @@
     "key": "max_fire_resistance",
     "name": "Maximum Fire Resistance",
     "format": "{value0}% to Maximum Fire Resistance",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "maximum_fire_resistance"
@@ -520,7 +520,7 @@
     "key": "max_lightning_resistance",
     "name": "Maximum Lightning Resistance",
     "format": "{value0}% to Maximum Lightning Resistance",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "maximum_lightning_resistance"
@@ -532,7 +532,7 @@
     "key": "enemy_cold_resistance",
     "name": "Enemy Cold Resistance",
     "format": "Enemy Cold Resistance: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "enemy_cold_resistance"
@@ -544,7 +544,7 @@
     "key": "enemy_fire_resistance",
     "name": "Enemy Fire Resistance",
     "format": "Enemy Fire Resistance: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "enemy_fire_resistance"
@@ -556,7 +556,7 @@
     "key": "enemy_lightning_resistance",
     "name": "Enemy Lightning Resistance",
     "format": "Enemy Lightning Resistance: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "enemy_lightning_resistance"
@@ -574,12 +574,6 @@
     "key": "feedback_damage_percent",
     "name": "Feedback Damage % of lost Mana",
     "format": "Feedback Damage: {value0}% of lost Mana"
-  },
-  {
-    "id": 82,
-    "key": "delay_between_blasts",
-    "name": "Delay between blasts",
-    "format": "Delay between blasts: {value0} seconds"
   },
   {
     "id": 83,
@@ -604,7 +598,7 @@
     "key": "physical_resistance",
     "name": "Physical Resistance",
     "format": "Physical Resistance: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "physical_resistance"
@@ -618,12 +612,6 @@
     "format": "Arena duration: {value0} seconds"
   },
   {
-    "id": 88,
-    "key": "delay_between_activations",
-    "name": "Delay between activations",
-    "format": "Delay between activations: {value0} seconds"
-  },
-  {
     "id": 89,
     "key": "releases_bolts",
     "name": "Releases # Bolts",
@@ -634,7 +622,7 @@
     "key": "attacker_takes_lightning_damage",
     "name": "Attacker takes Lightning damage",
     "format": "Attacker takes {value0} bonus Lightning damage",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "attacker_takes_lightning_damage"
@@ -670,7 +658,7 @@
     "key": "enemy_poison_resistance",
     "name": "Enemy Poison Resistance",
     "format": "Enemy Poison Resistance: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "enemy_poison_resistance"
@@ -694,7 +682,7 @@
     "key": "enemy_elemental_resistances",
     "name": "Enemy Elemental Resistances",
     "format": "Enemy Elemental Resistances: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "enemy_fire_resistance"
@@ -712,12 +700,6 @@
         "plannerKey": "enemy_poison_resistance"
       }
     ]
-  },
-  {
-    "id": 102,
-    "key": "delay_between_explosions",
-    "name": "Delay between explosions",
-    "format": "Delay between explosions: {value0} seconds"
   },
   {
     "id": 103,
@@ -772,7 +754,7 @@
     "key": "bloodlust_elemental_damage",
     "name": "Bloodlust Elemental Damage",
     "format": "Bloodlust Elemental Damage: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "bonus_elemental_damage_to_bloodlust"
@@ -784,7 +766,7 @@
     "key": "bloodlust_damage",
     "name": "Bloodlust Damage",
     "format": "Bloodlust Damage: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "bonus_damage_to_bloodlust"
@@ -808,7 +790,7 @@
     "key": "cast_speed",
     "name": "Cast Speed",
     "format": "Cast Speed: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "cast_speed"
@@ -832,7 +814,7 @@
     "key": "avoid_damage",
     "name": "Chance to Avoid Damage",
     "format": "{value0}% Chance to Avoid Damage",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "avoid_chance"
@@ -904,7 +886,7 @@
     "key": "maximum_life",
     "name": "Maximum Life",
     "format": "Maximum Life: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "maximum_life"
@@ -916,7 +898,7 @@
     "key": "blinds_target",
     "name": "Blinds Target",
     "format": "Blinds Target +{value0}",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "hit_blinds_target"
@@ -934,12 +916,6 @@
     "key": "enemy_attack_speed",
     "name": "Enemy Attack Speed",
     "format": "Enemy Attack Speed: {value0}%"
-  },
-  {
-    "id": 138,
-    "key": "delay_between_swarms",
-    "name": "Delay between Swarms",
-    "format": "Delay between Swarms: {value0} seconds"
   },
   {
     "id": 139,
@@ -970,7 +946,7 @@
     "key": "spell_damage",
     "name": "Spell Damage",
     "format": "Spell Damage: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "fire_spell_damage"
@@ -994,7 +970,7 @@
     "key": "minion_life_percent",
     "name": "Minion Life %",
     "format": "Minion Life: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "summoned_minion_life"
@@ -1018,7 +994,7 @@
     "key": "vulnerability_physical_resist",
     "name": "Vulnerability Physical Resistance",
     "format": "Vulnerability Physical Resistance: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "physical_resistance"
@@ -1036,7 +1012,7 @@
     "key": "mana_regeneration_rate",
     "name": "Mana Regeneration Rate",
     "format": "Mana Regeneration Rate: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "regenerate_mana"
@@ -1048,7 +1024,7 @@
     "key": "summoned_minion_attack_rating",
     "name": "Summoned Minion Attack Rating",
     "format": "{value0}% to Summoned Minion Attack Rating",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "summoned_minion_attack_rating"
@@ -1060,7 +1036,7 @@
     "key": "summoned_minion_damage",
     "name": "Summoned Minion Damage",
     "format": "{value0}% to Summoned Minion Damage",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "summoned_minion_damage"
@@ -1072,7 +1048,7 @@
     "key": "maximum_life_flat",
     "name": "Maximum Life flat",
     "format": "{value0} Maximum Life",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "life"
@@ -1084,7 +1060,7 @@
     "key": "life_steal",
     "name": "Life Steal",
     "format": "Life Steal: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "life_stolen_per_hit"
@@ -1096,7 +1072,7 @@
     "key": "maximum_mana",
     "name": "Maximum Mana",
     "format": "{value0}% Maximum Mana",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "maximum_mana"
@@ -1108,7 +1084,7 @@
     "key": "curse_length_reduction",
     "name": "Curse length reduction",
     "format": "Curse length reduction: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "curse_length_reduction"
@@ -1120,7 +1096,7 @@
     "key": "poison_length_reduction",
     "name": "Poison length reduction",
     "format": "Poison length reduction: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "poison_length_reduction"
@@ -1132,7 +1108,7 @@
     "key": "block_speed",
     "name": "Block Speed",
     "format": "Block Speed: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "block_speed"
@@ -1150,7 +1126,7 @@
     "key": "healing_from_potions",
     "name": "Healing from Potions",
     "format": "{value0}% Healing from Potions",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "increased_healing_from_potions"
@@ -1174,7 +1150,7 @@
     "key": "max_poison_resistance",
     "name": "Maximum Poison Resistance",
     "format": "{value0}% to Maximum Poison Resistance",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "maximum_poison_resist"
@@ -1186,7 +1162,7 @@
     "key": "lightning_spell_damage",
     "name": "Lightning Spell Damage",
     "format": "Lightning Spell Damage: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "lightning_spell_damage"
@@ -1198,7 +1174,7 @@
     "key": "fire_spell_damage",
     "name": "Fire Spell Damage",
     "format": "Fire Spell Damage: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "fire_spell_damage"
@@ -1210,7 +1186,7 @@
     "key": "enemy_magic_resistance",
     "name": "Enemy Magic Resistance",
     "format": "{value0}% Enemy Magic Resistance",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "enemy_physical_magic_resistance"
@@ -1222,7 +1198,7 @@
     "key": "maximum_elemental_resistances",
     "name": "Maximum Elemental Resistances",
     "format": "{value0}% to Maximum Elemental Resistances",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "maximum_fire_resistance"
@@ -1246,7 +1222,7 @@
     "key": "grit",
     "name": "Grit",
     "format": "Grit: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "grit"
@@ -1264,7 +1240,7 @@
     "key": "poison_pierce",
     "name": "Poison Pierce",
     "format": "Poison Pierce: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "enemy_poison_resistance"
@@ -1276,7 +1252,7 @@
     "key": "deadly_strike",
     "name": "Deadly Strike",
     "format": "{value0}% Deadly Strike",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "deadly_strike"
@@ -1294,7 +1270,7 @@
     "key": "defense_flat",
     "name": "Defense flat",
     "format": "{value0} Defense",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "defense"
@@ -1306,7 +1282,7 @@
     "key": "maximum_stamina",
     "name": "Maximum Stamina",
     "format": "{value0} Maximum Stamina",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "maximum_stamina"
@@ -1342,7 +1318,7 @@
     "key": "all_attributes_percent",
     "name": "Strength, Dexterity, Vitality and Energy percent",
     "format": "Strength, Dexterity, Vitality and Energy: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "percent_strength"
@@ -1366,7 +1342,7 @@
     "key": "physical_damage_reduced_flat",
     "name": "Physical Damage reduced by #",
     "format": "Physical Damage reduced by {value0}",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "physical_damage_taken_reduced"
@@ -1396,7 +1372,7 @@
     "key": "maximum_block_chance",
     "name": "Maximum Block chance",
     "format": "{value0}% Maximum Block chance",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "max_block_chance"
@@ -1414,7 +1390,7 @@
     "key": "summoned_minion_resistances",
     "name": "Summoned Minion Resistances",
     "format": "{value0}% to Summoned Minion Resistances",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "summoned_minion_resistances"
@@ -1426,7 +1402,7 @@
     "key": "life_after_each_kill",
     "name": "Life after each kill",
     "format": "{value0} Life after each kill",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "life_after_each_kill"
@@ -1450,7 +1426,7 @@
     "key": "slows_target",
     "name": "Slows target",
     "format": "Slows target by {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "slows_target"
@@ -1468,7 +1444,7 @@
     "key": "spell_focus",
     "name": "Spell Focus",
     "format": "{value0} to Spell Focus",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "spell_focus"
@@ -1480,7 +1456,7 @@
     "key": "poison_resistance",
     "name": "Poison Resistance",
     "format": "Poison Resistance: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "poison_resistance"
@@ -1522,7 +1498,7 @@
     "key": "slows_attacker",
     "name": "Slows attackers",
     "format": "Slows attackers by {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "slows_attacker"
@@ -1534,7 +1510,7 @@
     "key": "life_when_struck",
     "name": "Life when struck by an enemy",
     "format": "Life when struck by an enemy: {value0}",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "life_when_struck_by_an_enemy"
@@ -1552,7 +1528,7 @@
     "key": "critical_strike_chance",
     "name": "Critical Strike chance",
     "format": "Critical Strike chance: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "critical_strike"
@@ -1576,7 +1552,7 @@
     "key": "summoned_minion_life",
     "name": "Summoned Minion Life",
     "format": "{value0}% to Summoned Minion Life",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "summoned_minion_life"
@@ -1600,7 +1576,7 @@
     "key": "loma",
     "name": "Life on melee attack",
     "format": "{value0} Life on melee attack",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "life_on_melee_attack"
@@ -1612,7 +1588,7 @@
     "key": "all_attributes",
     "name": "Strength, Dexterity, Vitality and Energy flat",
     "format": "Strength, Dexterity, Vitality and Energy: {value0}",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "strength"
@@ -1672,7 +1648,7 @@
     "key": "vitality",
     "name": "Vitality flat",
     "format": "Vitality: {value0}",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "vitality"
@@ -1684,7 +1660,7 @@
     "key": "energy",
     "name": "Energy flat",
     "format": "Energy: {value0}",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "energy"
@@ -1696,7 +1672,7 @@
     "key": "target_takes_additional_damage",
     "name": "Target takes additional Damage per hit",
     "format": "Target takes additional Damage: {value0} per hit",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "target_takes_additional_damage"
@@ -1726,7 +1702,7 @@
     "key": "fire_resistance",
     "name": "Fire Resistance",
     "format": "Fire Resistance: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "fire_resistance"
@@ -1752,12 +1728,6 @@
     "format": "Hammers per cast: {value0}"
   },
   {
-    "id": 229,
-    "key": "delay_between_novas",
-    "name": "Delay between novas",
-    "format": "Delay betwen Novas: {value0} seconds"
-  },
-  {
     "id": 230,
     "key": "minion_resistances_added_as_poison_spell_damage",
     "name": "#% of your Minion Resistances added as Poison Spell Damage",
@@ -1768,7 +1738,7 @@
     "key": "vitality_percent",
     "name": "Vitality percent",
     "format": "Vitality: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "percent_vitality"
@@ -1780,7 +1750,7 @@
     "key": "strength_percent",
     "name": "Strength percent",
     "format": "Strength: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "percent_strength"
@@ -1798,7 +1768,7 @@
     "key": "bonus_defense_in_stone_form",
     "name": "Bonus Defense in Stone Form",
     "format": "Bonus Defense in Stone Form: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "enhanced_defense"
@@ -1810,7 +1780,7 @@
     "key": "base_block_chance",
     "name": "Base Block chance",
     "format": "{value0}% Base chance to Block",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "base_block_chance"
@@ -1858,7 +1828,7 @@
     "key": "energy_percent",
     "name": "Energy percent",
     "format": "Energy: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "percent_energy"
@@ -1906,7 +1876,7 @@
     "key": "crushes_attacker",
     "name": "Crushes attacker",
     "format": "Crushes attacker: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "chance_to_crush_attacker"
@@ -1924,7 +1894,7 @@
     "key": "fire_absorb",
     "name": "Fire Absorb",
     "format": "Fire Absorb: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "fire_absorb"
@@ -1936,7 +1906,7 @@
     "key": "cold_absorb",
     "name": "Cold Absorb",
     "format": "Cold Absorb: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "cold_absorb"
@@ -1948,7 +1918,7 @@
     "key": "lightning_absorb",
     "name": "Lightning Absorb",
     "format": "Lightning Absorb: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "lightning_absorb"
@@ -2002,7 +1972,7 @@
     "key": "dexterity",
     "name": "Dexterity flat",
     "format": "Dexterity: {value0}",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "dexterity"
@@ -2014,7 +1984,7 @@
     "key": "strength",
     "name": "Strength flat",
     "format": "Strength: {value0}",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "strength"
@@ -2050,7 +2020,7 @@
     "key": "poison_spell_damage",
     "name": "Poison Spell Damage",
     "format": "Poison Spell Damage: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "poison_spell_damage"
@@ -2080,7 +2050,7 @@
     "key": "fire_pierce",
     "name": "Fire Pierce",
     "format": "Fire Pierce: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "enemy_fire_resistance"
@@ -2092,7 +2062,7 @@
     "key": "cold_pierce",
     "name": "Cold Pierce",
     "format": "Cold Pierce: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "enemy_cold_resistance"
@@ -2104,7 +2074,7 @@
     "key": "lightning_pierce",
     "name": "Lightning Pierce",
     "format": "Lightning Pierce: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "enemy_lightning_resistance"
@@ -2116,7 +2086,7 @@
     "key": "magic_pierce",
     "name": "Magic Pierce",
     "format": "Magic Pierce: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "enemy_magic_resistance"
@@ -2158,7 +2128,7 @@
     "key": "all_skills",
     "name": "+# to All Skills",
     "format": "{value0} to All Skills",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "all_skills"
@@ -2170,7 +2140,7 @@
     "key": "elemental_magic_damage_reduced_flat",
     "name": "Elemental/Magic Damage reduced by #",
     "format": "Elemental/Magic Damage reduced by {value0}",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "elemental_magic_damage_taken_reduced"
@@ -2188,7 +2158,7 @@
     "key": "reanimate",
     "name": "Reanimate as MONSTER: #%",
     "format": "Reanimate as {value0}: {value1}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 1,
         "plannerKey": "reanimate_as_monster"
@@ -2218,7 +2188,7 @@
     "key": "mana_flat",
     "name": "Bonus flat Mana",
     "format": "{value0} to Mana",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "mana"
@@ -2410,7 +2380,7 @@
     "key": "class_poison_skill_duration",
     "name": "Class Poison skill duration",
     "format": "Class Poison skill duration: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "bonus_to_poison_skill_duration"
@@ -2422,7 +2392,7 @@
     "key": "physical_resistance_after_taking_weapon_damage",
     "name": "#% Physical Resistance after taking Weapon Damage",
     "format": "{value0}% Physical Resistance after taking Weapon Damage",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "physical_resistance"
@@ -2518,7 +2488,7 @@
     "key": "cold_resistance",
     "name": "Cold Resistance",
     "format": "Cold Resistance: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "cold_resistance"
@@ -2530,7 +2500,7 @@
     "key": "global_fire_activation_frequency",
     "name": "Activation Frequency of Periodic Fire Skills: #%",
     "format": "Activation Frequency of Periodic Fire Skills: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "activation_frequency"
@@ -2548,7 +2518,7 @@
     "key": "poison_spell_damage_for_seconds",
     "name": "+#% Poison Spell Damage for # seconds",
     "format": "+{value0}% Poison Spell Damage for {value1} seconds",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "poison_spell_damage"
@@ -2620,7 +2590,7 @@
     "key": "life_and_mana_on_striking",
     "name": "+# Life and Mana on striking",
     "format": "+{value0} Life and Mana on striking",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "life_on_striking"
@@ -2636,7 +2606,7 @@
     "key": "global_lightning_activation_frequency",
     "name": "Activation Frequency of Periodic Lightning Skills: #%",
     "format": "Activation Frequency of Periodic Lightning Skills: {value0}%",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "activation_frequency"
@@ -2666,18 +2636,12 @@
     "key": "grit_while_unmorphed",
     "name": "+#% Grit while unmorphed",
     "format": "+{value0}% Grit while unmorphed",
-    "pairedStat":[
+    "pairedStat": [
       {
         "valueIndex": 0,
         "plannerKey": "grit"
       }
     ]
-  },
-  {
-    "id": 355,
-    "key": "delay_between_detonations",
-    "name": "Delay between detonations",
-    "format": "Delay between detonations: {value0} seconds"
   },
   {
     "id": 356,
@@ -2704,9 +2668,9 @@
     "format": "{value0}% of Energy added as Movement Speed"
   },
   {
-    "id": 360,
-    "key": "delay_between_shockwaves",
-    "name": "Delay between shockwaves",
-    "format": "Delay between shockwaves: {value0} seconds"
+    "id": 361,
+    "key": "delay_between",
+    "name": "Delay between",
+    "format": "Delay between {value0}: {value1} seconds"
   }
 ]

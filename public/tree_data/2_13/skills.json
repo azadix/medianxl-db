@@ -383,10 +383,11 @@
         "value0": "60"
       },
       {
-        "statKey": "delay_between_shockwaves",
+        "statKey": "delay_between",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(25)"
+        "value0": "shockwaves",
+        "value1": "frames(25)"
       },
       {
         "statKey": "activation_frequency_effectiveness",
@@ -402,7 +403,7 @@
     "skillEffect": [
       "[[idol_of_scosglen]]",
       "Duration reduced by 90%",
-      "{{delay_between_shockwaves}}",
+      "{{delay_between}}",
       "{{activation_frequency_effectiveness}}",
       "",
       "Shockwaves deals {{weapon_damage}}"
@@ -1710,10 +1711,11 @@
         "value0": "20"
       },
       {
-        "statKey": "delay_between_detonations",
+        "statKey": "delay_between",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(375)"
+        "value0": "detonations",
+        "value1": "frames(375)"
       },
       {
         "statKey": "activation_frequency_effectiveness",
@@ -1734,7 +1736,7 @@
     "restriction": [],
     "skillEffect": [
       "{{movement_speed}}",
-      "{{delay_between_detonations}}",
+      "{{delay_between}}",
       "{{activation_frequency_effectiveness}}",
       "{{standing_near_cataclyst_increases_blast_damage}}",
       "{{fire_and_physical_damage_per_blast}}",
@@ -8573,10 +8575,11 @@
         "value0": "frames(7500*(1+[[continuity]].{{skill_duration}}/100))"
       },
       {
-        "statKey": "delay_between_activations",
+        "statKey": "delay_between",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(25)"
+        "value0": "activations",
+        "value1": "frames(25)"
       },
       {
         "statKey": "activation_frequency_effectiveness",
@@ -8591,7 +8594,7 @@
     "restriction": [],
     "skillEffect": [
       "{{slows_nearby_enemies}} (Effect scales with Cold Spell damage)",
-      "{{delay_between_activations}}",
+      "{{delay_between}}",
       "{{activation_frequency_effectiveness}}",
       "{{cold_damage}}",
       "{{duration}}",
@@ -8827,6 +8830,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "80"
+      },
+      {
+        "statKey": "delay_between",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "explosions",
+        "value1": "frames(50)"
       }
     ],
     "description": [
@@ -8836,7 +8846,7 @@
       "Requires Hive, Nova Charge and Path of Flames relics"
     ],
     "skillEffect": [
-      "{{delay_between_explosions}}",
+      "{{delay_between}}",
       "{{activation_frequency_effectiveness}}",
       "{{scatter_radius}}",
       "{{freeze_duration}}",
@@ -10542,10 +10552,11 @@
         "value2": "frames(50)"
       },
       {
-        "statKey": "delay_between_activations",
+        "statKey": "delay_between",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(50)"
+        "value0": "activations",
+        "value1": "frames(50)"
       },
       {
         "statKey": "activation_frequency_effectiveness",
@@ -10560,7 +10571,7 @@
     "restriction": [],
     "skillEffect": [
       "Damage increases with your highest elemental spell damage stat",
-      "{{delay_between_activations}}",
+      "{{delay_between}}",
       "{{activation_frequency_effectiveness}}",
       "{{poison_dot}}",
       "{{duration}}",
@@ -11586,10 +11597,11 @@
     "variants": [],
     "scalingConstants": [
       {
-        "statKey": "delay_between_activations",
+        "statKey": "delay_between",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(12.5)"
+        "value0": "activations",
+        "value1": "frames(12.5)"
       },
       {
         "statKey": "activation_frequency_effectiveness",
@@ -11615,7 +11627,7 @@
     ],
     "restriction": [],
     "skillEffect": [
-      "{{delay_between_activations}}",
+      "{{delay_between}}",
       "{{activation_frequency_effectiveness}}",
       "{{range}}",
       "{{fire_pierce}}",
@@ -12479,13 +12491,21 @@
     "affectedBySpecialization": false,
     "canAddPoints": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "delay_between",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "novas",
+        "value1": "frames(50)"
+      }
+    ],
     "description": [
       "Enemies near you trigger special retaliate novas that multi-hit"
     ],
     "restriction": [],
     "skillEffect": [
-      "{{delay_between_novas}}",
+      "{{delay_between}}",
       "{{activation_frequency_effectiveness}}",
       "{{duration}}",
       "{{mana_cost}}"
@@ -12737,10 +12757,11 @@
         "value0": "frames(50)"
       },
       {
-        "statKey": "delay_between_activations",
+        "statKey": "delay_between",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(150)"
+        "value0": "activations",
+        "value1": "frames(150)"
       },
       {
         "statKey": "activation_frequency_effectiveness",
@@ -12755,7 +12776,7 @@
     "restriction": [],
     "skillEffect": [
       "{{arena_duration}}",
-      "{{delay_between_activations}}",
+      "{{delay_between}}",
       "{{activation_frequency_effectiveness}}",
       "{{stun_length}}",
       "{{lightning_damage}}",
@@ -14498,10 +14519,11 @@
         "value0": "frames(7500)"
       },
       {
-        "statKey": "delay_between_activations",
+        "statKey": "delay_between",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(25)"
+        "value0": "activations",
+        "value1": "frames(25)"
       },
       {
         "statKey": "activation_frequency_effectiveness",
@@ -14538,7 +14560,7 @@
       "Damage increases with your highest elemental spell damage stat",
       "{{base_dex_added_to_ene}}",
       "{{scatter_radius}}",
-      "{{delay_between_activations}}",
+      "{{delay_between}}",
       "{{activation_frequency_effectiveness}}",
       "{{lightning_damage}}",
       "{{duration}}",
@@ -14857,10 +14879,11 @@
         "value0": "3*blvl"
       },
       {
-        "statKey": "delay_between_activations",
+        "statKey": "delay_between",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(50)"
+        "value0": "activations",
+        "value1": "frames(50)"
       }
     ],
     "description": [
@@ -14872,7 +14895,7 @@
       "Sacrifices Heat equal to: +???% of your Mana regenerated per second",
       "{{fire_damage}}",
       "{{range}}",
-      "{{delay_between_activations}}",
+      "{{delay_between}}",
       "{{global_fire_activation_frequency}}"
     ],
     "image": "icons-sor_168.png"
@@ -15274,10 +15297,11 @@
     "variants": [],
     "scalingConstants": [
       {
-        "statKey": "delay_between_blasts",
+        "statKey": "delay_between",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(10)"
+        "value0": "blasts",
+        "value1": "frames(10)"
       },
       {
         "statKey": "activation_range",
@@ -15298,7 +15322,7 @@
     "restriction": [],
     "skillEffect": [
       "{{activation_range}}",
-      "{{delay_between_blasts}}",
+      "{{delay_between}}",
       "{{activation_frequency_effectiveness}}",
       "{{average_fire_dot}}",
       "Hits multiple times",
@@ -16591,10 +16615,11 @@
         "value0": "2*blvl"
       },
       {
-        "statKey": "delay_between_activations",
+        "statKey": "delay_between",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(30-blvl)"
+        "value0": "activations",
+        "value1": "frames(30-blvl)"
       },
       {
         "statKey": "activation_frequency_effectiveness",
@@ -16609,7 +16634,7 @@
     "restriction": [],
     "skillEffect": [
       "Triggers 'On Melee Attack' skill procs",
-      "{{delay_between_activations}}",
+      "{{delay_between}}",
       "{{activation_frequency_effectiveness}}",
       "{{weapon_damage}}",
       "{{crushing_blow}}",
@@ -21826,10 +21851,11 @@
         "value0": "frames(75)"
       },
       {
-        "statKey": "delay_between_activations",
+        "statKey": "delay_between",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(150)"
+        "value0": "activations",
+        "value1": "frames(150)"
       }
     ],
     "description": [
@@ -21838,7 +21864,7 @@
     "restriction": [],
     "skillEffect": [
       "{{arena_duration}}",
-      "{{delay_between_activations}}",
+      "{{delay_between}}",
       "{{stun_length}}",
       "{{lightning_damage}}",
       "{{duration}}",
@@ -23201,14 +23227,22 @@
     "affectedBySpecialization": true,
     "canAddPoints": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "delay_between",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "blasts",
+        "value1": "frames(10)"
+      }
+    ],
     "description": [
       "Periodically assaults enemies with righteous blasts"
     ],
     "restriction": [],
     "skillEffect": [
       "{{target_seek_range}}",
-      "{{delay_between_blasts}}",
+      "{{delay_between}}",
       "{{targets}}",
       "{{bonus_physical_damage}}",
       "{{duration}}",
@@ -23233,14 +23267,22 @@
     "affectedBySpecialization": true,
     "canAddPoints": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "delay_between",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "blasts",
+        "value1": "frames(10)"
+      }
+    ],
     "description": [
       "Periodically blasts nearby threats with divine magic"
     ],
     "restriction": [],
     "skillEffect": [
       "{{target_seek_range}}",
-      "{{delay_between_blasts}}",
+      "{{delay_between}}",
       "{{targets}}",
       "{{bonus_physical_damage}}",
       "{{duration}}",
@@ -23788,10 +23830,11 @@
     "variants": [],
     "scalingConstants": [
       {
-        "statKey": "delay_between_novas",
+        "statKey": "delay_between",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(50)"
+        "value0": "novas",
+        "value1": "frames(50)"
       },
       {
         "statKey": "activation_frequency_effectiveness",
@@ -23805,7 +23848,7 @@
     ],
     "restriction": [],
     "skillEffect": [
-      "{{delay_between_novas}}",
+      "{{delay_between}}",
       "{{activation_frequency_effectiveness}}",
       "{{weapon_damage}}",
       "{{duration}}",
@@ -25251,10 +25294,11 @@
     "variants": [],
     "scalingConstants": [
       {
-        "statKey": "delay_between_activations",
+        "statKey": "delay_between",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(50)"
+        "value0": "activations",
+        "value1": "frames(50)"
       },
       {
         "statKey": "activation_frequency_effectiveness",
@@ -25268,7 +25312,7 @@
     ],
     "restriction": [],
     "skillEffect": [
-      "{{delay_between_activations}}",
+      "{{delay_between}}",
       "{{activation_frequency_effectiveness}}",
       "{{cold_damage}}",
       "{{duration}}",
