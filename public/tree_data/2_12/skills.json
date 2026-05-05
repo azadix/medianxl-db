@@ -11401,7 +11401,7 @@
       "Requires a naginata or halberd"
     ],
     "skillEffect": [
-      "{{percent_dex_gained_as_extra_magic_damage}}",
+      "{{percent_base_dex_gained_as_extra_magic_damage}}",
       "{{bonus_defense}}"
     ],
     "image": "icons-ass_120.png"

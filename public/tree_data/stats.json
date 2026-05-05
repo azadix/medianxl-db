@@ -2672,5 +2672,11 @@
     "key": "delay_between",
     "name": "Delay between",
     "format": "Delay between {value0}: {value1} seconds"
+  },
+  {
+    "id": 362,
+    "key": "percent_base_dex_gained_as_extra_magic_damage",
+    "name": "#% of base Dexterity gained as Extra Magic damage",
+    "format": "{value0}% of base Dexterity gained as Extra Magic damage"
   }
 ]

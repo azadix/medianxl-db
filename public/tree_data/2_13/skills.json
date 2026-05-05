@@ -5900,7 +5900,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames((250*(1+[[continuity]].{{skill_duration}}/100))+5*lvl)"
+        "value0": "frames(((255+5*lvl)*(1+[[continuity]].{{skill_duration}}/100)))"
       }
     ],
     "description": [
@@ -11875,7 +11875,7 @@
       "Requires a naginata or halberd"
     ],
     "skillEffect": [
-      "{{percent_dex_gained_as_extra_magic_damage}}",
+      "{{percent_base_dex_gained_as_extra_magic_damage}}",
       "{{bonus_defense}}"
     ],
     "image": "icons-ass_120.png"
@@ -14443,6 +14443,7 @@
     ],
     "restriction": [],
     "skillEffect": [
+      "Activates while at or above 60% Heat",
       "Deals Fire Damage equal to half the total maximum Damage of your Fire tree skills",
       "Sacrifices Heat equal to: +???% of your Mana regenerated per second",
       "{{fire_damage}}",
