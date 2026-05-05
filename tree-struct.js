@@ -304,8 +304,24 @@ export function applyTreeStructLayoutToSkills(mergedSkills, layoutRoot) {
 
     const byKey = buildTreeStructLayoutLookupMap(layoutRoot, classNameByLower);
 
+    const altSkillIdsForLookup = (idRaw) => {
+        const id = String(idRaw ?? '').trim();
+        if (!id) return [];
+        if (id.endsWith('_innate')) {
+            return [id, id.slice(0, -'_innate'.length)];
+        }
+        return [id, `${id}_innate`];
+    };
+
     for (const s of mergedSkills) {
-        const hit = byKey.get(`${String(s.class).toLowerCase()}|${String(s.id)}`);
+        const cLow = String(s.class).toLowerCase();
+        let hit = byKey.get(`${cLow}|${String(s.id)}`);
+        if (!hit) {
+            for (const alt of altSkillIdsForLookup(s.id)) {
+                hit = byKey.get(`${cLow}|${alt}`);
+                if (hit) break;
+            }
+        }
         if (hit) {
             s.tabName = hit.tabName;
             s.row = hit.row;
@@ -338,6 +354,15 @@ export function buildPlannerSkillsFromTreeStruct(mergedSkills, layoutRoot) {
         byClassSkill.set(`${String(s.class).toLowerCase()}|${String(s.id)}`, s);
     }
 
+    const altSkillIdsForLookup = (idRaw) => {
+        const id = String(idRaw ?? '').trim();
+        if (!id) return [];
+        if (id.endsWith('_innate')) {
+            return [id, id.slice(0, -'_innate'.length)];
+        }
+        return [id, `${id}_innate`];
+    };
+
     const out = [];
     for (const [classKey, classObj] of Object.entries(layoutRoot)) {
         if (!isTabLayoutBlock(classObj)) continue;
@@ -356,8 +381,14 @@ export function buildPlannerSkillsFromTreeStruct(mergedSkills, layoutRoot) {
                     console.warn('tree_struct: bad skill_details entry', classKey, tabName, entry);
                     continue;
                 }
-                const mapKey = `${className.toLowerCase()}|${p.skill}`;
-                const base = byClassSkill.get(mapKey);
+                const cLow = className.toLowerCase();
+                let base = byClassSkill.get(`${cLow}|${p.skill}`);
+                if (!base) {
+                    for (const alt of altSkillIdsForLookup(p.skill)) {
+                        base = byClassSkill.get(`${cLow}|${alt}`);
+                        if (base) break;
+                    }
+                }
                 if (!base) {
                     console.warn('tree_struct: no merged skill for', className, p.skill);
                     continue;
@@ -421,10 +452,27 @@ export function applyTreeStructPrerequisitesToSkills(mergedSkills, layoutRoot) {
     }
 
     const byKey = buildTreeStructPrerequisiteLookupMap(layoutRoot, classNameByLower);
+
+    const altSkillIdsForLookup = (idRaw) => {
+        const id = String(idRaw ?? '').trim();
+        if (!id) return [];
+        if (id.endsWith('_innate')) {
+            return [id, id.slice(0, -'_innate'.length)];
+        }
+        return [id, `${id}_innate`];
+    };
+
     for (const s of mergedSkills) {
         if (!s.class || !s.id) continue;
-        const k = `${String(s.class).toLowerCase()}|${String(s.id)}`;
-        let list = byKey.has(k) ? [...byKey.get(k)] : [];
+        const cLow = String(s.class).toLowerCase();
+        let list = [];
+        for (const alt of altSkillIdsForLookup(s.id)) {
+            const k = `${cLow}|${alt}`;
+            if (byKey.has(k)) {
+                list = [...byKey.get(k)];
+                break;
+            }
+        }
         // Paragon skills (and similar) are cloned per class but tree_struct only lists one prototype
         // (e.g. Amazon Reward). Inherit prerequisites from any class that defines this skill id.
         if (!list.length) {

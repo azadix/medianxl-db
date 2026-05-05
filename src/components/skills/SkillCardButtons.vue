@@ -19,6 +19,7 @@ function onMinus(e) {
   const d = e.shiftKey ? -25 : -1;
   emit('minus', d);
 }
+
 </script>
 
 <template>

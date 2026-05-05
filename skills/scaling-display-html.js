@@ -3,12 +3,7 @@
  * Matches Bulma classes used in {@link utils.js} expandPlaceholdersWithScaling.
  */
 
-export const SCALING_DISPLAY_HTML_CLASSES = Object.freeze({
-  unknown: 'has-text-danger',
-  formula: 'has-text-warning',
-  default: 'has-text-primary',
-  constants: 'has-text-white'
-});
+import { SCALING_DISPLAY_HTML_CLASSES } from '../utils.js';
 
 /**
  * Render {{stat}} line from merged scaling values (value0–3, formula/constant flags).

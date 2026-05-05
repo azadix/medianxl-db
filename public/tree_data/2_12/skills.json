@@ -1665,7 +1665,7 @@
         "value0": "frames(250)"
       },
       {
-        "statKey": "maximum_life",
+        "statKey": "minion_life_percent",
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "min(pow(blvl+5, 2),900)"
@@ -1678,7 +1678,7 @@
     "skillEffect": [
       "{{cooldown}}",
       "Casts Rend, Area effect attack",
-      "{{maximum_life}}",
+      "{{minion_life_percent}}",
       "{{life}}",
       "{{mana_cost}}",
       "Gains your Physical Resistance",

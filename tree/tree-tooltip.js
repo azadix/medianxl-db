@@ -1,6 +1,6 @@
 // Tooltip functionality for skill tree
 import { getSkillIconHTML, expandPlaceholdersWithScaling } from '../utils.js';
-import { getSkillPoints, getOSkillPoints, getAllSkillPoints, getAllOSkills, getTreeSkillsCache, getAllStats, getCharacterInstance } from '../character/character-state.js';
+import { getSkillPoints, getOSkillPoints, getAllSkillPoints, getAllOSkills, getTreeSkillsCache, getAllStats, getCharacterInstance, isSkillDisabled } from '../character/character-state.js';
 import { resolveVariantKeyForTooltip, formatDisplayNameWithVariantHtml } from './skill-variants.js';
 import { getCurrentVersion, versionToTreeAssetFolder } from '../version-config.js';
 import { getFileSkillStore } from './skill-data-store.js';
@@ -577,6 +577,11 @@ async function buildTooltipContent(skillData, level, warningMessage = '', isOSki
             </div>
     `;
     html += '</div>';
+
+    // Disabled indicator (planner toggle)
+    if (skillData?.id && isSkillDisabled(skillData.id)) {
+        html += `<div class="has-text-centered has-text-danger has-text-weight-semibold is-size-5">DISABLED (bonuses not applied)</div>`;
+    }
     
     // Get character state for formula evaluation (needed for all tooltip content)
     const allSkillPoints = getAllSkillPoints();

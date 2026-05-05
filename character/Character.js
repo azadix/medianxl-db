@@ -286,7 +286,52 @@ export default class Character {
     this.stats = createEmptyRegisteredStatsObject();
     /** @type {Record<string, number>} Sum of passive planner stats from allocated skills (not persisted). */
     this._plannerSkillStatBonuses = {};
+    /** Skills toggled off for planner stat aggregation (internal skill ids). */
+    this.disabledSkillIds = new Set();
     this.applyAutoQuestCompletionForLevel(this.level);
+  }
+
+  /**
+   * @param {string} internalId
+   * @returns {boolean}
+   */
+  isSkillDisabled(internalId) {
+    const k = String(internalId ?? '').trim();
+    return k !== '' && this.disabledSkillIds.has(k);
+  }
+
+  /**
+   * @param {string} internalId
+   * @param {boolean} disabled
+   */
+  setSkillDisabled(internalId, disabled) {
+    const k = String(internalId ?? '').trim();
+    if (!k) return;
+    if (disabled) this.disabledSkillIds.add(k);
+    else this.disabledSkillIds.delete(k);
+  }
+
+  /**
+   * @returns {string[]}
+   */
+  getDisabledSkillIds() {
+    return [...this.disabledSkillIds].sort((a, b) => a.localeCompare(b));
+  }
+
+  /**
+   * @param {unknown} list
+   */
+  setDisabledSkillIds(list) {
+    this.disabledSkillIds = new Set();
+    if (!Array.isArray(list)) return;
+    for (const id of list) {
+      const k = String(id ?? '').trim();
+      if (k) this.disabledSkillIds.add(k);
+    }
+  }
+
+  clearDisabledSkillIds() {
+    this.disabledSkillIds = new Set();
   }
 
   /**
@@ -712,6 +757,7 @@ export default class Character {
   resetAllSkillPoints() {
     this.skillPoints = {};
     this.maxLevels = {};
+    this.clearDisabledSkillIds();
   }
 
   /**
@@ -756,7 +802,8 @@ export default class Character {
       stats: { ...this.stats },
       questsCompleted: JSON.parse(JSON.stringify(this.questsCompleted)),
       questCompletionOptOut: JSON.parse(JSON.stringify(this.questCompletionOptOut || {})),
-      statAllocation: { ...this.statAllocation }
+      statAllocation: { ...this.statAllocation },
+      disabledSkillIds: this.getDisabledSkillIds()
     };
   }
 
@@ -781,6 +828,11 @@ export default class Character {
       this.setStatAllocation(state.statAllocation);
     } else {
       this.statAllocation = Character.createEmptyStatAllocation();
+    }
+    if (Array.isArray(state.disabledSkillIds)) {
+      this.setDisabledSkillIds(state.disabledSkillIds);
+    } else {
+      this.clearDisabledSkillIds();
     }
   }
 

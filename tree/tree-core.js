@@ -5,7 +5,7 @@ import { getCurrentTab, setCurrentTabState } from './tree-tab-state.js';
 import { updatePlannerUrlTab, setBuildUrlParam } from './tree-url-sync.js';
 import Tree from '../character/Tree.js';
 import Character from '../character/Character.js';
-import { initializeCharacter, applyClassBaselineStatsToCharacter, recomputeClassDerivedLifeMana, onPlannerSkillAllocationChanged, runPlannerSkillStatRecompute, getSpentSkillPoints, getAllSkillPoints, getAllSkillPointsById, setAllSkillPoints, setAllSkillPointsById, importQuestsCompleted, getAllOSkills, addOSkill, clearOSkills, setAllOSkills, getMinimumRequiredLevel, getTotalQuestSkillPoints, checkSkillsExceedingMaxLevel, getAvailableSkillPoints, getCharacterInstance, getCharacterLevel, getEffectivePlannerLevel, parseStatsFromText, exportStatsToText, clearAllStats, getQuestsCompletedForSave, getQuestCompletionOptOutForSave } from '../character/character-state.js';
+import { initializeCharacter, applyClassBaselineStatsToCharacter, recomputeClassDerivedLifeMana, onPlannerSkillAllocationChanged, runPlannerSkillStatRecompute, getSpentSkillPoints, getAllSkillPoints, getAllSkillPointsById, setAllSkillPoints, setAllSkillPointsById, importQuestsCompleted, getAllOSkills, addOSkill, clearOSkills, setAllOSkills, getMinimumRequiredLevel, getTotalQuestSkillPoints, checkSkillsExceedingMaxLevel, getAvailableSkillPoints, getCharacterInstance, getCharacterLevel, getEffectivePlannerLevel, parseStatsFromText, exportStatsToText, clearAllStats, getQuestsCompletedForSave, getQuestCompletionOptOutForSave, getDisabledSkillIds, setDisabledSkillIds } from '../character/character-state.js';
 import { refreshPlannerStatsPanelFromCharacter } from '../character/planner-stats-panel.js';
 import { initPlannerConfigPanel } from '../character/planner-config-panel.js';
 import { setPlannerSectionFromLegacy } from '../src/planner/planner-section-bridge.js';
@@ -196,6 +196,8 @@ function loadBuildData(build, buildIndex = null) {
     
     // Load oSkills
     setAllOSkills(build.oSkills || []);
+
+    setDisabledSkillIds(Array.isArray(build.disabledSkills) ? build.disabledSkills : []);
     
     // Load All Skills bonus
     if (build.allSkillsBonus !== undefined) {
@@ -212,6 +214,7 @@ function loadBuildData(build, buildIndex = null) {
     } else if (build.class) {
         applyClassBaselineStatsToCharacter(build.class);
     }
+    runPlannerSkillStatRecompute({ immediate: true });
     refreshPlannerStatsPanelFromCharacter();
     window.dispatchEvent(new CustomEvent('characterStatsChanged', { detail: { buildLoad: true } }));
     
@@ -1057,6 +1060,7 @@ function buildCurrentBuildSnapshot(name) {
         level: currentLevel,
         spentPoints: getSpentSkillPoints(),
         skillPoints: getAllSkillPointsById(),
+        disabledSkills: getDisabledSkillIds(),
         oSkills: getAllOSkills(),
         allSkillsBonus: getAllSkillsBonus(),
         stats: exportStatsToText(),
@@ -1580,10 +1584,11 @@ function showHelpModal() {
                 <h4 class="title is-5 mb-3 mt-5">Stat Colors</h4>
                 <p>Stat values in skill tooltips are color-coded to indicate their type:</p>
                 <ul>
-                    <li><span class="has-text-white">is-white</span> - Plain text</li>
-                    <li><span class="has-text-danger">is-danger</span> - Unknown value (displayed when a stat value cannot be determined)</li>
-                    <li><span class="has-text-primary">is-primary</span> - Constant (indicates a constant value that does not change with skill level)</li>
-                    <li><span class="has-text-warning">is-warning</span> - Function outcome (shown when a stat value is calculated from a formula or function)</li>
+                    <li><span class="has-text-white">Constant</span> - stat value that does not change with levels</li>
+                    <li><span class="has-text-danger">Unknown</span> - stat value cannot be determined</li>
+                    <li><span class="has-text-info">Function</span> - stat value is calculated from a formula or function</li>
+                    <li><span class="has-text-success">Skill</span> - other skill is being referenced eg. Earthquake, Shadow Refuge</li>
+                    <li><span class="has-text-warning">Subskill</span> - subskill is being referenced eg. Demon Blood Aura, Grim Vision</li>
                 </ul>
 
                 <h4 class="title is-5 mb-3 mt-5">Tips</h4>

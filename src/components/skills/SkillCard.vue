@@ -6,6 +6,7 @@ import {
   canAddPoints,
   getRestrictionMessage,
 } from '../../../tree/tree-render.js';
+import { setSkillDisabled } from '../../../character/character-state.js';
 import SkillVariantMenu from './SkillVariantMenu.vue';
 import SkillCardImage from './SkillCardImage.vue';
 import SkillCardButtons from './SkillCardButtons.vue';
@@ -16,6 +17,10 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['plus', 'minus']);
+
+function onToggleDisabled() {
+  setSkillDisabled(props.cardData.skillId, !props.cardData.isDisabled);
+}
 
 const variantLabel = ref('');
 const variantEpoch = ref(0);
@@ -60,8 +65,23 @@ const levelColorClass = computed(() =>
   getLevelColorClass(props.cardData.currentPoints || 0, props.cardData.maxPoints || 0)
 );
 
-const nameBaseClass = computed(() =>
-  props.cardData.hasDescription ? 'has-text-info' : ''
+const nameBaseClass = computed(() => {
+  const cd = props.cardData;
+  return cd.isDisabled ? 'has-text-danger' : '';
+});
+
+const showDisableToggle = computed(() => {
+  const cd = props.cardData;
+  if (cd.isInnate) return false;
+  if (cd.isPassive === true) return false;
+  if (cd.isUpgrade === true) return false;
+  if (String(cd.tabName || '').trim().toLowerCase() === 'mastery') return false;
+  if (Math.floor(Number(cd.currentPoints) || 0) <= 0) return false;
+  // show for regular non-passives and oSkills (which also carry isPassive/isUpgrade via tree-render)
+  return true;
+});
+const disableButtonTitle = computed(() =>
+  props.cardData.isDisabled ? 'Enable skill bonuses' : 'Disable skill bonuses'
 );
 
 const plusTitle = computed(() => getRestrictionMessage(props.cardData.restrictions) || '');
@@ -108,6 +128,17 @@ watch(
         @minus="emit('minus', $event)"
       />
     </div>
+    <button
+      v-if="showDisableToggle"
+      type="button"
+      class="button is-outlined is-small skill-disable-toggle"
+      :class="cardData.isDisabled ? 'is-danger' : 'is-success'"
+      :title="disableButtonTitle"
+      :aria-label="disableButtonTitle"
+      @click.prevent="onToggleDisabled"
+    >
+      <span class="icon is-small"><i class="fa-solid fa-power-off"></i></span>
+    </button>
     <div class="skill-card-name">
       <span class="skill-card-name-base" :class="nameBaseClass">{{ cardData.displayName }}</span>
       <span class="skill-card-name-variant has-text-grey is-size-7">{{ variantLabel }}</span>

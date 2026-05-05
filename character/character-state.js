@@ -174,6 +174,7 @@ export function buildMergedSkillLevelsForStatRecompute(character) {
         );
       if (row?.id) internal = String(row.id);
     }
+    if (character.isSkillDisabled(internal)) return;
     byInternal[internal] = (byInternal[internal] || 0) + n;
   }
 
@@ -187,6 +188,7 @@ export function buildMergedSkillLevelsForStatRecompute(character) {
     if (row.skillName) {
       const rowHit = store?.catalogByInternalId?.get(String(row.skillName).trim());
       const id = rowHit?.id ? String(rowHit.id) : String(row.skillName).trim();
+      if (character.isSkillDisabled(id)) continue;
       const cur = byInternal[id] || 0;
       byInternal[id] = Math.max(cur, p);
       continue;
@@ -195,6 +197,7 @@ export function buildMergedSkillLevelsForStatRecompute(character) {
       const hit = store.lookupSkillNameAndDisplayByNumericId(row.skillId);
       if (hit?.name) {
         const id = String(hit.name);
+        if (character.isSkillDisabled(id)) continue;
         const cur = byInternal[id] || 0;
         byInternal[id] = Math.max(cur, p);
       }
@@ -318,6 +321,45 @@ export function recomputeClassDerivedLifeMana() {
  */
 export function getCharacterInstance() {
   return characterInstance;
+}
+
+/**
+ * @param {string} internalId Internal skill id (skills.json `id`)
+ */
+export function isSkillDisabled(internalId) {
+  return characterInstance ? characterInstance.isSkillDisabled(internalId) : false;
+}
+
+/**
+ * Toggle planner stat contribution for a skill (does not change allocated points).
+ * @param {string} internalId
+ * @param {boolean} disabled
+ */
+export function setSkillDisabled(internalId, disabled) {
+  if (!characterInstance) return;
+  characterInstance.setSkillDisabled(internalId, disabled);
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(
+      new CustomEvent('skillPointsChanged', {
+        detail: {
+          skillName: internalId != null ? String(internalId) : null,
+          action: 'toggleDisabled'
+        }
+      })
+    );
+  }
+  runPlannerSkillStatRecompute({ immediate: true });
+}
+
+/** @returns {string[]} */
+export function getDisabledSkillIds() {
+  return characterInstance ? characterInstance.getDisabledSkillIds() : [];
+}
+
+/** @param {unknown} list */
+export function setDisabledSkillIds(list) {
+  if (!characterInstance) return;
+  characterInstance.setDisabledSkillIds(list);
 }
 
 /**
@@ -1106,7 +1148,8 @@ export function exportCharacterState() {
         stats: {},
         questsCompleted: Character.createDefaultQuestsCompleted(),
         questCompletionOptOut: Character.createDefaultQuestCompletionOptOut(),
-        statAllocation: Character.createEmptyStatAllocation()
+        statAllocation: Character.createEmptyStatAllocation(),
+        disabledSkillIds: []
       };
 }
 

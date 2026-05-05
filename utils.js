@@ -5,9 +5,20 @@ const ICONS_PER_ROW = Math.floor(ATLAS_SIZE / ICON_SIZE);
 export const MISSING_IMAGE_NAME = "icons-shared_missing.png";
 
 const SKILL_STYLE = "has-text-success";
-const FORMULA_STYLE = "has-text-warning";
+const FORMULA_STYLE = "has-text-info";
 const UNKNOWN_STYLE = "has-text-danger";
 const MISSING_STAT_STYLE = "has-text-danger";
+
+/**
+ * HTML classes used by scaling placeholder rendering (tooltips / descriptions).
+ * Single source of truth (was duplicated in skills/scaling-display-html.js).
+ */
+export const SCALING_DISPLAY_HTML_CLASSES = Object.freeze({
+    unknown: UNKNOWN_STYLE,
+    formula: FORMULA_STYLE,
+    default: "has-text-primary",
+    constants: "has-text-white",
+});
 
 function escapeHtmlAttr(s) {
     return String(s)

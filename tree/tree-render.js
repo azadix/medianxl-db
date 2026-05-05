@@ -1,6 +1,18 @@
 // Skills rendering and grid layout functionality
 import { getFileSkillStore } from './skill-data-store.js';
-import { getSkillPoints, getAllSkillPoints, getMinimumRequiredLevel, calculateEffectiveMaxLevel, getSkillRestrictions, canAllocateSkillPoints, addSkillPoint, removeSkillPoint, addSkillPointsBatch, removeSkillPointsBatch } from '../character/character-state.js';
+import {
+  getSkillPoints,
+  getAllSkillPoints,
+  getMinimumRequiredLevel,
+  calculateEffectiveMaxLevel,
+  getSkillRestrictions,
+  canAllocateSkillPoints,
+  addSkillPoint,
+  removeSkillPoint,
+  addSkillPointsBatch,
+  removeSkillPointsBatch,
+  isSkillDisabled
+} from '../character/character-state.js';
 import { getSkillIconHTML } from '../utils.js';
 import { getCurrentVersion, versionToTreeAssetFolder } from '../version-config.js';
 import { ToastManager } from './ToastManager.js';
@@ -154,18 +166,25 @@ export function buildPlannerSkillCardData(skillEntry, opts = {}) {
     );
 
     if (!isOSkill) {
+        const tags = Array.isArray(skillEntry.tags) ? skillEntry.tags : [];
+        const isPassive = tags.includes('Passive');
+        const isUpgrade = tags.includes('Upgrade');
         return {
             skillId: skillEntry.id,
             numericId: skillEntry.skillId,
             classId: skillEntry.classId,
             displayName: skillEntry.name,
+            tabName: skillEntry.tabName,
             iconHTML: getIconFn ? getIconFn(skillEntry.image, skillEntry.class) : '',
             hasDescription: skillEntry.hasDetails || false,
             currentPoints,
             maxPoints,
             canAllocate,
             restrictions,
-            isInnate: false
+            isInnate: false,
+            isPassive,
+            isUpgrade,
+            isDisabled: isSkillDisabled(skillEntry.id)
         };
     }
 
@@ -184,6 +203,13 @@ export function buildPlannerSkillCardData(skillEntry, opts = {}) {
         if (internal) variantStateKey = internal;
     }
 
+    // Resolve internal id for tags + disabled toggle (oSkills may only have numericId).
+    const internalId = variantStateKey || (numericId != null ? getFileSkillStore()?.internalNameByNumericId(numericId) : null);
+    const det = internalId ? getFileSkillStore()?.getSkillDetail(internalId) : null;
+    const tags = Array.isArray(det?.tags) ? det.tags : [];
+    const isPassive = tags.includes('Passive');
+    const isUpgrade = tags.includes('Upgrade');
+
     return {
         skillId: skillEntry.skillId || skillEntry.skillName,
         numericId,
@@ -196,6 +222,10 @@ export function buildPlannerSkillCardData(skillEntry, opts = {}) {
         canAllocate,
         restrictions,
         isInnate: false,
+        tabName: 'oSkill',
+        isPassive,
+        isUpgrade,
+        isDisabled: internalId ? isSkillDisabled(internalId) : false,
         variants: numericId != null ? listSkillVariants(numericId) : []
     };
 }
