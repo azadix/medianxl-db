@@ -149,6 +149,12 @@
       "name": "Passive"
     },
     {
+      "id": 69,
+      "class_id": 1,
+      "tab_index": 4,
+      "name": "Innate"
+    },
+    {
       "id": 1,
       "class_id": 2,
       "tab_index": 1,

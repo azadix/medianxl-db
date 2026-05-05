@@ -1223,9 +1223,9 @@
     "numericId": 13,
     "displayName": "Attack",
     "classId": 1,
-    "tab": 65,
+    "tab": 69,
     "class": "Other",
-    "tabName": "oSkill",
+    "tabName": "Innate",
     "tags": [
       "Attack",
       "Weapon Damage"
@@ -12008,52 +12008,6 @@
     "image": "icons-bar_94.png"
   },
   {
-    "id": "left_hand_swing",
-    "numericId": 130,
-    "displayName": "Left Hand Swing",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [
-      "Attack",
-      "Weapon Damage"
-    ],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [
-      "Normal attack"
-    ],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_3.png"
-  },
-  {
-    "id": "left_hand_throw",
-    "numericId": 131,
-    "displayName": "Left Hand Throw",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [
-      "Attack",
-      "Weapon Damage"
-    ],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [
-      "Throw equipped item"
-    ],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_5.png"
-  },
-  {
     "id": "lemures",
     "numericId": 592,
     "displayName": "Lemures",
@@ -13747,9 +13701,9 @@
     "numericId": 151,
     "displayName": "Move Only",
     "classId": 1,
-    "tab": 65,
+    "tab": 69,
     "class": "Other",
-    "tabName": "oSkill",
+    "tabName": "Innate",
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
@@ -21149,9 +21103,9 @@
     "numericId": 246,
     "displayName": "Throw",
     "classId": 1,
-    "tab": 65,
+    "tab": 69,
     "class": "Other",
-    "tabName": "oSkill",
+    "tabName": "Innate",
     "tags": [
       "Attack",
       "Weapon Damage"
@@ -21736,9 +21690,9 @@
     "numericId": 257,
     "displayName": "Town Portal",
     "classId": 1,
-    "tab": 65,
+    "tab": 69,
     "class": "Other",
-    "tabName": "oSkill",
+    "tabName": "Innate",
     "tags": [
       "Spell"
     ],
@@ -22070,9 +22024,9 @@
     "numericId": 266,
     "displayName": "Unsummon",
     "classId": 1,
-    "tab": 65,
+    "tab": 69,
     "class": "Other",
-    "tabName": "oSkill",
+    "tabName": "Innate",
     "tags": [],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,

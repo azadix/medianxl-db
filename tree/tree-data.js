@@ -77,8 +77,14 @@ async function loadSkillsFromFileData(plannerOnly) {
         throw new Error('File skill catalog is empty');
     }
     const loadedSkills = [];
+    const sharedInnateRows = [];
     for (const row of store.catalog) {
-        if (plannerOnly && row.classId === 1) continue;
+        if (plannerOnly && row.classId === 1) {
+            if (Number(row.tab) === 69) {
+                sharedInnateRows.push(row);
+            }
+            continue;
+        }
         const sk = buildSkillFromCatalogRow(store, row);
         if (sk) loadedSkills.push(sk);
     }
@@ -89,6 +95,39 @@ async function loadSkillsFromFileData(plannerOnly) {
     let out = buildPlannerSkillsFromTreeStruct(loadedSkills, layoutRoot);
     if (layoutRoot) {
         applyTreeStructLayoutToSkills(out, layoutRoot);
+    }
+    if (sharedInnateRows.length > 0) {
+        const classNameById = new Map((store.gameMeta?.classes || []).map((c) => [Number(c.id), c.name]));
+        const innateTabIdByClassId = new Map(
+            (store.gameMeta?.classTabs || [])
+                .filter((ct) => String(ct?.name) === 'Innate')
+                .map((ct) => [Number(ct.class_id), Number(ct.id)])
+        );
+        const playableClassIds = (store.gameMeta?.classes || [])
+            .map((c) => Number(c.id))
+            .filter((id) => Number.isFinite(id) && id !== 1);
+
+        const baseSharedInnateSkills = sharedInnateRows
+            .map((row) => buildSkillFromCatalogRow(store, row))
+            .filter(Boolean);
+
+        for (const classId of playableClassIds) {
+            const className = classNameById.get(classId);
+            const innateTabId = innateTabIdByClassId.get(classId);
+            if (!className || innateTabId == null || !Number.isFinite(innateTabId)) continue;
+
+            for (const base of baseSharedInnateSkills) {
+                const sk = base.clone();
+                sk.class = className;
+                sk.classId = classId;
+                sk.tab = innateTabId;
+                sk.tabName = 'Innate';
+                sk.row = 0;
+                sk.col = 0;
+                sk.sharedInnate = true;
+                out.push(sk);
+            }
+        }
     }
     const masteryByClass = new Map();
     out.forEach((s) => {

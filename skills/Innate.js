@@ -20,6 +20,9 @@ export default class Innate extends Skill {
      */
     static isInnateSkill(skill) {
         if (!skill) return false;
+        if (String(skill.tabName || '').toLowerCase() === 'innate') {
+            return true;
+        }
         const internal =
             typeof skill.id === 'string' && skill.id.trim() !== ''
                 ? skill.id

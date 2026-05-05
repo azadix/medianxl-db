@@ -31,6 +31,14 @@ const classSkills = computed(() => {
   return payload.value.skillsList.filter((s) => s.class === payload.value.selectedClass);
 });
 
+const sharedInnateSkills = computed(() => {
+  return classSkills.value.filter((s) => s.tabName === 'Innate' && s.sharedInnate);
+});
+
+const classSpecificInnateSkills = computed(() => {
+  return classSkills.value.filter((s) => s.tabName === 'Innate' && !s.sharedInnate);
+});
+
 const tabsByName = computed(() => {
   const tabs = {};
   for (const skill of classSkills.value) {
@@ -227,33 +235,76 @@ onUnmounted(() => {
       <PlannerSkillPointsBadge />
     </div>
     <div class="planner-skills-tab-panels">
-      <div
-        v-for="tabName in sortedTabNames"
-        :id="'tab-' + tabName"
-        :key="tabName"
-        class="skills-grid"
-        :style="{
-          display: activeTab === tabName ? 'grid' : 'none',
-          gridTemplateRows: `repeat(${gridTemplateDims(tabName).rows}, auto)`,
-          gridTemplateColumns: `repeat(${gridTemplateDims(tabName).cols}, 1fr)`,
-        }"
-      >
-        <template v-for="cell in cellsForTab(tabName)" :key="tabName + '-' + cell.r + '-' + cell.c">
-          <SkillCard
-            v-if="cell.skill"
-            :style="{ gridRow: cell.gr, gridColumn: cell.gc }"
-            :card-data="cardDataForSkill(cell.skill)"
-            :planner-revision="store.revision"
-            @plus="(d) => handleSkillPointChange(cell.skill, d, payload.skillsList)"
-            @minus="(d) => handleSkillPointChange(cell.skill, d, payload.skillsList)"
-          />
+      <template v-for="tabName in sortedTabNames" :key="tabName">
+        <div
+          v-if="tabName !== 'Innate'"
+          :id="'tab-' + tabName"
+          class="skills-grid"
+          :style="{
+            display: activeTab === tabName ? 'grid' : 'none',
+            gridTemplateRows: `repeat(${gridTemplateDims(tabName).rows}, auto)`,
+            gridTemplateColumns: `repeat(${gridTemplateDims(tabName).cols}, 1fr)`,
+          }"
+        >
+          <template v-for="cell in cellsForTab(tabName)" :key="tabName + '-' + cell.r + '-' + cell.c">
+            <SkillCard
+              v-if="cell.skill"
+              :style="{ gridRow: cell.gr, gridColumn: cell.gc }"
+              :card-data="cardDataForSkill(cell.skill)"
+              :planner-revision="store.revision"
+              @plus="(d) => handleSkillPointChange(cell.skill, d, payload.skillsList)"
+              @minus="(d) => handleSkillPointChange(cell.skill, d, payload.skillsList)"
+            />
+            <div
+              v-else
+              class="empty-skill-card"
+              :style="{ gridRow: cell.gr, gridColumn: cell.gc }"
+            />
+          </template>
+        </div>
+
+        <div v-else class="planner-innate-sections" :style="{ display: activeTab === 'Innate' ? 'block' : 'none' }">
           <div
-            v-else
-            class="empty-skill-card"
-            :style="{ gridRow: cell.gr, gridColumn: cell.gc }"
-          />
-        </template>
-      </div>
+            v-if="classSpecificInnateSkills.length"
+            class="skills-grid mb-3"
+            :style="{
+              display: 'grid',
+              gridTemplateRows: `repeat(${Math.ceil(classSpecificInnateSkills.length / 3)}, auto)`,
+              gridTemplateColumns: 'repeat(3, 1fr)',
+            }"
+          >
+            <SkillCard
+              v-for="(sk, idx) in classSpecificInnateSkills"
+              :key="'class-innate-' + String(sk.id)"
+              :style="{
+                gridRow: Math.floor(idx / 3) + 1,
+                gridColumn:
+                  classSpecificInnateSkills.length === 1 ? 2 : (idx % 3) + 1,
+              }"
+              :card-data="cardDataForSkill(sk)"
+              :planner-revision="store.revision"
+            />
+          </div>
+
+          <div
+            v-if="sharedInnateSkills.length"
+            class="skills-grid"
+            :style="{
+              display: 'grid',
+              gridTemplateRows: `repeat(${Math.ceil(sharedInnateSkills.length / 3)}, auto)`,
+              gridTemplateColumns: 'repeat(3, 1fr)',
+            }"
+          >
+            <SkillCard
+              v-for="(sk, idx) in sharedInnateSkills"
+              :key="'shared-innate-' + String(sk.id)"
+              :style="{ gridRow: Math.floor(idx / 3) + 1, gridColumn: (idx % 3) + 1 }"
+              :card-data="cardDataForSkill(sk)"
+              :planner-revision="store.revision"
+            />
+          </div>
+        </div>
+      </template>
 
       <div
         id="tab-oSkills"
