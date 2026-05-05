@@ -44,7 +44,8 @@
   align-items: center;
   justify-content: center;
   gap: 1rem;
-  min-width: 0;
+  min-width: min(22rem, 42vw);
+  flex-shrink: 0;
 }
 
 .planner-header-identity {

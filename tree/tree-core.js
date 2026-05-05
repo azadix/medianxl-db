@@ -1590,15 +1590,13 @@ function showHelpModal() {
                 <ul>
                     <li>Hover over skill cards to see detailed tooltips with scaling values</li>
                     <li>Use the "+# to All Skills" input to apply bonuses to all skills</li>
-                    <li>Character stats: use Life, Mana, Str, Dex, Energy, Vitality fields; skills can add extra stats. Life and Mana cannot go below 0.</li>
                     <li>Arrows between skills show prerequisite relationships</li>
                     <li>Skills that are maxed out are highlighted in yellow</li>
                     <li>Use "Load build" to open the saved-builds list; use Export (next to Save) on the planner toolbar to open a dialog where you set the build name stored in the JSON (default Unnamed Build if you leave the name empty)</li>
                 </ul>
                 
                 <h4 class="title is-5 mb-3 mt-5">Character Stats</h4>
-                <p>The sidebar lists core attributes as numeric fields. Extra stats appear when a skill formula references them; use &times; to remove unused extras.</p>
-                <p>Advanced: paste multiple lines under &quot;raw stat lines&quot; using <code>{{stat_key}}=value</code>. Saved builds store the same text format as before.</p>
+                <p>The sidebar lists core attributes as numeric fields. Extra stats appear when a skill formula references them.</p>
             </div>
         </section>
         <footer class="modal-card-foot p-4">

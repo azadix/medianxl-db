@@ -16893,31 +16893,6 @@
     "image": "icons-nec_144.png"
   },
   {
-    "id": "remorseless_winter",
-    "numericId": 183,
-    "displayName": "Remorseless Winter",
-    "classId": 1,
-    "tab": 68,
-    "class": "Other",
-    "tabName": "Passive",
-    "tags": [
-      "Passive"
-    ],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [
-      "100% of Vitality Added as Cold Damage to Weapon"
-    ],
-    "restriction": [
-      "Max Life gained per point of Vitality reduced by 0.9",
-      "You Cannot Deal Fire, Lightning or Poison Damage"
-    ],
-    "skillEffect": [],
-    "image": "icons-shared_missing.png"
-  },
-  {
     "id": "rend",
     "numericId": 503,
     "displayName": "Rend",
@@ -17669,28 +17644,6 @@
       "{{deadly_strike}}"
     ],
     "image": "icons-bar_126.png"
-  },
-  {
-    "id": "scepter_mastery",
-    "numericId": 195,
-    "displayName": "Scepter Mastery",
-    "classId": 1,
-    "tab": 68,
-    "class": "Other",
-    "tabName": "Passive",
-    "tags": [
-      "Passive"
-    ],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [
-      "+120% Weapon Physical Damage if Wielding a Scepter"
-    ],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_missing.png"
   },
   {
     "id": "scion",
@@ -21852,30 +21805,6 @@
     "image": "icons-pal_156.png"
   },
   {
-    "id": "treewarden_morph",
-    "numericId": 258,
-    "displayName": "Treewarden Morph",
-    "classId": 1,
-    "tab": 68,
-    "class": "Other",
-    "tabName": "Passive",
-    "tags": [
-      "Passive"
-    ],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [
-      "Transform into a massive treant"
-    ],
-    "restriction": [],
-    "skillEffect": [
-      "Allows the player to reach 5 FPA (for Barbarian maximum while wielding Labrys is 7 FPA)"
-    ],
-    "image": "icons-shared_missing.png"
-  },
-  {
     "id": "tremor",
     "numericId": 259,
     "displayName": "Tremor",
@@ -23895,7 +23824,7 @@
         "statKey": "cooldown",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(25)"
+        "value0": "frames(max(25,2.5))"
       },
       {
         "statKey": "base_cold_damage_based_on_uncapped_cold_resistance",

@@ -698,18 +698,18 @@ async function buildTooltipContent(skillData, level, warningMessage = '', isOSki
         
         // Check if skill has scaling data
         const hasScaling = checkSkillHasScaling(skillData.numericId);
-        
-        if (hasScaling) {
-            html += `<div class="tooltip-level-indicator is-italic">Level ${scalingLevel} values:</div>`;
-        }
-        
-        // Render main description
+
+        // Render main description first
         if (skillData.description) {
             const expandedDesc = await expandPlaceholdersWithScaling(skillData.numericId, scalingLevel, skillData.description, skillData.id, characterState, showFormulas, variantKey);
             html += `<div class="tooltip-main-desc has-text-centered mb-2">${expandedDesc}</div>`;
         }
-        
-        // Render skill effect
+
+        if (hasScaling) {
+            html += `<div class="tooltip-level-indicator is-italic">Level ${scalingLevel} values:</div>`;
+        }
+
+        // Render skill effect (stat lines)
         if (skillData.skillEffect) {
             const expandedEffect = await expandPlaceholdersWithScaling(skillData.numericId, scalingLevel, skillData.skillEffect, skillData.id, characterState, showFormulas, variantKey);
             const lines = expandedEffect.split('\n');

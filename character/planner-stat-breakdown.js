@@ -170,14 +170,14 @@ export function buildPlannerStatBreakdownHtml(statKey) {
   } else if (['strength', 'dexterity', 'vitality', 'energy'].includes(key) && row) {
     const baseline = Math.floor(Number(row[key]) || 0);
     const current = Math.floor(ch.getRawStat(key));
-    const above = Math.max(0, current - baseline);
+    const delta = current - baseline;
     const alloc = Math.max(0, Math.floor(Number(ch.statAllocation?.[key]) || 0));
 
     const attrRows = [{ label: 'Class baseline', value: fmt(baseline) }];
-    if (above > 0) {
+    if (delta !== 0) {
       attrRows.push({
-        label: 'Points above baseline (manual edits)',
-        value: `+${fmt(above)}`
+        label: 'Manual delta vs class baseline',
+        value: `${delta >= 0 ? '+' : ''}${fmt(delta)}`
       });
     }
     if (alloc > 0) {

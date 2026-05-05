@@ -7,7 +7,7 @@ import { getFileSkillStore } from '../../../tree/skill-data-store.js';
 import { usePlannerSkillReferencedStats } from '../../composables/usePlannerSkillReferencedStats.js';
 
 const statTooltipRoot = ref(null);
-/** @type {import('vue').Ref<{ key: string, label: string, min: number|null, max: number|null, allowNegative?: boolean, default?: number, alwaysVisible?: boolean, sortOrder?: number }[]>} */
+/** @type {import('vue').Ref<{ key: string, label: string, min: number|null, max: number|null, allowNegative?: boolean, default?: number, alwaysVisible?: boolean, sortOrder?: number, section?: string }[]>} */
 const statDefs = ref(getPlannerCharacterStatDefs());
 /** @type {import('vue').Ref<Record<string, number>>} */
 const stats = ref({});
@@ -22,6 +22,8 @@ const statFilters = [
   { id: 'attributes', label: 'Attributes' },
   { id: 'resists', label: 'Resists' },
   { id: 'damage', label: 'Damage' },
+  { id: 'defense', label: 'Defense' },
+  { id: 'minions', label: 'Minions' },
   { id: 'misc', label: 'Misc' },
 ];
 
@@ -52,17 +54,13 @@ const vitals = computed(() => [
   { key: 'mana', label: 'Mana', value: Math.floor(Number(stats.value.mana) || 0) },
 ]);
 
-function statCategory(def) {
-  const key = String(def.key || '').toLowerCase();
-  if (['strength', 'dexterity', 'energy', 'vitality'].includes(key)) return 'attributes';
-  if (key.includes('resistance') || key.endsWith('_res')) return 'resists';
-  if (key.includes('damage') || key.includes('spell') || key.includes('attack')) return 'damage';
-  return 'misc';
+function statSectionForDef(def) {
+  return def.section || '__unknown__';
 }
 
 const filteredStatDefs = computed(() => {
   if (statFilter.value === 'all') return visibleStatDefs.value;
-  return visibleStatDefs.value.filter((def) => statCategory(def) === statFilter.value);
+  return visibleStatDefs.value.filter((def) => statSectionForDef(def) === statFilter.value);
 });
 
 /** @param {{ allowNegative?: boolean, min: number|null }} def */

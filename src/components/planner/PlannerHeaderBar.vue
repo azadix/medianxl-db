@@ -5,6 +5,7 @@ import {
   getCurrentBuildDisplayName,
   plannerBackToMenuFromTree,
   plannerExportBuildClick,
+  plannerMenuOpenHelp,
   plannerRenameBuildClick,
   plannerResetBuildClick,
   plannerSaveAsBuildClick,
@@ -87,6 +88,16 @@ onUnmounted(() => {
       <button id="exportBuildBtn" class="button is-link is-outlined" type="button" @click="plannerExportBuildClick">
         <span class="icon"><i class="fa-solid fa-arrow-up-from-bracket"></i></span>
         <span>Export</span>
+      </button>
+      <button
+        id="plannerHelpBtn"
+        class="button is-info is-outlined"
+        type="button"
+        title="Planner help"
+        aria-label="Planner help"
+        @click="plannerMenuOpenHelp"
+      >
+        <span>?</span>
       </button>
     </div>
 

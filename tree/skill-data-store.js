@@ -136,7 +136,7 @@ export class SkillFileStore {
         this.catalogByInternalId = new Map();
         /** @type {Map<string, object>} */
         this.balanceCache = new Map();
-        /** @type {Array<{id?:number,key:string,label:string,min?:number|null,max?:number|null,allowNegative?:boolean,default?:number,alwaysVisible?:boolean,sortOrder?:number}>} */
+        /** @type {Array<{id?:number,key:string,label:string,min?:number|null,max?:number|null,allowNegative?:boolean,default?:number,alwaysVisible?:boolean,sortOrder?:number,section?:string}>} */
         this.characterStatRegistry = [];
         /** @type {Map<string, object>} */
         this.characterStatByKeyLower = new Map();

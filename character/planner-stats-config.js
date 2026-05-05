@@ -6,6 +6,10 @@
 import { getFileSkillStore } from '../tree/skill-data-store.js';
 
 /**
+ * @typedef {'attributes'|'resists'|'damage'|'defense'|'minions'|'misc'} PlannerStatSection
+ */
+
+/**
  * @typedef {{
  *   id?: number,
  *   key: string,
@@ -15,34 +19,18 @@ import { getFileSkillStore } from '../tree/skill-data-store.js';
  *   allowNegative?: boolean,
  *   default?: number,
  *   alwaysVisible?: boolean,
- *   sortOrder?: number
+ *   sortOrder?: number,
+ *   section?: PlannerStatSection
  * }} PlannerCharacterStatDef
  */
 
-/** Minimal registry before SkillFileStore init (tests / early load). */
-const FALLBACK_REGISTRY = /** @type {PlannerCharacterStatDef[]} */ ([
-  { key: 'life', label: 'Life', min: 0, max: null, allowNegative: false, alwaysVisible: true, sortOrder: 0 },
-  { key: 'mana', label: 'Mana', min: 0, max: null, allowNegative: false, alwaysVisible: true, sortOrder: 1 },
-  { key: 'strength', label: 'Strength', min: 0, max: null, allowNegative: false, alwaysVisible: true, sortOrder: 2 },
-  { key: 'dexterity', label: 'Dexterity', min: 0, max: null, allowNegative: false, alwaysVisible: true, sortOrder: 3 },
-  { key: 'energy', label: 'Energy', min: 0, max: null, allowNegative: false, alwaysVisible: true, sortOrder: 4 },
-  { key: 'vitality', label: 'Vitality', min: 0, max: null, allowNegative: false, alwaysVisible: true, sortOrder: 5 },
-  { key: 'fire_resistance', label: 'Fire Resistance', min: null, max: null, allowNegative: true, alwaysVisible: true, sortOrder: 6 },
-  { key: 'cold_resistance', label: 'Cold Resistance', min: null, max: null, allowNegative: true, alwaysVisible: true, sortOrder: 7 },
-  { key: 'lightning_resistance', label: 'Lightning Resistance', min: null, max: null, allowNegative: true, alwaysVisible: true, sortOrder: 8 },
-  { key: 'poison_resistance', label: 'Poison Resistance', min: null, max: null, allowNegative: true, alwaysVisible: true, sortOrder: 9 },
-  { key: 'magic_resistance', label: 'Magic Resistance', min: null, max: null, allowNegative: true, alwaysVisible: true, sortOrder: 10 },
-  { key: 'physical_resistance', label: 'Physical Resistance', min: null, max: null, allowNegative: true, alwaysVisible: true, sortOrder: 11 }
-]);
-
-/** @type {Map<string, PlannerCharacterStatDef>|null} */
-let _fallbackByKey = null;
-
-function fallbackByKeyMap() {
-  if (!_fallbackByKey) {
-    _fallbackByKey = new Map(FALLBACK_REGISTRY.map((r) => [r.key.toLowerCase(), r]));
+function normalizeSection(raw) {
+  if (typeof raw !== 'string') return undefined;
+  const s = raw.trim().toLowerCase();
+  if (s === 'attributes' || s === 'resists' || s === 'damage' || s === 'defense' || s === 'minions' || s === 'misc') {
+    return /** @type {PlannerStatSection} */ (s);
   }
-  return _fallbackByKey;
+  return undefined;
 }
 
 /**
@@ -58,6 +46,8 @@ function normalizeRegistryRows(rows) {
     const soRaw = r.sortOrder;
     const sortOrderNum =
       soRaw != null && soRaw !== '' ? Number(soRaw) : Number.NaN;
+    const section = normalizeSection(r.section);
+
     const def = {
       id: r.id,
       key,
@@ -66,7 +56,8 @@ function normalizeRegistryRows(rows) {
       max: r.max != null && r.max !== '' ? Number(r.max) : null,
       allowNegative: !!r.allowNegative,
       default: r.default != null ? Number(r.default) : 0,
-      alwaysVisible: !!r.alwaysVisible
+      alwaysVisible: !!r.alwaysVisible,
+      section
     };
     if (Number.isFinite(sortOrderNum)) {
       def.sortOrder = sortOrderNum;
@@ -115,7 +106,7 @@ export function getPlannerCharacterStatDefs() {
   if (raw && raw.length) {
     return sortPlannerStatDefsForDisplay(normalizeRegistryRows(raw));
   }
-  return sortPlannerStatDefsForDisplay([...FALLBACK_REGISTRY]);
+  return [];
 }
 
 /**
@@ -138,7 +129,7 @@ export function getPlannerStatDef(key) {
     const [def] = normalizeRegistryRows([row]);
     return def;
   }
-  return fallbackByKeyMap().get(k);
+  return undefined;
 }
 
 /**
@@ -242,9 +233,3 @@ export function plannerStatsToTextLines(stats) {
   }
   return lines;
 }
-
-/** @deprecated Use getPlannerCharacterStatDefs */
-export const PLANNER_BASE_STATS = FALLBACK_REGISTRY;
-
-/** @deprecated Use getPlannerBaseStatKeys() after store init */
-export const PLANNER_BASE_STAT_KEYS = FALLBACK_REGISTRY.map((x) => x.key);

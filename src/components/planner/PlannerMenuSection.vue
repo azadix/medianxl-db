@@ -4,7 +4,6 @@ import {
   plannerMenuNewBuild,
   plannerMenuOpenLoadSection,
   plannerMenuImportBuild,
-  plannerMenuOpenHelp,
 } from '../../../tree/tree-core.js';
 const knownIssuesLines = ref(/** @type {string[]} */ ([]));
 const knownIssuesLoadError = ref('');
@@ -58,17 +57,6 @@ onMounted(async () => {
         >
           <span class="icon-text">
             <span>Load build</span>
-          </span>
-        </button>
-
-        <button
-          id="menuHelpBtn"
-          class="button is-large is-fullwidth is-inverted is-info"
-          type="button"
-          @click="plannerMenuOpenHelp"
-        >
-          <span class="icon-text">
-            <span>Help</span>
           </span>
         </button>
       </div>
