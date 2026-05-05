@@ -47,6 +47,8 @@ function normalizeRegistryRows(rows) {
     const sortOrderNum =
       soRaw != null && soRaw !== '' ? Number(soRaw) : Number.NaN;
     const section = normalizeSection(r.section);
+    // Default allowNegative: true unless explicitly false (bounds still enforced via min/max).
+    const allowNegative = r.allowNegative === false ? false : true;
 
     const def = {
       id: r.id,
@@ -54,7 +56,7 @@ function normalizeRegistryRows(rows) {
       label: typeof r.label === 'string' && r.label.trim() ? r.label.trim() : key,
       min: r.min != null && r.min !== '' ? Number(r.min) : null,
       max: r.max != null && r.max !== '' ? Number(r.max) : null,
-      allowNegative: !!r.allowNegative,
+      allowNegative,
       default: r.default != null ? Number(r.default) : 0,
       alwaysVisible: !!r.alwaysVisible,
       section

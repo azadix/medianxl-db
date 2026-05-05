@@ -87,6 +87,7 @@
     "label": "Current Stamina",
     "min": null,
     "max": null,
+    "allowNegative": false,
     "section": "misc"
   },
   {
@@ -962,7 +963,6 @@
     "label": "#% Chance to cast [SKILL] on kill",
     "min": null,
     "max": null,
-    "allowNegative": true,
     "section": "misc"
   },
   {
@@ -1044,7 +1044,6 @@
     "label": "+# Defense (Based on Character Level) [(value / 32) * [LEVEL]]",
     "min": null,
     "max": null,
-    "allowNegative": true,
     "section": "defense"
   },
   {
