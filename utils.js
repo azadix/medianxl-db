@@ -4,20 +4,16 @@ const ATLAS_SIZE = 912;
 const ICONS_PER_ROW = Math.floor(ATLAS_SIZE / ICON_SIZE);
 export const MISSING_IMAGE_NAME = "icons-shared_missing.png";
 
-const SKILL_STYLE = "has-text-success";
-const FORMULA_STYLE = "has-text-info";
-const UNKNOWN_STYLE = "has-text-danger";
-const MISSING_STAT_STYLE = "has-text-danger";
-
 /**
  * HTML classes used by scaling placeholder rendering (tooltips / descriptions).
  * Single source of truth (was duplicated in skills/scaling-display-html.js).
  */
 export const SCALING_DISPLAY_HTML_CLASSES = Object.freeze({
-    unknown: UNKNOWN_STYLE,
-    formula: FORMULA_STYLE,
+    unknown: "has-text-danger",
+    formula: "has-text-info",
     default: "has-text-primary",
     constants: "has-text-white",
+    skill: "has-text-success"
 });
 
 function escapeHtmlAttr(s) {
@@ -282,18 +278,18 @@ export async function expandPlaceholdersWithScaling(numericId, level, descriptio
             if (idRef) {
                 const row = lookupSkillNameAndDisplayByNumericId(idRef[1]);
                 if (row) {
-                    return `<p class='${SKILL_STYLE}'>${row.displayName}</p>`;
+                    return `<p class='${SCALING_DISPLAY_HTML_CLASSES.skill}'>${row.displayName}</p>`;
                 }
-                return `<span class="${UNKNOWN_STYLE}">[unknown skill id:${idRef[1]}]</span>`;
+                return `<span class="${SCALING_DISPLAY_HTML_CLASSES.unknown}">[unknown skill id:${idRef[1]}]</span>`;
             }
             const displayName = lookupMergedDisplayNameByInternalName(trimmed);
             if (displayName) {
-                return `<p class='${SKILL_STYLE}'>${displayName}</p>`;
+                return `<p class='${SCALING_DISPLAY_HTML_CLASSES.skill}'>${displayName}</p>`;
             }
-            return `<span class="${UNKNOWN_STYLE}">[unknown skill:${trimmed}]</span>`;
+            return `<span class="${SCALING_DISPLAY_HTML_CLASSES.unknown}">[unknown skill:${trimmed}]</span>`;
         } catch (error) {
             console.warn('Error expanding skill name placeholder:', error);
-            return `<span class="${UNKNOWN_STYLE}">[skill placeholder error]</span>`;
+            return `<span class="${SCALING_DISPLAY_HTML_CLASSES.unknown}">[skill placeholder error]</span>`;
         }
     });
     
@@ -351,7 +347,7 @@ export async function expandPlaceholdersWithScaling(numericId, level, descriptio
                         
                         if (hasMissingValues) {
                             // Show ??? if any required values are missing
-                            const q = `<span class="${UNKNOWN_STYLE}">???</span>`;
+                            const q = `<span class="${SCALING_DISPLAY_HTML_CLASSES.unknown}">???</span>`;
                             output = (format || '{name}: {value}')
                                 .replace('{name}', name)
                                 .replace('{value0}', q)
@@ -420,7 +416,7 @@ export async function expandPlaceholdersWithScaling(numericId, level, descriptio
                             );
                             
                             // Format as single value
-                            const calculatedValueHtml = `<span class="${FORMULA_STYLE}">${calculatedMana}</span>`;
+                            const calculatedValueHtml = `<span class="${SCALING_DISPLAY_HTML_CLASSES.formula}">${calculatedMana}</span>`;
                             
                             // Replace all value placeholders with the calculated value
                             output = (format || '{name}: {value}')
@@ -436,7 +432,7 @@ export async function expandPlaceholdersWithScaling(numericId, level, descriptio
                 } else {
                     // No scaling values found at all - show ??? for all values
                     if (key === 'mana_cost') {
-                        const q = `<span class="${UNKNOWN_STYLE}">???</span>`;
+                        const q = `<span class="${SCALING_DISPLAY_HTML_CLASSES.unknown}">???</span>`;
                         output = (format || '{name}: {value}')
                             .replace('{name}', name)
                             .replace('{value0}', q)
@@ -444,7 +440,7 @@ export async function expandPlaceholdersWithScaling(numericId, level, descriptio
                             .replace('{value2}', "")
                             .replace('{value3}', "");
                     } else {
-                        const q = `<span class="${UNKNOWN_STYLE}">???</span>`;
+                        const q = `<span class="${SCALING_DISPLAY_HTML_CLASSES.unknown}">???</span>`;
                         output = (format || '{name}: {value}')
                             .replace('{name}', name)
                             .replace('{value0}', q)
@@ -466,7 +462,7 @@ export async function expandPlaceholdersWithScaling(numericId, level, descriptio
                 f2 = st2.format;
             }
             if (n2 != null) {
-                const q = `<span class="${UNKNOWN_STYLE}">???</span>`;
+                const q = `<span class="${SCALING_DISPLAY_HTML_CLASSES.unknown}">???</span>`;
                 output = (f2 || '{name}: {value}')
                     .replace('{name}', n2)
                     .replace('{value0}', q)
@@ -477,7 +473,7 @@ export async function expandPlaceholdersWithScaling(numericId, level, descriptio
                 // Skill text used {{stat}} not in stats.json (e.g. typo vs activation_frequency_effectiveness).
                 // Do not fall through to planner characterState.stats — keys like activation_frequency exist there as 0.
                 const esc = escapeHtmlAttr(rawKey);
-                output = `<span class="${MISSING_STAT_STYLE}">MISSING STAT - {{${esc}}}</span>`;
+                output = `<span class="${SCALING_DISPLAY_HTML_CLASSES.unknown}">MISSING STAT - {{${esc}}}</span>`;
             }
         }
 

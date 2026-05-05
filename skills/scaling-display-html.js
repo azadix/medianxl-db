@@ -14,16 +14,12 @@ import { SCALING_DISPLAY_HTML_CLASSES } from '../utils.js';
  * @returns {string} HTML fragment
  */
 export function formatScalingValuesToDescriptionHtml(scaling, statKeyLower = '') {
-  const UNKNOWN_STYLE = SCALING_DISPLAY_HTML_CLASSES.unknown;
-  const FORMULA_STYLE = SCALING_DISPLAY_HTML_CLASSES.formula;
-  const DEFAULT_STYLE = SCALING_DISPLAY_HTML_CLASSES.default;
-  const CONSTANTS_STYLE = SCALING_DISPLAY_HTML_CLASSES.constants;
 
   if (!scaling) {
-    return `<span class="${UNKNOWN_STYLE}">???</span>`;
+    return `<span class="${SCALING_DISPLAY_HTML_CLASSES.unknown}">???</span>`;
   }
   if (String(statKeyLower).toLowerCase() === 'mana_cost') {
-    return `<span class="${UNKNOWN_STYLE}">???</span>`;
+    return `<span class="${SCALING_DISPLAY_HTML_CLASSES.unknown}">???</span>`;
   }
 
   const name = scaling.statName || statKeyLower;
@@ -36,9 +32,9 @@ export function formatScalingValuesToDescriptionHtml(scaling, statKeyLower = '')
   const getValueClass = (valueIndex) => {
     const isFormula = scaling[`value${valueIndex}_formula`];
     const isConstant = scaling[`value${valueIndex}_constant`];
-    if (isFormula) return FORMULA_STYLE;
-    if (isConstant) return CONSTANTS_STYLE;
-    return DEFAULT_STYLE;
+    if (isFormula) return SCALING_DISPLAY_HTML_CLASSES.formula;
+    if (isConstant) return SCALING_DISPLAY_HTML_CLASSES.constants;
+    return SCALING_DISPLAY_HTML_CLASSES.default;
   };
 
   const hasAnyConstants = Boolean(
@@ -53,7 +49,7 @@ export function formatScalingValuesToDescriptionHtml(scaling, statKeyLower = '')
     const isFormula = scaling[`value${valueIndex}_formula`];
     const isConstant = scaling[`value${valueIndex}_constant`];
     if (isEmpty && (isFormula || isConstant || hasAnyConstants)) {
-      return `<span class="${UNKNOWN_STYLE}">???</span>`;
+      return `<span class="${SCALING_DISPLAY_HTML_CLASSES.unknown}">???</span>`;
     }
     return `<span class="${getValueClass(valueIndex)}">${defaultValue || ''}</span>`;
   };
