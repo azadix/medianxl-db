@@ -11316,24 +11316,6 @@
     "image": "icons-shared_missing.png"
   },
   {
-    "id": "kraken_stance",
-    "numericId": 127,
-    "displayName": "Kraken Stance",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_102.png"
-  },
-  {
     "id": "land_of_the_dead",
     "numericId": 689,
     "displayName": "Land of the Dead",
@@ -19387,14 +19369,32 @@
     "tab": 65,
     "class": "Other",
     "tabName": "oSkill",
-    "tags": [],
+    "tags": [
+      "Summon"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
-    "description": [],
+    "scalingConstants": [
+      {
+        "statKey": "minions",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "Minions",
+        "value1": "10"
+      }
+    ],
+    "description": [
+      "Summon a lot of really useless little demons to die for you"
+    ],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{minions}}",
+      "{{attack_rating}}",
+      "{{life}}",
+      "{{damage}}",
+      "{{mana_cost}}"
+    ],
     "image": "icons-shared_176.png"
   },
   {
@@ -21091,24 +21091,6 @@
     "restriction": [],
     "skillEffect": [],
     "image": "icons-shared_104.png"
-  },
-  {
-    "id": "unholy_armor",
-    "numericId": 264,
-    "displayName": "Unholy Armor",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_108.png"
   },
   {
     "id": "unseelie_curse",
