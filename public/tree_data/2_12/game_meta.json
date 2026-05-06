@@ -155,6 +155,12 @@
       "name": "Innate"
     },
     {
+      "id": 70,
+      "class_id": 1,
+      "tab_index": 5,
+      "name": "Mercenary only"
+    },
+    {
       "id": 1,
       "class_id": 2,
       "tab_index": 1,

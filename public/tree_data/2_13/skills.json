@@ -1074,9 +1074,9 @@
     "numericId": 10,
     "displayName": "Arrowside",
     "classId": 1,
-    "tab": 65,
+    "tab": 70,
     "class": "Other",
-    "tabName": "oSkill",
+    "tabName": "Mercenary only",
     "tags": [
       "Attack",
       "Weapon Damage"
@@ -1695,24 +1695,6 @@
     "image": "icons-ass_90.png"
   },
   {
-    "id": "bear_claw_nova",
-    "numericId": 18,
-    "displayName": "Bear Claw Nova",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_240.png"
-  },
-  {
     "id": "bear_companion",
     "numericId": 467,
     "displayName": "Bear Companion",
@@ -1918,24 +1900,6 @@
       "{{mana_cost}}"
     ],
     "image": "icons-shared_51.png"
-  },
-  {
-    "id": "blade_barrier",
-    "numericId": 21,
-    "displayName": "Blade Barrier",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_128.png"
   },
   {
     "id": "blade_spirits",
@@ -2156,24 +2120,6 @@
     "image": "icons-nec_198.png"
   },
   {
-    "id": "blindside",
-    "numericId": 24,
-    "displayName": "Blindside",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_missing.png"
-  },
-  {
     "id": "blink",
     "numericId": 362,
     "displayName": "Blink",
@@ -2232,24 +2178,6 @@
     "restriction": [],
     "skillEffect": [],
     "image": "icons-shared_148.png"
-  },
-  {
-    "id": "blood_flash",
-    "numericId": 26,
-    "displayName": "Blood Flash",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_52.png"
   },
   {
     "id": "blood_fury",
@@ -2528,24 +2456,6 @@
       "{{duration}}"
     ],
     "image": "icons-shared_18.png"
-  },
-  {
-    "id": "bloodspeakers_mark",
-    "numericId": 31,
-    "displayName": "Bloodspeaker's Mark",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_141.png"
   },
   {
     "id": "bloodstar",
@@ -2928,24 +2838,6 @@
       "{{wall_duration}}"
     ],
     "image": "icons-shared_23.png"
-  },
-  {
-    "id": "call_treewarden",
-    "numericId": 38,
-    "displayName": "Call Treewarden",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_54.png"
   },
   {
     "id": "carnage",
@@ -3753,24 +3645,6 @@
     "image": "icons-shared_288.png"
   },
   {
-    "id": "clobber",
-    "numericId": 50,
-    "displayName": "Clobber",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_143.png"
-  },
-  {
     "id": "cluster_bomb",
     "numericId": 51,
     "displayName": "Cluster Bomb",
@@ -4300,52 +4174,6 @@
     "image": "icons-shared_missing.png"
   },
   {
-    "id": "countdown",
-    "numericId": 56,
-    "displayName": "Countdown",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_163.png"
-  },
-  {
-    "id": "crane_stance",
-    "numericId": 57,
-    "displayName": "Crane Stance",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [
-      "Duration",
-      "Stance"
-    ],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [
-      "Increases damage and chance to avoid attacks"
-    ],
-    "restriction": [
-      "{{stance_affects_you}}"
-    ],
-    "skillEffect": [
-      "{{avoid_damage}}",
-      "{{physical_damage_percent}}"
-    ],
-    "image": "icons-shared_99.png"
-  },
-  {
     "id": "crimson_rite",
     "numericId": 296,
     "displayName": "Crimson Rite",
@@ -4586,24 +4414,6 @@
     "image": "icons-ama_82.png"
   },
   {
-    "id": "cyclone",
-    "numericId": 60,
-    "displayName": "Cyclone",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_222.png"
-  },
-  {
     "id": "dark_gathering",
     "numericId": 527,
     "displayName": "Dark Gathering",
@@ -4750,24 +4560,6 @@
     "image": "icons-shared_58.png"
   },
   {
-    "id": "death_coil",
-    "numericId": 63,
-    "displayName": "Death Coil",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_60.png"
-  },
-  {
     "id": "death_pact",
     "numericId": 528,
     "displayName": "Death Pact",
@@ -4870,24 +4662,6 @@
       "{{mana_cost}}"
     ],
     "image": "icons-nec_146.png"
-  },
-  {
-    "id": "death_shards",
-    "numericId": 64,
-    "displayName": "Death Shards",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_59.png"
   },
   {
     "id": "death_star",
@@ -5460,24 +5234,6 @@
       "30% of Weapon Physical damage bonuses added as Bonus Defense"
     ],
     "image": "icons-sor_162.png"
-  },
-  {
-    "id": "detonate",
-    "numericId": 69,
-    "displayName": "Detonate",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_21.png"
   },
   {
     "id": "devastation",
@@ -7544,24 +7300,6 @@
     "image": "icons-ama_122.png"
   },
   {
-    "id": "fire_bolt_nova",
-    "numericId": 81,
-    "displayName": "Fire Bolt Nova",
-    "classId": 1,
-    "tab": 66,
-    "class": "Other",
-    "tabName": "Proc",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_219.png"
-  },
-  {
     "id": "fire_cannonade",
     "numericId": 82,
     "displayName": "Fire Cannonade",
@@ -7586,24 +7324,6 @@
       "{{mana_cost}}"
     ],
     "image": "icons-shared_297.png"
-  },
-  {
-    "id": "fire_cascade",
-    "numericId": 83,
-    "displayName": "Fire Cascade",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_84.png"
   },
   {
     "id": "fire_elementals",
@@ -8990,24 +8710,6 @@
     "image": "icons-shared_101.png"
   },
   {
-    "id": "gift_of_vanquishing",
-    "numericId": 99,
-    "displayName": "Gift of Vanquishing",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_113.png"
-  },
-  {
     "id": "glacial_nova",
     "numericId": 100,
     "displayName": "Glacial Nova",
@@ -9217,24 +8919,6 @@
       "{{mana_cost}}"
     ],
     "image": "icons-shared_192.png"
-  },
-  {
-    "id": "gorefest",
-    "numericId": 103,
-    "displayName": "Gorefest",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_193.png"
   },
   {
     "id": "graveyard",
@@ -9690,24 +9374,6 @@
     "image": "icons-ass_36.png"
   },
   {
-    "id": "hail_of_stones",
-    "numericId": 106,
-    "displayName": "Hail of Stones",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_183.png"
-  },
-  {
     "id": "hailstorm",
     "numericId": 107,
     "displayName": "Hailstorm",
@@ -9827,24 +9493,6 @@
       "{{mana_cost}}"
     ],
     "image": "icons-shared_224.png"
-  },
-  {
-    "id": "hamstring",
-    "numericId": 109,
-    "displayName": "Hamstring",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_167.png"
   },
   {
     "id": "harbinger",
@@ -10773,24 +10421,6 @@
     "image": "icons-ama_104.png"
   },
   {
-    "id": "ice_beam",
-    "numericId": 114,
-    "displayName": "Ice Beam",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_194.png"
-  },
-  {
     "id": "ice_bolt_nova",
     "numericId": 115,
     "displayName": "Ice Bolt Nova",
@@ -10900,24 +10530,6 @@
       "{{mana_cost}}"
     ],
     "image": "icons-shared_87.png"
-  },
-  {
-    "id": "ice_whirl",
-    "numericId": 117,
-    "displayName": "Ice Whirl",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_196.png"
   },
   {
     "id": "iceburst",
@@ -11686,26 +11298,6 @@
     "image": "icons-ama_124.png"
   },
   {
-    "id": "kick",
-    "numericId": 125,
-    "displayName": "Kick",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [
-      "Kick target"
-    ],
-    "image": "icons-shared_3.png"
-  },
-  {
     "id": "knife_throw",
     "numericId": 126,
     "displayName": "Knife Throw",
@@ -11740,24 +11332,6 @@
     "restriction": [],
     "skillEffect": [],
     "image": "icons-shared_102.png"
-  },
-  {
-    "id": "lamia",
-    "numericId": 128,
-    "displayName": "Lamia",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_251.png"
   },
   {
     "id": "land_of_the_dead",
@@ -12833,24 +12407,6 @@
       "{{mana_cost}}"
     ],
     "image": "icons-ama_66.png"
-  },
-  {
-    "id": "mana_coil",
-    "numericId": 144,
-    "displayName": "Mana Coil",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_68.png"
   },
   {
     "id": "mana_pulse",
@@ -14530,24 +14086,6 @@
     "image": "icons-shared_122.png"
   },
   {
-    "id": "overpower",
-    "numericId": 159,
-    "displayName": "Overpower",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_40.png"
-  },
-  {
     "id": "pagan_rites",
     "numericId": 496,
     "displayName": "Pagan Rites",
@@ -16055,24 +15593,6 @@
     "image": "icons-sor_98.png"
   },
   {
-    "id": "pyroclastic_flow",
-    "numericId": 171,
-    "displayName": "Pyroclastic Flow",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_150.png"
-  },
-  {
     "id": "queen_of_blades",
     "numericId": 386,
     "displayName": "Queen of Blades",
@@ -16202,24 +15722,6 @@
     "image": "icons-dru_122.png"
   },
   {
-    "id": "rain_of_bombs",
-    "numericId": 172,
-    "displayName": "Rain of Bombs",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_45.png"
-  },
-  {
     "id": "rain_of_fire",
     "numericId": 502,
     "displayName": "Rain of Fire",
@@ -16244,42 +15746,6 @@
       "{{mana_cost}}"
     ],
     "image": "icons-dru_94.png"
-  },
-  {
-    "id": "rainbow_storm",
-    "numericId": 173,
-    "displayName": "Rainbow Storm",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_164.png"
-  },
-  {
-    "id": "rampagor",
-    "numericId": 174,
-    "displayName": "Rampagor",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_250.png"
   },
   {
     "id": "ranged_blood_thorns",
@@ -16546,24 +16012,6 @@
     "image": "icons-sor_128.png"
   },
   {
-    "id": "raven_flight",
-    "numericId": 178,
-    "displayName": "Raven Flight",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_118.png"
-  },
-  {
     "id": "raven_heart",
     "numericId": 179,
     "displayName": "Raven Heart",
@@ -16690,24 +16138,6 @@
       "{{regenerate_life}}"
     ],
     "image": "icons-shared_245.png"
-  },
-  {
-    "id": "razor_spines",
-    "numericId": 181,
-    "displayName": "Razor Spines",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_119.png"
   },
   {
     "id": "reaper",
@@ -17044,24 +16474,6 @@
     "image": "icons-pal_152.png"
   },
   {
-    "id": "ricochet",
-    "numericId": 184,
-    "displayName": "Ricochet",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_44.png"
-  },
-  {
     "id": "rime",
     "numericId": 664,
     "displayName": "Rime",
@@ -17263,24 +16675,6 @@
     "image": "icons-shared_missing.png"
   },
   {
-    "id": "rune_of_fire",
-    "numericId": 190,
-    "displayName": "Rune of Fire",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_70.png"
-  },
-  {
     "id": "rune_of_ice",
     "numericId": 191,
     "displayName": "Rune of Ice",
@@ -17297,24 +16691,6 @@
     "restriction": [],
     "skillEffect": [],
     "image": "icons-shared_34.png"
-  },
-  {
-    "id": "rune_of_mana",
-    "numericId": 192,
-    "displayName": "Rune of Mana",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_71.png"
   },
   {
     "id": "runemaster",
@@ -17970,24 +17346,6 @@
     "image": "icons-shared_200.png"
   },
   {
-    "id": "shadow_avatar",
-    "numericId": 202,
-    "displayName": "Shadow Avatar",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_120.png"
-  },
-  {
     "id": "shadow_blade",
     "numericId": 203,
     "displayName": "Shadow Blade",
@@ -18225,24 +17583,6 @@
     "restriction": [],
     "skillEffect": [],
     "image": "icons-ama_126.png"
-  },
-  {
-    "id": "shock_flower",
-    "numericId": 206,
-    "displayName": "Shock Flower",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_188.png"
   },
   {
     "id": "shockwave",
@@ -18639,24 +17979,6 @@
       "{{mana_cost}}"
     ],
     "image": "icons-pal_66.png"
-  },
-  {
-    "id": "smg",
-    "numericId": 214,
-    "displayName": "SMG",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_153.png"
   },
   {
     "id": "snake_bite",
@@ -19480,42 +18802,6 @@
     "image": "icons-bar_30.png"
   },
   {
-    "id": "splitfire",
-    "numericId": 220,
-    "displayName": "Splitfire",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_137.png"
-  },
-  {
-    "id": "squall_gust",
-    "numericId": 221,
-    "displayName": "Squall Gust",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_154.png"
-  },
-  {
     "id": "squall_wave",
     "numericId": 222,
     "displayName": "Squall Wave",
@@ -19624,42 +18910,6 @@
       "{{mana_cost}}"
     ],
     "image": "icons-bar_72.png"
-  },
-  {
-    "id": "starfire",
-    "numericId": 223,
-    "displayName": "Starfire",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_106.png"
-  },
-  {
-    "id": "static_spike",
-    "numericId": 224,
-    "displayName": "Static Spike",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_202.png"
   },
   {
     "id": "steady_shot",
@@ -20057,24 +19307,6 @@
     "image": "icons-ass_138.png"
   },
   {
-    "id": "summon_bane_monster",
-    "numericId": 228,
-    "displayName": "Summon Bane Monster",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_207.png"
-  },
-  {
     "id": "summon_darklings",
     "numericId": 229,
     "displayName": "Summon Darklings",
@@ -20109,24 +19341,6 @@
       "{{mana_cost}}"
     ],
     "image": "icons-shared_145.png"
-  },
-  {
-    "id": "summon_daystar",
-    "numericId": 230,
-    "displayName": "Summon Daystar",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_210.png"
   },
   {
     "id": "summon_edyrem",
@@ -20323,24 +19537,6 @@
     "image": "icons-shared_213.png"
   },
   {
-    "id": "summon_shredder",
-    "numericId": 236,
-    "displayName": "Summon Shredder",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_215.png"
-  },
-  {
     "id": "summon_sinner",
     "numericId": 237,
     "displayName": "Summon Sinner",
@@ -20381,24 +19577,6 @@
       "{{mana_cost}}"
     ],
     "image": "icons-shared_151.png"
-  },
-  {
-    "id": "summon_thunder_bear",
-    "numericId": 238,
-    "displayName": "Summon Thunder Bear",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_155.png"
   },
   {
     "id": "sun_strike",
@@ -20451,24 +19629,6 @@
       "{{mana_cost}}"
     ],
     "image": "icons-shared_0.png"
-  },
-  {
-    "id": "sunspear",
-    "numericId": 240,
-    "displayName": "Sunspear",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_107.png"
   },
   {
     "id": "superbeast",
@@ -21078,9 +20238,9 @@
     "numericId": 245,
     "displayName": "Thorn Field",
     "classId": 1,
-    "tab": 65,
+    "tab": 70,
     "class": "Other",
-    "tabName": "oSkill",
+    "tabName": "Mercenary only",
     "tags": [
       "Attack",
       "Weapon Damage"
@@ -21913,24 +21073,6 @@
       "{{mana_cost}}"
     ],
     "image": "icons-dru_148.png"
-  },
-  {
-    "id": "typhoon_sentry",
-    "numericId": 262,
-    "displayName": "Typhoon Sentry",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_123.png"
   },
   {
     "id": "ultimate_chaos",
@@ -23998,31 +23140,13 @@
     "image": "icons-bar_66.png"
   },
   {
-    "id": "wraith_arrow",
-    "numericId": 282,
-    "displayName": "Wraith Arrow",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_77.png"
-  },
-  {
     "id": "wraithsword",
     "numericId": 283,
     "displayName": "Wraithsword",
     "classId": 1,
-    "tab": 65,
+    "tab": 70,
     "class": "Other",
-    "tabName": "oSkill",
+    "tabName": "Mercenary only",
     "tags": [
       "Attack",
       "Weapon Damage"
