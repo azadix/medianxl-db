@@ -6,7 +6,7 @@ import {
   canAddPoints,
   getRestrictionMessage,
 } from '../../../tree/tree-render.js';
-import { setSkillDisabled } from '../../../character/character-state.js';
+import { setSkillDisabled, setOSkillSlotDisabled } from '../../../character/character-state.js';
 import SkillVariantMenu from './SkillVariantMenu.vue';
 import SkillCardImage from './SkillCardImage.vue';
 import SkillCardButtons from './SkillCardButtons.vue';
@@ -19,7 +19,12 @@ const props = defineProps({
 const emit = defineEmits(['plus', 'minus']);
 
 function onToggleDisabled() {
-  setSkillDisabled(props.cardData.skillId, !props.cardData.isDisabled);
+  const slotId = props.cardData.oskillSlotId;
+  if (slotId) {
+    setOSkillSlotDisabled(slotId, !props.cardData.isDisabled);
+  } else {
+    setSkillDisabled(props.cardData.skillId, !props.cardData.isDisabled);
+  }
 }
 
 const variantLabel = ref('');
@@ -77,6 +82,7 @@ const showDisableToggle = computed(() => {
   if (cd.isUpgrade === true) return false;
   if (String(cd.tabName || '').trim().toLowerCase() === 'mastery') return false;
   if (Math.floor(Number(cd.currentPoints) || 0) <= 0) return false;
+  if (cd.tabName === 'oSkill' && !cd.oskillSlotId) return false;
   // show for regular non-passives and oSkills (which also carry isPassive/isUpgrade via tree-render)
   return true;
 });
@@ -100,6 +106,7 @@ watch(
     :data-skill-id="String(cardData.skillId)"
     :data-skill-numeric-id="cardData.numericId != null ? String(cardData.numericId) : undefined"
     :data-class-id="cardData.classId != null ? String(cardData.classId) : undefined"
+    :data-oskill-slot-id="cardData.oskillSlotId != null ? String(cardData.oskillSlotId) : undefined"
     v-bind="skillVariantAttr"
   >
     <div class="skill-card-header">

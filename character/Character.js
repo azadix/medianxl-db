@@ -288,7 +288,17 @@ export default class Character {
     this._plannerSkillStatBonuses = {};
     /** Skills toggled off for planner stat aggregation (internal skill ids). */
     this.disabledSkillIds = new Set();
+    /** oSkill rows toggled off (per-row slot ids, independent of tree disable). */
+    this.disabledOSkillSlotIds = new Set();
     this.applyAutoQuestCompletionForLevel(this.level);
+  }
+
+  /** @returns {string} */
+  static newOSkillSlotId() {
+    if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+      return crypto.randomUUID();
+    }
+    return `os_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
   }
 
   /**
@@ -328,10 +338,78 @@ export default class Character {
       const k = String(id ?? '').trim();
       if (k) this.disabledSkillIds.add(k);
     }
+    this.pruneDisabledSkillsWithoutAllocatedPoints();
+  }
+
+  /**
+   * Drop disable toggles for skills with no points on the class tree (planner card state).
+   */
+  pruneDisabledSkillsWithoutAllocatedPoints() {
+    for (const id of [...this.disabledSkillIds]) {
+      if (this.getSkillPoints(id) <= 0) {
+        this.disabledSkillIds.delete(id);
+      }
+    }
   }
 
   clearDisabledSkillIds() {
     this.disabledSkillIds = new Set();
+  }
+
+  /**
+   * @param {string} slotId
+   * @returns {boolean}
+   */
+  isOSkillSlotDisabled(slotId) {
+    const k = String(slotId ?? '').trim();
+    return k !== '' && this.disabledOSkillSlotIds.has(k);
+  }
+
+  /**
+   * @param {string} slotId
+   * @param {boolean} disabled
+   */
+  setOSkillSlotDisabled(slotId, disabled) {
+    const k = String(slotId ?? '').trim();
+    if (!k) return;
+    if (disabled) this.disabledOSkillSlotIds.add(k);
+    else this.disabledOSkillSlotIds.delete(k);
+  }
+
+  /** @returns {string[]} */
+  getDisabledOSkillSlotIds() {
+    return [...this.disabledOSkillSlotIds].sort((a, b) => a.localeCompare(b));
+  }
+
+  /**
+   * @param {unknown} list
+   */
+  setDisabledOSkillSlotIds(list) {
+    this.disabledOSkillSlotIds = new Set();
+    if (!Array.isArray(list)) return;
+    for (const id of list) {
+      const k = String(id ?? '').trim();
+      if (k) this.disabledOSkillSlotIds.add(k);
+    }
+    this.pruneDisabledOSkillSlotsWithoutRows();
+  }
+
+  clearDisabledOSkillSlotIds() {
+    this.disabledOSkillSlotIds = new Set();
+  }
+
+  /**
+   * Remove oSkill disable flags that no longer match a row with points.
+   */
+  pruneDisabledOSkillSlotsWithoutRows() {
+    const alive = new Set();
+    for (const row of this.oSkills || []) {
+      const sid = String(row?.slotId ?? '').trim();
+      if (sid && Character.clampOSkillPoints(row?.points ?? 0) > 0) alive.add(sid);
+    }
+    for (const id of [...this.disabledOSkillSlotIds]) {
+      if (!alive.has(id)) this.disabledOSkillSlotIds.delete(id);
+    }
   }
 
   /**
@@ -749,6 +827,7 @@ export default class Character {
   setAllSkillPoints(skillPoints) {
     this.skillPoints = { ...skillPoints };
     this.maxLevels = {}; // Clear cache
+    this.pruneDisabledSkillsWithoutAllocatedPoints();
   }
 
   /**
@@ -803,7 +882,8 @@ export default class Character {
       questsCompleted: JSON.parse(JSON.stringify(this.questsCompleted)),
       questCompletionOptOut: JSON.parse(JSON.stringify(this.questCompletionOptOut || {})),
       statAllocation: { ...this.statAllocation },
-      disabledSkillIds: this.getDisabledSkillIds()
+      disabledSkillIds: this.getDisabledSkillIds(),
+      disabledOSkillSlotIds: this.getDisabledOSkillSlotIds()
     };
   }
 
@@ -833,6 +913,11 @@ export default class Character {
       this.setDisabledSkillIds(state.disabledSkillIds);
     } else {
       this.clearDisabledSkillIds();
+    }
+    if (Array.isArray(state.disabledOSkillSlotIds)) {
+      this.setDisabledOSkillSlotIds(state.disabledOSkillSlotIds);
+    } else {
+      this.clearDisabledOSkillSlotIds();
     }
   }
 
@@ -889,7 +974,8 @@ export default class Character {
         points: 1,
         hasDetails,
         description,
-        skillEffect
+        skillEffect,
+        slotId: Character.newOSkillSlotId()
       };
       
       this.oSkills.push(oskillData);
@@ -905,6 +991,9 @@ export default class Character {
       s.skillId === parseInt(skillIdOrName) || s.skillName === skillIdOrName
     );
     if (index > -1) {
+      const row = this.oSkills[index];
+      const sid = String(row?.slotId ?? '').trim();
+      if (sid) this.disabledOSkillSlotIds.delete(sid);
       this.oSkills.splice(index, 1);
     }
   }
@@ -936,6 +1025,7 @@ export default class Character {
    */
   clearOSkills() {
     this.oSkills = [];
+    this.clearDisabledOSkillSlotIds();
   }
 
   /**
@@ -950,6 +1040,7 @@ export default class Character {
       this.oSkills = oSkills
         .map((row) => ({
           ...row,
+          slotId: row.slotId || Character.newOSkillSlotId(),
           points: Character.clampOSkillPoints(row?.points ?? 0)
         }))
         .filter((row) => row.points > 0);
@@ -962,11 +1053,21 @@ export default class Character {
           this.oSkills.push({
             skillId: /^\d+$/.test(skillIdOrName) ? parseInt(skillIdOrName) : null,
             skillName: /^\d+$/.test(skillIdOrName) ? null : skillIdOrName,
-            points: clampedPoints
+            points: clampedPoints,
+            slotId: Character.newOSkillSlotId()
           });
         }
       });
     }
+    this.pruneDisabledOSkillSlotsWithoutRows();
+  }
+
+  /**
+   * Deep-enough copy of oSkill rows for build export (preserves slotId).
+   * @returns {Array<Object>}
+   */
+  getOSkillsSnapshotForSave() {
+    return (this.oSkills || []).map((row) => ({ ...row }));
   }
 
   static clampOSkillPoints(points) {

@@ -11,7 +11,8 @@ import {
   removeSkillPoint,
   addSkillPointsBatch,
   removeSkillPointsBatch,
-  isSkillDisabled
+  isSkillDisabled,
+  isOSkillSlotDisabled
 } from '../character/character-state.js';
 import { getSkillIconHTML } from '../utils.js';
 import { getCurrentVersion, versionToTreeAssetFolder } from '../version-config.js';
@@ -210,6 +211,8 @@ export function buildPlannerSkillCardData(skillEntry, opts = {}) {
     const isPassive = tags.includes('Passive');
     const isUpgrade = tags.includes('Upgrade');
 
+    const slotId = skillEntry.slotId ? String(skillEntry.slotId).trim() : '';
+
     return {
         skillId: skillEntry.skillId || skillEntry.skillName,
         numericId,
@@ -225,7 +228,8 @@ export function buildPlannerSkillCardData(skillEntry, opts = {}) {
         tabName: 'oSkill',
         isPassive,
         isUpgrade,
-        isDisabled: internalId ? isSkillDisabled(internalId) : false,
+        oskillSlotId: slotId || undefined,
+        isDisabled: slotId !== '' ? isOSkillSlotDisabled(slotId) : false,
         variants: numericId != null ? listSkillVariants(numericId) : []
     };
 }

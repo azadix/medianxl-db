@@ -9,9 +9,9 @@ import { listSkillVariants } from '../../tree/skill-variants.js';
 import { addOverlayArrows } from '../../tree/tree-arrows.js';
 import Innate from '../../skills/Innate.js';
 import {
-  getAllOSkills,
   changeOSkillPoints,
   getSkillPoints,
+  getOSkillRowsForPlanner,
   hasAnyOSkillAllocations
 } from '../../character/character-state.js';
 import { enrichOskillForDisplay } from '../../tree/oskill-display.js';
@@ -83,15 +83,8 @@ export function usePlannerSkillsTree({ payload, classSkills, activeTab, gridRang
   const oskillCardRows = computed(() => {
     store.revision;
     const out = [];
-    const raw = getAllOSkills();
-    const entries = Object.entries(raw || {});
-    for (const [skillIdOrName, points] of entries) {
-      if (!points || points <= 0) continue;
-      const rawRow = {
-        skillId: /^\d+$/.test(String(skillIdOrName)) ? parseInt(String(skillIdOrName), 10) : null,
-        skillName: /^\d+$/.test(String(skillIdOrName)) ? null : skillIdOrName,
-        points
-      };
+    const rows = getOSkillRowsForPlanner();
+    for (const rawRow of rows) {
       const enriched = enrichOskillForDisplay(rawRow);
       out.push(
         buildPlannerSkillCardData(enriched, {

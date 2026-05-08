@@ -185,10 +185,11 @@ export function buildMergedSkillLevelsForStatRecompute(character) {
   for (const row of character.oSkills || []) {
     const p = Character.clampOSkillPoints(row?.points ?? 0);
     if (p <= 0) continue;
+    const sid = String(row?.slotId ?? '').trim();
+    if (sid && character.isOSkillSlotDisabled(sid)) continue;
     if (row.skillName) {
       const rowHit = store?.catalogByInternalId?.get(String(row.skillName).trim());
       const id = rowHit?.id ? String(rowHit.id) : String(row.skillName).trim();
-      if (character.isSkillDisabled(id)) continue;
       const cur = byInternal[id] || 0;
       byInternal[id] = Math.max(cur, p);
       continue;
@@ -197,7 +198,6 @@ export function buildMergedSkillLevelsForStatRecompute(character) {
       const hit = store.lookupSkillNameAndDisplayByNumericId(row.skillId);
       if (hit?.name) {
         const id = String(hit.name);
-        if (character.isSkillDisabled(id)) continue;
         const cur = byInternal[id] || 0;
         byInternal[id] = Math.max(cur, p);
       }
@@ -331,6 +331,13 @@ export function isSkillDisabled(internalId) {
 }
 
 /**
+ * @param {string} slotId oSkill row id from Character.oSkills[].slotId
+ */
+export function isOSkillSlotDisabled(slotId) {
+  return characterInstance ? characterInstance.isOSkillSlotDisabled(slotId) : false;
+}
+
+/**
  * Toggle planner stat contribution for a skill (does not change allocated points).
  * @param {string} internalId
  * @param {boolean} disabled
@@ -351,15 +358,64 @@ export function setSkillDisabled(internalId, disabled) {
   runPlannerSkillStatRecompute({ immediate: true });
 }
 
+/**
+ * Toggle planner stat contribution for one oSkill row (tree disable is separate).
+ * @param {string} slotId
+ * @param {boolean} disabled
+ */
+export function setOSkillSlotDisabled(slotId, disabled) {
+  if (!characterInstance) return;
+  characterInstance.setOSkillSlotDisabled(slotId, disabled);
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(
+      new CustomEvent('skillPointsChanged', {
+        detail: {
+          skillName: slotId != null ? String(slotId) : null,
+          action: 'toggleDisabledOSkill'
+        }
+      })
+    );
+  }
+  runPlannerSkillStatRecompute({ immediate: true });
+}
+
 /** @returns {string[]} */
 export function getDisabledSkillIds() {
   return characterInstance ? characterInstance.getDisabledSkillIds() : [];
+}
+
+/** @returns {string[]} */
+export function getDisabledOSkillSlotIds() {
+  return characterInstance ? characterInstance.getDisabledOSkillSlotIds() : [];
 }
 
 /** @param {unknown} list */
 export function setDisabledSkillIds(list) {
   if (!characterInstance) return;
   characterInstance.setDisabledSkillIds(list);
+}
+
+/** @param {unknown} list */
+export function setDisabledOSkillSlotIds(list) {
+  if (!characterInstance) return;
+  characterInstance.setDisabledOSkillSlotIds(list);
+}
+
+/**
+ * oSkill rows for planner UI (array preserves slot ids; getAllOSkills() is a flattened map).
+ * @returns {Array<Object>}
+ */
+export function getOSkillRowsForPlanner() {
+  if (!characterInstance) return [];
+  return characterInstance.oSkills.filter((r) => Character.clampOSkillPoints(r?.points ?? 0) > 0);
+}
+
+/**
+ * Serialize oSkills for build JSON (includes slotId per row).
+ * @returns {Array<Object>}
+ */
+export function getOSkillsForBuildExport() {
+  return characterInstance ? characterInstance.getOSkillsSnapshotForSave() : [];
 }
 
 /**
@@ -955,6 +1011,8 @@ export function removeSkillPoint(skillName, allSkills = [], skipEvent = false) {
     if (characterInstance.skillPoints[skillName] === 0) {
       delete characterInstance.skillPoints[skillName];
     }
+
+    characterInstance.pruneDisabledSkillsWithoutAllocatedPoints();
     
     characterInstance.maxLevels = {}; // Clear cache as max levels may change
     
@@ -1022,6 +1080,10 @@ export function removeSkillPointsBatch(skillName, amount, allSkills = []) {
     characterInstance.maxLevels = {}; // Clear cache as max levels may change
     
     pointsRemoved++;
+  }
+
+  if (pointsRemoved > 0) {
+    characterInstance.pruneDisabledSkillsWithoutAllocatedPoints();
   }
   
   // Dispatch single event after all points are removed
@@ -1149,7 +1211,8 @@ export function exportCharacterState() {
         questsCompleted: Character.createDefaultQuestsCompleted(),
         questCompletionOptOut: Character.createDefaultQuestCompletionOptOut(),
         statAllocation: Character.createEmptyStatAllocation(),
-        disabledSkillIds: []
+        disabledSkillIds: [],
+        disabledOSkillSlotIds: []
       };
 }
 

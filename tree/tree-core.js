@@ -5,7 +5,7 @@ import { getCurrentTab, setCurrentTabState } from './tree-tab-state.js';
 import { updatePlannerUrlTab, setBuildUrlParam } from './tree-url-sync.js';
 import Tree from '../character/Tree.js';
 import Character from '../character/Character.js';
-import { initializeCharacter, applyClassBaselineStatsToCharacter, recomputeClassDerivedLifeMana, onPlannerSkillAllocationChanged, runPlannerSkillStatRecompute, getSpentSkillPoints, getAllSkillPoints, getAllSkillPointsById, setAllSkillPoints, setAllSkillPointsById, importQuestsCompleted, getAllOSkills, addOSkill, clearOSkills, setAllOSkills, getMinimumRequiredLevel, getTotalQuestSkillPoints, checkSkillsExceedingMaxLevel, getAvailableSkillPoints, getCharacterInstance, getCharacterLevel, getEffectivePlannerLevel, parseStatsFromText, exportStatsToText, clearAllStats, getQuestsCompletedForSave, getQuestCompletionOptOutForSave, getDisabledSkillIds, setDisabledSkillIds } from '../character/character-state.js';
+import { initializeCharacter, applyClassBaselineStatsToCharacter, recomputeClassDerivedLifeMana, onPlannerSkillAllocationChanged, runPlannerSkillStatRecompute, getSpentSkillPoints, getAllSkillPoints, getAllSkillPointsById, setAllSkillPoints, setAllSkillPointsById, importQuestsCompleted, getOSkillsForBuildExport, addOSkill, clearOSkills, setAllOSkills, getMinimumRequiredLevel, getTotalQuestSkillPoints, checkSkillsExceedingMaxLevel, getAvailableSkillPoints, getCharacterInstance, getCharacterLevel, getEffectivePlannerLevel, parseStatsFromText, exportStatsToText, clearAllStats, getQuestsCompletedForSave, getQuestCompletionOptOutForSave, getDisabledSkillIds, setDisabledSkillIds, getDisabledOSkillSlotIds, setDisabledOSkillSlotIds } from '../character/character-state.js';
 import { refreshPlannerStatsPanelFromCharacter } from '../character/planner-stats-panel.js';
 import { initPlannerConfigPanel } from '../character/planner-config-panel.js';
 import { setPlannerSectionFromLegacy } from '../src/planner/planner-section-bridge.js';
@@ -198,6 +198,7 @@ function loadBuildData(build, buildIndex = null) {
     setAllOSkills(build.oSkills || []);
 
     setDisabledSkillIds(Array.isArray(build.disabledSkills) ? build.disabledSkills : []);
+    setDisabledOSkillSlotIds(Array.isArray(build.disabledOSkillSlots) ? build.disabledOSkillSlots : []);
     
     // Load All Skills bonus
     if (build.allSkillsBonus !== undefined) {
@@ -1061,7 +1062,8 @@ function buildCurrentBuildSnapshot(name) {
         spentPoints: getSpentSkillPoints(),
         skillPoints: getAllSkillPointsById(),
         disabledSkills: getDisabledSkillIds(),
-        oSkills: getAllOSkills(),
+        disabledOSkillSlots: getDisabledOSkillSlotIds(),
+        oSkills: getOSkillsForBuildExport(),
         allSkillsBonus: getAllSkillsBonus(),
         stats: exportStatsToText(),
         questsCompleted,

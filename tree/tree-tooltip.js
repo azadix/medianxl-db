@@ -1,6 +1,16 @@
 // Tooltip functionality for skill tree
 import { getSkillIconHTML, expandPlaceholdersWithScaling } from '../utils.js';
-import { getSkillPoints, getOSkillPoints, getAllSkillPoints, getAllOSkills, getTreeSkillsCache, getAllStats, getCharacterInstance, isSkillDisabled } from '../character/character-state.js';
+import {
+  getSkillPoints,
+  getOSkillPoints,
+  getAllSkillPoints,
+  getAllOSkills,
+  getTreeSkillsCache,
+  getAllStats,
+  getCharacterInstance,
+  isSkillDisabled,
+  isOSkillSlotDisabled
+} from '../character/character-state.js';
 import { resolveVariantKeyForTooltip, formatDisplayNameWithVariantHtml } from './skill-variants.js';
 import { getCurrentVersion, versionToTreeAssetFolder } from '../version-config.js';
 import { getFileSkillStore } from './skill-data-store.js';
@@ -268,7 +278,8 @@ async function handleSkillPointsChanged(preferredCard = null) {
             context.currentLevel,
             context.warningMessage,
             context.isOSkill,
-            context.variantKey
+            context.variantKey,
+            context.oskillSlotId
         );
         
         tooltipElement.innerHTML = content;
@@ -316,7 +327,8 @@ async function showTooltip(skillId, mouseX, mouseY, hoveredCard = null) {
         context.currentLevel,
         context.warningMessage,
         context.isOSkill,
-        context.variantKey
+        context.variantKey,
+        context.oskillSlotId
     );
     
     // Update tooltip
@@ -531,8 +543,16 @@ function getSkillCategoryTags(numericId) {
  * @param {Object} skillData - Skill fields from the file store
  * @param {number} level - Current skill level
  * @param {string} warningMessage - Optional warning message (e.g., prerequisite not met)
+ * @param {string|null} [oskillSlotId] - Planner oSkill row id (data-oskill-slot-id); tree skills omit
  */
-async function buildTooltipContent(skillData, level, warningMessage = '', isOSkill = false, variantKey = null) {
+async function buildTooltipContent(
+  skillData,
+  level,
+  warningMessage = '',
+  isOSkill = false,
+  variantKey = null,
+  oskillSlotId = null
+) {
     // Get All Skills bonus for effective level calculation (used in multiple places)
     const allSkillsBonusInput = document.getElementById('allSkillsBonus');
     const allSkillsBonus = allSkillsBonusInput ? Math.max(0, parseInt(allSkillsBonusInput.value) || 0) : 0;
@@ -578,8 +598,12 @@ async function buildTooltipContent(skillData, level, warningMessage = '', isOSki
     `;
     html += '</div>';
 
-    // Disabled indicator (planner toggle)
-    if (skillData?.id && isSkillDisabled(skillData.id)) {
+    // Disabled indicator (planner toggle): tree uses internal id; oSkills use slot id
+    const slot = oskillSlotId != null ? String(oskillSlotId).trim() : '';
+    const contributionsDisabled = isOSkill
+      ? slot !== '' && isOSkillSlotDisabled(slot)
+      : Boolean(skillData?.id && isSkillDisabled(skillData.id));
+    if (contributionsDisabled) {
         html += `<div class="has-text-centered has-text-danger has-text-weight-semibold is-size-5">DISABLED (bonuses not applied)</div>`;
     }
     
@@ -816,6 +840,9 @@ export function destroyTooltip() {
 
 function resolveTooltipContext(skillCard, skillData, skillId) {
     const isOSkill = Boolean(skillCard && skillCard.closest('#tab-oSkills'));
+    const rawSlot = skillCard?.dataset?.oskillSlotId;
+    const oskillSlotId =
+        rawSlot != null && String(rawSlot).trim() !== '' ? String(rawSlot).trim() : null;
     const isInnate = Boolean(
         skillCard &&
         skillData &&
@@ -830,5 +857,5 @@ function resolveTooltipContext(skillCard, skillData, skillId) {
         ? ''
         : (skillCard?.querySelector('.skill-plus-btn')?.dataset?.warningMessage || '');
     const variantKey = resolveVariantKeyForTooltip(skillData.id, skillCard);
-    return { isOSkill, currentLevel, warningMessage, variantKey };
+    return { isOSkill, currentLevel, warningMessage, variantKey, oskillSlotId };
 }
