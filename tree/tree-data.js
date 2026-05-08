@@ -66,7 +66,6 @@ export function buildSkillFromCatalogRow(store, row) {
         base_max_level: row.baseMaxLevel,
         affected_by_specialization: row.affectedBySpecialization ? 1 : 0,
         parentSkillId: row.parentSkillId ?? null,
-        subskillLabel: row.subskillLabel ?? null,
         prerequisites: null
     });
 }

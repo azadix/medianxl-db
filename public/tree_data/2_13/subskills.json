@@ -4,7 +4,6 @@
     "numericId": 708,
     "displayName": "Petrify",
     "parentSkillId": "spellbind",
-    "subskillLabel": "Subskill",
     "scalingConstants": [
       {
         "statKey": "duration",

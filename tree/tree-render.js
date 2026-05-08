@@ -192,11 +192,7 @@ export function buildPlannerSkillCardData(skillEntry, opts = {}) {
             isUpgrade,
             isDisabled: isSkillDisabled(skillEntry.id),
             parentSkillId,
-            parentDisplayName,
-            subskillLabel:
-                skillEntry.subskillLabel != null && String(skillEntry.subskillLabel).trim() !== ''
-                    ? String(skillEntry.subskillLabel).trim()
-                    : null
+            parentDisplayName
         };
     }
 

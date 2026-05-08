@@ -3,7 +3,7 @@
  */
 
 /** @typedef {{ id?: number, key: string, name: string, format?: string }} StatRow */
-/** @typedef {{ id: string, displayName?: string|null, numericId?: number|null, parentSkillId?: string|null, subskillLabel?: string|null }} SkillRow */
+/** @typedef {{ id: string, displayName?: string|null, numericId?: number|null, parentSkillId?: string|null }} SkillRow */
 
 /**
  * @param {string} textBeforeCursor
@@ -399,7 +399,7 @@ export function attachEditorTextareaAutocomplete(textareas, options) {
                     const id = String(r.id);
                     const dn =
                         r.displayName != null && String(r.displayName).trim() !== '' ? String(r.displayName) : '';
-                    li.textContent = dn || id;
+                    li.textContent = dn ? `${dn} — ${id}` : id;
                     li.dataset.insert = subskillBlockRefForInsert(r, p.partial);
                     list.appendChild(li);
                 }

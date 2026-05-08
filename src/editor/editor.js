@@ -12,6 +12,9 @@ let editorFileBasename = DEFAULT_EDITOR_FILE_BASENAME;
 function isSubskillsMode() {
     return editorFileBasename === 'subskills.json';
 }
+
+/** When editing skills.json, also load subskills.json for ||...|| autocomplete. */
+let autocompleteSubskills = [];
 const DEFAULT_VARIANT_ROW = {
     variant_key: '',
     label: '',
@@ -356,6 +359,15 @@ async function loadSkillsForFolder(seg) {
         showToast('Could not load game_meta.json; class/tab dropdowns will be limited.', true);
     }
     workingSkills = deepClone(raw);
+    autocompleteSubskills = [];
+    if (!isSubskillsMode()) {
+        try {
+            const subskillsRaw = await fetchJson(`${TREE_DATA}/${seg}/subskills.json`);
+            autocompleteSubskills = Array.isArray(subskillsRaw) ? deepClone(subskillsRaw) : [];
+        } catch {
+            autocompleteSubskills = [];
+        }
+    }
     stripLegacyCalcSlots(workingSkills);
     stripTabSortOrderFromRows(workingSkills);
     normalizeSkillTextFieldsToStringArrays(workingSkills);
@@ -642,8 +654,6 @@ function populateForm(s) {
 
     const parentId = document.getElementById('f-parentSkillId');
     if (parentId) parentId.value = s.parentSkillId != null ? String(s.parentSkillId) : '';
-    const subLabel = document.getElementById('f-subskillLabel');
-    if (subLabel) subLabel.value = s.subskillLabel != null ? String(s.subskillLabel) : '';
 
     if (!isSubskillsMode()) {
         populatePlacementSelects(s);
@@ -798,7 +808,6 @@ function applyFormToWorkingSkill() {
         s.tags = readTagsFromForm();
     } else {
         s.parentSkillId = emptyToNull(document.getElementById('f-parentSkillId')?.value ?? '');
-        s.subskillLabel = emptyToNull(document.getElementById('f-subskillLabel')?.value ?? '');
         // Ensure removed fields do not persist in subskills.json
         delete s.classId;
         delete s.tab;
@@ -933,7 +942,6 @@ function makeNewSkillSkeleton() {
             numericId: nextNumericIdForNewSkill(),
             displayName: 'New subskill',
             parentSkillId: null,
-            subskillLabel: null,
             scalingConstants: [],
             description: [],
             skillEffect: []
@@ -1084,12 +1092,11 @@ export async function mountEditor(opts = {}) {
             getStatsRows: () => statsCatalog,
             getStatUsageCounts,
             getSkillRows: () =>
-                workingSkills.map((s) => ({
+                [...workingSkills, ...autocompleteSubskills].map((s) => ({
                     id: s.id,
                     displayName: s.displayName,
                     numericId: s.numericId,
-                    parentSkillId: s.parentSkillId ?? null,
-                    subskillLabel: s.subskillLabel ?? null
+                    parentSkillId: s.parentSkillId ?? null
                 }))
         });
     }

@@ -51,14 +51,6 @@
             </div>
           </div>
         </div>
-        <div class="column is-half">
-          <div class="field">
-            <label class="label" for="f-subskillLabel">subskillLabel</label>
-            <div class="control">
-              <input class="input" type="text" id="f-subskillLabel" placeholder="Subskill" />
-            </div>
-          </div>
-        </div>
       </div>
 
       <h3 class="title is-6 mt-4">Text</h3>

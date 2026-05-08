@@ -74,7 +74,6 @@ def load_merged_skills(data_dir: Path) -> list[dict]:
 
     Optional subskill metadata (used by the app UI, preserved by the JSON editor):
     - parentSkillId: internal id of the parent skill (string)
-    - subskillLabel: optional UI label override (string)
     """
     cat_path = data_dir / "skills.json"
     if not cat_path.is_file():

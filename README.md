@@ -54,7 +54,6 @@ Patch selection uses **`public/tree_data/versions.json`** (`is_active` marks the
 Some skills have version-specific **subskills**. These are represented as separate rows in **`public/tree_data/<major>_<minor>/subskills.json`**, linked to their parent skill via fields:
 
 - **`parentSkillId`**: internal `id` of the parent skill (string)
-- **`subskillLabel`**: optional label override for UI (string, defaults to `"Subskill"`)
 
 ## Layout
 

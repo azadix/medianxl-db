@@ -21,14 +21,14 @@ function isSubskillRow(s) {
 }
 
 function editorHaystack(s) {
-  return [s.id, s.displayName, s.parentSkillId, s.subskillLabel]
+  return [s.id, s.displayName, s.parentSkillId]
     .filter((x) => x != null)
     .map((x) => String(x).toLowerCase())
     .join('\u0000');
 }
 
 function editorPlain(s) {
-  return [s.id, s.displayName, s.parentSkillId, s.subskillLabel]
+  return [s.id, s.displayName, s.parentSkillId]
     .filter((x) => x != null)
     .map((x) => String(x))
     .join(' ');
@@ -152,7 +152,7 @@ const displayRows = computed(() => {
                   class="tag is-info is-light is-rounded is-size-7 ml-2"
                   :title="`Subskill of ${row.skill.parentSkillId}`"
                 >
-                  {{ row.skill.subskillLabel || 'Subskill' }}
+                  Subskill
                 </span>
               </td>
               <td class="editor-td-clip">{{ row.skill.parentSkillId ?? '' }}</td>

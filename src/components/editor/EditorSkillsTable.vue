@@ -18,14 +18,14 @@ const sortDir = ref(/** @type {1|-1} */ (1));
 const parsedSearch = computed(() => parseSearchInput(searchRaw.value));
 
 function editorHaystack(s) {
-  return [s.id, s.displayName, s.class, s.tabName, s.parentSkillId, s.subskillLabel]
+  return [s.id, s.displayName, s.class, s.tabName, s.parentSkillId]
     .filter((x) => x != null)
     .map((x) => String(x).toLowerCase())
     .join('\u0000');
 }
 
 function editorPlain(s) {
-  return [s.id, s.displayName, s.class, s.tabName, s.parentSkillId, s.subskillLabel]
+  return [s.id, s.displayName, s.class, s.tabName, s.parentSkillId]
     .filter((x) => x != null)
     .map((x) => String(x))
     .join(' ');
@@ -157,7 +157,7 @@ function iconMarkup(skill) {
                   class="tag is-info is-light is-rounded is-size-7 ml-2"
                   :title="`Subskill of ${row.skill.parentSkillId}`"
                 >
-                  {{ row.skill.subskillLabel || 'Subskill' }}
+                  Subskill
                 </span>
               </td>
               <td class="editor-td-clip">{{ row.skill.class ?? '' }}</td>

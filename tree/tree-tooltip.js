@@ -500,7 +500,6 @@ function getSkillDataFromFileStore(skillId, classIdNum = null, cardNumericId = n
         baseMaxLevel: cat.baseMaxLevel,
         affectedBySpecialization: cat.affectedBySpecialization ? 1 : 0,
         parentSkillId: cat.parentSkillId ?? null,
-        subskillLabel: cat.subskillLabel ?? null
     };
 }
 
@@ -586,8 +585,7 @@ async function buildTooltipContent(
     if (parentId) {
         const store = getFileSkillStore();
         const parentName = store?.lookupDisplayNameByInternalName(parentId) || parentId;
-        const label = skillData?.subskillLabel != null && String(skillData.subskillLabel).trim() !== '' ? String(skillData.subskillLabel).trim() : 'Subskill';
-        subskillHtml = `<p class="is-size-7 has-text-grey-lighter">${label} of <span class="has-text-weight-semibold">${escapeHtmlText(parentName)}</span></p>`;
+        subskillHtml = `<p class="is-size-7 has-text-grey-lighter">Subskill of <span class="has-text-weight-semibold">${escapeHtmlText(parentName)}</span></p>`;
     }
 
     html += `<div class="tooltip-name-container">
