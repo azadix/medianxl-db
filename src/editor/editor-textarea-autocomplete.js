@@ -3,11 +3,11 @@
  */
 
 /** @typedef {{ id?: number, key: string, name: string, format?: string }} StatRow */
-/** @typedef {{ id: string, displayName?: string|null, numericId?: number|null }} SkillRow */
+/** @typedef {{ id: string, displayName?: string|null, numericId?: number|null, parentSkillId?: string|null, subskillLabel?: string|null }} SkillRow */
 
 /**
  * @param {string} textBeforeCursor
- * @returns {{ kind: 'stat', partial: string, tokenStart: number } | { kind: 'skill', partial: string, tokenStart: number } | null}
+ * @returns {{ kind: 'stat', partial: string, tokenStart: number } | { kind: 'skill', partial: string, tokenStart: number } | { kind: 'subskillblock', partial: string, tokenStart: number } | null}
  */
 function parseOpenToken(textBeforeCursor) {
     const mStat = textBeforeCursor.match(/\{\{([a-zA-Z_][a-zA-Z0-9_]*)?$/);
@@ -24,6 +24,14 @@ function parseOpenToken(textBeforeCursor) {
             kind: 'skill',
             partial: mSkill[1] || '',
             tokenStart: textBeforeCursor.length - mSkill[0].length
+        };
+    }
+    const mSubskill = textBeforeCursor.match(/\|\|((?:id:[0-9]*|[a-zA-Z_][a-zA-Z0-9_]*)?)$/);
+    if (mSubskill) {
+        return {
+            kind: 'subskillblock',
+            partial: mSubskill[1] || '',
+            tokenStart: textBeforeCursor.length - mSubskill[0].length
         };
     }
     return null;
@@ -45,6 +53,24 @@ function skillRefForInsert(r, partial) {
         }
     }
     return `[[${r.id}]]`;
+}
+
+/**
+ * @param {SkillRow} r
+ * @param {string} partial
+ */
+function subskillBlockRefForInsert(r, partial) {
+    const p = partial.toLowerCase();
+    if (p.startsWith('id:')) {
+        const rest = p.slice(3).trim();
+        if (rest !== '' && /^\d+$/.test(rest)) {
+            const n = parseInt(rest, 10);
+            if (Number.isFinite(n) && r.numericId === n) {
+                return `||id:${n}||`;
+            }
+        }
+    }
+    return `||${r.id}||`;
 }
 
 /**
@@ -71,6 +97,35 @@ function filterSkillRows(partial, getSkillRows) {
             const id = String(r.id).toLowerCase();
             const dn = String(r.displayName || '').toLowerCase();
             return id.includes(p) || dn.includes(p) || id.startsWith(p);
+        })
+        .sort((a, b) => String(a.id).localeCompare(String(b.id)));
+}
+
+/**
+ * @param {string} partial
+ * @param {() => SkillRow[]} getSkillRows
+ */
+function filterSubskillRows(partial, getSkillRows) {
+    const rows = (getSkillRows() || []).filter((r) => r.parentSkillId != null && String(r.parentSkillId).trim() !== '');
+    const p = partial.toLowerCase();
+    if (!p) {
+        return [...rows].sort((a, b) => String(a.id).localeCompare(String(b.id)));
+    }
+    if (p.startsWith('id:')) {
+        const num = p.slice(3).trim();
+        if (num === '') {
+            return [...rows].sort((a, b) => (a.numericId || 0) - (b.numericId || 0));
+        }
+        const n = parseInt(num, 10);
+        if (!Number.isFinite(n)) return [];
+        return rows.filter((r) => r.numericId === n);
+    }
+    return rows
+        .filter((r) => {
+            const id = String(r.id).toLowerCase();
+            const dn = String(r.displayName || '').toLowerCase();
+            const parent = String(r.parentSkillId || '').toLowerCase();
+            return id.includes(p) || dn.includes(p) || parent.includes(p) || id.startsWith(p);
         })
         .sort((a, b) => String(a.id).localeCompare(String(b.id)));
 }
@@ -325,6 +380,37 @@ export function attachEditorTextareaAutocomplete(textareas, options) {
         parsed = p;
         if (p.kind === 'stat') {
             renderStats(p.partial);
+        } else if (p.kind === 'subskillblock') {
+            const rows = filterSubskillRows(p.partial, getSkillRows);
+            list.innerHTML = '';
+            if (rows.length === 0) {
+                const li = document.createElement('li');
+                li.className = 'dropdown-list-item empty';
+                li.textContent = 'No matching subskills';
+                list.appendChild(li);
+            } else {
+                const header = document.createElement('li');
+                header.className = 'dropdown-list-header';
+                header.innerHTML = '<span class="dropdown-header-text">Subskills</span>';
+                list.appendChild(header);
+                for (const r of rows.slice(0, 200)) {
+                    const li = document.createElement('li');
+                    li.className = 'dropdown-list-item';
+                    const id = String(r.id);
+                    const dn =
+                        r.displayName != null && String(r.displayName).trim() !== '' ? String(r.displayName) : '';
+                    li.textContent = dn || id;
+                    li.dataset.insert = subskillBlockRefForInsert(r, p.partial);
+                    list.appendChild(li);
+                }
+                if (rows.length > 200) {
+                    const note = document.createElement('li');
+                    note.className = 'dropdown-list-item empty';
+                    note.textContent = `…and ${rows.length - 200} more (type to filter)`;
+                    list.appendChild(note);
+                }
+                setActiveHighlight(0);
+            }
         } else {
             renderSkills(p.partial);
         }
@@ -337,7 +423,7 @@ export function attachEditorTextareaAutocomplete(textareas, options) {
      * token fragment too (prevents duplicating suffix like `a_cost}}`).
      * @param {string} fullText
      * @param {number} caretPos
-     * @param {'stat'|'skill'} kind
+     * @param {'stat'|'skill'|'subskillblock'} kind
      * @returns {number}
      */
     function computeReplaceEnd(fullText, caretPos, kind) {
@@ -346,7 +432,7 @@ export function attachEditorTextareaAutocomplete(textareas, options) {
         while (end < fullText.length && bodyRe.test(fullText[end])) {
             end += 1;
         }
-        const closing = kind === 'stat' ? '}}' : ']]';
+        const closing = kind === 'stat' ? '}}' : kind === 'subskillblock' ? '||' : ']]';
         if (fullText.slice(end, end + 2) === closing) {
             end += 2;
         }

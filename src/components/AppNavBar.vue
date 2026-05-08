@@ -42,10 +42,18 @@ onMounted(() => {
         <router-link v-if="isDev" :class="linkClass('editor')" to="/editor">
           <strong>Editor</strong>
         </router-link>
+        <router-link v-if="isDev" :class="linkClass('subskillsEditor')" to="/editor/subskills">
+          <strong>Subskills</strong>
+        </router-link>
       </div>
       <div class="navbar-end">
         <div
-          v-show="route.name === 'home' || route.name === 'planner' || route.name === 'editor'"
+          v-show="
+            route.name === 'home' ||
+              route.name === 'planner' ||
+              route.name === 'editor' ||
+              route.name === 'subskillsEditor'
+          "
           class="navbar-item"
         >
           <div class="field is-horizontal is-align-items-center mb-0">

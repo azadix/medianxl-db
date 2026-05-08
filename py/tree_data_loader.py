@@ -67,10 +67,14 @@ def text_has_placeholder(text: str | None) -> bool:
 
 def load_merged_skills(data_dir: Path) -> list[dict]:
     """
-    One row per skills.json catalog entry (definition + balance in one file).
+    One row per skills.json and subskills.json catalog entry (definition + balance in one file).
 
     Each row: numeric_id, name (internal), display_name, description, skill_effect, restriction,
     class_name, scalingConstants
+
+    Optional subskill metadata (used by the app UI, preserved by the JSON editor):
+    - parentSkillId: internal id of the parent skill (string)
+    - subskillLabel: optional UI label override (string)
     """
     cat_path = data_dir / "skills.json"
     if not cat_path.is_file():
@@ -79,6 +83,13 @@ def load_merged_skills(data_dir: Path) -> list[dict]:
     catalog = json.loads(cat_path.read_text(encoding="utf-8"))
     if not isinstance(catalog, list):
         raise ValueError("skills.json must be a JSON array")
+
+    sub_path = data_dir / "subskills.json"
+    if sub_path.is_file():
+        sub = json.loads(sub_path.read_text(encoding="utf-8"))
+        if not isinstance(sub, list):
+            raise ValueError("subskills.json must be a JSON array")
+        catalog = [*catalog, *sub]
 
     rows: list[dict] = []
     for row in catalog:

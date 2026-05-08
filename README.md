@@ -47,7 +47,14 @@ Open the URL Vite prints (with this repo’s base path, usually **`/medianxl-db/
 
 In **development** only, **`/editor`** is available for editing-oriented tooling; production builds redirect it to `/`.
 
-Patch selection uses **`public/tree_data/versions.json`** (`is_active` marks the default). Skill text and balance live in **`public/tree_data/<major>_<minor>/skills.json`**; global stat definitions in **`public/tree_data/stats.json`**.
+Patch selection uses **`public/tree_data/versions.json`** (`is_active` marks the default). Skill text and balance live in **`public/tree_data/<major>_<minor>/skills.json`** (and optional **`subskills.json`**); global stat definitions in **`public/tree_data/stats.json`**.
+
+### `subskills.json`
+
+Some skills have version-specific **subskills**. These are represented as separate rows in **`public/tree_data/<major>_<minor>/subskills.json`**, linked to their parent skill via fields:
+
+- **`parentSkillId`**: internal `id` of the parent skill (string)
+- **`subskillLabel`**: optional label override for UI (string, defaults to `"Subskill"`)
 
 ## Layout
 

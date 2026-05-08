@@ -103,6 +103,10 @@ export default class Skill {
         this.row = data.row ?? 0;                    // grid row position (0 is valid)
         this.col = data.col ?? 0;                    // grid column position (0 is valid)
         this.image = data.image || 'icons-shared_missing.png'; // icon filename
+
+        // Subskill metadata (optional; version-specific in skills.json)
+        this.parentSkillId = data.parentSkillId != null && String(data.parentSkillId).trim() !== '' ? String(data.parentSkillId).trim() : null;
+        this.subskillLabel = data.subskillLabel != null && String(data.subskillLabel).trim() !== '' ? String(data.subskillLabel).trim() : null;
         
         // Text content
         this.description = data.description || null;     // skill description with placeholders
@@ -832,6 +836,8 @@ export default class Skill {
             row: this.row,
             col: this.col,
             image: this.image,
+            parentSkillId: this.parentSkillId,
+            subskillLabel: this.subskillLabel,
             description: this.description,
             skillEffect: this.skillEffect,
             restriction: this.restriction,
@@ -866,6 +872,8 @@ export default class Skill {
             row: row.row,
             col: row.col,
             image: row.image || 'icons-shared_missing.png',
+            parentSkillId: row.parentSkillId ?? row.parent_skill_id ?? null,
+            subskillLabel: row.subskillLabel ?? row.subskill_label ?? null,
             description: row.description || null,
             skillEffect: row.skill_effect || null,
             restriction: row.restriction || null,

@@ -19,8 +19,15 @@ if (import.meta.env.DEV) {
     component: () => import('../views/EditorView.vue'),
     meta: { keepAlive: true },
   });
+  routes.push({
+    path: '/editor/subskills',
+    name: 'subskillsEditor',
+    component: () => import('../views/SubskillsEditorView.vue'),
+    meta: { keepAlive: true },
+  });
 } else {
   routes.push({ path: '/editor', redirect: '/' });
+  routes.push({ path: '/editor/subskills', redirect: '/' });
 }
 
 export default createRouter({

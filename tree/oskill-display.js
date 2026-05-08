@@ -21,6 +21,16 @@ export function enrichOskillForDisplay(oskill) {
     det = store?.getSkillDetail(internal);
     nid = det?.numericId ?? null;
   }
+  // Do not allow subskills to appear in the planner oSkill list display.
+  if (internal) {
+    const cat = store?.catalogByInternalId?.get(String(internal)) ?? null;
+    const pid = cat?.parentSkillId != null ? String(cat.parentSkillId).trim() : '';
+    if (pid) {
+      det = null;
+      internal = null;
+      nid = null;
+    }
+  }
   if (det && internal) {
     return {
       numericId: nid,

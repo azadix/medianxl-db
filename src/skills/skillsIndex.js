@@ -421,6 +421,9 @@ async function loadSkillsFromTreeDataPage() {
 
     const loadedSkills = [];
     for (const row of store.catalog) {
+      if (row?.parentSkillId != null && String(row.parentSkillId).trim() !== '') {
+        continue; // subskills are not shown on the main index list
+      }
       const sk = buildSkillFromCatalogRow(store, row);
       if (sk) loadedSkills.push(sk);
     }

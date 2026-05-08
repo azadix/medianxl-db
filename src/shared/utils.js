@@ -47,7 +47,7 @@ import { formulaEvaluator } from '../skills/domain/formula-evaluator.js';
 import { formatScalingValuesToDescriptionHtml } from '../skills/domain/scaling-display-html.js';
 
 // --- Skill data (tree_data JSON) load error ---
-function escapeHtmlText(s) {
+export function escapeHtmlText(s) {
     return String(s)
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
@@ -240,6 +240,8 @@ function calculateManaCost(mana, lvlmana, manashift, level, minMana) {
 // Expand using values sourced from skill_scaling for a given skill and level.
 // If inline values are provided in the token, they take precedence; otherwise fetch by stat key.
 // Also supports [[internal_name]] or [[id:123]] which expand to display_name in success color
+// Also supports ||internal_name|| (or ||id:123||) which expands to a labeled subskill "block":
+// the referenced skill's display name + its full skillEffect text with placeholders resolved.
 export async function expandPlaceholdersWithScaling(numericId, level, description, skillName = null, characterState = null, showFormulas = false, variantKey = null) {
     if (!description) return '';
     
@@ -266,6 +268,46 @@ export async function expandPlaceholdersWithScaling(numericId, level, descriptio
             crossSkillDotStatRe,
             '<span class="has-text-grey">[set character to preview]</span>'
         );
+    }
+
+    // Expand ||internal_name|| or ||id:123|| into a subskill block (name + all effect lines).
+    // This is done before [[...]] and {{...}} so the inserted block can contain placeholders too.
+    const subskillBlockRe = /\|\|([a-zA-Z_][a-zA-Z0-9_]*|id:\d+)\|\|/gi;
+    const subskillMatches = [...String(expandedDescription).matchAll(subskillBlockRe)];
+    if (subskillMatches.length > 0) {
+        const store = getFileSkillStore();
+        for (const m of subskillMatches) {
+            const full = m[0];
+            const refToken = m[1];
+            const resolved = store?.resolveCrossSkillRef(refToken, []);
+            if (!resolved) {
+                expandedDescription = expandedDescription.replace(
+                    full,
+                    `<span class="${SCALING_DISPLAY_HTML_CLASSES.unknown}">[unknown skill ${escapeHtmlAttr(refToken)}]</span>`
+                );
+                continue;
+            }
+
+            const det = store.getSkillDetail(resolved.internalName);
+            const rawEffect = det?.skill_effect ?? '';
+            const expandedEffect = await expandPlaceholdersWithScaling(
+                resolved.skillId,
+                level,
+                rawEffect,
+                resolved.internalName,
+                characterState,
+                showFormulas,
+                null
+            );
+            const effectHtml = String(expandedEffect).replace(/\r?\n/g, '<br>');
+            const label = escapeHtmlText(resolved.displayName || resolved.internalName);
+            const block = `
+<div class="subskill-inline-block">
+  <p class="has-text-warning has-text-weight-semibold">${label}</p>
+  <div class="subskill-inline-body">${effectHtml}</div>
+</div>`.trim();
+            expandedDescription = expandedDescription.replace(full, block);
+        }
     }
     
     // First, expand [[internal_name]] or [[id:123]] (id is catalog numericId)

@@ -1746,6 +1746,9 @@ function initializeOSkillsDropdown() {
     if (!store?.catalog?.length) return;
     const skillItems = [];
     for (const row of store.catalog) {
+        if (row?.parentSkillId != null && String(row.parentSkillId).trim() !== '') {
+            continue; // do not allow subskills in oSkill dropdown
+        }
         const det = store.getSkillDetail(row.id);
         if (!det) continue;
         const description = det.description || '';

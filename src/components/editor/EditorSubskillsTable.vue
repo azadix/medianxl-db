@@ -1,7 +1,5 @@
 <script setup>
 import { ref, computed } from 'vue';
-import { getSkillIconHTML } from '../../shared/utils.js';
-import SkillCardImage from '../skills/SkillCardImage.vue';
 import { parseSearchInput } from '../../skills/skillTableSearch.js';
 
 const props = defineProps({
@@ -12,20 +10,25 @@ const props = defineProps({
 const emit = defineEmits(['edit-index']);
 
 const searchRaw = ref('');
-const sortKey = ref(/** @type {'displayName'|'id'|'class'|'tabName'} */ ('displayName'));
+const sortKey = ref(/** @type {'displayName'|'id'|'parentSkillId'} */ ('displayName'));
 const sortDir = ref(/** @type {1|-1} */ (1));
 
 const parsedSearch = computed(() => parseSearchInput(searchRaw.value));
 
+function isSubskillRow(s) {
+  const p = s?.parentSkillId;
+  return p != null && String(p).trim() !== '';
+}
+
 function editorHaystack(s) {
-  return [s.id, s.displayName, s.class, s.tabName, s.parentSkillId, s.subskillLabel]
+  return [s.id, s.displayName, s.parentSkillId, s.subskillLabel]
     .filter((x) => x != null)
     .map((x) => String(x).toLowerCase())
     .join('\u0000');
 }
 
 function editorPlain(s) {
-  return [s.id, s.displayName, s.class, s.tabName, s.parentSkillId, s.subskillLabel]
+  return [s.id, s.displayName, s.parentSkillId, s.subskillLabel]
     .filter((x) => x != null)
     .map((x) => String(x))
     .join(' ');
@@ -52,10 +55,14 @@ const sortHint = computed(() => (sortDir.value === 1 ? 'asc' : 'desc'));
 
 const displayRows = computed(() => {
   const p = parsedSearch.value;
-  let rows = props.skills.map((skill, index) => ({ skill, index }));
+  let rows = props.skills
+    .map((skill, index) => ({ skill, index }))
+    .filter(({ skill }) => isSubskillRow(skill));
+
   if (p.type !== 'regex_error') {
     rows = rows.filter(({ skill }) => editorMatches(skill, p));
   }
+
   const key = sortKey.value;
   const dir = sortDir.value;
   rows = [...rows].sort((a, b) => {
@@ -74,22 +81,19 @@ const displayRows = computed(() => {
   return rows;
 });
 
-function iconMarkup(skill) {
-  return getSkillIconHTML(skill.image || '', skill.class || '', 'is-48x48', props.folderSeg || null);
-}
 </script>
 
 <template>
   <div class="editor-skills-table-root">
     <div class="field mb-3">
-      <label class="label is-sr-only" for="editor-skills-search">Search skills</label>
+      <label class="label is-sr-only" for="editor-subskills-search">Search subskills</label>
       <input
-        id="editor-skills-search"
+        id="editor-subskills-search"
         v-model="searchRaw"
         class="input"
         type="search"
         autocomplete="off"
-        placeholder="Search id, name, class, tab (use /pattern/flags for regex)"
+        placeholder="Search id, name, parent id (use /pattern/flags for regex)"
       />
       <p v-if="parsedSearch.type === 'regex_error'" class="help is-danger">
         Invalid regex: {{ parsedSearch.message }}
@@ -99,16 +103,13 @@ function iconMarkup(skill) {
     <div class="editor-skills-table-scroll">
       <table class="table is-fullwidth is-hoverable is-striped editor-skills-table">
         <colgroup>
-          <col class="editor-col-icon" />
           <col class="editor-col-id" />
           <col class="editor-col-name" />
-          <col class="editor-col-class" />
-          <col class="editor-col-tab" />
+          <col class="editor-col-parent" />
           <col class="editor-col-action" />
         </colgroup>
         <thead>
           <tr>
-            <th>Icon</th>
             <th>
               <button type="button" class="button is-ghost is-small p-0 editor-sort-btn" @click="toggleSort('id')">
                 ID
@@ -126,15 +127,13 @@ function iconMarkup(skill) {
               </button>
             </th>
             <th>
-              <button type="button" class="button is-ghost is-small p-0 editor-sort-btn" @click="toggleSort('class')">
-                Class
-                <span v-if="sortKey === 'class'" class="has-text-grey is-size-7">{{ sortHint }}</span>
-              </button>
-            </th>
-            <th>
-              <button type="button" class="button is-ghost is-small p-0 editor-sort-btn" @click="toggleSort('tabName')">
-                Tab
-                <span v-if="sortKey === 'tabName'" class="has-text-grey is-size-7">{{ sortHint }}</span>
+              <button
+                type="button"
+                class="button is-ghost is-small p-0 editor-sort-btn"
+                @click="toggleSort('parentSkillId')"
+              >
+                Parent
+                <span v-if="sortKey === 'parentSkillId'" class="has-text-grey is-size-7">{{ sortHint }}</span>
               </button>
             </th>
             <th></th>
@@ -142,26 +141,21 @@ function iconMarkup(skill) {
         </thead>
         <tbody>
           <tr v-if="displayRows.length === 0">
-            <td colspan="6" class="has-text-grey">No matching skills.</td>
+            <td colspan="4" class="has-text-grey">No matching subskills.</td>
           </tr>
           <template v-else>
             <tr v-for="row in displayRows" :key="row.index" :data-index="row.index">
-              <td class="editor-td-icon">
-                <SkillCardImage :icon-markup="iconMarkup(row.skill)" />
-              </td>
               <td class="skill-id-cell editor-td-clip">{{ row.skill.id ?? '' }}</td>
               <td class="editor-td-clip">
                 {{ row.skill.displayName != null ? row.skill.displayName : '' }}
                 <span
-                  v-if="row.skill.parentSkillId"
                   class="tag is-info is-light is-rounded is-size-7 ml-2"
                   :title="`Subskill of ${row.skill.parentSkillId}`"
                 >
                   {{ row.skill.subskillLabel || 'Subskill' }}
                 </span>
               </td>
-              <td class="editor-td-clip">{{ row.skill.class ?? '' }}</td>
-              <td class="editor-td-clip">{{ row.skill.tabName ?? '' }}</td>
+              <td class="editor-td-clip">{{ row.skill.parentSkillId ?? '' }}</td>
               <td class="editor-td-action">
                 <button type="button" class="button is-small is-primary" @click="emit('edit-index', row.index)">
                   Edit
@@ -187,23 +181,17 @@ function iconMarkup(skill) {
 .editor-skills-table {
   table-layout: fixed;
   width: 100%;
-  min-width: 52rem;
+  min-width: 44rem;
 }
 
-.editor-col-icon {
-  width: 4.5rem;
-}
 .editor-col-id {
   width: 5.5rem;
 }
 .editor-col-name {
   width: 16rem;
 }
-.editor-col-class {
-  width: 11rem;
-}
-.editor-col-tab {
-  width: 11rem;
+.editor-col-parent {
+  width: 12rem;
 }
 .editor-col-action {
   width: 5.5rem;
@@ -248,3 +236,4 @@ function iconMarkup(skill) {
   border: 0;
 }
 </style>
+

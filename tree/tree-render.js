@@ -170,6 +170,11 @@ export function buildPlannerSkillCardData(skillEntry, opts = {}) {
         const tags = Array.isArray(skillEntry.tags) ? skillEntry.tags : [];
         const isPassive = tags.includes('Passive');
         const isUpgrade = tags.includes('Upgrade');
+        const parentSkillId =
+            skillEntry.parentSkillId != null && String(skillEntry.parentSkillId).trim() !== ''
+                ? String(skillEntry.parentSkillId).trim()
+                : null;
+        const parentDisplayName = parentSkillId ? (getFileSkillStore()?.lookupDisplayNameByInternalName(parentSkillId) ?? parentSkillId) : null;
         return {
             skillId: skillEntry.id,
             numericId: skillEntry.skillId,
@@ -185,7 +190,13 @@ export function buildPlannerSkillCardData(skillEntry, opts = {}) {
             isInnate: false,
             isPassive,
             isUpgrade,
-            isDisabled: isSkillDisabled(skillEntry.id)
+            isDisabled: isSkillDisabled(skillEntry.id),
+            parentSkillId,
+            parentDisplayName,
+            subskillLabel:
+                skillEntry.subskillLabel != null && String(skillEntry.subskillLabel).trim() !== ''
+                    ? String(skillEntry.subskillLabel).trim()
+                    : null
         };
     }
 

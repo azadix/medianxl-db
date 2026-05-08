@@ -6,7 +6,12 @@ import { attachEditorTextareaAutocomplete } from './editor-textarea-autocomplete
 import { detachVersionSelectorListeners, versionToString } from '../shared/version-config.js';
 
 const TREE_DATA = 'tree_data';
+const DEFAULT_EDITOR_FILE_BASENAME = 'skills.json';
+let editorFileBasename = DEFAULT_EDITOR_FILE_BASENAME;
 
+function isSubskillsMode() {
+    return editorFileBasename === 'subskills.json';
+}
 const DEFAULT_VARIANT_ROW = {
     variant_key: '',
     label: '',
@@ -337,11 +342,11 @@ function hideLoadError() {
 
 async function loadSkillsForFolder(seg) {
     hideLoadError();
-    const skillsPath = `${TREE_DATA}/${seg}/skills.json`;
+    const skillsPath = `${TREE_DATA}/${seg}/${editorFileBasename}`;
     const metaPath = `${TREE_DATA}/${seg}/game_meta.json`;
     const raw = await fetchJson(skillsPath);
     if (!Array.isArray(raw)) {
-        throw new Error('skills.json must be a JSON array');
+        throw new Error(`${editorFileBasename} must be a JSON array`);
     }
     try {
         gameMeta = await fetchJson(metaPath);
@@ -632,15 +637,27 @@ function populateForm(s) {
     document.getElementById('f-id').value = s.id != null ? String(s.id) : '';
     document.getElementById('f-numericId').value = s.numericId != null ? String(s.numericId) : '';
     document.getElementById('f-displayName').value = s.displayName != null ? String(s.displayName) : '';
-    document.getElementById('f-image').value = s.image != null ? String(s.image) : '';
+    const img = document.getElementById('f-image');
+    if (img) img.value = s.image != null ? String(s.image) : '';
 
-    populatePlacementSelects(s);
-    setRowVersionFormFromSkill(s);
+    const parentId = document.getElementById('f-parentSkillId');
+    if (parentId) parentId.value = s.parentSkillId != null ? String(s.parentSkillId) : '';
+    const subLabel = document.getElementById('f-subskillLabel');
+    if (subLabel) subLabel.value = s.subskillLabel != null ? String(s.subskillLabel) : '';
 
-    document.getElementById('f-baseMaxLevel').value = s.baseMaxLevel != null ? String(s.baseMaxLevel) : '';
-    document.getElementById('f-affectedBySpecialization').checked = Boolean(s.affectedBySpecialization);
+    if (!isSubskillsMode()) {
+        populatePlacementSelects(s);
+        setRowVersionFormFromSkill(s);
+    }
 
-    setTagsFormFromSkill(s);
+    const baseMax = document.getElementById('f-baseMaxLevel');
+    if (baseMax) baseMax.value = s.baseMaxLevel != null ? String(s.baseMaxLevel) : '';
+    const abs = document.getElementById('f-affectedBySpecialization');
+    if (abs) abs.checked = Boolean(s.affectedBySpecialization);
+
+    if (!isSubskillsMode()) {
+        setTagsFormFromSkill(s);
+    }
 
     const joinLines = (v) => {
         if (v == null) return '';
@@ -652,12 +669,15 @@ function populateForm(s) {
     };
     document.getElementById('f-description').value = joinLines(s.description);
     document.getElementById('f-skillEffect').value = joinLines(s.skillEffect);
-    document.getElementById('f-restriction').value = joinLines(s.restriction);
+    const restr = document.getElementById('f-restriction');
+    if (restr) restr.value = joinLines(s.restriction);
 
-    document.getElementById('f-variants').value = prettyJson(s.variants, '[]');
+    const variants = document.getElementById('f-variants');
+    if (variants) variants.value = prettyJson(s.variants, '[]');
     document.getElementById('f-scalingConstants').value = prettyJson(s.scalingConstants, '[]');
 
     ['variants', 'scalingConstants'].forEach((k) => {
+        if (isSubskillsMode() && k === 'variants') return;
         const err = document.getElementById(`err-${k}`);
         if (err) {
             err.textContent = '';
@@ -718,16 +738,19 @@ function applyFormToWorkingSkill() {
 
     const s = workingSkills[selectedIndex];
 
-    const variants = parseJsonField('f-variants', 'err-variants', []);
-    if (variants === Symbol('invalid')) return false;
+    let variants = [];
+    if (!isSubskillsMode()) {
+        variants = parseJsonField('f-variants', 'err-variants', []);
+        if (variants === Symbol('invalid')) return false;
+        if (!Array.isArray(variants)) {
+            showFieldError('variants', 'Must be a JSON array');
+            return false;
+        }
+    }
 
     const scalingConstants = parseJsonField('f-scalingConstants', 'err-scalingConstants', []);
     if (scalingConstants === Symbol('invalid')) return false;
 
-    if (!Array.isArray(variants)) {
-        showFieldError('variants', 'Must be a JSON array');
-        return false;
-    }
     if (!Array.isArray(scalingConstants)) {
         showFieldError('scalingConstants', 'Must be a JSON array');
         return false;
@@ -735,41 +758,60 @@ function applyFormToWorkingSkill() {
 
     s.numericId = readInt('f-numericId');
     s.displayName = emptyToNull(document.getElementById('f-displayName').value);
-    s.image = emptyToNull(document.getElementById('f-image').value);
+    const img = document.getElementById('f-image');
+    if (img) s.image = emptyToNull(img.value);
 
     // rowVersionId removed
 
-    const classSel = document.getElementById('f-class-select');
-    const tabSel = document.getElementById('f-tab-select');
-    const cidStr = classSel?.value?.trim() ?? '';
-    const cid = cidStr === '' ? null : parseInt(cidStr, 10);
-    const clsOpt = classSel?.selectedOptions?.[0];
-    s.classId = Number.isFinite(cid) ? cid : null;
-    const clsName = clsOpt?.dataset?.name;
-    s.class =
-        clsName != null && clsName !== ''
-            ? String(clsName)
-            : s.classId != null && clsOpt
-              ? emptyToNull(clsOpt.textContent.replace(/\s*\(not in game_meta\)\s*$/, ''))
-              : null;
+    if (!isSubskillsMode()) {
+        const classSel = document.getElementById('f-class-select');
+        const tabSel = document.getElementById('f-tab-select');
+        const cidStr = classSel?.value?.trim() ?? '';
+        const cid = cidStr === '' ? null : parseInt(cidStr, 10);
+        const clsOpt = classSel?.selectedOptions?.[0];
+        s.classId = Number.isFinite(cid) ? cid : null;
+        const clsName = clsOpt?.dataset?.name;
+        s.class =
+            clsName != null && clsName !== ''
+                ? String(clsName)
+                : s.classId != null && clsOpt
+                  ? emptyToNull(clsOpt.textContent.replace(/\s*\(not in game_meta\)\s*$/, ''))
+                  : null;
 
-    const tidStr = tabSel?.value?.trim() ?? '';
-    const tid = tidStr === '' ? null : parseInt(tidStr, 10);
-    const tOpt = tabSel?.selectedOptions?.[0];
-    s.tab = Number.isFinite(tid) ? tid : null;
-    const tname = tOpt?.dataset?.tabName;
-    s.tabName =
-        tname != null && tname !== ''
-            ? String(tname)
-            : s.tab != null && tOpt
-              ? emptyToNull(tOpt.textContent.replace(/\s*\(not in game_meta for this class\)\s*$/, ''))
-              : null;
-    delete s.tabSortOrder;
+        const tidStr = tabSel?.value?.trim() ?? '';
+        const tid = tidStr === '' ? null : parseInt(tidStr, 10);
+        const tOpt = tabSel?.selectedOptions?.[0];
+        s.tab = Number.isFinite(tid) ? tid : null;
+        const tname = tOpt?.dataset?.tabName;
+        s.tabName =
+            tname != null && tname !== ''
+                ? String(tname)
+                : s.tab != null && tOpt
+                  ? emptyToNull(tOpt.textContent.replace(/\s*\(not in game_meta for this class\)\s*$/, ''))
+                  : null;
+        delete s.tabSortOrder;
 
-    s.baseMaxLevel = readInt('f-baseMaxLevel');
-    s.affectedBySpecialization = document.getElementById('f-affectedBySpecialization').checked;
+        s.baseMaxLevel = readInt('f-baseMaxLevel');
+        const abs = document.getElementById('f-affectedBySpecialization');
+        s.affectedBySpecialization = abs ? abs.checked : false;
 
-    s.tags = readTagsFromForm();
+        s.tags = readTagsFromForm();
+    } else {
+        s.parentSkillId = emptyToNull(document.getElementById('f-parentSkillId')?.value ?? '');
+        s.subskillLabel = emptyToNull(document.getElementById('f-subskillLabel')?.value ?? '');
+        // Ensure removed fields do not persist in subskills.json
+        delete s.classId;
+        delete s.tab;
+        delete s.class;
+        delete s.tabName;
+        delete s.tags;
+        delete s.baseMaxLevel;
+        delete s.affectedBySpecialization;
+        delete s.variants;
+        delete s.image;
+        delete s.restriction;
+        delete s.tabSortOrder;
+    }
 
     const splitLines = (raw) => {
         const t = String(raw ?? '');
@@ -779,10 +821,15 @@ function applyFormToWorkingSkill() {
     };
     s.description = splitLines(document.getElementById('f-description').value);
     s.skillEffect = splitLines(document.getElementById('f-skillEffect').value);
-    s.restriction = splitLines(document.getElementById('f-restriction').value);
+    const restr = document.getElementById('f-restriction');
+    if (restr) {
+        s.restriction = splitLines(restr.value);
+    }
     normalizeSkillTextFieldsToStringArrays([s]);
 
-    s.variants = variants;
+    if (!isSubskillsMode()) {
+        s.variants = variants;
+    }
     delete s.scaling;
     s.scalingConstants = scalingConstants;
 
@@ -880,6 +927,18 @@ function nextNumericIdForNewSkill() {
 }
 
 function makeNewSkillSkeleton() {
+    if (isSubskillsMode()) {
+        return {
+            id: nextUniqueInternalSkillId(),
+            numericId: nextNumericIdForNewSkill(),
+            displayName: 'New subskill',
+            parentSkillId: null,
+            subskillLabel: null,
+            scalingConstants: [],
+            description: [],
+            skillEffect: []
+        };
+    }
     return {
         id: nextUniqueInternalSkillId(),
         numericId: nextNumericIdForNewSkill(),
@@ -936,10 +995,10 @@ function downloadSkillsJson() {
     const a = document.createElement('a');
     const url = URL.createObjectURL(blob);
     a.href = url;
-    a.download = 'skills.json';
+    a.download = editorFileBasename;
     a.click();
     URL.revokeObjectURL(url);
-    showToast('Download started. Replace tree_data/' + folderSeg + '/skills.json in your repo.');
+    showToast(`Download started. Replace tree_data/${folderSeg}/${editorFileBasename} in your repo.`);
 }
 
 function editorBeforeUnload(e) {
@@ -950,10 +1009,14 @@ function editorBeforeUnload(e) {
 }
 
 /**
- * @param {{ syncEditorTableView?: (skills: object[], folder: string) => void }} [opts]
+ * @param {{ syncEditorTableView?: (skills: object[], folder: string) => void, fileBasename?: string }} [opts]
  */
 export async function mountEditor(opts = {}) {
     syncEditorTableView = typeof opts.syncEditorTableView === 'function' ? opts.syncEditorTableView : null;
+    editorFileBasename =
+        opts.fileBasename != null && String(opts.fileBasename).trim() !== ''
+            ? String(opts.fileBasename).trim()
+            : DEFAULT_EDITOR_FILE_BASENAME;
     window.addEventListener('beforeunload', editorBeforeUnload);
 
     document.getElementById('btn-reload')?.addEventListener('click', async () => {
@@ -1024,7 +1087,9 @@ export async function mountEditor(opts = {}) {
                 workingSkills.map((s) => ({
                     id: s.id,
                     displayName: s.displayName,
-                    numericId: s.numericId
+                    numericId: s.numericId,
+                    parentSkillId: s.parentSkillId ?? null,
+                    subskillLabel: s.subskillLabel ?? null
                 }))
         });
     }

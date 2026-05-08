@@ -18398,36 +18398,6 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(250-6.5*blvl)"
-      },
-      {
-        "statKey": "duration",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "frames(100+10*max(lvl-1,0))"
-      },
-      {
-        "statKey": "enemy_physical_resistance",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "-10"
-      },
-      {
-        "statKey": "enemy_defense",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "-50"
-      },
-      {
-        "statKey": "enemy_movement_speed",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "-30"
-      },
-      {
-        "statKey": "enemy_damage",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "-40"
       }
     ],
     "description": [
@@ -18436,12 +18406,7 @@
     "restriction": [],
     "skillEffect": [
       "{{cooldown}}",
-      "<p class='has-text-warning'>Petrify</p>",
-      "{{enemy_damage}}",
-      "{{enemy_physical_resistance}}",
-      "{{enemy_defense}}",
-      "{{enemy_movement_speed}}",
-      "{{duration}}",
+      "||spellbind_petrify||",
       "{{mana_cost}}"
     ],
     "image": "icons-ama_80.png"

@@ -536,6 +536,28 @@ export async function initSkillDataStore(defaultVersion) {
         const stats = await fetchJson(`${TREE_DATA_DIR}/stats.json`);
         const gameMeta = await fetchJson(`${TREE_DATA_DIR}/${folderSeg}/game_meta.json`);
         const skills = await fetchJson(`${TREE_DATA_DIR}/${folderSeg}/skills.json`);
+        let subskills = [];
+        try {
+            const rawSubskills = await fetchJson(`${TREE_DATA_DIR}/${folderSeg}/subskills.json`);
+            subskills = Array.isArray(rawSubskills) ? rawSubskills : [];
+        } catch (_e) {
+            // Optional file; older versions may not have it.
+            // Keep default [].
+        }
+
+        // Subskills file is intentionally minimal; inherit display/placement fields from the parent skill.
+        const skillsById = new Map((Array.isArray(skills) ? skills : []).map((r) => [String(r?.id), r]));
+        for (const ss of subskills) {
+            const pid = ss?.parentSkillId != null ? String(ss.parentSkillId).trim() : '';
+            if (!pid) continue;
+            const parent = skillsById.get(pid);
+            if (!parent) continue;
+            for (const k of ['classId', 'tab', 'class', 'tabName', 'tags', 'image', 'baseMaxLevel', 'affectedBySpecialization']) {
+                if (ss[k] == null) ss[k] = parent[k] ?? null;
+            }
+            if (ss.variants == null) ss.variants = [];
+            if (ss.restriction == null) ss.restriction = [];
+        }
         const characterStatRegistry = await fetchJson(
             `${TREE_DATA_DIR}/${folderSeg}/character_stats.json`
         );
@@ -562,9 +584,9 @@ export async function initSkillDataStore(defaultVersion) {
         store.gameMeta = gameMeta;
         const vRow = store.versions.find((v) => v.major === cur.major && v.minor === cur.minor);
         store.currentVersionId = vRow?.id ?? null;
-        store.catalog = skills;
+        store.catalog = [...skills, ...subskills];
         store.catalogByInternalId = new Map();
-        for (const row of skills) {
+        for (const row of store.catalog) {
             row._plannerClassIds = store.computePlannerClassIdsForRow(row);
             store.catalogByInternalId.set(String(row.id), row);
             const safe = String(row.id).replace(/\//g, '_');

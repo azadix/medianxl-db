@@ -1,5 +1,5 @@
 // Tooltip functionality for skill tree
-import { getSkillIconHTML, expandPlaceholdersWithScaling } from '../src/shared/utils.js';
+import { getSkillIconHTML, expandPlaceholdersWithScaling, escapeHtmlText } from '../src/shared/utils.js';
 import {
   getSkillPoints,
   getOSkillPoints,
@@ -498,7 +498,9 @@ function getSkillDataFromFileStore(skillId, classIdNum = null, cardNumericId = n
         image: det.image,
         className: det.className || store.primaryClassDisplayName(cat) || '',
         baseMaxLevel: cat.baseMaxLevel,
-        affectedBySpecialization: cat.affectedBySpecialization ? 1 : 0
+        affectedBySpecialization: cat.affectedBySpecialization ? 1 : 0,
+        parentSkillId: cat.parentSkillId ?? null,
+        subskillLabel: cat.subskillLabel ?? null
     };
 }
 
@@ -578,11 +580,22 @@ async function buildTooltipContent(
         tagsHtml += '</p>';
     }
 
+    // Subskill marker (if any)
+    let subskillHtml = '';
+    const parentId = skillData?.parentSkillId != null && String(skillData.parentSkillId).trim() !== '' ? String(skillData.parentSkillId).trim() : '';
+    if (parentId) {
+        const store = getFileSkillStore();
+        const parentName = store?.lookupDisplayNameByInternalName(parentId) || parentId;
+        const label = skillData?.subskillLabel != null && String(skillData.subskillLabel).trim() !== '' ? String(skillData.subskillLabel).trim() : 'Subskill';
+        subskillHtml = `<p class="is-size-7 has-text-grey-lighter">${label} of <span class="has-text-weight-semibold">${escapeHtmlText(parentName)}</span></p>`;
+    }
+
     html += `<div class="tooltip-name-container">
                 <div class="tooltip-name-section">
                     <div class="is-size-4 has-text-weight-bold">
                         ${formatDisplayNameWithVariantHtml(skillData.displayName, skillData.numericId, variantKey)}
                         ${tagsHtml}
+                        ${subskillHtml}
                     </div>
                 </div>
                 <div class="tooltip-level-section">

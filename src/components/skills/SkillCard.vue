@@ -148,6 +148,13 @@ watch(
     </button>
     <div class="skill-card-name">
       <span class="skill-card-name-base" :class="nameBaseClass">{{ cardData.displayName }}</span>
+      <span
+        v-if="cardData.parentSkillId"
+        class="tag is-info is-light is-rounded is-size-7 ml-1"
+        :title="`Subskill of ${cardData.parentDisplayName || cardData.parentSkillId}`"
+      >
+        {{ cardData.subskillLabel || 'Subskill' }}
+      </span>
       <span class="skill-card-name-variant has-text-grey is-size-7">{{ variantLabel }}</span>
     </div>
     <div class="skill-card-level">
