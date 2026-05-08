@@ -14,8 +14,8 @@ import {
   isSkillDisabled,
   isOSkillSlotDisabled
 } from '../character/character-state.js';
-import { getSkillIconHTML } from '../utils.js';
-import { getCurrentVersion, versionToTreeAssetFolder } from '../version-config.js';
+import { getSkillIconHTML } from '../src/shared/utils.js';
+import { getCurrentVersion, versionToTreeAssetFolder } from '../src/shared/version-config.js';
 import { ToastManager } from './ToastManager.js';
 import { listSkillVariants } from './skill-variants.js';
 import { notifySkillGridDomReset } from './tree-tooltip.js';

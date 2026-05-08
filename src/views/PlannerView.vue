@@ -13,7 +13,7 @@ import {
   unregisterPlannerSectionSetter,
 } from '../planner/planner-section-bridge.js';
 import { initializeTreePage } from '../../tree/tree-core.js';
-import { initializeVersionSelector } from '../../version-config.js';
+import { initializeVersionSelector } from '../shared/version-config.js';
 import '../../tree/tree-styles.css';
 import '../../tree/dropdown-style.css';
 import '../../tree/character-sheet-sidebar.css';

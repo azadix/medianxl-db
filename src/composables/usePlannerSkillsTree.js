@@ -7,7 +7,7 @@ import {
 } from '../../tree/tree-render.js';
 import { listSkillVariants } from '../../tree/skill-variants.js';
 import { addOverlayArrows } from '../../tree/tree-arrows.js';
-import Innate from '../../skills/Innate.js';
+import Innate from '../skills/domain/Innate.js';
 import {
   changeOSkillPoints,
   getSkillPoints,

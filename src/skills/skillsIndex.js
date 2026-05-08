@@ -3,15 +3,15 @@ import {
   getSkillIconHTML,
   expandPlaceholdersWithScaling,
   showSkillDataLoadError,
-} from '../../utils.js';
+} from '../shared/utils.js';
 import { getTreeSkillsCache } from '../../character/character-state.js';
-import { getCurrentVersion, versionToTreeAssetFolder, initializeVersionSelector } from '../../version-config.js';
+import { getCurrentVersion, versionToTreeAssetFolder, initializeVersionSelector } from '../shared/version-config.js';
 import {
   fetchTreeStructJson,
   getTreeLayoutRoot,
   applyTreeStructLayoutToSkills,
   applyTreeStructPrerequisitesToSkills,
-} from '../../tree-struct.js';
+} from '../shared/tree-struct.js';
 import {
   initSkillDataStore,
   getFileSkillStore,
@@ -19,7 +19,7 @@ import {
   tabOrderRankFromLookup
 } from '../../tree/skill-data-store.js';
 import { buildSkillFromCatalogRow } from '../../tree/tree-data.js';
-import Skill from '../../skills/Skill.js';
+import Skill from './domain/Skill.js';
 import { mergeHomeQuery } from './skillsIndexRoute.js';
 
 /** @type {import('vue-router').Router | null} */
@@ -244,7 +244,7 @@ async function displaySkillDetail(skillId) {
   if (treeClass || treeTab) {
     backHref = r
       ? r.resolve({ name: 'planner', query: { class: treeClass || '', tab: treeTab || '' } }).href
-      : `./planner.html?class=${treeClass || ''}&tab=${treeTab || ''}`;
+      : `./?class=${encodeURIComponent(treeClass || '')}&tab=${encodeURIComponent(treeTab || '')}`;
   } else if (r) {
     backHref = r.resolve({ name: 'home', query: filter ? { filter } : {} }).href;
   } else {

@@ -6,8 +6,8 @@ export default {
 
 <script setup>
 import { ref, onMounted, onUnmounted, nextTick } from 'vue';
-import { mountEditor, unmountEditor } from '../../editor.js';
-import '../../editor-page.css';
+import { mountEditor, unmountEditor } from '../editor/editor.js';
+import '../editor/editor-page.css';
 import '../../tree/dropdown-style.css';
 import EditorListSection from '../components/editor/EditorListSection.vue';
 import EditorEditSection from '../components/editor/EditorEditSection.vue';

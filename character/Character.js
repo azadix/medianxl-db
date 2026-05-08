@@ -9,7 +9,7 @@ import {
   createEmptyRegisteredStatsObject
 } from './planner-stats-config.js';
 import { getPlannerSkillsSnapshot } from './character-state.js';
-import { minCharacterLevelForAllocatedSkillPoints } from '../skills/skill-calculations.js';
+import { minCharacterLevelForAllocatedSkillPoints } from '../src/skills/domain/skill-calculations.js';
 
 export default class Character {
   // Level constraints

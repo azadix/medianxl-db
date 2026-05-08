@@ -1,5 +1,5 @@
 // Tooltip functionality for skill tree
-import { getSkillIconHTML, expandPlaceholdersWithScaling } from '../utils.js';
+import { getSkillIconHTML, expandPlaceholdersWithScaling } from '../src/shared/utils.js';
 import {
   getSkillPoints,
   getOSkillPoints,
@@ -12,10 +12,10 @@ import {
   isOSkillSlotDisabled
 } from '../character/character-state.js';
 import { resolveVariantKeyForTooltip, formatDisplayNameWithVariantHtml } from './skill-variants.js';
-import { getCurrentVersion, versionToTreeAssetFolder } from '../version-config.js';
+import { getCurrentVersion, versionToTreeAssetFolder } from '../src/shared/version-config.js';
 import { getFileSkillStore } from './skill-data-store.js';
-import Innate from '../skills/Innate.js';
-import { getMaxLevelModifierDescriptionsForSkill } from '../skills/skill-calculations.js';
+import Innate from '../src/skills/domain/Innate.js';
+import { getMaxLevelModifierDescriptionsForSkill } from '../src/skills/domain/skill-calculations.js';
 
 let tooltipElement = null;
 let currentHoveredSkill = null;

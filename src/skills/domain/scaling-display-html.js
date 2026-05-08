@@ -3,7 +3,7 @@
  * Matches Bulma classes used in {@link utils.js} expandPlaceholdersWithScaling.
  */
 
-import { SCALING_DISPLAY_HTML_CLASSES } from '../utils.js';
+import { SCALING_DISPLAY_HTML_CLASSES } from '../../shared/utils.js';
 
 /**
  * Render {{stat}} line from merged scaling values (value0–3, formula/constant flags).

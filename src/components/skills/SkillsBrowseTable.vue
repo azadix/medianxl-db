@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { getSkillIconHTML } from '../../../utils.js';
+import { getSkillIconHTML } from '../../shared/utils.js';
 import SkillCardImage from './SkillCardImage.vue';
 import { mergeHomeQuery, readHomeFilterFromRoute } from '../../skills/skillsIndexRoute.js';
 import { parseSearchInput, skillMatchesSearch } from '../../skills/skillTableSearch.js';

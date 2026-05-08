@@ -37,14 +37,14 @@ export const TAG_GROUPS = {
 };
 
 // Import Skill class for scaling values
-import Skill from './skills/Skill.js';
+import Skill from '../skills/domain/Skill.js';
 import {
     lookupMergedDisplayNameByInternalName,
     lookupSkillNameAndDisplayByNumericId,
     getFileSkillStore
-} from './tree/skill-data-store.js';
-import { formulaEvaluator } from './skills/formula-evaluator.js';
-import { formatScalingValuesToDescriptionHtml } from './skills/scaling-display-html.js';
+} from '../../tree/skill-data-store.js';
+import { formulaEvaluator } from '../skills/domain/formula-evaluator.js';
+import { formatScalingValuesToDescriptionHtml } from '../skills/domain/scaling-display-html.js';
 
 // --- Skill data (tree_data JSON) load error ---
 function escapeHtmlText(s) {

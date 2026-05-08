@@ -54,10 +54,13 @@ Patch selection uses **`public/tree_data/versions.json`** (`is_active` marks the
 | Path | Role |
 |------|------|
 | `src/` | Vue app (views, components, router, Pinia) |
+| `src/shared/` | Shared runtime modules (utils, version config, tree_struct loader) |
+| `src/editor/` | Dev-only editor runtime + styles (used by `/editor`) |
 | `public/tree_data/` | `versions.json`, `stats.json`, per-version folders (`2_13/`, …) with `skills.json` and `class-*.png` atlases |
 | `tree/` | Planner / tree UI assets (e.g. styles, editor integration) |
 | `character/` | Build and character state for the planner |
-| `skills/` | Skill model, formulas, helpers used by the UI |
+| `src/skills/domain/` | Skill model classes, formulas, and restrictions used by planner/home |
+| `src/skills/` | Skills page index/search/route helpers |
 | `atlas_generation/` | Per-icon sources by class + `make_all_atlases.py` to rebuild `class-*.png` |
 | `py/` | Python helpers (validation, extracts); import `tree_data_loader` |
 | `spellcheck/` | Spelling dictionaries and check scripts for skill text |

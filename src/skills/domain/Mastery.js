@@ -3,7 +3,7 @@
  * Represents skills from Mastery tabs with restriction checking
  */
 import Skill from './Skill.js';
-import { getSkillPoints } from '../character/character-state.js';
+import { getSkillPoints } from '../../../character/character-state.js';
 
 export default class Mastery extends Skill {
     static MAX_DIFFERENT_SKILLS = 3;

@@ -14,7 +14,7 @@ import {
     setSavedBuilds,
     notifySavedBuildsListRefresh,
 } from '../src/planner/saved-builds-storage.js';
-import { getCurrentDevotion, getDevotionDisplayName } from '../skills/skill-calculations.js';
+import { getCurrentDevotion, getDevotionDisplayName } from '../src/skills/domain/skill-calculations.js';
 import { initializeTooltip, refreshCurrentTooltip } from './tree-tooltip.js';
 import { ToastManager } from './ToastManager.js';
 import { DropdownList } from './DropdownList.js';
@@ -23,7 +23,7 @@ import {
     versionToString,
     setBuildVersionOverride,
     initializeVersionSelector
-} from '../version-config.js';
+} from '../src/shared/version-config.js';
 import { getFileSkillStore } from './skill-data-store.js';
 import { clearSkillVariants, applySkillVariantDefaultsForClass } from './skill-variants.js';
 

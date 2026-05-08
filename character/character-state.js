@@ -13,8 +13,8 @@ import {
 // Re-export getBaseSkillPoints for use in other modules
 export { Character };
 import { recomputePlannerStatsFromSkillAllocations } from './planner-stat-modifiers.js';
-import { checkDevotionRestriction, calculateMaxLevel } from '../skills/skill-calculations.js';
-import { extractStatReferences } from '../skills/formula-evaluator.js';
+import { checkDevotionRestriction, calculateMaxLevel } from '../src/skills/domain/skill-calculations.js';
+import { extractStatReferences } from '../src/skills/domain/formula-evaluator.js';
 import { getFileSkillStore } from '../tree/skill-data-store.js';
 import {
   checkUltimateRestriction,
@@ -22,7 +22,7 @@ import {
   checkMasteryRestriction,
   checkCovenRestriction,
   checkProficiencyRestriction
-} from '../skills/skill-restrictions.js';
+} from '../src/skills/domain/skill-restrictions.js';
 import {
   normalizePrereqSkillTargetKey,
   displayNameForPrereqSkillTarget

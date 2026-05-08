@@ -1,6 +1,6 @@
 <script setup>
 import EditorSkillsTable from './EditorSkillsTable.vue';
-import { editorOpenSkillAtIndex } from '../../../editor.js';
+import { editorOpenSkillAtIndex } from '../../editor/editor.js';
 
 defineProps({
   skills: { type: Array, default: () => [] },

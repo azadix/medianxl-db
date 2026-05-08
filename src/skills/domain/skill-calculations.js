@@ -3,8 +3,8 @@
  * Handles dynamic calculations for skill max levels and other modifiers
  */
 
-import Character from '../character/Character.js';
-import { getFileSkillStore } from '../tree/skill-data-store.js';
+import Character from '../../../character/Character.js';
+import { getFileSkillStore } from '../../../tree/skill-data-store.js';
 import Innate from './Innate.js';
 
 export { D2_CALC_BUCKETS, getCalcBucketIndex } from './calc-buckets.js';

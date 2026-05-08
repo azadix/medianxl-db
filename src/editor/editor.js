@@ -1,9 +1,9 @@
 /**
  * Local editor for tree_data/<version>/skills.json (no server write; download only).
  */
-import { TAG_GROUPS } from './utils.js';
+import { TAG_GROUPS } from '../shared/utils.js';
 import { attachEditorTextareaAutocomplete } from './editor-textarea-autocomplete.js';
-import { detachVersionSelectorListeners, versionToString } from './version-config.js';
+import { detachVersionSelectorListeners, versionToString } from '../shared/version-config.js';
 
 const TREE_DATA = 'tree_data';
 

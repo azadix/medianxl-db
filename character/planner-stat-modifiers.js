@@ -6,7 +6,7 @@
  * (see {@link runPlannerSkillStatRecompute} in character-state.js).
  */
 
-import Skill from '../skills/Skill.js';
+import Skill from '../src/skills/domain/Skill.js';
 import { getFileSkillStore } from '../tree/skill-data-store.js';
 import { getSkillVariantKey } from '../tree/skill-variants.js';
 import {

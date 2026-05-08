@@ -1,6 +1,6 @@
 // Game version configuration (tree_data/versions.json + game_meta.json via SkillFileStore)
 
-import { getFileSkillStore } from './tree/skill-data-store.js';
+import { getFileSkillStore } from '../../tree/skill-data-store.js';
 
 const BUILD_VERSION_OVERRIDE_KEY = 'medianxl_build_version_override';
 
