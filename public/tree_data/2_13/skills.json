@@ -6824,7 +6824,7 @@
     "variants": [],
     "scalingConstants": [],
     "description": [
-      "Melee attack that inflicts heavenly flames that spread to others"
+      "Inflicts heavenly flames that spread to others"
     ],
     "restriction": [
       "Requires a melee weapon",
