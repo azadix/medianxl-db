@@ -11445,8 +11445,8 @@
     "class": "Other",
     "tabName": "oSkill",
     "tags": [
-      "Magic",
       "Projectile",
+      "Magic",
       "Weapon Damage"
     ],
     "baseMaxLevel": 0,
@@ -11473,8 +11473,6 @@
     ],
     "restriction": [],
     "skillEffect": [
-      "Grants Steady Aim",
-      "Disabled Non-Hunter Ranged skills",
       "{{weapon_damage}}",
       "{{bonus_magic_damage}}",
       "{{mana_cost}}"
@@ -12668,8 +12666,8 @@
     "class": "Other",
     "tabName": "oSkill",
     "tags": [
-      "Magic",
       "Attack",
+      "Magic",
       "Weapon Damage"
     ],
     "baseMaxLevel": 0,
@@ -17787,14 +17785,27 @@
     "class": "Other",
     "tabName": "oSkill",
     "tags": [
-      "Magic",
       "Projectile",
+      "Magic",
       "Weapon Damage"
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100"
+      },
+      {
+        "statKey": "converts_phys_to_magic",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "50"
+      }
+    ],
     "description": [
       "Fires a bolt that shatters into more seeking bolts"
     ],
@@ -20628,7 +20639,7 @@
         "statKey": "cooldown",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(0+if(ulvl>=130,50,0))"
+        "value0": "frames(if(ulvl>=130,50,0))"
       }
     ],
     "description": [
