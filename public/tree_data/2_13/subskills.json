@@ -45,6 +45,33 @@
       "{{enemy_defense}}",
       "{{enemy_movement_speed}}",
       "{{duration}}"
-    ]
+    ],
+    "restriction": []
+  },
+  {
+    "id": "brutal_effigy_brutal_aura",
+    "numericId": 709,
+    "displayName": "Brutal Aura",
+    "parentSkillId": "brutal_effigy",
+    "scalingConstants": [
+      {
+        "statKey": "movement_speed",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "4*blvl"
+      },
+      {
+        "statKey": "deadly_strike",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "1*blvl"
+      }
+    ],
+    "description": [],
+    "skillEffect": [
+      "{{deadly_strike}}",
+      "{{movement_speed}}"
+    ],
+    "restriction": []
   }
 ]

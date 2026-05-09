@@ -229,12 +229,15 @@ export async function recomputePlannerStatsFromSkillAllocations(character, ctx) 
     characterState.lvl[name] = slvlBonus;
   }
 
-  for (const [internalKey, rawPoints] of Object.entries(mergedBlvl || {})) {
-    const blvlPoints = Math.max(0, Math.floor(Number(rawPoints) || 0));
-    if (blvlPoints <= 0) continue;
-
-    const catRow = catalogRowBySkillKey(store, internalKey);
-    if (!catRow?.numericId) continue;
+  /**
+   * Apply one catalog row's scalingConstants at a given blvlPoints.
+   * @param {object} catRow
+   * @param {string} internalKeyForLookup - key used for stored variant selection fallback
+   * @param {number} blvlPoints
+   * @param {object} effectiveCharacterState
+   */
+  async function applyScalingConstantsForCatalogRow(catRow, internalKeyForLookup, blvlPoints, effectiveCharacterState) {
+    if (!catRow?.numericId) return;
 
     const internalId = String(catRow.id);
     const displayName =
@@ -242,14 +245,14 @@ export async function recomputePlannerStatsFromSkillAllocations(character, ctx) 
         ? String(catRow.displayName)
         : internalId;
     const numericId = Number(catRow.numericId);
-    if (!Number.isFinite(numericId)) continue;
+    if (!Number.isFinite(numericId)) return;
 
     const scalingConstants = Array.isArray(catRow.scalingConstants) ? catRow.scalingConstants : [];
-    if (scalingConstants.length === 0) continue;
+    if (scalingConstants.length === 0) return;
 
     const skill = new Skill({ id: internalId, name: displayName, skillId: numericId });
 
-    const storedVk = getSkillVariantKey(internalId) ?? getSkillVariantKey(internalKey);
+    const storedVk = getSkillVariantKey(internalId) ?? getSkillVariantKey(internalKeyForLookup);
     const selectedVariantKey =
       storedVk != null && String(storedVk).trim() !== '' ? String(storedVk).trim() : null;
 
@@ -297,7 +300,7 @@ export async function recomputePlannerStatsFromSkillAllocations(character, ctx) 
           blvlPoints,
           statKey,
           occurrenceIndex,
-          characterState,
+          effectiveCharacterState,
           ulvl,
           false,
           0,
@@ -315,12 +318,7 @@ export async function recomputePlannerStatsFromSkillAllocations(character, ctx) 
           const slotVal = numericValueSlot(scalingValues, valueIndex);
           if (slotVal == null || slotVal === 0) continue;
           addBonus(bonuses, plannerKey, slotVal);
-          pushPlannerStatModifier(
-            plannerKey,
-            slotVal,
-            internalId,
-            displayName
-          );
+          pushPlannerStatModifier(plannerKey, slotVal, internalId, displayName);
         }
         if (isPlannerBaseStatKey(statKey)) {
           for (let i = 0; i <= 3; i++) {
@@ -328,13 +326,7 @@ export async function recomputePlannerStatsFromSkillAllocations(character, ctx) 
             const slotVal = numericValueSlot(scalingValues, i);
             if (slotVal == null || slotVal === 0) continue;
             addBonus(bonuses, statKey, slotVal);
-            pushPlannerStatModifier(
-              statKey,
-              slotVal,
-              internalId,
-              displayName,
-              `value${i} remainder`
-            );
+            pushPlannerStatModifier(statKey, slotVal, internalId, displayName, `value${i} remainder`);
           }
         }
         continue;
@@ -342,9 +334,39 @@ export async function recomputePlannerStatsFromSkillAllocations(character, ctx) 
 
       const delta = sumEvaluatedNumericSlots(scalingValues);
       if (!Number.isFinite(delta) || delta === 0) continue;
-
       addBonus(bonuses, statKey, delta);
       pushPlannerStatModifier(statKey, delta, internalId, displayName, '');
+    }
+  }
+
+  for (const [internalKey, rawPoints] of Object.entries(mergedBlvl || {})) {
+    const blvlPoints = Math.max(0, Math.floor(Number(rawPoints) || 0));
+    if (blvlPoints <= 0) continue;
+
+    const catRow = catalogRowBySkillKey(store, internalKey);
+    if (!catRow?.numericId) continue;
+
+    // Apply the allocated (parent) skill row itself.
+    await applyScalingConstantsForCatalogRow(catRow, internalKey, blvlPoints, characterState);
+
+    // Apply any linked subskills with the same points as their parent.
+    const parentInternalId = String(catRow.id);
+    const subskills = Array.isArray(store.catalog)
+      ? store.catalog.filter(
+          (r) =>
+            r?.parentSkillId != null &&
+            String(r.parentSkillId).trim() !== '' &&
+            String(r.parentSkillId).trim() === parentInternalId
+        )
+      : [];
+    for (const sub of subskills) {
+      const subInternalId = String(sub.id);
+      const patchedState = {
+        ...characterState,
+        blvl: { ...(characterState.blvl || {}), [subInternalId]: blvlPoints },
+        lvl: { ...(characterState.lvl || {}), [subInternalId]: slvlBonus }
+      };
+      await applyScalingConstantsForCatalogRow(sub, subInternalId, blvlPoints, patchedState);
     }
   }
 

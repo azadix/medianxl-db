@@ -2747,29 +2747,14 @@
     "baseMaxLevel": 10,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [
-      {
-        "statKey": "movement_speed",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "4*blvl"
-      },
-      {
-        "statKey": "deadly_strike",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "1*blvl"
-      }
-    ],
+    "scalingConstants": [],
     "description": [
       "Your effigy gains an aura that boosts your combat prowess while nearby"
     ],
     "restriction": [],
     "skillEffect": [
       "[[deathly_effigy]]",
-      "<p class='has-text-warning'>Brutal Aura</p>",
-      "{{deadly_strike}}",
-      "{{movement_speed}}"
+      "||brutal_effigy_brutal_aura||"
     ],
     "image": "icons-nec_202.png"
   },
@@ -3850,8 +3835,8 @@
       "{{enemy_defense}}",
       "{{enemy_movement_speed}}",
       "{{enemy_damage}}",
-      "{{duration}}",
       "{{enemy_physical_resistance}}",
+      "{{duration}}",
       "{{bonus_fire_damage_based_on_str_or_dex}}",
       "{{mana_cost}}"
     ],

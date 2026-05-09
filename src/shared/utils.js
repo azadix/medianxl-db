@@ -371,9 +371,43 @@ export async function expandPlaceholdersWithScaling(numericId, level, descriptio
             if (actualSkillName) {
                 const mergedDisplay = lookupMergedDisplayNameByInternalName(actualSkillName);
                 const displayName = mergedDisplay || actualSkillName;
-                
+
+                // Subskills are not allocated directly; they should scale with their parent's points.
+                // If this row has a parentSkillId, mirror the parent's blvl/slvl onto this skill id
+                // for placeholder evaluation.
+                let effectiveCharacterState = characterState;
+                let effectiveLevel = level;
+                if (characterState && store) {
+                    const cat = store.catalogByInternalId?.get?.(String(actualSkillName));
+                    const parentIdRaw = cat?.parentSkillId;
+                    const parentId =
+                        parentIdRaw != null && String(parentIdRaw).trim() !== ''
+                            ? String(parentIdRaw).trim()
+                            : null;
+                    if (parentId) {
+                        const parentBlvl = characterState.blvl?.[parentId] ?? 0;
+                        const parentSlvl = characterState.lvl?.[parentId] ?? 0;
+                        const patchedBlvl = { ...(characterState.blvl || {}), [actualSkillName]: parentBlvl };
+                        const patchedSlvl = { ...(characterState.lvl || {}), [actualSkillName]: parentSlvl };
+                        effectiveCharacterState = { ...characterState, blvl: patchedBlvl, lvl: patchedSlvl };
+                        const lvlSum = (Number(parentBlvl) || 0) + (Number(parentSlvl) || 0);
+                        if (Number.isFinite(lvlSum) && lvlSum > 0) {
+                            effectiveLevel = lvlSum;
+                        }
+                    }
+                }
+
                 const skill = new Skill({ id: actualSkillName, name: displayName, skillId: numericId });
-                const scalingValues = await skill.getScalingValues(level, key, occurrenceIndex, characterState, characterState?.level, showFormulas, 0, variantKey);
+                const scalingValues = await skill.getScalingValues(
+                    effectiveLevel,
+                    key,
+                    occurrenceIndex,
+                    effectiveCharacterState,
+                    effectiveCharacterState?.level,
+                    showFormulas,
+                    0,
+                    variantKey
+                );
                 
                 if (scalingValues) {
                     // Special handling for mana_cost: calculate single value from 3 parameters
@@ -412,18 +446,18 @@ export async function expandPlaceholdersWithScaling(numericId, level, descriptio
                                 }
                                 
                                 // If characterState is available, try to evaluate as formula
-                                if (characterState) {
-                                    const blvl = characterState.blvl?.[actualSkillName] || 0;
-                                    const slvl = characterState.lvl?.[actualSkillName] || 0;
+                                if (effectiveCharacterState) {
+                                    const blvl = effectiveCharacterState.blvl?.[actualSkillName] || 0;
+                                    const slvl = effectiveCharacterState.lvl?.[actualSkillName] || 0;
                                     const lvl = blvl + slvl;
                                     
                                     const variables = {
                                         blvl,
                                         slvl,
                                         lvl,
-                                        ulvl: characterState.level || 1,
-                                        _blvl: characterState.blvl || {},
-                                        characterState: characterState
+                                        ulvl: effectiveCharacterState.level || 1,
+                                        _blvl: effectiveCharacterState.blvl || {},
+                                        characterState: effectiveCharacterState
                                     };
                                     
                                     const evalResult = evaluator.evaluate(strValue, variables);
@@ -444,8 +478,8 @@ export async function expandPlaceholdersWithScaling(numericId, level, descriptio
                                 v3 !== '' && v3 !== null && v3 !== undefined;
                             const minManaNum = hasMinMana ? parseOrEvaluate(v3) : undefined;
 
-                            const blvl = characterState.blvl?.[actualSkillName] || 0;
-                            const slvl = characterState.lvl?.[actualSkillName] || 0;
+                            const blvl = effectiveCharacterState?.blvl?.[actualSkillName] || 0;
+                            const slvl = effectiveCharacterState?.lvl?.[actualSkillName] || 0;
                             const lvl = blvl + slvl;
 
                             // Calculate mana cost
