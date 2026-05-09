@@ -33,7 +33,7 @@ onMounted(() => {
     </div>
     <div class="navbar-menu" data-navbar-menu>
       <div class="navbar-start">
-        <router-link id="nav-all-skills" :class="linkClass('home')" to="/">
+        <router-link id="nav-all-skills" :class="linkClass('skills')" to="/skills">
           <strong>Skills</strong>
         </router-link>
         <router-link id="nav-tree" :class="linkClass('planner')" to="/planner">
@@ -49,7 +49,7 @@ onMounted(() => {
       <div class="navbar-end">
         <div
           v-show="
-            route.name === 'home' ||
+            route.name === 'skills' ||
               route.name === 'planner' ||
               route.name === 'editor' ||
               route.name === 'subskillsEditor'

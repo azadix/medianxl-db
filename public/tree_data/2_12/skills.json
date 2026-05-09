@@ -20097,24 +20097,6 @@
     "image": "icons-bar_142.png"
   },
   {
-    "id": "telekinesis",
-    "numericId": 243,
-    "displayName": "Telekinesis",
-    "classId": 1,
-    "tab": 65,
-    "class": "Other",
-    "tabName": "oSkill",
-    "tags": [],
-    "baseMaxLevel": 0,
-    "affectedBySpecialization": false,
-    "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
-    "image": "icons-shared_182.png"
-  },
-  {
     "id": "teleport",
     "numericId": 244,
     "displayName": "Teleport",

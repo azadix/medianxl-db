@@ -20,7 +20,12 @@ import {
 } from '../../tree/skill-data-store.js';
 import { buildSkillFromCatalogRow } from '../../tree/tree-data.js';
 import Skill from './domain/Skill.js';
-import { mergeHomeQuery } from './skillsIndexRoute.js';
+import {
+  mergeHomeQuery,
+  SKILLS_ROUTE_NAME,
+  readQueryStringArray,
+  readClassTagJoinFromQuery,
+} from './skillsIndexRoute.js';
 
 /** @type {import('vue-router').Router | null} */
 let routerRef = null;
@@ -239,6 +244,9 @@ async function displaySkillDetail(skillId) {
   const treeClass = q.class != null ? String(q.class) : null;
   const treeTab = q.tab != null ? String(q.tab) : null;
   const filter = q.filter != null ? String(q.filter) : null;
+  const browseClasses = readQueryStringArray(q, 'classes');
+  const browseTags = readQueryStringArray(q, 'tags');
+  const classTagJoin = readClassTagJoinFromQuery(q);
 
   let backHref;
   if (treeClass || treeTab) {
@@ -246,9 +254,23 @@ async function displaySkillDetail(skillId) {
       ? r.resolve({ name: 'planner', query: { class: treeClass || '', tab: treeTab || '' } }).href
       : `./?class=${encodeURIComponent(treeClass || '')}&tab=${encodeURIComponent(treeTab || '')}`;
   } else if (r) {
-    backHref = r.resolve({ name: 'home', query: filter ? { filter } : {} }).href;
+    /** @type {Record<string, string | string[]>} */
+    const backQuery = {};
+    if (filter && filter !== 'all') backQuery.filter = filter;
+    if (browseClasses.length) backQuery.classes = browseClasses;
+    if (browseTags.length) backQuery.tags = browseTags;
+    if (classTagJoin === 'or') backQuery.classTagOp = 'or';
+    backHref = r.resolve({ name: SKILLS_ROUTE_NAME, query: backQuery }).href;
   } else {
-    backHref = filter ? `./?filter=${encodeURIComponent(filter)}` : './';
+    const sp = new URLSearchParams();
+    if (filter && filter !== 'all') sp.set('filter', filter);
+    for (const c of browseClasses) sp.append('classes', c);
+    for (const t of browseTags) sp.append('tags', t);
+    if (classTagJoin === 'or') sp.set('classTagOp', 'or');
+    const qs = sp.toString();
+    const base = String(import.meta.env?.BASE_URL ?? '/').replace(/\/$/, '') || '';
+    const path = `${base}/skills`;
+    backHref = qs ? `${path}?${qs}` : path;
   }
 
   const backLabel = treeClass || treeTab ? 'Tree' : 'Skills';
@@ -536,7 +558,7 @@ export async function syncSkillsIndexFromRoute(router) {
   if (!pageTitleEl) return;
 
   const route = router.currentRoute.value;
-  if (route.name !== 'home') return;
+  if (route.name !== SKILLS_ROUTE_NAME) return;
 
   const rawSkill = route.query.skill;
   const skillParam = Array.isArray(rawSkill) ? rawSkill[0] : rawSkill;

@@ -3,7 +3,8 @@ import HomeView from '../views/HomeView.vue';
 import PlannerView from '../views/PlannerView.vue';
 
 const routes = [
-  { path: '/', name: 'home', component: HomeView },
+  { path: '/', redirect: '/skills' },
+  { path: '/skills', name: 'skills', component: HomeView },
   {
     path: '/planner',
     name: 'planner',

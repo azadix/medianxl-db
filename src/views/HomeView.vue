@@ -51,7 +51,7 @@ onUnmounted(() => {
 watch(
   () => route.query,
   async () => {
-    if (route.name === 'home') {
+    if (route.name === 'skills') {
       await syncSkillsIndexFromRoute(router);
     }
   },
