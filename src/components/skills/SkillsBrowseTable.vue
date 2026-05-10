@@ -308,11 +308,10 @@ function iconMarkup(skill) {
 
     <div
       v-if="uniqueClasses.length || uniqueTags.length"
-      class="skills-filter-panel box py-3 px-3 mb-4"
+      class="skills-filter-panel mb-2"
     >
       <div class="field is-grouped is-grouped-multiline is-align-items-flex-end skills-filter-dd-row">
         <div v-if="uniqueClasses.length" class="control">
-          <label id="skills-dd-class-label" class="label">Class</label>
           <div class="skills-filter-dd-row-inner">
             <div class="dropdown skills-filter-dd" :class="{ 'is-active': openDropdown === 'class' }">
               <div class="dropdown-trigger">
@@ -364,7 +363,6 @@ function iconMarkup(skill) {
           </div>
         </div>
         <div v-if="uniqueTags.length" class="control">
-          <label id="skills-dd-tags-label" class="label">Tags</label>
           <div class="skills-filter-dd-row-inner">
             <div class="dropdown skills-filter-dd" :class="{ 'is-active': openDropdown === 'tags' }">
               <div class="dropdown-trigger">
@@ -416,7 +414,6 @@ function iconMarkup(skill) {
           </div>
         </div>
         <div v-if="uniqueClasses.length && uniqueTags.length" class="control">
-          <label class="label" for="skills-filter-join">Combine class and tags</label>
           <div class="select">
             <select id="skills-filter-join" :value="classTagJoin" @change="onJoinChange">
               <option value="and">AND (match both)</option>
@@ -425,7 +422,6 @@ function iconMarkup(skill) {
           </div>
         </div>
         <div class="control filter-help-control">
-          <label class="label is-invisible" aria-hidden="true">Help</label>
           <button
             id="skillsFilterHelpBtn"
             type="button"
