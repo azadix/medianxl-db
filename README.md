@@ -62,7 +62,7 @@ Some skills have version-specific **subskills**. These are represented as separa
 | `src/` | Vue app (views, components, router, Pinia) |
 | `src/shared/` | Shared runtime modules (utils, version config, tree_struct loader) |
 | `src/editor/` | Dev-only editor runtime + styles (used by `/editor`) |
-| `public/tree_data/` | `versions.json`, `stats.json`, per-version folders (`2_13/`, …) with `skills.json` and `class-*.png` atlases |
+| `public/tree_data/` | `versions.json`, `stats.json`, per-version folders (`2_13/`, …) with `skills.json` and `class-*.{png,webp}` atlases |
 | `tree/` | Planner / tree UI assets (e.g. styles, editor integration) |
 | `character/` | Build and character state for the planner |
 | `src/skills/domain/` | Skill model classes, formulas, and restrictions used by planner/home |
@@ -81,9 +81,13 @@ npm run preview   # optional local check of dist/
 
 `build` runs **ESLint**, **spellcheck** (Python, active version from `public/tree_data/versions.json`), **Vite build**, then writes **`dist/404.html`** as a copy of **`dist/index.html`** so **GitHub Pages** can serve deep links to the SPA (`scripts/copy-spa-404.mjs`). The app base URL is set in **`vite.config.js`** (`base: '/medianxl-db/'`).
 
+**GitHub Pages** serves static files with **short default HTTP cache lifetimes**; you cannot set long `Cache-Control` per asset on Pages alone. Lighthouse may still flag “efficient cache policy” for that reason. The production bundle registers a **service worker** (`public/sw.js` → `dist/sw.js`) that **cache-first** stores `tree_data/**` JSON and `class-*.{png,webp}` after the first successful fetch, so repeat visits reuse those assets without relying on long server headers. Each build gets a **new cache name** (see `vite.config.js`) so updated deploys replace stale entries.
+
+To check impact yourself, run **`npm run preview`**, open the printed URL in Chrome, and use **Lighthouse** (or Network panel with “Disable cache” off) to compare **image transfer size** and **repeat-visit** requests before vs. after a deploy.
+
 ## Class icon atlases
 
-Atlases shipped to the app live under **`public/tree_data/<major>_<minor>/`** (e.g. `class-ama.png`, `class-shared.png`). Source frames are organized under **`atlas_generation/`** (per-class subfolders). Rebuild all classes for a patch:
+Atlases shipped to the app live under **`public/tree_data/<major>_<minor>/`** as **`class-*.png`** (lossless, zlib-optimized) plus matching **`class-*.webp`** for smaller transfers in supporting browsers (the UI uses CSS `image-set` with PNG fallback). Source frames are organized under **`atlas_generation/`** (per-class subfolders). Rebuild all classes for a patch:
 
 ```bash
 python atlas_generation/make_all_atlases.py --version 2.13

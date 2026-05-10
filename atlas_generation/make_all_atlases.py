@@ -43,8 +43,21 @@ def make_atlas(input_dir, output_file):
 
         atlas.paste(icon, (x, y))
 
-    atlas.save(output_file)
+    # Optimized PNG (smaller than default save) + WebP for browsers that support it.
+    atlas.save(
+        output_file,
+        format="PNG",
+        optimize=True,
+        compress_level=9,
+    )
     print(f"SUCCESS: Atlas saved: {output_file}")
+
+    webp_file = os.path.splitext(output_file)[0] + ".webp"
+    try:
+        atlas.save(webp_file, format="WEBP", quality=85, method=6, lossless=False)
+        print(f"SUCCESS: WebP atlas saved: {webp_file}")
+    except Exception as e:
+        print(f"WARNING: Could not write WebP ({webp_file}): {e}")
 
 
 def resolve_input_dir(icons_dir, version, class_id):

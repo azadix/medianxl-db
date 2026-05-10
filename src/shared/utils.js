@@ -117,7 +117,7 @@ export function formatStatName(stat) {
 const ATLAS_DEFAULT_VERSION_FOLDER = '2_13';
 
 /**
- * @param {string} gameVersionFolder - e.g. "2_12"; atlas URL is tree_data/<folder>/class-<prefix>.png; if omitted, uses ATLAS_DEFAULT_VERSION_FOLDER.
+ * @param {string} gameVersionFolder - e.g. "2_12"; atlas URLs are tree_data/<folder>/class-<prefix>.{webp,png}; if omitted, uses ATLAS_DEFAULT_VERSION_FOLDER.
  */
 export function getIconHTML(imagePath, className = '', gameVersionFolder = null) {
     if (!imagePath) return "";
@@ -139,14 +139,22 @@ export function getIconHTML(imagePath, className = '', gameVersionFolder = null)
     const folder = (gameVersionFolder && String(gameVersionFolder).trim())
         ? String(gameVersionFolder).trim()
         : ATLAS_DEFAULT_VERSION_FOLDER;
-    const atlasPath = `tree_data/${folder}/class-${prefix}.png`;
+    const atlasPng = `tree_data/${folder}/class-${prefix}.png`;
+    const atlasWebp = `tree_data/${folder}/class-${prefix}.webp`;
+    const pngEsc = escapeHtmlAttr(atlasPng);
+    const webpEsc = escapeHtmlAttr(atlasWebp);
+    // PNG fallback, then WebP-first image-set (reduces bytes where supported).
+    const bgImage =
+        `background-image:url('${pngEsc}');` +
+        `background-image:-webkit-image-set(url('${webpEsc}') 1x, url('${pngEsc}') 1x);` +
+        `background-image:image-set(url('${webpEsc}') type('image/webp'), url('${pngEsc}') type('image/png'));`;
 
     return `
         <div class="image ${className}"
             style="
                 width:${ICON_SIZE}px;
                 height:${ICON_SIZE}px;
-                background-image:url('${atlasPath}');
+                ${bgImage}
                 background-position:-${x}px -${y}px;
             ">
         </div>
@@ -163,7 +171,7 @@ export function getIconHTML(imagePath, className = '', gameVersionFolder = null)
  * @param {string|null|undefined} humanClassName - class display name for prefix lookup
  * @param {string} [className] - extra CSS class on the img element
  * @param {string|null|undefined} gameVersionFolder - e.g. "2_12"; only atlas-style names (icons-*_n.png / image-*_n.png).
- * Those load sprites from tree_data/<folder>/class-<prefix>.png. Loose PNGs use icons/<prefix>/<file> (not versioned).
+ * Those load sprites from tree_data/<folder>/class-<prefix>.{webp,png}. Loose PNGs use icons/<prefix>/<file> (not versioned).
  */
 export function getSkillIconHTML(imageFileName, humanClassName, className = '', gameVersionFolder = null) {
     const file = (imageFileName && imageFileName.trim().length > 0) ? imageFileName.trim() : MISSING_IMAGE_NAME;
@@ -171,7 +179,7 @@ export function getSkillIconHTML(imageFileName, humanClassName, className = '', 
         ? String(gameVersionFolder).trim()
         : null;
 
-    // Atlas-style: version-specific sprite sheets (tree_data/<major>_<minor>/class-*.png).
+    // Atlas-style: version-specific sprite sheets (tree_data/<major>_<minor>/class-*.{webp,png}).
     if (/^(?:icons|image)-[a-z]+_\d+\.png$/.test(file)) {
         return getIconHTML(file, className, atlasVersionFolder);
     }
