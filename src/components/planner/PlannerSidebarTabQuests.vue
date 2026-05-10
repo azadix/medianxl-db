@@ -12,43 +12,24 @@ import {
   difficultiesForQuest,
   formatQuestRewardBracket,
   QUEST_DIFF_NAMES,
-} from '../../../character/planner-config-panel.js';
+  sidebarTabQuests,
+} from '../../../character/sidebarTabQuests.js';
 
 const refreshKey = ref(0);
 
 const questIds = computed(() => Character.getQuestRewardQuestIds());
-
-const questActLabels = {
-  den_of_evil: 'Act 1',
-  radament: 'Act 2',
-  golden_bird: 'Act 3',
-  "lam_essen's_tome": 'Act 3',
-  izual: 'Act 4',
-  justicar_signet: 'Endgame',
-  inquisitor_of_the_triune: 'Endgame',
-};
-
-const questActOrder = {
-  'Act 1': 1,
-  'Act 2': 2,
-  'Act 3': 3,
-  'Act 4': 4,
-  'Act 5': 5,
-  Other: 90,
-  Endgame: 100,
-};
 
 const questRows = computed(() =>
   questIds.value
     .filter((questId) => difficultiesForQuest(questId).length > 0)
     .map((questId) => ({
       questId,
-      act: questActLabels[questId] || 'Other',
+      act: sidebarTabQuests.questActLabels[questId] || 'Other',
       diffs: difficultiesForQuest(questId),
     }))
     .sort((a, b) => {
-      const orderA = questActOrder[a.act] ?? questActOrder.Other;
-      const orderB = questActOrder[b.act] ?? questActOrder.Other;
+      const orderA = sidebarTabQuests.questActOrder[a.act] ?? sidebarTabQuests.questActOrder.Other;
+      const orderB = sidebarTabQuests.questActOrder[b.act] ?? sidebarTabQuests.questActOrder.Other;
       if (orderA !== orderB) return orderA - orderB;
       return formatQuestLabel(a.questId).localeCompare(formatQuestLabel(b.questId));
     })
@@ -130,16 +111,16 @@ const refreshHandler = () => {
 };
 
 onMounted(() => {
-  window.addEventListener('plannerConfigQuestsRefresh', refreshHandler);
+  window.addEventListener('plannerSidebarTabQuestsUiRefresh', refreshHandler);
 });
 
 onUnmounted(() => {
-  window.removeEventListener('plannerConfigQuestsRefresh', refreshHandler);
+  window.removeEventListener('plannerSidebarTabQuestsUiRefresh', refreshHandler);
 });
 </script>
 
 <template>
-  <div id="sidebarPaneConfig">
+  <div id="sidebarPaneQuests">
     <section class="planner-card planner-config-summary">
       <span class="planner-card__eyebrow">Quest completion</span>
       <div class="planner-config-summary__numbers">
@@ -162,7 +143,7 @@ onUnmounted(() => {
       </div>
     </section>
 
-    <div id="plannerConfigQuests" :key="refreshKey">
+    <div id="plannerSidebarTabQuestsList" :key="refreshKey">
       <p v-if="questIds.length === 0" class="is-size-7 has-text-grey">No quest rewards configured.</p>
       <div v-else class="planner-quest-groups">
         <section v-for="group in questGroups" :key="group.act" class="planner-quest-group">

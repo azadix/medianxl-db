@@ -1,5 +1,5 @@
 <script setup>
-/** @typedef {'overview'|'stats'|'config'} SidebarPane */
+/** @typedef {'overview'|'stats'|'quests'} SidebarPane */
 
 const props = defineProps({
   modelValue: { type: String, default: 'overview' },
@@ -28,10 +28,10 @@ function selectPane(pane) {
           <span>Stats</span>
         </a>
       </li>
-      <li id="sidebarTabConfigLi" :class="{ 'is-active': props.modelValue === 'config' }">
-        <a id="sidebarTabConfig" href="#" @click.prevent="selectPane('config')">
+      <li id="sidebarTabQuestsLi" :class="{ 'is-active': props.modelValue === 'quests' }">
+        <a id="sidebarTabQuests" href="#" @click.prevent="selectPane('quests')">
           <span class="icon is-small"><i class="fa-solid fa-list-check"></i></span>
-          <span>Config</span>
+          <span>Quests</span>
         </a>
       </li>
     </ul>

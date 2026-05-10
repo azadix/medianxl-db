@@ -1,8 +1,30 @@
 /**
- * Planner sidebar Config tab: quest completion per difficulty.
+ * Planner sidebar Quests tab: quest UI config and helpers (labels, ordering, formatting).
  */
 import Character from './Character.js';
 import { recomputeClassDerivedLifeMana } from './character-state.js';
+
+/** Quests tab: act labels and sort order for grouped quest list in {@link PlannerSidebarTabQuests.vue}. */
+export const sidebarTabQuests = {
+  questActLabels: {
+    den_of_evil: 'Act 1',
+    radament: 'Act 2',
+    golden_bird: 'Act 3',
+    "lam_essen's_tome": 'Act 3',
+    izual: 'Act 4',
+    justicar_signet: 'Endgame',
+    inquisitor_of_the_triune: 'Endgame',
+  },
+  questActOrder: {
+    'Act 1': 1,
+    'Act 2': 2,
+    'Act 3': 3,
+    'Act 4': 4,
+    'Act 5': 5,
+    Other: 90,
+    Endgame: 100,
+  },
+};
 
 export function formatQuestLabel(questId) {
   return String(questId)
@@ -14,15 +36,13 @@ export function formatQuestLabel(questId) {
 export function difficultiesForQuest(questId) {
   const q = Character.QUESTS[questId];
   if (!q?.reward) return [];
-  return ['normal', 'nightmare', 'hell'].filter(
-    (d) => q.reward[d] && typeof q.reward[d].amount === 'number'
-  );
+  return ['normal', 'nightmare', 'hell'].filter((d) => q.reward[d] && typeof q.reward[d].amount === 'number');
 }
 
 export const QUEST_DIFF_NAMES = {
   normal: 'Normal',
   nightmare: 'Nightmare',
-  hell: 'Hell'
+  hell: 'Hell',
 };
 
 /**
@@ -62,27 +82,27 @@ export function formatQuestRewardBracket(questId) {
   }
 }
 
-let plannerConfigRefreshWired = false;
+let plannerSidebarTabQuestsRefreshWired = false;
 
-export function refreshPlannerConfigPanel() {
+export function refreshPlannerSidebarTabQuests() {
   if (typeof window !== 'undefined') {
-    window.dispatchEvent(new CustomEvent('plannerConfigQuestsRefresh'));
+    window.dispatchEvent(new CustomEvent('plannerSidebarTabQuestsUiRefresh'));
   }
 }
 
 /**
- * Legacy no-op: {@link PlannerConfigPanel.vue} owns the UI.
+ * Wire global refresh events for {@link PlannerSidebarTabQuests.vue}.
  */
-export function initPlannerConfigPanel() {
-  if (!plannerConfigRefreshWired && typeof window !== 'undefined') {
-    plannerConfigRefreshWired = true;
-    window.addEventListener('plannerConfigRefresh', refreshPlannerConfigPanel);
+export function initPlannerSidebarTabQuests() {
+  if (!plannerSidebarTabQuestsRefreshWired && typeof window !== 'undefined') {
+    plannerSidebarTabQuestsRefreshWired = true;
+    window.addEventListener('plannerSidebarTabQuestsRefresh', refreshPlannerSidebarTabQuests);
     window.addEventListener('questCompletionChanged', (e) => {
       const qid = e.detail && e.detail.questId;
       if (qid == null || Character.QUESTS[qid]?.type === 'flat_life') {
         recomputeClassDerivedLifeMana();
       }
-      refreshPlannerConfigPanel();
+      refreshPlannerSidebarTabQuests();
     });
   }
 }

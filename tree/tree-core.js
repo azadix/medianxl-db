@@ -7,7 +7,7 @@ import Tree from '../character/Tree.js';
 import Character from '../character/Character.js';
 import { initializeCharacter, applyClassBaselineStatsToCharacter, recomputeClassDerivedLifeMana, onPlannerSkillAllocationChanged, runPlannerSkillStatRecompute, getSpentSkillPoints, getAllSkillPoints, getAllSkillPointsById, setAllSkillPoints, setAllSkillPointsById, importQuestsCompleted, getOSkillsForBuildExport, addOSkill, clearOSkills, setAllOSkills, getMinimumRequiredLevel, getTotalQuestSkillPoints, checkSkillsExceedingMaxLevel, getAvailableSkillPoints, getCharacterInstance, getCharacterLevel, getEffectivePlannerLevel, parseStatsFromText, exportStatsToText, clearAllStats, getQuestsCompletedForSave, getQuestCompletionOptOutForSave, getDisabledSkillIds, setDisabledSkillIds, getDisabledOSkillSlotIds, setDisabledOSkillSlotIds } from '../character/character-state.js';
 import { refreshPlannerStatsPanelFromCharacter } from '../character/planner-stats-panel.js';
-import { initPlannerConfigPanel } from '../character/planner-config-panel.js';
+import { initPlannerSidebarTabQuests } from '../character/sidebarTabQuests.js';
 import { setPlannerSectionFromLegacy } from '../src/planner/planner-section-bridge.js';
 import {
     getSavedBuilds,
@@ -237,7 +237,7 @@ function loadBuildData(build, buildIndex = null) {
         renderSkills(build.class, skillsList, skillsContainer, hasOSkills ? 'oSkills' : null);
     }
 
-    window.dispatchEvent(new CustomEvent('plannerConfigRefresh'));
+    window.dispatchEvent(new CustomEvent('plannerSidebarTabQuestsRefresh'));
     
     // Add event listener for skill point changes (needed for UI updates)
     // Remove any existing listener first to avoid duplicates
@@ -352,7 +352,7 @@ async function finalizePlannerPageAfterLoad() {
         renderSkills(selectedClass, skillsList, skillsContainer, savedTab);
         updateSkillPointsDisplay();
         updateDevotionDisplay();
-        window.dispatchEvent(new CustomEvent('plannerConfigRefresh'));
+        window.dispatchEvent(new CustomEvent('plannerSidebarTabQuestsRefresh'));
         initializeTooltip();
         initializeOSkillsDropdown();
     } else if (urlClass && availableClasses.includes(urlClass)) {
@@ -451,13 +451,13 @@ export async function initializeTreePage() {
         updateSkillPointsDisplay();
         updateDevotionDisplay();
 
-        window.dispatchEvent(new CustomEvent('plannerConfigRefresh'));
+        window.dispatchEvent(new CustomEvent('plannerSidebarTabQuestsRefresh'));
     });
     
     // Set up global event listeners (only once during initialization)
     setupGlobalEventListeners();
 
-    initPlannerConfigPanel();
+    initPlannerSidebarTabQuests();
 
     await finalizePlannerPageAfterLoad();
 }
@@ -584,7 +584,7 @@ async function main() {
         updateSkillPointsDisplay();
         updateDevotionDisplay();
 
-        window.dispatchEvent(new CustomEvent('plannerConfigRefresh'));
+        window.dispatchEvent(new CustomEvent('plannerSidebarTabQuestsRefresh'));
         
         // Initialize tooltip functionality
         initializeTooltip();
@@ -1137,7 +1137,7 @@ function resetBuild(showToast = true) {
         renderSkills(currentClass, skillsList, skillsContainer);
     }
 
-    window.dispatchEvent(new CustomEvent('plannerConfigRefresh'));
+    window.dispatchEvent(new CustomEvent('plannerSidebarTabQuestsRefresh'));
     
     // Clear current build index (this is a new build)
     currentBuildIndex = null;

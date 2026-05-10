@@ -533,7 +533,7 @@ export function setAllSkillPointsById(skillPointsById) {
 }
 
 /**
- * Total quest skill points from Config quest completion (no level gate).
+ * Total quest skill points from Quests tab completion (no level gate).
  * @param {number} [characterLevel] - ignored; kept for compatibility
  * @returns {number} Total quest skill points
  */
@@ -542,7 +542,7 @@ export function getTotalQuestSkillPoints(characterLevel = Character.MAX_LEVEL) {
 }
 
 /**
- * Total available skill points: base at max level plus full quest total from Config.
+ * Total available skill points: base at max level plus full quest total from the Quests tab.
  * @param {number} [characterLevel] - passed through to quest total (quest total does not depend on level)
  * @returns {number} Total available skill points
  */

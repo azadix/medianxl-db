@@ -20,7 +20,7 @@
   overflow-y: auto;
 }
 
-.sidebar-pane-scroll.is-config {
+.sidebar-pane-scroll.is-quests {
   overflow-y: hidden;
   padding-right: 0;
 }

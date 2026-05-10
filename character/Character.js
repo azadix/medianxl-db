@@ -444,7 +444,7 @@ export default class Character {
   // ===== QUEST MANAGEMENT METHODS =====
 
   /**
-   * Calculate total quest skill points from completed quests (Config checkboxes only; no level gate).
+   * Calculate total quest skill points from completed quests (Quests tab only; no level gate).
    * @param {number} [_characterLevel] - unused; kept for call-site compatibility
    * @returns {number} Total quest skill points
    */
