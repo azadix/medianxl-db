@@ -322,27 +322,32 @@ function iconMarkup(skill) {
                 </button>
               </div>
               <div class="dropdown-menu" role="menu">
-                <div class="dropdown-content skills-dd-scroll">
-                  <label
-                    v-for="c in uniqueClasses"
-                    :key="'dd-cls-' + c"
-                    class="dropdown-item skills-dd-checkbox-label"
-                    @click.prevent="toggleClassOption(c)"
-                  >
-                    <input
-                      type="checkbox"
-                      class="mr-2"
-                      :checked="selectedClasses.includes(c)"
-                      tabindex="-1"
-                      aria-hidden="true"
-                    />
-                    <span>{{ c }}</span>
-                  </label>
-                  <hr class="dropdown-divider" />
-                  <div class="px-2 py-2">
-                    <button type="button" class="button is-small is-light is-fullwidth" @click="clearClassFilters">
-                      Clear class filter
-                    </button>
+                <div class="dropdown-content skills-dd-body">
+                  <div class="skills-dd-scroll">
+                    <label
+                      v-for="c in uniqueClasses"
+                      :key="'dd-cls-' + c"
+                      class="dropdown-item skills-dd-checkbox-label"
+                      :class="{ 'is-selected': selectedClasses.includes(c) }"
+                      @click.prevent="toggleClassOption(c)"
+                    >
+                      <input
+                        type="checkbox"
+                        class="mr-2"
+                        :checked="selectedClasses.includes(c)"
+                        tabindex="-1"
+                        aria-hidden="true"
+                      />
+                      <span>{{ c }}</span>
+                    </label>
+                  </div>
+                  <div class="skills-dd-footer">
+                    <hr class="dropdown-divider skills-dd-footer-divider" />
+                    <div class="px-2 py-2">
+                      <button type="button" class="button is-small is-danger is-outlined is-fullwidth" @click="clearClassFilters">
+                        Clear class filter
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -369,27 +374,32 @@ function iconMarkup(skill) {
                 </button>
               </div>
               <div class="dropdown-menu" role="menu">
-                <div class="dropdown-content skills-dd-scroll">
-                  <label
-                    v-for="t in uniqueTags"
-                    :key="'dd-tag-' + t"
-                    class="dropdown-item skills-dd-checkbox-label"
-                    @click.prevent="toggleTagOption(t)"
-                  >
-                    <input
-                      type="checkbox"
-                      class="mr-2"
-                      :checked="selectedTags.includes(t)"
-                      tabindex="-1"
-                      aria-hidden="true"
-                    />
-                    <span>{{ t }}</span>
-                  </label>
-                  <hr class="dropdown-divider" />
-                  <div class="px-2 py-2">
-                    <button type="button" class="button is-small is-light is-fullwidth" @click="clearTagFilters">
-                      Clear tag filter
-                    </button>
+                <div class="dropdown-content skills-dd-body">
+                  <div class="skills-dd-scroll">
+                    <label
+                      v-for="t in uniqueTags"
+                      :key="'dd-tag-' + t"
+                      class="dropdown-item skills-dd-checkbox-label"
+                      :class="{ 'is-selected': selectedTags.includes(t) }"
+                      @click.prevent="toggleTagOption(t)"
+                    >
+                      <input
+                        type="checkbox"
+                        class="mr-2"
+                        :checked="selectedTags.includes(t)"
+                        tabindex="-1"
+                        aria-hidden="true"
+                      />
+                      <span>{{ t }}</span>
+                    </label>
+                  </div>
+                  <div class="skills-dd-footer">
+                    <hr class="dropdown-divider skills-dd-footer-divider" />
+                    <div class="px-2 py-2">
+                      <button type="button" class="button is-small is-danger is-outlined is-fullwidth" @click="clearTagFilters">
+                        Clear tag filter
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -407,32 +417,42 @@ function iconMarkup(skill) {
         </div>
         <div class="control filter-help-control">
           <label class="label is-invisible" aria-hidden="true">Help</label>
-          <button type="button" class="button is-small is-info is-light" @click="openFilterHelp">?</button>
+          <button
+            id="skillsFilterHelpBtn"
+            type="button"
+            class="button is-info is-outlined"
+            title="Skill filters help"
+            aria-label="Skill filters help"
+            @click="openFilterHelp"
+          >
+            <span>?</span>
+          </button>
         </div>
       </div>
     </div>
 
-    <div v-if="showFilterHelpModal" class="modal is-active">
+    <div v-if="showFilterHelpModal" class="modal is-active skills-filter-help-overlay">
       <div class="modal-background" @click="closeFilterHelp"></div>
-      <div class="modal-card">
-        <header class="modal-card-head">
+      <div class="modal-card skills-filter-help-card">
+        <header class="modal-card-head px-4">
           <p class="modal-card-title">Skill Filters Help</p>
-          <button type="button" class="delete" aria-label="close" @click="closeFilterHelp"></button>
         </header>
-        <section class="modal-card-body content">
-          <p>Open class or tag dropdowns to select filters.</p>
-          <ul>
-            <li>Class filter matches skills whose class is in the selected class list.</li>
-            <li>Tag filter in AND mode requires all selected tags on a skill.</li>
-            <li>Tag filter in OR mode requires at least one selected tag on a skill.</li>
-            <li>
-              When both class and tag filters have selections, Combine controls whether both groups must match (AND) or
-              either group can match (OR).
-            </li>
-          </ul>
+        <section class="modal-card-body p-4">
+          <div class="content">
+            <p>Open class or tag dropdowns to select filters.</p>
+            <ul>
+              <li>Class filter matches skills whose class is in the selected class list.</li>
+              <li>Tag filter in AND mode requires all selected tags on a skill.</li>
+              <li>Tag filter in OR mode requires at least one selected tag on a skill.</li>
+              <li>
+                When both class and tag filters have selections, Combine controls whether both groups must match (AND)
+                or either group can match (OR).
+              </li>
+            </ul>
+          </div>
         </section>
-        <footer class="modal-card-foot is-justify-content-flex-end">
-          <button type="button" class="button" @click="closeFilterHelp">Close</button>
+        <footer class="modal-card-foot p-4">
+          <button type="button" class="button is-primary" @click="closeFilterHelp">Close</button>
         </footer>
       </div>
     </div>
@@ -527,13 +547,26 @@ function iconMarkup(skill) {
   margin-left: auto;
 }
 
+.skills-filter-help-overlay {
+  z-index: 10000;
+}
+
+.skills-filter-help-card {
+  min-width: 50%;
+  max-height: 80vh;
+}
+
+.skills-filter-help-card .modal-card-body {
+  overflow-y: auto;
+}
+
 .skills-dd-trigger {
   display: inline-flex;
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
-  min-width: 10rem;
-  max-width: min(22rem, 100%);
+  min-width: 18rem;
+  max-width: min(40rem, 100%);
 }
 
 .skills-dd-trigger-text {
@@ -552,21 +585,49 @@ function iconMarkup(skill) {
 }
 
 .skills-filter-dd .dropdown-menu {
-  min-width: 100%;
-  max-width: min(90vw, 24rem);
+  min-width: max(100%, 18rem);
+  width: max-content;
+  max-width: min(92vw, 44rem);
+}
+
+.skills-filter-dd .dropdown-content.skills-dd-body {
+  display: flex;
+  flex-direction: column;
+  max-height: 50vh;
+  padding: 0;
+  overflow: hidden;
 }
 
 .skills-dd-scroll {
-  max-height: 16rem;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: auto;
   overflow-y: auto;
   padding-top: 0.35rem;
   padding-bottom: 0.35rem;
 }
 
+.skills-dd-footer {
+  flex: 0 0 auto;
+}
+
+.skills-dd-footer-divider {
+  margin: 0;
+}
+
 .skills-dd-checkbox-label {
   cursor: pointer;
-  white-space: normal;
-  word-break: break-word;
+  white-space: nowrap;
+  margin: 0.15rem 0.5rem;
+  border-radius: 0.35rem;
+  border: 1px solid hsl(0, 0%, 30%);
+  color: #b5b5b5;
+}
+
+.skills-dd-checkbox-label.is-selected {
+  border-color: hsla(153, 47%, 49%, 0.9);
+  background: hsla(153, 47%, 49%, 0.16);
+  color: #fff;
 }
 
 .skills-table-container {
