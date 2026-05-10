@@ -359,7 +359,8 @@
     "tabName": "Werebear",
     "tags": [
       "Weapon Damage",
-      "Upgrade"
+      "Upgrade",
+      "Periodic"
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
@@ -983,7 +984,8 @@
     "tags": [
       "Fire",
       "Buff",
-      "Duration"
+      "Duration",
+      "Periodic"
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
@@ -1648,7 +1650,8 @@
       "Fire",
       "Physical",
       "Duration",
-      "Ultimate"
+      "Ultimate",
+      "Periodic"
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": false,
@@ -5321,7 +5324,8 @@
     "tabName": "Storm",
     "tags": [
       "Debuff",
-      "Duration"
+      "Duration",
+      "Periodic"
     ],
     "baseMaxLevel": 6,
     "affectedBySpecialization": true,
@@ -8028,7 +8032,8 @@
     "tags": [
       "Cold",
       "Buff",
-      "Duration"
+      "Duration",
+      "Periodic"
     ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": true,
@@ -8260,7 +8265,8 @@
     "tags": [
       "Cold",
       "Buff",
-      "Duration"
+      "Duration",
+      "Periodic"
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
@@ -8916,7 +8922,8 @@
     "tags": [
       "Poison",
       "Buff",
-      "Duration"
+      "Duration",
+      "Periodic"
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": true,
@@ -9882,7 +9889,8 @@
     "tags": [
       "Poison",
       "Buff",
-      "Duration"
+      "Duration",
+      "Periodic"
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
@@ -10870,7 +10878,8 @@
     "tags": [
       "Fire",
       "Duration",
-      "Trap"
+      "Trap",
+      "Periodic"
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
@@ -11637,7 +11646,8 @@
     "tabName": "oSkill",
     "tags": [
       "Buff",
-      "Duration"
+      "Duration",
+      "Periodic"
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
@@ -11882,7 +11892,8 @@
       "Lightning",
       "Buff",
       "Debuff",
-      "Duration"
+      "Duration",
+      "Periodic"
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
@@ -13587,7 +13598,8 @@
     "tags": [
       "Buff",
       "Lightning",
-      "Duration"
+      "Duration",
+      "Periodic"
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
@@ -14336,7 +14348,8 @@
     "tags": [
       "Fire",
       "Duration",
-      "Buff"
+      "Buff",
+      "Periodic"
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
@@ -15568,7 +15581,8 @@
     "tags": [
       "Buff",
       "Duration",
-      "Weapon Damage"
+      "Weapon Damage",
+      "Periodic"
     ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": true,
@@ -20397,7 +20411,8 @@
     "tags": [
       "Buff",
       "Debuff",
-      "Duration"
+      "Duration",
+      "Periodic"
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": true,
@@ -22115,7 +22130,8 @@
     "tags": [
       "Buff",
       "Duration",
-      "Weapon Damage"
+      "Weapon Damage",
+      "Periodic"
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": false,
@@ -23524,7 +23540,8 @@
       "Buff",
       "Cold",
       "AoE",
-      "Duration"
+      "Duration",
+      "Periodic"
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
