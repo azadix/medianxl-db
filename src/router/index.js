@@ -4,7 +4,12 @@ import PlannerView from '../views/PlannerView.vue';
 
 const routes = [
   { path: '/', redirect: '/skills' },
-  { path: '/skills', name: 'skills', component: HomeView },
+  {
+    path: '/skills',
+    name: 'skills',
+    component: HomeView,
+    meta: { keepAlive: true },
+  },
   {
     path: '/planner',
     name: 'planner',
