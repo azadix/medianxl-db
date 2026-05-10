@@ -1461,7 +1461,7 @@
     "variants": [],
     "scalingConstants": [],
     "description": [
-      "Renders target vulnerable to magic and elemental damage (+ flat damage per hit)"
+      "Renders target vulnerable to magic and elemental damage"
     ],
     "restriction": [],
     "skillEffect": [
@@ -2556,36 +2556,14 @@
     "baseMaxLevel": 11,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [
-      {
-        "statKey": "radius",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "range(20+4*max(blvl-1,0))"
-      },
-      {
-        "statKey": "movement_speed",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "10+5*max(blvl-1,0)"
-      },
-      {
-        "statKey": "minion_resistances_added_as_poison_spell_damage",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "20+12*max(blvl-1,0)"
-      }
-    ],
+    "scalingConstants": [],
     "description": [
       "Harvesters gain an aura that increases efficiency for the party"
     ],
     "restriction": [],
     "skillEffect": [
       "[[harvesters]]",
-      "<p class='has-text-warning'>Venomous Aura</p>",
-      "{{minion_resistances_added_as_poison_spell_damage}}",
-      "{{movement_speed}}",
-      "{{radius}}"
+      "||bloom_venomous_aura||"
     ],
     "image": "icons-dru_32.png"
   },
@@ -3795,36 +3773,6 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "100"
-      },
-      {
-        "statKey": "duration",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "frames(125)"
-      },
-      {
-        "statKey": "enemy_physical_resistance",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "-10"
-      },
-      {
-        "statKey": "enemy_defense",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "-50"
-      },
-      {
-        "statKey": "enemy_movement_speed",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "-25"
-      },
-      {
-        "statKey": "enemy_damage",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "-25"
       }
     ],
     "description": [
@@ -3834,12 +3782,7 @@
     "skillEffect": [
       "{{weapon_damage}}",
       "{{cooldown}}",
-      "<p class='has-text-warning'>Are you not entertained?</p>",
-      "{{enemy_defense}}",
-      "{{enemy_movement_speed}}",
-      "{{enemy_damage}}",
-      "{{enemy_physical_resistance}}",
-      "{{duration}}",
+      "||colosseum_are_you_not_entertained||",
       "{{bonus_fire_damage_based_on_str_or_dex}}",
       "{{mana_cost}}"
     ],
@@ -6636,12 +6579,7 @@
     "skillEffect": [
       "[[superposition]]",
       "Cooldown reduced by 2 seconds (Minimum 0 seconds)",
-      "<p class='has-text-warning'>After using Superposition</p>",
-      "{{avoid_damage}}",
-      "{{cast_speed}}",
-      "{{movement_speed}}",
-      "{{mana_regeneration_rate}}",
-      "{{duration}}"
+      "||entanglement_after_using_superposition||"
     ],
     "image": "icons-sor_36.png"
   },
@@ -7693,9 +7631,7 @@
       "Gains 10% Total Damage per 1% Max Lightning Resist (Max 150%)",
       "Hits multiple times",
       "",
-      "<p class='has-text-warning'>Blinding Effect</p>",
-      "Reduces enemy Attack Rating by 25% for 3 seconds",
-      "+0.67 yards Blinding Radius per 2 Light Radius (Max 14 yards)",
+      "||flash_blinding_effect||",
       "{{lightning_damage}}",
       "{{mana_cost}}"
     ],
@@ -9053,36 +8989,14 @@
     "baseMaxLevel": 10,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [
-      {
-        "statKey": "radius",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "range(20+4*blvl)"
-      },
-      {
-        "statKey": "crushing_blow",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "10+2*blvl"
-      },
-      {
-        "statKey": "physical_damage_percent",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "20+10*blvl"
-      }
-    ],
+    "scalingConstants": [],
     "description": [
       "Skeletons provide an offensive aura to allies"
     ],
     "restriction": [],
     "skillEffect": [
       "[[blood_skeleton]]",
-      "<p class='has-text-warning'>Grim Vision Aura</p>",
-      "{{crushing_blow}}",
-      "{{physical_damage_percent}}",
-      "{{radius}}"
+      "||grim_vision_grim_vision_aura||"
     ],
     "image": "icons-nec_32.png"
   },
@@ -10481,9 +10395,7 @@
     "skillEffect": [
       "Casts Ice Lance and Glacial Nova on attack",
       "Elementals inherit your Cold Spell Damage, Cold Pierce, Energy and Spell Focus",
-      "<p class='has-text-warning'>Frost Essence Aura</p>",
-      "+20% to Total Defense",
-      "{{max_cold_resistance}}",
+      "||ice_elementals_frost_essence_aura||",
       "50% of Minion Damage added as Cold Spell Damage (Max 100%)",
       "{{minions_inherit_proc_chance}}",
       "{{minions}}",
@@ -10554,12 +10466,6 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "100"
-      },
-      {
-        "statKey": "enemy_movement_speed",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "-50"
       }
     ],
     "description": [
@@ -10571,9 +10477,7 @@
     "skillEffect": [
       "{{weapon_damage}}",
       "{{converts_phys_to_cold}}",
-      "<p class='has-text-warning'>Shell Shock</p>",
-      "{{enemy_movement_speed}}",
-      "{{enemy_cold_resistance}}"
+      "||iceburst_shell_shock||"
     ],
     "image": "icons-shared_110.png"
   },
@@ -10606,18 +10510,6 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(200-5*blvl)"
-      },
-      {
-        "statKey": "duration",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "frames((1000-900*bool([[ancestral_force]]))*(1+[[continuity]].{{skill_duration}}/100))"
-      },
-      {
-        "statKey": "physical_resistance",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "30"
       }
     ],
     "description": [
@@ -10626,10 +10518,7 @@
     "restriction": [],
     "skillEffect": [
       "{{cooldown}}",
-      "<p class='has-text-warning'>Stone Form</p>",
-      "{{physical_resistance}}",
-      "{{duration}}",
-      "{{movement_speed}}",
+      "||idol_of_scosglen_stone_form||",
       "{{mana_cost}}"
     ],
     "image": "icons-dru_136.png"
@@ -10808,18 +10697,6 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "170"
-      },
-      {
-        "statKey": "duration",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "frames(50)"
-      },
-      {
-        "statKey": "enemy_physical_resistance",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "-50"
       }
     ],
     "description": [
@@ -10831,9 +10708,7 @@
     "skillEffect": [
       "{{weapon_damage}}",
       "1% chance to Expose Weakness on attack",
-      "<p class='has-text-warning'>Expose Weakness</p>",
-      "{{enemy_physical_resistance}}",
-      "{{duration}}",
+      "||impale_expose_weakness||",
       "{{bonus_physical_damage}}",
       "{{mana_cost}}"
     ],
@@ -11176,18 +11051,6 @@
         "value0": "1700",
         "value1": "0",
         "value2": "6"
-      },
-      {
-        "statKey": "max_fire_resistance",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "1*blvl"
-      },
-      {
-        "statKey": "enemy_elemental_resistances",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "-2*blvl"
       }
     ],
     "description": [
@@ -11195,9 +11058,7 @@
     ],
     "restriction": [],
     "skillEffect": [
-      "<p class='has-text-warning'>Hellfire Aura</p>",
-      "{{enemy_elemental_resistances}}",
-      "{{max_fire_resistance}}",
+      "||jinn_hellfire_aura||",
       "",
       "{{fire_damage}}",
       "{{mana_cost}}"
@@ -12831,36 +12692,6 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(150)"
-      },
-      {
-        "statKey": "enemy_movement_speed",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "-33"
-      },
-      {
-        "statKey": "enemy_poison_resistance",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "-20"
-      },
-      {
-        "statKey": "enemy_attack_rating",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "-33"
-      },
-      {
-        "statKey": "enemy_damage",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "-33"
-      },
-      {
-        "statKey": "duration",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "frames(125)"
       }
     ],
     "description": [
@@ -12871,12 +12702,7 @@
       "{{usable_under_melee_locks}}",
       "{{cooldown}}",
       "{{field_duration}}",
-      "<p class='has-text-warning'>Haunt</p>",
-      "{{enemy_damage}}",
-      "{{enemy_attack_rating}}",
-      "{{enemy_movement_speed}}",
-      "{{enemy_poison_resistance}}",
-      "{{duration}}"
+      "||miasma_haunt||"
     ],
     "image": "icons-sor_138.png"
   },
@@ -12980,22 +12806,10 @@
         "value0": "frames(50)"
       },
       {
-        "statKey": "enemy_movement_speed",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "-30"
-      },
-      {
         "statKey": "minions",
         "occurrenceIndex": 0,
         "variantKey": "1+blvl/15",
         "value0": "Beams"
-      },
-      {
-        "statKey": "enemy_elemental_damage",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "-10"
       }
     ],
     "description": [
@@ -13007,9 +12821,7 @@
       "{{physical_damage}}",
       "{{lightning_damage}}",
       "{{mana_cost}}",
-      "<p class='has-text-warning'>Shock</p>",
-      "{{enemy_movement_speed}}",
-      "{{enemy_elemental_damage}}",
+      "||mind_flay_shock||",
       "{{duration}}"
     ],
     "image": "icons-pal_62.png"
@@ -15854,24 +15666,6 @@
         "value0": "550",
         "value1": "28",
         "value2": "7"
-      },
-      {
-        "statKey": "attack_speed",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "25+5*blvl"
-      },
-      {
-        "statKey": "cast_speed",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "25+5*blvl"
-      },
-      {
-        "statKey": "deadly_strike",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "10+blvl"
       }
     ],
     "description": [
@@ -15879,10 +15673,7 @@
     ],
     "restriction": [],
     "skillEffect": [
-      "<p class='has-text-warning'>Evocation Aura</p>",
-      "{{deadly_strike}}",
-      "{{attack_speed}}",
-      "{{cast_speed}}",
+      "||rathmas_chosen_evocation_aura||",
       "",
       "{{damage}}",
       "{{mana_cost}}"
@@ -15955,36 +15746,14 @@
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [
-      {
-        "statKey": "cast_speed",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "15"
-      },
-      {
-        "statKey": "energy_percent",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "25"
-      },
-      {
-        "statKey": "all_skills",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "1+blvl/4"
-      }
-    ],
+    "scalingConstants": [],
     "description": [
       "Grants an aura which increases caster prowess"
     ],
     "restriction": [],
     "skillEffect": [
       "Raven damage increases with Total Energy",
-      "<p class='has-text-warning'>Zann Esu's Rite</p>",
-      "{{energy_percent}}",
-      "{{cast_speed}}",
-      "{{all_skills}}",
+      "||raven_familiar_zann_esus_rite||",
       "{{damage}}",
       "{{mana_cost}}"
     ],
@@ -17883,10 +17652,7 @@
     ],
     "restriction": [],
     "skillEffect": [
-      "<p class='has-text-warning'>Demon Blood Aura</p>",
-      "Only affects players and Undead Minions",
-      "{{maximum_life}}",
-      "{{elemental_spell_damage}}",
+      "||skeletal_flayer_demon_blood_aura||",
       "{{minions}}",
       "{{life}}",
       "{{damage}}",
@@ -18549,12 +18315,7 @@
     ],
     "restriction": [],
     "skillEffect": [
-      "<p class='has-text-warning'>Avenging Aura</p>",
-      "{{maximum_life}}",
-      "{{radius}}",
-      "{{pmsd}}",
-      "{{fire_spell_damage}}",
-      "{{lightning_spell_damage}}",
+      "||spirit_of_vengeance_avenging_aura||",
       "{{mana_cost}}",
       "Summon with Ecstatic Frenzy on to disable Reanimates"
     ],
@@ -20157,36 +19918,14 @@
     "baseMaxLevel": 6,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [
-      {
-        "statKey": "duration",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "frames(15+8*max(blvl-1,0))"
-      },
-      {
-        "statKey": "enemy_physical_resistance",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "-10"
-      },
-      {
-        "statKey": "enemy_movement_speed",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "-60"
-      }
-    ],
+    "scalingConstants": [],
     "description": [
       "Inflicts a deepening terror upon your target"
     ],
     "restriction": [],
     "skillEffect": [
       "[[dream_eater]]",
-      "<p class='has-text-warning'>Terrifies target</p>",
-      "{{enemy_physical_resistance}}",
-      "{{enemy_movement_speed}}",
-      "{{duration}}"
+      "||terror_terrifies_target||"
     ],
     "image": "icons-nec_190.png"
   },
@@ -21670,30 +21409,6 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value2": "frames(75)"
-      },
-      {
-        "statKey": "enemy_physical_resistance",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "-15"
-      },
-      {
-        "statKey": "enemy_movement_speed",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "-30"
-      },
-      {
-        "statKey": "maximum_life",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "5+max(blvl-1,0)"
-      },
-      {
-        "statKey": "petrify",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "frames(50+10*blvl)"
       }
     ],
     "description": [
@@ -21701,12 +21416,8 @@
     ],
     "restriction": [],
     "skillEffect": [
-      "<p class='has-text-warning'>Petrify Attack</p>",
-      "{{enemy_physical_resistance}}",
-      "{{enemy_movement_speed}}",
-      "{{petrify}}",
-      "<p class='has-text-warning'>Forest Aura</p>",
-      "{{maximum_life}}",
+      "||vine_companion_petrify_attack||",
+      "||vine_companion_forest_aura||",
       "",
       "{{poison_dot}}",
       "{{mana_cost}}"
@@ -21853,18 +21564,6 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "2"
-      },
-      {
-        "statKey": "enemy_damage",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "-25"
-      },
-      {
-        "statKey": "enemy_attack_speed",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "-20"
       }
     ],
     "description": [
@@ -21874,9 +21573,7 @@
     "skillEffect": [
       "{{blinds_target}}",
       "Area Effect attack",
-      "<p class='has-text-warning'>Warp Field Aura</p>",
-      "{{enemy_damage}}",
-      "{{enemy_attack_speed}}",
+      "||void_archon_warp_field_aura||",
       "{{life}}",
       "{{damage}}",
       "{{attack_rating}}",

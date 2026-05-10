@@ -1436,7 +1436,7 @@
     "variants": [],
     "scalingConstants": [],
     "description": [
-      "Renders target vulnerable to magic and elemental damage (+ flat damage per hit)"
+      "Renders target vulnerable to magic and elemental damage"
     ],
     "restriction": [],
     "skillEffect": [

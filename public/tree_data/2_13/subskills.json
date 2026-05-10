@@ -73,5 +73,539 @@
       "{{movement_speed}}"
     ],
     "restriction": []
+  },
+  {
+    "id": "bloom_venomous_aura",
+    "numericId": 469,
+    "displayName": "Venomous Aura",
+    "parentSkillId": "bloom",
+    "scalingConstants": [
+      {
+        "statKey": "minion_resistances_added_as_poison_spell_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "20+12*max(blvl-1,0)"
+      },
+      {
+        "statKey": "movement_speed",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "10+5*max(blvl-1,0)"
+      },
+      {
+        "statKey": "radius",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "range(20+4*max(blvl-1,0))"
+      }
+    ],
+    "description": [],
+    "skillEffect": [
+      "{{minion_resistances_added_as_poison_spell_damage}}",
+      "{{movement_speed}}",
+      "{{radius}}"
+    ],
+    "restriction": []
+  },
+  {
+    "id": "colosseum_are_you_not_entertained",
+    "numericId": 576,
+    "displayName": "Are you not entertained?",
+    "parentSkillId": "colosseum",
+    "scalingConstants": [
+      {
+        "statKey": "enemy_defense",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "-50"
+      },
+      {
+        "statKey": "enemy_movement_speed",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "-25"
+      },
+      {
+        "statKey": "enemy_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "-25"
+      },
+      {
+        "statKey": "enemy_physical_resistance",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "-10"
+      },
+      {
+        "statKey": "duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(125)"
+      }
+    ],
+    "description": [],
+    "skillEffect": [
+      "{{enemy_defense}}",
+      "{{enemy_movement_speed}}",
+      "{{enemy_damage}}",
+      "{{enemy_physical_resistance}}",
+      "{{duration}}"
+    ],
+    "restriction": []
+  },
+  {
+    "id": "entanglement_after_using_superposition",
+    "numericId": 634,
+    "displayName": "After using Superposition",
+    "parentSkillId": "entanglement",
+    "scalingConstants": [],
+    "description": [],
+    "skillEffect": [
+      "{{avoid_damage}}",
+      "{{cast_speed}}",
+      "{{movement_speed}}",
+      "{{mana_regeneration_rate}}",
+      "{{duration}}"
+    ],
+    "restriction": []
+  },
+  {
+    "id": "flash_blinding_effect",
+    "numericId": 86,
+    "displayName": "Blinding Effect",
+    "parentSkillId": "flash",
+    "scalingConstants": [],
+    "description": [],
+    "skillEffect": [
+      "Reduces enemy Attack Rating by 25% for 3 seconds",
+      "+0.67 yards Blinding Radius per 2 Light Radius (Max 14 yards)"
+    ],
+    "restriction": []
+  },
+  {
+    "id": "grim_vision_grim_vision_aura",
+    "numericId": 544,
+    "displayName": "Grim Vision Aura",
+    "parentSkillId": "grim_vision",
+    "scalingConstants": [
+      {
+        "statKey": "crushing_blow",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "10+2*blvl"
+      },
+      {
+        "statKey": "physical_damage_percent",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "20+10*blvl"
+      },
+      {
+        "statKey": "radius",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "range(20+4*blvl)"
+      }
+    ],
+    "description": [],
+    "skillEffect": [
+      "{{crushing_blow}}",
+      "{{physical_damage_percent}}",
+      "{{radius}}"
+    ],
+    "restriction": []
+  },
+  {
+    "id": "ice_elementals_frost_essence_aura",
+    "numericId": 649,
+    "displayName": "Frost Essence Aura",
+    "parentSkillId": "ice_elementals",
+    "scalingConstants": [],
+    "description": [],
+    "skillEffect": [
+      "+20% to Total Defense",
+      "{{max_cold_resistance}}"
+    ],
+    "restriction": []
+  },
+  {
+    "id": "iceburst_shell_shock",
+    "numericId": 118,
+    "displayName": "Shell Shock",
+    "parentSkillId": "iceburst",
+    "scalingConstants": [
+      {
+        "statKey": "enemy_movement_speed",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "-50"
+      }
+    ],
+    "description": [],
+    "skillEffect": [
+      "{{enemy_movement_speed}}",
+      "{{enemy_cold_resistance}}"
+    ],
+    "restriction": []
+  },
+  {
+    "id": "idol_of_scosglen_stone_form",
+    "numericId": 492,
+    "displayName": "Stone Form",
+    "parentSkillId": "idol_of_scosglen",
+    "scalingConstants": [
+      {
+        "statKey": "physical_resistance",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "30"
+      },
+      {
+        "statKey": "duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames((1000-900*bool([[ancestral_force]]))*(1+[[continuity]].{{skill_duration}}/100))"
+      }
+    ],
+    "description": [],
+    "skillEffect": [
+      "{{physical_resistance}}",
+      "{{duration}}",
+      "{{movement_speed}}"
+    ],
+    "restriction": []
+  },
+  {
+    "id": "impale_expose_weakness",
+    "numericId": 322,
+    "displayName": "Expose Weakness",
+    "parentSkillId": "impale",
+    "scalingConstants": [
+      {
+        "statKey": "enemy_physical_resistance",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "-50"
+      },
+      {
+        "statKey": "duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(50)"
+      }
+    ],
+    "description": [],
+    "skillEffect": [
+      "{{enemy_physical_resistance}}",
+      "{{duration}}"
+    ],
+    "restriction": []
+  },
+  {
+    "id": "jinn_hellfire_aura",
+    "numericId": 546,
+    "displayName": "Hellfire Aura",
+    "parentSkillId": "jinn",
+    "scalingConstants": [
+      {
+        "statKey": "enemy_elemental_resistances",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "-2*blvl"
+      },
+      {
+        "statKey": "max_fire_resistance",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "1*blvl"
+      }
+    ],
+    "description": [],
+    "skillEffect": [
+      "{{enemy_elemental_resistances}}",
+      "{{max_fire_resistance}}"
+    ],
+    "restriction": []
+  },
+  {
+    "id": "miasma_haunt",
+    "numericId": 655,
+    "displayName": "Haunt",
+    "parentSkillId": "miasma",
+    "scalingConstants": [
+      {
+        "statKey": "enemy_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "-33"
+      },
+      {
+        "statKey": "enemy_attack_rating",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "-33"
+      },
+      {
+        "statKey": "enemy_movement_speed",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "-33"
+      },
+      {
+        "statKey": "enemy_poison_resistance",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "-20"
+      },
+      {
+        "statKey": "duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(125)"
+      }
+    ],
+    "description": [],
+    "skillEffect": [
+      "{{enemy_damage}}",
+      "{{enemy_attack_rating}}",
+      "{{enemy_movement_speed}}",
+      "{{enemy_poison_resistance}}",
+      "{{duration}}"
+    ],
+    "restriction": []
+  },
+  {
+    "id": "mind_flay_shock",
+    "numericId": 595,
+    "displayName": "Shock",
+    "parentSkillId": "mind_flay",
+    "scalingConstants": [
+      {
+        "statKey": "enemy_movement_speed",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "-30"
+      },
+      {
+        "statKey": "enemy_elemental_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "-10"
+      }
+    ],
+    "description": [],
+    "skillEffect": [
+      "{{enemy_movement_speed}}",
+      "{{enemy_elemental_damage}}"
+    ],
+    "restriction": []
+  },
+  {
+    "id": "rathmas_chosen_evocation_aura",
+    "numericId": 556,
+    "displayName": "Evocation Aura",
+    "parentSkillId": "rathmas_chosen",
+    "scalingConstants": [
+      {
+        "statKey": "deadly_strike",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "10+blvl"
+      },
+      {
+        "statKey": "attack_speed",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "25+5*blvl"
+      },
+      {
+        "statKey": "cast_speed",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "25+5*blvl"
+      }
+    ],
+    "description": [],
+    "skillEffect": [
+      "{{deadly_strike}}",
+      "{{attack_speed}}",
+      "{{cast_speed}}"
+    ],
+    "restriction": []
+  },
+  {
+    "id": "raven_familiar_zann_esus_rite",
+    "numericId": 663,
+    "displayName": "Zann Esu's Rite",
+    "parentSkillId": "raven_familiar",
+    "scalingConstants": [
+      {
+        "statKey": "energy_percent",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "25"
+      },
+      {
+        "statKey": "cast_speed",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "15"
+      },
+      {
+        "statKey": "all_skills",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "1+blvl/4"
+      }
+    ],
+    "description": [],
+    "skillEffect": [
+      "{{energy_percent}}",
+      "{{cast_speed}}",
+      "{{all_skills}}"
+    ],
+    "restriction": []
+  },
+  {
+    "id": "skeletal_flayer_demon_blood_aura",
+    "numericId": 212,
+    "displayName": "Demon Blood Aura",
+    "parentSkillId": "skeletal_flayer",
+    "scalingConstants": [],
+    "description": [],
+    "skillEffect": [
+      "Only affects players and Undead Minions",
+      "{{maximum_life}}",
+      "{{elemental_spell_damage}}"
+    ],
+    "restriction": []
+  },
+  {
+    "id": "spirit_of_vengeance_avenging_aura",
+    "numericId": 344,
+    "displayName": "Avenging Aura",
+    "parentSkillId": "spirit_of_vengeance",
+    "scalingConstants": [],
+    "description": [],
+    "skillEffect": [
+      "{{maximum_life}}",
+      "{{radius}}",
+      "{{pmsd}}",
+      "{{fire_spell_damage}}",
+      "{{lightning_spell_damage}}"
+    ],
+    "restriction": []
+  },
+  {
+    "id": "terror_terrifies_target",
+    "numericId": 565,
+    "displayName": "Terrifies target",
+    "parentSkillId": "terror",
+    "scalingConstants": [
+      {
+        "statKey": "enemy_physical_resistance",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "-10"
+      },
+      {
+        "statKey": "enemy_movement_speed",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "-60"
+      },
+      {
+        "statKey": "duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(15+8*max(blvl-1,0))"
+      }
+    ],
+    "description": [],
+    "skillEffect": [
+      "{{enemy_physical_resistance}}",
+      "{{enemy_movement_speed}}",
+      "{{duration}}"
+    ],
+    "restriction": []
+  },
+  {
+    "id": "vine_companion_forest_aura",
+    "numericId": 511,
+    "displayName": "Forest Aura",
+    "parentSkillId": "vine_companion",
+    "scalingConstants": [
+      {
+        "statKey": "maximum_life",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "5+max(blvl-1,0)"
+      }
+    ],
+    "description": [],
+    "skillEffect": [
+      "{{maximum_life}}"
+    ],
+    "restriction": []
+  },
+  {
+    "id": "vine_companion_petrify_attack",
+    "numericId": 511,
+    "displayName": "Petrify Attack",
+    "parentSkillId": "vine_companion",
+    "scalingConstants": [
+      {
+        "statKey": "enemy_physical_resistance",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "-15"
+      },
+      {
+        "statKey": "enemy_movement_speed",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "-30"
+      },
+      {
+        "statKey": "petrify",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(50+10*blvl)"
+      }
+    ],
+    "description": [],
+    "skillEffect": [
+      "{{enemy_physical_resistance}}",
+      "{{enemy_movement_speed}}",
+      "{{petrify}}"
+    ],
+    "restriction": []
+  },
+  {
+    "id": "void_archon_warp_field_aura",
+    "numericId": 274,
+    "displayName": "Warp Field Aura",
+    "parentSkillId": "void_archon",
+    "scalingConstants": [
+      {
+        "statKey": "enemy_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "-25"
+      },
+      {
+        "statKey": "enemy_attack_speed",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "-20"
+      }
+    ],
+    "description": [],
+    "skillEffect": [
+      "{{enemy_damage}}",
+      "{{enemy_attack_speed}}"
+    ],
+    "restriction": []
   }
 ]
