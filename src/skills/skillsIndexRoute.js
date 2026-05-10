@@ -76,19 +76,14 @@ export function readHomeTagFiltersFromRoute(router) {
 
 /**
  * How to combine class and tag filters when both have selections (`and` = must match both, `or` = match either).
- * Query: `classTagOp` preferred; `classTabOp` kept for older links.
+ * Query param: `filterLogic=or`; omitted or other values mean `and`.
  * @param {unknown} q
  * @returns {'and'|'or'}
  */
 export function readClassTagJoinFromQuery(q) {
   if (!q || typeof q !== 'object') return 'and';
   const rec = /** @type {Record<string, unknown>} */ (q);
-  const raw =
-    rec.classTagOp != null
-      ? String(rec.classTagOp).toLowerCase()
-      : rec.classTabOp != null
-        ? String(rec.classTabOp).toLowerCase()
-        : 'and';
+  const raw = rec.filterLogic != null ? String(rec.filterLogic).toLowerCase() : 'and';
   return raw === 'or' ? 'or' : 'and';
 }
 

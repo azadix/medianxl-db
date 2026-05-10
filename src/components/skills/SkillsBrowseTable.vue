@@ -162,8 +162,7 @@ function onJoinChange(e) {
   const el = /** @type {HTMLSelectElement} */ (e.target);
   const v = el.value === 'or' ? 'or' : 'and';
   mergeHomeQuery(router, {
-    classTagOp: v === 'and' ? '' : 'or',
-    classTabOp: '',
+    filterLogic: v === 'and' ? '' : 'or',
   });
 }
 
@@ -203,7 +202,19 @@ function homeQueryForSkill(skillId) {
   return q;
 }
 
-function toggleSort(key) {
+const sortHint = computed(() => (sortDir.value === 1 ? 'A-Z' : 'Z-A'));
+
+/**
+ * @param {object} skill
+ * @param {'name'|'class'|'tab'} key
+ */
+function sortComparableForSkill(skill, key) {
+  if (key === 'tab') return String(skill.tabName ?? '');
+  return String(skill[key] ?? '');
+}
+
+/** @param {'name'|'class'|'tab'} key */
+function toggleSortColumn(key) {
   if (sortKey.value === key) {
     sortDir.value = sortDir.value === 1 ? -1 : 1;
   } else {
@@ -211,8 +222,6 @@ function toggleSort(key) {
     sortDir.value = 1;
   }
 }
-
-const sortHint = computed(() => (sortDir.value === 1 ? 'asc' : 'desc'));
 
 const filteredSkills = computed(() => {
   const parsed = parsedSearch.value;
@@ -252,12 +261,12 @@ const filteredSkills = computed(() => {
   if (parsed.type !== 'regex_error') {
     rows = rows.filter((s) => skillMatchesSearch(s, parsed));
   }
-  const dir = sortDir.value;
   const key = sortKey.value;
+  const dir = sortDir.value;
   rows = [...rows].sort((a, b) => {
-    const va = String(a[key] ?? '');
-    const vb = String(b[key] ?? '');
-    const c = va.localeCompare(vb, undefined, { sensitivity: 'base' });
+    const va = sortComparableForSkill(a, key);
+    const vb = sortComparableForSkill(b, key);
+    const c = va.localeCompare(vb, undefined, { sensitivity: 'base', numeric: true });
     return c * dir;
   });
   return rows;
@@ -470,22 +479,22 @@ function iconMarkup(skill) {
           <tr>
             <th class="skills-col-icon">Image</th>
             <th class="skills-col-name">
-              <button type="button" class="button is-ghost is-small p-0 skills-sort-btn" @click="toggleSort('name')">
+              <button type="button" class="button is-ghost p-0 skills-sort-btn" @click="toggleSortColumn('name')">
                 Name
-                <span v-if="sortKey === 'name'" class="has-text-grey is-size-7">{{ sortHint }}</span>
+                <span v-if="sortKey === 'name'" class="has-text-grey pl-1 is-size-7">{{ sortHint }}</span>
               </button>
             </th>
             <th class="skills-col-tags is-hidden-mobile">Tags</th>
             <th class="is-hidden-mobile">
-              <button type="button" class="button is-ghost is-small p-0 skills-sort-btn" @click="toggleSort('class')">
+              <button type="button" class="button is-ghost p-0 skills-sort-btn" @click="toggleSortColumn('class')">
                 Class
-                <span v-if="sortKey === 'class'" class="has-text-grey is-size-7">{{ sortHint }}</span>
+                <span v-if="sortKey === 'class'" class="has-text-grey pl-1 is-size-7">{{ sortHint }}</span>
               </button>
             </th>
             <th class="is-hidden-mobile">
-              <button type="button" class="button is-ghost is-small p-0 skills-sort-btn" @click="toggleSort('tab')">
+              <button type="button" class="button is-ghost p-0 skills-sort-btn" @click="toggleSortColumn('tab')">
                 Tab
-                <span v-if="sortKey === 'tab'" class="has-text-grey is-size-7">{{ sortHint }}</span>
+                <span v-if="sortKey === 'tab'" class="has-text-grey pl-1 is-size-7">{{ sortHint }}</span>
               </button>
             </th>
           </tr>

@@ -39,6 +39,9 @@ function editorMatches(s, p) {
   return p.re.test(editorPlain(s));
 }
 
+const sortHint = computed(() => (sortDir.value === 1 ? 'A-Z' : 'Z-A'));
+
+/** @param {'displayName'|'id'|'class'|'tabName'} key */
 function toggleSort(key) {
   if (sortKey.value === key) {
     sortDir.value = sortDir.value === 1 ? -1 : 1;
@@ -47,8 +50,6 @@ function toggleSort(key) {
     sortDir.value = 1;
   }
 }
-
-const sortHint = computed(() => (sortDir.value === 1 ? 'asc' : 'desc'));
 
 const displayRows = computed(() => {
   const p = parsedSearch.value;
@@ -110,31 +111,31 @@ function iconMarkup(skill) {
           <tr>
             <th>Icon</th>
             <th>
-              <button type="button" class="button is-ghost is-small p-0 editor-sort-btn" @click="toggleSort('id')">
+              <button type="button" class="button is-ghost p-0 editor-sort-btn" @click="toggleSort('id')">
                 ID
-                <span v-if="sortKey === 'id'" class="has-text-grey is-size-7">{{ sortHint }}</span>
+                <span v-if="sortKey === 'id'" class="has-text-grey pl-1 is-size-7">{{ sortHint }}</span>
               </button>
             </th>
             <th>
               <button
                 type="button"
-                class="button is-ghost is-small p-0 editor-sort-btn"
+                class="button is-ghost p-0 editor-sort-btn"
                 @click="toggleSort('displayName')"
               >
                 Display name
-                <span v-if="sortKey === 'displayName'" class="has-text-grey is-size-7">{{ sortHint }}</span>
+                <span v-if="sortKey === 'displayName'" class="has-text-grey pl-1 is-size-7">{{ sortHint }}</span>
               </button>
             </th>
             <th>
-              <button type="button" class="button is-ghost is-small p-0 editor-sort-btn" @click="toggleSort('class')">
+              <button type="button" class="button is-ghost p-0 editor-sort-btn" @click="toggleSort('class')">
                 Class
-                <span v-if="sortKey === 'class'" class="has-text-grey is-size-7">{{ sortHint }}</span>
+                <span v-if="sortKey === 'class'" class="has-text-grey pl-1 is-size-7">{{ sortHint }}</span>
               </button>
             </th>
             <th>
-              <button type="button" class="button is-ghost is-small p-0 editor-sort-btn" @click="toggleSort('tabName')">
+              <button type="button" class="button is-ghost p-0 editor-sort-btn" @click="toggleSort('tabName')">
                 Tab
-                <span v-if="sortKey === 'tabName'" class="has-text-grey is-size-7">{{ sortHint }}</span>
+                <span v-if="sortKey === 'tabName'" class="has-text-grey pl-1 is-size-7">{{ sortHint }}</span>
               </button>
             </th>
             <th></th>
