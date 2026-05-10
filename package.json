@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "npm run spellcheck && vite",
     "spellcheck": "node scripts/run-spellcheck.mjs",
     "lint": "eslint .",
     "build": "npm run lint && node scripts/run-spellcheck.mjs && vite build && node scripts/copy-spa-404.mjs",
