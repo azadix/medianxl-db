@@ -1,0 +1,73 @@
+{
+    "name":"seer",
+    "version":"2.13",
+    "class":"Druid",
+    "level":137,
+    "spentPoints":150,
+    "skillPoints":{
+       "Barkskin":27,
+       "Ember Spirit":1,
+       "Frigid Domain":1,
+       "Growth":7,
+       "Harvest":8,
+       "Harvesters":14,
+       "Hunting Banshee":30,
+       "Meditation":3,
+       "Pagan Rites":1,
+       "Paragon of Sanctity":1,
+       "Specialization":10,
+       "Spiritual Alignment":31,
+       "Survival Instinct":1,
+       "Symbiosis":15
+    },
+    "disabledSkills":[],
+    "disabledOSkillSlots":[],
+    "oSkills":{},
+    "allSkillsBonus":0,
+    "stats":"{{life}}=3615\n{{mana}}=1385\n{{strength}}=25\n{{dexterity}}=20\n{{vitality}}=15\n{{energy}}=25",
+    "questsCompleted":{
+       "den_of_evil":[
+          1,
+          1,
+          1
+       ],
+       "radament":[
+          1,
+          1,
+          1
+       ],
+       "izual":[
+          1,
+          1,
+          1
+       ],
+       "inquisitor_of_the_triune":[
+          0,
+          0,
+          1
+       ],
+       "lam_essen's_tome":[
+          1,
+          1,
+          1
+       ],
+       "justicar_signet":[
+          0,
+          0,
+          1
+       ],
+       "golden_bird":[
+          1,
+          1,
+          1
+       ]
+    },
+    "questCompletionOptOut":{
+       "inquisitor_of_the_triune":[
+          1,
+          1,
+          0
+       ]
+    },
+    "savedAt":"2026-05-13T20:26:11.052Z"
+ }
