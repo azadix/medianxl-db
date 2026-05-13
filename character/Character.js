@@ -1030,20 +1030,26 @@ export default class Character {
 
   /**
    * Set all oSkills (for loading builds)
-   * @param {Array|Object} oSkills - Array of oSkill objects (old format) or Object with skill IDs/names as keys (new format)
+   * @param {Array|Object} oSkills - Array of full oSkill rows (legacy), compact `{ skillId, level }[]`, or object map (display name, internal id, or numeric id keys -> points)
    */
   setAllOSkills(oSkills) {
     if (!oSkills) {
       this.oSkills = [];
     } else if (Array.isArray(oSkills)) {
-      // Old format: array of objects with full metadata
+      // Array: full metadata (legacy), or compact `{ skillId, level }` from build export
       this.oSkills = oSkills
-        .map((row) => ({
-          ...row,
-          slotId: row.slotId || Character.newOSkillSlotId(),
-          points: Character.clampOSkillPoints(row?.points ?? 0)
-        }))
-        .filter((row) => row.points > 0);
+        .map((row) => {
+          const points = Character.clampOSkillPoints(row?.level ?? row?.points ?? 0);
+          if (points <= 0) return null;
+          const { level, ...rest } = row;
+          void level;
+          return {
+            ...rest,
+            points,
+            slotId: row.slotId || Character.newOSkillSlotId()
+          };
+        })
+        .filter(Boolean);
     } else if (typeof oSkills === 'object') {
       // New format: object with skill IDs or names as keys and points as values
       this.oSkills = [];
@@ -1060,14 +1066,6 @@ export default class Character {
       });
     }
     this.pruneDisabledOSkillSlotsWithoutRows();
-  }
-
-  /**
-   * Deep-enough copy of oSkill rows for build export (preserves slotId).
-   * @returns {Array<Object>}
-   */
-  getOSkillsSnapshotForSave() {
-    return (this.oSkills || []).map((row) => ({ ...row }));
   }
 
   static clampOSkillPoints(points) {

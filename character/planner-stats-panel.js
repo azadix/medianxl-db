@@ -314,13 +314,16 @@ export function applyPlannerStatInput(statKey, raw) {
     recomputeClassDerivedLifeMana();
   }
   runPlannerSkillStatRecompute();
-  syncAdvancedTextarea();
+  syncPlannerCharacterStatsTextareaFromCharacter();
   if (typeof window !== 'undefined') {
     window.dispatchEvent(new CustomEvent('characterStatsChanged', { detail: { statKey } }));
   }
 }
 
-function syncAdvancedTextarea() {
+/**
+ * Push current character raw stats into the advanced Character Stats textarea (when not focused).
+ */
+export function syncPlannerCharacterStatsTextareaFromCharacter() {
   const ta = document.getElementById('characterStats');
   const ch = getCharacterInstance();
   if (!ta || !ch) return;

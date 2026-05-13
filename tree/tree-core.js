@@ -5,8 +5,8 @@ import { getCurrentTab, setCurrentTabState } from './tree-tab-state.js';
 import { updatePlannerUrlTab, setBuildUrlParam } from './tree-url-sync.js';
 import Tree from '../character/Tree.js';
 import Character from '../character/Character.js';
-import { initializeCharacter, applyClassBaselineStatsToCharacter, recomputeClassDerivedLifeMana, onPlannerSkillAllocationChanged, runPlannerSkillStatRecompute, getSpentSkillPoints, getAllSkillPoints, getAllSkillPointsById, setAllSkillPoints, setAllSkillPointsById, importQuestsCompleted, getOSkillsForBuildExport, addOSkill, clearOSkills, setAllOSkills, getMinimumRequiredLevel, getTotalQuestSkillPoints, checkSkillsExceedingMaxLevel, getAvailableSkillPoints, getCharacterInstance, getCharacterLevel, getEffectivePlannerLevel, parseStatsFromText, exportStatsToText, clearAllStats, getQuestsCompletedForSave, getQuestCompletionOptOutForSave, getDisabledSkillIds, setDisabledSkillIds, getDisabledOSkillSlotIds, setDisabledOSkillSlotIds } from '../character/character-state.js';
-import { refreshPlannerStatsPanelFromCharacter } from '../character/planner-stats-panel.js';
+import { initializeCharacter, applyClassBaselineStatsToCharacter, recomputeClassDerivedLifeMana, onPlannerSkillAllocationChanged, runPlannerSkillStatRecompute, getSpentSkillPoints, getAllSkillPoints, getAllSkillPointsById, setAllSkillPoints, normalizeBuildSkillPointsForImport, normalizeBuildOSkillsForImport, importQuestsCompleted, getOSkillsForBuildExport, addOSkill, clearOSkills, setAllOSkills, getMinimumRequiredLevel, getTotalQuestSkillPoints, checkSkillsExceedingMaxLevel, getAvailableSkillPoints, getCharacterInstance, getCharacterLevel, getEffectivePlannerLevel, parseStatsFromText, exportStatsToText, clearAllStats, getQuestsCompletedForSave, getQuestCompletionOptOutForSave, getDisabledSkillIds, setDisabledSkillIds, getDisabledOSkillSlotIds, setDisabledOSkillSlotIds } from '../character/character-state.js';
+import { refreshPlannerStatsPanelFromCharacter, syncPlannerCharacterStatsTextareaFromCharacter } from '../character/planner-stats-panel.js';
 import { initPlannerSidebarTabQuests } from '../character/sidebarTabQuests.js';
 import { setPlannerSectionFromLegacy } from '../src/planner/planner-section-bridge.js';
 import {
@@ -181,21 +181,37 @@ function loadBuildData(build, buildIndex = null) {
         importQuestsCompleted(build.questsCompleted, build.questCompletionOptOut);
     }
     
-    // Load skill points (handle both old format with names and new format with IDs)
+    // Load skill points (display name, internal id, or numericId keys -> runtime internal ids)
     if (build.skillPoints) {
-        // Check if the first key is numeric (skill ID) or string (skill name)
-        const firstKey = Object.keys(build.skillPoints)[0];
-        if (firstKey && /^\d+$/.test(firstKey)) {
-            // New format: skill IDs
-            setAllSkillPointsById(build.skillPoints);
-        } else {
-            // Old format: skill names (backward compatibility)
-            setAllSkillPoints(build.skillPoints);
+        const { map, skipped } = normalizeBuildSkillPointsForImport(build.skillPoints);
+        setAllSkillPoints(map);
+        if (skipped.length > 0) {
+            const parts = skipped.map(
+                (s) => `${exportLabelForToast(s.key)} (skill level: ${s.wantedLevel})`
+            );
+            const list = parts.join(', ');
+            toastManager.showToast(
+                `Unknown tree skill${skipped.length > 1 ? 's' : ''} not loaded: ${list}.`,
+                false,
+                'warning'
+            );
         }
     }
-    
-    // Load oSkills
-    setAllOSkills(build.oSkills || []);
+
+    // Load oSkills (display map, internal map, numeric keys, or legacy array rows)
+    const oNorm = normalizeBuildOSkillsForImport(build.oSkills ?? []);
+    setAllOSkills(oNorm.payload);
+    if (oNorm.skipped.length > 0) {
+        const parts = oNorm.skipped.map(
+            (s) => `${exportLabelForToast(s.key)} (skill level: ${s.wantedLevel})`
+        );
+        const list = parts.join(', ');
+        toastManager.showToast(
+            `Unknown oSkill${oNorm.skipped.length > 1 ? 's' : ''} not loaded: ${list}.`,
+            false,
+            'warning'
+        );
+    }
 
     setDisabledSkillIds(Array.isArray(build.disabledSkills) ? build.disabledSkills : []);
     setDisabledOSkillSlotIds(Array.isArray(build.disabledOSkillSlots) ? build.disabledOSkillSlots : []);
@@ -205,19 +221,12 @@ function loadBuildData(build, buildIndex = null) {
         setAllSkillsBonus(build.allSkillsBonus);
     }
     
-    // Load Character Stats (panel + optional advanced textarea stay in sync via refresh)
-    const statsText = build.stats != null ? String(build.stats).trim() : '';
-    if (statsText) {
-        const errors = parseStatsFromText(build.stats);
-        if (errors.length > 0) {
-            console.warn('Stats parsing errors when loading build:', errors);
-        }
-    } else if (build.class) {
+    // Class baseline stats only when the build has no stats blob (saved builds carry raw stat lines).
+    const importedStatsText = build.stats != null ? String(build.stats).trim() : '';
+    if (!importedStatsText && build.class) {
         applyClassBaselineStatsToCharacter(build.class);
     }
     runPlannerSkillStatRecompute({ immediate: true });
-    refreshPlannerStatsPanelFromCharacter();
-    window.dispatchEvent(new CustomEvent('characterStatsChanged', { detail: { buildLoad: true } }));
     
     clearSkillVariants();
     applySkillVariantDefaultsForClass(build.class);
@@ -232,7 +241,9 @@ function loadBuildData(build, buildIndex = null) {
     if (skillsList) {
         // If build has oSkills, switch to oSkills tab after rendering
         const hasOSkills = build.oSkills && (
-            Array.isArray(build.oSkills) ? build.oSkills.length > 0 : Object.keys(build.oSkills).length > 0
+            Array.isArray(build.oSkills)
+                ? build.oSkills.length > 0
+                : typeof build.oSkills === 'object' && Object.keys(build.oSkills).length > 0
         );
         renderSkills(build.class, skillsList, skillsContainer, hasOSkills ? 'oSkills' : null);
     }
@@ -244,9 +255,21 @@ function loadBuildData(build, buildIndex = null) {
     window.removeEventListener('skillPointsChanged', handleSkillPointsChanged);
     window.addEventListener('skillPointsChanged', handleSkillPointsChanged);
     
-    // Update displays
+    // Update displays (updateMinimumLevelDisplay -> recomputeClassDerivedLifeMana overwrites life/mana)
     updateSkillPointsDisplay();
     updateDevotionDisplay();
+
+    // Re-apply saved raw stats after pool UI derived life/mana so imports match the JSON blob.
+    if (importedStatsText) {
+        const statErrors = parseStatsFromText(build.stats);
+        if (statErrors.length > 0) {
+            console.warn('Stats parsing errors when loading build:', statErrors);
+        }
+        runPlannerSkillStatRecompute({ immediate: true });
+    }
+    syncPlannerCharacterStatsTextareaFromCharacter();
+    refreshPlannerStatsPanelFromCharacter();
+    window.dispatchEvent(new CustomEvent('characterStatsChanged', { detail: { buildLoad: true } }));
     
     // Set current build index so "Save" button works
     if (buildIndex !== null) {
@@ -1274,11 +1297,36 @@ function validateBuildData(buildData) {
         toastManager.showToast('Skill points must be an object', 'danger');
         return false;
     }
-    
-    // Validate oSkills if present
+
+    for (const v of Object.values(buildData.skillPoints)) {
+        if (typeof v !== 'number' || Number.isNaN(v)) {
+            toastManager.showToast('Skill points values must be numbers', 'danger');
+            return false;
+        }
+    }
+
     if (buildData.oSkills !== undefined) {
-        if (typeof buildData.oSkills !== 'object') {
-            toastManager.showToast('oSkills must be an object', 'danger');
+        if (buildData.oSkills === null) {
+            toastManager.showToast('oSkills cannot be null', 'danger');
+            return false;
+        }
+        if (Array.isArray(buildData.oSkills)) {
+            for (let i = 0; i < buildData.oSkills.length; i++) {
+                const row = buildData.oSkills[i];
+                if (!row || typeof row !== 'object' || Array.isArray(row)) {
+                    toastManager.showToast(`oSkills[${i}] must be an object`, 'danger');
+                    return false;
+                }
+            }
+        } else if (typeof buildData.oSkills === 'object') {
+            for (const v of Object.values(buildData.oSkills)) {
+                if (typeof v !== 'number' || Number.isNaN(v)) {
+                    toastManager.showToast('oSkills map values must be numbers', 'danger');
+                    return false;
+                }
+            }
+        } else {
+            toastManager.showToast('oSkills must be a plain object or array', 'danger');
             return false;
         }
     }
