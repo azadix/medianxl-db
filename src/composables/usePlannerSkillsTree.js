@@ -117,7 +117,7 @@ export function usePlannerSkillsTree({ payload, classSkills, activeTab, gridRang
   }
 
   function oskillIdentifier(cardData) {
-    return cardData.numericId ?? cardData.skillId;
+    return cardData.variantStateKey ?? cardData.numericId ?? cardData.skillId;
   }
 
   function onOskillPlus(cardData, delta) {

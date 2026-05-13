@@ -31,12 +31,14 @@ export function enrichOskillForDisplay(oskill) {
       nid = null;
     }
   }
+  const slotId = oskill.slotId != null && String(oskill.slotId).trim() !== '' ? String(oskill.slotId).trim() : undefined;
   if (det && internal) {
     return {
       numericId: nid,
       skillId: oskill.skillId ?? nid,
       skillName: oskill.skillName || internal,
       points: oskill.points,
+      slotId,
       displayName: det.display_name || internal,
       image: det.image || 'icons-shared_missing.png',
       className: det.className || 'Other',
@@ -48,6 +50,7 @@ export function enrichOskillForDisplay(oskill) {
     skillId: oskill.skillId,
     skillName: oskill.skillName,
     points: oskill.points,
+    slotId,
     displayName: oskill.skillName || `Skill ${oskill.skillId}`,
     image: 'icons-shared_missing.png',
     className: 'Other',
