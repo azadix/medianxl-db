@@ -5,7 +5,7 @@ import { getCurrentTab, setCurrentTabState } from './tree-tab-state.js';
 import { updatePlannerUrlTab, setBuildUrlParam } from './tree-url-sync.js';
 import Tree from '../character/Tree.js';
 import Character from '../character/Character.js';
-import { initializeCharacter, applyClassBaselineStatsToCharacter, recomputeClassDerivedLifeMana, onPlannerSkillAllocationChanged, runPlannerSkillStatRecompute, getSpentSkillPoints, getAllSkillPoints, getAllSkillPointsById, setAllSkillPoints, normalizeBuildSkillPointsForImport, normalizeBuildOSkillsForImport, importQuestsCompleted, getOSkillsForBuildExport, addOSkill, clearOSkills, setAllOSkills, getMinimumRequiredLevel, getTotalQuestSkillPoints, checkSkillsExceedingMaxLevel, getAvailableSkillPoints, getCharacterInstance, getCharacterLevel, getEffectivePlannerLevel, parseStatsFromText, exportStatsToText, clearAllStats, getQuestsCompletedForSave, getQuestCompletionOptOutForSave, getDisabledSkillIds, setDisabledSkillIds, getDisabledOSkillSlotIds, setDisabledOSkillSlotIds } from '../character/character-state.js';
+import { initializeCharacter, applyClassBaselineStatsToCharacter, recomputeClassDerivedLifeMana, onPlannerSkillAllocationChanged, runPlannerSkillStatRecompute, getSpentSkillPoints, getAllSkillPoints, getAllSkillPointsById, setAllSkillPoints, normalizeBuildSkillPointsForImport, normalizeBuildOSkillsForImport, importQuestsCompleted, getOSkillsForBuildExport, addOSkill, clearOSkills, setAllOSkills, getMinimumRequiredLevel, getTotalQuestSkillPoints, checkSkillsExceedingMaxLevel, getAvailableSkillPoints, getCharacterInstance, getCharacterLevel, getEffectivePlannerLevel, parseStatsFromText, exportStatsToText, clearAllStats, getQuestsCompletedForSave, getQuestCompletionOptOutForSave, getDisabledSkillIds, setDisabledSkillIds, getDisabledOSkillSlotIds, setDisabledOSkillSlotIds, isPlannerSkillPointPoolOverBudget } from '../character/character-state.js';
 import { refreshPlannerStatsPanelFromCharacter, syncPlannerCharacterStatsTextareaFromCharacter } from '../character/planner-stats-panel.js';
 import { initPlannerSidebarTabQuests } from '../character/sidebarTabQuests.js';
 import { setPlannerSectionFromLegacy } from '../src/planner/planner-section-bridge.js';
@@ -278,8 +278,12 @@ function loadBuildData(build, buildIndex = null) {
     // Show tree section
     showSection('tree');
     
-    // Check for skills exceeding max level
+    // Check for skills exceeding max level and invalid skill point pool
     const exceedingSkills = checkSkillsExceedingMaxLevel(skillsList);
+    const poolOverBudget = isPlannerSkillPointPoolOverBudget();
+    if (poolOverBudget) {
+        toastManager.showToast('Spent skill points exceed available amount.', false, 'warning');
+    }
     if (exceedingSkills.length > 0) {
         const skillList = exceedingSkills
             .map(skill => `${skill.skillName} (${skill.currentPoints}/${skill.maxLevel})`)
@@ -290,7 +294,7 @@ function loadBuildData(build, buildIndex = null) {
             false,
             'danger'
         );
-    } else {
+    } else if (!poolOverBudget) {
         toastManager.showToast(`Build "${exportLabelForToast(build.name)}" loaded successfully!`, true, 'info');
     }
 }

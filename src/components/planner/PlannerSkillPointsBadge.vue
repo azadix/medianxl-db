@@ -15,6 +15,8 @@ const availablePoints = ref(0);
 const basePoints = computed(() => Character.getBaseSkillPoints(effectiveLevel.value));
 const questPoints = computed(() => getTotalQuestSkillPoints(effectiveLevel.value));
 
+const pointsOverBudget = computed(() => spentPoints.value > availablePoints.value);
+
 function refreshPoints() {
   spentPoints.value = getSpentSkillPoints();
   effectiveLevel.value = getEffectivePlannerLevel();
@@ -46,7 +48,10 @@ onUnmounted(() => {
   <div class="planner-header-points planner-tab-points">
     <span class="planner-card__eyebrow">Skill points</span>
     <span>
-      <strong id="minLevelSpentPart">{{ spentPoints }} spent</strong>
+      <strong
+        id="minLevelSpentPart"
+        :class="{ 'is-danger has-text-danger': pointsOverBudget }"
+      >{{ spentPoints }} spent</strong>
       <span class="has-text-grey"> / </span>
       <span
         id="minLevelAvailPart"

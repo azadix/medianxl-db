@@ -702,6 +702,19 @@ export function getSpentSkillPoints() {
 }
 
 /**
+ * Spent tree skill points exceed the pool shown in the planner header (same rule as PlannerSkillPointsBadge).
+ * @returns {boolean}
+ */
+export function isPlannerSkillPointPoolOverBudget() {
+  if (!characterInstance) return false;
+  const spent = characterInstance.getSpentSkillPoints();
+  const ul = getEffectivePlannerLevel();
+  const base = Character.getBaseSkillPoints(ul);
+  const quest = characterInstance.getTotalQuestSkillPoints(ul);
+  return spent > base + quest;
+}
+
+/**
  * Calculate remaining skill points
  * @returns {number} Points remaining to spend
  */
