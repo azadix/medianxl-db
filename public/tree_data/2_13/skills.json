@@ -12809,8 +12809,9 @@
       {
         "statKey": "minions",
         "occurrenceIndex": 0,
-        "variantKey": "1+blvl/15",
-        "value0": "Beams"
+        "variantKey": "",
+        "value0": "Beams",
+        "value1": "1+blvl/15"
       }
     ],
     "description": [
@@ -16562,7 +16563,7 @@
         "statKey": "cooldown",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(300-20*blvl)"
+        "value0": "max(frames(300-20*blvl),0)"
       }
     ],
     "description": [
