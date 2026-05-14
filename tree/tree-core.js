@@ -1054,8 +1054,10 @@ function renameCurrentBuild(name) {
 
     const builds = getSavedBuilds();
     if (currentBuildIndex !== null && currentBuildIndex >= 0 && currentBuildIndex < builds.length) {
-        builds[currentBuildIndex].name = name;
+        const ref = builds[currentBuildIndex];
+        ref.name = name;
         setSavedBuilds(builds);
+        currentBuildIndex = builds.indexOf(ref);
         notifySavedBuildsListRefresh();
     }
 
@@ -1426,12 +1428,14 @@ function updateCurrentBuild() {
     
     const keptName = builds[currentBuildIndex].name;
     setCurrentBuildDisplayName(keptName || '');
-    builds[currentBuildIndex] = buildCurrentBuildSnapshot(keptName);
-    
+    const snap = buildCurrentBuildSnapshot(keptName);
+    builds[currentBuildIndex] = snap;
+
     setSavedBuilds(builds);
+    currentBuildIndex = builds.indexOf(snap);
     notifySavedBuildsListRefresh();
-    
-    toastManager.showToast(`Build "${exportLabelForToast(builds[currentBuildIndex].name)}" updated!`, true, 'info');
+
+    toastManager.showToast(`Build "${exportLabelForToast(snap.name)}" updated!`, true, 'info');
 }
 
 /**
@@ -1464,12 +1468,10 @@ function saveBuild(buildName) {
 
     // Add new build
     builds.push(build);
-    
+
     setSavedBuilds(builds);
+    currentBuildIndex = builds.indexOf(build);
     notifySavedBuildsListRefresh();
-    
-    // Set current build index to the newly saved build
-    currentBuildIndex = builds.length - 1;
 
     toastManager.showToast(`Build "${exportLabelForToast(finalName)}" saved successfully!`, true, 'info');
 }
@@ -1763,17 +1765,21 @@ export function deleteBuild(index) {
     const label = exportLabelForToast(buildName);
     
     if (confirm(`Delete build "${label}"?`)) {
+        const deletingCurrent = currentBuildIndex === index;
+        const tracked =
+            !deletingCurrent && currentBuildIndex !== null && currentBuildIndex >= 0 && currentBuildIndex < builds.length
+                ? builds[currentBuildIndex]
+                : null;
+
         builds.splice(index, 1);
         setSavedBuilds(builds);
-        
-        // If we deleted the currently loaded build, clear the index
-        if (currentBuildIndex === index) {
+
+        if (deletingCurrent) {
             currentBuildIndex = null;
-        } else if (currentBuildIndex !== null && currentBuildIndex > index) {
-            // Adjust index if we deleted a build before the current one
-            currentBuildIndex--;
+        } else if (tracked) {
+            currentBuildIndex = builds.indexOf(tracked);
         }
-        
+
         notifySavedBuildsListRefresh();
         toastManager.showToast(`Build "${label}" deleted.`, true, 'info');
     }
@@ -1804,10 +1810,15 @@ export function renameBuild(index) {
         return;
     }
     
-    // Update the build name
-    builds[index].name = trimmedName;
+    const ref = builds[index];
+    const wasCurrent = currentBuildIndex === index;
+    ref.name = trimmedName;
     setSavedBuilds(builds);
-    
+
+    if (wasCurrent) {
+        currentBuildIndex = builds.indexOf(ref);
+    }
+
     notifySavedBuildsListRefresh();
     
     toastManager.showToast(`Build renamed to "${trimmedName}"!`, true, 'info');

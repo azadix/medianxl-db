@@ -67,7 +67,7 @@ watch(activeSection, (s) => {
 <template>
   <div id="saved-builds-list">
     <p v-if="builds.length === 0" class="has-text-grey-light">No saved builds found</p>
-    <div v-for="(build, index) in builds" :key="index" class="box mb-3">
+    <div v-for="(build, index) in builds" :key="`${build.savedAt || 'legacy'}-${index}`" class="box mb-3">
       <div class="columns is-vcentered">
         <div class="column is-narrow py-0">
           <img
