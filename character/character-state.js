@@ -272,11 +272,14 @@ export function onPlannerSkillAllocationChanged() {
 export function getEffectivePlannerLevel() {
   if (!characterInstance) return Character.DEFAULT_LEVEL;
   const stored = Character.clampLevel(characterInstance.level);
-  if (!getPlannerAutoLevelFromSpentSkillPoints()) {
+  const autoLevelFromSpent = getPlannerAutoLevelFromSpentSkillPoints();
+  if (!autoLevelFromSpent) {
     return stored;
   }
   const spent = characterInstance.getSpentSkillPoints();
-  if (spent <= 0) return stored;
+  if (spent <= 0) {
+    return stored;
+  }
   const minForBuild = characterInstance.getMinimumRequiredLevel(getPlannerSkillsSnapshot());
   return Math.max(stored, minForBuild);
 }
@@ -736,7 +739,8 @@ export function getRemainingSkillPoints() {
   const ul = getEffectivePlannerLevel();
   const basePoints = Character.getBaseSkillPoints(ul);
   const questPoints = characterInstance.getTotalQuestSkillPoints(ul);
-  return basePoints + questPoints - characterInstance.getSpentSkillPoints();
+  const spent = characterInstance.getSpentSkillPoints();
+  return basePoints + questPoints - spent;
 }
 
 /**
@@ -947,7 +951,23 @@ export function addSkillPoint(skillName, skill, maxLevel, allSkills = [], skipEv
   }
   
   // Check if we have skill points available
-  const remainingPoints = getRemainingSkillPoints();
+  let remainingPoints = getRemainingSkillPoints();
+  if (remainingPoints <= 0 && getPlannerAutoLevelFromSpentSkillPoints() && characterInstance) {
+    const prevPoints = currentPoints;
+    characterInstance.skillPoints[skillName] = prevPoints + 1;
+    characterInstance.maxLevels = {};
+    const neededAfterSpend = getMinimumRequiredLevel(allSkills);
+    if (prevPoints <= 0) {
+      delete characterInstance.skillPoints[skillName];
+    } else {
+      characterInstance.skillPoints[skillName] = prevPoints;
+    }
+    characterInstance.maxLevels = {};
+    if (characterInstance.level < neededAfterSpend) {
+      setCharacterLevel(neededAfterSpend);
+    }
+    remainingPoints = getRemainingSkillPoints();
+  }
   if (remainingPoints <= 0) {
     return { success: false, reason: 'No skill points remaining' };
   }
