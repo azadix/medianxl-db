@@ -5466,9 +5466,9 @@
     "image": "icons-pal_92.png"
   },
   {
-    "id": "divine_judgement",
+    "id": "divine_judgment",
     "numericId": 582,
-    "displayName": "Divine Judgement",
+    "displayName": "Divine Judgment",
     "classId": 5,
     "tab": 30,
     "class": "Paladin",
@@ -9781,7 +9781,7 @@
     "skillEffect": [
       "Per 40% Damage to Demons: +1 yard radius (Max 15)",
       "",
-      "[[divine_judgement]]",
+      "[[divine_judgment]]",
       "[[retaliate]]",
       "[[cherubim]]",
       "Adds 25 Magic Damage per level",

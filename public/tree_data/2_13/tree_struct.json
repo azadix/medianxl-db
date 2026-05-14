@@ -3713,23 +3713,23 @@
           "colosseum"
         ],
         [
-          "divine_judgement",
+          "divine_judgment",
           "lionheart"
         ],
         [
-          "divine_judgement",
+          "divine_judgment",
           "holy_fire"
         ],
         [
           "retaliate",
-          "divine_judgement"
+          "divine_judgment"
         ],
         [
-          "divine_judgement",
+          "divine_judgment",
           "sanctity"
         ],
         [
-          "divine_judgement",
+          "divine_judgment",
           "consecration"
         ]
       ],
@@ -3748,13 +3748,13 @@
           "row": 2,
           "col": 3,
           "prerequisites": [
-            "skill_level:1:divine_judgement",
+            "skill_level:1:divine_judgment",
             "skill_blocked_by:0:sanctity",
             "character_level:15:"
           ]
         },
         {
-          "id": "divine_judgement",
+          "id": "divine_judgment",
           "row": 2,
           "col": 2,
           "prerequisites": [
@@ -3768,7 +3768,7 @@
           "col": 2,
           "prerequisites": [
             "character_level:20:",
-            "skill_level:1:divine_judgement"
+            "skill_level:1:divine_judgment"
           ]
         },
         {
@@ -3777,7 +3777,7 @@
           "col": 1,
           "prerequisites": [
             "character_level:20:",
-            "skill_level:1:divine_judgement"
+            "skill_level:1:divine_judgment"
           ]
         },
         {
@@ -3790,7 +3790,7 @@
           "row": 2,
           "col": 1,
           "prerequisites": [
-            "skill_level:1:divine_judgement",
+            "skill_level:1:divine_judgment",
             "skill_blocked_by:0:consecration",
             "character_level:15:"
           ]
