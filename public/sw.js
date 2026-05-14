@@ -32,6 +32,9 @@ function shouldCacheTreeDataRequest(url) {
   } catch {
     return false;
   }
+  if (pathname.includes('/icons/') && /\/icons-shared_missing\.webp$/i.test(pathname)) {
+    return true;
+  }
   if (!pathname.includes('/tree_data/')) return false;
   if (pathname.endsWith('.json')) return true;
   if (/\/class-[a-z]+\.(webp|png)$/i.test(pathname)) return true;

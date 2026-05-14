@@ -3,6 +3,7 @@ const ICON_SIZE = 48;
 const ATLAS_SIZE = 912;
 const ICONS_PER_ROW = Math.floor(ATLAS_SIZE / ICON_SIZE);
 export const MISSING_IMAGE_NAME = "icons-shared_missing.png";
+export const MISSING_IMAGE_WEBP_NAME = "icons-shared_missing.webp";
 
 /**
  * HTML classes used by scaling placeholder rendering (tooltips / descriptions).
@@ -22,6 +23,16 @@ function escapeHtmlAttr(s) {
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;");
+}
+
+/**
+ * @param {string} className
+ */
+function missingIconPictureHTML(className) {
+    const png = `icons/${MISSING_IMAGE_NAME}`;
+    const webp = `icons/${MISSING_IMAGE_WEBP_NAME}`;
+    const cls = escapeHtmlAttr(`image ${className}`.trim());
+    return `<picture><source srcset="${escapeHtmlAttr(webp)}" type="image/webp"><img src="${escapeHtmlAttr(png)}" class="${cls}" alt="missing icon"></picture>`;
 }
 
 /**
@@ -122,13 +133,13 @@ const ATLAS_DEFAULT_VERSION_FOLDER = '2_13';
 export function getIconHTML(imagePath, className = '', gameVersionFolder = null) {
     if (!imagePath) return "";
     if (imagePath === MISSING_IMAGE_NAME) {
-        return `<img src="icons/${MISSING_IMAGE_NAME}" class="image ${className}" alt="missing icon">`;
+        return missingIconPictureHTML(className);
     }
 
     // Support both "icons-<prefix>_<index>.png" and "image-<prefix>_<index>.png"
     const match = imagePath.match(/^(?:icons|image)-([a-z]+)_(\d+)\.png$/);
     if (!match) {
-        return `<img src="icons/${MISSING_IMAGE_NAME}" class="image ${className}" alt="missing icon">`;
+        return missingIconPictureHTML(className);
     }
 
     const prefix = match[1];
@@ -197,7 +208,10 @@ export function getSkillIconHTML(imageFileName, humanClassName, className = '', 
         }
     }
 
-    const path = file === MISSING_IMAGE_NAME ? `icons/${MISSING_IMAGE_NAME}` : `icons/${prefix}/${file}`;
+    if (file === MISSING_IMAGE_NAME) {
+        return missingIconPictureHTML(className);
+    }
+    const path = `icons/${prefix}/${file}`;
     return `<img src="${path}" class="image ${className}">`;
 }
 
