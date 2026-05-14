@@ -159,7 +159,14 @@
     "numericId": 634,
     "displayName": "After using Superposition",
     "parentSkillId": "entanglement",
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(150*(1+[[continuity]].{{skill_duration}}/100))"
+      }
+    ],
     "description": [],
     "skillEffect": [
       "{{avoid_damage}}",
@@ -362,7 +369,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(125)"
+        "value0": "frames(125*(1+[[continuity]].{{skill_duration}}/100))"
       }
     ],
     "description": [],

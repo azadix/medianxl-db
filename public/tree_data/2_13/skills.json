@@ -867,7 +867,14 @@
     "baseMaxLevel": 1,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(0*(1+[[continuity]].{{skill_duration}}/100))"
+      }
+    ],
     "description": [
       "Unleash powerful reserves of arcane energy"
     ],
@@ -1424,7 +1431,14 @@
     "baseMaxLevel": 15,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(30000)"
+      }
+    ],
     "description": [
       "Gain the powers of a warrior crowned by the goddess"
     ],
@@ -7709,6 +7723,12 @@
         "value0": "1000",
         "value1": "0",
         "value2": "8"
+      },
+      {
+        "statKey": "duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(0*(1+[[continuity]].{{skill_duration}}/100))"
       }
     ],
     "description": [
@@ -8347,9 +8367,9 @@
     "class": "Sorceress",
     "tabName": "Melee",
     "tags": [
-      "Duration",
       "Projectile",
-      "Weapon Damage"
+      "Weapon Damage",
+      "Duration"
     ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": true,
@@ -9802,10 +9822,9 @@
     "class": "Sorceress",
     "tabName": "Coven",
     "tags": [
-      "Poison",
       "Buff",
-      "Duration",
-      "Periodic"
+      "Poison",
+      "Duration"
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
@@ -9829,6 +9848,12 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "150"
+      },
+      {
+        "statKey": "duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(0*(1+[[continuity]].{{skill_duration}}/100))"
       }
     ],
     "description": [
@@ -12996,7 +13021,14 @@
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(0*(1+[[continuity]].{{skill_duration}}/100))"
+      }
+    ],
     "description": [
       "Improves your melee combat prowess"
     ],
@@ -13412,8 +13444,7 @@
     "tags": [
       "Buff",
       "Lightning",
-      "Duration",
-      "Periodic"
+      "Duration"
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
@@ -13423,7 +13454,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(7500)"
+        "value0": "frames(7500*(1+[[continuity]].{{skill_duration}}/100))"
       },
       {
         "statKey": "delay_between",
