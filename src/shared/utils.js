@@ -255,6 +255,8 @@ function calculateManaCost(mana, lvlmana, manashift, level, minMana) {
     if (useMin) {
         const minFloor = Math.max(0, Math.trunc(parseFloat(minMana) || 0));
         cost = Math.max(minFloor, cost);
+    } else {
+        cost = Math.max(0, cost);
     }
     return cost;
 }
