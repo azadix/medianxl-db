@@ -9,6 +9,7 @@ import {
   getClassPlannerStatDefaults,
   computeClassDerivedLifeMana
 } from './class-baselines.js';
+import { getPlannerAutoLevelFromSpentSkillPoints } from '../src/planner/planner-level-options.js';
 
 // Re-export getBaseSkillPoints for use in other modules
 export { Character };
@@ -264,12 +265,16 @@ export function onPlannerSkillAllocationChanged() {
 
 /**
  * Planner level for life/mana scaling and header "Level N".
- * Uses the character's stored level (import / level control) and never shows below the minimum
- * level required by the current allocation (prereqs, skill point pool).
+ * When {@link getPlannerAutoLevelFromSpentSkillPoints} is true (default): max of stored level and
+ * minimum level required by the current allocation once any skill points are spent.
+ * When false: uses stored level only (manual control via planner options).
  */
 export function getEffectivePlannerLevel() {
   if (!characterInstance) return Character.DEFAULT_LEVEL;
   const stored = Character.clampLevel(characterInstance.level);
+  if (!getPlannerAutoLevelFromSpentSkillPoints()) {
+    return stored;
+  }
   const spent = characterInstance.getSpentSkillPoints();
   if (spent <= 0) return stored;
   const minForBuild = characterInstance.getMinimumRequiredLevel(getPlannerSkillsSnapshot());
@@ -685,12 +690,20 @@ export function getTotalQuestSkillPoints(characterLevel = Character.MAX_LEVEL) {
 }
 
 /**
- * Total available skill points: base at max level plus full quest total from the Quests tab.
- * @param {number} [characterLevel] - passed through to quest total (quest total does not depend on level)
- * @returns {number} Total available skill points
+ * Total available skill points at the given character level (base + quest tab rewards).
+ * When `characterLevel` is omitted, uses {@link getEffectivePlannerLevel}.
+ * @param {number} [characterLevel]
+ * @returns {number}
  */
-export function getAvailableSkillPoints(characterLevel = Character.MAX_LEVEL) {
-  return characterInstance ? characterInstance.getAvailableSkillPoints(characterLevel) : 0;
+export function getAvailableSkillPoints(characterLevel) {
+  if (!characterInstance) return 0;
+  const ul =
+    characterLevel != null && Number.isFinite(Number(characterLevel))
+      ? Character.clampLevel(Number(characterLevel))
+      : getEffectivePlannerLevel();
+  const basePoints = Character.getBaseSkillPoints(ul);
+  const questPoints = characterInstance.getTotalQuestSkillPoints(ul);
+  return basePoints + questPoints;
 }
 
 /**
@@ -719,7 +732,11 @@ export function isPlannerSkillPointPoolOverBudget() {
  * @returns {number} Points remaining to spend
  */
 export function getRemainingSkillPoints() {
-  return characterInstance ? characterInstance.getRemainingSkillPoints() : 0;
+  if (!characterInstance) return 0;
+  const ul = getEffectivePlannerLevel();
+  const basePoints = Character.getBaseSkillPoints(ul);
+  const questPoints = characterInstance.getTotalQuestSkillPoints(ul);
+  return basePoints + questPoints - characterInstance.getSpentSkillPoints();
 }
 
 /**
@@ -741,10 +758,18 @@ export function getMinimumRequiredLevel(allSkills = null) {
  */
 function bumpCharacterLevelToMinimumRequired(allSkills = null) {
   if (!characterInstance) return;
+  if (!getPlannerAutoLevelFromSpentSkillPoints()) return;
   const needed = getMinimumRequiredLevel(allSkills);
   if (characterInstance.level < needed) {
     setCharacterLevel(needed);
   }
+}
+
+/**
+ * When auto-level mode is on, raise stored level to the minimum required by the current build.
+ */
+export function syncPlannerCharacterLevelIfAuto(allSkills = null) {
+  bumpCharacterLevelToMinimumRequired(allSkills);
 }
 
 /**

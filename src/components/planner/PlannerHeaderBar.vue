@@ -6,6 +6,7 @@ import {
   plannerBackToMenuFromTree,
   plannerExportBuildClick,
   plannerMenuOpenHelp,
+  plannerRefreshAfterLevelOptions,
   plannerRenameBuildClick,
   plannerResetBuildClick,
   plannerSaveAsBuildClick,
@@ -13,14 +14,29 @@ import {
 } from '../../../tree/tree-core.js';
 import {
   getCharacterInstance,
+  getCharacterLevel,
   getEffectivePlannerLevel,
   getSpentSkillPoints,
+  setCharacterLevel,
+  syncPlannerCharacterLevelIfAuto,
 } from '../../../character/character-state.js';
+import Character from '../../../character/Character.js';
+import {
+  getPlannerAutoLevelFromSpentSkillPoints,
+  setPlannerAutoLevelFromSpentSkillPoints,
+} from '../../planner/planner-level-options.js';
 
 const className = ref('');
 const spentPoints = ref(0);
 const effectiveLevel = ref(1);
 const buildName = ref('Untitled build');
+
+const showOptionsModal = ref(false);
+const draftAutoLevelFromSp = ref(true);
+const draftCharacterLevel = ref(1);
+
+const minLv = Character.MIN_LEVEL;
+const maxLv = Character.MAX_LEVEL;
 
 const displayClass = computed(() => className.value || 'No class');
 const portraitSrc = computed(() => {
@@ -35,6 +51,31 @@ function refreshHeaderState() {
     ch?.className || (classSelect instanceof HTMLSelectElement ? classSelect.value : '') || '';
   spentPoints.value = getSpentSkillPoints();
   effectiveLevel.value = getEffectivePlannerLevel();
+}
+
+function openPlannerOptions() {
+  draftAutoLevelFromSp.value = getPlannerAutoLevelFromSpentSkillPoints();
+  draftCharacterLevel.value = getCharacterLevel();
+  showOptionsModal.value = true;
+}
+
+function closePlannerOptions() {
+  showOptionsModal.value = false;
+}
+
+function applyPlannerOptions() {
+  setPlannerAutoLevelFromSpentSkillPoints(draftAutoLevelFromSp.value);
+  if (draftAutoLevelFromSp.value) {
+    syncPlannerCharacterLevelIfAuto();
+  } else {
+    const n = Math.round(Number(draftCharacterLevel.value));
+    const clamped = Number.isFinite(n)
+      ? Math.max(minLv, Math.min(maxLv, n))
+      : Character.clampLevel(getCharacterLevel());
+    setCharacterLevel(clamped);
+  }
+  plannerRefreshAfterLevelOptions();
+  closePlannerOptions();
 }
 
 function onRefresh() {
@@ -90,6 +131,16 @@ onUnmounted(() => {
         <span>Export</span>
       </button>
       <button
+        id="plannerOptionsBtn"
+        class="button is-light is-outlined"
+        type="button"
+        title="Planner options"
+        aria-label="Planner options"
+        @click="openPlannerOptions"
+      >
+        <span class="icon"><i class="fa-solid fa-gear"></i></span>
+      </button>
+      <button
         id="plannerHelpBtn"
         class="button is-info is-outlined"
         type="button"
@@ -99,6 +150,54 @@ onUnmounted(() => {
       >
         <span>?</span>
       </button>
+    </div>
+
+    <div
+      v-if="showOptionsModal"
+      id="plannerOptionsModal"
+      class="modal is-active"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="plannerOptionsModalTitle"
+    >
+      <div class="modal-background" @click="closePlannerOptions"></div>
+      <div class="modal-card">
+        <header class="modal-card-head">
+          <p id="plannerOptionsModalTitle" class="modal-card-title">Planner options</p>
+          <button type="button" class="delete" aria-label="close" @click="closePlannerOptions"></button>
+        </header>
+        <section class="modal-card-body">
+          <div class="field">
+            <label class="checkbox">
+              <input v-model="draftAutoLevelFromSp" type="checkbox" />
+              Automatically set level from skill points spent
+            </label>
+            <p class="help">
+              When on, level is at least the minimum required by your build (default). When off, set level manually;
+              available skill points follow that level.
+            </p>
+          </div>
+          <div class="field">
+            <label class="label" for="plannerManualLevelInput">Character level</label>
+            <div class="control">
+              <input
+                id="plannerManualLevelInput"
+                v-model.number="draftCharacterLevel"
+                class="input"
+                type="number"
+                :min="minLv"
+                :max="maxLv"
+                :disabled="draftAutoLevelFromSp"
+              />
+            </div>
+            <p class="help">Allowed range: {{ minLv }} to {{ maxLv }}.</p>
+          </div>
+        </section>
+        <footer class="modal-card-foot">
+          <button type="button" class="button is-primary" @click="applyPlannerOptions">Apply</button>
+          <button type="button" class="button" @click="closePlannerOptions">Cancel</button>
+        </footer>
+      </div>
     </div>
 
     <div class="planner-header-center">

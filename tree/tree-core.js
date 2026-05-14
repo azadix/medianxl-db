@@ -713,6 +713,13 @@ function updateMinimumLevelDisplay() {
     recomputeClassDerivedLifeMana();
 }
 
+/** Refresh DOM pool + passive recomputation after planner level options (Vue) change. */
+export function plannerRefreshAfterLevelOptions() {
+    updateSkillPointsDisplay();
+    void runPlannerSkillStatRecompute({ immediate: true });
+    window.dispatchEvent(new CustomEvent('plannerStateChanged', { detail: { source: 'plannerLevelOptions' } }));
+}
+
 // Export function to update tab state (called from render module)
 export function setCurrentTab(tabName) {
     setCurrentTabState(tabName);
