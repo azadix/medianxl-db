@@ -23271,5 +23271,40 @@
       "{{mana_cost}}"
     ],
     "image": "icons-shared_295.png"
+  },
+  {
+    "id": "vindicate",
+    "numericId": 708,
+    "displayName": "Vindicate",
+    "classId": 1,
+    "tab": 65,
+    "class": "Other",
+    "tabName": "oSkill",
+    "tags": [
+      "Buff",
+      "Duration"
+    ],
+    "baseMaxLevel": 0,
+    "affectedBySpecialization": false,
+    "variants": [],
+    "scalingConstants": [
+      {
+        "statKey": "regenerates_percent_life_over_time",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100"
+      }
+    ],
+    "description": [
+      "Heals the party and boosts damage"
+    ],
+    "restriction": [],
+    "skillEffect": [
+      "{{weapon_physical_damage}}",
+      "{{regenerates_percent_life_over_time}}",
+      "(Max 15 000 Life)",
+      "{{duration}}"
+    ],
+    "image": "icons-pal_59.png"
   }
 ]
