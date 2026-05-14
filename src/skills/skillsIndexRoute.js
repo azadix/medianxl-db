@@ -75,21 +75,24 @@ export function readHomeTagFiltersFromRoute(router) {
 }
 
 /**
- * How to combine class and tag filters when both have selections (`and` = must match both, `or` = match either).
- * Query param: `filterLogic=or`; omitted or other values mean `and`.
+ * How to combine class and tag filters when both have selections (`and` = must match both, `or` = match either,
+ * `not` = show skills that match neither: invert the OR-style test, same tag OR rule as `or`).
+ * Query param: `filterLogic=or` or `filterLogic=not`; omitted or other values mean `and`.
  * @param {unknown} q
- * @returns {'and'|'or'}
+ * @returns {'and'|'or'|'not'}
  */
 export function readClassTagJoinFromQuery(q) {
   if (!q || typeof q !== 'object') return 'and';
   const rec = /** @type {Record<string, unknown>} */ (q);
   const raw = rec.filterLogic != null ? String(rec.filterLogic).toLowerCase() : 'and';
-  return raw === 'or' ? 'or' : 'and';
+  if (raw === 'or') return 'or';
+  if (raw === 'not') return 'not';
+  return 'and';
 }
 
 /**
  * @param {import('vue-router').Router | null | undefined} router
- * @returns {'and'|'or'}
+ * @returns {'and'|'or'|'not'}
  */
 export function readClassTagJoinFromRoute(router) {
   const q = router?.currentRoute?.value?.query;

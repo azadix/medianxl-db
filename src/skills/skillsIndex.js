@@ -260,6 +260,7 @@ async function displaySkillDetail(skillId) {
     if (browseClasses.length) backQuery.classes = browseClasses;
     if (browseTags.length) backQuery.tags = browseTags;
     if (classTagJoin === 'or') backQuery.filterLogic = 'or';
+    else if (classTagJoin === 'not') backQuery.filterLogic = 'not';
     backHref = r.resolve({ name: SKILLS_ROUTE_NAME, query: backQuery }).href;
   } else {
     const sp = new URLSearchParams();
@@ -267,6 +268,7 @@ async function displaySkillDetail(skillId) {
     for (const c of browseClasses) sp.append('classes', c);
     for (const t of browseTags) sp.append('tags', t);
     if (classTagJoin === 'or') sp.set('filterLogic', 'or');
+    else if (classTagJoin === 'not') sp.set('filterLogic', 'not');
     const qs = sp.toString();
     const base = String(import.meta.env?.BASE_URL ?? '/').replace(/\/$/, '') || '';
     const path = `${base}/skills`;

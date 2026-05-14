@@ -160,9 +160,10 @@ function toggleTagOption(value) {
  */
 function onJoinChange(e) {
   const el = /** @type {HTMLSelectElement} */ (e.target);
-  const v = el.value === 'or' ? 'or' : 'and';
+  const raw = el.value;
+  const v = raw === 'or' ? 'or' : raw === 'not' ? 'not' : 'and';
   mergeHomeQuery(router, {
-    filterLogic: v === 'and' ? '' : 'or',
+    filterLogic: v === 'and' ? '' : v,
   });
 }
 
@@ -234,29 +235,33 @@ const filteredSkills = computed(() => {
     return !has;
   });
   const join = classTagJoin.value;
+  const tagMode = join === 'or' || join === 'not' ? 'or' : 'and';
   const matchesClass = (s) => !classSel.length || classSel.includes(String(s.class ?? ''));
   const skillTags = (s) =>
     Array.isArray(s.tags) ? s.tags.map((t) => String(t).trim()).filter(Boolean) : [];
-  const matchesTag = (s) => {
+  const matchesTagWithMode = (s, mode) => {
     if (!tagSel.length) return true;
     const tags = skillTags(s);
-    if (join === 'and') {
+    if (mode === 'and') {
       return tagSel.every((t) => tags.includes(t));
     }
     return tagSel.some((t) => tags.includes(t));
   };
+  /** Positive pass before NOT: AND uses class+tag AND; OR and NOT both use class OR tag (NOT then negates). */
+  const combinedPositive = (s) => {
+    if (!classSel.length && !tagSel.length) return true;
+    if (classSel.length && !tagSel.length) return matchesClass(s);
+    if (!classSel.length && tagSel.length) return matchesTagWithMode(s, tagMode);
+    if (join === 'and') {
+      return matchesClass(s) && matchesTagWithMode(s, tagMode);
+    }
+    return matchesClass(s) || matchesTagWithMode(s, tagMode);
+  };
+  const combinedMatch = (s) => (join === 'not' ? !combinedPositive(s) : combinedPositive(s));
   if (!classSel.length && !tagSel.length) {
     // no class/tag constraint
-  } else if (classSel.length && !tagSel.length) {
-    rows = rows.filter(matchesClass);
-  } else if (!classSel.length && tagSel.length) {
-    rows = rows.filter(matchesTag);
   } else {
-    if (join === 'and') {
-      rows = rows.filter((s) => matchesClass(s) && matchesTag(s));
-    } else {
-      rows = rows.filter((s) => matchesClass(s) || matchesTag(s));
-    }
+    rows = rows.filter(combinedMatch);
   }
   if (parsed.type !== 'regex_error') {
     rows = rows.filter((s) => skillMatchesSearch(s, parsed));
@@ -418,6 +423,7 @@ function iconMarkup(skill) {
             <select id="skills-filter-join" :value="classTagJoin" @change="onJoinChange">
               <option value="and">AND (match both)</option>
               <option value="or">OR (match either)</option>
+              <option value="not">NOT (exclude either matches)</option>
             </select>
           </div>
         </div>
@@ -450,8 +456,13 @@ function iconMarkup(skill) {
               <li>Tag filter in AND mode requires all selected tags on a skill.</li>
               <li>Tag filter in OR mode requires at least one selected tag on a skill.</li>
               <li>
-                When both class and tag filters have selections, Combine controls whether both groups must match (AND)
-                or either group can match (OR).
+                NOT excludes skills that match the same OR-style rule as the OR option: class in the selected list, or
+                (tags) any selected tag. With both dropdowns, a skill is hidden if it matches either side. With only
+                classes or only tags, NOT inverts that single filter (tags use OR between selected tags).
+              </li>
+              <li>
+                When both class and tag filters have selections, Combine sets AND (both groups), OR (either group), or
+                NOT (neither-style exclusion using the OR combination).
               </li>
             </ul>
           </div>
