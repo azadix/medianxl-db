@@ -5,7 +5,7 @@ import { getCurrentTab, setCurrentTabState } from './tree-tab-state.js';
 import { updatePlannerUrlTab, setBuildUrlParam } from './tree-url-sync.js';
 import Tree from '../character/Tree.js';
 import Character from '../character/Character.js';
-import { initializeCharacter, applyClassBaselineStatsToCharacter, recomputeClassDerivedLifeMana, onPlannerSkillAllocationChanged, runPlannerSkillStatRecompute, getSpentSkillPoints, getAllSkillPoints, getAllSkillPointsById, setAllSkillPoints, normalizeBuildSkillPointsForImport, normalizeBuildOSkillsForImport, importQuestsCompleted, getOSkillsForBuildExport, addOSkill, clearOSkills, setAllOSkills, getMinimumRequiredLevel, getTotalQuestSkillPoints, checkSkillsExceedingMaxLevel, getAvailableSkillPoints, getCharacterInstance, getCharacterLevel, getEffectivePlannerLevel, parseStatsFromText, exportStatsToText, clearAllStats, getQuestsCompletedForSave, getQuestCompletionOptOutForSave, getDisabledSkillIds, setDisabledSkillIds, getDisabledOSkillSlotIds, setDisabledOSkillSlotIds, isPlannerSkillPointPoolOverBudget } from '../character/character-state.js';
+import { initializeCharacter, applyClassBaselineStatsToCharacter, recomputeClassDerivedLifeMana, onPlannerSkillAllocationChanged, runPlannerSkillStatRecompute, getSpentSkillPoints, getAllSkillPoints, getAllSkillPointsById, setAllSkillPoints, normalizeBuildSkillPointsForImport, normalizeBuildOSkillsForImport, importQuestsCompleted, getOSkillsForBuildExport, addOSkill, clearOSkills, setAllOSkills, getTotalQuestSkillPoints, checkSkillsExceedingMaxLevel, getAvailableSkillPoints, getCharacterInstance, getCharacterLevel, getEffectivePlannerLevel, parseStatsFromText, exportStatsToText, clearAllStats, getQuestsCompletedForSave, getQuestCompletionOptOutForSave, getDisabledSkillIds, setDisabledSkillIds, getDisabledOSkillSlotIds, setDisabledOSkillSlotIds, isPlannerSkillPointPoolOverBudget } from '../character/character-state.js';
 import { refreshPlannerStatsPanelFromCharacter, syncPlannerCharacterStatsTextareaFromCharacter } from '../character/planner-stats-panel.js';
 import { initPlannerSidebarTabQuests } from '../character/sidebarTabQuests.js';
 import { setPlannerSectionFromLegacy } from '../src/planner/planner-section-bridge.js';
@@ -1078,7 +1078,7 @@ function exportLabelForToast(name) {
 /** @param {string} name Build name (may be empty string) */
 function buildCurrentBuildSnapshot(name) {
     const currentClass = classSelect ? classSelect.value : null;
-    const currentLevel = getMinimumRequiredLevel();
+    const currentLevel = Character.clampLevel(getCharacterLevel());
     const questsCompleted = getQuestsCompletedForSave();
     const questCompletionOptOut = getQuestCompletionOptOutForSave();
     const snap = {
