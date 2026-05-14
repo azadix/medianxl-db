@@ -1,4 +1,3 @@
 Many skills are missing descriptions
 Skill damage and most of mana cost formulas are not implemented
 War Spirit synergies based on devotion are not filled in
-Cognition stats are applied regardless of Cognition amount

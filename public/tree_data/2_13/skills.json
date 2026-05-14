@@ -3655,7 +3655,8 @@
         "statKey": "enemy_magic_resistance",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "-15"
+        "value0": "-15",
+        "minCognition": 150
       },
       {
         "statKey": "cognition",

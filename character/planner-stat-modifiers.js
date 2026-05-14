@@ -231,12 +231,22 @@ export async function recomputePlannerStatsFromSkillAllocations(character, ctx) 
 
   /**
    * Apply one catalog row's scalingConstants at a given blvlPoints.
+   * Rows with `minCognition` are applied in a second pass so the gate uses cognition
+   * from all other scaling rows (e.g. Cognition skill formula before the 150+ EMR line).
    * @param {object} catRow
    * @param {string} internalKeyForLookup - key used for stored variant selection fallback
    * @param {number} blvlPoints
    * @param {object} effectiveCharacterState
+   * @param {{ skipMinCognitionRows?: boolean, onlyMinCognitionRows?: boolean }} [rowPhase]
    */
-  async function applyScalingConstantsForCatalogRow(catRow, internalKeyForLookup, blvlPoints, effectiveCharacterState) {
+  async function applyScalingConstantsForCatalogRow(
+    catRow,
+    internalKeyForLookup,
+    blvlPoints,
+    effectiveCharacterState,
+    rowPhase = {}
+  ) {
+    const { skipMinCognitionRows = false, onlyMinCognitionRows = false } = rowPhase;
     if (!catRow?.numericId) return;
 
     const internalId = String(catRow.id);
@@ -294,6 +304,29 @@ export async function recomputePlannerStatsFromSkillAllocations(character, ctx) 
         continue;
       }
 
+      const minCognitionRaw = scRow.minCognition ?? scRow.min_cognition;
+      const minCognition =
+        minCognitionRaw != null && String(minCognitionRaw).trim() !== ''
+          ? Math.floor(Number(minCognitionRaw))
+          : null;
+      const hasMinCognition =
+        minCognition != null && Number.isFinite(minCognition) && minCognition > 0;
+      if (skipMinCognitionRows && hasMinCognition) {
+        continue;
+      }
+      if (onlyMinCognitionRows && !hasMinCognition) {
+        continue;
+      }
+      if (onlyMinCognitionRows && hasMinCognition) {
+        const rawCog = Number(effectiveCharacterState.stats?.cognition);
+        const bonusCog = Number(bonuses.cognition);
+        const totalCognition =
+          (Number.isFinite(rawCog) ? rawCog : 0) + (Number.isFinite(bonusCog) ? bonusCog : 0);
+        if (totalCognition < minCognition) {
+          continue;
+        }
+      }
+
       let scalingValues;
       try {
         scalingValues = await skill.getScalingValues(
@@ -346,8 +379,13 @@ export async function recomputePlannerStatsFromSkillAllocations(character, ctx) 
     const catRow = catalogRowBySkillKey(store, internalKey);
     if (!catRow?.numericId) continue;
 
-    // Apply the allocated (parent) skill row itself.
-    await applyScalingConstantsForCatalogRow(catRow, internalKey, blvlPoints, characterState);
+    // Apply the allocated (parent) skill row itself (then cognition-gated rows).
+    await applyScalingConstantsForCatalogRow(catRow, internalKey, blvlPoints, characterState, {
+      skipMinCognitionRows: true
+    });
+    await applyScalingConstantsForCatalogRow(catRow, internalKey, blvlPoints, characterState, {
+      onlyMinCognitionRows: true
+    });
 
     // Apply any linked subskills with the same points as their parent.
     const parentInternalId = String(catRow.id);
@@ -366,7 +404,12 @@ export async function recomputePlannerStatsFromSkillAllocations(character, ctx) 
         blvl: { ...(characterState.blvl || {}), [subInternalId]: blvlPoints },
         lvl: { ...(characterState.lvl || {}), [subInternalId]: slvlBonus }
       };
-      await applyScalingConstantsForCatalogRow(sub, subInternalId, blvlPoints, patchedState);
+      await applyScalingConstantsForCatalogRow(sub, subInternalId, blvlPoints, patchedState, {
+        skipMinCognitionRows: true
+      });
+      await applyScalingConstantsForCatalogRow(sub, subInternalId, blvlPoints, patchedState, {
+        onlyMinCognitionRows: true
+      });
     }
   }
 
