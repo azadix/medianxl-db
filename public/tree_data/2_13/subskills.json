@@ -399,12 +399,19 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "-10"
+      },
+      {
+        "statKey": "duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(50*(1+[[continuity]].{{skill_duration}}/100))"
       }
     ],
     "description": [],
     "skillEffect": [
       "{{enemy_movement_speed}}",
-      "{{enemy_elemental_damage}}"
+      "{{enemy_elemental_damage}}",
+      "{{duration}}"
     ],
     "restriction": []
   },

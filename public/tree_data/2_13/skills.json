@@ -6202,7 +6202,14 @@
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(750*(1+[[continuity]].{{skill_duration}}/100))"
+      }
+    ],
     "description": [
       "Your spells and attacks ignore a fraction of enemy resistance"
     ],
@@ -8980,7 +8987,14 @@
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(15000*(1+[[continuity]].{{skill_duration}}/100))"
+      }
+    ],
     "description": [
       "Enemies near you are weaker"
     ],
@@ -12816,21 +12830,15 @@
     "class": "Paladin",
     "tabName": "Warlock",
     "tags": [
-      "Physical",
-      "Lightning",
       "Spell",
+      "Lightning",
+      "Physical",
       "Duration"
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
     "variants": [],
     "scalingConstants": [
-      {
-        "statKey": "duration",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "frames(50)"
-      },
       {
         "statKey": "minions",
         "occurrenceIndex": 0,
@@ -12848,8 +12856,7 @@
       "{{physical_damage}}",
       "{{lightning_damage}}",
       "{{mana_cost}}",
-      "||mind_flay_shock||",
-      "{{duration}}"
+      "||mind_flay_shock||"
     ],
     "image": "icons-pal_62.png"
   },
@@ -16710,7 +16717,14 @@
     "baseMaxLevel": 15,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(2250*(1+[[continuity]].{{skill_duration}}/100))"
+      }
+    ],
     "description": [
       "Blood ritual empowering your spells and restoring life"
     ],
@@ -18128,7 +18142,14 @@
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(750*(1+[[continuity]].{{skill_duration}}/100))"
+      }
+    ],
     "description": [
       "Temporarily raises all character speeds"
     ],
@@ -19651,7 +19672,14 @@
     "baseMaxLevel": 15,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(15000*(1+[[continuity]].{{skill_duration}}/100))"
+      }
+    ],
     "description": [
       "Infuse your flesh with a dark prayer"
     ],
@@ -21151,7 +21179,14 @@
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(0*(1+[[continuity]].{{skill_duration}}/100))"
+      }
+    ],
     "description": [
       "Increases Vitality, Energy and Weapon Damage"
     ],
@@ -21314,8 +21349,8 @@
     "class": "Paladin",
     "tabName": "Nephalem",
     "tags": [
-      "Physical",
       "Spell",
+      "Physical",
       "Duration"
     ],
     "baseMaxLevel": 25,
@@ -21328,6 +21363,12 @@
         "variantKey": "",
         "value0": "blasts",
         "value1": "frames(10)"
+      },
+      {
+        "statKey": "duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(0*(1+[[continuity]].{{skill_duration}}/100))"
       }
     ],
     "description": [
@@ -21353,8 +21394,8 @@
     "class": "Paladin",
     "tabName": "Nephalem",
     "tags": [
-      "Physical",
       "Spell",
+      "Physical",
       "Duration"
     ],
     "baseMaxLevel": 25,
@@ -21367,6 +21408,12 @@
         "variantKey": "",
         "value0": "blasts",
         "value1": "frames(10)"
+      },
+      {
+        "statKey": "duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(0*(1+[[continuity]].{{skill_duration}}/100))"
       }
     ],
     "description": [
@@ -21922,6 +21969,12 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "10"
+      },
+      {
+        "statKey": "duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(0*(1+[[continuity]].{{skill_duration}}/100))"
       }
     ],
     "description": [
