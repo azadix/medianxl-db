@@ -1456,7 +1456,7 @@
       "arrows": [],
       "skill_details": [
         {
-          "id": "bloodbath",
+          "id": "bloodbath_innate",
           "row": 0,
           "col": 0
         }
@@ -3596,7 +3596,7 @@
       "arrows": [],
       "skill_details": [
         {
-          "id": "bend_the_shadows",
+          "id": "bend_the_shadows_innate",
           "row": 0,
           "col": 0
         }
