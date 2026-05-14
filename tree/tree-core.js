@@ -1434,13 +1434,34 @@ function updateCurrentBuild() {
     toastManager.showToast(`Build "${exportLabelForToast(builds[currentBuildIndex].name)}" updated!`, true, 'info');
 }
 
+/**
+ * If `desiredName` is already used by a saved build, return `desiredName (2)`, `(3)`, …
+ * @param {string} desiredName
+ * @param {object[]} builds
+ * @returns {string}
+ */
+function uniquifyNewBuildNameAmongSaved(desiredName, builds) {
+    const base = String(desiredName ?? '').trim();
+    const used = new Set(
+        (builds || []).map((b) => String(b?.name ?? '').trim()).filter((s) => s !== '')
+    );
+    if (!used.has(base)) return base;
+    let n = 2;
+    while (n < 1e6) {
+        const candidate = `${base} (${n})`;
+        if (!used.has(candidate)) return candidate;
+        n += 1;
+    }
+    return `${base} (${Date.now()})`;
+}
+
 function saveBuild(buildName) {
-    setCurrentBuildDisplayName(buildName || '');
-    const build = buildCurrentBuildSnapshot(buildName);
-    
-    // Get existing builds
     const builds = getSavedBuilds();
-    
+    const finalName = uniquifyNewBuildNameAmongSaved(buildName, builds);
+
+    setCurrentBuildDisplayName(finalName || '');
+    const build = buildCurrentBuildSnapshot(finalName);
+
     // Add new build
     builds.push(build);
     
@@ -1450,7 +1471,7 @@ function saveBuild(buildName) {
     // Set current build index to the newly saved build
     currentBuildIndex = builds.length - 1;
 
-    toastManager.showToast(`Build "${exportLabelForToast(buildName)}" saved successfully!`, true, 'info');
+    toastManager.showToast(`Build "${exportLabelForToast(finalName)}" saved successfully!`, true, 'info');
 }
 
 export function ensureCharacterForBuildList() {
