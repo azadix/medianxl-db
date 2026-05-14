@@ -1574,8 +1574,18 @@ export function getAllOSkills() {
  * @param {string} skillName - Internal skill name
  * @returns {number} Points allocated (0 if not found)
  */
-export function getOSkillPoints(skillName) {
-  return characterInstance ? characterInstance.getOSkillPoints(skillName) : 0;
+export function getOSkillPoints(skillNameOrId) {
+  if (!characterInstance) return 0;
+  const direct = characterInstance.getOSkillPoints(skillNameOrId);
+  if (direct > 0) return direct;
+
+  const raw = String(skillNameOrId ?? '').trim();
+  if (!raw || !/^\d+$/.test(raw)) return direct;
+
+  const store = getFileSkillStore();
+  const internal = store?.internalNameByNumericId(Number(raw));
+  if (!internal) return direct;
+  return characterInstance.getOSkillPoints(internal);
 }
 
 /**
