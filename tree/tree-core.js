@@ -1209,16 +1209,17 @@ function promptAndSaveBuild() {
     if (!validateBuildBeforeSave()) {
         return;
     }
-    
-    const buildName = prompt('Enter a name for this build:');
-    if (buildName === null) {
-        return;
-    }
-    
-    // Clean the build name: trim whitespace and remove newlines (empty allowed)
-    const cleanBuildName = String(buildName).trim().replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ');
-    
-    saveBuild(cleanBuildName);
+
+    showBuildNameModal({
+        title: 'Save build',
+        titleId: 'saveBuildModalTitle',
+        subtitle: 'Save this planner state as a new build.',
+        iconClass: 'fa-floppy-disk',
+        helpText: 'Leave empty to save as "Unnamed Build".',
+        primaryText: 'Save build',
+        primaryIconClass: 'fa-check',
+        onConfirm: saveBuild,
+    });
 }
 
 function promptAndImportBuild() {
