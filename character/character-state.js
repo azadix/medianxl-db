@@ -934,6 +934,35 @@ function countPointsInTab(tabName, allSkills) {
 }
 
 /**
+ * When auto-level mode is on and the skill point pool is empty, probe +1 on skillName
+ * and raise stored level if the build requires it.
+ * @param {string} skillName
+ * @param {Array} allSkills
+ * @returns {number} Remaining skill points after a possible level bump
+ */
+function ensureRemainingSkillPointsForAutoLevel(skillName, allSkills) {
+  let remaining = getRemainingSkillPoints();
+  if (remaining > 0 || !getPlannerAutoLevelFromSpentSkillPoints() || !characterInstance) {
+    return remaining;
+  }
+
+  const prevPoints = getSkillPoints(skillName);
+  characterInstance.skillPoints[skillName] = prevPoints + 1;
+  characterInstance.maxLevels = {};
+  const neededAfterSpend = getMinimumRequiredLevel(allSkills);
+  if (prevPoints <= 0) {
+    delete characterInstance.skillPoints[skillName];
+  } else {
+    characterInstance.skillPoints[skillName] = prevPoints;
+  }
+  characterInstance.maxLevels = {};
+  if (characterInstance.level < neededAfterSpend) {
+    setCharacterLevel(neededAfterSpend);
+  }
+  return getRemainingSkillPoints();
+}
+
+/**
  * Add a point to a skill
  * @param {string} skillName - Skill name
  * @param {Object} skill - Skill object with prerequisites
@@ -951,23 +980,7 @@ export function addSkillPoint(skillName, skill, maxLevel, allSkills = [], skipEv
   }
   
   // Check if we have skill points available
-  let remainingPoints = getRemainingSkillPoints();
-  if (remainingPoints <= 0 && getPlannerAutoLevelFromSpentSkillPoints() && characterInstance) {
-    const prevPoints = currentPoints;
-    characterInstance.skillPoints[skillName] = prevPoints + 1;
-    characterInstance.maxLevels = {};
-    const neededAfterSpend = getMinimumRequiredLevel(allSkills);
-    if (prevPoints <= 0) {
-      delete characterInstance.skillPoints[skillName];
-    } else {
-      characterInstance.skillPoints[skillName] = prevPoints;
-    }
-    characterInstance.maxLevels = {};
-    if (characterInstance.level < neededAfterSpend) {
-      setCharacterLevel(neededAfterSpend);
-    }
-    remainingPoints = getRemainingSkillPoints();
-  }
+  const remainingPoints = ensureRemainingSkillPointsForAutoLevel(skillName, allSkills);
   if (remainingPoints <= 0) {
     return { success: false, reason: 'No skill points remaining' };
   }
@@ -1060,8 +1073,8 @@ export function addSkillPointsBatch(skillName, skill, amount, allSkills = [], ge
       break; // Can't add more points
     }
     
-    // Check if we have skill points available
-    const remainingPoints = getRemainingSkillPoints();
+    // Check if we have skill points available (auto-level may raise level first)
+    const remainingPoints = ensureRemainingSkillPointsForAutoLevel(skillName, allSkills);
     if (remainingPoints <= 0) {
       break; // No more skill points available
     }
