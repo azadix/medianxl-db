@@ -697,43 +697,5 @@
     "Necromancer": {
       "endurance": "necromancer"
     }
-  },
-  "skillVariants": {
-    "endurance": [
-      {
-        "variant_key": "necromancer",
-        "label": "Necromancer",
-        "sort_order": 0,
-        "description_override": null,
-        "skill_effect_override": null,
-        "restriction_override": null
-      }
-    ],
-    "stampede": [
-      {
-        "variant_key": "snake_stance",
-        "label": "Snake stance",
-        "sort_order": 0,
-        "description_override": null,
-        "skill_effect_override": "{{weapon_damage}}\n{{axes}}\n{{snake_stance_damage_multiplier}}\n{{mana_cost}}",
-        "restriction_override": null
-      },
-      {
-        "variant_key": "eagle_stance",
-        "label": "Eagle stance",
-        "sort_order": 1,
-        "description_override": null,
-        "skill_effect_override": "{{weapon_damage}}\n{{axes}}\n{{converts_phys_to_magic}}\n{{lightning_damage}}\n{{mana_cost}}",
-        "restriction_override": null
-      },
-      {
-        "variant_key": "wolf_stance",
-        "label": "Wolf stance",
-        "sort_order": 2,
-        "description_override": null,
-        "skill_effect_override": "{{weapon_damage}}\n{{axes}}\n{{physical_damage}}\n{{converts_phys_to_magic}}\n{{mana_cost}}",
-        "restriction_override": null
-      }
-    ]
   }
 }
