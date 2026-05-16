@@ -9781,7 +9781,7 @@
   {
     "id": "heavens_fury",
     "numericId": 691,
-    "displayName": "Heaven's Fury",
+    "displayName": "Heaven's fury",
     "classId": 1,
     "tab": 65,
     "class": "Other",
@@ -13981,7 +13981,14 @@
     "baseMaxLevel": 15,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "vitality_bonus_per_gem",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor(24+((170*max(lvl-1,0))*(170-24))/(100*(max(lvl-1,0)+50)))"
+      }
+    ],
     "description": [
       "Grants a life bonus for each gem equipped"
     ],
@@ -16139,7 +16146,7 @@
         "statKey": "summoned_minion_attack_rating",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "5+min(5*lvl,5)"
+        "value0": "5+max(5*lvl,5)"
       },
       {
         "statKey": "summoned_minion_damage",
