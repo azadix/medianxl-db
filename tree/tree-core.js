@@ -307,37 +307,19 @@ export { getOSkillPoints } from '../character/character-state.js';
 
 /**
  * Calculate armor image number based on spent skill points
- * Maps 0 to max available skill points to 1-10 image numbers
+ * Maps 0 to max possible skill points (163) to 1-10 image numbers
  * @param {number} spentPoints - Total skill points spent
  * @returns {number} - Image number (1-10)
  */
 export function calculateArmorImageNumber(spentPoints) {
-    // Safety check for invalid spent points
     if (isNaN(spentPoints) || spentPoints < 0) {
         console.warn('calculateArmorImageNumber: Invalid spentPoints, using 0');
         spentPoints = 0;
     }
-    
-    // Get maximum available skill points from character config
-    const maxSkillPoints = getAvailableSkillPoints();
-    
-    // If character not initialized or invalid maxSkillPoints, use a reasonable default
-    if (!maxSkillPoints || maxSkillPoints <= 0 || isNaN(maxSkillPoints)) {
-        // Use a reasonable default based on typical character level 150
-        // Level 150 = 149 base points + ~14 quest points = ~163 total
-        const defaultMaxPoints = 163;
-        const clampedPoints = Math.max(0, Math.min(defaultMaxPoints, spentPoints));
-        const imageNumber = Math.ceil((clampedPoints / defaultMaxPoints) * 10);
-        return Math.max(1, Math.min(10, imageNumber));
-    }
-    
-    // Clamp spent points to valid range (0 to max available)
+
+    const maxSkillPoints = Character.getMaxPossibleSkillPoints();
     const clampedPoints = Math.max(0, Math.min(maxSkillPoints, spentPoints));
-    
-    // Map 0 to max points to 1-10 images with even distribution across the range
     const imageNumber = Math.ceil((clampedPoints / maxSkillPoints) * 10);
-    
-    // Ensure result is within valid range (1-10)
     return Math.max(1, Math.min(10, imageNumber));
 }
 

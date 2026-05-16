@@ -441,6 +441,21 @@ export default class Character {
     return Math.max(0, clampedLevel - 1);
   }
 
+  /**
+   * Absolute max skill point pool (level 150 base + all skill_point quest rewards).
+   * @returns {number}
+   */
+  static getMaxPossibleSkillPoints() {
+    const base = Character.getBaseSkillPoints(Character.MAX_LEVEL);
+    let questMax = 0;
+    for (const def of Object.values(Character.QUESTS)) {
+      if (def?.type === 'skill_point') {
+        questMax += Character.sumQuestRewardAmounts(def, null);
+      }
+    }
+    return base + questMax;
+  }
+
   // ===== QUEST MANAGEMENT METHODS =====
 
   /**
