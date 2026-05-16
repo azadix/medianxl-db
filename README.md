@@ -106,7 +106,6 @@ Scripts load merged skills via **`py/tree_data_loader.py`**. Pass a data directo
 | `extract_placeholder_skills.py` | List skills whose text contains `{{…}}` |
 | `extract_skills_without_placeholders.py` | List skills with text but no `{{…}}` |
 | `extract_non_placeholder_lines.py` | Dump non-placeholder lines from description / effect / restriction text |
-| `analyze_export_usage.py` | Scan `*.js` exports and report in-repo usage (excludes `icons/`) |
 | `calculate_mana_params.py` | Helper to fit mana-cost parameters from level/cost pairs |
 
 Run from the **repo root**, for example: `python py/validate_skill_placeholders.py public/tree_data/2_13`.
