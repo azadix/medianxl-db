@@ -11,26 +11,43 @@ import sys
 from pathlib import Path
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent
+_TREE_DATA_ROOT = _REPO_ROOT / "public" / "tree_data"
 
 
 def repo_root() -> Path:
     return _REPO_ROOT
 
 
+def tree_data_root() -> Path:
+    return _TREE_DATA_ROOT
+
+
 def default_data_dir() -> Path:
-    """Repo-relative default version folder name (2_12); use for examples or explicit callers."""
-    return _REPO_ROOT / "tree_data" / "2_12"
+    """Active patch folder under public/tree_data (from versions.json)."""
+    versions_path = _TREE_DATA_ROOT / "versions.json"
+    if versions_path.is_file():
+        try:
+            versions = json.loads(versions_path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            versions = None
+        if isinstance(versions, list) and versions:
+            active = next((v for v in versions if v.get("is_active")), versions[0])
+            major = active.get("major")
+            minor = active.get("minor")
+            if major is not None and minor is not None:
+                return _TREE_DATA_ROOT / f"{major}_{minor}"
+    return _TREE_DATA_ROOT / "2_13"
 
 
 def resolve_data_dir(arg: str | None) -> Path:
     """
     Resolve CLI path to an absolute tree_data version directory.
-    Accepts e.g. public/tree_data/2_12, ../public/tree_data/2_12 (from py/).
+    Accepts e.g. public/tree_data/2_13, ../public/tree_data/2_13 (from py/).
     """
     if arg is None or arg == "":
         ex = default_data_dir().relative_to(_REPO_ROOT)
         print(
-            f"Error: specify the tree_data version directory (example: {ex} or public/tree_data/2_12).",
+            f"Error: specify the tree_data version directory (example: {ex.as_posix()}).",
             file=sys.stderr,
         )
         raise SystemExit(1)
@@ -41,7 +58,7 @@ def resolve_data_dir(arg: str | None) -> Path:
 
 
 def load_stats_json() -> list[dict]:
-    path = _REPO_ROOT / "tree_data" / "stats.json"
+    path = _TREE_DATA_ROOT / "stats.json"
     if not path.is_file():
         return []
     return json.loads(path.read_text(encoding="utf-8"))

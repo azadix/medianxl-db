@@ -101,7 +101,7 @@ Scripts load merged skills via **`py/tree_data_loader.py`**. Pass a data directo
 
 | Script | Purpose |
 |--------|---------|
-| `tree_data_loader.py` | Shared helpers (`load_merged_skills`, `resolve_data_dir`, …) |
+| `tree_data_loader.py` | Shared helpers (`load_merged_skills`, `load_stats_json`, `resolve_data_dir`; paths under `public/tree_data/`) |
 | `validate_skill_placeholders.py` | Validate `{{stat}}` placeholders against `stats.json` and `scalingConstants` |
 | `extract_placeholder_skills.py` | List skills whose text contains `{{…}}` |
 | `extract_skills_without_placeholders.py` | List skills with text but no `{{…}}` |
