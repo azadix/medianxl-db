@@ -2678,5 +2678,23 @@
     "key": "percent_base_dex_gained_as_extra_magic_damage",
     "name": "#% of base Dexterity gained as Extra Magic damage",
     "format": "{value0}% of base Dexterity gained as Extra Magic damage"
+  },
+  {
+    "id": 363,
+    "key": "poison_damage_to_weapons",
+    "name": "Poison Damage to weapons X-X",
+    "format": "Poison Damage to weapons: {value0}-{value1}"
+  },
+  {
+    "id": 364,
+    "key": "percent_bonus_based_on_angel_of_death_damage",
+    "name": "#% of Angel of Death damage added as Poison Damage",
+    "format": "({value0}% of Angel of Death damage)"
+  },
+  {
+    "id": 365,
+    "key": "freeze_length_to_wintertide",
+    "name": "+#% Freeze length to Wintertide",
+    "format": "+{value0}% Freeze length to Wintertide (Increasing returns with higher Energy)"
   }
 ]

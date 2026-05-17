@@ -1242,12 +1242,21 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100"
+      }
+    ],
     "description": [
       "Normal attack"
     ],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{weapon_damage}}"
+    ],
     "image": "icons-shared_3.png"
   },
   {
@@ -2126,14 +2135,46 @@
     "tab": 22,
     "class": "Necromancer",
     "tabName": "Melee",
-    "tags": [],
+    "tags": [
+      "Upgrade",
+      "Poison"
+    ],
     "baseMaxLevel": 5,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
-    "description": [],
+    "scalingConstants": [
+      {
+        "statKey": "duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(250)"
+      },
+      {
+        "statKey": "poison_pierce",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "5+[[angel_of_death]]"
+      },
+      {
+        "statKey": "percent_bonus_based_on_angel_of_death_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "8*blvl"
+      }
+    ],
+    "description": [
+      "Gain poison damage to all your attacks after jumping"
+    ],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "[[angel_of_death]]",
+      "{{poison_pierce}}",
+      "{{poison_damage_to_weapons}}",
+      "{{percent_bonus_based_on_angel_of_death_damage}}",
+      "{{duration}}",
+      "",
+      "Two-Handed weapons: Doubled Poison Pierce bonus"
+    ],
     "image": "icons-nec_198.png"
   },
   {
@@ -4981,14 +5022,54 @@
     "tab": 41,
     "class": "Barbarian",
     "tabName": "Elementalist",
-    "tags": [],
+    "tags": [
+      "Attack",
+      "Weapon Damage"
+    ],
     "baseMaxLevel": 5,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
+    "scalingConstants": [
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "90"
+      },
+      {
+        "statKey": "innate_elemental_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "6*blvl"
+      },
+      {
+        "statKey": "cooldown",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(300)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100",
+        "value1": "0",
+        "value2": "8"
+      }
+    ],
+    "description": [
+      "A concentrated burst of deadly ice"
+    ],
+    "restriction": [
+      "Requires Conflux"
+    ],
+    "skillEffect": [
+      "{{weapon_damage}}",
+      "{{cooldown}}",
+      "Cannot be used while Overloaded",
+      "{{innate_elemental_damage}} while Overloaded",
+      "{{mana_cost}}"
+    ],
     "image": "icons-bar_92.png"
   },
   {
@@ -15328,14 +15409,54 @@
     "tab": 41,
     "class": "Barbarian",
     "tabName": "Elementalist",
-    "tags": [],
+    "tags": [
+      "Buff",
+      "Healing"
+    ],
     "baseMaxLevel": 5,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
+    "scalingConstants": [
+      {
+        "statKey": "cooldown",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(625)"
+      },
+      {
+        "statKey": "poison_length_reduction",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "6*blvl"
+      },
+      {
+        "statKey": "regenerate_life_percent",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "3"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100",
+        "value1": "0",
+        "value2": "8"
+      }
+    ],
+    "description": [
+      "A restorative cleansing"
+    ],
+    "restriction": [
+      "Requires Conflux"
+    ],
+    "skillEffect": [
+      "{{regenerate_life_percent}} while Overloaded",
+      "{{cooldown}}",
+      "Cannot be used while Overloaded",
+      "{{poison_length_reduction}}",
+      "{{mana_cost}}"
+    ],
     "image": "icons-bar_108.png"
   },
   {
@@ -16276,14 +16397,21 @@
     "tab": 13,
     "class": "Sorceress",
     "tabName": "Cold",
-    "tags": [],
+    "tags": [
+      "Upgrade"
+    ],
     "baseMaxLevel": 4,
     "affectedBySpecialization": false,
     "variants": [],
     "scalingConstants": [],
-    "description": [],
+    "description": [
+      "Your Energy reserves improve Wintertide"
+    ],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "[[wintertide]]",
+      "{{freeze_length_to_wintertide}}"
+    ],
     "image": "icons-sor_64.png"
   },
   {
@@ -20038,12 +20166,21 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100"
+      }
+    ],
     "description": [
       "Throw equipped item"
     ],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{weapon_damage}}"
+    ],
     "image": "icons-shared_5.png"
   },
   {
@@ -20340,14 +20477,54 @@
     "tab": 41,
     "class": "Barbarian",
     "tabName": "Elementalist",
-    "tags": [],
+    "tags": [
+      "Projectile",
+      "Weapon Damage"
+    ],
     "baseMaxLevel": 5,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
+    "scalingConstants": [
+      {
+        "statKey": "cooldown",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(300)"
+      },
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "150"
+      },
+      {
+        "statKey": "movement_speed",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "15*blvl"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "75",
+        "value1": "0",
+        "value2": "8"
+      }
+    ],
+    "description": [
+      "Electrocutes a large area around you"
+    ],
+    "restriction": [
+      "Requires Conflux"
+    ],
+    "skillEffect": [
+      "{{weapon_damage}}",
+      "{{cooldown}}",
+      "Cannot be used while Overloaded",
+      "{{movement_speed}} while Overloaded",
+      "{{mana_cost}}"
+    ],
     "image": "icons-bar_60.png"
   },
   {
@@ -22686,16 +22863,41 @@
     "tab": 13,
     "class": "Sorceress",
     "tabName": "Cold",
-    "tags": [],
+    "tags": [
+      "Warp Strike",
+      "Healing"
+    ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
-    "description": [],
+    "scalingConstants": [
+      {
+        "statKey": "regenerates_percent_life_over_time",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "",
+        "value1": "frames(100)"
+      },
+      {
+        "statKey": "cooldown",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(200)"
+      }
+    ],
+    "description": [
+      "Teleports you to a target enemy"
+    ],
     "restriction": [
       "Requires an orb or scepter"
     ],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{cooldown}}",
+      "{{regenerates_percent_life_over_time}}",
+      "(Increases with Cold Spell damage)",
+      "{{freeze_duration}}",
+      "{{mana_cost}}"
+    ],
     "image": "icons-sor_44.png"
   },
   {
@@ -23398,5 +23600,23 @@
       "{{duration}}"
     ],
     "image": "icons-pal_59.png"
+  },
+  {
+    "id": "cursebreaker",
+    "numericId": 709,
+    "displayName": "Cursebreaker",
+    "classId": 1,
+    "tab": 66,
+    "class": "Other",
+    "tabName": "Proc",
+    "tags": [],
+    "baseMaxLevel": 1,
+    "affectedBySpecialization": false,
+    "variants": [],
+    "scalingConstants": [],
+    "description": [],
+    "restriction": [],
+    "skillEffect": [],
+    "image": "icons-shared_missing.png"
   }
 ]
