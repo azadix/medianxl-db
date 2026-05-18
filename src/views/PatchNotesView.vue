@@ -249,9 +249,7 @@ async function buildTooltipHtmlForSkill(skillRecord) {
     return tooltipHtmlBySkillKey.get(tooltipKey) || '';
   }
 
-  let descriptionExpanded = '';
-  let effectExpanded = '';
-  let restrictionExpanded = '';
+  let expandedBlocks;
   const iconHtml = getSkillIconHTML(
     skillRecord.image || '',
     skillRecord.class || 'Other',
@@ -264,16 +262,21 @@ async function buildTooltipHtmlForSkill(skillRecord) {
     if (!store) {
       throw new Error(`Skill store unavailable for ${skillRecord.folderKey}`);
     }
-    descriptionExpanded = await expandTooltipLines(skillRecord, skillRecord.description || []);
-    effectExpanded = await expandTooltipLines(skillRecord, skillRecord.skillEffect || []);
-    restrictionExpanded = await expandTooltipLines(skillRecord, skillRecord.restriction || []);
+    expandedBlocks = {
+      descriptionExpanded: await expandTooltipLines(skillRecord, skillRecord.description || []),
+      effectExpanded: await expandTooltipLines(skillRecord, skillRecord.skillEffect || []),
+      restrictionExpanded: await expandTooltipLines(skillRecord, skillRecord.restriction || []),
+    };
   } catch (error) {
     // Keep tooltip visible even if scaling/store evaluation fails.
     console.warn('Patch-note tooltip fallback (expansion failed):', error);
-    descriptionExpanded = (skillRecord.description || []).map((line) => escapeHtmlText(line)).join('\n');
-    effectExpanded = (skillRecord.skillEffect || []).map((line) => escapeHtmlText(line)).join('\n');
-    restrictionExpanded = (skillRecord.restriction || []).map((line) => escapeHtmlText(line)).join('\n');
+    expandedBlocks = {
+      descriptionExpanded: (skillRecord.description || []).map((line) => escapeHtmlText(line)).join('\n'),
+      effectExpanded: (skillRecord.skillEffect || []).map((line) => escapeHtmlText(line)).join('\n'),
+      restrictionExpanded: (skillRecord.restriction || []).map((line) => escapeHtmlText(line)).join('\n'),
+    };
   }
+  const { descriptionExpanded, effectExpanded, restrictionExpanded } = expandedBlocks;
 
   const tagsLine = [skillRecord.class, skillRecord.tabName].filter(Boolean).join(' / ');
   const headerHtml = `
@@ -604,12 +607,11 @@ async function showSkillTooltip(target, clientX, clientY) {
   }
 
   const token = ++tooltipTokenCounter;
-  let html = '';
+  let html;
   try {
     html = await buildTooltipHtmlForSkill(skillRecord);
   } catch (error) {
     console.warn('Patch-note tooltip build failed:', error);
-    html = '';
   }
   if (token !== tooltipTokenCounter) return;
   if (!html) {
