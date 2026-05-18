@@ -22,6 +22,7 @@ const SKILL_MARKER_REGEX = /\{\{([^{}]+)\}\}/g;
 const TOOLTIP_OFFSET = 18;
 const TOOLTIP_VIEWPORT_MARGIN = 12;
 const TOOLTIP_CACHE_LEVEL = 1;
+const BUILD_VERSION_OVERRIDE_KEY = 'medianxl_build_version_override';
 
 const skillMatchersByFolder = new Map();
 const tooltipHtmlBySkillKey = new Map();
@@ -164,11 +165,16 @@ async function ensureSkillStoreForFolder(folderKey) {
   activeStoreFolderKey = folderKey;
   storeInitPromise = (async () => {
     try {
-      // Switch active store so scaling placeholders resolve for the hovered patch version.
+      // Force store version to match hovered patch folder.
+      localStorage.setItem(BUILD_VERSION_OVERRIDE_KEY, JSON.stringify(parsed));
       resetSkillDataStoreForTests();
-      await initSkillDataStore({ major: parsed.major, minor: parsed.minor });
-      return getFileSkillStore();
-    } catch {
+      const store = await initSkillDataStore({ major: parsed.major, minor: parsed.minor });
+      if (!store || store.folderSeg !== folderKey) {
+        throw new Error(`Loaded wrong tree-data folder (expected ${folderKey}, got ${store?.folderSeg || 'none'})`);
+      }
+      return store;
+    } catch (error) {
+      console.warn('Patch-note tooltip store init failed:', error);
       return null;
     } finally {
       storeInitPromise = null;
@@ -207,6 +213,7 @@ async function expandTooltipLines(skillRecord, sourceLines) {
   if (!skillRecord?.id || skillRecord?.numericId == null) {
     return sourceLines.map((line) => escapeHtmlText(line)).join('\n');
   }
+  const sourceText = sourceLines.map((line) => String(line)).join('\n');
   const characterState = {
     level: 1,
     className: skillRecord.class || null,
@@ -218,7 +225,7 @@ async function expandTooltipLines(skillRecord, sourceLines) {
   const expanded = await expandPlaceholdersWithScaling(
     skillRecord.numericId,
     TOOLTIP_CACHE_LEVEL,
-    sourceLines,
+    sourceText,
     skillRecord.id,
     characterState,
     false,
@@ -243,8 +250,9 @@ async function buildTooltipHtmlForSkill(skillRecord) {
     return tooltipHtmlBySkillKey.get(tooltipKey) || '';
   }
 
-  await ensureSkillStoreForFolder(skillRecord.folderKey);
-
+  let descriptionExpanded = '';
+  let effectExpanded = '';
+  let restrictionExpanded = '';
   const iconHtml = getSkillIconHTML(
     skillRecord.image || '',
     skillRecord.class || 'Other',
@@ -252,9 +260,21 @@ async function buildTooltipHtmlForSkill(skillRecord) {
     skillRecord.folderKey
   );
 
-  const descriptionExpanded = await expandTooltipLines(skillRecord, skillRecord.description || []);
-  const effectExpanded = await expandTooltipLines(skillRecord, skillRecord.skillEffect || []);
-  const restrictionExpanded = await expandTooltipLines(skillRecord, skillRecord.restriction || []);
+  try {
+    const store = await ensureSkillStoreForFolder(skillRecord.folderKey);
+    if (!store) {
+      throw new Error(`Skill store unavailable for ${skillRecord.folderKey}`);
+    }
+    descriptionExpanded = await expandTooltipLines(skillRecord, skillRecord.description || []);
+    effectExpanded = await expandTooltipLines(skillRecord, skillRecord.skillEffect || []);
+    restrictionExpanded = await expandTooltipLines(skillRecord, skillRecord.restriction || []);
+  } catch (error) {
+    // Keep tooltip visible even if scaling/store evaluation fails.
+    console.warn('Patch-note tooltip fallback (expansion failed):', error);
+    descriptionExpanded = (skillRecord.description || []).map((line) => escapeHtmlText(line)).join('\n');
+    effectExpanded = (skillRecord.skillEffect || []).map((line) => escapeHtmlText(line)).join('\n');
+    restrictionExpanded = (skillRecord.restriction || []).map((line) => escapeHtmlText(line)).join('\n');
+  }
 
   const tagsLine = [skillRecord.class, skillRecord.tabName].filter(Boolean).join(' / ');
   const headerHtml = `
@@ -610,7 +630,13 @@ async function showSkillTooltip(target, clientX, clientY) {
   }
 
   const token = ++tooltipTokenCounter;
-  const html = await buildTooltipHtmlForSkill(skillRecord);
+  let html = '';
+  try {
+    html = await buildTooltipHtmlForSkill(skillRecord);
+  } catch (error) {
+    console.warn('Patch-note tooltip build failed:', error);
+    html = '';
+  }
   if (token !== tooltipTokenCounter) return;
   if (!html) {
     hideSkillTooltip();
