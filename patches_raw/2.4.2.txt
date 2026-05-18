@@ -1,0 +1,5 @@
+2.4.2 ADDITIONAL NOTES
+Most melee skills when direct attacking should now properly consider character size and target size
+Act 2 Tombs & Lab 7: latest map changes have been reverted to 2.4 iteration
+Heart of Darkness: End of Time entrance is now a one way portal
+

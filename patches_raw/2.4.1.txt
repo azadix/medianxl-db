@@ -1,0 +1,13 @@
+2.4.1 ADDITIONAL NOTES
+Fixed a bug that allowed some melee skills to be cast at any range with quickcast
+Act2 Tombs: widened majority of paths, removed majority of doorways and improved details
+Viz-jun: replaced nuke strikes with EMP strikes around the boss and the northern adjacent area
+Fauztinville:
+   * Reduced damage of Alpha and Delta
+   * Reduced Epsilon's spamminess
+   * Fixed typo in "Cube Reagent" for positronic brains
+Salvation Aura has an icon
+Hand of Frost now gives spell focus again
+Renamed Thunderhead (sacred unique axe) to Cumulonimbus, to avoid confusion with Thunderhead (tiered unique shield)
+Zod container updated to say the rune gives life after each kill
+

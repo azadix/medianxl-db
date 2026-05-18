@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import PlannerView from '../views/PlannerView.vue';
+import PatchNotesView from '../views/PatchNotesView.vue';
 
 const routes = [
   { path: '/', redirect: '/skills' },
@@ -14,6 +15,12 @@ const routes = [
     path: '/planner',
     name: 'planner',
     component: PlannerView,
+    meta: { keepAlive: true },
+  },
+  {
+    path: '/patch-notes',
+    name: 'patchNotes',
+    component: PatchNotesView,
     meta: { keepAlive: true },
   },
 ];

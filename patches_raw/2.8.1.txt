@@ -1,0 +1,68 @@
+2.8.1 Notes
+Notes
+   * "Pack Size" refers to the amount of monsters spawned at once
+   * "Frequency" determines which type of monster to spawn
+   * "Minions" are separate monsters that always spawn with the indicated monster.
+   * A lowered frequency simply means the zone will be populated with less of that type of monster, and more of other available types.
+Misc changes
+Rainbow Storm
+   * Visuals matched to actual damage spread
+   * Damage increased by 25%
+Void Goblin
+   * Void Gobs velocity decreased by 23%, AI delay increased slightly
+Relic Goblin
+   * Now has a cooldown of 5 seconds between teleports
+Monster balance
+General Monster Changes
+   * Unseen: Slow on hit reduced from 25% to 10%
+   * Hexwing (Heroic): Now casts Decrepify on attack instead of on sight
+   * Experience gain in level 90+ areas scaled back up based on area level. This results in around a 5% boost from current experience gain (27% reduced from 2.7) at level 90 and a 35% boost (13% reduced from 2.7) at level 140 and above.
+Rifts:
+Fauztinville
+   * Phantasms: Reduced frequency and pack size. Increased minion pack size
+   * Soul Reaver: Reduced frequency. Now Spawns with Hardliner minions
+Toraja Jungles
+   * Forest Keeper: AoE skill now checks defence
+Kurast 3000BA
+   * Risen Warlord: Pack size and frequency decreased
+   * Toxotes: Pack size and frequency decreased
+Tran Athulua
+   * Sovereign of the Sands: Slow aura removed. Can now drop the Maiden Bow base
+   * Mephisto's Cabalist: Can now drop the Maiden Bow base
+   * Grizzly Giant: Pack size and frequency decreased
+   * Bloodfire Rogue: Pack size and frequency decreased
+High Heavens
+   * Hexwing: Now casts Decrepify on attack instead of on sight. Pack size and frequency decreased. Health slightly decreased.
+   * Eternal Ember: Pack size and frenquency significantly decreased
+   * Serafiend: No longer casts bone prison
+   * Magistrate: Pack size and frenquency decreased
+   * Cabalist: Pack size and frenquency decreased
+   * Electrogeist: Pack size and frenquency decreased
+   * Exalted One: No long grants immunity to minions
+Triune
+   * Salamander: Spawn frequency decreased
+   * Temple Spire: Spawn frequency decreased
+Duncraig
+   * Dark Sovereign: Health significantly decreased. Spawn frequency decreased
+   * Slain soul (Barrels): Spawn frequency significantly decreased
+   * Toxotes: Pack size and frequency decreased. Minion count increased
+   * Fleshless one: No longer casts Decrepify
+   * Ancient Vampire: Pack size decreased. Minion count increased
+   * Thunderbolt: Pack size and frenquency decreased
+   * Erinys: Pack size decreased. Minion count increased
+   * Blackened One: Pack size decreased and frequency. Minion count increased
+*Fauztinville**
+   * Magistrate: Pack size and frenquency decreased
+   * Cabalist: Pack size and frenquency decreased
+   * Overseer: Pack size and frequency decreased
+   * Eternal Ember: Pack size and frequency decreased
+   * Cow Honcho: Pack size and frequency decreased
+   * Centaur: Frequency decreased
+   * Erinys: Pack size decreased. Now spawns with Necrobot minions
+   * All non lab guest monsters: Resistances matched to native monster values
+Scosglen
+   * Erinys: Pack size decreased. Minion count increased
+   * Colossal Tunnneler: Now uses the Sapling Guard treasure class instead of the Etherborne treasure class
+   * Thrall of Destruction: Pack size decreased. Minion count increased and changed to Treant Archers
+   * All non lab guest monsters: Resistances matched to native monster values
+

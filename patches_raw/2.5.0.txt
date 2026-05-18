@@ -1,0 +1,444 @@
+MEDIAN XL - Σ 2.5.0
+GENERAL
+ENGINE
+   * Fixed realm create game queue panel in realm lobby
+   * Added visual response when not enough gold to buy something from vendor
+   * Fix for quickcast when aiming at objects
+   * Removed repair buttons from vendor screen
+   * Added mouse wheel input to go through pages in gamble filter
+   * Added a global avoid cap for players only, see the character section
+   * Implemented hover tooltips in the stat screen that explain how each stat works
+EXPERIENCE
+   * Experience can be earned after 150 in TSW. This allows competing in the realm leaderboards after max level is reached
+MONSTERS
+   * Lament: reduced static lance projectile lag
+THE DUNGEON REFRESH PROGRAM
+WHAT?
+   * Breathe new life into the classic dungeon quests that have been a part of Median XL for many years
+WHY?
+   * It's beneficial to all players. Veterans get new challenges, new players will have a more polished experience and have more things to look forward to, everyone can develop their characters further -- We have a nice opportunity to provide extra content, interesting rewards, and make use of advanced engine features that were not available when these old quests were first crafted
+HOW?
+   * Starting with the current patch, and every following patch until we celebrate the release of Median XL 3.0, we will refresh the oldest dungeon content
+   * These refreshes can take several forms: overhauling the mechanics and/or visuals of the quests, introducing more difficult (Uber) versions, adding trophies or challenges
+   * We will assess, and collect feedback on, each dungeon individually to determine the best course of action
+   * For patch 2.5 this means the introduction of the Uber Butcher and an overhaul of the Death Projector
+   * We hope you share our excitement for this project and will be on the journey with us to Median XL 3.0!
+NEPHALEM RIFTS
+KURAST 3000 BA
+   * Skeleton Warriors: physical resist now 20%, up from 10%
+TRAN ATHULUA
+   * Amazon Defenders: physical resist now 50% (up from 10%)
+TRIUNE
+   * Monster level is now 130, required player level is 125
+   * Increased equipment drops and equipment quality
+   * Lucion: reduced health to avoid prolonging boss fight too much with level increase
+DUNCRAIG
+   * Necromorb: physical resist now 50% (down from 75%)
+FAUZTINVILLE
+   * Necrobots: physical resist now 60% (down from 75%), block now 20% (down from 41%)
+   * Neon Fiends: physical resist now 20% (down from 40%), elemental resists now 60% (up from 35%)
+   * Unique Mystic Orb drop chance increased by 10x
+   * Black Road charm no longer requires a rune to cube a portal
+DIMENSIONAL LABYRINTH
+   * Regular enemies physical resist now scales from 15% on floor 1 to 30% on floor 9 (down from 40-45%)
+   * Regular enemies magic resist now scales from 10% on floor 1 to 20% on floor 9 (down from 30-35%)
+ENDGAME DUNGEONS
+HORROR UNDER TRISTRAM
+   * Horror Under Tristram (Uber)
+   * New dungeon quest, requires level 125
+   * Quest instructions are found on freshly dropped Butcher's Teeth
+DEATH PROJECTOR
+   * Increased health, removed untargetable mechanics
+   * The projector is now attended by four officers (mini bosses) with different skills, which pose different challenges to your character:
+   * The Commander: summons ranged damage minions, has an AoE slap
+   * The Architect: casts damaging spells of every element
+   * The Befowler: warp strikes, buffs allies and debuffs enemies
+   * The Bulwark: uses Earthquake, repairs the Projector
+   * For the projector to be vulnerable, you must lure at least 2 of these officers to it
+   * Choose the officers which are easiest to deal with for your build
+   * Fixed a bug where the projector was not considered a boss in-game
+LEGION OF THE DAMNED
+   * Reduced non-boss monster life by 20%, reduces DPS check / alleviates lag for lower damage builds
+   * Increased delay between attacks of Malevolent Spirits and Apparitions
+   * Replaced laggy Phantom spinner skill with fireballs
+   * Replaced Nightstalker's Frost Prince skill with Glacial Spike volley
+   * Manouruk uses his skills half as often but they have increased damage
+   * Increased delay between mini-boss skill usage
+   * Corruption bearers ground on death effect now pulses less often. Hits slightly harder
+MIRROR TEMPLE
+   * Required Level: 120
+   * New class-specific locations in the Island of Skartara tombs
+   * Defeat the Nemesis of your class and earn exclusive rewards
+   * Drops Mirror of Shadows, an upgrade for the class charm
+   * Rewards the ability to craft a full set for 2 Arcane Crystals per piece
+   * The set is a specific set of that class which will be fixed for the entire season
+   * The sets will rotate every season
+   * Sets available for Season 33 are: Vasily's Following, The Snake Pit, Spirits of the Nephalem, Last King of Scosglen, Celestial Orchard, Cinadide's Craft, and Zann Esu's Secrets
+   * This feature is also available in Single Player
+GHOSTS OF OLD BREMMTOWN
+   * Necromancer reward is now 5% physical resist instead of 15% summoned minion resistances
+HERALD OF THE END
+   * Pain Worms no longer spawn randomly over time
+   * Instead there are 4 pre-spawned in the arena and their number is fixed, removed player collision
+   * Lockout timer reduced to 13 minutes
+HEART OF DARKNESS
+   * Blood of Creation: removed broken relic limit restriction
+   * Nithogur:
+   * Made changes to prevent Desolation from triggering instantly upon re-entry if you died to this skill
+   * Added reward relics for Barbarians and Necromancers
+   * Moloch now spawns randomly around the arena instead of next to the boss
+   * Their spawn timer is now more random instead of being completely fixed
+   * Slowed down the projectiles and increased the damage of the Eradication (cold) skill
+MAIN
+   * Avoid mechanics overhaul:
+   * Avoid from all sources is now capped at 60%
+   * Skills granting too much avoid have been reworked (see appropriate character sections)
+   * Avoid penalties applied to players have been greatly reduced or removed:
+   * Dimensional Labyrinth: floor 7+ avoid penalty is now 5%, down from 30%
+   * Hell Baal: 30% avoid penalty has been removed
+   * Bremmtown: 20% avoid penalty removed, replaced with -10% movement speed
+   * Samael: avoid penalty is now 10%, down from 50%
+   * Deimoss: avoid penalty is now 5%, down from 20%
+   * Sescheron's Destroyer: Burn Nova avoid penalty is now 10%, down from 50%
+   * Riftwalkers: avoid penalty removed from Lesser and Greater, reduced to 5% (down from 30%) on Ascended
+MISC
+   * Fixed an issue where mercenary strength, dexterity and potentially other stats were not displayed properly
+AMAZON
+BLOOD
+   * Eldritch Storm: damage reduced by 5%
+   * Magic Missiles: damage increased by 5%
+STORM
+   * Askari Lightning: corrected description damage calculation
+BOW
+   * Rearranged tree to be a bit cleaner.
+   * Dragonlore is available at level 10
+   * Decoy requires Dragonlore
+   * Fire at Will is available at level 25
+   * Phalanx is available at level 30, requires Fire at Will
+   * Elemental Command requires Barrage
+   * Trinity Arrow: corrected description damage calculation
+   * Barrage: fixed a bug where some arrows had less damage than intended. The arrows that are not converted to an elemental damage type should now also have 90% WDM and add the flat damage as magic.
+   * Wyrmshot (and Rapid Wyrmshot):
+   * Now randomly converts 25% of physical damage to fire, cold, or lightning
+   * Base seek range increased by 1.66 yards (maximum range is still 18 yards)
+   * Keen Sight:
+   * Max level is 8 instead of 12
+   * Also gives a chance to critical strike with bows and crossbows (up to 20% at max level)
+   * Decoy:
+   * Now has an 8 second cooldown, decreasing with base points down to 4 seconds
+   * Now benefits from Specialization (to 2 second cooldown)
+   * Reduced life gain per skill level to 15% (from 20%)
+ASSASSIN
+MAIN
+   * Gets only 1% life per point into Endurance again, since the reduction of avoid penalties increases her survivability in endgame.
+NINJA
+   * Perfect Being:
+   * Maximum Skill Level is now 20, less points required to max
+   * Now gives 36% + 1% per Base Level (Max 55%), down from 40% + 1% per Base Level
+PSIONIC
+   * Shuriken Flurry:
+   * Now deals ~66% of total damage as magic, up from ~52%
+   * Total damage unchanged
+   * Cognition:
+   * No longer gives bonus avoid to Perfect Being
+   * 150 Cognition bonus is now 15% Magic Pierce
+   * Points in Perfect being will now increase your Cognition bonus
+TRAPS
+   * Artifice Mastery: Claw block chance now up to 35%, down from 45%
+   * Shockwave Trap:
+   * Lightning bolt range reduced by 36%
+   * Damage gain for skill levels 9-22 increased by ~1.8x
+   * Damage gain for skill levels above 22 increased by ~3.2x
+   * Negative Charge: Maximum Skill Level is now 10, allowing for 14% extra lightning pierce
+THROWING
+   * Lethal Incision: now reduces Scorpion Blade area of effect while active
+NAGINATA
+   * Backstab:
+   * Removed cooldown and immunity effect
+   * Duration is now always 1 second
+   * Now adds weapon physical damage: 100% + 20% per Base Level
+   * Now hits 4 times per attack, up from once
+   * Maximum Base Level is now 20
+   * Execution:
+   * Now increases Backstab cooldown and duration by 10 seconds
+   * Removes weapon physical damage bonus
+BARBARIAN
+EARTHSHAKER
+   * Earthquake: removed annoying sound effects
+   * Tectonics:
+   * Maximum Base Level is now 10, up from 5
+   * Level 1 value is now 170% EWD per 1% proc chance, down from 200%
+WINDCARVER
+   * Gale Force:
+   * Weapon damage is now 70%, down from 80%
+   * Now hits 3 times per attack, up from once
+   * Executioner:
+   * Bonus damage increased by 57%, up to (50-60)
+   * This damage now also scales with 10% of your total Strength
+   * The above is multiplicative with the existing EWD scaling
+WARMONGER
+   * Snake Bite: damage increased by 10%
+   * Violence: Innate Elemental Damage synergy has been doubled
+   * Stampede:
+   * Physical damage synergy now 20% per Base Level, up from 10%
+   * Bonus physical damage now also scales with 20% of your Strength
+   * Bonus magic damage from Gladiator's Dominance doubled
+   * Weapon damage now 120%, up from 110%
+   * Honing:
+   * Now increases Stampede weapon damage to 130%, up from 120%
+   * Now increases Snake Stance damage by 40%, up from 25%
+   * Clarified on tooltip that this is a poison damage specialization
+   * Fixed Honing giving a small amount of poison damage to Stampede if Snake Stance was not active
+   * Gladiator's Dominance: magic damage bonus to Warmonger skills increased by 20%
+DRUID
+SEER
+   * Ember Spirit:
+   * Reduced hit count by 90%, damage has been increased by 11x to compensate
+   * Change was made to reduce the power of the skill's interaction with Banish
+   * It now deals more damage standalone and will lead to less enemy teleporting
+   * Note: tooltip damage value is not comparable with 2.4
+HUNTER
+   * Cascade:
+   * Fixed an oversight which prevented Cascade from scaling with weapon physical damage modifiers
+   * In addition, weapon damage procs such as: "on Kill" and "on Striking" will now work with this skill
+   * Changed tooltip tag to "projectile"
+   * Removed Steady Shot interaction (will always deal full bonus damage)
+   * Duration increased to 4 seconds, reduced graphical effects
+   * Now has a 1.8 second cooldown
+   * Primal Bond: now 4% weapon physical damage per 1% minion resistance, max 800%
+WEREWOLF
+   * Werewolf Form: now gives 2% avoid at Base Level 1, down from 7%
+   * Twisting Claw:
+   * Small tornadoes no longer pierce
+   * This change was made to prevent an interaction whereby standing just outside of melee range at certain angles could cause the skill to do 4-5x the intended damage per each use
+   * Namelocking an enemy with this skill is unaffected by this change
+   * Weapon damage now 180%, up from 172%
+REWARD
+   * Symbiosis: avoid now capped at 15%, down from 20%
+NECROMANCER
+DEATHSPEAKER
+   * Death Pact:
+   * Crossbow: now grants attack speed instead of fire pierce
+   * Death Ward:
+   * Chance to avoid damage is now 1% at Base Level 1, down from 6%
+   * Famine:
+   * Life leech is now 10% + 1% per base level, down from 10% + 2% per base level
+   * Now gives 100 + 50 per base level maximum life
+CROSSBOW
+   * Ignite:
+   * Level cap of 20
+   * Grants 5% + 1.5% fire pierce per base level up to 35%
+REWARD
+   * Graveyard:
+   * Delay between punishers reduced by 20%
+   * New synergy: +3% damage multiplier per Base Level
+PALADIN
+ASPECTS
+   * Clarified summon number scaling on Servants of Valor and Conclave
+INCARNATION
+   * All the damage synergy tooltips now respect the maximum value
+   * Dragon Jaws:
+   * Now hits twice per cast instead of once, damage halved
+   * Mana synergy max bonus now 600%, down from 700%
+   * Damage gain per skill level between levels 9 and 16 increased by 60%
+   * Damage gain per skill level between levels 17 and 22 increased by 100%
+   * Damage gain per skill level between levels 23 and 28 increased by 150%
+   * Damage gain per skill level above level 28 increased by 100%
+   * The goal of these changes is to make the early-mid game progression with the skill easier (before you can stack significant mana) while reducing the effect of the buff in the late endgame
+   * Dragon Breath:
+   * Maximum Skill Level is now 8
+   * Base Level synergy bonuses doubled
+   * It now takes 7 less Base Levels to get the maximum effect
+   * Now also reduces enemy lightning damage
+   * Solar Flare:
+   * Duration no longer scales with Base Levels
+   * Duration now fixed at 30 seconds (old Base Level 23 value)
+   * Base levels now increase damage synergy with increasing returns (but linear with the mana bonus)
+   * This allows you to get very high damage out of this skill early on if you specialize in it
+   * Now has a cooldown that starts low and increases with character level up to 6 seconds
+   * Greatly increased damage scaling after level 28
+   * Added graphics for the damage effect
+   * Maximum Skill Level is now 20, down from 25
+   * Annihilation:
+   * Reduced area scaling from 90% for 0.6 yards to 110% for 0.6 yards
+   * Max area is now 9 yards, down from 10
+   * Updated tooltip to be clearer
+   * Damage gain per skill level from levels 2-28 increased by 44%
+   * Increased fire pierce gain per level significantly. Capped pierce now achieved at character level 110, down from 150
+   * These change makes the skill better at single target throughout early to late game. This skill does not need as much area scaling
+SORCERESS
+MELEE
+   * Reorganized the skill placements in the tree to make it more obvious you are choosing between one of two damage source paths
+   * Fusillade:
+   * Reworked cooldown formula: will now always have 2 seconds of downtime, regardless of skill level (note: higher skill levels will still increase uptime)
+   * Change was made to promote Bladestorm as a single target filler and thematically separate the skill from Broadside
+   * Weapon damage modifier now 175%, up from 110%
+   * Bladestorm:
+   * Weapon damage now 70%, up from 60%
+   * Greatly increased sword hitbox size for better area of effect
+   * Primordial Might:
+   * Renamed from Paradigm Shift
+   * Now requires Bladestorm instead of Mooncall
+   * Added information to tooltip that this is the elemental damage specialization
+   * Added melee only restriction to mirror Determination
+   * Now requires level 40, to give players some time before they have to commit
+   * Determination:
+   * Removed unnecessary elemental damage nullification
+   * Added information to tooltip that this is the physical damage specialization
+   * Now requires level 40
+   * Cold Blooded:
+   * No longer reduces weapon physical damage and gives pierce based on Dexterity
+   * Using Bladestorm while wielding a crystal sword will have a 40% chance to trigger a Glacial Volley on attack
+   * NB: due to a technical limitation this skill will only work with crystal swords found in patch 2.5 and onwards
+   * Glacial Volley:
+   * Fires off three medium range piercing ice bolts
+   * Deals damage equal to 140% of your total cold weapon damage
+   * Converts your added lightning and fire weapon damage to cold
+   * Checks hit chance similarly to other Melee Sorceress skills
+FIRE
+   * Pyroblast:
+   * Reduced hit count by 89%, damage has been increased by 11x to compensate
+   * Change was made to reduce the power of the skill's interaction with Banish
+   * It now deals more damage standalone and will lead to less enemy teleporting
+   * Note: tooltip damage value is not comparable with 2.4
+LIGHTNING
+   * Superposition: no longer restricts summoning
+REWARD
+   * Baneblade:
+   * Removed 1% Base Block
+   * Now adds 2% Innate Elemental Damage bonus per Base Level
+ITEM ONLY SKILLS
+   * Weapon damage of Arrow, Bolt, Knife Throw, Javelin procs standardized to 100% (most were 50%).
+   * Lava Pit:
+   * Fixed a bug that made you immobile if you triggered this skill while using Whirlwind
+   * Due to a technical limitation it will only apply to freshly found items
+   * Guard Tower: now 100% weapon damage, down from 140%
+   * In the Dimensional Labyrinth, this change is mostly compensated for by resist changes
+GENERAL CHANGES
+   * Non-class bows now get 13% weapon physical damage per 100 dexterity (up from 11%)
+   * Repeating Crossbow: rebalanced to shoot faster, but less damage
+   * Heavy Crossbow: increased damage
+   * Trebuchet: increased damage
+   * Balanced Axe:
+   * Reduced throwing damage variance to make it more consistent
+   * Sacred throwing damage increased by ~20%, Strength scaling is now 14% (up from 11%)
+   * T2 - T4 throwing damage increased by ~33%
+   * T1 throwing damage increased by 100%
+MASTERCRAFTED ITEMS
+   * New type of base items with the following properties:
+   * Always spawn rare with max sockets
+   * Cannot use with Oil of Renewal
+   * Have unique implicit modifiers
+   * These items can be crafted and are designed to be interesting options for builds as well as to promote farming less popular areas
+   * Currently only items of this type are the Maiden Bow and the Kukri, but more will be added in the future
+   * Maiden Bow:
+   * Bow: 77-85 damage, 20 speed, 13% Dexterity scaling
+   * Adds 2% EWD per 3% attack speed
+   * Low chance to drop from Amazon Defenders in Hell Tran Athulua
+   * Kukri:
+   * Dagger: 45-50 damage, 0 speed, 14% Dexterity scaling
+   * Gives +1 Lightning Damage per 1% Total Physical Weapon Damage Bonus (includes bonus from dexterity)
+   * Gives +1 Lightning Damage per 1% Bonus to Defense
+   * Drops in storyline side areas on Hell difficulty
+ITEM AFFIXES
+   * Resist affixes on armor, shields, and weapons can now also grant max resists
+   * 50-60% resist rolls on body armor, staff, bow, scepter, and amazon spears always give +1% max res of the same type
+   * 35-40% resist rolls on other weapons, armor, and shields gives (0-1)% max res of the same type
+   * Arrow quivers no longer roll + to Necromancer Skills
+   * Quivers no longer roll + to Mana
+   * Quivers can now roll up to 20% Magic Find
+   * Quivers can roll +1 life on striking or rarely +2
+   * Rings can roll +1 life on striking or rarely +1 mana on striking
+MYSTIC ORBS
+   * All Unique Mystic Orbs are now limited to 2 per item from 5
+   * Solitude:
+   * Now gives 1 Life on Striking instead of Life Spark proc
+   * Reduced to 2% strength
+   * Ten Pin Striker: added 5% strength
+   * Zayl's Soul Orb:
+   * Moved to armor only
+   * Increased energy bonus to 2%
+   * Reduced mana from 150 to 100
+   * Farnham's Lost Marble:
+   * Moved to jewelry only
+   * Reduced move speed penalty from 4% to 2%
+   * Vizjun's Ball Bearing: increased dexterity to 25
+   * Eye of Malic: no longer drops
+   * Eye of the Storm: new weapon UMO
+   * +5% lightning spell damage
+   * +12 energy
+   * 1% ctc level 50 Supernova on melee attack
+   * Crystal of Tears:
+   * Reduced level requirement from +20 to +10
+   * Reduced damage from 5-8 to 3-6
+   * Warbringer:
+   * Increased proc chance to 3%
+   * Reduced maximum damage slightly and added minimum damage
+   * Moon Crystal:
+   * Increased regenerate mana stat slightly
+   * New Unique Mystic Orb: Invisible (Armor)
+   * 1% Chance to Avoid Damage
+   * 12% Faster Hit Recovery
+   * 12% Faster Block Recovery
+   * Limit: 1
+OCCULT EFFIGIES
+   * Arcane Hunger: can now be used with runewords once more
+TIERED UNIQUES
+   * Locust Hive: reworked
+   * 4% ctc arrow on striking
+   * adds (2-3) to (8-10) magic damage
+   * +1 life on striking
+   * Plague Gland: reworked
+   * adds 2 to 4 physical damage
+   * +(50-200) attack rating
+   * 15% attack speed
+   * 25 life regenerated per second
+   * Herr Donner: magic find rolls are now positive
+   * Shadow Vortex: replaced curse length reduction with 50% Weapon Physical Damage bonus
+SACRED UNIQUES
+   * Etrayu: proc chance increased to 33%, max damage rolls up to 300 (was 25%, 250)
+   * Gjallarhorn: flat damage increased to 50-125 (was 40-100)
+   * Stormstrike: now rolls 5-20% innate elemental damage instead of 5-20% lightning pierce
+   * Fleshstinger: added an extra 100% damage to demons
+   * Hellreach: flat damage increased to 50 (was 0 min, 50 max), now has 250-500 flat life
+   * Windforce: max damage per character level increased to 3.75 (was 2.5)
+   * Chasmstriker: now rolls up to 175 max damage, 200 strength, 200 dexterity (was 150, 150, 150)
+   * Nymyr's Shadow: now grants +4 to Necromancer skills
+   * Dacana's Fist: minimum magic find roll is now 0
+   * Eye of the Storm (Viper Bow): renamed to Storm Arc
+   * Dark Pact: now also grants 5% maximum avoid (new stat)
+   * Auriel's Robe: removed buggy Wolf Stance. Now gives 50% movement speed and 100% Enhanced Weapon Damage. Defense roll is now (140-200)%
+NEW SACRED UNIQUES
+   * Breath of Fire: new Stinger Crossbow
+   * Athulua's Blessing: new Amazon-only Heavy Gloves
+SETS
+   * Achilio's Wake: full set bonus now grants 50% to strength
+   * Curse of the Zakarum:
+   * Removed the Wolf Stance aura on the 3 piece bonus, due to it constantly glitching with other items
+   * 3 piece bonus now just gives the straight basic stats as the aura would
+   * Namely: 70% Attack Speed and Hit Recovery, 40% Movement Speed, 10% Crushing Blow, 20% EWD
+RUNEWORDS
+   * Mirage:
+   * Bonus damage from deadly strike now caps when deadly strike caps (100%)
+   * Bonus damage per deadly strike reduced from 140 to 95 (this change is a ~10% nerf in the Dimensional Labyrinth)
+   * Maximum block bonus reduced from 25% to 10%
+   * Maenad: new amazon helmet runeword (Shaen Loz Yst)
+   * Ecstatic Frenzy: +300% Total Damage
+   * Fire, Cold, and Lightning Pierce Reduced by 100
+   * +3-4 to All Skills
+   * +40-45% Cast Speed
+   * +25-30% Move Speed
+   * Adds 20-30 Damage
+   * Maximum Elemental Resists +1%
+   * Black Cat: removed negative magic find
+   * Talon: new barbarian sword runeword (Nef)
+   * Area Effect Attack
+   * 20% Attack Speed
+   * +24-35% Enhanced Damage
+   * +4 Minimum Damage
+   * +6-10 Dexterity
+RELICS
+   * Fusillade:
+   * No longer reduces the skill cooldown
+   * Dexterity bonus now 10%, up from 6%
+

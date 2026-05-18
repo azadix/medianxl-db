@@ -1,0 +1,4 @@
+2.2.3
+Fixed a rare crash related to boss AI
+Fixed waypoint activation not having a sound
+

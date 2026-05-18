@@ -1,0 +1,457 @@
+2.10.0 Notes
+Game
+General
+Engine
+   * Loot Filter: located in a new tab in the game settings menu
+   * Supports multiple different filtering lists, with one active at a time
+   * Switching between different filters is easy and you can also set a favourite that you can load with a hotkey
+   * You can export or import filters from the clipboard with a single click
+   * Display loot notifications on the screen and in the chat history, and/or on the minimap
+   * Create custom rules tailored to your needs based on: Quality, Item Level, Item Type, Item Base, and more
+   * Loot Display: overhauled loot label display algorithm to be more efficient
+   * Many more items can be seen on the screen at once
+   * Will now show items that dropped at the edge of the screen without requiring you to backtrack
+   * You are now able to show or hide drops based on your filter settings
+   * You can now use a hotkey to toggle display on or off, instead of holding down a key
+   * Loot labels no longer interfere with other unit interactions (attacking monsters, opening doors etc.)
+   * Almost all minions now inherit the owner's Fire, Cold, Lightning, and Poison pierce
+   * Excludes: Iron Golem, Jinn, Annihilation, Spirit of Vengeance, Assassin Traps, Vine Companion
+   * Implemented "keep attacking after monster dies" in-game
+   * Re-added difficulty keyboard shortcuts from vanilla (R/N/H)
+   * Disabled repair hotkey
+Monsters
+   * Reduced the damage that minions and mercenaries receive from most bosses by 13%
+   * The following monsters now cause a "dangerous monster" alert to appear above your health globe when nearby:
+   * Ominous Spirit, Unstable Anomaly, Abyssal Shrine
+   * Sszark the Burning: duration of flaming leap circles halved
+Endgame Quests
+Trophy Rework
+   * Trophy fragments no longer drop from any boss
+   * All Trophies are now gained through new Trophy Challenges. Each boss that had a trophy drop before now has a specific challenge instead, outside of Athulua
+   * These challenges will be listed in the corresponding boss section of the patch notes, and can be viewed in game by right clicking any charm with a trophy
+   * Trophy challenges that have a time limit will require you to kill the boss and cube the charm within the limit. Ones that do not will simply require you to cube within 10 seconds of killing the boss. Exceptions will be noted
+   * Dying or entering another zone with a trophy challenge will void the one you've already started, so be careful
+   * Completing a trophy challenge will allow you to upgrade the charm, giving the same bonuses as before, with the new addition of locking the charm to the class used to complete the challenge
+   * The class lock will prevent the market from being flooded by a few accounts using specific characters that excel at certain trophies. There will be value in farming difficult trophies on difficult classes
+   * Only one of each charm can be upgraded per character per game
+   * Full trophies can still drop from pillar bosses in the Dimensional Labyrinth. These versions, along with non ladder versions, do not stack with trophy challenges but also do not lock the charm to any class, giving them niche value
+Nephalem Rifts
+Secret Cow Level
+   * Wirt's leg is no longer consumed when opening a portal to the rift
+   * The cube recipe to open a portal can only be executed once per game
+Kurast 3000 BA
+   * Increased density on hell mode by 10%
+   * Totem protection aura now reduces damage taken by allies by 67%, up from 50%
+High Heavens/Library of Fate
+   * Heroic Variant:
+   * Drop rate of Heavenly Souls from Ethereal and Avatars has been halved
+   * Ethereal can now be resurrected with the Paladin ultimate skill
+Tran Athulua
+   * Trophy Challenge: Kill Skovos and Lycander within 10 seconds of each other. Cube while both buffs are on your character
+Triune
+   * Trophy Challenge: Kill Lucien without being struck by Malic's burn missiles
+Duncraig
+   * Trophy Challenge: Enter from the waypoint, and kill Assur without being hit by his Flamefront
+Viz-Jun
+   * Trophy Challenge: Enter from the waypoint, and kill the Master Control System and cube the charm within 25 seconds
+   * Stat rolls on the charm are now 16-30, up from 11-30
+Scosglen
+   * Tenet of Restraint: now requires any emblem, instead of 4 trophy fragments
+Dimensional Labyrinth
+   * Archbishop Lazarus now has fixed hp independent of lab tier. It will take 3 times as many purifies to kill him in Lab as it does normally
+   * He now always drops his trophy on kill, and has a 10% chance to drop the star chart fragment
+   * Groupies spawned by Lazarus now deal 50% less damage, and no longer have elemental pierce at any tier
+Endgame Dungeons
+Nightmare at the Rogue Camp
+   * A new game mode, exclusive to the Sin War realm
+   * The Rogue Camp has been overrun by a vicious undead horde, are you up to the challenge?
+   * Can be accessed by any character at level 125, regardless of progress
+   * To start playing create a game on Hell difficulty with password: halloween
+   * Killing monsters rewards you with Harvest Points which can be exchanged for keys to the Spooky Chest
+   * Harvest points are shared between players in the event
+   * Trick or Treat:
+   * The chest can be opened repeatedly, drops improve with each successful unlock
+   * Rarely unlocks will fail and your hard earned key will poof, better luck next time
+   * Rewards include Sets, Sacred Uniques, Enhanced Runes, Unique Jewels, Relics, and jump scares (no, really)
+   * As well as Scrolls of Enchantment - unique modifiers and stat boosts that can be applied once to each of your items
+   * The chest can be looted in the camp or in a safe area accessible after interacting with the Deus Ex machina
+   * Survive long enough to face the evil controlling the nightmare
+Mirror Temple
+   * Sets for season 38 are:
+   * Zerae's Divinity
+   * The Snake Pit
+   * Big Game Hunter
+   * Kale Monath
+   * The Towerlord
+   * Cinadide's Craft
+   * Elemental Children
+Binding of Baal
+   * Level lockdown now happens after 60 seconds, up from 20
+Legacy of Blood
+   * Trophy Challenge: Kill Bartuc and cube the charm within 15 seconds of entering
+The Veiled Prophet
+   * Trophy Challenge:
+   * Kill Oris or Gamuel before destroying the Veil Piercer
+   * Kill The Veiled Prophet
+Heart of Sin
+   * Trophy Challenge: Kill Azmodan without being hit by a Molten Boulder from a Flameblood
+Invasion II
+   * Once the charm has been upgraded with essence, the cube recipe will no longer appear to "execute"
+   * Improved the wording in the instructions to the bonus quests
+Judgement Day
+   * Trophy Challenge: Kill both Imperius and Malthael within 60 seconds of the hooded figure disappearing. Cube with both buffs on your character
+Quov Tsin
+   * Trophy Challenge: Kill Quov Tsin without being struck by a bone spear
+Kingdom of Shadow
+   * Trophy Challenge: Purify the Ominous Statue by the entrance, then kill Juris Khan while debuffed
+   * The Ominous Statue grants a debuff which causes all teleport skills to have +50 seconds to cooldown
+Banisher of Light
+   * Trophy Challenge: Kill Kabraxis without being struck by his Pillar of Poison
+   * Max resistance rolls on the charm are now 2-3%, up from 1-3%
+Legion of the Damned
+   * Bone Chimes: Magic Find scaling has been doubled
+Eve of Destruction
+   * Trophy Challenge: Kill Baal without being hit by his Black Carpet Bomb spell
+Lord of Lies
+   * Trophy Challenge: Kill the real Belial after killing all of his clones
+Ghosts of Old Bremmtown
+   * Trophy Challenge: Identical to old trophy upgrade requirement
+   * Regular charm upgrade no longer requires you to kill the Dark Star Dragon within 90 seconds, can now be done at any time
+Yshari Sanctum
+   * Trophy Challenge: Kill Valthek and cube the charm within 5 minutes of killing his Altar
+   * Charm resistances rolls raised to 10-20, from 5-20
+Xazax
+   * Trophy Challenge: Kill Xazax without being struck by a penitent
+   * Trophy now grants 75-125 tri-elemental damage instead of 4% slow target
+Astrogha
+   * Spider Totems now empower nearby enemies in a small radius, granting them 20% increased damage
+   * Fixed a bug where totems could drop double loot sometimes
+   * Trophy Challenge: Kill the real Astrogha while he is empowered by a Spider Totem
+Nymyr's Light
+   * The Sleep charm is now upgraded by cubing it in place of a charm after completing a trophy challenge. Bonuses are identical to before
+   * Full trophies from Lab or Non Ladder cannot be used to upgrade the sleep
+Invasion III
+   * Once the charm has been upgraded with essence, the cube recipe will no longer appear to "execute"
+   * Improved the wording in the instructions to the bonus quests
+The Void
+   * Inarius: Removed excessive poison resistance
+   * Trophy Challenge: Kill Inarius without allowing Lilith to take any damage
+   * Trophy now grants +2 to all skills, up from +1
+Nephalem's Sacrifice
+   * Trophy Challenge:
+   * Kill Uldyssian and cube the charm within 4 minutes of killing Moreina the Corrupted
+   * Do not fail Azmodan's or Baal's trophy conditions on the path
+   * Trophy now grants 4% Deadly Strike and 8% Innate Elemental Damage instead of 100-150 tri-elemental damage
+   * Korlic: no longer leaps, fixing a longstanding bug where he would desync and become difficult to kill
+Archbishop Lazarus
+   * Trophy Challenge: Kill Archbishop Lazarus without allowing any Black Hand Totem to cast Tremor
+Herald of the End
+   * Standing in the Pentagram will now display a buff icon
+Characters
+Animation Rework
+   * Glossary:
+   * 1H Swing = 1H Swords, 1H Axes (including Throwing Axes), Maces, War Hammer, Sceptres
+   * 1H Thrust = Javelins, Daggers, Throwing Knives
+   * 2H Other = 2H Hammers, 2H Axes, Staves, Scythes, Naginata
+   * FPA = frames per animation. Lower numbers are better as they mean more attacks per second
+   * Note: animations not mentioned below are unchanged
+Main
+   * Reduced damage multiplier of unarmed attacks from 100% to 50%
+Amazon
+Animations
+   * 1H Thrust casting speed improved to 7 FPA, down from 9
+   * 2H Swords attacks improved to 8 FPA, down from 10
+   * 2H Swords casting speed improved to 8 FPA, down from 9
+   * Crossbow attacks improved to 7 FPA, down from 8
+   * 1H Thrust blocking speed improved to 2 FPA, down from 3
+   * Block speed required for fastest animation is now 292, down from 434
+Spear
+   * Great Hunt: maximum range of the spirits reduced by 50%
+Assassin
+Animations
+   * 1H Swing & 1H Thrust attacks now improved to 6 FPA, down from 8
+   * 2H Swords & Spears attacks now improved to 8 FPA, down from 11
+   * 2H Other attacks slowed down slightly, but still unchanged at 7 FPA
+   * Bow attacks improved to 8 FPA, down from 9
+   * Crossbow attacks improved to 8 FPA, down from 11. High Attack Speed required
+   * 2H Other casting now improved to 7 FPA, down from 8
+   * All blocking speeds improved to 2 FPA, down from 3
+   * Block speed required for fastest animation is now 292, down from 600
+Psionic
+   * Psionic Storm:
+   * % Mana drain moved to Energize
+   * Mana cost reduced
+   * Now gains +0.4% total damage per cognition if you have at least 75 cognition, this boost is reflected in the tooltip
+   * Matched real damage to the damage listed in the tooltip, resulting in around a 20-30% damage boost at high skill levels
+   * Energize:
+   * Now only activates under 90% life
+   * Drains 5% maximum mana per cast of Psionic Storm to heal 1% maximum life per base level
+   * Requires at least 10% of your maximum mana pool to trigger
+   * Maximum skill level reduced to 5
+Claw
+   * Anathema:
+   * No longer restricts to melee skills
+   * Can now be toggled on/off
+   * Innate Elemental Damage at Base Level 1 now +11%, up from +6%
+   * Max Base Level is now 20, down from 25
+   * Fixed a bug where you could sometimes grant this buff to a party member
+Throwing
+   * Maelstrom MkIV: weapon damage now 100%, down from 105%
+   * Wychwind:
+   * Reduced number of hits per cast by ~40%
+   * The skill hit count has not been changed significantly since Ultimative when the game state was highly different
+   * Currently with stationary bosses, curses like Banish, and much more accessible "on striking" healing effects the number of hits is very excessive
+   * The skill remains the best "stacked damage" ability in the game
+Barbarian
+Animations
+   * Crossbow attacks improved to 8 FPA, down from 11
+   * 2H Other casting speed improved to 8 FPA, down from 9
+   * All blocking speeds improved to 2 FPA, down from 4
+   * Block speed required for fastest animation is now 292, up from 232
+Earthshaker
+   * Earthquake: Aftershock damage now 180%, down from 200%
+Elementalist
+   * Conflux: fixed tooltip error with skill classification
+Druid
+Animations
+   * Bow & Crossbow casting speed improved to 7 FPA, down from 8
+   * All blocking speeds improved to 3 FPA, down from 7
+   * Block speed required for fastest animation is now 292, down from 600
+Wereowl
+   * Wereowl Form:
+   * All blocking speeds improved to 3 FPA, down from 4
+   * Block speed required for fastest animation is now 200, down from 566
+   * Progeny's Blessing: fixed a bug with the synergy description, the numbers were the wrong way around
+Werewolf
+   * Werewolf Form:
+   * All blocking speeds improved to 2 FPA, down from 3
+   * Block speed required for fastest animation is now 292, up from 200
+   * Twisted Claw: reworked, now causes a spiral of damaging tornados to erupt from the target
+Necromancer
+Animations
+   * Bow attacks improved to 8 FPA, down from 10
+   * All blocking speeds improved to 2 FPA, down from 3
+   * Block speed required for fastest animation is now 292, up from 280
+Deathspeaker
+   * Sacrifice: removed annoying "Help us" audio. This applies to the monster version as well
+Malice
+   * Dream Eater: damage reduced by 10%
+Crossbow
+   * Deathly Effigy:
+   * Reduced weapon damage multiplier of Bolt Rush from 90% to 50%
+   * Bolt Rush range reduced by 37%
+   * No longer blocks pathing
+Summon
+   * Night Hawks:
+   * Damage gain from levels smoothed out, damage will be lower until slvl 50, and slightly higher above
+   * Death proc %wdm raised from 17% to 50% (will deal about their tooltip damage per proc)
+Paladin
+Animations
+   * Spear attacks improved to 6 FPA, down from 7. High Attack Speed required
+   * Bow & Crossbow attacks improved to 7 FPA, down from 10
+   * All blocking speeds improved to 2 FPA, down from 3
+   * Block speed required for fastest animation is now 292, down from 600
+Aspects
+   * Rapture: fixed a bug with the tooltip displaying wrong base duration
+Incarnation
+   * Annihilation: fixed a bug where the hydra could sometimes be killed by enemies
+Reward
+   * Superbeast:
+   * Hit Recovery (and hence blocking) speed improved to 3 FPA, down from 4
+   * Hit recovery speed required for fastest animations is now 292, down from 535
+Sorceress
+Animations
+   * 1H Thrust attacks improved to 7 FPA, down from 8
+   * 2H Swords attacks improved to 8 FPA, down from 11
+   * 2H Spears attacks improved to 8 FPA, down from 11
+   * All blocking speeds improved to 2 FPA, down from 4
+   * Block speed required for fastest animation is now 292, up from 280
+Fire
+   * Havoc: damage reduced by 10%
+Item Only Skills
+   * Arcane Swarm: damage reduced by 14%
+   * Orb of Annihilation:
+   * Doubled damage at level 1, damage per Skill Level increased by 25% (~34% damage boost at endgame values)
+   * Tooltip now shows damage numbers instead of memes
+   * Reduced visual intensity
+   * ATMG:
+   * The skill has received a major improvement to make it competitive without relying on the old placement mechanics
+   * Base radius is now 10 yards, down from 13.3
+   * Radius now increases with base Dexterity: +33% at 200, 500, and 900 (Max radius of 20 yards)
+   * Weapon damage now 60%, up from 55%
+   * The weapon damage modifier of this skill will now increase with your Deadly/Critical Strike or Innate Elemental Damage (whichever is higher)
+   * Deals 75% weapon damage if you have at least 55% Deadly/Critical Strike or 55% Innate Elemental Damage
+   * Deals 95% weapon damage if you have at least 85% Deadly/Critical Strike or 110% Innate Elemental Damage
+   * Mana cost now increases by 3 per Skill Level, up from 2
+   * Flash:
+   * Reduced damage variance
+   * Damage gain from skills after level 28 reduced by 14%
+   * Summon Glowing Fungus, Summon Sinner and Summon Frostwalker:
+   * Removed elemental pierce gain from Minion Attack Rating
+   * Will now gain elemental pierce from your own
+   * Clear Mind: damage reduced by 11%
+   * Guided Chain:
+   * Weapon Damage increased to 120%
+   * Seek range and Lifetime of first arrow chain increased to better acquire targets
+   * Banish: enemy flat magic damage reduction reduced by 28%
+   * Mana Tide Totem:
+   * Can now be summoned without a targeted corpse
+   * Health increased by 300% to make it more durable at baseline (Totemancer health is unchanged)
+   * Mana recovery is now 10 + 2% per Skill level
+   * The old value was way too high because essentially provided infinite mana
+   * Elemental Totem:
+   * Can now be summoned without a targeted corpse
+   * Health increased by 300% to make it more durable at baseline (Totemancer health is unchanged)
+   * Now also grants a bonus to Innate Elemental Damage: 9% + 1% per Skill Level
+   * Clarified tooltip wording
+   * Cherubim:
+   * Added bonus magic damage display to the tooltip (if you have any)
+   * Fixed a bug where the bonus magic damage from Consecration was never applied
+   * Time Wave: rare affix skill levels increased to (8-12), up from 1
+Items
+General Changes
+   * Soulbinder Gloves:
+   * New Mastercrafted gloves
+   * Can spawn nearly all oSkills from the rare affix pool
+   * This includes those which can be found on any rare base, regardless of slot or class requirement
+   * Will still respect affix generation rules
+   * Base item requires 350 Strength, 350 Dexterity, and Level 100
+   * Is a very rare drop from regular enemies in Kurast 3000BA on Hell difficulty, and a 3% drop from Manoruk, the commander of the Legion of the Damned
+   * The requirements and drop rate take into account that oSkill builds are mainly used by veteran players and that these are similar to an extra Relic for many builds
+   * Flying Kinzhal:
+   * New Mastercrafted elemental base throwing knife
+   * Adds 40% of Dexterity as cold damage to weapon
+   * Gain +1 Life on Striking per 100 base Vitality
+   * Base item has the same requirements as the Sacred Throwing Knife
+   * Only drops in Bremmtown on Hell difficulty
+   * Introduces an elemental base for knife users with powerful sustain as a trade off for damage
+   * Invictus:
+   * Removed the weapon physical damage scaling from Strength
+   * It gave no meaningful bonus to early game characters (11% WPD at 500 strength), and was too high at endgame
+   * Replaced with extra +40% WPD at tier 4, scaled down at lower tiers
+   * Shrines:
+   * Improved the tooltips of all shrines by explaining how you can bless items in game
+   * Now also explains an item can only be blessed once and that blessings do not work on Ethereal items
+   * Due to inflation, the I am Rich gem now requires an Archbishop Lazarus trophy, a Vial of Elder Blood, and an Essence of Time to create
+   * Arrow and Bolt Quivers have had their affixes modified:
+   * No longer roll resistances, gold find, or life regeneration
+   * Can now roll modest amounts of flat elemental damage, innate elemental damage, and fire/cold/lightning pierce
+   * Chance to Cast Cryo Beam on Striking has been replaced by Chance to Cast Cascade on Kill
+   * Chance to Cast Sun Strike on Striking has been replaced by Chance to Cast Arrow on Striking
+   * Angelic Crossbows: now have a strength damage bonus value of 14%, up from 11%
+   * Fixed a bug where magic/rare/crafted class items could sometimes spawn +Skill bonuses to other classes
+   * Angelic Shields: will now be able to spawn +Druid Skills due to a technical limitation
+   * Fixed a bug where Miasma on Attack was spawning on Angelic ranged weapons
+Occult Effigies
+   * Elemental Dominion: Reworked, now applies to Melee elemental weapons, granting them 4% chance to cast level 10 life spark on melee attack and +5 level required. Can be applied 2 times
+   * Elemental Ire: Reworked, now applies to ranged elemental weapons, granting them 1% chance to cast level 4 life spark on striking and +5 level required. Can be applied 2 times
+Sacred Uniques
+   * Items that have the restitution mechanic (Wintry Majesty, Arrogance, and Endless Pride) now require Heavenly Souls to restore instead of trophy fragments
+   * Khazra Pouch:
+   * Physical resist is now +5%, up from +(1-5)%
+   * Mana on attack is now +(25-50), up from +(10-50)
+   * Bonus to Defense is now +(25-50)%, up from +(20-50)%
+   * Flat physical damage added is now 15-25, up from 10-20
+   * Added +(2-3)% to Maximum Fire and Lightning resistances
+   * Increased bonus Magic Damage from strength to 60%, up from 50%
+   * Clarified it only works if you have a source of AoE attack
+   * Lacuni Cowl:
+   * Maximum Elemental Resists bonus is now always +1%, up from +(0-1)%
+   * Fire/Lightning elemental pierce is now +(15-25)%, up from +(5-20)%
+   * Fire/Lightning damage is now 200-300, up from 150-200
+   * Shiverhood:
+   * Replaced Minion Life bonus with +3% to Maximum Cold resist
+   * Cold Spell Damage increased to +(30-40)%, up from +(20-30)%
+   * Aidan's Lament:
+   * Replaced +2% Maximum Lightning Resist with +1% to all Maximum Resistances
+   * Undead/Demons damage bonuses are now +(90-120)%, up from +(60-120)%
+   * Added +(4-8)% to Physical Resist
+   * Metalhead:
+   * Removed Ignore Target's Defense bonus (doesn't work against bosses), reanimate chance, bonus to defense
+   * Increased Lightning damage to +(250-500), up from +(1-50)
+   * Added +(1-2)% to Maximum Elemental Resistances
+   * Veil of Steel:
+   * Required level is now 100, down from 130
+   * Weapon Physical Damage bonus is now +200%, up from +150%
+   * Leah's Vision: now also gives +1 Death Ripple Enhancement
+   * The Point of No Return: reworked completely
+   * This item is now all about harnessing the power of corruption
+   * It can be used for an oSkill build and/or for traditional casters depending on corruptions
+   * Adds 101% Movement Speed, 202% Mana Regeneration, +25 to Orb of Annihilation
+   * Also adds the following corruption related properties:
+   * Can be corrupted 10 times
+   * Empowered corruption Outcomes (see below)
+   * Failed corruptions do not increase required level (and failure probability is reduced)
+   * Successful corruptions increase required level by 10
+   * Orb of Annihilation: +10% Total Damage per corrupted item worn
+   * Possible corruption outcomes:
+   * +4 to All Skills
+   * +2% to Maximum Elemental Resistances
+   * +25% Spell Damage
+   * +10% Maximum Life
+   * +25% Maximum Mana
+   * +20% Elemental Pierce
+   * +10% Physical Resist
+   * +20% to All Attributes
+   * +150 Life regenerated per second
+   * Required level is now 50
+   * Cold Blood:
+   * Removed Banish
+   * Cold Pierce is now +(20-30)%, up from 10%
+   * Blizzard proc level now 63, up from 50
+   * Flat cold damage given specifically by Cold Blood doubled, now adds +150% to Cold Spell Damage
+   * Strength Beyond Strength:
+   * Removed Pyroblast proc
+   * Added physical damage is now 25-40
+   * Panthera's Bite: clarified that the Superbeast proc has a short duration
+   * Segnitia: reworked completely
+   * This item is now competitive with other endgame physical damage chest pieces while bringing unique flavor
+   * Base stats:
+   * 5% CtC Thunder Hammer on Striking (old proc was causing single target damage loss due to high frequency ND application)
+   * Elemental Resists +50%
+   * Weapon Physical Damage +(200-250)%
+   * Physical Resist +(15-20)%
+   * Guard Tower: +1 Arrow
+   * Cherubim: +(50-75) Magic damage per Skill Level
+   * In addition, if you have any of the following skills at level 30 or higher:
+   * ATMG, Charged Strike, Cherubim, Guard Tower, Lex Talionis, Rock Shock, Time Wave
+   * +20% Slow Target
+   * +100 Life after each kill
+   * +20% chance of Crushing Blow
+   * Physical Damage reduced by 150
+   * The armor provides straightforward benefits to any builds which use the above skills
+   * Even if your build doesn't main the above skills, the conditional bonuses can be unlocked through strategic gear choices. For example:
+   * Charged Strike affix on rare amulets
+   * The Last Crusader, Hellmouth sacred uniques
+   * Relics
+   * etc.
+   * Hellmouth:
+   * Bonus to defense is now always 50%
+   * Max Fire Resist is now always +2%
+   * Bonus to strength is now +(15 to 25)%, up from +(11 to 15)%
+   * Now also adds +2% to Max Poison Resist
+   * The Defiler: Deathlord morph Hit Recovery speed required for fastest animations is now 292, down from 600
+Sets
+   * Witchhunter's Hood:
+   * reduced Maximum Elemental Resistance bonus to +1, down from +2
+   * added maximum resistance bonuses to multiple level 105 Sacred Uniques to compensate and provide more gearing options
+   * Celestia's Myth: Maximum resistances on full set bonus reduced to 1%
+Runewords
+   * Farseer: new helm runeword
+   * Requires Zod-El-Cham
+   * Adds +1 to Max Elemental Resistances and +(100-200)% Enhanced Defense
+   * Adds 8% to Max Mana and 5% to Max Life
+   * Adds +1 to All skills and 75 Life regenerated per second
+   * Myth:
+   * New 2H Barbarian Axe Runeword
+   * Requires Jah-Ko-Gul-Jah
+   * Adds +200% Enhanced damage and +(35-50) to (95-125) flat Physical damage
+   * Also has +30% Attack Speed, 20% Strength, 10% Physical Resist, and +(1-5)% Life leech
+   * Atlacamani: fixed a description bug with the innate elemental damage amount
+   * Comaetho: fixed a description bug, haunt duration is increased by 4 seconds, not 2
+Relics
+   * Titan's Fortitude: now has 2 min duration like to match innate
+   * Hurricane: regeneration now works
+   * Balefire: now actually gives Balefire instead of Wrath
+   * Banish: removed
+

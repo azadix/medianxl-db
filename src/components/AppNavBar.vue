@@ -41,6 +41,9 @@ onMounted(() => {
         <router-link id="nav-tree" :class="linkClass('planner')" to="/planner">
           <strong>Planner</strong>
         </router-link>
+        <router-link :class="linkClass('patchNotes')" to="/patch-notes">
+          <strong>Patch notes</strong>
+        </router-link>
         <router-link v-if="isDev" :class="linkClass('editor')" to="/editor">
           <strong>Editor</strong>
         </router-link>
@@ -79,6 +82,7 @@ onMounted(() => {
           v-show="
             route.name === 'skills' ||
               route.name === 'planner' ||
+              route.name === 'patchNotes' ||
               route.name === 'editor' ||
               route.name === 'subskillsEditor'
           "

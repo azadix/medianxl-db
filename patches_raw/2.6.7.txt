@@ -1,0 +1,36 @@
+2.6.7 Additional Notes
+Singleplayer stash size increased to 10 pages per character and 10 shared pages
+Shared stash disabled in TCP/IP (should prevent shared stash from being replaced with host's stash)
+Heart of Darkness is finally enabled in singleplayer, sorry for the wait!
+Tectonics: now also scales SoR proc chance with strength
+Psicrown: increased damage by about 15%. 4800 total energy in 2.6 will have the same damage as 1100 base energy in 2.5
+Deathgaze:
+   * Now gains bonus cold damage per Skill Level, with big scaling above Skill Level 28
+   * Now converts 50% of Physical damage to Cold
+Cleaver of Mirrors:
+   * Reduced variance of affix rolls
+   * Now also adds 10-20 to Deathgaze
+Boarfrost: Replaced Crushing Blow with +10 to Deathgaze
+The Pathless:
+   * Enhanced Damage is now always 160%
+   * New effect if no points in stances:
+   * Shower of Rocks: cooldown reduced by 1 second
+   * Thunder Slam: cooldown reduced by 4 seconds
+Claw of the Spirit Wolf:
+   * Completely reworked, rarity increased
+   * Now gives the following bonuses:
+   * Gain 50% of your Wolf Companion Base Damage as Flat Physical Damage
+   * +1% Fire, Cold and Lightning resistances per Wolf Companion Skill Level
+   * Adds 4-6 Barbarian Skills, 100% increased attack speed and 200 life regenerated per second
+Legion of the Damned: Manoruk's nova damage reduced by 60% (max difficulty nova should now hit for 6k at 80% lightning resist instead of 15k)
+Act 3 merc no longer attempts melee attacks
+Pathfinder should now work for elemental bow bases (this change does not apply to existing bows, you'll need a new one)
+Uber Death Projector upgrade now always adds +10% experience gained
+Experience scaling reverted to 2.5 values
+Widowmaker: fixed an issue where Widowmaker was usable with certain melee only passives or buffs
+Hades Gate now correctly deals 110% weapon damage with added fire
+Lylia's Curse: fixed an issue where only the Maximum Lightning Resistance version of the charm would drop
+Noctule: fixed an issue where Noctule could fail to target small targets
+Lacerator: removed 1-2 flat damage
+Hunting Banshee: fixed a very old bug which caused banshee to target unintended targets such as wall traps and invisible map tricks
+

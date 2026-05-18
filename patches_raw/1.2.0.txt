@@ -1,0 +1,491 @@
+- Patch Σ 1.2.0
+GAME
+General
+
+
+ENGINE
+                              * You can now drop charms to your cube/stash while already having charm in inventory
+                              * Belt UI is now fully functional again, including the show belt rows hotkey
+                              * Implemented missing set item stat functionality in the item desc
+                              * Implemented new event handler for more consistent events on monster deaths
+                              * Fixed a bug that made mercenary's resistance display inaccurate
+                              * Fixed a bug that caused Night Hawks to spawn multiple bosses
+                              * Fixed an issue where some items could be used on Iron Golem, but weren't supposed to be
+SET OVERHAUL
+
+
+                              * Introduced nine new oSkill-based sets & one new rare set, also re-introducing 2 beloved nostalgia oSkills:
+                              * Frozen Orb (without cooldown) and Lightning Fury
+                              * All five-piece sets are now four-piece, in multiple cases highly contested slots are now free
+                              * Reduced the level requirement of most set items to allow for extra orb space
+                              * Sets can now drop from mid-Nightmare onwards
+                              * Partial bonuses from 3 and 4 pieces are now gained from 2 and 3 pieces respectively, making set pairs viable
+                              * Modified and rebalanced partial and in some cases full set bonuses
+                              * The rarities have been improved and evened out, making previously difficult sets easier to obtain
+                              * Greatly improved certain sets such as Ape and Henchmen sets, the latter which also has fixed stat display
+                              * Restored class-specific items as the weapons of the Pantheon and Celestia's Myth sets
+EXPERIENCE
+                              * Improved endgame experience scaling
+                              * Modified all rift alvls to better fit progression
+MONSTERS
+                              * Reduced monster targeting distance to between 1.0 and 1.1 distance for most enemies. Changes have also been done to reduce the occurrence of invisible barrels and mines
+                              * Replaced avoid from most monsters that had it, due to annoying battle feedback and issues with some (melee) skills
+                              * NI'VA: replaced on-death Gift Sacred Armor proc with Gift of Vanquishing
+                              * GHOM: reduced defense on Hell, added missing poison resist, removed Block
+                              * Fixed priestess sound from Tremor used by various monsters
+AREAS
+                              * Reduced maze sizes on hell difficulty: Den of Evil, Jails
+                              * Reduced maze sizes on all difficulties: Maggot Lairs, Swampy Pit
+
+
+
+
+________________
+
+
+ENDGAME QUESTS
+Nephalem Rifts
+
+
+TRAN ATHULUA
+                              * Priestess scroll drop chance increased to 1/6
+                              * The gardener is here! Trees will no longer block visibility
+                              * Halved Arrowside proc chance
+TEGANZE
+                              * Required essences to complete charm is now 20. Reduced Umbaru elemental max damage
+TRIUNE
+                              * TOME OF POSESSION: added lore, some fixes
+                              * Reworked other aspects of Triune
+DUNCRAIG
+                              * Map improvements
+FAUZTINVILLE
+                              * Reduced set drop chance to counter set amulet drops
+DIMENSIONAL LABYRINTH
+Previously regular monsters would gain 3% physical and magical resistance per floor, capping at 52% and 42% respectively on floor 15. This meant that physical and magic damage dealing builds were superior to elemental ones for all yellow and early red floors. Now regular monsters will start with 15% physical and 5% magical resist on floor 1, and gain 5% per floor. Capping at 45% physical and 35% magic on floor 7.
+                              * Monster density increased by 5% on all floors. Slightly improved regular monster drop rates
+                              * Experience gained from monsters increased by: 30%, 40% and 50% - in white, yellow and red floors respectively
+                              * Great Rune drop rates: increased by 50% in yellow floors, increased by 100% in red floors
+                              * Occult Effigy drop rates: increased by 17% on yellow floors, increased by 29% on red floors
+                              * RIFTSTONES:
+                              * Slightly reduced the drop rate of T3-T6 riftstones
+                              * Increased the drop rate of T8-T14 riftstones
+                              * T1-T5 riftstones no longer require an Arcane Crystal to be charged
+                              * QUEST ITEMS: slightly reduced drop chances on white and yellow floors, increased drop chance on red floors
+                              * GHARBAD THE WEAK: will now drop 2 set items on yellow floors and 3 set items on red floors, up from 1 on all floors
+                              * CORRUPTED HEROES:
+                              * Will now always drop at least rare items in yellow floors onwards, previously red floors only
+                              * Greatly increased unique and set item drop bias on all floors, red floors saw the biggest gain
+                              * Removed chance to teleport on damage taken on white floors
+                              * Amazon: now uses 8 projectile Homing Nova Shot instead of Sun Strike chain, in order to do single target damage
+                              * Assassin: chance to avoid damage reduced by 14%, chance to block reduced by 20%
+                              * Necromancer: will now use Rotting Flesh instead of Raven Spirit, increased attack and cast speed
+                              * OBSERVERS: increased the damage of their Evil Frost ability
+                              * COLOSSAL TUNNELER: increased the next delay and slightly reduced the damage of their Quake skill
+                              * ERINYS: Flame Fan damage now caps at floor 11 value
+                              * NAVIGATOR: now has a slowing aura instead of casting Chronofield
+                              * ABYSSAL SHRINE:
+                              * Now displays trophy boost chance (i.e. x2 on yellow floors, x3 on red)
+                              * Added 1 new outcome to spawn pool
+                              * T6 MODIFIER: now 50% absorb, down from 60%
+                              * T13 MODIFIER: now 150% physical damage added as elemental, down from 200%
+                              * PHOBOSS:
+                              * Frost Arena damage decreased by 20% and reduced activation chance when first aggroed
+                              * Added special boss portrait to warn players if he has spawned
+                              * Maximum cold resistance decrease is now 1 + 1/tier level above 10, down from 4 + 1/tier level above 10
+                              * Reduced chance to spawn on Floor 11 by 50%
+                              * Slightly increased effigy drop chance
+                              * UNSTABLE ANOMALY: reduced chance to spawn on Floor 11 by 50%
+                              * Implemented Mystic Dyes as Lab-only drops
+Endgame Dungeons
+
+
+CREATURE OF FLAME
+                              * Dimensional gates will now spawn minions every 8 seconds, down from 10
+QUOV TSIN
+                              * Reduced elemental damage by 33%
+YSHARI SANCTUM
+                              * Holybolt: increased velocity by 25%, adjusted range, missile now easier to see
+ATANNA KHAN
+                              * No longer pierces 200% magic resistance
+                              * Rebalanced damage of all spells
+                              * Now slows you down slightly
+                              * Fixed scaling on certain spells that caused 1HKOs
+                              * Teleport attack now stuns you
+                              * Increased melee magic damage
+                              * Reduced health
+SPIRIT OF GIYUA (NEW)
+                              * Replaces Zorun Tzin
+                              * Fully overhauled battle, with proper lore and better visuals
+                              * Same concept as before, but streamlined and intuitive
+                              * Better map clear/control incentive, due to mana stealers
+                              * All elements but poison are present in the battle, making offensive trade-off for long battle viable, also less trivial for block characters
+                              * Untargetable minions are now consolidated in a new minion
+                              * The turrets are now nests, which will spawn these minions periodically, heavily punishing player death while they’re alive (as they’ll continue to spawn)
+                              * The spawn of purify nests is now properly timed and boss will no longer swarm dozens at once, removing the RNG factor of the battle
+                              * Enhanced map and sounds
+ARCHBISHOP LAZARUS
+                              * GROUPIES: no longer give experience
+SAMAEL
+                              * Entry cost reduced from 100 Signets of Learning, Taha, Ghal and Qor Rune to 25 Signets of Learning and a Taha Rune
+                              * Charm now drops without any stats and must be cubed with 75 Signets of Learning, a Ghal and a Qor Rune to unlock stats
+                              * Reward items now drop without any stats and must be cubed with 75 Signets of Learning, an Auhe and a Shaad Rune to unlock stats
+                              * Samael block chance is now 0%, down from 50%
+
+
+
+
+________________
+
+
+CHARACTERS
+General
+
+
+MISC
+                              * All summons which were previously immune to fire, cold or lightning will now have regular resistances to these elements and 50% absorb instead
+                              * Fixed a bug with certain buffs being cast in town: Dragonheart, Sacred Armor, Symbiosis, Euphoria, Demiurge and Antimass can now be used in town
+                              * The following skills can now also be used in town: Bloodlust, Bloodlust oSkill, Vindicate and Hymn
+                              * ROGUE MERCENARY:
+                              * Enhanced Weapon Damage and Life Regeneration bonuses will now scale with dexterity and not strength
+                              * Now gains 1% Physical Resist per 4 levels
+                              * Now gains 1% chance to avoid melee attacks per 40 dexterity. Capped at 60%
+                              * Priestess will now use Homing Nova Shot instead of Tremor
+                              * Ranger will now use Dark Power instead of Wraith Arrow
+Amazon
+
+
+BLOODLUST: Enhanced Weapon Damage increased from 15% to 25%
+BLOOD
+                              * MAGIC MISSILES: now reaches 12 missiles from skill level, down from 15
+                              * BLOODSTORM: damage increased by 11%
+                              * LAVA PIT: damage increased by 15%
+BOW
+                              * DRAGONLORE:
+                              * Removed flat damage to attacks
+                              * Now adds elemental (fire, cold, lightning and poison) pierce: 10% + 2% per Base Level, and physical resist: 1% + 1% per Base Level
+                              * BARRAGE:
+                              * Improved projectile density, number of projectiles no longer scales with skill level
+                              * Weapon damage increased to 75%, up from 60%
+                              * Now converts 75% physical damage to: 25% fire, 25% cold and 25% lightning
+                              * Now has a 0.8 second cooldown which may be removed by maxing this skill until Base Level 6
+                              * New skill icon
+                              * SUN STRIKE: removed from the skill tree, still available as an oSkill
+                              * TRINITY ARROW:
+                              * New skill replacing Sun Strike
+                              * Overhead shot which explodes into tri-elemental arrows
+                              * Deals up to 1000% total weapon damage at impact center
+                              * PHALANX: weapon damage increased to 100%, up from 85%, to compensate for lack of direct damage synergy with new Dragonlore
+                              * WYRMSHOT: weapon damage increased to 60%, up from 50%, as above
+JAVELIN
+                              * FAIRY RING: now grants +20% bonus fire damage per Base Level
+                              * RICOCHET:
+                              * Weapon damage increased by 33%
+                              * Now converts 63% physical damage to magic, up from 50% (leech returns unchanged, better damage as monster magic resist is lower)
+NEUTRAL
+                              * FIRE ELEMENTALS: Fire Cannonade can now trigger when unsummoning as well
+SPEAR
+                              * GREAT HUNT: base number of projectiles is now 3, down from 4
+                              * POUNCE:
+                              * Weapon damage increased by 33%
+                              * Now converts 25% physical damage to magic (leech returns unchanged, better damage as monster magic resist is lower)
+REWARD
+                              * CURARE:
+                              * Duration is now fixed at 2 seconds (damage per second unchanged)
+                              * Damage increased by 27%
+                              * Now also increases your poison length resist by 150% and your maximum poison resist by +3%
+Assassin
+CLAW
+                              * BATSTRIKE: fixed a bug giving excessive amounts of Enhanced Weapon Damage to the Assassin
+                              * TWIN FANG STRIKE:
+                              * Poison damage increased by 20%
+                              * Fire damage increased by 10%
+THROWING
+                              * MAELSTROM MKV:
+                              * Bonus magic damage at level 1 reduced to 10% of dexterity, down from 30%
+                              * Each nova is now 13 projectiles, down from 16
+TRAPS
+A new skill type. Traps do not inherit any player stats, unless stated otherwise on the skill tooltip.
+Weapon damage & Spell damage scaling attributes do not affect trap damage. The one exception is the trap damage conversion from Subterfuge.
+Trap damage scales with character level, like spells. However, unlike spells, the scaling is not limited to level 120.
+                              * TIEFLING FORM: is now a level 30 required skill in the Psionic tree
+                              * LIMPET LASER:
+                              * Removed from skill tree, now available as an oSkill on Claws and Assassin shields
+                              * Additional laser now gained every 20 skill levels, instead of every 9 Base Levels
+                              * INCINERATION TRAP: new skill
+                              * Burns all nearby enemies when placed
+                              * Range and enemy fire resistance pierce increase with Base Level
+                              * Limit: 1, Duration: 20 seconds
+                              * SHOCKWAVE TRAP: new skill
+                              * Detonates into a nova of chaotic projectiles, dealing lightning and physical damage
+                              * Pierces enemy lightning resistance, increasing with Base Level
+                              * Limit: 1 + 1 per 5 base levels, self-destructs after detonation
+                              * CATALYST TRAP: new skill
+                              * Slows enemy movement speed within its radius by 50%
+                              * Increases the total damage of traps detonated within its radius by 100% + 10% per Base Level
+                              * Limit: 1, Duration: 60 seconds
+                              * SUBTERFUGE: new passive skill
+                              * Enables the use of the trap skills
+                              * Only allows the use of traps/melee/summoning/buff/debuff skills
+                              * Adds 33% of your fire, cold, lightning and physical/magic spell damage as bonus trap damage
+                              * Increases your maximum fire and cold resistances
+                              * You may only summon Edyrem
+                              * ARTIFICE MASTERY: new passive skill
+                              * Unlock requirement: character level 96 and having all three trap skills at Base Level 15 or above
+                              * Adds +50% to Vitality and +50% Block Speed
+                              * Regenerates 25% of your maximum life over 5 seconds when hit by monster weapon damage
+                              * Enables Claw Block: up to 50% chance to block when wielding two claws
+REWARD
+                              * WAY OF THE GRYPHON:
+                              * Reduced variance between minimum and maximum roll to make it more reliable
+                              * Lightning damage to weapon increased by 100%
+                              * Lightning Spell Damage replaced with 5% Lightning Absorb
+                              * BEACON:
+                              * The explosion effect is now considered a trap detonation for stat scaling purposes
+                              * Cleaned up the graphic effects to reduce visual obstruction
+                              * Greatly reduced the number of hits per detonation and rebalanced the base damage accordingly
+                              * Area of effect increased by 96%
+                              * New synergy: Catalyst Trap. Standing near the Catalyst before detonation will impart the Catalyst damage bonus to the explosion at 200% efficiency
+                              * Damage output for non-trapper builds will be significantly lower
+                              * Lowered sound from nuke warning
+                              * VAMPIRIC ICON: cooldown no longer collides with Hades Gate
+Barbarian
+STANCE
+                              * EAGLE STANCE: increased life regeneration by 19%
+REWARD
+                              * GLADIATOR'S DOMINANCE: greatly increased the bonus magic damage to Overkill and Rebound
+Druid
+
+
+MARK OF THE WILD: duration increased to 2 minutes, Enhanced Weapon Damage bonus increased from 20% to 30%
+CORRUPTION
+                              * ACID FIENDS:
+                              * Spell damage value on the tooltip is now correct
+                              * Fixed a bug which made their Plague Avatar synergy malfunction
+                              * Will now inherit your poison spell damage, poison pierce, energy, energy factor and strength factor
+                              * PLAGUE AVATAR: reduced visual congestion
+HUNTER
+                              * LAUGHING GHOST:
+                              * Increased ghost travel distance by 45%
+                              * Removed explosion next delay. Will now deal significant single target damage at its center
+                              * Added 20% magic damage synergy per Base Level
+                              * Increased mana cost slightly
+                              * Goal is to provide the bow tree with a good ranged single target ability before/without SU items
+                              * Since projectile travel distance is always fixed, player aim and positioning will play a big role in damage output
+SEER
+                              * ELEMENTAL:
+                              * Will now correctly deal damage to enemies after piercing
+                              * Explosion area of effect has been removed
+                              * Fire trail damage greatly increased
+                              * Now grants an extra projectile every 8 base levels, down from 14
+                              * HUNTING BANSHEE:
+                              * Main projectile travel distance increased by 30%
+                              * Improved targeting when enemy is hugging a wall
+                              * Now grants an extra projectile every 13 base levels, down from 14
+                              * RAIN OF FIRE: damage increased by 10%
+WEREWOLF
+                              * WEREWOLF FORM: bonus to attack rating is now percentage based and only affects Druid skills
+                              * HARBINGER: cooldown unless maxed until Base Level 8
+                              * FEED THE PACK: now adds 30% increased attack speed, increased heal after kill
+                              * TWISTED CLAW: weapon damage increased by 29%, now delivers more damage in less hits, projectiles keep doing damage for their entire duration
+REWARD
+                              * FAERIE FIRE: tooltip now shows chance to avoid even if you have not put any points in the skill
+                              * FORCE OF NATURE:
+                              * Clarified spell effect tooltip to prevent confusion
+                              * Elemental damage to weapon increased by 50%
+Necromancer
+
+
+BEND THE SHADOWS: mana cost no longer scales with skill level
+MELEE
+                              * PARASITE: weapon damage increased by 29%
+SUMMON
+                              * NIGHT HAWKS: damage reduced by 12%
+TOTEM
+                              * FROSTCLAW TOTEM: slightly increased damage
+                              * FIREHEART TOTEM: increased damage
+                              * STORMEYE TOTEM: increased damage
+REWARD
+                              * VEIL KING: movement speed increased by 20%
+Paladin
+RITUALIST
+                              * TERROR STRIKE: removed, still available as an oSkill
+                              * GRIM PRESENCE: new skill replacing Terror Strike
+                              * Buff which lasts 10 minutes, and enables the use of unholy melee skills
+                              * While active reduces the attack speed, cast speed, weapon damage and attack rating of nearby enemies
+                              * While active empowers the Divine Apparition, Vessel of Justice and Symphony of Destruction skills
+                              * LEMURES:
+                              * Now gain damage from Vitality instead of Energy, and Energy Factor scales off your vitality instead of energy
+                              * Damage increased by 11%
+                              * Tuned Wraith projectile sounds to avoid excessive audio duration
+                              * BLACK SLEEP: removed
+                              * POSSESSION: new Passive skill
+                              * Adds a 20% + Base Level chance to dodge projectiles, up to 35%
+                              * Adds 50 + 10% Hit Recovery per Base Level
+                              * Only allows the use of melee, summoning and buff/debuff skills
+                              * Gives Ignore Target's Defense
+                              * BLOOD THORNS:
+                              * Now gain damage from Vitality instead of Energy and Energy Factor scales off your vitality instead of energy
+                              * Now only repeats three times per attack rather than four. Damage increased by 60%, damage variance reduced
+                              * Area of Effect increased by 44%
+                              * HYMN:
+                              * Renamed to Sanguine Covenant
+                              * Life on Attack at level 1 is now 30, up from 15
+                              * Duration is now fixed at 60 seconds, up from 30
+                              * Enemy fire and cold resists are now reduced by 1% of your maximum life (up to -200%)
+                              * Now requires Grim Presence
+Sorceress
+
+
+Rebalanced the single target spells of the elemental trees. Damage per cast has been tuned in accordance with skill mechanics and how hard is it to extract the full damage potential of the skill in practice
+                              * ABYSS: needs aiming, damage over time, target movement reduces damage greatly.
+                              * Will have the best damage potential per cast. Damage reduced by 21%
+                              * FLAMESTRIKE: no aiming, damage over time, target movement reduces damage greatly
+                              * Second best damage potential. Damage increased by 63%, area of effect reduced by 55%
+                              * Added number of hits information to the tooltip
+                              * ARACHNOMANCY: no aiming, damage over time, target movement reduces damage slightly, diminishing returns on cast speed
+                              * Third best damage potential. Damage increased by 418%. Area of effect reduced by 99%
+                              * THUNDERSTONE: no aiming, instant damage, target movement reduces damage
+                              * Fourth best damage potential. Damage increased by 68%, area of effect reduced by 75%
+                              * Mana cost doubled, in order to be in line with the other single target spells
+                              * Added number of hits information to the tooltip
+ARCANE
+                              * ARCANE TORRENT: magic damage increased by 27%
+                              * MANA SWEEP: cooldown doubled, cooldown decrease per Base Level doubled
+FIRE
+                              * PYROBLAST: main projectile speed increased by 20%, flame duration increased by 33% (33% more damage per cast against stationary targets)
+LIGHTNING
+                              * TEMPEST: damage increased by 25%
+Item Only Skills
+
+
+                              * LIGHTNING ARENA: reverted arena density nerf
+                              * SUMMON SINNER, SUMMON AVALANCHE, SUMMON GLOWING FUNGUS:
+                              * Life increased by 200%
+                              * Minion spell level increases by 1 for every 2 oSkill levels
+                              * Minions now gain 50% of your minion damage as fire/cold/lightning spell damage
+                              * Skill tooltips will now list minion spell level and damage, rather than unnecessary melee attack damage and attack rating
+                              * GAMMA FIELD: increased damage
+                              * CATACLYSM: increased mana cost
+                              * WYRD: weapon damage increased to 35%, greatly increased mana cost
+                              * AMATOXIN: slightly increased damage
+                              * ORB OF ANNIHILATION: now deals insane damage as intended
+                              * VENOMCLOUD TOTEM: increased damage
+                              * WINTER AVATAR: damage increased by 20%
+                              * RAVEN HEART: tooltip duration is now accurate
+                              * WAR CRY:
+                              * No longer leeches life, may now be used on the left mouse button
+                              * Added 100% of physical damage as extra magic damage
+                              * Critical strike chance per Wolf Companion Base Level increased by 100%
+                              * Critical damage per Blood Hatred Base Level increased by 25%
+                              * Damage bonus per Mountain King Base Level increased by 25%
+                              * KRAKEN STANCE:
+                              * Fixed a bug where Chober Chaber was only increasing the fire damage component of the stance and not the cold and lightning
+                              * Damage bonus per Base Level in the Stance tree and Honor tree (with Chober Chaber) increased by 50%
+                              * SPIRAL DANCE: bonus magic damage increased by 33%
+
+
+
+
+________________
+
+
+ITEMS
+General
+
+
+                              * Changes to Enhanced Weapon Damage gained from stats on base items
+                              * Weapons which had 30% conversion will now have 26% from Strength and 25% from dexterity
+                              * Weapons which had 25% conversion will now have 22% from Strength and 21% from dexterity
+                              * Weapons which had 20% conversion will now have 18% from Strength and 17% from dexterity
+                              * Smaller difference between general & class specific items, as class specific items usually have better stats already
+                              * Dexterity conversion is lower due to stat also providing block & attack rating
+                              * Reduced sources of "Damage to Protector Spirit Bloodlust" in line with other bloodlust enhancers, as they were missed during 1.1
+                              * Items previously ilvl 117 are now ilvl 119
+                              * Veil King oSkill on Assassin shields now spawns with improved stats
+TROPHIES
+                              * Added a description to each Trophy, listing the granted stats
+                              * The Uldyssian Trophy now adds more elemental damage instead of Deadly Strike
+                              * Blessed/trophied items will now say so in their description
+ITEM AFFIXES
+                              * New ring rare/magic affix: flat physical damage
+                              * Quiver lottery upgrade: magic find reduced from 100% to 50%
+                              * Halved elemental resistance affixes in the rare affix pool
+                              * Reduced absorb stats on easily obtainable items
+RUNES
+                              * ENCHANTED RUNES
+                              * Total of 33 new runes
+                              * They can be obtained by cubing a low rune and Xis Rune
+                              * Empowered runewords will now only require 1 enchanted rune instead of rune + Xis combo
+                              * Due to compatibility issues, older enchanted runewords will disappear from characters
+                              * Enchanted Runewords will now have a golden shade
+                              * GEMATRIA:
+                              * The effect is now clarified in the item description
+                              * Elemental runes now provide 100% bonus, up from 70%
+                              * Kabraxis' Stone renamed to Xis Rune
+MYSTIC ORBS
+                              * NAGAPEARL: magic and gold find now 10%, down from 20%
+                              * PERFECT SPHERE: disabled. Was too powerful with the increased importance of maximum resists
+OCCULT EFFIGIES
+                              * Added one new effigy
+                              * EMPYREAN TOUCH can no longer be used on Bows/Crossbows. Added warning for Indestructible items
+                              * PATH OF BRUTALITY: now makes item class specific to your current class. For example, cubing with an Amazon will make the item Amazon specific
+Sacred Uniques
+
+
+                              * FAERIE PYRE: reduced total magic damage scaling to 4% per Base Level in the Hunter tree, to prevent excessive scaling with the new Laughing Ghost
+                              * ZULAR KHAN'S TEMPEST:
+                              * No longer gives 1000% damage to Lightning Arena
+                              * Instead grants a new oSkill: Thunder Arena, which has double the uptime of Lightning arena and x14 the damage
+                              * You cannot use both Thunder and Lightning arenas together
+                              * Replaced oSkills with flat elemental damage, increased ways skill bonuses
+                              * STORM BLADE: proc chance increased, magic find increased, is now always ethereal
+                              * GOTTERDAMMERUNG: now adds 400 maximum damage, down from 500
+                              * HELLREACH: now adds 200% of your fire and physical spell damage as Enhanced Weapon Damage, up from 100%
+                              * MALLEUS MALEFICARUM: Bane proc level increased from 16 to 25, i.e. -22% to enemy physical resist, up from -17% (NB: mega impact is -15%)
+                              * GRIFFON'S EYE: now adds 20% of total lightning resistance to lightning spell damage, up from 16%
+                              * THE DEFILER: bonus to parasite targets now 6, down from 12
+                              * IDOL OF RYGNAR: life leech is now 25%, down from (25-30)%. Enhanced Weapon Damage roll is now 101-200
+                              * THE PETULANT:
+                              * Removed 25-50 flat physical damage
+                              * Instead adds +3 maximum damage per Tantrum level, while tantrum is active
+                              * SOUL REAVER: bonus to all attributes now 65-75%, up from 40-50%
+                              * ATHULUA'S WRATH:
+                              * Removed Dragonlore skill levels
+                              * Now also adds poison pierce
+                              * Added 3% chance to cast level 63 Sun Strike on Striking (4 piercing projectiles)
+                              * Ecstatic Frenzy effect can no longer be snapshot
+                              * SIGNAL FIRE: now gives +50 to Sun Strike
+                              * THE BURIED HAWK: Paragon no longer spawns as a possible oSkill due to snapshotting
+                              * MAD KING'S SPINE: will now update Superbeast's tooltip if you use the item while in this morph, so you know what stats you are gaining and losing
+                              * CORNERSTONE OF THE WORLD: replaced Prismatic Cloak & Call Necrobot with two new oSkills
+                              * THE WORSHIPPER: increased mana/hp, cooldown reduction & skill levels. Now has an item level of 130
+                              * GRAVETALON, ALNAIR, DUX INFERNUM: procs no longer trigger a short cooldown
+                              * DECKARD CAIN'S HEIRLOOM: now gives 3% spell damage per 1% additional experience gain, up from 1.5%
+                              * TWIN TERRORS: now give 300% bonus magic damage to Noctule, up from 200%
+                              * BLACK VOID: fixed color
+                              * HEARTSEEKER: oSkill level reduced to (5-10), down from (15-20)
+                              * HERALD OF PESTILENCE: now spawns with +(10-15) to Devouring Cloud
+                              * IN FERO SALVA:
+                              * Fire/cold resistance pierce removed for better synergy with the new Ritualist tree
+                              * Bonuses to Blood Thorns and Lemures increased from (9-11) to (12-15)
+                              * Reduced the variance of the spell damage rolls
+                              * LEAH'S VISION: now grants 1% physical/magic spell damage and 1% bonus to total character defense per 10 attributes, down from 15
+                              * MENTE SCURA: now gives +200% bonus magic damage to parasite, up from +125%
+                              * GUARDIAN OF SCOSGLEN: flat elemental damage to weapon per Strength Factor increased by 50%
+                              * SHADOWSABRE: Crucify bonus levels increased to +(15-25), up from +(1-15)
+                              * DESOLATION: re-added missing item description: "Adds 9000 - 9000 Magic damage", now spawns with 1% CtC Lifeblood on Striking
+                              * DESPONDENCE: re-added missing item description: "Nearby enemies lose 10% Magic and Elemental resistances"
+Sets
+
+
+                              * ARCHBISHOP LAZARUS: now uses rarer bases
+                              * VIZJUN'S DEVICES: tweaked stats to work better with the new trapper tree
+                              * GELEB'S GREED: physical resist is now 5%
+Runewords
+
+
+                              * UNICORN: extra Magic Missiles projectiles now 3, down from 5
+                              * ORIS HERALD: Magic Missiles level is now 23 - 37, down from 23 - 46
+                              * REBEL: stat rolls now 151-200 on the enhanced version
+                              * LOXIAN: chance to avoid replaced with physical resist
+

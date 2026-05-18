@@ -1,0 +1,4 @@
+2.2.7
+Fixed relics being sellable
+Fixed a crash that could happen on pre-2.2 NL and SP characters upon trying to enter a game
+

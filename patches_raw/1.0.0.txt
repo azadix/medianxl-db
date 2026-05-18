@@ -1,0 +1,1108 @@
+- First Release - Patch Σ 1.0.0 -
+                              * Engine
+                              * The Sigma Core
+                              * Quality of Life
+                              * Diablo 2 Bugfixes
+                              * Balance
+                              * Game
+                              * Monsters
+                              * Areas
+                              * Challenges
+                              * Endgame Quests
+                              * General
+                              * Nephalem Rifts
+                              * Dungeons
+                              * Characters
+                              * General
+                              * Amazon
+                              * Assassin
+                              * Barbarian
+                              * Druid
+                              * Necromancer
+                              * Paladin
+                              * Sorceress
+                              * Item Only Skills
+                              * Items
+                              * General
+                              * Tiered Uniques
+                              * Sacred Uniques
+                              * Sets
+                              * Runewords
+                              * Cube Recipes
+                              * Shrinecrafting
+                              * Rare Affix Pool
+                              * Mystic Orbs
+
+
+
+
+________________
+
+
+ENGINE
+THE SIGMA CORE
+
+
+ Resolution and field of view has been increased to 1024x768, up from the classic 800x600
+ Use the glide settings if you wish to further stretch window size, without losing visual quality
+ The user interface has been updated to bring it up to modern game standards
+ All skill cooldowns are now dynamically calculated, meaning that lag will not make the cooldown appear extended
+ Skills of a different group no longer share cooldowns
+ Stats such as physical resistance and magic resistance now appear on the character sheet
+ A new configuration menu has been implemented, with 4 separate tabs:
+ Hotkey Settings
+ Notification Settings: Includes things such as notifications for new skill/stat points, gear durability decay, etc..
+ Interface Settings: Includes options for always showing mana/HP, displaying game name/password in upper right corner, etc..
+ Video & Sound Settings
+ Objects such as the Cairn Stones, Shrines, Horadric Staff altar, Tal Rasha tomb and Act 5 waypoints now appear when Map Reveal is used
+ Support for Windows XP, Windows Vista, D2SE and PlugY has been dropped due to incompatibility
+ We are aiming to implement stash pages in the future
+Quality of Life
+GENERAL
+ Town Portal is now an innate skill with a 10 second cooldown. This means you won't have to worry about having to buy town portal scrolls ever again
+ All items which drops from monsters are now automatically identified once picked up
+ Waypoints and gold are automatically collected when you walk over them
+ As a result of the larger resolution:
+ Inventory and stash space has been increased
+ There are now more items on the Gambling screen. Including rings/amulets
+ Gear is automatically re-equipped in town after death. Potions no longer vacate your belt every time you die
+ You no longer lose experience or gold on death
+ Respawning after death now has a 5 second cooldown. This change was made to counteract the removal of gold and experience loss upon death
+ This also discourages players from suicide rushing endgame content
+ Area level now optionally displays in the upper right corner of the screen
+ Added options to display/hide game name and/or game password in the configuration menu
+ A portal to the Cow Level can now be created in any Act Town
+ Difficulties reverted to their vanilla nomenclature (Normal, Nightmare, and Hell difficulties)
+HOTKEYS
+ Map Reveal is now accessible via the user interface or by pressing 'R' while in-game by default
+ A hotkey has been added for nopickup, by default it is 'X'
+ A hotkey has been added for the transmute button in the Horadric Cube, it is 'C' by default
+ You can now use Ctrl+Click to move/drop items from inventory to the stash, cube or ground
+Diablo 2 Bugfixes
+
+
+ Fixed a bug that caused the game to crash if a cinematic was played while running the game with -nosound
+ Fixed a bug that made the game crash if certain FCR/IAS/FRW values were used
+ Fixed a bug that made the game crash if charms had no affixes available
+ Fixed many percentage calculations that led to overflows, which caused side effects like the damage cap
+ Fixed a "bug/feature" that prevented druids to die while morphed
+ Fixed a bug that caused characters to resurrect in a "ghost state" if they received life after dying
+ Fixed a bug with level palettes when switching acts
+ Fixed a "bug" that prevented whirlwind from triggering chance to cast skills
+ Fixed a "bug" that made the game pick unintended monster for bosses in Hell difficulty
+ Fixed a bug that broke hotkeys while using chat in the Horadric Cube
+ Fixed a bug that caused sprites to disappear after a certain number of sprites were displayed simultaneously
+ Fixed various glitches with stat requirements (so called str/dex glitch)
+ Fixed a bug that caused life, mana and stamina to rollover on the client when it went past 32,767
+ Fixed a bug that caused redundant CPU usage in a loop
+ Fixed a "bug" that made the game draw null missiles, wasting performance
+ Fixed a bug that caused ethereal item bonuses to be applied more than once if item was rerolled (i.e. in a cube recipe)
+ Fixed a bug that made the game freeze when trying to enter a portal at the same time you died
+ Error #1336 will no longer crash the game
+ Fixed a bug that caused portals to not display level names properly
+ Fixed a bug that caused items granting an aura to not re-apply after death
+ Fixed a bug that enabled carrying more than one charm under certain circumstances
+
+
+________________
+
+
+BALANCE
+EXPERIENCE PROGRESSION
+
+
+ Max Character level increased to 150
+ Modified Area Level (aLVL) ranges on Nightmare difficulty from 51-115 to 51-100
+ Modified aLVL ranges on Hell difficulty from 120 to 105-120
+ ENDGAME ZONES
+ Modified aLVL ranges from 120 to 105-150
+ Rifts and Dungeons have level requirements starting at 105 and each difficulty block unlocks after 5 levels
+ EXPERIENCE FORMULA REVAMP
+ Level 100 should be reachable by the start of Hell, without rerunning areas
+ 101 to 120 will now take more time to achieve
+ There are no longer huge experience gaps on levels 121-125
+ Multiple improvements on Normal and especially Nightmare experience scaling
+ Removal of experience penalty on death will make boss hunting less punishing during leveling
+ Signets of Learning limit reduced to 400 to compensate for new stat points
+ Sacred Uniques now have varying level requirements and ilvls, which means some uniques will only drop in the hardest stages
+ Experience signets removed
+ OUR PHILOSOPHY: read more...
+CHANGES TO RESISTANCES
+
+
+ Most of the monsters in Median have had their immunity removed
+ All bosses on Hell difficulty now receive 20% more damage from Magic sources compared to Median 2017
+ This was done to compensate for the fact that Magic damage has no special properties. Unlike Physical (leech) and Elemental (resist pierce on gear)
+ All regular enemy immunities replaced with absorb:
+ Damage from the absorbed source is reduced by: 25%, 50%, 75% on Normal, Nightmare, Hell difficulties respectively
+ Previously, endgame bosses reduced the duration of poison applied to them by 90%+. This has been reduced to a flat 50%
+ Duration reduction is maintained in order to counteract the "double dip" effect of resistance pierce, only present for poison damage
+ Regular monster resistances:
+ 0% all on Normal
+ 0% Magic and Physical, 15% Elemental on Nightmare
+ 0% Magic, 10% Physical, 35% Elemental on Hell
+ Note: poison is considered an element in Diablo 2
+ The global absorb distribution has been improved. For example: there used to be significantly more fire immune enemies compared to other elements
+ The level distribution of absorbs has also been improved. For example: there used to be zones which had 90% of their monsters immune to one element
+ Monsters that previously had physical immunity will now have 60% resistance to physical damage
+MOVEMENT SPEED
+
+
+ Run/walk toggle has been disabled, so you can no longer accidentally be running
+ "Sprint" replaces run:
+ Lasts about 5 seconds and is significantly faster than old running
+ In the future, effects may be added by skills/passives when sprinting
+ Removed stamina gain per level of vitality, removed stamina stats on most items
+ Stamina now vs vanilla Diablo 2:
+ You no longer need to stand still to initiate stamina regen from an empty orb
+ Stamina regeneration rate has been improved significantly
+ Morphs now have the same walking speed as the character, instead of being slower, and can now run
+ Character base movement speed slightly increased
+ Movement speed (Faster Run/Walk) from most items removed
+ Instead, boots can now spawn with innate 15-40% movement speed regardless of rarity. Middle values are weighted to be most common
+ Skill speeds have been removed, all player skills will now modify item equivalents (adjusted accordingly)
+ Skill speeds often confused players and caused inordinate character speeds endgame, both of which were undesirable
+ Monster slow effects reduced by 40%
+ Velocity slow on armors and shields reduced by 40%
+CHANGES TO THE GOLD ECONOMY
+We want gold to be a balanced resource in Sigma, and going forward. Previously obtaining gold was trivial and involved boring activities such as selling garbage items to vendors. Because of this we could never add truly useful endgame purchases for this resource. The changes to gold in Sigma aim to address this.
+
+
+ Merchants have had enough, and will no longer pay top coin for your rubbish
+ Gold drops from monsters have been increased greatly. The only way to make more gold now is to kill more monsters
+ Greater Gold signets now give 60% less gold
+ Greater and Superior potions prices increased
+ Oil prices have increased
+ Larzuk has colluded with the Merchant Cartel and Mystic Orb prices are now the same in every town
+ Rings and Amulets may now be gambled from merchants once again (at endgame appropriate prices)
+ We will add other useful purchases in future patches
+ITEM DESCRIPTIONS
+Multiple descriptions have been changed in order to improve clarity and fix redundancies and errors
+
+
+ Most affix descriptions have been simplified. Many of these are self-explanatory and require no log. Some examples:
+ "Better Chance of getting magic items" is now "Magic Find"
+ "Life replenish" no longer uses a complicated formula and is now "Life Regenerated per Second", so you know exactly what you are getting
+ Speed affixes are no longer either double positive or double negative
+ "All resistances" are now "Elemental resistances" in order to prevent confusion with the addition of physical and magic resistances to the character sheet
+ "when your Enemy is Slain" has been renamed to "on Death Blow"
+
+
+________________
+
+
+GAME
+Monsters
+GENERAL
+ Each boss/superunique now has its own portrait and life bar that appears on the screen without having to hover over them
+ Monsters in mid Nightmare onwards now drop half as many potions
+ All bosses are no longer affected by Crushing Blow
+ Monsters which have on death skills now cast them less often but with more damage
+ Act 1 monsters in Normal difficulty now have increased health
+ Act bosses no longer drop guaranteed uniques on Nightmare and Hell
+ BRONZE, SILVER, GOLD TITAN: Removed immunity auras
+ PEST: Reduced pack size in the Sewers
+ Removed Vultures from the Arcane Sanctuary monster pool
+ELITE
+ Elite monsters can now drop world drops (like Belladonna Extracts)
+ STONE HAMMER DEMON: Now use earthquake instead of Shower of Rocks
+ DJINN: Reduced the damage of Immolation Bomb
+ DETONATOR: Proc chance increased to 100%, but now deals significantly less damage
+ DARK CHAMPION: Now uses Sun Strike instead of Ambush
+ STEEL CRUSHER: Charge now deals cold damage. Their Rust Storm now slows significantly less on Normal and Nightmare difficulties
+ SHOCK MONKEY: Multihit of Lightning Wall reduced
+ BROKEN SOUL: Glacial Spike damage reduced by 25%, chill now lasts 1 second, up from 0.2
+ HELLCAT: Removed spell-disabling aura
+ PORKCHOP: Replaced with elite Blood Rogues in the Forgotten Tower. Completely removed
+ SKULL CLAN: Shamans now summon 25% less goats per corpse, summoned goats give 80% less experience
+ MUTILATOR: Damage reduced by 50%
+ MANGLER: Reduced damage, added ND to storm crows skill
+ CRUCIATOR: Reduced damage and seek range. No longer attack through walls
+ KNIGHT OF DEATH: Now uses a Time Strike instead of their stat reduction curse
+ WANDERING SARANDESH: Removed from Act 4 Plains of Despair
+ ONYX KNIGHT: Reduced Shock Flower level
+ TREE OF LIFE: Reduced HP on Normal
+ ICE CLAN: Removed 25% chance to cast Widowmaker on Death
+ VOID ARCHON: Warp Field Aura reduces potion effectiveness by 50%
+ QUE-HEGAN: Reduced pack size and sound processing related lag
+VETERAN
+
+
+ Veteran monsters no longer permanently stun you with their melee attacks
+ LANDMASS: Now cast Doom instead of Shower of Rocks and deal slightly reduced damage
+ GLOWING BLOB: Deal 20% increased damage
+ACT BOSSES
+ Act bosses no longer have 75% chance to avoid on Hell difficulty
+ DURIEL: Increased HP, decreased AR. Decreased damage
+ BAAL: Increased defense and reduced HP on Normal. Reduced HP in Nightmare. Fixed a bug with his Stormcall doing pure physical damage
+SUPERUNIQUES
+ Resist mods are now capped.
+ PRINCE ALBRECHT: Reduced group size on Normal difficulty
+ GRISWOLD: Reduced damage on Nightmare
+ The Gift box has been removed
+ New unique item replaces Gift Box. Spawns improved version on all difficulties
+ This unique must be found and cannot be upgraded, it also cannot be disenchanted
+ Avoid replaced with increased life
+ RADAMENT: Damage reduced
+ ZOLTUN KULLE: Slightly reduced HP on Nightmare. Reduced damage. Now spawns portal to Tal Rasha on death as opposed to using Dark Portal
+ FLOWER PROWLER: Removed
+ KENTRIL DUMON: Damage reduced
+ MAGHDA: Damage reduced on Hive. Slightly reduced HP on Nightmare
+ BUYARD CHOLIK: Replaced with Iceclaw the Merciless who spawns Shadow Selves
+ GHOM: Reduced HP on all difficulties and increased damage on Normal
+ INFERNAL CONTRAPTION: reduced spawn rate on Normal, increased HP on Nightmare and Hell difficulties
+ KETHRYRES: New superunique in the Halls of the Dead level 3. Opens portal to Tran Athulua
+ GHEED'S MENTOR: New superunique in the Stony Tomb Level 2. Opens portal to the Island of the Sunless Sea
+ NARTHAL: New superunique on the Arreat Summit. Now opens a portal to the old Arreat Summit instead of one of the Ancients
+ IZUAL: Removed avoid and increased life to compensate. Now opens a portal to the Diamond Gates (High Heavens) on death
+ SHENK THE OVERSEER: Now has the overseer sprite, reworked, including higher HP
+ NIHLATHAK: His empowered minions (old Rathma's Chosen) no longer one shot
+ TALIC: Stormblast proc removed due to severe desync now that whirlwind is able to trigger procs. Now has 30% physical resistance on all difficulties.
+ All ancients now have regular monster resists as opposed to 0
+Areas
+GENERAL
+ Environmental sound fixed in many zones (Tristram soundtrack is now back)
+ Restored multiple zones that used to host endgame quests previously
+ Reduced the damage of the "Uber slayer" chest trap
+ACT 1
+ ROGUE ENCAMPMENT: moved warriv, fixed Akara tent
+ TRISTRAM: Wirt has escaped
+ BLOODTHRONE: lowered density
+ACT 3
+ Reduced map reveal time due to numerous map optimizations
+ KURAST DOCKS: Has been reverted to its LoD variant, but improved
+ CALDEUM: Now accessed via killing Vizier who guards the entrance to Lower Kurast from the Flayer Jungle
+Challenges
+GENERAL
+ Removed information scrolls
+ Level Challenge 2: removed
+ Black Road Challenge: replaced with new Dungeon quest
+LEVEL CHALLENGE
+ Tran Athulua now has a level requirement of 45 to enter on Normal
+ Now accessed by killing the Infernal Contraption in Act 5 (the final wave of Baal's minions)
+ Changed the rules of the challenge and modified the map
+ Each Priestess drops a shard of their respective element, these 3 must be cubed together at or below level 59 to avoid an Arcane Crystal penalty
+ This penalty is 2 arcane crystals per 10 levels above level 59. So you can still do the challenge if you forget about it, but at a price
+ENNEAD CHALLENGE
+ Is now accessed after killing Mephisto on Nightmare difficulty
+ See Kurast 3000 BA for further changes
+
+
+________________
+
+
+ENDGAME QUESTS
+
+
+General
+RIFTS AND DUNGEONS
+
+
+ Endgame quests are now divided into Rifts and Dungeons, the latter are primarily Boss focused and the former are zones for gathering items and experience
+ All endgame zones now have different level requirements for entry
+ This was done to prevent newer players from straying into them, and also to improve the endgame progression
+ The level requirement will be displayed on the area entrance or portal. Can also display it on the automap text (setting in configuration)
+ Rifts/Dungeons which are not required for challenges may only be accessed on Hell difficulty
+ All keys which were previously required to open Dungeon entrances are now consumable scrolls
+ Dark Portal skill removed after revamping the entrance to all zones
+ Unfortunately, there was not enough time to implement additional waypoints but they will be coming in a future update
+BOSS EVENTS
+
+
+ Some quests will now have their entrance locked after a period of time
+ When the timer is over, you may not return to the zone if you decide to exit or die
+ This feature, in cooperation with the removal of many one-hit-kill skills, also aims to make Hardcore mode more balanced
+
+
+Nephalem Rifts
+
+
+VERY EASY
+ISLAND OF THE SUNLESS SEA
+ Reclassified to Very Easy, monster stats have been reduced accordingly
+ Added 6 new superunique Sunless Angels which drop an angel bag each. You must collect six of them to make the charm
+ Removed Lucion and Malic
+ 1/10 chance for the Sunless Crystal Bird to drop from the angels
+ Increased density
+ Greatly increased illumination
+ Sunless revelers and mutants were removed
+ Feyr bolt now reduces potion effectiveness by 50%. Increased their HP and gave them a speed reduction
+ Now accessed after killing Gheed's Mentor superunique in the Treasure Vault
+ Multiple tweaks to make the level look more abandoned
+ Map no longer has black edges and has been improved and increased
+ Restored previous quest location (Drifter Cavern)
+EASY
+THE SECRET COW LEVEL
+ Cows are now in smaller groups and difficulty has been readjusted
+ A Baal kill is no longer required to access this level. Updated recipe in the Cube Recipes section
+ The Cow King now spawns here
+ You can also find wirt's other leg
+ Drops from Cow Summoners, Shamans and Honchos increased
+ Cow Honcho damage reduced
+TORAJAN JUNGLES
+ Now accessed via portal in Kurast Docks
+ Fixed occasional crashes upon zone entry
+ Level spawn point is now where Akarat used to be
+ Attack rating of Forest Keepers and Crippling Swarms reduced
+ Forest Keeper HP buff reduced, added a small amount of Crushing Blow to their attacks, reduced experience
+ Slightly reduced damage from most monsters
+ Removed signets of skill
+ AKARAT'S FOLLOWERS
+ Spawn as regular monsters in the jungles
+ Hammer proc removed, greatly increased HP, drop items like regular monsters
+ Slightly decreased damage and attack rating, increased defense
+ Weakening Nova no longer slows monsters down. Instead it also reduces magic resistance
+ AKARAT
+ Moved next to Kurast 3000 BA portal
+ Now has 90% base resistance
+ Removed avoid and increased HP
+ Physical damage halved, added cold damage to attacks. At 70% cold resistance you take the same damage as before
+ LORD ALDRIC JITAN
+ Slightly buffed health and damage
+ No longer casts Singularity along with his Rakkis Guardsmen. This has been replaced with Guard Tower
+MODERATE
+KURAST 3000 BA
+There were multiple issues with this quest. It was unintuitive for an early quest, immortal skeletons would block players from attacking totems and make it very difficult for certain builds to deal with. Additionally, the stage felt like a very cluttered, visually unappealing, and glitchy map with a "cramped" feeling. The high concentration of skeletons with aura effect was also causing performance issues.
+
+
+ Map re-created from scratch. It is now considerably larger than the previous version
+ FPS loss greatly reduced
+ Skeletons: Increased HP by 20%
+ SHADOWGATE TOTEMS
+ Now resurrects skeletons instead of summoning new ones
+ HP increased by 8x, removed Avoid, and they now have an attack
+ Shadowgate aura: Changed visuals to reduce lag, now increases skeleton life by 100% instead of making them invulnerable
+ Hammer of the Taan Judges drop rate increased to 1/3
+HIGH HEAVENS
+ 7 NEW ZONES
+ Diamond Gates
+ Silver City (Town)
+ Library of Fate
+ The Silver Spire Level 1
+ The Silver Spire Level 2
+ Pools of Wisdom
+ Halls of Valor
+ Crystal Arch
+ Weakening nova no longer slows monsters down. Instead it also reduces magic resist
+ Ethereals: reduced chance to use weaken nova to 33%, increased HP and defense. No longer stun
+ Lightwells: delay between punishers increased by 25%
+ Wings of the Departed drop rate reduced by 90%
+ KHALIMGRAD:
+ Now named Library of Fate, multiple map fixes and improvements
+ Zakarum Avatar: hitbox size increased
+TRAN ATHULUA
+ Slight density reduction
+ The priestesses now have an aura to distinguish them more easily from the other Amazon Warriors
+ Slightly reduced damage of Priestesses, increased HP in Normal difficulty
+ Removed barrel spawns
+ Arrowside proc modified: Lowered duration, now has a small delay before actual arrows spawn
+ Sunstone of the Gods: Now obtained by cubing 3 guaranteed reagents from the Priestesses
+ Map improvements
+HARD
+TEGANZE
+ TERUL: Charm now always drops
+ Trader Chest removed and replaced with new item: Umbaru Treasure
+ Umbaru Treasure can be cubed with essences up to 25, each consumed essence can give between -3 to 5 stats. The final gamble gives +4 to all attributes
+ Random elemental hit (like vanilla Diablo 2 Spectral Hit)
+ Slightly increased life
+TRIUNE
+ No longer need to re-equip book when you die
+ Charm (Lucion's Soulstone): removed stats, now called Demonic Wormhole
+ Cycles have been fully replaced by a new cube reagent to fill a similar purpose when used with the Wormhole
+ Drop quality increased
+ Map improved to reduce clutter
+ Spires are no longer a one hit kill and were working unexpectedly, this was fixed
+ Vaca Loca now called Durram, tweaked skills
+ Tome of Possession refurbished
+ Abolish curse: defense/avoid/movespeed reduction changed to negative HP regeneration
+ Primus' Messenger replaced with Malic
+ Arihan replaced with Lucion, Primus of the Triune
+DUNCRAIG
+ Map massively overhauled with new guild tileset, less need for teleportation and smoother gameplay
+ WALLS FADE
+ Reduced difficulty tier
+ Drop quality increased
+ Now accessed from the Church of Dien-Ap-Sten
+ SLAIN SOULS:
+ Dynamite/barrel damage reduced to a point where they are survivable with enough health and/or physical resist
+ Increased HP and defense
+ Small density reduction
+ Minibosses now appear on the mini-map
+VERY HARD
+TORAJA
+ The cemetery is now a transition area between the Torajan Jungles and Teganze
+ Experience greatly increased
+ LILITH:
+ Now has double HP, her broadside damage was reduced by 25%, and she can now walk through fences
+ Doubled maximum life
+ Now drops a charm instead of requiring a cube recipe
+VIZJUN
+ Respawns no longer give experience or drops to prevent AFK farming
+ Now spawns at the Proving Grounds and initial location moved
+ Reduced excess mob density and visual effects
+FAUZTINVILLE
+ Density reduced. Drop quality increased. Improved illumination
+ Is now in Act 5 and accessed by cubing the Kabraxis Ultra Elemental gems with the Black Road charm
+ Improved entrance so hidden passage is visible
+ Harpylisk: Increased damage and attack rating, slightly reduced HP
+ Necrobot: Increased HP
+ Neon Fiend: Slightly increased HP and walk speed
+
+
+Dungeons
+
+
+VERY EASY
+HORROR UNDER TRISTRAM
+ Butcher quest fully revamped
+ No longer has to stand in a pentagram to take damage
+ The area now contains 4 Sacrificial Shrines, these shrines fill with blood after he casts Bloodlust and unleash fire waves seeking the player
+ The Butcher's melee attack now deals damage in a small radius
+ Reduced ambient flames in the center of his lair
+INFERNAL MACHINE
+ Wandering Sarandesh, Mahasattva and Unseelie Dames no longer spawn here, machine health increased to compensate
+DEATH PROJECTOR
+ Death spiral is no longer a one shot, but it still does high damage. Now it spins continuously
+ Death Mechanics' velocity and attack rating was reduced by 20%
+ Lots of map improvements regarding bugged unwalkable tiles, modified layout
+EASY
+ASSAULT ON MOUNT ARREAT
+ Now has a 2 minute level lock
+ King Koth: Greatly increased defense, slightly increased damage
+ Bear Shamans: Reduced drops
+BINDING OF BAAL
+ Tal Rasha: Increased HP, defense, and experience
+CREATURE OF FLAME
+ No longer has a one shot beam
+ Now summons Dimensional Gates which spawn Elite monsters until killed, and lobs fiery mortar
+ Now uses a new AI and the level layout has been modified
+ Now has a proper portal from Caldeum
+MODERATE
+LEGACY OF BLOOD
+
+
+ Quest is now locked after 1 minute
+ Map enlarged to allow for more breathing room
+ 20% less minion density in the zone
+ BARTUC
+ Now also loses his magic immunity on using Wychwind
+ Tweaked AI, increased HP, increased damage and removed his avoid
+ Will now despawn all his minions upon dying
+ BLOOD GOLEMS
+ Reduced golem death proc damage
+ Increased vulnerability duration and reduced HP
+ Slightly decreased damage
+ No longer leave corpses
+BULL PRINCE RODEO
+ Has his own arena, accessible after killing the Cow King
+ Battle modified via tweaked AI
+ Cow Rush is now a timered skill and does less damage
+ Fight should now be less chaotic
+ Fool's Gold: Reanimate removed from charm and no longer rolls negative stats
+RATHMA SQUARE
+ Map has been redone to improve visibility, walls fade as well
+ Crawler respawn chance reduced to 75% from 100%. Increased HP, can no longer be reanimated
+ PRIMUS: Increased health
+ On death, the stage is cleared and spawns a portal to Triune
+ Now accessed from Caldeum
+ Density reduced
+AZMODAN
+ Removed fire pierce, now has fire spell damage
+ Adjusted skill levels, reduced life
+ Now spawns without minions so his area is less chaotic
+ Replaced Shower of Rocks with Fortress
+ Greatly increased HP, defense and Flamestrike skill level
+ SONS OF AZMODAN: Replaced Apocalypse with Fire Fountain so they deal damage now
+ Charm's maximum resistance reduced to 2% (part of a larger maximum resistance overhaul)
+THE BLACK ROAD
+ New Dungeon Quest
+ Bramwell: New zone, accessed from Rogue Encampment
+ Church of Dien-Ap-Sten: New zone, the prophet's fortress in Bramwell
+ Subterranean Corridor: Connects the Church to Duncraig
+ Killing Buyard Cholik in the Church gives you the new Black Road charm
+ Kabraxis is now spawned after killing Buyard Cholik
+THE VEILED PROPHET
+ Renamed from Cathedral of Vanity
+ Now located in the Library of Fate
+ Map improved
+ CRYSTAL BALL
+ Health increased by 200%
+ The beam mechanics have been modified
+ Hitbox increased
+ No longer a superunique (Meaning it can no longer spawn with Teleportation or Stone Skin)
+ 30 second quest lock
+ High Clerics: Buffed
+ Inarius: Greatly increased health. Spawns after destroying the Crystal Ball
+ Nuns of Vanity: have strengthened their beliefs and can no longer be converted
+HARD
+EVE OF DESTRUCTION
+ Baal must now be defeated within 20 minutes of entering the final chamber, otherwise the Worldstone becomes corrupted
+BANISHER OF LIGHT
+ formerly Kabraxis, now located in the Path to Enlightenment, accessed after killing Buyard Cholik
+ KABRAXIS: Weapon damage reduced by 38%, life reduced by 10%, Balefire damage reduced by 10%. Removed block
+ Ultra Elementals no longer have 200 elemental pierce
+QUOV TSIN
+ Map has been improved
+ Stars in the stage background
+ Bone Spear Nova proc chance increased along with speed, damage has been reduced to prevent one hit kill
+ Missiles can now go through space
+ Trinity Nova has been replaced with Mythal
+ Charm stats reduced by 10 (they now appear in Athulua's new charm)
+JUDGEMENT DAY
+ Fully revamped quest, thematic and skill changes
+ New zones: Halls of Valor and Pools of Wisdom, located in the Crystal Arch
+ Absorb on Crystalline Flame Medallion charm reduced to 5%
+ Charm upgrade proc duration extended to 1 minute
+ Bosses have more life and Angiris' Chosen (their Rathma's Chosen) proc has been replaced
+ Edyrems: Replaced Divine Apparition with spell flurry, removed concentration, increased speed. Have two variants (light and dark)
+ATHULUA
+ New scroll drops from the Priestesses with a 1/10 chance
+ Stand in the center/heart of the Island of Skartara to summon her
+ She now drops a new charm
+ Buffed Valkyrie's Prime bow
+ Slightly reduced tracing missile velocity, reduced CB and magic arrow damage
+KING OF UREH
+
+
+ Has a quest lock of 90 seconds
+ JURIS KHAN: Health significantly increased, his damage has been increased as well
+ Citizens now spawn in smalled packs, now have slightly lowered speed and increased damage and attack rating
+ Darkwardens have increased damage and attack rating
+ MAP OVERHAUL
+ Passage is now wider
+ There are now two parallel passages which come together
+ Boss area redone
+ Ruins of Ureh map size reduced by 56% and now has 2 variants instead of 6
+ THEME REWORK
+ Citizens are now more ghostly with no light radius or blue aura
+ Level will now have smaller light variations
+ Mazi's Eidolon: former Punishment Turrets
+ Punisher spiral: Changed light effect, smaller radius and now green instead of red
+GHOSTS OF OLD BREMMTOWN
+ Increased density and reduced pack size, so mobs are now more dispersed
+ HOWLING SPIRITS
+ Buffed all Howling Spirit stats
+ Added cold damage to their attacks and reduced their physical damage
+ At 82% cold resistance, you take the same damage as before
+ Reduced avoid pierce from spirits from 50% to 20%
+ Increased map size and made it easier to navigate
+ Dark Star Dragon beam changed. Now drops a charm
+VERY HARD
+REALM OF LIES
+ Density has been modified and flesh mothers removed
+ Level color changed to red to match the theme of Hell
+ Chest traps are now removed
+ BELIAL
+ Boss fight is entirely new and showcases the Lord of Lies' illusion prowess and trickery
+ Level lock timer is 60 seconds
+ Moved to Very Hard category
+ Charm minimum roll is now 100
+YSHARI SANCTUM
+ VALTHEK: boss stage now locks after 15 minutes
+ Bosses have normal boss resistances, avoid replaced with increased life. Buffed
+ Reduced the density of the Act 4 biome
+ Reduced drowned beast pack size and stats
+ Chimera pierce removed, skill level of their proc reduced. Damage reduced
+ Tweaked density of all zones
+ Harmonium and Celestial descendent damage lowered
+ Polar Worms spawn less monsters
+ Set drops are now guaranteed with two pieces per boss
+ Increased jungle zone monster damage
+ Swapped entrance with Rathma Square
+XAZAX
+ Greatly reduced Maggot Lair and Depths size
+ Entrance in the Twin Seas moved closer
+ No longer has maggot curse
+ PENITENT: Movement speed reduced by 18%. Now only spawned once at the start of the fight and then every 30 seconds
+ Xazax must now be defeated within 5 minutes of entering his arena
+ Cannot be Frozen removed from charm, this stat has been added to numerous items instead to improve character gear selection choices
+ Now casts Glacial Spikes instead of Punishers dealing cold damage with a long chill duration
+ASTROGHA
+ Now absorbs elemental damage rather than decreasing elemental spell power
+ His charm now gives a 1 second cooldown reduction to Jitan's Gate
+ Numerous quality of life improvements to the map
+NYMYR'S LIGHT
+ World Nexus now in Act 4 to reduce the load on the Act 3 map reveal, but is accessed the same way
+ Reanimates removed from The Sleep charm
+ Boss room improved and braziers no longer interfere with walking
+ Stage locks after 1 minute
+ ATANNA KHAN
+ Health reduced by 80%
+ Slightly reduced magic damage
+ Reduced walk speed
+ Doubled hitbox size
+ Reduced knockback chance on skills
+ Removed apple state on player
+ Removed one-shot from witches' trace skill
+ Density increased
+EXTREME
+NEPHALEM'S SACRIFICE
+ Charm now gives a bonus to Edyrem life and has a minimum roll of +1 to All Skills. Now called the Neutrality Pact. Reanimate removed from charm. Now has a Purify oSkill instead of charges
+ Slightly reduced movement speed
+ Reduced health and damage
+ Miscellaneous map tweaks and balance changes on stages
+ Reduced Edyrem Attack Rating
+ARCHBISHOP LAZARUS
+ Removed all chance to avoid damage, reduced damage and life
+ Genesis is now located in Vizjun. Removed shrines and improved the floor tiles
+ Groupies no longer randomly spawn in the zone
+ If you die you may no longer return to the zone in the current game
+ Reanimate removed from the charm reward
+THE VOID
+ Rathma now has 30% avoid instead of 90%, his health has been increased by 50%. Reduced Starfall damage
+ The Void boss fight zone becomes locked after 25 minutes
+ Arena now does 10% more damage to Rathma and players, Mendeln does 10% more damage
+ Now also has a star background
+ Soul of Pride no longer has regeneration and is now affected by auto-targeting skills
+ Entrance now opens after killing Inarius
+ Removed "apple" effect on darkness aura
+ Reduced lag from Citizens
+ Reduced Wrath's Blink Damage
+IMPOSSIBLE
+HERALD OF THE END
+ Slightly reduced the power level of the reward items
+ Fixed Death Strike desync issues and reduced proc chance
+ Samael: Reduced skill usage by 13% and reduced movement speed. However, he is now resistant to slow effects
+ No longer regenerates health. Boss fight is now best attempted solo
+ Takes significantly less elemental damage, to normalize HP pool between elemental and physical/magic sources
+ Town Portal no longer works in the Edge of Nothingness and you have up to 20 minutes before the level is locked
+
+
+________________
+
+
+CHARACTERS
+GENERAL
+
+
+ Updated the visual effects of many skills for better clarity and performance
+ All warp skills are now limited in range
+ Uber skills have been renamed to Ultimate
+ Improved Black Road and Ennead skill descriptions
+ Barbarian mercenaries now use Wraithsword instead of Shower of Rocks
+ Tainted Blood, Dragonheart, Symbiosis, Mark of the Wild and Euphoria can no longer be used in town. This was necessary to circumvent a bug.
+ All skills which previously had a "0.8 second cooldown removed at base level x" will now have no cooldown as long as they're maxed OR at base level x, and at 0.8 seconds otherwise. This was done to ease the leveling process with these timered skills and to encourage spending points in these skills, rather than them being only 1 point
+AMAZON
+BOW
+ DRAGONLORE: added a magic damage component equal to the elements, increased damage by 15%
+ Total damage boost from this passive has been increased by 53%
+JAVELIN
+ RICOCHET: 20% larger target seek area
+ ENFILADE: has been replaced with a new ability
+ Throw a javelin which bursts into a constricting spiral of toxic spikes
+ Deals 100% weapon damage, hits multiple times and poisons the target for 1 second
+SPEAR
+ GREAT HUNT: weapon damage increased to 70%, up from 60%
+BLOOD
+In the blood witch tree all your spells are empowered under the effect of Blood Fury. Blood Fury can now be activated by casting your Innate Bloodlust, in addition to automatically activating when you are below 66% life
+
+
+ BLOODLUST: if you have at least one point in Bacchanalia
+ Duration is 20 seconds. A cooldown of 30 seconds is added
+ Activates Blood Fury
+ MAGIC MISSILES:
+ Damage and Mana cost increased by 20%, improved targeting
+ Now starts at 4 projectiles up from 2. Additional projectiles now gained every 5 levels, up from 3
+ Base explosion radius doubled
+ BLOODSTORM: damage increased by 20%
+ BACCHANALIA: skill enhancements are now listed on their respective tooltips
+ LAVA PIT: will no longer switch to default melee attack if you are out of mana
+STORM
+ THUNDERCRACK: weapon damage increased to 110%, up from 100%
+ STORMCALL: 20% greater area of effect
+ MAGNETIC FIELD: weapon damage increased to 60%, up from 55%. Bonus damage increased by 25%
+NEUTRAL
+ BALANCE: no longer capped at 32 000 defense
+ FIRE ELEMENTALS: now gain 5% fire spell damage and fire pierce per Base Level
+REWARD
+ SPELLBIND: enemy damage reduction is now 40%, down from 50%
+Assassin
+CLAW
+ BATSTRIKE: has been improved significantly
+ The third charge no longer has Next Delay
+ Bat summon stats have been greatly improved and you can now summon up to 10 at once
+ The number of bats summoned on second charge release scales with Base Level
+ NOCTULE:
+ Now generates 50% less projectiles per second
+ Duration is now fixed at the previous level 20 value
+ Weapon damage has been increased by 40%
+THROW
+ SCORPION BLADE: damage reduced by 30%, now gains an extra projectile every 4 base levels of MkIV, up from 3
+ STORM CROWS: weapon damage increased to 100%, up from 90%. Clarified mechanics on tooltip
+ MAELSTROM MKIV: has been upgraded to an improved iteration: APF-20 MkI
+ The main projectile now pierces all enemies and explodes on first contact dealing heavy magic damage in a small area based on your dexterity
+ Flechette novas have 50% less projectiles but they now deal 90% weapon damage, up from 30%
+ WYCHWIND:
+ Improved visuals and performance
+ Debuff now starts at -50% and scales down to 0, its duration has been greatly reduced
+ BROADSIDE:
+ Damage increased by 14%, now usable while wielding a Naginata
+ +8 knives at level 1, base cooldown increased by 2 seconds
+NINJA
+ SHADOW REFUGE: Changed shade of blue to prevent the assassin from appearing beheaded
+ HADES GATE:
+ Weapon damage increased to 110%, up from 90%. Radius increased to 18.6 yards
+ Tooltip now shows accurate cooldown before investing points
+MARTIAL
+ BLINK: Improved visuals
+PSIONICS
+ SHURIKEN FLURRY:
+ Base projectile count increased to the level 27 value, but now fixed
+ 50% less shurikens, however they deal double damage
+ Damage at level 1 reduced, damage after level 28 increased by 33%
+TRAPS
+ ELECTROFIELD SENTRY: removed next delay from nova, fuse now deals 50% less damage. Improved visuals
+ TIEFLING FORM: can now unmorph and has a cooldown of 10 seconds
+REWARD
+ PRISMATIC CLOAK: synergy now changed to 8% per base level, down from 10%
+Barbarian
+CHAMPION
+ EARTHQUAKE: weapon damage increased from 70% to 80%
+THROW
+ REBOUND: bonus damage from Gladiator's Dominance doubled
+ OVERKILL: now has 10 axes baseline, up from 3. Base Level axe scaling reduced by 20%
+SPIRITS
+Barbarian summons now follow the player, unlike previously due to an AI limitation. They now use their skills much more often
+ SHAMANIC TRANCE: no longer gives a bonus to mana regeneration. Mana cost growth of ancient spirit summons has been halved
+ SPIRIT WALK: stance radius bonus reduced by half. Boosting your minions with your stances will now require a greater investment
+SPECIAL
+ MOUNTAIN KING: halved attribute bonus from skill levels. Added a synergy granting +1.5% to all stats per Base Level
+STANCE
+Barbarian stances now only affect the player and his minions (mercenary included)
+ LION STANCE: maximum physical resist penalty reduced to -25%, down from -30%
+ WOLF STANCE: movement speed is no longer capped, starts with 40% movement speed and gains 2% per base level
+REWARD
+ RUNEMASTER:
+ No longer gains a defense bonus from skill levels. This allowed us to fix the "runemaster bug". You no longer need to re-equip your items
+ Base bonus increased to 3%, up from 1%. Bonus per base level increased to 0.75%, up from 0.5%
+ Total defense bonus per rune is now capped at 20%
+ GLADIATOR'S DOMINANCE:
+ Bonus block reduced to 5%, down from 6%
+ Movement speed cap increased to 75%
+ Magic Damage added to ranged skills increased by 50%
+ NEPHALEM SPIRIT: damage scaling from strength and dexterity reduced by 25%
+Druid
+GENERAL
+Now start with a Hand Axe instead of a Short Sword
+TREEWARDEN
+ THORN STRIKE: 20% more hits per attack, 30% less weapon damage. Temporary cooldown added
+ CIRCLE OF LIFE: scales 60% less with skill levels after level 28
+TRAP RAT
+Hit recovery animation has been improved.
+ THORN WALL: single target potential has been greatly improved
+ Now hits 25 times per second, duration increases with skill level so you need to invest points for maximum potential
+WEREWOLF
+ MANA PULSE: now unlocks at level 3
+ HARBINGER: now unlocks at level 6. Slightly reduced number of hits per cast
+ TWISTED CLAW: weapon damage increased from 60% to 70%
+SEER
+ ELEMENTAL: now gains an extra projectile every 14 Base Levels
+ HUNTING BANSHEE:
+ removed Next Delay, damage reduced appropriately. No longer goes through walls
+ now gains an extra projectile every 14 Base Levels
+VENOM
+ PLAGUE AVATAR: damage increased by 20%
+ MYTHAL: improved performance
+ ACID FIENDS: now cast level 15 Poison Flash on Nightmare and 30 on Hell, up from 5
+Necromancer
+INNATE
+ BURNING VEIL: added cooldown equal to wall duration
+TOTEM
+ Death's Fury and Howling totems no longer affect players, only Necromancer minions
+ STORMEYE TOTEM: 30% faster cast rate, bolts now gain pierce chance per Base Level
+SUMMON
+Unfortunately there was not enough time to implement and test the planned summon tree overhaul as we promised
+It will be one of the main content features in the next patch
+
+
+ VEIL KING: hostile version can no longer be charmed
+MALICE
+ PESTILENCE: Damage reduced by 20%, mana cost increased
+MELEE
+ CARNAGE: weapon damage reduced to 85%, down from 100%
+ PARASITE: 20% increased target area
+ DEATHLORD: No longer capped at 32 000 defense
+CROSSBOW
+ DEATH SHARDS: 50% less projectiles. Now 100% weapon damage up from 50%
+ FRAGMENTATION SHOT: now deals fire damage instead of magic
+ WIDOWMAKER:
+ Now no longer requires you to target a minion to shoot, mana cost increased
+ 50% less projectiles. Weapon damage increased to 70% up from 40%
+REWARD
+ DEATH WARD: made changes to reduce effectiveness for casters and increase it for other builds
+ Now grants 35% bonus to defense per Base Level, up from 0%
+ Now grants 5% bonus to defense per Skill Level, down from 25%
+Paladin
+GENERAL
+ Implemented new true Neutraldin concept.
+NEUTRALITY
+ New paladin sub class, comprised of BOTH neutral trees only
+ May not choose any Holy or Unholy skills
+ You may cast both vessels at the same time and they gain both damage and target increase improvements
+ The duration of Sacred Armor and Demiurge is increased to 20 seconds
+ All Paladin devotion descriptions have been improved
+HONOR
+ RETALIATE: weapon damage increased to 70%, up from 60%
+ DIVINE JUDGMENT: total hits per attack reduced by 16% and weapon damage increased to 70%, up from 66%. 0.8 second temporary cooldown added
+ DRAGONHEART: physical damage per base level reduced to 15%, down from 25%
+ COLOSSEUM: removed debuff sounds and overlay at end. Significantly improved performance
+LIGHT
+ VESSEL OF RETRIBUTION: attack range increased to 4.7 yards
+ SACRED ARMOR: stats slightly reduced, mana cost increased
+DRAGON
+ DRAGON WYRMS: damage reduced by 20%
+DEMON
+ BLOOD THORNS: damage increased by 15%
+SHADOW
+ VESSEL OF JUSTICE: attack range reduced to 9.3 yards
+ DEMIURGE: stats slightly reduced, mana cost increased
+WICKED
+ MIND FLAY: damage increased by 24%
+ SLAYER: fixed a bug which caused your Slayers to not benefit from your energy and energy factor
+REWARD
+ RESURRECT:
+ Risen minion level is now based on player level, rather than area level. Duration is now infinite
+ Bonus to risen minion spells and attacks has been increased by 50%
+Sorceress
+INNATE
+ FORCE WALL: removed
+ MANA SHIELD: new innate skill
+ When activated, redirects a portion (default: 15%) of all incoming direct damage to mana before life
+FIRE
+ FIREDANCE:
+ Removed overlay on units inside the circle for better visual clarity
+ Significantly improved performance
+LIGHTNING
+ FORKED LIGHTNING: improved description
+ THUNDERSTONE:
+ Fixed an issue which caused less charged bolts than intended to hit the enemy you target
+ Now delivers 20 hits per cast on a stationary target
+ TEMPEST: maximum projectiles increased to 8, up from 7
+COLD
+ FRIGID SPHERE: increased area of effect by 25%. Removed jagged explosion edges
+ SHATTER THE FLESH: damage increased by 25%
+ ABYSS: Now hits 13 times per second, down from 25. Damage increased by 65%
+POISON
+ VENGEFUL POWER: Maximum life bonus reduced to 15%, down from 25%
+ARCANE
+ Damage scaling of offensive spells in this tree has changed. Now they scale less with skill level, more with mana and also with character level
+ Immersion and Arcane Torrent's visuals have been remade for better thematic consistency
+ IMMERSION:
+ Overhauled skill visuals and mechanics to make it better suited to its role - single target burst damage
+ Damage increased by 40%
+ FAMILIAR: aura radius increased by 20%
+ ARCANE TORRENT:
+ Number of projectiles no longer scale, but is now fixed at 25
+ Projectiles move faster and travel further allowing for greater coverage
+ Damage increased by 20%
+ MANA SWEEP:
+ Cooldown increased. Base Level 13 is now required to remove it, up from 10
+ Damage reduced at level 1, but now scales significantly better with mana
+ ANTIMASS: cooldown increased
+MELEE
+ MOONSTRIKE: Moon Blessing physical damage to all attacks now 15% per Base Level, down from 25%
+ FUSILLADE: fixed incorrect projectile count on tooltip
+REWARD
+ SYMBOL OF ESU: Moon Symbols may now be purchased from Anya in Harrogath after freeing her
+ CHRONOFIELD: Improved skill description and reduced performance impact
+ FORCE BLAST: Now reduces enemy weapon damage by 40%, down from 50%. Reduced performance impact
+Item Only Skills
+GENERAL
+
+
+ Many oSkills have been improved significantly. We will continue iterating on the rest in future patches
+ Class spells which have a temporary cooldown (for example Deathgaze, Maelstrom or Iron Spiral) have no cooldown as oSkills
+ Class spells which have parameters that only scale with base level (for example Parasite and Overkill) scale with skill levels, at a reduced rate, as oSkills
+OSKILL CHANGES
+
+
+ EDYREM:
+ Now reduce monsters to Hell appropriate resistance rather than 0
+ Attack rating increased by 50%
+ JITAN'S GATE: removed the life increase effect
+ PATH OF FLAMES: delay between attacks changed to 0.4 seconds, up from 0.2 seconds
+ CLAW TORNADO: now shoots 1 Projectile, down from 2. Weapon damage increased to 50%, up from 35%
+ STORMFRONT: mechanics have been changed significantly
+ Next Delay has been removed. Extra projectiles benefit both single target and clear
+ Gain an additional projectile every 25 skill levels, significantly increasing damage output
+ This skill is present on several Sacred unique items, and may now be crafted on scepters in addition to staves
+ Damage increased by 90%
+ CHERUBIM: renamed from Cherub Strike
+ No longer requires you to be hit before being able to use
+ Weapon damage increased to 100%, up from 35%
+ Target seek range now fixed at 20 yards, cooldown decreases to 0 with skill levels
+ Now attacks up to 6 enemies at once, up from 1
+ May be cast on the ground in front of you, without a monster target
+ PENTAGRAM:
+ Removed Next Delay, added 1.6 second cooldown
+ Damage increased by 450%, mana cost scales with level
+ SPIRAL DANCE: weapon damage increased to 50%, up from 35%
+ DEATH BLOSSOM: damage increased by 100%
+ WINTER AVATAR: has been greatly improved
+ Is now a melee spell with a cooldown of 0.9 seconds
+ Frost novas only appear directly under the avatar, allowing for greater single target damage
+ Damage increased by 150%, area of effect increased by 40%
+ CHARGED STRIKE: new, "classic", weapon damage oSkill
+ Deals 125% weapon damage and starts at 3 projectiles. Can be used with any weapon
+ Gains an extra projectile for every 6 skill levels. All projectiles pierce and damage your primary target
+ Skill is available on several Sacred unique items, and replaces the Shadow Avatar affix on rare and magic amulets
+ AVALANCHE: no longer pierces walls. Damage increased by 25%
+ ULTIMATE CHAOS: weapon damage increased to 40%, up from 25%. Mana cost halved
+ VOID STAR: damage reduced by 40%.
+ APOCALYPSE: 20% greater area of effect
+ FLASH: area of effect increased by 56%, damage increased by 200%, mana cost doubled
+ ARROW SWARM: damage increased to 90%, up from 75%. Mana cost now increases with skill level
+ AMATOXIN: Damage doubled
+ POWDER KEG: Damage increased by 120%
+ FANATICISM AURA: reduced attack speed bonus
+ NIGHTMARE: now reduces potion effectiveness by 33%, down from 100%. No longer reduces attack speed
+ GIFT OF THE WILD: now has an accurate skill description
+ KRAKEN STANCE: added stance synergy explanation to skill description
+ SLICER BLADE: Slightly reduced damage (this affects Vampire damage)
+ DIRE CHARM: Removed
+NEW OSKILLS
+ HOMING NOVA SHOT: Fire a nova of homing shots, no I'm not insulting your intelligence.
+ RAPID WYRMSHOT: Wyrmshot with 13 hits per second, but limited to two targets.
+ ARCANE SWARM: A crisscrossing volley of magic bolts which scale with every type of spell damage.
+ LEX TALIONIS: When activated, triggers a retaliate nova every few seconds when near enemies.
+ RAVENOUS FLAMES: An aura which supports two different play styles depending on your attribute allocation.
+ WAR CRY: Area of effect shout that can life leech and crit, with varying amounts of crit damage, depending on your skill allocation.
+ BEAR CLAW NOVA: Throw a nova of bear claws, no I'm not insulting your intelligence.
+ RANGED BLOOD THORNS: Allows you to cast Blood Thorns at range.
+
+
+________________
+
+
+ITEMS
+General
+PROCS
+We love procs, they add a unique layer of customization to character equipment and are very satisfying. However, they can also make it very hard to actually see what is going on and negatively impact server performance.
+
+
+ Proc chances on all items have been reduced
+ In Sigma we have focused on making procs occur less often but with greater impact, greater viability, better diversity and performance
+ Some reduced spell proc chances have been compensated with increased skill level
+ More "on Death Blow" procs for casters and brand new proc skills
+ All "when damaged" procs have been replaced with more useful ones. This also helps prevent numerous significantly laggy encounters
+PURIFY
+A certain set of endgame quests require defeating enemies which are immune to all forms of damage apart from a special skill called Purify. These bosses are typically some of the least fun to play against, because they are heavily biased in favor of weapon damage characters, and especially ranged ones. While we do like the variety in endgame content introduced by this mechanic we are also aware of its shortcomings and have taken several steps to improve the experience.
+
+
+ Open Wounds removed. This was the main reason why casters were so much worse at this type of content.
+ Purify damage has been significantly increased to compensate. Purify damage per second is now higher compared to previous Open Wounds damage
+ Slow Target effect is now capped at 25% against bosses, which again makes the experience more equal between weapon damage and caster characters
+TIERS
+ There are now only 4 tiers of items preceding Sacreds, down from 6
+ The slowest base items like crossbows are now slightly faster and the fastest, like daggers, are slightly slower
+BASE ITEMS
+ Crossbows:
+ Amazon & Druid maximum attack speed is now 1 frame slower than using a bow
+ Necromancer attack speed with crossbows has also been improved and is slightly faster than Amazon and Druid speeds.
+WORLD DROPS
+ World drops are no longer significantly biased to zones which drop the most junk per hour: cows
+ Belladonna Extract can now drop starting at act 1 normal
+ Viz-jun is no longer excluded from world drops
+ World drop chances improve slightly with area level
+GENERAL
+ 30% less magic find on socketables such as runes and jewels
+ The experience gain stat on all items has been reduced
+ Gold Find on items reduced by 75%
+ Kur Rune now gives 3% mana
+ Resistance rolls on jewels and runes have been reduced
+ Secret Jewelwords have been removed
+ Reanimate chances on most items and socketables has been reduced, except where the items had a strong theme necessitating them.
+ The amount of maximum resistance bonuses on items and socketables has been reduced
+ This was done in order to make the elemental resistance cap more meaningful and to enable us to remove the hidden pierce of many enemies
+Tiered Uniques
+
+
+The tiered unique (TU) item pool has been revamped.
+ Items with a good assortment of stats but poor numbers have been buffed
+ Added new items for builds which had no, or very few, viable choices from the TU pool
+ Items which have been staples for too many builds, or those which were too powerful, have been toned down
+ Several TUs have been added which support popular skills as viable early game oSkill builds. For example: Deathgaze, Noctule and ATMG Sentry
+ TU jewellery and quiver drops are now more varied and have been improved to be attractive during the leveling process
+ Unique jewellery and quivers may no longer be disenchanted into Signets of Learning
+Sacred Uniques
+SACRED UNIQUE REVAMP
+ Sacred uniques are no longer strictly limited to 3 per base item. Most bases will have two variants and a few - three
+ Approximately 130 of the best and most popular Sacred uniques from Median 2017 have been kept, with stats appropriately adjusted for their rarity.
+ All others were removed.
+ Approximately 240 new uniques have been created and added to the game with the following goals:
+ To be distinctly more "unique", offering new interesting stats which are not obtainable from regular affixes.
+ To support a greater number of viable gear options for existing builds, and to create some new ones
+ To work well with the existing item structure in the game, by encouraging character using a combination of: crafts/rare, uniques, runewords and sets
+ Included is a new unique item created by our Season 17 challenge winners
+SACRED UNIQUE TIERS
+ Sacred uniques are now split into different tiers based on their rarity:
+ Tier 1: they start dropping from regular monsters in areas of level (aLVL) 104+. Despite being the most common these are still very powerful and build enabling
+ Tier 2: generally higher power level and more quirky mechanics. Start dropping from regular monsters in aLVL 117 and beyond, and bosses in aLVL 115 areas
+ Tier 3: extremely rare chase items. Very few in number and incredibly powerful. Only drop from monsters in aLVL 130 zones and beyond.
+ The item pool was separated in this way because we want to reward players who take greater risks and clear harder areas with better rewards.
+ The item progression is also more closely tied to the leveling progression this way
+ More Sacred uniques will continue to be added in future patches
+OTHER
+ GRAVETALON: Gravetalon has been fixed. It just works ™
+Sets
+
+
+Sets have always been popular among our players and we appreciate that they help new players build reasonably effective characters without a full understanding of the Median XL mechanics. One problem with this has always been the fact that collecting a full set was very difficult compared to the power level of the items. Therefore we have made them easier to obtain while reducing the power of a few outliers.
+
+
+ Multiple set items moved to lower end bases which do not have any Sacred uniques.
+ This makes them easier to drop because these bases are more frequent and because any unique roll will also return a set
+ More sets now have only 1 class exclusive piece, allowing for more viable gear options consisting of partial set bonuses
+ TUNDRA WALKER: removed bonus to Nephalem Spirit, slightly increased other full set bonus stats
+ ADRIA'S CIRCLE: reduced stats from the full set bonus
+ SATANIC MANTRA: removed Lamia reanimate
+ VASILY'S FOLLOWING: tweaked for better compatibility with new Enfilade
+ THE TRICKSTER: physical resist reduced to 10%, down from 25%
+ Set items can no longer be disenchanted into arcane crystals
+Runewords
+
+
+ HIERODULE: now gives a bonus to all maximum resistances instead of a Sorceress morph
+ KALI: maximum fire resist reduced to 4%
+ XIS-SHARK: now gives +2 maximum damage per clvl. While still a great option for one-handed characters we wanted this item to be less ubiquitous in general
+ XIS-REBEL: now gives +200% weapon physical damage, down from 300%. Bonus to all resistances reduced from 100-150 to 60-80
+ Doubled Venomous Aura effect has been replaced on Aes Dana with poison spell damage
+ "Secret" elemental runewords have been removed
+Cube Recipes
+
+
+ Implemented mixed disenchanting for signets of learning (Example: You can mix set and sacred uniques with the catalyst of learning)
+ You can now cube any combination of shards as long as the output is less than 3 crystals
+ Removed tomes / scrolls from recipes that required them
+ Wirt's leg is now found in the Catacombs level 4
+ The Horadric Malus and other quest items can no longer be disenchanted into Arcane Shards
+ OIL OF RENEWAL: Now restores any item to superior
+ CATALYST OF DESTRUCTION: removed
+ RIP recipe still works, but with the Oil of Renewal instead
+ Magic Find bonus from jewelcrafting has been reduced
+Shrinecrafting
+
+
+ The variance of pierce rolls on shrines has been reduced
+ TRINITY SHRINE: now gives 5% f/c/l pierce on two-handed weapons and body armor instead of damage. Elemental damage on other slots increased by 100%
+ SPIRITUAL SHRINE: added increased % mana
+ WEIRD SHRINE: increased minimum enhanced damage roll
+ INTIMIDATING SHRINE: now adds enhanced damage on weapons
+ No longer add double MO bonus
+ Descriptions have been modified
+ Blessing now costs two arcane crystals, up from one
+Rare Affix Pool
+
+
+ ATMG SENTRY: Skill level increased to 14-20, up from 5-7
+ The minimum damage prefix now also spawns with up to 60% enhanced damage
+ Flat elemental suffixes on weapons are now in separate categories. This means you can now find or craft weapons with up to 3 different elemental damage rolls
+Mystic Orbs
+
+
+ Removed Movement Speed and Poison Skill Duration orbs
+ Mana regeneration Mystic Orbs now grant 5%, down from 8%
+ Removed skeleton reanimate Mystic Orb, replaced with "Adds 1-2 Weapon Damage"
+ Life leech Mystic Orb is now 3%, down from 4%
+ Ring/Amulet Mystic Orb is now Ring/Amulet/Quiver
+ Magic Find Mystic Orb is now 3%

@@ -1,0 +1,742 @@
+2.3.0 NOTES
+Shaman relics now give 25% of one minion stat. Set bonus now increases Spirit Walk heal +5% of Max Life
+Shadowtwin:
+   * Removed mana, mana on kill, Veil King oSkill
+   * Now allows you to summon 2 ancient spirits per cast
+Malleus Maleficarum:
+   * Removed Skill Level bonuses to Retaliate and Divine Judgment
+   * Now grants 6% chance to cast Widowmaker on Attack
+Lacerator:
+   * Removed orange text
+   * Bear Claw Nova now 130% weapon damage, up from 110%
+Game
+GENERAL
+ENGINE
+   * Temporarily removed Physical Damage from extended stat screen as it wasn't accurately accounting for flat physical sources. For the time being you can calculate your physical damage with D2Stats
+   * Fixed chance to get hit in LCS using monstats level (which is no longer used) instead of area level
+   * Both formulae now use the area level the monster was found in as opposed to the current area level (i.e. the town's area level for instance when you're in town)
+QUALITY OF LIFE
+   * New feature: most melee skills can now be used with shift and without having to select a target. However, "on attack" procs and healing will only trigger if the main swing lands on a target. Melee skills that benefit from this are:
+   * Impale
+   * Great Hunt
+   * Hyena Strike
+   * Noctule
+   * Crucify
+   * Earthquake
+   * Shower of Rocks
+   * Thunder Slam
+   * Iron Spiral
+   * Primordial Strike
+   * Wildfire
+   * Twisted Claw
+   * Carnage
+   * Divine Judgement
+   * Retaliate
+   * Lemures
+   * Blood Thorns
+   * Bladestorm
+   * Glacial Torrent
+   * Spiral Dance
+   * Charged strike
+   * Black Lotus Strike
+   * Death Blossom
+   * Winter Avatar
+   * Gorefest
+   * Ancient's Hand
+   * Medusa
+   * Whirlpool
+   * Stormblast
+   * Iceburst
+   * Deathgaze
+   * Batstrike
+   * Rend (made into proper melee skill)
+   * The following attack buffs are converted to buffs:
+   * Shadow Refuge
+   * Conflux
+   * Mooncall (renamed from Moonstrike)
+   * Conquest
+MONSTERS
+   * Goblins: reduced Voided Spawn/Glob flee chance
+   * Mephisto: fixed flashing circle arena dealing damage inside itself
+AREAS
+   * Increased density in the following zones to improve the leveling curve:
+   * Catacombs 1, 2, 3
+   * Rocky Waste
+   * Dry Hills
+   * Far Oasis
+   * Lost City
+   * Canyon of the Magi
+   * Harem
+   * Palace Cellar 1, 2, 3
+   * Maggot Lair 1, 2, 3
+   * Tal Rasha's Tomb
+   * Small area level tweaks in early normal difficulty
+Endgame Quests
+NEPHALEM RIFTS
+KURAST 3000 BA
+   * Reworked several areas to be more open and interconnected to reduce backtracking
+   * Made a few sections more distinctive as to improve player's navigation
+   * Ennead Necromancers are located very close to the same old coordinates
+   * 35% overall gain in enemies spawning areas
+HIGH HEAVENS/LIBRARY OF FATE
+   * Added a small shrine bias
+TRIUNE
+   * Added a small shrine bias
+FAUZTINVILLE
+   * Fauzt-great rune drop chances increased by 90% (1 every 40 rune drops in the zone)
+   * Improved unique and rare drop chances
+   * Increased shrine drops by 33%
+SCOSGLEN
+   * Corrupted Boxes:
+   * Added missing emblem outcome
+   * Reduced golden cycle spawn chance
+   * Increased oil drops
+   * Added additional relic drop bias
+   * Increased unique and set drop rates
+   * Halved winter damage in snow areas
+   * Increased tenet design drop chance by 40%
+DIMENSIONAL LABYRINTH
+   * Overhauled the reward structure to make the zone more rewarding and give a better sense of progression
+   * The Dimensional Key charm now has a 50% chance to drop from Corrupted Heroes on yellow floors. No longer drops from Deimoss
+   * There are now four different types of base charms as opposed to one, each tailored to different builds
+   * The types are: physical weapon, elemental weapon, caster, summoner
+   * You will now unlock bonuses as you progress through the Riftstones to complete several quests
+   * Quests
+   * Trial of Discovery: transmute one of every depleted Riftstone with the charm. Adds magic find with increasing returns based on the stone tier
+   * Trial of Purity: transmute the rare miniboss drops (star chart pieces & dream fragments). Adds bonuses depending on charm base with increasing returns
+   * The above two quests will produce a charm with better stats compared to the 2.2 equivalent which required a 100% Deimoss kill
+   * End the Invasion: defeat Deimoss to add a bonus to your Dimensional Key, depending on charm base
+   * Trial of the Nephalem: complete the above three quests to unlock the final two hard mode quests
+   * Occult Smithing: defeat Deimoss with exactly 3 optional difficulty modifiers
+   * Dimensional Alchemy: defeat Deimoss with exactly 5 optional difficulty modifiers
+   * Completion rewards
+   * Trial of Discovery: +75% magic find
+   * Trial of Purity: +75% Enhanced Weapon Damage or +16% Innate Elemental Damage or +35% Spell Damage or +100% Minion Damage
+   * End the Invasion: +5% Deadly Strike or +(100 to 200) Tri-Elemental damage or +5% Spell Focus bonus or +5% Maximum Life and Mana
+   * Trial of the Nephalem: unlocks hard mode quests
+   * Occult Smithing: unlocks the Occult Effigy upgrade recipe. Transmute two identical Effigies to receive a higher tier. Unlimited uses
+   * Dimensional Alchemy: unlocks the Relic crafting recipe. Transmute a Depleted Riftstone (6) to receive a random relic. 5 charges
+   * Replaced Curse Immunity modifier on monsters with 80% Curse Length Reduction
+   * Abyssal Shrines:
+   * All Abyssal Shrine bosses may now drop Sacred items with a high chance of being Set or Unique. Probability depends on difficulty and floor
+   * Archbishop Lazarus:
+   * Will now always summon T10 infused groupies, as opposed to regulars
+   * Trophy drop chance now 50% on yellow floors and 75% chance on red floors
+   * Atanna Khan:
+   * Replaces Astrogha spawns from Abyssal Shrines
+   * Has a high chance to drop The Awakening unique armor: 10% on yellow floors, 25% on red floors
+   * Bartuc: will now always spawn T6 infused Blood Golems instead of regular
+   * Unstable Anomaly:
+   * Is now more aggressive
+   * Now drops 3 items, up from 1
+ENDGAME DUNGEONS
+LEGION OF THE DAMNED
+   * Soul Pillars have been slightly distanced some more to reduce occurrence of unintended AoE damage
+   * Fixed a bug where Rotted Husks weren't spawning in the correct pattern (Wave 3)
+   * Soul Pillars will no longer spawn anything/give rewards if killed by Manourouk's death
+YSHARI SANCTUM
+   * Set pieces no longer have durability and no longer break
+   * Minor details additions to improve player's sense of orientation on all stages
+   * Dream of Anguish: improved visibility and further simplified some sections of the maze
+   * Snare of Destruction: improved visibility and greatly reduced dead-ends
+   * Specter of Hatred: slightly simplified some sections of the maze and reduced dead-ends
+   * Figment of Pain: fixed some pathing issues
+ASTROGHA
+   * Completely reworked boss fight while keeping to the theme of the original and being lore friendly
+   * No longer extremely punishing for melee characters, removed one shot debuff mechanics
+   * Split into two phases, the cunning spider has one final trick when near death
+   * The Web of Deceit now has a 5 minute lockout timer
+   * Life roll on charm is now +(200-500), up from +(100-500) to compensate for the increased fight duration
+NYMYR'S LIGHT
+   * Reenvisioned the map to reduce details density and improve visibility
+   * Reduced the area surrounding the entrance's portal
+INVASION III
+   * Removed the change introduced in patch 2.1 causing the boss to rarely gain avoid when hit
+   * Increased the number of Rift Storms in the area
+THE VOID
+   * Soul of Gluttony: reduced regeneration in the middle of the zone
+   * Lilith: reduced Poison Spray damage
+NEPHALEM'S SACRIFICE
+   * Removed "superunique" property from bosses that had it (making them very resistant)
+   * Rebalanced health/resist from minibosses
+   * Reduced Jazreth the Deceived AI delay
+DEIMOSS
+   * Removed the change introduced in patch 2.1 causing the boss to rarely gain avoid when hit
+   * Rebalanced the optional difficulty modifiers
+   * Boss Healer: healing per second halved. Fixed a bug causing the boss to not heal at certain player positions
+   * Teleport cooldown increase: will now also reduce all your skill levels by 10. You will not be able to use abilities with a resulting level of 0
+   * Speed slow: will now reduce Movement Speed by 40%, up from 15%. Navigator spawns in the arena have had their movement speed reduced by 30%
+   * Councillor Ormac: will now use Rift Volley instead of Supernova, fixed a bug where his Stormblast attack always had a 5% chance to hit
+   * Councillor Vanig: will now use Poison Volley instead of Poison Nova
+Characters
+MISC
+   * Sky Siege/Tantrum/Disco Inferno/Wychwind:
+   * Using any of these skills near Deimoss the Fleshweaver or the Ascendant Riftwalker will cause all nearby enemies to gain 66% chance to avoid damage for a short time
+AMAZON
+GENERAL
+   * Fixed Ecstatic Frenzy's and War Spirit's buff icons
+BLOOD
+   * Magic Missiles:
+   * Increased base missiles by 2
+   * Mana cost per level reduced by 10%
+   * Bloodstorm:
+   * Reduced base mana cost
+   * Increased base targets by 1
+   * Balefire: now requires level 10, down from 15
+   * Bacchanalia: now requires level 15, down from 20
+   * Fire Elementals: now require level 20, down from 25
+STORM
+The storm tree has been divided into two separate sub-trees: a caster tree using Stormcall and Askari Lightning, and a WDM tree with focus on Hammer of Zerae. You can only use one sub-tree or the other.
+   * No longer compatible with Melee Devotion
+   * Thundercrack: removed
+   * Magnetic Field: removed
+   * Thundermaiden:
+   * Renamed from Asterism, now a level 1 skill
+   * Now adds 3 max damage per Base Level (from 4), but adds an additional 0.5 max damage per soft (and base) level
+   * No longer receives Defense bonus from points in Hammer of Zerae, but has defense bonus per level increased from 7% to 9%
+   * No longer adds dexterity
+   * Hammer of Zerae:
+   * Now a level 2 skill, requires Thundermaiden
+   * Increased hammer area of effect
+   * Reduced visual spam
+   * Now scales with Attack Speed
+   * Now convert 50% Physical Damage to Lightning
+   * Weapon damage now 180%
+   * Bonus lightning damage now 20% per Base Level in itself rather than Stormcall
+   * Increased additional Physical and Lightning Damage scaling above slvl 17
+   * Power Shift:
+   * New level 10 skill, requires Hammer of Zerae
+   * Throws an additional two hammers, but they all travel a shorter distance
+   * Ideal for concentrated damage
+   * Max level: 1
+   * Reckoning of Zerae:
+   * New level 40 skill, upgrades Hammer of Zerae and Power Shift
+   * Adds a chance that hammers will bounce once they are destroyed (end of travel or hitting a wall)
+   * Hammers will bounce to the cursor location at the time of first casting the skill
+   * The hammers explode dealing 100% Lightning Damage and hitting multiple times
+   * Chance to bounce is 10% per Base Level for Hammer of Zerae and 3% per Base Level to Power Shift
+   * Stormcall:
+   * Now a level 2 skill, requires Thundermaiden
+   * Now scales with Energy rather than Dexterity
+   * Removed Physical Damage
+   * Increased starting damage and damage in early levels
+   * Askari Lightning:
+   * Now a level 5 skill
+   * Reduced base mana cost
+   * Fixed inaccurate damage formula
+   * Now displays damage in tooltip
+   * Base damage from stormcall increased from 300% to 330%
+   * Conductivity:
+   * New upgrade skill available at level 50 for Stormcall which gives it a chance to proc Askari Lightning
+   * Gives 0.5% proc chance per base level
+   * Max Level: 7
+   * Discharge:
+   * Now a level 25 skill
+   * Revamped skill into a buff
+   * Now casts periodically thunders at your foes, making them more vulnerable to your Lightning Damage
+   * Emits a thunder every 7.4 seconds, -1 seconds per Base Level
+   * Max Level: 6
+   * Resistance:
+   * New level 75 skill
+   * Provides stats based on the storm path chosen
+   * Adds 30% block speed
+   * Adds 1% Base Block per Base Level, if the Thunder path was chosen
+   * Adds 1% Maximum Block per Base Level, if the Hammer path was chosen
+   * Max level: 7
+DIVINE
+BOW
+   * Barrage:
+   * Weapon Damage now 90%, up from 75%
+   * Fixed a bug which resulted in the flat damage being significantly lower than intended
+   * New bonus damage formula scales quadratically with Skill Levels
+   * Maximum Base Level reduced to 5, but will now scale with Elemental Command (to prevent excessive flat damage at the levelling stage)
+   * Trinity Arrow:
+   * Removed flat Physical Damage
+   * Added bonus Fire, Cold or Lightning Damage to projectile. Scales quadratically with Skill Levels
+   * Maximum Base Level reduced to 5, but will now scale with Elemental Command (to prevent excessive flat damage at the levelling stage)
+   * Weapon damage increased by 10%
+   * Elemental Command:
+   * Now increases Trinity Arrow and Barrage maximum Base Levels
+   * The formula is +1 max Base Level per 4 character levels
+   * Wyrmshot:
+   * Increased base target seek range, equivalent of 3 points in Keen Sight
+   * Weapon damage now 80%, up from 75%
+   * Keen Sight: maximum Base level reduced by 3
+   * Phalanx:
+   * Weapon damage now 150%, up from 140%
+   * No longer has a cooldown
+   * Fire at Will:
+   * Now increases attack & movement speeds while Phalanx is active
+   * Movement Speed bonus is 5% per Base Level
+   * Attack Speed bonus is 10% per Base Level
+JAVELIN
+   * Eviscerate: Weapon Damage now 90%, down from 95%
+   * Impale:
+   * Weapon damage now 170%, down from 180%
+   * Expose weakness is now a curse (doesn't stack with other physical resist debuffs)
+   * Second Wind: maximum health regeneration now 6% per second, down from 7%
+   * Elemental Aegis: maximum absorb now 12%, down from 13%
+SPEAR
+   * Great Hunt:
+   * Reduced clown fiesta
+ASSASSIN
+NINJA
+   * Shadow Refuge:
+   * Fixed a bug that caused it to not be affected by Continuity
+   * Now gains 1 second extra duration per Base Level
+   * Tripled mana cost
+   * Added "burst of speed" overlay instead of glitchy color palette effect
+   * Queen of Blades:
+   * Reworked mechanically, now leaves stationary spinning blades after hitting an enemy, instead of bouncing
+   * Blade traps last for 2 seconds and hit multiple times
+   * Now checks AR
+   * Weapon damage increased from 35% to 45%
+   * Delay between Volleys increased to 1 second
+   * Shred: blade scaling now 4 + 1 per Base Level, down from 2 + 2 per Base Level
+CLAW
+   * Noctule: improved area of effect
+   * Way of the Gryphon:
+   * Base pierce increased by 1%
+   * Reduced damage in early levels but increased damage in mid/late game
+   * Winged Calamity: max level now 10
+THROWING
+   * Way of the Spider:
+   * Base pierce increased by 1%
+   * Damage increased by 29%
+   * Increased early level damage
+   * Now adds 2% poison spell damage per level under 100
+   * Scorpion Blade:
+   * Now a level 6 skill
+   * Fully reworked due to multiple issues and unnecessary complexity with scaling
+   * Knives now explode instantly in a radius after hitting, however old poison cloud visuals were maintained
+   * Starts at two knives
+   * Now scales based on Way of the Spider damage, multiplied by Spell Damage. No longer scales with Spell Focus and energy
+   * Knife count synergy now based on Base Levels rather than Queen of Blades level
+   * Now detonates twice, for better Area of Effect coverage and damage
+   * Increased area of effect
+   * Blades now have ND, greatly improving their spread (not being all tanked by a single fat enemy)
+   * Lethal Incision:
+   * Now a level 15 skill
+   * Reworked damage numbers
+   * Now also increases skill duration to Scorpion Blade
+   * Storm Crows:
+   * Reduced base mana cost
+   * Increased early level Physical Damage
+   * Primary knives (before homing) travel faster and trigger quicker
+   * Homing knives now have a greater hitbox for better accuracy, and travel further
+   * Wychwind:
+   * Now a level 20 skill
+   * Now always explodes when it reaches the end of its range
+   * Increased main knife size
+   * Weapon damage reduced from 40% to 35%
+   * Now properly checks for Attack Rating
+   * Fixed vulnerability duration tooltip not accounting for continuity
+   * APF-20 'Maelstrom' MkI:
+   * Now a level 10 skill
+   * Broadside:
+   * Now a level 30 skill
+   * Void Gazer: doubled Maximum Block Chance bonus
+NAGINATA
+   * Way of the Phoenix:
+   * Base pierce increased by 1%
+   * Reduced damage in early levels but increased damage in mid/late game
+   * Crucify: damage increased by 20%
+   * Laserblade: damage based on dexterity per level increased by 40%
+TRAPS
+   * Forger's Hegemony: block speed bonus now 25%
+   * Incineration Trap:
+   * Increased damage by 10%, and base damage by 20%
+REWARD
+   * Vampiric Icon: reduced size to reduce clutter
+   * Prismatic Cloak: now adds Block Speed per level
+   * Way of the Raven (new):
+   * New level 90 ultimate skill, replaces Phase Bomb
+BARBARIAN
+GENERAL
+NOMAD
+   * Lion Stance: fixed synergy string
+   * Snake Stance: increased early game damage, late game damage unchanged
+   * Eagle Stance: maximum Innate Elemental Damage bonus is now 30%, up from 20%
+   * Wolf Stance: fixed Crushing Blow synergy tooltip
+   * Spirit Guide:
+   * Fixed a bug where the Bonus Defense was scaling with points in Shamanic Trance instead of Base Levels
+   * Renamed to Wolven Guide
+EARTHSHAKER
+   * Tectonics: new passive skill
+   * Your Earthquakes occasionally trigger Shower of Rocks (bypassing cooldown)
+   * Chance is 1% per 230% Weapon Physical Damage bonuses
+   * Weapon Physical Damage requirement is reduced by 10% per Base Level
+   * Requires Heart of Stone
+   * Requires level 110, maximum Base Level is 5
+ELEMENTALIST
+   * Thunderstorm:
+   * Weapon damage now 200%, up from 150%
+   * Lightning bolt area of effect increased by 21%
+   * Movement speed bonus now 7% per Base Level, up from 6%
+   * Iron Spiral:
+   * Mana cost reduced by 40%, cooldown removed
+   * Evened minimum and maximum values for bonus damage
+   * Added a Base Level synergy: bonus Lightning Damage increases quadratically with Base Levels
+   * Galvanism: new passive skill
+   * Upgrades Iron Spiral and Thunderstorm
+   * Iron Spiral maximum level increases by 1 for every 3 character levels above 90
+   * Thunderstorm inherits Iron Spiral bonus lightning damage (and then doubles it due to weapon damage modifier)
+   * Requires level 93, maximum Base Level is 1
+WINDCARVER
+   * Whirlwind: now gains 25% Weapon Physical Damage bonus per Base Level, up from 20%
+WARMONGER
+   * Snake Bite:
+   * Damage at level 1 increased by 6x, damage at endgame increased by 5%, increased minimum damage to be closer to the maximum
+   * Changed the way endgame character level influences damage. Character levels above 130 will now add significantly more damage compared to before
+   * Previously going from level 130 to 150 would increase damage by ~9%, now it will increase it by ~52%
+   * Stampede:
+   * No longer has a cooldown, projectile count now fixed at 12
+   * Now gains +2 flat physical damage per Skill Level (max 56)
+   * This damage scales with your Weapon Physical Damage bonuses
+   * Now has a synergy which increases this damage by 10% per Base Level
+   * Weapon Damage increased to 110%, up from 100%
+   * Violence: reworked skill
+   * Now grants a short duration buff after using Stampede
+   * Grants Deadly Strike and Innate Elemental Damage for 0.6 seconds
+   * Deadly strike amount is 2% per Base Level
+   * Innate Elemental Damage amount is 4% per Base Level
+   * Honing: new passive skill, upgrades Stampede
+   * Stampede Weapon Damage modifier increases to 120%, up from 110%
+   * Stampede no longer gains bonus Physical or Magic Damage
+   * Violence will also increase your Snake Stance damage by 25%
+   * Required level is 50, maximum Base Level is 1
+   * Fortress:
+   * Fixed a bug where the skill was dealing significantly less damage than intended
+   * Weapon Damage now 100%, down from 120%
+   * Effective damage per second has more than doubled compared to previous patch
+SHAMAN
+   * Ancient Spirits:
+   * Maximum Base Levels of spirit summons reduced to 20, down from 25
+   * Synergy bonuses have been increased accordingly
+   * Fixed inconsistencies between the bonuses granted by Stances to players and Ancient Spirits
+   * Guardian Spirit: now throws an extra axe on every Difficulty, projectiles changed to axes
+   * Spirit Walk:
+   * Now requires character level 25 to learn, down from 30
+   * Now instantly heals a portion of your Maximum Life on use
+   * Base life healed is 2.5% and increases by 0.25% per Base Level in the Shaman tree (max 10%)
+   * Range now 13.33 yards, down from 16.67, but now increases by 0.11 yards per Skill Level (max 20 yards)
+   * Mana cost now 10 + 6 per level, down from 55 + 4 per level
+   * Shamanic Trance:
+   * Is now a passive skill, maximum Base Level is now 1
+   * No longer grants additional maximum Spirits per Base Level
+   * Now gain +1 maximum Spirit at player levels 20, 40, 100 and 140
+   * Completely reworked the other stat bonuses granted by this skill, to make them scale better in the endgame and simplify their logic
+   * The Life bonus from base Strength is now multiplicative with Minion Life bonuses instead of additive
+   * As a result, minions are now much more durable in the endgame and stacking Minion Life on gear provides much better returns
+   * The life and damage bonuses from Skill Levels have now been moved to Base Level bonuses on the minion skills
+   * These bonuses now stack linearly with Minion Life / Damage stats on gear. Their values have been greatly increased
+   * Therefore they are very powerful early on, but points can be freed up in the endgame for well geared characters
+   * The damage bonus from base Strength is now multiplicative with Minion Damage bonuses instead of additive
+   * As a result high investment in Minion Damage gear in the endgame will result in higher damage output compared to before
+   * Bonuses from base Strength now cap at 600, and have been scaled accordingly, in order to give more freedom in stat allocation
+   * Spirit Reave:
+   * Can now be used at all times / no longer requires an Ancient Spirit death
+   * Reduced damage during the levelling stage
+   * Mana cost now 75, down from 100
+   * Spirit Bond: maximum Base Level is now 2
+   * Ancestral Endurance: new passive skill
+   * Upgrades Spirit Reave, activates after using Spirit Reave
+   * Gain the Melee Devotion damage mitigation without losing the ability to summon
+   * Base duration is 20 seconds
+   * Ranged skills will be disabled
+   * This does not stack with the Melee Devotion mastery
+   * Requires level 30 and 20 points in Shaman tree skills, maximum Base Level is 1
+REWARD
+   * Runemaster: now also gives +2% to maximum Fire, Cold and Lightning Resistances
+   * Nephalem Spirit:
+   * No longer gives Innate Elemental Damage
+   * Now gives 15% Physical Resistance (this also applies to Ancient Spirits - see tooltip)
+   * Fixed a bug causing it to give less damage per base Vitality
+   * Gladiator's Dominance:
+   * Magic damage synergy on ranged skill tooltips now only displayed if you have this ultimate
+   * Base Block Chance bonus now +6%, up from +5%
+DRUID
+NATURE
+   * Infected Roots:
+   * Damage increased by 10%
+   * Reduced mana cost
+HUNTER
+   * Heartseeker: Weapon Damage now 140%, up from 110%
+   * Cascade: weapon Damage now 115%, up from 90%
+WEREBEAR
+   * Rend:
+   * Now triggers on-attack procs and healing
+   * Increased area of effect
+   * Reduced thorns lingering damage by 16%, to reduce excessive single target damage
+WEREOWL
+   * Increased attack speed, can now reach 7 FPA, up from 8
+   * Earth Talons:
+   * Base duration increased by 50%
+   * Increased area of effect (visually still the same)
+   * Ferocity: now requires level 6
+   * Charged Talons: now requires level 9
+   * Raid:
+   * Renamed from Birdstorm
+   * Increased base projectile count by 33%
+   * Now requires level 12
+   * Egg Trap:
+   * Now requires level 24
+WEREWOLF
+   * Twisted Claw: mini twisters duration is now 15% shorter, to reduce excessive single target damage
+   * Howl of the Spirits: reduced base cooldown by 25%
+REWARD
+   * Mythal: fixed a bug causing it to be considered a curse
+NECROMANCER
+GENERAL
+   * Bend the Shadows: cooldown increased by 0.2 seconds
+   * Slightly reduced teleport range
+MALICE
+   * Dream Eater: base cooldown reduced by 50%
+MELEE
+   * Carnage: now 90% Weapon Damage, up from 80%
+   * Parasite: doubled flat Magic Damage
+   * Reaper: duration now 5 seconds (affected by continuity)
+   * Blight Descent: base duration now 5 seconds
+   * Deathlord: re-added duration to skill description
+CROSSBOW
+   * Buckshot: Weapon Damage now 120%, down from 125%
+   * Fragmentation Shot:
+   * Now a level 5 skill, requires Buckshot
+   * Dragonfire Oil:
+   * Now a level 10 skill, requires Fragmentation Shot
+   * Widowmaker:
+   * Increased base missile count
+   * Weapon damage now 57%, down from 60%
+   * Ignite: now a level 30 skill
+   * Death Shards:
+   * Now a level 50 skill, requires Widowmaker
+   * Weapon Damage increased from 50% to 100%
+   * Increased mana cost
+   * Carrion Drain:
+   * Halved life leech to Death Shards
+PALADIN
+TEMPLAR
+   * Retaliate:
+   * Now gains an additional 120% increase to bonus damage at character level 1, tapering down to 0 at character level 120
+   * Base mana cost reduced from 3 to 1, mana gain per level reduced by 9%
+   * Weapon Damage increased to 133%, up from 100%
+   * Bonus Fire Damage reduced by 25%
+   * Thus, bonus damage stays the same but Weapon Damage has increased (this is a buff)
+   * Divine Judgment:
+   * Weapon damage now 105%, down from 110%
+   * No longer has a cooldown
+   * No longer gains Magic Damage with Skill and Base levels
+   * Now grants a buff for 0.6 seconds after using the skill
+   * Buff gives 6% bonus to Weapon Physical Damage per Base Level
+   * Consecration: skill has been reworked
+   * Now adds 50% bonus damage to Undead and Demons per Base Level
+   * Now halves the bonus damage from Holy Fire
+   * Now requires level 15
+   * Lionheart: fixed the skill giving less IED than intended
+INCARNATION
+   * Dragon Jaws:
+   * Damage at level 1 increased by 50%, endgame damage unchanged
+   * Damage bonus from character level now caps at 145, up from 120 (~23% more damage at max level compared to before)
+   * Annihilation:
+   * Damage at level 1 increased by 33%, endgame damage unchanged
+SORCERESS
+MELEE
+   * Bladestorm:
+   * Weapon Damage increased to 60%, up from 55%
+   * Magic Damage synergy increased to 12%, up from 10%
+   * Magic conversion now 90% at level 1, down from 95%. Max conversion now 50%, down from 60% (more leech)
+   * Fusillade: Weapon Damage increased to 110%, up from 100%
+   * Cold Blooded: now adds 1.5% of Dexterity as Cold Pierce, up from 1%
+   * Determination: new passive skill
+   * Sacrifices Elemental Damage dealing capabilities to increase your Defense
+   * 30% of your average Fire, Cold and Lightning Damage is added as Bonus Defense
+   * Deal no Fire, Cold or Lightning Damage
+   * Only allows the use of melee, summoning and buff/debuff skills
+   * Requires level 50, maximum Base Level is 1
+   * Fatal Focus: new passive skill
+   * Increases your Deadly Strike at the cost of your Maximum Block Chance
+   * Grants 1% Deadly Strike and +4% per Base Level
+   * Grants -5% Max Block Chance per Base Level
+   * Requires level 70, maximum Base Level is 8
+LIGHTNING
+   * Forked Lightning: damage at level 1 increased by 150%, endgame damage unchanged
+ITEM ONLY SKILLS
+   * Pentagram: damage increased by 10%
+   * Wyrd: affix now requires character level 60, up from 40
+   * Searing Glow:
+   * Now hits 5 times per cast, up from 4
+   * Successfully corrupted equipment damage bonus now 30% per item up from 20%
+   * Avalanche: area of effect expansion requirement now 1250 Spell Focus, up from 1200
+   * Guard Tower: now converts 33% of damage to magic; now requires 11 levels for an extra target, up from 10
+   * Hamstring: removed
+   * Clobber: removed
+   * Cherubim: Weapon Damage now 110%, down from 120%
+   * Death Star:
+   * Fixed a bug where the projectiles would stop dealing damage after hitting an unpoisoned target
+   * Pulse radius reduced by 8%
+   * Tantrum:
+   * Fixed a bug causing the set to not function
+   * Halved number of hits
+Items
+MISC
+   * Replaced Amulet/Ring/Quiver +1 Life Regen mystic orb with +20 to Life
+   * Blackleach Blade: now adds 100/250/500/1000 Poison Damage over 2 seconds
+   * Brainhack: Deathgaze is now usable again
+   * Fixed the Magister still having Apocalypse instead of Flamefront
+   * Zerae's Veil: rebalanced for new stormzon
+   * Dreamswayer: rebalanced for new stormzon
+   * Fixed a bug where tiered Throwing Axes were counting as 2H weapons (not retroactive)
+   * Increased base damage for most Scepters
+   * Naginata: WSM buffed to 5, from 10
+   * The Black Dame: requirements per tier now +10/25/50/75%
+   * Chargebreaker: removed minion stats and added Block Speed
+   * "Slain monsters rest in peace" stat no longer has a visual effect and sound
+   * Crystal of Tears:
+   * Removed health penalty, biggest stackers were builds who could ignore this anyway
+   * Level requirement now +20, up from +10
+CORRUPTION
+   * Corrupted Crystals now require 5 shards to be made
+   * Added all possible cube combinations that could add up to 3 crystals or less
+RELICS
+   * Queen of Blades: Shred duration bonus now +50%
+   * Eviscerate: now +1 projectile, down from +2
+   * Mythal: replaced previous orange stat which wasn't working, now provides double debuff duration of Mythal effect (1s -> 2s)
+   * Removed Magnetic Field & Thundercrack relics
+   * Added Discharge relic
+   * Stormcall: replaced Stormclash proc with +1% proc chance to Conductivity
+   * Titan's Fortitude: description now accurate
+   * Phalanx: skill level is now always 1
+ITEM AFFIXES
+   * Boots: minimum FRW roll now 10%, up from 0%
+   * Naginata
+   * Removed Hades Gate cooldown reduction affix
+   * Removed Bloodbath duration affix
+   * Dual pierce affix now 25% pierce of all Elements
+   * Removed %life affix
+   * Enhanced Weapon Damage affix now (51 to 100), up from (31 to 80)
+   * Broadside cooldown reduction affix now 3 seconds, up from 2
+SACRED UNIQUES
+   * Natasha's Legacy Design: now requires 5 of each rune/essence, down from 6
+   * Natasha's Legacy: minimum elemental pierce roll increased from 3% to 10%
+   * Legio Di Manes: reworked stats
+   * Zular Khan's Tempest:
+   * 50% Fire/Lightning pierce changed to 30% pierce of all Elements
+   * Removed redundant flat Fire/Lightning Damage bonus
+   * Assassin's ways bonus levels now +(21 to 35), up from (25 to 30)
+   * Now also includes skill levels to Way of the Raven
+   * Black Ice: removed %stat bonuses, added 20% Innate Elemental Damage and 100% Attack Rating
+   * Storm Blade:
+   * Max Damage increased by 100
+   * Now also pierces cold
+   * Doubled Javelin Nova proc chance
+   * Magic Find increased to 75%
+   * Blackjade's Legacy:
+   * Now also pierces Cold per point into Shadow Refuge
+   * Banner of Bitter Winds: Cold Spell Damage bonus per way level now 1%
+   * The Doom Gong of Xiansai: no longer has increased requirements, removed Strength bonus
+   * Zayl's Temptation:
+   * Now adds -(11 to 15) to all enemy resists instead of flat Elemental damage
+   * Now adds 10% Maximum Block chance
+   * Increased assassin skill levels from (3 to 5) to (4 to 6)
+   * Removed reanimate, Crucify skill levels & ewd penalty
+   * Saber of the Stormsail: fixed a bug causing the character to freeze in place whenever Squall Wave triggers
+   * Dux Infernum: no longer summons jinns on attack, now grants level 8 Hellfire Aura (this change is not retroactive)
+   * Azurewrath:
+   * Now adds 90% of Vitality as Cold Damage to weapon (up from 80%)
+   * Vitality now grants 0.5 less Maximum Life per point
+   * Above changes are retroactive
+   * Legion:
+   * Renamed to Legionnaire
+   * Now has 10% chance to trigger Thunder Hammer on striking
+   * Slightly reduced added Physical Damage
+   * Azgar's Crystal: removed Mana Pulse AoE effect due to technical reasons
+   * Solar Scion:
+   * No longer adds druid skill levels
+   * Now adds 33% spell damage
+   * New orange stat: Double Conductivity Effect
+   * Gromotvod: changed orange text
+   * Stormhammer:
+   * Renamed from Thunderbane
+   * Now adds effect: Reckoning of Zerae: Double Power Shift Bounce Chance
+   * Added 4% chance to trigger Hammertime on kill
+   * Now adds flat lightning damage and pierce rather than Physical Damage and Spellbind cooldown reduction
+   * Doubled Physical Resist
+   * Piranha Swarm:
+   * Reworked stats
+   * Now makes Scorpion Blade "Always Explode" (i.e. when missile reaches end of range, it will explode as if it hit something) and reduced max travel range
+   * Adds 150% poison spell damage, 150 Life after kill, (4 to 7) assassin skills
+   * Adds 50% magic find, 2% max Resistances and 50% Mana Regeneration
+   * Increased rarity
+   * Knight's Grace: increased flat Maximum Damage to 25 from 20
+   * Angel's Wrath: increased Maximum Life from 3% to 5%
+   * Buzzbomb: removed
+   * Penumbra:
+   * Now a SU rarity, slightly adjusted stats
+   * Max damage now rolls (21 to 100)
+   * Removed flat cold damage, added 10% Dexterity
+   * Rakkis' Benediction: reworked for storm tree
+   * New Sacred Unique: Death Sentence, replaces Eternal Bodyguard, increased rarity
+   * New SSU Balanced Knife: Sky Murder
+   * Shaman relics now give 25% of one minion stat. Set bonus now increases Spirit Walk heal +5% of Max Life
+   * Shadowtwin:
+   * Removed mana, mana on kill, Veil King oSkill
+   * Now allows you to summon 2 ancient spirits per cast
+   * Malleus Maleficarum:
+   * Removed Skill Level bonuses to Retaliate and Divine Judgment
+   * Now grants 6% chance to cast Widowmaker on Attack
+   * Lacerator:
+   * Removed orange text
+   * Bear Claw Nova now 130% weapon damage, up from 110%
+SETS
+   * Witchhunter's Attire:
+   * Two piece Lightning pierce bonus reduced from 20% to 10%, now adds 10% Maximum Block chance instead of 20% resistence
+   * Full set bonus no longer has reanimate chance, now adds 20% pierce to all Elements
+   * Witchhunter's Ire: now also adds Cold and Poison Damage
+   * Thunderstorm: fixed full set bonus orange text
+   * Spirits of the Nephalem:
+   * The Guardian: removed +1 max Spirits
+   * Two piece set bonus now gives 50% to Minion Attack Rating instead of the proc
+   * Three piece set bonus now gives 15% to Minion Resistances instead of EWD, now 15% Minion Damage instead of 50%
+   * Full set bonus now gives 300 to Vitality and Energy instead of 500 each
+   * The Trickster: now gives Pestilence instead of Graveyard to make the required level on par with the rest of the set
+   * Achilio's Wake: now gives Fire pierce instead of Poison
+   * Achilio's Stealth: increased EWD and added 10% Movement Speed
+   * Zerae's Divinity:
+   * Two piece bonus:
+   * Increased Lightning pierce to 25%
+   * Replaced Amazon Skills with Spell Focus
+   * Three piece bonus:
+   * Replaced mana steal with Physical Resist
+   * Rebalanced full set bonus
+   * Zerae's Holy Wrath:
+   * Crushing Blow increased to (10-15)%
+   * Now adds 75-100 Energy
+   * Zerae's Redemption: replaced Stormeye Totem with 30% to Combat Speeds
+   * Zerae's Refinement:
+   * Increased Amazon Skills from 1 to 2
+   * Dexterity now rolls from 75 to 100
+   * Maximum Damage replaced with Cast Rate
+   * Zerae's Vindication:
+   * Replaced proc with -40% to requirements
+   * Replaced flat lightning damage with 1 to 2 to Amazon Skillssp
+   * Reduced physical resist to 10%
+   * Celestia's Charge: increased minimum Movement Speed to 10% from 8%
+   * Vizjun's Devices:
+   * Max resistance from full set bonus reduced to 1%
+   * Creed:
+   * Modified the stats of various pieces
+   * Full Set Bonus:
+   * Knife Throw on kill 30% -> 100%
+   * Scorpion Blade on striking -> 5% on Kill
+   * Removed 200 Strength/Vitality
+   * Now adds +5 to Assassin skill levels
+RUNEWORDS
+   * Pax Mystica: now only requires Tir rune
+   * Twisted Mind: fixed Life bonus, Life bonus now requires Occult Path (this change is not retroactive)
+   * Artemesia's Authority:
+   * Orange text now synergizes with Hammer of Zerae
+   * Life on Attack replaced with Life on Striking
+   * Proc removed
+   * Disturbance: now converts Hammer of Zerae to 100% Lightning, added flat Vitality
+   * Perfect Storm: Physical/Magical Spell Damage changed to Lightning Spell Damage
+

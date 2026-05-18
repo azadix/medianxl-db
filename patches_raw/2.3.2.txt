@@ -1,0 +1,7 @@
+2.3.2 ADDITIONAL NOTES
+Fixed a bug with Chance to Hit and Chance to Get Hit not reading correctly
+Scosglen: fixed a bug that caused higher relic drops than intended
+Mooncall: fixed issue with distance casting
+Amazon Hammer Path now compatible with melee devotion
+Discharge: improved description
+

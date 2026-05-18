@@ -1,0 +1,415 @@
+2.2.0 NOTES
+   * Ureh: completely reworked map
+   * Reworked Carnage/Bane relics
+   * Corruption: reworked tech, no longer coupled with lottery/lucky chance, i.e. it's now possible to roll both on one item
+   * Back to the Abyss: increased necro skill levels by 1
+Game
+GENERAL
+ENGINE
+   * Main menu layout has been reworked
+   * Adjustments to vendor grid size to accommodate Tartarus theme
+   * Added in-game ping to the automap game information (toggle via Preferences -> Interface Settings)
+   * Reworked how experience is divided among players:
+   * In previous patch (and in vanilla), experience from a killed monster is divided among players in the same area. For example, at two players, a monster had extra 50% exp, but then the total amount was divided between the players
+   * Now, players will always get 100% experience from nearby monster kills, regardless of how many other players there are in the game, nearby, or who got the kill (in vanilla, the killing blow got a higher share of the exp%)
+   * This translates to more experience during group play compared to before, as experience is no longer divided. For example, a monster killed with 8 players nearby now provides a total of 800% experience (100% to each nearby player). For characters solo-farming on games with multiple people, they will also only get a max of 100% experience per kill
+   * These changes were primarily done to remove any incentives for people to multilog for any reason other than muling, i.e. getting more experience. This has cost us resources and time over the years while punishing people who wanted to play from the same IP. Multilog rules/warnings have not been very efficient to prevent accidental bans, especially for the non-English community.
+   * Extended the "carry one" functionality from charms to add charm groups. This is the foundation of the Relic Rework. WARNING: unsocket your relics before patch is live or the game will eat them!
+QUALITY OF LIFE
+   * All items can now be unsocketed, as long as they aren't runewords, which means socket fillers can be recovered in case rune order goes wrong
+   * Added a button in the inventory to automatically collect all items that could go into containers (AC, runes, shrines, etc)
+   * Re-added town portal delay but at 1 second instead of 3 seconds
+Endgame Quests
+NEPHALEM RIFTS
+DUNCRAIG
+   * Enlarged a few sections and added a few passages
+   * 25% overall gain in enemies spawning areas
+   * Slightly reduced drop rates
+FAUZTINVILLE
+   * Increased Fauztinville-only rune drop chances (Taha/Ghal/Qor)
+SCOSGLEN
+   * Added a couple of new paths
+   * 10% overall gain in enemies spawning areas
+   * Slightly increased density
+   * Improved unique and set item drop chance
+   * Reduced excessive defense from mobs and corrupted druids
+   * Increased experience by 10%
+   * Etherborn: removed Weather Storm screen flickering
+   * Spriggan: reduced Fire Punch damage by 10%
+   * Dryad Spawn: reduced chance to flee, making it more forgiving for melee builds
+   * Corrupted Druids:
+   * Reduced ally damage reduction granted by aura
+   * Reduced chance to hit
+   * Corrupted Wolf:
+   * Replaced mana leech with mana drain aura, reduced physical damage, attack rating and Twisted Claw level
+   * Corrupted Hunter:
+   * Reduced physical & fire damage
+   * Reduced Bear Companion damage and health
+   * Replaced Cascade with Phalanx
+   * Corrupted Seer:
+   * Reduced Ember Spirit and Banshee skill levels
+   * Higher zones in the stage now have a permanent Blizzard effect
+   * Ominous Guardian:
+   * No longer despawns
+   * Reduced spawning frequency
+   * Reduced ally damage reduction granted by aura
+   * Eleventh Eye: new mini-boss located in the Scosglen cemetery
+   * Tenets and Tenet Designs no longer spawn in Treasure Boxes, instead the Corrupted Bosses have a 20% chance to spawn the designs and 1% chance for a Tenet:
+   * Corrupted Werewolf: drops Tenet/Design of Judgement
+   * Corrupted Werebear: drops Tenet/Design of Restraint
+   * Corrupted Wereowl: drops Tenet/Design of Vigor
+   * Corrupted Seer: drops Tenet/Design of Wisdom
+   * Corrupted Hunter: drops Tenet/Design of Conflict
+   * Corrupted Naturist: drops Tenet/Design of Harmony
+   * Modified the types of the required sacred uniques due to issues with existing itemtypes
+   * Treasure of Fiacla-Gear:
+   * Enchanted rune and arcane crystals are now both cubed on the first step
+   * Unlock gold cost now varies depending on rune used
+   * Reworked all outcomes, removed equipment from item pool and increased UMO/relic/cycle biases instead, in addition to extra crystals
+   * Tur Dulra's Oak Seed: renamed to Dúlra Aegis
+   * Corrupted Box: now only requires one Arcane Crystal in addition to rune to unlock
+DIMENSIONAL LABYRINTH
+   * Phoboss:
+   * Reduced damage of all of his attacks and abilities by 20% (excluding the Frost Arena)
+   * Reduced loot rewards - you now have a 0.25% chance of getting nothing, 99.75% chance of getting at least 1 drop, and 90.25% chance of getting 2 drops; down from 2 drops always
+ENDGAME DUNGEONS
+LEGION OF THE DAMNED
+   * Reduced number of Zombies and Fallen Heroes spawned in the last wave to reduce lag
+   * Greatly increased health of the damned souls (which unlock difficulty additions)
+KINGDOM OF SHADOW
+   * Removed unexciting zone prior to zombie arena, now connected directly to Vizjerei's Temple
+   * Completely reworked map, and added a connection to the World Nexus
+TORAJA
+   * Now requires level 120 to access, down from 125
+   * Area level reduced to 120 from 126
+   * Slightly reduced density
+EVE OF DESTRUCTION
+   * Now requires level 125 to access, up from 120
+   * Area level increased to 125
+   * Baal:
+   * Fixed a bug preventing Visions from spawning on Hell difficulty
+   * Will now drop a Relic the first time you kill him
+XAZAX
+   * Reduced physical resistance from 40% to 35%, magic resistance from 28% to 23%
+NYMYR'S LIGHT
+   * Now located in the Kingdom of Shadow
+   * Atanna Khan: reduced physical resistance from 40% to 35%, magic resistance from 28% to 23%, reduced health by 10%
+SPIRIT WORLD
+   * Giyua: reduced physical resistance from 40% to 35%, magic resistance from 28% to 23%, increased health by 10%
+   * Nests: reduced health by 38%
+THE VOID
+   * Soul of Pride: now takes less time to kill when low on health
+UILELOSCADH MÓR
+   * Defeat Sescheron's Destroyer, a new dungeon boss in Scosglen
+   * Boss drops a fruit that upgrades the Dúlra Aegis, providing:
+   * +1 to All Skills
+   * 5% Maximum Life
+   * 25% Magic Find
+   * Drops up to 3 Sacred Uniques
+   * Chance to drop Relic
+Characters
+GENERAL
+   * Melee Mastery: clarified description
+   * Added physical resistance to mercenary stat screen
+   * Re-added mercenary resistance turning gold at 75% max resistance
+AMAZON
+JAVELIN
+   * Deadly Dance: now reduces deadly strike by 15%, up from 10%
+   * Elemental Aegis: maximum absorb is now 13%, down from 15%
+   * Indomitable: fixed a bug causing block chance to always be 50% instead of maximum block
+REWARD
+   * Spirit of Vengeance: no longer requires a corpse
+ASSASSIN
+GENERAL
+   * Now obtains 2% life per point into Endurance
+CLAW
+   * Summon Familiars: bat duration now affected by Continuity mastery
+   * Noctule: reduced sound effects
+BARBARIAN
+EARTHSHAKER
+   * Earthquake
+   * No longer gains flat physical damage after Skill Level 28
+   * Physical synergy increased to 14% per Base Level, up from 10%
+   * Maximum skill level is now 20
+WARMONGER
+   * Fortress: increased attack speed, damage per second increased by 11%, projectile speed increased by 15%
+DRUID
+WEREOWL
+   * Wereowl Form: increased movement speed
+   * Ferocity: now adds flat physical damage at low levels
+   * Egg Trap:
+   * Now a level 25 skill
+   * Greatly increased base lightning damage
+   * Birds now pierce through enemies, massively increasing damage potential in high density zones
+   * Now shoots 2 novas instead of 3
+   * Increased attack speed animation, now able to reach 8 fpa
+   * Replaced quill sound on skills with bird ones
+   * Thorn Wall: increased weapon damage by 11%
+   * Progeny's Blessing:
+   * Now affected by Continuity mastery
+   * Now heals you based on Egg Trap base level
+NECROMANCER
+MELEE
+   * Reaper:
+   * Due to limitations in the game engine, splash effect now has 0% conversion to magic (the conversion wasn't working)
+   * Now affected by Continuity mastery
+SUMMON
+   * Abyss Knight:
+   * Now a spellcaster minion
+   * No longer have physical damage nor attack rating, their spells always hit
+   * Main attack now deals magic damage and properly scales with minion damage now
+SORCERESS
+ARCANE
+   * Immersion: tooltip now shows damage from full hit, better indicates skill is for single target
+   * Arcane Torrent: now gains an additional 1% bonus to total damage per character level above 110
+   * Arcane Fury: now adds an additional projectile to Immersion
+REWARD
+   * Force Shout: clarified description
+ITEM ONLY SKILLS
+   * Apocalypse
+   * Concept: Apocalypse was one of the skills used by Diablo in the original Diablo 1 game. As such it should: 1) require great ability from the caster and 2) should not be available early on. To implement the first part a high level of the skill will be required in order to "activate" it, this also leverages the numerous sources which carry the oSkill. In addition, a good investment into mana will be required to fit the theme. As for the second part, the tiered unique sources of this oSkill will be removed and the required level of the rare affix will be increased.
+   * Skill changes:
+   * Damage is now always the equivalent of old level 120 Apocalypse, it does not scale with skill levels
+   * Will be castable from skill level 62 onwards. If you have a lower level you will not be able to play with this skill
+   * Will deal 50% more damage if your current mana is higher than your maximum life
+   * Now reaches its maximum damage range 63% faster, area of effect increased by 21%
+   * Mana cost is fixed at 125
+   * Item changes:
+   * Level requirement of rare affix increased by 33
+   * Apocalypse procs on tiered uniques replaced with Fire Splash
+   * Apocalypse proc on Stygian Fury now level 63, up from 60
+   * Auto Da Fe: replaced Apocalypse with Flamefront
+   * The Magister: replaced Apocalypse with Flamefront, slightly reduced skill levels
+   * Phoenix Wave
+   * Concept: A phoenix is a mythical bird which can be regenerated in a burst of flames and combustion. This skill is being improved by fine tuning the mechanics and increasing the damage and utility through thematic scaling
+   * Skill changes:
+   * Wave speed has been doubled, wave maximum range has been increased by 16%
+   * Wave will no longer be obstructed by unwalkable ground terrain such as rocks and water puddles
+   * Now restores a percentage of your maximum life per cast, based on your character class: Paladin/Sorceress = 0.2%, Other classes = 0.4%
+   * The above values are set so that slower casters will be compensated for the lower damage output with more regeneration
+   * Amount healed increases by 100% if you have at least 2800 energy and 200% if you have at least 3600 energy
+   * Damage increased by 27%, reduced damage variance
+   * Fire spell damage now applies at 180% of value, Cold/Lightning/Poison spell damage applies at -75% of value
+   * For example an item with 10% Fire and Cold spell damage will increase Phoenix Wave damage by 11%, an item with 10% to all spell damage will decrease damage by 4%
+   * Chaotic Spark: replaces Static Lance
+   * Concept: An ability that scales with cast speed. Both mechanically with faster animations (through the use of an on cast proc) and numerically from your uncapped cast speed (incentivizing more speed scaling past lowest frame breakpoint). This oSkill will be restricted to Paladins and Sorceresses who are able to best make use of the ability through their fast cast speeds.
+   * Skill changes:
+   * Now fires 4 projectiles up from 3, next delay removed (main projectiles can now shotgun)
+   * Main projectiles no longer pierce but instead explode in a small area on impact
+   * 20% chance to trigger a charged nova on cast, releasing 32 piercing projectiles around you
+   * Damage increased by 452%
+   * Charged nova stuns enemies for 0.5 seconds on hit
+   * Damage scaling cap from Spell Focus is tripled for this skill
+   * Your cast speed stat also counts as Spell Focus for this skill
+   * Item changes:
+   * Now only spawns on Sorceress body armor and Paladin helms
+   * Arcane Swarm:
+   * Concept: numerical analysis compared to the closest scaling skill (Voidstar) and playtesting reveals that performance is good with the following factors considered
+   * Average roll on Atanna Khan's Dress
+   * Inclusion of big all skills roll on elemental bow affix pool
+   * 12 to all skills from maxed familiar
+   * Easy availability of generic spell damage buffs: firedance/blood fury
+   * Crowd control with Chronofield
+   * Skill changes:
+   * Now also gains a small amount of flat damage per Skill Level, in addition to more projectiles
+   * At level 37 this is equivalent to a 57% damage buff compared to previously, with the buff increasing with better gear
+   * Mana cost reduced by 66%
+   * Projectile range increased by 27%, projectile speed increased by 53%
+   * Pentagram
+   * Concept: specialize the skill a bit further to fit a more defined gameplay role. Increase power without compromising on the visuals too much (no cooldown casting = nothing resembling a pentagram on the screen any more) and without making low frame casters the best as is the norm. Harness the demonic/corruption theme more.
+   * Skill changes:
+   * Make the skill more suited to the close ranged playstyle by enabling casting under melee only restrictions such as Melee Devotion, skill tag in the description changed to "melee spell"
+   * The above change makes this skill a great candidate as a single target addition or Blood Thorns replacement for a Ritualist
+   * To make this skill more suitable for other classes the character will also gain physical resist for a short time after casting (this way other classes can play melee caster with it too and Paladins don't benefit as much)
+   * The buffs will scale with the amount of unspent attribute points you have. The character has to sacrifice a part of themselves to harness the demonic power and also as a nod to ancient Median XL nostalgia
+   * Skill Cooldown is reduced by 0.04 seconds for every 20 unspent attribute points you have, up to a maximum of 300 (minimum cooldown now 1 second, compared to 1.6 before, a 60% damage buff while chain casting)
+   * Gain 2% Physical Resistance for 2 seconds after casting for every 20 unspent attribute points you have, up to a maximum of 300 (30% physical resistance maximum)
+   * Mana cost doubled as it was not appropriate for a cooldown ability before
+   * Item changes:
+   * Now added to the Veil of the Tainted Sun sacred unique
+   * Wyrd
+   * Concept: establish a theme consistent with the visuals. Create scaling for stats that have not had such vectors before, creating use cases for items which were previously not popular. Tie holy visuals to theme
+   * Skill Changes:
+   * Soul is no longer targetable anywhere on the screen, now appears a short distance away from you and works with melee only restrictions
+   * Cooldown removed, always hits. Soul releases a nova every 0.4 seconds, down from 0.6. Now release 3 novas per cast, down from 4
+   * Mana cost greatly increased: 150 mana at level 1, rising by 2 mana per level
+   * Deals damage based on the amount of Magic damage added to your weapon, starts at 40% and gains an additional 1% per Skill Level
+   * Damage is increased by half of your Damage to Demons bonus
+   * Item Changes:
+   * No longer spawns on the Astrogha's Moon set
+   * The Overlord tiered unique has been reworked accordingly
+   * Avalanche:
+   * Concept: make the skill easier to play and more powerful by enabling targets between the avalanches to take damage. Require some sacrifice for builds wanting to use the skill this way, as otherwise it would be too generic
+   * Skill Changes:
+   * If you have at least 1200 Spell Focus double radius of frost explosions (300% increased area of effect)
+   * Guard Tower
+   * Concept: improve the skill so that it becomes worth casting stand-alone. Further, use it to enable the often requested playstyle of a Fortress character as visuals and theme have synergy
+   * Skill Changes:
+   * Weapon damage increased to 140%, up from 25%
+   * Now targets an additional enemy in range for every 10 Skill Levels
+   * Guard Towers which are active while Fortress is also active have their seek radius and enemy targets doubled
+   * Tower duration is now always 5 seconds and duration no longer increases with Skill Level
+   * Item Changes:
+   * Guard Tower proc level on items reduced to 1, existing items not affected
+   * Guard Tower relic proc chance now 1%, down from 3%
+   * Skill level on the Helepolis unique has been doubled
+   * Proc chance on Chargebreaker has been halved
+   * Proc chance on Rathma's Tyranny now 15%, down from 25%
+   * Mount Arreat 3 piece set bonus proc chance now 10%, down from 20%
+   * Added +(8-16) to Guard tower as an affix on magic/rare/crafted Barbarian Shields
+   * Death Star
+   * Concept: skill which scales through stacking flat poison damage on gear and skills, without the detrimental duration handling which makes the stat suboptimal in normal use cases (damage reduction from multiple item sources, exponential scaling from skill sources). The skill will be exclusive to classes who can best take advantage of the mechanics.
+   * Skill Changes:
+   * Main projectile now pierces and does no damage, instead pulses every 0.4 seconds poisoning enemies in an area around itself
+   * Deals damage based on the combined poison damage per second of all your skill and item sources
+   * Deals 120% + 6% per Skill Level of your combined poison damage per second
+   * Gains an extra projectile every 15 skill levels (max 3)
+   * Poison duration is 2 seconds
+   * The skill is not affected by poison spell damage, spell focus and poison skill duration stats as weapon damage projectiles
+   * Item Changes:
+   * Proc chance reduced from 5% to 2%, Skill Level is now 1
+   * Added +(8-18) to Death Star as an affix on magic/rare/crafted Amazon Helms, Assassin Shields, Assassin Claws and Barbarian Helms
+   * Cataclysm
+   * Concept: the skill cannot retain its current functionality as there are other fire oSkills which do the job better. Its mechanics are less suited to crowd clearing compared to Apocalypse and less suited to single target compared to Pentagram. The skill is widely available so it must be reworked to provide benefits to many builds and Paladins in particular.
+   * Skill Changes:
+   * Renamed to Ignis Fatuus
+   * No longer conjures a fireball nova around you, is now a long duration buff
+   * Grants Spell Focus, Fire damage to weapons and reduces your Fire Resistance
+   * Spell Focus bonus is +5 per Skill Level until level 40, and +2 afterwards
+   * Fire damage bonus is 12 - 20 per Skill Level until level 40, and 6 - 10 afterwards
+   * Fire resistance penalty is 1.5% per Skill Level
+   * Duration is reduced to 20 seconds if you obtain this buff from a proc
+   * Item Changes:
+   * Armageddon Set: no longer gives a Cataclysm proc, set bonus is now "50% increased Cataclysm bonuses". Removed all skill bonuses from items to balance the set for non-fire builds
+   * Ensi Runeword: now procs Apocalypse, chance is now 33% down from 40%
+   * Apocstasy Runeword: now gives Pyroblast instead
+   * Eternal Vigil: proc removed, other proc chances now 4% up from 3%
+   * Hammer of Jholm: now procs Apocalypse
+   * Heart of Fire: now procs Pyroblast
+   * Bartuc's Curse: now gives Phoenix Wave
+   * Veil of the Tainted Sun: now gives Pentagram
+   * Proc level on the magic/rare/crafted affix increased to 40, up from 19
+   * Can now spawn as an affix on magic/rare/crafted Druid Helms and Paladin Helms instead of Sorceress Orbs and Necromancer Staves
+   * Searing Glow
+   * Concept: fix a big mechanical problem with the skill - it requires an enemy to click on but primary target only gets hit once while adjacent targets get hit three times. Make it fulfill two distinct roles better, depending on thematic scaling.
+   * Skill Changes:
+   * Damage increased by 50%, attack rating debuff now 20% down from 25%
+   * Reworked mechanics so that all targets in radius now get hit three times per cast
+   * The skill changes its role based on the number of successfully corrupted items your character is wearing
+   * If you are wearing none the powers of Heaven imbue the skill, increasing debuff duration to 30 seconds. Enemy attack rating debuff increases from 20% to 35%
+   * If you are wearing one or more the powers of Hell imbue this skill, it gains 15% of Physical Damage added as Fire per successfully corrupted item worn
+   * Item Changes:
+   * Relic skill bonus is now +(9-11), down from +(12-21)
+   * Now spawns as an oSkill with level bonus +(14-21) on magic/rare/crafted Amazon Shields, Necromancer Staves and Druid Helms
+   * Now spawns as an oSkill with level bonus +(4-10) on magic/rare/crafted Paladin Shields
+   * Summon Sinner
+   * Concept: part of a trio of high level elemental minions that can complement any summoner. These will leverage the other improved oSkills in the patch, with scaling that promotes more variety in summoner gearing. You will only be able to summon one type of elemental minion per build. Make summon counts scale with player level, providing a big power boost for simply playing the game. Helps characters using the skill progress further even if they are unlucky with drops.
+   * Skill Changes:
+   * Minion health doubled, now uses the reworked version of Apocalypse
+   * Gains spell damage equal to 40% of your minion damage stat, down from 50%
+   * Gains 10 Spell Focus and 30 Energy per Skill Level
+   * Now starts with 10 fire pierce, fire pierce is increased by your bonus to minion attack rating
+   * Base minion count is now 1, gain an extra maximum minion at character levels 130, 140 and 148
+   * Item Changes:
+   * Now spawns as an oSkill with level bonus +(10-16) on magic/rare/crafted Necromancer Shields and Necromancer Wands, Amazon Helms and Amazon Shields and Barbarian Shields
+   * Summon Glowing Fungus
+   * Concept: part of a trio of high level elemental minions that can complement any summoner. These will leverage the other improved oSkills in the patch, with scaling that promotes more variety in summoner gearing. You will only be able to summon one type of elemental minion per build. Make summon counts scale with player level, providing a big power boost for simply playing the game. Helps characters using the skill progress further even if they are unlucky with drops.
+   * Skill Changes:
+   * Minion health doubled, now uses Chaotic Spark
+   * Chaotic Spark level increases with Skill Levels
+   * Gains spell damage equal to 40% of your minion damage stat, down from 50%
+   * Gains 3 Spell Focus and 5 Energy per 1% Cast Speed
+   * Now starts with 10 lightning pierce, lightning pierce is increased by your bonus to minion attack rating
+   * Base minion count is now 1, gain an extra maximum minion at character levels 130, 140 and 148
+   * Item Changes:
+   * Now spawns as an oSkill with level bonus +(20-26) on magic/rare/crafted Necromancer Staves and Amazon Shields
+   * Ice Lance
+   * Concept: currently doesn't have a role as coverage is too low to clear and damage is too low to boss. Transform the skill into a viable single target option.
+   * Skill Changes:
+   * No longer pierces, no longer freezes as bosses are freeze immune anyway, now deals damage in a small area
+   * Initial projectile speed is now very low but the lance accelerates rapidly
+   * Now hits 3 times per impact, up from 1. Damage increased by 20%
+   * Increases and reductions to weapon physical damage now count as cold spell damage for this skill
+   * This helps physical builds leverage the large number of proc sources of this skill as well as cold casters who can quickly weapon swap for a single target boost
+   * Mana cost greatly increased
+   * Item Changes:
+   * Now spawns as an oSkill with level bonus +(14-28) on magic/rare/crafted Belts
+   * Now spawns as a 25% lvl 40 on melee attack proc on magic/rare/crafted Belts, in addition to +(5-10)% cold pierce
+   * The above affixes cannot spawn together
+   * Summon Avalanche
+   * Concept: part of a trio of high level elemental minions that can complement any summoner. These will leverage the other improved oSkills in the patch, with scaling that promotes more variety in summoner gearing. You will only be able to summon one type of elemental minion per build. Make summon counts scale with player level, providing a big power boost for simply playing the game. Helps characters using the skill progress further even if they are unlucky with drops.
+   * Skill Changes:
+   * Renamed to Summon Frostwalker
+   * Replaced creature model, no longer has a massive collision size
+   * Minion health doubled, now uses the reworked Ice Lance
+   * Ice Lance level increases with Skill Levels
+   * Gains spell damage equal to 40% of your minion damage stat, down from 50%
+   * Gains 1.5 Spell Focus and 4 Energy per 1% summoned minion life
+   * Now starts with 25 cold pierce, cold pierce is increased by your bonus to minion attack rating
+   * Base minion count is now 1, gain an extra maximum minion at character levels 130, 140 and 148
+   * Item Changes:
+   * Now spawns as an oSkill with level bonus +(20-26) on magic/rare/crafted Druid Staves and Barbarian Shields
+   * Void Archon: fixed attack speed debuff value (-20%)
+   * Frozen Orb: reduced mana cost
+   * Hawk Talons:
+   * Increased weapon damage by 33%
+   * Increased magic damage, with increasing returns
+   * Trinity Nova: now uses cast instead of attack animation
+   * Lightning Arena: arena duration increased by 37%
+   * Limpet Laser: slightly increased endgame damage
+   * Shunpo: weapon damage increased by 23%
+   * Gamma Field: damage increased by 10%
+   * Supernova: damage increased by 15%
+Items
+GENERAL
+   * Akara's Robe: can no longer be upgraded into war cloak
+   * Innate Tri-Elemental damage display is now orange instead of gold
+   * Golden Cycle: fixed size
+   * Desolation:
+   * Halved magic damage from 5000 to 2500
+   * Ultimate chaos damage increased by 120%
+   * The Shanker: now adds 5%-20% crushing blow (depending on tier)
+   * Quov Tsin's Fall: replaced with new unique Dagger: Sharp Beak
+   * Dagger, Dirk, Kriss, Blade: increased WSM on all tiers and damage at t1-t2
+CORRUPTION
+   * Runewords can now be corrupted
+   * Corrupted Crystals: recolored shards and their appearance on ground
+   * Fixed a bug where success chance was 22% (2/9) rather than 33% (1/3), and further increased to 40%, effectively nearly doubling success chance compared to previous patch
+   * Chance for corruption increasing level required is now 30%, down from 33%
+   * Therefore chances for success/nothing/failure are now 40%, 30% and 30% respectively
+   * Implemented Corrupted Cluster
+DROP RATES
+   * Single Player and Multiplayer modes now share the same itemratio table, meaning the chance to find sets or uniques are now the same in both modes. The new rates are a middle ground of both, therefore meaning slightly increased unique/set chance in MP and slightly reduced in SP. Note that this drop change only affects item quality, and doesn't (and didn't) affect any items that don't roll rarities (runes, shrines, relics, etc).
+   * Increased Enhanced Rune drop chances
+   * Increased rune drop chances globally
+RELICS
+   * Relics are now charms and will no longer consume socket space. WARNING: unsocket your relics before patch is live or the game will eat them!
+   * You can have a maximum of 3 relics at any time in your inventory
+   * Can not carry the same relic twice. Balancing relics around having 1 and stacking (3+) has proven difficult, often leading to relics being underwhelming when not stacked. Instead we are increasing the power baseline and limiting them in most cases.
+   * Relics now have required level 75, down from 120
+   * Relics can now drop on all difficulties
+   * Increased the skill level of all relics
+   * Added additional stats to all relics, including procs and orange effects
+   * Removed several relics with skills that were notoriously outdated/useless or highly abusable
+SACRED UNIQUES
+   * Thunder King of Sescheron: orange text now works correctly
+   * The Worshipper: now reduces Bend the Shadows cooldown by 1 second, rather than 2
+   * Gaze of the Dead: now gives +150% damage to demons instead of 180% damage to the Zakarum
+   * Freakshow: fixed Pestilence duration
+   * Plunderbird: life% bonus now (2-5)%, up from (1-3)%
+   * Sky Spirit: now adds 10% crushing blow instead of attack speed
+   * Back to the Abyss: increased skill levels by 1
+   * New Sacred Unique: Strixclaw (Blade), replaces Drow Valor
+SETS
+   * Emerald Cloud:
+   * Crushing blow increased to (5-10)%
+   * Now spawns with (0-1)% Maximum Resistances
+   * Now adds (11 to 25) enemy lightning resistances
+   * Emerald Flower:
+   * Increased flat physical damage to 50-100
+   * Increased flat cold and lightning damage, removed fire
+   * Emerald Earth:
+   * Replaced fire damage with 100-200 lightning damage
+   * Now adds (11 to 15) lightning pierce
+   * Emerald Sky: cold damage increased to 100-200
+

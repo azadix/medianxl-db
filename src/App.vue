@@ -4,7 +4,9 @@ import { useRoute } from 'vue-router';
 import AppNavBar from './components/AppNavBar.vue';
 
 const route = useRoute();
-const cachedNames = import.meta.env.DEV ? ['PlannerView', 'EditorView'] : ['PlannerView'];
+const cachedNames = import.meta.env.DEV
+  ? ['PlannerView', 'PatchNotesView', 'EditorView']
+  : ['PlannerView', 'PatchNotesView'];
 const useKeepAlive = computed(() => Boolean(route.meta?.keepAlive));
 </script>
 
