@@ -14,7 +14,6 @@ import {
   resetSkillDataStoreForTests,
 } from '../../tree/skill-data-store.js';
 
-const CONTEXT_RADIUS = 2;
 const MAX_RESULTS = 200;
 const SKILL_HIGHLIGHT_CLASS = 'patch-skill-highlight';
 // Patch-note authors can mark explicit skills as {{Exact Skill Display Name}}.
@@ -462,26 +461,6 @@ function getRangeKey(version, start, end) {
   return `${version}:${start}:${end}`;
 }
 
-function mergeRanges(ranges) {
-  if (!ranges.length) return [];
-
-  const sorted = [...ranges].sort((a, b) => a.start - b.start);
-  const merged = [sorted[0]];
-
-  for (let i = 1; i < sorted.length; i += 1) {
-    const current = sorted[i];
-    const last = merged[merged.length - 1];
-    if (current.start <= last.end + 1) {
-      last.end = Math.max(last.end, current.end);
-      last.baseKeys = [...new Set([...last.baseKeys, ...current.baseKeys])];
-      continue;
-    }
-    merged.push(current);
-  }
-
-  return merged;
-}
-
 const searchResults = computed(() => {
   if (!hasQuery.value) return { total: 0, shown: 0, cards: [] };
 
@@ -491,26 +470,16 @@ const searchResults = computed(() => {
     const hits = section.lines.filter((line) => line.text.toLowerCase().includes(loweredQuery.value));
     if (!hits.length) continue;
 
-    const baseRanges = mergeRanges(
-      hits.map((hit) => {
-        const start = Math.max(0, hit.localIdx - CONTEXT_RADIUS);
-        const end = Math.min(section.lines.length - 1, hit.localIdx + CONTEXT_RADIUS);
-        const key = getRangeKey(section.version, start, end);
-        return { start, end, baseKeys: [key] };
-      })
-    );
-
-    for (const range of baseRanges) {
-      const slice = section.lines.slice(range.start, range.end + 1);
+    for (const hit of hits) {
       cards.push({
-        key: getRangeKey(section.version, range.start, range.end),
+        key: getRangeKey(section.version, hit.localIdx, hit.localIdx),
         version: section.version,
         folderKey: section.folderKey,
-        start: range.start,
-        end: range.end,
+        start: hit.localIdx,
+        end: hit.localIdx,
         totalLines: section.lines.length,
-        lines: slice,
-        matchCount: slice.filter((line) => line.text.toLowerCase().includes(loweredQuery.value)).length,
+        lines: [hit],
+        matchCount: 1,
       });
     }
   }
@@ -532,8 +501,13 @@ function renderSectionMarkdown(lines, folderKey) {
   return highlightSkillNamesInRenderedHtml(rendered, folderKey);
 }
 
+function normalizeSearchLineForMarkdown(lineText) {
+  // Single-line snippets lose list context, so leading indentation can be misparsed as code blocks.
+  return String(lineText || '').trimStart();
+}
+
 function renderSearchMarkdown(lines, needle, folderKey) {
-  const source = lines.map((line) => line.text).join('\n');
+  const source = lines.map((line) => normalizeSearchLineForMarkdown(line.text)).join('\n');
   const rendered = highlightSkillNamesInRenderedHtml(renderMarkdown(source), folderKey);
   if (!needle) return rendered;
   return highlightRenderedHtml(rendered, needle);
