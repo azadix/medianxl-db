@@ -76,6 +76,21 @@ def stats_by_key_lower(stats: list[dict]) -> dict[str, dict]:
 _PLACEHOLDER_RE = re.compile(r"\{\{[^}]+\}\}")
 
 
+def _text_value_to_string(value: object) -> str:
+    """
+    skills.json text fields may be:
+      - string (legacy)
+      - list[str] (new: one entry per row/line)
+      - null
+    Normalize to a single string.
+    """
+    if value is None:
+        return ""
+    if isinstance(value, list):
+        return "\n".join("" if item is None else str(item) for item in value)
+    return str(value)
+
+
 def text_has_placeholder(text: str | None) -> bool:
     if not text:
         return False
@@ -122,9 +137,9 @@ def load_merged_skills(data_dir: Path) -> list[dict]:
                 "numeric_id": row.get("numericId"),
                 "name": str(iid),
                 "display_name": row.get("displayName") or str(iid),
-                "description": (row.get("description") or "") or "",
-                "skill_effect": (se or "") or "",
-                "restriction": (row.get("restriction") or "") or "",
+                "description": _text_value_to_string(row.get("description")),
+                "skill_effect": _text_value_to_string(se),
+                "restriction": _text_value_to_string(row.get("restriction")),
                 "class_name": row.get("class"),
                 "scalingConstants": list(row.get("scalingConstants") or []),
             }

@@ -68,7 +68,7 @@ Some skills have version-specific **subskills**. These are represented as separa
 | `src/skills/domain/` | Skill model classes, formulas, and restrictions used by planner/home |
 | `src/skills/` | Skills page index/search/route helpers |
 | `atlas_generation/` | Per-icon sources by class + `make_all_atlases.py` to rebuild `class-*.png` |
-| `py/` | Python helpers (validation, extracts); import `tree_data_loader` |
+| `py/` | Python helpers (validation, stats, utilities); import `tree_data_loader` |
 | `spellcheck/` | Spelling dictionaries and check scripts for skill text |
 | `scripts/` | Node helpers used by npm (`run-spellcheck.mjs`, `copy-spa-404.mjs` for GitHub Pages) |
 
@@ -103,9 +103,7 @@ Scripts load merged skills via **`py/tree_data_loader.py`**. Pass a data directo
 |--------|---------|
 | `tree_data_loader.py` | Shared helpers (`load_merged_skills`, `load_stats_json`, `resolve_data_dir`; paths under `public/tree_data/`) |
 | `validate_skill_placeholders.py` | Validate `{{stat}}` placeholders against `stats.json` and `scalingConstants` |
-| `extract_placeholder_skills.py` | List skills whose text contains `{{…}}` |
-| `extract_skills_without_placeholders.py` | List skills with text but no `{{…}}` |
-| `extract_non_placeholder_lines.py` | Dump non-placeholder lines from description / effect / restriction text |
+| `stat_counter_statistics.py` | Show placeholder stat usage counts (`PLACEHOLDER STATISTICS` section only) |
 | `calculate_mana_params.py` | Helper to fit mana-cost parameters from level/cost pairs |
 
 Run from the **repo root**, for example: `python py/validate_skill_placeholders.py public/tree_data/2_13`.
