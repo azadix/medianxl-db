@@ -1,7 +1,0 @@
-2.2.6
-Implemented goblins in Single Player
-Tartarus Theme: implemented better Waypoints, Vendor & Quest GUIs
-Death Ripple: fixed a bug that caused AoE to be much smaller than intended
-Added sounds for act 2 and act 3 Arcane Crystal rewards
-Fixed a bug that could occur when an item was on the cursor and you selected the sort container button
-

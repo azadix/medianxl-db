@@ -1,6 +1,0 @@
-2.2.8
-Fixed a crash that could happen when making an iron golem out of Dux Infernum
-Fixed chance to hit in LCS using monstats level (which is no longer used) instead of area level
-Fixed the "drop item on ground" string appearing on equipped items
-All NPCs have received mandatory first aid training and can now heal you
-

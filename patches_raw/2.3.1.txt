@@ -1,4 +1,0 @@
-2.3.1 ADDITIONAL NOTES
-Fixed Spirit Walk cooldown not going down
-Determination: now adds a Base Defense bonus based on your Weapon Physical Damage bonuses
-

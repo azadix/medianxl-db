@@ -1,2 +1,0 @@
-2.7.1 Notes
-   * Workaround for the launcher not downloading updated Fog.dll
