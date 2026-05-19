@@ -50,6 +50,9 @@ onMounted(() => {
         <router-link v-if="isDev" :class="linkClass('subskillsEditor')" to="/editor/subskills">
           <strong>Subskills</strong>
         </router-link>
+        <router-link v-if="isDev" :class="linkClass('calculations')" to="/calculations">
+          <strong>Calculations</strong>
+        </router-link>
       </div>
       <div class="navbar-end is-align-items-center">
         <div class="navbar-item py-1">
@@ -84,7 +87,8 @@ onMounted(() => {
               route.name === 'planner' ||
               route.name === 'patchNotes' ||
               route.name === 'editor' ||
-              route.name === 'subskillsEditor'
+              route.name === 'subskillsEditor' ||
+              route.name === 'calculations'
           "
           class="navbar-item"
         >
