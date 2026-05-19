@@ -64,6 +64,26 @@ function getAssetUrl(relativePath) {
   return new URL(relativePath, window.location.origin + import.meta.env.BASE_URL).href;
 }
 
+async function loadAvailableTreeDataFolders() {
+  try {
+    const response = await fetch(getAssetUrl('tree_data/versions.json'));
+    if (!response.ok) return new Set();
+    const versions = await response.json();
+    if (!Array.isArray(versions)) return new Set();
+
+    const folderKeys = new Set();
+    for (const row of versions) {
+      const major = Number(row?.major);
+      const minor = Number(row?.minor);
+      if (!Number.isFinite(major) || !Number.isFinite(minor)) continue;
+      folderKeys.add(`${major}_${minor}`);
+    }
+    return folderKeys;
+  } catch {
+    return new Set();
+  }
+}
+
 function normalizeSkillName(value) {
   const normalized = String(value || '').trim();
   return normalized;
@@ -401,6 +421,7 @@ async function loadPatchData() {
   loadError.value = '';
 
   try {
+    const availableFolderKeys = await loadAvailableTreeDataFolders();
     const manifestUrl = getAssetUrl('patch_notes/index.json');
     const manifestResponse = await fetch(manifestUrl);
     if (!manifestResponse.ok) {
@@ -428,8 +449,11 @@ async function loadPatchData() {
       })
     );
 
-    const uniqueFolders = [...new Set(loadedSections.map((section) => section.folderKey))];
-    await Promise.all(uniqueFolders.map((folderKey) => loadSkillMatcherForFolder(folderKey)));
+    const uniqueFolders = [...new Set(loadedSections.map((section) => section.folderKey))]
+      .filter((folderKey) => availableFolderKeys.has(folderKey));
+    if (uniqueFolders.length) {
+      await Promise.all(uniqueFolders.map((folderKey) => loadSkillMatcherForFolder(folderKey)));
+    }
 
     patchSections.value = loadedSections.sort(sortVersionsDesc);
   } catch (error) {
@@ -834,7 +858,8 @@ onUnmounted(() => {
         </article>
       </div>
     </div>
-    <!-- eslint-disable-next-line vue/no-v-html -->
+    <!-- Built from bundled skill data; escaped where needed, not user input -->
+    <!-- eslint-disable vue/no-v-html -->
     <div
       v-show="tooltipVisible"
       ref="tooltipElement"
@@ -842,6 +867,7 @@ onUnmounted(() => {
       :style="tooltipStyle"
       v-html="tooltipHtml"
     />
+    <!-- eslint-enable vue/no-v-html -->
   </section>
 </template>
 
