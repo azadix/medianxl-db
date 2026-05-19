@@ -15,7 +15,6 @@ import {
 } from '../../tree/skill-data-store.js';
 
 const MAX_RESULTS = 200;
-const SKILL_HIGHLIGHT_CLASS = 'patch-skill-highlight';
 // Patch-note authors can mark explicit skills as {{Exact Skill Display Name}}.
 const SKILL_MARKER_REGEX = /\{\{([^{}]+)\}\}/g;
 const TOOLTIP_OFFSET = 18;
@@ -33,8 +32,10 @@ const query = ref('');
 const isLoading = ref(true);
 const loadError = ref('');
 const patchSections = ref([]);
+const SCROLL_TARGET_TOLERANCE = 2;
 
 const patchNotesRoot = ref(null);
+const patchSearchSticky = ref(null);
 const tooltipElement = ref(null);
 const tooltipVisible = ref(false);
 const tooltipHtml = ref('');
@@ -337,7 +338,7 @@ function highlightSkillNamesInRenderedHtml(renderedHtml, folderKey) {
       raw &&
       parentTag !== 'SCRIPT' &&
       parentTag !== 'STYLE' &&
-      !parentElement?.closest(`.${SKILL_HIGHLIGHT_CLASS}`)
+      !parentElement?.closest(`.patch-skill-highlight`)
     ) {
       textNodes.push(node);
     }
@@ -373,7 +374,7 @@ function highlightSkillNamesInRenderedHtml(renderedHtml, folderKey) {
       }
 
       const spanEl = doc.createElement('span');
-      spanEl.className = `${SKILL_HIGHLIGHT_CLASS} has-text-warning has-text-weight-bold`;
+      spanEl.className = `patch-skill-highlight has-text-warning has-text-weight-bold`;
       spanEl.textContent = skillRecord.displayName || markerInner;
       spanEl.setAttribute('tabindex', '0');
       spanEl.setAttribute('role', 'button');
@@ -442,11 +443,59 @@ async function loadPatchData() {
 const queryText = computed(() => query.value.trim());
 const loweredQuery = computed(() => queryText.value.toLowerCase());
 const hasQuery = computed(() => queryText.value.length > 0);
+const sectionCardSelector = computed(() => (hasQuery.value ? '.result-card' : '.patch-section'));
+const isSearchDisabled = computed(() => isLoading.value || Boolean(loadError.value));
 
 watch(queryText, (value) => {
   if (!value) return;
   window.scrollTo(0, 0);
 });
+
+function getScrollThreshold() {
+  const sticky = patchSearchSticky.value;
+  if (!sticky) return 0;
+  const stickyRect = sticky.getBoundingClientRect();
+  return stickyRect.bottom + SCROLL_TARGET_TOLERANCE;
+}
+
+function scrollElementBelowSticky(element) {
+  if (!element) return false;
+  const threshold = getScrollThreshold();
+  const targetTop = window.scrollY + element.getBoundingClientRect().top - threshold;
+  window.scrollTo({ top: Math.max(0, targetTop), behavior: 'smooth' });
+  return true;
+}
+
+function getSectionCards() {
+  const root = patchNotesRoot.value;
+  if (!root) return [];
+  return [...root.querySelectorAll(sectionCardSelector.value)];
+}
+
+function getCurrentSectionCard(cards) {
+  if (!cards.length) return null;
+  const threshold = getScrollThreshold();
+  let candidate = null;
+
+  for (const card of cards) {
+    const rect = card.getBoundingClientRect();
+    if (rect.top <= threshold) {
+      candidate = card;
+      continue;
+    }
+    break;
+  }
+
+  if (candidate) return candidate;
+  return cards.find((card) => card.getBoundingClientRect().bottom > threshold) || cards[0];
+}
+
+function jumpToCurrentSectionTop() {
+  const cards = getSectionCards();
+  const currentCard = getCurrentSectionCard(cards);
+  if (scrollElementBelowSticky(currentCard)) return;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 
 const searchableSections = computed(() =>
   patchSections.value.map((section) => ({
@@ -626,11 +675,11 @@ async function showSkillTooltip(target, clientX, clientY) {
 
 function closestSkillTarget(eventTarget) {
   if (eventTarget instanceof Element) {
-    return eventTarget.closest(`.${SKILL_HIGHLIGHT_CLASS}`);
+    return eventTarget.closest(`.patch-skill-highlight`);
   }
   // Mouse/focus events can originate from text nodes inside the highlighted span.
   if (eventTarget instanceof Node && eventTarget.nodeType === Node.TEXT_NODE) {
-    return eventTarget.parentElement?.closest(`.${SKILL_HIGHLIGHT_CLASS}`) || null;
+    return eventTarget.parentElement?.closest(`.patch-skill-highlight`) || null;
   }
   return null;
 }
@@ -704,27 +753,39 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <section class="section px-3">
-    <div ref="patchNotesRoot" class="container patch-notes-container">
-      <h1 class="title mb-2">Patch notes</h1>
-      <p class="subtitle mb-4">Search or browse Median XL patch notes by version.</p>
-
-      <div class="patch-search-sticky mb-4">
+  <section class="section patch-notes-view">
+    <div ref="patchSearchSticky" class="patch-search-sticky mb-4">
+      <div class="container patch-search-container">
         <div class="field mb-0">
           <label class="label" for="patch-search">Search</label>
-          <div class="control">
-            <input
-              id="patch-search"
-              v-model="query"
-              class="input"
-              type="text"
-              placeholder="Type to search patch notes..."
-              :disabled="isLoading || Boolean(loadError)"
-            />
+          <div class="field is-grouped mb-0 patch-search-controls">
+            <div class="control is-expanded patch-search-input-control">
+              <input
+                id="patch-search"
+                v-model="query"
+                class="input"
+                type="text"
+                placeholder="Type to search patch notes..."
+                :disabled="isSearchDisabled"
+              />
+            </div>
+            <div class="control">
+              <button
+                type="button"
+                class="button patch-jump-top-button"
+                title="Jump to top of current patch section"
+                aria-label="Jump to top of current patch section"
+                :disabled="isSearchDisabled"
+                @click="jumpToCurrentSectionTop"
+              >
+                Jump to Top
+              </button>
+            </div>
           </div>
         </div>
       </div>
-
+    </div>
+    <div ref="patchNotesRoot" class="container patch-notes-container">
       <div v-if="isLoading" class="notification">Loading patch notes...</div>
       <div v-else-if="loadError" class="notification is-danger">{{ loadError }}</div>
 
@@ -741,6 +802,7 @@ onUnmounted(() => {
             v-for="card in searchResults.cards"
             :key="card.key"
             class="result-card p-0"
+            :data-version="card.version"
           >
             <header class="result-header p-3">
               <p class="result-title has-text-info mb-0">Patch {{ card.version }} ({{ card.matchCount }} match{{ card.matchCount === 1 ? '' : 'es' }})</p>
@@ -758,6 +820,7 @@ onUnmounted(() => {
           v-for="section in patchSections"
           :key="section.version"
           class="patch-section mb-1 p-0"
+          :data-version="section.version"
         >
           <details class="patch-details">
             <summary class="patch-summary p-3">
@@ -783,13 +846,20 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
+.patch-notes-view {
+  --patch-sticky-offset: 3rem;
+  --patch-notes-start-cap: 20vh;
+  --patch-section-scroll-margin: calc(var(--patch-sticky-offset) + 6.5rem);
+}
+
+.patch-search-container,
 .patch-notes-container {
   max-width: 1100px;
 }
 
 .patch-search-sticky {
   position: sticky;
-  top: calc(3.25rem + 0.5rem);
+  top: var(--patch-sticky-offset);
   z-index: 10;
   padding: 0.6rem 0.8rem;
   margin: 0 -0.2rem;
@@ -797,6 +867,18 @@ onUnmounted(() => {
   border-radius: 0.75rem;
   background: rgba(22, 22, 22, 0.95);
   backdrop-filter: blur(2px);
+}
+
+.patch-search-controls {
+  align-items: flex-end;
+}
+
+.patch-search-input-control {
+  min-width: 10rem;
+}
+
+.patch-jump-top-button {
+  min-width: 3.25rem;
 }
 
 .results {
@@ -812,6 +894,7 @@ onUnmounted(() => {
   box-shadow: none;
   border-radius: 1rem;
   border: 1px solid rgba(127, 127, 127, 0.2);
+  scroll-margin-top: var(--patch-section-scroll-margin);
 }
 
 .patch-summary,
