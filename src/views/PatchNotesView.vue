@@ -844,7 +844,7 @@ onUnmounted(() => {
 .context {
   margin: 0;
   overflow-x: hidden;
-  line-height: 1;
+  line-height: 1.3rem;
   white-space: normal;
   overflow-wrap: anywhere;
   word-break: break-word;
@@ -942,15 +942,21 @@ mark {
 
 .markdown-content:deep(ul),
 .markdown-content:deep(ol) {
-  margin-left: 1.2rem;
   margin-top: 0.25rem;
   margin-bottom: 0.25rem;
 }
 
 .markdown-content:deep(ul li),
 .markdown-content:deep(ol li) {
-  line-height: 1.2;
-  margin: 0.2rem 0;
+  margin: 0 0;
+  white-space: normal;
+}
+
+.markdown-content:deep(ul li > p),
+.markdown-content:deep(ol li > p) {
+  margin-top: 0;
+  margin-bottom: 0;
+  white-space: normal;
 }
 
 .markdown-content:deep(p),
