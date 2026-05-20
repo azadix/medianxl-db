@@ -5,7 +5,7 @@ export default {
 </script>
 
 <script setup>
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import { marked } from 'marked';
 import { expandPlaceholdersWithScaling, escapeHtmlText, getSkillIconHTML } from '../shared/utils.js';
 import {
@@ -521,6 +521,100 @@ function jumpToCurrentSectionTop() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+function markdownToPlainText(markdownText) {
+  const rendered = renderMarkdown(String(markdownText || ''));
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(`<div id="patch-markdown-root">${rendered}</div>`, 'text/html');
+  const root = doc.getElementById('patch-markdown-root');
+  const text = root?.textContent || '';
+  return text.replace(/\s+/g, ' ').trim();
+}
+
+function findTextMatchInElement(rootElement, needleText) {
+  const root = rootElement instanceof Element ? rootElement : null;
+  const needle = String(needleText || '').trim();
+  if (!root || !needle) return null;
+
+  const loweredNeedle = needle.toLowerCase();
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  let node = walker.nextNode();
+  while (node) {
+    const raw = node.nodeValue || '';
+    const loweredRaw = raw.toLowerCase();
+    const start = loweredRaw.indexOf(loweredNeedle);
+    if (start !== -1) {
+      return {
+        node,
+        start,
+        end: start + needle.length,
+      };
+    }
+    node = walker.nextNode();
+  }
+  return null;
+}
+
+function selectTextMatch(textMatch) {
+  if (!textMatch?.node) return false;
+  const selection = window.getSelection();
+  if (!selection) return false;
+  const range = document.createRange();
+  range.setStart(textMatch.node, textMatch.start);
+  range.setEnd(textMatch.node, textMatch.end);
+  selection.removeAllRanges();
+  selection.addRange(range);
+  return true;
+}
+
+function findPatchSectionByVersion(version) {
+  const root = patchNotesRoot.value;
+  if (!root) return null;
+  const sections = root.querySelectorAll('.patch-section');
+  for (const section of sections) {
+    if (section.dataset.version === version) return section;
+  }
+  return null;
+}
+
+async function jumpToFullPatchSection(version, lineText) {
+  if (!version) return;
+  const fallbackNeedle = queryText.value;
+  const normalizedLine = normalizeSearchLineForMarkdown(lineText);
+  const lineNeedle = markdownToPlainText(normalizedLine);
+  query.value = '';
+  hideSkillTooltip();
+  await nextTick();
+
+  const targetSection = findPatchSectionByVersion(String(version));
+  if (!targetSection) {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    return;
+  }
+
+  const details = targetSection.querySelector('.patch-details');
+  if (details instanceof HTMLDetailsElement) {
+    details.open = true;
+  }
+  await nextTick();
+
+  const exactLineMatch = findTextMatchInElement(targetSection, lineNeedle);
+  if (exactLineMatch) {
+    selectTextMatch(exactLineMatch);
+    const selectedElement = exactLineMatch.node.parentElement || targetSection;
+    if (scrollElementBelowSticky(selectedElement)) return;
+  }
+
+  const fallbackQueryMatch = findTextMatchInElement(targetSection, fallbackNeedle);
+  if (fallbackQueryMatch) {
+    selectTextMatch(fallbackQueryMatch);
+    const selectedElement = fallbackQueryMatch.node.parentElement || targetSection;
+    if (scrollElementBelowSticky(selectedElement)) return;
+  }
+
+  if (scrollElementBelowSticky(targetSection)) return;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 const searchableSections = computed(() =>
   patchSections.value.map((section) => ({
     version: section.version,
@@ -777,7 +871,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <section class="section patch-notes-view">
+  <section class="section py-0 patch-notes-view">
     <div ref="patchSearchSticky" class="patch-search-sticky mb-4">
       <div class="container patch-search-container">
         <div class="field mb-0">
@@ -830,6 +924,13 @@ onUnmounted(() => {
           >
             <header class="result-header p-3">
               <p class="result-title has-text-info mb-0">Patch {{ card.version }} ({{ card.matchCount }} match{{ card.matchCount === 1 ? '' : 'es' }})</p>
+              <button
+                type="button"
+                class="button is-small is-ghost patch-open-full-button"
+                @click="jumpToFullPatchSection(card.version, card.lines[0]?.text || '')"
+              >
+                View full patch
+              </button>
             </header>
 
             <!-- eslint-disable-next-line vue/no-v-html -->
@@ -1047,6 +1148,10 @@ mark {
 
 .result-header {
   border-bottom: 1px solid rgba(127, 127, 127, 0.2);
+}
+
+.patch-open-full-button {
+  flex-shrink: 0;
 }
 
 .markdown-content:deep(ul),
