@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { getSkillIconHTML } from '../../shared/utils.js';
+import { getSkillIconHTML } from '@/shared/utils.js';
 import SkillCardImage from './SkillCardImage.vue';
 import {
   mergeHomeQuery,

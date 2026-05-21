@@ -53,7 +53,7 @@ import {
     lookupMergedDisplayNameByInternalName,
     lookupSkillNameAndDisplayByNumericId,
     getFileSkillStore
-} from '../../tree/skill-data-store.js';
+} from '@/tree/skill-data-store.js';
 import { formulaEvaluator } from '@/skills/domain/formula-evaluator.js';
 import { formatScalingValuesToDescriptionHtml } from '@/skills/domain/scaling-display-html.js';
 

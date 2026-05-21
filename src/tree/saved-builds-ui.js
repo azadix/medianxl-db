@@ -4,7 +4,7 @@
  */
 import { loadPlannerSkillsFromTreeData } from './tree-data.js';
 import { renderSkills } from './tree-render.js';
-import Character from '../src/character/Character.js';
+import Character from '@/character/Character.js';
 import {
   initializeCharacter,
   applyClassBaselineStatsToCharacter,
@@ -29,21 +29,21 @@ import {
   isPlannerSkillPointPoolOverBudget,
   getSpentSkillPoints,
   getAllSkillPointsById,
-} from '../src/character/character-state.js';
-import { syncPlannerCharacterStatsTextareaFromCharacter, refreshPlannerStatsPanelFromCharacter } from '../src/character/planner-stats-panel.js';
+} from '@/character/character-state.js';
+import { syncPlannerCharacterStatsTextareaFromCharacter, refreshPlannerStatsPanelFromCharacter } from '@/character/planner-stats-panel.js';
 import {
   getSavedBuilds,
   setSavedBuilds,
   notifySavedBuildsListRefresh,
-} from '../src/planner/saved-builds-storage.js';
+} from '@/planner/saved-builds-storage.js';
 import {
   getCurrentVersion,
   versionToString,
   setBuildVersionOverride,
-} from '../src/shared/version-config.js';
+} from '@/shared/version-config.js';
 import { initializeTooltip } from './tree-tooltip.js';
 import { clearSkillVariants, applySkillVariantDefaultsForClass } from './skill-variants.js';
-import { parseVersionString } from '../src/planner/build-url-codec.js';
+import { parseVersionString } from '@/planner/build-url-codec.js';
 import { getFileSkillStore } from './skill-data-store.js';
 import {
   toastManager,
@@ -57,7 +57,7 @@ import {
   getCurrentBuildDisplayName,
   setCurrentBuildDisplayName,
 } from './planner-session.js';
-import Tree from '../src/character/Tree.js';
+import Tree from '@/character/Tree.js';
 import {
   updateSkillPointsDisplay,
   updateDevotionDisplay,

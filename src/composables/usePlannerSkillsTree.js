@@ -1,12 +1,12 @@
 import { computed, watch } from 'vue';
-import { usePlannerStore } from '../stores/planner.js';
+import { usePlannerStore } from '@/stores/planner.js';
 import {
   buildPlannerSkillCardData,
   updateTabColors,
   getSkillIcon
-} from '../../tree/tree-render.js';
-import { listSkillVariants } from '../../tree/skill-variants.js';
-import { addOverlayArrows } from '../../tree/tree-arrows.js';
+} from '@/tree/tree-render.js';
+import { listSkillVariants } from '@/tree/skill-variants.js';
+import { addOverlayArrows } from '@/tree/tree-arrows.js';
 import { isInnateSkill } from '@/skills/domain/skill-skill-types.js';
 import {
   changeOSkillPoints,
@@ -14,7 +14,7 @@ import {
   getOSkillRowsForPlanner,
   hasAnyOSkillAllocations
 } from '@/character/character-state.js';
-import { enrichOskillForDisplay } from '../../tree/tree-render.js';
+import { enrichOskillForDisplay } from '@/tree/tree-render.js';
 
 const OSKILL_COLS = 3;
 

@@ -1,6 +1,6 @@
 import { watch } from 'vue';
 import { storeToRefs } from 'pinia';
-import { usePlannerStore } from '../stores/planner.js';
+import { usePlannerStore } from '@/stores/planner.js';
 
 /**
  * Re-run callback when planner Pinia revision bumps (legacy window events bridged in store).

@@ -4,12 +4,12 @@ import {
   getFileSkillStore,
   buildTabOrderLookupFromGameMeta,
   tabOrderRankFromLookup
-} from '../../../tree/skill-data-store.js';
-import { usePlannerStore } from '../../stores/planner.js';
-import { updatePlannerUrlTab } from '../../planner/tree-url-sync.js';
-import { handleSkillPointChange, setCurrentTabState } from '../../../tree/tree-render.js';
-import SkillCard from '../skills/SkillCard.vue';
-import { usePlannerSkillsTree } from '../../composables/usePlannerSkillsTree.js';
+} from '@/tree/skill-data-store.js';
+import { usePlannerStore } from '@/stores/planner.js';
+import { updatePlannerUrlTab } from '@/planner/tree-url-sync.js';
+import { handleSkillPointChange, setCurrentTabState } from '@/tree/tree-render.js';
+import SkillCard from '@/components/skills/SkillCard.vue';
+import { usePlannerSkillsTree } from '@/composables/usePlannerSkillsTree.js';
 import PlannerSkillPointsBadge from './PlannerSkillPointsBadge.vue';
 
 const store = usePlannerStore();

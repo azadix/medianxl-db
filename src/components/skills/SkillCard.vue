@@ -1,11 +1,11 @@
 <script setup>
 import { computed, ref, watch } from 'vue';
-import { getSkillVariantKey } from '../../../tree/skill-variants.js';
+import { getSkillVariantKey } from '@/tree/skill-variants.js';
 import {
   getLevelColorClass,
   canAddPoints,
   getRestrictionMessage,
-} from '../../../tree/tree-render.js';
+} from '@/tree/tree-render.js';
 import { setSkillDisabled, setOSkillSlotDisabled } from '@/character/character-state.js';
 import SkillVariantMenu from './SkillVariantMenu.vue';
 import SkillCardImage from './SkillCardImage.vue';

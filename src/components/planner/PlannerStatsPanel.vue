@@ -1,11 +1,11 @@
 <script setup>
 import { ref, computed, onMounted, nextTick } from 'vue';
-import { usePlannerRevisionRefresh } from '../../composables/usePlannerRevisionRefresh.js';
+import { usePlannerRevisionRefresh } from '@/composables/usePlannerRevisionRefresh.js';
 import { getPlannerCharacterStatDefs } from '@/character/planner-stats-config.js';
 import { getCharacterInstance } from '@/character/character-state.js';
 import { setupPlannerStatRowTooltips, applyPlannerStatInput } from '@/character/planner-stats-panel.js';
-import { getFileSkillStore } from '../../../tree/skill-data-store.js';
-import { usePlannerSkillReferencedStats } from '../../composables/usePlannerSkillReferencedStats.js';
+import { getFileSkillStore } from '@/tree/skill-data-store.js';
+import { usePlannerSkillReferencedStats } from '@/composables/usePlannerSkillReferencedStats.js';
 
 const statTooltipRoot = ref(null);
 /** @type {import('vue').Ref<{ key: string, label: string, min: number|null, max: number|null, allowNegative?: boolean, default?: number, alwaysVisible?: boolean, sortOrder?: number, section?: string }[]>} */

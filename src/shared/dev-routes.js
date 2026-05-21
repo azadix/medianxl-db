@@ -22,7 +22,7 @@ export const DEV_ROUTE_DEFS = [
 
         name: 'editor',
 
-        component: () => import('../views/EditorView.vue'),
+        component: () => import('@/views/EditorView.vue'),
 
         keepAliveName: 'EditorView',
 
@@ -40,7 +40,7 @@ export const DEV_ROUTE_DEFS = [
 
         name: 'subskillsEditor',
 
-        component: () => import('../views/EditorView.vue'),
+        component: () => import('@/views/EditorView.vue'),
 
         keepAliveName: 'EditorView',
 
@@ -58,7 +58,7 @@ export const DEV_ROUTE_DEFS = [
 
         name: 'calculations',
 
-        component: () => import('../views/CalculationsView.vue'),
+        component: () => import('@/views/CalculationsView.vue'),
 
         keepAliveName: 'CalculationsView',
 

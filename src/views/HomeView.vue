@@ -2,9 +2,9 @@
 import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { mountSkillsIndex, unmountSkillsIndex, syncSkillsIndexFromRoute } from '@/skills/skillsIndex.js';
-import SkillsBrowseTable from '../components/skills/SkillsBrowseTable.vue';
-import '../../tree/tree-styles.css';
-import '../../tree/character-sheet-sidebar.css';
+import SkillsBrowseTable from '@/components/skills/SkillsBrowseTable.vue';
+import '@/tree/tree-styles.css';
+import '@/tree/character-sheet-sidebar.css';
 
 const skillsList = ref([]);
 const skillIconFolder = ref(null);

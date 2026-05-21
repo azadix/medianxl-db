@@ -5,8 +5,8 @@
  * @see skill-restrictions.js — first-point allocation rules (classes in skill-allocation-rules.js).
  */
 
-import { getBalanceVersionIdsForFallback } from '../../shared/version-config.js';
-import { getFileSkillStore } from '../../../tree/skill-data-store.js';
+import { getBalanceVersionIdsForFallback } from '@/shared/version-config.js';
+import { getFileSkillStore } from '@/tree/skill-data-store.js';
 import { normalizePrereqSkillTargetKey } from '@/character/prereq-utils.js';
 import { getCalcBucketIndex } from './calc-buckets.js';
 import { formulaEvaluator } from './formula-evaluator.js';

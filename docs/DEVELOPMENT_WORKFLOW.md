@@ -50,4 +50,4 @@ Before opening a PR:
 ## Current structure notes
 
 - Canonical app modules live under `src/` (notably `src/character` and `src/skills`).
-- Some root-level `tree/` modules remain as planner runtime/compatibility surfaces.
+- Some root-level `src/tree/` modules remain as planner runtime/compatibility surfaces.

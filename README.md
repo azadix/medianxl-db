@@ -54,7 +54,7 @@ npm run preview
 - `src/skills/` - skills page logic and domain models
 - `src/character/` - character/planner domain state and rules
 - `src/editor/` - dev-only editor runtime
-- `tree/` - planner runtime/render modules (with compatibility facades)
+- `src/tree/` - planner runtime/render modules (with compatibility facades)
 - `py/` - Python utility scripts
 - `spellcheck/` - dictionaries and spellcheck scripts
 - `atlas_generation/` - class icon atlas generation scripts

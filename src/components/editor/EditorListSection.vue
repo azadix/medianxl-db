@@ -1,7 +1,7 @@
 <script setup>
 import EditorSkillsTable from './EditorSkillsTable.vue';
 import EditorSubskillsTable from './EditorSubskillsTable.vue';
-import { editorOpenSkillAtIndex } from '../../editor/editor-store.js';
+import { editorOpenSkillAtIndex } from '@/editor/editor-store.js';
 
 defineProps({
   /** 'skills' | 'subskills' */

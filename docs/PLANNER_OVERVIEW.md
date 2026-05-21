@@ -23,8 +23,8 @@ How the planner route is wired today.
 
 ## Planner modules
 
-- `tree/tree-core.js`: planner facade exports used by Vue components.
-- `tree/planner-init.js`, `tree/planner-dom-handlers.js`, `tree/planner-ui-updates.js`, `tree/saved-builds-ui.js`: planner runtime split from previous monolith.
+- `src/tree/tree-core.js`: planner facade exports used by Vue components.
+- `src/tree/planner-init.js`, `src/tree/planner-dom-handlers.js`, `src/tree/planner-ui-updates.js`, `src/tree/saved-builds-ui.js`: planner runtime split from previous monolith.
 - `src/planner/build-url-codec.js` + `src/planner/tree-url-sync.js`: build URL encode/decode + URL sync helpers.
 
 ## Character and allocation layer
@@ -45,10 +45,10 @@ Allocation rules and restrictions are in `src/skills/domain/`:
 
 - Vue tree UI: `src/components/planner/PlannerSkillsTree.vue`.
 - Planner tree composable: `src/composables/usePlannerSkillsTree.js`.
-- Render/tooltip helpers: `tree/tree-render.js`, `tree/tree-tooltip.js`, `tree/tree-arrows.js`.
+- Render/tooltip helpers: `src/tree/tree-render.js`, `src/tree/tree-tooltip.js`, `src/tree/tree-arrows.js`.
 - Layout and prerequisites from `public/tree_data/<version>/tree_struct.json`, applied through `src/shared/tree-struct.js`.
 
 ## Data dependencies
 
-- Catalog and skill details are loaded through `tree/skill-data-store.js`.
+- Catalog and skill details are loaded through `src/tree/skill-data-store.js`.
 - Active version is controlled by `src/shared/version-config.js` and the navbar version selector.

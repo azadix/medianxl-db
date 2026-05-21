@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue';
-import { getSkillIconHTML } from '../../shared/utils.js';
-import SkillCardImage from '../skills/SkillCardImage.vue';
+import { getSkillIconHTML } from '@/shared/utils.js';
+import SkillCardImage from '@/components/skills/SkillCardImage.vue';
 import { parseSearchInput } from '@/skills/skillTableSearch.js';
 
 const props = defineProps({

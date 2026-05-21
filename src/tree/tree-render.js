@@ -83,10 +83,10 @@ import {
   removeSkillPointsBatch,
   isSkillDisabled,
   isOSkillSlotDisabled
-} from '../src/character/character-state.js';
-import { getSkillIconHTML } from '../src/shared/utils.js';
-import { getCurrentVersion, versionToTreeAssetFolder } from '../src/shared/version-config.js';
-import { ToastManager } from '../src/planner/toast-manager.js';
+} from '@/character/character-state.js';
+import { getSkillIconHTML } from '@/shared/utils.js';
+import { getCurrentVersion, versionToTreeAssetFolder } from '@/shared/version-config.js';
+import { ToastManager } from '@/planner/toast-manager.js';
 import { listSkillVariants } from './skill-variants.js';
 import { notifySkillGridDomReset } from './tree-tooltip.js';
 

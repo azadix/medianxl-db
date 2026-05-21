@@ -1,6 +1,6 @@
 <script setup>
 import { nextTick, onMounted, ref } from 'vue';
-import { usePlannerRevisionRefresh } from '../../composables/usePlannerRevisionRefresh.js';
+import { usePlannerRevisionRefresh } from '@/composables/usePlannerRevisionRefresh.js';
 import { setupPlannerMinLevelSkillPoolTooltips } from '@/character/planner-stats-panel.js';
 import {
   getEffectivePlannerLevel,

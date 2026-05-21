@@ -7,11 +7,11 @@ export default {
 <script setup>
 import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
-import { mountEditor, unmountEditor } from '../editor/editor-store.js';
-import '../editor/editor-page.css';
-import '../../tree/dropdown-style.css';
-import EditorListSection from '../components/editor/EditorListSection.vue';
-import EditorEditSection from '../components/editor/EditorEditSection.vue';
+import { mountEditor, unmountEditor } from '@/editor/editor-store.js';
+import '@/editor/editor-page.css';
+import '@/tree/dropdown-style.css';
+import EditorListSection from '@/components/editor/EditorListSection.vue';
+import EditorEditSection from '@/components/editor/EditorEditSection.vue';
 
 const route = useRoute();
 

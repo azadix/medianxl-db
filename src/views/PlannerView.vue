@@ -7,21 +7,21 @@ export default {
 <script setup>
 import { onMounted, onUnmounted, onActivated, nextTick } from 'vue';
 import { storeToRefs } from 'pinia';
-import { usePlannerStore } from '../stores/planner.js';
-import { attachPlannerWindowSync } from '../composables/usePlannerRevisionRefresh.js';
+import { usePlannerStore } from '@/stores/planner.js';
+import { attachPlannerWindowSync } from '@/composables/usePlannerRevisionRefresh.js';
 import {
   registerPlannerSectionSetter,
   unregisterPlannerSectionSetter,
-} from '../planner/planner-section-bridge.js';
-import { initializeTreePage } from '../../tree/tree-core.js';
-import { initializeVersionSelector } from '../shared/version-config.js';
-import '../../tree/tree-styles.css';
-import '../../tree/dropdown-style.css';
-import '../../tree/character-sheet-sidebar.css';
-import PlannerMenuSection from '../components/planner/PlannerMenuSection.vue';
-import PlannerTreeSection from '../components/planner/PlannerTreeSection.vue';
-import PlannerLoadSection from '../components/planner/PlannerLoadSection.vue';
-import SkillTooltipHost from '../components/planner/SkillTooltipHost.vue';
+} from '@/planner/planner-section-bridge.js';
+import { initializeTreePage } from '@/tree/tree-core.js';
+import { initializeVersionSelector } from '@/shared/version-config.js';
+import '@/tree/tree-styles.css';
+import '@/tree/dropdown-style.css';
+import '@/tree/character-sheet-sidebar.css';
+import PlannerMenuSection from '@/components/planner/PlannerMenuSection.vue';
+import PlannerTreeSection from '@/components/planner/PlannerTreeSection.vue';
+import PlannerLoadSection from '@/components/planner/PlannerLoadSection.vue';
+import SkillTooltipHost from '@/components/planner/SkillTooltipHost.vue';
 
 const plannerStore = usePlannerStore();
 const { activeSection } = storeToRefs(plannerStore);

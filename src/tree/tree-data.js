@@ -1,8 +1,8 @@
 // Data loading for the skills tree (tree_data/*.json)
-import Skill from '../src/skills/domain/Skill.js';
-import { showSkillDataLoadError } from '../src/shared/utils.js';
-import { buildTreeSkillsCacheFromLoadedSkills, setPlannerSkillsSnapshot } from '../src/character/character-state.js';
-import { getCurrentVersion } from '../src/shared/version-config.js';
+import Skill from '@/skills/domain/Skill.js';
+import { showSkillDataLoadError } from '@/shared/utils.js';
+import { buildTreeSkillsCacheFromLoadedSkills, setPlannerSkillsSnapshot } from '@/character/character-state.js';
+import { getCurrentVersion } from '@/shared/version-config.js';
 import { initSkillDataStore, getFileSkillStore } from './skill-data-store.js';
 import {
     fetchTreeStructJson,
@@ -12,7 +12,7 @@ import {
     applyTreeStructPrerequisitesToSkills,
     cacheTreeStructArrowsFromLayoutRoot,
     clearTreeStructArrowsCache
-} from '../src/shared/tree-struct.js';
+} from '@/shared/tree-struct.js';
 
 /**
  * Planner rows and tree_struct lookups use a concrete class name (e.g. "Amazon").

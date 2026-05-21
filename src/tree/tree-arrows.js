@@ -1,4 +1,4 @@
-import { getTreeArrowPairsForSkillsInTab } from '../src/shared/tree-struct.js';
+import { getTreeArrowPairsForSkillsInTab } from '@/shared/tree-struct.js';
 
 /**
  * Add overlay arrows to show skill prerequisites

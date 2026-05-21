@@ -2,7 +2,7 @@
  * Per-class default Life/Mana/attributes for the planner (from tree_data game_meta.classes).
  */
 
-import { getFileSkillStore } from '../../tree/skill-data-store.js';
+import { getFileSkillStore } from '@/tree/skill-data-store.js';
 
 /**
  * Vitality/energy scaling uses only points above the class baseline vit/energy (row.vitality / row.energy).

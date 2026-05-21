@@ -2,8 +2,8 @@
  * @file Shared mutable state for the legacy planner DOM layer.
  * @module tree/planner-session
  */
-import { ToastManager } from '../src/planner/toast-manager.js';
-import _Tree from '../src/character/Tree.js';
+import { ToastManager } from '@/planner/toast-manager.js';
+import _Tree from '@/character/Tree.js';
 
 let skillsList;
 /** @type {_Tree|null} */

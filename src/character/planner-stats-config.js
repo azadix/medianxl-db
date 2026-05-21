@@ -3,7 +3,7 @@
  * Strict registry: only these keys exist on the character; unknown keys are rejected.
  */
 
-import { getFileSkillStore } from '../../tree/skill-data-store.js';
+import { getFileSkillStore } from '@/tree/skill-data-store.js';
 
 /**
  * @typedef {'attributes'|'resists'|'damage'|'defense'|'minions'|'misc'} PlannerStatSection

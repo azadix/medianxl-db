@@ -3,7 +3,7 @@
  * @module shared/version-config
  */
 
-import { getFileSkillStore } from '../../tree/skill-data-store.js';
+import { getFileSkillStore } from '@/tree/skill-data-store.js';
 import {
     BUILD_VERSION_OVERRIDE_KEY,
     DEFAULT_GAME_VERSION,

@@ -2,9 +2,9 @@
  * @file Editor in-memory store, forms, and version load (no server write).
  * @module src/editor/editor-store
  */
-import { TAG_GROUPS } from '../shared/utils.js';
+import { TAG_GROUPS } from '@/shared/utils.js';
 import { attachEditorTextareaAutocomplete } from './editor-textarea-autocomplete.js';
-import { detachVersionSelectorListeners, versionToString } from '../shared/version-config.js';
+import { detachVersionSelectorListeners, versionToString } from '@/shared/version-config.js';
 
 const TREE_DATA = 'tree_data';
 const DEFAULT_EDITOR_FILE_BASENAME = 'skills.json';

@@ -5,9 +5,9 @@
 import { loadPlannerSkillsFromTreeData } from './tree-data.js';
 import { renderSkills } from './tree-render.js';
 import { getCurrentTab, setCurrentTabState } from './tree-render.js';
-import { updatePlannerUrlTab } from '../src/planner/tree-url-sync.js';
-import Tree from '../src/character/Tree.js';
-import Character from '../src/character/Character.js';
+import { updatePlannerUrlTab } from '@/planner/tree-url-sync.js';
+import Tree from '@/character/Tree.js';
+import Character from '@/character/Character.js';
 import {
   initializeCharacter,
   applyClassBaselineStatsToCharacter,
@@ -16,13 +16,13 @@ import {
   getCharacterLevel,
   clearOSkills,
   clearAllStats,
-} from '../src/character/character-state.js';
-import { refreshPlannerStatsPanelFromCharacter } from '../src/character/planner-stats-panel.js';
-import { initPlannerSidebarTabQuests } from '../src/character/sidebarTabQuests.js';
-import { initializeVersionSelector } from '../src/shared/version-config.js';
+} from '@/character/character-state.js';
+import { refreshPlannerStatsPanelFromCharacter } from '@/character/planner-stats-panel.js';
+import { initPlannerSidebarTabQuests } from '@/character/sidebarTabQuests.js';
+import { initializeVersionSelector } from '@/shared/version-config.js';
 import { initializeTooltip } from './tree-tooltip.js';
 import { clearSkillVariants, applySkillVariantDefaultsForClass } from './skill-variants.js';
-import { decompressBuildFromUrlParam } from '../src/planner/build-url-codec.js';
+import { decompressBuildFromUrlParam } from '@/planner/build-url-codec.js';
 import {
   setSkillsList,
   setPlannerTreeRef,

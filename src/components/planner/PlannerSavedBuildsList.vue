@@ -1,15 +1,15 @@
 <script setup>
 import { ref, onMounted, onUnmounted, watch } from 'vue';
 import { storeToRefs } from 'pinia';
-import { usePlannerStore } from '../../stores/planner.js';
-import { getSavedBuilds } from '../../planner/saved-builds-storage.js';
+import { usePlannerStore } from '@/stores/planner.js';
+import { getSavedBuilds } from '@/planner/saved-builds-storage.js';
 import {
   calculateArmorImageNumber,
   loadBuild,
   deleteBuild,
   renameBuild,
   ensureCharacterForBuildList,
-} from '../../../tree/tree-core.js';
+} from '@/tree/tree-core.js';
 import { getSpentSkillPoints } from '@/character/character-state.js';
 
 const { activeSection } = storeToRefs(usePlannerStore());

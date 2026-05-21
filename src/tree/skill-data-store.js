@@ -8,7 +8,7 @@ import {
     BUILD_VERSION_OVERRIDE_KEY,
     DEFAULT_GAME_VERSION,
     treeAssetFolderFromMajorMinor,
-} from '../src/shared/version-constants.js';
+} from '@/shared/version-constants.js';
 
 const TREE_DATA_DIR = 'tree_data';
 

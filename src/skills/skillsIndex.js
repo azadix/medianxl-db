@@ -3,22 +3,22 @@ import {
   getSkillIconHTML,
   expandPlaceholdersWithScaling,
   showSkillDataLoadError,
-} from '../shared/utils.js';
+} from '@/shared/utils.js';
 import { getTreeSkillsCache } from '@/character/character-state.js';
-import { getCurrentVersion, versionToTreeAssetFolder, initializeVersionSelector } from '../shared/version-config.js';
+import { getCurrentVersion, versionToTreeAssetFolder, initializeVersionSelector } from '@/shared/version-config.js';
 import {
   fetchTreeStructJson,
   getTreeLayoutRoot,
   applyTreeStructLayoutToSkills,
   applyTreeStructPrerequisitesToSkills,
-} from '../shared/tree-struct.js';
+} from '@/shared/tree-struct.js';
 import {
   initSkillDataStore,
   getFileSkillStore,
   buildTabOrderLookupFromGameMeta,
   tabOrderRankFromLookup
-} from '../../tree/skill-data-store.js';
-import { buildSkillFromCatalogRow } from '../../tree/tree-data.js';
+} from '@/tree/skill-data-store.js';
+import { buildSkillFromCatalogRow } from '@/tree/tree-data.js';
 import Skill from './domain/Skill.js';
 
 /** Skills index route name and query helpers (formerly skillsIndexRoute.js). */

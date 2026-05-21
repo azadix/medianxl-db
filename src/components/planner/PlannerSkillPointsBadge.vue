@@ -1,6 +1,6 @@
 <script setup>
 import { computed, nextTick, onMounted, ref } from 'vue';
-import { usePlannerRevisionRefresh } from '../../composables/usePlannerRevisionRefresh.js';
+import { usePlannerRevisionRefresh } from '@/composables/usePlannerRevisionRefresh.js';
 import {
   getEffectivePlannerLevel,
   getSpentSkillPoints,

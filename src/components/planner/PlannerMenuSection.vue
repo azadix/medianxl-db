@@ -4,7 +4,7 @@ import {
   plannerMenuNewBuild,
   plannerMenuOpenLoadSection,
   plannerMenuImportBuild,
-} from '../../../tree/tree-core.js';
+} from '@/tree/tree-core.js';
 const knownIssuesLines = ref(/** @type {string[]} */ ([]));
 const knownIssuesLoadError = ref('');
 const knownIssuesFetched = ref(false);

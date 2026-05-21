@@ -4,7 +4,7 @@
  */
 
 import Character from '@/character/Character.js';
-import { getFileSkillStore } from '../../../tree/skill-data-store.js';
+import { getFileSkillStore } from '@/tree/skill-data-store.js';
 import { isInnateSkill } from './skill-skill-types.js';
 
 export { D2_CALC_BUCKETS, getCalcBucketIndex } from './calc-buckets.js';

@@ -4,7 +4,7 @@
  */
 import { renderSkills } from './tree-render.js';
 import { getCurrentTab } from './tree-render.js';
-import Character from '../src/character/Character.js';
+import Character from '@/character/Character.js';
 import {
   recomputeClassDerivedLifeMana,
   onPlannerSkillAllocationChanged,
@@ -12,13 +12,13 @@ import {
   getAllSkillPoints,
   getTotalQuestSkillPoints,
   getEffectivePlannerLevel,
-} from '../src/character/character-state.js';
-import { getCurrentDevotion, getDevotionDisplayName } from '../src/skills/domain/skill-calculations.js';
+} from '@/character/character-state.js';
+import { getCurrentDevotion, getDevotionDisplayName } from '@/skills/domain/skill-calculations.js';
 import { DropdownList } from './DropdownList.js';
 import { getFileSkillStore } from './skill-data-store.js';
-import { addOSkill } from '../src/character/character-state.js';
-import { setPlannerSectionFromLegacy } from '../src/planner/planner-section-bridge.js';
-import { notifySavedBuildsListRefresh } from '../src/planner/saved-builds-storage.js';
+import { addOSkill } from '@/character/character-state.js';
+import { setPlannerSectionFromLegacy } from '@/planner/planner-section-bridge.js';
+import { notifySavedBuildsListRefresh } from '@/planner/saved-builds-storage.js';
 import {
   getSkillsList,
   getClassSelect,

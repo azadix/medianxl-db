@@ -4,23 +4,23 @@
  */
 import { ref } from 'vue';
 import { marked } from 'marked';
-import { expandPlaceholdersWithScaling, escapeHtmlText, getSkillIconHTML } from '../shared/utils.js';
+import { expandPlaceholdersWithScaling, escapeHtmlText, getSkillIconHTML } from '@/shared/utils.js';
 import {
   buildSkillTooltipDescriptionBlock,
   buildSkillTooltipHeaderHtml,
   buildSkillTooltipRestrictionBlock,
   wrapSkillTooltipContent,
-} from '../shared/tooltip-html.js';
+} from '@/shared/tooltip-html.js';
 import {
   getFileSkillStore,
   initSkillDataStore,
   resetSkillDataStoreForTests,
-} from '../../tree/skill-data-store.js';
+} from '@/tree/skill-data-store.js';
 import {
   parsePatchVersionString,
   patchVersionToFolderKey,
   setBuildVersionOverride,
-} from '../shared/version-config.js';
+} from '@/shared/version-config.js';
 
 const SKILL_MARKER_REGEX = /\{\{([^{}]+)\}\}/g;
 const TOOLTIP_CACHE_LEVEL = 1;

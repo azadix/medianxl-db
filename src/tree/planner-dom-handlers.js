@@ -3,21 +3,21 @@
  * @module tree/planner-dom-handlers
  */
 import { renderSkills } from './tree-render.js';
-import { setBuildUrlParam } from '../src/planner/tree-url-sync.js';
-import Character from '../src/character/Character.js';
+import { setBuildUrlParam } from '@/planner/tree-url-sync.js';
+import Character from '@/character/Character.js';
 import {
   initializeCharacter,
   applyClassBaselineStatsToCharacter,
   clearOSkills,
-} from '../src/character/character-state.js';
-import { refreshPlannerStatsPanelFromCharacter } from '../src/character/planner-stats-panel.js';
+} from '@/character/character-state.js';
+import { refreshPlannerStatsPanelFromCharacter } from '@/character/planner-stats-panel.js';
 import { clearSkillVariants, applySkillVariantDefaultsForClass } from './skill-variants.js';
-import { compressBuildToUrlParam } from '../src/planner/build-url-codec.js';
+import { compressBuildToUrlParam } from '@/planner/build-url-codec.js';
 import {
   getSavedBuilds,
   setSavedBuilds,
   notifySavedBuildsListRefresh,
-} from '../src/planner/saved-builds-storage.js';
+} from '@/planner/saved-builds-storage.js';
 import {
   toastManager,
   getSkillsList,

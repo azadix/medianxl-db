@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import HomeView from '../views/HomeView.vue';
-import PlannerView from '../views/PlannerView.vue';
-import PatchNotesView from '../views/PatchNotesView.vue';
-import { DEV_ROUTE_DEFS } from '../shared/dev-routes.js';
+import HomeView from '@/views/HomeView.vue';
+import PlannerView from '@/views/PlannerView.vue';
+import PatchNotesView from '@/views/PatchNotesView.vue';
+import { DEV_ROUTE_DEFS } from '@/shared/dev-routes.js';
 
 const routes = [
   { path: '/', redirect: '/skills' },

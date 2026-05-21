@@ -1,5 +1,5 @@
 <script setup>
-import { plannerBackToMenuFromLoad } from '../../../tree/tree-core.js';
+import { plannerBackToMenuFromLoad } from '@/tree/tree-core.js';
 import PlannerSavedBuildsList from './PlannerSavedBuildsList.vue';
 </script>
 

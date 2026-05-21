@@ -18,7 +18,7 @@ export { Character };
 import { recomputePlannerStatsFromSkillAllocations } from './planner-stat-modifiers.js';
 import { checkDevotionRestriction, calculateMaxLevel } from '@/skills/domain/skill-calculations.js';
 import { extractStatReferences } from '@/skills/domain/formula-evaluator.js';
-import { getFileSkillStore } from '../../tree/skill-data-store.js';
+import { getFileSkillStore } from '@/tree/skill-data-store.js';
 import {
   checkUltimateRestriction,
   checkParagonRestriction,

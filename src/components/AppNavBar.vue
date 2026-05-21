@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted } from 'vue';
 import { useRoute } from 'vue-router';
-import { DEV_ROUTE_DEFS, routeShowsVersionSelector } from '../shared/dev-routes.js';
+import { DEV_ROUTE_DEFS, routeShowsVersionSelector } from '@/shared/dev-routes.js';
 
 const route = useRoute();
 const isDev = import.meta.env.DEV;

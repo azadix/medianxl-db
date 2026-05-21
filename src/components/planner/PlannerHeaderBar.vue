@@ -1,6 +1,6 @@
 <script setup>
 import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue';
-import { usePlannerRevisionRefresh } from '../../composables/usePlannerRevisionRefresh.js';
+import { usePlannerRevisionRefresh } from '@/composables/usePlannerRevisionRefresh.js';
 import {
   calculateArmorImageNumber,
   getCurrentBuildDisplayName,
@@ -12,7 +12,7 @@ import {
   plannerResetBuildClick,
   plannerSaveAsBuildClick,
   plannerSaveBuildClick,
-} from '../../../tree/tree-core.js';
+} from '@/tree/tree-core.js';
 import {
   getCharacterInstance,
   getCharacterLevel,
@@ -25,7 +25,7 @@ import Character from '@/character/Character.js';
 import {
   getPlannerAutoLevelFromSpentSkillPoints,
   setPlannerAutoLevelFromSpentSkillPoints,
-} from '../../planner/planner-level-options.js';
+} from '@/planner/planner-level-options.js';
 
 const className = ref('');
 const spentPoints = ref(0);

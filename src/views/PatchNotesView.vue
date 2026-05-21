@@ -6,9 +6,9 @@ export default {
 
 <script setup>
 import { ref } from 'vue';
-import { usePatchNotesData } from '../composables/usePatchNotesData.js';
-import { usePatchNotesSearch } from '../composables/usePatchNotesSearch.js';
-import { usePatchSkillTooltip } from '../composables/usePatchSkillTooltip.js';
+import { usePatchNotesData } from '@/composables/usePatchNotesData.js';
+import { usePatchNotesSearch } from '@/composables/usePatchNotesSearch.js';
+import { usePatchSkillTooltip } from '@/composables/usePatchSkillTooltip.js';
 
 const patchNotesRoot = ref(null);
 const patchSearchSticky = ref(null);
