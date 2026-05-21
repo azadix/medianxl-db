@@ -1,18 +1,20 @@
 /**
- * File-backed skill data (tree_data/*.json).
- * Does not import version-config (avoid circular deps). Duplicates minimal version helpers.
+ * @file File-backed skill data (`public/tree_data/*.json`).
+ * Does not import version-config (avoid circular deps with getFileSkillStore).
+ * @module tree/skill-data-store
  */
 
+import {
+    BUILD_VERSION_OVERRIDE_KEY,
+    DEFAULT_GAME_VERSION,
+    treeAssetFolderFromMajorMinor,
+} from '../src/shared/version-constants.js';
+
 const TREE_DATA_DIR = 'tree_data';
-const BUILD_VERSION_OVERRIDE_KEY = 'medianxl_build_version_override';
 
 /** @type {SkillFileStore | null} */
 let _store = null;
 let _initPromise = null;
-
-function versionToFolder(major, minor) {
-    return `${major}_${minor}`;
-}
 
 function parseBuildOverride() {
     const raw = localStorage.getItem(BUILD_VERSION_OVERRIDE_KEY);
@@ -29,6 +31,9 @@ function parseBuildOverride() {
 }
 
 /**
+ * Resolve major/minor from build override, active versions.json row, or fallback.
+ * @param {Array<{ major: number, minor: number, is_active?: boolean | number }> | null | undefined} versionsList
+ * @param {{ major: number, minor: number }} defaultVersion
  * @returns {{ major: number, minor: number }}
  */
 export function getRequestedTreeVersion(versionsList, defaultVersion) {
@@ -524,15 +529,17 @@ export class SkillFileStore {
 }
 
 /**
- * @param {{ major: number, minor: number }} defaultVersion
+ * Load versions.json, stats, and catalog for the requested or default patch folder.
+ * @param {{ major: number, minor: number }} [defaultVersion] defaults to {@link DEFAULT_GAME_VERSION}
+ * @returns {Promise<SkillFileStore>}
  */
-export async function initSkillDataStore(defaultVersion) {
+export async function initSkillDataStore(defaultVersion = DEFAULT_GAME_VERSION) {
     if (_initPromise) return _initPromise;
 
     _initPromise = (async () => {
         const versions = await fetchJson(`${TREE_DATA_DIR}/versions.json`);
         const cur = getRequestedTreeVersion(versions, defaultVersion);
-        const folderSeg = versionToFolder(cur.major, cur.minor);
+        const folderSeg = treeAssetFolderFromMajorMinor(cur.major, cur.minor);
         const stats = await fetchJson(`${TREE_DATA_DIR}/stats.json`);
         const gameMeta = await fetchJson(`${TREE_DATA_DIR}/${folderSeg}/game_meta.json`);
         const skills = await fetchJson(`${TREE_DATA_DIR}/${folderSeg}/skills.json`);
@@ -599,6 +606,9 @@ export async function initSkillDataStore(defaultVersion) {
     return _initPromise;
 }
 
+/**
+ * @returns {SkillFileStore | null} singleton after {@link initSkillDataStore}
+ */
 export function getFileSkillStore() {
     return _store;
 }
@@ -624,6 +634,7 @@ export function lookupSkillNameAndDisplayByNumericId(numericId) {
     return getFileSkillStore()?.lookupSkillNameAndDisplayByNumericId(numericId) ?? null;
 }
 
+/** Clear singleton so the next init reloads tree_data (tests and patch-notes tooltips). */
 export function resetSkillDataStoreForTests() {
     _store = null;
     _initPromise = null;

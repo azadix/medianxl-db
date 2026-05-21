@@ -1,5 +1,75 @@
 // Skills rendering and grid layout functionality
 import { getFileSkillStore } from './skill-data-store.js';
+
+/** Tab name for the skill tree (shared by tree-core and planner Vue without a separate module). */
+let currentTab = null;
+
+export function getCurrentTab() {
+    return currentTab;
+}
+
+export function setCurrentTabState(tabName) {
+    currentTab = tabName;
+}
+
+/**
+ * Enrich a raw oSkill row (from character state) for buildOSkillCardData.
+ * Mirrors tree-core createOSkillCard lookup logic.
+ * @param {object} oskill
+ * @returns {object}
+ */
+export function enrichOskillForDisplay(oskill) {
+    if (oskill.displayName && oskill.image) {
+        return oskill;
+    }
+    const store = getFileSkillStore();
+    let det = null;
+    let nid = null;
+    let internal = null;
+    if (oskill.skillId) {
+        internal = store?.internalNameByNumericId(oskill.skillId);
+        nid = oskill.skillId;
+        if (internal) det = store.getSkillDetail(internal);
+    } else if (oskill.skillName) {
+        internal = oskill.skillName;
+        det = store?.getSkillDetail(internal);
+        nid = det?.numericId ?? null;
+    }
+    if (internal) {
+        const cat = store?.catalogByInternalId?.get(String(internal)) ?? null;
+        const pid = cat?.parentSkillId != null ? String(cat.parentSkillId).trim() : '';
+        if (pid) {
+            det = null;
+            internal = null;
+            nid = null;
+        }
+    }
+    const slotId = oskill.slotId != null && String(oskill.slotId).trim() !== '' ? String(oskill.slotId).trim() : undefined;
+    if (det && internal) {
+        return {
+            numericId: nid,
+            skillId: oskill.skillId ?? nid,
+            skillName: oskill.skillName || internal,
+            points: oskill.points,
+            slotId,
+            displayName: det.display_name || internal,
+            image: det.image || 'icons-shared_missing.png',
+            className: det.className || 'Other',
+            hasDetails: true,
+            description: det.description,
+        };
+    }
+    return {
+        skillId: oskill.skillId,
+        skillName: oskill.skillName,
+        points: oskill.points,
+        slotId,
+        displayName: oskill.skillName || `Skill ${oskill.skillId}`,
+        image: 'icons-shared_missing.png',
+        className: 'Other',
+        hasDetails: false,
+    };
+}
 import {
   getSkillPoints,
   getAllSkillPoints,
@@ -13,10 +83,10 @@ import {
   removeSkillPointsBatch,
   isSkillDisabled,
   isOSkillSlotDisabled
-} from '../character/character-state.js';
+} from '../src/character/character-state.js';
 import { getSkillIconHTML } from '../src/shared/utils.js';
 import { getCurrentVersion, versionToTreeAssetFolder } from '../src/shared/version-config.js';
-import { ToastManager } from './ToastManager.js';
+import { ToastManager } from '../src/planner/toast-manager.js';
 import { listSkillVariants } from './skill-variants.js';
 import { notifySkillGridDomReset } from './tree-tooltip.js';
 
@@ -67,7 +137,7 @@ export function renderSkills(selectedClass, skillsList, skillsContainer, preserv
 
 /**
  * Handle skill point change (consolidated from SkillTreeController)
- * @param {Object} skill - Skill object
+ * @param {object} skill - Skill object
  * @param {number} delta - Points to add (positive) or remove (negative)
  * @param {Array} allSkills - Array of all skills (for validation)
  */
@@ -129,9 +199,9 @@ export function handleSkillPointChange(skill, delta, allSkills = []) {
 
 /**
  * Build planner card data for both regular skills and oSkills.
- * @param {Object} skillEntry
+ * @param {object} skillEntry
  * @param {{ skillType?: 'regular'|'oskill', allSkills?: Array, getIconFn?: Function }} opts
- * @returns {Object}
+ * @returns {object}
  */
 export function buildPlannerSkillCardData(skillEntry, opts = {}) {
     const skillType = opts.skillType || 'regular';

@@ -2,7 +2,7 @@
 import { ref, computed } from 'vue';
 import { getSkillIconHTML } from '../../shared/utils.js';
 import SkillCardImage from '../skills/SkillCardImage.vue';
-import { parseSearchInput } from '../../skills/skillTableSearch.js';
+import { parseSearchInput } from '@/skills/skillTableSearch.js';
 
 const props = defineProps({
   skills: { type: Array, default: () => [] },

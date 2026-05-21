@@ -1,5 +1,6 @@
 /**
- * Local editor for tree_data/<version>/skills.json (no server write; download only).
+ * @file Editor in-memory store, forms, and version load (no server write).
+ * @module src/editor/editor-store
  */
 import { TAG_GROUPS } from '../shared/utils.js';
 import { attachEditorTextareaAutocomplete } from './editor-textarea-autocomplete.js';
@@ -994,19 +995,21 @@ function closeEditView() {
     refreshEditorTableView();
 }
 
-function downloadSkillsJson() {
+/**
+ * Build JSON export payload from the working buffer.
+ * @returns {{ text: string, basename: string, folderSeg: string }}
+ */
+export function getEditorExportPayload() {
     const exportSkills = deepClone(workingSkills);
     stripTabSortOrderFromRows(exportSkills);
     normalizeSkillTextFieldsToStringArrays(exportSkills);
     const text = `${JSON.stringify(exportSkills, null, 2)}\n`;
-    const blob = new Blob([text], { type: 'application/json;charset=utf-8' });
-    const a = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    a.href = url;
-    a.download = editorFileBasename;
-    a.click();
-    URL.revokeObjectURL(url);
-    showToast(`Download started. Replace tree_data/${folderSeg}/${editorFileBasename} in your repo.`);
+    return { text, basename: editorFileBasename, folderSeg };
+}
+
+/** @param {string} msg @param {boolean} [isError] */
+export function showEditorToast(msg, isError = false) {
+    showToast(msg, isError);
 }
 
 function editorBeforeUnload(e) {
@@ -1020,6 +1023,7 @@ function editorBeforeUnload(e) {
  * @param {{ syncEditorTableView?: (skills: object[], folder: string) => void, fileBasename?: string }} [opts]
  */
 export async function mountEditor(opts = {}) {
+    const { downloadSkillsJson } = await import('./editor-download.js');
     syncEditorTableView = typeof opts.syncEditorTableView === 'function' ? opts.syncEditorTableView : null;
     editorFileBasename =
         opts.fileBasename != null && String(opts.fileBasename).trim() !== ''

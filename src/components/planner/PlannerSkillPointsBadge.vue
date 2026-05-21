@@ -1,12 +1,13 @@
 <script setup>
-import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue';
+import { computed, nextTick, onMounted, ref } from 'vue';
+import { usePlannerRevisionRefresh } from '../../composables/usePlannerRevisionRefresh.js';
 import {
   getEffectivePlannerLevel,
   getSpentSkillPoints,
   getTotalQuestSkillPoints,
-} from '../../../character/character-state.js';
-import Character from '../../../character/Character.js';
-import { setupPlannerMinLevelSkillPoolTooltips } from '../../../character/planner-stats-panel.js';
+} from '@/character/character-state.js';
+import Character from '@/character/Character.js';
+import { setupPlannerMinLevelSkillPoolTooltips } from '@/character/planner-stats-panel.js';
 
 const spentPoints = ref(0);
 const effectiveLevel = ref(1);
@@ -30,18 +31,9 @@ function onRefresh() {
 onMounted(() => {
   setupPlannerMinLevelSkillPoolTooltips();
   onRefresh();
-  window.addEventListener('plannerStateChanged', onRefresh);
-  window.addEventListener('skillPointsChanged', onRefresh);
-  window.addEventListener('questCompletionChanged', onRefresh);
-  window.addEventListener('plannerStatsPanelRefresh', onRefresh);
 });
 
-onUnmounted(() => {
-  window.removeEventListener('plannerStateChanged', onRefresh);
-  window.removeEventListener('skillPointsChanged', onRefresh);
-  window.removeEventListener('questCompletionChanged', onRefresh);
-  window.removeEventListener('plannerStatsPanelRefresh', onRefresh);
-});
+usePlannerRevisionRefresh(onRefresh);
 </script>
 
 <template>

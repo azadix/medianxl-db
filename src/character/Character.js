@@ -9,7 +9,7 @@ import {
   createEmptyRegisteredStatsObject
 } from './planner-stats-config.js';
 import { getPlannerSkillsSnapshot } from './character-state.js';
-import { minCharacterLevelForAllocatedSkillPoints } from '../src/skills/domain/skill-calculations.js';
+import { minCharacterLevelForAllocatedSkillPoints } from '@/skills/domain/skill-calculations.js';
 
 export default class Character {
   // Level constraints
@@ -765,7 +765,7 @@ export default class Character {
   /**
    * Update quest completion status
    * @param {string} questId - Quest identifier
-   * @param {Object} difficulties - Object with normal, nightmare, hell boolean values
+   * @param {object} difficulties - Object with normal, nightmare, hell boolean values
    */
   updateQuestCompletion(questId, difficulties) {
     if (!this.questsCompleted[questId]) {
@@ -801,7 +801,7 @@ export default class Character {
   /**
    * Get quest completion status
    * @param {string} questId - Quest identifier
-   * @returns {Object} Object with normal, nightmare, hell boolean values
+   * @returns {object} Object with normal, nightmare, hell boolean values
    */
   getQuestCompletion(questId) {
     return this.questsCompleted[questId] || { normal: false, nightmare: false, hell: false };
@@ -829,7 +829,7 @@ export default class Character {
 
   /**
    * Get all skill points
-   * @returns {Object} Map of skill_id -> points
+   * @returns {object} Map of skill_id -> points
    */
   getAllSkillPoints() {
     return { ...this.skillPoints };
@@ -837,7 +837,7 @@ export default class Character {
 
   /**
    * Set all skill points (used for loading builds)
-   * @param {Object} skillPoints - Map of skill_name or skill_id -> points
+   * @param {object} skillPoints - Map of skill_name or skill_id -> points
    */
   setAllSkillPoints(skillPoints) {
     this.skillPoints = { ...skillPoints };
@@ -886,7 +886,7 @@ export default class Character {
 
   /**
    * Export character state for saving
-   * @returns {Object} Character state
+   * @returns {object} Character state
    */
   exportState() {
     return {
@@ -904,7 +904,7 @@ export default class Character {
 
   /**
    * Import character state from save
-   * @param {Object} state - Saved character state
+   * @param {object} state - Saved character state
    */
   importState(state) {
     this.level = state.level || Character.DEFAULT_LEVEL;
@@ -940,7 +940,7 @@ export default class Character {
 
   /**
    * Get all oSkills in simplified format (ID and points only)
-   * @returns {Object} Object with skill IDs as keys and points as values
+   * @returns {object} Object with skill IDs as keys and points as values
    */
   getAllOSkills() {
     const oSkillsObj = {};
@@ -1045,7 +1045,7 @@ export default class Character {
 
   /**
    * Set all oSkills (for loading builds)
-   * @param {Array|Object} oSkills - Array of full oSkill rows (legacy), compact `{ skillId, level }[]`, or object map (display name, internal id, or numeric id keys -> points)
+   * @param {Array | object} oSkills - Array of full oSkill rows (legacy), compact `{ skillId, level }[]`, or object map (display name, internal id, or numeric id keys -> points)
    */
   setAllOSkills(oSkills) {
     if (!oSkills) {
@@ -1170,7 +1170,7 @@ export default class Character {
 
   /**
    * Get all stats
-   * @returns {Object} Map of stat_key -> value
+   * @returns {object} Map of stat_key -> value
    */
   getAllStats() {
     const out = { ...this.stats };
@@ -1191,7 +1191,7 @@ export default class Character {
 
   /**
    * Set all stats (used for loading builds)
-   * @param {Object} stats - Map of stat_key -> value
+   * @param {object} stats - Map of stat_key -> value
    */
   setAllStats(stats) {
     const oldStats = { ...this.stats };

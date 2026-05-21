@@ -6,7 +6,7 @@ import {
   canAddPoints,
   getRestrictionMessage,
 } from '../../../tree/tree-render.js';
-import { setSkillDisabled, setOSkillSlotDisabled } from '../../../character/character-state.js';
+import { setSkillDisabled, setOSkillSlotDisabled } from '@/character/character-state.js';
 import SkillVariantMenu from './SkillVariantMenu.vue';
 import SkillCardImage from './SkillCardImage.vue';
 import SkillCardButtons from './SkillCardButtons.vue';

@@ -162,9 +162,9 @@ export class FormulaEvaluator {
 
   /**
    * Register a new function that can be used in formulas
-   * @param {Object} options - Function registration options
+   * @param {object} options - Function registration options
    * @param {string} options.keyword - Function name (required)
-   * @param {Function} options.function - Function implementation (required)
+   * @param {Function} options["function"] - Function implementation (required)
    * @param {string} options.description - Optional description of what the function does
    * @param {string} options.example - Optional example of how to use the function
    */
@@ -180,7 +180,7 @@ export class FormulaEvaluator {
   
   /**
    * Register a new variable that can be used in formulas
-   * @param {Object} options - Variable registration options
+   * @param {object} options - Variable registration options
    * @param {string} options.keyword - Variable name (required)
    * @param {string} options.description - Optional description of what the variable represents
    * @param {string} options.example - Optional example of how to use the variable
@@ -205,7 +205,7 @@ export class FormulaEvaluator {
   
   /**
    * Get function information including description and example
-   * @returns {Array<Object>} Array of function objects with name, description, and example
+   * @returns {Array<object>} Array of function objects with name, description, and example
    */
   getFunctionInfo() {
     return Array.from(this.functionRegistry.entries()).map(([name, info]) => ({
@@ -217,7 +217,7 @@ export class FormulaEvaluator {
   
   /**
    * Get variable information including description and example
-   * @returns {Array<Object>} Array of variable objects with name, description, and example
+   * @returns {Array<object>} Array of variable objects with name, description, and example
    */
   getVariableInfo() {
     return Array.from(this.variableRegistry).map(v => ({
@@ -229,7 +229,7 @@ export class FormulaEvaluator {
   
   /**
    * Get skill reference information for the modal
-   * @returns {Array<Object>} Array of skill reference objects with name, description, and example
+   * @returns {Array<object>} Array of skill reference objects with name, description, and example
    */
   getSkillReferenceInfo() {
     return [
@@ -249,7 +249,7 @@ export class FormulaEvaluator {
 
   /**
    * Get stat reference information character stat references in formulas
-   * @returns {Array<Object>} Array of stat reference objects with name, description, and example
+   * @returns {Array<object>} Array of stat reference objects with name, description, and example
    */
   getStatReferenceInfo() {
     return [
@@ -264,7 +264,7 @@ export class FormulaEvaluator {
   /**
    * Parse and validate a formula string
    * @param {string} formula - The formula to parse
-   * @returns {Object} Parse result with success flag and error message
+   * @returns {object} Parse result with success flag and error message
    */
   parseFormula(formula) {
     try {
@@ -381,7 +381,7 @@ export class FormulaEvaluator {
    * Validate if() function syntax
    * Checks that all if() calls have exactly 3 arguments
    * @param {string} formula - The formula to validate
-   * @returns {Object} Validation result with success flag and error message
+   * @returns {object} Validation result with success flag and error message
    */
   validateIfSyntax(formula) {
     // Find all if() function calls (case-insensitive word boundary)
@@ -449,8 +449,8 @@ export class FormulaEvaluator {
   /**
    * Evaluate a formula with given variables
    * @param {string} formula - The formula to evaluate
-   * @param {Object} variables - Variable values (blvl, lvl, ulvl, etc.)
-   * @returns {Object} Evaluation result with success flag, value, and error message
+   * @param {object} variables - Variable values (blvl, lvl, ulvl, etc.)
+   * @returns {object} Evaluation result with success flag, value, and error message
    */
   evaluate(formula, variables = {}) {
     try {

@@ -4,7 +4,7 @@ import {
   expandPlaceholdersWithScaling,
   showSkillDataLoadError,
 } from '../shared/utils.js';
-import { getTreeSkillsCache } from '../../character/character-state.js';
+import { getTreeSkillsCache } from '@/character/character-state.js';
 import { getCurrentVersion, versionToTreeAssetFolder, initializeVersionSelector } from '../shared/version-config.js';
 import {
   fetchTreeStructJson,
@@ -20,12 +20,101 @@ import {
 } from '../../tree/skill-data-store.js';
 import { buildSkillFromCatalogRow } from '../../tree/tree-data.js';
 import Skill from './domain/Skill.js';
-import {
-  mergeHomeQuery,
-  SKILLS_ROUTE_NAME,
-  readQueryStringArray,
-  readClassTagJoinFromQuery,
-} from './skillsIndexRoute.js';
+
+/** Skills index route name and query helpers (formerly skillsIndexRoute.js). */
+export const SKILLS_ROUTE_NAME = 'skills';
+
+const FILTER_VALUES = ['all', 'with_details', 'without_details'];
+
+/**
+ * @param {unknown} q
+ * @param {string} key
+ * @returns {string[]}
+ */
+export function readQueryStringArray(q, key) {
+  if (!q || typeof q !== 'object') return [];
+  const raw = /** @type {Record<string, unknown>} */ (q)[key];
+  if (raw == null || raw === '') return [];
+  if (Array.isArray(raw)) return raw.map(String).filter(Boolean);
+  return [String(raw)].filter(Boolean);
+}
+
+/**
+ * @param {import('vue-router').Router | null | undefined} router
+ * @param {Record<string, string | string[] | undefined | null>} partial
+ */
+export function mergeHomeQuery(router, partial) {
+  if (!router) return;
+  const cur = router.currentRoute.value.query;
+  const next = { ...cur };
+  for (const [k, v] of Object.entries(partial)) {
+    if (v === undefined || v === null || v === '') {
+      delete next[k];
+    } else if (Array.isArray(v)) {
+      const filtered = v.map(String).filter(Boolean);
+      if (filtered.length === 0) delete next[k];
+      else next[k] = filtered;
+    } else {
+      next[k] = String(v);
+    }
+  }
+  router.replace({ name: SKILLS_ROUTE_NAME, query: next });
+}
+
+/**
+ * @param {import('vue-router').Router | null | undefined} router
+ * @returns {'all'|'with_details'|'without_details'}
+ */
+export function readHomeFilterFromRoute(router) {
+  const q = router?.currentRoute?.value?.query;
+  const fromQuery = q && q.filter != null ? String(q.filter) : null;
+  const savedFilter =
+    fromQuery ?? new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '').get('filter');
+  if (savedFilter && FILTER_VALUES.includes(String(savedFilter))) {
+    return /** @type {'all'|'with_details'|'without_details'} */ (String(savedFilter));
+  }
+  return 'all';
+}
+
+/**
+ * @param {import('vue-router').Router | null | undefined} router
+ * @returns {string[]}
+ */
+export function readHomeClassFiltersFromRoute(router) {
+  const q = router?.currentRoute?.value?.query;
+  return readQueryStringArray(q, 'classes');
+}
+
+/**
+ * @param {import('vue-router').Router | null | undefined} router
+ * @returns {string[]}
+ */
+export function readHomeTagFiltersFromRoute(router) {
+  const q = router?.currentRoute?.value?.query;
+  return readQueryStringArray(q, 'tags');
+}
+
+/**
+ * @param {unknown} q
+ * @returns {'and'|'or'|'not'}
+ */
+export function readClassTagJoinFromQuery(q) {
+  if (!q || typeof q !== 'object') return 'and';
+  const rec = /** @type {Record<string, unknown>} */ (q);
+  const raw = rec.filterLogic != null ? String(rec.filterLogic).toLowerCase() : 'and';
+  if (raw === 'or') return 'or';
+  if (raw === 'not') return 'not';
+  return 'and';
+}
+
+/**
+ * @param {import('vue-router').Router | null | undefined} router
+ * @returns {'and'|'or'|'not'}
+ */
+export function readClassTagJoinFromRoute(router) {
+  const q = router?.currentRoute?.value?.query;
+  return readClassTagJoinFromQuery(q);
+}
 
 /** @type {import('vue-router').Router | null} */
 let routerRef = null;

@@ -9,7 +9,6 @@ export class ToastManager {
 
         let timeoutId;
         
-        // Always apply the background class
         toast.classList.add(`is-${toastBgClass}`);
         
         if (autoRemove) {

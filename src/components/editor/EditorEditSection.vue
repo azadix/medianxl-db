@@ -1,3 +1,10 @@
+<script setup>
+defineProps({
+  /** 'skills' | 'subskills' */
+  mode: { type: String, default: 'skills' },
+});
+</script>
+
 <template>
   <div id="edit-view" class="is-hidden">
     <div class="level mt-4">
@@ -10,7 +17,9 @@
         </div>
       </div>
     </div>
-    <h2 class="title is-5" id="edit-heading">Edit skill</h2>
+    <h2 class="title is-5" id="edit-heading">
+      {{ mode === 'subskills' ? 'Edit subskill' : 'Edit skill' }}
+    </h2>
 
     <form id="skill-form" class="box">
       <h3 class="title is-6">Identity</h3>
@@ -39,7 +48,7 @@
             </div>
           </div>
         </div>
-        <div class="column is-half">
+        <div v-if="mode !== 'subskills'" class="column is-half">
           <div class="field">
             <label class="label" for="f-image">image</label>
             <div class="control">
@@ -49,71 +58,87 @@
         </div>
       </div>
 
-      <h3 class="title is-6 mt-4">Placement</h3>
-      <div class="columns is-multiline">
-        <div class="column is-half">
-          <div class="field">
-            <label class="label" for="f-class-select">class</label>
-            <div class="control">
-              <div class="select is-fullwidth">
-                <select id="f-class-select"></select>
+      <template v-if="mode === 'subskills'">
+        <h3 class="title is-6 mt-4">Subskill link</h3>
+        <div class="columns is-multiline">
+          <div class="column is-half">
+            <div class="field">
+              <label class="label" for="f-parentSkillId">parentSkillId</label>
+              <div class="control">
+                <input class="input" type="text" id="f-parentSkillId" placeholder="e.g. spellbind" />
               </div>
             </div>
           </div>
         </div>
-        <div class="column is-half">
-          <div class="field">
-            <label class="label" for="f-tab-select">tabName</label>
-            <div class="control">
-              <div class="select is-fullwidth">
-                <select id="f-tab-select"></select>
+      </template>
+
+      <template v-else>
+        <h3 class="title is-6 mt-4">Placement</h3>
+        <div class="columns is-multiline">
+          <div class="column is-half">
+            <div class="field">
+              <label class="label" for="f-class-select">class</label>
+              <div class="control">
+                <div class="select is-fullwidth">
+                  <select id="f-class-select"></select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="column is-half">
+            <div class="field">
+              <label class="label" for="f-tab-select">tabName</label>
+              <div class="control">
+                <div class="select is-fullwidth">
+                  <select id="f-tab-select"></select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="column is-one-quarter">
+            <div class="field">
+              <label class="label" for="f-classId">classId</label>
+              <div class="control">
+                <input class="input" type="number" id="f-classId" step="1" readonly />
+              </div>
+            </div>
+          </div>
+          <div class="column is-one-quarter">
+            <div class="field">
+              <label class="label" for="f-tab">tab (id)</label>
+              <div class="control">
+                <input class="input" type="number" id="f-tab" step="1" readonly />
               </div>
             </div>
           </div>
         </div>
-        <div class="column is-one-quarter">
-          <div class="field">
-            <label class="label" for="f-classId">classId</label>
-            <div class="control">
-              <input class="input" type="number" id="f-classId" step="1" readonly />
-            </div>
-          </div>
-        </div>
-        <div class="column is-one-quarter">
-          <div class="field">
-            <label class="label" for="f-tab">tab (id)</label>
-            <div class="control">
-              <input class="input" type="number" id="f-tab" step="1" readonly />
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <h3 class="title is-6 mt-4">Levels and flags</h3>
-      <div class="columns is-multiline">
-        <div class="column is-one-quarter">
-          <div class="field">
-            <label class="label" for="f-baseMaxLevel">baseMaxLevel</label>
-            <div class="control">
-              <input class="input" type="number" id="f-baseMaxLevel" step="1" />
+        <h3 class="title is-6 mt-4">Levels and flags</h3>
+        <div class="columns is-multiline">
+          <div class="column is-one-quarter">
+            <div class="field">
+              <label class="label" for="f-baseMaxLevel">baseMaxLevel</label>
+              <div class="control">
+                <input class="input" type="number" id="f-baseMaxLevel" step="1" />
+              </div>
+            </div>
+          </div>
+          <div class="column is-one-quarter">
+            <div class="field">
+              <label class="checkbox mt-5">
+                <input type="checkbox" id="f-affectedBySpecialization" />
+                affectedBySpecialization
+              </label>
             </div>
           </div>
         </div>
-        <div class="column is-one-quarter">
-          <div class="field">
-            <label class="checkbox mt-5">
-              <input type="checkbox" id="f-affectedBySpecialization" />
-              affectedBySpecialization
-            </label>
-          </div>
-        </div>
-      </div>
 
-      <div class="field">
-        <label class="label">tags</label>
-        <div id="f-tags-checkboxes" class="f-tags-sections"></div>
-        <p class="help is-hidden" id="f-tags-no-meta">No skilltags in game_meta; tag list is unchanged until checkboxes are available.</p>
-      </div>
+        <div class="field">
+          <label class="label">tags</label>
+          <div id="f-tags-checkboxes" class="f-tags-sections"></div>
+          <p class="help is-hidden" id="f-tags-no-meta">No skilltags in game_meta; tag list is unchanged until checkboxes are available.</p>
+        </div>
+      </template>
 
       <h3 class="title is-6 mt-4">Text</h3>
       <div class="field">
@@ -128,7 +153,7 @@
           <textarea class="textarea" id="f-skillEffect" rows="6"></textarea>
         </div>
       </div>
-      <div class="field">
+      <div v-if="mode !== 'subskills'" class="field">
         <label class="label" for="f-restriction">restriction</label>
         <div class="control">
           <textarea class="textarea" id="f-restriction" rows="2"></textarea>
@@ -136,7 +161,7 @@
       </div>
 
       <h3 class="title is-6 mt-4">JSON (must be valid JSON arrays / object)</h3>
-      <div class="field">
+      <div v-if="mode !== 'subskills'" class="field">
         <div class="level is-mobile mb-2">
           <div class="level-left">
             <div class="level-item">
@@ -189,7 +214,9 @@
           <button type="button" class="button is-primary" id="btn-apply">Apply to buffer</button>
         </div>
         <div class="control">
-          <button type="button" class="button is-link is-light" id="btn-download-edit">Download skills.json</button>
+          <button type="button" class="button is-link is-light" id="btn-download-edit">
+            {{ mode === 'subskills' ? 'Download subskills.json' : 'Download skills.json' }}
+          </button>
         </div>
       </div>
     </form>

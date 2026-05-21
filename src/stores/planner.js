@@ -21,13 +21,20 @@ export const usePlannerStore = defineStore('planner', {
     },
     attachWindowSync() {
       const bump = () => this.bump();
-      window.addEventListener('skillPointsChanged', bump);
-      window.addEventListener('plannerStateChanged', bump);
-      window.addEventListener('characterStatsChanged', bump);
+      const events = [
+        'skillPointsChanged',
+        'plannerStateChanged',
+        'characterStatsChanged',
+        'questCompletionChanged',
+        'plannerStatsPanelRefresh',
+      ];
+      for (const name of events) {
+        window.addEventListener(name, bump);
+      }
       return () => {
-        window.removeEventListener('skillPointsChanged', bump);
-        window.removeEventListener('plannerStateChanged', bump);
-        window.removeEventListener('characterStatsChanged', bump);
+        for (const name of events) {
+          window.removeEventListener(name, bump);
+        }
       };
     },
   },

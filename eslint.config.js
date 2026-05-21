@@ -1,5 +1,6 @@
 import js from '@eslint/js';
 import pluginVue from 'eslint-plugin-vue';
+import pluginJSDoc from 'eslint-plugin-jsdoc';
 import globals from 'globals';
 
 export default [
@@ -28,5 +29,23 @@ export default [
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrors: 'none' }
       ]
     }
-  }
+  },
+  {
+    files: ['src/**/*.js', 'tree/**/*.js'],
+    plugins: { jsdoc: pluginJSDoc },
+    rules: {
+      ...pluginJSDoc.configs['flat/recommended'].rules,
+      'jsdoc/require-jsdoc': 'off',
+      'jsdoc/require-description': 'off',
+      'jsdoc/require-param': 'off',
+      'jsdoc/require-returns': 'off',
+      'jsdoc/require-param-description': 'off',
+      'jsdoc/require-returns-description': 'off',
+      'jsdoc/tag-lines': 'off',
+      'jsdoc/check-param-names': 'off',
+      'jsdoc/check-types': 'warn',
+      'jsdoc/no-undefined-types': 'off',
+      'jsdoc/valid-types': 'warn',
+    },
+  },
 ];

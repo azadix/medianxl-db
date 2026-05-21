@@ -2,10 +2,11 @@
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 import AppNavBar from './components/AppNavBar.vue';
+import { DEV_KEEP_ALIVE_NAMES } from './shared/dev-routes.js';
 
 const route = useRoute();
 const cachedNames = import.meta.env.DEV
-  ? ['PlannerView', 'PatchNotesView', 'EditorView', 'CalculationsView']
+  ? ['PlannerView', 'PatchNotesView', ...DEV_KEEP_ALIVE_NAMES]
   : ['PlannerView', 'PatchNotesView'];
 const useKeepAlive = computed(() => Boolean(route.meta?.keepAlive));
 </script>

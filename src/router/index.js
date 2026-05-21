@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import PlannerView from '../views/PlannerView.vue';
 import PatchNotesView from '../views/PatchNotesView.vue';
+import { DEV_ROUTE_DEFS } from '../shared/dev-routes.js';
 
 const routes = [
   { path: '/', redirect: '/skills' },
@@ -26,28 +27,22 @@ const routes = [
 ];
 
 if (import.meta.env.DEV) {
-  routes.push({
-    path: '/editor',
-    name: 'editor',
-    component: () => import('../views/EditorView.vue'),
-    meta: { keepAlive: true },
-  });
-  routes.push({
-    path: '/editor/subskills',
-    name: 'subskillsEditor',
-    component: () => import('../views/SubskillsEditorView.vue'),
-    meta: { keepAlive: true },
-  });
-  routes.push({
-    path: '/calculations',
-    name: 'calculations',
-    component: () => import('../views/CalculationsView.vue'),
-    meta: { keepAlive: true },
-  });
+  for (const def of DEV_ROUTE_DEFS) {
+    routes.push({
+      path: def.path,
+      name: def.name,
+      component: def.component,
+      meta: {
+        keepAlive: true,
+        ...(def.editorMode ? { editorMode: def.editorMode } : {}),
+        ...(def.editorFile ? { editorFile: def.editorFile } : {}),
+      },
+    });
+  }
 } else {
-  routes.push({ path: '/editor', redirect: '/' });
-  routes.push({ path: '/editor/subskills', redirect: '/' });
-  routes.push({ path: '/calculations', redirect: '/' });
+  for (const def of DEV_ROUTE_DEFS) {
+    routes.push({ path: def.path, redirect: '/' });
+  }
 }
 
 export default createRouter({

@@ -3,24 +3,21 @@
  *
  * Architecture:
  * - {@link Skill} is the runtime model for planner rows (see tree-data / Skill.fromCatalogRow).
- * - Subclasses (Mastery, Ultimate, Paragon, Coven, Proficiency, Innate, OSkill) add
- *   `static isXSkill(skill)` predicates and `checkRestriction(allSkills)` for their rules.
+ * - Allocation rule classes in `skill-allocation-rules.js` add predicates and `checkRestriction`.
+ * - Innate / oskill catalog predicates live in `skill-skill-types.js`.
  * - All `checkRestriction` implementations return `{ allowed: boolean, reason: string }`.
  *
- * To add a new rule:
+ * To add a new rule see `docs/ADDING_SKILL_RULES.md`:
  * 1. Create or extend a subclass with `static is…(skill)` and `checkRestriction`.
  * 2. Export a thin `check…Restriction(skill, allSkills)` wrapper here.
  * 3. Register the check in character-state `addSkillPoint` / `addSkillPointsBatch` (order matters).
  * 4. If the rule should show in the skill card warning UI, add it to `getSkillRestrictions` there.
  *
  * @module skills/skill-restrictions
+ * @see docs/ADDING_SKILL_RULES.md
  */
 
-import Mastery from './Mastery.js';
-import Coven from './Coven.js';
-import Proficiency from './Proficiency.js';
-import Ultimate from './Ultimate.js';
-import Paragon from './Paragon.js';
+import { Mastery, Coven, Proficiency, Ultimate, Paragon } from './skill-allocation-rules.js';
 
 /** @typedef {{ allowed: boolean, reason: string }} AllocationCheckResult */
 
@@ -71,7 +68,7 @@ export function checkProficiencyRestriction(skill, allSkills) {
 
 /**
  * Human-readable summary for tooling / new contributors (not used at runtime).
- * Order in {@link character/character-state.js} `addSkillPoint` may differ slightly (e.g. devotion last).
+ * Order in {@link src/character/character-state.js} `addSkillPoint` may differ slightly (e.g. devotion last).
  */
 export const FIRST_POINT_RULE_SUMMARY = Object.freeze([
     {
