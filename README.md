@@ -39,6 +39,7 @@ npm run preview
 - `docs/PATCH_NOTES_OVERVIEW.md` - patch notes load/search/tooltip pipeline
 - `docs/PATCH_RELEASE.md` - checklist for a new `tree_data` patch folder
 - `docs/ADDING_SKILL_RULES.md` - how to add planner allocation rules
+- `docs/DAMAGE_RANGES.md` - D2-style band damage for `{{*_damage}}` placeholders
 - `docs/DOCS_ADDED.md` - summary of this documentation batch
 
 ## Data layout

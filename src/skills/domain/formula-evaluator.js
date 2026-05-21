@@ -164,9 +164,9 @@ export class FormulaEvaluator {
    * Register a new function that can be used in formulas
    * @param {object} options - Function registration options
    * @param {string} options.keyword - Function name (required)
-   * @param {Function} options["function"] - Function implementation (required)
-   * @param {string} options.description - Optional description of what the function does
-   * @param {string} options.example - Optional example of how to use the function
+   * @param {(...args: unknown[]) => unknown} options.function - Function implementation (required)
+   * @param {string} [options.description] - Optional description of what the function does
+   * @param {string} [options.example] - Optional example of how to use the function
    */
   registerFunction({ keyword, function: func, description = '', example = '' }) {
     if (!keyword) {

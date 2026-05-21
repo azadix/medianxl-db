@@ -1054,7 +1054,7 @@ export function addSkillPoint(skillName, skill, maxLevel, allSkills = [], skipEv
  * @param {object} skill - Skill object
  * @param {number} amount - Number of points to add
  * @param {Array} allSkills - Array of all skills
- * @param {Function} getMaxLevelFn - Function to get current max level (may change during batch)
+ * @param {() => number} [getMaxLevelFn] - Returns current max level (may change during batch)
  * @returns {object} { success: boolean, pointsAdded: number, reason: string }
  */
 export function addSkillPointsBatch(skillName, skill, amount, allSkills = [], getMaxLevelFn = null) {

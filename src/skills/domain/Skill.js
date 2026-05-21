@@ -435,7 +435,7 @@ export default class Skill {
 
     /**
      * Evaluate a single value if it's a formula
-     * @param {*} value - Value to evaluate
+     * @param {string|number|boolean|null|undefined} value - Value to evaluate
      * @param {object} formulaEvaluator - Formula evaluator instance
      * @param {object} variables - Variables for formula evaluation
      * @param {number} crossSkillDepth - recursion guard for cross-skill stat tokens
@@ -609,6 +609,23 @@ export default class Skill {
                 value0: null, value1: null, value2: null, value3: null,
                 value0_constant: false, value1_constant: false, value2_constant: false, value3_constant: false
             };
+        }
+
+        // Keep optional metadata from scaling/constants rows (used by specialized tooltip calculators).
+        for (const key of [
+            'damageModel',
+            'damageKind',
+            'baseMin',
+            'baseMax',
+            'minPerLevel',
+            'maxPerLevel',
+            'hitShift',
+            'synergyFormula',
+            'minCharacterLevel',
+        ]) {
+            if (Object.prototype.hasOwnProperty.call(constantValues, key)) {
+                result[key] = constantValues[key];
+            }
         }
         
         // Process each constant value

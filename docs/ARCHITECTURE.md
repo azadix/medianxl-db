@@ -47,3 +47,7 @@ Character state is implemented in `src/character/character-state.js` (canonical 
 - `public/tree_data/<major>_<minor>/subskills.json`: optional linked subskills.
 - `public/tree_data/<major>_<minor>/tree_struct.json`: planner tree positions + prerequisites.
 - `public/patch_notes/index.json` + `public/patch_notes/*.md`: patch notes manifest/content.
+
+## Damage ranges
+
+Opt-in D2-style min–max damage for `{{cold_damage}}`, `{{fire_damage}}`, etc. See **[DAMAGE_RANGES.md](DAMAGE_RANGES.md)** for authoring, level bands, synergy, and code paths.

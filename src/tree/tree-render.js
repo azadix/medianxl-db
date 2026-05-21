@@ -200,7 +200,7 @@ export function handleSkillPointChange(skill, delta, allSkills = []) {
 /**
  * Build planner card data for both regular skills and oSkills.
  * @param {object} skillEntry
- * @param {{ skillType?: 'regular'|'oskill', allSkills?: Array, getIconFn?: Function }} opts
+ * @param {{ skillType?: 'regular'|'oskill', allSkills?: Array, getIconFn?: (image: string, className: string) => string }} opts
  * @returns {object}
  */
 export function buildPlannerSkillCardData(skillEntry, opts = {}) {

@@ -56,6 +56,7 @@ import {
 } from '@/tree/skill-data-store.js';
 import { formulaEvaluator } from '@/skills/domain/formula-evaluator.js';
 import { formatScalingValuesToDescriptionHtml } from '@/skills/domain/scaling-display-html.js';
+import { calculateBandDamageMinMax, isBandDamageStatKey } from '@/skills/domain/damage-calculator.js';
 
 // --- Skill data (tree_data JSON) load error ---
 export function escapeHtmlText(s) {
@@ -401,8 +402,9 @@ export async function expandPlaceholdersWithScaling(numericId, level, descriptio
                 // for placeholder evaluation.
                 let effectiveCharacterState = characterState;
                 let effectiveLevel = level;
+                const catalogRow = store?.catalogByInternalId?.get?.(String(actualSkillName)) ?? null;
                 if (characterState && store) {
-                    const cat = store.catalogByInternalId?.get?.(String(actualSkillName));
+                    const cat = catalogRow;
                     const parentIdRaw = cat?.parentSkillId;
                     const parentId =
                         parentIdRaw != null && String(parentIdRaw).trim() !== ''
@@ -421,7 +423,12 @@ export async function expandPlaceholdersWithScaling(numericId, level, descriptio
                     }
                 }
 
-                const skill = new Skill({ id: actualSkillName, name: displayName, skillId: numericId });
+                const skill = new Skill({
+                    id: actualSkillName,
+                    name: displayName,
+                    skillId: numericId,
+                    tags: Array.isArray(catalogRow?.tags) ? catalogRow.tags : [],
+                });
                 const scalingValues = await skill.getScalingValues(
                     effectiveLevel,
                     key,
@@ -434,8 +441,76 @@ export async function expandPlaceholdersWithScaling(numericId, level, descriptio
                 );
                 
                 if (scalingValues) {
+                    const blvl = effectiveCharacterState?.blvl?.[actualSkillName] || 0;
+                    const slvl = effectiveCharacterState?.lvl?.[actualSkillName] || 0;
+                    const lvl = (Number(blvl) || 0) + (Number(slvl) || 0) || Math.max(1, Number(effectiveLevel) || 1);
+                    const formulaVariables = {
+                        blvl,
+                        slvl,
+                        lvl,
+                        ulvl: effectiveCharacterState?.level || 1,
+                        _blvl: effectiveCharacterState?.blvl || {},
+                        _lvl: effectiveCharacterState?.lvl || {},
+                        characterState: effectiveCharacterState || null
+                    };
+
+                    // Helper to parse or evaluate a numeric value.
+                    const parseOrEvaluate = (value) => {
+                        const strValue = String(value ?? '').trim();
+                        if (!strValue) return 0;
+                        const isPureNumber = /^-?\d+(\.\d+)?$/.test(strValue);
+                        if (isPureNumber) return parseFloat(strValue) || 0;
+                        const evalResult = formulaEvaluator.evaluate(strValue, formulaVariables);
+                        if (evalResult.success) return Number(evalResult.value) || 0;
+                        return 0;
+                    };
+
+                    if (
+                        String(scalingValues.damageModel || '').toLowerCase() === 'bands' &&
+                        isBandDamageStatKey(key)
+                    ) {
+                        const rawSynergyFormula = String(scalingValues.synergyFormula || '').trim();
+                        let synergyMultiplier = 1;
+                        if (rawSynergyFormula) {
+                            const evalResult = formulaEvaluator.evaluate(rawSynergyFormula, formulaVariables);
+                            if (evalResult.success) {
+                                const pct = Number(evalResult.value);
+                                if (Number.isFinite(pct)) {
+                                    synergyMultiplier = (100 + pct) / 100;
+                                }
+                            }
+                        }
+                        const kind = String(scalingValues.damageKind || '').toLowerCase() === 'physical'
+                            ? 'physical'
+                            : 'elemental';
+                        const minPerLevel = Array.isArray(scalingValues.minPerLevel)
+                            ? scalingValues.minPerLevel
+                            : [0, 0, 0, 0, 0];
+                        const maxPerLevel = Array.isArray(scalingValues.maxPerLevel)
+                            ? scalingValues.maxPerLevel
+                            : [0, 0, 0, 0, 0];
+                        const minMax = calculateBandDamageMinMax({
+                            kind,
+                            statKey: key,
+                            skill,
+                            level: lvl,
+                            baseMin: scalingValues.baseMin ?? scalingValues.value0 ?? 0,
+                            baseMax: scalingValues.baseMax ?? scalingValues.value1 ?? 0,
+                            minPerLevel,
+                            maxPerLevel,
+                            hitShift: scalingValues.hitShift,
+                            synergyMultiplier,
+                        });
+                        const rendered = {
+                            ...scalingValues,
+                            value0: String(minMax.min),
+                            value1: String(minMax.max),
+                            value0_constant: true,
+                            value1_constant: true,
+                        };
+                        output = formatScalingValuesToDescriptionHtml(rendered, key);
                     // Special handling for mana_cost: calculate single value from 3 parameters
-                    if (key === 'mana_cost') {
+                    } else if (key === 'mana_cost') {
                         const v0 = scalingValues.value0 ?? ''; // mana
                         const v1 = scalingValues.value1 ?? ''; // lvlmana
                         const v2 = scalingValues.value2 ?? ''; // manashift
@@ -455,45 +530,6 @@ export async function expandPlaceholdersWithScaling(numericId, level, descriptio
                                 .replace('{value2}', q)
                                 .replace('{value3}', q);
                         } else {
-                            // Values are already evaluated by getScalingValues() when showFormulas is false
-                            // If showFormulas is true or evaluation failed, values might be formula strings
-                            // Try to parse as numbers first, and if that fails, try to evaluate as formulas
-                            const evaluator = formulaEvaluator;
-                            
-                            // Helper to parse or evaluate a value
-                            const parseOrEvaluate = (value) => {
-                                const strValue = String(value).trim();
-                                // Check if it's a pure number (already evaluated)
-                                const isPureNumber = /^-?\d+(\.\d+)?$/.test(strValue);
-                                if (isPureNumber) {
-                                    return parseFloat(strValue) || 0;
-                                }
-                                
-                                // If characterState is available, try to evaluate as formula
-                                if (effectiveCharacterState) {
-                                    const blvl = effectiveCharacterState.blvl?.[actualSkillName] || 0;
-                                    const slvl = effectiveCharacterState.lvl?.[actualSkillName] || 0;
-                                    const lvl = blvl + slvl;
-                                    
-                                    const variables = {
-                                        blvl,
-                                        slvl,
-                                        lvl,
-                                        ulvl: effectiveCharacterState.level || 1,
-                                        _blvl: effectiveCharacterState.blvl || {},
-                                        characterState: effectiveCharacterState
-                                    };
-                                    
-                                    const evalResult = evaluator.evaluate(strValue, variables);
-                                    if (evalResult.success) {
-                                        return evalResult.value;
-                                    }
-                                }
-                                
-                                // If evaluation fails or no characterState, return 0
-                                return 0;
-                            };
-                            
                             const mana = parseOrEvaluate(v0);
                             const lvlmana = parseOrEvaluate(v1);
                             const manashift = parseOrEvaluate(v2);
@@ -501,10 +537,6 @@ export async function expandPlaceholdersWithScaling(numericId, level, descriptio
                             const hasMinMana =
                                 v3 !== '' && v3 !== null && v3 !== undefined;
                             const minManaNum = hasMinMana ? parseOrEvaluate(v3) : undefined;
-
-                            const blvl = effectiveCharacterState?.blvl?.[actualSkillName] || 0;
-                            const slvl = effectiveCharacterState?.lvl?.[actualSkillName] || 0;
-                            const lvl = blvl + slvl;
 
                             // Calculate mana cost
                             const calculatedMana = calculateManaCost(

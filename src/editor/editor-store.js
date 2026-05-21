@@ -29,7 +29,15 @@ const DEFAULT_SCALING_CONSTANT_ROW = {
     statKey: '',
     occurrenceIndex: 0,
     variantKey: '',
-    value0: ''
+    value0: '',
+    damageModel: '',
+    damageKind: '',
+    baseMin: '',
+    baseMax: '',
+    minPerLevel: [],
+    maxPerLevel: [],
+    hitShift: '',
+    synergyFormula: ''
 };
 
 /** @type {object[]} */
@@ -902,7 +910,7 @@ function appendDefaultScalingConstantRowToForm() {
         err.textContent = '';
         err.classList.add('is-hidden');
     }
-    showToast('Appended default scalingConstants object. Edit JSON then Apply.');
+    showToast('Appended default scalingConstants object. For D2 ranges, set damageModel=bands and fill base/band fields.');
 }
 
 function collectInternalSkillIdSet() {
@@ -1007,7 +1015,10 @@ export function getEditorExportPayload() {
     return { text, basename: editorFileBasename, folderSeg };
 }
 
-/** @param {string} msg @param {boolean} [isError] */
+/**
+ * @param {string} msg
+ * @param {boolean} [isError]
+ */
 export function showEditorToast(msg, isError = false) {
     showToast(msg, isError);
 }

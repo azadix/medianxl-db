@@ -390,7 +390,16 @@ export class SkillFileStore {
             value0_constant: false,
             value1_constant: false,
             value2_constant: false,
-            value3_constant: false
+            value3_constant: false,
+            // Optional D2-style band model fields (kept as pass-through metadata).
+            damageModel: hit.damageModel,
+            damageKind: hit.damageKind,
+            baseMin: hit.baseMin,
+            baseMax: hit.baseMax,
+            minPerLevel: hit.minPerLevel,
+            maxPerLevel: hit.maxPerLevel,
+            hitShift: hit.hitShift,
+            synergyFormula: hit.synergyFormula
         };
     }
 
@@ -465,6 +474,15 @@ export class SkillFileStore {
             value3_constant: inferConst(3),
             statName: st?.name ?? hit.statKey,
             format: st?.format,
+            // Optional D2-style band model fields (kept as pass-through metadata).
+            damageModel: hit.damageModel,
+            damageKind: hit.damageKind,
+            baseMin: hit.baseMin,
+            baseMax: hit.baseMax,
+            minPerLevel: hit.minPerLevel,
+            maxPerLevel: hit.maxPerLevel,
+            hitShift: hit.hitShift,
+            synergyFormula: hit.synergyFormula,
             ...(minCharacterLevel !== undefined ? { minCharacterLevel } : {})
         };
     }
