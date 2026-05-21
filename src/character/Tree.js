@@ -3,7 +3,7 @@
  */
 export default class Tree {
   /**
-   * @param {Array<Object>} skills - Planner skill rows (same shape as tree-data output)
+   * @param {Array<object>} skills - Planner skill rows (same shape as tree-data output)
    */
   constructor(skills = []) {
     this.skills = Array.isArray(skills) ? skills : [];
@@ -15,7 +15,7 @@ export default class Tree {
 
   /**
    * @param {number|string} skillId - Numeric skill id or string key
-   * @returns {Object|undefined}
+   * @returns {object | undefined}
    */
   getSkillById(skillId) {
     const n = Number(skillId);
@@ -29,7 +29,7 @@ export default class Tree {
 
   /**
    * @param {string} name - Internal skill id or display name
-   * @returns {Object|undefined}
+   * @returns {object | undefined}
    */
   getSkillByName(name) {
     if (name == null || name === '') return undefined;

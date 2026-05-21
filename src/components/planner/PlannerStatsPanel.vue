@@ -1,8 +1,9 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue';
-import { getPlannerCharacterStatDefs } from '../../../character/planner-stats-config.js';
-import { getCharacterInstance } from '../../../character/character-state.js';
-import { setupPlannerStatRowTooltips, applyPlannerStatInput } from '../../../character/planner-stats-panel.js';
+import { ref, computed, onMounted, nextTick } from 'vue';
+import { usePlannerRevisionRefresh } from '../../composables/usePlannerRevisionRefresh.js';
+import { getPlannerCharacterStatDefs } from '@/character/planner-stats-config.js';
+import { getCharacterInstance } from '@/character/character-state.js';
+import { setupPlannerStatRowTooltips, applyPlannerStatInput } from '@/character/planner-stats-panel.js';
 import { getFileSkillStore } from '../../../tree/skill-data-store.js';
 import { usePlannerSkillReferencedStats } from '../../composables/usePlannerSkillReferencedStats.js';
 
@@ -133,18 +134,9 @@ onMounted(() => {
       setupPlannerStatRowTooltips(statTooltipRoot.value);
     }
   });
-  window.addEventListener('characterStatsChanged', refreshHandler);
-  window.addEventListener('plannerStatsPanelRefresh', refreshHandler);
-  window.addEventListener('questCompletionChanged', refreshHandler);
-  window.addEventListener('skillPointsChanged', refreshHandler);
 });
 
-onUnmounted(() => {
-  window.removeEventListener('characterStatsChanged', refreshHandler);
-  window.removeEventListener('plannerStatsPanelRefresh', refreshHandler);
-  window.removeEventListener('questCompletionChanged', refreshHandler);
-  window.removeEventListener('skillPointsChanged', refreshHandler);
-});
+usePlannerRevisionRefresh(refreshHandler);
 </script>
 
 <template>

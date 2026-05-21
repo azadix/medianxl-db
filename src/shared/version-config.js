@@ -1,33 +1,67 @@
-// Game version configuration (tree_data/versions.json + game_meta.json via SkillFileStore)
+/**
+ * @file Game version selection (versions.json, build override, navbar selector).
+ * @module shared/version-config
+ */
 
 import { getFileSkillStore } from '../../tree/skill-data-store.js';
-
-const BUILD_VERSION_OVERRIDE_KEY = 'medianxl_build_version_override';
-
-const DEFAULT_VERSION = { major: 2, minor: 12 };
+import {
+    BUILD_VERSION_OVERRIDE_KEY,
+    DEFAULT_GAME_VERSION,
+    treeAssetFolderFromMajorMinor,
+} from './version-constants.js';
 
 /**
- * @param {{ major: number, minor: number }} version
- * @returns {string}
+ * @typedef {{ major: number, minor: number }} GameVersion
+ * @typedef {{ major: number, minor: number, patch: number }} PatchVersionParts
+ */
+
+/**
+ * @param {GameVersion} version
+ * @returns {string} e.g. `"2.12"`
  */
 export function versionToString(version) {
     return `${version.major}.${version.minor}`;
 }
 
 /**
- * Folder segment for tree JSON and atlas PNGs, e.g. tree_data/2_12/
- * @param {{ major: number, minor: number }} version
+ * Folder segment for tree JSON and atlas PNGs, e.g. `tree_data/2_12/`.
+ * @param {GameVersion | null | undefined} version
+ * @returns {string}
  */
 export function versionToTreeAssetFolder(version) {
     if (!version || typeof version.major !== 'number' || typeof version.minor !== 'number') {
-        return `${DEFAULT_VERSION.major}_${DEFAULT_VERSION.minor}`;
+        return treeAssetFolderFromMajorMinor(DEFAULT_GAME_VERSION.major, DEFAULT_GAME_VERSION.minor);
     }
-    return `${version.major}_${version.minor}`;
+    return treeAssetFolderFromMajorMinor(version.major, version.minor);
 }
 
 /**
- * Selected major/minor: build override from localStorage if valid, else active row from versions.json, else first row, else DEFAULT_VERSION.
- * @returns {{ major: number, minor: number }}
+ * Parse a patch-notes version string (supports `2.13.5`; patch segment defaults to 0).
+ * @param {string | number} version
+ * @returns {PatchVersionParts}
+ */
+export function parsePatchVersionString(version) {
+    const parts = String(version).split('.').map((part) => Number.parseInt(part, 10));
+    return {
+        major: parts[0] || 0,
+        minor: parts[1] || 0,
+        patch: parts[2] || 0,
+    };
+}
+
+/**
+ * Map patch-notes version string to `tree_data` folder key (major_minor only).
+ * @param {string | number} version
+ * @returns {string}
+ */
+export function patchVersionToFolderKey(version) {
+    const { major, minor } = parsePatchVersionString(version);
+    return treeAssetFolderFromMajorMinor(major, minor);
+}
+
+/**
+ * Selected major/minor: build override from localStorage if valid, else active row from versions.json, else first row, else default.
+ * @returns {GameVersion}
  */
 export function getCurrentVersion() {
     let parsedOverride = null;
@@ -67,9 +101,12 @@ export function getCurrentVersion() {
     if (parsedOverride) {
         return parsedOverride;
     }
-    return DEFAULT_VERSION;
+    return { ...DEFAULT_GAME_VERSION };
 }
 
+/**
+ * @param {GameVersion} version
+ */
 export function setBuildVersionOverride(version) {
     if (version && typeof version.major === 'number' && typeof version.minor === 'number') {
         localStorage.setItem(BUILD_VERSION_OVERRIDE_KEY, JSON.stringify(version));
@@ -80,20 +117,22 @@ export function clearBuildVersionOverride() {
     localStorage.removeItem(BUILD_VERSION_OVERRIDE_KEY);
 }
 
-/** @deprecated Use setBuildVersionOverride */
+/**
+ * @deprecated Use {@link setBuildVersionOverride}; this alias is kept for legacy callers.
+ */
 export function setCurrentVersion(version) {
     setBuildVersionOverride(version);
 }
 
 /**
- * @returns {Promise<Array<{ major: number, minor: number }>>}
+ * @returns {Promise<GameVersion[]>}
  */
 export async function getSortedVersions() {
     const store = getFileSkillStore();
     if (store?.versions?.length) {
         return store.versions.map((v) => ({ major: v.major, minor: v.minor }));
     }
-    return [DEFAULT_VERSION];
+    return [{ ...DEFAULT_GAME_VERSION }];
 }
 
 /**
@@ -113,6 +152,7 @@ export function detachVersionSelectorListeners(selectorElement) {
 }
 
 /**
+ * Populate `#version-selector` and reload on change (clears override when selecting active version).
  * @param {HTMLSelectElement} selectorElement
  */
 export async function initializeVersionSelector(selectorElement) {
@@ -158,8 +198,8 @@ export async function initializeVersionSelector(selectorElement) {
 }
 
 /**
- * @param {{ major: number, minor: number }} version
- * @returns {number|null}
+ * @param {GameVersion | null | undefined} version
+ * @returns {number | null}
  */
 export function getVersionIdForMajorMinor(version) {
     if (!version || typeof version.major !== 'number' || typeof version.minor !== 'number') {
@@ -171,7 +211,8 @@ export function getVersionIdForMajorMinor(version) {
 }
 
 /**
- * @param {number} versionId
+ * @param {number | null | undefined} versionId
+ * @returns {string}
  */
 export function getVersionStringForId(versionId) {
     if (versionId == null) return '';

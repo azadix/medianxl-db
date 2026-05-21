@@ -1,5 +1,6 @@
 <script setup>
 import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue';
+import { usePlannerRevisionRefresh } from '../../composables/usePlannerRevisionRefresh.js';
 import {
   calculateArmorImageNumber,
   getCurrentBuildDisplayName,
@@ -19,8 +20,8 @@ import {
   getSpentSkillPoints,
   setCharacterLevel,
   syncPlannerCharacterLevelIfAuto,
-} from '../../../character/character-state.js';
-import Character from '../../../character/Character.js';
+} from '@/character/character-state.js';
+import Character from '@/character/Character.js';
 import {
   getPlannerAutoLevelFromSpentSkillPoints,
   setPlannerAutoLevelFromSpentSkillPoints,
@@ -94,20 +95,12 @@ function onBuildNameChanged(e) {
 onMounted(() => {
   onRefresh();
   setBuildNameLabel(getCurrentBuildDisplayName());
-  window.addEventListener('plannerStateChanged', onRefresh);
-  window.addEventListener('skillPointsChanged', onRefresh);
-  window.addEventListener('characterStatsChanged', onRefresh);
-  window.addEventListener('questCompletionChanged', onRefresh);
-  window.addEventListener('plannerStatsPanelRefresh', onRefresh);
   window.addEventListener('plannerBuildNameChanged', onBuildNameChanged);
 });
 
+usePlannerRevisionRefresh(onRefresh);
+
 onUnmounted(() => {
-  window.removeEventListener('plannerStateChanged', onRefresh);
-  window.removeEventListener('skillPointsChanged', onRefresh);
-  window.removeEventListener('characterStatsChanged', onRefresh);
-  window.removeEventListener('questCompletionChanged', onRefresh);
-  window.removeEventListener('plannerStatsPanelRefresh', onRefresh);
   window.removeEventListener('plannerBuildNameChanged', onBuildNameChanged);
 });
 </script>

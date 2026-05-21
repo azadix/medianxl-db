@@ -6,9 +6,9 @@
  * (see {@link runPlannerSkillStatRecompute} in character-state.js).
  */
 
-import Skill from '../src/skills/domain/Skill.js';
-import { getFileSkillStore } from '../tree/skill-data-store.js';
-import { getSkillVariantKey } from '../tree/skill-variants.js';
+import Skill from '@/skills/domain/Skill.js';
+import { getFileSkillStore } from '../../tree/skill-data-store.js';
+import { getSkillVariantKey } from '../../tree/skill-variants.js';
 import {
   getPlannerStatDef,
   isPlannerBaseStatKey,
@@ -30,7 +30,7 @@ import {
 let _plannerStatSkillModifiersByKey = {};
 
 /**
- * @param {import('../tree/skill-data-store.js').SkillFileStore|null} store
+ * @param {import('../../tree/skill-data-store.js').SkillFileStore|null} store
  * @param {string} skillKey
  * @returns {object|null} catalog row
  */
@@ -72,7 +72,7 @@ function sumEvaluatedNumericSlots(scalingValues) {
 
 /**
  * Resolve a token from stats.json `pairedStat[].stat` to a planner registry key (character_stats `key`).
- * @param {import('../tree/skill-data-store.js').SkillFileStore|null} store
+ * @param {import('../../tree/skill-data-store.js').SkillFileStore|null} store
  * @param {string} tokenLower
  * @returns {string|null}
  */
@@ -92,7 +92,7 @@ function resolvePairedStatTargetToPlannerKey(store, tokenLower) {
 /**
  * Validated entries from stats.json `pairedStat` (optional array on the scaling-stat row).
  * Every valid object is kept: multiple rows may share the same valueIndex so one slot updates several planner stats.
- * @param {import('../tree/skill-data-store.js').SkillFileStore|null} store
+ * @param {import('../../tree/skill-data-store.js').SkillFileStore|null} store
  * @param {unknown} raw
  * @returns {{ valueIndex: number, plannerKey: string }[]}
  */
@@ -140,7 +140,7 @@ function numericValueSlot(scalingValues, valueIndex) {
 }
 
 /**
- * @param {import('../tree/skill-data-store.js').SkillFileStore|null} store
+ * @param {import('../../tree/skill-data-store.js').SkillFileStore|null} store
  * @param {string} scalingStatKey lowercased skills scalingConstants.statKey
  * @returns {{ valueIndex: number, plannerKey: string }[]}
  */

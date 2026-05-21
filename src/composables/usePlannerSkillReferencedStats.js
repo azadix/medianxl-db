@@ -1,7 +1,7 @@
 import { computed } from 'vue';
-import { getPlannerStatDef } from '../../character/planner-stats-config.js';
-import { getPairedStatRouting } from '../../character/planner-stat-modifiers.js';
-import { getAllOSkills, getCharacterInstance } from '../../character/character-state.js';
+import { getPlannerStatDef } from '@/character/planner-stats-config.js';
+import { getPairedStatRouting } from '@/character/planner-stat-modifiers.js';
+import { getAllOSkills, getCharacterInstance } from '@/character/character-state.js';
 import { getFileSkillStore } from '../../tree/skill-data-store.js';
 
 /**

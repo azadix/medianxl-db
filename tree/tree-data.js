@@ -1,7 +1,7 @@
 // Data loading for the skills tree (tree_data/*.json)
 import Skill from '../src/skills/domain/Skill.js';
 import { showSkillDataLoadError } from '../src/shared/utils.js';
-import { buildTreeSkillsCacheFromLoadedSkills, setPlannerSkillsSnapshot } from '../character/character-state.js';
+import { buildTreeSkillsCacheFromLoadedSkills, setPlannerSkillsSnapshot } from '../src/character/character-state.js';
 import { getCurrentVersion } from '../src/shared/version-config.js';
 import { initSkillDataStore, getFileSkillStore } from './skill-data-store.js';
 import {

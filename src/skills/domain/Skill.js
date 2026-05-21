@@ -2,13 +2,12 @@
 /**
  * Skill class represents one catalog row (skills.json + detail/balance files).
  *
- * @see skill-restrictions.js — how Mastery / Ultimate / Paragon / Coven / Proficiency subclasses
- *   plug into first-point allocation and where to register new rules.
+ * @see skill-restrictions.js — first-point allocation rules (classes in skill-allocation-rules.js).
  */
 
 import { getBalanceVersionIdsForFallback } from '../../shared/version-config.js';
 import { getFileSkillStore } from '../../../tree/skill-data-store.js';
-import { normalizePrereqSkillTargetKey } from '../../../character/prereq-utils.js';
+import { normalizePrereqSkillTargetKey } from '@/character/prereq-utils.js';
 import { getCalcBucketIndex } from './calc-buckets.js';
 import { formulaEvaluator } from './formula-evaluator.js';
 import { formatScalingValuesToDescriptionHtml } from './scaling-display-html.js';
@@ -62,7 +61,7 @@ export default class Skill {
     static DEFAULT_BASE_MAX_LEVEL = 1;
     /**
      * Creates a new Skill instance
-     * @param {Object} data - Skill data object
+     * @param {object} data - Skill data object
      * @param {string} data.id - Skill name (internal key)
      * @param {number} data.skillId - Numeric catalog id (`numericId` in skills.json)
      * @param {string} data.name - Display name shown to users
@@ -143,7 +142,7 @@ export default class Skill {
 
     /**
      * First numeric slot from evaluated scaling row (for formulas).
-     * @param {Object|null} scaling
+     * @param {object | null} scaling
      * @returns {number}
      */
     static _primaryNumericFromScalingValues(scaling) {
@@ -322,8 +321,8 @@ export default class Skill {
 
     /**
      * Check if skill prerequisites are met for given character state
-     * @param {Object} characterState - Character state object
-     * @param {Object} characterState.skillLevels - Object mapping skill names to current levels
+     * @param {object} characterState - Character state object
+     * @param {object} characterState.skillLevels - Object mapping skill names to current levels
      * @param {Array} characterState.allSkills - Array of all skills for validation
      * @returns {boolean} True if prerequisites are met
      */
@@ -364,9 +363,9 @@ export default class Skill {
 
     /**
      * Build variables object for formula evaluation
-     * @param {Object} characterState - Character state object
+     * @param {object} characterState - Character state object
      * @param {number} characterLevel - Character level
-     * @returns {Object} Variables object for formula evaluation
+     * @returns {object} Variables object for formula evaluation
      */
     _buildFormulaVariables(characterState, characterLevel) {
         if (!characterState) return null;
@@ -397,10 +396,10 @@ export default class Skill {
 
     /**
      * Evaluate calc1..calc6 in order, then set `calc` from the active lvl bucket.
-     * @param {Object} formulaEvaluator
-     * @param {Object} baseVariables - from _buildFormulaVariables (no calc* yet)
+     * @param {object} formulaEvaluator
+     * @param {object} baseVariables - from _buildFormulaVariables (no calc* yet)
      * @param {number} crossSkillDepth
-     * @returns {Promise<Object>} baseVariables plus numeric calc1..calc6 and calc
+     * @returns {Promise<object>} baseVariables plus numeric calc1..calc6 and calc
      */
     async _mergeCalcSlotVariables(formulaEvaluator, baseVariables, crossSkillDepth = 0) {
         if (!baseVariables) return null;
@@ -437,11 +436,11 @@ export default class Skill {
     /**
      * Evaluate a single value if it's a formula
      * @param {*} value - Value to evaluate
-     * @param {Object} formulaEvaluator - Formula evaluator instance
-     * @param {Object} variables - Variables for formula evaluation
+     * @param {object} formulaEvaluator - Formula evaluator instance
+     * @param {object} variables - Variables for formula evaluation
      * @param {number} crossSkillDepth - recursion guard for cross-skill stat tokens
      * @param {boolean} silentWarn - if true, omit console.warn on evaluation failure
-     * @returns {Promise<Object>} Result with evaluated value and formula flag
+     * @returns {Promise<object>} Result with evaluated value and formula flag
      */
     async _evaluateValue(value, formulaEvaluator, variables, crossSkillDepth = 0, silentWarn = false) {
         // Convert value to string for processing
@@ -500,9 +499,9 @@ export default class Skill {
 
     /**
      * Process all 4 values (value0-3) for formulas
-     * @param {Object} result - Result object to modify
-     * @param {Object} formulaEvaluator - Formula evaluator instance
-     * @param {Object} variables - Variables for formula evaluation
+     * @param {object} result - Result object to modify
+     * @param {object} formulaEvaluator - Formula evaluator instance
+     * @param {object} variables - Variables for formula evaluation
      */
     async _processValuesForFormulas(result, formulaEvaluator, variables, showFormulas = false, crossSkillDepth = 0) {
         if (!variables || !result) return;
@@ -550,7 +549,7 @@ export default class Skill {
      * @param {number} level - Skill level
      * @param {string} statKey - Stat key to get values for
      * @param {number} occurrenceIndex - Occurrence index for duplicate stats
-     * @returns {Object|null} Scaling values object or null if not found
+     * @returns {object | null} Scaling values object or null if not found
      */
     async _getScalingRow(level, statKey, occurrenceIndex, variantKey = null) {
         await this._ensureFileBalance();
@@ -576,7 +575,7 @@ export default class Skill {
      * Query constants table for constant values
      * @param {string} statKey - Stat key to get values for
      * @param {number} occurrenceIndex - Occurrence index for duplicate stats
-     * @returns {Object|null} Constant values object or null if not found
+     * @returns {object | null} Constant values object or null if not found
      */
     async _getConstantsRow(statKey, occurrenceIndex, variantKey = null) {
         await this._ensureFileBalance();
@@ -593,11 +592,11 @@ export default class Skill {
 
     /**
      * Merge constant values with scaling values
-     * @param {Object} result - Current result object
-     * @param {Object} constantValues - Constant values from skill data
-     * @param {Object} formulaEvaluator - Formula evaluator instance
-     * @param {Object} variables - Variables for formula evaluation
-     * @returns {Promise<Object>} Merged result object
+     * @param {object} result - Current result object
+     * @param {object} constantValues - Constant values from skill data
+     * @param {object} formulaEvaluator - Formula evaluator instance
+     * @param {object} variables - Variables for formula evaluation
+     * @returns {Promise<object>} Merged result object
      */
     async _mergeConstants(result, constantValues, formulaEvaluator, variables, showFormulas = false, crossSkillDepth = 0) {
         if (!constantValues) return result;
@@ -711,7 +710,7 @@ export default class Skill {
      * @param {number} level - Skill level
      * @param {string} statKey - Stat key to get values for
      * @param {number} occurrenceIndex - Occurrence index for duplicate stats (default: 0)
-     * @returns {Object|null} Scaling values object or null if not found
+     * @returns {object | null} Scaling values object or null if not found
      */
     async getScalingValues(
         level,
@@ -854,7 +853,7 @@ export default class Skill {
 
     /**
      * Factory method to create Skill from a catalog row shape (legacy SQL row field names).
-     * @param {Object} row - Row-like object (`name`, `display_name`, `id` as numeric id, etc.)
+     * @param {object} row - Row-like object (`name`, `display_name`, `id` as numeric id, etc.)
      * @returns {Skill} New Skill instance
      */
     static fromCatalogRow(row) {

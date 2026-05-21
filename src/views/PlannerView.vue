@@ -8,6 +8,7 @@ export default {
 import { onMounted, onUnmounted, onActivated, nextTick } from 'vue';
 import { storeToRefs } from 'pinia';
 import { usePlannerStore } from '../stores/planner.js';
+import { attachPlannerWindowSync } from '../composables/usePlannerRevisionRefresh.js';
 import {
   registerPlannerSectionSetter,
   unregisterPlannerSectionSetter,
@@ -26,10 +27,12 @@ const plannerStore = usePlannerStore();
 const { activeSection } = storeToRefs(plannerStore);
 
 let initStarted = false;
+let unbindPlannerSync = () => {};
 
 onMounted(async () => {
   if (initStarted) return;
   initStarted = true;
+  unbindPlannerSync = attachPlannerWindowSync();
   registerPlannerSectionSetter((section) => plannerStore.setActiveSection(section));
   await nextTick();
   await initializeTreePage();
@@ -44,6 +47,7 @@ onActivated(async () => {
 
 onUnmounted(() => {
   initStarted = false;
+  unbindPlannerSync();
   unregisterPlannerSectionSetter();
 });
 </script>

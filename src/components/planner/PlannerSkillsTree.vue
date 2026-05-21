@@ -6,15 +6,13 @@ import {
   tabOrderRankFromLookup
 } from '../../../tree/skill-data-store.js';
 import { usePlannerStore } from '../../stores/planner.js';
-import { setCurrentTabState } from '../../../tree/tree-tab-state.js';
-import { updatePlannerUrlTab } from '../../../tree/tree-url-sync.js';
-import { handleSkillPointChange } from '../../../tree/tree-render.js';
+import { updatePlannerUrlTab } from '../../planner/tree-url-sync.js';
+import { handleSkillPointChange, setCurrentTabState } from '../../../tree/tree-render.js';
 import SkillCard from '../skills/SkillCard.vue';
 import { usePlannerSkillsTree } from '../../composables/usePlannerSkillsTree.js';
 import PlannerSkillPointsBadge from './PlannerSkillPointsBadge.vue';
 
 const store = usePlannerStore();
-let unbindWindow = () => {};
 let resizeFrame = 0;
 
 function syncTabToUrl(tabName) {
@@ -199,7 +197,6 @@ function onWindowResize() {
 }
 
 onMounted(() => {
-  unbindWindow = store.attachWindowSync();
   window.addEventListener('plannerSkillsRenderRequested', onPlannerRenderRequested);
   window.addEventListener('plannerSkillsLightUpdate', onPlannerLight);
   window.addEventListener('resize', onWindowResize, { passive: true });
@@ -210,7 +207,6 @@ onUnmounted(() => {
     window.cancelAnimationFrame(resizeFrame);
     resizeFrame = 0;
   }
-  unbindWindow();
   window.removeEventListener('plannerSkillsRenderRequested', onPlannerRenderRequested);
   window.removeEventListener('plannerSkillsLightUpdate', onPlannerLight);
   window.removeEventListener('resize', onWindowResize);

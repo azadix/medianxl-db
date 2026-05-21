@@ -1,19 +1,19 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
-import Character from '../../../character/Character.js';
+import Character from '@/character/Character.js';
 import {
   getQuestCompletion,
   updateQuestCompletion,
   getCharacterInstance,
   completeAllQuests,
-} from '../../../character/character-state.js';
+} from '@/character/character-state.js';
 import {
   formatQuestLabel,
   difficultiesForQuest,
   formatQuestRewardBracket,
   QUEST_DIFF_NAMES,
   sidebarTabQuests,
-} from '../../../character/sidebarTabQuests.js';
+} from '@/character/sidebarTabQuests.js';
 
 const refreshKey = ref(0);
 

@@ -30,6 +30,17 @@ npm run preview
 
 `npm run build` runs lint + spellcheck + Vite build.
 
+## Docs
+
+- `docs/ARCHITECTURE.md` - app modules, data flow, and key folders
+- `docs/DEVELOPMENT_WORKFLOW.md` - local setup, scripts, and common contributor tasks
+- `docs/PLANNER_OVERVIEW.md` - planner route, runtime modules, and state flow
+- `docs/EDITOR_OVERVIEW.md` - editor route modes, store, and JSON workflow
+- `docs/PATCH_NOTES_OVERVIEW.md` - patch notes load/search/tooltip pipeline
+- `docs/PATCH_RELEASE.md` - checklist for a new `tree_data` patch folder
+- `docs/ADDING_SKILL_RULES.md` - how to add planner allocation rules
+- `docs/DOCS_ADDED.md` - summary of this documentation batch
+
 ## Data layout
 
 - `public/tree_data/versions.json` - available patch versions (`is_active` is default)
@@ -41,8 +52,9 @@ npm run preview
 
 - `src/` - app code (Vue components, views, router, stores)
 - `src/skills/` - skills page logic and domain models
+- `src/character/` - character/planner domain state and rules
 - `src/editor/` - dev-only editor runtime
-- `character/`, `tree/` - planner/tree UI and state
+- `tree/` - planner runtime/render modules (with compatibility facades)
 - `py/` - Python utility scripts
 - `spellcheck/` - dictionaries and spellcheck scripts
 - `atlas_generation/` - class icon atlas generation scripts

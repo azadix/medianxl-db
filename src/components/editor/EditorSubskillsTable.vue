@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue';
-import { parseSearchInput } from '../../skills/skillTableSearch.js';
+import { parseSearchInput } from '@/skills/skillTableSearch.js';
 
 const props = defineProps({
   skills: { type: Array, default: () => [] },
@@ -149,12 +149,6 @@ const displayRows = computed(() => {
               <td class="skill-id-cell editor-td-clip">{{ row.skill.id ?? '' }}</td>
               <td class="editor-td-clip">
                 {{ row.skill.displayName != null ? row.skill.displayName : '' }}
-                <span
-                  class="tag is-info is-light is-rounded is-size-7 ml-2"
-                  :title="`Subskill of ${row.skill.parentSkillId}`"
-                >
-                  Subskill
-                </span>
               </td>
               <td class="editor-td-clip">{{ row.skill.parentSkillId ?? '' }}</td>
               <td class="editor-td-action">

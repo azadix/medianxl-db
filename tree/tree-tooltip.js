@@ -1,6 +1,15 @@
 // Tooltip functionality for skill tree
 import { getSkillIconHTML, expandPlaceholdersWithScaling, escapeHtmlText } from '../src/shared/utils.js';
 import {
+  buildSkillTooltipDescriptionBlock,
+  buildSkillTooltipDisabledBannerHtml,
+  buildSkillTooltipHeaderHtml,
+  buildSkillTooltipPrerequisiteWarningHtml,
+  buildSkillTooltipRestrictionBlock,
+  buildSkillTooltipScalingBlockHtml,
+  wrapSkillTooltipContent,
+} from '../src/shared/tooltip-html.js';
+import {
   getSkillPoints,
   getOSkillPoints,
   getAllSkillPoints,
@@ -10,11 +19,11 @@ import {
   getCharacterInstance,
   isSkillDisabled,
   isOSkillSlotDisabled
-} from '../character/character-state.js';
+} from '../src/character/character-state.js';
 import { resolveVariantKeyForTooltip, formatDisplayNameWithVariantHtml } from './skill-variants.js';
 import { getCurrentVersion, versionToTreeAssetFolder } from '../src/shared/version-config.js';
 import { getFileSkillStore } from './skill-data-store.js';
-import Innate from '../src/skills/domain/Innate.js';
+import { isInnateSkill } from '../src/skills/domain/skill-skill-types.js';
 import { getMaxLevelModifierDescriptionsForSkill } from '../src/skills/domain/skill-calculations.js';
 
 let tooltipElement = null;
@@ -541,7 +550,7 @@ function getSkillCategoryTags(numericId) {
 
 /**
  * Build tooltip HTML content
- * @param {Object} skillData - Skill fields from the file store
+ * @param {object} skillData - Skill fields from the file store
  * @param {number} level - Current skill level
  * @param {string} warningMessage - Optional warning message (e.g., prerequisite not met)
  * @param {string|null} [oskillSlotId] - Planner oSkill row id (data-oskill-slot-id); tree skills omit
@@ -563,15 +572,10 @@ async function buildTooltipContent(
         : level + allSkillsBonus;
     const scalingLevel = isOSkill ? effectiveLevel : level;
     
-    let html = '<div class="tooltip-content">';
-    
-    // Skill name and icon
-    html += '<div class="tooltip-header">';
     const iconFolder = versionToTreeAssetFolder(getCurrentVersion());
-    html += `<div class="tooltip-icon">${getSkillIconHTML(skillData.image, skillData.className, 'is-64x64', iconFolder)}</div>`;
-    
-    // Skill category tags (if any)
-    let tagsHtml = ''
+    const iconHtml = getSkillIconHTML(skillData.image, skillData.className, 'is-64x64', iconFolder);
+
+    let tagsHtml = '';
     const tags = getSkillCategoryTags(skillData.numericId);
     if (tags.length > 0) {
         tagsHtml += '<p class="is-size-7 has-text-weight-bold has-text-grey-lighter">';
@@ -579,7 +583,6 @@ async function buildTooltipContent(
         tagsHtml += '</p>';
     }
 
-    // Subskill marker (if any)
     let subskillHtml = '';
     const parentId = skillData?.parentSkillId != null && String(skillData.parentSkillId).trim() !== '' ? String(skillData.parentSkillId).trim() : '';
     if (parentId) {
@@ -588,34 +591,31 @@ async function buildTooltipContent(
         subskillHtml = `<p class="is-size-7 has-text-grey-lighter">Subskill of <span class="has-text-weight-semibold">${escapeHtmlText(parentName)}</span></p>`;
     }
 
-    html += `<div class="tooltip-name-container">
-                <div class="tooltip-name-section">
-                    <div class="is-size-4 has-text-weight-bold">
-                        ${formatDisplayNameWithVariantHtml(skillData.displayName, skillData.numericId, variantKey)}
-                        ${tagsHtml}
-                        ${subskillHtml}
-                    </div>
-                </div>
-                <div class="tooltip-level-section">
-                    <div class="is-size-6 has-text-weight-bold has-text-info">
+    const allSkillsLine = allSkillsBonus > 0 ? `${allSkillsBonus} from all skills` : '';
+    const levelSectionHtml = `<div class="is-size-6 has-text-weight-bold has-text-info">
                         Level ${effectiveLevel}
                     </div>
                     <div class="is-size-7 has-text-grey">
                         ${level} from points<br>
-                        ${allSkillsBonus > 0 ? `${allSkillsBonus} from all skills` : ''}
-                    </div>
-                </div>
-            </div>
-    `;
-    html += '</div>';
+                        ${allSkillsLine}
+                    </div>`;
 
-    // Disabled indicator (planner toggle): tree uses internal id; oSkills use slot id
+    const bodyParts = [
+        buildSkillTooltipHeaderHtml({
+            iconHtml,
+            nameInnerHtml: formatDisplayNameWithVariantHtml(skillData.displayName, skillData.numericId, variantKey),
+            tagsHtml,
+            subskillHtml,
+            levelSectionHtml,
+        }),
+    ];
+
     const slot = oskillSlotId != null ? String(oskillSlotId).trim() : '';
     const contributionsDisabled = isOSkill
       ? slot !== '' && isOSkillSlotDisabled(slot)
       : Boolean(skillData?.id && isSkillDisabled(skillData.id));
     if (contributionsDisabled) {
-        html += `<div class="has-text-centered has-text-danger has-text-weight-semibold is-size-5">DISABLED (bonuses not applied)</div>`;
+        bodyParts.push(buildSkillTooltipDisabledBannerHtml());
     }
     
     // Get character state for formula evaluation (needed for all tooltip content)
@@ -731,86 +731,74 @@ async function buildTooltipContent(
     // Check if Ctrl key is pressed (for formula display)
     const showFormulas = ctrlKeyPressed;
     
-    // Description with scaling
-    // Render description and skill effect
+    let mainDescHtml = '';
+    if (skillData.description) {
+        mainDescHtml = await expandPlaceholdersWithScaling(
+            skillData.numericId,
+            scalingLevel,
+            skillData.description,
+            skillData.id,
+            characterState,
+            showFormulas,
+            variantKey
+        );
+    }
+
+    const hasScaling = checkSkillHasScaling(skillData.numericId);
+    const levelIndicatorHtml = hasScaling
+        ? `<div class="tooltip-level-indicator is-italic">Level ${scalingLevel} values:</div>`
+        : '';
+
+    let effectExpanded = '';
+    if (skillData.skillEffect) {
+        effectExpanded = await expandPlaceholdersWithScaling(
+            skillData.numericId,
+            scalingLevel,
+            skillData.skillEffect,
+            skillData.id,
+            characterState,
+            showFormulas,
+            variantKey
+        );
+    }
+
     if (skillData.description || skillData.skillEffect) {
-        html += '<div class="tooltip-description p-0">';
-        
-        // Check if skill has scaling data
-        const hasScaling = checkSkillHasScaling(skillData.numericId);
-
-        // Render main description first
-        if (skillData.description) {
-            const expandedDesc = await expandPlaceholdersWithScaling(skillData.numericId, scalingLevel, skillData.description, skillData.id, characterState, showFormulas, variantKey);
-            html += `<div class="tooltip-main-desc has-text-centered mb-2">${expandedDesc}</div>`;
-        }
-
-        if (hasScaling) {
-            html += `<div class="tooltip-level-indicator is-italic">Level ${scalingLevel} values:</div>`;
-        }
-
-        // Render skill effect (stat lines)
-        if (skillData.skillEffect) {
-            const expandedEffect = await expandPlaceholdersWithScaling(skillData.numericId, scalingLevel, skillData.skillEffect, skillData.id, characterState, showFormulas, variantKey);
-            const lines = expandedEffect.split('\n');
-            
-            lines.forEach(line => {
-                if (line.trim()) {
-                    html += `<div class="tooltip-effect has-text-centered">${line}</div>`;
-                } else {
-                    html += '<div>&nbsp;</div>';
-                }
-            });
-        }
-        
-        html += '</div>';
+        bodyParts.push(
+            buildSkillTooltipDescriptionBlock({
+                mainDescHtml,
+                levelIndicatorHtml,
+                effectExpanded,
+                preserveBlankEffectLines: true,
+                wrapperClass: 'tooltip-description p-0',
+            })
+        );
     }
 
-    // Restriction (if any)
     if (skillData.restriction) {
-        html += '<div class="tooltip-warning">';
-        // Expand placeholders in restriction text
-        const expandedRestriction = await expandPlaceholdersWithScaling(skillData.numericId, scalingLevel, skillData.restriction, skillData.id, characterState, showFormulas, variantKey);
-        const restrictionLines = expandedRestriction.split('\n');
-        restrictionLines.forEach(line => {
-            html += `<div class="has-text-warning">${line}</div>`;
-        });
-        html += '</div>';
-    }
-    
-    // Warning message (if any) - for prerequisites, devotion, etc.
-    if (warningMessage) {
-        html += '<div class="tooltip-restriction">';
-        const warningLines = warningMessage.split('\n');
-        warningLines.forEach(line => {
-            html += `<div class="has-text-danger">${line}</div>`;
-        });
-        html += '</div>';
+        const expandedRestriction = await expandPlaceholdersWithScaling(
+            skillData.numericId,
+            scalingLevel,
+            skillData.restriction,
+            skillData.id,
+            characterState,
+            showFormulas,
+            variantKey
+        );
+        bodyParts.push(buildSkillTooltipRestrictionBlock(expandedRestriction));
     }
 
-    // Max-level scaling (MAX_LEVEL_MODIFIERS descriptions) — bottom section, info styling
+    bodyParts.push(buildSkillTooltipPrerequisiteWarningHtml(warningMessage));
+
     if (!isOSkill && skillData.numericId != null) {
         const scalingLines = getMaxLevelModifierDescriptionsForSkill(
             skillData.numericId,
             characterState.blvl,
             characterLevel
         );
-        if (scalingLines.length > 0) {
-            html += '<div class="tooltip-scaling">';
-            scalingLines.forEach((line) => {
-                const safe = String(line)
-                    .replace(/&/g, '&amp;')
-                    .replace(/</g, '&lt;')
-                    .replace(/>/g, '&gt;')
-                    .replace(/"/g, '&quot;');
-                html += `<div class="has-text-info">${safe}</div>`;
-            });
-            html += '</div>';
-        }
+        bodyParts.push(buildSkillTooltipScalingBlockHtml(scalingLines));
     }
-    
-    html += '</div>';
-    return html;
+
+    return wrapSkillTooltipContent(bodyParts.join(''));
 }
 
 /**
@@ -857,7 +845,7 @@ function resolveTooltipContext(skillCard, skillData, skillId) {
     const isInnate = Boolean(
         skillCard &&
         skillData &&
-        Innate.isInnateSkill({ id: skillData.id })
+        isInnateSkill({ id: skillData.id })
     );
     const currentLevel = isOSkill
         ? Math.max(1, getOSkillPoints(skillId))

@@ -3,9 +3,9 @@
  * Handles dynamic calculations for skill max levels and other modifiers
  */
 
-import Character from '../../../character/Character.js';
+import Character from '@/character/Character.js';
 import { getFileSkillStore } from '../../../tree/skill-data-store.js';
-import Innate from './Innate.js';
+import { isInnateSkill } from './skill-skill-types.js';
 
 export { D2_CALC_BUCKETS, getCalcBucketIndex } from './calc-buckets.js';
 
@@ -352,7 +352,7 @@ export function skillMaxLevelScalesWithCharacterLevel(skillId, skillLevels = {})
   const store = getFileSkillStore();
   if (!store) return false;
   const internal = store.internalNameByNumericId(skillId);
-  if (!internal || Innate.isInnateSkill({ id: internal })) return false;
+  if (!internal || isInnateSkill({ id: internal })) return false;
   const cat = store.catalog?.find((c) => c.numericId === skillId);
   if (!cat) return false;
   const a = computeMaxSkillLevelAtUlvl(skillId, skillLevels, Character.MIN_LEVEL);
@@ -391,7 +391,7 @@ export function minCharacterLevelForAllocatedSkillPoints(skillId, skillLevels = 
 /**
  * Calculate the effective max level for a skill
  * @param {number} skillId - The skill ID to calculate max level for
- * @param {Object} skillLevels - Object mapping skill_name to current skill level
+ * @param {object} skillLevels - Object mapping skill_name to current skill level
  * @param {number} characterLevel - Current character level (by default we assume max level)
  * @returns {number} The calculated max level
  */
@@ -414,7 +414,7 @@ export function calculateMaxLevel(skillId, skillLevels = {}, characterLevel = Ch
     }
     return 0;
   }
-  const nonInnate = !Innate.isInnateSkill({ id: internal });
+  const nonInnate = !isInnateSkill({ id: internal });
 
   const maxAtMinUlvl = computeMaxSkillLevelAtUlvl(skillId, skillLevels, Character.MIN_LEVEL);
   const maxAtMaxUlvl = computeMaxSkillLevelAtUlvl(skillId, skillLevels, Character.MAX_LEVEL);
@@ -510,7 +510,7 @@ export function getSkillDevotion(skillId) {
 
 /**
  * Determine the current devotion based on allocated skills
- * @param {Object} skillLevels - Object mapping skill_name to current skill level
+ * @param {object} skillLevels - Object mapping skill_name to current skill level
  * @returns {string} The current devotion type (DEVOTION_TYPES constant)
  */
 export function getCurrentDevotion(skillLevels = {}) {
@@ -532,8 +532,8 @@ export function getCurrentDevotion(skillLevels = {}) {
 /**
  * Check if a skill can be allocated based on devotion restrictions
  * @param {number} skillId - The skill ID to check
- * @param {Object} skillLevels - Object mapping skill_name to current skill level
- * @returns {Object} { canAllocate: boolean, reason: string }
+ * @param {object} skillLevels - Object mapping skill_name to current skill level
+ * @returns {object} { canAllocate: boolean, reason: string }
  */
 export function checkDevotionRestriction(skillId, skillLevels = {}) {
   const currentDevotion = getCurrentDevotion(skillLevels);

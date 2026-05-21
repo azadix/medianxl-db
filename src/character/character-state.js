@@ -1,6 +1,8 @@
 /**
- * Character State Management
- * Manages character build including skill points, level, and prerequisites
+ * @file Character planner singleton: init, stats, allocation, quests, oSkills.
+ * @module character/character-state
+ *
+ * Domain slices: allocation.js, build-import-export.js, planner-oskills.js, planner-quests.js.
  */
 
 import Character from './Character.js';
@@ -9,21 +11,21 @@ import {
   getClassPlannerStatDefaults,
   computeClassDerivedLifeMana
 } from './class-baselines.js';
-import { getPlannerAutoLevelFromSpentSkillPoints } from '../src/planner/planner-level-options.js';
+import { getPlannerAutoLevelFromSpentSkillPoints } from '@/planner/planner-level-options.js';
 
 // Re-export getBaseSkillPoints for use in other modules
 export { Character };
 import { recomputePlannerStatsFromSkillAllocations } from './planner-stat-modifiers.js';
-import { checkDevotionRestriction, calculateMaxLevel } from '../src/skills/domain/skill-calculations.js';
-import { extractStatReferences } from '../src/skills/domain/formula-evaluator.js';
-import { getFileSkillStore } from '../tree/skill-data-store.js';
+import { checkDevotionRestriction, calculateMaxLevel } from '@/skills/domain/skill-calculations.js';
+import { extractStatReferences } from '@/skills/domain/formula-evaluator.js';
+import { getFileSkillStore } from '../../tree/skill-data-store.js';
 import {
   checkUltimateRestriction,
   checkParagonRestriction,
   checkMasteryRestriction,
   checkCovenRestriction,
   checkProficiencyRestriction
-} from '../src/skills/domain/skill-restrictions.js';
+} from '@/skills/domain/skill-restrictions.js';
 import {
   normalizePrereqSkillTargetKey,
   displayNameForPrereqSkillTarget
@@ -82,7 +84,7 @@ export function buildTreeSkillsCacheFromLoadedSkills(skills) {
 
 /**
  * Get the tree skills cache
- * @returns {Object} Cache mapping tab_index to array of skill names
+ * @returns {object} Cache mapping tab_index to array of skill names
  */
 export function getTreeSkillsCache() {
   return treeSkillsCache;
@@ -415,7 +417,7 @@ export function setDisabledOSkillSlotIds(list) {
 
 /**
  * oSkill rows for planner UI (array preserves slot ids; getAllOSkills() is a flattened map).
- * @returns {Array<Object>}
+ * @returns {Array<object>}
  */
 export function getOSkillRowsForPlanner() {
   if (!characterInstance) return [];
@@ -483,7 +485,7 @@ export function getSkillPoints(skillName) {
 
 /**
  * Get all skill points (regular skills only, excludes oSkills)
- * @returns {Object} Map of skill_name -> points
+ * @returns {object} Map of skill_name -> points
  */
 export function getAllSkillPoints() {
   return characterInstance ? characterInstance.getAllSkillPoints() : {};
@@ -492,7 +494,7 @@ export function getAllSkillPoints() {
 /**
  * Get all regular skill points explicitly (excludes oSkills)
  * This ensures oSkills never affect regular skill calculations
- * @returns {Object} Map of skill_name -> points (regular skills only)
+ * @returns {object} Map of skill_name -> points (regular skills only)
  */
 export function getRegularSkillPoints() {
   // getAllSkillPoints already excludes oSkills since they're stored separately
@@ -560,7 +562,7 @@ export function normalizeBuildSkillPointsForImport(map) {
 }
 
 /**
- * @param {Object} row
+ * @param {object} row
  * @returns {string}
  */
 function oskillRowSkipLabel(row) {
@@ -572,8 +574,8 @@ function oskillRowSkipLabel(row) {
 }
 
 /**
- * @param {Object} row
- * @returns {Object|null}
+ * @param {object} row
+ * @returns {object | null}
  */
 function normalizeSingleOSkillImportRow(row) {
   const points = Character.clampOSkillPoints(row?.level ?? row?.points ?? 0);
@@ -603,14 +605,14 @@ function normalizeSingleOSkillImportRow(row) {
  * Normalize legacy oSkills (array rows or string-key map) for Character.setAllOSkills.
  * Unknown keys or rows are omitted and listed in `skipped`.
  * @param {unknown} input
- * @returns {{ payload: Object|Array<Object>, skipped: Array<{ key: string, wantedLevel: number }> }}
+ * @returns {{payload: object | Array<object>, skipped: Array<{key: string, wantedLevel: number}>}}
  */
 export function normalizeBuildOSkillsForImport(input) {
   /** @type {Array<{ key: string, wantedLevel: number }>} */
   const skipped = [];
   if (input == null) return { payload: [], skipped };
   if (Array.isArray(input)) {
-    /** @type {Array<Object>} */
+    /** @type {Array<object>} */
     const out = [];
     for (const row of input) {
       const points = Character.clampOSkillPoints(row?.level ?? row?.points ?? 0);
@@ -663,7 +665,7 @@ export function getAllSkillPointsById() {
 
 /**
  * Set all skill points (used for loading builds)
- * @param {Object} skillPoints - Map of skill_name -> points
+ * @param {object} skillPoints - Map of skill_name -> points
  */
 export function setAllSkillPoints(skillPoints) {
   if (characterInstance) {
@@ -674,7 +676,7 @@ export function setAllSkillPoints(skillPoints) {
 
 /**
  * Set all skill points from a saved build map (numericId, internal id, or display name keys).
- * @param {Object} skillPointsById - Legacy name; values normalized to internal ids before storage.
+ * @param {object} skillPointsById - Legacy name; values normalized to internal ids before storage.
  */
 export function setAllSkillPointsById(skillPointsById) {
   if (!characterInstance) return;
@@ -778,9 +780,9 @@ export function syncPlannerCharacterLevelIfAuto(allSkills = null) {
 
 /**
  * Check if prerequisites are met for a skill
- * @param {Object} skill - Skill object with prerequisites array
+ * @param {object} skill - Skill object with prerequisites array
  * @param {Array} allSkills - Optional array of all skills for tree points validation
- * @returns {Object} { met: boolean, reasons: string[] }
+ * @returns {object} { met: boolean, reasons: string[] }
  */
 export function checkPrerequisites(skill, allSkills = []) {
   if (!skill.prerequisites || skill.prerequisites.length === 0) {
@@ -965,10 +967,10 @@ function ensureRemainingSkillPointsForAutoLevel(skillName, allSkills) {
 /**
  * Add a point to a skill
  * @param {string} skillName - Skill name
- * @param {Object} skill - Skill object with prerequisites
+ * @param {object} skill - Skill object with prerequisites
  * @param {number} maxLevel - Maximum level for this skill
  * @param {Array} allSkills - Array of all skills for prerequisite validation
- * @returns {Object} { success: boolean, reason: string }
+ * @returns {object} { success: boolean, reason: string }
  */
 export function addSkillPoint(skillName, skill, maxLevel, allSkills = [], skipEvent = false) {
   const currentPoints = getSkillPoints(skillName);
@@ -1049,11 +1051,11 @@ export function addSkillPoint(skillName, skill, maxLevel, allSkills = [], skipEv
 /**
  * Add multiple skill points at once (for batch operations like shift-click)
  * @param {string} skillName - Skill name
- * @param {Object} skill - Skill object
+ * @param {object} skill - Skill object
  * @param {number} amount - Number of points to add
  * @param {Array} allSkills - Array of all skills
  * @param {Function} getMaxLevelFn - Function to get current max level (may change during batch)
- * @returns {Object} { success: boolean, pointsAdded: number, reason: string }
+ * @returns {object} { success: boolean, pointsAdded: number, reason: string }
  */
 export function addSkillPointsBatch(skillName, skill, amount, allSkills = [], getMaxLevelFn = null) {
   if (!characterInstance) {
@@ -1143,7 +1145,7 @@ export function addSkillPointsBatch(skillName, skill, amount, allSkills = [], ge
  * This prevents removing points from skills like Specialization when it would break other skills
  * @param {string} skillName - Skill name being removed
  * @param {Array} allSkills - Array of all skills
- * @returns {Object} { allowed: boolean, reason: string }
+ * @returns {object} { allowed: boolean, reason: string }
  */
 function checkMaxLevelDependencies(skillName, allSkills = []) {
   // Skills that affect max levels: specialization, noxious_mastery, elemental_command
@@ -1193,7 +1195,7 @@ function checkMaxLevelDependencies(skillName, allSkills = []) {
  * Remove a point from a skill
  * @param {string} skillName - Skill name
  * @param {Array} allSkills - Array of all skills to check dependencies
- * @returns {Object} { success: boolean, reason: string }
+ * @returns {object} { success: boolean, reason: string }
  */
 export function removeSkillPoint(skillName, allSkills = [], skipEvent = false) {
   const currentPoints = getSkillPoints(skillName);
@@ -1246,7 +1248,7 @@ export function removeSkillPoint(skillName, allSkills = [], skipEvent = false) {
  * @param {string} skillName - Skill name
  * @param {number} amount - Number of points to remove
  * @param {Array} allSkills - Array of all skills
- * @returns {Object} { success: boolean, pointsRemoved: number, reason: string }
+ * @returns {object} { success: boolean, pointsRemoved: number, reason: string }
  */
 export function removeSkillPointsBatch(skillName, amount, allSkills = []) {
   if (!characterInstance) {
@@ -1351,7 +1353,7 @@ export function checkSkillsExceedingMaxLevel(allSkills = []) {
  * Get minimum required points and which skills are blocking removal
  * @param {string} skillName - Skill to check
  * @param {Array} allSkills - All available skills
- * @returns {Object} {minRequired: number, blockingSkills: Array}
+ * @returns {object} {minRequired: number, blockingSkills: Array}
  */
 function getMinimumRequiredPointsWithBlockingSkills(skillName, allSkills) {
   let minRequired = 0;
@@ -1412,7 +1414,7 @@ export function getTotalSkillPoints() {
 
 /**
  * Export character state for saving
- * @returns {Object} Character state
+ * @returns {object} Character state
  */
 export function exportCharacterState() {
   return characterInstance
@@ -1433,7 +1435,7 @@ export function exportCharacterState() {
 /**
  * Update quest completion status
  * @param {string} questId - Quest identifier
- * @param {Object} difficulties - Object with normal, nightmare, hell boolean values
+ * @param {object} difficulties - Object with normal, nightmare, hell boolean values
  */
 export function updateQuestCompletion(questId, difficulties) {
   if (characterInstance) {
@@ -1445,7 +1447,7 @@ export function updateQuestCompletion(questId, difficulties) {
 /**
  * Get quest completion status
  * @param {string} questId - Quest identifier
- * @returns {Object} Object with normal, nightmare, hell boolean values
+ * @returns {object} Object with normal, nightmare, hell boolean values
  */
 export function getQuestCompletion(questId) {
   return characterInstance ? characterInstance.getQuestCompletion(questId) : { normal: false, nightmare: false, hell: false };
@@ -1560,7 +1562,7 @@ export function completeAllQuests() {
 
 /**
  * Import character state from save
- * @param {Object} state - Saved character state
+ * @param {object} state - Saved character state
  */
 export function importCharacterState(state) {
   if (characterInstance) {
@@ -1658,7 +1660,7 @@ export function clearOSkills() {
 
 /**
  * Set all oSkills (for loading builds)
- * @param {Array|Object} oSkills - Array of oSkill rows, object map (display/internal/numeric keys), or normalized internal map
+ * @param {Array | object} oSkills - Array of oSkill rows, object map (display/internal/numeric keys), or normalized internal map
  */
 export function setAllOSkills(oSkills) {
   if (characterInstance) {
@@ -1696,7 +1698,7 @@ export function setStat(statKey, value) {
 
 /**
  * Get all stats
- * @returns {Object} Map of stat_key -> value
+ * @returns {object} Map of stat_key -> value
  */
 export function getAllStats() {
   return characterInstance ? characterInstance.getAllStats() : {};
@@ -1704,7 +1706,7 @@ export function getAllStats() {
 
 /**
  * Set all stats (used for loading builds)
- * @param {Object} stats - Map of stat_key -> value
+ * @param {object} stats - Map of stat_key -> value
  */
 export function setAllStats(stats) {
   if (characterInstance) {
@@ -1750,7 +1752,6 @@ export function exportStatsToText() {
 /**
  * Get all formulas used by a skill for auto-adding stats
  * @param {number} skillId - Numeric catalog skill id
- * @returns {Array<string>} Array of formula strings
  */
 function pushStatKeyAsFormula(formulas, statKey) {
   const sk = String(statKey || '').trim();
@@ -1863,8 +1864,8 @@ async function autoAddStatsToInput(skillId) {
 /**
  * Filter skill levels to exclude oSkills
  * Ensures oSkill points never affect regular skill calculations
- * @param {Object} skillLevels - Object mapping skill_name/ID to points
- * @returns {Object} Filtered skill levels with only regular skills
+ * @param {object} skillLevels - Object mapping skill_name/ID to points
+ * @returns {object} Filtered skill levels with only regular skills
  */
 const OSKILL_HARD_CAP = 150;
 
@@ -1932,7 +1933,7 @@ function filterRegularSkillsOnly(skillLevels) {
  * Consolidated from SkillService
  * @param {number} skillId - Numeric catalog id for regular skills, or oSkill identifier
  * @param {string} skillType - 'regular' | 'oskill'
- * @param {Object} skillLevels - Object mapping skill_name to current skill level (should only contain regular skills, not oSkills)
+ * @param {object} skillLevels - Object mapping skill_name to current skill level (should only contain regular skills, not oSkills)
  * @param {number} characterLevel - Current character level
  * @returns {number} Effective max level (capped at 150)
  */
@@ -1952,11 +1953,11 @@ export function calculateEffectiveMaxLevel(skillId, skillType, skillLevels = {},
 /**
  * Get all restrictions for a skill
  * Consolidated from SkillValidationService
- * @param {Object} skill - Skill object (for regular skills) or skill metadata (for oSkills)
+ * @param {object} skill - Skill object (for regular skills) or skill metadata (for oSkills)
  * @param {string} skillType - 'regular' | 'oskill'
  * @param {number} currentPoints - Current points allocated
  * @param {Array} allSkills - Array of all skills (for regular skills only)
- * @param {Object} skillLevels - Object mapping skill_name to current skill level (should exclude oSkills for regular skills)
+ * @param {object} skillLevels - Object mapping skill_name to current skill level (should exclude oSkills for regular skills)
  * @returns {Array} Array of {type: string, reason: string} restriction objects
  */
 export function getSkillRestrictions(skill, skillType, currentPoints, allSkills = [], skillLevels = {}) {
@@ -2044,12 +2045,12 @@ export function getSkillRestrictions(skill, skillType, currentPoints, allSkills 
 /**
  * Check if a skill can have points allocated
  * Consolidated from SkillService/SkillValidationService
- * @param {Object} skill - Skill object or skill metadata
+ * @param {object} skill - Skill object or skill metadata
  * @param {string} skillType - 'regular' | 'oskill'
  * @param {number} currentPoints - Current points allocated
  * @param {number} maxPoints - Maximum points allowed
  * @param {Array} allSkills - Array of all skills (for regular skills only)
- * @param {Object} skillLevels - Object mapping skill_name to current skill level
+ * @param {object} skillLevels - Object mapping skill_name to current skill level
  * @returns {boolean} True if skill can have points allocated
  */
 export function canAllocateSkillPoints(skill, skillType, currentPoints, maxPoints, allSkills = [], skillLevels = {}) {

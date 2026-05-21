@@ -10,7 +10,7 @@ import {
   renameBuild,
   ensureCharacterForBuildList,
 } from '../../../tree/tree-core.js';
-import { getSpentSkillPoints } from '../../../character/character-state.js';
+import { getSpentSkillPoints } from '@/character/character-state.js';
 
 const { activeSection } = storeToRefs(usePlannerStore());
 

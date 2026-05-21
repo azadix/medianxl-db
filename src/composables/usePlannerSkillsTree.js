@@ -7,14 +7,14 @@ import {
 } from '../../tree/tree-render.js';
 import { listSkillVariants } from '../../tree/skill-variants.js';
 import { addOverlayArrows } from '../../tree/tree-arrows.js';
-import Innate from '../skills/domain/Innate.js';
+import { isInnateSkill } from '@/skills/domain/skill-skill-types.js';
 import {
   changeOSkillPoints,
   getSkillPoints,
   getOSkillRowsForPlanner,
   hasAnyOSkillAllocations
-} from '../../character/character-state.js';
-import { enrichOskillForDisplay } from '../../tree/oskill-display.js';
+} from '@/character/character-state.js';
+import { enrichOskillForDisplay } from '../../tree/tree-render.js';
 
 const OSKILL_COLS = 3;
 
@@ -38,7 +38,7 @@ export function usePlannerSkillsTree({ payload, classSkills, activeTab, gridRang
       console.warn('[PlannerSkillsTree] listSkillVariants', skill?.id, e);
     }
     try {
-      if (Innate.isInnateSkill(skill)) {
+      if (isInnateSkill(skill)) {
         return {
           skillId: skill.id,
           numericId: skill.skillId,

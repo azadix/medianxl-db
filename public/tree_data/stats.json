@@ -1429,7 +1429,7 @@
     "pairedStat": [
       {
         "valueIndex": 0,
-        "plannerKey": "slows_target"
+        "plannerKey": "slows_target_by"
       }
     ]
   },
@@ -2161,7 +2161,7 @@
     "pairedStat": [
       {
         "valueIndex": 1,
-        "plannerKey": "reanimate_as_monster"
+        "plannerKey": "reanimate_as_monster_name"
       }
     ]
   },

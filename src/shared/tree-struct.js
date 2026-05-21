@@ -146,7 +146,9 @@ export function getTreeLayoutRoot(treeStruct) {
     return treeStruct;
 }
 
-/** @deprecated use getTreeLayoutRoot */
+/**
+ * @deprecated Use {@link getTreeLayoutRoot}; version-specific wrappers are no longer needed.
+ */
 export function getTreeLayoutRootForVersion(treeStruct, _major, _minor) {
     return getTreeLayoutRoot(treeStruct);
 }

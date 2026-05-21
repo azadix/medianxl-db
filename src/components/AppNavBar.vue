@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted } from 'vue';
 import { useRoute } from 'vue-router';
+import { DEV_ROUTE_DEFS, routeShowsVersionSelector } from '../shared/dev-routes.js';
 
 const route = useRoute();
 const isDev = import.meta.env.DEV;
@@ -44,15 +45,16 @@ onMounted(() => {
         <router-link :class="linkClass('patchNotes')" to="/patch-notes">
           <strong>Patch notes</strong>
         </router-link>
-        <router-link v-if="isDev" :class="linkClass('editor')" to="/editor">
-          <strong>Editor</strong>
-        </router-link>
-        <router-link v-if="isDev" :class="linkClass('subskillsEditor')" to="/editor/subskills">
-          <strong>Subskills</strong>
-        </router-link>
-        <router-link v-if="isDev" :class="linkClass('calculations')" to="/calculations">
-          <strong>Calculations</strong>
-        </router-link>
+        <template v-if="isDev">
+          <router-link
+            v-for="def in DEV_ROUTE_DEFS"
+            :key="def.name"
+            :class="linkClass(def.name)"
+            :to="def.path"
+          >
+            <strong>{{ def.navLabel }}</strong>
+          </router-link>
+        </template>
       </div>
       <div class="navbar-end is-align-items-center">
         <div class="navbar-item py-1">
@@ -82,14 +84,7 @@ onMounted(() => {
           </a>
         </div>
         <div
-          v-show="
-            route.name === 'skills' ||
-              route.name === 'planner' ||
-              route.name === 'patchNotes' ||
-              route.name === 'editor' ||
-              route.name === 'subskillsEditor' ||
-              route.name === 'calculations'
-          "
+          v-show="routeShowsVersionSelector(route.name)"
           class="navbar-item"
         >
           <div class="field is-horizontal is-align-items-center mb-0">
@@ -113,9 +108,7 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.navbar {
-  border-bottom: 1px solid rgba(122, 122, 122, 122);
-}
+
 
 .github-link {
   display: flex;
