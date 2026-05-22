@@ -4,6 +4,11 @@
 
 import { getFileSkillStore } from '@/tree/skill-data-store.js';
 
+/** @param {unknown} value */
+function parseOptionalNumber(value) {
+  return value != null && value !== '' && !Number.isNaN(Number(value)) ? Number(value) : 0;
+}
+
 /**
  * Vitality/energy scaling uses only points above the class baseline vit/energy (row.vitality / row.energy).
  * @param {number} level Effective planner level (>= 1)
@@ -21,17 +26,16 @@ export function computeClassDerivedLifeMana(level, vitality, energy, row) {
   const lvDelta = Math.max(0, lvl - 1);
   const vit = Math.max(0, Number(vitality) || 0);
   const ene = Math.max(0, Number(energy) || 0);
-  const n = (v) => (v != null && v !== '' && !Number.isNaN(Number(v)) ? Number(v) : 0);
-  const bl = n(row.base_life);
-  const bm = n(row.base_mana);
-  const baseVit = Math.max(0, n(row.vitality));
-  const baseEne = Math.max(0, n(row.energy));
+  const bl = parseOptionalNumber(row.base_life);
+  const bm = parseOptionalNumber(row.base_mana);
+  const baseVit = Math.max(0, parseOptionalNumber(row.vitality));
+  const baseEne = Math.max(0, parseOptionalNumber(row.energy));
   const vitExtra = Math.max(0, vit - baseVit);
   const eneExtra = Math.max(0, ene - baseEne);
-  const lpl = n(row.life_per_level);
-  const mpl = n(row.mana_per_level);
-  const lpv = n(row.life_per_vitality);
-  const mpe = n(row.mana_per_energy);
+  const lpl = parseOptionalNumber(row.life_per_level);
+  const mpl = parseOptionalNumber(row.mana_per_level);
+  const lpv = parseOptionalNumber(row.life_per_vitality);
+  const mpe = parseOptionalNumber(row.mana_per_energy);
   return {
     life: bl + lvDelta * lpl + vitExtra * lpv,
     mana: bm + lvDelta * mpl + eneExtra * mpe
@@ -50,17 +54,16 @@ export function computeClassDerivedLifeManaBreakdown(level, vitality, energy, ro
   const lvDelta = Math.max(0, lvl - 1);
   const vit = Math.max(0, Number(vitality) || 0);
   const ene = Math.max(0, Number(energy) || 0);
-  const n = (v) => (v != null && v !== '' && !Number.isNaN(Number(v)) ? Number(v) : 0);
-  const bl = n(row.base_life);
-  const bm = n(row.base_mana);
-  const baseVit = Math.max(0, n(row.vitality));
-  const baseEne = Math.max(0, n(row.energy));
+  const bl = parseOptionalNumber(row.base_life);
+  const bm = parseOptionalNumber(row.base_mana);
+  const baseVit = Math.max(0, parseOptionalNumber(row.vitality));
+  const baseEne = Math.max(0, parseOptionalNumber(row.energy));
   const vitExtra = Math.max(0, vit - baseVit);
   const eneExtra = Math.max(0, ene - baseEne);
-  const lpl = n(row.life_per_level);
-  const mpl = n(row.mana_per_level);
-  const lpv = n(row.life_per_vitality);
-  const mpe = n(row.mana_per_energy);
+  const lpl = parseOptionalNumber(row.life_per_level);
+  const mpl = parseOptionalNumber(row.mana_per_level);
+  const lpv = parseOptionalNumber(row.life_per_vitality);
+  const mpe = parseOptionalNumber(row.mana_per_energy);
   const lifeFromLevel = lvDelta * lpl;
   const lifeFromVitality = vitExtra * lpv;
   const manaFromLevel = lvDelta * mpl;
@@ -101,18 +104,17 @@ export function getClassPlannerStatDefaults(className) {
   if (!className) return null;
   const row = getFileSkillStore()?.gameMeta?.classes?.find((c) => c.name === className);
   if (!row) return null;
-  const num = (v) => (v != null && v !== '' ? Number(v) : 0);
-  const nonNegAttr = (v) => Math.max(0, num(v));
+  const nonNegativeAttr = (value) => Math.max(0, parseOptionalNumber(value));
   return {
-    base_life: num(row.base_life),
-    base_mana: num(row.base_mana),
-    strength: nonNegAttr(row.base_strength),
-    dexterity: nonNegAttr(row.base_dexterity),
-    energy: nonNegAttr(row.base_energy),
-    vitality: nonNegAttr(row.base_vitality),
-    life_per_level: num(row.life_per_level),
-    mana_per_level: num(row.mana_per_level),
-    life_per_vitality: num(row.life_per_vitality),
-    mana_per_energy: num(row.mana_per_energy)
+    base_life: parseOptionalNumber(row.base_life),
+    base_mana: parseOptionalNumber(row.base_mana),
+    strength: nonNegativeAttr(row.base_strength),
+    dexterity: nonNegativeAttr(row.base_dexterity),
+    energy: nonNegativeAttr(row.base_energy),
+    vitality: nonNegativeAttr(row.base_vitality),
+    life_per_level: parseOptionalNumber(row.life_per_level),
+    mana_per_level: parseOptionalNumber(row.mana_per_level),
+    life_per_vitality: parseOptionalNumber(row.life_per_vitality),
+    mana_per_energy: parseOptionalNumber(row.mana_per_energy)
   };
 }

@@ -29,10 +29,10 @@ function formatQuestIdLabel(questId) {
     .join(' ');
 }
 
-function fmt(n) {
-  const x = Number(n);
-  if (!Number.isFinite(x)) return '0';
-  return Math.abs(x - Math.round(x)) < 1e-6 ? String(Math.round(x)) : x.toFixed(2);
+function formatStatDisplayValue(value) {
+  const num = Number(value);
+  if (!Number.isFinite(num)) return '0';
+  return Math.abs(num - Math.round(num)) < 1e-6 ? String(Math.round(num)) : num.toFixed(2);
 }
 
 /** @param {object} character Character instance with questsCompleted */
@@ -68,8 +68,8 @@ function getFlatLifeQuestParts(character) {
  */
 export function buildPlannerStatBreakdownHtml(statKey) {
   const key = String(statKey || '').toLowerCase();
-  const ch = getCharacterInstance();
-  if (!ch) {
+  const character = getCharacterInstance();
+  if (!character) {
     return `<p class="planner-stat-tooltip-empty">${escapeHtml('No character loaded.')}</p>`;
   }
 
@@ -81,8 +81,8 @@ export function buildPlannerStatBreakdownHtml(statKey) {
   }
 
   const level = getEffectivePlannerLevel();
-  const row = getClassPlannerStatDefaults(ch.className);
-  const rawStat = ch.getStat(key);
+  const row = getClassPlannerStatDefaults(character.className);
+  const rawStat = character.getStat(key);
   const displayedNum = (() => {
     const n = Number(rawStat);
     return Number.isFinite(n) ? n : 0;
@@ -92,29 +92,29 @@ export function buildPlannerStatBreakdownHtml(statKey) {
   const sections = [];
 
   if ((key === 'life' || key === 'mana') && row) {
-    const vit = Number(ch.getRawStat('vitality')) || 0;
-    const ene = Number(ch.getRawStat('energy')) || 0;
+    const vit = Number(character.getRawStat('vitality')) || 0;
+    const ene = Number(character.getRawStat('energy')) || 0;
     const b = computeClassDerivedLifeManaBreakdown(level, vit, ene, row);
 
     if (key === 'life') {
       const classRows = [
-        { label: 'Class base life', value: `+${fmt(b.baseLife)}` },
+        { label: 'Class base life', value: `+${formatStatDisplayValue(b.baseLife)}` },
         {
-          label: `Life per level (${fmt(b.lifePerLevel)} × ${b.levelsAbove1} level(s) above 1)`,
-          value: `+${fmt(b.lifeFromLevel)}`
+          label: `Life per level (${formatStatDisplayValue(b.lifePerLevel)} × ${b.levelsAbove1} level(s) above 1)`,
+          value: `+${formatStatDisplayValue(b.lifeFromLevel)}`
         },
         {
-          label: `From vitality above class baseline (${fmt(b.vitalityAboveBaseline)} vit × ${fmt(b.lifePerVitality)})`,
-          value: `+${fmt(b.lifeFromVitality)}`
+          label: `From vitality above class baseline (${formatStatDisplayValue(b.vitalityAboveBaseline)} vit × ${formatStatDisplayValue(b.lifePerVitality)})`,
+          value: `+${formatStatDisplayValue(b.lifeFromVitality)}`
         }
       ];
       sections.push({ title: 'Class & level scaling', rows: classRows });
 
-      const questParts = getFlatLifeQuestParts(ch);
+      const questParts = getFlatLifeQuestParts(character);
       const questRows = questParts.map((q) => ({
         label: q.label,
-        value: `+${fmt(q.total)}`,
-        detail: q.perDifficulty.map((p) => `${p.diff}: +${fmt(p.amount)}`).join(', ')
+        value: `+${formatStatDisplayValue(q.total)}`,
+        detail: q.perDifficulty.map((p) => `${p.diff}: +${formatStatDisplayValue(p.amount)}`).join(', ')
       }));
       if (questRows.length > 0) {
         sections.push({ title: 'Quests (flat life)', rows: questRows });
@@ -134,18 +134,18 @@ export function buildPlannerStatBreakdownHtml(statKey) {
 
       sections.push({
         title: 'Total',
-        rows: [{ label: fmt(displayedNum), value: undefined }]
+        rows: [{ label: formatStatDisplayValue(displayedNum), value: undefined }]
       });
     } else {
       const classRows = [
-        { label: 'Class base mana', value: `+${fmt(b.baseMana)}` },
+        { label: 'Class base mana', value: `+${formatStatDisplayValue(b.baseMana)}` },
         {
-          label: `Mana per level (${fmt(b.manaPerLevel)} × ${b.levelsAbove1} level(s) above 1)`,
-          value: `+${fmt(b.manaFromLevel)}`
+          label: `Mana per level (${formatStatDisplayValue(b.manaPerLevel)} × ${b.levelsAbove1} level(s) above 1)`,
+          value: `+${formatStatDisplayValue(b.manaFromLevel)}`
         },
         {
-          label: `From energy above class baseline (${fmt(b.energyAboveBaseline)} energy × ${fmt(b.manaPerEnergy)})`,
-          value: `+${fmt(b.manaFromEnergy)}`
+          label: `From energy above class baseline (${formatStatDisplayValue(b.energyAboveBaseline)} energy × ${formatStatDisplayValue(b.manaPerEnergy)})`,
+          value: `+${formatStatDisplayValue(b.manaFromEnergy)}`
         }
       ];
       sections.push({ title: 'Class & level scaling', rows: classRows });
@@ -164,24 +164,24 @@ export function buildPlannerStatBreakdownHtml(statKey) {
 
       sections.push({
         title: 'Total',
-        rows: [{ label: fmt(displayedNum), value: undefined }]
+        rows: [{ label: formatStatDisplayValue(displayedNum), value: undefined }]
       });
     }
   } else if (['strength', 'dexterity', 'vitality', 'energy'].includes(key) && row) {
     const baseline = Math.floor(Number(row[key]) || 0);
-    const current = Math.floor(ch.getRawStat(key));
+    const current = Math.floor(character.getRawStat(key));
     const delta = current - baseline;
-    const alloc = Math.max(0, Math.floor(Number(ch.statAllocation?.[key]) || 0));
+    const alloc = Math.max(0, Math.floor(Number(character.statAllocation?.[key]) || 0));
 
-    const attrRows = [{ label: 'Class baseline', value: fmt(baseline) }];
+    const attrRows = [{ label: 'Class baseline', value: formatStatDisplayValue(baseline) }];
     if (delta !== 0) {
       attrRows.push({
         label: 'Manual delta vs class baseline',
-        value: `${delta >= 0 ? '+' : ''}${fmt(delta)}`
+        value: `${delta >= 0 ? '+' : ''}${formatStatDisplayValue(delta)}`
       });
     }
     if (alloc > 0) {
-      attrRows.push({ label: 'Recorded in stat allocation (build save)', value: `+${fmt(alloc)}` });
+      attrRows.push({ label: 'Recorded in stat allocation (build save)', value: `+${formatStatDisplayValue(alloc)}` });
     }
     sections.push({ title: 'Attributes', rows: attrRows });
 
@@ -193,11 +193,11 @@ export function buildPlannerStatBreakdownHtml(statKey) {
       });
     }
   } else if (isPlannerNegativeAllowedBaseStat(key)) {
-    const rawOnly = ch.getRawStat(key);
+    const rawOnly = character.getRawStat(key);
     const mods = getPlannerStatSkillModifiers(key);
     sections.push({
       title: 'Manual / saved',
-      rows: [{ label: 'Manually edited value: ', value: fmt(rawOnly) }]
+      rows: [{ label: 'Manually edited value: ', value: formatStatDisplayValue(rawOnly) }]
     });
     if (mods.length > 0) {
       sections.push({
@@ -210,17 +210,17 @@ export function buildPlannerStatBreakdownHtml(statKey) {
     }
     sections.push({
       title: 'Total',
-      rows: [{ label: fmt(displayedNum), value: undefined }]
+      rows: [{ label: formatStatDisplayValue(displayedNum), value: undefined }]
     });
   } else {
-    const rawOnly = ch.getRawStat(key);
+    const rawOnly = character.getRawStat(key);
     const mods = getPlannerStatSkillModifiers(key);
     sections.push({
       title: 'Manual / saved',
       rows: [
         {
           label: row ? 'Manually edited value: ' : 'No class row in game_meta',
-          value: fmt(rawOnly),
+          value: formatStatDisplayValue(rawOnly),
           detail: row ? undefined : 'Select a class for baseline breakdowns.'
         }
       ]
@@ -236,32 +236,32 @@ export function buildPlannerStatBreakdownHtml(statKey) {
     }
     sections.push({
       title: 'Total',
-      rows: [{ label: fmt(displayedNum), value: undefined }]
+      rows: [{ label: formatStatDisplayValue(displayedNum), value: undefined }]
     });
   }
 
   let html = `<div class="planner-stat-tooltip-body">`;
   html += `<p class="planner-stat-tooltip-title mb-2">${escapeHtml(title)}</p>`;
   if (!isPlannerNegativeAllowedBaseStat(key)) {
-    html += `<p class="planner-stat-tooltip-meta mb-2">Effective level for scaling: ${fmt(level)}</p>`;
+    html += `<p class="planner-stat-tooltip-meta mb-2">Effective level for scaling: ${formatStatDisplayValue(level)}</p>`;
   }
 
   for (const sec of sections) {
     html += `<div class="planner-stat-tooltip-section mb-2">`;
     html += `<div class="planner-stat-tooltip-h">${escapeHtml(sec.title)}</div>`;
     html += `<ul class="planner-stat-tooltip-list">`;
-    for (const r of sec.rows) {
+    for (const row of sec.rows) {
       html += `<li>`;
-      if (r.value === undefined && r.label !== undefined && r.label !== '') {
-        html += `<span class="planner-stat-tooltip-v planner-stat-tooltip-total-num">${escapeHtml(r.label)}</span>`;
+      if (row.value === undefined && row.label !== undefined && row.label !== '') {
+        html += `<span class="planner-stat-tooltip-v planner-stat-tooltip-total-num">${escapeHtml(row.label)}</span>`;
       } else {
-        html += `<span class="planner-stat-tooltip-k">${escapeHtml(r.label)}</span>`;
-        if (r.value !== undefined && r.value !== '') {
-          html += ` <span class="planner-stat-tooltip-v">${escapeHtml(r.value)}</span>`;
+        html += `<span class="planner-stat-tooltip-k">${escapeHtml(row.label)}</span>`;
+        if (row.value !== undefined && row.value !== '') {
+          html += ` <span class="planner-stat-tooltip-v">${escapeHtml(row.value)}</span>`;
         }
       }
-      if (r.detail) {
-        html += `<div class="planner-stat-tooltip-d">${escapeHtml(r.detail)}</div>`;
+      if (row.detail) {
+        html += `<div class="planner-stat-tooltip-d">${escapeHtml(row.detail)}</div>`;
       }
       html += `</li>`;
     }

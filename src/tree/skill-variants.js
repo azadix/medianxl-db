@@ -47,7 +47,7 @@ export function applySkillVariantDefaultsForClass(className) {
         const numericId = cat?.numericId;
         if (numericId == null) continue;
         const variants = listSkillVariants(numericId);
-        if (!variants.some((x) => x.variant_key === vk)) continue;
+        if (!variants.some((variant) => variant.variant_key === vk)) continue;
         setSkillVariantKey(sid, vk);
     }
 }
@@ -106,7 +106,7 @@ function escapeHtmlAttr(s) {
 export function variantBracketSuffixFromList(variantKey, variants) {
     if (!variants || variants.length === 0) return '';
     if (variantKey == null || variantKey === '') return '';
-    const row = variants.find((x) => x.variant_key === variantKey);
+    const row = variants.find((variant) => variant.variant_key === variantKey);
     const inner = row ? row.label : String(variantKey);
     return ` [${inner}]`;
 }

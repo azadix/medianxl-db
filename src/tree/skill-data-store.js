@@ -20,9 +20,9 @@ function parseBuildOverride() {
     const raw = localStorage.getItem(BUILD_VERSION_OVERRIDE_KEY);
     if (!raw) return null;
     try {
-        const o = JSON.parse(raw);
-        if (o && typeof o.major === 'number' && typeof o.minor === 'number') {
-            return { major: o.major, minor: o.minor };
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed.major === 'number' && typeof parsed.minor === 'number') {
+            return { major: parsed.major, minor: parsed.minor };
         }
     } catch {
         /* ignore */
@@ -37,16 +37,18 @@ function parseBuildOverride() {
  * @returns {{ major: number, minor: number }}
  */
 export function getRequestedTreeVersion(versionsList, defaultVersion) {
-    const ov = parseBuildOverride();
-    if (ov && versionsList?.length) {
-        const ok = versionsList.some((v) => v.major === ov.major && v.minor === ov.minor);
-        if (ok) return ov;
+    const overrideVersion = parseBuildOverride();
+    if (overrideVersion && versionsList?.length) {
+        const ok = versionsList.some(
+            (row) => row.major === overrideVersion.major && row.minor === overrideVersion.minor
+        );
+        if (ok) return overrideVersion;
     }
-    const active = versionsList?.find((v) => v.is_active);
+    const active = versionsList?.find((row) => row.is_active);
     if (active) return { major: active.major, minor: active.minor };
     if (versionsList?.length) {
-        const v = versionsList[0];
-        return { major: v.major, minor: v.minor };
+        const first = versionsList[0];
+        return { major: first.major, minor: first.minor };
     }
     return defaultVersion;
 }

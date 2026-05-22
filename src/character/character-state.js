@@ -523,8 +523,8 @@ function sortStringKeyedObject(obj) {
  * @returns {object|null}
  */
 export function resolveCatalogRowBySkillRef(key, store = null) {
-  const st = store ?? getFileSkillStore();
-  const catalog = st?.catalog;
+  const skillStore = store ?? getFileSkillStore();
+  const catalog = skillStore?.catalog;
   if (!catalog || key == null) return null;
   const s = String(key).trim();
   if (!s) return null;
@@ -704,12 +704,12 @@ export function getTotalQuestSkillPoints(characterLevel = Character.MAX_LEVEL) {
  */
 export function getAvailableSkillPoints(characterLevel) {
   if (!characterInstance) return 0;
-  const ul =
+  const plannerLevel =
     characterLevel != null && Number.isFinite(Number(characterLevel))
       ? Character.clampLevel(Number(characterLevel))
       : getEffectivePlannerLevel();
-  const basePoints = Character.getBaseSkillPoints(ul);
-  const questPoints = characterInstance.getTotalQuestSkillPoints(ul);
+  const basePoints = Character.getBaseSkillPoints(plannerLevel);
+  const questPoints = characterInstance.getTotalQuestSkillPoints(plannerLevel);
   return basePoints + questPoints;
 }
 
@@ -728,9 +728,9 @@ export function getSpentSkillPoints() {
 export function isPlannerSkillPointPoolOverBudget() {
   if (!characterInstance) return false;
   const spent = characterInstance.getSpentSkillPoints();
-  const ul = getEffectivePlannerLevel();
-  const base = Character.getBaseSkillPoints(ul);
-  const quest = characterInstance.getTotalQuestSkillPoints(ul);
+  const plannerLevel = getEffectivePlannerLevel();
+  const base = Character.getBaseSkillPoints(plannerLevel);
+  const quest = characterInstance.getTotalQuestSkillPoints(plannerLevel);
   return spent > base + quest;
 }
 
@@ -740,9 +740,9 @@ export function isPlannerSkillPointPoolOverBudget() {
  */
 export function getRemainingSkillPoints() {
   if (!characterInstance) return 0;
-  const ul = getEffectivePlannerLevel();
-  const basePoints = Character.getBaseSkillPoints(ul);
-  const questPoints = characterInstance.getTotalQuestSkillPoints(ul);
+  const plannerLevel = getEffectivePlannerLevel();
+  const basePoints = Character.getBaseSkillPoints(plannerLevel);
+  const questPoints = characterInstance.getTotalQuestSkillPoints(plannerLevel);
   const spent = characterInstance.getSpentSkillPoints();
   return basePoints + questPoints - spent;
 }
@@ -1766,9 +1766,9 @@ export function exportStatsToText() {
  * @param {number} skillId - Numeric catalog skill id
  */
 function pushStatKeyAsFormula(formulas, statKey) {
-  const sk = String(statKey || '').trim();
-  if (!sk) return;
-  formulas.push(`{{${sk}}}`);
+  const trimmedKey = String(statKey || '').trim();
+  if (!trimmedKey) return;
+  formulas.push(`{{${trimmedKey}}}`);
 }
 
 async function getSkillFormulas(skillId) {
@@ -1801,9 +1801,9 @@ async function getSkillFormulas(skillId) {
         }
       }
       for (let j = 1; j <= 6; j++) {
-        const c = det[`calc${j}`];
-        if (c != null && String(c).trim() !== '') {
-          formulas.push(String(c));
+        const calcFormula = det[`calc${j}`];
+        if (calcFormula != null && String(calcFormula).trim() !== '') {
+          formulas.push(String(calcFormula));
         }
       }
     }

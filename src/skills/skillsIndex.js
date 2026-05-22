@@ -159,14 +159,14 @@ function escapeHtml(text) {
 
 /** @returns {number | null} */
 function readSkillLevelFromRoute() {
-  const r = getRouter();
-  if (!r) return null;
-  const q = r.currentRoute.value.query;
-  const raw = q.lvl ?? q.level;
-  const s = Array.isArray(raw) ? raw[0] : raw;
-  if (s == null || s === '') return null;
-  const n = parseInt(String(s), 10);
-  return Number.isFinite(n) ? n : null;
+  const router = getRouter();
+  if (!router) return null;
+  const query = router.currentRoute.value.query;
+  const raw = query.lvl ?? query.level;
+  const levelString = Array.isArray(raw) ? raw[0] : raw;
+  if (levelString == null || levelString === '') return null;
+  const parsedLevel = parseInt(String(levelString), 10);
+  return Number.isFinite(parsedLevel) ? parsedLevel : null;
 }
 
 function detailEl() {
@@ -517,8 +517,8 @@ async function displaySkillDetail(skillId) {
   }
 
   homeSkillDetailFormulaListenersDetach = () => {
-    for (const fn of cleanupFns) {
-      fn();
+    for (const detachListener of cleanupFns) {
+      detachListener();
     }
     cleanupFns.length = 0;
   };
@@ -537,8 +537,8 @@ async function loadSkillsFromTreeDataPage() {
       if (row?.parentSkillId != null && String(row.parentSkillId).trim() !== '') {
         continue; // subskills are not shown on the main index list
       }
-      const sk = buildSkillFromCatalogRow(store, row);
-      if (sk) loadedSkills.push(sk);
+      const skill = buildSkillFromCatalogRow(store, row);
+      if (skill) loadedSkills.push(skill);
     }
     const cur = getCurrentVersion();
     const treeStruct = await fetchTreeStructJson(cur.major, cur.minor);
@@ -549,11 +549,11 @@ async function loadSkillsFromTreeDataPage() {
     }
     const tabOrderLookup = buildTabOrderLookupFromGameMeta(store.gameMeta);
     loadedSkills.sort((a, b) => {
-      const c = String(a.class || '').localeCompare(String(b.class || ''));
-      if (c !== 0) return c;
-      const ta = tabOrderRankFromLookup(a, tabOrderLookup);
-      const tb = tabOrderRankFromLookup(b, tabOrderLookup);
-      if (ta !== tb) return ta - tb;
+      const byClass = String(a.class || '').localeCompare(String(b.class || ''));
+      if (byClass !== 0) return byClass;
+      const tabRankA = tabOrderRankFromLookup(a, tabOrderLookup);
+      const tabRankB = tabOrderRankFromLookup(b, tabOrderLookup);
+      if (tabRankA !== tabRankB) return tabRankA - tabRankB;
       return String(a.name || '').localeCompare(String(b.name || ''));
     });
     skillsList = loadedSkills;

@@ -159,7 +159,7 @@ export function getPairedStatRouting(store, scalingStatKey) {
  */
 function pushPlannerStatModifier(plannerKey, delta, internalId, displayName, slotLabel) {
   if (!Number.isFinite(delta) || delta === 0) return;
-  const desc = `${delta >= 0 ? '+' : ''}${fmtMod(delta)}${slotLabel ? ` (${slotLabel})` : ''}`;
+  const desc = `${delta >= 0 ? '+' : ''}${formatModifierDisplayValue(delta)}${slotLabel ? ` (${slotLabel})` : ''}`;
   if (!_plannerStatSkillModifiersByKey[plannerKey]) _plannerStatSkillModifiersByKey[plannerKey] = [];
   _plannerStatSkillModifiersByKey[plannerKey].push({
     skillId: internalId,
@@ -181,10 +181,10 @@ function addBonus(bonuses, plannerKey, delta) {
   bonuses[plannerKey] = prev + delta;
 }
 
-function fmtMod(n) {
-  const x = Number(n);
-  if (!Number.isFinite(x)) return '0';
-  return Math.abs(x - Math.round(x)) < 1e-6 ? String(Math.round(x)) : x.toFixed(2);
+function formatModifierDisplayValue(value) {
+  const num = Number(value);
+  if (!Number.isFinite(num)) return '0';
+  return Math.abs(num - Math.round(num)) < 1e-6 ? String(Math.round(num)) : num.toFixed(2);
 }
 
 /**

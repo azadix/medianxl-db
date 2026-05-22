@@ -415,10 +415,10 @@ export async function expandPlaceholdersWithScaling(numericId, level, descriptio
         let actualSkillName = skillName;
 
         const store = getFileSkillStore();
-        const st = store?.getStatByKeyLower(key);
-        if (st) {
-            name = st.name;
-            format = st.format;
+        const statRow = store?.getStatByKeyLower(key);
+        if (statRow) {
+            name = statRow.name;
+            format = statRow.format;
         }
         if (!actualSkillName && store) {
             const resolved = store.lookupSkillNameAndDisplayByNumericId(numericId);
@@ -619,17 +619,17 @@ export async function expandPlaceholdersWithScaling(numericId, level, descriptio
 
         // If no scaling row for this level, but stat exists: show format with ??? placeholders
         if (output === `[Unknown stat: ${rawKey}]`) {
-            let n2 = null;
-            let f2 = null;
-            const st2 = getFileSkillStore()?.getStatByKeyLower(key);
-            if (st2) {
-                n2 = st2.name;
-                f2 = st2.format;
+            let statDisplayName = null;
+            let statFormat = null;
+            const fallbackStatRow = getFileSkillStore()?.getStatByKeyLower(key);
+            if (fallbackStatRow) {
+                statDisplayName = fallbackStatRow.name;
+                statFormat = fallbackStatRow.format;
             }
-            if (n2 != null) {
+            if (statDisplayName != null) {
                 const q = `<span class="${SCALING_DISPLAY_HTML_CLASSES.unknown}">???</span>`;
-                output = (f2 || '{name}: {value}')
-                    .replace('{name}', n2)
+                output = (statFormat || '{name}: {value}')
+                    .replace('{name}', statDisplayName)
                     .replace('{value0}', q)
                     .replace('{value1}', q)
                     .replace('{value2}', q)
