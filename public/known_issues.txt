@@ -1,4 +1,3 @@
 85 skills (out of 777) are missing it's description: 5 oSkills, 47 procs, 33 class skills
 Skill damage calculation is not implemented
 War Spirit synergies based on devotion are not filled in
-Soulchain doesn't prevent selecting all 3 elemental totem skills

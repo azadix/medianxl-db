@@ -24,7 +24,8 @@ import {
   checkParagonRestriction,
   checkMasteryRestriction,
   checkCovenRestriction,
-  checkProficiencyRestriction
+  checkProficiencyRestriction,
+  checkSoulchainTotemRestriction
 } from '@/skills/domain/skill-restrictions.js';
 import {
   normalizePrereqSkillTargetKey,
@@ -36,7 +37,8 @@ export {
   checkParagonRestriction,
   checkMasteryRestriction,
   checkCovenRestriction,
-  checkProficiencyRestriction
+  checkProficiencyRestriction,
+  checkSoulchainTotemRestriction
 };
 
 /** Last planner skill list from tree load (for min-level / character_level prereqs without threading arrays everywhere). */
@@ -1017,6 +1019,11 @@ export function addSkillPoint(skillName, skill, maxLevel, allSkills = [], skipEv
     if (!proficiencyCheck.allowed) {
       return { success: false, reason: proficiencyCheck.reason };
     }
+
+    const soulchainTotemCheck = checkSoulchainTotemRestriction(skill, allSkills);
+    if (!soulchainTotemCheck.allowed) {
+      return { success: false, reason: soulchainTotemCheck.reason };
+    }
     
     // Check Devotion restriction (only when adding first point, Paladin and Amazon)
     if (characterInstance) {
@@ -1106,6 +1113,11 @@ export function addSkillPointsBatch(skillName, skill, amount, allSkills = [], ge
       const proficiencyCheck = checkProficiencyRestriction(skill, allSkills);
       if (!proficiencyCheck.allowed) {
         return { success: pointsAdded > 0, pointsAdded, reason: proficiencyCheck.reason };
+      }
+
+      const soulchainTotemCheck = checkSoulchainTotemRestriction(skill, allSkills);
+      if (!soulchainTotemCheck.allowed) {
+        return { success: pointsAdded > 0, pointsAdded, reason: soulchainTotemCheck.reason };
       }
       
       const devotionCheck = checkDevotionRestriction(skill.skillId, characterInstance.skillPoints);
@@ -2027,6 +2039,14 @@ export function getSkillRestrictions(skill, skillType, currentPoints, allSkills 
     restrictions.push({
       type: 'proficiency',
       reason: proficiencyRestriction.reason
+    });
+  }
+
+  const soulchainTotemRestriction = checkSoulchainTotemRestriction(skill, allSkills);
+  if (!soulchainTotemRestriction.allowed) {
+    restrictions.push({
+      type: 'soulchain_totem',
+      reason: soulchainTotemRestriction.reason
     });
   }
 

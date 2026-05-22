@@ -3,6 +3,5 @@ dist/
 __pycache__/
 .DS_Store
 *.local
-*todo*
+todo/*
 *cursor*
-*.csv

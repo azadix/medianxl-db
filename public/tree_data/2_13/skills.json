@@ -20289,7 +20289,7 @@
       "Sacrifice two elements for greater proficiency in a third"
     ],
     "restriction": [
-      "Soulchain can only be learned if you selected a single totem element (NOT YET IMPLEMENTED)"
+      "Soulchain can only be learned if you selected a single totem element"
     ],
     "skillEffect": [
       "[[fireheart_totem]]",

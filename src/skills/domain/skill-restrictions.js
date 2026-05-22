@@ -17,7 +17,7 @@
  * @see docs/ADDING_SKILL_RULES.md
  */
 
-import { Mastery, Coven, Proficiency, Ultimate, Paragon } from './skill-allocation-rules.js';
+import { Mastery, Coven, Proficiency, Ultimate, Paragon, SoulchainTotem } from './skill-allocation-rules.js';
 
 /** @typedef {{ allowed: boolean, reason: string }} AllocationCheckResult */
 
@@ -67,6 +67,15 @@ export function checkProficiencyRestriction(skill, allSkills) {
 }
 
 /**
+ * @param {import('./Skill.js').default | object} skill
+ * @param {object[]} allSkills
+ * @returns {AllocationCheckResult}
+ */
+export function checkSoulchainTotemRestriction(skill, allSkills) {
+    return new SoulchainTotem(skill).checkRestriction(allSkills);
+}
+
+/**
  * Human-readable summary for tooling / new contributors (not used at runtime).
  * Order in {@link src/character/character-state.js} `addSkillPoint` may differ slightly (e.g. devotion last).
  */
@@ -100,5 +109,11 @@ export const FIRST_POINT_RULE_SUMMARY = Object.freeze([
         classRef: 'Paragon',
         predicate: "skill.hasTag('Paragon')",
         rule: 'At most one Paragon-tagged skill per class may have points.'
+    },
+    {
+        id: 'soulchain_totem',
+        classRef: 'SoulchainTotem',
+        predicate: 'soulchain or elemental totem ids (see SoulchainTotem.ELEMENTAL_TOTEMS)',
+        rule: 'Soulchain requires at most one elemental totem with points; Soulchain blocks a second elemental totem.'
     }
 ]);

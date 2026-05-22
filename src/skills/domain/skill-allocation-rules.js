@@ -1,5 +1,5 @@
 /**
- * @file First-point allocation rule subclasses (Mastery, Ultimate, Paragon, Coven, Proficiency).
+ * @file First-point allocation rule subclasses (Mastery, Ultimate, Paragon, Coven, Proficiency, SoulchainTotem).
  * @module skills/domain/skill-allocation-rules
  * @see skill-restrictions.js
  */
@@ -149,6 +149,55 @@ export class Coven extends Skill {
                 allowed: false,
                 reason: `Cannot allocate points to more than ${Coven.MAX_DIFFERENT_SKILLS} of these Coven skills:\n- Living Flame\n- Warp Armor\n- Snow Queen\n- Vengeful Power`
             };
+        }
+
+        return { allowed: true, reason: '' };
+    }
+}
+
+export class SoulchainTotem extends Skill {
+    static ELEMENTAL_TOTEMS = ['fireheart_totem', 'stormeye_totem', 'frostclaw_totem'];
+    static SOULCHAIN_ID = 'soulchain';
+
+    static isElementalTotemSkill(skill) {
+        return SoulchainTotem.ELEMENTAL_TOTEMS.includes(skill.id);
+    }
+
+    static isSoulchainSkill(skill) {
+        return skill.id === SoulchainTotem.SOULCHAIN_ID;
+    }
+
+    static countElementalTotemsWithPoints(allSkills) {
+        return allSkills.filter(skill =>
+            SoulchainTotem.isElementalTotemSkill(skill) && getSkillPoints(skill.id) > 0
+        ).length;
+    }
+
+    checkRestriction(allSkills) {
+        if (getSkillPoints(this.id) > 0) {
+            return { allowed: true, reason: '' };
+        }
+
+        const totemCount = SoulchainTotem.countElementalTotemsWithPoints(allSkills);
+        const soulchainPoints = getSkillPoints(SoulchainTotem.SOULCHAIN_ID);
+
+        if (SoulchainTotem.isSoulchainSkill(this)) {
+            if (totemCount > 1) {
+                return {
+                    allowed: false,
+                    reason: 'Cannot allocate Soulchain while more than one elemental totem skill has points.'
+                };
+            }
+            return { allowed: true, reason: '' };
+        }
+
+        if (SoulchainTotem.isElementalTotemSkill(this)) {
+            if (soulchainPoints > 0 && totemCount >= 1) {
+                return {
+                    allowed: false,
+                    reason: 'Cannot allocate a second elemental totem while Soulchain has points.'
+                };
+            }
         }
 
         return { allowed: true, reason: '' };
