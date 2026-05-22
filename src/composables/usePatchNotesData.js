@@ -4,7 +4,12 @@
  */
 import { ref } from 'vue';
 import { marked } from 'marked';
-import { expandPlaceholdersWithScaling, escapeHtmlText, getSkillIconHTML } from '@/shared/utils.js';
+import {
+  expandPlaceholdersWithScaling,
+  escapeHtmlText,
+  getAssetUrl,
+  getSkillIconHTML,
+} from '@/shared/utils.js';
 import {
   buildSkillTooltipDescriptionBlock,
   buildSkillTooltipHeaderHtml,
@@ -37,10 +42,6 @@ function sortVersionsDesc(a, b) {
   if (ap.major !== bp.major) return bp.major - ap.major;
   if (ap.minor !== bp.minor) return bp.minor - ap.minor;
   return bp.patch - ap.patch;
-}
-
-function getAssetUrl(relativePath) {
-  return new URL(relativePath, window.location.origin + import.meta.env.BASE_URL).href;
 }
 
 async function loadAvailableTreeDataFolders() {

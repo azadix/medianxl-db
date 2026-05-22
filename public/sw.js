@@ -1,4 +1,4 @@
-/* Service worker: cache tree_data JSON and class atlas images after first fetch.
+/* Service worker: cache static game assets after first fetch (tree_data, icons, patch_notes).
  * __CACHE_VERSION__ is replaced at vite build (see vite.config.js). */
 
 const CACHE_NAME = 'medianxl-tree-__CACHE_VERSION__';
@@ -25,15 +25,18 @@ self.addEventListener('activate', (event) => {
 /**
  * @param {string} url
  */
-function shouldCacheTreeDataRequest(url) {
+function shouldCacheStaticRequest(url) {
   let pathname;
   try {
     pathname = new URL(url).pathname;
   } catch {
     return false;
   }
-  if (pathname.includes('/icons/') && /\/icons-shared_missing\.webp$/i.test(pathname)) {
-    return true;
+  if (pathname.includes('/patch_notes/')) {
+    return /\.(json|md)$/i.test(pathname);
+  }
+  if (pathname.includes('/icons/')) {
+    return /\.(webp|png|gif|jpe?g)$/i.test(pathname);
   }
   if (!pathname.includes('/tree_data/')) return false;
   if (pathname.endsWith('.json')) return true;
@@ -43,7 +46,7 @@ function shouldCacheTreeDataRequest(url) {
 
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
-  if (!shouldCacheTreeDataRequest(event.request.url)) return;
+  if (!shouldCacheStaticRequest(event.request.url)) return;
 
   event.respondWith(
     caches.open(CACHE_NAME).then((cache) =>

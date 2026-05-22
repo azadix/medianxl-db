@@ -1,3 +1,14 @@
+import Skill from '@/skills/domain/Skill.js';
+import { isSubskillActive } from '@/skills/domain/conditional-subskills.js';
+import {
+    lookupMergedDisplayNameByInternalName,
+    lookupSkillNameAndDisplayByNumericId,
+    getFileSkillStore
+} from '@/tree/skill-data-store.js';
+import { formulaEvaluator } from '@/skills/domain/formula-evaluator.js';
+import { formatScalingValuesToDescriptionHtml } from '@/skills/domain/scaling-display-html.js';
+import { calculateBandDamageMinMax, isBandDamageStatKey } from '@/skills/domain/damage-calculator.js';
+
 // --- Icon Atlas Helper ---
 const ICON_SIZE = 48;
 const ATLAS_SIZE = 912;
@@ -29,8 +40,8 @@ function escapeHtmlAttr(s) {
  * @param {string} className
  */
 function missingIconPictureHTML(className) {
-    const png = `icons/${MISSING_IMAGE_NAME}`;
-    const webp = `icons/${MISSING_IMAGE_WEBP_NAME}`;
+    const png = getAssetUrl(`icons/${MISSING_IMAGE_NAME}`);
+    const webp = getAssetUrl(`icons/${MISSING_IMAGE_WEBP_NAME}`);
     const cls = escapeHtmlAttr(`image ${className}`.trim());
     return `<picture><source srcset="${escapeHtmlAttr(webp)}" type="image/webp"><img src="${escapeHtmlAttr(png)}" class="${cls}" alt="missing icon"></picture>`;
 }
@@ -46,18 +57,6 @@ export const TAG_GROUPS = {
     "Teleport": [10, 20, 24],
     "Custom": [16, 18, 19, 33, 34, 37]
 };
-
-// Import Skill class for scaling values
-import Skill from '@/skills/domain/Skill.js';
-import { isSubskillActive } from '@/skills/domain/conditional-subskills.js';
-import {
-    lookupMergedDisplayNameByInternalName,
-    lookupSkillNameAndDisplayByNumericId,
-    getFileSkillStore
-} from '@/tree/skill-data-store.js';
-import { formulaEvaluator } from '@/skills/domain/formula-evaluator.js';
-import { formatScalingValuesToDescriptionHtml } from '@/skills/domain/scaling-display-html.js';
-import { calculateBandDamageMinMax, isBandDamageStatKey } from '@/skills/domain/damage-calculator.js';
 
 // --- Skill data (tree_data JSON) load error ---
 export function escapeHtmlText(s) {
@@ -96,6 +95,17 @@ export function showSkillDataLoadError(errorMessage, contentElement = null) {
 }
 
 // --- URL Helpers ---
+
+/**
+ * Resolve a public asset path with Vite `BASE_URL` (GitHub Pages subpath, etc.).
+ * @param {string} relativePath - e.g. `tree_data/2_13/class-ama.webp`
+ * @returns {string} Absolute URL
+ */
+export function getAssetUrl(relativePath) {
+    const base = import.meta.env.BASE_URL || '/';
+    return new URL(relativePath, window.location.origin + base).href;
+}
+
 export function getUrlParams() {
     return Object.fromEntries(new URLSearchParams(window.location.search).entries());
 }
@@ -152,8 +162,8 @@ export function getIconHTML(imagePath, className = '', gameVersionFolder = null)
     const folder = (gameVersionFolder && String(gameVersionFolder).trim())
         ? String(gameVersionFolder).trim()
         : ATLAS_DEFAULT_VERSION_FOLDER;
-    const atlasPng = `tree_data/${folder}/class-${prefix}.png`;
-    const atlasWebp = `tree_data/${folder}/class-${prefix}.webp`;
+    const atlasPng = getAssetUrl(`tree_data/${folder}/class-${prefix}.png`);
+    const atlasWebp = getAssetUrl(`tree_data/${folder}/class-${prefix}.webp`);
     const pngEsc = escapeHtmlAttr(atlasPng);
     const webpEsc = escapeHtmlAttr(atlasWebp);
     // PNG fallback, then WebP-first image-set (reduces bytes where supported).
@@ -213,8 +223,8 @@ export function getSkillIconHTML(imageFileName, humanClassName, className = '', 
     if (file === MISSING_IMAGE_NAME) {
         return missingIconPictureHTML(className);
     }
-    const path = `icons/${prefix}/${file}`;
-    return `<img src="${path}" class="image ${className}">`;
+    const path = getAssetUrl(`icons/${prefix}/${file}`);
+    return `<img src="${escapeHtmlAttr(path)}" class="image ${className}">`;
 }
 
 
