@@ -5104,53 +5104,21 @@
     "baseMaxLevel": 13,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [
-      {
-        "statKey": "attack_speed",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0.2*tree(23)*(1+0.15*blvl)"
-      },
-      {
-        "statKey": "weapon_physical_damage",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0.65*tree(22)*(1+0.15*blvl)"
-      },
-      {
-        "statKey": "spell_damage",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "(0.4*tree(24)*(1+(0.15*blvl)))*(1+bool([[occult_path]])*((4*max(ulvl-125,0))/100))"
-      },
-      {
-        "statKey": "summoned_minion_resistances",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0.15*tree(21)*(1+0.15*blvl)"
-      },
-      {
-        "statKey": "mana_flat",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "6*tree(25)*(1+0.15*blvl)"
-      }
-    ],
+    "scalingConstants": [],
     "description": [
       "Your devotion determines your combat strengths"
     ],
     "restriction": [],
     "skillEffect": [
-      "<p class='has-text-warning'>Necromancer</p>",
-      "{{summoned_minion_resistances}}",
-      "<p class='has-text-warning'>Deathlord</p>",
-      "{{weapon_physical_damage}}",
-      "<p class='has-text-warning'>Alchemist</p>",
-      "{{attack_speed}}",
-      "<p class='has-text-warning'>Nightwalker</p>",
-      "{{spell_damage}}",
-      "<p class='has-text-warning'>Scholar</p>",
-      "{{mana_flat}}"
+      "||death_pact_necromancer||",
+      "",
+      "||death_pact_deathlord||",
+      "",
+      "||death_pact_alchemist||",
+      "",
+      "||death_pact_nightwalker||",
+      "",
+      "||death_pact_scholar||"
     ],
     "image": "icons-nec_162.png"
   },

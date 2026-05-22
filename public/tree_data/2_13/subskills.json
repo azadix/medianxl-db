@@ -679,5 +679,105 @@
       "(Based on Frostclaw Totem base level)"
     ],
     "restriction": []
+  },
+  {
+    "id": "death_pact_necromancer",
+    "numericId": 713,
+    "displayName": "Necromancer",
+    "parentSkillId": "death_pact",
+    "activeWhenTabPoints": 21,
+    "scalingConstants": [
+      {
+        "statKey": "summoned_minion_resistances",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0.15*tree(21)*(1+0.15*blvl)"
+      }
+    ],
+    "description": [],
+    "skillEffect": [
+      "{{summoned_minion_resistances}}"
+    ],
+    "restriction": []
+  },
+  {
+    "id": "death_pact_deathlord",
+    "numericId": 714,
+    "displayName": "Deathlord",
+    "parentSkillId": "death_pact",
+    "activeWhenTabPoints": 22,
+    "scalingConstants": [
+      {
+        "statKey": "weapon_physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0.65*tree(22)*(1+0.15*blvl)"
+      }
+    ],
+    "description": [],
+    "skillEffect": [
+      "{{weapon_physical_damage}}"
+    ],
+    "restriction": []
+  },
+  {
+    "id": "death_pact_alchemist",
+    "numericId": 715,
+    "displayName": "Alchemist",
+    "parentSkillId": "death_pact",
+    "activeWhenTabPoints": 23,
+    "scalingConstants": [
+      {
+        "statKey": "attack_speed",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0.2*tree(23)*(1+0.15*blvl)"
+      }
+    ],
+    "description": [],
+    "skillEffect": [
+      "{{attack_speed}}"
+    ],
+    "restriction": []
+  },
+  {
+    "id": "death_pact_nightwalker",
+    "numericId": 716,
+    "displayName": "Nightwalker",
+    "parentSkillId": "death_pact",
+    "activeWhenTabPoints": 24,
+    "scalingConstants": [
+      {
+        "statKey": "spell_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(0.4*tree(24)*(1+(0.15*blvl)))*(1+bool([[occult_path]])*((4*max(ulvl-125,0))/100))"
+      }
+    ],
+    "description": [],
+    "skillEffect": [
+      "{{spell_damage}}"
+    ],
+    "restriction": []
+  },
+  {
+    "id": "death_pact_scholar",
+    "numericId": 717,
+    "displayName": "Scholar",
+    "parentSkillId": "death_pact",
+    "activeWhenTabPoints": 25,
+    "scalingConstants": [
+      {
+        "statKey": "mana_flat",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "6*tree(25)*(1+0.15*blvl)"
+      }
+    ],
+    "description": [],
+    "skillEffect": [
+      "{{mana_flat}}"
+    ],
+    "restriction": []
   }
 ]
