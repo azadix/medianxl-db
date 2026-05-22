@@ -394,6 +394,10 @@
     color: #eee;
 }
 
+.subskill-inline-block--inactive {
+    opacity: 0.65;
+}
+
 /* Mobile responsive styles */
 @media screen and (max-width: 768px) {
     /* Fix scrolling on mobile */

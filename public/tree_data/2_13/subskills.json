@@ -621,5 +621,63 @@
       "{{enemy_attack_speed}}"
     ],
     "restriction": []
+  },
+  {
+    "id": "soulchain_burning_chain",
+    "numericId": 710,
+    "displayName": "Burning Chain",
+    "parentSkillId": "soulchain",
+    "activeWhenSkillPoints": "fireheart_totem",
+    "scalingConstants": [
+      {
+        "statKey": "regenerate_life",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "max(-1+11*[[fireheart_totem]],0)"
+      }
+    ],
+    "description": [],
+    "skillEffect": [
+      "{{regenerate_life}}",
+      "(Based on Fireheart Totem base level)"
+    ],
+    "restriction": []
+  },
+  {
+    "id": "soulchain_magnetic_chain",
+    "numericId": 711,
+    "displayName": "Magnetic Chain",
+    "parentSkillId": "soulchain",
+    "activeWhenSkillPoints": "stormeye_totem",
+    "scalingConstants": [],
+    "description": [],
+    "skillEffect": [
+      "{{cast_speed}}",
+      "{{hit_recovery}}",
+      "{{movement_speed}}",
+      "(Based on Stormeye Totem base level)"
+    ],
+    "restriction": []
+  },
+  {
+    "id": "soulchain_frozen_chain",
+    "numericId": 712,
+    "displayName": "Frozen Chain",
+    "parentSkillId": "soulchain",
+    "activeWhenSkillPoints": "frostclaw_totem",
+    "scalingConstants": [
+      {
+        "statKey": "defense_flat",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "517*[[frostclaw_totem]]"
+      }
+    ],
+    "description": [],
+    "skillEffect": [
+      "{{defense_flat}}",
+      "(Based on Frostclaw Totem base level)"
+    ],
+    "restriction": []
   }
 ]

@@ -8,6 +8,7 @@
 
 import Skill from '@/skills/domain/Skill.js';
 import { getFileSkillStore } from '@/tree/skill-data-store.js';
+import { isSubskillActive } from '@/skills/domain/conditional-subskills.js';
 import { getSkillVariantKey } from '@/tree/skill-variants.js';
 import {
   getPlannerStatDef,
@@ -398,6 +399,9 @@ export async function recomputePlannerStatsFromSkillAllocations(character, ctx) 
         )
       : [];
     for (const sub of subskills) {
+      if (!isSubskillActive(sub, characterState)) {
+        continue;
+      }
       const subInternalId = String(sub.id);
       const patchedState = {
         ...characterState,

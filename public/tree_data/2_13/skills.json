@@ -20271,20 +20271,7 @@
     "baseMaxLevel": 10,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [
-      {
-        "statKey": "regenerate_life",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "max(-1+11*[[fireheart_totem]],0)"
-      },
-      {
-        "statKey": "defense_flat",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "517*[[frostclaw_totem]]"
-      }
-    ],
+    "scalingConstants": [],
     "description": [
       "Sacrifice two elements for greater proficiency in a third"
     ],
@@ -20298,19 +20285,11 @@
       "[[dark_gathering]]",
       "Maximum level increased by 1 per Base Level",
       "",
-      "<p class='has-text-warning'>Burning Chain</p>",
-      "{{regenerate_life}}",
-      "(Based on Fireheart Totem base level)",
+      "||soulchain_burning_chain||",
       "",
-      "<p class='has-text-warning'>Magnetic Chain</p>",
-      "{{cast_speed}}",
-      "{{hit_recovery}}",
-      "{{movement_speed}}",
-      "(Based on Stormeye Totem base level)",
+      "||soulchain_magnetic_chain||",
       "",
-      "<p class='has-text-warning'>Frozen Chain</p>",
-      "{{defense_flat}}",
-      "(Based on Frostclaw Totem base level)",
+      "||soulchain_frozen_chain||",
       "",
       "Max this skill: Summon two totems per cast"
     ],

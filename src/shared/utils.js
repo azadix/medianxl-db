@@ -49,6 +49,7 @@ export const TAG_GROUPS = {
 
 // Import Skill class for scaling values
 import Skill from '@/skills/domain/Skill.js';
+import { isSubskillActive } from '@/skills/domain/conditional-subskills.js';
 import {
     lookupMergedDisplayNameByInternalName,
     lookupSkillNameAndDisplayByNumericId,
@@ -296,9 +297,10 @@ export async function expandPlaceholdersWithScaling(numericId, level, descriptio
     }
 
     // Expand ||internal_name|| or ||id:123|| into a subskill block (name + all effect lines).
-    // This is done before [[...]] and {{...}} so the inserted block can contain placeholders too.
+    // Blocks are fully expanded first, then shielded from parent [[...]] pass (formulas may contain [[skill]]).
     const subskillBlockRe = /\|\|([a-zA-Z_][a-zA-Z0-9_]*|id:\d+)\|\|/gi;
     const subskillMatches = [...String(expandedDescription).matchAll(subskillBlockRe)];
+    const subskillBlockPlaceholders = [];
     if (subskillMatches.length > 0) {
         const store = getFileSkillStore();
         for (const m of subskillMatches) {
@@ -315,6 +317,8 @@ export async function expandPlaceholdersWithScaling(numericId, level, descriptio
 
             const det = store.getSkillDetail(resolved.internalName);
             const rawEffect = det?.skill_effect ?? '';
+            const subskillRow = store.catalogByInternalId?.get?.(resolved.internalName) ?? null;
+            const active = isSubskillActive(subskillRow, characterState);
             const expandedEffect = await expandPlaceholdersWithScaling(
                 resolved.skillId,
                 level,
@@ -326,14 +330,31 @@ export async function expandPlaceholdersWithScaling(numericId, level, descriptio
             );
             const effectHtml = String(expandedEffect).replace(/\r?\n/g, '<br>');
             const label = escapeHtmlText(resolved.displayName || resolved.internalName);
+            const labelClass = active
+                ? 'has-text-warning has-text-weight-semibold'
+                : 'has-text-grey has-text-weight-semibold';
+            const blockClass = active
+                ? 'subskill-inline-block'
+                : 'subskill-inline-block subskill-inline-block--inactive';
+            const bodyClass = active ? 'subskill-inline-body' : 'subskill-inline-body has-text-grey';
             const block = `
-<div class="subskill-inline-block">
-  <p class="has-text-warning has-text-weight-semibold">${label}</p>
-  <div class="subskill-inline-body">${effectHtml}</div>
+<div class="${blockClass}">
+  <p class="${labelClass}">${label}</p>
+  <div class="${bodyClass}">${effectHtml}</div>
 </div>`.trim();
-            expandedDescription = expandedDescription.replace(full, block);
+            const placeholderToken = `\x00SUBSKILL_BLOCK_${subskillBlockPlaceholders.length}\x00`;
+            subskillBlockPlaceholders.push(block);
+            expandedDescription = expandedDescription.replace(full, placeholderToken);
         }
     }
+
+    const restoreSubskillBlocks = (text) => {
+        let out = String(text);
+        for (let i = 0; i < subskillBlockPlaceholders.length; i++) {
+            out = out.split(`\x00SUBSKILL_BLOCK_${i}\x00`).join(subskillBlockPlaceholders[i]);
+        }
+        return out;
+    };
     
     // First, expand [[internal_name]] or [[id:123]] (id is catalog numericId)
     expandedDescription = expandedDescription.replace(/\[\[(.*?)\]\]/g, (match, inner) => {
@@ -359,6 +380,8 @@ export async function expandPlaceholdersWithScaling(numericId, level, descriptio
             return `<span class="${SCALING_DISPLAY_HTML_CLASSES.unknown}">[skill placeholder error]</span>`;
         }
     });
+
+    expandedDescription = restoreSubskillBlocks(expandedDescription);
     
     // Then, expand stat placeholders {{stat_key}}
     const placeholderMatches = expandedDescription.match(/\{\{(.*?)\}\}/g);
