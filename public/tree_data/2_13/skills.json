@@ -11,7 +11,16 @@
     "baseMaxLevel": 1,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "80",
+        "value1": "22",
+        "value2": "6"
+      }
+    ],
     "description": [],
     "restriction": [],
     "skillEffect": [],
@@ -32,7 +41,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "154",
+        "value1": "31",
+        "value2": "5"
+      }
+    ],
     "description": [
       "Create a whirling vortex of frost around a target point"
     ],
@@ -65,9 +83,9 @@
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "20",
-        "value1": "7",
-        "value2": "8"
+        "value0": "40",
+        "value1": "14",
+        "value2": "7"
       },
       {
         "statKey": "minions",
@@ -136,6 +154,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "3*blvl"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "6"
       }
     ],
     "description": [
@@ -258,9 +284,9 @@
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "55",
-        "value1": "11",
-        "value2": "7"
+        "value0": "110",
+        "value1": "22",
+        "value2": "6"
       },
       {
         "statKey": "duration",
@@ -336,6 +362,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "20"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "6"
       }
     ],
     "description": [
@@ -494,6 +528,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "100"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "66",
+        "value1": "11",
+        "value2": "6"
       }
     ],
     "description": [
@@ -573,7 +615,16 @@
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "88",
+        "value1": "50",
+        "value2": "6"
+      }
+    ],
     "description": [],
     "restriction": [],
     "skillEffect": [],
@@ -605,6 +656,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "60+ceil(0.5*lvl)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "220",
+        "value1": "0",
+        "value2": "6"
       }
     ],
     "description": [
@@ -665,6 +724,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "60"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "45",
+        "value1": "12",
+        "value2": "5"
       }
     ],
     "description": [
@@ -698,7 +765,17 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "250",
+        "value1": "0",
+        "value2": "8",
+        "min_mana": "250"
+      }
+    ],
     "description": [
       "Incinerates all enemies in a large area around you"
     ],
@@ -773,6 +850,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "8*blvl"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "6"
       }
     ],
     "description": [
@@ -813,6 +898,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value2": "frames(40)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "40",
+        "value1": "10",
+        "value2": "7"
       }
     ],
     "description": [
@@ -873,6 +966,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(0*(1+[[continuity]].{{skill_duration}}/100))"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "500",
+        "value1": "0",
+        "value2": "8"
       }
     ],
     "description": [
@@ -935,7 +1036,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "110",
+        "value1": "12",
+        "value2": "6"
+      }
+    ],
     "description": [
       "Shred enemies with crisscrossing magic arrows"
     ],
@@ -966,7 +1076,16 @@
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "22",
+        "value1": "26",
+        "value2": "6"
+      }
+    ],
     "description": [
       "Devastate enemies in front of you with arcane power"
     ],
@@ -1009,6 +1128,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "40"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100",
+        "value1": "10",
+        "value2": "8"
       }
     ],
     "description": [
@@ -1063,6 +1190,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "120"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "45",
+        "value1": "9",
+        "value2": "5"
       }
     ],
     "description": [
@@ -1093,7 +1228,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "6"
+      }
+    ],
     "description": [
       "A torrent of arrows seek the enemy"
     ],
@@ -1119,7 +1263,16 @@
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "6"
+      }
+    ],
     "description": [
       "Proficiency in the craft imparts advanced field survival techniques"
     ],
@@ -1143,7 +1296,17 @@
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "40",
+        "value1": "24",
+        "value2": "5",
+        "min_mana": "2"
+      }
+    ],
     "description": [],
     "restriction": [],
     "skillEffect": [],
@@ -1248,6 +1411,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "100"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "5"
       }
     ],
     "description": [
@@ -1274,7 +1445,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "110",
+        "value1": "24",
+        "value2": "6"
+      }
+    ],
     "description": [
       "Summon two parallel rolling clouds of frost and ice"
     ],
@@ -1316,7 +1496,16 @@
     "baseMaxLevel": 20,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "150",
+        "value1": "-4",
+        "value2": "6"
+      }
+    ],
     "description": [],
     "restriction": [],
     "skillEffect": [],
@@ -1361,7 +1550,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "44",
+        "value1": "35",
+        "value2": "5"
+      }
+    ],
     "description": [
       "Tap into your life force to power a blast of green hellfire"
     ],
@@ -1395,9 +1593,9 @@
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "27",
-        "value1": "6",
-        "value2": "8"
+        "value0": "220",
+        "value1": "48",
+        "value2": "5"
       },
       {
         "statKey": "cooldown",
@@ -1446,6 +1644,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(30000)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "1100",
+        "value1": "0",
+        "value2": "6"
       }
     ],
     "description": [
@@ -1482,7 +1688,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "264",
+        "value1": "31",
+        "value2": "5"
+      }
+    ],
     "description": [
       "Renders target vulnerable to magic and elemental damage"
     ],
@@ -1575,6 +1790,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "75"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "24",
+        "value1": "16",
+        "value2": "5"
       }
     ],
     "description": [
@@ -1603,7 +1826,16 @@
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "132",
+        "value1": "11",
+        "value2": "5"
+      }
+    ],
     "description": [],
     "restriction": [],
     "skillEffect": [],
@@ -1643,6 +1875,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "100-2*blvl"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "22",
+        "value1": "9",
+        "value2": "6"
       }
     ],
     "description": [
@@ -1704,6 +1944,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(750+750*lvl)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "1750",
+        "value1": "0",
+        "value2": "6"
       }
     ],
     "description": [
@@ -1746,6 +1994,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "min(pow(blvl+5, 2),900)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "800",
+        "value1": "80",
+        "value2": "5"
       }
     ],
     "description": [
@@ -1791,6 +2047,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "20+blvl"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "5"
       }
     ],
     "description": [
@@ -1913,6 +2177,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value2": "frames(50)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "40",
+        "value1": "20",
+        "value2": "5"
       }
     ],
     "description": [
@@ -1947,6 +2219,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "Blade Spirits"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "132",
+        "value1": "42",
+        "value2": "6"
       }
     ],
     "description": [
@@ -1985,6 +2265,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "50"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "22",
+        "value1": "10",
+        "value2": "6"
       }
     ],
     "description": [
@@ -2048,7 +2336,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "352",
+        "value1": "35",
+        "value2": "5"
+      }
+    ],
     "description": [
       "Multiple gigantic stunning novas that knock enemies back"
     ],
@@ -2266,6 +2563,14 @@
         "variantKey": "",
         "value0": "2",
         "value1": "1"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "1100",
+        "value1": "55",
+        "value2": "7"
       }
     ],
     "description": [
@@ -2328,9 +2633,9 @@
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "50",
-        "value1": "30",
-        "value2": "5"
+        "value0": "25",
+        "value1": "15",
+        "value2": "6"
       },
       {
         "statKey": "attack_rating",
@@ -2382,7 +2687,16 @@
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "53",
+        "value1": "20",
+        "value2": "5"
+      }
+    ],
     "description": [
       "Blasts enemies with burning thorns"
     ],
@@ -2447,7 +2761,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "5"
+      }
+    ],
     "description": [
       "The power of the war god increases your damage"
     ],
@@ -2529,7 +2852,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "18",
+        "value1": "13",
+        "value2": "5"
+      }
+    ],
     "description": [
       "Fires a deadly but slow moving missile of burning blood"
     ],
@@ -2556,7 +2888,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "2",
+        "value1": "26",
+        "value2": "7"
+      }
+    ],
     "description": [
       "Skull trap that fires blood stars at multiple enemies"
     ],
@@ -2584,7 +2925,16 @@
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "6"
+      }
+    ],
     "description": [
       "Additional bonuses from Life Steal depending on your stance"
     ],
@@ -2640,6 +2990,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(50)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "2200",
+        "value1": "0",
+        "value2": "6"
       }
     ],
     "description": [
@@ -2697,6 +3055,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(125)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "53",
+        "value1": "18",
+        "value2": "6"
       }
     ],
     "description": [
@@ -2887,9 +3253,9 @@
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "10",
-        "value1": "5",
-        "value2": "7"
+        "value0": "40",
+        "value1": "20",
+        "value2": "5"
       },
       {
         "statKey": "cooldown",
@@ -2961,6 +3327,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(75)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "120",
+        "value1": "9",
+        "value2": "5"
       }
     ],
     "description": [
@@ -3039,6 +3413,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "90+10*blvl"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "66",
+        "value1": "33",
+        "value2": "7"
       }
     ],
     "description": [
@@ -3084,9 +3466,9 @@
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "5",
-        "value1": "5",
-        "value2": "7"
+        "value0": "20",
+        "value1": "20",
+        "value2": "5"
       },
       {
         "statKey": "attack_rating_percent",
@@ -3139,7 +3521,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "132",
+        "value1": "0",
+        "value2": "5"
+      }
+    ],
     "description": [
       "Temporarily reduce damage taken"
     ],
@@ -3238,6 +3629,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "Spearwomen"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "264",
+        "value1": "31",
+        "value2": "6"
       }
     ],
     "description": [
@@ -3318,7 +3717,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "60",
+        "value1": "18",
+        "value2": "6"
+      }
+    ],
     "description": [
       "An unstable incantation which conjures a charged volley or nova"
     ],
@@ -3355,6 +3763,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "110"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "22",
+        "value1": "15",
+        "value2": "6"
       }
     ],
     "description": [
@@ -3429,6 +3845,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "10"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "35",
+        "value1": "22",
+        "value2": "5"
       }
     ],
     "description": [
@@ -3515,6 +3939,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "70"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "110",
+        "value1": "9",
+        "value2": "6"
       }
     ],
     "description": [
@@ -3548,7 +3980,16 @@
     "baseMaxLevel": 15,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "900",
+        "value1": "44",
+        "value2": "7"
+      }
+    ],
     "description": [
       "Warp spacetime to slow enemies and distort matter"
     ],
@@ -3590,6 +4031,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(375*(1+[[continuity]].{{skill_duration}}/100))"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "44",
+        "value1": "33",
+        "value2": "6"
       }
     ],
     "description": [
@@ -3625,6 +4074,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "2*blvl"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "6"
       }
     ],
     "description": [
@@ -3653,7 +4110,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "125",
+        "value1": "15",
+        "value2": "8"
+      }
+    ],
     "description": [
       "Conjure magical ripples accross the landscape, empowered by your unspent skill points"
     ],
@@ -3680,7 +4146,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "35",
+        "value1": "22",
+        "value2": "5"
+      }
+    ],
     "description": [
       "Lob a device which splits into exploding shrapnel"
     ],
@@ -3793,7 +4268,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "185",
+        "value1": "31",
+        "value2": "5"
+      }
+    ],
     "description": [
       "Nova of icy terror that forces nearby monsters to flee"
     ],
@@ -3829,6 +4313,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "100"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "440",
+        "value1": "37",
+        "value2": "5"
       }
     ],
     "description": [
@@ -3960,7 +4452,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "44",
+        "value1": "26",
+        "value2": "5"
+      }
+    ],
     "description": [
       "Casts a cone of ice and frost in front of you"
     ],
@@ -4023,6 +4524,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "-785"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "9",
+        "value1": "4",
+        "value2": "6"
       }
     ],
     "description": [
@@ -4229,6 +4738,15 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "25"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "5",
+        "value1": "3",
+        "value2": "7",
+        "min_mana": "1"
       }
     ],
     "description": [
@@ -4340,7 +4858,16 @@
     "baseMaxLevel": 10,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "20",
+        "value1": "10",
+        "value2": "8"
+      }
+    ],
     "description": [
       "A protective shield freezing melee attackers"
     ],
@@ -4465,6 +4992,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "10"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "5"
       }
     ],
     "description": [
@@ -4533,7 +5068,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "40",
+        "value1": "20",
+        "value2": "5"
+      }
+    ],
     "description": [
       "Conjure a searing shockwave of fire"
     ],
@@ -4631,9 +5175,9 @@
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "4",
-        "value1": "3",
-        "value2": "8"
+        "value0": "30",
+        "value1": "24",
+        "value2": "5"
       }
     ],
     "description": [
@@ -4665,7 +5209,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "40",
+        "value1": "7",
+        "value2": "7"
+      }
+    ],
     "description": [
       "Noxious star which periodically poisons enemies near it"
     ],
@@ -4745,6 +5298,15 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "50"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "30",
+        "value1": "2",
+        "value2": "7",
+        "min_mana": "6"
       }
     ],
     "description": [
@@ -4882,7 +5444,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "88",
+        "value1": "11",
+        "value2": "5"
+      }
+    ],
     "description": [
       "Blasts the target zone with concentrated magical energy"
     ],
@@ -4917,9 +5488,9 @@
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "13",
-        "value1": "11",
-        "value2": "6"
+        "value0": "26",
+        "value1": "22",
+        "value2": "5"
       },
       {
         "statKey": "cooldown",
@@ -5008,7 +5579,16 @@
     "baseMaxLevel": 10,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "52",
+        "value1": "41",
+        "value2": "6"
+      }
+    ],
     "description": [],
     "restriction": [],
     "skillEffect": [],
@@ -5099,6 +5679,14 @@
         "variantKey": "",
         "value0": "25",
         "value1": "Attack/Kill/Death Blow"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "64",
+        "value1": "29",
+        "value2": "5"
       }
     ],
     "description": [
@@ -5221,6 +5809,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "-2500"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "176",
+        "value1": "22",
+        "value2": "5"
       }
     ],
     "description": [
@@ -5301,6 +5897,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value2": "frames(25)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "55",
+        "value1": "13",
+        "value2": "6"
       }
     ],
     "description": [
@@ -5394,6 +5998,14 @@
         "variantKey": "",
         "value0": "1",
         "value1": "1"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "240",
+        "value1": "4",
+        "value2": "8"
       }
     ],
     "description": [
@@ -5438,9 +6050,9 @@
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "325",
+        "value0": "1300",
         "value1": "0",
-        "value2": "8"
+        "value2": "6"
       },
       {
         "statKey": "duration",
@@ -5481,6 +6093,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value2": "frames(25)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "35",
+        "value1": "22",
+        "value2": "5"
       }
     ],
     "description": [
@@ -5516,6 +6136,15 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(25*({{magic_resistance}}/25))"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "2200",
+        "value1": "0",
+        "value2": "6",
+        "min_mana": "400"
       }
     ],
     "description": [
@@ -5546,7 +6175,16 @@
     "baseMaxLevel": 15,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "880",
+        "value1": "66",
+        "value2": "5"
+      }
+    ],
     "description": [
       "Teleport to target location, freezing nearby monsters"
     ],
@@ -5587,6 +6225,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "60-2*blvl"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "40",
+        "value1": "20",
+        "value2": "5"
       }
     ],
     "description": [
@@ -5650,7 +6296,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "220",
+        "value1": "0",
+        "value2": "5"
+      }
+    ],
     "description": [
       "Converts target monster for a longer time than a normal charm"
     ],
@@ -5685,6 +6340,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(((255+5*lvl)*(1+[[continuity]].{{skill_duration}}/100)))"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "352",
+        "value1": "35",
+        "value2": "5"
       }
     ],
     "description": [
@@ -5712,7 +6375,16 @@
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "8",
+        "value1": "12",
+        "value2": "6"
+      }
+    ],
     "description": [],
     "restriction": [],
     "skillEffect": [],
@@ -5730,7 +6402,16 @@
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "35",
+        "value1": "20",
+        "value2": "8"
+      }
+    ],
     "description": [],
     "restriction": [],
     "skillEffect": [],
@@ -5801,6 +6482,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "12+2*blvl"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "440",
+        "value1": "11",
+        "value2": "6"
       }
     ],
     "description": [
@@ -5825,7 +6514,16 @@
     "baseMaxLevel": 8,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "35",
+        "value1": "20",
+        "value2": "7"
+      }
+    ],
     "description": [],
     "restriction": [],
     "skillEffect": [],
@@ -5869,7 +6567,7 @@
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "165",
+        "value0": "150",
         "value1": "52",
         "value2": "5"
       }
@@ -5917,6 +6615,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "100"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "5"
       }
     ],
     "description": [
@@ -5953,6 +6659,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "100"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "12",
+        "value1": "11",
+        "value2": "6"
       }
     ],
     "description": [
@@ -5985,7 +6699,16 @@
     "baseMaxLevel": 20,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "6",
+        "value1": "2",
+        "value2": "7"
+      }
+    ],
     "description": [
       "Unleash a tremor followed by an aftershock"
     ],
@@ -6030,6 +6753,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(15000)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "330",
+        "value1": "0",
+        "value2": "5"
       }
     ],
     "description": [
@@ -6085,6 +6816,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(75)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "220",
+        "value1": "13",
+        "value2": "5"
       }
     ],
     "description": [
@@ -6118,7 +6857,16 @@
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "40",
+        "value1": "31",
+        "value2": "5"
+      }
+    ],
     "description": [
       "Unleashes a twister of forbidden power"
     ],
@@ -6144,7 +6892,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "22",
+        "value1": "15",
+        "value2": "5"
+      }
+    ],
     "description": [
       "Fires wide piercing blasts of lightning in front of you"
     ],
@@ -6253,6 +7010,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "1+[[dark_gathering]]/5"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "761",
+        "value1": "95",
+        "value2": "5"
       }
     ],
     "description": [
@@ -6289,6 +7054,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(750*(1+[[continuity]].{{skill_duration}}/100))"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "132",
+        "value1": "15",
+        "value2": "5"
       }
     ],
     "description": [
@@ -6349,7 +7122,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "158",
+        "value1": "53",
+        "value2": "5"
+      }
+    ],
     "description": [
       "An Elfin Spirit whose song charms nearby enemies"
     ],
@@ -6430,6 +7212,14 @@
         "variantKey": "",
         "value0": "Spirits",
         "value1": "1+blvl/7"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "26",
+        "value1": "29",
+        "value2": "5"
       }
     ],
     "description": [
@@ -6469,6 +7259,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(max(200-floor({{mana_regeneration_rate}}/6),75))"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "6"
       }
     ],
     "description": [
@@ -6512,6 +7310,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "Globules"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "55",
+        "value1": "15",
+        "value2": "5"
       }
     ],
     "description": [
@@ -6776,6 +7582,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "90"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "8",
+        "value1": "8",
+        "value2": "5"
       }
     ],
     "description": [
@@ -6825,7 +7639,16 @@
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "6"
+      }
+    ],
     "description": [
       "Improves Whirlwind if wielding a two-handed weapon"
     ],
@@ -6852,7 +7675,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "666",
+        "value1": "6",
+        "value2": "8"
+      }
+    ],
     "description": [
       "Inflicts heavenly flames that spread to others"
     ],
@@ -6925,6 +7757,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames((750+250*(lvl-1))*(1+[[continuity]].{{skill_duration}}/100))"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "900",
+        "value1": "24",
+        "value2": "6"
       }
     ],
     "description": [
@@ -7111,6 +7951,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "10"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100",
+        "value1": "5",
+        "value2": "8"
       }
     ],
     "description": [
@@ -7212,6 +8060,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "40+10*lvl"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "110",
+        "value1": "0",
+        "value2": "5"
       }
     ],
     "description": [
@@ -7344,7 +8200,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "340",
+        "value1": "28",
+        "value2": "6"
+      }
+    ],
     "description": [
       "Conjure a massive barrage of fireballs"
     ],
@@ -7391,6 +8256,14 @@
         "variantKey": "",
         "value0": "33",
         "value1": "Attack/Kill/Death Blow"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "20",
+        "value1": "6",
+        "value2": "7"
       }
     ],
     "description": [
@@ -7460,6 +8333,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "30+3,5*blvl"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "660",
+        "value1": "154",
+        "value2": "5"
       }
     ],
     "description": [
@@ -7494,9 +8375,9 @@
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "15",
-        "value1": "20",
-        "value2": "8"
+        "value0": "30",
+        "value1": "40",
+        "value2": "7"
       },
       {
         "statKey": "totems",
@@ -7551,9 +8432,9 @@
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "5",
-        "value1": "5",
-        "value2": "7"
+        "value0": "20",
+        "value1": "20",
+        "value2": "5"
       },
       {
         "statKey": "attack_rating_percent",
@@ -7618,7 +8499,17 @@
         "restriction_override": null
       }
     ],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "5",
+        "min_mana": "8"
+      }
+    ],
     "description": [
       "Casts a wave of exploding firebolts in front of you"
     ],
@@ -7658,7 +8549,16 @@
         "restriction_override": null
       }
     ],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "5"
+      }
+    ],
     "description": [
       "Calls down a massive pillar of flames from the sky"
     ],
@@ -7692,6 +8592,15 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "100"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "18",
+        "value1": "15",
+        "value2": "5",
+        "min_mana": "5"
       }
     ],
     "description": [
@@ -7725,7 +8634,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "18",
+        "value1": "13",
+        "value2": "6"
+      }
+    ],
     "description": [
       "Electrocutes and blinds nearby enemies"
     ],
@@ -7810,7 +8728,8 @@
         "variantKey": "",
         "value0": "1000",
         "value1": "0",
-        "value2": "8"
+        "value2": "8",
+        "min_mana": "750"
       },
       {
         "statKey": "duration",
@@ -7908,7 +8827,16 @@
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "22",
+        "value1": "18",
+        "value2": "5"
+      }
+    ],
     "description": [
       "Casts multiple bolts of lightning to scorch your enemies"
     ],
@@ -7985,6 +8913,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(125+3*(lvl-1))"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "132",
+        "value1": "13",
+        "value2": "5"
       }
     ],
     "description": [
@@ -8102,6 +9038,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "70"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100",
+        "value1": "10",
+        "value2": "8"
       }
     ],
     "description": [
@@ -8133,7 +9077,16 @@
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "40",
+        "value1": "26",
+        "value2": "5"
+      }
+    ],
     "description": [
       "Emit a wave of creeeping frozen doom"
     ],
@@ -8215,9 +9168,9 @@
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "15",
-        "value1": "20",
-        "value2": "8"
+        "value0": "30",
+        "value1": "40",
+        "value2": "7"
       },
       {
         "statKey": "totems",
@@ -8260,7 +9213,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "26",
+        "value1": "18",
+        "value2": "5"
+      }
+    ],
     "description": [
       "Unleash homing waves of frost upon your enemies"
     ],
@@ -8286,7 +9248,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "220",
+        "value1": "36",
+        "value2": "5"
+      }
+    ],
     "description": [
       "Ice missile that shatters on impact, damaging nearby enemies"
     ],
@@ -8347,6 +9318,14 @@
         "variantKey": "",
         "value0": "explosions",
         "value1": "frames(50)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "523",
+        "value1": "306",
+        "value2": "5"
       }
     ],
     "description": [
@@ -8382,7 +9361,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "60",
+        "value1": "24",
+        "value2": "6"
+      }
+    ],
     "description": [
       "Creates a globe of frozen death"
     ],
@@ -8433,6 +9421,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(125)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "22",
+        "value1": "37",
+        "value2": "5"
       }
     ],
     "description": [
@@ -8468,6 +9464,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "140"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "220",
+        "value1": "35",
+        "value2": "6"
       }
     ],
     "description": [
@@ -8536,7 +9540,16 @@
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "6"
+      }
+    ],
     "description": [
       "Empowers Iron Spiral and Thunderstorm"
     ],
@@ -8571,6 +9584,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "3"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "106",
+        "value1": "18",
+        "value2": "5"
       }
     ],
     "description": [
@@ -8772,6 +9793,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(50)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "493",
+        "value1": "39",
+        "value2": "5"
       }
     ],
     "description": [
@@ -8801,7 +9830,16 @@
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "30",
+        "value1": "20",
+        "value2": "6"
+      }
+    ],
     "description": [
       "Unleash a freezing cascade through your weapon"
     ],
@@ -8909,6 +9947,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(175*(1+[[continuity]].{{skill_duration}}/100))"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "66",
+        "value1": "11",
+        "value2": "5"
       }
     ],
     "description": [
@@ -8942,6 +9988,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "10"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "422",
+        "value1": "26",
+        "value2": "5"
       }
     ],
     "description": [
@@ -9036,6 +10090,15 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "100"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "34",
+        "value1": "11",
+        "value2": "5",
+        "min_mana": "5"
       }
     ],
     "description": [
@@ -9074,6 +10137,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(15000*(1+[[continuity]].{{skill_duration}}/100))"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "5"
       }
     ],
     "description": [
@@ -9182,6 +10253,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "range(36)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100",
+        "value1": "6",
+        "value2": "6"
       }
     ],
     "description": [
@@ -9225,6 +10304,14 @@
         "variantKey": "",
         "value0": "100",
         "value1": "Kill/Death Blow"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "31",
+        "value1": "29",
+        "value2": "5"
       }
     ],
     "description": [
@@ -9269,8 +10356,8 @@
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "280",
-        "value1": "8",
+        "value0": "308",
+        "value1": "7",
         "value2": "5"
       },
       {
@@ -9332,6 +10419,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(750)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "200",
+        "value1": "44",
+        "value2": "6"
       }
     ],
     "description": [
@@ -9378,6 +10473,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "10-[[momentum]]"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "550",
+        "value1": "24",
+        "value2": "5"
       }
     ],
     "description": [
@@ -9411,7 +10514,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "220",
+        "value1": "31",
+        "value2": "5"
+      }
+    ],
     "description": [
       "Uses target enemy as a focus for a storm of ice and frost"
     ],
@@ -9452,6 +10564,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "25"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "44",
+        "value1": "31",
+        "value2": "4"
       }
     ],
     "description": [
@@ -9489,6 +10609,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "100"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "125",
+        "value1": "50",
+        "value2": "5"
       }
     ],
     "description": [
@@ -9550,6 +10678,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "100-min(lvl,25)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "22",
+        "value1": "15",
+        "value2": "6"
       }
     ],
     "description": [
@@ -9597,6 +10733,14 @@
         "variantKey": "",
         "value0": "5+blvl/4",
         "value1": "frames(25)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "26",
+        "value1": "24",
+        "value2": "5"
       }
     ],
     "description": [
@@ -9639,6 +10783,14 @@
         "variantKey": "",
         "value0": "Harvesters",
         "value1": "1+min(blvl/3,4)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "168",
+        "value1": "34",
+        "value2": "6"
       }
     ],
     "description": [
@@ -9678,6 +10830,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(30)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "6"
       }
     ],
     "description": [
@@ -9720,6 +10880,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(250)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "660",
+        "value1": "0",
+        "value2": "5"
       }
     ],
     "description": [
@@ -9749,7 +10917,16 @@
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "6"
+      }
+    ],
     "description": [
       "Amplifies your Physical prowess and nullifies your Elemental power"
     ],
@@ -9841,6 +11018,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "5*floor(lvl/2)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "240",
+        "value1": "9",
+        "value2": "5"
       }
     ],
     "description": [
@@ -9887,6 +11072,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "70"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "110",
+        "value1": "0",
+        "value2": "7"
       }
     ],
     "description": [
@@ -9949,6 +11142,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(0*(1+[[continuity]].{{skill_duration}}/100))"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "440",
+        "value1": "297",
+        "value2": "5"
       }
     ],
     "description": [
@@ -10090,7 +11291,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "750",
+        "value1": "0",
+        "value2": "6"
+      }
+    ],
     "description": [
       "Sacred circle that increases the power of spells cast within"
     ],
@@ -10125,9 +11335,9 @@
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "600",
-        "value1": "120",
-        "value2": "5"
+        "value0": "400",
+        "value1": "60",
+        "value2": "6"
       },
       {
         "statKey": "cooldown",
@@ -10268,6 +11478,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "range(12)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "6"
       }
     ],
     "description": [
@@ -10350,6 +11568,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "1+blvl/10"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "53",
+        "value1": "33",
+        "value2": "5"
       }
     ],
     "description": [
@@ -10393,6 +11619,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "50"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "51",
+        "value1": "9",
+        "value2": "5"
       }
     ],
     "description": [
@@ -10432,6 +11666,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value2": "frames(250)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "26",
+        "value1": "13",
+        "value2": "5"
       }
     ],
     "description": [
@@ -10464,7 +11706,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "220",
+        "value1": "22",
+        "value2": "5"
+      }
+    ],
     "description": [
       "Casts a nova of ice bolts"
     ],
@@ -10507,6 +11758,14 @@
         "variantKey": "",
         "value0": "33",
         "value1": "Attack/Kill/Death Blow"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "132",
+        "value1": "26",
+        "value2": "6"
       }
     ],
     "description": [
@@ -10542,7 +11801,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "20",
+        "value1": "5",
+        "value2": "7"
+      }
+    ],
     "description": [
       "Rapidly accelerating shard of ice which delivers heavy damage"
     ],
@@ -10587,6 +11855,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "100"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "44",
+        "value1": "20",
+        "value2": "5"
       }
     ],
     "description": [
@@ -10622,8 +11898,8 @@
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "600",
-        "value1": "56",
+        "value0": "660",
+        "value1": "57",
         "value2": "5"
       },
       {
@@ -10664,6 +11940,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "5*lvl"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "8"
       }
     ],
     "description": [
@@ -10697,7 +11981,7 @@
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "328",
+        "value0": "330",
         "value1": "0",
         "value2": "5"
       },
@@ -10741,7 +12025,16 @@
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "9",
+        "value1": "31",
+        "value2": "6"
+      }
+    ],
     "description": [
       "An energy wave dealing damage based on lost mana"
     ],
@@ -10818,6 +12111,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "170"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "44",
+        "value1": "24",
+        "value2": "5"
       }
     ],
     "description": [
@@ -10905,6 +12206,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "15+5*blvl"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "44",
+        "value1": "56",
+        "value2": "5"
       }
     ],
     "description": [
@@ -10967,6 +12276,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value2": "frames(22.5)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "46",
+        "value1": "35",
+        "value2": "5"
       }
     ],
     "description": [
@@ -11008,6 +12325,14 @@
         "variantKey": "",
         "value0": "100",
         "value1": "frames(20)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "53",
+        "value1": "18",
+        "value2": "5"
       }
     ],
     "description": [
@@ -11096,6 +12421,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "5+5*lvl"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "8",
+        "value1": "4",
+        "value2": "5"
       }
     ],
     "description": [
@@ -11483,6 +12816,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "range(6)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "80",
+        "value1": "43",
+        "value2": "5"
       }
     ],
     "description": [
@@ -11523,6 +12864,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(75)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "30",
+        "value1": "0",
+        "value2": "8"
       }
     ],
     "description": [
@@ -11552,7 +12901,16 @@
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "26",
+        "value1": "20",
+        "value2": "5"
+      }
+    ],
     "description": [
       "Unleashes multiple homing ice wraiths"
     ],
@@ -11612,7 +12970,16 @@
     "baseMaxLevel": 10,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "400",
+        "value1": "10",
+        "value2": "6"
+      }
+    ],
     "description": [],
     "restriction": [],
     "skillEffect": [],
@@ -11641,6 +13008,14 @@
         "variantKey": "",
         "value0": "novas",
         "value1": "frames(50)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "1760",
+        "value1": "0",
+        "value2": "7"
       }
     ],
     "description": [
@@ -11690,6 +13065,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "25"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "2900",
+        "value1": "0",
+        "value2": "6"
       }
     ],
     "description": [
@@ -11851,7 +13234,16 @@
     "baseMaxLevel": 5,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "6"
+      }
+    ],
     "description": [
       "Whirlwind attacks restore life"
     ],
@@ -11905,6 +13297,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "55"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "220",
+        "value1": "0",
+        "value2": "5"
       }
     ],
     "description": [
@@ -11944,6 +13344,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "100"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "110",
+        "value1": "40",
+        "value2": "5"
       }
     ],
     "description": [
@@ -11989,6 +13397,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "3+3*lvl"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "572",
+        "value1": "57",
+        "value2": "5"
       }
     ],
     "description": [
@@ -12051,6 +13467,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(125)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "172",
+        "value1": "20",
+        "value2": "5"
       }
     ],
     "description": [
@@ -12091,6 +13515,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(150)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "62",
+        "value1": "37",
+        "value2": "5"
       }
     ],
     "description": [
@@ -12142,6 +13574,14 @@
         "variantKey": "",
         "value0": "8*blvl",
         "value1": "10*blvl"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "5"
       }
     ],
     "description": [
@@ -12200,7 +13640,16 @@
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "317",
+        "value1": "40",
+        "value2": "5"
+      }
+    ],
     "description": [
       "Increases offensive and defensive power"
     ],
@@ -12269,6 +13718,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "Lorenadoes"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "22",
+        "value1": "18",
+        "value2": "5"
       }
     ],
     "description": [
@@ -12303,9 +13760,10 @@
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "53",
-        "value1": "15",
-        "value2": "5"
+        "value0": "110",
+        "value1": "13",
+        "value2": "6",
+        "min_mana": "12"
       },
       {
         "statKey": "converts_phys_to_magic",
@@ -12352,6 +13810,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "range(6)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "8",
+        "value1": "23",
+        "value2": "5"
       }
     ],
     "description": [
@@ -12394,6 +13860,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(45*(1+[[continuity]].{{skill_duration}}/100))"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "6"
       }
     ],
     "description": [
@@ -12496,6 +13970,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "1+[[dark_gathering]]/5"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "264",
+        "value1": "31",
+        "value2": "6"
       }
     ],
     "description": [
@@ -12531,6 +14013,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(3000*(1+[[continuity]].{{skill_duration}}/100))"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "440",
+        "value1": "0",
+        "value2": "5"
       }
     ],
     "description": [
@@ -12669,6 +14159,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "85"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "75",
+        "value1": "6",
+        "value2": "8"
       }
     ],
     "description": [
@@ -12771,7 +14269,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "581",
+        "value1": "73",
+        "value2": "5"
+      }
+    ],
     "description": [
       "Bombard the target area with a continuous rain of meteors"
     ],
@@ -12813,6 +14320,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(150)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "53",
+        "value1": "20",
+        "value2": "5"
       }
     ],
     "description": [
@@ -12848,6 +14363,14 @@
         "variantKey": "",
         "value0": "1",
         "value1": "500-50*blvl"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "6"
       }
     ],
     "description": [
@@ -12878,9 +14401,9 @@
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "550",
+        "value0": "1100",
         "value1": "0",
-        "value2": "8"
+        "value2": "7"
       },
       {
         "statKey": "cooldown",
@@ -12926,6 +14449,14 @@
         "variantKey": "",
         "value0": "Beams",
         "value1": "1+blvl/15"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "16",
+        "value1": "18",
+        "value2": "5"
       }
     ],
     "description": [
@@ -13115,6 +14646,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(0*(1+[[continuity]].{{skill_duration}}/100))"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "13",
+        "value1": "20",
+        "value2": "5"
       }
     ],
     "description": [
@@ -13174,7 +14713,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "5"
+      }
+    ],
     "description": [
       "Walk to target location"
     ],
@@ -13197,7 +14745,16 @@
     "baseMaxLevel": 10,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "770",
+        "value1": "22",
+        "value2": "6"
+      }
+    ],
     "description": [
       "Field of wild magic that pierces resistances"
     ],
@@ -13323,9 +14880,9 @@
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "25",
-        "value1": "25",
-        "value2": "6"
+        "value0": "50",
+        "value1": "50",
+        "value2": "5"
       },
       {
         "statKey": "attack_rating",
@@ -13383,6 +14940,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(250*(1+[[continuity]].{{skill_duration}}/100))"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "106",
+        "value1": "22",
+        "value2": "5"
       }
     ],
     "description": [
@@ -13459,6 +15024,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "75"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "22",
+        "value1": "9",
+        "value2": "6"
       }
     ],
     "description": [
@@ -13508,7 +15081,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "106",
+        "value1": "22",
+        "value2": "5"
+      }
+    ],
     "description": [
       "Places a powerful electric time bomb"
     ],
@@ -13610,7 +15192,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "330",
+        "value1": "18",
+        "value2": "5"
+      }
+    ],
     "description": [
       "A ring of arrows around you"
     ],
@@ -13854,7 +15445,8 @@
         "variantKey": "",
         "value0": "4000",
         "value1": "0",
-        "value2": "8"
+        "value2": "8",
+        "min_mana": "4000"
       }
     ],
     "description": [
@@ -13902,6 +15494,14 @@
         "variantKey": "",
         "value0": "activations",
         "value1": "frames(50)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "8"
       }
     ],
     "description": [
@@ -13952,6 +15552,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "7+blvl/2"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "43",
+        "value1": "9",
+        "value2": "5"
       }
     ],
     "description": [
@@ -13982,7 +15590,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "900",
+        "value1": "90",
+        "value2": "6"
+      }
+    ],
     "description": [
       "A shadow overlord to lead your phantom army"
     ],
@@ -14016,6 +15633,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "max(frames(50-5*blvl),0)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "220",
+        "value1": "44",
+        "value2": "5"
       }
     ],
     "description": [
@@ -14313,6 +15938,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "40"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "440",
+        "value1": "0",
+        "value2": "5"
       }
     ],
     "description": [
@@ -14411,6 +16044,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "60"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "60",
+        "value1": "3",
+        "value2": "8"
       }
     ],
     "description": [
@@ -14445,7 +16086,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "145",
+        "value1": "26",
+        "value2": "6"
+      }
+    ],
     "description": [
       "Creates an expanding pentagram of fire around you"
     ],
@@ -14512,9 +16162,9 @@
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "165",
-        "value1": "35",
-        "value2": "7"
+        "value0": "330",
+        "value1": "70",
+        "value2": "6"
       },
       {
         "statKey": "poison_dot",
@@ -14575,6 +16225,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "range(48+3*lvl)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "352",
+        "value1": "13",
+        "value2": "5"
       }
     ],
     "description": [
@@ -14606,7 +16264,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "80",
+        "value1": "20",
+        "value2": "6"
+      }
+    ],
     "description": [
       "Casts a wide flame wave in front of you"
     ],
@@ -14635,7 +16302,16 @@
     "baseMaxLevel": 5,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "6"
+      }
+    ],
     "description": [
       "Find extra loot when you slay monsters"
     ],
@@ -14668,9 +16344,9 @@
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "366",
-        "value1": "13",
-        "value2": "7"
+        "value0": "733",
+        "value1": "26",
+        "value2": "6"
       },
       {
         "statKey": "duration",
@@ -14718,7 +16394,16 @@
     "baseMaxLevel": 10,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "26",
+        "value1": "15",
+        "value2": "5"
+      }
+    ],
     "description": [
       "Improves your combat fortitude"
     ],
@@ -14762,6 +16447,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "25"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "20",
+        "value1": "3",
+        "value2": "7"
       }
     ],
     "description": [
@@ -14797,7 +16490,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "44",
+        "value1": "26",
+        "value2": "5"
+      }
+    ],
     "description": [
       "Throw a barrel full of explosive powder!"
     ],
@@ -14825,7 +16527,16 @@
     "baseMaxLevel": 1,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "110",
+        "value1": "40",
+        "value2": "4"
+      }
+    ],
     "description": [
       "Launch a short range hammer that sacrifices its piercing capabilities for greatly increased impact damage"
     ],
@@ -14862,6 +16573,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "50*blvl"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "6"
       }
     ],
     "description": [
@@ -14990,7 +16709,16 @@
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "6"
+      }
+    ],
     "description": [
       "Your Wolves reduce Elemental defenses instead of Physical"
     ],
@@ -15046,7 +16774,16 @@
     "baseMaxLevel": 5,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "20",
+        "value1": "0",
+        "value2": "8"
+      }
+    ],
     "description": [
       "Discharge the power of the elements"
     ],
@@ -15162,6 +16899,14 @@
         "variantKey": "",
         "value0": "25",
         "value1": "Attack/Kill/Death Blow"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "84",
+        "value1": "29",
+        "value2": "5"
       }
     ],
     "description": [
@@ -15237,9 +16982,9 @@
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "11",
-        "value1": "6",
-        "value2": "8"
+        "value0": "44",
+        "value1": "24",
+        "value2": "6"
       },
       {
         "statKey": "cooldown",
@@ -15286,9 +17031,9 @@
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "10",
-        "value1": "21",
-        "value2": "6"
+        "value0": "20",
+        "value1": "42",
+        "value2": "5"
       },
       {
         "statKey": "magic_feedback_damage_percent",
@@ -15389,6 +17134,14 @@
         "variantKey": "",
         "value0": "625*if([[paragon_of_sanctity]],if(ulvl>=136,1.2,1),1)",
         "value1": "frames(125)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "6"
       }
     ],
     "description": [
@@ -15539,7 +17292,16 @@
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "44",
+        "value1": "22",
+        "value2": "5"
+      }
+    ],
     "description": [
       "A massive boulder of fire that explodes on impact"
     ],
@@ -15578,9 +17340,9 @@
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "33",
-        "value1": "6",
-        "value2": "8"
+        "value0": "264",
+        "value1": "48",
+        "value2": "5"
       },
       {
         "statKey": "attack_speed",
@@ -15663,6 +17425,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "1+ceil(blvl/10)+bool([[progenys_blessing]])"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "32",
+        "value1": "15",
+        "value2": "6"
       }
     ],
     "description": [
@@ -15695,7 +17465,16 @@
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "185",
+        "value1": "61",
+        "value2": "5"
+      }
+    ],
     "description": [
       "Target enemy as a focus for a slowly expanding rain of embers"
     ],
@@ -15718,7 +17497,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "110",
+        "value1": "15",
+        "value2": "5"
+      }
+    ],
     "description": [],
     "restriction": [],
     "skillEffect": [],
@@ -15736,7 +17524,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "220",
+        "value1": "13",
+        "value2": "6"
+      }
+    ],
     "description": [],
     "restriction": [],
     "skillEffect": [],
@@ -15791,6 +17588,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "13"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "176",
+        "value1": "22",
+        "value2": "6"
       }
     ],
     "description": [
@@ -15882,6 +17687,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "7*lvl+3*blvl"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "5",
+        "value1": "2",
+        "value2": "8"
       }
     ],
     "description": [
@@ -15914,7 +17727,16 @@
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "120",
+        "value1": "40",
+        "value2": "7"
+      }
+    ],
     "description": [
       "Grants an aura which increases caster prowess"
     ],
@@ -15956,6 +17778,14 @@
         "variantKey": "",
         "value0": "2",
         "value1": "1"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "246",
+        "value1": "31",
+        "value2": "5"
       }
     ],
     "description": [
@@ -16109,6 +17939,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "50"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "31",
+        "value1": "13",
+        "value2": "5"
       }
     ],
     "description": [
@@ -16175,6 +18013,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "25*blvl"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "5"
       }
     ],
     "description": [
@@ -16215,6 +18061,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "55"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "5",
+        "value1": "2",
+        "value2": "8"
       }
     ],
     "description": [
@@ -16314,6 +18168,14 @@
         "variantKey": "",
         "value0": "50",
         "value1": "Kill/Death Blow"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "330",
+        "value1": "44",
+        "value2": "6"
       }
     ],
     "description": [
@@ -16356,6 +18218,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "140"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "8",
+        "value1": "8",
+        "value2": "5"
       }
     ],
     "description": [
@@ -16383,7 +18253,16 @@
     "baseMaxLevel": 1,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "220",
+        "value1": "27",
+        "value2": "8"
+      }
+    ],
     "description": [],
     "restriction": [],
     "skillEffect": [],
@@ -16454,6 +18333,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(75)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "48",
+        "value1": "22",
+        "value2": "6"
       }
     ],
     "description": [
@@ -16482,7 +18369,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "660",
+        "value1": "22",
+        "value2": "6"
+      }
+    ],
     "description": [
       "Casts a searing sun that burns enemies while passing overhead"
     ],
@@ -16563,7 +18459,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "88",
+        "value1": "0",
+        "value2": "5"
+      }
+    ],
     "description": [
       "Melee attack that produces a rock that bounces off enemies"
     ],
@@ -16814,6 +18719,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "-2*floor(max({{attack_speed}}-500,0)/3)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100",
+        "value1": "0",
+        "value2": "8"
       }
     ],
     "description": [
@@ -16858,6 +18771,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(2250*(1+[[continuity]].{{skill_duration}}/100))"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "440",
+        "value1": "48",
+        "value2": "5"
       }
     ],
     "description": [
@@ -16894,6 +18815,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "3*blvl"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "6"
       }
     ],
     "description": [
@@ -16918,7 +18847,16 @@
     "baseMaxLevel": 4,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "5"
+      }
+    ],
     "description": [],
     "restriction": [],
     "skillEffect": [],
@@ -16939,7 +18877,16 @@
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "12",
+        "value1": "19",
+        "value2": "5"
+      }
+    ],
     "description": [
       "Knives coated in deadly poison"
     ],
@@ -17035,6 +18982,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(125)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "44",
+        "value1": "41",
+        "value2": "5"
       }
     ],
     "description": [
@@ -17093,6 +19048,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "-35"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "22",
+        "value1": "15",
+        "value2": "6"
       }
     ],
     "description": [
@@ -17126,7 +19089,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "13",
+        "value1": "22",
+        "value2": "5"
+      }
+    ],
     "description": [
       "Blast the target area with an explosive orb of holy fire"
     ],
@@ -17189,6 +19161,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "-25"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "44",
+        "value1": "41",
+        "value2": "5"
       }
     ],
     "description": [
@@ -17240,6 +19220,14 @@
         "variantKey": "",
         "value0": "25",
         "value1": "Attack/Kill/Death Blow"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "396",
+        "value1": "35",
+        "value2": "4"
       }
     ],
     "description": [
@@ -17319,6 +19307,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "14+blvl"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "6"
       }
     ],
     "description": [
@@ -17422,7 +19418,16 @@
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "8"
+      }
+    ],
     "description": [
       "Improves the combat prowess of your Ancient Spirits"
     ],
@@ -17464,6 +19469,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(20)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "44",
+        "value1": "26",
+        "value2": "5"
       }
     ],
     "description": [
@@ -17548,7 +19561,16 @@
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "88",
+        "value1": "24",
+        "value2": "5"
+      }
+    ],
     "description": [
       "Detonates into a chaotic nova near enemies"
     ],
@@ -17637,6 +19659,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "-25"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "160",
+        "value1": "16",
+        "value2": "5"
       }
     ],
     "description": [
@@ -17673,7 +19703,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "110",
+        "value1": "20",
+        "value2": "5"
+      }
+    ],
     "description": [
       "Teleport to target enemy, dealing weapon damage around you"
     ],
@@ -17754,6 +19793,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "50"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "88",
+        "value1": "11",
+        "value2": "5"
       }
     ],
     "description": [
@@ -17792,6 +19839,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(50)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "850",
+        "value1": "85",
+        "value2": "6"
       }
     ],
     "description": [
@@ -17827,6 +19882,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "Flayers"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "53",
+        "value1": "31",
+        "value2": "5"
       }
     ],
     "description": [
@@ -17869,6 +19932,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(50)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "57",
+        "value1": "15",
+        "value2": "5"
       }
     ],
     "description": [
@@ -17905,6 +19976,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(25)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "60",
+        "value1": "26",
+        "value2": "5"
       }
     ],
     "description": [
@@ -17942,6 +20021,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value2": "frames(45*if([[gladiators_dominance]],(1+(20+1.5*(slvl+[[gladiators_dominance]]-1))/100),1))"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "9",
+        "value1": "29",
+        "value2": "5"
       }
     ],
     "description": [
@@ -17984,6 +20071,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "5+blvl"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "5"
       }
     ],
     "description": [
@@ -18075,6 +20170,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "1"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "33",
+        "value1": "18",
+        "value2": "6"
       }
     ],
     "description": [
@@ -18246,6 +20349,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "3"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "440",
+        "value1": "0",
+        "value2": "5"
       }
     ],
     "description": [
@@ -18283,6 +20394,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(750*(1+[[continuity]].{{skill_duration}}/100))"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "132",
+        "value1": "26",
+        "value2": "5"
       }
     ],
     "description": [
@@ -18345,7 +20464,8 @@
         "variantKey": "",
         "value0": "550",
         "value1": "22",
-        "value2": "5"
+        "value2": "5",
+        "min_mana": "10"
       },
       {
         "statKey": "cooldown",
@@ -18442,6 +20562,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "50"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "176",
+        "value1": "11",
+        "value2": "5"
       }
     ],
     "description": [
@@ -18472,7 +20600,16 @@
     "baseMaxLevel": 2,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "6"
+      }
+    ],
     "description": [
       "Spirit Reave's duration increases with your summon count"
     ],
@@ -18498,7 +20635,16 @@
     "baseMaxLevel": 15,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "1500",
+        "value1": "0",
+        "value2": "6"
+      }
+    ],
     "description": [
       "Calls upon a vengeful spirit that summons random undead and has an aura which increases Spell damage and Life"
     ],
@@ -18533,7 +20679,8 @@
         "variantKey": "",
         "value0": "75",
         "value1": "0",
-        "value2": "8"
+        "value2": "8",
+        "min_mana": "75"
       },
       {
         "statKey": "cooldown",
@@ -18584,6 +20731,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(max(250-5*tree(43),75))"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "10",
+        "value1": "6",
+        "value2": "8"
       }
     ],
     "description": [
@@ -18691,6 +20846,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "75"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "26",
+        "value1": "13",
+        "value2": "5"
       }
     ],
     "description": [
@@ -18802,6 +20965,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "1+min(blvl/9,3)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "12",
+        "value1": "10",
+        "value2": "5"
       }
     ],
     "description": [
@@ -18858,6 +21029,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "6"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "60",
+        "value1": "9",
+        "value2": "5"
       }
     ],
     "description": [
@@ -18937,6 +21116,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "30*blvl"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "6"
       }
     ],
     "description": [
@@ -18978,7 +21165,7 @@
         "value0": "5",
         "value1": "15",
         "value2": "5",
-        "min_mana": 1
+        "min_mana": "1"
       }
     ],
     "description": [
@@ -19022,6 +21209,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "100"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "44",
+        "value1": "20",
+        "value2": "5"
       }
     ],
     "description": [
@@ -19054,7 +21249,16 @@
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "8",
+        "value1": "10",
+        "value2": "6"
+      }
+    ],
     "description": [
       "Lightning strikes the earth electrocuting nearby enemies"
     ],
@@ -19080,7 +21284,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "55",
+        "value1": "15",
+        "value2": "6"
+      }
+    ],
     "description": [
       "Conjure lightning spears that explode on impact"
     ],
@@ -19113,9 +21326,9 @@
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "15",
-        "value1": "20",
-        "value2": "8"
+        "value0": "30",
+        "value1": "40",
+        "value2": "7"
       },
       {
         "statKey": "totems",
@@ -19233,6 +21446,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "Darklings"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "132",
+        "value1": "66",
+        "value2": "5"
       }
     ],
     "description": [
@@ -19269,6 +21490,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "Edyrems"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "264",
+        "value1": "0",
+        "value2": "5"
       }
     ],
     "description": [
@@ -19307,6 +21536,14 @@
         "variantKey": "",
         "value0": "Minions",
         "value1": "10"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "132",
+        "value1": "66",
+        "value2": "5"
       }
     ],
     "description": [
@@ -19362,6 +21599,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "Minions"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "132",
+        "value1": "66",
+        "value2": "6"
       }
     ],
     "description": [
@@ -19405,6 +21650,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "Minions"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "132",
+        "value1": "66",
+        "value2": "6"
       }
     ],
     "description": [
@@ -19446,6 +21699,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "Shock Beasts"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "660",
+        "value1": "0",
+        "value2": "6"
       }
     ],
     "description": [
@@ -19483,6 +21744,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "Minions"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "132",
+        "value1": "66",
+        "value2": "6"
       }
     ],
     "description": [
@@ -19537,6 +21806,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "1+lvl/21"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "22",
+        "value1": "9",
+        "value2": "5"
       }
     ],
     "description": [
@@ -19569,7 +21846,16 @@
     "baseMaxLevel": 15,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "1500",
+        "value1": "0",
+        "value2": "6"
+      }
+    ],
     "description": [],
     "restriction": [],
     "skillEffect": [],
@@ -19589,7 +21875,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "330",
+        "value1": "66",
+        "value2": "5"
+      }
+    ],
     "description": [
       "Blasts out a gigantic nova of powerful lightning"
     ],
@@ -19616,7 +21911,17 @@
     "baseMaxLevel": 1,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "250",
+        "value1": "0",
+        "value2": "8",
+        "min_mana": "250"
+      }
+    ],
     "description": [
       "Short ranged teleport"
     ],
@@ -19661,6 +21966,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "20"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "1000",
+        "value1": "0",
+        "value2": "1"
       }
     ],
     "description": [
@@ -19709,6 +22022,14 @@
         "variantKey": "",
         "value0": "100",
         "value1": "frames(1000-min(25*[[harvesters]]),500)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "6"
       }
     ],
     "description": [
@@ -19786,7 +22107,16 @@
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "440",
+        "value1": "20",
+        "value2": "5"
+      }
+    ],
     "description": [],
     "restriction": [],
     "skillEffect": [],
@@ -19813,6 +22143,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(15000*(1+[[continuity]].{{skill_duration}}/100))"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "440",
+        "value1": "44",
+        "value2": "5"
       }
     ],
     "description": [
@@ -19857,6 +22195,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(500)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "13",
+        "value1": "11",
+        "value2": "5"
       }
     ],
     "description": [
@@ -19934,6 +22280,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "65"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "66",
+        "value1": "11",
+        "value2": "5"
       }
     ],
     "description": [
@@ -19977,6 +22331,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "20-blvl"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "6"
       }
     ],
     "description": [
@@ -20056,7 +22418,16 @@
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "53",
+        "value1": "18",
+        "value2": "5"
+      }
+    ],
     "description": [
       "Casts powerful lightning bolts at all nearby enemies"
     ],
@@ -20140,7 +22511,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "5"
+      }
+    ],
     "description": [
       "Unleashes a ripple of deadly spikes"
     ],
@@ -20172,6 +22552,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "100"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "5"
       }
     ],
     "description": [
@@ -20225,6 +22613,14 @@
         "variantKey": "",
         "value0": "activations",
         "value1": "frames(150)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "220",
+        "value1": "0",
+        "value2": "5"
       }
     ],
     "description": [
@@ -20310,6 +22706,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(50)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "20",
+        "value1": "0",
+        "value2": "8"
       }
     ],
     "description": [
@@ -20385,6 +22789,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "5*blvl"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "750",
+        "value1": "0",
+        "value2": "6"
       }
     ],
     "description": [
@@ -20456,7 +22868,16 @@
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "20",
+        "value1": "18",
+        "value2": "6"
+      }
+    ],
     "description": [
       "Throw a charged stone that emits charged bolts on impact"
     ],
@@ -20571,6 +22992,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(if(ulvl>=130,50,0))"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "8"
       }
     ],
     "description": [
@@ -20616,6 +23045,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(40)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "220",
+        "value1": "0",
+        "value2": "6"
       }
     ],
     "description": [
@@ -20650,6 +23087,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "-20"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "900",
+        "value1": "44",
+        "value2": "6"
       }
     ],
     "description": [
@@ -20754,9 +23199,9 @@
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "1",
-        "value1": "5",
-        "value2": "8"
+        "value0": "8",
+        "value1": "40",
+        "value2": "5"
       }
     ],
     "description": [
@@ -20904,6 +23349,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "100"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "18",
+        "value1": "12",
+        "value2": "5"
       }
     ],
     "description": [
@@ -20936,7 +23389,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "300",
+        "value1": "13",
+        "value2": "7"
+      }
+    ],
     "description": [
       "A torrent of tri-elemental damage seeks the enemy"
     ],
@@ -21001,6 +23463,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "100"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "110",
+        "value1": "22",
+        "value2": "5"
       }
     ],
     "description": [
@@ -21028,7 +23498,17 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "880",
+        "value1": "0",
+        "value2": "6",
+        "min_mana": "350"
+      }
+    ],
     "description": [],
     "restriction": [],
     "skillEffect": [],
@@ -21098,7 +23578,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "5"
+      }
+    ],
     "description": [
       "Releases a summoned creature"
     ],
@@ -21133,6 +23622,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "4*blvl"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "6"
       }
     ],
     "description": [
@@ -21165,6 +23662,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "30*blvl"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "6"
       }
     ],
     "description": [
@@ -21222,7 +23727,16 @@
     "baseMaxLevel": 15,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "750",
+        "value1": "0",
+        "value2": "6"
+      }
+    ],
     "description": [],
     "restriction": [],
     "skillEffect": [],
@@ -21261,7 +23775,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "141",
+        "value1": "35",
+        "value2": "5"
+      }
+    ],
     "description": [
       "Quickly vanquish as many foes as you can to gain power"
     ],
@@ -21296,9 +23819,9 @@
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "500",
-        "value1": "45",
-        "value2": "8"
+        "value0": "1000",
+        "value1": "90",
+        "value2": "7"
       },
       {
         "statKey": "attack_rating",
@@ -21369,6 +23892,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(0*(1+[[continuity]].{{skill_duration}}/100))"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "50",
+        "value1": "15",
+        "value2": "8"
       }
     ],
     "description": [
@@ -21471,6 +24002,14 @@
         "variantKey": "",
         "value0": "100",
         "value1": "Kill/Death Blow"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "79",
+        "value1": "158",
+        "value2": "5"
       }
     ],
     "description": [
@@ -21512,6 +24051,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "10"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "18",
+        "value1": "13",
+        "value2": "5"
       }
     ],
     "description": [
@@ -21553,6 +24100,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(0*(1+[[continuity]].{{skill_duration}}/100))"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "22",
+        "value1": "28",
+        "value2": "5"
       }
     ],
     "description": [
@@ -21598,6 +24153,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(0*(1+[[continuity]].{{skill_duration}}/100))"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "22",
+        "value1": "28",
+        "value2": "5"
       }
     ],
     "description": [
@@ -21673,6 +24236,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value2": "frames(75)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "440",
+        "value1": "66",
+        "value2": "6"
       }
     ],
     "description": [
@@ -21748,6 +24319,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value2": "frames(75)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "44",
+        "value1": "7",
+        "value2": "3"
       }
     ],
     "description": [
@@ -21776,7 +24355,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "8",
+        "value1": "20",
+        "value2": "6"
+      }
+    ],
     "description": [
       "Summon a vengeful specter from Tylwulf's past"
     ],
@@ -21828,6 +24416,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "2"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "650",
+        "value1": "70",
+        "value2": "6"
       }
     ],
     "description": [
@@ -21974,7 +24570,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "110",
+        "value1": "29",
+        "value2": "6"
+      }
+    ],
     "description": [],
     "restriction": [],
     "skillEffect": [],
@@ -22038,7 +24643,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "669",
+        "value1": "84",
+        "value2": "4"
+      }
+    ],
     "description": [],
     "restriction": [],
     "skillEffect": [],
@@ -22059,7 +24673,17 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "770",
+        "value1": "0",
+        "value2": "6",
+        "min_mana": "175"
+      }
+    ],
     "description": [
       "Legends tell of elder shamans who were able to channel their shouts into devastating shockwaves"
     ],
@@ -22110,6 +24734,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "35"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "2000",
+        "value1": "0",
+        "value2": "6"
       }
     ],
     "description": [
@@ -22159,6 +24791,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(0*(1+[[continuity]].{{skill_duration}}/100))"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "880",
+        "value1": "132",
+        "value2": "5"
       }
     ],
     "description": [
@@ -22208,6 +24848,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "30*blvl"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "6"
       }
     ],
     "description": [
@@ -22460,6 +25108,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "9+lvl"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "44",
+        "value1": "11",
+        "value2": "5"
       }
     ],
     "description": [
@@ -22502,6 +25158,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "15+blvl"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "44",
+        "value1": "11",
+        "value2": "5"
       }
     ],
     "description": [
@@ -22543,6 +25207,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "-50"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "5"
       }
     ],
     "description": [
@@ -22581,6 +25253,15 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "60"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "300",
+        "value1": "4",
+        "value2": "6",
+        "min_mana": "50"
       }
     ],
     "description": [
@@ -22620,6 +25301,15 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "150"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "4",
+        "value1": "3",
+        "value2": "6",
+        "min_mana": "1"
       }
     ],
     "description": [
@@ -22662,9 +25352,9 @@
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "10",
-        "value1": "10",
-        "value2": "6"
+        "value0": "20",
+        "value1": "20",
+        "value2": "5"
       },
       {
         "statKey": "converts_phys_to_magic",
@@ -22745,9 +25435,9 @@
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "66",
-        "value1": "24",
-        "value2": "5"
+        "value0": "17",
+        "value1": "10",
+        "value2": "7"
       }
     ],
     "description": [
@@ -22777,7 +25467,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "264",
+        "value1": "13",
+        "value2": "6"
+      }
+    ],
     "description": [
       "Hit all enemies in your path"
     ],
@@ -22836,6 +25535,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "20+0.5*lvl"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "792",
+        "value1": "79",
+        "value2": "5"
       }
     ],
     "description": [
@@ -22883,6 +25590,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(200)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "150",
+        "value1": "0",
+        "value2": "8"
       }
     ],
     "description": [
@@ -23014,6 +25729,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "10+14*blvl+lvl-1"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "5"
       }
     ],
     "description": [
@@ -23087,7 +25810,17 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "0",
+        "value1": "0",
+        "value2": "5",
+        "min_mana": "5"
+      }
+    ],
     "description": [
       "Strike which explodes into ghostly blades"
     ],
@@ -23114,7 +25847,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "55",
+        "value1": "15",
+        "value2": "5"
+      }
+    ],
     "description": [
       "Cleanses the area with a nova of deadly holy fireballs"
     ],
@@ -23203,7 +25945,16 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "80",
+        "value1": "3",
+        "value2": "8"
+      }
+    ],
     "description": [
       "Cast your nephalem soul to destroy the wicked with holy energy"
     ],
@@ -23260,6 +26011,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "3+blvl/2"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "66",
+        "value1": "13",
+        "value2": "5"
       }
     ],
     "description": [
@@ -23327,6 +26086,15 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "120"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "80",
+        "value1": "10",
+        "value2": "6",
+        "min_mana": "1"
       }
     ],
     "description": [
@@ -23370,6 +26138,15 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "60"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "80",
+        "value1": "10",
+        "value2": "6",
+        "min_mana": "1"
       }
     ],
     "description": [
@@ -23415,6 +26192,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "100+2*lvl"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "110",
+        "value1": "22",
+        "value2": "6"
       }
     ],
     "description": [
@@ -23460,7 +26245,7 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "400",
-        "value1": "1",
+        "value1": "0",
         "value2": "8"
       }
     ],
@@ -23504,6 +26289,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(200)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "220",
+        "value1": "31",
+        "value2": "5"
       }
     ],
     "description": [
@@ -23551,6 +26344,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "100"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "440",
+        "value1": "297",
+        "value2": "5"
       }
     ],
     "description": [
