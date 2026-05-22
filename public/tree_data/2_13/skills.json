@@ -1230,6 +1230,12 @@
     "variants": [],
     "scalingConstants": [
       {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "75"
+      },
+      {
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
@@ -3523,6 +3529,12 @@
     "variants": [],
     "scalingConstants": [
       {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "50"
+      },
+      {
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
@@ -5413,6 +5425,12 @@
     "affectedBySpecialization": false,
     "variants": [],
     "scalingConstants": [
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "50"
+      },
       {
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
@@ -8919,7 +8937,14 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "30"
+      }
+    ],
     "description": [
       "Melee attack that unleashes target seeking killer chickens"
     ],
@@ -15162,6 +15187,12 @@
     "variants": [],
     "scalingConstants": [
       {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "65"
+      },
+      {
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
@@ -16743,6 +16774,12 @@
     "affectedBySpecialization": true,
     "variants": [],
     "scalingConstants": [
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "160"
+      },
       {
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
@@ -18429,6 +18466,12 @@
     "variants": [],
     "scalingConstants": [
       {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100"
+      },
+      {
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
@@ -19672,6 +19715,12 @@
     "affectedBySpecialization": false,
     "variants": [],
     "scalingConstants": [
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "90"
+      },
       {
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
@@ -22460,6 +22509,12 @@
     "variants": [],
     "scalingConstants": [
       {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "37"
+      },
+      {
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
@@ -24670,6 +24725,12 @@
     "variants": [],
     "scalingConstants": [
       {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "50"
+      },
+      {
         "statKey": "delay_between",
         "occurrenceIndex": 0,
         "variantKey": "",
@@ -25416,6 +25477,12 @@
     "variants": [],
     "scalingConstants": [
       {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100"
+      },
+      {
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
@@ -25758,6 +25825,12 @@
     "affectedBySpecialization": false,
     "variants": [],
     "scalingConstants": [
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "55"
+      },
       {
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
