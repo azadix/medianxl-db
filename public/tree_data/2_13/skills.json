@@ -17286,13 +17286,13 @@
     "id": "pyroblast",
     "numericId": 662,
     "displayName": "Pyroblast",
-    "classId": 3,
-    "tab": 11,
-    "class": "Sorceress",
-    "tabName": "Fire",
+    "classId": 1,
+    "tab": 65,
+    "class": "Other",
+    "tabName": "oSkill",
     "tags": [
-      "Fire",
-      "Spell"
+      "Spell",
+      "Fire"
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
@@ -17679,7 +17679,7 @@
         "statKey": "weapon_damage",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "120"
+        "value0": "100"
       },
       {
         "statKey": "duration",
@@ -18189,7 +18189,7 @@
     "restriction": [],
     "skillEffect": [
       "Minions gain 100 Life Regeneration per base level",
-      "Minions inherit your Elemental Pierce and half of you Spell Damage",
+      "Minions inherit your Elemental Pierce and half of your Spell Damage",
       "{{minions_inherit_proc_chance}}",
       "",
       "{{minions}}",
