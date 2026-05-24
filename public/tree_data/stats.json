@@ -2720,5 +2720,17 @@
         "plannerKey": "unspent_stat_points"
       }
     ]
+  },
+  {
+    "id": 369,
+    "key": "critical_strike_damage",
+    "name": "Critical Strike Damage",
+    "format": "Critical Strike Damage: {value0}%"
+  },
+  {
+    "id": 370,
+    "key": "war_cry_damage_multiplier",
+    "name": "War Cry Damage",
+    "format": "War Cry Damage: +{value0}%"
   }
 ]

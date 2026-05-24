@@ -1702,6 +1702,24 @@
         "value0": "264",
         "value1": "31",
         "value2": "5"
+      },
+      {
+        "statKey": "radius",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "range(min(12+2*floor((lvl-1)/2),40))"
+      },
+      {
+        "statKey": "duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(250*(1+[[continuity]].{{skill_duration}}/100))"
+      },
+      {
+        "statKey": "bonus_elemental_magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "9*lvl"
       }
     ],
     "description": [
@@ -1709,8 +1727,10 @@
     ],
     "restriction": [],
     "skillEffect": [
+      "{{bonus_elemental_magic_damage}}",
       "{{radius}}",
-      "{{duration}}"
+      "{{duration}}",
+      "{{mana_cost}}"
     ],
     "image": "icons-shared_127.png"
   },
@@ -3862,7 +3882,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "10"
+        "value0": "frames(250)"
       },
       {
         "statKey": "mana_cost",
@@ -9767,7 +9787,20 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(1000+50*lvl)"
+      },
+      {
+        "statKey": "attack_speed",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "20"
+      }
+    ],
     "description": [
       "Invoke the power of the wild to strengthen all allies"
     ],
@@ -10514,7 +10547,7 @@
         "statKey": "cooldown",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "10-[[momentum]]"
+        "value0": "frames(250-25*[[momentum]])"
       },
       {
         "statKey": "mana_cost",
@@ -12073,7 +12106,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(15000)"
+        "value0": "frames(15000*(1+[[continuity]].{{skill_duration}}/100))"
       },
       {
         "statKey": "drains_life_while_active",
@@ -12398,12 +12431,6 @@
     "variants": [],
     "scalingConstants": [
       {
-        "statKey": "cooldown",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "5"
-      },
-      {
         "statKey": "regenerates_percent_life_over_time",
         "occurrenceIndex": 0,
         "variantKey": "",
@@ -12425,7 +12452,6 @@
     "restriction": [],
     "skillEffect": [
       "{{can_be_cast_on_other_units}}",
-      "{{cooldown}}",
       "{{regenerates_percent_life_over_time}}"
     ],
     "image": "icons-shared_66.png"
@@ -16205,7 +16231,6 @@
     "skillEffect": [
       "Cooldown reduced by 0.04 second per 20 unspent attributes (Max 300)",
       "+2% to Physical Resistance for 2 seconds after casting per 20 unspent attributes (Max 300)",
-
       "{{cooldown}}",
       "{{physical_resistance}}",
       "{{fire_damage}}",
@@ -24801,6 +24826,24 @@
         "value1": "0",
         "value2": "6",
         "min_mana": "175"
+      },
+      {
+        "statKey": "critical_strike_chance",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "25+4*[[wolf_companion]]"
+      },
+      {
+        "statKey": "critical_strike_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "130+8*[[ancient_blood]]"
+      },
+      {
+        "statKey": "war_cry_damage_multiplier",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "3*floor({{energy}}/100)+3*[[mountain_king]]"
       }
     ],
     "description": [
@@ -24809,16 +24852,11 @@
     "restriction": [],
     "skillEffect": [
       "{{critical_strike_chance}}",
-      "Critical Strike damage: 130%",
-      "+3% Total War Cry damage per 100 Energy",
-      "Energy: +1% increased damage",
+      "{{critical_strike_damage}}",
+      "{{war_cry_damage_multiplier}}",
+      "Energy: +XXX% increased damage",
       "{{magic_damage}}",
       "{{bonus_physical_damage}}",
-      "",
-      "Synergies:",
-      "+8% Critical Strike damage per Ancient Blood Base level",
-      "+3% War Cry Total damage per Mountain King Base level",
-      "+4% Base Critical Chance per Wolf Companion Base level",
       "{{mana_cost}}"
     ],
     "image": "icons-shared_246.png"
