@@ -237,9 +237,11 @@ export function getSkillIconHTML(imageFileName, humanClassName, className = '', 
  * @param {number|string} manashift - Bitwise shift multiplier for precision (value2)
  * @param {number} level - Current skill level
  * @param {number|string|undefined|null} [minMana] - Optional floor from `mana_cost` min_mana / value3; omitted means cost may be 0
- * @returns {number} Calculated mana cost (truncated to integer)
+ * @param {{ channeled?: boolean }} [options]
+ * @returns {number} Calculated mana cost (integer, or one decimal when channeled)
  */
-function calculateManaCost(mana, lvlmana, manashift, level, minMana) {
+export function calculateManaCost(mana, lvlmana, manashift, level, minMana, options = {}) {
+    const channeled = Boolean(options.channeled);
     // Ensure level is at least 1
     const effectiveLevel = Math.max(1, level || 1);
     
@@ -259,18 +261,35 @@ function calculateManaCost(mana, lvlmana, manashift, level, minMana) {
     const shiftMultiplier = Math.pow(2, manashiftNum);
     const totalMana256ths = (baseMana * shiftMultiplier) / 256;
     
-    let cost = Math.trunc(totalMana256ths);
+    let cost = channeled ? totalMana256ths : Math.trunc(totalMana256ths);
     const useMin =
         minMana !== undefined &&
         minMana !== null &&
         !(typeof minMana === 'string' && minMana.trim() === '');
     if (useMin) {
-        const minFloor = Math.max(0, Math.trunc(parseFloat(minMana) || 0));
+        const minFloor = channeled
+            ? Math.max(0, parseFloat(minMana) || 0)
+            : Math.max(0, Math.trunc(parseFloat(minMana) || 0));
         cost = Math.max(minFloor, cost);
     } else {
         cost = Math.max(0, cost);
     }
+    if (channeled) {
+        return Math.round(cost * 10) / 10;
+    }
     return cost;
+}
+
+/**
+ * @param {number} cost
+ * @param {{ channeled?: boolean }} [options]
+ * @returns {string}
+ */
+export function formatManaCostDisplay(cost, options = {}) {
+    if (options.channeled) {
+        return (Math.round(Number(cost) * 10) / 10).toFixed(1);
+    }
+    return String(cost);
 }
 
 // Expand using values sourced from skill_scaling for a given skill and level.
@@ -571,17 +590,19 @@ export async function expandPlaceholdersWithScaling(numericId, level, descriptio
                                 v3 !== '' && v3 !== null && v3 !== undefined;
                             const minManaNum = hasMinMana ? parseOrEvaluate(v3) : undefined;
 
-                            // Calculate mana cost
+                            const channeled = skill.hasTag("Channeled");
+
                             const calculatedMana = calculateManaCost(
                                 mana,
                                 lvlmana,
                                 manashift,
                                 lvl,
-                                hasMinMana ? minManaNum : undefined
+                                hasMinMana ? minManaNum : undefined,
+                                { channeled }
                             );
-                            
-                            // Format as single value
-                            const calculatedValueHtml = `<span class="${SCALING_DISPLAY_HTML_CLASSES.formula}">${calculatedMana}</span>`;
+
+                            const manaDisplay = formatManaCostDisplay(calculatedMana, { channeled });
+                            const calculatedValueHtml = `<span class="${SCALING_DISPLAY_HTML_CLASSES.formula}">${manaDisplay}</span>`;
                             
                             // Replace all value placeholders with the calculated value
                             output = (format || '{name}: {value}')
