@@ -24854,7 +24854,7 @@
       "{{critical_strike_chance}}",
       "{{critical_strike_damage}}",
       "{{war_cry_damage_multiplier}}",
-      "Energy: +XXX% increased damage",
+      "Energy: +#% increased damage",
       "{{magic_damage}}",
       "{{bonus_physical_damage}}",
       "{{mana_cost}}"
