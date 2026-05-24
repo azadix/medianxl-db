@@ -3781,8 +3781,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "22",
-        "value1": "15",
+        "value1": "13",
         "value2": "6"
+      },
+      {
+        "statKey": "charged_bolts",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "1+lvl/6"
       }
     ],
     "description": [
@@ -4482,7 +4488,7 @@
       "{{cold_damage}}",
       "{{mana_cost}}"
     ],
-    "image": "icons-shared_178.png"
+    "image": "icons-shared_302.png"
   },
   {
     "id": "confluence",
@@ -5197,6 +5203,20 @@
         "value0": "40",
         "value1": "7",
         "value2": "7"
+      },
+      {
+        "statKey": "poison_dot",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "",
+        "value1": "",
+        "value2": "frames(50)"
+      },
+      {
+        "statKey": "poison_damage_based_on_items_and_skills",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "114+6*lvl"
       }
     ],
     "description": [
@@ -5204,9 +5224,9 @@
     ],
     "restriction": [],
     "skillEffect": [
-      "Deals 216% of your combined Poison Damage per second from items and skills",
+      "{{poison_damage_based_on_items_and_skills}}",
       "Always hits",
-      "Gain an extra projectile per 15 Skill levels",
+      "Gain an extra projectile per 15 Skill Levels (Max 3)",
       "{{poison_dot}}",
       "{{mana_cost}}"
     ],
@@ -6121,7 +6141,7 @@
         "statKey": "cooldown",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(25*({{magic_resistance}}/25))"
+        "value0": "frames(25-({{magic_resistance}}/25))"
       },
       {
         "statKey": "mana_cost",
@@ -6738,7 +6758,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(15000)"
+        "value0": "frames(15000*(1+[[continuity]].{{skill_duration}}/100))"
       },
       {
         "statKey": "mana_cost",
@@ -7708,7 +7728,7 @@
     "restriction": [],
     "skillEffect": [
       "[[thunderstone]]",
-      "{{life_restored_per_cast}}",
+      "{{life_restored_per_cast}} {Based on Maximum Life)",
       "{{poison_length_reduction}}",
       "{{max_lightning_resistance}}"
     ],
@@ -8635,6 +8655,7 @@
     ],
     "restriction": [],
     "skillEffect": [
+      "{{usable_under_melee_locks}}",
       "Gains 10% Total Damage per 1% Max Lightning Resist (Max 150%)",
       "Hits multiple times",
       "",
@@ -10012,10 +10033,9 @@
     "class": "Other",
     "tabName": "oSkill",
     "tags": [
-      "Poison",
       "Buff",
-      "Duration",
-      "Periodic"
+      "Poison",
+      "Duration"
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": true,
@@ -10040,6 +10060,25 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(1500*(1+[[continuity]].{{skill_duration}}/100))"
+      },
+      {
+        "statKey": "activation_frequency_effectiveness",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "65"
+      },
+      {
+        "statKey": "delay_between",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "activations",
+        "value1": "frames(20)"
+      },
+      {
+        "statKey": "regenerate_life",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "max(max(max({{summoned_minion_damage}}/2,{{poison_spell_damage}}),{{pmsd}})+1,1)"
       }
     ],
     "description": [
@@ -10047,8 +10086,12 @@
     ],
     "restriction": [],
     "skillEffect": [
-      "{{activation_frequency_effectiveness}}",
+      "{{regenerate_life}}",
+      "(Based on whichever is highest: Minion Damage, Poison Spell Damage, or Physical/Magic Spell Damage)",
+      "",
       "{{punishers}}",
+      "{{delay_between}}",
+      "{{activation_frequency_effectiveness}}",
       "{{duration}}",
       "{{poison_dot}}",
       "{{mana_cost}}"
@@ -10254,6 +10297,12 @@
         "value0": "100",
         "value1": "6",
         "value2": "6"
+      },
+      {
+        "statKey": "arrows",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "1+lvl/11"
       }
     ],
     "description": [
@@ -10515,6 +10564,12 @@
         "value0": "220",
         "value1": "31",
         "value2": "5"
+      },
+      {
+        "statKey": "duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(0)"
       }
     ],
     "description": [
@@ -11292,6 +11347,36 @@
         "value0": "750",
         "value1": "0",
         "value2": "6"
+      },
+      {
+        "statKey": "cast_speed",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "150"
+      },
+      {
+        "statKey": "mana_regeneration_rate",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "300"
+      },
+      {
+        "statKey": "summoned_minion_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100"
+      },
+      {
+        "statKey": "spell_focus",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "200"
+      },
+      {
+        "statKey": "duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(250)"
       }
     ],
     "description": [
@@ -11802,6 +11887,12 @@
         "value0": "20",
         "value1": "5",
         "value2": "7"
+      },
+      {
+        "statKey": "projectiles",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "1+lvl/50"
       }
     ],
     "description": [
@@ -12652,7 +12743,7 @@
         "statKey": "regenerate_life",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "max(max(max({{minion_damage}},{{poison_spell_damage}}),{{pmsd}})-1,1)"
+        "value0": "max(max(max({{summoned_minion_damage}}/2,{{poison_spell_damage}}),{{pmsd}})-1,1)"
       },
       {
         "statKey": "enemy_movement_speed",
@@ -13144,10 +13235,10 @@
         "value0": "(5*blvl)/2"
       },
       {
-        "statKey": "healing_potions_additional_seconds",
+        "statKey": "potions_additional_seconds",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(175+25*floor(blvl/4))"
+        "value0": "frames(25*floor(blvl/4))"
       }
     ],
     "description": [
@@ -13159,7 +13250,7 @@
       "{{physical_resistance}}",
       "",
       "<p class='has-text-success'>Alchemist Path</p>",
-      "{{healing_potions_additional_seconds}}",
+      "{{potions_additional_seconds}}",
       "{{increased_potion_effectiveness}}",
       "",
       "{{life_after_each_kill}}"
@@ -14005,7 +14096,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(3000*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(0*(1+[[continuity]].{{skill_duration}}/100))"
       },
       {
         "statKey": "mana_cost",
@@ -16093,6 +16184,18 @@
         "value0": "145",
         "value1": "26",
         "value2": "6"
+      },
+      {
+        "statKey": "cooldown",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(max(40-min(floor({{unspent_stat_points}}/20),15),25))"
+      },
+      {
+        "statKey": "physical_resistance",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "2*min(floor({{unspent_stat_points}}/20),15)"
       }
     ],
     "description": [
@@ -16102,7 +16205,9 @@
     "skillEffect": [
       "Cooldown reduced by 0.04 second per 20 unspent attributes (Max 300)",
       "+2% to Physical Resistance for 2 seconds after casting per 20 unspent attributes (Max 300)",
+
       "{{cooldown}}",
+      "{{physical_resistance}}",
       "{{fire_damage}}",
       "{{mana_cost}}"
     ],
@@ -16280,8 +16385,11 @@
     "skillEffect": [
       "Fire Spell Damage efficiency: 190%",
       "Cold/Lightning/Poison Spell Damage efficiency: -80%",
+      "",
+      "{{life_restored_per_cast}}",
       "Double healing if you are not a Paladin or a Sorceress",
       "100% increased healing at 2800 Energy and again at 3600 Energy",
+      "",
       "{{fire_damage}}",
       "{{mana_cost}}"
     ],
@@ -19067,6 +19175,12 @@
         "value0": "22",
         "value1": "15",
         "value2": "6"
+      },
+      {
+        "statKey": "dazzle_duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(0*(1+[[continuity]].{{skill_duration}}/100))"
       }
     ],
     "description": [
@@ -19080,6 +19194,8 @@
       "",
       "For each successfully corrupted item equipped:",
       "Add 30% of Physical Damage as Fire",
+      "Dazzle: Enemy Attack Rating -20%",
+      "{{dazzle_duration}}",
       "{{physical_damage}}",
       "{{mana_cost}}"
     ],
@@ -24310,7 +24426,8 @@
     "tabName": "oSkill",
     "tags": [
       "Poison",
-      "Spell"
+      "Spell",
+      "Channeled"
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,

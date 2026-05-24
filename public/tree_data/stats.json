@@ -1838,8 +1838,8 @@
   {
     "id": 243,
     "key": "life_restored_per_cast",
-    "name": "Life Restored per cast (Based on Maximum Life)",
-    "format": "{value0} Life Restored per cast (Based on Maximum Life)"
+    "name": "Life Restored per cast",
+    "format": "{value0} Life Restored per cast"
   },
   {
     "id": 244,
@@ -2317,9 +2317,9 @@
   },
   {
     "id": 309,
-    "key": "healing_potions_additional_seconds",
-    "name": "Healing potions last # additional seconds",
-    "format": "Healing potions last {value0} additional seconds"
+    "key": "potions_additional_seconds",
+    "name": "Potions last # additional seconds",
+    "format": "Potions last {value0} additional seconds"
   },
   {
     "id": 310,
@@ -2696,5 +2696,29 @@
     "key": "freeze_length_to_wintertide",
     "name": "+#% Freeze length to Wintertide",
     "format": "+{value0}% Freeze length to Wintertide (Increasing returns with higher Energy)"
+  },
+  {
+    "id": 366,
+    "key": "dazzle_duration",
+    "name": "Dazzle duration: # seconds",
+    "format": "Dazzle duration: {value0} seconds"
+  },
+  {
+    "id": 367,
+    "key": "poison_damage_based_on_items_and_skills",
+    "name": "Deals #% of your combined Poison Damage per second from items and skills",
+    "format": "Deals {value0}% of your combined Poison Damage per second from items and skills"
+  },
+  {
+    "id": 368,
+    "key": "unspent_stat_points",
+    "name": "Unspent stat points",
+    "format": "Unspent stat points: {value0}",
+    "pairedStat": [
+      {
+        "valueIndex": 0,
+        "plannerKey": "unspent_stat_points"
+      }
+    ]
   }
 ]

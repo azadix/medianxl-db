@@ -44,6 +44,26 @@
     "section": "attributes"
   },
   {
+    "id": 4,
+    "key": "unspent_stat_points",
+    "label": "Unspent stat points",
+    "min": null,
+    "max": null,
+    "allowNegative": false,
+    "alwaysVisible": false,
+    "section": "misc"
+  },
+  {
+    "id": 5,
+    "key": "unspent_skill_points",
+    "label": "Unspent skill points",
+    "min": null,
+    "max": null,
+    "allowNegative": false,
+    "alwaysVisible": false,
+    "section": "misc"
+  },
+  {
     "id": 6,
     "key": "life",
     "label": "Life",

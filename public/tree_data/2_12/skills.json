@@ -11763,10 +11763,10 @@
         "value0": "(5*blvl)/2"
       },
       {
-        "statKey": "healing_potions_additional_seconds",
+        "statKey": "potions_additional_seconds",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(175+50*floor(blvl/5))"
+        "value0": "frames(50*floor(blvl/5))"
       }
     ],
     "description": [
@@ -11778,7 +11778,7 @@
       "{{physical_resistance}}",
       "",
       "<p class='has-text-success'>Alchemist Path</p>",
-      "{{healing_potions_additional_seconds}}",
+      "{{potions_additional_seconds}}",
       "{{healing_rate_from_potions}}",
       "",
       "{{life_after_each_kill}}"
