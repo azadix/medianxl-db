@@ -1603,3 +1603,7 @@ restorative
 cleansing
 wintertide
 dazzle
+multi-hits
+decreased
+handed
+dual

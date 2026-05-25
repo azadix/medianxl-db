@@ -20569,7 +20569,13 @@
         "statKey": "weapon_damage",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "75"
+        "value0": "160"
+      },
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 1,
+        "variantKey": "",
+        "value0": "90"
       },
       {
         "statKey": "converts_phys_to_magic",
@@ -20591,11 +20597,16 @@
     ],
     "restriction": [],
     "skillEffect": [
-      "{{converts_phys_to_magic}}",
-      "Area Effect delay: 1.2 seconds",
+      "While using a Two-Handed weapon or Dual Wielding:",
+      "Increased range, higher Weapon Damage",
       "{{weapon_damage}}",
+      "",
+      "While using a One Handed weapon:",
+      "Decreased range, Multi-hits",
+      "{{weapon_damage}}",
+      "",
+      "{{converts_phys_to_magic}}",
       "{{magic_damage}}",
-      "{{range}}",
       "{{mana_cost}}"
     ],
     "image": "icons-shared_93.png"
