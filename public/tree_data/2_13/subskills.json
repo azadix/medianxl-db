@@ -779,5 +779,18 @@
       "{{mana_flat}}"
     ],
     "restriction": []
+  },
+  {
+    "id": "artifice_mastery_claw_block",
+    "numericId": 718,
+    "displayName": "Claw Block",
+    "parentSkillId": "artifice_mastery",
+    "scalingConstants": [],
+    "description": [],
+    "skillEffect": [
+      "20% Chance to Block Attacks and Spells while wielding two claws",
+      "(Does not work while walking or running)"
+    ],
+    "restriction": []
   }
 ]

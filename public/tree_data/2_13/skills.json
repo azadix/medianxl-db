@@ -154,14 +154,6 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "3*blvl"
-      },
-      {
-        "statKey": "mana_cost",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0",
-        "value1": "0",
-        "value2": "6"
       }
     ],
     "description": [
@@ -362,14 +354,6 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "20"
-      },
-      {
-        "statKey": "mana_cost",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0",
-        "value1": "0",
-        "value2": "6"
       }
     ],
     "description": [
@@ -850,14 +834,6 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "8*blvl"
-      },
-      {
-        "statKey": "mana_cost",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0",
-        "value1": "0",
-        "value2": "6"
       }
     ],
     "description": [
@@ -1234,14 +1210,6 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "75"
-      },
-      {
-        "statKey": "mana_cost",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0",
-        "value1": "0",
-        "value2": "6"
       }
     ],
     "description": [
@@ -1269,24 +1237,13 @@
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [
-      {
-        "statKey": "mana_cost",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0",
-        "value1": "0",
-        "value2": "6"
-      }
-    ],
+    "scalingConstants": [],
     "description": [
       "Proficiency in the craft imparts advanced field survival techniques"
     ],
     "restriction": [],
     "skillEffect": [
-      "<p class='has-text-warning'>Claw Block</p>",
-      "20% Chance to Block Attacks and Spells while wielding two claws",
-      "(Does not work while walking or running)"
+      "||artifice_mastery_claw_block||"
     ],
     "image": "icons-ass_136.png"
   },
@@ -4112,14 +4069,6 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "2*blvl"
-      },
-      {
-        "statKey": "mana_cost",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0",
-        "value1": "0",
-        "value2": "6"
       }
     ],
     "description": [
@@ -7285,14 +7234,6 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(max(200-floor({{mana_regeneration_rate}}/6),75))"
-      },
-      {
-        "statKey": "mana_cost",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0",
-        "value1": "0",
-        "value2": "6"
       }
     ],
     "description": [
@@ -10911,14 +10852,6 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(30)"
-      },
-      {
-        "statKey": "mana_cost",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0",
-        "value1": "0",
-        "value2": "6"
       }
     ],
     "description": [
@@ -11589,14 +11522,6 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "range(12)"
-      },
-      {
-        "statKey": "mana_cost",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0",
-        "value1": "0",
-        "value2": "6"
       }
     ],
     "description": [
@@ -13970,14 +13895,6 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(45*(1+[[continuity]].{{skill_duration}}/100))"
-      },
-      {
-        "statKey": "mana_cost",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0",
-        "value1": "0",
-        "value2": "6"
       }
     ],
     "description": [
@@ -14473,14 +14390,6 @@
         "variantKey": "",
         "value0": "1",
         "value1": "500-50*blvl"
-      },
-      {
-        "statKey": "mana_cost",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0",
-        "value1": "0",
-        "value2": "6"
       }
     ],
     "description": [
@@ -16705,14 +16614,6 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "50*blvl"
-      },
-      {
-        "statKey": "mana_cost",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0",
-        "value1": "0",
-        "value2": "6"
       }
     ],
     "description": [
@@ -17272,14 +17173,6 @@
         "variantKey": "",
         "value0": "625*if([[paragon_of_sanctity]],if(ulvl>=136,1.2,1),1)",
         "value1": "frames(125)"
-      },
-      {
-        "statKey": "mana_cost",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0",
-        "value1": "0",
-        "value2": "6"
       }
     ],
     "description": [
@@ -18959,14 +18852,6 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "3*blvl"
-      },
-      {
-        "statKey": "mana_cost",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0",
-        "value1": "0",
-        "value2": "6"
       }
     ],
     "description": [
@@ -19459,14 +19344,6 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "14+blvl"
-      },
-      {
-        "statKey": "mana_cost",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0",
-        "value1": "0",
-        "value2": "6"
       }
     ],
     "description": [
@@ -21180,14 +21057,12 @@
       "Focuses the hunter for more complex shots"
     ],
     "restriction": [
-      "Requires a bow or crossbow",
-      "Disables non-Hunter ranged skills"
+      "Requires a bow or crossbow"
     ],
     "skillEffect": [
       "{{stead_aim_gained_per_shot}}",
       "{{maximum_steady_aim_charges}}",
       "{{weapon_damage}}",
-      "{{all_skills}} during Steady Aim",
       "{{attack_rating_percent}}",
       "{{fire_damage}}",
       "{{mana_cost}}"
@@ -21253,14 +21128,6 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "30*blvl"
-      },
-      {
-        "statKey": "mana_cost",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0",
-        "value1": "0",
-        "value2": "6"
       }
     ],
     "description": [
@@ -22159,14 +22026,6 @@
         "variantKey": "",
         "value0": "100",
         "value1": "frames(1000-min(25*[[harvesters]]),500)"
-      },
-      {
-        "statKey": "mana_cost",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0",
-        "value1": "0",
-        "value2": "6"
       }
     ],
     "description": [
@@ -22468,14 +22327,6 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "20-blvl"
-      },
-      {
-        "statKey": "mana_cost",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0",
-        "value1": "0",
-        "value2": "6"
       }
     ],
     "description": [
@@ -23765,14 +23616,6 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "4*blvl"
-      },
-      {
-        "statKey": "mana_cost",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0",
-        "value1": "0",
-        "value2": "6"
       }
     ],
     "description": [
@@ -23805,14 +23648,6 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "30*blvl"
-      },
-      {
-        "statKey": "mana_cost",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0",
-        "value1": "0",
-        "value2": "6"
       }
     ],
     "description": [
@@ -25011,14 +24846,6 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "30*blvl"
-      },
-      {
-        "statKey": "mana_cost",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0",
-        "value1": "0",
-        "value2": "6"
       }
     ],
     "description": [
