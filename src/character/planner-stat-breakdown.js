@@ -127,7 +127,8 @@ export function buildPlannerStatBreakdownHtml(statKey) {
           rows: mods.map((m) => ({
             label: m.displayName,
             value: m.description,
-            detail: m.kind ? String(m.kind) : undefined
+            detail: m.kind ? String(m.kind) : undefined,
+            active: m.active !== false
           }))
         });
       }
@@ -157,7 +158,8 @@ export function buildPlannerStatBreakdownHtml(statKey) {
           rows: mods.map((m) => ({
             label: m.displayName,
             value: m.description,
-            detail: m.kind ? String(m.kind) : undefined
+            detail: m.kind ? String(m.kind) : undefined,
+            active: m.active !== false
           }))
         });
       }
@@ -189,7 +191,7 @@ export function buildPlannerStatBreakdownHtml(statKey) {
     if (mods.length > 0) {
       sections.push({
         title: 'Skills',
-        rows: mods.map((m) => ({ label: m.displayName, value: m.description }))
+        rows: mods.map((m) => ({ label: m.displayName, value: m.description, active: m.active !== false }))
       });
     }
   } else if (isPlannerNegativeAllowedBaseStat(key)) {
@@ -204,7 +206,8 @@ export function buildPlannerStatBreakdownHtml(statKey) {
         title: 'Skills',
         rows: mods.map((m) => ({
           label: m.displayName,
-          value: m.description
+          value: m.description,
+          active: m.active !== false
         }))
       });
     }
@@ -230,7 +233,8 @@ export function buildPlannerStatBreakdownHtml(statKey) {
         title: 'Skills',
         rows: mods.map((m) => ({
           label: m.displayName,
-          value: m.description
+          value: m.description,
+          active: m.active !== false
         }))
       });
     }
@@ -251,13 +255,14 @@ export function buildPlannerStatBreakdownHtml(statKey) {
     html += `<div class="planner-stat-tooltip-h">${escapeHtml(sec.title)}</div>`;
     html += `<ul class="planner-stat-tooltip-list">`;
     for (const row of sec.rows) {
+      const inactive = row.active === false;
       html += `<li>`;
       if (row.value === undefined && row.label !== undefined && row.label !== '') {
-        html += `<span class="planner-stat-tooltip-v planner-stat-tooltip-total-num">${escapeHtml(row.label)}</span>`;
+        html += `<span class="planner-stat-tooltip-v planner-stat-tooltip-total-num${inactive ? ' has-text-grey has-text-weight-semibold' : ''}">${escapeHtml(row.label)}</span>`;
       } else {
-        html += `<span class="planner-stat-tooltip-k">${escapeHtml(row.label)}</span>`;
+        html += `<span class="planner-stat-tooltip-k${inactive ? ' has-text-grey has-text-weight-semibold' : ''}">${escapeHtml(row.label)}</span>`;
         if (row.value !== undefined && row.value !== '') {
-          html += ` <span class="planner-stat-tooltip-v">${escapeHtml(row.value)}</span>`;
+          html += ` <span class="planner-stat-tooltip-v${inactive ? ' has-text-grey' : ''}">${escapeHtml(row.value)}</span>`;
         }
       }
       if (row.detail) {

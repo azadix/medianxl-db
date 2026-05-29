@@ -292,6 +292,20 @@ export function setupPlannerMinLevelSkillPoolTooltips() {
   window.addEventListener('plannerStateChanged', refreshPoolTooltip);
 }
 
+// Recompute planner stats when config conditions change
+if (typeof window !== 'undefined') {
+  window.addEventListener('plannerConfigChanged', () => {
+    try {
+      if (typeof console !== 'undefined' && console.debug) {
+        console.debug('[planner-stats] plannerConfigChanged -> recompute');
+      }
+      runPlannerSkillStatRecompute({ immediate: true });
+    } catch (e) {
+      if (typeof console !== 'undefined' && console.error) console.error('recompute error', e);
+    }
+  });
+}
+
 function resyncStatBreakdownTooltipAfterPanelRefresh(root) {
   if (!statBreakdownHoverKey || !root) return;
   const newAnchor = findStatBreakdownAnchorForKey(root, statBreakdownHoverKey);

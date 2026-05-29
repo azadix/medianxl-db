@@ -2732,5 +2732,29 @@
     "key": "war_cry_damage_multiplier",
     "name": "War Cry Damage",
     "format": "War Cry Damage: +{value0}%"
+  },
+  {
+    "id": 371,
+    "key": "deals_percent_of_stormcall_damage",
+    "name": "Deals #% of Your Stormcall Damage",
+    "format": "Deals {value0}% of Your Stormcall Damage"
+  },
+  {
+    "id": 372,
+    "key": "defense_bonus_multiplier",
+    "name": "Total Defense bonus multiplier",
+    "format": "Total Defense multiplier {value0}%"
+  },
+  {
+    "id": 373,
+    "key": "wpd_per_flat_str_or_dex",
+    "name": "Gain 1% Weapon Physical Damage per # Strength or Dexterity",
+    "format": "Gain 1% Weapon Physical Damage per {value0} Strength or Dexterity"
+  },
+  {
+    "id": 374,
+    "key": "base_life_percent_of_caster_life",
+    "name": "Base Life: #% of Caster Life",
+    "format": "Base Life: {value0}% of Caster Life"
   }
 ]

@@ -30,6 +30,7 @@ import {
   getSpentSkillPoints,
   getAllSkillPointsById,
 } from '@/character/character-state.js';
+import { getSelectedConditionKeys, setCondition as setPlannerCondition } from '@/stores/planner-config-store.js';
 import { syncPlannerCharacterStatsTextareaFromCharacter, refreshPlannerStatsPanelFromCharacter } from '@/character/planner-stats-panel.js';
 import {
   getSavedBuilds,
@@ -164,6 +165,20 @@ export function loadBuildData(build, buildIndex = null) {
     // Load All Skills bonus
     if (build.allSkillsBonus !== undefined) {
         setAllSkillsBonus(build.allSkillsBonus);
+    }
+
+    // Load planner config conditions (selected checkboxes)
+    if (Array.isArray(build.configConditions)) {
+        try {
+            // Reset/set each condition key
+            for (const k of build.configConditions) {
+                if (typeof k === 'string' && String(k).trim() !== '') {
+                    setPlannerCondition(k, true);
+                }
+            }
+        } catch (e) {
+            console.warn('Failed to apply build configConditions:', e);
+        }
     }
     
     // Class baseline stats only when the build has no stats blob (saved builds carry raw stat lines).
@@ -384,6 +399,19 @@ function validateBuildData(buildData) {
         for (const q of Object.values(buildData.questsCompleted)) {
             if (!isValidSavedQuestDifficultyValue(q)) {
                 toastManager.showToast('questsCompleted entries must be objects or [n,n,n] arrays', 'danger');
+                return false;
+            }
+        }
+    }
+
+    if (buildData.configConditions !== undefined) {
+        if (!Array.isArray(buildData.configConditions)) {
+            toastManager.showToast('configConditions must be an array', 'danger');
+            return false;
+        }
+        for (const v of buildData.configConditions) {
+            if (typeof v !== 'string') {
+                toastManager.showToast('configConditions entries must be strings', 'danger');
                 return false;
             }
         }
@@ -819,6 +847,13 @@ export function buildCurrentBuildSnapshot(name) {
     questCompletionOptOut,
     savedAt: new Date().toISOString(),
   };
+    // Include planner config selected conditions (if any)
+    try {
+        const cfg = Array.isArray(getSelectedConditionKeys()) ? getSelectedConditionKeys() : [];
+        if (cfg.length > 0) snap.configConditions = cfg;
+    } catch {
+        // ignore
+    }
   if (Character.isDefaultQuestState(getCharacterLevel(), snap.questsCompleted, snap.questCompletionOptOut)) {
     delete snap.questsCompleted;
     delete snap.questCompletionOptOut;

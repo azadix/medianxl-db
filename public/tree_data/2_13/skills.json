@@ -1234,6 +1234,9 @@
     "tags": [
       "Passive"
     ],
+    "showCondition": [
+      "while_wielding_two_claws"
+    ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
     "variants": [],
@@ -1255,7 +1258,11 @@
     "tab": 5,
     "class": "Amazon",
     "tabName": "Storm",
-    "tags": [],
+    "tags": [
+      "Spell",
+      "Lightning",
+      "AoE"
+    ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
     "variants": [],
@@ -1270,9 +1277,15 @@
         "min_mana": "2"
       }
     ],
-    "description": [],
+    "description": [
+      "Conjure a devastating lightning strike"
+    ],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{lightning_damage}}",
+      "{{deals_percent_of_stormcall_damage}}",
+      "{{mana_cost}}"
+    ],
     "image": "icons-ama_118.png"
   },
   {
@@ -5550,7 +5563,10 @@
     "tab": 2,
     "class": "Amazon",
     "tabName": "Bow",
-    "tags": [],
+    "tags": [
+      "Summon",
+      "Duration"
+    ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": true,
     "variants": [],
@@ -5562,11 +5578,31 @@
         "value0": "52",
         "value1": "41",
         "value2": "6"
+      },
+      {
+        "statKey": "cooldown",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(200-25*blvl)"
+      },
+      {
+        "statKey": "duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(250)"
       }
     ],
-    "description": [],
+    "description": [
+      "Spawn a decoy to distract your foes"
+    ],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "Affected by Minion stat bonuses",
+      "{{cooldown}}",
+      "{{base_life_percent_of_caster_life}}",
+      "{{duration}}",
+      "{{mana_cost}}"
+    ],
     "image": "icons-ama_162.png"
   },
   {
@@ -6895,14 +6931,45 @@
     "tab": 3,
     "class": "Amazon",
     "tabName": "Javelin",
-    "tags": [],
+    "tags": [
+      "Upgrade"
+    ],
+    "showCondition": [
+      "after_blocking"
+    ],
     "baseMaxLevel": 8,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
-    "description": [],
+    "scalingConstants": [
+      {
+        "statKey": "cold_absorb",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "4+blvl"
+      },
+      {
+        "statKey": "fire_absorb",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "4+blvl"
+      },
+      {
+        "statKey": "lightning_absorb",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "4+blvl"
+      }
+    ],
+    "description": [
+      "Shieldmaiden grants elemental absorb after you block"
+    ],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "[[shieldmaiden]]",
+      "{{fire_absorb}} after blocking",
+      "{{cold_absorb}} after blocking",
+      "{{lightning_absorb}} after blocking"
+    ],
     "image": "icons-ama_138.png"
   },
   {
@@ -8652,14 +8719,28 @@
     "tab": 6,
     "class": "Amazon",
     "tabName": "Blood",
-    "tags": [],
+    "tags": [
+      "Upgrade"
+    ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
-    "description": [],
+    "scalingConstants": [
+      {
+        "statKey": "regenerate_life_percent",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "-2"
+      }
+    ],
+    "description": [
+      "Your blood spells gain a bonus to total damage at high skill levels"
+    ],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{regenerate_life_percent}}",
+      "+1% Damage multiplier at Skill level 70 onwards (Max +30%)"
+    ],
     "image": "icons-ama_152.png"
   },
   {
@@ -8729,6 +8810,9 @@
     "tags": [
       "Passive",
       "Healing"
+    ],
+    "showCondition": [
+      "after_taking_weapon_damage"
     ],
     "baseMaxLevel": 5,
     "affectedBySpecialization": false,
@@ -18002,14 +18086,31 @@
     "tab": 5,
     "class": "Amazon",
     "tabName": "Storm",
-    "tags": [],
+    "tags": [
+      "Passive"
+    ],
     "baseMaxLevel": 20,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
+    "scalingConstants": [
+      {
+        "statKey": "bonus_lightning_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "5*blvl"
+      }
+    ],
+    "description": [
+      "Zerae rewards your devotion by imbuing your hammers to strike with even more force"
+    ],
+    "restriction": [
+      "Requires a mace, hammer, or scepter"
+    ],
+    "skillEffect": [
+      "[[hammer_of_zerae]]",
+      "{{bonus_lightning_damage}}",
+      "{{wpd_per_flat_str_or_dex}}"
+    ],
     "image": "icons-ama_143.png"
   },
   {
@@ -18123,14 +18224,55 @@
     "tab": 5,
     "class": "Amazon",
     "tabName": "Storm",
-    "tags": [],
+    "tags": [
+      "Passive"
+    ],
     "baseMaxLevel": 7,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
-    "description": [],
+    "scalingConstants": [
+      {
+        "statKey": "base_block_chance",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "blvl"
+      },
+      {
+        "statKey": "defense_bonus_multiplier",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "5*blvl"
+      },
+      {
+        "statKey": "grit",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "10"
+      },
+      {
+        "statKey": "maximum_block_chance",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "1+3*blvl"
+      },
+      {
+        "statKey": "block_speed",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "30"
+      }
+    ],
+    "description": [
+      "Improves your defenses and blocking based on your path"
+    ],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{block_speed}}",
+      "{{grit}} (Hammer Path)",
+      "{{maximum_block_chance}} (Hammer Path)",
+      "{{base_block_chance}} (Thunder Path)",
+      "{{defense_bonus_multiplier}} (while wielding a Two-handed weapon)"
+    ],
     "image": "icons-ama_144.png"
   },
   {
@@ -19155,14 +19297,31 @@
     "tab": 3,
     "class": "Amazon",
     "tabName": "Javelin",
-    "tags": [],
+    "tags": [
+      "Upgrade"
+    ],
+    "showCondition": [
+      "after_blocking"
+    ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
-    "description": [],
+    "scalingConstants": [
+      {
+        "statKey": "regenerate_life_percent",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "1+blvl/2"
+      }
+    ],
+    "description": [
+      "Shieldmaiden regenerates Life after you block"
+    ],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "[[shieldmaiden]]",
+      "{{regenerate_life_percent}} (after blocking)"
+    ],
     "image": "icons-ama_90.png"
   },
   {
@@ -19546,14 +19705,38 @@
     "tab": 3,
     "class": "Amazon",
     "tabName": "Javelin",
-    "tags": [],
+    "tags": [
+      "Passive",
+      "Duration"
+    ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
+    "scalingConstants": [
+      {
+        "statKey": "duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(200*(1+[[continuity]].{{skill_duration}}/100))"
+      },
+      {
+        "statKey": "block_speed",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "30*blvl"
+      }
+    ],
+    "description": [
+      "Increase block and grants bonuses for a short time after blocking"
+    ],
+    "restriction": [
+      "Requires an Amazon class shield"
+    ],
+    "skillEffect": [
+      "{{block_speed}}",
+      "{{duration}}",
+      "{{base_block_chance}} (based on character level)"
+    ],
     "image": "icons-ama_126.png"
   },
   {

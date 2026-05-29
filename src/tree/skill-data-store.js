@@ -151,7 +151,40 @@ export class SkillFileStore {
         this.characterStatByStatsKeyLower = new Map();
         /** @type {number|null} version id (from versions.json) matching loaded folder */
         this.currentVersionId = null;
+            /** @type {Array<object>} conditions loaded from conditions.json */
+            this.conditions = [];
+            /** @type {Map<string, object>} conditions keyed by lowercase key */
+            this.conditionsByKeyLower = new Map();
     }
+
+        /**
+         * Get a condition by key (case-insensitive).
+         * @param {string} key
+         * @returns {object|null}
+         */
+        getConditionByKey(key) {
+            if (key == null) return null;
+            return this.conditionsByKeyLower.get(String(key).toLowerCase()) ?? null;
+        }
+
+        /**
+         * Resolve conditions for a skill row or explicit showCondition array.
+         * @param {object|Array<string>|null} skillOrArray
+         * @returns {object[]} array of condition objects (may be empty)
+         */
+        getConditionsForSkill(skillOrArray) {
+            if (!skillOrArray) return [];
+            let keys;
+            if (Array.isArray(skillOrArray)) keys = skillOrArray;
+            else if (Array.isArray(skillOrArray.showCondition)) keys = skillOrArray.showCondition;
+            else return [];
+            const out = [];
+            for (const k of keys) {
+                const c = this.getConditionByKey(k);
+                if (c) out.push(c);
+            }
+            return out;
+        }
 
     /**
      * Balance version ids to try (matches getBalanceVersionIdsForFallback).
@@ -589,9 +622,23 @@ export async function initSkillDataStore(defaultVersion = DEFAULT_GAME_VERSION) 
             `${TREE_DATA_DIR}/${folderSeg}/character_stats.json`
         );
 
+        // Optional per-version conditions file. New feature: conditions.json
+        let conditions = [];
+        try {
+            const rawConditions = await fetchJson(`${TREE_DATA_DIR}/${folderSeg}/conditions.json`);
+            conditions = Array.isArray(rawConditions) ? rawConditions : [];
+        } catch (_e) {
+            // Optional file; keep default [] if not present.
+        }
+
         const store = new SkillFileStore();
         store.versions = versions;
         store.stats = stats;
+        // attach conditions and build lookup
+        store.conditions = conditions;
+        for (const c of conditions) {
+            if (c && c.key) store.conditionsByKeyLower.set(String(c.key).toLowerCase(), c);
+        }
         for (const s of stats) {
             if (s.key) store.statsByKeyLower.set(String(s.key).toLowerCase(), s);
         }
@@ -620,6 +667,9 @@ export async function initSkillDataStore(defaultVersion = DEFAULT_GAME_VERSION) 
             store.balanceCache.set(safe, balanceObjectFromMergedRow(row));
         }
         _store = store;
+        if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent('skillDataStoreInitialized', { detail: { folderSeg } }));
+        }
         return store;
     })();
 

@@ -4,6 +4,7 @@ import PlannerSidebarTabs from './PlannerSidebarTabs.vue';
 import PlannerSidebarOverview from './PlannerSidebarOverview.vue';
 import PlannerStatsPanel from './PlannerStatsPanel.vue';
 import PlannerSidebarTabQuests from './PlannerSidebarTabQuests.vue';
+import PlannerSidebarConfig from './PlannerSidebarConfig.vue';
 
 const sidebarPane = ref('overview');
 </script>
@@ -16,6 +17,7 @@ const sidebarPane = ref('overview');
         <PlannerSidebarOverview v-show="sidebarPane === 'overview'" />
         <PlannerStatsPanel v-show="sidebarPane === 'stats'" />
         <PlannerSidebarTabQuests v-show="sidebarPane === 'quests'" />
+        <PlannerSidebarConfig v-show="sidebarPane === 'config'" />
       </div>
     </div>
   </div>

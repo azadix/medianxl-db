@@ -20,6 +20,7 @@ import {
   isSkillDisabled,
   isOSkillSlotDisabled
 } from '@/character/character-state.js';
+import { isConditionSelected } from '@/stores/planner-config-store.js';
 import { resolveVariantKeyForTooltip, formatDisplayNameWithVariantHtml } from './skill-variants.js';
 import { getCurrentVersion, versionToTreeAssetFolder } from '@/shared/version-config.js';
 import { getFileSkillStore } from './skill-data-store.js';
@@ -55,6 +56,39 @@ function onTooltipRefreshEvent(e) {
 
 function onSkillPointsChangedForTooltip() {
     handleSkillPointsChanged(null);
+}
+
+function onPlannerConfigChangedForTooltip() {
+    handleSkillPointsChanged(null);
+}
+
+function buildSkillTooltipConditionHtml(skillData) {
+    const store = getFileSkillStore();
+    if (!store || !skillData?.id) return '';
+    const catalogRow = store.catalogByInternalId?.get(skillData.id);
+    if (!catalogRow) return '';
+
+    const conditions = store.getConditionsForSkill(catalogRow);
+    if (!Array.isArray(conditions) || conditions.length === 0) return '';
+
+    const rows = conditions.map((cond) => {
+        const active = isConditionSelected(cond.key);
+        const label = cond.name || formatConditionLabel(cond.key || '');
+        return `State:<span class="is-size-7 ${active ? 'has-text-success' : 'has-text-danger'}">` +
+            `<span class="has-text-weight-semibold"> ${escapeHtmlText(label)}</span>` +
+            ` ${active ? '' : '(disabled)'}` +
+            `</span>`;
+    });
+
+    return `<div class="tooltip-condition mb-2">${rows.join('')}</div>`;
+}
+
+function formatConditionLabel(rawKey) {
+    return String(rawKey || '')
+        .split('_')
+        .filter(Boolean)
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
 }
 
 function cardMatchesCurrentHover(card) {
@@ -165,6 +199,8 @@ export function initializeTooltip() {
     
     // Listen for skill point changes to update tooltip if it's showing
     window.addEventListener('skillPointsChanged', onSkillPointsChangedForTooltip);
+    // Refresh tooltip when planner Config toggles change condition state
+    window.addEventListener('plannerConfigChanged', onPlannerConfigChangedForTooltip);
     
     // Listen for tooltip refresh events (triggered after minLevelDisplay is updated)
     window.addEventListener('tooltipRefresh', onTooltipRefreshEvent);
@@ -610,6 +646,11 @@ async function buildTooltipContent(
         }),
     ];
 
+    const conditionHtml = buildSkillTooltipConditionHtml(skillData);
+    if (conditionHtml) {
+        bodyParts.push(conditionHtml);
+    }
+
     const slot = oskillSlotId != null ? String(oskillSlotId).trim() : '';
     const contributionsDisabled = isOSkill
       ? slot !== '' && isOSkillSlotDisabled(slot)
@@ -831,6 +872,7 @@ export function destroyTooltip() {
     document.removeEventListener('mousemove', handleMouseMove);
     window.removeEventListener('scroll', onWindowScrollForTooltip, true);
     window.removeEventListener('skillPointsChanged', onSkillPointsChangedForTooltip);
+    window.removeEventListener('plannerConfigChanged', onPlannerConfigChangedForTooltip);
     window.removeEventListener('tooltipRefresh', onTooltipRefreshEvent);
     
     // Reset Ctrl key state

@@ -8,6 +8,7 @@
 
 import Skill from '@/skills/domain/Skill.js';
 import { getFileSkillStore } from '@/tree/skill-data-store.js';
+import { isConditionSelected } from '@/stores/planner-config-store.js';
 import { isSubskillActive } from '@/skills/domain/conditional-subskills.js';
 import { getSkillVariantKey } from '@/tree/skill-variants.js';
 import {
@@ -23,7 +24,8 @@ import {
  *   displayName: string,
  *   description: string,
  *   kind?: PlannerStatModifierKind,
- *   value?: number
+ *   value?: number,
+ *   active?: boolean
  * }} PlannerStatModifier
  */
 
@@ -157,7 +159,7 @@ export function getPairedStatRouting(store, scalingStatKey) {
  * @param {string} displayName
  * @param {string} slotLabel e.g. "value0" or "remainder"
  */
-function pushPlannerStatModifier(plannerKey, delta, internalId, displayName, slotLabel) {
+function pushPlannerStatModifier(plannerKey, delta, internalId, displayName, slotLabel, active = true) {
   if (!Number.isFinite(delta) || delta === 0) return;
   const desc = `${delta >= 0 ? '+' : ''}${formatModifierDisplayValue(delta)}${slotLabel ? ` (${slotLabel})` : ''}`;
   if (!_plannerStatSkillModifiersByKey[plannerKey]) _plannerStatSkillModifiersByKey[plannerKey] = [];
@@ -166,7 +168,8 @@ function pushPlannerStatModifier(plannerKey, delta, internalId, displayName, slo
     displayName,
     description: desc,
     kind: 'flat',
-    value: delta
+    value: delta,
+    active: Boolean(active)
   });
 }
 
@@ -267,6 +270,11 @@ export async function recomputePlannerStatsFromSkillAllocations(character, ctx) 
     const selectedVariantKey =
       storedVk != null && String(storedVk).trim() !== '' ? String(storedVk).trim() : null;
 
+    // Determine if this catalog row has conditions and whether any are selected
+    const conds = store.getConditionsForSkill(catRow);
+    const hasConds = Array.isArray(conds) && conds.length > 0;
+    const rowActive = !hasConds || conds.some((cc) => isConditionSelected(cc.key));
+
     for (const scRow of scalingConstants) {
       const statKeyRaw = scRow?.statKey;
       if (statKeyRaw == null || String(statKeyRaw).trim() === '') continue;
@@ -351,16 +359,16 @@ export async function recomputePlannerStatsFromSkillAllocations(character, ctx) 
         for (const { valueIndex, plannerKey } of pairedRouting) {
           const slotVal = numericValueSlot(scalingValues, valueIndex);
           if (slotVal == null || slotVal === 0) continue;
-          addBonus(bonuses, plannerKey, slotVal);
-          pushPlannerStatModifier(plannerKey, slotVal, internalId, displayName);
+          if (rowActive) addBonus(bonuses, plannerKey, slotVal);
+          pushPlannerStatModifier(plannerKey, slotVal, internalId, displayName, '', rowActive);
         }
         if (isPlannerBaseStatKey(statKey)) {
           for (let i = 0; i <= 3; i++) {
             if (claimed.has(i)) continue;
             const slotVal = numericValueSlot(scalingValues, i);
             if (slotVal == null || slotVal === 0) continue;
-            addBonus(bonuses, statKey, slotVal);
-            pushPlannerStatModifier(statKey, slotVal, internalId, displayName, `value${i} remainder`);
+            if (rowActive) addBonus(bonuses, statKey, slotVal);
+            pushPlannerStatModifier(statKey, slotVal, internalId, displayName, `value${i} remainder`, rowActive);
           }
         }
         continue;
@@ -368,8 +376,8 @@ export async function recomputePlannerStatsFromSkillAllocations(character, ctx) 
 
       const delta = sumEvaluatedNumericSlots(scalingValues);
       if (!Number.isFinite(delta) || delta === 0) continue;
-      addBonus(bonuses, statKey, delta);
-      pushPlannerStatModifier(statKey, delta, internalId, displayName, '');
+      if (rowActive) addBonus(bonuses, statKey, delta);
+      pushPlannerStatModifier(statKey, delta, internalId, displayName, '', rowActive);
     }
   }
 
