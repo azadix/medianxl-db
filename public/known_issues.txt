@@ -2,3 +2,4 @@
 Skill damage calculation is not implemented
 War Spirit synergies based on devotion are not filled in
 Conditional stats from skills/passives are not implemented
+Conditions from oSkills are not being applied

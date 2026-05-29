@@ -168,21 +168,43 @@ export class SkillFileStore {
         }
 
         /**
-         * Resolve conditions for a skill row or explicit showCondition array.
+         * Resolve conditions for a skill row from per-stat showCondition in scalingConstants.
          * @param {object|Array<string>|null} skillOrArray
          * @returns {object[]} array of condition objects (may be empty)
          */
         getConditionsForSkill(skillOrArray) {
             if (!skillOrArray) return [];
-            let keys;
-            if (Array.isArray(skillOrArray)) keys = skillOrArray;
-            else if (Array.isArray(skillOrArray.showCondition)) keys = skillOrArray.showCondition;
-            else return [];
+            
+            const seenKeys = new Set();
             const out = [];
-            for (const k of keys) {
-                const c = this.getConditionByKey(k);
-                if (c) out.push(c);
+            
+            // Collect unique keys to avoid duplicates
+            const addKey = (k) => {
+                const keyStr = String(k).toLowerCase();
+                if (!seenKeys.has(keyStr)) {
+                    seenKeys.add(keyStr);
+                    const c = this.getConditionByKey(k);
+                    if (c) out.push(c);
+                }
+            };
+            
+            // Array format (direct array of keys)
+            if (Array.isArray(skillOrArray)) {
+                for (const k of skillOrArray) {
+                    if (k != null) addKey(k);
+                }
             }
+            // Per-stat showCondition in scalingConstants
+            else if (skillOrArray && Array.isArray(skillOrArray.scalingConstants)) {
+                for (const stat of skillOrArray.scalingConstants) {
+                    if (stat && Array.isArray(stat.showCondition)) {
+                        for (const k of stat.showCondition) {
+                            if (k != null) addKey(k);
+                        }
+                    }
+                }
+            }
+            
             return out;
         }
 

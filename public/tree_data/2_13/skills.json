@@ -1741,7 +1741,10 @@
         "statKey": "grit_while_unmorphed",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "blvl/3"
+        "value0": "blvl/3",
+        "showCondition": [
+          "while_unmorphed"
+        ]
       }
     ],
     "description": [
@@ -6017,6 +6020,12 @@
         "value0": "240",
         "value1": "4",
         "value2": "8"
+      },
+      {
+        "statKey": "duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(0*(1+[[continuity]].{{skill_duration}}/100))"
       }
     ],
     "description": [
@@ -6934,9 +6943,6 @@
     "tags": [
       "Upgrade"
     ],
-    "showCondition": [
-      "after_blocking"
-    ],
     "baseMaxLevel": 8,
     "affectedBySpecialization": false,
     "variants": [],
@@ -6945,19 +6951,28 @@
         "statKey": "cold_absorb",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "4+blvl"
+        "value0": "4+blvl",
+        "showCondition": [
+          "after_blocking"
+        ]
       },
       {
         "statKey": "fire_absorb",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "4+blvl"
+        "value0": "4+blvl",
+        "showCondition": [
+          "after_blocking"
+        ]
       },
       {
         "statKey": "lightning_absorb",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "4+blvl"
+        "value0": "4+blvl",
+        "showCondition": [
+          "after_blocking"
+        ]
       }
     ],
     "description": [
@@ -7972,7 +7987,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(750)"
+        "value0": "frames(750*(1+[[continuity]].{{skill_duration}}/100))"
       },
       {
         "statKey": "physical_resistance",
@@ -8811,9 +8826,6 @@
       "Passive",
       "Healing"
     ],
-    "showCondition": [
-      "after_taking_weapon_damage"
-    ],
     "baseMaxLevel": 5,
     "affectedBySpecialization": false,
     "variants": [],
@@ -8822,32 +8834,47 @@
         "statKey": "max_cold_resistance",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "3"
+        "value0": "3",
+        "showCondition": [
+          "after_taking_weapon_damage"
+        ]
       },
       {
         "statKey": "max_fire_resistance",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "3"
+        "value0": "3",
+        "showCondition": [
+          "after_taking_weapon_damage"
+        ]
       },
       {
         "statKey": "block_speed",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "25"
+        "value0": "25",
+        "showCondition": [
+          "after_taking_weapon_damage"
+        ]
       },
       {
         "statKey": "regenerates_percent_life_over_time",
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "5*blvl",
-        "value1": "frames(125)"
+        "value1": "frames(125)",
+        "showCondition": [
+          "after_taking_weapon_damage"
+        ]
       },
       {
         "statKey": "vitality_percent",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "10"
+        "value0": "10",
+        "showCondition": [
+          "after_taking_weapon_damage"
+        ]
       }
     ],
     "description": [
@@ -12239,6 +12266,12 @@
         "value0": "170"
       },
       {
+        "statKey": "duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(50*(1+[[continuity]].{{skill_duration}}/100))"
+      },
+      {
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
@@ -13509,7 +13542,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(7500)"
+        "value0": "frames(7500*(1+[[continuity]].{{skill_duration}}/100))"
       },
       {
         "statKey": "elemental_magic_damage_reduced_flat",
@@ -19300,9 +19333,6 @@
     "tags": [
       "Upgrade"
     ],
-    "showCondition": [
-      "after_blocking"
-    ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": false,
     "variants": [],
@@ -19311,7 +19341,10 @@
         "statKey": "regenerate_life_percent",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "1+blvl/2"
+        "value0": "1+blvl/2",
+        "showCondition": [
+          "after_blocking"
+        ]
       }
     ],
     "description": [
@@ -22384,7 +22417,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(500)"
+        "value0": "frames(500*(1+[[continuity]].{{skill_duration}}/100))"
       },
       {
         "statKey": "mana_cost",

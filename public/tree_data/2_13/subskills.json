@@ -9,7 +9,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(100+10*max(lvl-1,0))"
+        "value0": "frames((100+10*max(lvl-1,0))*(1+[[continuity]].{{skill_duration}}/100))"
       },
       {
         "statKey": "enemy_physical_resistance",

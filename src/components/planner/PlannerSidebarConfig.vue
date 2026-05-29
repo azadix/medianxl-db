@@ -38,9 +38,14 @@ const conditions = computed(() => {
   if (s && Array.isArray(s.catalog)) {
     for (const row of s.catalog) {
       if (!activeSkills.has(String(row.id))) continue;
-      if (Array.isArray(row.showCondition)) {
-        for (const k of row.showCondition) {
-          if (k != null) used.add(String(k).toLowerCase());
+      // Per-stat showCondition in scalingConstants
+      if (Array.isArray(row.scalingConstants)) {
+        for (const stat of row.scalingConstants) {
+          if (stat && Array.isArray(stat.showCondition)) {
+            for (const k of stat.showCondition) {
+              if (k != null) used.add(String(k).toLowerCase());
+            }
+          }
         }
       }
     }
