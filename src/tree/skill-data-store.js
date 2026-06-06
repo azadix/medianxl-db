@@ -168,43 +168,53 @@ export class SkillFileStore {
         }
 
         /**
-         * Resolve conditions for a skill row from per-stat showCondition in scalingConstants.
+         * Collect condition keys referenced by a catalog row or raw key array.
+         * @param {object|Array<string>|null} skillOrRow
+         * @returns {string[]}
+         */
+        collectShowConditionKeys(skillOrRow) {
+            if (!skillOrRow) return [];
+            if (Array.isArray(skillOrRow)) {
+                return skillOrRow.filter((k) => k != null).map((k) => String(k));
+            }
+            /** @type {string[]} */
+            const keys = [];
+            if (Array.isArray(skillOrRow.showCondition)) {
+                for (const k of skillOrRow.showCondition) {
+                    if (k != null) keys.push(String(k));
+                }
+            }
+            if (Array.isArray(skillOrRow.scalingConstants)) {
+                for (const stat of skillOrRow.scalingConstants) {
+                    if (stat && Array.isArray(stat.showCondition)) {
+                        for (const k of stat.showCondition) {
+                            if (k != null) keys.push(String(k));
+                        }
+                    }
+                }
+            }
+            return keys;
+        }
+
+        /**
+         * Resolve conditions for a skill row from row-level and per-stat showCondition.
          * @param {object|Array<string>|null} skillOrArray
          * @returns {object[]} array of condition objects (may be empty)
          */
         getConditionsForSkill(skillOrArray) {
             if (!skillOrArray) return [];
-            
+
             const seenKeys = new Set();
             const out = [];
-            
-            // Collect unique keys to avoid duplicates
-            const addKey = (k) => {
+
+            for (const k of this.collectShowConditionKeys(skillOrArray)) {
                 const keyStr = String(k).toLowerCase();
-                if (!seenKeys.has(keyStr)) {
-                    seenKeys.add(keyStr);
-                    const c = this.getConditionByKey(k);
-                    if (c) out.push(c);
-                }
-            };
-            
-            // Array format (direct array of keys)
-            if (Array.isArray(skillOrArray)) {
-                for (const k of skillOrArray) {
-                    if (k != null) addKey(k);
-                }
+                if (seenKeys.has(keyStr)) continue;
+                seenKeys.add(keyStr);
+                const c = this.getConditionByKey(k);
+                if (c) out.push(c);
             }
-            // Per-stat showCondition in scalingConstants
-            else if (skillOrArray && Array.isArray(skillOrArray.scalingConstants)) {
-                for (const stat of skillOrArray.scalingConstants) {
-                    if (stat && Array.isArray(stat.showCondition)) {
-                        for (const k of stat.showCondition) {
-                            if (k != null) addKey(k);
-                        }
-                    }
-                }
-            }
-            
+
             return out;
         }
 

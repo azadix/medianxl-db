@@ -212,6 +212,15 @@ export function buildMergedSkillLevelsForStatRecompute(character) {
   return byInternal;
 }
 
+/**
+ * Internal catalog ids with points from tree skills and oSkills (matches stat recompute).
+ * @returns {Set<string>}
+ */
+export function getActiveInternalSkillIdsForConditions() {
+  if (!characterInstance) return new Set();
+  return new Set(Object.keys(buildMergedSkillLevelsForStatRecompute(characterInstance)));
+}
+
 async function runPlannerSkillStatRecomputeImpl() {
   if (!characterInstance) return;
   const mergedBlvl = buildMergedSkillLevelsForStatRecompute(characterInstance);

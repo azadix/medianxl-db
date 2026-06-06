@@ -1,7 +1,7 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { getActiveInternalSkillIdsForConditions } from '@/character/character-state.js';
 import { getFileSkillStore } from '@/tree/skill-data-store.js';
-import { getAllSkillPoints } from '@/character/character-state.js';
 import { toggleCondition, selectedConditions } from '@/stores/planner-config-store.js';
 
 const refreshCount = ref(0);
@@ -27,26 +27,13 @@ const conditions = computed(() => {
   refreshCount.value;
   const s = getFileSkillStore();
   const all = s && Array.isArray(s.conditions) ? s.conditions : [];
-  const activeSkillPoints = getAllSkillPoints();
-  const activeSkills = new Set(
-    Object.entries(activeSkillPoints)
-      .filter(([, points]) => Number(points) > 0)
-      .map(([skillName]) => String(skillName).trim())
-      .filter((key) => key !== '')
-  );
+  const activeSkills = getActiveInternalSkillIdsForConditions();
   const used = new Set();
   if (s && Array.isArray(s.catalog)) {
     for (const row of s.catalog) {
       if (!activeSkills.has(String(row.id))) continue;
-      // Per-stat showCondition in scalingConstants
-      if (Array.isArray(row.scalingConstants)) {
-        for (const stat of row.scalingConstants) {
-          if (stat && Array.isArray(stat.showCondition)) {
-            for (const k of stat.showCondition) {
-              if (k != null) used.add(String(k).toLowerCase());
-            }
-          }
-        }
+      for (const k of s.collectShowConditionKeys(row)) {
+        used.add(String(k).toLowerCase());
       }
     }
   }
