@@ -6,6 +6,7 @@ Ordered steps when adding a new game patch folder under `public/tree_data/<major
 
 1. Copy the previous patch folder (e.g. `2_12` → `2_13`) or scaffold from templates in `README.md`.
 2. Update JSON in the new folder: `skills.json`, `tree_struct.json`, `game_meta.json`, `character_stats.json`, optional `subskills.json`.
+   - `tree_struct.json` uses structured `prerequisites` objects and `layoutParents` per skill (see `src/shared/tree-struct.js` header).
 3. Add a row to `public/tree_data/versions.json` with `major`, `minor`, `name`, and `is_active` (set `is_active` on the new default row; clear others if only one active).
 
 ## 2. Validation

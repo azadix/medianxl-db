@@ -7,21 +7,27 @@
  * {
  *   "Sorceress": {
  *     "Fire": {
- *       "arrows": [["prereq_internal", "dependent_internal"], ...],
  *       "skill_details": [
- *         { "id": "warmth", "row": 1, "col": 1,
- *           "prerequisites": ["skill_level:1:fire_bolt", "tree_points:10:Warmonger"] },
- *         ...
+ *         {
+ *           "id": "warmth",
+ *           "row": 1,
+ *           "col": 1,
+ *           "layoutParents": ["fire_bolt"],
+ *           "prerequisites": {
+ *             "character_level": 10,
+ *             "skill_level": ["fire_bolt", 1],
+ *             "tree_points": ["Warmonger", 30],
+ *             "skill_blocked_by": ["stormcall", 0]
+ *           }
+ *         }
  *       ]
  *     }
  *   }
  * }
  *
- * Each string is requirement_type:requirement_value:target (same as planner Skill.prerequisites).
- * For skill_level and skill_blocked_by, target is the skill id (snake_case), not display name.
- * Omit "prerequisites" or use [] if none. Skills not listed in skill_details get no prerequisites on the planner.
- *
- * `id` may be spelled as `skill` or `name` instead of `id`. Tuple form [ "skill", row, col ] is also accepted.
+ * `layoutParents`: visual tree arrows (parent skill ids), derived at load time.
+ * Multiple skill_level / skill_blocked_by entries use an array of pairs:
+ *   `"skill_level": [["a", 1], ["b", 1]]`
  */
 
 export const TREE_DATA_DIR = 'tree_data';
@@ -32,9 +38,10 @@ export function treeStructJsonPath(major, minor) {
 }
 
 /**
+ * @param {object|null} raw
  * @param {number} major
  * @param {number} minor
- * @returns {Promise<object|null>}
+ * @returns {object|null}
  */
 function unwrapVersionedTreeRoot(raw, major, minor) {
     if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return raw;
@@ -45,83 +52,16 @@ function unwrapVersionedTreeRoot(raw, major, minor) {
     return raw;
 }
 
-function isLegacySkillGridTab(block) {
-    if (!block || typeof block !== 'object' || Array.isArray(block)) return false;
-    if ('skill_details' in block || 'skill_positions' in block || 'arrows' in block) return false;
-    const keys = Object.keys(block);
-    if (!keys.length) return false;
-    return keys.every((k) => {
-        const v = block[k];
-        return Array.isArray(v) && v.length >= 2 && Number.isFinite(Number(v[0])) && Number.isFinite(Number(v[1]));
-    });
-}
-
 /**
- * Unwrap optional top-level version key; convert legacy tab maps (skill -> [r,c]) to { arrows, skill_details }.
  * @param {object|null} raw
  * @param {number} major
  * @param {number} minor
  * @returns {object|null}
  */
 export function normalizeTreeStructPayload(raw, major, minor) {
-    let root = unwrapVersionedTreeRoot(raw, major, minor);
+    const root = unwrapVersionedTreeRoot(raw, major, minor);
     if (!root || typeof root !== 'object' || Array.isArray(root)) return null;
-
-    let needsLegacy = false;
-    for (const classObj of Object.values(root)) {
-        if (!classObj || typeof classObj !== 'object' || Array.isArray(classObj)) continue;
-        for (const [tabName, block] of Object.entries(classObj)) {
-            if (tabName === 'arrows') continue;
-            if (isLegacySkillGridTab(block)) {
-                needsLegacy = true;
-                break;
-            }
-        }
-        if (needsLegacy) break;
-    }
-    if (!needsLegacy) return root;
-
-    const out = {};
-    for (const [classKey, classObj] of Object.entries(root)) {
-        if (!classObj || typeof classObj !== 'object' || Array.isArray(classObj)) continue;
-        const classArrows = Array.isArray(classObj.arrows) ? classObj.arrows : [];
-        const skillToTab = new Map();
-        for (const [tabName, block] of Object.entries(classObj)) {
-            if (tabName === 'arrows') continue;
-            if (!isLegacySkillGridTab(block)) continue;
-            for (const sk of Object.keys(block)) {
-                skillToTab.set(sk, tabName);
-            }
-        }
-        out[classKey] = {};
-        for (const [tabName, block] of Object.entries(classObj)) {
-            if (tabName === 'arrows') continue;
-            if (!isLegacySkillGridTab(block)) {
-                out[classKey][tabName] =
-                    block && typeof block === 'object' && !Array.isArray(block) ? { ...block } : block;
-                continue;
-            }
-            const skill_details = [];
-            for (const sk of Object.keys(block).sort()) {
-                const pos = block[sk];
-                skill_details.push({ id: sk, row: Number(pos[0]), col: Number(pos[1]), prerequisites: [] });
-            }
-            const tabArrows = [];
-            const seen = new Set();
-            for (const pair of classArrows) {
-                if (!Array.isArray(pair) || pair.length < 2) continue;
-                const fr = String(pair[0]);
-                const to = String(pair[1]);
-                if (skillToTab.get(to) !== tabName) continue;
-                const k = `${fr}\0${to}`;
-                if (seen.has(k)) continue;
-                seen.add(k);
-                tabArrows.push([fr, to]);
-            }
-            out[classKey][tabName] = { arrows: tabArrows, skill_details };
-        }
-    }
-    return out;
+    return root;
 }
 
 export async function fetchTreeStructJson(major, minor) {
@@ -138,19 +78,12 @@ export async function fetchTreeStructJson(major, minor) {
 }
 
 /**
- * @param {object|null} treeStruct - parsed JSON root (entire file is one version)
- * @returns {object|null} same reference if usable layout object
+ * @param {object|null} treeStruct
+ * @returns {object|null}
  */
 export function getTreeLayoutRoot(treeStruct) {
     if (!treeStruct || typeof treeStruct !== 'object' || Array.isArray(treeStruct)) return null;
     return treeStruct;
-}
-
-/**
- * @deprecated Use {@link getTreeLayoutRoot}; version-specific wrappers are no longer needed.
- */
-export function getTreeLayoutRootForVersion(treeStruct, _major, _minor) {
-    return getTreeLayoutRoot(treeStruct);
 }
 
 /** @type {Map<string, Map<string, [string, string][]>>} classLower -> tabLower -> pairs */
@@ -164,10 +97,10 @@ function isTabLayoutBlock(v) {
     return v && typeof v === 'object' && !Array.isArray(v);
 }
 
-/** Per-tab skill rows (layout + optional prerequisites). Prefer skill_details; skill_positions is legacy. */
+/** @param {object|null|undefined} tabBlock */
 function getSkillDetailsList(tabBlock) {
     if (!tabBlock || typeof tabBlock !== 'object') return null;
-    const arr = tabBlock.skill_details ?? tabBlock.skill_positions;
+    const arr = tabBlock.skill_details;
     return Array.isArray(arr) ? arr : null;
 }
 
@@ -187,14 +120,9 @@ export function cacheTreeStructArrowsFromLayoutRoot(layoutRoot) {
         }
         for (const [tabName, tabBlock] of Object.entries(classObj)) {
             if (!isTabLayoutBlock(tabBlock)) continue;
-            const raw = tabBlock.arrows;
-            if (!Array.isArray(raw)) continue;
-            const pairs = [];
-            for (const item of raw) {
-                if (Array.isArray(item) && item.length >= 2) {
-                    pairs.push([String(item[0]), String(item[1])]);
-                }
-            }
+            const details = getSkillDetailsList(tabBlock);
+            if (!details) continue;
+            const pairs = deriveArrowsFromSkillDetails(details);
             if (pairs.length) {
                 tabMap.set(String(tabName).toLowerCase(), pairs);
             }
@@ -222,36 +150,139 @@ function resolveCanonicalClassName(requested, classNameByLower) {
     return hit ?? null;
 }
 
-function normalizePrerequisiteStringsFromEntry(raw) {
+/**
+ * @param {string} type
+ * @param {string|number} value
+ * @param {string} [target]
+ * @returns {string}
+ */
+function formatPrereqTriple(type, value, target = '') {
+    return `${type}:${value}:${target ?? ''}`;
+}
+
+/**
+ * @param {unknown} raw
+ * @returns {boolean}
+ */
+function isPrereqPair(raw) {
+    return (
+        Array.isArray(raw) &&
+        raw.length >= 2 &&
+        typeof raw[0] === 'string' &&
+        raw[0].trim() !== '' &&
+        Number.isFinite(Number(raw[1]))
+    );
+}
+
+/**
+ * @param {unknown} raw
+ * @returns {[string, number][]}
+ */
+function normalizePrereqPairList(raw) {
+    if (!raw) return [];
+    if (isPrereqPair(raw)) {
+        return [[String(raw[0]).trim(), Math.floor(Number(raw[1]))]];
+    }
     if (!Array.isArray(raw)) return [];
+    /** @type {[string, number][]} */
     const out = [];
-    for (const x of raw) {
-        if (typeof x === 'string' && x.trim()) out.push(x.trim());
+    for (const item of raw) {
+        if (!isPrereqPair(item)) continue;
+        out.push([String(item[0]).trim(), Math.floor(Number(item[1]))]);
     }
     return out;
 }
 
 /**
+ * Convert tree_struct prerequisite objects to planner prerequisite strings.
+ * @param {object} obj
+ * @returns {string[]}
+ */
+function prerequisitesObjectToPlannerStrings(obj) {
+    if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return [];
+    /** @type {string[]} */
+    const out = [];
+
+    if (obj.character_level != null && String(obj.character_level).trim() !== '') {
+        const n = Math.floor(Number(obj.character_level));
+        if (Number.isFinite(n)) out.push(formatPrereqTriple('character_level', n));
+    }
+
+    for (const [skillId, points] of normalizePrereqPairList(obj.skill_level)) {
+        out.push(formatPrereqTriple('skill_level', points, skillId));
+    }
+
+    for (const [skillId, maxPoints] of normalizePrereqPairList(obj.skill_blocked_by)) {
+        out.push(formatPrereqTriple('skill_blocked_by', maxPoints, skillId));
+    }
+
+    if (obj.tree_points != null) {
+        const pairs = normalizePrereqPairList(obj.tree_points);
+        if (pairs.length === 1) {
+            const [tabName, points] = pairs[0];
+            out.push(formatPrereqTriple('tree_points', points, tabName));
+        }
+    }
+
+    return out;
+}
+
+/**
+ * @param {unknown} raw
+ * @returns {string[]}
+ */
+function normalizeLayoutParentsFromEntry(raw) {
+    if (!Array.isArray(raw)) return [];
+    const out = [];
+    const seen = new Set();
+    for (const item of raw) {
+        if (item == null || String(item).trim() === '') continue;
+        const id = String(item).trim();
+        if (seen.has(id)) continue;
+        seen.add(id);
+        out.push(id);
+    }
+    return out;
+}
+
+/**
+ * @param {object[]} skillDetails
+ * @returns {[string, string][]}
+ */
+export function deriveArrowsFromSkillDetails(skillDetails) {
+    if (!Array.isArray(skillDetails)) return [];
+    /** @type {[string, string][]} */
+    const pairs = [];
+    for (const entry of skillDetails) {
+        if (!entry || typeof entry !== 'object' || Array.isArray(entry)) continue;
+        const childId = entry.id;
+        if (childId == null || String(childId).trim() === '') continue;
+        const child = String(childId).trim();
+        for (const parent of normalizeLayoutParentsFromEntry(entry.layoutParents)) {
+            pairs.push([parent, child]);
+        }
+    }
+    return pairs;
+}
+
+/**
  * @param {unknown} entry
- * @returns {{ skill: string, row: number, col: number, prerequisites: string[] }|null}
+ * @returns {{ skill: string, row: number, col: number, prerequisites: string[], layoutParents: string[] }|null}
  */
 export function parseSkillPositionEntry(entry) {
-    if (Array.isArray(entry) && entry.length >= 3) {
-        const row = Number(entry[1]);
-        const col = Number(entry[2]);
-        if (!Number.isFinite(row) || !Number.isFinite(col)) return null;
-        return { skill: String(entry[0]), row, col, prerequisites: [] };
-    }
-    if (entry && typeof entry === 'object' && !Array.isArray(entry)) {
-        const id = entry.id ?? entry.skill ?? entry.name;
-        if (id == null || String(id).trim() === '') return null;
-        const row = Number(entry.row);
-        const col = Number(entry.col);
-        if (!Number.isFinite(row) || !Number.isFinite(col)) return null;
-        const prerequisites = normalizePrerequisiteStringsFromEntry(entry.prerequisites);
-        return { skill: String(id), row, col, prerequisites };
-    }
-    return null;
+    if (!entry || typeof entry !== 'object' || Array.isArray(entry)) return null;
+    const id = entry.id;
+    if (id == null || String(id).trim() === '') return null;
+    const row = Number(entry.row);
+    const col = Number(entry.col);
+    if (!Number.isFinite(row) || !Number.isFinite(col)) return null;
+    const rawPrereq = entry.prerequisites;
+    const prerequisites =
+        rawPrereq && typeof rawPrereq === 'object' && !Array.isArray(rawPrereq)
+            ? prerequisitesObjectToPlannerStrings(rawPrereq)
+            : [];
+    const layoutParents = normalizeLayoutParentsFromEntry(entry.layoutParents);
+    return { skill: String(id), row, col, prerequisites, layoutParents };
 }
 
 /**
@@ -407,9 +438,8 @@ export function buildPlannerSkillsFromTreeStruct(mergedSkills, layoutRoot) {
 }
 
 /**
- * Map "classLower|skillId" -> prerequisite strings from tree_struct skill_details.
  * @param {object|null} layoutRoot
- * @param {Map<string, string>} classNameByLower canonical class name by lower key
+ * @param {Map<string, string>} classNameByLower
  * @returns {Map<string, string[]>}
  */
 export function buildTreeStructPrerequisiteLookupMap(layoutRoot, classNameByLower) {
@@ -430,7 +460,7 @@ export function buildTreeStructPrerequisiteLookupMap(layoutRoot, classNameByLowe
                 const p = parseSkillPositionEntry(entry);
                 if (!p) continue;
                 const mapKey = `${cLow}|${p.skill}`;
-                const list = p.prerequisites && p.prerequisites.length > 0 ? [...p.prerequisites] : [];
+                const list = p.prerequisites.length > 0 ? [...p.prerequisites] : [];
                 byKey.set(mapKey, list);
             }
         }
@@ -439,7 +469,6 @@ export function buildTreeStructPrerequisiteLookupMap(layoutRoot, classNameByLowe
 }
 
 /**
- * Planner: prerequisites come only from tree_struct. Skills not in the map get [].
  * @param {object[]} mergedSkills
  * @param {object|null} layoutRoot
  */
@@ -475,8 +504,6 @@ export function applyTreeStructPrerequisitesToSkills(mergedSkills, layoutRoot) {
                 break;
             }
         }
-        // Paragon skills (and similar) are cloned per class but tree_struct only lists one prototype
-        // (e.g. Amazon Reward). Inherit prerequisites from any class that defines this skill id.
         if (!list.length) {
             const suffix = `|${String(s.id)}`;
             for (const [mapKey, plist] of byKey) {
