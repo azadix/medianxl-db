@@ -1,4 +1,4 @@
-77 skills (out of 777) are missing it's description: 5 oSkills, 47 procs, 25 class skills
-Skill damage calculation is not implemented
-War Spirit synergies based on devotion are not filled in
-Conditional stats from skills/passives are not implemented
+77 skills (out of 777) are missing it's description: 5 oSkills, 47 procs, 25 class skills
+Skill damage calculation is not implemented
+War Spirit synergies based on devotion are not filled in
+Conditional stats from skills/passives are not implemented
