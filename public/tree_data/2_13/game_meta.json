@@ -621,6 +621,10 @@
       "name": "Passive"
     },
     {
+      "id": 39,
+      "name": "Periodic"
+    },
+    {
       "id": 1,
       "name": "Physical"
     },

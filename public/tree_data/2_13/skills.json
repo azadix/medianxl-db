@@ -10120,7 +10120,8 @@
     "tags": [
       "Buff",
       "Poison",
-      "Duration"
+      "Duration",
+      "Periodic"
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": true,

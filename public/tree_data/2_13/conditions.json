@@ -23,10 +23,12 @@
   { "key": "after_being_hit", "name": null, "description": "" },
   { "key": "when_struck", "name": null, "description": "" },
   { "key": "after_taking_weapon_damage", "name": null, "description": "" },
+  { "key": "while_standing", "name": null, "description": "" },
   { "key": "while_walking", "name": null, "description": "" },
   { "key": "while_sprinting", "name": null, "description": "" },
 
   { "key": "while_wielding_two_claws", "name": null, "description": "" },
+  { "key": "while_wielding_onehanded_weapon", "name": null, "description": "" },
   { "key": "while_wielding_twohanded_weapon", "name": null, "description": "" },
   { "key": "while_wielding_naginata", "name": null, "description": "" },
   { "key": "while_wielding_spear", "name": null, "description": "" },
