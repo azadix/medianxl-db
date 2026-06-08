@@ -1450,14 +1450,36 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Cold",
+      "Physical",
+      "Weapon Damage"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
-    "description": [],
+    "scalingConstants": [
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "150"
+      },
+      {
+        "statKey": "converts_phys_to_cold",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100"
+      }
+    ],
+    "description": [
+      "Creates a furious storm of energy at the target location"
+    ],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{converts_phys_to_cold}}",
+      "{{weapon_damage}}"
+    ],
     "image": "icons-shared_178.png"
   },
   {
@@ -2523,14 +2545,37 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Cold"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
-    "description": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "220",
+        "value1": "26",
+        "value2": "5"
+      },
+      {
+        "statKey": "cooldown",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(10)"
+      }
+    ],
+    "description": [
+      "Summons an ice storm to rain cold death onto your enemies"
+    ],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{cold_damage}}",
+      "{{cooldown}}",
+      "{{mana_cost}}"
+    ],
     "image": "icons-shared_148.png"
   },
   {
@@ -3362,14 +3407,32 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Spell",
+      "Fire"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
-    "description": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "132",
+        "value1": "48",
+        "value2": "5"
+      }
+    ],
+    "description": [
+      "Cast a ring of deadly fireballs in all directions around you"
+    ],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{fire_damage}}",
+      "{{fireballs}}",
+      "{{mana_cost}}"
+    ],
     "image": "icons-shared_35.png"
   },
   {
@@ -9475,14 +9538,52 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Cold"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
-    "description": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "18",
+        "value1": "13",
+        "value2": "5"
+      },
+      {
+        "statKey": "minions",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "Souls",
+        "value1": ""
+      },
+      {
+        "statKey": "target_seek_range",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "range(30)"
+      },
+      {
+        "statKey": "freeze_duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(50)"
+      }
+    ],
+    "description": [
+      "Shoots ice orbs at random foes, dealing heavy damage"
+    ],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{cold_damage}}",
+      "{{freeze_duration}}",
+      "{{minions}}",
+      "{{target_seek_range}}",
+      "{{mana_cost}}"
+    ],
     "image": "icons-shared_63.png"
   },
   {
@@ -12207,14 +12308,38 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Fire"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
-    "description": [],
+    "scalingConstants": [
+      {
+        "statKey": "length_of_fuse",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(50)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "141",
+        "value1": "22",
+        "value2": "5"
+      }
+    ],
+    "description": [
+      "Places a powerful explosive timed bomb at your target"
+    ],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{fire_damage}}",
+      "{{fireballs}}",
+      "{{length_of_fuse}}",
+      "{{mana_cost}}"
+    ],
     "image": "icons-shared_65.png"
   },
   {
@@ -13363,14 +13488,29 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Buff",
+      "Healing"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
-    "description": [],
+    "scalingConstants": [
+      {
+        "statKey": "regenerates_percent_life_over_time",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100",
+        "value1": ""
+      }
+    ],
+    "description": [
+      "Quickly restores your life"
+    ],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{regenerates_percent_life_over_time}}"
+    ],
     "image": "icons-shared_115.png"
   },
   {
@@ -17236,14 +17376,37 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Poison"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
-    "description": [],
+    "scalingConstants": [
+      {
+        "statKey": "punishers",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "1"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "92",
+        "value1": "20",
+        "value2": "5"
+      }
+    ],
+    "description": [
+      "Casts a slow moving bolt of doom that kills or cripples a target"
+    ],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{punishers}}",
+      "{{poison_dot}}",
+      "{{mana_cost}}"
+    ],
     "image": "icons-shared_69.png"
   },
   {
@@ -17254,14 +17417,37 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Poison"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
-    "description": [],
+    "scalingConstants": [
+      {
+        "statKey": "punishers",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "3"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "92",
+        "value1": "20",
+        "value2": "5"
+      }
+    ],
+    "description": [
+      "Casts a slow moving bolt of doom that kills or cripples a target"
+    ],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{punishers}}",
+      "{{poison_dot}}",
+      "{{mana_cost}}"
+    ],
     "image": "icons-shared_69.png"
   },
   {
@@ -23716,7 +23902,12 @@
     "tab": 65,
     "class": "Other",
     "tabName": "oSkill",
-    "tags": [],
+    "tags": [
+      "Projectile",
+      "Magic",
+      "Physical",
+      "Weapon Damage"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
@@ -23729,11 +23920,30 @@
         "value1": "0",
         "value2": "6",
         "min_mana": "350"
+      },
+      {
+        "statKey": "converts_phys_to_magic",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "50"
+      },
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100"
       }
     ],
-    "description": [],
+    "description": [
+      "Devastate enemies by drawing power from the Void"
+    ],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{converts_phys_to_magic}}",
+      "{{weapon_damage}}",
+      "{{cooldown}}",
+      "{{mana_cost}}"
+    ],
     "image": "icons-shared_104.png"
   },
   {
@@ -24773,7 +24983,10 @@
     "tab": 65,
     "class": "Other",
     "tabName": "oSkill",
-    "tags": [],
+    "tags": [
+      "Spell",
+      "Cold"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
@@ -24787,9 +25000,14 @@
         "value2": "6"
       }
     ],
-    "description": [],
+    "description": [
+      "Evil entity which fires bone spears at nearby enemies"
+    ],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{cold_damage}}",
+      "(Skill damage increases with Fire, Cold, Lightning, Poison and Physical/Magic Spell damage)"
+    ],
     "image": "icons-shared_105.png"
   },
   {
