@@ -4,62 +4,17 @@
  * @module tree/skill-data-store
  */
 
-import {
-    BUILD_VERSION_OVERRIDE_KEY,
-    DEFAULT_GAME_VERSION,
-    treeAssetFolderFromMajorMinor,
-} from '@/shared/version-constants.js';
+import { DEFAULT_GAME_VERSION, treeAssetFolderFromMajorMinor } from '@/shared/version-constants.js';
+import { fetchJson } from '@/shared/fetch-json.js';
+import { getRequestedTreeVersion, resolveGameVersion } from '@/shared/version-resolver.js';
+
+export { getRequestedTreeVersion, resolveGameVersion };
 
 const TREE_DATA_DIR = 'tree_data';
 
 /** @type {SkillFileStore | null} */
 let _store = null;
 let _initPromise = null;
-
-function parseBuildOverride() {
-    const raw = localStorage.getItem(BUILD_VERSION_OVERRIDE_KEY);
-    if (!raw) return null;
-    try {
-        const parsed = JSON.parse(raw);
-        if (parsed && typeof parsed.major === 'number' && typeof parsed.minor === 'number') {
-            return { major: parsed.major, minor: parsed.minor };
-        }
-    } catch {
-        /* ignore */
-    }
-    return null;
-}
-
-/**
- * Resolve major/minor from build override, active versions.json row, or fallback.
- * @param {Array<{ major: number, minor: number, is_active?: boolean | number }> | null | undefined} versionsList
- * @param {{ major: number, minor: number }} defaultVersion
- * @returns {{ major: number, minor: number }}
- */
-export function getRequestedTreeVersion(versionsList, defaultVersion) {
-    const overrideVersion = parseBuildOverride();
-    if (overrideVersion && versionsList?.length) {
-        const ok = versionsList.some(
-            (row) => row.major === overrideVersion.major && row.minor === overrideVersion.minor
-        );
-        if (ok) return overrideVersion;
-    }
-    const active = versionsList?.find((row) => row.is_active);
-    if (active) return { major: active.major, minor: active.minor };
-    if (versionsList?.length) {
-        const first = versionsList[0];
-        return { major: first.major, minor: first.minor };
-    }
-    return defaultVersion;
-}
-
-async function fetchJson(path) {
-    const res = await fetch(path);
-    if (!res.ok) {
-        throw new Error(`Failed to load ${path}: ${res.status}`);
-    }
-    return res.json();
-}
 
 /**
  * One map for a whole sort: `class_id|tab_id` -> classTabs.tab_index.

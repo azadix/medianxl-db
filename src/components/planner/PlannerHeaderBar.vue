@@ -1,6 +1,7 @@
 <script setup>
 import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue';
 import { usePlannerRevisionRefresh } from '@/composables/usePlannerRevisionRefresh.js';
+import { usePlannerSkillPoints } from '@/composables/usePlannerSkillPoints.js';
 import {
   calculateArmorImageNumber,
   getCurrentBuildDisplayName,
@@ -16,8 +17,6 @@ import {
 import {
   getCharacterInstance,
   getCharacterLevel,
-  getEffectivePlannerLevel,
-  getSpentSkillPoints,
   setCharacterLevel,
   syncPlannerCharacterLevelIfAuto,
 } from '@/character/character-state.js';
@@ -28,9 +27,9 @@ import {
 } from '@/planner/planner-level-options.js';
 
 const className = ref('');
-const spentPoints = ref(0);
-const effectiveLevel = ref(1);
 const buildName = ref('Untitled build');
+
+const { spentPoints, effectiveLevel } = usePlannerSkillPoints();
 
 const showOptionsModal = ref(false);
 const draftAutoLevelFromSp = ref(true);
@@ -50,8 +49,6 @@ function refreshHeaderState() {
   const classSelect = document.getElementById('classSelect');
   className.value =
     ch?.className || (classSelect instanceof HTMLSelectElement ? classSelect.value : '') || '';
-  spentPoints.value = getSpentSkillPoints();
-  effectiveLevel.value = getEffectivePlannerLevel();
 }
 
 function openPlannerOptions() {

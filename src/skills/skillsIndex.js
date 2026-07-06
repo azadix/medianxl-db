@@ -6,6 +6,7 @@ import {
 } from '@/shared/utils.js';
 import { getTreeSkillsCache } from '@/character/character-state.js';
 import { getCurrentVersion, versionToTreeAssetFolder, initializeVersionSelector } from '@/shared/version-config.js';
+import { DEFAULT_GAME_VERSION } from '@/shared/version-constants.js';
 import {
   fetchTreeStructJson,
   getTreeLayoutRoot,
@@ -528,7 +529,7 @@ async function displaySkillDetail(skillId) {
 
 async function loadSkillsFromTreeDataPage() {
   try {
-    await initSkillDataStore({ major: 2, minor: 12 });
+    await initSkillDataStore({ ...DEFAULT_GAME_VERSION });
     const store = getFileSkillStore();
     skillIconGameVersionFolder = versionToTreeAssetFolder(getCurrentVersion());
 

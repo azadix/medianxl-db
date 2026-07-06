@@ -10,8 +10,8 @@
  * To add a new rule see `docs/ADDING_SKILL_RULES.md`:
  * 1. Create or extend a subclass with `static is…(skill)` and `checkRestriction`.
  * 2. Export a thin `check…Restriction(skill, allSkills)` wrapper here.
- * 3. Register the check in character-state `addSkillPoint` / `addSkillPointsBatch` (order matters).
- * 4. If the rule should show in the skill card warning UI, add it to `getSkillRestrictions` there.
+ * 3. Register the check in `first-point-allocation-checks.js` (used by addSkillPoint and getSkillRestrictions).
+ * 4. If the rule should show in the skill card warning UI, it is included automatically via the shared pipeline.
  *
  * @module skills/skill-restrictions
  * @see docs/ADDING_SKILL_RULES.md
@@ -77,7 +77,7 @@ export function checkSoulchainTotemRestriction(skill, allSkills) {
 
 /**
  * Human-readable summary for tooling / new contributors (not used at runtime).
- * Order in {@link src/character/character-state.js} `addSkillPoint` may differ slightly (e.g. devotion last).
+ * Order in {@link src/character/first-point-allocation-checks.js} matches addSkillPoint and getSkillRestrictions.
  */
 export const FIRST_POINT_RULE_SUMMARY = Object.freeze([
     {

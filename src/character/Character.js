@@ -8,7 +8,7 @@ import {
   isPlannerBaseStatKey,
   createEmptyRegisteredStatsObject
 } from './planner-stats-config.js';
-import { getPlannerSkillsSnapshot } from './character-state.js';
+import { getPlannerSkillsSnapshot } from './planner-snapshot.js';
 import { minCharacterLevelForAllocatedSkillPoints } from '@/skills/domain/skill-calculations.js';
 
 export default class Character {

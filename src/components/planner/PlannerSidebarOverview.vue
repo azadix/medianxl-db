@@ -1,37 +1,9 @@
 <script setup>
-import { nextTick, onMounted, ref } from 'vue';
-import { usePlannerRevisionRefresh } from '@/composables/usePlannerRevisionRefresh.js';
-import { setupPlannerMinLevelSkillPoolTooltips } from '@/character/planner-stats-panel.js';
-import {
-  getEffectivePlannerLevel,
-  getSpentSkillPoints,
-  getTotalQuestSkillPoints,
-} from '@/character/character-state.js';
-import Character from '@/character/Character.js';
+import { usePlannerSkillPoints } from '@/composables/usePlannerSkillPoints.js';
 
-const spentPoints = ref(0);
-const effectiveLevel = ref(1);
-const availablePoints = ref(0);
-
-function refreshSummary() {
-  spentPoints.value = getSpentSkillPoints();
-  effectiveLevel.value = getEffectivePlannerLevel();
-  availablePoints.value =
-    Character.getBaseSkillPoints(effectiveLevel.value) + getTotalQuestSkillPoints(effectiveLevel.value);
-}
-
-function onRefresh() {
-  nextTick(refreshSummary);
-}
-
-onMounted(() => {
-  nextTick(() => {
-    setupPlannerMinLevelSkillPoolTooltips();
-    refreshSummary();
-  });
+const { spentPoints, effectiveLevel, availablePoints } = usePlannerSkillPoints({
+  setupPoolTooltips: true,
 });
-
-usePlannerRevisionRefresh(onRefresh);
 </script>
 
 <template>

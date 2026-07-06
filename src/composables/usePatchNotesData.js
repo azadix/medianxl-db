@@ -26,6 +26,7 @@ import {
   patchVersionToFolderKey,
   setBuildVersionOverride,
 } from '@/shared/version-config.js';
+import { parseFolderVersion } from '@/shared/version-resolver.js';
 
 const SKILL_MARKER_REGEX = /\{\{([^{}]+)\}\}/g;
 const TOOLTIP_CACHE_LEVEL = 1;
@@ -66,14 +67,6 @@ async function loadAvailableTreeDataFolders() {
 
 function normalizeSkillName(value) {
   return String(value || '').trim();
-}
-
-function parseFolderVersion(folderKey) {
-  const [majorRaw, minorRaw] = String(folderKey || '').split('_');
-  const major = Number.parseInt(majorRaw, 10);
-  const minor = Number.parseInt(minorRaw, 10);
-  if (!Number.isFinite(major) || !Number.isFinite(minor)) return null;
-  return { major, minor };
 }
 
 function toArrayText(value) {

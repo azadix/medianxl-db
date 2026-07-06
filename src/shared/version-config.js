@@ -9,6 +9,7 @@ import {
     DEFAULT_GAME_VERSION,
     treeAssetFolderFromMajorMinor,
 } from './version-constants.js';
+import { parseBuildOverride, resolveGameVersion } from './version-resolver.js';
 
 /**
  * @typedef {{ major: number, minor: number }} GameVersion
@@ -64,44 +65,16 @@ export function patchVersionToFolderKey(version) {
  * @returns {GameVersion}
  */
 export function getCurrentVersion() {
-    let parsedOverride = null;
-    const buildOverrideRaw = localStorage.getItem(BUILD_VERSION_OVERRIDE_KEY);
-    if (buildOverrideRaw) {
-        try {
-            const o = JSON.parse(buildOverrideRaw);
-            if (o && typeof o.major === 'number' && typeof o.minor === 'number') {
-                parsedOverride = o;
-            } else {
-                clearBuildVersionOverride();
-            }
-        } catch {
-            clearBuildVersionOverride();
-        }
+    const parsedOverride = parseBuildOverride();
+    if (parsedOverride === null && localStorage.getItem(BUILD_VERSION_OVERRIDE_KEY)) {
+        clearBuildVersionOverride();
     }
 
     const store = getFileSkillStore();
-    if (store?.versions?.length) {
-        if (parsedOverride) {
-            const ok = store.versions.some(
-                (v) => v.major === parsedOverride.major && v.minor === parsedOverride.minor
-            );
-            if (ok) {
-                return parsedOverride;
-            }
-            clearBuildVersionOverride();
-        }
-        const active = store.versions.find((v) => v.is_active);
-        if (active) {
-            return { major: active.major, minor: active.minor };
-        }
-        const v0 = store.versions[0];
-        return { major: v0.major, minor: v0.minor };
-    }
-
-    if (parsedOverride) {
-        return parsedOverride;
-    }
-    return { ...DEFAULT_GAME_VERSION };
+    return resolveGameVersion(store?.versions, {
+        defaultVersion: DEFAULT_GAME_VERSION,
+        clearInvalidOverride: true,
+    });
 }
 
 /**

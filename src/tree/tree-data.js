@@ -3,6 +3,7 @@ import Skill from '@/skills/domain/Skill.js';
 import { showSkillDataLoadError } from '@/shared/utils.js';
 import { buildTreeSkillsCacheFromLoadedSkills, setPlannerSkillsSnapshot } from '@/character/character-state.js';
 import { getCurrentVersion } from '@/shared/version-config.js';
+import { DEFAULT_GAME_VERSION } from '@/shared/version-constants.js';
 import { initSkillDataStore, getFileSkillStore } from './skill-data-store.js';
 import {
     fetchTreeStructJson,
@@ -72,7 +73,7 @@ export function buildSkillFromCatalogRow(store, row) {
 
 async function loadSkillsFromFileData(plannerOnly) {
     clearTreeStructArrowsCache();
-    await initSkillDataStore({ major: 2, minor: 12 });
+    await initSkillDataStore({ ...DEFAULT_GAME_VERSION });
     const store = getFileSkillStore();
     if (!store?.catalog?.length) {
         throw new Error('File skill catalog is empty');

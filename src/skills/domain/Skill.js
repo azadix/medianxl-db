@@ -7,7 +7,7 @@
 
 import { getBalanceVersionIdsForFallback } from '@/shared/version-config.js';
 import { getFileSkillStore } from '@/tree/skill-data-store.js';
-import { normalizePrereqSkillTargetKey } from '@/character/prereq-utils.js';
+import { checkPrerequisites } from '@/character/planner-prereqs.js';
 import { getCalcBucketIndex } from './calc-buckets.js';
 import { formulaEvaluator } from './formula-evaluator.js';
 import { formatScalingValuesToDescriptionHtml } from './scaling-display-html.js';
@@ -327,38 +327,8 @@ export default class Skill {
      * @returns {boolean} True if prerequisites are met
      */
     meetsPrerequisites(characterState) {
-        if (!this.prerequisites || this.prerequisites.length === 0) {
-            return true;
-        }
-        
-        // Basic prerequisite checking - for full validation, use the existing checkPrerequisites function
-        // This is a simplified version that just checks if prerequisites exist
-        const { skillLevels = {} } = characterState;
-        
-        // Check if any prerequisites exist that would block the skill
-        for (const prereq of this.prerequisites) {
-            const [type, value, target] = prereq.split(':');
-            
-            if (type === 'skill_level') {
-                const requiredLevel = parseInt(value, 10);
-                const targetKey = normalizePrereqSkillTargetKey(target);
-                const currentLevel = skillLevels[targetKey] || 0;
-                if (currentLevel < requiredLevel) {
-                    return false;
-                }
-            } else if (type === 'skill_blocked_by') {
-                const maxAllowedPoints = parseInt(value, 10);
-                const targetKey = normalizePrereqSkillTargetKey(target);
-                const currentPoints = skillLevels[targetKey] || 0;
-                if (currentPoints > maxAllowedPoints) {
-                    return false;
-                }
-            }
-            // Note: For full validation including tree_points, character_level, etc.,
-            // use the existing checkPrerequisites function from character-state.js
-        }
-        
-        return true;
+        const allSkills = characterState?.allSkills || [];
+        return checkPrerequisites(this, allSkills).met;
     }
 
     /**

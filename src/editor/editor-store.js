@@ -5,6 +5,8 @@
 import { TAG_GROUPS } from '@/shared/utils.js';
 import { attachEditorTextareaAutocomplete } from './editor-textarea-autocomplete.js';
 import { detachVersionSelectorListeners, versionToString } from '@/shared/version-config.js';
+import { fetchJson } from '@/shared/fetch-json.js';
+import { parseFolderVersion } from '@/shared/version-resolver.js';
 
 const TREE_DATA = 'tree_data';
 const DEFAULT_EDITOR_FILE_BASENAME = 'skills.json';
@@ -290,23 +292,6 @@ function setDirty(on) {
     const dl = document.getElementById('btn-download');
     if (badge) badge.classList.toggle('is-hidden', !on);
     if (dl) dl.disabled = workingSkills.length === 0;
-}
-
-async function fetchJson(path) {
-    const res = await fetch(path);
-    if (!res.ok) {
-        throw new Error(`${path}: ${res.status} ${res.statusText}`);
-    }
-    return res.json();
-}
-
-/** @param {string} seg - e.g. "2_12" */
-function parseFolderSegToVersion(seg) {
-    const parts = String(seg).split('_');
-    return {
-        major: parseInt(parts[0], 10) || 0,
-        minor: parseInt(parts[1], 10) || 0,
-    };
 }
 
 async function loadVersionsIntoSelect() {
@@ -1142,7 +1127,7 @@ export async function mountEditor(opts = {}) {
             if (dirty) {
                 const ok = window.confirm('Discard unsaved in-memory changes and load the other version?');
                 if (!ok) {
-                    ev.target.value = JSON.stringify(parseFolderSegToVersion(folderSeg));
+                    ev.target.value = JSON.stringify(parseFolderVersion(folderSeg) ?? { major: 0, minor: 0 });
                     return;
                 }
             }
