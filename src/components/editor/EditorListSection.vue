@@ -29,17 +29,19 @@ defineProps({
 
     <div class="field is-grouped is-grouped-multiline mb-4">
       <div class="control">
-        <button type="button" class="button is-info" id="btn-reload">Reload from server</button>
+        <button type="button" class="button is-info is-inverted is-outlined" id="btn-reload">
+          Reload from server
+        </button>
       </div>
       <div class="control">
-        <button type="button" class="button is-success" id="btn-add-skill">
+        <button type="button" class="button is-success is-inverted is-outlined" id="btn-add-skill">
           Add new skill
         </button>
       </div>
       <div class="control">
         <button
           type="button"
-          class="button is-primary"
+          class="button is-primary is-inverted is-outlined"
           id="btn-download"
           disabled
         >

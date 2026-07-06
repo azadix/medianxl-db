@@ -10,7 +10,7 @@ defineProps({
     <div class="level mt-4">
       <div class="level-left">
         <div class="level-item">
-          <button type="button" class="button is-light" id="btn-back">
+          <button type="button" class="button is-light is-inverted is-outlined" id="btn-back">
             <span class="icon"><i class="fas fa-arrow-left"></i></span>
             <span>Back to list</span>
           </button>
@@ -170,7 +170,7 @@ defineProps({
           </div>
           <div class="level-right">
             <div class="level-item">
-              <button type="button" class="button is-small is-light" id="btn-add-variant-row">
+              <button type="button" class="button is-small is-light is-inverted is-outlined" id="btn-add-variant-row">
                 Add variant row
               </button>
             </div>
@@ -199,7 +199,7 @@ defineProps({
               </div>
             </div>
             <div class="level-item">
-              <button type="button" class="button is-small is-light" id="btn-add-scaling-constant-row">
+              <button type="button" class="button is-small is-light is-inverted is-outlined" id="btn-add-scaling-constant-row">
                 Add scalingConstants row
               </button>
             </div>
@@ -211,10 +211,10 @@ defineProps({
 
       <div class="field is-grouped mt-5">
         <div class="control">
-          <button type="button" class="button is-primary" id="btn-apply">Apply to buffer</button>
+          <button type="button" class="button is-primary is-inverted is-outlined" id="btn-apply">Apply to buffer</button>
         </div>
         <div class="control">
-          <button type="button" class="button is-link is-light" id="btn-download-edit">
+          <button type="button" class="button is-link is-inverted is-outlined" id="btn-download-edit">
             {{ mode === 'subskills' ? 'Download subskills.json' : 'Download skills.json' }}
           </button>
         </div>

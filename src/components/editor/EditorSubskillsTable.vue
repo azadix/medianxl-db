@@ -152,7 +152,11 @@ const displayRows = computed(() => {
               </td>
               <td class="editor-td-clip">{{ row.skill.parentSkillId ?? '' }}</td>
               <td class="editor-td-action">
-                <button type="button" class="button is-small is-primary" @click="emit('edit-index', row.index)">
+                <button
+                  type="button"
+                  class="button is-small is-primary is-inverted is-outlined"
+                  @click="emit('edit-index', row.index)"
+                >
                   Edit
                 </button>
               </td>
