@@ -1,5 +1,11 @@
+<script>
+export default {
+  name: 'HomeView',
+};
+</script>
+
 <script setup>
-import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue';
+import { ref, computed, onMounted, onUnmounted, onActivated, watch, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { mountSkillsIndex, unmountSkillsIndex, syncSkillsIndexFromRoute } from '@/skills/skillsIndex.js';
 import SkillsBrowseTable from '@/components/skills/SkillsBrowseTable.vue';
@@ -42,6 +48,12 @@ onMounted(async () => {
       loadError.value = '';
     },
   });
+});
+
+onActivated(async () => {
+  if (route.name === 'skills') {
+    await syncSkillsIndexFromRoute(router);
+  }
 });
 
 onUnmounted(() => {

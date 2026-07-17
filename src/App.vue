@@ -6,8 +6,8 @@ import { DEV_KEEP_ALIVE_NAMES } from './shared/dev-routes.js';
 
 const route = useRoute();
 const cachedNames = import.meta.env.DEV
-  ? ['PlannerView', 'PatchNotesView', ...DEV_KEEP_ALIVE_NAMES]
-  : ['PlannerView', 'PatchNotesView'];
+  ? ['HomeView', 'PlannerView', 'PatchNotesView', ...DEV_KEEP_ALIVE_NAMES]
+  : ['HomeView', 'PlannerView', 'PatchNotesView'];
 const useKeepAlive = computed(() => Boolean(route.meta?.keepAlive));
 </script>
 
