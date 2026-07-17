@@ -28,13 +28,22 @@ export const SCALING_DISPLAY_HTML_CLASSES = Object.freeze({
     skill: "has-text-success"
 });
 
-function escapeHtmlAttr(s) {
+/**
+ * Escape text for safe insertion into HTML text or attribute values.
+ * @param {unknown} s
+ * @returns {string}
+ */
+export function escapeHtmlText(s) {
+    if (s == null) return '';
     return String(s)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;");
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
 }
+
+/** @type {typeof escapeHtmlText} */
+export const escapeHtmlAttr = escapeHtmlText;
 
 /**
  * @param {string} className
@@ -59,13 +68,6 @@ export const TAG_GROUPS = {
 };
 
 // --- Skill data (tree_data JSON) load error ---
-export function escapeHtmlText(s) {
-    return String(s)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-}
 
 export function showSkillDataLoadError(errorMessage, contentElement = null) {
     const targetElement = contentElement || document.getElementById('content');

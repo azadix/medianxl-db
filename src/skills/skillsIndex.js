@@ -3,6 +3,7 @@ import {
   getSkillIconHTML,
   expandPlaceholdersWithScaling,
   showSkillDataLoadError,
+  escapeHtmlText,
 } from '@/shared/utils.js';
 import { getTreeSkillsCache } from '@/character/character-state.js';
 import { getCurrentVersion, versionToTreeAssetFolder, initializeVersionSelector } from '@/shared/version-config.js';
@@ -145,17 +146,6 @@ function detachHomeSkillDetailFormulaListeners() {
     homeSkillDetailFormulaListenersDetach();
     homeSkillDetailFormulaListenersDetach = null;
   }
-}
-
-/**
- * @param {unknown} text
- * @returns {string}
- */
-function escapeHtml(text) {
-  if (text == null) return '';
-  const d = document.createElement('div');
-  d.textContent = String(text);
-  return d.innerHTML;
 }
 
 /** @returns {number | null} */
@@ -302,8 +292,8 @@ async function displaySkillDetail(skillId) {
       .map(
         ([label, value]) => `
           <div class="skill-detail-info-row">
-            <span>${escapeHtml(label)}</span>
-            <strong>${escapeHtml(value)}</strong>
+            <span>${escapeHtmlText(label)}</span>
+            <strong>${escapeHtmlText(value)}</strong>
           </div>
         `
       )
@@ -319,7 +309,7 @@ async function displaySkillDetail(skillId) {
         blocks.push(
           `<section class="home-skill-meta-section">
             <span class="planner-card__eyebrow">calc${i}</span>
-            <pre class="home-skill-meta-calc"><code>${escapeHtml(String(v))}</code></pre>
+            <pre class="home-skill-meta-calc"><code>${escapeHtmlText(String(v))}</code></pre>
           </section>`
         );
       }
@@ -368,11 +358,11 @@ async function displaySkillDetail(skillId) {
   const backLabel = treeClass || treeTab ? 'Tree' : 'Skills';
   const backButton = `
         <div class="skill-detail-toolbar">
-            <a href="${escapeHtml(backHref)}" class="button is-light is-outlined">
+            <a href="${escapeHtmlText(backHref)}" class="button is-light is-outlined">
                 <span class="icon">
                     <i class="fas fa-arrow-left"></i>
                 </span>
-                <span>Back to ${escapeHtml(backLabel)}</span>
+                <span>Back to ${escapeHtmlText(backLabel)}</span>
             </a>
         </div>
     `;
@@ -393,7 +383,7 @@ async function displaySkillDetail(skillId) {
                 <main class="skill-detail-main order-2-mobile">
                     <section class="skill-detail-hero planner-card">
                         <span class="planner-card__eyebrow">Skill</span>
-                        <h2 class="title is-3 skill-detail-page-name">${escapeHtml(skillInfo.name)}</h2>
+                        <h2 class="title is-3 skill-detail-page-name">${escapeHtmlText(skillInfo.name)}</h2>
                         <p class="skill-detail-formula-hint">Hold Ctrl to show raw formulae. Release Ctrl to hide them.</p>
                     </section>
 

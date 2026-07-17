@@ -13,14 +13,7 @@ import {
   getPlannerStatLabel
 } from './planner-stats-config.js';
 import { getCharacterInstance, getEffectivePlannerLevel } from './character-state.js';
-
-function escapeHtml(s) {
-  return String(s)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-}
+import { escapeHtmlText } from '@/shared/utils.js';
 
 function formatQuestIdLabel(questId) {
   return String(questId)
@@ -70,12 +63,12 @@ export function buildPlannerStatBreakdownHtml(statKey) {
   const key = String(statKey || '').toLowerCase();
   const character = getCharacterInstance();
   if (!character) {
-    return `<p class="planner-stat-tooltip-empty">${escapeHtml('No character loaded.')}</p>`;
+    return `<p class="planner-stat-tooltip-empty">${escapeHtmlText('No character loaded.')}</p>`;
   }
 
   if (!isPlannerBaseStatKey(key)) {
     return `<div class="planner-stat-tooltip-body">
-      <p class="mb-1"><strong>${escapeHtml(key)}</strong></p>
+      <p class="mb-1"><strong>${escapeHtmlText(key)}</strong></p>
       <p class="planner-stat-tooltip-meta mb-0">Unknown stat (not in character_stats registry).</p>
     </div>`;
   }
@@ -245,28 +238,28 @@ export function buildPlannerStatBreakdownHtml(statKey) {
   }
 
   let html = `<div class="planner-stat-tooltip-body">`;
-  html += `<p class="planner-stat-tooltip-title mb-2">${escapeHtml(title)}</p>`;
+  html += `<p class="planner-stat-tooltip-title mb-2">${escapeHtmlText(title)}</p>`;
   if (!isPlannerNegativeAllowedBaseStat(key)) {
     html += `<p class="planner-stat-tooltip-meta mb-2">Effective level for scaling: ${formatStatDisplayValue(level)}</p>`;
   }
 
   for (const sec of sections) {
     html += `<div class="planner-stat-tooltip-section mb-2">`;
-    html += `<div class="planner-stat-tooltip-h">${escapeHtml(sec.title)}</div>`;
+    html += `<div class="planner-stat-tooltip-h">${escapeHtmlText(sec.title)}</div>`;
     html += `<ul class="planner-stat-tooltip-list">`;
     for (const row of sec.rows) {
       const inactive = row.active === false;
       html += `<li>`;
       if (row.value === undefined && row.label !== undefined && row.label !== '') {
-        html += `<span class="planner-stat-tooltip-v planner-stat-tooltip-total-num${inactive ? ' has-text-grey has-text-weight-semibold' : ''}">${escapeHtml(row.label)}</span>`;
+        html += `<span class="planner-stat-tooltip-v planner-stat-tooltip-total-num${inactive ? ' has-text-grey has-text-weight-semibold' : ''}">${escapeHtmlText(row.label)}</span>`;
       } else {
-        html += `<span class="planner-stat-tooltip-k${inactive ? ' has-text-grey has-text-weight-semibold' : ''}">${escapeHtml(row.label)}</span>`;
+        html += `<span class="planner-stat-tooltip-k${inactive ? ' has-text-grey has-text-weight-semibold' : ''}">${escapeHtmlText(row.label)}</span>`;
         if (row.value !== undefined && row.value !== '') {
-          html += ` <span class="planner-stat-tooltip-v${inactive ? ' has-text-grey' : ''}">${escapeHtml(row.value)}</span>`;
+          html += ` <span class="planner-stat-tooltip-v${inactive ? ' has-text-grey' : ''}">${escapeHtmlText(row.value)}</span>`;
         }
       }
       if (row.detail) {
-        html += `<div class="planner-stat-tooltip-d">${escapeHtml(row.detail)}</div>`;
+        html += `<div class="planner-stat-tooltip-d">${escapeHtmlText(row.detail)}</div>`;
       }
       html += `</li>`;
     }

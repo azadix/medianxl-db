@@ -1,6 +1,7 @@
 /**
  * Skill UI variants (stance, class-specific preview, etc.): selection state + tree_data helpers.
  */
+import { escapeHtmlAttr } from '@/shared/utils.js';
 import { getFileSkillStore } from './skill-data-store.js';
 
 const selectedVariantBySkillName = new Map();
@@ -86,14 +87,6 @@ export function resolveVariantKeyForTooltip(skillName, skillCardEl) {
     if (stored) return stored;
     // No implicit first variant: default scaling/text is base skill row (variant_key null in data).
     return null;
-}
-
-function escapeHtmlAttr(s) {
-    return String(s)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
 }
 
 /**

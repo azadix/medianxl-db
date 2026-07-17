@@ -3,6 +3,7 @@
  */
 import { getCharacterInstance, recomputeClassDerivedLifeMana, runPlannerSkillStatRecompute } from './character-state.js';
 import { buildPlannerStatBreakdownHtml } from './planner-stat-breakdown.js';
+import { escapeHtmlText } from '@/shared/utils.js';
 
 /** @type {HTMLElement | null} */
 let statBreakdownTooltipEl = null;
@@ -37,14 +38,6 @@ let minLevelPoolTooltipEl = null;
 let minLevelPoolHoveredAnchor = null;
 let minLevelPoolTooltipSetup = false;
 
-function escapeHtmlSkillPool(s) {
-  return String(s)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-}
-
 /**
  * @param {number|string} basePoints
  * @param {number|string} questPoints
@@ -57,12 +50,12 @@ function buildMinLevelSkillPoolTooltipHtml(basePoints, questPoints, effectiveLev
   const total = base + quest;
   return `<div class="planner-stat-tooltip-body">
   <p class="planner-stat-tooltip-title mb-2">Available skill points</p>
-  <p class="planner-stat-tooltip-meta mb-2">At level ${escapeHtmlSkillPool(lvl)} (minimum required for this allocation).</p>
+  <p class="planner-stat-tooltip-meta mb-2">At level ${escapeHtmlText(lvl)} (minimum required for this allocation).</p>
   <ul class="planner-stat-tooltip-list">
-    <li><span class="planner-stat-tooltip-k">Base skill points</span> <span class="planner-stat-tooltip-v">+${escapeHtmlSkillPool(base)}</span></li>
-    <li><span class="planner-stat-tooltip-k">Quest skill points</span> <span class="planner-stat-tooltip-v">+${escapeHtmlSkillPool(quest)}</span></li>
+    <li><span class="planner-stat-tooltip-k">Base skill points</span> <span class="planner-stat-tooltip-v">+${escapeHtmlText(base)}</span></li>
+    <li><span class="planner-stat-tooltip-k">Quest skill points</span> <span class="planner-stat-tooltip-v">+${escapeHtmlText(quest)}</span></li>
   </ul>
-  <p class="planner-stat-tooltip-meta mb-0">Total: ${escapeHtmlSkillPool(total)}</p>
+  <p class="planner-stat-tooltip-meta mb-0">Total: ${escapeHtmlText(total)}</p>
 </div>`;
 }
 
