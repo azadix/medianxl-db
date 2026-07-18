@@ -118,8 +118,6 @@ export function routeShowsVersionSelector(routeName) {
 
         routeName === 'planner' ||
 
-        routeName === 'patchNotes' ||
-
         isDevRouteName(routeName)
 
     );
