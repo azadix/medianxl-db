@@ -148,16 +148,30 @@ function detachHomeSkillDetailFormulaListeners() {
   }
 }
 
-/** @returns {number | null} */
-function readSkillLevelFromRoute() {
+/**
+ * @param {string} key
+ * @param {string} [fallbackKey]
+ * @returns {number | null}
+ */
+function readIntQueryParam(key, fallbackKey) {
   const router = getRouter();
   if (!router) return null;
   const query = router.currentRoute.value.query;
-  const raw = query.lvl ?? query.level;
-  const levelString = Array.isArray(raw) ? raw[0] : raw;
-  if (levelString == null || levelString === '') return null;
-  const parsedLevel = parseInt(String(levelString), 10);
-  return Number.isFinite(parsedLevel) ? parsedLevel : null;
+  const raw = query[key] ?? (fallbackKey != null ? query[fallbackKey] : undefined);
+  const valueString = Array.isArray(raw) ? raw[0] : raw;
+  if (valueString == null || valueString === '') return null;
+  const parsed = parseInt(String(valueString), 10);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+/** Base level (blvl) from route. @returns {number | null} */
+function readSkillLevelFromRoute() {
+  return readIntQueryParam('lvl', 'level');
+}
+
+/** Added level (slvl) from route. @returns {number | null} */
+function readAddedLevelFromRoute() {
+  return readIntQueryParam('slvl');
 }
 
 function detailEl() {
@@ -188,11 +202,16 @@ async function displaySkillDetail(skillId) {
   const sid = String(skillId);
   const maxPreview = Skill.MAX_SKILL_LEVEL;
   const routeLvl = readSkillLevelFromRoute();
+  const routeAddedLvl = readAddedLevelFromRoute();
   const initialLevel = Math.min(
     maxPreview,
     Math.max(1, routeLvl != null && Number.isFinite(routeLvl) ? routeLvl : 1)
   );
-  const displayKey = `${sid}|${initialLevel}`;
+  const initialAddedLevel = Math.min(
+    maxPreview,
+    Math.max(0, routeAddedLvl != null && Number.isFinite(routeAddedLvl) ? routeAddedLvl : 0)
+  );
+  const displayKey = `${sid}|${initialLevel}|${initialAddedLevel}`;
   if (lastDisplayedSkillKey === displayKey && host.querySelector('.skill-detail')) {
     return;
   }
@@ -213,36 +232,52 @@ async function displaySkillDetail(skillId) {
 
   const formulaState = { showFormulas: false };
 
-  const defaultCharacterState = (level) => ({
-    level,
-    blvl: { [skillInfo.id]: level },
-    lvl: { [skillInfo.id]: level },
+  /**
+   * @param {number} blvl
+   * @param {number} slvl
+   */
+  const defaultCharacterState = (blvl, slvl) => ({
+    level: Math.max(1, blvl + slvl),
+    blvl: { [skillInfo.id]: blvl },
+    lvl: { [skillInfo.id]: slvl },
     treeSkillsCache: getTreeSkillsCache(),
   });
 
-  async function renderDescriptionAtLevel(level, showFormulas) {
+  /**
+   * @param {number} blvl
+   * @param {number} slvl
+   * @param {boolean} showFormulas
+   */
+  async function renderDescriptionAtLevel(blvl, slvl, showFormulas) {
     if (!skillInfo.description) return '';
+    const effectiveLevel = Math.max(1, blvl + slvl);
     const expanded = await expandPlaceholdersWithScaling(
       skillInfo.skillId,
-      level,
+      effectiveLevel,
       skillInfo.description,
       skillInfo.id,
-      defaultCharacterState(level),
+      defaultCharacterState(blvl, slvl),
       showFormulas
     );
     return `<span class="planner-card__eyebrow">Description</span><div class="content skill-detail-copy">${expanded}</div>`;
   }
 
-  async function renderSkillEffectBodyAtLevel(level, showFormulas) {
+  /**
+   * @param {number} blvl
+   * @param {number} slvl
+   * @param {boolean} showFormulas
+   */
+  async function renderSkillEffectBodyAtLevel(blvl, slvl, showFormulas) {
     if (!skillInfo.skillEffect) {
       return '<p class="has-text-grey is-italic mb-0">No skill effect for this skill.</p>';
     }
+    const effectiveLevel = Math.max(1, blvl + slvl);
     const expandedEffect = await expandPlaceholdersWithScaling(
       skillInfo.skillId,
-      level,
+      effectiveLevel,
       skillInfo.skillEffect,
       skillInfo.id,
-      defaultCharacterState(level),
+      defaultCharacterState(blvl, slvl),
       showFormulas
     );
     const lines = expandedEffect.split('\n');
@@ -257,14 +292,20 @@ async function displaySkillDetail(skillId) {
     return html;
   }
 
-  async function renderRestrictionAtLevel(level, showFormulas) {
+  /**
+   * @param {number} blvl
+   * @param {number} slvl
+   * @param {boolean} showFormulas
+   */
+  async function renderRestrictionAtLevel(blvl, slvl, showFormulas) {
     if (!skillInfo.restriction) return '';
+    const effectiveLevel = Math.max(1, blvl + slvl);
     const expandedRestriction = await expandPlaceholdersWithScaling(
       skillInfo.skillId,
-      level,
+      effectiveLevel,
       skillInfo.restriction,
       skillInfo.id,
-      defaultCharacterState(level),
+      defaultCharacterState(blvl, slvl),
       showFormulas
     );
     let html = `<span class="planner-card__eyebrow">Restriction</span>`;
@@ -398,8 +439,12 @@ async function displaySkillDetail(skillId) {
                                 </div>
                                 <div class="field is-grouped is-align-items-center skill-effect-level-row mb-0">
                                     <label class="label mb-0 mr-3" for="skill-level-input">Base level</label>
-                                    <div class="control">
+                                    <div class="control mr-4">
                                         <input class="input planner-compact-number" type="number" id="skill-level-input" min="1" max="${maxPreview}" value="${initialLevel}" />
+                                    </div>
+                                    <label class="label mb-0 mr-3" for="skill-added-level-input">Added level</label>
+                                    <div class="control">
+                                        <input class="input planner-compact-number" type="number" id="skill-added-level-input" min="0" max="${maxPreview}" value="${initialAddedLevel}" />
                                     </div>
                                 </div>
                             </div>
@@ -425,20 +470,34 @@ async function displaySkillDetail(skillId) {
         </div>
     `;
 
-  async function refreshTextBodies() {
-    const input = /** @type {HTMLInputElement | null} */ (host.querySelector('#skill-level-input'));
-    const levelRaw = input ? parseInt(String(input.value), 10) : initialLevel;
-    const level = Math.min(maxPreview, Math.max(1, Number.isFinite(levelRaw) ? levelRaw : initialLevel));
-    if (input && String(input.value) !== String(level)) {
-      input.value = String(level);
+  function readPreviewLevelsFromInputs() {
+    const baseInput = /** @type {HTMLInputElement | null} */ (host.querySelector('#skill-level-input'));
+    const addedInput = /** @type {HTMLInputElement | null} */ (host.querySelector('#skill-added-level-input'));
+    const baseRaw = baseInput ? parseInt(String(baseInput.value), 10) : initialLevel;
+    const addedRaw = addedInput ? parseInt(String(addedInput.value), 10) : initialAddedLevel;
+    const blvl = Math.min(maxPreview, Math.max(1, Number.isFinite(baseRaw) ? baseRaw : initialLevel));
+    const slvl = Math.min(
+      maxPreview,
+      Math.max(0, Number.isFinite(addedRaw) ? addedRaw : initialAddedLevel)
+    );
+    if (baseInput && String(baseInput.value) !== String(blvl)) {
+      baseInput.value = String(blvl);
     }
+    if (addedInput && String(addedInput.value) !== String(slvl)) {
+      addedInput.value = String(slvl);
+    }
+    return { blvl, slvl };
+  }
+
+  async function refreshTextBodies() {
+    const { blvl, slvl } = readPreviewLevelsFromInputs();
     const sf = formulaState.showFormulas;
     const rest = host.querySelector('.skill-restriction');
     const desc = host.querySelector('.skill-description');
     const effBody = host.querySelector('.skill-effect-body');
-    if (rest) rest.innerHTML = await renderRestrictionAtLevel(level, sf);
-    if (desc) desc.innerHTML = await renderDescriptionAtLevel(level, sf);
-    if (effBody) effBody.innerHTML = await renderSkillEffectBodyAtLevel(level, sf);
+    if (rest) rest.innerHTML = await renderRestrictionAtLevel(blvl, slvl, sf);
+    if (desc) desc.innerHTML = await renderDescriptionAtLevel(blvl, slvl, sf);
+    if (effBody) effBody.innerHTML = await renderSkillEffectBodyAtLevel(blvl, slvl, sf);
   }
 
   await refreshTextBodies();
@@ -446,6 +505,7 @@ async function displaySkillDetail(skillId) {
   mergeHomeQueryFromIndex({
     skill: sid,
     lvl: initialLevel === 1 ? '' : String(initialLevel),
+    slvl: initialAddedLevel === 0 ? '' : String(initialAddedLevel),
   });
 
   const cleanupFns = [];
@@ -488,23 +548,34 @@ async function displaySkillDetail(skillId) {
   cleanupFns.push(() => document.removeEventListener('mousemove', onMouseMove));
 
   const levelInput = /** @type {HTMLInputElement | null} */ (host.querySelector('#skill-level-input'));
+  const addedLevelInput = /** @type {HTMLInputElement | null} */ (
+    host.querySelector('#skill-added-level-input')
+  );
+  let debounceId = 0;
+  const onLevelInput = () => {
+    const { blvl, slvl } = readPreviewLevelsFromInputs();
+    mergeHomeQueryFromIndex({
+      lvl: blvl === 1 ? '' : String(blvl),
+      slvl: slvl === 0 ? '' : String(slvl),
+    });
+    lastDisplayedSkillKey = `${sid}|${blvl}|${slvl}`;
+    window.clearTimeout(debounceId);
+    debounceId = window.setTimeout(() => {
+      debounceId = 0;
+      void refreshTextBodies();
+    }, 100);
+  };
   if (levelInput) {
-    let debounceId = 0;
-    const onLevelInput = () => {
-      const levelRaw = parseInt(String(levelInput.value), 10);
-      const level = Math.min(maxPreview, Math.max(1, Number.isFinite(levelRaw) ? levelRaw : 1));
-      mergeHomeQueryFromIndex({ lvl: level === 1 ? '' : String(level) });
-      lastDisplayedSkillKey = `${sid}|${level}`;
-      window.clearTimeout(debounceId);
-      debounceId = window.setTimeout(() => {
-        debounceId = 0;
-        void refreshTextBodies();
-      }, 100);
-    };
     levelInput.addEventListener('input', onLevelInput);
     levelInput.addEventListener('change', onLevelInput);
     cleanupFns.push(() => levelInput.removeEventListener('input', onLevelInput));
     cleanupFns.push(() => levelInput.removeEventListener('change', onLevelInput));
+  }
+  if (addedLevelInput) {
+    addedLevelInput.addEventListener('input', onLevelInput);
+    addedLevelInput.addEventListener('change', onLevelInput);
+    cleanupFns.push(() => addedLevelInput.removeEventListener('input', onLevelInput));
+    cleanupFns.push(() => addedLevelInput.removeEventListener('change', onLevelInput));
   }
 
   homeSkillDetailFormulaListenersDetach = () => {
@@ -514,7 +585,7 @@ async function displaySkillDetail(skillId) {
     cleanupFns.length = 0;
   };
 
-  lastDisplayedSkillKey = `${sid}|${initialLevel}`;
+  lastDisplayedSkillKey = `${sid}|${initialLevel}|${initialAddedLevel}`;
 }
 
 async function loadSkillsFromTreeDataPage() {
@@ -648,11 +719,16 @@ export async function syncSkillsIndexFromRoute(router) {
   if (skillParam) {
     const host = detailEl();
     const routeLvl = readSkillLevelFromRoute();
+    const routeAddedLvl = readAddedLevelFromRoute();
     const previewLevel = Math.min(
       Skill.MAX_SKILL_LEVEL,
       Math.max(1, routeLvl != null && Number.isFinite(routeLvl) ? routeLvl : 1)
     );
-    const routeKey = `${String(skillParam)}|${previewLevel}`;
+    const previewAddedLevel = Math.min(
+      Skill.MAX_SKILL_LEVEL,
+      Math.max(0, routeAddedLvl != null && Number.isFinite(routeAddedLvl) ? routeAddedLvl : 0)
+    );
+    const routeKey = `${String(skillParam)}|${previewLevel}|${previewAddedLevel}`;
     if (lastDisplayedSkillKey === routeKey && host && host.querySelector('.skill-detail')) {
       return;
     }

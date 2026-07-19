@@ -158,7 +158,8 @@ watch(
 }
 
 :deep(.skill-effect-level-row) {
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
+  gap: 0.35rem 0;
 }
 
 :deep(.skill-effect-level-row .label),
