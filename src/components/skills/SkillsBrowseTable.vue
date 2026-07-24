@@ -442,13 +442,26 @@ function iconMarkup(skill) {
       </div>
     </div>
 
-    <div v-if="showFilterHelpModal" class="modal is-active skills-filter-help-overlay">
+    <div
+      v-if="showFilterHelpModal"
+      class="modal is-active planner-export-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="skillFiltersHelpModalTitle"
+    >
       <div class="modal-background" @click="closeFilterHelp"></div>
-      <div class="modal-card skills-filter-help-card">
-        <header class="modal-card-head px-4">
-          <p class="modal-card-title">Skill Filters Help</p>
+      <div class="modal-card planner-export-modal__card planner-export-modal__card--wide" style="max-height: 80vh">
+        <header class="modal-card-head planner-export-modal__head p-4">
+          <span class="icon planner-export-modal__icon">
+            <i class="fa-solid fa-filter"></i>
+          </span>
+          <div class="planner-export-modal__title">
+            <p id="skillFiltersHelpModalTitle" class="modal-card-title mb-0">Skill Filters Help</p>
+            <p class="is-size-7 has-text-grey-light mb-0">How class, tag, and combine filters work.</p>
+          </div>
+          <button type="button" class="delete" aria-label="Close" @click="closeFilterHelp"></button>
         </header>
-        <section class="modal-card-body p-4">
+        <section class="modal-card-body planner-export-modal__body p-4" style="overflow-y: auto">
           <div class="content">
             <p>Open class or tag dropdowns to select filters.</p>
             <ul>
@@ -467,8 +480,11 @@ function iconMarkup(skill) {
             </ul>
           </div>
         </section>
-        <footer class="modal-card-foot p-4">
-          <button type="button" class="button is-primary" @click="closeFilterHelp">Close</button>
+        <footer class="modal-card-foot planner-export-modal__foot p-4">
+          <button type="button" class="button is-primary is-inverted is-outlined" @click="closeFilterHelp">
+            <span class="icon"><i class="fa-solid fa-check"></i></span>
+            <span>Close</span>
+          </button>
         </footer>
       </div>
     </div>
@@ -561,19 +577,6 @@ function iconMarkup(skill) {
 
 .filter-help-control {
   margin-left: auto;
-}
-
-.skills-filter-help-overlay {
-  z-index: 10000;
-}
-
-.skills-filter-help-card {
-  min-width: 50%;
-  max-height: 80vh;
-}
-
-.skills-filter-help-card .modal-card-body {
-  overflow-y: auto;
 }
 
 .skills-dd-trigger {

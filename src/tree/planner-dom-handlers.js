@@ -418,18 +418,27 @@ export function resetBuild(showToast = true) {
 
 function showHelpModal() {
     const overlay = document.createElement('div');
-    overlay.className = 'modal is-active';
-    overlay.style.cssText = 'z-index: 10000;';
+    overlay.className = 'modal is-active planner-export-modal';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('aria-labelledby', 'plannerHelpModalTitle');
+
     const modalBackground = document.createElement('div');
     modalBackground.className = 'modal-background';
+
     const modal = document.createElement('div');
-    modal.className = 'modal-card';
-    modal.style.cssText = 'min-width: 50%; max-height: 80vh;';
+    modal.className = 'modal-card planner-export-modal__card planner-export-modal__card--wide';
+    modal.style.maxHeight = '80vh';
     modal.innerHTML = `
-        <header class="modal-card-head px-4">
-            <p class="modal-card-title">Planner Help</p>
+        <header class="modal-card-head planner-export-modal__head p-4">
+            <span class="icon planner-export-modal__icon"><i class="fa-solid fa-circle-question"></i></span>
+            <div class="planner-export-modal__title">
+                <p id="plannerHelpModalTitle" class="modal-card-title mb-0">Planner Help</p>
+                <p class="is-size-7 has-text-grey-light mb-0">Shortcuts, stat colors, and planner tips.</p>
+            </div>
+            <button type="button" class="delete" id="closeHelpModalX" aria-label="Close"></button>
         </header>
-        <section class="modal-card-body p-4">
+        <section class="modal-card-body planner-export-modal__body p-4" style="overflow-y: auto;">
             <div class="content">
                 <h4 class="title is-5 mb-3">Keyboard Shortcuts</h4>
                 <ul>
@@ -458,18 +467,24 @@ function showHelpModal() {
                 <p>The sidebar lists core attributes as numeric fields. Extra stats appear when a skill formula references them.</p>
             </div>
         </section>
-        <footer class="modal-card-foot p-4">
-            <button class="button is-primary" id="closeHelpModalBtn">Close</button>
+        <footer class="modal-card-foot planner-export-modal__foot p-4">
+            <button class="button is-primary is-inverted is-outlined" id="closeHelpModalBtn" type="button">
+                <span class="icon"><i class="fa-solid fa-check"></i></span>
+                <span>Close</span>
+            </button>
         </footer>
     `;
     overlay.appendChild(modalBackground);
     overlay.appendChild(modal);
     document.body.appendChild(overlay);
     const closeModal = () => {
-        document.body.removeChild(overlay);
+        if (overlay.parentNode) {
+            document.body.removeChild(overlay);
+        }
         document.removeEventListener('keydown', handleEscape);
     };
     modal.querySelector('#closeHelpModalBtn').addEventListener('click', closeModal);
+    modal.querySelector('#closeHelpModalX').addEventListener('click', closeModal);
     modalBackground.addEventListener('click', closeModal);
     const handleEscape = (e) => {
         if (e.key === 'Escape') closeModal();

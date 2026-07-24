@@ -145,18 +145,26 @@ onUnmounted(() => {
     <div
       v-if="showOptionsModal"
       id="plannerOptionsModal"
-      class="modal is-active"
+      class="modal is-active planner-export-modal"
       role="dialog"
       aria-modal="true"
       aria-labelledby="plannerOptionsModalTitle"
     >
       <div class="modal-background" @click="closePlannerOptions"></div>
-      <div class="modal-card">
-        <header class="modal-card-head">
-          <p id="plannerOptionsModalTitle" class="modal-card-title">Planner options</p>
-          <button type="button" class="delete" aria-label="close" @click="closePlannerOptions"></button>
+      <div class="modal-card planner-export-modal__card">
+        <header class="modal-card-head planner-export-modal__head p-4">
+          <span class="icon planner-export-modal__icon">
+            <i class="fa-solid fa-sliders"></i>
+          </span>
+          <div class="planner-export-modal__title">
+            <p id="plannerOptionsModalTitle" class="modal-card-title mb-0">Planner options</p>
+            <p class="is-size-7 has-text-grey-light mb-0">
+              Adjust how character level and skill points interact.
+            </p>
+          </div>
+          <button type="button" class="delete" aria-label="Close" @click="closePlannerOptions"></button>
         </header>
-        <section class="modal-card-body">
+        <section class="modal-card-body planner-export-modal__body p-4">
           <div class="field">
             <label class="checkbox">
               <input v-model="draftAutoLevelFromSp" type="checkbox" />
@@ -183,8 +191,11 @@ onUnmounted(() => {
             <p class="help">Allowed range: {{ minLv }} to {{ maxLv }}.</p>
           </div>
         </section>
-        <footer class="modal-card-foot">
-          <button type="button" class="button is-primary" @click="applyPlannerOptions">Apply</button>
+        <footer class="modal-card-foot planner-export-modal__foot p-4">
+          <button type="button" class="button is-primary is-inverted is-outlined" @click="applyPlannerOptions">
+            <span class="icon"><i class="fa-solid fa-check"></i></span>
+            <span>Apply</span>
+          </button>
           <button type="button" class="button" @click="closePlannerOptions">Cancel</button>
         </footer>
       </div>
