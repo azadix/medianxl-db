@@ -7,6 +7,12 @@ import { attachEditorTextareaAutocomplete } from './editor-textarea-autocomplete
 import { detachVersionSelectorListeners, versionToString } from '@/shared/version-config.js';
 import { fetchJson } from '@/shared/fetch-json.js';
 import { parseFolderVersion } from '@/shared/version-resolver.js';
+import {
+    statsKeysLowerFromRows,
+    validateScalingConstantsArray,
+    validateVariantsArray,
+    variantKeysFromVariants,
+} from '@/shared/skill-json-validation.js';
 
 const TREE_DATA = 'tree_data';
 const DEFAULT_EDITOR_FILE_BASENAME = 'skills.json';
@@ -750,6 +756,11 @@ function applyFormToWorkingSkill() {
             showFieldError('variants', 'Must be a JSON array');
             return false;
         }
+        const variantErrors = validateVariantsArray(variants);
+        if (variantErrors.length) {
+            showSchemaErrors('variants', variantErrors);
+            return false;
+        }
     }
 
     const scalingConstants = parseJsonField('f-scalingConstants', 'err-scalingConstants', []);
@@ -757,6 +768,19 @@ function applyFormToWorkingSkill() {
 
     if (!Array.isArray(scalingConstants)) {
         showFieldError('scalingConstants', 'Must be a JSON array');
+        return false;
+    }
+
+    const scalingErrors = validateScalingConstantsArray(scalingConstants, {
+        statsByKeyLower: statsKeysLowerFromRows(statsCatalog),
+        variantKeys: isSubskillsMode()
+            ? variantKeysFromVariants(s.variants)
+            : variantKeysFromVariants(variants),
+        tabIds: new Set((gameMeta?.classTabs || []).map((t) => t.id)),
+        skillId: s.id,
+    });
+    if (scalingErrors.length) {
+        showSchemaErrors('scalingConstants', scalingErrors);
         return false;
     }
 
@@ -848,6 +872,16 @@ function showFieldError(field, msg) {
         err.textContent = msg;
         err.classList.remove('is-hidden');
     }
+}
+
+/**
+ * @param {string} field - e.g. `variants` or `scalingConstants`
+ * @param {string[]} failures
+ */
+function showSchemaErrors(field, failures) {
+    const shown = failures.slice(0, 5);
+    const more = failures.length > 5 ? ` …and ${failures.length - 5} more` : '';
+    showFieldError(field, shown.join(' · ') + more);
 }
 
 function appendDefaultVariantRowToForm() {
