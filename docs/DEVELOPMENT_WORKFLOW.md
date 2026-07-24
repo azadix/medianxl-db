@@ -11,14 +11,14 @@ npm run dev
 
 Notes:
 
-- `npm run dev` runs spellcheck first, then starts Vite.
+- `npm run dev` runs the full Vitest suite first, then starts Vite.
 - App routes are under the Vite base URL (often `/medianxl-db/`).
 
 ## Core scripts
 
 - `npm run lint`: ESLint for JS/Vue files.
-- `npm run spellcheck`: checks skill text placeholders/wording.
-- `npm run build`: lint + spellcheck + Vite build + SPA 404 copy.
+- `npm run build`: lint + Vitest + Vite build + SPA 404 copy.
+- `npm test` / `npm run test:data`: Vitest (includes spellcheck).
 - `npm run preview`: serve the production build locally.
 
 ## Common contributor tasks

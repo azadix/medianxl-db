@@ -12,9 +12,8 @@ Ordered steps when adding a new game patch folder under `public/tree_data/<major
 ## 2. Validation
 
 ```bash
-npm run spellcheck
+npm run test:data
 python py/validate_skill_placeholders.py public/tree_data/<major>_<minor>
-python spellcheck/check_spelling.py public/tree_data/<major>_<minor>
 ```
 
 Optional: `python py/stat_counter_statistics.py public/tree_data/<major>_<minor>` for placeholder stat usage.
@@ -52,7 +51,7 @@ Dev-only (local `npm run dev`):
 npm run build
 ```
 
-Fix lint/spellcheck failures before merge.
+Fix lint/test failures before merge.
 
 ## Shared version utilities
 

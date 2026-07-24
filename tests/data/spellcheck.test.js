@@ -1,12 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import { collectSpellingErrors } from '../helpers/spellcheck.js';
-import { loadActiveTreeData } from '../helpers/tree-data.js';
-
-const { skills, subskills } = loadActiveTreeData();
+import {
+  collectSpellingErrors,
+  loadSkillRows,
+  resolveActiveDataDir,
+} from '../helpers/spellcheck.js';
 
 describe('skill text spellcheck', () => {
   it('finds no unknown words against spelling-dict.txt', () => {
-    const errors = collectSpellingErrors([...skills, ...subskills]);
+    const dataDir = resolveActiveDataDir();
+    const skills = loadSkillRows(dataDir);
+    const { errors } = collectSpellingErrors(skills);
     if (errors.length) {
       const samples = errors
         .slice(0, 15)

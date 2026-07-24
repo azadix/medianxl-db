@@ -28,7 +28,8 @@ npm run build
 npm run preview
 ```
 
-`npm run build` runs lint + spellcheck + Vite build.
+`npm run build` runs lint + Vitest + Vite build.
+`npm run dev` runs Vitest first, then starts Vite.
 
 ## Testing
 
@@ -44,7 +45,7 @@ Update snapshots after intentional tooltip-output changes:
 npx vitest run -u
 ```
 
-Python is not required for tests (only for atlas generation and the optional `npm run spellcheck` CLI).
+Python is not required for tests (only for atlas generation / `py/` utilities).
 
 ## Docs
 
@@ -72,13 +73,12 @@ Python is not required for tests (only for atlas generation and the optional `np
 - `src/editor/` - dev-only editor runtime
 - `src/tree/` - planner runtime/render modules (with compatibility facades)
 - `py/` - Python utility scripts
-- `spellcheck/` - dictionaries and spellcheck scripts
+- `spellcheck/` - dictionaries used by Vitest spellcheck
 - `atlas_generation/` - class icon atlas generation scripts
 
 ## Useful scripts
 
 - `npm run lint` - ESLint
-- `npm run spellcheck` - spellcheck active version data (Python CLI)
 - `npm test` / `npm run test:unit` / `npm run test:data` - Vitest suites
 - `python py/validate_skill_placeholders.py public/tree_data/2_13` - validate placeholders
 - `python py/stat_counter_statistics.py public/tree_data/2_13` - placeholder stat usage
@@ -101,23 +101,18 @@ python atlas_generation/make_all_atlases.py --version 2.13
 
 ## Spellcheck
 
-Spellcheck scans merged skill text (`description`, `restriction`, `skill_effect`) for
-unknown words. It ignores placeholders like `{{...}}` and compares words against:
+Skill text spelling is checked as part of Vitest (`npm run test:data` / `npm test`).
+It scans `description`, `restriction`, and `skillEffect`, ignores placeholders like
+`{{...}}` / `[[...]]`, and compares words against:
 
 - `spellcheck/spelling-dict.txt` (known words)
 - `spellcheck/ignore-dict.txt` (allowed exceptions)
 
-If unknown words are found, it prints them by skill and exits with a non-zero status.
-
-```bash
-npm run spellcheck
-python spellcheck/check_spelling.py public/tree_data/2_13
-python spellcheck/generate_spelling_dict.py -o spellcheck/spelling-dict.txt
-```
+Add new game words to those dictionaries when tests fail on legitimate terms.
 
 ## Dependencies
 
-- Node.js + npm - app runtime and build tooling
-- Python 3.9+ - utility scripts (`py/`, `spellcheck/`, `atlas_generation/`)
+- Node.js + npm - app runtime, build, and tests
+- Python 3.9+ - atlas generation and utility scripts (`atlas_generation/`, `py/`)
 - Pillow - required for atlas generation (`pip install pillow`)
 - Vue 3, Vue Router, Pinia, Vite - frontend stack (managed in `package.json`)

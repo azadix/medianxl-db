@@ -3,10 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "npm run spellcheck && vite",
-    "spellcheck": "node scripts/run-spellcheck.mjs",
+    "dev": "npm test && vite",
     "lint": "eslint .",
-    "build": "npm run lint && node scripts/run-spellcheck.mjs && vite build && node scripts/copy-spa-404.mjs",
+    "build": "npm run lint && npm test && vite build && node scripts/copy-spa-404.mjs",
     "preview": "vite preview",
     "test": "vitest run",
     "test:unit": "vitest run tests/unit",

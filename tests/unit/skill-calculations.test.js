@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import {
   calculateMaxLevel,
   getDevotionDisplayName,
@@ -24,7 +24,10 @@ describe('getDevotionDisplayName', () => {
 describe('calculateMaxLevel without store', () => {
   it('returns 0 when store is not initialized', () => {
     resetSkillDataStoreForTests();
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
     expect(calculateMaxLevel(1, {})).toBe(0);
+    expect(warn).toHaveBeenCalled();
+    warn.mockRestore();
   });
 });
 
