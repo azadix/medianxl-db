@@ -2,8 +2,8 @@ import sys
 from pathlib import Path
 
 _REPO = Path(__file__).resolve().parent.parent
-if str(_REPO / "py") not in sys.path:
-    sys.path.insert(0, str(_REPO / "py"))
+if str(_REPO / "scripts" / "py") not in sys.path:
+    sys.path.insert(0, str(_REPO / "scripts" / "py"))
 
 from tree_data_loader import resolve_data_dir, load_merged_skills
 

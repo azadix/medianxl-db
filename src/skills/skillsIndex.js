@@ -164,12 +164,18 @@ function readIntQueryParam(key, fallbackKey) {
   return Number.isFinite(parsed) ? parsed : null;
 }
 
-/** Base level (blvl) from route. @returns {number | null} */
+/**
+ * Base level (blvl) from route.
+ * @returns {number | null}
+ */
 function readSkillLevelFromRoute() {
   return readIntQueryParam('lvl', 'level');
 }
 
-/** Added level (slvl) from route. @returns {number | null} */
+/**
+ * Added level (slvl) from route.
+ * @returns {number | null}
+ */
 function readAddedLevelFromRoute() {
   return readIntQueryParam('slvl');
 }

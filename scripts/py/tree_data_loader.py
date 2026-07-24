@@ -1,6 +1,6 @@
 """
 Load skill text + balance from tree_data JSON (skills.json, stats.json; game_meta for non-skill data if needed).
-Scripts run with cwd typically `py/`; paths are resolved from repo root.
+Scripts live under `scripts/py/`; paths are resolved from repo root.
 """
 
 from __future__ import annotations
@@ -10,7 +10,7 @@ import re
 import sys
 from pathlib import Path
 
-_REPO_ROOT = Path(__file__).resolve().parent.parent
+_REPO_ROOT = Path(__file__).resolve().parents[2]
 _TREE_DATA_ROOT = _REPO_ROOT / "public" / "tree_data"
 
 
@@ -42,7 +42,7 @@ def default_data_dir() -> Path:
 def resolve_data_dir(arg: str | None) -> Path:
     """
     Resolve CLI path to an absolute tree_data version directory.
-    Accepts e.g. public/tree_data/2_13, ../public/tree_data/2_13 (from py/).
+    Accepts e.g. public/tree_data/2_13, ../public/tree_data/2_13 (from scripts/py/).
     """
     if arg is None or arg == "":
         ex = default_data_dir().relative_to(_REPO_ROOT)

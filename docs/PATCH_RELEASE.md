@@ -13,10 +13,10 @@ Ordered steps when adding a new game patch folder under `public/tree_data/<major
 
 ```bash
 npm run test:data
-python py/validate_skill_placeholders.py public/tree_data/<major>_<minor>
+python scripts/py/validate_skill_placeholders.py public/tree_data/<major>_<minor>
 ```
 
-Optional: `python py/stat_counter_statistics.py public/tree_data/<major>_<minor>` for placeholder stat usage.
+Optional: `python scripts/py/stat_counter_statistics.py public/tree_data/<major>_<minor>` for placeholder stat usage.
 
 ## 3. Atlases
 

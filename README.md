@@ -45,7 +45,7 @@ Update snapshots after intentional tooltip-output changes:
 npx vitest run -u
 ```
 
-Python is not required for tests (only for atlas generation / `py/` utilities).
+Python is not required for tests (only for atlas generation / `scripts/py/` utilities).
 
 ## Docs
 
@@ -72,7 +72,7 @@ Python is not required for tests (only for atlas generation / `py/` utilities).
 - `src/character/` - character/planner domain state and rules
 - `src/editor/` - dev-only editor runtime
 - `src/tree/` - planner runtime/render modules (with compatibility facades)
-- `py/` - Python utility scripts
+- `scripts/` - build helpers and Python data utilities (`scripts/py/`)
 - `spellcheck/` - dictionaries used by Vitest spellcheck
 - `atlas_generation/` - class icon atlas generation scripts
 
@@ -80,8 +80,8 @@ Python is not required for tests (only for atlas generation / `py/` utilities).
 
 - `npm run lint` - ESLint
 - `npm test` / `npm run test:unit` / `npm run test:data` - Vitest suites
-- `python py/validate_skill_placeholders.py public/tree_data/2_13` - validate placeholders
-- `python py/stat_counter_statistics.py public/tree_data/2_13` - placeholder stat usage
+- `python scripts/py/validate_skill_placeholders.py public/tree_data/2_13` - validate placeholders
+- `python scripts/py/stat_counter_statistics.py public/tree_data/2_13` - placeholder stat usage
 - `python atlas_generation/make_all_atlases.py --version 2.13` - rebuild class atlases
 
 ## Atlas generation
@@ -113,6 +113,6 @@ Add new game words to those dictionaries when tests fail on legitimate terms.
 ## Dependencies
 
 - Node.js + npm - app runtime, build, and tests
-- Python 3.9+ - atlas generation and utility scripts (`atlas_generation/`, `py/`)
+- Python 3.9+ - atlas generation and utility scripts (`atlas_generation/`, `scripts/py/`)
 - Pillow - required for atlas generation (`pip install pillow`)
 - Vue 3, Vue Router, Pinia, Vite - frontend stack (managed in `package.json`)
