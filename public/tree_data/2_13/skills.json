@@ -6014,7 +6014,7 @@
         "statKey": "ctc_empowered_spell_on_death",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "5*blvl*(1+[[soulbound]]/25)"
+        "value0": "5*blvl*(1+[[soulbond]]/25)"
       },
       {
         "statKey": "ctc_empowered_spell_on_death_blow",

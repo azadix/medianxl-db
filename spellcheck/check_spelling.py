@@ -145,32 +145,34 @@ def _text_value_to_string(v):
         return "\n".join("" if x is None else str(x) for x in v)
     return str(v)
 
-def check_spelling(data_dir_arg, dict_files, ignore_files=None, min_word_length=2):
+def collect_spelling_errors(data_dir_arg, dict_files, ignore_files=None, min_word_length=2, quiet=False):
     """
-    Check spelling in skill text fields (tree_data) against dictionary files.
+    Collect spelling errors in skill text fields against dictionary files.
 
-    Args:
-        data_dir_arg: tree_data version directory path (required; None exits via resolve_data_dir)
-        dict_files (list): List of dictionary file paths
-        ignore_files (list): List of ignore dictionary file paths (optional)
-        min_word_length (int): Minimum word length to check (default: 2)
+    Returns:
+        tuple[list[dict], int]: (error entries, words checked)
     """
-    # Load dictionaries
-    known_words = load_dictionaries(dict_files)
-    
-    # Load ignore dictionary
-    ignore_words = load_ignore_dictionary(ignore_files) if ignore_files else set()
-    if ignore_words:
-        print(f"Total words to ignore: {len(ignore_words)}\n")
-    
+    known_words = load_dictionaries(dict_files) if not quiet else _load_dictionaries_quiet(dict_files)
+
+    ignore_words = set()
+    if ignore_files:
+        ignore_words = (
+            load_ignore_dictionary(ignore_files)
+            if not quiet
+            else _load_ignore_dictionary_quiet(ignore_files)
+        )
+        if ignore_words and not quiet:
+            print(f"Total words to ignore: {len(ignore_words)}\n")
+
     if not known_words:
-        print("Error: No words loaded from dictionaries!")
-        sys.exit(1)
-    
-    print(f"\nTotal unique words in dictionary: {len(known_words)}")
+        raise ValueError("No words loaded from dictionaries")
+
+    if not quiet:
+        print(f"\nTotal unique words in dictionary: {len(known_words)}")
 
     data_dir = resolve_data_dir(data_dir_arg)
-    print(f"Checking tree_data: {data_dir}\n")
+    if not quiet:
+        print(f"Checking tree_data: {data_dir}\n")
 
     skills = load_merged_skills(data_dir)
     skills = [
@@ -181,11 +183,12 @@ def check_spelling(data_dir_arg, dict_files, ignore_files=None, min_word_length=
         or _text_value_to_string(s.get("skill_effect")).strip()
     ]
     skills.sort(key=lambda r: (r.get("display_name") or "", r.get("name") or ""))
-    print(f"Found {len(skills)} skills to check\n")
-    
+    if not quiet:
+        print(f"Found {len(skills)} skills to check\n")
+
     errors = []
     checked_words_count = 0
-    
+
     for row in skills:
         skill_id = row.get("numeric_id")
         name = row.get("name") or ""
@@ -194,8 +197,7 @@ def check_spelling(data_dir_arg, dict_files, ignore_files=None, min_word_length=
         restriction = _text_value_to_string(row.get("restriction"))
         skill_effect = _text_value_to_string(row.get("skill_effect"))
         skill_errors = []
-        
-        # Check description
+
         if description:
             words = extract_words(description)
             checked_words_count += len(words)
@@ -204,10 +206,9 @@ def check_spelling(data_dir_arg, dict_files, ignore_files=None, min_word_length=
                     skill_errors.append({
                         'field': 'description',
                         'word': word,
-                        'context': description[:100]  # First 100 chars for context
+                        'context': description[:100]
                     })
-        
-        # Check restriction
+
         if restriction:
             words = extract_words(restriction)
             checked_words_count += len(words)
@@ -218,8 +219,7 @@ def check_spelling(data_dir_arg, dict_files, ignore_files=None, min_word_length=
                         'word': word,
                         'context': restriction[:100]
                     })
-        
-        # Check skill_effect
+
         if skill_effect:
             words = extract_words(skill_effect)
             checked_words_count += len(words)
@@ -230,7 +230,7 @@ def check_spelling(data_dir_arg, dict_files, ignore_files=None, min_word_length=
                         'word': word,
                         'context': skill_effect[:100]
                     })
-        
+
         if skill_errors:
             errors.append({
                 'skill_id': skill_id,
@@ -239,20 +239,65 @@ def check_spelling(data_dir_arg, dict_files, ignore_files=None, min_word_length=
                 'errors': skill_errors
             })
 
-    # Report results
+    return errors, checked_words_count
+
+
+def _load_word_file_set(files):
+    """Quiet dictionary loader used by tests."""
+    words = set()
+    for path in files or []:
+        dict_path = Path(path)
+        if not dict_path.is_absolute() and not dict_path.exists():
+            dict_path = Path(__file__).parent / path
+        if not dict_path.exists():
+            continue
+        with open(dict_path, 'r', encoding='utf-8') as f:
+            for line in f:
+                word = line.strip().lower()
+                if word and not word.startswith('#'):
+                    words.add(word)
+    return words
+
+
+def _load_dictionaries_quiet(dict_files):
+    return _load_word_file_set(dict_files)
+
+
+def _load_ignore_dictionary_quiet(ignore_files):
+    return _load_word_file_set(ignore_files)
+
+
+def check_spelling(data_dir_arg, dict_files, ignore_files=None, min_word_length=2):
+    """
+    Check spelling in skill text fields (tree_data) against dictionary files.
+
+    Args:
+        data_dir_arg: tree_data version directory path (required; None exits via resolve_data_dir)
+        dict_files (list): List of dictionary file paths
+        ignore_files (list): List of ignore dictionary file paths (optional)
+        min_word_length (int): Minimum word length to check (default: 2)
+    """
+    try:
+        errors, checked_words_count = collect_spelling_errors(
+            data_dir_arg, dict_files, ignore_files, min_word_length, quiet=False
+        )
+    except ValueError as e:
+        print(f"Error: {e}!")
+        sys.exit(1)
+
     print("=" * 80)
     print("SPELLING CHECK RESULTS")
     print("=" * 80)
     print(f"Total words checked: {checked_words_count}")
     print(f"Skills with potential spelling errors: {len(errors)}")
     print()
-    
+
     if errors:
         unique_unknown_words = set()
         for error_entry in errors:
             for err in error_entry['errors']:
                 unique_unknown_words.add(err['word'])
-        
+
         print(f"Unique unknown words found: {len(unique_unknown_words)}")
         print(f"Unknown words: {', '.join(sorted(unique_unknown_words))}")
         print()
@@ -260,7 +305,7 @@ def check_spelling(data_dir_arg, dict_files, ignore_files=None, min_word_length=
         print("DETAILED ERRORS BY SKILL")
         print("=" * 80)
         print()
-        
+
         for error_entry in errors:
             print(f"[{error_entry['display_name']}] (ID: {error_entry['skill_id']}, Name: {error_entry['name']})")
             for err in error_entry['errors']:
@@ -271,7 +316,7 @@ def check_spelling(data_dir_arg, dict_files, ignore_files=None, min_word_length=
     else:
         print("[OK] No spelling errors found!")
         print()
-    
+
     return len(errors)
 
 

@@ -1,0 +1,40 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`tooltip expansion > snapshots expanded description/effect for representative skills 1`] = `
+{
+  "abyss": {
+    "description": "Create a whirling vortex of frost around a target point",
+    "level": 1,
+    "skillEffect": "Sphere does no damage
+Vortex hits 13 times per second
+Cold Damage: <span class="has-text-danger">???</span>-<span class="has-text-danger">???</span>
+Mana cost: <span class="has-text-info">19</span>  ",
+    "variantKey": null,
+  },
+  "ancestral_endurance": {
+    "description": "Increases your damage mitigation after using Spirit Reave",
+    "level": 1,
+    "skillEffect": "<p class='has-text-success'>Spirit Reave</p>
+Grit: <span class="has-text-white">20</span>%
+Duration: <span class="has-text-white">frames(500*(1+[[continuity]].{{skill_duration}}/100))</span> seconds",
+    "variantKey": null,
+  },
+  "artifice_mastery": {
+    "description": "Proficiency in the craft imparts advanced field survival techniques",
+    "level": 1,
+    "skillEffect": "<div class="subskill-inline-block">
+  <p class="has-text-warning has-text-weight-semibold">Claw Block</p>
+  <div class="subskill-inline-body">20% Chance to Block Attacks and Spells while wielding two claws<br>(Does not work while walking or running)</div>
+</div>",
+    "variantKey": null,
+  },
+  "flamefront": {
+    "description": "Casts a wave of exploding firebolts in front of you",
+    "level": 1,
+    "skillEffect": "Firebolts: <span class="has-text-danger">???</span>
+Fire Damage: <span class="has-text-danger">???</span>-<span class="has-text-danger">???</span>
+Mana cost: <span class="has-text-info">8</span>  ",
+    "variantKey": "non_sorceress",
+  },
+}
+`;

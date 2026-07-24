@@ -2756,5 +2756,11 @@
     "key": "base_life_percent_of_caster_life",
     "name": "Base Life: #% of Caster Life",
     "format": "Base Life: {value0}% of Caster Life"
+  },
+  {
+    "id": 375,
+    "key": "bonus_lightning_damage",
+    "name": "Bonus flat Lightning damage",
+    "format": "{value0} Bonus Lightning damage"
   }
 ]

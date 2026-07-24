@@ -30,6 +30,24 @@ npm run preview
 
 `npm run build` runs lint + spellcheck + Vite build.
 
+## Testing
+
+Two separate local suites:
+
+```bash
+npm run test:unit   # Vitest: domain logic + tooltip HTML / expansion
+npm run test:data   # pytest: schema, placeholders, spellcheck on tree_data
+npm test            # both
+```
+
+Update Vitest snapshots after intentional tooltip-output changes:
+
+```bash
+npx vitest run -u
+```
+
+Install Python test deps once: `pip install -r requirements-dev.txt`.
+
 ## Docs
 
 - `docs/ARCHITECTURE.md` - app modules, data flow, and key folders
@@ -63,6 +81,7 @@ npm run preview
 
 - `npm run lint` - ESLint
 - `npm run spellcheck` - spellcheck active version data
+- `npm run test:unit` / `npm run test:data` - unit and skill-data tests
 - `python py/validate_skill_placeholders.py public/tree_data/2_13` - validate placeholders
 - `python py/stat_counter_statistics.py public/tree_data/2_13` - placeholder stat usage
 - `python atlas_generation/make_all_atlases.py --version 2.13` - rebuild class atlases
