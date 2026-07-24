@@ -32,21 +32,19 @@ npm run preview
 
 ## Testing
 
-Two separate local suites:
-
 ```bash
-npm run test:unit   # Vitest: domain logic + tooltip HTML / expansion
-npm run test:data   # pytest: schema, placeholders, spellcheck on tree_data
-npm test            # both
+npm test            # all Vitest suites (unit + skill data)
+npm run test:unit   # domain logic + tooltip expansion
+npm run test:data   # schema, placeholders, refs, scaling, spellcheck
 ```
 
-Update Vitest snapshots after intentional tooltip-output changes:
+Update snapshots after intentional tooltip-output changes:
 
 ```bash
 npx vitest run -u
 ```
 
-Install Python test deps once: `pip install -r requirements-dev.txt`.
+Python is not required for tests (only for atlas generation and the optional `npm run spellcheck` CLI).
 
 ## Docs
 
@@ -80,8 +78,8 @@ Install Python test deps once: `pip install -r requirements-dev.txt`.
 ## Useful scripts
 
 - `npm run lint` - ESLint
-- `npm run spellcheck` - spellcheck active version data
-- `npm run test:unit` / `npm run test:data` - unit and skill-data tests
+- `npm run spellcheck` - spellcheck active version data (Python CLI)
+- `npm test` / `npm run test:unit` / `npm run test:data` - Vitest suites
 - `python py/validate_skill_placeholders.py public/tree_data/2_13` - validate placeholders
 - `python py/stat_counter_statistics.py public/tree_data/2_13` - placeholder stat usage
 - `python atlas_generation/make_all_atlases.py --version 2.13` - rebuild class atlases

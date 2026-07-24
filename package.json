@@ -8,9 +8,9 @@
     "lint": "eslint .",
     "build": "npm run lint && node scripts/run-spellcheck.mjs && vite build && node scripts/copy-spa-404.mjs",
     "preview": "vite preview",
-    "test": "npm run test:unit && npm run test:data",
-    "test:unit": "vitest run",
-    "test:data": "python -m pytest py/tests -q"
+    "test": "vitest run",
+    "test:unit": "vitest run tests/unit",
+    "test:data": "vitest run tests/data"
   },
   "dependencies": {
     "marked": "^18.0.3",
