@@ -2,8 +2,8 @@
  * @file Planner DOM handlers: displays, menus, modals, oSkill dropdown.
  * @module tree/planner-dom-handlers
  */
-import { renderSkills } from './tree-render.js';
-import { setBuildUrlParam } from '@/planner/tree-url-sync.js';
+import { renderSkills, getCurrentTab } from './tree-render.js';
+import { setBuildUrlParam, updatePlannerUrlTab } from '@/planner/tree-url-sync.js';
 import Character from '@/character/Character.js';
 import {
   initializeCharacter,
@@ -362,15 +362,8 @@ export function resetBuild(showToast = true) {
     const classSelect = getClassSelect();
     const skillsList = getSkillsList();
     const skillsContainer = getSkillsContainer();
-    // Reset to first class
-    if (classSelect && skillsList) {
-        const classes = [...new Set(skillsList.map(skill => skill.class))];
-        if (classes.length > 0) {
-            classSelect.value = classes[0];
-        }
-    }
-    
-    // Clear all skill points and reset quest completion to defaults
+
+    // Keep selected class; clear skill points and reset quest completion to defaults
     const currentClass = classSelect ? classSelect.value : null;
     initializeCharacter(currentClass, Character.DEFAULT_LEVEL);
     applyClassBaselineStatsToCharacter(currentClass);
@@ -381,9 +374,12 @@ export function resetBuild(showToast = true) {
 
     clearSkillVariants();
     applySkillVariantDefaultsForClass(currentClass);
-    
+
+    const savedTab = getCurrentTab();
+    updatePlannerUrlTab(currentClass, savedTab);
+
     if (currentClass && skillsList) {
-        renderSkills(currentClass, skillsList, skillsContainer);
+        renderSkills(currentClass, skillsList, skillsContainer, savedTab);
     }
 
     window.dispatchEvent(new CustomEvent('plannerSidebarTabQuestsRefresh'));
