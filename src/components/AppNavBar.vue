@@ -6,7 +6,7 @@ import { DEV_ROUTE_DEFS, routeShowsVersionSelector } from '@/shared/dev-routes.j
 const route = useRoute();
 const isDev = import.meta.env.DEV;
 
-const repoUrl = 'https://github.com/azadix/medianxl-db-beta';
+const repoUrl = 'https://github.com/azadix/medianxl-db';
 
 function linkClass(name) {
   return ['navbar-item', { 'is-selected': route.name === name }];
