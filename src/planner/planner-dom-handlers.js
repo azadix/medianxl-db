@@ -542,8 +542,8 @@ function showHelpModal() {
                     <li><span class="has-text-white">Base</span> - points spent on the skill (0 for item-granted oSkills)</li>
                     <li><span class="has-text-info">All skills</span> - "+# to All Skills" (also applies to oSkills)</li>
                     <li><span class="skill-bonus-class">Class skills</span> - "+# to Class Skills" (class tree only, not oSkills)</li>
-                    <li><span class="skill-bonus-item">Item</span> - oSkill grants from relics and charms (slvl only)</li>
-                    <li><span class="skill-bonus-relic">Relic</span> - other skill bonuses from enabled relics</li>
+                    <li><span class="skill-bonus-item">Item</span> - oSkill grants from charms (and later equipped items)</li>
+                    <li><span class="skill-bonus-relic">Relic</span> - skill bonuses from enabled relics, including oSkill grants</li>
                 </ul>
                 <h4 class="title is-5 mb-3 mt-5">Tips</h4>
                 <ul>

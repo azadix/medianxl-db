@@ -28,6 +28,8 @@ import { getFileSkillStore, withBaseAttributeFormulaStats } from '@/shared/skill
 import { isInnateSkill } from '@/skills/domain/skill-skill-types.js';
 import { getMaxLevelModifierDescriptionsForSkill } from '@/skills/domain/skill-calculations.js';
 import { getRelicSkillBonusForSkill } from '@/items/skill-bonus-from-modifiers.js';
+import { collectEnabledRelicOSkillGrants } from '@/items/item-granted-oskills.js';
+import { computeSkillBonusSourceAmounts } from './skill-bonus-sources.js';
 import Character from '@/character/Character.js';
 
 let tooltipElement = null;
@@ -630,24 +632,29 @@ async function buildTooltipContent(
         skillClass: skillData.className || skillData.class || '',
     });
     const itemOSkillBonus = isOSkill ? getOSkillItemPoints(skillData.id) : 0;
+    const relicOSkillGrant = isOSkill
+        ? Character.clampOSkillPoints(
+            collectEnabledRelicOSkillGrants({ className: charClassName })[skillData.id] || 0
+          )
+        : 0;
     // Class skills bonus applies to tree skills only; oSkills get all-skills + item grants.
     // Item-granted oSkills have blvl 0; the relic/charm +N is slvl.
-    const softLevelBonus = isOSkill
-        ? allSkillsBonus + relicBonus + itemOSkillBonus
-        : allSkillsBonus + classSkillsBonus + relicBonus;
-    const effectiveLevel = isOSkill
-        ? Math.min(150, level + softLevelBonus)
-        : level + softLevelBonus;
-    let remainingSoft = Math.max(0, effectiveLevel - level);
-    const appliedAllSkillsBonus = Math.min(allSkillsBonus, remainingSoft);
-    remainingSoft -= appliedAllSkillsBonus;
-    const appliedClassSkillsBonus = isOSkill ? 0 : Math.min(classSkillsBonus, remainingSoft);
-    if (!isOSkill) remainingSoft -= appliedClassSkillsBonus;
-    const appliedItemBonus = isOSkill ? Math.min(itemOSkillBonus, remainingSoft) : 0;
-    remainingSoft -= appliedItemBonus;
-    const appliedRelicBonus = isOSkill
-        ? Math.max(0, remainingSoft)
-        : relicBonus;
+    const sourceAmounts = computeSkillBonusSourceAmounts({
+        baseLevel: level,
+        allSkillsBonus,
+        classSkillsBonus,
+        itemPoints: itemOSkillBonus,
+        relicSoft: relicBonus,
+        relicOSkillGrant,
+        isOSkill,
+    });
+    const {
+        effectiveLevel,
+        appliedAllSkillsBonus,
+        appliedClassSkillsBonus,
+        appliedItemBonus,
+        appliedRelicBonus,
+    } = sourceAmounts;
     const scalingLevel = isOSkill ? effectiveLevel : level;
     
     const iconFolder = versionToTreeAssetFolder(getCurrentVersion());
@@ -669,7 +676,6 @@ async function buildTooltipContent(
         subskillHtml = `<p class="is-size-7 has-text-grey-lighter">Subskill of <span class="has-text-weight-semibold">${escapeHtmlText(parentName)}</span></p>`;
     }
 
-    const appliedClassSkillsBonusForTable = isOSkill ? 0 : appliedClassSkillsBonus;
     const levelSectionHtml = `<div class="is-size-6 has-text-weight-bold has-text-warning-light">
                         Level ${effectiveLevel}
                     </div>`;
@@ -685,7 +691,7 @@ async function buildTooltipContent(
         },
         {
             label: 'Class skills',
-            valueHtml: `<span class="skill-bonus-class">+${appliedClassSkillsBonusForTable}</span>`,
+            valueHtml: `<span class="skill-bonus-class">+${appliedClassSkillsBonus}</span>`,
         },
     ];
     if (isOSkill) {

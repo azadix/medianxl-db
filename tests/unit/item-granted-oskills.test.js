@@ -12,6 +12,9 @@ import {
   collectOSkillGrantsFromModifierLines,
   collectOSkillGrantsFromCharmDefs,
   collectOSkillGrantsFromRelicDefs,
+  collectEnabledCharmOSkillGrants,
+  collectEnabledRelicOSkillGrants,
+  collectEnabledItemOSkillGrants,
   wrapNamedSkillGrantMarkers,
   formatItemModifierLineHtml,
   annotateAffixDisplayPartsWithSkills,
@@ -137,5 +140,11 @@ describe('item-granted oSkills', () => {
       { kind: 'text', text: ' to Teleport' },
     ]);
     expect(parts.some((p) => p.kind === 'skill' && p.text === 'Teleport')).toBe(true);
+  });
+
+  it('enabled relic grants stay separate from the merged charm+relic collector', () => {
+    expect(collectEnabledRelicOSkillGrants()).toEqual({});
+    expect(collectEnabledCharmOSkillGrants()).toEqual({});
+    expect(collectEnabledItemOSkillGrants()).toEqual({});
   });
 });

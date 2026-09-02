@@ -255,48 +255,92 @@ export function collectOSkillGrantsFromRelicDefs(relics, ctx = {}) {
 }
 
 /**
+ * @param {{ className?: string|null }} [options]
+ * @returns {string}
+ */
+function resolveGrantClassName(options = {}) {
+  const provided = options.className != null ? String(options.className).trim() : '';
+  if (provided) return provided;
+  try {
+    const character = getCharacterInstance();
+    return character?.className != null ? String(character.className).trim() : '';
+  } catch {
+    return '';
+  }
+}
+
+/**
+ * @param {Record<string, string>|null|undefined} enabledMap
+ * @param {object} itemsStore
+ * @returns {Array<{ def: object, rolls?: Record<string, number>|null }>}
+ */
+function enabledDefsWithRolls(enabledMap, itemsStore) {
+  /** @type {Array<{ def: object, rolls?: Record<string, number>|null }>} */
+  const out = [];
+  for (const [defId, instanceId] of Object.entries(enabledMap || {})) {
+    const def = itemsStore.catalogById?.[defId];
+    if (!def) continue;
+    const rolls = itemsStore.getRollsForInstance?.(instanceId) ?? null;
+    out.push({ def, rolls });
+  }
+  return out;
+}
+
+/**
+ * @param {...Record<string, number>} maps
+ * @returns {Record<string, number>}
+ */
+function mergeGrantMaps(...maps) {
+  /** @type {Record<string, number>} */
+  const out = {};
+  for (const map of maps) {
+    for (const [id, amount] of Object.entries(map || {})) {
+      out[id] = (out[id] || 0) + amount;
+    }
+  }
+  return out;
+}
+
+/**
+ * Collect oSkill grants from enabled charms in the store.
+ * @param {{ className?: string|null }} [options]
+ * @returns {Record<string, number>}
+ */
+export function collectEnabledCharmOSkillGrants(options = {}) {
+  try {
+    const className = resolveGrantClassName(options);
+    const itemsStore = useItemsStore();
+    const charms = enabledDefsWithRolls(itemsStore.enabledCharms, itemsStore);
+    return collectOSkillGrantsFromCharmDefs(charms, { className });
+  } catch {
+    return {};
+  }
+}
+
+/**
+ * Collect oSkill grants from enabled relics in the store.
+ * @param {{ className?: string|null }} [options]
+ * @returns {Record<string, number>}
+ */
+export function collectEnabledRelicOSkillGrants(options = {}) {
+  try {
+    const className = resolveGrantClassName(options);
+    const itemsStore = useItemsStore();
+    const relics = enabledDefsWithRolls(itemsStore.enabledRelics, itemsStore);
+    return collectOSkillGrantsFromRelicDefs(relics, { className });
+  } catch {
+    return {};
+  }
+}
+
+/**
  * Collect item-granted oSkill levels from enabled charms + relics in the store.
  * @param {{ className?: string|null }} [options]
  * @returns {Record<string, number>} skillId -> total item points
  */
 export function collectEnabledItemOSkillGrants(options = {}) {
-  let className = options.className != null ? String(options.className).trim() : '';
-  try {
-    if (!className) {
-      const character = getCharacterInstance();
-      className = character?.className != null ? String(character.className).trim() : '';
-    }
-    const itemsStore = useItemsStore();
-    /** @type {Array<{ def: object, rolls?: Record<string, number>|null }>} */
-    const charms = [];
-    for (const [defId, instanceId] of Object.entries(itemsStore.enabledCharms || {})) {
-      const def = itemsStore.catalogById?.[defId];
-      if (!def) continue;
-      const rolls = itemsStore.getRollsForInstance?.(instanceId) ?? null;
-      charms.push({ def, rolls });
-    }
-    /** @type {Array<{ def: object, rolls?: Record<string, number>|null }>} */
-    const relics = [];
-    for (const [defId, instanceId] of Object.entries(itemsStore.enabledRelics || {})) {
-      const def = itemsStore.catalogById?.[defId];
-      if (!def) continue;
-      const rolls = itemsStore.getRollsForInstance?.(instanceId) ?? null;
-      relics.push({ def, rolls });
-    }
-    /** @type {Record<string, number>} */
-    const out = {};
-    for (const [id, amount] of Object.entries(
-      collectOSkillGrantsFromCharmDefs(charms, { className })
-    )) {
-      out[id] = (out[id] || 0) + amount;
-    }
-    for (const [id, amount] of Object.entries(
-      collectOSkillGrantsFromRelicDefs(relics, { className })
-    )) {
-      out[id] = (out[id] || 0) + amount;
-    }
-    return out;
-  } catch {
-    return {};
-  }
+  return mergeGrantMaps(
+    collectEnabledCharmOSkillGrants(options),
+    collectEnabledRelicOSkillGrants(options)
+  );
 }
