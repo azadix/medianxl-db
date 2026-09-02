@@ -298,7 +298,7 @@ export function resolveSetBonuses(setDef, equippedCount, totalPieces = 0) {
   if (!setDef || !Array.isArray(setDef.bonuses)) return [];
   return setDef.bonuses.map((b) => {
     const required = b.required;
-    let active = false;
+    let active;
     if (required === 'complete') {
       active = totalPieces > 0 ? equippedCount >= totalPieces : equippedCount >= 2;
     } else {

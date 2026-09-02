@@ -96,15 +96,10 @@ export function wrapNamedSkillGrantMarkers(line) {
     parseSkillBonusFromModifierLine(stripCharmDisplayPrefix(body))?.skillName || grant.displayName
   ).trim();
   if (!skillName) return text;
-  let wrappedBody = body;
-  if (grant.classOnly) {
-    const re = new RegExp(`(\\s+to\\s+)${escapeRegExp(skillName)}(\\s+\\()`, 'i');
-    wrappedBody = body.replace(re, `$1[[${grant.skillId}]]$2`);
-  } else {
-    const re = new RegExp(`(\\s+to\\s+)${escapeRegExp(skillName)}(\\s*)$`, 'i');
-    wrappedBody = body.replace(re, `$1[[${grant.skillId}]]$2`);
-  }
-  return prefix + wrappedBody;
+  const re = grant.classOnly
+    ? new RegExp(`(\\s+to\\s+)${escapeRegExp(skillName)}(\\s+\\()`, 'i')
+    : new RegExp(`(\\s+to\\s+)${escapeRegExp(skillName)}(\\s*)$`, 'i');
+  return prefix + body.replace(re, `$1[[${grant.skillId}]]$2`);
 }
 
 /**

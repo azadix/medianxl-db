@@ -49,7 +49,7 @@ export class FormulaEvaluator {
     this.registerFunction('cond', (value) => (value === 0 ? 0 : 1));
     this.registerFunction('tree', (tabId) => this.calculateTreePoints(tabId));
     this.registerFunction('if', (condition, trueValue, falseValue) =>
-      Boolean(condition) ? trueValue : falseValue
+      condition ? trueValue : falseValue
     );
     this.registerFunction('ln', (a, b, lvl) => this.linearFromParams(a, b, lvl));
     this.registerFunction('dm', (a, b, lvl) => this.diminishingFromParams(a, b, lvl));

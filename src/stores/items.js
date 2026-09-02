@@ -941,6 +941,7 @@ export const useItemsStore = defineStore('items', {
             // Try put back on equipment source if possible
             if (fromEquipSlot != null) {
               const oldDef = this.getDefForInstance(oldId);
+              const className = getCharacterInstance()?.className ?? null;
               if (
                 oldDef &&
                 canEquipInSlot(oldDef, fromEquipSlot, className) &&

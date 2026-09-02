@@ -359,7 +359,7 @@ export async function sumPlannerManaCostMultiplierPercent(characterState) {
         const { getCharacterInstance } = await import('@/character/planner-instance.js');
         character = getCharacterInstance();
     } catch {
-        character = null;
+        // keep character null when planner instance is unavailable
     }
 
     // Regular-skill tooltips omit oSkills from blvl; still fold in oSkill multipliers.

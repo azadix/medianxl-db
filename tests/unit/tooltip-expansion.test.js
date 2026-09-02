@@ -296,7 +296,7 @@ describe('tooltip expansion', () => {
 
     expect(expanded).not.toMatch(/\{\{attack_rating_percent\}\}/);
     expect(expanded).toMatch(
-      new RegExp(`Attack Rating:\\s*<span[^>]*>${expectedAr}<\/span>%`)
+      new RegExp(`Attack Rating:\\s*<span[^>]*>${expectedAr}</span>%`)
     );
   });
 });

@@ -13,6 +13,7 @@ export function buildJsonDownloadFilename(rawName) {
     .trim()
     .replace(/[\r\n]+/g, ' ')
     .replace(/\s+/g, ' ')
+    // eslint-disable-next-line no-control-regex -- strip Windows-illegal and C0 control chars from filenames
     .replace(/[<>:"/\\|?*\u0000-\u001f]/g, '_')
     .replace(/\.+$/g, '')
     .trim();
