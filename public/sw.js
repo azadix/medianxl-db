@@ -34,6 +34,14 @@ self.addEventListener('activate', (event) => {
 });
 
 /**
+ * Patch list must not be cache-first (new notes would stay hidden until the next SW version).
+ * @param {string} pathname
+ */
+function isPatchNotesIndex(pathname) {
+  return pathname.includes('/patch_notes/') && /\/index\.json$/i.test(pathname);
+}
+
+/**
  * @param {string} url
  */
 function shouldCacheStaticRequest(url) {
@@ -44,6 +52,7 @@ function shouldCacheStaticRequest(url) {
     return false;
   }
   if (pathname.includes('/patch_notes/')) {
+    if (isPatchNotesIndex(pathname)) return false;
     return /\.(json|md)$/i.test(pathname);
   }
   // Never cache-first PWA/favicon art (blocks icon updates).
@@ -158,6 +167,11 @@ self.addEventListener('fetch', (event) => {
   try {
     url = new URL(event.request.url);
   } catch {
+    return;
+  }
+
+  if (isPatchNotesIndex(url.pathname)) {
+    event.respondWith(networkFirst(event.request, DATA_CACHE));
     return;
   }
 
