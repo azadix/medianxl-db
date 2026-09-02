@@ -2,8 +2,6 @@
 
 Short map of how the app is organized.
 
-For folder cleanup history and remaining notes, see [SRC_STRUCTURE_AUDIT.md](SRC_STRUCTURE_AUDIT.md).
-
 ## App surfaces
 
 - `src/views/HomeView.vue` + `src/skills/skills-index.js`: skills browse/detail page.
