@@ -42,7 +42,7 @@
     white-space: nowrap;
 }
 
-/* Token autocomplete ({{ stat }} / [[ skill ]]) — overrides tree/dropdown-style absolute panel */
+/* Token autocomplete ({{ stat }} / [[ skill ]]) — overrides styles/dropdown-style absolute panel */
 .editor-token-dropdown {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
     border-radius: 3px;
@@ -64,7 +64,7 @@
     overflow-x: hidden;
 }
 
-/* Keyboard-selected row (matches tree/dropdown-style hover intent) */
+/* Keyboard-selected row (matches styles/dropdown-style hover intent) */
 .editor-token-dropdown .dropdown-list-item[data-insert].is-active {
     background-color: var(--hover-bg-color, #f4ad08);
     color: var(--hover-text-color, #0a0a0a);

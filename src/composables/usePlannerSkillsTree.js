@@ -13,7 +13,7 @@ import {
   getSkillPoints,
   getOSkillRowsForPlanner,
   hasAnyOSkillAllocations
-} from '@/character/character-state.js';
+} from '@/character/planner-core.js';
 import { enrichOskillForDisplay } from '@/tree/tree-render.js';
 
 const OSKILL_COLS = 3;
@@ -33,7 +33,7 @@ export function usePlannerSkillsTree({ payload, classSkills, activeTab, gridRang
     const list = payload.value?.skillsList || [];
     let variants = [];
     try {
-      variants = skill.skillId != null ? listSkillVariants(skill.skillId) : [];
+      variants = skill.id ? listSkillVariants(skill.id) : [];
     } catch (e) {
       console.warn('[PlannerSkillsTree] listSkillVariants', skill?.id, e);
     }
@@ -41,7 +41,6 @@ export function usePlannerSkillsTree({ payload, classSkills, activeTab, gridRang
       if (isInnateSkill(skill)) {
         return {
           skillId: skill.id,
-          numericId: skill.skillId,
           classId: skill.classId,
           displayName: skill.name,
           iconHTML: getSkillIcon(skill.image, skill.class),
@@ -65,7 +64,6 @@ export function usePlannerSkillsTree({ payload, classSkills, activeTab, gridRang
       console.warn('[PlannerSkillsTree] cardDataForSkill', skill?.id, e);
       return {
         skillId: skill.id,
-        numericId: skill.skillId,
         classId: skill.classId,
         displayName: skill.name || String(skill.id),
         iconHTML: '',
@@ -117,7 +115,7 @@ export function usePlannerSkillsTree({ payload, classSkills, activeTab, gridRang
   }
 
   function oskillIdentifier(cardData) {
-    return cardData.variantStateKey ?? cardData.numericId ?? cardData.skillId;
+    return cardData.variantStateKey ?? cardData.skillId;
   }
 
   function onOskillPlus(cardData, delta) {
@@ -140,6 +138,9 @@ export function usePlannerSkillsTree({ payload, classSkills, activeTab, gridRang
     grid.querySelectorAll('.overlay-arrow').forEach((a) => a.remove());
     setTimeout(() => {
       try {
+        const rect = grid.getBoundingClientRect();
+        // Tree pane may be display:none (Items/Other); skip until layout exists.
+        if (rect.width < 1 || rect.height < 1) return;
         addOverlayArrows(grid, tabSkills, g.minRow, g.minCol);
       } catch (e) {
         console.warn('[PlannerSkillsTree] addOverlayArrows', e);

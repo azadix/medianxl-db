@@ -26,8 +26,11 @@
  * }
  *
  * `layoutParents`: visual tree arrows (parent skill ids), derived at load time.
- * Multiple skill_level / skill_blocked_by entries use an array of pairs:
+ * Multiple skill_level / skill_blocked_by entries use an array of pairs (AND):
  *   `"skill_level": [["a", 1], ["b", 1]]`
+ * OR groups are nested arrays of pairs (AND across groups, OR within):
+ *   `"skill_level": [[["a", 15], ["b", 15]], [["c", 15], ["d", 15]]]`
+ * Mixed AND pairs and OR groups may appear in the same skill_level list.
  */
 
 export const TREE_DATA_DIR = 'tree_data';
@@ -175,6 +178,15 @@ function isPrereqPair(raw) {
 }
 
 /**
+ * OR group: array of two or more prereq pairs.
+ * @param {unknown} raw
+ * @returns {boolean}
+ */
+function isOrGroup(raw) {
+    return Array.isArray(raw) && raw.length >= 2 && raw.every(isPrereqPair);
+}
+
+/**
  * @param {unknown} raw
  * @returns {[string, number][]}
  */
@@ -194,6 +206,33 @@ function normalizePrereqPairList(raw) {
 }
 
 /**
+ * Emit planner strings for skill_level (AND pairs and OR groups).
+ * @param {unknown} raw
+ * @returns {string[]}
+ */
+function skillLevelToPlannerStrings(raw) {
+    if (!raw) return [];
+    if (isPrereqPair(raw)) {
+        return [formatPrereqTriple('skill_level', Math.floor(Number(raw[1])), String(raw[0]).trim())];
+    }
+    if (!Array.isArray(raw)) return [];
+    /** @type {string[]} */
+    const out = [];
+    for (const item of raw) {
+        if (isOrGroup(item)) {
+            const points = Math.floor(Number(item[0][1]));
+            const ids = item.map((pair) => String(pair[0]).trim()).join('|');
+            out.push(formatPrereqTriple('skill_level_any', points, ids));
+        } else if (isPrereqPair(item)) {
+            out.push(
+                formatPrereqTriple('skill_level', Math.floor(Number(item[1])), String(item[0]).trim())
+            );
+        }
+    }
+    return out;
+}
+
+/**
  * Convert tree_struct prerequisite objects to planner prerequisite strings.
  * @param {object} obj
  * @returns {string[]}
@@ -208,9 +247,7 @@ function prerequisitesObjectToPlannerStrings(obj) {
         if (Number.isFinite(n)) out.push(formatPrereqTriple('character_level', n));
     }
 
-    for (const [skillId, points] of normalizePrereqPairList(obj.skill_level)) {
-        out.push(formatPrereqTriple('skill_level', points, skillId));
-    }
+    out.push(...skillLevelToPlannerStrings(obj.skill_level));
 
     for (const [skillId, maxPoints] of normalizePrereqPairList(obj.skill_blocked_by)) {
         out.push(formatPrereqTriple('skill_blocked_by', maxPoints, skillId));

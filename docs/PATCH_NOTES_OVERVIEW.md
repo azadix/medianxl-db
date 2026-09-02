@@ -13,8 +13,8 @@ How patch notes content, search, and skill tooltips work.
 
 ## Data pipeline
 
-1. Load patch file list from `public/patch_notes/index.json`.
-2. Fetch each markdown file from `public/patch_notes/*.md`.
+1. Load patch manifest from `public/patch_notes/index.json` (`[{ "file": "2.13.5.md", "date": "2026-04-24" }, ...]`).
+2. Fetch each markdown file from `public/patch_notes/*.md` (newest 10 first, then backfill).
 3. Convert version labels (for example `2.13.5`) to tree-data folder keys (`2_13`) with `patchVersionToFolderKey` from `src/shared/version-config.js`.
 4. Preload skill matcher maps from `tree_data/<folder>/skills.json` for marker lookup.
 5. Render markdown with `marked`.

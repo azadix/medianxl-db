@@ -2,24 +2,24 @@
 import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue';
 import { usePlannerRevisionRefresh } from '@/composables/usePlannerRevisionRefresh.js';
 import { usePlannerSkillPoints } from '@/composables/usePlannerSkillPoints.js';
+import { calculateArmorImageNumber } from '@/planner/planner-ui-updates.js';
+import { getCurrentBuildDisplayName } from '@/planner/planner-session.js';
+import { plannerRefreshAfterLevelOptions } from '@/planner/planner-init.js';
 import {
-  calculateArmorImageNumber,
-  getCurrentBuildDisplayName,
   plannerBackToMenuFromTree,
   plannerExportBuildClick,
   plannerMenuOpenHelp,
-  plannerRefreshAfterLevelOptions,
   plannerRenameBuildClick,
   plannerResetBuildClick,
   plannerSaveAsBuildClick,
   plannerSaveBuildClick,
-} from '@/tree/tree-core.js';
+} from '@/planner/planner-dom-handlers.js';
 import {
   getCharacterInstance,
   getCharacterLevel,
   setCharacterLevel,
   syncPlannerCharacterLevelIfAuto,
-} from '@/character/character-state.js';
+} from '@/character/planner-core.js';
 import Character from '@/character/Character.js';
 import {
   getPlannerAutoLevelFromSpentSkillPoints,
@@ -119,6 +119,10 @@ onUnmounted(() => {
       <button id="exportBuildBtn" class="button is-link is-outlined" type="button" @click="plannerExportBuildClick">
         <span class="icon"><i class="fa-solid fa-arrow-up-from-bracket"></i></span>
         <span>Export</span>
+      </button>
+      <button id="resetBuildBtn" class="button is-danger is-outlined" type="button" @click="plannerResetBuildClick">
+        <span class="icon"><i class="fa-solid fa-rotate-left"></i></span>
+        <span>Reset</span>
       </button>
       <button
         id="plannerOptionsBtn"
@@ -221,11 +225,6 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <div class="planner-header-actions planner-header-actions--right buttons">
-      <button id="resetBuildBtn" class="button is-danger is-outlined" type="button" @click="plannerResetBuildClick">
-        <span class="icon"><i class="fa-solid fa-rotate-left"></i></span>
-        <span>Reset</span>
-      </button>
-    </div>
+    <div class="planner-header-actions planner-header-actions--right buttons"></div>
   </header>
 </template>

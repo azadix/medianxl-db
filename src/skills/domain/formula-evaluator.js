@@ -10,255 +10,64 @@
  * - Example: If lvl=10, "lvl/3" = 3 but "1/3*lvl" = 0
  */
 
+import { resolveCharacterStatKeyForToken } from '@/shared/skill-data-store.js';
+import { isConditionSelected } from '@/stores/planner-config-store.js';
+
 const framesPerSecond = 25;
 
 export class FormulaEvaluator {
   constructor(characterState = null) {
-    // Use registries instead of hardcoded maps
+    /** @type {Map<string, (...args: unknown[]) => unknown>} */
     this.functionRegistry = new Map();
-    this.variableRegistry = new Set();
-    
+
     // Store character state reference for tree() function
     this.characterState = characterState;
-    
+
     // Store tree skills cache
     this.treeSkillsCache = characterState?.treeSkillsCache || {};
-    
-    // Register default functions
-    this.registerFunction({
-      keyword: 'floor',
-      function: Math.floor,
-      description: 'Rounds down to the nearest integer',
-      example: 'floor(5.7) == 5'
+
+    this.registerFunction('floor', Math.floor);
+    this.registerFunction('ceil', Math.ceil);
+    this.registerFunction('round', (value, decimals = 0) => {
+      const factor = Math.pow(10, decimals);
+      return Math.round(value * factor) / factor;
     });
-    this.registerFunction({
-      keyword: 'ceil',
-      function: Math.ceil,
-      description: 'Rounds up to the nearest integer',
-      example: 'ceil(5.2) == 6'
+    this.registerFunction('min', Math.min);
+    this.registerFunction('max', Math.max);
+    this.registerFunction('pow', Math.pow);
+    this.registerFunction('frames', (frames) => {
+      // Convert frames to seconds with 0.01 rounding
+      return Math.floor((frames / framesPerSecond) * 100) / 100;
     });
-    this.registerFunction({
-      keyword: 'round',
-      function: (value, decimals = 0) => {
-        const factor = Math.pow(10, decimals);
-        return Math.round(value * factor) / factor;
-      },
-      description: 'Rounds to specified decimal places (default: 0)',
-      example: 'round(5.678, 2) == 5.68'
+    this.registerFunction('range', (feet) => {
+      // Convert feet to yards with 1/3 feet precision
+      // Pattern: 1=0.3, 2=0.6, 3=1.0, 4=1.3, 5=1.6, 6=2.0, etc.
+      return Math.floor((feet * 0.3 + Math.floor(feet / 3) * 0.1) * 1000) / 1000;
     });
-    this.registerFunction({
-      keyword: 'min',
-      function: Math.min,
-      description: 'Returns the smallest of the given numbers',
-      example: 'min(5, 10, 3) == 3'
-    });
-    this.registerFunction({
-      keyword: 'max',
-      function: Math.max,
-      description: 'Returns the largest of the given numbers',
-      example: 'max(5, 10, 3) == 10'
-    });
-    this.registerFunction({
-      keyword: 'pow',
-      function: Math.pow,
-      description: 'Raises base to the power of exponent',
-      example: 'pow(2, 3) == 8'
-    });
-    this.registerFunction({
-      keyword: 'frames',
-      function: (frames) => {
-        // Convert frames to seconds with 0.01 rounding
-        return Math.floor((frames / framesPerSecond) * 100) / 100;
-      },
-      description: `Converts frame count to seconds (${framesPerSecond} frames = 1 second) with 0.01 rounding`,
-      example: `frames(${framesPerSecond}) == 1.0, frames(1) == ${1/framesPerSecond}`
-    });
-    this.registerFunction({
-      keyword: 'range',
-      function: (feet) => {
-        // Convert feet to yards with 1/3 feet precision
-        // Pattern: 1=0.3, 2=0.6, 3=1.0, 4=1.3, 5=1.6, 6=2.0, etc.
-        return Math.floor((feet * 0.3 + Math.floor(feet / 3) * 0.1) * 1000) / 1000;
-      },
-      description: 'Converts feet to yards with 1/3 feet precision',
-      example: 'range(3) == 1.0, range(4) == 1.3'
-    });
-    this.registerFunction({
-      keyword: 'bool',
-      function: (value) => {
-        // Returns 0 if value is 0, 1 if value is different than 0
-        return value === 0 ? 0 : 1;
-      },
-      description: 'Returns 0 if value is 0, 1 if value is different than 0',
-      example: 'bool(0) == 0, bool(5) == 1'
-    });
-    this.registerFunction({
-      keyword: 'tree',
-      function: (tabId) => {
-        // Get character state from variables passed to evaluate()
-        return this.calculateTreePoints(tabId);
-      },
-      description: 'Returns total skill points spent in the specified skill tree',
-      example: 'tree(1) returns points in tab ID 1'
-    });
-    this.registerFunction({
-      keyword: 'if',
-      function: (condition, trueValue, falseValue) => {
-        // Condition is evaluated by JavaScript before being passed here
-        // Handle boolean, number (0 = false, non-zero = true), or truthy/falsy values
-        const conditionResult = Boolean(condition);
-        return conditionResult ? trueValue : falseValue;
-      },
-      description: 'Conditional: returns trueValue if condition is true, otherwise falseValue. Supports comparisons: ==, !=, <, <=, >, >=',
-      example: 'if(lvl <= 22, 5*slvl, 0) - returns 5*slvl if level <= 22, otherwise 0'
-    });
-    this.registerFunction({
-      keyword: 'ln',
-      function: (a, b, lvl) => this.linearFromParams(a, b, lvl),
-      description: 'Linear param curve: a + b * (lvl - 1) (ln12)',
-      example: 'ln(calc1, calc2, lvl) with numeric calc1/calc2 or literals'
-    });
-    this.registerFunction({
-      keyword: 'dm',
-      function: (a, b, lvl) => this.diminishingFromParams(a, b, lvl),
-      description: 'Diminishing param curve (dm12)',
-      example: 'dm(calc1, calc2, lvl)'
-    });
-    
-    // Register default variables with descriptions and examples
-    this.registerVariable({
-      keyword: 'blvl',
-      description: 'Base skill level (points invested in this skill from tree)',
-      example: '50 + 15*blvl'
-    });
-    this.registerVariable({
-      keyword: 'slvl',
-      description: 'All skills bonus (from "+# to All Skills" input field only)',
-      example: '100 + 5*slvl'
-    });
-    this.registerVariable({
-      keyword: 'lvl',
-      description: 'Total effective skill level (slvl + blvl combined)',
-      example: '100 + 5*lvl'
-    });
-    this.registerVariable({
-      keyword: 'ulvl',
-      description: 'Character level',
-      example: '25 + ulvl'
-    });
-    this.registerVariable({
-      keyword: 'calc',
-      description: 'Numeric result of the calc slot for your current lvl bucket (same as calc1..calc6 by band: 0–1, 2–8, 9–16, 17–22, 23–28, 29+)',
-      example: 'calc*blvl'
-    });
-    for (let i = 1; i <= 6; i++) {
-      this.registerVariable({
-        keyword: `calc${i}`,
-        description: `D2-style calc slot ${i} (formula on the skill row; evaluated before scaling). Result is a number.`,
-        example: i === 1 ? 'Scaling: calc1*blvl with calc1 = lvl*5' : `Use calc${i} in formulas`
-      });
-    }
+    this.registerFunction('bool', (value) => (value === 0 ? 0 : 1));
+    // Rewritten to 0/1 before eval; keep a no-op so the keyword is registered.
+    this.registerFunction('cond', (value) => (value === 0 ? 0 : 1));
+    this.registerFunction('tree', (tabId) => this.calculateTreePoints(tabId));
+    this.registerFunction('if', (condition, trueValue, falseValue) =>
+      Boolean(condition) ? trueValue : falseValue
+    );
+    this.registerFunction('ln', (a, b, lvl) => this.linearFromParams(a, b, lvl));
+    this.registerFunction('dm', (a, b, lvl) => this.diminishingFromParams(a, b, lvl));
   }
 
   /**
-   * Register a new function that can be used in formulas
-   * @param {object} options - Function registration options
-   * @param {string} options.keyword - Function name (required)
-   * @param {(...args: unknown[]) => unknown} options.function - Function implementation (required)
-   * @param {string} [options.description] - Optional description of what the function does
-   * @param {string} [options.example] - Optional example of how to use the function
+   * Register a function that can be used in formulas.
+   * @param {string} keyword
+   * @param {(...args: unknown[]) => unknown} func
    */
-  registerFunction({ keyword, function: func, description = '', example = '' }) {
+  registerFunction(keyword, func) {
     if (!keyword) {
       throw new Error('Function keyword is required');
     }
     if (!func || typeof func !== 'function') {
       throw new Error(`Cannot register ${keyword}: function is required and must be a function`);
     }
-    this.functionRegistry.set(keyword, { func, description, example });
-  }
-  
-  /**
-   * Register a new variable that can be used in formulas
-   * @param {object} options - Variable registration options
-   * @param {string} options.keyword - Variable name (required)
-   * @param {string} options.description - Optional description of what the variable represents
-   * @param {string} options.example - Optional example of how to use the variable
-   */
-  registerVariable({ keyword, description = '', example = '' }) {
-    if (!keyword) {
-      throw new Error('Variable keyword is required');
-    }
-    if (typeof keyword !== 'string' || !keyword.match(/^[a-zA-Z_][a-zA-Z0-9_]*$/)) {
-      throw new Error(`Invalid variable name: ${keyword}`);
-    }
-    this.variableRegistry.add({ name: keyword, description, example });
-  }
-  
-  /**
-   * Get all registered functions
-   * @returns {Array<string>} Array of function names
-   */
-  getRegisteredFunctions() {
-    return Array.from(this.functionRegistry.keys());
-  }
-  
-  /**
-   * Get function information including description and example
-   * @returns {Array<object>} Array of function objects with name, description, and example
-   */
-  getFunctionInfo() {
-    return Array.from(this.functionRegistry.entries()).map(([name, info]) => ({
-      name,
-      description: info.description || 'No description available',
-      example: info.example || 'No example available'
-    }));
-  }
-  
-  /**
-   * Get variable information including description and example
-   * @returns {Array<object>} Array of variable objects with name, description, and example
-   */
-  getVariableInfo() {
-    return Array.from(this.variableRegistry).map(v => ({
-      name: v.name,
-      description: v.description || 'No description available',
-      example: v.example || 'No example available'
-    }));
-  }
-  
-  /**
-   * Get skill reference information for the modal
-   * @returns {Array<object>} Array of skill reference objects with name, description, and example
-   */
-  getSkillReferenceInfo() {
-    return [
-      {
-        name: '[[skill_name]]',
-        description: 'Reference another skill\'s blvl (base points) in formulas',
-        example: '5 + [[barrage]] * 2'
-      },
-      {
-        name: '[[skill_name]].{{stat_key}}',
-        description:
-          'Numeric value of a stat on another skill at that skill\'s current level (blvl + all-skills). Resolved before {{character stats}}.',
-        example: '[[continuity]].{{skill_duration}}'
-      },
-    ];
-  }
-
-  /**
-   * Get stat reference information character stat references in formulas
-   * @returns {Array<object>} Array of stat reference objects with name, description, and example
-   */
-  getStatReferenceInfo() {
-    return [
-      {
-        name: '{{stat_name}}',
-        description: 'Reference character stat value in formulas (e.g., strength, dexterity, vitality, energy)',
-        example: '50 + {{strength}} * 2'
-      },
-    ];
+    this.functionRegistry.set(keyword, func);
   }
 
   /**
@@ -502,12 +311,12 @@ export class FormulaEvaluator {
    */
   createEvaluationContext(variables) {
     const context = { ...variables };
-    
+
     // Add all registered functions
-    for (const [name, info] of this.functionRegistry) {
-      context[name] = info.func;
+    for (const [name, func] of this.functionRegistry) {
+      context[name] = func;
     }
-    
+
     return context;
   }
 
@@ -516,6 +325,11 @@ export class FormulaEvaluator {
    */
   replaceVariables(formula, context) {
     let processed = formula;
+
+    // Planner conditions: cond(while_wielding_twohanded_weapon) -> 1 or 0
+    processed = processed.replace(/\bcond\(\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*\)/g, (_, key) =>
+      isConditionSelected(key) ? '1' : '0'
+    );
     
     // Replace character stat references first (e.g., {{strength}} -> stat value)
     processed = this.replaceStatReferences(processed, context);
@@ -547,14 +361,22 @@ export class FormulaEvaluator {
   replaceStatReferences(formula, context) {
     // Match {{statName}} patterns (double braces)
     const statRefPattern = /\{\{([a-zA-Z_][a-zA-Z0-9_]*)\}\}/g;
-    
+    const stats = context.characterState?.stats;
+
     return formula.replace(statRefPattern, (match, statName) => {
       const k = String(statName).toLowerCase();
-      // Get stat value from character state stats (keys stored lowercase)
-      if (context.characterState && context.characterState.stats && context.characterState.stats[k] !== undefined) {
-        return String(context.characterState.stats[k]);
+      // Direct character_stats key (e.g. {{strength}}, {{life_stolen_per_hit}})
+      // Prefer injected {{base_dexterity}} etc. when present (raw accrued attrs).
+      if (stats && stats[k] !== undefined) {
+        return String(stats[k]);
       }
-      
+      // stats.json alias via pairedStat reverse map (e.g. {{life_steal}} -> life_stolen_per_hit)
+      // Also maps {{base_dexterity}} -> dexterity when base_* was not injected.
+      const aliased = resolveCharacterStatKeyForToken(k);
+      if (aliased && aliased !== k && stats && stats[aliased] !== undefined) {
+        return String(stats[aliased]);
+      }
+
       // If stat not found, return 0
       return '0';
     });
@@ -635,18 +457,18 @@ export class FormulaEvaluator {
   safeEvaluate(formula) {
     try {
       const context = {};
-      
+
       // Add all registered functions to context
-      for (const [name, info] of this.functionRegistry) {
-        context[name] = info.func;
+      for (const [name, func] of this.functionRegistry) {
+        context[name] = func;
       }
-      
+
       const func = new Function('context', `return ${formula}`);
       const result = func(context);
-      
+
       // Check if formula contains decimal-preserving functions (frames or range)
       const hasDecimalFunction = /context\.(frames|range)\(/g.test(formula);
-      
+
       if (hasDecimalFunction) {
         // Preserve decimal precision for formulas using frames() or range()
         return Math.round(result * 100) / 100;
@@ -689,24 +511,6 @@ export class FormulaEvaluator {
    */
   setTempCharacterState(characterState) {
     this.tempCharacterState = characterState;
-  }
-
-  /**
-   * Get list of variables used in a formula
-   * @param {string} formula - The formula to analyze
-   * @returns {Array} Array of variable names found in the formula
-   */
-  getVariables(formula) {
-    const variables = new Set();
-    
-    for (const varName of this.variableRegistry) {
-      const regex = new RegExp(`\\b${varName}\\b`, 'g');
-      if (regex.test(formula)) {
-        variables.add(varName);
-      }
-    }
-    
-    return Array.from(variables);
   }
 }
 

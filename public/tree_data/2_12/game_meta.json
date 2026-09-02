@@ -703,5 +703,10 @@
     "Necromancer": {
       "endurance": "necromancer"
     }
+  },
+  "paladinDevotionUltimateSkills": {
+    "dragons_blessing": "holy",
+    "resurrect": "neutral",
+    "superbeast": "unholy"
   }
 }

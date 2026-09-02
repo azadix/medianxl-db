@@ -1,10 +1,17 @@
 [
   {
+    "id": 4,
+    "major": 2,
+    "minor": 14,
+    "name": "2.14",
+    "is_active": 1
+  },
+  {
     "id": 3,
     "major": 2,
     "minor": 13,
     "name": "2.13",
-    "is_active": 1
+    "is_active": 0
   },
   {
     "id": 1,

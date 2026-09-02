@@ -14,7 +14,7 @@ Mana cost: <span class="has-text-info">19</span>  ",
   "ancestral_endurance": {
     "description": "Increases your damage mitigation after using Spirit Reave",
     "level": 1,
-    "skillEffect": "<p class='has-text-success'>Spirit Reave</p>
+    "skillEffect": "<span class='has-text-success'>Spirit Reave</span>
 Grit: <span class="has-text-white">20</span>%
 Duration: <span class="has-text-white">frames(500*(1+[[continuity]].{{skill_duration}}/100))</span> seconds",
     "variantKey": null,
@@ -22,10 +22,7 @@ Duration: <span class="has-text-white">frames(500*(1+[[continuity]].{{skill_dura
   "artifice_mastery": {
     "description": "Proficiency in the craft imparts advanced field survival techniques",
     "level": 1,
-    "skillEffect": "<div class="subskill-inline-block">
-  <p class="has-text-warning has-text-weight-semibold">Claw Block</p>
-  <div class="subskill-inline-body">20% Chance to Block Attacks and Spells while wielding two claws<br>(Does not work while walking or running)</div>
-</div>",
+    "skillEffect": "<fieldset class="subskill-inline-block"><legend class="subskill-inline-legend has-text-warning has-text-weight-semibold">Claw Block</legend><div class="subskill-inline-body">Avoid chance from Perfect Being converted to chance to block attacks and spells while wielding two claws<br><span class="has-text-grey"><span class="has-text-white">blvl+[[perfect_being]].{{avoid_damage}}</span>% Base chance to Block</span></div></fieldset>",
     "variantKey": null,
   },
   "flamefront": {

@@ -1,8 +1,8 @@
 import { computed } from 'vue';
 import { getPlannerStatDef } from '@/character/planner-stats-config.js';
 import { getPairedStatRouting } from '@/character/planner-stat-modifiers.js';
-import { getAllOSkills, getCharacterInstance } from '@/character/character-state.js';
-import { getFileSkillStore } from '@/tree/skill-data-store.js';
+import { getAllOSkills, getCharacterInstance } from '@/character/planner-core.js';
+import { getFileSkillStore } from '@/shared/skill-data-store.js';
 
 /**
  * Stat registry keys referenced by allocated skills (skillEffect + scalingConstants formulas).
@@ -71,12 +71,6 @@ export function usePlannerSkillReferencedStats(refreshTick) {
 
       let row = store.catalogByInternalId?.get?.(rawKey) ?? null;
       if (row) return row;
-
-      if (/^\d+$/.test(rawKey)) {
-        const nid = Number(rawKey);
-        const hit = Array.isArray(store.catalog) ? store.catalog.find((r) => Number(r?.numericId) === nid) : null;
-        if (hit) return hit;
-      }
 
       const norm = normalizeSkillNameToInternalId(rawKey);
       if (norm && norm !== rawKey) {

@@ -35,7 +35,6 @@ export function loadActiveTreeData() {
   }
 
   const mergedSkills = [...skills, ...subskills].map((row) => ({
-    numeric_id: row.numericId,
     name: String(row.id),
     display_name: row.displayName || String(row.id),
     description: asText(row.description),
@@ -61,16 +60,9 @@ export function loadActiveTreeData() {
 export function catalogLookups(skills, subskills) {
   const rows = [...skills, ...subskills];
   const internalIds = new Set(rows.map((r) => String(r.id)));
-  const numericIds = new Set(
-    rows.map((r) => r.numericId).filter((n) => n != null)
-  );
-  return { internalIds, numericIds };
+  return { internalIds };
 }
 
-export function refExists(ref, internalIds, numericIds) {
-  if (String(ref).startsWith('id:')) {
-    const n = Number.parseInt(String(ref).slice(3), 10);
-    return Number.isFinite(n) && numericIds.has(n);
-  }
+export function refExists(ref, internalIds) {
   return internalIds.has(ref);
 }

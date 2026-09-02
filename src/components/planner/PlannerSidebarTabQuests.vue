@@ -6,16 +6,17 @@ import {
   updateQuestCompletion,
   getCharacterInstance,
   completeAllQuests,
-} from '@/character/character-state.js';
+} from '@/character/planner-core.js';
 import {
   formatQuestLabel,
   difficultiesForQuest,
   formatQuestRewardBracket,
   QUEST_DIFF_NAMES,
   sidebarTabQuests,
-} from '@/character/sidebarTabQuests.js';
+} from '@/character/sidebar-tab-quests.js';
 
 const refreshKey = ref(0);
+const questsExpanded = ref(false);
 
 const questIds = computed(() => Character.getQuestRewardQuestIds());
 
@@ -122,7 +123,18 @@ onUnmounted(() => {
 <template>
   <div id="sidebarPaneQuests">
     <section class="planner-card planner-config-summary">
-      <span class="planner-card__eyebrow">Quest completion</span>
+      <button
+        type="button"
+        class="planner-quest-summary-toggle"
+        :aria-expanded="questsExpanded"
+        aria-controls="plannerSidebarTabQuestsList"
+        @click="questsExpanded = !questsExpanded"
+      >
+        <span class="planner-card__eyebrow mb-0">Quest completion</span>
+        <span class="icon is-small">
+          <i class="fa-solid" :class="questsExpanded ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+        </span>
+      </button>
       <div class="planner-config-summary__numbers">
         <div>
           <strong>{{ questSummary.done }} / {{ questSummary.total }}</strong>
@@ -143,7 +155,7 @@ onUnmounted(() => {
       </div>
     </section>
 
-    <div id="plannerSidebarTabQuestsList" :key="refreshKey">
+    <div v-show="questsExpanded" id="plannerSidebarTabQuestsList" :key="refreshKey">
       <p v-if="questIds.length === 0" class="is-size-7 has-text-grey">No quest rewards configured.</p>
       <div v-else class="planner-quest-groups">
         <section v-for="group in questGroups" :key="group.act" class="planner-quest-group">

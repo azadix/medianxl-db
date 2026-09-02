@@ -5,3 +5,4 @@ __pycache__/
 *.local
 todo/*
 *cursor*
+tools/tools.local.json

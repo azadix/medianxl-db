@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import {
   calculateMaxLevel,
+  computeMaxSkillLevelAtUlvl,
   getDevotionDisplayName,
   DEVOTION_TYPES,
   getSkillDevotion,
@@ -10,7 +11,7 @@ import {
   initSkillDataStore,
   resetSkillDataStoreForTests,
   getFileSkillStore,
-} from '@/tree/skill-data-store.js';
+} from '@/shared/skill-data-store.js';
 import { installTreeDataFetchMock } from '../helpers/mock-fetch-tree-data.js';
 
 describe('getDevotionDisplayName', () => {
@@ -57,7 +58,7 @@ describe('skill calculations with tree_data', () => {
       (s) => s.baseMaxLevel != null && s.baseMaxLevel > 0 && !String(s.id).includes('innate')
     );
     expect(skill).toBeTruthy();
-    const max = calculateMaxLevel(skill.numericId, {});
+    const max = calculateMaxLevel(skill.id, {});
     expect(max).toBeGreaterThanOrEqual(skill.baseMaxLevel);
   });
 
@@ -65,7 +66,27 @@ describe('skill calculations with tree_data', () => {
     const store = getFileSkillStore();
     const holySkill = store.catalog.find((s) => s.classId === 5 && (s.tab === 30 || s.tab === 31));
     expect(holySkill).toBeTruthy();
-    expect(getSkillDevotion(holySkill.numericId)).toBe(DEVOTION_TYPES.HOLY);
+    expect(getSkillDevotion(holySkill.id)).toBe(DEVOTION_TYPES.HOLY);
+  });
+
+  it('getSkillDevotion uses game_meta paladinDevotionUltimateSkills', () => {
+    const store = getFileSkillStore();
+    const map = store.gameMeta?.paladinDevotionUltimateSkills;
+    expect(map && typeof map === 'object').toBeTruthy();
+    for (const [id, devotion] of Object.entries(map)) {
+      const skill = store.catalog.find((s) => s.id === id);
+      expect(skill, `missing ultimate skill '${id}'`).toBeTruthy();
+      expect(getSkillDevotion(skill.id)).toBe(devotion);
+    }
+  });
+
+  it('elemental command scales trinity arrow max level with current character level', () => {
+    const skillLevels = { elemental_command: 1, trinity_arrow: 1 };
+    expect(computeMaxSkillLevelAtUlvl('trinity_arrow', skillLevels, 25)).toBe(11);
+    expect(calculateMaxLevel('trinity_arrow', skillLevels, 25)).toBe(11);
+    expect(calculateMaxLevel('trinity_arrow', skillLevels, 116)).toBe(25);
+    expect(calculateMaxLevel('trinity_arrow', skillLevels, 150)).toBe(25);
+    expect(calculateMaxLevel('trinity_arrow', {}, 25)).toBe(5);
   });
 
   it('checkDevotionRestriction blocks cross-devotion allocation', () => {
@@ -75,10 +96,10 @@ describe('skill calculations with tree_data', () => {
     expect(holySkill && unholySkill).toBeTruthy();
 
     const levels = { [holySkill.id]: 1 };
-    const ok = checkDevotionRestriction(holySkill.numericId, levels);
+    const ok = checkDevotionRestriction(holySkill.id, levels);
     expect(ok.canAllocate).toBe(true);
 
-    const blocked = checkDevotionRestriction(unholySkill.numericId, levels);
+    const blocked = checkDevotionRestriction(unholySkill.id, levels);
     expect(blocked.canAllocate).toBe(false);
     expect(blocked.reason).toContain('Holy Devotion');
   });

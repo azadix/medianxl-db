@@ -13,11 +13,11 @@ import {
   registerPlannerSectionSetter,
   unregisterPlannerSectionSetter,
 } from '@/planner/planner-section-bridge.js';
-import { initializeTreePage } from '@/tree/tree-core.js';
+import { initializeTreePage } from '@/planner/planner-init.js';
 import { initializeVersionSelector } from '@/shared/version-config.js';
-import '@/tree/tree-styles.css';
-import '@/tree/dropdown-style.css';
-import '@/tree/character-sheet-sidebar.css';
+import '@/styles/tree-styles.css';
+import '@/styles/dropdown-style.css';
+import '@/styles/character-sheet-sidebar.css';
 import PlannerMenuSection from '@/components/planner/PlannerMenuSection.vue';
 import PlannerTreeSection from '@/components/planner/PlannerTreeSection.vue';
 import PlannerLoadSection from '@/components/planner/PlannerLoadSection.vue';

@@ -67,7 +67,7 @@ export function runFirstPointAllocationChecks(
     }
   }
 
-  const devotionCheck = checkDevotionRestriction(skill.skillId, skillLevels);
+  const devotionCheck = checkDevotionRestriction(skill.id, skillLevels);
   if (!devotionCheck.canAllocate) {
     if (mode === 'list') {
       restrictions.push({ type: 'devotion', reason: devotionCheck.reason });

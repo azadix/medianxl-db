@@ -1,6 +1,6 @@
 /**
  * D2-style calc1..calc6 buckets for the `calc` shorthand.
- * Kept dependency-free so Skill.js can import without pulling character-state.
+ * Kept dependency-free so Skill.js can import without pulling planner-core.
  */
 
 export const D2_CALC_BUCKETS = [

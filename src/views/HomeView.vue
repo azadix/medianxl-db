@@ -7,10 +7,10 @@ export default {
 <script setup>
 import { ref, computed, onMounted, onUnmounted, onActivated, watch, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { mountSkillsIndex, unmountSkillsIndex, syncSkillsIndexFromRoute } from '@/skills/skillsIndex.js';
+import { mountSkillsIndex, unmountSkillsIndex, syncSkillsIndexFromRoute } from '@/skills/skills-index.js';
 import SkillsBrowseTable from '@/components/skills/SkillsBrowseTable.vue';
-import '@/tree/tree-styles.css';
-import '@/tree/character-sheet-sidebar.css';
+import '@/styles/tree-styles.css';
+import '@/styles/character-sheet-sidebar.css';
 
 const skillsList = ref([]);
 const skillIconFolder = ref(null);
@@ -239,24 +239,6 @@ watch(
 :deep(.skill-detail-info-row strong) {
   color: #f1f1f1;
   text-align: right;
-}
-
-:deep(.home-skill-meta) {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-:deep(.home-skill-meta-calc) {
-  margin-top: 0.45rem;
-  padding: 0.75rem 1rem;
-  border: 1px solid hsl(0, 0%, 24%);
-  border-radius: 0.35rem;
-  background: hsl(0, 0%, 7%);
-  color: #e8e8e8;
-  font-size: 0.85rem;
-  line-height: 1.45;
-  overflow-x: auto;
 }
 
 @media screen and (max-width: 768px) {

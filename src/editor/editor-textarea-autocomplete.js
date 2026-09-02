@@ -1,9 +1,9 @@
 /**
- * Autocomplete for description / skillEffect / restriction when typing {{ (stats) or [[ (skills).
+ * Autocomplete for description / skillEffect / restriction when typing {{ (stats), [[ (skills), or << (subskill blocks).
  */
 
 /** @typedef {{ id?: number, key: string, name: string, format?: string }} StatRow */
-/** @typedef {{ id: string, displayName?: string|null, numericId?: number|null, parentSkillId?: string|null }} SkillRow */
+/** @typedef {{ id: string, displayName?: string|null, parentSkillId?: string|null }} SkillRow */
 
 /**
  * @param {string} textBeforeCursor
@@ -18,7 +18,7 @@ function parseOpenToken(textBeforeCursor) {
             tokenStart: textBeforeCursor.length - mStat[0].length
         };
     }
-    const mSkill = textBeforeCursor.match(/\[\[((?:id:[0-9]*|[a-zA-Z_][a-zA-Z0-9_]*)?)$/);
+    const mSkill = textBeforeCursor.match(/\[\[([a-zA-Z_][a-zA-Z0-9_]*)?$/);
     if (mSkill) {
         return {
             kind: 'skill',
@@ -26,7 +26,7 @@ function parseOpenToken(textBeforeCursor) {
             tokenStart: textBeforeCursor.length - mSkill[0].length
         };
     }
-    const mSubskill = textBeforeCursor.match(/\|\|((?:id:[0-9]*|[a-zA-Z_][a-zA-Z0-9_]*)?)$/);
+    const mSubskill = textBeforeCursor.match(/<<([a-zA-Z_][a-zA-Z0-9_]*)?$/);
     if (mSubskill) {
         return {
             kind: 'subskillblock',
@@ -41,17 +41,7 @@ function parseOpenToken(textBeforeCursor) {
  * @param {SkillRow} r
  * @param {string} partial
  */
-function skillRefForInsert(r, partial) {
-    const p = partial.toLowerCase();
-    if (p.startsWith('id:')) {
-        const rest = p.slice(3).trim();
-        if (rest !== '' && /^\d+$/.test(rest)) {
-            const n = parseInt(rest, 10);
-            if (Number.isFinite(n) && r.numericId === n) {
-                return `[[id:${n}]]`;
-            }
-        }
-    }
+function skillRefForInsert(r, _partial) {
     return `[[${r.id}]]`;
 }
 
@@ -59,18 +49,8 @@ function skillRefForInsert(r, partial) {
  * @param {SkillRow} r
  * @param {string} partial
  */
-function subskillBlockRefForInsert(r, partial) {
-    const p = partial.toLowerCase();
-    if (p.startsWith('id:')) {
-        const rest = p.slice(3).trim();
-        if (rest !== '' && /^\d+$/.test(rest)) {
-            const n = parseInt(rest, 10);
-            if (Number.isFinite(n) && r.numericId === n) {
-                return `||id:${n}||`;
-            }
-        }
-    }
-    return `||${r.id}||`;
+function subskillBlockRefForInsert(r, _partial) {
+    return `<<${r.id}>>`;
 }
 
 /**
@@ -82,15 +62,6 @@ function filterSkillRows(partial, getSkillRows) {
     const p = partial.toLowerCase();
     if (!p) {
         return [...rows].sort((a, b) => String(a.id).localeCompare(String(b.id)));
-    }
-    if (p.startsWith('id:')) {
-        const num = p.slice(3).trim();
-        if (num === '') {
-            return [...rows].sort((a, b) => (a.numericId || 0) - (b.numericId || 0));
-        }
-        const n = parseInt(num, 10);
-        if (!Number.isFinite(n)) return [];
-        return rows.filter((r) => r.numericId === n);
     }
     return rows
         .filter((r) => {
@@ -110,15 +81,6 @@ function filterSubskillRows(partial, getSkillRows) {
     const p = partial.toLowerCase();
     if (!p) {
         return [...rows].sort((a, b) => String(a.id).localeCompare(String(b.id)));
-    }
-    if (p.startsWith('id:')) {
-        const num = p.slice(3).trim();
-        if (num === '') {
-            return [...rows].sort((a, b) => (a.numericId || 0) - (b.numericId || 0));
-        }
-        const n = parseInt(num, 10);
-        if (!Number.isFinite(n)) return [];
-        return rows.filter((r) => r.numericId === n);
     }
     return rows
         .filter((r) => {
@@ -432,7 +394,7 @@ export function attachEditorTextareaAutocomplete(textareas, options) {
         while (end < fullText.length && bodyRe.test(fullText[end])) {
             end += 1;
         }
-        const closing = kind === 'stat' ? '}}' : kind === 'subskillblock' ? '||' : ']]';
+        const closing = kind === 'stat' ? '}}' : kind === 'subskillblock' ? '>>' : ']]';
         if (fullText.slice(end, end + 2) === closing) {
             end += 2;
         }

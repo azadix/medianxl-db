@@ -1,10 +1,10 @@
 // Data loading for the skills tree (tree_data/*.json)
 import Skill from '@/skills/domain/Skill.js';
 import { showSkillDataLoadError } from '@/shared/utils.js';
-import { buildTreeSkillsCacheFromLoadedSkills, setPlannerSkillsSnapshot } from '@/character/character-state.js';
+import { buildTreeSkillsCacheFromLoadedSkills, setPlannerSkillsSnapshot } from '@/character/planner-core.js';
 import { getCurrentVersion } from '@/shared/version-config.js';
 import { DEFAULT_GAME_VERSION } from '@/shared/version-constants.js';
-import { initSkillDataStore, getFileSkillStore } from './skill-data-store.js';
+import { initSkillDataStore, getFileSkillStore } from '@/shared/skill-data-store.js';
 import {
     fetchTreeStructJson,
     getTreeLayoutRoot,
@@ -18,7 +18,7 @@ import {
 /**
  * Planner rows and tree_struct lookups use a concrete class name (e.g. "Amazon").
  * skills.json may use `"class": "__all__"` or a name array for multiclass skills.
- * @param {import('./skill-data-store.js').SkillFileStore} store
+ * @param {import('@/shared/skill-data-store.js').SkillFileStore} store
  * @param {object} row
  * @returns {string}
  */
@@ -43,7 +43,7 @@ function classNameFromClassId(store, classId) {
 }
 
 /**
- * @param {import('./skill-data-store.js').SkillFileStore} store
+ * @param {import('@/shared/skill-data-store.js').SkillFileStore} store
  * @param {object} row - skills.json entry (catalog + balance fields)
  * @returns {Skill|null}
  */
@@ -52,7 +52,6 @@ export function buildSkillFromCatalogRow(store, row) {
     if (!det) return null;
     const tagsJoined = row.tags?.length ? row.tags.join(', ') : '';
     return Skill.fromCatalogRow({
-        id: row.numericId,
         name: row.id,
         display_name: det.display_name ?? row.displayName,
         class_id: row.classId,

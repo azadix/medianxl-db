@@ -10,8 +10,8 @@ import {
   readHomeTagFiltersFromRoute,
   readClassTagJoinFromRoute,
   SKILLS_ROUTE_NAME,
-} from '@/skills/skillsIndex.js';
-import { parseSearchInput, skillMatchesSearch } from '@/skills/skillTableSearch.js';
+} from '@/skills/skills-index.js';
+import { parseSearchInput, skillMatchesSearch } from '@/skills/skill-table-search.js';
 
 const props = defineProps({
   skills: { type: Array, default: () => [] },

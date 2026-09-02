@@ -1,0 +1,969 @@
+[
+  {
+    "id": "ab!",
+    "name": "Astrogha's Venom Stinger",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "invtail",
+    "reqLevel": 125,
+    "modifiers": [
+      "+1 to All Skills",
+      "Jitan's Gate Cooldown Reduced by 1 seconds",
+      "+(200 to 500) to Life",
+      "Poison Length Reduction 50%"
+    ],
+    "trophy": [
+      "-5% to Enemy Elemental Resistances"
+    ]
+  },
+  {
+    "id": "a56",
+    "name": "Azmodan's Heart",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "invhrt",
+    "reqLevel": 115,
+    "modifiers": [
+      "Maximum Elemental Resists +2%",
+      "Elemental Resists +(11 to 20)%",
+      "-5% to All Vendor Prices"
+    ],
+    "trophy": [
+      "+150 to Life",
+      "+75 to Mana"
+    ]
+  },
+  {
+    "id": "ir76",
+    "name": "Bone Chimes",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "bonechimes",
+    "reqLevel": 120,
+    "modifiers": [
+      "Gives stats based on the sum of your bonus damage to Undead and Demons",
+      "30% added as Weapon Physical Damage (Max +150%)",
+      "Current Bonus: 1%"
+    ]
+  },
+  {
+    "id": "voXX",
+    "name": "Books of Kalan",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "invkalan",
+    "reqLevel": 130,
+    "modifiers": [
+      "+1 to All Skills",
+      "+(3 to 15) to Teleport",
+      "+25 to Life",
+      "+50 to Mana",
+      "Disenchant to open a portal to Inarius in the Void"
+    ],
+    "trophy": [
+      "+2 to All Skills"
+    ]
+  },
+  {
+    "id": "x04",
+    "name": "Caoi Dulra Fruit",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "ccdru",
+    "reqLevel": 90,
+    "modifiers": [
+      "Unlocks your Ennead Skill",
+      "+2 to Druid Skill Levels",
+      "Elemental Resists +30%",
+      "25% Bonus to Defense"
+    ],
+    "upgrades": [
+      [
+        "+1 to Druid Skill Levels",
+        "-5 Physical damage taken"
+      ]
+    ],
+    "classRestriction": "Druid Only"
+  },
+  {
+    "id": "w@w",
+    "name": "Cold Fusion Schematics",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "coldfusion",
+    "reqLevel": 125,
+    "modifiers": [
+      "1% Chance to cast level 10 Time Strike on Striking",
+      "+(16 to 30) to Strength",
+      "+(16 to 30) to Dexterity",
+      "+(16 to 30) to Vitality",
+      "+(16 to 30) to Energy"
+    ],
+    "trophy": [
+      "+15 to all Attributes"
+    ]
+  },
+  {
+    "id": "\\\\8",
+    "name": "Corrupted Wormhole",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "invlucion",
+    "reqLevel": 100,
+    "modifiers": [
+      "Add Cycles to apply specific bonuses"
+    ],
+    "trophy": [
+      "30% Magic Find"
+    ]
+  },
+  {
+    "id": "lok",
+    "name": "Crystalline Flame Medallion",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "invvip",
+    "reqLevel": 120,
+    "modifiers": [
+      "+1 to Summon Edyrem",
+      "Fire Absorb 5%",
+      "Lightning Absorb 5%",
+      "Cold Absorb 5%",
+      "Cube after Killing Imperius and Malthael"
+    ],
+    "upgrade": [
+      "+1 to All Skills",
+      "+40 to All Attributes"
+    ],
+    "trophy": [
+      "5% to All Attributes"
+    ]
+  },
+  {
+    "id": "t@t",
+    "name": "Demonsbane",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "demonsbanez",
+    "reqLevel": 120,
+    "modifiers": [
+      "+(0 to 2) to Sorceress Skill Levels",
+      "+(0 to 2) to Paladin Skill Levels",
+      "+(0 to 2) to Necromancer Skill Levels",
+      "+(0 to 2) to Druid Skill Levels",
+      "+(0 to 2) to Barbarian Skill Levels",
+      "+(0 to 2) to Assassin Skill Levels",
+      "+(0 to 2) to Amazon Skill Levels",
+      "+15 Life Regenerated per Second",
+      "Heroic Duncraig",
+      "Rewards: Assur's Bane upgrades, Sacred Unique Crafting, Exclusive Uniques",
+      "Cube charm with 5 Sacred Uniques to create a Mark of Sanctity",
+      "Learn the Paragon of Sanctity skill"
+    ],
+    "trophy": [
+      "10% Combat Speeds"
+    ]
+  },
+  {
+    "id": "ebw",
+    "name": "Dimensional Key - Arcana",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "dimensionalkey",
+    "reqLevel": 130,
+    "modifiers": [
+      "+5% Bonus to Spell Focus",
+      "+35% to Spell Damage",
+      "75% Magic Find"
+    ]
+  },
+  {
+    "id": "ebw-mandate",
+    "name": "Dimensional Key - Mandate",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "dimensionalkey",
+    "reqLevel": 130,
+    "modifiers": [
+      "+100% to Summoned Minion Damage",
+      "Maximum Life and Mana +5%",
+      "75% Magic Find"
+    ]
+  },
+  {
+    "id": "ebw-onslaught",
+    "name": "Dimensional Key - Onslaught",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "dimensionalkey",
+    "reqLevel": 130,
+    "modifiers": [
+      "5% Deadly Strike",
+      "Weapon Physical Damage +75%",
+      "75% Magic Find"
+    ]
+  },
+  {
+    "id": "ebw-primordia",
+    "name": "Dimensional Key - Primordia",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "dimensionalkey",
+    "reqLevel": 130,
+    "modifiers": [
+      "Adds 100-200 Fire Damage",
+      "Adds 100-200 Lightning Damage",
+      "Adds 100-200 Cold Damage",
+      "16% Innate Elemental Damage",
+      "75% Magic Find"
+    ]
+  },
+  {
+    "id": "|dc",
+    "name": "Dragon Claw",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "invhorn",
+    "reqLevel": 125,
+    "modifiers": [
+      "Unlocks Mastery Skill: Chemistry",
+      "+(50 to 150) to Life",
+      "+(25 to 75) to Mana",
+      "Cube to upgrade, granting bonuses based on your class"
+    ],
+    "upgrade": [
+      {
+        "amazon": [
+          "+500 to Life"
+        ],
+        "assassin": [
+          "Maximum Life +5%"
+        ],
+        "barbarian": [
+          "Weapon Physical Damage +30%"
+        ],
+        "druid": [
+          "+1000 Defense"
+        ],
+        "necromancer": [
+          "Physical Resist 5%"
+        ],
+        "paladin": [
+          "5% Chance to Avoid Damage"
+        ],
+        "sorceress": [
+          "+50 Spell Focus"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "|dul",
+    "name": "Dulra Aegis",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "invdulra",
+    "reqLevel": 140,
+    "modifiers": [
+      "Cube with perfect gems to add or roll stats"
+    ]
+  },
+  {
+    "id": "ebu",
+    "name": "Essence of Time",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "essenceoftime",
+    "reqLevel": 1,
+    "modifiers": [
+      "+1 to Time Warp",
+      "Maximum Life +10%",
+      "He who fights with monsters",
+      "might take care lest he",
+      "thereby become a monster",
+      "And if you gaze for long into an abyss",
+      "the abyss gazes also into you"
+    ]
+  },
+  {
+    "id": "x0x",
+    "name": "Eternal Bone Pile",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "invbonr3",
+    "reqLevel": 120,
+    "modifiers": [
+      "+(1 to 2) to Sorceress Skill Levels",
+      "+(1 to 2) to Paladin Skill Levels",
+      "+(1 to 2) to Necromancer Skill Levels",
+      "+(1 to 2) to Druid Skill Levels",
+      "+(1 to 2) to Barbarian Skill Levels",
+      "+(1 to 2) to Assassin Skill Levels",
+      "+(1 to 2) to Amazon Skill Levels",
+      "10% Movement Speed"
+    ],
+    "trophy": [
+      "10% Movement Speed"
+    ]
+  },
+  {
+    "id": "x06",
+    "name": "Eye of Divinity",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "ccpal",
+    "reqLevel": 90,
+    "modifiers": [
+      "Unlocks your Ennead Skill",
+      "+2 to Paladin Skill Levels",
+      "Physical Resist 5%",
+      "30% Bonus to Defense"
+    ],
+    "upgrades": [
+      [
+        "+1 to Paladin Skill Levels",
+        "-5 Physical damage taken"
+      ]
+    ],
+    "classRestriction": "Paladin Only"
+  },
+  {
+    "id": "az!",
+    "name": "Fool's Gold",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "invgldm",
+    "reqLevel": 115,
+    "modifiers": [
+      "+(0 to 38) to Strength",
+      "+(0 to 38) to Dexterity",
+      "+(0 to 38) to Vitality",
+      "+(0 to 38) to Energy",
+      "(11 to 15)% Bonus to Defense",
+      "-10% Gold Find",
+      "(16 to 20)% Magic Find"
+    ]
+  },
+  {
+    "id": "a68",
+    "name": "Horazon's Focus",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "invhorazon",
+    "reqLevel": 100,
+    "modifiers": [
+      "(3 to 5)% Life stolen per Hit",
+      "(3 to 5)% Mana stolen per Hit",
+      "-50 Defense",
+      "+(21 to 25) to all Attributes"
+    ]
+  },
+  {
+    "id": "a66",
+    "name": "Idol of Vanity",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "invgbi",
+    "reqLevel": 115,
+    "modifiers": [
+      "Unlocks Mastery Skill: Continuity",
+      "15% Combat Speeds"
+    ],
+    "trophy": [
+      "+20% to Summoned Minion Life",
+      "+10% to Summoned Minion Resistances"
+    ]
+  },
+  {
+    "id": "a59",
+    "name": "Laser Focus Crystal",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "invdss",
+    "reqLevel": 100,
+    "modifiers": [
+      "Maximum Life +3%",
+      "Maximum Mana +10%",
+      "+10% to Experience Gained"
+    ]
+  },
+  {
+    "id": "adi",
+    "name": "Legacy of Blood",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "invlegacy",
+    "reqLevel": 115,
+    "modifiers": [
+      "Unlocks Mastery Skill: Endurance",
+      "(3 to 5)% Life stolen per Hit",
+      "(3 to 5)% Mana stolen per Hit"
+    ],
+    "trophy": [
+      "20% Bonus to Defense"
+    ]
+  },
+  {
+    "id": "|ld",
+    "name": "Lylia's Curse",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "lyliascharm",
+    "reqLevel": 120,
+    "modifiers": [
+      "+(11 to 25)% Bonus to Summoned Edyrem Life",
+      "+20 Life Regenerated per Second",
+      "Maximum Lightning Resist +1%",
+      "Elemental Resists +10%"
+    ]
+  },
+  {
+    "id": "yqe",
+    "name": "Moon of the Spider",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "invhscr2",
+    "reqLevel": 110,
+    "modifiers": [
+      "+(21 to 25) Spell Focus",
+      "+1 to Jitan's Gate",
+      "Half Freeze Duration"
+    ]
+  },
+  {
+    "id": "##.",
+    "name": "Neutrality Pact",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "scroll05",
+    "reqLevel": 130,
+    "modifiers": [
+      "+(1 to 2) to All Skills",
+      "+(61 to 100)% Bonus to Summoned Edyrem Life",
+      "+(2 to 5) to Purify"
+    ],
+    "trophy": [
+      "8% Innate Elemental Damage",
+      "4% Deadly Strike"
+    ]
+  },
+  {
+    "id": "x07",
+    "name": "Nexus Crystal",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "ccsor",
+    "reqLevel": 90,
+    "modifiers": [
+      "Unlocks your Ennead Skill",
+      "+2 to Sorceress Skill Levels",
+      "+15% Bonus to Spell Focus",
+      "+15% to Spell Damage"
+    ],
+    "upgrades": [
+      [
+        "+1 to Sorceress Skill Levels",
+        "-5 Physical damage taken"
+      ]
+    ],
+    "classRestriction": "Sorceress Only"
+  },
+  {
+    "id": "a55",
+    "name": "Optical Detector",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "inveye",
+    "reqLevel": 100,
+    "modifiers": [
+      "Unlocks Mastery Skill: Tenacity",
+      "+5% to Summoned Minion Resistances",
+      "Elemental Resists +15%"
+    ]
+  },
+  {
+    "id": "0u1",
+    "name": "Paragon's Hammer",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "invhmr",
+    "reqLevel": 115,
+    "modifiers": [
+      "Charges: 5",
+      "Can be upgraded in Heroic Endgame Quests",
+      "+1 to All Skills"
+    ]
+  },
+  {
+    "id": "ktzx",
+    "name": "Riftwalker's Eye",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "evileye",
+    "reqLevel": 100,
+    "modifiers": [
+      "+1 to All Skills",
+      "+15% to Experience Gained",
+      "Bonus Quest I",
+      "- without taking damage from the Rift Storm",
+      "Bonus Quest II",
+      "- with at least one Frozen Shambler alive",
+      "- without taking damage from the Rift Storm"
+    ],
+    "upgrades": [
+      [
+        "+1 to All Skills"
+      ],
+      [
+        "Increase Maximum Life and Mana 2%"
+      ],
+      [
+        "Maximum Elemental Resists +1%"
+      ],
+      [
+        "Maximum Elemental Resists +1%"
+      ]
+    ]
+  },
+  {
+    "id": "x01",
+    "name": "Sacred Sunstone",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "ccama",
+    "reqLevel": 90,
+    "modifiers": [
+      "Unlocks your Ennead Skill",
+      "+2 to Amazon Skill Levels",
+      "+25 Life Regenerated per Second",
+      "Maximum Life +10%"
+    ],
+    "upgrades": [
+      [
+        "+1 to Amazon Skill Levels",
+        "-5 Physical damage taken"
+      ]
+    ],
+    "classRestriction": "Amazon Only"
+  },
+  {
+    "id": "a61",
+    "name": "Sacred Worldstone Key",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "invworldkey",
+    "reqLevel": 100,
+    "modifiers": [
+      "Weapon Physical Damage +(25 to 30)%",
+      "(21 to 30)% Bonus to Defense"
+    ]
+  },
+  {
+    "id": "a58",
+    "name": "Scroll of Kings",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "invscb2",
+    "reqLevel": 115,
+    "modifiers": [
+      "+10% to Spell Damage",
+      "20% to All Attributes"
+    ]
+  },
+  {
+    "id": "x02",
+    "name": "Shadow Vortex",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "ccasn",
+    "reqLevel": 90,
+    "modifiers": [
+      "Unlocks your Ennead Skill",
+      "+2 to Assassin Skill Levels",
+      "Weapon Physical Damage +50%",
+      "5% Chance to Avoid Damage"
+    ],
+    "upgrades": [
+      [
+        "+1 to Assassin Skill Levels",
+        "-5 Physical damage taken"
+      ]
+    ],
+    "classRestriction": "Assassin Only"
+  },
+  {
+    "id": "aq!",
+    "name": "Silver Seal of Ureh",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "invrin",
+    "reqLevel": 120,
+    "modifiers": [
+      "+1 to All Skills",
+      "+(21 to 30) Spell Focus",
+      "+(11 to 13)% to Summoned Minion Damage",
+      "+(11 to 15)% to Summoned Minion Resistances",
+      "+(11 to 20) to Strength",
+      "+(11 to 20) to Dexterity",
+      "+(11 to 20) to Vitality",
+      "+(11 to 20) to Energy"
+    ],
+    "trophy": [
+      "+10% to Spell Damage"
+    ]
+  },
+  {
+    "id": "yq2",
+    "name": "Six Angel Bag",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "angelbag1",
+    "reqLevel": 105,
+    "modifiers": [
+      "(3 to 5)% Innate Elemental Damage",
+      "Fire Resist +(21 to 25)%",
+      "Lightning Resist +(21 to 25)%",
+      "Cold Resist +(21 to 25)%"
+    ],
+    "upgrades": [
+      [
+        "-(2 to 5)% to All Enemy Resistances",
+        "3% Chance of Crushing Blow",
+        "+(-3 to 5) to Light Radius"
+      ]
+    ]
+  },
+  {
+    "id": "bxa",
+    "name": "Soul of Kabraxis",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "braxwhorl",
+    "reqLevel": 120,
+    "modifiers": [
+      "+1 to All Skills",
+      "Maximum Fire Resist +(2 to 3)%",
+      "Maximum Lightning Resist +(2 to 3)%",
+      "Maximum Cold Resist +(2 to 3)%",
+      "Maximum Poison Resist +(2 to 3)%"
+    ],
+    "trophy": [
+      "Adds 5-10 Damage"
+    ]
+  },
+  {
+    "id": "x05",
+    "name": "Soulstone Shard",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "ccnec",
+    "reqLevel": 90,
+    "modifiers": [
+      "Unlocks your Ennead Skill",
+      "+2 to Necromancer Skill Levels",
+      "+25% to Summoned Minion Damage",
+      "+1000 Defense"
+    ],
+    "upgrades": [
+      [
+        "+1 to Necromancer Skill Levels",
+        "-5 Physical damage taken"
+      ]
+    ],
+    "classRestriction": "Necromancer Only"
+  },
+  {
+    "id": "blol",
+    "name": "Spirit of Creation",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "vine",
+    "reqLevel": 125,
+    "modifiers": [
+      "Unlocks Mastery Skill: Specialization",
+      "+25 to Strength",
+      "Maximum Mana +(1 to 5)%",
+      "Regenerate Mana +10%",
+      "Elemental Resists +(1 to 10)%"
+    ],
+    "trophy": [
+      "Elemental Resists +10%"
+    ]
+  },
+  {
+    "id": "yqx",
+    "name": "Spirit Trance Herb",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "invhrb",
+    "reqLevel": 115,
+    "modifiers": [
+      "10% Attack Speed",
+      "10% Cast Speed",
+      "(21 to 150)% Bonus to Attack Rating",
+      "+(10 to 25) Life Regenerated per Second"
+    ]
+  },
+  {
+    "id": "x4x",
+    "name": "Sunstone of the Gods",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "invgmv",
+    "reqLevel": 115,
+    "modifiers": [
+      "(3 to 5)% Innate Elemental Damage",
+      "Maximum Life +(3 to 5)%",
+      "Maximum Mana +(11 to 15)%"
+    ],
+    "trophy": [
+      "Physical Resist 5%"
+    ]
+  },
+  {
+    "id": "twi",
+    "name": "Sunstone of the Twin Seas",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "invgmg",
+    "reqLevel": 50,
+    "modifiers": [
+      "+2 to All Skills",
+      "10% Combat Speeds",
+      "-5% to Enemy Fire Resistance",
+      "-5% to Enemy Lightning Resistance",
+      "-5% to Enemy Cold Resistance",
+      "10% to All Attributes",
+      "Elemental Resists +10%",
+      "+5% to Experience Gained"
+    ],
+    "upgrades": [
+      [
+        "Elemental Resists +10%"
+      ],
+      [
+        "Elemental Resists +10%"
+      ],
+      [
+        "Elemental Resists +10%"
+      ]
+    ]
+  },
+  {
+    "id": "|\\\\",
+    "name": "The Ancient Repositories",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "ancientrepositoriesz",
+    "reqLevel": 125,
+    "modifiers": [
+      "+(0 to 1) to All Skills",
+      "(101 to 150)% Bonus to Attack Rating",
+      "+(11 to 15)% to Spell Damage",
+      "(6 to 10)% Chance of Crushing Blow",
+      "Fire Resist +(10 to 20)%",
+      "Lightning Resist +(10 to 20)%",
+      "Cold Resist +(10 to 20)%"
+    ],
+    "trophy": [
+      "Maximum Life and Mana +5%"
+    ]
+  },
+  {
+    "id": "tbr",
+    "name": "The Black Road",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "invsbk3",
+    "reqLevel": 115,
+    "modifiers": [
+      "Unlocks your Black Road Skill",
+      "+150 to Life",
+      "+75 to Mana"
+    ]
+  },
+  {
+    "id": "k@k",
+    "name": "The Book of Lies",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "invsbk2",
+    "reqLevel": 125,
+    "modifiers": [
+      "+(100 to 500) to Life",
+      "+(50 to 250) to Mana"
+    ],
+    "trophy": [
+      "Weapon Physical Damage +20%"
+    ]
+  },
+  {
+    "id": "a60",
+    "name": "The Butcher's Tooth",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "invfang",
+    "reqLevel": 100,
+    "modifiers": [
+      "+10 to all Attributes",
+      "20% Magic Find",
+      "+1 to Light Radius"
+    ]
+  },
+  {
+    "id": "x@x",
+    "name": "The Glorious Book of Median",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "bookoflaz",
+    "reqLevel": 130,
+    "modifiers": [
+      "+1 to All Skills",
+      "Adds 10-15 Damage",
+      "+(24 to 45)% Damage to Demons",
+      "Elemental Resists +(5 to 15)%"
+    ],
+    "upgrade": [
+      "+1 to All Skills",
+      "+10 to all Attributes",
+      "+5% to Experience Gained"
+    ],
+    "trophy": [
+      "Maximum Elemental Resists +1%"
+    ]
+  },
+  {
+    "id": "ths",
+    "name": "The Sleep",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "jewelabc",
+    "reqLevel": 125,
+    "dungeon": "Nymyr's Light",
+    "modifiers": [
+      "Cube After Completing a Trophy Challenge to Awaken",
+      "Disenchant to open a portal to the World Nexus",
+      "Maximum Fire Resist +(0 to 1)%",
+      "Maximum Lightning Resist +(0 to 1)%",
+      "Maximum Cold Resist +(0 to 1)%",
+      "Maximum Poison Resist +(0 to 1)%"
+    ]
+  },
+  {
+    "id": "trc",
+    "name": "Umbaru Treasure",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "foolsbox",
+    "reqLevel": 120,
+    "modifiers": [
+      "Cube with Essence/Runestone to Roll Stat",
+      "+10% to Spell Damage",
+      "Essence Slots: 16"
+    ]
+  },
+  {
+    "id": "ebx",
+    "name": "Vial of Elder Blood",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "eldervial",
+    "reqLevel": 135,
+    "modifiers": [
+      "-5% to Enemy Elemental Resistances",
+      "Maximum Mana +(5 to 15)%",
+      "+50 Life after each Kill",
+      "+(5 to 25)% to Experience Gained",
+      "with unlocked Dimensional Alchemy",
+      "and a Greater Signet of Learning to open",
+      "a portal to the Heart of Darkness"
+    ]
+  },
+  {
+    "id": "a57",
+    "name": "Visions of Akarat",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "akaratbook",
+    "reqLevel": 110,
+    "modifiers": [
+      "+(201 to 250) Defense",
+      "+(21 to 25) to all Attributes"
+    ]
+  },
+  {
+    "id": "|wc",
+    "name": "Weather Control",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "invathulua",
+    "reqLevel": 120,
+    "modifiers": [
+      "Jitan's Gate Cooldown Reduced by 1 seconds",
+      "(2 to 5)% Innate Elemental Damage",
+      "+10 to all Attributes"
+    ]
+  },
+  {
+    "id": "x03",
+    "name": "Worldstone Orb",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "ccbar",
+    "reqLevel": 90,
+    "modifiers": [
+      "Unlocks your Ennead Skill",
+      "+2 to Barbarian Skill Levels",
+      "+25% to Summoned Minion Life",
+      "+1% to Runemaster Defense Bonus"
+    ],
+    "upgrades": [
+      [
+        "+1 to Barbarian Skill Levels",
+        "-5 Physical damage taken"
+      ]
+    ],
+    "classRestriction": "Barbarian Only"
+  },
+  {
+    "id": "|\\#",
+    "name": "Xazax's Illusion",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "maggotlairfag",
+    "reqLevel": 125,
+    "modifiers": [
+      "+(0 to 2) to Necromancer Skill Levels",
+      "+(0 to 2) to Paladin Skill Levels",
+      "+(0 to 2) to Sorceress Skill Levels",
+      "+(0 to 2) to Barbarian Skill Levels",
+      "+(0 to 2) to Druid Skill Levels",
+      "+(0 to 2) to Amazon Skill Levels",
+      "+(0 to 2) to Assassin Skill Levels",
+      "+(10 to 25) Life Regenerated per Second",
+      "Poison Resist +(26 to 50)%"
+    ],
+    "trophy": [
+      "Adds 75-125 Fire Damage",
+      "Adds 75-125 Lightning Damage",
+      "Adds 75-125 Cold Damage"
+    ]
+  },
+  {
+    "id": "yq8",
+    "name": "Zakarum's Ear",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "invear",
+    "reqLevel": 115,
+    "modifiers": [
+      "(6 to 10)% to All Attributes",
+      "+(6 to 15)% to Experience Gained",
+      "Heroic Library of Fate",
+      "Rewards: Angelic Items, Crafting Rares, Crafting Exclusive Uniques",
+      "Tramsmute with a Perfect Gem to open with Area Level 125",
+      "Tramsmute with 2 Angelic items to open with Area Level 130",
+      "Further progress requires the Paragon of Fate mastery and a Mark of Fate"
+    ]
+  }
+]

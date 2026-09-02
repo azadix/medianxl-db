@@ -1,0 +1,2702 @@
+[
+  {
+    "id": "relic:abyss-knight",
+    "name": "Relic (Abyss Knight)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic06",
+    "reqLevel": 75,
+    "modifiers": [
+      "+1 Extra Abyss Knight",
+      "+(9 to 19) to Abyss Knight",
+      "+15% to Summoned Minion Resistances"
+    ]
+  },
+  {
+    "id": "relic:abyss",
+    "name": "Relic (Abyss)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic02",
+    "reqLevel": 75,
+    "modifiers": [
+      "2% Chance to cast level 50 Abyss on Death Blow",
+      "+5% to Cold Spell Damage",
+      "+(19 to 29) to Abyss"
+    ]
+  },
+  {
+    "id": "relic:ancients-hand",
+    "name": "Relic (Ancients' Hand)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic06",
+    "reqLevel": 75,
+    "modifiers": [
+      "Adds 50-150 Fire Damage",
+      "-(3 to 5)% to Enemy Fire Resistance",
+      "+(10 to 20) to Ancients' Hand"
+    ]
+  },
+  {
+    "id": "relic:angel-of-death",
+    "name": "Relic (Angel of Death)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic05",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(21 to 25)% Bonus to Poison Skill Duration",
+      "Angel of Death Cooldown Reduced by 1 seconds",
+      "+(21 to 28) to Angel of Death"
+    ]
+  },
+  {
+    "id": "relic:antimass",
+    "name": "Relic (Antimass)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic06",
+    "reqLevel": 75,
+    "modifiers": [
+      "Antimass Recovers Stamina",
+      "+(5 to 11) to Antimass",
+      "+100 to Life"
+    ]
+  },
+  {
+    "id": "relic:apf-20-maelstrom-mkv",
+    "name": "Relic (APF-20 'Maelstrom' MkV)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "Maelstrom MkI: +10% Bonus Magic Damage",
+      "+(13 to 21) to APF-20 'Maelstrom' MkI",
+      "+(13 to 21) to APF-20 'Maelstrom' MkV",
+      "+20 to Dexterity"
+    ]
+  },
+  {
+    "id": "relic:apocalypse",
+    "name": "Relic (Apocalypse)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic06",
+    "reqLevel": 75,
+    "modifiers": [
+      "-(3 to 6)% to Enemy Fire Resistance",
+      "+(8 to 14) to Apocalypse",
+      "+(101 to 150) to Mana"
+    ]
+  },
+  {
+    "id": "relic:arachnomancy",
+    "name": "Relic (Arachnomancy)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic06",
+    "reqLevel": 75,
+    "modifiers": [
+      "4% Chance to cast level 50 Arachnomancy on Kill",
+      "-(3 to 8)% to Enemy Poison Resistance",
+      "+(17 to 25) to Arachnomancy"
+    ]
+  },
+  {
+    "id": "relic:arcane-swarm",
+    "name": "Relic (Arcane Swarm)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic05",
+    "reqLevel": 75,
+    "modifiers": [
+      "10% Cast Speed",
+      "+(3 to 8)% to Spell Damage",
+      "+(3 to 10) to Arcane Swarm"
+    ]
+  },
+  {
+    "id": "relic:arcane-torrent",
+    "name": "Relic (Arcane Torrent)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic05",
+    "reqLevel": 75,
+    "modifiers": [
+      "Arcane Torrent: +20% Extra Projectiles",
+      "+(17 to 25) to Arcane Torrent",
+      "+100 to Mana",
+      "Maximum Mana +(5 to 10)%"
+    ]
+  },
+  {
+    "id": "relic:arrow-swarm",
+    "name": "Relic (Arrow Swarm)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic04",
+    "reqLevel": 75,
+    "modifiers": [
+      "Arrow Swarm: +2 Projectiles",
+      "Adds 5-10 Damage",
+      "+(4 to 9) to Arrow Swarm"
+    ]
+  },
+  {
+    "id": "relic:atmg-sentry",
+    "name": "Relic (ATMG Sentry)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic05",
+    "reqLevel": 75,
+    "modifiers": [
+      "3% Chance to cast level 30 ATMG Sentry on Kill",
+      "+1 to ATMG Sentry"
+    ]
+  },
+  {
+    "id": "relic:avalanche",
+    "name": "Relic (Avalanche)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic05",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(11 to 20) Spell Focus",
+      "-(4 to 6)% to Enemy Cold Resistance",
+      "+(6 to 12) to Avalanche"
+    ]
+  },
+  {
+    "id": "relic:balefire",
+    "name": "Relic (Balefire)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic02",
+    "reqLevel": 75,
+    "modifiers": [
+      "Balefire: 30% Movement Speed while Self-Immolating",
+      "+(6 to 10)% to Physical/Magic Spell Damage",
+      "+(10 to 18) to Balefire"
+    ]
+  },
+  {
+    "id": "relic:bane",
+    "name": "Relic (Bane)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic02",
+    "reqLevel": 75,
+    "modifiers": [
+      "Bane: +100% Duration",
+      "+(3 to 8) to Bane",
+      "Physical Damage Taken Reduced by (11 to 20)"
+    ]
+  },
+  {
+    "id": "relic:barrage",
+    "name": "Relic (Barrage)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic03",
+    "reqLevel": 75,
+    "modifiers": [
+      "100% Chance to cast level 60 Barrage when you Die",
+      "Adds 25-75 Fire Damage",
+      "Adds 25-75 Lightning Damage",
+      "Adds 25-75 Cold Damage",
+      "-(3 to 6)% to Enemy Elemental Resistances",
+      "+(4 to 9) to Barrage"
+    ]
+  },
+  {
+    "id": "relic:black-lotus-strike",
+    "name": "Relic (Black Lotus Strike)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic05",
+    "reqLevel": 75,
+    "modifiers": [
+      "-(4 to 10)% to Enemy Poison Resistance",
+      "+(25 to 38) to Black Lotus Strike",
+      "Poison Resist +35%"
+    ]
+  },
+  {
+    "id": "relic:bladestorm",
+    "name": "Relic (Bladestorm)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic02",
+    "reqLevel": 75,
+    "modifiers": [
+      "Adds 50-100 Magic Damage",
+      "(4 to 6)% Life stolen per Hit",
+      "+(5 to 9) to Bladestorm"
+    ]
+  },
+  {
+    "id": "relic:blink",
+    "name": "Relic (Blink)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "Blink Restores Stamina If You Have a Point in Summon Familiars",
+      "Blink Cooldown Reduced by 0.5 seconds",
+      "+(8 to 15) to Blink"
+    ]
+  },
+  {
+    "id": "relic:blood-fury",
+    "name": "Relic (Overcharged)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic05",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(2 to 7) to Overcharged",
+      "+(33 to 66) to Life",
+      "+(21 to 30) Life after each Kill"
+    ]
+  },
+  {
+    "id": "relic:blood-skeleton",
+    "name": "Relic (Blood Skeleton)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic03",
+    "reqLevel": 75,
+    "modifiers": [
+      "Blood Skeleton: +5 to Grim Vision Aura",
+      "+(13 to 25) to Blood Skeleton",
+      "+(5 to 10)% to Summoned Minion Resistances"
+    ]
+  },
+  {
+    "id": "relic:bloodstar",
+    "name": "Relic (Bloodstar)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic04",
+    "reqLevel": 75,
+    "modifiers": [
+      "+2 Bloodstar Projectiles",
+      "5% Chance to cast level 61 Bloodstar on Death Blow",
+      "+(45 to 59) to Bloodstar"
+    ]
+  },
+  {
+    "id": "relic:bloodstorm",
+    "name": "Relic (Bloodstorm)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "2% Chance to cast level 60 Bloodstorm on Death Blow",
+      "+(13 to 19) to Bloodstorm",
+      "+(21 to 60) to Life",
+      "Maximum Fire Resist +(1 to 2)%"
+    ]
+  },
+  {
+    "id": "relic:brimstone",
+    "name": "Relic (Brimstone)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "+5% Bonus to Spell Focus",
+      "+(6 to 10)% to Fire Spell Damage",
+      "+(15 to 26) to Brimstone"
+    ]
+  },
+  {
+    "id": "relic:broadside",
+    "name": "Relic (Broadside)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic02",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(5 to 10) to Minimum Damage",
+      "+(31 to 42) to Broadside",
+      "(2 to 4)% Deadly Strike"
+    ]
+  },
+  {
+    "id": "relic:carnage",
+    "name": "Relic (Carnage)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic02",
+    "reqLevel": 75,
+    "modifiers": [
+      "Carnage: Added Fire Damage Doubled",
+      "Carnage Cooldown Reduced by 1.72 seconds",
+      "20% Attack Speed",
+      "+(11 to 19) to Carnage"
+    ]
+  },
+  {
+    "id": "relic:catapult-shot",
+    "name": "Relic (Catapult Shot)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic03",
+    "reqLevel": 75,
+    "modifiers": [
+      "Catapult Shot: 100% Increased Fire Damage",
+      "+150 to Maximum Fire Damage",
+      "+(3 to 12) to Catapult Shot"
+    ]
+  },
+  {
+    "id": "relic:champions-of-the-sun",
+    "name": "Relic (Champions of the Sun)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(15 to 26) to Champions of the Sun",
+      "+(11 to 15)% to Summoned Minion Damage",
+      "Elemental Resists +(10 to 15)%"
+    ]
+  },
+  {
+    "id": "relic:charged-strike",
+    "name": "Relic (Charged Strike)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(6 to 15) to Charged Strike",
+      "+40 Life on Melee Attack",
+      "+40 Mana on Melee Attack"
+    ]
+  },
+  {
+    "id": "relic:cherubim",
+    "name": "Relic (Cherubim)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic03",
+    "reqLevel": 75,
+    "modifiers": [
+      "5% Life stolen per Hit",
+      "+(6 to 13) to Cherubim",
+      "(4 to 8)% to Strength"
+    ]
+  },
+  {
+    "id": "relic:churel",
+    "name": "Relic (Churel)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(7 to 15) to Churel",
+      "Slows Attacker by 10%",
+      "Cold Absorb (2 to 3)%"
+    ]
+  },
+  {
+    "id": "relic:colosseum",
+    "name": "Relic (Colosseum)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic05",
+    "reqLevel": 75,
+    "modifiers": [
+      "(11 to 15)% Block Speed",
+      "(11 to 15)% Hit Recovery",
+      "+(4 to 8) to Colosseum"
+    ]
+  },
+  {
+    "id": "relic:cone-of-cold",
+    "name": "Relic (Cone of Cold)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic03",
+    "reqLevel": 75,
+    "modifiers": [
+      "Cone of Cold Size Increased by 50%",
+      "+(6 to 10)% to Cold Spell Damage",
+      "+(27 to 39) to Cone of Cold"
+    ]
+  },
+  {
+    "id": "relic:crucify",
+    "name": "Relic (Crucify)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic03",
+    "reqLevel": 75,
+    "modifiers": [
+      "Adds 50-100 Magic Damage",
+      "+(6 to 17) to Crucify",
+      "(2 to 4)% Deadly Strike"
+    ]
+  },
+  {
+    "id": "relic:dark-power",
+    "name": "Relic (Dark Power)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic03",
+    "reqLevel": 75,
+    "modifiers": [
+      "Dark Power: Doubled Magic Damage",
+      "Adds 100-200 Magic Damage",
+      "+(6 to 11) to Dark Power"
+    ]
+  },
+  {
+    "id": "relic:death-ripple",
+    "name": "Relic (Death Ripple)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic06",
+    "reqLevel": 75,
+    "modifiers": [
+      "Enhances Death Ripple",
+      "25% Cast Speed",
+      "+15% to Physical/Magic Spell Damage",
+      "+(21 to 33) to Death Ripple"
+    ]
+  },
+  {
+    "id": "relic:deathgaze",
+    "name": "Relic (Deathgaze)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic04",
+    "reqLevel": 75,
+    "modifiers": [
+      "-(7 to 10)% to Enemy Cold Resistance",
+      "+(9 to 17) to Deathgaze",
+      "Maximum Cold Resist +1%"
+    ]
+  },
+  {
+    "id": "relic:defender-spirit",
+    "name": "Relic (Defender Spirit)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic03",
+    "reqLevel": 75,
+    "modifiers": [
+      "+1 Extra Defender Spirit",
+      "+(22 to 35) to Defender Spirit",
+      "+25% to Summoned Minion Life",
+      "+5% to Summoned Minion Damage",
+      "Spirit Walk Heals an Additional 5% Maximum Life while Carrying All Shaman Relics",
+      "(Defender Spirit - Guardian Spirit - Protector Spirit)"
+    ]
+  },
+  {
+    "id": "relic:demonic-speed",
+    "name": "Relic (Demonic Speed)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic02",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(31 to 40)% Damage to Demons",
+      "+(4 to 7) to Demonic Speed",
+      "+(51 to 100) Life after each Demon Kill"
+    ]
+  },
+  {
+    "id": "relic:devouring-cloud",
+    "name": "Relic (Devouring Cloud)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic04",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(5 to 10)% to Poison Spell Damage",
+      "+(15 to 24) to Devouring Cloud",
+      "Poison Resist +30%"
+    ]
+  },
+  {
+    "id": "relic:discharge",
+    "name": "Relic (Discharge)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "Discharge: Thunder Frequency Improved by 0.4 seconds",
+      "+(14 to 25) to Discharge",
+      "+(6 to 12) to Energy",
+      "Maximum Lightning Resist +1%"
+    ]
+  },
+  {
+    "id": "relic:disco-inferno",
+    "name": "Relic (Disco Inferno)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic03",
+    "reqLevel": 75,
+    "modifiers": [
+      "5% Movement Speed",
+      "+33 to Disco Inferno",
+      "Regenerate Mana +15%"
+    ]
+  },
+  {
+    "id": "relic:diseased-cattle",
+    "name": "Relic (Diseased Cattle)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic04",
+    "reqLevel": 75,
+    "modifiers": [
+      "+1 Diseased Cattle Projectiles",
+      "-(3 to 6)% to Enemy Poison Resistance",
+      "+(14 to 21) to Diseased Cattle"
+    ]
+  },
+  {
+    "id": "relic:disintegrate",
+    "name": "Relic (Disintegrate)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 90,
+    "modifiers": [
+      "100% Chance to cast level 60 Disintegrate when you Die",
+      "+(10 to 18) to Disintegrate",
+      "Magic Resist +(1 to 5)%"
+    ]
+  },
+  {
+    "id": "relic:divine-judgement",
+    "name": "Relic (Divine Judgement)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic06",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(9 to 16) to Divine Judgement",
+      "+(21 to 25) to Strength",
+      "(2 to 4)% to Strength"
+    ]
+  },
+  {
+    "id": "relic:dream-eater",
+    "name": "Relic (Dream Eater)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "+1 to All Skills",
+      "+(5 to 9) to Dream Eater (Necromancer Only)",
+      "+(11 to 25) to Dream Eater"
+    ]
+  },
+  {
+    "id": "relic:earthquake",
+    "name": "Relic (Earthquake)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic03",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(5 to 10) to Maximum Damage",
+      "+(16 to 23) to Earthquake",
+      "Physical Resist 2%"
+    ]
+  },
+  {
+    "id": "relic:ecstatic-frenzy",
+    "name": "Relic (Ecstatic Frenzy)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic04",
+    "reqLevel": 75,
+    "modifiers": [
+      "4% Movement Speed",
+      "+(21 to 28) to Ecstatic Frenzy",
+      "+(10 to 15) Maximum Stamina"
+    ]
+  },
+  {
+    "id": "relic:eldritch-storm",
+    "name": "Relic (Eldritch Storm)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "With 25 Points in Eldritch Storm",
+      "2% Chance to Cast level 60 Eldritch Storm on Death Blow",
+      "-(2 to 5)% to Enemy Fire Resistance",
+      "+(21 to 31) to Eldritch Storm"
+    ]
+  },
+  {
+    "id": "relic:elemental-totem",
+    "name": "Relic (Elemental Totem)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(2 to 5) to Elemental Totem",
+      "Elemental Resists +5%",
+      "+(2 to 4)% to Experience Gained"
+    ]
+  },
+  {
+    "id": "relic:ember-spirit",
+    "name": "Relic (Ember Spirit)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic03",
+    "reqLevel": 75,
+    "modifiers": [
+      "1% Chance to cast level 60 Ember Spirit on Death Blow",
+      "+(17 to 29) to Ember Spirit",
+      "Fire Resist +30%",
+      "+1 Hunting Banshee/Ember Spirit Projectile while Carrying Seer Spirit Relics",
+      "(Ember Spirit - Hunting Banshee)"
+    ]
+  },
+  {
+    "id": "relic:emerald-prison",
+    "name": "Relic (Emerald Prison)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic04",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(11 to 15)% Bonus to Poison Skill Duration",
+      "+10% to Poison Spell Damage",
+      "+(18 to 31) to Emerald Prison"
+    ]
+  },
+  {
+    "id": "relic:eviscerate",
+    "name": "Relic (Eviscerate)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "Eviscerate: +1 Projectile",
+      "(51 to 125)% Bonus to Attack Rating",
+      "+(11 to 18) to Eviscerate"
+    ]
+  },
+  {
+    "id": "relic:exorcism",
+    "name": "Relic (Exorcism)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic02",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(12 to 21) to Exorcism",
+      "Weapon Physical Damage +(11 to 20)%",
+      "Slow Target (8 to 10)%"
+    ]
+  },
+  {
+    "id": "relic:feral-strike",
+    "name": "Relic (Feral Strike)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "10% Movement Speed",
+      "+(6 to 12)% Bonus Damage to Mark of the Wild",
+      "(81 to 140)% Bonus to Attack Rating",
+      "+(8 to 17) to Feral Strike"
+    ]
+  },
+  {
+    "id": "relic:fire-elementals",
+    "name": "Relic (Fire Elementals)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic05",
+    "reqLevel": 75,
+    "modifiers": [
+      "+25% Fire Pierce to Fire Elementals",
+      "+(5 to 10)% to Fire Spell Damage",
+      "+(15 to 23) to Fire Elementals",
+      "Summon one extra Elemental with each cast while carrying both relics",
+      "(Summon Fire Elemental - Summon Ice Elemental)"
+    ]
+  },
+  {
+    "id": "relic:fireheart-totem",
+    "name": "Relic (Fireheart Totem)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic04",
+    "reqLevel": 75,
+    "modifiers": [
+      "+1 Extra Fireheart Totem",
+      "+(20 to 35) to Fireheart Totem",
+      "5% Fire/Cold/Lightning Absorb while Carrying Totem Relics",
+      "(Fireheart Totem - Frostclaw Totem - Stormeye Totem)"
+    ]
+  },
+  {
+    "id": "relic:flameburst-shot-2",
+    "name": "Relic (Flameburst Shot)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "Flameburst shot: +5 Projectiles",
+      "+12 to Maximum Damage",
+      "+(12 to 21) to Flameburst Shot"
+    ]
+  },
+  {
+    "id": "relic:flamefront",
+    "name": "Relic (Flamefront)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic05",
+    "reqLevel": 75,
+    "modifiers": [
+      "Flamefront: +10% Damage Multiplier",
+      "+10 to Flamefront (Sorceress Only)",
+      "+(15 to 27) to Flamefront"
+    ]
+  },
+  {
+    "id": "relic:flamestrike",
+    "name": "Relic (Flamestrike)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(31 to 40) Spell Focus",
+      "+(16 to 25) to Flamestrike (Sorceress Only)",
+      "+10 to Flamestrike",
+      "Maximum Fire Resist +1%"
+    ]
+  },
+  {
+    "id": "relic:flametail-shot",
+    "name": "Relic (Flametail Shot)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic02",
+    "reqLevel": 75,
+    "modifiers": [
+      "2% Chance to cast level 40 Flametail Shot on Kill",
+      "10% Chance to cast level 25 Flametail Shot when Struck by a Missile",
+      "+(12 to 24) to Flametail Shot"
+    ]
+  },
+  {
+    "id": "relic:flash",
+    "name": "Relic (Flash)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic06",
+    "reqLevel": 75,
+    "modifiers": [
+      "6% Chance to cast level 50 Flash on Death Blow",
+      "+(16 to 21) to Flash",
+      "Maximum Lightning Resist +(1 to 2)%"
+    ]
+  },
+  {
+    "id": "relic:forked-lightning",
+    "name": "Relic (Forked Lightning)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic04",
+    "reqLevel": 75,
+    "modifiers": [
+      "Forked Lightning: +12% Damage Multiplier",
+      "+(17 to 25) to Forked Lightning",
+      "Lightning Resist +30%"
+    ]
+  },
+  {
+    "id": "relic:fortress",
+    "name": "Relic (Fortress)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic06",
+    "reqLevel": 75,
+    "modifiers": [
+      "+2% to Runemaster Defense Bonus while Fortress is Active",
+      "+(11 to 22) to Fortress",
+      "+1000 Defense"
+    ]
+  },
+  {
+    "id": "relic:frigid-domain",
+    "name": "Relic (Frigid Domain)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic04",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(3 to 5) to Frigid Domain",
+      "Cold Resist +20%"
+    ]
+  },
+  {
+    "id": "relic:frigid-nova",
+    "name": "Relic (Frigid Nova)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic06",
+    "reqLevel": 75,
+    "modifiers": [
+      "Frigid Nova: Double Freeze Duration",
+      "+(14 to 26) to Frigid Nova",
+      "Maximum Cold Resist +1%",
+      "Cold Resist +30%"
+    ]
+  },
+  {
+    "id": "relic:frostclaw-totem",
+    "name": "Relic (Frostclaw Totem)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic05",
+    "reqLevel": 75,
+    "modifiers": [
+      "+1 Extra Frostclaw Totem",
+      "+(20 to 35) to Frostclaw Totem",
+      "5% Fire/Cold/Lightning Absorb while Carrying Totem Relics",
+      "(Fireheart Totem - Frostclaw Totem - Stormeye Totem)"
+    ]
+  },
+  {
+    "id": "relic:frozen-orb",
+    "name": "Relic (Frozen Orb)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic06",
+    "reqLevel": 75,
+    "modifiers": [
+      "-(3 to 6)% to Enemy Cold Resistance",
+      "+(15 to 22) to Frozen Orb",
+      "+20 Mana after each Kill"
+    ]
+  },
+  {
+    "id": "relic:funeral-pyre",
+    "name": "Relic (Funeral Pyre)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic05",
+    "reqLevel": 75,
+    "modifiers": [
+      "+1 to Necromancer Skill Levels",
+      "+(14 to 24) to Funeral Pyre",
+      "+(31 to 50) Life after each Kill"
+    ]
+  },
+  {
+    "id": "relic:fusillade",
+    "name": "Relic (Fusillade)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(4 to 12) to Fusillade",
+      "10% to Dexterity"
+    ]
+  },
+  {
+    "id": "relic:gamma-field",
+    "name": "Relic (Gamma Field)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(8 to 10)% to Poison Spell Damage",
+      "+(11 to 20) to Gamma Field",
+      "Poison Length Reduction (11 to 20)%",
+      "(10 to 15)% Magic Find"
+    ]
+  },
+  {
+    "id": "relic:glacial-nova",
+    "name": "Relic (Glacial Nova)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic03",
+    "reqLevel": 75,
+    "modifiers": [
+      "1% Chance to cast level 40 Glacial Nova on Death Blow",
+      "Glacial Nova Cooldown Reduced by 2 seconds",
+      "+(13 to 22) to Glacial Nova"
+    ]
+  },
+  {
+    "id": "relic:golden-calf",
+    "name": "Relic (Golden Calf)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic05",
+    "reqLevel": 75,
+    "modifiers": [
+      "+10 to Golden Calf",
+      "75% Gold Find",
+      "-5% to All Vendor Prices"
+    ]
+  },
+  {
+    "id": "relic:great-hunt",
+    "name": "Relic (Great Hunt)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic04",
+    "reqLevel": 75,
+    "modifiers": [
+      "Great Hunt: +1 Spirit",
+      "+100 to Minimum Magic Damage",
+      "+(3 to 6) to Great Hunt"
+    ]
+  },
+  {
+    "id": "relic:guard-tower",
+    "name": "Relic (Guard Tower)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic03",
+    "reqLevel": 75,
+    "modifiers": [
+      "1% Chance to cast level 10 Guard Tower on Kill",
+      "+(7 to 16) to Guard Tower",
+      "(31 to 50)% Bonus to Defense"
+    ]
+  },
+  {
+    "id": "relic:guardian-spirit",
+    "name": "Relic (Guardian Spirit)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "+1 Extra Guardian Spirit",
+      "+(22 to 35) to Guardian Spirit",
+      "+25% to Summoned Minion Damage",
+      "Spirit Walk Heals an Additional 5% Maximum Life while Carrying All Shaman Relics",
+      "(Defender Spirit - Guardian Spirit - Protector Spirit)"
+    ]
+  },
+  {
+    "id": "relic:habeas-corpus",
+    "name": "Relic (Habeas Corpus)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic02",
+    "reqLevel": 90,
+    "modifiers": [
+      "+(1 to 5) to Habeas Corpus",
+      "+(10 to 16)% to Summoned Minion Life",
+      "+(5 to 10)% to Summoned Minion Resistances"
+    ]
+  },
+  {
+    "id": "relic:hailstorm",
+    "name": "Relic (Hailstorm)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic06",
+    "reqLevel": 75,
+    "modifiers": [
+      "+30 Spell Focus",
+      "+(11 to 22) to Hailstorm",
+      "Cold Absorb (1 to 2)%"
+    ]
+  },
+  {
+    "id": "relic:hammer-of-zerae",
+    "name": "Relic (Hammer of Zerae)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic06",
+    "reqLevel": 75,
+    "modifiers": [
+      "+250 to Maximum Lightning Damage",
+      "+(7 to 16) to Hammer of Zerae"
+    ]
+  },
+  {
+    "id": "relic:hammertime",
+    "name": "Relic (Hammertime)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(18 to 28) to Hammertime",
+      "(6 to 10)% Potion Effectiveness",
+      "Maximum Life +(1 to 2)%",
+      "Maximum Mana +(1 to 2)%"
+    ]
+  },
+  {
+    "id": "relic:harvest",
+    "name": "Relic (Harvest)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic03",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(11 to 17) to Harvest",
+      "+80 Life Regenerated per Second",
+      "Maximum Poison Resist +(1 to 2)%"
+    ]
+  },
+  {
+    "id": "relic:harvesters",
+    "name": "Relic (Harvesters)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic05",
+    "reqLevel": 75,
+    "modifiers": [
+      "+2 Extra Harvesters",
+      "+(12 to 24) to Harvest (Druid Only)",
+      "+(13 to 25) to Harvesters"
+    ]
+  },
+  {
+    "id": "relic:hawk-talons",
+    "name": "Relic (Hawk Talons)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic04",
+    "reqLevel": 75,
+    "modifiers": [
+      "+150 to Maximum Magic Damage",
+      "+(11 to 22) to Hawk Talons",
+      "(1 to 3)% Chance of Crushing Blow",
+      "(1 to 3)% Deadly Strike"
+    ]
+  },
+  {
+    "id": "relic:heavens-fury",
+    "name": "Relic (Heaven's fury)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic06",
+    "reqLevel": 75,
+    "modifiers": [
+      "+50% Damage to Demons",
+      "+1 to Heaven's fury",
+      "+(6 to 10) to Light Radius"
+    ]
+  },
+  {
+    "id": "relic:hive",
+    "name": "Relic (Hive)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(11 to 21) to Hive",
+      "Maximum Poison Resist +(1 to 2)%",
+      "+10 to Frozen Heart while Carrying Periodic Relics",
+      "(Hive - Nova Charge - Path of Flames)"
+    ]
+  },
+  {
+    "id": "relic:hunting-banshee",
+    "name": "Relic (Hunting Banshee)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic04",
+    "reqLevel": 75,
+    "modifiers": [
+      "1% Chance to cast level 60 Hunting Banshee on Death Blow",
+      "+(17 to 29) to Hunting Banshee",
+      "Cold Resist +30%",
+      "+1 Hunting Banshee/Ember Spirit Projectile while Carrying Seer Spirit Relics",
+      "(Ember Spirit - Hunting Banshee)"
+    ]
+  },
+  {
+    "id": "relic:hyena-strike",
+    "name": "Relic (Hyena Strike)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic05",
+    "reqLevel": 75,
+    "modifiers": [
+      "-(4 to 7)% to Enemy Poison Resistance",
+      "+(16 to 27) to Hyena Strike",
+      "+10 Maximum Stamina"
+    ]
+  },
+  {
+    "id": "relic:ice-bolt-nova",
+    "name": "Relic (Ice Bolt Nova)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic03",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(8 to 15) to Ice Bolt Nova",
+      "Maximum Cold Resist +1%",
+      "Cold Resist +30%",
+      "Cannot Be Frozen"
+    ]
+  },
+  {
+    "id": "relic:ice-elementals",
+    "name": "Relic (Ice Elementals)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic04",
+    "reqLevel": 75,
+    "modifiers": [
+      "+1 Extra Ice Elemental",
+      "-(5 to 8)% to Enemy Cold Resistance",
+      "+(15 to 32) to Ice Elementals",
+      "+1000 Defense",
+      "Summon one extra Elemental with each cast while carrying both relics",
+      "(Summon Fire Elemental - Summon Ice Elemental)"
+    ]
+  },
+  {
+    "id": "relic:iceburst",
+    "name": "Relic (Iceburst)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "20% Attack Speed",
+      "Adds 50-150 Cold Damage",
+      "+(6 to 12) to Iceburst"
+    ]
+  },
+  {
+    "id": "relic:immersion",
+    "name": "Relic (Immersion)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic04",
+    "reqLevel": 75,
+    "modifiers": [
+      "Immersion: +10% Damage Multiplier",
+      "+(12 to 21) to Immersion",
+      "+100 to Mana"
+    ]
+  },
+  {
+    "id": "relic:impale",
+    "name": "Relic (Impale)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic03",
+    "reqLevel": 75,
+    "modifiers": [
+      "Marked for Death Duration Increased by 0.2 Seconds",
+      "+(2 to 7) to Impale",
+      "(2 to 3)% Deadly Strike"
+    ]
+  },
+  {
+    "id": "relic:infected-roots",
+    "name": "Relic (Infected Roots)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic03",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(15 to 20)% Bonus to Poison Skill Duration",
+      "+(14 to 23) to Infected Roots",
+      "Poison Length Reduction (21 to 25)%"
+    ]
+  },
+  {
+    "id": "relic:iron-golem",
+    "name": "Relic (Iron Golem)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(11 to 21) to Iron Golem",
+      "+100% to Summoned Minion Attack Rating",
+      "(11 to 15)% Magic Find"
+    ]
+  },
+  {
+    "id": "relic:jitans-gate",
+    "name": "Relic (Jitan's Gate)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic03",
+    "reqLevel": 75,
+    "modifiers": [
+      "+75% Velocity After Casting Jitan's Gate",
+      "Jitan's Gate Cooldown Reduced by 2 seconds",
+      "+(2 to 4) to Jitan's Gate"
+    ]
+  },
+  {
+    "id": "relic:lava-pit",
+    "name": "Relic (Lava Pit)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "Hungering Flames: +2% of Max Life healed per cast",
+      "+(21 to 32) to Lava Pit"
+    ]
+  },
+  {
+    "id": "relic:liche-form",
+    "name": "Relic (Liche Form)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 90,
+    "modifiers": [
+      "3% Chance to cast level 50 Punishers on Kill",
+      "+(20 to 30)% Bonus to Poison Skill Duration",
+      "+(11 to 20) to Liche Form"
+    ]
+  },
+  {
+    "id": "relic:lightning-arena",
+    "name": "Relic (Lightning Arena)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "5% Movement Speed",
+      "+(11 to 20) to Lightning Arena",
+      "Maximum Lightning Resist +(1 to 2)%"
+    ]
+  },
+  {
+    "id": "relic:lightning-fury",
+    "name": "Relic (Lightning Fury)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic06",
+    "reqLevel": 75,
+    "modifiers": [
+      "+10% Lightning Fury Damage",
+      "+(4 to 8) to Lightning Fury",
+      "+1 Life on Striking"
+    ]
+  },
+  {
+    "id": "relic:lightning-shield-2",
+    "name": "Relic (Lightning Shield)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "Lightning shield: elemental damage reduction applies to all classes, but at 33% effectiveness",
+      "+(11 to 17) to Lightning Shield",
+      "(31 to 50)% Bonus to Defense"
+    ]
+  },
+  {
+    "id": "relic:lightning-wall",
+    "name": "Relic (Lightning Wall)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic05",
+    "reqLevel": 75,
+    "modifiers": [
+      "-(4 to 7)% to Enemy Lightning Resistance",
+      "+(14 to 24) to Lightning Wall",
+      "Lightning Absorb (2 to 3)%"
+    ]
+  },
+  {
+    "id": "relic:limpet-laser",
+    "name": "Relic (Limpet Laser)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic05",
+    "reqLevel": 75,
+    "modifiers": [
+      "Limpet Laser: +1 Projectile",
+      "+(4 to 7)% to Cold Spell Damage",
+      "+(5 to 12) to Limpet Laser"
+    ]
+  },
+  {
+    "id": "relic:lorenado",
+    "name": "Relic (Lorenado)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic02",
+    "reqLevel": 75,
+    "modifiers": [
+      "2% Chance to cast level 50 Lorenado on Kill",
+      "+(11 to 19) to Lorenado",
+      "Maximum Poison Resist +1%",
+      "Poison Length Reduction 25%"
+    ]
+  },
+  {
+    "id": "relic:magic-missiles",
+    "name": "Relic (Magic Missiles)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "Blast Radius: Explosion Radius increased by 2 Yards",
+      "+(8 to 10)% to Physical/Magic Spell Damage",
+      "+(21 to 31) to Magic Missiles"
+    ]
+  },
+  {
+    "id": "relic:mana-sweep",
+    "name": "Relic (Mana Sweep)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic05",
+    "reqLevel": 75,
+    "modifiers": [
+      "Mana Sweep: +10% Total Damage",
+      "Mana Sweep Cooldown Reduced by 3 seconds",
+      "+(8 to 18) to Mana Sweep"
+    ]
+  },
+  {
+    "id": "relic:mana-tide-totem",
+    "name": "Relic (Mana Tide Totem)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic03",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(5 to 12) to Mana Tide Totem",
+      "+100 to Mana",
+      "+(16 to 25) Mana when Struck by an Enemy"
+    ]
+  },
+  {
+    "id": "relic:mark-of-the-wild",
+    "name": "Relic (Mark of the Wild)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic05",
+    "reqLevel": 75,
+    "modifiers": [
+      "100% Duration Bonus to Mark of the Wild",
+      "+(4 to 8) to Mark of the Wild",
+      "(1 to 2)% Deadly Strike"
+    ]
+  },
+  {
+    "id": "relic:miasma",
+    "name": "Relic (Miasma)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic06",
+    "reqLevel": 75,
+    "modifiers": [
+      "+50% Bonus to Miasma Haunt Duration",
+      "+(4 to 8)% to Poison Spell Damage",
+      "+(13 to 21) to Miasma"
+    ]
+  },
+  {
+    "id": "relic:mind-flay",
+    "name": "Relic (Mind Flay)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "Symphony of Destruction: +1 Beam in Slayer's Area of Effect",
+      "+(5 to 11) to Mind Flay",
+      "Lightning Resist +30%"
+    ]
+  },
+  {
+    "id": "relic:mooncall",
+    "name": "Relic (Mooncall)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "(8 to 13)% Innate Elemental Damage",
+      "+(14 to 25) to Mooncall",
+      "+100 to Life"
+    ]
+  },
+  {
+    "id": "relic:mythal",
+    "name": "Relic (Mythal)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic02",
+    "reqLevel": 90,
+    "modifiers": [
+      "Mythal: Doubled Debuff Duration",
+      "+(11 to 15)% Bonus Elemental Damage to Mark of the Wild",
+      "+(6 to 11) to Mythal"
+    ]
+  },
+  {
+    "id": "relic:night-hawks",
+    "name": "Relic (Night Hawks)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic03",
+    "reqLevel": 75,
+    "modifiers": [
+      "+3 Maximum Night Hawks",
+      "+(15 to 30) to Night Hawks",
+      "+(11 to 20)% to Summoned Minion Damage"
+    ]
+  },
+  {
+    "id": "relic:nightmare",
+    "name": "Relic (Nightmare)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic02",
+    "reqLevel": 75,
+    "modifiers": [
+      "Nightmare Reduces Physical Resistance by 6%",
+      "+(4 to 13) to Nightmare"
+    ]
+  },
+  {
+    "id": "relic:nova-charge",
+    "name": "Relic (Nova Charge)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic02",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(8 to 14) to Nova Charge",
+      "+20 to Energy",
+      "+10 to Frozen Heart while Carrying Periodic Relics",
+      "(Hive - Nova Charge - Path of Flames)"
+    ]
+  },
+  {
+    "id": "relic:ohman",
+    "name": "Relic (OHMAN)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic05",
+    "reqLevel": 75,
+    "modifiers": [
+      "(2 to 4)% Mana stolen per Hit",
+      "+(3 to 7) to OHMAN",
+      "+1 Mana on Striking"
+    ]
+  },
+  {
+    "id": "relic:orb-of-annihilation",
+    "name": "Relic (Orb of Annihilation)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic04",
+    "reqLevel": 75,
+    "modifiers": [
+      "+1 to All Skills",
+      "+(6 to 12) to Orb of Annihilation",
+      "+200 to Mana"
+    ]
+  },
+  {
+    "id": "relic:overkill",
+    "name": "Relic (Overkill)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic02",
+    "reqLevel": 75,
+    "modifiers": [
+      "15% Movement Speed",
+      "+(10 to 18) to Overkill",
+      "Weapon Physical Damage +(21 to 30)%"
+    ]
+  },
+  {
+    "id": "relic:overlord",
+    "name": "Relic (Overlord)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic04",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(5 to 13) to Overlord",
+      "+20% to Summoned Minion Damage",
+      "Maximum Life +(2 to 3)%"
+    ]
+  },
+  {
+    "id": "relic:pagan-rites",
+    "name": "Relic (Pagan Rites)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "+1 to All Skills when using an Apple",
+      "+1 to Druid Skill Levels",
+      "+(5 to 12) to Pagan Rites"
+    ]
+  },
+  {
+    "id": "relic:parasite",
+    "name": "Relic (Parasite)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic04",
+    "reqLevel": 75,
+    "modifiers": [
+      "Parasite Gains 5 Additional Targets",
+      "Adds 100-200 Magic Damage",
+      "+(9 to 15) to Parasite"
+    ]
+  },
+  {
+    "id": "relic:path-of-flames",
+    "name": "Relic (Path of Flames)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic06",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(6 to 13) to Path of Flames",
+      "Fire Resist +20%",
+      "+10 to Frozen Heart while Carrying Periodic Relics",
+      "(Hive - Nova Charge - Path of Flames)"
+    ]
+  },
+  {
+    "id": "relic:patriot-sentry",
+    "name": "Relic (Patriot Sentry)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic04",
+    "reqLevel": 75,
+    "modifiers": [
+      "(0 to 1)% Base Block Chance",
+      "+(11 to 15) to Maximum Damage",
+      "+(4 to 11) to Patriot Sentry"
+    ]
+  },
+  {
+    "id": "relic:pentagram",
+    "name": "Relic (Pentagram)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic06",
+    "reqLevel": 75,
+    "modifiers": [
+      "-(3 to 7)% to Enemy Fire Resistance",
+      "+(8 to 17) to Pentagram",
+      "Attacker Takes Fire Damage of 250"
+    ]
+  },
+  {
+    "id": "relic:pestilence",
+    "name": "Relic (Pestilence)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "Pestilence: +10 Seconds Duration",
+      "+(8 to 13) to Pestilence (Necromancer Only)",
+      "+(23 to 34) to Pestilence"
+    ]
+  },
+  {
+    "id": "relic:phalanx",
+    "name": "Relic (Phalanx)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic03",
+    "reqLevel": 75,
+    "modifiers": [
+      "1% Chance to cast level 13 Arrow on Striking",
+      "+1 to Phalanx"
+    ]
+  },
+  {
+    "id": "relic:phoenix-wave",
+    "name": "Relic (Phoenix Wave)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic06",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(4 to 8)% to Fire Spell Damage",
+      "+(11 to 16) to Phoenix Wave",
+      "Maximum Fire Resist +(1 to 2)%"
+    ]
+  },
+  {
+    "id": "relic:pounce",
+    "name": "Relic (Pounce)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic05",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(13 to 18)% Bonus Damage to Bloodlust",
+      "(21 to 30)% Hit Recovery",
+      "+(7 to 12) to Pounce"
+    ]
+  },
+  {
+    "id": "relic:powder-keg",
+    "name": "Relic (Powder Keg)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic06",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(11 to 18) to Powder Keg",
+      "Fire Resist +(21 to 30)%",
+      "Physical Resist (2 to 3)%",
+      "Attacker Takes Fire Damage of 200"
+    ]
+  },
+  {
+    "id": "relic:protector-spirit",
+    "name": "Relic (Protector Spirit)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic04",
+    "reqLevel": 75,
+    "modifiers": [
+      "+1 Extra Protector Spirit",
+      "+(12 to 20)% Damage to Protector Spirit Bloodlust",
+      "+(15 to 25) to Protector Spirit",
+      "+25% to Summoned Minion Resistances",
+      "Spirit Walk Heals an Additional 5% Maximum Life while Carrying All Shaman Relics",
+      "(Defender Spirit - Guardian Spirit - Protector Spirit)"
+    ]
+  },
+  {
+    "id": "relic:psicrown",
+    "name": "Relic (Psicrown)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic02",
+    "reqLevel": 75,
+    "modifiers": [
+      "+500 Total Energy to Psicrown",
+      "+(12 to 19) to Psicrown"
+    ]
+  },
+  {
+    "id": "relic:psionic-storm",
+    "name": "Relic (Psionic Storm)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic02",
+    "reqLevel": 75,
+    "modifiers": [
+      "+8% Total Psionic Storm Damage",
+      "+(13 to 25) to Psionic Storm",
+      "(2 to 5)% to Energy"
+    ]
+  },
+  {
+    "id": "relic:pyroblast",
+    "name": "Relic (Pyroblast)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic04",
+    "reqLevel": 75,
+    "modifiers": [
+      "1% Chance to cast level 40 Pyroblast on Death Blow",
+      "+(3 to 5)% Bonus to Spell Focus",
+      "+(18 to 23) to Pyroblast"
+    ]
+  },
+  {
+    "id": "relic:queen-of-blades",
+    "name": "Relic (Queen of Blades)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(11 to 20) to Queen of Blades",
+      "(2 to 4)% Chance of Crushing Blow"
+    ]
+  },
+  {
+    "id": "relic:raid",
+    "name": "Relic (Raid)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic03",
+    "reqLevel": 75,
+    "modifiers": [
+      "+1 Target to Raid",
+      "+(7 to 13) to Raid (Druid Only)",
+      "Weapon Physical Damage +(21 to 35)%",
+      "(21 to 35)% Bonus to Defense"
+    ],
+    "classRestriction": "Druid Only"
+  },
+  {
+    "id": "relic:rain-of-fire",
+    "name": "Relic (Rain of Fire)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(21 to 30) Spell Focus",
+      "+(4 to 9) to Rain of Fire (Druid Only)",
+      "+(14 to 22) to Rain of Fire",
+      "Fire Absorb (2 to 3)%"
+    ]
+  },
+  {
+    "id": "relic:raven-familiar",
+    "name": "Relic (Raven Familiar)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic04",
+    "reqLevel": 75,
+    "modifiers": [
+      "-5% Movement Speed",
+      "+(3 to 6) to Raven Familiar",
+      "+5 to all Attributes"
+    ]
+  },
+  {
+    "id": "relic:raven-heart",
+    "name": "Relic (Raven Heart)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(2 to 6) to Raven Heart",
+      "Cannot Be Frozen",
+      "+50 Life when Struck by an Enemy"
+    ]
+  },
+  {
+    "id": "relic:rebound",
+    "name": "Relic (Rebound)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic02",
+    "reqLevel": 75,
+    "modifiers": [
+      "+10 Rebound Projectiles",
+      "+(5 to 10) to Minimum Damage",
+      "+(13 to 22) to Rebound"
+    ]
+  },
+  {
+    "id": "relic:resurrect",
+    "name": "Relic (Resurrect)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic04",
+    "reqLevel": 90,
+    "modifiers": [
+      "+25% Magic Find When Near a Revenant",
+      "+(11 to 23) to Resurrect",
+      "+(21 to 40)% to Summoned Minion Life"
+    ]
+  },
+  {
+    "id": "relic:retaliate",
+    "name": "Relic (Retaliate)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic02",
+    "reqLevel": 75,
+    "modifiers": [
+      "+1 to Paladin Skill Levels",
+      "30% Block Speed",
+      "+(11 to 17) to Retaliate"
+    ]
+  },
+  {
+    "id": "relic:ring-of-light",
+    "name": "Relic (Ring of Light)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic05",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(4 to 11) to Ring of Light",
+      "Fire Absorb (1 to 2)%",
+      "+(2 to 5) to Light Radius"
+    ]
+  },
+  {
+    "id": "relic:rising-dawn",
+    "name": "Relic (Rising Dawn)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic03",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(7 to 10)% to Physical/Magic Spell Damage",
+      "+10 to Rising Dawn",
+      "Magic Resist +(1 to 3)%"
+    ]
+  },
+  {
+    "id": "relic:sacrifices",
+    "name": "Relic (Sacrifices)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic02",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(4 to 12) to Sacrifices",
+      "+(6 to 14) Life after each Kill",
+      "4% Reanimate as: Random Monster"
+    ]
+  },
+  {
+    "id": "relic:scorpion-blade",
+    "name": "Relic (Scorpion Blade)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "Lethal Incision: +1 Extra Blade",
+      "+(11 to 16) to Scorpion Blade",
+      "Poison Resist +(11 to 20)%"
+    ]
+  },
+  {
+    "id": "relic:screaming-eagle",
+    "name": "Relic (Screaming Eagle)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic02",
+    "reqLevel": 75,
+    "modifiers": [
+      "Screaming Eagle Duration Increased by 3 seconds",
+      "10% Attack Speed",
+      "+(7 to 16) to Screaming Eagle"
+    ]
+  },
+  {
+    "id": "relic:searing-glow",
+    "name": "Relic (Searing Glow)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "Searing Glow: Dazzle Reduces Enemy Attack Rating by 5%",
+      "2% Chance to cast level 50 Searing Glow on Death Blow",
+      "+(13 to 17) to Searing Glow"
+    ]
+  },
+  {
+    "id": "relic:searing-orb",
+    "name": "Relic (Searing Orb)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic04",
+    "reqLevel": 75,
+    "modifiers": [
+      "-(2 to 5)% to Enemy Fire Resistance",
+      "+(13 to 22) to Searing Orb",
+      "+(2 to 5) to Light Radius"
+    ]
+  },
+  {
+    "id": "relic:serafiend-prison",
+    "name": "Relic (Serafiend Prison)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic03",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(30 to 40)% Damage to Demons",
+      "+(4 to 7) to Serafiend Prison",
+      "Slow Target 5%"
+    ]
+  },
+  {
+    "id": "relic:servants-of-valor",
+    "name": "Relic (Servants of Valor)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic05",
+    "reqLevel": 75,
+    "modifiers": [
+      "Summons 2 extra Servants per cast",
+      "+(21 to 32) to Servants of Valor",
+      "+(16 to 25)% to Summoned Minion Damage"
+    ]
+  },
+  {
+    "id": "relic:shatter-the-flesh",
+    "name": "Relic (Shatter the Flesh)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic06",
+    "reqLevel": 75,
+    "modifiers": [
+      "1% Chance to cast level 50 Shatter the Flesh on Death Blow",
+      "+(21 to 32) to Shatter the Flesh",
+      "Freezes attacker +2"
+    ]
+  },
+  {
+    "id": "relic:shower-of-rocks",
+    "name": "Relic (Shower of Rocks)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(2 to 7) to Shower of Rocks",
+      "Weapon Physical Damage +(70 to 90)%",
+      "Physical Resist (1 to 2)%"
+    ]
+  },
+  {
+    "id": "relic:shunpo",
+    "name": "Relic (Shunpo)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic04",
+    "reqLevel": 75,
+    "modifiers": [
+      "Adds 15-25 Damage",
+      "+(8 to 14) to Shunpo",
+      "(0 to 2)% Deadly Strike"
+    ],
+    "classRestriction": "Assassin Only"
+  },
+  {
+    "id": "relic:shuriken-flurry",
+    "name": "Relic (Shuriken Flurry)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic03",
+    "reqLevel": 75,
+    "modifiers": [
+      "+1% Physical/Magic Spell Damage per 5 Cognition",
+      "+(18 to 26) to Shuriken Flurry",
+      "Physical Damage Taken Reduced by (21 to 30)"
+    ]
+  },
+  {
+    "id": "relic:singularity",
+    "name": "Relic (Singularity)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic05",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(9 to 14) to Singularity",
+      "Magic Absorb (1 to 3)%",
+      "+(16 to 30) Life after each Kill"
+    ]
+  },
+  {
+    "id": "relic:skeletal-flayer",
+    "name": "Relic (Skeletal Flayer)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic06",
+    "reqLevel": 75,
+    "modifiers": [
+      "+15% Elemental Spell Damage to Demon Blood Aura",
+      "+(11 to 23) to Skeletal Flayer",
+      "Maximum Life +(2 to 3)%"
+    ]
+  },
+  {
+    "id": "relic:sky-siege",
+    "name": "Relic (Sky Siege)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic04",
+    "reqLevel": 75,
+    "modifiers": [
+      "20% Attack Speed",
+      "+(250 to 550) to Attack Rating",
+      "+(3 to 5) to Sky Siege"
+    ]
+  },
+  {
+    "id": "relic:slayer",
+    "name": "Relic (Slayer)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic04",
+    "reqLevel": 75,
+    "modifiers": [
+      "20% Lightning Pierce to Slayers",
+      "+(11 to 15) Spell Focus",
+      "+(9 to 20) to Slayer"
+    ]
+  },
+  {
+    "id": "relic:snake-bite",
+    "name": "Relic (Snake Bite)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic02",
+    "reqLevel": 75,
+    "modifiers": [
+      "+15% Bonus to Poison Skill Duration",
+      "-10% to Enemy Poison Resistance",
+      "+(12 to 20) to Snake Bite"
+    ]
+  },
+  {
+    "id": "relic:solar-flare",
+    "name": "Relic (Solar Flare)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic02",
+    "reqLevel": 75,
+    "modifiers": [
+      "Solar Flare: +30% Duration",
+      "+(3 to 5)% to Physical/Magic Spell Damage",
+      "+(3 to 5)% to Fire Spell Damage",
+      "+(14 to 22) to Solar Flare"
+    ]
+  },
+  {
+    "id": "relic:soulshatter",
+    "name": "Relic (Soulshatter)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "Adds 5-10 Damage",
+      "-(4 to 7)% to Enemy Fire Resistance",
+      "+(8 to 15) to Soulshatter"
+    ]
+  },
+  {
+    "id": "relic:spark-of-hope",
+    "name": "Relic (Spark of Hope)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "Spark of Hope Duration Increased by 50 seconds",
+      "+(9 to 17) to Spark of Hope",
+      "Half Freeze Duration"
+    ]
+  },
+  {
+    "id": "relic:spike-nova",
+    "name": "Relic (Spike Nova)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic04",
+    "reqLevel": 75,
+    "modifiers": [
+      "Adds 5-15 Damage",
+      "+(5 to 13) to Spike Nova",
+      "(4 to 8)% Chance of Crushing Blow"
+    ]
+  },
+  {
+    "id": "relic:spiral-dance",
+    "name": "Relic (Spiral Dance)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic03",
+    "reqLevel": 75,
+    "modifiers": [
+      "+200% Bonus Magic Damage to Spiral Dance",
+      "+(11 to 17) to Spiral Dance",
+      "+25 Mana on Melee Attack"
+    ]
+  },
+  {
+    "id": "relic:spirit-walk",
+    "name": "Relic (Spirit Walk)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic02",
+    "reqLevel": 75,
+    "modifiers": [
+      "Spirit Walk Cooldown Reduced by 1 seconds",
+      "+(3 to 7) to Spirit Walk",
+      "+(21 to 40) to Vitality"
+    ]
+  },
+  {
+    "id": "relic:split-arrow",
+    "name": "Relic (Split Arrow)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic02",
+    "reqLevel": 75,
+    "modifiers": [
+      "Split Arrow: +8 Projectiles",
+      "+(13 to 24) to Split Arrow",
+      "(6 to 10)% Chance of Crushing Blow"
+    ]
+  },
+  {
+    "id": "relic:stampede",
+    "name": "Relic (Stampede)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "Stampede: +1 Projectile",
+      "8% Life stolen per Hit",
+      "+(16 to 27) to Stampede"
+    ]
+  },
+  {
+    "id": "relic:storm-crows",
+    "name": "Relic (Storm Crows)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic06",
+    "reqLevel": 75,
+    "modifiers": [
+      "+2 Storm Crows Projectiles",
+      "1% Chance to cast level 3 Knife Throw on Striking",
+      "+(16 to 24) to Storm Crows"
+    ]
+  },
+  {
+    "id": "relic:stormblast",
+    "name": "Relic (Stormblast)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic06",
+    "reqLevel": 75,
+    "modifiers": [
+      "Stormblast: 5% Chance to Trigger Additional Projectile",
+      "Adds 1-150 Lightning Damage",
+      "+(4 to 11) to Stormblast"
+    ]
+  },
+  {
+    "id": "relic:stormcall",
+    "name": "Relic (Stormcall)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "Conductivity: +1% Chance to Cast Askari Lightning on Hit",
+      "-(4 to 7)% to Enemy Lightning Resistance",
+      "+(14 to 24) to Stormcall"
+    ]
+  },
+  {
+    "id": "relic:stormclash",
+    "name": "Relic (Stormclash)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic06",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(6 to 10)% Bonus Elemental Damage to Mark of the Wild",
+      "+(6 to 12) to Stormclash",
+      "Lightning Absorb (1 to 2)%"
+    ]
+  },
+  {
+    "id": "relic:stormeye-totem",
+    "name": "Relic (Stormeye Totem)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic04",
+    "reqLevel": 75,
+    "modifiers": [
+      "+1 Extra Stormeye Totem",
+      "+(20 to 35) to Stormeye Totem",
+      "5% Fire/Cold/Lightning Absorb while Carrying Totem Relics",
+      "(Fireheart Totem - Frostclaw Totem - Stormeye Totem)"
+    ]
+  },
+  {
+    "id": "relic:summon-frostwalker",
+    "name": "Relic (Summon Frostwalker)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic04",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(9 to 16) to Summon Frostwalker",
+      "Maximum Cold Resist +1%",
+      "Gain Exodia while Carrying All Summon Trio Relics",
+      "(Summon Frostwalker - Summon Glowing Fungus - Summon Sinner)",
+      "Exodia",
+      "Summon One Extra Minion With Each Cast",
+      "+100% to Summoned Minion Damage",
+      "+100% to Summoned Minion Attack Rating",
+      "+666 to Life"
+    ]
+  },
+  {
+    "id": "relic:summon-glowing-fungus",
+    "name": "Relic (Summon Glowing Fungus)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic02",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(9 to 16) to Summon Glowing Fungus",
+      "Maximum Lightning Resist +1%",
+      "Gain Exodia while Carrying All Summon Trio Relics",
+      "(Summon Frostwalker - Summon Glowing Fungus - Summon Sinner)",
+      "Exodia",
+      "Summon One Extra Minion With Each Cast",
+      "+100% to Summoned Minion Damage",
+      "+100% to Summoned Minion Attack Rating",
+      "+666 to Life"
+    ]
+  },
+  {
+    "id": "relic:summon-sinner",
+    "name": "Relic (Summon Sinner)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic05",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(9 to 16) to Summon Sinner",
+      "Maximum Fire Resist +1%",
+      "Gain Exodia while Carrying All Summon Trio Relics",
+      "(Summon Frostwalker - Summon Glowing Fungus - Summon Sinner)",
+      "Exodia",
+      "Summon One Extra Minion With Each Cast",
+      "+100% to Summoned Minion Damage",
+      "+100% to Summoned Minion Attack Rating",
+      "+666 to Life"
+    ]
+  },
+  {
+    "id": "relic:supernova",
+    "name": "Relic (Supernova)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic02",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(6 to 10)% to Lightning Spell Damage",
+      "-(2 to 5)% to Enemy Lightning Resistance",
+      "+(13 to 22) to Supernova"
+    ]
+  },
+  {
+    "id": "relic:takedown",
+    "name": "Relic (Takedown)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic04",
+    "reqLevel": 75,
+    "modifiers": [
+      "Takedown: +1 Maximum Fury Charges",
+      "+1 to Amazon Skill Levels",
+      "+(9 to 14) to Takedown"
+    ]
+  },
+  {
+    "id": "relic:tantrum",
+    "name": "Relic (Tantrum)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic04",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(6 to 12) to Tantrum",
+      "+2000 Defense vs. Melee",
+      "(3 to 5)% to Dexterity"
+    ]
+  },
+  {
+    "id": "relic:teleport",
+    "name": "Relic (Teleport)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic03",
+    "reqLevel": 75,
+    "modifiers": [
+      "(3 to 7)% Movement Speed",
+      "Teleport Cooldown Reduced by 0.8 seconds",
+      "+(6 to 14) to Teleport"
+    ]
+  },
+  {
+    "id": "relic:tempest",
+    "name": "Relic (Tempest)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic05",
+    "reqLevel": 75,
+    "modifiers": [
+      "+3 Maximum Tempest Projectiles",
+      "+(4 to 8)% to Lightning Spell Damage",
+      "+(9 to 17) to Tempest"
+    ]
+  },
+  {
+    "id": "relic:thunder-arena",
+    "name": "Relic (Thunder Arena)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic03",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(11 to 24) to Thunder Arena",
+      "+2000 Defense vs. Missile",
+      "(31 to 50)% Bonus to Defense"
+    ]
+  },
+  {
+    "id": "relic:thunder-slam",
+    "name": "Relic (Thunder Slam)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic04",
+    "reqLevel": 75,
+    "modifiers": [
+      "Thunder Slam Cooldown Reduced by 2 seconds",
+      "Stun Attack",
+      "+(8 to 14) to Thunder Slam"
+    ]
+  },
+  {
+    "id": "relic:thunderstone",
+    "name": "Relic (Thunderstone)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "20% Movement Speed",
+      "+(8 to 15) to Thunderstone",
+      "+20 Life after each Kill"
+    ]
+  },
+  {
+    "id": "relic:time-wave",
+    "name": "Relic (Time Wave)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic05",
+    "reqLevel": 75,
+    "modifiers": [
+      "5% Chance to cast level 8 Time Wave on Melee Attack",
+      "1% Chance to cast level 7 Time Strike on Striking",
+      "+8 to Time Wave"
+    ]
+  },
+  {
+    "id": "relic:timefield",
+    "name": "Relic (Timefield)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic03",
+    "reqLevel": 90,
+    "modifiers": [
+      "(3 to 4)% Skill Duration",
+      "+(4 to 9) to Timefield",
+      "Slow Target 5%"
+    ]
+  },
+  {
+    "id": "relic:titans-fortitude",
+    "name": "Relic (Titan's Fortitude)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic03",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(2 to 6) to Titan's Fortitude",
+      "+(101 to 500) Defense",
+      "+5% to Experience Gained"
+    ]
+  },
+  {
+    "id": "relic:trinity-arrow",
+    "name": "Relic (Trinity Arrow)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic03",
+    "reqLevel": 75,
+    "modifiers": [
+      "(6 to 9)% Innate Elemental Damage",
+      "+(6 to 13) to Trinity Arrow",
+      "Fire Absorb 1%",
+      "Lightning Absorb 1%",
+      "Cold Absorb 1%"
+    ]
+  },
+  {
+    "id": "relic:trinity-beam",
+    "name": "Relic (Trinity Beam)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic04",
+    "reqLevel": 75,
+    "modifiers": [
+      "-(2 to 3)% to Enemy Fire Resistance",
+      "-(2 to 3)% to Enemy Lightning Resistance",
+      "-(2 to 3)% to Enemy Cold Resistance",
+      "+(1 to 4) to Trinity Beam"
+    ]
+  },
+  {
+    "id": "relic:trinity-nova",
+    "name": "Relic (Trinity Nova)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "1% Chance to cast level 40 Trinity Nova on Death Blow",
+      "-5% to Enemy Fire Resistance",
+      "-5% to Enemy Lightning Resistance",
+      "-5% to Enemy Cold Resistance",
+      "+(11 to 25) to Trinity Nova"
+    ]
+  },
+  {
+    "id": "relic:venomcloud-totem",
+    "name": "Relic (Venomcloud Totem)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic06",
+    "reqLevel": 75,
+    "modifiers": [
+      "+1 Extra Venomcloud Totem",
+      "-(4 to 8)% to Enemy Poison Resistance",
+      "+(8 to 19) to Venomcloud Totem"
+    ]
+  },
+  {
+    "id": "relic:vessel-of-judgement",
+    "name": "Relic (Vessel of Judgement)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "Vessel of Judgement: +1 Target",
+      "+(6 to 8)% to Physical/Magic Spell Damage",
+      "+(9 to 17) to Vessel of Judgement"
+    ]
+  },
+  {
+    "id": "relic:vessel-of-retribution",
+    "name": "Relic (Vessel of Retribution)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic03",
+    "reqLevel": 75,
+    "modifiers": [
+      "Vessel of Retribution: 0.7% Damage Leeched as Life",
+      "+(6 to 8)% to Physical/Magic Spell Damage",
+      "+(14 to 23) to Vessel of Retribution"
+    ]
+  },
+  {
+    "id": "relic:virulence",
+    "name": "Relic (Virulence)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic04",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(11 to 15)% Bonus to Poison Skill Duration",
+      "-(4 to 6)% to Enemy Poison Resistance",
+      "+(9 to 19) to Virulence"
+    ]
+  },
+  {
+    "id": "relic:void-archon",
+    "name": "Relic (Void Archon)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(15 to 26) to Void Archon",
+      "+(11 to 15)% to Summoned Minion Resistances",
+      "(2 to 4)% to Vitality"
+    ]
+  },
+  {
+    "id": "relic:war-cry",
+    "name": "Relic (War Cry)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "+1 to Barbarian Skill Levels",
+      "+(6 to 14) to War Cry",
+      "+(21 to 40) to Energy"
+    ]
+  },
+  {
+    "id": "relic:ward-of-fate",
+    "name": "Relic (Ward of Fate)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic06",
+    "reqLevel": 75,
+    "modifiers": [
+      "5% Movement Speed",
+      "10% Combat Speeds",
+      "+(14 to 25) to Ward of Fate"
+    ]
+  },
+  {
+    "id": "relic:whirlpool",
+    "name": "Relic (Whirlpool)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic03",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(301 to 600) to Attack Rating",
+      "+(5 to 9) to Whirlpool",
+      "+(21 to 30) Mana on Melee Attack"
+    ]
+  },
+  {
+    "id": "relic:whirlwind",
+    "name": "Relic (Whirlwind)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic02",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(8 to 14) to Whirlwind",
+      "(2 to 4)% to All Attributes",
+      "Poison Resist +25%"
+    ]
+  },
+  {
+    "id": "relic:widowmaker",
+    "name": "Relic (Widowmaker)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic04",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(21 to 40)% Damage to Undead",
+      "+(15 to 24) to Widowmaker",
+      "(6 to 9)% to Strength"
+    ]
+  },
+  {
+    "id": "relic:winter-avatar",
+    "name": "Relic (Winter Avatar)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic02",
+    "reqLevel": 75,
+    "modifiers": [
+      "+(4 to 7)% to Cold Spell Damage",
+      "+(9 to 16) to Winter Avatar",
+      "Maximum Cold Resist +1%"
+    ]
+  },
+  {
+    "id": "relic:wolf-companion",
+    "name": "Relic (Wolf Companion)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic01",
+    "reqLevel": 75,
+    "modifiers": [
+      "Hunter's Mark: Increased Damage per Hit",
+      "+(15 to 26) to Wolf Companion",
+      "2% Reanimate as: Spirit Wolf"
+    ]
+  },
+  {
+    "id": "relic:wychwind",
+    "name": "Relic (Wychwind)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic02",
+    "reqLevel": 75,
+    "modifiers": [
+      "+5% physical resistance during wychwind vulnerability",
+      "+1 to Assassin Skill Levels",
+      "+(9 to 17) to Wychwind"
+    ]
+  },
+  {
+    "id": "relic:wyrd",
+    "name": "Relic (Wyrd)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic06",
+    "reqLevel": 75,
+    "modifiers": [
+      "Adds 50-100 Magic Damage",
+      "+(7 to 12) to Wyrd",
+      "Magic Resist +(1 to 3)%"
+    ]
+  },
+  {
+    "id": "relic:wyrmshot",
+    "name": "Relic (Wyrmshot)",
+    "keepInInventory": true,
+    "rarity": "relic",
+    "icon": "relic03",
+    "reqLevel": 75,
+    "modifiers": [
+      "+3 Wyrmshot Targets",
+      "(4 to 6)% Innate Elemental Damage",
+      "+(9 to 15) to Wyrmshot"
+    ]
+  }
+]

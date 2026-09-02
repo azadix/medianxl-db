@@ -1,6 +1,7 @@
 /**
  * Shared prerequisite string helpers (tree_struct + planner).
- * Prereq format: type:value:target (e.g. skill_level:1:fire_bolt).
+ * Prereq format: type:value:target (e.g. skill_level:1:fire_bolt,
+ * skill_level_any:15:shockwave_trap|incineration_trap).
  */
 
 /**

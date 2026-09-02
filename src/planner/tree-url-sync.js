@@ -1,4 +1,4 @@
-/** URL query sync for planner class/tab/build (no dependency on tree-core). */
+/** URL query sync for planner class/tab/build. */
 
 export function updatePlannerUrlTab(selectedClass, selectedTab) {
   const url = new URL(window.location.href);
@@ -16,5 +16,13 @@ export function updatePlannerUrlTab(selectedClass, selectedTab) {
 export function setBuildUrlParam(encoded) {
   const url = new URL(window.location.href);
   url.searchParams.set('build', encoded);
+  window.history.replaceState({}, '', url);
+}
+
+/** Drop shared-build payload from the URL (e.g. when switching game version). */
+export function clearBuildUrlParam() {
+  const url = new URL(window.location.href);
+  if (!url.searchParams.has('build')) return;
+  url.searchParams.delete('build');
   window.history.replaceState({}, '', url);
 }

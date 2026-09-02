@@ -5,7 +5,7 @@
 
 /**
  * @typedef {object} SkillTooltipHeaderOptions
- * @property {string} iconHtml - Output of `getSkillIconHTML`
+ * @property {string} [iconHtml] - Output of `getSkillIconHTML`; omit to hide the icon column
  * @property {string} nameInnerHtml - Name line HTML (may include variant markup)
  * @property {string} [tagsHtml] - Optional tags paragraph HTML
  * @property {string} [subskillHtml] - Optional subskill-of line HTML
@@ -51,15 +51,19 @@ export function toTooltipLineHtml(expandedBlock, lineClassName, options = {}) {
  */
 export function buildSkillTooltipHeaderHtml(options) {
   const {
-    iconHtml,
+    iconHtml = '',
     nameInnerHtml,
     tagsHtml = '',
     subskillHtml = '',
     levelSectionHtml,
   } = options;
 
+  const iconBlock = String(iconHtml || '').trim()
+    ? `<div class="tooltip-icon">${iconHtml}</div>`
+    : '';
+
   return `<div class="tooltip-header">
-      <div class="tooltip-icon">${iconHtml}</div>
+      ${iconBlock}
       <div class="tooltip-name-container">
         <div class="tooltip-name-section">
           <div class="is-size-4 has-text-weight-bold">
@@ -106,7 +110,8 @@ export function buildSkillTooltipDescriptionBlock(options) {
     preserveBlankLines: preserveBlankEffectLines,
   });
   const hasEffect = Boolean(effectInner);
-  const hasIndicator = Boolean(String(levelIndicatorHtml).trim());
+  // Don't show "Level N values:" with nothing under it (e.g. Move Only / Unsummon).
+  const hasIndicator = hasEffect && Boolean(String(levelIndicatorHtml).trim());
 
   if (!hasMain && !hasEffect && !hasIndicator) return '';
 
@@ -125,11 +130,39 @@ export function buildSkillTooltipDescriptionBlock(options) {
 }
 
 /**
- * @param {string} innerHtml - Header + body fragments (no outer wrapper)
+ * @typedef {{ label: string, valueHtml: string }} SkillBonusSourceRow
+ */
+
+/**
+ * Alt-held skill bonus sources panel.
+ * @param {SkillBonusSourceRow[]} rows
  * @returns {string}
  */
-export function wrapSkillTooltipContent(innerHtml) {
-  return `<div class="tooltip-content">${innerHtml}</div>`;
+export function buildSkillBonusSourcesTableHtml(rows) {
+  if (!Array.isArray(rows) || !rows.length) return '';
+  const body = rows
+    .map((row) => {
+      const label = String(row?.label ?? '');
+      const valueHtml = String(row?.valueHtml ?? '');
+      return `<div class="skill-bonus-sources-row"><span class="skill-bonus-sources-label">${label}</span><span class="skill-bonus-sources-value">${valueHtml}</span></div>`;
+    })
+    .join('');
+  return `<div class="skill-tooltip-sources" aria-label="Skill bonus sources">
+      <div class="skill-bonus-sources-title">SOURCES</div>
+      <div class="skill-bonus-sources-table">${body}</div>
+    </div>`;
+}
+
+/**
+ * @param {string} innerHtml - Header + body fragments (no outer wrapper)
+ * @param {string} [sourcesHtml] - Optional Alt-held sources panel HTML
+ * @returns {string}
+ */
+export function wrapSkillTooltipContent(innerHtml, sourcesHtml = '') {
+  const main = `<div class="tooltip-content">${innerHtml}</div>`;
+  const sources = String(sourcesHtml || '').trim();
+  if (!sources) return main;
+  return `<div class="skill-tooltip-panels">${main}${sources}</div>`;
 }
 
 /**

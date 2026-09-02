@@ -10,13 +10,13 @@ import Character from './Character.js';
 import { normalizePlannerStatValue, isPlannerBaseStatKey } from './planner-stats-config.js';
 import {
   getClassPlannerStatDefaults,
-  computeClassDerivedLifeMana
+  computeClassDerivedLifeManaBreakdown
 } from './class-baselines.js';
 import { getPlannerAutoLevelFromSpentSkillPoints } from '@/planner/planner-level-options.js';
 import { recomputePlannerStatsFromSkillAllocations } from './planner-stat-modifiers.js';
 import { calculateMaxLevel } from '@/skills/domain/skill-calculations.js';
 import { extractStatReferences } from '@/skills/domain/formula-evaluator.js';
-import { getFileSkillStore } from '@/tree/skill-data-store.js';
+import { getFileSkillStore, resolveCharacterStatKeyForToken } from '@/shared/skill-data-store.js';
 import {
   normalizePrereqSkillTargetKey,
 } from './prereq-utils.js';
@@ -63,6 +63,8 @@ import {
   getOSkillRowsForPlanner,
   getAllOSkills,
   getOSkillPoints,
+  getOSkillManualPoints,
+  getOSkillItemPoints,
   addOSkill,
   removeOSkill,
   changeOSkillPoints,
@@ -70,6 +72,7 @@ import {
   setAllOSkills,
   getOSkillIdentifierSet,
   hasAnyOSkillAllocations,
+  syncItemGrantedOSkills,
 } from './planner-oskills.js';
 
 export { Character, getCharacterInstance };
@@ -100,6 +103,8 @@ export {
   getOSkillRowsForPlanner,
   getAllOSkills,
   getOSkillPoints,
+  getOSkillManualPoints,
+  getOSkillItemPoints,
   addOSkill,
   removeOSkill,
   changeOSkillPoints,
@@ -107,6 +112,7 @@ export {
   setAllOSkills,
   getOSkillIdentifierSet,
   hasAnyOSkillAllocations,
+  syncItemGrantedOSkills,
 };
 
 /**
@@ -125,8 +131,9 @@ export function initializeCharacter(className, level = Character.DEFAULT_LEVEL) 
 let _plannerSkillStatRecomputeTimer = null;
 
 /**
- * Resolve merged skill levels (internal id -> points) for passive stat aggregation.
- * Regular tree skills exclude oSkill keys; oSkills override same internal id with max points.
+ * Resolve merged skill levels (internal id -> blvl) for passive stat aggregation.
+ * Regular tree skills exclude oSkill keys; oSkills use manual points only (item grants are slvl).
+ * Item-only oSkills are present with blvl 0 so slvl still applies.
  * @param {Character} character
  * @returns {Record<string, number>}
  */
@@ -145,9 +152,6 @@ export function buildMergedSkillLevelsForStatRecompute(character) {
     if (store) {
       const row =
         store.catalogByInternalId?.get(internal) ??
-        (/^\d+$/.test(internal)
-          ? store.catalog?.find((r) => Number(r?.numericId) === Number(internal))
-          : null) ??
         store.catalogByInternalId?.get(
           internal.toLowerCase().replace(/'/g, '').replace(/\s+/g, '_')
         ) ??
@@ -165,24 +169,16 @@ export function buildMergedSkillLevelsForStatRecompute(character) {
   }
 
   for (const row of character.oSkills || []) {
-    const p = Character.clampOSkillPoints(row?.points ?? 0);
-    if (p <= 0) continue;
+    const parts = Character.oSkillLevelParts(row, 0);
+    if (parts.effective <= 0) continue;
     const sid = String(row?.slotId ?? '').trim();
     if (sid && character.isOSkillSlotDisabled(sid)) continue;
     if (row.skillName) {
       const rowHit = store?.catalogByInternalId?.get(String(row.skillName).trim());
       const id = rowHit?.id ? String(rowHit.id) : String(row.skillName).trim();
       const cur = byInternal[id] || 0;
-      byInternal[id] = Math.max(cur, p);
-      continue;
-    }
-    if (row.skillId != null && store) {
-      const hit = store.lookupSkillNameAndDisplayByNumericId(row.skillId);
-      if (hit?.name) {
-        const id = String(hit.name);
-        const cur = byInternal[id] || 0;
-        byInternal[id] = Math.max(cur, p);
-      }
+      // Item grants are slvl; merged map is blvl only (0 for item-only oSkills).
+      byInternal[id] = Math.max(cur, parts.blvl);
     }
   }
 
@@ -202,16 +198,22 @@ async function runPlannerSkillStatRecomputeImpl() {
   if (!getCharacterInstance()) return;
   const mergedBlvl = buildMergedSkillLevelsForStatRecompute(getCharacterInstance());
   let allSkillsBonus = 0;
+  let classSkillsBonus = 0;
   if (typeof document !== 'undefined') {
-    const inp = document.getElementById('allSkillsBonus');
-    if (inp instanceof HTMLInputElement) {
-      allSkillsBonus = Math.max(0, Math.floor(parseInt(inp.value, 10) || 0));
+    const allInp = document.getElementById('allSkillsBonus');
+    if (allInp instanceof HTMLInputElement) {
+      allSkillsBonus = Math.max(0, Math.floor(parseInt(allInp.value, 10) || 0));
+    }
+    const classInp = document.getElementById('classSkillsBonus');
+    if (classInp instanceof HTMLInputElement) {
+      classSkillsBonus = Math.max(0, Math.floor(parseInt(classInp.value, 10) || 0));
     }
   }
   await recomputePlannerStatsFromSkillAllocations(getCharacterInstance(), {
     effectiveLevel: getEffectivePlannerLevel(),
     treeSkillsCache: getTreeSkillsCache(),
     allSkillsBonus,
+    classSkillsBonus,
     mergedBlvl
   });
   if (typeof window !== 'undefined') {
@@ -288,7 +290,7 @@ export function applyClassBaselineStatsToCharacter(className) {
   next.dexterity = normalizePlannerStatValue('dexterity', row.dexterity);
   next.energy = normalizePlannerStatValue('energy', row.energy);
   next.vitality = normalizePlannerStatValue('vitality', row.vitality);
-  const { life, mana } = computeClassDerivedLifeMana(level, next.vitality, next.energy, row);
+  const { life, mana } = computeClassDerivedLifeManaBreakdown(level, next.vitality, next.energy, row);
   const lifeBonus = getCharacterInstance().getTotalQuestLifeBonus();
   next.life = normalizePlannerStatValue('life', life + lifeBonus);
   next.mana = normalizePlannerStatValue('mana', mana);
@@ -307,7 +309,7 @@ export function recomputeClassDerivedLifeMana() {
   const level = getEffectivePlannerLevel();
   const vit = getCharacterInstance().getRawStat('vitality');
   const ene = getCharacterInstance().getRawStat('energy');
-  const { life, mana } = computeClassDerivedLifeMana(level, vit, ene, row);
+  const { life, mana } = computeClassDerivedLifeManaBreakdown(level, vit, ene, row);
   const lifeBonus = getCharacterInstance().getTotalQuestLifeBonus();
   getCharacterInstance().setRawStat('life', normalizePlannerStatValue('life', life + lifeBonus));
   getCharacterInstance().setRawStat('mana', normalizePlannerStatValue('mana', mana));
@@ -602,7 +604,7 @@ export function addSkillPoint(skillName, skill, maxLevel, allSkills = [], skipEv
     character.maxLevels = {};
 
     bumpCharacterLevelToMinimumRequired(allSkills);
-    autoAddStatsToInput(skill.skillId);
+    autoAddStatsToInput(skill.id);
 
     if (!skipEvent) {
       notifySkillPointsChanged(skillName, 'add');
@@ -665,7 +667,7 @@ export function addSkillPointsBatch(skillName, skill, amount, allSkills = [], ge
     
     // Auto-add required stats to input field (only need to do this once)
     if (pointsAdded === 0) {
-      autoAddStatsToInput(skill.skillId);
+      autoAddStatsToInput(skill.id);
     }
     
     pointsAdded++;
@@ -718,7 +720,7 @@ function checkMaxLevelDependencies(skillName, allSkills = []) {
     if (!skill) continue;
     
     // Calculate what the new max level would be with the simulated removal
-    const newMaxLevel = calculateMaxLevel(skill.skillId, simulatedSkillPoints, getCharacterInstance().level);
+    const newMaxLevel = calculateMaxLevel(skill.id, simulatedSkillPoints, getCharacterInstance().level);
     
     // Check if current points would exceed new max
     if (allocatedPoints > newMaxLevel) {
@@ -863,7 +865,7 @@ export function removeSkillPointsBatch(skillName, amount, allSkills = []) {
 export function checkSkillsExceedingMaxLevel(allSkills = []) {
   if (!getCharacterInstance()) return [];
 
-  const actualCharacterLevel = getMinimumRequiredLevel(allSkills);
+  const actualCharacterLevel = getCharacterInstance().level;
   const skillLevels = getAllSkillPoints();
   const exceedingSkills = [];
   
@@ -876,7 +878,7 @@ export function checkSkillsExceedingMaxLevel(allSkills = []) {
     if (!skill) continue;
     
     // Calculate the current maximum level for this skill
-    const effectiveMaxLevel = calculateMaxLevel(skill.skillId, skillLevels, actualCharacterLevel);
+    const effectiveMaxLevel = calculateMaxLevel(skill.id, skillLevels, actualCharacterLevel);
     
     // If current points exceed the maximum, add to list
     if (currentPoints > effectiveMaxLevel) {
@@ -901,39 +903,58 @@ export function checkSkillsExceedingMaxLevel(allSkills = []) {
 function getMinimumRequiredPointsWithBlockingSkills(skillName, allSkills) {
   let minRequired = 0;
   const blockingSkills = [];
-  
-  if (!getCharacterInstance()) return { minRequired: 0, blockingSkills: [] };
-  
+
+  const character = getCharacterInstance();
+  if (!character) return { minRequired: 0, blockingSkills: [] };
+
+  const recordRequirement = (requiredPoints, blockerName) => {
+    if (requiredPoints > minRequired) {
+      minRequired = requiredPoints;
+      blockingSkills.length = 0;
+    }
+    if (requiredPoints === minRequired) {
+      blockingSkills.push(blockerName);
+    }
+  };
+
   // Check all skills that have points allocated
-  for (const [allocatedSkillName, points] of Object.entries(getCharacterInstance().skillPoints)) {
+  for (const [allocatedSkillName, points] of Object.entries(character.skillPoints)) {
     if (points === 0) continue;
-    
-    // Find the skill object
-    const skill = allSkills.find(s => s.id === allocatedSkillName);
+
+    const skill = allSkills.find((s) => s.id === allocatedSkillName);
     if (!skill || !skill.prerequisites) continue;
-    
-    // Check if this skill depends on the skill we're checking
+
+    const blockerName = skill.name || allocatedSkillName;
+
     for (const prereq of skill.prerequisites) {
       const [type, value, target] = prereq.split(':');
-      
+      const requiredPoints = parseInt(value, 10);
+
       if (type === 'skill_level') {
         const targetSkillName = normalizePrereqSkillTargetKey(target);
-        
         if (targetSkillName === skillName) {
-          const requiredPoints = parseInt(value, 10);
-          if (requiredPoints > minRequired) {
-            minRequired = requiredPoints;
-            // Clear previous blocking skills since we found a higher requirement
-            blockingSkills.length = 0;
-          }
-          if (requiredPoints === minRequired) {
-            blockingSkills.push(skill.name || allocatedSkillName);
-          }
+          recordRequirement(requiredPoints, blockerName);
+        }
+      } else if (type === 'skill_level_any') {
+        const ids = String(target || '')
+          .split('|')
+          .map((s) => s.trim())
+          .filter(Boolean);
+        const keys = ids.map((id) => normalizePrereqSkillTargetKey(id));
+        if (!keys.includes(skillName)) continue;
+
+        // Another member of the OR group still meets the requirement → not blocking
+        const otherStillMet = keys.some((key) => {
+          if (key === skillName) return false;
+          return character.getSkillPoints(key) >= requiredPoints;
+        });
+        if (!otherStillMet) {
+          recordRequirement(requiredPoints, blockerName);
         }
       }
     }
   }
-  
+
   return { minRequired, blockingSkills };
 }
 
@@ -1035,7 +1056,7 @@ export function exportStatsToText() {
 
 /**
  * Get all formulas used by a skill for auto-adding stats
- * @param {number} skillId - Numeric catalog skill id
+ * @param {string} skillId - Catalog internal skill id
  */
 function pushStatKeyAsFormula(formulas, statKey) {
   const trimmedKey = String(statKey || '').trim();
@@ -1046,8 +1067,8 @@ function pushStatKeyAsFormula(formulas, statKey) {
 async function getSkillFormulas(skillId) {
   const store = getFileSkillStore();
   if (!store) return [];
-  const internal = store.internalNameByNumericId(skillId);
-  if (!internal) return [];
+  const internal = skillId != null ? String(skillId) : '';
+  if (!internal || !store.catalogByInternalId?.get(internal)) return [];
   const formulas = [];
   try {
     await store.loadSkillBalance(internal);
@@ -1109,9 +1130,11 @@ async function autoAddStatsToInput(skillId) {
   let added = false;
   for (const statName of statRefsSet) {
     const k = String(statName).toLowerCase();
-    if (!isPlannerBaseStatKey(k)) continue;
-    if (!Object.prototype.hasOwnProperty.call(next, k)) {
-      next[k] = normalizePlannerStatValue(k, 0);
+    // Resolve stats.json aliases (e.g. life_steal -> life_stolen_per_hit)
+    const plannerKey = isPlannerBaseStatKey(k) ? k : resolveCharacterStatKeyForToken(k);
+    if (!plannerKey || !isPlannerBaseStatKey(plannerKey)) continue;
+    if (!Object.prototype.hasOwnProperty.call(next, plannerKey)) {
+      next[plannerKey] = normalizePlannerStatValue(plannerKey, 0);
       added = true;
     }
   }
@@ -1171,7 +1194,7 @@ function filterRegularSkillsOnly(skillLevels) {
 /**
  * Calculate effective max level for a skill (works for both regular skills and oSkills)
  * Consolidated from SkillService
- * @param {number} skillId - Numeric catalog id for regular skills, or oSkill identifier
+ * @param {string} skillId - Catalog internal id for regular skills, or oSkill identifier
  * @param {string} skillType - 'regular' | 'oskill'
  * @param {object} skillLevels - Object mapping skill_name to current skill level (should only contain regular skills, not oSkills)
  * @param {number} characterLevel - Current character level

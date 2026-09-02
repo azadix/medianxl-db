@@ -1,15 +1,27 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import { nextTick, onMounted, onUnmounted, ref } from 'vue';
 import {
   plannerMenuNewBuild,
   plannerMenuOpenLoadSection,
-  plannerMenuImportBuild,
-} from '@/tree/tree-core.js';
+  plannerMenuPrepareImport,
+  plannerMenuImportBuildFromText,
+  plannerMenuReadBuildJsonFile,
+} from '@/planner/planner-dom-handlers.js';
+
 const knownIssuesLines = ref(/** @type {string[]} */ ([]));
 const knownIssuesLoadError = ref('');
 const knownIssuesFetched = ref(false);
 
+const showImportModal = ref(false);
+const importJsonText = ref('');
+const importFileName = ref('');
+const importDragOver = ref(false);
+const importBusy = ref(false);
+const importFileInput = ref(/** @type {HTMLInputElement | null} */ (null));
+const importTextarea = ref(/** @type {HTMLTextAreaElement | null} */ (null));
+
 onMounted(async () => {
+  document.addEventListener('keydown', onGlobalKeydown);
   try {
     const url = new URL('known_issues.txt', window.location.origin + import.meta.env.BASE_URL).href;
     const res = await fetch(url);
@@ -26,6 +38,115 @@ onMounted(async () => {
     knownIssuesFetched.value = true;
   }
 });
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', onGlobalKeydown);
+});
+
+/**
+ * @param {KeyboardEvent} e
+ */
+function onGlobalKeydown(e) {
+  if (e.key === 'Escape' && showImportModal.value) {
+    closeImportModal();
+  }
+}
+
+async function openImportModal() {
+  await plannerMenuPrepareImport();
+  importJsonText.value = '';
+  importFileName.value = '';
+  importDragOver.value = false;
+  importBusy.value = false;
+  showImportModal.value = true;
+  await nextTick();
+  importTextarea.value?.focus();
+}
+
+function closeImportModal() {
+  showImportModal.value = false;
+  importDragOver.value = false;
+  importBusy.value = false;
+}
+
+function openImportFilePicker() {
+  const input = importFileInput.value;
+  if (!input) return;
+  input.value = '';
+  input.click();
+}
+
+/**
+ * @param {File | null | undefined} file
+ */
+async function loadImportFile(file) {
+  if (!file || importBusy.value) return;
+  if (importJsonText.value.trim() !== '') {
+    const replace = window.confirm('Replace the pasted JSON with this file?');
+    if (!replace) return;
+  }
+  importBusy.value = true;
+  try {
+    const text = await plannerMenuReadBuildJsonFile(file);
+    if (text == null) return;
+    importJsonText.value = text;
+    importFileName.value = file.name || 'build.json';
+  } finally {
+    importBusy.value = false;
+  }
+}
+
+/** Editing the paste field means content is no longer tied to a loaded file. */
+function onImportJsonInput() {
+  if (importFileName.value) {
+    importFileName.value = '';
+  }
+}
+
+/**
+ * @param {Event} e
+ */
+async function onImportFileSelected(e) {
+  const input = /** @type {HTMLInputElement} */ (e.target);
+  const file = input.files && input.files[0] ? input.files[0] : null;
+  input.value = '';
+  await loadImportFile(file);
+}
+
+/**
+ * @param {DragEvent} e
+ */
+function onImportDragOver(e) {
+  e.preventDefault();
+  importDragOver.value = true;
+}
+
+function onImportDragLeave() {
+  importDragOver.value = false;
+}
+
+/**
+ * @param {DragEvent} e
+ */
+async function onImportDrop(e) {
+  e.preventDefault();
+  importDragOver.value = false;
+  const file = e.dataTransfer?.files?.[0] || null;
+  await loadImportFile(file);
+}
+
+async function confirmImport() {
+  if (importBusy.value) return;
+  importBusy.value = true;
+  try {
+    const ok = await plannerMenuImportBuildFromText(importJsonText.value);
+    if (ok) {
+      closeImportModal();
+    }
+  } finally {
+    importBusy.value = false;
+  }
+}
 </script>
 
 <template>
@@ -42,7 +163,7 @@ onMounted(async () => {
           id="menuImportBuildBtn"
           class="button is-large is-fullwidth"
           type="button"
-          @click="plannerMenuImportBuild"
+          @click="openImportModal"
         >
           <span class="icon-text">
             <span>Import Build</span>
@@ -79,5 +200,118 @@ onMounted(async () => {
         </div>
       </div>
     </div>
+
+    <div
+      v-if="showImportModal"
+      id="plannerImportBuildModal"
+      class="modal is-active planner-export-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="plannerImportBuildModalTitle"
+    >
+      <div class="modal-background" @click="closeImportModal"></div>
+      <div class="modal-card planner-export-modal__card planner-export-modal__card--wide">
+        <header class="modal-card-head planner-export-modal__head p-4">
+          <span class="icon planner-export-modal__icon">
+            <i class="fa-solid fa-file-import"></i>
+          </span>
+          <div class="planner-export-modal__title">
+            <p id="plannerImportBuildModalTitle" class="modal-card-title mb-0">Import build</p>
+            <p class="is-size-7 has-text-grey-light mb-0">
+              Paste JSON or load a build file, then import.
+            </p>
+          </div>
+          <button type="button" class="delete" aria-label="Close" @click="closeImportModal"></button>
+        </header>
+
+        <section class="modal-card-body planner-export-modal__body p-4">
+          <div class="field">
+            <label class="label" for="plannerImportJsonTextarea">Build JSON</label>
+            <div class="control">
+              <textarea
+                id="plannerImportJsonTextarea"
+                ref="importTextarea"
+                v-model="importJsonText"
+                class="textarea planner-import-json-textarea"
+                rows="2"
+                placeholder='{ "name": "...", "class": "...", ... }'
+                spellcheck="false"
+                @input="onImportJsonInput"
+              ></textarea>
+            </div>
+            <p class="help">Import uses this text. Loading a file replaces any pasted JSON.</p>
+          </div>
+
+          <div class="field mb-0">
+            <label class="label">Or load a JSON file</label>
+            <div
+              class="planner-import-dropzone"
+              :class="{ 'is-dragover': importDragOver }"
+              @dragover="onImportDragOver"
+              @dragleave="onImportDragLeave"
+              @drop="onImportDrop"
+            >
+              <p class="mb-2">
+                Drop a <code>.json</code> file here, or choose one from disk.
+              </p>
+              <button
+                type="button"
+                class="button is-info is-outlined is-small"
+                :disabled="importBusy"
+                @click="openImportFilePicker"
+              >
+                <span class="icon is-small"><i class="fa-solid fa-folder-open"></i></span>
+                <span>Choose file</span>
+              </button>
+              <p v-if="importFileName" class="help mt-2 mb-0">Loaded: {{ importFileName }}</p>
+            </div>
+            <input
+              ref="importFileInput"
+              type="file"
+              accept=".json,application/json"
+              class="is-hidden"
+              @change="onImportFileSelected"
+            />
+          </div>
+        </section>
+
+        <footer class="modal-card-foot planner-export-modal__foot p-4">
+          <button
+            type="button"
+            class="button is-primary is-inverted is-outlined"
+            :disabled="importBusy"
+            @click="confirmImport"
+          >
+            <span class="icon"><i class="fa-solid fa-file-import"></i></span>
+            <span>Import</span>
+          </button>
+          <button type="button" class="button" :disabled="importBusy" @click="closeImportModal">
+            Cancel
+          </button>
+        </footer>
+      </div>
+    </div>
   </section>
 </template>
+
+<style scoped>
+.planner-import-json-textarea {
+  min-height: 0;
+  font-family: Consolas, Monaco, 'Courier New', monospace;
+  font-size: 0.82rem;
+  resize: vertical;
+}
+
+.planner-import-dropzone {
+  border: 1px dashed hsl(0, 0%, 32%);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  background: hsl(0, 0%, 9%);
+  text-align: center;
+}
+
+.planner-import-dropzone.is-dragover {
+  border-color: hsl(204, 86%, 53%);
+  background: hsl(204, 30%, 14%);
+}
+</style>

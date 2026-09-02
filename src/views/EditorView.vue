@@ -5,11 +5,11 @@ export default {
 </script>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue';
+import { ref, computed, watch, onMounted, onUnmounted, onActivated, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
-import { mountEditor, unmountEditor } from '@/editor/editor-store.js';
+import { mountEditor, unmountEditor, bindEditorFile } from '@/editor/editor-store.js';
 import '@/editor/editor-page.css';
-import '@/tree/dropdown-style.css';
+import '@/styles/dropdown-style.css';
 import EditorListSection from '@/components/editor/EditorListSection.vue';
 import EditorEditSection from '@/components/editor/EditorEditSection.vue';
 
@@ -24,19 +24,41 @@ const fileBasename = computed(() =>
 
 const editorSkills = ref([]);
 const editorFolder = ref('');
+let mounted = false;
+
+function syncTable(skills, folder) {
+  editorSkills.value = skills;
+  editorFolder.value = folder ?? '';
+}
+
+async function bindCurrentFile() {
+  await bindEditorFile({
+    fileBasename: fileBasename.value,
+    syncEditorTableView: syncTable,
+  });
+}
 
 onMounted(async () => {
   await nextTick();
   await mountEditor({
     fileBasename: fileBasename.value,
-    syncEditorTableView(skills, folder) {
-      editorSkills.value = skills;
-      editorFolder.value = folder ?? '';
-    },
+    syncEditorTableView: syncTable,
   });
+  mounted = true;
+});
+
+onActivated(async () => {
+  if (!mounted) return;
+  await bindCurrentFile();
+});
+
+watch(fileBasename, async (next, prev) => {
+  if (!mounted || next === prev) return;
+  await bindCurrentFile();
 });
 
 onUnmounted(() => {
+  mounted = false;
   unmountEditor();
 });
 </script>

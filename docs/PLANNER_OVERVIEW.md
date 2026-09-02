@@ -23,17 +23,18 @@ How the planner route is wired today.
 
 ## Planner modules
 
-- `src/tree/tree-core.js`: planner facade exports used by Vue components.
-- `src/tree/planner-init.js`, `src/tree/planner-dom-handlers.js`, `src/tree/planner-ui-updates.js`, `src/tree/saved-builds-ui.js`: planner runtime split from previous monolith.
+- `src/planner/planner-init.js`, `planner-session.js`, `planner-dom-handlers.js`, `planner-ui-updates.js`, `saved-builds-ui.js`: planner page shell/runtime.
 - `src/planner/build-url-codec.js` + `src/planner/tree-url-sync.js`: build URL encode/decode + URL sync helpers.
+- Vue components import these modules directly.
 
 ## Character and allocation layer
 
-Canonical character domain now lives in `src/character/`:
+Canonical character domain lives in `src/character/`:
 
-- `src/character/character-state.js`: planner singleton, allocation, quests, stats, import/export.
-- `src/character/Character.js`, `src/character/Tree.js`: core domain classes.
+- `src/character/planner-core.js`: planner singleton, allocation, quests, stats, import/export.
+- `src/character/Character.js`: character class.
 - `src/character/planner-*.js`: stat/quest helper modules.
+- `src/tree/Tree.js`: loaded class skill-list wrapper for the tree UI.
 
 Allocation rules and restrictions are in `src/skills/domain/`:
 
@@ -50,5 +51,5 @@ Allocation rules and restrictions are in `src/skills/domain/`:
 
 ## Data dependencies
 
-- Catalog and skill details are loaded through `src/tree/skill-data-store.js`.
+- Catalog and skill details are loaded through `src/shared/skill-data-store.js`.
 - Active version is controlled by `src/shared/version-config.js` and the navbar version selector.

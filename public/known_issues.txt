@@ -1,4 +1,4 @@
-67 skills (out of 777) are missing it's description: 3 oSkills, 39 procs, 25 class skills
+55 skills (out of 646) are missing it's description: 3 oSkills, 40 procs, 12 class skills
 Skill damage calculation is not implemented
-War Spirit synergies based on devotion are not filled in
-Conditional stats from skills/passives are not implemented
+Conditional stats from skills/passives are not implemented fully
+Dynamic calculation of activation frequency is not implemented

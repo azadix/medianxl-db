@@ -7,7 +7,7 @@
 export const BUILD_VERSION_OVERRIDE_KEY = 'medianxl_build_version_override';
 
 /** Fallback when versions.json is unavailable. */
-export const DEFAULT_GAME_VERSION = { major: 2, minor: 12 };
+export const DEFAULT_GAME_VERSION = { major: 2, minor: 14 };
 
 /**
  * Folder segment under `public/tree_data/`, e.g. `2_12`.
@@ -18,3 +18,9 @@ export const DEFAULT_GAME_VERSION = { major: 2, minor: 12 };
 export function treeAssetFolderFromMajorMinor(major, minor) {
     return `${major}_${minor}`;
 }
+
+/** Fallback `tree_data` folder (atlas icons, etc.) when no patch folder is passed. */
+export const DEFAULT_TREE_ASSET_FOLDER = treeAssetFolderFromMajorMinor(
+    DEFAULT_GAME_VERSION.major,
+    DEFAULT_GAME_VERSION.minor
+);

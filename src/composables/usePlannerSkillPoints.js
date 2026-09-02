@@ -5,7 +5,7 @@ import {
   getEffectivePlannerLevel,
   getSpentSkillPoints,
   getTotalQuestSkillPoints,
-} from '@/character/character-state.js';
+} from '@/character/planner-core.js';
 import Character from '@/character/Character.js';
 
 /**

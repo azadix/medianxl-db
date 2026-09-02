@@ -28,15 +28,7 @@ defineProps({
           <div class="field">
             <label class="label" for="f-id">Internal id</label>
             <div class="control">
-              <input class="input" type="text" id="f-id" readonly />
-            </div>
-          </div>
-        </div>
-        <div class="column is-half">
-          <div class="field">
-            <label class="label" for="f-numericId">numericId</label>
-            <div class="control">
-              <input class="input" type="number" id="f-numericId" step="1" />
+              <input class="input" type="text" id="f-id" placeholder="e.g. snake_bite (blank → new_skill on Apply)" />
             </div>
           </div>
         </div>
@@ -52,7 +44,7 @@ defineProps({
           <div class="field">
             <label class="label" for="f-image">image</label>
             <div class="control">
-              <input class="input" type="text" id="f-image" placeholder="icons-....png" />
+              <input class="input" type="text" id="f-image" placeholder="icons-shared_1" />
             </div>
           </div>
         </div>

@@ -13,25 +13,25 @@ Ordered steps when adding a new game patch folder under `public/tree_data/<major
 
 ```bash
 npm run test:data
-python scripts/py/validate_skill_placeholders.py public/tree_data/<major>_<minor>
+python tools/py/validate_skill_placeholders.py public/tree_data/<major>_<minor>
 ```
 
-Optional: `python scripts/py/stat_counter_statistics.py public/tree_data/<major>_<minor>` for placeholder stat usage.
+Optional: `python tools/py/stat_counter_statistics.py public/tree_data/<major>_<minor>` for placeholder stat usage.
 
 ## 3. Atlases
 
 Rebuild class icon atlases for the new version:
 
 ```bash
-python atlas_generation/make_all_atlases.py --version <major>.<minor>
+python tools/atlas_generation/make_all_atlases.py --version <major>.<minor>
 ```
 
-Confirm `class-*.png` (and `.webp` if generated) land in `public/tree_data/<major>_<minor>/`.
+Confirm `class-*.webp` land in `public/tree_data/<major>_<minor>/`.
 
 ## 4. Patch notes
 
 1. Add markdown under `public/patch_notes/` (version string in front matter or filename per existing convention).
-2. Update `public/patch_notes/index.json` manifest.
+2. Update `public/patch_notes/index.json` (`{ "file": "2.14.0.md", "date": "2026-07-29" }`).
 3. Smoke-test `/patch-notes`: search, `{{Skill Name}}` markers, tooltips per folder.
 
 ## 5. App smoke routes
@@ -43,7 +43,6 @@ Confirm `class-*.png` (and `.webp` if generated) land in `public/tree_data/<majo
 Dev-only (local `npm run dev`):
 
 - `/editor`, `/editor/subskills` — edit and download JSON
-- `/calculations` — formula smoke checks
 
 ## 6. Build
 

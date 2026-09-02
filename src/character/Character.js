@@ -282,7 +282,7 @@ export default class Character {
     this.questsCompleted = Character.createDefaultQuestsCompleted();
     this.questCompletionOptOut = Character.createDefaultQuestCompletionOptOut();
     this.statAllocation = Character.createEmptyStatAllocation();
-    this.oSkills = []; // Array of {skillId, skillName, displayName, image, className, points}
+    this.oSkills = []; // Array of {skillName, displayName, image, className, points}
     this.stats = createEmptyRegisteredStatsObject();
     /** @type {Record<string, number>} Sum of passive planner stats from allocated skills (not persisted). */
     this._plannerSkillStatBonuses = {};
@@ -535,12 +535,6 @@ export default class Character {
     }
   }
 
-  /** Old quest keys from prior planner versions -> {@link QUESTS} keys. */
-  static LEGACY_QUEST_ID_ALIASES = {
-    // Old `QUEST_SIGNET_CAP_BONUSES` used a broken string key that evaluated to this id.
-    justicars_signet: 'justicar_signet'
-  };
-
   /**
    * Wire format: per-difficulty flags as [normal, nightmare, hell] with 0/1; omit all-zero rows in saves.
    * @param {unknown} val - Legacy object or compact [n,n,n] array
@@ -596,20 +590,6 @@ export default class Character {
       const norm = Character.normalizeQuestDifficultiesFromSave(raw[key]);
       if (norm) raw[key] = norm;
       else delete raw[key];
-    }
-    for (const [legacyId, canonicalId] of Object.entries(Character.LEGACY_QUEST_ID_ALIASES)) {
-      const src = raw[legacyId];
-      if (!src || typeof src !== 'object') continue;
-      const cur = raw[canonicalId];
-      if (!cur) {
-        raw[canonicalId] = { ...src };
-      } else {
-        raw[canonicalId] = {
-          normal: !!(cur.normal || src.normal),
-          nightmare: !!(cur.nightmare || src.nightmare),
-          hell: !!(cur.hell || src.hell)
-        };
-      }
     }
     for (const [questId, diff] of Object.entries(raw)) {
       if (!this.questsCompleted[questId]) {
@@ -729,9 +709,9 @@ export default class Character {
             if (!sk) continue;
 
             const pointsInSkill = skillLevels[name] || 0;
-            if (sk.skillId != null && Number.isFinite(Number(sk.skillId)) && pointsInSkill > 0) {
+            if (sk.id != null && pointsInSkill > 0) {
               const dynMin = minCharacterLevelForAllocatedSkillPoints(
-                Number(sk.skillId),
+                String(sk.id),
                 skillLevels,
                 pointsInSkill
               );
@@ -939,34 +919,54 @@ export default class Character {
   // ===== OSKILLS MANAGEMENT METHODS =====
 
   /**
-   * Get all oSkills in simplified format (ID and points only)
-   * @returns {object} Object with skill IDs as keys and points as values
+   * Get all oSkills in simplified format (internal id and points only)
+   * @returns {object} Object with skill names as keys and points as values
    */
   getAllOSkills() {
     const oSkillsObj = {};
     this.oSkills.forEach(oskill => {
-      // Use skillId if available, otherwise fall back to skillName
-      const key = oskill.skillId || oskill.skillName;
-      oSkillsObj[key] = oskill.points;
+      const key = oskill.skillName;
+      if (!key) return;
+      oSkillsObj[key] = Character.effectiveOSkillPoints(oskill);
     });
     return oSkillsObj;
   }
 
   /**
-   * Get points for a specific oSkill
+   * Get points for a specific oSkill (manual + item-granted).
    * @param {string} skillName - Internal skill name
    * @returns {number} Points allocated (0 if not found)
    */
   getOSkillPoints(skillIdOrName) {
-    const oskill = this.oSkills.find(s => 
-      s.skillId === parseInt(skillIdOrName) || s.skillName === skillIdOrName
-    );
-    return oskill ? oskill.points : 0;
+    const key = String(skillIdOrName ?? '');
+    const oskill = this.oSkills.find(s => s.skillName === key);
+    return oskill ? Character.effectiveOSkillPoints(oskill) : 0;
+  }
+
+  /**
+   * Manual points only (exported / build JSON).
+   * @param {string} skillIdOrName
+   * @returns {number}
+   */
+  getOSkillManualPoints(skillIdOrName) {
+    const key = String(skillIdOrName ?? '');
+    const oskill = this.oSkills.find(s => s.skillName === key);
+    return oskill ? Character.clampOSkillPoints(oskill.points ?? 0) : 0;
+  }
+
+  /**
+   * Item-granted points only.
+   * @param {string} skillIdOrName
+   * @returns {number}
+   */
+  getOSkillItemPoints(skillIdOrName) {
+    const key = String(skillIdOrName ?? '');
+    const oskill = this.oSkills.find(s => s.skillName === key);
+    return oskill ? Character.clampOSkillPoints(oskill.itemPoints ?? 0) : 0;
   }
 
   /**
    * Add an oSkill or increment if it exists
-   * @param {number} skillId - Numeric catalog skill id
    * @param {string} displayName - Display name
    * @param {string} skillName - Internal skill name
    * @param {string} image - Image filename
@@ -975,18 +975,20 @@ export default class Character {
    * @param {string} description - Skill description
    * @param {string} skillEffect - Skill effect
    */
-  addOSkill(skillId, displayName, skillName, image, className, hasDetails = false, description = null, skillEffect = null) {
+  addOSkill(displayName, skillName, image, className, hasDetails = false, description = null, skillEffect = null) {
     const existing = this.oSkills.find(s => s.skillName === skillName);
     if (existing) {
-      existing.points = Character.clampOSkillPoints(existing.points + 1);
+      const itemPts = Character.clampOSkillPoints(existing.itemPoints ?? 0);
+      const maxManual = Math.max(0, Character.OSKILL_MAX_POINTS - itemPts);
+      existing.points = Math.min(maxManual, Character.clampOSkillPoints((existing.points ?? 0) + 1));
     } else {
       const oskillData = {
-        skillId,
         displayName,
         skillName,
         image,
         className,
         points: 1,
+        itemPoints: 0,
         hasDetails,
         description,
         skillEffect,
@@ -1002,9 +1004,8 @@ export default class Character {
    * @param {string} skillName - Internal skill name
    */
   removeOSkill(skillIdOrName) {
-    const index = this.oSkills.findIndex(s => 
-      s.skillId === parseInt(skillIdOrName) || s.skillName === skillIdOrName
-    );
+    const key = String(skillIdOrName ?? '');
+    const index = this.oSkills.findIndex(s => s.skillName === key);
     if (index > -1) {
       const row = this.oSkills[index];
       const sid = String(row?.slotId ?? '').trim();
@@ -1014,25 +1015,71 @@ export default class Character {
   }
 
   /**
-   * Change oSkill points (positive to add, negative to remove)
+   * Change manual oSkill points (positive to add, negative to remove).
+   * Item-granted floor keeps the row while itemPoints &gt; 0.
    * @param {string} skillName - Internal skill name
    * @param {number} amount - Amount to change (can be negative)
    */
   changeOSkillPoints(skillIdOrName, amount) {
-    // Find skill by ID or name
-    const skill = this.oSkills.find(s => 
-      s.skillId === parseInt(skillIdOrName) || s.skillName === skillIdOrName
-    );
+    const key = String(skillIdOrName ?? '');
+    const skill = this.oSkills.find(s => s.skillName === key);
     if (!skill) return;
 
-    const newPoints = skill.points + amount;
-    
-    skill.points = Character.clampOSkillPoints(newPoints);
-    
-    // Remove skill if points drop to 0 or below
-    if (skill.points <= 0) {
+    const itemPts = Character.clampOSkillPoints(skill.itemPoints ?? 0);
+    const maxManual = Math.max(0, Character.OSKILL_MAX_POINTS - itemPts);
+    const nextManual = Character.clampOSkillPoints((skill.points ?? 0) + amount);
+    skill.points = Math.max(0, Math.min(maxManual, nextManual));
+
+    // Remove only when both manual and item grants are gone.
+    if (skill.points <= 0 && itemPts <= 0) {
       this.removeOSkill(skillIdOrName);
     }
+  }
+
+  /**
+   * Set derived item-granted points for an oSkill row (create if needed).
+   * @param {object} meta
+   * @param {string} meta.displayName
+   * @param {string} meta.skillName
+   * @param {string} [meta.image]
+   * @param {string} [meta.className]
+   * @param {boolean} [meta.hasDetails]
+   * @param {string|null} [meta.description]
+   * @param {string|null} [meta.skillEffect]
+   * @param {number} itemPoints
+   * @returns {'created'|'updated'|'unchanged'}
+   */
+  setOSkillItemPoints(meta, itemPoints) {
+    const skillName = String(meta?.skillName ?? '').trim();
+    if (!skillName) return 'unchanged';
+    const nextItem = Character.clampOSkillPoints(itemPoints);
+    let row = this.oSkills.find((s) => s.skillName === skillName);
+    if (!row) {
+      if (nextItem <= 0) return 'unchanged';
+      this.oSkills.push({
+        displayName: meta.displayName ?? skillName,
+        skillName,
+        image: meta.image,
+        className: meta.className,
+        points: 0,
+        itemPoints: nextItem,
+        hasDetails: Boolean(meta.hasDetails),
+        description: meta.description ?? null,
+        skillEffect: meta.skillEffect ?? null,
+        slotId: Character.newOSkillSlotId(),
+      });
+      return 'created';
+    }
+    const prev = Character.clampOSkillPoints(row.itemPoints ?? 0);
+    if (prev === nextItem) return 'unchanged';
+    row.itemPoints = nextItem;
+    const maxManual = Math.max(0, Character.OSKILL_MAX_POINTS - nextItem);
+    row.points = Math.min(maxManual, Character.clampOSkillPoints(row.points ?? 0));
+    if (row.points <= 0 && nextItem <= 0) {
+      this.removeOSkill(skillName);
+      return 'updated';
+    }
+    return 'updated';
   }
 
   /**
@@ -1045,36 +1092,39 @@ export default class Character {
 
   /**
    * Set all oSkills (for loading builds)
-   * @param {Array | object} oSkills - Array of full oSkill rows (legacy), compact `{ skillId, level }[]`, or object map (display name, internal id, or numeric id keys -> points)
+   * @param {Array | object} oSkills - Array of full oSkill rows (legacy), compact `{ skillName, level }[]`, or object map (display name or internal id keys -> points)
    */
   setAllOSkills(oSkills) {
     if (!oSkills) {
       this.oSkills = [];
     } else if (Array.isArray(oSkills)) {
-      // Array: full metadata (legacy), or compact `{ skillId, level }` from build export
+      // Array: full metadata (legacy), or compact `{ skillName, level }` from build export
       this.oSkills = oSkills
         .map((row) => {
           const points = Character.clampOSkillPoints(row?.level ?? row?.points ?? 0);
-          if (points <= 0) return null;
-          const { level, ...rest } = row;
+          const itemPoints = Character.clampOSkillPoints(row?.itemPoints ?? 0);
+          if (points <= 0 && itemPoints <= 0) return null;
+          const { level, skillId, ...rest } = row;
           void level;
+          void skillId;
           return {
             ...rest,
             points,
+            itemPoints,
             slotId: row.slotId || Character.newOSkillSlotId()
           };
         })
         .filter(Boolean);
     } else if (typeof oSkills === 'object') {
-      // New format: object with skill IDs or names as keys and points as values
+      // Object with skill names (or display names) as keys and points as values
       this.oSkills = [];
       Object.entries(oSkills).forEach(([skillIdOrName, points]) => {
         const clampedPoints = Character.clampOSkillPoints(points);
         if (clampedPoints > 0) {
           this.oSkills.push({
-            skillId: /^\d+$/.test(skillIdOrName) ? parseInt(skillIdOrName) : null,
-            skillName: /^\d+$/.test(skillIdOrName) ? null : skillIdOrName,
+            skillName: skillIdOrName,
             points: clampedPoints,
+            itemPoints: 0,
             slotId: Character.newOSkillSlotId()
           });
         }
@@ -1086,6 +1136,38 @@ export default class Character {
   static clampOSkillPoints(points) {
     const normalized = Math.floor(Number(points) || 0);
     return Math.max(0, Math.min(Character.OSKILL_MAX_POINTS, normalized));
+  }
+
+  /**
+   * @param {{ points?: number, itemPoints?: number }|null|undefined} row
+   * @returns {number}
+   */
+  static effectiveOSkillPoints(row) {
+    if (!row) return 0;
+    const parts = Character.oSkillLevelParts(row, 0);
+    return parts.effective;
+  }
+
+  /**
+   * Relic/charm oSkill grants are slvl, not hard points. Manual `points` are blvl.
+   * @param {{ points?: number, itemPoints?: number }|null|undefined} row
+   * @param {number} [extraSoft] all-skills + relic soft (not including itemPoints)
+   * @returns {{ blvl: number, itemSlvl: number, slvl: number, effective: number }}
+   */
+  static oSkillLevelParts(row, extraSoft = 0) {
+    const blvl = Character.clampOSkillPoints(row?.points ?? 0);
+    const itemSlvl = Character.clampOSkillPoints(row?.itemPoints ?? 0);
+    const extra = Math.max(0, Math.floor(Number(extraSoft) || 0));
+    const slvl = Math.min(
+      itemSlvl + extra,
+      Math.max(0, Character.OSKILL_MAX_POINTS - blvl)
+    );
+    return {
+      blvl,
+      itemSlvl,
+      slvl,
+      effective: Math.min(Character.OSKILL_MAX_POINTS, blvl + slvl),
+    };
   }
 
   // ===== STATS MANAGEMENT METHODS =====

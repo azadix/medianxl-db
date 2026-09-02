@@ -9,7 +9,7 @@ Custom events on `window` bridge legacy DOM modules, Vue components, and Pinia. 
 | `skillPointsChanged` | `planner-instance.js`, `planner-core.js` (add/remove), `PlannerSidebarTabQuests.vue`, `saved-builds-ui.js` | Pinia `planner.js` (via `attachWindowSync`), `planner-init.js`, `tree-tooltip.js`, `planner-stats-panel.js`, `PlannerSidebarConfig.vue`, `PlannerSavedBuildsList.vue`, `saved-builds-ui.js` | Tree points, oSkills, or quest rewards changed; refresh tooltips, conditions, portraits |
 | `plannerStateChanged` | `planner-instance.js`, `planner-init.js` | Pinia `planner.js`, `planner-stats-panel.js` | Broader planner mutations (class, level options, import, reset) |
 | `characterLevelChanged` | `Character.js` | `planner-init.js`, `planner-stats-panel.js` | Manual level change; update skill pool display |
-| `questCompletionChanged` | `Character.js` | `planner-init.js`, `planner-stats-panel.js`, `sidebarTabQuests.js` | Quest tab checkbox toggled |
+| `questCompletionChanged` | `Character.js` | `planner-init.js`, `planner-stats-panel.js`, `sidebar-tab-quests.js` | Quest tab checkbox toggled |
 
 ## Stats panel and tooltips
 
@@ -25,8 +25,8 @@ Custom events on `window` bridge legacy DOM modules, Vue components, and Pinia. 
 | Event | Emitters | Listeners | Purpose |
 |-------|----------|-----------|---------|
 | `plannerBuildNameChanged` | `planner-session.js` | `PlannerHeaderBar.vue` | Update header build name label |
-| `plannerSidebarTabQuestsRefresh` | `planner-init.js`, `planner-dom-handlers.js`, `saved-builds-ui.js` | `sidebarTabQuests.js` | Reload quest tab DOM from character state |
-| `plannerSidebarTabQuestsUiRefresh` | `sidebarTabQuests.js` | `PlannerSidebarTabQuests.vue` | Sync Vue quest tab after imperative refresh |
+| `plannerSidebarTabQuestsRefresh` | `planner-init.js`, `planner-dom-handlers.js`, `saved-builds-ui.js` | `sidebar-tab-quests.js` | Reload quest tab DOM from character state |
+| `plannerSidebarTabQuestsUiRefresh` | `sidebar-tab-quests.js` | `PlannerSidebarTabQuests.vue` | Sync Vue quest tab after imperative refresh |
 | `plannerSkillsRenderRequested` | `tree-render.js`, `planner-ui-updates.js` | `PlannerSkillsTree.vue` | Full tree re-render |
 | `plannerSkillsLightUpdate` | `tree-render.js` | `PlannerSkillsTree.vue` | Update point badges without full render |
 | `savedBuildsListRefresh` | `saved-builds-storage.js` | `PlannerSavedBuildsList.vue` | Refresh saved builds list |

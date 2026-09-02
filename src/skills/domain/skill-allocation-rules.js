@@ -5,7 +5,7 @@
  */
 
 import Skill from './Skill.js';
-import { getSkillPoints } from '@/character/character-state.js';
+import { getSkillPoints } from '@/character/planner-core.js';
 
 export class Mastery extends Skill {
     static MAX_DIFFERENT_SKILLS = 3;

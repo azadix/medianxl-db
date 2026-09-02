@@ -1,5 +1,5 @@
 /**
- * Lets legacy modules (e.g. tree-core) drive planner section visibility via Pinia
+ * Lets legacy modules (e.g. planner-ui-updates) drive planner section visibility via Pinia
  * without importing Vue. Registered from PlannerView on mount.
  */
 

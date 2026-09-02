@@ -12,7 +12,7 @@ import {
   isPlannerNegativeAllowedBaseStat,
   getPlannerStatLabel
 } from './planner-stats-config.js';
-import { getCharacterInstance, getEffectivePlannerLevel } from './character-state.js';
+import { getCharacterInstance, getEffectivePlannerLevel } from './planner-core.js';
 import { escapeHtmlText } from '@/shared/utils.js';
 
 function formatQuestIdLabel(questId) {

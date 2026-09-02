@@ -10,6 +10,8 @@ import { parseFolderVersion } from '@/shared/version-resolver.js';
 import {
     statsKeysLowerFromRows,
     validateScalingConstantsArray,
+    validateSkillCatalogRow,
+    validateSubskillCatalogRow,
     validateVariantsArray,
     variantKeysFromVariants,
 } from '@/shared/skill-json-validation.js';
@@ -22,8 +24,10 @@ function isSubskillsMode() {
     return editorFileBasename === 'subskills.json';
 }
 
-/** When editing skills.json, also load subskills.json for ||...|| autocomplete. */
+/** When editing skills.json, also load subskills.json for <<...>> autocomplete. */
 let autocompleteSubskills = [];
+/** When editing subskills.json, skills.json rows for {{}} usage-rank autocomplete. */
+let skillsForStatUsage = [];
 const DEFAULT_VARIANT_ROW = {
     variant_key: '',
     label: '',
@@ -38,14 +42,6 @@ const DEFAULT_SCALING_CONSTANT_ROW = {
     occurrenceIndex: 0,
     variantKey: '',
     value0: '',
-    damageModel: '',
-    damageKind: '',
-    baseMin: '',
-    baseMax: '',
-    minPerLevel: [],
-    maxPerLevel: [],
-    hitShift: '',
-    synergyFormula: ''
 };
 
 /** @type {object[]} */
@@ -60,6 +56,12 @@ let syncEditorTableView = null;
 let selectedIndex = -1;
 let dirty = false;
 let versionsList = [];
+/** @type {AbortController | null} */
+let editorDomAbort = null;
+/** @type {{ destroy: () => void, hide: () => void } | null} */
+let autocompleteApi = null;
+/** True after mountEditor finishes its first successful bind. */
+let editorMounted = false;
 
 /** @type {{ classes?: { id: number; name: string }[]; classTabs?: { id: number; class_id: number; tab_index: number; name: string }[]; skilltags?: { id: number; name: string }[] } | null} */
 let gameMeta = null;
@@ -152,7 +154,8 @@ function normalizeSkillTextFieldsToStringArrays(skills) {
 
 function getStatUsageCounts() {
     if (!statUsageCountsCache) {
-        statUsageCountsCache = computeStatUsageCounts(workingSkills);
+        const source = isSubskillsMode() ? skillsForStatUsage : workingSkills;
+        statUsageCountsCache = computeStatUsageCounts(source);
     }
     return statUsageCountsCache;
 }
@@ -360,12 +363,21 @@ async function loadSkillsForFolder(seg) {
     }
     workingSkills = deepClone(raw);
     autocompleteSubskills = [];
+    skillsForStatUsage = [];
     if (!isSubskillsMode()) {
         try {
             const subskillsRaw = await fetchJson(`${TREE_DATA}/${seg}/subskills.json`);
             autocompleteSubskills = Array.isArray(subskillsRaw) ? deepClone(subskillsRaw) : [];
         } catch {
             autocompleteSubskills = [];
+        }
+    } else {
+        try {
+            const skillsRaw = await fetchJson(`${TREE_DATA}/${seg}/skills.json`);
+            skillsForStatUsage = Array.isArray(skillsRaw) ? deepClone(skillsRaw) : [];
+            normalizeSkillTextFieldsToStringArrays(skillsForStatUsage);
+        } catch {
+            skillsForStatUsage = [];
         }
     }
     stripLegacyCalcSlots(workingSkills);
@@ -647,7 +659,6 @@ function prettyJson(val, fallback) {
 
 function populateForm(s) {
     document.getElementById('f-id').value = s.id != null ? String(s.id) : '';
-    document.getElementById('f-numericId').value = s.numericId != null ? String(s.numericId) : '';
     document.getElementById('f-displayName').value = s.displayName != null ? String(s.displayName) : '';
     const img = document.getElementById('f-image');
     if (img) img.value = s.image != null ? String(s.image) : '';
@@ -736,6 +747,12 @@ function emptyToNull(str) {
     return t === '' ? null : t;
 }
 
+/** Atlas image keys are extension-free; strip accidental .png/.webp on save. */
+function normalizeImageKey(str) {
+    const t = String(str).trim().replace(/\.(?:png|webp)$/i, '');
+    return t === '' ? null : t;
+}
+
 function readInt(id) {
     const v = document.getElementById(id).value.trim();
     if (v === '') return null;
@@ -747,6 +764,22 @@ function applyFormToWorkingSkill() {
     if (selectedIndex < 0 || selectedIndex >= workingSkills.length) return false;
 
     const s = workingSkills[selectedIndex];
+
+    const idInput = document.getElementById('f-id');
+    let nextId = emptyToNull(idInput?.value ?? '');
+    if (!nextId) {
+        nextId = nextUniqueInternalSkillId();
+        if (idInput) idInput.value = nextId;
+    } else {
+        for (let i = 0; i < workingSkills.length; i++) {
+            if (i === selectedIndex) continue;
+            if (String(workingSkills[i]?.id || '') === nextId) {
+                showToast(`Internal id "${nextId}" is already used.`, true);
+                return false;
+            }
+        }
+    }
+    s.id = nextId;
 
     let variants = [];
     if (!isSubskillsMode()) {
@@ -784,10 +817,9 @@ function applyFormToWorkingSkill() {
         return false;
     }
 
-    s.numericId = readInt('f-numericId');
     s.displayName = emptyToNull(document.getElementById('f-displayName').value);
     const img = document.getElementById('f-image');
-    if (img) s.image = emptyToNull(img.value);
+    if (img) s.image = normalizeImageKey(img.value);
 
     // rowVersionId removed
 
@@ -860,6 +892,16 @@ function applyFormToWorkingSkill() {
     delete s.scaling;
     s.scalingConstants = scalingConstants;
 
+    const shapeErrors = isSubskillsMode()
+        ? validateSubskillCatalogRow(s)
+        : validateSkillCatalogRow(s);
+    if (shapeErrors.length) {
+        const shown = shapeErrors.slice(0, 5);
+        const more = shapeErrors.length > 5 ? ` …and ${shapeErrors.length - 5} more` : '';
+        showToast(shown.join(' · ') + more, true);
+        return false;
+    }
+
     invalidateStatUsageCounts();
     return true;
 }
@@ -929,7 +971,7 @@ function appendDefaultScalingConstantRowToForm() {
         err.textContent = '';
         err.classList.add('is-hidden');
     }
-    showToast('Appended default scalingConstants object. For D2 ranges, set damageModel=bands and fill base/band fields.');
+    showToast('Appended default scalingConstants object.');
 }
 
 function collectInternalSkillIdSet() {
@@ -952,22 +994,10 @@ function nextUniqueInternalSkillId() {
     }
 }
 
-function nextNumericIdForNewSkill() {
-    let max = 0;
-    for (const s of workingSkills) {
-        const v = s.numericId;
-        if (v == null) continue;
-        const n = Number(v);
-        if (Number.isFinite(n) && n > max) max = n;
-    }
-    return max + 1;
-}
-
 function makeNewSkillSkeleton() {
     if (isSubskillsMode()) {
         return {
-            id: nextUniqueInternalSkillId(),
-            numericId: nextNumericIdForNewSkill(),
+            id: '',
             displayName: 'New subskill',
             parentSkillId: null,
             scalingConstants: [],
@@ -976,8 +1006,7 @@ function makeNewSkillSkeleton() {
         };
     }
     return {
-        id: nextUniqueInternalSkillId(),
-        numericId: nextNumericIdForNewSkill(),
+        id: '',
         displayName: 'New skill',
         classId: null,
         tab: null,
@@ -1002,7 +1031,7 @@ function addNewSkill() {
     setDirty(true);
     refreshEditorTableView();
     openEditView(workingSkills.length - 1);
-    showToast('New skill added. Edit fields, Apply, then Download JSON.');
+    showToast('New skill added. Set internal id (or leave blank for new_skill), Apply, then Download JSON.');
 }
 
 function openEditView(index) {
@@ -1054,6 +1083,15 @@ function editorBeforeUnload(e) {
  */
 export async function mountEditor(opts = {}) {
     const { downloadSkillsJson } = await import('./editor-download.js');
+    if (editorDomAbort) {
+        editorDomAbort.abort();
+        editorDomAbort = null;
+    }
+    if (autocompleteApi) {
+        autocompleteApi.destroy();
+        autocompleteApi = null;
+    }
+
     syncEditorTableView = typeof opts.syncEditorTableView === 'function' ? opts.syncEditorTableView : null;
     editorFileBasename =
         opts.fileBasename != null && String(opts.fileBasename).trim() !== ''
@@ -1061,75 +1099,109 @@ export async function mountEditor(opts = {}) {
             : DEFAULT_EDITOR_FILE_BASENAME;
     window.addEventListener('beforeunload', editorBeforeUnload);
 
-    document.getElementById('btn-reload')?.addEventListener('click', async () => {
-        if (dirty) {
-            const ok = window.confirm('Reload from server and discard in-memory edits?');
-            if (!ok) return;
-        }
-        try {
-            await loadSkillsForFolder(folderSeg);
-            showToast('Reloaded from server.');
-        } catch (e) {
-            showToast(e.message || 'Reload failed', true);
-        }
-    });
+    editorDomAbort = new AbortController();
+    const { signal } = editorDomAbort;
+
+    document.getElementById('btn-reload')?.addEventListener(
+        'click',
+        async () => {
+            if (dirty) {
+                const ok = window.confirm('Reload from server and discard in-memory edits?');
+                if (!ok) return;
+            }
+            try {
+                await loadSkillsForFolder(folderSeg);
+                showToast('Reloaded from server.');
+            } catch (e) {
+                showToast(e.message || 'Reload failed', true);
+            }
+        },
+        { signal }
+    );
 
     document.getElementById('btn-add-skill')?.addEventListener('click', () => {
         addNewSkill();
-    });
+    }, { signal });
 
-    document.getElementById('btn-download')?.addEventListener('click', downloadSkillsJson);
-    document.getElementById('btn-download-edit')?.addEventListener('click', downloadSkillsJson);
+    document.getElementById('btn-download')?.addEventListener('click', downloadSkillsJson, { signal });
+    document.getElementById('btn-download-edit')?.addEventListener('click', downloadSkillsJson, { signal });
 
-    document.getElementById('btn-back')?.addEventListener('click', () => closeEditView());
+    document.getElementById('btn-back')?.addEventListener('click', () => closeEditView(), { signal });
 
-    document.getElementById('btn-apply')?.addEventListener('click', () => {
-        if (applyFormToWorkingSkill()) {
-            setDirty(true);
-            showToast('Changes applied to buffer. Download JSON to save to disk.');
-        } else {
-            showToast('Fix JSON or field errors before applying.', true);
-        }
-    });
+    document.getElementById('btn-apply')?.addEventListener(
+        'click',
+        () => {
+            if (applyFormToWorkingSkill()) {
+                setDirty(true);
+                showToast('Changes applied to buffer. Download JSON to save to disk.');
+            } else {
+                showToast('Fix JSON or field errors before applying.', true);
+            }
+        },
+        { signal }
+    );
 
-    document.getElementById('btn-add-variant-row')?.addEventListener('click', () => {
-        appendDefaultVariantRowToForm();
-    });
-    document.getElementById('btn-add-scaling-constant-row')?.addEventListener('click', () => {
-        appendDefaultScalingConstantRowToForm();
-    });
+    document.getElementById('btn-add-variant-row')?.addEventListener(
+        'click',
+        () => {
+            appendDefaultVariantRowToForm();
+        },
+        { signal }
+    );
+    document.getElementById('btn-add-scaling-constant-row')?.addEventListener(
+        'click',
+        () => {
+            appendDefaultScalingConstantRowToForm();
+        },
+        { signal }
+    );
 
-    document.getElementById('f-description')?.addEventListener('input', () => {
-        refreshEditorScalingStatSelect();
-    });
-    document.getElementById('f-skillEffect')?.addEventListener('input', () => {
-        refreshEditorScalingStatSelect();
-    });
-    document.getElementById('editor-scaling-stat-add')?.addEventListener('change', (e) => {
-        const t = e.target;
-        if (!(t instanceof HTMLSelectElement)) return;
-        const v = t.value;
-        if (!v) return;
-        appendScalingConstantRowForDescriptionStat(v);
-        t.value = '';
-    });
+    document.getElementById('f-description')?.addEventListener(
+        'input',
+        () => {
+            refreshEditorScalingStatSelect();
+        },
+        { signal }
+    );
+    document.getElementById('f-skillEffect')?.addEventListener(
+        'input',
+        () => {
+            refreshEditorScalingStatSelect();
+        },
+        { signal }
+    );
+    document.getElementById('editor-scaling-stat-add')?.addEventListener(
+        'change',
+        (e) => {
+            const t = e.target;
+            if (!(t instanceof HTMLSelectElement)) return;
+            const v = t.value;
+            if (!v) return;
+            appendScalingConstantRowForDescriptionStat(v);
+            t.value = '';
+        },
+        { signal }
+    );
 
-    document.getElementById('f-class-select')?.addEventListener('change', onClassSelectChange);
-    document.getElementById('f-tab-select')?.addEventListener('change', syncPlacementReadonlyFromSelects);
+    document.getElementById('f-class-select')?.addEventListener('change', onClassSelectChange, { signal });
+    document.getElementById('f-tab-select')?.addEventListener(
+        'change',
+        syncPlacementReadonlyFromSelects,
+        { signal }
+    );
 
     const descTa = document.getElementById('f-description');
     const effectTa = document.getElementById('f-skillEffect');
     const restrTa = document.getElementById('f-restriction');
     const textAreas = [descTa, effectTa, restrTa].filter(Boolean);
     if (textAreas.length) {
-        attachEditorTextareaAutocomplete(textAreas, {
+        autocompleteApi = attachEditorTextareaAutocomplete(textAreas, {
             getStatsRows: () => statsCatalog,
             getStatUsageCounts,
             getSkillRows: () =>
                 [...workingSkills, ...autocompleteSubskills].map((s) => ({
                     id: s.id,
                     displayName: s.displayName,
-                    numericId: s.numericId,
                     parentSkillId: s.parentSkillId ?? null
                 }))
         });
@@ -1167,7 +1239,7 @@ export async function mountEditor(opts = {}) {
             }
             try {
                 await loadSkillsForFolder(next);
-                showToast(`Loaded ${TREE_DATA}/${next}/skills.json`);
+                showToast(`Loaded ${TREE_DATA}/${next}/${editorFileBasename}`);
             } catch (err) {
                 console.error(err);
                 showLoadError(err.message || String(err));
@@ -1175,9 +1247,70 @@ export async function mountEditor(opts = {}) {
             }
         };
         if (sel) {
-            sel.addEventListener('change', onEditorVersionChange);
+            sel.addEventListener('change', onEditorVersionChange, { signal });
             sel._editorVersionChangeHandler = onEditorVersionChange;
         }
+        editorMounted = true;
+    } catch (e) {
+        console.error(e);
+        showLoadError(e.message || String(e));
+        showToast(e.message || 'Load failed', true);
+    }
+}
+
+/**
+ * Re-bind the active tree_data file (skills vs subskills) and reload when it changes.
+ * Safe to call from keep-alive onActivated / route watches.
+ * @param {{ syncEditorTableView?: (skills: object[], folder: string) => void, fileBasename?: string }} [opts]
+ */
+export async function bindEditorFile(opts = {}) {
+    const nextBasename =
+        opts.fileBasename != null && String(opts.fileBasename).trim() !== ''
+            ? String(opts.fileBasename).trim()
+            : DEFAULT_EDITOR_FILE_BASENAME;
+    if (typeof opts.syncEditorTableView === 'function') {
+        syncEditorTableView = opts.syncEditorTableView;
+    }
+
+    if (!editorMounted) {
+        editorFileBasename = nextBasename;
+        return;
+    }
+
+    if (nextBasename === editorFileBasename) {
+        syncEditorTableView?.(workingSkills.slice(), folderSeg);
+        return;
+    }
+
+    if (dirty) {
+        const ok = window.confirm(
+            `Switch to ${nextBasename} and discard unsaved in-memory edits?`
+        );
+        if (!ok) {
+            return;
+        }
+    }
+
+    editorFileBasename = nextBasename;
+    const seg =
+        folderSeg ||
+        (() => {
+            const selEl = document.getElementById('version-selector');
+            if (!selEl?.value) return '';
+            try {
+                const parsed = JSON.parse(selEl.value);
+                return `${parsed.major}_${parsed.minor}`;
+            } catch {
+                return '';
+            }
+        })();
+    if (!seg) {
+        showToast('Version selector not found; cannot switch editor file.', true);
+        return;
+    }
+    try {
+        await loadSkillsForFolder(seg);
+        showToast(`Loaded ${TREE_DATA}/${seg}/${editorFileBasename}`);
     } catch (e) {
         console.error(e);
         showLoadError(e.message || String(e));
@@ -1187,6 +1320,22 @@ export async function mountEditor(opts = {}) {
 
 export function unmountEditor() {
     window.removeEventListener('beforeunload', editorBeforeUnload);
+    if (editorDomAbort) {
+        editorDomAbort.abort();
+        editorDomAbort = null;
+    }
+    if (autocompleteApi) {
+        autocompleteApi.destroy();
+        autocompleteApi = null;
+    }
     syncEditorTableView = null;
     detachVersionSelectorListeners(document.getElementById('version-selector'));
+    workingSkills = [];
+    autocompleteSubskills = [];
+    skillsForStatUsage = [];
+    selectedIndex = -1;
+    dirty = false;
+    editorMounted = false;
+    editorFileBasename = DEFAULT_EDITOR_FILE_BASENAME;
+    invalidateStatUsageCounts();
 }

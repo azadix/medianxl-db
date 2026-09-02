@@ -1,0 +1,51 @@
+[
+  { "key": "while_unmorphed", "name": null, "description": "", "group": "morph" },
+  { "key": "while_in_werewolf_form", "name": null, "description": "", "group": "morph" },
+  { "key": "while_in_wereowl_form", "name": null, "description": "", "group": "morph" },
+  { "key": "while_in_werbear_form", "name": null, "description": "", "group": "morph" },
+
+  { "key": "during_torment", "name": null, "description": "" },
+  { "key": "during_ravage", "name": null, "description": "" },
+  { "key": "during_whirlwinding", "name": null, "description": "" },
+  { "key": "during_fusillade", "name": null, "description": "" },
+  { "key": "after_using_superposition", "name": null, "description": "" },
+  { "key": "after_using_stampede", "name": null, "description": "" },
+  { "key": "while_fortress_is_active", "name": null, "description": "" },
+  { "key": "while_decoy_is_active", "name": null, "description": "" },
+
+  { "key": "during_conflux", "name": null, "description": "" },
+  { "key": "while_overloaded", "name": null, "description": "" },
+  { "key": "while_drinking_healing_potion", "name": null, "description": "", "group": "potion" },
+  { "key": "while_drinking_mana_potion", "name": null, "description": "", "group": "potion" },
+  { "key": "while_drinking_rejuvenation_potion", "name": null, "description": "", "group": "potion" },
+
+  { "key": "while_channeling", "name": null, "description": "" },
+  { "key": "after_blocking", "name": null, "description": "" },
+  { "key": "after_being_hit", "name": null, "description": "" },
+  { "key": "when_struck", "name": null, "description": "" },
+  { "key": "after_taking_weapon_damage", "name": null, "description": "" },
+  { "key": "while_standing", "name": null, "description": "", "group": "movement" },
+  { "key": "while_walking", "name": null, "description": "", "group": "movement" },
+  { "key": "while_sprinting", "name": null, "description": "", "group": "movement" },
+
+  { "key": "while_wielding_two_claws", "name": null, "description": "", "group": "weapon" },
+  { "key": "while_wielding_onehanded_weapon", "name": null, "description": "", "group": "weapon" },
+  { "key": "while_wielding_twohanded_weapon", "name": null, "description": "", "group": "weapon" },
+  { "key": "while_wielding_naginata", "name": null, "description": "", "group": "weapon" },
+  { "key": "while_wielding_spear", "name": null, "description": "", "group": "weapon" },
+  { "key": "while_wielding_javelin", "name": null, "description": "", "group": "weapon" },
+  { "key": "while_wielding_bow", "name": null, "description": "", "group": "weapon" },
+
+  { "key": "while_in_heroic_library", "name": null, "description": "", "group": "heroic_area" },
+  { "key": "while_in_heroic_duncraig", "name": null, "description": "", "group": "heroic_area" },
+
+  { "key": "while_maximum_mana_is_higher_than_maximum_life", "name": null, "description": "" },
+  { "key": "while_over_60_percent_heat", "name": null, "description": "life_level" },
+  { "key": "while_under_90_percent_life", "name": null, "description": "life_level" },
+
+  { "key": "while_lion_stance", "name": null, "description": "", "group": "stance" },
+  { "key": "while_snake_stance", "name": null, "description": "", "group": "stance" },
+  { "key": "while_eagle_stance", "name": null, "description": "", "group": "stance" },
+  { "key": "while_wolf_stance", "name": null, "description": "", "group": "stance" },
+  { "key": "while_bear_stance", "name": null, "description": "", "group": "stance" }
+]

@@ -3,24 +3,28 @@ import { ref, onMounted, onUnmounted, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { usePlannerStore } from '@/stores/planner.js';
 import { getSavedBuilds } from '@/planner/saved-builds-storage.js';
+import { calculateArmorImageNumber } from '@/planner/planner-ui-updates.js';
 import {
-  calculateArmorImageNumber,
   loadBuild,
   deleteBuild,
   renameBuild,
+  downloadSavedBuildAsJson,
   ensureCharacterForBuildList,
-} from '@/tree/tree-core.js';
-import { getSpentSkillPoints } from '@/character/character-state.js';
+} from '@/planner/saved-builds-ui.js';
+import { getSpentSkillPoints } from '@/character/planner-core.js';
 
 const { activeSection } = storeToRefs(usePlannerStore());
 
 const builds = ref([]);
 /** Bumps when current class/points change so portrait URLs re-evaluate without re-reading storage. */
 const portraitTick = ref(0);
+/** Index of the row whose Export dropdown is open, or null. */
+const openExportIndex = ref(/** @type {number | null} */ (null));
 
 function refreshFromStorage() {
   ensureCharacterForBuildList();
   builds.value = getSavedBuilds();
+  openExportIndex.value = null;
 }
 
 function onSavedBuildsListRefresh() {
@@ -44,10 +48,46 @@ function portraitSrc(build) {
   return `portraits/${build.class}/${calculateArmorImageNumber(build.spentPoints)}.gif`;
 }
 
+/**
+ * @param {number} index
+ */
+function toggleExportDropdown(index) {
+  openExportIndex.value = openExportIndex.value === index ? null : index;
+}
+
+/**
+ * @param {number} index
+ */
+function exportAsJson(index) {
+  openExportIndex.value = null;
+  downloadSavedBuildAsJson(index);
+}
+
+/**
+ * @param {Event} e
+ */
+function onGlobalPointerDown(e) {
+  const el = /** @type {HTMLElement | null} */ (e.target);
+  if (!el?.closest) return;
+  if (el.closest('.planner-export-dd')) return;
+  openExportIndex.value = null;
+}
+
+/**
+ * @param {KeyboardEvent} e
+ */
+function onGlobalKeydown(e) {
+  if (e.key === 'Escape') {
+    openExportIndex.value = null;
+  }
+}
+
 onMounted(() => {
   window.addEventListener('savedBuildsListRefresh', onSavedBuildsListRefresh);
   window.addEventListener('skillPointsChanged', bumpPortraitsIfLoad);
   window.addEventListener('characterStatsChanged', bumpPortraitsIfLoad);
+  document.addEventListener('pointerdown', onGlobalPointerDown, true);
+  document.addEventListener('keydown', onGlobalKeydown);
   refreshFromStorage();
 });
 
@@ -55,11 +95,15 @@ onUnmounted(() => {
   window.removeEventListener('savedBuildsListRefresh', onSavedBuildsListRefresh);
   window.removeEventListener('skillPointsChanged', bumpPortraitsIfLoad);
   window.removeEventListener('characterStatsChanged', bumpPortraitsIfLoad);
+  document.removeEventListener('pointerdown', onGlobalPointerDown, true);
+  document.removeEventListener('keydown', onGlobalKeydown);
 });
 
 watch(activeSection, (s) => {
   if (s === 'load') {
     refreshFromStorage();
+  } else {
+    openExportIndex.value = null;
   }
 });
 </script>
@@ -104,6 +148,37 @@ watch(activeSection, (s) => {
             >
               Rename
             </button>
+            <div
+              class="dropdown planner-export-dd is-right"
+              :class="{ 'is-active': openExportIndex === index }"
+            >
+              <div class="dropdown-trigger">
+                <button
+                  type="button"
+                  class="button is-link is-outlined"
+                  aria-haspopup="true"
+                  :aria-expanded="openExportIndex === index"
+                  @click.stop="toggleExportDropdown(index)"
+                >
+                  <span>Export</span>
+                  <span class="icon is-small">
+                    <i class="fas fa-angle-down" aria-hidden="true"></i>
+                  </span>
+                </button>
+              </div>
+              <div class="dropdown-menu" role="menu">
+                <div class="dropdown-content">
+                  <a
+                    class="dropdown-item"
+                    role="menuitem"
+                    href="#"
+                    @click.prevent="exportAsJson(index)"
+                  >
+                    Export as JSON
+                  </a>
+                </div>
+              </div>
+            </div>
             <button
               type="button"
               class="button is-danger is-outlined"
@@ -117,3 +192,10 @@ watch(activeSection, (s) => {
     </div>
   </div>
 </template>
+
+<style scoped>
+.planner-export-dd {
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+</style>

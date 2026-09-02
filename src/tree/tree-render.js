@@ -1,7 +1,9 @@
 // Skills rendering and grid layout functionality
-import { getFileSkillStore } from './skill-data-store.js';
+import { getFileSkillStore } from '@/shared/skill-data-store.js';
+import { MISSING_IMAGE_NAME } from '@/shared/utils.js';
+import Character from '@/character/Character.js';
 
-/** Tab name for the skill tree (shared by tree-core and planner Vue without a separate module). */
+/** Tab name for the skill tree (shared by planner runtime and planner Vue without a separate module). */
 let currentTab = null;
 
 export function getCurrentTab() {
@@ -14,26 +16,25 @@ export function setCurrentTabState(tabName) {
 
 /**
  * Enrich a raw oSkill row (from character state) for buildOSkillCardData.
- * Mirrors tree-core createOSkillCard lookup logic.
+ * Mirrors planner oSkill card lookup logic.
  * @param {object} oskill
  * @returns {object}
  */
 export function enrichOskillForDisplay(oskill) {
     if (oskill.displayName && oskill.image) {
-        return oskill;
+        return {
+            ...oskill,
+            points: Character.clampOSkillPoints(oskill.points ?? 0),
+            manualPoints: Character.clampOSkillPoints(oskill.points ?? 0),
+            itemPoints: Character.clampOSkillPoints(oskill.itemPoints ?? 0),
+        };
     }
     const store = getFileSkillStore();
     let det = null;
-    let nid = null;
     let internal = null;
-    if (oskill.skillId) {
-        internal = store?.internalNameByNumericId(oskill.skillId);
-        nid = oskill.skillId;
-        if (internal) det = store.getSkillDetail(internal);
-    } else if (oskill.skillName) {
+    if (oskill.skillName) {
         internal = oskill.skillName;
         det = store?.getSkillDetail(internal);
-        nid = det?.numericId ?? null;
     }
     if (internal) {
         const cat = store?.catalogByInternalId?.get(String(internal)) ?? null;
@@ -41,31 +42,35 @@ export function enrichOskillForDisplay(oskill) {
         if (pid) {
             det = null;
             internal = null;
-            nid = null;
         }
     }
     const slotId = oskill.slotId != null && String(oskill.slotId).trim() !== '' ? String(oskill.slotId).trim() : undefined;
+    const manualPoints = Character.clampOSkillPoints(oskill.points ?? 0);
+    const itemPoints = Character.clampOSkillPoints(oskill.itemPoints ?? 0);
     if (det && internal) {
         return {
-            numericId: nid,
-            skillId: oskill.skillId ?? nid,
+            skillId: internal,
             skillName: oskill.skillName || internal,
-            points: oskill.points,
+            points: manualPoints,
+            manualPoints,
+            itemPoints,
             slotId,
             displayName: det.display_name || internal,
-            image: det.image || 'icons-shared_missing.png',
+            image: det.image || MISSING_IMAGE_NAME,
             className: det.className || 'Other',
             hasDetails: true,
             description: det.description,
         };
     }
     return {
-        skillId: oskill.skillId,
+        skillId: oskill.skillName,
         skillName: oskill.skillName,
-        points: oskill.points,
+        points: manualPoints,
+        manualPoints,
+        itemPoints,
         slotId,
-        displayName: oskill.skillName || `Skill ${oskill.skillId}`,
-        image: 'icons-shared_missing.png',
+        displayName: oskill.skillName || 'oSkill',
+        image: MISSING_IMAGE_NAME,
         className: 'Other',
         hasDetails: false,
     };
@@ -73,7 +78,7 @@ export function enrichOskillForDisplay(oskill) {
 import {
   getSkillPoints,
   getAllSkillPoints,
-  getMinimumRequiredLevel,
+  getCharacterLevel,
   calculateEffectiveMaxLevel,
   getSkillRestrictions,
   canAllocateSkillPoints,
@@ -83,7 +88,7 @@ import {
   removeSkillPointsBatch,
   isSkillDisabled,
   isOSkillSlotDisabled
-} from '@/character/character-state.js';
+} from '@/character/planner-core.js';
 import { getSkillIconHTML } from '@/shared/utils.js';
 import { getCurrentVersion, versionToTreeAssetFolder } from '@/shared/version-config.js';
 import { ToastManager } from '@/planner/toast-manager.js';
@@ -142,14 +147,14 @@ export function renderSkills(selectedClass, skillsList, skillsContainer, preserv
  * @param {Array} allSkills - Array of all skills (for validation)
  */
 export function handleSkillPointChange(skill, delta, allSkills = []) {
-    const minLevel = getMinimumRequiredLevel(allSkills);
+    const characterLevel = getCharacterLevel();
     const skillLevels = getAllSkillPoints();
 
     const effectiveMaxLevel = calculateEffectiveMaxLevel(
-        skill.skillId,
+        skill.id,
         'regular',
         skillLevels,
-        minLevel
+        characterLevel
     ) || skill.baseMaxLevel;
 
     // Handle multiple points (shift/ctrl clicks) - use batch operations for performance
@@ -161,10 +166,10 @@ export function handleSkillPointChange(skill, delta, allSkills = []) {
             const getMaxLevelFn = () => {
                 const currentSkillLevels = getAllSkillPoints();
                 return calculateEffectiveMaxLevel(
-                    skill.skillId,
+                    skill.id,
                     'regular',
                     currentSkillLevels,
-                    minLevel
+                    getCharacterLevel()
                 ) || skill.baseMaxLevel;
             };
             
@@ -208,18 +213,23 @@ export function buildPlannerSkillCardData(skillEntry, opts = {}) {
     const allSkills = Array.isArray(opts.allSkills) ? opts.allSkills : [];
     const getIconFn = opts.getIconFn || null;
     const skillLevels = getAllSkillPoints();
-    const minLevel = getMinimumRequiredLevel(allSkills);
+    const characterLevel = getCharacterLevel();
     const isOSkill = skillType === 'oskill';
-
+    const itemPoints = isOSkill
+        ? Character.clampOSkillPoints(skillEntry.itemPoints ?? 0)
+        : 0;
     const currentPoints = isOSkill
-        ? (skillEntry.points || 0)
+        ? Character.clampOSkillPoints(skillEntry.manualPoints ?? skillEntry.points ?? 0)
         : getSkillPoints(skillEntry.id);
-    const maxPoints = calculateEffectiveMaxLevel(
-        isOSkill ? (skillEntry.skillId || skillEntry.skillName) : skillEntry.skillId,
+    const catalogMax = calculateEffectiveMaxLevel(
+        isOSkill ? (skillEntry.skillName || skillEntry.skillId) : skillEntry.id,
         skillType,
         skillLevels,
-        minLevel
+        characterLevel
     ) || skillEntry.baseMaxLevel;
+    const maxPoints = isOSkill
+        ? Math.max(0, Character.OSKILL_MAX_POINTS - itemPoints)
+        : catalogMax;
     const restrictions = getSkillRestrictions(
         skillEntry,
         skillType,
@@ -247,7 +257,6 @@ export function buildPlannerSkillCardData(skillEntry, opts = {}) {
         const parentDisplayName = parentSkillId ? (getFileSkillStore()?.lookupDisplayNameByInternalName(parentSkillId) ?? parentSkillId) : null;
         return {
             skillId: skillEntry.id,
-            numericId: skillEntry.skillId,
             classId: skillEntry.classId,
             displayName: skillEntry.name,
             tabName: skillEntry.tabName,
@@ -266,23 +275,17 @@ export function buildPlannerSkillCardData(skillEntry, opts = {}) {
         };
     }
 
-    const numericId =
-        typeof skillEntry.numericId === 'number'
-            ? skillEntry.numericId
-            : typeof skillEntry.skillId === 'number'
-                ? skillEntry.skillId
-                : null;
     let variantStateKey =
         skillEntry.skillName && String(skillEntry.skillName).trim() !== ''
             ? skillEntry.skillName
             : null;
-    if (!variantStateKey && numericId != null) {
-        const internal = getFileSkillStore()?.internalNameByNumericId(numericId);
-        if (internal) variantStateKey = internal;
-    }
 
-    // Resolve internal id for tags + disabled toggle (oSkills may only have numericId).
-    const internalId = variantStateKey || (numericId != null ? getFileSkillStore()?.internalNameByNumericId(numericId) : null);
+    // Resolve internal id for tags + disabled toggle.
+    const internalId =
+        variantStateKey ||
+        (skillEntry.skillId != null && typeof skillEntry.skillId === 'string'
+            ? skillEntry.skillId
+            : null);
     const det = internalId ? getFileSkillStore()?.getSkillDetail(internalId) : null;
     const tags = Array.isArray(det?.tags) ? det.tags : [];
     const isPassive = tags.includes('Passive');
@@ -291,10 +294,9 @@ export function buildPlannerSkillCardData(skillEntry, opts = {}) {
     const slotId = skillEntry.slotId ? String(skillEntry.slotId).trim() : '';
 
     return {
-        skillId: skillEntry.skillId || skillEntry.skillName,
-        numericId,
+        skillId: skillEntry.skillName || skillEntry.skillId,
         variantStateKey: variantStateKey || undefined,
-        displayName: skillEntry.displayName || skillEntry.skillName || `Skill ${skillEntry.skillId}`,
+        displayName: skillEntry.displayName || skillEntry.skillName || 'oSkill',
         iconHTML: getIconFn ? getIconFn(skillEntry.image, skillEntry.className) : '',
         hasDescription: skillEntry.hasDetails || false,
         currentPoints,
@@ -307,7 +309,9 @@ export function buildPlannerSkillCardData(skillEntry, opts = {}) {
         isUpgrade,
         oskillSlotId: slotId || undefined,
         isDisabled: slotId !== '' ? isOSkillSlotDisabled(slotId) : false,
-        variants: numericId != null ? listSkillVariants(numericId) : []
+        variants: internalId != null ? listSkillVariants(internalId) : [],
+        manualPoints: currentPoints,
+        itemPoints,
     };
 }
 

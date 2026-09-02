@@ -3,7 +3,11 @@
  * @module src/composables/usePatchSkillTooltip
  */
 import { onMounted, onUnmounted, ref } from 'vue';
-import { buildTooltipHtmlForSkill, getSkillRecordFromElement } from './usePatchNotesData.js';
+import {
+  buildTooltipHtmlForSkill,
+  getCachedPatchSkillTooltipHtml,
+  getSkillRecordFromElement,
+} from './usePatchNotesData.js';
 
 const TOOLTIP_OFFSET = 18;
 const TOOLTIP_VIEWPORT_MARGIN = 12;
@@ -16,45 +20,80 @@ const TOOLTIP_VIEWPORT_MARGIN = 12;
  */
 export function usePatchSkillTooltip({ patchNotesRoot, loadPatchData }) {
   const tooltipElement = ref(null);
-  const tooltipVisible = ref(false);
-  const tooltipHtml = ref('');
-  const tooltipStyle = ref({ left: '-9999px', top: '-9999px' });
   let tooltipTokenCounter = 0;
+  let positionRafId = 0;
+  let pendingClientX = 0;
+  let pendingClientY = 0;
+  /** @type {HTMLElement|null} */
+  let currentHoveredTarget = null;
 
-  function updateTooltipPosition(clientX, clientY) {
+  function isTooltipShowing() {
+    const node = tooltipElement.value;
+    return Boolean(node && node.style.display !== 'none');
+  }
+
+  function applyTooltipPosition(node, clientX, clientY) {
     const baseLeft = clientX + TOOLTIP_OFFSET;
     const baseTop = clientY + TOOLTIP_OFFSET;
-    tooltipStyle.value = {
-      left: `${baseLeft}px`,
-      top: `${baseTop}px`,
-    };
+    const rect = node.getBoundingClientRect();
+    let nextLeft = baseLeft;
+    let nextTop = baseTop;
+    const maxLeft = window.innerWidth - rect.width - TOOLTIP_VIEWPORT_MARGIN;
+    const maxTop = window.innerHeight - rect.height - TOOLTIP_VIEWPORT_MARGIN;
+    if (nextLeft > maxLeft) nextLeft = Math.max(TOOLTIP_VIEWPORT_MARGIN, maxLeft);
+    if (nextTop > maxTop) nextTop = Math.max(TOOLTIP_VIEWPORT_MARGIN, maxTop);
+    node.style.left = `${nextLeft}px`;
+    node.style.top = `${nextTop}px`;
+  }
 
-    requestAnimationFrame(() => {
+  function updateTooltipPosition(clientX, clientY) {
+    pendingClientX = clientX;
+    pendingClientY = clientY;
+    if (positionRafId) return;
+    positionRafId = requestAnimationFrame(() => {
+      positionRafId = 0;
       const node = tooltipElement.value;
-      if (!node || !tooltipVisible.value) return;
-      const rect = node.getBoundingClientRect();
-      let nextLeft = baseLeft;
-      let nextTop = baseTop;
-      const maxLeft = window.innerWidth - rect.width - TOOLTIP_VIEWPORT_MARGIN;
-      const maxTop = window.innerHeight - rect.height - TOOLTIP_VIEWPORT_MARGIN;
-      if (nextLeft > maxLeft) nextLeft = Math.max(TOOLTIP_VIEWPORT_MARGIN, maxLeft);
-      if (nextTop > maxTop) nextTop = Math.max(TOOLTIP_VIEWPORT_MARGIN, maxTop);
-      tooltipStyle.value = {
-        left: `${nextLeft}px`,
-        top: `${nextTop}px`,
-      };
+      if (!node || !isTooltipShowing()) return;
+      applyTooltipPosition(node, pendingClientX, pendingClientY);
     });
   }
 
+  function presentTooltip(node, html, clientX, clientY) {
+    node.innerHTML = html;
+    node.style.display = 'block';
+    updateTooltipPosition(clientX, clientY);
+  }
+
   function hideSkillTooltip() {
-    tooltipVisible.value = false;
-    tooltipHtml.value = '';
+    if (positionRafId) {
+      cancelAnimationFrame(positionRafId);
+      positionRafId = 0;
+    }
+    currentHoveredTarget = null;
+    const node = tooltipElement.value;
+    if (node) node.style.display = 'none';
   }
 
   async function showSkillTooltip(target, clientX, clientY) {
     const skillRecord = getSkillRecordFromElement(target);
     if (!skillRecord) {
       hideSkillTooltip();
+      return;
+    }
+
+    const node = tooltipElement.value;
+    if (!node) return;
+
+    if (currentHoveredTarget === target && isTooltipShowing()) {
+      updateTooltipPosition(clientX, clientY);
+      return;
+    }
+
+    currentHoveredTarget = target;
+
+    const cached = getCachedPatchSkillTooltipHtml(skillRecord);
+    if (cached) {
+      presentTooltip(node, cached, clientX, clientY);
       return;
     }
 
@@ -70,10 +109,9 @@ export function usePatchSkillTooltip({ patchNotesRoot, loadPatchData }) {
       hideSkillTooltip();
       return;
     }
+    if (currentHoveredTarget !== target) return;
 
-    tooltipHtml.value = html;
-    tooltipVisible.value = true;
-    updateTooltipPosition(clientX, clientY);
+    presentTooltip(node, html, clientX, clientY);
   }
 
   function closestSkillTarget(eventTarget) {
@@ -93,7 +131,7 @@ export function usePatchSkillTooltip({ patchNotesRoot, loadPatchData }) {
   }
 
   function onPatchMouseMove(event) {
-    if (!tooltipVisible.value) return;
+    if (!isTooltipShowing()) return;
     const target = closestSkillTarget(event.target);
     if (!target) return;
     updateTooltipPosition(event.clientX || 0, event.clientY || 0);
@@ -104,6 +142,7 @@ export function usePatchSkillTooltip({ patchNotesRoot, loadPatchData }) {
     if (!leavingFrom) return;
     const stillInside = closestSkillTarget(event.relatedTarget);
     if (stillInside === leavingFrom) return;
+    if (stillInside) return;
     hideSkillTooltip();
   }
 
@@ -119,6 +158,7 @@ export function usePatchSkillTooltip({ patchNotesRoot, loadPatchData }) {
     if (!from) return;
     const to = closestSkillTarget(event.relatedTarget);
     if (to === from) return;
+    if (to) return;
     hideSkillTooltip();
   }
 
@@ -132,6 +172,8 @@ export function usePatchSkillTooltip({ patchNotesRoot, loadPatchData }) {
     await loadPatchData();
     const root = patchNotesRoot.value;
     if (!root) return;
+    const node = tooltipElement.value;
+    if (node) node.style.display = 'none';
     root.addEventListener('mouseover', onPatchMouseOver);
     root.addEventListener('mousemove', onPatchMouseMove);
     root.addEventListener('mouseout', onPatchMouseOut);
@@ -141,6 +183,10 @@ export function usePatchSkillTooltip({ patchNotesRoot, loadPatchData }) {
   });
 
   onUnmounted(() => {
+    if (positionRafId) {
+      cancelAnimationFrame(positionRafId);
+      positionRafId = 0;
+    }
     const root = patchNotesRoot.value;
     if (!root) return;
     root.removeEventListener('mouseover', onPatchMouseOver);
@@ -153,9 +199,6 @@ export function usePatchSkillTooltip({ patchNotesRoot, loadPatchData }) {
 
   return {
     tooltipElement,
-    tooltipVisible,
-    tooltipHtml,
-    tooltipStyle,
     hideSkillTooltip,
   };
 }

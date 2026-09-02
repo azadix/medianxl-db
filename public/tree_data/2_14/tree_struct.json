@@ -1,0 +1,5753 @@
+{
+  "Amazon": {
+    "Divine": {
+      "skill_details": [
+        {
+          "id": "balance",
+          "row": 3,
+          "col": 2,
+          "layoutParents": [
+            "wild_and_free"
+          ],
+          "prerequisites": {
+            "character_level": 10,
+            "skill_level": [
+              "wild_and_free",
+              1
+            ]
+          }
+        },
+        {
+          "id": "defensive_harmony",
+          "row": 4,
+          "col": 3,
+          "layoutParents": [
+            "balance"
+          ],
+          "prerequisites": {
+            "character_level": 30,
+            "skill_level": [
+              "balance",
+              1
+            ]
+          }
+        },
+        {
+          "id": "ecstatic_frenzy",
+          "row": 4,
+          "col": 1,
+          "layoutParents": [
+            "balance"
+          ],
+          "prerequisites": {
+            "character_level": 20,
+            "skill_level": [
+              "balance",
+              1
+            ]
+          }
+        },
+        {
+          "id": "fortitude",
+          "row": 6,
+          "col": 1,
+          "layoutParents": [
+            "ecstatic_frenzy"
+          ],
+          "prerequisites": {
+            "character_level": 40,
+            "skill_level": [
+              "ecstatic_frenzy",
+              1
+            ]
+          }
+        },
+        {
+          "id": "wild_and_free",
+          "row": 1,
+          "col": 2
+        }
+      ]
+    },
+    "Bow": {
+      "skill_details": [
+        {
+          "id": "barrage",
+          "row": 2,
+          "col": 3,
+          "layoutParents": [
+            "trinity_arrow"
+          ],
+          "prerequisites": {
+            "character_level": 5,
+            "skill_level": [
+              "trinity_arrow",
+              1
+            ]
+          }
+        },
+        {
+          "id": "decoy",
+          "row": 3,
+          "col": 1,
+          "layoutParents": [
+            "dragonlore"
+          ],
+          "prerequisites": {
+            "character_level": 15,
+            "skill_level": [
+              "dragonlore",
+              1
+            ]
+          }
+        },
+        {
+          "id": "dragonlore",
+          "row": 2,
+          "col": 2,
+          "layoutParents": [
+            "trinity_arrow"
+          ],
+          "prerequisites": {
+            "character_level": 10,
+            "skill_level": [
+              "trinity_arrow",
+              1
+            ]
+          }
+        },
+        {
+          "id": "elemental_command",
+          "row": 4,
+          "col": 3,
+          "layoutParents": [
+            "barrage"
+          ],
+          "prerequisites": {
+            "character_level": 25,
+            "skill_level": [
+              "barrage",
+              1
+            ]
+          }
+        },
+        {
+          "id": "fire_at_will",
+          "row": 4,
+          "col": 1,
+          "layoutParents": [
+            "decoy"
+          ],
+          "prerequisites": {
+            "character_level": 25,
+            "skill_level": [
+              "decoy",
+              1
+            ]
+          }
+        },
+        {
+          "id": "keen_sight",
+          "row": 5,
+          "col": 2,
+          "layoutParents": [
+            "wyrmshot"
+          ],
+          "prerequisites": {
+            "character_level": 40,
+            "skill_level": [
+              "wyrmshot",
+              1
+            ]
+          }
+        },
+        {
+          "id": "rapid_wyrmshot",
+          "row": 6,
+          "col": 2,
+          "layoutParents": [
+            "keen_sight"
+          ],
+          "prerequisites": {
+            "character_level": 120,
+            "skill_level": [
+              "keen_sight",
+              1
+            ]
+          }
+        },
+        {
+          "id": "phalanx",
+          "row": 5,
+          "col": 1,
+          "layoutParents": [
+            "fire_at_will"
+          ],
+          "prerequisites": {
+            "character_level": 30,
+            "skill_level": [
+              "fire_at_will",
+              1
+            ]
+          }
+        },
+        {
+          "id": "trinity_arrow",
+          "row": 1,
+          "col": 2
+        },
+        {
+          "id": "wyrmshot",
+          "row": 4,
+          "col": 2,
+          "layoutParents": [
+            "dragonlore"
+          ],
+          "prerequisites": {
+            "character_level": 30,
+            "skill_level": [
+              "dragonlore",
+              1
+            ]
+          }
+        }
+      ]
+    },
+    "Javelin": {
+      "skill_details": [
+        {
+          "id": "bulwark",
+          "row": 5,
+          "col": 1,
+          "layoutParents": [
+            "elemental_aegis"
+          ],
+          "prerequisites": {
+            "character_level": 50,
+            "skill_level": [
+              "elemental_aegis",
+              8
+            ]
+          }
+        },
+        {
+          "id": "deadly_dance",
+          "row": 1,
+          "col": 3,
+          "layoutParents": [
+            "impale"
+          ],
+          "prerequisites": {
+            "character_level": 20,
+            "skill_level": [
+              "impale",
+              1
+            ]
+          }
+        },
+        {
+          "id": "elemental_aegis",
+          "row": 6,
+          "col": 2,
+          "layoutParents": [
+            "second_wind"
+          ],
+          "prerequisites": {
+            "character_level": 35,
+            "skill_level": [
+              "second_wind",
+              10
+            ]
+          }
+        },
+        {
+          "id": "eviscerate",
+          "row": 3,
+          "col": 2
+        },
+        {
+          "id": "gemling",
+          "row": 3,
+          "col": 3,
+          "layoutParents": [
+            "paragon"
+          ],
+          "prerequisites": {
+            "character_level": 100,
+            "skill_level": [
+              "paragon",
+              1
+            ]
+          }
+        },
+        {
+          "id": "impale",
+          "row": 1,
+          "col": 2,
+          "layoutParents": [
+            "eviscerate"
+          ],
+          "prerequisites": {
+            "character_level": 10,
+            "skill_level": [
+              "eviscerate",
+              1
+            ]
+          }
+        },
+        {
+          "id": "indomitable",
+          "row": 5,
+          "col": 2,
+          "layoutParents": [
+            "bulwark"
+          ],
+          "prerequisites": {
+            "character_level": 110,
+            "skill_level": [
+              "bulwark",
+              10
+            ]
+          }
+        },
+        {
+          "id": "noxious_mastery",
+          "row": 3,
+          "col": 1,
+          "layoutParents": [
+            "curare"
+          ],
+          "prerequisites": {
+            "character_level": 100,
+            "skill_level": [
+              "curare",
+              1
+            ]
+          }
+        },
+        {
+          "id": "scorpion_sting",
+          "row": 1,
+          "col": 1,
+          "layoutParents": [
+            "impale"
+          ],
+          "prerequisites": {
+            "character_level": 25,
+            "skill_level": [
+              "impale",
+              1
+            ]
+          }
+        },
+        {
+          "id": "second_wind",
+          "row": 5,
+          "col": 3,
+          "layoutParents": [
+            "shieldmaiden"
+          ],
+          "prerequisites": {
+            "character_level": 20,
+            "skill_level": [
+              "shieldmaiden",
+              10
+            ]
+          }
+        },
+        {
+          "id": "shieldmaiden",
+          "row": 4,
+          "col": 2,
+          "prerequisites": {
+            "character_level": 5
+          }
+        }
+      ]
+    },
+    "Spear": {
+      "skill_details": [
+        {
+          "id": "fend",
+          "row": 6,
+          "col": 2,
+          "layoutParents": [
+            "pounce"
+          ],
+          "prerequisites": {
+            "character_level": 40,
+            "skill_level": [
+              "pounce",
+              1
+            ]
+          }
+        },
+        {
+          "id": "great_hunt",
+          "row": 1,
+          "col": 1
+        },
+        {
+          "id": "hunters_prowess",
+          "row": 3,
+          "col": 1,
+          "layoutParents": [
+            "takedown"
+          ],
+          "prerequisites": {
+            "character_level": 15,
+            "skill_level": [
+              "takedown",
+              1
+            ]
+          }
+        },
+        {
+          "id": "hyena_strike",
+          "row": 2,
+          "col": 2,
+          "layoutParents": [
+            "great_hunt"
+          ],
+          "prerequisites": {
+            "character_level": 5,
+            "skill_level": [
+              "great_hunt",
+              1
+            ]
+          }
+        },
+        {
+          "id": "lioness",
+          "row": 4,
+          "col": 3,
+          "layoutParents": [
+            "takedown"
+          ],
+          "prerequisites": {
+            "character_level": 20,
+            "skill_level": [
+              "takedown",
+              1
+            ]
+          }
+        },
+        {
+          "id": "pounce",
+          "row": 5,
+          "col": 3,
+          "layoutParents": [
+            "lioness"
+          ],
+          "prerequisites": {
+            "character_level": 30,
+            "skill_level": [
+              "lioness",
+              1
+            ]
+          }
+        },
+        {
+          "id": "takedown",
+          "row": 3,
+          "col": 2,
+          "layoutParents": [
+            "hyena_strike"
+          ],
+          "prerequisites": {
+            "character_level": 10,
+            "skill_level": [
+              "hyena_strike",
+              1
+            ]
+          }
+        }
+      ]
+    },
+    "Storm": {
+      "skill_details": [
+        {
+          "id": "askari_lightning",
+          "row": 3,
+          "col": 3,
+          "layoutParents": [
+            "stormcall"
+          ],
+          "prerequisites": {
+            "character_level": 5,
+            "skill_level": [
+              "stormcall",
+              1
+            ]
+          }
+        },
+        {
+          "id": "conductivity",
+          "row": 5,
+          "col": 3,
+          "layoutParents": [
+            "askari_lightning"
+          ],
+          "prerequisites": {
+            "character_level": 50,
+            "skill_level": [
+              "askari_lightning",
+              1
+            ]
+          }
+        },
+        {
+          "id": "discharge",
+          "row": 3,
+          "col": 2,
+          "layoutParents": [
+            "thundermaiden"
+          ],
+          "prerequisites": {
+            "character_level": 25,
+            "skill_level": [
+              "thundermaiden",
+              1
+            ]
+          }
+        },
+        {
+          "id": "hammer_of_zerae",
+          "row": 2,
+          "col": 1,
+          "layoutParents": [
+            "thundermaiden"
+          ],
+          "prerequisites": {
+            "skill_level": [
+              "thundermaiden",
+              1
+            ],
+            "skill_blocked_by": [
+              "stormcall",
+              0
+            ]
+          }
+        },
+        {
+          "id": "lightning_shield",
+          "row": 4,
+          "col": 2,
+          "layoutParents": [
+            "discharge"
+          ],
+          "prerequisites": {
+            "character_level": 30,
+            "skill_level": [
+              "discharge",
+              1
+            ]
+          }
+        },
+        {
+          "id": "power_shift",
+          "row": 3,
+          "col": 1,
+          "layoutParents": [
+            "hammer_of_zerae"
+          ],
+          "prerequisites": {
+            "character_level": 10,
+            "skill_level": [
+              "hammer_of_zerae",
+              1
+            ]
+          }
+        },
+        {
+          "id": "reckoning_of_zerae",
+          "row": 5,
+          "col": 1,
+          "layoutParents": [
+            "power_shift"
+          ],
+          "prerequisites": {
+            "character_level": 40,
+            "skill_level": [
+              "power_shift",
+              1
+            ]
+          }
+        },
+        {
+          "id": "resistance",
+          "row": 6,
+          "col": 2,
+          "layoutParents": [
+            "lightning_shield"
+          ],
+          "prerequisites": {
+            "character_level": 75,
+            "skill_level": [
+              "lightning_shield",
+              1
+            ]
+          }
+        },
+        {
+          "id": "stormcall",
+          "row": 2,
+          "col": 3,
+          "layoutParents": [
+            "thundermaiden"
+          ],
+          "prerequisites": {
+            "skill_level": [
+              "thundermaiden",
+              1
+            ],
+            "skill_blocked_by": [
+              "hammer_of_zerae",
+              0
+            ]
+          }
+        },
+        {
+          "id": "thundermaiden",
+          "row": 1,
+          "col": 2
+        }
+      ]
+    },
+    "Blood": {
+      "skill_details": [
+        {
+          "id": "blast_radius",
+          "row": 3,
+          "col": 1,
+          "layoutParents": [
+            "magic_missiles"
+          ],
+          "prerequisites": {
+            "character_level": 50,
+            "skill_level": [
+              "magic_missiles",
+              1
+            ]
+          }
+        },
+        {
+          "id": "blood_magic",
+          "row": 1,
+          "col": 2
+        },
+        {
+          "id": "concentrated_effect",
+          "row": 4,
+          "col": 1,
+          "layoutParents": [
+            "blast_radius"
+          ],
+          "prerequisites": {
+            "character_level": 80,
+            "skill_level": [
+              "blast_radius",
+              1
+            ]
+          }
+        },
+        {
+          "id": "crimson_rite",
+          "row": 5,
+          "col": 1,
+          "prerequisites": {
+            "character_level": 10,
+            "skill_level": [
+              "blood_magic",
+              1
+            ]
+          }
+        },
+        {
+          "id": "eldritch_storm",
+          "row": 2,
+          "col": 2,
+          "layoutParents": [
+            "blood_magic"
+          ],
+          "prerequisites": {
+            "character_level": 15,
+            "skill_level": [
+              "blood_magic",
+              1
+            ]
+          }
+        },
+        {
+          "id": "entropy",
+          "row": 3,
+          "col": 2,
+          "layoutParents": [
+            "eldritch_storm"
+          ],
+          "prerequisites": {
+            "character_level": 60,
+            "skill_level": [
+              "eldritch_storm",
+              1
+            ]
+          }
+        },
+        {
+          "id": "fire_elementals",
+          "row": 6,
+          "col": 1,
+          "prerequisites": {
+            "character_level": 20,
+            "skill_level": [
+              "blood_magic",
+              1
+            ]
+          }
+        },
+        {
+          "id": "forbidden_knowledge",
+          "row": 5,
+          "col": 3,
+          "layoutParents": [
+            "spiritual_invocation"
+          ],
+          "prerequisites": {
+            "character_level": 120,
+            "skill_level": [
+              "spiritual_invocation",
+              1
+            ]
+          }
+        },
+        {
+          "id": "hungering_flames",
+          "row": 3,
+          "col": 3,
+          "layoutParents": [
+            "lava_pit"
+          ],
+          "prerequisites": {
+            "character_level": 70,
+            "skill_level": [
+              "lava_pit",
+              1
+            ]
+          }
+        },
+        {
+          "id": "lava_pit",
+          "row": 2,
+          "col": 3,
+          "layoutParents": [
+            "blood_magic"
+          ],
+          "prerequisites": {
+            "character_level": 30,
+            "skill_level": [
+              "blood_magic",
+              1
+            ]
+          }
+        },
+        {
+          "id": "magic_missiles",
+          "row": 2,
+          "col": 1,
+          "layoutParents": [
+            "blood_magic"
+          ],
+          "prerequisites": {
+            "character_level": 2,
+            "skill_level": [
+              "blood_magic",
+              1
+            ]
+          }
+        },
+        {
+          "id": "spiritual_invocation",
+          "row": 5,
+          "col": 2,
+          "layoutParents": [
+            "crimson_rite"
+          ],
+          "prerequisites": {
+            "character_level": 40,
+            "skill_level": [
+              "crimson_rite",
+              1
+            ]
+          }
+        },
+        {
+          "id": "unstable_essence",
+          "row": 6,
+          "col": 3,
+          "layoutParents": [
+            "fire_elementals"
+          ],
+          "prerequisites": {
+            "character_level": 40,
+            "skill_level": [
+              "fire_elementals",
+              1
+            ]
+          }
+        }
+      ]
+    },
+    "Mastery": {
+      "skill_details": [
+        {
+          "id": "chemistry",
+          "row": 5,
+          "col": 3,
+          "prerequisites": {
+            "character_level": 125
+          }
+        },
+        {
+          "id": "continuity",
+          "row": 4,
+          "col": 3,
+          "prerequisites": {
+            "character_level": 115
+          }
+        },
+        {
+          "id": "endurance",
+          "row": 4,
+          "col": 2,
+          "prerequisites": {
+            "character_level": 115
+          }
+        },
+        {
+          "id": "freedom",
+          "row": 2,
+          "col": 2
+        },
+        {
+          "id": "meditation",
+          "row": 1,
+          "col": 1
+        },
+        {
+          "id": "melee_devotion",
+          "row": 1,
+          "col": 3
+        },
+        {
+          "id": "purity",
+          "row": 1,
+          "col": 2
+        },
+        {
+          "id": "specialization",
+          "row": 5,
+          "col": 1,
+          "prerequisites": {
+            "character_level": 125
+          }
+        },
+        {
+          "id": "tenacity",
+          "row": 4,
+          "col": 1,
+          "prerequisites": {
+            "character_level": 100
+          }
+        }
+      ]
+    },
+    "Reward": {
+      "skill_details": [
+        {
+          "id": "curare",
+          "row": 3,
+          "col": 1,
+          "prerequisites": {
+            "character_level": 90
+          }
+        },
+        {
+          "id": "paragon",
+          "row": 3,
+          "col": 2,
+          "prerequisites": {
+            "character_level": 90
+          }
+        },
+        {
+          "id": "paragon_of_fate",
+          "row": 5,
+          "col": 1,
+          "prerequisites": {
+            "character_level": 130
+          }
+        },
+        {
+          "id": "paragon_of_sanctity",
+          "row": 5,
+          "col": 2,
+          "prerequisites": {
+            "character_level": 130
+          }
+        },
+        {
+          "id": "spellbind",
+          "row": 1,
+          "col": 1,
+          "prerequisites": {
+            "character_level": 90
+          }
+        },
+        {
+          "id": "spirit_of_vengeance",
+          "row": 3,
+          "col": 3,
+          "prerequisites": {
+            "character_level": 90
+          }
+        },
+        {
+          "id": "war_spirit",
+          "row": 1,
+          "col": 3,
+          "prerequisites": {
+            "character_level": 115
+          }
+        }
+      ]
+    },
+    "Innate": {
+      "skill_details": [
+        {
+          "id": "bloodlust_innate",
+          "row": 0,
+          "col": 0
+        }
+      ]
+    }
+  },
+  "Assassin": {
+    "Ninja": {
+      "skill_details": [
+        {
+          "id": "blink",
+          "row": 1,
+          "col": 2
+        },
+        {
+          "id": "domain",
+          "row": 2,
+          "col": 3,
+          "layoutParents": [
+            "blink"
+          ],
+          "prerequisites": {
+            "character_level": 5,
+            "skill_level": [
+              "blink",
+              1
+            ]
+          }
+        },
+        {
+          "id": "perfect_being",
+          "row": 4,
+          "col": 3,
+          "layoutParents": [
+            "shadow_refuge"
+          ],
+          "prerequisites": {
+            "character_level": 20,
+            "skill_level": [
+              "shadow_refuge",
+              1
+            ]
+          }
+        },
+        {
+          "id": "queen_of_blades",
+          "row": 5,
+          "col": 2,
+          "prerequisites": {
+            "character_level": 25
+          }
+        },
+        {
+          "id": "shadow_refuge",
+          "row": 3,
+          "col": 2,
+          "layoutParents": [
+            "blink"
+          ],
+          "prerequisites": {
+            "character_level": 10,
+            "skill_level": [
+              "blink",
+              1
+            ]
+          }
+        },
+        {
+          "id": "shadowrush",
+          "row": 4,
+          "col": 1,
+          "layoutParents": [
+            "shadow_refuge"
+          ],
+          "prerequisites": {
+            "character_level": 15,
+            "skill_level": [
+              "shadow_refuge",
+              1
+            ]
+          }
+        }
+      ]
+    },
+    "Throwing": {
+      "skill_details": [
+        {
+          "id": "apf-20_maelstrom_mkv",
+          "row": 3,
+          "col": 1,
+          "layoutParents": [
+            "storm_crows"
+          ],
+          "prerequisites": {
+            "character_level": 10,
+            "skill_level": [
+              "storm_crows",
+              1
+            ]
+          }
+        },
+        {
+          "id": "broadside",
+          "row": 5,
+          "col": 2,
+          "prerequisites": {
+            "character_level": 30
+          }
+        },
+        {
+          "id": "lethal_incision",
+          "row": 4,
+          "col": 3,
+          "layoutParents": [
+            "scorpion_blade"
+          ],
+          "prerequisites": {
+            "character_level": 15,
+            "skill_level": [
+              "scorpion_blade",
+              1
+            ]
+          }
+        },
+        {
+          "id": "scorpion_blade",
+          "row": 2,
+          "col": 3,
+          "layoutParents": [
+            "way_of_the_spider"
+          ],
+          "prerequisites": {
+            "character_level": 6,
+            "skill_level": [
+              "way_of_the_spider",
+              1
+            ]
+          }
+        },
+        {
+          "id": "storm_crows",
+          "row": 1,
+          "col": 1
+        },
+        {
+          "id": "pneumatic_burst",
+          "row": 1,
+          "col": 2,
+          "layoutParents": [
+            "storm_crows"
+          ],
+          "prerequisites": {
+            "character_level": 20,
+            "skill_level": [
+              "storm_crows",
+              1
+            ]
+          }
+        },
+        {
+          "id": "void_gazer",
+          "row": 6,
+          "col": 3,
+          "layoutParents": [
+            "black_wind"
+          ],
+          "prerequisites": {
+            "character_level": 100,
+            "skill_level": [
+              "black_wind",
+              1
+            ]
+          }
+        },
+        {
+          "id": "way_of_the_spider",
+          "row": 1,
+          "col": 3,
+          "prerequisites": {
+            "character_level": 5
+          }
+        },
+        {
+          "id": "black_wind",
+          "row": 6,
+          "col": 1,
+          "layoutParents": [
+            "apf-20_maelstrom_mkv"
+          ],
+          "prerequisites": {
+            "character_level": 50,
+            "skill_level": [
+              "apf-20_maelstrom_mkv",
+              1
+            ]
+          }
+        },
+        {
+          "id": "ring_of_steel",
+          "row": 3,
+          "col": 2,
+          "layoutParents": [
+            "apf-20_maelstrom_mkv"
+          ],
+          "prerequisites": {
+            "character_level": 50,
+            "skill_level": [
+              "apf-20_maelstrom_mkv",
+              1
+            ]
+          }
+        }
+      ]
+    },
+    "Claw": {
+      "skill_details": [
+        {
+          "id": "anathema",
+          "row": 5,
+          "col": 1,
+          "prerequisites": {
+            "character_level": 50
+          }
+        },
+        {
+          "id": "batstrike",
+          "row": 3,
+          "col": 2,
+          "layoutParents": [
+            "noctule"
+          ],
+          "prerequisites": {
+            "character_level": 20,
+            "skill_level": [
+              "noctule",
+              1
+            ]
+          }
+        },
+        {
+          "id": "fanged_assault",
+          "row": 3,
+          "col": 3,
+          "layoutParents": [
+            "summon_familiars"
+          ],
+          "prerequisites": {
+            "character_level": 80,
+            "skill_level": [
+              "summon_familiars",
+              1
+            ]
+          }
+        },
+        {
+          "id": "noctule",
+          "row": 1,
+          "col": 2,
+          "prerequisites": {
+            "skill_blocked_by": [
+              "artifice_mastery",
+              0
+            ]
+          }
+        },
+        {
+          "id": "shadow_dancer",
+          "row": 2,
+          "col": 1,
+          "layoutParents": [
+            "noctule"
+          ],
+          "prerequisites": {
+            "character_level": 15,
+            "skill_level": [
+              "noctule",
+              1
+            ]
+          }
+        },
+        {
+          "id": "summon_familiars",
+          "row": 4,
+          "col": 3,
+          "layoutParents": [
+            "batstrike"
+          ],
+          "prerequisites": {
+            "character_level": 30,
+            "skill_level": [
+              "batstrike",
+              1
+            ]
+          }
+        },
+        {
+          "id": "vampiric_strike",
+          "row": 6,
+          "col": 2,
+          "layoutParents": [
+            "batstrike"
+          ],
+          "prerequisites": {
+            "character_level": 115,
+            "skill_level": [
+              "batstrike",
+              1
+            ]
+          }
+        },
+        {
+          "id": "way_of_the_gryphon",
+          "row": 1,
+          "col": 3,
+          "prerequisites": {
+            "character_level": 5
+          }
+        },
+        {
+          "id": "winged_calamity",
+          "row": 5,
+          "col": 3,
+          "layoutParents": [
+            "summon_familiars"
+          ],
+          "prerequisites": {
+            "character_level": 70,
+            "skill_level": [
+              "summon_familiars",
+              1
+            ]
+          }
+        }
+      ]
+    },
+    "Naginata": {
+      "skill_details": [
+        {
+          "id": "backstab",
+          "row": 4,
+          "col": 1,
+          "layoutParents": [
+            "barrier_strike",
+            "laserblade"
+          ],
+          "prerequisites": {
+            "character_level": 25,
+            "skill_level": [
+              [
+                "barrier_strike",
+                1
+              ],
+              [
+                "laserblade",
+                1
+              ]
+            ]
+          }
+        },
+        {
+          "id": "barrier_strike",
+          "row": 3,
+          "col": 2,
+          "layoutParents": [
+            "crucify"
+          ],
+          "prerequisites": {
+            "character_level": 15,
+            "skill_level": [
+              "crucify",
+              1
+            ]
+          }
+        },
+        {
+          "id": "crucify",
+          "row": 1,
+          "col": 2
+        },
+        {
+          "id": "execution",
+          "row": 6,
+          "col": 1,
+          "layoutParents": [
+            "backstab"
+          ],
+          "prerequisites": {
+            "character_level": 40,
+            "skill_level": [
+              "backstab",
+              1
+            ]
+          }
+        },
+        {
+          "id": "hades_gate",
+          "row": 5,
+          "col": 2,
+          "layoutParents": [
+            "barrier_strike"
+          ],
+          "prerequisites": {
+            "character_level": 33,
+            "skill_level": [
+              "barrier_strike",
+              1
+            ]
+          }
+        },
+        {
+          "id": "laserblade",
+          "row": 2,
+          "col": 1,
+          "prerequisites": {
+            "character_level": 10
+          }
+        },
+        {
+          "id": "momentum",
+          "row": 6,
+          "col": 3,
+          "layoutParents": [
+            "hades_gate"
+          ],
+          "prerequisites": {
+            "character_level": 66,
+            "skill_level": [
+              "hades_gate",
+              1
+            ]
+          }
+        },
+        {
+          "id": "way_of_the_phoenix",
+          "row": 1,
+          "col": 3,
+          "prerequisites": {
+            "character_level": 5
+          }
+        }
+      ]
+    },
+    "Traps": {
+      "skill_details": [
+        {
+          "id": "artifice_mastery",
+          "row": 5,
+          "col": 2,
+          "layoutParents": [
+            "catalyst_trap",
+            "beacon"
+          ],
+          "prerequisites": {
+            "skill_level": [
+              [
+                "subterfuge",
+                15
+              ],
+              [
+                [
+                  "shockwave_trap",
+                  15
+                ],
+                [
+                  "incineration_trap",
+                  15
+                ]
+              ],
+              [
+                [
+                  "catalyst_trap",
+                  15
+                ],
+                [
+                  "beacon",
+                  15
+                ]
+              ]
+            ],
+            "skill_blocked_by": [
+              "noctule",
+              0
+            ]
+          }
+        },
+        {
+          "id": "catalyst_trap",
+          "row": 4,
+          "col": 1,
+          "layoutParents": [
+            "deadly_constructs"
+          ],
+          "prerequisites": {
+            "character_level": 20,
+            "skill_level": [
+              "deadly_constructs",
+              1
+            ],
+            "skill_blocked_by": [
+              "beacon",
+              0
+            ]
+          }
+        },
+        {
+          "id": "deadly_constructs",
+          "row": 3,
+          "col": 2,
+          "layoutParents": [
+            "shockwave_trap",
+            "incineration_trap"
+          ],
+          "prerequisites": {
+            "character_level": 10,
+            "skill_level": [
+              [
+                [
+                  "shockwave_trap",
+                  1
+                ],
+                [
+                  "incineration_trap",
+                  1
+                ]
+              ]
+            ]
+          }
+        },
+        {
+          "id": "forgers_hegemony",
+          "row": 6,
+          "col": 2,
+          "layoutParents": [
+            "artifice_mastery"
+          ],
+          "prerequisites": {
+            "character_level": 80,
+            "skill_level": [
+              "artifice_mastery",
+              1
+            ]
+          }
+        },
+        {
+          "id": "incineration_trap",
+          "row": 2,
+          "col": 3,
+          "layoutParents": [
+            "subterfuge"
+          ],
+          "prerequisites": {
+            "character_level": 1,
+            "skill_level": [
+              "subterfuge",
+              1
+            ],
+            "skill_blocked_by": [
+              "shockwave_trap",
+              0
+            ]
+          }
+        },
+        {
+          "id": "shockwave_trap",
+          "row": 2,
+          "col": 1,
+          "layoutParents": [
+            "subterfuge"
+          ],
+          "prerequisites": {
+            "skill_level": [
+              "subterfuge",
+              1
+            ],
+            "skill_blocked_by": [
+              "incineration_trap",
+              0
+            ]
+          }
+        },
+        {
+          "id": "beacon",
+          "row": 4,
+          "col": 3,
+          "layoutParents": [
+            "deadly_constructs"
+          ],
+          "prerequisites": {
+            "skill_level": [
+              "deadly_constructs",
+              1
+            ],
+            "skill_blocked_by": [
+              "catalyst_trap",
+              0
+            ]
+          }
+        },
+        {
+          "id": "subterfuge",
+          "row": 1,
+          "col": 2
+        }
+      ]
+    },
+    "Psionic": {
+      "skill_details": [
+        {
+          "id": "cognition",
+          "row": 3,
+          "col": 2,
+          "prerequisites": {
+            "character_level": 50,
+            "skill_level": [
+              "pinnacle",
+              1
+            ]
+          }
+        },
+        {
+          "id": "energize",
+          "row": 5,
+          "col": 2,
+          "layoutParents": [
+            "psionic_storm"
+          ],
+          "prerequisites": {
+            "character_level": 15,
+            "skill_level": [
+              "psionic_storm",
+              1
+            ]
+          }
+        },
+        {
+          "id": "mind_ripple",
+          "row": 4,
+          "col": 1,
+          "layoutParents": [
+            "energize"
+          ],
+          "prerequisites": {
+            "character_level": 20,
+            "skill_level": [
+              "energize",
+              1
+            ]
+          }
+        },
+        {
+          "id": "pinnacle",
+          "row": 2,
+          "col": 1,
+          "layoutParents": [
+            "mind_ripple"
+          ],
+          "prerequisites": {
+            "character_level": 30,
+            "skill_level": [
+              "mind_ripple",
+              1
+            ]
+          }
+        },
+        {
+          "id": "psionic_scream",
+          "row": 2,
+          "col": 3,
+          "layoutParents": [
+            "shuriken_flurry"
+          ],
+          "prerequisites": {
+            "character_level": 5,
+            "skill_level": [
+              "shuriken_flurry",
+              1
+            ]
+          }
+        },
+        {
+          "id": "psionic_storm",
+          "row": 4,
+          "col": 3,
+          "layoutParents": [
+            "psionic_scream"
+          ],
+          "prerequisites": {
+            "character_level": 10,
+            "skill_level": [
+              "psionic_scream",
+              1
+            ]
+          }
+        },
+        {
+          "id": "shuriken_flurry",
+          "row": 1,
+          "col": 2
+        }
+      ]
+    },
+    "Reward": {
+      "skill_details": [
+        {
+          "id": "doom",
+          "row": 3,
+          "col": 1,
+          "prerequisites": {
+            "character_level": 90
+          }
+        },
+        {
+          "id": "prismatic_cloak",
+          "row": 1,
+          "col": 1,
+          "prerequisites": {
+            "character_level": 90
+          }
+        },
+        {
+          "id": "vampiric_icon",
+          "row": 1,
+          "col": 3,
+          "prerequisites": {
+            "character_level": 115
+          }
+        },
+        {
+          "id": "way_of_the_raven",
+          "row": 3,
+          "col": 2,
+          "prerequisites": {
+            "character_level": 90
+          }
+        },
+        {
+          "id": "shadow_flow",
+          "row": 3,
+          "col": 3,
+          "prerequisites": {
+            "character_level": 90
+          }
+        }
+      ]
+    },
+    "Innate": {
+      "skill_details": [
+        {
+          "id": "bloodbath_innate",
+          "row": 0,
+          "col": 0
+        }
+      ]
+    }
+  },
+  "Barbarian": {
+    "Nomad": {
+      "skill_details": [
+        {
+          "id": "ancient_blood",
+          "row": 2,
+          "col": 2,
+          "layoutParents": [
+            "wolf_companion"
+          ],
+          "prerequisites": {
+            "character_level": 5,
+            "skill_level": [
+              "wolf_companion",
+              1
+            ]
+          }
+        },
+        {
+          "id": "bear_stance",
+          "row": 4,
+          "col": 3,
+          "layoutParents": [
+            "snake_stance"
+          ],
+          "prerequisites": {
+            "character_level": 15,
+            "skill_level": [
+              "snake_stance",
+              1
+            ]
+          }
+        },
+        {
+          "id": "eagle_stance",
+          "row": 5,
+          "col": 3,
+          "layoutParents": [
+            "bear_stance"
+          ],
+          "prerequisites": {
+            "character_level": 20,
+            "skill_level": [
+              "bear_stance",
+              1
+            ]
+          }
+        },
+        {
+          "id": "hunters_mark",
+          "row": 3,
+          "col": 1,
+          "layoutParents": [
+            "wolf_companion"
+          ],
+          "prerequisites": {
+            "character_level": 10,
+            "skill_level": [
+              "wolf_companion",
+              1
+            ]
+          }
+        },
+        {
+          "id": "lion_stance",
+          "row": 1,
+          "col": 3
+        },
+        {
+          "id": "mountain_king",
+          "row": 4,
+          "col": 2,
+          "layoutParents": [
+            "ancient_blood"
+          ],
+          "prerequisites": {
+            "character_level": 20,
+            "skill_level": [
+              "ancient_blood",
+              1
+            ]
+          }
+        },
+        {
+          "id": "primordial_hunt",
+          "row": 6,
+          "col": 1,
+          "layoutParents": [
+            "wolven_guide"
+          ],
+          "prerequisites": {
+            "character_level": 30,
+            "skill_level": [
+              "wolven_guide",
+              1
+            ]
+          }
+        },
+        {
+          "id": "snake_stance",
+          "row": 3,
+          "col": 3,
+          "layoutParents": [
+            "lion_stance"
+          ],
+          "prerequisites": {
+            "character_level": 10,
+            "skill_level": [
+              "lion_stance",
+              1
+            ]
+          }
+        },
+        {
+          "id": "wolf_companion",
+          "row": 1,
+          "col": 1
+        },
+        {
+          "id": "wolf_stance",
+          "row": 6,
+          "col": 3,
+          "layoutParents": [
+            "eagle_stance"
+          ],
+          "prerequisites": {
+            "character_level": 25,
+            "skill_level": [
+              "eagle_stance",
+              1
+            ]
+          }
+        },
+        {
+          "id": "wolven_guide",
+          "row": 5,
+          "col": 1,
+          "layoutParents": [
+            "hunters_mark"
+          ],
+          "prerequisites": {
+            "character_level": 25,
+            "skill_level": [
+              "hunters_mark",
+              1
+            ]
+          }
+        }
+      ]
+    },
+    "Earthshaker": {
+      "skill_details": [
+        {
+          "id": "aftermath",
+          "row": 6,
+          "col": 3,
+          "layoutParents": [
+            "shower_of_rocks"
+          ],
+          "prerequisites": {
+            "character_level": 50,
+            "skill_level": [
+              [
+                "shower_of_rocks",
+                1
+              ],
+              [
+                "heart_of_stone",
+                1
+              ]
+            ]
+          }
+        },
+        {
+          "id": "earthquake",
+          "row": 1,
+          "col": 3
+        },
+        {
+          "id": "heart_of_stone",
+          "row": 4,
+          "col": 1,
+          "layoutParents": [
+            "thunder_slam"
+          ],
+          "prerequisites": {
+            "character_level": 20,
+            "skill_level": [
+              "thunder_slam",
+              1
+            ],
+            "skill_blocked_by": [
+              "whirlwind",
+              0
+            ]
+          }
+        },
+        {
+          "id": "leap",
+          "row": 3,
+          "col": 3,
+          "layoutParents": [
+            "thunder_slam"
+          ],
+          "prerequisites": {
+            "character_level": 15,
+            "skill_level": [
+              "thunder_slam",
+              1
+            ]
+          }
+        },
+        {
+          "id": "shower_of_rocks",
+          "row": 5,
+          "col": 2,
+          "layoutParents": [
+            "thunder_slam"
+          ],
+          "prerequisites": {
+            "character_level": 25,
+            "skill_level": [
+              "thunder_slam",
+              1
+            ]
+          }
+        },
+        {
+          "id": "tectonics",
+          "row": 5,
+          "col": 1,
+          "layoutParents": [
+            "heart_of_stone"
+          ],
+          "prerequisites": {
+            "character_level": 110,
+            "skill_level": [
+              "heart_of_stone",
+              1
+            ]
+          }
+        },
+        {
+          "id": "thunder_slam",
+          "row": 2,
+          "col": 2,
+          "layoutParents": [
+            "earthquake"
+          ],
+          "prerequisites": {
+            "character_level": 10,
+            "skill_level": [
+              "earthquake",
+              1
+            ]
+          }
+        },
+        {
+          "id": "upheaval",
+          "row": 2,
+          "col": 1,
+          "layoutParents": [
+            "thunder_slam"
+          ],
+          "prerequisites": {
+            "character_level": 15,
+            "skill_level": [
+              "thunder_slam",
+              1
+            ]
+          }
+        }
+      ]
+    },
+    "Windcarver": {
+      "skill_details": [
+        {
+          "id": "executioner",
+          "row": 6,
+          "col": 1,
+          "layoutParents": [
+            "gale_force"
+          ],
+          "prerequisites": {
+            "character_level": 60,
+            "skill_level": [
+              "gale_force",
+              1
+            ]
+          }
+        },
+        {
+          "id": "gale_force",
+          "row": 6,
+          "col": 2,
+          "layoutParents": [
+            "whirlwind"
+          ],
+          "prerequisites": {
+            "character_level": 50,
+            "skill_level": [
+              "whirlwind",
+              1
+            ]
+          }
+        },
+        {
+          "id": "lifestealer",
+          "row": 5,
+          "col": 3,
+          "layoutParents": [
+            "whirlwind"
+          ],
+          "prerequisites": {
+            "character_level": 40,
+            "skill_level": [
+              "whirlwind",
+              1
+            ]
+          }
+        },
+        {
+          "id": "precision",
+          "row": 2,
+          "col": 1,
+          "layoutParents": [
+            "whirlwind"
+          ],
+          "prerequisites": {
+            "character_level": 10,
+            "skill_level": [
+              "whirlwind",
+              1
+            ]
+          }
+        },
+        {
+          "id": "savagery",
+          "row": 3,
+          "col": 3,
+          "layoutParents": [
+            "whirlwind"
+          ],
+          "prerequisites": {
+            "character_level": 20,
+            "skill_level": [
+              "whirlwind",
+              1
+            ]
+          }
+        },
+        {
+          "id": "stoneskin",
+          "row": 4,
+          "col": 1,
+          "layoutParents": [
+            "whirlwind"
+          ],
+          "prerequisites": {
+            "character_level": 30,
+            "skill_level": [
+              "whirlwind",
+              1
+            ]
+          }
+        },
+        {
+          "id": "whirlwind",
+          "row": 1,
+          "col": 2,
+          "prerequisites": {
+            "skill_blocked_by": [
+              "heart_of_stone",
+              0
+            ]
+          }
+        }
+      ]
+    },
+    "Elementalist": {
+      "skill_details": [
+        {
+          "id": "conflux",
+          "row": 1,
+          "col": 2
+        },
+        {
+          "id": "deep_freeze",
+          "row": 4,
+          "col": 2,
+          "layoutParents": [
+            "elemental_overload"
+          ],
+          "prerequisites": {
+            "character_level": 25,
+            "skill_level": [
+              "elemental_overload",
+              1
+            ]
+          }
+        },
+        {
+          "id": "elemental_overload",
+          "row": 3,
+          "col": 2,
+          "layoutParents": [
+            "iron_spiral"
+          ],
+          "prerequisites": {
+            "character_level": 15,
+            "skill_level": [
+              "iron_spiral",
+              1
+            ]
+          }
+        },
+        {
+          "id": "galvanism",
+          "row": 2,
+          "col": 3,
+          "layoutParents": [
+            "iron_spiral"
+          ],
+          "prerequisites": {
+            "character_level": 93,
+            "skill_level": [
+              "iron_spiral",
+              1
+            ]
+          }
+        },
+        {
+          "id": "iron_spiral",
+          "row": 2,
+          "col": 2,
+          "layoutParents": [
+            "conflux"
+          ],
+          "prerequisites": {
+            "character_level": 3,
+            "skill_level": [
+              "conflux",
+              1
+            ]
+          }
+        },
+        {
+          "id": "primordial_strike",
+          "row": 5,
+          "col": 2,
+          "layoutParents": [
+            "thunderstorm",
+            "deep_freeze",
+            "purifying_flame"
+          ],
+          "prerequisites": {
+            "character_level": 40,
+            "skill_level": [
+              [
+                "thunderstorm",
+                1
+              ],
+              [
+                "deep_freeze",
+                1
+              ],
+              [
+                "purifying_flame",
+                1
+              ]
+            ]
+          }
+        },
+        {
+          "id": "purifying_flame",
+          "row": 4,
+          "col": 3,
+          "layoutParents": [
+            "elemental_overload"
+          ],
+          "prerequisites": {
+            "character_level": 30,
+            "skill_level": [
+              "elemental_overload",
+              1
+            ]
+          }
+        },
+        {
+          "id": "thunderstorm",
+          "row": 4,
+          "col": 1,
+          "layoutParents": [
+            "elemental_overload"
+          ],
+          "prerequisites": {
+            "character_level": 15,
+            "skill_level": [
+              "elemental_overload",
+              1
+            ]
+          }
+        }
+      ]
+    },
+    "Warmonger": {
+      "skill_details": [
+        {
+          "id": "aptitude",
+          "row": 5,
+          "col": 1,
+          "layoutParents": [
+            "bloodthirst"
+          ],
+          "prerequisites": {
+            "character_level": 120,
+            "skill_level": [
+              "bloodthirst",
+              1
+            ]
+          }
+        },
+        {
+          "id": "bloodthirst",
+          "row": 3,
+          "col": 2,
+          "layoutParents": [
+            "snake_bite",
+            "overkill"
+          ],
+          "prerequisites": {
+            "tree_points": [
+              "Warmonger",
+              30
+            ],
+            "character_level": 40,
+            "skill_level": [
+              [
+                [
+                  "snake_bite",
+                  1
+                ],
+                [
+                  "overkill",
+                  1
+                ]
+              ]
+            ]
+          }
+        },
+        {
+          "id": "citadel",
+          "row": 6,
+          "col": 2,
+          "layoutParents": [
+            "fortress"
+          ],
+          "prerequisites": {
+            "character_level": 30,
+            "skill_level": [
+              "fortress",
+              1
+            ]
+          }
+        },
+        {
+          "id": "fortress",
+          "row": 6,
+          "col": 1,
+          "prerequisites": {
+            "character_level": 25
+          }
+        },
+        {
+          "id": "mighty_vigor",
+          "row": 4,
+          "col": 1,
+          "layoutParents": [
+            "bloodthirst"
+          ],
+          "prerequisites": {
+            "character_level": 50,
+            "skill_level": [
+              "bloodthirst",
+              1
+            ]
+          }
+        },
+        {
+          "id": "overkill",
+          "row": 2,
+          "col": 3,
+          "layoutParents": [
+            "stampede"
+          ],
+          "prerequisites": {
+            "character_level": 12,
+            "skill_level": [
+              "stampede",
+              1
+            ]
+          }
+        },
+        {
+          "id": "pillage",
+          "row": 5,
+          "col": 2,
+          "layoutParents": [
+            "bloodthirst"
+          ],
+          "prerequisites": {
+            "character_level": 100,
+            "skill_level": [
+              "bloodthirst",
+              1
+            ]
+          }
+        },
+        {
+          "id": "snake_bite",
+          "row": 2,
+          "col": 1,
+          "layoutParents": [
+            "stampede"
+          ],
+          "prerequisites": {
+            "character_level": 12,
+            "skill_level": [
+              "stampede",
+              1
+            ]
+          }
+        },
+        {
+          "id": "stampede",
+          "row": 1,
+          "col": 2
+        },
+        {
+          "id": "unyielding",
+          "row": 4,
+          "col": 3,
+          "layoutParents": [
+            "bloodthirst"
+          ],
+          "prerequisites": {
+            "character_level": 45,
+            "skill_level": [
+              "bloodthirst",
+              1
+            ]
+          }
+        },
+        {
+          "id": "warder",
+          "row": 5,
+          "col": 3,
+          "layoutParents": [
+            "bloodthirst"
+          ],
+          "prerequisites": {
+            "character_level": 90,
+            "skill_level": [
+              "bloodthirst",
+              1
+            ]
+          }
+        }
+      ]
+    },
+    "Shaman": {
+      "skill_details": [
+        {
+          "id": "ancestral_endurance",
+          "row": 5,
+          "col": 3,
+          "layoutParents": [
+            "spirit_reave"
+          ],
+          "prerequisites": {
+            "character_level": 30,
+            "tree_points": [
+              "Shaman",
+              45
+            ],
+            "skill_level": [
+              "spirit_reave",
+              1
+            ]
+          }
+        },
+        {
+          "id": "defender_spirit",
+          "row": 2,
+          "col": 2,
+          "layoutParents": [
+            "guardian_spirit"
+          ],
+          "prerequisites": {
+            "character_level": 6,
+            "skill_level": [
+              "guardian_spirit",
+              1
+            ]
+          }
+        },
+        {
+          "id": "guardian_spirit",
+          "row": 1,
+          "col": 2
+        },
+        {
+          "id": "protector_spirit",
+          "row": 3,
+          "col": 2,
+          "layoutParents": [
+            "defender_spirit"
+          ],
+          "prerequisites": {
+            "character_level": 12,
+            "skill_level": [
+              "defender_spirit",
+              1
+            ]
+          }
+        },
+        {
+          "id": "shamanic_trance",
+          "row": 4,
+          "col": 1,
+          "layoutParents": [
+            "protector_spirit"
+          ],
+          "prerequisites": {
+            "character_level": 20,
+            "skill_level": [
+              "protector_spirit",
+              1
+            ]
+          }
+        },
+        {
+          "id": "spirit_bond",
+          "row": 6,
+          "col": 3,
+          "layoutParents": [
+            "ancestral_endurance"
+          ],
+          "prerequisites": {
+            "character_level": 70,
+            "skill_level": [
+              "ancestral_endurance",
+              1
+            ]
+          }
+        },
+        {
+          "id": "spirit_reave",
+          "row": 4,
+          "col": 3,
+          "layoutParents": [
+            "protector_spirit"
+          ],
+          "prerequisites": {
+            "character_level": 20,
+            "skill_level": [
+              "protector_spirit",
+              1
+            ]
+          }
+        },
+        {
+          "id": "spirit_walk",
+          "row": 5,
+          "col": 2,
+          "layoutParents": [
+            "shamanic_trance",
+            "spirit_reave"
+          ],
+          "prerequisites": {
+            "character_level": 25,
+            "skill_level": [
+              [
+                "shamanic_trance",
+                1
+              ],
+              [
+                "spirit_reave",
+                1
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    "Reward": {
+      "skill_details": [
+        {
+          "id": "gladiators_dominance",
+          "row": 3,
+          "col": 3,
+          "prerequisites": {
+            "character_level": 90
+          }
+        },
+        {
+          "id": "immortal",
+          "row": 1,
+          "col": 1,
+          "prerequisites": {
+            "character_level": 90
+          }
+        },
+        {
+          "id": "nephalem_spirit",
+          "row": 3,
+          "col": 1,
+          "prerequisites": {
+            "character_level": 90
+          }
+        },
+        {
+          "id": "runemaster",
+          "row": 3,
+          "col": 2,
+          "prerequisites": {
+            "character_level": 90
+          }
+        },
+        {
+          "id": "thundergod",
+          "row": 1,
+          "col": 3,
+          "prerequisites": {
+            "character_level": 115
+          }
+        }
+      ]
+    },
+    "Innate": {
+      "skill_details": [
+        {
+          "id": "titans_fortitude_innate",
+          "row": 0,
+          "col": 0
+        }
+      ]
+    }
+  },
+  "Druid": {
+    "Nature": {
+      "skill_details": [
+        {
+          "id": "barkskin",
+          "row": 3,
+          "col": 2,
+          "layoutParents": [
+            "harvest"
+          ],
+          "prerequisites": {
+            "character_level": 10,
+            "skill_level": [
+              "harvest",
+              1
+            ]
+          }
+        },
+        {
+          "id": "bloom",
+          "row": 6,
+          "col": 1,
+          "layoutParents": [
+            "harvesters"
+          ],
+          "prerequisites": {
+            "character_level": 25,
+            "skill_level": [
+              "harvesters",
+              1
+            ]
+          }
+        },
+        {
+          "id": "devouring_cloud",
+          "row": 4,
+          "col": 3,
+          "layoutParents": [
+            "barkskin"
+          ],
+          "prerequisites": {
+            "character_level": 15,
+            "skill_level": [
+              "barkskin",
+              1
+            ]
+          }
+        },
+        {
+          "id": "growth",
+          "row": 6,
+          "col": 3,
+          "layoutParents": [
+            "harvesters"
+          ],
+          "prerequisites": {
+            "character_level": 35,
+            "skill_level": [
+              "harvesters",
+              1
+            ]
+          }
+        },
+        {
+          "id": "harvest",
+          "row": 1,
+          "col": 2
+        },
+        {
+          "id": "harvesters",
+          "row": 5,
+          "col": 2,
+          "layoutParents": [
+            "barkskin"
+          ],
+          "prerequisites": {
+            "character_level": 20,
+            "skill_level": [
+              "barkskin",
+              1
+            ]
+          }
+        },
+        {
+          "id": "infected_roots",
+          "row": 2,
+          "col": 1,
+          "layoutParents": [
+            "harvest"
+          ],
+          "prerequisites": {
+            "character_level": 5,
+            "skill_level": [
+              "harvest",
+              1
+            ]
+          }
+        }
+      ]
+    },
+    "Werewolf": {
+      "skill_details": [
+        {
+          "id": "ceaseless_fury",
+          "row": 2,
+          "col": 1,
+          "layoutParents": [
+            "harbinger"
+          ],
+          "prerequisites": {
+            "character_level": 6,
+            "skill_level": [
+              "harbinger",
+              1
+            ]
+          }
+        },
+        {
+          "id": "feed_the_pack",
+          "row": 3,
+          "col": 2,
+          "layoutParents": [
+            "harbinger"
+          ],
+          "prerequisites": {
+            "character_level": 10,
+            "skill_level": [
+              "harbinger",
+              1
+            ]
+          }
+        },
+        {
+          "id": "feral_escalation",
+          "row": 4,
+          "col": 3,
+          "layoutParents": [
+            "mana_pulse"
+          ],
+          "prerequisites": {
+            "character_level": 25,
+            "skill_level": [
+              "mana_pulse",
+              1
+            ]
+          }
+        },
+        {
+          "id": "harbinger",
+          "row": 2,
+          "col": 2,
+          "layoutParents": [
+            "werewolf_form"
+          ],
+          "prerequisites": {
+            "character_level": 5,
+            "skill_level": [
+              "werewolf_form",
+              1
+            ]
+          }
+        },
+        {
+          "id": "howl_of_the_spirits",
+          "row": 6,
+          "col": 2,
+          "layoutParents": [
+            "feed_the_pack"
+          ],
+          "prerequisites": {
+            "character_level": 50,
+            "skill_level": [
+              "feed_the_pack",
+              1
+            ]
+          }
+        },
+        {
+          "id": "lunar_assault",
+          "row": 1,
+          "col": 1,
+          "layoutParents": [
+            "werewolf_form"
+          ],
+          "prerequisites": {
+            "character_level": 4,
+            "skill_level": [
+              "werewolf_form",
+              1
+            ]
+          }
+        },
+        {
+          "id": "mana_pulse",
+          "row": 1,
+          "col": 3,
+          "layoutParents": [
+            "werewolf_form"
+          ],
+          "prerequisites": {
+            "character_level": 3,
+            "skill_level": [
+              "werewolf_form",
+              1
+            ]
+          }
+        },
+        {
+          "id": "twisted_claw",
+          "row": 4,
+          "col": 1,
+          "layoutParents": [
+            "feed_the_pack"
+          ],
+          "prerequisites": {
+            "character_level": 15,
+            "skill_level": [
+              "feed_the_pack",
+              1
+            ]
+          }
+        },
+        {
+          "id": "werewolf_form",
+          "row": 1,
+          "col": 2
+        }
+      ]
+    },
+    "Wereowl": {
+      "skill_details": [
+        {
+          "id": "charged_talons",
+          "row": 2,
+          "col": 1,
+          "layoutParents": [
+            "earth_talons"
+          ],
+          "prerequisites": {
+            "character_level": 9,
+            "skill_level": [
+              "earth_talons",
+              1
+            ]
+          }
+        },
+        {
+          "id": "earth_talons",
+          "row": 1,
+          "col": 2,
+          "layoutParents": [
+            "wereowl_form"
+          ],
+          "prerequisites": {
+            "character_level": 3,
+            "skill_level": [
+              "wereowl_form",
+              1
+            ]
+          }
+        },
+        {
+          "id": "egg_trap",
+          "row": 5,
+          "col": 2,
+          "layoutParents": [
+            "raid"
+          ],
+          "prerequisites": {
+            "character_level": 24,
+            "skill_level": [
+              "raid",
+              1
+            ]
+          }
+        },
+        {
+          "id": "ferocity",
+          "row": 2,
+          "col": 3,
+          "layoutParents": [
+            "wereowl_form"
+          ],
+          "prerequisites": {
+            "character_level": 6,
+            "skill_level": [
+              "wereowl_form",
+              1
+            ]
+          }
+        },
+        {
+          "id": "progenys_blessing",
+          "row": 6,
+          "col": 2,
+          "layoutParents": [
+            "egg_trap"
+          ],
+          "prerequisites": {
+            "character_level": 40,
+            "skill_level": [
+              "egg_trap",
+              1
+            ]
+          }
+        },
+        {
+          "id": "raid",
+          "row": 3,
+          "col": 2,
+          "layoutParents": [
+            "earth_talons"
+          ],
+          "prerequisites": {
+            "character_level": 12,
+            "skill_level": [
+              "earth_talons",
+              1
+            ]
+          }
+        },
+        {
+          "id": "steel_wings",
+          "row": 5,
+          "col": 3,
+          "layoutParents": [
+            "raid",
+            "ferocity"
+          ],
+          "prerequisites": {
+            "character_level": 30,
+            "skill_level": [
+              [
+                "raid",
+                1
+              ],
+              [
+                "ferocity",
+                1
+              ]
+            ]
+          }
+        },
+        {
+          "id": "wereowl_form",
+          "row": 1,
+          "col": 3
+        }
+      ]
+    },
+    "Werebear": {
+      "skill_details": [
+        {
+          "id": "ancestral_force",
+          "row": 6,
+          "col": 3,
+          "layoutParents": [
+            "idol_of_scosglen"
+          ],
+          "prerequisites": {
+            "character_level": 40,
+            "skill_level": [
+              "idol_of_scosglen",
+              1
+            ]
+          }
+        },
+        {
+          "id": "ancestral_protection",
+          "row": 5,
+          "col": 3,
+          "layoutParents": [
+            "idol_of_scosglen"
+          ],
+          "prerequisites": {
+            "character_level": 25,
+            "skill_level": [
+              "idol_of_scosglen",
+              1
+            ]
+          }
+        },
+        {
+          "id": "bestial_potency",
+          "row": 2,
+          "col": 1,
+          "layoutParents": [
+            "werebear_morph"
+          ],
+          "prerequisites": {
+            "character_level": 5,
+            "skill_level": [
+              "werebear_morph",
+              1
+            ]
+          }
+        },
+        {
+          "id": "hunger",
+          "row": 6,
+          "col": 1,
+          "layoutParents": [
+            "primal_dominance"
+          ],
+          "prerequisites": {
+            "character_level": 30,
+            "skill_level": [
+              "primal_dominance",
+              1
+            ]
+          }
+        },
+        {
+          "id": "idol_of_scosglen",
+          "row": 5,
+          "col": 2,
+          "layoutParents": [
+            "ravage"
+          ],
+          "prerequisites": {
+            "character_level": 20,
+            "skill_level": [
+              "ravage",
+              1
+            ]
+          }
+        },
+        {
+          "id": "primal_dominance",
+          "row": 4,
+          "col": 1,
+          "layoutParents": [
+            "bestial_potency"
+          ],
+          "prerequisites": {
+            "character_level": 15,
+            "skill_level": [
+              "bestial_potency",
+              1
+            ]
+          }
+        },
+        {
+          "id": "ravage",
+          "row": 3,
+          "col": 2,
+          "layoutParents": [
+            "rend"
+          ],
+          "prerequisites": {
+            "character_level": 15,
+            "skill_level": [
+              "rend",
+              1
+            ]
+          }
+        },
+        {
+          "id": "rend",
+          "row": 1,
+          "col": 2,
+          "layoutParents": [
+            "werebear_morph"
+          ],
+          "prerequisites": {
+            "character_level": 4,
+            "skill_level": [
+              "werebear_morph",
+              1
+            ]
+          }
+        },
+        {
+          "id": "werebear_morph",
+          "row": 1,
+          "col": 1
+        },
+        {
+          "id": "wildfire",
+          "row": 3,
+          "col": 3,
+          "layoutParents": [
+            "rend"
+          ],
+          "prerequisites": {
+            "character_level": 10,
+            "skill_level": [
+              "rend",
+              1
+            ]
+          }
+        }
+      ]
+    },
+    "Hunter": {
+      "skill_details": [
+        {
+          "id": "bear_companion",
+          "row": 3,
+          "col": 2,
+          "layoutParents": [
+            "erupting_strike"
+          ],
+          "prerequisites": {
+            "character_level": 20,
+            "skill_level": [
+              "erupting_strike",
+              1
+            ]
+          }
+        },
+        {
+          "id": "cascade",
+          "row": 2,
+          "col": 1,
+          "layoutParents": [
+            "steady_shot"
+          ],
+          "prerequisites": {
+            "character_level": 3,
+            "skill_level": [
+              "steady_shot",
+              1
+            ]
+          }
+        },
+        {
+          "id": "erupting_strike",
+          "row": 2,
+          "col": 2,
+          "layoutParents": [
+            "cascade",
+            "heartseeker"
+          ],
+          "prerequisites": {
+            "skill_level": [
+              [
+                "cascade",
+                1
+              ],
+              [
+                "heartseeker",
+                1
+              ]
+            ]
+          }
+        },
+        {
+          "id": "heart_of_the_pack",
+          "row": 4,
+          "col": 2,
+          "layoutParents": [
+            "bear_companion"
+          ],
+          "prerequisites": {
+            "character_level": 25,
+            "skill_level": [
+              "bear_companion",
+              1
+            ]
+          }
+        },
+        {
+          "id": "heartseeker",
+          "row": 2,
+          "col": 3,
+          "layoutParents": [
+            "steady_shot"
+          ],
+          "prerequisites": {
+            "skill_level": [
+              "steady_shot",
+              1
+            ]
+          }
+        },
+        {
+          "id": "pathfinder",
+          "row": 5,
+          "col": 2,
+          "layoutParents": [
+            "heart_of_the_pack"
+          ],
+          "prerequisites": {
+            "character_level": 35,
+            "skill_level": [
+              "heart_of_the_pack",
+              1
+            ]
+          }
+        },
+        {
+          "id": "primal_bond",
+          "row": 3,
+          "col": 3,
+          "layoutParents": [
+            "bear_companion"
+          ],
+          "prerequisites": {
+            "character_level": 30,
+            "skill_level": [
+              "bear_companion",
+              25
+            ]
+          }
+        },
+        {
+          "id": "steady_shot",
+          "row": 1,
+          "col": 2
+        },
+        {
+          "id": "tracking",
+          "row": 6,
+          "col": 2,
+          "layoutParents": [
+            "pathfinder"
+          ],
+          "prerequisites": {
+            "character_level": 70,
+            "tree_points": [
+              "Hunter",
+              70
+            ],
+            "skill_level": [
+              "pathfinder",
+              1
+            ]
+          }
+        }
+      ]
+    },
+    "Seer": {
+      "skill_details": [
+        {
+          "id": "armageddon",
+          "row": 5,
+          "col": 1,
+          "layoutParents": [
+            "spiritual_alignment",
+            "rain_of_fire"
+          ],
+          "prerequisites": {
+            "character_level": 30,
+            "skill_level": [
+              [
+                "spiritual_alignment",
+                1
+              ],
+              [
+                "rain_of_fire",
+                1
+              ]
+            ]
+          }
+        },
+        {
+          "id": "ember_spirit",
+          "row": 1,
+          "col": 1
+        },
+        {
+          "id": "frigid_domain",
+          "row": 5,
+          "col": 3,
+          "layoutParents": [
+            "spiritual_alignment"
+          ],
+          "prerequisites": {
+            "character_level": 30,
+            "skill_level": [
+              "spiritual_alignment",
+              1
+            ]
+          }
+        },
+        {
+          "id": "hunting_banshee",
+          "row": 2,
+          "col": 3,
+          "prerequisites": {
+            "character_level": 8
+          }
+        },
+        {
+          "id": "pagan_rites",
+          "row": 3,
+          "col": 2,
+          "layoutParents": [
+            "hunting_banshee",
+            "ember_spirit"
+          ],
+          "prerequisites": {
+            "character_level": 12,
+            "skill_level": [
+              [
+                "hunting_banshee",
+                1
+              ],
+              [
+                "ember_spirit",
+                1
+              ]
+            ]
+          }
+        },
+        {
+          "id": "rain_of_fire",
+          "row": 4,
+          "col": 1,
+          "layoutParents": [
+            "ember_spirit"
+          ],
+          "prerequisites": {
+            "character_level": 20,
+            "skill_level": [
+              "ember_spirit",
+              1
+            ]
+          }
+        },
+        {
+          "id": "spiritual_alignment",
+          "row": 4,
+          "col": 2,
+          "layoutParents": [
+            "pagan_rites"
+          ],
+          "prerequisites": {
+            "character_level": 15,
+            "skill_level": [
+              "pagan_rites",
+              1
+            ]
+          }
+        }
+      ]
+    },
+    "Reward": {
+      "skill_details": [
+        {
+          "id": "faerie_fire",
+          "row": 3,
+          "col": 3,
+          "prerequisites": {
+            "character_level": 90
+          }
+        },
+        {
+          "id": "mythal",
+          "row": 1,
+          "col": 1,
+          "prerequisites": {
+            "character_level": 90
+          }
+        },
+        {
+          "id": "survival_instinct",
+          "row": 3,
+          "col": 2,
+          "prerequisites": {
+            "character_level": 90
+          }
+        },
+        {
+          "id": "symbiosis",
+          "row": 1,
+          "col": 3,
+          "prerequisites": {
+            "character_level": 115
+          }
+        },
+        {
+          "id": "vine_companion",
+          "row": 3,
+          "col": 1,
+          "prerequisites": {
+            "character_level": 90
+          }
+        }
+      ]
+    },
+    "Innate": {
+      "skill_details": [
+        {
+          "id": "mark_of_the_wild_innate",
+          "row": 0,
+          "col": 0
+        }
+      ]
+    }
+  },
+  "Necromancer": {
+    "Deathspeaker": {
+      "skill_details": [
+        {
+          "id": "bane",
+          "row": 5,
+          "col": 2,
+          "prerequisites": {
+            "character_level": 30
+          }
+        },
+        {
+          "id": "death_pact",
+          "row": 6,
+          "col": 1,
+          "layoutParents": [
+            "death_ward"
+          ],
+          "prerequisites": {
+            "character_level": 37,
+            "skill_level": [
+              "death_ward",
+              1
+            ]
+          }
+        },
+        {
+          "id": "death_ward",
+          "row": 4,
+          "col": 1,
+          "layoutParents": [
+            "sacrifices"
+          ],
+          "prerequisites": {
+            "character_level": 15,
+            "skill_level": [
+              "sacrifices",
+              1
+            ]
+          }
+        },
+        {
+          "id": "embalming",
+          "row": 1,
+          "col": 2
+        },
+        {
+          "id": "famine",
+          "row": 4,
+          "col": 3,
+          "layoutParents": [
+            "sacrifices"
+          ],
+          "prerequisites": {
+            "character_level": 20,
+            "skill_level": [
+              "sacrifices",
+              1
+            ]
+          }
+        },
+        {
+          "id": "sacrifices",
+          "row": 3,
+          "col": 2,
+          "layoutParents": [
+            "embalming"
+          ],
+          "prerequisites": {
+            "character_level": 10,
+            "skill_level": [
+              "embalming",
+              1
+            ]
+          }
+        }
+      ]
+    },
+    "Summon": {
+      "skill_details": [
+        {
+          "id": "abyss_knight",
+          "row": 3,
+          "col": 2,
+          "layoutParents": [
+            "night_hawks"
+          ],
+          "prerequisites": {
+            "character_level": 12,
+            "skill_level": [
+              "night_hawks",
+              1
+            ]
+          }
+        },
+        {
+          "id": "blood_skeleton",
+          "row": 1,
+          "col": 2
+        },
+        {
+          "id": "from_the_abyss",
+          "row": 3,
+          "col": 3,
+          "layoutParents": [
+            "abyss_knight"
+          ],
+          "prerequisites": {
+            "character_level": 50,
+            "skill_level": [
+              "abyss_knight",
+              1
+            ]
+          }
+        },
+        {
+          "id": "grim_vision",
+          "row": 1,
+          "col": 3,
+          "layoutParents": [
+            "blood_skeleton"
+          ],
+          "prerequisites": {
+            "character_level": 30,
+            "skill_level": [
+              "blood_skeleton",
+              1
+            ]
+          }
+        },
+        {
+          "id": "iron_golem",
+          "row": 4,
+          "col": 2,
+          "layoutParents": [
+            "abyss_knight"
+          ],
+          "prerequisites": {
+            "character_level": 20,
+            "skill_level": [
+              "abyss_knight",
+              1
+            ]
+          }
+        },
+        {
+          "id": "metal_solace",
+          "row": 4,
+          "col": 1,
+          "layoutParents": [
+            "iron_golem"
+          ],
+          "prerequisites": {
+            "character_level": 60,
+            "skill_level": [
+              "iron_golem",
+              1
+            ]
+          }
+        },
+        {
+          "id": "night_hawks",
+          "row": 2,
+          "col": 2,
+          "layoutParents": [
+            "blood_skeleton"
+          ],
+          "prerequisites": {
+            "character_level": 6,
+            "skill_level": [
+              "blood_skeleton",
+              1
+            ]
+          }
+        },
+        {
+          "id": "resurgence",
+          "row": 6,
+          "col": 2,
+          "layoutParents": [
+            "iron_golem"
+          ],
+          "prerequisites": {
+            "character_level": 25,
+            "skill_level": [
+              "iron_golem",
+              1
+            ]
+          }
+        },
+        {
+          "id": "violent_immolation",
+          "row": 2,
+          "col": 1,
+          "layoutParents": [
+            "night_hawks"
+          ],
+          "prerequisites": {
+            "character_level": 40,
+            "skill_level": [
+              "night_hawks",
+              1
+            ]
+          }
+        }
+      ]
+    },
+    "Melee": {
+      "skill_details": [
+        {
+          "id": "angel_of_death",
+          "row": 3,
+          "col": 2,
+          "layoutParents": [
+            "carnage"
+          ],
+          "prerequisites": {
+            "character_level": 15,
+            "skill_level": [
+              "carnage",
+              1
+            ]
+          }
+        },
+        {
+          "id": "blight_descent",
+          "row": 4,
+          "col": 3,
+          "layoutParents": [
+            "angel_of_death"
+          ],
+          "prerequisites": {
+            "character_level": 35,
+            "skill_level": [
+              "angel_of_death",
+              1
+            ]
+          }
+        },
+        {
+          "id": "carnage",
+          "row": 2,
+          "col": 2,
+          "layoutParents": [
+            "parasite"
+          ],
+          "prerequisites": {
+            "character_level": 5,
+            "skill_level": [
+              "parasite",
+              1
+            ]
+          }
+        },
+        {
+          "id": "deathlord",
+          "row": 5,
+          "col": 2,
+          "layoutParents": [
+            "angel_of_death"
+          ],
+          "prerequisites": {
+            "character_level": 20,
+            "skill_level": [
+              "angel_of_death",
+              1
+            ]
+          }
+        },
+        {
+          "id": "demonic_commune",
+          "row": 6,
+          "col": 1,
+          "layoutParents": [
+            "deathlord"
+          ],
+          "prerequisites": {
+            "character_level": 30,
+            "skill_level": [
+              "deathlord",
+              1
+            ]
+          }
+        },
+        {
+          "id": "ominous_vigor",
+          "row": 6,
+          "col": 3,
+          "layoutParents": [
+            "deathlord"
+          ],
+          "prerequisites": {
+            "tree_points": [
+              "Melee",
+              30
+            ],
+            "character_level": 40,
+            "skill_level": [
+              "deathlord",
+              1
+            ]
+          }
+        },
+        {
+          "id": "onslaught",
+          "row": 3,
+          "col": 1,
+          "layoutParents": [
+            "carnage"
+          ],
+          "prerequisites": {
+            "character_level": 10,
+            "skill_level": [
+              "carnage",
+              1
+            ]
+          }
+        },
+        {
+          "id": "parasite",
+          "row": 1,
+          "col": 2
+        },
+        {
+          "id": "reaper",
+          "row": 2,
+          "col": 3,
+          "layoutParents": [
+            "parasite"
+          ],
+          "prerequisites": {
+            "character_level": 25,
+            "skill_level": [
+              "parasite",
+              5
+            ]
+          }
+        }
+      ]
+    },
+    "Crossbow": {
+      "skill_details": [
+        {
+          "id": "alchemical_preparation",
+          "row": 4,
+          "col": 3,
+          "layoutParents": [
+            "flameburst_shot"
+          ],
+          "prerequisites": {
+            "character_level": 20,
+            "skill_level": [
+              "flameburst_shot",
+              1
+            ]
+          }
+        },
+        {
+          "id": "brutal_effigy",
+          "row": 4,
+          "col": 2,
+          "layoutParents": [
+            "deathly_effigy"
+          ],
+          "prerequisites": {
+            "character_level": 20,
+            "skill_level": [
+              "deathly_effigy",
+              1
+            ]
+          }
+        },
+        {
+          "id": "catapult_shot",
+          "row": 1,
+          "col": 3,
+          "prerequisites": {
+            "skill_blocked_by": [
+              "widowmaker",
+              0
+            ]
+          }
+        },
+        {
+          "id": "deathly_effigy",
+          "row": 3,
+          "col": 1,
+          "layoutParents": [
+            "widowmaker"
+          ],
+          "prerequisites": {
+            "character_level": 10,
+            "skill_level": [
+              "widowmaker",
+              1
+            ]
+          }
+        },
+        {
+          "id": "debilitating_concoction",
+          "row": 5,
+          "col": 3,
+          "layoutParents": [
+            "alchemical_preparation"
+          ],
+          "prerequisites": {
+            "character_level": 30,
+            "skill_level": [
+              "alchemical_preparation",
+              1
+            ]
+          }
+        },
+        {
+          "id": "flameburst_shot",
+          "row": 3,
+          "col": 3,
+          "layoutParents": [
+            "catapult_shot"
+          ],
+          "prerequisites": {
+            "character_level": 10,
+            "skill_level": [
+              "catapult_shot",
+              1
+            ]
+          }
+        },
+        {
+          "id": "life_from_death",
+          "row": 6,
+          "col": 2,
+          "layoutParents": [
+            "voodoo_practice",
+            "debilitating_concoction"
+          ],
+          "prerequisites": {
+            "character_level": 50,
+            "skill_level": [
+              [
+                [
+                  "voodoo_practice",
+                  1
+                ],
+                [
+                  "debilitating_concoction",
+                  1
+                ]
+              ]
+            ]
+          }
+        },
+        {
+          "id": "voodoo_practice",
+          "row": 5,
+          "col": 1,
+          "layoutParents": [
+            "deathly_effigy"
+          ],
+          "prerequisites": {
+            "character_level": 30,
+            "skill_level": [
+              "deathly_effigy",
+              1
+            ]
+          }
+        },
+        {
+          "id": "widowmaker",
+          "row": 1,
+          "col": 1,
+          "prerequisites": {
+            "skill_blocked_by": [
+              "catapult_shot",
+              0
+            ]
+          }
+        }
+      ]
+    },
+    "Malice": {
+      "skill_details": [
+        {
+          "id": "death_ripple",
+          "row": 1,
+          "col": 2,
+          "prerequisites": {
+            "skill_blocked_by": [
+              "torment",
+              0
+            ]
+          }
+        },
+        {
+          "id": "dream_eater",
+          "row": 2,
+          "col": 2,
+          "layoutParents": [
+            "death_ripple"
+          ],
+          "prerequisites": {
+            "character_level": 10,
+            "skill_level": [
+              "death_ripple",
+              1
+            ]
+          }
+        },
+        {
+          "id": "gift_of_blood",
+          "row": 5,
+          "col": 3,
+          "layoutParents": [
+            "torment"
+          ],
+          "prerequisites": {
+            "character_level": 50,
+            "skill_level": [
+              "torment",
+              1
+            ]
+          }
+        },
+        {
+          "id": "nightwalker",
+          "row": 3,
+          "col": 2,
+          "layoutParents": [
+            "pestilence",
+            "dream_eater"
+          ],
+          "prerequisites": {
+            "character_level": 50,
+            "skill_level": [
+              [
+                [
+                  "pestilence",
+                  1
+                ],
+                [
+                  "dream_eater",
+                  1
+                ]
+              ]
+            ]
+          }
+        },
+        {
+          "id": "occult_path",
+          "row": 2,
+          "col": 3,
+          "layoutParents": [
+            "dream_eater"
+          ],
+          "prerequisites": {
+            "tree_points": [
+              "Malice",
+              20
+            ],
+            "character_level": 30,
+            "skill_level": [
+              "dream_eater",
+              1
+            ]
+          }
+        },
+        {
+          "id": "pestilence",
+          "row": 5,
+          "col": 2,
+          "layoutParents": [
+            "torment"
+          ],
+          "prerequisites": {
+            "character_level": 5,
+            "skill_level": [
+              "torment",
+              1
+            ]
+          }
+        },
+        {
+          "id": "relentless",
+          "row": 5,
+          "col": 1,
+          "layoutParents": [
+            "torment"
+          ],
+          "prerequisites": {
+            "character_level": 115,
+            "skill_level": [
+              "torment",
+              1
+            ]
+          }
+        },
+        {
+          "id": "terror",
+          "row": 2,
+          "col": 1,
+          "layoutParents": [
+            "dream_eater"
+          ],
+          "prerequisites": {
+            "character_level": 20,
+            "skill_level": [
+              "dream_eater",
+              1
+            ]
+          }
+        },
+        {
+          "id": "torment",
+          "row": 6,
+          "col": 2,
+          "prerequisites": {
+            "skill_blocked_by": [
+              "death_ripple",
+              0
+            ]
+          }
+        }
+      ]
+    },
+    "Totem": {
+      "skill_details": [
+        {
+          "id": "apprenticeship",
+          "row": 2,
+          "col": 2
+        },
+        {
+          "id": "dark_gathering",
+          "row": 3,
+          "col": 2,
+          "layoutParents": [
+            "apprenticeship"
+          ],
+          "prerequisites": {
+            "character_level": 15,
+            "skill_level": [
+              "apprenticeship",
+              1
+            ]
+          }
+        },
+        {
+          "id": "dirge",
+          "row": 5,
+          "col": 2,
+          "layoutParents": [
+            "dark_gathering"
+          ],
+          "prerequisites": {
+            "character_level": 30,
+            "skill_level": [
+              "dark_gathering",
+              1
+            ]
+          }
+        },
+        {
+          "id": "fireheart_totem",
+          "row": 1,
+          "col": 1,
+          "layoutParents": [
+            "apprenticeship"
+          ],
+          "prerequisites": {
+            "skill_level": [
+              "apprenticeship",
+              1
+            ]
+          }
+        },
+        {
+          "id": "frostclaw_totem",
+          "row": 1,
+          "col": 3,
+          "layoutParents": [
+            "apprenticeship"
+          ],
+          "prerequisites": {
+            "character_level": 15,
+            "skill_level": [
+              "apprenticeship",
+              1
+            ]
+          }
+        },
+        {
+          "id": "soulbond",
+          "row": 6,
+          "col": 1,
+          "layoutParents": [
+            "dirge"
+          ],
+          "prerequisites": {
+            "character_level": 40,
+            "skill_level": [
+              "dirge",
+              1
+            ],
+            "skill_blocked_by": [
+              "soulchain",
+              0
+            ]
+          }
+        },
+        {
+          "id": "soulchain",
+          "row": 6,
+          "col": 3,
+          "layoutParents": [
+            "dirge"
+          ],
+          "prerequisites": {
+            "character_level": 40,
+            "skill_level": [
+              "dirge",
+              1
+            ],
+            "skill_blocked_by": [
+              "soulbond",
+              0
+            ]
+          }
+        },
+        {
+          "id": "stormeye_totem",
+          "row": 1,
+          "col": 2,
+          "layoutParents": [
+            "apprenticeship"
+          ],
+          "prerequisites": {
+            "character_level": 10,
+            "skill_level": [
+              "apprenticeship",
+              1
+            ]
+          }
+        }
+      ]
+    },
+    "Reward": {
+      "skill_details": [
+        {
+          "id": "jinn",
+          "row": 3,
+          "col": 3,
+          "prerequisites": {
+            "character_level": 90
+          }
+        },
+        {
+          "id": "land_of_the_dead",
+          "row": 1,
+          "col": 3
+        },
+        {
+          "id": "rathmas_chosen",
+          "row": 3,
+          "col": 1,
+          "prerequisites": {
+            "character_level": 90
+          }
+        },
+        {
+          "id": "talons_hold",
+          "row": 1,
+          "col": 1,
+          "prerequisites": {
+            "character_level": 90
+          }
+        },
+        {
+          "id": "veil_king",
+          "row": 3,
+          "col": 2,
+          "prerequisites": {
+            "character_level": 90
+          }
+        }
+      ]
+    },
+    "Innate": {
+      "skill_details": [
+        {
+          "id": "bend_the_shadows_innate",
+          "row": 0,
+          "col": 0
+        }
+      ]
+    }
+  },
+  "Paladin": {
+    "Aspects": {
+      "skill_details": [
+        {
+          "id": "conclave",
+          "row": 5,
+          "col": 1,
+          "layoutParents": [
+            "servants_of_valor"
+          ],
+          "prerequisites": {
+            "character_level": 40,
+            "skill_level": [
+              "servants_of_valor",
+              1
+            ]
+          }
+        },
+        {
+          "id": "habeas_corpus",
+          "row": 6,
+          "col": 3,
+          "layoutParents": [
+            "resurrect"
+          ],
+          "prerequisites": {
+            "character_level": 90,
+            "skill_level": [
+              "resurrect",
+              1
+            ]
+          }
+        },
+        {
+          "id": "resurrect",
+          "row": 6,
+          "col": 1,
+          "layoutParents": [
+            "servants_of_valor"
+          ],
+          "prerequisites": {
+            "character_level": 90,
+            "skill_level": [
+              "servants_of_valor",
+              10
+            ]
+          }
+        },
+        {
+          "id": "elemental_wisdom",
+          "row": 1,
+          "col": 2
+        },
+        {
+          "id": "fervor",
+          "row": 5,
+          "col": 3,
+          "layoutParents": [
+            "servants_of_valor"
+          ],
+          "prerequisites": {
+            "character_level": 50,
+            "skill_level": [
+              "servants_of_valor",
+              1
+            ]
+          }
+        },
+        {
+          "id": "servants_of_valor",
+          "row": 5,
+          "col": 2,
+          "layoutParents": [
+            "ward_of_fate"
+          ],
+          "prerequisites": {
+            "character_level": 35,
+            "skill_level": [
+              "ward_of_fate",
+              1
+            ]
+          }
+        },
+        {
+          "id": "spark_of_hope",
+          "row": 3,
+          "col": 2,
+          "layoutParents": [
+            "veneration_of_justice"
+          ],
+          "prerequisites": {
+            "character_level": 10,
+            "skill_level": [
+              "veneration_of_justice",
+              1
+            ]
+          }
+        },
+        {
+          "id": "valiance",
+          "row": 4,
+          "col": 3,
+          "layoutParents": [
+            "ward_of_fate"
+          ],
+          "prerequisites": {
+            "character_level": 35,
+            "skill_level": [
+              "ward_of_fate",
+              1
+            ]
+          }
+        },
+        {
+          "id": "veneration_of_justice",
+          "row": 2,
+          "col": 2,
+          "layoutParents": [
+            "elemental_wisdom"
+          ],
+          "prerequisites": {
+            "character_level": 5,
+            "skill_level": [
+              "elemental_wisdom",
+              1
+            ]
+          }
+        },
+        {
+          "id": "ward_of_fate",
+          "row": 4,
+          "col": 2,
+          "layoutParents": [
+            "spark_of_hope"
+          ],
+          "prerequisites": {
+            "character_level": 30,
+            "skill_level": [
+              "spark_of_hope",
+              1
+            ]
+          }
+        }
+      ]
+    },
+    "Templar": {
+      "skill_details": [
+        {
+          "id": "colosseum",
+          "row": 6,
+          "col": 1,
+          "layoutParents": [
+            "lionheart"
+          ],
+          "prerequisites": {
+            "character_level": 55,
+            "skill_level": [
+              "lionheart",
+              1
+            ]
+          }
+        },
+        {
+          "id": "consecration",
+          "row": 2,
+          "col": 3,
+          "layoutParents": [
+            "divine_judgement"
+          ],
+          "prerequisites": {
+            "character_level": 15,
+            "skill_level": [
+              "divine_judgement",
+              1
+            ],
+            "skill_blocked_by": [
+              "sanctity",
+              0
+            ]
+          }
+        },
+        {
+          "id": "divine_judgement",
+          "row": 2,
+          "col": 2,
+          "layoutParents": [
+            "retaliate"
+          ],
+          "prerequisites": {
+            "character_level": 10,
+            "skill_level": [
+              "retaliate",
+              1
+            ]
+          }
+        },
+        {
+          "id": "holy_fire",
+          "row": 5,
+          "col": 2,
+          "layoutParents": [
+            "divine_judgement"
+          ],
+          "prerequisites": {
+            "character_level": 20,
+            "skill_level": [
+              "divine_judgement",
+              1
+            ]
+          }
+        },
+        {
+          "id": "lionheart",
+          "row": 4,
+          "col": 1,
+          "layoutParents": [
+            "divine_judgement"
+          ],
+          "prerequisites": {
+            "character_level": 20,
+            "skill_level": [
+              "divine_judgement",
+              1
+            ]
+          }
+        },
+        {
+          "id": "retaliate",
+          "row": 1,
+          "col": 2
+        },
+        {
+          "id": "sanctity",
+          "row": 2,
+          "col": 1,
+          "layoutParents": [
+            "divine_judgement"
+          ],
+          "prerequisites": {
+            "character_level": 15,
+            "skill_level": [
+              "divine_judgement",
+              1
+            ],
+            "skill_blocked_by": [
+              "consecration",
+              0
+            ]
+          }
+        }
+      ]
+    },
+    "Incarnation": {
+      "skill_details": [
+        {
+          "id": "annihilation",
+          "row": 5,
+          "col": 2,
+          "layoutParents": [
+            "dragonbone_armor"
+          ],
+          "prerequisites": {
+            "character_level": 20,
+            "skill_level": [
+              "dragonbone_armor",
+              1
+            ]
+          }
+        },
+        {
+          "id": "apex_predator",
+          "row": 4,
+          "col": 1,
+          "layoutParents": [
+            "dragon_jaws"
+          ],
+          "prerequisites": {
+            "character_level": 25,
+            "skill_level": [
+              "dragon_jaws",
+              1
+            ]
+          }
+        },
+        {
+          "id": "combustion",
+          "row": 6,
+          "col": 3,
+          "layoutParents": [
+            "annihilation"
+          ],
+          "prerequisites": {
+            "character_level": 75,
+            "skill_level": [
+              "annihilation",
+              1
+            ]
+          }
+        },
+        {
+          "id": "dragon_jaws",
+          "row": 1,
+          "col": 1
+        },
+        {
+          "id": "dragonbone_armor",
+          "row": 3,
+          "col": 2,
+          "layoutParents": [
+            "dragon_jaws"
+          ],
+          "prerequisites": {
+            "character_level": 15,
+            "skill_level": [
+              "dragon_jaws",
+              1
+            ]
+          }
+        },
+        {
+          "id": "dragons_breath",
+          "row": 5,
+          "col": 3,
+          "layoutParents": [
+            "annihilation"
+          ],
+          "prerequisites": {
+            "character_level": 40,
+            "skill_level": [
+              "annihilation",
+              1
+            ]
+          }
+        },
+        {
+          "id": "scion",
+          "row": 3,
+          "col": 3,
+          "layoutParents": [
+            "solar_flare"
+          ],
+          "prerequisites": {
+            "character_level": 20,
+            "skill_level": [
+              "solar_flare",
+              1
+            ]
+          }
+        },
+        {
+          "id": "solar_flare",
+          "row": 2,
+          "col": 3,
+          "layoutParents": [
+            "dragon_jaws"
+          ],
+          "prerequisites": {
+            "character_level": 10,
+            "skill_level": [
+              "dragon_jaws",
+              1
+            ]
+          }
+        }
+      ]
+    },
+    "Nephalem": {
+      "skill_details": [
+        {
+          "id": "vessel_of_judgement",
+          "row": 1,
+          "col": 3
+        },
+        {
+          "id": "vessel_of_retribution",
+          "row": 5,
+          "col": 1
+        },
+        {
+          "id": "absolution",
+          "row": 2,
+          "col": 2,
+          "layoutParents": [
+            "vessel_of_judgement",
+            "life_and_death"
+          ],
+          "prerequisites": {
+            "character_level": 15,
+            "skill_level": [
+              [
+                "vessel_of_judgement",
+                1
+              ],
+              [
+                "life_and_death",
+                1
+              ]
+            ]
+          }
+        },
+        {
+          "id": "life_and_death",
+          "row": 1,
+          "col": 1,
+          "layoutParents": [
+            "vessel_of_judgement"
+          ],
+          "prerequisites": {
+            "character_level": 10,
+            "skill_level": [
+              "vessel_of_judgement",
+              1
+            ]
+          }
+        },
+        {
+          "id": "reverence",
+          "row": 3,
+          "col": 2,
+          "layoutParents": [
+            "absolution",
+            "sentence"
+          ],
+          "prerequisites": {
+            "character_level": 25,
+            "skill_level": [
+              [
+                "absolution",
+                1
+              ],
+              [
+                "sentence",
+                1
+              ]
+            ]
+          }
+        },
+        {
+          "id": "solstice_and_equinox",
+          "row": 5,
+          "col": 3,
+          "layoutParents": [
+            "vessel_of_retribution"
+          ],
+          "prerequisites": {
+            "character_level": 5,
+            "skill_level": [
+              "vessel_of_retribution",
+              1
+            ]
+          }
+        },
+        {
+          "id": "sentence",
+          "row": 4,
+          "col": 2,
+          "layoutParents": [
+            "vessel_of_retribution",
+            "solstice_and_equinox"
+          ],
+          "prerequisites": {
+            "character_level": 15,
+            "skill_level": [
+              [
+                "vessel_of_retribution",
+                1
+              ],
+              [
+                "solstice_and_equinox",
+                1
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    "Ritualist": {
+      "skill_details": [
+        {
+          "id": "blood_thorns",
+          "row": 3,
+          "col": 2,
+          "layoutParents": [
+            "lemures"
+          ],
+          "prerequisites": {
+            "character_level": 20,
+            "skill_level": [
+              "lemures",
+              1
+            ]
+          }
+        },
+        {
+          "id": "frostbite",
+          "row": 6,
+          "col": 1,
+          "prerequisites": {
+            "character_level": 90
+          }
+        },
+        {
+          "id": "grim_presence",
+          "row": 1,
+          "col": 1,
+          "prerequisites": {
+            "skill_blocked_by": [
+              "tainted_blood",
+              0
+            ]
+          }
+        },
+        {
+          "id": "lemures",
+          "row": 2,
+          "col": 2,
+          "layoutParents": [
+            "grim_presence"
+          ],
+          "prerequisites": {
+            "character_level": 3,
+            "skill_level": [
+              "grim_presence",
+              1
+            ]
+          }
+        },
+        {
+          "id": "possession",
+          "row": 4,
+          "col": 1,
+          "layoutParents": [
+            "grim_presence"
+          ],
+          "prerequisites": {
+            "character_level": 10,
+            "skill_level": [
+              "grim_presence",
+              1
+            ]
+          }
+        },
+        {
+          "id": "rite_of_the_restless",
+          "row": 2,
+          "col": 3,
+          "layoutParents": [
+            "lemures"
+          ],
+          "prerequisites": {
+            "character_level": 30,
+            "skill_level": [
+              "lemures",
+              1
+            ],
+            "skill_blocked_by": [
+              "rite_of_thorns",
+              0
+            ]
+          }
+        },
+        {
+          "id": "rite_of_thorns",
+          "row": 3,
+          "col": 3,
+          "layoutParents": [
+            "blood_thorns"
+          ],
+          "prerequisites": {
+            "character_level": 30,
+            "skill_level": [
+              "blood_thorns",
+              1
+            ],
+            "skill_blocked_by": [
+              "rite_of_the_restless",
+              0
+            ]
+          }
+        },
+        {
+          "id": "sanguine_covenant",
+          "row": 4,
+          "col": 3,
+          "layoutParents": [
+            "possession"
+          ],
+          "prerequisites": {
+            "character_level": 35,
+            "skill_level": [
+              "possession",
+              1
+            ]
+          }
+        },
+        {
+          "id": "transcendence",
+          "row": 6,
+          "col": 3,
+          "prerequisites": {
+            "character_level": 50
+          }
+        }
+      ]
+    },
+    "Warlock": {
+      "skill_details": [
+        {
+          "id": "acumen",
+          "row": 6,
+          "col": 3,
+          "layoutParents": [
+            "tainted_blood"
+          ],
+          "prerequisites": {
+            "character_level": 70,
+            "skill_level": [
+              "tainted_blood",
+              1
+            ]
+          }
+        },
+        {
+          "id": "confluence",
+          "row": 2,
+          "col": 1,
+          "layoutParents": [
+            "mind_flay"
+          ],
+          "prerequisites": {
+            "character_level": 10,
+            "skill_level": [
+              "mind_flay",
+              1
+            ]
+          }
+        },
+        {
+          "id": "mind_flay",
+          "row": 1,
+          "col": 2
+        },
+        {
+          "id": "slayer",
+          "row": 4,
+          "col": 2,
+          "layoutParents": [
+            "mind_flay"
+          ],
+          "prerequisites": {
+            "character_level": 15,
+            "skill_level": [
+              "mind_flay",
+              1
+            ]
+          }
+        },
+        {
+          "id": "stormlord",
+          "row": 3,
+          "col": 3,
+          "layoutParents": [
+            "mind_flay"
+          ],
+          "prerequisites": {
+            "character_level": 10,
+            "skill_level": [
+              "mind_flay",
+              1
+            ]
+          }
+        },
+        {
+          "id": "symphony_of_destruction",
+          "row": 5,
+          "col": 1,
+          "layoutParents": [
+            "slayer"
+          ],
+          "prerequisites": {
+            "character_level": 30,
+            "skill_level": [
+              "slayer",
+              1
+            ]
+          }
+        },
+        {
+          "id": "tainted_blood",
+          "row": 5,
+          "col": 3,
+          "layoutParents": [
+            "stormlord"
+          ],
+          "prerequisites": {
+            "character_level": 20,
+            "skill_level": [
+              "stormlord",
+              1
+            ],
+            "skill_blocked_by": [
+              "grim_presence",
+              0
+            ]
+          }
+        }
+      ]
+    },
+    "Reward": {
+      "skill_details": [
+        {
+          "id": "blessed_life",
+          "row": 1,
+          "col": 3,
+          "prerequisites": {
+            "character_level": 115
+          }
+        },
+        {
+          "id": "divine_apparition",
+          "row": 1,
+          "col": 1,
+          "prerequisites": {
+            "character_level": 90
+          }
+        },
+        {
+          "id": "dragons_blessing",
+          "row": 3,
+          "col": 1,
+          "prerequisites": {
+            "character_level": 90
+          }
+        },
+        {
+          "id": "arbiter",
+          "row": 3,
+          "col": 2,
+          "prerequisites": {
+            "character_level": 90
+          }
+        },
+        {
+          "id": "superbeast",
+          "row": 3,
+          "col": 3,
+          "prerequisites": {
+            "character_level": 90
+          }
+        }
+      ]
+    },
+    "Innate": {
+      "skill_details": [
+        {
+          "id": "vindicate_innate",
+          "row": 0,
+          "col": 0
+        }
+      ]
+    }
+  },
+  "Sorceress": {
+    "Arcane": {
+      "skill_details": [
+        {
+          "id": "antimass",
+          "row": 5,
+          "col": 3,
+          "layoutParents": [
+            "raven_familiar"
+          ],
+          "prerequisites": {
+            "character_level": 30,
+            "skill_level": [
+              "raven_familiar",
+              1
+            ]
+          }
+        },
+        {
+          "id": "arcane_fury",
+          "row": 6,
+          "col": 2,
+          "layoutParents": [
+            "antimass"
+          ],
+          "prerequisites": {
+            "tree_points": [
+              "Arcane",
+              50
+            ],
+            "character_level": 100,
+            "skill_level": [
+              "antimass",
+              1
+            ]
+          }
+        },
+        {
+          "id": "arcane_torrent",
+          "row": 2,
+          "col": 2,
+          "layoutParents": [
+            "immersion"
+          ],
+          "prerequisites": {
+            "character_level": 5,
+            "skill_level": [
+              "immersion",
+              1
+            ]
+          }
+        },
+        {
+          "id": "immersion",
+          "row": 1,
+          "col": 2
+        },
+        {
+          "id": "mana_sweep",
+          "row": 5,
+          "col": 1,
+          "layoutParents": [
+            "raven_familiar"
+          ],
+          "prerequisites": {
+            "character_level": 30,
+            "skill_level": [
+              "raven_familiar",
+              1
+            ],
+            "skill_blocked_by": [
+              [
+                "havoc",
+                0
+              ],
+              [
+                "entanglement",
+                0
+              ],
+              [
+                "frostborn",
+                0
+              ],
+              [
+                "blight",
+                0
+              ]
+            ]
+          }
+        },
+        {
+          "id": "raven_familiar",
+          "row": 4,
+          "col": 2,
+          "layoutParents": [
+            "arcane_torrent"
+          ],
+          "prerequisites": {
+            "character_level": 20,
+            "skill_level": [
+              "arcane_torrent",
+              1
+            ]
+          }
+        },
+        {
+          "id": "superposition",
+          "row": 5,
+          "col": 2,
+          "layoutParents": [
+            "raven_familiar"
+          ],
+          "prerequisites": {
+            "character_level": 25,
+            "skill_level": [
+              "raven_familiar",
+              1
+            ]
+          }
+        }
+      ]
+    },
+    "Fire": {
+      "skill_details": [
+        {
+          "id": "warmth",
+          "row": 1,
+          "col": 1,
+          "layoutParents": [
+            "molten_core"
+          ],
+          "prerequisites": {
+            "character_level": 5,
+            "skill_level": [
+              "molten_core",
+              1
+            ]
+          }
+        },
+        {
+          "id": "molten_core",
+          "row": 1,
+          "col": 2,
+          "prerequisites": {
+            "character_level": 1,
+            "skill_blocked_by": [
+              "entanglement",
+              0
+            ]
+          }
+        },
+        {
+          "id": "emberstep",
+          "row": 1,
+          "col": 3,
+          "layoutParents": [
+            "molten_core"
+          ],
+          "prerequisites": {
+            "character_level": 15,
+            "skill_level": [
+              "molten_core",
+              1
+            ]
+          }
+        },
+        {
+          "id": "flamefront",
+          "row": 3,
+          "col": 1,
+          "layoutParents": [
+            "molten_core"
+          ],
+          "prerequisites": {
+            "character_level": 1,
+            "skill_level": [
+              "molten_core",
+              1
+            ]
+          }
+        },
+        {
+          "id": "overheat",
+          "row": 3,
+          "col": 2,
+          "layoutParents": [
+            "molten_core"
+          ],
+          "prerequisites": {
+            "character_level": 15,
+            "skill_level": [
+              "molten_core",
+              1
+            ]
+          }
+        },
+        {
+          "id": "flamestrike",
+          "row": 3,
+          "col": 3,
+          "layoutParents": [
+            "molten_core"
+          ],
+          "prerequisites": {
+            "character_level": 15,
+            "skill_level": [
+              "molten_core",
+              1
+            ]
+          }
+        },
+        {
+          "id": "incineration",
+          "row": 4,
+          "col": 1,
+          "layoutParents": [
+            "overheat",
+            "flamefront"
+          ],
+          "prerequisites": {
+            "character_level": 50,
+            "skill_level": [
+              [
+                "flamefront",
+                1
+              ],
+              [
+                "overheat",
+                1
+              ]
+            ]
+          }
+        },
+        {
+          "id": "pyre",
+          "row": 4,
+          "col": 3,
+          "layoutParents": [
+            "overheat",
+            "flamestrike"
+          ],
+          "prerequisites": {
+            "character_level": 50,
+            "skill_level": [
+              [
+                "flamestrike",
+                1
+              ],
+              [
+                "overheat",
+                1
+              ]
+            ]
+          }
+        },
+        {
+          "id": "havoc",
+          "row": 6,
+          "col": 2,
+          "layoutParents": [
+            "overheat"
+          ],
+          "prerequisites": {
+            "tree_points": [
+              "Fire",
+              50
+            ],
+            "character_level": 60,
+            "skill_level": [
+              "overheat",
+              1
+            ],
+            "skill_blocked_by": [
+              "mana_sweep",
+              0
+            ]
+          }
+        }
+      ]
+    },
+    "Lightning": {
+      "skill_details": [
+        {
+          "id": "entanglement",
+          "row": 6,
+          "col": 1,
+          "layoutParents": [
+            "tempest"
+          ],
+          "prerequisites": {
+            "tree_points": [
+              "Lightning",
+              50
+            ],
+            "character_level": 100,
+            "skill_level": [
+              "tempest",
+              1
+            ],
+            "skill_blocked_by": [
+              [
+                "mana_sweep",
+                0
+              ],
+              [
+                "molten_core",
+                0
+              ]
+            ]
+          }
+        },
+        {
+          "id": "eye_of_the_storm",
+          "row": 3,
+          "col": 1,
+          "layoutParents": [
+            "thunderstone"
+          ],
+          "prerequisites": {
+            "character_level": 20,
+            "skill_level": [
+              "thunderstone",
+              1
+            ]
+          }
+        },
+        {
+          "id": "forked_lightning",
+          "row": 1,
+          "col": 3
+        },
+        {
+          "id": "mind_spark",
+          "row": 5,
+          "col": 3,
+          "layoutParents": [
+            "tempest"
+          ],
+          "prerequisites": {
+            "character_level": 100,
+            "skill_level": [
+              "tempest",
+              1
+            ]
+          }
+        },
+        {
+          "id": "tempest",
+          "row": 4,
+          "col": 3,
+          "layoutParents": [
+            "thunderstone"
+          ],
+          "prerequisites": {
+            "character_level": 25,
+            "skill_level": [
+              "thunderstone",
+              1
+            ]
+          }
+        },
+        {
+          "id": "thunderstone",
+          "row": 2,
+          "col": 1,
+          "layoutParents": [
+            "forked_lightning"
+          ],
+          "prerequisites": {
+            "character_level": 15,
+            "skill_level": [
+              "forked_lightning",
+              1
+            ]
+          }
+        }
+      ]
+    },
+    "Cold": {
+      "skill_details": [
+        {
+          "id": "crystalline_barrier",
+          "row": 2,
+          "col": 2,
+          "layoutParents": [
+            "frigid_nova"
+          ],
+          "prerequisites": {
+            "character_level": 10,
+            "skill_level": [
+              "frigid_nova",
+              1
+            ]
+          }
+        },
+        {
+          "id": "frigid_nova",
+          "row": 1,
+          "col": 1
+        },
+        {
+          "id": "frostborn",
+          "row": 6,
+          "col": 2,
+          "layoutParents": [
+            "wintertide"
+          ],
+          "prerequisites": {
+            "tree_points": [
+              "Cold",
+              50
+            ],
+            "character_level": 100,
+            "skill_level": [
+              "wintertide",
+              1
+            ],
+            "skill_blocked_by": [
+              "mana_sweep",
+              0
+            ]
+          }
+        },
+        {
+          "id": "glacial_torrent",
+          "row": 3,
+          "col": 2,
+          "layoutParents": [
+            "crystalline_barrier"
+          ],
+          "prerequisites": {
+            "character_level": 15,
+            "skill_level": [
+              "crystalline_barrier",
+              1
+            ]
+          }
+        },
+        {
+          "id": "hoar_frost",
+          "row": 5,
+          "col": 3,
+          "layoutParents": [
+            "wintertide"
+          ],
+          "prerequisites": {
+            "character_level": 40,
+            "skill_level": [
+              "wintertide",
+              1
+            ]
+          }
+        },
+        {
+          "id": "rime",
+          "row": 5,
+          "col": 1,
+          "layoutParents": [
+            "wintertide"
+          ],
+          "prerequisites": {
+            "character_level": 50,
+            "skill_level": [
+              "wintertide",
+              1
+            ]
+          }
+        },
+        {
+          "id": "wintertide",
+          "row": 4,
+          "col": 2,
+          "layoutParents": [
+            "glacial_torrent"
+          ],
+          "prerequisites": {
+            "character_level": 30,
+            "skill_level": [
+              "glacial_torrent",
+              1
+            ]
+          }
+        }
+      ]
+    },
+    "Poison": {
+      "skill_details": [
+        {
+          "id": "arachnomancy",
+          "row": 4,
+          "col": 2,
+          "layoutParents": [
+            "miasma"
+          ],
+          "prerequisites": {
+            "character_level": 15,
+            "skill_level": [
+              "miasma",
+              1
+            ]
+          }
+        },
+        {
+          "id": "blight",
+          "row": 6,
+          "col": 2,
+          "layoutParents": [
+            "arachnomancy"
+          ],
+          "prerequisites": {
+            "tree_points": [
+              "Poison",
+              50
+            ],
+            "character_level": 100,
+            "skill_level": [
+              "arachnomancy",
+              1
+            ],
+            "skill_blocked_by": [
+              "mana_sweep",
+              0
+            ]
+          }
+        },
+        {
+          "id": "inoculation",
+          "row": 2,
+          "col": 1,
+          "layoutParents": [
+            "miasma"
+          ],
+          "prerequisites": {
+            "character_level": 40,
+            "skill_level": [
+              "miasma",
+              1
+            ]
+          }
+        },
+        {
+          "id": "decay",
+          "row": 3,
+          "col": 1,
+          "layoutParents": [
+            "inoculation"
+          ],
+          "prerequisites": {
+            "character_level": 60,
+            "skill_level": [
+              "inoculation",
+              5
+            ]
+          }
+        },
+        {
+          "id": "elucidation",
+          "row": 3,
+          "col": 3,
+          "layoutParents": [
+            "lorenado"
+          ],
+          "prerequisites": {
+            "character_level": 80,
+            "skill_level": [
+              "lorenado",
+              1
+            ]
+          }
+        },
+        {
+          "id": "lorenado",
+          "row": 1,
+          "col": 3
+        },
+        {
+          "id": "miasma",
+          "row": 2,
+          "col": 2,
+          "layoutParents": [
+            "lorenado"
+          ],
+          "prerequisites": {
+            "character_level": 10,
+            "skill_level": [
+              "lorenado",
+              1
+            ]
+          }
+        }
+      ]
+    },
+    "Melee": {
+      "skill_details": [
+        {
+          "id": "arcane_sustenance",
+          "row": 6,
+          "col": 1,
+          "layoutParents": [
+            "fusillade"
+          ],
+          "prerequisites": {
+            "character_level": 40,
+            "skill_level": [
+              "fusillade",
+              1
+            ]
+          }
+        },
+        {
+          "id": "bladestorm",
+          "row": 2,
+          "col": 2,
+          "layoutParents": [
+            "mooncall"
+          ],
+          "prerequisites": {
+            "character_level": 3,
+            "skill_level": [
+              "mooncall",
+              1
+            ]
+          }
+        },
+        {
+          "id": "cold_blooded",
+          "row": 4,
+          "col": 3,
+          "layoutParents": [
+            "primordial_might"
+          ],
+          "prerequisites": {
+            "character_level": 70,
+            "skill_level": [
+              "primordial_might",
+              1
+            ]
+          }
+        },
+        {
+          "id": "determination",
+          "row": 3,
+          "col": 1,
+          "layoutParents": [
+            "bladestorm"
+          ],
+          "prerequisites": {
+            "character_level": 40,
+            "skill_level": [
+              "bladestorm",
+              1
+            ]
+          }
+        },
+        {
+          "id": "fatal_focus",
+          "row": 4,
+          "col": 1,
+          "layoutParents": [
+            "determination"
+          ],
+          "prerequisites": {
+            "character_level": 70,
+            "skill_level": [
+              "determination",
+              1
+            ]
+          }
+        },
+        {
+          "id": "fusillade",
+          "row": 5,
+          "col": 2,
+          "layoutParents": [
+            "bladestorm"
+          ],
+          "prerequisites": {
+            "character_level": 30,
+            "skill_level": [
+              "bladestorm",
+              1
+            ]
+          }
+        },
+        {
+          "id": "mooncall",
+          "row": 1,
+          "col": 2
+        },
+        {
+          "id": "premonition",
+          "row": 6,
+          "col": 3,
+          "layoutParents": [
+            "fusillade"
+          ],
+          "prerequisites": {
+            "character_level": 90,
+            "skill_level": [
+              "fusillade",
+              1
+            ]
+          }
+        },
+        {
+          "id": "primordial_might",
+          "row": 3,
+          "col": 3,
+          "layoutParents": [
+            "bladestorm"
+          ],
+          "prerequisites": {
+            "character_level": 40,
+            "skill_level": [
+              "bladestorm",
+              1
+            ]
+          }
+        }
+      ]
+    },
+    "Coven": {
+      "skill_details": [
+        {
+          "id": "firedance",
+          "row": 2,
+          "col": 3,
+          "layoutParents": [
+            "living_flame"
+          ],
+          "prerequisites": {
+            "character_level": 30,
+            "skill_level": [
+              "living_flame",
+              1
+            ]
+          }
+        },
+        {
+          "id": "hive",
+          "row": 5,
+          "col": 3,
+          "layoutParents": [
+            "vengeful_power"
+          ],
+          "prerequisites": {
+            "character_level": 30,
+            "skill_level": [
+              "vengeful_power",
+              1
+            ]
+          }
+        },
+        {
+          "id": "ice_elementals",
+          "row": 4,
+          "col": 3,
+          "layoutParents": [
+            "snow_queen"
+          ],
+          "prerequisites": {
+            "character_level": 30,
+            "skill_level": [
+              "snow_queen",
+              1
+            ]
+          }
+        },
+        {
+          "id": "living_flame",
+          "row": 2,
+          "col": 1,
+          "prerequisites": {
+            "character_level": 15
+          }
+        },
+        {
+          "id": "nova_charge",
+          "row": 3,
+          "col": 3,
+          "layoutParents": [
+            "warp_armor"
+          ],
+          "prerequisites": {
+            "character_level": 30,
+            "skill_level": [
+              "warp_armor",
+              1
+            ]
+          }
+        },
+        {
+          "id": "snow_queen",
+          "row": 4,
+          "col": 1,
+          "prerequisites": {
+            "character_level": 15
+          }
+        },
+        {
+          "id": "vengeful_power",
+          "row": 5,
+          "col": 1,
+          "prerequisites": {
+            "character_level": 15
+          }
+        },
+        {
+          "id": "warp_armor",
+          "row": 3,
+          "col": 1,
+          "prerequisites": {
+            "character_level": 15
+          }
+        }
+      ]
+    },
+    "Reward": {
+      "skill_details": [
+        {
+          "id": "baneblade",
+          "row": 3,
+          "col": 3,
+          "prerequisites": {
+            "character_level": 90
+          }
+        },
+        {
+          "id": "chronofield",
+          "row": 3,
+          "col": 1,
+          "prerequisites": {
+            "character_level": 90
+          }
+        },
+        {
+          "id": "force_blast",
+          "row": 1,
+          "col": 3,
+          "prerequisites": {
+            "character_level": 115
+          }
+        },
+        {
+          "id": "symbol_of_esu",
+          "row": 1,
+          "col": 1,
+          "prerequisites": {
+            "character_level": 90
+          }
+        },
+        {
+          "id": "witch_blood",
+          "row": 3,
+          "col": 2,
+          "prerequisites": {
+            "character_level": 90
+          }
+        }
+      ]
+    },
+    "Innate": {
+      "skill_details": [
+        {
+          "id": "mana_shield_innate",
+          "row": 0,
+          "col": 0
+        }
+      ]
+    }
+  }
+}

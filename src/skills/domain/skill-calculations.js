@@ -4,10 +4,8 @@
  */
 
 import Character from '@/character/Character.js';
-import { getFileSkillStore } from '@/tree/skill-data-store.js';
+import { getFileSkillStore } from '@/shared/skill-data-store.js';
 import { isInnateSkill } from './skill-skill-types.js';
-
-export { D2_CALC_BUCKETS, getCalcBucketIndex } from './calc-buckets.js';
 
 /**
  * Max Level Modifier Rules
@@ -116,12 +114,10 @@ const MAX_LEVEL_MODIFIERS = [
     targetSkillNames: ['trinity_arrow', 'barrage'],
     characterLevelDivisor: 4, // +1 max level for every 4 character levels
     maxBonus: 20,
-    startLevel: 15,
     description: 'Increases Trinity Arrow and Barrage max level by 1 for every 4 character levels',
     calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = Character.DEFAULT_LEVEL) {
       if (sourceSkillLevel > 0 && this.targetSkillNames.includes(targetSkillData.skill_name)) {
-        const effectiveLevel = Math.max(0, characterLevel - this.startLevel);
-        return Math.min(Math.floor(effectiveLevel / this.characterLevelDivisor), this.maxBonus);
+        return Math.min(Math.floor(characterLevel / this.characterLevelDivisor), this.maxBonus);
       }
       return 0;
     }
@@ -180,7 +176,7 @@ const MAX_LEVEL_MODIFIERS = [
     }
   },
   {
-    sourceSkillName: 'soulchain', // Elemental Command needs at least 1 point to activate
+    sourceSkillName: 'soulchain', // Soulchain needs at least 1 point to activate
     type: 'affects_multiple_skills',
     targetSkillNames: ['fireheart_totem', 'stormeye_totem', 'frostclaw_totem', 'dark_gathering'],
     description: 'Increases Soulchained totems and Dark Gathering max level by 1 for each base level',
@@ -242,20 +238,20 @@ const MAX_LEVEL_MODIFIERS = [
  * Descriptions from {@link MAX_LEVEL_MODIFIERS} for tooltips.
  * If `sourceSkillName` is set, that description is shown only on that skill’s tooltip.
  * Otherwise the description is shown for the skill(s) the rule applies to (target / bonus).
- * @param {number} numericId - catalog numeric id for the skill
+ * @param {string} skillId - catalog internal id for the skill
  * @param {Record<string, number>} skillLevels
  * @param {number} characterLevel
  * @returns {string[]}
  */
 export function getMaxLevelModifierDescriptionsForSkill(
-  numericId,
+  skillId,
   skillLevels = {},
   characterLevel = Character.DEFAULT_LEVEL
 ) {
   const store = getFileSkillStore();
   if (!store) return [];
-  const internal = store.internalNameByNumericId(numericId);
-  const cat = store.catalog?.find((c) => c.numericId === numericId);
+  const internal = skillId != null ? String(skillId) : '';
+  const cat = store.catalogByInternalId?.get(internal) ?? store.catalog?.find((c) => c.id === internal);
   if (!internal || !cat) return [];
 
   const targetSkillData = {
@@ -307,7 +303,7 @@ export function getMaxLevelModifierDescriptionsForSkill(
 
 /**
  * Raw max skill level at a given character level (ulvl), before planner "use max at 150" aggregation.
- * @param {number} skillId - Catalog numeric id
+ * @param {string} skillId - Catalog internal id
  * @param {Record<string, number>} skillLevels - internal skill name -> points
  * @param {number} ulvl - Character level passed into max-level modifiers
  * @returns {number}
@@ -315,8 +311,8 @@ export function getMaxLevelModifierDescriptionsForSkill(
 export function computeMaxSkillLevelAtUlvl(skillId, skillLevels = {}, ulvl = Character.DEFAULT_LEVEL) {
   const store = getFileSkillStore();
   if (!store) return 0;
-  const internal = store.internalNameByNumericId(skillId);
-  const cat = store.catalog?.find((c) => c.numericId === skillId);
+  const internal = skillId != null ? String(skillId) : '';
+  const cat = store.catalogByInternalId?.get(internal) ?? store.catalog?.find((c) => c.id === internal);
   if (!internal || !cat) return 0;
   const base_max_level = cat.baseMaxLevel;
   if (base_max_level == null) return 0;
@@ -344,16 +340,16 @@ export function computeMaxSkillLevelAtUlvl(skillId, skillLevels = {}, ulvl = Cha
 }
 
 /**
- * True when {@link calculateMaxLevel} uses the ulvl-150 invest cap (max grows with character level).
- * @param {number} skillId
+ * True when a skill's max level grows with character level (ulvl).
+ * @param {string} skillId
  * @param {Record<string, number>} skillLevels
  */
 export function skillMaxLevelScalesWithCharacterLevel(skillId, skillLevels = {}) {
   const store = getFileSkillStore();
   if (!store) return false;
-  const internal = store.internalNameByNumericId(skillId);
+  const internal = skillId != null ? String(skillId) : '';
   if (!internal || isInnateSkill({ id: internal })) return false;
-  const cat = store.catalog?.find((c) => c.numericId === skillId);
+  const cat = store.catalogByInternalId?.get(internal) ?? store.catalog?.find((c) => c.id === internal);
   if (!cat) return false;
   const a = computeMaxSkillLevelAtUlvl(skillId, skillLevels, Character.MIN_LEVEL);
   const b = computeMaxSkillLevelAtUlvl(skillId, skillLevels, Character.MAX_LEVEL);
@@ -363,7 +359,7 @@ export function skillMaxLevelScalesWithCharacterLevel(skillId, skillLevels = {})
 /**
  * Minimum character level (ulvl) needed to legally hold `points` in this skill, from max-level modifiers only.
  * Returns {@link Character.MIN_LEVEL} when the skill does not scale max with ulvl.
- * @param {number} skillId
+ * @param {string} skillId
  * @param {Record<string, number>} skillLevels
  * @param {number} points - Allocated points (blvl) in this skill
  */
@@ -390,7 +386,7 @@ export function minCharacterLevelForAllocatedSkillPoints(skillId, skillLevels = 
 
 /**
  * Calculate the effective max level for a skill
- * @param {number} skillId - The skill ID to calculate max level for
+ * @param {string} skillId - The skill internal id to calculate max level for
  * @param {object} skillLevels - Object mapping skill_name to current skill level
  * @param {number} characterLevel - Current character level (by default we assume max level)
  * @returns {number} The calculated max level
@@ -401,8 +397,8 @@ export function calculateMaxLevel(skillId, skillLevels = {}, characterLevel = Ch
     console.warn('calculateMaxLevel: Skill data store not initialized');
     return 0;
   }
-  const internal = store.internalNameByNumericId(skillId);
-  const cat = store.catalog?.find((c) => c.numericId === skillId);
+  const internal = skillId != null ? String(skillId) : '';
+  const cat = store.catalogByInternalId?.get(internal) ?? store.catalog?.find((c) => c.id === internal);
   if (!internal || !cat) {
     console.warn(`calculateMaxLevel: Skill ${skillId} does not exist`);
     return 0;
@@ -416,14 +412,7 @@ export function calculateMaxLevel(skillId, skillLevels = {}, characterLevel = Ch
   }
   const nonInnate = !isInnateSkill({ id: internal });
 
-  const maxAtMinUlvl = computeMaxSkillLevelAtUlvl(skillId, skillLevels, Character.MIN_LEVEL);
-  const maxAtMaxUlvl = computeMaxSkillLevelAtUlvl(skillId, skillLevels, Character.MAX_LEVEL);
   const maxAtCurrentUlvl = computeMaxSkillLevelAtUlvl(skillId, skillLevels, characterLevel);
-
-  // Skills whose max grows with character level (ulvl): planner cap matches level 150, not current ulvl.
-  if (nonInnate && maxAtMaxUlvl > maxAtMinUlvl) {
-    return maxAtMaxUlvl;
-  }
 
   let effectiveMaxLevel = maxAtCurrentUlvl;
   if (effectiveMaxLevel < 1 && nonInnate) {
@@ -468,29 +457,31 @@ const AMAZON_DEVOTION_TABS = {
   [DEVOTION_TYPES.BLOOD]: [6]          // Blood (6)
 };
 
-// Define which ultimate skills belong to which devotion (Paladin only)
-const PALADIN_DEVOTION_ULTIMATE_SKILLS = {
-  'dragons_blessing': DEVOTION_TYPES.HOLY,
-  'resurrect': DEVOTION_TYPES.NEUTRAL,
-  'superbeast': DEVOTION_TYPES.UNHOLY
-};
+/**
+ * Paladin Reward ultimates → devotion (versioned in game_meta.paladinDevotionUltimateSkills).
+ * @returns {Record<string, string>}
+ */
+function getPaladinDevotionUltimateSkills() {
+  return getFileSkillStore()?.gameMeta?.paladinDevotionUltimateSkills || {};
+}
 
 /**
  * Get the devotion type for a skill based on its tab or name
- * @param {number} skillId - The skill ID
+ * @param {string} skillId - The skill internal id
  * @returns {string} The devotion type (DEVOTION_TYPES constant)
  */
 export function getSkillDevotion(skillId) {
   const store = getFileSkillStore();
-  const internal = store?.internalNameByNumericId(skillId);
-  const det = internal ? store.getSkillDetail(internal) : null;
+  const internal = skillId != null ? String(skillId) : '';
+  const det = internal ? store?.getSkillDetail(internal) : null;
   if (!det) return DEVOTION_TYPES.NONE;
   const skillName = internal;
   const tabIndex = det.tabIndex;
   const classId = det.classId;
   if (classId === 5) {
-    if (PALADIN_DEVOTION_ULTIMATE_SKILLS[skillName]) {
-      return PALADIN_DEVOTION_ULTIMATE_SKILLS[skillName];
+    const ultimateDevotion = getPaladinDevotionUltimateSkills()[skillName];
+    if (ultimateDevotion) {
+      return ultimateDevotion;
     }
     for (const [devotion, tabs] of Object.entries(PALADIN_DEVOTION_TABS)) {
       if (tabs.includes(tabIndex)) {
@@ -517,9 +508,9 @@ export function getCurrentDevotion(skillLevels = {}) {
   const store = getFileSkillStore();
   for (const [skillName, level] of Object.entries(skillLevels)) {
     if (level > 0) {
-      const cat = store?.catalog?.find((c) => c.id === skillName);
+      const cat = store?.catalogByInternalId?.get(skillName) ?? store?.catalog?.find((c) => c.id === skillName);
       if (cat) {
-        const devotion = getSkillDevotion(cat.numericId);
+        const devotion = getSkillDevotion(cat.id);
         if (devotion !== DEVOTION_TYPES.NONE) {
           return devotion;
         }
@@ -527,37 +518,6 @@ export function getCurrentDevotion(skillLevels = {}) {
     }
   }
   return DEVOTION_TYPES.NONE;
-}
-
-/**
- * Check if a skill can be allocated based on devotion restrictions
- * @param {number} skillId - The skill ID to check
- * @param {object} skillLevels - Object mapping skill_name to current skill level
- * @returns {object} { canAllocate: boolean, reason: string }
- */
-export function checkDevotionRestriction(skillId, skillLevels = {}) {
-  const currentDevotion = getCurrentDevotion(skillLevels);
-  const skillDevotion = getSkillDevotion(skillId);
-  if (currentDevotion === DEVOTION_TYPES.NONE || skillDevotion === DEVOTION_TYPES.NONE) {
-    return { canAllocate: true, reason: '' };
-  }
-  if (currentDevotion === skillDevotion) {
-    return { canAllocate: true, reason: '' };
-  }
-  const devotionNames = {
-    [DEVOTION_TYPES.HOLY]: 'Holy Devotion',
-    [DEVOTION_TYPES.NEUTRAL]: 'Neutral Devotion',
-    [DEVOTION_TYPES.UNHOLY]: 'Unholy Devotion',
-    [DEVOTION_TYPES.BOW]: 'Bow Devotion',
-    [DEVOTION_TYPES.JAVELIN]: 'Javelin Devotion',
-    [DEVOTION_TYPES.SPEAR]: 'Spear Devotion',
-    [DEVOTION_TYPES.STORM]: 'Storm Devotion',
-    [DEVOTION_TYPES.BLOOD]: 'Blood Devotion'
-  };
-  return {
-    canAllocate: false,
-    reason: `Cannot allocate skill: You are locked into ${devotionNames[currentDevotion]}. This skill requires ${devotionNames[skillDevotion]}.`
-  };
 }
 
 /**
@@ -578,5 +538,26 @@ export function getDevotionDisplayName(devotionType) {
     [DEVOTION_TYPES.BLOOD]: 'Blood Devotion'
   };
   return names[devotionType] || 'Unknown';
+}
+
+/**
+ * Check if a skill can be allocated based on devotion restrictions
+ * @param {string} skillId - The skill internal id to check
+ * @param {object} skillLevels - Object mapping skill_name to current skill level
+ * @returns {object} { canAllocate: boolean, reason: string }
+ */
+export function checkDevotionRestriction(skillId, skillLevels = {}) {
+  const currentDevotion = getCurrentDevotion(skillLevels);
+  const skillDevotion = getSkillDevotion(skillId);
+  if (currentDevotion === DEVOTION_TYPES.NONE || skillDevotion === DEVOTION_TYPES.NONE) {
+    return { canAllocate: true, reason: '' };
+  }
+  if (currentDevotion === skillDevotion) {
+    return { canAllocate: true, reason: '' };
+  }
+  return {
+    canAllocate: false,
+    reason: `Cannot allocate skill: You are locked into ${getDevotionDisplayName(currentDevotion)}. This skill requires ${getDevotionDisplayName(skillDevotion)}.`
+  };
 }
 

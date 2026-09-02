@@ -171,7 +171,8 @@
     "id": 28,
     "key": "bonus_magic_damage",
     "name": "Bonus flat Magic damage",
-    "format": "{value0} Bonus Magic damage"
+    "format": "{value0} Bonus Magic damage",
+    "signed": true
   },
   {
     "id": 29,
@@ -253,37 +254,25 @@
   },
   {
     "id": 41,
-    "key": "aura_physical_resistance",
-    "name": "Aura increases Physical Resistance",
-    "format": "Aura increases Physical Resistance by {value0}%",
+    "key": "aura_summon_physical_resistance",
+    "name": "Aura increases Summon Physical Resistance",
+    "format": "Aura increases Summon Physical Resistance by {value0}%",
     "pairedStat": [
       {
         "valueIndex": 0,
-        "plannerKey": "physical_resistance"
+        "plannerKey": "summon_physical_resistance"
       }
     ]
   },
   {
     "id": 42,
-    "key": "aura_elemental_resistances",
-    "name": "Aura increases Elemental Resistances",
-    "format": "Aura increases Elemental Resistances: {value0}%",
+    "key": "aura_summon_elemental_resistances",
+    "name": "Aura increases Summon Elemental Resistances",
+    "format": "Aura increases Summon Elemental Resistances: {value0}%",
     "pairedStat": [
       {
         "valueIndex": 0,
-        "plannerKey": "fire_resistance"
-      },
-      {
-        "valueIndex": 0,
-        "plannerKey": "cold_resistance"
-      },
-      {
-        "valueIndex": 0,
-        "plannerKey": "lightning_resistance"
-      },
-      {
-        "valueIndex": 0,
-        "plannerKey": "poison_resistance"
+        "plannerKey": "summoned_minion_resistances"
       }
     ]
   },
@@ -1022,8 +1011,8 @@
   {
     "id": 151,
     "key": "summoned_minion_attack_rating",
-    "name": "Summoned Minion Attack Rating",
-    "format": "{value0}% to Summoned Minion Attack Rating",
+    "name": "Summon Attack Rating",
+    "format": "{value0}% to Summon Attack Rating",
     "pairedStat": [
       {
         "valueIndex": 0,
@@ -1034,8 +1023,8 @@
   {
     "id": 152,
     "key": "summoned_minion_damage",
-    "name": "Summoned Minion Damage",
-    "format": "{value0}% to Summoned Minion Damage",
+    "name": "Summon Damage",
+    "format": "{value0}% to Summon Damage",
     "pairedStat": [
       {
         "valueIndex": 0,
@@ -1388,8 +1377,8 @@
   {
     "id": 186,
     "key": "summoned_minion_resistances",
-    "name": "Summoned Minion Resistances",
-    "format": "{value0}% to Summoned Minion Resistances",
+    "name": "Summon Elemental Resistances",
+    "format": "{value0}% to Summon Elemental Resistances",
     "pairedStat": [
       {
         "valueIndex": 0,
@@ -1528,6 +1517,7 @@
     "key": "critical_strike_chance",
     "name": "Critical Strike chance",
     "format": "Critical Strike chance: {value0}%",
+    "signed": true,
     "pairedStat": [
       {
         "valueIndex": 0,
@@ -1550,8 +1540,8 @@
   {
     "id": 205,
     "key": "summoned_minion_life",
-    "name": "Summoned Minion Life",
-    "format": "{value0}% to Summoned Minion Life",
+    "name": "Summon Life",
+    "format": "{value0}% to Summon Life",
     "pairedStat": [
       {
         "valueIndex": 0,
@@ -1672,6 +1662,7 @@
     "key": "target_takes_additional_damage",
     "name": "Target takes additional Damage per hit",
     "format": "Target takes additional Damage: {value0} per hit",
+    "signed": true,
     "pairedStat": [
       {
         "valueIndex": 0,
@@ -1796,8 +1787,8 @@
   {
     "id": 237,
     "key": "weapon_physical_damage_per_minion_resist",
-    "name": "Weapon Physical Damage per Summoned Minion Resist",
-    "format": "{value0}% Weapon Physical Damage per 1% Summoned Minion Resistances (Max +600%))"
+    "name": "Weapon Physical Damage per Summon Elemental Resist",
+    "format": "{value0}% Weapon Physical Damage per 1% Summon Elemental Resistances (Max +600%))"
   },
   {
     "id": 238,
@@ -2451,7 +2442,8 @@
     "id": 329,
     "key": "claw_physical_damage",
     "name": "Claw Physical Damage #%",
-    "format": "Claw Physical Damage: {value0}%"
+    "format": "Claw Physical Damage: {value0}%",
+    "signed": true
   },
   {
     "id": 330,
@@ -2533,9 +2525,9 @@
   },
   {
     "id": 340,
-    "key": "activation_frequency_effectiveness",
-    "name": "Activation Frequency Effectiveness: #%",
-    "format": "Activation Frequency Effectiveness: {value0}%"
+    "key": "activation_frequency_multiplier",
+    "name": "Activation Frequency Multiplier: #%",
+    "format": "Activation Frequency Multiplier: {value0}%"
   },
   {
     "id": 341,
@@ -2669,9 +2661,9 @@
   },
   {
     "id": 361,
-    "key": "delay_between",
-    "name": "Delay between",
-    "format": "Delay between {value0}: {value1} seconds"
+    "key": "activation_delay",
+    "name": "Activation delay: # seconds",
+    "format": "Activation delay: {value0} seconds"
   },
   {
     "id": 362,
@@ -2762,5 +2754,211 @@
     "key": "bonus_lightning_damage",
     "name": "Bonus flat Lightning damage",
     "format": "{value0} Bonus Lightning damage"
+  },
+  {
+    "id": 376,
+    "key": "damage_to_demons_and_undead",
+    "name": "#% Damage to Demons and Undead",
+    "format": "{value0}% Damage to Demons and Undead"
+  },
+  {
+    "id": 377,
+    "key": "life_leech",
+    "name": "#% Life Leech",
+    "format": "{value0}% Life Leech"
+  },
+  {
+    "id": 378,
+    "key": "total_damage_added_as_fire",
+    "name": "#% of Total Damage added as Fire Damage",
+    "format": "{value0}% of Total Damage added as Fire Damage"
+  },
+  {
+    "id": 379,
+    "key": "divine_apparition_cold_damage_multiplier",
+    "name": "Divine Apparition Cold Damage Multiplier #%",
+    "format": "Divine Apparition Cold Damage Multiplier +{value0}%"
+  },
+  {
+    "id": 380,
+    "key": "chance_to_cast_on_attack",
+    "name": "Chance to cast on attack: #%",
+    "format": "Chance to cast on attack: {value0}%"
+  },
+  {
+    "id": 381,
+    "key": "uses_bat_attack",
+    "name": "Uses level # Bat Attack",
+    "format": "Uses level {value0} Bat Attack"
+  },
+  {
+    "id": 382,
+    "key": "total_damage_reduction",
+    "name": "Total Damage Reduction: #%",
+    "format": "Total Damage Reduction: +{value0}%"
+  },
+  {
+    "id": 383,
+    "key": "base_mana_cost",
+    "name": "+#% Base Mana Cost",
+    "format": "+{value0}% Base Mana Cost"
+  },
+  {
+    "id": 384,
+    "key": "minion_mana_cost",
+    "name": "Mana Cost: # (#% of Caster Mana Cost)",
+    "format": "Mana Cost: {value0} ({value1}%)"
+  },
+  {
+    "id": 385,
+    "key": "total_bats",
+    "name": "Total Bats",
+    "format": "Total Bats: {value0}"
+  },
+  {
+    "id": 386,
+    "key": "damage_multiplier",
+    "name": "Damage Multiplier",
+    "format": "Damage Multiplier: {value0}%"
+  },
+  {
+    "id": 387,
+    "key": "chance_to_cast_on_melee_attack",
+    "name": "#% Chance to cast on melee attack",
+    "format": "{value0}% Chance to cast on melee attack"
+  },
+  {
+    "id": 388,
+    "key": "hits_per_target",
+    "name": "Hits per target: #",
+    "format": "Hits per target: {value0}"
+  },
+  {
+    "id": 389,
+    "key": "mana_cost_multiplier",
+    "name": "#% Mana cost of skills",
+    "format": "{value0}% Mana cost of skills",
+    "signed": true,
+    "pairedStat": [
+      {
+        "valueIndex": 0,
+        "plannerKey": "mana_cost_of_skills"
+      }
+    ]
+  },
+  {
+    "id": 390,
+    "key": "activation_frequency",
+    "name": "#% Activation Frequency",
+    "format": "{value0}% Activation Frequency",
+    "signed": true
+  },
+  {
+    "id": 391,
+    "key": "dragon_jaws_damage_leeched_as_life",
+    "name": "#% of Dragon Jaws Damage Leeched as Life",
+    "format": "{value0}/10000 of Dragon Jaws Damage Leeched as Life"
+  },
+  {
+    "id": 392,
+    "key": "absorbs_physical_damage_equal_to_maximum_mana",
+    "name": "Absorbs Physical Damage equal to #% of Maximum Mana",
+    "format": "Absorbs Physical Damage equal to {value0}% of Maximum Mana"
+  },
+  {
+    "id": 393,
+    "key": "blades_per_cast",
+    "name": "# Blades per cast",
+    "format": "{value0} Blades per cast"
+  },
+  {
+    "id": 394,
+    "key": "bonus_lightning_damage_increased_by_percent",
+    "name": "Bonus Lightning damage increased by #%",
+    "format": "Bonus Lightning damage increased by {value0}%"
+  },
+  {
+    "id": 395,
+    "key": "leeches_percent_of_missing_life",
+    "name": "Leeches #-#% of Missing Life",
+    "format": "Leeches {value0}-{value1}% of Missing Life"
+  },
+  {
+    "id": 396,
+    "key": "area_of_effect",
+    "name": "Area of Effect: # yards",
+    "format": "Area of Effect: {value0} yards"
+  },
+  {
+    "id": 397,
+    "key": "area_of_effect_increased_by_percent",
+    "name": "Area of Effect increased by #%",
+    "format": "Area of Effect increased by {value0}%"
+  },
+  {
+    "id": 398,
+    "key": "catalyst_trap_damage_bonus",
+    "name": "Traps placed within the radius of the Catalyst are enhanced and deal +#% Total damage",
+    "format": "Traps placed within the radius of the Catalyst are enhanced and deal +{value0}% Total damage"
+  },
+  {
+    "id": 399,
+    "key": "life_on_striking",
+    "name": "+# Life on striking",
+    "format": "+{value0} Life on striking",
+    "pairedStat": [
+      {
+        "valueIndex": 0,
+        "plannerKey": "life_on_striking"
+      }
+    ]
+  },
+  {
+    "id": 400,
+    "key": "summoned_minion_physical_resistance",
+    "name": "#% Summon Physical Resistance",
+    "format": "{value0}% to Summon Physical Resistance",
+    "pairedStat": [
+      {
+        "valueIndex": 0,
+        "plannerKey": "summon_physical_resistance"
+      }
+    ]
+  },
+  {
+    "id": 401,
+    "key": "chance_to_cast_chaos_nova_on_kill",
+    "name": "#% chance to cast Chaos Nova on Kill",
+    "format": "{value0}% chance to cast Chaos Nova on Kill"
+  },
+  {
+    "id": 402,
+    "key": "maximum_avoid_chance",
+    "name": "Maximum Chance to Avoid increased by: #%",
+    "format": "Maximum Chance to Avoid increased by: {value0}%"
+  },
+  {
+    "id": 403,
+    "key": "stun_length_to_attack",
+    "name": "Stun length to attack: # seconds",
+    "format": "Stun length to attack: {value0} seconds"
+  },
+  {
+    "id": 404,
+    "key": "dexterity_percent",
+    "name": "Dexterity percent",
+    "format": "Dexterity: {value0}%",
+    "pairedStat": [
+      {
+        "valueIndex": 0,
+        "plannerKey": "percent_dexterity"
+      }
+    ]
+  },
+  {
+    "id": 405,
+    "key": "bonus_projectiles_to_flameburst_and_catapult_shot",
+    "name": "Bonus Projectiles to Flameburst and Catapult Shot",
+    "format": "{value0} Bonus Projectiles to Flameburst and Catapult Shot"
   }
 ]

@@ -19,8 +19,8 @@ import {
 import {
   getFileSkillStore,
   initSkillDataStore,
-  resetSkillDataStoreForTests,
-} from '@/tree/skill-data-store.js';
+  resetSkillDataStore,
+} from '@/shared/skill-data-store.js';
 import {
   parsePatchVersionString,
   patchVersionToFolderKey,
@@ -30,6 +30,8 @@ import { parseFolderVersion } from '@/shared/version-resolver.js';
 
 const SKILL_MARKER_REGEX = /\{\{([^{}]+)\}\}/g;
 const TOOLTIP_CACHE_LEVEL = 1;
+/** Newest patch notes to fetch before first paint; older ones load in the background. */
+const INITIAL_PATCH_COUNT = 10;
 
 const skillMatchersByFolder = new Map();
 const tooltipHtmlBySkillKey = new Map();
@@ -43,6 +45,93 @@ function sortVersionsDesc(a, b) {
   if (ap.major !== bp.major) return bp.major - ap.major;
   if (ap.minor !== bp.minor) return bp.minor - ap.minor;
   return bp.patch - ap.patch;
+}
+
+function sortFilenamesNewestFirst(a, b) {
+  return sortVersionsDesc(
+    { version: String(a).replace(/\.md$/i, '') },
+    { version: String(b).replace(/\.md$/i, '') }
+  );
+}
+
+/**
+ * @param {string} filename
+ * @param {string|null} [releaseDate]
+ * @returns {Promise<{ version: string, lines: string[], folderKey: string, releaseDate: string|null }>}
+ */
+async function fetchPatchSection(filename, releaseDate = null) {
+  const response = await fetch(getAssetUrl(`patch_notes/${filename}`));
+  if (!response.ok) {
+    throw new Error(`Failed to load ${filename} (${response.status})`);
+  }
+
+  const version = filename.replace(/\.md$/i, '');
+  const text = await response.text();
+  const lines = text.replace(/\r\n/g, '\n').split('\n');
+  const folderKey = patchVersionToFolderKey(version);
+  const date =
+    releaseDate != null && String(releaseDate).trim() !== ''
+      ? String(releaseDate).trim()
+      : null;
+
+  return { version, lines, folderKey, releaseDate: date };
+}
+
+/**
+ * Normalize patch_notes/index.json entries.
+ * Supports `{ "file": "2.13.5.md", "date": "2026-04-24" }` or legacy `"2.13.5.md"`.
+ * @param {unknown} entry
+ * @returns {{ file: string, date: string|null }|null}
+ */
+function normalizeManifestEntry(entry) {
+  if (typeof entry === 'string') {
+    const file = entry.trim();
+    if (!file) return null;
+    return { file, date: null };
+  }
+  if (!entry || typeof entry !== 'object') return null;
+  const fileRaw = entry.file ?? entry.filename ?? entry.name;
+  if (fileRaw == null || String(fileRaw).trim() === '') return null;
+  const file = String(fileRaw).trim();
+  const rawDate = entry.date ?? entry.releaseDate ?? null;
+  const date =
+    rawDate != null && String(rawDate).trim() !== '' ? String(rawDate).trim() : null;
+  return { file, date };
+}
+
+/**
+ * Format a stored release date for display (YYYY-MM-DD preferred).
+ * @param {string|null|undefined} value
+ * @returns {string}
+ */
+export function formatPatchReleaseDate(value) {
+  if (value == null || String(value).trim() === '') return '';
+  const raw = String(value).trim();
+  const isoDay = raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (isoDay) {
+    const d = new Date(`${raw}T00:00:00`);
+    if (!Number.isNaN(d.getTime())) {
+      return d.toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      });
+    }
+  }
+  return raw;
+}
+
+/**
+ * @param {Array<{ folderKey: string }>} sections
+ * @param {Set<string>} availableFolderKeys
+ */
+async function preloadMatchersForSections(sections, availableFolderKeys) {
+  const uniqueFolders = [...new Set(sections.map((section) => section.folderKey))].filter(
+    (folderKey) => availableFolderKeys.has(folderKey)
+  );
+  if (uniqueFolders.length) {
+    await Promise.all(uniqueFolders.map((folderKey) => loadSkillMatcherForFolder(folderKey)));
+  }
 }
 
 async function loadAvailableTreeDataFolders() {
@@ -86,7 +175,6 @@ function buildSkillMatcher(skills) {
     if (!dedupedByLowered.has(lowered)) {
       dedupedByLowered.set(lowered, {
         id: row?.id ? String(row.id) : '',
-        numericId: Number.isFinite(Number(row?.numericId)) ? Number(row.numericId) : null,
         displayName,
         class: row?.class ? String(row.class) : '',
         tabName: row?.tabName ? String(row.tabName) : '',
@@ -158,7 +246,7 @@ async function ensureSkillStoreForFolder(folderKey) {
   storeInitPromise = (async () => {
     try {
       setBuildVersionOverride(parsed);
-      resetSkillDataStoreForTests();
+      resetSkillDataStore();
       const store = await initSkillDataStore({ major: parsed.major, minor: parsed.minor });
       if (!store || store.folderSeg !== folderKey) {
         throw new Error(`Loaded wrong tree-data folder (expected ${folderKey}, got ${store?.folderSeg || 'none'})`);
@@ -195,13 +283,25 @@ export function getSkillRecordFromElement(target) {
 
 function buildTooltipKey(skillRecord) {
   if (!skillRecord) return '';
-  const skillId = skillRecord.id || skillRecord.numericId || skillRecord.displayName || 'unknown';
+  const skillId = skillRecord.id || skillRecord.displayName || 'unknown';
   return `${skillRecord.folderKey}:${skillId}:lvl${TOOLTIP_CACHE_LEVEL}`;
+}
+
+/**
+ * Cached patch-note tooltip HTML (sync). Null when not built yet.
+ * @param {object} skillRecord
+ * @returns {string|null}
+ */
+export function getCachedPatchSkillTooltipHtml(skillRecord) {
+  if (!skillRecord) return null;
+  const tooltipKey = buildTooltipKey(skillRecord);
+  if (!tooltipHtmlBySkillKey.has(tooltipKey)) return null;
+  return tooltipHtmlBySkillKey.get(tooltipKey) || '';
 }
 
 async function expandTooltipLines(skillRecord, sourceLines) {
   if (!sourceLines.length) return '';
-  if (!skillRecord?.id || skillRecord?.numericId == null) {
+  if (!skillRecord?.id) {
     return sourceLines.map((line) => escapeHtmlText(line)).join('\n');
   }
   const sourceText = sourceLines.map((line) => String(line)).join('\n');
@@ -214,7 +314,7 @@ async function expandTooltipLines(skillRecord, sourceLines) {
     stats: {},
   };
   const expanded = await expandPlaceholdersWithScaling(
-    skillRecord.numericId,
+    skillRecord.id,
     TOOLTIP_CACHE_LEVEL,
     sourceText,
     skillRecord.id,
@@ -273,8 +373,8 @@ export async function buildTooltipHtmlForSkill(skillRecord) {
     iconHtml,
     nameInnerHtml: escapeHtmlText(skillRecord.displayName || 'Unknown skill'),
     tagsHtml,
-    levelSectionHtml: `<div class="is-size-6 has-text-weight-bold has-text-info">Level 1</div>
-          <div class="is-size-7 has-text-grey">1 from points</div>`,
+    levelSectionHtml: `<div class="is-size-6 has-text-weight-bold has-text-warning-light">Level 1</div>
+          <div class="is-size-7 has-text-grey">[<span class="has-text-white">1</span> + <span class="has-text-info">0</span> + <span class="skill-bonus-class">0</span>]</div>`,
   });
 
   const bodyParts = [
@@ -356,7 +456,6 @@ export function highlightSkillNamesInRenderedHtml(renderedHtml, folderKey) {
       spanEl.dataset.skillLoweredName = loweredMarker;
       spanEl.dataset.skillName = skillRecord.displayName || markerInner;
       if (skillRecord.id) spanEl.dataset.skillId = skillRecord.id;
-      if (skillRecord.numericId != null) spanEl.dataset.skillNumericId = String(skillRecord.numericId);
       fragment.appendChild(spanEl);
       cursor = markerEnd;
     }
@@ -372,20 +471,24 @@ export function highlightSkillNamesInRenderedHtml(renderedHtml, folderKey) {
 
 /**
  * @returns {{
- *   patchSections: import('vue').Ref<Array<{ version: string, lines: string[], folderKey: string }>>,
+ *   patchSections: import('vue').Ref<Array<{ version: string, lines: string[], folderKey: string, releaseDate: string|null }>>,
  *   isLoading: import('vue').Ref<boolean>,
+ *   isBackfillLoading: import('vue').Ref<boolean>,
  *   loadError: import('vue').Ref<string>,
  *   loadPatchData: () => Promise<void>,
  *   renderSectionMarkdown: (lines: string[], folderKey: string) => string,
+ *   formatPatchReleaseDate: (value: string|null|undefined) => string,
  * }}
  */
 export function usePatchNotesData() {
   const isLoading = ref(true);
+  const isBackfillLoading = ref(false);
   const loadError = ref('');
   const patchSections = ref([]);
 
   async function loadPatchData() {
     isLoading.value = true;
+    isBackfillLoading.value = false;
     loadError.value = '';
 
     try {
@@ -395,40 +498,51 @@ export function usePatchNotesData() {
         throw new Error(`Failed to load patch list (${manifestResponse.status})`);
       }
 
-      const filenames = await manifestResponse.json();
-      if (!Array.isArray(filenames)) {
+      const manifest = await manifestResponse.json();
+      if (!Array.isArray(manifest)) {
         throw new Error('Patch list is invalid.');
       }
 
-      const loadedSections = await Promise.all(
-        filenames.map(async (filename) => {
-          const response = await fetch(getAssetUrl(`patch_notes/${filename}`));
-          if (!response.ok) {
-            throw new Error(`Failed to load ${filename} (${response.status})`);
-          }
-
-          const version = filename.replace(/\.md$/i, '');
-          const text = await response.text();
-          const lines = text.replace(/\r\n/g, '\n').split('\n');
-          const folderKey = patchVersionToFolderKey(version);
-
-          return { version, lines, folderKey };
-        })
-      );
-
-      const uniqueFolders = [...new Set(loadedSections.map((section) => section.folderKey))].filter(
-        (folderKey) => availableFolderKeys.has(folderKey)
-      );
-      if (uniqueFolders.length) {
-        await Promise.all(uniqueFolders.map((folderKey) => loadSkillMatcherForFolder(folderKey)));
+      const entries = manifest
+        .map((entry) => normalizeManifestEntry(entry))
+        .filter(Boolean);
+      if (!entries.length) {
+        throw new Error('Patch list is empty.');
       }
 
-      patchSections.value = loadedSections.sort(sortVersionsDesc);
+      const sortedEntries = [...entries].sort((a, b) =>
+        sortFilenamesNewestFirst(a.file, b.file)
+      );
+      const immediate = sortedEntries.slice(0, INITIAL_PATCH_COUNT);
+      const deferred = sortedEntries.slice(INITIAL_PATCH_COUNT);
+
+      const firstSections = await Promise.all(
+        immediate.map((entry) => fetchPatchSection(entry.file, entry.date))
+      );
+      await preloadMatchersForSections(firstSections, availableFolderKeys);
+      patchSections.value = firstSections.sort(sortVersionsDesc);
+      isLoading.value = false;
+
+      if (deferred.length === 0) return;
+
+      isBackfillLoading.value = true;
+      try {
+        const restSections = await Promise.all(
+          deferred.map((entry) => fetchPatchSection(entry.file, entry.date))
+        );
+        await preloadMatchersForSections(restSections, availableFolderKeys);
+        patchSections.value = [...firstSections, ...restSections].sort(sortVersionsDesc);
+      } catch (backfillError) {
+        console.warn('Failed to load older patch notes:', backfillError);
+      } finally {
+        isBackfillLoading.value = false;
+      }
     } catch (error) {
       loadError.value = error instanceof Error ? error.message : 'Could not load patch notes.';
       patchSections.value = [];
     } finally {
       isLoading.value = false;
+      isBackfillLoading.value = false;
     }
   }
 
@@ -444,8 +558,10 @@ export function usePatchNotesData() {
   return {
     patchSections,
     isLoading,
+    isBackfillLoading,
     loadError,
     loadPatchData,
     renderSectionMarkdown,
+    formatPatchReleaseDate,
   };
 }

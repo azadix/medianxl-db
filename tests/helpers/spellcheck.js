@@ -6,4 +6,4 @@ export {
   collectSpellingErrors,
   loadSkillRows,
   resolveActiveDataDir,
-} from '../../spellcheck/check-spelling.mjs';
+} from '../../tools/spellcheck/check-spelling.mjs';

@@ -3,7 +3,7 @@ import PlannerSkillsTree from './PlannerSkillsTree.vue';
 </script>
 
 <template>
-  <div class="column" style="overflow-y: auto; overflow-x: hidden; position: relative">
+  <div class="planner-skills-column">
     <div id="skillsContainer">
       <PlannerSkillsTree />
     </div>

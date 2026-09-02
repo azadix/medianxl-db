@@ -5,11 +5,15 @@
   "scripts": {
     "dev": "npm test && vite",
     "lint": "eslint .",
-    "build": "npm run lint && npm test && vite build && node scripts/copy-spa-404.mjs",
+    "build": "npm run lint && npm test && vite build && node tools/copy-spa-404.mjs",
     "preview": "vite preview",
     "test": "vitest run",
     "test:unit": "vitest run tests/unit",
-    "test:data": "vitest run tests/data"
+    "test:data": "vitest run tests/data",
+    "spellcheck": "vitest run tests/data/spellcheck.test.js",
+    "build:item-icons": "python tools/item_icons/publish_item_icons.py --version 2.14",
+    "unique-stats-db": "node tools/generate-unique-stats-db.mjs",
+    "generate-relics-charms-tsw": "node tools/generate-relics-charms-from-tsw.mjs"
   },
   "dependencies": {
     "marked": "^18.0.3",

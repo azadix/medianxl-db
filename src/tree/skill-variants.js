@@ -2,7 +2,7 @@
  * Skill UI variants (stance, class-specific preview, etc.): selection state + tree_data helpers.
  */
 import { escapeHtmlAttr } from '@/shared/utils.js';
-import { getFileSkillStore } from './skill-data-store.js';
+import { getFileSkillStore } from '@/shared/skill-data-store.js';
 
 const selectedVariantBySkillName = new Map();
 
@@ -45,24 +45,22 @@ export function applySkillVariantDefaultsForClass(className) {
         }
         const vk = String(variantKey).trim();
         const cat = store.catalogByInternalId?.get(sid);
-        const numericId = cat?.numericId;
-        if (numericId == null) continue;
-        const variants = listSkillVariants(numericId);
+        if (!cat) continue;
+        const variants = listSkillVariants(sid);
         if (!variants.some((variant) => variant.variant_key === vk)) continue;
         setSkillVariantKey(sid, vk);
     }
 }
 
 /**
- * @param {number} numericId - catalog `numericId` (skills.json id)
+ * @param {string} skillId - catalog internal id
  * @returns {Array<{ variant_key: string, label: string, sort_order: number }>}
  */
-export function listSkillVariants(numericId) {
-    if (numericId == null) return [];
+export function listSkillVariants(skillId) {
+    if (skillId == null || String(skillId).trim() === '') return [];
     const store = getFileSkillStore();
-    const internal = store?.internalNameByNumericId?.(numericId);
-    if (!internal) return [];
-    const row = store.catalogByInternalId?.get(String(internal));
+    const internal = String(skillId);
+    const row = store?.catalogByInternalId?.get(internal);
     const list = row?.variants;
     if (!Array.isArray(list) || list.length === 0) return [];
     return list.map((v) => ({
@@ -107,12 +105,12 @@ export function variantBracketSuffixFromList(variantKey, variants) {
 /**
  * Skill name + optional muted bracket suffix for tooltip HTML.
  * @param {string} displayName
- * @param {number} numericId - catalog `numericId` for variant list lookup
+ * @param {string} skillId - catalog internal id for variant list lookup
  * @param {string|null|undefined} variantKey
  * @returns {string} HTML string
  */
-export function formatDisplayNameWithVariantHtml(displayName, numericId, variantKey) {
-    const variants = listSkillVariants(numericId);
+export function formatDisplayNameWithVariantHtml(displayName, skillId, variantKey) {
+    const variants = listSkillVariants(skillId);
     const suf = variantBracketSuffixFromList(variantKey, variants);
     const base = escapeHtmlAttr(displayName);
     if (!suf) return base;

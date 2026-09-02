@@ -33,7 +33,7 @@ if (import.meta.env.DEV) {
       name: def.name,
       component: def.component,
       meta: {
-        keepAlive: true,
+        keepAlive: def.keepAlive !== false,
         ...(def.editorMode ? { editorMode: def.editorMode } : {}),
         ...(def.editorFile ? { editorFile: def.editorFile } : {}),
       },

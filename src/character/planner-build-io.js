@@ -4,7 +4,7 @@
  */
 
 import Character from './Character.js';
-import { getFileSkillStore } from '@/tree/skill-data-store.js';
+import { getFileSkillStore } from '@/shared/skill-data-store.js';
 import { getCharacterInstance } from './planner-instance.js';
 import { notifyPlannerStateChanged } from './planner-instance.js';
 
@@ -21,6 +21,7 @@ function sortStringKeyedObject(obj) {
 }
 
 /**
+ * Resolve a build-import skill key by internal id or display name.
  * @param {string|number} key
  * @param {ReturnType<typeof getFileSkillStore>|null} [store]
  * @returns {object|null}
@@ -31,10 +32,6 @@ export function resolveCatalogRowBySkillRef(key, store = null) {
   if (!catalog || key == null) return null;
   const s = String(key).trim();
   if (!s) return null;
-  if (/^\d+$/.test(s)) {
-    const n = parseInt(s, 10);
-    return catalog.find((c) => c.numericId === n) ?? null;
-  }
   let row = catalog.find((c) => c.id === s);
   if (row) return row;
   row = catalog.find((c) => String(c.displayName ?? '') === s);
@@ -72,7 +69,6 @@ function oskillRowSkipLabel(row) {
   if (!row || typeof row !== 'object') return 'oSkill row';
   if (row.displayName != null && String(row.displayName).trim() !== '') return String(row.displayName).trim();
   if (row.skillName != null && String(row.skillName).trim() !== '') return String(row.skillName).trim();
-  if (row.skillId != null && Number.isFinite(Number(row.skillId))) return `id:${row.skillId}`;
   return 'oSkill row';
 }
 
@@ -85,15 +81,11 @@ function normalizeSingleOSkillImportRow(row) {
   if (points <= 0) return null;
   const store = getFileSkillStore();
   let cat = null;
-  if (row.skillId != null && Number.isFinite(Number(row.skillId))) {
-    cat = resolveCatalogRowBySkillRef(String(row.skillId), store);
-  }
-  if (!cat && row.skillName) cat = resolveCatalogRowBySkillRef(row.skillName, store);
+  if (row.skillName) cat = resolveCatalogRowBySkillRef(row.skillName, store);
   if (!cat && row.displayName) cat = resolveCatalogRowBySkillRef(row.displayName, store);
   const sid = row.slotId != null && String(row.slotId).trim() !== '' ? String(row.slotId).trim() : Character.newOSkillSlotId();
   if (!cat) return null;
   return {
-    skillId: cat.numericId,
     skillName: cat.id,
     points,
     slotId: sid,
@@ -199,16 +191,13 @@ export function getOSkillsForBuildExport() {
     const level = Character.clampOSkillPoints(row?.points ?? 0);
     if (level <= 0) continue;
     let cat = null;
-    if (row.skillId != null && Number.isFinite(Number(row.skillId))) {
-      cat = store?.catalog?.find((c) => c.numericId === Number(row.skillId)) ?? null;
-    }
-    if (!cat && row.skillName) cat = store?.catalog?.find((c) => c.id === row.skillName) ?? null;
+    if (row.skillName) cat = store?.catalog?.find((c) => c.id === row.skillName) ?? null;
     const key =
       cat && cat.displayName != null && String(cat.displayName).trim() !== ''
         ? String(cat.displayName)
         : row.displayName && String(row.displayName).trim() !== ''
           ? String(row.displayName)
-          : row.skillName || `Skill ${row.skillId ?? ''}`;
+          : row.skillName || 'oSkill';
     out[key] = (out[key] || 0) + level;
   }
   return sortStringKeyedObject(out);

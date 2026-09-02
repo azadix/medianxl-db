@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import {
   validateVariantsArray,
   validateScalingConstantsArray,
+  validateSkillCatalogRow,
+  validateSubskillCatalogRow,
   looksLikeFormula,
   statsKeysLowerFromRows,
   variantKeysFromVariants,
@@ -148,5 +150,107 @@ describe('validateScalingConstantsArray', () => {
         { statsByKeyLower: stats, variantKeys, tabIds: new Set([24]) }
       )
     ).toEqual([]);
+  });
+
+  it('accepts cond() planner condition formulas', () => {
+    expect(
+      validateScalingConstantsArray(
+        [
+          {
+            statKey: 'area_of_effect',
+            occurrenceIndex: 0,
+            variantKey: '',
+            value0: 'range(18+10*[[executioner]]*cond(while_wielding_twohanded_weapon))',
+          },
+        ],
+        { statsByKeyLower: new Map([['area_of_effect', { key: 'area_of_effect' }]]), variantKeys }
+      )
+    ).toEqual([]);
+  });
+});
+
+describe('validateSkillCatalogRow', () => {
+  const validSkill = {
+    id: 'absolution',    displayName: 'Absolution',
+    classId: 5,
+    tab: 32,
+    class: 'Paladin',
+    tabName: 'Nephalem',
+    tags: ['Spell'],
+    baseMaxLevel: 1,
+    affectedBySpecialization: false,
+    variants: [],
+    scalingConstants: [],
+    description: ['line'],
+    restriction: [],
+    skillEffect: ['{{mana_cost}}'],
+    image: 'icons-pal_132',
+  };
+
+  it('accepts a valid skill row', () => {
+    expect(validateSkillCatalogRow(validSkill)).toEqual([]);
+  });
+
+  it('rejects non-objects and bad field types', () => {
+    expect(validateSkillCatalogRow(null)).toContain('skill row must be an object');
+    expect(validateSkillCatalogRow({ ...validSkill, classId: '5' })[0]).toMatch(/classId/);
+    expect(validateSkillCatalogRow({ ...validSkill, tags: 'Spell' })[0]).toMatch(/tags/);
+    expect(validateSkillCatalogRow({ ...validSkill, affectedBySpecialization: 1 })[0]).toMatch(
+      /affectedBySpecialization/
+    );
+  });
+
+  it('allows optional showCondition when it is a string array', () => {
+    expect(
+      validateSkillCatalogRow({
+        ...validSkill,
+        showCondition: ['while_in_werewolf_form'],
+      })
+    ).toEqual([]);
+    expect(
+      validateSkillCatalogRow({
+        ...validSkill,
+        showCondition: 'while_in_werewolf_form',
+      })[0]
+    ).toMatch(/showCondition/);
+  });
+});
+
+describe('validateSubskillCatalogRow', () => {
+  const validSubskill = {
+    id: 'spellbind_petrify',    displayName: 'Petrify',
+    parentSkillId: 'spellbind',
+    scalingConstants: [],
+    description: [],
+    skillEffect: [],
+    restriction: [],
+  };
+
+  it('accepts a valid subskill row', () => {
+    expect(validateSubskillCatalogRow(validSubskill)).toEqual([]);
+  });
+
+  it('requires parentSkillId and allows omitted restriction', () => {
+    expect(
+      validateSubskillCatalogRow({ ...validSubskill, parentSkillId: '' })[0]
+    ).toMatch(/parentSkillId/);
+    const { restriction: _omit, ...withoutRestriction } = validSubskill;
+    expect(validateSubskillCatalogRow(withoutRestriction)).toEqual([]);
+  });
+
+  it('validates optional activation fields', () => {
+    expect(
+      validateSubskillCatalogRow({
+        ...validSubskill,
+        activeWhenTabPoints: 21,
+        activeWhenSkillPoints: 'fireheart_totem',
+      })
+    ).toEqual([]);
+    expect(
+      validateSubskillCatalogRow({
+        ...validSubskill,
+        activeWhenTabPoints: '21',
+      })[0]
+    ).toMatch(/activeWhenTabPoints/);
   });
 });

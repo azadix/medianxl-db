@@ -1,7 +1,6 @@
 [
   {
     "id": "spellbind_petrify",
-    "numericId": 708,
     "displayName": "Petrify",
     "parentSkillId": "spellbind",
     "scalingConstants": [
@@ -50,7 +49,6 @@
   },
   {
     "id": "brutal_effigy_brutal_aura",
-    "numericId": 709,
     "displayName": "Brutal Aura",
     "parentSkillId": "brutal_effigy",
     "scalingConstants": [
@@ -76,7 +74,6 @@
   },
   {
     "id": "bloom_venomous_aura",
-    "numericId": 469,
     "displayName": "Venomous Aura",
     "parentSkillId": "bloom",
     "scalingConstants": [
@@ -109,7 +106,6 @@
   },
   {
     "id": "colosseum_are_you_not_entertained",
-    "numericId": 576,
     "displayName": "Are you not entertained?",
     "parentSkillId": "colosseum",
     "scalingConstants": [
@@ -156,7 +152,6 @@
   },
   {
     "id": "entanglement_after_using_superposition",
-    "numericId": 634,
     "displayName": "After using Superposition",
     "parentSkillId": "entanglement",
     "scalingConstants": [
@@ -179,7 +174,6 @@
   },
   {
     "id": "flash_blinding_effect",
-    "numericId": 86,
     "displayName": "Blinding Effect",
     "parentSkillId": "flash",
     "scalingConstants": [],
@@ -192,7 +186,6 @@
   },
   {
     "id": "grim_vision_grim_vision_aura",
-    "numericId": 544,
     "displayName": "Grim Vision Aura",
     "parentSkillId": "grim_vision",
     "scalingConstants": [
@@ -225,7 +218,6 @@
   },
   {
     "id": "ice_elementals_frost_essence_aura",
-    "numericId": 649,
     "displayName": "Frost Essence Aura",
     "parentSkillId": "ice_elementals",
     "scalingConstants": [],
@@ -238,7 +230,6 @@
   },
   {
     "id": "iceburst_shell_shock",
-    "numericId": 118,
     "displayName": "Shell Shock",
     "parentSkillId": "iceburst",
     "scalingConstants": [
@@ -258,7 +249,6 @@
   },
   {
     "id": "idol_of_scosglen_stone_form",
-    "numericId": 492,
     "displayName": "Stone Form",
     "parentSkillId": "idol_of_scosglen",
     "scalingConstants": [
@@ -285,7 +275,6 @@
   },
   {
     "id": "impale_expose_weakness",
-    "numericId": 322,
     "displayName": "Expose Weakness",
     "parentSkillId": "impale",
     "scalingConstants": [
@@ -311,7 +300,6 @@
   },
   {
     "id": "jinn_hellfire_aura",
-    "numericId": 546,
     "displayName": "Hellfire Aura",
     "parentSkillId": "jinn",
     "scalingConstants": [
@@ -337,7 +325,6 @@
   },
   {
     "id": "miasma_haunt",
-    "numericId": 655,
     "displayName": "Haunt",
     "parentSkillId": "miasma",
     "scalingConstants": [
@@ -384,7 +371,6 @@
   },
   {
     "id": "mind_flay_shock",
-    "numericId": 595,
     "displayName": "Shock",
     "parentSkillId": "mind_flay",
     "scalingConstants": [
@@ -417,7 +403,6 @@
   },
   {
     "id": "rathmas_chosen_evocation_aura",
-    "numericId": 556,
     "displayName": "Evocation Aura",
     "parentSkillId": "rathmas_chosen",
     "scalingConstants": [
@@ -450,7 +435,6 @@
   },
   {
     "id": "raven_familiar_zann_esus_rite",
-    "numericId": 663,
     "displayName": "Zann Esu's Rite",
     "parentSkillId": "raven_familiar",
     "scalingConstants": [
@@ -483,7 +467,6 @@
   },
   {
     "id": "skeletal_flayer_demon_blood_aura",
-    "numericId": 212,
     "displayName": "Demon Blood Aura",
     "parentSkillId": "skeletal_flayer",
     "scalingConstants": [],
@@ -497,7 +480,6 @@
   },
   {
     "id": "spirit_of_vengeance_avenging_aura",
-    "numericId": 344,
     "displayName": "Avenging Aura",
     "parentSkillId": "spirit_of_vengeance",
     "scalingConstants": [],
@@ -513,7 +495,6 @@
   },
   {
     "id": "terror_terrifies_target",
-    "numericId": 565,
     "displayName": "Terrifies target",
     "parentSkillId": "terror",
     "scalingConstants": [
@@ -546,7 +527,6 @@
   },
   {
     "id": "vine_companion_forest_aura",
-    "numericId": 511,
     "displayName": "Forest Aura",
     "parentSkillId": "vine_companion",
     "scalingConstants": [
@@ -565,7 +545,6 @@
   },
   {
     "id": "vine_companion_petrify_attack",
-    "numericId": 511,
     "displayName": "Petrify Attack",
     "parentSkillId": "vine_companion",
     "scalingConstants": [
@@ -598,7 +577,6 @@
   },
   {
     "id": "void_archon_warp_field_aura",
-    "numericId": 274,
     "displayName": "Warp Field Aura",
     "parentSkillId": "void_archon",
     "scalingConstants": [
@@ -624,7 +602,6 @@
   },
   {
     "id": "soulchain_burning_chain",
-    "numericId": 710,
     "displayName": "Burning Chain",
     "parentSkillId": "soulchain",
     "activeWhenSkillPoints": "fireheart_totem",
@@ -645,7 +622,6 @@
   },
   {
     "id": "soulchain_magnetic_chain",
-    "numericId": 711,
     "displayName": "Magnetic Chain",
     "parentSkillId": "soulchain",
     "activeWhenSkillPoints": "stormeye_totem",
@@ -661,7 +637,6 @@
   },
   {
     "id": "soulchain_frozen_chain",
-    "numericId": 712,
     "displayName": "Frozen Chain",
     "parentSkillId": "soulchain",
     "activeWhenSkillPoints": "frostclaw_totem",
@@ -682,7 +657,6 @@
   },
   {
     "id": "death_pact_necromancer",
-    "numericId": 713,
     "displayName": "Necromancer",
     "parentSkillId": "death_pact",
     "activeWhenTabPoints": 21,
@@ -702,7 +676,6 @@
   },
   {
     "id": "death_pact_deathlord",
-    "numericId": 714,
     "displayName": "Deathlord",
     "parentSkillId": "death_pact",
     "activeWhenTabPoints": 22,
@@ -722,7 +695,6 @@
   },
   {
     "id": "death_pact_alchemist",
-    "numericId": 715,
     "displayName": "Alchemist",
     "parentSkillId": "death_pact",
     "activeWhenTabPoints": 23,
@@ -742,7 +714,6 @@
   },
   {
     "id": "death_pact_nightwalker",
-    "numericId": 716,
     "displayName": "Nightwalker",
     "parentSkillId": "death_pact",
     "activeWhenTabPoints": 24,
@@ -762,7 +733,6 @@
   },
   {
     "id": "death_pact_scholar",
-    "numericId": 717,
     "displayName": "Scholar",
     "parentSkillId": "death_pact",
     "activeWhenTabPoints": 25,
@@ -782,7 +752,6 @@
   },
   {
     "id": "artifice_mastery_claw_block",
-    "numericId": 718,
     "displayName": "Claw Block",
     "parentSkillId": "artifice_mastery",
     "scalingConstants": [],

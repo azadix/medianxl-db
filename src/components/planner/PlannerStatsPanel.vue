@@ -2,10 +2,11 @@
 import { ref, computed, onMounted, nextTick } from 'vue';
 import { usePlannerRevisionRefresh } from '@/composables/usePlannerRevisionRefresh.js';
 import { getPlannerCharacterStatDefs } from '@/character/planner-stats-config.js';
-import { getCharacterInstance } from '@/character/character-state.js';
+import { getCharacterInstance } from '@/character/planner-core.js';
 import { setupPlannerStatRowTooltips, applyPlannerStatInput } from '@/character/planner-stats-panel.js';
-import { getFileSkillStore } from '@/tree/skill-data-store.js';
+import { getFileSkillStore } from '@/shared/skill-data-store.js';
 import { usePlannerSkillReferencedStats } from '@/composables/usePlannerSkillReferencedStats.js';
+import { isPlannerStatConditionInactive } from '@/character/planner-stat-modifiers.js';
 
 const statTooltipRoot = ref(null);
 /** @type {import('vue').Ref<{ key: string, label: string, min: number|null, max: number|null, allowNegative?: boolean, default?: number, alwaysVisible?: boolean, sortOrder?: number, section?: string }[]>} */
@@ -183,6 +184,7 @@ usePlannerRevisionRefresh(refreshHandler);
             :class="{
               'planner-stat-life': def.key === 'life',
               'planner-stat-mana': def.key === 'mana',
+              'planner-stat-row--inactive': isPlannerStatConditionInactive(def.key, stats[def.key]),
             }"
             :data-stat-key="def.key"
           >
@@ -192,6 +194,7 @@ usePlannerRevisionRefresh(refreshHandler);
                 :id="'planner-stat-' + def.key"
                 type="number"
                 class="input is-small planner-stat-input"
+                :class="{ 'has-text-grey': isPlannerStatConditionInactive(def.key, stats[def.key]) }"
                 :data-stat-key="def.key"
                 step="any"
                 :min="statInputMin(def)"

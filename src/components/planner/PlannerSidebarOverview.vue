@@ -21,13 +21,15 @@ const { spentPoints, effectiveLevel, availablePoints } = usePlannerSkillPoints({
       </div>
     </section>
 
-    <section class="planner-card">
+    <section class="planner-card planner-skill-bonuses-card">
+      <span class="planner-card__eyebrow">Skill bonuses</span>
       <div class="planner-card-row">
-        <div>
-          <span class="planner-card__eyebrow">Skill bonuses</span>
-          <label class="label mb-0" for="allSkillsBonus">+# to All Skills</label>
-        </div>
+        <label class="label mb-0 has-text-info" for="allSkillsBonus">+# to All Skills</label>
         <input id="allSkillsBonus" type="number" class="input planner-compact-number" min="0" value="0" placeholder="0" />
+      </div>
+      <div class="planner-card-row">
+        <label class="label mb-0 skill-bonus-class" id="classSkillsBonusLabel" for="classSkillsBonus">+# to Class Skills</label>
+        <input id="classSkillsBonus" type="number" class="input planner-compact-number" min="0" value="0" placeholder="0" />
       </div>
     </section>
 

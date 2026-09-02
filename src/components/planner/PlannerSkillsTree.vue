@@ -4,13 +4,14 @@ import {
   getFileSkillStore,
   buildTabOrderLookupFromGameMeta,
   tabOrderRankFromLookup
-} from '@/tree/skill-data-store.js';
+} from '@/shared/skill-data-store.js';
 import { usePlannerStore } from '@/stores/planner.js';
 import { updatePlannerUrlTab } from '@/planner/tree-url-sync.js';
 import { handleSkillPointChange, setCurrentTabState } from '@/tree/tree-render.js';
 import SkillCard from '@/components/skills/SkillCard.vue';
 import { usePlannerSkillsTree } from '@/composables/usePlannerSkillsTree.js';
 import PlannerSkillPointsBadge from './PlannerSkillPointsBadge.vue';
+import { plannerResetTreeClick } from '@/planner/planner-dom-handlers.js';
 
 const store = usePlannerStore();
 let resizeFrame = 0;
@@ -196,9 +197,14 @@ function onWindowResize() {
   });
 }
 
+function onRedrawArrows() {
+  nextTick(() => scheduleArrows());
+}
+
 onMounted(() => {
   window.addEventListener('plannerSkillsRenderRequested', onPlannerRenderRequested);
   window.addEventListener('plannerSkillsLightUpdate', onPlannerLight);
+  window.addEventListener('plannerSkillsRedrawArrows', onRedrawArrows);
   window.addEventListener('resize', onWindowResize, { passive: true });
 });
 
@@ -209,6 +215,7 @@ onUnmounted(() => {
   }
   window.removeEventListener('plannerSkillsRenderRequested', onPlannerRenderRequested);
   window.removeEventListener('plannerSkillsLightUpdate', onPlannerLight);
+  window.removeEventListener('plannerSkillsRedrawArrows', onRedrawArrows);
   window.removeEventListener('resize', onWindowResize);
 });
 </script>
@@ -228,7 +235,18 @@ onUnmounted(() => {
           <a href="#" data-tab="oSkills" @click.prevent="switchTab('oSkills')">oSkills</a>
         </li>
       </ul>
-      <PlannerSkillPointsBadge />
+      <div class="planner-tab-actions">
+        <button
+          id="resetTreeBtn"
+          class="button is-danger is-outlined is-small"
+          type="button"
+          @click="plannerResetTreeClick"
+        >
+          <span class="icon"><i class="fa-solid fa-rotate-left"></i></span>
+          <span>Reset tree</span>
+        </button>
+        <PlannerSkillPointsBadge />
+      </div>
     </div>
     <div class="planner-skills-tab-panels">
       <template v-for="tabName in sortedTabNames" :key="tabName">
@@ -309,7 +327,7 @@ onUnmounted(() => {
       >
         <SkillCard
           v-for="(cd, idx) in oskillCardRows"
-          :key="'os-' + idx + '-' + String(cd.skillId ?? '') + '-' + String(cd.numericId ?? '')"
+          :key="'os-' + idx + '-' + String(cd.skillId ?? '')"
           :style="oskillGridArea(idx)"
           :card-data="cd"
           :planner-revision="store.revision"

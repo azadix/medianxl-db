@@ -22,7 +22,7 @@ Developer-only JSON editor for skill data.
 
 - `src/editor/editor-store.js`: in-memory buffer, load/reload, form apply, dirty state, version switching.
 - `src/editor/editor-download.js`: downloads current buffer as JSON.
-- `src/editor/editor-textarea-autocomplete.js`: textarea autocomplete for placeholders/stat references.
+- `src/editor/editor-textarea-autocomplete.js`: textarea autocomplete for `{{stat}}`, `[[skill]]`, and `<<subskill>>` placeholders.
 - `src/editor/editor.js`: compatibility export facade.
 
 ## Data sources

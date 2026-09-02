@@ -54,6 +54,30 @@ describe('built-in function behavior', () => {
     expect(result.success, result.error).toBe(true);
     expect(result.value).toBe(0);
   });
+
+  it('tree() sums blvl from treeSkillsCache and [[skill]] subtracts that skill blvl', () => {
+    const characterState = {
+      blvl: { frostborn: 1, ice_bolt: 5, glacial_spike: 10 },
+      lvl: {},
+      level: 50,
+      stats: {},
+      treeSkillsCache: {
+        13: ['frostborn', 'ice_bolt', 'glacial_spike'],
+      },
+    };
+    const result = evaluateFormula('5*(tree(13)-[[frostborn]])', {
+      blvl: 1,
+      slvl: 0,
+      lvl: 1,
+      ulvl: 50,
+      _blvl: characterState.blvl,
+      _lvl: characterState.lvl,
+      characterState,
+    });
+    expect(result.success, result.error).toBe(true);
+    // (1+5+10 - 1) * 5
+    expect(result.value).toBe(75);
+  });
 });
 
 describe('scaling formula sweep (real data)', () => {
@@ -67,9 +91,9 @@ describe('scaling formula sweep (real data)', () => {
   }
 
   const FORMULA_HINT_RE =
-    /\[\[|\{\{|\b(?:lvl|blvl|slvl|ulvl|calc[1-6]?)\b|\b(?:floor|ceil|round|min|max|pow|frames|range|bool|tree|if|ln|dm)\s*\(/;
+    /\[\[|\{\{|\b(?:lvl|blvl|slvl|ulvl)\b|\b(?:floor|ceil|round|min|max|pow|frames|range|bool|tree|if|ln|dm)\s*\(/;
   const STAT_REF_RE = /\{\{([a-zA-Z_][a-zA-Z0-9_]*)\}\}/g;
-  const COMPOUND_REF_RE = /\[\[([a-zA-Z_][a-zA-Z0-9_]*|id:\d+)\]\]\.\{\{([a-zA-Z_][a-zA-Z0-9_]*)\}\}/g;
+  const COMPOUND_REF_RE = /\[\[([a-zA-Z_][a-zA-Z0-9_]*)\]\]\.\{\{([a-zA-Z_][a-zA-Z0-9_]*)\}\}/g;
 
   function collectFormulas() {
     const out = [];
@@ -110,13 +134,6 @@ describe('scaling formula sweep (real data)', () => {
         blvl: level,
         slvl: 0,
         ulvl: Math.min(150, level * 2),
-        calc: 5,
-        calc1: 5,
-        calc2: 5,
-        calc3: 5,
-        calc4: 5,
-        calc5: 5,
-        calc6: 5,
         characterState: {
           level: Math.min(150, level * 2),
           stats,

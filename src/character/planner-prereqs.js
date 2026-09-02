@@ -9,15 +9,9 @@ import {
 } from './prereq-utils.js';
 import { getCharacterInstance } from './planner-instance.js';
 
-/** Skills that use OR logic for skill_level prerequisites (instead of AND). */
-const OR_PREREQUISITE_SKILLS = [
-  'Life From Death',
-  'Bloodthirst',
-  'Nightwalker',
-];
-
 const PREREQUISITE_ORDER = {
   skill_level: 1,
+  skill_level_any: 1,
   skill_blocked_by: 2,
   tree_points: 3,
   character_level: 4,
@@ -33,6 +27,40 @@ export function getSkillPointsForPrereqs(skillName) {
 }
 
 /**
+ * @param {string} prereq
+ * @param {object[]} allSkills
+ * @returns {{ met: boolean, message: string|null }}
+ */
+function evaluateSkillLevelAny(prereq, allSkills) {
+  const [, value, target] = prereq.split(':');
+  const requiredPoints = parseInt(value, 10);
+  const ids = String(target || '')
+    .split('|')
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+  const orReasons = [];
+  for (const id of ids) {
+    const targetSkillName = normalizePrereqSkillTargetKey(id);
+    const currentPoints = getSkillPointsForPrereqs(targetSkillName);
+    if (currentPoints >= requiredPoints) {
+      return { met: true, message: null };
+    }
+    const targetLabel = displayNameForPrereqSkillTarget(id, allSkills);
+    if (requiredPoints === 1) {
+      orReasons.push(`${targetLabel}`);
+    } else {
+      orReasons.push(`${requiredPoints} points in ${targetLabel}`);
+    }
+  }
+
+  return {
+    met: false,
+    message: `Requires one of: ${orReasons.join(' OR ')}`,
+  };
+}
+
+/**
  * @param {object} skill
  * @param {object[]} [allSkills]
  * @returns {{ met: boolean, reasons: string[] }}
@@ -43,21 +71,8 @@ export function checkPrerequisites(skill, allSkills = []) {
   }
 
   const reasonsWithTypes = [];
-  const useOrLogic = OR_PREREQUISITE_SKILLS.includes(skill.name);
-
-  const skillLevelPrereqs = [];
-  const otherPrereqs = [];
 
   for (const prereq of skill.prerequisites) {
-    const [type] = prereq.split(':');
-    if (type === 'skill_level') {
-      skillLevelPrereqs.push(prereq);
-    } else {
-      otherPrereqs.push(prereq);
-    }
-  }
-
-  for (const prereq of otherPrereqs) {
     const [type, value, target] = prereq.split(':');
 
     if (type === 'character_level') {
@@ -86,57 +101,30 @@ export function checkPrerequisites(skill, allSkills = []) {
           message: `Requires ${requiredPoints} point${requiredPoints > 1 ? 's' : ''} in ${targetTabName} tree`,
         });
       }
-    }
-  }
-
-  if (skillLevelPrereqs.length > 0) {
-    if (useOrLogic) {
-      let anyMet = false;
-      const orReasons = [];
-
-      for (const prereq of skillLevelPrereqs) {
-        const [, value, target] = prereq.split(':');
-        const requiredPoints = parseInt(value, 10);
-        const targetSkillName = normalizePrereqSkillTargetKey(target);
-        const currentPoints = getSkillPointsForPrereqs(targetSkillName);
-        const targetLabel = displayNameForPrereqSkillTarget(target, allSkills);
-
-        if (currentPoints >= requiredPoints) {
-          anyMet = true;
-          break;
-        }
-        if (requiredPoints === 1) {
-          orReasons.push(`${targetLabel}`);
-        } else {
-          orReasons.push(`${requiredPoints} points in ${targetLabel}`);
-        }
-      }
-
-      if (!anyMet) {
+    } else if (type === 'skill_level_any') {
+      const result = evaluateSkillLevelAny(prereq, allSkills);
+      if (!result.met) {
         reasonsWithTypes.push({
-          type: 'skill_level',
-          message: `Requires one of: ${orReasons.join(' OR ')}`,
+          type: 'skill_level_any',
+          message: result.message,
         });
       }
-    } else {
-      for (const prereq of skillLevelPrereqs) {
-        const [, value, target] = prereq.split(':');
-        const requiredPoints = parseInt(value, 10);
-        const targetSkillName = normalizePrereqSkillTargetKey(target);
-        const currentPoints = getSkillPointsForPrereqs(targetSkillName);
-        const targetLabel = displayNameForPrereqSkillTarget(target, allSkills);
+    } else if (type === 'skill_level') {
+      const requiredPoints = parseInt(value, 10);
+      const targetSkillName = normalizePrereqSkillTargetKey(target);
+      const currentPoints = getSkillPointsForPrereqs(targetSkillName);
+      const targetLabel = displayNameForPrereqSkillTarget(target, allSkills);
 
-        if (currentPoints < requiredPoints) {
-          const message =
-            requiredPoints === 1
-              ? `Requires ${targetLabel}`
-              : `Requires ${requiredPoints} points in ${targetLabel}`;
+      if (currentPoints < requiredPoints) {
+        const message =
+          requiredPoints === 1
+            ? `Requires ${targetLabel}`
+            : `Requires ${requiredPoints} points in ${targetLabel}`;
 
-          reasonsWithTypes.push({
-            type: 'skill_level',
-            message,
-          });
-        }
+        reasonsWithTypes.push({
+          type: 'skill_level',
+          message,
+        });
       }
     }
   }

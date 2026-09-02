@@ -6,15 +6,15 @@
  */
 
 import { getBalanceVersionIdsForFallback } from '@/shared/version-config.js';
-import { getFileSkillStore } from '@/tree/skill-data-store.js';
+import { getFileSkillStore } from '@/shared/skill-data-store.js';
+import { MISSING_IMAGE_NAME } from '@/shared/utils.js';
 import { checkPrerequisites } from '@/character/planner-prereqs.js';
-import { getCalcBucketIndex } from './calc-buckets.js';
 import { formulaEvaluator } from './formula-evaluator.js';
 import { formatScalingValuesToDescriptionHtml } from './scaling-display-html.js';
 
-/** [[internal_name]].{{stat}} or [[id:123]].{{stat}} in formulas and descriptions (not plain {{stat}} on current skill). */
+/** [[internal_name]].{{stat}} in formulas and descriptions (not plain {{stat}} on current skill). */
 const CROSS_SKILL_DOT_STAT_PATTERN =
-    /\[\[([a-zA-Z_][a-zA-Z0-9_]*|id:\d+)\]\]\.\{\{([a-zA-Z_][a-zA-Z0-9_]*)\}\}/gi;
+    /\[\[([a-zA-Z_][a-zA-Z0-9_]*)\]\]\.\{\{([a-zA-Z_][a-zA-Z0-9_]*)\}\}/gi;
 const MAX_CROSS_SKILL_DEPTH = 12;
 
 /**
@@ -30,9 +30,7 @@ function looksLikePlainTextScalingConstant(s) {
         lower === 'blvl' ||
         lower === 'slvl' ||
         lower === 'lvl' ||
-        lower === 'ulvl' ||
-        lower === 'calc' ||
-        /^calc[1-6]$/.test(lower)
+        lower === 'ulvl'
     ) {
         return false;
     }
@@ -63,7 +61,6 @@ export default class Skill {
      * Creates a new Skill instance
      * @param {object} data - Skill data object
      * @param {string} data.id - Skill name (internal key)
-     * @param {number} data.skillId - Numeric catalog id (`numericId` in skills.json)
      * @param {string} data.name - Display name shown to users
      * @param {string} data.class - Class the skill belongs to
      * @param {number} data.classId - Numeric class ID
@@ -88,7 +85,6 @@ export default class Skill {
         
         // Core identification
         this.id = data.id;                           // skill name (internal key)
-        this.skillId = data.skillId;                 // numeric catalog id
         this.name = data.name;                       // display name shown to users
         
         // Class and tab information
@@ -101,7 +97,7 @@ export default class Skill {
         this.tags = data.tags || [];                 // array of tag strings
         this.row = data.row ?? 0;                    // grid row position (0 is valid)
         this.col = data.col ?? 0;                    // grid column position (0 is valid)
-        this.image = data.image || 'icons-shared_missing.png'; // icon filename
+        this.image = data.image || MISSING_IMAGE_NAME; // atlas key
 
         // Subskill metadata (optional; version-specific in skills.json)
         this.parentSkillId = data.parentSkillId != null && String(data.parentSkillId).trim() !== '' ? String(data.parentSkillId).trim() : null;
@@ -120,19 +116,12 @@ export default class Skill {
 
         // Prerequisites
         this.prerequisites = data.prerequisites || [];
-
-        // D2-style calc slots (formula strings; evaluated before scaling)
-        for (let i = 1; i <= 6; i++) {
-            const k = `calc${i}`;
-            const v = data[k] ?? data[`calc_${i}`];
-            this[k] = v != null && String(v).trim() !== '' ? String(v) : '';
-        }
     }
 
     /**
-     * @param {string} refToken - internal skill name or `id:123` (skills.id)
+     * @param {string} refToken - internal skill id
      * @param {number[]} versionIds - balance patches to try by name
-     * @returns {{ skillId: number, internalName: string, displayName: string }|null}
+     * @returns {{ internalName: string, displayName: string }|null}
      */
     static _resolveCrossSkillRef(refToken, versionIds) {
         const store = getFileSkillStore();
@@ -185,7 +174,7 @@ export default class Skill {
                 out = out.split(full).join('0');
                 continue;
             }
-            const { skillId, internalName } = resolved;
+            const { internalName } = resolved;
             const blvl = characterState.blvl?.[internalName] ?? 0;
             const slvl = characterState.lvl?.[internalName] ?? 0;
             const refLvl = blvl + slvl;
@@ -193,7 +182,7 @@ export default class Skill {
                 out = out.split(full).join('0');
                 continue;
             }
-            const other = new Skill({ id: internalName, name: resolved.displayName, skillId });
+            const other = new Skill({ id: internalName, name: resolved.displayName });
             const scaling = await other.getScalingValues(
                 refLvl,
                 statKey,
@@ -242,12 +231,12 @@ export default class Skill {
 
             const resolved = Skill._resolveCrossSkillRef(refToken, versionIds);
             if (!resolved) {
-                const label = /^id:\d+$/i.test(String(refToken).trim()) ? refToken : `${refToken}?`;
+                const label = `${refToken}?`;
                 out = out.split(full).join(`<span class="has-text-danger">[${label}]</span>`);
                 continue;
             }
 
-            const { skillId, internalName, displayName } = resolved;
+            const { internalName, displayName } = resolved;
             const blvl = characterState.blvl?.[internalName] ?? 0;
             const slvl = characterState.lvl?.[internalName] ?? 0;
             const refLvl = blvl + slvl;
@@ -256,7 +245,7 @@ export default class Skill {
                 continue;
             }
 
-            const skill = new Skill({ id: internalName, name: displayName, skillId });
+            const skill = new Skill({ id: internalName, name: displayName });
             const scaling = await skill.getScalingValues(
                 refLvl,
                 statKey,
@@ -281,7 +270,7 @@ export default class Skill {
     }
 
     async hasScalingData() {
-        if (!this.skillId) return false;
+        if (!this.id) return false;
         if (!getFileSkillStore()) return false;
 
         try {
@@ -302,7 +291,7 @@ export default class Skill {
      * @returns {number[]} Array of levels with scaling data
      */
     async getAvailableLevels() {
-        if (!this.skillId) return [];
+        if (!this.id) return [];
         if (!getFileSkillStore()) return [];
 
         try {
@@ -341,7 +330,7 @@ export default class Skill {
         if (!characterState) return null;
         
         const blvl = characterState.blvl?.[this.id] || 0;
-        const slvl = characterState.lvl?.[this.id] || 0; // All skills bonus
+        const slvl = characterState.lvl?.[this.id] || 0; // Soft levels (class/all skills bonuses)
         const lvl = blvl + slvl; // Total effective skill level
         
         // Build variables object
@@ -353,7 +342,7 @@ export default class Skill {
             ulvl: characterLevel || 1,
             // Full objects for skill references
             _blvl: characterState.blvl, // Full blvl object for skill references
-            _lvl: characterState.lvl,   // Full lvl object for skill references (All Skills bonus)
+            _lvl: characterState.lvl,   // Full lvl object for skill references (soft-level bonuses)
             // Pass full character state for tree() function
             characterState: characterState
         };
@@ -362,45 +351,6 @@ export default class Skill {
         // They are replaced in FormulaEvaluator.replaceStatReferences()
         
         return variables;
-    }
-
-    /**
-     * Evaluate calc1..calc6 in order, then set `calc` from the active lvl bucket.
-     * @param {object} formulaEvaluator
-     * @param {object} baseVariables - from _buildFormulaVariables (no calc* yet)
-     * @param {number} crossSkillDepth
-     * @returns {Promise<object>} baseVariables plus numeric calc1..calc6 and calc
-     */
-    async _mergeCalcSlotVariables(formulaEvaluator, baseVariables, crossSkillDepth = 0) {
-        if (!baseVariables) return null;
-        const ctx = { ...baseVariables };
-        for (let i = 1; i <= 6; i++) {
-            const key = `calc${i}`;
-            const raw = this[key];
-            const str = raw != null ? String(raw).trim() : '';
-            let num = 0;
-            if (str) {
-                const { value, wasFormula } = await this._evaluateValue(
-                    str,
-                    formulaEvaluator,
-                    ctx,
-                    crossSkillDepth,
-                    true
-                );
-                if (wasFormula) {
-                    const n = parseFloat(String(value), 10);
-                    num = Number.isFinite(n) ? n : 0;
-                } else if (/^-?\d+(\.\d+)?$/.test(str.trim())) {
-                    num = parseFloat(str.trim()) || 0;
-                } else {
-                    num = 0;
-                }
-            }
-            ctx[key] = num;
-        }
-        const bucket = getCalcBucketIndex(ctx.lvl);
-        ctx.calc = ctx[`calc${bucket}`] ?? 0;
-        return ctx;
     }
 
     /**
@@ -502,6 +452,8 @@ export default class Skill {
             );
             
             if (showFormulas && wasFormula) {
+                // Keep evaluated number for special calculators (e.g. minion_mana_cost)
+                result[`${valueKey}_evaluated`] = value;
                 // Show original formula instead of evaluated value
                 result[valueKey] = stringValue;
             } else {
@@ -525,7 +477,7 @@ export default class Skill {
         await this._ensureFileBalance();
         const versionIds = getBalanceVersionIdsForFallback();
         if (versionIds.length === 0) {
-            console.warn(`_getScalingRow: No balance version IDs for skill ${this.skillId}, level ${level}, stat ${statKey}`);
+            console.warn(`_getScalingRow: No balance version IDs for skill ${this.id}, level ${level}, stat ${statKey}`);
             return null;
         }
 
@@ -551,7 +503,7 @@ export default class Skill {
         await this._ensureFileBalance();
         const versionIds = getBalanceVersionIdsForFallback();
         if (versionIds.length === 0) {
-            console.warn(`_getConstantsRow: No balance version IDs for skill ${this.skillId}`);
+            console.warn(`_getConstantsRow: No balance version IDs for skill ${this.id}`);
             return null;
         }
 
@@ -576,6 +528,7 @@ export default class Skill {
             result = { 
                 statName: constantValues.statName, 
                 format: constantValues.format,
+                signed: constantValues.signed,
                 value0: null, value1: null, value2: null, value3: null,
                 value0_constant: false, value1_constant: false, value2_constant: false, value3_constant: false
             };
@@ -583,15 +536,8 @@ export default class Skill {
 
         // Keep optional metadata from scaling/constants rows (used by specialized tooltip calculators).
         for (const key of [
-            'damageModel',
-            'damageKind',
-            'baseMin',
-            'baseMax',
-            'minPerLevel',
-            'maxPerLevel',
-            'hitShift',
-            'synergyFormula',
             'minCharacterLevel',
+            'signed',
         ]) {
             if (Object.prototype.hasOwnProperty.call(constantValues, key)) {
                 result[key] = constantValues[key];
@@ -621,6 +567,7 @@ export default class Skill {
                     );
                     
                     if (showFormulas && wasFormula) {
+                        result[`${valueKey}_evaluated`] = value;
                         // Show original formula instead of evaluated value
                         result[valueKey] = stringValue;
                     } else {
@@ -663,6 +610,7 @@ export default class Skill {
                         
                         if (wasFormula || (!isNaN(stringValue) && stringValue !== '')) {
                             if (showFormulas && wasFormula) {
+                                result[`${valueKey}_evaluated`] = value;
                                 // Show original formula instead of evaluated value
                                 result[valueKey] = stringValue;
                             } else {
@@ -709,7 +657,7 @@ export default class Skill {
         crossSkillDepth = 0,
         variantKey = null
     ) {
-        if (!this.skillId || !statKey) {
+        if (!this.id || !statKey) {
             return null;
         }
         if (!getFileSkillStore()) {
@@ -718,14 +666,7 @@ export default class Skill {
 
         try {
             const baseVariables = this._buildFormulaVariables(characterState, characterLevel);
-            const variables =
-                baseVariables != null
-                    ? await this._mergeCalcSlotVariables(
-                          formulaEvaluator,
-                          baseVariables,
-                          crossSkillDepth
-                      )
-                    : null;
+            const variables = baseVariables;
             
             // Get level-specific values
             let result = await this._getScalingRow(level, statKey, occurrenceIndex, variantKey);
@@ -811,7 +752,6 @@ export default class Skill {
     clone() {
         return new Skill({
             id: this.id,
-            skillId: this.skillId,
             name: this.name,
             class: this.class,
             classId: this.classId,
@@ -829,24 +769,17 @@ export default class Skill {
             baseMaxLevel: this.baseMaxLevel,
             affectedBySpecialization: this.affectedBySpecialization,
             prerequisites: [...this.prerequisites],
-            calc1: this.calc1,
-            calc2: this.calc2,
-            calc3: this.calc3,
-            calc4: this.calc4,
-            calc5: this.calc5,
-            calc6: this.calc6
         });
     }
 
     /**
      * Factory method to create Skill from a catalog row shape (legacy SQL row field names).
-     * @param {object} row - Row-like object (`name`, `display_name`, `id` as numeric id, etc.)
+     * @param {object} row - Row-like object (`name`, `display_name`, etc.)
      * @returns {Skill} New Skill instance
      */
     static fromCatalogRow(row) {
         return new Skill({
             id: row.name,
-            skillId: row.id,
             name: row.display_name,
             class: row.class_name || '',
             classId: row.class_id,
@@ -855,7 +788,7 @@ export default class Skill {
             tags: row.tags ? row.tags.split(', ') : [],
             row: row.row,
             col: row.col,
-            image: row.image || 'icons-shared_missing.png',
+            image: row.image || MISSING_IMAGE_NAME,
             parentSkillId: row.parentSkillId ?? row.parent_skill_id ?? null,
             description: row.description || null,
             skillEffect: row.skill_effect || null,

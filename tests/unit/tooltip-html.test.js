@@ -5,6 +5,7 @@ import {
   buildSkillTooltipDescriptionBlock,
   buildSkillTooltipRestrictionBlock,
   buildSkillTooltipScalingBlockHtml,
+  buildSkillBonusSourcesTableHtml,
   wrapSkillTooltipContent,
   buildSkillTooltipDisabledBannerHtml,
   buildSkillTooltipPrerequisiteWarningHtml,
@@ -51,6 +52,15 @@ describe('buildSkillTooltipHeaderHtml', () => {
     expect(html).toContain('<span>of Parent</span>');
     expect(html).toContain('Lv 5');
   });
+
+  it('omits the icon column when iconHtml is empty', () => {
+    const html = buildSkillTooltipHeaderHtml({
+      nameInnerHtml: 'Sword',
+      levelSectionHtml: '',
+    });
+    expect(html).not.toContain('tooltip-icon');
+    expect(html).toContain('Sword');
+  });
 });
 
 describe('buildSkillTooltipDescriptionBlock', () => {
@@ -73,6 +83,16 @@ describe('buildSkillTooltipDescriptionBlock', () => {
     expect(html).toContain('tooltip-effect');
     expect(html).toContain('line1');
     expect(html).toContain('line2');
+  });
+
+  it('omits level indicator when there is no effect content', () => {
+    const html = buildSkillTooltipDescriptionBlock({
+      mainDescHtml: 'Walk to target location',
+      levelIndicatorHtml: '<div class="tooltip-level-indicator">Level 0 values:</div>',
+      effectExpanded: '',
+    });
+    expect(html).toContain('Walk to target location');
+    expect(html).not.toContain('Level 0 values:');
   });
 });
 
@@ -107,6 +127,25 @@ describe('buildSkillTooltipScalingBlockHtml', () => {
 describe('wrapSkillTooltipContent and banners', () => {
   it('wraps content', () => {
     expect(wrapSkillTooltipContent('inner')).toBe('<div class="tooltip-content">inner</div>');
+  });
+
+  it('wraps content with sources panel', () => {
+    const sources = buildSkillBonusSourcesTableHtml([
+      { label: 'Base', valueHtml: '<span>1</span>' },
+      { label: 'Relic', valueHtml: '<span class="skill-bonus-relic">+3</span>' },
+    ]);
+    const html = wrapSkillTooltipContent('inner', sources);
+    expect(html).toContain('skill-tooltip-panels');
+    expect(html).toContain('tooltip-content');
+    expect(html).toContain('SOURCES');
+    expect(html).toContain('skill-bonus-relic');
+    expect(html).toContain('Base');
+    expect(html).toContain('Relic');
+  });
+
+  it('builds empty sources table for empty rows', () => {
+    expect(buildSkillBonusSourcesTableHtml([])).toBe('');
+    expect(buildSkillBonusSourcesTableHtml(null)).toBe('');
   });
 
   it('builds disabled banner', () => {

@@ -13,6 +13,7 @@ export class DropdownList {
             template: (item) => item.name,
             doNotFilterElement: false,
             isReadOnly: false,
+            clearOnSelect: false,
             ...options
         };
         this.items = [];
@@ -186,11 +187,25 @@ export class DropdownList {
 
     selectItem(item) {
         this.selectedItem = item;
-        this.input.value = item?.name || item?.text || '';
+        if (!this.options.clearOnSelect) {
+            this.input.value = item?.name || item?.text || '';
+        }
         if (this.options.onSelect) {
             this.options.onSelect(item);
         }
         this.container.dispatchEvent(new CustomEvent('change', { detail: item }));
+        if (this.options.clearOnSelect) {
+            this.clearSearch();
+        }
+    }
+
+    clearSearch() {
+        this.input.value = '';
+        this.selectedItem = null;
+        this.shouldRenderOnShow = true;
+        if (this.list.style.display !== 'block') {
+            this.renderItems(this.items);
+        }
     }
 
     showList() {
@@ -216,14 +231,12 @@ export class DropdownList {
             this.positionOSkillsDropdown();
         }
 
-        if (this.shouldRenderOnShow) {
-            if (this.input.value && !this.options.doNotFilterElement) {
-                this.filterItems(this.input.value);
-            } else {
-                this.renderItems();
-            }
-            this.shouldRenderOnShow = false;
+        if (this.input.value && !this.options.doNotFilterElement) {
+            this.filterItems(this.input.value);
+        } else {
+            this.renderItems();
         }
+        this.shouldRenderOnShow = false;
     }
 
     positionOSkillsDropdown() {
@@ -257,8 +270,7 @@ export class DropdownList {
         if (item) {
             this.selectItem(item);
         } else {
-            this.input.value = '';
-            this.selectedItem = null;
+            this.clearSearch();
         }
     }
 

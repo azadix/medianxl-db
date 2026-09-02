@@ -2,7 +2,7 @@
  * Per-class default Life/Mana/attributes for the planner (from tree_data game_meta.classes).
  */
 
-import { getFileSkillStore } from '@/tree/skill-data-store.js';
+import { getFileSkillStore } from '@/shared/skill-data-store.js';
 
 /** @param {unknown} value */
 function parseOptionalNumber(value) {
@@ -10,6 +10,7 @@ function parseOptionalNumber(value) {
 }
 
 /**
+ * Class formula life/mana plus per-component breakdown for tooltips / UI.
  * Vitality/energy scaling uses only points above the class baseline vit/energy (row.vitality / row.energy).
  * @param {number} level Effective planner level (>= 1)
  * @param {number} vitality Current planner vitality
@@ -20,34 +21,6 @@ function parseOptionalNumber(value) {
  *   life_per_level: number, mana_per_level: number,
  *   life_per_vitality: number, mana_per_energy: number
  * }} row Class row from getClassPlannerStatDefaults (vitality/energy = base_vitality/base_energy)
- */
-export function computeClassDerivedLifeMana(level, vitality, energy, row) {
-  const lvl = Math.max(1, Number(level) || 1);
-  const lvDelta = Math.max(0, lvl - 1);
-  const vit = Math.max(0, Number(vitality) || 0);
-  const ene = Math.max(0, Number(energy) || 0);
-  const bl = parseOptionalNumber(row.base_life);
-  const bm = parseOptionalNumber(row.base_mana);
-  const baseVit = Math.max(0, parseOptionalNumber(row.vitality));
-  const baseEne = Math.max(0, parseOptionalNumber(row.energy));
-  const vitExtra = Math.max(0, vit - baseVit);
-  const eneExtra = Math.max(0, ene - baseEne);
-  const lpl = parseOptionalNumber(row.life_per_level);
-  const mpl = parseOptionalNumber(row.mana_per_level);
-  const lpv = parseOptionalNumber(row.life_per_vitality);
-  const mpe = parseOptionalNumber(row.mana_per_energy);
-  return {
-    life: bl + lvDelta * lpl + vitExtra * lpv,
-    mana: bm + lvDelta * mpl + eneExtra * mpe
-  };
-}
-
-/**
- * Same math as {@link computeClassDerivedLifeMana}, split for tooltips / UI.
- * @param {number} level
- * @param {number} vitality
- * @param {number} energy
- * @param {object} row Same shape as {@link getClassPlannerStatDefaults} result
  */
 export function computeClassDerivedLifeManaBreakdown(level, vitality, energy, row) {
   const lvl = Math.max(1, Number(level) || 1);
@@ -78,7 +51,7 @@ export function computeClassDerivedLifeManaBreakdown(level, vitality, energy, ro
     vitalityAboveBaseline: vitExtra,
     lifePerVitality: lpv,
     lifeFromVitality,
-    lifeFromClassFormula: bl + lifeFromLevel + lifeFromVitality,
+    life: bl + lifeFromLevel + lifeFromVitality,
     baseMana: bm,
     manaPerLevel: mpl,
     manaFromLevel,
@@ -86,7 +59,7 @@ export function computeClassDerivedLifeManaBreakdown(level, vitality, energy, ro
     energyAboveBaseline: eneExtra,
     manaPerEnergy: mpe,
     manaFromEnergy,
-    manaFromClassFormula: bm + manaFromLevel + manaFromEnergy
+    mana: bm + manaFromLevel + manaFromEnergy
   };
 }
 

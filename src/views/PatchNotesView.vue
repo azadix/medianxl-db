@@ -13,10 +13,10 @@ import { usePatchSkillTooltip } from '@/composables/usePatchSkillTooltip.js';
 const patchNotesRoot = ref(null);
 const patchSearchSticky = ref(null);
 
-const { patchSections, isLoading, loadError, loadPatchData, renderSectionMarkdown } =
+const { patchSections, isLoading, isBackfillLoading, loadError, loadPatchData, renderSectionMarkdown, formatPatchReleaseDate } =
   usePatchNotesData();
 
-const { tooltipElement, tooltipVisible, tooltipHtml, tooltipStyle, hideSkillTooltip } =
+const { tooltipElement, hideSkillTooltip } =
   usePatchSkillTooltip({ patchNotesRoot, loadPatchData });
 
 const {
@@ -91,7 +91,11 @@ const {
             :data-version="card.version"
           >
             <header class="result-header p-3">
-              <p class="result-title has-text-info mb-0">Patch {{ card.version }} ({{ card.matchCount }} match{{ card.matchCount === 1 ? '' : 'es' }})</p>
+              <p class="result-title has-text-info mb-0">
+                Patch {{ card.version }}
+                <span v-if="card.releaseDate" class="patch-release">{{ formatPatchReleaseDate(card.releaseDate) }}</span>
+                <span class="patch-meta">({{ card.matchCount }} match{{ card.matchCount === 1 ? '' : 'es' }})</span>
+              </p>
               <button
                 type="button"
                 class="button is-small is-ghost patch-open-full-button"
@@ -104,8 +108,13 @@ const {
             <!-- eslint-disable-next-line vue/no-v-html -->
             <div class="context content markdown-content p-3" v-html="renderSearchMarkdown(card.lines, queryText, card.folderKey)" />
           </article>
+          <div v-if="isBackfillLoading" class="notification is-light mt-2 mb-0">
+            Loading older patch notes...
+          </div>
         </div>
-        <div v-else class="notification">No matching patch notes found.</div>
+        <div v-else class="notification">
+          {{ isBackfillLoading ? 'Loading older patch notes...' : 'No matching patch notes found.' }}
+        </div>
       </template>
 
       <div v-else class="results">
@@ -117,7 +126,10 @@ const {
         >
           <details class="patch-details">
             <summary class="patch-summary p-3">
-              <span class="patch-title has-text-info">Patch {{ section.version }}</span>
+              <span class="patch-title has-text-info">
+                Patch {{ section.version }}
+                <span v-if="section.releaseDate" class="patch-release">{{ formatPatchReleaseDate(section.releaseDate) }}</span>
+              </span>
               <span class="patch-meta">{{ section.lines.length }} lines</span>
             </summary>
 
@@ -125,17 +137,15 @@ const {
             <div class="context content markdown-content p-3" v-html="renderSectionMarkdown(section.lines, section.folderKey)" />
           </details>
         </article>
+        <div v-if="isBackfillLoading" class="notification is-light mt-2 mb-0">
+          Loading older patch notes...
+        </div>
       </div>
     </div>
-    <!-- eslint-disable vue/no-v-html -->
     <div
-      v-show="tooltipVisible"
       ref="tooltipElement"
       class="skill-tooltip patch-note-skill-tooltip"
-      :style="tooltipStyle"
-      v-html="tooltipHtml"
     />
-    <!-- eslint-enable vue/no-v-html -->
   </section>
 </template>
 
@@ -213,6 +223,13 @@ const {
   font-weight: 700;
 }
 
+.patch-release {
+  margin-left: 0.5rem;
+  color: var(--bulma-text-weak, #9f9f9f);
+  font-weight: 500;
+  font-size: 0.85em;
+}
+
 .patch-meta {
   color: var(--bulma-text-weak, #9f9f9f);
   font-size: 0.9rem;
@@ -231,6 +248,8 @@ const {
 
 .patch-note-skill-tooltip {
   position: fixed;
+  left: -9999px;
+  top: -9999px;
   z-index: 10000;
   max-width: 50vw;
   min-width: 300px;
@@ -276,6 +295,10 @@ const {
   flex-shrink: 0;
 }
 
+.patch-note-skill-tooltip .skill-bonus-class {
+  color: #cc00ff;
+}
+
 .patch-note-skill-tooltip :deep(.tooltip-icon .image) {
   width: 64px;
   height: 64px;
@@ -297,6 +320,41 @@ const {
   font-size: 0.9rem;
   color: #aaa;
   margin-bottom: 4px;
+}
+
+.patch-note-skill-tooltip .subskill-inline-block {
+  margin: 10px 0 6px;
+  padding: 4px 6px 6px;
+  border: 1px solid rgba(255, 166, 87, 0.65);
+  border-radius: 4px;
+  background: transparent;
+  text-align: center;
+  min-inline-size: 0;
+}
+
+.patch-note-skill-tooltip .subskill-inline-legend {
+  padding: 0 8px;
+  margin: 0 auto;
+  width: auto;
+  float: none;
+  text-align: center;
+  background: #1a1a1a;
+  line-height: 1.2;
+}
+
+.patch-note-skill-tooltip .subskill-inline-body {
+  text-align: center;
+  margin-top: 0;
+  line-height: 1.35;
+}
+
+.patch-note-skill-tooltip .subskill-inline-block--inactive {
+  opacity: 0.65;
+  border-color: rgba(138, 138, 138, 0.55);
+}
+
+.patch-note-skill-tooltip .subskill-inline-block--inactive .subskill-inline-legend {
+  color: #aaa;
 }
 
 :deep(.patch-skill-highlight) {

@@ -2131,12 +2131,14 @@
             "character_level": 40,
             "skill_level": [
               [
-                "snake_bite",
-                1
-              ],
-              [
-                "overkill",
-                1
+                [
+                  "snake_bite",
+                  1
+                ],
+                [
+                  "overkill",
+                  1
+                ]
               ]
             ]
           }
@@ -3657,12 +3659,14 @@
             "character_level": 50,
             "skill_level": [
               [
-                "voodoo_practice",
-                1
-              ],
-              [
-                "debilitating_concoction",
-                1
+                [
+                  "voodoo_practice",
+                  1
+                ],
+                [
+                  "debilitating_concoction",
+                  1
+                ]
               ]
             ]
           }
@@ -3750,12 +3754,14 @@
             "character_level": 50,
             "skill_level": [
               [
-                "pestilence",
-                1
-              ],
-              [
-                "dream_eater",
-                1
+                [
+                  "pestilence",
+                  1
+                ],
+                [
+                  "dream_eater",
+                  1
+                ]
               ]
             ]
           }

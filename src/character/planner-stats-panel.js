@@ -1,7 +1,7 @@
 /**
  * Planner stats: tooltip wiring + helpers for {@link PlannerStatsPanel.vue}.
  */
-import { getCharacterInstance, recomputeClassDerivedLifeMana, runPlannerSkillStatRecompute } from './character-state.js';
+import { getCharacterInstance, recomputeClassDerivedLifeMana, runPlannerSkillStatRecompute } from './planner-core.js';
 import { buildPlannerStatBreakdownHtml } from './planner-stat-breakdown.js';
 import { escapeHtmlText } from '@/shared/utils.js';
 

@@ -3,7 +3,8 @@
  * @module shared/version-config
  */
 
-import { getFileSkillStore } from '@/tree/skill-data-store.js';
+import { getFileSkillStore } from '@/shared/skill-data-store.js';
+import { clearBuildUrlParam } from '@/planner/tree-url-sync.js';
 import {
     BUILD_VERSION_OVERRIDE_KEY,
     DEFAULT_GAME_VERSION,
@@ -163,6 +164,8 @@ export async function initializeVersionSelector(selectorElement) {
         } else {
             setBuildVersionOverride(selectedVersion);
         }
+        // Drop URL build payload so reload does not re-import and snap version back.
+        clearBuildUrlParam();
         window.location.reload();
     };
 

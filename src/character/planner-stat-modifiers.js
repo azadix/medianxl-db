@@ -3,19 +3,21 @@
  * Return rows here so stat tooltips can list them (e.g. Curare: +100 poison length reduction).
  *
  * Hook {@link recomputePlannerStatsFromSkillAllocations} runs when skill allocations change
- * (see {@link runPlannerSkillStatRecompute} in character-state.js).
+ * (see {@link runPlannerSkillStatRecompute} in planner-core.js).
  */
 
-import Skill from '@/skills/domain/Skill.js';
-import { getFileSkillStore } from '@/tree/skill-data-store.js';
-import { isConditionSelected } from '@/stores/planner-config-store.js';
 import { isSubskillActive } from '@/skills/domain/conditional-subskills.js';
+import { isScalingConstantRowActive } from '@/skills/domain/show-conditions.js';
 import { getSkillVariantKey } from '@/tree/skill-variants.js';
 import {
   getPlannerStatDef,
   isPlannerBaseStatKey,
   normalizePlannerStatValue
 } from './planner-stats-config.js';
+import Skill from '@/skills/domain/Skill.js';
+import { getFileSkillStore, withBaseAttributeFormulaStats } from '@/shared/skill-data-store.js';
+import { getRelicSkillBonusForSkill } from '@/items/skill-bonus-from-modifiers.js';
+import Character from './Character.js';
 
 /**
  * @typedef {'flat' | 'percent' | 'more'} PlannerStatModifierKind
@@ -33,7 +35,7 @@ import {
 let _plannerStatSkillModifiersByKey = {};
 
 /**
- * @param {import('@/tree/skill-data-store.js').SkillFileStore|null} store
+ * @param {import('@/shared/skill-data-store.js').SkillFileStore|null} store
  * @param {string} skillKey
  * @returns {object|null} catalog row
  */
@@ -42,11 +44,6 @@ function catalogRowBySkillKey(store, skillKey) {
   if (!rawKey || !store) return null;
   let row = store.catalogByInternalId?.get(rawKey) ?? null;
   if (row) return row;
-  if (/^\d+$/.test(rawKey)) {
-    const nid = Number(rawKey);
-    const hit = Array.isArray(store.catalog) ? store.catalog.find((r) => Number(r?.numericId) === nid) : null;
-    if (hit) return hit;
-  }
   const norm = rawKey.toLowerCase().replace(/'/g, '').replace(/\s+/g, '_');
   row = store.catalogByInternalId?.get(norm) ?? null;
   if (row) return row;
@@ -75,7 +72,7 @@ function sumEvaluatedNumericSlots(scalingValues) {
 
 /**
  * Resolve a token from stats.json `pairedStat[].stat` to a planner registry key (character_stats `key`).
- * @param {import('@/tree/skill-data-store.js').SkillFileStore|null} store
+ * @param {import('@/shared/skill-data-store.js').SkillFileStore|null} store
  * @param {string} tokenLower
  * @returns {string|null}
  */
@@ -95,7 +92,7 @@ function resolvePairedStatTargetToPlannerKey(store, tokenLower) {
 /**
  * Validated entries from stats.json `pairedStat` (optional array on the scaling-stat row).
  * Every valid object is kept: multiple rows may share the same valueIndex so one slot updates several planner stats.
- * @param {import('@/tree/skill-data-store.js').SkillFileStore|null} store
+ * @param {import('@/shared/skill-data-store.js').SkillFileStore|null} store
  * @param {unknown} raw
  * @returns {{ valueIndex: number, plannerKey: string }[]}
  */
@@ -143,13 +140,35 @@ function numericValueSlot(scalingValues, valueIndex) {
 }
 
 /**
- * @param {import('@/tree/skill-data-store.js').SkillFileStore|null} store
+ * @param {import('@/shared/skill-data-store.js').SkillFileStore|null} store
  * @param {string} scalingStatKey lowercased skills scalingConstants.statKey
  * @returns {{ valueIndex: number, plannerKey: string }[]}
  */
 export function getPairedStatRouting(store, scalingStatKey) {
   const meta = store?.getStatByKeyLower?.(scalingStatKey);
   return normalizePairedStatList(store, meta?.pairedStat);
+}
+
+/**
+ * True when this planner stat only has inactive (condition-off) skill modifiers
+ * and no non-default manual/saved value. Used to grey sheet rows that exist only
+ * because of inactive skill contributions (e.g. Soulchain). Skill lines stay grey
+ * in the tooltip via modifier.active; manual totals should not grey the row.
+ * @param {string} statKey
+ * @param {number|string|null|undefined} [displayedValue] current panel value (raw + active bonuses)
+ * @returns {boolean}
+ */
+export function isPlannerStatConditionInactive(statKey, displayedValue) {
+  const mods = getPlannerStatSkillModifiers(statKey);
+  if (!mods.length) return false;
+  if (!mods.every((m) => m.active === false)) return false;
+  if (displayedValue !== undefined && displayedValue !== null) {
+    const def = getPlannerStatDef(statKey);
+    const defaultVal = def?.default != null && !Number.isNaN(def.default) ? def.default : 0;
+    const v = Number(displayedValue);
+    if (Number.isFinite(v) && v !== defaultVal) return false;
+  }
+  return true;
 }
 
 /**
@@ -195,6 +214,7 @@ function formatModifierDisplayValue(value) {
  *   effectiveLevel: number,
  *   treeSkillsCache: Record<string, string[]>,
  *   allSkillsBonus: number,
+ *   classSkillsBonus?: number,
  *   mergedBlvl: Record<string, number>
  * }} PlannerSkillStatRecomputeContext
  */
@@ -213,9 +233,35 @@ export async function recomputePlannerStatsFromSkillAllocations(character, ctx) 
     return;
   }
 
-  const { effectiveLevel, treeSkillsCache, allSkillsBonus, mergedBlvl } = ctx;
+  const { effectiveLevel, treeSkillsCache, allSkillsBonus, classSkillsBonus, mergedBlvl } = ctx;
   const ulvl = Math.max(1, Math.floor(Number(effectiveLevel) || 1));
-  const slvlBonus = Math.max(0, Math.floor(Number(allSkillsBonus) || 0));
+  const slvlAll = Math.max(0, Math.floor(Number(allSkillsBonus) || 0));
+  const slvlClass = Math.max(0, Math.floor(Number(classSkillsBonus) || 0));
+  const charClass = character.className != null ? String(character.className) : '';
+
+  /**
+   * Soft levels for tree skills of this class include class-skills bonus; oSkills / foreign skills do not.
+   * Relic +skills are layered on top (Overview inputs stay separate).
+   * @param {string} skillKey
+   */
+  function softLevelForSkillKey(skillKey) {
+    const cat = catalogRowBySkillKey(store, skillKey);
+    const skillClass = cat?.class != null ? String(cat.class) : '';
+    const getsClassBonus = charClass !== '' && skillClass === charClass;
+    const displayName =
+      cat?.displayName != null && String(cat.displayName).trim() !== ''
+        ? String(cat.displayName).trim()
+        : String(skillKey);
+    const relicBonus = getRelicSkillBonusForSkill({
+      skillId: skillKey,
+      displayName,
+      isOSkill: !getsClassBonus,
+      className: charClass,
+      skillClass,
+    });
+    const itemSlvl = Character.clampOSkillPoints(character.getOSkillItemPoints(skillKey));
+    return slvlAll + (getsClassBonus ? slvlClass : 0) + relicBonus + itemSlvl;
+  }
 
   /** @type {Record<string, number>} */
   const bonuses = {};
@@ -226,11 +272,11 @@ export async function recomputePlannerStatsFromSkillAllocations(character, ctx) 
     blvl: { ...mergedBlvl },
     lvl: {},
     treeSkillsCache: treeSkillsCache && typeof treeSkillsCache === 'object' ? treeSkillsCache : {},
-    stats: { ...character.getAllRawStats() }
+    stats: withBaseAttributeFormulaStats({ ...character.getAllRawStats() }, character)
   };
 
   for (const name of Object.keys(characterState.blvl)) {
-    characterState.lvl[name] = slvlBonus;
+    characterState.lvl[name] = softLevelForSkillKey(name);
   }
 
   /**
@@ -251,29 +297,22 @@ export async function recomputePlannerStatsFromSkillAllocations(character, ctx) 
     rowPhase = {}
   ) {
     const { skipMinCognitionRows = false, onlyMinCognitionRows = false } = rowPhase;
-    if (!catRow?.numericId) return;
+    if (!catRow?.id) return;
 
     const internalId = String(catRow.id);
     const displayName =
       catRow.displayName != null && String(catRow.displayName).trim() !== ''
         ? String(catRow.displayName)
         : internalId;
-    const numericId = Number(catRow.numericId);
-    if (!Number.isFinite(numericId)) return;
 
     const scalingConstants = Array.isArray(catRow.scalingConstants) ? catRow.scalingConstants : [];
     if (scalingConstants.length === 0) return;
 
-    const skill = new Skill({ id: internalId, name: displayName, skillId: numericId });
+    const skill = new Skill({ id: internalId, name: displayName });
 
     const storedVk = getSkillVariantKey(internalId) ?? getSkillVariantKey(internalKeyForLookup);
     const selectedVariantKey =
       storedVk != null && String(storedVk).trim() !== '' ? String(storedVk).trim() : null;
-
-    // Determine if this catalog row has conditions and whether any are selected
-    const conds = store.getConditionsForSkill(catRow);
-    const hasConds = Array.isArray(conds) && conds.length > 0;
-    const rowActive = !hasConds || conds.some((cc) => isConditionSelected(cc.key));
 
     for (const scRow of scalingConstants) {
       const statKeyRaw = scRow?.statKey;
@@ -336,6 +375,9 @@ export async function recomputePlannerStatsFromSkillAllocations(character, ctx) 
         }
       }
 
+      // Per-row showCondition (e.g. Bloodthirst stance lines), not skill-wide OR
+      const rowActive = isScalingConstantRowActive(catRow, scRow);
+
       let scalingValues;
       try {
         scalingValues = await skill.getScalingValues(
@@ -383,16 +425,24 @@ export async function recomputePlannerStatsFromSkillAllocations(character, ctx) 
 
   for (const [internalKey, rawPoints] of Object.entries(mergedBlvl || {})) {
     const blvlPoints = Math.max(0, Math.floor(Number(rawPoints) || 0));
-    if (blvlPoints <= 0) continue;
+    const slvl = Math.max(0, Math.floor(Number(characterState.lvl?.[internalKey]) || 0));
+    if (blvlPoints <= 0 && slvl <= 0) continue;
 
     const catRow = catalogRowBySkillKey(store, internalKey);
-    if (!catRow?.numericId) continue;
+    if (!catRow?.id) continue;
+
+    const isOSkill = (character.oSkills || []).some(
+      (r) => String(r?.skillName || '').trim() === String(internalKey)
+    );
+    const scalingLevel = isOSkill
+      ? Math.min(Character.OSKILL_MAX_POINTS, blvlPoints + slvl)
+      : blvlPoints;
 
     // Apply the allocated (parent) skill row itself (then cognition-gated rows).
-    await applyScalingConstantsForCatalogRow(catRow, internalKey, blvlPoints, characterState, {
+    await applyScalingConstantsForCatalogRow(catRow, internalKey, scalingLevel, characterState, {
       skipMinCognitionRows: true
     });
-    await applyScalingConstantsForCatalogRow(catRow, internalKey, blvlPoints, characterState, {
+    await applyScalingConstantsForCatalogRow(catRow, internalKey, scalingLevel, characterState, {
       onlyMinCognitionRows: true
     });
 
@@ -414,12 +464,12 @@ export async function recomputePlannerStatsFromSkillAllocations(character, ctx) 
       const patchedState = {
         ...characterState,
         blvl: { ...(characterState.blvl || {}), [subInternalId]: blvlPoints },
-        lvl: { ...(characterState.lvl || {}), [subInternalId]: slvlBonus }
+        lvl: { ...(characterState.lvl || {}), [subInternalId]: softLevelForSkillKey(subInternalId) }
       };
-      await applyScalingConstantsForCatalogRow(sub, subInternalId, blvlPoints, patchedState, {
+      await applyScalingConstantsForCatalogRow(sub, subInternalId, scalingLevel, patchedState, {
         skipMinCognitionRows: true
       });
-      await applyScalingConstantsForCatalogRow(sub, subInternalId, blvlPoints, patchedState, {
+      await applyScalingConstantsForCatalogRow(sub, subInternalId, scalingLevel, patchedState, {
         onlyMinCognitionRows: true
       });
     }

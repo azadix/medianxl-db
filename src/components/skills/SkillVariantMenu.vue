@@ -5,7 +5,7 @@ import {
   setSkillVariantKey,
   variantBracketSuffixFromList,
 } from '@/tree/skill-variants.js';
-import { runPlannerSkillStatRecompute } from '@/character/character-state.js';
+import { runPlannerSkillStatRecompute } from '@/character/planner-core.js';
 
 const props = defineProps({
   variantMapKey: { type: String, required: true },

@@ -19,6 +19,7 @@ Notes:
 - `npm run lint`: ESLint for JS/Vue files.
 - `npm run build`: lint + Vitest + Vite build + SPA 404 copy.
 - `npm test` / `npm run test:data`: Vitest (includes spellcheck).
+- `npm run spellcheck`: skill text spelling only (`tools/spellcheck/`).
 - `npm run preview`: serve the production build locally.
 
 ## Common contributor tasks
@@ -29,7 +30,7 @@ Notes:
   - Follow `docs/PATCH_RELEASE.md`.
 - **Adjust planner allocation rules**
   - Work in `src/skills/domain/skill-allocation-rules.js` and `src/skills/domain/skill-restrictions.js`.
-  - Integrate in `src/character/character-state.js`.
+  - Integrate in `src/character/planner-core.js`.
   - See `docs/ADDING_SKILL_RULES.md`.
 - **Edit patch notes**
   - Add/update `public/patch_notes/*.md`.
@@ -50,4 +51,4 @@ Before opening a PR:
 ## Current structure notes
 
 - Canonical app modules live under `src/` (notably `src/character` and `src/skills`).
-- Some root-level `src/tree/` modules remain as planner runtime/compatibility surfaces.
+- `src/tree/` holds skill tree UI (render/tooltip/arrows); planner shell/runtime lives under `src/planner/`.

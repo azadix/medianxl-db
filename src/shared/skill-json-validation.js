@@ -1,5 +1,5 @@
 /**
- * Shape validation for editor JSON fields: variants + scalingConstants.
+ * Shape validation for catalog rows, variants, and scalingConstants.
  * Shared by the skill editor Apply path and Vitest data tests.
  * @module src/shared/skill-json-validation
  */
@@ -15,6 +15,7 @@ export const KNOWN_FORMULA_FUNCTIONS = Object.freeze(
     'frames',
     'range',
     'bool',
+    'cond',
     'tree',
     'if',
     'ln',
@@ -28,13 +29,6 @@ export const KNOWN_FORMULA_VARIABLES = Object.freeze(
     'blvl',
     'slvl',
     'ulvl',
-    'calc',
-    'calc1',
-    'calc2',
-    'calc3',
-    'calc4',
-    'calc5',
-    'calc6',
   ])
 );
 
@@ -49,7 +43,7 @@ const OVERRIDE_KEYS = Object.freeze([
 const FUNC_CALL_RE = /([a-zA-Z_][a-zA-Z0-9_]*)\s*\(/g;
 const TREE_CALL_RE = /\btree\((\d+)\)/g;
 const FORMULA_HINT_RE =
-  /\[\[|\{\{|\b(?:lvl|blvl|slvl|ulvl|calc[1-6]?)\b|\b(?:floor|ceil|round|min|max|pow|frames|range|bool|tree|if|ln|dm)\s*\(/;
+  /\[\[|\{\{|\b(?:lvl|blvl|slvl|ulvl)\b|\b(?:floor|ceil|round|min|max|pow|frames|range|bool|cond|tree|if|ln|dm)\s*\(/;
 
 /**
  * @param {string} value
@@ -100,6 +94,155 @@ function isNonEmptyStringArrayOrNull(value) {
   if (value == null) return true;
   if (!Array.isArray(value)) return false;
   return value.every((x) => typeof x === 'string');
+}
+
+/**
+ * @param {unknown} value
+ * @returns {boolean}
+ */
+function isStringArray(value) {
+  return Array.isArray(value) && value.every((x) => typeof x === 'string');
+}
+
+/**
+ * @param {unknown} row
+ * @param {string} key
+ * @param {string[]} failures
+ * @param {string} prefix
+ */
+function requireNonEmptyString(row, key, failures, prefix) {
+  const value = row[key];
+  if (typeof value !== 'string' || value.trim() === '') {
+    failures.push(`${prefix}${key} must be a non-empty string`);
+  }
+}
+
+/**
+ * @param {unknown} row
+ * @param {string} key
+ * @param {string[]} failures
+ * @param {string} prefix
+ */
+function requireFiniteNumber(row, key, failures, prefix) {
+  const value = row[key];
+  if (typeof value !== 'number' || !Number.isFinite(value)) {
+    failures.push(`${prefix}${key} must be a finite number`);
+  }
+}
+
+/**
+ * @param {unknown} row
+ * @param {string} key
+ * @param {string[]} failures
+ * @param {string} prefix
+ */
+function requireBoolean(row, key, failures, prefix) {
+  if (typeof row[key] !== 'boolean') {
+    failures.push(`${prefix}${key} must be a boolean`);
+  }
+}
+
+/**
+ * @param {unknown} row
+ * @param {string} key
+ * @param {string[]} failures
+ * @param {string} prefix
+ */
+function requireStringArray(row, key, failures, prefix) {
+  if (!isStringArray(row[key])) {
+    failures.push(`${prefix}${key} must be an array of strings`);
+  }
+}
+
+/**
+ * @param {unknown} row
+ * @param {string} key
+ * @param {string[]} failures
+ * @param {string} prefix
+ */
+function requireArray(row, key, failures, prefix) {
+  if (!Array.isArray(row[key])) {
+    failures.push(`${prefix}${key} must be an array`);
+  }
+}
+
+/**
+ * Structural shape check for one skills.json catalog row.
+ * @param {unknown} row
+ * @returns {string[]}
+ */
+export function validateSkillCatalogRow(row) {
+  const failures = [];
+  if (row == null || typeof row !== 'object' || Array.isArray(row)) {
+    return ['skill row must be an object'];
+  }
+
+  const prefix = typeof row.id === 'string' && row.id.trim() ? `${row.id}: ` : '';
+
+  requireNonEmptyString(row, 'id', failures, prefix);
+  requireNonEmptyString(row, 'displayName', failures, prefix);
+  requireFiniteNumber(row, 'classId', failures, prefix);
+  requireFiniteNumber(row, 'tab', failures, prefix);
+  requireNonEmptyString(row, 'class', failures, prefix);
+  requireNonEmptyString(row, 'tabName', failures, prefix);
+  requireStringArray(row, 'tags', failures, prefix);
+  requireFiniteNumber(row, 'baseMaxLevel', failures, prefix);
+  requireBoolean(row, 'affectedBySpecialization', failures, prefix);
+  requireArray(row, 'variants', failures, prefix);
+  requireArray(row, 'scalingConstants', failures, prefix);
+  requireStringArray(row, 'description', failures, prefix);
+  requireStringArray(row, 'restriction', failures, prefix);
+  requireStringArray(row, 'skillEffect', failures, prefix);
+
+  if (row.image != null && row.image !== '') {
+    if (typeof row.image !== 'string') {
+      failures.push(`${prefix}image must be a string when set`);
+    }
+  }
+
+  if (row.showCondition != null) {
+    requireStringArray(row, 'showCondition', failures, prefix);
+  }
+
+  return failures;
+}
+
+/**
+ * Structural shape check for one subskills.json catalog row.
+ * @param {unknown} row
+ * @returns {string[]}
+ */
+export function validateSubskillCatalogRow(row) {
+  const failures = [];
+  if (row == null || typeof row !== 'object' || Array.isArray(row)) {
+    return ['subskill row must be an object'];
+  }
+
+  const prefix = typeof row.id === 'string' && row.id.trim() ? `${row.id}: ` : '';
+
+  requireNonEmptyString(row, 'id', failures, prefix);
+  requireNonEmptyString(row, 'displayName', failures, prefix);
+  requireNonEmptyString(row, 'parentSkillId', failures, prefix);
+  requireArray(row, 'scalingConstants', failures, prefix);
+  requireStringArray(row, 'description', failures, prefix);
+  requireStringArray(row, 'skillEffect', failures, prefix);
+
+  // Present on disk; editor may omit. When set, must be string[].
+  if (row.restriction != null) {
+    requireStringArray(row, 'restriction', failures, prefix);
+  }
+
+  if (row.activeWhenTabPoints != null) {
+    requireFiniteNumber(row, 'activeWhenTabPoints', failures, prefix);
+  }
+  if (row.activeWhenSkillPoints != null) {
+    requireNonEmptyString(row, 'activeWhenSkillPoints', failures, prefix);
+  }
+  if (row.showCondition != null) {
+    requireStringArray(row, 'showCondition', failures, prefix);
+  }
+
+  return failures;
 }
 
 /**
@@ -205,13 +348,7 @@ export function validateScalingConstantsArray(rows, ctx = {}) {
     }
 
     const hasValue = SCALING_VALUE_SLOTS.some((slot) => String(sc[slot] ?? '').trim() !== '');
-    const hasBand =
-      (sc.baseMin != null && String(sc.baseMin).trim() !== '') ||
-      (sc.baseMax != null && String(sc.baseMax).trim() !== '') ||
-      (typeof sc.damageModel === 'string' && sc.damageModel.trim() !== '') ||
-      (Array.isArray(sc.minPerLevel) && sc.minPerLevel.length > 0) ||
-      (Array.isArray(sc.maxPerLevel) && sc.maxPerLevel.length > 0);
-    if (!hasValue && !hasBand) {
+    if (!hasValue) {
       failures.push(`${label}: empty scaling row for '${statKey || '?'}'`);
     }
 
@@ -222,14 +359,9 @@ export function validateScalingConstantsArray(rows, ctx = {}) {
         ...validateFormulaLikeValue(String(value), `${label}.${slot}`)
       );
     }
-    if (sc.synergyFormula != null && String(sc.synergyFormula).trim() !== '') {
-      failures.push(
-        ...validateFormulaLikeValue(String(sc.synergyFormula), `${label}.synergyFormula`)
-      );
-    }
 
     if (tabIds) {
-      for (const slot of [...SCALING_VALUE_SLOTS, 'synergyFormula']) {
+      for (const slot of SCALING_VALUE_SLOTS) {
         const value = String(sc[slot] ?? '');
         for (const match of value.matchAll(TREE_CALL_RE)) {
           const tabId = Number.parseInt(match[1], 10);

@@ -184,6 +184,7 @@ export function usePatchNotesSearch({
     patchSections.value.map((section) => ({
       version: section.version,
       folderKey: section.folderKey,
+      releaseDate: section.releaseDate ?? null,
       lines: section.lines.map((line, idx) => ({
         lineNumber: idx + 1,
         text: line,
@@ -210,6 +211,7 @@ export function usePatchNotesSearch({
           key: getRangeKey(section.version, hit.localIdx, hit.localIdx),
           version: section.version,
           folderKey: section.folderKey,
+          releaseDate: section.releaseDate ?? null,
           start: hit.localIdx,
           end: hit.localIdx,
           totalLines: section.lines.length,

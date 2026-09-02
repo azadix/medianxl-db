@@ -1,20 +1,21 @@
 import Skill from '@/skills/domain/Skill.js';
 import { isSubskillActive } from '@/skills/domain/conditional-subskills.js';
+import { isScalingConstantRowActive } from '@/skills/domain/show-conditions.js';
 import {
     lookupMergedDisplayNameByInternalName,
-    lookupSkillNameAndDisplayByNumericId,
     getFileSkillStore
-} from '@/tree/skill-data-store.js';
+} from '@/shared/skill-data-store.js';
 import { formulaEvaluator } from '@/skills/domain/formula-evaluator.js';
 import { formatScalingValuesToDescriptionHtml } from '@/skills/domain/scaling-display-html.js';
-import { calculateBandDamageMinMax, isBandDamageStatKey } from '@/skills/domain/damage-calculator.js';
+import { DEFAULT_TREE_ASSET_FOLDER } from '@/shared/version-constants.js';
 
 // --- Icon Atlas Helper ---
 const ICON_SIZE = 48;
 const ATLAS_SIZE = 912;
 const ICONS_PER_ROW = Math.floor(ATLAS_SIZE / ICON_SIZE);
-export const MISSING_IMAGE_NAME = "icons-shared_missing.png";
-export const MISSING_IMAGE_WEBP_NAME = "icons-shared_missing.webp";
+
+/** Sentinel / JSON key for a missing skill icon (not a file path). */
+export const MISSING_IMAGE_NAME = 'icons-shared_missing';
 
 /**
  * HTML classes used by scaling placeholder rendering (tooltips / descriptions).
@@ -46,13 +47,15 @@ export function escapeHtmlText(s) {
 export const escapeHtmlAttr = escapeHtmlText;
 
 /**
+ * Same 48×48 div shell as atlas sprites so callers (e.g. HomeView `scale(5)`) size them equally.
  * @param {string} className
  */
 function missingIconPictureHTML(className) {
-    const png = getAssetUrl(`icons/${MISSING_IMAGE_NAME}`);
-    const webp = getAssetUrl(`icons/${MISSING_IMAGE_WEBP_NAME}`);
+    const webp = getAssetUrl(`icons/${MISSING_IMAGE_NAME}.webp`);
     const cls = escapeHtmlAttr(`image ${className}`.trim());
-    return `<picture><source srcset="${escapeHtmlAttr(webp)}" type="image/webp"><img src="${escapeHtmlAttr(png)}" class="${cls}" alt="missing icon"></picture>`;
+    const webpEsc = escapeHtmlAttr(webp);
+    const bgImage = `background-image:url('${webpEsc}');`;
+    return `<div class="${cls}" style="width:${ICON_SIZE}px;height:${ICON_SIZE}px;${bgImage}background-size:${ICON_SIZE}px ${ICON_SIZE}px;background-repeat:no-repeat;" role="img" aria-label="missing icon"></div>`;
 }
 
 /**
@@ -108,6 +111,17 @@ export function getAssetUrl(relativePath) {
     return new URL(relativePath, window.location.origin + base).href;
 }
 
+/**
+ * Resolve a planner item inventory icon URL from its catalog `icon` stem.
+ * @param {string|null|undefined} iconKey - e.g. `invpa4`
+ * @returns {string} Absolute URL, or empty string when `iconKey` is missing
+ */
+export function getItemIconUrl(iconKey) {
+    const key = (iconKey && String(iconKey).trim()) || '';
+    if (!key) return '';
+    return getAssetUrl(`icons/item_icons/${key}.webp`);
+}
+
 export function getUrlParams() {
     return Object.fromEntries(new URLSearchParams(window.location.search).entries());
 }
@@ -138,11 +152,8 @@ export function formatStatName(stat) {
     ).join(' ');
 }
 
-// When no patch folder is passed, use this tree_data subdirectory (underscore major_minor).
-const ATLAS_DEFAULT_VERSION_FOLDER = '2_13';
-
 /**
- * @param {string} gameVersionFolder - e.g. "2_12"; atlas URLs are tree_data/<folder>/class-<prefix>.{webp,png}; if omitted, uses ATLAS_DEFAULT_VERSION_FOLDER.
+ * @param {string} gameVersionFolder - e.g. "2_14"; atlas URLs are tree_data/<folder>/class-<prefix>.webp; if omitted, uses {@link DEFAULT_TREE_ASSET_FOLDER}.
  */
 export function getIconHTML(imagePath, className = '', gameVersionFolder = null) {
     if (!imagePath) return "";
@@ -150,8 +161,8 @@ export function getIconHTML(imagePath, className = '', gameVersionFolder = null)
         return missingIconPictureHTML(className);
     }
 
-    // Support both "icons-<prefix>_<index>.png" and "image-<prefix>_<index>.png"
-    const match = imagePath.match(/^(?:icons|image)-([a-z]+)_(\d+)\.png$/);
+    // Atlas keys: "icons-<prefix>_<index>" (not a file path)
+    const match = imagePath.match(/^(?:icons|image)-([a-z]+)_(\d+)$/i);
     if (!match) {
         return missingIconPictureHTML(className);
     }
@@ -163,16 +174,10 @@ export function getIconHTML(imagePath, className = '', gameVersionFolder = null)
 
     const folder = (gameVersionFolder && String(gameVersionFolder).trim())
         ? String(gameVersionFolder).trim()
-        : ATLAS_DEFAULT_VERSION_FOLDER;
-    const atlasPng = getAssetUrl(`tree_data/${folder}/class-${prefix}.png`);
+        : DEFAULT_TREE_ASSET_FOLDER;
     const atlasWebp = getAssetUrl(`tree_data/${folder}/class-${prefix}.webp`);
-    const pngEsc = escapeHtmlAttr(atlasPng);
     const webpEsc = escapeHtmlAttr(atlasWebp);
-    // PNG fallback, then WebP-first image-set (reduces bytes where supported).
-    const bgImage =
-        `background-image:url('${pngEsc}');` +
-        `background-image:-webkit-image-set(url('${webpEsc}') 1x, url('${pngEsc}') 1x);` +
-        `background-image:image-set(url('${webpEsc}') type('image/webp'), url('${pngEsc}') type('image/png'));`;
+    const bgImage = `background-image:url('${webpEsc}');`;
 
     return `
         <div class="image ${className}"
@@ -186,47 +191,27 @@ export function getIconHTML(imagePath, className = '', gameVersionFolder = null)
     `;
 }
 
-// --- Class-derived icon resolver ---
-// Accepts a raw image filename (e.g., "image.png") and the human-readable class name
-// Maps the class to a directory prefix and returns an <img> element pointing to icons/<prefix>/<filename>
-// For class "Other", shared images are used (icons/shared)
+// --- Skill icon resolver ---
+// Atlas-style keys (icons-<prefix>_N / image-<prefix>_N) load sprites from
+// tree_data/<version>/class-<prefix>.webp. Missing / unknown names use icons/ placeholders.
 
 /**
- * @param {string|null|undefined} imageFileName - raw filename from data (e.g. "image.png")
- * @param {string|null|undefined} humanClassName - class display name for prefix lookup
- * @param {string} [className] - extra CSS class on the img element
- * @param {string|null|undefined} gameVersionFolder - e.g. "2_12"; only atlas-style names (icons-*_n.png / image-*_n.png).
- * Those load sprites from tree_data/<folder>/class-<prefix>.{webp,png}. Loose PNGs use icons/<prefix>/<file> (not versioned).
+ * @param {string|null|undefined} imageFileName - atlas key from data (e.g. "icons-pal_132")
+ * @param {string|null|undefined} _humanClassName - unused; kept for call-site compatibility
+ * @param {string} [className] - extra CSS class on the icon element
+ * @param {string|null|undefined} gameVersionFolder - e.g. "2_14"; atlas sprites from tree_data/<folder>/class-*.webp
  */
-export function getSkillIconHTML(imageFileName, humanClassName, className = '', gameVersionFolder = null) {
+export function getSkillIconHTML(imageFileName, _humanClassName, className = '', gameVersionFolder = null) {
     const file = (imageFileName && imageFileName.trim().length > 0) ? imageFileName.trim() : MISSING_IMAGE_NAME;
     const atlasVersionFolder = gameVersionFolder && String(gameVersionFolder).trim().length > 0
         ? String(gameVersionFolder).trim()
         : null;
 
-    // Atlas-style: version-specific sprite sheets (tree_data/<major>_<minor>/class-*.{webp,png}).
-    if (/^(?:icons|image)-[a-z]+_\d+\.png$/.test(file)) {
+    if (/^(?:icons|image)-[a-z]+_\d+$/i.test(file)) {
         return getIconHTML(file, className, atlasVersionFolder);
     }
 
-    // Loose PNGs: shared across patches; keep sources for building atlases in your asset pipeline, not under version folders here.
-    const isExplicitShared = /^shared\//.test(file) || /(^|-)shared(_|\.)/i.test(file);
-
-    let prefix = 'shared';
-
-    if (!isExplicitShared && humanClassName) {
-        const store = getFileSkillStore();
-        const row = store?.gameMeta?.classes?.find((c) => c.name === humanClassName);
-        if (row?.image_prefix) {
-            prefix = row.image_prefix;
-        }
-    }
-
-    if (file === MISSING_IMAGE_NAME) {
-        return missingIconPictureHTML(className);
-    }
-    const path = getAssetUrl(`icons/${prefix}/${file}`);
-    return `<img src="${escapeHtmlAttr(path)}" class="image ${className}">`;
+    return missingIconPictureHTML(className);
 }
 
 
@@ -239,11 +224,15 @@ export function getSkillIconHTML(imageFileName, humanClassName, className = '', 
  * @param {number|string} manashift - Bitwise shift multiplier for precision (value2)
  * @param {number} level - Current skill level
  * @param {number|string|undefined|null} [minMana] - Optional floor from `mana_cost` min_mana / value3; omitted means cost may be 0
- * @param {{ channeled?: boolean }} [options]
+ * @param {{ channeled?: boolean, manaCostOfSkillsPercent?: number }} [options]
+ *   `manaCostOfSkillsPercent` — planner "% Mana cost of skills" included in the formula:
+ *   lvlmana is scaled as trunc(lvlmana * (100 + pct) / 100) before level growth
+ *   (matches Dragonbone 35/57/79 at blvl 1/2/3 with pct 10/11/11).
  * @returns {number} Calculated mana cost (integer, or one decimal when channeled)
  */
 export function calculateManaCost(mana, lvlmana, manashift, level, minMana, options = {}) {
     const channeled = Boolean(options.channeled);
+    const manaCostOfSkillsPercent = Math.trunc(Number(options.manaCostOfSkillsPercent) || 0);
     // Ensure level is at least 1
     const effectiveLevel = Math.max(1, level || 1);
     
@@ -254,9 +243,13 @@ export function calculateManaCost(mana, lvlmana, manashift, level, minMana, opti
     
     // Truncate mana and lvlmana before adding
     const truncatedMana = Math.trunc(manaNum);
-    const truncatedLvlmana = Math.trunc(lvlmanaNum);
+    let truncatedLvlmana = Math.trunc(lvlmanaNum);
+    // Include "% Mana cost of skills" in the per-level term (not a post-replace of the cost).
+    if (manaCostOfSkillsPercent !== 0) {
+        truncatedLvlmana = Math.trunc((truncatedLvlmana * (100 + manaCostOfSkillsPercent)) / 100);
+    }
     
-    // Calculate base mana: trunc(mana) + trunc(lvlmana) * (level - 1)
+    // Calculate base mana: trunc(mana) + trunc(lvlmana') * (level - 1)
     const baseMana = truncatedMana + truncatedLvlmana * (effectiveLevel - 1);
     
     // Apply manashift: (baseMana * (2^manashift)) / 256
@@ -294,12 +287,215 @@ export function formatManaCostDisplay(cost, options = {}) {
     return String(cost);
 }
 
+/**
+ * @deprecated Prefer calculateManaCost(..., { manaCostOfSkillsPercent }).
+ * Kept for tests/callers that scale an already-computed cost.
+ * @param {number} cost
+ * @param {number|string|undefined|null} percentIncrease
+ * @param {{ channeled?: boolean }} [options]
+ * @returns {number}
+ */
+export function applyManaCostMultiplier(cost, percentIncrease, options = {}) {
+    // Legacy post-scale; Dragonbone series needs lvlmana scaling inside calculateManaCost instead.
+    const base = Number(cost);
+    if (!Number.isFinite(base)) return 0;
+    const pct = Math.trunc(Number(percentIncrease) || 0);
+    if (pct === 0) {
+        return options.channeled ? Math.round(base * 10) / 10 : Math.trunc(base);
+    }
+    const scaled = (base * (100 + pct)) / 100;
+    if (options.channeled) {
+        return Math.round(scaled * 10) / 10;
+    }
+    return Math.trunc(scaled);
+}
+
+/**
+ * Total "% Mana cost of skills" for planner mana display.
+ * Prefers character mana_cost_of_skills (manual base + skill pairedStat bonuses);
+ * falls back to summing allocated mana_cost_multiplier rows.
+ * @param {object|null|undefined} characterState
+ * @returns {Promise<number>}
+ */
+export async function getPlannerManaCostOfSkillsPercent(characterState) {
+    try {
+        const { getCharacterInstance } = await import('@/character/planner-instance.js');
+        const character = getCharacterInstance();
+        if (character && typeof character.getStat === 'function') {
+            const fromChar = Math.trunc(Number(character.getStat('mana_cost_of_skills')) || 0);
+            // Prefer live character total whenever the planner is available.
+            return fromChar;
+        }
+    } catch {
+        // browse / tests without planner instance
+    }
+
+    const fromState = characterState?.stats?.mana_cost_of_skills;
+    if (fromState != null && String(fromState).trim() !== '') {
+        const n = Math.trunc(Number(fromState) || 0);
+        if (Number.isFinite(n)) return n;
+    }
+
+    return sumPlannerManaCostMultiplierPercent(characterState);
+}
+
+/**
+ * Sum mana_cost_multiplier % from allocated skills (and oSkills).
+ * Fallback when character mana_cost_of_skills is unavailable.
+ * @param {object|null|undefined} characterState
+ * @returns {Promise<number>}
+ */
+export async function sumPlannerManaCostMultiplierPercent(characterState) {
+    if (!characterState || typeof characterState !== 'object') return 0;
+    const store = getFileSkillStore();
+    if (!store?.catalogByInternalId) return 0;
+
+    /** @type {Record<string, number>} */
+    const blvlMap = { ...(characterState.blvl || {}) };
+
+    /** @type {{ isSkillDisabled?: (id: string) => boolean, oSkills?: object[] } | null} */
+    let character = null;
+    try {
+        const { getCharacterInstance } = await import('@/character/planner-instance.js');
+        character = getCharacterInstance();
+    } catch {
+        character = null;
+    }
+
+    // Regular-skill tooltips omit oSkills from blvl; still fold in oSkill multipliers.
+    // Item-granted oSkills have blvl 0; their grant is slvl.
+    /** @type {Record<string, number>} */
+    const slvlMap = { ...(characterState.lvl || {}) };
+    if (character && Array.isArray(character.oSkills)) {
+        const { default: Character } = await import('@/character/Character.js');
+        for (const row of character.oSkills) {
+            const name = row?.skillName != null ? String(row.skillName).trim() : '';
+            if (!name) continue;
+            const parts = Character.oSkillLevelParts(row, 0);
+            if (parts.effective <= 0) continue;
+            blvlMap[name] = Math.max(blvlMap[name] || 0, parts.blvl);
+            if (slvlMap[name] == null) {
+                slvlMap[name] = parts.itemSlvl;
+            }
+        }
+    }
+
+    const defaultSlvl = Math.max(
+        0,
+        ...Object.values(slvlMap)
+            .map((v) => Math.floor(Number(v) || 0))
+            .filter((n) => Number.isFinite(n))
+    );
+
+    let total = 0;
+    const ulvl = Math.max(1, Math.floor(Number(characterState.level) || 1));
+
+    for (const [rawId, rawPts] of Object.entries(blvlMap)) {
+        const internalId = String(rawId || '').trim();
+        if (!internalId) continue;
+        const blvlPoints = Math.max(0, Math.floor(Number(rawPts) || 0));
+        const slvlRaw = slvlMap[internalId];
+        const slvl =
+            slvlRaw != null && String(slvlRaw).trim() !== ''
+                ? Math.max(0, Math.floor(Number(slvlRaw) || 0))
+                : defaultSlvl;
+        if (blvlPoints <= 0 && slvl <= 0) continue;
+        if (character?.isSkillDisabled?.(internalId)) continue;
+
+        const catRow = store.catalogByInternalId.get(internalId);
+        if (!catRow) continue;
+        const scalingConstants = Array.isArray(catRow.scalingConstants) ? catRow.scalingConstants : [];
+        const multRows = scalingConstants.filter(
+            (r) => String(r?.statKey || '').trim().toLowerCase() === 'mana_cost_multiplier'
+        );
+        if (multRows.length === 0) continue;
+
+        const lvl = blvlPoints + slvl || 1;
+        const formulaVariables = {
+            blvl: blvlPoints,
+            slvl,
+            lvl,
+            ulvl,
+            _blvl: blvlMap,
+            _lvl: slvlMap,
+            characterState: { ...characterState, blvl: blvlMap, lvl: slvlMap }
+        };
+
+        for (const scRow of multRows) {
+            if (!isScalingConstantRowActive(catRow, scRow)) continue;
+            const formula = scRow?.value0;
+            if (formula == null || String(formula).trim() === '') continue;
+            const str = String(formula).trim();
+            if (/^-?\d+(\.\d+)?$/.test(str)) {
+                total += Math.trunc(parseFloat(str) || 0);
+                continue;
+            }
+            const evalResult = formulaEvaluator.evaluate(str, formulaVariables);
+            if (evalResult.success) {
+                total += Math.trunc(Number(evalResult.value) || 0);
+            }
+        }
+    }
+
+    return total;
+}
+
+/**
+ * Minion summon mana cost matching game integer math for % of Maximum Mana skills:
+ *   unit = trunc(mana / 100)           // trunc(stat(9,0) / 25600)
+ *   raw  = trunc(percent) * unit
+ *   lvlmana = trunc(raw / max(1, lvl-1))
+ *   cost = mana_cost(1, lvlmana, manashift=8, lvl, minmana=1)
+ * Cap / per-minion math belongs in the value0 formula (e.g. min(5*pets, 50)).
+ * @param {number|string} percentManaCost - value0: % of Maximum Mana
+ * @param {number|string|undefined|null} [maxMana] - planner Maximum Mana when available
+ * @param {number|string|undefined|null} [skillLevel] - effective skill level (blvl+slvl)
+ * @param {{ manaCostOfSkillsPercent?: number }} [options]
+ * @returns {{ percent: number, cost: number|null, mode: 'absolute'|'percent' }}
+ */
+export function calculateMinionManaCost(percentManaCost, maxMana, skillLevel, options = {}) {
+    const rawPercent = Math.max(0, parseFloat(percentManaCost) || 0);
+    // Keep one decimal for display (e.g. 4.5); cost math uses trunc(percent)
+    const percent = Math.round(rawPercent * 10) / 10;
+    const pctInt = Math.max(0, Math.trunc(percent));
+
+    const manaNum = maxMana === undefined || maxMana === null || String(maxMana).trim() === ''
+        ? null
+        : Number(maxMana);
+    if (manaNum != null && Number.isFinite(manaNum)) {
+        const mana = Math.max(0, Math.trunc(manaNum));
+        const lvl = Math.max(1, Math.trunc(Number(skillLevel) || 1));
+        const unit = Math.trunc(mana / 100);
+        const raw = pctInt * unit;
+        const denom = Math.max(1, lvl - 1);
+        const lvlmana = Math.trunc(raw / denom);
+        const cost = calculateManaCost(1, lvlmana, 8, lvl, 1, {
+            manaCostOfSkillsPercent: options.manaCostOfSkillsPercent
+        });
+        return { percent, cost, mode: 'absolute' };
+    }
+    return { percent, cost: null, mode: 'percent' };
+}
+
+/**
+ * @param {{ percent: number, cost: number|null, mode: 'absolute'|'percent' }} result
+ * @returns {{ value0: string, value1: string }}
+ */
+export function formatMinionManaCostDisplay(result) {
+    const pct = result?.percent ?? 0;
+    const pctStr = Number.isInteger(pct) ? String(pct) : String(pct);
+    if (result?.mode === 'absolute' && result.cost != null) {
+        return { value0: String(result.cost), value1: pctStr };
+    }
+    return { value0: null, value1: pctStr };
+}
+
 // Expand using values sourced from skill_scaling for a given skill and level.
 // If inline values are provided in the token, they take precedence; otherwise fetch by stat key.
-// Also supports [[internal_name]] or [[id:123]] which expand to display_name in success color
-// Also supports ||internal_name|| (or ||id:123||) which expands to a labeled subskill "block":
+// Also supports [[internal_name]] which expand to display_name in success color
+// Also supports <<internal_name>> which expands to a labeled subskill "block":
 // the referenced skill's display name + its full skillEffect text with placeholders resolved.
-export async function expandPlaceholdersWithScaling(numericId, level, description, skillName = null, characterState = null, showFormulas = false, variantKey = null) {
+export async function expandPlaceholdersWithScaling(skillId, level, description, skillName = null, characterState = null, showFormulas = false, variantKey = null) {
     if (!description) return '';
     
     if (!getFileSkillStore()) return description;
@@ -308,7 +504,7 @@ export async function expandPlaceholdersWithScaling(numericId, level, descriptio
     const occurrenceCounts = new Map();
 
     const crossSkillDotStatRe =
-        /\[\[([a-zA-Z_][a-zA-Z0-9_]*|id:\d+)\]\]\.\{\{([a-zA-Z_][a-zA-Z0-9_]*)\}\}/gi;
+        /\[\[([a-zA-Z_][a-zA-Z0-9_]*)\]\]\.\{\{([a-zA-Z_][a-zA-Z0-9_]*)\}\}/gi;
 
     let expandedDescription = description;
     if (characterState) {
@@ -327,9 +523,10 @@ export async function expandPlaceholdersWithScaling(numericId, level, descriptio
         );
     }
 
-    // Expand ||internal_name|| or ||id:123|| into a subskill block (name + all effect lines).
-    // Blocks are fully expanded first, then shielded from parent [[...]] pass (formulas may contain [[skill]]).
-    const subskillBlockRe = /\|\|([a-zA-Z_][a-zA-Z0-9_]*|id:\d+)\|\|/gi;
+    // Expand <<internal_name>> into a subskill block (name + all effect lines).
+    // Blocks are fully expanded first, then shielded from parent [[...]] and {{...}} passes
+    // (showFormulas may leave [[skill]].{{stat}} / {{character_stat}} inside formula text).
+    const subskillBlockRe = /<<([a-zA-Z_][a-zA-Z0-9_]*)>>/gi;
     const subskillMatches = [...String(expandedDescription).matchAll(subskillBlockRe)];
     const subskillBlockPlaceholders = [];
     if (subskillMatches.length > 0) {
@@ -351,7 +548,7 @@ export async function expandPlaceholdersWithScaling(numericId, level, descriptio
             const subskillRow = store.catalogByInternalId?.get?.(resolved.internalName) ?? null;
             const active = isSubskillActive(subskillRow, characterState);
             const expandedEffect = await expandPlaceholdersWithScaling(
-                resolved.skillId,
+                resolved.internalName,
                 level,
                 rawEffect,
                 resolved.internalName,
@@ -361,18 +558,15 @@ export async function expandPlaceholdersWithScaling(numericId, level, descriptio
             );
             const effectHtml = String(expandedEffect).replace(/\r?\n/g, '<br>');
             const label = escapeHtmlText(resolved.displayName || resolved.internalName);
-            const labelClass = active
-                ? 'has-text-warning has-text-weight-semibold'
-                : 'has-text-grey has-text-weight-semibold';
             const blockClass = active
                 ? 'subskill-inline-block'
                 : 'subskill-inline-block subskill-inline-block--inactive';
+            const labelClass = active
+                ? 'subskill-inline-legend has-text-warning has-text-weight-semibold'
+                : 'subskill-inline-legend has-text-grey has-text-weight-semibold';
             const bodyClass = active ? 'subskill-inline-body' : 'subskill-inline-body has-text-grey';
-            const block = `
-<div class="${blockClass}">
-  <p class="${labelClass}">${label}</p>
-  <div class="${bodyClass}">${effectHtml}</div>
-</div>`.trim();
+            // Keep the block on one line so tooltip line-splitting does not break the wrapper.
+            const block = `<fieldset class="${blockClass}"><legend class="${labelClass}">${label}</legend><div class="${bodyClass}">${effectHtml}</div></fieldset>`;
             const placeholderToken = `\x00SUBSKILL_BLOCK_${subskillBlockPlaceholders.length}\x00`;
             subskillBlockPlaceholders.push(block);
             expandedDescription = expandedDescription.replace(full, placeholderToken);
@@ -387,23 +581,15 @@ export async function expandPlaceholdersWithScaling(numericId, level, descriptio
         return out;
     };
     
-    // First, expand [[internal_name]] or [[id:123]] (id is catalog numericId)
+    // First, expand [[internal_name]]
     expandedDescription = expandedDescription.replace(/\[\[(.*?)\]\]/g, (match, inner) => {
         const trimmed = inner.trim();
         if (!trimmed) return match;
 
         try {
-            const idRef = trimmed.match(/^id:(\d+)$/i);
-            if (idRef) {
-                const row = lookupSkillNameAndDisplayByNumericId(idRef[1]);
-                if (row) {
-                    return `<p class='${SCALING_DISPLAY_HTML_CLASSES.skill}'>${row.displayName}</p>`;
-                }
-                return `<span class="${SCALING_DISPLAY_HTML_CLASSES.unknown}">[unknown skill id:${idRef[1]}]</span>`;
-            }
             const displayName = lookupMergedDisplayNameByInternalName(trimmed);
             if (displayName) {
-                return `<p class='${SCALING_DISPLAY_HTML_CLASSES.skill}'>${displayName}</p>`;
+                return `<span class='${SCALING_DISPLAY_HTML_CLASSES.skill}'>${displayName}</span>`;
             }
             return `<span class="${SCALING_DISPLAY_HTML_CLASSES.unknown}">[unknown skill:${trimmed}]</span>`;
         } catch (error) {
@@ -412,12 +598,11 @@ export async function expandPlaceholdersWithScaling(numericId, level, descriptio
         }
     });
 
-    expandedDescription = restoreSubskillBlocks(expandedDescription);
-    
-    // Then, expand stat placeholders {{stat_key}}
+    // Expand parent {{stat}} while subskill blocks stay shielded, then restore.
+    // Restoring earlier re-expands {{character_stat}} left inside Ctrl formula text as skill stats (???%).
     const placeholderMatches = expandedDescription.match(/\{\{(.*?)\}\}/g);
     if (!placeholderMatches) {
-        return expandedDescription;
+        return restoreSubskillBlocks(expandedDescription);
     }
     
     let result = expandedDescription;
@@ -434,6 +619,7 @@ export async function expandPlaceholdersWithScaling(numericId, level, descriptio
         let name = null;
         let format = null;
         let actualSkillName = skillName;
+        let placeholderConditionInactive = false;
 
         const store = getFileSkillStore();
         const statRow = store?.getStatByKeyLower(key);
@@ -441,9 +627,9 @@ export async function expandPlaceholdersWithScaling(numericId, level, descriptio
             name = statRow.name;
             format = statRow.format;
         }
-        if (!actualSkillName && store) {
-            const resolved = store.lookupSkillNameAndDisplayByNumericId(numericId);
-            if (resolved) actualSkillName = resolved.name;
+        if (!actualSkillName && store && skillId != null) {
+            const id = String(skillId);
+            if (store.catalogByInternalId?.get(id)) actualSkillName = id;
         }
 
         if (name != null) {
@@ -477,10 +663,31 @@ export async function expandPlaceholdersWithScaling(numericId, level, descriptio
                     }
                 }
 
+                // Match Soulchain inactive subskills: grey showCondition-gated lines when off
+                const scRows = Array.isArray(catalogRow?.scalingConstants)
+                    ? catalogRow.scalingConstants
+                    : [];
+                const vk =
+                    variantKey != null && String(variantKey).trim() !== ''
+                        ? String(variantKey).trim()
+                        : null;
+                const scHit = scRows.find((r) => {
+                    if (String(r?.statKey || '').toLowerCase() !== key) return false;
+                    if (Number(r?.occurrenceIndex ?? 0) !== occurrenceIndex) return false;
+                    const rowVk =
+                        r?.variantKey != null && String(r.variantKey).trim() !== ''
+                            ? String(r.variantKey).trim()
+                            : null;
+                    if (vk) return rowVk === vk;
+                    return rowVk == null;
+                });
+                if (scHit && !isScalingConstantRowActive(catalogRow, scHit)) {
+                    placeholderConditionInactive = true;
+                }
+
                 const skill = new Skill({
                     id: actualSkillName,
                     name: displayName,
-                    skillId: numericId,
                     tags: Array.isArray(catalogRow?.tags) ? catalogRow.tags : [],
                 });
                 const scalingValues = await skill.getScalingValues(
@@ -519,52 +726,7 @@ export async function expandPlaceholdersWithScaling(numericId, level, descriptio
                         return 0;
                     };
 
-                    if (
-                        String(scalingValues.damageModel || '').toLowerCase() === 'bands' &&
-                        isBandDamageStatKey(key)
-                    ) {
-                        const rawSynergyFormula = String(scalingValues.synergyFormula || '').trim();
-                        let synergyMultiplier = 1;
-                        if (rawSynergyFormula) {
-                            const evalResult = formulaEvaluator.evaluate(rawSynergyFormula, formulaVariables);
-                            if (evalResult.success) {
-                                const pct = Number(evalResult.value);
-                                if (Number.isFinite(pct)) {
-                                    synergyMultiplier = (100 + pct) / 100;
-                                }
-                            }
-                        }
-                        const kind = String(scalingValues.damageKind || '').toLowerCase() === 'physical'
-                            ? 'physical'
-                            : 'elemental';
-                        const minPerLevel = Array.isArray(scalingValues.minPerLevel)
-                            ? scalingValues.minPerLevel
-                            : [0, 0, 0, 0, 0];
-                        const maxPerLevel = Array.isArray(scalingValues.maxPerLevel)
-                            ? scalingValues.maxPerLevel
-                            : [0, 0, 0, 0, 0];
-                        const minMax = calculateBandDamageMinMax({
-                            kind,
-                            statKey: key,
-                            skill,
-                            level: lvl,
-                            baseMin: scalingValues.baseMin ?? scalingValues.value0 ?? 0,
-                            baseMax: scalingValues.baseMax ?? scalingValues.value1 ?? 0,
-                            minPerLevel,
-                            maxPerLevel,
-                            hitShift: scalingValues.hitShift,
-                            synergyMultiplier,
-                        });
-                        const rendered = {
-                            ...scalingValues,
-                            value0: String(minMax.min),
-                            value1: String(minMax.max),
-                            value0_constant: true,
-                            value1_constant: true,
-                        };
-                        output = formatScalingValuesToDescriptionHtml(rendered, key);
-                    // Special handling for mana_cost: calculate single value from 3 parameters
-                    } else if (key === 'mana_cost') {
+                    if (key === 'mana_cost') {
                         const v0 = scalingValues.value0 ?? ''; // mana
                         const v1 = scalingValues.value1 ?? ''; // lvlmana
                         const v2 = scalingValues.value2 ?? ''; // manashift
@@ -593,6 +755,9 @@ export async function expandPlaceholdersWithScaling(numericId, level, descriptio
                             const minManaNum = hasMinMana ? parseOrEvaluate(v3) : undefined;
 
                             const channeled = skill.hasTag("Channeled");
+                            const manaCostOfSkillsPercent = await getPlannerManaCostOfSkillsPercent(
+                                effectiveCharacterState
+                            );
 
                             const calculatedMana = calculateManaCost(
                                 mana,
@@ -600,7 +765,7 @@ export async function expandPlaceholdersWithScaling(numericId, level, descriptio
                                 manashift,
                                 lvl,
                                 hasMinMana ? minManaNum : undefined,
-                                { channeled }
+                                { channeled, manaCostOfSkillsPercent }
                             );
 
                             const manaDisplay = formatManaCostDisplay(calculatedMana, { channeled });
@@ -614,17 +779,73 @@ export async function expandPlaceholdersWithScaling(numericId, level, descriptio
                                 .replace('{value2}', "")
                                 .replace('{value3}', "");
                         }
+                    // Special handling for minion_mana_cost:
+                    // value0 = % of Maximum Mana; flat cost from game integer mana path
+                    } else if (key === 'minion_mana_cost') {
+                        const v0 = scalingValues.value0 ?? ''; // percent mana cost (or formula when Ctrl)
+                        const hasMissingPercent =
+                            v0 === '' || v0 === null || v0 === undefined;
+
+                        const q = `<span class="${SCALING_DISPLAY_HTML_CLASSES.unknown}">???</span>`;
+                        if (hasMissingPercent) {
+                            output = (format || '{name}: {value}')
+                                .replace('{name}', name)
+                                .replace('{value0}', q)
+                                .replace('{value1}', q)
+                                .replace('{value2}', '')
+                                .replace('{value3}', '');
+                        } else {
+                            // Ctrl/showFormulas keeps the formula string in value0; use the
+                            // properly cross-skill-evaluated number for the flat cost.
+                            const percentSource =
+                                showFormulas && scalingValues.value0_evaluated != null
+                                    ? scalingValues.value0_evaluated
+                                    : v0;
+                            const percentManaCost = parseOrEvaluate(percentSource);
+                            const maxManaRaw = effectiveCharacterState?.stats?.mana;
+                            const manaCostOfSkillsPercent = await getPlannerManaCostOfSkillsPercent(
+                                effectiveCharacterState
+                            );
+                            const result = calculateMinionManaCost(percentManaCost, maxManaRaw, lvl, {
+                                manaCostOfSkillsPercent
+                            });
+                            const display = formatMinionManaCostDisplay(result);
+                            const formulaClass = SCALING_DISPLAY_HTML_CLASSES.formula;
+                            const value0Html = display.value0 != null
+                                ? `<span class="${formulaClass}">${display.value0}</span>`
+                                : q;
+                            const value1Html =
+                                showFormulas && scalingValues.value0_formula
+                                    ? `<span class="${formulaClass}">${escapeHtmlText(
+                                          scalingValues.value0_original || v0
+                                      )}</span>`
+                                    : `<span class="${formulaClass}">${display.value1}</span>`;
+                            output = (format || '{name}: {value}')
+                                .replace('{name}', name)
+                                .replace('{value0}', value0Html)
+                                .replace('{value1}', value1Html)
+                                .replace('{value2}', '')
+                                .replace('{value3}', '');
+                        }
                     } else {
                         output = formatScalingValuesToDescriptionHtml(scalingValues, key);
                     }
                 } else {
-                    // No scaling values found at all - show ??? for all values
+                    // No scaling values found at all - show ??? for required slots
                     if (key === 'mana_cost') {
                         const q = `<span class="${SCALING_DISPLAY_HTML_CLASSES.unknown}">???</span>`;
                         output = (format || '{name}: {value}')
                             .replace('{name}', name)
                             .replace('{value0}', q)
                             .replace('{value1}', "")
+                            .replace('{value2}', "")
+                            .replace('{value3}', "");
+                    } else if (key === 'minion_mana_cost') {
+                        const q = `<span class="${SCALING_DISPLAY_HTML_CLASSES.unknown}">???</span>`;
+                        output = (format || '{name}: {value}')
+                            .replace('{name}', name)
+                            .replace('{value0}', q)
+                            .replace('{value1}', q)
                             .replace('{value2}', "")
                             .replace('{value3}', "");
                     } else {
@@ -658,7 +879,7 @@ export async function expandPlaceholdersWithScaling(numericId, level, descriptio
                     .replace('{value2}', q)
                     .replace('{value3}', q);
             } else if (actualSkillName) {
-                // Skill text used {{stat}} not in stats.json (e.g. typo vs activation_frequency_effectiveness).
+                // Skill text used {{stat}} not in stats.json (e.g. typo vs activation_frequency_multiplier).
                 // Do not fall through to planner characterState.stats — keys like activation_frequency exist there as 0.
                 const esc = escapeHtmlAttr(rawKey);
                 output = `<span class="${SCALING_DISPLAY_HTML_CLASSES.unknown}">MISSING STAT - {{${esc}}}</span>`;
@@ -680,11 +901,42 @@ export async function expandPlaceholdersWithScaling(numericId, level, descriptio
             output =
                 statValue === undefined || statValue === null ? '' : String(statValue);
         }
+
+        // Grey out showCondition-gated stats when the condition is off (Soulchain-style)
+        if (placeholderConditionInactive && output && output !== `[Unknown stat: ${rawKey}]`) {
+            output = `<span class="has-text-grey">${output}</span>`;
+        }
         
-        result = result.replace(match, output);
+        // Only replace standalone {{stat}} — skip tokens that belong to [[skill]].{{stat}}
+        // (e.g. Ctrl formula display keeps raw cooldown formulas containing those compounds).
+        result = replaceFirstStandaloneStatPlaceholder(result, match, output);
     }
     
-    return result;
+    return restoreSubskillBlocks(result);
+}
+
+/**
+ * Replace the first `{{stat}}` that is not part of `[[ref]].{{stat}}`.
+ * String.replace(match, …) would otherwise hit an embedded compound inserted by an
+ * earlier placeholder (e.g. cooldown formula with [[fire_elementals]].{{minions}}).
+ *
+ * @param {string} text
+ * @param {string} placeholder full token including braces, e.g. "{{minions}}"
+ * @param {string} replacement
+ * @returns {string}
+ */
+function replaceFirstStandaloneStatPlaceholder(text, placeholder, replacement) {
+    let searchFrom = 0;
+    while (true) {
+        const idx = text.indexOf(placeholder, searchFrom);
+        if (idx === -1) return text;
+        const before = text.slice(0, idx);
+        if (/\[\[[^\]]*\]\]\.$/.test(before)) {
+            searchFrom = idx + placeholder.length;
+            continue;
+        }
+        return before + replacement + text.slice(idx + placeholder.length);
+    }
 }
 
 /**

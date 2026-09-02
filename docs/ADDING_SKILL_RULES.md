@@ -14,8 +14,8 @@ Each rule implements `checkRestriction(allSkills)` returning `{ allowed: boolean
 
 1. **Predicate + check** — Add or extend a subclass with `static is…(skill)` and `checkRestriction`, or add a dedicated small module if the rule does not fit an existing class.
 2. **Export wrapper** — Add `check…Restriction(skill, allSkills)` in `src/skills/domain/skill-restrictions.js`.
-3. **Register in planner** — Call the wrapper from `src/character/character-state.js` in `addSkillPoint` / `addSkillPointsBatch` (order matters; devotion is typically last).
-4. **UI warnings** — If the rule should appear on the skill card, add it to `getSkillRestrictions` in `character-state.js`.
+3. **Register in planner** — Call the wrapper from `src/character/planner-core.js` in `addSkillPoint` / `addSkillPointsBatch` (order matters; devotion is typically last).
+4. **UI warnings** — If the rule should appear on the skill card, add it to `getSkillRestrictions` in `planner-core.js`.
 5. **Document** — Append an entry to `FIRST_POINT_RULE_SUMMARY` in `skill-restrictions.js` for contributors and tooling.
 
 ## Testing manually

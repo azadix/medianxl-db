@@ -1,0 +1,115 @@
+:root {
+    --bg-color: #fafafa;
+    --text-color: #14161a;
+    --border-color: #3d4451;
+    --header-bg-color: #666666;
+    --header-text-color: #f5f5f5;
+    --hover-bg-color: #f4ad08;
+    --hover-text-color: #0a0a0a;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-color: #14161a;
+        --text-color: #fafafa;
+        --border-color: #3d4451;
+        --header-bg-color: #f5f5f5;
+        --header-text-color: #666666;
+        --hover-bg-color: #f4ad08;
+        --hover-text-color: #0a0a0a;
+    }
+}
+
+.dropdown-list-container {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.dropdown-list {
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    min-width: 75%;
+    width: auto;
+    max-height: 60vh;
+    overflow-y: auto;
+    color: var(--text-color);
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    z-index: 9999;
+    margin-inline-start: 0 !important;
+}
+
+.dropdown-list-item {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0.375rem 1.5rem;
+    color: var(--text-color);
+    cursor: pointer;
+}
+
+.dropdown-list-item-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    min-width: 0;
+}
+
+.dropdown-list-item-name {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.dropdown-list-item-tags {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 0.25rem;
+    max-width: 55%;
+    overflow: hidden;
+}
+
+.dropdown-list-tag {
+    display: inline-block;
+    flex: 0 0 auto;
+    padding: 0.05rem 0.35rem;
+    border-radius: 999px;
+    background: hsl(0, 0%, 28%);
+    color: hsl(0, 0%, 90%);
+    font-size: 0.65rem;
+    line-height: 1.35;
+    white-space: nowrap;
+}
+
+.dropdown-list-item:hover {
+    background-color: var(--hover-bg-color);
+    color: var(--hover-text-color);
+}
+
+.dropdown-list-item:hover .dropdown-list-tag {
+    background: hsl(0, 0%, 18%);
+    color: hsl(0, 0%, 95%);
+}
+
+.dropdown-list-header {
+    padding: 0.375rem 1rem;
+    font-weight: bold;
+    color: var(--header-text-color);
+    background-color: var(--header-bg-color);
+    pointer-events: none;
+    border-bottom: 1px solid #ddd;
+}
+
+.dropdown-list-item.empty {
+    color: var(--text-light, #7a7a7a);
+    font-style: italic;
+    cursor: not-allowed;
+}
