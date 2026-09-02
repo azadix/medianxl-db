@@ -157,6 +157,41 @@ describe('relic skill resolve', () => {
     expect(skill?.id).toBe('maelstrom');
     expect(skill?.image).toBe('icons-sor_3');
   });
+
+  it('maps hyphenated relic slugs to underscore skill ids', () => {
+    const byId = new Map([
+      [
+        'arrow',
+        { id: 'arrow', displayName: 'Arrow', image: 'icons-shared_missing', classId: 1 },
+      ],
+      [
+        'arrow_swarm',
+        { id: 'arrow_swarm', displayName: 'Arrow Swarm', image: 'icons-shared_126', classId: 1 },
+      ],
+    ]);
+    vi.spyOn(skillDataStore, 'getFileSkillStore').mockReturnValue({
+      getSkillDetail: (id) => {
+        const row = byId.get(id);
+        if (!row) return null;
+        return {
+          id: row.id,
+          display_name: row.displayName,
+          image: row.image,
+          className: 'Amazon',
+        };
+      },
+      catalogByInternalId: byId,
+      primaryClassDisplayName: () => 'Amazon',
+    });
+    const skill = resolveRelicSkill({
+      id: 'relic:arrow-swarm',
+      name: 'Relic (Arrow Swarm)',
+      category: 'relics',
+      rarity: 'relic',
+    });
+    expect(skill?.id).toBe('arrow_swarm');
+    expect(skill?.image).toBe('icons-shared_126');
+  });
 });
 
 describe('items store enable lists', () => {

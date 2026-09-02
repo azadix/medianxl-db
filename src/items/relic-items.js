@@ -10,6 +10,7 @@ import {
 } from '@/items/affix-rolls.js';
 import { annotateAffixDisplayPartsWithSkills } from '@/items/item-granted-oskills.js';
 import { getFileSkillStore } from '@/shared/skill-data-store.js';
+import { MISSING_IMAGE_NAME } from '@/shared/utils.js';
 
 /** MXL hard cap: at most 3 enabled relics. */
 export const MAX_RELICS = 3;
@@ -72,15 +73,33 @@ function relicSlugCandidates(slug) {
   const raw = String(slug || '').trim().toLowerCase();
   if (!raw) return [];
   /** @type {string[]} */
-  const out = [raw];
+  const out = [];
+  const seen = new Set();
+  const push = (value) => {
+    if (!value || seen.has(value)) return;
+    seen.add(value);
+    out.push(value);
+  };
   let cur = raw;
-  while (cur.includes('-')) {
+  while (true) {
+    push(cur);
+    // Skill ids use underscores (arrow_swarm); relic slugs use hyphens.
+    if (cur.includes('-')) push(cur.replace(/-/g, '_'));
+    if (!cur.includes('-')) break;
     const next = cur.replace(/-[^-]+$/, '');
     if (!next || next === cur) break;
-    out.push(next);
     cur = next;
   }
   return out;
+}
+
+/**
+ * @param {unknown} image
+ * @returns {boolean}
+ */
+function isUsableSkillImage(image) {
+  const img = image != null ? String(image).trim() : '';
+  return img.length > 0 && img !== MISSING_IMAGE_NAME;
 }
 
 /**
@@ -101,26 +120,28 @@ export function resolveRelicSkill(def) {
   const idCandidates = relicSlugCandidates(slug);
   for (const candidate of idCandidates) {
     const detail = store.getSkillDetail(candidate);
-    if (detail?.image) {
-      return {
-        id: String(detail.id),
-        displayName: String(detail.display_name || detail.id),
-        image: detail.image != null ? String(detail.image) : null,
-        className: String(detail.className || ''),
-      };
-    }
+    if (!isUsableSkillImage(detail?.image)) continue;
+    return {
+      id: String(detail.id),
+      displayName: String(detail.display_name || detail.id),
+      image: String(detail.image),
+      className: String(detail.className || ''),
+    };
   }
 
   /** @type {Map<string, object>|undefined} */
   const byId = store.catalogByInternalId;
   if (byId && typeof byId.values === 'function') {
-    const hints = [nameHint, ...idCandidates.map((s) => s.replace(/-/g, ' '))].filter(Boolean);
+    const hints = [
+      nameHint,
+      ...idCandidates.map((s) => s.replace(/[-_]/g, ' ')),
+    ].filter(Boolean);
     for (const hint of hints) {
       const needle = hint.toLowerCase();
       for (const row of byId.values()) {
         const dn = String(row?.displayName || '').trim();
         if (!dn || dn.toLowerCase() !== needle) continue;
-        if (!row.image) continue;
+        if (!isUsableSkillImage(row.image)) continue;
         return {
           id: String(row.id),
           displayName: dn,
