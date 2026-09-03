@@ -9,6 +9,7 @@ import {
   deleteBuild,
   renameBuild,
   downloadSavedBuildAsJson,
+  exportBuild,
   ensureCharacterForBuildList,
 } from '@/planner/saved-builds-ui.js';
 import { getSpentSkillPoints } from '@/character/planner-core.js';
@@ -58,9 +59,17 @@ function toggleExportDropdown(index) {
 /**
  * @param {number} index
  */
-function exportAsJson(index) {
+function exportToFile(index) {
   openExportIndex.value = null;
   downloadSavedBuildAsJson(index);
+}
+
+/**
+ * @param {number} index
+ */
+function copyJson(index) {
+  openExportIndex.value = null;
+  exportBuild(index);
 }
 
 /**
@@ -172,9 +181,17 @@ watch(activeSection, (s) => {
                     class="dropdown-item"
                     role="menuitem"
                     href="#"
-                    @click.prevent="exportAsJson(index)"
+                    @click.prevent="exportToFile(index)"
                   >
-                    Export as JSON
+                    Export to file
+                  </a>
+                  <a
+                    class="dropdown-item"
+                    role="menuitem"
+                    href="#"
+                    @click.prevent="copyJson(index)"
+                  >
+                    Copy JSON text
                   </a>
                 </div>
               </div>
