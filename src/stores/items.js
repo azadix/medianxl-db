@@ -33,7 +33,7 @@ import {
   countEquippedSetPieces,
   resolveSetBonuses,
 } from '@/items/item-overlays.js';
-import { buildCatalogFromUniqueStats } from '@/items/unique-stats-catalog.js';
+import { buildCatalogFromUniqueStats, resolveCatalogDefId } from '@/items/unique-stats-catalog.js';
 
 /**
  * @typedef {{ location: 'equipment'|'inventory'|'charms'|'relics', slot: string|number }} SlotRef
@@ -190,7 +190,13 @@ export const useItemsStore = defineStore('items', {
     catalogById(state) {
       /** @type {Record<string, ItemDef>} */
       const map = {};
-      for (const d of state.catalog) map[d.id] = d;
+      for (const d of state.catalog) {
+        map[d.id] = d;
+        if (d.uniqueKind === 'tiered' && Number(d.tier) === 4 && typeof d.id === 'string') {
+          const alias = d.id.replace(/:4$/, '');
+          if (alias.endsWith(':tu') && map[alias] == null) map[alias] = d;
+        }
+      }
       return map;
     },
 
@@ -771,16 +777,18 @@ export const useItemsStore = defineStore('items', {
     /**
      * Tooltip extras for set items (active bonuses from currently equipped pieces).
      * @param {object|null|undefined} def
-     * @returns {{ setBonuses?: Array<{ required: number|string, modifiers: string[], active: boolean }>, setName?: string }}
+     * @returns {{ className?: string|null, setBonuses?: Array<{ required: number|string, modifiers: string[], active: boolean }>, setName?: string }}
      */
     getTooltipOptionsForDef(def) {
-      if (!def?.setId) return {};
+      const className = getCharacterInstance()?.className ?? null;
+      if (!def?.setId) return { className };
       const setDef = this.setsById[def.setId];
-      if (!setDef) return { setName: def.setName };
+      if (!setDef) return { className, setName: def.setName };
       const counts = countEquippedSetPieces(this.equippedDefs);
       const equippedCount = counts[def.setId] || 0;
       const totalPieces = this.catalog.filter((d) => d.setId === def.setId).length;
       return {
+        className,
         setName: setDef.name || def.setName,
         setBonuses: resolveSetBonuses(setDef, equippedCount, totalPieces),
       };
@@ -1143,12 +1151,23 @@ export const useItemsStore = defineStore('items', {
        * @returns {{ defId: string, icon: string|null, rolls: Record<string, number>|null }|null}
        */
       const parseEntry = (entry) => {
-        if (typeof entry === 'string') return { defId: entry, icon: null, rolls: null };
-        if (!entry || typeof entry !== 'object') return null;
-        const defId = /** @type {{ defId?: unknown }} */ (entry).defId;
-        const icon = /** @type {{ icon?: unknown }} */ (entry).icon;
-        const rollsRaw = /** @type {{ rolls?: unknown }} */ (entry).rolls;
+        /** @type {string|undefined} */
+        let defId;
+        /** @type {unknown} */
+        let icon = null;
+        /** @type {unknown} */
+        let rollsRaw = null;
+        if (typeof entry === 'string') {
+          defId = entry;
+        } else if (entry && typeof entry === 'object') {
+          defId = /** @type {{ defId?: unknown }} */ (entry).defId;
+          icon = /** @type {{ icon?: unknown }} */ (entry).icon;
+          rollsRaw = /** @type {{ rolls?: unknown }} */ (entry).rolls;
+        } else {
+          return null;
+        }
         if (typeof defId !== 'string') return null;
+        defId = resolveCatalogDefId(defId, this.catalogById);
         /** @type {Record<string, number>|null} */
         let rolls = null;
         if (rollsRaw && typeof rollsRaw === 'object' && !Array.isArray(rollsRaw)) {

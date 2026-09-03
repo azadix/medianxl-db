@@ -91,3 +91,23 @@ export function getClassPlannerStatDefaults(className) {
     mana_per_energy: parseOptionalNumber(row.mana_per_energy)
   };
 }
+
+/**
+ * Shield "Class %" block chance for a planner class (from game_meta.shieldClassBlockPercent).
+ * @param {string|null|undefined} className
+ * @returns {number|null}
+ */
+export function getShieldClassBlockPercent(className) {
+  const name = String(className || '').trim();
+  if (!name) return null;
+  const groups = getFileSkillStore()?.gameMeta?.shieldClassBlockPercent;
+  if (!Array.isArray(groups)) return null;
+  for (const group of groups) {
+    const classes = Array.isArray(group?.classes) ? group.classes : [];
+    if (classes.some((c) => String(c) === name)) {
+      const pct = Number(group.percent);
+      return Number.isFinite(pct) ? pct : null;
+    }
+  }
+  return null;
+}

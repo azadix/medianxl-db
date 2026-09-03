@@ -238,7 +238,12 @@ export function itemPickerSearchText(item) {
  */
 function itemPickerQualityAlias(item) {
   const kind = item.uniqueKind;
-  if (kind === 'tiered') return 'TU';
+  if (kind === 'tiered') {
+    if (item.tier != null && String(item.tier).trim() !== '') {
+      return `TU T${item.tier} t${item.tier}`;
+    }
+    return 'TU';
+  }
   if (kind === 'su') return 'SU';
   if (kind === 'ssu') return 'SSU';
   if (kind === 'sssu') return 'SSSU';

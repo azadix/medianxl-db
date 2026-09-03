@@ -33,6 +33,7 @@ const RARITY_CLASS = Object.freeze({
  * @param {{
  *   characterLevel?: number|null,
  *   charmInInventory?: boolean,
+ *   className?: string|null,
  *   setBonuses?: Array<{ required: number|string, modifiers: string[], active: boolean }>,
  *   setName?: string|null,
  * }} [options]
@@ -73,6 +74,7 @@ export function buildItemTooltipHtml(def, _iconKey = null, rolls = null, options
   const lines = getItemStatLines(def, rolls, {
     characterLevel: options.characterLevel ?? null,
     charmInInventory: options.charmInInventory !== false,
+    className: options.className ?? null,
   }).map((line) => formatItemModifierLineHtml(line));
 
   const body = buildSkillTooltipDescriptionBlock({

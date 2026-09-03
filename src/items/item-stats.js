@@ -26,6 +26,7 @@ import {
   isOverlayItem,
 } from '@/items/item-overlays.js';
 import { formatRunewordBadge, isRunewordItem } from '@/items/runeword-items.js';
+import { getShieldClassBlockPercent } from '@/character/class-baselines.js';
 
 /** @type {Readonly<Record<string, string>>} */
 export const ITEM_CATEGORY_LABEL = Object.freeze({
@@ -236,6 +237,48 @@ export function mergeRollsForDef(def, existingRolls = null, options = {}) {
   return { ...defaultRollsForDef(def, options), ...(existingRolls || {}) };
 }
 
+const CLASS_BLOCK_ONLY_RE = /^class\s*%$/i;
+const CLASS_BLOCK_RANGE_RE = /^([+-]?\d+)\s+to\s+([+-]?\d+)\s*%\s*\+\s*class\s*%$/i;
+const CLASS_BLOCK_FLAT_RE = /^([+-]?\d+)\s*%\s*\+\s*class\s*%$/i;
+
+/**
+ * Extra block % on top of class block (wiki/TSW "1% + Class%").
+ * @param {string} block
+ * @returns {{ min: number, max: number }|null}
+ */
+function parseClassBlockExtra(block) {
+  const text = String(block || '').replace(/\s+/g, ' ').trim();
+  if (!text) return null;
+  if (CLASS_BLOCK_ONLY_RE.test(text)) return { min: 0, max: 0 };
+  const range = CLASS_BLOCK_RANGE_RE.exec(text);
+  if (range) return { min: Number(range[1]), max: Number(range[2]) };
+  const flat = CLASS_BLOCK_FLAT_RE.exec(text);
+  if (flat) {
+    const n = Number(flat[1]);
+    return { min: n, max: n };
+  }
+  return null;
+}
+
+/**
+ * One-line Chance to Block, resolving Class % for the planner class.
+ * @param {string|null|undefined} block
+ * @param {string|null|undefined} [className]
+ * @returns {string|null}
+ */
+export function formatChanceToBlockLine(block, className = null) {
+  const text = String(block || '').replace(/\s+/g, ' ').trim();
+  if (!text) return null;
+  const extra = parseClassBlockExtra(text);
+  if (!extra) return `Chance to Block: ${text}`;
+  const classPct = getShieldClassBlockPercent(className);
+  if (classPct == null) return `Chance to Block: ${text}`;
+  const min = extra.min + classPct;
+  const max = extra.max + classPct;
+  if (min === max) return `Chance to Block: ${min}%`;
+  return `Chance to Block: ${min} to ${max}%`;
+}
+
 /**
  * Static + rolled stat lines for tooltips / detail panel.
  * @param {object|null|undefined} def
@@ -273,7 +316,10 @@ export function getItemStatLines(def, rolls = null, options = {}) {
     }
   }
 
-  if (def.block) lines.push(`Chance to Block: ${def.block}`);
+  if (def.block) {
+    const blockLine = formatChanceToBlockLine(def.block, options.className ?? null);
+    if (blockLine) lines.push(blockLine);
+  }
   if (def.reqLevel > 0) lines.push(`Required Level: ${def.reqLevel}`);
   if (def.reqStr > 0) lines.push(`Required Strength: ${def.reqStr}`);
   if (def.reqDex > 0) lines.push(`Required Dexterity: ${def.reqDex}`);

@@ -6,16 +6,25 @@
  * Run locally only — the API can 403 CI runner IPs.
  *
  * Usage:
- *   node tools/generate-unique-stats-db.mjs [version] [--resume]
+ *   node tools/generate-unique-stats-db.mjs [version] [--resume] [--wiki-only]
  *
  * Defaults to 2.14 → public/items/2_14/unique-stats-db.json
  * --resume skips names already present in an existing output file.
+ * --wiki-only skips the TSW crawl and only refreshes TU rows from the wiki.
  * Existing setName values are preserved onto matching names when rewriting.
+ * For 2.14, TU stats (T1–T4 plus jewelry/quivers) come from
+ * https://docs.median-xl.com/doc/items/tiereduniques (raw HTML).
  */
 
 import { writeFileSync, mkdirSync, readFileSync, existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import {
+  TIERED_UNIQUES_WIKI_URL,
+  WIKI_TU_VERSION_FOLDERS,
+  mergeWikiTuEntries,
+  parseTieredUniquesWiki,
+} from './parse-tiered-uniques-wiki.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -45,6 +54,7 @@ function parseArgs(argv) {
   return {
     version: positional[0] || DEFAULT_VERSION,
     resume: flags.has('--resume'),
+    wikiOnly: flags.has('--wiki-only'),
   };
 }
 
@@ -64,6 +74,18 @@ async function fetchJson(url) {
 }
 
 /**
+ * @param {string} url
+ * @returns {Promise<string>}
+ */
+async function fetchHtml(url) {
+  const res = await fetch(url, { headers: { Accept: 'text/html' } });
+  if (!res.ok) {
+    throw new Error(`${url} -> HTTP ${res.status}`);
+  }
+  return res.text();
+}
+
+/**
  * @typedef {{
  *   name: string,
  *   quality: string,
@@ -72,6 +94,7 @@ async function fetchJson(url) {
  *   type?: string,
  *   nameDisplay?: string,
  *   setName?: string,
+ *   tier?: number,
  * }} UniqueStatsEntry
  */
 
@@ -144,19 +167,12 @@ async function fetchExactItem(name, quality) {
 }
 
 async function main() {
-  const { version, resume } = parseArgs(process.argv.slice(2));
+  const { version, resume, wikiOnly } = parseArgs(process.argv.slice(2));
   const folder = versionToFolder(version);
   const outputPath = path.join(ROOT, 'public', 'items', folder, 'unique-stats-db.json');
+  const wikiEnabled = WIKI_TU_VERSION_FOLDERS.has(folder);
 
   console.log(`Version ${version} → ${outputPath}`);
-  console.log('Fetching item index...');
-  const index = await fetchJson(`${API_URL}?mode=index`);
-  const indexItems = (index.items ?? []).filter((item) =>
-    RELEVANT_QUALITIES.has(item.quality)
-  );
-  console.log(
-    `${indexItems.length} unique/set entries to crawl (of ${(index.items ?? []).length} total).`
-  );
 
   // Always load existing for setName preservation; resume also skips re-fetch
   const existing = loadExistingEntries(outputPath);
@@ -165,62 +181,96 @@ async function main() {
   }
 
   /** @type {UniqueStatsEntry[]} */
-  const entries = [];
-  let done = 0;
-  let skipped = 0;
-  let fetched = 0;
+  let entries = [];
 
-  for (const indexItem of indexItems) {
-    const name = indexItem.name;
-    const quality = indexItem.quality;
-    const prev = existing.get(name);
-    const preservedSetName = prev?.setName;
+  if (wikiOnly) {
+    entries = [...existing.values()];
+    console.log(`Wiki-only: keeping ${entries.length} existing entries.`);
+  } else {
+    console.log('Fetching item index...');
+    const index = await fetchJson(`${API_URL}?mode=index`);
+    const indexItems = (index.items ?? []).filter((item) => {
+      if (!RELEVANT_QUALITIES.has(item.quality)) return false;
+      if (wikiEnabled && item.quality === 'TU') return false;
+      return true;
+    });
+    console.log(
+      `${indexItems.length} unique/set entries to crawl (of ${(index.items ?? []).length} total).`
+    );
 
-    if (resume && prev && prev.stats) {
-      const kept = { ...prev };
-      if (preservedSetName) kept.setName = preservedSetName;
-      // Fill class/type from index when older dump lacked them
-      if (!kept.class && indexItem.class) kept.class = indexItem.class;
-      if (!kept.type && indexItem.type) kept.type = indexItem.type;
-      entries.push(kept);
-      skipped++;
+    let done = 0;
+    let skipped = 0;
+    let fetched = 0;
+
+    for (const indexItem of indexItems) {
+      const name = indexItem.name;
+      const quality = indexItem.quality;
+      const prev = existing.get(name);
+      const preservedSetName = prev?.setName;
+
+      if (resume && prev && prev.stats) {
+        const kept = { ...prev };
+        if (preservedSetName) kept.setName = preservedSetName;
+        if (!kept.class && indexItem.class) kept.class = indexItem.class;
+        if (!kept.type && indexItem.type) kept.type = indexItem.type;
+        entries.push(kept);
+        skipped++;
+        done++;
+        if (done % 25 === 0 || done === indexItems.length) {
+          console.log(`  ${done}/${indexItems.length} (${fetched} fetched, ${skipped} resumed)`);
+        }
+        continue;
+      }
+
+      try {
+        const match = await fetchExactItem(name, quality);
+        if (match) {
+          entries.push(entryFromMatch(match, preservedSetName));
+          fetched++;
+        } else {
+          console.warn(`  no exact match returned for "${name}" (${quality})`);
+          entries.push(
+            entryFromMatch(
+              {
+                name,
+                quality,
+                class: indexItem.class,
+                type: indexItem.type,
+                stats: '',
+              },
+              preservedSetName
+            )
+          );
+        }
+      } catch (err) {
+        console.warn(`  failed "${name}": ${err.message}`);
+      }
+
       done++;
       if (done % 25 === 0 || done === indexItems.length) {
         console.log(`  ${done}/${indexItems.length} (${fetched} fetched, ${skipped} resumed)`);
       }
-      continue;
+      await sleep(REQUEST_DELAY_MS);
     }
 
-    try {
-      const match = await fetchExactItem(name, quality);
-      if (match) {
-        entries.push(entryFromMatch(match, preservedSetName));
-        fetched++;
-      } else {
-        console.warn(`  no exact match returned for "${name}" (${quality})`);
-        // Keep index stub so we don't lose the name; class/type from index
-        entries.push(
-          entryFromMatch(
-            {
-              name,
-              quality,
-              class: indexItem.class,
-              type: indexItem.type,
-              stats: '',
-            },
-            preservedSetName
-          )
-        );
+    // Keep existing TUs so wiki merge can fall back when a name is missing.
+    if (wikiEnabled) {
+      for (const prev of existing.values()) {
+        if (prev.quality === 'TU') entries.push(prev);
       }
-    } catch (err) {
-      console.warn(`  failed "${name}": ${err.message}`);
     }
+  }
 
-    done++;
-    if (done % 25 === 0 || done === indexItems.length) {
-      console.log(`  ${done}/${indexItems.length} (${fetched} fetched, ${skipped} resumed)`);
+  if (wikiEnabled) {
+    console.log(`Fetching wiki HTML ${TIERED_UNIQUES_WIKI_URL}`);
+    try {
+      const html = await fetchHtml(TIERED_UNIQUES_WIKI_URL);
+      const wikiEntries = parseTieredUniquesWiki(html);
+      console.log(`  parsed ${wikiEntries.length} TU rows from wiki`);
+      entries = mergeWikiTuEntries(entries, wikiEntries);
+    } catch (err) {
+      console.warn(`  wiki overlay failed: ${err.message}`);
     }
-    await sleep(REQUEST_DELAY_MS);
   }
 
   const db = {

@@ -706,5 +706,10 @@
     "dragons_blessing": "holy",
     "resurrect": "neutral",
     "superbeast": "unholy"
-  }
+  },
+  "shieldClassBlockPercent": [
+    { "classes": ["Amazon", "Assassin", "Druid", "Sorceress"], "percent": 3 },
+    { "classes": ["Necromancer", "Paladin"], "percent": 1 },
+    { "classes": ["Barbarian"], "percent": 0 }
+  ]
 }

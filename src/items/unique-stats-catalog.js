@@ -12,6 +12,7 @@
  *   type?: string,
  *   nameDisplay?: string,
  *   setName?: string,
+ *   tier?: number,
  * }} UniqueStatsEntry
  */
 
@@ -125,6 +126,7 @@ function isHeaderLine(line) {
  *   damage1hDisplay?: string,
  *   damage2hDisplay?: string,
  *   throwDamageDisplay?: string,
+ *   block?: string,
  *   modifiers: string[],
  * }}
  */
@@ -254,7 +256,26 @@ export function parseItemStats(stats) {
       continue;
     }
     if (/^(Strength|Dexterity) Damage Bonus:/i.test(line)) continue;
-    if (/^Chance to Block:/i.test(line)) continue;
+    const blockLine = /^Chance to Block:\s*(.*)$/i.exec(line);
+    if (blockLine) {
+      let value = String(blockLine[1] || '').trim();
+      while (i + 1 < lines.length) {
+        const next = String(lines[i + 1] || '').trim();
+        if (
+          /^Class$/i.test(next) ||
+          /^%$/i.test(next) ||
+          /^Class\s*%$/i.test(next) ||
+          /^\+\s*Class\s*%$/i.test(next)
+        ) {
+          value = `${value} ${next}`.replace(/\s+/g, ' ').trim();
+          i += 1;
+          continue;
+        }
+        break;
+      }
+      if (value) out.block = value;
+      continue;
+    }
 
     if (!isHeaderLine(line)) {
       out.modifiers.push(line);
@@ -283,7 +304,12 @@ export function findBaseForType(typeName, quality, bases) {
   }
 
   if (quality === 'TU') {
-    // Prefer highest tier (4) then lower
+    const typedTier = /\((\d)\)\s*$/.exec(type);
+    if (typedTier) {
+      const hit = bases.find((b) => b.name === type);
+      if (hit) return hit;
+    }
+    // Prefer highest tier (4) then lower when type has no (N) suffix
     for (const tier of [4, 3, 2, 1]) {
       const hit = bases.find((b) => b.name === `${type} (${tier})`);
       if (hit) return hit;
@@ -333,7 +359,10 @@ export function entryToItemDef(entry, bases) {
 
   const idPrefix = rarityInfo.rarity === 'set' ? 's' : 'u';
   const qualitySlug = slugify(entry.quality);
-  const id = `${idPrefix}:${slugify(entry.name)}:${qualitySlug}`;
+  let id = `${idPrefix}:${slugify(entry.name)}:${qualitySlug}`;
+  if (entry.quality === 'TU' && entry.tier != null) {
+    id = `${id}:${entry.tier}`;
+  }
 
   /** @type {Record<string, unknown>} */
   const def = {
@@ -345,6 +374,7 @@ export function entryToItemDef(entry, bases) {
 
   if (rarityInfo.uniqueKind) def.uniqueKind = rarityInfo.uniqueKind;
   if (rarityInfo.tier != null) def.tier = rarityInfo.tier;
+  else if (entry.tier != null) def.tier = entry.tier;
   if (entry.type) def.baseType = String(entry.type).trim();
 
   if (parsed.reqLevel != null) def.reqLevel = parsed.reqLevel;
@@ -357,6 +387,7 @@ export function entryToItemDef(entry, bases) {
   if (parsed.damage1hDisplay) def.damage1hDisplay = parsed.damage1hDisplay;
   if (parsed.damage2hDisplay) def.damage2hDisplay = parsed.damage2hDisplay;
   if (parsed.throwDamageDisplay) def.throwDamageDisplay = parsed.throwDamageDisplay;
+  if (parsed.block) def.block = parsed.block;
 
   if (entry.class) def.group = entry.class;
 
@@ -407,4 +438,21 @@ export function buildCatalogFromUniqueStats(db, bases) {
     if (def) items.push(def);
   }
   return { items, sets };
+}
+
+/**
+ * Map a legacy `u:name:tu` overlay id to `u:name:tu:4` when that T4 def exists.
+ * @param {string} defId
+ * @param {Record<string, object>|null|undefined} catalogById
+ * @returns {string}
+ */
+export function resolveCatalogDefId(defId, catalogById) {
+  const id = String(defId || '');
+  if (!id) return id;
+  if (catalogById && catalogById[id]) return id;
+  if (/^u:.+:tu$/.test(id)) {
+    const t4 = `${id}:4`;
+    if (catalogById && catalogById[t4]) return t4;
+  }
+  return id;
 }

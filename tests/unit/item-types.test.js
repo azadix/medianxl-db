@@ -93,17 +93,19 @@ describe('matchesItemPickerSearch', () => {
   it('matches assassin katar TU by base type and quality tokens', () => {
     const nutcracker = {
       name: 'The Nutcracker',
-      id: 'u:the-nutcracker:tu',
+      id: 'u:the-nutcracker:tu:4',
       type: 'h2h',
       baseName: 'Katar (4)',
       baseType: 'Katar (4)',
       group: 'Assassin Claws',
       uniqueKind: 'tiered',
+      tier: 4,
       classRestriction: 'Assassin Only',
     };
     expect(matchesItemPickerSearch(nutcracker, 'katar')).toBe(true);
     expect(matchesItemPickerSearch(nutcracker, 'katar tu')).toBe(true);
     expect(matchesItemPickerSearch(nutcracker, 'tu')).toBe(true);
+    expect(matchesItemPickerSearch(nutcracker, 't4')).toBe(true);
     expect(matchesItemPickerSearch(nutcracker, 'bow')).toBe(false);
   });
 });

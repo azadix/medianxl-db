@@ -9,6 +9,8 @@ import {
   parseItemStats,
   parseSetBonusStats,
   findBaseForType,
+  entryToItemDef,
+  resolveCatalogDefId,
 } from '../../src/items/unique-stats-catalog.js';
 
 const ROOT = resolve(import.meta.dirname, '../..');
@@ -32,8 +34,12 @@ describe('unique-stats-db catalog', () => {
     expect(items.length).toBeGreaterThan(500);
     expect(sets.length).toBeGreaterThan(20);
 
-    const grim = items.find((u) => u.name === 'Grim Fang');
+    const grimAll = items.filter((u) => u.name === 'Grim Fang');
+    expect(grimAll.map((u) => u.tier).sort()).toEqual([1, 2, 3, 4]);
+    const grim = grimAll.find((u) => u.tier === 4);
     expect(grim).toBeTruthy();
+    expect(grim.id).toBe('u:grim-fang:tu:4');
+    expect(grimAll.find((u) => u.tier === 1)?.id).toBe('u:grim-fang:tu:1');
     expect(grim.baseId).toBeTruthy();
     expect(grim.baseName).toMatch(/Short Sword/i);
     expect(grim.baseType).toBe('Short Sword (4)');
@@ -41,6 +47,11 @@ describe('unique-stats-db catalog', () => {
     expect(grim.uniqueKind).toBe('tiered');
     expect(Array.isArray(grim.modifiers)).toBe(true);
     expect(grim.modifiers.length).toBeGreaterThan(0);
+
+    const hangman = items.find((u) => u.name === 'Hangman');
+    expect(hangman?.uniqueKind).toBe('tiered');
+    expect(hangman?.tier).toBeUndefined();
+    expect(hangman?.id).toBe('u:hangman:tu');
 
     const ach = items.find((s) => s.name === "Achilios' Eagle Eye");
     expect(ach).toBeTruthy();
@@ -117,14 +128,53 @@ describe('unique-stats-db catalog', () => {
     expect(avenger.modifiers).not.toContain('209');
   });
 
+  it('keeps shield Class % as a parsed block value', () => {
+    const parsed = parseItemStats(
+      'Defense: 10 to 20\nChance to Block:\nClass\n%\nRequired Level: 1'
+    );
+    expect(parsed.block).toBe('Class %');
+    expect(parsed.modifiers).not.toContain('Class');
+    expect(parsed.modifiers).not.toContain('%');
+  });
+
   it('matches bases by type name', () => {
     const bases = [
+      { id: 'a1', name: 'Short Sword (1)' },
       { id: 'a', name: 'Short Sword (4)' },
       { id: 'b', name: 'Helm (Sacred)' },
       { id: 'c', name: 'Ring' },
     ];
     expect(findBaseForType('Short Sword (4)', 'TU', bases)?.id).toBe('a');
+    expect(findBaseForType('Short Sword (1)', 'TU', bases)?.id).toBe('a1');
     expect(findBaseForType('Helm', 'Sacred Set', bases)?.id).toBe('b');
     expect(findBaseForType('Ring', 'SU', bases)?.id).toBe('c');
+  });
+
+  it('suffixes TU overlay ids with the numeric tier', () => {
+    const bases = [
+      { id: 'a1', name: 'Short Sword (1)', type: 'swd', category: 'weapons', slot: 'arms' },
+    ];
+    const def = entryToItemDef(
+      {
+        name: 'Grim Fang',
+        quality: 'TU',
+        tier: 1,
+        type: 'Short Sword (1)',
+        stats: 'Required Level: 20\nSocketed (1)\n+10 to Strength',
+      },
+      bases
+    );
+    expect(def.id).toBe('u:grim-fang:tu:1');
+    expect(def.tier).toBe(1);
+    expect(def.baseName).toBe('Short Sword (1)');
+  });
+
+  it('resolves legacy u:name:tu ids to T4', () => {
+    const byId = { 'u:grim-fang:tu:4': { id: 'u:grim-fang:tu:4' } };
+    expect(resolveCatalogDefId('u:grim-fang:tu', byId)).toBe('u:grim-fang:tu:4');
+    expect(resolveCatalogDefId('u:grim-fang:tu:4', byId)).toBe('u:grim-fang:tu:4');
+    expect(resolveCatalogDefId('u:hangman:tu', { 'u:hangman:tu': { id: 'u:hangman:tu' } })).toBe(
+      'u:hangman:tu'
+    );
   });
 });
