@@ -6,7 +6,6 @@ import {
   plannerMenuPrepareImport,
   plannerMenuImportBuildFromText,
   plannerMenuReadBuildJsonFile,
-  plannerMenuReadPastebinBuild,
 } from '@/planner/planner-dom-handlers.js';
 
 const knownIssuesLines = ref(/** @type {string[]} */ ([]));
@@ -16,7 +15,6 @@ const knownIssuesFetched = ref(false);
 const showImportModal = ref(false);
 const importJsonText = ref('');
 const importFileName = ref('');
-const importPastebinUrl = ref('');
 const importDragOver = ref(false);
 const importBusy = ref(false);
 const importFileInput = ref(/** @type {HTMLInputElement | null} */ (null));
@@ -58,7 +56,6 @@ async function openImportModal() {
   await plannerMenuPrepareImport();
   importJsonText.value = '';
   importFileName.value = '';
-  importPastebinUrl.value = '';
   importDragOver.value = false;
   importBusy.value = false;
   showImportModal.value = true;
@@ -94,23 +91,6 @@ async function loadImportFile(file) {
     if (text == null) return;
     importJsonText.value = text;
     importFileName.value = file.name || 'build.json';
-  } finally {
-    importBusy.value = false;
-  }
-}
-
-async function loadImportPastebin() {
-  if (importBusy.value || importPastebinUrl.value.trim() === '') return;
-  if (importJsonText.value.trim() !== '') {
-    const replace = window.confirm('Replace the current JSON with the Pastebin paste?');
-    if (!replace) return;
-  }
-  importBusy.value = true;
-  try {
-    const text = await plannerMenuReadPastebinBuild(importPastebinUrl.value);
-    if (text == null) return;
-    importJsonText.value = text;
-    importFileName.value = '';
   } finally {
     importBusy.value = false;
   }
@@ -254,40 +234,12 @@ async function confirmImport() {
                 v-model="importJsonText"
                 class="textarea planner-import-json-textarea"
                 rows="2"
-                placeholder="{ &quot;name&quot;: &quot;...&quot;, &quot;class&quot;: &quot;...&quot;, ... }"
+                placeholder='{ "name": "...", "class": "...", ... }'
                 spellcheck="false"
                 @input="onImportJsonInput"
               ></textarea>
             </div>
             <p class="help">Import uses this text. Loading a file replaces any pasted JSON.</p>
-          </div>
-
-          <div class="field">
-            <label class="label" for="plannerImportPastebinUrl">Or load from Pastebin</label>
-            <div class="field has-addons">
-              <div class="control is-expanded">
-                <input
-                  id="plannerImportPastebinUrl"
-                  v-model="importPastebinUrl"
-                  class="input"
-                  type="url"
-                  placeholder="https://pastebin.com/kK11qxv0"
-                  :disabled="importBusy"
-                  @keyup.enter="loadImportPastebin"
-                />
-              </div>
-              <div class="control">
-                <button
-                  type="button"
-                  class="button is-info is-outlined"
-                  :disabled="importBusy || !importPastebinUrl.trim()"
-                  @click="loadImportPastebin"
-                >
-                  Load link
-                </button>
-              </div>
-            </div>
-            <p class="help">The paste must contain the build JSON. Only pastebin.com links are accepted.</p>
           </div>
 
           <div class="field mb-0">

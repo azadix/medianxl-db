@@ -53,7 +53,6 @@ import {
   downloadCurrentBuildAsJson,
   fallbackCopyToClipboard,
 } from './saved-builds-ui.js';
-import { readPastebinBuildText } from './build-file-io.js';
 import { main } from './planner-init.js';
 
 export async function plannerMenuNewBuild() {
@@ -102,20 +101,6 @@ export async function plannerMenuImportBuildFromText(jsonString) {
  */
 export async function plannerMenuReadBuildJsonFile(file) {
     return readBuildJsonFileText(file);
-}
-
-/**
- * Read build JSON from a Pastebin URL.
- * @param {string} url
- * @returns {Promise<string|null>}
- */
-export async function plannerMenuReadPastebinBuild(url) {
-    try {
-        return await readPastebinBuildText(url);
-    } catch (error) {
-        toastManager.showToast(`Could not load Pastebin: ${error.message}`, false, 'danger');
-        return null;
-    }
 }
 
 /**
