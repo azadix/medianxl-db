@@ -149,9 +149,10 @@ function parseJewelryTable(tableHtml, section) {
   /** @type {UniqueStatsEntry[]} */
   const entries = [];
   for (const td of tableCells(tableHtml)) {
-    const nameMatch = /<span class="item-unique[^"]*"[^>]*>[\s\S]*?<b>\s*([\s\S]*?)<\/b>/i.exec(
-      td
-    );
+    const nameMatch =
+      /<span\b[^>]*class="[^"]*\bitem-unique\b[^"]*"[^>]*>[\s\S]*?<b>\s*([\s\S]*?)<\/b>/i.exec(
+        td
+      );
     if (!nameMatch) continue;
     const name = htmlToLines(nameMatch[1]).join(' ');
     if (!name) continue;
@@ -174,15 +175,19 @@ export function parseTieredUniquesWiki(html) {
   /** @type {UniqueStatsEntry[]} */
   const entries = [];
   let section = '';
-  const tokenRe =
-    /<p class="genbig">([\s\S]*?)<\/p>|<table class="uniques">([\s\S]*?)<\/table>/gi;
+  const tableRe = /<table class="uniques">([\s\S]*?)(?:<\/table>|$)/gi;
   let match;
-  while ((match = tokenRe.exec(page))) {
-    if (match[1] != null) {
-      section = htmlToLines(match[1]).join(' ');
-      continue;
-    }
-    const tableHtml = match[2] || '';
+  while ((match = tableRe.exec(page))) {
+    // Derive the latest mapped section from the HTML before this table.
+    // This also handles slices where one genbig <p> wraps multiple tables.
+    const beforeTable = page.slice(0, match.index);
+    const sectionMatches = [
+      ...beforeTable.matchAll(
+        /<b[^>]*>\s*(Amulets|Rings|Jewels|Arrow Quivers|Crossbow Quivers)\s*<\/b>/gi
+      ),
+    ];
+    if (sectionMatches.length) section = sectionMatches.at(-1)[1];
+    const tableHtml = match[1];
     if (/<th\b[^>]*class="item-unique"/i.test(tableHtml)) {
       entries.push(...parseTieredTable(tableHtml));
     } else {
