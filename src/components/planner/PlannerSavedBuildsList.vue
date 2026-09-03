@@ -194,8 +194,8 @@ watch(activeSection, (s) => {
 </template>
 
 <style scoped>
+/* .buttons already uses gap; extra margin shifts the dropdown trigger up. */
 .planner-export-dd {
-  margin-right: 0.5rem;
-  margin-bottom: 0.5rem;
+  margin: 0;
 }
 </style>
