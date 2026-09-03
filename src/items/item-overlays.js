@@ -260,7 +260,7 @@ export function getOverlayStatLines(def, rolls = null, options = {}) {
  * @returns {string}
  */
 export function formatOverlayBadge(uniqueKind, tier) {
-  if (uniqueKind === 'tiered' && tier != null) return `T${tier}`;
+  if (uniqueKind === 'tiered') return tier != null ? `T${tier}` : 'TU';
   if (uniqueKind === 'su') return 'SU';
   if (uniqueKind === 'ssu') return 'SSU';
   if (uniqueKind === 'sssu') return 'SSSU';

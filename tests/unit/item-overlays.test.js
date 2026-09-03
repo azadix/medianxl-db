@@ -73,6 +73,7 @@ describe('resolveItemDef', () => {
 
   it('formats badges', () => {
     expect(formatOverlayBadge('tiered', 2)).toBe('T2');
+    expect(formatOverlayBadge('tiered')).toBe('TU');
     expect(formatOverlayBadge('su')).toBe('SU');
     expect(formatOverlayBadge('sssu')).toBe('SSSU');
   });

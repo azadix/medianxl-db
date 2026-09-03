@@ -14,7 +14,7 @@ import {
   canEquipForClass,
   canPlaceInInventory,
 } from '@/items/item-types.js';
-import { getCharacterInstance } from '@/character/planner-instance.js';
+import { getCharacterInstance, raiseCharacterLevelForItemReq } from '@/character/planner-instance.js';
 import {
   canPlace,
   placeAt,
@@ -70,6 +70,7 @@ import { buildCatalogFromUniqueStats } from '@/items/unique-stats-catalog.js';
  *   trophy?: string[],
  *   baseId?: string,
  *   baseName?: string,
+ *   baseType?: string,
  *   uniqueKind?: string,
  *   tier?: number|string,
  *   setId?: string,
@@ -81,7 +82,32 @@ import { buildCatalogFromUniqueStats } from '@/items/unique-stats-catalog.js';
  * }} ItemDef
  * @typedef {{ id: string, name: string, bonuses: Array<{ required: number|string, modifiers: string[] }> }} SetDef
  * @typedef {{ defId: string, icon: string, rolls?: Record<string, number> }} ItemInstance
+ * @typedef {{
+ *   weaponSet: 0|1,
+ *   equipment: Record<string, string|{ defId: string, icon?: string, rolls?: Record<string, number> }|null>,
+ *   inventory: Array<{ slot: number, defId: string, icon?: string, rolls?: Record<string, number> }>,
+ *   charms: Array<{ defId: string, rolls?: Record<string, number> }>,
+ *   relics: Array<{ defId: string, rolls?: Record<string, number> }>
+ * }} ItemsSnapshot
  */
+
+/**
+ * Whether a toSnapshot() result should be stored on a saved build.
+ * @param {Partial<ItemsSnapshot>|null|undefined} snap
+ * @returns {boolean}
+ */
+export function itemsSnapshotHasState(snap) {
+  if (!snap || typeof snap !== 'object') return false;
+  if (snap.weaponSet === 1) return true;
+  const equipment = snap.equipment;
+  if (equipment && typeof equipment === 'object' && Object.values(equipment).some((v) => v != null)) {
+    return true;
+  }
+  if (Array.isArray(snap.inventory) && snap.inventory.length > 0) return true;
+  if (Array.isArray(snap.charms) && snap.charms.length > 0) return true;
+  if (Array.isArray(snap.relics) && snap.relics.length > 0) return true;
+  return false;
+}
 
 export const useItemsStore = defineStore('items', {
   state: () => ({
@@ -90,6 +116,8 @@ export const useItemsStore = defineStore('items', {
     /** @type {SetDef[]} */
     sets: [],
     catalogLoaded: false,
+    /** Version folder the catalog was fetched for, e.g. `"2_14"`. */
+    catalogVersionFolder: /** @type {string|null} */ (null),
     /** @type {Record<number, ItemInstance>} */
     instances: {},
     nextInstanceId: 1,
@@ -197,9 +225,9 @@ export const useItemsStore = defineStore('items', {
     pickerCatalog() {
       const sel = this.selectedSlot;
       if (!sel) return this.catalog;
-      const className = getCharacterInstance()?.className ?? null;
       if (sel.location === 'equipment') {
-        return this.catalog.filter((d) => canEquipInSlot(d, String(sel.slot), className));
+        // List every item that fits the slot. Class restrictions only block Add/equip.
+        return this.catalog.filter((d) => canEquipInSlot(d, String(sel.slot)));
       }
       if (sel.location === 'inventory') {
         // Charms/relics use dedicated enable lists — not the inventory grid.
@@ -230,12 +258,35 @@ export const useItemsStore = defineStore('items', {
     enabledRelicCount() {
       return Object.keys(this.enabledRelics).length;
     },
+    /** Highest Required Level among equipped gear and enabled charms/relics. */
+    maxActiveItemReqLevel() {
+      let max = 0;
+      const consider = (def) => {
+        const req = Number(def?.reqLevel);
+        if (Number.isFinite(req) && req > max) max = req;
+      };
+      for (const slot of EQUIPMENT_SLOTS) {
+        const id = this.equipment[slot];
+        if (id == null) continue;
+        const inst = this.instances[id];
+        consider(inst ? this.catalogById[inst.defId] : null);
+      }
+      for (const defId of Object.keys(this.enabledCharms)) consider(this.catalogById[defId]);
+      for (const defId of Object.keys(this.enabledRelics)) consider(this.catalogById[defId]);
+      return max;
+    },
+    isCatalogCurrent() {
+      return (
+        this.catalogLoaded &&
+        this.catalogVersionFolder === versionToTreeAssetFolder(getCurrentVersion())
+      );
+    },
   },
 
   actions: {
     async loadCatalog() {
-      if (this.catalogLoaded) return;
       const versionFolder = versionToTreeAssetFolder(getCurrentVersion());
+      if (this.catalogLoaded && this.catalogVersionFolder === versionFolder) return;
       const required = ['baseitems.json', 'charms.json', 'other.json'];
       const optional = ['relics.json', 'unique-stats-db.json'];
       try {
@@ -299,11 +350,13 @@ export const useItemsStore = defineStore('items', {
 
         this.catalog = [...baseItems, ...charms, ...other, ...overlays, ...relics];
         this.sets = sets;
+        this.catalogVersionFolder = versionFolder;
         this.catalogLoaded = true;
       } catch (e) {
         console.error('Failed to load item catalog', e);
         this.catalog = [];
         this.sets = [];
+        this.catalogVersionFolder = versionFolder;
         this.catalogLoaded = true;
       }
     },
@@ -311,6 +364,14 @@ export const useItemsStore = defineStore('items', {
     /** @param {0|1} set */
     setWeaponSet(set) {
       this.weaponSet = set === 1 ? 1 : 0;
+    },
+
+    /**
+     * Raise planner level to cover equipped/enabled item requirements.
+     * @returns {boolean}
+     */
+    syncCharacterLevelToItemReqs() {
+      return raiseCharacterLevelForItemReq({ reqLevel: this.maxActiveItemReqLevel });
     },
 
     /**
@@ -482,6 +543,7 @@ export const useItemsStore = defineStore('items', {
         const id = this.createInstance(defId, null, rolls);
         this.enabledCharms = { ...this.enabledCharms, [defId]: id };
         this.selectEnabledItem('charms', defId);
+        this.syncCharacterLevelToItemReqs();
         return true;
       }
       if (existing == null) return true;
@@ -529,6 +591,7 @@ export const useItemsStore = defineStore('items', {
       this.nextInstanceId = nextId;
       this.instances = nextInstances;
       this.enabledCharms = nextEnabled;
+      this.syncCharacterLevelToItemReqs();
       return added;
     },
 
@@ -597,6 +660,7 @@ export const useItemsStore = defineStore('items', {
         const id = this.createInstance(defId, null, rolls);
         this.enabledRelics = { ...this.enabledRelics, [defId]: id };
         this.selectEnabledItem('relics', defId);
+        this.syncCharacterLevelToItemReqs();
         return true;
       }
       if (existing == null) return true;
@@ -726,6 +790,7 @@ export const useItemsStore = defineStore('items', {
         this.equipment[slot] = id;
         if (prev != null) this.destroyInstanceIfOrphaned(prev);
         this.editingInstanceId = id;
+        this.syncCharacterLevelToItemReqs();
         return true;
       }
 
@@ -893,6 +958,7 @@ export const useItemsStore = defineStore('items', {
         }
 
         this.equipment[toSlot] = fromId;
+        this.syncCharacterLevelToItemReqs();
         return true;
       }
 
@@ -962,13 +1028,7 @@ export const useItemsStore = defineStore('items', {
 
     /**
      * Compact snapshot for build save/load.
-     * @returns {{
-     *   weaponSet: 0|1,
-     *   equipment: Record<string, string|{ defId: string, icon?: string, rolls?: Record<string, number> }|null>,
-     *   inventory: Array<{ slot: number, defId: string, icon?: string, rolls?: Record<string, number> }>,
-     *   charms: Array<{ defId: string, rolls?: Record<string, number> }>,
-     *   relics: Array<{ defId: string, rolls?: Record<string, number> }>
-     * }}
+     * @returns {ItemsSnapshot}
      */
     toSnapshot() {
       /** @type {Record<string, string|{ defId: string, icon?: string, rolls?: Record<string, number> }|null>} */
@@ -1164,6 +1224,7 @@ export const useItemsStore = defineStore('items', {
           }
         }
       }
+      this.syncCharacterLevelToItemReqs();
     },
 
     resetItems() {

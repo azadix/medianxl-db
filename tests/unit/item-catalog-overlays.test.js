@@ -35,6 +35,8 @@ describe('unique-stats-db catalog', () => {
     const grim = items.find((u) => u.name === 'Grim Fang');
     expect(grim).toBeTruthy();
     expect(grim.baseId).toBeTruthy();
+    expect(grim.baseName).toMatch(/Short Sword/i);
+    expect(grim.baseType).toBe('Short Sword (4)');
     expect(grim.rarity).toBe('unique');
     expect(grim.uniqueKind).toBe('tiered');
     expect(Array.isArray(grim.modifiers)).toBe(true);

@@ -345,6 +345,7 @@ export function entryToItemDef(entry, bases) {
 
   if (rarityInfo.uniqueKind) def.uniqueKind = rarityInfo.uniqueKind;
   if (rarityInfo.tier != null) def.tier = rarityInfo.tier;
+  if (entry.type) def.baseType = String(entry.type).trim();
 
   if (parsed.reqLevel != null) def.reqLevel = parsed.reqLevel;
   if (parsed.reqStr != null) def.reqStr = parsed.reqStr;

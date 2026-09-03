@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { canEquipForClass, canEquipInSlot, isUniquePickerItem } from '@/items/item-types.js';
+import { canEquipForClass, canEquipInSlot, isUniquePickerItem, matchesItemPickerSearch } from '@/items/item-types.js';
 
 describe('canEquipForClass', () => {
   it('allows unrestricted items for any class', () => {
@@ -36,6 +36,13 @@ describe('canEquipInSlot', () => {
     expect(canEquipInSlot(def, 'rarm', 'Druid')).toBe(true);
     expect(canEquipInSlot(def, 'rarm', 'Necromancer')).toBe(false);
   });
+
+  it('ignores class restriction when className is omitted', () => {
+    const def = { slot: 'arms', classRestriction: 'Assassin Only' };
+    expect(canEquipInSlot(def, 'rarm')).toBe(true);
+    expect(canEquipInSlot(def, 'rarm', 'Amazon')).toBe(false);
+    expect(canEquipInSlot(def, 'rarm', 'Assassin')).toBe(true);
+  });
 });
 
 describe('isUniquePickerItem', () => {
@@ -57,5 +64,46 @@ describe('isUniquePickerItem', () => {
       })
     ).toBe(false);
     expect(isUniquePickerItem({ rarity: 'normal' })).toBe(false);
+  });
+});
+
+describe('matchesItemPickerSearch', () => {
+  const grandfather = {
+    name: 'The Grandfather',
+    id: 'u:the-grandfather:su',
+    type: 'qgsd',
+    baseName: 'Colossus Blade (Sacred)',
+    baseType: 'Colossus Blade (Sacred)',
+    group: 'Two-Handed Swords',
+  };
+
+  it('matches unique items by base name and type family', () => {
+    expect(matchesItemPickerSearch(grandfather, 'colossus blade')).toBe(true);
+    expect(matchesItemPickerSearch(grandfather, 'sword')).toBe(true);
+    expect(matchesItemPickerSearch(grandfather, 'two-handed')).toBe(true);
+    expect(matchesItemPickerSearch(grandfather, 'grandfather')).toBe(true);
+    expect(matchesItemPickerSearch(grandfather, 'bow')).toBe(false);
+  });
+
+  it('treats an empty query as a match', () => {
+    expect(matchesItemPickerSearch(grandfather, '')).toBe(true);
+    expect(matchesItemPickerSearch(grandfather, '   ')).toBe(true);
+  });
+
+  it('matches assassin katar TU by base type and quality tokens', () => {
+    const nutcracker = {
+      name: 'The Nutcracker',
+      id: 'u:the-nutcracker:tu',
+      type: 'h2h',
+      baseName: 'Katar (4)',
+      baseType: 'Katar (4)',
+      group: 'Assassin Claws',
+      uniqueKind: 'tiered',
+      classRestriction: 'Assassin Only',
+    };
+    expect(matchesItemPickerSearch(nutcracker, 'katar')).toBe(true);
+    expect(matchesItemPickerSearch(nutcracker, 'katar tu')).toBe(true);
+    expect(matchesItemPickerSearch(nutcracker, 'tu')).toBe(true);
+    expect(matchesItemPickerSearch(nutcracker, 'bow')).toBe(false);
   });
 });

@@ -2,7 +2,12 @@
 import { computed, nextTick, ref, watch, onMounted, onUnmounted } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useItemsStore } from '@/stores/items.js';
-import { ITEM_CATEGORIES, canEquipInSlot, isUniquePickerItem } from '@/items/item-types.js';
+import {
+  ITEM_CATEGORIES,
+  canEquipInSlot,
+  isUniquePickerItem,
+  matchesItemPickerSearch,
+} from '@/items/item-types.js';
 import { isCharmItem } from '@/items/charm-items.js';
 import { isRelicItem } from '@/items/relic-items.js';
 import {
@@ -62,16 +67,9 @@ const filteredItems = computed(() => {
   if (category.value !== 'all') {
     list = list.filter((d) => matchesCategory(d, category.value));
   }
-  const q = search.value.trim().toLowerCase();
+  const q = search.value.trim();
   if (q) {
-    list = list.filter(
-      (d) =>
-        d.name.toLowerCase().includes(q) ||
-        String(d.id).toLowerCase().includes(q) ||
-        String(d.type || '').toLowerCase().includes(q) ||
-        String(d.baseName || '').toLowerCase().includes(q) ||
-        String(d.setName || '').toLowerCase().includes(q)
-    );
+    list = list.filter((d) => matchesItemPickerSearch(d, q));
   }
   return list;
 });

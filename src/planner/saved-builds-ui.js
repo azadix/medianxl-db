@@ -32,7 +32,7 @@ import {
   getAllSkillPointsById,
 } from '@/character/planner-core.js';
 import { getSelectedConditionKeys, setCondition as setPlannerCondition } from '@/stores/planner-config-store.js';
-import { useItemsStore } from '@/stores/items.js';
+import { useItemsStore, itemsSnapshotHasState } from '@/stores/items.js';
 import { syncPlannerCharacterStatsTextareaFromCharacter, refreshPlannerStatsPanelFromCharacter } from '@/character/planner-stats-panel.js';
 import {
   getSavedBuilds,
@@ -203,17 +203,18 @@ export function loadBuildData(build, buildIndex = null) {
         }
     }
 
-    // Load equipment / inventory items (async catalog)
+    // Load equipment / inventory / charms / relics (async catalog)
     try {
         const itemsStore = useItemsStore();
         const applyItems = () => {
+            itemsStore.syncViewerClassName(build.class);
             if (build.items != null) itemsStore.fromSnapshot(build.items);
             else itemsStore.resetItems();
-            itemsStore.syncViewerClassName(build.class);
+            itemsStore.pruneClassRestrictedEnableList();
             syncItemGrantedOSkills();
             runPlannerSkillStatRecompute({ immediate: true });
         };
-        if (itemsStore.catalogLoaded) applyItems();
+        if (itemsStore.isCatalogCurrent) applyItems();
         else itemsStore.loadCatalog().then(applyItems);
     } catch (e) {
         console.warn('Failed to apply build items:', e);
@@ -977,9 +978,7 @@ export function buildCurrentBuildSnapshot(name) {
   try {
     const itemsStore = useItemsStore();
     const itemsSnap = itemsStore.toSnapshot();
-    const hasEquip = Object.values(itemsSnap.equipment).some((v) => v != null);
-    const hasInv = itemsSnap.inventory.length > 0;
-    if (hasEquip || hasInv || itemsSnap.weaponSet !== 0) {
+    if (itemsSnapshotHasState(itemsSnap)) {
       snap.items = itemsSnap;
     }
   } catch {

@@ -21,6 +21,22 @@ export function setCharacterInstance(instance) {
 }
 
 /**
+ * Raise stored planner level to an item's required level (never lowers).
+ * @param {{ reqLevel?: number }|null|undefined} def
+ * @returns {boolean} True if the stored level changed
+ */
+export function raiseCharacterLevelForItemReq(def) {
+  const req = Number(def?.reqLevel);
+  if (!Number.isFinite(req) || req <= 0) return false;
+  if (!characterInstance) return false;
+  const needed = Character.clampLevel(req);
+  if (characterInstance.level >= needed) return false;
+  characterInstance.setCharacterLevel(needed);
+  notifyPlannerStateChanged({ source: 'itemReqLevel' });
+  return true;
+}
+
+/**
  * @param {Record<string, unknown>} [detail]
  */
 export function notifyPlannerStateChanged(detail = {}) {

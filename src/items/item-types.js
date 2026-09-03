@@ -207,3 +207,56 @@ export function isUniquePickerItem(item) {
 export function isRelicPickerItem(item) {
   return isRelicItem(item);
 }
+
+/**
+ * Haystack for the item picker search box (name, base, type family).
+ * @param {object|null|undefined} item
+ * @returns {string}
+ */
+export function itemPickerSearchText(item) {
+  if (!item || typeof item !== 'object') return '';
+  return [
+    item.name,
+    item.id,
+    item.type,
+    item.baseName,
+    item.baseType,
+    item.baseId,
+    item.setName,
+    item.group,
+    itemPickerQualityAlias(item),
+  ]
+    .filter((v) => v != null && String(v).trim() !== '')
+    .join(' ')
+    .toLowerCase();
+}
+
+/**
+ * Search aliases for unique quality (TU/SU), kept as standalone tokens.
+ * @param {object} item
+ * @returns {string}
+ */
+function itemPickerQualityAlias(item) {
+  const kind = item.uniqueKind;
+  if (kind === 'tiered') return 'TU';
+  if (kind === 'su') return 'SU';
+  if (kind === 'ssu') return 'SSU';
+  if (kind === 'sssu') return 'SSSU';
+  return '';
+}
+
+/**
+ * Whether an item should appear for the given picker search query.
+ * Every whitespace-separated token must match.
+ * @param {object|null|undefined} item
+ * @param {string} query
+ * @returns {boolean}
+ */
+export function matchesItemPickerSearch(item, query) {
+  const q = String(query || '')
+    .trim()
+    .toLowerCase();
+  if (!q) return true;
+  const text = itemPickerSearchText(item);
+  return q.split(/\s+/).every((tok) => text.includes(tok));
+}

@@ -1,12 +1,14 @@
 /**
  * @file Tests for charm/relic enable lists and relic skill resolve.
  */
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
-import { useItemsStore } from '@/stores/items.js';
+import { useItemsStore, itemsSnapshotHasState } from '@/stores/items.js';
 import { MAX_RELICS, resolveRelicSkill, relicSlugFromId } from '@/items/relic-items.js';
 import { isCharmItem } from '@/items/charm-items.js';
 import * as skillDataStore from '@/shared/skill-data-store.js';
+import * as versionConfig from '@/shared/version-config.js';
+import * as utils from '@/shared/utils.js';
 
 const charmA = {
   id: 'a60',
@@ -342,5 +344,115 @@ describe('items store enable lists', () => {
     expect(added).toBe(1);
     expect(store.isEnabled('charms', charmA.id)).toBe(true);
     expect(Object.keys(store.enabledCharms).filter((id) => id.startsWith('ebw'))).toHaveLength(1);
+  });
+
+  it('treats charms-only and relics-only snapshots as persistable', () => {
+    expect(itemsSnapshotHasState(store.toSnapshot())).toBe(false);
+    expect(itemsSnapshotHasState(null)).toBe(false);
+    expect(
+      itemsSnapshotHasState({
+        weaponSet: 0,
+        equipment: { head: null },
+        inventory: [],
+        charms: [],
+        relics: [],
+      })
+    ).toBe(false);
+
+    store.toggleCharm(charmA.id, true);
+    expect(itemsSnapshotHasState(store.toSnapshot())).toBe(true);
+
+    store.resetItems();
+    seedCatalog(store);
+    store.toggleRelic(relicA.id, true);
+    expect(itemsSnapshotHasState(store.toSnapshot())).toBe(true);
+  });
+
+  it('restores class-restricted charms/relics when viewer class is set first', () => {
+    const druidCharm = {
+      id: 'ccdru',
+      name: 'Caoi Dulra Fruit',
+      type: 'charm',
+      category: 'charms',
+      keepInInventory: true,
+      rarity: 'unique',
+      classRestriction: 'Druid Only',
+    };
+    const raidRelic = {
+      id: 'relic:raid',
+      name: 'Relic (Raid)',
+      category: 'relics',
+      rarity: 'relic',
+      keepInInventory: true,
+      classRestriction: 'Druid Only',
+    };
+    store.catalog = [charmA, druidCharm, relicA, raidRelic];
+
+    const snap = {
+      weaponSet: 0,
+      equipment: {},
+      inventory: [],
+      charms: [{ defId: druidCharm.id }],
+      relics: [{ defId: raidRelic.id }],
+    };
+
+    store.syncViewerClassName('Amazon');
+    store.fromSnapshot(snap);
+    expect(store.isEnabled('charms', druidCharm.id)).toBe(false);
+    store.pruneClassRestrictedEnableList();
+    expect(store.isEnabled('relics', raidRelic.id)).toBe(false);
+
+    store.syncViewerClassName('Druid');
+    store.fromSnapshot(snap);
+    store.pruneClassRestrictedEnableList();
+    expect(store.isEnabled('charms', druidCharm.id)).toBe(true);
+    expect(store.isEnabled('relics', raidRelic.id)).toBe(true);
+  });
+});
+
+describe('item catalog version reload', () => {
+  /** @type {ReturnType<typeof useItemsStore>} */
+  let store;
+
+  beforeEach(() => {
+    setActivePinia(createPinia());
+    store = useItemsStore();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
+  });
+
+  it('refetches when the loaded catalog version folder differs', async () => {
+    store.catalog = [{ id: 'stale' }];
+    store.catalogLoaded = true;
+    store.catalogVersionFolder = '2_13';
+
+    vi.spyOn(versionConfig, 'getCurrentVersion').mockReturnValue({ major: 2, minor: 14 });
+    vi.spyOn(utils, 'getAssetUrl').mockImplementation((p) => `http://local/${p}`);
+
+    const jsonOk = (body) =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve(body),
+      });
+    const fetchMock = vi.fn((url) => {
+      const href = String(url);
+      if (href.includes('baseitems.json') || href.includes('charms.json') || href.includes('other.json')) {
+        return jsonOk([]);
+      }
+      return Promise.resolve({ ok: false, status: 404 });
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    await store.loadCatalog();
+    expect(fetchMock).toHaveBeenCalled();
+    expect(store.catalogVersionFolder).toBe('2_14');
+    expect(store.isCatalogCurrent).toBe(true);
+
+    fetchMock.mockClear();
+    await store.loadCatalog();
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 });
