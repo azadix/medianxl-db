@@ -39,6 +39,7 @@ import {
   setSavedBuilds,
   notifySavedBuildsListRefresh,
 } from '@/planner/saved-builds-storage.js';
+import { showBuildNameModal } from '@/planner/planner-dom-handlers.js';
 import {
   buildJsonDownloadFilename,
   downloadTextAsJsonFile,
@@ -888,36 +889,37 @@ export function renameBuild(index) {
     }
     
     const currentBuild = builds[index];
-    const defaultLabel = exportLabelForToast(currentBuild.name);
-    const newName = prompt(`Enter new name for build "${defaultLabel}":`, currentBuild.name ?? '');
-    
-    if (newName === null) {
-        return;
-    }
-    
-    const trimmedName = newName.trim();
-    
-    // Check if name already exists (excluding current build); empty names can repeat
-    const nameExists =
-        trimmedName !== '' &&
-        builds.some((build, i) => i !== index && build.name === trimmedName);
-    if (nameExists) {
-        toastManager.showToast(`Build name "${trimmedName}" already exists!`, true, 'danger');
-        return;
-    }
-    
-    const ref = builds[index];
-    const wasCurrent = getCurrentBuildIndex() === index;
-    ref.name = trimmedName;
-    setSavedBuilds(builds);
+    showBuildNameModal({
+        title: 'Rename build',
+        titleId: 'renameBuildModalTitle',
+        subtitle: 'Update the name shown for this saved build.',
+        iconClass: 'fa-pen-to-square',
+        helpText: 'Used for the saved build. Empty names become "Unnamed Build".',
+        primaryText: 'Rename build',
+        primaryIconClass: 'fa-check',
+        initialName: currentBuild.name ?? '',
+        onConfirm(name) {
+            const nameExists =
+                name !== 'Unnamed Build' &&
+                builds.some((build, i) => i !== index && build.name === name);
+            if (nameExists) {
+                toastManager.showToast(`Build name "${name}" already exists!`, true, 'danger');
+                return;
+            }
 
-    if (wasCurrent) {
-        setCurrentBuildIndex(builds.indexOf(ref));
-    }
+            const ref = builds[index];
+            const wasCurrent = getCurrentBuildIndex() === index;
+            ref.name = name;
+            setSavedBuilds(builds);
 
-    notifySavedBuildsListRefresh();
-    
-    toastManager.showToast(`Build renamed to "${trimmedName}"!`, true, 'info');
+            if (wasCurrent) {
+                setCurrentBuildIndex(builds.indexOf(ref));
+            }
+
+            notifySavedBuildsListRefresh();
+            toastManager.showToast(`Build renamed to "${exportLabelForToast(name)}"!`, true, 'info');
+        },
+    });
 }
 
 // oSkills Management

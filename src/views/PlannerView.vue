@@ -64,6 +64,6 @@ onUnmounted(() => {
 <style scoped>
 .planner-route {
   margin-top: 0;
-  overflow: hidden;
+  overflow: visible;
 }
 </style>

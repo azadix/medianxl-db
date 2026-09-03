@@ -190,6 +190,7 @@ export function showBuildNameModal(opts) {
         primaryText,
         primaryIconClass,
         onConfirm,
+        initialName,
         secondaryAction,
         secondaryActions,
     } = opts;
@@ -258,7 +259,7 @@ export function showBuildNameModal(opts) {
     input.type = 'text';
     input.setAttribute('placeholder', 'Unnamed Build');
     input.setAttribute('autocomplete', 'off');
-    input.value = getCurrentBuildNamePrefill();
+    input.value = initialName ?? getCurrentBuildNamePrefill();
     control.appendChild(input);
 
     const inputIcon = document.createElement('span');

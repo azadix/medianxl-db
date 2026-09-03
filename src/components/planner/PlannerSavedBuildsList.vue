@@ -198,4 +198,13 @@ watch(activeSection, (s) => {
 .planner-export-dd {
   margin: 0;
 }
+
+.planner-export-dd.is-active {
+  z-index: 30;
+}
+
+.planner-export-dd .dropdown-content {
+  z-index: 30;
+  border: 1px solid var(--bulma-link);
+}
 </style>
