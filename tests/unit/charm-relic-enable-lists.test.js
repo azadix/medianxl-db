@@ -22,6 +22,7 @@ const charmA = {
   icon: 'invbut',
   reqLevel: 100,
   modifiers: ['+10 to all Attributes'],
+  upgrades: [['+1 to All Skills'], ['Maximum Life +5%']],
 };
 
 const charmB = {
@@ -36,6 +37,7 @@ const charmB = {
   icon: 'lyliascharm',
   reqLevel: 120,
   modifiers: ['+20 Life Regenerated per Second'],
+  upgrades: [['+2 to All Skills']],
 };
 
 const relicA = {
@@ -214,6 +216,13 @@ describe('items store enable lists', () => {
     const added = store.enableAllCharms();
     expect(added).toBe(1);
     expect(Object.keys(store.enabledCharms)).toHaveLength(2);
+    expect(store.getRollsForInstance(store.enabledCharms[charmA.id])).toEqual({
+      charmUpgrade0: 1,
+      charmUpgrade1: 1,
+    });
+    expect(store.getRollsForInstance(store.enabledCharms[charmB.id])).toEqual({
+      charmUpgrade0: 1,
+    });
 
     expect(store.toggleCharm(charmA.id, false)).toBe(true);
     expect(store.enabledCharms[charmA.id]).toBeUndefined();

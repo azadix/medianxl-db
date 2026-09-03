@@ -23,7 +23,11 @@ import {
   listPlacedItems,
 } from '@/items/inventory-placement.js';
 import { pickItemIcon } from '@/items/item-icons.js';
-import { isCharmItem, isDimensionalKeyCharm } from '@/items/charm-items.js';
+import {
+  getCharmUpgradeEntries,
+  isCharmItem,
+  isDimensionalKeyCharm,
+} from '@/items/charm-items.js';
 import { isRelicItem, MAX_RELICS } from '@/items/relic-items.js';
 import {
   countEquippedSetPieces,
@@ -574,7 +578,19 @@ export const useItemsStore = defineStore('items', {
         isDimensionalKeyCharm(this.catalogById[id])
       );
       for (const def of this.charmCatalog) {
-        if (nextEnabled[def.id] != null) continue;
+        const upgradeRolls = Object.fromEntries(
+          getCharmUpgradeEntries(def, this.viewerClassName).map((entry) => [entry.key, 1])
+        );
+        const existingId = nextEnabled[def.id];
+        if (existingId != null) {
+          if (Object.keys(upgradeRolls).length && nextInstances[existingId]) {
+            nextInstances[existingId] = {
+              ...nextInstances[existingId],
+              rolls: { ...nextInstances[existingId].rolls, ...upgradeRolls },
+            };
+          }
+          continue;
+        }
         if (isDimensionalKeyCharm(def)) {
           if (hasDimensionalKey) continue;
           hasDimensionalKey = true;
@@ -583,6 +599,7 @@ export const useItemsStore = defineStore('items', {
         nextInstances[id] = {
           defId: def.id,
           icon: pickItemIcon(def),
+          ...(Object.keys(upgradeRolls).length ? { rolls: upgradeRolls } : {}),
         };
         nextEnabled[def.id] = id;
         added += 1;
