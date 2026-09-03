@@ -24,6 +24,7 @@ import { initializeVersionSelector } from '@/shared/version-config.js';
 import { initializeTooltip } from '@/tree/tree-tooltip.js';
 import { clearSkillVariants, applySkillVariantDefaultsForClass } from '@/tree/skill-variants.js';
 import { decompressBuildFromUrlParam } from '@/planner/build-url-codec.js';
+import { readPastebinBuildText } from '@/planner/build-file-io.js';
 import {
   setSkillsList,
   setPlannerTreeRef,
@@ -36,8 +37,10 @@ import {
   getSkillsList,
   getClassSelect,
   getSkillsContainer,
+  toastManager,
 } from './planner-session.js';
 import { importBuild, loadPlannerClassNames } from './saved-builds-ui.js';
+import { importBuildFromJsonText } from './saved-builds-ui.js';
 import {
   updateSkillPointsDisplay,
   updateDevotionDisplay,
@@ -56,8 +59,9 @@ async function finalizePlannerPageAfterLoad() {
     const urlParams = new URLSearchParams(window.location.search);
     const urlClass = urlParams.get('class');
     const buildParam = urlParams.get('build');
+    const pastebinParam = urlParams.get('pbin');
     const existingCharacter = getCharacterInstance();
-    if (buildParam) {
+    if (buildParam || pastebinParam) {
         await main();
         return;
     }
@@ -178,6 +182,7 @@ export async function main() {
         const savedClass = urlParams.get('class');
         const savedTab = urlParams.get('tab');
         const buildParam = urlParams.get('build');
+        const pastebinParam = urlParams.get('pbin');
         if (buildParam) {
             try {
                 const buildData = await decompressBuildFromUrlParam(buildParam);
@@ -185,6 +190,20 @@ export async function main() {
                 return;
             } catch (e) {
                 console.warn('Invalid build URL param, ignoring.', e);
+            }
+        } else if (pastebinParam) {
+            try {
+                const pasteText = await readPastebinBuildText(
+                    `https://pastebin.com/${encodeURIComponent(pastebinParam)}`
+                );
+                if (!importBuildFromJsonText(pasteText)) return;
+                const url = new URL(window.location.href);
+                url.searchParams.delete('pbin');
+                window.history.replaceState({}, '', url);
+                return;
+            } catch (e) {
+                console.warn('Invalid Pastebin build URL param, ignoring.', e);
+                toastManager.showToast(`Could not load Pastebin build: ${e.message}`, false, 'danger');
             }
         }
         const availableClasses = Array.from(classSelect.options).map((option) => option.value);
