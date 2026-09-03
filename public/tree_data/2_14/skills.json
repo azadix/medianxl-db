@@ -1377,7 +1377,7 @@
     "tags": [
       "Passive"
     ],
-    "baseMaxLevel": 1,
+    "baseMaxLevel": 5,
     "affectedBySpecialization": false,
     "variants": [],
     "scalingConstants": [],
