@@ -105,7 +105,7 @@
         "statKey": "minion_mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "min(5*[[abyss_knight]].{{minions}},50)"
+        "value0": "min(6*[[abyss_knight]].{{minions}},50)"
       },
       {
         "statKey": "cooldown",
@@ -2198,7 +2198,7 @@
         "statKey": "minion_mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "min(20*[[bear_companion]].{{minions}},50)"
+        "value0": "min(25*[[bear_companion]].{{minions}},50)"
       }
     ],
     "description": [
@@ -2867,7 +2867,7 @@
         "statKey": "minion_mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "min(5*[[blood_skeleton]].{{minions}},50)"
+        "value0": "min(6*[[blood_skeleton]].{{minions}},50)"
       },
       {
         "statKey": "attack_rating",
@@ -3944,7 +3944,7 @@
         "statKey": "minion_mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "min(5*[[champions_of_the_sun]].{{minions}},50)"
+        "value0": "min(6*[[champions_of_the_sun]].{{minions}},50)"
       }
     ],
     "description": [
@@ -6057,7 +6057,7 @@
         "statKey": "minion_mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "min(5*[[defender_spirit]].{{minions}},50)"
+        "value0": "min(6*[[defender_spirit]].{{minions}},50)"
       }
     ],
     "description": [
@@ -8768,7 +8768,7 @@
         "statKey": "minion_mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "min(1.5*[[fire_elementals]].{{minions}},50)"
+        "value0": "min(2*[[fire_elementals]].{{minions}},50)"
       },
       {
         "statKey": "cooldown",
@@ -10965,7 +10965,7 @@
         "statKey": "minion_mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "min(5*[[guardian_spirit]].{{minions}},50)"
+        "value0": "min(6*[[guardian_spirit]].{{minions}},50)"
       }
     ],
     "description": [
@@ -11452,7 +11452,7 @@
         "statKey": "minion_mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "min(5*[[harvesters]].{{minions}},50)"
+        "value0": "min(6*[[harvesters]].{{minions}},50)"
       }
     ],
     "description": [
@@ -12418,7 +12418,7 @@
         "statKey": "minion_mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "min(5*[[ice_elementals]].{{minions}},50)"
+        "value0": "min(6*[[ice_elementals]].{{minions}},50)"
       }
     ],
     "description": [
@@ -14243,7 +14243,7 @@
         "statKey": "limpet_mines",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "1+lvl/16"
+        "value0": "2+lvl/16"
       },
       {
         "statKey": "mana_cost",
@@ -15592,7 +15592,7 @@
         "statKey": "minion_mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "min((3+[[violent_immolation]])*[[night_hawks]].{{minions}}/2,50)"
+        "value0": "min((4+[[violent_immolation]])*[[night_hawks]].{{minions}}/2,50)"
       },
       {
         "statKey": "attack_rating",
@@ -17642,7 +17642,7 @@
         "statKey": "minion_mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "min(5*[[protector_spirit]].{{minions}},50)"
+        "value0": "min(6*[[protector_spirit]].{{minions}},50)"
       },
       {
         "statKey": "bloodlust_damage",
@@ -20132,7 +20132,7 @@
         "statKey": "minion_mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "min(5*[[servants_of_valor]].{{minions}},50)"
+        "value0": "min(6*[[servants_of_valor]].{{minions}},50)"
       }
     ],
     "description": [
@@ -20894,8 +20894,8 @@
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "57",
-        "value1": "15",
+        "value0": "50",
+        "value1": "12",
         "value2": "5"
       }
     ],
@@ -22627,7 +22627,7 @@
         "statKey": "minion_mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "min(8*[[summon_frostwalker]].{{minions}},50)"
+        "value0": "min(6*[[summon_frostwalker]].{{minions}},50)"
       }
     ],
     "description": [
@@ -22683,7 +22683,7 @@
         "statKey": "minion_mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "min(8*[[summon_glowing_fungus]].{{minions}},50)"
+        "value0": "min(6*[[summon_glowing_fungus]].{{minions}},50)"
       }
     ],
     "description": [
@@ -22781,7 +22781,7 @@
         "statKey": "minion_mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "min(8*[[summon_sinner]].{{minions}},50)"
+        "value0": "min(6*[[summon_sinner]].{{minions}},50)"
       }
     ],
     "description": [
@@ -24913,7 +24913,7 @@
         "statKey": "minion_mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "min(20*[[veil_king]].{{minions}},40)"
+        "value0": "min(25*[[veil_king]].{{minions}},50)"
       },
       {
         "statKey": "cooldown",
@@ -25417,7 +25417,7 @@
         "statKey": "base_mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "33"
+        "value0": "25"
       }
     ],
     "description": [
@@ -25680,9 +25680,10 @@
       "{{regenerate_life}}",
       "{{mana_regeneration_rate}}",
       "{{life_on_striking}}",
-      "{{maximum_block_chance}}",
       "{{movement_speed}}",
-      "{{hit_recovery}}"
+      "{{hit_recovery}}",
+      "Granted passively:",
+      "{{maximum_block_chance}}"
     ],
     "image": "icons-ass_168"
   },
@@ -27781,7 +27782,6 @@
       "{{blades_per_cast}}",
       "{{magic_damage}}",
       "",
-      "Damage increases with Physical/Magic Spell Damage",
       "Summon 1/3rd of your maximum blades per cast",
       "Inherits Movement Speed from Shadow Flow"
     ],

@@ -4541,7 +4541,7 @@
             "sentence"
           ],
           "prerequisites": {
-            "character_level": 25,
+            "character_level": 40,
             "skill_level": [
               [
                 "absolution",
