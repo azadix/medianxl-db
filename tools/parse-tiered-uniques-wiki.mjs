@@ -49,7 +49,22 @@ export function htmlToLines(html) {
 }
 
 /**
- * Wiki splits "Class %" across sibling spans ("Class" then "%").
+ * @param {string} line
+ * @returns {boolean}
+ */
+function isBlockValuePart(line) {
+  const value = String(line || '').trim();
+  return (
+    /^[+-]?\(?\d+(?:\.\d+)?(?:\s+to\s+[+-]?\d+(?:\.\d+)?)?\)?%\s*\+?$/i.test(value) ||
+    /^Class$/i.test(value) ||
+    /^%$/i.test(value) ||
+    /^Class\s*%$/i.test(value) ||
+    /^\+\s*Class\s*%$/i.test(value)
+  );
+}
+
+/**
+ * Join stat labels and values split across sibling wiki spans.
  * @param {string[]} lines
  * @returns {string[]}
  */
@@ -59,6 +74,14 @@ export function joinSplitStatLines(lines) {
   const out = [];
   for (let i = 0; i < src.length; i++) {
     const line = src[i];
+    if (
+      /^Innate .+ Damage:\s*$/i.test(line) &&
+      /^\([^)]*% of [^)]+\)$/i.test(src[i + 1] || '')
+    ) {
+      out.push(`${line.trim()} ${src[i + 1].trim()}`);
+      i += 1;
+      continue;
+    }
     const block = /^Chance to Block:\s*(.*)$/i.exec(line);
     if (!block) {
       out.push(line);
@@ -67,12 +90,7 @@ export function joinSplitStatLines(lines) {
     const parts = [String(block[1] || '').trim()].filter(Boolean);
     while (i + 1 < src.length) {
       const next = src[i + 1];
-      if (
-        /^Class$/i.test(next) ||
-        /^%$/i.test(next) ||
-        /^Class\s*%$/i.test(next) ||
-        /^\+\s*Class\s*%$/i.test(next)
-      ) {
+      if (isBlockValuePart(next)) {
         parts.push(next);
         i += 1;
         continue;

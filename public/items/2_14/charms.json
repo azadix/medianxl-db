@@ -185,7 +185,7 @@
     "icon": "dimensionalkey",
     "reqLevel": 130,
     "modifiers": [
-      "+100% to Summoned Minion Damage",
+      "+100% to Summon Damage",
       "Maximum Life and Mana +5%",
       "75% Magic Find"
     ]
@@ -353,7 +353,6 @@
     "reqLevel": 100,
     "modifiers": [
       "(3 to 5)% Life stolen per Hit",
-      "(3 to 5)% Mana stolen per Hit",
       "-50 Defense",
       "+(21 to 25) to all Attributes"
     ]
@@ -396,8 +395,7 @@
     "reqLevel": 115,
     "modifiers": [
       "Unlocks Mastery Skill: Endurance",
-      "(3 to 5)% Life stolen per Hit",
-      "(3 to 5)% Mana stolen per Hit"
+      "(3 to 5)% Life stolen per Hit"
     ],
     "trophy": [
       "20% Bonus to Defense"
@@ -477,7 +475,7 @@
     "reqLevel": 100,
     "modifiers": [
       "Unlocks Mastery Skill: Tenacity",
-      "+5% to Summoned Minion Resistances",
+      "+5% to Summon Elemental Resistances",
       "Elemental Resists +15%"
     ]
   },
@@ -489,8 +487,9 @@
     "icon": "invhmr",
     "reqLevel": 115,
     "modifiers": [
-      "Charges: 5",
-      "Can be upgraded in Heroic Endgame Quests",
+      "Can be upgraded in Heroic Dungeon Quests",
+      "Charges: 2",
+      "Can be upgraded to unlock a Paragon reward skill",
       "+1 to All Skills"
     ]
   },
@@ -601,8 +600,8 @@
     "modifiers": [
       "+1 to All Skills",
       "+(21 to 30) Spell Focus",
-      "+(11 to 13)% to Summoned Minion Damage",
-      "+(11 to 15)% to Summoned Minion Resistances",
+      "+(11 to 13)% to Summon Damage",
+      "+(11 to 15)% to Summon Elemental Resistances",
       "+(11 to 20) to Strength",
       "+(11 to 20) to Dexterity",
       "+(11 to 20) to Vitality",
@@ -661,7 +660,7 @@
     "modifiers": [
       "Unlocks your Ennead Skill",
       "+2 to Necromancer Skill Levels",
-      "+25% to Summoned Minion Damage",
+      "+25% to Summon Damage",
       "+1000 Defense"
     ],
     "upgrades": [
@@ -914,7 +913,7 @@
     "modifiers": [
       "Unlocks your Ennead Skill",
       "+2 to Barbarian Skill Levels",
-      "+25% to Summoned Minion Life",
+      "+25% to Summon Life",
       "+1% to Runemaster Defense Bonus"
     ],
     "upgrades": [
@@ -961,8 +960,7 @@
       "+(6 to 15)% to Experience Gained",
       "Heroic Library of Fate",
       "Rewards: Angelic Items, Crafting Rares, Crafting Exclusive Uniques",
-      "Tramsmute with a Perfect Gem to open with Area Level 125",
-      "Tramsmute with 2 Angelic items to open with Area Level 130",
+      "Tramsmute with a Perfect Gem and 50,000 gold to open with Area Level 130",
       "Further progress requires the Paragon of Fate mastery and a Mark of Fate"
     ]
   }

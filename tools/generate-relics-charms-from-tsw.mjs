@@ -1,8 +1,7 @@
 /**
- * Builds relics.json and refreshes charms.json from the TSW item API
+ * Refreshes charms.json from the TSW item API
  * (https://tsw.vn.cz/stats/api_item.php).
  *
- * Relics: full regenerate from quality=Relic (icons preserved from existing file).
  * Charms: update modifiers/reqLevel/classRestriction for entries already in
  * charms.json (preserves id, icon, trophy, upgrades). Does not auto-add
  * Heroic / Pearl-of-Wisdom junk. Dimensional Key is stored in TSW under the
@@ -14,12 +13,10 @@
  * Run locally only — API requires an IP seen in-game within 24h.
  *
  * Usage:
- *   node tools/generate-relics-charms-from-tsw.mjs [version] [--resume] [--relics] [--charms]
- *   npm run generate-relics-charms-tsw
+ *   node tools/generate-relics-charms-from-tsw.mjs [version] [--charms]
+ *   npm run generate-charms-tsw
  *
- * Defaults to 2.14 and also copies the same relics.json / charms.json to 2_13
- * (current patches share these catalogs). If neither --relics nor --charms is
- * passed, both run.
+ * Defaults to 2.14 charms only.
  */
 
 import { writeFileSync, mkdirSync, readFileSync, existsSync } from 'node:fs';
@@ -32,8 +29,7 @@ const ROOT = path.resolve(__dirname, '..');
 const API_URL = 'https://tsw.vn.cz/stats/api_item.php';
 const REQUEST_DELAY_MS = 1000;
 const DEFAULT_VERSION = '2.14';
-/** Same relic/charm catalogs for these version folders. */
-const MIRROR_FOLDERS = ['2_13', '2_14'];
+const SUPPORTED_FOLDER = '2_14';
 
 const CHARM_CLASSES = new Set(['Quest Charms', 'Class Charms', 'Charms']);
 
@@ -100,13 +96,14 @@ function versionToFolder(version) {
 function parseArgs(argv) {
   const flags = new Set(argv.filter((a) => a.startsWith('--')));
   const positional = argv.filter((a) => !a.startsWith('--'));
-  const relics = flags.has('--relics');
-  const charms = flags.has('--charms');
+  if (flags.has('--relics')) {
+    throw new Error('Relics must be generated from the Median XL wiki.');
+  }
   return {
     version: positional[0] || DEFAULT_VERSION,
-    resume: flags.has('--resume'),
-    doRelics: relics || charms ? relics : true,
-    doCharms: relics || charms ? charms : true,
+    resume: false,
+    doRelics: false,
+    doCharms: true,
   };
 }
 
@@ -505,30 +502,16 @@ async function generateCharms(outDir) {
   return out.length;
 }
 
-/**
- * @param {string} sourcePath
- * @param {string} fileName
- * @param {string} primaryFolder
- */
-function mirrorToSiblingFolders(sourcePath, fileName, primaryFolder) {
-  const json = readFileSync(sourcePath, 'utf8');
-  for (const folder of MIRROR_FOLDERS) {
-    if (folder === primaryFolder) continue;
-    const destDir = path.join(ROOT, 'public', 'items', folder);
-    mkdirSync(destDir, { recursive: true });
-    const dest = path.join(destDir, fileName);
-    writeFileSync(dest, json);
-    console.log(`Mirrored → ${dest}`);
-  }
-}
-
 async function main() {
   const { version, resume, doRelics, doCharms } = parseArgs(process.argv.slice(2));
   const folder = versionToFolder(version);
+  if (folder !== SUPPORTED_FOLDER) {
+    throw new Error(`Only 2.14 item data is available; received ${version}.`);
+  }
   const outDir = path.join(ROOT, 'public', 'items', folder);
   mkdirSync(outDir, { recursive: true });
 
-  console.log(`Version ${version} → ${outDir} (mirrors to ${MIRROR_FOLDERS.join(', ')})`);
+  console.log(`Version ${version} → ${outDir}`);
   console.log(`Mode: relics=${doRelics} charms=${doCharms} resume=${resume}`);
 
   // Probe API once up front
@@ -536,11 +519,9 @@ async function main() {
 
   if (doRelics) {
     await generateRelics(outDir, resume);
-    mirrorToSiblingFolders(path.join(outDir, 'relics.json'), 'relics.json', folder);
   }
   if (doCharms) {
     await generateCharms(outDir);
-    mirrorToSiblingFolders(path.join(outDir, 'charms.json'), 'charms.json', folder);
   }
 }
 

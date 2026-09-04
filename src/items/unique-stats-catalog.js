@@ -98,6 +98,23 @@ const HEADER_LINE_RES = [
 
 /** Bare number (or "N to M") left on the next line after a requirement label. */
 const SPLIT_HEADER_VALUE_RE = /^-?\d+(?:\s+to\s+-?\d+)?$/;
+const SPLIT_BLOCK_VALUE_RE =
+  /^[+-]?\(?\d+(?:\.\d+)?(?:\s+to\s+[+-]?\d+(?:\.\d+)?)?\)?%\s*\+?$/;
+
+/**
+ * @param {string} line
+ * @returns {boolean}
+ */
+function isBlockValuePart(line) {
+  const value = String(line || '').trim();
+  return (
+    SPLIT_BLOCK_VALUE_RE.test(value) ||
+    /^Class$/i.test(value) ||
+    /^%$/i.test(value) ||
+    /^Class\s*%$/i.test(value) ||
+    /^\+\s*Class\s*%$/i.test(value)
+  );
+}
 
 /**
  * @param {string} line
@@ -261,12 +278,7 @@ export function parseItemStats(stats) {
       let value = String(blockLine[1] || '').trim();
       while (i + 1 < lines.length) {
         const next = String(lines[i + 1] || '').trim();
-        if (
-          /^Class$/i.test(next) ||
-          /^%$/i.test(next) ||
-          /^Class\s*%$/i.test(next) ||
-          /^\+\s*Class\s*%$/i.test(next)
-        ) {
+        if (isBlockValuePart(next)) {
           value = `${value} ${next}`.replace(/\s+/g, ' ').trim();
           i += 1;
           continue;

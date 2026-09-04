@@ -1,76 +1,51 @@
 /**
- * Builds unique/set item stat templates (with roll ranges) by crawling the
- * public MXL item API (https://tsw.vn.cz/stats/api_item.php).
- *
- * Adapted from D2MXLUtils scripts/generate-unique-stats-db.mjs.
- * Run locally only — the API can 403 CI runner IPs.
+ * Build 2.14 unique and set stat templates from raw Median XL docs HTML.
  *
  * Usage:
- *   node tools/generate-unique-stats-db.mjs [version] [--resume] [--wiki-only]
- *
- * Defaults to 2.14 → public/items/2_14/unique-stats-db.json
- * --resume skips names already present in an existing output file.
- * --wiki-only skips the TSW crawl and only refreshes TU rows from the wiki.
- * Existing setName values are preserved onto matching names when rewriting.
- * For 2.14, TU stats (T1–T4 plus jewelry/quivers) come from
- * https://docs.median-xl.com/doc/items/tiereduniques (raw HTML).
+ *   node tools/generate-unique-stats-db.mjs [2.14] [--check]
  */
 
-import { writeFileSync, mkdirSync, readFileSync, existsSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
+  SACRED_UNIQUES_WIKI_URL,
+  parseSacredUniquesWiki,
+} from './parse-sacred-uniques-wiki.mjs';
+import { SETS_WIKI_URL, parseSetsWiki } from './parse-sets-wiki.mjs';
+import {
   TIERED_UNIQUES_WIKI_URL,
-  WIKI_TU_VERSION_FOLDERS,
-  mergeWikiTuEntries,
   parseTieredUniquesWiki,
 } from './parse-tiered-uniques-wiki.mjs';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const ROOT = path.resolve(__dirname, '..');
-
-const API_URL = 'https://tsw.vn.cz/stats/api_item.php';
-const RELEVANT_QUALITIES = new Set(['TU', 'SU', 'Set', 'Sacred Set']);
-const REQUEST_DELAY_MS = 1000;
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DEFAULT_VERSION = '2.14';
+const SUPPORTED_FOLDER = '2_14';
+const QUALITY_ORDER = new Map([
+  ['Sacred Set', 0],
+  ['Set', 1],
+  ['SU', 2],
+  ['TU', 3],
+]);
+
+/**
+ * @typedef {{
+ *   name: string,
+ *   quality: string,
+ *   stats: string,
+ *   type?: string,
+ *   setName?: string,
+ *   tier?: number,
+ * }} UniqueStatsEntry
+ */
 
 /**
  * @param {string} version
  * @returns {string}
  */
 function versionToFolder(version) {
-  const parts = String(version).trim().split('.');
-  const major = parts[0] || '0';
-  const minor = parts[1] || '0';
+  const [major = '0', minor = '0'] = String(version).trim().split('.');
   return `${major}_${minor}`;
-}
-
-/**
- * @param {string[]} argv
- */
-function parseArgs(argv) {
-  const flags = new Set(argv.filter((a) => a.startsWith('--')));
-  const positional = argv.filter((a) => !a.startsWith('--'));
-  return {
-    version: positional[0] || DEFAULT_VERSION,
-    resume: flags.has('--resume'),
-    wikiOnly: flags.has('--wiki-only'),
-  };
-}
-
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-/**
- * @param {string} url
- */
-async function fetchJson(url) {
-  const res = await fetch(url);
-  if (!res.ok) {
-    throw new Error(`${url} -> HTTP ${res.status}`);
-  }
-  return res.json();
 }
 
 /**
@@ -78,212 +53,195 @@ async function fetchJson(url) {
  * @returns {Promise<string>}
  */
 async function fetchHtml(url) {
-  const res = await fetch(url, { headers: { Accept: 'text/html' } });
-  if (!res.ok) {
-    throw new Error(`${url} -> HTTP ${res.status}`);
+  const response = await fetch(url, { headers: { Accept: 'text/html' } });
+  if (!response.ok) throw new Error(`${url} -> HTTP ${response.status}`);
+  return response.text();
+}
+
+/**
+ * @param {string} filePath
+ * @returns {UniqueStatsEntry[]}
+ */
+function loadExisting(filePath) {
+  if (!existsSync(filePath)) return [];
+  const data = JSON.parse(readFileSync(filePath, 'utf8'));
+  return Array.isArray(data) ? data : data.entries || [];
+}
+
+/**
+ * @param {string} value
+ * @returns {Set<string>}
+ */
+function comparableTokens(value) {
+  return new Set(
+    String(value || '')
+      .toLowerCase()
+      .match(/[a-z0-9]+/g)
+      ?.filter((token) => token.length > 2) || []
+  );
+}
+
+/**
+ * @param {UniqueStatsEntry} candidate
+ * @param {UniqueStatsEntry|undefined} previous
+ * @returns {number}
+ */
+function variantScore(candidate, previous) {
+  if (!previous) return 0;
+  let score = candidate.type === previous.type ? 100_000 : 0;
+  const current = comparableTokens(candidate.stats);
+  for (const token of comparableTokens(previous.stats)) {
+    if (current.has(token)) score += 1;
   }
-  return res.text();
+  return score;
 }
 
 /**
- * @typedef {{
- *   name: string,
- *   quality: string,
- *   stats: string,
- *   class?: string,
- *   type?: string,
- *   nameDisplay?: string,
- *   setName?: string,
- *   tier?: number,
- * }} UniqueStatsEntry
+ * The wiki has a few same-name alternate variants. Keep the previously
+ * selected base/stat variant so generated item ids remain stable.
+ *
+ * @param {UniqueStatsEntry[]} entries
+ * @param {UniqueStatsEntry[]} existing
+ * @returns {UniqueStatsEntry[]}
  */
-
-/**
- * @param {string} outputPath
- * @returns {Map<string, UniqueStatsEntry>}
- */
-function loadExistingEntries(outputPath) {
-  /** @type {Map<string, UniqueStatsEntry>} */
-  const map = new Map();
-  if (!existsSync(outputPath)) return map;
-  try {
-    const data = JSON.parse(readFileSync(outputPath, 'utf8'));
-    for (const entry of data.entries ?? []) {
-      if (entry?.name) map.set(entry.name, entry);
-    }
-  } catch (err) {
-    console.warn(`Could not read existing file for resume: ${err.message}`);
-  }
-  return map;
-}
-
-/**
- * @param {object} match
- * @param {string} [setName]
- * @returns {UniqueStatsEntry}
- */
-function entryFromMatch(match, setName) {
-  /** @type {UniqueStatsEntry} */
-  const entry = {
-    name: match.name,
-    quality: match.quality,
-    stats: match.stats ?? '',
-  };
-  if (match.class) entry.class = match.class;
-  if (match.type) entry.type = match.type;
-  if (match.name_display) entry.nameDisplay = match.name_display;
-  if (setName) entry.setName = setName;
-  return entry;
-}
-
-/**
- * @param {string} name
- * @param {string} quality
- * @returns {Promise<object|null>}
- */
-async function fetchExactItem(name, quality) {
-  const tryQueries = [name, `${name} (${quality})`];
-  for (let i = 0; i < tryQueries.length; i++) {
-    const q = tryQueries[i];
-    const url = `${API_URL}?q=${encodeURIComponent(q)}`;
-    const result = await fetchJson(url);
-    if (i < tryQueries.length - 1) await sleep(REQUEST_DELAY_MS);
-
-    const items = result.items ?? [];
-    const exact = items.find((it) => it.name === name && it.quality === quality);
-    if (exact) return exact;
-    const byName = items.find((it) => it.name === name);
-    if (byName) return byName;
-
-    // Truncated: matches only — try qualified next
-    if (result.truncated && Array.isArray(result.matches)) {
-      const hit = result.matches.find(
-        (m) => m.name === name && (!quality || m.quality === quality)
-      );
-      if (hit && i === 0) continue;
-    }
-  }
-  return null;
-}
-
-async function main() {
-  const { version, resume, wikiOnly } = parseArgs(process.argv.slice(2));
-  const folder = versionToFolder(version);
-  const outputPath = path.join(ROOT, 'public', 'items', folder, 'unique-stats-db.json');
-  const wikiEnabled = WIKI_TU_VERSION_FOLDERS.has(folder);
-
-  console.log(`Version ${version} → ${outputPath}`);
-
-  // Always load existing for setName preservation; resume also skips re-fetch
-  const existing = loadExistingEntries(outputPath);
-  if (resume && existing.size) {
-    console.log(`Resume: ${existing.size} entries already on disk.`);
+function selectStableVariants(entries, existing) {
+  const previousByKey = new Map(
+    existing.map((entry) => [`${entry.quality}\0${entry.name}`, entry])
+  );
+  /** @type {Map<string, UniqueStatsEntry[]>} */
+  const groups = new Map();
+  for (const entry of entries) {
+    const key = `${entry.quality}\0${entry.name}`;
+    const group = groups.get(key) || [];
+    group.push(entry);
+    groups.set(key, group);
   }
 
   /** @type {UniqueStatsEntry[]} */
-  let entries = [];
-
-  if (wikiOnly) {
-    entries = [...existing.values()];
-    console.log(`Wiki-only: keeping ${entries.length} existing entries.`);
-  } else {
-    console.log('Fetching item index...');
-    const index = await fetchJson(`${API_URL}?mode=index`);
-    const indexItems = (index.items ?? []).filter((item) => {
-      if (!RELEVANT_QUALITIES.has(item.quality)) return false;
-      if (wikiEnabled && item.quality === 'TU') return false;
-      return true;
-    });
-    console.log(
-      `${indexItems.length} unique/set entries to crawl (of ${(index.items ?? []).length} total).`
+  const selected = [];
+  for (const [key, group] of groups) {
+    if (group.length === 1) {
+      selected.push(group[0]);
+      continue;
+    }
+    const previous = previousByKey.get(key);
+    group.sort(
+      (a, b) =>
+        variantScore(b, previous) - variantScore(a, previous) ||
+        String(a.type || '').localeCompare(String(b.type || ''), 'en') ||
+        a.stats.localeCompare(b.stats, 'en')
     );
-
-    let done = 0;
-    let skipped = 0;
-    let fetched = 0;
-
-    for (const indexItem of indexItems) {
-      const name = indexItem.name;
-      const quality = indexItem.quality;
-      const prev = existing.get(name);
-      const preservedSetName = prev?.setName;
-
-      if (resume && prev && prev.stats) {
-        const kept = { ...prev };
-        if (preservedSetName) kept.setName = preservedSetName;
-        if (!kept.class && indexItem.class) kept.class = indexItem.class;
-        if (!kept.type && indexItem.type) kept.type = indexItem.type;
-        entries.push(kept);
-        skipped++;
-        done++;
-        if (done % 25 === 0 || done === indexItems.length) {
-          console.log(`  ${done}/${indexItems.length} (${fetched} fetched, ${skipped} resumed)`);
-        }
-        continue;
-      }
-
-      try {
-        const match = await fetchExactItem(name, quality);
-        if (match) {
-          entries.push(entryFromMatch(match, preservedSetName));
-          fetched++;
-        } else {
-          console.warn(`  no exact match returned for "${name}" (${quality})`);
-          entries.push(
-            entryFromMatch(
-              {
-                name,
-                quality,
-                class: indexItem.class,
-                type: indexItem.type,
-                stats: '',
-              },
-              preservedSetName
-            )
-          );
-        }
-      } catch (err) {
-        console.warn(`  failed "${name}": ${err.message}`);
-      }
-
-      done++;
-      if (done % 25 === 0 || done === indexItems.length) {
-        console.log(`  ${done}/${indexItems.length} (${fetched} fetched, ${skipped} resumed)`);
-      }
-      await sleep(REQUEST_DELAY_MS);
-    }
-
-    // Keep existing TUs so wiki merge can fall back when a name is missing.
-    if (wikiEnabled) {
-      for (const prev of existing.values()) {
-        if (prev.quality === 'TU') entries.push(prev);
-      }
-    }
+    selected.push(group[0]);
+    console.log(
+      `  selected ${group[0].name} (${group[0].type || 'no type'}) from ${group.length} variants`
+    );
   }
-
-  if (wikiEnabled) {
-    console.log(`Fetching wiki HTML ${TIERED_UNIQUES_WIKI_URL}`);
-    try {
-      const html = await fetchHtml(TIERED_UNIQUES_WIKI_URL);
-      const wikiEntries = parseTieredUniquesWiki(html);
-      console.log(`  parsed ${wikiEntries.length} TU rows from wiki`);
-      entries = mergeWikiTuEntries(entries, wikiEntries);
-    } catch (err) {
-      console.warn(`  wiki overlay failed: ${err.message}`);
-    }
-  }
-
-  const db = {
-    generatedAt: new Date().toISOString(),
-    entries,
-  };
-
-  mkdirSync(path.dirname(outputPath), { recursive: true });
-  writeFileSync(outputPath, JSON.stringify(db, null, 2));
-  console.log(`Wrote ${entries.length} entries to ${outputPath}`);
+  return selected;
 }
 
-main().catch((err) => {
-  console.error(err);
+/**
+ * @param {UniqueStatsEntry} entry
+ * @returns {string}
+ */
+function entryKey(entry) {
+  return `${entry.quality}\0${entry.name}\0${entry.tier ?? ''}`;
+}
+
+/**
+ * @param {UniqueStatsEntry[]} entries
+ * @returns {Record<string, number>}
+ */
+function qualityCounts(entries) {
+  /** @type {Record<string, number>} */
+  const counts = {};
+  for (const entry of entries) counts[entry.quality] = (counts[entry.quality] || 0) + 1;
+  return counts;
+}
+
+/**
+ * @param {UniqueStatsEntry[]} entries
+ */
+function validateEntries(entries) {
+  const counts = qualityCounts(entries);
+  if ((counts.TU || 0) < 800) throw new Error(`Parsed too few tiered uniques: ${counts.TU || 0}`);
+  if ((counts.SU || 0) < 400) throw new Error(`Parsed too few sacred uniques: ${counts.SU || 0}`);
+  if ((counts.Set || 0) < 45) throw new Error(`Parsed too few set bonuses: ${counts.Set || 0}`);
+  if ((counts['Sacred Set'] || 0) < 170) {
+    throw new Error(`Parsed too few set items: ${counts['Sacred Set'] || 0}`);
+  }
+
+  const seen = new Set();
+  for (const entry of entries) {
+    const key = entryKey(entry);
+    if (seen.has(key)) throw new Error(`Duplicate wiki entry: ${key.replaceAll('\0', ' / ')}`);
+    seen.add(key);
+    if (!entry.name || !entry.stats) throw new Error(`Incomplete wiki entry: ${key}`);
+  }
+}
+
+/**
+ * @param {UniqueStatsEntry[]} previous
+ * @param {UniqueStatsEntry[]} next
+ */
+function printDiffSummary(previous, next) {
+  const before = new Map(previous.map((entry) => [entryKey(entry), entry]));
+  const after = new Map(next.map((entry) => [entryKey(entry), entry]));
+  const added = [...after.keys()].filter((key) => !before.has(key));
+  const removed = [...before.keys()].filter((key) => !after.has(key));
+  const changed = [...after].filter(
+    ([key, entry]) => before.has(key) && JSON.stringify(entry) !== JSON.stringify(before.get(key))
+  );
+  console.log(`Changes: ${added.length} added, ${removed.length} removed, ${changed.length} updated.`);
+}
+
+async function main() {
+  const args = process.argv.slice(2);
+  const flags = new Set(args.filter((arg) => arg.startsWith('--')));
+  const version = args.find((arg) => !arg.startsWith('--')) || DEFAULT_VERSION;
+  const folder = versionToFolder(version);
+  if (folder !== SUPPORTED_FOLDER) {
+    throw new Error(`Only 2.14 wiki item data is available; received ${version}.`);
+  }
+
+  const outputPath = path.join(ROOT, 'public', 'items', folder, 'unique-stats-db.json');
+  const existing = loadExisting(outputPath);
+  console.log('Fetching tiered uniques, sacred uniques, and sets from Median XL docs...');
+  const [tieredHtml, sacredHtml, setsHtml] = await Promise.all([
+    fetchHtml(TIERED_UNIQUES_WIKI_URL),
+    fetchHtml(SACRED_UNIQUES_WIKI_URL),
+    fetchHtml(SETS_WIKI_URL),
+  ]);
+
+  const tiered = parseTieredUniquesWiki(tieredHtml);
+  const sacred = selectStableVariants(parseSacredUniquesWiki(sacredHtml), existing);
+  const sets = parseSetsWiki(setsHtml);
+  const entries = [...sets, ...sacred, ...tiered].sort(
+    (a, b) =>
+      (QUALITY_ORDER.get(a.quality) ?? 99) - (QUALITY_ORDER.get(b.quality) ?? 99) ||
+      a.name.localeCompare(b.name, 'en') ||
+      (a.tier ?? 0) - (b.tier ?? 0)
+  );
+
+  validateEntries(entries);
+  const counts = qualityCounts(entries);
+  console.log(`Parsed ${entries.length} entries: ${JSON.stringify(counts)}`);
+  printDiffSummary(existing, entries);
+
+  if (flags.has('--check')) {
+    console.log('Check only; no files written.');
+    return;
+  }
+
+  mkdirSync(path.dirname(outputPath), { recursive: true });
+  writeFileSync(
+    outputPath,
+    `${JSON.stringify({ generatedAt: new Date().toISOString(), entries }, null, 2)}\n`,
+    'utf8'
+  );
+  console.log(`Wrote ${entries.length} entries -> ${outputPath}`);
+}
+
+main().catch((error) => {
+  console.error(error);
   process.exit(1);
 });

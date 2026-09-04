@@ -2827,9 +2827,10 @@
       "max": 14
     },
     "classRestriction": "Necromancer Only",
-    "strDamageBonus": 0.16,
+    "strDamageBonus": 0.14,
     "attackModifier": "Mega Impact",
-    "group": "Necromancer Scythes"
+    "group": "Necromancer Scythes",
+    "dexDamageBonus": 0.14
   },
   {
     "id": "!17",
@@ -2853,9 +2854,10 @@
       "max": 31
     },
     "classRestriction": "Necromancer Only",
-    "strDamageBonus": 0.16,
+    "strDamageBonus": 0.14,
     "attackModifier": "Mega Impact",
-    "group": "Necromancer Scythes"
+    "group": "Necromancer Scythes",
+    "dexDamageBonus": 0.14
   },
   {
     "id": "!19",
@@ -2879,9 +2881,10 @@
       "max": 59
     },
     "classRestriction": "Necromancer Only",
-    "strDamageBonus": 0.16,
+    "strDamageBonus": 0.14,
     "attackModifier": "Mega Impact",
-    "group": "Necromancer Scythes"
+    "group": "Necromancer Scythes",
+    "dexDamageBonus": 0.14
   },
   {
     "id": "!20",
@@ -2905,9 +2908,10 @@
       "max": 70
     },
     "classRestriction": "Necromancer Only",
-    "strDamageBonus": 0.16,
+    "strDamageBonus": 0.14,
     "attackModifier": "Mega Impact",
-    "group": "Necromancer Scythes"
+    "group": "Necromancer Scythes",
+    "dexDamageBonus": 0.14
   },
   {
     "id": "!21",
@@ -2931,9 +2935,10 @@
       "max": 84
     },
     "classRestriction": "Necromancer Only",
-    "strDamageBonus": 0.16,
+    "strDamageBonus": 0.14,
     "attackModifier": "Mega Impact",
-    "group": "Necromancer Scythes"
+    "group": "Necromancer Scythes",
+    "dexDamageBonus": 0.14
   },
   {
     "id": "637",
@@ -11719,7 +11724,7 @@
     "sockets": 3,
     "speed": -20,
     "classRestriction": "Necromancer Only",
-    "innate": "Innate Fire Damage: (48.0% of Dexterity)",
+    "innate": "Innate Fire Damage: (52.0% of Dexterity)",
     "adds": "Adds 160-250 Fire Damage",
     "group": "Necromancer Daggers"
   },
@@ -17286,9 +17291,10 @@
       "max": 8
     },
     "classRestriction": "Necromancer Only",
-    "strDamageBonus": 0.16,
+    "strDamageBonus": 0.14,
     "attackModifier": "Mega Impact",
-    "group": "Necromancer Scythes"
+    "group": "Necromancer Scythes",
+    "dexDamageBonus": 0.14
   },
   {
     "id": "!10",
@@ -17312,9 +17318,10 @@
       "max": 14
     },
     "classRestriction": "Necromancer Only",
-    "strDamageBonus": 0.16,
+    "strDamageBonus": 0.14,
     "attackModifier": "Mega Impact",
-    "group": "Necromancer Scythes"
+    "group": "Necromancer Scythes",
+    "dexDamageBonus": 0.14
   },
   {
     "id": "!12",
@@ -17338,9 +17345,10 @@
       "max": 26
     },
     "classRestriction": "Necromancer Only",
-    "strDamageBonus": 0.16,
+    "strDamageBonus": 0.14,
     "attackModifier": "Mega Impact",
-    "group": "Necromancer Scythes"
+    "group": "Necromancer Scythes",
+    "dexDamageBonus": 0.14
   },
   {
     "id": "!13",
@@ -17364,9 +17372,10 @@
       "max": 32
     },
     "classRestriction": "Necromancer Only",
-    "strDamageBonus": 0.16,
+    "strDamageBonus": 0.14,
     "attackModifier": "Mega Impact",
-    "group": "Necromancer Scythes"
+    "group": "Necromancer Scythes",
+    "dexDamageBonus": 0.14
   },
   {
     "id": "!14",
@@ -17390,9 +17399,10 @@
       "max": 80
     },
     "classRestriction": "Necromancer Only",
-    "strDamageBonus": 0.16,
+    "strDamageBonus": 0.14,
     "attackModifier": "Mega Impact",
-    "group": "Necromancer Scythes"
+    "group": "Necromancer Scythes",
+    "dexDamageBonus": 0.14
   },
   {
     "id": "2@4",
@@ -17535,7 +17545,7 @@
       "max": 12
     },
     "classRestriction": "Amazon Only",
-    "dexDamageBonus": 0.15,
+    "dexDamageBonus": 0.17,
     "group": "Amazon Bows"
   },
   {
@@ -17559,7 +17569,7 @@
       "max": 29
     },
     "classRestriction": "Amazon Only",
-    "dexDamageBonus": 0.15,
+    "dexDamageBonus": 0.17,
     "group": "Amazon Bows"
   },
   {
@@ -17583,7 +17593,7 @@
       "max": 54
     },
     "classRestriction": "Amazon Only",
-    "dexDamageBonus": 0.15,
+    "dexDamageBonus": 0.17,
     "group": "Amazon Bows"
   },
   {
@@ -17607,7 +17617,7 @@
       "max": 64
     },
     "classRestriction": "Amazon Only",
-    "dexDamageBonus": 0.15,
+    "dexDamageBonus": 0.17,
     "group": "Amazon Bows"
   },
   {
@@ -17631,7 +17641,7 @@
       "max": 75
     },
     "classRestriction": "Amazon Only",
-    "dexDamageBonus": 0.15,
+    "dexDamageBonus": 0.17,
     "group": "Amazon Bows"
   },
   {
@@ -20785,8 +20795,9 @@
       "max": 7
     },
     "classRestriction": "Necromancer Only",
-    "dexDamageBonus": 0.13,
-    "group": "Necromancer Daggers"
+    "dexDamageBonus": 0.11,
+    "group": "Necromancer Daggers",
+    "strDamageBonus": 0.11
   },
   {
     "id": "!79",
@@ -20809,8 +20820,9 @@
       "max": 17
     },
     "classRestriction": "Necromancer Only",
-    "dexDamageBonus": 0.13,
-    "group": "Necromancer Daggers"
+    "dexDamageBonus": 0.11,
+    "group": "Necromancer Daggers",
+    "strDamageBonus": 0.11
   },
   {
     "id": "!81",
@@ -20833,8 +20845,9 @@
       "max": 29
     },
     "classRestriction": "Necromancer Only",
-    "dexDamageBonus": 0.13,
-    "group": "Necromancer Daggers"
+    "dexDamageBonus": 0.11,
+    "group": "Necromancer Daggers",
+    "strDamageBonus": 0.11
   },
   {
     "id": "!82",
@@ -20857,8 +20870,9 @@
       "max": 34
     },
     "classRestriction": "Necromancer Only",
-    "dexDamageBonus": 0.13,
-    "group": "Necromancer Daggers"
+    "dexDamageBonus": 0.11,
+    "group": "Necromancer Daggers",
+    "strDamageBonus": 0.11
   },
   {
     "id": "!83",
@@ -20881,8 +20895,9 @@
       "max": 57
     },
     "classRestriction": "Necromancer Only",
-    "dexDamageBonus": 0.13,
-    "group": "Necromancer Daggers"
+    "dexDamageBonus": 0.11,
+    "group": "Necromancer Daggers",
+    "strDamageBonus": 0.11
   },
   {
     "id": "w14",
