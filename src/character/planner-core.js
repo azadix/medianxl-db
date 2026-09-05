@@ -277,6 +277,21 @@ export function getEffectivePlannerLevel() {
 }
 
 /**
+ * Keep current pool in sync when max life/mana changes: stay full if it was full, else clamp.
+ * @param {import('./Character.js').default} character
+ * @param {'life'|'mana'} poolKey
+ * @param {'current_life'|'current_mana'} currentKey
+ * @param {number} nextMax
+ */
+function syncCurrentPoolAfterMaxChange(character, poolKey, currentKey, nextMax) {
+  const prevMax = character.getRawStat(poolKey);
+  const prevCurrent = character.getRawStat(currentKey);
+  const wasFull = prevCurrent >= prevMax;
+  character.setRawStat(poolKey, nextMax);
+  character.setRawStat(currentKey, wasFull ? nextMax : Math.min(prevCurrent, nextMax));
+}
+
+/**
  * Set planner core stats from game_meta classes: attributes from base_*; life/mana from scaling.
  * @param {string} className
  */
@@ -294,6 +309,8 @@ export function applyClassBaselineStatsToCharacter(className) {
   const lifeBonus = getCharacterInstance().getTotalQuestLifeBonus();
   next.life = normalizePlannerStatValue('life', life + lifeBonus);
   next.mana = normalizePlannerStatValue('mana', mana);
+  next.current_life = next.life;
+  next.current_mana = next.mana;
   getCharacterInstance().setAllStats(next);
 }
 
@@ -311,8 +328,10 @@ export function recomputeClassDerivedLifeMana() {
   const ene = getCharacterInstance().getRawStat('energy');
   const { life, mana } = computeClassDerivedLifeManaBreakdown(level, vit, ene, row);
   const lifeBonus = getCharacterInstance().getTotalQuestLifeBonus();
-  getCharacterInstance().setRawStat('life', normalizePlannerStatValue('life', life + lifeBonus));
-  getCharacterInstance().setRawStat('mana', normalizePlannerStatValue('mana', mana));
+  const nextLife = normalizePlannerStatValue('life', life + lifeBonus);
+  const nextMana = normalizePlannerStatValue('mana', mana);
+  syncCurrentPoolAfterMaxChange(getCharacterInstance(), 'life', 'current_life', nextLife);
+  syncCurrentPoolAfterMaxChange(getCharacterInstance(), 'mana', 'current_mana', nextMana);
   if (typeof window !== 'undefined') {
     window.dispatchEvent(new CustomEvent('plannerStatsPanelRefresh'));
     window.dispatchEvent(new CustomEvent('characterStatsChanged', { detail: { derivedLifeMana: true } }));

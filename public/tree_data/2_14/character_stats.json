@@ -80,6 +80,18 @@
     "label": "Base Life",
     "min": null,
     "max": null,
+    "allowNegative": false,
+    "section": "defense"
+  },
+  {
+    "id": 906,
+    "key": "current_life",
+    "label": "Current Life",
+    "min": null,
+    "max": null,
+    "allowNegative": false,
+    "alwaysVisible": true,
+    "sortOrder": 0,
     "section": "defense"
   },
   {
@@ -99,6 +111,18 @@
     "label": "Base Mana",
     "min": null,
     "max": null,
+    "allowNegative": false,
+    "section": "defense"
+  },
+  {
+    "id": 905,
+    "key": "current_mana",
+    "label": "Current Mana",
+    "min": null,
+    "max": null,
+    "allowNegative": false,
+    "alwaysVisible": true,
+    "sortOrder": 1,
     "section": "defense"
   },
   {

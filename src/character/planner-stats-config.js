@@ -204,7 +204,14 @@ export function normalizePlannerStatValue(key, raw) {
     v = Math.max(floor, v);
   }
   v = applyMinMax(v, meta);
-  if (k === 'life' || k === 'mana') {
+  if (
+    k === 'life' ||
+    k === 'mana' ||
+    k === 'base_life' ||
+    k === 'base_mana' ||
+    k === 'current_life' ||
+    k === 'current_mana'
+  ) {
     v = Math.floor(v);
   }
   return v;

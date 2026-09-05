@@ -316,7 +316,15 @@ function resyncStatBreakdownTooltipAfterPanelRefresh(root) {
 export function applyPlannerStatInput(statKey, raw) {
   const ch = getCharacterInstance();
   if (!ch) return;
-  ch.setStat(statKey, raw);
+  if (statKey === 'current_mana' || statKey === 'current_life') {
+    const maxKey = statKey === 'current_mana' ? 'mana' : 'life';
+    const maxPool = ch.getStat(maxKey);
+    const n = typeof raw === 'number' ? raw : parseFloat(String(raw).trim());
+    const clamped = Number.isFinite(n) ? Math.max(0, Math.min(n, maxPool)) : 0;
+    ch.setRawStat(statKey, clamped);
+  } else {
+    ch.setStat(statKey, raw);
+  }
   if (statKey === 'vitality' || statKey === 'energy') {
     recomputeClassDerivedLifeMana();
   }

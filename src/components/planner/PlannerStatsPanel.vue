@@ -40,7 +40,7 @@ function defaultStatValue(def) {
 
 const visibleStatDefs = computed(() => {
   return statDefs.value.filter((def) => {
-    if (def.key === 'life' || def.key === 'mana') return false;
+    if (def.key === 'life' || def.key === 'mana' || def.key === 'base_life' || def.key === 'base_mana') return false;
     if (def.alwaysVisible) return true;
     if (skillReferencedStatKeys.value.has(def.key)) return true;
     if (activeStatKey.value === def.key) return true;
@@ -52,8 +52,16 @@ const visibleStatDefs = computed(() => {
 });
 
 const vitals = computed(() => [
-  { key: 'life', label: 'Life', value: Math.floor(Number(stats.value.life) || 0) },
-  { key: 'mana', label: 'Mana', value: Math.floor(Number(stats.value.mana) || 0) },
+  {
+    key: 'life',
+    label: 'Life',
+    value: `${Math.floor(Number(stats.value.current_life) || 0)} / ${Math.floor(Number(stats.value.life) || 0)}`
+  },
+  {
+    key: 'mana',
+    label: 'Mana',
+    value: `${Math.floor(Number(stats.value.current_mana) || 0)} / ${Math.floor(Number(stats.value.mana) || 0)}`
+  },
 ]);
 
 function statSectionForDef(def) {
@@ -75,6 +83,14 @@ function statInputMin(def) {
 
 /** @param {{ max: number|null }} def */
 function statInputMax(def) {
+  if (def.key === 'current_mana') {
+    const m = Math.floor(Number(stats.value.mana) || 0);
+    return m > 0 ? m : undefined;
+  }
+  if (def.key === 'current_life') {
+    const m = Math.floor(Number(stats.value.life) || 0);
+    return m > 0 ? m : undefined;
+  }
   return def.max != null && Number.isFinite(def.max) ? def.max : undefined;
 }
 

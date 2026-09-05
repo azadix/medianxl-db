@@ -1318,6 +1318,7 @@ export default class Character {
   parseStatsFromText(text) {
     const errors = [];
     const next = createEmptyRegisteredStatsObject();
+    const seen = new Set();
     const lines = text.split('\n');
 
     for (let i = 0; i < lines.length; i++) {
@@ -1351,10 +1352,17 @@ export default class Character {
       }
 
       next[k] = normalizePlannerStatValue(k, numValue);
+      seen.add(k);
     }
 
     for (const k of Object.keys(next)) {
       next[k] = normalizePlannerStatValue(k, next[k]);
+    }
+    if (!seen.has('current_mana')) {
+      next.current_mana = next.mana;
+    }
+    if (!seen.has('current_life')) {
+      next.current_life = next.life;
     }
     this.stats = next;
 

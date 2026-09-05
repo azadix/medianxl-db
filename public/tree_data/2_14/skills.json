@@ -374,7 +374,7 @@
     "restriction": [],
     "skillEffect": [
       "{{cast_again_to_turn_off}}",
-      "{{weapon_damage}}",
+      "{{weapon_physical_damage}}",
       "{{max_fire_resistance}}",
       "{{max_cold_resistance}}",
       "{{max_lightning_resistance}}",
@@ -711,6 +711,12 @@
         "value0": "220",
         "value1": "0",
         "value2": "6"
+      },
+      {
+        "statKey": "cooldown",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(max(50,225-dm(5,120,lvl))+(1-min(1,blvl))*250)"
       }
     ],
     "description": [
@@ -1101,6 +1107,12 @@
         "value0": "500",
         "value1": "0",
         "value2": "8"
+      },
+      {
+        "statKey": "cooldown",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(500)"
       }
     ],
     "description": [
@@ -1414,6 +1426,12 @@
         "value1": "24",
         "value2": "5",
         "min_mana": "2"
+      },
+      {
+        "statKey": "deals_percent_of_stormcall_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "((299+lvl)*(100+blvl))/100"
       }
     ],
     "description": [
@@ -1841,6 +1859,42 @@
         "value0": "1100",
         "value1": "0",
         "value2": "6"
+      },
+      {
+        "statKey": "cooldown",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(125)"
+      },
+      {
+        "statKey": "block_speed",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "150"
+      },
+      {
+        "statKey": "physical_damage_percent",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(120+(blvl-1)*9)"
+      },
+      {
+        "statKey": "maximum_life",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(1+1*(blvl-1))"
+      },
+      {
+        "statKey": "innate_elemental_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "blvl*2"
+      },
+      {
+        "statKey": "bonus_defense",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "((220*lvl)*(481-31))/(100*(lvl+50))+31"
       }
     ],
     "description": [
@@ -2007,6 +2061,12 @@
         "value0": "24",
         "value1": "16",
         "value2": "5"
+      },
+      {
+        "statKey": "bonus_fire_cold_or_lightning",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((max(3,min(3*lvl,66))*(100+lvl*lvl))/100)"
       }
     ],
     "description": [
@@ -2474,6 +2534,18 @@
         "value0": "22",
         "value1": "10",
         "value2": "6"
+      },
+      {
+        "statKey": "bonus_magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor(floor((4*lvl)/2)*(100+((5*ulvl)/4))/100)"
+      },
+      {
+        "statKey": "converts_phys_to_magic",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "80-(lvl-1)"
       }
     ],
     "description": [
@@ -2836,7 +2908,14 @@
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "regenerate_life",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((floor(min(2*ulvl,200)*256/25)+floor(floor(min({{life}},25000)*256/2500)*(100+floor(5*{{regenerate_mana}}/2))/100))*25/256)"
+      }
+    ],
     "description": [
       "Sacrifice your life force to obtain ruinous power"
     ],
@@ -4296,6 +4375,18 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(126+2*(lvl-1))"
+      },
+      {
+        "statKey": "cooldown",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(75)"
+      },
+      {
+        "statKey": "enemy_movement_speed",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "-1*min(((220*lvl)*(50-10))/(100*(lvl+50))+10,60)"
       }
     ],
     "description": [
@@ -4378,6 +4469,12 @@
       {
         "statKey": "maximum_block_chance",
         "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "2*blvl"
+      },
+      {
+        "statKey": "maximum_block_chance",
+        "occurrenceIndex": 1,
         "variantKey": "",
         "value0": "2*blvl"
       }
@@ -5096,6 +5193,12 @@
         "value1": "3",
         "value2": "7",
         "min_mana": "1"
+      },
+      {
+        "statKey": "bonus_magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor(floor((8*lvl)/2)*(100+((16*ulvl)/4))/100)"
       }
     ],
     "description": [
@@ -5946,6 +6049,12 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(250)"
+      },
+      {
+        "statKey": "base_life_percent_of_caster_life",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((100+15*(lvl-1))*(50+max(50,ulvl+10))/200)"
       }
     ],
     "description": [
@@ -6866,7 +6975,7 @@
         "statKey": "enemy_elemental_resistances",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "min(-[[trinity_arrow]]-[[barrage]],-50)"
+        "value0": "max(-[[trinity_arrow]]-[[barrage]],-50)"
       }
     ],
     "description": [
@@ -7158,6 +7267,12 @@
         "value0": "6",
         "value1": "4",
         "value2": "7"
+      },
+      {
+        "statKey": "bonus_magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor(((3+3*min(max(lvl-1,0),7)+3*min(max(lvl-8,0),8)+3*min(max(lvl-16,0),6)+3*min(max(lvl-22,0),6))*64+floor((3+3*min(max(lvl-1,0),7)+3*min(max(lvl-8,0),8)+3*min(max(lvl-16,0),6)+3*min(max(lvl-22,0),6))*64*floor((floor(15*blvl*(100+min(ulvl,100))/100)+min(ulvl,100))*(100+floor(max({{strength}},{{dexterity}})/12)+{{enhanced_weapon_damage}})/100)/100))/256)"
       }
     ],
     "description": [
@@ -7211,6 +7326,12 @@
         "value0": "330",
         "value1": "0",
         "value2": "5"
+      },
+      {
+        "statKey": "bonus_magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor(floor((15+15*min(max(lvl-1,0),7)+15*min(max(lvl-8,0),8)+20*min(max(lvl-16,0),6)+25*min(max(lvl-22,0),6)+30*max(lvl-28,0))/8)*(100+(20*blvl))/100)"
       }
     ],
     "description": [
@@ -8023,6 +8144,12 @@
         "value0": "8",
         "value1": "8",
         "value2": "5"
+      },
+      {
+        "statKey": "bonus_physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor(floor((4+3*min(max(lvl-1,0),7)+3*min(max(lvl-8,0),8)+2*min(max(lvl-16,0),6)+2*min(max(lvl-22,0),6)+1*max(lvl-28,0))/4)*(100+(((12*blvl)*(100+min(ulvl,100)))/100+min(ulvl,100)))/100)"
       }
     ],
     "description": [
@@ -8176,6 +8303,12 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "15*blvl"
+      },
+      {
+        "statKey": "life_restored_per_cast",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "max((4*((({{base_life}}/800)*blvl)/4))/256,(4*((({{base_life}}/800)*1)/5))/256)"
       }
     ],
     "description": [
@@ -9039,6 +9172,12 @@
         "value1": "0",
         "value2": "5",
         "min_mana": "8"
+      },
+      {
+        "statKey": "firebolts",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(min(3+lvl/10,7)+(blvl*(max(({{current_mana}}*4)/max({{base_mana}},1),0))))"
       }
     ],
     "description": [
@@ -10103,6 +10242,24 @@
         "value0": "220",
         "value1": "35",
         "value2": "6"
+      },
+      {
+        "statKey": "duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(50+(lvl-1))"
+      },
+      {
+        "statKey": "cooldown",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames((50+(lvl-1))+50)"
+      },
+      {
+        "statKey": "target_seek_range",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "range(9)"
       }
     ],
     "description": [
@@ -10747,6 +10904,12 @@
         "value1": "11",
         "value2": "5",
         "min_mana": "5"
+      },
+      {
+        "statKey": "bonus_magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor(floor((6*lvl)/2)*(100+((5*ulvl)/4))/100)"
       }
     ],
     "description": [
@@ -12694,6 +12857,12 @@
         "value0": "9",
         "value1": "31",
         "value2": "6"
+      },
+      {
+        "statKey": "feedback_damage_percent",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "if(lvl<29,(min(100+2*ulvl,220)*(52+13*(lvl-1)))/160,(min(100+2*ulvl,220)*(214+7*(lvl-1)))/160)"
       }
     ],
     "description": [
@@ -12824,6 +12993,12 @@
         "value0": "44",
         "value1": "24",
         "value2": "5"
+      },
+      {
+        "statKey": "bonus_physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor(floor((8+6*min(max(lvl-1,0),7)+4*min(max(lvl-8,0),8)+3*min(max(lvl-16,0),6)+2*min(max(lvl-22,0),6)+1*max(lvl-28,0))/8)*(100+((ulvl*ulvl)/7))/100)"
       }
     ],
     "description": [
@@ -14131,6 +14306,12 @@
         "value0": "572",
         "value1": "57",
         "value2": "5"
+      },
+      {
+        "statKey": "attacker_takes_lightning_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor(floor((260+26*min(max(lvl-1,0),7)+26*min(max(lvl-8,0),8)+26*min(max(lvl-16,0),6)+26*min(max(lvl-22,0),6)+26*max(lvl-28,0))/16)*(100+(max(((({{minimum_1_handed_damage}}+{{maximum_1_handed_damage}})/2+({{minimum_lightning_damage}}+{{maximum_lightning_damage}})/2)*4),((((((50+10*min(ulvl,120))*((50+(130*({{energy}}+20))/(500+{{energy}}))+min({{spell_focus}}/10,100)))/100-75)*(100+{{lightning_spell_damage}}))/100+{{lightning_spell_damage}})*2))))/100)"
       }
     ],
     "description": [
@@ -14337,7 +14518,32 @@
     "baseMaxLevel": 25,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "maximum_life_flat",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(([[curare]]*100+50)*256)/256"
+      },
+      {
+        "statKey": "attack_speed",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "max((min((blvl-1)*8+10,250)),10)"
+      },
+      {
+        "statKey": "attack_rating_percent",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "((220*lvl)*(460-1))/(100*(lvl+50))+1"
+      },
+      {
+        "statKey": "bonus_defense",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(50+20*(lvl-1))"
+      }
+    ],
     "description": [
       "Increases damage and defense"
     ],
@@ -14425,7 +14631,20 @@
     "baseMaxLevel": 25,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "maximum_life_flat",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "60+((blvl*blvl)*9)/5"
+      },
+      {
+        "statKey": "regenerate_life",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((26+26*min(max(lvl-1,0),7)+40*min(max(lvl-8,0),8)+70*min(max(lvl-16,0),6)+104*min(max(lvl-22,0),6)+130*max(lvl-28,0))*25/256)"
+      }
+    ],
     "description": [
       "Grants Life Regeneration and increases Max Life"
     ],
@@ -14667,7 +14886,14 @@
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "cooldown",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(max(520-blvl*40,0))"
+      }
+    ],
     "description": [
       "Steals Mana and damages nearby enemies based on lost Mana"
     ],
@@ -15258,7 +15484,14 @@
     "baseMaxLevel": 4,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "bolt_per_energy",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "min(1200-100,1200-100*blvl)"
+      }
+    ],
     "description": [
       "Your energy reserves enhance Tempest"
     ],
@@ -15373,6 +15606,12 @@
         "value0": "13",
         "value1": "20",
         "value2": "5"
+      },
+      {
+        "statKey": "loma_per_character_level",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(((10+ulvl/2)*(100+8*blvl))/100)"
       }
     ],
     "description": [
@@ -17183,6 +17422,12 @@
         "value0": "20",
         "value1": "3",
         "value2": "7"
+      },
+      {
+        "statKey": "bonus_magic_damage_based_on_str_and_dex",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "lvl*4"
       }
     ],
     "description": [
@@ -17496,6 +17741,12 @@
         "value0": "20",
         "value1": "0",
         "value2": "8"
+      },
+      {
+        "statKey": "bonus_magic_damage_based_on_str_or_dex",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "max(4,4*blvl)"
       }
     ],
     "description": [
@@ -18749,6 +19000,12 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "5*blvl"
+      },
+      {
+        "statKey": "bonus_lightning_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "max(blvl,1)*5"
       }
     ],
     "description": [
@@ -18850,6 +19107,12 @@
         "value0": "5",
         "value1": "2",
         "value2": "8"
+      },
+      {
+        "statKey": "bonus_physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(((((8*lvl)*(100+15*blvl))/16)*((100+max({{strength}},{{dexterity}})/14)+{{enhanced_weapon_damage}}))/10000)"
       }
     ],
     "description": [
@@ -19115,7 +19378,14 @@
     "baseMaxLevel": 4,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "freeze_length_to_wintertide",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "max(10,(if(blvl>0,(10+({{energy}}/100)*({{energy}}/100))/(5-blvl),0)))"
+      }
+    ],
     "description": [
       "Your Energy reserves improve Wintertide"
     ],
@@ -20449,6 +20719,12 @@
         "showCondition": [
           "after_blocking"
         ]
+      },
+      {
+        "statKey": "base_block_chance",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(max(46-ulvl/3,2))"
       }
     ],
     "description": [
@@ -21092,6 +21368,12 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "35"
+      },
+      {
+        "statKey": "block_speed",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(20+lvl)"
       }
     ],
     "description": [
@@ -21716,6 +21998,12 @@
         "value0": "10",
         "value1": "6",
         "value2": "8"
+      },
+      {
+        "statKey": "restores_life_on_use_based_on_max_life",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor(floor(floor({{life}}*256/100)*(250+if(lvl-blvl>2,500,0)+min(25*([[guardian_spirit]]+[[defender_spirit]]+[[spirit_reave]]+[[protector_spirit]]+[[shamanic_trance]]+blvl+[[ancestral_endurance]]+[[spirit_bond]]),750))/100)/256)"
       }
     ],
     "description": [
@@ -23872,6 +24160,12 @@
         "value0": "20",
         "value1": "18",
         "value2": "6"
+      },
+      {
+        "statKey": "charged_bolts",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "20"
       }
     ],
     "description": [
@@ -24383,6 +24677,18 @@
         "value0": "18",
         "value1": "12",
         "value2": "5"
+      },
+      {
+        "statKey": "bonus_fire_cold_or_lightning",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(max(2,min(2*lvl,44))*(100+lvl*lvl))/100"
+      },
+      {
+        "statKey": "projectiles",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "18"
       }
     ],
     "description": [
@@ -26120,6 +26426,12 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "5+blvl/2"
+      },
+      {
+        "statKey": "bonus_defense",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(30+8*(lvl-1))"
       }
     ],
     "description": [
@@ -26196,6 +26508,12 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "(20+3*(lvl-1))/2"
+      },
+      {
+        "statKey": "bonus_fire_damage_to_weapons",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor(floor((17+22*min(max(lvl-1,0),7)+26*min(max(lvl-8,0),8)+28*min(max(lvl-16,0),6)+30*min(max(lvl-22,0),6)+30*max(lvl-28,0))/8)*(100+((((((blvl-1)*20)*ulvl)/120)*(70+min(3*ulvl,450)))/400))/100)"
       }
     ],
     "description": [
@@ -26235,6 +26553,12 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "(20+3*(lvl-1))/2"
+      },
+      {
+        "statKey": "bonus_cold_damage_to_weapons",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor(floor((40+18*min(max(lvl-1,0),7)+20*min(max(lvl-8,0),8)+22*min(max(lvl-16,0),6)+24*min(max(lvl-22,0),6)+26*max(lvl-28,0))/8)*(100+((((((blvl-1)*35)*ulvl)/120)*(70+min(3*ulvl,450)))/400))/100)"
       }
     ],
     "description": [
@@ -26529,6 +26853,12 @@
         "value1": "3",
         "value2": "6",
         "min_mana": "1"
+      },
+      {
+        "statKey": "weapon_physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "max(10,(((25*blvl)*(100+min(ulvl,100)))/100))"
       }
     ],
     "description": [

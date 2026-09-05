@@ -763,6 +763,23 @@ export function withBaseAttributeFormulaStats(stats, character = null) {
             out[baseKey] = out[attrKey];
         }
     }
+    // D2 stat 7/9 (max life/mana) in display points. Planner `life`/`mana` are the computed pools.
+    const maxLife =
+        character && typeof character.getStat === 'function'
+            ? character.getStat('life')
+            : Number(out.life) || 0;
+    const maxMana =
+        character && typeof character.getStat === 'function'
+            ? character.getStat('mana')
+            : Number(out.mana) || 0;
+    out.base_life = Number.isFinite(maxLife) ? maxLife : 0;
+    out.base_mana = Number.isFinite(maxMana) ? maxMana : 0;
+    if (character && typeof character.getRawStat === 'function') {
+        const currentLife = character.getRawStat('current_life');
+        const currentMana = character.getRawStat('current_mana');
+        if (Number.isFinite(currentLife)) out.current_life = currentLife;
+        if (Number.isFinite(currentMana)) out.current_mana = currentMana;
+    }
     return out;
 }
 

@@ -166,6 +166,30 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(150*(1+[[continuity]].{{skill_duration}}/100))"
+      },
+      {
+        "statKey": "avoid_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "max(5,(((([[forked_lightning]]+[[thunderstone]])+[[tempest]])+[[mind_spark]])+[[eye_of_the_storm]])/10)"
+      },
+      {
+        "statKey": "cast_speed",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "50+max(100,(((([[forked_lightning]]+[[thunderstone]])+[[tempest]])+[[mind_spark]])+[[eye_of_the_storm]])*2)"
+      },
+      {
+        "statKey": "movement_speed",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "13+max(25,(((([[forked_lightning]]+[[thunderstone]])+[[tempest]])+[[mind_spark]])+[[eye_of_the_storm]])/2)"
+      },
+      {
+        "statKey": "mana_regeneration_rate",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "min(100,150-(((([[forked_lightning]]+[[thunderstone]])+[[tempest]])+[[mind_spark]])+[[eye_of_the_storm]]))"
       }
     ],
     "description": [],
@@ -488,7 +512,26 @@
     "id": "spirit_of_vengeance_avenging_aura",
     "displayName": "Avenging Aura",
     "parentSkillId": "spirit_of_vengeance",
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "pmsd",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(10+3*(lvl-1))"
+      },
+      {
+        "statKey": "fire_spell_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(10+3*(lvl-1))"
+      },
+      {
+        "statKey": "lightning_spell_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(10+3*(lvl-1))"
+      }
+    ],
     "description": [],
     "skillEffect": [
       "{{maximum_life}}",
