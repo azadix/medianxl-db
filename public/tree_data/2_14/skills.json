@@ -3808,7 +3808,7 @@
       "[[shockwave_trap]]",
       "Bolts explode into small novas on contact",
       "[[incineration_trap]]",
-      "Halved base delay between activations",
+      "Massively increases damage per hit",
       "",
       "{{mana_cost}}"
     ],
@@ -6963,7 +6963,7 @@
         "statKey": "weapon_physical_damage",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "5*([[phalanx]]+[[wyrmshot]])"
+        "value0": "min(5*([[phalanx]]+[[wyrmshot]]),250)"
       },
       {
         "statKey": "physical_resistance",
@@ -13076,7 +13076,7 @@
         "statKey": "range",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "range(24+2*floor(blvl/2))"
+        "value0": "range(52)"
       },
       {
         "statKey": "fire_pierce",
