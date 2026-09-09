@@ -3808,7 +3808,7 @@
       "[[shockwave_trap]]",
       "Bolts explode into small novas on contact",
       "[[incineration_trap]]",
-      "Massively increases damage per hit",
+      "Doubles base activation rate",
       "",
       "{{mana_cost}}"
     ],
@@ -13076,7 +13076,7 @@
         "statKey": "range",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "range(52)"
+        "value0": "range(24+2*floor(blvl/2))"
       },
       {
         "statKey": "fire_pierce",
