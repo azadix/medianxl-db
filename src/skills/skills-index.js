@@ -21,6 +21,9 @@ import {
   tabOrderRankFromLookup
 } from '@/shared/skill-data-store.js';
 import { buildSkillFromCatalogRow } from '@/tree/tree-data.js';
+import { useItemsStore } from '@/stores/items.js';
+import { getProcSourcesForSkill, procRowSources } from '@/items/item-procs.js';
+import { itemRarityNameClass } from '@/items/item-tooltip.js';
 import Skill from './domain/Skill.js';
 
 /** Skills index route name and query helpers (formerly skillsIndexRoute.js). */
@@ -97,6 +100,15 @@ export function readHomeTagFiltersFromRoute(router) {
 }
 
 /**
+ * @param {import('vue-router').Router | null | undefined} router
+ * @returns {string[]}
+ */
+export function readHomeConditionFiltersFromRoute(router) {
+  const q = router?.currentRoute?.value?.query;
+  return readQueryStringArray(q, 'conditions');
+}
+
+/**
  * @param {unknown} q
  * @returns {'and'|'or'|'not'}
  */
@@ -116,6 +128,25 @@ export function readClassTagJoinFromQuery(q) {
 export function readClassTagJoinFromRoute(router) {
   const q = router?.currentRoute?.value?.query;
   return readClassTagJoinFromQuery(q);
+}
+
+/**
+ * @param {unknown} q
+ * @returns {'skills'|'procs'}
+ */
+export function readHomeViewFromQuery(q) {
+  if (!q || typeof q !== 'object') return 'skills';
+  const rec = /** @type {Record<string, unknown>} */ (q);
+  const raw = rec.view != null ? String(rec.view).toLowerCase() : '';
+  return raw === 'procs' ? 'procs' : 'skills';
+}
+
+/**
+ * @param {import('vue-router').Router | null | undefined} router
+ * @returns {'skills'|'procs'}
+ */
+export function readHomeViewFromRoute(router) {
+  return readHomeViewFromQuery(router?.currentRoute?.value?.query);
 }
 
 /** @type {import('vue-router').Router | null} */
@@ -196,9 +227,64 @@ function showListView() {
   if (!pageTitleEl) return;
   detachHomeSkillDetailFormulaListeners();
   lastDisplayedSkillKey = null;
-  pageTitleEl.textContent = 'All Skills';
+  pageTitleEl.textContent = readHomeViewFromRoute(getRouter()) === 'procs' ? 'Procs' : 'All Skills';
   const el = detailEl();
   if (el) el.innerHTML = '';
+}
+
+/**
+ * @param {import('@/items/item-procs.js').ItemProcRow[]} rows
+ * @returns {string}
+ */
+function buildProcSourcesTableHtml(rows) {
+  if (!Array.isArray(rows) || !rows.length) return '';
+  const body = rows
+    .map((row) => {
+      const sourceHtml = procRowSources(row)
+        .map((source) => {
+          const sourceAttrs =
+            source.sourceKind === 'setBonus'
+              ? `data-proc-set-id="${escapeHtmlText(String(source.setId || ''))}" data-proc-set-required="${escapeHtmlText(
+                  String(source.setRequired ?? '')
+                )}"`
+              : `data-proc-item-id="${escapeHtmlText(String(source.itemDefId || ''))}"`;
+          const rarityClass = itemRarityNameClass(source.sourceRarity);
+          return `<span class="skills-td-link js-proc-source ${rarityClass}" tabindex="0" ${sourceAttrs}>${escapeHtmlText(
+            source.sourceLabel
+          )}</span>`;
+        })
+        .join('');
+      return `<tr>
+          <td>${escapeHtmlText(row.chanceLabel)}%</td>
+          <td>${escapeHtmlText(row.condition)}</td>
+          <td>${escapeHtmlText(String(row.level))}</td>
+          <td>${sourceHtml}</td>
+        </tr>`;
+    })
+    .join('');
+  return `
+    <section class="planner-card skill-proc-sources-panel">
+      <div class="skill-detail-section-head">
+        <div>
+          <span class="planner-card__eyebrow">Item Procs</span>
+          <h3 class="title is-5 mb-0">Sources</h3>
+        </div>
+      </div>
+      <div class="table-container">
+        <table class="table is-hoverable is-fullwidth skill-proc-sources-table">
+          <thead>
+            <tr>
+              <th>Chance</th>
+              <th>Condition</th>
+              <th>Level</th>
+              <th>Source</th>
+            </tr>
+          </thead>
+          <tbody>${body}</tbody>
+        </table>
+      </div>
+    </section>
+  `;
 }
 
 async function displaySkillDetail(skillId) {
@@ -230,6 +316,15 @@ async function displaySkillDetail(skillId) {
 
   detachHomeSkillDetailFormulaListeners();
   pageTitleEl.textContent = '';
+
+  const itemsStore = useItemsStore();
+  try {
+    await itemsStore.loadCatalog();
+  } catch {
+    /* proc sources stay empty */
+  }
+  const procSourceRows = getProcSourcesForSkill(skillInfo.id, itemsStore);
+  const procSourcesHtml = buildProcSourcesTableHtml(procSourceRows);
 
   const skillImage = skillInfo.image
     ? `${getSkillIconHTML(skillInfo.image, skillInfo.class, 'skill-image', skillIconGameVersionFolder)}`
@@ -354,7 +449,9 @@ async function displaySkillDetail(skillId) {
   const filter = q.filter != null ? String(q.filter) : null;
   const browseClasses = readQueryStringArray(q, 'classes');
   const browseTags = readQueryStringArray(q, 'tags');
+  const browseConditions = readQueryStringArray(q, 'conditions');
   const classTagJoin = readClassTagJoinFromQuery(q);
+  const homeView = readHomeViewFromQuery(q);
 
   let backHref;
   if (treeClass || treeTab) {
@@ -367,23 +464,27 @@ async function displaySkillDetail(skillId) {
     if (filter && filter !== 'all') backQuery.filter = filter;
     if (browseClasses.length) backQuery.classes = browseClasses;
     if (browseTags.length) backQuery.tags = browseTags;
+    if (browseConditions.length) backQuery.conditions = browseConditions;
     if (classTagJoin === 'or') backQuery.filterLogic = 'or';
     else if (classTagJoin === 'not') backQuery.filterLogic = 'not';
+    if (homeView === 'procs') backQuery.view = 'procs';
     backHref = r.resolve({ name: SKILLS_ROUTE_NAME, query: backQuery }).href;
   } else {
     const sp = new URLSearchParams();
     if (filter && filter !== 'all') sp.set('filter', filter);
     for (const c of browseClasses) sp.append('classes', c);
     for (const t of browseTags) sp.append('tags', t);
+    for (const cond of browseConditions) sp.append('conditions', cond);
     if (classTagJoin === 'or') sp.set('filterLogic', 'or');
     else if (classTagJoin === 'not') sp.set('filterLogic', 'not');
+    if (homeView === 'procs') sp.set('view', 'procs');
     const qs = sp.toString();
     const base = String(import.meta.env?.BASE_URL ?? '/').replace(/\/$/, '') || '';
     const path = `${base}/skills`;
     backHref = qs ? `${path}?${qs}` : path;
   }
 
-  const backLabel = treeClass || treeTab ? 'Tree' : 'Skills';
+  const backLabel = treeClass || treeTab ? 'Tree' : homeView === 'procs' ? 'Procs' : 'Skills';
   const backButton = `
         <div class="skill-detail-toolbar">
             <a href="${escapeHtmlText(backHref)}" class="button is-light is-outlined">
@@ -436,6 +537,7 @@ async function displaySkillDetail(skillId) {
                             </div>
                             <div class="skill-effect-body content"></div>
                         </section>
+                        ${procSourcesHtml}
                     </div>
                 </main>
 

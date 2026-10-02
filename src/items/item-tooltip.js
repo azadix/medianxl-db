@@ -15,7 +15,7 @@ import { formatSetBonusLabel } from '@/items/item-overlays.js';
 import { formatRunewordBadge, isRunewordItem } from '@/items/runeword-items.js';
 
 /** @type {Readonly<Record<string, string>>} */
-const RARITY_CLASS = Object.freeze({
+export const ITEM_RARITY_NAME_CLASS = Object.freeze({
   normal: 'item-tooltip-name--normal',
   magic: 'item-tooltip-name--magic',
   rare: 'item-tooltip-name--rare',
@@ -25,6 +25,16 @@ const RARITY_CLASS = Object.freeze({
   relic: 'item-tooltip-name--relic',
   crafted: 'item-tooltip-name--crafted',
 });
+
+/**
+ * Tooltip / list color class for an item rarity.
+ * @param {string|null|undefined} rarity
+ * @returns {string}
+ */
+export function itemRarityNameClass(rarity) {
+  const key = String(rarity || 'normal');
+  return ITEM_RARITY_NAME_CLASS[key] || ITEM_RARITY_NAME_CLASS.normal;
+}
 
 /**
  * @param {object|null|undefined} def - Catalog item def
@@ -44,7 +54,7 @@ export function buildItemTooltipHtml(def, _iconKey = null, rolls = null, options
 
   const name = escapeHtmlText(def.name || def.id || 'Unknown item');
   const rarity = String(def.rarity || 'normal');
-  const rarityClass = RARITY_CLASS[rarity] || RARITY_CLASS.normal;
+  const rarityClass = itemRarityNameClass(rarity);
   const category = ITEM_CATEGORY_LABEL[def.category] || escapeHtmlText(def.category || '');
 
   const classRestriction = def.classRestriction

@@ -461,29 +461,29 @@
     text-align: center;
 }
 
-.item-tooltip .item-tooltip-name--normal {
+.item-tooltip-name--normal {
     color: #c8c8d0;
 }
 
-.item-tooltip .item-tooltip-name--magic {
+.item-tooltip-name--magic {
     color: #6969ff;
 }
 
-.item-tooltip .item-tooltip-name--rare {
+.item-tooltip-name--rare {
     color: #ffff64;
 }
 
-.item-tooltip .item-tooltip-name--unique,
-.item-tooltip .item-tooltip-name--relic {
+.item-tooltip-name--unique,
+.item-tooltip-name--relic {
     color: #c7b377;
 }
 
-.item-tooltip .item-tooltip-name--set {
+.item-tooltip-name--set {
     color: #00c000;
 }
 
-.item-tooltip .item-tooltip-name--runeword,
-.item-tooltip .item-tooltip-name--crafted {
+.item-tooltip-name--runeword,
+.item-tooltip-name--crafted {
     color: #ff9b2f;
 }
 

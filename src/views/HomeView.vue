@@ -7,8 +7,21 @@ export default {
 <script setup>
 import { ref, computed, onMounted, onUnmounted, onActivated, watch, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { mountSkillsIndex, unmountSkillsIndex, syncSkillsIndexFromRoute } from '@/skills/skills-index.js';
+import {
+  mountSkillsIndex,
+  unmountSkillsIndex,
+  syncSkillsIndexFromRoute,
+  mergeHomeQuery,
+  readHomeViewFromRoute,
+  SKILLS_ROUTE_NAME,
+} from '@/skills/skills-index.js';
 import SkillsBrowseTable from '@/components/skills/SkillsBrowseTable.vue';
+import SkillsProcsTable from '@/components/skills/SkillsProcsTable.vue';
+import SkillsPageTooltipHost from '@/components/skills/SkillsPageTooltipHost.vue';
+import { useSkillsPageTooltips } from '@/composables/useSkillsPageTooltips.js';
+import { hideSkillsPageTooltips } from '@/skills/skills-page-tooltip-runtime.js';
+import { useItemsStore } from '@/stores/items.js';
+import { getItemProcRows } from '@/items/item-procs.js';
 import '@/styles/tree-styles.css';
 import '@/styles/character-sheet-sidebar.css';
 
@@ -17,9 +30,11 @@ const skillIconFolder = ref(null);
 const loadError = ref('');
 const detailContentEl = ref(null);
 const pageTitleEl = ref(null);
+const pageRootEl = ref(null);
 
 const route = useRoute();
 const router = useRouter();
+const itemsStore = useItemsStore();
 
 const hasSkillQuery = computed(() => {
   const raw = route.query.skill;
@@ -27,12 +42,29 @@ const hasSkillQuery = computed(() => {
   return Boolean(s);
 });
 
+const isProcsView = computed(() => readHomeViewFromRoute(router) === 'procs');
+
+const procRows = computed(() => {
+  void itemsStore.catalog;
+  void itemsStore.sets;
+  void skillsList.value;
+  if (!itemsStore.catalogLoaded || !skillsList.value.length) return [];
+  return getItemProcRows(itemsStore);
+});
+
+useSkillsPageTooltips({ rootEl: pageRootEl });
+
 function getDetailEl() {
   return detailContentEl.value;
 }
 
+function setBrowseView(view) {
+  mergeHomeQuery(router, { view: view === 'procs' ? 'procs' : '' });
+}
+
 onMounted(async () => {
   await nextTick();
+  void itemsStore.loadCatalog();
   mountSkillsIndex({
     router,
     pageTitleEl: pageTitleEl.value,
@@ -51,7 +83,7 @@ onMounted(async () => {
 });
 
 onActivated(async () => {
-  if (route.name === 'skills') {
+  if (route.name === SKILLS_ROUTE_NAME) {
     await syncSkillsIndexFromRoute(router);
   }
 });
@@ -63,7 +95,8 @@ onUnmounted(() => {
 watch(
   () => route.query,
   async () => {
-    if (route.name === 'skills') {
+    hideSkillsPageTooltips();
+    if (route.name === SKILLS_ROUTE_NAME) {
       await syncSkillsIndexFromRoute(router);
     }
   },
@@ -72,26 +105,48 @@ watch(
 </script>
 
 <template>
-  <div class="container mt-4 home-skills-page">
-    <h2
+  <div ref="pageRootEl" class="container mt-4 home-skills-page">
+    <span ref="pageTitleEl" id="page-title" class="is-sr-only" aria-hidden="true"></span>
+    <div
       v-show="!hasSkillQuery"
-      class="title mt-3 mb-2"
-      ref="pageTitleEl"
-      id="page-title"
+      class="tabs is-toggle mt-3 mb-3 home-skills-view-tabs"
+      role="navigation"
+      aria-label="Skills views"
     >
-      All Skills
-    </h2>
+      <ul>
+        <li :class="{ 'is-active': !isProcsView }">
+          <a href="#" @click.prevent="setBrowseView('skills')">Skills</a>
+        </li>
+        <li :class="{ 'is-active': isProcsView }">
+          <a href="#" @click.prevent="setBrowseView('procs')">Procs</a>
+        </li>
+      </ul>
+    </div>
     <div v-if="loadError" class="notification is-danger content">
       {{ loadError }}
     </div>
     <template v-else>
       <SkillsBrowseTable
-        v-show="!hasSkillQuery && skillsList.length > 0"
+        v-show="!hasSkillQuery && !isProcsView && skillsList.length > 0"
         :skills="skillsList"
         :icon-folder="skillIconFolder"
       />
-      <p v-if="!hasSkillQuery && skillsList.length === 0" class="has-text-grey is-italic mt-2">
+      <SkillsProcsTable
+        v-show="!hasSkillQuery && isProcsView && itemsStore.catalogLoaded"
+        :rows="procRows"
+        :icon-folder="skillIconFolder"
+      />
+      <p
+        v-if="!hasSkillQuery && !isProcsView && skillsList.length === 0"
+        class="has-text-grey is-italic mt-2"
+      >
         Loading skills...
+      </p>
+      <p
+        v-else-if="!hasSkillQuery && isProcsView && !itemsStore.catalogLoaded"
+        class="has-text-grey is-italic mt-2"
+      >
+        Loading procs...
       </p>
       <div
         ref="detailContentEl"
@@ -100,6 +155,7 @@ watch(
         class="home-skill-detail-host"
       />
     </template>
+    <SkillsPageTooltipHost />
   </div>
 </template>
 
@@ -107,6 +163,30 @@ watch(
 .filter-toggle {
   transition: all 0.3s ease;
   min-width: 15rem;
+}
+
+.home-skills-view-tabs {
+  margin-bottom: 0.75rem;
+}
+
+.home-skills-view-tabs :deep(a) {
+  font-size: 1.75rem;
+  font-weight: 600;
+  line-height: 1.125;
+  padding-left: 1.1em;
+  padding-right: 1.1em;
+}
+
+.is-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 :deep(.skill-detail-page) {
@@ -171,6 +251,20 @@ watch(
 :deep(.skill-effect-body) {
   color: #e8e8e8;
   line-height: 1.55;
+}
+
+:deep(.skill-proc-sources-table) {
+  font-size: 0.95rem;
+}
+
+:deep(.skill-proc-sources-table td) {
+  vertical-align: top;
+}
+
+:deep(.skill-proc-sources-table .js-proc-source) {
+  display: block;
+  cursor: pointer;
+  font-weight: 600;
 }
 
 :deep(.skill-detail-infobox) {
