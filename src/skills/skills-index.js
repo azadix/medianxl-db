@@ -738,12 +738,6 @@ async function displaySkillDetail(skillId) {
             ${backButton}
             <div class="skill-detail-shell">
                 <main class="skill-detail-main order-2-mobile">
-                    <section class="skill-detail-hero planner-card">
-                        <span class="planner-card__eyebrow">Skill</span>
-                        <h2 class="title is-3 skill-detail-page-name">${escapeHtmlText(skillInfo.name)}</h2>
-                        <p class="skill-detail-formula-hint">Hold Ctrl to show raw formulae. Release Ctrl to hide them.</p>
-                    </section>
-
                     <div class="skill-info">
                         ${restrictionHtml}
                         ${descriptionHtml}
@@ -772,6 +766,11 @@ async function displaySkillDetail(skillId) {
                 </main>
 
                 <aside class="skill-detail-infobox order-1-mobile">
+                    <section class="skill-detail-hero planner-card">
+                        <span class="planner-card__eyebrow">Skill</span>
+                        <h2 class="title is-4 skill-detail-page-name">${escapeHtmlText(skillInfo.name)}</h2>
+                        <p class="skill-detail-formula-hint">Hold Ctrl to show raw formulae</p>
+                    </section>
                     <section class="planner-card skill-detail-image-card">
                         <span class="planner-card__eyebrow">Skill Image</span>
                         <div class="skill-image-container">

@@ -219,8 +219,9 @@ watch(
 }
 
 :deep(.skill-detail-page-name) {
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
   color: #fff;
+  overflow-wrap: anywhere;
 }
 
 :deep(.skill-detail-formula-hint) {
@@ -285,6 +286,10 @@ watch(
   flex-direction: column;
   gap: 0.75rem;
   min-width: 0;
+}
+
+:deep(.skill-detail-infobox .planner-card) {
+  margin-bottom: 0;
 }
 
 :deep(.skill-detail-image-card) {
