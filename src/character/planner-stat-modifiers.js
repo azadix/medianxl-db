@@ -17,6 +17,11 @@ import {
 import Skill from '@/skills/domain/Skill.js';
 import { getFileSkillStore, withBaseAttributeFormulaStats } from '@/shared/skill-data-store.js';
 import { getRelicSkillBonusForSkill } from '@/items/skill-bonus-from-modifiers.js';
+import { collectEnabledRelicOSkillGrants } from '@/items/item-granted-oskills.js';
+import {
+  oSkillIdsFromCharacter,
+  relicOSkillIdsFromGrants,
+} from '@/skills/domain/lightning-shield-elem-dr.js';
 import Character from './Character.js';
 
 /**
@@ -272,7 +277,11 @@ export async function recomputePlannerStatsFromSkillAllocations(character, ctx) 
     blvl: { ...mergedBlvl },
     lvl: {},
     treeSkillsCache: treeSkillsCache && typeof treeSkillsCache === 'object' ? treeSkillsCache : {},
-    stats: withBaseAttributeFormulaStats({ ...character.getAllRawStats() }, character)
+    stats: withBaseAttributeFormulaStats({ ...character.getAllRawStats() }, character),
+    oSkillIds: oSkillIdsFromCharacter(character),
+    relicOSkillIds: relicOSkillIdsFromGrants(
+      collectEnabledRelicOSkillGrants({ className: charClass })
+    ),
   };
 
   for (const name of Object.keys(characterState.blvl)) {

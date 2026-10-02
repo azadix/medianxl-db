@@ -11,6 +11,7 @@ import { MISSING_IMAGE_NAME } from '@/shared/utils.js';
 import { checkPrerequisites } from '@/character/planner-prereqs.js';
 import { formulaEvaluator } from './formula-evaluator.js';
 import { formatScalingValuesToDescriptionHtml } from './scaling-display-html.js';
+import { applyLightningShieldElemDrToScaling } from './lightning-shield-elem-dr.js';
 
 /** [[internal_name]].{{stat}} in formulas and descriptions (not plain {{stat}} on current skill). */
 const CROSS_SKILL_DOT_STAT_PATTERN =
@@ -696,6 +697,16 @@ export default class Skill {
                     variables,
                     showFormulas,
                     crossSkillDepth
+                );
+            }
+
+            if (result) {
+                applyLightningShieldElemDrToScaling(
+                    this.id,
+                    statKey,
+                    result,
+                    characterState,
+                    showFormulas
                 );
             }
             

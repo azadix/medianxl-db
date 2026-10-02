@@ -29,6 +29,7 @@ import { isInnateSkill } from '@/skills/domain/skill-skill-types.js';
 import { getMaxLevelModifierDescriptionsForSkill } from '@/skills/domain/skill-calculations.js';
 import { getRelicSkillBonusForSkill } from '@/items/skill-bonus-from-modifiers.js';
 import { collectEnabledRelicOSkillGrants } from '@/items/item-granted-oskills.js';
+import { relicOSkillIdsFromGrants } from '@/skills/domain/lightning-shield-elem-dr.js';
 import { computeSkillBonusSourceAmounts } from './skill-bonus-sources.js';
 import Character from '@/character/Character.js';
 
@@ -632,10 +633,9 @@ async function buildTooltipContent(
         skillClass: skillData.className || skillData.class || '',
     });
     const itemOSkillBonus = isOSkill ? getOSkillItemPoints(skillData.id) : 0;
+    const relicOSkillGrants = collectEnabledRelicOSkillGrants({ className: charClassName });
     const relicOSkillGrant = isOSkill
-        ? Character.clampOSkillPoints(
-            collectEnabledRelicOSkillGrants({ className: charClassName })[skillData.id] || 0
-          )
+        ? Character.clampOSkillPoints(relicOSkillGrants[skillData.id] || 0)
         : 0;
     // Class skills bonus applies to tree skills only; oSkills get all-skills + item grants.
     // Item-granted oSkills have blvl 0; the relic/charm +N is slvl.
@@ -767,7 +767,11 @@ async function buildTooltipContent(
         blvl: {}, // Will be populated below
         lvl: {}, // Will be populated below
         treeSkillsCache: getTreeSkillsCache(), // Add tree skills cache for tree() function
-        stats: { ...characterStats } // Add character stats for formula evaluation
+        stats: { ...characterStats }, // Add character stats for formula evaluation
+        oSkillIds: isOSkill
+            ? [...new Set([...oSkillRowsByName.keys(), String(skillData.id)])]
+            : [...oSkillRowsByName.keys()],
+        relicOSkillIds: relicOSkillIdsFromGrants(relicOSkillGrants),
     };
     
     const currentSkillName = skillData.id;

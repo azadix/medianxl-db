@@ -2,6 +2,10 @@ import Skill from '@/skills/domain/Skill.js';
 import { isSubskillActive } from '@/skills/domain/conditional-subskills.js';
 import { isScalingConstantRowActive } from '@/skills/domain/show-conditions.js';
 import {
+    isLightningShieldElemDrStat,
+    lightningShieldElemDrFactor,
+} from '@/skills/domain/lightning-shield-elem-dr.js';
+import {
     lookupMergedDisplayNameByInternalName,
     getFileSkillStore
 } from '@/shared/skill-data-store.js';
@@ -700,8 +704,13 @@ export async function expandPlaceholdersWithScaling(skillId, level, description,
                     0,
                     variantKey
                 );
-                
-                if (scalingValues) {
+
+                if (
+                    isLightningShieldElemDrStat(actualSkillName, key) &&
+                    lightningShieldElemDrFactor(effectiveCharacterState, actualSkillName) === 0
+                ) {
+                    output = '';
+                } else if (scalingValues) {
                     const blvl = effectiveCharacterState?.blvl?.[actualSkillName] || 0;
                     const slvl = effectiveCharacterState?.lvl?.[actualSkillName] || 0;
                     const lvl = (Number(blvl) || 0) + (Number(slvl) || 0) || Math.max(1, Number(effectiveLevel) || 1);
