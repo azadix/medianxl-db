@@ -150,6 +150,14 @@ export function flattenModifierLines(modifiers) {
 }
 
 /**
+ * @param {string} badge
+ * @returns {boolean}
+ */
+function omitSourceLabelBadge(badge) {
+  return badge === 'SU' || badge === 'TU' || badge === 'Set' || /^T[1-4]$/i.test(badge);
+}
+
+/**
  * @param {object|null|undefined} def
  * @returns {string}
  */
@@ -158,8 +166,9 @@ export function formatProcItemSourceLabel(def) {
   if (isRelicItem(def)) return String(def.name || 'Relic');
   if (isCharmItem(def)) return String(def.name || 'Charm');
 
-  const badge =
+  const rawBadge =
     formatOverlayBadge(def.uniqueKind, def.tier) || formatItemRarityBadge(def) || '';
+  const badge = omitSourceLabelBadge(rawBadge) ? '' : rawBadge;
   const name = String(def.name || def.id || 'Unknown item');
   const typePart = String(def.baseName || def.baseType || def.group || '').trim();
   if (badge && typePart) return `${badge}: ${name} (${typePart})`;

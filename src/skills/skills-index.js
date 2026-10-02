@@ -23,6 +23,7 @@ import {
 import { buildSkillFromCatalogRow } from '@/tree/tree-data.js';
 import { useItemsStore } from '@/stores/items.js';
 import { getProcSourcesForSkill, procRowSources } from '@/items/item-procs.js';
+import { getSkillGrantSourcesForSkill } from '@/items/item-skill-grants.js';
 import { itemRarityNameClass } from '@/items/item-tooltip.js';
 import Skill from './domain/Skill.js';
 
@@ -233,6 +234,79 @@ function showListView() {
 }
 
 /**
+ * @param {import('@/items/item-procs.js').ItemProcRow | import('@/items/item-skill-grants.js').ItemSkillGrantRow} row
+ * @returns {string}
+ */
+function sourceSpansHtml(row) {
+  return procRowSources(row)
+    .map((source) => {
+      const sourceAttrs =
+        source.sourceKind === 'setBonus'
+          ? `data-proc-set-id="${escapeHtmlText(String(source.setId || ''))}" data-proc-set-required="${escapeHtmlText(
+              String(source.setRequired ?? '')
+            )}"`
+          : `data-proc-item-id="${escapeHtmlText(String(source.itemDefId || ''))}"`;
+      const rarityClass = itemRarityNameClass(source.sourceRarity);
+      return `<span class="skills-td-link js-proc-source ${rarityClass}" tabindex="0" ${sourceAttrs}>${escapeHtmlText(
+        source.sourceLabel
+      )}</span>`;
+    })
+    .join('');
+}
+
+/**
+ * @param {string} eyebrow
+ * @param {string[]} headers
+ * @param {string} body
+ * @returns {string}
+ */
+function buildItemSourcesTableHtml(eyebrow, headers, body) {
+  if (!body) return '';
+  const head = headers.map((label) => `<th>${escapeHtmlText(label)}</th>`).join('');
+  return `
+    <section class="planner-card skill-proc-sources-panel">
+      <div class="skill-detail-section-head">
+        <div>
+          <span class="planner-card__eyebrow">${escapeHtmlText(eyebrow)}</span>
+          <h3 class="title is-5 mb-0">Sources</h3>
+        </div>
+      </div>
+      <div class="table-container">
+        <table class="table is-hoverable is-fullwidth skill-proc-sources-table">
+          <thead>
+            <tr>${head}</tr>
+          </thead>
+          <tbody>${body}</tbody>
+        </table>
+      </div>
+    </section>
+  `;
+}
+
+/**
+ * @param {import('@/items/item-skill-grants.js').ItemSkillGrantRow[]} rows
+ * @returns {string}
+ */
+function buildSkillGrantSourcesTableHtml(rows) {
+  if (!Array.isArray(rows) || !rows.length) return '';
+  const showRestriction = rows.some((row) => row.restrictionLabel);
+  const body = rows
+    .map((row) => {
+      const restrictionCell = showRestriction
+        ? `<td>${escapeHtmlText(row.restrictionLabel || '')}</td>`
+        : '';
+      return `<tr>
+          <td>${escapeHtmlText(row.amountLabel)}</td>
+          ${restrictionCell}
+          <td>${sourceSpansHtml(row)}</td>
+        </tr>`;
+    })
+    .join('');
+  const headers = showRestriction ? ['Amount', 'Restriction', 'Source'] : ['Amount', 'Source'];
+  return buildItemSourcesTableHtml('Item Bonuses', headers, body);
+}
+
+/**
  * @param {import('@/items/item-procs.js').ItemProcRow[]} rows
  * @returns {string}
  */
@@ -240,51 +314,15 @@ function buildProcSourcesTableHtml(rows) {
   if (!Array.isArray(rows) || !rows.length) return '';
   const body = rows
     .map((row) => {
-      const sourceHtml = procRowSources(row)
-        .map((source) => {
-          const sourceAttrs =
-            source.sourceKind === 'setBonus'
-              ? `data-proc-set-id="${escapeHtmlText(String(source.setId || ''))}" data-proc-set-required="${escapeHtmlText(
-                  String(source.setRequired ?? '')
-                )}"`
-              : `data-proc-item-id="${escapeHtmlText(String(source.itemDefId || ''))}"`;
-          const rarityClass = itemRarityNameClass(source.sourceRarity);
-          return `<span class="skills-td-link js-proc-source ${rarityClass}" tabindex="0" ${sourceAttrs}>${escapeHtmlText(
-            source.sourceLabel
-          )}</span>`;
-        })
-        .join('');
       return `<tr>
           <td>${escapeHtmlText(row.chanceLabel)}%</td>
           <td>${escapeHtmlText(row.condition)}</td>
           <td>${escapeHtmlText(String(row.level))}</td>
-          <td>${sourceHtml}</td>
+          <td>${sourceSpansHtml(row)}</td>
         </tr>`;
     })
     .join('');
-  return `
-    <section class="planner-card skill-proc-sources-panel">
-      <div class="skill-detail-section-head">
-        <div>
-          <span class="planner-card__eyebrow">Item Procs</span>
-          <h3 class="title is-5 mb-0">Sources</h3>
-        </div>
-      </div>
-      <div class="table-container">
-        <table class="table is-hoverable is-fullwidth skill-proc-sources-table">
-          <thead>
-            <tr>
-              <th>Chance</th>
-              <th>Condition</th>
-              <th>Level</th>
-              <th>Source</th>
-            </tr>
-          </thead>
-          <tbody>${body}</tbody>
-        </table>
-      </div>
-    </section>
-  `;
+  return buildItemSourcesTableHtml('Item Procs', ['Chance', 'Condition', 'Level', 'Source'], body);
 }
 
 async function displaySkillDetail(skillId) {
@@ -323,6 +361,8 @@ async function displaySkillDetail(skillId) {
   } catch {
     /* proc sources stay empty */
   }
+  const skillGrantRows = getSkillGrantSourcesForSkill(skillInfo.id, itemsStore);
+  const skillGrantSourcesHtml = buildSkillGrantSourcesTableHtml(skillGrantRows);
   const procSourceRows = getProcSourcesForSkill(skillInfo.id, itemsStore);
   const procSourcesHtml = buildProcSourcesTableHtml(procSourceRows);
 
@@ -537,6 +577,7 @@ async function displaySkillDetail(skillId) {
                             </div>
                             <div class="skill-effect-body content"></div>
                         </section>
+                        ${skillGrantSourcesHtml}
                         ${procSourcesHtml}
                     </div>
                 </main>

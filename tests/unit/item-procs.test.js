@@ -87,7 +87,7 @@ describe('item procs', () => {
         uniqueKind: 'tiered',
         baseName: 'Stinger Crossbow',
       })
-    ).toBe('TU: Starkiller (Stinger Crossbow)');
+    ).toBe('Starkiller (Stinger Crossbow)');
     expect(
       formatProcItemSourceLabel({
         name: 'Relic (Abyss)',
@@ -96,6 +96,28 @@ describe('item procs', () => {
         id: 'relic:abyss',
       })
     ).toBe('Relic (Abyss)');
+    expect(
+      formatProcItemSourceLabel({
+        name: 'Asgardsreia',
+        uniqueKind: 'su',
+        baseName: 'Spangenhelm (Sacred)',
+      })
+    ).toBe('Asgardsreia (Spangenhelm (Sacred))');
+    expect(
+      formatProcItemSourceLabel({
+        name: 'Starkiller',
+        uniqueKind: 'tiered',
+        tier: 1,
+        baseName: 'Stinger Crossbow',
+      })
+    ).toBe('Starkiller (Stinger Crossbow)');
+    expect(
+      formatProcItemSourceLabel({
+        name: 'Fire',
+        rarity: 'set',
+        baseName: 'Reflex Bow (Sacred)',
+      })
+    ).toBe('Fire (Reflex Bow (Sacred))');
     expect(formatProcSetBonusSourceLabel({ name: 'Tundra Walker' }, 'complete')).toBe(
       'Set bonus: Tundra Walker (complete)'
     );
@@ -233,8 +255,8 @@ describe('item procs', () => {
     const fivePct = grouped.find((r) => r.skillId === 'arrow' && r.chanceLabel === '5');
     expect(grouped.filter((r) => r.skillId === 'arrow')).toHaveLength(2);
     expect(threePct?.sources.map((s) => s.sourceLabel)).toEqual([
-      "SU: Athulua's Blessing (Heavy Gloves (Sacred))",
-      'SU: Bag of Tricks (Bolt Quiver)',
+      "Athulua's Blessing (Heavy Gloves (Sacred))",
+      'Bag of Tricks (Bolt Quiver)',
     ]);
     expect(fivePct?.sources).toHaveLength(1);
     expect(groupItemProcRows(collectItemProcs(catalog, [])).length).toBe(2);

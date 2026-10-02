@@ -261,6 +261,10 @@ watch(
   vertical-align: top;
 }
 
+:deep(.skill-proc-sources-table td:not(:last-child)) {
+  white-space: nowrap;
+}
+
 :deep(.skill-proc-sources-table .js-proc-source) {
   display: block;
   cursor: pointer;
