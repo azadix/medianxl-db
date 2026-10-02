@@ -22,7 +22,15 @@ describe('unique-stats-db catalog', () => {
     expect(existsSync(resolve(dir, 'uniqueitems.json'))).toBe(false);
     expect(existsSync(resolve(dir, 'setitems.json'))).toBe(false);
     expect(existsSync(resolve(dir, 'sets.json'))).toBe(false);
-    expect(existsSync(resolve(dir, 'runewords.json'))).toBe(false);
+    expect(existsSync(resolve(dir, 'runewords.json'))).toBe(true);
+
+    const runewords = JSON.parse(readFileSync(resolve(dir, 'runewords.json'), 'utf8'));
+    const rwEntries = Array.isArray(runewords) ? runewords : runewords.entries || [];
+    const shark = rwEntries.find((e) => e.name === 'Shark');
+    expect(shark?.id).toBe('rw:shark');
+    expect(shark?.runes).toEqual(['Eld']);
+    expect(shark?.allowedTypes).toEqual(['Weapons']);
+    expect(shark?.modifiers?.some((m) => /Bloodlust on Kill/.test(m))).toBe(true);
 
     const bases = [
       ...JSON.parse(readFileSync(resolve(dir, 'baseitems.json'), 'utf8')),

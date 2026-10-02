@@ -7,6 +7,7 @@ import { resolveCatalogRowBySkillRef } from '@/character/planner-build-io.js';
 import { isCharmItem, isModifierPool } from '@/items/charm-items.js';
 import { formatOverlayBadge } from '@/items/item-overlays.js';
 import { isRelicItem } from '@/items/relic-items.js';
+import { isRunewordItem } from '@/items/runeword-items.js';
 import { formatItemRarityBadge } from '@/items/item-stats.js';
 
 /** Longest-first so "when Struck by a Missile" wins over "when Struck". */
@@ -165,6 +166,7 @@ export function formatProcItemSourceLabel(def) {
   if (!def || typeof def !== 'object') return 'Unknown item';
   if (isRelicItem(def)) return String(def.name || 'Relic');
   if (isCharmItem(def)) return String(def.name || 'Charm');
+  if (isRunewordItem(def)) return String(def.name || 'Runeword');
 
   const rawBadge =
     formatOverlayBadge(def.uniqueKind, def.tier) || formatItemRarityBadge(def) || '';

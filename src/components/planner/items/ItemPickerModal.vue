@@ -5,6 +5,7 @@ import { useItemsStore } from '@/stores/items.js';
 import {
   ITEM_CATEGORIES,
   canEquipInSlot,
+  isRunewordPickerItem,
   isUniquePickerItem,
   matchesItemPickerSearch,
 } from '@/items/item-types.js';
@@ -16,6 +17,12 @@ import {
   clampRoll,
 } from '@/items/item-stats.js';
 import { formatOverlayBadge } from '@/items/item-overlays.js';
+import {
+  formatRunewordRecipe,
+  isRunewordTemplate,
+  listEligibleRunewordBases,
+  mergeRunewordWithBase,
+} from '@/items/runeword-items.js';
 import ItemDetailPanel from './ItemDetailPanel.vue';
 import { getEffectivePlannerLevel, getCharacterInstance } from '@/character/planner-core.js';
 
@@ -30,6 +37,9 @@ const searchInput = ref(null);
 const previewId = ref(null);
 /** @type {import('vue').Ref<Record<string, number>>} */
 const rolls = ref({});
+const baseSearch = ref('');
+/** @type {import('vue').Ref<string|null>} */
+const selectedBaseId = ref(null);
 
 watch(isPickerOpen, async (open) => {
   if (open) {
@@ -37,6 +47,8 @@ watch(isPickerOpen, async (open) => {
     category.value = 'all';
     previewId.value = null;
     rolls.value = {};
+    baseSearch.value = '';
+    selectedBaseId.value = null;
     await nextTick();
     searchInput.value?.focus();
   }
@@ -51,9 +63,10 @@ function matchesCategory(item, cat) {
   // Gear uniques only — charms/relics use dedicated enable lists
   if (cat === 'uniques') return isUniquePickerItem(item);
   if (cat === 'sets') return item.rarity === 'set';
-  // Hide unique/set overlays from base weapon/armor/jewelry lists
+  if (cat === 'runewords') return isRunewordPickerItem(item);
+  // Hide unique/set/runeword overlays from base weapon/armor/jewelry lists
   if (cat === 'weapons' || cat === 'armor' || cat === 'jewelry') {
-    if (item.rarity === 'unique' || item.rarity === 'set') {
+    if (item.rarity === 'unique' || item.rarity === 'set' || item.rarity === 'runeword') {
       return false;
     }
     if (isRelicItem(item) || isCharmItem(item)) return false;
@@ -74,18 +87,50 @@ const filteredItems = computed(() => {
   return list;
 });
 
-const previewDef = computed(() => {
+const previewTemplate = computed(() => {
   if (!previewId.value) return null;
   return itemsStore.catalogById[previewId.value] ?? null;
 });
 
 const className = computed(() => getCharacterInstance()?.className ?? null);
 
+const eligibleBases = computed(() => {
+  const template = previewTemplate.value;
+  if (!isRunewordTemplate(template)) return [];
+  const sel = selectedSlot.value;
+  const equipSlot = sel?.location === 'equipment' ? String(sel.slot) : '';
+  return listEligibleRunewordBases(template, itemsStore.catalog, {
+    equipSlot: equipSlot || null,
+    canEquipInSlot: equipSlot ? canEquipInSlot : undefined,
+  });
+});
+
+const filteredBases = computed(() => {
+  const q = baseSearch.value.trim().toLowerCase();
+  if (!q) return eligibleBases.value;
+  return eligibleBases.value.filter((base) =>
+    String(base.name || '')
+      .toLowerCase()
+      .includes(q)
+  );
+});
+
+const previewDef = computed(() => {
+  const template = previewTemplate.value;
+  if (!template) return null;
+  if (isRunewordTemplate(template) && selectedBaseId.value) {
+    const base = itemsStore.catalogById[selectedBaseId.value];
+    return mergeRunewordWithBase(template, base) || template;
+  }
+  return template;
+});
+
 const canEquipPreview = computed(() => {
   const def = previewDef.value;
   const sel = selectedSlot.value;
   if (!def || !sel) return false;
   if (isRelicItem(def) || isCharmItem(def)) return false;
+  if (isRunewordTemplate(previewTemplate.value) && !selectedBaseId.value) return false;
   if (sel.location === 'equipment') {
     return canEquipInSlot(def, String(sel.slot), className.value);
   }
@@ -115,6 +160,21 @@ watch(filteredItems, (list) => {
   if (!list.some((d) => d.id === previewId.value)) {
     previewId.value = null;
     rolls.value = {};
+    selectedBaseId.value = null;
+    baseSearch.value = '';
+  }
+});
+
+watch([previewId, eligibleBases], () => {
+  const template = previewTemplate.value;
+  if (!isRunewordTemplate(template)) {
+    selectedBaseId.value = null;
+    baseSearch.value = '';
+    return;
+  }
+  const bases = eligibleBases.value;
+  if (!selectedBaseId.value || !bases.some((b) => b.id === selectedBaseId.value)) {
+    selectedBaseId.value = bases[0]?.id ?? null;
   }
 });
 
@@ -134,6 +194,7 @@ const slotTitle = computed(() => {
  * @returns {string}
  */
 function rowSubtitle(item) {
+  if (isRunewordTemplate(item)) return formatRunewordRecipe(item);
   const parts = [];
   if (item.baseName) parts.push(item.baseName);
   const badge = formatOverlayBadge(item.uniqueKind, item.tier);
@@ -164,19 +225,39 @@ function setRoll(key, min, max, raw) {
  * @param {string} [defId]
  */
 function onEquip(defId) {
-  const id = typeof defId === 'string' ? defId : previewId.value;
-  if (!id) return;
+  const pickedId = typeof defId === 'string' ? defId : previewId.value;
+  if (!pickedId) return;
+  const picked = itemsStore.catalogById[pickedId];
+  if (!picked) return;
+  let id = pickedId;
+  if (isRunewordTemplate(picked)) {
+    const sel = selectedSlot.value;
+    const equipSlot = sel?.location === 'equipment' ? String(sel.slot) : '';
+    const bases = listEligibleRunewordBases(picked, itemsStore.catalog, {
+      equipSlot: equipSlot || null,
+      canEquipInSlot: equipSlot ? canEquipInSlot : undefined,
+    });
+    const baseId =
+      pickedId === previewId.value && selectedBaseId.value
+        ? selectedBaseId.value
+        : bases[0]?.id;
+    if (!baseId) return;
+    const mergedId = itemsStore.ensureRunewordDef(pickedId, baseId);
+    if (!mergedId) return;
+    id = mergedId;
+  }
   const def = itemsStore.catalogById[id];
   if (!def) return;
   const sel = selectedSlot.value;
   if (sel?.location === 'equipment' && !canEquipInSlot(def, String(sel.slot), className.value)) {
     return;
   }
-  const nextRolls =
-    previewId.value === id && Object.keys(rolls.value).length
-      ? mergeRollsForDef(def, rolls.value, rollOptions.value)
-      : mergeRollsForDef(def, null, rollOptions.value);
-  previewId.value = id;
+  const nextRolls = mergeRollsForDef(
+    def,
+    previewId.value === pickedId ? rolls.value : null,
+    rollOptions.value
+  );
+  previewId.value = pickedId;
   rolls.value = nextRolls;
   itemsStore.equipFromPicker(id, nextRolls);
 }
@@ -285,6 +366,35 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown));
           </div>
 
           <aside class="item-picker-modal__detail" aria-label="Item stats">
+            <div
+              v-if="isRunewordTemplate(previewTemplate)"
+              class="item-picker-modal__base-picker"
+            >
+              <label class="item-picker-modal__base-picker-label" for="runewordBaseSearch">
+                Base item
+              </label>
+              <input
+                id="runewordBaseSearch"
+                v-model="baseSearch"
+                class="input is-small"
+                type="search"
+                placeholder="Filter bases..."
+                autocomplete="off"
+                spellcheck="false"
+              />
+              <select
+                v-model="selectedBaseId"
+                class="item-picker-modal__base-select"
+                aria-label="Runeword base"
+              >
+                <option v-if="filteredBases.length === 0" :value="null" disabled>
+                  No compatible bases
+                </option>
+                <option v-for="base in filteredBases" :key="base.id" :value="base.id">
+                  {{ base.name }} ({{ base.sockets || 0 }} sock)
+                </option>
+              </select>
+            </div>
             <ItemDetailPanel
               :def="previewDef"
               :rolls="rolls"

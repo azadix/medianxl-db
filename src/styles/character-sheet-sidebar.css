@@ -1612,6 +1612,30 @@
   background: hsl(0, 0%, 14%);
 }
 
+.item-picker-modal__base-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 0.85rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid hsl(0, 0%, 24%);
+}
+
+.item-picker-modal__base-picker-label {
+  font-size: 0.75rem;
+  color: hsl(0, 0%, 70%);
+}
+
+.item-picker-modal__base-select {
+  width: 100%;
+  min-height: 2rem;
+  padding: 0.25rem 0.4rem;
+  background: hsl(0, 0%, 10%);
+  color: hsl(0, 0%, 90%);
+  border: 1px solid hsl(0, 0%, 28%);
+  border-radius: 4px;
+}
+
 .item-picker-modal__detail-preview {
   min-width: 0;
 }

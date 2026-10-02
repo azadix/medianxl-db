@@ -34,6 +34,13 @@ import {
   resolveSetBonuses,
 } from '@/items/item-overlays.js';
 import { buildCatalogFromUniqueStats, resolveCatalogDefId } from '@/items/unique-stats-catalog.js';
+import {
+  isRunewordTemplate,
+  mergeRunewordWithBase,
+  parseRunewordInstanceId,
+  runewordEntryToItemDef,
+  runewordFitsEquipSlot,
+} from '@/items/runeword-items.js';
 
 /**
  * @typedef {{ location: 'equipment'|'inventory'|'charms'|'relics', slot: string|number }} SlotRef
@@ -122,6 +129,11 @@ export const useItemsStore = defineStore('items', {
     catalogLoaded: false,
     /** Version folder the catalog was fetched for, e.g. `"2_14"`. */
     catalogVersionFolder: /** @type {string|null} */ (null),
+    /**
+     * Merged runeword defs (`rw:name:baseId`) created at equip/load time.
+     * @type {ItemDef[]}
+     */
+    runtimeOverlayDefs: [],
     /** @type {Record<number, ItemInstance>} */
     instances: {},
     nextInstanceId: 1,
@@ -197,6 +209,9 @@ export const useItemsStore = defineStore('items', {
           if (alias.endsWith(':tu') && map[alias] == null) map[alias] = d;
         }
       }
+      for (const d of state.runtimeOverlayDefs) {
+        if (d?.id) map[d.id] = d;
+      }
       return map;
     },
 
@@ -237,7 +252,13 @@ export const useItemsStore = defineStore('items', {
       if (!sel) return this.catalog;
       if (sel.location === 'equipment') {
         // List every item that fits the slot. Class restrictions only block Add/equip.
-        return this.catalog.filter((d) => canEquipInSlot(d, String(sel.slot)));
+        const slot = String(sel.slot);
+        return this.catalog.filter((d) => {
+          if (isRunewordTemplate(d)) {
+            return runewordFitsEquipSlot(d, slot, this.catalog, undefined, canEquipInSlot);
+          }
+          return canEquipInSlot(d, slot);
+        });
       }
       if (sel.location === 'inventory') {
         // Charms/relics use dedicated enable lists — not the inventory grid.
@@ -298,7 +319,7 @@ export const useItemsStore = defineStore('items', {
       const versionFolder = versionToTreeAssetFolder(getCurrentVersion());
       if (this.catalogLoaded && this.catalogVersionFolder === versionFolder) return;
       const required = ['baseitems.json', 'charms.json', 'other.json'];
-      const optional = ['relics.json', 'unique-stats-db.json'];
+      const optional = ['relics.json', 'unique-stats-db.json', 'runewords.json'];
       try {
         const requiredRes = await Promise.all(
           required.map((file) => fetch(getAssetUrl(`items/${versionFolder}/${file}`)))
@@ -336,6 +357,8 @@ export const useItemsStore = defineStore('items', {
         let overlays = [];
         /** @type {SetDef[]} */
         let sets = [];
+        /** @type {ItemDef[]} */
+        let runewords = [];
         if (optionalRes[0]?.ok) {
           const data = await optionalRes[0].json();
           relics = (Array.isArray(data) ? data : []).map((/** @type {ItemDef} */ r) => ({
@@ -357,15 +380,22 @@ export const useItemsStore = defineStore('items', {
           overlays = built.items;
           sets = built.sets;
         }
+        if (optionalRes[2]?.ok) {
+          const data = await optionalRes[2].json();
+          const entries = Array.isArray(data) ? data : data.entries || [];
+          runewords = entries.map(runewordEntryToItemDef).filter(Boolean);
+        }
 
-        this.catalog = [...baseItems, ...charms, ...other, ...overlays, ...relics];
+        this.catalog = [...baseItems, ...charms, ...other, ...overlays, ...relics, ...runewords];
         this.sets = sets;
+        this.runtimeOverlayDefs = [];
         this.catalogVersionFolder = versionFolder;
         this.catalogLoaded = true;
       } catch (e) {
         console.error('Failed to load item catalog', e);
         this.catalog = [];
         this.sets = [];
+        this.runtimeOverlayDefs = [];
         this.catalogVersionFolder = versionFolder;
         this.catalogLoaded = true;
       }
@@ -457,6 +487,22 @@ export const useItemsStore = defineStore('items', {
       }
       this.instances[id] = inst;
       return id;
+    },
+
+    /**
+     * Merge a runeword template with a base and cache the runtime def.
+     * @param {string} templateId
+     * @param {string} baseId
+     * @returns {string|null}
+     */
+    ensureRunewordDef(templateId, baseId) {
+      if (!templateId || !baseId) return null;
+      const id = `${templateId}:${baseId}`;
+      if (this.catalogById[id]) return id;
+      const merged = mergeRunewordWithBase(this.catalogById[templateId], this.catalogById[baseId]);
+      if (!merged) return null;
+      this.runtimeOverlayDefs = [...this.runtimeOverlayDefs, merged];
+      return merged.id;
     },
 
     /**
@@ -1168,6 +1214,13 @@ export const useItemsStore = defineStore('items', {
         }
         if (typeof defId !== 'string') return null;
         defId = resolveCatalogDefId(defId, this.catalogById);
+        if (!this.catalogById[defId]) {
+          const parsed = parseRunewordInstanceId(defId);
+          if (parsed) {
+            const ensured = this.ensureRunewordDef(parsed.templateId, parsed.baseId);
+            if (ensured) defId = ensured;
+          }
+        }
         /** @type {Record<string, number>|null} */
         let rolls = null;
         if (rollsRaw && typeof rollsRaw === 'object' && !Array.isArray(rollsRaw)) {

@@ -144,6 +144,13 @@ describe('item procs', () => {
           baseType: 'Amazon Spears',
           modifiers: ['5% Chance to cast level 15 Amplify Damage on Striking'],
         },
+        {
+          id: 'rw:shark',
+          name: 'Shark',
+          rarity: 'runeword',
+          uniqueKind: 'runeword',
+          modifiers: ['5% Chance to cast level 9 Bloodlust on Kill'],
+        },
       ],
       [
         {
@@ -159,11 +166,9 @@ describe('item procs', () => {
       ]
     );
 
-    expect(rows.map((r) => r.skillId).sort()).toEqual([
-      'abyss',
-      'amplify_damage',
-      'ancients_hand',
-    ].sort());
+    expect(rows.map((r) => r.skillId).sort()).toEqual(
+      ['abyss', 'amplify_damage', 'ancients_hand', 'bloodlust'].sort()
+    );
 
     const abyss = rows.find((r) => r.skillId === 'abyss');
     expect(abyss).toMatchObject({
@@ -183,6 +188,16 @@ describe('item procs', () => {
       setRequired: 'complete',
       sourceLabel: 'Set bonus: Tundra Walker (complete)',
       sourceRarity: 'set',
+    });
+
+    const shark = rows.find((r) => r.itemDefId === 'rw:shark');
+    expect(shark).toMatchObject({
+      skillId: 'bloodlust',
+      chance: 5,
+      level: 9,
+      condition: 'on Kill',
+      sourceLabel: 'Shark',
+      sourceRarity: 'runeword',
     });
   });
 

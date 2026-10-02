@@ -108,4 +108,19 @@ describe('matchesItemPickerSearch', () => {
     expect(matchesItemPickerSearch(nutcracker, 't4')).toBe(true);
     expect(matchesItemPickerSearch(nutcracker, 'bow')).toBe(false);
   });
+
+  it('matches runewords by rune code and rune names', () => {
+    const hive = {
+      name: 'Hive',
+      id: 'rw:hive',
+      rarity: 'runeword',
+      uniqueKind: 'runeword',
+      runeCode: 'BerBerIst',
+      runes: ['Ber', 'Ber', 'Ist'],
+    };
+    expect(matchesItemPickerSearch(hive, 'berberist')).toBe(true);
+    expect(matchesItemPickerSearch(hive, 'ber')).toBe(true);
+    expect(matchesItemPickerSearch(hive, 'rw')).toBe(true);
+    expect(matchesItemPickerSearch(hive, 'bow')).toBe(false);
+  });
 });

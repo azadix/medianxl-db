@@ -1,0 +1,6204 @@
+{
+  "generatedAt": "2026-10-02T19:35:16.697Z",
+  "entries": [
+    {
+      "id": "rw:a-perfect-storm",
+      "name": "A Perfect Storm",
+      "runeCode": "TuulUrtFul",
+      "runes": [
+        "Tuul",
+        "Urt",
+        "Ful"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Amazon Shields"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+(3 to 4) to Amazon Skill Levels",
+        "1% Base Block Chance",
+        "+(40 to 60) Spell Focus",
+        "40% Block Speed",
+        "40% Hit Recovery",
+        "+(30 to 40)% to Lightning Spell Damage",
+        "-(20 to 25)% to Enemy Lightning Resistance",
+        "+(10 to 16) to Overcharged",
+        "+(121 to 150)% Enhanced Defense",
+        "(10 to 15)% to Energy",
+        "Maximum Lightning Resist +1%",
+        "Maximum Cold Resist +1%",
+        "Lightning Resist +45%",
+        "Cold Resist +45%",
+        "Lightning Absorb 1%",
+        "Physical Resist 5%"
+      ]
+    },
+    {
+      "id": "rw:acokanthera",
+      "name": "Acokanthera",
+      "runeCode": "IstVenShaen",
+      "runes": [
+        "Ist",
+        "Ven",
+        "Shaen"
+      ],
+      "reqLevel": 105,
+      "allowedTypes": [
+        "Druid Staves"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+(7 to 9) to Druid Skill Levels",
+        "9% Chance to cast level 1 Corrupted Vines on Death Blow",
+        "+20% Bonus to Poison Skill Duration",
+        "25% Hit Recovery",
+        "Ignore Target's Defense",
+        "-(32 to 37)% to Enemy Poison Resistance",
+        "50% Chance of Crushing Blow",
+        "+(30 to 40)% to Summon Life",
+        "+(1000 to 2000) Defense",
+        "+(3 to 5) Life on Striking",
+        "(25 to 40)% Magic Find"
+      ]
+    },
+    {
+      "id": "rw:aconitum",
+      "name": "Aconitum",
+      "runeCode": "VenGhalUrt",
+      "runes": [
+        "Ven",
+        "Ghal",
+        "Urt"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Druid Helms"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "When Equipped with Acokanthera: +1 Second Duration to Devouring Cloud",
+        "+(4 to 5) to Druid Skill Levels",
+        "+15 Spell Focus",
+        "-10% to Enemy Poison Resistance",
+        "+(30 to 40)% to Summon Life",
+        "+(10 to 20)% to Summon Elemental Resistances",
+        "+(120 to 150)% Enhanced Defense",
+        "Lightning Resist +35%",
+        "Physical Resist 5%",
+        "(15 to 30)% Magic Find"
+      ]
+    },
+    {
+      "id": "rw:aes-dana",
+      "name": "Aes Dana",
+      "runeCode": "SurUmOhm",
+      "runes": [
+        "Sur",
+        "Um",
+        "Ohm"
+      ],
+      "reqLevel": 75,
+      "allowedTypes": [
+        "Staves"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+(6 to 7) to Druid Skill Levels",
+        "45% Hit Recovery",
+        "+(30 to 40)% to Poison Spell Damage",
+        "-10% to Enemy Poison Resistance",
+        "+(50 to 60)% to Summon Life",
+        "+(70 to 80)% to Summon Damage",
+        "+50% to Summon Elemental Resistances",
+        "+(100 to 200) to Life",
+        "Maximum Mana +40%",
+        "Regenerate Mana +15%",
+        "Elemental Resists +60%"
+      ]
+    },
+    {
+      "id": "rw:aether",
+      "name": "Aether",
+      "runeCode": "JahDolDol",
+      "runes": [
+        "Jah",
+        "Dol",
+        "Dol"
+      ],
+      "reqLevel": 80,
+      "allowedTypes": [
+        "Necromancer Crossbows"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "20% Attack Speed",
+        "Ignore Target's Defense",
+        "Adds (80 to 120)-(160 to 180) Magic Damage",
+        "+(95 to 125)% Enhanced Damage",
+        "+20% to Summon Life",
+        "(21 to 25)% to Strength",
+        "10% Chance to Avoid Damage",
+        "-(10 to 15)% Mana Cost of Skills"
+      ]
+    },
+    {
+      "id": "rw:ahriman",
+      "name": "Ahriman",
+      "runeCode": "VezGhal",
+      "runes": [
+        "Vez",
+        "Ghal"
+      ],
+      "reqLevel": 115,
+      "allowedTypes": [
+        "Belts"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+1 to All Skills",
+        "+15 Spell Focus",
+        "10% Cast Speed",
+        "Adds 100-300 Fire Damage",
+        "Adds 100-300 Lightning Damage",
+        "Adds 100-300 Cold Damage",
+        "+(31 to 50) to all Attributes",
+        "Maximum Elemental Resists +1%",
+        "Elemental Resists +(31 to 40)%",
+        "Requirements +10%"
+      ]
+    },
+    {
+      "id": "rw:aiwass",
+      "name": "Aiwass",
+      "runeCode": "ZodKa",
+      "runes": [
+        "Zod",
+        "Ka"
+      ],
+      "reqLevel": 105,
+      "allowedTypes": [
+        "Gloves"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+20% Nightwalker damage bonus",
+        "+3 to Necromancer Skill Levels",
+        "+(66 to 99) Spell Focus",
+        "+293 Defense",
+        "(21 to 35)% to Strength",
+        "+(1 to 100) to Life",
+        "Regenerate Mana +(5 to 10)%",
+        "Maximum Elemental Resists +1%",
+        "+15 Life after each Kill"
+      ]
+    },
+    {
+      "id": "rw:algiz",
+      "name": "Algiz",
+      "runeCode": "ThulEth",
+      "runes": [
+        "Thul",
+        "Eth"
+      ],
+      "reqLevel": 28,
+      "allowedTypes": [
+        "Barbarian Helms"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "10% Combat Speeds",
+        "+3% to Cold Spell Damage",
+        "-3% to Poison Spell Damage",
+        "3% Chance of Crushing Blow",
+        "+(40 to 60)% Enhanced Defense",
+        "+15 to Dexterity",
+        "Fire Resist +(3 to 10)%",
+        "Cold Resist +25%",
+        "Poison Resist +(3 to 10)%",
+        "(11 to 15)% Bonus to Defense",
+        "(4 to 9)% Gold Find"
+      ]
+    },
+    {
+      "id": "rw:amanita",
+      "name": "Amanita",
+      "runeCode": "VenAmn",
+      "runes": [
+        "Ven",
+        "Amn"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Helms"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "3% Chance to cast level 1 Time Wave on Melee Attack",
+        "+(200 to 300) to Attack Rating",
+        "-(21 to 25)% to Enemy Poison Resistance",
+        "+(2 to 5) to Amatoxin",
+        "(3 to 5)% Chance of Crushing Blow",
+        "Attacker Flees after Striking 20%",
+        "+(115 to 143)% Enhanced Defense",
+        "+(30 to 50) to Vitality",
+        "Poison Resist +25%"
+      ]
+    },
+    {
+      "id": "rw:amok",
+      "name": "Amok",
+      "runeCode": "GurUmBer",
+      "runes": [
+        "Gur",
+        "Um",
+        "Ber"
+      ],
+      "reqLevel": 115,
+      "allowedTypes": [
+        "Bows"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "3% Chance to cast level 17 Gift of Inner Fire on Kill",
+        "110% Attack Speed",
+        "-25% to Enemy Lightning Resistance",
+        "+200% Enhanced Damage",
+        "-25% to Enemy Cold Resistance",
+        "+(34 to 39) to Tantrum",
+        "Slow Target (5 to 10)%",
+        "Elemental Resists +10%",
+        "+5 Life on Striking"
+      ]
+    },
+    {
+      "id": "rw:anak",
+      "name": "Anak",
+      "runeCode": "HelEldBer",
+      "runes": [
+        "Hel",
+        "Eld",
+        "Ber"
+      ],
+      "reqLevel": 78,
+      "allowedTypes": [
+        "Barbarian Swords",
+        "Barbarian One-Handed Axes"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "30% Attack Speed",
+        "Adds (20 to 40)-45 Damage",
+        "Adds 100-200 Lightning Damage",
+        "-15% to Enemy Lightning Resistance",
+        "+(171 to 200)% Enhanced Damage",
+        "Slow Target (10 to 15)%",
+        "Lightning Resist +(66 to 75)%",
+        "+50 Life on Melee Attack",
+        "(3 to 7)% Gold Find"
+      ]
+    },
+    {
+      "id": "rw:anarchy",
+      "name": "Anarchy",
+      "runeCode": "SolCham",
+      "runes": [
+        "Sol",
+        "Cham"
+      ],
+      "reqLevel": 83,
+      "allowedTypes": [
+        "Assassin Claws"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+(3 to 4) to Assassin Skill Levels",
+        "40% Cast Speed",
+        "+(21 to 25)% to Fire Spell Damage",
+        "+(21 to 25)% to Lightning Spell Damage",
+        "Maximum Life +5%",
+        "+(61 to 75) to Mana",
+        "Maximum Mana +20%",
+        "+(26 to 30) Mana after each Kill"
+      ]
+    },
+    {
+      "id": "rw:angelic-touch",
+      "name": "Angelic Touch",
+      "runeCode": "YhamIah",
+      "runes": [
+        "Yham",
+        "Iah"
+      ],
+      "reqLevel": 120,
+      "allowedTypes": [
+        "Belts"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+1000 Life Regenerated per Second While Under 7000 Life",
+        "(3 to 5)% Life stolen per Hit",
+        "(3 to 5)% Deadly Strike",
+        "+(205 to 225)% Enhanced Defense",
+        "+5000 Defense",
+        "(25 to 30)% to Strength",
+        "Maximum Life and Mana +(7 to 9)%"
+      ]
+    },
+    {
+      "id": "rw:antediluvian",
+      "name": "Antediluvian",
+      "runeCode": "XithXod",
+      "runes": [
+        "Xith",
+        "Xod"
+      ],
+      "reqLevel": 120,
+      "allowedTypes": [
+        "Barbarian One-Handed Axes"
+      ],
+      "excludedTypes": [
+        "Barbarian Two-Handed Axes"
+      ],
+      "excludedNames": [],
+      "modifiers": [
+        "+2.5% Innate Elemental Damage per Wolf Stance Base Level",
+        "+1 to All Skills",
+        "20% Base Block Chance",
+        "Adds 1200-1550 Fire Damage",
+        "-50% to Enemy Fire Resistance",
+        "100% to Strength",
+        "Maximum Block Chance -20%",
+        "Physical Resist (15 to 20)%"
+      ]
+    },
+    {
+      "id": "rw:apostasy",
+      "name": "Apostasy",
+      "runeCode": "GhalGhalArc",
+      "runes": [
+        "Ghal",
+        "Ghal",
+        "Arc"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Scepters"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+(3 to 4) to All Skills",
+        "+50 Spell Focus",
+        "+(8 to 11)% Bonus to Spell Focus",
+        "50% Cast Speed",
+        "+(21 to 25)% to Fire Spell Damage",
+        "+(21 to 25)% to Cold Spell Damage",
+        "+(28 to 32) to Frozen Crown",
+        "+(28 to 32) to Pyroblast",
+        "(21 to 30)% Bonus to Defense"
+      ]
+    },
+    {
+      "id": "rw:arcane-protection",
+      "name": "Arcane Protection",
+      "runeCode": "ArcSur",
+      "runes": [
+        "Arc",
+        "Sur"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Circlets"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "Psicrown Now Explodes Upon Impact",
+        "+(1 to 2) to All Skills",
+        "+(5 to 10)% Bonus to Spell Focus",
+        "+(15 to 20)% to Spell Damage",
+        "+(6 to 9) to Psicrown",
+        "+(400 to 600) Defense",
+        "Regenerate Mana +(20 to 25)%",
+        "Physical Resist (5 to 10)%",
+        "Elemental/Magic Damage Taken Reduced by (15 to 25)",
+        "+(20 to 30) Life and Mana after each Kill",
+        "(20 to 30)% Magic Find"
+      ]
+    },
+    {
+      "id": "rw:artemesias-authority",
+      "name": "Artemesia's Authority",
+      "runeCode": "LozFulQor",
+      "runes": [
+        "Loz",
+        "Ful",
+        "Qor"
+      ],
+      "reqLevel": 115,
+      "allowedTypes": [
+        "Scepters"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+4-5 Damage per Hammer of Zerae Base Level",
+        "+2 to Amazon Skill Levels",
+        "20% Block Speed",
+        "40% Hit Recovery",
+        "Adds 125-150 Damage",
+        "-(22 to 27)% to Enemy Lightning Resistance",
+        "+(171 to 200)% Enhanced Damage",
+        "3% Deadly Strike",
+        "+4% to Summon Physical Resist",
+        "+250 to Life",
+        "Physical Resist 5%",
+        "+(1 to 2) Life on Striking"
+      ]
+    },
+    {
+      "id": "rw:askari-device",
+      "name": "Askari Device",
+      "runeCode": "TahaYst",
+      "runes": [
+        "Taha",
+        "Yst"
+      ],
+      "reqLevel": 110,
+      "allowedTypes": [
+        "Amazon Javelins"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "Innate Tri-Elemental Damage: (40.0% of Dexterity)",
+        "+4 to Amazon Skill Levels",
+        "8% Chance to cast level 27 Javelin Nova on Kill",
+        "40% Attack Speed",
+        "+75 Damage",
+        "Adds 300-500 Fire Damage",
+        "Adds 300-500 Lightning Damage",
+        "Adds 300-500 Cold Damage",
+        "(15 to 20)% Innate Elemental Damage",
+        "-(31 to 36)% to Enemy Elemental Resistances",
+        "+200 to Life",
+        "Maximum Elemental Resists +1%",
+        "(40 to 50)% Magic Find"
+      ]
+    },
+    {
+      "id": "rw:atlacamani",
+      "name": "Atlacamani",
+      "runeCode": "VexIstUm",
+      "runes": [
+        "Vex",
+        "Ist",
+        "Um"
+      ],
+      "reqLevel": 68,
+      "allowedTypes": [
+        "Scythes"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "Innate Tri-Elemental Damage: (52.0% of Dexterity)",
+        "75% Attack Speed",
+        "15% Cast Speed",
+        "Adds 250-350 Magic Damage",
+        "+(138 to 154)% Enhanced Damage",
+        "+(7 to 9) to Medusa",
+        "(3 to 5)% Chance of Crushing Blow",
+        "+(41 to 60) to Strength",
+        "+(41 to 60) to Dexterity",
+        "Elemental Resists +10%",
+        "-(15 to 20)% Mana Cost of Skills",
+        "10% Magic Find"
+      ]
+    },
+    {
+      "id": "rw:atlantis",
+      "name": "Atlantis",
+      "runeCode": "FalKo",
+      "runes": [
+        "Fal",
+        "Ko"
+      ],
+      "reqLevel": 50,
+      "allowedTypes": [
+        "Necromancer Crossbows"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "15% Chance to cast level 10 Arcane Torrent on Kill",
+        "+(58 to 86)% Enhanced Damage",
+        "Weapon Physical Damage +(40 to 60)%",
+        "+(25 to 30) to Strength",
+        "(6 to 10)% to Strength",
+        "+(25 to 30) to Dexterity",
+        "(6 to 10)% to Dexterity",
+        "+(300 to 500) to Mana",
+        "Maximum Mana +(21 to 25)%",
+        "(13 to 19)% Gold Find"
+      ]
+    },
+    {
+      "id": "rw:avatar",
+      "name": "Avatar",
+      "runeCode": "IgnFulGla",
+      "runes": [
+        "Ign",
+        "Ful",
+        "Gla"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Shields"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+1 to All Skills",
+        "45% Cast Speed",
+        "45% Hit Recovery",
+        "-(27 to 30)% to Enemy Fire Resistance",
+        "-(27 to 30)% to Enemy Lightning Resistance",
+        "-(27 to 30)% to Enemy Cold Resistance",
+        "+(172 to 200)% Enhanced Defense",
+        "Fire Absorb 3%",
+        "Lightning Absorb 3%",
+        "Cold Absorb 3%",
+        "(16 to 25)% Magic Find",
+        "Requirements +25%"
+      ]
+    },
+    {
+      "id": "rw:battle-rage",
+      "name": "Battle Rage",
+      "runeCode": "SilZurRal",
+      "runes": [
+        "Sil",
+        "Zur",
+        "Ral"
+      ],
+      "reqLevel": 115,
+      "allowedTypes": [
+        "Paladin Helms"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+1 to Paladin Skill Levels",
+        "25% Attack Speed",
+        "Adds 46-71 Damage",
+        "(10 to 20)% Life stolen per Hit",
+        "+(171 to 200)% Enhanced Defense",
+        "Regenerate Mana +14%",
+        "Maximum Fire Resist +2%",
+        "Elemental Resists +(20 to 25)%",
+        "Physical Resist 10%"
+      ]
+    },
+    {
+      "id": "rw:black-cat",
+      "name": "Black Cat",
+      "runeCode": "ElTir",
+      "runes": [
+        "El",
+        "Tir"
+      ],
+      "reqLevel": 10,
+      "allowedTypes": [
+        "Necromancer Scythes"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "10% Chance to cast level 3 Seal of Fire on Melee Attack",
+        "25% Chance to cast level 40 Punishers on Kill",
+        "20% Attack Speed",
+        "75% Bonus to Attack Rating",
+        "Adds 8-12 Fire Damage",
+        "+(30 to 57)% Enhanced Damage",
+        "(3 to 5)% Chance of Crushing Blow",
+        "+5 to all Attributes",
+        "+7 to Life"
+      ]
+    },
+    {
+      "id": "rw:blazing-armament",
+      "name": "Blazing Armament",
+      "runeCode": "IgnGhalOhn",
+      "runes": [
+        "Ign",
+        "Ghal",
+        "Ohn"
+      ],
+      "reqLevel": 115,
+      "allowedTypes": [
+        "Body Armors"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+25 Defense per 1% Fire Spell Damage",
+        "+2 to All Skills",
+        "2% Chance to cast level 59 Fire Cannonade on Death Blow",
+        "+(80 to 100) Spell Focus",
+        "70% Hit Recovery",
+        "+(1 to 15)% to Fire Spell Damage",
+        "-30% to Enemy Fire Resistance",
+        "+(250 to 350) to Life",
+        "Maximum Fire Resist +4%",
+        "(15 to 25)% Bonus to Defense",
+        "+(3 to 5) to Light Radius"
+      ]
+    },
+    {
+      "id": "rw:blitzen",
+      "name": "Blitzen",
+      "runeCode": "OrtFal",
+      "runes": [
+        "Ort",
+        "Fal"
+      ],
+      "reqLevel": 50,
+      "allowedTypes": [
+        "Bows"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "Up to Level 100: +2-4 Lightning Damage per Character Level",
+        "Above Level 100: +6-12 Lightning Damage per Character Level",
+        "2% Chance to cast level 3 Life Spark on Striking",
+        "10% Attack Speed",
+        "-15% to Enemy Lightning Resistance",
+        "+(6 to 9) to Tantrum",
+        "5% to Dexterity",
+        "Lightning Resist +30%",
+        "+(20 to 40) Life after each Kill"
+      ]
+    },
+    {
+      "id": "rw:bogspitter",
+      "name": "Bogspitter",
+      "runeCode": "BerUm",
+      "runes": [
+        "Ber",
+        "Um"
+      ],
+      "reqLevel": 78,
+      "allowedTypes": [
+        "Helms"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+1 to All Skills",
+        "20% Chance to cast level 11 Miasma on Melee Attack",
+        "Adds 60-179 Poison Damage over 1 seconds",
+        "Slows Attacker by (10 to 15)%",
+        "+(115 to 143)% Enhanced Defense",
+        "Elemental Resists +10%"
+      ]
+    },
+    {
+      "id": "rw:bona-dea",
+      "name": "Bona Dea",
+      "runeCode": "TalPul",
+      "runes": [
+        "Tal",
+        "Pul"
+      ],
+      "reqLevel": 55,
+      "allowedTypes": [
+        "Amazon Helms"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "40% Cast Speed",
+        "0.5% to Lightning Spell Damage (Based on Character Level)",
+        "-(16 to 20)% to Enemy Lightning Resistance",
+        "0.5% to Cold Spell Damage (Based on Character Level)",
+        "-(16 to 20)% to Enemy Cold Resistance",
+        "+(9 to 11) to Hailstorm",
+        "+(9 to 11) to Electrobolt",
+        "5% to Energy",
+        "Lightning Resist +25%",
+        "Cold Resist +25%"
+      ]
+    },
+    {
+      "id": "rw:bone-dart",
+      "name": "Bone Dart",
+      "runeCode": "HelSurHel",
+      "runes": [
+        "Hel",
+        "Sur",
+        "Hel"
+      ],
+      "reqLevel": 75,
+      "allowedTypes": [
+        "Necromancer Crossbows"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "5% Chance to cast level 1 Catapult Shot on Kill",
+        "Additional Dexterity Damage Bonus: 0.0390625%",
+        "40% Attack Speed",
+        "+40 Damage",
+        "(40 to 60)% Bonus to Attack Rating",
+        "-(15 to 20)% to Enemy Fire Resistance",
+        "+(180 to 200)% Enhanced Damage",
+        "+10% to Summon Damage",
+        "Regenerate Mana +15%",
+        "-15% Mana Cost of Skills",
+        "(20 to 40)% Gold Find"
+      ]
+    },
+    {
+      "id": "rw:brahman",
+      "name": "Brahman",
+      "runeCode": "JahKo",
+      "runes": [
+        "Jah",
+        "Ko"
+      ],
+      "reqLevel": 80,
+      "allowedTypes": [
+        "Paladin Clubs",
+        "Paladin Maces",
+        "Paladin Hammers"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+1 to passive Bear Stance",
+        "20% Attack Speed",
+        "100% Hit Recovery",
+        "Adds 44-55 Damage",
+        "+(159 to 186)% Enhanced Damage",
+        "+(3 to 5) to Mountain King",
+        "+1000 Defense",
+        "5% to Strength",
+        "(30 to 40)% Gold Find"
+      ]
+    },
+    {
+      "id": "rw:brawl",
+      "name": "Brawl",
+      "runeCode": "ShaelEld",
+      "runes": [
+        "Shael",
+        "Eld"
+      ],
+      "reqLevel": 35,
+      "allowedTypes": [
+        "Gloves"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "7% Chance to cast level 14 Punishers on Melee Attack",
+        "+10% Bonus to Poison Skill Duration",
+        "15% Attack Speed",
+        "+(10 to 13) to Maximum Damage",
+        "+(25 to 35) Defense",
+        "+(5 to 15) to Strength",
+        "(11 to 15)% to Vitality"
+      ]
+    },
+    {
+      "id": "rw:burning-contagion",
+      "name": "Burning Contagion",
+      "runeCode": "VenIgnVexTyr",
+      "runes": [
+        "Ven",
+        "Ign",
+        "Vex",
+        "Tyr"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Staves"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "classRestriction": "Sorceress Only",
+      "modifiers": [
+        "12% Chance to cast Level 42 Flamefront on Death Blow when Below 80% Life",
+        "+(8 to 10) to Sorceress Skill Levels",
+        "+(40 to 50) Spell Focus",
+        "40% Cast Speed",
+        "-(42 to 52)% to Enemy Fire Resistance",
+        "+(50 to 60)% to Poison Spell Damage",
+        "Physical Resist 5%",
+        "(25 to 35)% Magic Find"
+      ]
+    },
+    {
+      "id": "rw:cambion",
+      "name": "Cambion",
+      "runeCode": "RalSur",
+      "runes": [
+        "Ral",
+        "Sur"
+      ],
+      "reqLevel": 75,
+      "allowedTypes": [
+        "Amazon Helms"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+2 to Amazon Skill Levels",
+        "+(32 to 37) to Orb of Annihilation",
+        "Maximum Mana +(4 to 7)%",
+        "Regenerate Mana +(15 to 20)%",
+        "Fire Resist +25%",
+        "Fire Absorb 2%",
+        "Lightning Absorb 2%",
+        "Cold Absorb 2%",
+        "Poison Length Reduction 50%",
+        "Elemental/Magic Damage Taken Reduced by (5 to 10)",
+        "+(21 to 30) Life after each Kill"
+      ]
+    },
+    {
+      "id": "rw:cecaelia",
+      "name": "Cecaelia",
+      "runeCode": "TahaIgnFulGlaVenSil",
+      "runes": [
+        "Taha",
+        "Ign",
+        "Ful",
+        "Gla",
+        "Ven",
+        "Sil"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Amazon Bows"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "50% Attack Speed",
+        "+175 Damage",
+        "+500 Fire Damage",
+        "+500 Lightning Damage",
+        "+500 Cold Damage",
+        "-18% to Enemy Elemental Resistances",
+        "(3 to 5)% Chance of Crushing Blow",
+        "Slow Target (21 to 25)%",
+        "+50 to Dexterity",
+        "+100 to Vitality"
+      ]
+    },
+    {
+      "id": "rw:cerberus",
+      "name": "Cerberus",
+      "runeCode": "MalIgnIst",
+      "runes": [
+        "Mal",
+        "Ign",
+        "Ist"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Assassin Naginatas"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "13% Chance to cast level 33 Cataclysm on Kill",
+        "Adds 55-77 Damage",
+        "-(22 to 27)% to Enemy Fire Resistance",
+        "+(141 to 170)% Enhanced Damage",
+        "+(21 to 30) to Way of the Phoenix (Assassin Only)",
+        "18% to All Attributes",
+        "66% Magic Find"
+      ]
+    },
+    {
+      "id": "rw:cernunnos",
+      "name": "Cernunnos",
+      "runeCode": "JahOhmBer",
+      "runes": [
+        "Jah",
+        "Ohm",
+        "Ber"
+      ],
+      "reqLevel": 80,
+      "allowedTypes": [
+        "Druid Bows"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "2% Chance to cast level 9 Cascade on Death Blow",
+        "30% Attack Speed",
+        "15% Hit Recovery",
+        "Adds 60-80 Damage",
+        "+(130 to 170)% Enhanced Damage",
+        "Weapon Physical Damage +50%",
+        "Slow Target 10%",
+        "+90% to Summon Life",
+        "3% Reanimate as: Random Monster"
+      ]
+    },
+    {
+      "id": "rw:cheetah",
+      "name": "Cheetah",
+      "runeCode": "El",
+      "runes": [
+        "El"
+      ],
+      "reqLevel": 6,
+      "allowedTypes": [
+        "Throwing Axes"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "5% Movement Speed",
+        "5% Chance to cast level 9 Gift of the Wild on Kill",
+        "15% Combat Speeds",
+        "Adds 3-5 Damage",
+        "75% Bonus to Attack Rating",
+        "5% Life stolen per Hit",
+        "+1 to all Attributes"
+      ]
+    },
+    {
+      "id": "rw:choronzon",
+      "name": "Choronzon",
+      "runeCode": "SurTal",
+      "runes": [
+        "Sur",
+        "Tal"
+      ],
+      "reqLevel": 75,
+      "allowedTypes": [
+        "Assassin Claws"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+2 to Assassin Skill Levels",
+        "20% Cast Speed",
+        "+20% to Physical/Magic Spell Damage",
+        "Slows Attacker by (15 to 20)%",
+        "10% to Energy",
+        "Regenerate Mana +15%",
+        "+(20 to 25) Life after each Kill",
+        "4% Reanimate as: Random Monster",
+        "+(40 to 50) Life when Struck by an Enemy"
+      ]
+    },
+    {
+      "id": "rw:chrysopelea",
+      "name": "Chrysopelea",
+      "runeCode": "Shael",
+      "runes": [
+        "Shael"
+      ],
+      "reqLevel": 35,
+      "allowedTypes": [
+        "Throwing Knives"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "10% Chance to cast level 20 Lorenado on Kill",
+        "+(26 to 35)% Bonus to Poison Skill Duration",
+        "+(8 to 10) to Minimum Damage",
+        "+(30 to 57)% Enhanced Damage",
+        "-(6 to 10)% to Enemy Poison Resistance"
+      ]
+    },
+    {
+      "id": "rw:chthon",
+      "name": "Chthon",
+      "runeCode": "UmSurMal",
+      "runes": [
+        "Um",
+        "Sur",
+        "Mal"
+      ],
+      "reqLevel": 75,
+      "allowedTypes": [
+        "Necromancer Scythes"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "13% Chance to cast level 10 Crucify on Kill",
+        "25% Chance to cast level 3 Tremor on Kill",
+        "50% Attack Speed",
+        "Adds 30-40 Damage",
+        "+(250 to 400) to Attack Rating",
+        "+(101 to 125)% Enhanced Damage",
+        "5% Chance of Crushing Blow",
+        "Weapon Physical Damage +75%",
+        "3% to All Attributes",
+        "Regenerate Mana +15%",
+        "Elemental Resists +10%",
+        "+(80 to 100) Life after each Kill"
+      ]
+    },
+    {
+      "id": "rw:circe",
+      "name": "Circe",
+      "runeCode": "RhalArc",
+      "runes": [
+        "Rhal",
+        "Arc"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Sorceress Orbs"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+3 to All Skills when using an Apple",
+        "+4% Bonus to Spell Focus",
+        "+44% to Lightning Spell Damage",
+        "+44% to Poison Spell Damage",
+        "+24 to Bloodlust",
+        "(61 to 75)% to Energy",
+        "Fire Resist +35%"
+      ]
+    },
+    {
+      "id": "rw:cloudburst",
+      "name": "Cloudburst",
+      "runeCode": "PulLo",
+      "runes": [
+        "Pul",
+        "Lo"
+      ],
+      "reqLevel": 73,
+      "allowedTypes": [
+        "Amazon Shields"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+1 to Amazon Skill Levels",
+        "1% Base Block Chance",
+        "+(10 to 15)% Bonus to Spell Focus",
+        "40% Block Speed",
+        "+(15 to 20)% to Spell Damage",
+        "-(15 to 20)% to Enemy Lightning Resistance",
+        "5% to Dexterity",
+        "5% to Energy"
+      ]
+    },
+    {
+      "id": "rw:colliding-worlds",
+      "name": "Colliding Worlds",
+      "runeCode": "EldJahGulPulPul",
+      "runes": [
+        "Eld",
+        "Jah",
+        "Gul",
+        "Pul",
+        "Pul"
+      ],
+      "reqLevel": 80,
+      "allowedTypes": [
+        "Amazon Bows"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "100% Attack Speed",
+        "+(43 to 55) to Maximum Damage",
+        "+(130 to 158)% Enhanced Damage",
+        "+(4 to 6) to Elvensong",
+        "+(1 to 6) to Pathfinder",
+        "+(41 to 50) to Strength",
+        "+(41 to 50) to Dexterity",
+        "10% to Energy"
+      ]
+    },
+    {
+      "id": "rw:comaetho",
+      "name": "Comaetho",
+      "runeCode": "ZodPul",
+      "runes": [
+        "Zod",
+        "Pul"
+      ],
+      "reqLevel": 85,
+      "allowedTypes": [
+        "Sorceress Body Armors"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "Miasma: Haunt Duration Increased by 4 seconds",
+        "+2 to Sorceress Skill Levels",
+        "10% Cast Speed",
+        "-(18 to 25)% to Enemy Elemental Resistances",
+        "Slows Attacker by 10%",
+        "+(144 to 171)% Enhanced Defense",
+        "10% to Energy",
+        "5% Chance to Avoid Damage",
+        "+15 Life after each Kill"
+      ]
+    },
+    {
+      "id": "rw:corona-aureola",
+      "name": "Corona Aureola",
+      "runeCode": "VezArc",
+      "runes": [
+        "Vez",
+        "Arc"
+      ],
+      "reqLevel": 115,
+      "allowedTypes": [
+        "Amazon Helms"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "Above 70% Life: -10 Life After Each Kill",
+        "Below 50% Life: +200 Life After Each Kill",
+        "+(2 to 3) to Amazon Skill Levels",
+        "+(10 to 15)% Bonus to Spell Focus",
+        "60% Cast Speed",
+        "+(15 to 20)% to Fire Spell Damage",
+        "-(15 to 20)% to Enemy Fire Resistance",
+        "+(141 to 171)% Enhanced Defense",
+        "Physical Resist (5 to 10)%",
+        "(20 to 30)% Magic Find"
+      ]
+    },
+    {
+      "id": "rw:craton",
+      "name": "Craton",
+      "runeCode": "UmLem",
+      "runes": [
+        "Um",
+        "Lem"
+      ],
+      "reqLevel": 58,
+      "allowedTypes": [
+        "Boots"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "1% Chance to cast level 7 Shower of Rocks on Melee Attack",
+        "3% Chance of Crushing Blow",
+        "+(21 to 25) to all Attributes",
+        "5% to Vitality",
+        "Elemental Resists +10%",
+        "Physical Damage Taken Reduced by (16 to 20)",
+        "(31 to 40)% Bonus to Defense",
+        "(1 to 10)% Gold Find",
+        "(1 to 10)% Magic Find",
+        "+(1 to 10) to Light Radius"
+      ]
+    },
+    {
+      "id": "rw:crescent-moon",
+      "name": "Crescent Moon",
+      "runeCode": "JahGulEld",
+      "runes": [
+        "Jah",
+        "Gul",
+        "Eld"
+      ],
+      "reqLevel": 80,
+      "allowedTypes": [
+        "One-Handed Swords"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "2% Chance to cast level 1 Devastation on Kill",
+        "75% Attack Speed",
+        "Adds (40 to 50)-(75 to 85) Damage",
+        "+(155 to 175)% Enhanced Damage",
+        "(1 to 5)% Chance of Crushing Blow",
+        "+(30 to 40) to all Attributes",
+        "Elemental Resists +(11 to 15)%",
+        "+1 Life on Striking",
+        "(15 to 20)% Weapon Damage Taken Restores Mana"
+      ]
+    },
+    {
+      "id": "rw:crucible",
+      "name": "Crucible",
+      "runeCode": "IgnJahGul",
+      "runes": [
+        "Ign",
+        "Jah",
+        "Gul"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Necromancer Crossbows"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "Famine Grants 1% of Strength and Dexterity as Innate Elemental Damage",
+        "Famine No Longer Grants Weapon Physical Damage",
+        "25% Chance to cast level 36 Banish on Kill",
+        "50% Attack Speed",
+        "+(300 to 400) to Attack Rating",
+        "-(30 to 37)% to Enemy Fire Resistance",
+        "+15% Enhanced Damage",
+        "25% to Strength",
+        "5% Chance to Avoid Damage",
+        "-(30 to 40)% Mana Cost of Skills"
+      ]
+    },
+    {
+      "id": "rw:cube",
+      "name": "Cube",
+      "runeCode": "Nef",
+      "runes": [
+        "Nef"
+      ],
+      "reqLevel": 13,
+      "allowedTypes": [
+        "Necromancer Shields"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+1 to Necromancer Skill Levels",
+        "5% Movement Speed",
+        "+2 Damage",
+        "+5 to Dexterity",
+        "+10 to Vitality",
+        "(4 to 7)% Gold Find"
+      ]
+    },
+    {
+      "id": "rw:curandera",
+      "name": "Curandera",
+      "runeCode": "ZurUmTaha",
+      "runes": [
+        "Zur",
+        "Um",
+        "Taha"
+      ],
+      "reqLevel": 115,
+      "allowedTypes": [
+        "Sorceress Body Armors"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+4 to Sorceress Skill Levels",
+        "20% Cast Speed",
+        "-10% to Enemy Elemental Resistances",
+        "+200% Enhanced Defense",
+        "+1 Life Regenerated per Second (Based on Character Level)",
+        "Regenerate Mana +11%",
+        "Elemental Resists +(45 to 65)%",
+        "Physical Resist 30%"
+      ]
+    },
+    {
+      "id": "rw:dagda",
+      "name": "Dagda",
+      "runeCode": "ChamIoIst",
+      "runes": [
+        "Cham",
+        "Io",
+        "Ist"
+      ],
+      "reqLevel": 83,
+      "allowedTypes": [
+        "Necromancer Staves"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+(6 to 7) to Necromancer Skill Levels",
+        "3% Chance to cast level 1 Lifeblood when Struck",
+        "15% Cast Speed",
+        "+(26 to 35)% to Summon Damage",
+        "+(110 to 130)% to Summon Attack Rating",
+        "+(31 to 40) to all Attributes",
+        "Maximum Life +5%",
+        "Maximum Mana +20%",
+        "19% Gold Find",
+        "10% Magic Find"
+      ]
+    },
+    {
+      "id": "rw:dar-al-harb",
+      "name": "Dar-Al-Harb",
+      "runeCode": "FalUm",
+      "runes": [
+        "Fal",
+        "Um"
+      ],
+      "reqLevel": 58,
+      "allowedTypes": [
+        "Assassin Shields"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+(3 to 4) to Assassin Skill Levels",
+        "15% Cast Speed",
+        "0.25% to Fire Spell Damage (Based on Character Level)",
+        "0.25% to Lightning Spell Damage (Based on Character Level)",
+        "+(16 to 19) to Summon Darklings",
+        "+(19 to 22) to Skeletal Flayer",
+        "+25 to Dexterity",
+        "5% to Dexterity",
+        "+25 to Energy",
+        "Elemental Resists +10%"
+      ]
+    },
+    {
+      "id": "rw:dark-maidens-talons",
+      "name": "Dark Maiden's Talons",
+      "runeCode": "FulMhal",
+      "runes": [
+        "Ful",
+        "Mhal"
+      ],
+      "reqLevel": 110,
+      "allowedTypes": [
+        "Assassin Claws"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "Enemy Fire Resistance is Reduced by Lightning Pierce at 25% Efficiency",
+        "(75 to 125)% Bonus to Attack Rating",
+        "+750 Fire Damage",
+        "Adds 450-300 Lightning Damage",
+        "+(30 to 40)% to Fire Spell Damage",
+        "-(15 to 20)% to Enemy Elemental Resistances",
+        "(11 to 15)% to All Attributes",
+        "Maximum Lightning Resist +1%",
+        "+(150 to 200) Life on Melee Attack"
+      ]
+    },
+    {
+      "id": "rw:dawn",
+      "name": "Dawn",
+      "runeCode": "Zol",
+      "runes": [
+        "Zol"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Weapons"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "10% Chance to cast level 32 Celerity on Kill",
+        "45% Hit Recovery",
+        "(301 to 500)% Bonus to Attack Rating",
+        "+(172 to 200)% Enhanced Damage",
+        "75% to Strength",
+        "75% to Dexterity",
+        "35% to Vitality",
+        "75% to Energy",
+        "+100 to Mana",
+        "60% Gold Find",
+        "+(2 to 4) to Light Radius"
+      ]
+    },
+    {
+      "id": "rw:dead-star",
+      "name": "Dead Star",
+      "runeCode": "VenVen",
+      "runes": [
+        "Ven",
+        "Ven"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Throwing Knives"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+2 to All Skills",
+        "15% Movement Speed",
+        "13% Chance to cast level 25 Scorpion Blade on Kill",
+        "Adds 33-66 Damage",
+        "+(171 to 200)% Enhanced Damage",
+        "-28% to Enemy Poison Resistance",
+        "(3 to 5)% Chance of Crushing Blow",
+        "+2 Life on Striking"
+      ]
+    },
+    {
+      "id": "rw:demhe",
+      "name": "Demhe",
+      "runeCode": "ZodLew",
+      "runes": [
+        "Zod",
+        "Lew"
+      ],
+      "reqLevel": 110,
+      "allowedTypes": [
+        "Maces",
+        "Scepters"
+      ],
+      "excludedTypes": [
+        "Hammers"
+      ],
+      "excludedNames": [],
+      "modifiers": [
+        "25% Chance to cast level 35 Infected Roots on Melee Attack",
+        "Adds (70 to 100)-(110 to 150) Damage",
+        "Stun Attack",
+        "+(172 to 200)% Enhanced Damage",
+        "+(39 to 45)% to Cold Spell Damage",
+        "-(39 to 45)% to Enemy Cold Resistance",
+        "+(39 to 45)% to Poison Spell Damage",
+        "-(39 to 45)% to Enemy Poison Resistance",
+        "20% to Vitality",
+        "-(25 to 30)% Mana Cost of Skills",
+        "+15 Life after each Kill"
+      ]
+    },
+    {
+      "id": "rw:dirge",
+      "name": "Dirge",
+      "runeCode": "QorJahSil",
+      "runes": [
+        "Qor",
+        "Jah",
+        "Sil"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Druid Bows"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "Allows an Additional Bear Companion",
+        "25% Chance to cast level 20 Crucify on Death Blow",
+        "50% Attack Speed",
+        "Adds 58-112 Damage",
+        "+(166 to 195)% Enhanced Damage",
+        "10% Deadly Strike",
+        "+(25 to 35)% to Summon Elemental Resistances",
+        "+(150 to 200) to Strength",
+        "Physical Resist (5 to 10)%",
+        "+5 Life on Striking"
+      ]
+    },
+    {
+      "id": "rw:disturbance",
+      "name": "Disturbance",
+      "runeCode": "OrtSilYst",
+      "runes": [
+        "Ort",
+        "Sil",
+        "Yst"
+      ],
+      "reqLevel": 110,
+      "allowedTypes": [
+        "Amazon Helms"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "Hammer of Zerae: Lightning Spell Damage Applies to Added Lightning Damage At 50% Efficiency",
+        "+(2 to 3) to Amazon Skill Levels",
+        "20% Block Speed",
+        "Adds 4-6 Damage",
+        "Adds 7-15 Damage",
+        "+(141 to 171)% Enhanced Defense",
+        "(15 to 20)% to Dexterity",
+        "+(200 to 300) to Vitality",
+        "Maximum Lightning Resist +2%",
+        "Lightning Resist +25%",
+        "+(100 to 150) Life after each Kill",
+        "(15 to 20)% Magic Find"
+      ]
+    },
+    {
+      "id": "rw:dragon",
+      "name": "Dragon",
+      "runeCode": "IgnGhalIgnPhul",
+      "runes": [
+        "Ign",
+        "Ghal",
+        "Ign",
+        "Phul"
+      ],
+      "reqLevel": 110,
+      "allowedTypes": [
+        "Staves"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "classRestriction": "Sorceress Only",
+      "modifiers": [
+        "Overheat: Burns One Target, Hits Multiple Times",
+        "+(7 to 9) to Sorceress Skill Levels",
+        "+(100 to 115) Spell Focus",
+        "75% Cast Speed",
+        "+(36 to 46)% to Fire Spell Damage",
+        "-(35 to 43)% to Enemy Fire Resistance",
+        "+(55 to 66) to Energy",
+        "7% to Energy"
+      ]
+    },
+    {
+      "id": "rw:dragon-seed",
+      "name": "Dragon Seed",
+      "runeCode": "SilSilQor",
+      "runes": [
+        "Sil",
+        "Sil",
+        "Qor"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Throwing Axes"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+(1 to 2) to All Skills",
+        "1% Chance to cast level 23 Screaming Eagle on Striking",
+        "Adds 74-127 Damage",
+        "+200% Enhanced Damage",
+        "(7 to 10)% Deadly Strike",
+        "Physical Resist 15%",
+        "+1 Life on Striking"
+      ]
+    },
+    {
+      "id": "rw:dream",
+      "name": "Dream",
+      "runeCode": "FulGhalFulNif",
+      "runes": [
+        "Ful",
+        "Ghal",
+        "Ful",
+        "Nif"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Staves"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "Holy Shock",
+        "Nearby Enemies take 1200 Lightning Damage every 1.2 seconds",
+        "Activation Frequency Effectiveness: 30%",
+        "+1% damage per 7 Energy",
+        "16.6 Yard Radius",
+        "+(3 to 4) to All Skills",
+        "+(75 to 100) Spell Focus",
+        "75% Cast Speed",
+        "+(41 to 51)% to Lightning Spell Damage",
+        "-(24 to 29)% to Enemy Lightning Resistance",
+        "+(32 to 36) to Supernova",
+        "+500 to Mana",
+        "(20 to 25)% Weapon Damage Taken Restores Mana",
+        "(25 to 35)% Magic Find"
+      ]
+    },
+    {
+      "id": "rw:duress",
+      "name": "Duress",
+      "runeCode": "Thal",
+      "runes": [
+        "Thal"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Belts"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "7% Chance to cast Level 5 Lifespark on Death Blow when Below 50% Life",
+        "+1 to All Skills",
+        "15% Cast Speed",
+        "+(21 to 26)% to Physical/Magic Spell Damage",
+        "Slows Attacker by 10%",
+        "+(141 to 171)% Enhanced Defense",
+        "+(150 to 200) to Life",
+        "Maximum Mana +(6 to 10)%",
+        "Physical Resist 5%"
+      ]
+    },
+    {
+      "id": "rw:durga",
+      "name": "Durga",
+      "runeCode": "IstOhmTal",
+      "runes": [
+        "Ist",
+        "Ohm",
+        "Tal"
+      ],
+      "reqLevel": 70,
+      "allowedTypes": [
+        "Scepters"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+4 to Amazon Skill Levels",
+        "+13% Bonus Elemental Damage to Bloodlust",
+        "40% Cast Speed",
+        "15% Hit Recovery",
+        "+25% to Fire Spell Damage",
+        "-10% to Enemy Fire Resistance",
+        "Attacker Flees after Striking (11 to 15)%",
+        "+(30 to 50)% to Summon Life",
+        "+50% to Summon Damage",
+        "3% Reanimate as: Random Monster",
+        "(17 to 21)% Gold Find",
+        "10% Magic Find"
+      ]
+    },
+    {
+      "id": "rw:dyaus-pita",
+      "name": "Dyaus Pita",
+      "runeCode": "ChamUm",
+      "runes": [
+        "Cham",
+        "Um"
+      ],
+      "reqLevel": 83,
+      "allowedTypes": [
+        "Belts"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "10% Combat Speeds",
+        "+200% Enhanced Defense",
+        "10% to All Attributes",
+        "Maximum Life +(3 to 5)%",
+        "Maximum Mana +5%",
+        "Elemental Resists +10%",
+        "-10% Mana Cost of Skills",
+        "(10 to 15)% Gold Find",
+        "(10 to 15)% Magic Find"
+      ]
+    },
+    {
+      "id": "rw:echoing-fury",
+      "name": "Echoing Fury",
+      "runeCode": "SilIgnGurQorIah",
+      "runes": [
+        "Sil",
+        "Ign",
+        "Gur",
+        "Qor",
+        "Iah"
+      ],
+      "reqLevel": 120,
+      "allowedTypes": [
+        "Hammers"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "Deal no Elemental Damage",
+        "You May Only use Melee, Summon and Support Skills",
+        "Hammer of Zerae: Deals Weapon Damage in an Area as it Travels",
+        "40% Attack Speed",
+        "30% Hit Recovery",
+        "Adds 158-187 Damage",
+        "-5% to Enemy Fire Resistance",
+        "+(205 to 225)% Enhanced Damage",
+        "25% Chance of Crushing Blow",
+        "3% Deadly Strike",
+        "+(3000 to 4000) Defense",
+        "50% to Strength",
+        "Physical Resist 10%",
+        "Requirements +250%"
+      ]
+    },
+    {
+      "id": "rw:edda",
+      "name": "Edda",
+      "runeCode": "TirTal",
+      "runes": [
+        "Tir",
+        "Tal"
+      ],
+      "reqLevel": 20,
+      "allowedTypes": [
+        "Amazon Shields"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+1 to Amazon Skill Levels",
+        "15% Cast Speed",
+        "+(3 to 5)% to Physical/Magic Spell Damage",
+        "+10% to Fire Spell Damage",
+        "Maximum Mana +(11 to 20)%",
+        "Poison Resist +(10 to 15)%",
+        "Requirements -15%"
+      ]
+    },
+    {
+      "id": "rw:edge",
+      "name": "Edge",
+      "runeCode": "EthEl",
+      "runes": [
+        "Eth",
+        "El"
+      ],
+      "reqLevel": 15,
+      "allowedTypes": [
+        "Amazon Bows"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "Level 1 Spark of Hope",
+        "+3 Fire Damage",
+        "+3 Lightning Damage",
+        "+3 Cold Damage",
+        "+(35 to 45)% Enhanced Damage",
+        "(3 to 5)% Chance of Crushing Blow",
+        "+3 to Strength",
+        "+(43 to 63) to Dexterity",
+        "+3 to Vitality",
+        "+3 to Energy",
+        "-10% Mana Cost of Skills",
+        "+(1 to 3)% to Experience Gained"
+      ]
+    },
+    {
+      "id": "rw:eidolon",
+      "name": "Eidolon",
+      "runeCode": "QorSil",
+      "runes": [
+        "Qor",
+        "Sil"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Helms"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+2 to All Skills",
+        "10% Combat Speeds",
+        "Adds 4-6 Damage",
+        "Adds 7-15 Damage",
+        "5% Deadly Strike",
+        "+(144 to 171)% Enhanced Defense",
+        "(20 to 25)% to All Attributes",
+        "Elemental Resists +(35 to 40)%",
+        "(25 to 30)% Bonus to Defense",
+        "+4 to Light Radius"
+      ]
+    },
+    {
+      "id": "rw:eloi",
+      "name": "Eloi",
+      "runeCode": "ThulNefGul",
+      "runes": [
+        "Thul",
+        "Nef",
+        "Gul"
+      ],
+      "reqLevel": 65,
+      "allowedTypes": [
+        "Amazon Shields"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "15% Attack Speed",
+        "+(15 to 25) to Champions of the Sun",
+        "+(6 to 8)% to Summon Damage",
+        "+(115 to 143)% Enhanced Defense",
+        "Cold Resist +25%",
+        "Physical Resist 10%",
+        "-5% to All Vendor Prices"
+      ]
+    },
+    {
+      "id": "rw:elverfolk",
+      "name": "Elverfolk",
+      "runeCode": "ChamIstVex",
+      "runes": [
+        "Cham",
+        "Ist",
+        "Vex"
+      ],
+      "reqLevel": 83,
+      "allowedTypes": [
+        "Staves"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+(7 to 8) to All Skills",
+        "+(60 to 80) Spell Focus",
+        "35% Cast Speed",
+        "-(27 to 33)% to Enemy Elemental Resistances",
+        "+750 Defense vs. Missile",
+        "(21 to 30)% to Energy",
+        "Maximum Life and Mana +5%",
+        "Elemental Resists +(35 to 45)%",
+        "(31 to 40)% Bonus to Defense",
+        "10% Magic Find"
+      ]
+    },
+    {
+      "id": "rw:enlightenment",
+      "name": "Enlightenment",
+      "runeCode": "El",
+      "runes": [
+        "El"
+      ],
+      "reqLevel": 6,
+      "allowedTypes": [
+        "Gloves"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "10% Combat Speeds",
+        "2% Life stolen per Hit",
+        "+5 to all Attributes",
+        "+(3 to 5) Life Regenerated per Second",
+        "Lightning Resist +15%",
+        "-10% Mana Cost of Skills",
+        "+(4 to 6) to Light Radius"
+      ]
+    },
+    {
+      "id": "rw:ensi",
+      "name": "Ensi",
+      "runeCode": "IgnIgnHelThul",
+      "runes": [
+        "Ign",
+        "Ign",
+        "Hel",
+        "Thul"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Paladin Spears"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "33% Chance to cast level 63 Apocalypse on Melee Attack",
+        "100% Attack Speed",
+        "Adds 125-188 Fire Damage",
+        "-(14 to 19)% to Enemy Fire Resistance",
+        "Hit Blinds Target +(2 to 3)",
+        "Cold Resist +30%"
+      ]
+    },
+    {
+      "id": "rw:epicenter",
+      "name": "Epicenter",
+      "runeCode": "Ith",
+      "runes": [
+        "Ith"
+      ],
+      "reqLevel": 18,
+      "allowedTypes": [
+        "Boots"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "0.0625% Chance of Crushing Blow (Based on Character Level)",
+        "+(4 to 15)% Enhanced Defense",
+        "+(40 to 60) to Life",
+        "Elemental Resists +(3 to 5)%"
+      ]
+    },
+    {
+      "id": "rw:erawan",
+      "name": "Erawan",
+      "runeCode": "LemKoCham",
+      "runes": [
+        "Lem",
+        "Ko",
+        "Cham"
+      ],
+      "reqLevel": 83,
+      "allowedTypes": [
+        "Body Armors"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "15% Combat Speeds",
+        "5% Chance of Crushing Blow",
+        "+(144 to 171)% Enhanced Defense",
+        "(27 to 30)% to Strength",
+        "(27 to 30)% to Vitality",
+        "Physical Resist (13 to 15)%",
+        "(15 to 20)% Bonus to Defense"
+      ]
+    },
+    {
+      "id": "rw:eschaton",
+      "name": "Eschaton",
+      "runeCode": "IgnTyrIgn",
+      "runes": [
+        "Ign",
+        "Tyr",
+        "Ign"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Paladin Helms"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "Divine Judgement: 1.5% Fire Pierce per Base Level while attacking",
+        "+(2 to 3) to Paladin Skill Levels",
+        "Adds 50-100 Fire Damage",
+        "+(195 to 240)% Enhanced Defense",
+        "Poison Length Reduction 50%",
+        "+(30 to 40) Life on Melee Attack",
+        "+(5 to 8) to Light Radius"
+      ]
+    },
+    {
+      "id": "rw:eternal-median-2005-2026-thanks-everyone",
+      "name": "Eternal Median 2005-2026 Thanks everyone!",
+      "runeCode": "TahaLewGhalFelQorKa",
+      "runes": [
+        "Taha",
+        "Lew",
+        "Ghal",
+        "Fel",
+        "Qor",
+        "Ka"
+      ],
+      "reqLevel": 110,
+      "allowedTypes": [
+        "Body Armors"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+4 to All Skills",
+        "+(50 to 85) Spell Focus",
+        "-(10 to 20)% to Enemy Elemental Resistances",
+        "+1 to Disco Inferno",
+        "(5 to 10)% Deadly Strike",
+        "+(172 to 200)% Enhanced Defense",
+        "10% to All Attributes",
+        "Maximum Elemental Resists +1%",
+        "+2 Life on Striking"
+      ]
+    },
+    {
+      "id": "rw:evanescence",
+      "name": "Evanescence",
+      "runeCode": "JahEldSilSil",
+      "runes": [
+        "Jah",
+        "Eld",
+        "Sil",
+        "Sil"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Amazon Spears"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+(3 to 4) to Amazon Skill Levels",
+        "100% Attack Speed",
+        "Adds 41-94 Damage",
+        "+(171 to 200)% Enhanced Damage",
+        "+(10 to 15) to Warp Armor",
+        "Physical Resist (16 to 20)%",
+        "+250 Life on Melee Attack"
+      ]
+    },
+    {
+      "id": "rw:farseer",
+      "name": "Farseer",
+      "runeCode": "ZodElCham",
+      "runes": [
+        "Zod",
+        "El",
+        "Cham"
+      ],
+      "reqLevel": 85,
+      "allowedTypes": [
+        "Helms"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+1 to All Skills",
+        "+(100 to 200)% Enhanced Defense",
+        "+75 Life Regenerated per Second",
+        "Maximum Life +5%",
+        "Maximum Mana +10%",
+        "Maximum Elemental Resists +1%",
+        "-20% Mana Cost of Skills",
+        "+15 Life after each Kill"
+      ]
+    },
+    {
+      "id": "rw:fawkes",
+      "name": "Fawkes",
+      "runeCode": "PulRhal",
+      "runes": [
+        "Pul",
+        "Rhal"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Barbarian Helms"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+(2 to 3) to All Skills",
+        "20% Chance to cast level 40 Ember Spirit on Melee Attack",
+        "50% Cast Speed",
+        "1% to Fire Spell Damage (Based on Character Level)",
+        "+(26 to 32) to Powder Keg",
+        "+150 to Energy",
+        "(5 to 10)% to Energy",
+        "Fire Resist +35%",
+        "+(61 to 90) Life after each Kill"
+      ]
+    },
+    {
+      "id": "rw:fiacla-gears-weathervane",
+      "name": "Fiacla-Gear's Weathervane",
+      "runeCode": "FulTahaGhalFul",
+      "runes": [
+        "Ful",
+        "Taha",
+        "Ghal",
+        "Ful"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Druid Staves"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+(9 to 12) to Druid Skill Levels",
+        "+(190 to 260) Spell Focus",
+        "50% Cast Speed",
+        "+(30 to 40)% to Lightning Spell Damage",
+        "-40% to Enemy Lightning Resistance",
+        "+(15 to 21) to Nova Charge",
+        "+(23 to 26) to Tempest",
+        "30% to Energy"
+      ]
+    },
+    {
+      "id": "rw:fiend",
+      "name": "Fiend",
+      "runeCode": "SolKo",
+      "runes": [
+        "Sol",
+        "Ko"
+      ],
+      "reqLevel": 48,
+      "allowedTypes": [
+        "Assassin Claws"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+1 to Assassin Skill Levels",
+        "3% Chance to cast level 11 Psionic Scream when Struck",
+        "+(3 to 4) to Psionic Storm (Assassin Only)",
+        "5% to Strength",
+        "+(61 to 75) to Mana",
+        "Maximum Mana +(5 to 10)%",
+        "Poison Resist +30%",
+        "+(20 to 40) Mana after each Kill",
+        "(7 to 10)% Gold Find",
+        "(10 to 15)% Magic Find"
+      ]
+    },
+    {
+      "id": "rw:firefly",
+      "name": "Firefly",
+      "runeCode": "EldAmn",
+      "runes": [
+        "Eld",
+        "Amn"
+      ],
+      "reqLevel": 30,
+      "allowedTypes": [
+        "Amazon Javelins"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "10% Movement Speed",
+        "50% Attack Speed",
+        "+5 to Maximum Damage",
+        "Adds 75-125 Fire Damage",
+        "(9 to 12)% Life stolen per Hit",
+        "+(71 to 100)% Enhanced Damage",
+        "5% Chance of Crushing Blow",
+        "Slow Target (11 to 15)%",
+        "Poison Resist +30%"
+      ]
+    },
+    {
+      "id": "rw:fuse",
+      "name": "Fuse",
+      "runeCode": "Mhal",
+      "runes": [
+        "Mhal"
+      ],
+      "reqLevel": 110,
+      "allowedTypes": [
+        "Belts"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "Level 5 Blast Wave (40/40 Charges)",
+        "Adds 38-113 Fire Damage",
+        "0.375% to Fire Spell Damage (Based on Character Level)",
+        "+(7 to 12) to Path of Flames",
+        "+14 to Ignis Fatuus",
+        "+(143 to 171)% Enhanced Defense",
+        "5% to All Attributes",
+        "Fire Resist +(75 to 100)%"
+      ]
+    },
+    {
+      "id": "rw:geas",
+      "name": "Geas",
+      "runeCode": "NifUm",
+      "runes": [
+        "Nif",
+        "Um"
+      ],
+      "reqLevel": 95,
+      "allowedTypes": [
+        "Shields"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+(110 to 125)% Bonus to Poison Skill Duration",
+        "+5% to Lightning Spell Damage",
+        "+200% Enhanced Defense",
+        "Fire Resist +77%",
+        "Lightning Resist +77%",
+        "Cold Resist +77%",
+        "Poison Resist -13%"
+      ]
+    },
+    {
+      "id": "rw:gehenna",
+      "name": "Gehenna",
+      "runeCode": "ChamOhmLo",
+      "runes": [
+        "Cham",
+        "Ohm",
+        "Lo"
+      ],
+      "reqLevel": 83,
+      "allowedTypes": [
+        "Weapons"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "20% Chance to cast level 32 Frozen Crown on Melee Attack",
+        "15% Block Speed",
+        "15% Hit Recovery",
+        "Adds 94-125 Cold Damage",
+        "Adds 150-200 Poison Damage over 1 seconds",
+        "+(144 to 171)% Enhanced Damage",
+        "+25% to Cold Spell Damage",
+        "-25% to Enemy Cold Resistance",
+        "+25% to Poison Spell Damage",
+        "-25% to Enemy Poison Resistance",
+        "Maximum Life +5%",
+        "Maximum Mana +(23 to 28)%",
+        "Requirements -33%"
+      ]
+    },
+    {
+      "id": "rw:gharaniq",
+      "name": "Gharaniq",
+      "runeCode": "JahSilElq",
+      "runes": [
+        "Jah",
+        "Sil",
+        "Elq"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Barbarian Swords",
+        "Barbarian One-Handed Axes"
+      ],
+      "excludedTypes": [
+        "Barbarian Two-Handed Axes"
+      ],
+      "excludedNames": [],
+      "modifiers": [
+        "+(3 to 4) to Barbarian Skill Levels",
+        "Adds 8-12 Damage",
+        "Adds 120-(60 to 70) Damage",
+        "+(171 to 200)% Enhanced Damage",
+        "Weapon Physical Damage +(60 to 80)%",
+        "+(81 to 100) to Strength",
+        "+(225 to 250) to Dexterity",
+        "5% Chance to Avoid Damage"
+      ]
+    },
+    {
+      "id": "rw:ghoul",
+      "name": "Ghoul",
+      "runeCode": "Lem",
+      "runes": [
+        "Lem"
+      ],
+      "reqLevel": 53,
+      "allowedTypes": [
+        "Necromancer Wands"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+(1 to 2) to Necromancer Skill Levels",
+        "+1 to Maximum Necromancer Minions",
+        "+(15 to 20)% to Cold Spell Damage",
+        "+(5 to 7) to Frostfire Wave",
+        "15% to Vitality",
+        "+1% to Experience Gained"
+      ]
+    },
+    {
+      "id": "rw:glacier",
+      "name": "Glacier",
+      "runeCode": "GlaXethGhal",
+      "runes": [
+        "Gla",
+        "Xeth",
+        "Ghal"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Druid Staves"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+1 Hunting Banshee Missiles",
+        "+(7 to 8) to Druid Skill Levels",
+        "+25 Spell Focus",
+        "+20% Bonus to Spell Focus",
+        "25% Cast Speed",
+        "+(26 to 31)% to Cold Spell Damage",
+        "-(17 to 22)% to Enemy Cold Resistance",
+        "+(6 to 8) to Hunting Banshee (Druid Only)",
+        "+(18 to 24) to Raven Heart",
+        "Maximum Mana +(20 to 25)%",
+        "+(100 to 150) Mana after each Kill",
+        "(20 to 30)% Magic Find"
+      ]
+    },
+    {
+      "id": "rw:gloom",
+      "name": "Gloom",
+      "runeCode": "LuxHem",
+      "runes": [
+        "Lux",
+        "Hem"
+      ],
+      "reqLevel": 105,
+      "allowedTypes": [
+        "Necromancer Shields"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "Abyss Knights Reduce Enemy Magic Resistance by 10%",
+        "+(4 to 5) to Necromancer Skill Levels",
+        "+(20 to 25)% to Summon Life",
+        "+(53 to 63)% to Summon Damage",
+        "+10% to Summon Elemental Resistances",
+        "+200% Enhanced Defense",
+        "Elemental Resists +15%",
+        "Physical Resist 5%",
+        "(15 to 25)% Magic Find"
+      ]
+    },
+    {
+      "id": "rw:grief",
+      "name": "Grief",
+      "runeCode": "BerLemGulBur",
+      "runes": [
+        "Ber",
+        "Lem",
+        "Gul",
+        "Bur"
+      ],
+      "reqLevel": 115,
+      "allowedTypes": [
+        "Barbarian Two-Handed Axes"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "Tectonics: +30 Power",
+        "+(3 to 4) to Barbarian Skill Levels",
+        "80% Attack Speed",
+        "+140 Damage",
+        "+200% Enhanced Damage",
+        "Slow Target 21%",
+        "4% to Vitality",
+        "Maximum Elemental Resists +1%",
+        "5% Chance to Avoid Damage"
+      ]
+    },
+    {
+      "id": "rw:hadad",
+      "name": "Hadad",
+      "runeCode": "OrtDol",
+      "runes": [
+        "Ort",
+        "Dol"
+      ],
+      "reqLevel": 38,
+      "allowedTypes": [
+        "Staves"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+2 to All Skills",
+        "5% Chance to cast level 13 Lightning Shield when Struck",
+        "0.25% to Lightning Spell Damage (Based on Character Level)",
+        "-10% to Enemy Lightning Resistance",
+        "+(1 to 4) to Supernova",
+        "+10% to Summon Life",
+        "Lightning Resist +30%",
+        "Attacker Takes Lightning Damage of (100 to 150)",
+        "10% Weapon Damage Taken Restores Mana"
+      ]
+    },
+    {
+      "id": "rw:hail",
+      "name": "Hail",
+      "runeCode": "MalBer",
+      "runes": [
+        "Mal",
+        "Ber"
+      ],
+      "reqLevel": 78,
+      "allowedTypes": [
+        "Assassin Claws"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+2 to Assassin Skill Levels",
+        "7% Chance to cast level 29 Shower of Rocks on Kill",
+        "40% Attack Speed",
+        "Adds 40-80 Damage",
+        "Adds 63-188 Cold Damage",
+        "+(171 to 200)% Enhanced Damage",
+        "(8 to 10)% Chance of Crushing Blow",
+        "Slow Target 3%",
+        "3% to All Attributes"
+      ]
+    },
+    {
+      "id": "rw:hand-of-frost",
+      "name": "Hand of Frost",
+      "runeCode": "GlaGlaXeth",
+      "runes": [
+        "Gla",
+        "Gla",
+        "Xeth"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Sorceress Orbs"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+(4 to 5) to All Skills",
+        "100% Block Speed",
+        "Wintertide Cooldown Reduced by 2 seconds",
+        "+(25 to 45)% to Cold Spell Damage",
+        "-35% to Enemy Cold Resistance",
+        "+50% to Summon Life",
+        "Physical Resist 5%",
+        "100% Bonus to Defense",
+        "+(150 to 200) Life when Struck by an Enemy"
+      ]
+    },
+    {
+      "id": "rw:harmony",
+      "name": "Harmony",
+      "runeCode": "LuxHel",
+      "runes": [
+        "Lux",
+        "Hel"
+      ],
+      "reqLevel": 105,
+      "allowedTypes": [
+        "Paladin Clubs",
+        "Paladin Maces",
+        "Paladin Hammers"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "Servants of Valor regenerate 2% of their life per second",
+        "+(3 to 4) to Paladin Skill Levels",
+        "30% Cast Speed",
+        "30% Hit Recovery",
+        "+(50 to 65)% to Summon Damage",
+        "+15% to Summon Elemental Resistances",
+        "+(60 to 75)% to Summon Attack Rating",
+        "(15 to 25)% Magic Find"
+      ]
+    },
+    {
+      "id": "rw:heart-of-skovos",
+      "name": "Heart of Skovos",
+      "runeCode": "ElqSilUmDoj",
+      "runes": [
+        "Elq",
+        "Sil",
+        "Um",
+        "Doj"
+      ],
+      "reqLevel": 105,
+      "allowedTypes": [
+        "Amazon Shields"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+(1 to 2) to Amazon Skill Levels",
+        "5% Chance to cast level 12 Javelin Nova on Block",
+        "1% Base Block Chance",
+        "40% Attack Speed",
+        "30% Cast Speed",
+        "Adds 37-60 Damage",
+        "150% Bonus to Attack Rating",
+        "+20% to Summon Life",
+        "+(171 to 200)% Enhanced Defense",
+        "Elemental Resists +10%",
+        "Physical Resist 1%",
+        "+1 Life on Striking"
+      ]
+    },
+    {
+      "id": "rw:helgrotha",
+      "name": "Helgrotha",
+      "runeCode": "VenVenIth",
+      "runes": [
+        "Ven",
+        "Ven",
+        "Ith"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Sorceress Orbs"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+2 to Sorceress Skill Levels",
+        "1% Base Block Chance",
+        "50% Cast Speed",
+        "+15% to Poison Spell Damage",
+        "-64% to Enemy Poison Resistance",
+        "25% to Energy",
+        "Maximum Life +7%"
+      ]
+    },
+    {
+      "id": "rw:hellfire-plate",
+      "name": "Hellfire Plate",
+      "runeCode": "IgnJahGurRhal",
+      "runes": [
+        "Ign",
+        "Jah",
+        "Gur",
+        "Rhal"
+      ],
+      "reqLevel": 115,
+      "allowedTypes": [
+        "Body Armors"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "-5% Innate Elemental Damage per 1% Fire Absorb",
+        "15% Chance to cast level 9 Life Spark on Melee Attack",
+        "30% Attack Speed",
+        "+250 Fire Damage",
+        "50% Innate Elemental Damage",
+        "-(11 to 15)% to Enemy Elemental Resistances",
+        "+(171 to 200)% Enhanced Defense",
+        "Maximum Life +(3 to 5)%",
+        "Maximum Elemental Resists +(1 to 2)%",
+        "Physical Resist (7 to 10)%"
+      ]
+    },
+    {
+      "id": "rw:herfjotur",
+      "name": "Herfjotur",
+      "runeCode": "BerOrt",
+      "runes": [
+        "Ber",
+        "Ort"
+      ],
+      "reqLevel": 78,
+      "allowedTypes": [
+        "Amazon Javelins"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "Ring of Flames Gains +1% Total Damage per Character Level",
+        "+(1 to 2) to Amazon Skill Levels",
+        "5% Chance to cast level 1 Timefield on Kill",
+        "2% Chance to cast level 19 Ring of Flames on Striking",
+        "Adds 35-45 Damage",
+        "+(15 to 20)% to Fire Spell Damage",
+        "-(25 to 30)% to Enemy Fire Resistance",
+        "+(141 to 171)% Enhanced Damage",
+        "(3 to 5)% Chance of Crushing Blow",
+        "Slow Target 25%",
+        "+(40 to 60) to Energy",
+        "Lightning Resist +30%"
+      ]
+    },
+    {
+      "id": "rw:hierodule",
+      "name": "Hierodule",
+      "runeCode": "ThalArc",
+      "runes": [
+        "Thal",
+        "Arc"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Paladin Helms"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+3 to Paladin Skill Levels",
+        "+5% Bonus to Spell Focus",
+        "60% Cast Speed",
+        "+(35 to 50)% to Physical/Magic Spell Damage",
+        "+15% to Lightning Spell Damage",
+        "Maximum Elemental Resists +2%"
+      ]
+    },
+    {
+      "id": "rw:hive",
+      "name": "Hive",
+      "runeCode": "BerBerIst",
+      "runes": [
+        "Ber",
+        "Ber",
+        "Ist"
+      ],
+      "reqLevel": 78,
+      "allowedTypes": [
+        "Bows"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "15% Chance to cast level 6 Spike Nova on Kill",
+        "20% Attack Speed",
+        "Adds 15-(16 to 25) Damage",
+        "Adds 300-450 Poison Damage over 1 seconds",
+        "+(100 to 120)% Enhanced Damage",
+        "(5 to 10)% Chance of Crushing Blow",
+        "Slow Target 20%",
+        "+1 Life Regenerated per Second (Based on Character Level)",
+        "+200 to Life",
+        "10% Magic Find"
+      ]
+    },
+    {
+      "id": "rw:honor",
+      "name": "Honor",
+      "runeCode": "Tal",
+      "runes": [
+        "Tal"
+      ],
+      "reqLevel": 20,
+      "allowedTypes": [
+        "Helms"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "7% Movement Speed",
+        "+7% to Spell Damage",
+        "Elemental Resists +7%",
+        "Poison Length Reduction (10 to 15)%",
+        "-7% to All Vendor Prices"
+      ]
+    },
+    {
+      "id": "rw:hornet",
+      "name": "Hornet",
+      "runeCode": "AhmnVexVex",
+      "runes": [
+        "Ahmn",
+        "Vex",
+        "Vex"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Bows"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "40% Cast Speed",
+        "Adds 100-125 Damage",
+        "Adds 25-50 Poison Damage over 1 seconds",
+        "+(172 to 200)% Enhanced Damage",
+        "+(25 to 29) to Arrow Swarm",
+        "(30 to 35)% to Dexterity",
+        "Poison Resist +35%"
+      ]
+    },
+    {
+      "id": "rw:iblis",
+      "name": "Iblis",
+      "runeCode": "TyrSur",
+      "runes": [
+        "Tyr",
+        "Sur"
+      ],
+      "reqLevel": 90,
+      "allowedTypes": [
+        "Gloves"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+40 Spell Focus if Sanguine Covenant is Active",
+        "+10% Maximum Mana if Solar Flare is Active",
+        "+(38 to 43)% to Fire Spell Damage",
+        "(25 to 35)% to Energy",
+        "Regenerate Mana +(10 to 15)%",
+        "Fire Absorb 4%",
+        "+10 to Light Radius"
+      ]
+    },
+    {
+      "id": "rw:ice-breaker",
+      "name": "Ice Breaker",
+      "runeCode": "IgnElqIgnGulVex",
+      "runes": [
+        "Ign",
+        "Elq",
+        "Ign",
+        "Gul",
+        "Vex"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Amazon Bows"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "30% Chance to cast level 60 Flamestrike on Kill",
+        "60% Attack Speed",
+        "15% Cast Speed",
+        "Adds (1 to 150)-(180 to 280) Damage",
+        "-(15 to 19)% to Enemy Fire Resistance",
+        "+(172 to 200)% Enhanced Damage",
+        "(1 to 25)% Chance of Crushing Blow",
+        "Cold Resist +(81 to 100)%",
+        "Cannot Be Frozen"
+      ]
+    },
+    {
+      "id": "rw:ilmatar",
+      "name": "Ilmatar",
+      "runeCode": "ArcNif",
+      "runes": [
+        "Arc",
+        "Nif"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Paladin Helms"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+1% Maximum Elemental Resist per 200% Lightning Spell Damage",
+        "+4 to Paladin Skill Levels",
+        "+(5 to 10)% Bonus to Spell Focus",
+        "40% Hit Recovery",
+        "+30% to Physical/Magic Spell Damage",
+        "+5% to Lightning Spell Damage",
+        "-(15 to 20)% to Enemy Lightning Resistance",
+        "+(26 to 36) to Overcharged",
+        "+(141 to 171)% Enhanced Defense"
+      ]
+    },
+    {
+      "id": "rw:indigo",
+      "name": "Indigo",
+      "runeCode": "UnTaha",
+      "runes": [
+        "Un",
+        "Taha"
+      ],
+      "reqLevel": 110,
+      "allowedTypes": [
+        "Circlets"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+2 to All Skills",
+        "+100 Spell Focus",
+        "50% Cast Speed",
+        "-(15 to 20)% to Enemy Elemental Resistances",
+        "Maximum Elemental Resists +2%",
+        "Elemental Resists +(13 to 15)%",
+        "Requirements -100%"
+      ]
+    },
+    {
+      "id": "rw:instinct",
+      "name": "Instinct",
+      "runeCode": "IgnGurTyrZod",
+      "runes": [
+        "Ign",
+        "Gur",
+        "Tyr",
+        "Zod"
+      ],
+      "reqLevel": 115,
+      "allowedTypes": [
+        "One-Handed Axes"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+6 to Druid Skill Levels",
+        "+(48 to 60)% Bonus Damage to Mark of the Wild",
+        "+(18 to 20)% Bonus Elemental Damage to Mark of the Wild",
+        "130% Attack Speed",
+        "(150 to 250)% Bonus to Attack Rating",
+        "+(46 to 56)% to Fire Spell Damage",
+        "-52% to Enemy Fire Resistance",
+        "Physical Resist (10 to 15)%",
+        "+(215 to 265) Life after each Kill"
+      ]
+    },
+    {
+      "id": "rw:intifada",
+      "name": "Intifada",
+      "runeCode": "AmnKo",
+      "runes": [
+        "Amn",
+        "Ko"
+      ],
+      "reqLevel": 48,
+      "allowedTypes": [
+        "Paladin Clubs",
+        "Paladin Maces",
+        "Paladin Hammers"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "8% Chance to cast level 8 Shower of Rocks on Melee Attack",
+        "Adds 80-120 Magic Damage",
+        "+(87 to 114)% Enhanced Damage",
+        "(6 to 10)% Chance of Crushing Blow",
+        "+(16 to 25)% to Summon Damage",
+        "5% to Strength",
+        "Poison Resist +30%"
+      ]
+    },
+    {
+      "id": "rw:jaguar",
+      "name": "Jaguar",
+      "runeCode": "QorJahSilFel",
+      "runes": [
+        "Qor",
+        "Jah",
+        "Sil",
+        "Fel"
+      ],
+      "reqLevel": 110,
+      "allowedTypes": [
+        "Paladin Spears"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "If Colosseum has 20 Base Levels:",
+        "+10% Chance to avoid damage",
+        "-5% enemy physical resistance to colosseum debuff",
+        "10% Movement Speed",
+        "Additional Strength Damage Bonus: 0.03125%",
+        "50% Attack Speed",
+        "Adds 203-202 Damage",
+        "+(175 to 200)% Enhanced Damage",
+        "5% Deadly Strike",
+        "(10 to 15)% to Strength",
+        "7% to Dexterity",
+        "15% Chance to Avoid Damage"
+      ]
+    },
+    {
+      "id": "rw:judge",
+      "name": "Judge",
+      "runeCode": "FulRhal",
+      "runes": [
+        "Ful",
+        "Rhal"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Assassin Claws"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "20% Chance to cast level 60 Forked Lightning on Melee Attack",
+        "18% Chance to cast level 14 Thunder Hammer on Striking",
+        "Adds 125-250 Lightning Damage",
+        "Stun Attack",
+        "-(12 to 17)% to Enemy Lightning Resistance",
+        "+(144 to 171)% Enhanced Damage",
+        "(21 to 30)% to Dexterity",
+        "Fire Resist +35%",
+        "Lightning Resist +75%"
+      ]
+    },
+    {
+      "id": "rw:kabbalah",
+      "name": "Kabbalah",
+      "runeCode": "Cham",
+      "runes": [
+        "Cham"
+      ],
+      "reqLevel": 83,
+      "allowedTypes": [
+        "Sorceress Orbs"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+3 to Sorceress Skill Levels",
+        "-1% Base Block Chance",
+        "60% Hit Recovery",
+        "+(6 to 16) to Divine Apparition",
+        "20% to Energy",
+        "Maximum Life and Mana +5%",
+        "+(100 to 200) Life when Struck by an Enemy"
+      ]
+    },
+    {
+      "id": "rw:kali",
+      "name": "Kali",
+      "runeCode": "LumKo",
+      "runes": [
+        "Lum",
+        "Ko"
+      ],
+      "reqLevel": 48,
+      "allowedTypes": [
+        "Gloves"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+2 to All Skills",
+        "15% Chance to cast level 13 Seal of Fire on Kill",
+        "+15% to Summon Elemental Resistances",
+        "5% to Strength",
+        "Maximum Fire Resist +4%",
+        "Fire Resist +25%"
+      ]
+    },
+    {
+      "id": "rw:ker",
+      "name": "Ker",
+      "runeCode": "Tir",
+      "runes": [
+        "Tir"
+      ],
+      "reqLevel": 10,
+      "allowedTypes": [
+        "Sorceress Orbs"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "3% Chance to cast level 1 Bloodlust on Death Blow",
+        "30% Cast Speed",
+        "+(5 to 10)% to Physical/Magic Spell Damage",
+        "+(5 to 10)% to Fire Spell Damage",
+        "+(5 to 10)% to Lightning Spell Damage",
+        "+(5 to 10)% to Cold Spell Damage",
+        "+(5 to 10)% to Poison Spell Damage",
+        "+(15 to 25) to Life",
+        "Elemental Resists +(4 to 6)%"
+      ]
+    },
+    {
+      "id": "rw:khalims-protector",
+      "name": "Khalim's Protector",
+      "runeCode": "VenLoVenAmn",
+      "runes": [
+        "Ven",
+        "Lo",
+        "Ven",
+        "Amn"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Shields"
+      ],
+      "excludedTypes": [
+        "Barbarian Shields"
+      ],
+      "excludedNames": [],
+      "modifiers": [
+        "+(1 to 2) to All Skills",
+        "2% Base Block Chance",
+        "60% Block Speed",
+        "-15% to Enemy Poison Resistance",
+        "+(171 to 200)% Enhanced Defense",
+        "Maximum Poison Resist +4%",
+        "Poison Resist +25%",
+        "Poison Length Reduction 30%",
+        "+50 Life after each Kill",
+        "50% Bonus to Defense"
+      ]
+    },
+    {
+      "id": "rw:khattak",
+      "name": "Khattak",
+      "runeCode": "OrtEld",
+      "runes": [
+        "Ort",
+        "Eld"
+      ],
+      "reqLevel": 25,
+      "allowedTypes": [
+        "Assassin Naginatas"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "5% Chance to cast level 10 Celerity on Kill",
+        "20% Attack Speed",
+        "40% Hit Recovery",
+        "Adds 10-20 Damage",
+        "+(35 to 46)% Enhanced Damage",
+        "Maximum Mana +1%",
+        "Lightning Resist +30%"
+      ]
+    },
+    {
+      "id": "rw:kings-blood",
+      "name": "King's Blood",
+      "runeCode": "VezLo",
+      "runes": [
+        "Vez",
+        "Lo"
+      ],
+      "reqLevel": 115,
+      "allowedTypes": [
+        "Daggers"
+      ],
+      "excludedTypes": [
+        "Throwing Knives"
+      ],
+      "excludedNames": [],
+      "modifiers": [
+        "+(3 to 4) to All Skills",
+        "40% Cast Speed",
+        "15% Block Speed",
+        "+167 to Minimum Damage",
+        "(32 to 42)% Life stolen per Hit",
+        "+200% Enhanced Damage",
+        "+(61 to 80) to all Attributes",
+        "Maximum Block Chance +5%",
+        "+7% to Experience Gained",
+        "+3 to Light Radius"
+      ]
+    },
+    {
+      "id": "rw:knave",
+      "name": "Knave",
+      "runeCode": "SolChamQor",
+      "runes": [
+        "Sol",
+        "Cham",
+        "Qor"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Boots"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "Mana Sweep: -25% Total Damage, Leeches no Mana",
+        "+(0 to 1) to Sorceress Skill Levels",
+        "5% Deadly Strike",
+        "+40 to Mana",
+        "Maximum Mana +(5 to 10)%",
+        "Magic Resist +(2 to 5)%",
+        "Physical Resist (2 to 5)%"
+      ]
+    },
+    {
+      "id": "rw:koan",
+      "name": "Koan",
+      "runeCode": "Ort",
+      "runes": [
+        "Ort"
+      ],
+      "reqLevel": 25,
+      "allowedTypes": [
+        "Necromancer Wands"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+1 to Necromancer Skill Levels",
+        "+(3 to 7)% to Spell Damage",
+        "+10% to Summon Life",
+        "Regenerate Mana +(31 to 40)%",
+        "Lightning Resist +30%",
+        "10% Chance to Avoid Damage",
+        "-3% Gold Find"
+      ]
+    },
+    {
+      "id": "rw:kodiak",
+      "name": "Kodiak",
+      "runeCode": "ElGulSur",
+      "runes": [
+        "El",
+        "Gul",
+        "Sur"
+      ],
+      "reqLevel": 75,
+      "allowedTypes": [
+        "One-Handed Axes"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "70% Attack Speed",
+        "+(21 to 50) to Minimum Damage",
+        "(11 to 25)% Life stolen per Hit",
+        "-(20 to 30)% to Enemy Fire Resistance",
+        "+(141 to 170)% Enhanced Damage",
+        "(11 to 25)% Chance of Crushing Blow",
+        "+3 to all Attributes",
+        "Weapon Physical Damage +0.625% (Based on Character Level)",
+        "Regenerate Mana +15%"
+      ]
+    },
+    {
+      "id": "rw:kronos",
+      "name": "Kronos",
+      "runeCode": "QorEl",
+      "runes": [
+        "Qor",
+        "El"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Necromancer Crossbows"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "Voodoo Practice: +1% Extra Chance to Spawn a Corpse on Striking",
+        "100% Chance to cast level 17 Time Strike on Kill",
+        "Adds 70-90 Damage",
+        "+(172 to 200)% Enhanced Damage",
+        "+1 to Timefield",
+        "(11 to 13)% Chance of Crushing Blow",
+        "3% Deadly Strike",
+        "+3 to all Attributes",
+        "(31 to 40)% to Strength",
+        "(11 to 13)% to Vitality"
+      ]
+    },
+    {
+      "id": "rw:laadan",
+      "name": "Laadan",
+      "runeCode": "VexCham",
+      "runes": [
+        "Vex",
+        "Cham"
+      ],
+      "reqLevel": 83,
+      "allowedTypes": [
+        "Druid Staves"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+(6 to 7) to Druid Skill Levels",
+        "100% Cast Speed",
+        "Mana Sweep Cooldown Reduced by 6 seconds",
+        "+(26 to 29) to Mana Sweep",
+        "Slows Attacker by (16 to 20)%",
+        "Maximum Life +5%",
+        "+250 to Mana",
+        "Maximum Mana +(3 to 6)%",
+        "Requirements -10%"
+      ]
+    },
+    {
+      "id": "rw:lahmu",
+      "name": "Lahmu",
+      "runeCode": "ElNef",
+      "runes": [
+        "El",
+        "Nef"
+      ],
+      "reqLevel": 13,
+      "allowedTypes": [
+        "Barbarian Two-Handed Axes"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "20% Combat Speeds",
+        "10% Innate Elemental Damage",
+        "+3 to all Attributes",
+        "Elemental Resists +(3 to 5)%",
+        "+(5 to 10) Life after each Kill",
+        "+1% to Experience Gained",
+        "(5 to 10)% Gold Find"
+      ]
+    },
+    {
+      "id": "rw:lemuria",
+      "name": "Lemuria",
+      "runeCode": "IgnLewFal",
+      "runes": [
+        "Ign",
+        "Lew",
+        "Fal"
+      ],
+      "reqLevel": 110,
+      "allowedTypes": [
+        "Necromancer Scythes"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "45% Attack Speed",
+        "Adds (70 to 100)-(130 to 150) Damage",
+        "-(32 to 37)% to Enemy Fire Resistance",
+        "+200% Enhanced Damage",
+        "+(25 to 28) to Soulshatter",
+        "+50% to Summon Life",
+        "+(115 to 165) to Strength",
+        "(7 to 10)% to Dexterity",
+        "+40 to Vitality",
+        "(6 to 10)% to Vitality",
+        "+40 to Energy",
+        "3% Reanimate as: Random Monster"
+      ]
+    },
+    {
+      "id": "rw:lethal-huntress",
+      "name": "Lethal Huntress",
+      "runeCode": "IstVenVen",
+      "runes": [
+        "Ist",
+        "Ven",
+        "Ven"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Amazon Spears"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+(4 to 5) to Amazon Skill Levels",
+        "5% Chance to cast level 12 Javelin Nova on Kill",
+        "50% Attack Speed",
+        "250% Bonus to Attack Rating",
+        "-(34 to 39)% to Enemy Poison Resistance",
+        "+(150 to 200) to Dexterity",
+        "+(250 to 400) to Life",
+        "Physical Resist 10%",
+        "+(80 to 100) Life on Melee Attack",
+        "(20 to 25)% Magic Find"
+      ]
+    },
+    {
+      "id": "rw:leviathan",
+      "name": "Leviathan",
+      "runeCode": "QorQorJah",
+      "runes": [
+        "Qor",
+        "Qor",
+        "Jah"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Necromancer Scythes"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "30% Attack Speed",
+        "Adds 55-70 Damage",
+        "+(401 to 500) to Attack Rating",
+        "+(156 to 186)% Enhanced Damage",
+        "+(17 to 21) to Dark Power",
+        "(7 to 10)% Deadly Strike",
+        "Slow Target (21 to 25)%",
+        "(36 to 50)% to Strength",
+        "(36 to 50)% to Dexterity",
+        "+(75 to 125) to Life",
+        "Physical Resist (12 to 15)%"
+      ]
+    },
+    {
+      "id": "rw:lifecrusher",
+      "name": "Lifecrusher",
+      "runeCode": "MhalChamUm",
+      "runes": [
+        "Mhal",
+        "Cham",
+        "Um"
+      ],
+      "reqLevel": 110,
+      "allowedTypes": [
+        "Boots"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "30% Hit Recovery",
+        "0.125% Chance of Crushing Blow (Based on Character Level)",
+        "+(171 to 200)% Enhanced Defense",
+        "(5 to 10)% to All Attributes",
+        "Maximum Life +(7 to 10)%",
+        "Maximum Elemental Resists +1%",
+        "Elemental Resists +(15 to 25)%"
+      ]
+    },
+    {
+      "id": "rw:ligeia",
+      "name": "Ligeia",
+      "runeCode": "OhnUn",
+      "runes": [
+        "Ohn",
+        "Un"
+      ],
+      "reqLevel": 115,
+      "allowedTypes": [
+        "Assassin Shields"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+6 Life per Cognition",
+        "+4 to Assassin Skill Levels",
+        "-4% Base Block Chance",
+        "70% Hit Recovery",
+        "+(20 to 30)% to Physical/Magic Spell Damage",
+        "+150% Enhanced Defense",
+        "+5000 Defense",
+        "(7 to 10)% to All Attributes",
+        "+(130 to 150) to Energy",
+        "Elemental Resists +(20 to 25)%",
+        "Physical Resist 5%"
+      ]
+    },
+    {
+      "id": "rw:lincos",
+      "name": "Lincos",
+      "runeCode": "RhalTaha",
+      "runes": [
+        "Rhal",
+        "Taha"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Druid Staves"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+(9 to 11) to Druid Skill Levels",
+        "-41% to Enemy Elemental Resistances",
+        "+(12 to 16) to Overcharged",
+        "+(45 to 48) to Arcane Torrent",
+        "(41 to 50)% to Energy",
+        "Regenerate Mana +(31 to 50)%",
+        "Maximum Elemental Resists +2%",
+        "Fire Resist +35%",
+        "+(25 to 50) Mana after each Kill"
+      ]
+    },
+    {
+      "id": "rw:lionheart",
+      "name": "Lionheart",
+      "runeCode": "OhmThulFal",
+      "runes": [
+        "Ohm",
+        "Thul",
+        "Fal"
+      ],
+      "reqLevel": 70,
+      "allowedTypes": [
+        "Body Armors"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+2 to All Skills",
+        "30% Attack Speed",
+        "30% Cast Speed",
+        "30% Block Speed",
+        "45% Hit Recovery",
+        "+1.625% Enhanced Defense (Based on Character Level)",
+        "5% to Dexterity",
+        "+(550 to 650) to Life",
+        "Cold Resist +25%"
+      ]
+    },
+    {
+      "id": "rw:ljosalf",
+      "name": "Ljosalf",
+      "runeCode": "UmGhalGhal",
+      "runes": [
+        "Um",
+        "Ghal",
+        "Ghal"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Staves"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+(8 to 10) to All Skills",
+        "100% Chance to cast level 60 Bloodstar on Death Blow",
+        "+50 Spell Focus",
+        "0.625% to Fire Spell Damage (Based on Character Level)",
+        "+(46 to 49) to Bloodstar",
+        "+250 Life Regenerated per Second",
+        "Elemental Resists +(82 to 86)%",
+        "+(101 to 200) Life when Struck by an Enemy"
+      ]
+    },
+    {
+      "id": "rw:loa",
+      "name": "Loa",
+      "runeCode": "Eld",
+      "runes": [
+        "Eld"
+      ],
+      "reqLevel": 8,
+      "allowedTypes": [
+        "Necromancer Daggers"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "10% Chance to cast level 6 Gift of the Wild on Kill",
+        "+15 to Maximum Damage",
+        "+(45 to 55)% Enhanced Damage",
+        "8% Reanimate as: Random Monster"
+      ]
+    },
+    {
+      "id": "rw:louhi",
+      "name": "Louhi",
+      "runeCode": "VenOhnXod",
+      "runes": [
+        "Ven",
+        "Ohn",
+        "Xod"
+      ],
+      "reqLevel": 120,
+      "allowedTypes": [
+        "Druid Staves"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "If you have No Points in Werebear, Werewolf, Wereowl, Hunter and Seer Trees:",
+        "Can No Longer Summon Harvesters",
+        "Harvest Grants Bloom Bonuses",
+        "Harvest Duration Now 15 Seconds",
+        "+(9 to 10) to All Skills",
+        "30% Hit Recovery",
+        "+(30 to 40)% to Poison Spell Damage",
+        "-(32 to 37)% to Enemy Poison Resistance",
+        "+(5000 to 10000) Defense",
+        "Maximum Life +(3 to 5)%",
+        "Maximum Elemental Resists +1%",
+        "Physical Resist 5%"
+      ]
+    },
+    {
+      "id": "rw:loxian",
+      "name": "Loxian",
+      "runeCode": "GhalVex",
+      "runes": [
+        "Ghal",
+        "Vex"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Druid Staves"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+(8 to 10) to Druid Skill Levels",
+        "+(210 to 230) Spell Focus",
+        "20% Cast Speed",
+        "+(41 to 50)% to Spell Damage",
+        "Physical Resist (11 to 15)%",
+        "(51 to 75)% Bonus to Defense"
+      ]
+    },
+    {
+      "id": "rw:lumen-arcana",
+      "name": "Lumen Arcana",
+      "runeCode": "Ith",
+      "runes": [
+        "Ith"
+      ],
+      "reqLevel": 18,
+      "allowedTypes": [
+        "Body Armors"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+1 to All Skills",
+        "-(3 to 8)% to Enemy Fire Resistance",
+        "-(3 to 8)% to Enemy Lightning Resistance",
+        "-(3 to 8)% to Enemy Cold Resistance",
+        "-(3 to 8)% to Enemy Poison Resistance",
+        "+(25 to 50)% Enhanced Defense",
+        "+2 to Light Radius"
+      ]
+    },
+    {
+      "id": "rw:lunar-fury",
+      "name": "Lunar Fury",
+      "runeCode": "ZodSilZol",
+      "runes": [
+        "Zod",
+        "Sil",
+        "Zol"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "One-Handed Swords"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [
+        "Tyrannical Blades"
+      ],
+      "classRestriction": "Druid Only",
+      "modifiers": [
+        "+200% Enhanced Weapon Damage",
+        "-3% Weapon Physical Damage per 1% Lost Mana",
+        "+(3 to 4) to Druid Skill Levels",
+        "55% Attack Speed",
+        "Adds 8-12 Damage",
+        "Adds (120 to 125)-(126 to 140) Damage",
+        "+(171 to 200)% Enhanced Damage",
+        "5% Chance of Crushing Blow",
+        "+(20 to 40) to all Attributes",
+        "+100 to Mana",
+        "Regenerate Mana +(15 to 25)%",
+        "Physical Resist 5%",
+        "+15 Life after each Kill"
+      ]
+    },
+    {
+      "id": "rw:lynx",
+      "name": "Lynx",
+      "runeCode": "OrtRal",
+      "runes": [
+        "Ort",
+        "Ral"
+      ],
+      "reqLevel": 25,
+      "allowedTypes": [
+        "Druid Bows"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "5% Chance to cast level 8 Gift of Celerity on Death Blow",
+        "30% Attack Speed",
+        "-10% to Enemy Fire Resistance",
+        "+(40 to 67)% Enhanced Damage",
+        "Slow Target 15%",
+        "+10 to Strength",
+        "+15 to Dexterity",
+        "Fire Resist +30%",
+        "Lightning Resist +30%"
+      ]
+    },
+    {
+      "id": "rw:lyrannikin",
+      "name": "Lyrannikin",
+      "runeCode": "HemArcUn",
+      "runes": [
+        "Hem",
+        "Arc",
+        "Un"
+      ],
+      "reqLevel": 110,
+      "allowedTypes": [
+        "Sorceress Body Armors"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+(5 to 10)% Bonus to Spell Focus",
+        "+(13 to 15) to Rising Dawn",
+        "+10% to Summon Damage",
+        "+200% Enhanced Defense",
+        "+(150 to 200) to Vitality",
+        "Elemental Resists +75%",
+        "Poison Length Reduction (65 to 75)%",
+        "Physical Damage Taken Reduced by (40 to 60)"
+      ]
+    },
+    {
+      "id": "rw:lysra",
+      "name": "Lysra",
+      "runeCode": "MalCham",
+      "runes": [
+        "Mal",
+        "Cham"
+      ],
+      "reqLevel": 83,
+      "allowedTypes": [
+        "Belts"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "15% Combat Speeds",
+        "-(8 to 10)% to Enemy Elemental Resistances",
+        "+(141 to 171)% Enhanced Defense",
+        "5% to All Attributes",
+        "+1.5 to Life (Based on Character Level)",
+        "Maximum Mana +2%",
+        "+(10 to 20) Life and Mana after each Kill"
+      ]
+    },
+    {
+      "id": "rw:maenad",
+      "name": "Maenad",
+      "runeCode": "ShaenLozYst",
+      "runes": [
+        "Shaen",
+        "Loz",
+        "Yst"
+      ],
+      "reqLevel": 115,
+      "allowedTypes": [
+        "Amazon Helms"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "Ecstatic Frenzy: +300% Total Damage",
+        "Fire, Cold, and Lightning Pierce Reduced by 100",
+        "+(3 to 4) to All Skills",
+        "(25 to 30)% Movement Speed",
+        "(40 to 45)% Cast Speed",
+        "Adds 20-30 Damage",
+        "+3% to Summon Physical Resist",
+        "Maximum Elemental Resists +1%",
+        "10% Magic Find"
+      ]
+    },
+    {
+      "id": "rw:malignant-shard",
+      "name": "Malignant Shard",
+      "runeCode": "VenXith",
+      "runes": [
+        "Ven",
+        "Xith"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Necromancer Daggers"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "3% Chance to cast level 38 Rotting Flesh on Kill",
+        "+(80 to 100) Spell Focus",
+        "Angel of Death Cooldown Reduced by 0.5 seconds",
+        "+50 Damage",
+        "(80 to 100)% Bonus to Attack Rating",
+        "+(21 to 31)% to Poison Spell Damage",
+        "-(32 to 37)% to Enemy Poison Resistance",
+        "+(10 to 15) to Angel of Death (Necromancer Only)",
+        "+(50 to 100) to all Attributes",
+        "+1 Life on Striking"
+      ]
+    },
+    {
+      "id": "rw:manta",
+      "name": "Manta",
+      "runeCode": "TahaSilBer",
+      "runes": [
+        "Taha",
+        "Sil",
+        "Ber"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Amazon Bows"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "5% Chance to cast level 30 Lightning Streak on Kill",
+        "60% Attack Speed",
+        "Adds 58-82 Damage",
+        "(16 to 21)% Life stolen per Hit",
+        "+(30 to 40)% to Lightning Spell Damage",
+        "+(172 to 200)% Enhanced Damage",
+        "Slow Target 10%",
+        "4% Reanimate as: Random Monster",
+        "Worship the Crack Monkeys!"
+      ]
+    },
+    {
+      "id": "rw:megalith",
+      "name": "Megalith",
+      "runeCode": "LoFal",
+      "runes": [
+        "Lo",
+        "Fal"
+      ],
+      "reqLevel": 73,
+      "allowedTypes": [
+        "Boots"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+1 to All Skills",
+        "25% Cast Speed",
+        "15% Block Speed",
+        "+(115 to 143)% Enhanced Defense",
+        "+(10 to 20) to all Attributes",
+        "5% to Dexterity",
+        "Regenerate Mana +30%",
+        "Physical Resist 5%"
+      ]
+    },
+    {
+      "id": "rw:memory",
+      "name": "Memory",
+      "runeCode": "IgnVenFulGla",
+      "runes": [
+        "Ign",
+        "Ven",
+        "Ful",
+        "Gla"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Gloves"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+1 to All Skills",
+        "+(40 to 50) Spell Focus",
+        "10% Cast Speed",
+        "+(8 to 10)% to Spell Damage",
+        "-11% to Enemy Elemental Resistances",
+        "+150 Life Regenerated per Second",
+        "-20% Mana Cost of Skills"
+      ]
+    },
+    {
+      "id": "rw:mercy",
+      "name": "Mercy",
+      "runeCode": "LewElq",
+      "runes": [
+        "Lew",
+        "Elq"
+      ],
+      "reqLevel": 110,
+      "allowedTypes": [
+        "Gloves"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "10% Chance to cast level 18 Punishers on Melee Attack",
+        "10% Combat Speeds",
+        "Adds 25-45 Damage",
+        "+26 Defense",
+        "+(151 to 200) to Strength",
+        "(15 to 20)% to Vitality"
+      ]
+    },
+    {
+      "id": "rw:minefield",
+      "name": "Minefield",
+      "runeCode": "IgnTyrRalOhm",
+      "runes": [
+        "Ign",
+        "Tyr",
+        "Ral",
+        "Ohm"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "One-Handed Swords"
+      ],
+      "excludedTypes": [
+        "Two-Handed Swords"
+      ],
+      "excludedNames": [],
+      "modifiers": [
+        "If you have 90% Fire Resist: +50% Fire Spell Damage",
+        "40% Hit Recovery",
+        "+(26 to 31)% to Fire Spell Damage",
+        "-62% to Enemy Fire Resistance",
+        "Fire Resist +30%",
+        "Fire Absorb (1 to 2)%",
+        "Attacker Takes Fire Damage of (400 to 500)"
+      ]
+    },
+    {
+      "id": "rw:mirage",
+      "name": "Mirage",
+      "runeCode": "ElqOhnVezLozGurXod",
+      "runes": [
+        "Elq",
+        "Ohn",
+        "Vez",
+        "Loz",
+        "Gur",
+        "Xod"
+      ],
+      "reqLevel": 120,
+      "allowedTypes": [
+        "Sorceress Crystal Swords"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+80 Magic Damage per 1% Deadly Strike",
+        "+(2 to 3) to All Skills",
+        "10% Chance to cast level 4 Time Strike on Striking",
+        "50% Attack Speed",
+        "50% Cast Speed",
+        "20% Block Speed",
+        "50% Hit Recovery",
+        "Adds 100-150 Damage",
+        "+(180 to 200)% Enhanced Damage",
+        "+4% to Summon Physical Resist",
+        "+75 to Dexterity",
+        "Maximum Block Chance +10%"
+      ]
+    },
+    {
+      "id": "rw:mithridatism",
+      "name": "Mithridatism",
+      "runeCode": "VenOhm",
+      "runes": [
+        "Ven",
+        "Ohm"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Gloves"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "Gain 20% of your Poison Resistance as Poison Length Reduction",
+        "+1 to All Skills",
+        "25% Hit Recovery",
+        "Adds 300-400 Poison Damage over 2 seconds",
+        "-(7 to 10)% to Enemy Poison Resistance",
+        "+(141 to 171)% Enhanced Defense",
+        "+10 to all Attributes",
+        "Poison Resist +25%"
+      ]
+    },
+    {
+      "id": "rw:morthwyrtha",
+      "name": "Morthwyrtha",
+      "runeCode": "IoSur",
+      "runes": [
+        "Io",
+        "Sur"
+      ],
+      "reqLevel": 75,
+      "allowedTypes": [
+        "Barbarian Helms"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+(3 to 4) to Barbarian Skill Levels",
+        "+1 to Maximum Barbarian Minions",
+        "+3 to Banish",
+        "+(16 to 20)% to Summon Damage",
+        "+(50 to 75)% to Summon Attack Rating",
+        "Regenerate Mana +(6 to 10)%"
+      ]
+    },
+    {
+      "id": "rw:myth",
+      "name": "Myth",
+      "runeCode": "JahKoGulJah",
+      "runes": [
+        "Jah",
+        "Ko",
+        "Gul",
+        "Jah"
+      ],
+      "reqLevel": 80,
+      "allowedTypes": [
+        "Barbarian Two-Handed Axes"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "30% Attack Speed",
+        "Adds (60 to 75)-(76 to 100) Damage",
+        "(1 to 5)% Life stolen per Hit",
+        "+200% Enhanced Damage",
+        "20% to Strength",
+        "Physical Resist 10%"
+      ]
+    },
+    {
+      "id": "rw:nasrudin",
+      "name": "Nasrudin",
+      "runeCode": "ZodTaha",
+      "runes": [
+        "Zod",
+        "Taha"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Barbarian Helms"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "80% Combat Speeds",
+        "+(9 to 15) to Cautious Strike",
+        "+200% Enhanced Defense",
+        "+(251 to 300) to Dexterity",
+        "+15 Life after each Kill",
+        "(26 to 32)% Gold Find"
+      ]
+    },
+    {
+      "id": "rw:natha",
+      "name": "Natha",
+      "runeCode": "GulEl",
+      "runes": [
+        "Gul",
+        "El"
+      ],
+      "reqLevel": 65,
+      "allowedTypes": [
+        "Druid Helms"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+1 Steady Aim charge per Steady Shot",
+        "4% Chance to cast level 2 Arrow on Striking",
+        "20% Attack Speed",
+        "50% Hit Recovery",
+        "(31 to 50)% Bonus to Attack Rating",
+        "+(58 to 86)% Enhanced Defense",
+        "+5 to all Attributes",
+        "Physical Resist 10%"
+      ]
+    },
+    {
+      "id": "rw:natures-grace",
+      "name": "Nature's Grace",
+      "runeCode": "KoVenVenIth",
+      "runes": [
+        "Ko",
+        "Ven",
+        "Ven",
+        "Ith"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Druid Helms"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+(1 to 2) to Druid Skill Levels",
+        "1% Base Block Chance",
+        "+30% to Poison Spell Damage",
+        "-15% to Enemy Poison Resistance",
+        "+(171 to 200)% Enhanced Defense",
+        "+100 to Strength",
+        "40% to Strength",
+        "Requirements -50%"
+      ]
+    },
+    {
+      "id": "rw:nephilim",
+      "name": "Nephilim",
+      "runeCode": "ZodThul",
+      "runes": [
+        "Zod",
+        "Thul"
+      ],
+      "reqLevel": 85,
+      "allowedTypes": [
+        "Boots"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+(144 to 171)% Enhanced Defense",
+        "+150 Defense",
+        "+50 to Strength",
+        "(21 to 25)% to Strength",
+        "+50 to Vitality",
+        "(21 to 25)% to Vitality",
+        "Cold Resist +25%",
+        "+15 Life after each Kill"
+      ]
+    },
+    {
+      "id": "rw:nezha",
+      "name": "Nezha",
+      "runeCode": "KaFelIst",
+      "runes": [
+        "Ka",
+        "Fel",
+        "Ist"
+      ],
+      "reqLevel": 110,
+      "allowedTypes": [
+        "Druid Helms"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "While in Wereowl Form: Adds 20 Damage",
+        "While in Werewolf Form: -25% Enemy Cold Resistance",
+        "+2 to Druid Skill Levels",
+        "25% Attack Speed",
+        "+(172 to 200)% Enhanced Defense",
+        "7% to Strength",
+        "(47 to 52)% to Dexterity",
+        "Maximum Mana +(11 to 20)%",
+        "(50 to 80)% Magic Find"
+      ]
+    },
+    {
+      "id": "rw:obedience",
+      "name": "Obedience",
+      "runeCode": "ZurTahaArcIst",
+      "runes": [
+        "Zur",
+        "Taha",
+        "Arc",
+        "Ist"
+      ],
+      "reqLevel": 115,
+      "allowedTypes": [
+        "Necromancer Staves"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "When Soulchain is Active:",
+        "Frostclaw Totem has 6% Chance to cast Level 44 Blizzard on Death Blow",
+        "Fireheart Totem has 6% Chance to cast Level 44 Fire Cannonade on Death Blow",
+        "Stormeye Totem has 6% Chance to cast Level 44 Stormclash on Death Blow",
+        "+13 to Necromancer Skill Levels",
+        "+(8 to 11)% Bonus to Spell Focus",
+        "+(35 to 40)% to Spell Damage",
+        "-26% to Enemy Elemental Resistances",
+        "+(300 to 400) to Life",
+        "Regenerate Mana +22%",
+        "Physical Resist 10%",
+        "+(100 to 150) Life after each Kill",
+        "50% Magic Find"
+      ]
+    },
+    {
+      "id": "rw:obsidian-crown",
+      "name": "Obsidian Crown",
+      "runeCode": "IahFelUmLum",
+      "runes": [
+        "Iah",
+        "Fel",
+        "Um",
+        "Lum"
+      ],
+      "reqLevel": 120,
+      "allowedTypes": [
+        "Amazon Helms"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "Takedown: +1 Maximum Fury Charges",
+        "+2 to Amazon Skill Levels",
+        "20% Combat Speeds",
+        "+(125 to 145)% Enhanced Defense",
+        "(15 to 20)% to Dexterity",
+        "+(400 to 500) to Life",
+        "Maximum Elemental Resists +2%",
+        "Elemental Resists +(20 to 25)%"
+      ]
+    },
+    {
+      "id": "rw:oriflamme",
+      "name": "Oriflamme",
+      "runeCode": "TahaQorZod",
+      "runes": [
+        "Taha",
+        "Qor",
+        "Zod"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Paladin Clubs",
+        "Paladin Maces",
+        "Paladin Hammers"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "Additional Dexterity Damage Bonus: 0.078125%",
+        "80% Attack Speed",
+        "Adds 111-140 Damage",
+        "Adds 400-500 Magic Damage",
+        "-(30 to 35)% to Enemy Fire Resistance",
+        "+(172 to 200)% Enhanced Damage",
+        "5% Deadly Strike",
+        "Slow Target 10%",
+        "+200 to Strength",
+        "+200 to Dexterity",
+        "+15 Life after each Kill"
+      ]
+    },
+    {
+      "id": "rw:oris-herald",
+      "name": "Oris' Herald",
+      "runeCode": "ArcIgnVenFulGlaGul",
+      "runes": [
+        "Arc",
+        "Ign",
+        "Ven",
+        "Ful",
+        "Gla",
+        "Gul"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Scepters"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "Orb Effects Applied to this Item are Doubled",
+        "+(2 to 3) to All Skills",
+        "+(5 to 10)% Bonus to Spell Focus",
+        "35% Cast Speed",
+        "+(15 to 20)% to Physical/Magic Spell Damage",
+        "+(30 to 35) to Magic Missiles",
+        "25% to Energy",
+        "Physical Resist 10%"
+      ]
+    },
+    {
+      "id": "rw:orisha",
+      "name": "Orisha",
+      "runeCode": "TalSurThul",
+      "runes": [
+        "Tal",
+        "Sur",
+        "Thul"
+      ],
+      "reqLevel": 75,
+      "allowedTypes": [
+        "Paladin Spears"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+4 to Paladin Skill Levels",
+        "50% Cast Speed",
+        "+(40 to 50)% to Physical/Magic Spell Damage",
+        "-15% to Enemy Lightning Resistance",
+        "5% to All Attributes",
+        "Regenerate Mana +15%",
+        "Cold Resist +30%",
+        "Physical Resist (5 to 10)%",
+        "+(75 to 100) Life when Struck by an Enemy",
+        "+(2 to 3)% to Experience Gained"
+      ]
+    },
+    {
+      "id": "rw:outlaw",
+      "name": "Outlaw",
+      "runeCode": "TalHel",
+      "runes": [
+        "Tal",
+        "Hel"
+      ],
+      "reqLevel": 40,
+      "allowedTypes": [
+        "Boots"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+1 to Necromancer Skill Levels",
+        "Attacker Flees after Striking 5%",
+        "+(16 to 20)% to Summon Damage",
+        "+(6 to 15)% to Summon Elemental Resistances",
+        "+(30 to 57)% Enhanced Defense",
+        "+(11 to 15) to Energy",
+        "Elemental Resists +(3 to 5)%",
+        "Physical Damage Taken Reduced by (1 to 5)",
+        "+(1 to 5) to Light Radius"
+      ]
+    },
+    {
+      "id": "rw:overseers-slippers",
+      "name": "Overseer's Slippers",
+      "runeCode": "HemIo",
+      "runes": [
+        "Hem",
+        "Io"
+      ],
+      "reqLevel": 105,
+      "allowedTypes": [
+        "Boots"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "Abyss Knights: Chance to cast Chaos Nova on Kill Doubled",
+        "+1 to Necromancer Skill Levels",
+        "4% Chance to cast level 11 Force Blast when Struck",
+        "Attacker Flees after Striking 10%",
+        "+(28 to 33)% to Summon Damage",
+        "+(31 to 40)% to Summon Elemental Resistances",
+        "+50% to Summon Attack Rating",
+        "+200% Enhanced Defense",
+        "+(200 to 250) to Energy",
+        "(25 to 30)% Magic Find"
+      ]
+    },
+    {
+      "id": "rw:path",
+      "name": "Path",
+      "runeCode": "OhmRalSur",
+      "runes": [
+        "Ohm",
+        "Ral",
+        "Sur"
+      ],
+      "reqLevel": 75,
+      "allowedTypes": [
+        "Scepters"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+3 to Amazon Skill Levels",
+        "+(13 to 15)% Bonus to Spell Focus",
+        "15% Hit Recovery",
+        "+30% to Physical/Magic Spell Damage",
+        "+20% to Fire Spell Damage",
+        "-(10 to 15)% to Enemy Fire Resistance",
+        "+9 to Ignis Fatuus",
+        "Regenerate Mana +15%",
+        "Fire Resist +30%",
+        "Physical Resist (10 to 15)%",
+        "+(4 to 5)% to Experience Gained",
+        "Total Defense = 0",
+        "Requirements -20%"
+      ]
+    },
+    {
+      "id": "rw:patriot",
+      "name": "Patriot",
+      "runeCode": "El",
+      "runes": [
+        "El"
+      ],
+      "reqLevel": 6,
+      "allowedTypes": [
+        "Throwing Knives"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+2 Fire Damage",
+        "Adds 10-20 Poison Damage over 2 seconds",
+        "-(6 to 8)% to Enemy Fire Resistance",
+        "+(12 to 18)% Enhanced Damage",
+        "-(6 to 8)% to Enemy Poison Resistance",
+        "+4 to Dexterity",
+        "+4 to Vitality",
+        "+4 to Energy",
+        "(3 to 5)% Gold Find"
+      ]
+    },
+    {
+      "id": "rw:pax-mystica",
+      "name": "Pax Mystica",
+      "runeCode": "Tir",
+      "runes": [
+        "Tir"
+      ],
+      "reqLevel": 10,
+      "allowedTypes": [
+        "Staves"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+1 to All Skills",
+        "+7% to Spell Damage",
+        "+(2 to 5) to Blink",
+        "Elemental Resists +(11 to 15)%",
+        "(11 to 13)% Magic Find"
+      ]
+    },
+    {
+      "id": "rw:plagued-mallet",
+      "name": "Plagued Mallet",
+      "runeCode": "VenLozFulOl",
+      "runes": [
+        "Ven",
+        "Loz",
+        "Ful",
+        "Ol"
+      ],
+      "reqLevel": 115,
+      "allowedTypes": [
+        "Scepters"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "Curare: +5% Damage Multiplier per Reckoning of Zerae Base Level",
+        "+4 to Amazon Skill Levels",
+        "3% Chance to cast level 1 Shower of Rocks on Kill",
+        "20% Block Speed",
+        "Adds 400-800 Poison Damage over 2 seconds",
+        "-(37 to 42)% to Enemy Lightning Resistance",
+        "+(141 to 171)% Enhanced Damage",
+        "-(37 to 42)% to Enemy Poison Resistance",
+        "+4% to Summon Physical Resist",
+        "+13 to all Attributes",
+        "+(300 to 400) to Life",
+        "Physical Resist (10 to 15)%",
+        "(40 to 50)% Magic Find"
+      ]
+    },
+    {
+      "id": "rw:prodigy",
+      "name": "Prodigy",
+      "runeCode": "AmnLum",
+      "runes": [
+        "Amn",
+        "Lum"
+      ],
+      "reqLevel": 45,
+      "allowedTypes": [
+        "Gloves"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+1 to All Skills",
+        "+(10 to 15)% to Summon Damage",
+        "+5% to Summon Elemental Resistances",
+        "+93 Defense",
+        "(11 to 20)% to Strength",
+        "Regenerate Mana +(10 to 15)%",
+        "Fire Resist +(3 to 8)%",
+        "Lightning Resist +(3 to 8)%",
+        "Cold Resist +(3 to 8)%",
+        "Poison Resist +(28 to 33)%"
+      ]
+    },
+    {
+      "id": "rw:prophecy",
+      "name": "Prophecy",
+      "runeCode": "Ith",
+      "runes": [
+        "Ith"
+      ],
+      "reqLevel": 18,
+      "allowedTypes": [
+        "Scepters"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+1 to All Skills",
+        "+(3 to 4) to Maximum Damage",
+        "+(10 to 26)% Enhanced Damage",
+        "+1 Life Regenerated per Second",
+        "Fire Resist +(21 to 40)%",
+        "Cold Resist +(21 to 40)%",
+        "Poison Length Reduction (10 to 15)%",
+        "Attacker Takes Fire Damage of (21 to 25)",
+        "Attacker Takes Cold Damage of (21 to 25)"
+      ]
+    },
+    {
+      "id": "rw:quimbanda",
+      "name": "Quimbanda",
+      "runeCode": "VexEl",
+      "runes": [
+        "Vex",
+        "El"
+      ],
+      "reqLevel": 68,
+      "allowedTypes": [
+        "Necromancer Shields"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+1 to Necromancer Skill Levels",
+        "25% Cast Speed",
+        "+(10 to 15)% to Spell Damage",
+        "+(5 to 10) to all Attributes",
+        "+(51 to 100) to Life",
+        "Regenerate Mana +5%",
+        "Elemental/Magic Damage Taken Reduced by 5",
+        "+(15 to 30) Mana after each Kill"
+      ]
+    },
+    {
+      "id": "rw:ra",
+      "name": "Ra",
+      "runeCode": "ShaelThul",
+      "runes": [
+        "Shael",
+        "Thul"
+      ],
+      "reqLevel": 35,
+      "allowedTypes": [
+        "Helms"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "Living Flame Gives +1% Fire Spell Damage per 8 Character Levels",
+        "+1 to All Skills",
+        "+10% Bonus to Poison Skill Duration",
+        "35% Cast Speed",
+        "-(7 to 10)% to Enemy Fire Resistance",
+        "-(7 to 10)% to Enemy Poison Resistance",
+        "Attacker Flees after Striking (11 to 15)%",
+        "Cold Resist +25%",
+        "Poison Resist +25%",
+        "(7 to 13)% Gold Find",
+        "7% Magic Find"
+      ]
+    },
+    {
+      "id": "rw:rainbow",
+      "name": "Rainbow",
+      "runeCode": "Eth",
+      "runes": [
+        "Eth"
+      ],
+      "reqLevel": 15,
+      "allowedTypes": [
+        "Belts"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+5% to Spell Damage",
+        "+(6 to 10)% to Summon Elemental Resistances",
+        "Regenerate Mana +(5 to 10)%",
+        "Elemental Resists +(10 to 15)%",
+        "(6 to 8)% Magic Find",
+        "+2 to Light Radius"
+      ]
+    },
+    {
+      "id": "rw:raptor",
+      "name": "Raptor",
+      "runeCode": "ZodSurLemEl",
+      "runes": [
+        "Zod",
+        "Sur",
+        "Lem",
+        "El"
+      ],
+      "reqLevel": 85,
+      "allowedTypes": [
+        "Throwing Axes"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "classRestriction": "Barbarian Only",
+      "modifiers": [
+        "3% Chance to cast level 60 Thunder Slam on Kill",
+        "-19% to Enemy Poison Resistance",
+        "+(6 to 11) to Snake Stance (Barbarian Only)",
+        "+3 to all Attributes",
+        "5% to Vitality",
+        "Maximum Life +3%",
+        "Regenerate Mana +15%",
+        "+115 Life after each Kill"
+      ]
+    },
+    {
+      "id": "rw:rathmas-blessing",
+      "name": "Rathma's Blessing",
+      "runeCode": "OrtGlaThulGla",
+      "runes": [
+        "Ort",
+        "Gla",
+        "Thul",
+        "Gla"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Circlets"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+(2 to 3) to All Skills",
+        "+50% to Summon Life",
+        "+25% to Summon Damage",
+        "+50% to Summon Elemental Resistances",
+        "Lightning Resist +25%",
+        "Cold Resist +50%",
+        "+10 Cold Absorb",
+        "(15 to 20)% Magic Find"
+      ]
+    },
+    {
+      "id": "rw:rebel",
+      "name": "Rebel",
+      "runeCode": "ZolSilSilLo",
+      "runes": [
+        "Zol",
+        "Sil",
+        "Sil",
+        "Lo"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Body Armors"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "15% Combat Speeds",
+        "Adds 8-12 Damage",
+        "Weapon Physical Damage +(80 to 100)%",
+        "+(172 to 200)% Enhanced Defense",
+        "+(151 to 200) to Strength",
+        "+(151 to 200) to Dexterity",
+        "+75 to Mana",
+        "Maximum Elemental Resists +1%",
+        "Elemental Resists +(40 to 50)%"
+      ]
+    },
+    {
+      "id": "rw:roc",
+      "name": "Roc",
+      "runeCode": "EldOhm",
+      "runes": [
+        "Eld",
+        "Ohm"
+      ],
+      "reqLevel": 70,
+      "allowedTypes": [
+        "Necromancer Daggers"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "15% Hit Recovery",
+        "Thunder Slam Cooldown Reduced by 3 seconds",
+        "Adds 20-35 Damage",
+        "+(141 to 171)% Enhanced Damage",
+        "+(9 to 12) to Thunder Slam",
+        "(3 to 5)% Chance of Crushing Blow",
+        "Hit Causes Monster to Flee +25%",
+        "25% to Strength",
+        "25% to Dexterity",
+        "7% Reanimate as: Random Monster"
+      ]
+    },
+    {
+      "id": "rw:rusalka",
+      "name": "Rusalka",
+      "runeCode": "ElBerBerOhm",
+      "runes": [
+        "El",
+        "Ber",
+        "Ber",
+        "Ohm"
+      ],
+      "reqLevel": 78,
+      "allowedTypes": [
+        "Amazon Spears"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "10% Chance to cast level 32 Punisher Barrage on Melee Attack",
+        "30% Chance to cast level 60 Hunting Banshee on Kill",
+        "15% Hit Recovery",
+        "+(90 to 110) to Minimum Damage",
+        "+(141 to 171)% Enhanced Damage",
+        "+(71 to 100)% to Cold Spell Damage",
+        "-40% to Enemy Cold Resistance",
+        "+(71 to 100)% to Poison Spell Damage",
+        "-40% to Enemy Poison Resistance",
+        "+13 to Void Archon",
+        "Slow Target 10%",
+        "+(73 to 98) to all Attributes"
+      ]
+    },
+    {
+      "id": "rw:sabertooth",
+      "name": "Sabertooth",
+      "runeCode": "SurGul",
+      "runes": [
+        "Sur",
+        "Gul"
+      ],
+      "reqLevel": 75,
+      "allowedTypes": [
+        "One-Handed Axes"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "80% Attack Speed",
+        "(9 to 17)% Life stolen per Hit",
+        "+(144 to 171)% Enhanced Damage",
+        "+150 to Strength",
+        "Weapon Physical Damage +1.21875% (Based on Character Level)",
+        "Regenerate Mana +15%"
+      ]
+    },
+    {
+      "id": "rw:sangreal",
+      "name": "Sangreal",
+      "runeCode": "OhmSol",
+      "runes": [
+        "Ohm",
+        "Sol"
+      ],
+      "reqLevel": 70,
+      "allowedTypes": [
+        "Paladin Shields"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "Demon Blood Aura",
+        "You and Undead Minions: Maximum Life +6%",
+        "26.6 Yard Radius",
+        "-10% Base Block Chance",
+        "25% Attack Speed",
+        "40% Hit Recovery",
+        "+(10 to 15)% to Summon Life",
+        "+33 Defense"
+      ]
+    },
+    {
+      "id": "rw:savage",
+      "name": "Savage",
+      "runeCode": "YstFelKa",
+      "runes": [
+        "Yst",
+        "Fel",
+        "Ka"
+      ],
+      "reqLevel": 110,
+      "allowedTypes": [
+        "Gloves"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+1% Weapon Physical Damage per 50 Strength or Dexterity",
+        "(Whichever is Higher)",
+        "75% Attack Speed",
+        "+10 Damage",
+        "+200% Enhanced Defense",
+        "+(10 to 40) to all Attributes",
+        "10% to Strength",
+        "10% to Dexterity",
+        "Maximum Cold Resist +1%",
+        "Cold Resist +25%",
+        "10% Magic Find"
+      ]
+    },
+    {
+      "id": "rw:scorched-earth",
+      "name": "Scorched Earth",
+      "runeCode": "IgnTahaUn",
+      "runes": [
+        "Ign",
+        "Taha",
+        "Un"
+      ],
+      "reqLevel": 110,
+      "allowedTypes": [
+        "Assassin Shields"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+25 Fire Damage per 100 Dexterity",
+        "10% Chance to cast level 59 Pentagram on Melee Attack",
+        "1% Base Block Chance",
+        "30% Block Speed",
+        "-(10 to 15)% to Enemy Elemental Resistances",
+        "Weapon Physical Damage -150%",
+        "+(172 to 200)% Enhanced Defense",
+        "+(41 to 50) to all Attributes",
+        "Maximum Fire Resist +1%",
+        "Elemental Resists +(15 to 25)%",
+        "Fire Absorb 1%"
+      ]
+    },
+    {
+      "id": "rw:shadow-bite",
+      "name": "Shadow Bite",
+      "runeCode": "Phul",
+      "runes": [
+        "Phul"
+      ],
+      "reqLevel": 110,
+      "allowedTypes": [
+        "Throwing Knives"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+4 Storm Crows Projectiles",
+        "5% Chance to cast level 24 Hammertime on Kill",
+        "20% Combat Speeds",
+        "Adds 110-(125 to 145) Damage",
+        "Adds (200 to 300)-(400 to 500) Magic Damage",
+        "+(171 to 200)% Enhanced Damage",
+        "(5 to 10)% to All Attributes",
+        "+(100 to 200) to Life"
+      ]
+    },
+    {
+      "id": "rw:shamo",
+      "name": "Shamo",
+      "runeCode": "RalSolEld",
+      "runes": [
+        "Ral",
+        "Sol",
+        "Eld"
+      ],
+      "reqLevel": 33,
+      "allowedTypes": [
+        "Assassin Naginatas"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "10% Chance to cast level 15 Life Spark on Melee Attack",
+        "30% Attack Speed",
+        "Adds 12-23 Damage",
+        "+(60 to 100)% Enhanced Damage",
+        "+(3 to 5) to ATMG Sentry",
+        "+40 to Strength",
+        "+40 to Dexterity",
+        "Fire Resist +30%"
+      ]
+    },
+    {
+      "id": "rw:shark",
+      "name": "Shark",
+      "runeCode": "Eld",
+      "runes": [
+        "Eld"
+      ],
+      "reqLevel": 8,
+      "allowedTypes": [
+        "Weapons"
+      ],
+      "excludedTypes": [
+        "Necromancer Daggers",
+        "Assassin Claws"
+      ],
+      "excludedNames": [],
+      "modifiers": [
+        "5% Chance to cast level 9 Bloodlust on Kill",
+        "+(7 to 9)% Bonus Damage to Bloodlust",
+        "20% Attack Speed",
+        "+5 to Maximum Damage",
+        "+0.125 to Maximum Damage (Based on Character Level)",
+        "1.5% Bonus to Attack Rating (Based on Character Level)",
+        "+(24 to 35)% Enhanced Damage"
+      ]
+    },
+    {
+      "id": "rw:shaula",
+      "name": "Shaula",
+      "runeCode": "BerMalLum",
+      "runes": [
+        "Ber",
+        "Mal",
+        "Lum"
+      ],
+      "reqLevel": 78,
+      "allowedTypes": [
+        "Sorceress Crystal Swords"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+(1 to 2) to Sorceress Skill Levels",
+        "40% Attack Speed",
+        "Adds (30 to 40)-(60 to 70) Damage",
+        "+(141 to 171)% Enhanced Damage",
+        "Slow Target (5 to 10)%",
+        "3% to All Attributes",
+        "+(3 to 5)% to Experience Gained"
+      ]
+    },
+    {
+      "id": "rw:shedim",
+      "name": "Shedim",
+      "runeCode": "Eld",
+      "runes": [
+        "Eld"
+      ],
+      "reqLevel": 8,
+      "allowedTypes": [
+        "Assassin Claws"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+5 to Maximum Damage",
+        "25% Bonus to Attack Rating",
+        "+30% Damage to Undead",
+        "Adds 13-25 Poison Damage over 1 seconds",
+        "+(30 to 50)% Enhanced Damage",
+        "-10% to Enemy Poison Resistance",
+        "Poison Length Reduction (11 to 20)%",
+        "+(6 to 8) Mana after each Kill"
+      ]
+    },
+    {
+      "id": "rw:shockwave",
+      "name": "Shockwave",
+      "runeCode": "IthShael",
+      "runes": [
+        "Ith",
+        "Shael"
+      ],
+      "reqLevel": 35,
+      "allowedTypes": [
+        "Bows"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "50% Chance to cast level 14 Punishers on Kill",
+        "+15% Bonus to Poison Skill Duration",
+        "Adds 6-9 Damage",
+        "+(58 to 72)% Enhanced Damage",
+        "+10% to Poison Spell Damage",
+        "(3 to 5)% Chance of Crushing Blow",
+        "Slow Target (11 to 15)%",
+        "+(21 to 40) to Dexterity",
+        "+(21 to 40) to Energy"
+      ]
+    },
+    {
+      "id": "rw:siegfried",
+      "name": "Siegfried",
+      "runeCode": "VexNef",
+      "runes": [
+        "Vex",
+        "Nef"
+      ],
+      "reqLevel": 68,
+      "allowedTypes": [
+        "Amazon Helms"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "3% Chance to cast level 5 Vanquish on Kill",
+        "50% Attack Speed",
+        "15% Cast Speed",
+        "Adds 42-125 Fire Damage",
+        "Adds 42-125 Lightning Damage",
+        "Adds 42-125 Cold Damage",
+        "(3 to 5)% Chance of Crushing Blow",
+        "+(72 to 100)% Enhanced Defense",
+        "+50 to Dexterity",
+        "Elemental Resists +(21 to 25)%"
+      ]
+    },
+    {
+      "id": "rw:skylord",
+      "name": "Skylord",
+      "runeCode": "ArcXethGlaMal",
+      "runes": [
+        "Arc",
+        "Xeth",
+        "Gla",
+        "Mal"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Paladin Spears"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "Lemures Explosion Radius Increased by 2 yards",
+        "+(8 to 10) to Paladin Skill Levels",
+        "+(11 to 16)% Bonus to Spell Focus",
+        "90% Attack Speed",
+        "(75 to 100)% Bonus to Attack Rating",
+        "+(41 to 61)% to Cold Spell Damage",
+        "(21 to 25)% to All Attributes",
+        "+(75 to 125) Mana on Melee Attack",
+        "+(100 to 150) Mana when Struck by an Enemy"
+      ]
+    },
+    {
+      "id": "rw:smoldering-edge",
+      "name": "Smoldering Edge",
+      "runeCode": "Tir",
+      "runes": [
+        "Tir"
+      ],
+      "reqLevel": 10,
+      "allowedTypes": [
+        "Barbarian One-Handed Axes"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "15% Attack Speed",
+        "+10 Fire Damage",
+        "Elemental Resists +(4 to 6)%",
+        "+(2 to 3) Life on Melee Attack",
+        "(5 to 10)% Magic Find"
+      ]
+    },
+    {
+      "id": "rw:snowsquall",
+      "name": "Snowsquall",
+      "runeCode": "GlaIu",
+      "runes": [
+        "Gla",
+        "Iu"
+      ],
+      "reqLevel": 105,
+      "allowedTypes": [
+        "Gloves"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+1% Maximum Cold Resist per 80% Cold Resist",
+        "+1 to All Skills",
+        "20% Hit Recovery",
+        "Adds 100-200 Cold Damage",
+        "(3 to 5)% Innate Elemental Damage",
+        "-(7 to 10)% to Enemy Cold Resistance",
+        "Slow Target 20%",
+        "+200% Enhanced Defense",
+        "+(21 to 25) to Dexterity",
+        "Cold Absorb (3 to 5)%"
+      ]
+    },
+    {
+      "id": "rw:splintered-soul",
+      "name": "Splintered Soul",
+      "runeCode": "TahaXithUn",
+      "runes": [
+        "Taha",
+        "Xith",
+        "Un"
+      ],
+      "reqLevel": 110,
+      "allowedTypes": [
+        "Necromancer Shields"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "When Soulchain is Active:",
+        "Dirge Chances to cast Increased by 10%",
+        "+2 to Necromancer Skill Levels",
+        "20% Hit Recovery",
+        "+(20 to 25)% to Physical/Magic Spell Damage",
+        "+(20 to 25)% to Fire Spell Damage",
+        "-(15 to 20)% to Enemy Elemental Resistances",
+        "+(20 to 25)% to Lightning Spell Damage",
+        "+(20 to 25)% to Cold Spell Damage",
+        "+(20 to 25)% to Poison Spell Damage",
+        "+(141 to 171)% Enhanced Defense",
+        "Maximum Elemental Resists +1%",
+        "Elemental Resists +(15 to 20)%",
+        "+(40 to 50) Life after each Kill"
+      ]
+    },
+    {
+      "id": "rw:stardust",
+      "name": "Stardust",
+      "runeCode": "TahaJahQor",
+      "runes": [
+        "Taha",
+        "Jah",
+        "Qor"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Bows"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "2% Chance to cast level 52 Singularity on Kill",
+        "2% Chance to cast level 61 Meteor Shower on Kill",
+        "Adds 57-69 Damage",
+        "Adds 1-500 Fire Damage",
+        "Adds 1-500 Lightning Damage",
+        "Adds 1-500 Cold Damage",
+        "-(16 to 21)% to Enemy Elemental Resistances",
+        "+200% Enhanced Damage",
+        "5% Deadly Strike",
+        "(21 to 30)% to Dexterity"
+      ]
+    },
+    {
+      "id": "rw:starlight",
+      "name": "Starlight",
+      "runeCode": "ZolMalBer",
+      "runes": [
+        "Zol",
+        "Mal",
+        "Ber"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Shields"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "classRestriction": "Sorceress Only",
+      "modifiers": [
+        "Heal 0.05% Life per Second per 1% Lost Mana",
+        "+2 to All Skills",
+        "+(5 to 7) to Immersion (Sorceress Only)",
+        "+(5 to 7) to Arcane Torrent (Sorceress Only)",
+        "Slows Attacker by 14%",
+        "+(141 to 171)% Enhanced Defense",
+        "3% to All Attributes",
+        "+(165 to 215) to Mana",
+        "Maximum Mana +20%",
+        "Physical Resist 5%",
+        "Requirements -15%"
+      ]
+    },
+    {
+      "id": "rw:sting",
+      "name": "Sting",
+      "runeCode": "Tir",
+      "runes": [
+        "Tir"
+      ],
+      "reqLevel": 10,
+      "allowedTypes": [
+        "Crossbows"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "25% Attack Speed",
+        "+(40 to 50)% Enhanced Damage",
+        "1% Reanimate as: Random Monster",
+        "(5 to 10)% Gold Find"
+      ]
+    },
+    {
+      "id": "rw:stone",
+      "name": "Stone",
+      "runeCode": "Thul",
+      "runes": [
+        "Thul"
+      ],
+      "reqLevel": 28,
+      "allowedTypes": [
+        "Shields"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+1 to All Skills",
+        "25% Hit Recovery",
+        "+(3 to 5) to Maximum Damage",
+        "5% to All Attributes",
+        "+(30 to 40) to Life",
+        "Cold Resist +25%",
+        "Cannot Be Frozen"
+      ]
+    },
+    {
+      "id": "rw:stonefist",
+      "name": "Stonefist",
+      "runeCode": "SilQor",
+      "runes": [
+        "Sil",
+        "Qor"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Assassin Claws"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+5-10 Damage per Character Level Above 138",
+        "+2 to Assassin Skill Levels",
+        "5% Chance to cast level 7 Thunder Wave on Melee Attack",
+        "Adds 133-137 Damage",
+        "(10 to 15)% Life stolen per Hit",
+        "+200% Enhanced Damage",
+        "10% Deadly Strike",
+        "+(100 to 125) to Vitality",
+        "Physical Resist -5%",
+        "Cannot Be Frozen"
+      ]
+    },
+    {
+      "id": "rw:stoneharpe",
+      "name": "Stoneharpe",
+      "runeCode": "SilFelZurSil",
+      "runes": [
+        "Sil",
+        "Fel",
+        "Zur",
+        "Sil"
+      ],
+      "reqLevel": 115,
+      "allowedTypes": [
+        "Scythes"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "Medusa: slow target by 1% per 2 skill levels",
+        "50% Attack Speed",
+        "Adds 16-24 Damage",
+        "Adds (185 to 210)-(215 to 240) Damage",
+        "(15 to 20)% Life stolen per Hit",
+        "+200% Enhanced Damage",
+        "+(15 to 20) to Medusa",
+        "10% Deadly Strike",
+        "+(50 to 75)% to Summon Damage",
+        "+50% to Summon Elemental Resistances",
+        "7% to Dexterity",
+        "Regenerate Mana +22%",
+        "Maximum Elemental Resists +1%"
+      ]
+    },
+    {
+      "id": "rw:storm-quill",
+      "name": "Storm Quill",
+      "runeCode": "ZodDol",
+      "runes": [
+        "Zod",
+        "Dol"
+      ],
+      "reqLevel": 85,
+      "allowedTypes": [
+        "Daggers"
+      ],
+      "excludedTypes": [
+        "Necromancer Daggers"
+      ],
+      "excludedNames": [],
+      "classRestriction": "Druid Only",
+      "modifiers": [
+        "25% Combat Speeds",
+        "Adds (10 to 20)-50 Damage",
+        "Adds 100-150 Lightning Damage",
+        "-(15 to 20)% to Enemy Lightning Resistance",
+        "+(120 to 150)% Enhanced Damage",
+        "+10% to Summon Life",
+        "+15 Life after each Kill",
+        "2% Reanimate as: Random Monster"
+      ]
+    },
+    {
+      "id": "rw:stormshapers-gift",
+      "name": "Stormshaper's Gift",
+      "runeCode": "NifFul",
+      "runes": [
+        "Nif",
+        "Ful"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Gloves"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "2% Chance to cast level 15 Stormpike on Striking",
+        "Adds 1-(25 to 30) Damage",
+        "+6% to Lightning Spell Damage",
+        "-15% to Enemy Lightning Resistance",
+        "+(171 to 200)% Enhanced Defense",
+        "15% to Dexterity",
+        "Elemental Resists +20%",
+        "100% Bonus to Defense",
+        "(80 to 100)% Gold Find"
+      ]
+    },
+    {
+      "id": "rw:styx",
+      "name": "Styx",
+      "runeCode": "TahaDoj",
+      "runes": [
+        "Taha",
+        "Doj"
+      ],
+      "reqLevel": 105,
+      "allowedTypes": [
+        "Necromancer Staves"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "Your Cold Damage is Nullified",
+        "3% Chance to cast level 30 Pyroblast on Death Blow",
+        "3% Chance to cast level 30 Tempest on Death Blow",
+        "-40% to Spell Damage",
+        "-23% to Enemy Elemental Resistances",
+        "+(25 to 30) to Skeletal Flayer",
+        "+1 to Witch Blood",
+        "+(34 to 40) to Tempest",
+        "+(34 to 40) to Thunderstone",
+        "+20% to Summon Life",
+        "(25 to 30)% Magic Find"
+      ]
+    },
+    {
+      "id": "rw:svalinn",
+      "name": "Svalinn",
+      "runeCode": "RhalLoOhn",
+      "runes": [
+        "Rhal",
+        "Lo",
+        "Ohn"
+      ],
+      "reqLevel": 115,
+      "allowedTypes": [
+        "Shields"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "-1% to Enemy Elemental Resistances per 150 Dexterity",
+        "8% Chance to cast level 7 Life Spark on Block",
+        "1% Base Block Chance",
+        "15% Block Speed",
+        "40% Hit Recovery",
+        "+(151 to 200)% Enhanced Defense",
+        "+(30 to 40) to all Attributes",
+        "(15 to 20)% to Dexterity",
+        "+200 to Life",
+        "Fire Resist +(35 to 40)%",
+        "Lightning Resist +(20 to 25)%",
+        "Cold Resist +(20 to 25)%",
+        "Poison Resist +(20 to 25)%",
+        "Fire Absorb (3 to 5)%",
+        "Physical Resist 5%"
+      ]
+    },
+    {
+      "id": "rw:tailwind",
+      "name": "Tailwind",
+      "runeCode": "ThulFal",
+      "runes": [
+        "Thul",
+        "Fal"
+      ],
+      "reqLevel": 50,
+      "allowedTypes": [
+        "Bows"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "(10 to 15)% Movement Speed",
+        "+(10 to 13)% Bonus to Spell Focus",
+        "+0.625 to Maximum Damage (Based on Character Level)",
+        "Adds 77-150 Cold Damage",
+        "+15 to Guided Chain",
+        "5% to Dexterity",
+        "Weapon Physical Damage +1.5625% (Based on Character Level)",
+        "Cold Resist +30%",
+        "Cold Absorb 5%"
+      ]
+    },
+    {
+      "id": "rw:talon",
+      "name": "Talon",
+      "runeCode": "Nef",
+      "runes": [
+        "Nef"
+      ],
+      "reqLevel": 13,
+      "allowedTypes": [
+        "Barbarian Swords"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "Area Effect Attack",
+        "20% Attack Speed",
+        "+(3 to 4) to Minimum Damage",
+        "+(24 to 35)% Enhanced Damage",
+        "+(6 to 10) to Dexterity"
+      ]
+    },
+    {
+      "id": "rw:taming-sari",
+      "name": "Taming Sari",
+      "runeCode": "QorMhal",
+      "runes": [
+        "Qor",
+        "Mhal"
+      ],
+      "reqLevel": 110,
+      "allowedTypes": [
+        "Necromancer Daggers"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "Carnage Now Converts 100% Physical Damage to Fire",
+        "+(2 to 4) to Necromancer Skill Levels",
+        "50% Hit Recovery",
+        "Adds (110 to 130)-(140 to 160) Damage",
+        "-(30 to 35)% to Enemy Fire Resistance",
+        "+(170 to 200)% Enhanced Damage",
+        "3% Deadly Strike",
+        "4% to All Attributes",
+        "Physical Resist 5%",
+        "+(200 to 250) Life on Melee Attack"
+      ]
+    },
+    {
+      "id": "rw:taqiyya",
+      "name": "Taqiyya",
+      "runeCode": "ElNefOhm",
+      "runes": [
+        "El",
+        "Nef",
+        "Ohm"
+      ],
+      "reqLevel": 70,
+      "allowedTypes": [
+        "Paladin Spears"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+1 to All Skills",
+        "25% Chance to cast level 42 Immolation Bomb on Melee Attack",
+        "25% Chance to cast level 42 Nova Bomb on Melee Attack",
+        "+(30 to 50) Spell Focus",
+        "50% Attack Speed",
+        "50% Cast Speed",
+        "70% Hit Recovery",
+        "(50 to 100)% Bonus to Attack Rating",
+        "+(30 to 40)% to Physical/Magic Spell Damage",
+        "+(30 to 40)% to Fire Spell Damage",
+        "+(30 to 40)% to Lightning Spell Damage",
+        "-50% to Enemy Lightning Resistance",
+        "+(30 to 40)% to Cold Spell Damage",
+        "+(30 to 40)% to Poison Spell Damage",
+        "+(10 to 20) to all Attributes"
+      ]
+    },
+    {
+      "id": "rw:tartarus",
+      "name": "Tartarus",
+      "runeCode": "BerChamFal",
+      "runes": [
+        "Ber",
+        "Cham",
+        "Fal"
+      ],
+      "reqLevel": 83,
+      "allowedTypes": [
+        "Crossbows"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "5% Chance to cast level 42 Mind Ripple on Kill",
+        "20% Attack Speed",
+        "+0.75 to Maximum Damage (Based on Character Level)",
+        "+(172 to 200)% Enhanced Damage",
+        "Slow Target 10%",
+        "(15 to 20)% to Strength",
+        "5% to Dexterity",
+        "Maximum Mana +5%",
+        "Fire Resist +100%",
+        "Lightning Resist +100%",
+        "+(101 to 150) Life after each Kill"
+      ]
+    },
+    {
+      "id": "rw:thelema",
+      "name": "Thelema",
+      "runeCode": "LewIuHel",
+      "runes": [
+        "Lew",
+        "Iu",
+        "Hel"
+      ],
+      "reqLevel": 110,
+      "allowedTypes": [
+        "Body Armors"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+4 to All Skills",
+        "+(80 to 95)% to Summon Damage",
+        "+20% to Summon Physical Resist",
+        "+(200 to 250)% to Summon Attack Rating",
+        "+(172 to 200)% Enhanced Defense",
+        "+(120 to 150) to Vitality",
+        "15% to Vitality",
+        "+(101 to 125) Mana when Struck by an Enemy"
+      ]
+    },
+    {
+      "id": "rw:thunder-talons",
+      "name": "Thunder Talons",
+      "runeCode": "FulPhul",
+      "runes": [
+        "Ful",
+        "Phul"
+      ],
+      "reqLevel": 110,
+      "allowedTypes": [
+        "Daggers"
+      ],
+      "excludedTypes": [
+        "Necromancer Daggers"
+      ],
+      "excludedNames": [],
+      "classRestriction": "Druid Only",
+      "modifiers": [
+        "+100 Lightning Damage per Character Level Above 130",
+        "50% Hit Recovery",
+        "Adds 120-(121 to 140) Damage",
+        "-(27 to 32)% to Enemy Lightning Resistance",
+        "+(171 to 200)% Enhanced Damage",
+        "+(8 to 10) to Earth Talons (Druid Only)",
+        "7% to Energy",
+        "Maximum Lightning Resist +2%",
+        "Physical Resist 5%",
+        "+1 Life on Striking"
+      ]
+    },
+    {
+      "id": "rw:timefather",
+      "name": "Timefather",
+      "runeCode": "SilKaSilIah",
+      "runes": [
+        "Sil",
+        "Ka",
+        "Sil",
+        "Iah"
+      ],
+      "reqLevel": 120,
+      "allowedTypes": [
+        "Necromancer Scythes"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "Mega Impact",
+        ": Greatly Increased Radius, Duration, and Effect",
+        "8% Chance to cast level 30 Time Strike on Striking",
+        "40% Attack Speed",
+        "Adds 16-24 Damage",
+        "Adds (135 to 150)-(155 to 170) Damage",
+        "(200 to 250)% Bonus to Attack Rating",
+        "(15 to 20)% Life stolen per Hit",
+        "+205% Enhanced Damage",
+        "7% to Strength",
+        "Maximum Elemental Resists +1%",
+        "Physical Resist (7 to 10)%"
+      ]
+    },
+    {
+      "id": "rw:titans-blockade",
+      "name": "Titan's Blockade",
+      "runeCode": "UmZolLew",
+      "runes": [
+        "Um",
+        "Zol",
+        "Lew"
+      ],
+      "reqLevel": 110,
+      "allowedTypes": [
+        "Barbarian Shields"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "At least 1 Base Level in Runemaster: Maximum Poison Resist +4%",
+        "With 15 Base Levels in Runemaster: 10% Deadly Strike",
+        "40% Hit Recovery",
+        "+20 Damage",
+        "Slows Attacker by 10%",
+        "+(130 to 150)% Enhanced Defense",
+        "+(1000 to 2000) Defense",
+        "(20 to 30)% to Strength",
+        "20% to Vitality",
+        "+15 to Mana",
+        "Maximum Mana +5%",
+        "Elemental Resists +35%"
+      ]
+    },
+    {
+      "id": "rw:titanomachia",
+      "name": "Titanomachia",
+      "runeCode": "JahFulPhul",
+      "runes": [
+        "Jah",
+        "Ful",
+        "Phul"
+      ],
+      "reqLevel": 110,
+      "allowedTypes": [
+        "Amazon Spears"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "25% Chance to cast level 19 Stormblast on Melee Attack",
+        "+125 Damage",
+        "+250 Lightning Damage",
+        "Stun Attack",
+        "-(18 to 22)% to Enemy Lightning Resistance",
+        "+195% Enhanced Damage",
+        "+150 to Strength",
+        "7% to Energy",
+        "Physical Resist 15%"
+      ]
+    },
+    {
+      "id": "rw:tonatiuh",
+      "name": "Tonatiuh",
+      "runeCode": "IgnQor",
+      "runes": [
+        "Ign",
+        "Qor"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Barbarian Shields"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+2 to Barbarian Skill Levels",
+        "20% Chance to cast level 36 Flamefront on Melee Attack",
+        "Adds 63-438 Fire Damage",
+        "-(25 to 35)% to Enemy Fire Resistance",
+        "2% Deadly Strike",
+        "Weapon Physical Damage +(30 to 50)%",
+        "+(115 to 143)% Enhanced Defense",
+        "Fire Absorb 1%",
+        "5% Chance to Avoid Damage"
+      ]
+    },
+    {
+      "id": "rw:tranquility",
+      "name": "Tranquility",
+      "runeCode": "ZolLew",
+      "runes": [
+        "Zol",
+        "Lew"
+      ],
+      "reqLevel": 110,
+      "allowedTypes": [
+        "Paladin Shields"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "Gain 50% of your Maximum Mana as Defense",
+        "+(3 to 4) to Paladin Skill Levels",
+        "30% Hit Recovery",
+        "+(25 to 35)% to Physical/Magic Spell Damage",
+        "+(141 to 171)% Enhanced Defense",
+        "+(30 to 50) to Vitality",
+        "10% to Vitality",
+        "+(51 to 100) to Energy",
+        "Maximum Life and Mana +5%",
+        "+75 to Mana",
+        "Maximum Elemental Resists +1%"
+      ]
+    },
+    {
+      "id": "rw:treachery",
+      "name": "Treachery",
+      "runeCode": "ArcPhul",
+      "runes": [
+        "Arc",
+        "Phul"
+      ],
+      "reqLevel": 110,
+      "allowedTypes": [
+        "Belts"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+1 to All Skills",
+        "+(5 to 10)% Bonus to Spell Focus",
+        "10% Hit Recovery",
+        "+(15 to 20)% to Physical/Magic Spell Damage",
+        "+(12 to 15) to Singularity",
+        "(15 to 20)% to Energy",
+        "+(150 to 250) to Mana",
+        "Physical Resist 5%",
+        "+(100 to 200) Life when Struck by an Enemy"
+      ]
+    },
+    {
+      "id": "rw:triunes-blessing",
+      "name": "Triune's Blessing",
+      "runeCode": "VenSilVenSil",
+      "runes": [
+        "Ven",
+        "Sil",
+        "Ven",
+        "Sil"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Barbarian Shields"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+(1 to 2) to Barbarian Skill Levels",
+        "1% Base Block Chance",
+        "Adds 2-8 Damage",
+        "250% Bonus to Attack Rating",
+        "Adds 313-508 Poison Damage over 2 seconds",
+        "+10% to Poison Spell Damage",
+        "-30% to Enemy Poison Resistance",
+        "+(171 to 200)% Enhanced Defense",
+        "Maximum Poison Resist +2%",
+        "Poison Length Reduction 30%",
+        "Physical Resist 2%"
+      ]
+    },
+    {
+      "id": "rw:truce",
+      "name": "Truce",
+      "runeCode": "Jah",
+      "runes": [
+        "Jah"
+      ],
+      "reqLevel": 80,
+      "allowedTypes": [
+        "Belts"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "5% Combat Speeds",
+        "Stun Attack",
+        "Slows Attacker by 5%",
+        "+(172 to 200)% Enhanced Defense",
+        "Physical Resist 10%"
+      ]
+    },
+    {
+      "id": "rw:twisted-mind",
+      "name": "Twisted Mind",
+      "runeCode": "ArcOlPhul",
+      "runes": [
+        "Arc",
+        "Ol",
+        "Phul"
+      ],
+      "reqLevel": 110,
+      "allowedTypes": [
+        "Necromancer Shields"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "Enhances Death Ripple",
+        "Occult Path: +10 Life per Death Ripple Skill Level",
+        "+(3 to 5) to Necromancer Skill Levels",
+        "2% Chance to cast level 10 Timefield on Death Blow",
+        "+(5 to 10)% Bonus to Spell Focus",
+        "+(50 to 75)% to Summon Life",
+        "+(171 to 200)% Enhanced Defense",
+        "+13 to all Attributes",
+        "10% to Energy",
+        "Magic Resist +1%",
+        "+(100 to 150) Life after each Kill",
+        "(30 to 40)% Magic Find"
+      ]
+    },
+    {
+      "id": "rw:typhoon",
+      "name": "Typhoon",
+      "runeCode": "ZolElqGla",
+      "runes": [
+        "Zol",
+        "Elq",
+        "Gla"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Druid Helms"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "Howl of the Spirits: +4 Seconds Duration",
+        "3% Chance to cast level 10 Shower of Rocks on Melee Attack",
+        "+10 to Maximum Damage",
+        "+(300 to 500) to Attack Rating",
+        "-(10 to 15)% to Enemy Cold Resistance",
+        "+(8 to 12) to Twisted Claw (Druid Only)",
+        "+(141 to 171)% Enhanced Defense",
+        "(20 to 25)% to Strength",
+        "+15 to Mana",
+        "Maximum Mana +10%",
+        "Maximum Elemental Resists +1%",
+        "Physical Resist 5%"
+      ]
+    },
+    {
+      "id": "rw:tzeentch",
+      "name": "Tzeentch",
+      "runeCode": "TahaTahaQor",
+      "runes": [
+        "Taha",
+        "Taha",
+        "Qor"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Necromancer Scythes"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "4% Chance to cast level 27 Punisher Barrage on Kill",
+        "20% Chance to cast level 40 Punisher Bolt on Striking",
+        "Adds 63-125 Damage",
+        "-(12 to 17)% to Enemy Elemental Resistances",
+        "+(126 to 154)% Enhanced Damage",
+        "5% Deadly Strike",
+        "Hit Causes Monster to Flee +5%",
+        "-(20 to 25)% Mana Cost of Skills"
+      ]
+    },
+    {
+      "id": "rw:unicorn",
+      "name": "Unicorn",
+      "runeCode": "GhalArc",
+      "runes": [
+        "Ghal",
+        "Arc"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Amazon Helms"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "3 Magic Missiles Projectiles",
+        "+(4 to 5) to Amazon Skill Levels",
+        "+(35 to 40) Spell Focus",
+        "+(17 to 20)% Bonus to Spell Focus",
+        "50% Cast Speed",
+        "Elemental Resists +(7 to 10)%",
+        "Fire Absorb 2%",
+        "Lightning Absorb 2%",
+        "Cold Absorb 2%"
+      ]
+    },
+    {
+      "id": "rw:venefica",
+      "name": "Venefica",
+      "runeCode": "GhalShael",
+      "runes": [
+        "Ghal",
+        "Shael"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Sorceress Body Armors"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+(4 to 5) to Sorceress Skill Levels",
+        "+(120 to 130)% Bonus to Poison Skill Duration",
+        "+15 Spell Focus",
+        "0.5% to Poison Spell Damage (Based on Character Level)",
+        "-15% to Enemy Poison Resistance",
+        "Attacker Flees after Striking (21 to 25)%",
+        "+(172 to 200)% Enhanced Defense",
+        "Requirements -20%"
+      ]
+    },
+    {
+      "id": "rw:victory-median-xl-6-years",
+      "name": "Victory (Median XL - 6 years)",
+      "runeCode": "SolAmn",
+      "runes": [
+        "Sol",
+        "Amn"
+      ],
+      "reqLevel": 33,
+      "allowedTypes": [
+        "Body Armors"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "4% Chance to cast level 11 Fortress on Melee Attack",
+        "50% Bonus to Attack Rating",
+        "Weapon Physical Damage +(10 to 15)%",
+        "+(15 to 25) to all Attributes",
+        "+(50 to 100) to Mana",
+        "Poison Resist +25%",
+        "(16 to 25)% Magic Find",
+        "+2 to Light Radius"
+      ]
+    },
+    {
+      "id": "rw:viper",
+      "name": "Viper",
+      "runeCode": "TirEl",
+      "runes": [
+        "Tir",
+        "El"
+      ],
+      "reqLevel": 10,
+      "allowedTypes": [
+        "Throwing Axes"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+1 to Barbarian Skill Levels",
+        "-(5 to 10)% to Enemy Poison Resistance",
+        "+3 to all Attributes",
+        "Poison Resist +20%",
+        "+1 Mana after each Kill"
+      ]
+    },
+    {
+      "id": "rw:vision",
+      "name": "Vision",
+      "runeCode": "GhalOlYhamArc",
+      "runes": [
+        "Ghal",
+        "Ol",
+        "Yham",
+        "Arc"
+      ],
+      "reqLevel": 120,
+      "allowedTypes": [
+        "Boots"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "10% of Total Energy Gained as Life",
+        "+1 to All Skills",
+        "+15 Spell Focus",
+        "+10% Bonus to Spell Focus",
+        "-(10 to 15)% to Enemy Elemental Resistances",
+        "+(141 to 171)% Enhanced Defense",
+        "+13 to all Attributes",
+        "Maximum Life and Mana +(2 to 6)%",
+        "Maximum Elemental Resists +1%",
+        "Physical Damage Taken Reduced by (10 to 20)"
+      ]
+    },
+    {
+      "id": "rw:void",
+      "name": "Void",
+      "runeCode": "Sur",
+      "runes": [
+        "Sur"
+      ],
+      "reqLevel": 75,
+      "allowedTypes": [
+        "Weapons"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "Adds 7-13 Damage",
+        "+(58 to 72)% Enhanced Damage",
+        "Slow Target 20%",
+        "Regenerate Mana +15%",
+        "Cold Resist +40%",
+        "Physical Damage Taken Reduced by (11 to 15)",
+        "-(25 to 30)% Mana Cost of Skills",
+        "2% Reanimate as: Random Monster"
+      ]
+    },
+    {
+      "id": "rw:void-dancer",
+      "name": "Void Dancer",
+      "runeCode": "SilQorGurIah",
+      "runes": [
+        "Sil",
+        "Qor",
+        "Gur",
+        "Iah"
+      ],
+      "reqLevel": 120,
+      "allowedTypes": [
+        "Assassin Shields"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "Shadow Dancer: Applies to Throwing Knives",
+        "Elemental Ways Deal no Damage",
+        "+5 to Assassin Skill Levels",
+        "20% Movement Speed",
+        "30% Attack Speed",
+        "75% Hit Recovery",
+        "+25 Damage",
+        "2% Deadly Strike",
+        "+25% Enhanced Defense",
+        "25% to Dexterity",
+        "+666 to Life",
+        "Maximum Block Chance -50%",
+        "Physical Resist 9%"
+      ]
+    },
+    {
+      "id": "rw:voodoo-branch",
+      "name": "Voodoo Branch",
+      "runeCode": "VenGurArcSil",
+      "runes": [
+        "Ven",
+        "Gur",
+        "Arc",
+        "Sil"
+      ],
+      "reqLevel": 115,
+      "allowedTypes": [
+        "Javelins"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "1% poison spell damage per 3% attack speed",
+        "+4% Bonus to Spell Focus",
+        "40% Attack Speed",
+        "Adds 8-12 Damage",
+        "Adds (60 to 70)-(110 to 130) Damage",
+        "+(150 to 200)% Enhanced Damage",
+        "-(35 to 50)% to Enemy Poison Resistance",
+        "-(6 to 10)% to Strength",
+        "+150 Life Regenerated per Second",
+        "Requirements +75%"
+      ]
+    },
+    {
+      "id": "rw:vortex",
+      "name": "Vortex",
+      "runeCode": "SurBurFul",
+      "runes": [
+        "Sur",
+        "Bur",
+        "Ful"
+      ],
+      "reqLevel": 115,
+      "allowedTypes": [
+        "Paladin Shields"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "Allows an additional Slayer",
+        "+(1 to 2) to Paladin Skill Levels",
+        "+50% to Spell Damage",
+        "-(7 to 12)% to Enemy Lightning Resistance",
+        "Slows Attacker by 17%",
+        "+(141 to 171)% Enhanced Defense",
+        "(5 to 10)% to Vitality",
+        "Regenerate Mana +10%",
+        "Maximum Lightning Resist +2%",
+        "Lightning Resist +(25 to 30)%",
+        "Lightning Absorb 1%",
+        "Physical Resist 5%"
+      ]
+    },
+    {
+      "id": "rw:wall-of-fire",
+      "name": "Wall of Fire",
+      "runeCode": "ZodLo",
+      "runes": [
+        "Zod",
+        "Lo"
+      ],
+      "reqLevel": 85,
+      "allowedTypes": [
+        "Shields"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "+1 to All Skills",
+        "40% Block Speed",
+        "+(144 to 171)% Enhanced Defense",
+        "40% to Strength",
+        "40% to Vitality",
+        "+15 Life after each Kill",
+        "(11 to 20)% Bonus to Defense",
+        "Attacker Takes Fire Damage of 500"
+      ]
+    },
+    {
+      "id": "rw:warpath",
+      "name": "Warpath",
+      "runeCode": "OhnLemLem",
+      "runes": [
+        "Ohn",
+        "Lem",
+        "Lem"
+      ],
+      "reqLevel": 115,
+      "allowedTypes": [
+        "Barbarian Shields"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "25% Chance to cast level 4 Time Strike on Melee Attack",
+        "100% Hit Recovery",
+        "Adds 25-100 Damage",
+        "5% Chance of Crushing Blow",
+        "+(172 to 200)% Enhanced Defense",
+        "55% to Vitality"
+      ]
+    },
+    {
+      "id": "rw:wind-runner",
+      "name": "Wind Runner",
+      "runeCode": "SilIahElqGul",
+      "runes": [
+        "Sil",
+        "Iah",
+        "Elq",
+        "Gul"
+      ],
+      "reqLevel": 120,
+      "allowedTypes": [
+        "Boots"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "No Stamina Regeneration. Whenever you run out of stamina:",
+        "Fully restore it, heal 20 Life for each point restored",
+        "Gain Max Physical Damage buff based on Maximum Stamina",
+        "10% Movement Speed",
+        "50% Attack Speed",
+        "Adds 10-20 Damage",
+        "250% Bonus to Attack Rating",
+        "(12 to 15)% Life stolen per Hit",
+        "+(200 to 225)% Enhanced Defense",
+        "(15 to 35)% Faster Stamina Drain",
+        "Requirements -25%"
+      ]
+    },
+    {
+      "id": "rw:wintermourne",
+      "name": "Wintermourne",
+      "runeCode": "GlaTuulGhalTuul",
+      "runes": [
+        "Gla",
+        "Tuul",
+        "Ghal",
+        "Tuul"
+      ],
+      "reqLevel": 100,
+      "allowedTypes": [
+        "Two-Handed Swords"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "Winter Avatar: Cooldown Reduced by 0.3 Seconds,",
+        "+20 Defense per 1% Cold Resistance During Effect",
+        "+(6 to 7) to All Skills",
+        "20% Movement Speed",
+        "+25 Spell Focus",
+        "+(15 to 20)% Bonus to Spell Focus",
+        "100% Attack Speed",
+        "+(80 to 95)% to Cold Spell Damage",
+        "-(20 to 30)% to Enemy Cold Resistance",
+        "+117 to Strength",
+        "Cold Resist +70%",
+        "Requirements -30%"
+      ]
+    },
+    {
+      "id": "rw:zohar",
+      "name": "Zohar",
+      "runeCode": "MhalElqSil",
+      "runes": [
+        "Mhal",
+        "Elq",
+        "Sil"
+      ],
+      "reqLevel": 110,
+      "allowedTypes": [
+        "Paladin Shields"
+      ],
+      "excludedTypes": [],
+      "excludedNames": [],
+      "modifiers": [
+        "80% Attack Speed",
+        "Adds 40-55 Damage",
+        "+(18 to 21) to Cherubim",
+        "Slows Attacker by 20%",
+        "+200% Enhanced Defense",
+        "10% to All Attributes",
+        "Physical Resist 1%",
+        "(10 to 15)% Chance to Avoid Damage",
+        "-10% to All Vendor Prices"
+      ]
+    }
+  ]
+}

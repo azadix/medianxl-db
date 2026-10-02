@@ -81,6 +81,7 @@ export const ITEM_CATEGORIES = Object.freeze([
   { id: 'jewelry', name: 'Jewelry' },
   { id: 'uniques', name: 'Uniques' },
   { id: 'sets', name: 'Sets' },
+  { id: 'runewords', name: 'Runewords' },
 ]);
 
 /**
@@ -200,6 +201,16 @@ export function isUniquePickerItem(item) {
 }
 
 /**
+ * Whether a catalog def belongs in the Runewords picker tab (templates only).
+ * @param {object|null|undefined} item
+ * @returns {boolean}
+ */
+export function isRunewordPickerItem(item) {
+  if (!item || typeof item !== 'object') return false;
+  return item.rarity === 'runeword' && !item.baseId;
+}
+
+/**
  * Whether a catalog def belongs in the Relics picker tab.
  * @param {object|null|undefined} item
  * @returns {boolean}
@@ -215,6 +226,7 @@ export function isRelicPickerItem(item) {
  */
 export function itemPickerSearchText(item) {
   if (!item || typeof item !== 'object') return '';
+  const runes = Array.isArray(item.runes) ? item.runes.map(String) : [];
   return [
     item.name,
     item.id,
@@ -224,6 +236,9 @@ export function itemPickerSearchText(item) {
     item.baseId,
     item.setName,
     item.group,
+    item.runeCode,
+    runes.join(' '),
+    runes.join(''),
     itemPickerQualityAlias(item),
   ]
     .filter((v) => v != null && String(v).trim() !== '')
@@ -247,6 +262,7 @@ function itemPickerQualityAlias(item) {
   if (kind === 'su') return 'SU';
   if (kind === 'ssu') return 'SSU';
   if (kind === 'sssu') return 'SSSU';
+  if (kind === 'runeword') return 'RW runeword';
   return '';
 }
 

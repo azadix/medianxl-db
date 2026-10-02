@@ -25,7 +25,7 @@ import {
   getOverlayStatLines,
   isOverlayItem,
 } from '@/items/item-overlays.js';
-import { formatRunewordBadge, isRunewordItem } from '@/items/runeword-items.js';
+import { formatRunewordBadge, formatRunewordSocketFillerLines, isRunewordItem } from '@/items/runeword-items.js';
 import { getShieldClassBlockPercent } from '@/character/class-baselines.js';
 
 /** @type {Readonly<Record<string, string>>} */
@@ -364,6 +364,7 @@ export function getItemStatLines(def, rolls = null, options = {}) {
     }
   } else if (overlay && !options.charmHeaderOnly) {
     lines.push(...getOverlayStatLines(def, rolls, { hideRollableRanges }));
+    if (isRunewordItem(def)) lines.push(...formatRunewordSocketFillerLines(def));
   }
 
   return lines;
@@ -404,6 +405,15 @@ export function getItemDetailStatRows(def, rolls = null, options = {}) {
   }
   if (isOverlayItem(def)) {
     rows.push(...asMod(getOverlayDetailStatRows(def, rolls)));
+    if (isRunewordItem(def)) {
+      rows.push(
+        ...formatRunewordSocketFillerLines(def).map((text) => ({
+          kind: /** @type {const} */ ('text'),
+          text,
+          section: /** @type {const} */ ('mod'),
+        }))
+      );
+    }
     return rows;
   }
   for (const stat of getRollableStats(def, rolls, { className })) {
