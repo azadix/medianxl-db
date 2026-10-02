@@ -255,14 +255,162 @@ function sourceSpansHtml(row) {
 }
 
 /**
+ * @param {import('@/items/item-procs.js').ItemProcRow | import('@/items/item-skill-grants.js').ItemSkillGrantRow} row
+ * @returns {string}
+ */
+function sourcesSortText(row) {
+  return procRowSources(row)
+    .map((src) => src.sourceLabel)
+    .join('\n');
+}
+
+/**
+ * @param {unknown} a
+ * @param {unknown} b
+ * @param {1|-1} dir
+ * @returns {number}
+ */
+function compareSourcesLocale(a, b, dir) {
+  return String(a ?? '').localeCompare(String(b ?? ''), undefined, { sensitivity: 'base', numeric: true }) * dir;
+}
+
+/**
+ * @param {import('@/items/item-skill-grants.js').ItemSkillGrantRow[]} rows
+ * @param {string} key
+ * @param {1|-1} dir
+ * @returns {import('@/items/item-skill-grants.js').ItemSkillGrantRow[]}
+ */
+function sortGrantRows(rows, key, dir) {
+  const list = [...rows];
+  list.sort((a, b) => {
+    if (key === 'amount') {
+      const c = (Number(a.amount) || 0) - (Number(b.amount) || 0);
+      if (c) return c * dir;
+      const d = (Number(a.amountMax) || 0) - (Number(b.amountMax) || 0);
+      if (d) return d * dir;
+    } else if (key === 'restriction') {
+      const c = compareSourcesLocale(a.restrictionLabel, b.restrictionLabel, dir);
+      if (c) return c;
+    }
+    return compareSourcesLocale(sourcesSortText(a), sourcesSortText(b), dir);
+  });
+  return list;
+}
+
+/**
+ * @param {import('@/items/item-procs.js').ItemProcRow[]} rows
+ * @param {string} key
+ * @param {1|-1} dir
+ * @returns {import('@/items/item-procs.js').ItemProcRow[]}
+ */
+function sortProcRows(rows, key, dir) {
+  const list = [...rows];
+  list.sort((a, b) => {
+    if (key === 'chance') {
+      const c = (Number(a.chance) || 0) - (Number(b.chance) || 0);
+      if (c) return c * dir;
+      const d = (Number(a.chanceMax) || 0) - (Number(b.chanceMax) || 0);
+      if (d) return d * dir;
+    } else if (key === 'level') {
+      const c = (Number(a.level) || 0) - (Number(b.level) || 0);
+      if (c) return c * dir;
+    } else if (key === 'condition') {
+      const c = compareSourcesLocale(a.condition, b.condition, dir);
+      if (c) return c;
+    }
+    return compareSourcesLocale(sourcesSortText(a), sourcesSortText(b), dir);
+  });
+  return list;
+}
+
+/**
+ * @param {string} activeKey
+ * @param {string} key
+ * @param {1|-1} dir
+ * @returns {string}
+ */
+function sourcesSortHintHtml(activeKey, key, dir) {
+  if (activeKey !== key) return '';
+  return `<span class="has-text-grey pl-1 is-size-7">${dir === 1 ? 'A-Z' : 'Z-A'}</span>`;
+}
+
+/**
+ * @param {string} label
+ * @param {string} key
+ * @param {string} sortKey
+ * @param {1|-1} sortDir
+ * @returns {string}
+ */
+function sourcesSortTh(label, key, sortKey, sortDir) {
+  return `<th><button type="button" class="button is-ghost p-0 skills-sort-btn js-skill-sources-sort" data-sort-key="${escapeHtmlText(
+    key
+  )}">${escapeHtmlText(label)} ${sourcesSortHintHtml(sortKey, key, sortDir)}</button></th>`;
+}
+
+/**
+ * @param {boolean} showRestriction
+ * @param {string} sortKey
+ * @param {1|-1} sortDir
+ * @returns {string}
+ */
+function grantSourcesHeadHtml(showRestriction, sortKey, sortDir) {
+  return (
+    sourcesSortTh('Amount', 'amount', sortKey, sortDir) +
+    (showRestriction ? sourcesSortTh('Restriction', 'restriction', sortKey, sortDir) : '') +
+    sourcesSortTh('Source', 'source', sortKey, sortDir)
+  );
+}
+
+/**
+ * @param {string} sortKey
+ * @param {1|-1} sortDir
+ * @returns {string}
+ */
+function procSourcesHeadHtml(sortKey, sortDir) {
+  return (
+    sourcesSortTh('Chance', 'chance', sortKey, sortDir) +
+    sourcesSortTh('Condition', 'condition', sortKey, sortDir) +
+    sourcesSortTh('Level', 'level', sortKey, sortDir) +
+    sourcesSortTh('Source', 'source', sortKey, sortDir)
+  );
+}
+
+/**
+ * @param {import('@/items/item-skill-grants.js').ItemSkillGrantRow} row
+ * @param {boolean} showRestriction
+ * @returns {string}
+ */
+function grantSourcesRowHtml(row, showRestriction) {
+  const restrictionCell = showRestriction ? `<td>${escapeHtmlText(row.restrictionLabel || '')}</td>` : '';
+  return `<tr>
+          <td>${escapeHtmlText(row.amountLabel)}</td>
+          ${restrictionCell}
+          <td>${sourceSpansHtml(row)}</td>
+        </tr>`;
+}
+
+/**
+ * @param {import('@/items/item-procs.js').ItemProcRow} row
+ * @returns {string}
+ */
+function procSourcesRowHtml(row) {
+  return `<tr>
+          <td>${escapeHtmlText(row.chanceLabel)}%</td>
+          <td>${escapeHtmlText(row.condition)}</td>
+          <td>${escapeHtmlText(String(row.level))}</td>
+          <td>${sourceSpansHtml(row)}</td>
+        </tr>`;
+}
+
+/**
  * @param {string} eyebrow
- * @param {string[]} headers
+ * @param {string} kind
+ * @param {string} head
  * @param {string} body
  * @returns {string}
  */
-function buildItemSourcesTableHtml(eyebrow, headers, body) {
+function buildItemSourcesTableHtml(eyebrow, kind, head, body) {
   if (!body) return '';
-  const head = headers.map((label) => `<th>${escapeHtmlText(label)}</th>`).join('');
   return `
     <section class="planner-card skill-proc-sources-panel">
       <div class="skill-detail-section-head">
@@ -272,7 +420,9 @@ function buildItemSourcesTableHtml(eyebrow, headers, body) {
         </div>
       </div>
       <div class="table-container">
-        <table class="table is-hoverable is-fullwidth skill-proc-sources-table">
+        <table class="table is-hoverable is-fullwidth skill-proc-sources-table" data-sources-kind="${escapeHtmlText(
+          kind
+        )}">
           <thead>
             <tr>${head}</tr>
           </thead>
@@ -290,20 +440,14 @@ function buildItemSourcesTableHtml(eyebrow, headers, body) {
 function buildSkillGrantSourcesTableHtml(rows) {
   if (!Array.isArray(rows) || !rows.length) return '';
   const showRestriction = rows.some((row) => row.restrictionLabel);
-  const body = rows
-    .map((row) => {
-      const restrictionCell = showRestriction
-        ? `<td>${escapeHtmlText(row.restrictionLabel || '')}</td>`
-        : '';
-      return `<tr>
-          <td>${escapeHtmlText(row.amountLabel)}</td>
-          ${restrictionCell}
-          <td>${sourceSpansHtml(row)}</td>
-        </tr>`;
-    })
-    .join('');
-  const headers = showRestriction ? ['Amount', 'Restriction', 'Source'] : ['Amount', 'Source'];
-  return buildItemSourcesTableHtml('Item Bonuses', headers, body);
+  const sorted = sortGrantRows(rows, 'amount', 1);
+  const body = sorted.map((row) => grantSourcesRowHtml(row, showRestriction)).join('');
+  return buildItemSourcesTableHtml(
+    'Item Bonuses',
+    'grants',
+    grantSourcesHeadHtml(showRestriction, 'amount', 1),
+    body
+  );
 }
 
 /**
@@ -312,17 +456,62 @@ function buildSkillGrantSourcesTableHtml(rows) {
  */
 function buildProcSourcesTableHtml(rows) {
   if (!Array.isArray(rows) || !rows.length) return '';
-  const body = rows
-    .map((row) => {
-      return `<tr>
-          <td>${escapeHtmlText(row.chanceLabel)}%</td>
-          <td>${escapeHtmlText(row.condition)}</td>
-          <td>${escapeHtmlText(String(row.level))}</td>
-          <td>${sourceSpansHtml(row)}</td>
-        </tr>`;
-    })
-    .join('');
-  return buildItemSourcesTableHtml('Item Procs', ['Chance', 'Condition', 'Level', 'Source'], body);
+  const sorted = sortProcRows(rows, 'chance', 1);
+  const body = sorted.map((row) => procSourcesRowHtml(row)).join('');
+  return buildItemSourcesTableHtml('Item Procs', 'procs', procSourcesHeadHtml('chance', 1), body);
+}
+
+/**
+ * @param {HTMLElement} host
+ * @param {'grants'|'procs'} kind
+ * @param {Array<import('@/items/item-procs.js').ItemProcRow | import('@/items/item-skill-grants.js').ItemSkillGrantRow>} rows
+ * @param {Array<() => void>} cleanupFns
+ */
+function bindSkillSourcesTableSort(host, kind, rows, cleanupFns) {
+  const table = host.querySelector(`table.skill-proc-sources-table[data-sources-kind="${kind}"]`);
+  if (!(table instanceof HTMLElement) || !rows.length) return;
+  const showRestriction = kind === 'grants' && rows.some((row) => 'restrictionLabel' in row && row.restrictionLabel);
+  const state = {
+    key: kind === 'grants' ? 'amount' : 'chance',
+    dir: /** @type {1|-1} */ (1),
+  };
+
+  function paint() {
+    const theadRow = table.querySelector('thead tr');
+    const tbody = table.querySelector('tbody');
+    if (kind === 'grants') {
+      const grantRows = /** @type {import('@/items/item-skill-grants.js').ItemSkillGrantRow[]} */ (rows);
+      const sorted = sortGrantRows(grantRows, state.key, state.dir);
+      if (theadRow) theadRow.innerHTML = grantSourcesHeadHtml(showRestriction, state.key, state.dir);
+      if (tbody) tbody.innerHTML = sorted.map((row) => grantSourcesRowHtml(row, showRestriction)).join('');
+      return;
+    }
+    const procRows = /** @type {import('@/items/item-procs.js').ItemProcRow[]} */ (rows);
+    const sorted = sortProcRows(procRows, state.key, state.dir);
+    if (theadRow) theadRow.innerHTML = procSourcesHeadHtml(state.key, state.dir);
+    if (tbody) tbody.innerHTML = sorted.map((row) => procSourcesRowHtml(row)).join('');
+  }
+
+  /**
+   * @param {Event} event
+   */
+  function onClick(event) {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    const btn = target.closest('.js-skill-sources-sort');
+    if (!(btn instanceof HTMLElement) || !table.contains(btn)) return;
+    const key = btn.getAttribute('data-sort-key') || '';
+    if (!key) return;
+    if (state.key === key) state.dir = /** @type {1|-1} */ (state.dir === 1 ? -1 : 1);
+    else {
+      state.key = key;
+      state.dir = 1;
+    }
+    paint();
+  }
+
+  table.addEventListener('click', onClick);
+  cleanupFns.push(() => table.removeEventListener('click', onClick));
 }
 
 async function displaySkillDetail(skillId) {
@@ -637,6 +826,8 @@ async function displaySkillDetail(skillId) {
   });
 
   const cleanupFns = [];
+  bindSkillSourcesTableSort(host, 'grants', skillGrantRows, cleanupFns);
+  bindSkillSourcesTableSort(host, 'procs', procSourceRows, cleanupFns);
 
   const onKeyDown = (e) => {
     if (e.key === 'Control' || e.ctrlKey) {

@@ -271,6 +271,13 @@ watch(
   font-weight: 600;
 }
 
+:deep(.skill-proc-sources-table .skills-sort-btn) {
+  height: auto;
+  font-weight: 600;
+  text-decoration: none;
+  color: inherit;
+}
+
 :deep(.skill-detail-infobox) {
   position: sticky;
   top: calc(var(--planner-header-h, 3rem) + 0.75rem);
