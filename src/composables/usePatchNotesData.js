@@ -373,8 +373,7 @@ export async function buildTooltipHtmlForSkill(skillRecord) {
     iconHtml,
     nameInnerHtml: escapeHtmlText(skillRecord.displayName || 'Unknown skill'),
     tagsHtml,
-    levelSectionHtml: `<div class="is-size-6 has-text-weight-bold has-text-warning-light">Level 1</div>
-          <div class="is-size-7 has-text-grey">[<span class="has-text-white">1</span> + <span class="has-text-info">0</span> + <span class="skill-bonus-class">0</span>]</div>`,
+    levelSectionHtml: `<div class="is-size-6 has-text-weight-bold has-text-warning-light">Level 1</div>`,
   });
 
   const bodyParts = [

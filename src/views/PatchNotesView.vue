@@ -295,10 +295,6 @@ const {
   flex-shrink: 0;
 }
 
-.patch-note-skill-tooltip .skill-bonus-class {
-  color: #cc00ff;
-}
-
 .patch-note-skill-tooltip :deep(.tooltip-icon .image) {
   width: 64px;
   height: 64px;
