@@ -533,13 +533,12 @@ function iconMarkup(skill) {
               </td>
               <td class="skills-td-clip">
                 <RouterLink
-                  v-if="skill.hasDetails"
                   :to="{ name: SKILLS_ROUTE_NAME, query: homeQueryForSkill(skill.id) }"
                   class="has-text-weight-medium skills-td-link"
+                  :class="{ 'has-text-danger': !skill.hasDetails }"
                 >
                   {{ skill.name }}
                 </RouterLink>
-                <span v-else class="skills-td-link">{{ skill.name }}</span>
               </td>
               <td class="skills-col-tags is-hidden-mobile skills-td-tags">
                 <div v-if="skill.tags && skill.tags.length" class="tags">
@@ -693,6 +692,7 @@ function iconMarkup(skill) {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  cursor: pointer;
 }
 
 .skills-td-tags {
