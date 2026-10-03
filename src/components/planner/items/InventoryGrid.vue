@@ -17,6 +17,7 @@ import {
   hideItemTooltip,
 } from '@/items/item-tooltip-runtime.js';
 import { getEffectivePlannerLevel } from '@/character/planner-core.js';
+import { itemRarityFrameClass } from '@/items/item-tooltip.js';
 
 const itemsStore = useItemsStore();
 const { placedInventoryItems, selectedSlot, dragPayload } = storeToRefs(itemsStore);
@@ -246,7 +247,10 @@ function onDrop(e) {
         v-for="item in placedInventoryItems"
         :key="'item-' + item.instanceId"
         class="planner-inventory-item"
-        :class="{ 'planner-inventory-item--active': activeAnchor === item.anchor }"
+        :class="[
+          itemRarityFrameClass(itemsStore.getDefForInstance(item.instanceId)?.rarity),
+          { 'planner-inventory-item--active': activeAnchor === item.anchor },
+        ]"
         :style="overlayStyle(item)"
         draggable="true"
         @click="onItemClick($event, item.anchor)"

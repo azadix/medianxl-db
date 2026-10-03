@@ -1063,6 +1063,23 @@
   outline: 1px solid hsl(348, 86%, 50%);
 }
 
+.planner-inventory-item,
+.planner-slot--equipment.planner-slot--filled .planner-slot__body {
+  --item-rarity-tile-fill:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--item-rarity-fill-color, var(--item-rarity-color)) var(--item-rarity-fill-top-mix), transparent) 0%,
+      transparent 46%,
+      rgb(0 0 0 / 0.28) 100%
+    ),
+    radial-gradient(
+      ellipse 90% 85% at 50% 38%,
+      color-mix(in srgb, var(--item-rarity-fill-color, var(--item-rarity-color)) var(--item-rarity-fill-center-mix), hsl(0 0% 8%)) 0%,
+      color-mix(in srgb, var(--item-rarity-fill-color, var(--item-rarity-color)) var(--item-rarity-fill-mid-mix), hsl(0 0% 5%)) 55%,
+      color-mix(in srgb, var(--item-rarity-fill-color, var(--item-rarity-color)) var(--item-rarity-fill-edge-mix), hsl(0 0% 3%)) 100%
+    );
+}
+
 .planner-inventory-item {
   position: absolute;
   box-sizing: border-box;
@@ -1072,7 +1089,7 @@
   min-height: 0;
   cursor: grab;
   border: 1px solid hsl(0, 0%, 45%);
-  background: hsl(0, 0%, 16%);
+  background: var(--item-rarity-tile-fill);
   pointer-events: auto;
   z-index: 1;
 }
@@ -1239,10 +1256,9 @@
 }
 
 .planner-slot--equipment.planner-slot--filled .planner-slot__body {
-  --item-rarity-fill: hsl(0, 0%, 12%);
   border: 2px solid transparent;
-  background:
-    linear-gradient(var(--item-rarity-fill), var(--item-rarity-fill)) padding-box,
+  background-image:
+    var(--item-rarity-tile-fill),
     linear-gradient(
       135deg,
       var(--item-rarity-color) 0%,
@@ -1250,7 +1266,9 @@
       transparent 48%,
       color-mix(in srgb, var(--item-rarity-color) 40%, transparent) 78%,
       var(--item-rarity-color) 100%
-    ) border-box;
+    );
+  background-origin: padding-box, padding-box, border-box;
+  background-clip: padding-box, padding-box, border-box;
   box-shadow:
     inset 1px 1px 0 0 color-mix(in srgb, var(--item-rarity-color) 80%, transparent),
     inset 2px 2px 0 0 color-mix(in srgb, var(--item-rarity-color) 45%, transparent),
