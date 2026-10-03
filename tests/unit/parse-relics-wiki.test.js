@@ -11,8 +11,8 @@ const HTML = `
         <img src="https://docs.median-xl.com/images/baseitems/relic04.jpg"><br>
         <span class="item-unique">Relic<br></span>
         <span class="item-basic">Required Level: 75<br></span>
+        <span class="item-orange">+(6 to 12)% Bonus Damage to Mark of the Wild<br></span>
         <span class="item-magic">
-          +(6 to 12)% Bonus Damage to Mark of the Wild<br>
           +(8 to 17) to Feral Strike<br>
         </span>
       </td>
@@ -38,7 +38,7 @@ describe('relic wiki parser', () => {
         icon: 'relic04',
         reqLevel: 75,
         modifiers: [
-          '+(6 to 12)% Bonus Damage to Mark of the Wild',
+          '{orange}+(6 to 12)% Bonus Damage to Mark of the Wild',
           '+(8 to 17) to Feral Strike',
         ],
       },

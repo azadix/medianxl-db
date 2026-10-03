@@ -9,6 +9,7 @@ import {
   buildAffixDisplayParts,
 } from '@/items/affix-rolls.js';
 import { annotateAffixDisplayPartsWithSkills } from '@/items/item-granted-oskills.js';
+import { decodeModifierLine, encodeModifierLine } from '@/items/item-modifier-line.js';
 import { getFileSkillStore } from '@/shared/skill-data-store.js';
 import { MISSING_IMAGE_NAME } from '@/shared/utils.js';
 
@@ -183,16 +184,18 @@ export function isRelicBonusActive(def, characterLevel, options = {}) {
 
 /**
  * @param {object|null|undefined} def
- * @returns {{ sourceKey: string, text: string }[]}
+ * @returns {{ sourceKey: string, text: string, color: string }[]}
  */
 export function collectRelicAffixSources(def) {
-  /** @type {{ sourceKey: string, text: string }[]} */
+  /** @type {{ sourceKey: string, text: string, color: string }[]} */
   const out = [];
   if (!def || typeof def !== 'object') return out;
   let i = 0;
   for (const mod of Array.isArray(def.modifiers) ? def.modifiers : []) {
     if (typeof mod !== 'string' || !mod.trim()) continue;
-    out.push({ sourceKey: `base:m${i}`, text: mod });
+    const { text, color } = decodeModifierLine(mod);
+    if (!text) continue;
+    out.push({ sourceKey: `base:m${i}`, text, color });
     i += 1;
   }
   return out;
@@ -245,7 +248,7 @@ export function getRelicStatLines(def, rolls = null, options = {}) {
   for (const source of collectRelicAffixSources(def)) {
     const text = resolveRelicAffixText(source.text, source.sourceKey, rolls, hide);
     if (text == null) continue;
-    lines.push(text);
+    lines.push(encodeModifierLine(text, source.color));
   }
   return lines;
 }
@@ -276,6 +279,7 @@ export function buildRelicSourceRollableStats(source, rolls = null) {
       displayParts: parts,
       min: range.min,
       max: range.max,
+      color: source.color || 'magic',
     });
   });
   return out;
@@ -313,7 +317,7 @@ export function getRelicDetailStatRows(def, rolls = null) {
     }
     const text = resolveRelicAffixText(source.text, source.sourceKey, rolls, false);
     if (text == null) continue;
-    rows.push({ kind: 'text', text });
+    rows.push({ kind: 'text', text, color: source.color || 'magic' });
   }
   return rows;
 }

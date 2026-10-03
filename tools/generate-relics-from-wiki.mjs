@@ -13,6 +13,8 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { encodeModifierLine, modifierLineText } from '../src/items/item-modifier-line.js';
+import { htmlToColoredLines } from './parse-tiered-uniques-wiki.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -43,32 +45,11 @@ function versionToFolder(version) {
 
 /**
  * @param {string} html
- * @returns {string}
- */
-function decodeEntities(html) {
-  return String(html || '')
-    .replace(/&nbsp;/gi, ' ')
-    .replace(/&#x([0-9a-f]+);/gi, (_, hex) => String.fromCodePoint(parseInt(hex, 16)))
-    .replace(/&#(\d+);/g, (_, value) => String.fromCodePoint(Number(value)))
-    .replace(/&amp;/gi, '&')
-    .replace(/&lt;/gi, '<')
-    .replace(/&gt;/gi, '>')
-    .replace(/&quot;/gi, '"')
-    .replace(/&apos;|&#39;/gi, "'");
-}
-
-/**
- * @param {string} html
  * @returns {string[]}
  */
 export function relicHtmlToLines(html) {
-  return decodeEntities(
-    String(html || '')
-      .replace(/<br\s*\/?>/gi, '\n')
-      .replace(/<[^>]+>/g, '')
-  )
-    .split(/\r?\n/)
-    .map((line) => line.replace(/\s+/g, ' ').trim())
+  return htmlToColoredLines(html)
+    .map((line) => encodeModifierLine(line.text, line.color))
     .filter(Boolean);
 }
 
@@ -105,13 +86,14 @@ export function parseRelicWikiCells(html) {
     const modifiers = [];
 
     for (const line of lines) {
-      if (/^Relic$/i.test(line)) continue;
-      const req = /^Required Level:\s*(\d+)$/i.exec(line);
+      const text = modifierLineText(line);
+      if (/^Relic$/i.test(text)) continue;
+      const req = /^Required Level:\s*(\d+)$/i.exec(text);
       if (req) {
         reqLevel = Number(req[1]);
         continue;
       }
-      const only = /^\(([^)]+ Only)\)$/i.exec(line);
+      const only = /^\(([^)]+ Only)\)$/i.exec(text);
       if (only) {
         classRestriction = only[1];
         continue;
@@ -163,11 +145,12 @@ function matchScore(cell, skillName) {
 
   let score = 0;
   for (const modifier of cell.modifiers) {
-    const line = normalizeForMatch(modifier);
+    const raw = modifierLineText(modifier);
+    const line = normalizeForMatch(raw);
     const padded = ` ${line} `;
     const directGrant =
-      /^\+\(?\d+\s+to\s+\d+\)?\s+to\s+(.+)$/i.exec(modifier) ||
-      /^\+\d+\s+to\s+(.+)$/i.exec(modifier);
+      /^\+\(?\d+\s+to\s+\d+\)?\s+to\s+(.+)$/i.exec(raw) ||
+      /^\+\d+\s+to\s+(.+)$/i.exec(raw);
     const directTarget = normalizeForMatch(directGrant?.[1]);
     if (
       directTarget === skill ||

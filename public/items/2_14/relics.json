@@ -7,7 +7,7 @@
     "icon": "relic06",
     "reqLevel": 75,
     "modifiers": [
-      "+1 Extra Abyss Knight",
+      "{orange}+1 Extra Abyss Knight",
       "+(9 to 19) to Abyss Knight",
       "+15% to Summon Elemental Resistances"
     ]
@@ -59,7 +59,7 @@
     "icon": "relic06",
     "reqLevel": 75,
     "modifiers": [
-      "Antimass Recovers Stamina",
+      "{orange}Antimass Recovers Stamina",
       "+(5 to 11) to Antimass",
       "+100 to Life"
     ]
@@ -72,7 +72,7 @@
     "icon": "relic02",
     "reqLevel": 75,
     "modifiers": [
-      "Maelstrom MkI: +10% Bonus Magic Damage",
+      "{orange}Maelstrom MkI: +10% Bonus Magic Damage",
       "+(13 to 21) to APF-20 'Maelstrom' MkI",
       "+(13 to 21) to APF-20 'Maelstrom' MkV",
       "+20 to Dexterity"
@@ -125,7 +125,7 @@
     "icon": "relic02",
     "reqLevel": 75,
     "modifiers": [
-      "Arcane Torrent: +20% Extra Projectiles",
+      "{orange}Arcane Torrent: +20% Extra Projectiles",
       "+(17 to 25) to Arcane Torrent",
       "+100 to Mana",
       "Maximum Mana +(5 to 10)%"
@@ -139,7 +139,7 @@
     "icon": "relic01",
     "reqLevel": 75,
     "modifiers": [
-      "Arrow Swarm: +2 Projectiles",
+      "{orange}Arrow Swarm: +2 Projectiles",
       "Adds 5-10 Damage",
       "+(4 to 9) to Arrow Swarm"
     ]
@@ -177,7 +177,7 @@
     "icon": "relic04",
     "reqLevel": 75,
     "modifiers": [
-      "Balefire: 30% Movement Speed while Self-Immolating",
+      "{orange}Balefire: 30% Movement Speed while Self-Immolating",
       "+(6 to 10)% to Physical/Magic Spell Damage",
       "+(10 to 18) to Balefire"
     ]
@@ -190,7 +190,7 @@
     "icon": "relic05",
     "reqLevel": 75,
     "modifiers": [
-      "Bane: +100% Duration",
+      "{orange}Bane: +100% Duration",
       "+(3 to 8) to Bane",
       "Physical Damage Taken Reduced by (11 to 20)"
     ]
@@ -245,7 +245,7 @@
     "icon": "relic02",
     "reqLevel": 75,
     "modifiers": [
-      "Blink Restores Stamina If You Have a Point in Summon Familiars",
+      "{orange}Blink Restores Stamina If You Have a Point in Summon Familiars",
       "Blink Cooldown Reduced by 0.5 seconds",
       "+(8 to 15) to Blink"
     ]
@@ -258,7 +258,7 @@
     "icon": "relic02",
     "reqLevel": 75,
     "modifiers": [
-      "Blood Skeleton: +5 to Grim Vision Aura",
+      "{orange}Blood Skeleton: +5 to Grim Vision Aura",
       "+(13 to 25) to Blood Skeleton",
       "+(5 to 10)% to Summon Elemental Resistances"
     ]
@@ -271,7 +271,7 @@
     "icon": "relic03",
     "reqLevel": 75,
     "modifiers": [
-      "+2 Bloodstar Projectiles",
+      "{orange}+2 Bloodstar Projectiles",
       "5% Chance to cast level 61 Bloodstar on Death Blow",
       "+(45 to 59) to Bloodstar"
     ]
@@ -324,7 +324,7 @@
     "icon": "relic01",
     "reqLevel": 75,
     "modifiers": [
-      "Carnage: Added Fire Damage Doubled",
+      "{orange}Carnage: Added Fire Damage Doubled",
       "Carnage Cooldown Reduced by 1.72 seconds",
       "20% Attack Speed",
       "+(11 to 19) to Carnage"
@@ -338,7 +338,7 @@
     "icon": "relic05",
     "reqLevel": 75,
     "modifiers": [
-      "Catapult Shot: 100% Increased Fire Damage",
+      "{orange}Catapult Shot: 100% Increased Fire Damage",
       "+150 to Maximum Fire Damage",
       "+(3 to 12) to Catapult Shot"
     ]
@@ -416,7 +416,7 @@
     "icon": "relic02",
     "reqLevel": 75,
     "modifiers": [
-      "Cone of Cold Size Increased by 50%",
+      "{orange}Cone of Cold Size Increased by 50%",
       "+(6 to 10)% to Cold Spell Damage",
       "+(27 to 39) to Cone of Cold"
     ]
@@ -442,7 +442,7 @@
     "icon": "relic04",
     "reqLevel": 75,
     "modifiers": [
-      "Dark Power: Doubled Magic Damage",
+      "{orange}Dark Power: Doubled Magic Damage",
       "Adds 100-200 Magic Damage",
       "+(6 to 11) to Dark Power"
     ]
@@ -455,7 +455,7 @@
     "icon": "relic03",
     "reqLevel": 75,
     "modifiers": [
-      "Enhances Death Ripple",
+      "{orange}Enhances Death Ripple",
       "25% Cast Speed",
       "+15% to Physical/Magic Spell Damage",
       "+(21 to 33) to Death Ripple"
@@ -482,12 +482,12 @@
     "icon": "relic01",
     "reqLevel": 75,
     "modifiers": [
-      "+1 Extra Defender Spirit",
+      "{orange}+1 Extra Defender Spirit",
       "+(22 to 35) to Defender Spirit",
       "+25% to Summon Life",
       "+5% to Summon Damage",
-      "Spirit Walk Heals an Additional 5% Maximum Life while Carrying All Shaman Relics",
-      "(Defender Spirit - Guardian Spirit - Protector Spirit)"
+      "{grey}Spirit Walk Heals an Additional 5% Maximum Life while Carrying All Shaman Relics",
+      "{grey}(Defender Spirit - Guardian Spirit - Protector Spirit)"
     ]
   },
   {
@@ -524,7 +524,7 @@
     "icon": "relic02",
     "reqLevel": 75,
     "modifiers": [
-      "Discharge: Thunder Frequency Improved by 0.4 seconds",
+      "{orange}Discharge: Thunder Frequency Improved by 0.4 seconds",
       "+(14 to 25) to Discharge",
       "+(6 to 12) to Energy",
       "Maximum Lightning Resist +1%"
@@ -551,7 +551,7 @@
     "icon": "relic03",
     "reqLevel": 75,
     "modifiers": [
-      "+1 Diseased Cattle Projectiles",
+      "{orange}+1 Diseased Cattle Projectiles",
       "-(3 to 6)% to Enemy Poison Resistance",
       "+(14 to 21) to Diseased Cattle"
     ]
@@ -629,8 +629,8 @@
     "icon": "relic01",
     "reqLevel": 75,
     "modifiers": [
-      "With 25 Points in Eldritch Storm",
-      "2% Chance to Cast level 60 Eldritch Storm on Death Blow",
+      "{orange}With 25 Points in Eldritch Storm",
+      "{grey}2% Chance to Cast level 60 Eldritch Storm on Death Blow",
       "-(2 to 5)% to Enemy Fire Resistance",
       "+(21 to 31) to Eldritch Storm"
     ]
@@ -659,8 +659,8 @@
       "1% Chance to cast level 60 Ember Spirit on Death Blow",
       "+(17 to 29) to Ember Spirit",
       "Fire Resist +30%",
-      "+1 Hunting Banshee/Ember Spirit Projectile while Carrying Seer Spirit Relics",
-      "(Ember Spirit - Hunting Banshee)"
+      "{grey}+1 Hunting Banshee/Ember Spirit Projectile while Carrying Seer Spirit Relics",
+      "{grey}(Ember Spirit - Hunting Banshee)"
     ]
   },
   {
@@ -684,7 +684,7 @@
     "icon": "relic04",
     "reqLevel": 75,
     "modifiers": [
-      "Eviscerate: +1 Projectile",
+      "{orange}Eviscerate: +1 Projectile",
       "(51 to 125)% Bonus to Attack Rating",
       "+(11 to 18) to Eviscerate"
     ]
@@ -724,7 +724,7 @@
     "icon": "relic02",
     "reqLevel": 75,
     "modifiers": [
-      "+25% Fire Pierce to Fire Elementals",
+      "{orange}+25% Fire Pierce to Fire Elementals",
       "+20% to Fire Spell Damage",
       "+(15 to 23) to Fire Elementals"
     ]
@@ -737,10 +737,10 @@
     "icon": "relic01",
     "reqLevel": 75,
     "modifiers": [
-      "+1 Extra Fireheart Totem",
+      "{orange}+1 Extra Fireheart Totem",
       "+(20 to 35) to Fireheart Totem",
-      "5% Fire/Cold/Lightning Absorb while Carrying Totem Relics",
-      "(Fireheart Totem - Frostclaw Totem - Stormeye Totem)"
+      "{grey}5% Fire/Cold/Lightning Absorb while Carrying Totem Relics",
+      "{grey}(Fireheart Totem - Frostclaw Totem - Stormeye Totem)"
     ]
   },
   {
@@ -751,7 +751,7 @@
     "icon": "relic04",
     "reqLevel": 75,
     "modifiers": [
-      "Flameburst shot: +5 Projectiles",
+      "{orange}Flameburst shot: +5 Projectiles",
       "+12 to Maximum Damage",
       "+(12 to 21) to Flameburst Shot"
     ]
@@ -764,7 +764,7 @@
     "icon": "relic04",
     "reqLevel": 75,
     "modifiers": [
-      "Flamefront: +10% Damage Multiplier",
+      "{orange}Flamefront: +10% Damage Multiplier",
       "+10 to Flamefront (Sorceress Only)",
       "+(15 to 27) to Flamefront"
     ]
@@ -817,7 +817,7 @@
     "icon": "relic02",
     "reqLevel": 75,
     "modifiers": [
-      "Forked Lightning: +12% Damage Multiplier",
+      "{orange}Forked Lightning: +12% Damage Multiplier",
       "+(17 to 25) to Forked Lightning",
       "Lightning Resist +30%"
     ]
@@ -830,7 +830,7 @@
     "icon": "relic04",
     "reqLevel": 75,
     "modifiers": [
-      "+2% to Runemaster Defense Bonus while Fortress is Active",
+      "{orange}+2% to Runemaster Defense Bonus while Fortress is Active",
       "+(11 to 22) to Fortress",
       "+1000 Defense"
     ]
@@ -855,7 +855,7 @@
     "icon": "relic04",
     "reqLevel": 75,
     "modifiers": [
-      "Frigid Nova: Double Freeze Duration",
+      "{orange}Frigid Nova: Double Freeze Duration",
       "+(14 to 26) to Frigid Nova",
       "Maximum Cold Resist +1%",
       "Cold Resist +30%"
@@ -869,10 +869,10 @@
     "icon": "relic01",
     "reqLevel": 75,
     "modifiers": [
-      "+1 Extra Frostclaw Totem",
+      "{orange}+1 Extra Frostclaw Totem",
       "+(20 to 35) to Frostclaw Totem",
-      "5% Fire/Cold/Lightning Absorb while Carrying Totem Relics",
-      "(Fireheart Totem - Frostclaw Totem - Stormeye Totem)"
+      "{grey}5% Fire/Cold/Lightning Absorb while Carrying Totem Relics",
+      "{grey}(Fireheart Totem - Frostclaw Totem - Stormeye Totem)"
     ]
   },
   {
@@ -961,7 +961,7 @@
     "icon": "relic03",
     "reqLevel": 75,
     "modifiers": [
-      "Great Hunt: +1 Spirit",
+      "{orange}Great Hunt: +1 Spirit",
       "+100 to Minimum Magic Damage",
       "+(3 to 6) to Great Hunt"
     ]
@@ -987,11 +987,11 @@
     "icon": "relic04",
     "reqLevel": 75,
     "modifiers": [
-      "+1 Extra Guardian Spirit",
+      "{orange}+1 Extra Guardian Spirit",
       "+(22 to 35) to Guardian Spirit",
       "+25% to Summon Damage",
-      "Spirit Walk Heals an Additional 5% Maximum Life while Carrying All Shaman Relics",
-      "(Defender Spirit - Guardian Spirit - Protector Spirit)"
+      "{grey}Spirit Walk Heals an Additional 5% Maximum Life while Carrying All Shaman Relics",
+      "{grey}(Defender Spirit - Guardian Spirit - Protector Spirit)"
     ]
   },
   {
@@ -1067,7 +1067,7 @@
     "icon": "relic01",
     "reqLevel": 75,
     "modifiers": [
-      "+2 Extra Harvesters",
+      "{orange}+2 Extra Harvesters",
       "+(12 to 24) to Harvest (Druid Only)",
       "+(13 to 25) to Harvesters"
     ]
@@ -1109,8 +1109,8 @@
     "modifiers": [
       "+(11 to 21) to Hive",
       "Maximum Poison Resist +(1 to 2)%",
-      "+10 to Frozen Heart while Carrying Periodic Relics",
-      "(Hive - Nova Charge - Path of Flames)"
+      "{grey}+10 to Frozen Heart while Carrying Periodic Relics",
+      "{grey}(Hive - Nova Charge - Path of Flames)"
     ]
   },
   {
@@ -1124,8 +1124,8 @@
       "1% Chance to cast level 60 Hunting Banshee on Death Blow",
       "+(17 to 29) to Hunting Banshee",
       "Cold Resist +30%",
-      "+1 Hunting Banshee/Ember Spirit Projectile while Carrying Seer Spirit Relics",
-      "(Ember Spirit - Hunting Banshee)"
+      "{grey}+1 Hunting Banshee/Ember Spirit Projectile while Carrying Seer Spirit Relics",
+      "{grey}(Ember Spirit - Hunting Banshee)"
     ]
   },
   {
@@ -1163,7 +1163,7 @@
     "icon": "relic06",
     "reqLevel": 75,
     "modifiers": [
-      "+1 Extra Ice Elemental",
+      "{orange}+1 Extra Ice Elemental",
       "-(5 to 8)% to Enemy Cold Resistance",
       "+(15 to 32) to Ice Elementals",
       "+10000 Defense"
@@ -1190,7 +1190,7 @@
     "icon": "relic05",
     "reqLevel": 75,
     "modifiers": [
-      "Immersion: +10% Damage Multiplier",
+      "{orange}Immersion: +10% Damage Multiplier",
       "+(12 to 21) to Immersion",
       "+100 to Mana"
     ]
@@ -1203,7 +1203,7 @@
     "icon": "relic03",
     "reqLevel": 75,
     "modifiers": [
-      "Marked for Death Duration Increased by 0.2 Seconds",
+      "{orange}Marked for Death Duration Increased by 0.2 Seconds",
       "+(2 to 7) to Impale",
       "(2 to 3)% Deadly Strike"
     ]
@@ -1242,7 +1242,7 @@
     "icon": "relic03",
     "reqLevel": 75,
     "modifiers": [
-      "+75% Velocity After Casting Jitan's Gate",
+      "{orange}+75% Velocity After Casting Jitan's Gate",
       "Jitan's Gate Cooldown Reduced by 2 seconds",
       "+(2 to 4) to Jitan's Gate"
     ]
@@ -1255,7 +1255,7 @@
     "icon": "relic01",
     "reqLevel": 75,
     "modifiers": [
-      "Hungering Flames: +2% of Max Life healed per cast",
+      "{orange}Hungering Flames: +2% of Max Life healed per cast",
       "+(21 to 32) to Lava Pit"
     ]
   },
@@ -1293,7 +1293,7 @@
     "icon": "relic06",
     "reqLevel": 75,
     "modifiers": [
-      "+10% Lightning Fury Damage",
+      "{orange}+10% Lightning Fury Damage",
       "+(4 to 8) to Lightning Fury",
       "+1 Life on Striking"
     ]
@@ -1306,7 +1306,7 @@
     "icon": "relic01",
     "reqLevel": 75,
     "modifiers": [
-      "Lightning shield: elemental damage reduction for non-Amazons applies at 33% effectiveness",
+      "{orange}Lightning shield: elemental damage reduction for non-Amazons applies at 33% effectiveness",
       "+(11 to 17) to Lightning Shield",
       "(31 to 50)% Bonus to Defense"
     ]
@@ -1332,7 +1332,7 @@
     "icon": "relic06",
     "reqLevel": 75,
     "modifiers": [
-      "Limpet Laser: +1 Projectile",
+      "{orange}Limpet Laser: +1 Projectile",
       "+(4 to 7)% to Cold Spell Damage",
       "+(5 to 12) to Limpet Laser"
     ]
@@ -1359,7 +1359,7 @@
     "icon": "relic04",
     "reqLevel": 75,
     "modifiers": [
-      "Blast Radius: Explosion Radius increased by 2 Yards",
+      "{orange}Blast Radius: Explosion Radius increased by 2 Yards",
       "+(8 to 10)% to Physical/Magic Spell Damage",
       "+(21 to 31) to Magic Missiles"
     ]
@@ -1372,7 +1372,7 @@
     "icon": "relic03",
     "reqLevel": 75,
     "modifiers": [
-      "Mana Sweep: +10% Total Damage",
+      "{orange}Mana Sweep: +10% Total Damage",
       "Mana Sweep Cooldown Reduced by 3 seconds",
       "+(8 to 18) to Mana Sweep"
     ]
@@ -1411,7 +1411,7 @@
     "icon": "relic01",
     "reqLevel": 75,
     "modifiers": [
-      "+50% Bonus to Miasma Haunt Duration",
+      "{orange}+50% Bonus to Miasma Haunt Duration",
       "+(4 to 8)% to Poison Spell Damage",
       "+(13 to 21) to Miasma"
     ]
@@ -1424,7 +1424,7 @@
     "icon": "relic05",
     "reqLevel": 75,
     "modifiers": [
-      "Symphony of Destruction: +1 Beam in Slayer's Area of Effect",
+      "{orange}Symphony of Destruction: +1 Beam in Slayer's Area of Effect",
       "+(5 to 11) to Mind Flay",
       "Lightning Resist +30%"
     ]
@@ -1450,7 +1450,7 @@
     "icon": "relic03",
     "reqLevel": 90,
     "modifiers": [
-      "Mythal: Doubled Debuff Duration",
+      "{orange}Mythal: Doubled Debuff Duration",
       "+(11 to 15)% Bonus Elemental Damage to Mark of the Wild",
       "+(6 to 11) to Mythal"
     ]
@@ -1463,7 +1463,7 @@
     "icon": "relic04",
     "reqLevel": 75,
     "modifiers": [
-      "+3 Maximum Night Hawks",
+      "{orange}+3 Maximum Night Hawks",
       "+(15 to 30) to Night Hawks",
       "+(11 to 20)% to Summon Damage"
     ]
@@ -1476,7 +1476,7 @@
     "icon": "relic03",
     "reqLevel": 75,
     "modifiers": [
-      "Nightmare Reduces Physical Resistance by 6%",
+      "{orange}Nightmare Reduces Physical Resistance by 6%",
       "+(4 to 13) to Nightmare"
     ]
   },
@@ -1490,8 +1490,8 @@
     "modifiers": [
       "+(8 to 14) to Nova Charge",
       "+20 to Energy",
-      "+10 to Frozen Heart while Carrying Periodic Relics",
-      "(Hive - Nova Charge - Path of Flames)"
+      "{grey}+10 to Frozen Heart while Carrying Periodic Relics",
+      "{grey}(Hive - Nova Charge - Path of Flames)"
     ]
   },
   {
@@ -1566,7 +1566,7 @@
     "icon": "relic01",
     "reqLevel": 75,
     "modifiers": [
-      "+1 to All Skills when using an Apple",
+      "{orange}+1 to All Skills when using an Apple",
       "+1 to Druid Skill Levels",
       "+(5 to 12) to Pagan Rites"
     ]
@@ -1579,7 +1579,7 @@
     "icon": "relic06",
     "reqLevel": 75,
     "modifiers": [
-      "Parasite Gains 5 Additional Targets",
+      "{orange}Parasite Gains 5 Additional Targets",
       "Adds 100-200 Magic Damage",
       "+(9 to 15) to Parasite"
     ]
@@ -1594,8 +1594,8 @@
     "modifiers": [
       "+(6 to 13) to Path of Flames",
       "Fire Resist +20%",
-      "+10 to Frozen Heart while Carrying Periodic Relics",
-      "(Hive - Nova Charge - Path of Flames)"
+      "{grey}+10 to Frozen Heart while Carrying Periodic Relics",
+      "{grey}(Hive - Nova Charge - Path of Flames)"
     ]
   },
   {
@@ -1632,7 +1632,7 @@
     "icon": "relic05",
     "reqLevel": 75,
     "modifiers": [
-      "Pestilence: +10 Seconds Duration",
+      "{orange}Pestilence: +10 Seconds Duration",
       "+(8 to 13) to Pestilence (Necromancer Only)",
       "+(23 to 34) to Pestilence"
     ]
@@ -1697,12 +1697,12 @@
     "icon": "relic04",
     "reqLevel": 75,
     "modifiers": [
-      "+1 Extra Protector Spirit",
+      "{orange}+1 Extra Protector Spirit",
       "+(12 to 20)% Damage to Protector Spirit Bloodlust",
       "+(15 to 25) to Protector Spirit",
       "+25% to Summon Elemental Resistances",
-      "Spirit Walk Heals an Additional 5% Maximum Life while Carrying All Shaman Relics",
-      "(Defender Spirit - Guardian Spirit - Protector Spirit)"
+      "{grey}Spirit Walk Heals an Additional 5% Maximum Life while Carrying All Shaman Relics",
+      "{grey}(Defender Spirit - Guardian Spirit - Protector Spirit)"
     ]
   },
   {
@@ -1713,7 +1713,7 @@
     "icon": "relic03",
     "reqLevel": 75,
     "modifiers": [
-      "+500 Total Energy to Psicrown",
+      "{orange}+500 Total Energy to Psicrown",
       "+(12 to 19) to Psicrown"
     ]
   },
@@ -1725,7 +1725,7 @@
     "icon": "relic04",
     "reqLevel": 75,
     "modifiers": [
-      "+8% Total Psionic Storm Damage",
+      "{orange}+8% Total Psionic Storm Damage",
       "+(13 to 25) to Psionic Storm",
       "(2 to 5)% to Energy"
     ]
@@ -1763,7 +1763,7 @@
     "icon": "relic04",
     "reqLevel": 75,
     "modifiers": [
-      "+1 Target to Raid",
+      "{orange}+1 Target to Raid",
       "+(7 to 13) to Raid (Druid Only)",
       "Weapon Physical Damage +(21 to 35)%",
       "(21 to 35)% Bonus to Defense"
@@ -1818,7 +1818,7 @@
     "icon": "relic03",
     "reqLevel": 75,
     "modifiers": [
-      "+10 Rebound Projectiles",
+      "{orange}+10 Rebound Projectiles",
       "+(5 to 10) to Minimum Damage",
       "+(13 to 22) to Rebound"
     ]
@@ -1831,7 +1831,7 @@
     "icon": "relic02",
     "reqLevel": 90,
     "modifiers": [
-      "+25% Magic Find When Near a Revenant",
+      "{orange}+25% Magic Find When Near a Revenant",
       "+(11 to 23) to Resurrect",
       "+(21 to 40)% to Summon Life"
     ]
@@ -1896,7 +1896,7 @@
     "icon": "relic05",
     "reqLevel": 75,
     "modifiers": [
-      "Lethal Incision: +1 Extra Blade",
+      "{orange}Lethal Incision: +1 Extra Blade",
       "+(11 to 16) to Scorpion Blade",
       "Poison Resist +(11 to 20)%"
     ]
@@ -1909,7 +1909,7 @@
     "icon": "relic04",
     "reqLevel": 75,
     "modifiers": [
-      "Screaming Eagle Duration Increased by 3 seconds",
+      "{orange}Screaming Eagle Duration Increased by 3 seconds",
       "10% Attack Speed",
       "+(7 to 16) to Screaming Eagle"
     ]
@@ -1922,7 +1922,7 @@
     "icon": "relic04",
     "reqLevel": 75,
     "modifiers": [
-      "Searing Glow: Dazzle Reduces Enemy Attack Rating by 5%",
+      "{orange}Searing Glow: Dazzle Reduces Enemy Attack Rating by 5%",
       "2% Chance to cast level 50 Searing Glow on Death Blow",
       "+(13 to 17) to Searing Glow"
     ]
@@ -1961,7 +1961,7 @@
     "icon": "relic02",
     "reqLevel": 75,
     "modifiers": [
-      "+1 Extra Servant",
+      "{orange}+1 Extra Servant",
       "+(21 to 32) to Servants of Valor",
       "+(16 to 25)% to Summon Damage"
     ]
@@ -2014,7 +2014,7 @@
     "icon": "relic06",
     "reqLevel": 75,
     "modifiers": [
-      "+1% Physical/Magic Spell Damage per 5 Cognition",
+      "{orange}+1% Physical/Magic Spell Damage per 5 Cognition",
       "15% Chance to cast level 40 Shuriken Flurry on Melee Attack",
       "+(18 to 26) to Shuriken Flurry",
       "Physical Damage Taken Reduced by (21 to 30)"
@@ -2041,7 +2041,7 @@
     "icon": "relic06",
     "reqLevel": 75,
     "modifiers": [
-      "+15% Elemental Spell Damage to Demon Blood Aura",
+      "{orange}+15% Elemental Spell Damage to Demon Blood Aura",
       "+(11 to 23) to Skeletal Flayer",
       "Maximum Life +(2 to 3)%"
     ]
@@ -2067,7 +2067,7 @@
     "icon": "relic01",
     "reqLevel": 75,
     "modifiers": [
-      "20% Lightning Pierce to Slayers",
+      "{orange}20% Lightning Pierce to Slayers",
       "+(11 to 15) Spell Focus",
       "+(9 to 20) to Slayer"
     ]
@@ -2080,7 +2080,7 @@
     "icon": "relic05",
     "reqLevel": 75,
     "modifiers": [
-      "Snake Bite: ignores enemy Defense and Block",
+      "{orange}Snake Bite: ignores enemy Defense and Block",
       "-5% to Enemy Poison Resistance",
       "+(12 to 20) to Snake Bite"
     ]
@@ -2093,7 +2093,7 @@
     "icon": "relic01",
     "reqLevel": 75,
     "modifiers": [
-      "Solar Flare: +30% Duration",
+      "{orange}Solar Flare: +30% Duration",
       "+(3 to 5)% to Physical/Magic Spell Damage",
       "+(3 to 5)% to Fire Spell Damage",
       "+(14 to 22) to Solar Flare"
@@ -2120,7 +2120,7 @@
     "icon": "relic05",
     "reqLevel": 75,
     "modifiers": [
-      "Spark of Hope Duration Increased by 50 seconds",
+      "{orange}Spark of Hope Duration Increased by 50 seconds",
       "+(9 to 17) to Spark of Hope",
       "Half Freeze Duration"
     ]
@@ -2146,7 +2146,7 @@
     "icon": "relic01",
     "reqLevel": 75,
     "modifiers": [
-      "+200% Bonus Magic Damage to Spiral Dance",
+      "{orange}+200% Bonus Magic Damage to Spiral Dance",
       "+(11 to 17) to Spiral Dance",
       "+25 Mana on Melee Attack"
     ]
@@ -2172,7 +2172,7 @@
     "icon": "relic03",
     "reqLevel": 75,
     "modifiers": [
-      "Split Arrow: +8 Projectiles",
+      "{orange}Split Arrow: +8 Projectiles",
       "+(13 to 24) to Split Arrow",
       "(6 to 10)% Chance of Crushing Blow"
     ]
@@ -2185,7 +2185,7 @@
     "icon": "relic03",
     "reqLevel": 75,
     "modifiers": [
-      "Stampede: +1 Projectile",
+      "{orange}Stampede: +1 Projectile",
       "8% Life stolen per Hit",
       "+(16 to 27) to Stampede"
     ]
@@ -2198,7 +2198,7 @@
     "icon": "relic01",
     "reqLevel": 75,
     "modifiers": [
-      "+2 Storm Crows Projectiles",
+      "{orange}+2 Storm Crows Projectiles",
       "1% Chance to cast level 3 Knife Throw on Striking",
       "+(16 to 24) to Storm Crows"
     ]
@@ -2211,7 +2211,7 @@
     "icon": "relic05",
     "reqLevel": 75,
     "modifiers": [
-      "Stormblast: 5% Chance to Trigger Additional Projectile",
+      "{orange}Stormblast: 5% Chance to Trigger Additional Projectile",
       "Adds 1-150 Lightning Damage",
       "+(4 to 11) to Stormblast"
     ]
@@ -2224,7 +2224,7 @@
     "icon": "relic06",
     "reqLevel": 75,
     "modifiers": [
-      "Conductivity: +1% Chance to Cast Askari Lightning on Hit",
+      "{orange}Conductivity: +1% Chance to Cast Askari Lightning on Hit",
       "-(4 to 7)% to Enemy Lightning Resistance",
       "+(14 to 24) to Stormcall"
     ]
@@ -2250,10 +2250,10 @@
     "icon": "relic02",
     "reqLevel": 75,
     "modifiers": [
-      "+1 Extra Stormeye Totem",
+      "{orange}+1 Extra Stormeye Totem",
       "+(20 to 35) to Stormeye Totem",
-      "5% Fire/Cold/Lightning Absorb while Carrying Totem Relics",
-      "(Fireheart Totem - Frostclaw Totem - Stormeye Totem)"
+      "{grey}5% Fire/Cold/Lightning Absorb while Carrying Totem Relics",
+      "{grey}(Fireheart Totem - Frostclaw Totem - Stormeye Totem)"
     ]
   },
   {
@@ -2266,9 +2266,11 @@
     "modifiers": [
       "+(9 to 16) to Summon Frostwalker",
       "Maximum Cold Resist +1%",
-      "Gain Exodia while Carrying All Summon Trio Relics",
-      "(Summon Frostwalker - Summon Glowing Fungus - Summon Sinner)",
-      "Exodia",
+      "{grey}Gain",
+      "{orange}Exodia",
+      "{grey}while Carrying All Summon Trio Relics",
+      "{grey}(Summon Frostwalker - Summon Glowing Fungus - Summon Sinner)",
+      "{orange}Exodia",
       "Allows you to summon all of the above minions at once",
       "+100% to Summon Damage",
       "+100% to Summon Attack Rating",
@@ -2285,9 +2287,11 @@
     "modifiers": [
       "+(9 to 16) to Summon Glowing Fungus",
       "Maximum Lightning Resist +1%",
-      "Gain Exodia while Carrying All Summon Trio Relics",
-      "(Summon Frostwalker - Summon Glowing Fungus - Summon Sinner)",
-      "Exodia",
+      "{grey}Gain",
+      "{orange}Exodia",
+      "{grey}while Carrying All Summon Trio Relics",
+      "{grey}(Summon Frostwalker - Summon Glowing Fungus - Summon Sinner)",
+      "{orange}Exodia",
       "Allows you to summon all of the above minions at once",
       "+100% to Summon Damage",
       "+100% to Summon Attack Rating",
@@ -2304,9 +2308,11 @@
     "modifiers": [
       "+(9 to 16) to Summon Sinner",
       "Maximum Fire Resist +1%",
-      "Gain Exodia while Carrying All Summon Trio Relics",
-      "(Summon Frostwalker - Summon Glowing Fungus - Summon Sinner)",
-      "Exodia",
+      "{grey}Gain",
+      "{orange}Exodia",
+      "{grey}while Carrying All Summon Trio Relics",
+      "{grey}(Summon Frostwalker - Summon Glowing Fungus - Summon Sinner)",
+      "{orange}Exodia",
       "Allows you to summon all of the above minions at once",
       "+100% to Summon Damage",
       "+100% to Summon Attack Rating",
@@ -2334,7 +2340,7 @@
     "icon": "relic01",
     "reqLevel": 75,
     "modifiers": [
-      "Takedown: +1 Maximum Fury Charges",
+      "{orange}Takedown: +1 Maximum Fury Charges",
       "+1 to Amazon Skill Levels",
       "+(9 to 14) to Takedown"
     ]
@@ -2373,7 +2379,7 @@
     "icon": "relic01",
     "reqLevel": 75,
     "modifiers": [
-      "+3 Maximum Tempest Projectiles",
+      "{orange}+3 Maximum Tempest Projectiles",
       "+(4 to 8)% to Lightning Spell Damage",
       "+(9 to 17) to Tempest"
     ]
@@ -2508,7 +2514,7 @@
     "icon": "relic05",
     "reqLevel": 75,
     "modifiers": [
-      "+1 Extra Venomcloud Totem",
+      "{orange}+1 Extra Venomcloud Totem",
       "-(4 to 8)% to Enemy Poison Resistance",
       "+(8 to 19) to Venomcloud Totem"
     ]
@@ -2521,7 +2527,7 @@
     "icon": "relic04",
     "reqLevel": 75,
     "modifiers": [
-      "Vessel of Judgement: +1 Target",
+      "{orange}Vessel of Judgement: +1 Target",
       "+(6 to 8)% to Physical/Magic Spell Damage",
       "+(9 to 17) to Vessel of Judgement"
     ]
@@ -2534,7 +2540,7 @@
     "icon": "relic05",
     "reqLevel": 75,
     "modifiers": [
-      "Vessel of Retribution: 0.7% Damage Leeched as Life",
+      "{orange}Vessel of Retribution: 0.7% Damage Leeched as Life",
       "+(6 to 8)% to Physical/Magic Spell Damage",
       "+(14 to 23) to Vessel of Retribution"
     ]
@@ -2651,7 +2657,7 @@
     "icon": "relic06",
     "reqLevel": 75,
     "modifiers": [
-      "Hunter's Mark: Increased Damage per Hit",
+      "{orange}Hunter's Mark: Increased Damage per Hit",
       "+(15 to 26) to Wolf Companion",
       "2% Reanimate as: Spirit Wolf"
     ]
@@ -2664,7 +2670,7 @@
     "icon": "relic05",
     "reqLevel": 75,
     "modifiers": [
-      "+5% physical resistance during wychwind vulnerability",
+      "{orange}+5% physical resistance during wychwind vulnerability",
       "+1 to Assassin Skill Levels",
       "+(9 to 17) to Wychwind"
     ]
@@ -2690,7 +2696,7 @@
     "icon": "relic03",
     "reqLevel": 75,
     "modifiers": [
-      "+3 Wyrmshot Targets",
+      "{orange}+3 Wyrmshot Targets",
       "(4 to 6)% Innate Elemental Damage",
       "+(9 to 15) to Wyrmshot"
     ]

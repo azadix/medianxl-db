@@ -131,4 +131,22 @@ describe('item tooltip orange and grey mods', () => {
     expect(html).not.toContain('{orange}');
     expect(html).not.toContain('{grey}');
   });
+
+  it('colors orange and grey relic modifiers', () => {
+    const html = buildItemTooltipHtml({
+      name: 'Relic (Abyss Knight)',
+      rarity: 'relic',
+      category: 'relics',
+      modifiers: [
+        '{orange}+1 Extra Abyss Knight',
+        '{grey}Spirit Walk Heals an Additional 5% Maximum Life while Carrying All Shaman Relics',
+        '+(9 to 19) to Abyss Knight',
+      ],
+    });
+    expect(html).toContain('item-mod--orange');
+    expect(html).toContain('item-mod--grey');
+    expect(html).toContain('+1 Extra Abyss Knight');
+    expect(html).not.toContain('{orange}');
+    expect(html).not.toContain('{grey}');
+  });
 });
