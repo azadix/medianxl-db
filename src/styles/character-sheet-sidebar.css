@@ -1251,6 +1251,51 @@
       color-mix(in srgb, var(--item-rarity-color) 40%, transparent) 78%,
       var(--item-rarity-color) 100%
     ) border-box;
+  box-shadow:
+    inset 1px 1px 0 0 color-mix(in srgb, var(--item-rarity-color) 80%, transparent),
+    inset 2px 2px 0 0 color-mix(in srgb, var(--item-rarity-color) 45%, transparent),
+    inset 3px 3px 0 0 color-mix(in srgb, var(--item-rarity-color) 18%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, var(--item-rarity-color) 38%, transparent);
+}
+
+.planner-slot--equipment.planner-slot--filled .planner-slot__body::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 1;
+  padding: 0.55rem;
+  image-rendering: pixelated;
+  background-image:
+    repeating-conic-gradient(
+      from 90deg at 50% 50%,
+      rgb(0 0 0 / 0.28) 0deg 90deg,
+      transparent 90deg 180deg
+    ),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--item-rarity-color) 88%, transparent) 0 14%,
+      color-mix(in srgb, var(--item-rarity-color) 55%, transparent) 14% 30%,
+      color-mix(in srgb, var(--item-rarity-color) 28%, transparent) 30% 48%,
+      color-mix(in srgb, var(--item-rarity-color) 10%, transparent) 48% 70%,
+      transparent 70%
+    );
+  background-size: 2px 2px, 100% 100%;
+  -webkit-mask-image: linear-gradient(#000 0 0), linear-gradient(#000 0 0);
+  -webkit-mask-clip: content-box, border-box;
+  -webkit-mask-composite: xor;
+  mask-image: linear-gradient(#000 0 0), linear-gradient(#000 0 0);
+  mask-clip: content-box, border-box;
+  mask-composite: exclude;
+}
+
+.planner-slot--compact.planner-slot--filled .planner-slot__body::before {
+  padding: 0.32rem;
+}
+
+.planner-slot--tiny.planner-slot--filled .planner-slot__body::before {
+  padding: 0.2rem;
 }
 
 .planner-slot--equipment.planner-slot--drop-accept .planner-slot__body {
