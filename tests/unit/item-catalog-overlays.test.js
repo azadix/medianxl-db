@@ -177,6 +177,33 @@ describe('unique-stats-db catalog', () => {
     expect(def.baseName).toBe('Short Sword (1)');
   });
 
+  it('copies innate and adds from the grey base', () => {
+    const bases = [
+      {
+        id: '22@',
+        name: 'Battle Axe (Sacred)',
+        type: 's2ha',
+        category: 'weapons',
+        slot: 'arms',
+        innate: 'Innate Fire Damage: (84.0% of Strength)',
+        adds: 'Adds 250-350 Fire Damage',
+        strDamageBonus: 0.16,
+      },
+    ];
+    const def = entryToItemDef(
+      {
+        name: 'Flame Axe',
+        quality: 'SU',
+        type: 'Battle Axe (Sacred)',
+        stats: 'Required Level: 90\nRequired Strength: 486\n+100% Enhanced Damage\nSocketed (6)',
+      },
+      bases
+    );
+    expect(def.innate).toBe('Innate Fire Damage: (84.0% of Strength)');
+    expect(def.adds).toBe('Adds 250-350 Fire Damage');
+    expect(def.strDamageBonus).toBe(0.16);
+  });
+
   it('resolves legacy u:name:tu ids to T4', () => {
     const byId = { 'u:grim-fang:tu:4': { id: 'u:grim-fang:tu:4' } };
     expect(resolveCatalogDefId('u:grim-fang:tu', byId)).toBe('u:grim-fang:tu:4');

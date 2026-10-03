@@ -27,6 +27,7 @@ import {
 } from '@/items/item-overlays.js';
 import { formatRunewordBadge, formatRunewordSocketFillerLines, isRunewordItem } from '@/items/runeword-items.js';
 import { getShieldClassBlockPercent } from '@/character/class-baselines.js';
+import { resolveItemRequirements } from '@/items/item-requirements.js';
 
 /** @type {Readonly<Record<string, string>>} */
 export const ITEM_CATEGORY_LABEL = Object.freeze({
@@ -237,6 +238,52 @@ export function mergeRollsForDef(def, existingRolls = null, options = {}) {
   return { ...defaultRollsForDef(def, options), ...(existingRolls || {}) };
 }
 
+const INNATE_DAMAGE_TYPE_RE =
+  /Innate\s+(Fire|Cold|Lightning|Poison|Magic|Physical|Shadow)\s+Damage/i;
+const ADDS_DAMAGE_TYPE_RE =
+  /\bAdds\b[^\n]*\b(Fire|Cold|Lightning|Poison|Magic|Physical|Shadow)\s+Damage/i;
+
+const RARITY_SUBTITLE_WORD = Object.freeze({
+  magic: 'Magic',
+  rare: 'Rare',
+  unique: 'Unique',
+  set: 'Set',
+  runeword: 'Runeword',
+  relic: 'Relic',
+  crafted: 'Crafted',
+});
+
+/**
+ * Basetype elemental damage (Fire, Cold, …) from `innate` / `adds`.
+ * @param {object|null|undefined} def
+ * @returns {string}
+ */
+export function getItemDamageType(def) {
+  if (!def || typeof def !== 'object') return '';
+  const innate = INNATE_DAMAGE_TYPE_RE.exec(String(def.innate || ''));
+  if (innate) return innate[1][0].toUpperCase() + innate[1].slice(1).toLowerCase();
+  const adds = ADDS_DAMAGE_TYPE_RE.exec(String(def.adds || ''));
+  if (adds) return adds[1][0].toUpperCase() + adds[1].slice(1).toLowerCase();
+  return '';
+}
+
+/**
+ * D5-style subtitle: `UNIQUE WEAPON · T4`.
+ * @param {object|null|undefined} def
+ * @returns {string}
+ */
+export function formatItemTooltipSubtitle(def) {
+  if (!def || typeof def !== 'object') return '';
+  const rarity = String(def.rarity || 'normal');
+  const rarityWord = RARITY_SUBTITLE_WORD[rarity] || '';
+  const typeWord = def.group || ITEM_CATEGORY_LABEL[def.category] || def.category || '';
+  const left = [rarityWord, typeWord].filter(Boolean).join(' ').toUpperCase();
+  const badge = formatItemRarityBadge(def);
+  const skipBadge = !badge || /^(Unique|Set|RW|Crafted|Rare|Magic|Relic)$/i.test(badge);
+  if (!skipBadge && badge) return left ? `${left} · ${badge}` : badge;
+  return left;
+}
+
 const CLASS_BLOCK_ONLY_RE = /^class\s*%$/i;
 const CLASS_BLOCK_RANGE_RE = /^([+-]?\d+)\s+to\s+([+-]?\d+)\s*%\s*\+\s*class\s*%$/i;
 const CLASS_BLOCK_FLAT_RE = /^([+-]?\d+)\s*%\s*\+\s*class\s*%$/i;
@@ -280,76 +327,111 @@ export function formatChanceToBlockLine(block, className = null) {
 }
 
 /**
- * Static + rolled stat lines for tooltips / detail panel.
+ * @typedef {{
+ *   base: string[],
+ *   scaling: string[],
+ *   mods: string[],
+ *   requirements: import('@/items/item-requirements.js').ItemRequirements,
+ * }} ItemStatSections
+ */
+
+/**
  * @param {object|null|undefined} def
  * @param {Record<string, number>|null|undefined} [rolls]
- * @param {{ hideRollableRanges?: boolean, characterLevel?: number|null, charmInInventory?: boolean, className?: string|null, charmHeaderOnly?: boolean }} [options]
- * @returns {string[]}
+ * @param {{
+ *   hideRollableRanges?: boolean,
+ *   characterLevel?: number|null,
+ *   charmInInventory?: boolean,
+ *   className?: string|null,
+ *   charmHeaderOnly?: boolean,
+ *   socketables?: Array<object>|null,
+ * }} [options]
+ * @returns {ItemStatSections}
  */
-export function getItemStatLines(def, rolls = null, options = {}) {
+export function getItemStatSections(def, rolls = null, options = {}) {
+  /** @type {ItemStatSections} */
+  const empty = {
+    base: [],
+    scaling: [],
+    mods: [],
+    requirements: { reqLevel: 0, reqStr: 0, reqDex: 0, reductionPct: 0 },
+  };
+  if (!def || typeof def !== 'object') return empty;
+
   const hideRollableRanges = options.hideRollableRanges === true;
   /** @type {Set<string>|null} */
   const rollableKeys = hideRollableRanges
     ? new Set(getRollableStats(def, rolls, { className: options.className ?? null }).map((s) => s.key))
     : null;
-  if (!def || typeof def !== 'object') return [];
   const overlay = isOverlayItem(def);
   /** @type {string[]} */
-  const lines = [];
+  const base = [];
+  /** @type {string[]} */
+  const scaling = [];
+  /** @type {string[]} */
+  const mods = [];
 
-  if (def.damage1hDisplay) lines.push(`One-Hand Damage: ${def.damage1hDisplay}`);
-  else if (def.damage1h) lines.push(`One-Hand Damage: ${def.damage1h.min} to ${def.damage1h.max}`);
-  if (def.damage2hDisplay) lines.push(`Two-Hand Damage: ${def.damage2hDisplay}`);
-  else if (def.damage2h) lines.push(`Two-Hand Damage: ${def.damage2h.min} to ${def.damage2h.max}`);
-  if (def.throwDamageDisplay) lines.push(`Throw Damage: ${def.throwDamageDisplay}`);
+  if (def.damage1hDisplay) base.push(`One-Hand Damage: ${def.damage1hDisplay}`);
+  else if (def.damage1h) base.push(`One-Hand Damage: ${def.damage1h.min} to ${def.damage1h.max}`);
+  if (def.damage2hDisplay) base.push(`Two-Hand Damage: ${def.damage2hDisplay}`);
+  else if (def.damage2h) base.push(`Two-Hand Damage: ${def.damage2h.min} to ${def.damage2h.max}`);
+  if (def.throwDamageDisplay) base.push(`Throw Damage: ${def.throwDamageDisplay}`);
 
   if (def.defenseDisplay) {
-    lines.push(`Defense: ${def.defenseDisplay}`);
+    base.push(`Defense: ${def.defenseDisplay}`);
   } else if (def.defense) {
     const rolled = rolls && Number.isFinite(rolls.defense) ? rolls.defense : null;
     if (rollableKeys?.has('defense')) {
       // Roll controls shown elsewhere - skip static defense line.
     } else if (rolled != null) {
-      lines.push(`Defense: ${rolled}`);
+      base.push(`Defense: ${rolled}`);
     } else {
-      lines.push(`Defense: ${def.defense.min} to ${def.defense.max}`);
+      base.push(`Defense: ${def.defense.min} to ${def.defense.max}`);
     }
   }
 
   if (def.block) {
     const blockLine = formatChanceToBlockLine(def.block, options.className ?? null);
-    if (blockLine) lines.push(blockLine);
+    if (blockLine) base.push(blockLine);
   }
-  if (def.reqLevel > 0) lines.push(`Required Level: ${def.reqLevel}`);
-  if (def.reqStr > 0) lines.push(`Required Strength: ${def.reqStr}`);
-  if (def.reqDex > 0) lines.push(`Required Dexterity: ${def.reqDex}`);
-  if (def.range != null) lines.push(`Melee range: ${def.range}`);
-  if (def.speed != null) lines.push(`Attack Speed Modifier: ${def.speed}`);
+
+  const damageType = getItemDamageType(def);
+  if (damageType) base.push(`${damageType} Damage`);
+
+  if (def.range != null) base.push(`Melee range: ${def.range}`);
+  if (def.speed != null) base.push(`Attack Speed Modifier: ${def.speed}`);
+  if (def.movePenalty != null) base.push(`Movement Speed Penalty: ${def.movePenalty}`);
+
   if (def.strDamageBonus != null) {
-    lines.push(`Strength Damage Bonus: (${def.strDamageBonus} per Strength)%`);
+    scaling.push(`Strength Damage Bonus: (${def.strDamageBonus} per Strength)%`);
   }
   if (def.dexDamageBonus != null) {
-    lines.push(`Dexterity Damage Bonus: (${def.dexDamageBonus} per Dexterity)%`);
+    scaling.push(`Dexterity Damage Bonus: (${def.dexDamageBonus} per Dexterity)%`);
   }
-  if (def.movePenalty != null) lines.push(`Movement Speed Penalty: ${def.movePenalty}`);
-  if (def.innate) lines.push(String(def.innate));
-  if (!overlay && def.adds) lines.push(String(def.adds));
-  if (!overlay && def.attackModifier) lines.push(String(def.attackModifier));
+  if (def.innate) scaling.push(String(def.innate));
+
+  if (def.adds) {
+    const adds = String(def.adds);
+    const alreadyListed =
+      overlay && Array.isArray(def.modifiers) && def.modifiers.some((mod) => String(mod) === adds);
+    if (!alreadyListed) mods.push(adds);
+  }
+  if (!overlay && def.attackModifier) mods.push(String(def.attackModifier));
   if (def.sockets > 0) {
     const filled = rolls && Number.isFinite(rolls.sockets) ? rolls.sockets : null;
     if (rollableKeys?.has('sockets')) {
       // Roll controls shown elsewhere - skip static sockets line.
     } else if (overlay) {
-      lines.push(`Socketed (${def.sockets})`);
+      mods.push(`Socketed (${def.sockets})`);
     } else if (filled != null) {
-      if (filled > 0) lines.push(`Socketed (${filled})`);
+      if (filled > 0) mods.push(`Socketed (${filled})`);
     } else {
-      lines.push(`Socketed (${def.sockets})`);
+      mods.push(`Socketed (${def.sockets})`);
     }
   }
 
   if (isCharmItem(def)) {
-    lines.push(
+    mods.push(
       ...getCharmStatLines(def, options.characterLevel ?? null, {
         inInventory: options.charmInInventory !== false,
         rolls,
@@ -360,14 +442,34 @@ export function getItemStatLines(def, rolls = null, options = {}) {
     );
   } else if (isRelicItem(def) && !options.charmHeaderOnly) {
     if (options.charmInInventory !== false) {
-      lines.push(...getRelicStatLines(def, rolls, { hideRollableRanges }));
+      mods.push(...getRelicStatLines(def, rolls, { hideRollableRanges }));
     }
   } else if (overlay && !options.charmHeaderOnly) {
-    lines.push(...getOverlayStatLines(def, rolls, { hideRollableRanges }));
-    if (isRunewordItem(def)) lines.push(...formatRunewordSocketFillerLines(def));
+    mods.push(...getOverlayStatLines(def, rolls, { hideRollableRanges }));
+    if (isRunewordItem(def)) mods.push(...formatRunewordSocketFillerLines(def));
   }
 
-  return lines;
+  return {
+    base,
+    scaling,
+    mods,
+    requirements: resolveItemRequirements(def, {
+      rolls,
+      socketables: options.socketables ?? null,
+    }),
+  };
+}
+
+/**
+ * Static + rolled stat lines for tooltips / detail panel (no requirements footer).
+ * @param {object|null|undefined} def
+ * @param {Record<string, number>|null|undefined} [rolls]
+ * @param {{ hideRollableRanges?: boolean, characterLevel?: number|null, charmInInventory?: boolean, className?: string|null, charmHeaderOnly?: boolean, socketables?: Array<object>|null }} [options]
+ * @returns {string[]}
+ */
+export function getItemStatLines(def, rolls = null, options = {}) {
+  const sections = getItemStatSections(def, rolls, options);
+  return [...sections.base, ...sections.scaling, ...sections.mods];
 }
 
 /**

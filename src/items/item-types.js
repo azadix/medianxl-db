@@ -160,15 +160,153 @@ export function canEquipForClass(def, className) {
   return required === String(className).trim();
 }
 
+/** Opposite weapon/off-hand slot in the same set, or null. */
+const PAIRED_WEAPON_SLOTS = Object.freeze({
+  rarm: 'larm',
+  larm: 'rarm',
+  rarm2: 'larm2',
+  larm2: 'rarm2',
+});
+
+/** Weapon groups that always occupy both hands (no 1h damage). */
+const STRICT_TWO_HAND_GROUPS = new Set([
+  'Amazon Bows',
+  'Amazon Spears',
+  'Assassin Naginatas',
+  'Barbarian Two-Handed Axes',
+  'Bows',
+  'Crossbows',
+  'Druid Bows',
+  'Druid Staves',
+  'Necromancer Crossbows',
+  'Necromancer Scythes',
+  'Necromancer Staves',
+  'Paladin Hammers',
+  'Paladin Spears',
+  'Scythes',
+  'Spears',
+  'Staves',
+  'Two-Handed Axes',
+]);
+
+/**
+ * @param {string} slot
+ * @returns {string|null}
+ */
+export function pairedWeaponSlot(slot) {
+  return PAIRED_WEAPON_SLOTS[String(slot)] ?? null;
+}
+
+/**
+ * @param {string|null|undefined} className
+ * @returns {boolean}
+ */
+function isBarbarianClass(className) {
+  return String(className || '').replace(/\s+only\s*$/i, '').trim() === 'Barbarian';
+}
+
+/**
+ * @param {object|null|undefined} def
+ * @returns {boolean}
+ */
+function hasOneHandDamage(def) {
+  return !!(def?.damage1h || def?.damage1hDisplay);
+}
+
+/**
+ * @param {object|null|undefined} def
+ * @returns {boolean}
+ */
+function hasTwoHandDamage(def) {
+  return !!(def?.damage2h || def?.damage2hDisplay);
+}
+
+/**
+ * @param {object|null|undefined} def
+ * @returns {boolean}
+ */
+export function isShieldItem(def) {
+  if (!def) return false;
+  return /shield/i.test(String(def.group || ''));
+}
+
+/**
+ * @param {object|null|undefined} def
+ * @returns {boolean}
+ */
+function isStaffItem(def) {
+  if (!def) return false;
+  if (/staves/i.test(String(def.group || ''))) return true;
+  return /staf|stf/i.test(String(def.type || ''));
+}
+
+/**
+ * Weapon that occupies a hand slot (not a shield).
+ * @param {object|null|undefined} def
+ * @returns {boolean}
+ */
+export function isHandWeapon(def) {
+  if (!def || isShieldItem(def)) return false;
+  if (def.category === 'weapons') return true;
+  if (hasOneHandDamage(def) || hasTwoHandDamage(def)) return true;
+  const group = String(def.group || '');
+  return /staves|bows|crossbows|spears|naginatas|scythes|swords|axes|hammers|maces|claws|daggers|javelins|orbs|wands|scepters|knives/i.test(
+    group
+  );
+}
+
+/**
+ * True two-hander (staff, bow, spear, 2h axe, …). Cannot pair with a shield except for Barbarian.
+ * @param {object|null|undefined} def
+ * @returns {boolean}
+ */
+export function isStrictTwoHandedWeapon(def) {
+  if (!def || isShieldItem(def)) return false;
+  if (isStaffItem(def)) return true;
+  if (STRICT_TWO_HAND_GROUPS.has(String(def.group || ''))) return true;
+  return hasTwoHandDamage(def) && !hasOneHandDamage(def);
+}
+
+/**
+ * Two-handed weapon, including versatile two-handed swords (1h+2h).
+ * @param {object|null|undefined} def
+ * @returns {boolean}
+ */
+export function isTwoHandedWeapon(def) {
+  if (!def || isShieldItem(def)) return false;
+  if (isStrictTwoHandedWeapon(def)) return true;
+  if (String(def.group || '') === 'Two-Handed Swords') return true;
+  return hasOneHandDamage(def) && hasTwoHandDamage(def);
+}
+
+/**
+ * Whether two items may occupy paired weapon slots together.
+ * Only Barbarian may dual-wield when either item is two-handed. Staves are two-handed.
+ * @param {object|null|undefined} a
+ * @param {object|null|undefined} b
+ * @param {string|null|undefined} [className]
+ * @returns {boolean}
+ */
+export function canDualWieldPair(a, b, className) {
+  if (!a || !b) return true;
+  const barb = isBarbarianClass(className);
+  if (isStrictTwoHandedWeapon(a) || isStrictTwoHandedWeapon(b)) return barb;
+  if (isHandWeapon(a) && isHandWeapon(b) && (isTwoHandedWeapon(a) || isTwoHandedWeapon(b))) {
+    return barb;
+  }
+  return true;
+}
+
 /**
  * Whether a catalog item can go in an equipment slot.
  * Catalog uses `arms` / `ring` for interchangeable slots; equipment uses rarm/larm and rrin/lrin.
  * @param {{ slot?: string|string[], type?: string, classRestriction?: string }} def
  * @param {string} equipSlot
  * @param {string|null|undefined} [className] - When provided, enforces class restrictions
+ * @param {{ otherHandDef?: object|null, className?: string|null }} [options]
  * @returns {boolean}
  */
-export function canEquipInSlot(def, equipSlot, className = undefined) {
+export function canEquipInSlot(def, equipSlot, className = undefined, options = {}) {
   if (!def) return false;
   if (isCharmItem(def) || isRelicItem(def)) return false;
   const allowed = def.slot;
@@ -177,8 +315,49 @@ export function canEquipInSlot(def, equipSlot, className = undefined) {
   const targetGroup = equipSlotGroup(equipSlot);
   const slotOk = list.some((s) => equipSlotGroup(String(s)) === targetGroup);
   if (!slotOk) return false;
-  if (className !== undefined) return canEquipForClass(def, className);
+  if (className !== undefined && !canEquipForClass(def, className)) return false;
+  const other = options?.otherHandDef;
+  if (other) {
+    const pairClass = className !== undefined ? className : options.className;
+    if (!canDualWieldPair(def, other, pairClass)) return false;
+  }
   return true;
+}
+
+/**
+ * Why an item cannot go in an equipment slot, or null if it can.
+ * @param {object|null|undefined} def
+ * @param {string} equipSlot
+ * @param {string|null|undefined} [className]
+ * @param {{ otherHandDef?: object|null, className?: string|null }} [options]
+ * @returns {string|null}
+ */
+export function equipBlockedReason(def, equipSlot, className = undefined, options = {}) {
+  if (!def) return 'Select an item first.';
+  if (isCharmItem(def) || isRelicItem(def)) {
+    return 'Charms and relics cannot go in this slot.';
+  }
+  const allowed = def.slot;
+  if (allowed == null) return 'This item cannot be equipped.';
+  const list = Array.isArray(allowed) ? allowed : [allowed];
+  const targetGroup = equipSlotGroup(equipSlot);
+  const slotOk = list.some((s) => equipSlotGroup(String(s)) === targetGroup);
+  if (!slotOk) {
+    const label = EQUIPMENT_SLOT_LABELS[normalizeEquipSlot(equipSlot)] || 'this slot';
+    return `Does not fit the ${label} slot.`;
+  }
+  if (className !== undefined && !canEquipForClass(def, className)) {
+    const restriction = String(def.classRestriction || '').trim();
+    return restriction || 'Not usable by this class.';
+  }
+  const other = options?.otherHandDef;
+  if (other) {
+    const pairClass = className !== undefined ? className : options.className;
+    if (!canDualWieldPair(def, other, pairClass)) {
+      return 'Only Barbarian can dual-wield with a two-handed weapon.';
+    }
+  }
+  return null;
 }
 
 /**

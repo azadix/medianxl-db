@@ -44,8 +44,6 @@ export function formatRunewordRecipe(def) {
 export function formatRunewordBadge(def) {
   if (!isRunewordItem(def)) return '';
   const recipe = formatRunewordRecipe(def);
-  const lvl = def.runewordLevel ?? def.reqLevel;
-  if (recipe && lvl != null) return `RW ${recipe} (L${lvl})`;
   if (recipe) return `RW ${recipe}`;
   return 'RW';
 }

@@ -10,7 +10,7 @@ import {
   resolveCharmUpgradeModifiers,
   resolveCharmTrophyModifiers,
 } from '@/items/charm-items.js';
-import { getItemStatLines, getItemDetailStatRows, defaultRollsForDef } from '@/items/item-stats.js';
+import { getItemStatLines, getItemDetailStatRows, getItemStatSections, defaultRollsForDef } from '@/items/item-stats.js';
 
 const butcher = {
   id: 'a60',
@@ -89,9 +89,13 @@ describe('charm-items', () => {
       characterLevel: 110,
       charmInInventory: true,
     });
-    expect(lines).toContain('Required Level: 100');
     expect(lines).not.toContain('Keep in Inventory to Gain Bonus');
     expect(lines).toContain('+10 to all Attributes');
+    const sections = getItemStatSections(butcher, null, {
+      characterLevel: 110,
+      charmInInventory: true,
+    });
+    expect(sections.requirements.reqLevel).toBe(100);
   });
 
   it('resolves one-of modifier pools from rolls', () => {

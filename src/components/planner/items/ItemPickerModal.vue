@@ -4,7 +4,9 @@ import { storeToRefs } from 'pinia';
 import { useItemsStore } from '@/stores/items.js';
 import {
   ITEM_CATEGORIES,
+  canEquipForClass,
   canEquipInSlot,
+  equipBlockedReason,
   isRunewordPickerItem,
   isUniquePickerItem,
   matchesItemPickerSearch,
@@ -92,7 +94,34 @@ const previewTemplate = computed(() => {
   return itemsStore.catalogById[previewId.value] ?? null;
 });
 
-const className = computed(() => getCharacterInstance()?.className ?? null);
+const className = computed(() => itemsStore.viewerClassName ?? getCharacterInstance()?.className ?? null);
+
+const otherHandDef = computed(() => {
+  const sel = selectedSlot.value;
+  if (sel?.location !== 'equipment') return null;
+  return itemsStore.otherHandDefForEquip(String(sel.slot));
+});
+
+/**
+ * @param {object} def
+ * @param {string} slot
+ * @param {string|null|undefined} [cls]
+ * @returns {boolean}
+ */
+function fitsEquipSlot(def, slot, cls) {
+  return canEquipInSlot(def, slot, cls, {
+    otherHandDef: otherHandDef.value,
+    className: className.value,
+  });
+}
+
+/**
+ * @param {object|null|undefined} item
+ * @returns {boolean}
+ */
+function canSelectPickerItem(item) {
+  return canEquipForClass(item, className.value);
+}
 
 const eligibleBases = computed(() => {
   const template = previewTemplate.value;
@@ -101,7 +130,8 @@ const eligibleBases = computed(() => {
   const equipSlot = sel?.location === 'equipment' ? String(sel.slot) : '';
   return listEligibleRunewordBases(template, itemsStore.catalog, {
     equipSlot: equipSlot || null,
-    canEquipInSlot: equipSlot ? canEquipInSlot : undefined,
+    className: className.value,
+    canEquipInSlot: equipSlot ? fitsEquipSlot : undefined,
   });
 });
 
@@ -130,11 +160,36 @@ const canEquipPreview = computed(() => {
   const sel = selectedSlot.value;
   if (!def || !sel) return false;
   if (isRelicItem(def) || isCharmItem(def)) return false;
+  if (!canSelectPickerItem(previewTemplate.value)) return false;
   if (isRunewordTemplate(previewTemplate.value) && !selectedBaseId.value) return false;
   if (sel.location === 'equipment') {
-    return canEquipInSlot(def, String(sel.slot), className.value);
+    return fitsEquipSlot(def, String(sel.slot), className.value);
   }
   return sel.location === 'inventory';
+});
+
+const addBlockedReason = computed(() => {
+  if (canEquipPreview.value) return '';
+  const template = previewTemplate.value;
+  const def = previewDef.value;
+  const sel = selectedSlot.value;
+  if (!def || !sel) return '';
+  if (!canSelectPickerItem(template)) {
+    return String(template.classRestriction || 'Not usable by this class.');
+  }
+  if (isRunewordTemplate(template) && !selectedBaseId.value) {
+    return eligibleBases.value.length === 0
+      ? 'No compatible bases for this class.'
+      : 'Select a base item.';
+  }
+  if (sel.location === 'equipment') {
+    return (
+      equipBlockedReason(def, String(sel.slot), className.value, {
+        otherHandDef: otherHandDef.value,
+      }) || ''
+    );
+  }
+  return '';
 });
 
 const rollOptions = computed(() => ({ className: className.value }));
@@ -165,6 +220,7 @@ watch(filteredItems, (list) => {
   }
 });
 
+
 watch([previewId, eligibleBases], () => {
   const template = previewTemplate.value;
   if (!isRunewordTemplate(template)) {
@@ -194,12 +250,17 @@ const slotTitle = computed(() => {
  * @returns {string}
  */
 function rowSubtitle(item) {
-  if (isRunewordTemplate(item)) return formatRunewordRecipe(item);
   const parts = [];
-  if (item.baseName) parts.push(item.baseName);
-  const badge = formatOverlayBadge(item.uniqueKind, item.tier);
-  if (badge) parts.push(badge);
-  if (item.setName) parts.push(item.setName);
+  if (isRunewordTemplate(item)) {
+    const recipe = formatRunewordRecipe(item);
+    if (recipe) parts.push(recipe);
+  } else {
+    if (item.baseName) parts.push(item.baseName);
+    const badge = formatOverlayBadge(item.uniqueKind, item.tier);
+    if (badge) parts.push(badge);
+    if (item.setName) parts.push(item.setName);
+  }
+  if (item.classRestriction) parts.push(item.classRestriction);
   return parts.join(' · ');
 }
 
@@ -235,7 +296,8 @@ function onEquip(defId) {
     const equipSlot = sel?.location === 'equipment' ? String(sel.slot) : '';
     const bases = listEligibleRunewordBases(picked, itemsStore.catalog, {
       equipSlot: equipSlot || null,
-      canEquipInSlot: equipSlot ? canEquipInSlot : undefined,
+      className: className.value,
+      canEquipInSlot: equipSlot ? fitsEquipSlot : undefined,
     });
     const baseId =
       pickedId === previewId.value && selectedBaseId.value
@@ -248,8 +310,9 @@ function onEquip(defId) {
   }
   const def = itemsStore.catalogById[id];
   if (!def) return;
+  if (!canSelectPickerItem(picked) || !canEquipForClass(def, className.value)) return;
   const sel = selectedSlot.value;
-  if (sel?.location === 'equipment' && !canEquipInSlot(def, String(sel.slot), className.value)) {
+  if (sel?.location === 'equipment' && !fitsEquipSlot(def, String(sel.slot), className.value)) {
     return;
   }
   const nextRolls = mergeRollsForDef(
@@ -348,14 +411,19 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown));
                 class="item-picker-modal__row"
                 :class="[
                   'item-picker-modal__row--' + (item.rarity || 'normal'),
-                  { 'is-selected': previewId === item.id },
+                  {
+                    'is-selected': previewId === item.id,
+                    'is-disabled': !canSelectPickerItem(item),
+                  },
                 ]"
                 role="option"
                 :aria-selected="previewId === item.id"
+                :aria-disabled="!canSelectPickerItem(item)"
+                :title="canSelectPickerItem(item) ? undefined : item.classRestriction || 'Not usable by this class'"
                 tabindex="0"
                 @click="onSelect(item.id)"
                 @keydown.enter.prevent="onSelect(item.id)"
-                @dblclick.prevent="onEquip(item.id)"
+                @dblclick.prevent="canSelectPickerItem(item) && onEquip(item.id)"
               >
                 <span class="item-picker-modal__row-name">{{ item.name }}</span>
                 <span v-if="rowSubtitle(item)" class="item-picker-modal__row-meta">{{
@@ -412,15 +480,21 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown));
           Clear slot
         </button>
         <div class="item-picker-modal__foot-right">
-          <button type="button" class="button" @click="onClose">Cancel</button>
-          <button
-            type="button"
-            class="button is-link"
-            :disabled="!previewDef || !canEquipPreview"
-            @click="onEquip()"
-          >
-            Add item
-          </button>
+          <p v-if="addBlockedReason" class="item-picker-modal__add-reason" role="status">
+            {{ addBlockedReason }}
+          </p>
+          <div class="item-picker-modal__foot-actions">
+            <button type="button" class="button" @click="onClose">Cancel</button>
+            <button
+              type="button"
+              class="button is-link"
+              :disabled="!previewDef || !canEquipPreview"
+              :title="addBlockedReason || undefined"
+              @click="onEquip()"
+            >
+              Add item
+            </button>
+          </div>
         </div>
       </footer>
     </div>

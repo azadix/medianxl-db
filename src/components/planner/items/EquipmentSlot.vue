@@ -9,6 +9,7 @@ import {
   moveItemTooltip,
   hideItemTooltip,
 } from '@/items/item-tooltip-runtime.js';
+import { itemRarityFrameClass } from '@/items/item-tooltip.js';
 import ItemIcon from './ItemIcon.vue';
 
 const props = defineProps({
@@ -54,15 +55,7 @@ const isTiny = computed(() => cells.value.w * cells.value.h <= 1);
 const isCompact = computed(() => isTiny.value || cells.value.h <= 1);
 
 const rarityBadge = computed(() => formatItemRarityBadge(def.value));
-
-const socketCount = computed(() => {
-  const d = def.value;
-  if (!d) return 0;
-  const id = instanceId.value;
-  const rolls = id != null ? itemsStore.getRollsForInstance(id) : null;
-  if (rolls && Number.isFinite(rolls.sockets)) return Math.max(0, rolls.sockets);
-  return Number(d.sockets) > 0 ? Number(d.sockets) : 0;
-});
+const rarityFrameClass = computed(() => (def.value ? itemRarityFrameClass(def.value.rarity) : ''));
 
 const dropState = ref(/** @type {''|'accept'|'reject'} */ (''));
 const nameEl = ref(null);
@@ -167,7 +160,9 @@ function canAcceptDrag(payload) {
   if (!payload?.from) return false;
   const defFor = itemsStore.getDefForInstance(payload.instanceId);
   if (!defFor) return false;
-  return canEquipInSlot(defFor, props.slotKey, getCharacterInstance()?.className ?? null);
+  const className = itemsStore.viewerClassName ?? getCharacterInstance()?.className ?? null;
+  const otherHandDef = itemsStore.otherHandDefForEquip(props.slotKey, payload.from);
+  return canEquipInSlot(defFor, props.slotKey, className, { otherHandDef });
 }
 
 function onDragOver(e) {
@@ -215,14 +210,17 @@ function onDrop(e) {
 <template>
   <div
     class="planner-slot planner-slot--equipment"
-    :class="{
-      'planner-slot--active': isActive,
-      'planner-slot--drop-accept': dropState === 'accept',
-      'planner-slot--drop-reject': dropState === 'reject',
-      'planner-slot--filled': !!def,
-      'planner-slot--tiny': isTiny,
-      'planner-slot--compact': isCompact,
-    }"
+    :class="[
+      {
+        'planner-slot--active': isActive,
+        'planner-slot--drop-accept': dropState === 'accept',
+        'planner-slot--drop-reject': dropState === 'reject',
+        'planner-slot--filled': !!def,
+        'planner-slot--tiny': isTiny,
+        'planner-slot--compact': isCompact,
+      },
+      rarityFrameClass,
+    ]"
     :style="slotStyle"
     :aria-label="def ? label + ': ' + def.name : label || undefined"
     role="button"
@@ -240,34 +238,29 @@ function onDrop(e) {
     @mousemove="onItemMouseMove"
     @mouseleave="onItemMouseLeave"
   >
-    <span v-if="!def" class="planner-slot__empty-label">{{ label }}</span>
-    <div v-if="def" class="planner-slot__item-visual" :style="itemVisualStyle">
-      <ItemIcon
-        :def="def"
-        :icon="instanceId != null ? itemsStore.getIconForInstance(instanceId) : ''"
-        fill
-      />
-    </div>
-    <span v-if="def && rarityBadge" class="planner-slot__badge">{{ rarityBadge }}</span>
-    <div
-      v-if="def"
-      class="planner-slot__meta"
-      :class="'item-picker-modal__row--' + (def.rarity || 'normal')"
-    >
-      <span class="planner-slot__name-wrap">
-        <span
-          ref="nameEl"
-          class="planner-slot__name item-picker-modal__row-name"
-          :style="nameScale < 1 ? { transform: `scale(${nameScale})` } : undefined"
-        >{{ def.name }}</span>
-      </span>
-      <span v-if="socketCount > 0" class="planner-slot__sockets" :aria-label="socketCount + ' sockets'">
-        <span
-          v-for="n in socketCount"
-          :key="n"
-          class="planner-slot__socket"
-        ></span>
-      </span>
+    <div class="planner-slot__body">
+      <span v-if="!def" class="planner-slot__empty-label">{{ label }}</span>
+      <div v-if="def" class="planner-slot__item-visual" :style="itemVisualStyle">
+        <ItemIcon
+          :def="def"
+          :icon="instanceId != null ? itemsStore.getIconForInstance(instanceId) : ''"
+          fill
+        />
+      </div>
+      <span v-if="def && rarityBadge" class="planner-slot__badge">{{ rarityBadge }}</span>
+      <div
+        v-if="def"
+        class="planner-slot__meta"
+        :class="'item-picker-modal__row--' + (def.rarity || 'normal')"
+      >
+        <span class="planner-slot__name-wrap">
+          <span
+            ref="nameEl"
+            class="planner-slot__name item-picker-modal__row-name"
+            :style="nameScale < 1 ? { transform: `scale(${nameScale})` } : undefined"
+          >{{ def.name }}</span>
+        </span>
+      </div>
     </div>
   </div>
 </template>

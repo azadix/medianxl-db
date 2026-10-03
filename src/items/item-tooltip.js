@@ -3,14 +3,12 @@
  * @module items/item-tooltip-html
  */
 
-import { escapeHtmlText } from '@/shared/utils.js';
+import { escapeHtmlText, getItemIconUrl } from '@/shared/utils.js';
 import { formatItemModifierLineHtml } from '@/items/item-granted-oskills.js';
 import {
-  buildSkillTooltipHeaderHtml,
-  buildSkillTooltipDescriptionBlock,
-  wrapSkillTooltipContent,
-} from '@/shared/tooltip-html.js';
-import { ITEM_CATEGORY_LABEL, getItemStatLines } from '@/items/item-stats.js';
+  formatItemTooltipSubtitle,
+  getItemStatSections,
+} from '@/items/item-stats.js';
 import { formatSetBonusLabel } from '@/items/item-overlays.js';
 import { formatRunewordBadge, isRunewordItem } from '@/items/runeword-items.js';
 
@@ -37,25 +35,93 @@ export function itemRarityNameClass(rarity) {
 }
 
 /**
+ * Shared rarity frame class (tooltip card + doll slots).
+ * @param {string|null|undefined} rarity
+ * @returns {string}
+ */
+export function itemRarityFrameClass(rarity) {
+  const key = String(rarity || 'normal');
+  return ITEM_RARITY_NAME_CLASS[key] ? `item-rarity--${key}` : 'item-rarity--normal';
+}
+
+/**
+ * @param {string} stem
+ * @returns {string}
+ */
+function itemTooltipIconSrc(stem) {
+  const key = String(stem || '').trim();
+  if (!key) return '';
+  if (typeof window === 'undefined') return `icons/item_icons/${key}.webp`;
+  return getItemIconUrl(key);
+}
+
+/**
+ * @param {string[]} lines
+ * @returns {string}
+ */
+function renderStatLines(lines) {
+  return lines
+    .map((line) => `<div class="item-tooltip-line">${formatItemModifierLineHtml(line)}</div>`)
+    .join('');
+}
+
+/**
+ * @param {import('@/items/item-requirements.js').ItemRequirements} reqs
+ * @param {{
+ *   characterLevel?: number|null,
+ *   characterStrength?: number|null,
+ *   characterDexterity?: number|null,
+ * }} options
+ * @returns {string}
+ */
+function buildRequirementsHtml(reqs, options) {
+  const parts = [];
+  if (reqs.reqLevel > 0) {
+    const unmet =
+      options.characterLevel != null && Number(options.characterLevel) < reqs.reqLevel;
+    const cls = unmet ? ' item-tooltip-req--unmet' : '';
+    parts.push(`<span class="item-tooltip-req${cls}">Level ${reqs.reqLevel}</span>`);
+  }
+  if (reqs.reqStr > 0) {
+    const unmet =
+      options.characterStrength != null && Number(options.characterStrength) < reqs.reqStr;
+    const cls = unmet ? ' item-tooltip-req--unmet' : '';
+    parts.push(`<span class="item-tooltip-req${cls}">${reqs.reqStr} Strength</span>`);
+  }
+  if (reqs.reqDex > 0) {
+    const unmet =
+      options.characterDexterity != null && Number(options.characterDexterity) < reqs.reqDex;
+    const cls = unmet ? ' item-tooltip-req--unmet' : '';
+    parts.push(`<span class="item-tooltip-req${cls}">${reqs.reqDex} Dexterity</span>`);
+  }
+  if (!parts.length) return '';
+  return `<div class="item-tooltip-reqs">Requires: ${parts.join(', ')}</div>`;
+}
+
+/**
  * @param {object|null|undefined} def - Catalog item def
- * @param {string|null|undefined} [_iconKey] - Unused; kept for call-site compatibility
+ * @param {string|null|undefined} [iconKey] - Instance icon stem; falls back to `def.icon`
  * @param {Record<string, number>|null|undefined} [rolls] - Instance rolled values
  * @param {{
  *   characterLevel?: number|null,
+ *   characterStrength?: number|null,
+ *   characterDexterity?: number|null,
  *   charmInInventory?: boolean,
  *   className?: string|null,
  *   setBonuses?: Array<{ required: number|string, modifiers: string[], active: boolean }>,
  *   setName?: string|null,
+ *   socketables?: Array<object>|null,
  * }} [options]
  * @returns {string} HTML
  */
-export function buildItemTooltipHtml(def, _iconKey = null, rolls = null, options = {}) {
+export function buildItemTooltipHtml(def, iconKey = null, rolls = null, options = {}) {
   if (!def || typeof def !== 'object') return '';
 
   const name = escapeHtmlText(def.name || def.id || 'Unknown item');
   const rarity = String(def.rarity || 'normal');
   const rarityClass = itemRarityNameClass(rarity);
-  const category = ITEM_CATEGORY_LABEL[def.category] || escapeHtmlText(def.category || '');
+  const frameClass = itemRarityFrameClass(rarity);
+  const subtitle = escapeHtmlText(formatItemTooltipSubtitle(def));
 
   const classRestriction = def.classRestriction
     ? escapeHtmlText(String(def.classRestriction))
@@ -64,35 +130,46 @@ export function buildItemTooltipHtml(def, _iconKey = null, rolls = null, options
   const setName = options.setName || def.setName;
   const rwBadge = isRunewordItem(def) ? formatRunewordBadge(def) : '';
   const tags = [
-    category ? `<span class="is-size-7 has-text-grey">${category}</span>` : '',
-    baseName ? `<div class="is-size-7 has-text-grey-light">${baseName}</div>` : '',
-    rwBadge
-      ? `<div class="is-size-7 has-text-warning">${escapeHtmlText(rwBadge)}</div>`
-      : '',
-    setName ? `<div class="is-size-7 has-text-success">${escapeHtmlText(String(setName))}</div>` : '',
-    classRestriction
-      ? `<div class="is-size-7 has-text-grey-light">${classRestriction}</div>`
-      : '',
+    baseName ? `<div class="item-tooltip-tag">${baseName}</div>` : '',
+    rwBadge ? `<div class="item-tooltip-tag item-tooltip-tag--runeword">${escapeHtmlText(rwBadge)}</div>` : '',
+    setName ? `<div class="item-tooltip-tag item-tooltip-tag--set">${escapeHtmlText(String(setName))}</div>` : '',
+    classRestriction ? `<div class="item-tooltip-tag">${classRestriction}</div>` : '',
   ].join('');
 
-  const header = buildSkillTooltipHeaderHtml({
-    nameInnerHtml: `<span class="${rarityClass}">${name}</span>`,
-    tagsHtml: tags ? `<div class="mt-1">${tags}</div>` : '',
-    levelSectionHtml: '',
-  });
+  const stem = (iconKey && String(iconKey).trim()) || (def.icon && String(def.icon).trim()) || '';
+  const iconUrl = itemTooltipIconSrc(stem);
+  const art = iconUrl
+    ? `<div class="item-tooltip-art"><img class="item-tooltip-icon" src="${escapeHtmlText(iconUrl)}" alt=""></div>`
+    : '';
 
-  const lines = getItemStatLines(def, rolls, {
+  const sections = getItemStatSections(def, rolls, {
     characterLevel: options.characterLevel ?? null,
     charmInInventory: options.charmInInventory !== false,
     className: options.className ?? null,
-  }).map((line) => formatItemModifierLineHtml(line));
-
-  const body = buildSkillTooltipDescriptionBlock({
-    effectExpanded: lines.join('\n'),
-    effectLineClass: 'tooltip-effect has-text-centered is-size-6',
+    socketables: options.socketables ?? null,
   });
 
-  return wrapSkillTooltipContent(`${header}${body}${buildSetBonusSectionHtml(options.setBonuses)}`);
+  const baseBlock = renderStatLines([...sections.base, ...sections.scaling]);
+  const modsBlock = renderStatLines(sections.mods);
+  const reqsHtml = buildRequirementsHtml(sections.requirements, options);
+
+  const header = `<div class="item-tooltip-header">
+      <div class="item-tooltip-header-text">
+        <div class="item-tooltip-name ${rarityClass}">${name}</div>
+        ${subtitle ? `<div class="item-tooltip-subtitle">${subtitle}</div>` : ''}
+        ${tags ? `<div class="item-tooltip-tags">${tags}</div>` : ''}
+      </div>
+      ${art}
+    </div>`;
+
+  const body = [
+    baseBlock ? `<div class="item-tooltip-section item-tooltip-section--base">${baseBlock}</div>` : '',
+    modsBlock ? `<div class="item-tooltip-section item-tooltip-section--mods">${modsBlock}</div>` : '',
+    reqsHtml,
+    buildSetBonusSectionHtml(options.setBonuses),
+  ].join('');
+
+  return `<div class="tooltip-content item-tooltip-card ${frameClass}">${header}${body}</div>`;
 }
 
 /**

@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { canEquipForClass, canEquipInSlot, isUniquePickerItem, matchesItemPickerSearch } from '@/items/item-types.js';
+import {
+  canEquipForClass,
+  canEquipInSlot,
+  equipBlockedReason,
+  isStrictTwoHandedWeapon,
+  isTwoHandedWeapon,
+  isUniquePickerItem,
+  matchesItemPickerSearch,
+} from '@/items/item-types.js';
 
 describe('canEquipForClass', () => {
   it('allows unrestricted items for any class', () => {
@@ -42,6 +50,103 @@ describe('canEquipInSlot', () => {
     expect(canEquipInSlot(def, 'rarm')).toBe(true);
     expect(canEquipInSlot(def, 'rarm', 'Amazon')).toBe(false);
     expect(canEquipInSlot(def, 'rarm', 'Assassin')).toBe(true);
+  });
+});
+
+describe('equipBlockedReason', () => {
+  it('explains class, slot, and two-hand blocks', () => {
+    const paladinShield = { slot: 'arms', classRestriction: 'Paladin Only', group: 'Paladin Shields' };
+    expect(equipBlockedReason(paladinShield, 'larm', 'Barbarian')).toBe('Paladin Only');
+    expect(equipBlockedReason(paladinShield, 'larm', 'Paladin')).toBe(null);
+    expect(equipBlockedReason({ slot: 'head' }, 'belt', 'Amazon')).toBe('Does not fit the Belt slot.');
+
+    const staff = { slot: 'arms', category: 'weapons', group: 'Staves', type: 'staf', damage2h: { min: 5, max: 12 } };
+    const sword = { slot: 'arms', category: 'weapons', group: 'One-Handed Swords', damage1h: { min: 4, max: 8 } };
+    expect(equipBlockedReason(sword, 'larm', 'Amazon', { otherHandDef: staff })).toBe(
+      'Only Barbarian can dual-wield with a two-handed weapon.'
+    );
+    expect(equipBlockedReason(sword, 'larm', 'Barbarian', { otherHandDef: staff })).toBe(null);
+  });
+});
+
+describe('two-handed pairing', () => {
+  const staff = {
+    slot: 'arms',
+    category: 'weapons',
+    group: 'Staves',
+    type: 'staf',
+    damage2h: { min: 5, max: 12 },
+  };
+  const sword = {
+    slot: 'arms',
+    category: 'weapons',
+    group: 'One-Handed Swords',
+    type: 'swor',
+    damage1h: { min: 4, max: 8 },
+  };
+  const twoHSword = {
+    slot: 'arms',
+    category: 'weapons',
+    group: 'Two-Handed Swords',
+    type: '2hsd',
+    damage1h: { min: 8, max: 16 },
+    damage2h: { min: 20, max: 40 },
+  };
+  const shield = {
+    slot: 'arms',
+    category: 'armor',
+    group: 'Shields',
+    type: 'shie',
+    block: '20%',
+  };
+  const bow = {
+    slot: 'arms',
+    category: 'weapons',
+    group: 'Bows',
+    type: 'bow',
+    damage2h: { min: 10, max: 20 },
+  };
+  const hammer2h = {
+    slot: 'arms',
+    category: 'weapons',
+    group: 'Hammers',
+    type: 'hamm',
+    damage2h: { min: 12, max: 24 },
+  };
+
+  it('treats staves as strict two-handers even without damage fields', () => {
+    expect(isStrictTwoHandedWeapon(staff)).toBe(true);
+    expect(isStrictTwoHandedWeapon({ slot: 'arms', group: 'Druid Staves', type: 'dstf' })).toBe(true);
+    expect(isTwoHandedWeapon(staff)).toBe(true);
+    expect(isStrictTwoHandedWeapon(twoHSword)).toBe(false);
+    expect(isTwoHandedWeapon(twoHSword)).toBe(true);
+  });
+
+  it('blocks a two-hander with another weapon except for Barbarian', () => {
+    expect(canEquipInSlot(sword, 'larm', 'Amazon', { otherHandDef: staff })).toBe(false);
+    expect(canEquipInSlot(staff, 'rarm', 'Sorceress', { otherHandDef: sword })).toBe(false);
+    expect(canEquipInSlot(sword, 'larm', 'Amazon', { otherHandDef: twoHSword })).toBe(false);
+    expect(canEquipInSlot(sword, 'larm', 'Barbarian', { otherHandDef: staff })).toBe(true);
+    expect(canEquipInSlot(twoHSword, 'rarm', 'Barbarian', { otherHandDef: sword })).toBe(true);
+  });
+
+  it('allows a two-handed sword with a shield, but not a staff or bow', () => {
+    expect(canEquipInSlot(shield, 'larm', 'Paladin', { otherHandDef: twoHSword })).toBe(true);
+    expect(canEquipInSlot(shield, 'larm', 'Sorceress', { otherHandDef: staff })).toBe(false);
+    expect(canEquipInSlot(shield, 'larm', 'Amazon', { otherHandDef: bow })).toBe(false);
+    expect(canEquipInSlot(shield, 'larm', 'Barbarian', { otherHandDef: staff })).toBe(true);
+  });
+
+  it('treats 2h hammers as two-handed from damage, not the mixed group', () => {
+    expect(isStrictTwoHandedWeapon(hammer2h)).toBe(true);
+    expect(canEquipInSlot(sword, 'larm', 'Paladin', { otherHandDef: hammer2h })).toBe(false);
+    expect(canEquipInSlot(shield, 'larm', 'Paladin', { otherHandDef: hammer2h })).toBe(false);
+  });
+
+  it('still allows two one-handers or an empty other hand', () => {
+    expect(canEquipInSlot(sword, 'larm', 'Amazon', { otherHandDef: sword })).toBe(true);
+    expect(canEquipInSlot(staff, 'rarm', 'Amazon')).toBe(true);
+    expect(canEquipInSlot(staff, 'rarm', 'Amazon', { otherHandDef: null })).toBe(true);
   });
 });
 

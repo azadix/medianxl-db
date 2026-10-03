@@ -62,7 +62,7 @@ describe('runeword helpers', () => {
     expect(isRunewordItem(rw)).toBe(true);
     expect(isOverlayItem(rw)).toBe(true);
     expect(formatRunewordRecipe(rw)).toBe('Hel + Sur + Hel');
-    expect(formatRunewordBadge(rw)).toContain('Hel + Sur + Hel');
+    expect(formatRunewordBadge(rw)).toBe('RW Hel + Sur + Hel');
     expect(formatOverlayBadge('runeword')).toBe('RW');
   });
 
@@ -284,6 +284,55 @@ describe('runeword helpers', () => {
       modifiers: ['+(40 to 60) to Life'],
     });
     expect(listEligibleRunewordBases(bootRw, catalog).map((b) => b.id)).toEqual(['boot']);
+  });
+
+  it('excludes class-restricted bases for other classes', () => {
+    const shieldRw = runewordEntryToItemDef({
+      id: 'rw:stone-class',
+      name: 'Stone',
+      runeCode: 'Thul',
+      runes: ['Thul'],
+      reqLevel: 28,
+      allowedTypes: ['Shields'],
+      excludedTypes: [],
+      excludedNames: [],
+      modifiers: ['+1 to All Skills'],
+    });
+    const catalog = [
+      {
+        id: 'pally',
+        name: 'Aerin Shield (Sacred)',
+        rarity: 'normal',
+        group: 'Paladin Shields',
+        category: 'armor',
+        slot: 'arms',
+        sockets: 4,
+        classRestriction: 'Paladin Only',
+      },
+      {
+        id: 'kite',
+        name: 'Kite Shield (Sacred)',
+        rarity: 'normal',
+        group: 'Shields',
+        category: 'armor',
+        slot: 'arms',
+        sockets: 4,
+      },
+    ];
+    expect(
+      listEligibleRunewordBases(shieldRw, catalog, {
+        equipSlot: 'larm',
+        className: 'Amazon',
+        canEquipInSlot,
+      }).map((b) => b.id)
+    ).toEqual(['kite']);
+    expect(
+      listEligibleRunewordBases(shieldRw, catalog, {
+        equipSlot: 'larm',
+        className: 'Paladin',
+        canEquipInSlot,
+      }).map((b) => b.id)
+    ).toEqual(['pally', 'kite']);
   });
 
   it('merges a chosen base and fills extra sockets with empty jewels', () => {

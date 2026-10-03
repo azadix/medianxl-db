@@ -13,6 +13,7 @@ import {
   canEquipInSlot,
   canEquipForClass,
   canPlaceInInventory,
+  pairedWeaponSlot,
 } from '@/items/item-types.js';
 import { getCharacterInstance, raiseCharacterLevelForItemReq } from '@/character/planner-instance.js';
 import {
@@ -253,11 +254,14 @@ export const useItemsStore = defineStore('items', {
       if (sel.location === 'equipment') {
         // List every item that fits the slot. Class restrictions only block Add/equip.
         const slot = String(sel.slot);
+        const otherHandDef = this.otherHandDefForEquip(slot);
+        const className = this.viewerClassName;
+        const fits = (item, s, cls) => canEquipInSlot(item, s, cls, { otherHandDef, className });
         return this.catalog.filter((d) => {
           if (isRunewordTemplate(d)) {
-            return runewordFitsEquipSlot(d, slot, this.catalog, undefined, canEquipInSlot);
+            return runewordFitsEquipSlot(d, slot, this.catalog, undefined, fits);
           }
-          return canEquipInSlot(d, slot);
+          return fits(d, slot, undefined);
         });
       }
       if (sel.location === 'inventory') {
@@ -757,6 +761,22 @@ export const useItemsStore = defineStore('items', {
     },
 
     /**
+     * Item occupying the paired weapon/off-hand slot.
+     * When moving from that pair onto `toSlot`, the destination occupant is the other hand (swap).
+     * @param {string} toSlot
+     * @param {SlotRef|null} [fromRef]
+     * @returns {ItemDef|null}
+     */
+    otherHandDefForEquip(toSlot, fromRef = null) {
+      const pair = pairedWeaponSlot(String(toSlot));
+      if (!pair) return null;
+      if (fromRef?.location === 'equipment' && String(fromRef.slot) === pair) {
+        return this.getEquipmentDef(String(toSlot));
+      }
+      return this.getEquipmentDef(pair);
+    },
+
+    /**
      * @param {string} slot
      * @returns {number|null}
      */
@@ -826,15 +846,20 @@ export const useItemsStore = defineStore('items', {
      * @returns {{ className?: string|null, setBonuses?: Array<{ required: number|string, modifiers: string[], active: boolean }>, setName?: string }}
      */
     getTooltipOptionsForDef(def) {
-      const className = getCharacterInstance()?.className ?? null;
-      if (!def?.setId) return { className };
+      const ch = getCharacterInstance();
+      const className = ch?.className ?? null;
+      const characterLevel = ch?.level ?? null;
+      const characterStrength = ch && typeof ch.getStat === 'function' ? ch.getStat('strength') : null;
+      const characterDexterity = ch && typeof ch.getStat === 'function' ? ch.getStat('dexterity') : null;
+      const extras = { className, characterLevel, characterStrength, characterDexterity };
+      if (!def?.setId) return extras;
       const setDef = this.setsById[def.setId];
-      if (!setDef) return { className, setName: def.setName };
+      if (!setDef) return { ...extras, setName: def.setName };
       const counts = countEquippedSetPieces(this.equippedDefs);
       const equippedCount = counts[def.setId] || 0;
       const totalPieces = this.catalog.filter((d) => d.setId === def.setId).length;
       return {
-        className,
+        ...extras,
         setName: setDef.name || def.setName,
         setBonuses: resolveSetBonuses(setDef, equippedCount, totalPieces),
       };
@@ -854,8 +879,9 @@ export const useItemsStore = defineStore('items', {
 
       if (sel.location === 'equipment') {
         const slot = String(sel.slot);
-        const className = getCharacterInstance()?.className ?? null;
-        if (!canEquipInSlot(def, slot, className)) return false;
+        const className = this.viewerClassName ?? getCharacterInstance()?.className ?? null;
+        const otherHandDef = this.otherHandDefForEquip(slot);
+        if (!canEquipInSlot(def, slot, className, { otherHandDef })) return false;
         const prev = this.equipment[slot];
         const id = this.createInstance(defId, null, rolls);
         this.equipment[slot] = id;
@@ -967,8 +993,13 @@ export const useItemsStore = defineStore('items', {
 
       if (to.location === 'equipment') {
         const toSlot = String(to.slot);
-        const className = getCharacterInstance()?.className ?? null;
-        if (!canEquipInSlot(def, toSlot, className)) return false;
+        const className = this.viewerClassName ?? getCharacterInstance()?.className ?? null;
+        const toOther = this.otherHandDefForEquip(toSlot, from);
+        if (!canEquipInSlot(def, toSlot, className, { otherHandDef: toOther })) return false;
+        const fromOther =
+          from.location === 'equipment'
+            ? this.otherHandDefForEquip(String(from.slot), to)
+            : null;
         const toId = this.equipment[toSlot];
 
         // Remove from source first
@@ -982,7 +1013,10 @@ export const useItemsStore = defineStore('items', {
         if (toId != null) {
           const toDef = this.getDefForInstance(toId);
           if (from.location === 'equipment') {
-            if (toDef && canEquipInSlot(toDef, String(from.slot), className)) {
+            if (
+              toDef &&
+              canEquipInSlot(toDef, String(from.slot), className, { otherHandDef: fromOther })
+            ) {
               this.equipment[String(from.slot)] = toId;
             } else {
               // Try inventory dump — or destroy if nowhere
@@ -1078,10 +1112,12 @@ export const useItemsStore = defineStore('items', {
             // Try put back on equipment source if possible
             if (fromEquipSlot != null) {
               const oldDef = this.getDefForInstance(oldId);
-              const className = getCharacterInstance()?.className ?? null;
+              const className = this.viewerClassName ?? getCharacterInstance()?.className ?? null;
               if (
                 oldDef &&
-                canEquipInSlot(oldDef, fromEquipSlot, className) &&
+                canEquipInSlot(oldDef, fromEquipSlot, className, {
+                  otherHandDef: this.otherHandDefForEquip(fromEquipSlot),
+                }) &&
                 this.equipment[fromEquipSlot] == null
               ) {
                 this.equipment[fromEquipSlot] = oldId;

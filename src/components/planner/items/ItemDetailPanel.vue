@@ -4,6 +4,10 @@ import CharmExtrasControls from './CharmExtrasControls.vue';
 import ItemRollRow from './ItemRollRow.vue';
 import { formatItemOverlayMeta, formatItemRarityBadge } from '@/items/item-stats.js';
 import { formatItemModifierLineHtml } from '@/items/item-granted-oskills.js';
+import {
+  formatItemRequirementsLine,
+  resolveItemRequirements,
+} from '@/items/item-requirements.js';
 import { computed } from 'vue';
 
 const props = defineProps({
@@ -24,19 +28,20 @@ const emit = defineEmits(['update:rolls', 'set-roll']);
 const previewMeta = computed(() => formatItemOverlayMeta(props.def));
 const rarityBadge = computed(() => formatItemRarityBadge(props.def));
 
-const reqLevel = computed(() => {
-  const n = Number(props.def?.reqLevel);
-  return Number.isFinite(n) && n > 0 ? n : null;
-});
+const requirementsLine = computed(() =>
+  formatItemRequirementsLine(
+    resolveItemRequirements(props.def, { rolls: props.effectiveRolls })
+  )
+);
 
-const REQ_LEVEL_RE = /^Required Level:\s*/i;
+const REQ_LINE_RE = /^(Required (Level|Strength|Dexterity):|Requires:)/i;
 
 const baseRows = computed(() =>
   props.detailStatRows.filter((row) => {
     if (row.section !== 'base') return false;
     if (row.kind === 'text') {
       const text = String(row.text || '').trim();
-      if (!text || REQ_LEVEL_RE.test(text)) return false;
+      if (!text || REQ_LINE_RE.test(text)) return false;
     }
     return true;
   })
@@ -81,8 +86,8 @@ function modLineHtml(text) {
             <span v-if="rarityBadge" class="item-detail__badge">{{ rarityBadge }}</span>
           </p>
           <p class="is-size-7 has-text-grey mb-0">{{ previewMeta }}</p>
-          <p v-if="reqLevel != null" class="is-size-7 has-text-grey mb-0">
-            Required Level {{ reqLevel }}
+          <p v-if="requirementsLine" class="is-size-7 has-text-grey mb-0">
+            {{ requirementsLine }}
           </p>
           <p v-if="def.baseName" class="is-size-7 has-text-grey-light mb-0">
             Base: {{ def.baseName }}

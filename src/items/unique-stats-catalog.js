@@ -420,6 +420,8 @@ export function entryToItemDef(entry, bases) {
     if (base.range != null) def.range = base.range;
     if (base.strDamageBonus != null) def.strDamageBonus = base.strDamageBonus;
     if (base.dexDamageBonus != null) def.dexDamageBonus = base.dexDamageBonus;
+    if (base.innate) def.innate = base.innate;
+    if (base.adds) def.adds = base.adds;
   } else {
     // Fallback so jewelry-like items without a matched base still show in picker
     def.category = def.category || 'other';
