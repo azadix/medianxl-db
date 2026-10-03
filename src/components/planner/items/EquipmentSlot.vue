@@ -162,7 +162,10 @@ function canAcceptDrag(payload) {
   if (!defFor) return false;
   const className = itemsStore.viewerClassName ?? getCharacterInstance()?.className ?? null;
   const otherHandDef = itemsStore.otherHandDefForEquip(props.slotKey, payload.from);
-  return canEquipInSlot(defFor, props.slotKey, className, { otherHandDef });
+  return canEquipInSlot(defFor, props.slotKey, className, {
+    ...itemsStore.equipCheckOptions(props.slotKey, payload.from),
+    otherHandDef,
+  });
 }
 
 function onDragOver(e) {

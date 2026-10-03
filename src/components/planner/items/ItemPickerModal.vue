@@ -110,6 +110,7 @@ const otherHandDef = computed(() => {
  */
 function fitsEquipSlot(def, slot, cls) {
   return canEquipInSlot(def, slot, cls, {
+    ...itemsStore.equipCheckOptions(slot),
     otherHandDef: otherHandDef.value,
     className: className.value,
   });
@@ -185,6 +186,7 @@ const addBlockedReason = computed(() => {
   if (sel.location === 'equipment') {
     return (
       equipBlockedReason(def, String(sel.slot), className.value, {
+        ...itemsStore.equipCheckOptions(String(sel.slot)),
         otherHandDef: otherHandDef.value,
       }) || ''
     );

@@ -39,6 +39,21 @@ describe('canEquipInSlot', () => {
     expect(canEquipInSlot(def, 'neck')).toBe(false);
   });
 
+  it('blocks a second copy of the same set item', () => {
+    const ring = { id: 's:ring:set', slot: 'ring', rarity: 'set', setId: 'set:pantheon' };
+    expect(
+      canEquipInSlot(ring, 'lrin', undefined, {
+        equippedDefs: [ring],
+      })
+    ).toBe(false);
+    expect(
+      canEquipInSlot(ring, 'lrin', undefined, {
+        equippedDefs: [ring],
+        ignoreSetPieceKeys: ['s:ring:set'],
+      })
+    ).toBe(true);
+  });
+
   it('enforces class restrictions when className is provided', () => {
     const def = { slot: 'arms', classRestriction: 'Druid Only' };
     expect(canEquipInSlot(def, 'rarm', 'Druid')).toBe(true);
@@ -66,6 +81,11 @@ describe('equipBlockedReason', () => {
       'Only Barbarian can dual-wield with a two-handed weapon.'
     );
     expect(equipBlockedReason(sword, 'larm', 'Barbarian', { otherHandDef: staff })).toBe(null);
+
+    const setRing = { id: 's:ring:set', slot: 'ring', rarity: 'set', setId: 'set:pantheon' };
+    expect(
+      equipBlockedReason(setRing, 'lrin', undefined, { equippedDefs: [setRing] })
+    ).toBe('This set item is already equipped.');
   });
 });
 

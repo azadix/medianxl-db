@@ -5,6 +5,7 @@
 
 import { isCharmItem } from '@/items/charm-items.js';
 import { isRelicItem } from '@/items/relic-items.js';
+import { hasDuplicateEquippedSetItem } from '@/items/item-overlays.js';
 
 /** Inventory grid: 15 columns x 10 rows (150 cells). */
 export const INV_COLUMNS = 15;
@@ -303,7 +304,7 @@ export function canDualWieldPair(a, b, className) {
  * @param {{ slot?: string|string[], type?: string, classRestriction?: string }} def
  * @param {string} equipSlot
  * @param {string|null|undefined} [className] - When provided, enforces class restrictions
- * @param {{ otherHandDef?: object|null, className?: string|null }} [options]
+ * @param {{ otherHandDef?: object|null, className?: string|null, equippedDefs?: Array<object|null|undefined>, ignoreSetPieceKeys?: string[] }} [options]
  * @returns {boolean}
  */
 export function canEquipInSlot(def, equipSlot, className = undefined, options = {}) {
@@ -321,6 +322,9 @@ export function canEquipInSlot(def, equipSlot, className = undefined, options = 
     const pairClass = className !== undefined ? className : options.className;
     if (!canDualWieldPair(def, other, pairClass)) return false;
   }
+  if (hasDuplicateEquippedSetItem(def, options.equippedDefs, options.ignoreSetPieceKeys)) {
+    return false;
+  }
   return true;
 }
 
@@ -329,7 +333,7 @@ export function canEquipInSlot(def, equipSlot, className = undefined, options = 
  * @param {object|null|undefined} def
  * @param {string} equipSlot
  * @param {string|null|undefined} [className]
- * @param {{ otherHandDef?: object|null, className?: string|null }} [options]
+ * @param {{ otherHandDef?: object|null, className?: string|null, equippedDefs?: Array<object|null|undefined>, ignoreSetPieceKeys?: string[] }} [options]
  * @returns {string|null}
  */
 export function equipBlockedReason(def, equipSlot, className = undefined, options = {}) {
@@ -356,6 +360,9 @@ export function equipBlockedReason(def, equipSlot, className = undefined, option
     if (!canDualWieldPair(def, other, pairClass)) {
       return 'Only Barbarian can dual-wield with a two-handed weapon.';
     }
+  }
+  if (hasDuplicateEquippedSetItem(def, options.equippedDefs, options.ignoreSetPieceKeys)) {
+    return 'This set item is already equipped.';
   }
   return null;
 }

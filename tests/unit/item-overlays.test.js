@@ -12,6 +12,7 @@ import {
   countEquippedSetPieces,
   resolveSetBonuses,
   overlayAffixRollKey,
+  hasDuplicateEquippedSetItem,
 } from '@/items/item-overlays.js';
 import { defaultRollsForDef, mergeRollsForDef, getItemDetailStatRows } from '@/items/item-stats.js';
 import { parseAffixRanges } from '@/items/affix-rolls.js';
@@ -121,15 +122,41 @@ describe('set bonuses', () => {
     ],
   };
 
-  it('counts equipped pieces', () => {
+  it('counts unique equipped pieces', () => {
     const counts = countEquippedSetPieces([
-      { setId: 'set:pantheon' },
-      { setId: 'set:pantheon' },
-      { setId: 'set:other' },
+      { id: 's:helm:set', setId: 'set:pantheon' },
+      { id: 's:ring:set', setId: 'set:pantheon' },
+      { id: 's:ring:set', setId: 'set:pantheon' },
+      { id: 's:amu:set', setId: 'set:other' },
       null,
     ]);
     expect(counts['set:pantheon']).toBe(2);
     expect(counts['set:other']).toBe(1);
+  });
+
+  it('treats same set item as already equipped', () => {
+    const equipped = [
+      { id: 's:ring:set', setId: 'set:pantheon', rarity: 'set' },
+    ];
+    expect(
+      hasDuplicateEquippedSetItem(
+        { id: 's:ring:set', setId: 'set:pantheon', rarity: 'set' },
+        equipped
+      )
+    ).toBe(true);
+    expect(
+      hasDuplicateEquippedSetItem(
+        { id: 's:ring:set', setId: 'set:pantheon', rarity: 'set' },
+        equipped,
+        ['s:ring:set']
+      )
+    ).toBe(false);
+    expect(
+      hasDuplicateEquippedSetItem(
+        { id: 's:helm:set', setId: 'set:pantheon', rarity: 'set' },
+        equipped
+      )
+    ).toBe(false);
   });
 
   it('marks active bonus tiers', () => {

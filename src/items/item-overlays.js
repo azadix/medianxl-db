@@ -274,18 +274,59 @@ export function formatOverlayBadge(uniqueKind, tier) {
 }
 
 /**
- * Count equipped pieces per setId.
+ * Identity for a set piece (same catalog item, not two copies).
+ * @param {object|null|undefined} def
+ * @returns {string}
+ */
+export function setItemPieceKey(def) {
+  if (!isSetItem(def)) return '';
+  if (def.id != null && String(def.id)) return String(def.id);
+  const name = String(def.name || '')
+    .trim()
+    .toLowerCase();
+  const setId = String(def.setId || '');
+  return name && setId ? `${setId}:${name}` : '';
+}
+
+/**
+ * Count unique equipped pieces per setId.
  * @param {Array<object|null|undefined>} equippedDefs
  * @returns {Record<string, number>}
  */
 export function countEquippedSetPieces(equippedDefs) {
   /** @type {Record<string, number>} */
   const counts = {};
+  /** @type {Set<string>} */
+  const seen = new Set();
   for (const def of equippedDefs) {
     if (!def?.setId) continue;
+    const key = setItemPieceKey(def);
+    if (key) {
+      if (seen.has(key)) continue;
+      seen.add(key);
+    }
     counts[def.setId] = (counts[def.setId] || 0) + 1;
   }
   return counts;
+}
+
+/**
+ * @param {object|null|undefined} def
+ * @param {Array<object|null|undefined>|null|undefined} equippedDefs
+ * @param {string[]|null|undefined} [ignoreKeys]
+ * @returns {boolean}
+ */
+export function hasDuplicateEquippedSetItem(def, equippedDefs, ignoreKeys = []) {
+  const key = setItemPieceKey(def);
+  if (!key) return false;
+  /** @type {Set<string>} */
+  const ignore = new Set((ignoreKeys || []).filter(Boolean));
+  for (const equipped of equippedDefs || []) {
+    const equippedKey = setItemPieceKey(equipped);
+    if (!equippedKey || ignore.has(equippedKey)) continue;
+    if (equippedKey === key) return true;
+  }
+  return false;
 }
 
 /**

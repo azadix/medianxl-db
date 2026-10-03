@@ -33,6 +33,7 @@ import { isRelicItem, MAX_RELICS } from '@/items/relic-items.js';
 import {
   countEquippedSetPieces,
   resolveSetBonuses,
+  setItemPieceKey,
 } from '@/items/item-overlays.js';
 import { buildCatalogFromUniqueStats, resolveCatalogDefId } from '@/items/unique-stats-catalog.js';
 import {
@@ -256,7 +257,9 @@ export const useItemsStore = defineStore('items', {
         const slot = String(sel.slot);
         const otherHandDef = this.otherHandDefForEquip(slot);
         const className = this.viewerClassName;
-        const fits = (item, s, cls) => canEquipInSlot(item, s, cls, { otherHandDef, className });
+        const equipOpts = this.equipCheckOptions(slot);
+        const fits = (item, s, cls) =>
+          canEquipInSlot(item, s, cls, { ...equipOpts, otherHandDef, className });
         return this.catalog.filter((d) => {
           if (isRunewordTemplate(d)) {
             return runewordFitsEquipSlot(d, slot, this.catalog, undefined, fits);
@@ -777,6 +780,28 @@ export const useItemsStore = defineStore('items', {
     },
 
     /**
+     * Slot-fit options, including unique set-piece checks.
+     * @param {string} slot
+     * @param {SlotRef|null} [fromRef]
+     * @returns {{ otherHandDef: ItemDef|null, equippedDefs: ItemDef[], ignoreSetPieceKeys: string[] }}
+     */
+    equipCheckOptions(slot, fromRef = null) {
+      /** @type {string[]} */
+      const ignoreSetPieceKeys = [];
+      const currentKey = setItemPieceKey(this.getEquipmentDef(slot));
+      if (currentKey) ignoreSetPieceKeys.push(currentKey);
+      if (fromRef?.location === 'equipment') {
+        const fromKey = setItemPieceKey(this.getEquipmentDef(String(fromRef.slot)));
+        if (fromKey) ignoreSetPieceKeys.push(fromKey);
+      }
+      return {
+        otherHandDef: this.otherHandDefForEquip(slot, fromRef),
+        equippedDefs: this.equippedDefs,
+        ignoreSetPieceKeys,
+      };
+    },
+
+    /**
      * @param {string} slot
      * @returns {number|null}
      */
@@ -881,7 +906,9 @@ export const useItemsStore = defineStore('items', {
         const slot = String(sel.slot);
         const className = this.viewerClassName ?? getCharacterInstance()?.className ?? null;
         const otherHandDef = this.otherHandDefForEquip(slot);
-        if (!canEquipInSlot(def, slot, className, { otherHandDef })) return false;
+        if (!canEquipInSlot(def, slot, className, { ...this.equipCheckOptions(slot), otherHandDef })) {
+          return false;
+        }
         const prev = this.equipment[slot];
         const id = this.createInstance(defId, null, rolls);
         this.equipment[slot] = id;
@@ -995,7 +1022,14 @@ export const useItemsStore = defineStore('items', {
         const toSlot = String(to.slot);
         const className = this.viewerClassName ?? getCharacterInstance()?.className ?? null;
         const toOther = this.otherHandDefForEquip(toSlot, from);
-        if (!canEquipInSlot(def, toSlot, className, { otherHandDef: toOther })) return false;
+        if (
+          !canEquipInSlot(def, toSlot, className, {
+            ...this.equipCheckOptions(toSlot, from),
+            otherHandDef: toOther,
+          })
+        ) {
+          return false;
+        }
         const fromOther =
           from.location === 'equipment'
             ? this.otherHandDefForEquip(String(from.slot), to)
@@ -1015,7 +1049,13 @@ export const useItemsStore = defineStore('items', {
           if (from.location === 'equipment') {
             if (
               toDef &&
-              canEquipInSlot(toDef, String(from.slot), className, { otherHandDef: fromOther })
+              canEquipInSlot(toDef, String(from.slot), className, {
+                ...this.equipCheckOptions(String(from.slot), {
+                  location: 'equipment',
+                  slot: toSlot,
+                }),
+                otherHandDef: fromOther,
+              })
             ) {
               this.equipment[String(from.slot)] = toId;
             } else {
@@ -1116,6 +1156,7 @@ export const useItemsStore = defineStore('items', {
               if (
                 oldDef &&
                 canEquipInSlot(oldDef, fromEquipSlot, className, {
+                  ...this.equipCheckOptions(fromEquipSlot),
                   otherHandDef: this.otherHandDefForEquip(fromEquipSlot),
                 }) &&
                 this.equipment[fromEquipSlot] == null

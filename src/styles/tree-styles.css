@@ -22,7 +22,7 @@
 
 .item-rarity--normal {
     --item-rarity-color: var(--item-rarity-normal);
-    --item-rarity-fill-color: #000000;
+    --item-rarity-fill-color: #1a1a1a;
     --item-rarity-fill-center-mix: 100%;
     --item-rarity-fill-mid-mix: 100%;
     --item-rarity-fill-edge-mix: 100%;
@@ -32,14 +32,7 @@
 .item-rarity--rare { --item-rarity-color: var(--item-rarity-rare); }
 .item-rarity--unique { --item-rarity-color: var(--item-rarity-unique); }
 .item-rarity--set { --item-rarity-color: var(--item-rarity-set); }
-.item-rarity--runeword {
-    --item-rarity-color: var(--item-rarity-runeword);
-    --item-rarity-fill-color: #c8c8c8;
-    --item-rarity-fill-center-mix: 78%;
-    --item-rarity-fill-mid-mix: 58%;
-    --item-rarity-fill-edge-mix: 40%;
-    --item-rarity-fill-top-mix: 28%;
-}
+.item-rarity--runeword { --item-rarity-color: var(--item-rarity-runeword); }
 .item-rarity--relic { --item-rarity-color: var(--item-rarity-relic); }
 .item-rarity--crafted { --item-rarity-color: var(--item-rarity-crafted); }
 
