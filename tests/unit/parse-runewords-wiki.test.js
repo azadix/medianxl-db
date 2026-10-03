@@ -38,12 +38,14 @@ describe('parseRunewordsWiki', () => {
     const lunar = entries.find((e) => e.name === 'Lunar Fury');
     expect(lunar.classRestriction).toBe('Druid Only');
     expect(lunar.excludedNames).toEqual(['Tyrannical Blades']);
-    expect(lunar.modifiers).toContain('+200% Enhanced Weapon Damage');
+    expect(lunar.modifiers).toContain('{orange}+200% Enhanced Weapon Damage');
+    expect(lunar.modifiers).toContain('+(3 to 4) to Druid Skill Levels');
     expect(lunar.modifiers).not.toContain('(Druid Only)');
 
     const minefield = entries.find((e) => e.name === 'Minefield');
     expect(minefield.runes).toEqual(['Ign', 'Tyr', 'Ral', 'Ohm']);
     expect(minefield.excludedTypes).toEqual(['Two-Handed Swords']);
+    expect(minefield.modifiers).toContain('{orange}If you have 90% Fire Resist: +50% Fire Spell Damage');
   });
 
   it('merges duplicate name+recipe listings', () => {

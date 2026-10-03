@@ -3,7 +3,10 @@
  * Keeps <br>-split label/value lines (do not convert the page to markdown).
  */
 
+import { encodeModifierLine, modifierColorFromWikiClass } from '../src/items/item-modifier-line.js';
+
 /** @typedef {{ name: string, quality: string, stats: string, type?: string, tier?: number }} UniqueStatsEntry */
+/** @typedef {{ text: string, color: string }} ColoredStatLine */
 
 export const TIERED_UNIQUES_WIKI_URL = 'https://docs.median-xl.com/doc/items/tiereduniques';
 
@@ -36,16 +39,103 @@ function decodeEntities(html) {
 }
 
 /**
+ * @param {string} attrs
+ * @returns {string}
+ */
+function classFromAttrs(attrs) {
+  const match = /\bclass\s*=\s*"([^"]*)"/i.exec(attrs) || /\bclass\s*=\s*'([^']*)'/i.exec(attrs);
+  return match ? match[1] : '';
+}
+
+/**
+ * @param {string} attrs
+ * @returns {string}
+ */
+function titleFromAttrs(attrs) {
+  const match = /\btitle\s*=\s*"([^"]*)"/i.exec(attrs) || /\btitle\s*=\s*'([^']*)'/i.exec(attrs);
+  return match ? decodeEntities(match[1]) : '';
+}
+
+/**
+ * @param {Array<{ color: string }>} stack
+ * @returns {string}
+ */
+function stackColor(stack) {
+  for (let i = stack.length - 1; i >= 0; i--) {
+    if (stack[i].color) return stack[i].color;
+  }
+  return 'magic';
+}
+
+/**
+ * @param {string} title
+ * @returns {string}
+ */
+function cleanWikiTitle(title) {
+  return String(title || '')
+    .replace(/[\r\n]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/**
+ * Wiki stat lines with item-* colors. Orange unique text and grey
+ * (`item-runeword`) effect lines are preserved; dotted-orange titles become grey.
+ * @param {string} html
+ * @returns {ColoredStatLine[]}
+ */
+export function htmlToColoredLines(html) {
+  const src = String(html || '').replace(/<br\s*\/?>/gi, '\n');
+  /** @type {Array<{ color: string, title: string }>} */
+  const stack = [];
+  /** @type {ColoredStatLine[]} */
+  const lines = [];
+  let buf = '';
+
+  function flushLine() {
+    const text = decodeEntities(buf).replace(/\s+/g, ' ').trim();
+    buf = '';
+    if (text) lines.push({ text, color: stackColor(stack) });
+  }
+
+  const tokenRe = /<\/?([a-zA-Z][\w:-]*)([^>]*)>|([^<]+)/g;
+  let match;
+  while ((match = tokenRe.exec(src))) {
+    if (match[3] != null) {
+      const parts = match[3].split('\n');
+      for (let i = 0; i < parts.length; i++) {
+        buf += parts[i];
+        if (i < parts.length - 1) flushLine();
+      }
+      continue;
+    }
+    const tag = match[1].toLowerCase();
+    if (tag !== 'span') continue;
+    if (match[0].startsWith('</')) {
+      const entry = stack[stack.length - 1];
+      if (entry?.title && entry.color === 'orange') {
+        flushLine();
+        const title = cleanWikiTitle(entry.title);
+        if (title) lines.push({ text: title, color: 'grey' });
+      }
+      stack.pop();
+      continue;
+    }
+    stack.push({
+      color: modifierColorFromWikiClass(classFromAttrs(match[2])),
+      title: titleFromAttrs(match[2]),
+    });
+  }
+  flushLine();
+  return lines;
+}
+
+/**
  * @param {string} html
  * @returns {string[]}
  */
 export function htmlToLines(html) {
-  const withBreaks = String(html || '').replace(/<br\s*\/?>/gi, '\n');
-  const noTags = withBreaks.replace(/<[^>]+>/g, '');
-  return decodeEntities(noTags)
-    .split('\n')
-    .map((line) => line.replace(/\s+/g, ' ').trim())
-    .filter(Boolean);
+  return htmlToColoredLines(html).map((line) => line.text);
 }
 
 /**
@@ -64,25 +154,42 @@ function isBlockValuePart(line) {
 }
 
 /**
- * Join stat labels and values split across sibling wiki spans.
- * @param {string[]} lines
- * @returns {string[]}
+ * @param {unknown} line
+ * @returns {ColoredStatLine}
  */
-export function joinSplitStatLines(lines) {
-  const src = Array.isArray(lines) ? lines : [];
-  /** @type {string[]} */
+function asColoredLine(line) {
+  if (line && typeof line === 'object' && 'text' in line) {
+    return {
+      text: String(/** @type {{ text?: unknown }} */ (line).text || ''),
+      color: String(/** @type {{ color?: unknown }} */ (line).color || 'magic'),
+    };
+  }
+  return { text: String(line || ''), color: 'magic' };
+}
+
+/**
+ * Join stat labels and values split across sibling wiki spans.
+ * @param {Array<string|ColoredStatLine>} lines
+ * @returns {ColoredStatLine[]}
+ */
+export function joinSplitColoredStatLines(lines) {
+  const src = (Array.isArray(lines) ? lines : []).map(asColoredLine);
+  /** @type {ColoredStatLine[]} */
   const out = [];
   for (let i = 0; i < src.length; i++) {
     const line = src[i];
     if (
-      /^Innate .+ Damage:\s*$/i.test(line) &&
-      /^\([^)]*% of [^)]+\)$/i.test(src[i + 1] || '')
+      /^Innate .+ Damage:\s*$/i.test(line.text) &&
+      /^\([^)]*% of [^)]+\)$/i.test(src[i + 1]?.text || '')
     ) {
-      out.push(`${line.trim()} ${src[i + 1].trim()}`);
+      out.push({
+        text: `${line.text.trim()} ${src[i + 1].text.trim()}`,
+        color: line.color,
+      });
       i += 1;
       continue;
     }
-    const block = /^Chance to Block:\s*(.*)$/i.exec(line);
+    const block = /^Chance to Block:\s*(.*)$/i.exec(line.text);
     if (!block) {
       out.push(line);
       continue;
@@ -90,17 +197,40 @@ export function joinSplitStatLines(lines) {
     const parts = [String(block[1] || '').trim()].filter(Boolean);
     while (i + 1 < src.length) {
       const next = src[i + 1];
-      if (isBlockValuePart(next)) {
-        parts.push(next);
+      if (isBlockValuePart(next.text)) {
+        parts.push(next.text);
         i += 1;
         continue;
       }
       break;
     }
     const value = parts.join(' ').replace(/\s+/g, ' ').trim();
-    out.push(value ? `Chance to Block: ${value}` : 'Chance to Block:');
+    out.push({
+      text: value ? `Chance to Block: ${value}` : 'Chance to Block:',
+      color: line.color,
+    });
   }
   return out;
+}
+
+/**
+ * Join stat labels and values split across sibling wiki spans.
+ * @param {Array<string|ColoredStatLine>} lines
+ * @returns {string[]}
+ */
+export function joinSplitStatLines(lines) {
+  return joinSplitColoredStatLines(lines).map((line) => line.text);
+}
+
+/**
+ * @param {Array<string|ColoredStatLine>} lines
+ * @returns {string}
+ */
+export function formatColoredStatLines(lines) {
+  return joinSplitColoredStatLines(lines)
+    .map((line) => encodeModifierLine(line.text, line.color))
+    .filter(Boolean)
+    .join('\n');
 }
 
 /**
@@ -144,11 +274,11 @@ function parseTieredTable(tableHtml) {
   const entries = [];
   for (const td of tableCells(tableHtml)) {
     if (isIconCell(td)) continue;
-    const lines = joinSplitStatLines(htmlToLines(td));
-    const tierHit = lines.find((line) => /^Tier\s*([1-4])$/i.test(line));
+    const lines = joinSplitColoredStatLines(htmlToColoredLines(td));
+    const tierHit = lines.find((line) => /^Tier\s*([1-4])$/i.test(line.text));
     if (!tierHit) continue;
-    const tier = Number(/^Tier\s*([1-4])$/i.exec(tierHit)?.[1]);
-    const stats = lines.filter((line) => !/^Tier\s*[1-4]$/i.test(line)).join('\n');
+    const tier = Number(/^Tier\s*([1-4])$/i.exec(tierHit.text)?.[1]);
+    const stats = formatColoredStatLines(lines.filter((line) => !/^Tier\s*[1-4]$/i.test(line.text)));
     /** @type {UniqueStatsEntry} */
     const entry = { name, quality: 'TU', stats, tier };
     if (base) entry.type = `${base} (${tier})`;
@@ -174,8 +304,8 @@ function parseJewelryTable(tableHtml, section) {
     if (!nameMatch) continue;
     const name = htmlToLines(nameMatch[1]).join(' ');
     if (!name) continue;
-    const lines = joinSplitStatLines(htmlToLines(td));
-    const stats = (lines[0] === name ? lines.slice(1) : lines).join('\n');
+    const lines = joinSplitColoredStatLines(htmlToColoredLines(td));
+    const stats = formatColoredStatLines(lines[0]?.text === name ? lines.slice(1) : lines);
     /** @type {UniqueStatsEntry} */
     const entry = { name, quality: 'TU', stats };
     if (type) entry.type = type;

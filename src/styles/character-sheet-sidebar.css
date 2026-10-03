@@ -1796,6 +1796,17 @@
   min-width: 0;
 }
 
+.item-picker-modal__stat-line.item-mod--orange,
+.item-picker-modal__roll-row.item-mod--orange .item-picker-modal__roll-display {
+  color: var(--item-mod-orange, #ffa500);
+}
+
+.item-picker-modal__stat-line.item-mod--grey,
+.item-picker-modal__roll-row.item-mod--grey .item-picker-modal__roll-display {
+  color: var(--item-mod-grey, #a8a8a8);
+  padding-left: 0.55em;
+}
+
 .item-picker-modal__roll-slider {
   width: 100%;
   accent-color: #7a9cff;

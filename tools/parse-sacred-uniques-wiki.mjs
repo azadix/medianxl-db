@@ -4,8 +4,10 @@
 
 import {
   WIKI_SECTION_TO_TYPE,
+  formatColoredStatLines,
+  htmlToColoredLines,
   htmlToLines,
-  joinSplitStatLines,
+  joinSplitColoredStatLines,
 } from './parse-tiered-uniques-wiki.mjs';
 
 /** @typedef {{ name: string, quality: 'SU', stats: string, type?: string }} SacredUniqueEntry */
@@ -67,9 +69,9 @@ export function parseSacredUniquesWiki(html) {
 
       const name = htmlToLines(nameMatch[1]).join(' ');
       if (!name) continue;
-      const lines = joinSplitStatLines(htmlToLines(cell));
-      const nameIndex = lines.indexOf(name);
-      const stats = lines.slice(nameIndex >= 0 ? nameIndex + 1 : 0).join('\n');
+      const lines = joinSplitColoredStatLines(htmlToColoredLines(cell));
+      const nameIndex = lines.findIndex((line) => line.text === name);
+      const stats = formatColoredStatLines(lines.slice(nameIndex >= 0 ? nameIndex + 1 : 0));
       const entry = { name, quality: 'SU', stats };
       if (type) entry.type = type;
       entries.push(entry);

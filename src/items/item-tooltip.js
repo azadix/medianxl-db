@@ -4,6 +4,10 @@
  */
 
 import { escapeHtmlText, getItemIconUrl } from '@/shared/utils.js';
+import {
+  decodeModifierLine,
+  modifierColorCssClass,
+} from '@/items/item-modifier-line.js';
 import { formatItemModifierLineHtml } from '@/items/item-granted-oskills.js';
 import {
   formatItemTooltipSubtitle,
@@ -61,7 +65,11 @@ function itemTooltipIconSrc(stem) {
  */
 function renderStatLines(lines) {
   return lines
-    .map((line) => `<div class="item-tooltip-line">${formatItemModifierLineHtml(line)}</div>`)
+    .map((line) => {
+      const cls = modifierColorCssClass(decodeModifierLine(line).color);
+      const classAttr = cls ? ` ${cls}` : '';
+      return `<div class="item-tooltip-line${classAttr}">${formatItemModifierLineHtml(line)}</div>`;
+    })
     .join('');
 }
 
@@ -187,10 +195,11 @@ function buildSetBonusSectionHtml(setBonuses) {
         ? 'item-tooltip-set-bonus item-tooltip-set-bonus--active'
         : 'item-tooltip-set-bonus item-tooltip-set-bonus--inactive';
       const mods = (bonus.modifiers || [])
-        .map(
-          (mod) =>
-            `<div class="item-tooltip-set-bonus-mod">${formatItemModifierLineHtml(mod)}</div>`
-        )
+        .map((mod) => {
+          const cls = modifierColorCssClass(decodeModifierLine(mod).color);
+          const classAttr = cls ? ` ${cls}` : '';
+          return `<div class="item-tooltip-set-bonus-mod${classAttr}">${formatItemModifierLineHtml(mod)}</div>`;
+        })
         .join('');
       return `<fieldset class="${stateClass}"><legend class="item-tooltip-set-bonus-label">${escapeHtmlText(
         formatSetBonusLabel(bonus.required)

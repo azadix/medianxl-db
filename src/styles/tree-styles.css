@@ -11,6 +11,8 @@
     --item-rarity-runeword: #a8a8a8;
     --item-rarity-relic: #c7b377;
     --item-rarity-crafted: #ff9b2f;
+    --item-mod-orange: #ffa500;
+    --item-mod-grey: #a8a8a8;
     --item-rarity-color: var(--item-rarity-normal);
   }
 
@@ -580,6 +582,15 @@
     font-size: 0.9rem;
     line-height: 1.35;
     text-align: left;
+}
+
+.item-mod--orange {
+    color: var(--item-mod-orange, #ffa500);
+}
+
+.item-mod--grey {
+    color: var(--item-mod-grey, #a8a8a8);
+    padding-left: 0.55em;
 }
 
 .item-tooltip-reqs {

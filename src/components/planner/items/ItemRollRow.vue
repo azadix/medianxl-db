@@ -2,13 +2,18 @@
 /**
  * One rollable stat row: colored variable text + slider + number input.
  */
-defineProps({
-  /** @type {{ key: string, display: string, displayParts?: { kind: string, text: string }[], min: number, max: number }} */
+import { computed } from 'vue';
+import { modifierColorCssClass } from '@/items/item-modifier-line.js';
+
+const props = defineProps({
+  /** @type {{ key: string, display: string, displayParts?: { kind: string, text: string }[], min: number, max: number, color?: string }} */
   stat: { type: Object, required: true },
   value: { type: Number, required: true },
 });
 
 const emit = defineEmits(['update']);
+
+const colorClass = computed(() => modifierColorCssClass(props.stat?.color));
 
 /**
  * @param {string|number} raw
@@ -19,7 +24,7 @@ function onChange(raw) {
 </script>
 
 <template>
-  <div class="item-picker-modal__roll-row">
+  <div class="item-picker-modal__roll-row" :class="colorClass">
     <span class="item-picker-modal__roll-display">
       <template
         v-for="(part, i) in stat.displayParts?.length

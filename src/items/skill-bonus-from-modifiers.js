@@ -11,6 +11,7 @@ import {
   getRelicStatLines,
   isRelicBonusActive,
 } from '@/items/relic-items.js';
+import { decodeModifierLine } from '@/items/item-modifier-line.js';
 
 /**
  * Soft levels when a relic's generic `+# to Skill` applies to a skill already
@@ -70,7 +71,9 @@ export function isSkillOnCharacterTree(ctx = {}) {
  * @returns {ParsedSkillBonus|null}
  */
 export function parseSkillBonusFromModifierLine(line) {
-  const text = String(line || '').trim();
+  const decoded = decodeModifierLine(line);
+  if (decoded.color === 'grey') return null;
+  const text = decoded.text;
   if (!text) return null;
 
   let match = ALL_SKILLS_RE.exec(text);

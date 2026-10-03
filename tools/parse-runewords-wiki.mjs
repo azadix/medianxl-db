@@ -4,7 +4,12 @@
  */
 
 import { parseItemStats, slugify } from '../src/items/unique-stats-catalog.js';
-import { htmlToLines, joinSplitStatLines } from './parse-tiered-uniques-wiki.mjs';
+import {
+  formatColoredStatLines,
+  htmlToColoredLines,
+  htmlToLines,
+  joinSplitColoredStatLines,
+} from './parse-tiered-uniques-wiki.mjs';
 
 export const RUNEWORDS_WIKI_URL = 'https://docs.median-xl.com/doc/items/runewords';
 
@@ -225,7 +230,7 @@ export function parseAllowedTypesCell(html) {
  * @returns {{ modifiers: string[], classRestriction?: string }}
  */
 export function parseRunewordStatsCell(html, reqLevel) {
-  const joined = joinSplitStatLines(htmlToLines(html)).join('\n');
+  const joined = formatColoredStatLines(joinSplitColoredStatLines(htmlToColoredLines(html)));
   const parsed = parseItemStats(joined);
   /** @type {{ modifiers: string[], classRestriction?: string }} */
   const out = {

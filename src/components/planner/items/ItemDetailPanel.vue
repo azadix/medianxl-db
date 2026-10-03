@@ -4,6 +4,7 @@ import CharmExtrasControls from './CharmExtrasControls.vue';
 import ItemRollRow from './ItemRollRow.vue';
 import { formatItemOverlayMeta, formatItemRarityBadge } from '@/items/item-stats.js';
 import { formatItemModifierLineHtml } from '@/items/item-granted-oskills.js';
+import { decodeModifierLine, modifierColorCssClass } from '@/items/item-modifier-line.js';
 import {
   formatItemRequirementsLine,
   resolveItemRequirements,
@@ -65,6 +66,15 @@ function onRollUpdate(key, min, max, raw) {
 function modLineHtml(text) {
   return formatItemModifierLineHtml(text);
 }
+
+/**
+ * @param {{ text?: string, color?: string, stat?: { color?: string } }} row
+ * @returns {string}
+ */
+function modLineClass(row) {
+  const color = row?.color || row?.stat?.color || decodeModifierLine(row?.text).color;
+  return modifierColorCssClass(color);
+}
 </script>
 
 <template>
@@ -120,6 +130,7 @@ function modLineHtml(text) {
           <p
             v-if="row.kind === 'text'"
             class="item-picker-modal__stat-line"
+            :class="modLineClass(row)"
           >
             <span class="item-picker-modal__stat-line-text" v-html="modLineHtml(row.text)"></span>
           </p>

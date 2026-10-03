@@ -18,6 +18,7 @@ describe('parseSkillBonusFromModifierLine', () => {
 
   it('rejects conditional all-skills lines', () => {
     expect(parseSkillBonusFromModifierLine('+1 to All Skills when using an Apple')).toBeNull();
+    expect(parseSkillBonusFromModifierLine('{grey}+1 to All Skills')).toBeNull();
   });
 
   it('parses class skill levels', () => {

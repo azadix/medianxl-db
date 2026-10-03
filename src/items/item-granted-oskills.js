@@ -19,10 +19,8 @@ import {
   parseSkillBonusFromModifierLine,
   isSkillOnCharacterTree,
 } from '@/items/skill-bonus-from-modifiers.js';
-import {
-  escapeHtmlText,
-  SCALING_DISPLAY_HTML_CLASSES,
-} from '@/shared/utils.js';
+import { decodeModifierLine } from '@/items/item-modifier-line.js';
+import { escapeHtmlText, SCALING_DISPLAY_HTML_CLASSES } from '@/shared/utils.js';
 import { lookupMergedDisplayNameByInternalName } from '@/shared/skill-data-store.js';
 
 const CHARM_PREFIX_RE = /^\[(?:Upgrade|Trophy)\]\s*/i;
@@ -108,7 +106,7 @@ export function wrapNamedSkillGrantMarkers(line) {
  * @returns {string}
  */
 export function formatItemModifierLineHtml(line) {
-  const marked = wrapNamedSkillGrantMarkers(line);
+  const marked = wrapNamedSkillGrantMarkers(decodeModifierLine(line).text);
   let out = '';
   let cursor = 0;
   const re = /\[\[(.*?)\]\]/g;

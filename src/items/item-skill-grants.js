@@ -3,6 +3,7 @@
  * @module items/item-skill-grants
  */
 
+import { decodeModifierLine } from '@/items/item-modifier-line.js';
 import { resolveCatalogRowBySkillRef } from '@/character/planner-build-io.js';
 import {
   flattenModifierLines,
@@ -65,7 +66,9 @@ function isNonSkillGrantRest(rest) {
  * @returns {ParsedSkillGrant|null}
  */
 export function parseSkillGrantFromModifierLine(line) {
-  const text = stripProcLinePrefix(line);
+  const decoded = decodeModifierLine(line);
+  if (decoded.color === 'grey') return null;
+  const text = stripProcLinePrefix(decoded.text);
   if (!text) return null;
   const match = GRANT_LINE_RE.exec(text);
   if (!match) return null;

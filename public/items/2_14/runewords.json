@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-02T19:35:16.697Z",
+  "generatedAt": "2026-10-03T16:20:21.618Z",
   "entries": [
     {
       "id": "rw:a-perfect-storm",
@@ -80,7 +80,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "When Equipped with Acokanthera: +1 Second Duration to Devouring Cloud",
+        "{orange}When Equipped with Acokanthera: +1 Second Duration to Devouring Cloud",
         "+(4 to 5) to Druid Skill Levels",
         "+15 Spell Focus",
         "-10% to Enemy Poison Resistance",
@@ -189,7 +189,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "+20% Nightwalker damage bonus",
+        "{orange}+20% Nightwalker damage bonus",
         "+3 to Necromancer Skill Levels",
         "+(66 to 99) Spell Focus",
         "+293 Defense",
@@ -349,7 +349,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "+1000 Life Regenerated per Second While Under 7000 Life",
+        "{orange}+1000 Life Regenerated per Second While Under 7000 Life",
         "(3 to 5)% Life stolen per Hit",
         "(3 to 5)% Deadly Strike",
         "+(205 to 225)% Enhanced Defense",
@@ -375,7 +375,7 @@
       ],
       "excludedNames": [],
       "modifiers": [
-        "+2.5% Innate Elemental Damage per Wolf Stance Base Level",
+        "{orange}+2.5% Innate Elemental Damage per Wolf Stance Base Level",
         "+1 to All Skills",
         "20% Base Block Chance",
         "Adds 1200-1550 Fire Damage",
@@ -427,7 +427,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "Psicrown Now Explodes Upon Impact",
+        "{orange}Psicrown Now Explodes Upon Impact",
         "+(1 to 2) to All Skills",
         "+(5 to 10)% Bonus to Spell Focus",
         "+(15 to 20)% to Spell Damage",
@@ -456,7 +456,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "+4-5 Damage per Hammer of Zerae Base Level",
+        "{orange}+4-5 Damage per Hammer of Zerae Base Level",
         "+2 to Amazon Skill Levels",
         "20% Block Speed",
         "40% Hit Recovery",
@@ -656,7 +656,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "+25 Defense per 1% Fire Spell Damage",
+        "{orange}+25 Defense per 1% Fire Spell Damage",
         "+2 to All Skills",
         "2% Chance to cast level 59 Fire Cannonade on Death Blow",
         "+(80 to 100) Spell Focus",
@@ -684,8 +684,8 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "Up to Level 100: +2-4 Lightning Damage per Character Level",
-        "Above Level 100: +6-12 Lightning Damage per Character Level",
+        "{orange}Up to Level 100: +2-4 Lightning Damage per Character Level",
+        "{orange}Above Level 100: +6-12 Lightning Damage per Character Level",
         "2% Chance to cast level 3 Life Spark on Striking",
         "10% Attack Speed",
         "-15% to Enemy Lightning Resistance",
@@ -791,7 +791,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "+1 to passive Bear Stance",
+        "{orange}+1 to passive Bear Stance",
         "20% Attack Speed",
         "100% Hit Recovery",
         "Adds 44-55 Damage",
@@ -844,7 +844,7 @@
       "excludedNames": [],
       "classRestriction": "Sorceress Only",
       "modifiers": [
-        "12% Chance to cast Level 42 Flamefront on Death Blow when Below 80% Life",
+        "{orange}12% Chance to cast Level 42 Flamefront on Death Blow when Below 80% Life",
         "+(8 to 10) to Sorceress Skill Levels",
         "+(40 to 50) Spell Focus",
         "40% Cast Speed",
@@ -1080,7 +1080,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "+3 to All Skills when using an Apple",
+        "{orange}+3 to All Skills when using an Apple",
         "+4% Bonus to Spell Focus",
         "+44% to Lightning Spell Damage",
         "+44% to Poison Spell Damage",
@@ -1157,7 +1157,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "Miasma: Haunt Duration Increased by 4 seconds",
+        "{orange}Miasma: Haunt Duration Increased by 4 seconds",
         "+2 to Sorceress Skill Levels",
         "10% Cast Speed",
         "-(18 to 25)% to Enemy Elemental Resistances",
@@ -1183,8 +1183,8 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "Above 70% Life: -10 Life After Each Kill",
-        "Below 50% Life: +200 Life After Each Kill",
+        "{orange}Above 70% Life: -10 Life After Each Kill",
+        "{orange}Below 50% Life: +200 Life After Each Kill",
         "+(2 to 3) to Amazon Skill Levels",
         "+(10 to 15)% Bonus to Spell Focus",
         "60% Cast Speed",
@@ -1265,8 +1265,8 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "Famine Grants 1% of Strength and Dexterity as Innate Elemental Damage",
-        "Famine No Longer Grants Weapon Physical Damage",
+        "{orange}Famine Grants 1% of Strength and Dexterity as Innate Elemental Damage",
+        "{orange}Famine No Longer Grants Weapon Physical Damage",
         "25% Chance to cast level 36 Banish on Kill",
         "50% Attack Speed",
         "+(300 to 400) to Attack Rating",
@@ -1395,7 +1395,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "Enemy Fire Resistance is Reduced by Lightning Pierce at 25% Efficiency",
+        "{orange}Enemy Fire Resistance is Reduced by Lightning Pierce at 25% Efficiency",
         "(75 to 125)% Bonus to Attack Rating",
         "+750 Fire Damage",
         "Adds 450-300 Lightning Damage",
@@ -1505,7 +1505,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "Allows an Additional Bear Companion",
+        "{orange}Allows an Additional Bear Companion",
         "25% Chance to cast level 20 Crucify on Death Blow",
         "50% Attack Speed",
         "Adds 58-112 Damage",
@@ -1533,7 +1533,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "Hammer of Zerae: Lightning Spell Damage Applies to Added Lightning Damage At 50% Efficiency",
+        "{orange}Hammer of Zerae: Lightning Spell Damage Applies to Added Lightning Damage At 50% Efficiency",
         "+(2 to 3) to Amazon Skill Levels",
         "20% Block Speed",
         "Adds 4-6 Damage",
@@ -1565,7 +1565,7 @@
       "excludedNames": [],
       "classRestriction": "Sorceress Only",
       "modifiers": [
-        "Overheat: Burns One Target, Hits Multiple Times",
+        "{orange}Overheat: Burns One Target, Hits Multiple Times",
         "+(7 to 9) to Sorceress Skill Levels",
         "+(100 to 115) Spell Focus",
         "75% Cast Speed",
@@ -1617,11 +1617,11 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "Holy Shock",
-        "Nearby Enemies take 1200 Lightning Damage every 1.2 seconds",
-        "Activation Frequency Effectiveness: 30%",
-        "+1% damage per 7 Energy",
-        "16.6 Yard Radius",
+        "{orange}Holy Shock",
+        "{grey}Nearby Enemies take 1200 Lightning Damage every 1.2 seconds",
+        "{grey}Activation Frequency Effectiveness: 30%",
+        "{grey}+1% damage per 7 Energy",
+        "{grey}16.6 Yard Radius",
         "+(3 to 4) to All Skills",
         "+(75 to 100) Spell Focus",
         "75% Cast Speed",
@@ -1647,7 +1647,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "7% Chance to cast Level 5 Lifespark on Death Blow when Below 50% Life",
+        "{orange}7% Chance to cast Level 5 Lifespark on Death Blow when Below 50% Life",
         "+1 to All Skills",
         "15% Cast Speed",
         "+(21 to 26)% to Physical/Magic Spell Damage",
@@ -1732,9 +1732,9 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "Deal no Elemental Damage",
-        "You May Only use Melee, Summon and Support Skills",
-        "Hammer of Zerae: Deals Weapon Damage in an Area as it Travels",
+        "{orange}Deal no Elemental Damage",
+        "{orange}You May Only use Melee, Summon and Support Skills",
+        "{orange}Hammer of Zerae: Deals Weapon Damage in an Area as it Travels",
         "40% Attack Speed",
         "30% Hit Recovery",
         "Adds 158-187 Damage",
@@ -1787,7 +1787,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "Level 1 Spark of Hope",
+        "{orange}Level 1 Spark of Hope",
         "+3 Fire Damage",
         "+3 Lightning Damage",
         "+3 Cold Damage",
@@ -1990,7 +1990,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "Divine Judgement: 1.5% Fire Pierce per Base Level while attacking",
+        "{orange}Divine Judgement: 1.5% Fire Pierce per Base Level while attacking",
         "+(2 to 3) to Paladin Skill Levels",
         "Adds 50-100 Fire Damage",
         "+(195 to 240)% Enhanced Defense",
@@ -2333,7 +2333,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "+1 Hunting Banshee Missiles",
+        "{orange}+1 Hunting Banshee Missiles",
         "+(7 to 8) to Druid Skill Levels",
         "+25 Spell Focus",
         "+20% Bonus to Spell Focus",
@@ -2362,7 +2362,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "Abyss Knights Reduce Enemy Magic Resistance by 10%",
+        "{orange}Abyss Knights Reduce Enemy Magic Resistance by 10%",
         "+(4 to 5) to Necromancer Skill Levels",
         "+(20 to 25)% to Summon Life",
         "+(53 to 63)% to Summon Damage",
@@ -2390,7 +2390,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "Tectonics: +30 Power",
+        "{orange}Tectonics: +30 Power",
         "+(3 to 4) to Barbarian Skill Levels",
         "80% Attack Speed",
         "+140 Damage",
@@ -2497,7 +2497,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "Servants of Valor regenerate 2% of their life per second",
+        "{orange}Servants of Valor regenerate 2% of their life per second",
         "+(3 to 4) to Paladin Skill Levels",
         "30% Cast Speed",
         "30% Hit Recovery",
@@ -2580,7 +2580,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "-5% Innate Elemental Damage per 1% Fire Absorb",
+        "{orange}-5% Innate Elemental Damage per 1% Fire Absorb",
         "15% Chance to cast level 9 Life Spark on Melee Attack",
         "30% Attack Speed",
         "+250 Fire Damage",
@@ -2607,7 +2607,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "Ring of Flames Gains +1% Total Damage per Character Level",
+        "{orange}Ring of Flames Gains +1% Total Damage per Character Level",
         "+(1 to 2) to Amazon Skill Levels",
         "5% Chance to cast level 1 Timefield on Kill",
         "2% Chance to cast level 19 Ring of Flames on Striking",
@@ -2733,8 +2733,8 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "+40 Spell Focus if Sanguine Covenant is Active",
-        "+10% Maximum Mana if Solar Flare is Active",
+        "{orange}+40 Spell Focus if Sanguine Covenant is Active",
+        "{orange}+10% Maximum Mana if Solar Flare is Active",
         "+(38 to 43)% to Fire Spell Damage",
         "(25 to 35)% to Energy",
         "Regenerate Mana +(10 to 15)%",
@@ -2786,7 +2786,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "+1% Maximum Elemental Resist per 200% Lightning Spell Damage",
+        "{orange}+1% Maximum Elemental Resist per 200% Lightning Spell Damage",
         "+4 to Paladin Skill Levels",
         "+(5 to 10)% Bonus to Spell Focus",
         "40% Hit Recovery",
@@ -2892,9 +2892,9 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "If Colosseum has 20 Base Levels:",
-        "+10% Chance to avoid damage",
-        "-5% enemy physical resistance to colosseum debuff",
+        "{orange}If Colosseum has 20 Base Levels:",
+        "{grey}+10% Chance to avoid damage",
+        "{grey}-5% enemy physical resistance to colosseum debuff",
         "10% Movement Speed",
         "Additional Strength Damage Bonus: 0.03125%",
         "50% Attack Speed",
@@ -3103,7 +3103,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "Mana Sweep: -25% Total Damage, Leeches no Mana",
+        "{orange}Mana Sweep: -25% Total Damage, Leeches no Mana",
         "+(0 to 1) to Sorceress Skill Levels",
         "5% Deadly Strike",
         "+40 to Mana",
@@ -3177,7 +3177,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "Voodoo Practice: +1% Extra Chance to Spawn a Corpse on Striking",
+        "{orange}Voodoo Practice: +1% Extra Chance to Spawn a Corpse on Striking",
         "100% Chance to cast level 17 Time Strike on Kill",
         "Adds 70-90 Damage",
         "+(172 to 200)% Enhanced Damage",
@@ -3366,7 +3366,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "+6 Life per Cognition",
+        "{orange}+6 Life per Cognition",
         "+4 to Assassin Skill Levels",
         "-4% Base Block Chance",
         "70% Hit Recovery",
@@ -3494,10 +3494,10 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "If you have No Points in Werebear, Werewolf, Wereowl, Hunter and Seer Trees:",
-        "Can No Longer Summon Harvesters",
-        "Harvest Grants Bloom Bonuses",
-        "Harvest Duration Now 15 Seconds",
+        "{orange}If you have No Points in Werebear, Werewolf, Wereowl, Hunter and Seer Trees:",
+        "{grey}Can No Longer Summon Harvesters",
+        "{grey}Harvest Grants Bloom Bonuses",
+        "{grey}Harvest Duration Now 15 Seconds",
         "+(9 to 10) to All Skills",
         "30% Hit Recovery",
         "+(30 to 40)% to Poison Spell Damage",
@@ -3573,8 +3573,8 @@
       ],
       "classRestriction": "Druid Only",
       "modifiers": [
-        "+200% Enhanced Weapon Damage",
-        "-3% Weapon Physical Damage per 1% Lost Mana",
+        "{orange}+200% Enhanced Weapon Damage",
+        "{orange}-3% Weapon Physical Damage per 1% Lost Mana",
         "+(3 to 4) to Druid Skill Levels",
         "55% Attack Speed",
         "Adds 8-12 Damage",
@@ -3680,8 +3680,8 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "Ecstatic Frenzy: +300% Total Damage",
-        "Fire, Cold, and Lightning Pierce Reduced by 100",
+        "{orange}Ecstatic Frenzy: +300% Total Damage",
+        "{orange}Fire, Cold, and Lightning Pierce Reduced by 100",
         "+(3 to 4) to All Skills",
         "(25 to 30)% Movement Speed",
         "(40 to 45)% Cast Speed",
@@ -3838,7 +3838,7 @@
       ],
       "excludedNames": [],
       "modifiers": [
-        "If you have 90% Fire Resist: +50% Fire Spell Damage",
+        "{orange}If you have 90% Fire Resist: +50% Fire Spell Damage",
         "40% Hit Recovery",
         "+(26 to 31)% to Fire Spell Damage",
         "-62% to Enemy Fire Resistance",
@@ -3866,7 +3866,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "+80 Magic Damage per 1% Deadly Strike",
+        "{orange}+80 Magic Damage per 1% Deadly Strike",
         "+(2 to 3) to All Skills",
         "10% Chance to cast level 4 Time Strike on Striking",
         "50% Attack Speed",
@@ -3895,7 +3895,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "Gain 20% of your Poison Resistance as Poison Length Reduction",
+        "{orange}Gain 20% of your Poison Resistance as Poison Length Reduction",
         "+1 to All Skills",
         "25% Hit Recovery",
         "Adds 300-400 Poison Damage over 2 seconds",
@@ -3991,7 +3991,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "+1 Steady Aim charge per Steady Shot",
+        "{orange}+1 Steady Aim charge per Steady Shot",
         "4% Chance to cast level 2 Arrow on Striking",
         "20% Attack Speed",
         "50% Hit Recovery",
@@ -4069,8 +4069,8 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "While in Wereowl Form: Adds 20 Damage",
-        "While in Werewolf Form: -25% Enemy Cold Resistance",
+        "{orange}While in Wereowl Form: Adds 20 Damage",
+        "{orange}While in Werewolf Form: -25% Enemy Cold Resistance",
         "+2 to Druid Skill Levels",
         "25% Attack Speed",
         "+(172 to 200)% Enhanced Defense",
@@ -4097,10 +4097,10 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "When Soulchain is Active:",
-        "Frostclaw Totem has 6% Chance to cast Level 44 Blizzard on Death Blow",
-        "Fireheart Totem has 6% Chance to cast Level 44 Fire Cannonade on Death Blow",
-        "Stormeye Totem has 6% Chance to cast Level 44 Stormclash on Death Blow",
+        "{orange}When Soulchain is Active:",
+        "{grey}Frostclaw Totem has 6% Chance to cast Level 44 Blizzard on Death Blow",
+        "{grey}Fireheart Totem has 6% Chance to cast Level 44 Fire Cannonade on Death Blow",
+        "{grey}Stormeye Totem has 6% Chance to cast Level 44 Stormclash on Death Blow",
         "+13 to Necromancer Skill Levels",
         "+(8 to 11)% Bonus to Spell Focus",
         "+(35 to 40)% to Spell Damage",
@@ -4129,7 +4129,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "Takedown: +1 Maximum Fury Charges",
+        "{orange}Takedown: +1 Maximum Fury Charges",
         "+2 to Amazon Skill Levels",
         "20% Combat Speeds",
         "+(125 to 145)% Enhanced Defense",
@@ -4268,7 +4268,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "Abyss Knights: Chance to cast Chaos Nova on Kill Doubled",
+        "{orange}Abyss Knights: Chance to cast Chaos Nova on Kill Doubled",
         "+1 to Necromancer Skill Levels",
         "4% Chance to cast level 11 Force Blast when Struck",
         "Attacker Flees after Striking 10%",
@@ -4374,7 +4374,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "Curare: +5% Damage Multiplier per Reckoning of Zerae Base Level",
+        "{orange}Curare: +5% Damage Multiplier per Reckoning of Zerae Base Level",
         "+4 to Amazon Skill Levels",
         "3% Chance to cast level 1 Shower of Rocks on Kill",
         "20% Block Speed",
@@ -4481,7 +4481,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "Living Flame Gives +1% Fire Spell Damage per 8 Character Levels",
+        "{orange}Living Flame Gives +1% Fire Spell Damage per 8 Character Levels",
         "+1 to All Skills",
         "+10% Bonus to Poison Skill Duration",
         "35% Cast Speed",
@@ -4695,9 +4695,9 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "Demon Blood Aura",
-        "You and Undead Minions: Maximum Life +6%",
-        "26.6 Yard Radius",
+        "{orange}Demon Blood Aura",
+        "{grey}You and Undead Minions: Maximum Life +6%",
+        "{grey}26.6 Yard Radius",
         "-10% Base Block Chance",
         "25% Attack Speed",
         "40% Hit Recovery",
@@ -4721,8 +4721,8 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "+1% Weapon Physical Damage per 50 Strength or Dexterity",
-        "(Whichever is Higher)",
+        "{orange}+1% Weapon Physical Damage per 50 Strength or Dexterity",
+        "{orange}(Whichever is Higher)",
         "75% Attack Speed",
         "+10 Damage",
         "+200% Enhanced Defense",
@@ -4750,7 +4750,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "+25 Fire Damage per 100 Dexterity",
+        "{orange}+25 Fire Damage per 100 Dexterity",
         "10% Chance to cast level 59 Pentagram on Melee Attack",
         "1% Base Block Chance",
         "30% Block Speed",
@@ -4777,7 +4777,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "+4 Storm Crows Projectiles",
+        "{orange}+4 Storm Crows Projectiles",
         "5% Chance to cast level 24 Hammertime on Kill",
         "20% Combat Speeds",
         "Adds 110-(125 to 145) Damage",
@@ -4958,7 +4958,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "Lemures Explosion Radius Increased by 2 yards",
+        "{orange}Lemures Explosion Radius Increased by 2 yards",
         "+(8 to 10) to Paladin Skill Levels",
         "+(11 to 16)% Bonus to Spell Focus",
         "90% Attack Speed",
@@ -5005,7 +5005,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "+1% Maximum Cold Resist per 80% Cold Resist",
+        "{orange}+1% Maximum Cold Resist per 80% Cold Resist",
         "+1 to All Skills",
         "20% Hit Recovery",
         "Adds 100-200 Cold Damage",
@@ -5033,8 +5033,8 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "When Soulchain is Active:",
-        "Dirge Chances to cast Increased by 10%",
+        "{orange}When Soulchain is Active:",
+        "{grey}Dirge Chances to cast Increased by 10%",
         "+2 to Necromancer Skill Levels",
         "20% Hit Recovery",
         "+(20 to 25)% to Physical/Magic Spell Damage",
@@ -5094,7 +5094,7 @@
       "excludedNames": [],
       "classRestriction": "Sorceress Only",
       "modifiers": [
-        "Heal 0.05% Life per Second per 1% Lost Mana",
+        "{orange}Heal 0.05% Life per Second per 1% Lost Mana",
         "+2 to All Skills",
         "+(5 to 7) to Immersion (Sorceress Only)",
         "+(5 to 7) to Arcane Torrent (Sorceress Only)",
@@ -5165,7 +5165,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "+5-10 Damage per Character Level Above 138",
+        "{orange}+5-10 Damage per Character Level Above 138",
         "+2 to Assassin Skill Levels",
         "5% Chance to cast level 7 Thunder Wave on Melee Attack",
         "Adds 133-137 Damage",
@@ -5194,7 +5194,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "Medusa: slow target by 1% per 2 skill levels",
+        "{orange}Medusa: slow target by 1% per 2 skill levels",
         "50% Attack Speed",
         "Adds 16-24 Damage",
         "Adds (185 to 210)-(215 to 240) Damage",
@@ -5278,7 +5278,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "Your Cold Damage is Nullified",
+        "{orange}Your Cold Damage is Nullified",
         "3% Chance to cast level 30 Pyroblast on Death Blow",
         "3% Chance to cast level 30 Tempest on Death Blow",
         "-40% to Spell Damage",
@@ -5307,7 +5307,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "-1% to Enemy Elemental Resistances per 150 Dexterity",
+        "{orange}-1% to Enemy Elemental Resistances per 150 Dexterity",
         "8% Chance to cast level 7 Life Spark on Block",
         "1% Base Block Chance",
         "15% Block Speed",
@@ -5364,7 +5364,8 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "Area Effect Attack",
+        "{orange}Area Effect Attack",
+        "{grey}100% Chance to Cast on Attack: Deals 50% normal attack damage in a radius of 5 yards.",
         "20% Attack Speed",
         "+(3 to 4) to Minimum Damage",
         "+(24 to 35)% Enhanced Damage",
@@ -5386,7 +5387,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "Carnage Now Converts 100% Physical Damage to Fire",
+        "{orange}Carnage Now Converts 100% Physical Damage to Fire",
         "+(2 to 4) to Necromancer Skill Levels",
         "50% Hit Recovery",
         "Adds (110 to 130)-(140 to 160) Damage",
@@ -5504,7 +5505,7 @@
       "excludedNames": [],
       "classRestriction": "Druid Only",
       "modifiers": [
-        "+100 Lightning Damage per Character Level Above 130",
+        "{orange}+100 Lightning Damage per Character Level Above 130",
         "50% Hit Recovery",
         "Adds 120-(121 to 140) Damage",
         "-(27 to 32)% to Enemy Lightning Resistance",
@@ -5533,8 +5534,9 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "Mega Impact",
-        ": Greatly Increased Radius, Duration, and Effect",
+        "{orange}Mega Impact",
+        "{grey}25% Chance to Cast on Attack: Reduces target physical resistance by -7% for 2 seconds.",
+        "{orange}: Greatly Increased Radius, Duration, and Effect",
         "8% Chance to cast level 30 Time Strike on Striking",
         "40% Attack Speed",
         "Adds 16-24 Damage",
@@ -5563,8 +5565,8 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "At least 1 Base Level in Runemaster: Maximum Poison Resist +4%",
-        "With 15 Base Levels in Runemaster: 10% Deadly Strike",
+        "{orange}At least 1 Base Level in Runemaster: Maximum Poison Resist +4%",
+        "{orange}With 15 Base Levels in Runemaster: 10% Deadly Strike",
         "40% Hit Recovery",
         "+20 Damage",
         "Slows Attacker by 10%",
@@ -5645,7 +5647,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "Gain 50% of your Maximum Mana as Defense",
+        "{orange}Gain 50% of your Maximum Mana as Defense",
         "+(3 to 4) to Paladin Skill Levels",
         "30% Hit Recovery",
         "+(25 to 35)% to Physical/Magic Spell Damage",
@@ -5751,8 +5753,8 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "Enhances Death Ripple",
-        "Occult Path: +10 Life per Death Ripple Skill Level",
+        "{orange}Enhances Death Ripple",
+        "{orange}Occult Path: +10 Life per Death Ripple Skill Level",
         "+(3 to 5) to Necromancer Skill Levels",
         "2% Chance to cast level 10 Timefield on Death Blow",
         "+(5 to 10)% Bonus to Spell Focus",
@@ -5781,7 +5783,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "Howl of the Spirits: +4 Seconds Duration",
+        "{orange}Howl of the Spirits: +4 Seconds Duration",
         "3% Chance to cast level 10 Shower of Rocks on Melee Attack",
         "+10 to Maximum Damage",
         "+(300 to 500) to Attack Rating",
@@ -5836,7 +5838,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "3 Magic Missiles Projectiles",
+        "{orange}3 Magic Missiles Projectiles",
         "+(4 to 5) to Amazon Skill Levels",
         "+(35 to 40) Spell Focus",
         "+(17 to 20)% Bonus to Spell Focus",
@@ -5936,7 +5938,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "10% of Total Energy Gained as Life",
+        "{orange}10% of Total Energy Gained as Life",
         "+1 to All Skills",
         "+15 Spell Focus",
         "+10% Bonus to Spell Focus",
@@ -5989,8 +5991,8 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "Shadow Dancer: Applies to Throwing Knives",
-        "Elemental Ways Deal no Damage",
+        "{orange}Shadow Dancer: Applies to Throwing Knives",
+        "{orange}Elemental Ways Deal no Damage",
         "+5 to Assassin Skill Levels",
         "20% Movement Speed",
         "30% Attack Speed",
@@ -6021,7 +6023,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "1% poison spell damage per 3% attack speed",
+        "{orange}1% poison spell damage per 3% attack speed",
         "+4% Bonus to Spell Focus",
         "40% Attack Speed",
         "Adds 8-12 Damage",
@@ -6049,7 +6051,7 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "Allows an additional Slayer",
+        "{orange}Allows an additional Slayer",
         "+(1 to 2) to Paladin Skill Levels",
         "+50% to Spell Damage",
         "-(7 to 12)% to Enemy Lightning Resistance",
@@ -6129,9 +6131,9 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "No Stamina Regeneration. Whenever you run out of stamina:",
-        "Fully restore it, heal 20 Life for each point restored",
-        "Gain Max Physical Damage buff based on Maximum Stamina",
+        "{orange}No Stamina Regeneration. Whenever you run out of stamina:",
+        "{grey}Fully restore it, heal 20 Life for each point restored",
+        "{grey}Gain Max Physical Damage buff based on Maximum Stamina",
         "10% Movement Speed",
         "50% Attack Speed",
         "Adds 10-20 Damage",
@@ -6159,8 +6161,8 @@
       "excludedTypes": [],
       "excludedNames": [],
       "modifiers": [
-        "Winter Avatar: Cooldown Reduced by 0.3 Seconds,",
-        "+20 Defense per 1% Cold Resistance During Effect",
+        "{orange}Winter Avatar: Cooldown Reduced by 0.3 Seconds,",
+        "{orange}+20 Defense per 1% Cold Resistance During Effect",
         "+(6 to 7) to All Skills",
         "20% Movement Speed",
         "+25 Spell Focus",

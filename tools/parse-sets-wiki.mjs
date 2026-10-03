@@ -2,7 +2,12 @@
  * Parse docs.median-xl.com set raw HTML into set-item and set-bonus entries.
  */
 
-import { htmlToLines, joinSplitStatLines } from './parse-tiered-uniques-wiki.mjs';
+import {
+  formatColoredStatLines,
+  htmlToColoredLines,
+  htmlToLines,
+  joinSplitColoredStatLines,
+} from './parse-tiered-uniques-wiki.mjs';
 
 /**
  * @typedef {{
@@ -57,7 +62,8 @@ export function parseSetsWiki(html) {
     const summary = cells.find((cell) => !/<img\b/i.test(cell));
     if (!summary) continue;
 
-    const summaryLines = htmlToLines(summary);
+    const summaryColored = joinSplitColoredStatLines(htmlToColoredLines(summary));
+    const summaryLines = summaryColored.map((line) => line.text);
     const setName = summaryLines[0];
     const bonusIndex = summaryLines.findIndex((line) => /^Set Bonus\b/i.test(line));
     if (!setName || bonusIndex < 0) continue;
@@ -71,20 +77,20 @@ export function parseSetsWiki(html) {
     entries.push({
       name: setName,
       quality: 'Set',
-      stats: formatSetBonuses(summaryLines.slice(bonusIndex)),
+      stats: formatSetBonuses(formatColoredStatLines(summaryColored.slice(bonusIndex)).split('\n')),
     });
 
     for (const cell of cells) {
       if (!/<img\b/i.test(cell)) continue;
-      const lines = joinSplitStatLines(htmlToLines(cell));
+      const lines = joinSplitColoredStatLines(htmlToColoredLines(cell));
       if (lines.length < 3) continue;
-      const [name, type, ...statLines] = lines;
+      const [nameLine, typeLine, ...statLines] = lines;
       entries.push({
-        name,
+        name: nameLine.text,
         quality: 'Sacred Set',
-        stats: statLines.join('\n'),
+        stats: formatColoredStatLines(statLines),
         setName,
-        type,
+        type: typeLine.text,
       });
     }
   }

@@ -3,6 +3,7 @@
  * @module items/item-requirements
  */
 
+import { decodeModifierLine } from '@/items/item-modifier-line.js';
 import { getOverlayStatLines, isOverlayItem } from '@/items/item-overlays.js';
 
 /**
@@ -33,7 +34,9 @@ const REQ_RANGE_RE =
  * @returns {number}
  */
 export function parseRequirementsReductionPct(text) {
-  const s = String(text || '').replace(/\s+/g, ' ').trim();
+  const decoded = decodeModifierLine(text);
+  if (decoded.color === 'grey') return 0;
+  const s = decoded.text.replace(/\s+/g, ' ').trim();
   if (!s) return 0;
   const reducedBy = REQ_REDUCED_BY_RE.exec(s);
   if (reducedBy) return Math.abs(Number(reducedBy[1])) || 0;

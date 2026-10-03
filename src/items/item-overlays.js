@@ -9,6 +9,7 @@ import {
   buildAffixDisplayParts,
 } from '@/items/affix-rolls.js';
 import { annotateAffixDisplayPartsWithSkills } from '@/items/item-granted-oskills.js';
+import { decodeModifierLine, encodeModifierLine } from '@/items/item-modifier-line.js';
 
 /**
  * @param {number} min
@@ -119,7 +120,7 @@ export function resolveDefAgainstCatalog(def, catalogById) {
 
 /**
  * @param {object|null|undefined} def
- * @returns {{ sourceKey: string, text: string }[]}
+ * @returns {{ sourceKey: string, text: string, color: string }[]}
  */
 export function collectOverlayAffixSources(def) {
   /** @type {{ sourceKey: string, text: string }[]} */
@@ -128,7 +129,9 @@ export function collectOverlayAffixSources(def) {
   let i = 0;
   for (const mod of Array.isArray(def.modifiers) ? def.modifiers : []) {
     if (typeof mod !== 'string' || !mod.trim()) continue;
-    out.push({ sourceKey: `base:m${i}`, text: mod });
+    const { text, color } = decodeModifierLine(mod);
+    if (!text) continue;
+    out.push({ sourceKey: `base:m${i}`, text, color });
     i += 1;
   }
   return out;
@@ -176,6 +179,7 @@ export function buildOverlaySourceRollableStats(source, rolls = null) {
       displayParts: parts,
       min: range.min,
       max: range.max,
+      color: source.color || 'magic',
     });
   });
   return out;
@@ -213,7 +217,7 @@ export function getOverlayDetailStatRows(def, rolls = null) {
     }
     const text = resolveOverlayAffixText(source.text, source.sourceKey, rolls, false);
     if (text == null) continue;
-    rows.push({ kind: 'text', text });
+    rows.push({ kind: 'text', text, color: source.color || 'magic' });
   }
   return rows;
 }
@@ -249,7 +253,7 @@ export function getOverlayStatLines(def, rolls = null, options = {}) {
   for (const source of collectOverlayAffixSources(def)) {
     const text = resolveOverlayAffixText(source.text, source.sourceKey, rolls, hide);
     if (text == null) continue;
-    lines.push(text);
+    lines.push(encodeModifierLine(text, source.color));
   }
   return lines;
 }
