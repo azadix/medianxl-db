@@ -1707,3 +1707,4 @@ warlock
 neutral
 slayer's
 slayer
+scorpion
