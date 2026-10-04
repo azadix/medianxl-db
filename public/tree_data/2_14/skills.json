@@ -13907,7 +13907,11 @@
     "tab": 57,
     "class": "Assassin",
     "tabName": "Throwing",
-    "tags": [],
+    "tags": [
+      "Buff",
+      "Duration",
+      "Poison"
+    ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": true,
     "variants": [],
@@ -13925,12 +13929,39 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames((1000+50*(lvl-1))*(1+[[continuity]].{{skill_duration}}/100))"
+      },
+      {
+        "statKey": "knives",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "1"
+      },
+      {
+        "statKey": "skill_duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "25+5*(blvl-1)"
+      },
+      {
+        "statKey": "total_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "max(85,85+15*(blvl-1)+min(360-3*min(ulvl,138),0))"
       }
     ],
-    "description": [],
+    "description": [
+      "Concentrate the power of your poisonous blades"
+    ],
     "restriction": [],
     "skillEffect": [
-      "{{duration}}"
+      "[[scorpion_blade]]",
+      "Reduces explosion radius by 56%",
+      "{{knives}}",
+      "{{skill_duration}}",
+      "{{total_damage}}",
+      "+2% Movement Speed per Scorpion Blade Base Level",
+      "{{duration}}",
+      "{{mana_cost}}"
     ],
     "image": "icons-ass_160"
   },
