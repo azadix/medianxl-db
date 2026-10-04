@@ -66,9 +66,9 @@ describe('buildItemTooltipHtml', () => {
 
     expect(html).toContain('item-rarity--magic');
     expect(html).toContain('MAGIC SPEARS');
-    expect(html).toContain('Fire Damage');
     expect(html).toContain('Strength Damage Bonus');
     expect(html).toContain('Innate Fire Damage: (84.0% of Strength)');
+    expect(html).not.toMatch(/>Fire Damage</);
     expect(html).toContain('Requires:');
     expect(html).toContain('Level 12');
     expect(html).toContain('60 Dexterity');
@@ -76,12 +76,10 @@ describe('buildItemTooltipHtml', () => {
     expect(html).not.toContain('Required Level:');
     expect(html).not.toContain('Required Dexterity:');
 
-    const fireTypeAt = html.indexOf('Fire Damage');
     const strBonusAt = html.indexOf('Strength Damage Bonus');
     const innateAt = html.indexOf('Innate Fire Damage');
     const reqsAt = html.indexOf('Requires:');
-    expect(fireTypeAt).toBeGreaterThan(-1);
-    expect(strBonusAt).toBeGreaterThan(fireTypeAt);
+    expect(strBonusAt).toBeGreaterThan(-1);
     expect(innateAt).toBeGreaterThan(strBonusAt);
     expect(reqsAt).toBeGreaterThan(innateAt);
   });
@@ -142,7 +140,7 @@ describe('getItemStatSections', () => {
       adds: 'Adds 250-350 Fire Damage',
     });
     expect(sections.base[0]).toBe('One-Hand Damage: 10 to 20');
-    expect(sections.base).toContain('Fire Damage');
+    expect(sections.base).not.toContain('Fire Damage');
     expect(sections.scaling[0]).toContain('Strength Damage Bonus');
     expect(sections.scaling[1]).toBe('Innate Fire Damage: (84.0% of Strength)');
     expect(sections.mods).toContain('Adds 250-350 Fire Damage');
@@ -152,5 +150,29 @@ describe('getItemStatSections', () => {
       reqDex: 60,
       reductionPct: 0,
     });
+  });
+
+  it('lists innate once and does not label it as regular fire damage', () => {
+    const sections = getItemStatSections({
+      rarity: 'unique',
+      uniqueKind: 'su',
+      speed: 10,
+      innate: 'Innate Fire Damage: (80.0% of Strength)',
+      adds: 'Adds 250-350 Fire Damage',
+      sockets: 6,
+      modifiers: [
+        'Innate Fire Damage: (80.0% of Strength)',
+        'Adds 250-350 Fire Damage',
+        '-20% to Enemy Fire Resistance',
+      ],
+    });
+    const innateLines = [...sections.base, ...sections.scaling, ...sections.mods].filter((line) =>
+      /Innate Fire Damage/.test(line)
+    );
+    expect(innateLines).toEqual(['Innate Fire Damage: (80.0% of Strength)']);
+    expect(sections.base).not.toContain('Fire Damage');
+    expect(sections.scaling).toContain('Innate Fire Damage: (80.0% of Strength)');
+    expect(sections.mods).toContain('Adds 250-350 Fire Damage');
+    expect(sections.mods).not.toContain('Innate Fire Damage: (80.0% of Strength)');
   });
 });

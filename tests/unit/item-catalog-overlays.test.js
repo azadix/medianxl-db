@@ -88,6 +88,10 @@ describe('unique-stats-db catalog', () => {
       )
     );
     expect(leakedReq.map((item) => item.name)).toEqual([]);
+
+    const voidTouched = items.find((u) => u.name === 'Void-Touched');
+    expect(voidTouched?.innate).toBe('Innate Fire Damage: (80.0% of Strength)');
+    expect(voidTouched?.modifiers.filter((mod) => /Innate Fire Damage/i.test(mod))).toEqual([]);
   });
 
   it('other.json includes quiver bases', () => {
@@ -202,6 +206,15 @@ describe('unique-stats-db catalog', () => {
     expect(def.innate).toBe('Innate Fire Damage: (84.0% of Strength)');
     expect(def.adds).toBe('Adds 250-350 Fire Damage');
     expect(def.strDamageBonus).toBe(0.16);
+  });
+
+  it('parses innate as a header instead of a unique modifier', () => {
+    const parsed = parseItemStats(
+      'Required Level: 100\nInnate Fire Damage: (80.0% of Strength)\nAdds 250-350 Fire Damage\nSocketed (6)'
+    );
+    expect(parsed.innate).toBe('Innate Fire Damage: (80.0% of Strength)');
+    expect(parsed.modifiers).toEqual(['Adds 250-350 Fire Damage']);
+    expect(parsed.sockets).toBe(6);
   });
 
   it('resolves legacy u:name:tu ids to T4', () => {

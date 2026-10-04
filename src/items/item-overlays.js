@@ -127,10 +127,12 @@ export function collectOverlayAffixSources(def) {
   const out = [];
   if (!def || typeof def !== 'object') return out;
   let i = 0;
+  const innateText = String(def.innate || '').trim();
   for (const mod of Array.isArray(def.modifiers) ? def.modifiers : []) {
     if (typeof mod !== 'string' || !mod.trim()) continue;
     const { text, color } = decodeModifierLine(mod);
     if (!text) continue;
+    if (innateText && text.trim() === innateText) continue;
     out.push({ sourceKey: `base:m${i}`, text, color });
     i += 1;
   }

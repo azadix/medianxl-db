@@ -93,6 +93,7 @@ const HEADER_LINE_RES = [
   /^Required Dexterity:\s*(-?\d+)?$/i,
   /^Item Level:\s*(-?\d+)?$/i,
   /^(Strength|Dexterity) Damage Bonus:/i,
+  /^Innate\s+(Fire|Cold|Lightning|Poison|Magic|Physical|Shadow)\s+Damage:/i,
   /^Socketed\s*\((\d+)\)\s*$/i,
 ];
 
@@ -144,6 +145,7 @@ function isHeaderLine(line) {
  *   damage2hDisplay?: string,
  *   throwDamageDisplay?: string,
  *   block?: string,
+ *   innate?: string,
  *   modifiers: string[],
  * }}
  */
@@ -273,6 +275,21 @@ export function parseItemStats(stats) {
       continue;
     }
     if (/^(Strength|Dexterity) Damage Bonus:/i.test(line)) continue;
+    const innateLine =
+      /^Innate\s+(Fire|Cold|Lightning|Poison|Magic|Physical|Shadow)\s+Damage:\s*(.*)$/i.exec(line);
+    if (innateLine) {
+      const kind = innateLine[1][0].toUpperCase() + innateLine[1].slice(1).toLowerCase();
+      let value = String(innateLine[2] || '').trim();
+      if (!value) {
+        const next = String(lines[i + 1] || '').trim();
+        if (next && /^\(.*\)\s*$/.test(next)) {
+          value = next;
+          i += 1;
+        }
+      }
+      out.innate = value ? `Innate ${kind} Damage: ${value}` : `Innate ${kind} Damage`;
+      continue;
+    }
     const blockLine = /^Chance to Block:\s*(.*)$/i.exec(line);
     if (blockLine) {
       let value = String(blockLine[1] || '').trim();
@@ -400,6 +417,7 @@ export function entryToItemDef(entry, bases) {
   if (parsed.damage2hDisplay) def.damage2hDisplay = parsed.damage2hDisplay;
   if (parsed.throwDamageDisplay) def.throwDamageDisplay = parsed.throwDamageDisplay;
   if (parsed.block) def.block = parsed.block;
+  if (parsed.innate) def.innate = parsed.innate;
 
   if (entry.class) def.group = entry.class;
 
@@ -420,7 +438,7 @@ export function entryToItemDef(entry, bases) {
     if (base.range != null) def.range = base.range;
     if (base.strDamageBonus != null) def.strDamageBonus = base.strDamageBonus;
     if (base.dexDamageBonus != null) def.dexDamageBonus = base.dexDamageBonus;
-    if (base.innate) def.innate = base.innate;
+    if (!def.innate && base.innate) def.innate = base.innate;
     if (base.adds) def.adds = base.adds;
   } else {
     // Fallback so jewelry-like items without a matched base still show in picker

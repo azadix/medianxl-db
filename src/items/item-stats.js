@@ -254,14 +254,14 @@ const RARITY_SUBTITLE_WORD = Object.freeze({
 });
 
 /**
- * Basetype elemental damage (Fire, Cold, …) from `innate` / `adds`.
+ * Basetype elemental damage (Fire, Cold, …) from `adds`.
+ * Innate elemental damage is a different conversion and is not a weapon type.
  * @param {object|null|undefined} def
  * @returns {string}
  */
 export function getItemDamageType(def) {
   if (!def || typeof def !== 'object') return '';
-  const innate = INNATE_DAMAGE_TYPE_RE.exec(String(def.innate || ''));
-  if (innate) return innate[1][0].toUpperCase() + innate[1].slice(1).toLowerCase();
+  if (INNATE_DAMAGE_TYPE_RE.test(String(def.innate || ''))) return '';
   const adds = ADDS_DAMAGE_TYPE_RE.exec(String(def.adds || ''));
   if (adds) return adds[1][0].toUpperCase() + adds[1].slice(1).toLowerCase();
   return '';
