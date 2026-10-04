@@ -2960,5 +2960,29 @@
     "key": "bonus_projectiles_to_flameburst_and_catapult_shot",
     "name": "Bonus Projectiles to Flameburst and Catapult Shot",
     "format": "{value0} Bonus Projectiles to Flameburst and Catapult Shot"
+  },
+  {
+    "id": 406,
+    "key": "enemy_fire_and_lightning_damage",
+    "name": "Enemy Fire and Lightning Damage",
+    "format": "Enemy Fire and Lightning Damage: {value0}%"
+  },
+  {
+    "id": 407,
+    "key": "extra_projectile_per_percent_pmsd",
+    "name": "+1 Extra Projectile per #% Physical Spell Damage",
+    "format": "+1 Extra Projectile per {value0}% Physical Spell Damage"
+  },
+  {
+    "id": 408,
+    "key": "explosion_radius_per_percent_pmsd",
+    "name": "+0.6 yards Explosion Radius per #% Physical Spell Damage",
+    "format": "+0.6 yards Explosion Radius per {value0}% Physical Spell Damage"
+  },
+  {
+    "id": 409,
+    "key": "fire_pierce_to_servants",
+    "name": "Fire Pierce to Servants",
+    "format": "Fire Pierce to Servants: {value0}%"
   }
 ]

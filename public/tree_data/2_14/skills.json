@@ -157,14 +157,25 @@
     "tab": 34,
     "class": "Paladin",
     "tabName": "Warlock",
-    "tags": [],
+    "tags": [
+      "Passive"
+    ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
     "variants": [],
     "scalingConstants": [],
-    "description": [],
+    "description": [
+      "Mastery over the dark arts improves your abilities"
+    ],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "[[mind_flay]]",
+      "+100% Area of Effect",
+      "[[stormlord]]",
+      "+100% to all Attributes",
+      "[[slayer]]",
+      "2% of Maximum Life regenerated per second near phantom"
+    ],
     "image": "icons-pal_134"
   },
   {
@@ -659,11 +670,26 @@
     "tab": 31,
     "class": "Paladin",
     "tabName": "Incarnation",
-    "tags": [],
+    "tags": [
+      "Fire",
+      "Spell"
+    ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
     "variants": [],
     "scalingConstants": [
+      {
+        "statKey": "cooldown",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(150)"
+      },
+      {
+        "statKey": "fire_pierce",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "max(10,min(160,(min(blvl,20)*((3*ulvl)/2))/20))"
+      },
       {
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
@@ -673,9 +699,17 @@
         "value2": "6"
       }
     ],
-    "description": [],
+    "description": [
+      "Summon fiery serpents to incinerate your foes"
+    ],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{cooldown}}",
+      "[[combustion]]",
+      "{{fire_pierce}}",
+      "{{fire_damage}}",
+      "{{mana_cost}}"
+    ],
     "image": "icons-pal_116"
   },
   {
@@ -738,7 +772,9 @@
     "tab": 31,
     "class": "Paladin",
     "tabName": "Incarnation",
-    "tags": [],
+    "tags": [
+      "Upgrade"
+    ],
     "baseMaxLevel": 4,
     "affectedBySpecialization": false,
     "variants": [],
@@ -1032,13 +1068,19 @@
         "statKey": "defense_bonus_multiplier",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "lvl"
+        "value0": "(1+blvl/3)*lvl"
       },
       {
         "statKey": "activation_frequency",
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "3*blvl"
+      },
+      {
+        "statKey": "duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames((ln(7500,750,lvl)*(100+[[continuity]].{{skill_duration}}))/100)"
       }
     ],
     "description": [
@@ -4738,10 +4780,29 @@
     "baseMaxLevel": 5,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
-    "description": [],
+    "scalingConstants": [
+      {
+        "statKey": "extra_projectile_per_percent_pmsd",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "500/max(blvl,1)"
+      },
+      {
+        "statKey": "explosion_radius_per_percent_pmsd",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "550/max(blvl,1)"
+      }
+    ],
+    "description": [
+      "Increases the offensive potency of Annihilation"
+    ],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "[[annihilation]]",
+      "{{extra_projectile_per_percent_pmsd}}",
+      "{{explosion_radius_per_percent_pmsd}}"
+    ],
     "image": "icons-pal_138"
   },
   {
@@ -4787,7 +4848,14 @@
         "statKey": "summoned_minion_life",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "5+15*blvl"
+        "value0": "ln(5,4,blvl)+15*blvl"
+      },
+      {
+        "statKey": "minions",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "Maximum Servants",
+        "value1": "floor(blvl/2)"
       }
     ],
     "description": [
@@ -4796,6 +4864,7 @@
     "restriction": [],
     "skillEffect": [
       "[[servants_of_valor]]",
+      "{{minions}}",
       "{{summoned_minion_life}}"
     ],
     "image": "icons-pal_140"
@@ -6866,7 +6935,10 @@
     "tab": 31,
     "class": "Paladin",
     "tabName": "Incarnation",
-    "tags": [],
+    "tags": [
+      "Spell",
+      "Physical"
+    ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
     "variants": [],
@@ -6880,9 +6952,14 @@
         "value2": "6"
       }
     ],
-    "description": [],
+    "description": [
+      "Shreds the target area with monstrous fangs"
+    ],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{physical_damage}}",
+      "{{mana_cost}}"
+    ],
     "image": "icons-pal_104"
   },
   {
@@ -7042,11 +7119,37 @@
     "tab": 31,
     "class": "Paladin",
     "tabName": "Incarnation",
-    "tags": [],
+    "tags": [
+      "Debuff"
+    ],
     "baseMaxLevel": 8,
     "affectedBySpecialization": true,
     "variants": [],
     "scalingConstants": [
+      {
+        "statKey": "enemy_fire_and_lightning_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "-(4+2*blvl)"
+      },
+      {
+        "statKey": "enemy_fire_resistance",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "-(8+4*blvl)"
+      },
+      {
+        "statKey": "radius",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "range((7*(100+{{fire_spell_damage}})/100))"
+      },
+      {
+        "statKey": "duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(((250*(100+{{fire_spell_damage}})/100)*(100+[[continuity]].{{skill_duration}}))/100)"
+      },
       {
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
@@ -7054,18 +7157,18 @@
         "value0": "35",
         "value1": "20",
         "value2": "7"
-      },
-      {
-        "statKey": "duration",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "frames(((250*(100+{{fire_spell_damage}})/100)*(100+[[continuity]].{{skill_duration}}))/100)"
       }
     ],
-    "description": [],
+    "description": [
+      "Reduces enemy fire resistance and fire damage"
+    ],
     "restriction": [],
     "skillEffect": [
-      "{{duration}}"
+      "{{duration}}",
+      "{{enemy_fire_and_lightning_damage}}",
+      "{{enemy_fire_resistance}}",
+      "{{radius}}",
+      "{{mana_cost}}"
     ],
     "image": "icons-pal_96"
   },
@@ -8769,7 +8872,7 @@
         "statKey": "summoned_minion_damage",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "10+3*min(lvl-1,0)"
+        "value0": "ln(10,3,lvl)"
       }
     ],
     "description": [
@@ -19351,17 +19454,34 @@
         "statKey": "movement_speed",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "-40+[[valiance]]*8"
+        "value0": "min(100,-40+[[valiance]]*8)"
+      },
+      {
+        "statKey": "magic_resistance",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "10"
+      },
+      {
+        "statKey": "defense_flat",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "650*[[ward_of_fate]]"
       }
     ],
     "description": [
       "Applies relevant effects from Ward of Fate and Veneration of Justice"
     ],
-    "restriction": [],
+    "restriction": [
+      "Disables casting Ward of Fate and Veneration of Justice"
+    ],
     "skillEffect": [
       "{{vitality}}",
       "{{energy}}",
-      "{{movement_speed}}"
+      "{{defense_flat}}",
+      "{{movement_speed}}",
+      "{{magic_resistance}}",
+      "{{regenerate_life}}"
     ],
     "image": "icons-pal_152"
   },
@@ -19768,14 +19888,55 @@
     "tab": 30,
     "class": "Paladin",
     "tabName": "Templar",
-    "tags": [],
+    "tags": [
+      "Passive"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
-    "description": [],
+    "scalingConstants": [
+      {
+        "statKey": "innate_elemental_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "10+([[divine_judgement]]*6)/5"
+      },
+      {
+        "statKey": "strength",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "blvl*20"
+      },
+      {
+        "statKey": "dexterity",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "blvl*20"
+      },
+      {
+        "statKey": "life_on_striking",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "[[divine_judgement]]/10"
+      },
+      {
+        "statKey": "weapon_physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "-666"
+      }
+    ],
+    "description": [
+      "Turn from the physical to increase elemental prowess"
+    ],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{weapon_physical_damage}}",
+      "{{innate_elemental_damage}}",
+      "{{strength}}",
+      "{{dexterity}}",
+      "{{life_on_striking}}"
+    ],
     "image": "icons-pal_122"
   },
   {
@@ -19940,23 +20101,36 @@
     "tab": 31,
     "class": "Paladin",
     "tabName": "Incarnation",
-    "tags": [],
+    "tags": [
+      "Passive"
+    ],
     "baseMaxLevel": 4,
     "affectedBySpecialization": false,
     "variants": [],
     "scalingConstants": [
       {
-        "statKey": "mana_cost",
+        "statKey": "fire_spell_damage",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "0",
-        "value1": "0",
-        "value2": "5"
+        "value0": "[[annihilation]]*blvl"
+      },
+      {
+        "statKey": "pmsd",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "[[dragon_jaws]]*blvl"
       }
     ],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
+    "description": [
+      "The power of the light strengthens you in combat"
+    ],
+    "restriction": [
+    ],
+    "skillEffect": [
+      "[[solar_flare]]",
+      "{{fire_spell_damage}}",
+      "{{pmsd}}"
+    ],
     "image": "icons-pal_154"
   },
   {
@@ -20383,13 +20557,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "Servants",
-        "value1": "2+min(blvl/2,5)+floor([[conclave]]/2)"
+        "value1": "min(2+blvl/2,5+min(5,[[conclave]]/2))"
       },
       {
         "statKey": "minions_inherit_proc_chance",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "25",
+        "value0": "20",
         "value1": "Attack/Kill/Death Blow"
       },
       {
@@ -21651,6 +21825,30 @@
         "value0": "frames(750*(1+[[continuity]].{{skill_duration}}/100))"
       },
       {
+        "statKey": "attack_speed",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "((160*lvl*31)/(100*(lvl+50))+14)+2*blvl"
+      },
+      {
+        "statKey": "cast_speed",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "((160*lvl*31)/(100*(lvl+50))+14)+2*blvl"
+      },
+      {
+        "statKey": "hit_recovery",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "((160*lvl*31)/(100*(lvl+50))+14)+2*blvl"
+      },
+      {
+        "statKey": "movement_speed",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "min(ln(30,1,lvl)/2+2*blvl,60)"
+      },
+      {
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
@@ -21660,7 +21858,7 @@
       }
     ],
     "description": [
-      "Temporarily raises all character speeds"
+      "Temporarily speeds up nearby allies"
     ],
     "restriction": [],
     "skillEffect": [
@@ -23165,6 +23363,36 @@
     "variants": [],
     "scalingConstants": [
       {
+        "statKey": "duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames((ln(5000,250,lvl)*(100+[[continuity]].{{skill_duration}}))/100)"
+      },
+      {
+        "statKey": "fire_spell_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "((((blvl+[[grim_presence]]+[[lemures]]+[[blood_thorns]]+[[sanguine_covenant]])*5)/4)+10)"
+      },
+      {
+        "statKey": "cold_spell_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "((((blvl+[[grim_presence]]+[[lemures]]+[[blood_thorns]]+[[sanguine_covenant]])*5)/4)+10)"
+      },
+      {
+        "statKey": "lightning_spell_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "((((blvl+[[mind_flay]]+[[slayer]]+[[tainted_blood]])*5)/4)+10)"
+      },
+      {
+        "statKey": "pmsd",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "((((blvl+[[mind_flay]]+[[slayer]]+[[tainted_blood]])*5)/4)+10)"
+      },
+      {
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",
@@ -23173,10 +23401,20 @@
         "value2": "6"
       }
     ],
-    "description": [],
+    "description": [
+      "Morph into a shadow beast, increasing damage"
+    ],
     "restriction": [],
     "skillEffect": [
-      "{{duration}}"
+      "+1.25% to Fire and Cold Spell Damage per Base Level in active Ritualist skills and Superbeast",
+      "{{fire_spell_damage}}",
+      "{{cold_spell_damage}}",
+      "",
+      "+1.25% to Lightning and Physical/Magic Spell Damage per Base Level in active Warlock skills and Superbeast",
+      "{{lightning_spell_damage}}",
+      "{{pmsd}}",
+      "{{duration}}",
+      "{{mana_cost}}"
     ],
     "image": "icons-pal_84"
   },
@@ -23409,23 +23647,21 @@
     "tab": 34,
     "class": "Paladin",
     "tabName": "Warlock",
-    "tags": [],
+    "tags": [
+      "Upgrade"
+    ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [
-      {
-        "statKey": "mana_cost",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "440",
-        "value1": "20",
-        "value2": "5"
-      }
+    "scalingConstants": [],
+    "description": [
+      "Your Mind Flay is enhanced near your Slayer"
     ],
-    "description": [],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "[[mind_flay]]",
+      "+1 Beam in Slayer's area of effect"
+    ],
     "image": "icons-pal_114"
   },
   {
@@ -24618,14 +24854,28 @@
     "tab": 33,
     "class": "Paladin",
     "tabName": "Ritualist",
-    "tags": [],
+    "tags": [
+      "Upgrade"
+    ],
     "baseMaxLevel": 5,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
-    "description": [],
+    "scalingConstants": [
+      {
+        "statKey": "fire_pierce_to_servants",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "max(10,10*blvl)"
+      }
+    ],
+    "description": [
+      "Grim Presence adds fire pierce to your Servants of Valor"
+    ],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "[[grim_presence]]",
+      "{{fire_pierce_to_servants}}"
+    ],
     "image": "icons-pal_156"
   },
   {
@@ -25575,7 +25825,7 @@
         "statKey": "target_seek_range",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "range(16)"
+        "value0": "range(12)"
       },
       {
         "statKey": "duration",
