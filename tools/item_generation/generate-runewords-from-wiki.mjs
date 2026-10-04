@@ -2,8 +2,8 @@
  * Build 2.14 runeword templates from raw Median XL docs HTML.
  *
  * Usage:
- *   node tools/generate-runewords-from-wiki.mjs [2.14] [--check]
- *   node tools/generate-runewords-from-wiki.mjs 2.14 --from-html path/to/page.html
+ *   node tools/item_generation/generate-runewords-from-wiki.mjs [2.14] [--check]
+ *   node tools/item_generation/generate-runewords-from-wiki.mjs 2.14 --from-html path/to/page.html
  */
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -15,7 +15,7 @@ import {
   parseRunewordsWiki,
 } from './parse-runewords-wiki.mjs';
 
-const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const DEFAULT_VERSION = '2.14';
 const SUPPORTED_FOLDER = '2_14';
 
@@ -101,8 +101,8 @@ function printDiffSummary(previous, next) {
   console.log(`Changes: ${added.length} added, ${removed.length} removed, ${changed.length} updated.`);
 }
 
-async function main() {
-  const args = process.argv.slice(2);
+export async function main(argv = process.argv.slice(2)) {
+  const args = argv;
   const flags = new Set(args.filter((arg) => arg.startsWith('--') && arg !== '--from-html'));
   const fromHtmlIdx = args.indexOf('--from-html');
   const fromHtml = fromHtmlIdx >= 0 ? args[fromHtmlIdx + 1] : '';
@@ -143,7 +143,9 @@ async function main() {
   console.log(`Wrote ${entries.length} runewords -> ${outputPath}`);
 }
 
-main().catch((error) => {
-  console.error(error);
-  process.exit(1);
-});
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  main().catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });
+}

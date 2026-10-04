@@ -3,7 +3,7 @@
  * Keeps <br>-split label/value lines (do not convert the page to markdown).
  */
 
-import { encodeModifierLine, modifierColorFromWikiClass } from '../src/items/item-modifier-line.js';
+import { encodeModifierLine, modifierColorFromWikiClass } from '../../src/items/item-modifier-line.js';
 
 /** @typedef {{ name: string, quality: string, stats: string, type?: string, tier?: number }} UniqueStatsEntry */
 /** @typedef {{ text: string, color: string }} ColoredStatLine */

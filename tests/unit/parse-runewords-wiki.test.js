@@ -10,7 +10,7 @@ import {
   parseRunewordsWiki,
   resolveRunes,
   splitRuneCode,
-} from '../../tools/parse-runewords-wiki.mjs';
+} from '../../tools/item_generation/parse-runewords-wiki.mjs';
 
 const ROOT = resolve(import.meta.dirname, '../..');
 const snippet = readFileSync(resolve(ROOT, 'tests/fixtures/runewords-wiki-snippet.html'), 'utf8');

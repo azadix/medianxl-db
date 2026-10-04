@@ -12,8 +12,8 @@ import { parseSkillBonusFromModifierLine } from '../../src/items/skill-bonus-fro
 import { parseProcFromModifierLine } from '../../src/items/item-procs.js';
 import { parseRequirementsReductionPct } from '../../src/items/item-requirements.js';
 import { buildItemTooltipHtml } from '../../src/items/item-tooltip.js';
-import { parseSacredUniquesWiki } from '../../tools/parse-sacred-uniques-wiki.mjs';
-import { htmlToColoredLines } from '../../tools/parse-tiered-uniques-wiki.mjs';
+import { parseSacredUniquesWiki } from '../../tools/item_generation/parse-sacred-uniques-wiki.mjs';
+import { htmlToColoredLines } from '../../tools/item_generation/parse-tiered-uniques-wiki.mjs';
 
 describe('item modifier color encoding', () => {
   it('encodes orange and grey prefixes', () => {

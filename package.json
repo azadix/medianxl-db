@@ -12,10 +12,7 @@
     "test:data": "vitest run tests/data",
     "spellcheck": "vitest run tests/data/spellcheck.test.js",
     "build:item-icons": "python tools/item_icons/publish_item_icons.py --version 2.14",
-    "unique-stats-db": "node tools/generate-unique-stats-db.mjs",
-    "generate-relics-wiki": "node tools/generate-relics-from-wiki.mjs",
-    "generate-runewords-wiki": "node tools/generate-runewords-from-wiki.mjs",
-    "generate-charms-tsw": "node tools/generate-relics-charms-from-tsw.mjs --charms"
+    "generate:items": "node tools/item_generation/generate.mjs"
   },
   "dependencies": {
     "marked": "^18.0.3",

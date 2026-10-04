@@ -2,7 +2,7 @@
  * Build 2.14 unique and set stat templates from raw Median XL docs HTML.
  *
  * Usage:
- *   node tools/generate-unique-stats-db.mjs [2.14] [--check]
+ *   node tools/item_generation/generate-unique-stats-db.mjs [2.14] [--check]
  */
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -18,7 +18,7 @@ import {
   parseTieredUniquesWiki,
 } from './parse-tiered-uniques-wiki.mjs';
 
-const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const DEFAULT_VERSION = '2.14';
 const SUPPORTED_FOLDER = '2_14';
 const QUALITY_ORDER = new Map([
@@ -194,8 +194,8 @@ function printDiffSummary(previous, next) {
   console.log(`Changes: ${added.length} added, ${removed.length} removed, ${changed.length} updated.`);
 }
 
-async function main() {
-  const args = process.argv.slice(2);
+export async function main(argv = process.argv.slice(2)) {
+  const args = argv;
   const flags = new Set(args.filter((arg) => arg.startsWith('--')));
   const version = args.find((arg) => !arg.startsWith('--')) || DEFAULT_VERSION;
   const folder = versionToFolder(version);
@@ -241,7 +241,9 @@ async function main() {
   console.log(`Wrote ${entries.length} entries -> ${outputPath}`);
 }
 
-main().catch((error) => {
-  console.error(error);
-  process.exit(1);
-});
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  main().catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });
+}

@@ -11,14 +11,27 @@ Each game version folder (`2_12`, `2_13`, `2_14`, …) contains:
 
 The planner loads base/charm/other/relic catalogs and builds unique/set overlays from `unique-stats-db.json`. Runeword templates come from `runewords.json`.
 
+Scripts live in `tools/item_generation/`. One npm command covers them:
+
+```
+npm run generate:items
+npm run generate:items -- --check
+npm run generate:items -- uniques relics runewords charms
+npm run generate:items -- all
+```
+
+Default (no catalog names) refreshes unique-stats, relics, and runewords from
+wiki HTML. Pass catalog names to run a subset. `charms` / `all` also hits the
+TSW API (needs an IP seen in-game within 24h). `--check` parses without writing.
+
 ## Regenerating `unique-stats-db.json`
 
 Fetch the current 2.14 tiered uniques, sacred uniques, and sets from the raw
 Median XL docs HTML:
 
 ```
-npm run unique-stats-db
-node tools/generate-unique-stats-db.mjs 2.14 --check
+npm run generate:items -- uniques
+npm run generate:items -- uniques 2.14 --check
 ```
 
 Only `public/items/2_14/unique-stats-db.json` is written.
@@ -28,8 +41,8 @@ Only `public/items/2_14/unique-stats-db.json` is written.
 From the raw relic wiki HTML:
 
 ```
-npm run generate-relics-wiki
-node tools/generate-relics-from-wiki.mjs 2.14 --check
+npm run generate:items -- relics
+npm run generate:items -- relics 2.14 --check
 ```
 
 The wiki does not render relic names, so the generator matches all cells to the
@@ -42,8 +55,8 @@ Only `public/items/2_14/relics.json` is written.
 From the raw runewords wiki HTML:
 
 ```
-npm run generate-runewords-wiki
-node tools/generate-runewords-from-wiki.mjs 2.14 --check
+npm run generate:items -- runewords
+npm run generate:items -- runewords 2.14 --check
 ```
 
 Only `public/items/2_14/runewords.json` is written. The planner keeps one template per runeword and asks for a compatible grey base when you pick it. Extra sockets past the rune count are filled with empty jewels.
@@ -54,8 +67,8 @@ Charms are the only catalog refreshed from the TSW item API because their docs
 are split across many quest pages:
 
 ```
-npm run generate-charms-tsw
-node tools/generate-relics-charms-from-tsw.mjs 2.14 --charms
+npm run generate:items -- charms
+npm run generate:items -- charms 2.14
 ```
 
 Only `public/items/2_14/charms.json` is written.

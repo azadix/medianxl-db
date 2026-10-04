@@ -3,8 +3,8 @@
  */
 import { describe, expect, it } from 'vitest';
 import { parseItemStats } from '../../src/items/unique-stats-catalog.js';
-import { parseSacredUniquesWiki } from '../../tools/parse-sacred-uniques-wiki.mjs';
-import { parseSetsWiki } from '../../tools/parse-sets-wiki.mjs';
+import { parseSacredUniquesWiki } from '../../tools/item_generation/parse-sacred-uniques-wiki.mjs';
+import { parseSetsWiki } from '../../tools/item_generation/parse-sets-wiki.mjs';
 
 describe('sacred unique wiki parser', () => {
   it('parses base items and section-based jewelry types', () => {

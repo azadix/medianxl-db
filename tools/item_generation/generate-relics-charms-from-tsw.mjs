@@ -13,8 +13,8 @@
  * Run locally only — API requires an IP seen in-game within 24h.
  *
  * Usage:
- *   node tools/generate-relics-charms-from-tsw.mjs [version] [--charms]
- *   npm run generate-charms-tsw
+ *   node tools/item_generation/generate-relics-charms-from-tsw.mjs [version] [--charms]
+ *   npm run generate:items -- charms
  *
  * Defaults to 2.14 charms only.
  */
@@ -24,7 +24,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const ROOT = path.resolve(__dirname, '..');
+const ROOT = path.resolve(__dirname, '../..');
 
 const API_URL = 'https://tsw.vn.cz/stats/api_item.php';
 const REQUEST_DELAY_MS = 1000;
@@ -502,8 +502,8 @@ async function generateCharms(outDir) {
   return out.length;
 }
 
-async function main() {
-  const { version, resume, doRelics, doCharms } = parseArgs(process.argv.slice(2));
+export async function main(argv = process.argv.slice(2)) {
+  const { version, resume, doRelics, doCharms } = parseArgs(argv);
   const folder = versionToFolder(version);
   if (folder !== SUPPORTED_FOLDER) {
     throw new Error(`Only 2.14 item data is available; received ${version}.`);
@@ -525,7 +525,9 @@ async function main() {
   }
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  main().catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
+}

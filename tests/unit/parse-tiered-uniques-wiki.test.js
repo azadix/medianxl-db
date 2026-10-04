@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { parseItemStats } from '../../src/items/unique-stats-catalog.js';
-import { parseTieredUniquesWiki } from '../../tools/parse-tiered-uniques-wiki.mjs';
+import { parseTieredUniquesWiki } from '../../tools/item_generation/parse-tiered-uniques-wiki.mjs';
 
 const ROOT = resolve(import.meta.dirname, '../..');
 const snippet = readFileSync(

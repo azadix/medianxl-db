@@ -7,17 +7,17 @@
  * are refreshed.
  *
  * Usage:
- *   node tools/generate-relics-from-wiki.mjs [version] [--check]
+ *   node tools/item_generation/generate-relics-from-wiki.mjs [version] [--check]
  */
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { encodeModifierLine, modifierLineText } from '../src/items/item-modifier-line.js';
+import { encodeModifierLine, modifierLineText } from '../../src/items/item-modifier-line.js';
 import { htmlToColoredLines } from './parse-tiered-uniques-wiki.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const ROOT = path.resolve(__dirname, '..');
+const ROOT = path.resolve(__dirname, '../..');
 
 export const RELICS_WIKI_URL = 'https://docs.median-xl.com/doc/wiki/relics';
 
@@ -277,8 +277,8 @@ function buildCatalog(previous, matches) {
     .sort((a, b) => String(a.name).localeCompare(String(b.name), 'en'));
 }
 
-async function main() {
-  const args = process.argv.slice(2);
+export async function main(argv = process.argv.slice(2)) {
+  const args = argv;
   const flags = new Set(args.filter((arg) => arg.startsWith('--')));
   const version = args.find((arg) => !arg.startsWith('--')) || DEFAULT_VERSION;
   const folder = versionToFolder(version);

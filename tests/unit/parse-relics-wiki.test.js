@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   matchRelicWikiCells,
   parseRelicWikiCells,
-} from '../../tools/generate-relics-from-wiki.mjs';
+} from '../../tools/item_generation/generate-relics-from-wiki.mjs';
 
 const HTML = `
   <table>

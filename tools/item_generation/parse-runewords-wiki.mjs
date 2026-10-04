@@ -3,7 +3,7 @@
  * Keeps <br>-split stat lines (do not convert the page to markdown).
  */
 
-import { parseItemStats, slugify } from '../src/items/unique-stats-catalog.js';
+import { parseItemStats, slugify } from '../../src/items/unique-stats-catalog.js';
 import {
   formatColoredStatLines,
   htmlToColoredLines,

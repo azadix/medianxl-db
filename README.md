@@ -90,6 +90,7 @@ Python is not required for tests (only for atlas generation / `tools/py/` utilit
 - `src/editor/` - dev-only editor runtime
 - `src/tree/` - planner runtime/render modules (with compatibility facades)
 - `tools/` - build helpers, Python utilities (`tools/py/`), spellcheck, atlas generation
+- `tools/item_generation/` - wiki/TSW item catalog generators
 - `tools/atlas_generation/` - class icon atlas generation scripts
 - `tools/item_icons/` - inventory icon extraction / publish scripts
 - `public/items/<major>_<minor>/` - item catalogs (`baseitems.json`, `charms.json`, `other.json`)
@@ -100,7 +101,8 @@ Python is not required for tests (only for atlas generation / `tools/py/` utilit
 - `npm run lint` - ESLint
 - `npm test` / `npm run test:unit` / `npm run test:data` - Vitest suites
 - `npm run spellcheck` - skill text spelling (`tools/spellcheck/`)
-- `npm run build:item-icons` - publish inventory WebPs to `public/icons/item_icons/`
+- `npm run generate:items` - refresh unique-stats, relics, and runewords from wiki HTML
+- `npm run generate:items -- charms` - refresh charms from the TSW API
 - `python tools/py/validate_skill_placeholders.py public/tree_data/2_13` - validate placeholders
 - `python tools/py/stat_counter_statistics.py public/tree_data/2_13` - placeholder stat usage
 - `python tools/py/diff_skills_vs_docs.py` - compare `skills.json` to mxl-extractor docs
