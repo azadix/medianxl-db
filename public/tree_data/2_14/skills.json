@@ -2132,11 +2132,27 @@
     "tab": 59,
     "class": "Assassin",
     "tabName": "Naginata",
-    "tags": [],
+    "tags": [
+      "Attack",
+      "Magic",
+      "Weapon Damage"
+    ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
     "variants": [],
     "scalingConstants": [
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100"
+      },
+      {
+        "statKey": "converts_phys_to_magic",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "50"
+      },
       {
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
@@ -2144,13 +2160,28 @@
         "value0": "132",
         "value1": "11",
         "value2": "5"
+      },
+      {
+        "statKey": "bonus_magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor(floor((3+3*min(max(lvl-1,0),7)+4*min(max(lvl-8,0),8)+5*min(max(lvl-16,0),6)+6*min(max(lvl-22,0),6)+7*max(lvl-28,0))/2)*(100+(((5*ulvl)/4)*(100+20*blvl))/100)/100)"
       }
     ],
-    "description": [],
+    "description": [
+      "Creates a circle of blades that repel enemies"
+    ],
     "restriction": [
       "Requires a naginata or halberd"
     ],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{weapon_damage}}",
+      "{{converts_phys_to_magic}}",
+      "{{bonus_magic_damage}}",
+      "Enhancement 1: additional ring of blades at character level 90",
+      "Enhancement 2: Ring of blades density +75% at character level 120",
+      "{{mana_cost}}"
+    ],
     "image": "icons-ass_114"
   },
   {
