@@ -1594,14 +1594,6 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "100"
-      },
-      {
-        "statKey": "mana_cost",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0",
-        "value1": "0",
-        "value2": "5"
       }
     ],
     "description": [
@@ -2382,14 +2374,6 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "min(blvl+20,50)"
-      },
-      {
-        "statKey": "mana_cost",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0",
-        "value1": "0",
-        "value2": "5"
       }
     ],
     "description": [
@@ -3159,14 +3143,6 @@
     "affectedBySpecialization": false,
     "variants": [],
     "scalingConstants": [
-      {
-        "statKey": "mana_cost",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0",
-        "value1": "0",
-        "value2": "5"
-      },
       {
         "statKey": "duration",
         "occurrenceIndex": 0,
@@ -5554,14 +5530,6 @@
         "value0": "10"
       },
       {
-        "statKey": "mana_cost",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0",
-        "value1": "0",
-        "value2": "5"
-      },
-      {
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
@@ -7305,14 +7273,6 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "100"
-      },
-      {
-        "statKey": "mana_cost",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0",
-        "value1": "0",
-        "value2": "5"
       }
     ],
     "description": [
@@ -9352,16 +9312,7 @@
         "restriction_override": null
       }
     ],
-    "scalingConstants": [
-      {
-        "statKey": "mana_cost",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0",
-        "value1": "0",
-        "value2": "5"
-      }
-    ],
+    "scalingConstants": [],
     "description": [
       "Calls down a massive pillar of flames from the sky"
     ],
@@ -11081,14 +11032,6 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(15000*(1+[[continuity]].{{skill_duration}}/100))"
-      },
-      {
-        "statKey": "mana_cost",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0",
-        "value1": "0",
-        "value2": "5"
       }
     ],
     "description": [
@@ -14617,14 +14560,6 @@
         "variantKey": "",
         "value0": "8*blvl",
         "value1": "10*blvl"
-      },
-      {
-        "statKey": "mana_cost",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0",
-        "value1": "0",
-        "value2": "5"
       }
     ],
     "description": [
@@ -19186,14 +19121,6 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "15*blvl"
-      },
-      {
-        "statKey": "mana_cost",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0",
-        "value1": "0",
-        "value2": "5"
       }
     ],
     "description": [
@@ -21520,14 +21447,6 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "5+blvl"
-      },
-      {
-        "statKey": "mana_cost",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0",
-        "value1": "0",
-        "value2": "5"
       }
     ],
     "description": [
@@ -24072,14 +23991,6 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "37"
-      },
-      {
-        "statKey": "mana_cost",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0",
-        "value1": "0",
-        "value2": "5"
       }
     ],
     "description": [
@@ -24112,14 +24023,6 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "100"
-      },
-      {
-        "statKey": "mana_cost",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0",
-        "value1": "0",
-        "value2": "5"
       }
     ],
     "description": [
@@ -27029,14 +26932,6 @@
         "value0": "-50"
       },
       {
-        "statKey": "mana_cost",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0",
-        "value1": "0",
-        "value2": "5"
-      },
-      {
         "statKey": "attack_rating",
         "occurrenceIndex": 0,
         "variantKey": "",
@@ -27630,14 +27525,6 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "10+14*blvl+lvl-1"
-      },
-      {
-        "statKey": "mana_cost",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0",
-        "value1": "0",
-        "value2": "5"
       }
     ],
     "description": [
