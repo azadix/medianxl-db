@@ -25,7 +25,30 @@ function defaultRollValue(min, max) {
 /** @type {Readonly<Record<string, string>>} */
 export const OVERLAY_ROLL_KEYS = Object.freeze({
   affixPrefix: 'modAffix:',
+  optionalPrefix: 'modOptional:',
 });
+
+/**
+ * @param {unknown} mod
+ * @returns {mod is { optional: true, text: string }}
+ */
+export function isOptionalModifier(mod) {
+  return Boolean(
+    mod &&
+      typeof mod === 'object' &&
+      !Array.isArray(mod) &&
+      /** @type {{ optional?: unknown }} */ (mod).optional === true &&
+      typeof /** @type {{ text?: unknown }} */ (mod).text === 'string'
+  );
+}
+
+/**
+ * @param {number} index
+ * @returns {string}
+ */
+export function overlayOptionalRollKey(index) {
+  return `${OVERLAY_ROLL_KEYS.optionalPrefix}${index}`;
+}
 
 /**
  * @param {object|null|undefined} def
@@ -120,15 +143,58 @@ export function resolveDefAgainstCatalog(def, catalogById) {
 
 /**
  * @param {object|null|undefined} def
+ * @returns {{ index: number, key: string, text: string }[]}
+ */
+export function getOverlayOptionalModifiers(def) {
+  /** @type {{ index: number, key: string, text: string }[]} */
+  const out = [];
+  if (!def || typeof def !== 'object') return out;
+  let index = 0;
+  for (const mod of Array.isArray(def.modifiers) ? def.modifiers : []) {
+    if (isOptionalModifier(mod)) {
+      out.push({
+        index,
+        key: overlayOptionalRollKey(index),
+        text: mod.text,
+      });
+      index += 1;
+    }
+  }
+  return out;
+}
+
+/**
+ * @param {object|null|undefined} def
+ * @returns {boolean}
+ */
+export function hasOverlayExtras(def) {
+  return getOverlayOptionalModifiers(def).length > 0;
+}
+
+/**
+ * @param {object|null|undefined} def
+ * @param {Record<string, number>|null|undefined} [rolls]
  * @returns {{ sourceKey: string, text: string, color: string }[]}
  */
-export function collectOverlayAffixSources(def) {
-  /** @type {{ sourceKey: string, text: string }[]} */
+export function collectOverlayAffixSources(def, rolls = null) {
+  /** @type {{ sourceKey: string, text: string, color: string }[]} */
   const out = [];
   if (!def || typeof def !== 'object') return out;
   let i = 0;
+  let optionalIndex = 0;
   const innateText = String(def.innate || '').trim();
   for (const mod of Array.isArray(def.modifiers) ? def.modifiers : []) {
+    if (isOptionalModifier(mod)) {
+      const key = overlayOptionalRollKey(optionalIndex);
+      optionalIndex += 1;
+      if (!rolls || !Number(rolls[key])) continue;
+      const text = String(mod.text || '').trim();
+      if (!text) continue;
+      if (innateText && text === innateText) continue;
+      out.push({ sourceKey: `base:m${i}`, text, color: 'magic' });
+      i += 1;
+      continue;
+    }
     if (typeof mod !== 'string' || !mod.trim()) continue;
     const { text, color } = decodeModifierLine(mod);
     if (!text) continue;
@@ -195,7 +261,7 @@ export function buildOverlaySourceRollableStats(source, rolls = null) {
 export function getOverlayRollableStats(def, rolls = null) {
   /** @type {import('@/items/item-stats.js').RollableStat[]} */
   const out = [];
-  for (const source of collectOverlayAffixSources(def)) {
+  for (const source of collectOverlayAffixSources(def, rolls)) {
     out.push(...buildOverlaySourceRollableStats(source, rolls));
   }
   return out;
@@ -209,7 +275,7 @@ export function getOverlayRollableStats(def, rolls = null) {
 export function getOverlayDetailStatRows(def, rolls = null) {
   /** @type {({ kind: 'text', text: string } | { kind: 'roll', stat: import('@/items/item-stats.js').RollableStat })[]} */
   const rows = [];
-  for (const source of collectOverlayAffixSources(def)) {
+  for (const source of collectOverlayAffixSources(def, rolls)) {
     const ranges = parseAffixRanges(source.text);
     if (ranges.length) {
       for (const stat of buildOverlaySourceRollableStats(source, rolls)) {
@@ -231,7 +297,10 @@ export function getOverlayDetailStatRows(def, rolls = null) {
 export function defaultOverlayAffixRolls(def) {
   /** @type {Record<string, number>} */
   const rolls = {};
-  for (const source of collectOverlayAffixSources(def)) {
+  for (const optional of getOverlayOptionalModifiers(def)) {
+    rolls[optional.key] = 0;
+  }
+  for (const source of collectOverlayAffixSources(def, rolls)) {
     parseAffixRanges(source.text).forEach((range, rangeIndex) => {
       rolls[overlayAffixRollKey(source.sourceKey, rangeIndex)] = defaultRollValue(
         range.min,
@@ -252,7 +321,7 @@ export function getOverlayStatLines(def, rolls = null, options = {}) {
   /** @type {string[]} */
   const lines = [];
   const hide = options.hideRollableRanges === true;
-  for (const source of collectOverlayAffixSources(def)) {
+  for (const source of collectOverlayAffixSources(def, rolls)) {
     const text = resolveOverlayAffixText(source.text, source.sourceKey, rolls, hide);
     if (text == null) continue;
     lines.push(encodeModifierLine(text, source.color));

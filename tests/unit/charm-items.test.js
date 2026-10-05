@@ -6,6 +6,9 @@ import {
   getCharmStatLines,
   getCharmUpgradeEntries,
   getCharmDetailStatRows,
+  getCharmClassUpgradeKeys,
+  getCharmTrophyOptions,
+  getParagonHammerConfig,
   resolveCharmBaseModifiers,
   resolveCharmUpgradeModifiers,
   resolveCharmTrophyModifiers,
@@ -106,6 +109,48 @@ describe('charm-items', () => {
     ]);
   });
 
+  it('picks only low or high roll per Bone Chimes version', () => {
+    const chimes = {
+      id: 'ir76',
+      type: 'charm',
+      category: 'charms',
+      keepInInventory: true,
+      reqLevel: 120,
+      modifiers: [
+        'Gives stats based on the sum of your bonus damage to Undead and Demons',
+        {
+          label: 'Version',
+          oneOf: [
+            {
+              label: 'Weapon Physical Damage',
+              low: '30% added as Weapon Physical Damage (Max +150%)',
+              high: '36% added as Weapon Physical Damage (Max +150%)',
+            },
+            {
+              label: 'Innate Elemental Damage',
+              low: '6% added as Innate Elemental Damage',
+              high: '8% added as Innate Elemental Damage',
+            },
+          ],
+        },
+      ],
+    };
+    const defaults = defaultRollsForDef(chimes);
+    expect(defaults.charmPool0).toBe(0);
+    expect(defaults.charmPoolHigh0).toBe(0);
+    expect(resolveCharmBaseModifiers(chimes, defaults)).toContain(
+      '30% added as Weapon Physical Damage (Max +150%)'
+    );
+    expect(resolveCharmBaseModifiers(chimes, { ...defaults, charmPoolHigh0: 1 })).toContain(
+      '36% added as Weapon Physical Damage (Max +150%)'
+    );
+    expect(
+      resolveCharmBaseModifiers(chimes, { ...defaults, charmPool0: 1, charmPoolHigh0: 1 })
+    ).toContain('8% added as Innate Elemental Damage');
+    const rows = getCharmDetailStatRows(chimes, { ...defaults, charmPoolHigh0: 1 });
+    expect(rows.some((row) => row.kind === 'roll')).toBe(false);
+  });
+
   it('exposes one checkbox entry per upgrade step', () => {
     const entries = getCharmUpgradeEntries(riftwalker);
     expect(entries).toHaveLength(3);
@@ -191,6 +236,95 @@ describe('charm-items', () => {
     expect(labels[crush]).toMatch(/^\[Upgrade\]/);
     expect(labels[trophy]).toMatch(/^\[Trophy\]/);
     expect(getCharmDetailStatRows(bag, rolls).at(-1)?.kind).toBe('text');
+  });
+
+  it('uses the current class for Dragon Claw upgrades', () => {
+    const claw = {
+      id: '|dc',
+      type: 'charm',
+      category: 'charms',
+      keepInInventory: true,
+      upgrade: [
+        {
+          amazon: ['+500 to Life'],
+          assassin: ['Maximum Life +5%'],
+          barbarian: ['Weapon Physical Damage +30%'],
+        },
+      ],
+    };
+    expect(getCharmClassUpgradeKeys(claw)).toEqual(['amazon', 'assassin', 'barbarian']);
+    expect(getCharmUpgradeEntries(claw, 'Assassin')[0].affixes).toEqual(['Maximum Life +5%']);
+    expect(getCharmUpgradeEntries(claw, 'Barbarian')[0].affixes).toEqual([
+      'Weapon Physical Damage +30%',
+    ]);
+  });
+
+  it('selects Sleep trophy options and extra awakening', () => {
+    const sleep = {
+      id: 'ths',
+      type: 'charm',
+      category: 'charms',
+      keepInInventory: true,
+      extraAwakening: true,
+      trophyOptions: [
+        { label: 'Legacy of Blood', affixes: ['20% Life stolen per Hit'] },
+        { label: 'The Void', affixes: ['+1% Base Block Chance'] },
+      ],
+    };
+    expect(getCharmTrophyOptions(sleep)).toHaveLength(2);
+    const lines = getCharmStatLines(sleep, 125, {
+      inInventory: true,
+      rolls: { charmTrophyIndex: 1, charmAwakening: 1, charmTrophyIndex2: 2 },
+    });
+    expect(lines).toContain('[Trophy] 20% Life stolen per Hit');
+    expect(lines).toContain('[Awakening] +1% Base Block Chance');
+    expect(
+      getCharmStatLines(sleep, 125, {
+        inInventory: true,
+        rolls: { charmTrophyIndex: 1, charmAwakening: 1, charmTrophyIndex2: 1 },
+      })
+    ).not.toContain('[Awakening] 20% Life stolen per Hit');
+  });
+
+  it('applies Paragon Hammer Justicar and charge-limited upgrades', () => {
+    const hammer = {
+      id: '0u1',
+      type: 'charm',
+      category: 'charms',
+      keepInInventory: true,
+      modifiers: [
+        'Can be upgraded in Heroic Dungeon Quests',
+        'Can be upgraded to unlock a Paragon reward skill',
+        '+1 to All Skills',
+      ],
+      paragonHammer: {
+        regularLimit: 2,
+        regularUpgrades: [
+          { label: 'The Butcher', affixes: ['+2 to All Attributes per Character Level above 130'] },
+          { label: 'Infernal Machine', affixes: ['+3% to Elemental Resists per Character Level above 130'] },
+        ],
+        paragonPaths: [{ label: 'Paragon of Fate', affixes: ['Unlocks Mastery Skill: Paragon of Fate'] }],
+        justicar: {
+          label: 'Justicar',
+          affixes: ['Maximum Elemental Resists +1%'],
+        },
+      },
+    };
+    expect(getParagonHammerConfig(hammer)).not.toBeNull();
+    const lines = getCharmStatLines(hammer, 115, {
+      inInventory: true,
+      rolls: {
+        charmParagonRegular0: 1,
+        charmParagonRegular1: 1,
+        charmParagonPath: 1,
+        charmParagonJusticar: 1,
+      },
+    });
+    expect(lines).not.toContain('Can be upgraded in Heroic Dungeon Quests');
+    expect(lines).not.toContain('Can be upgraded to unlock a Paragon reward skill');
+    expect(lines).toContain('[The Butcher] +2 to All Attributes per Character Level above 130');
+    expect(lines).toContain('[Paragon of Fate] Unlocks Mastery Skill: Paragon of Fate');
+    expect(lines).toContain('[Justicar] Maximum Elemental Resists +1%');
   });
 
 });

@@ -217,6 +217,27 @@ describe('unique-stats-db catalog', () => {
     expect(parsed.sockets).toBe(6);
   });
 
+  it('parses tri-elemental innate as a header', () => {
+    const parsed = parseItemStats(
+      'Required Level: 110\nInnate Tri-Elemental Damage: (40.0% of Dexterity)\n+4 to Amazon Skill Levels\nSocketed (4)'
+    );
+    expect(parsed.innate).toBe('Innate Tri-Elemental Damage: (40.0% of Dexterity)');
+    expect(parsed.modifiers).toEqual(['+4 to Amazon Skill Levels']);
+  });
+
+  it('parses half-chance Cannot Be Frozen as an optional modifier', () => {
+    const split = parseItemStats(
+      'Required Level: 100\nCannot Be Frozen\n(1/2 chance to appear)\nSocketed (6)'
+    );
+    expect(split.modifiers).toContainEqual({ optional: true, text: 'Cannot Be Frozen' });
+    expect(split.modifiers).not.toContain('(1/2 chance to appear)');
+
+    const inline = parseItemStats(
+      'Required Level: 100\nCannot Be Frozen (1/2 chance to appear)\nSocketed (6)'
+    );
+    expect(inline.modifiers).toContainEqual({ optional: true, text: 'Cannot Be Frozen' });
+  });
+
   it('resolves legacy u:name:tu ids to T4', () => {
     const byId = { 'u:grim-fang:tu:4': { id: 'u:grim-fang:tu:4' } };
     expect(resolveCatalogDefId('u:grim-fang:tu', byId)).toBe('u:grim-fang:tu:4');

@@ -1,6 +1,7 @@
 <script setup>
 import ItemIcon from './ItemIcon.vue';
 import CharmExtrasControls from './CharmExtrasControls.vue';
+import OverlayExtrasControls from './OverlayExtrasControls.vue';
 import ItemRollRow from './ItemRollRow.vue';
 import { formatItemOverlayMeta, formatItemRarityBadge } from '@/items/item-stats.js';
 import { formatItemModifierLineHtml } from '@/items/item-granted-oskills.js';
@@ -145,6 +146,12 @@ function modLineClass(row) {
     </section>
 
     <CharmExtrasControls
+      v-if="def"
+      :def="def"
+      :rolls="rolls"
+      @update:rolls="emit('update:rolls', $event)"
+    />
+    <OverlayExtrasControls
       v-if="def"
       :def="def"
       :rolls="rolls"

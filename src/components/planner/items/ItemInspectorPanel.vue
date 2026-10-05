@@ -76,7 +76,9 @@ const itemIcon = computed(() => {
   return itemDef.value?.icon || '';
 });
 
-const className = computed(() => getCharacterInstance()?.className ?? null);
+const className = computed(
+  () => itemsStore.viewerClassName ?? getCharacterInstance()?.className ?? null
+);
 
 const rollOptions = computed(() => ({ className: className.value }));
 

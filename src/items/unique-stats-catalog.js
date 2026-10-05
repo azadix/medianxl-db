@@ -16,6 +16,55 @@
  * }} UniqueStatsEntry
  */
 
+export const INNATE_DAMAGE_LINE_RE =
+  /^Innate\s+(Fire|Cold|Lightning|Poison|Magic|Physical|Shadow|Tri-Elemental)\s+Damage:\s*(.*)$/i;
+
+const OPTIONAL_CHANCE_RE = /^\((\d+)\s*\/\s*(\d+)\s+chance to appear\)\s*$/i;
+const OPTIONAL_CHANCE_SUFFIX_RE = /^(.*?)\s*\((\d+)\s*\/\s*(\d+)\s+chance to appear\)\s*$/i;
+
+/**
+ * @param {string} kind
+ * @returns {string}
+ */
+function formatInnateKind(kind) {
+  const raw = String(kind || '');
+  if (/^tri-elemental$/i.test(raw)) return 'Tri-Elemental';
+  return raw.charAt(0).toUpperCase() + raw.slice(1).toLowerCase();
+}
+
+/**
+ * @param {string|null|undefined} line
+ * @returns {string|null}
+ */
+export function parseInnateDamageLine(line) {
+  const match = INNATE_DAMAGE_LINE_RE.exec(String(line || '').trim());
+  if (!match) return null;
+  const kind = formatInnateKind(match[1]);
+  const value = String(match[2] || '').trim();
+  return value ? `Innate ${kind} Damage: ${value}` : `Innate ${kind} Damage`;
+}
+
+/**
+ * Lift innate damage lines out of modifier lists into `innate`.
+ * @param {unknown[]} modifiers
+ * @returns {{ innate: string|null, modifiers: unknown[] }}
+ */
+export function extractInnateFromModifiers(modifiers) {
+  let innate = null;
+  const rest = [];
+  for (const mod of Array.isArray(modifiers) ? modifiers : []) {
+    if (typeof mod === 'string') {
+      const parsed = parseInnateDamageLine(mod);
+      if (parsed) {
+        innate = parsed;
+        continue;
+      }
+    }
+    rest.push(mod);
+  }
+  return { innate, modifiers: rest };
+}
+
 /**
  * @param {string} text
  * @returns {string}
@@ -275,11 +324,10 @@ export function parseItemStats(stats) {
       continue;
     }
     if (/^(Strength|Dexterity) Damage Bonus:/i.test(line)) continue;
-    const innateLine =
-      /^Innate\s+(Fire|Cold|Lightning|Poison|Magic|Physical|Shadow)\s+Damage:\s*(.*)$/i.exec(line);
-    if (innateLine) {
-      const kind = innateLine[1][0].toUpperCase() + innateLine[1].slice(1).toLowerCase();
-      let value = String(innateLine[2] || '').trim();
+    const innateMatch = INNATE_DAMAGE_LINE_RE.exec(line);
+    if (innateMatch) {
+      const kind = formatInnateKind(innateMatch[1]);
+      let value = String(innateMatch[2] || '').trim();
       if (!value) {
         const next = String(lines[i + 1] || '').trim();
         if (next && /^\(.*\)\s*$/.test(next)) {
@@ -288,6 +336,21 @@ export function parseItemStats(stats) {
         }
       }
       out.innate = value ? `Innate ${kind} Damage: ${value}` : `Innate ${kind} Damage`;
+      continue;
+    }
+    const chanceOnly = OPTIONAL_CHANCE_RE.exec(line);
+    if (chanceOnly) {
+      const prev = out.modifiers[out.modifiers.length - 1];
+      if (typeof prev === 'string' && prev.trim()) {
+        out.modifiers[out.modifiers.length - 1] = { optional: true, text: prev };
+      } else if (prev && typeof prev === 'object' && prev.text) {
+        prev.optional = true;
+      }
+      continue;
+    }
+    const chanceSuffix = OPTIONAL_CHANCE_SUFFIX_RE.exec(line);
+    if (chanceSuffix && chanceSuffix[1].trim()) {
+      out.modifiers.push({ optional: true, text: chanceSuffix[1].trim() });
       continue;
     }
     const blockLine = /^Chance to Block:\s*(.*)$/i.exec(line);

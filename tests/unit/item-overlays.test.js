@@ -12,6 +12,7 @@ import {
   countEquippedSetPieces,
   resolveSetBonuses,
   overlayAffixRollKey,
+  overlayOptionalRollKey,
   hasDuplicateEquippedSetItem,
 } from '@/items/item-overlays.js';
 import { defaultRollsForDef, mergeRollsForDef, getItemDetailStatRows } from '@/items/item-stats.js';
@@ -108,6 +109,21 @@ describe('overlay affix rolls', () => {
     const saved = { [overlayAffixRollKey('base:m0', 0)]: 3 };
     const merged = mergeRollsForDef(grimFang, saved);
     expect(merged[overlayAffixRollKey('base:m0', 0)]).toBe(3);
+  });
+
+  it('toggles optional Cannot Be Frozen from rolls', () => {
+    const candlewake = {
+      id: 'u:candlewake:su',
+      name: 'Candlewake',
+      rarity: 'unique',
+      uniqueKind: 'su',
+      modifiers: [{ optional: true, text: 'Cannot Be Frozen' }, '+(150 to 200)% Enhanced Defense'],
+    };
+    const defaults = defaultOverlayAffixRolls(candlewake);
+    expect(defaults[overlayOptionalRollKey(0)]).toBe(0);
+    expect(getOverlayStatLines(candlewake, defaults)).not.toContain('Cannot Be Frozen');
+    const enabled = { ...defaults, [overlayOptionalRollKey(0)]: 1 };
+    expect(getOverlayStatLines(candlewake, enabled)).toContain('Cannot Be Frozen');
   });
 });
 

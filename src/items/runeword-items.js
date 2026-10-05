@@ -4,7 +4,7 @@
  */
 
 import { resolveItemDef } from '@/items/item-overlays.js';
-import { slugify } from '@/items/unique-stats-catalog.js';
+import { extractInnateFromModifiers, slugify } from '@/items/unique-stats-catalog.js';
 
 export const EMPTY_JEWEL_ID = 'jew';
 
@@ -277,6 +277,9 @@ export function runewordEntryToItemDef(entry) {
     invWidth: 2,
     invHeight: 2,
   };
+  const extracted = extractInnateFromModifiers(def.modifiers);
+  def.modifiers = extracted.modifiers.map(String);
+  if (extracted.innate) def.innate = extracted.innate;
   if (entry.classRestriction) def.classRestriction = entry.classRestriction;
   return def;
 }

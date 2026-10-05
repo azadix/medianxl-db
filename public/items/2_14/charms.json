@@ -42,8 +42,41 @@
     "reqLevel": 120,
     "modifiers": [
       "Gives stats based on the sum of your bonus damage to Undead and Demons",
-      "30% added as Weapon Physical Damage (Max +150%)",
-      "Current Bonus: 1%"
+      {
+        "label": "Version",
+        "oneOf": [
+          {
+            "label": "Weapon Physical Damage",
+            "low": "30% added as Weapon Physical Damage",
+            "high": "36% added as Weapon Physical Damage"
+          },
+          {
+            "label": "Innate Elemental Damage",
+            "low": "6% added as Innate Elemental Damage",
+            "high": "8% added as Innate Elemental Damage"
+          },
+          {
+            "label": "Physical / Magical Spell Damage",
+            "low": "15% added as Physical/Magic Spell Damage",
+            "high": "18% added as Physical/Magic Spell Damage"
+          },
+          {
+            "label": "Fire / Lightning Spell Damage",
+            "low": "15% added as Fire/Lightning Spell Damage",
+            "high": "18% added as Fire/Lightning Spell Damage"
+          },
+          {
+            "label": "Cold / Poison Spell Damage",
+            "low": "15% added as Cold/Poison Spell Damage",
+            "high": "18% added as Cold/Poison Spell Damage"
+          },
+          {
+            "label": "Magic Find",
+            "low": "10% added as Magic Find",
+            "high": "12% added as Magic Find"
+          }
+        ]
+      }
     ]
   },
   {
@@ -255,6 +288,9 @@
           "+50 Spell Focus"
         ]
       }
+    ],
+    "trophy": [
+      "+10% to Experience Gained"
     ]
   },
   {
@@ -265,7 +301,93 @@
     "icon": "invdulra",
     "reqLevel": 140,
     "modifiers": [
-      "Cube with perfect gems to add or roll stats"
+      "Cube with perfect gems to add or roll stats",
+      {
+        "label": "Perfect Ruby",
+        "oneOf": [
+          "(none)",
+          "+1 to Amazon Skill Levels",
+          "+1 to Assassin Skill Levels",
+          "+1 to Barbarian Skill Levels",
+          "+1 to Druid Skill Levels",
+          "+1 to Necromancer Skill Levels",
+          "+1 to Paladin Skill Levels",
+          "+1 to Sorceress Skill Levels"
+        ]
+      },
+      {
+        "label": "Perfect Emerald",
+        "oneOf": [
+          "(none)",
+          "+20% Attack Speed",
+          "+20% Cast Speed",
+          "+30% Block Speed",
+          "+30% Movement Speed",
+          "+5% Movement Speed"
+        ]
+      },
+      {
+        "label": "Perfect Sapphire",
+        "oneOf": [
+          "(none)",
+          "-5% to Enemy Fire Resistance",
+          "-5% to Enemy Cold Resistance",
+          "-5% to Enemy Lightning Resistance",
+          "-5% to Enemy Poison Resistance"
+        ]
+      },
+      {
+        "label": "Perfect Topaz",
+        "oneOf": [
+          "(none)",
+          "+30 to Strength",
+          "+30 to Dexterity",
+          "+30 to Vitality",
+          "+30 to Energy"
+        ]
+      },
+      {
+        "label": "Perfect Amethyst",
+        "oneOf": [
+          "(none)",
+          "Fire Resist +40%",
+          "Cold Resist +40%",
+          "Lightning Resist +40%",
+          "Poison Resist +40%",
+          "Physical Resist +4%",
+          "Magic Resist +4%"
+        ]
+      },
+      {
+        "label": "Perfect Diamond",
+        "oneOf": [
+          "(none)",
+          "Maximum Fire Resist +2%",
+          "Maximum Cold Resist +2%",
+          "Maximum Lightning Resist +2%",
+          "Maximum Poison Resist +2%"
+        ]
+      },
+      {
+        "label": "Perfect Skull",
+        "oneOf": [
+          "(none)",
+          "+30% to Summoned Minion Damage",
+          "+120% to Summoned Minion Attack Rating",
+          "+80% to Summoned Minion Life",
+          "+20% to Summoned Minion Resistance"
+        ]
+      }
+    ],
+    "upgrades": [
+      {
+        "label": "Dulra Fruit",
+        "affixes": [
+          "+1 to All Skills",
+          "Maximum Life +5%",
+          "25% Magic Find"
+        ]
+      }
     ]
   },
   {
@@ -411,7 +533,14 @@
     "modifiers": [
       "+(11 to 25)% Bonus to Summoned Edyrem Life",
       "+20 Life Regenerated per Second",
-      "Maximum Lightning Resist +1%",
+      {
+        "oneOf": [
+          "Maximum Fire Resist +1%",
+          "Maximum Lightning Resist +1%",
+          "Maximum Cold Resist +1%",
+          "Maximum Poison Resist +1%"
+        ]
+      },
       "Elemental Resists +10%"
     ]
   },
@@ -488,10 +617,61 @@
     "reqLevel": 115,
     "modifiers": [
       "Can be upgraded in Heroic Dungeon Quests",
-      "Charges: 2",
       "Can be upgraded to unlock a Paragon reward skill",
       "+1 to All Skills"
-    ]
+    ],
+    "paragonHammer": {
+      "regularLimit": 2,
+      "regularUpgrades": [
+        {
+          "id": "butcher",
+          "label": "The Butcher",
+          "affixes": [
+            "+2 to All Attributes per Character Level above 130",
+            "+3% to Magic Find per Character Level above 130"
+          ]
+        },
+        {
+          "id": "infernal",
+          "label": "Infernal Machine",
+          "affixes": [
+            "+2% to Summoned Minion Resistances per Character Level above 130",
+            "+3% to Elemental Resists per Character Level above 130"
+          ]
+        },
+        {
+          "id": "projector",
+          "label": "Death Projector",
+          "affixes": [
+            "+1% Maximum Mana per Character Level above 130",
+            "Regenerate mana +2% per Character Level above 130"
+          ]
+        }
+      ],
+      "paragonPaths": [
+        {
+          "id": "fate",
+          "label": "Paragon of Fate",
+          "affixes": [
+            "Unlocks Mastery Skill: Paragon of Fate"
+          ]
+        },
+        {
+          "id": "sanctity",
+          "label": "Paragon of Sanctity",
+          "affixes": [
+            "Unlocks Mastery Skill: Paragon of Sanctity"
+          ]
+        }
+      ],
+      "justicar": {
+        "label": "Justicar",
+        "hint": "Requires at least 36 affixes from Rare/Crafted/Magic items",
+        "affixes": [
+          "Maximum Elemental Resists +1%"
+        ]
+      }
+    }
   },
   {
     "id": "ktzx",
@@ -625,11 +805,14 @@
       "Cold Resist +(21 to 25)%"
     ],
     "upgrades": [
-      [
-        "-(2 to 5)% to All Enemy Resistances",
-        "3% Chance of Crushing Blow",
-        "+(-3 to 5) to Light Radius"
-      ]
+      {
+        "label": "Sunless Crystal Bird",
+        "affixes": [
+          "-(2 to 5)% to All Enemy Resistances",
+          "3% Chance of Crushing Blow",
+          "+(-3 to 5) to Light Radius"
+        ]
+      }
     ]
   },
   {
@@ -846,6 +1029,168 @@
       "Maximum Lightning Resist +(0 to 1)%",
       "Maximum Cold Resist +(0 to 1)%",
       "Maximum Poison Resist +(0 to 1)%"
+    ],
+    "extraAwakening": true,
+    "trophyOptions": [
+      {
+        "label": "Legacy of Blood",
+        "affixes": [
+          "20% Mana stolen per Hit",
+          "20% Life stolen per Hit",
+          "+25 to all Attributes"
+        ]
+      },
+      {
+        "label": "The Veiled Prophet",
+        "affixes": [
+          "+50 Spell Focus",
+          "+5% Bonus to Spell Focus",
+          "+50 Energy"
+        ]
+      },
+      {
+        "label": "Heart of Sin",
+        "affixes": [
+          "+100 Life Regenerated per Second",
+          "5% Max Life",
+          "Cannot Be Frozen"
+        ]
+      },
+      {
+        "label": "Tran Athulua",
+        "affixes": [
+          "100% Bonus to Attack Rating",
+          "+750 Attack Rating",
+          "Physical Damage Reduced by 50"
+        ]
+      },
+      {
+        "label": "Judgement Day",
+        "affixes": [
+          "+50% to Summoned Minion Life",
+          "+25% to Summoned Minion Damage",
+          "+20% to Summoned Minion Resistances"
+        ]
+      },
+      {
+        "label": "Quov Tsin",
+        "affixes": [
+          "+20% Bonus Elemental Damage to Bloodlust",
+          "Elemental Resists +20%",
+          "Elemental/Magic Damage Reduced by 20"
+        ]
+      },
+      {
+        "label": "Kingdom of Shadow",
+        "affixes": [
+          "20% Movement Speed",
+          "50% Hit Recovery",
+          "50% Block Speed",
+          "+20 Maximum Stamina"
+        ]
+      },
+      {
+        "label": "Banisher of Light",
+        "affixes": [
+          "-15% to Enemy Elemental Resistances",
+          "+50% Bonus to Poison Skill Duration"
+        ]
+      },
+      {
+        "label": "The Triune",
+        "affixes": [
+          "Adds 10-20 damage",
+          "10% to All Attributes"
+        ]
+      },
+      {
+        "label": "Duncraig",
+        "affixes": [
+          "+60% Damage to Demons",
+          "+60% Damage to Undead",
+          "+75 Life on Attack",
+          "+75 Mana on Attack"
+        ]
+      },
+      {
+        "label": "Eve of Destruction",
+        "affixes": [
+          "Weapon Physical Damage +40%",
+          "Regenerate Mana +50%",
+          "+10% to Experience Gained"
+        ]
+      },
+      {
+        "label": "Lord of Lies",
+        "affixes": [
+          "+250 to Life",
+          "+250 to Mana",
+          "50% Gold Find",
+          "-20% to All Vendor Prices"
+        ]
+      },
+      {
+        "label": "Ghosts of Old Bremmtown",
+        "affixes": [
+          "+15% Move Speed",
+          "6% Avoid"
+        ]
+      },
+      {
+        "label": "Yshari Sanctum",
+        "affixes": [
+          "+25% to Spell Damage",
+          "Maximum Mana 10%",
+          "+20 All Attributes"
+        ]
+      },
+      {
+        "label": "Xazax",
+        "affixes": [
+          "10% Chance of Crushing Blow",
+          "Poison Length Reduced by 25%",
+          "50% Magic Find"
+        ]
+      },
+      {
+        "label": "Astrogha",
+        "affixes": [
+          "+2 to All Skills",
+          "Slow Target 20%",
+          "30% Curse Length Reduction"
+        ]
+      },
+      {
+        "label": "Viz-jun",
+        "affixes": [
+          "+1500 Defense",
+          "Physical Resist 5%",
+          "50% Bonus to Defense"
+        ]
+      },
+      {
+        "label": "The Void",
+        "affixes": [
+          "Teleport Cooldown Reduced by 1 second",
+          "+1% Base Block Chance",
+          "+5 to Light Radius"
+        ]
+      },
+      {
+        "label": "Nephalem's Sacrifice",
+        "affixes": [
+          "15% Innate Elemental Damage",
+          "10% All Attributes"
+        ]
+      },
+      {
+        "label": "Archbishop Lazarus",
+        "affixes": [
+          "50% Combat Speeds",
+          "Maximum Life +5%",
+          "Magic Resist +5%"
+        ]
+      }
     ]
   },
   {
@@ -858,7 +1203,20 @@
     "modifiers": [
       "Cube with Essence/Runestone to Roll Stat",
       "+10% to Spell Damage",
+      "+(-48 to 80) to Strength",
+      "+(-48 to 80) to Dexterity",
+      "+(-48 to 80) to Vitality",
+      "+(-48 to 80) to Energy",
       "Essence Slots: 16"
+    ],
+    "upgrades": [
+      {
+        "label": "Ghost Trance",
+        "affixes": [
+          "+1 to All Skills",
+          "+(8 to 32) to all Attributes"
+        ]
+      }
     ]
   },
   {
@@ -876,6 +1234,16 @@
       "with unlocked Dimensional Alchemy",
       "and a Greater Signet of Learning to open",
       "a portal to the Heart of Darkness"
+    ],
+    "upgrades": [
+      {
+        "label": "Champion of Sanctuary",
+        "affixes": [
+          "Champion of Sanctuary",
+          "-5% to Enemy Elemental Resistances",
+          "Maximum Life +5%"
+        ]
+      }
     ]
   },
   {
