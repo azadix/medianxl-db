@@ -21,6 +21,7 @@ import {
 } from '@/items/runeword-items.js';
 import { isOverlayItem, formatOverlayBadge } from '@/items/item-overlays.js';
 import { canEquipInSlot } from '@/items/item-types.js';
+import { getItemStatSections } from '@/items/item-stats.js';
 
 describe('relic helpers', () => {
   const relic = {
@@ -374,5 +375,41 @@ describe('runeword helpers', () => {
     expect(formatRunewordSocketFillerLines(merged)).toEqual([
       'Sockets: Jewel, Jewel, Jewel, Eld Rune',
     ]);
+  });
+
+  it('lifts runeword innate damage into the header', () => {
+    const template = runewordEntryToItemDef({
+      id: 'rw:askari-device',
+      name: 'Askari Device',
+      runes: ['Taha', 'Yst'],
+      reqLevel: 110,
+      allowedTypes: ['Amazon Javelins'],
+      modifiers: [
+        'Innate Tri-Elemental Damage: (40.0% of Dexterity)',
+        '+4 to Amazon Skill Levels',
+        '(15 to 20)% Innate Elemental Damage',
+      ],
+    });
+    expect(template.innate).toBe('Innate Tri-Elemental Damage: (40.0% of Dexterity)');
+    expect(template.modifiers).not.toContain('Innate Tri-Elemental Damage: (40.0% of Dexterity)');
+    const base = {
+      id: 'jav-s',
+      name: 'Maiden Javelin (Sacred)',
+      rarity: 'normal',
+      category: 'weapons',
+      group: 'Amazon Javelins',
+      slot: 'arms',
+      sockets: 4,
+      dexDamageBonus: 0.15,
+      icon: 'invjav',
+      type: 'jave',
+    };
+    const merged = mergeRunewordWithBase(template, base);
+    expect(merged.innate).toBe('Innate Tri-Elemental Damage: (40.0% of Dexterity)');
+    expect(merged.dexDamageBonus).toBe(0.15);
+    const sections = getItemStatSections(merged);
+    expect(sections.scaling).toContain('Dexterity Damage Bonus: (0.15 per Dexterity)%');
+    expect(sections.scaling).toContain('Innate Tri-Elemental Damage: (40.0% of Dexterity)');
+    expect(sections.mods.some((line) => /Innate Tri-Elemental/.test(line))).toBe(false);
   });
 });

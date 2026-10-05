@@ -5,7 +5,12 @@
 
 import { decodeModifierLine } from '@/items/item-modifier-line.js';
 import { resolveCatalogRowBySkillRef } from '@/character/planner-build-io.js';
-import { isCharmItem, isModifierPool } from '@/items/charm-items.js';
+import {
+  isCharmItem,
+  isModifierPool,
+  normalizeCharmPoolOption,
+  charmPoolOptionTexts,
+} from '@/items/charm-items.js';
 import { formatOverlayBadge } from '@/items/item-overlays.js';
 import { isRelicItem } from '@/items/relic-items.js';
 import { isRunewordItem } from '@/items/runeword-items.js';
@@ -145,8 +150,9 @@ export function flattenModifierLines(modifiers) {
     }
     if (isModifierPool(mod)) {
       for (const opt of mod.oneOf) {
-        const text = String(opt || '').trim();
-        if (text) out.push(text);
+        for (const text of charmPoolOptionTexts(normalizeCharmPoolOption(opt))) {
+          if (text) out.push(text);
+        }
       }
     }
   }

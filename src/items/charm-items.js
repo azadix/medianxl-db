@@ -15,13 +15,23 @@ import { defaultRollValue } from '@/items/item-stats.js';
 export const CHARM_ROLL_KEYS = Object.freeze({
   upgradePrefix: 'charmUpgrade',
   trophy: 'charmTrophy',
+  trophyIndex: 'charmTrophyIndex',
+  trophyIndex2: 'charmTrophyIndex2',
+  awakening: 'charmAwakening',
   poolPrefix: 'charmPool',
+  poolHighPrefix: 'charmPoolHigh',
   affixPrefix: 'charmAffix:',
+  paragonRegularPrefix: 'charmParagonRegular',
+  paragonPath: 'charmParagonPath',
+  paragonJusticar: 'charmParagonJusticar',
 });
+
+const NONE_POOL_OPTION = '(none)';
 
 /**
  * @typedef {{ index: number, key: string, label: string, affixes: string[] }} CharmUpgradeEntry
  * @typedef {{ key: string, label: string, affixes: string[] }} CharmTrophyEntry
+ * @typedef {{ label: string, affixes: string[] }} CharmTrophyOption
  * @typedef {{ sourceKey: string, text: string, prefix: string }} CharmAffixSource
  */
 
@@ -35,8 +45,86 @@ export function charmAffixRollKey(sourceKey, rangeIndex) {
 }
 
 /**
+ * @param {number} poolIndex
+ * @param {number} optionIndex
+ * @returns {string}
+ */
+export function charmPoolOptionSourceKey(poolIndex, optionIndex) {
+  return `base:p${poolIndex}:o${optionIndex}`;
+}
+
+/**
+ * @param {number} poolIndex
+ * @returns {string}
+ */
+export function charmPoolHighRollKey(poolIndex) {
+  return `${CHARM_ROLL_KEYS.poolHighPrefix}${poolIndex}`;
+}
+
+/**
+ * @typedef {{ label: string, text?: string, low?: string, high?: string }} CharmPoolOption
+ */
+
+/**
+ * @param {unknown} opt
+ * @returns {CharmPoolOption}
+ */
+export function normalizeCharmPoolOption(opt) {
+  if (typeof opt === 'string') {
+    return { label: opt, text: opt };
+  }
+  if (opt && typeof opt === 'object' && !Array.isArray(opt)) {
+    const rec = /** @type {{ label?: unknown, low?: unknown, high?: unknown, text?: unknown }} */ (opt);
+    const low = typeof rec.low === 'string' ? rec.low.trim() : '';
+    const high = typeof rec.high === 'string' ? rec.high.trim() : '';
+    if (low && high) {
+      const label =
+        typeof rec.label === 'string' && rec.label.trim() ? rec.label.trim() : low;
+      return { label, low, high };
+    }
+    const text = typeof rec.text === 'string' && rec.text.trim() ? rec.text.trim() : '';
+    if (text) {
+      const label =
+        typeof rec.label === 'string' && rec.label.trim() ? rec.label.trim() : text;
+      return { label, text };
+    }
+  }
+  const fallback = String(opt ?? '');
+  return { label: fallback, text: fallback };
+}
+
+/**
+ * @param {CharmPoolOption} option
+ * @returns {string[]}
+ */
+export function charmPoolOptionTexts(option) {
+  if (option.low && option.high) return [option.low, option.high];
+  return option.text ? [option.text] : [];
+}
+
+/**
+ * @param {CharmPoolOption} option
+ * @param {boolean} high
+ * @returns {string}
+ */
+export function resolveCharmPoolOptionText(option, high) {
+  if (option.low && option.high) return high ? option.high : option.low;
+  return option.text || option.label || '';
+}
+
+/**
+ * @param {'Low'|'High'} kind
+ * @param {string} affix
+ * @returns {string}
+ */
+export function formatCharmPoolRollButton(kind, affix) {
+  const match = /^(\d+)\s*%/.exec(String(affix || ''));
+  return match ? `${kind} Roll (${match[1]}%)` : `${kind} Roll`;
+}
+
+/**
  * @param {unknown} mod
- * @returns {mod is { oneOf: string[] }}
+ * @returns {mod is { oneOf: unknown[] }}
  */
 export function isModifierPool(mod) {
   return Boolean(
@@ -46,6 +134,58 @@ export function isModifierPool(mod) {
       Array.isArray(/** @type {{ oneOf?: unknown }} */ (mod).oneOf) &&
       /** @type {{ oneOf: unknown[] }} */ (mod).oneOf.length > 0
   );
+}
+
+/**
+ * @param {unknown} step
+ * @param {number} index
+ * @returns {CharmUpgradeEntry|null}
+ */
+function normalizeUpgradeStep(step, index) {
+  if (Array.isArray(step)) {
+    return {
+      index,
+      key: `${CHARM_ROLL_KEYS.upgradePrefix}${index}`,
+      label: `Upgrade ${index + 1}`,
+      affixes: step.map((m) => String(m)),
+    };
+  }
+  if (step && typeof step === 'object' && Array.isArray(/** @type {{ affixes?: unknown }} */ (step).affixes)) {
+    const labeled = /** @type {{ label?: unknown, affixes: unknown[] }} */ (step);
+    return {
+      index,
+      key: `${CHARM_ROLL_KEYS.upgradePrefix}${index}`,
+      label: String(labeled.label || `Upgrade ${index + 1}`),
+      affixes: labeled.affixes.map((m) => String(m)),
+    };
+  }
+  return null;
+}
+
+/**
+ * @param {object|null|undefined} def
+ * @returns {Record<string, string[]>|null}
+ */
+export function getCharmClassUpgradeMap(def) {
+  if (!def || !Array.isArray(def.upgrade) || !def.upgrade.length) return null;
+  const first = def.upgrade[0];
+  if (!first || typeof first !== 'object' || Array.isArray(first)) return null;
+  if (Array.isArray(/** @type {{ affixes?: unknown }} */ (first).affixes)) return null;
+  /** @type {Record<string, string[]>} */
+  const out = {};
+  for (const [key, value] of Object.entries(first)) {
+    if (Array.isArray(value)) out[key] = value.map((m) => String(m));
+  }
+  return Object.keys(out).length ? out : null;
+}
+
+/**
+ * @param {object|null|undefined} def
+ * @returns {string[]}
+ */
+export function getCharmClassUpgradeKeys(def) {
+  const map = getCharmClassUpgradeMap(def);
+  return map ? Object.keys(map) : [];
 }
 
 /**
@@ -120,21 +260,18 @@ export function getCharmUpgradeEntries(def, className = null) {
   if (!def || typeof def !== 'object') return [];
 
   if (Array.isArray(def.upgrades) && def.upgrades.length) {
-    return def.upgrades.map((step, index) => ({
-      index,
-      key: `${CHARM_ROLL_KEYS.upgradePrefix}${index}`,
-      label: `Upgrade ${index + 1}`,
-      affixes: Array.isArray(step) ? step.map((m) => String(m)) : [],
-    }));
+    return def.upgrades
+      .map((step, index) => normalizeUpgradeStep(step, index))
+      .filter((entry) => entry != null);
   }
 
   if (!Array.isArray(def.upgrade) || !def.upgrade.length) return [];
 
-  const first = def.upgrade[0];
-  if (first && typeof first === 'object' && !Array.isArray(first)) {
-    const classKey = classNameToUpgradeKey(className);
-    const affixes =
-      classKey && Array.isArray(first[classKey]) ? first[classKey].map((m) => String(m)) : [];
+  const classMap = getCharmClassUpgradeMap(def);
+  if (classMap) {
+    const keys = Object.keys(classMap);
+    const classKey = classNameToUpgradeKey(className) || keys[0];
+    const affixes = classKey && Array.isArray(classMap[classKey]) ? classMap[classKey] : [];
     return [
       {
         index: 0,
@@ -170,6 +307,55 @@ export function getCharmTrophyEntry(def) {
 
 /**
  * @param {object|null|undefined} def
+ * @returns {CharmTrophyOption[]}
+ */
+export function getCharmTrophyOptions(def) {
+  if (!def || !Array.isArray(def.trophyOptions)) return [];
+  return def.trophyOptions
+    .map((opt) => {
+      if (!opt || typeof opt !== 'object') return null;
+      const label = String(opt.label || '').trim();
+      const affixes = Array.isArray(opt.affixes) ? opt.affixes.map((m) => String(m)) : [];
+      if (!label) return null;
+      return { label, affixes };
+    })
+    .filter((opt) => opt != null);
+}
+
+/**
+ * @param {object|null|undefined} def
+ * @returns {boolean}
+ */
+export function hasCharmExtraAwakening(def) {
+  return Boolean(def && def.extraAwakening);
+}
+
+/**
+ * @param {object|null|undefined} def
+ * @returns {object|null}
+ */
+export function getParagonHammerConfig(def) {
+  if (!def || typeof def.paragonHammer !== 'object' || !def.paragonHammer) return null;
+  return def.paragonHammer;
+}
+
+/**
+ * @param {object|null|undefined} def
+ * @param {Record<string, number>|null|undefined} rolls
+ * @returns {number}
+ */
+export function countParagonRegularUpgrades(def, rolls = null) {
+  const cfg = getParagonHammerConfig(def);
+  const list = Array.isArray(cfg?.regularUpgrades) ? cfg.regularUpgrades : [];
+  let n = 0;
+  for (let i = 0; i < list.length; i++) {
+    if (Number(rolls?.[`${CHARM_ROLL_KEYS.paragonRegularPrefix}${i}`])) n += 1;
+  }
+  return n;
+}
+
+/**
+ * @param {object|null|undefined} def
  * @returns {boolean}
  */
 export function hasCharmUpgrade(def) {
@@ -189,23 +375,31 @@ export function hasCharmTrophy(def) {
  * @returns {boolean}
  */
 export function hasCharmExtras(def) {
-  return hasCharmUpgrade(def) || hasCharmTrophy(def) || getCharmModifierPools(def).length > 0;
+  return (
+    hasCharmUpgrade(def) ||
+    hasCharmTrophy(def) ||
+    getCharmModifierPools(def).length > 0 ||
+    getCharmTrophyOptions(def).length > 0 ||
+    getParagonHammerConfig(def) != null
+  );
 }
 
 /**
  * @param {object|null|undefined} def
- * @returns {{ poolIndex: number, options: string[] }[]}
+ * @returns {{ poolIndex: number, options: CharmPoolOption[], label: string }[]}
  */
 export function getCharmModifierPools(def) {
   const mods = Array.isArray(def?.modifiers) ? def.modifiers : [];
-  /** @type {{ poolIndex: number, options: string[] }[]} */
+  /** @type {{ poolIndex: number, options: CharmPoolOption[], label: string }[]} */
   const pools = [];
   let poolIndex = 0;
   for (const mod of mods) {
     if (isModifierPool(mod)) {
+      const label = typeof mod.label === 'string' && mod.label.trim() ? mod.label.trim() : 'Modifier choice';
       pools.push({
         poolIndex,
-        options: mod.oneOf.map((opt) => String(opt)),
+        options: mod.oneOf.map((opt) => normalizeCharmPoolOption(opt)),
+        label,
       });
       poolIndex += 1;
     }
@@ -224,23 +418,39 @@ export function collectCharmAffixSources(def, rolls = null, className = null) {
   const out = [];
   if (!def || typeof def !== 'object') return out;
 
+  const paragon = getParagonHammerConfig(def);
+  const regularUsed = countParagonRegularUpgrades(def, rolls);
+  const paragonPath = Number(rolls?.[CHARM_ROLL_KEYS.paragonPath]) || 0;
+  const regularLimit = Number(paragon?.regularLimit) || 0;
+
   let modIndex = 0;
   let poolIndex = 0;
   for (const mod of Array.isArray(def.modifiers) ? def.modifiers : []) {
     if (isModifierPool(mod)) {
       const key = `${CHARM_ROLL_KEYS.poolPrefix}${poolIndex}`;
       const selected = Number(rolls?.[key]) || 0;
-      const options = mod.oneOf.map((opt) => String(opt));
+      const options = mod.oneOf.map((opt) => normalizeCharmPoolOption(opt));
       const clamped = Math.min(Math.max(0, selected), options.length - 1);
+      const option = options[clamped];
+      const high = Boolean(Number(rolls?.[charmPoolHighRollKey(poolIndex)]));
+      const text = option ? resolveCharmPoolOptionText(option, high) : '';
+      poolIndex += 1;
+      if (!text || text === NONE_POOL_OPTION) continue;
       out.push({
-        sourceKey: `base:p${poolIndex}`,
-        text: options[clamped],
+        sourceKey: charmPoolOptionSourceKey(poolIndex - 1, clamped),
+        text,
         prefix: '',
       });
-      poolIndex += 1;
       continue;
     }
     if (typeof mod === 'string') {
+      if (paragon) {
+        if (/^Charges:/i.test(mod)) continue;
+        if (/^Can be upgraded in Heroic/i.test(mod) && regularLimit && regularUsed >= regularLimit) {
+          continue;
+        }
+        if (/^Can be upgraded to unlock a Paragon/i.test(mod) && paragonPath > 0) continue;
+      }
       out.push({
         sourceKey: `base:m${modIndex}`,
         text: mod,
@@ -271,6 +481,70 @@ export function collectCharmAffixSources(def, rolls = null, className = null) {
     });
   }
 
+  const trophyOptions = getCharmTrophyOptions(def);
+  if (trophyOptions.length) {
+    const idx = Number(rolls?.[CHARM_ROLL_KEYS.trophyIndex]) || 0;
+    const chosen = idx > 0 ? trophyOptions[idx - 1] : null;
+    if (chosen) {
+      chosen.affixes.forEach((text, affixIndex) => {
+        out.push({
+          sourceKey: `trophyOpt:${idx}:${affixIndex}`,
+          text,
+          prefix: '[Trophy] ',
+        });
+      });
+    }
+    if (hasCharmExtraAwakening(def) && Number(rolls?.[CHARM_ROLL_KEYS.awakening])) {
+      const idx2 = Number(rolls?.[CHARM_ROLL_KEYS.trophyIndex2]) || 0;
+      const chosen2 = idx2 > 0 && idx2 !== idx ? trophyOptions[idx2 - 1] : null;
+      if (chosen2) {
+        chosen2.affixes.forEach((text, affixIndex) => {
+          out.push({
+            sourceKey: `trophyOpt2:${idx2}:${affixIndex}`,
+            text,
+            prefix: '[Awakening] ',
+          });
+        });
+      }
+    }
+  }
+
+  if (paragon) {
+    const regulars = Array.isArray(paragon.regularUpgrades) ? paragon.regularUpgrades : [];
+    regulars.forEach((step, index) => {
+      if (!Number(rolls?.[`${CHARM_ROLL_KEYS.paragonRegularPrefix}${index}`])) return;
+      const affixes = Array.isArray(step?.affixes) ? step.affixes : [];
+      affixes.forEach((text, affixIndex) => {
+        out.push({
+          sourceKey: `paragonRegular:${index}:${affixIndex}`,
+          text: String(text),
+          prefix: `[${String(step.label || 'Upgrade')}] `,
+        });
+      });
+    });
+    const paths = Array.isArray(paragon.paragonPaths) ? paragon.paragonPaths : [];
+    const path = paths[paragonPath - 1];
+    if (path && Array.isArray(path.affixes)) {
+      path.affixes.forEach((text, affixIndex) => {
+        out.push({
+          sourceKey: `paragonPath:${paragonPath}:${affixIndex}`,
+          text: String(text),
+          prefix: `[${String(path.label || 'Paragon')}] `,
+        });
+      });
+    }
+    if (paragon.justicar && Number(rolls?.[CHARM_ROLL_KEYS.paragonJusticar])) {
+      const affixes = Array.isArray(paragon.justicar.affixes) ? paragon.justicar.affixes : [];
+      affixes.forEach((text, affixIndex) => {
+        out.push({
+          sourceKey: `paragonJusticar:${affixIndex}`,
+          text: String(text),
+          prefix: '[Justicar] ',
+        });
+      });
+    }
+  }
+
   return out;
 }
 
@@ -292,6 +566,12 @@ export function getCharmAffixSources(def, rolls = null, className = null, option
     }
     if (source.sourceKey.startsWith('trophy:')) {
       return Boolean(rolls?.[CHARM_ROLL_KEYS.trophy]);
+    }
+    if (source.sourceKey.startsWith('trophyOpt')) {
+      return true;
+    }
+    if (source.sourceKey.startsWith('paragon')) {
+      return true;
     }
     return true;
   });
@@ -400,10 +680,24 @@ export function getCharmDetailStatRows(def, rolls = null, className = null) {
 export function defaultCharmAffixRolls(def, className = null) {
   /** @type {Record<string, number>} */
   const out = {};
-  for (const source of collectCharmAffixSources(def, null, className)) {
-    parseAffixRanges(source.text).forEach((range, rangeIndex) => {
-      const key = charmAffixRollKey(source.sourceKey, rangeIndex);
+  /**
+   * @param {string} sourceKey
+   * @param {string} text
+   */
+  const seed = (sourceKey, text) => {
+    parseAffixRanges(text).forEach((range, rangeIndex) => {
+      const key = charmAffixRollKey(sourceKey, rangeIndex);
       if (!(key in out)) out[key] = defaultRollValue(range.min, range.max);
+    });
+  };
+  for (const source of collectCharmAffixSources(def, null, className)) {
+    seed(source.sourceKey, source.text);
+  }
+  for (const pool of getCharmModifierPools(def)) {
+    pool.options.forEach((option, optionIndex) => {
+      for (const text of charmPoolOptionTexts(option)) {
+        seed(charmPoolOptionSourceKey(pool.poolIndex, optionIndex), text);
+      }
     });
   }
   return out;
@@ -425,8 +719,27 @@ export function defaultCharmRollsForDef(def, className = null) {
   if (getCharmTrophyEntry(def)) {
     rolls[CHARM_ROLL_KEYS.trophy] = 0;
   }
+  if (getCharmTrophyOptions(def).length) {
+    rolls[CHARM_ROLL_KEYS.trophyIndex] = 0;
+    if (hasCharmExtraAwakening(def)) {
+      rolls[CHARM_ROLL_KEYS.awakening] = 0;
+      rolls[CHARM_ROLL_KEYS.trophyIndex2] = 0;
+    }
+  }
+  const paragon = getParagonHammerConfig(def);
+  if (paragon) {
+    const regulars = Array.isArray(paragon.regularUpgrades) ? paragon.regularUpgrades : [];
+    regulars.forEach((_step, index) => {
+      rolls[`${CHARM_ROLL_KEYS.paragonRegularPrefix}${index}`] = 0;
+    });
+    rolls[CHARM_ROLL_KEYS.paragonPath] = 0;
+    if (paragon.justicar) rolls[CHARM_ROLL_KEYS.paragonJusticar] = 0;
+  }
   for (const pool of getCharmModifierPools(def)) {
     rolls[`${CHARM_ROLL_KEYS.poolPrefix}${pool.poolIndex}`] = 0;
+    if (pool.options.some((opt) => Boolean(opt.low && opt.high))) {
+      rolls[charmPoolHighRollKey(pool.poolIndex)] = 0;
+    }
   }
   return { ...rolls, ...defaultCharmAffixRolls(def, className) };
 }

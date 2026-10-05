@@ -239,7 +239,7 @@ export function mergeRollsForDef(def, existingRolls = null, options = {}) {
 }
 
 const INNATE_DAMAGE_TYPE_RE =
-  /Innate\s+(Fire|Cold|Lightning|Poison|Magic|Physical|Shadow)\s+Damage/i;
+  /Innate\s+(Fire|Cold|Lightning|Poison|Magic|Physical|Shadow|Tri-Elemental)\s+Damage/i;
 const ADDS_DAMAGE_TYPE_RE =
   /\bAdds\b[^\n]*\b(Fire|Cold|Lightning|Poison|Magic|Physical|Shadow)\s+Damage/i;
 
