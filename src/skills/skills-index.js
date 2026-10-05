@@ -30,8 +30,6 @@ import Skill from './domain/Skill.js';
 /** Skills index route name and query helpers (formerly skillsIndexRoute.js). */
 export const SKILLS_ROUTE_NAME = 'skills';
 
-const FILTER_VALUES = ['all', 'with_details', 'without_details'];
-
 /**
  * @param {unknown} q
  * @param {string} key
@@ -65,21 +63,6 @@ export function mergeHomeQuery(router, partial) {
     }
   }
   router.replace({ name: SKILLS_ROUTE_NAME, query: next });
-}
-
-/**
- * @param {import('vue-router').Router | null | undefined} router
- * @returns {'all'|'with_details'|'without_details'}
- */
-export function readHomeFilterFromRoute(router) {
-  const q = router?.currentRoute?.value?.query;
-  const fromQuery = q && q.filter != null ? String(q.filter) : null;
-  const savedFilter =
-    fromQuery ?? new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '').get('filter');
-  if (savedFilter && FILTER_VALUES.includes(String(savedFilter))) {
-    return /** @type {'all'|'with_details'|'without_details'} */ (String(savedFilter));
-  }
-  return 'all';
 }
 
 /**
@@ -675,7 +658,6 @@ async function displaySkillDetail(skillId) {
   const q = r ? r.currentRoute.value.query : {};
   const treeClass = q.class != null ? String(q.class) : null;
   const treeTab = q.tab != null ? String(q.tab) : null;
-  const filter = q.filter != null ? String(q.filter) : null;
   const browseClasses = readQueryStringArray(q, 'classes');
   const browseTags = readQueryStringArray(q, 'tags');
   const browseConditions = readQueryStringArray(q, 'conditions');
@@ -690,7 +672,6 @@ async function displaySkillDetail(skillId) {
   } else if (r) {
     /** @type {Record<string, string | string[]>} */
     const backQuery = {};
-    if (filter && filter !== 'all') backQuery.filter = filter;
     if (browseClasses.length) backQuery.classes = browseClasses;
     if (browseTags.length) backQuery.tags = browseTags;
     if (browseConditions.length) backQuery.conditions = browseConditions;
@@ -700,7 +681,6 @@ async function displaySkillDetail(skillId) {
     backHref = r.resolve({ name: SKILLS_ROUTE_NAME, query: backQuery }).href;
   } else {
     const sp = new URLSearchParams();
-    if (filter && filter !== 'all') sp.set('filter', filter);
     for (const c of browseClasses) sp.append('classes', c);
     for (const t of browseTags) sp.append('tags', t);
     for (const cond of browseConditions) sp.append('conditions', cond);

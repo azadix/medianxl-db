@@ -160,11 +160,6 @@ watch(
 </template>
 
 <style scoped>
-.filter-toggle {
-  transition: all 0.3s ease;
-  min-width: 15rem;
-}
-
 .home-skills-view-tabs {
   margin-bottom: 0.75rem;
 }

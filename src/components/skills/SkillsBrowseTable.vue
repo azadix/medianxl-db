@@ -5,7 +5,6 @@ import { getSkillIconHTML } from '@/shared/utils.js';
 import SkillCardImage from './SkillCardImage.vue';
 import {
   mergeHomeQuery,
-  readHomeFilterFromRoute,
   readHomeClassFiltersFromRoute,
   readHomeTagFiltersFromRoute,
   readClassTagJoinFromRoute,
@@ -27,8 +26,6 @@ const sortKey = ref(/** @type {'name'|'class'|'tab'} */ ('name'));
 const sortDir = ref(/** @type {1|-1} */ (1));
 
 const parsedSearch = computed(() => parseSearchInput(searchRaw.value));
-
-const filterState = computed(() => readHomeFilterFromRoute(router));
 
 const selectedClasses = computed(() => readHomeClassFiltersFromRoute(router));
 const selectedTags = computed(() => readHomeTagFiltersFromRoute(router));
@@ -53,28 +50,6 @@ const uniqueTags = computed(() => {
     }
   }
   return [...set].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
-});
-
-const filterButtonClass = computed(() => {
-  switch (filterState.value) {
-    case 'with_details':
-      return 'is-primary';
-    case 'without_details':
-      return 'is-success';
-    default:
-      return 'is-info';
-  }
-});
-
-const filterButtonLabel = computed(() => {
-  switch (filterState.value) {
-    case 'with_details':
-      return 'Show only with details';
-    case 'without_details':
-      return 'Show only without details';
-    default:
-      return 'Show all';
-  }
 });
 
 const openDropdown = ref(/** @type {null | 'class' | 'tags'} */ (null));
@@ -177,24 +152,6 @@ function clearTagFilters() {
   mergeHomeQuery(router, { tags: [], tabs: [] });
 }
 
-function cycleFilter() {
-  let next;
-  switch (filterState.value) {
-    case 'all':
-      next = 'with_details';
-      break;
-    case 'with_details':
-      next = 'without_details';
-      break;
-    case 'without_details':
-      next = 'all';
-      break;
-    default:
-      next = 'all';
-  }
-  mergeHomeQuery(router, { filter: next === 'all' ? '' : next });
-}
-
 function homeQueryForSkill(skillId) {
   const q = { ...route.query, skill: String(skillId) };
   const f = q.filter;
@@ -228,12 +185,7 @@ const filteredSkills = computed(() => {
   const parsed = parsedSearch.value;
   const classSel = selectedClasses.value;
   const tagSel = selectedTags.value;
-  let rows = props.skills.filter((s) => {
-    if (filterState.value === 'all') return true;
-    const has = Boolean(s.hasDetails);
-    if (filterState.value === 'with_details') return has;
-    return !has;
-  });
+  let rows = [...props.skills];
   const join = classTagJoin.value;
   const tagMode = join === 'or' || join === 'not' ? 'or' : 'and';
   const matchesClass = (s) => !classSel.length || classSel.includes(String(s.class ?? ''));
@@ -285,16 +237,6 @@ function iconMarkup(skill) {
 <template>
   <div class="skills-browse-root">
     <div class="field is-grouped is-grouped-multiline is-align-items-flex-end mb-4 skills-browse-toolbar">
-      <div class="control">
-        <button
-          type="button"
-          class="button is-outlined filter-toggle"
-          :class="filterButtonClass"
-          @click="cycleFilter"
-        >
-          {{ filterButtonLabel }}
-        </button>
-      </div>
       <div class="control is-expanded" style="flex: 1; min-width: 12rem">
         <label class="label is-sr-only" for="skills-search-input">Search skills</label>
         <input
