@@ -6,3 +6,8 @@ __pycache__/
 todo/*
 *cursor*
 tools/tools.local.json
+tools/skill_viz/_extract/
+tools/skill_viz/_cache/
+tools/skill_viz/*.mpqscript
+public/skill_viz/**/*.gif
+public/skill_viz/**/*.png

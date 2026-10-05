@@ -28,6 +28,14 @@ export const DEV_ROUTE_DEFS = [
     editorMode: 'subskills',
     editorFile: 'subskills.json',
   },
+  {
+    path: '/skill-viz',
+    name: 'skillViz',
+    component: () => import('@/views/SkillVizView.vue'),
+    keepAliveName: 'SkillVizView',
+    keepAlive: false,
+    navLabel: 'Skill viz',
+  },
 ];
 
 /** Route `name` values for dev-only pages. */
