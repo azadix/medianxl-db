@@ -293,7 +293,11 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Debuff",
+      "Duration",
+      "AoE"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
@@ -309,13 +313,20 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "-20"
+      },
+      {
+        "statKey": "radius",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "range(4)"
       }
     ],
     "description": [],
     "restriction": [],
     "skillEffect": [
       "{{duration}}",
-      "{{enemy_physical_resistance}}"
+      "{{enemy_physical_resistance}}",
+      "{{radius}}"
     ],
     "image": "icons-shared_missing"
   },
@@ -1335,14 +1346,26 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Projectile",
+      "Weapon Damage"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100"
+      }
+    ],
     "description": [],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{weapon_damage}}"
+    ],
     "image": "icons-shared_missing"
   },
   {
@@ -1494,11 +1517,20 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Magic",
+      "Weapon Damage"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
     "scalingConstants": [
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "60"
+      },
       {
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
@@ -1511,6 +1543,8 @@
     "description": [],
     "restriction": [],
     "skillEffect": [
+      "{{weapon_damage}}",
+      "{{magic_damage}}",
       "{{mana_cost}}"
     ],
     "image": "icons-shared_missing"
@@ -3417,14 +3451,26 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Projectile",
+      "Weapon Damage"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "50"
+      }
+    ],
     "description": [],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{weapon_damage}}"
+    ],
     "image": "icons-shared_missing"
   },
   {
@@ -4014,6 +4060,7 @@
     "class": "Other",
     "tabName": "Proc",
     "tags": [
+      "Buff",
       "Duration"
     ],
     "baseMaxLevel": 0,
@@ -4024,7 +4071,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(250)"
+        "value0": "frames(250*(1+[[continuity]].{{skill_duration}}/100))"
       },
       {
         "statKey": "movement_speed",
@@ -4037,6 +4084,7 @@
     "restriction": [],
     "skillEffect": [
       "{{movement_speed}}",
+      "Cannot Be Frozen",
       "{{duration}}"
     ],
     "image": "icons-shared_missing"
@@ -5183,14 +5231,35 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Weapon Damage"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "199"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "26",
+        "value1": "11",
+        "value2": "5",
+        "min_mana": "6"
+      }
+    ],
     "description": [],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{weapon_damage}}",
+      "{{mana_cost}}"
+    ],
     "image": "icons-shared_missing"
   },
   {
@@ -6410,14 +6479,33 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Fire",
+      "Weapon Damage"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100"
+      },
+      {
+        "statKey": "converts_phys_to_fire",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100"
+      }
+    ],
     "description": [],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{weapon_damage}}",
+      "{{converts_phys_to_fire}}"
+    ],
     "image": "icons-shared_missing"
   },
   {
@@ -8107,14 +8195,32 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Magic",
+      "Spell"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
-    "description": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "132",
+        "value1": "37",
+        "value2": "5"
+      }
+    ],
+    "description": [
+      "Casts a devastating beam of searing energy"
+    ],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{physical_damage}}",
+      "{{magic_damage}}",
+      "{{mana_cost}}"
+    ],
     "image": "icons-shared_133"
   },
   {
@@ -8303,14 +8409,6 @@
     "affectedBySpecialization": false,
     "variants": [],
     "scalingConstants": [
-      {
-        "statKey": "mana_cost",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0",
-        "value1": "0",
-        "value2": "6"
-      },
       {
         "statKey": "area_of_effect_increased_by_percent",
         "occurrenceIndex": 0,
@@ -9259,15 +9357,6 @@
     ],
     "scalingConstants": [
       {
-        "statKey": "mana_cost",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0",
-        "value1": "0",
-        "value2": "5",
-        "min_mana": "8"
-      },
-      {
         "statKey": "firebolts",
         "occurrenceIndex": 0,
         "variantKey": "",
@@ -9418,14 +9507,26 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Projectile",
+      "Weapon Damage"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100"
+      }
+    ],
     "description": [],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{weapon_damage}}"
+    ],
     "image": "icons-shared_missing"
   },
   {
@@ -10550,6 +10651,7 @@
     "class": "Other",
     "tabName": "Proc",
     "tags": [
+      "Buff",
       "Duration"
     ],
     "baseMaxLevel": 0,
@@ -10560,7 +10662,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(250)"
+        "value0": "frames(250*(1+[[continuity]].{{skill_duration}}/100))"
       },
       {
         "statKey": "movement_speed",
@@ -10573,6 +10675,7 @@
     "restriction": [],
     "skillEffect": [
       "{{movement_speed}}",
+      "Cannot Be Frozen",
       "{{duration}}"
     ],
     "image": "icons-shared_missing"
@@ -12843,14 +12946,6 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "5*lvl"
-      },
-      {
-        "statKey": "mana_cost",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0",
-        "value1": "0",
-        "value2": "8"
       }
     ],
     "description": [
@@ -13401,14 +13496,26 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Projectile",
+      "Weapon Damage"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100"
+      }
+    ],
     "description": [],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{weapon_damage}}"
+    ],
     "image": "icons-shared_missing"
   },
   {
@@ -13418,14 +13525,33 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Projectile",
+      "Weapon Damage"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "75"
+      },
+      {
+        "statKey": "javelins",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "64"
+      }
+    ],
     "description": [],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{weapon_damage}}",
+      "{{javelins}}"
+    ],
     "image": "icons-shared_missing"
   },
   {
@@ -13557,14 +13683,26 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Projectile",
+      "Weapon Damage"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100"
+      }
+    ],
     "description": [],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{weapon_damage}}"
+    ],
     "image": "icons-shared_missing"
   },
   {
@@ -14175,23 +14313,33 @@
     "class": "Other",
     "tabName": "Proc",
     "tags": [
-      "Healing"
+      "Healing",
+      "Spell"
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
     "scalingConstants": [
       {
-        "statKey": "percent_life_restored_per_cast",
+        "statKey": "restores_life_on_use_based_on_max_life",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "lvl"
+        "value0": "floor({{life}}*lvl/100)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "53",
+        "value1": "18",
+        "value2": "5"
       }
     ],
     "description": [],
     "restriction": [],
     "skillEffect": [
-      "{{percent_life_restored_per_cast}}"
+      "{{restores_life_on_use_based_on_max_life}}",
+      "{{mana_cost}}"
     ],
     "image": "icons-shared_missing"
   },
@@ -14449,14 +14597,45 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Lightning",
+      "Spell"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
-    "description": [],
+    "scalingConstants": [
+      {
+        "statKey": "releases_bolts",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "min(2+(lvl-1),4)"
+      },
+      {
+        "statKey": "bolts",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "8+(lvl-1)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "317",
+        "value1": "79",
+        "value2": "5"
+      }
+    ],
+    "description": [
+      "Fires a bolt of searing lightning at nearby enemies"
+    ],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{releases_bolts}}",
+      "Bolt Length: {{bolts}}",
+      "{{lightning_damage}}",
+      "{{mana_cost}}"
+    ],
     "image": "icons-shared_116"
   },
   {
@@ -16114,14 +16293,33 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Lightning",
+      "Spell",
+      "AoE"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
-    "description": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "264",
+        "value1": "4",
+        "value2": "4",
+        "min_mana": "2"
+      }
+    ],
+    "description": [
+      "Creates an electrically charged ring"
+    ],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{lightning_damage}}",
+      "{{mana_cost}}"
+    ],
     "image": "icons-shared_24"
   },
   {
@@ -16552,14 +16750,6 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "40"
-      },
-      {
-        "statKey": "mana_cost",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0",
-        "value1": "0",
-        "value2": "8"
       }
     ],
     "description": [
@@ -16723,14 +16913,29 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Magic",
+      "Spell"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "53",
+        "value1": "13",
+        "value2": "5"
+      }
+    ],
     "description": [],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{magic_damage}}",
+      "{{mana_cost}}"
+    ],
     "image": "icons-shared_88"
   },
   {
@@ -18157,14 +18362,37 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Poison",
+      "Spell"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "poison_dot",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "",
+        "value1": "",
+        "value2": "frames(50)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "106",
+        "value1": "31",
+        "value2": "5"
+      }
+    ],
     "description": [],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{poison_dot}}",
+      "{{mana_cost}}"
+    ],
     "image": "icons-shared_missing"
   },
   {
@@ -18622,11 +18850,26 @@
     "tab": 65,
     "class": "Other",
     "tabName": "oSkill",
-    "tags": [],
+    "tags": [
+      "Fire",
+      "Spell"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
     "scalingConstants": [
+      {
+        "statKey": "cooldown",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(500-500*bool([[blood_thorns]]))"
+      },
+      {
+        "statKey": "shoots_times",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "3"
+      },
       {
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
@@ -18636,9 +18879,19 @@
         "value2": "5"
       }
     ],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
+    "description": [
+      "Target enemy to blast them with burning thorns"
+    ],
+    "restriction": [
+      "Requires Blood Thorns"
+    ],
+    "skillEffect": [
+      "{{cooldown}}",
+      "{{shoots_times}}",
+      "Damage derived from [[blood_thorns]]",
+      "{{fire_damage}}",
+      "{{mana_cost}}"
+    ],
     "image": "icons-shared_241"
   },
   {
@@ -18648,11 +18901,34 @@
     "tab": 65,
     "class": "Other",
     "tabName": "oSkill",
-    "tags": [],
+    "tags": [
+      "Physical",
+      "Lightning",
+      "Projectile",
+      "Weapon Damage"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
     "scalingConstants": [
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "50"
+      },
+      {
+        "statKey": "converts_phys_to_lightning",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "50"
+      },
+      {
+        "statKey": "trap_duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(75)"
+      },
       {
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
@@ -18662,9 +18938,21 @@
         "value2": "6"
       }
     ],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
+    "description": [
+      "Spawn a fiery egg at a distance"
+    ],
+    "restriction": [
+      "Requires Wereowl Form"
+    ],
+    "skillEffect": [
+      "Does not trigger [[progenys_blessing]]",
+      "Inherits all [[egg_trap]] attributes",
+      "{{weapon_damage}}",
+      "{{converts_phys_to_lightning}}",
+      "{{trap_duration}}",
+      "{{lightning_damage}}",
+      "{{mana_cost}}"
+    ],
     "image": "icons-shared_279"
   },
   {
@@ -19512,14 +19800,29 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Fire",
+      "Spell"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "48",
+        "value1": "22",
+        "value2": "6"
+      }
+    ],
     "description": [],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{fire_damage}}",
+      "{{mana_cost}}"
+    ],
     "image": "icons-shared_missing"
   },
   {
@@ -19703,14 +20006,31 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Poison",
+      "Spell"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
-    "description": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "66",
+        "value1": "44",
+        "value2": "5"
+      }
+    ],
+    "description": [
+      "Harvest spirit energy to create a massive choking cloud"
+    ],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{poison_dot}}",
+      "{{mana_cost}}"
+    ],
     "image": "icons-shared_missing"
   },
   {
@@ -19720,7 +20040,11 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Cold",
+      "Trap",
+      "Duration"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
@@ -19732,7 +20056,9 @@
         "value0": "frames((50+5*(lvl-1))*(1+[[continuity]].{{skill_duration}}/100))"
       }
     ],
-    "description": [],
+    "description": [
+      "Places a landmine that freezes enemies at your feet"
+    ],
     "restriction": [],
     "skillEffect": [
       "{{duration}}"
@@ -19798,28 +20124,38 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Debuff",
+      "Duration",
+      "AoE"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
     "scalingConstants": [
       {
+        "statKey": "enemy_defense",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "-40"
+      },
+      {
         "statKey": "enemy_physical_resistance",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "8"
+        "value0": "-8"
+      },
+      {
+        "statKey": "radius",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "range(20)"
       },
       {
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(200*(1+[[continuity]].{{skill_duration}}/100))"
-      },
-      {
-        "statKey": "enemy_defense",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "-40"
       }
     ],
     "description": [],
@@ -19827,6 +20163,7 @@
     "skillEffect": [
       "{{enemy_defense}}",
       "{{enemy_physical_resistance}}",
+      "{{radius}}",
       "{{duration}}"
     ],
     "image": "icons-shared_missing"
@@ -20276,14 +20613,47 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Fire",
+      "Spell",
+      "Trap",
+      "Duration"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
-    "description": [],
+    "scalingConstants": [
+      {
+        "statKey": "trap_duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(125)"
+      },
+      {
+        "statKey": "activation_range",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "range(min(max(3+(lvl-1),3),9))"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "31",
+        "value1": "20",
+        "value2": "5"
+      }
+    ],
+    "description": [
+      "Magical proximity trap that emits fiery radiation"
+    ],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{trap_duration}}",
+      "{{activation_range}}",
+      "{{fire_damage}}",
+      "{{mana_cost}}"
+    ],
     "image": "icons-shared_187"
   },
   {
@@ -20591,7 +20961,10 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Cold",
+      "Duration"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
@@ -20603,7 +20976,9 @@
         "value0": "frames((100+10*(lvl-1))*(1+[[continuity]].{{skill_duration}}/100))"
       }
     ],
-    "description": [],
+    "description": [
+      "Traps an enemy in a large ice block, freezing it solid"
+    ],
     "restriction": [],
     "skillEffect": [
       "{{duration}}"
@@ -20617,14 +20992,49 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Magic",
+      "Projectile",
+      "Weapon Damage"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
+    "scalingConstants": [
+      {
+        "statKey": "stun_length",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(25)"
+      },
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "50"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "616",
+        "value1": "62",
+        "value2": "5"
+      }
+    ],
+    "description": [
+      "Deadly throwing knife that instantly kills the target"
+    ],
+    "restriction": [
+      "Requires a throwing knife"
+    ],
+    "skillEffect": [
+      "{{stun_length}}",
+      "{{weapon_damage}}",
+      "{{physical_damage}}",
+      "{{magic_damage}}",
+      "{{mana_cost}}"
+    ],
     "image": "icons-shared_73"
   },
   {
@@ -20764,16 +21174,7 @@
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [
-      {
-        "statKey": "mana_cost",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0",
-        "value1": "0",
-        "value2": "8"
-      }
-    ],
+    "scalingConstants": [],
     "description": [
       "Improves the combat prowess of your Ancient Spirits"
     ],
@@ -20843,14 +21244,27 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Projectile",
+      "Weapon Damage"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "50"
+      }
+    ],
     "description": [],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{weapon_damage}}",
+      "Each dagger splits into 1 projectile on impact, dealing 37% Weapon Damage"
+    ],
     "image": "icons-shared_missing"
   },
   {
@@ -20910,14 +21324,41 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Magic",
+      "Attack",
+      "Weapon Damage",
+      "AoE"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
+    "scalingConstants": [
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "35"
+      },
+      {
+        "statKey": "projectiles",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "10+2*(lvl-1)"
+      }
+    ],
+    "description": [
+      "Melee attack that blasts out a gigantic crushing wave"
+    ],
+    "restriction": [
+      "Works only after using Blood Hatred",
+      "Requires a melee weapon"
+    ],
+    "skillEffect": [
+      "{{weapon_damage}}",
+      "{{projectiles}}",
+      "{{magic_damage}}"
+    ],
     "image": "icons-shared_missing"
   },
   {
@@ -21959,14 +22400,34 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Weapon Damage"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "150"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "110",
+        "value1": "20",
+        "value2": "5"
+      }
+    ],
     "description": [],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{weapon_damage}}",
+      "{{mana_cost}}"
+    ],
     "image": "icons-shared_missing"
   },
   {
@@ -22321,14 +22782,37 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Projectile",
+      "Weapon Damage"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
+    "scalingConstants": [
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "87"
+      },
+      {
+        "statKey": "projectiles",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "8"
+      }
+    ],
+    "description": [
+      "Fire multiple arrows comprising a large crushing wave"
+    ],
+    "restriction": [
+      "Requires a bow or crossbow"
+    ],
+    "skillEffect": [
+      "{{weapon_damage}}",
+      "{{projectiles}}"
+    ],
     "image": "icons-shared_214"
   },
   {
@@ -22824,14 +23308,34 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Lightning",
+      "Weapon Damage"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100"
+      },
+      {
+        "statKey": "converts_phys_to_lightning",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "50"
+      }
+    ],
     "description": [],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{weapon_damage}}",
+      "{{lightning_damage}}",
+      "{{converts_phys_to_lightning}}"
+    ],
     "image": "icons-shared_missing"
   },
   {
@@ -24138,14 +24642,27 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Physical",
+      "Weapon Damage"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "60"
+      }
+    ],
     "description": [],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{weapon_damage}}",
+      "{{physical_damage}}"
+    ],
     "image": "icons-shared_missing"
   },
   {
@@ -24155,14 +24672,30 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Physical",
+      "Projectile",
+      "Weapon Damage"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
-    "description": [],
+    "scalingConstants": [
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "75"
+      }
+    ],
+    "description": [
+      "A nova of thunder hammers"
+    ],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{weapon_damage}}",
+      "{{physical_damage}}"
+    ],
     "image": "icons-shared_missing"
   },
   {
@@ -24228,14 +24761,34 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Physical",
+      "Weapon Damage"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "60"
+      },
+      {
+        "statKey": "missiles",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "1+lvl"
+      }
+    ],
     "description": [],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{weapon_damage}}",
+      "{{physical_damage}}",
+      "{{missiles}}"
+    ],
     "image": "icons-shared_missing"
   },
   {
@@ -24445,14 +24998,46 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Attack",
+      "Weapon Damage"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
+    "scalingConstants": [
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "75"
+      },
+      {
+        "statKey": "length_of_fuse",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(25)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "44",
+        "value1": "0",
+        "value2": "5"
+      }
+    ],
+    "description": [
+      "Melee attack followed by a second delayed attack"
+    ],
+    "restriction": [
+      "Requires a melee weapon"
+    ],
+    "skillEffect": [
+      "{{weapon_damage}}",
+      "{{length_of_fuse}}",
+      "{{mana_cost}}"
+    ],
     "image": "icons-shared_74"
   },
   {
@@ -24480,14 +25065,6 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(if(ulvl>=130,50,0))"
-      },
-      {
-        "statKey": "mana_cost",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0",
-        "value1": "0",
-        "value2": "8"
       }
     ],
     "description": [
@@ -24735,14 +25312,33 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Attack",
+      "Physical",
+      "Weapon Damage"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
-    "description": [],
-    "restriction": [],
-    "skillEffect": [],
+    "scalingConstants": [
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "140"
+      }
+    ],
+    "description": [
+      "The speed of your weapon conjures a storm of twisters"
+    ],
+    "restriction": [
+      "Requires a staff, spear, or naginata"
+    ],
+    "skillEffect": [
+      "1% Increased Physical Damage per 2% Increased Attack Speed",
+      "{{weapon_damage}}",
+      "{{twisters}}"
+    ],
     "image": "icons-shared_83"
   },
   {
@@ -24850,14 +25446,30 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Magic",
+      "Spell",
+      "AoE"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
-    "description": [],
+    "scalingConstants": [
+      {
+        "statKey": "radius",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "range(15+(lvl-1))"
+      }
+    ],
+    "description": [
+      "Causes a violent earthquake that damages all visible enemies"
+    ],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "Magic Damage: % of Target Life",
+      "{{radius}}"
+    ],
     "image": "icons-shared_29"
   },
   {
@@ -25088,14 +25700,55 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Debuff",
+      "Duration",
+      "AoE"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "enemy_movement_speed",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "-100"
+      },
+      {
+        "statKey": "enemy_physical_resistance",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "-25"
+      },
+      {
+        "statKey": "maximum_block_chance",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "-50"
+      },
+      {
+        "statKey": "radius",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "range(10)"
+      },
+      {
+        "statKey": "duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames((50+5*(lvl-1))*(1+[[continuity]].{{skill_duration}}/100))"
+      }
+    ],
     "description": [],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{enemy_movement_speed}}",
+      "{{enemy_physical_resistance}}",
+      "{{maximum_block_chance}}",
+      "{{radius}}",
+      "{{duration}}"
+    ],
     "image": "icons-shared_missing"
   },
   {
@@ -25486,14 +26139,45 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Poison",
+      "Weapon Damage"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "50"
+      },
+      {
+        "statKey": "poison_dot",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "",
+        "value1": "",
+        "value2": "frames(50)"
+      },
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "176",
+        "value1": "0",
+        "value2": "5",
+        "min_mana": "2"
+      }
+    ],
     "description": [],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{weapon_damage}}",
+      "{{poison_dot}}",
+      "{{mana_cost}}"
+    ],
     "image": "icons-shared_missing"
   },
   {
@@ -26037,14 +26721,32 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Magic",
+      "Spell"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
-    "description": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "48",
+        "value1": "33",
+        "value2": "4"
+      }
+    ],
+    "description": [
+      "Emit arcane lightning around you"
+    ],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "{{physical_damage}}",
+      "{{magic_damage}}",
+      "{{mana_cost}}"
+    ],
     "image": "icons-shared_missing"
   },
   {
@@ -26294,11 +26996,27 @@
     "tab": 65,
     "class": "Other",
     "tabName": "oSkill",
-    "tags": [],
+    "tags": [
+      "Lightning",
+      "Spell",
+      "Duration"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
     "scalingConstants": [
+      {
+        "statKey": "bolts",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "10"
+      },
+      {
+        "statKey": "duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(100)"
+      },
       {
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
@@ -26308,9 +27026,16 @@
         "value2": "4"
       }
     ],
-    "description": [],
+    "description": [
+      "Creates a rotating whirlpool of electricity at the target spot"
+    ],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "Bolt Length: {{bolts}}",
+      "{{lightning_damage}}",
+      "{{duration}}",
+      "{{mana_cost}}"
+    ],
     "image": "icons-shared_76"
   },
   {
@@ -27645,15 +28370,6 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "55"
-      },
-      {
-        "statKey": "mana_cost",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "0",
-        "value1": "0",
-        "value2": "5",
-        "min_mana": "5"
       }
     ],
     "description": [
@@ -28196,14 +28912,28 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Spell"
+    ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "mana_cost",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "1",
+        "value1": "1",
+        "value2": "5"
+      }
+    ],
     "description": [],
     "restriction": [],
-    "skillEffect": [],
+    "skillEffect": [
+      "Removes curses",
+      "{{mana_cost}}"
+    ],
     "image": "icons-shared_missing"
   },
   {

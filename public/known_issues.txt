@@ -1,4 +1,3 @@
-43 skills (out of 648) are missing it's description: 3 oSkills, 40 procs
 Skill damage calculation is not implemented
 Conditional stats from skills/passives are not implemented fully
 Dynamic calculation of activation frequency is not implemented

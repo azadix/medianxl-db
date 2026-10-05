@@ -30,7 +30,7 @@ Duration: <span class="has-text-white">frames(500*(1+[[continuity]].{{skill_dura
     "level": 1,
     "skillEffect": "Firebolts: <span class="has-text-white">(min(3+lvl/10,7)+(blvl*(max(({{current_mana}}*4)/max({{base_mana}},1),0))))</span>
 Fire Damage: <span class="has-text-danger">???</span>-<span class="has-text-danger">???</span>
-Mana cost: <span class="has-text-info">8</span>  ",
+Mana cost: <span class="has-text-danger">???</span>  ",
     "variantKey": "non_sorceress",
   },
 }
