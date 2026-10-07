@@ -7,9 +7,11 @@ import { resolve } from 'node:path';
 import {
   parseAllowedTypesCell,
   parseRunewordNameCell,
+  parseRunewordStatsCell,
   parseRunewordsWiki,
   resolveRunes,
   splitRuneCode,
+  splitRunewordDisplayName,
 } from '../../tools/item_generation/parse-runewords-wiki.mjs';
 
 const ROOT = resolve(import.meta.dirname, '../..');
@@ -46,6 +48,13 @@ describe('parseRunewordsWiki', () => {
     expect(minefield.runes).toEqual(['Ign', 'Tyr', 'Ral', 'Ohm']);
     expect(minefield.excludedTypes).toEqual(['Two-Handed Swords']);
     expect(minefield.modifiers).toContain('{orange}If you have 90% Fire Resist: +50% Fire Spell Damage');
+
+    const atlacamani = entries.find((e) => e.name === 'Atlacamani');
+    expect(atlacamani.innate).toBe('Innate Tri-Elemental Damage: (52.0% of Dexterity)');
+    expect(atlacamani.modifiers).toContain('75% Attack Speed');
+    expect(atlacamani.modifiers).not.toContain(
+      'Innate Tri-Elemental Damage: (52.0% of Dexterity)'
+    );
   });
 
   it('merges duplicate name+recipe listings', () => {
@@ -55,11 +64,34 @@ describe('parseRunewordsWiki', () => {
     expect(demhe[0].allowedTypes.sort()).toEqual(['Maces', 'Scepters']);
     expect(demhe[0].excludedTypes).toEqual(['Hammers']);
   });
+
+  it('keeps anniversary text off the runeword name', () => {
+    const entries = parseRunewordsWiki(snippet);
+    const victory = entries.find((e) => e.name === 'Victory');
+    expect(victory).toBeTruthy();
+    expect(victory.id).toBe('rw:victory');
+    expect(victory.subtitle).toBe('(Median XL - 6 years)');
+    const eternal = entries.find((e) => e.name === 'Eternal');
+    expect(eternal).toBeTruthy();
+    expect(eternal.id).toBe('rw:eternal');
+    expect(eternal.subtitle).toMatch(/Median 2005-2026/i);
+  });
 });
 
 describe('runeword wiki cell helpers', () => {
   it('parses name cells and rune codes', () => {
     expect(parseRunewordNameCell("Shark<br>'Eld'")).toEqual({ name: 'Shark', runeCode: 'Eld' });
+    expect(splitRunewordDisplayName('Victory (Median XL - 6 years)')).toEqual({
+      name: 'Victory',
+      subtitle: '(Median XL - 6 years)',
+    });
+    expect(
+      parseRunewordNameCell("Victory (Median XL - 6 years)<br>'SolAmn'")
+    ).toEqual({
+      name: 'Victory',
+      runeCode: 'SolAmn',
+      subtitle: '(Median XL - 6 years)',
+    });
     expect(splitRuneCode('BerBerIst')).toEqual(['Ber', 'Ber', 'Ist']);
     expect(resolveRunes('GhalGhal', '2x Ghal Rune')).toEqual(['Ghal', 'Ghal']);
     expect(resolveRunes('', '2x Ber Rune Ist Rune')).toEqual(['Ber', 'Ber', 'Ist']);
@@ -74,5 +106,13 @@ describe('runeword wiki cell helpers', () => {
     expect(
       parseAllowedTypesCell('One-Handed Swords (except Tyrannical Blades)').excludedNames
     ).toEqual(['Tyrannical Blades']);
+  });
+
+  it('keeps innate damage off the modifier list', () => {
+    const stats = parseRunewordStatsCell(
+      'Innate Tri-Elemental Damage: (52.0% of Dexterity)<br>75% Attack Speed'
+    );
+    expect(stats.innate).toBe('Innate Tri-Elemental Damage: (52.0% of Dexterity)');
+    expect(stats.modifiers).toEqual(['75% Attack Speed']);
   });
 });

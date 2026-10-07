@@ -60,7 +60,7 @@ function entryKey(entry) {
  * @param {object[]} entries
  */
 function validateEntries(entries) {
-  if (!Array.isArray(entries) || entries.length < 100) {
+  if (!Array.isArray(entries) || entries.length < 200) {
     throw new Error(`Parsed too few runewords: ${entries?.length || 0}`);
   }
   const seen = new Set();

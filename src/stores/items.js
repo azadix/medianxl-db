@@ -40,6 +40,7 @@ import {
   isRunewordTemplate,
   mergeRunewordWithBase,
   parseRunewordInstanceId,
+  resolveRunewordTemplateId,
   runewordEntryToItemDef,
   runewordFitsEquipSlot,
 } from '@/items/runeword-items.js';
@@ -504,9 +505,13 @@ export const useItemsStore = defineStore('items', {
      */
     ensureRunewordDef(templateId, baseId) {
       if (!templateId || !baseId) return null;
-      const id = `${templateId}:${baseId}`;
+      const resolvedTemplateId = resolveRunewordTemplateId(templateId);
+      const id = `${resolvedTemplateId}:${baseId}`;
       if (this.catalogById[id]) return id;
-      const merged = mergeRunewordWithBase(this.catalogById[templateId], this.catalogById[baseId]);
+      const merged = mergeRunewordWithBase(
+        this.catalogById[resolvedTemplateId],
+        this.catalogById[baseId]
+      );
       if (!merged) return null;
       this.runtimeOverlayDefs = [...this.runtimeOverlayDefs, merged];
       return merged.id;

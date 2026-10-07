@@ -36,8 +36,14 @@ function formatInnateKind(kind) {
  * @param {string|null|undefined} line
  * @returns {string|null}
  */
+function stripModifierColorPrefix(line) {
+  return String(line || '')
+    .replace(/^\{(orange|grey)\}/, '')
+    .trim();
+}
+
 export function parseInnateDamageLine(line) {
-  const match = INNATE_DAMAGE_LINE_RE.exec(String(line || '').trim());
+  const match = INNATE_DAMAGE_LINE_RE.exec(stripModifierColorPrefix(line));
   if (!match) return null;
   const kind = formatInnateKind(match[1]);
   const value = String(match[2] || '').trim();
@@ -324,7 +330,7 @@ export function parseItemStats(stats) {
       continue;
     }
     if (/^(Strength|Dexterity) Damage Bonus:/i.test(line)) continue;
-    const innateMatch = INNATE_DAMAGE_LINE_RE.exec(line);
+    const innateMatch = INNATE_DAMAGE_LINE_RE.exec(stripModifierColorPrefix(line));
     if (innateMatch) {
       const kind = formatInnateKind(innateMatch[1]);
       let value = String(innateMatch[2] || '').trim();

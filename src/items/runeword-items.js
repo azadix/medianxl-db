@@ -4,9 +4,33 @@
  */
 
 import { resolveItemDef } from '@/items/item-overlays.js';
-import { extractInnateFromModifiers, slugify } from '@/items/unique-stats-catalog.js';
+import {
+  extractInnateFromModifiers,
+  parseInnateDamageLine,
+  slugify,
+} from '@/items/unique-stats-catalog.js';
+import {
+  baseNameWithoutTier,
+  templateAllowsBaseFields,
+  wikiTypeMatchesBaseFields,
+} from '@/items/runeword-type-families.js';
 
 export const EMPTY_JEWEL_ID = 'jew';
+
+/** Old wiki subtitle slugs → current template ids. */
+export const RUNEWORD_TEMPLATE_ID_ALIASES = Object.freeze({
+  'rw:victory-median-xl-6-years': 'rw:victory',
+  'rw:eternal-median-2005-2026-thanks-everyone': 'rw:eternal',
+});
+
+/**
+ * @param {string|null|undefined} templateId
+ * @returns {string}
+ */
+export function resolveRunewordTemplateId(templateId) {
+  const id = String(templateId || '');
+  return RUNEWORD_TEMPLATE_ID_ALIASES[id] || id;
+}
 
 /**
  * @param {object|null|undefined} def
@@ -48,15 +72,7 @@ export function formatRunewordBadge(def) {
   return 'RW';
 }
 
-/**
- * @param {string|null|undefined} name
- * @returns {string}
- */
-export function baseNameWithoutTier(name) {
-  return String(name || '')
-    .replace(/\s*\((?:Sacred|\d)\)\s*$/i, '')
-    .trim();
-}
+export { baseNameWithoutTier };
 
 /**
  * @param {object|null|undefined} base
@@ -76,18 +92,7 @@ export function runewordBaseSortRank(base) {
  * @returns {boolean}
  */
 export function wikiTypeMatchesBase(type, base) {
-  if (!base || typeof base !== 'object') return false;
-  const wikiType = String(type || '').trim();
-  if (!wikiType) return false;
-  if (wikiType === 'Weapons') return base.category === 'weapons';
-  if (wikiType === 'Helms') {
-    const group = String(base.group || '');
-    return /helm/i.test(group) && !/circlet/i.test(group);
-  }
-  if (wikiType === 'Shields') return /shield/i.test(String(base.group || ''));
-  if (wikiType === 'Gloves') return base.slot === 'glov';
-  if (wikiType === 'Boots') return base.slot === 'feet';
-  return base.group === wikiType;
+  return wikiTypeMatchesBaseFields(type, base);
 }
 
 /**
@@ -97,15 +102,7 @@ export function wikiTypeMatchesBase(type, base) {
  */
 export function runewordTemplateAllowsBase(template, base) {
   if (!template || !base || base.rarity !== 'normal') return false;
-  const allowed = Array.isArray(template.allowedTypes) ? template.allowedTypes : [];
-  if (!allowed.length) return false;
-  if (!allowed.some((type) => wikiTypeMatchesBase(type, base))) return false;
-  const excludedTypes = Array.isArray(template.excludedTypes) ? template.excludedTypes : [];
-  if (excludedTypes.some((type) => wikiTypeMatchesBase(type, base))) return false;
-  const excludedNames = Array.isArray(template.excludedNames) ? template.excludedNames : [];
-  if (!excludedNames.length) return true;
-  const core = baseNameWithoutTier(base.name).toLowerCase();
-  return !excludedNames.some((name) => String(name || '').trim().toLowerCase() === core);
+  return templateAllowsBaseFields(template, base);
 }
 
 /**
@@ -182,7 +179,8 @@ export function parseRunewordInstanceId(defId) {
   const id = String(defId || '');
   const match = /^(rw:[^:]+):(.+)$/.exec(id);
   if (!match) return null;
-  return { templateId: match[1], baseId: match[2], id };
+  const templateId = resolveRunewordTemplateId(match[1]);
+  return { templateId, baseId: match[2], id: mergedRunewordId(templateId, match[2]) };
 }
 
 /**
@@ -279,7 +277,10 @@ export function runewordEntryToItemDef(entry) {
   };
   const extracted = extractInnateFromModifiers(def.modifiers);
   def.modifiers = extracted.modifiers.map(String);
+  const catalogInnate = parseInnateDamageLine(entry.innate) || (entry.innate ? String(entry.innate) : '');
   if (extracted.innate) def.innate = extracted.innate;
+  else if (catalogInnate) def.innate = catalogInnate;
   if (entry.classRestriction) def.classRestriction = entry.classRestriction;
+  if (entry.subtitle) def.subtitle = String(entry.subtitle);
   return def;
 }

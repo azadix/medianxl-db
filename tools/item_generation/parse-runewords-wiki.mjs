@@ -100,6 +100,8 @@ const ELEMENT_RUNE_ALIASES = Object.freeze({
  *   excludedTypes: string[],
  *   excludedNames: string[],
  *   classRestriction?: string,
+ *   subtitle?: string,
+ *   innate?: string,
  *   modifiers: string[],
  * }} RunewordTemplate
  */
@@ -126,17 +128,59 @@ function isIconOrEmptyCell(html) {
 }
 
 /**
+ * Split a wiki display name from an anniversary / parenthetical subtitle.
+ * @param {string} rawName
+ * @returns {{ name: string, subtitle: string }}
+ */
+export function splitRunewordDisplayName(rawName) {
+  let name = String(rawName || '').replace(/\s+/g, ' ').trim();
+  let subtitle = '';
+  const parens = /\s+(\([^)]*\))\s*$/.exec(name);
+  if (parens) {
+    subtitle = parens[1].trim();
+    name = name.slice(0, parens.index).trim();
+  } else {
+    const anniversary = /^(.*?)(?:\s+)(Median\s+2005[\s\S]*|Thanks everyone!)$/i.exec(name);
+    if (anniversary) {
+      name = anniversary[1].trim();
+      subtitle = anniversary[2].trim();
+    }
+  }
+  return { name, subtitle };
+}
+
+/**
  * @param {string} html
- * @returns {{ name: string, runeCode: string }|null}
+ * @returns {{ name: string, runeCode: string, subtitle?: string }|null}
  */
 export function parseRunewordNameCell(html) {
-  const text = htmlToLines(html).join(' ').replace(/\s+/g, ' ').trim();
-  const match = /^(.+?)\s+'([A-Za-z]+)'\s*$/.exec(text);
-  if (!match) return null;
-  const name = match[1].trim();
-  const runeCode = match[2];
-  if (!name || !runeCode) return null;
-  return { name, runeCode };
+  const markup = String(html || '');
+  const uniqueMatch = /<span\b[^>]*class="[^"]*\bitem-unique\b[^"]*"[^>]*>([\s\S]*?)<\/span>/i.exec(
+    markup
+  );
+  const lines = htmlToLines(markup);
+  const joined = lines.join(' ').replace(/\s+/g, ' ').trim();
+  const codeMatch = /'([A-Za-z]+)'\s*$/.exec(joined);
+  if (!codeMatch) return null;
+  const runeCode = codeMatch[1];
+  let rawName;
+  if (uniqueMatch) {
+    rawName = htmlToLines(uniqueMatch[1]).join(' ').replace(/\s+/g, ' ').trim();
+  } else {
+    rawName = joined.replace(new RegExp(`\\s*'${runeCode}'\\s*$`), '').trim();
+  }
+  const split = splitRunewordDisplayName(rawName);
+  if (uniqueMatch && !split.subtitle) {
+    const leftover = lines
+      .map((line) => String(line || '').trim())
+      .filter((text) => text && text !== split.name && text !== `'${runeCode}'` && text !== runeCode);
+    if (leftover.length) split.subtitle = leftover.join(' ').replace(/\s+/g, ' ').trim();
+  }
+  if (!split.name || !runeCode) return null;
+  /** @type {{ name: string, runeCode: string, subtitle?: string }} */
+  const out = { name: split.name, runeCode };
+  if (split.subtitle) out.subtitle = split.subtitle;
+  return out;
 }
 
 /**
@@ -227,16 +271,17 @@ export function parseAllowedTypesCell(html) {
 /**
  * @param {string} html
  * @param {number} reqLevel
- * @returns {{ modifiers: string[], classRestriction?: string }}
+ * @returns {{ modifiers: string[], classRestriction?: string, innate?: string }}
  */
 export function parseRunewordStatsCell(html, reqLevel) {
   const joined = formatColoredStatLines(joinSplitColoredStatLines(htmlToColoredLines(html)));
   const parsed = parseItemStats(joined);
-  /** @type {{ modifiers: string[], classRestriction?: string }} */
+  /** @type {{ modifiers: string[], classRestriction?: string, innate?: string }} */
   const out = {
     modifiers: Array.isArray(parsed.modifiers) ? parsed.modifiers.map(String) : [],
   };
   if (parsed.classRestriction) out.classRestriction = parsed.classRestriction;
+  if (parsed.innate) out.innate = parsed.innate;
   void reqLevel;
   return out;
 }
@@ -283,6 +328,8 @@ function mergeDuplicateTemplates(a, b) {
   if (!merged.classRestriction && b.classRestriction) {
     merged.classRestriction = b.classRestriction;
   }
+  if (!merged.subtitle && b.subtitle) merged.subtitle = b.subtitle;
+  if (!merged.innate && b.innate) merged.innate = b.innate;
   if ((!merged.modifiers || !merged.modifiers.length) && b.modifiers?.length) {
     merged.modifiers = b.modifiers;
   }
@@ -329,6 +376,8 @@ export function parseRunewordsWiki(html) {
         excludedTypes: types.excludedTypes,
         excludedNames: types.excludedNames,
         ...(stats.classRestriction ? { classRestriction: stats.classRestriction } : {}),
+        ...(named.subtitle ? { subtitle: named.subtitle } : {}),
+        ...(stats.innate ? { innate: stats.innate } : {}),
         modifiers: stats.modifiers,
       });
     }

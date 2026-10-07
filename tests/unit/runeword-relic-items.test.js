@@ -18,6 +18,8 @@ import {
   getRunewordSocketFillers,
   formatRunewordSocketFillerLines,
   runewordEntryToItemDef,
+  parseRunewordInstanceId,
+  resolveRunewordTemplateId,
 } from '@/items/runeword-items.js';
 import { isOverlayItem, formatOverlayBadge } from '@/items/item-overlays.js';
 import { canEquipInSlot } from '@/items/item-types.js';
@@ -186,6 +188,15 @@ describe('runeword helpers', () => {
     expect(listEligibleRunewordBases(lunar, lunarCatalog).map((b) => b.id)).toEqual(['ok']);
   });
 
+  it('resolves anniversary template id aliases', () => {
+    expect(resolveRunewordTemplateId('rw:victory-median-xl-6-years')).toBe('rw:victory');
+    expect(parseRunewordInstanceId('rw:eternal-median-2005-2026-thanks-everyone:cap-s')).toEqual({
+      templateId: 'rw:eternal',
+      baseId: 'cap-s',
+      id: 'rw:eternal:cap-s',
+    });
+  });
+
   it('maps Helms/Shields/Gloves/Boots wiki aliases', () => {
     const catalog = [
       {
@@ -245,7 +256,7 @@ describe('runeword helpers', () => {
       excludedNames: [],
       modifiers: ['+7% to Spell Damage'],
     });
-    expect(listEligibleRunewordBases(helmRw, catalog).map((b) => b.id)).toEqual(['helm']);
+    expect(listEligibleRunewordBases(helmRw, catalog).map((b) => b.id)).toEqual(['helm', 'circ']);
 
     const shieldRw = runewordEntryToItemDef({
       id: 'rw:stone',
@@ -411,5 +422,19 @@ describe('runeword helpers', () => {
     expect(sections.scaling).toContain('Dexterity Damage Bonus: (0.15 per Dexterity)%');
     expect(sections.scaling).toContain('Innate Tri-Elemental Damage: (40.0% of Dexterity)');
     expect(sections.mods.some((line) => /Innate Tri-Elemental/.test(line))).toBe(false);
+  });
+
+  it('uses catalog innate when it is not in modifiers', () => {
+    const template = runewordEntryToItemDef({
+      id: 'rw:atlacamani',
+      name: 'Atlacamani',
+      runes: ['Vex', 'Ist', 'Um'],
+      reqLevel: 68,
+      allowedTypes: ['Scythes'],
+      innate: 'Innate Tri-Elemental Damage: (52.0% of Dexterity)',
+      modifiers: ['75% Attack Speed'],
+    });
+    expect(template.innate).toBe('Innate Tri-Elemental Damage: (52.0% of Dexterity)');
+    expect(template.modifiers).toEqual(['75% Attack Speed']);
   });
 });

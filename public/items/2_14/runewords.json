@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-03T16:20:21.618Z",
+  "generatedAt": "2026-10-07T20:35:27.140Z",
   "entries": [
     {
       "id": "rw:a-perfect-storm",
@@ -484,8 +484,8 @@
       ],
       "excludedTypes": [],
       "excludedNames": [],
+      "innate": "Innate Tri-Elemental Damage: (40.0% of Dexterity)",
       "modifiers": [
-        "Innate Tri-Elemental Damage: (40.0% of Dexterity)",
         "+4 to Amazon Skill Levels",
         "8% Chance to cast level 27 Javelin Nova on Kill",
         "40% Attack Speed",
@@ -515,8 +515,8 @@
       ],
       "excludedTypes": [],
       "excludedNames": [],
+      "innate": "Innate Tri-Elemental Damage: (52.0% of Dexterity)",
       "modifiers": [
-        "Innate Tri-Elemental Damage: (52.0% of Dexterity)",
         "75% Attack Speed",
         "15% Cast Speed",
         "Adds 250-350 Magic Damage",
@@ -2000,8 +2000,8 @@
       ]
     },
     {
-      "id": "rw:eternal-median-2005-2026-thanks-everyone",
-      "name": "Eternal Median 2005-2026 Thanks everyone!",
+      "id": "rw:eternal",
+      "name": "Eternal",
       "runeCode": "TahaLewGhalFelQorKa",
       "runes": [
         "Taha",
@@ -2017,6 +2017,7 @@
       ],
       "excludedTypes": [],
       "excludedNames": [],
+      "subtitle": "Median 2005-2026 Thanks everyone!",
       "modifiers": [
         "+4 to All Skills",
         "+(50 to 85) Spell Focus",
@@ -5875,8 +5876,8 @@
       ]
     },
     {
-      "id": "rw:victory-median-xl-6-years",
-      "name": "Victory (Median XL - 6 years)",
+      "id": "rw:victory",
+      "name": "Victory",
       "runeCode": "SolAmn",
       "runes": [
         "Sol",
@@ -5888,6 +5889,7 @@
       ],
       "excludedTypes": [],
       "excludedNames": [],
+      "subtitle": "(Median XL - 6 years)",
       "modifiers": [
         "4% Chance to cast level 11 Fortress on Melee Attack",
         "50% Bonus to Attack Rating",
