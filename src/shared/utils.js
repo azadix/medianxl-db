@@ -116,6 +116,17 @@ export function getAssetUrl(relativePath) {
 }
 
 /**
+ * Canonical skill-preview GIF for a catalog skill id.
+ * @param {string|null|undefined} skillId
+ * @returns {string} Absolute URL, or empty string when `skillId` is missing
+ */
+export function getSkillPreviewUrl(skillId) {
+    const id = (skillId && String(skillId).trim()) || '';
+    if (!id) return '';
+    return getAssetUrl(`skill-previews/${encodeURIComponent(id)}.gif`);
+}
+
+/**
  * Resolve a planner item inventory icon URL from its catalog `icon` stem.
  * @param {string|null|undefined} iconKey - e.g. `invpa4`
  * @returns {string} Absolute URL, or empty string when `iconKey` is missing

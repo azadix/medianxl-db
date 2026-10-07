@@ -34,12 +34,20 @@ What it can and can't show
 - Formulas use the skill level you pick; skills referenced by synergy formulas count at the same
   level, and character stats count as 100.
 
+Publish to the site
+-------------------
+After rendering, from this folder run:
+  python\\python.exe publish_previews.py
+That copies GIFs to public/skill-previews/{skill-id}.gif (matched by display name)
+and writes public/skill-previews/manifest.json for the skills page.
+
 Files
 -----
-start.py         launcher
-python\          a private copy of Python 3.12 (nothing is installed on your system)
-app\server.py    the local web server; app\ui\index.html the interface
-app\engine\      the emulator: gamedata.py (MPQ + .bin tables), calcvm.py (skill formulas),
-                 sim.py (engine core), plugins_a-d.py (ported game functions), gfx.py, dcc.py,
-                 mpq.py, actor.py (amazon/zombie sprites)
-output\          rendered GIFs (created on first render)
+start.py              launcher
+publish_previews.py   copy GIFs into public/skill-previews
+python\               a private copy of Python 3.12 (nothing is installed on your system)
+app\server.py         the local web server; app\ui\index.html the interface
+app\engine\           the emulator: gamedata.py (MPQ + .bin tables), calcvm.py (skill formulas),
+                      sim.py (engine core), plugins_a-d.py (ported game functions), gfx.py, dcc.py,
+                      mpq.py, actor.py (amazon/zombie sprites)
+output\               rendered GIFs (created on first render)

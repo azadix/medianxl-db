@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   calculateManaCost,
   formatManaCostDisplay,
@@ -7,6 +7,7 @@ import {
   applyManaCostMultiplier,
   escapeHtmlText,
   sanitizeSkillId,
+  getSkillPreviewUrl,
 } from '@/shared/utils.js';
 
 describe('escapeHtmlText', () => {
@@ -24,6 +25,24 @@ describe('sanitizeSkillId', () => {
   it('strips unsafe characters', () => {
     expect(sanitizeSkillId('fire-ball_1')).toBe('fire-ball_1');
     expect(sanitizeSkillId('a/b<script>')).toBe('abscript');
+  });
+});
+
+describe('getSkillPreviewUrl', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it('returns empty when id is missing', () => {
+    expect(getSkillPreviewUrl('')).toBe('');
+    expect(getSkillPreviewUrl(null)).toBe('');
+  });
+
+  it('builds a skill-previews gif path', () => {
+    vi.stubGlobal('window', { location: { origin: 'http://local' } });
+    expect(getSkillPreviewUrl('apf-20_maelstrom_mki')).toContain(
+      'skill-previews/apf-20_maelstrom_mki.gif'
+    );
   });
 });
 
