@@ -6,3 +6,6 @@ __pycache__/
 todo/*
 *cursor*
 tools/tools.local.json
+tools/skill_animator/output/
+tools/skill_animator/app/config.json
+tools/skill_animator/python/

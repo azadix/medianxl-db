@@ -1,0 +1,1162 @@
+[
+{
+"sid": 494,
+"name": "Abyss"
+},
+{
+"sid": 1394,
+"name": "Abyss Knight"
+},
+{
+"sid": 1765,
+"name": "Amatoxin"
+},
+{
+"sid": 1754,
+"name": "Ancients' Hand"
+},
+{
+"sid": 1387,
+"name": "Angel of Death"
+},
+{
+"sid": 1580,
+"name": "Antimass"
+},
+{
+"sid": 1662,
+"name": "APF-20 'Maelstrom' MkI"
+},
+{
+"sid": 1121,
+"name": "APF-20 'Maelstrom' MkV"
+},
+{
+"sid": 459,
+"name": "Apocalypse"
+},
+{
+"sid": 421,
+"name": "Arachnomancy"
+},
+{
+"sid": 2386,
+"name": "Arcane Blast"
+},
+{
+"sid": 1652,
+"name": "Arcane Swarm"
+},
+{
+"sid": 422,
+"name": "Arcane Torrent"
+},
+{
+"sid": 1759,
+"name": "Arrow Swarm"
+},
+{
+"sid": 447,
+"name": "ATMG Sentry"
+},
+{
+"sid": 1687,
+"name": "Avalanche"
+},
+{
+"sid": 1043,
+"name": "Balance"
+},
+{
+"sid": 513,
+"name": "Balefire"
+},
+{
+"sid": 1390,
+"name": "Bane"
+},
+{
+"sid": 481,
+"name": "Banish"
+},
+{
+"sid": 301,
+"name": "Barrage"
+},
+{
+"sid": 1377,
+"name": "Bend the Shadows"
+},
+{
+"sid": 1695,
+"name": "Black Lotus Strike"
+},
+{
+"sid": 1813,
+"name": "Blade Sentinels"
+},
+{
+"sid": 575,
+"name": "Blade Spirits"
+},
+{
+"sid": 508,
+"name": "Bladestorm"
+},
+{
+"sid": 482,
+"name": "Blast Wave"
+},
+{
+"sid": 1134,
+"name": "Blink"
+},
+{
+"sid": 377,
+"name": "Blood Skeleton"
+},
+{
+"sid": 500,
+"name": "Bloodlust"
+},
+{
+"sid": 452,
+"name": "Bloodstar"
+},
+{
+"sid": 512,
+"name": "Bloodstorm"
+},
+{
+"sid": 475,
+"name": "Brimstone"
+},
+{
+"sid": 1122,
+"name": "Broadside"
+},
+{
+"sid": 1384,
+"name": "Carnage"
+},
+{
+"sid": 371,
+"name": "Catapult Shot"
+},
+{
+"sid": 1727,
+"name": "Cautious Strike"
+},
+{
+"sid": 1791,
+"name": "Champions of the Sun"
+},
+{
+"sid": 1745,
+"name": "Chaotic Spark"
+},
+{
+"sid": 1663,
+"name": "Charged Strike"
+},
+{
+"sid": 476,
+"name": "Cherubim"
+},
+{
+"sid": 1942,
+"name": "Chillstring"
+},
+{
+"sid": 1688,
+"name": "Churel"
+},
+{
+"sid": 1802,
+"name": "Clear Mind"
+},
+{
+"sid": 440,
+"name": "Cluster Bomb"
+},
+{
+"sid": 1768,
+"name": "Cold Fear"
+},
+{
+"sid": 1480,
+"name": "Colosseum"
+},
+{
+"sid": 446,
+"name": "Cone of Cold"
+},
+{
+"sid": 1736,
+"name": "Conquest"
+},
+{
+"sid": 1807,
+"name": "Coronation"
+},
+{
+"sid": 1110,
+"name": "Crucify"
+},
+{
+"sid": 1800,
+"name": "Crystalline Arsenal"
+},
+{
+"sid": 472,
+"name": "Dark Power"
+},
+{
+"sid": 1723,
+"name": "Death Blossom"
+},
+{
+"sid": 1379,
+"name": "Death Ripple"
+},
+{
+"sid": 456,
+"name": "Death Star"
+},
+{
+"sid": 1812,
+"name": "Deathgaze"
+},
+{
+"sid": 507,
+"name": "Deathstrike"
+},
+{
+"sid": 1215,
+"name": "Defender Spirit"
+},
+{
+"sid": 1718,
+"name": "Demonic Speed"
+},
+{
+"sid": 1343,
+"name": "Devouring Cloud"
+},
+{
+"sid": 1069,
+"name": "Discharge"
+},
+{
+"sid": 1771,
+"name": "Disco Inferno"
+},
+{
+"sid": 1706,
+"name": "Diseased Cattle"
+},
+{
+"sid": 1770,
+"name": "Disintegrate"
+},
+{
+"sid": 1504,
+"name": "Divine Apparition"
+},
+{
+"sid": 1477,
+"name": "Divine Judgement"
+},
+{
+"sid": 1774,
+"name": "Dominate"
+},
+{
+"sid": 1381,
+"name": "Dream Eater"
+},
+{
+"sid": 1199,
+"name": "Earthquake"
+},
+{
+"sid": 1044,
+"name": "Ecstatic Frenzy"
+},
+{
+"sid": 308,
+"name": "Eldritch Storm"
+},
+{
+"sid": 1715,
+"name": "Electrobolt"
+},
+{
+"sid": 1703,
+"name": "Elemental Totem"
+},
+{
+"sid": 353,
+"name": "Ember Spirit"
+},
+{
+"sid": 1690,
+"name": "Emerald Prison"
+},
+{
+"sid": 1031,
+"name": "Eviscerate"
+},
+{
+"sid": 1734,
+"name": "Exorcism"
+},
+{
+"sid": 1750,
+"name": "Feral Strike"
+},
+{
+"sid": 1042,
+"name": "Fire Elementals"
+},
+{
+"sid": 1563,
+"name": "Firedance"
+},
+{
+"sid": 1400,
+"name": "Fireheart Totem"
+},
+{
+"sid": 1433,
+"name": "Flameburst Shot"
+},
+{
+"sid": 523,
+"name": "Flamefront"
+},
+{
+"sid": 411,
+"name": "Flamestrike"
+},
+{
+"sid": 511,
+"name": "Flametail Shot"
+},
+{
+"sid": 454,
+"name": "Flash"
+},
+{
+"sid": 417,
+"name": "Forked Lightning"
+},
+{
+"sid": 336,
+"name": "Fortress"
+},
+{
+"sid": 1300,
+"name": "Frigid Domain"
+},
+{
+"sid": 413,
+"name": "Frigid Nova"
+},
+{
+"sid": 1398,
+"name": "Frostclaw Totem"
+},
+{
+"sid": 1719,
+"name": "Frostfire Wave"
+},
+{
+"sid": 1789,
+"name": "Frozen Heart"
+},
+{
+"sid": 1705,
+"name": "Frozen Orb"
+},
+{
+"sid": 1665,
+"name": "Funeral Pyre"
+},
+{
+"sid": 1573,
+"name": "Fusillade"
+},
+{
+"sid": 504,
+"name": "Gamma Field"
+},
+{
+"sid": 706,
+"name": "Gift of the Wild"
+},
+{
+"sid": 465,
+"name": "Glacial Nova"
+},
+{
+"sid": 1730,
+"name": "Golden Calf"
+},
+{
+"sid": 1934,
+"name": "Golden Chariot"
+},
+{
+"sid": 1696,
+"name": "Graveyard"
+},
+{
+"sid": 1038,
+"name": "Great Hunt"
+},
+{
+"sid": 442,
+"name": "Guard Tower"
+},
+{
+"sid": 1213,
+"name": "Guardian Spirit"
+},
+{
+"sid": 1739,
+"name": "Guided Chain"
+},
+{
+"sid": 1527,
+"name": "Habeas Corpus"
+},
+{
+"sid": 505,
+"name": "Hailstorm"
+},
+{
+"sid": 1054,
+"name": "Hammer of Zerae"
+},
+{
+"sid": 451,
+"name": "Hammertime"
+},
+{
+"sid": 1645,
+"name": "Harbinger"
+},
+{
+"sid": 356,
+"name": "Harvest"
+},
+{
+"sid": 1317,
+"name": "Harvesters"
+},
+{
+"sid": 1773,
+"name": "Hawk Talons"
+},
+{
+"sid": 352,
+"name": "Heartseeker"
+},
+{
+"sid": 518,
+"name": "Heaven's Fury"
+},
+{
+"sid": 1912,
+"name": "Herald of Zakarum"
+},
+{
+"sid": 1570,
+"name": "Hive"
+},
+{
+"sid": 2385,
+"name": "Holybolt"
+},
+{
+"sid": 497,
+"name": "Hounfor"
+},
+{
+"sid": 354,
+"name": "Hunting Banshee"
+},
+{
+"sid": 1806,
+"name": "Hurricane"
+},
+{
+"sid": 1037,
+"name": "Hyena Strike"
+},
+{
+"sid": 457,
+"name": "Ice Bolt Nova"
+},
+{
+"sid": 416,
+"name": "Ice Elementals"
+},
+{
+"sid": 499,
+"name": "Ice Lance"
+},
+{
+"sid": 1810,
+"name": "Iceburst"
+},
+{
+"sid": 470,
+"name": "Ignis Fatuus"
+},
+{
+"sid": 520,
+"name": "Ignis Mortem"
+},
+{
+"sid": 1576,
+"name": "Immersion"
+},
+{
+"sid": 1032,
+"name": "Impale"
+},
+{
+"sid": 357,
+"name": "Infected Roots"
+},
+{
+"sid": 90,
+"name": "Iron Golem"
+},
+{
+"sid": 2065,
+"name": "Jerhyn's Tawiz"
+},
+{
+"sid": 551,
+"name": "Jitan's Gate"
+},
+{
+"sid": 1669,
+"name": "Laughing Ghost"
+},
+{
+"sid": 306,
+"name": "Lava Pit"
+},
+{
+"sid": 1655,
+"name": "Lex Talionis"
+},
+{
+"sid": 1798,
+"name": "Liche Form"
+},
+{
+"sid": 1944,
+"name": "Lightforge"
+},
+{
+"sid": 1708,
+"name": "Lightning Arena"
+},
+{
+"sid": 1712,
+"name": "Lightning Fury"
+},
+{
+"sid": 1083,
+"name": "Lightning Shield"
+},
+{
+"sid": 439,
+"name": "Lightning Wall"
+},
+{
+"sid": 1713,
+"name": "Limpet Laser"
+},
+{
+"sid": 419,
+"name": "Lorenado"
+},
+{
+"sid": 302,
+"name": "Magic Missiles"
+},
+{
+"sid": 1579,
+"name": "Mana Sweep"
+},
+{
+"sid": 1701,
+"name": "Mana Tide Totem"
+},
+{
+"sid": 435,
+"name": "Mark of the Wild"
+},
+{
+"sid": 1757,
+"name": "Medusa"
+},
+{
+"sid": 1642,
+"name": "Meteor Shower"
+},
+{
+"sid": 420,
+"name": "Miasma"
+},
+{
+"sid": 1825,
+"name": "Mind Control"
+},
+{
+"sid": 395,
+"name": "Mind Flay"
+},
+{
+"sid": 1571,
+"name": "Mooncall"
+},
+{
+"sid": 1225,
+"name": "Mountain King"
+},
+{
+"sid": 1319,
+"name": "Mythal"
+},
+{
+"sid": 1396,
+"name": "Night Hawks"
+},
+{
+"sid": 468,
+"name": "Nightmare"
+},
+{
+"sid": 1921,
+"name": "Nihlathak's Bombard"
+},
+{
+"sid": 1648,
+"name": "Noctule"
+},
+{
+"sid": 502,
+"name": "Nova Bomb"
+},
+{
+"sid": 1568,
+"name": "Nova Charge"
+},
+{
+"sid": 1667,
+"name": "Nova Shot"
+},
+{
+"sid": 1697,
+"name": "OHMAN"
+},
+{
+"sid": 441,
+"name": "Orb of Annihilation"
+},
+{
+"sid": 1741,
+"name": "Overcharged"
+},
+{
+"sid": 1228,
+"name": "Overkill"
+},
+{
+"sid": 1709,
+"name": "Overlord"
+},
+{
+"sid": 358,
+"name": "Pagan Rites"
+},
+{
+"sid": 1385,
+"name": "Parasite"
+},
+{
+"sid": 1766,
+"name": "Path of Flames"
+},
+{
+"sid": 1297,
+"name": "Pathfinder"
+},
+{
+"sid": 1749,
+"name": "Patriot Sentry"
+},
+{
+"sid": 1640,
+"name": "Pentagram"
+},
+{
+"sid": 250,
+"name": "Pestilence"
+},
+{
+"sid": 1027,
+"name": "Phalanx"
+},
+{
+"sid": 1779,
+"name": "Phoenix Wave"
+},
+{
+"sid": 1674,
+"name": "Pounce"
+},
+{
+"sid": 445,
+"name": "Powder Keg"
+},
+{
+"sid": 1216,
+"name": "Protector Spirit"
+},
+{
+"sid": 1683,
+"name": "Psicrown"
+},
+{
+"sid": 1138,
+"name": "Psionic Storm"
+},
+{
+"sid": 1826,
+"name": "Purify"
+},
+{
+"sid": 522,
+"name": "Pyroblast"
+},
+{
+"sid": 1135,
+"name": "Queen of Blades"
+},
+{
+"sid": 355,
+"name": "Rain of Fire"
+},
+{
+"sid": 1752,
+"name": "Rainbow Storm"
+},
+{
+"sid": 1660,
+"name": "Ranged Blood Thorns"
+},
+{
+"sid": 1804,
+"name": "Ranged Egg Trap"
+},
+{
+"sid": 1577,
+"name": "Raven Familiar"
+},
+{
+"sid": 1721,
+"name": "Raven Heart"
+},
+{
+"sid": 1656,
+"name": "Ravenous Flames"
+},
+{
+"sid": 515,
+"name": "Rebound"
+},
+{
+"sid": 1304,
+"name": "Rend"
+},
+{
+"sid": 1506,
+"name": "Resurrect"
+},
+{
+"sid": 1476,
+"name": "Retaliate"
+},
+{
+"sid": 1672,
+"name": "Ring of Light"
+},
+{
+"sid": 493,
+"name": "Rising Dawn"
+},
+{
+"sid": 1699,
+"name": "Rock Shock"
+},
+{
+"sid": 369,
+"name": "Sacrifices"
+},
+{
+"sid": 1644,
+"name": "Sandstorm"
+},
+{
+"sid": 319,
+"name": "Scorpion Blade"
+},
+{
+"sid": 2428,
+"name": "Scream of Trag'Oul"
+},
+{
+"sid": 516,
+"name": "Screaming Eagle"
+},
+{
+"sid": 474,
+"name": "Searing Glow"
+},
+{
+"sid": 1769,
+"name": "Searing Orb"
+},
+{
+"sid": 519,
+"name": "Serafiend Prison"
+},
+{
+"sid": 1924,
+"name": "Serenthia's Scorn"
+},
+{
+"sid": 1502,
+"name": "Servants of Valor"
+},
+{
+"sid": 1119,
+"name": "Shadow Refuge"
+},
+{
+"sid": 509,
+"name": "Shatter the Flesh"
+},
+{
+"sid": 1202,
+"name": "Shower of Rocks"
+},
+{
+"sid": 1692,
+"name": "Shunpo"
+},
+{
+"sid": 321,
+"name": "Shuriken Flurry"
+},
+{
+"sid": 1735,
+"name": "Silver Dart"
+},
+{
+"sid": 510,
+"name": "Singularity"
+},
+{
+"sid": 1675,
+"name": "Skeletal Flayer"
+},
+{
+"sid": 1680,
+"name": "Sky Siege"
+},
+{
+"sid": 396,
+"name": "Slayer"
+},
+{
+"sid": 1650,
+"name": "Smite"
+},
+{
+"sid": 1226,
+"name": "Snake Bite"
+},
+{
+"sid": 1481,
+"name": "Solar Flare"
+},
+{
+"sid": 1694,
+"name": "Soulshatter"
+},
+{
+"sid": 393,
+"name": "Spark of Hope"
+},
+{
+"sid": 485,
+"name": "Spike Nova"
+},
+{
+"sid": 449,
+"name": "Spiral Dance"
+},
+{
+"sid": 1218,
+"name": "Spirit Walk"
+},
+{
+"sid": 1668,
+"name": "Split Arrow"
+},
+{
+"sid": 1227,
+"name": "Stampede"
+},
+{
+"sid": 1296,
+"name": "Steady Shot"
+},
+{
+"sid": 1120,
+"name": "Storm Crows"
+},
+{
+"sid": 1809,
+"name": "Stormblast"
+},
+{
+"sid": 1053,
+"name": "Stormcall"
+},
+{
+"sid": 1685,
+"name": "Stormclash"
+},
+{
+"sid": 1408,
+"name": "Stormeye Totem"
+},
+{
+"sid": 1497,
+"name": "Stormlord"
+},
+{
+"sid": 1777,
+"name": "Summon Darklings"
+},
+{
+"sid": 1639,
+"name": "Summon Edyrem"
+},
+{
+"sid": 1744,
+"name": "Summon Fallen"
+},
+{
+"sid": 1794,
+"name": "Summon Frostwalker"
+},
+{
+"sid": 1795,
+"name": "Summon Glowing Fungus"
+},
+{
+"sid": 1793,
+"name": "Summon Sinner"
+},
+{
+"sid": 488,
+"name": "Sun Strike"
+},
+{
+"sid": 473,
+"name": "Supernova"
+},
+{
+"sid": 1036,
+"name": "Takedown"
+},
+{
+"sid": 1751,
+"name": "Tantrum"
+},
+{
+"sid": 1671,
+"name": "Teleport"
+},
+{
+"sid": 418,
+"name": "Tempest"
+},
+{
+"sid": 1913,
+"name": "The Collector"
+},
+{
+"sid": 2891,
+"name": "The Last Warchief"
+},
+{
+"sid": 1714,
+"name": "Thunder Arena"
+},
+{
+"sid": 1201,
+"name": "Thunder Slam"
+},
+{
+"sid": 1230,
+"name": "Thundergod"
+},
+{
+"sid": 1566,
+"name": "Thunderstone"
+},
+{
+"sid": 2825,
+"name": "Time Warp"
+},
+{
+"sid": 1691,
+"name": "Time Wave"
+},
+{
+"sid": 461,
+"name": "Timefield"
+},
+{
+"sid": 1693,
+"name": "Titan's Fortitude"
+},
+{
+"sid": 1340,
+"name": "Tracking"
+},
+{
+"sid": 309,
+"name": "Trinity Arrow"
+},
+{
+"sid": 450,
+"name": "Trinity Beam"
+},
+{
+"sid": 1641,
+"name": "Trinity Nova"
+},
+{
+"sid": 1646,
+"name": "Ultimate Chaos"
+},
+{
+"sid": 1681,
+"name": "Venomcloud Totem"
+},
+{
+"sid": 1498,
+"name": "Vessel of Judgement"
+},
+{
+"sid": 1486,
+"name": "Vessel of Retribution"
+},
+{
+"sid": 1475,
+"name": "Vindicate"
+},
+{
+"sid": 1772,
+"name": "Virulence"
+},
+{
+"sid": 670,
+"name": "Visions of the Past"
+},
+{
+"sid": 1678,
+"name": "Void Archon"
+},
+{
+"sid": 1815,
+"name": "Void Tendrils"
+},
+{
+"sid": 1647,
+"name": "Voidstar"
+},
+{
+"sid": 1657,
+"name": "War Cry"
+},
+{
+"sid": 1488,
+"name": "Ward of Fate"
+},
+{
+"sid": 1612,
+"name": "Warmth"
+},
+{
+"sid": 1567,
+"name": "Warp Armor"
+},
+{
+"sid": 1775,
+"name": "Whirlpool"
+},
+{
+"sid": 1234,
+"name": "Whirlwind"
+},
+{
+"sid": 372,
+"name": "Widowmaker"
+},
+{
+"sid": 1041,
+"name": "Wild and Free"
+},
+{
+"sid": 1698,
+"name": "Windform"
+},
+{
+"sid": 1746,
+"name": "Winter Avatar"
+},
+{
+"sid": 1583,
+"name": "Witch Blood"
+},
+{
+"sid": 1220,
+"name": "Wolf Companion"
+},
+{
+"sid": 1733,
+"name": "Wychwind"
+},
+{
+"sid": 1742,
+"name": "Wyrd"
+},
+{
+"sid": 1029,
+"name": "Wyrmshot"
+}
+]

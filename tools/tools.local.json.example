@@ -1,3 +1,5 @@
 {
-  "qdc6_exe": "C:\\Median Tools\\qdc6\\qdc6.exe"
+  "qdc6_exe": "C:\\Median Tools\\qdc6\\qdc6.exe",
+  "mpq_editor": "C:\\Median Tools\\mpq editor\\x64\\MPQEditor.exe",
+  "d2_game_dir": "C:\\Games\\median-xl"
 }

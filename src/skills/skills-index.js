@@ -4,6 +4,8 @@ import {
   expandPlaceholdersWithScaling,
   showSkillDataLoadError,
   escapeHtmlText,
+  getAssetUrl,
+  getSkillPreviewUrl,
 } from '@/shared/utils.js';
 import { getTreeSkillsCache } from '@/character/planner-core.js';
 import { getCurrentVersion, versionToTreeAssetFolder, initializeVersionSelector } from '@/shared/version-config.js';
@@ -149,6 +151,8 @@ let clearLoadError = null;
 let skillsList = [];
 /** `tree_data` subfolder (e.g. "2_14"); from versionToTreeAssetFolder after JSON load */
 let skillIconGameVersionFolder = null;
+/** Skill ids that have a GIF in public/skill-previews */
+let skillPreviewIds = new Set();
 
 /** Avoid redundant re-render when router.replace mirrors the current skill detail */
 let lastDisplayedSkillKey = null;
@@ -497,6 +501,55 @@ function bindSkillSourcesTableSort(host, kind, rows, cleanupFns) {
   cleanupFns.push(() => table.removeEventListener('click', onClick));
 }
 
+function buildSkillPreviewHtml(skillInfo) {
+  const id = String(skillInfo?.id || '').trim();
+  if (!id || !skillPreviewIds.has(id)) return '';
+  const src = getSkillPreviewUrl(id);
+  if (!src) return '';
+  const alt = `${skillInfo.name || id} preview`;
+  return `
+            <section class="planner-card skill-preview-panel" data-skill-preview>
+                <div class="skill-detail-section-head">
+                    <div>
+                        <span class="planner-card__eyebrow">Skill preview</span>
+                        <h3 class="title is-5 mb-0">Skill preview</h3>
+                    </div>
+                </div>
+                <p class="skill-preview-caption">Default scene (skill level 20, no items or passives). 1 grid = 1 yard.</p>
+                <p class="skill-preview-notice">Highly experimental. May not correctly represent the skill in game.</p>
+                <div class="skill-preview-frame">
+                    <img src="${escapeHtmlText(src)}" alt="${escapeHtmlText(alt)}" width="800" height="400" loading="lazy" />
+                </div>
+            </section>
+  `;
+}
+
+function bindSkillPreviewError(host, cleanupFns) {
+  const panel = host.querySelector('[data-skill-preview]');
+  const img = panel?.querySelector('img');
+  if (!panel || !img) return;
+  const onError = () => {
+    panel.hidden = true;
+  };
+  img.addEventListener('error', onError);
+  cleanupFns.push(() => img.removeEventListener('error', onError));
+}
+
+async function loadSkillPreviewManifest() {
+  try {
+    const res = await fetch(getAssetUrl('skill-previews/manifest.json'));
+    if (!res.ok) {
+      skillPreviewIds = new Set();
+      return;
+    }
+    const data = await res.json();
+    const ids = Array.isArray(data?.ids) ? data.ids : [];
+    skillPreviewIds = new Set(ids.map((id) => String(id)));
+  } catch {
+    skillPreviewIds = new Set();
+  }
+}
+
 async function displaySkillDetail(skillId) {
   const host = detailEl();
   if (!host || !pageTitleEl) return;
@@ -712,6 +765,7 @@ async function displaySkillDetail(skillId) {
   const descriptionHtml = skillInfo.description
     ? '<section class="planner-card skill-description"></section>'
     : '';
+  const previewHtml = buildSkillPreviewHtml(skillInfo);
 
   host.innerHTML = `
         <div class="skill-detail skill-detail-page">
@@ -742,6 +796,7 @@ async function displaySkillDetail(skillId) {
                         </section>
                         ${skillGrantSourcesHtml}
                         ${procSourcesHtml}
+                        ${previewHtml}
                     </div>
                 </main>
 
@@ -807,6 +862,7 @@ async function displaySkillDetail(skillId) {
   const cleanupFns = [];
   bindSkillSourcesTableSort(host, 'grants', skillGrantRows, cleanupFns);
   bindSkillSourcesTableSort(host, 'procs', procSourceRows, cleanupFns);
+  bindSkillPreviewError(host, cleanupFns);
 
   const onKeyDown = (e) => {
     if (e.key === 'Control' || e.ctrlKey) {
@@ -917,6 +973,7 @@ async function loadSkillsFromTreeDataPage() {
       return String(a.name || '').localeCompare(String(b.name || ''));
     });
     skillsList = loadedSkills;
+    await loadSkillPreviewManifest();
     setSkillsCatalog?.(loadedSkills, skillIconGameVersionFolder);
     clearLoadError?.();
 
@@ -928,6 +985,7 @@ async function loadSkillsFromTreeDataPage() {
   } catch (error) {
     console.error('Error loading skills from tree_data:', error);
     skillsList = [];
+    skillPreviewIds = new Set();
     setSkillsCatalog?.([], null);
     if (setLoadError) {
       setLoadError(error.message);
@@ -993,6 +1051,7 @@ export function unmountSkillsIndex() {
   clearLoadError = null;
   skillsList = [];
   skillIconGameVersionFolder = null;
+  skillPreviewIds = new Set();
   lastDisplayedSkillKey = null;
 }
 

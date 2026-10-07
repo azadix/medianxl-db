@@ -283,6 +283,32 @@ watch(
   min-width: 0;
 }
 
+:deep(.skill-preview-caption),
+:deep(.skill-preview-notice) {
+  margin: 0.35rem 0 0;
+  font-size: 0.82rem;
+}
+
+:deep(.skill-preview-caption) {
+  color: #9a9aa8;
+}
+
+:deep(.skill-preview-notice) {
+  margin-bottom: 0.75rem;
+  color: #ff3860;
+}
+
+:deep(.skill-preview-frame) {
+  width: 100%;
+  background: hsl(0, 0%, 7%);
+}
+
+:deep(.skill-preview-frame img) {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 :deep(.skill-detail-infobox .planner-card) {
   margin-bottom: 0;
 }
