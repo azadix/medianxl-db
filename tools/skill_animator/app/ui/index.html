@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MXL Skill Animator</title>
+<style>
+:root{
+  --bg:#141312; --panel:#1d1b19; --panel2:#252220; --line:#3a352a; --text:#e6e1d6; --mut:#9a917f;
+  --gold:#c9a95c; --gold2:#e8cc84; --red:#b8574b; --green:#7fa86a; --blue:#6f95c9;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--text);font:14px/1.45 "Segoe UI",system-ui,sans-serif;display:flex;flex-direction:column}
+header{display:flex;align-items:center;gap:14px;padding:10px 16px;border-bottom:1px solid var(--line);background:#100f0e}
+header h1{font-size:17px;margin:0;color:var(--gold2);letter-spacing:.3px;font-weight:600}
+#status{margin-left:auto;font-size:13px;color:var(--mut);display:flex;align-items:center;gap:8px}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--mut)}
+.dot.ok{background:var(--green)} .dot.bad{background:var(--red)} .dot.busy{background:var(--gold);animation:p 1s infinite}
+@keyframes p{50%{opacity:.3}}
+main{flex:1;display:grid;grid-template-columns:300px 1fr 300px;min-height:0}
+aside,section{min-height:0}
+#left{border-right:1px solid var(--line);display:flex;flex-direction:column;background:var(--panel)}
+#left .tools{padding:10px;display:flex;flex-direction:column;gap:8px;border-bottom:1px solid var(--line)}
+input[type=text],input[type=number],select{width:100%;background:#0f0e0d;color:var(--text);border:1px solid var(--line);border-radius:6px;padding:7px 9px;font:inherit}
+input:focus,select:focus{outline:1px solid var(--gold);border-color:var(--gold)}
+.seg{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.seg button{flex:1;background:transparent;border:0;color:var(--mut);padding:6px;font:inherit;cursor:pointer}
+.seg button.on{background:var(--panel2);color:var(--gold2)}
+#list{flex:1;overflow:auto}
+.item{padding:7px 12px;border-bottom:1px solid #26231f;cursor:pointer;display:flex;align-items:center;gap:8px}
+.item:hover{background:#24211e}
+.item.sel{background:#2d2822;box-shadow:inset 3px 0 0 var(--gold)}
+.item .nm{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item .tag{font-size:11px;color:var(--mut)}
+.item .st{width:8px;height:8px;border-radius:50%}
+.st.ok{background:var(--green)} .st.no{background:var(--red)}
+#count{font-size:12px;color:var(--mut);padding:6px 12px;border-top:1px solid var(--line)}
+#center{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:22px;overflow:auto;gap:14px}
+#stage{background:#0b0b0b;border:1px solid var(--line);border-radius:8px;min-width:480px;min-height:350px;display:flex;align-items:center;justify-content:center;position:relative;max-width:100%}
+#stage img{display:block;max-width:100%;image-rendering:auto}
+#stage .ph{color:var(--mut);padding:30px;text-align:center}
+#title{font-size:20px;color:var(--gold2);margin:0}
+#meta{color:var(--mut);font-size:13px;text-align:center;max-width:560px}
+.spinner{width:34px;height:34px;border:3px solid #333;border-top-color:var(--gold);border-radius:50%;animation:r .8s linear infinite}
+@keyframes r{to{transform:rotate(360deg)}}
+#right{border-left:1px solid var(--line);background:var(--panel);overflow:auto;padding:12px 14px;display:flex;flex-direction:column;gap:14px}
+h3{margin:0 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:.8px;color:var(--gold)}
+.row{display:flex;align-items:center;gap:8px;margin:6px 0}
+.row label{flex:1;color:var(--mut);font-size:13px}
+.row input[type=number],.row select{width:110px}
+input[type=range]{width:110px;accent-color:var(--gold)}
+.btn{background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:6px;padding:8px 12px;font:inherit;cursor:pointer;width:100%}
+.btn:hover{border-color:var(--gold)}
+.btn.primary{background:#5b4a24;border-color:#8a7136;color:#fff3d6}
+.btn.primary:hover{background:#6c582b}
+.btn:disabled{opacity:.5;cursor:default}
+.btns{display:flex;flex-direction:column;gap:8px}
+.bar{height:8px;background:#0f0e0d;border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.bar>div{height:100%;background:var(--gold);width:0}
+#log{font:12px/1.4 Consolas,monospace;color:#b8b0a0;background:#0f0e0d;border:1px solid var(--line);border-radius:6px;padding:8px;max-height:160px;overflow:auto;white-space:pre-wrap}
+.hint{font-size:12px;color:var(--mut)}
+details summary{cursor:pointer;color:var(--gold);font-size:12px;text-transform:uppercase;letter-spacing:.8px}
+@media (max-width:1000px){main{grid-template-columns:240px 1fr}#right{grid-column:1/-1;border-left:0;border-top:1px solid var(--line)}}
+</style>
+</head>
+<body>
+<header>
+  <h1>MXL Skill Animator</h1>
+  <span class="hint">Median XL skill animations replayed from the game's own skill and missile code</span>
+  <div id="status"><span class="dot busy" id="dot"></span><span id="stxt">Starting…</span></div>
+</header>
+<main>
+  <aside id="left">
+    <div class="tools">
+      <input type="text" id="q" placeholder="Search skills…" autocomplete="off">
+      <div class="seg" id="filter">
+        <button data-f="osk" class="on">Oskills</button>
+        <button data-f="all">All with missiles</button>
+      </div>
+    </div>
+    <div id="list"></div>
+    <div id="count"></div>
+  </aside>
+
+  <section id="center">
+    <h2 id="title">Pick a skill</h2>
+    <div id="stage"><div class="ph">Choose a skill on the left, then press <b>Render</b>.<br>Rendered GIFs are saved to your output folder.</div></div>
+    <div id="meta"></div>
+  </section>
+
+  <aside id="right">
+    <div class="btns">
+      <button class="btn primary" id="go" disabled>Render selected</button>
+      <button class="btn" id="all" disabled>Render all in list</button>
+      <button class="btn" id="open">Open output folder</button>
+    </div>
+    <div id="jobbox" style="display:none">
+      <h3>Batch</h3>
+      <div class="bar"><div id="jbar"></div></div>
+      <div class="row"><span class="hint" id="jtxt"></span></div>
+      <button class="btn" id="cancel">Cancel batch</button>
+    </div>
+
+    <div>
+      <h3>Scene</h3>
+      <div class="row"><label for="lvl">Skill level <b id="lvlv">20</b></label><input type="range" id="lvl" min="1" max="60" value="20"></div>
+      <div class="row"><label for="distance">Target distance (yards)</label><input type="number" id="distance" value="11" min="2" max="40"></div>
+      <div class="row"><label for="enemies">Stand-in enemies</label>
+        <select id="enemies"><option value="auto">Auto</option><option value="on">Always</option><option value="off">Never</option></select></div>
+      <div class="row"><label for="seed">Random seed</label><input type="number" id="seed" value="7"></div>
+    </div>
+
+    <div>
+      <h3>Output</h3>
+      <div class="row"><label for="max_frames">Max frames (25/s)</label><input type="number" id="max_frames" value="200" min="10" max="1000"></div>
+      <div class="row"><label for="max_kb">File size limit (KB)</label><input type="number" id="max_kb" value="250" min="0"></div>
+      <p class="hint">GIFs are always 800x400 with a fixed camera (1-yard checkerboard). Over the size limit, frames are dropped and the palette is reduced. 0 = no limit.</p>
+    </div>
+
+    <details>
+      <summary>Settings</summary>
+      <div class="row" style="flex-direction:column;align-items:stretch">
+        <label for="game_dir">Median XL folder</label><input type="text" id="game_dir">
+        <label for="out_dir">Output folder</label><input type="text" id="out_dir">
+        <label for="file_pattern">File name ({name}, {sid})</label><input type="text" id="file_pattern">
+        <button class="btn" id="savecfg">Save and reload game data</button>
+      </div>
+    </details>
+
+    <div>
+      <h3>Log</h3>
+      <div id="log"></div>
+    </div>
+  </aside>
+</main>
+<script>
+const $ = s => document.querySelector(s);
+let skills = [], filter = 'osk', sel = null, done = {}, loadedOnce = false;
+const OPTS = ['lvl','distance','enemies','seed','max_frames','max_kb'];
+
+function store(k, v){ try{ localStorage.setItem('mxl.'+k, v) }catch(e){} }
+function recall(k){ try{ return localStorage.getItem('mxl.'+k) }catch(e){ return null } }
+OPTS.forEach(k => { const v = recall(k); if (v !== null) $('#'+k).value = v; $('#'+k).addEventListener('change', e => store(k, e.target.value)); });
+$('#lvlv').textContent = $('#lvl').value;
+$('#lvl').addEventListener('input', e => $('#lvlv').textContent = e.target.value);
+
+function opts(){ const o = {}; OPTS.forEach(k => o[k] = $('#'+k).value); return o; }
+async function api(path, body){
+  const r = await fetch(path, body === undefined ? {} : {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
+  return r.json();
+}
+
+function visible(){
+  const q = $('#q').value.trim().toLowerCase();
+  return skills.filter(s => (filter === 'all' ? s.missiles : s.oskill) && (!q || s.name.toLowerCase().includes(q) || String(s.sid) === q));
+}
+function drawList(){
+  const v = visible();
+  $('#list').innerHTML = '';
+  const frag = document.createDocumentFragment();
+  for (const s of v){
+    const d = document.createElement('div');
+    d.className = 'item' + (sel && sel.sid === s.sid ? ' sel' : '');
+    const st = done[s.sid] === undefined ? '' : `<span class="st ${done[s.sid] ? 'ok' : 'no'}" title="${done[s.sid] ? 'rendered' : 'nothing to show'}"></span>`;
+    d.innerHTML = `<span class="nm"></span><span class="tag">#${s.sid}</span>${st}`;
+    d.querySelector('.nm').textContent = s.name;
+    d.onclick = () => { sel = s; drawList(); $('#title').textContent = s.name; $('#go').disabled = false; render(); };
+    frag.appendChild(d);
+  }
+  $('#list').appendChild(frag);
+  $('#count').textContent = v.length + ' skills';
+  $('#all').disabled = !v.length;
+}
+$('#q').addEventListener('input', drawList);
+document.querySelectorAll('#filter button').forEach(b => b.onclick = () => {
+  filter = b.dataset.f; document.querySelectorAll('#filter button').forEach(x => x.classList.toggle('on', x === b)); drawList();
+});
+
+function showResult(r){
+  done[r.sid] = !!r.ok;
+  if (r.ok){
+    $('#stage').innerHTML = `<img alt="${r.name} animation" src="${r.url}">`;
+    const i = r.info;
+    $('#meta').textContent = `${r.file} · ${i.width}×${i.height}px · ${i.frames} frames · ${i.kb} KB · ${i.seconds}s` + (i.errors && i.errors.length ? ' · notes: ' + i.errors.length : '');
+  } else {
+    $('#stage').innerHTML = `<div class="ph">Nothing to show for this skill.<br><span class="hint">${(r.info && r.info.why) || ''}</span></div>`;
+    $('#meta').textContent = '';
+  }
+  drawList();
+}
+async function render(){
+  if (!sel) return;
+  $('#stage').innerHTML = '<div class="spinner"></div>';
+  $('#meta').textContent = 'Simulating ' + sel.name + '…';
+  $('#go').disabled = true;
+  try { showResult(await api('/api/render', {sid: sel.sid, options: opts()})); }
+  catch(e){ $('#stage').innerHTML = '<div class="ph">Render failed: ' + e + '</div>'; }
+  $('#go').disabled = false;
+}
+$('#go').onclick = render;
+$('#open').onclick = () => api('/api/open_folder', {});
+$('#all').onclick = async () => {
+  const v = visible();
+  if (!confirm(`Render ${v.length} skills into the output folder? Existing files with the same names are replaced.`)) return;
+  await api('/api/batch', {sids: v.map(s => s.sid), options: opts()});
+  pollJob();
+};
+$('#cancel').onclick = () => api('/api/cancel', {});
+async function pollJob(){
+  const j = await api('/api/job');
+  if (!j.total){ return; }
+  $('#jobbox').style.display = '';
+  $('#jbar').style.width = (100 * j.done / j.total) + '%';
+  $('#jtxt').textContent = `${j.done}/${j.total} · ${j.ok} rendered · ${j.skipped} nothing to show` + (j.running ? '' : ' · finished');
+  (j.results || []).forEach(r => done[r.sid] = !!r.ok);
+  const last = (j.results || []).filter(r => r.ok).slice(-1)[0];
+  if (last && j.running){ $('#stage').innerHTML = `<img alt="" src="${last.url}">`; $('#title').textContent = last.name; }
+  drawList();
+  if (j.running) setTimeout(pollJob, 1000);
+}
+
+async function poll(){
+  let s;
+  try { s = await api('/api/status'); } catch(e){ $('#dot').className = 'dot bad'; $('#stxt').textContent = 'Server stopped'; return; }
+  $('#log').textContent = (s.log || []).join('\n');
+  $('#log').scrollTop = 1e9;
+  if (!$('#game_dir').value){ $('#game_dir').value = s.cfg.game_dir; $('#out_dir').value = s.cfg.out_dir; $('#file_pattern').value = s.cfg.file_pattern; }
+  if (s.loading){ $('#dot').className = 'dot busy'; $('#stxt').textContent = 'Loading game data…'; }
+  else if (s.error){ $('#dot').className = 'dot bad'; $('#stxt').textContent = 'Game data not loaded – check Settings'; document.querySelector('details').open = true; }
+  else if (s.loaded){
+    $('#dot').className = 'dot ok'; $('#stxt').textContent = 'Ready';
+    if (!loadedOnce){ loadedOnce = true; skills = await api('/api/skills'); drawList(); }
+  }
+  setTimeout(poll, s.loaded && !s.loading ? 4000 : 800);
+}
+$('#savecfg').onclick = async () => {
+  loadedOnce = false;
+  await api('/api/config', {game_dir: $('#game_dir').value, out_dir: $('#out_dir').value, file_pattern: $('#file_pattern').value, reload: true});
+};
+poll(); pollJob();
+</script>
+</body>
+</html>
