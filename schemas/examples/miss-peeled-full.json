@@ -1,0 +1,1372 @@
+{
+  "name": "Miss_Peeled",
+  "version": "2.14",
+  "class": "Assassin",
+  "level": 150,
+  "difficultyTitle": "Matriarch",
+  "signetsEaten": 400,
+  "allSkillsBonus": 32,
+  "classSkillsBonus": 10,
+  "stats": {
+    "baseStrength": 50,
+    "baseDexterity": 725,
+    "baseVitality": 0,
+    "baseEnergy": 0,
+    "strength": 70,
+    "dexterity": 1160,
+    "vitality": 15,
+    "energy": 15,
+    "life": 12338,
+    "mana": 4457,
+    "percent_strength": 60,
+    "percent_dexterity": 116,
+    "percent_vitality": 62,
+    "percent_energy": 62,
+    "maximum_life": 30,
+    "maximum_mana": 58,
+    "all_skills": 32,
+    "class_skill_levels": 10,
+    "maximum_skill_level": 0,
+    "experience_gained": 84,
+    "life_stolen_per_hit": 14,
+    "life_after_each_kill": 50,
+    "life_on_striking": 2,
+    "life_on_melee_attack": 142,
+    "life_regenerated_per_second": 71.2,
+    "regenerate_mana": 10,
+    "cold_resistance": 207,
+    "maximum_cold_resistance": 12,
+    "fire_resistance": 160,
+    "maximum_fire_resistance": 11,
+    "lightning_resistance": 56,
+    "maximum_lightning_resistance": 10,
+    "poison_resistance": 178,
+    "maximum_poison_resist": 10,
+    "magic_resistance": 4,
+    "physical_resistance": 7,
+    "physical_damage_taken_reduced": 75,
+    "poison_length_reduction": 85,
+    "curse_length_reduction": 30,
+    "cold_absorb": 6,
+    "fire_absorb": 5,
+    "lightning_absorb": 7,
+    "magic_find": 146,
+    "gold_find": -10,
+    "movement_speed": 59,
+    "light_radius": 7,
+    "attack_speed": 45,
+    "cast_speed": 45,
+    "hit_recovery": 125,
+    "block_speed": 50,
+    "total_character_defense": 209,
+    "enhanced_weapon_damage": 97,
+    "attack_rating": 545,
+    "percent_attack_rating": 471,
+    "chance_of_crushing_blow": 11,
+    "deadly_strike": 4,
+    "avoid_chance": 5,
+    "slows_target_by": 20,
+    "minimum_cold_damage": 175,
+    "maximum_cold_damage": 325,
+    "minimum_fire_damage": 375,
+    "maximum_fire_damage": 625,
+    "minimum_lightning_damage": 375,
+    "maximum_lightning_damage": 625,
+    "cold_spell_damage": 95,
+    "enemy_cold_resistance": 65,
+    "fire_spell_damage": 94,
+    "enemy_fire_resistance": 43,
+    "lightning_spell_damage": 96,
+    "enemy_lightning_resistance": 105,
+    "poison_spell_damage": 94,
+    "enemy_poison_resistance": 19,
+    "physical_magic_spell_damage": 98,
+    "summoned_minion_life": 114,
+    "summoned_minion_damage": 41,
+    "summoned_minion_resistances": 26,
+    "summoned_minion_attack_rating": 10
+  },
+  "skillPoints": {
+    "Blink": 1,
+    "Shadow Refuge": 2,
+    "Shadowrush": 6,
+    "Perfect Being": 20,
+    "Queen of Blades": 2,
+    "Storm Crows": 1,
+    "APF-20 'Maelstrom' MkV": 1,
+    "Black Wind": 1,
+    "Void Gazer": 10,
+    "Noctule": 25,
+    "Way of the Gryphon": 25,
+    "Batstrike": 1,
+    "Anathema": 1,
+    "Vampiric Strike": 5,
+    "Way of the Phoenix": 25,
+    "Purity": 4,
+    "Melee Devotion": 1,
+    "Continuity": 1,
+    "Prismatic Cloak": 15,
+    "Way of the Raven": 15,
+    "Paragon of Sanctity": 1
+  },
+  "oSkills": {
+    "Disintegrate": 12,
+    "Hailstorm": 20,
+    "Jitan's Gate": 1,
+    "Lightning Shield": 20,
+    "Lightning Wall": 19,
+    "Purify": 4,
+    "Stormclash": 20,
+    "Summon Edyrem": 1,
+    "Teleport": 15,
+    "Vindicate": 1,
+    "Voidstar": 28,
+    "Whirlwind": 14
+  },
+  "questsCompleted": {
+    "den_of_evil": {
+      "normal": true,
+      "nightmare": true,
+      "hell": true
+    },
+    "radament": {
+      "normal": true,
+      "nightmare": true,
+      "hell": true
+    },
+    "izual": {
+      "normal": true,
+      "nightmare": true,
+      "hell": true
+    },
+    "lam_essen's_tome": {
+      "normal": true,
+      "nightmare": true,
+      "hell": true
+    },
+    "golden_bird": {
+      "normal": true,
+      "nightmare": true,
+      "hell": true
+    },
+    "inquisitor_of_the_triune": {
+      "normal": false,
+      "nightmare": false,
+      "hell": true
+    },
+    "justicar_signet": {
+      "normal": false,
+      "nightmare": false,
+      "hell": true
+    }
+  },
+  "items": {
+    "weaponSet": 0,
+    "equipment": {
+      "head": {
+        "defId": "u:lacuni-cowl:su",
+        "stats": [
+          "Skull Cap (Sacred)",
+          "Defense: 3212 (1290)",
+          "Required Level: 110",
+          "Required Strength: 495",
+          "Orb Effects Applied to this Item are Doubled",
+          "+14 Spell Focus",
+          "+15% Hit Recovery",
+          "+80% Bonus to Attack Rating",
+          "+141 to Attack Rating",
+          "Adds 200-300 Fire Damage",
+          "Adds 200-300 Lightning Damage",
+          "+4% to Physical/Magic Spell Damage",
+          "-19% to Enemy Fire Resistance",
+          "-24% to Enemy Lightning Resistance",
+          "+149% Enhanced Defense",
+          "+2% to Strength",
+          "+10 to all Attributes",
+          "+2% to Dexterity",
+          "+3% to Vitality",
+          "+2% to Energy",
+          "+33 to Life",
+          "+23 to Mana",
+          "Maximum Elemental Resists +1%",
+          "Fire Resist +6%",
+          "Lightning Resist +6%",
+          "Activation Frequency +1%",
+          "+9 Life on Melee Attack",
+          "+4 Mana on Melee Attack",
+          "+50% Bonus to Defense",
+          "2% Reanimate as: Undead Marksman",
+          "+1% to Experience Gained",
+          "Requirements -10%",
+          "+20 Required Level"
+        ],
+        "mystic_orbs": [
+          [
+            5,
+            "MO - Total Char Defense"
+          ]
+        ],
+        "socketables": [
+          {
+            "type": "Jewel",
+            "name": "Jewel",
+            "stats": [
+              "+15% Hit Recovery",
+              "+43% Bonus to Attack Rating",
+              "+33 to Life",
+              "Lightning Resist +6%",
+              "Activation Frequency +1%"
+            ]
+          },
+          {
+            "type": "Jewel",
+            "name": "Jewel",
+            "stats": [
+              "+37% Bonus to Attack Rating",
+              "+1% to Vitality",
+              "+23 to Mana",
+              "+9 Life on Melee Attack",
+              "+4 Mana on Melee Attack",
+              "+1% to Experience Gained"
+            ]
+          },
+          {
+            "type": "Jewel",
+            "name": "Jewel",
+            "stats": [
+              "+14 Spell Focus",
+              "+141 to Attack Rating",
+              "+2% to Physical/Magic Spell Damage",
+              "+1% to All Attributes",
+              "+5 to all Attributes"
+            ]
+          },
+          {
+            "type": "Jewel",
+            "name": "Jewel",
+            "stats": [
+              "+2% to Physical/Magic Spell Damage",
+              "+1% to All Attributes",
+              "+5 to all Attributes",
+              "Fire Resist +6%",
+              "Requirements -10%"
+            ]
+          }
+        ]
+      },
+      "neck": {
+        "defId": "Amulet",
+        "stats": [
+          "+3 to All Skills",
+          "-10% to Enemy Lightning Resistance",
+          "+20% to Summon Damage",
+          "+33 to Vitality",
+          "+245 to Mana"
+        ]
+      },
+      "tors": {
+        "defId": "u:silks-of-the-victor:su",
+        "stats": [
+          "Ancient Armor (Sacred)",
+          "Defense: 22917 (4897)",
+          "Required Level: 135",
+          "Required Strength: 722",
+          "Level 10 Nephalem Weapons",
+          "5% Innate Elemental Damage",
+          "Adds Fire and Lightning Damage:",
+          "20-30% of base Strength and Dexterity",
+          "10-15% of base Vitality",
+          "+2 to All Skills",
+          "+15% Block Speed",
+          "+30% Hit Recovery",
+          "+3 to Minimum Damage",
+          "+45% Bonus to Attack Rating",
+          "+115 to Attack Rating",
+          "+1% to Cold Spell Damage",
+          "+10% to Summon Attack Rating",
+          "+200% Enhanced Defense",
+          "+168% Enhanced Defense (Based on Character Level)",
+          "+15 to Strength",
+          "+13% to Dexterity",
+          "+24 to Dexterity",
+          "+15 to Vitality",
+          "+15 to Energy",
+          "+1003 to Life",
+          "Fire Resist +6%",
+          "Lightning Resist +6%",
+          "Poison Resist +6%",
+          "Physical Resist +1%",
+          "+13 Life on Melee Attack",
+          "-20% Mana Cost of Skills",
+          "+8 Mana on Melee Attack",
+          "+25% Bonus to Defense",
+          "+5% to Experience Gained",
+          "Requirements -5%",
+          "+35 Required Level"
+        ],
+        "eth": true,
+        "corrupted": true,
+        "mystic_orbs": [
+          [
+            5,
+            "MO - Total Char Defense"
+          ],
+          [
+            1,
+            "Weight of Talent"
+          ]
+        ],
+        "socketables": [
+          {
+            "type": "Jewel",
+            "name": "Jewel",
+            "stats": [
+              "+3 to Minimum Damage",
+              "+6 to all Attributes",
+              "+2% to Dexterity",
+              "+34 to Life",
+              "Fire Resist +6%"
+            ]
+          },
+          {
+            "type": "Jewel",
+            "name": "Jewel",
+            "stats": [
+              "+45% Bonus to Attack Rating",
+              "+10% to Summon Attack Rating",
+              "+5 to Strength",
+              "+14 to Dexterity",
+              "+5 to Vitality",
+              "+5 to Energy",
+              "Poison Resist +6%"
+            ]
+          },
+          {
+            "type": "Gem",
+            "name": "Perfect Amethyst"
+          },
+          {
+            "type": "Gem",
+            "name": "Perfect Amethyst"
+          },
+          {
+            "type": "Jewel",
+            "name": "Jewel",
+            "stats": [
+              "+15% Hit Recovery",
+              "+115 to Attack Rating",
+              "+1% to Dexterity",
+              "Lightning Resist +6%",
+              "+8 Life on Melee Attack",
+              "+4 Mana on Melee Attack"
+            ]
+          },
+          {
+            "type": "Jewel",
+            "name": "Jewel",
+            "stats": [
+              "+15% Block Speed",
+              "+15% Hit Recovery",
+              "+1% to Cold Spell Damage",
+              "+4 to all Attributes",
+              "+5 Life on Melee Attack",
+              "+4 Mana on Melee Attack"
+            ]
+          }
+        ]
+      },
+      "glov": {
+        "defId": "Light Gauntlets (Angelic)",
+        "stats": [
+          "Defense: 670",
+          "Required Strength: 600",
+          "+3 to All Skills",
+          "+15% Hit Recovery",
+          "+43% Bonus to Attack Rating",
+          "+148 to Attack Rating",
+          "+5% Life stolen per Hit",
+          "+2% to Lightning Spell Damage",
+          "-10% to Enemy Cold Resistance",
+          "+49 to all Attributes",
+          "+7% to Dexterity",
+          "+1% to Vitality",
+          "+2% to Energy",
+          "+264 to Life",
+          "+124 to Mana",
+          "Maximum Elemental Resists +1%",
+          "Fire Resist -10%",
+          "Lightning Resist -4%",
+          "Cold Resist -4%",
+          "Poison Resist -4%",
+          "Activation Frequency +3%",
+          "+12 Mana on Melee Attack",
+          "+25% Bonus to Defense",
+          "Cannot Be Frozen",
+          "+62 Required Level"
+        ],
+        "mystic_orbs": [
+          [
+            5,
+            "MO - Total Char Defense"
+          ],
+          [
+            1,
+            "Zayl's Soul Orb"
+          ],
+          [
+            1,
+            "Rare MO - Fire Resist"
+          ],
+          [
+            1,
+            "Rare MO - Cold Resist"
+          ],
+          [
+            1,
+            "Rare MO - Lightning Resist"
+          ],
+          [
+            1,
+            "Rare MO - Poison Resist"
+          ]
+        ],
+        "socketables": [
+          {
+            "type": "Jewel",
+            "name": "Jewel",
+            "stats": [
+              "+15% Hit Recovery",
+              "+2% to Dexterity",
+              "+24 to Mana",
+              "Poison Resist +6%",
+              "Activation Frequency +1%"
+            ]
+          },
+          {
+            "type": "Gem",
+            "name": "Perfect Amethyst"
+          },
+          {
+            "type": "Jewel",
+            "name": "Jewel",
+            "stats": [
+              "+43% Bonus to Attack Rating",
+              "+1% to Vitality",
+              "+50 to Life",
+              "Cold Resist +6%",
+              "Activation Frequency +2%"
+            ]
+          },
+          {
+            "type": "Jewel",
+            "name": "Jewel",
+            "stats": [
+              "+148 to Attack Rating",
+              "+2% to Lightning Spell Damage",
+              "+6 to all Attributes",
+              "+50 to Life",
+              "Lightning Resist +6%"
+            ]
+          }
+        ]
+      },
+      "feet": {
+        "defId": "Light Plated Boots (Angelic)",
+        "stats": [
+          "Defense: 2853 (951)",
+          "Required Strength: 625",
+          "+2 to All Skills",
+          "+35% Movement Speed",
+          "+12 to Disintegrate",
+          "+200% Enhanced Defense",
+          "+46 to all Attributes",
+          "+20% to Dexterity",
+          "Cold Resist +38%",
+          "Poison Length Reduction +35%",
+          "Physical Damage Taken Reduced by 20",
+          "+25% Bonus to Defense",
+          "+20 Required Level"
+        ],
+        "mystic_orbs": [
+          [
+            5,
+            "MO - Total Char Defense"
+          ]
+        ],
+        "socketables": [
+          {
+            "type": "Gem",
+            "name": "Perfect Amethyst"
+          },
+          {
+            "type": "Gem",
+            "name": "Perfect Amethyst"
+          },
+          {
+            "type": "Gem",
+            "name": "Perfect Amethyst"
+          },
+          {
+            "type": "Gem",
+            "name": "Perfect Amethyst"
+          }
+        ]
+      },
+      "belt": {
+        "defId": "u:nor-tirajs-wisdom:su",
+        "stats": [
+          "Heavy Belt (Sacred)",
+          "Defense: 4184 (1722)",
+          "Required Level: 100",
+          "Required Strength: 744",
+          "+115 Spell Focus",
+          "+36% Bonus to Attack Rating",
+          "+141 to Attack Rating",
+          "-25% to Enemy Lightning Resistance",
+          "-10% to Enemy Cold Resistance",
+          "+20 to Stormclash",
+          "+20 to Lightning Shield",
+          "+143% Enhanced Defense",
+          "+10 to all Attributes",
+          "+39 to Life",
+          "Maximum Mana +10%",
+          "Fire Resist +6%",
+          "Physical Resist +1%",
+          "+23% Bonus to Defense",
+          "+2% to Experience Gained",
+          "Requirements +21%"
+        ],
+        "eth": true,
+        "corrupted": true,
+        "socketables": [
+          {
+            "type": "Jewel",
+            "name": "Jewel",
+            "stats": [
+              "+15 Spell Focus",
+              "+36% Bonus to Attack Rating",
+              "+6 to all Attributes",
+              "+39 to Life",
+              "Requirements -10%"
+            ]
+          },
+          {
+            "type": "Jewel",
+            "name": "Jewel",
+            "stats": [
+              "+141 to Attack Rating",
+              "+4 to all Attributes",
+              "Fire Resist +6%",
+              "Requirements -10%"
+            ]
+          }
+        ]
+      },
+      "rrin": {
+        "defId": "Ring",
+        "stats": [
+          "+1 to All Skills",
+          "+2% Movement Speed",
+          "+7% Innate Elemental Damage",
+          "-5% to Enemy Lightning Resistance",
+          "+10% to Summon Damage",
+          "Cold Resist +22%",
+          "Physical Damage Taken Reduced by 25",
+          "+60 Life on Melee Attack",
+          "+60 Mana on Melee Attack",
+          "+40 Required Level"
+        ],
+        "mystic_orbs": [
+          [
+            5,
+            "MO - Damage Reduced"
+          ],
+          [
+            2,
+            "Farnham's Lost Marble"
+          ]
+        ]
+      },
+      "lrin": {
+        "defId": "Ring",
+        "stats": [
+          "+1 to All Skills",
+          "+2% Movement Speed",
+          "2% Chance to cast level 10 Unseelie Curse on Kill",
+          "-5% to Enemy Lightning Resistance",
+          "+14% to Summon Life",
+          "Physical Damage Taken Reduced by 25",
+          "+2 Life on Striking",
+          "+60 Life on Melee Attack",
+          "-10% Mana Cost of Skills",
+          "+60 Mana on Melee Attack",
+          "+40 Required Level"
+        ],
+        "mystic_orbs": [
+          [
+            5,
+            "MO - Damage Reduced"
+          ],
+          [
+            2,
+            "Farnham's Lost Marble"
+          ]
+        ]
+      },
+      "rarm": {
+        "defId": "u:mekanism:su",
+        "stats": [
+          "Wrist Blade (Sacred)",
+          "Throw Damage: 1 to 2",
+          "(Assassin Only)",
+          "Required Level: 140",
+          "Required Dexterity: 341",
+          "Innate Lightning Damage: 719 (62.0% of Dexterity)",
+          "Shuriken Flurry: Shurikens deal 150% Weapon Damage",
+          "+5 to Assassin Skill Levels",
+          "15% Chance to cast level 30 Shuriken Flurry on Melee Attack",
+          "6% Chance to cast level 5 Arrow on Striking",
+          "+20% Attack Speed",
+          "Adds 6-8 Damage",
+          "+250% Bonus to Attack Rating",
+          "Adds 160-250 Lightning Damage",
+          "-22% to Enemy Elemental Resistances",
+          "+30% to Dexterity",
+          "+400 to Life",
+          "Maximum Elemental Resists +1%",
+          "+2 Life on Striking",
+          "+125 Life on Melee Attack",
+          "+40 Required Level"
+        ],
+        "mystic_orbs": [
+          [
+            5,
+            "MO - Life on Attack"
+          ],
+          [
+            2,
+            "Warbringer"
+          ]
+        ],
+        "socketables": [
+          {
+            "type": "Gem",
+            "name": "Perfect Amethyst"
+          },
+          {
+            "type": "Gem",
+            "name": "Perfect Amethyst"
+          },
+          {
+            "type": "Gem",
+            "name": "Perfect Amethyst"
+          }
+        ]
+      },
+      "larm": {
+        "defId": "u:zayls-temptation:su",
+        "stats": [
+          "Bladed Shield (Sacred)",
+          "Defense: 2520 (869)",
+          "(Assassin Only)",
+          "Required Level: 110",
+          "Required Dexterity: 1100",
+          "Regens 15% Life Over 5 Seconds Upon Taking Weapon Damage",
+          "+5 to Assassin Skill Levels",
+          "+1% Base Block Chance",
+          "+15% Hit Recovery",
+          "-13% to Enemy Elemental Resistances",
+          "Slow Target +23%",
+          "+10% to Summon Attack Rating",
+          "+190% Enhanced Defense",
+          "+1% to Strength",
+          "+5 to all Attributes",
+          "+32% to Dexterity",
+          "+1% to Vitality",
+          "+1% to Energy",
+          "Maximum Elemental Resists +1%",
+          "Maximum Block Chance +10%",
+          "Fire Resist +5%",
+          "Requirements +100%"
+        ],
+        "corrupted": true,
+        "socketables": [
+          {
+            "type": "Enchanted Rune",
+            "name": "Fel Rune (19)"
+          },
+          {
+            "type": "Enchanted Rune",
+            "name": "Fel Rune (19)"
+          },
+          {
+            "type": "Enchanted Rune",
+            "name": "Fel Rune (19)"
+          },
+          {
+            "type": "Rune",
+            "name": "Fal Rune (19)"
+          },
+          {
+            "type": "Rune",
+            "name": "Fal Rune (19)"
+          },
+          {
+            "type": "Jewel",
+            "name": "Jewel",
+            "stats": [
+              "+15% Hit Recovery",
+              "+10% to Summon Attack Rating",
+              "+1% to All Attributes",
+              "+5 to all Attributes",
+              "Fire Resist +5%"
+            ]
+          }
+        ]
+      },
+      "rarm2": {
+        "defId": "Despondence",
+        "stats": [
+          "Voidforged Staff",
+          "Two-Hand Damage: 13 to 16",
+          "Required Level: 125",
+          "Despair",
+          "Nearby Enemies: -30% Attack Rating and -25% Weapon Physical Damage",
+          "16.6 Yard Radius",
+          "+50% to Spell Damage",
+          "-21% to Enemy Cold Resistance",
+          "+28 to Voidstar",
+          "+1 to Vindicate",
+          "+944 to Life",
+          "Lightning Resist -100%"
+        ]
+      },
+      "larm2": null
+    },
+    "charms": [
+      {
+        "defId": "ab!",
+        "stats": [
+          "(Assassin Only)",
+          "Required Level: 125",
+          "+1 to All Skills",
+          "Jitan's Gate Cooldown Reduced by 1 second ",
+          "-5% to Enemy Elemental Resistances",
+          "+450 to Life",
+          "Poison Length Reduction +50%",
+          "- Web of Deception -"
+        ]
+      },
+      {
+        "defId": "a56",
+        "stats": [
+          "(Assassin Only)",
+          "Required Level: 115",
+          "+150 to Life",
+          "+75 to Mana",
+          "Maximum Elemental Resists +2%",
+          "Elemental Resists +20%",
+          "-5% to All Vendor Prices",
+          "- Vile Dissolution -"
+        ]
+      },
+      {
+        "defId": "ir76",
+        "stats": [
+          "Required Level: 120",
+          "Gives stats based on the sum of your bonus damage to Undead and Demons",
+          "8% added as Innate Elemental Damage (Max +25%)",
+          "Current Bonus: +128%"
+        ]
+      },
+      {
+        "defId": "voXX",
+        "stats": [
+          "(Assassin Only)",
+          "Required Level: 130",
+          "+3 to All Skills",
+          "+15 to Teleport",
+          "+25 to Life",
+          "+50 to Mana",
+          "- Stigma of Excidium -"
+        ]
+      },
+      {
+        "defId": "w@w",
+        "stats": [
+          "(Assassin Only)",
+          "Required Level: 125",
+          "1% Chance to cast level 10 Time Strike on Striking",
+          "+38 to Strength",
+          "+45 to Dexterity",
+          "+41 to Vitality",
+          "+36 to Energy",
+          "- Power Synthesis -"
+        ]
+      },
+      {
+        "defId": "\\\\8",
+        "stats": [
+          "(Assassin Only)",
+          "Required Level: 140",
+          "+16% to Dexterity",
+          "+78 to Dexterity",
+          "+30% Magic Find",
+          "+40 Required Level",
+          "- Revelations of the Cult -"
+        ]
+      },
+      {
+        "defId": "lok",
+        "stats": [
+          "(Assassin Only)",
+          "Required Level: 120",
+          "+1 to All Skills",
+          "+1 to Summon Edyrem",
+          "+5% to All Attributes",
+          "+40 to all Attributes",
+          "Fire Absorb +5%",
+          "Lightning Absorb +5%",
+          "Cold Absorb +5%",
+          "- Divine Mandate -"
+        ]
+      },
+      {
+        "defId": "t@t",
+        "stats": [
+          "By Robert Marks",
+          "(Assassin Only)",
+          "Required Level: 120",
+          "+2 to Assassin Skill Levels",
+          "+1 to Druid Skill Levels",
+          "+1 to Paladin Skill Levels",
+          "+2 to Sorceress Skill Levels",
+          "+1 to Amazon Skill Levels",
+          "+10% Combat Speeds",
+          "+15 Life Regenerated per Second",
+          "Heroic Duncraig",
+          "Rewards: Assur's Bane upgrades, Sacred Unique Crafting, Exclusive Uniques",
+          "Cube charm with 5 Sacred Uniques to create a Mark of Sanctity",
+          "Learn the Paragon of Sanctity skill",
+          "Transmute in the cube to obtain a Pearl of Wisdom on this topic",
+          "- Infernal Blaze -"
+        ]
+      },
+      {
+        "defId": "|dc",
+        "stats": [
+          "(Assassin Only)",
+          "Required Level: 125",
+          "Unlocks Mastery Skill: Chemistry",
+          "+141 to Life",
+          "Maximum Life +5%",
+          "+54 to Mana",
+          "+10% to Experience Gained",
+          "- Glow of the Dark Star -"
+        ]
+      },
+      {
+        "defId": "|dul",
+        "stats": [
+          "Required Level: 140",
+          "+1 to All Skills",
+          "+1 to Assassin Skill Levels",
+          "+30% Hit Recovery",
+          "-5% to Enemy Lightning Resistance",
+          "+80% to Summon Life",
+          "+30 to Dexterity",
+          "Maximum Life +5%",
+          "Maximum Cold Resist +2%",
+          "Magic Resist +4%",
+          "+25% Magic Find"
+        ]
+      },
+      {
+        "defId": "x0x",
+        "stats": [
+          "(Assassin Only)",
+          "Required Level: 120",
+          "+2 to Assassin Skill Levels",
+          "+2 to Druid Skill Levels",
+          "+2 to Barbarian Skill Levels",
+          "+2 to Paladin Skill Levels",
+          "+1 to Necromancer Skill Levels",
+          "+1 to Sorceress Skill Levels",
+          "+2 to Amazon Skill Levels",
+          "+20% Movement Speed",
+          "- Eternal Reign -"
+        ]
+      },
+      {
+        "defId": "az!",
+        "stats": [
+          "Moo moo moo Moooo! Moo!",
+          "Required Level: 115",
+          "+37 to Strength",
+          "+33 to Dexterity",
+          "+10 to Vitality",
+          "+17 to Energy",
+          "+12% Bonus to Defense",
+          "-10% Gold Find",
+          "+19% Magic Find"
+        ]
+      },
+      {
+        "defId": "a68",
+        "stats": [
+          "Required Level: 100",
+          "+4% Life stolen per Hit",
+          "-50 Defense",
+          "+24 to all Attributes"
+        ]
+      },
+      {
+        "defId": "a66",
+        "stats": [
+          "(Assassin Only)",
+          "Required Level: 115",
+          "Unlocks Mastery Skill: Continuity",
+          "+15% Combat Speeds",
+          "+20% to Summon Life",
+          "+10% to Summon Elemental Resistances",
+          "- Blighted Grace -"
+        ]
+      },
+      {
+        "defId": "a59",
+        "stats": [
+          "Required Level: 100",
+          "Maximum Life +3%",
+          "Maximum Mana +10%",
+          "+10% to Experience Gained",
+          "Death Projector (Heroic)",
+          "Difficulty Level: 125",
+          "Transmute with a Thal rune to receive two quest entrance scrolls",
+          "Reward can be used to upgrade Paragon's Hammer"
+        ]
+      },
+      {
+        "defId": "adi",
+        "stats": [
+          "By Richard Knaak",
+          "(Assassin Only)",
+          "Required Level: 115",
+          "Unlocks Mastery Skill: Endurance",
+          "+5% Life stolen per Hit",
+          "+20% Bonus to Defense",
+          "- Curse of the Warlord -"
+        ]
+      },
+      {
+        "defId": "|ld",
+        "stats": [
+          "Required Level: 120",
+          "+16% Bonus to Summoned Edyrem Life",
+          "+20 Life Regenerated per Second",
+          "Maximum Fire Resist +1%",
+          "Elemental Resists +10%"
+        ]
+      },
+      {
+        "defId": "yqe",
+        "stats": [
+          "By Richard Knaak",
+          "Required Level: 110",
+          "+25 Spell Focus",
+          "+1 to Jitan's Gate",
+          "Half Freeze Duration"
+        ]
+      },
+      {
+        "defId": "##.",
+        "stats": [
+          "(Assassin Only)",
+          "Required Level: 130",
+          "+2 to All Skills",
+          "+79% Bonus to Summoned Edyrem Life",
+          "+8% Innate Elemental Damage",
+          "+4 to Purify",
+          "+4% Deadly Strike",
+          "- Legacy of the Ancients -"
+        ]
+      },
+      {
+        "defId": "a55",
+        "stats": [
+          "Required Level: 100",
+          "Unlocks Mastery Skill: Tenacity",
+          "+5% to Summon Elemental Resistances",
+          "Elemental Resists +15%",
+          "Infernal Machine (Heroic)",
+          "Difficulty Level: 125",
+          "Transmute with a Xith rune to receive two quest entrance scrolls",
+          "Reward can be used to upgrade Paragon's Hammer"
+        ]
+      },
+      {
+        "defId": "0u1",
+        "stats": [
+          "Required Level: 115",
+          "Unlocks Mastery Skill: Paragon of Sanctity",
+          "(Keep in inventory to gain bonus)",
+          "Level 130",
+          "Transmute: Paragon's Hammer + 4 (8) Sacred Uniques = 1 (2) Sacred Essence",
+          "Transmute: Paragon's Hammer + Any Sacred Unique + 100,000 gold = Duncraig 130 scroll",
+          "Level 134",
+          "Transmute: Paragon's Hammer + Sacred Essence + 200,000 gold = Duncraig 134 scroll",
+          "Level 139",
+          "Transmute: Paragon's Hammer + 2 Sacred Essence + 300,000 gold = Duncraig 139 scroll",
+          "+1 to All Skills",
+          "+3% Elemental Resists per Character Level above 130",
+          "+2% Summon Elemental Resistances per Character Level above 130",
+          "+3% Magic Find per Character Level above 130",
+          "+2 to All Attributes per Character Level above 130"
+        ]
+      },
+      {
+        "defId": "ebw-primordia",
+        "stats": [
+          "Dimensional Key",
+          "Required Level: 130",
+          "Trial of Discovery",
+          "Explore every level of the Labyrinth",
+          "Transmute charm once with each Riftstone",
+          "(must be done in ascending order)",
+          "Trial of Purity",
+          "Defeat the monster Heroes, Champions and Sovereigns roaming the Labyrinth",
+          "Transmute charm once with each Star Chart piece and Dream Fragment",
+          "(these items are rare drops from Labyrinth mini bosses)",
+          "Dream Fragment (2)",
+          "Dream Fragment (3)",
+          "Dream Fragment (4)",
+          "Star Chart (1)",
+          "Star Chart (2)",
+          "Star Chart (4)",
+          "End the Invasion",
+          "Defeat Deimoss the Fleshweaver in the Labyrinth depths",
+          "Transmute charm after boss death",
+          "Trial of the Nephalem",
+          "Complete all of the above Labyrinth Quests",
+          "Transmute the charm with a Celestial Wind effigy",
+          "Adds 100-200 Fire Damage",
+          "Adds 100-200 Lightning Damage",
+          "Adds 100-200 Cold Damage",
+          "+10% Innate Elemental Damage",
+          "+52% Magic Find",
+          "+1 to Light Radius"
+        ]
+      },
+      {
+        "defId": "ktzx",
+        "stats": [
+          "Required Level: 100",
+          "+2 to All Skills",
+          "Maximum Life and Mana +2%",
+          "Maximum Elemental Resists +2%",
+          "+15% to Experience Gained"
+        ]
+      },
+      {
+        "defId": "a61",
+        "stats": [
+          "Required Level: 100",
+          "Weapon Physical Damage +27%",
+          "+29% Bonus to Defense"
+        ]
+      },
+      {
+        "defId": "a58",
+        "stats": [
+          "Required Level: 115",
+          "+10% to Spell Damage",
+          "+20% to All Attributes"
+        ]
+      },
+      {
+        "defId": "x02",
+        "stats": [
+          "(Assassin Challenge Item)",
+          "(Assassin Only)",
+          "Required Level: 90",
+          "Unlocks your Ennead Skill",
+          "+3 to Assassin Skill Levels",
+          "Weapon Physical Damage +50%",
+          "Physical Damage Taken Reduced by 5",
+          "+5% Chance to Avoid Damage"
+        ]
+      },
+      {
+        "defId": "aq!",
+        "stats": [
+          "(Assassin Only)",
+          "Required Level: 120",
+          "+1 to All Skills",
+          "+28 Spell Focus",
+          "+10% to Spell Damage",
+          "+11% to Summon Damage",
+          "+11% to Summon Elemental Resistances",
+          "+20 to Strength",
+          "+12 to Dexterity",
+          "+14 to Vitality",
+          "+14 to Energy",
+          "- Virtuosity of the Elements -"
+        ]
+      },
+      {
+        "defId": "yq2",
+        "stats": [
+          "Required Level: 105",
+          "+5% Innate Elemental Damage",
+          "-4% to Enemy Elemental Resistances",
+          "+3% Chance of Crushing Blow",
+          "Fire Resist +25%",
+          "Lightning Resist +21%",
+          "Cold Resist +24%",
+          "+5 to Light Radius"
+        ]
+      },
+      {
+        "defId": "bxa",
+        "stats": [
+          "(Assassin Only)",
+          "Required Level: 120",
+          "+1 to All Skills",
+          "Adds 5-10 Damage",
+          "Maximum Elemental Resists +3%",
+          "- Shadow's Embrace -"
+        ]
+      },
+      {
+        "defId": "blol",
+        "stats": [
+          "(Assassin Only)",
+          "Required Level: 125",
+          "Unlocks Mastery Skill: Specialization",
+          "+25 to Strength",
+          "Maximum Mana +4%",
+          "Regenerate Mana +10%",
+          "Elemental Resists +18%",
+          "- Stigma of Excidium -"
+        ]
+      },
+      {
+        "defId": "yqx",
+        "stats": [
+          "Required Level: 115",
+          "+10% Attack Speed",
+          "+10% Cast Speed",
+          "+143% Bonus to Attack Rating",
+          "+22 Life Regenerated per Second"
+        ]
+      },
+      {
+        "defId": "x4x",
+        "stats": [
+          "(Assassin Only)",
+          "Required Level: 115",
+          "+5% Innate Elemental Damage",
+          "Maximum Life +5%",
+          "Maximum Mana +13%",
+          "Physical Resist +5%",
+          "- Askari Valor -"
+        ]
+      },
+      {
+        "defId": "twi",
+        "stats": [
+          "Required Level: 50",
+          "+2 to All Skills",
+          "+10% Combat Speeds",
+          "-5% to Enemy Fire Resistance",
+          "-5% to Enemy Lightning Resistance",
+          "-5% to Enemy Cold Resistance",
+          "+10% to All Attributes",
+          "Elemental Resists +40%",
+          "+5% to Experience Gained"
+        ]
+      },
+      {
+        "defId": "|\\\\",
+        "stats": [
+          "(Assassin Only)",
+          "Required Level: 125",
+          "+1 to All Skills",
+          "+124% Bonus to Attack Rating",
+          "+14% to Spell Damage",
+          "+8% Chance of Crushing Blow",
+          "Maximum Life and Mana +5%",
+          "Fire Resist +18%",
+          "Lightning Resist +18%",
+          "Cold Resist +18%",
+          "- Arcane Guidance -"
+        ]
+      },
+      {
+        "defId": "tbr",
+        "stats": [
+          "Required Level: 115",
+          "Unlocks your Black Road Skill",
+          "+150 to Life",
+          "+75 to Mana",
+          "Right click to open Time Rift"
+        ]
+      },
+      {
+        "defId": "k@k",
+        "stats": [
+          "(Assassin Only)",
+          "Required Level: 125",
+          "Weapon Physical Damage +20%",
+          "+453 to Life",
+          "+117 to Mana",
+          "- Demonic Forgery -"
+        ]
+      },
+      {
+        "defId": "a60",
+        "stats": [
+          "Required Level: 100",
+          "+10 to all Attributes",
+          "+20% Magic Find",
+          "+1 to Light Radius",
+          "Horror Under Tristram (Heroic)",
+          "Difficulty Level: 125",
+          "Transmute with an Urt rune to receive two quest entrance scrolls",
+          "Reward can be used to upgrade Paragon's Hammer"
+        ]
+      },
+      {
+        "defId": "x@x",
+        "stats": [
+          "Required Level: 130",
+          "+1 to All Skills",
+          "Adds 10-15 Damage",
+          "+29% Damage to Demons",
+          "Elemental Resists +6%"
+        ]
+      },
+      {
+        "defId": "ths",
+        "stats": [
+          "Required Level: 125",
+          "Cube After Completing a Trophy Challenge to Awaken",
+          "Disenchant to open a portal to the World Nexus",
+          "+2 to All Skills",
+          "+15% Innate Elemental Damage",
+          "Slow Target +20%",
+          "+10% to All Attributes",
+          "Maximum Elemental Resists +1%",
+          "Curse Length Reduction +30%",
+          "- Awakened -"
+        ]
+      },
+      {
+        "defId": "trc",
+        "stats": [
+          "Required Level: 120",
+          "+1 to All Skills",
+          "+10% to Spell Damage",
+          "+50 to Strength",
+          "+52 to Dexterity",
+          "+48 to Vitality",
+          "+42 to Energy"
+        ]
+      },
+      {
+        "defId": "ebx",
+        "stats": [
+          "(Assassin Only)",
+          "Required Level: 135",
+          "Champion of Sanctuary",
+          "-10% to Enemy Elemental Resistances",
+          "Maximum Life +5%",
+          "Maximum Mana +14%",
+          "+50 Life after each Kill",
+          "+21% to Experience Gained",
+          "Transmute with a Nephalem Dimensional Key",
+          "with unlocked Void Armor",
+          "and a Greater Signet of Learning to open",
+          "a portal to the Heart of Darkness"
+        ]
+      },
+      {
+        "defId": "a57",
+        "stats": [
+          "Required Level: 110",
+          "+208 Defense",
+          "+25 to all Attributes"
+        ]
+      },
+      {
+        "defId": "|wc",
+        "stats": [
+          "Required Level: 120",
+          "Jitan's Gate Cooldown Reduced by 1 second ",
+          "+4% Innate Elemental Damage",
+          "+10 to all Attributes"
+        ]
+      },
+      {
+        "defId": "|\\#",
+        "stats": [
+          "(Assassin Only)",
+          "Required Level: 125",
+          "+2 to Assassin Skill Levels",
+          "+2 to Druid Skill Levels",
+          "+2 to Barbarian Skill Levels",
+          "+1 to Paladin Skill Levels",
+          "+2 to Sorceress Skill Levels",
+          "+2 to Amazon Skill Levels",
+          "Adds 75-125 Fire Damage",
+          "Adds 75-125 Lightning Damage",
+          "Adds 75-125 Cold Damage",
+          "+13 Life Regenerated per Second",
+          "Poison Resist +42%",
+          "- Demonic Delirium -"
+        ]
+      },
+      {
+        "defId": "yq8",
+        "stats": [
+          "Required Level: 115",
+          "+9% to All Attributes",
+          "+15% to Experience Gained",
+          "Heroic Library of Fate",
+          "Rewards: Angelic Items, Crafting Rares, Crafting Exclusive Uniques",
+          "Tramsmute with a Perfect Gem and 50,000 gold to open with Area Level 130",
+          "Further progress requires the Paragon of Fate mastery and a Mark of Fate",
+          "Transmute in the cube to obtain a Pearl of Wisdom on this topic"
+        ]
+      }
+    ],
+    "relics": [
+      {
+        "defId": "relic:hailstorm",
+        "stats": [
+          "Required Level: 75",
+          "+30 Spell Focus",
+          "+20 to Hailstorm",
+          "Cold Absorb +1%"
+        ]
+      },
+      {
+        "defId": "relic:lightning-wall",
+        "stats": [
+          "Required Level: 75",
+          "-7% to Enemy Lightning Resistance",
+          "+19 to Lightning Wall",
+          "Lightning Absorb +2%"
+        ]
+      },
+      {
+        "defId": "relic:whirlwind",
+        "stats": [
+          "Required Level: 75",
+          "+14 to Whirlwind",
+          "+4% to All Attributes",
+          "Poison Resist +25%"
+        ]
+      }
+    ]
+  }
+}
