@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/azadix/medianxl-db/schemas/planner-build-full.schema.json",
   "title": "Planner build interchange JSON",
-  "$comment": "Interchange subset of a medianxl-db build snapshot. Field names stay ours; $comment maps notarmory / MXL Planner dump names. Tree skills and oSkills both live on the character (skillPoints + oSkills). Item and socketable stats are resolved affix lines (their description_lines without colour codes). Our extra export keys (inventory grid, savedAt, spentPoints, disabledSkills, configConditions, and similar) are allowed via additionalProperties and are not part of this contract. We do not currently write stats (this object), signetsEaten, difficultyTitle, eth, corrupted, mystic_orbs, socketables, or item stats. Our save still uses a different stats template string.",
+  "$comment": "Full interchange including items. Field names stay ours; item tooltip text follows the notarmory dump (description_lines with colour codes). Tree skills and oSkills live on the character. Compact TSW export is planner-build.schema.json (no items).",
   "type": "object",
   "additionalProperties": true,
   "required": ["name", "class", "level", "skillPoints", "oSkills"],
@@ -117,7 +117,27 @@
     "ItemStatLines": {
       "type": "array",
       "items": { "type": "string" },
-      "$comment": "Resolved affix lines. Analog of their description_lines without colour codes. Needed when affixes are random or when the dump's actual rolls should be listed instead of rebuilt from catalogs."
+      "$comment": "Plain tooltip lines without colour. Prefer description_lines for full interchange."
+    },
+    "DescriptionSegment": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "prefixItems": [
+        { "type": "string", "$comment": "Tooltip fragment." },
+        { "type": "integer", "$comment": "notarmory colour id (ItemColors)." }
+      ],
+      "items": false
+    },
+    "DescriptionLine": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/DescriptionSegment" },
+      "$comment": "One tooltip row. Multiple segments when the line mixes colours (e.g. Defense value)."
+    },
+    "DescriptionLines": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/DescriptionLine" },
+      "$comment": "Full tooltip from notarmory description_lines, including name, prefixes/suffixes, Already Upgraded, Corrupted, and affixes."
     },
     "MysticOrbs": {
       "type": "array",
@@ -140,48 +160,64 @@
       "properties": {
         "type": {
           "type": "string",
-          "$comment": "Jewel marks a socketed jewel in their dump."
+          "$comment": "Jewel, Gem, Rune, Enchanted Rune, ..."
         },
         "name": { "type": "string" },
+        "quality": { "type": "string", "$comment": "Crafted, Rare, Unique, or empty for gems/runes." },
+        "name_color": { "type": "integer", "$comment": "notarmory colour id for the socketable name." },
+        "code": { "type": "string", "$comment": "notarmory item code, e.g. jew, gpv." },
+        "description_lines": { "$ref": "#/$defs/DescriptionLines" },
         "stats": {
           "$ref": "#/$defs/ItemStatLines",
-          "$comment": "Needed for rare/crafted jewels whose affixes are not in item catalogs. Omit for gems, runes, and unique jewels rebuildable from name or defId + rolls."
+          "$comment": "Optional plain-text fallback. Prefer description_lines."
         },
-        "rolls": {
-          "$ref": "#/$defs/ItemRolls",
-          "$comment": "Catalog roll keys for unique socketables. Not a substitute for stats on randomized jewels."
-        }
+        "rolls": { "$ref": "#/$defs/ItemRolls" }
       }
     },
     "ItemInstance": {
       "type": "object",
       "additionalProperties": true,
-      "required": ["defId"],
+      "required": ["name"],
       "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "$comment": "Display name. Same as notarmory display_name / item."
+        },
+        "quality": {
+          "type": "string",
+          "$comment": "notarmory quality: Unique, Rare, Crafted, ..."
+        },
+        "display_quality": {
+          "type": "string",
+          "$comment": "notarmory display_quality when it differs (SU, SSU, TU, ...)."
+        },
         "defId": {
           "type": "string",
           "minLength": 1,
-          "$comment": "Catalog id. Their display_name is the catalog name for this id."
+          "$comment": "Optional catalog id. Not a substitute for name."
         },
+        "type": {
+          "type": "string",
+          "$comment": "notarmory type / base, e.g. Wrist Blade (SSU)."
+        },
+        "code": { "type": "string", "$comment": "notarmory item code." },
+        "name_color": { "type": "integer", "$comment": "notarmory colour id for the item name." },
         "icon": { "type": "string" },
+        "description_lines": { "$ref": "#/$defs/DescriptionLines" },
         "stats": {
           "$ref": "#/$defs/ItemStatLines",
-          "$comment": "Item's resolved affix lines from the dump. Same analog as socketable stats. Needed for rares/crafts; unique items may still include actual rolls here instead of only defId."
+          "$comment": "Optional plain-text fallback. Prefer description_lines."
         },
         "rolls": { "$ref": "#/$defs/ItemRolls" },
-        "eth": {
-          "type": "boolean",
-          "$comment": "Ethereal. Gap: we do not write this."
-        },
-        "corrupted": {
-          "type": "boolean",
-          "$comment": "Corrupted. Gap: we do not write this."
-        },
+        "eth": { "type": "boolean" },
+        "corrupted": { "type": "boolean" },
+        "is_upgraded": { "type": "boolean", "$comment": "notarmory is_upgraded (Already Upgraded also appears in description_lines)." },
         "mystic_orbs": { "$ref": "#/$defs/MysticOrbs" },
         "socketables": {
           "type": "array",
           "items": { "$ref": "#/$defs/Socketable" },
-          "$comment": "Filled sockets in socket order. Gap: we do not write this; jewels are not first-class in our save."
+          "$comment": "Filled sockets in socket order."
         }
       }
     },
@@ -196,17 +232,27 @@
     "EnabledCharmOrRelic": {
       "type": "object",
       "additionalProperties": true,
-      "required": ["defId"],
+      "required": ["name"],
       "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "$comment": "Display name. Relics: Relic: <Skill>."
+        },
+        "quality": { "type": "string" },
         "defId": {
           "type": "string",
           "minLength": 1,
-          "$comment": "Catalog id. Their display_name comes from the catalog (relics: Relic: <Skill> or own name)."
+          "$comment": "Optional catalog id."
         },
+        "code": { "type": "string" },
+        "name_color": { "type": "integer" },
+        "description_lines": { "$ref": "#/$defs/DescriptionLines" },
         "stats": { "$ref": "#/$defs/ItemStatLines" },
         "rolls": { "$ref": "#/$defs/ItemRolls" },
         "eth": { "type": "boolean" },
         "corrupted": { "type": "boolean" },
+        "is_upgraded": { "type": "boolean" },
         "mystic_orbs": { "$ref": "#/$defs/MysticOrbs" },
         "socketables": {
           "type": "array",

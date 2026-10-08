@@ -164,1207 +164,1858 @@
     "weaponSet": 0,
     "equipment": {
       "head": {
+        "name": "Lacuni Cowl",
+        "quality": "Unique",
+        "display_quality": "SU",
         "defId": "u:lacuni-cowl:su",
-        "stats": [
-          "Skull Cap (Sacred)",
-          "Defense: 3212 (1290)",
-          "Required Level: 110",
-          "Required Strength: 495",
-          "Orb Effects Applied to this Item are Doubled",
-          "+14 Spell Focus",
-          "+15% Hit Recovery",
-          "+80% Bonus to Attack Rating",
-          "+141 to Attack Rating",
-          "Adds 200-300 Fire Damage",
-          "Adds 200-300 Lightning Damage",
-          "+4% to Physical/Magic Spell Damage",
-          "-19% to Enemy Fire Resistance",
-          "-24% to Enemy Lightning Resistance",
-          "+149% Enhanced Defense",
-          "+2% to Strength",
-          "+10 to all Attributes",
-          "+2% to Dexterity",
-          "+3% to Vitality",
-          "+2% to Energy",
-          "+33 to Life",
-          "+23 to Mana",
-          "Maximum Elemental Resists +1%",
-          "Fire Resist +6%",
-          "Lightning Resist +6%",
-          "Activation Frequency +1%",
-          "+9 Life on Melee Attack",
-          "+4 Mana on Melee Attack",
-          "+50% Bonus to Defense",
-          "2% Reanimate as: Undead Marksman",
-          "+1% to Experience Gained",
-          "Requirements -10%",
-          "+20 Required Level"
+        "type": "Skull Cap (SU)",
+        "code": "@17",
+        "name_color": 4,
+        "icon": "invskp",
+        "description_lines": [
+          [["Lacuni Cowl", 4]],
+          [["Skull Cap (Sacred)", 4]],
+          [["Defense: ", -1], ["3212", 3], [" (1290)", -1]],
+          [["Required Level: 110", -1]],
+          [["Required Strength: 495", 1]],
+          [["Orb Effects Applied to this Item are Doubled", 10]],
+          [["+14 Spell Focus", 3]],
+          [["+15% Hit Recovery", 3]],
+          [["+80% Bonus to Attack Rating", 3]],
+          [["+141 to Attack Rating", 3]],
+          [["Adds 200-300 Fire Damage", 3]],
+          [["Adds 200-300 Lightning Damage", 3]],
+          [["+4% to Physical/Magic Spell Damage", 3]],
+          [["-19% to Enemy Fire Resistance", 3]],
+          [["-24% to Enemy Lightning Resistance", 3]],
+          [["+149% Enhanced Defense", 3]],
+          [["+2% to Strength", 3]],
+          [["+10 to all Attributes", 3]],
+          [["+2% to Dexterity", 3]],
+          [["+3% to Vitality", 3]],
+          [["+2% to Energy", 3]],
+          [["+33 to Life", 3]],
+          [["+23 to Mana", 3]],
+          [["Maximum Elemental Resists +1%", 3]],
+          [["Fire Resist +6%", 3]],
+          [["Lightning Resist +6%", 3]],
+          [["Activation Frequency +1%", 3]],
+          [["+9 Life on Melee Attack", 3]],
+          [["+4 Mana on Melee Attack", 3]],
+          [["+50% Bonus to Defense", 3]],
+          [["2% Reanimate as: ", 3], ["Undead Marksman", 0]],
+          [["+1% to Experience Gained", 3]],
+          [["Requirements -10%", 3]],
+          [["+20 Required Level", 3]],
+          [["Socketed (4/4)", 3]]
         ],
-        "mystic_orbs": [
-          [
-            5,
-            "MO - Total Char Defense"
-          ]
-        ],
+        "mystic_orbs": [[5, "MO - Total Char Defense"]],
         "socketables": [
           {
             "type": "Jewel",
             "name": "Jewel",
-            "stats": [
-              "+15% Hit Recovery",
-              "+43% Bonus to Attack Rating",
-              "+33 to Life",
-              "Lightning Resist +6%",
-              "Activation Frequency +1%"
+            "quality": "Crafted",
+            "code": "jew",
+            "name_color": 8,
+            "description_lines": [
+              [["Jewel", 8]],
+              [["+15% Hit Recovery", 3]],
+              [["+43% Bonus to Attack Rating", 3]],
+              [["+33 to Life", 3]],
+              [["Lightning Resist +6%", 3]],
+              [["Activation Frequency +1%", 3]]
             ]
           },
           {
             "type": "Jewel",
             "name": "Jewel",
-            "stats": [
-              "+37% Bonus to Attack Rating",
-              "+1% to Vitality",
-              "+23 to Mana",
-              "+9 Life on Melee Attack",
-              "+4 Mana on Melee Attack",
-              "+1% to Experience Gained"
+            "quality": "Crafted",
+            "code": "jew",
+            "name_color": 8,
+            "description_lines": [
+              [["Jewel", 8]],
+              [["+37% Bonus to Attack Rating", 3]],
+              [["+1% to Vitality", 3]],
+              [["+23 to Mana", 3]],
+              [["+9 Life on Melee Attack", 3]],
+              [["+4 Mana on Melee Attack", 3]],
+              [["+1% to Experience Gained", 3]]
             ]
           },
           {
             "type": "Jewel",
             "name": "Jewel",
-            "stats": [
-              "+14 Spell Focus",
-              "+141 to Attack Rating",
-              "+2% to Physical/Magic Spell Damage",
-              "+1% to All Attributes",
-              "+5 to all Attributes"
+            "quality": "Crafted",
+            "code": "jew",
+            "name_color": 8,
+            "description_lines": [
+              [["Jewel", 8]],
+              [["+14 Spell Focus", 3]],
+              [["+141 to Attack Rating", 3]],
+              [["+2% to Physical/Magic Spell Damage", 3]],
+              [["+1% to All Attributes", 3]],
+              [["+5 to all Attributes", 3]]
             ]
           },
           {
             "type": "Jewel",
             "name": "Jewel",
-            "stats": [
-              "+2% to Physical/Magic Spell Damage",
-              "+1% to All Attributes",
-              "+5 to all Attributes",
-              "Fire Resist +6%",
-              "Requirements -10%"
+            "quality": "Crafted",
+            "code": "jew",
+            "name_color": 8,
+            "description_lines": [
+              [["Jewel", 8]],
+              [["+2% to Physical/Magic Spell Damage", 3]],
+              [["+1% to All Attributes", 3]],
+              [["+5 to all Attributes", 3]],
+              [["Fire Resist +6%", 3]],
+              [["Requirements -10%", 3]]
             ]
           }
         ]
       },
       "neck": {
+        "name": "Amulet",
+        "quality": "Rare",
         "defId": "Amulet",
-        "stats": [
-          "+3 to All Skills",
-          "-10% to Enemy Lightning Resistance",
-          "+20% to Summon Damage",
-          "+33 to Vitality",
-          "+245 to Mana"
+        "type": "Amulet",
+        "code": "amu",
+        "name_color": 9,
+        "icon": "invamu3",
+        "description_lines": [
+          [["Amulet", 9]],
+          [["Prefixes: 2", 9]],
+          [["Suffixes: 3", 9]],
+          [["+3 to All Skills", 3]],
+          [["-10% to Enemy Lightning Resistance", 3]],
+          [["+20% to Summon Damage", 3]],
+          [["+33 to Vitality", 3]],
+          [["+245 to Mana", 3]]
         ]
       },
       "tors": {
+        "name": "Silks of the Victor",
+        "quality": "Unique",
+        "display_quality": "SU",
         "defId": "u:silks-of-the-victor:su",
-        "stats": [
-          "Ancient Armor (Sacred)",
-          "Defense: 22917 (4897)",
-          "Required Level: 135",
-          "Required Strength: 722",
-          "Level 10 Nephalem Weapons",
-          "5% Innate Elemental Damage",
-          "Adds Fire and Lightning Damage:",
-          "20-30% of base Strength and Dexterity",
-          "10-15% of base Vitality",
-          "+2 to All Skills",
-          "+15% Block Speed",
-          "+30% Hit Recovery",
-          "+3 to Minimum Damage",
-          "+45% Bonus to Attack Rating",
-          "+115 to Attack Rating",
-          "+1% to Cold Spell Damage",
-          "+10% to Summon Attack Rating",
-          "+200% Enhanced Defense",
-          "+168% Enhanced Defense (Based on Character Level)",
-          "+15 to Strength",
-          "+13% to Dexterity",
-          "+24 to Dexterity",
-          "+15 to Vitality",
-          "+15 to Energy",
-          "+1003 to Life",
-          "Fire Resist +6%",
-          "Lightning Resist +6%",
-          "Poison Resist +6%",
-          "Physical Resist +1%",
-          "+13 Life on Melee Attack",
-          "-20% Mana Cost of Skills",
-          "+8 Mana on Melee Attack",
-          "+25% Bonus to Defense",
-          "+5% to Experience Gained",
-          "Requirements -5%",
-          "+35 Required Level"
-        ],
+        "type": "Ancient Armor (SU) [eth]",
+        "code": "@15",
+        "name_color": 4,
+        "icon": "invaar",
         "eth": true,
         "corrupted": true,
-        "mystic_orbs": [
-          [
-            5,
-            "MO - Total Char Defense"
-          ],
-          [
-            1,
-            "Weight of Talent"
-          ]
+        "description_lines": [
+          [["Silks of the Victor", 4]],
+          [["Ancient Armor (Sacred)", 4]],
+          [["Defense: ", -1], ["22917", 3], [" (4897)", -1]],
+          [["Required Level: 135", -1]],
+          [["Required Strength: 722", 1]],
+          [["Ethereal", 5]],
+          [["Corrupted", 1]],
+          [["Already Upgraded", 2]],
+          [["Level 10 Nephalem Weapons", 8]],
+          [["5% Innate Elemental Damage", 5]],
+          [["Adds Fire and Lightning Damage:", 5]],
+          [["20-30% of base Strength and Dexterity", 5]],
+          [["10-15% of base Vitality", 5]],
+          [["+2 to All Skills", 3]],
+          [["+15% Block Speed", 3]],
+          [["+30% Hit Recovery", 3]],
+          [["+3 to Minimum Damage", 3]],
+          [["+45% Bonus to Attack Rating", 3]],
+          [["+115 to Attack Rating", 3]],
+          [["+1% to Cold Spell Damage", 3]],
+          [["+10% to Summon Attack Rating", 3]],
+          [["+200% Enhanced Defense", 3]],
+          [["+168% Enhanced Defense (Based on Character Level)", 3]],
+          [["+15 to Strength", 3]],
+          [["+13% to Dexterity", 3]],
+          [["+24 to Dexterity", 3]],
+          [["+15 to Vitality", 3]],
+          [["+15 to Energy", 3]],
+          [["+1003 to Life", 3]],
+          [["Fire Resist +6%", 3]],
+          [["Lightning Resist +6%", 3]],
+          [["Poison Resist +6%", 3]],
+          [["Physical Resist +1%", 3]],
+          [["+13 Life on Melee Attack", 3]],
+          [["-20% Mana Cost of Skills", 3]],
+          [["+8 Mana on Melee Attack", 3]],
+          [["+25% Bonus to Defense", 3]],
+          [["+5% to Experience Gained", 3]],
+          [["Requirements -5%", 3]],
+          [["+35 Required Level", 3]],
+          [["Socketed (6/6)", 3]]
         ],
+        "mystic_orbs": [[5, "MO - Total Char Defense"], [1, "Weight of Talent"]],
         "socketables": [
           {
             "type": "Jewel",
             "name": "Jewel",
-            "stats": [
-              "+3 to Minimum Damage",
-              "+6 to all Attributes",
-              "+2% to Dexterity",
-              "+34 to Life",
-              "Fire Resist +6%"
+            "quality": "Crafted",
+            "code": "jew",
+            "name_color": 8,
+            "description_lines": [
+              [["Jewel", 8]],
+              [["+3 to Minimum Damage", 3]],
+              [["+6 to all Attributes", 3]],
+              [["+2% to Dexterity", 3]],
+              [["+34 to Life", 3]],
+              [["Fire Resist +6%", 3]]
             ]
           },
           {
             "type": "Jewel",
             "name": "Jewel",
-            "stats": [
-              "+45% Bonus to Attack Rating",
-              "+10% to Summon Attack Rating",
-              "+5 to Strength",
-              "+14 to Dexterity",
-              "+5 to Vitality",
-              "+5 to Energy",
-              "Poison Resist +6%"
+            "quality": "Crafted",
+            "code": "jew",
+            "name_color": 8,
+            "description_lines": [
+              [["Jewel", 8]],
+              [["+45% Bonus to Attack Rating", 3]],
+              [["+10% to Summon Attack Rating", 3]],
+              [["+5 to Strength", 3]],
+              [["+14 to Dexterity", 3]],
+              [["+5 to Vitality", 3]],
+              [["+5 to Energy", 3]],
+              [["Poison Resist +6%", 3]]
             ]
           },
           {
             "type": "Gem",
-            "name": "Perfect Amethyst"
+            "name": "Perfect Amethyst",
+            "code": "gpv",
+            "name_color": 11,
+            "description_lines": [
+              [["Perfect Amethyst", 11]],
+              [["Required Level: 18", -1]],
+              [["+5% to Dexterity", 3]]
+            ]
           },
           {
             "type": "Gem",
-            "name": "Perfect Amethyst"
-          },
-          {
-            "type": "Jewel",
-            "name": "Jewel",
-            "stats": [
-              "+15% Hit Recovery",
-              "+115 to Attack Rating",
-              "+1% to Dexterity",
-              "Lightning Resist +6%",
-              "+8 Life on Melee Attack",
-              "+4 Mana on Melee Attack"
+            "name": "Perfect Amethyst",
+            "code": "gpv",
+            "name_color": 11,
+            "description_lines": [
+              [["Perfect Amethyst", 11]],
+              [["Required Level: 18", -1]],
+              [["+5% to Dexterity", 3]]
             ]
           },
           {
             "type": "Jewel",
             "name": "Jewel",
-            "stats": [
-              "+15% Block Speed",
-              "+15% Hit Recovery",
-              "+1% to Cold Spell Damage",
-              "+4 to all Attributes",
-              "+5 Life on Melee Attack",
-              "+4 Mana on Melee Attack"
+            "quality": "Crafted",
+            "code": "jew",
+            "name_color": 8,
+            "description_lines": [
+              [["Jewel", 8]],
+              [["+15% Hit Recovery", 3]],
+              [["+115 to Attack Rating", 3]],
+              [["+1% to Dexterity", 3]],
+              [["Lightning Resist +6%", 3]],
+              [["+8 Life on Melee Attack", 3]],
+              [["+4 Mana on Melee Attack", 3]]
+            ]
+          },
+          {
+            "type": "Jewel",
+            "name": "Jewel",
+            "quality": "Crafted",
+            "code": "jew",
+            "name_color": 8,
+            "description_lines": [
+              [["Jewel", 8]],
+              [["+15% Block Speed", 3]],
+              [["+15% Hit Recovery", 3]],
+              [["+1% to Cold Spell Damage", 3]],
+              [["+4 to all Attributes", 3]],
+              [["+5 Life on Melee Attack", 3]],
+              [["+4 Mana on Melee Attack", 3]]
             ]
           }
         ]
       },
       "glov": {
+        "name": "Light Gauntlets (Angelic)",
+        "quality": "Rare",
         "defId": "Light Gauntlets (Angelic)",
-        "stats": [
-          "Defense: 670",
-          "Required Strength: 600",
-          "+3 to All Skills",
-          "+15% Hit Recovery",
-          "+43% Bonus to Attack Rating",
-          "+148 to Attack Rating",
-          "+5% Life stolen per Hit",
-          "+2% to Lightning Spell Damage",
-          "-10% to Enemy Cold Resistance",
-          "+49 to all Attributes",
-          "+7% to Dexterity",
-          "+1% to Vitality",
-          "+2% to Energy",
-          "+264 to Life",
-          "+124 to Mana",
-          "Maximum Elemental Resists +1%",
-          "Fire Resist -10%",
-          "Lightning Resist -4%",
-          "Cold Resist -4%",
-          "Poison Resist -4%",
-          "Activation Frequency +3%",
-          "+12 Mana on Melee Attack",
-          "+25% Bonus to Defense",
-          "Cannot Be Frozen",
-          "+62 Required Level"
+        "type": "Light Gauntlets (Angelic)",
+        "code": "an05",
+        "name_color": 9,
+        "icon": "angelicgloves",
+        "description_lines": [
+          [["Light Gauntlets (Angelic)", 9]],
+          [["Defense: 670", -1]],
+          [["Required Strength: 600", 1]],
+          [["Prefixes: 3", 9]],
+          [["Suffixes: 3", 9]],
+          [["Cannot be Renewed", 1]],
+          [["Cannot be Crafted (Shrines will be lost)", 1]],
+          [["+3 to All Skills", 3]],
+          [["+15% Hit Recovery", 3]],
+          [["+43% Bonus to Attack Rating", 3]],
+          [["+148 to Attack Rating", 3]],
+          [["+5% Life stolen per Hit", 3]],
+          [["+2% to Lightning Spell Damage", 3]],
+          [["-10% to Enemy Cold Resistance", 3]],
+          [["+49 to all Attributes", 3]],
+          [["+7% to Dexterity", 3]],
+          [["+1% to Vitality", 3]],
+          [["+2% to Energy", 3]],
+          [["+264 to Life", 3]],
+          [["+124 to Mana", 3]],
+          [["Maximum Elemental Resists +1%", 3]],
+          [["Fire Resist -10%", 3]],
+          [["Lightning Resist -4%", 3]],
+          [["Cold Resist -4%", 3]],
+          [["Poison Resist -4%", 3]],
+          [["Activation Frequency +3%", 3]],
+          [["+12 Mana on Melee Attack", 3]],
+          [["+25% Bonus to Defense", 3]],
+          [["Cannot Be Frozen", 3]],
+          [["+62 Required Level", 3]],
+          [["Socketed (4/4)", 3]]
         ],
-        "mystic_orbs": [
-          [
-            5,
-            "MO - Total Char Defense"
-          ],
-          [
-            1,
-            "Zayl's Soul Orb"
-          ],
-          [
-            1,
-            "Rare MO - Fire Resist"
-          ],
-          [
-            1,
-            "Rare MO - Cold Resist"
-          ],
-          [
-            1,
-            "Rare MO - Lightning Resist"
-          ],
-          [
-            1,
-            "Rare MO - Poison Resist"
-          ]
-        ],
+        "mystic_orbs": [[5, "MO - Total Char Defense"], [1, "Zayl's Soul Orb"], [1, "Rare MO - Fire Resist"], [1, "Rare MO - Cold Resist"], [1, "Rare MO - Lightning Resist"], [1, "Rare MO - Poison Resist"]],
         "socketables": [
           {
             "type": "Jewel",
             "name": "Jewel",
-            "stats": [
-              "+15% Hit Recovery",
-              "+2% to Dexterity",
-              "+24 to Mana",
-              "Poison Resist +6%",
-              "Activation Frequency +1%"
+            "quality": "Crafted",
+            "code": "jew",
+            "name_color": 8,
+            "description_lines": [
+              [["Jewel", 8]],
+              [["+15% Hit Recovery", 3]],
+              [["+2% to Dexterity", 3]],
+              [["+24 to Mana", 3]],
+              [["Poison Resist +6%", 3]],
+              [["Activation Frequency +1%", 3]]
             ]
           },
           {
             "type": "Gem",
-            "name": "Perfect Amethyst"
-          },
-          {
-            "type": "Jewel",
-            "name": "Jewel",
-            "stats": [
-              "+43% Bonus to Attack Rating",
-              "+1% to Vitality",
-              "+50 to Life",
-              "Cold Resist +6%",
-              "Activation Frequency +2%"
+            "name": "Perfect Amethyst",
+            "code": "gpv",
+            "name_color": 11,
+            "description_lines": [
+              [["Perfect Amethyst", 11]],
+              [["Required Level: 18", -1]],
+              [["+5% to Dexterity", 3]]
             ]
           },
           {
             "type": "Jewel",
             "name": "Jewel",
-            "stats": [
-              "+148 to Attack Rating",
-              "+2% to Lightning Spell Damage",
-              "+6 to all Attributes",
-              "+50 to Life",
-              "Lightning Resist +6%"
+            "quality": "Crafted",
+            "code": "jew",
+            "name_color": 8,
+            "description_lines": [
+              [["Jewel", 8]],
+              [["+43% Bonus to Attack Rating", 3]],
+              [["+1% to Vitality", 3]],
+              [["+50 to Life", 3]],
+              [["Cold Resist +6%", 3]],
+              [["Activation Frequency +2%", 3]]
+            ]
+          },
+          {
+            "type": "Jewel",
+            "name": "Jewel",
+            "quality": "Crafted",
+            "code": "jew",
+            "name_color": 8,
+            "description_lines": [
+              [["Jewel", 8]],
+              [["+148 to Attack Rating", 3]],
+              [["+2% to Lightning Spell Damage", 3]],
+              [["+6 to all Attributes", 3]],
+              [["+50 to Life", 3]],
+              [["Lightning Resist +6%", 3]]
             ]
           }
         ]
       },
       "feet": {
+        "name": "Light Plated Boots (Angelic)",
+        "quality": "Rare",
         "defId": "Light Plated Boots (Angelic)",
-        "stats": [
-          "Defense: 2853 (951)",
-          "Required Strength: 625",
-          "+2 to All Skills",
-          "+35% Movement Speed",
-          "+12 to Disintegrate",
-          "+200% Enhanced Defense",
-          "+46 to all Attributes",
-          "+20% to Dexterity",
-          "Cold Resist +38%",
-          "Poison Length Reduction +35%",
-          "Physical Damage Taken Reduced by 20",
-          "+25% Bonus to Defense",
-          "+20 Required Level"
+        "type": "Light Plated Boots (Angelic)",
+        "code": "an04",
+        "name_color": 9,
+        "icon": "angelicboots",
+        "description_lines": [
+          [["Light Plated Boots (Angelic)", 9]],
+          [["Defense: ", -1], ["2853", 3], [" (951)", -1]],
+          [["Required Strength: 625", 1]],
+          [["Prefixes: 3", 9]],
+          [["Suffixes: 3", 9]],
+          [["Cannot be Renewed", 1]],
+          [["Cannot be Crafted (Shrines will be lost)", 1]],
+          [["+2 to All Skills", 3]],
+          [["+35% Movement Speed", 3]],
+          [["+12 to Disintegrate", 3]],
+          [["+200% Enhanced Defense", 3]],
+          [["+46 to all Attributes", 3]],
+          [["+20% to Dexterity", 3]],
+          [["Cold Resist +38%", 3]],
+          [["Poison Length Reduction +35%", 3]],
+          [["Physical Damage Taken Reduced by 20", 3]],
+          [["+25% Bonus to Defense", 3]],
+          [["+20 Required Level", 3]],
+          [["Socketed (4/4)", 3]]
         ],
-        "mystic_orbs": [
-          [
-            5,
-            "MO - Total Char Defense"
-          ]
-        ],
+        "mystic_orbs": [[5, "MO - Total Char Defense"]],
         "socketables": [
           {
             "type": "Gem",
-            "name": "Perfect Amethyst"
+            "name": "Perfect Amethyst",
+            "code": "gpv",
+            "name_color": 11,
+            "description_lines": [
+              [["Perfect Amethyst", 11]],
+              [["Required Level: 18", -1]],
+              [["+5% to Dexterity", 3]]
+            ]
           },
           {
             "type": "Gem",
-            "name": "Perfect Amethyst"
+            "name": "Perfect Amethyst",
+            "code": "gpv",
+            "name_color": 11,
+            "description_lines": [
+              [["Perfect Amethyst", 11]],
+              [["Required Level: 18", -1]],
+              [["+5% to Dexterity", 3]]
+            ]
           },
           {
             "type": "Gem",
-            "name": "Perfect Amethyst"
+            "name": "Perfect Amethyst",
+            "code": "gpv",
+            "name_color": 11,
+            "description_lines": [
+              [["Perfect Amethyst", 11]],
+              [["Required Level: 18", -1]],
+              [["+5% to Dexterity", 3]]
+            ]
           },
           {
             "type": "Gem",
-            "name": "Perfect Amethyst"
+            "name": "Perfect Amethyst",
+            "code": "gpv",
+            "name_color": 11,
+            "description_lines": [
+              [["Perfect Amethyst", 11]],
+              [["Required Level: 18", -1]],
+              [["+5% to Dexterity", 3]]
+            ]
           }
         ]
       },
       "belt": {
+        "name": "Nor Tiraj's Wisdom",
+        "quality": "Unique",
+        "display_quality": "SU",
         "defId": "u:nor-tirajs-wisdom:su",
-        "stats": [
-          "Heavy Belt (Sacred)",
-          "Defense: 4184 (1722)",
-          "Required Level: 100",
-          "Required Strength: 744",
-          "+115 Spell Focus",
-          "+36% Bonus to Attack Rating",
-          "+141 to Attack Rating",
-          "-25% to Enemy Lightning Resistance",
-          "-10% to Enemy Cold Resistance",
-          "+20 to Stormclash",
-          "+20 to Lightning Shield",
-          "+143% Enhanced Defense",
-          "+10 to all Attributes",
-          "+39 to Life",
-          "Maximum Mana +10%",
-          "Fire Resist +6%",
-          "Physical Resist +1%",
-          "+23% Bonus to Defense",
-          "+2% to Experience Gained",
-          "Requirements +21%"
-        ],
+        "type": "Heavy Belt (SU) [eth]",
+        "code": "@31",
+        "name_color": 4,
+        "icon": "invtbl",
         "eth": true,
         "corrupted": true,
+        "description_lines": [
+          [["Nor Tiraj's Wisdom", 4]],
+          [["Heavy Belt (Sacred)", 4]],
+          [["Defense: ", -1], ["4184", 3], [" (1722)", -1]],
+          [["Required Level: 100", -1]],
+          [["Required Strength: 744", 1]],
+          [["Ethereal", 5]],
+          [["Corrupted", 1]],
+          [["Already Upgraded", 2]],
+          [["+115 Spell Focus", 3]],
+          [["+36% Bonus to Attack Rating", 3]],
+          [["+141 to Attack Rating", 3]],
+          [["-25% to Enemy Lightning Resistance", 3]],
+          [["-10% to Enemy Cold Resistance", 3]],
+          [["+20 to Stormclash", 3]],
+          [["+20 to Lightning Shield", 3]],
+          [["+143% Enhanced Defense", 3]],
+          [["+10 to all Attributes", 3]],
+          [["+39 to Life", 3]],
+          [["Maximum Mana +10%", 3]],
+          [["Fire Resist +6%", 3]],
+          [["Physical Resist +1%", 3]],
+          [["+23% Bonus to Defense", 3]],
+          [["+2% to Experience Gained", 3]],
+          [["Requirements +21%", 3]],
+          [["Socketed (2/2)", 3]]
+        ],
         "socketables": [
           {
             "type": "Jewel",
             "name": "Jewel",
-            "stats": [
-              "+15 Spell Focus",
-              "+36% Bonus to Attack Rating",
-              "+6 to all Attributes",
-              "+39 to Life",
-              "Requirements -10%"
+            "quality": "Crafted",
+            "code": "jew",
+            "name_color": 8,
+            "description_lines": [
+              [["Jewel", 8]],
+              [["+15 Spell Focus", 3]],
+              [["+36% Bonus to Attack Rating", 3]],
+              [["+6 to all Attributes", 3]],
+              [["+39 to Life", 3]],
+              [["Requirements -10%", 3]]
             ]
           },
           {
             "type": "Jewel",
             "name": "Jewel",
-            "stats": [
-              "+141 to Attack Rating",
-              "+4 to all Attributes",
-              "Fire Resist +6%",
-              "Requirements -10%"
+            "quality": "Rare",
+            "code": "jew",
+            "name_color": 9,
+            "description_lines": [
+              [["Jewel", 9]],
+              [["+141 to Attack Rating", 3]],
+              [["+4 to all Attributes", 3]],
+              [["Fire Resist +6%", 3]],
+              [["Requirements -10%", 3]]
             ]
           }
         ]
       },
       "rrin": {
+        "name": "Ring",
+        "quality": "Rare",
         "defId": "Ring",
-        "stats": [
-          "+1 to All Skills",
-          "+2% Movement Speed",
-          "+7% Innate Elemental Damage",
-          "-5% to Enemy Lightning Resistance",
-          "+10% to Summon Damage",
-          "Cold Resist +22%",
-          "Physical Damage Taken Reduced by 25",
-          "+60 Life on Melee Attack",
-          "+60 Mana on Melee Attack",
-          "+40 Required Level"
+        "type": "Ring",
+        "code": "rin",
+        "name_color": 9,
+        "icon": "invrin5",
+        "description_lines": [
+          [["Ring", 9]],
+          [["Prefixes: 2", 9]],
+          [["Suffixes: 3", 9]],
+          [["+1 to All Skills", 3]],
+          [["+2% Movement Speed", 3]],
+          [["+7% Innate Elemental Damage", 3]],
+          [["-5% to Enemy Lightning Resistance", 3]],
+          [["+10% to Summon Damage", 3]],
+          [["Cold Resist +22%", 3]],
+          [["Physical Damage Taken Reduced by 25", 3]],
+          [["+60 Life on Melee Attack", 3]],
+          [["+60 Mana on Melee Attack", 3]],
+          [["+40 Required Level", 3]]
         ],
-        "mystic_orbs": [
-          [
-            5,
-            "MO - Damage Reduced"
-          ],
-          [
-            2,
-            "Farnham's Lost Marble"
-          ]
-        ]
+        "mystic_orbs": [[5, "MO - Damage Reduced"], [2, "Farnham's Lost Marble"]]
       },
       "lrin": {
+        "name": "Ring",
+        "quality": "Rare",
         "defId": "Ring",
-        "stats": [
-          "+1 to All Skills",
-          "+2% Movement Speed",
-          "2% Chance to cast level 10 Unseelie Curse on Kill",
-          "-5% to Enemy Lightning Resistance",
-          "+14% to Summon Life",
-          "Physical Damage Taken Reduced by 25",
-          "+2 Life on Striking",
-          "+60 Life on Melee Attack",
-          "-10% Mana Cost of Skills",
-          "+60 Mana on Melee Attack",
-          "+40 Required Level"
+        "type": "Ring",
+        "code": "rin",
+        "name_color": 9,
+        "icon": "invrin1",
+        "description_lines": [
+          [["Ring", 9]],
+          [["Prefixes: 3", 9]],
+          [["Suffixes: 3", 9]],
+          [["+1 to All Skills", 3]],
+          [["+2% Movement Speed", 3]],
+          [["2% Chance to cast level 10 Unseelie Curse on Kill", 3]],
+          [["-5% to Enemy Lightning Resistance", 3]],
+          [["+14% to Summon Life", 3]],
+          [["Physical Damage Taken Reduced by 25", 3]],
+          [["+2 Life on Striking", 3]],
+          [["+60 Life on Melee Attack", 3]],
+          [["-10% Mana Cost of Skills", 3]],
+          [["+60 Mana on Melee Attack", 3]],
+          [["+40 Required Level", 3]]
         ],
-        "mystic_orbs": [
-          [
-            5,
-            "MO - Damage Reduced"
-          ],
-          [
-            2,
-            "Farnham's Lost Marble"
-          ]
-        ]
+        "mystic_orbs": [[5, "MO - Damage Reduced"], [2, "Farnham's Lost Marble"]]
       },
       "rarm": {
+        "name": "Mekanism",
+        "quality": "Unique",
+        "display_quality": "SSU",
         "defId": "u:mekanism:su",
-        "stats": [
-          "Wrist Blade (Sacred)",
-          "Throw Damage: 1 to 2",
-          "(Assassin Only)",
-          "Required Level: 140",
-          "Required Dexterity: 341",
-          "Innate Lightning Damage: 719 (62.0% of Dexterity)",
-          "Shuriken Flurry: Shurikens deal 150% Weapon Damage",
-          "+5 to Assassin Skill Levels",
-          "15% Chance to cast level 30 Shuriken Flurry on Melee Attack",
-          "6% Chance to cast level 5 Arrow on Striking",
-          "+20% Attack Speed",
-          "Adds 6-8 Damage",
-          "+250% Bonus to Attack Rating",
-          "Adds 160-250 Lightning Damage",
-          "-22% to Enemy Elemental Resistances",
-          "+30% to Dexterity",
-          "+400 to Life",
-          "Maximum Elemental Resists +1%",
-          "+2 Life on Striking",
-          "+125 Life on Melee Attack",
-          "+40 Required Level"
+        "type": "Wrist Blade (SSU)",
+        "code": "91@",
+        "name_color": 4,
+        "icon": "invktr",
+        "description_lines": [
+          [["Mekanism", 4]],
+          [["Wrist Blade (Sacred)", 4]],
+          [["Throw Damage: 1 to 2", -1]],
+          [["(Assassin Only)", -1]],
+          [["Required Level: 140", -1]],
+          [["Required Dexterity: 341", -1]],
+          [["Innate Lightning Damage: ", 0], ["719 ", 9], ["(62.0% of Dexterity)", 0]],
+          [["Already Upgraded", 2]],
+          [["Shuriken Flurry: Shurikens deal 150% Weapon Damage", 8]],
+          [["+5 to Assassin Skill Levels", 3]],
+          [["15% Chance to cast level 30 Shuriken Flurry on Melee Attack", 3]],
+          [["6% Chance to cast level 5 Arrow on Striking", 3]],
+          [["+20% Attack Speed", 3]],
+          [["Adds 6-8 Damage", 3]],
+          [["+250% Bonus to Attack Rating", 3]],
+          [["Adds 160-250 Lightning Damage", 3]],
+          [["-22% to Enemy Elemental Resistances", 3]],
+          [["+30% to Dexterity", 3]],
+          [["+400 to Life", 3]],
+          [["Maximum Elemental Resists +1%", 3]],
+          [["+2 Life on Striking", 3]],
+          [["+125 Life on Melee Attack", 3]],
+          [["+40 Required Level", 3]],
+          [["Socketed (3/3)", 3]]
         ],
-        "mystic_orbs": [
-          [
-            5,
-            "MO - Life on Attack"
-          ],
-          [
-            2,
-            "Warbringer"
-          ]
-        ],
+        "mystic_orbs": [[5, "MO - Life on Attack"], [2, "Warbringer"]],
         "socketables": [
           {
             "type": "Gem",
-            "name": "Perfect Amethyst"
+            "name": "Perfect Amethyst",
+            "code": "gpv",
+            "name_color": 11,
+            "description_lines": [
+              [["Perfect Amethyst", 11]],
+              [["Required Level: 18", -1]],
+              [["+50% Bonus to Attack Rating", 3]]
+            ]
           },
           {
             "type": "Gem",
-            "name": "Perfect Amethyst"
+            "name": "Perfect Amethyst",
+            "code": "gpv",
+            "name_color": 11,
+            "description_lines": [
+              [["Perfect Amethyst", 11]],
+              [["Required Level: 18", -1]],
+              [["+50% Bonus to Attack Rating", 3]]
+            ]
           },
           {
             "type": "Gem",
-            "name": "Perfect Amethyst"
+            "name": "Perfect Amethyst",
+            "code": "gpv",
+            "name_color": 11,
+            "description_lines": [
+              [["Perfect Amethyst", 11]],
+              [["Required Level: 18", -1]],
+              [["+50% Bonus to Attack Rating", 3]]
+            ]
           }
         ]
       },
       "larm": {
+        "name": "Zayl's Temptation",
+        "quality": "Unique",
+        "display_quality": "SSU",
         "defId": "u:zayls-temptation:su",
-        "stats": [
-          "Bladed Shield (Sacred)",
-          "Defense: 2520 (869)",
-          "(Assassin Only)",
-          "Required Level: 110",
-          "Required Dexterity: 1100",
-          "Regens 15% Life Over 5 Seconds Upon Taking Weapon Damage",
-          "+5 to Assassin Skill Levels",
-          "+1% Base Block Chance",
-          "+15% Hit Recovery",
-          "-13% to Enemy Elemental Resistances",
-          "Slow Target +23%",
-          "+10% to Summon Attack Rating",
-          "+190% Enhanced Defense",
-          "+1% to Strength",
-          "+5 to all Attributes",
-          "+32% to Dexterity",
-          "+1% to Vitality",
-          "+1% to Energy",
-          "Maximum Elemental Resists +1%",
-          "Maximum Block Chance +10%",
-          "Fire Resist +5%",
-          "Requirements +100%"
-        ],
+        "type": "Bladed Shield (SSU)",
+        "code": "1@Q",
+        "name_color": 4,
+        "icon": "invxpku",
         "corrupted": true,
+        "description_lines": [
+          [["Zayl's Temptation", 4]],
+          [["Bladed Shield (Sacred)", 4]],
+          [["FelFelFelFalFal", 4]],
+          [["Defense: ", -1], ["2520", 3], [" (869)", -1]],
+          [["(Assassin Only)", -1]],
+          [["Required Level: 110", -1]],
+          [["Required Dexterity: 1100", -1]],
+          [["Corrupted", 1]],
+          [["Already Upgraded", 2]],
+          [["Regens 15% Life Over 5 Seconds Upon Taking Weapon Damage", 8]],
+          [["+5 to Assassin Skill Levels", 3]],
+          [["+1% Base Block Chance", 3]],
+          [["+15% Hit Recovery", 3]],
+          [["-13% to Enemy Elemental Resistances", 3]],
+          [["Slow Target +23%", 3]],
+          [["+10% to Summon Attack Rating", 3]],
+          [["+190% Enhanced Defense", 3]],
+          [["+1% to Strength", 3]],
+          [["+5 to all Attributes", 3]],
+          [["+32% to Dexterity", 3]],
+          [["+1% to Vitality", 3]],
+          [["+1% to Energy", 3]],
+          [["Maximum Elemental Resists +1%", 3]],
+          [["Maximum Block Chance +10%", 3]],
+          [["Fire Resist +5%", 3]],
+          [["Requirements +100%", 3]],
+          [["Socketed (6/6)", 3]]
+        ],
         "socketables": [
           {
             "type": "Enchanted Rune",
-            "name": "Fel Rune (19)"
+            "name": "Fel Rune (19)",
+            "code": "rx19",
+            "name_color": 11,
+            "description_lines": [
+              [["Fel Rune", 11]],
+              [["Enchanted Rune (19)", 0]],
+              [["Required Level: 110", -1]],
+              [["+7% to Dexterity", 3]]
+            ]
           },
           {
             "type": "Enchanted Rune",
-            "name": "Fel Rune (19)"
+            "name": "Fel Rune (19)",
+            "code": "rx19",
+            "name_color": 11,
+            "description_lines": [
+              [["Fel Rune", 11]],
+              [["Enchanted Rune (19)", 0]],
+              [["Required Level: 110", -1]],
+              [["+7% to Dexterity", 3]]
+            ]
           },
           {
             "type": "Enchanted Rune",
-            "name": "Fel Rune (19)"
+            "name": "Fel Rune (19)",
+            "code": "rx19",
+            "name_color": 11,
+            "description_lines": [
+              [["Fel Rune", 11]],
+              [["Enchanted Rune (19)", 0]],
+              [["Required Level: 110", -1]],
+              [["+7% to Dexterity", 3]]
+            ]
           },
           {
             "type": "Rune",
-            "name": "Fal Rune (19)"
+            "name": "Fal Rune (19)",
+            "code": "r19",
+            "name_color": 11,
+            "description_lines": [
+              [["Fal Rune", 11]],
+              [["Required Level: 50", -1]],
+              [["+5% to Dexterity", 3]]
+            ]
           },
           {
             "type": "Rune",
-            "name": "Fal Rune (19)"
+            "name": "Fal Rune (19)",
+            "code": "r19",
+            "name_color": 11,
+            "description_lines": [
+              [["Fal Rune", 11]],
+              [["Required Level: 50", -1]],
+              [["+5% to Dexterity", 3]]
+            ]
           },
           {
             "type": "Jewel",
             "name": "Jewel",
-            "stats": [
-              "+15% Hit Recovery",
-              "+10% to Summon Attack Rating",
-              "+1% to All Attributes",
-              "+5 to all Attributes",
-              "Fire Resist +5%"
+            "quality": "Crafted",
+            "code": "jew",
+            "name_color": 8,
+            "description_lines": [
+              [["Jewel", 8]],
+              [["+15% Hit Recovery", 3]],
+              [["+10% to Summon Attack Rating", 3]],
+              [["+1% to All Attributes", 3]],
+              [["+5 to all Attributes", 3]],
+              [["Fire Resist +5%", 3]]
             ]
           }
         ]
       },
       "rarm2": {
+        "name": "Despondence",
+        "quality": "Unique",
+        "display_quality": "SU",
         "defId": "Despondence",
-        "stats": [
-          "Voidforged Staff",
-          "Two-Hand Damage: 13 to 16",
-          "Required Level: 125",
-          "Despair",
-          "Nearby Enemies: -30% Attack Rating and -25% Weapon Physical Damage",
-          "16.6 Yard Radius",
-          "+50% to Spell Damage",
-          "-21% to Enemy Cold Resistance",
-          "+28 to Voidstar",
-          "+1 to Vindicate",
-          "+944 to Life",
-          "Lightning Resist -100%"
+        "type": "Voidforged Staff",
+        "code": "SM3",
+        "name_color": 4,
+        "icon": "sstaff",
+        "description_lines": [
+          [["Despondence", 4]],
+          [["Voidforged Staff", 4]],
+          [["Two-Hand Damage: 13 to 16", -1]],
+          [["Required Level: 125", -1]],
+          [["Despair", 8]],
+          [["Nearby Enemies: -30% Attack Rating and -25% Weapon Physical Damage", 5]],
+          [["16.6 Yard Radius", 5]],
+          [["+50% to Spell Damage", 3]],
+          [["-21% to Enemy Cold Resistance", 3]],
+          [["+28 to Voidstar", 3]],
+          [["+1 to Vindicate", 3]],
+          [["+944 to Life", 3]],
+          [["Lightning Resist -100%", 3]]
         ]
       },
       "larm2": null
     },
     "charms": [
       {
-        "defId": "ab!",
-        "stats": [
-          "(Assassin Only)",
-          "Required Level: 125",
-          "+1 to All Skills",
-          "Jitan's Gate Cooldown Reduced by 1 second ",
-          "-5% to Enemy Elemental Resistances",
-          "+450 to Life",
-          "Poison Length Reduction +50%",
-          "- Web of Deception -"
-        ]
-      },
-      {
-        "defId": "a56",
-        "stats": [
-          "(Assassin Only)",
-          "Required Level: 115",
-          "+150 to Life",
-          "+75 to Mana",
-          "Maximum Elemental Resists +2%",
-          "Elemental Resists +20%",
-          "-5% to All Vendor Prices",
-          "- Vile Dissolution -"
-        ]
-      },
-      {
-        "defId": "ir76",
-        "stats": [
-          "Required Level: 120",
-          "Gives stats based on the sum of your bonus damage to Undead and Demons",
-          "8% added as Innate Elemental Damage (Max +25%)",
-          "Current Bonus: +128%"
-        ]
-      },
-      {
-        "defId": "voXX",
-        "stats": [
-          "(Assassin Only)",
-          "Required Level: 130",
-          "+3 to All Skills",
-          "+15 to Teleport",
-          "+25 to Life",
-          "+50 to Mana",
-          "- Stigma of Excidium -"
-        ]
-      },
-      {
-        "defId": "w@w",
-        "stats": [
-          "(Assassin Only)",
-          "Required Level: 125",
-          "1% Chance to cast level 10 Time Strike on Striking",
-          "+38 to Strength",
-          "+45 to Dexterity",
-          "+41 to Vitality",
-          "+36 to Energy",
-          "- Power Synthesis -"
-        ]
-      },
-      {
-        "defId": "\\\\8",
-        "stats": [
-          "(Assassin Only)",
-          "Required Level: 140",
-          "+16% to Dexterity",
-          "+78 to Dexterity",
-          "+30% Magic Find",
-          "+40 Required Level",
-          "- Revelations of the Cult -"
-        ]
-      },
-      {
-        "defId": "lok",
-        "stats": [
-          "(Assassin Only)",
-          "Required Level: 120",
-          "+1 to All Skills",
-          "+1 to Summon Edyrem",
-          "+5% to All Attributes",
-          "+40 to all Attributes",
-          "Fire Absorb +5%",
-          "Lightning Absorb +5%",
-          "Cold Absorb +5%",
-          "- Divine Mandate -"
-        ]
-      },
-      {
-        "defId": "t@t",
-        "stats": [
-          "By Robert Marks",
-          "(Assassin Only)",
-          "Required Level: 120",
-          "+2 to Assassin Skill Levels",
-          "+1 to Druid Skill Levels",
-          "+1 to Paladin Skill Levels",
-          "+2 to Sorceress Skill Levels",
-          "+1 to Amazon Skill Levels",
-          "+10% Combat Speeds",
-          "+15 Life Regenerated per Second",
-          "Heroic Duncraig",
-          "Rewards: Assur's Bane upgrades, Sacred Unique Crafting, Exclusive Uniques",
-          "Cube charm with 5 Sacred Uniques to create a Mark of Sanctity",
-          "Learn the Paragon of Sanctity skill",
-          "Transmute in the cube to obtain a Pearl of Wisdom on this topic",
-          "- Infernal Blaze -"
-        ]
-      },
-      {
-        "defId": "|dc",
-        "stats": [
-          "(Assassin Only)",
-          "Required Level: 125",
-          "Unlocks Mastery Skill: Chemistry",
-          "+141 to Life",
-          "Maximum Life +5%",
-          "+54 to Mana",
-          "+10% to Experience Gained",
-          "- Glow of the Dark Star -"
-        ]
-      },
-      {
-        "defId": "|dul",
-        "stats": [
-          "Required Level: 140",
-          "+1 to All Skills",
-          "+1 to Assassin Skill Levels",
-          "+30% Hit Recovery",
-          "-5% to Enemy Lightning Resistance",
-          "+80% to Summon Life",
-          "+30 to Dexterity",
-          "Maximum Life +5%",
-          "Maximum Cold Resist +2%",
-          "Magic Resist +4%",
-          "+25% Magic Find"
-        ]
-      },
-      {
-        "defId": "x0x",
-        "stats": [
-          "(Assassin Only)",
-          "Required Level: 120",
-          "+2 to Assassin Skill Levels",
-          "+2 to Druid Skill Levels",
-          "+2 to Barbarian Skill Levels",
-          "+2 to Paladin Skill Levels",
-          "+1 to Necromancer Skill Levels",
-          "+1 to Sorceress Skill Levels",
-          "+2 to Amazon Skill Levels",
-          "+20% Movement Speed",
-          "- Eternal Reign -"
-        ]
-      },
-      {
-        "defId": "az!",
-        "stats": [
-          "Moo moo moo Moooo! Moo!",
-          "Required Level: 115",
-          "+37 to Strength",
-          "+33 to Dexterity",
-          "+10 to Vitality",
-          "+17 to Energy",
-          "+12% Bonus to Defense",
-          "-10% Gold Find",
-          "+19% Magic Find"
-        ]
-      },
-      {
+        "name": "Horazon's Focus",
+        "quality": "Unique",
+        "display_quality": "Charm",
         "defId": "a68",
-        "stats": [
-          "Required Level: 100",
-          "+4% Life stolen per Hit",
-          "-50 Defense",
-          "+24 to all Attributes"
+        "type": "Charm",
+        "code": "a68",
+        "name_color": 4,
+        "icon": "invhorazon",
+        "description_lines": [
+          [["Horazon's Focus", 4]],
+          [["Required Level: 100", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["+4% Life stolen per Hit", 3]],
+          [["-50 Defense", 3]],
+          [["+24 to all Attributes", 3]]
         ]
       },
       {
-        "defId": "a66",
-        "stats": [
-          "(Assassin Only)",
-          "Required Level: 115",
-          "Unlocks Mastery Skill: Continuity",
-          "+15% Combat Speeds",
-          "+20% to Summon Life",
-          "+10% to Summon Elemental Resistances",
-          "- Blighted Grace -"
-        ]
-      },
-      {
-        "defId": "a59",
-        "stats": [
-          "Required Level: 100",
-          "Maximum Life +3%",
-          "Maximum Mana +10%",
-          "+10% to Experience Gained",
-          "Death Projector (Heroic)",
-          "Difficulty Level: 125",
-          "Transmute with a Thal rune to receive two quest entrance scrolls",
-          "Reward can be used to upgrade Paragon's Hammer"
-        ]
-      },
-      {
-        "defId": "adi",
-        "stats": [
-          "By Richard Knaak",
-          "(Assassin Only)",
-          "Required Level: 115",
-          "Unlocks Mastery Skill: Endurance",
-          "+5% Life stolen per Hit",
-          "+20% Bonus to Defense",
-          "- Curse of the Warlord -"
-        ]
-      },
-      {
-        "defId": "|ld",
-        "stats": [
-          "Required Level: 120",
-          "+16% Bonus to Summoned Edyrem Life",
-          "+20 Life Regenerated per Second",
-          "Maximum Fire Resist +1%",
-          "Elemental Resists +10%"
-        ]
-      },
-      {
-        "defId": "yqe",
-        "stats": [
-          "By Richard Knaak",
-          "Required Level: 110",
-          "+25 Spell Focus",
-          "+1 to Jitan's Gate",
-          "Half Freeze Duration"
-        ]
-      },
-      {
-        "defId": "##.",
-        "stats": [
-          "(Assassin Only)",
-          "Required Level: 130",
-          "+2 to All Skills",
-          "+79% Bonus to Summoned Edyrem Life",
-          "+8% Innate Elemental Damage",
-          "+4 to Purify",
-          "+4% Deadly Strike",
-          "- Legacy of the Ancients -"
-        ]
-      },
-      {
-        "defId": "a55",
-        "stats": [
-          "Required Level: 100",
-          "Unlocks Mastery Skill: Tenacity",
-          "+5% to Summon Elemental Resistances",
-          "Elemental Resists +15%",
-          "Infernal Machine (Heroic)",
-          "Difficulty Level: 125",
-          "Transmute with a Xith rune to receive two quest entrance scrolls",
-          "Reward can be used to upgrade Paragon's Hammer"
-        ]
-      },
-      {
-        "defId": "0u1",
-        "stats": [
-          "Required Level: 115",
-          "Unlocks Mastery Skill: Paragon of Sanctity",
-          "(Keep in inventory to gain bonus)",
-          "Level 130",
-          "Transmute: Paragon's Hammer + 4 (8) Sacred Uniques = 1 (2) Sacred Essence",
-          "Transmute: Paragon's Hammer + Any Sacred Unique + 100,000 gold = Duncraig 130 scroll",
-          "Level 134",
-          "Transmute: Paragon's Hammer + Sacred Essence + 200,000 gold = Duncraig 134 scroll",
-          "Level 139",
-          "Transmute: Paragon's Hammer + 2 Sacred Essence + 300,000 gold = Duncraig 139 scroll",
-          "+1 to All Skills",
-          "+3% Elemental Resists per Character Level above 130",
-          "+2% Summon Elemental Resistances per Character Level above 130",
-          "+3% Magic Find per Character Level above 130",
-          "+2 to All Attributes per Character Level above 130"
-        ]
-      },
-      {
-        "defId": "ebw-primordia",
-        "stats": [
-          "Dimensional Key",
-          "Required Level: 130",
-          "Trial of Discovery",
-          "Explore every level of the Labyrinth",
-          "Transmute charm once with each Riftstone",
-          "(must be done in ascending order)",
-          "Trial of Purity",
-          "Defeat the monster Heroes, Champions and Sovereigns roaming the Labyrinth",
-          "Transmute charm once with each Star Chart piece and Dream Fragment",
-          "(these items are rare drops from Labyrinth mini bosses)",
-          "Dream Fragment (2)",
-          "Dream Fragment (3)",
-          "Dream Fragment (4)",
-          "Star Chart (1)",
-          "Star Chart (2)",
-          "Star Chart (4)",
-          "End the Invasion",
-          "Defeat Deimoss the Fleshweaver in the Labyrinth depths",
-          "Transmute charm after boss death",
-          "Trial of the Nephalem",
-          "Complete all of the above Labyrinth Quests",
-          "Transmute the charm with a Celestial Wind effigy",
-          "Adds 100-200 Fire Damage",
-          "Adds 100-200 Lightning Damage",
-          "Adds 100-200 Cold Damage",
-          "+10% Innate Elemental Damage",
-          "+52% Magic Find",
-          "+1 to Light Radius"
-        ]
-      },
-      {
-        "defId": "ktzx",
-        "stats": [
-          "Required Level: 100",
-          "+2 to All Skills",
-          "Maximum Life and Mana +2%",
-          "Maximum Elemental Resists +2%",
-          "+15% to Experience Gained"
-        ]
-      },
-      {
-        "defId": "a61",
-        "stats": [
-          "Required Level: 100",
-          "Weapon Physical Damage +27%",
-          "+29% Bonus to Defense"
-        ]
-      },
-      {
-        "defId": "a58",
-        "stats": [
-          "Required Level: 115",
-          "+10% to Spell Damage",
-          "+20% to All Attributes"
-        ]
-      },
-      {
-        "defId": "x02",
-        "stats": [
-          "(Assassin Challenge Item)",
-          "(Assassin Only)",
-          "Required Level: 90",
-          "Unlocks your Ennead Skill",
-          "+3 to Assassin Skill Levels",
-          "Weapon Physical Damage +50%",
-          "Physical Damage Taken Reduced by 5",
-          "+5% Chance to Avoid Damage"
-        ]
-      },
-      {
-        "defId": "aq!",
-        "stats": [
-          "(Assassin Only)",
-          "Required Level: 120",
-          "+1 to All Skills",
-          "+28 Spell Focus",
-          "+10% to Spell Damage",
-          "+11% to Summon Damage",
-          "+11% to Summon Elemental Resistances",
-          "+20 to Strength",
-          "+12 to Dexterity",
-          "+14 to Vitality",
-          "+14 to Energy",
-          "- Virtuosity of the Elements -"
-        ]
-      },
-      {
-        "defId": "yq2",
-        "stats": [
-          "Required Level: 105",
-          "+5% Innate Elemental Damage",
-          "-4% to Enemy Elemental Resistances",
-          "+3% Chance of Crushing Blow",
-          "Fire Resist +25%",
-          "Lightning Resist +21%",
-          "Cold Resist +24%",
-          "+5 to Light Radius"
-        ]
-      },
-      {
-        "defId": "bxa",
-        "stats": [
-          "(Assassin Only)",
-          "Required Level: 120",
-          "+1 to All Skills",
-          "Adds 5-10 Damage",
-          "Maximum Elemental Resists +3%",
-          "- Shadow's Embrace -"
-        ]
-      },
-      {
-        "defId": "blol",
-        "stats": [
-          "(Assassin Only)",
-          "Required Level: 125",
-          "Unlocks Mastery Skill: Specialization",
-          "+25 to Strength",
-          "Maximum Mana +4%",
-          "Regenerate Mana +10%",
-          "Elemental Resists +18%",
-          "- Stigma of Excidium -"
-        ]
-      },
-      {
-        "defId": "yqx",
-        "stats": [
-          "Required Level: 115",
-          "+10% Attack Speed",
-          "+10% Cast Speed",
-          "+143% Bonus to Attack Rating",
-          "+22 Life Regenerated per Second"
-        ]
-      },
-      {
-        "defId": "x4x",
-        "stats": [
-          "(Assassin Only)",
-          "Required Level: 115",
-          "+5% Innate Elemental Damage",
-          "Maximum Life +5%",
-          "Maximum Mana +13%",
-          "Physical Resist +5%",
-          "- Askari Valor -"
-        ]
-      },
-      {
-        "defId": "twi",
-        "stats": [
-          "Required Level: 50",
-          "+2 to All Skills",
-          "+10% Combat Speeds",
-          "-5% to Enemy Fire Resistance",
-          "-5% to Enemy Lightning Resistance",
-          "-5% to Enemy Cold Resistance",
-          "+10% to All Attributes",
-          "Elemental Resists +40%",
-          "+5% to Experience Gained"
-        ]
-      },
-      {
-        "defId": "|\\\\",
-        "stats": [
-          "(Assassin Only)",
-          "Required Level: 125",
-          "+1 to All Skills",
-          "+124% Bonus to Attack Rating",
-          "+14% to Spell Damage",
-          "+8% Chance of Crushing Blow",
-          "Maximum Life and Mana +5%",
-          "Fire Resist +18%",
-          "Lightning Resist +18%",
-          "Cold Resist +18%",
-          "- Arcane Guidance -"
-        ]
-      },
-      {
-        "defId": "tbr",
-        "stats": [
-          "Required Level: 115",
-          "Unlocks your Black Road Skill",
-          "+150 to Life",
-          "+75 to Mana",
-          "Right click to open Time Rift"
-        ]
-      },
-      {
-        "defId": "k@k",
-        "stats": [
-          "(Assassin Only)",
-          "Required Level: 125",
-          "Weapon Physical Damage +20%",
-          "+453 to Life",
-          "+117 to Mana",
-          "- Demonic Forgery -"
-        ]
-      },
-      {
-        "defId": "a60",
-        "stats": [
-          "Required Level: 100",
-          "+10 to all Attributes",
-          "+20% Magic Find",
-          "+1 to Light Radius",
-          "Horror Under Tristram (Heroic)",
-          "Difficulty Level: 125",
-          "Transmute with an Urt rune to receive two quest entrance scrolls",
-          "Reward can be used to upgrade Paragon's Hammer"
-        ]
-      },
-      {
-        "defId": "x@x",
-        "stats": [
-          "Required Level: 130",
-          "+1 to All Skills",
-          "Adds 10-15 Damage",
-          "+29% Damage to Demons",
-          "Elemental Resists +6%"
-        ]
-      },
-      {
-        "defId": "ths",
-        "stats": [
-          "Required Level: 125",
-          "Cube After Completing a Trophy Challenge to Awaken",
-          "Disenchant to open a portal to the World Nexus",
-          "+2 to All Skills",
-          "+15% Innate Elemental Damage",
-          "Slow Target +20%",
-          "+10% to All Attributes",
-          "Maximum Elemental Resists +1%",
-          "Curse Length Reduction +30%",
-          "- Awakened -"
-        ]
-      },
-      {
-        "defId": "trc",
-        "stats": [
-          "Required Level: 120",
-          "+1 to All Skills",
-          "+10% to Spell Damage",
-          "+50 to Strength",
-          "+52 to Dexterity",
-          "+48 to Vitality",
-          "+42 to Energy"
-        ]
-      },
-      {
-        "defId": "ebx",
-        "stats": [
-          "(Assassin Only)",
-          "Required Level: 135",
-          "Champion of Sanctuary",
-          "-10% to Enemy Elemental Resistances",
-          "Maximum Life +5%",
-          "Maximum Mana +14%",
-          "+50 Life after each Kill",
-          "+21% to Experience Gained",
-          "Transmute with a Nephalem Dimensional Key",
-          "with unlocked Void Armor",
-          "and a Greater Signet of Learning to open",
-          "a portal to the Heart of Darkness"
-        ]
-      },
-      {
+        "name": "Visions of Akarat",
+        "quality": "Unique",
+        "display_quality": "Charm",
         "defId": "a57",
-        "stats": [
-          "Required Level: 110",
-          "+208 Defense",
-          "+25 to all Attributes"
+        "type": "Charm",
+        "code": "a57",
+        "name_color": 4,
+        "icon": "akaratbook",
+        "description_lines": [
+          [["Visions of Akarat", 4]],
+          [["Required Level: 110", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["+208 Defense", 3]],
+          [["+25 to all Attributes", 3]]
         ]
       },
       {
-        "defId": "|wc",
-        "stats": [
-          "Required Level: 120",
-          "Jitan's Gate Cooldown Reduced by 1 second ",
-          "+4% Innate Elemental Damage",
-          "+10 to all Attributes"
+        "name": "Shadow Vortex",
+        "quality": "Unique",
+        "display_quality": "Charm",
+        "defId": "x02",
+        "type": "Charm",
+        "code": "x02",
+        "name_color": 4,
+        "icon": "ccasn",
+        "is_upgraded": true,
+        "description_lines": [
+          [["Shadow Vortex", 4]],
+          [["(Assassin Challenge Item)", 4]],
+          [["(Assassin Only)", -1]],
+          [["Required Level: 90", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["Unlocks your Ennead Skill", 2]],
+          [["+3 to Assassin Skill Levels", 3]],
+          [["Weapon Physical Damage +50%", 3]],
+          [["Physical Damage Taken Reduced by 5", 3]],
+          [["+5% Chance to Avoid Damage", 3]]
         ]
       },
       {
-        "defId": "|\\#",
-        "stats": [
-          "(Assassin Only)",
-          "Required Level: 125",
-          "+2 to Assassin Skill Levels",
-          "+2 to Druid Skill Levels",
-          "+2 to Barbarian Skill Levels",
-          "+1 to Paladin Skill Levels",
-          "+2 to Sorceress Skill Levels",
-          "+2 to Amazon Skill Levels",
-          "Adds 75-125 Fire Damage",
-          "Adds 75-125 Lightning Damage",
-          "Adds 75-125 Cold Damage",
-          "+13 Life Regenerated per Second",
-          "Poison Resist +42%",
-          "- Demonic Delirium -"
+        "name": "The Black Road",
+        "quality": "Unique",
+        "display_quality": "Charm",
+        "defId": "tbr",
+        "type": "Charm",
+        "code": "tbr",
+        "name_color": 4,
+        "icon": "invsbk3",
+        "is_upgraded": true,
+        "description_lines": [
+          [["The Black Road", 4]],
+          [["Required Level: 115", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["Unlocks your Black Road Skill", 2]],
+          [["+150 to Life", 3]],
+          [["+75 to Mana", 3]],
+          [["Right click to open Time Rift", 0]]
         ]
       },
       {
+        "name": "Silver Seal of Ureh",
+        "quality": "Unique",
+        "display_quality": "Charm",
+        "defId": "aq!",
+        "type": "Charm",
+        "code": "aq!",
+        "name_color": 4,
+        "icon": "invrin",
+        "description_lines": [
+          [["Silver Seal of Ureh", 4]],
+          [["(Assassin Only)", -1]],
+          [["Required Level: 120", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["+1 to All Skills", 3]],
+          [["+28 Spell Focus", 3]],
+          [["+10% to Spell Damage", 3]],
+          [["+11% to Summon Damage", 3]],
+          [["+11% to Summon Elemental Resistances", 3]],
+          [["+20 to Strength", 3]],
+          [["+12 to Dexterity", 3]],
+          [["+14 to Vitality", 3]],
+          [["+14 to Energy", 3]],
+          [["- Virtuosity of the Elements -", 5]]
+        ]
+      },
+      {
+        "name": "Crystalline Flame Medallion",
+        "quality": "Unique",
+        "display_quality": "Charm",
+        "defId": "lok",
+        "type": "Charm",
+        "code": "lok",
+        "name_color": 4,
+        "icon": "invvip",
+        "is_upgraded": true,
+        "description_lines": [
+          [["Crystalline Flame Medallion", 4]],
+          [["(Assassin Only)", -1]],
+          [["Required Level: 120", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["+1 to All Skills", 3]],
+          [["+1 to Summon Edyrem", 3]],
+          [["+5% to All Attributes", 3]],
+          [["+40 to all Attributes", 3]],
+          [["Fire Absorb +5%", 3]],
+          [["Lightning Absorb +5%", 3]],
+          [["Cold Absorb +5%", 3]],
+          [["- Divine Mandate -", 5]]
+        ]
+      },
+      {
+        "name": "Umbaru Treasure",
+        "quality": "Unique",
+        "display_quality": "Charm",
+        "defId": "trc",
+        "type": "Charm",
+        "code": "trc",
+        "name_color": 4,
+        "icon": "foolsbox",
+        "is_upgraded": true,
+        "description_lines": [
+          [["Umbaru Treasure", 4]],
+          [["Required Level: 120", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["+1 to All Skills", 3]],
+          [["+10% to Spell Damage", 3]],
+          [["+50 to Strength", 3]],
+          [["+52 to Dexterity", 3]],
+          [["+48 to Vitality", 3]],
+          [["+42 to Energy", 3]]
+        ]
+      },
+      {
+        "name": "Eternal Bone Pile",
+        "quality": "Unique",
+        "display_quality": "Charm",
+        "defId": "x0x",
+        "type": "Charm",
+        "code": "x0x",
+        "name_color": 4,
+        "icon": "invbonr3",
+        "description_lines": [
+          [["Eternal Bone Pile", 4]],
+          [["(Assassin Only)", -1]],
+          [["Required Level: 120", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["+2 to Assassin Skill Levels", 3]],
+          [["+2 to Druid Skill Levels", 3]],
+          [["+2 to Barbarian Skill Levels", 3]],
+          [["+2 to Paladin Skill Levels", 3]],
+          [["+1 to Necromancer Skill Levels", 3]],
+          [["+1 to Sorceress Skill Levels", 3]],
+          [["+2 to Amazon Skill Levels", 3]],
+          [["+20% Movement Speed", 3]],
+          [["- Eternal Reign -", 5]]
+        ]
+      },
+      {
+        "name": "Dragon Claw",
+        "quality": "Unique",
+        "display_quality": "Charm",
+        "defId": "|dc",
+        "type": "Charm",
+        "code": "|dc",
+        "name_color": 4,
+        "icon": "invhorn",
+        "is_upgraded": true,
+        "description_lines": [
+          [["Dragon Claw", 4]],
+          [["(Assassin Only)", -1]],
+          [["Required Level: 125", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["Unlocks Mastery Skill: Chemistry", 2]],
+          [["+141 to Life", 3]],
+          [["Maximum Life +5%", 3]],
+          [["+54 to Mana", 3]],
+          [["+10% to Experience Gained", 3]],
+          [["- Glow of the Dark Star -", 5]]
+        ]
+      },
+      {
+        "name": "The Ancient Repositories",
+        "quality": "Unique",
+        "display_quality": "Charm",
+        "defId": "|\\\\",
+        "type": "Charm",
+        "code": "|\\\\",
+        "name_color": 4,
+        "icon": "ancientrepositoriesz",
+        "description_lines": [
+          [["The Ancient Repositories", 4]],
+          [["(Assassin Only)", -1]],
+          [["Required Level: 125", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["+1 to All Skills", 3]],
+          [["+124% Bonus to Attack Rating", 3]],
+          [["+14% to Spell Damage", 3]],
+          [["+8% Chance of Crushing Blow", 3]],
+          [["Maximum Life and Mana +5%", 3]],
+          [["Fire Resist +18%", 3]],
+          [["Lightning Resist +18%", 3]],
+          [["Cold Resist +18%", 3]],
+          [["- Arcane Guidance -", 5]]
+        ]
+      },
+      {
+        "name": "Neutrality Pact",
+        "quality": "Unique",
+        "display_quality": "Charm",
+        "defId": "##.",
+        "type": "Charm",
+        "code": "##.",
+        "name_color": 4,
+        "icon": "scroll05",
+        "description_lines": [
+          [["Neutrality Pact", 4]],
+          [["(Assassin Only)", -1]],
+          [["Required Level: 130", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["+2 to All Skills", 3]],
+          [["+79% Bonus to Summoned Edyrem Life", 3]],
+          [["+8% Innate Elemental Damage", 3]],
+          [["+4 to Purify", 3]],
+          [["+4% Deadly Strike", 3]],
+          [["- Legacy of the Ancients -", 5]]
+        ]
+      },
+      {
+        "name": "Cold Fusion Schematics",
+        "quality": "Unique",
+        "display_quality": "Charm",
+        "defId": "w@w",
+        "type": "Charm",
+        "code": "w@w",
+        "name_color": 4,
+        "icon": "coldfusion",
+        "description_lines": [
+          [["Cold Fusion Schematics", 4]],
+          [["(Assassin Only)", -1]],
+          [["Required Level: 125", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["1% Chance to cast level 10 Time Strike on Striking", 3]],
+          [["+38 to Strength", 3]],
+          [["+45 to Dexterity", 3]],
+          [["+41 to Vitality", 3]],
+          [["+36 to Energy", 3]],
+          [["- Power Synthesis -", 5]]
+        ]
+      },
+      {
+        "name": "Soul of Kabraxis",
+        "quality": "Unique",
+        "display_quality": "Charm",
+        "defId": "bxa",
+        "type": "Charm",
+        "code": "bxa",
+        "name_color": 4,
+        "icon": "braxwhorl",
+        "description_lines": [
+          [["Soul of Kabraxis", 4]],
+          [["(Assassin Only)", -1]],
+          [["Required Level: 120", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["+1 to All Skills", 3]],
+          [["Adds 5-10 Damage", 3]],
+          [["Maximum Elemental Resists +3%", 3]],
+          [["- Shadow's Embrace -", 5]]
+        ]
+      },
+      {
+        "name": "Spirit of Creation",
+        "quality": "Unique",
+        "display_quality": "Charm",
+        "defId": "blol",
+        "type": "Charm",
+        "code": "blol",
+        "name_color": 4,
+        "icon": "vine",
+        "description_lines": [
+          [["Spirit of Creation", 4]],
+          [["(Assassin Only)", -1]],
+          [["Required Level: 125", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["Unlocks Mastery Skill: Specialization", 2]],
+          [["+25 to Strength", 3]],
+          [["Maximum Mana +4%", 3]],
+          [["Regenerate Mana +10%", 3]],
+          [["Elemental Resists +18%", 3]],
+          [["- Stigma of Excidium -", 5]]
+        ]
+      },
+      {
+        "name": "The Book of Lies",
+        "quality": "Unique",
+        "display_quality": "Charm",
+        "defId": "k@k",
+        "type": "Charm",
+        "code": "k@k",
+        "name_color": 4,
+        "icon": "invsbk2",
+        "description_lines": [
+          [["The Book of Lies", 4]],
+          [["(Assassin Only)", -1]],
+          [["Required Level: 125", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["Weapon Physical Damage +20%", 3]],
+          [["+453 to Life", 3]],
+          [["+117 to Mana", 3]],
+          [["- Demonic Forgery -", 5]]
+        ]
+      },
+      {
+        "name": "Azmodan's Heart",
+        "quality": "Unique",
+        "display_quality": "Charm",
+        "defId": "a56",
+        "type": "Charm",
+        "code": "a56",
+        "name_color": 4,
+        "icon": "invhrt",
+        "description_lines": [
+          [["Azmodan's Heart", 4]],
+          [["(Assassin Only)", -1]],
+          [["Required Level: 115", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["+150 to Life", 3]],
+          [["+75 to Mana", 3]],
+          [["Maximum Elemental Resists +2%", 3]],
+          [["Elemental Resists +20%", 3]],
+          [["-5% to All Vendor Prices", 3]],
+          [["- Vile Dissolution -", 5]]
+        ]
+      },
+      {
+        "name": "Sunstone of the Gods",
+        "quality": "Unique",
+        "display_quality": "Charm",
+        "defId": "x4x",
+        "type": "Charm",
+        "code": "x4x",
+        "name_color": 4,
+        "icon": "invgmv",
+        "description_lines": [
+          [["Sunstone of the Gods", 4]],
+          [["(Assassin Only)", -1]],
+          [["Required Level: 115", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["+5% Innate Elemental Damage", 3]],
+          [["Maximum Life +5%", 3]],
+          [["Maximum Mana +13%", 3]],
+          [["Physical Resist +5%", 3]],
+          [["- Askari Valor -", 5]]
+        ]
+      },
+      {
+        "name": "Bone Chimes",
+        "quality": "Unique",
+        "display_quality": "Charm",
+        "defId": "ir76",
+        "type": "Charm",
+        "code": "ir76",
+        "name_color": 4,
+        "icon": "bonechimes",
+        "description_lines": [
+          [["Bone Chimes", 4]],
+          [["Required Level: 120", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["Gives stats based on the sum of your bonus damage to Undead and Demons", 8]],
+          [["8% added as Innate Elemental Damage (Max +25%)", 3]],
+          [["Current Bonus: +128%", 3]]
+        ]
+      },
+      {
+        "name": "Zakarum's Ear",
+        "quality": "Unique",
+        "display_quality": "Charm",
         "defId": "yq8",
-        "stats": [
-          "Required Level: 115",
-          "+9% to All Attributes",
-          "+15% to Experience Gained",
-          "Heroic Library of Fate",
-          "Rewards: Angelic Items, Crafting Rares, Crafting Exclusive Uniques",
-          "Tramsmute with a Perfect Gem and 50,000 gold to open with Area Level 130",
-          "Further progress requires the Paragon of Fate mastery and a Mark of Fate",
-          "Transmute in the cube to obtain a Pearl of Wisdom on this topic"
+        "type": "Charm",
+        "code": "yq8",
+        "name_color": 4,
+        "icon": "invear",
+        "description_lines": [
+          [["Zakarum's Ear", 4]],
+          [["Required Level: 115", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["+9% to All Attributes", 3]],
+          [["+15% to Experience Gained", 3]],
+          [["Heroic Library of Fate", 8]],
+          [["Rewards: Angelic Items, Crafting Rares, Crafting Exclusive Uniques", 11]],
+          [["Tramsmute with a Perfect Gem and 50,000 gold to open with Area Level 130", 5]],
+          [["Further progress requires the Paragon of Fate mastery and a Mark of Fate", 5]],
+          [["Transmute in the cube to obtain a Pearl of Wisdom on this topic", 0]]
+        ]
+      },
+      {
+        "name": "Sacred Worldstone Key",
+        "quality": "Unique",
+        "display_quality": "Charm",
+        "defId": "a61",
+        "type": "Charm",
+        "code": "a61",
+        "name_color": 4,
+        "icon": "invworldkey",
+        "description_lines": [
+          [["Sacred Worldstone Key", 4]],
+          [["Required Level: 100", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["Weapon Physical Damage +27%", 3]],
+          [["+29% Bonus to Defense", 3]]
+        ]
+      },
+      {
+        "name": "Sunstone of the Twin Seas",
+        "quality": "Unique",
+        "display_quality": "Charm",
+        "defId": "twi",
+        "type": "Charm",
+        "code": "twi",
+        "name_color": 4,
+        "icon": "invgmg",
+        "is_upgraded": true,
+        "description_lines": [
+          [["Sunstone of the Twin Seas", 4]],
+          [["Required Level: 50", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["+2 to All Skills", 3]],
+          [["+10% Combat Speeds", 3]],
+          [["-5% to Enemy Fire Resistance", 3]],
+          [["-5% to Enemy Lightning Resistance", 3]],
+          [["-5% to Enemy Cold Resistance", 3]],
+          [["+10% to All Attributes", 3]],
+          [["Elemental Resists +40%", 3]],
+          [["+5% to Experience Gained", 3]]
+        ]
+      },
+      {
+        "name": "Astrogha's Venom Stinger",
+        "quality": "Unique",
+        "display_quality": "Charm",
+        "defId": "ab!",
+        "type": "Charm",
+        "code": "ab!",
+        "name_color": 4,
+        "icon": "invtail",
+        "description_lines": [
+          [["Astrogha's Venom Stinger", 4]],
+          [["(Assassin Only)", -1]],
+          [["Required Level: 125", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["+1 to All Skills", 3]],
+          [["Jitan's Gate Cooldown Reduced by 1 second ", 3]],
+          [["-5% to Enemy Elemental Resistances", 3]],
+          [["+450 to Life", 3]],
+          [["Poison Length Reduction +50%", 3]],
+          [["- Web of Deception -", 5]]
+        ]
+      },
+      {
+        "name": "The Butcher's Tooth",
+        "quality": "Unique",
+        "display_quality": "Charm",
+        "defId": "a60",
+        "type": "Charm",
+        "code": "a60",
+        "name_color": 4,
+        "icon": "invfang",
+        "description_lines": [
+          [["The Butcher's Tooth", 4]],
+          [["Required Level: 100", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["+10 to all Attributes", 3]],
+          [["+20% Magic Find", 3]],
+          [["+1 to Light Radius", 3]],
+          [["Horror Under Tristram (Heroic)", 4]],
+          [["Difficulty Level: 125", 5]],
+          [["Transmute with an Urt rune to receive two quest entrance scrolls", 5]],
+          [["Reward can be used to upgrade Paragon's Hammer", 5]]
+        ]
+      },
+      {
+        "name": "Vial of Elder Blood",
+        "quality": "Unique",
+        "display_quality": "Charm",
+        "defId": "ebx",
+        "type": "Charm",
+        "code": "ebx",
+        "name_color": 4,
+        "icon": "eldervial",
+        "description_lines": [
+          [["Vial of Elder Blood", 4]],
+          [["(Assassin Only)", -1]],
+          [["Required Level: 135", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["Champion of Sanctuary", 7]],
+          [["-10% to Enemy Elemental Resistances", 3]],
+          [["Maximum Life +5%", 3]],
+          [["Maximum Mana +14%", 3]],
+          [["+50 Life after each Kill", 3]],
+          [["+21% to Experience Gained", 3]],
+          [["Transmute with a Nephalem Dimensional Key", 5]],
+          [["with unlocked Void Armor", 5]],
+          [["and a Greater Signet of Learning to open", 5]],
+          [["a portal to the Heart of Darkness", 5]]
+        ]
+      },
+      {
+        "name": "The Sleep",
+        "quality": "Unique",
+        "display_quality": "Charm",
+        "defId": "ths",
+        "type": "Charm",
+        "code": "ths",
+        "name_color": 4,
+        "icon": "jewelabc",
+        "is_upgraded": true,
+        "description_lines": [
+          [["The Sleep", 4]],
+          [["Required Level: 125", -1]],
+          [["Cube After Completing a Trophy Challenge to Awaken", 8]],
+          [["Disenchant to open a portal to the World Nexus", 8]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["+2 to All Skills", 3]],
+          [["+15% Innate Elemental Damage", 3]],
+          [["Slow Target +20%", 3]],
+          [["+10% to All Attributes", 3]],
+          [["Maximum Elemental Resists +1%", 3]],
+          [["Curse Length Reduction +30%", 3]],
+          [["- Awakened -", 5]]
+        ]
+      },
+      {
+        "name": "Idol of Vanity",
+        "quality": "Unique",
+        "display_quality": "Charm",
+        "defId": "a66",
+        "type": "Charm",
+        "code": "a66",
+        "name_color": 4,
+        "icon": "invgbi",
+        "description_lines": [
+          [["Idol of Vanity", 4]],
+          [["(Assassin Only)", -1]],
+          [["Required Level: 115", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["Unlocks Mastery Skill: Continuity", 2]],
+          [["+15% Combat Speeds", 3]],
+          [["+20% to Summon Life", 3]],
+          [["+10% to Summon Elemental Resistances", 3]],
+          [["- Blighted Grace -", 5]]
+        ]
+      },
+      {
+        "name": "Scroll of Kings",
+        "quality": "Unique",
+        "display_quality": "Charm",
+        "defId": "a58",
+        "type": "Charm",
+        "code": "a58",
+        "name_color": 4,
+        "icon": "invscb2",
+        "description_lines": [
+          [["Scroll of Kings", 4]],
+          [["Required Level: 115", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["+10% to Spell Damage", 3]],
+          [["+20% to All Attributes", 3]]
+        ]
+      },
+      {
+        "name": "Riftwalker's Eye",
+        "quality": "Unique",
+        "display_quality": "Charm",
+        "defId": "ktzx",
+        "type": "Charm",
+        "code": "ktzx",
+        "name_color": 4,
+        "icon": "evileye",
+        "is_upgraded": true,
+        "description_lines": [
+          [["Riftwalker's Eye", 4]],
+          [["Required Level: 100", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["+2 to All Skills", 3]],
+          [["Maximum Life and Mana +2%", 3]],
+          [["Maximum Elemental Resists +2%", 3]],
+          [["+15% to Experience Gained", 3]]
+        ]
+      },
+      {
+        "name": "Books of Kalan",
+        "quality": "Unique",
+        "display_quality": "Charm",
+        "defId": "voXX",
+        "type": "Charm",
+        "code": "voXX",
+        "name_color": 4,
+        "icon": "invkalan",
+        "description_lines": [
+          [["Books of Kalan", 4]],
+          [["(Assassin Only)", -1]],
+          [["Required Level: 130", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["+3 to All Skills", 3]],
+          [["+15 to Teleport", 3]],
+          [["+25 to Life", 3]],
+          [["+50 to Mana", 3]],
+          [["- Stigma of Excidium -", 5]]
+        ]
+      },
+      {
+        "name": "Demonsbane",
+        "quality": "Unique",
+        "display_quality": "Charm",
+        "defId": "t@t",
+        "type": "Charm",
+        "code": "t@t",
+        "name_color": 4,
+        "icon": "demonsbanez",
+        "description_lines": [
+          [["Demonsbane", 4]],
+          [["By Robert Marks", 4]],
+          [["(Assassin Only)", -1]],
+          [["Required Level: 120", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["+2 to Assassin Skill Levels", 3]],
+          [["+1 to Druid Skill Levels", 3]],
+          [["+1 to Paladin Skill Levels", 3]],
+          [["+2 to Sorceress Skill Levels", 3]],
+          [["+1 to Amazon Skill Levels", 3]],
+          [["+10% Combat Speeds", 3]],
+          [["+15 Life Regenerated per Second", 3]],
+          [["Heroic Duncraig", 8]],
+          [["Rewards: Assur's Bane upgrades, Sacred Unique Crafting, Exclusive Uniques", 11]],
+          [["Cube charm with 5 Sacred Uniques to create a Mark of Sanctity", 5]],
+          [["Learn the Paragon of Sanctity skill", 5]],
+          [["Transmute in the cube to obtain a Pearl of Wisdom on this topic", 8]],
+          [["- Infernal Blaze -", 5]]
+        ]
+      },
+      {
+        "name": "Weather Control",
+        "quality": "Unique",
+        "display_quality": "Charm",
+        "defId": "|wc",
+        "type": "Charm",
+        "code": "|wc",
+        "name_color": 4,
+        "icon": "invathulua",
+        "description_lines": [
+          [["Weather Control", 4]],
+          [["Required Level: 120", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["Jitan's Gate Cooldown Reduced by 1 second ", 3]],
+          [["+4% Innate Elemental Damage", 3]],
+          [["+10 to all Attributes", 3]]
+        ]
+      },
+      {
+        "name": "Laser Focus Crystal",
+        "quality": "Unique",
+        "display_quality": "Charm",
+        "defId": "a59",
+        "type": "Charm",
+        "code": "a59",
+        "name_color": 4,
+        "icon": "invdss",
+        "description_lines": [
+          [["Laser Focus Crystal", 4]],
+          [["Required Level: 100", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["Maximum Life +3%", 3]],
+          [["Maximum Mana +10%", 3]],
+          [["+10% to Experience Gained", 3]],
+          [["Death Projector (Heroic)", 4]],
+          [["Difficulty Level: 125", 5]],
+          [["Transmute with a Thal rune to receive two quest entrance scrolls", 5]],
+          [["Reward can be used to upgrade Paragon's Hammer", 5]]
+        ]
+      },
+      {
+        "name": "Xazax's Illusion",
+        "quality": "Unique",
+        "display_quality": "Charm",
+        "defId": "|\\#",
+        "type": "Charm",
+        "code": "|\\#",
+        "name_color": 4,
+        "icon": "maggotlairfag",
+        "description_lines": [
+          [["Xazax's Illusion", 4]],
+          [["(Assassin Only)", -1]],
+          [["Required Level: 125", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["+2 to Assassin Skill Levels", 3]],
+          [["+2 to Druid Skill Levels", 3]],
+          [["+2 to Barbarian Skill Levels", 3]],
+          [["+1 to Paladin Skill Levels", 3]],
+          [["+2 to Sorceress Skill Levels", 3]],
+          [["+2 to Amazon Skill Levels", 3]],
+          [["Adds 75-125 Fire Damage", 3]],
+          [["Adds 75-125 Lightning Damage", 3]],
+          [["Adds 75-125 Cold Damage", 3]],
+          [["+13 Life Regenerated per Second", 3]],
+          [["Poison Resist +42%", 3]],
+          [["- Demonic Delirium -", 5]]
+        ]
+      },
+      {
+        "name": "Spirit Trance Herb",
+        "quality": "Unique",
+        "display_quality": "Charm",
+        "defId": "yqx",
+        "type": "Charm",
+        "code": "yqx",
+        "name_color": 4,
+        "icon": "invhrb",
+        "description_lines": [
+          [["Spirit Trance Herb", 4]],
+          [["Required Level: 115", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["+10% Attack Speed", 3]],
+          [["+10% Cast Speed", 3]],
+          [["+143% Bonus to Attack Rating", 3]],
+          [["+22 Life Regenerated per Second", 3]]
+        ]
+      },
+      {
+        "name": "Corrupted Wormhole",
+        "quality": "Unique",
+        "display_quality": "Charm",
+        "defId": "\\\\8",
+        "type": "Charm",
+        "code": "\\\\8",
+        "name_color": 4,
+        "icon": "invlucion",
+        "description_lines": [
+          [["Corrupted Wormhole", 4]],
+          [["(Assassin Only)", -1]],
+          [["Required Level: 140", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["+16% to Dexterity", 3]],
+          [["+78 to Dexterity", 3]],
+          [["+30% Magic Find", 3]],
+          [["+40 Required Level", 3]],
+          [["- Revelations of the Cult -", 5]]
+        ]
+      },
+      {
+        "name": "Fool's Gold",
+        "quality": "Unique",
+        "display_quality": "Charm",
+        "defId": "az!",
+        "type": "Charm",
+        "code": "az!",
+        "name_color": 4,
+        "icon": "invgldm",
+        "description_lines": [
+          [["Fool's Gold", 4]],
+          [["Moo moo moo Moooo! Moo!", 4]],
+          [["Required Level: 115", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["+37 to Strength", 3]],
+          [["+33 to Dexterity", 3]],
+          [["+10 to Vitality", 3]],
+          [["+17 to Energy", 3]],
+          [["+12% Bonus to Defense", 3]],
+          [["-10% Gold Find", 3]],
+          [["+19% Magic Find", 3]]
+        ]
+      },
+      {
+        "name": "Lylia's Curse",
+        "quality": "Unique",
+        "display_quality": "Charm",
+        "defId": "|ld",
+        "type": "Charm",
+        "code": "|ld",
+        "name_color": 4,
+        "icon": "lyliascharm",
+        "description_lines": [
+          [["Lylia's Curse", 4]],
+          [["Required Level: 120", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["+16% Bonus to Summoned Edyrem Life", 3]],
+          [["+20 Life Regenerated per Second", 3]],
+          [["Maximum Fire Resist +1%", 3]],
+          [["Elemental Resists +10%", 3]]
+        ]
+      },
+      {
+        "name": "The Glorious Book of Median",
+        "quality": "Unique",
+        "display_quality": "Charm",
+        "defId": "x@x",
+        "type": "Charm",
+        "code": "x@x",
+        "name_color": 4,
+        "icon": "bookoflaz",
+        "description_lines": [
+          [["The Glorious Book of Median", 4]],
+          [["Required Level: 130", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["+1 to All Skills", 3]],
+          [["Adds 10-15 Damage", 3]],
+          [["+29% Damage to Demons", 3]],
+          [["Elemental Resists +6%", 3]]
+        ]
+      },
+      {
+        "name": "Optical Detector",
+        "quality": "Unique",
+        "display_quality": "Charm",
+        "defId": "a55",
+        "type": "Charm",
+        "code": "a55",
+        "name_color": 4,
+        "icon": "inveye",
+        "description_lines": [
+          [["Optical Detector", 4]],
+          [["Required Level: 100", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["Unlocks Mastery Skill: Tenacity", 2]],
+          [["+5% to Summon Elemental Resistances", 3]],
+          [["Elemental Resists +15%", 3]],
+          [["Infernal Machine (Heroic)", 4]],
+          [["Difficulty Level: 125", 5]],
+          [["Transmute with a Xith rune to receive two quest entrance scrolls", 5]],
+          [["Reward can be used to upgrade Paragon's Hammer", 5]]
+        ]
+      },
+      {
+        "name": "Legacy of Blood",
+        "quality": "Unique",
+        "display_quality": "Charm",
+        "defId": "adi",
+        "type": "Charm",
+        "code": "adi",
+        "name_color": 4,
+        "icon": "invlegacy",
+        "description_lines": [
+          [["Legacy of Blood", 4]],
+          [["By Richard Knaak", 4]],
+          [["(Assassin Only)", -1]],
+          [["Required Level: 115", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["Unlocks Mastery Skill: Endurance", 2]],
+          [["+5% Life stolen per Hit", 3]],
+          [["+20% Bonus to Defense", 3]],
+          [["- Curse of the Warlord -", 5]]
+        ]
+      },
+      {
+        "name": "Primordia",
+        "quality": "Unique",
+        "display_quality": "Charm",
+        "defId": "ebw-primordia",
+        "type": "Charm",
+        "code": "eby",
+        "name_color": 4,
+        "icon": "dimensionalkey",
+        "is_upgraded": true,
+        "description_lines": [
+          [["Primordia", 4]],
+          [["Dimensional Key", 4]],
+          [["Required Level: 130", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["Trial of Discovery", 4]],
+          [["Explore every level of the Labyrinth", 5]],
+          [["Transmute charm once with each Riftstone", 5]],
+          [["(must be done in ascending order)", 5]],
+          [["Trial of Purity", 4]],
+          [["Defeat the monster Heroes, Champions and Sovereigns roaming the Labyrinth", 5]],
+          [["Transmute charm once with each Star Chart piece and Dream Fragment", 5]],
+          [["(these items are rare drops from Labyrinth mini bosses)", 5]],
+          [["Dream Fragment (2)", 2]],
+          [["Dream Fragment (3)", 2]],
+          [["Dream Fragment (4)", 2]],
+          [["Star Chart (1)", 2]],
+          [["Star Chart (2)", 2]],
+          [["Star Chart (4)", 2]],
+          [["End the Invasion", 4]],
+          [["Defeat Deimoss the Fleshweaver in the Labyrinth depths", 5]],
+          [["Transmute charm after boss death", 5]],
+          [["Trial of the Nephalem", 4]],
+          [["Complete all of the above Labyrinth Quests", 5]],
+          [["Transmute the charm with a Celestial Wind effigy", 5]],
+          [["Adds 100-200 Fire Damage", 3]],
+          [["Adds 100-200 Lightning Damage", 3]],
+          [["Adds 100-200 Cold Damage", 3]],
+          [["+10% Innate Elemental Damage", 3]],
+          [["+52% Magic Find", 3]],
+          [["+1 to Light Radius", 3]]
+        ]
+      },
+      {
+        "name": "Paragon's Hammer",
+        "quality": "Unique",
+        "display_quality": "Charm",
+        "defId": "0u1",
+        "type": "Charm",
+        "code": "0u1",
+        "name_color": 4,
+        "icon": "invhmr",
+        "is_upgraded": true,
+        "description_lines": [
+          [["Paragon's Hammer", 4]],
+          [["Required Level: 115", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["Unlocks Mastery Skill: Paragon of Sanctity", 2]],
+          [["(Keep in inventory to gain bonus)", 2]],
+          [["Level 130", 4]],
+          [["Transmute: Paragon's Hammer + 4 (8) Sacred Uniques = 1 (2) Sacred Essence", 0]],
+          [["Transmute: Paragon's Hammer + Any Sacred Unique + 100,000 gold = Duncraig 130 scroll", 0]],
+          [["Level 134", 4]],
+          [["Transmute: Paragon's Hammer + Sacred Essence + 200,000 gold = Duncraig 134 scroll", 0]],
+          [["Level 139", 4]],
+          [["Transmute: Paragon's Hammer + 2 Sacred Essence + 300,000 gold = Duncraig 139 scroll", 0]],
+          [["+1 to All Skills", 3]],
+          [["+3% Elemental Resists per Character Level above 130", 3]],
+          [["+2% Summon Elemental Resistances per Character Level above 130", 3]],
+          [["+3% Magic Find per Character Level above 130", 3]],
+          [["+2 to All Attributes per Character Level above 130", 3]]
+        ]
+      },
+      {
+        "name": "Six Angel Bag",
+        "quality": "Unique",
+        "display_quality": "Charm",
+        "defId": "yq2",
+        "type": "Charm",
+        "code": "yq2",
+        "name_color": 4,
+        "icon": "angelbag1",
+        "is_upgraded": true,
+        "description_lines": [
+          [["Six Angel Bag", 4]],
+          [["Required Level: 105", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["+5% Innate Elemental Damage", 3]],
+          [["-4% to Enemy Elemental Resistances", 3]],
+          [["+3% Chance of Crushing Blow", 3]],
+          [["Fire Resist +25%", 3]],
+          [["Lightning Resist +21%", 3]],
+          [["Cold Resist +24%", 3]],
+          [["+5 to Light Radius", 3]]
+        ]
+      },
+      {
+        "name": "Dulra Aegis",
+        "quality": "Unique",
+        "display_quality": "Charm",
+        "defId": "|dul",
+        "type": "Charm",
+        "code": "|dul",
+        "name_color": 4,
+        "icon": "invdulra",
+        "is_upgraded": true,
+        "description_lines": [
+          [["Dulra Aegis", 4]],
+          [["Required Level: 140", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["+1 to All Skills", 3]],
+          [["+1 to Assassin Skill Levels", 3]],
+          [["+30% Hit Recovery", 3]],
+          [["-5% to Enemy Lightning Resistance", 3]],
+          [["+80% to Summon Life", 3]],
+          [["+30 to Dexterity", 3]],
+          [["Maximum Life +5%", 3]],
+          [["Maximum Cold Resist +2%", 3]],
+          [["Magic Resist +4%", 3]],
+          [["+25% Magic Find", 3]]
+        ]
+      },
+      {
+        "name": "Moon of the Spider",
+        "quality": "Unique",
+        "display_quality": "Charm",
+        "defId": "yqe",
+        "type": "Charm",
+        "code": "yqe",
+        "name_color": 4,
+        "icon": "invhscr2",
+        "description_lines": [
+          [["Moon of the Spider", 4]],
+          [["By Richard Knaak", 4]],
+          [["Required Level: 110", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["+25 Spell Focus", 3]],
+          [["+1 to Jitan's Gate", 3]],
+          [["Half Freeze Duration", 3]]
         ]
       }
     ],
     "relics": [
       {
-        "defId": "relic:hailstorm",
-        "stats": [
-          "Required Level: 75",
-          "+30 Spell Focus",
-          "+20 to Hailstorm",
-          "Cold Absorb +1%"
-        ]
-      },
-      {
+        "name": "Relic: Lightning Wall",
+        "quality": "Unique",
+        "display_quality": "Relic",
         "defId": "relic:lightning-wall",
-        "stats": [
-          "Required Level: 75",
-          "-7% to Enemy Lightning Resistance",
-          "+19 to Lightning Wall",
-          "Lightning Absorb +2%"
+        "type": "Charm",
+        "code": "cotw",
+        "name_color": 4,
+        "icon": "relic01",
+        "description_lines": [
+          [["Relic", 4]],
+          [["Required Level: 75", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["-7% to Enemy Lightning Resistance", 3]],
+          [["+19 to Lightning Wall", 3]],
+          [["Lightning Absorb +2%", 3]]
         ]
       },
       {
+        "name": "Relic: Whirlwind",
+        "quality": "Unique",
+        "display_quality": "Relic",
         "defId": "relic:whirlwind",
-        "stats": [
-          "Required Level: 75",
-          "+14 to Whirlwind",
-          "+4% to All Attributes",
-          "Poison Resist +25%"
+        "type": "Charm",
+        "code": "cotw",
+        "name_color": 4,
+        "icon": "relic04",
+        "description_lines": [
+          [["Relic", 4]],
+          [["Required Level: 75", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["+14 to Whirlwind", 3]],
+          [["+4% to All Attributes", 3]],
+          [["Poison Resist +25%", 3]]
+        ]
+      },
+      {
+        "name": "Relic: Hailstorm",
+        "quality": "Unique",
+        "display_quality": "Relic",
+        "defId": "relic:hailstorm",
+        "type": "Charm",
+        "code": "cotw",
+        "name_color": 4,
+        "icon": "relic05",
+        "description_lines": [
+          [["Relic", 4]],
+          [["Required Level: 75", -1]],
+          [["Keep in Inventory to Gain Bonus", -1]],
+          [["+30 Spell Focus", 3]],
+          [["+20 to Hailstorm", 3]],
+          [["Cold Absorb +1%", 3]]
         ]
       }
     ]

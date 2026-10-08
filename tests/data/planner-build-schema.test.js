@@ -165,7 +165,7 @@ const FIXTURE = {
     equipment: {
       head: 'unique:andariels-visage',
       neck: null,
-      tors: { defId: 'unique:tyraels-might', rolls: { defense: 800 } },
+      tors: { name: "Tyrael's Might", defId: 'unique:tyraels-might', rolls: { defense: 800 } },
       glov: null,
       feet: null,
       belt: null,
@@ -177,8 +177,8 @@ const FIXTURE = {
       larm2: null,
     },
     inventory: [{ slot: 0, defId: 'unique:wizardspike' }],
-    charms: [{ defId: 'charm:the-sleep', rolls: { 'upgrade:0': 1 } }],
-    relics: [{ defId: 'relic:charged-strike' }],
+    charms: [{ name: 'The Sleep', defId: 'charm:the-sleep', rolls: { 'upgrade:0': 1 } }],
+    relics: [{ name: 'Relic: Charged Strike', defId: 'relic:charged-strike' }],
   },
 };
 
@@ -206,6 +206,10 @@ describe('planner build full schema', () => {
     expect(schema.$defs.Stats.properties).not.toHaveProperty('allSkillsBonus');
     expect(schema.properties).not.toHaveProperty('savedAt');
     expect(schema.$defs.ItemsSnapshot.properties).not.toHaveProperty('inventory');
+    expect(schema.$defs.ItemInstance.required).toEqual(['name']);
+    expect(schema.$defs.ItemInstance.properties).toHaveProperty('description_lines');
+    expect(schema.$defs.ItemInstance.properties).toHaveProperty('quality');
+    expect(schema.$defs.ItemInstance.properties).toHaveProperty('name_color');
   });
 
   it('accepts a snapshot matching current export shape', () => {
@@ -241,7 +245,10 @@ describe('planner build full schema', () => {
         equipment: {
           ...FIXTURE.items.equipment,
           head: {
+            name: "Andariel's Visage",
+            quality: 'Unique',
             defId: 'unique:andariels-visage',
+            description_lines: [[['Andariel\'s Visage', 4]], [['Already Upgraded', 1]]],
             stats: ['+2 to All Skills', '15% Life stolen per Hit'],
             eth: true,
             corrupted: false,
@@ -279,7 +286,7 @@ describe('planner build full schema', () => {
           ...FIXTURE.items,
           equipment: {
             ...FIXTURE.items.equipment,
-            head: { defId: 'unique:andariels-visage', socketables: [{ type: 'Jewel', name: 'Jewel', stats: 'nope' }] },
+            head: { name: "Andariel's Visage", defId: 'unique:andariels-visage', socketables: [{ type: 'Jewel', name: 'Jewel', stats: 'nope' }] },
           },
         },
       }).length
@@ -289,7 +296,15 @@ describe('planner build full schema', () => {
     expect(
       validate(schema, schema, {
         ...FIXTURE,
-        items: { ...FIXTURE.items, relics: [{ defId: 'a' }, { defId: 'b' }, { defId: 'c' }, { defId: 'd' }] },
+        items: {
+          ...FIXTURE.items,
+          relics: [
+            { name: 'a' },
+            { name: 'b' },
+            { name: 'c' },
+            { name: 'd' },
+          ],
+        },
       }).length
     ).toBeGreaterThan(0);
   });
