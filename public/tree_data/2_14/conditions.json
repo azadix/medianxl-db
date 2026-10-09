@@ -12,6 +12,7 @@
   { "key": "after_using_stampede", "name": null, "description": "" },
   { "key": "while_fortress_is_active", "name": null, "description": "" },
   { "key": "while_decoy_is_active", "name": null, "description": "" },
+  { "key": "while_black_wind_is_active", "name": null, "description": "" },
 
   { "key": "during_conflux", "name": null, "description": "" },
   { "key": "while_overloaded", "name": null, "description": "" },

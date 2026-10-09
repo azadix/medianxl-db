@@ -149,7 +149,8 @@ describe('wrapSkillTooltipContent and banners', () => {
   });
 
   it('builds disabled banner', () => {
-    expect(buildSkillTooltipDisabledBannerHtml()).toContain('DISABLED');
+    expect(buildSkillTooltipDisabledBannerHtml(true)).toContain('Disabled');
+    expect(buildSkillTooltipDisabledBannerHtml(false)).toContain('Enabled');
   });
 
   it('builds prerequisite warning', () => {

@@ -26860,13 +26860,19 @@
         "statKey": "hit_recovery",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "2*blvl"
+        "value0": "2*blvl",
+        "showCondition": [
+          "while_black_wind_is_active"
+        ]
       },
       {
         "statKey": "movement_speed",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "2*blvl"
+        "value0": "2*blvl",
+        "showCondition": [
+          "while_black_wind_is_active"
+        ]
       },
       {
         "statKey": "maximum_block_chance",
@@ -26878,19 +26884,28 @@
         "statKey": "regenerate_life",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "(-0.001*blvl)*{{life}}"
+        "value0": "(-0.001*blvl)*{{life}}",
+        "showCondition": [
+          "while_black_wind_is_active"
+        ]
       },
       {
         "statKey": "mana_regeneration_rate",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "-7*blvl"
+        "value0": "-7*blvl",
+        "showCondition": [
+          "while_black_wind_is_active"
+        ]
       },
       {
         "statKey": "life_on_striking",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "if(blvl>=5,1,0)"
+        "value0": "if(blvl>=5,1,0)",
+        "showCondition": [
+          "while_black_wind_is_active"
+        ]
       }
     ],
     "description": [

@@ -10,6 +10,8 @@ import {
 } from './planner-stats-config.js';
 import { getPlannerSkillsSnapshot } from './planner-snapshot.js';
 import { minCharacterLevelForAllocatedSkillPoints } from '@/skills/domain/skill-calculations.js';
+import { catalogRowUsesPlannerBonusToggle } from '@/skills/domain/skill-skill-types.js';
+import { getFileSkillStore } from '@/shared/skill-data-store.js';
 
 export default class Character {
   // Level constraints
@@ -288,8 +290,12 @@ export default class Character {
     this._plannerSkillStatBonuses = {};
     /** Skills toggled off for planner stat aggregation (internal skill ids). */
     this.disabledSkillIds = new Set();
+    /** Toggleable skills the player turned on (default off). */
+    this.enabledSkillIds = new Set();
     /** oSkill rows toggled off (per-row slot ids, independent of tree disable). */
     this.disabledOSkillSlotIds = new Set();
+    /** Toggleable oSkill rows the player turned on (default off). */
+    this.enabledOSkillSlotIds = new Set();
     this.applyAutoQuestCompletionForLevel(this.level);
   }
 
@@ -305,9 +311,29 @@ export default class Character {
    * @param {string} internalId
    * @returns {boolean}
    */
+  skillUsesPlannerBonusToggle(internalId) {
+    const id = String(internalId ?? '').trim();
+    if (!id) return false;
+    const store = getFileSkillStore();
+    const cat = store?.catalogByInternalId?.get(id);
+    if (catalogRowUsesPlannerBonusToggle(cat)) return true;
+    const det = store?.getSkillDetail?.(id);
+    if (!det) return false;
+    return catalogRowUsesPlannerBonusToggle({
+      id,
+      tags: det.tags,
+      tabName: det.tabName || cat?.tabName,
+    });
+  }
+
+  /**
+   * @param {string} internalId
+   * @returns {boolean}
+   */
   isSkillDisabled(internalId) {
     const k = String(internalId ?? '').trim();
-    return k !== '' && this.disabledSkillIds.has(k);
+    if (!k || !this.skillUsesPlannerBonusToggle(k)) return false;
+    return !this.enabledSkillIds.has(k);
   }
 
   /**
@@ -317,8 +343,28 @@ export default class Character {
   setSkillDisabled(internalId, disabled) {
     const k = String(internalId ?? '').trim();
     if (!k) return;
-    if (disabled) this.disabledSkillIds.add(k);
-    else this.disabledSkillIds.delete(k);
+    if (disabled) this.enabledSkillIds.delete(k);
+    else this.enabledSkillIds.add(k);
+  }
+
+  /**
+   * @returns {string[]}
+   */
+  getEnabledSkillIds() {
+    return [...this.enabledSkillIds].sort((a, b) => a.localeCompare(b));
+  }
+
+  /**
+   * @param {unknown} list
+   */
+  setEnabledSkillIds(list) {
+    this.enabledSkillIds = new Set();
+    if (!Array.isArray(list)) return;
+    for (const id of list) {
+      const k = String(id ?? '').trim();
+      if (k) this.enabledSkillIds.add(k);
+    }
+    this.pruneDisabledSkillsWithoutAllocatedPoints();
   }
 
   /**
@@ -342,7 +388,7 @@ export default class Character {
   }
 
   /**
-   * Drop disable toggles for skills with no points on the class tree (planner card state).
+   * Drop bonus-toggle flags for skills with no points on the class tree.
    */
   pruneDisabledSkillsWithoutAllocatedPoints() {
     for (const id of [...this.disabledSkillIds]) {
@@ -350,10 +396,38 @@ export default class Character {
         this.disabledSkillIds.delete(id);
       }
     }
+    for (const id of [...this.enabledSkillIds]) {
+      if (this.getSkillPoints(id) <= 0) {
+        this.enabledSkillIds.delete(id);
+      }
+    }
   }
 
   clearDisabledSkillIds() {
     this.disabledSkillIds = new Set();
+    this.enabledSkillIds = new Set();
+  }
+
+  /**
+   * Older saves stored opt-out disabled ids (everything else was on).
+   * @param {unknown} list
+   */
+  applyLegacyDisabledSkillIds(list) {
+    const disabled = new Set();
+    if (Array.isArray(list)) {
+      for (const id of list) {
+        const k = String(id ?? '').trim();
+        if (k) disabled.add(k);
+      }
+    }
+    this.disabledSkillIds = new Set(disabled);
+    const enabled = [];
+    for (const [id, pts] of Object.entries(this.skillPoints || {})) {
+      if (Math.floor(Number(pts) || 0) <= 0) continue;
+      if (!this.skillUsesPlannerBonusToggle(id)) continue;
+      if (!disabled.has(String(id))) enabled.push(id);
+    }
+    this.setEnabledSkillIds(enabled);
   }
 
   /**
@@ -362,7 +436,11 @@ export default class Character {
    */
   isOSkillSlotDisabled(slotId) {
     const k = String(slotId ?? '').trim();
-    return k !== '' && this.disabledOSkillSlotIds.has(k);
+    if (!k) return false;
+    const row = (this.oSkills || []).find((r) => String(r?.slotId ?? '').trim() === k);
+    const skillId = row?.skillName != null ? String(row.skillName).trim() : '';
+    if (skillId && !this.skillUsesPlannerBonusToggle(skillId)) return false;
+    return !this.enabledOSkillSlotIds.has(k);
   }
 
   /**
@@ -372,8 +450,26 @@ export default class Character {
   setOSkillSlotDisabled(slotId, disabled) {
     const k = String(slotId ?? '').trim();
     if (!k) return;
-    if (disabled) this.disabledOSkillSlotIds.add(k);
-    else this.disabledOSkillSlotIds.delete(k);
+    if (disabled) this.enabledOSkillSlotIds.delete(k);
+    else this.enabledOSkillSlotIds.add(k);
+  }
+
+  /** @returns {string[]} */
+  getEnabledOSkillSlotIds() {
+    return [...this.enabledOSkillSlotIds].sort((a, b) => a.localeCompare(b));
+  }
+
+  /**
+   * @param {unknown} list
+   */
+  setEnabledOSkillSlotIds(list) {
+    this.enabledOSkillSlotIds = new Set();
+    if (!Array.isArray(list)) return;
+    for (const id of list) {
+      const k = String(id ?? '').trim();
+      if (k) this.enabledOSkillSlotIds.add(k);
+    }
+    this.pruneDisabledOSkillSlotsWithoutRows();
   }
 
   /** @returns {string[]} */
@@ -396,6 +492,31 @@ export default class Character {
 
   clearDisabledOSkillSlotIds() {
     this.disabledOSkillSlotIds = new Set();
+    this.enabledOSkillSlotIds = new Set();
+  }
+
+  /**
+   * Older saves stored opt-out disabled oSkill slots (everything else was on).
+   * @param {unknown} list
+   */
+  applyLegacyDisabledOSkillSlotIds(list) {
+    const disabled = new Set();
+    if (Array.isArray(list)) {
+      for (const id of list) {
+        const k = String(id ?? '').trim();
+        if (k) disabled.add(k);
+      }
+    }
+    this.disabledOSkillSlotIds = new Set(disabled);
+    const enabled = [];
+    for (const row of this.oSkills || []) {
+      const sid = String(row?.slotId ?? '').trim();
+      if (!sid || Character.clampOSkillPoints(row?.points ?? 0) <= 0) continue;
+      const skillId = row?.skillName != null ? String(row.skillName).trim() : '';
+      if (skillId && !this.skillUsesPlannerBonusToggle(skillId)) continue;
+      if (!disabled.has(sid)) enabled.push(sid);
+    }
+    this.setEnabledOSkillSlotIds(enabled);
   }
 
   /**
@@ -409,6 +530,9 @@ export default class Character {
     }
     for (const id of [...this.disabledOSkillSlotIds]) {
       if (!alive.has(id)) this.disabledOSkillSlotIds.delete(id);
+    }
+    for (const id of [...this.enabledOSkillSlotIds]) {
+      if (!alive.has(id)) this.enabledOSkillSlotIds.delete(id);
     }
   }
 
@@ -878,7 +1002,9 @@ export default class Character {
       questCompletionOptOut: JSON.parse(JSON.stringify(this.questCompletionOptOut || {})),
       statAllocation: { ...this.statAllocation },
       disabledSkillIds: this.getDisabledSkillIds(),
-      disabledOSkillSlotIds: this.getDisabledOSkillSlotIds()
+      enabledSkillIds: this.getEnabledSkillIds(),
+      disabledOSkillSlotIds: this.getDisabledOSkillSlotIds(),
+      enabledOSkillSlotIds: this.getEnabledOSkillSlotIds()
     };
   }
 
@@ -904,13 +1030,17 @@ export default class Character {
     } else {
       this.statAllocation = Character.createEmptyStatAllocation();
     }
-    if (Array.isArray(state.disabledSkillIds)) {
-      this.setDisabledSkillIds(state.disabledSkillIds);
+    if (Array.isArray(state.enabledSkillIds)) {
+      this.setEnabledSkillIds(state.enabledSkillIds);
+    } else if (Array.isArray(state.disabledSkillIds)) {
+      this.applyLegacyDisabledSkillIds(state.disabledSkillIds);
     } else {
       this.clearDisabledSkillIds();
     }
-    if (Array.isArray(state.disabledOSkillSlotIds)) {
-      this.setDisabledOSkillSlotIds(state.disabledOSkillSlotIds);
+    if (Array.isArray(state.enabledOSkillSlotIds)) {
+      this.setEnabledOSkillSlotIds(state.enabledOSkillSlotIds);
+    } else if (Array.isArray(state.disabledOSkillSlotIds)) {
+      this.applyLegacyDisabledOSkillSlotIds(state.disabledOSkillSlotIds);
     } else {
       this.clearDisabledOSkillSlotIds();
     }

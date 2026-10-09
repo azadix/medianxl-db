@@ -70,11 +70,6 @@ const levelColorClass = computed(() =>
   getLevelColorClass(props.cardData.currentPoints || 0, props.cardData.maxPoints || 0)
 );
 
-const nameBaseClass = computed(() => {
-  const cd = props.cardData;
-  return cd.isDisabled ? 'has-text-danger' : '';
-});
-
 const showDisableToggle = computed(() => {
   const cd = props.cardData;
   if (cd.isInnate) return false;
@@ -139,7 +134,7 @@ watch(
       v-if="showDisableToggle"
       type="button"
       class="button is-outlined is-small skill-disable-toggle"
-      :class="cardData.isDisabled ? 'is-danger' : 'is-success'"
+      :class="cardData.isDisabled ? 'is-off' : 'is-success'"
       :title="disableButtonTitle"
       :aria-label="disableButtonTitle"
       @click.prevent="onToggleDisabled"
@@ -147,7 +142,7 @@ watch(
       <span class="icon is-small"><i class="fa-solid fa-power-off"></i></span>
     </button>
     <div class="skill-card-name">
-      <span class="skill-card-name-base" :class="nameBaseClass">{{ cardData.displayName }}</span>
+      <span class="skill-card-name-base">{{ cardData.displayName }}</span>
       <span
         v-if="cardData.parentSkillId"
         class="tag is-info is-light is-rounded is-size-7 ml-1"

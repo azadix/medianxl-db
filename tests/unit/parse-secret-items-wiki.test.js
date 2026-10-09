@@ -84,7 +84,22 @@ describe('parseSecretItemsWiki', () => {
 
     const relics = entries.filter((e) => e.quality === 'Relic');
     expect(relics.filter((e) => e.name === 'Time-Lost Relic')).toHaveLength(6);
-    expect(relics.filter((e) => e.name === 'Blood of Creation')).toHaveLength(7);
+    const blood = relics.filter((e) => e.name === 'Blood of Creation');
+    expect(blood).toHaveLength(7);
+    expect(blood.map((e) => [e.variant, e.stats.match(/^\(([^)]+Only)\)/m)?.[1]])).toEqual([
+      ['Version 1', 'Amazon Only'],
+      ['Version 2', 'Paladin Only'],
+      ['Version 3', 'Sorceress Only'],
+      ['Version 4', 'Barbarian Only'],
+      ['Version 5', 'Necromancer Only'],
+      ['Version 6', 'Assassin Only'],
+      ['Version 7', 'Druid Only'],
+    ]);
+    expect(blood.every((e) => e.icon === 'darkremnant')).toBe(true);
+    const v1Lines = blood[0].stats.split('\n').filter((line) =>
+      /^\+1 to Crystalline Arsenal$/i.test(line.replace(/^\{(orange|grey)\}/, '').trim())
+    );
+    expect(v1Lines).toHaveLength(1);
 
     const maleficence = entries.find((e) => e.name === 'Maleficence');
     expect(maleficence?.stats).toContain('+50 to Harbinger');
@@ -146,10 +161,11 @@ describe('secret item catalog overlays', () => {
     );
     expect(relic).toMatchObject({
       id: 'relic:blood-of-creation-version-1',
-      name: 'Blood of Creation (Version 1)',
+      name: 'Blood of Creation',
       rarity: 'relic',
       keepInInventory: true,
       category: 'relics',
+      icon: 'relic01',
     });
 
     const { items } = buildCatalogFromUniqueStats(

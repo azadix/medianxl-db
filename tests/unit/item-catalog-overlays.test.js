@@ -77,6 +77,10 @@ describe('unique-stats-db catalog', () => {
     expect(maleficence?.baseName).toBe('Tyrannical Blade');
     expect(items.filter((u) => u.name === "Akara's Robe")).toHaveLength(3);
     expect(items.some((r) => r.id === 'relic:blood-of-creation-version-1')).toBe(true);
+    const boc1 = items.find((r) => r.id === 'relic:blood-of-creation-version-1');
+    expect(boc1?.classRestriction).toBe('Amazon Only');
+    expect(boc1?.icon).toBe('darkremnant');
+    expect((boc1?.modifiers || []).filter((m) => /Crystalline Arsenal/i.test(m))).toHaveLength(1);
     expect(items.find((c) => c.id === 'charm:essence-of-time')?.keepInInventory).toBe(true);
 
     const storm = items.find((s) => s.name === 'Elemental Storm');

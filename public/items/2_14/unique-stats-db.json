@@ -10558,57 +10558,64 @@
     {
       "name": "Blood of Creation",
       "quality": "Relic",
-      "stats": "Required Level: 50\nItem Level: 150\n{orange}+1 to Crystalline Arsenal\n{orange}While holding a Javelin:\n{orange}Launches a massive frozen spike that splits into smaller bursts, which split again into small spikes\n{orange}Main spike deals 200% weapon damage, each split halves damage\n+1 to Crystalline Arsenal\n{orange}While holding a Spear:\n{orange}Strike the ground in front of you, releasing an pulsing nova of cold\n{orange}Deals up to 2800% Weapon damage at the center\n{orange}While holding a Bow:\n{orange}Fire an ice mine that slows to a halt a short distance in front of you\n{orange}before exploding into a rapid barrage of homing ice arrows\n{orange}Enemies can trigger the mine prematurely upon contact\n{orange}Deals 50% Weapon Damage\n{orange}Blessing of Karcheus",
+      "stats": "Required Level: 50\n(Amazon Only)\nItem Level: 150\n{orange}+1 to Crystalline Arsenal\n{orange}While holding a Javelin:\n{orange}Launches a massive frozen spike that splits into smaller bursts, which split again into small spikes\n{orange}Main spike deals 200% weapon damage, each split halves damage\n{orange}While holding a Spear:\n{orange}Strike the ground in front of you, releasing an pulsing nova of cold\n{orange}Deals up to 2800% Weapon damage at the center\n{orange}While holding a Bow:\n{orange}Fire an ice mine that slows to a halt a short distance in front of you\n{orange}before exploding into a rapid barrage of homing ice arrows\n{orange}Enemies can trigger the mine prematurely upon contact\n{orange}Deals 50% Weapon Damage\n{orange}Blessing of Karcheus",
       "source": "secret",
       "variant": "Version 1",
+      "icon": "darkremnant",
       "type": "Relic"
     },
     {
       "name": "Blood of Creation",
       "quality": "Relic",
-      "stats": "Required Level: 50\nItem Level: 150\n{orange}Servants of Valor:\n{orange}Doubled Fire Damage, Attack Speed, and Movement Speed\n{orange}Inherits Fire Pierce from Elemental Wisdom twice\n{orange}After taking damage, Servants lose 10% of their life per second until they die\n{orange}Sacrificial Fervor",
+      "stats": "Required Level: 50\n(Paladin Only)\nItem Level: 150\n{orange}Servants of Valor:\n{orange}Doubled Fire Damage, Attack Speed, and Movement Speed\n{orange}Inherits Fire Pierce from Elemental Wisdom twice\n{orange}After taking damage, Servants lose 10% of their life per second until they die\n{orange}Sacrificial Fervor",
       "source": "secret",
       "variant": "Version 2",
+      "icon": "darkremnant",
       "type": "Relic"
     },
     {
       "name": "Blood of Creation",
       "quality": "Relic",
-      "stats": "Required Level: 50\nItem Level: 150\n+1 to Clear Mind\n{orange}A Blank Slate of Infinite Potential",
+      "stats": "Required Level: 50\n(Sorceress Only)\nItem Level: 150\n+1 to Clear Mind\n{orange}A Blank Slate of Infinite Potential",
       "source": "secret",
       "variant": "Version 3",
+      "icon": "darkremnant",
       "type": "Relic"
     },
     {
       "name": "Blood of Creation",
       "quality": "Relic",
-      "stats": "Required Level: 1\nItem Level: 150\n+1 to The Last Warchief\n{orange}Famous last words",
+      "stats": "Required Level: 1\n(Barbarian Only)\nItem Level: 150\n+1 to The Last Warchief\n{orange}Famous last words",
       "source": "secret",
       "variant": "Version 4",
+      "icon": "darkremnant",
       "type": "Relic"
     },
     {
       "name": "Blood of Creation",
       "quality": "Relic",
-      "stats": "Required Level: 90\nItem Level: 150\nIf you have Veil King:\nBlood Skeletons inherit Catapult Shot's Fire Damage\nBlood Skeletons get Double Benefit from Minion Life Stats\nIf you have Rathma's Chosen:\n+12% Minion Life per Summon Tree Minion Base Level\n+15% Weapon Physical Damage per Summon Tree Minion Base Level\nIf you have Jinn:\n+30% Totem damage synergy",
+      "stats": "Required Level: 90\n(Necromancer Only)\nItem Level: 150\nIf you have Veil King:\nBlood Skeletons inherit Catapult Shot's Fire Damage\nBlood Skeletons get Double Benefit from Minion Life Stats\nIf you have Rathma's Chosen:\n+12% Minion Life per Summon Tree Minion Base Level\n+15% Weapon Physical Damage per Summon Tree Minion Base Level\nIf you have Jinn:\n+30% Totem damage synergy",
       "source": "secret",
       "variant": "Version 5",
+      "icon": "darkremnant",
       "type": "Relic"
     },
     {
       "name": "Blood of Creation",
       "quality": "Relic",
-      "stats": "Required Level: 10\nItem Level: 150\n{grey}While attacking with Crucify:\n{grey}Laserblade works with all weapons\n{grey}10% Chance to Cast Level 60 Crucify on Kill\n{grey}1% Chance to Cast Level 60 Crucify on Striking\n10% Chance to cast level 60 Slayer on Kill\n1% Chance to cast level 60 Slayer on Striking",
+      "stats": "Required Level: 10\n(Assassin Only)\nItem Level: 150\n{grey}While attacking with Crucify:\n{grey}Laserblade works with all weapons\n{grey}10% Chance to Cast Level 60 Crucify on Kill\n{grey}1% Chance to Cast Level 60 Crucify on Striking\n10% Chance to cast level 60 Slayer on Kill\n1% Chance to cast level 60 Slayer on Striking",
       "source": "secret",
       "variant": "Version 6",
+      "icon": "darkremnant",
       "type": "Relic"
     },
     {
       "name": "Blood of Creation",
       "quality": "Relic",
-      "stats": "Required Level: 50\nItem Level: 150\n{orange}While in human form:\n{orange}Gain 1 Maximum Stamina per 100 Vitality\n{orange}Gain 3-5 Physical Damage with melee weapons per 1 Stamina\n{orange}The hunter persists. The prey falters",
+      "stats": "Required Level: 50\n(Druid Only)\nItem Level: 150\n{orange}While in human form:\n{orange}Gain 1 Maximum Stamina per 100 Vitality\n{orange}Gain 3-5 Physical Damage with melee weapons per 1 Stamina\n{orange}The hunter persists. The prey falters",
       "source": "secret",
       "variant": "Version 7",
+      "icon": "darkremnant",
       "type": "Relic"
     },
     {

@@ -24,9 +24,10 @@ import {
   getQuestsCompletedForSave,
   getQuestCompletionOptOutForSave,
   getDisabledSkillIds,
-  setDisabledSkillIds,
+  getEnabledSkillIds,
   getDisabledOSkillSlotIds,
-  setDisabledOSkillSlotIds,
+  getEnabledOSkillSlotIds,
+  applyLoadedSkillBonusToggles,
   isPlannerSkillPointPoolOverBudget,
   getSpentSkillPoints,
   getAllSkillPointsById,
@@ -188,8 +189,12 @@ export function loadBuildData(build, buildIndex = null) {
         }
     }
 
-    setDisabledSkillIds(Array.isArray(build.disabledSkills) ? build.disabledSkills : []);
-    setDisabledOSkillSlotIds(Array.isArray(build.disabledOSkillSlots) ? build.disabledOSkillSlots : []);
+    applyLoadedSkillBonusToggles({
+      enabledSkills: build.enabledSkills,
+      disabledSkills: build.disabledSkills,
+      enabledOSkillSlots: build.enabledOSkillSlots,
+      disabledOSkillSlots: build.disabledOSkillSlots,
+    });
     
     // Load soft-level bonuses
     if (build.allSkillsBonus !== undefined) {
@@ -1018,7 +1023,9 @@ export function buildCurrentBuildSnapshot(name) {
     spentPoints: getSpentSkillPoints(),
     skillPoints: getAllSkillPointsById(),
     disabledSkills: getDisabledSkillIds(),
+    enabledSkills: getEnabledSkillIds(),
     disabledOSkillSlots: getDisabledOSkillSlotIds(),
+    enabledOSkillSlots: getEnabledOSkillSlotIds(),
     oSkills: getOSkillsForBuildExport(),
     allSkillsBonus: getAllSkillsBonus(),
     classSkillsBonus: getClassSkillsBonus(),

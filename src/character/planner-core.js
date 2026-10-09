@@ -400,8 +400,18 @@ export function getDisabledSkillIds() {
 }
 
 /** @returns {string[]} */
+export function getEnabledSkillIds() {
+  return getCharacterInstance() ? getCharacterInstance().getEnabledSkillIds() : [];
+}
+
+/** @returns {string[]} */
 export function getDisabledOSkillSlotIds() {
   return getCharacterInstance() ? getCharacterInstance().getDisabledOSkillSlotIds() : [];
+}
+
+/** @returns {string[]} */
+export function getEnabledOSkillSlotIds() {
+  return getCharacterInstance() ? getCharacterInstance().getEnabledOSkillSlotIds() : [];
 }
 
 /** @param {unknown} list */
@@ -414,6 +424,29 @@ export function setDisabledSkillIds(list) {
 export function setDisabledOSkillSlotIds(list) {
   if (!getCharacterInstance()) return;
   getCharacterInstance().setDisabledOSkillSlotIds(list);
+}
+
+/**
+ * @param {{
+ *   enabledSkills?: unknown,
+ *   disabledSkills?: unknown,
+ *   enabledOSkillSlots?: unknown,
+ *   disabledOSkillSlots?: unknown,
+ * }} payload
+ */
+export function applyLoadedSkillBonusToggles(payload = {}) {
+  const ch = getCharacterInstance();
+  if (!ch) return;
+  if (Array.isArray(payload.enabledSkills)) {
+    ch.setEnabledSkillIds(payload.enabledSkills);
+  } else {
+    ch.applyLegacyDisabledSkillIds(payload.disabledSkills);
+  }
+  if (Array.isArray(payload.enabledOSkillSlots)) {
+    ch.setEnabledOSkillSlotIds(payload.enabledOSkillSlots);
+  } else {
+    ch.applyLegacyDisabledOSkillSlotIds(payload.disabledOSkillSlots);
+  }
 }
 
 /**

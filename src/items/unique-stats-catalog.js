@@ -15,6 +15,7 @@
  *   tier?: number,
  *   variant?: string,
  *   source?: string,
+ *   icon?: string,
  * }} UniqueStatsEntry
  */
 
@@ -520,6 +521,7 @@ function overlayIdForEntry(entry, rarityInfo) {
  * @returns {string}
  */
 function displayNameForEntry(entry) {
+  if (entry.name === 'Blood of Creation') return entry.name;
   if (entry.variant && (entry.quality === 'Relic' || entry.quality === 'Charm')) {
     return `${entry.name} (${entry.variant})`;
   }
@@ -561,7 +563,7 @@ export function entryToItemDef(entry, bases) {
     def.category = 'relics';
     def.type = 'relic';
     def.keepInInventory = true;
-    def.icon = 'relic01';
+    def.icon = entry.icon ? String(entry.icon).trim() : 'relic01';
     def.invWidth = 1;
     def.invHeight = 1;
     def.slot = null;

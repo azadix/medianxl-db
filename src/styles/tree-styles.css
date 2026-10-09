@@ -149,11 +149,23 @@
     z-index: 2;
 }
 
+.skill-disable-toggle.is-off {
+    background: #111 !important;
+    border-color: #2a2a2a !important;
+    color: #c8c8c8 !important;
+}
+
 .skill-disable-toggle:hover,
 .skill-disable-toggle:focus,
 .skill-disable-toggle:focus-visible {
     background: transparent !important;
     box-shadow: none !important;
+}
+
+.skill-disable-toggle.is-off:hover,
+.skill-disable-toggle.is-off:focus,
+.skill-disable-toggle.is-off:focus-visible {
+    background: #111 !important;
 }
 
 .skill-buttons {

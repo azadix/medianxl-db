@@ -122,9 +122,9 @@ function buildSkillTooltipConditionHtml(skillData) {
     const rows = visible.map((cond) => {
         const active = isConditionSelected(cond.key);
         const label = cond.name || formatConditionLabel(cond.key || '');
-        return `State:<span class="is-size-7 ${active ? 'has-text-success' : 'has-text-danger'}">` +
+        const stateClass = active ? 'has-text-success' : '';
+        return `State:<span class="is-size-7 ${stateClass}">` +
             `<span class="has-text-weight-semibold"> ${escapeHtmlText(label)}</span>` +
-            ` ${active ? '' : '(disabled)'}` +
             `</span>`;
     });
 
@@ -352,7 +352,8 @@ async function handleSkillPointsChanged(preferredCard = null) {
             context.warningMessage,
             context.isOSkill,
             context.variantKey,
-            context.oskillSlotId
+            context.oskillSlotId,
+            context.hasDisableToggle
         );
         
         tooltipElement.innerHTML = content;
@@ -400,7 +401,8 @@ async function showTooltip(skillId, mouseX, mouseY, hoveredCard = null) {
         context.warningMessage,
         context.isOSkill,
         context.variantKey,
-        context.oskillSlotId
+        context.oskillSlotId,
+        context.hasDisableToggle
     );
     
     // Update tooltip
@@ -610,7 +612,8 @@ async function buildTooltipContent(
   warningMessage = '',
   isOSkill = false,
   variantKey = null,
-  oskillSlotId = null
+  oskillSlotId = null,
+  hasDisableToggle = false
 ) {
     // Get skill soft-level bonuses for effective level calculation
     const allSkillsBonusInput = document.getElementById('allSkillsBonus');
@@ -725,8 +728,8 @@ async function buildTooltipContent(
     const contributionsDisabled = isOSkill
       ? slot !== '' && isOSkillSlotDisabled(slot)
       : Boolean(skillData?.id && isSkillDisabled(skillData.id));
-    if (contributionsDisabled) {
-        bodyParts.push(buildSkillTooltipDisabledBannerHtml());
+    if (hasDisableToggle) {
+        bodyParts.push(buildSkillTooltipDisabledBannerHtml(contributionsDisabled));
     }
     
     // Get character state for formula evaluation (needed for all tooltip content)
@@ -980,5 +983,6 @@ function resolveTooltipContext(skillCard, skillData, skillId) {
         ? ''
         : (skillCard?.querySelector('.skill-plus-btn')?.dataset?.warningMessage || '');
     const variantKey = resolveVariantKeyForTooltip(skillData.id, skillCard);
-    return { isOSkill, currentLevel, warningMessage, variantKey, oskillSlotId };
+    const hasDisableToggle = Boolean(skillCard?.querySelector('.skill-disable-toggle'));
+    return { isOSkill, currentLevel, warningMessage, variantKey, oskillSlotId, hasDisableToggle };
 }

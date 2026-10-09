@@ -29,3 +29,18 @@ export function isInnateSkill(skill) {
 export function isOSkillType(skill) {
     return skill.classId === 1;
 }
+
+/**
+ * Skills that show the planner bonus power toggle (non-passive attack/buff skills).
+ * These start with bonuses off until the player enables them.
+ * @param {object|null|undefined} row catalog or skill-detail row
+ * @returns {boolean}
+ */
+export function catalogRowUsesPlannerBonusToggle(row) {
+    if (!row) return false;
+    if (isInnateSkill(row)) return false;
+    const tags = Array.isArray(row.tags) ? row.tags : [];
+    if (tags.includes('Passive') || tags.includes('Upgrade')) return false;
+    if (String(row.tabName || '').trim().toLowerCase() === 'mastery') return false;
+    return true;
+}

@@ -219,7 +219,9 @@ export function exportCharacterState() {
         questCompletionOptOut: Character.createDefaultQuestCompletionOptOut(),
         statAllocation: Character.createEmptyStatAllocation(),
         disabledSkillIds: [],
+        enabledSkillIds: [],
         disabledOSkillSlotIds: [],
+        enabledOSkillSlotIds: [],
       };
 }
 
