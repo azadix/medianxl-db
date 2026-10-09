@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { createPinia, setActivePinia } from 'pinia';
 import { buildCatalogFromUniqueStats } from '@/items/unique-stats-catalog.js';
+import { useItemsStore } from '@/stores/items.js';
 import {
   unwrapTswOrNativeBuild,
   isTswEnvelope,
@@ -250,6 +252,47 @@ describe('tsw-build-import', () => {
     expect(skipped.every((row) => row.reason === 'uncatalogued' || row.reason === 'stash')).toBe(true);
     expect(skipped.some((row) => row.name === 'Ring')).toBe(false);
     expect(skipped.some((row) => /Angelic/.test(row.name))).toBe(false);
+  });
+
+  it('applies Miss_Peeled items through the Pinia store catalog index', () => {
+    const dir = resolve(ROOT, 'public/items/2_14');
+    const baseItems = JSON.parse(readFileSync(resolve(dir, 'baseitems.json'), 'utf8'));
+    const other = JSON.parse(readFileSync(resolve(dir, 'other.json'), 'utf8'));
+    const charms = JSON.parse(readFileSync(resolve(dir, 'charms.json'), 'utf8')).map((c) => ({
+      ...c,
+      type: c.type || 'charm',
+      category: c.category || 'charms',
+      keepInInventory: true,
+    }));
+    const relics = JSON.parse(readFileSync(resolve(dir, 'relics.json'), 'utf8')).map((r) => ({
+      ...r,
+      type: r.type || 'jewl',
+      category: r.category || 'relics',
+      rarity: r.rarity || 'relic',
+      keepInInventory: true,
+    }));
+    const db = JSON.parse(readFileSync(resolve(dir, 'unique-stats-db.json'), 'utf8'));
+    const { items: overlays } = buildCatalogFromUniqueStats(db, [...baseItems, ...other]);
+    const tsw = JSON.parse(readFileSync(resolve(ROOT, 'schemas/examples/Miss_Peeled.json'), 'utf8'));
+
+    setActivePinia(createPinia());
+    const store = useItemsStore();
+    store.catalog = [...baseItems, ...charms, ...other, ...overlays, ...relics];
+    store.catalogLoaded = true;
+    store.catalogVersionFolder = '2_14';
+
+    const { snapshot } = mapTswItemsToSnapshot(tsw.items, store);
+    store.fromSnapshot(snapshot);
+
+    expect(store.getEquipmentDef('head')?.id).toBe('u:lacuni-cowl:su');
+    expect(store.getEquipmentDef('rarm')?.id).toBe('u:mekanism:su');
+    expect(store.getEquipmentDef('lrin')?.customQuality).toBe('rare');
+    expect(store.getEquipmentDef('glov')?.customQuality).toBe('angelic');
+    expect(store.enabledCharms.a68).toBeTruthy();
+    expect(store.enabledCharms['ebw-primordia']).toBeTruthy();
+    expect(Object.keys(store.enabledRelics).sort()).toEqual(
+      ['relic:hailstorm', 'relic:lightning-wall', 'relic:whirlwind'].sort()
+    );
   });
 });
 

@@ -464,4 +464,48 @@ describe('item catalog version reload', () => {
     await store.loadCatalog();
     expect(fetchMock).not.toHaveBeenCalled();
   });
+
+  it('keeps required catalog items when unique-stats JSON is invalid', async () => {
+    vi.spyOn(versionConfig, 'getCurrentVersion').mockReturnValue({ major: 2, minor: 14 });
+    vi.spyOn(utils, 'getAssetUrl').mockImplementation((p) => `http://local/${p}`);
+
+    const jsonOk = (body) =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve(body),
+      });
+    const fetchMock = vi.fn((url) => {
+      const href = String(url);
+      if (href.includes('baseitems.json')) {
+        return jsonOk([{ id: 'rin', name: 'Ring', category: 'jewelry', slot: 'ring' }]);
+      }
+      if (href.includes('charms.json') || href.includes('other.json')) {
+        return jsonOk([]);
+      }
+      if (href.includes('unique-stats-db.json')) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.reject(new SyntaxError('Unexpected token <')),
+        });
+      }
+      return Promise.resolve({ ok: false, status: 404 });
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    await store.loadCatalog();
+    expect(store.catalogLoaded).toBe(true);
+    expect(store.catalog.some((d) => d.id === 'rin')).toBe(true);
+    expect(store.isCatalogCurrent).toBe(true);
+  });
+
+  it('does not stick an empty catalog after a required-file failure', async () => {
+    vi.spyOn(versionConfig, 'getCurrentVersion').mockReturnValue({ major: 2, minor: 14 });
+    vi.spyOn(utils, 'getAssetUrl').mockImplementation((p) => `http://local/${p}`);
+
+    vi.stubGlobal('fetch', vi.fn(() => Promise.resolve({ ok: false, status: 404 })));
+
+    await store.loadCatalog();
+    expect(store.catalogLoaded).toBe(false);
+    expect(store.isCatalogCurrent).toBe(false);
+  });
 });

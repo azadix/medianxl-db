@@ -219,35 +219,43 @@ export function loadBuildData(build, buildIndex = null) {
     try {
         const itemsStore = useItemsStore();
         const applyItems = () => {
-            itemsStore.syncViewerClassName(build.class);
-            if (tswItems) {
-                const { snapshot, skipped } = mapTswItemsToSnapshot(tswItems, itemsStore);
-                itemsStore.fromSnapshot(snapshot);
-                toastSkippedTswItems(skipped);
-            } else if (build.items != null) {
-                itemsStore.fromSnapshot(build.items);
-            } else {
-                itemsStore.resetItems();
-            }
-            itemsStore.pruneClassRestrictedEnableList();
-            syncItemGrantedOSkills();
-            if (tswItems) {
-                const left = applyTswOSkillLeftovers(build.oSkills);
-                if (left.skipped.length > 0) {
-                    const parts = left.skipped.map(
-                        (s) => `${exportLabelForToast(s.key)} (skill level: ${s.wantedLevel})`
-                    );
-                    toastManager.showToast(
-                        `Unknown oSkill${left.skipped.length > 1 ? 's' : ''} not loaded: ${parts.join(', ')}.`,
-                        false,
-                        'warning'
-                    );
+            try {
+                itemsStore.syncViewerClassName(build.class);
+                if (tswItems) {
+                    const { snapshot, skipped } = mapTswItemsToSnapshot(tswItems, itemsStore);
+                    itemsStore.fromSnapshot(snapshot);
+                    toastSkippedTswItems(skipped);
+                } else if (build.items != null) {
+                    itemsStore.fromSnapshot(build.items);
+                } else {
+                    itemsStore.resetItems();
                 }
+                itemsStore.pruneClassRestrictedEnableList();
+                syncItemGrantedOSkills();
+                if (tswItems) {
+                    const left = applyTswOSkillLeftovers(build.oSkills);
+                    if (left.skipped.length > 0) {
+                        const parts = left.skipped.map(
+                            (s) => `${exportLabelForToast(s.key)} (skill level: ${s.wantedLevel})`
+                        );
+                        toastManager.showToast(
+                            `Unknown oSkill${left.skipped.length > 1 ? 's' : ''} not loaded: ${parts.join(', ')}.`,
+                            false,
+                            'warning'
+                        );
+                    }
+                }
+                runPlannerSkillStatRecompute({ immediate: true });
+            } catch (err) {
+                console.warn('Failed to apply build items:', err);
             }
-            runPlannerSkillStatRecompute({ immediate: true });
         };
         if (itemsStore.isCatalogCurrent) applyItems();
-        else itemsStore.loadCatalog().then(applyItems);
+        else {
+            itemsStore.loadCatalog().then(applyItems).catch((err) => {
+                console.warn('Failed to apply build items:', err);
+            });
+        }
     } catch (e) {
         console.warn('Failed to apply build items:', e);
     }

@@ -46,6 +46,36 @@ import {
 } from '@/items/runeword-items.js';
 import { applyCustomOverlayToDef, parseCustomPayload } from '@/items/custom-items.js';
 
+/** @type {WeakMap<object, { folder: string, promise: Promise<void> }>} */
+const catalogLoadInflight = new WeakMap();
+
+/**
+ * @param {Response|null|undefined} res
+ * @returns {Promise<unknown>}
+ */
+async function readJsonIfOk(res) {
+  if (!res?.ok) return null;
+  try {
+    return await res.json();
+  } catch (e) {
+    console.warn('Failed to parse item catalog JSON', e);
+    return null;
+  }
+}
+
+/**
+ * @param {string} url
+ * @returns {Promise<Response|null>}
+ */
+async function fetchCatalogFile(url) {
+  try {
+    return await fetch(url);
+  } catch (e) {
+    console.warn('Failed to fetch item catalog file', url, e);
+    return null;
+  }
+}
+
 /**
  * @typedef {{ location: 'equipment'|'inventory'|'charms'|'relics', slot: string|number }} SlotRef
  * @typedef {{
@@ -353,86 +383,111 @@ export const useItemsStore = defineStore('items', {
     async loadCatalog() {
       const versionFolder = versionToTreeAssetFolder(getCurrentVersion());
       if (this.catalogLoaded && this.catalogVersionFolder === versionFolder) return;
-      const required = ['baseitems.json', 'charms.json', 'other.json'];
-      const optional = ['relics.json', 'unique-stats-db.json', 'runewords.json'];
+      const inflight = catalogLoadInflight.get(this);
+      if (inflight && inflight.folder === versionFolder) return inflight.promise;
+
+      const promise = (async () => {
+        const required = ['baseitems.json', 'charms.json', 'other.json'];
+        const optional = ['relics.json', 'unique-stats-db.json', 'runewords.json'];
+        try {
+          const requiredRes = await Promise.all(
+            required.map((file) => fetch(getAssetUrl(`items/${versionFolder}/${file}`)))
+          );
+          const failed = requiredRes.find((res) => !res?.ok);
+          if (failed) throw new Error(`catalog ${failed.status}`);
+
+          const requiredChunks = await Promise.all(requiredRes.map((res) => res.json()));
+          /** @type {ItemDef[]} */
+          const baseItems = Array.isArray(requiredChunks[0]) ? requiredChunks[0] : [];
+          /** @type {ItemDef[]} */
+          const charms = (Array.isArray(requiredChunks[1]) ? requiredChunks[1] : []).map(
+            (/** @type {ItemDef} */ c) => ({
+              ...c,
+              type: c.type || 'charm',
+              category: c.category || 'charms',
+              keepInInventory: true,
+              slot: c.slot ?? null,
+              invWidth: c.invWidth || 1,
+              invHeight: c.invHeight || 1,
+              reqStr: c.reqStr ?? 0,
+              reqDex: c.reqDex ?? 0,
+            })
+          );
+          /** @type {ItemDef[]} */
+          const other = Array.isArray(requiredChunks[2]) ? requiredChunks[2] : [];
+          const basesForMatch = [...baseItems, ...other];
+
+          const optionalRes = await Promise.all(
+            optional.map((file) => fetchCatalogFile(getAssetUrl(`items/${versionFolder}/${file}`)))
+          );
+          /** @type {ItemDef[]} */
+          let relics = [];
+          /** @type {ItemDef[]} */
+          let overlays = [];
+          /** @type {SetDef[]} */
+          let sets = [];
+          /** @type {ItemDef[]} */
+          let runewords = [];
+          const relicsData = await readJsonIfOk(optionalRes[0]);
+          if (relicsData) {
+            relics = (Array.isArray(relicsData) ? relicsData : []).map((/** @type {ItemDef} */ r) => ({
+              ...r,
+              type: r.type || 'jewl',
+              category: r.category || 'relics',
+              rarity: r.rarity || 'relic',
+              keepInInventory: true,
+              slot: r.slot ?? null,
+              invWidth: r.invWidth || 1,
+              invHeight: r.invHeight || 1,
+              reqStr: r.reqStr ?? 0,
+              reqDex: r.reqDex ?? 0,
+            }));
+          }
+          const uniqueStatsData = await readJsonIfOk(optionalRes[1]);
+          if (uniqueStatsData) {
+            try {
+              const built = buildCatalogFromUniqueStats(uniqueStatsData, basesForMatch);
+              overlays = built.items;
+              sets = built.sets;
+            } catch (e) {
+              console.warn('Failed to build unique-stats catalog', e);
+            }
+          }
+          const runewordsData = await readJsonIfOk(optionalRes[2]);
+          if (runewordsData) {
+            const entries = Array.isArray(runewordsData)
+              ? runewordsData
+              : /** @type {{ entries?: unknown }} */ (runewordsData).entries || [];
+            runewords = (Array.isArray(entries) ? entries : [])
+              .map(runewordEntryToItemDef)
+              .filter(Boolean);
+          }
+
+          this.catalog = [...baseItems, ...charms, ...other, ...overlays, ...relics, ...runewords];
+          this.sets = sets;
+          this.runtimeOverlayDefs = [];
+          this.catalogVersionFolder = versionFolder;
+          this.catalogLoaded = true;
+        } catch (e) {
+          console.error('Failed to load item catalog', e);
+          // Leave a previous catalog in place. Only mark empty+loaded when nothing was loaded yet,
+          // so import can retry instead of mapping against a sticky empty catalog.
+          if (!this.catalogLoaded) {
+            this.catalog = [];
+            this.sets = [];
+            this.runtimeOverlayDefs = [];
+            this.catalogVersionFolder = null;
+            this.catalogLoaded = false;
+          }
+        }
+      })();
+
+      catalogLoadInflight.set(this, { folder: versionFolder, promise });
       try {
-        const requiredRes = await Promise.all(
-          required.map((file) => fetch(getAssetUrl(`items/${versionFolder}/${file}`)))
-        );
-        const failed = requiredRes.find((res) => !res.ok);
-        if (failed) throw new Error(`catalog ${failed.status}`);
-
-        const requiredChunks = await Promise.all(requiredRes.map((res) => res.json()));
-        /** @type {ItemDef[]} */
-        const baseItems = Array.isArray(requiredChunks[0]) ? requiredChunks[0] : [];
-        /** @type {ItemDef[]} */
-        const charms = (Array.isArray(requiredChunks[1]) ? requiredChunks[1] : []).map(
-          (/** @type {ItemDef} */ c) => ({
-            ...c,
-            type: c.type || 'charm',
-            category: c.category || 'charms',
-            keepInInventory: true,
-            slot: c.slot ?? null,
-            invWidth: c.invWidth || 1,
-            invHeight: c.invHeight || 1,
-            reqStr: c.reqStr ?? 0,
-            reqDex: c.reqDex ?? 0,
-          })
-        );
-        /** @type {ItemDef[]} */
-        const other = Array.isArray(requiredChunks[2]) ? requiredChunks[2] : [];
-        const basesForMatch = [...baseItems, ...other];
-
-        const optionalRes = await Promise.all(
-          optional.map((file) => fetch(getAssetUrl(`items/${versionFolder}/${file}`)))
-        );
-        /** @type {ItemDef[]} */
-        let relics = [];
-        /** @type {ItemDef[]} */
-        let overlays = [];
-        /** @type {SetDef[]} */
-        let sets = [];
-        /** @type {ItemDef[]} */
-        let runewords = [];
-        if (optionalRes[0]?.ok) {
-          const data = await optionalRes[0].json();
-          relics = (Array.isArray(data) ? data : []).map((/** @type {ItemDef} */ r) => ({
-            ...r,
-            type: r.type || 'jewl',
-            category: r.category || 'relics',
-            rarity: r.rarity || 'relic',
-            keepInInventory: true,
-            slot: r.slot ?? null,
-            invWidth: r.invWidth || 1,
-            invHeight: r.invHeight || 1,
-            reqStr: r.reqStr ?? 0,
-            reqDex: r.reqDex ?? 0,
-          }));
-        }
-        if (optionalRes[1]?.ok) {
-          const data = await optionalRes[1].json();
-          const built = buildCatalogFromUniqueStats(data, basesForMatch);
-          overlays = built.items;
-          sets = built.sets;
-        }
-        if (optionalRes[2]?.ok) {
-          const data = await optionalRes[2].json();
-          const entries = Array.isArray(data) ? data : data.entries || [];
-          runewords = entries.map(runewordEntryToItemDef).filter(Boolean);
-        }
-
-        this.catalog = [...baseItems, ...charms, ...other, ...overlays, ...relics, ...runewords];
-        this.sets = sets;
-        this.runtimeOverlayDefs = [];
-        this.catalogVersionFolder = versionFolder;
-        this.catalogLoaded = true;
-      } catch (e) {
-        console.error('Failed to load item catalog', e);
-        this.catalog = [];
-        this.sets = [];
-        this.runtimeOverlayDefs = [];
-        this.catalogVersionFolder = versionFolder;
-        this.catalogLoaded = true;
+        await promise;
+      } finally {
+        const cur = catalogLoadInflight.get(this);
+        if (cur && cur.promise === promise) catalogLoadInflight.delete(this);
       }
     },
 

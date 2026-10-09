@@ -118,23 +118,27 @@ function normName(text) {
  * @returns {{ list: object[], byId: Record<string, object> }}
  */
 function catalogIndex(catalog) {
-  if (catalog && typeof catalog === 'object') {
-    const rec = /** @type {{ catalog?: object[], catalogById?: Record<string, object> }} */ (catalog);
-    const list = Array.isArray(rec.catalog)
-      ? rec.catalog
-      : rec.catalogById
-        ? Object.values(rec.catalogById)
-        : [];
-    /** @type {Record<string, object>} */
-    const byId = rec.catalogById && typeof rec.catalogById === 'object' ? { ...rec.catalogById } : {};
-    if (!Object.keys(byId).length) {
-      for (const def of list) {
-        if (def?.id) byId[String(def.id)] = def;
-      }
-    }
-    return { list, byId };
+  if (!catalog || typeof catalog !== 'object') return { list: [], byId: {} };
+  const rec = /** @type {{ catalog?: object[], catalogById?: Record<string, object> }} */ (catalog);
+  /** @type {object[]} */
+  const list = Array.isArray(rec.catalog)
+    ? rec.catalog
+    : rec.catalogById && typeof rec.catalogById === 'object' && !Array.isArray(rec.catalogById)
+      ? Object.values(rec.catalogById)
+      : [];
+  /** @type {Record<string, object>} */
+  const byId = {};
+  for (const def of list) {
+    if (def?.id != null && String(def.id)) byId[String(def.id)] = def;
   }
-  return { list: [], byId: {} };
+  // Keep catalogById aliases (e.g. u:name:tu -> T4) that are not list ids.
+  if (rec.catalogById && typeof rec.catalogById === 'object' && !Array.isArray(rec.catalogById)) {
+    for (const [id, def] of Object.entries(rec.catalogById)) {
+      if (!id || !def || byId[id] != null) continue;
+      byId[id] = def;
+    }
+  }
+  return { list, byId };
 }
 
 /**
