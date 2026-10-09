@@ -740,6 +740,31 @@
   white-space: nowrap;
 }
 
+.planner-enable-list__group {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.planner-enable-list__group--all,
+.planner-enable-list__group--available {
+  flex: 1 1 auto;
+}
+
+.planner-enable-list__group--enabled {
+  flex: 0 0 auto;
+}
+
+.planner-enable-list__heading {
+  margin: 0 0 0.25rem;
+  padding: 0 0.1rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: hsl(0, 0%, 62%);
+}
+
 .planner-enable-list__rows {
   list-style: none;
   margin: 0;
@@ -750,6 +775,11 @@
   border: 1px solid hsl(0, 0%, 24%);
   border-radius: 4px;
   background: hsl(0, 0%, 12%);
+}
+
+.planner-enable-list__group--enabled .planner-enable-list__rows {
+  flex: 0 1 auto;
+  max-height: 9.5rem;
 }
 
 .planner-enable-list__empty {

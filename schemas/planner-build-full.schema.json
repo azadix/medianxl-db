@@ -1,79 +1,23 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/azadix/medianxl-db/schemas/planner-build-full.schema.json",
-  "title": "Planner build interchange JSON",
-  "$comment": "Full interchange including items. Field names stay ours; item tooltip text follows the notarmory dump (description_lines with colour codes). Tree skills and oSkills live on the character. Compact TSW export is planner-build.schema.json (no items).",
+  "title": "TSW planner build export",
+  "$comment": "NotArmory/TSW character export envelope. Native planner saves are a different JSON shape and are not this schema. Import unwraps build and maps catalog-backed items.",
   "type": "object",
   "additionalProperties": true,
-  "required": ["name", "class", "level", "skillPoints", "oSkills"],
+  "required": ["build", "items"],
   "properties": {
-    "name": {
-      "type": "string",
-      "$comment": "Build name. Same as notarmory/MXL Planner name."
-    },
-    "class": {
-      "type": "string",
-      "minLength": 1,
-      "$comment": "Character class display name, e.g. Amazon. Same as their class."
-    },
-    "level": {
-      "type": "integer",
-      "minimum": 1,
-      "maximum": 150,
-      "$comment": "Character level. Same as their level."
-    },
-    "version": {
-      "type": "string",
-      "pattern": "^[0-9]+\\.[0-9]+$",
-      "$comment": "Game version string, e.g. \"2.14\". Same as their version."
-    },
-    "skillPoints": {
-      "$ref": "#/$defs/SkillPointsMap",
-      "$comment": "Hard points per tree skill. Export keys are display names; import also accepts internal ids. Same as their skillPoints. Empty object when none."
-    },
-    "oSkills": {
-      "$ref": "#/$defs/SkillPointsMap",
-      "$comment": "Granted oSkills on the character, same map shape as skillPoints. Empty object when none. Other planners may derive these from items; in our format they are required here."
-    },
-    "questsCompleted": {
+    "ok": { "type": "boolean" },
+    "api_version": { "type": "integer", "minimum": 1 },
+    "meta": {
       "type": "object",
-      "additionalProperties": { "$ref": "#/$defs/QuestDifficulties" },
-      "properties": {
-        "den_of_evil": { "$ref": "#/$defs/QuestDifficulties" },
-        "radament": { "$ref": "#/$defs/QuestDifficulties" },
-        "izual": { "$ref": "#/$defs/QuestDifficulties" },
-        "lam_essen's_tome": { "$ref": "#/$defs/QuestDifficulties" },
-        "golden_bird": { "$ref": "#/$defs/QuestDifficulties" },
-        "inquisitor_of_the_triune": { "$ref": "#/$defs/QuestDifficulties" },
-        "justicar_signet": { "$ref": "#/$defs/QuestDifficulties" }
-      },
-      "$comment": "Quest rewards per difficulty. Same as their questsCompleted."
+      "additionalProperties": true
     },
-    "signetsEaten": {
-      "type": "integer",
-      "minimum": 0,
-      "$comment": "Signets of Learning eaten. Not modeled in our save yet. Gap they need."
-    },
-    "allSkillsBonus": {
-      "type": "integer",
-      "minimum": 0,
-      "$comment": "TSW All Skills (gear). Same as our allSkillsBonus. Optional here; required on compact TSW export because items are omitted."
-    },
-    "classSkillsBonus": {
-      "type": "integer",
-      "minimum": 0,
-      "$comment": "TSW Class Skills (gear). Same as our classSkillsBonus. Optional here; required on compact TSW export because items are omitted."
-    },
-    "stats": {
-      "$ref": "#/$defs/Stats",
-      "$comment": "Character stats. baseStrength/baseDexterity/baseVitality/baseEnergy are required when present; all other stats are optional. Not the export template string."
-    },
-    "difficultyTitle": {
-      "type": "string",
-      "$comment": "Eve of Destruction progress / difficulty title. Not modeled in our save yet. Gap they need."
-    },
+    "build": { "$ref": "#/$defs/TswBuild" },
     "items": {
-      "$ref": "#/$defs/ItemsSnapshot"
+      "type": "array",
+      "items": { "$ref": "#/$defs/TswItem" },
+      "$comment": "Flat NotArmory dump. Gear uses location Gear + slot; charms/relics use Inventory."
     }
   },
   "$defs": {
@@ -91,33 +35,47 @@
       "type": "object",
       "additionalProperties": { "type": "number" }
     },
-    "Stats": {
+    "TswBuild": {
       "type": "object",
-      "additionalProperties": { "type": "number" },
-      "required": ["baseStrength", "baseDexterity", "baseVitality", "baseEnergy"],
-      "$comment": "Required naked spend plus any other character stats (planner character_stats keys: strength, life, fire_resistance, ...).",
+      "additionalProperties": true,
+      "required": ["name", "class", "level", "skillPoints", "oSkills"],
       "properties": {
-        "baseStrength": { "type": "integer", "minimum": 0, "$comment": "Points spent on Strength without gear. Our statAllocation.strength." },
-        "baseDexterity": { "type": "integer", "minimum": 0, "$comment": "Points spent on Dexterity without gear. Our statAllocation.dexterity." },
-        "baseVitality": { "type": "integer", "minimum": 0, "$comment": "Points spent on Vitality without gear. Our statAllocation.vitality." },
-        "baseEnergy": { "type": "integer", "minimum": 0, "$comment": "Points spent on Energy without gear. Our statAllocation.energy." },
-        "strength": { "type": "number", "$comment": "Total Strength with gear." },
-        "dexterity": { "type": "number", "$comment": "Total Dexterity with gear." },
-        "vitality": { "type": "number", "$comment": "Total Vitality with gear." },
-        "energy": { "type": "number", "$comment": "Total Energy with gear." },
-        "life": { "type": "number" },
-        "mana": { "type": "number" }
+        "name": { "type": "string", "$comment": "Character / build name." },
+        "class": { "type": "string", "minLength": 1 },
+        "level": { "type": "integer", "minimum": 1, "maximum": 150 },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+$"
+        },
+        "skillPoints": {
+          "$ref": "#/$defs/SkillPointsMap",
+          "$comment": "Hard points per tree skill. Keys are display names."
+        },
+        "oSkills": {
+          "$ref": "#/$defs/SkillPointsMap",
+          "$comment": "Character-sheet oSkill totals (item grants included)."
+        },
+        "allSkillsBonus": { "type": "integer", "minimum": 0 },
+        "classSkillsBonus": { "type": "integer", "minimum": 0 },
+        "stats": {
+          "type": "string",
+          "$comment": "Planner stats template blob, e.g. {{life}}=12338."
+        },
+        "questsCompleted": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/QuestDifficulties" },
+          "properties": {
+            "den_of_evil": { "$ref": "#/$defs/QuestDifficulties" },
+            "radament": { "$ref": "#/$defs/QuestDifficulties" },
+            "izual": { "$ref": "#/$defs/QuestDifficulties" },
+            "lam_essen's_tome": { "$ref": "#/$defs/QuestDifficulties" },
+            "golden_bird": { "$ref": "#/$defs/QuestDifficulties" },
+            "inquisitor_of_the_triune": { "$ref": "#/$defs/QuestDifficulties" },
+            "justicar_signet": { "$ref": "#/$defs/QuestDifficulties" }
+          }
+        },
+        "savedAt": { "type": "string" }
       }
-    },
-    "ItemRolls": {
-      "type": "object",
-      "additionalProperties": { "type": "number" },
-      "$comment": "Actual rolled values keyed by stat line. Analog of notarmory stat_ranges / charm_ranges, which are min/max; those ranges live in version item catalogs. Not a substitute for stats on rares, crafts, or jewels."
-    },
-    "ItemStatLines": {
-      "type": "array",
-      "items": { "type": "string" },
-      "$comment": "Plain tooltip lines without colour. Prefer description_lines for full interchange."
     },
     "DescriptionSegment": {
       "type": "array",
@@ -125,19 +83,17 @@
       "maxItems": 2,
       "prefixItems": [
         { "type": "string", "$comment": "Tooltip fragment." },
-        { "type": "integer", "$comment": "notarmory colour id (ItemColors)." }
+        { "type": "integer", "$comment": "NotArmory colour id." }
       ],
       "items": false
     },
     "DescriptionLine": {
       "type": "array",
-      "items": { "$ref": "#/$defs/DescriptionSegment" },
-      "$comment": "One tooltip row. Multiple segments when the line mixes colours (e.g. Defense value)."
+      "items": { "$ref": "#/$defs/DescriptionSegment" }
     },
     "DescriptionLines": {
       "type": "array",
-      "items": { "$ref": "#/$defs/DescriptionLine" },
-      "$comment": "Full tooltip from notarmory description_lines, including name, prefixes/suffixes, Already Upgraded, Corrupted, and affixes."
+      "items": { "$ref": "#/$defs/DescriptionLine" }
     },
     "MysticOrbs": {
       "type": "array",
@@ -150,192 +106,59 @@
           { "type": "string", "minLength": 1 }
         ],
         "items": false
-      },
-      "$comment": "[[count, \"orb name\"], ...]. Gap: we do not write this."
+      }
+    },
+    "RangeBag": {
+      "type": ["object", "array"],
+      "$comment": "NotArmory sometimes emits {} maps and sometimes []."
     },
     "Socketable": {
       "type": "object",
       "additionalProperties": true,
       "required": ["type", "name"],
       "properties": {
-        "type": {
-          "type": "string",
-          "$comment": "Jewel, Gem, Rune, Enchanted Rune, ..."
-        },
+        "type": { "type": "string" },
         "name": { "type": "string" },
-        "quality": { "type": "string", "$comment": "Crafted, Rare, Unique, or empty for gems/runes." },
-        "name_color": { "type": "integer", "$comment": "notarmory colour id for the socketable name." },
-        "code": { "type": "string", "$comment": "notarmory item code, e.g. jew, gpv." },
-        "description_lines": { "$ref": "#/$defs/DescriptionLines" },
-        "stats": {
-          "$ref": "#/$defs/ItemStatLines",
-          "$comment": "Optional plain-text fallback. Prefer description_lines."
-        },
-        "rolls": { "$ref": "#/$defs/ItemRolls" }
-      }
-    },
-    "ItemInstance": {
-      "type": "object",
-      "additionalProperties": true,
-      "required": ["name"],
-      "properties": {
-        "name": {
-          "type": "string",
-          "minLength": 1,
-          "$comment": "Display name. Same as notarmory display_name / item."
-        },
-        "quality": {
-          "type": "string",
-          "$comment": "notarmory quality: Unique, Rare, Crafted, ..."
-        },
-        "display_quality": {
-          "type": "string",
-          "$comment": "notarmory display_quality when it differs (SU, SSU, TU, ...)."
-        },
-        "defId": {
-          "type": "string",
-          "minLength": 1,
-          "$comment": "Optional catalog id. Not a substitute for name."
-        },
-        "type": {
-          "type": "string",
-          "$comment": "notarmory type / base, e.g. Wrist Blade (SSU)."
-        },
-        "code": { "type": "string", "$comment": "notarmory item code." },
-        "name_color": { "type": "integer", "$comment": "notarmory colour id for the item name." },
-        "icon": { "type": "string" },
-        "description_lines": { "$ref": "#/$defs/DescriptionLines" },
-        "stats": {
-          "$ref": "#/$defs/ItemStatLines",
-          "$comment": "Optional plain-text fallback. Prefer description_lines."
-        },
-        "rolls": { "$ref": "#/$defs/ItemRolls" },
-        "eth": { "type": "boolean" },
-        "corrupted": { "type": "boolean" },
-        "is_upgraded": { "type": "boolean", "$comment": "notarmory is_upgraded (Already Upgraded also appears in description_lines)." },
-        "mystic_orbs": { "$ref": "#/$defs/MysticOrbs" },
-        "socketables": {
-          "type": "array",
-          "items": { "$ref": "#/$defs/Socketable" },
-          "$comment": "Filled sockets in socket order."
-        }
-      }
-    },
-    "ItemEntry": {
-      "oneOf": [
-        { "type": "null" },
-        { "type": "string", "minLength": 1 },
-        { "$ref": "#/$defs/ItemInstance" }
-      ],
-      "$comment": "Empty slot, defId shorthand, or instance object."
-    },
-    "EnabledCharmOrRelic": {
-      "type": "object",
-      "additionalProperties": true,
-      "required": ["name"],
-      "properties": {
-        "name": {
-          "type": "string",
-          "minLength": 1,
-          "$comment": "Display name. Relics: Relic: <Skill>."
-        },
         "quality": { "type": "string" },
-        "defId": {
-          "type": "string",
-          "minLength": 1,
-          "$comment": "Optional catalog id."
-        },
-        "code": { "type": "string" },
         "name_color": { "type": "integer" },
-        "description_lines": { "$ref": "#/$defs/DescriptionLines" },
-        "stats": { "$ref": "#/$defs/ItemStatLines" },
-        "rolls": { "$ref": "#/$defs/ItemRolls" },
+        "code": { "type": "string" },
+        "image": { "type": "string" },
+        "slot": { "type": "integer" },
+        "description_lines": { "$ref": "#/$defs/DescriptionLines" }
+      }
+    },
+    "TswItem": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["item", "location"],
+      "properties": {
+        "item": { "type": "string", "minLength": 1 },
+        "display_name": { "type": "string" },
+        "type": { "type": "string" },
+        "quality": { "type": "string" },
+        "display_quality": { "type": "string" },
+        "code": { "type": "string" },
+        "image": { "type": "string" },
+        "name_color": { "type": "integer" },
         "eth": { "type": "boolean" },
         "corrupted": { "type": "boolean" },
+        "is_charm": { "type": "boolean" },
+        "is_trophy": { "type": "boolean" },
+        "is_class_charm": { "type": "boolean" },
+        "is_rw": { "type": "boolean" },
         "is_upgraded": { "type": "boolean" },
-        "mystic_orbs": { "$ref": "#/$defs/MysticOrbs" },
+        "has_trophy": { "type": "boolean" },
+        "area": { "type": "string" },
+        "location": { "type": "string", "minLength": 1 },
+        "slot": { "type": ["string", "null"] },
+        "description_lines": { "$ref": "#/$defs/DescriptionLines" },
         "socketables": {
           "type": "array",
           "items": { "$ref": "#/$defs/Socketable" }
-        }
-      },
-      "$comment": "Enabled charm or relic. Maps to their Inventory items with type Charm. Not placed on the grid."
-    },
-    "ItemsSnapshot": {
-      "type": "object",
-      "additionalProperties": true,
-      "properties": {
-        "weaponSet": {
-          "type": "integer",
-          "enum": [0, 1],
-          "$comment": "Active weapon switch. 0 is RightHandMain/LeftHandMain, 1 is the Alternate pair."
         },
-        "equipment": {
-          "type": "object",
-          "additionalProperties": { "$ref": "#/$defs/ItemEntry" },
-          "properties": {
-            "head": {
-              "$ref": "#/$defs/ItemEntry",
-              "$comment": "notarmory slot Head. location Gear."
-            },
-            "neck": {
-              "$ref": "#/$defs/ItemEntry",
-              "$comment": "notarmory slot Neck."
-            },
-            "tors": {
-              "$ref": "#/$defs/ItemEntry",
-              "$comment": "notarmory slot Torso."
-            },
-            "glov": {
-              "$ref": "#/$defs/ItemEntry",
-              "$comment": "notarmory slot Hands."
-            },
-            "feet": {
-              "$ref": "#/$defs/ItemEntry",
-              "$comment": "notarmory slot Feet."
-            },
-            "belt": {
-              "$ref": "#/$defs/ItemEntry",
-              "$comment": "notarmory slot Waist."
-            },
-            "rrin": {
-              "$ref": "#/$defs/ItemEntry",
-              "$comment": "notarmory slot RightFinger."
-            },
-            "lrin": {
-              "$ref": "#/$defs/ItemEntry",
-              "$comment": "notarmory slot LeftFinger."
-            },
-            "rarm": {
-              "$ref": "#/$defs/ItemEntry",
-              "$comment": "notarmory slot RightHandMain."
-            },
-            "larm": {
-              "$ref": "#/$defs/ItemEntry",
-              "$comment": "notarmory slot LeftHandMain."
-            },
-            "rarm2": {
-              "$ref": "#/$defs/ItemEntry",
-              "$comment": "notarmory slot RightHandAlternate."
-            },
-            "larm2": {
-              "$ref": "#/$defs/ItemEntry",
-              "$comment": "notarmory slot LeftHandAlternate."
-            }
-          },
-          "$comment": "Equipped gear including weapon switch. Their location Gear."
-        },
-        "charms": {
-          "type": "array",
-          "items": { "$ref": "#/$defs/EnabledCharmOrRelic" },
-          "$comment": "Enabled dungeon charms. Their Inventory type Charm."
-        },
-        "relics": {
-          "type": "array",
-          "maxItems": 3,
-          "items": { "$ref": "#/$defs/EnabledCharmOrRelic" },
-          "$comment": "Enabled relics, cap 3. Their Inventory type Charm."
-        }
+        "mystic_orbs": { "$ref": "#/$defs/MysticOrbs" },
+        "stat_ranges": { "$ref": "#/$defs/RangeBag" },
+        "charm_ranges": { "$ref": "#/$defs/RangeBag" }
       }
     }
   }

@@ -66,6 +66,12 @@ import {
   getCurrentBuildDisplayName,
   setCurrentBuildDisplayName,
 } from './planner-session.js';
+import {
+  unwrapTswOrNativeBuild,
+  mapTswItemsToSnapshot,
+  applyTswOSkillLeftovers,
+  inferTswQuestsCompleted,
+} from './tsw-build-import.js';
 import Tree from '@/tree/Tree.js';
 import {
   updateSkillPointsDisplay,
@@ -141,8 +147,10 @@ export function loadBuildData(build, buildIndex = null) {
     // Initialize character with loaded class and level first
     initializeCharacter(build.class, build.level);
 
-    if (build.questsCompleted && typeof build.questsCompleted === 'object') {
-        importQuestsCompleted(build.questsCompleted, build.questCompletionOptOut);
+    const tswEnvelope = Boolean(build.__tswEnvelope) || Array.isArray(build.__tswItems);
+    const quests = tswEnvelope ? inferTswQuestsCompleted(build) : build.questsCompleted;
+    if (quests && typeof quests === 'object') {
+        importQuestsCompleted(quests, tswEnvelope ? undefined : build.questCompletionOptOut);
     }
     
     // Load skill points (display name or internal id -> runtime internal ids)
@@ -162,19 +170,22 @@ export function loadBuildData(build, buildIndex = null) {
         }
     }
 
-    // Load oSkills (display/internal map, or legacy array rows with skillName/displayName)
-    const oNorm = normalizeBuildOSkillsForImport(build.oSkills ?? []);
-    setAllOSkills(oNorm.payload);
-    if (oNorm.skipped.length > 0) {
-        const parts = oNorm.skipped.map(
-            (s) => `${exportLabelForToast(s.key)} (skill level: ${s.wantedLevel})`
-        );
-        const list = parts.join(', ');
-        toastManager.showToast(
-            `Unknown oSkill${oNorm.skipped.length > 1 ? 's' : ''} not loaded: ${list}.`,
-            false,
-            'warning'
-        );
+    // TSW envelope oSkills are character-sheet totals; apply leftovers after items.
+    const tswItems = Array.isArray(build.__tswItems) ? build.__tswItems : null;
+    if (!tswItems) {
+        const oNorm = normalizeBuildOSkillsForImport(build.oSkills ?? []);
+        setAllOSkills(oNorm.payload);
+        if (oNorm.skipped.length > 0) {
+            const parts = oNorm.skipped.map(
+                (s) => `${exportLabelForToast(s.key)} (skill level: ${s.wantedLevel})`
+            );
+            const list = parts.join(', ');
+            toastManager.showToast(
+                `Unknown oSkill${oNorm.skipped.length > 1 ? 's' : ''} not loaded: ${list}.`,
+                false,
+                'warning'
+            );
+        }
     }
 
     setDisabledSkillIds(Array.isArray(build.disabledSkills) ? build.disabledSkills : []);
@@ -209,10 +220,30 @@ export function loadBuildData(build, buildIndex = null) {
         const itemsStore = useItemsStore();
         const applyItems = () => {
             itemsStore.syncViewerClassName(build.class);
-            if (build.items != null) itemsStore.fromSnapshot(build.items);
-            else itemsStore.resetItems();
+            if (tswItems) {
+                const { snapshot, skipped } = mapTswItemsToSnapshot(tswItems, itemsStore);
+                itemsStore.fromSnapshot(snapshot);
+                toastSkippedTswItems(skipped);
+            } else if (build.items != null) {
+                itemsStore.fromSnapshot(build.items);
+            } else {
+                itemsStore.resetItems();
+            }
             itemsStore.pruneClassRestrictedEnableList();
             syncItemGrantedOSkills();
+            if (tswItems) {
+                const left = applyTswOSkillLeftovers(build.oSkills);
+                if (left.skipped.length > 0) {
+                    const parts = left.skipped.map(
+                        (s) => `${exportLabelForToast(s.key)} (skill level: ${s.wantedLevel})`
+                    );
+                    toastManager.showToast(
+                        `Unknown oSkill${left.skipped.length > 1 ? 's' : ''} not loaded: ${parts.join(', ')}.`,
+                        false,
+                        'warning'
+                    );
+                }
+            }
             runPlannerSkillStatRecompute({ immediate: true });
         };
         if (itemsStore.isCatalogCurrent) applyItems();
@@ -330,11 +361,13 @@ export function importBuildFromJsonText(jsonString) {
     }
 
     try {
-        const buildData = JSON.parse(String(jsonString).trim());
-        if (!validateBuildData(buildData)) {
+        const parsed = JSON.parse(String(jsonString).trim());
+        const { build, tswItems } = unwrapTswOrNativeBuild(parsed);
+        if (tswItems) build.__tswItems = tswItems;
+        if (!validateBuildData(build)) {
             return false;
         }
-        importBuild(buildData);
+        importBuild(build);
         return true;
     } catch (error) {
         toastManager.showToast(`Invalid JSON: ${error.message}`, false, 'danger');
@@ -393,6 +426,22 @@ function isValidSavedQuestDifficultyValue(v) {
         );
     }
     return Boolean(v && typeof v === 'object' && !Array.isArray(v));
+}
+
+/**
+ * @param {Array<{ name: string, reason?: string }>} skipped
+ */
+function toastSkippedTswItems(skipped) {
+    if (!Array.isArray(skipped) || skipped.length === 0) return;
+    const names = skipped.map((s) => exportLabelForToast(s.name || '(unnamed)'));
+    const shown = names.slice(0, 8);
+    const extra = names.length - shown.length;
+    const list = extra > 0 ? `${shown.join(', ')}, and ${extra} more` : shown.join(', ');
+    toastManager.showToast(
+        `Skipped ${names.length} item${names.length > 1 ? 's' : ''} not in the catalog: ${list}.`,
+        false,
+        'warning'
+    );
 }
 
 /**

@@ -3,15 +3,8 @@ import { resolve } from 'node:path';
 import { readJson } from '../helpers/tree-data.js';
 
 const ROOT = resolve(import.meta.dirname, '../..');
-const SCHEMA_PATH = resolve(ROOT, 'schemas/planner-build.schema.json');
-const FULL_SCHEMA_PATH = resolve(ROOT, 'schemas/planner-build-full.schema.json');
-const EXPECTED_FULL_DEFS = [
-  'QuestDifficulties',
-  'SkillPointsMap',
-  'ItemRolls',
-  'ItemEntry',
-  'ItemsSnapshot',
-];
+const SCHEMA_PATH = resolve(ROOT, 'schemas/planner-build-full.schema.json');
+const EXAMPLE_PATH = resolve(ROOT, 'schemas/examples/Miss_Peeled.json');
 
 /**
  * @param {object} root
@@ -81,7 +74,7 @@ function validate(root, schema, data, path = '$') {
   const errors = [];
 
   if (sch.type != null && !matchesType(data, sch.type)) {
-    errors.push(`${path}: expected ${sch.type}, got ${jsonType(data)}`);
+    errors.push(`${path}: expected ${JSON.stringify(sch.type)}, got ${jsonType(data)}`);
     return errors;
   }
   if (sch.enum && !sch.enum.includes(data)) {
@@ -147,217 +140,98 @@ function validate(root, schema, data, path = '$') {
 }
 
 const FIXTURE = {
-  name: 'Example Build',
-  version: '2.14',
-  class: 'Amazon',
-  level: 120,
-  spentPoints: 20,
-  skillPoints: { 'Fury Funnel': 20 },
-  disabledSkills: [],
-  disabledOSkillSlots: [],
-  oSkills: { 'Fast Attack': 5 },
-  allSkillsBonus: 0,
-  classSkillsBonus: 0,
-  questsCompleted: { den_of_evil: { normal: true, nightmare: true, hell: true } },
-  savedAt: '2026-10-08T17:00:00.000Z',
-  items: {
-    weaponSet: 0,
-    equipment: {
-      head: 'unique:andariels-visage',
-      neck: null,
-      tors: { name: "Tyrael's Might", defId: 'unique:tyraels-might', rolls: { defense: 800 } },
-      glov: null,
-      feet: null,
-      belt: null,
-      rrin: null,
-      lrin: null,
-      rarm: null,
-      larm: null,
-      rarm2: null,
-      larm2: null,
-    },
-    inventory: [{ slot: 0, defId: 'unique:wizardspike' }],
-    charms: [{ name: 'The Sleep', defId: 'charm:the-sleep', rolls: { 'upgrade:0': 1 } }],
-    relics: [{ name: 'Relic: Charged Strike', defId: 'relic:charged-strike' }],
+  ok: true,
+  api_version: 1,
+  meta: { realm: 'TSW' },
+  build: {
+    name: 'Example',
+    version: '2.14',
+    class: 'Amazon',
+    level: 120,
+    skillPoints: { 'Fury Funnel': 20 },
+    oSkills: { 'Fast Attack': 5 },
+    allSkillsBonus: 8,
+    stats: '{{life}}=1000\n{{mana}}=200',
+    questsCompleted: { den_of_evil: { normal: true, nightmare: true, hell: true } },
+    savedAt: '2026-10-08T17:00:00.000Z',
   },
+  items: [
+    {
+      item: "Andariel's Visage",
+      display_name: "Andariel's Visage",
+      quality: 'Unique',
+      display_quality: 'SU',
+      location: 'Gear',
+      slot: 'Head',
+      description_lines: [[["Andariel's Visage", 4]], [['Already Upgraded', 2]]],
+      socketables: [],
+      mystic_orbs: [],
+      stat_ranges: [],
+      charm_ranges: [],
+    },
+  ],
 };
 
 describe('planner build full schema', () => {
-  const schema = readJson(FULL_SCHEMA_PATH);
+  const schema = readJson(SCHEMA_PATH);
 
-  it('is JSON Schema 2020-12 with expected required keys and $defs', () => {
+  it('is the TSW envelope schema', () => {
     expect(schema.$schema).toBe('https://json-schema.org/draft/2020-12/schema');
     expect(schema.$id).toBe('https://github.com/azadix/medianxl-db/schemas/planner-build-full.schema.json');
     expect(schema.type).toBe('object');
-    expect(schema.additionalProperties).toBe(true);
-    expect(schema.required).toEqual(['name', 'class', 'level', 'skillPoints', 'oSkills']);
-    for (const key of EXPECTED_FULL_DEFS) {
-      expect(schema.$defs, `missing $defs.${key}`).toHaveProperty(key);
-    }
-    expect(schema.properties).toHaveProperty('oSkills');
-    expect(schema.properties).toHaveProperty('stats');
-    expect(schema.properties).toHaveProperty('allSkillsBonus');
-    expect(schema.properties).toHaveProperty('classSkillsBonus');
-    expect(schema.$defs.Stats.properties).toHaveProperty('baseStrength');
-    expect(schema.$defs.Stats.properties).toHaveProperty('baseDexterity');
-    expect(schema.$defs.Stats.properties).toHaveProperty('baseVitality');
-    expect(schema.$defs.Stats.properties).toHaveProperty('baseEnergy');
-    expect(schema.$defs.Stats.required).toEqual(['baseStrength', 'baseDexterity', 'baseVitality', 'baseEnergy']);
-    expect(schema.$defs.Stats.properties).not.toHaveProperty('allSkillsBonus');
-    expect(schema.properties).not.toHaveProperty('savedAt');
-    expect(schema.$defs.ItemsSnapshot.properties).not.toHaveProperty('inventory');
-    expect(schema.$defs.ItemInstance.required).toEqual(['name']);
-    expect(schema.$defs.ItemInstance.properties).toHaveProperty('description_lines');
-    expect(schema.$defs.ItemInstance.properties).toHaveProperty('quality');
-    expect(schema.$defs.ItemInstance.properties).toHaveProperty('name_color');
+    expect(schema.required).toEqual(['build', 'items']);
+    expect(schema.properties.build.$ref).toBe('#/$defs/TswBuild');
+    expect(schema.$defs.TswBuild.required).toEqual(['name', 'class', 'level', 'skillPoints', 'oSkills']);
+    expect(schema.$defs.TswBuild.properties.stats.type).toBe('string');
+    expect(schema.properties.items.type).toBe('array');
+    expect(schema.$defs).toHaveProperty('TswItem');
+    expect(schema.$defs).toHaveProperty('DescriptionLines');
+    expect(schema.$defs).not.toHaveProperty('ItemsSnapshot');
   });
 
-  it('accepts a snapshot matching current export shape', () => {
+  it('accepts a TSW envelope fixture', () => {
     const errors = validate(schema, schema, FIXTURE);
     expect(errors, errors.join('\n')).toEqual([]);
   });
 
-  it('accepts the Miss_Peeled full example', () => {
-    const example = readJson(resolve(ROOT, 'schemas/examples/miss-peeled-full.json'));
+  it('accepts the Miss_Peeled TSW export', () => {
+    const example = readJson(EXAMPLE_PATH);
     const errors = validate(schema, schema, example);
     expect(errors, errors.join('\n')).toEqual([]);
+    expect(example.build.name).toBe('Miss_Peeled');
+    expect(typeof example.build.stats).toBe('string');
+    expect(Array.isArray(example.items)).toBe(true);
   });
 
-  it('accepts optional mapped gap fields other planners may emit', () => {
-    const withGaps = {
-      ...FIXTURE,
-      extraFromOtherPlanner: true,
-      signetsEaten: 400,
-      allSkillsBonus: 32,
-      classSkillsBonus: 10,
-      stats: {
-        baseStrength: 10,
-        baseDexterity: 0,
-        baseVitality: 50,
-        baseEnergy: 0,
-        strength: 70,
-        life: 12338,
-        fire_resistance: 160,
-      },
-      difficultyTitle: 'Destroyer',
-      items: {
-        ...FIXTURE.items,
-        equipment: {
-          ...FIXTURE.items.equipment,
-          head: {
-            name: "Andariel's Visage",
-            quality: 'Unique',
-            defId: 'unique:andariels-visage',
-            description_lines: [[['Andariel\'s Visage', 4]], [['Already Upgraded', 1]]],
-            stats: ['+2 to All Skills', '15% Life stolen per Hit'],
-            eth: true,
-            corrupted: false,
-            mystic_orbs: [[5, 'Mystic Orb: Life']],
-            socketables: [
-              {
-                type: 'Jewel',
-                name: 'Rare Jewel',
-                stats: ['+15 to Strength', 'Fire Resist +6%'],
-                rolls: { 'to Strength': 15 },
-              },
-            ],
-          },
-        },
-      },
-    };
-    const errors = validate(schema, schema, withGaps);
-    expect(errors, errors.join('\n')).toEqual([]);
-  });
+  it('rejects missing envelope fields and invalid build data', () => {
+    const noBuild = { ...FIXTURE };
+    delete noBuild.build;
+    expect(validate(schema, schema, noBuild).some((e) => e.includes('build'))).toBe(true);
 
-  it('rejects missing required fields and invalid item slots', () => {
-    const noClass = { ...FIXTURE };
-    delete noClass.class;
+    const noItems = { ...FIXTURE };
+    delete noItems.items;
+    expect(validate(schema, schema, noItems).some((e) => e.includes('items'))).toBe(true);
+
+    const noClass = structuredClone(FIXTURE);
+    delete noClass.build.class;
     expect(validate(schema, schema, noClass).some((e) => e.includes('class'))).toBe(true);
 
-    const noOSkills = { ...FIXTURE };
-    delete noOSkills.oSkills;
+    const noOSkills = structuredClone(FIXTURE);
+    delete noOSkills.build.oSkills;
     expect(validate(schema, schema, noOSkills).some((e) => e.includes('oSkills'))).toBe(true);
 
-    expect(validate(schema, schema, { ...FIXTURE, oSkills: {} }).length).toBe(0);
+    expect(validate(schema, schema, { ...FIXTURE, items: {} }).length).toBeGreaterThan(0);
     expect(
       validate(schema, schema, {
         ...FIXTURE,
-        items: {
-          ...FIXTURE.items,
-          equipment: {
-            ...FIXTURE.items.equipment,
-            head: { name: "Andariel's Visage", defId: 'unique:andariels-visage', socketables: [{ type: 'Jewel', name: 'Jewel', stats: 'nope' }] },
-          },
-        },
+        build: { ...FIXTURE.build, level: 0 },
       }).length
     ).toBeGreaterThan(0);
-    expect(validate(schema, schema, { ...FIXTURE, level: 0 }).length).toBeGreaterThan(0);
-    expect(validate(schema, schema, { ...FIXTURE, skillPoints: [] }).length).toBeGreaterThan(0);
     expect(
       validate(schema, schema, {
         ...FIXTURE,
-        items: {
-          ...FIXTURE.items,
-          relics: [
-            { name: 'a' },
-            { name: 'b' },
-            { name: 'c' },
-            { name: 'd' },
-          ],
-        },
+        build: { ...FIXTURE.build, stats: { life: 1 } },
       }).length
     ).toBeGreaterThan(0);
-  });
-});
-
-describe('planner build schema', () => {
-  const schema = readJson(SCHEMA_PATH);
-  const example = readJson(resolve(ROOT, 'schemas/examples/miss-peeled.json'));
-
-  it('is the TSW export schema without items and with required skill bonuses', () => {
-    expect(schema.$id).toBe('https://github.com/azadix/medianxl-db/schemas/planner-build.schema.json');
-    expect(schema.required).toEqual([
-      'name',
-      'class',
-      'level',
-      'skillPoints',
-      'oSkills',
-      'allSkillsBonus',
-      'classSkillsBonus',
-      'stats',
-    ]);
-    expect(schema.properties.items).toBe(false);
-    expect(schema.properties).not.toHaveProperty('difficultyTitle');
-    expect(schema.$defs).not.toHaveProperty('ItemsSnapshot');
-    expect(schema.$defs.Stats.required).toEqual(['baseStrength', 'baseDexterity', 'baseVitality', 'baseEnergy']);
-    expect(schema.$defs.Stats.additionalProperties).toEqual({ type: 'number' });
-  });
-
-  it('accepts the Miss_Peeled example', () => {
-    const errors = validate(schema, schema, example);
-    expect(errors, errors.join('\n')).toEqual([]);
-    expect(example.allSkillsBonus).toBe(32);
-    expect(example.classSkillsBonus).toBe(10);
-    expect(example).not.toHaveProperty('items');
-  });
-
-  it('rejects missing skill bonuses, missing allocation, and an items section', () => {
-    const noBonus = structuredClone(example);
-    delete noBonus.allSkillsBonus;
-    expect(validate(schema, schema, noBonus).some((e) => e.includes('allSkillsBonus'))).toBe(true);
-
-    const noAlloc = { ...example };
-    delete noAlloc.stats;
-    expect(validate(schema, schema, noAlloc).some((e) => e.includes('stats'))).toBe(true);
-
-    expect(validate(schema, schema, { ...example, items: { equipment: {} } }).some((e) => e.includes('items'))).toBe(
-      true
-    );
-
-    const withExtras = structuredClone(example);
-    withExtras.stats.strength = 70;
-    withExtras.stats.life = 12338;
-    withExtras.stats.fire_resistance = 160;
-    expect(validate(schema, schema, withExtras)).toEqual([]);
   });
 });

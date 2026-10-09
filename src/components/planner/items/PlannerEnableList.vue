@@ -47,6 +47,30 @@ const filtered = computed(() => {
   );
 });
 
+const enabledDefs = computed(() => catalog.value.filter((d) => isEnabled(d)));
+
+const availableFiltered = computed(() => filtered.value.filter((d) => !isEnabled(d)));
+
+const listSections = computed(() => {
+  if (!isRelics.value) {
+    return [{ id: 'all', title: null, defs: filtered.value, empty: 'No matching items' }];
+  }
+  return [
+    {
+      id: 'enabled',
+      title: 'Enabled relics',
+      defs: enabledDefs.value,
+      empty: 'None enabled',
+    },
+    {
+      id: 'available',
+      title: 'Available relics',
+      defs: availableFiltered.value,
+      empty: 'No matching items',
+    },
+  ];
+});
+
 const atRelicCap = computed(
   () => isRelics.value && enabledRelicCount.value >= MAX_RELICS
 );
@@ -154,44 +178,56 @@ function onEnableAllCharms() {
       </span>
     </div>
 
-    <ul class="planner-enable-list__rows" role="listbox" :aria-label="isCharms ? 'Charm list' : 'Relic list'">
-      <li v-if="filtered.length === 0" class="planner-enable-list__empty">No matching items</li>
-      <li
-        v-for="def in filtered"
-        :key="def.id"
-        class="planner-enable-list__row"
-        :class="[
-          'planner-enable-list__row--' + (def.rarity || 'normal'),
-          {
-            'is-selected': isSelected(def),
-            'is-enabled': isEnabled(def),
-            'is-disabled': checkboxDisabled(def),
-          },
-        ]"
-        role="option"
-        :aria-selected="isSelected(def)"
-        tabindex="0"
-        @click="onSelectRow(def)"
-        @keydown.enter.prevent="onSelectRow(def)"
+    <div
+      v-for="section in listSections"
+      :key="section.id"
+      class="planner-enable-list__group"
+      :class="'planner-enable-list__group--' + section.id"
+    >
+      <h3 v-if="section.title" class="planner-enable-list__heading">{{ section.title }}</h3>
+      <ul
+        class="planner-enable-list__rows"
+        role="listbox"
+        :aria-label="section.title || (isCharms ? 'Charm list' : 'Relic list')"
       >
-        <label class="planner-enable-list__check" @click.stop>
-          <input
-            type="checkbox"
-            :checked="isEnabled(def)"
-            :disabled="checkboxDisabled(def)"
-            :aria-label="'Enable ' + def.name"
-            @change="onCheckboxChange(def, $event)"
-          />
-        </label>
-        <div class="planner-enable-list__icon">
-          <SkillCardImage
-            v-if="isRelics && relicIconMarkup(def)"
-            :icon-markup="relicIconMarkup(def)"
-          />
-          <ItemIcon v-else :def="def" fill />
-        </div>
-        <span class="planner-enable-list__name">{{ def.name }}</span>
-      </li>
-    </ul>
+        <li v-if="section.defs.length === 0" class="planner-enable-list__empty">{{ section.empty }}</li>
+        <li
+          v-for="def in section.defs"
+          :key="def.id"
+          class="planner-enable-list__row"
+          :class="[
+            'planner-enable-list__row--' + (def.rarity || 'normal'),
+            {
+              'is-selected': isSelected(def),
+              'is-enabled': isEnabled(def),
+              'is-disabled': checkboxDisabled(def),
+            },
+          ]"
+          role="option"
+          :aria-selected="isSelected(def)"
+          tabindex="0"
+          @click="onSelectRow(def)"
+          @keydown.enter.prevent="onSelectRow(def)"
+        >
+          <label class="planner-enable-list__check" @click.stop>
+            <input
+              type="checkbox"
+              :checked="isEnabled(def)"
+              :disabled="checkboxDisabled(def)"
+              :aria-label="'Enable ' + def.name"
+              @change="onCheckboxChange(def, $event)"
+            />
+          </label>
+          <div class="planner-enable-list__icon">
+            <SkillCardImage
+              v-if="isRelics && relicIconMarkup(def)"
+              :icon-markup="relicIconMarkup(def)"
+            />
+            <ItemIcon v-else :def="def" fill />
+          </div>
+          <span class="planner-enable-list__name">{{ def.name }}</span>
+        </li>
+      </ul>
+    </div>
   </section>
 </template>
