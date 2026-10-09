@@ -957,7 +957,7 @@
     "tags": [
       "Passive"
     ],
-    "baseMaxLevel": 0,
+    "baseMaxLevel": 1,
     "affectedBySpecialization": false,
     "variants": [],
     "scalingConstants": [
@@ -13254,7 +13254,7 @@
         "statKey": "fire_pierce",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "15+5*blvl"
+        "value0": "4*blvl"
       },
       {
         "statKey": "mana_cost",
@@ -17117,7 +17117,6 @@
     "tabName": "Melee",
     "tags": [
       "Physical",
-      "Fire",
       "Attack",
       "Weapon Damage"
     ],
@@ -27320,7 +27319,7 @@
     "tags": [
       "Passive"
     ],
-    "baseMaxLevel": 0,
+    "baseMaxLevel": 1,
     "affectedBySpecialization": false,
     "variants": [],
     "scalingConstants": [

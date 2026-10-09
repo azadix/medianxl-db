@@ -89,6 +89,33 @@ describe('skill calculations with tree_data', () => {
     expect(calculateMaxLevel('trinity_arrow', {}, 25)).toBe(5);
   });
 
+  it('warmth max level is 1 + floor(ulvl / 4)', () => {
+    expect(computeMaxSkillLevelAtUlvl('warmth', {}, 8)).toBe(3);
+    expect(computeMaxSkillLevelAtUlvl('warmth', {}, 150)).toBe(38);
+    expect(calculateMaxLevel('warmth', {}, 150)).toBe(38);
+  });
+
+  it('aptitude max level is 1 + min(4, floor((ulvl - 120) / 5))', () => {
+    expect(computeMaxSkillLevelAtUlvl('aptitude', {}, 120)).toBe(1);
+    expect(computeMaxSkillLevelAtUlvl('aptitude', {}, 140)).toBe(5);
+    expect(computeMaxSkillLevelAtUlvl('aptitude', {}, 150)).toBe(5);
+    expect(calculateMaxLevel('aptitude', {}, 150)).toBe(5);
+  });
+
+  it('incineration trap fire pierce scales 4% per base level', () => {
+    const store = getFileSkillStore();
+    const row = store.catalog.find((s) => s.id === 'incineration_trap');
+    const pierce = (row?.scalingConstants || []).find((c) => c.statKey === 'fire_pierce');
+    expect(pierce?.value0).toBe('4*blvl');
+  });
+
+  it('parasite is magic conversion, not fire-tagged', () => {
+    const store = getFileSkillStore();
+    const row = store.catalog.find((s) => s.id === 'parasite');
+    expect(row?.tags).toEqual(['Physical', 'Attack', 'Weapon Damage']);
+    expect(row?.tags).not.toContain('Fire');
+  });
+
   it('checkDevotionRestriction blocks cross-devotion allocation', () => {
     const store = getFileSkillStore();
     const holySkill = store.catalog.find((s) => s.classId === 5 && (s.tab === 30 || s.tab === 31));

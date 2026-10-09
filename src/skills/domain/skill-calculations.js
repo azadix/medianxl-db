@@ -191,13 +191,14 @@ const MAX_LEVEL_MODIFIERS = [
     sourceSkillName: null,
     type: 'self_character_level',
     targetSkillName: 'aptitude',
-    characterLevelDivisor: 5, // +1 max level for every 5 character levels
-    startLevel: 115, // Skill becomes available at level 120
-    description: 'Increases its own max level by 1 for every 5 character levels (starting from level 120)',
+    characterLevelDivisor: 5, // +1 max level for every 5 character levels after 120
+    startLevel: 120,
+    maxBonus: 4,
+    description: 'Increases its own max level by 1 for every 5 character levels after 120 (max +4)',
     calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = Character.DEFAULT_LEVEL) {
       if (targetSkillData.skill_name === this.targetSkillName) {
         const effectiveLevel = Math.max(0, characterLevel - this.startLevel);
-        return Math.floor(effectiveLevel / this.characterLevelDivisor);
+        return Math.min(Math.floor(effectiveLevel / this.characterLevelDivisor), this.maxBonus);
       }
       return 0;
     }
@@ -221,13 +222,11 @@ const MAX_LEVEL_MODIFIERS = [
     sourceSkillName: null,
     type: 'self_character_level',
     targetSkillName: 'warmth',
-    characterLevelDivisor: 4, // +1 max level for every 4 character levels
-    startLevel: 1, // Skill becomes available at level 5
-    description: 'Increases its own max level by 1 for every 4 character levels (starting from level 5)',
+    characterLevelDivisor: 4,
+    description: 'Increases its own max level by 1 for every 4 character levels',
     calculateBonus: function(sourceSkillLevel, targetSkillData, characterLevel = Character.DEFAULT_LEVEL) {
       if (targetSkillData.skill_name === this.targetSkillName) {
-        const effectiveLevel = Math.max(0, characterLevel - this.startLevel);
-        return Math.floor(effectiveLevel / this.characterLevelDivisor);
+        return Math.floor(characterLevel / this.characterLevelDivisor);
       }
       return 0;
     }
