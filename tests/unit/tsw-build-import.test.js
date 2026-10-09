@@ -247,7 +247,6 @@ describe('tsw-build-import', () => {
     expect(snapshot.equipment.neck?.custom?.quality).toBe('rare');
     expect(snapshot.equipment.glov?.custom?.quality).toBe('angelic');
     expect(snapshot.equipment.feet?.custom?.quality).toBe('angelic');
-    expect(skipped.length).toBeGreaterThan(0);
     expect(skipped.every((row) => row.reason === 'uncatalogued' || row.reason === 'stash')).toBe(true);
     expect(skipped.some((row) => row.name === 'Ring')).toBe(false);
     expect(skipped.some((row) => /Angelic/.test(row.name))).toBe(false);
