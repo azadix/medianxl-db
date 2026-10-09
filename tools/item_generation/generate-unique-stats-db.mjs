@@ -17,6 +17,10 @@ import {
   TIERED_UNIQUES_WIKI_URL,
   parseTieredUniquesWiki,
 } from './parse-tiered-uniques-wiki.mjs';
+import {
+  SECRET_ITEMS_WIKI_URL,
+  parseSecretItemsWiki,
+} from './parse-secret-items-wiki.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const DEFAULT_VERSION = '2.14';
@@ -26,6 +30,8 @@ const QUALITY_ORDER = new Map([
   ['Set', 1],
   ['SU', 2],
   ['TU', 3],
+  ['Relic', 4],
+  ['Charm', 5],
 ]);
 
 /**
@@ -53,9 +59,51 @@ function versionToFolder(version) {
  * @returns {Promise<string>}
  */
 async function fetchHtml(url) {
-  const response = await fetch(url, { headers: { Accept: 'text/html' } });
+  const response = await fetch(url, {
+    headers: {
+      Accept: 'text/html',
+      'User-Agent':
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    },
+  });
   if (!response.ok) throw new Error(`${url} -> HTTP ${response.status}`);
   return response.text();
+}
+
+/**
+ * @returns {string}
+ */
+function secretFixturePath() {
+  return path.join(ROOT, 'tests', 'fixtures', 'secret-items-wiki.html');
+}
+
+/**
+ * @returns {Promise<string>}
+ */
+async function loadSecretItemsHtml() {
+  try {
+    const html = await fetchHtml(SECRET_ITEMS_WIKI_URL);
+    if (html.includes('mxl-tooltip')) return html;
+    throw new Error('Secret Items page did not contain item tooltips');
+  } catch (error) {
+    const fallback = secretFixturePath();
+    if (!existsSync(fallback)) throw error;
+    console.log(`  secret wiki fetch failed (${error.message}); using ${path.relative(ROOT, fallback)}`);
+    return readFileSync(fallback, 'utf8');
+  }
+}
+
+/**
+ * @param {UniqueStatsEntry[]} existing
+ * @param {UniqueStatsEntry[]} secret
+ * @returns {UniqueStatsEntry[]}
+ */
+function mergeSecretEntries(existing, secret) {
+  const incoming = new Set(secret.map(entryKey));
+  const kept = existing.filter(
+    (entry) => entry.source !== 'secret' && !incoming.has(entryKey(entry))
+  );
+  return [...kept, ...secret];
 }
 
 /**
@@ -144,7 +192,7 @@ function selectStableVariants(entries, existing) {
  * @returns {string}
  */
 function entryKey(entry) {
-  return `${entry.quality}\0${entry.name}\0${entry.tier ?? ''}`;
+  return `${entry.quality}\0${entry.name}\0${entry.tier ?? ''}\0${entry.variant ?? ''}`;
 }
 
 /**
@@ -177,6 +225,21 @@ function validateEntries(entries) {
     seen.add(key);
     if (!entry.name || !entry.stats) throw new Error(`Incomplete wiki entry: ${key}`);
   }
+  if ((counts.Relic || 0) < 5) throw new Error(`Parsed too few secret relics: ${counts.Relic || 0}`);
+}
+
+/**
+ * @param {UniqueStatsEntry} a
+ * @param {UniqueStatsEntry} b
+ * @returns {number}
+ */
+function compareEntries(a, b) {
+  return (
+    (QUALITY_ORDER.get(a.quality) ?? 99) - (QUALITY_ORDER.get(b.quality) ?? 99) ||
+    a.name.localeCompare(b.name, 'en') ||
+    (a.tier ?? 0) - (b.tier ?? 0) ||
+    String(a.variant || '').localeCompare(String(b.variant || ''), 'en')
+  );
 }
 
 /**
@@ -205,22 +268,27 @@ export async function main(argv = process.argv.slice(2)) {
 
   const outputPath = path.join(ROOT, 'public', 'items', folder, 'unique-stats-db.json');
   const existing = loadExisting(outputPath);
-  console.log('Fetching tiered uniques, sacred uniques, and sets from Median XL docs...');
-  const [tieredHtml, sacredHtml, setsHtml] = await Promise.all([
-    fetchHtml(TIERED_UNIQUES_WIKI_URL),
-    fetchHtml(SACRED_UNIQUES_WIKI_URL),
-    fetchHtml(SETS_WIKI_URL),
-  ]);
+  console.log(`Fetching secret items from ${SECRET_ITEMS_WIKI_URL}...`);
+  const secret = parseSecretItemsWiki(await loadSecretItemsHtml());
+  console.log(`Parsed ${secret.length} secret item entries.`);
 
-  const tiered = parseTieredUniquesWiki(tieredHtml);
-  const sacred = selectStableVariants(parseSacredUniquesWiki(sacredHtml), existing);
-  const sets = parseSetsWiki(setsHtml);
-  const entries = [...sets, ...sacred, ...tiered].sort(
-    (a, b) =>
-      (QUALITY_ORDER.get(a.quality) ?? 99) - (QUALITY_ORDER.get(b.quality) ?? 99) ||
-      a.name.localeCompare(b.name, 'en') ||
-      (a.tier ?? 0) - (b.tier ?? 0)
-  );
+  /** @type {UniqueStatsEntry[]} */
+  let entries;
+  if (flags.has('--secrets-only')) {
+    entries = mergeSecretEntries(existing, secret).sort(compareEntries);
+  } else {
+    console.log('Fetching tiered uniques, sacred uniques, and sets from Median XL docs...');
+    const [tieredHtml, sacredHtml, setsHtml] = await Promise.all([
+      fetchHtml(TIERED_UNIQUES_WIKI_URL),
+      fetchHtml(SACRED_UNIQUES_WIKI_URL),
+      fetchHtml(SETS_WIKI_URL),
+    ]);
+
+    const tiered = parseTieredUniquesWiki(tieredHtml);
+    const sacred = selectStableVariants(parseSacredUniquesWiki(sacredHtml), existing);
+    const sets = parseSetsWiki(setsHtml);
+    entries = mergeSecretEntries([...sets, ...sacred, ...tiered], secret).sort(compareEntries);
+  }
 
   validateEntries(entries);
   const counts = qualityCounts(entries);

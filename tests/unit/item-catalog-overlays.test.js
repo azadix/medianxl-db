@@ -71,6 +71,14 @@ describe('unique-stats-db catalog', () => {
     const pantheon = sets.find((s) => s.id === 'set:pantheon');
     expect(pantheon?.bonuses?.length).toBeGreaterThan(0);
 
+    const maleficence = items.find((u) => u.name === 'Maleficence');
+    expect(maleficence?.id).toBe('u:maleficence:su');
+    expect(maleficence?.slot).toBe('arms');
+    expect(maleficence?.baseName).toBe('Tyrannical Blade');
+    expect(items.filter((u) => u.name === "Akara's Robe")).toHaveLength(3);
+    expect(items.some((r) => r.id === 'relic:blood-of-creation-version-1')).toBe(true);
+    expect(items.find((c) => c.id === 'charm:essence-of-time')?.keepInInventory).toBe(true);
+
     const storm = items.find((s) => s.name === 'Elemental Storm');
     expect(storm?.reqDex).toBe(109);
     expect(storm?.modifiers).not.toContain('Required Dexterity:');

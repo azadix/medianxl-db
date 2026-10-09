@@ -13,6 +13,8 @@
  *   nameDisplay?: string,
  *   setName?: string,
  *   tier?: number,
+ *   variant?: string,
+ *   source?: string,
  * }} UniqueStatsEntry
  */
 
@@ -95,6 +97,10 @@ export function qualityToRarity(quality) {
       return { rarity: 'unique', uniqueKind: 'su', tier: 'sacred' };
     case 'Sacred Set':
       return { rarity: 'set' };
+    case 'Relic':
+      return { rarity: 'relic' };
+    case 'Charm':
+      return { rarity: 'unique' };
     default:
       return null;
   }
@@ -150,6 +156,7 @@ const HEADER_LINE_RES = [
   /^(Strength|Dexterity) Damage Bonus:/i,
   /^Innate\s+(Fire|Cold|Lightning|Poison|Magic|Physical|Shadow)\s+Damage:/i,
   /^Socketed\s*\((\d+)\)\s*$/i,
+  /^Relic$/i,
 ];
 
 /** Bare number (or "N to M") left on the next line after a requirement label. */
@@ -421,6 +428,52 @@ export function findBaseForType(typeName, quality, bases) {
   return asIs || null;
 }
 
+/** Unique-only bases that are missing from the grey catalog. */
+const TYPE_SHAPE_FALLBACKS = Object.freeze({
+  'Tyrannical Blade': 'Crystal Sword (Sacred)',
+  'Voidsworn Bow': 'Maple Bow (Sacred)',
+  'Voidforged Staff': 'War Staff (Sacred)',
+  'Sacred Bow': 'Long War Bow (Sacred)',
+  'Ornate Plate': 'Full Plate Mail (Sacred)',
+  'Sigil of Deadly Sins': 'Ring',
+  'Ring of Pride': 'Ring',
+});
+
+/**
+ * Copy slot/size from a similar catalog base when the wiki type has no row.
+ * @param {string|null|undefined} typeName
+ * @param {string} quality
+ * @param {Array<{ id?: string, name?: string }>} bases
+ * @returns {{ id?: string, name?: string }|null}
+ */
+export function findShapeBaseForType(typeName, quality, bases) {
+  const type = String(typeName || '').trim();
+  if (!type || !Array.isArray(bases)) return null;
+  const named = TYPE_SHAPE_FALLBACKS[type];
+  if (named) {
+    const hit = bases.find((b) => b.name === named);
+    if (hit) return hit;
+  }
+  const sacred = quality === 'SU' || quality === 'Sacred Set';
+  /** @type {Array<[RegExp, string, string]>} */
+  const heuristics = [
+    [/ring|sigil/i, 'Ring', 'Ring'],
+    [/amulet/i, 'Amulet', 'Amulet'],
+    [/jewel/i, 'Jewel', 'Jewel'],
+    [/bow/i, 'Maple Bow (Sacred)', 'Maple Bow (4)'],
+    [/staff/i, 'War Staff (Sacred)', 'War Staff (4)'],
+    [/blade|sword/i, 'Crystal Sword (Sacred)', 'Crystal Sword (4)'],
+    [/plate|mail|armor|robe/i, 'Full Plate Mail (Sacred)', 'Full Plate Mail (4)'],
+  ];
+  for (const [re, sacredName, tierName] of heuristics) {
+    if (!re.test(type)) continue;
+    const want = sacred ? sacredName : tierName;
+    const hit = bases.find((b) => b.name === want);
+    if (hit) return hit;
+  }
+  return null;
+}
+
 /**
  * @param {UniqueStatsEntry[]} entries
  * @returns {Array<{ id: string, name: string, bonuses: Array<{ required: number|string, modifiers: string[] }> }>}
@@ -443,6 +496,38 @@ export function buildSetDefsFromEntries(entries) {
 
 /**
  * @param {UniqueStatsEntry} entry
+ * @param {{ rarity: string }} rarityInfo
+ * @returns {string}
+ */
+function overlayIdForEntry(entry, rarityInfo) {
+  if (entry.quality === 'Relic') {
+    const variant = entry.variant ? `-${slugify(entry.variant)}` : '';
+    return `relic:${slugify(entry.name)}${variant}`;
+  }
+  if (entry.quality === 'Charm') {
+    return `charm:${slugify(entry.name)}`;
+  }
+  const idPrefix = rarityInfo.rarity === 'set' ? 's' : 'u';
+  const qualitySlug = slugify(entry.quality);
+  let id = `${idPrefix}:${slugify(entry.name)}:${qualitySlug}`;
+  if (entry.quality === 'TU' && entry.tier != null) id = `${id}:${entry.tier}`;
+  else if (entry.variant) id = `${id}:${slugify(entry.variant)}`;
+  return id;
+}
+
+/**
+ * @param {UniqueStatsEntry} entry
+ * @returns {string}
+ */
+function displayNameForEntry(entry) {
+  if (entry.variant && (entry.quality === 'Relic' || entry.quality === 'Charm')) {
+    return `${entry.name} (${entry.variant})`;
+  }
+  return entry.name;
+}
+
+/**
+ * @param {UniqueStatsEntry} entry
  * @param {Array<object>} bases
  * @returns {object|null}
  */
@@ -453,19 +538,17 @@ export function entryToItemDef(entry, bases) {
   if (!rarityInfo) return null;
 
   const parsed = parseItemStats(entry.stats || '');
-  const base = findBaseForType(entry.type, entry.quality, bases);
+  const matchedBase = findBaseForType(entry.type, entry.quality, bases);
+  const shapeBase = matchedBase
+    ? null
+    : findShapeBaseForType(entry.type, entry.quality, bases);
 
-  const idPrefix = rarityInfo.rarity === 'set' ? 's' : 'u';
-  const qualitySlug = slugify(entry.quality);
-  let id = `${idPrefix}:${slugify(entry.name)}:${qualitySlug}`;
-  if (entry.quality === 'TU' && entry.tier != null) {
-    id = `${id}:${entry.tier}`;
-  }
+  const id = overlayIdForEntry(entry, rarityInfo);
 
   /** @type {Record<string, unknown>} */
   const def = {
     id,
-    name: entry.name,
+    name: displayNameForEntry(entry),
     rarity: rarityInfo.rarity,
     modifiers: parsed.modifiers,
   };
@@ -474,6 +557,22 @@ export function entryToItemDef(entry, bases) {
   if (rarityInfo.tier != null) def.tier = rarityInfo.tier;
   else if (entry.tier != null) def.tier = entry.tier;
   if (entry.type) def.baseType = String(entry.type).trim();
+  if (entry.quality === 'Relic') {
+    def.category = 'relics';
+    def.type = 'relic';
+    def.keepInInventory = true;
+    def.icon = 'relic01';
+    def.invWidth = 1;
+    def.invHeight = 1;
+    def.slot = null;
+  } else if (entry.quality === 'Charm') {
+    def.category = 'charms';
+    def.type = 'charm';
+    def.keepInInventory = true;
+    def.invWidth = 1;
+    def.invHeight = 1;
+    def.slot = null;
+  }
 
   if (parsed.reqLevel != null) def.reqLevel = parsed.reqLevel;
   if (parsed.reqStr != null) def.reqStr = parsed.reqStr;
@@ -490,30 +589,39 @@ export function entryToItemDef(entry, bases) {
 
   if (entry.class) def.group = entry.class;
 
-  if (base) {
-    def.baseId = base.id;
-    def.baseName = base.name;
-    def.type = base.type;
-    def.category = base.category;
-    def.slot = base.slot;
-    def.invWidth = base.invWidth ?? 1;
-    def.invHeight = base.invHeight ?? 1;
-    def.icon = base.icon;
-    if (base.group && !def.group) def.group = base.group;
-    if (base.classRestriction && !def.classRestriction) {
-      def.classRestriction = base.classRestriction;
+  const applyBaseShape = (src, { asCatalogBase }) => {
+    if (asCatalogBase) {
+      def.baseId = src.id;
+      def.baseName = src.name;
+    } else {
+      def.baseName = String(entry.type || src.name || '').trim() || src.name;
     }
-    if (base.speed != null) def.speed = base.speed;
-    if (base.range != null) def.range = base.range;
-    if (base.strDamageBonus != null) def.strDamageBonus = base.strDamageBonus;
-    if (base.dexDamageBonus != null) def.dexDamageBonus = base.dexDamageBonus;
-    if (!def.innate && base.innate) def.innate = base.innate;
-    if (base.adds) def.adds = base.adds;
-  } else {
-    // Fallback so jewelry-like items without a matched base still show in picker
-    def.category = def.category || 'other';
-    def.invWidth = 1;
-    def.invHeight = 1;
+    def.type = src.type;
+    def.category = src.category;
+    def.slot = src.slot;
+    def.invWidth = src.invWidth ?? 1;
+    def.invHeight = src.invHeight ?? 1;
+    if (src.icon) def.icon = src.icon;
+    if (src.group && !def.group) def.group = src.group;
+    if (src.classRestriction && !def.classRestriction) {
+      def.classRestriction = src.classRestriction;
+    }
+    if (src.speed != null) def.speed = src.speed;
+    if (src.range != null) def.range = src.range;
+    if (src.strDamageBonus != null) def.strDamageBonus = src.strDamageBonus;
+    if (src.dexDamageBonus != null) def.dexDamageBonus = src.dexDamageBonus;
+    if (!def.innate && src.innate) def.innate = src.innate;
+    if (src.adds) def.adds = src.adds;
+  };
+
+  if (entry.quality !== 'Relic' && entry.quality !== 'Charm') {
+    if (matchedBase) applyBaseShape(matchedBase, { asCatalogBase: true });
+    else if (shapeBase) applyBaseShape(shapeBase, { asCatalogBase: false });
+    else {
+      def.category = def.category || 'other';
+      def.invWidth = def.invWidth || 1;
+      def.invHeight = def.invHeight || 1;
+    }
   }
 
   if (rarityInfo.rarity === 'set' && entry.setName) {

@@ -18,13 +18,16 @@ export function modifierColorFromWikiClass(className) {
   const names = String(className || '')
     .toLowerCase()
     .split(/\s+/);
-  if (names.includes('item-orange')) return MODIFIER_COLOR_ORANGE;
-  if (names.includes('item-runeword')) return MODIFIER_COLOR_GREY;
-  if (names.includes('item-magic')) return MODIFIER_COLOR_MAGIC;
-  if (names.includes('item-basic')) return 'basic';
-  if (names.includes('item-red')) return 'red';
-  if (names.includes('item-set')) return 'set';
-  if (names.includes('item-darkgreen')) return 'darkgreen';
+  if (names.includes('item-orange') || names.includes('mxl-orange') || names.includes('mxl-unique')) {
+    return MODIFIER_COLOR_ORANGE;
+  }
+  if (names.includes('item-runeword') || names.includes('mxl-grey')) return MODIFIER_COLOR_GREY;
+  if (names.includes('item-magic') || names.includes('mxl-magic')) return MODIFIER_COLOR_MAGIC;
+  if (names.includes('item-basic') || names.includes('mxl-basic')) return 'basic';
+  if (names.includes('mxl-tan')) return MODIFIER_COLOR_ORANGE;
+  if (names.includes('item-red') || names.includes('mxl-red')) return 'red';
+  if (names.includes('item-set') || names.includes('mxl-set')) return 'set';
+  if (names.includes('item-darkgreen') || names.includes('mxl-darkgreen')) return 'darkgreen';
   return '';
 }
 

@@ -113,8 +113,8 @@ export function htmlToColoredLines(html) {
     if (tag !== 'span') continue;
     if (match[0].startsWith('</')) {
       const entry = stack[stack.length - 1];
+      flushLine();
       if (entry?.title && entry.color === 'orange') {
-        flushLine();
         const title = cleanWikiTitle(entry.title);
         if (title) lines.push({ text: title, color: 'grey' });
       }

@@ -26,12 +26,13 @@ TSW API (needs an IP seen in-game within 24h). `--check` parses without writing.
 
 ## Regenerating `unique-stats-db.json`
 
-Fetch the current 2.14 tiered uniques, sacred uniques, and sets from the raw
-Median XL docs HTML:
+Fetch the current 2.14 tiered uniques, sacred uniques, sets, and Secret Items
+from wiki HTML:
 
 ```
 npm run generate:items -- uniques
 npm run generate:items -- uniques 2.14 --check
+npm run generate:items -- uniques --secrets-only
 ```
 
 Only `public/items/2_14/unique-stats-db.json` is written.

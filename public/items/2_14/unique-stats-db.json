@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-03T16:20:15.999Z",
+  "generatedAt": "2026-10-09T19:04:17.882Z",
   "entries": [
     {
       "name": "Achilios' Eagle Eye",
@@ -1621,6 +1621,14 @@
       "type": "Crown (Sacred)"
     },
     {
+      "name": "Akara's Robe",
+      "quality": "SU",
+      "stats": "Required Level: 80\n+1 to All Skills\n+500 Defense\n+(31 to 50) to all Attributes\n+200 to Life\nElemental Resists +(31 to 40)%\nRequirements -(21 to 30)%",
+      "source": "secret",
+      "variant": "Hell",
+      "type": "Quilted Armor (Sacred)"
+    },
+    {
       "name": "Akarat's Trek",
       "quality": "SU",
       "stats": "Defense:\n(1960 - 2352) to (2170 - 2604)\nRequired Level: 100\nRequired Strength: 625\nItem Level: 120\n(10 to 40)% Movement Speed\n2% Chance to cast level 30 Hammertime on Melee Attack\n2% Chance to cast level 30 Thunder Wave on Melee Attack\n2% Chance to cast level 30 Thunder Hammer Nova on Melee Attack\n+(15 to 20) to Charged Strike\nWeapon Physical Damage +(60 to 90)%\n+(150 to 200)% Enhanced Defense\n10% to All Attributes\n+10 to Light Radius\nSocketed (4)",
@@ -2023,6 +2031,13 @@
       "type": "Spiked Shield (Sacred)"
     },
     {
+      "name": "Celestial Sigil",
+      "quality": "SU",
+      "stats": "Required Level: 125\nItem Level: 110\n{grey}Level 20 Warp Field Aura\n{grey}Reduces enemy Movement Speed by 20%\n{grey}Nullifies range of most Teleport skills\n{grey}8 Yard Radius\n+(2 to 5) to All Skills\n1% Chance to cast level 5 Gift of Celerity on Death Blow\n5% Innate Elemental Damage\n+20% to Spell Damage\n5% Deadly Strike\nLightning Resist -100%",
+      "source": "secret",
+      "type": "Amulet"
+    },
+    {
       "name": "Champion of the Triune",
       "quality": "SU",
       "stats": "Defense:\n5209 to 6598\nRequired Level: 115\nRequired Strength: 665\nItem Level: 120\n{grey}Ethereal\n6% Chance to cast level 1 Force Blast on Melee Attack\n5% Deadly Strike\n+200% Enhanced Defense\n+(100 to 1000) Defense\n+(100 to 150) to Strength\nElemental Resists -15%\nPhysical Resist 5%\nSocketed (2)",
@@ -2203,6 +2218,20 @@
       "type": "Kazarghand (Sacred)"
     },
     {
+      "name": "Desolation",
+      "quality": "SU",
+      "stats": "Required Level: 125\nItem Level: 110\n{orange}Adds 4000 - 5000 Magic Damage\n1% Chance to cast level 21 Lifeblood on Striking\n5% Chance to cast level 60 Dark Power on Kill\n+1 to Ultimate Chaos\nLightning Resist -100%\nPhysical Resist (15 to 25)%\n100% Magic Find",
+      "source": "secret",
+      "type": "Voidsworn Bow"
+    },
+    {
+      "name": "Despondence",
+      "quality": "SU",
+      "stats": "Required Level: 125\nItem Level: 110\n{grey}Despair\n{grey}Nearby Enemies: -30% Attack Rating and -25% Weapon Physical Damage\n{grey}16.6 Yard Radius\n+50% to Spell Damage\n-(20 to 30)% to Enemy Cold Resistance\n+1 to Vindicate\n+(20 to 30) to Voidstar\n+(600 to 1000) to Life\nLightning Resist -100%",
+      "source": "secret",
+      "type": "Voidforged Staff"
+    },
+    {
       "name": "Deviant Crown",
       "quality": "SU",
       "stats": "Defense:\n1958 to 2106\n(Amazon Only)\nRequired Level: 60\nRequired Dexterity: 534\nItem Level: 120\n{orange}If you have No Points in Lioness, Shieldmaiden,\n{orange}Thundermaiden, Crimson Rite and Dragonlore:\n{grey}+50% Cast Speed\n{grey}+100% Magic Find\n{grey}+33% Deadly Strike\n{grey}+25% Physical Resist\n{grey}+600 Spell Focus\n+(4 to 5) to Amazon Skill Levels\n+100% Enhanced Defense\nMaximum Elemental Resists +2%\nSocketed (4)",
@@ -2275,6 +2304,34 @@
       "type": "Ring"
     },
     {
+      "name": "Elemental Band (Cold)",
+      "quality": "SU",
+      "stats": "Required Level: 100\nItem Level: 150\n+1 to All Skills\n+(20 to 25)% to Cold Spell Damage\n-(10 to 12)% to Enemy Cold Resistance\n+(4 to 6) to Frigid Domain\nMaximum Cold Resist +2%\nCold Resist +20%\nActivation Frequency 20%",
+      "source": "secret",
+      "type": "Ring"
+    },
+    {
+      "name": "Elemental Band (Fire)",
+      "quality": "SU",
+      "stats": "Required Level: 100\nItem Level: 150\n+1 to All Skills\n+(20 to 25)% to Fire Spell Damage\n-(10 to 12)% to Enemy Fire Resistance\n+(6 to 13) to Path of Flames\nMaximum Fire Resist +2%\nFire Resist +20%\nActivation Frequency 20%",
+      "source": "secret",
+      "type": "Ring"
+    },
+    {
+      "name": "Elemental Band (Lightning)",
+      "quality": "SU",
+      "stats": "Required Level: 100\nItem Level: 150\n+1 to All Skills\n+(20 to 25)% to Lightning Spell Damage\n-(10 to 12)% to Enemy Lightning Resistance\n+(8 to 14) to Nova Charge\n+20 to Energy\nMaximum Lightning Resist +2%\nActivation Frequency 20%",
+      "source": "secret",
+      "type": "Ring"
+    },
+    {
+      "name": "Elemental Band (Poison)",
+      "quality": "SU",
+      "stats": "Required Level: 100\nItem Level: 150\n+1 to All Skills\n+(20 to 25)% to Poison Spell Damage\n-(10 to 12)% to Enemy Poison Resistance\n+(11 to 21) to Hive\nMaximum Poison Resist +3%\nPoison Length Reduction 20%\nActivation Frequency 20%",
+      "source": "secret",
+      "type": "Ring"
+    },
+    {
       "name": "Elemental Disciple",
       "quality": "SU",
       "stats": "Defense:\n(6034 - 7131) to (7246 - 8564)\nRequired Level: 80\nRequired Strength: 650\nItem Level: 105\n+(1 to 4) to Paladin Skill Levels\n+(1 to 4) to Assassin Skill Levels\n+(1 to 4) to Druid Skill Levels\n1% Base Block Chance\n+(15 to 35)% to Fire Spell Damage\n-15% to Enemy Fire Resistance\n+(15 to 35)% to Lightning Spell Damage\n-15% to Enemy Lightning Resistance\n+(120 to 160)% Enhanced Defense\nRegenerate Mana +30%\n20% Gold Find\nSocketed (6)",
@@ -2333,6 +2390,13 @@
       "quality": "SU",
       "stats": "Two-Hand Damage:\n(213 - 311) to (302 - 352)\n(Druid Only)\nRequired Level: 100\nRequired Strength: 555\nItem Level: 105\nStrength Damage Bonus: (0.16 per Strength)%\n{orange}Laughing Ghost: +8% Bonus Magic Damage per Summon Skill Base Level\n1% Chance to cast level 10 Arrow on Striking\nAdds (50 to 120)-(130 to 150) Damage\n15% Life stolen per Hit\n+(130 to 170)% Enhanced Damage\n+28 to Laughing Ghost\nFire Absorb (1 to 5)%\nLightning Absorb (1 to 5)%\nCold Absorb (1 to 5)%\n(25 to 50)% Bonus to Defense\nSocketed (6)",
       "type": "Serpent Bow (Sacred)"
+    },
+    {
+      "name": "Faithless",
+      "quality": "SU",
+      "stats": "Required Level: 80\nItem Level: 150\n{orange}Queen of Blades: +50% Area of Effect\n+200% Enhanced Damage\nAdds 155-170 Damage\nMaximum Fire Resist +(1 to 2)%\nMaximum Cold Resist +(1 to 2)%\nMaximum Poison Resist +(1 to 2)%\nRequirements +100%",
+      "source": "secret",
+      "type": "Blade Talons (Sacred)"
     },
     {
       "name": "Farsight Globe",
@@ -2935,6 +2999,13 @@
       "type": "Gothic Shield (Sacred)"
     },
     {
+      "name": "Maleficence",
+      "quality": "SU",
+      "stats": "Required Level: 125\nItem Level: 110\n1% Chance to cast level 20 Orb of Annihilation on Striking\n+200% Enhanced Damage\n+50 to Harbinger\nLightning Resist -100%\n(1 to 5)% Chance to Avoid Damage\n+3% to Experience Gained",
+      "source": "secret",
+      "type": "Tyrannical Blade"
+    },
+    {
       "name": "Malevolence",
       "quality": "SU",
       "stats": "One-Hand Damage: 37 to 40\n(Necromancer Only)\nRequired Level: 100\nRequired Dexterity: 170\nItem Level: 120\nDexterity Damage Bonus: (0.06 per Dexterity)%\n+10% Bonus to Spell Focus\n+(21 to 50)% to Physical/Magic Spell Damage\n+(21 to 50)% to Poison Spell Damage\n-(26 to 35)% to Enemy Poison Resistance\n+(17 to 27) to Venomcloud Totem\n+(101 to 150) to Energy\nMaximum Mana +(11 to 15)%\nSocketed (2)",
@@ -3035,6 +3106,13 @@
       "quality": "SU",
       "stats": "Defense: 2263 to 2331\nRequired Level: 65\nRequired Strength: 500\nItem Level: 130\n{orange}Orb Effects Applied to this Item are Quadrupled\nSocketed (6)",
       "type": "Quilted Armor (Sacred)"
+    },
+    {
+      "name": "Natasha's Legacy",
+      "quality": "SU",
+      "stats": "Required Level: 120\nItem Level: 1\n+(2 to 4) to All Skills\n-(10 to 30)% to Enemy Elemental Resistances\n+(171 to 200)% Enhanced Defense\nMaximum Elemental Resists +(1 to 2)%\nPhysical Resist (5 to 20)%\n100% Bonus to Defense",
+      "source": "secret",
+      "type": "Ornate Plate"
     },
     {
       "name": "Nature's Orphan",
@@ -3199,6 +3277,13 @@
       "type": "Heavy Crossbow (Sacred)"
     },
     {
+      "name": "Raven Mantle",
+      "quality": "SU",
+      "stats": "Required Level: 100\nItem Level: 150\n{orange}100% of Physical/Magic spell damage regenerated as life per second\n+1 to All Skills\n+(40 to 60)% to Physical/Magic Spell Damage\n+200% Enhanced Defense\n+2000 Defense\n+500 to Life\n100% Bonus to Defense\n-2 to Light Radius\nRequirements -33%",
+      "source": "secret",
+      "type": "Ring Mail (Sacred)"
+    },
+    {
       "name": "Razorspine",
       "quality": "SU",
       "stats": "Defense:\n(3714 - 4372) to (3961 - 4663)\nRequired Level: 100\nRequired Strength: 550\nItem Level: 105\n20% Chance to cast level 7 Spike Nova when Struck\n+(58 to 86)% Enhanced Defense\n+(41 to 50) to Strength\n+(250 to 400) Life Regenerated per Second\nPhysical Resist 15%\nSocketed (6)",
@@ -3221,6 +3306,20 @@
       "quality": "SU",
       "stats": "Two-Hand Damage:\n(389 - 408) to (403 - 423)\nRequired Level: 100\nRequired Dexterity:\n1404\nItem Level: 120\nDexterity Damage Bonus: (0.15 per Dexterity)%\n{orange}Mega Impact\n{grey}25% Chance to Cast on Attack: Reduces target physical resistance by -7% for 2 seconds.\n50% Attack Speed\n50% Hit Recovery\n+225 Damage\n+(170 to 200)% Enhanced Damage\n50% Chance of Crushing Blow\nPhysical Resist (8 to 15)%\n100% Bonus to Defense\nRequirements +500%\nSocketed (4)",
       "type": "Battle Staff (Sacred)"
+    },
+    {
+      "name": "Ring of Pride",
+      "quality": "SU",
+      "stats": "Item Level: 1",
+      "source": "secret",
+      "type": "Ring"
+    },
+    {
+      "name": "Ring of Virtue",
+      "quality": "SU",
+      "stats": "{orange}Quest Ring\nRequired Level: 130\nItem Level: 1\n+1 to Scream of Trag'Oul\n+(26 to 50) to all Attributes\n+200 to Life\n+100 to Mana\n+(6 to 15) to Light Radius",
+      "source": "secret",
+      "type": "Sigil of Deadly Sins"
     },
     {
       "name": "Ring of Woe",
@@ -3907,6 +4006,13 @@
       "type": "Tower Shield (Sacred)"
     },
     {
+      "name": "Valkyrie's Prime",
+      "quality": "SU",
+      "stats": "Required Level: 110\nItem Level: 105\n+(1 to 4) to All Skills\n35% Chance to cast level 15 Arrow on Striking\n100% Chance to cast level 1 Athulua's Wrath when you Die\n+(151 to 200)% Enhanced Damage\nAdds 180-220 Damage\nIgnore Target's Defense\n+(20 to 25) to Sky Siege\nMaximum Elemental Resists +(1 to 2)%\n{grey}- Athulua's Determination -",
+      "source": "secret",
+      "type": "Sacred Bow"
+    },
+    {
       "name": "Valthek's Command",
       "quality": "SU",
       "stats": "Two-Hand Damage: 63 to 69\n(Sorceress Only)\nRequired Level: 100\nRequired Dexterity: 333\nItem Level: 120\nDexterity Damage Bonus: (0.15 per Dexterity)%\n{orange}Mana Sweep: +30% Total Damage, Leeches no Mana\n+(9 to 11) to Sorceress Skill Levels\n4% Chance to cast level 50 Vizjerei Rage on Death Blow\n+(500 to 888) to Life\n+(500 to 888) to Mana\nPhysical Resist 10%\n+50% Mana Cost of Skills\nSocketed (6)",
@@ -3971,6 +4077,13 @@
       "quality": "SU",
       "stats": "Defense:\n6435 to 7705\n(Barbarian Only)\nRequired Level: 100\nRequired Strength: 500\nItem Level: 120\n+(25 to 40)% to Physical/Magic Spell Damage\n+(15 to 20) to War Cry\n+200% Enhanced Defense\n+(3000 to 4000) Defense\nMaximum Mana +15%\nMaximum Elemental Resists +1%\nSocketed (4)",
       "type": "Horned Helm (Sacred)"
+    },
+    {
+      "name": "Void-Infused",
+      "quality": "SU",
+      "stats": "Item Level: 140\n{orange}Erupting Strike grants 16% extra bonus fire damage per character level above 137\n25% Chance to cast level 1 Corrupted Vines on Death Blow\n-40% to Enemy Fire Resistance\nPhysical Resist 20%\n100% Magic Find\nRequirements +600%\n{orange}And the Abyss Stares Back",
+      "source": "secret",
+      "type": "Maple Bow (Sacred)"
     },
     {
       "name": "Void-Touched",
@@ -4181,6 +4294,24 @@
       "stats": "Defense:\n(1104 - 1173) to (1358 - 1443)\nRequired Level: 48\nRequired Strength: 402\nItem Level: 77\n30% Cast Speed\n+(14 to 15)% to Fire Spell Damage\n+(14 to 15)% to Lightning Spell Damage\n+(14 to 15)% to Cold Spell Damage\n+(75 to 86)% Enhanced Defense\n+(36 to 40) to Energy\nElemental Resists +(18 to 20)%\nElemental/Magic Damage Taken Reduced by (18 to 20)\nSocketed (2)",
       "tier": 4,
       "type": "Belt (4)"
+    },
+    {
+      "name": "Akara's Robe",
+      "quality": "TU",
+      "stats": "Required Level: 10\n+50 Defense\n+(6 to 10) to all Attributes\n+50 to Life\nElemental Resists +(11 to 15)%\n{orange}Cannot be Upgraded",
+      "source": "secret",
+      "variant": "Normal",
+      "tier": 1,
+      "type": "Quilted Armor (1)"
+    },
+    {
+      "name": "Akara's Robe",
+      "quality": "TU",
+      "stats": "Required Level: 50\n+1 to All Skills\n+250 Defense\n+(11 to 20) to all Attributes\n+100 to Life\nElemental Resists +(21 to 25)%\n{orange}Cannot be Upgraded",
+      "source": "secret",
+      "variant": "Nightmare",
+      "tier": 3,
+      "type": "Quilted Armor (3)"
     },
     {
       "name": "Al Nath",
@@ -10423,6 +10554,128 @@
       "stats": "Defense:\n(446 - 505) to (490 - 555)\n(Amazon Only)\nRequired Level: 45\nRequired Strength: 350\nItem Level: 77\n+3 to Amazon Skill Levels\n+(12 to 16)% to Lightning Spell Damage\n-15% to Enemy Lightning Resistance\n+(121 to 150)% Enhanced Defense\nLightning Resist +(66 to 75)%\nPhysical Resist 5%\n(18 to 20)% Bonus to Defense\nSocketed (4)",
       "tier": 4,
       "type": "Morion (4)"
+    },
+    {
+      "name": "Blood of Creation",
+      "quality": "Relic",
+      "stats": "Required Level: 50\nItem Level: 150\n{orange}+1 to Crystalline Arsenal\n{orange}While holding a Javelin:\n{orange}Launches a massive frozen spike that splits into smaller bursts, which split again into small spikes\n{orange}Main spike deals 200% weapon damage, each split halves damage\n+1 to Crystalline Arsenal\n{orange}While holding a Spear:\n{orange}Strike the ground in front of you, releasing an pulsing nova of cold\n{orange}Deals up to 2800% Weapon damage at the center\n{orange}While holding a Bow:\n{orange}Fire an ice mine that slows to a halt a short distance in front of you\n{orange}before exploding into a rapid barrage of homing ice arrows\n{orange}Enemies can trigger the mine prematurely upon contact\n{orange}Deals 50% Weapon Damage\n{orange}Blessing of Karcheus",
+      "source": "secret",
+      "variant": "Version 1",
+      "type": "Relic"
+    },
+    {
+      "name": "Blood of Creation",
+      "quality": "Relic",
+      "stats": "Required Level: 50\nItem Level: 150\n{orange}Servants of Valor:\n{orange}Doubled Fire Damage, Attack Speed, and Movement Speed\n{orange}Inherits Fire Pierce from Elemental Wisdom twice\n{orange}After taking damage, Servants lose 10% of their life per second until they die\n{orange}Sacrificial Fervor",
+      "source": "secret",
+      "variant": "Version 2",
+      "type": "Relic"
+    },
+    {
+      "name": "Blood of Creation",
+      "quality": "Relic",
+      "stats": "Required Level: 50\nItem Level: 150\n+1 to Clear Mind\n{orange}A Blank Slate of Infinite Potential",
+      "source": "secret",
+      "variant": "Version 3",
+      "type": "Relic"
+    },
+    {
+      "name": "Blood of Creation",
+      "quality": "Relic",
+      "stats": "Required Level: 1\nItem Level: 150\n+1 to The Last Warchief\n{orange}Famous last words",
+      "source": "secret",
+      "variant": "Version 4",
+      "type": "Relic"
+    },
+    {
+      "name": "Blood of Creation",
+      "quality": "Relic",
+      "stats": "Required Level: 90\nItem Level: 150\nIf you have Veil King:\nBlood Skeletons inherit Catapult Shot's Fire Damage\nBlood Skeletons get Double Benefit from Minion Life Stats\nIf you have Rathma's Chosen:\n+12% Minion Life per Summon Tree Minion Base Level\n+15% Weapon Physical Damage per Summon Tree Minion Base Level\nIf you have Jinn:\n+30% Totem damage synergy",
+      "source": "secret",
+      "variant": "Version 5",
+      "type": "Relic"
+    },
+    {
+      "name": "Blood of Creation",
+      "quality": "Relic",
+      "stats": "Required Level: 10\nItem Level: 150\n{grey}While attacking with Crucify:\n{grey}Laserblade works with all weapons\n{grey}10% Chance to Cast Level 60 Crucify on Kill\n{grey}1% Chance to Cast Level 60 Crucify on Striking\n10% Chance to cast level 60 Slayer on Kill\n1% Chance to cast level 60 Slayer on Striking",
+      "source": "secret",
+      "variant": "Version 6",
+      "type": "Relic"
+    },
+    {
+      "name": "Blood of Creation",
+      "quality": "Relic",
+      "stats": "Required Level: 50\nItem Level: 150\n{orange}While in human form:\n{orange}Gain 1 Maximum Stamina per 100 Vitality\n{orange}Gain 3-5 Physical Damage with melee weapons per 1 Stamina\n{orange}The hunter persists. The prey falters",
+      "source": "secret",
+      "variant": "Version 7",
+      "type": "Relic"
+    },
+    {
+      "name": "Bonehexer's Puzzlebox",
+      "quality": "Relic",
+      "stats": "Required Level: 140\nItem Level: 139",
+      "source": "secret",
+      "type": "Relic"
+    },
+    {
+      "name": "Time-Lost Relic",
+      "quality": "Relic",
+      "stats": "Required Level: 75\nItem Level: 1\n{orange}Cube with Essence of Time to uncover a Skill, Recipe or Unique item mod\n{orange}from the Future, Past, or from a different Timeline entirely...",
+      "source": "secret",
+      "type": "Relic"
+    },
+    {
+      "name": "Time-Lost Relic",
+      "quality": "Relic",
+      "stats": "Required Level: 75\n{orange}Chance to Cast level 60 Cone of Cold on Melee Attack equal to your Deadly/Critical Strike chance\n{orange}Cone of Cold Size increased by 50% per 10 Trophied Charms you have",
+      "source": "secret",
+      "variant": "Outcome 1",
+      "type": "Relic"
+    },
+    {
+      "name": "Time-Lost Relic",
+      "quality": "Relic",
+      "stats": "Required Level: 75\n{orange}While your uncapped Lightning Resist, Lightning Spell Damage and Spell Focus sum up to exactly 2000\n{orange}Become Lightning Enchanted\n{orange}(4% Chance to Cast level 50 Spark Nova when Damaged)",
+      "source": "secret",
+      "variant": "Outcome 2",
+      "type": "Relic"
+    },
+    {
+      "name": "Time-Lost Relic",
+      "quality": "Relic",
+      "stats": "Required Level: 75\n+(12 to 16) to Fire Cannonade",
+      "source": "secret",
+      "variant": "Outcome 3",
+      "type": "Relic"
+    },
+    {
+      "name": "Time-Lost Relic",
+      "quality": "Relic",
+      "stats": "Required Level: 75\n+(10 to 16) to Judgement Day",
+      "source": "secret",
+      "variant": "Outcome 4",
+      "type": "Relic"
+    },
+    {
+      "name": "Time-Lost Relic",
+      "quality": "Relic",
+      "stats": "Required Level: 75\n+25 to Resurrect\n+1 to Body of the Savior",
+      "source": "secret",
+      "variant": "Outcome 5",
+      "type": "Relic"
+    },
+    {
+      "name": "Essence of Time",
+      "quality": "Charm",
+      "stats": "Required Level: 1\nItem Level: 1\n+1 to Time Warp\nMaximum Life +10%\n{orange}He who fights with monsters\n{orange}might take care lest he\n{orange}thereby become a monster\n{orange}And if you gaze for long into an abyss\n{orange}the abyss gazes also into you",
+      "source": "secret"
+    },
+    {
+      "name": "Skinrender's Ear",
+      "quality": "Charm",
+      "stats": "Required Level: 140\nItem Level: 139\n{orange}+30% Magic Resist in Heroic Duncraig\n+150 Life Regenerated per Second",
+      "source": "secret"
     }
   ]
 }

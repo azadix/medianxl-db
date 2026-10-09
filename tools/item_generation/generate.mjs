@@ -10,6 +10,7 @@
  *   npm run generate:items -- charms
  *   npm run generate:items -- all
  *   npm run generate:items -- uniques relics runewords 2.14 --check
+ *   npm run generate:items -- uniques --secrets-only
  *   npm run generate:items -- runewords --from-html path/to/page.html
  */
 
