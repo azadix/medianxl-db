@@ -11,6 +11,7 @@
     --item-rarity-runeword: #a8a8a8;
     --item-rarity-relic: #c7b377;
     --item-rarity-crafted: #ff9b2f;
+    --item-rarity-honorific: #4a9a5a;
     --item-mod-orange: #ffa500;
     --item-mod-grey: #a8a8a8;
     --item-rarity-color: var(--item-rarity-normal);
@@ -35,6 +36,8 @@
 .item-rarity--runeword { --item-rarity-color: var(--item-rarity-runeword); }
 .item-rarity--relic { --item-rarity-color: var(--item-rarity-relic); }
 .item-rarity--crafted { --item-rarity-color: var(--item-rarity-crafted); }
+.item-rarity--honorific { --item-rarity-color: var(--item-rarity-honorific); }
+.item-rarity--angelic { --item-rarity-color: var(--item-rarity-rare); }
 
 #tree-section {
     height: calc(100vh - 3.25rem);
@@ -647,6 +650,14 @@
 
 .item-tooltip-name--crafted {
     color: var(--item-rarity-crafted);
+}
+
+.item-tooltip-name--honorific {
+    color: var(--item-rarity-honorific);
+}
+
+.item-tooltip-name--angelic {
+    color: var(--item-rarity-rare);
 }
 
 .item-tooltip .item-tooltip-set-bonuses {

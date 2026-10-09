@@ -13,6 +13,11 @@ import { isCharmItem, isDimensionalKeyCharm } from '@/items/charm-items.js';
 import { isRelicItem, MAX_RELICS } from '@/items/relic-items.js';
 import { EQUIPMENT_SLOTS } from '@/items/item-types.js';
 import { slugify } from '@/items/unique-stats-catalog.js';
+import {
+  resolveCustomBaseDefId,
+  tswCustomQuality,
+  tswCustomSnapshotEntry,
+} from '@/items/custom-items.js';
 
 /** @type {Readonly<Record<string, string>>} */
 export const TSW_SLOT_TO_EQUIPMENT = Object.freeze({
@@ -317,11 +322,11 @@ function isCatalogBacked(row, def) {
  * Map a TSW items dump onto `{ weaponSet, equipment, charms, relics }`.
  * @param {unknown} rows
  * @param {object} catalog
- * @returns {{ snapshot: { weaponSet: 0, equipment: Record<string, { defId: string }|null>, charms: Array<{ defId: string }>, relics: Array<{ defId: string }> }, skipped: Array<{ name: string, reason: string }> }}
+ * @returns {{ snapshot: { weaponSet: 0, equipment: Record<string, { defId: string, custom?: object, icon?: string }|null>, charms: Array<{ defId: string }>, relics: Array<{ defId: string }> }, skipped: Array<{ name: string, reason: string }> }}
  */
 export function mapTswItemsToSnapshot(rows, catalog) {
   const cat = catalogIndex(catalog);
-  /** @type {Record<string, { defId: string }|null>} */
+  /** @type {Record<string, { defId: string, custom?: object, icon?: string }|null>} */
   const equipment = {};
   for (const slot of EQUIPMENT_SLOTS) equipment[slot] = null;
   /** @type {Array<{ defId: string }>} */
@@ -342,6 +347,27 @@ export function mapTswItemsToSnapshot(rows, catalog) {
     const location = String(row.location || '').trim();
     if (location !== 'Gear' && location !== 'Inventory') {
       skipped.push({ name, reason: 'stash' });
+      continue;
+    }
+
+    const customQuality = tswCustomQuality(row);
+    if (customQuality) {
+      if (location !== 'Gear') {
+        skipped.push({ name, reason: 'uncatalogued' });
+        continue;
+      }
+      const slotKey = TSW_SLOT_TO_EQUIPMENT[String(row.slot || '')];
+      if (!slotKey) {
+        skipped.push({ name, reason: 'unknown-slot' });
+        continue;
+      }
+      const defId = resolveCustomBaseDefId(row, cat, customQuality);
+      const def = defId ? cat.byId[defId] : null;
+      if (!defId || !def) {
+        skipped.push({ name, reason: 'uncatalogued' });
+        continue;
+      }
+      equipment[slotKey] = tswCustomSnapshotEntry(row, defId, customQuality);
       continue;
     }
 

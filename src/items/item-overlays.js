@@ -60,6 +60,7 @@ export function isOverlayItem(def) {
   if (def.category === 'charms' || def.type === 'charm' || def.keepInInventory) return false;
   if (def.category === 'relics' || def.rarity === 'relic') return false;
   return (
+    Boolean(def.customQuality) ||
     Boolean(def.baseId) ||
     def.rarity === 'unique' ||
     def.rarity === 'set' ||

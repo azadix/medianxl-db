@@ -44,6 +44,7 @@ import {
   runewordEntryToItemDef,
   runewordFitsEquipSlot,
 } from '@/items/runeword-items.js';
+import { applyCustomOverlayToDef, parseCustomPayload } from '@/items/custom-items.js';
 
 /**
  * @typedef {{ location: 'equipment'|'inventory'|'charms'|'relics', slot: string|number }} SlotRef
@@ -95,11 +96,18 @@ import {
  *   defenseDisplay?: string,
  * }} ItemDef
  * @typedef {{ id: string, name: string, bonuses: Array<{ required: number|string, modifiers: string[] }> }} SetDef
- * @typedef {{ defId: string, icon: string, rolls?: Record<string, number> }} ItemInstance
+ * @typedef {{ quality: 'magic'|'rare'|'crafted'|'honorific'|'angelic', name?: string, modifiers: string[] }} CustomItemPayload
+ * @typedef {{ defId: string, icon: string, rolls?: Record<string, number>, custom?: CustomItemPayload }} ItemInstance
+ * @typedef {{
+ *   defId: string,
+ *   icon?: string,
+ *   rolls?: Record<string, number>,
+ *   custom?: CustomItemPayload
+ * }} ItemSnapshotEntry
  * @typedef {{
  *   weaponSet: 0|1,
- *   equipment: Record<string, string|{ defId: string, icon?: string, rolls?: Record<string, number> }|null>,
- *   inventory: Array<{ slot: number, defId: string, icon?: string, rolls?: Record<string, number> }>,
+ *   equipment: Record<string, string|ItemSnapshotEntry|null>,
+ *   inventory: Array<{ slot: number } & ItemSnapshotEntry>,
  *   charms: Array<{ defId: string, rolls?: Record<string, number> }>,
  *   relics: Array<{ defId: string, rolls?: Record<string, number> }>
  * }} ItemsSnapshot
@@ -110,6 +118,25 @@ import {
  * @param {Partial<ItemsSnapshot>|null|undefined} snap
  * @returns {boolean}
  */
+/**
+ * @param {ItemInstance|null|undefined} inst
+ * @returns {ItemSnapshotEntry|string|null}
+ */
+function snapshotInstanceEntry(inst) {
+  const defId = inst?.defId;
+  if (!defId) return null;
+  const hasIcon = Boolean(inst.icon);
+  const hasRolls = Boolean(inst.rolls && Object.keys(inst.rolls).length);
+  const custom = parseCustomPayload(inst.custom);
+  if (!hasIcon && !hasRolls && !custom) return defId;
+  /** @type {ItemSnapshotEntry} */
+  const entry = { defId };
+  if (hasIcon) entry.icon = inst.icon;
+  if (hasRolls) entry.rolls = { ...inst.rolls };
+  if (custom) entry.custom = custom;
+  return entry;
+}
+
 export function itemsSnapshotHasState(snap) {
   if (!snap || typeof snap !== 'object') return false;
   if (snap.weaponSet === 1) return true;
@@ -480,12 +507,13 @@ export const useItemsStore = defineStore('items', {
      * @param {string} defId
      * @param {string|null|undefined} [icon]
      * @param {Record<string, number>|null|undefined} [rolls]
+     * @param {unknown} [custom]
      * @returns {number}
      */
-    createInstance(defId, icon = null, rolls = null) {
+    createInstance(defId, icon = null, rolls = null, custom = null) {
       const id = this.nextInstanceId++;
       const def = this.catalogById[defId];
-      /** @type {{ defId: string, icon: string, rolls?: Record<string, number> }} */
+      /** @type {ItemInstance} */
       const inst = {
         defId,
         icon: pickItemIcon(def, icon),
@@ -493,6 +521,8 @@ export const useItemsStore = defineStore('items', {
       if (rolls && typeof rolls === 'object' && Object.keys(rolls).length) {
         inst.rolls = { ...rolls };
       }
+      const parsedCustom = parseCustomPayload(custom);
+      if (parsedCustom) inst.custom = parsedCustom;
       this.instances[id] = inst;
       return id;
     },
@@ -763,9 +793,7 @@ export const useItemsStore = defineStore('items', {
     getEquipmentDef(slot) {
       const id = this.equipment[slot];
       if (id == null) return null;
-      const inst = this.instances[id];
-      if (!inst) return null;
-      return this.catalogById[inst.defId] ?? null;
+      return this.getDefForInstance(id);
     },
 
     /**
@@ -821,7 +849,8 @@ export const useItemsStore = defineStore('items', {
     getDefForInstance(instanceId) {
       const inst = this.instances[instanceId];
       if (!inst) return null;
-      return this.catalogById[inst.defId] ?? null;
+      const def = this.catalogById[inst.defId] ?? null;
+      return applyCustomOverlayToDef(def, inst.custom);
     },
 
     /**
@@ -1184,7 +1213,7 @@ export const useItemsStore = defineStore('items', {
      * @returns {ItemsSnapshot}
      */
     toSnapshot() {
-      /** @type {Record<string, string|{ defId: string, icon?: string, rolls?: Record<string, number> }|null>} */
+      /** @type {Record<string, string|ItemSnapshotEntry|null>} */
       const equipment = {};
       for (const slot of EQUIPMENT_SLOTS) {
         const id = this.equipment[slot];
@@ -1192,23 +1221,7 @@ export const useItemsStore = defineStore('items', {
           equipment[slot] = null;
           continue;
         }
-        const inst = this.instances[id];
-        const defId = inst?.defId ?? null;
-        if (!defId) {
-          equipment[slot] = null;
-          continue;
-        }
-        const hasIcon = Boolean(inst.icon);
-        const hasRolls = Boolean(inst.rolls && Object.keys(inst.rolls).length);
-        if (!hasIcon && !hasRolls) {
-          equipment[slot] = defId;
-          continue;
-        }
-        /** @type {{ defId: string, icon?: string, rolls?: Record<string, number> }} */
-        const entry = { defId };
-        if (hasIcon) entry.icon = inst.icon;
-        if (hasRolls) entry.rolls = { ...inst.rolls };
-        equipment[slot] = entry;
+        equipment[slot] = snapshotInstanceEntry(this.instances[id]);
       }
       /** @type {Array<{ slot: number, defId: string, icon?: string, rolls?: Record<string, number> }>} */
       const inventory = [];
@@ -1221,11 +1234,13 @@ export const useItemsStore = defineStore('items', {
         const def = this.catalogById[defId];
         // Charms/relics belong in dedicated snapshot arrays (even if still on grid mid-migrate).
         if (isCharmItem(def) || isRelicItem(def)) continue;
-        /** @type {{ slot: number, defId: string, icon?: string, rolls?: Record<string, number> }} */
-        const row = { slot: i, defId };
-        if (inst.icon) row.icon = inst.icon;
-        if (inst.rolls && Object.keys(inst.rolls).length) row.rolls = { ...inst.rolls };
-        inventory.push(row);
+        const entry = snapshotInstanceEntry(inst);
+        if (!entry) continue;
+        if (typeof entry === 'string') {
+          inventory.push({ slot: i, defId: entry });
+        } else {
+          inventory.push({ slot: i, ...entry });
+        }
       }
 
       /**
@@ -1276,7 +1291,7 @@ export const useItemsStore = defineStore('items', {
 
       /**
        * @param {unknown} entry
-       * @returns {{ defId: string, icon: string|null, rolls: Record<string, number>|null }|null}
+       * @returns {{ defId: string, icon: string|null, rolls: Record<string, number>|null, custom: CustomItemPayload|null }|null}
        */
       const parseEntry = (entry) => {
         /** @type {string|undefined} */
@@ -1285,12 +1300,15 @@ export const useItemsStore = defineStore('items', {
         let icon = null;
         /** @type {unknown} */
         let rollsRaw = null;
+        /** @type {unknown} */
+        let customRaw = null;
         if (typeof entry === 'string') {
           defId = entry;
         } else if (entry && typeof entry === 'object') {
           defId = /** @type {{ defId?: unknown }} */ (entry).defId;
           icon = /** @type {{ icon?: unknown }} */ (entry).icon;
           rollsRaw = /** @type {{ rolls?: unknown }} */ (entry).rolls;
+          customRaw = /** @type {{ custom?: unknown }} */ (entry).custom;
         } else {
           return null;
         }
@@ -1317,6 +1335,7 @@ export const useItemsStore = defineStore('items', {
           defId,
           icon: typeof icon === 'string' ? icon : null,
           rolls,
+          custom: parseCustomPayload(customRaw),
         };
       };
 
@@ -1345,7 +1364,7 @@ export const useItemsStore = defineStore('items', {
         for (const slot of EQUIPMENT_SLOTS) {
           const parsed = parseEntry(/** @type {Record<string, unknown>} */ (eq)[slot]);
           if (!parsed || !this.catalogById[parsed.defId]) continue;
-          const id = this.createInstance(parsed.defId, parsed.icon, parsed.rolls);
+          const id = this.createInstance(parsed.defId, parsed.icon, parsed.rolls, parsed.custom);
           this.equipment[slot] = id;
         }
       }
@@ -1386,7 +1405,7 @@ export const useItemsStore = defineStore('items', {
             enableFromSnap(parsed.defId, parsed.rolls, 'relics');
             continue;
           }
-          const id = this.createInstance(parsed.defId, parsed.icon, parsed.rolls);
+          const id = this.createInstance(parsed.defId, parsed.icon, parsed.rolls, parsed.custom);
           const getSize = this.getInstanceSize;
           if (canPlace(this.inventory, slot, def.invWidth || 1, def.invHeight || 1, getSize)) {
             this.inventory = placeAt(this.inventory, slot, id, getSize);

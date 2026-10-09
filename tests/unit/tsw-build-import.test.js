@@ -16,6 +16,10 @@ const ROOT = resolve(import.meta.dirname, '../..');
 const catalog = {
   catalog: [
     { id: '@17', name: 'Skull Cap', rarity: 'normal', category: 'armor' },
+    { id: 'rin', name: 'Ring', rarity: 'normal', category: 'jewelry' },
+    { id: 'amu', name: 'Amulet', rarity: 'normal', category: 'jewelry' },
+    { id: '@36', name: 'Light Gauntlets (Sacred)', rarity: 'normal', category: 'armor', slot: 'glov' },
+    { id: 'cap-sacred', name: 'Cap (Sacred)', rarity: 'normal', category: 'armor', slot: 'head' },
     { id: 'u:lacuni-cowl:su', name: 'Lacuni Cowl', uniqueKind: 'su', rarity: 'unique' },
     { id: 'a68', name: "Horazon's Focus", type: 'charm', category: 'charms', keepInInventory: true },
     {
@@ -82,7 +86,7 @@ describe('tsw-build-import', () => {
     ).toEqual({ normal: false, nightmare: false, hell: false });
   });
 
-  it('maps Head unique, charm code, Primordia, and relic; skips rare rings', () => {
+  it('maps Head unique, charm code, Primordia, relic, and a rare ring', () => {
     const rows = [
       {
         item: 'Lacuni Cowl',
@@ -121,16 +125,87 @@ describe('tsw-build-import', () => {
         display_name: 'Ring',
         quality: 'Rare',
         display_quality: 'Rare',
+        code: 'rin',
         location: 'Gear',
         slot: 'LeftFinger',
+        description_lines: [[['Ring', 9]], [['Prefixes: 3', 9]], [['+1 to All Skills', 3]]],
       },
     ];
     const { snapshot, skipped } = mapTswItemsToSnapshot(rows, byIdCatalog());
     expect(snapshot.equipment.head).toEqual({ defId: 'u:lacuni-cowl:su' });
-    expect(snapshot.equipment.lrin).toBeNull();
+    expect(snapshot.equipment.lrin).toEqual({
+      defId: 'rin',
+      custom: { quality: 'rare', name: 'Ring', modifiers: ['+1 to All Skills'] },
+    });
     expect(snapshot.charms).toEqual([{ defId: 'a68' }, { defId: 'ebw-primordia' }]);
     expect(snapshot.relics).toEqual([{ defId: 'relic:lightning-wall' }]);
-    expect(skipped.some((s) => s.name === 'Ring' && s.reason === 'uncatalogued')).toBe(true);
+    expect(skipped.some((s) => s.name === 'Ring')).toBe(false);
+  });
+
+  it('maps magic, honorific, and angelic gear onto the matching base', () => {
+    const rows = [
+      {
+        item: 'Ring',
+        display_name: 'Ring',
+        type: 'Ring',
+        quality: 'Magic',
+        display_quality: 'Magic',
+        code: 'rin',
+        location: 'Gear',
+        slot: 'RightFinger',
+        description_lines: [[['Ring', 3]], [['+10 to Strength', 3]]],
+      },
+      {
+        item: 'Cap (Honorific)',
+        display_name: 'Cap (Honorific)',
+        type: 'Cap (Sacred)',
+        quality: 'Honorific',
+        location: 'Gear',
+        slot: 'Head',
+        description_lines: [
+          [['Cap (Honorific)', 3]],
+          [['Required Level: 1', 1]],
+          [['+5% Enhanced Defense', 3]],
+        ],
+      },
+      {
+        item: 'Light Gauntlets (Angelic)',
+        display_name: 'Light Gauntlets (Angelic)',
+        type: 'Light Gauntlets (Angelic)',
+        quality: 'Rare',
+        display_quality: 'Rare',
+        code: 'an05',
+        image: 'angelicgloves',
+        location: 'Gear',
+        slot: 'Hands',
+        description_lines: [
+          [['Light Gauntlets (Angelic)', 9]],
+          [['Defense: 670', -1]],
+          [['Required Strength: 600', 1]],
+          [['Prefixes: 3', 9]],
+          [['+3 to All Skills', 3]],
+        ],
+      },
+    ];
+    const { snapshot, skipped } = mapTswItemsToSnapshot(rows, byIdCatalog());
+    expect(skipped).toEqual([]);
+    expect(snapshot.equipment.rrin).toMatchObject({
+      defId: 'rin',
+      custom: { quality: 'magic', name: 'Ring', modifiers: ['+10 to Strength'] },
+    });
+    expect(snapshot.equipment.head).toMatchObject({
+      defId: 'cap-sacred',
+      custom: { quality: 'honorific', name: 'Cap (Honorific)', modifiers: ['+5% Enhanced Defense'] },
+    });
+    expect(snapshot.equipment.glov).toMatchObject({
+      defId: '@36',
+      icon: 'angelicgloves',
+      custom: {
+        quality: 'angelic',
+        name: 'Light Gauntlets (Angelic)',
+        modifiers: ['+3 to All Skills'],
+      },
+    });
   });
 
   it('resolves catalog ids used by the mapper', () => {
@@ -166,9 +241,16 @@ describe('tsw-build-import', () => {
     expect(snapshot.relics.map((row) => row.defId).sort()).toEqual(
       ['relic:hailstorm', 'relic:lightning-wall', 'relic:whirlwind'].sort()
     );
+    expect(snapshot.equipment.lrin?.defId).toBe('rin');
+    expect(snapshot.equipment.lrin?.custom?.quality).toBe('rare');
+    expect(snapshot.equipment.rrin?.custom?.quality).toBe('rare');
+    expect(snapshot.equipment.neck?.custom?.quality).toBe('rare');
+    expect(snapshot.equipment.glov?.custom?.quality).toBe('angelic');
+    expect(snapshot.equipment.feet?.custom?.quality).toBe('angelic');
     expect(skipped.length).toBeGreaterThan(0);
     expect(skipped.every((row) => row.reason === 'uncatalogued' || row.reason === 'stash')).toBe(true);
-    expect(skipped.some((row) => row.name === 'Ring')).toBe(true);
+    expect(skipped.some((row) => row.name === 'Ring')).toBe(false);
+    expect(skipped.some((row) => /Angelic/.test(row.name))).toBe(false);
   });
 });
 

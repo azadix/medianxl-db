@@ -26,6 +26,8 @@ export const ITEM_RARITY_NAME_CLASS = Object.freeze({
   runeword: 'item-tooltip-name--runeword',
   relic: 'item-tooltip-name--relic',
   crafted: 'item-tooltip-name--crafted',
+  honorific: 'item-tooltip-name--honorific',
+  angelic: 'item-tooltip-name--angelic',
 });
 
 /**

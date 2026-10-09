@@ -62,6 +62,8 @@ export function formatItemRarityBadge(def) {
   const rarity = String(def.rarity || '');
   if (rarity === 'set') return 'Set';
   if (rarity === 'unique') return 'Unique';
+  if (rarity === 'honorific') return 'Honorific';
+  if (rarity === 'angelic') return 'Angelic';
   if (rarity === 'crafted') return 'Crafted';
   if (rarity === 'rare') return 'Rare';
   if (rarity === 'magic') return 'Magic';
@@ -251,6 +253,8 @@ const RARITY_SUBTITLE_WORD = Object.freeze({
   runeword: 'Runeword',
   relic: 'Relic',
   crafted: 'Crafted',
+  honorific: 'Honorific',
+  angelic: 'Angelic',
 });
 
 /**
@@ -279,7 +283,7 @@ export function formatItemTooltipSubtitle(def) {
   const typeWord = def.group || ITEM_CATEGORY_LABEL[def.category] || def.category || '';
   const left = [rarityWord, typeWord].filter(Boolean).join(' ').toUpperCase();
   const badge = formatItemRarityBadge(def);
-  const skipBadge = !badge || /^(Unique|Set|RW|Crafted|Rare|Magic|Relic)$/i.test(badge);
+  const skipBadge = !badge || /^(Unique|Set|RW|Crafted|Rare|Magic|Relic|Honorific|Angelic)$/i.test(badge);
   if (!skipBadge && badge) return left ? `${left} · ${badge}` : badge;
   return left;
 }
