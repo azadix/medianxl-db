@@ -166,15 +166,13 @@ export function wrapSkillTooltipContent(innerHtml, sourcesHtml = '') {
 }
 
 /**
- * Planner bonus-toggle banner. Green when enabled, grey when disabled.
+ * Planner bonus-toggle banner. Shown only when bonuses are off.
  * @param {boolean} [disabled]
  * @returns {string}
  */
 export function buildSkillTooltipDisabledBannerHtml(disabled = true) {
-  if (disabled) {
-    return '<div class="has-text-centered has-text-grey has-text-weight-semibold is-size-5">Disabled (bonuses not applied)</div>';
-  }
-  return '<div class="has-text-centered has-text-success has-text-weight-semibold is-size-5">Enabled</div>';
+  if (!disabled) return '';
+  return '<div class="has-text-centered has-text-grey has-text-weight-semibold is-size-5">Disabled (bonuses not applied)</div>';
 }
 
 /**

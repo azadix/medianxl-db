@@ -728,8 +728,8 @@ async function buildTooltipContent(
     const contributionsDisabled = isOSkill
       ? slot !== '' && isOSkillSlotDisabled(slot)
       : Boolean(skillData?.id && isSkillDisabled(skillData.id));
-    if (hasDisableToggle) {
-        bodyParts.push(buildSkillTooltipDisabledBannerHtml(contributionsDisabled));
+    if (hasDisableToggle && contributionsDisabled) {
+        bodyParts.push(buildSkillTooltipDisabledBannerHtml(true));
     }
     
     // Get character state for formula evaluation (needed for all tooltip content)

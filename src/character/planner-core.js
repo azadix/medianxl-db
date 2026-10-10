@@ -439,13 +439,17 @@ export function applyLoadedSkillBonusToggles(payload = {}) {
   if (!ch) return;
   if (Array.isArray(payload.enabledSkills)) {
     ch.setEnabledSkillIds(payload.enabledSkills);
-  } else {
+  } else if (Array.isArray(payload.disabledSkills)) {
     ch.applyLegacyDisabledSkillIds(payload.disabledSkills);
+  } else {
+    ch.setEnabledSkillIds([]);
   }
   if (Array.isArray(payload.enabledOSkillSlots)) {
     ch.setEnabledOSkillSlotIds(payload.enabledOSkillSlots);
-  } else {
+  } else if (Array.isArray(payload.disabledOSkillSlots)) {
     ch.applyLegacyDisabledOSkillSlotIds(payload.disabledOSkillSlots);
+  } else {
+    ch.setEnabledOSkillSlotIds([]);
   }
 }
 
