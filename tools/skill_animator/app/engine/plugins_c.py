@@ -1,48 +1,43 @@
-"""Missile plug-ins (batch C): vanilla D2Game srvhit / srvdo and D2Client cltdo / clthit functions.
+"""Missile plug-ins (batch C): srvhit / srvdo and cltdo / clthit handlers.
 
-Ported from the shipped 1.13c D2Game.dll / D2Client.dll (Median XL install): Ghidra decompile where it was
-readable, raw objdump disassembly everywhere else (most of these functions are not split by Ghidra).
-D2Common ordinals were resolved through the IAT (pe.imports/exports).
-
-Missile-creation parameter struct (FUN_6fc8f930, 0x5c bytes; client FUN_6fb630f0 uses the same layout):
-  +0x00 flags   1=source is (+0x14,+0x18) else unit +0x08 | 2=target = source + (+0x1c,+0x20)
-                0x20=target is absolute (+0x1c,+0x20) | neither: target = source, nudged to (+1,+1) when vel!=0
-                (so a missile created "without target" flies along subtile (+1,+1)) | 4=vel from +0x28
-                (0x10: +0x28 already fixed point, else <<8) | 8=Range += (SubStop-SubStart)*(+0x34) if SubLoop
-                0x200=start at anim frame (+0x40), Range -= it | 0x400=remaining frames = dist(target)/vel
-                (used by FUN_6fcc1880) | 0x800=activate frame = (+0x44) | 0x1000=tohit (+0x48)
-                0x8000=Range override (+0x4c) | 0x4000 (client) = no light
-  +0x04 owner unit   +0x08 source unit   +0x0c target unit   +0x10 missile id
-  +0x14/+0x18 source x/y   +0x1c/+0x20 target x/y (or offset)   +0x28 velocity   +0x2c skill   +0x30 level
-  +0x34 extra sub-loops (flag 8)   +0x40 start frame   +0x44 activate   +0x48 tohit   +0x4c range
-  +0x54 post-create callback(ecx=new missile, edx=+0x58)   +0x58 callback arg
-  Velocity (fixed point) = (Vel + VelLev*lvl/8) << 8, then *75/100.  Range = Range + LevRange*lvl.
-Wrappers: FUN_6fcc0000(game, skill, level, id, x, y; ESI=owner): flags 1, no target -> dir (+1,+1).
-  FUN_6fcc28f0(ECX=game, EDX=id, owner, skill, level, dx, dy, tx, ty, chk): flags 0x21, source = owner
-  pos + (dx,dy), target (tx,ty) or the owner's current target if 0.  FUN_6fcc1880(game, id, skill, level,
-  dx, dy, ty; EAX=tx, ESI=owner): flags 0x420 (source = owner unit, missile ends exactly at target point).
+Missile-creation parameter struct (0x5c bytes; client create uses the same layout):
+ +0x00 flags 1=source is (+0x14,+0x18) else unit +0x08 | 2=target = source + (+0x1c,+0x20)
+ 0x20=target is absolute (+0x1c,+0x20) | neither: target = source, nudged to (+1,+1) when vel!=0
+ (so a missile created "without target" flies along subtile (+1,+1)) | 4=vel from +0x28
+ (0x10: +0x28 already fixed point, else <<8) | 8=Range += (SubStop-SubStart)*(+0x34) if SubLoop
+ 0x200=start at anim frame (+0x40), Range -= it | 0x400=remaining frames = dist(target)/vel
+ | 0x800=activate frame = (+0x44) | 0x1000=tohit (+0x48)
+ 0x8000=Range override (+0x4c) | 0x4000 (client) = no light
+ +0x04 owner unit +0x08 source unit +0x0c target unit +0x10 missile id
+ +0x14/+0x18 source x/y +0x1c/+0x20 target x/y (or offset) +0x28 velocity +0x2c skill +0x30 level
+ +0x34 extra sub-loops (flag 8) +0x40 start frame +0x44 activate +0x48 tohit +0x4c range
+ +0x54 post-create callback +0x58 callback arg
+ Velocity (fixed point) = (Vel + VelLev*lvl/8) << 8, then *75/100. Range = Range + LevRange*lvl.
+Create wrappers: flags 1, no target -> dir (+1,+1).
+ flags 0x21, source = owner pos + (dx,dy), target (tx,ty) or the owner's current target if 0.
+ flags 0x420 (source = owner unit, missile ends exactly at target point).
 
 Missile data +0x28 / +0x2c (ord 11018/10637, 10818/10019) are kept in m.data['d28'] / m.data['d2c'].
 Conventions added here (the emulator may honour them; harmless if it does not):
-  m.frame              animation frame to draw this tick (srvdo/cltdo 5); else draw by age.
-  m.data['frame_offset'] start animation at this frame (create flag 0x200 / random start).
-  m.data['wander']     charged-bolt random path (hit 45 with sHitPar2): call path_hook(m, sim) every tick.
-  mhit_N returning 'pierce' = the game keeps the missile flying (hit return code 4); None = normal.
+ m.frame animation frame to draw this tick (srvdo/cltdo 5); else draw by age.
+ m.data['frame_offset'] start animation at this frame (create flag 0x200 / random start).
+ m.data['wander'] charged-bolt random path (hit 45 with sHitPar2): call path_hook(m, sim) every tick.
+ mhit_N returning 'pierce' = the game keeps the missile flying (hit return code 4); None = normal.
 """
 import math
 
-VS_DEFAULT = 1 / 32.0   # ASSUMED Vel -> subtiles/frame, same as emu.VSCALE.  Code evidence (flag 0x400 math:
+VS_DEFAULT = 1 / 32.0   # ASSUMED Vel -> subtiles/frame, same as emu.VSCALE. Code evidence (flag 0x400 math:
                         # frames = dist*65536/(vel_fp*16)) suggests Vel*0.75*256/4096 = Vel*3/64 instead.
 
-# 64-dir tables (D2Game 0x6fd1ca60 cos / 0x6fd1c960 sin == 0x6fd1c590 / 0x6fd1c490, magnitude 30)
+# 64-dir tables (cos / sin, magnitude 30)
 COS64 = [30, 29, 29, 28, 27, 26, 24, 23, 21, 19, 16, 14, 11, 8, 5, 2, 0, -2, -5, -8, -11, -14, -16, -19, -21,
          -23, -24, -26, -27, -28, -29, -29, -30, -29, -29, -28, -27, -26, -24, -23, -21, -19, -16, -14, -11,
          -8, -5, -2, 0, 2, 5, 8, 11, 14, 16, 19, 21, 23, 24, 26, 27, 28, 29, 29]
 SIN64 = COS64[48:] + COS64[:48]
-# 16-dir coarse ring used by srvhit 2 (x: 0x6fd1cba0, y: 0x6fd1cb60)
+# 16-dir coarse ring used by srvhit 2
 RING16_X = [0, 1, 2, 2, 2, 2, 2, 1, 0, -1, -2, -2, -2, -2, -2, -1]
 RING16_Y = [2, 2, 2, 1, 0, -1, -2, -2, -2, -2, -2, -1, 0, 1, 2, 2]
-# burst pattern of FUN_6fcc26e0 (srvhit 45)
+# burst pattern of srvhit 45
 B6D4 = [0, 0, 20, -20, 14, 14, -14, -14]
 B6F4 = [20, -20, 0, 0, 14, -14, -14, 14]
 B714 = [8, 2, 11, 4, 13, 6, 9]
@@ -85,7 +80,7 @@ def _mrow(sim, mid):
 
 
 def _rand(sim, n):
-    """FUN_6fc211d0 / FUN_6fab1380: 0..n-1, and 0 when n <= 0."""
+    """0..n-1, and 0 when n <= 0."""
     return sim.rng.randrange(n) if n > 0 else 0
 
 
@@ -107,7 +102,7 @@ def _range(sim, mid, lvl, loops=0):
 
 
 def _spawn(sim, m, mid, x, y, dx=1.0, dy=1.0, **kw):
-    """Create mid like FUN_6fc8f930.  dx,dy = (target - source); (0,0) -> (+1,+1) as the engine does."""
+    """Create mid. dx,dy = (target - source); (0,0) -> (+1,+1) as the engine does."""
     if not mid:
         return None
     if dx == 0 and dy == 0:
@@ -121,7 +116,7 @@ def _spawn(sim, m, mid, x, y, dx=1.0, dy=1.0, **kw):
 
 
 def _new_cell(m):
-    """Path flag 8 (D2Common 0x6fd5d6eb, read by ord 10203): set when the last path step crossed >= 1 subtile."""
+    """Path flag 8: set when the last path step crossed >= 1 subtile."""
     d = _d(m)
     c = (math.floor(m.x), math.floor(m.y))
     old = d.get('_cell')
@@ -130,7 +125,7 @@ def _new_cell(m):
 
 
 def _force_explode(child, sim):
-    """FUN_6fc5ede0(game, unit, 1): the child explodes (runs its own hit) right away.  ASSUMED: it then dies."""
+    """The child explodes (runs its own hit) right away. ASSUMED: it then dies."""
     if child is None:
         return
     h = getattr(child, 'hit', None)
@@ -143,7 +138,7 @@ def _force_explode(child, sim):
 
 
 def _anim_ctl(m, sim):
-    """Shared by srvdo 5 (0x6fc61980) and cltdo 5 (0x6fb62f90): SubLoop animation control."""
+    """Shared by srvdo 5 and cltdo 5: SubLoop animation control."""
     d = _d(m)
     ss, se = _n(m.r, 'SubStart'), _n(m.r, 'SubStop')
     f = d.get('af', 0)
@@ -159,8 +154,8 @@ def _anim_ctl(m, sim):
 
 
 def path_hook(m, sim):
-    """Path type 10 (set by srvhit 45 callback 0x6fc59210, path dist = min(range,77)).  ASSUMED shape:
-    charged-bolt style random zig-zag - every 3 frames re-pick a heading within +-60 deg of the original."""
+    """Path type 10 (set by srvhit 45 callback, path dist = min(range,77)). ASSUMED shape:
+ charged-bolt style random zig-zag - every 3 frames re-pick a heading within +-60 deg of the original."""
     w = _d(m).get('wander')
     if not w or m.age % 3:
         return
@@ -170,9 +165,9 @@ def path_hook(m, sim):
 
 # ================================================================ server hit functions
 def mhit_36(m, sim, unit=None):
-    """srvhit 36 @0x6fc5ab30.  Only when no unit was hit (arg3==0, else returns 0): FUN_6fcc0000 creates
-    HitSubMissile1 at the missile's x/y (same skill/level, no target -> flies (+1,+1)) and copies data +0x28
-    (ord 11018 -> 10637).  Users: 407 rows, e.g. ml385->ml386, ml757->ml753 (visual usually by clthit 44)."""
+    """srvhit 36. Only when no unit was hit (arg3==0, else returns 0): creates
+ HitSubMissile1 at the missile's x/y (same skill/level, no target -> flies (+1,+1)) and copies data +0x28
+ (ord 11018 -> 10637). Users: 407 rows, e.g. ml385->ml386, ml757->ml753 (visual usually by clthit 44)."""
     if unit is not None:
         return None
     sub = m.r.get('HitSubMissile1')
@@ -183,13 +178,13 @@ def mhit_36(m, sim, unit=None):
 
 
 def mhit_45(m, sim, unit=None):
-    """srvhit 45 @0x6fc5c3b0.  If sHitPar1 > 0: FUN_6fcc26e0 bursts sHitPar1 HitSubMissile1 from the missile's
-    x/y (struct flags 3: target = pos + offset).  First offset (14,-14), then a fixed scatter table
-    (0x6fd1b6d4..0x6fd1b75c; 7 rows of 4 pairs + 1, count <= 40).  The outer loop only stops when the
-    running count hits exactly 0, so even counts run all 7 rows (sHitPar1 4 -> 12 missiles, faithful to the
-    asm at 0x6fcc2740 'je').  If sHitPar2 != 0 the create
-    callback 0x6fc59210 gives each child path type 10 with distance min(range,255) (charged-bolt wander).
-    e.g. ml431 (sHitPar1 10, sHitPar2 1 -> ml433), ml734 (4 x ml1065)."""
+    """srvhit 45. If sHitPar1 > 0: bursts sHitPar1 HitSubMissile1 from the missile's
+ x/y (struct flags 3: target = pos + offset). First offset (14,-14), then a fixed scatter table
+ (7 rows of 4 pairs + 1, count <= 40). The outer loop only stops when the
+ running count hits exactly 0, so even counts run all 7 rows (sHitPar1 4 -> 12 missiles).
+ If sHitPar2 != 0 the create
+ callback gives each child path type 10 with distance min(range,255) (charged-bolt wander).
+ e.g. ml431 (sHitPar1 10, sHitPar2 1 -> ml433), ml734 (4 x ml1065)."""
     cnt = _n(m.r, 'sHitPar1')
     sub = m.r.get('HitSubMissile1')
     if cnt <= 0 or not sub:
@@ -208,46 +203,46 @@ def mhit_45(m, sim, unit=None):
         offs.append((B6F4[j], B6D4[j]))
         n -= 1
     wander = _n(m.r, 'sHitPar2') != 0
-    for ox, oy in offs:
+    from . import plugins_a
+    for i, (ox, oy) in enumerate(offs):
         c = _spawn(sim, m, sub, m.x, m.y, ox, oy, target=(m.x + ox, m.y + oy))
         if c is not None and wander:
-            _d(c)['wander'] = {'base': math.atan2(oy, ox), 'dist': min(getattr(c, 'range', 77), 77)}
+            plugins_a._charged_bolt_setup(sim, c, i)
     return None
 
 
 def mhit_1(m, sim, unit=None):
-    """srvhit 1 @0x6fc5b990.  Splash damage only: FUN_6fcc0c70 area search around the missile, radius
-    sHitPar1 subtiles (if <= 0: skills.txt calc1 of the missile's skill, min 1), callback 0x6fcc1210 damage.
-    No missiles spawned (the visual is clthit 1).  e.g. ml62 (r 4), ml341 (r 8)."""
+    """srvhit 1. Splash damage only: area search around the missile, radius
+ sHitPar1 subtiles (if <= 0: skills.txt calc1 of the missile's skill, min 1), callback damage.
+ No missiles spawned (the visual is clthit 1). e.g. ml62 (r 4), ml341 (r 8)."""
     _d(m)['splash_radius'] = _n(m.r, 'sHitPar1') or _calc(sim, _sid(m), 'calc1', 1)
     return None
 
 
 def mhit_21(m, sim, unit=None):
-    """srvhit 21 @0x6fc5abd0.  On a unit hit: applies the skill's auratargetstate (+0x82) for auralencalc
-    (+0x60) frames via FUN_6fcc00b0 / FUN_6fc648e0.  State only, no missiles.  e.g. ml219, ml970."""
+    """srvhit 21. On a unit hit: applies the skill's auratargetstate (+0x82) for auralencalc
+ (+0x60) frames. State only, no missiles. e.g. ml219, ml970."""
     return None
 
 
 def mhit_13(m, sim, unit=None):
-    """srvhit 13 @0x6fc5b3e0.  Splash damage only: radius sHitPar1 (else skill aurarangecalc, min 1),
-    sHitPar2 (else auralencalc) feeds FUN_6fc594b0 (effect length).  No spawns.  e.g. ml96, ml336."""
+    """srvhit 13. Splash damage only: radius sHitPar1 (else skill aurarangecalc, min 1),
+ sHitPar2 (else auralencalc) is the effect length. No spawns. e.g. ml96, ml336."""
     _d(m)['splash_radius'] = _n(m.r, 'sHitPar1') or _calc(sim, _sid(m), 'aurarangecalc', 1)
     return None
 
 
 def mhit_18(m, sim, unit=None):
-    """srvhit 18 @0x6fc5ea60.  On hitting an enemy (FUN_6fd00570): FUN_6fc49240 puts the skill's aurastate
-    (+0x80) on it for auralencalc frames.  State only, returns 0.  e.g. ml149 (Vel 30, Accel -500)."""
+    """srvhit 18. On hitting an enemy: puts the skill's aurastate
+ (+0x80) on it for auralencalc frames. State only, returns 0. e.g. ml149 (Vel 30, Accel -500)."""
     return None
 
 
 def mhit_2(m, sim, unit=None):
-    """srvhit 2 @0x6fc5e330 -> FUN_6fc5d680(game, owner, skill, lvl, sHitPar1, sHitPar2, sHitPar3;
-    EDX=HitSubMissile1, EAX=hit unit or the missile itself).  Flags 0x17 (+8 when sHitPar3 > 0, +0x34 =
-    sHitPar3 extra sub-loops).  Ring 1: 16-dir table indices 0, s, 2s.. (s = max(sHitPar2,1)), speed = child
-    Param1<<7 raw = Param1/2 Vel units.  Ring 2 (only if sHitPar1 != 0): indices 1, 1+s1, .. <= 15, speed child
-    Param2/2.  Centre = hit unit, else missile.  Returns 3.  e.g. ml43 (1,2,3)->ml221 (Param1 2, Param2 4)."""
+    """srvhit 2. Flags 0x17 (+8 when sHitPar3 > 0, +0x34 =
+ sHitPar3 extra sub-loops). Ring 1: 16-dir table indices 0, s, 2s... (s = max(sHitPar2,1)), speed = child
+ Param1<<7 raw = Param1/2 Vel units. Ring 2 (only if sHitPar1 != 0): indices 1, 1+s1, ... <= 15, speed child
+ Param2/2. Centre = hit unit, else missile. Returns 3. e.g. ml43 (1,2,3)->ml221 (Param1 2, Param2 4)."""
     sub = m.r.get('HitSubMissile1')
     if not sub:
         return None
@@ -267,9 +262,9 @@ def mhit_2(m, sim, unit=None):
 
 
 def mhit_5(m, sim, unit=None):
-    """srvhit 5 @0x6fc5c700.  Ring of HitSubMissile1 from the missile (flags 2, source = missile unit):
-    every max(sHitPar1,1)-th of the 64 directions (0x6fd1c590 x / 0x6fd1c490 y, |v|=30); each child gets
-    data +0x28 = x component, +0x2c = y component.  Returns 3.  e.g. ml4383 (13 -> 5 dirs of ml4384)."""
+    """srvhit 5. Ring of HitSubMissile1 from the missile (flags 2, source = missile unit):
+ every max(sHitPar1,1)-th of the 64 directions (x / y, |v|=30); each child gets
+ data +0x28 = x component, +0x2c = y component. Returns 3. e.g. ml4383 (13 -> 5 dirs of ml4384)."""
     sub = m.r.get('HitSubMissile1')
     if not sub:
         return None
@@ -282,12 +277,12 @@ def mhit_5(m, sim, unit=None):
 
 
 def mhit_12(m, sim, unit=None):
-    """srvhit 12 @0x6fc5d020 (chain).  Only on a unit hit and while data +0x28 (hits left) > 1: search
-    radius sHitPar1 (else skill aurarangecalc, min 1) around the missile (FUN_6fcc0f40, callback 0x6fcbed70
-    picks the unit with the next-higher unit id after the hit one, wrapping to the lowest; the hit unit is
-    excluded), then re-create the SAME missile id at the missile's x/y aimed at that unit's position (flags
-    0x21, no homing) with +0x28 = count-1.  Returns 3.  e.g. ml93/ml267 (Vel 30, Range 25).
-    ASSUMED: if the launching skill did not set +0x28, start from the skill's calc1."""
+    """srvhit 12 (chain). Only on a unit hit and while data +0x28 (hits left) > 1: search
+ radius sHitPar1 (else skill aurarangecalc, min 1) around the missile (callback
+ picks the unit with the next-higher unit id after the hit one, wrapping to the lowest; the hit unit is
+ excluded), then re-create the SAME missile id at the missile's x/y aimed at that unit's position (flags
+ 0x21, no homing) with +0x28 = count-1. Returns 3. e.g. ml93/ml267 (Vel 30, Range 25).
+ ASSUMED: if the launching skill did not set +0x28, start from the skill's calc1."""
     if unit is None:
         return None
     d = _d(m)
@@ -316,24 +311,24 @@ def mhit_12(m, sim, unit=None):
 
 
 def mhit_6(m, sim, unit=None):
-    """srvhit 6 @0x6fc5bd10.  Spawns MONSTER sHitPar1 (monstats row; ids >= monstats count are objects/
-    special) at the missile's x/y in mode sHitPar2 (0..15, default 1) via FUN_6fc67cf0.  No missile.
-    e.g. ml1004 (2143), ml1134 (1107)."""
+    """srvhit 6. Spawns MONSTER sHitPar1 (monstats row; ids >= monstats count are objects/
+ special) at the missile's x/y in mode sHitPar2 (0..15, default 1). No missile.
+ e.g. ml1004 (2143), ml1134 (1107)."""
     _d(m)['summon'] = (_n(m.r, 'sHitPar1'), _n(m.r, 'sHitPar2'))
     return None
 
 
 def mhit_24(m, sim, unit=None):
-    """srvhit 24 @0x6fc5b7c0.  Splash damage like hit 1 (radius sHitPar1, else calc1; damage set up by
-    FUN_6fc5a4e0).  No spawns.  e.g. ml238, ml4267 (r 12)."""
+    """srvhit 24. Splash damage like hit 1 (radius sHitPar1, else calc1).
+ No spawns. e.g. ml238, ml4267 (r 12)."""
     _d(m)['splash_radius'] = _n(m.r, 'sHitPar1') or _calc(sim, _sid(m), 'calc1', 1)
     return None
 
 
 def mhit_4(m, sim, unit=None):
-    """srvhit 4 @0x6fc5f220.  For each HitSubMissile1..4 that is set: create it from the missile (flags 0:
-    source = missile unit, no target -> (+1,+1)); if sHitPar1 > 0 the child immediately explodes on the hit
-    unit (FUN_6fc5ede0(game, unit, 1)).  Returns 3.  e.g. ml41 -> ml656, ml4569 -> ml4570."""
+    """srvhit 4. For each HitSubMissile1..4 that is set: create it from the missile (flags 0:
+ source = missile unit, no target -> (+1,+1)); if sHitPar1 > 0 the child immediately explodes on the hit
+ unit. Returns 3. e.g. ml41 -> ml656, ml4569 -> ml4570."""
     force = _n(m.r, 'sHitPar1') > 0
     for col in ('HitSubMissile1', 'HitSubMissile2', 'HitSubMissile3', 'HitSubMissile4'):
         sub = m.r.get(col)
@@ -345,11 +340,11 @@ def mhit_4(m, sim, unit=None):
 
 
 def mhit_10(m, sim, unit=None):
-    """srvhit 10 @0x6fc5b140 (guided / bone-spirit style, srvdo 7 users ml86, ml329...).  Flags in data
-    +0x28: bit1 = locked target -> only dies on its path target unit, other units -> code 4 (fly on);
-    bit2 = seeking -> while frames remain: die if bit4 else fly on; when none remain FUN_6fc5b070 re-targets
-    the next unit (id order) within Param2 subtiles and flies on.  No bits -> normal hit (3).
-    ASSUMED: without stored bits, bit1 when m.homing is set."""
+    """srvhit 10 (guided / bone-spirit style, srvdo 7 users ml86, ml329...). Flags in data
+ +0x28: bit1 = locked target -> only dies on its path target unit, other units -> code 4 (fly on);
+ bit2 = seeking -> while frames remain: die if bit4 else fly on; when none remain re-targets
+ the next unit (id order) within Param2 subtiles and flies on. No bits -> normal hit (3).
+ ASSUMED: without stored bits, bit1 when m.homing is set."""
     if unit is None:
         return None
     d = _d(m)
@@ -371,19 +366,19 @@ def mhit_10(m, sim, unit=None):
 
 # ================================================================ server do functions
 def mdo_5(m, sim):
-    """srvdo 5 @0x6fc61980.  Animation control for looping ground fires (ml67, ml69 firewall): when the anim
-    frame (+0x44>>8) reaches SubStart-1 jump to SubStart-1+rand(SubStop-SubStart); when remaining frames ==
-    SubStart jump to SubStart-3; while remaining < SubStart step back 2 (plays the intro in reverse).  Then
-    the normal move (0x6fc5f320).  Movement unchanged."""
+    """srvdo 5. Animation control for looping ground fires (ml67, ml69 firewall): when the anim
+ frame (+0x44>>8) reaches SubStart-1 jump to SubStart-1+rand(SubStop-SubStart); when remaining frames ==
+ SubStart jump to SubStart-3; while remaining < SubStart step back 2 (plays the intro in reverse). Then
+ the normal move. Movement unchanged."""
     _anim_ctl(m, sim)
 
 
 def mdo_31(m, sim):
-    """srvdo 31 @0x6fc5f9f0.  Whenever the path crossed a subtile (path flag 8) create SubMissile1 twice from
-    the missile (flags 2): target offsets (+0x28,+0x2c) and (-(+0x28),-(+0x2c)).  The launching skill
-    (skill srvdo 139 @0x6fc2d290 / 125) stores +0x28 = -(ty-cy), +0x2c = tx-cx, i.e. the perpendicular of the
-    aim -> a wave spraying sideways.  e.g. ml517->ml518, Phoenix Wave ml1975.  ASSUMED fallback when the skill
-    did not store them: perpendicular of the current heading."""
+    """srvdo 31. Whenever the path crossed a subtile (path flag 8) create SubMissile1 twice from
+ the missile (flags 2): target offsets (+0x28,+0x2c) and (-(+0x28),-(+0x2c)). The launching skill
+ (skill srvdo 139 / 125) stores +0x28 = -(ty-cy), +0x2c = tx-cx, i.e. the perpendicular of the
+ aim -> a wave spraying sideways. e.g. ml517->ml518, Phoenix Wave ml1975. ASSUMED fallback when the skill
+ did not store them: perpendicular of the current heading."""
     if not _new_cell(m):
         return None
     d = _d(m)
@@ -397,9 +392,9 @@ def mdo_31(m, sim):
 
 
 def mdo_23(m, sim):
-    """srvdo 23 @0x6fc605e0.  Trail: whenever the path crossed a subtile create SubMissile1 at the missile's
-    x/y (flags 1, no target); if Param1 > 0 also flag 8 -> child Range += (SubStop-SubStart)*Param1.
-    e.g. ml441 (P1 3)->ml443, ml458->ml457."""
+    """srvdo 23. Trail: whenever the path crossed a subtile create SubMissile1 at the missile's
+ x/y (flags 1, no target); if Param1 > 0 also flag 8 -> child Range += (SubStop-SubStart)*Param1.
+ e.g. ml441 (P1 3)->ml443, ml458->ml457."""
     if not _new_cell(m):
         return None
     sub = m.r.get('SubMissile1')
@@ -410,15 +405,15 @@ def mdo_23(m, sim):
 
 
 def mdo_3(m, sim):
-    """srvdo 3 @0x6fc61ae0.  If the path has no target unit (path+0x7c) it ORs collision bit 0x40 into the
-    room collision map at the missile's subtile (ord 10468), then moves normally.  No visual change."""
+    """srvdo 3. If the path has no target unit (path+0x7c) it ORs collision bit 0x40 into the
+ room collision map at the missile's subtile (ord 10468), then moves normally. No visual change."""
     return None
 
 
 def mdo_25(m, sim):
-    """srvdo 25 @0x6fc604d0 -> FUN_6fc5d1e0.  Every calc2 frames (age % calc2 == 0, skills.txt calc2 of the
-    missile's skill) create SubMissile1 at x+rand(2(r-1))-(r-1), y+same, r = calc1, unless that subtile
-    collides with mask 0x45 (flags 3, no target).  e.g. ml461 (Armageddon-style control) -> ml462."""
+    """srvdo 25. Every calc2 frames (age % calc2 == 0, skills.txt calc2 of the
+ missile's skill) create SubMissile1 at x+rand(2(r-1))-(r-1), y+same, r = calc1, unless that subtile
+ collides with mask 0x45 (flags 3, no target). e.g. ml461 (Armageddon-style control) -> ml462."""
     sid = _sid(m)
     per = _calc(sim, sid, 'calc2', 0)
     r = _calc(sim, sid, 'calc1', 1)
@@ -436,17 +431,17 @@ def _rain(m, sim, per, r, sub):
 
 
 def mdo_6(m, sim):
-    """srvdo 6 @0x6fc61850.  Firewall maker: whenever the path crossed a subtile create SubMissile1 at the
-    missile's x/y (flags 0x21, target = same point -> (+1,+1)).  e.g. ml68->ml69, ml130->ml131."""
+    """srvdo 6. Firewall maker: whenever the path crossed a subtile create SubMissile1 at the
+ missile's x/y (flags 0x21, target = same point -> (+1,+1)). e.g. ml68->ml69, ml130->ml131."""
     if _new_cell(m):
         _spawn(sim, m, m.r.get('SubMissile1'), m.x, m.y, 1, 1)
     return None
 
 
 def mdo_8(m, sim):
-    """srvdo 8 @0x6fc61670 (Blizzard).  k = lvl / max(Param3,1); radius = Param1 + max(k,2);
-    period = max(Param2 - k, 3); then as srvdo 25 (FUN_6fc5d1e0, collision mask 5): every period frames a
-    SubMissile1 at a random point within +-(radius-1).  e.g. ml106 (5,8,4) -> ml107 shards."""
+    """srvdo 8 (Blizzard). k = lvl / max(Param3,1); radius = Param1 + max(k,2);
+ period = max(Param2 - k, 3); then as srvdo 25 (collision mask 5): every period frames a
+ SubMissile1 at a random point within +-(radius-1). e.g. ml106 (5,8,4) -> ml107 shards."""
     k = _lvl(m) // max(_n(m.r, 'Param3'), 1)
     rad = _n(m.r, 'Param1') + max(k, 2)
     per = max(_n(m.r, 'Param2') - k, 3)
@@ -455,10 +450,10 @@ def mdo_8(m, sim):
 
 
 def mdo_22(m, sim):
-    """srvdo 22 @0x6fc606d0.  While age < 2 store +0x28 = -(pathTargetY - y), +0x2c = pathTargetX - x
-    (ord 10983/10764, perpendicular of the flight).  Whenever the path crossed a subtile create SubMissile1
-    at x/y toward offsets (+0x28,+0x2c) and the negation (flags 0xb; flag 8 with +0x34 = Param1 extra
-    sub-loops).  e.g. ml431 (P1 3) -> ml432 sideways, ml805."""
+    """srvdo 22. While age < 2 store +0x28 = -(pathTargetY - y), +0x2c = pathTargetX - x
+ (ord 10983/10764, perpendicular of the flight). Whenever the path crossed a subtile create SubMissile1
+ at x/y toward offsets (+0x28,+0x2c) and the negation (flags 0xb; flag 8 with +0x34 = Param1 extra
+ sub-loops). e.g. ml431 (P1 3) -> ml432 sideways, ml805."""
     d = _d(m)
     if m.age < 2:
         t = getattr(m, 'target', None)
@@ -477,10 +472,10 @@ def mdo_22(m, sim):
 
 
 def mdo_34(m, sim):
-    """srvdo 34 @0x6fc61c30.  n = number of leading pairs (SubMissile i set and Param i+1 > 0), i=1..3.
-    Once age >= Param1: pick i = rand(n); if age % Param(i+1) == 0 create SubMissile i from the missile
-    (flags 0) and make it explode at once (FUN_6fc5ede0(.., 0, 1)).  Then srvdo 3.
-    e.g. ml546 (P1 25; ml654 every 3, ml655 every 45)."""
+    """srvdo 34. n = number of leading pairs (SubMissile i set and Param i+1 > 0), i=1..3.
+ Once age >= Param1: pick i = rand(n); if age % Param(i+1) == 0 create SubMissile i from the missile
+ (flags 0) and make it explode at once. Then srvdo 3.
+ e.g. ml546 (P1 25; ml654 every 3, ml655 every 45)."""
     pairs = []
     for i in range(1, 4):
         sub = m.r.get('SubMissile%d' % i)
@@ -498,11 +493,11 @@ def mdo_34(m, sim):
 
 # ================================================================ client do functions
 def cdo_8(m, sim):
-    """cltdo 8 @0x6fb691c0.  After InitSteps frames, whenever the path crossed a subtile create
-    CltSubMissile1 at x/y (flags 1).  Create callback 0x6fb60f40: child heading = parent heading
-    (ord 10042 -> 10706), random start frame rand(child AnimLen), and if the child's CltParam2 > 0 a
-    vertical offset rand(P2)-P2/2 (stored <<11 in gfx info +0x30/+0xc; px scale ASSUMED 0.5/unit).
-    e.g. ml93 chain lightning -> ml99 (CltParam2 16)."""
+    """cltdo 8. After InitSteps frames, whenever the path crossed a subtile create
+ CltSubMissile1 at x/y (flags 1). Create callback: child heading = parent heading
+ (ord 10042 -> 10706), random start frame rand(child AnimLen), and if the child's CltParam2 > 0 a
+ vertical offset rand(P2)-P2/2 (stored <<11 in gfx info +0x30/+0xc; px scale ASSUMED 0.5/unit).
+ e.g. ml93 chain lightning -> ml99 (CltParam2 16)."""
     if m.age < _n(m.r, 'InitSteps') or not _new_cell(m):
         return None
     sub = m.r.get('CltSubMissile1')
@@ -518,13 +513,13 @@ def cdo_8(m, sim):
 
 
 def cdo_5(m, sim):
-    """cltdo 5 @0x6fb62f90.  Client copy of srvdo 5's SubLoop animation control (clamped at 0)."""
+    """cltdo 5. Client copy of srvdo 5's SubLoop animation control (clamped at 0)."""
     _anim_ctl(m, sim)
 
 
 def cdo_52(m, sim):
-    """cltdo 52 @0x6fb672d0.  Client copy of srvdo 31: on each subtile crossed, CltSubMissile1 toward
-    (+0x28,+0x2c) and the negation (sideways wave).  e.g. ml517->ml518, ml1102->ml1104."""
+    """cltdo 52. Client copy of srvdo 31: on each subtile crossed, CltSubMissile1 toward
+ (+0x28,+0x2c) and the negation (sideways wave). e.g. ml517->ml518, ml1102->ml1104."""
     if not _new_cell(m):
         return None
     d = _d(m)
@@ -538,10 +533,10 @@ def cdo_52(m, sim):
 
 
 def cdo_6(m, sim):
-    """cltdo 6 @0x6fb692b0.  Client firewall maker: on each subtile crossed create one of CltSubMissile1/2/3
-    at x/y (flags 0x21|0x8000: Range forced to CltSubMissile1's Range): with Clt2 and Clt3 rand(3) -> 0:Clt2
-    1:Clt3 2:Clt1; with only Clt2 rand(2) -> 0:Clt2 else Clt1.  Only 1 in CltParam1 pieces keeps its light
-    (flag 0x4000 = no light).  e.g. ml68 (4) -> ml69 / ml104 / ml105."""
+    """cltdo 6. Client firewall maker: on each subtile crossed create one of CltSubMissile1/2/3
+ at x/y (flags 0x21|0x8000: Range forced to CltSubMissile1's Range): with Clt2 and Clt3 rand(3) -> 0:Clt2
+ 1:Clt3 2:Clt1; with only Clt2 rand(2) -> 0:Clt2 else Clt1. Only 1 in CltParam1 pieces keeps its light
+ (flag 0x4000 = no light). e.g. ml68 (4) -> ml69 / ml104 / ml105."""
     if not _new_cell(m):
         return None
     c1, c2, c3 = (m.r.get('CltSubMissile%d' % i) for i in (1, 2, 3))
@@ -560,9 +555,9 @@ def cdo_6(m, sim):
 
 
 def cdo_18(m, sim):
-    """cltdo 18 @0x6fb68960.  After InitSteps, on each subtile crossed create CltSubMissile1 at x/y (flags 1)
-    and give it the parent's heading (ord 10042 -> 10706); attached to the parent's light list.
-    e.g. ml192 -> ml248, ml2618 -> ml2619 (Vel 4, drifts forward)."""
+    """cltdo 18. After InitSteps, on each subtile crossed create CltSubMissile1 at x/y (flags 1)
+ and give it the parent's heading (ord 10042 -> 10706); attached to the parent's light list.
+ e.g. ml192 -> ml248, ml2618 -> ml2619 (Vel 4, drifts forward)."""
     if m.age < _n(m.r, 'InitSteps') or not _new_cell(m):
         return None
     _spawn(sim, m, m.r.get('CltSubMissile1'), m.x, m.y, m.dx, m.dy)
@@ -570,17 +565,17 @@ def cdo_18(m, sim):
 
 
 def cdo_2(m, sim):
-    """cltdo 2 @0x6fb63060.  While the missile is inside the visible screen rect its remaining frames are
-    reset to 128 every tick (never expires); off screen it is removed.  e.g. ml18-ml21 (Vel 3-4, Range 128).
-    ASSUMED always on screen."""
+    """cltdo 2. While the missile is inside the visible screen rect its remaining frames are
+ reset to 128 every tick (never expires); off screen it is removed. e.g. ml18-ml21 (Vel 3-4, Range 128).
+ ASSUMED always on screen."""
     m.range = m.age + 128
 
 
 def cdo_4(m, sim):
-    """cltdo 4 @0x6fb6be00 -> FUN_6fb69470(CltParam1, CltParam2, CltParam3, CltSubMissile1).  On the last
-    frame (remaining == 0), else with chance 1/CltParam1 per frame: create CltParam2 CltSubMissile1 from the
-    missile (flags 0x20) aimed at x+ox, y+oy where o = rand(2S)-S then pushed out by S (|o| in S..2S),
-    S = CltParam3.  e.g. ml39 (24,1,6) -> ml141 sparks (Vel 1).  ASSUMED last frame = age == range-1."""
+    """cltdo 4. On the last
+ frame (remaining == 0), else with chance 1/CltParam1 per frame: create CltParam2 CltSubMissile1 from the
+ missile (flags 0x20) aimed at x+ox, y+oy where o = rand(2S)-S then pushed out by S (|o| in S..2S),
+ S = CltParam3. e.g. ml39 (24,1,6) -> ml141 sparks (Vel 1). ASSUMED last frame = age == range-1."""
     p1, cnt, s = _n(m.r, 'CltParam1'), _n(m.r, 'CltParam2'), _n(m.r, 'CltParam3')
     sub = m.r.get('CltSubMissile1')
     if not sub:
@@ -597,18 +592,28 @@ def cdo_4(m, sim):
 
 
 # ================================================================ client hit functions
+def chit_14(m, sim, unit=None):
+    """clthit 14. Ice/explode pair used with silent srvhit 13 (Avalanche ml1980, Frozen Orb).
+ Creates CltHitSubMissile1 and CltHitSubMissile2 at the missile (FreezeExplodeCenter + Ejecta)."""
+    for col in ('CltHitSubMissile1', 'CltHitSubMissile2', 'CltHitSubMissile3', 'CltHitSubMissile4'):
+        sub = m.r.get(col)
+        if sub:
+            _spawn(sim, m, sub, m.x, m.y, m.dx, m.dy)
+    return None
+
+
 def chit_10(m, sim, unit=None):
-    """clthit 10 @0x6fb62570.  On a unit hit, if ProgOverlay is set, plays that overlay on the hit unit
-    (FUN_6fb1b300).  No missile.  e.g. ml56, ml90, ml99."""
+    """clthit 10. On a unit hit, if ProgOverlay is set, plays that overlay on the hit unit.
+ No missile. e.g. ml56, ml90, ml99."""
     if unit is not None and m.r.get('ProgOverlay'):
         _d(m)['overlay_on_hit'] = (m.r.get('ProgOverlay'), tuple(unit))
     return None
 
 
 def chit_44(m, sim, unit=None):
-    """clthit 44 @0x6fb60740.  Only when no unit was hit: create CltHitSubMissile1 at the missile (flags 0x20
-    via FUN_6fb60450), then give it the parent's heading (ord 10042 -> 10706) and copy data +0x28.
-    Client side of srvhit 36 (e.g. ml385 -> ml386)."""
+    """clthit 44. Only when no unit was hit: create CltHitSubMissile1 at the missile (flags 0x20),
+ then give it the parent's heading (ord 10042 -> 10706) and copy data +0x28.
+ Client side of srvhit 36 (e.g. ml385 -> ml386)."""
     if unit is not None:
         return None
     c = _spawn(sim, m, m.r.get('CltHitSubMissile1'), m.x, m.y, m.dx, m.dy)
@@ -618,10 +623,10 @@ def chit_44(m, sim, unit=None):
 
 
 def chit_1(m, sim, unit=None):
-    """clthit 1 @0x6fb6c1a0 -> FUN_6fb66d40.  If CltHitSubMissile1 is set (only checked), fill a disc of radius
-    cHitPar1 subtiles around the missile with the HARD-CODED missile 0x109 = ml265: for dy, dx in -r..r
-    (step 1) with dx*dx+dy*dy <= r*r, keep a cell only if rand(cHitPar2) == 0 (cHitPar2 <= 0: always),
-    flags 0x201: start frame rand(child RandStart), Range reduced by it.  e.g. ml62 (3,1): 29 flames."""
+    """clthit 1. If CltHitSubMissile1 is set (only checked), fill a disc of radius
+ cHitPar1 subtiles around the missile with the HARD-CODED missile 0x109 = ml265: for dy, dx in -r.r
+ (step 1) with dx*dx+dy*dy <= r*r, keep a cell only if rand(cHitPar2) == 0 (cHitPar2 <= 0: always),
+ flags 0x201: start frame rand(child RandStart), Range reduced by it. e.g. ml62 (3,1): 29 flames."""
     if not m.r.get('CltHitSubMissile1'):
         return None
     r, skip = _n(m.r, 'cHitPar1'), _n(m.r, 'cHitPar2')

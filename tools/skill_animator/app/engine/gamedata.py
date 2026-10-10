@@ -52,6 +52,7 @@ class GameData:
         self.skillcode = self.excel('skillscode.bin')
         self.MIS = self._missiles()
         self.SK = self._skills()
+        self.OVL = self._overlays()
         self.names = self._skill_names()
         for sid, r in enumerate(self.SK):
             r['skill'] = self.names.get(sid) or 'sk%d' % sid
@@ -132,6 +133,44 @@ class GameData:
                 r[k] = v
             rows.append(r)
         return rows
+
+    def _overlays(self):
+        """overlay.bin: D2OverlayTxt, 132-byte rows (D2Common 1.13c / Sigma LAYOUTS.md)."""
+        try:
+            d = self.excel('overlay.bin')
+        except Exception:
+            return {}
+        n = struct.unpack_from('<I', d)[0]
+        if n <= 0:
+            return {}
+        rs = (len(d) - 4) // n
+        out = {}
+        for i in range(n):
+            b = 4 + i * rs
+            if b + min(rs, 0x80) > len(d):
+                break
+            # Sigma overlay.bin: 132-byte rows, +2 unmapped id word then Filename (LAYOUTS.md)
+            fn = d[b + 2:b + 64].split(b'\0')[0].decode('latin-1', 'replace')
+            def _i(off, default=0):
+                if b + off + 4 <= b + rs:
+                    return struct.unpack_from('<i', d, b + off)[0]
+                return default
+            def _b(off, default=0):
+                if b + off < b + rs:
+                    return d[b + off]
+                return default
+            rec = {
+                'Filename': fn,
+                'Xoffset': _i(0x58),
+                'Yoffset': _i(0x5c),
+                'AnimRate': _i(0x70) or 16,
+                'Trans': _b(0x78, 3),
+                'NumDirections': _b(0x7e, 1) or 1,
+            }
+            out[i] = rec
+            out[str(i)] = rec
+            out['ol%d' % i] = rec
+        return out
 
     # ------------------------------------------------------------------ strings
     def _tbl(self, path):

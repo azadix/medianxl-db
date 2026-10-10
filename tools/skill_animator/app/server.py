@@ -118,7 +118,7 @@ def do_render(sid, opt):
         os.makedirs(S.cfg['out_dir'], exist_ok=True)
         fn = out_name(sid, name)
         path = os.path.join(S.cfg['out_dir'], fn)
-        size = sim.save_gif(fr, path, sc, max_bytes=int(float(opt.get('max_kb', 250)) * 1000))
+        size = sim.save_gif(fr, path, sc)
     info.update(kb=size // 1024, seconds=round(time.time() - t, 1))
     return {'ok': True, 'sid': sid, 'name': name, 'file': fn, 'url': '/out/' + urllib.parse.quote(fn) + '?t=%d' % time.time(),
             'info': info}

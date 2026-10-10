@@ -47,6 +47,7 @@ describe('oSkill item grants as slvl', () => {
       itemPoints: 9,
       slotId: 'test-slot',
     });
+    character.setOSkillSlotDisabled('test-slot', false);
     const merged = buildMergedSkillLevelsForStatRecompute(character);
     expect(merged.teleport).toBe(0);
   });
@@ -60,6 +61,7 @@ describe('oSkill item grants as slvl', () => {
       itemPoints: 9,
       slotId: 'test-slot',
     });
+    character.setOSkillSlotDisabled('test-slot', false);
     const merged = buildMergedSkillLevelsForStatRecompute(character);
     expect(merged.teleport).toBe(4);
   });

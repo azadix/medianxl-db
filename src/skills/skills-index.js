@@ -518,7 +518,7 @@ function buildSkillPreviewHtml(skillInfo) {
                 <p class="skill-preview-caption">Default scene (skill level 20, no items or passives). 1 grid = 1 yard.</p>
                 <p class="skill-preview-notice">Highly experimental. May not correctly represent the skill in game.</p>
                 <div class="skill-preview-frame">
-                    <img src="${escapeHtmlText(src)}" alt="${escapeHtmlText(alt)}" width="800" height="400" loading="lazy" />
+                    <img src="${escapeHtmlText(src)}" alt="${escapeHtmlText(alt)}" width="600" height="300" loading="lazy" />
                 </div>
             </section>
   `;

@@ -44,10 +44,12 @@ class Sprites:
         self._path = {}
         self._ndir = {}
         self._unit = {}
+        self._ovl = {}
 
     def mis_path(self, mid):
         if mid in self._path:
             return self._path[mid]
+        self._path[mid] = None
         r = self.gd.MIS.get(mid)
         p = None
         cel = (r or {}).get('CelFile', '')
@@ -55,6 +57,21 @@ class Sprites:
             p = 'data\\global\\missiles\\%s.dcc' % cel
             if not self.gd.read(p):
                 p = None
+        # HitClass 80 is the poison-nova impact class. Median often leaves CelFile
+        # null on those bolts (e.g. Angel of Death ml5593); the client still uses
+        # the poisonNova missile art, not ProgOverlay (that's the on-hit flash).
+        if not p and str((r or {}).get('HitClass') or '') == '80':
+            cand = 'data\\global\\missiles\\poisonNova.dcc'
+            if self.gd.read(cand):
+                p = cand
+        # Invisible carriers (Arrowside/Broadside) draw their hit-sub cel.
+        if not p:
+            for col in ('HitSubMissile1', 'CltHitSubMissile1'):
+                sub = (r or {}).get(col)
+                if sub and sub != mid:
+                    p = self.mis_path(sub)
+                    if p:
+                        break
         self._path[mid] = p
         return p
 
@@ -76,6 +93,38 @@ class Sprites:
             self._spr.clear()
         self._spr[key] = fr
         return fr
+
+    def ovl_path(self, oid):
+        """Return (dcc path, overlay row) or (None, {})."""
+        key = oid
+        if key in self._ovl:
+            return self._ovl[key]
+        rec = {}
+        ovl = getattr(self.gd, 'OVL', None) or {}
+        if oid in ovl:
+            rec = ovl[oid]
+        else:
+            try:
+                rec = ovl.get(int(oid), {})
+            except (TypeError, ValueError):
+                rec = {}
+        p = None
+        fn = (rec.get('Filename') or '').replace('/', '\\').strip()
+        if fn and fn.lower() != 'null':
+            for cand in (
+                'data\\global\\overlays\\%s.dcc' % fn,
+                'data\\global\\overlays\\%s.dc6' % fn,
+            ):
+                if self.gd.read(cand):
+                    p = cand
+                    break
+        rec = dict(rec)
+        rec['Trans'] = int(rec.get('Trans') or 3)
+        rec['Xoffset'] = int(rec.get('Xoffset') or 0)
+        rec['Yoffset'] = int(rec.get('Yoffset') or 0)
+        rec['AnimRate'] = int(rec.get('AnimRate') or 16)
+        self._ovl[key] = (p, rec)
+        return p, rec
 
     def unit(self, kind, token, mode, wclass=None):
         key = (kind, token, mode, wclass)

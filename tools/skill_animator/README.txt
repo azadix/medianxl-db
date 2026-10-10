@@ -1,7 +1,7 @@
 MXL Skill Animator
 ==================
 
-Renders Median XL skill animations as GIFs by replaying the game's own skill and missile code
+Renders Median XL skill animations as GIFs
 (the same engine used for the oskill GIFs on wiki.median-xl.com).
 
 Start
@@ -26,9 +26,8 @@ Settings (right-hand panel)
 
 What it can and can't show
 --------------------------
-- Missile skills: replayed with ~70 functions ported from D2Game/D2Client/D2Sigma (launch patterns,
-  novas, rings, chains, falling meteors, Median's own rain/line patterns...).
-- Speed: (Vel + VelLev*lvl/8) * 3/64 subtiles per frame, from the game's missile-creation code.
+- Missile skills: launch patterns, novas, rings, chains, falling meteors, rain/line patterns.
+- Speed: (Vel + VelLev*lvl/8) * 3/64 subtiles per frame.
 - Not covered: summons, buffs/auras and skills whose visuals come from client-only code. Those show
   "Nothing to show for this skill".
 - Formulas use the skill level you pick; skills referenced by synergy formulas count at the same
@@ -48,6 +47,6 @@ publish_previews.py   copy GIFs into public/skill-previews
 python\               a private copy of Python 3.12 (nothing is installed on your system)
 app\server.py         the local web server; app\ui\index.html the interface
 app\engine\           the emulator: gamedata.py (MPQ + .bin tables), calcvm.py (skill formulas),
-                      sim.py (engine core), plugins_a-d.py (ported game functions), gfx.py, dcc.py,
+                      sim.py (engine core), plugins_a-d.py (skill/missile handlers), gfx.py, dcc.py,
                       mpq.py, actor.py (amazon/zombie sprites)
 output\               rendered GIFs (created on first render)
