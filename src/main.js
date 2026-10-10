@@ -2,6 +2,9 @@
 import { createPinia } from 'pinia';
 import App from './App.vue';
 import router from './router';
+import { consumeTswImportCodeFromLocation } from '@/planner/tsw-code-import.js';
+
+consumeTswImportCodeFromLocation();
 
 const app = createApp(App);
 app.use(createPinia());

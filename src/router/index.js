@@ -3,6 +3,9 @@ import HomeView from '@/views/HomeView.vue';
 import PlannerView from '@/views/PlannerView.vue';
 import PatchNotesView from '@/views/PatchNotesView.vue';
 import { DEV_ROUTE_DEFS } from '@/shared/dev-routes.js';
+import { consumeTswImportCodeFromLocation } from '@/planner/tsw-code-import.js';
+
+consumeTswImportCodeFromLocation();
 
 const routes = [
   { path: '/', redirect: '/skills' },
@@ -18,6 +21,7 @@ const routes = [
     component: PlannerView,
     meta: { keepAlive: true },
   },
+  { path: '/import/tsw', redirect: () => ({ path: '/planner', hash: '' }) },
   {
     path: '/patch-notes',
     name: 'patchNotes',
@@ -45,7 +49,13 @@ if (import.meta.env.DEV) {
   }
 }
 
-export default createRouter({
+const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
 });
+
+router.afterEach(() => {
+  consumeTswImportCodeFromLocation();
+});
+
+export default router;

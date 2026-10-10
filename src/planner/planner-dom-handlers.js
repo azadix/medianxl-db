@@ -54,6 +54,7 @@ import {
   fallbackCopyToClipboard,
 } from './saved-builds-ui.js';
 import { main } from './planner-init.js';
+import { fetchTswBuildByCode } from './tsw-code-import.js';
 
 export async function plannerMenuNewBuild() {
     showSection('tree');
@@ -92,6 +93,25 @@ export async function plannerMenuImportBuildFromText(jsonString) {
         await main();
     }
     return importBuildFromJsonText(jsonString);
+}
+
+/**
+ * Fetch a TSW envelope and import it.
+ * @param {string} code
+ * @returns {Promise<boolean>}
+ */
+export async function plannerMenuImportBuildFromTswCode(code) {
+    if (!isTreeInitialized()) {
+        await main();
+    }
+    try {
+        const data = await fetchTswBuildByCode(code);
+        return importBuildFromJsonText(JSON.stringify(data));
+    } catch (error) {
+        const message = error instanceof Error ? error.message : 'TSW import failed';
+        toastManager.showToast(message, false, 'danger');
+        return false;
+    }
 }
 
 /**

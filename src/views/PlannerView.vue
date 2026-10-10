@@ -14,6 +14,11 @@ import {
   unregisterPlannerSectionSetter,
 } from '@/planner/planner-section-bridge.js';
 import { initializeTreePage } from '@/planner/planner-init.js';
+import { plannerMenuImportBuildFromTswCode } from '@/planner/planner-dom-handlers.js';
+import {
+  consumeTswImportCodeFromLocation,
+  takePendingTswImportCode,
+} from '@/planner/tsw-code-import.js';
 import { initializeVersionSelector } from '@/shared/version-config.js';
 import '@/styles/tree-styles.css';
 import '@/styles/dropdown-style.css';
@@ -28,6 +33,19 @@ const { activeSection } = storeToRefs(plannerStore);
 
 let initStarted = false;
 let unbindPlannerSync = () => {};
+let tswImportInFlight = false;
+
+async function runPendingTswImport() {
+  consumeTswImportCodeFromLocation();
+  const tswCode = takePendingTswImportCode();
+  if (!tswCode || tswImportInFlight) return;
+  tswImportInFlight = true;
+  try {
+    await plannerMenuImportBuildFromTswCode(tswCode);
+  } finally {
+    tswImportInFlight = false;
+  }
+}
 
 onMounted(async () => {
   if (initStarted) return;
@@ -36,6 +54,7 @@ onMounted(async () => {
   registerPlannerSectionSetter((section) => plannerStore.setActiveSection(section));
   await nextTick();
   await initializeTreePage();
+  await runPendingTswImport();
 });
 
 onActivated(async () => {
@@ -43,6 +62,7 @@ onActivated(async () => {
   if (sel) {
     await initializeVersionSelector(sel);
   }
+  await runPendingTswImport();
 });
 
 onUnmounted(() => {
