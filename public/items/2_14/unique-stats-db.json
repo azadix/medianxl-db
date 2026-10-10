@@ -10673,12 +10673,6 @@
       "type": "Relic"
     },
     {
-      "name": "Essence of Time",
-      "quality": "Charm",
-      "stats": "Required Level: 1\nItem Level: 1\n+1 to Time Warp\nMaximum Life +10%\n{orange}He who fights with monsters\n{orange}might take care lest he\n{orange}thereby become a monster\n{orange}And if you gaze for long into an abyss\n{orange}the abyss gazes also into you",
-      "source": "secret"
-    },
-    {
       "name": "Skinrender's Ear",
       "quality": "Charm",
       "stats": "Required Level: 140\nItem Level: 139\n{orange}+30% Magic Resist in Heroic Duncraig\n+150 Life Regenerated per Second",

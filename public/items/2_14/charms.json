@@ -400,11 +400,11 @@
     "modifiers": [
       "+1 to Time Warp",
       "Maximum Life +10%",
-      "He who fights with monsters",
-      "might take care lest he",
-      "thereby become a monster",
-      "And if you gaze for long into an abyss",
-      "the abyss gazes also into you"
+      "{orange}He who fights with monsters",
+      "{orange}might take care lest he",
+      "{orange}thereby become a monster",
+      "{orange}And if you gaze for long into an abyss",
+      "{orange}the abyss gazes also into you"
     ]
   },
   {

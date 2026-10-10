@@ -48,16 +48,15 @@ const SNIPPET = `
 `;
 
 describe('parseSecretItemsWiki', () => {
-  it('skips locked, herding, soulstone, disabled outcomes, and the disabled section', () => {
+  it('skips locked, herding, soulstone, essence of time, disabled outcomes, and the disabled section', () => {
     const entries = parseSecretItemsWiki(SNIPPET);
-    expect(entries.map((e) => e.name)).toEqual(['Maleficence', 'Essence of Time']);
+    expect(entries.map((e) => e.name)).toEqual(['Maleficence']);
     expect(entries[0]).toMatchObject({
       quality: 'SU',
       type: 'Tyrannical Blade',
       source: 'secret',
     });
     expect(entries[0].stats).toContain('+200% Enhanced Damage');
-    expect(entries[1].quality).toBe('Charm');
   });
 
   it('parses the live Secret Items fixture', () => {
@@ -67,8 +66,8 @@ describe('parseSecretItemsWiki', () => {
     expect(names).toContain('Maleficence');
     expect(names).toContain("Valkyrie's Prime");
     expect(names).toContain("Akara's Robe");
-    expect(names).toContain('Essence of Time');
     expect(names).toContain('Blood of Creation');
+    expect(names).not.toContain('Essence of Time');
     expect(names).not.toContain('Staff of Herding');
     expect(names).not.toContain('Soulstone of the Hallows');
     expect(names).not.toContain('Storm Shard');
@@ -173,6 +172,6 @@ describe('secret item catalog overlays', () => {
       bases
     );
     expect(items.find((d) => d.name === 'Maleficence')?.slot).toBe('arms');
-    expect(items.find((d) => d.name === 'Essence of Time')?.keepInInventory).toBe(true);
+    expect(items.find((d) => d.name === 'Essence of Time')).toBeUndefined();
   });
 });

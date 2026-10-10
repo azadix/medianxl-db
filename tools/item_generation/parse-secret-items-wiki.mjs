@@ -21,7 +21,12 @@ import {
 
 export const SECRET_ITEMS_WIKI_URL = 'https://wiki.median-xl.com/Secret_Items';
 
-const SKIP_NAMES = new Set(['Locked Samael item', 'Staff of Herding', 'Soulstone of the Hallows']);
+const SKIP_NAMES = new Set([
+  'Locked Samael item',
+  'Staff of Herding',
+  'Soulstone of the Hallows',
+  'Essence of Time',
+]);
 const SKIP_SECTIONS = new Set(['Disabled_items', 'Summary', 'Version_history', 'mw-toc-heading']);
 const RELIC_SECTIONS = new Set(['Relics_and_special_items', 'Time-Lost_Relics', 'Blood_of_Creation']);
 const RELIC_NAMES = new Set(["Bonehexer's Puzzlebox", 'Time-Lost Relic', 'Blood of Creation']);
@@ -155,8 +160,8 @@ function statsFromHtml(statsHtml) {
 
 /**
  * Parse Secret Items wiki HTML into unique-stats entries.
- * Skips Staff of Herding, Soulstone of the Hallows, locked Samael placeholder,
- * disabled Time-Lost outcomes, and the Disabled items section.
+ * Skips Staff of Herding, Soulstone of the Hallows, Essence of Time (charms.json),
+ * locked Samael placeholder, disabled Time-Lost outcomes, and the Disabled items section.
  *
  * @param {string} html
  * @returns {UniqueStatsEntry[]}

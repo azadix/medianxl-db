@@ -81,7 +81,7 @@ describe('unique-stats-db catalog', () => {
     expect(boc1?.classRestriction).toBe('Amazon Only');
     expect(boc1?.icon).toBe('darkremnant');
     expect((boc1?.modifiers || []).filter((m) => /Crystalline Arsenal/i.test(m))).toHaveLength(1);
-    expect(items.find((c) => c.id === 'charm:essence-of-time')?.keepInInventory).toBe(true);
+    expect(items.find((c) => c.id === 'charm:essence-of-time')).toBeUndefined();
 
     const storm = items.find((s) => s.name === 'Elemental Storm');
     expect(storm?.reqDex).toBe(109);
