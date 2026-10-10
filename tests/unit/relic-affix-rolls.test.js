@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
   getRelicRollableStats,
-  getRelicDetailStatRows,
   defaultRelicAffixRolls,
   relicAffixRollKey,
 } from '@/items/relic-items.js';

@@ -61,7 +61,7 @@ export function resolveOccupiedCell(inventory, clickSlot, getSize) {
  * @param {number} invWidth
  * @param {number} invHeight
  * @param {(id: number) => { invWidth: number, invHeight: number }|null} getSize
- * @param {number} [ignoreAnchor=-1]
+ * @param {number} [ignoreAnchor]
  * @returns {boolean}
  */
 export function canPlace(inventory, anchor, invWidth, invHeight, getSize, ignoreAnchor = -1) {
@@ -125,7 +125,7 @@ export function placeAt(inventory, anchor, instanceId, getSize) {
  * @param {number} invWidth
  * @param {number} invHeight
  * @param {(id: number) => { invWidth: number, invHeight: number }|null} getSize
- * @param {number} [ignoreAnchor=-1]
+ * @param {number} [ignoreAnchor]
  * @returns {number} Anchor slot or -1
  */
 export function findAnchorForClick(

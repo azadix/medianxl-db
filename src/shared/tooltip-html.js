@@ -167,7 +167,7 @@ export function wrapSkillTooltipContent(innerHtml, sourcesHtml = '') {
 
 /**
  * Planner bonus-toggle banner. Green when enabled, grey when disabled.
- * @param {boolean} [disabled=true]
+ * @param {boolean} [disabled]
  * @returns {string}
  */
 export function buildSkillTooltipDisabledBannerHtml(disabled = true) {

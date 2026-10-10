@@ -5,7 +5,6 @@
 import {
   formatColoredStatLines,
   htmlToColoredLines,
-  htmlToLines,
   joinSplitColoredStatLines,
 } from './parse-tiered-uniques-wiki.mjs';
 

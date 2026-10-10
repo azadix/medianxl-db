@@ -133,6 +133,7 @@ function modLineClass(row) {
             class="item-picker-modal__stat-line"
             :class="modLineClass(row)"
           >
+            <!-- eslint-disable-next-line vue/no-v-html -- escaped skill-name markup -->
             <span class="item-picker-modal__stat-line-text" v-html="modLineHtml(row.text)"></span>
           </p>
           <ItemRollRow

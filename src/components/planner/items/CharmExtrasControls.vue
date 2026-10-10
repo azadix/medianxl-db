@@ -253,10 +253,7 @@ function setParagonPath(path) {
           <input
             type="checkbox"
             :checked="Boolean(rolls[`${CHARM_ROLL_KEYS.paragonRegularPrefix}${idx}`])"
-            :disabled="
-                !rolls[`${CHARM_ROLL_KEYS.paragonRegularPrefix}${idx}`] &&
-                paragonRegularUsed >= paragonRegularLimit
-            "
+            :disabled="!rolls[`${CHARM_ROLL_KEYS.paragonRegularPrefix}${idx}`] && paragonRegularUsed >= paragonRegularLimit"
             @change="setParagonRegular(idx, $event.target.checked)"
           />
           {{ step.label }}

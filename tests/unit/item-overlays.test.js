@@ -7,7 +7,6 @@ import {
   isOverlayItem,
   formatOverlayBadge,
   defaultOverlayAffixRolls,
-  getOverlayDetailStatRows,
   getOverlayStatLines,
   countEquippedSetPieces,
   resolveSetBonuses,

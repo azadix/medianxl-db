@@ -234,7 +234,7 @@ async function confirmImport() {
                 v-model="importJsonText"
                 class="textarea planner-import-json-textarea"
                 rows="2"
-                placeholder='{ "name": "...", "class": "...", ... }'
+                placeholder="{ &quot;name&quot;: &quot;...&quot;, &quot;class&quot;: &quot;...&quot;, ... }"
                 spellcheck="false"
                 @input="onImportJsonInput"
               ></textarea>
