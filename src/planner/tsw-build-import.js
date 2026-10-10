@@ -173,7 +173,7 @@ function looksLikeRelic(row) {
  */
 function relicSkillHint(row) {
   const name = tswItemDisplayName(row);
-  const m = name.match(/^Relic\s*[:\(]\s*(.+?)\s*\)?\s*$/i);
+  const m = name.match(/^Relic\s*[:(]\s*(.+?)\s*\)?\s*$/i);
   if (!m) return null;
   return String(m[1] || '')
     .replace(/\)\s*$/, '')
