@@ -7133,7 +7133,7 @@
         "statKey": "physical_resistance",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "min([[trinity_arrow]]+[[barrage]]+[[phalanx]]+[[wyrmshot]]+[[decoy]],25)"
+        "value0": "min(([[trinity_arrow]]+[[barrage]]+[[phalanx]]+[[wyrmshot]]+[[decoy]])/2,25)"
       },
       {
         "statKey": "enemy_elemental_resistances",
