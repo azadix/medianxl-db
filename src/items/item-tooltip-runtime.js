@@ -5,23 +5,8 @@
 
 import { buildItemTooltipHtml } from '@/items/item-tooltip.js';
 import { useItemsStore } from '@/stores/items.js';
-import {
-  bindLiveTooltip,
-  initTooltipPinning,
-  maybeAltStickLiveTooltip,
-  refreshPinnedHosts,
-  shouldSuppressLiveTooltipHide,
-  updateLiveTooltipBinding,
-} from '@/shared/tooltip-pinning.js';
-
-const TOOLTIP_OFFSET = 15;
-const TOOLTIP_VIEWPORT_MARGIN = 12;
-
-/** @type {HTMLElement|null} */
-let tooltipElement = null;
-let positionRafId = 0;
-let pendingClientX = 0;
-let pendingClientY = 0;
+import { refreshPinnedHosts } from '@/shared/tooltip-pinning.js';
+import { createLiveTooltipShell } from '@/shared/live-tooltip-shell.js';
 
 /**
  * @typedef {{
@@ -35,32 +20,24 @@ let pendingClientY = 0;
 /** @type {ItemTooltipState|null} */
 let lastState = null;
 
+const shell = createLiveTooltipShell({
+  portalId: 'item-tooltip-portal',
+  kind: 'item',
+  getHtml: () => buildHtmlFromState(lastState),
+});
+
 /**
  * Bind to `#item-tooltip-portal` (call from ItemTooltipHost onMounted).
  */
 export function initItemTooltip() {
-  tooltipElement = document.getElementById('item-tooltip-portal');
-  initTooltipPinning();
-  if (tooltipElement) {
-    bindLiveTooltip(tooltipElement, {
-      kind: 'item',
-      getHtml: () => buildHtmlFromState(lastState),
-      meta: {},
-      onHideLive: () => {
-        /* portal cleared by promote */
-      },
-    });
-  }
+  shell.attach({
+    getHtml: () => buildHtmlFromState(lastState),
+  });
 }
 
 export function destroyItemTooltip() {
-  hideItemTooltip(true);
-  tooltipElement = null;
+  shell.detach();
   lastState = null;
-}
-
-function isShowing() {
-  return Boolean(tooltipElement && tooltipElement.style.display !== 'none');
 }
 
 /**
@@ -115,81 +92,18 @@ function makeHtmlGetter(state) {
 }
 
 /**
- * @param {HTMLElement} node
- * @param {number} clientX
- * @param {number} clientY
- */
-function applyPosition(node, clientX, clientY) {
-  const baseLeft = clientX + TOOLTIP_OFFSET;
-  const baseTop = clientY + TOOLTIP_OFFSET;
-  const rect = node.getBoundingClientRect();
-  let nextLeft = baseLeft;
-  let nextTop = baseTop;
-  const maxLeft = window.innerWidth - rect.width - TOOLTIP_VIEWPORT_MARGIN;
-  const maxTop = window.innerHeight - rect.height - TOOLTIP_VIEWPORT_MARGIN;
-  if (nextLeft > maxLeft) nextLeft = Math.max(TOOLTIP_VIEWPORT_MARGIN, maxLeft);
-  if (nextTop > maxTop) nextTop = Math.max(TOOLTIP_VIEWPORT_MARGIN, maxTop);
-  node.style.left = `${nextLeft}px`;
-  node.style.top = `${nextTop}px`;
-}
-
-/**
  * @param {number} clientX
  * @param {number} clientY
  */
 export function moveItemTooltip(clientX, clientY) {
-  pendingClientX = clientX;
-  pendingClientY = clientY;
-  if (positionRafId) return;
-  positionRafId = requestAnimationFrame(() => {
-    positionRafId = 0;
-    const node = tooltipElement;
-    if (!node || !isShowing()) return;
-    // Keep last coords for hide hit-testing even when not repositioning.
-    applyPosition(node, pendingClientX, pendingClientY);
-  });
-}
-
-/**
- * @returns {boolean}
- */
-function isPointerOverLiveTooltip() {
-  const node = tooltipElement;
-  if (!node || node.style.display === 'none') return false;
-  try {
-    return node.matches(':hover') || Boolean(node.querySelector(':hover'));
-  } catch {
-    return false;
-  }
+  shell.move(clientX, clientY);
 }
 
 /**
  * @param {boolean} [force]
  */
 export function hideItemTooltip(force = false) {
-  if (!force && shouldSuppressLiveTooltipHide(tooltipElement)) return;
-  if (!force) {
-    // Moving from an item onto the pin button leaves the item first.
-    requestAnimationFrame(() => {
-      if (shouldSuppressLiveTooltipHide(tooltipElement)) return;
-      if (isPointerOverLiveTooltip()) return;
-      clearLiveTooltip();
-    });
-    return;
-  }
-  clearLiveTooltip();
-}
-
-function clearLiveTooltip() {
-  if (positionRafId) {
-    cancelAnimationFrame(positionRafId);
-    positionRafId = 0;
-  }
-  const node = tooltipElement;
-  if (node) {
-    node.style.display = 'none';
-    node.innerHTML = '';
-  }
+  shell.hide(force, { deferIfOverPortal: !force });
 }
 
 /**
@@ -207,8 +121,7 @@ function clearLiveTooltip() {
  * }} [options]
  */
 export function showItemTooltip(def, iconKey, clientX, clientY, rolls = null, options = {}) {
-  const node = tooltipElement;
-  if (!node || !def) {
+  if (!def) {
     hideItemTooltip(true);
     return;
   }
@@ -224,17 +137,13 @@ export function showItemTooltip(def, iconKey, clientX, clientY, rolls = null, op
     hideItemTooltip(true);
     return;
   }
-  node.innerHTML = html;
-  node.style.display = 'block';
-  updateLiveTooltipBinding(node, {
+  shell.present(html, clientX, clientY, {
     getHtml: makeHtmlGetter(state),
     meta: {
       instanceId: options.instanceId ?? null,
       itemId: def.id ?? null,
     },
   });
-  moveItemTooltip(clientX, clientY);
-  maybeAltStickLiveTooltip(node);
 }
 
 /**
@@ -243,12 +152,10 @@ export function showItemTooltip(def, iconKey, clientX, clientY, rolls = null, op
  * @returns {Promise<void>}
  */
 export async function refreshItemTooltips(filter = {}) {
-  const node = tooltipElement;
-  if (node && isShowing() && lastState?.def) {
+  if (shell.isShowing() && lastState?.def) {
     const html = buildHtmlFromState(lastState);
     if (html) {
-      node.innerHTML = html;
-      updateLiveTooltipBinding(node, {
+      shell.updateContent(html, {
         getHtml: makeHtmlGetter(lastState),
         meta: {
           instanceId: lastState.options?.instanceId ?? null,

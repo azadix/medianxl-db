@@ -12,6 +12,7 @@ import {
   refreshPinnedHosts,
   releaseAltStuckHosts,
   shouldSuppressLiveTooltipHide,
+  updateLiveTooltipBinding,
 } from '@/shared/tooltip-pinning.js';
 import { wrapNestedSkillTooltipHtml } from '@/shared/tooltip-html.js';
 
@@ -74,6 +75,37 @@ describe('tooltip pinning', () => {
     document.dispatchEvent(new KeyboardEvent('keyup', { key: 'Alt', code: 'AltLeft', bubbles: true }));
     expect(isTooltipAltHeld()).toBe(false);
     expect(listPinnedHosts()).toHaveLength(0);
+  });
+
+  it('dedupes Alt-stuck hosts for the same skill id', () => {
+    portal.innerHTML = '<div class="tooltip-content">Fireball</div>';
+    portal.style.display = 'block';
+    portal.style.left = '10px';
+    portal.style.top = '10px';
+    updateLiveTooltipBinding(portal, {
+      getHtml: () => '<div class="tooltip-content">Fireball</div>',
+      meta: { skillId: 'fireball' },
+    });
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Alt', code: 'AltLeft', bubbles: true }));
+    expect(listPinnedHosts()).toHaveLength(1);
+
+    // Second live present while Alt held should update the same host, not stack.
+    portal.innerHTML = '<div class="tooltip-content">Fireball v2</div>';
+    portal.style.display = 'block';
+    portal.style.left = '40px';
+    portal.style.top = '50px';
+    updateLiveTooltipBinding(portal, {
+      getHtml: () => '<div class="tooltip-content">Fireball v2</div>',
+      meta: { skillId: 'fireball' },
+    });
+    maybeAltStickLiveTooltip(portal);
+
+    expect(listPinnedHosts()).toHaveLength(1);
+    expect(listPinnedHosts()[0].el.textContent).toContain('Fireball v2');
+    expect(listPinnedHosts()[0].meta.skillId).toBe('fireball');
+
+    document.dispatchEvent(new KeyboardEvent('keyup', { key: 'Alt', code: 'AltLeft', bubbles: true }));
   });
 
   it('Alt-stick works across multiple press cycles', () => {

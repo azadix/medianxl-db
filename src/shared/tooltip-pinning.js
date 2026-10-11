@@ -196,7 +196,43 @@ export function shouldSuppressLiveTooltipHide(portal) {
 }
 
 /**
+ * Identity key used to dedupe Alt-stuck hosts for the same skill/item.
+ * @param {string} kind
+ * @param {Record<string, unknown>|null|undefined} meta
+ * @returns {string}
+ */
+function altHostIdentityKey(kind, meta) {
+  const k = String(kind || 'tooltip');
+  if (meta?.skillId != null && String(meta.skillId).trim() !== '') {
+    return `${k}:skill:${String(meta.skillId)}`;
+  }
+  if (meta?.instanceId != null && String(meta.instanceId).trim() !== '') {
+    return `${k}:instance:${String(meta.instanceId)}`;
+  }
+  if (meta?.itemId != null && String(meta.itemId).trim() !== '') {
+    return `${k}:item:${String(meta.itemId)}`;
+  }
+  return '';
+}
+
+/**
+ * @param {string} kind
+ * @param {Record<string, unknown>|null|undefined} meta
+ * @returns {PinnedTooltipHost|null}
+ */
+function findMatchingAltHost(kind, meta) {
+  const key = altHostIdentityKey(kind, meta);
+  if (!key) return null;
+  for (const host of hosts.values()) {
+    if (host.mode !== 'alt') continue;
+    if (altHostIdentityKey(host.kind, host.meta) === key) return host;
+  }
+  return null;
+}
+
+/**
  * If Alt is held and the live tooltip is visible, promote it to an Alt-stuck host.
+ * Reuses an existing Alt-stuck host for the same skill/item instead of stacking copies.
  * @param {HTMLElement|null|undefined} portal
  * @returns {boolean} true if promoted
  */
@@ -220,21 +256,43 @@ export function promoteLiveTooltip(portal, mode = 'pin') {
 
   const rect = portal.getBoundingClientRect();
   const binding = liveBindings.get(portal);
+  const kind = binding?.kind || 'tooltip';
+  const meta = binding?.meta ? { ...binding.meta } : {};
+  const getHtml = binding?.getHtml || null;
   const className = portal.className
     .split(/\s+/)
     .filter((c) => c && c !== INTERACTIVE_CLASS && c !== STUCK_CLASS && c !== PINNED_CLASS && c !== DRAGGING_CLASS)
     .join(' ');
 
-  const host = createPinnedHost({
-    html,
-    left: rect.left,
-    top: rect.top,
-    className,
-    kind: binding?.kind || 'tooltip',
-    mode,
-    getHtml: binding?.getHtml || null,
-    meta: binding?.meta ? { ...binding.meta } : {},
-  });
+  /** @type {PinnedTooltipHost|null} */
+  let host = null;
+  if (mode === 'alt') {
+    const existing = findMatchingAltHost(kind, meta);
+    if (existing) {
+      existing.el.innerHTML = html;
+      existing.el.style.left = `${Math.max(0, rect.left)}px`;
+      existing.el.style.top = `${Math.max(0, rect.top)}px`;
+      existing.getHtml = getHtml;
+      existing.meta = meta;
+      ensurePinButton(existing.el, { live: false, hostId: existing.id, pinned: false });
+      bindHostDrag(existing.el, existing.id);
+      bumpHostZ(existing.el);
+      host = existing;
+    }
+  }
+
+  if (!host) {
+    host = createPinnedHost({
+      html,
+      left: rect.left,
+      top: rect.top,
+      className,
+      kind,
+      mode,
+      getHtml,
+      meta,
+    });
+  }
 
   portal.style.display = 'none';
   portal.innerHTML = '';
