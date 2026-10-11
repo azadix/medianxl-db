@@ -14,6 +14,7 @@ import {
 } from './class-baselines.js';
 import { getPlannerAutoLevelFromSpentSkillPoints } from '@/planner/planner-options.js';
 import { recomputePlannerStatsFromSkillAllocations } from './planner-stat-modifiers.js';
+import { recomputePlannerStatsFromItems } from '@/items/item-character-stat-bonuses.js';
 import { calculateMaxLevel } from '@/skills/domain/skill-calculations.js';
 import { extractStatReferences } from '@/skills/domain/formula-evaluator.js';
 import { getFileSkillStore, resolveCharacterStatKeyForToken } from '@/shared/skill-data-store.js';
@@ -209,6 +210,8 @@ async function runPlannerSkillStatRecomputeImpl() {
       classSkillsBonus = Math.max(0, Math.floor(parseInt(classInp.value, 10) || 0));
     }
   }
+  // Items first so skill scaling formulas see current relic/charm/gear flats.
+  recomputePlannerStatsFromItems(getCharacterInstance());
   await recomputePlannerStatsFromSkillAllocations(getCharacterInstance(), {
     effectiveLevel: getEffectivePlannerLevel(),
     treeSkillsCache: getTreeSkillsCache(),

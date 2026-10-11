@@ -288,6 +288,8 @@ export default class Character {
     this.stats = createEmptyRegisteredStatsObject();
     /** @type {Record<string, number>} Sum of passive planner stats from allocated skills (not persisted). */
     this._plannerSkillStatBonuses = {};
+    /** @type {Record<string, number>} Sum of planner stats from enabled items/relics/charms (not persisted). */
+    this._plannerItemStatBonuses = {};
     /** Skills toggled off for planner stat aggregation (internal skill ids). */
     this.disabledSkillIds = new Set();
     /** Toggleable skills the player turned on (default off). */
@@ -1324,21 +1326,23 @@ export default class Character {
     const k = String(statKey || '').toLowerCase();
     if (!isPlannerBaseStatKey(k)) return 0;
     const raw = this.getRawStat(k);
-    const bonus = Number(this._plannerSkillStatBonuses?.[k]) || 0;
-    return normalizePlannerStatValue(k, raw + bonus);
+    const skillBonus = Number(this._plannerSkillStatBonuses?.[k]) || 0;
+    const itemBonus = Number(this._plannerItemStatBonuses?.[k]) || 0;
+    return normalizePlannerStatValue(k, raw + skillBonus + itemBonus);
   }
 
   /**
-   * Set stored stat from a **displayed** value (panel input): underlying save excludes passive skill bonuses.
+   * Set stored stat from a **displayed** value (panel input): underlying save excludes passive skill/item bonuses.
    * @param {string} statKey - Stat key (e.g., 'strength', 'dexterity')
    * @param {number|string} value - Value shown in the planner
    */
   setStat(statKey, value) {
     const k = String(statKey || '').trim().toLowerCase();
     if (!k || !isPlannerBaseStatKey(k)) return;
-    const bonus = Number(this._plannerSkillStatBonuses?.[k]) || 0;
+    const skillBonus = Number(this._plannerSkillStatBonuses?.[k]) || 0;
+    const itemBonus = Number(this._plannerItemStatBonuses?.[k]) || 0;
     const displayNum = typeof value === 'number' ? value : parseFloat(String(value).trim());
-    const storedBase = Number.isFinite(displayNum) ? displayNum - bonus : 0;
+    const storedBase = Number.isFinite(displayNum) ? displayNum - skillBonus - itemBonus : 0;
     this.stats[k] = normalizePlannerStatValue(k, storedBase);
   }
 
@@ -1369,6 +1373,38 @@ export default class Character {
       next[k] = n;
     }
     this._plannerSkillStatBonuses = next;
+  }
+
+  /**
+   * Replace item/relic/charm flat stat bonuses (recomputed when gear changes).
+   * @param {Record<string, number>} bonuses
+   */
+  setPlannerItemStatBonuses(bonuses) {
+    /** @type {Record<string, number>} */
+    const next = {};
+    for (const [k0, v] of Object.entries(bonuses || {})) {
+      const k = String(k0 || '').trim().toLowerCase();
+      if (!k || !isPlannerBaseStatKey(k)) continue;
+      const n = Number(v);
+      if (!Number.isFinite(n) || n === 0) continue;
+      next[k] = n;
+    }
+    this._plannerItemStatBonuses = next;
+  }
+
+  /**
+   * Stored + item bonuses (no skill passives) — for skill formulas that should see gear.
+   * @returns {Record<string, number>}
+   */
+  getAllStatsWithoutSkillBonuses() {
+    const out = { ...this.stats };
+    for (const k of Object.keys(out)) {
+      if (!isPlannerBaseStatKey(k)) continue;
+      const raw = this.getRawStat(k);
+      const itemBonus = Number(this._plannerItemStatBonuses?.[k]) || 0;
+      out[k] = normalizePlannerStatValue(k, raw + itemBonus);
+    }
+    return out;
   }
 
   /**
@@ -1430,6 +1466,7 @@ export default class Character {
     const oldStats = { ...this.stats };
     this.stats = createEmptyRegisteredStatsObject();
     this._plannerSkillStatBonuses = {};
+    this._plannerItemStatBonuses = {};
 
     // Dispatch event if stats changed
     if (typeof window !== 'undefined' && Object.keys(oldStats).length > 0) {

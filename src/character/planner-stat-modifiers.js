@@ -277,7 +277,14 @@ export async function recomputePlannerStatsFromSkillAllocations(character, ctx) 
     blvl: { ...mergedBlvl },
     lvl: {},
     treeSkillsCache: treeSkillsCache && typeof treeSkillsCache === 'object' ? treeSkillsCache : {},
-    stats: withBaseAttributeFormulaStats({ ...character.getAllRawStats() }, character),
+    stats: withBaseAttributeFormulaStats(
+      {
+        ...(typeof character.getAllStatsWithoutSkillBonuses === 'function'
+          ? character.getAllStatsWithoutSkillBonuses()
+          : character.getAllRawStats()),
+      },
+      character
+    ),
     oSkillIds: oSkillIdsFromCharacter(character),
     relicOSkillIds: relicOSkillIdsFromGrants(
       collectEnabledRelicOSkillGrants({ className: charClass })

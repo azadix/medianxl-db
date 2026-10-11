@@ -7,6 +7,7 @@ import {
   computeClassDerivedLifeManaBreakdown
 } from './class-baselines.js';
 import { getPlannerStatSkillModifiers } from './planner-stat-modifiers.js';
+import { getPlannerStatItemModifiers } from '@/items/item-character-stat-bonuses.js';
 import {
   isPlannerBaseStatKey,
   isPlannerNegativeAllowedBaseStat,
@@ -26,6 +27,23 @@ function formatStatDisplayValue(value) {
   const num = Number(value);
   if (!Number.isFinite(num)) return '0';
   return Math.abs(num - Math.round(num)) < 1e-6 ? String(Math.round(num)) : num.toFixed(2);
+}
+
+/**
+ * @param {string} statKey
+ * @param {Array<{ title: string, rows: object[] }>} sections
+ */
+function pushItemBonusSection(statKey, sections) {
+  const mods = getPlannerStatItemModifiers(statKey);
+  if (!mods.length) return;
+  sections.push({
+    title: 'Items',
+    rows: mods.map((m) => ({
+      label: m.sourceLabel,
+      value: m.description,
+      active: m.active !== false,
+    })),
+  });
 }
 
 /** @param {object} character Character instance with questsCompleted */
@@ -125,6 +143,7 @@ export function buildPlannerStatBreakdownHtml(statKey) {
           }))
         });
       }
+      pushItemBonusSection('life', sections);
 
       sections.push({
         title: 'Total',
@@ -156,6 +175,7 @@ export function buildPlannerStatBreakdownHtml(statKey) {
           }))
         });
       }
+      pushItemBonusSection('mana', sections);
 
       sections.push({
         title: 'Total',
@@ -187,6 +207,7 @@ export function buildPlannerStatBreakdownHtml(statKey) {
         rows: mods.map((m) => ({ label: m.displayName, value: m.description, active: m.active !== false }))
       });
     }
+    pushItemBonusSection(key, sections);
   } else if (isPlannerNegativeAllowedBaseStat(key)) {
     const rawOnly = character.getRawStat(key);
     const mods = getPlannerStatSkillModifiers(key);
@@ -204,6 +225,7 @@ export function buildPlannerStatBreakdownHtml(statKey) {
         }))
       });
     }
+    pushItemBonusSection(key, sections);
     sections.push({
       title: 'Total',
       rows: [{ label: formatStatDisplayValue(displayedNum), value: undefined }]
@@ -231,6 +253,7 @@ export function buildPlannerStatBreakdownHtml(statKey) {
         }))
       });
     }
+    pushItemBonusSection(key, sections);
     sections.push({
       title: 'Total',
       rows: [{ label: formatStatDisplayValue(displayedNum), value: undefined }]
