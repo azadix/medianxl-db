@@ -81,6 +81,23 @@ describe('skillBonusAmountForContext', () => {
     expect(skillBonusAmountForContext(parsed, { ...dreamCtx, className: 'Amazon' })).toBe(0);
   });
 
+  it('keeps Class Only amount above the relic on-tree +3 cap', () => {
+    const parsed = {
+      kind: 'skill',
+      amount: 5,
+      skillName: 'Noctule',
+      className: 'Assassin',
+    };
+    expect(
+      skillBonusAmountForContext(parsed, {
+        displayName: 'Noctule',
+        className: 'Assassin',
+        skillClass: 'Assassin',
+        isOSkill: false,
+      })
+    ).toBe(5);
+  });
+
   it('uses flat +3 for generic skill lines when skill is on the character tree', () => {
     const parsed = { kind: 'skill', amount: 25, skillName: 'Ecstatic Frenzy' };
     expect(

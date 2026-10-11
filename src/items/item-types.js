@@ -176,6 +176,18 @@ export function canEquipForClass(def, className) {
   return required === String(className).trim();
 }
 
+/**
+ * Why the class cannot use this item, or null if usable.
+ * @param {{ classRestriction?: string }|null|undefined} def
+ * @param {string|null|undefined} className
+ * @returns {string|null}
+ */
+export function classEquipBlockedReason(def, className) {
+  if (canEquipForClass(def, className)) return null;
+  const restriction = String(def?.classRestriction || '').trim();
+  return restriction || 'Not usable by this class.';
+}
+
 /** Opposite weapon/off-hand slot in the same set, or null. */
 const PAIRED_WEAPON_SLOTS = Object.freeze({
   rarm: 'larm',
@@ -440,9 +452,9 @@ export function equipBlockedReason(def, equipSlot, className = undefined, option
     const label = EQUIPMENT_SLOT_LABELS[normalizeEquipSlot(equipSlot)] || 'this slot';
     return `Does not fit the ${label} slot.`;
   }
-  if (className !== undefined && !canEquipForClass(def, className)) {
-    const restriction = String(def.classRestriction || '').trim();
-    return restriction || 'Not usable by this class.';
+  if (className !== undefined) {
+    const classReason = classEquipBlockedReason(def, className);
+    if (classReason) return classReason;
   }
   const other = options?.otherHandDef;
   if (other) {

@@ -685,15 +685,16 @@ async function buildTooltipContent(
         skillData.displayName != null && String(skillData.displayName).trim() !== ''
             ? String(skillData.displayName).trim()
             : String(skillData.id || '');
-    const relicBonus = isProc
-      ? 0
-      : getRelicSkillBonusForSkill({
-          skillId: skillData.id,
-          displayName: skillDisplayName,
-          isOSkill,
-          className: charClassName,
-          skillClass: skillData.className || skillData.class || '',
-        });
+    const softCtx = {
+      skillId: skillData.id,
+      displayName: skillDisplayName,
+      isOSkill,
+      className: charClassName,
+      skillClass: skillData.className || skillData.class || '',
+    };
+    const relicBonus = isProc ? 0 : getRelicSkillBonusForSkill(softCtx);
+    // Tree soft from gear `+# to Skill (Class Only)` / per-skill lines — not class-skills input.
+    const gearSoft = isProc ? 0 : getEquippedGearSkillBonusForSkill(softCtx);
     const itemOSkillBonus = isOSkill ? getOSkillItemPoints(skillData.id) : 0;
     const relicOSkillGrants = collectEnabledRelicOSkillGrants({ className: charClassName });
     const relicOSkillGrant = isOSkill
@@ -701,11 +702,13 @@ async function buildTooltipContent(
         : 0;
     // Class skills bonus applies to tree skills only; oSkills get all-skills + item grants.
     // Item-granted oSkills have blvl 0; the relic/charm +N is slvl.
+    // Gear Class Only soft is Item (separate from Overview class-skills).
     const sourceAmounts = computeSkillBonusSourceAmounts({
         baseLevel: level,
         allSkillsBonus,
         classSkillsBonus,
         itemPoints: itemOSkillBonus,
+        itemSoft: gearSoft,
         relicSoft: relicBonus,
         relicOSkillGrant,
         isOSkill,
@@ -801,17 +804,15 @@ async function buildTooltipContent(
         });
       }
     }
-    if (!isProc && isOSkill) {
+    if (!isProc) {
         sourceRows.push({
             label: 'Item',
             valueHtml: `<span class="skill-bonus-item">+${appliedItemBonus}</span>`,
         });
-    }
-    if (!isProc) {
-      sourceRows.push({
-        label: 'Relic',
-        valueHtml: `<span class="skill-bonus-relic">+${appliedRelicBonus}</span>`,
-      });
+        sourceRows.push({
+            label: 'Relic',
+            valueHtml: `<span class="skill-bonus-relic">+${appliedRelicBonus}</span>`,
+        });
     }
     const sourcesHtml = buildSkillBonusSourcesTableHtml(sourceRows);
 

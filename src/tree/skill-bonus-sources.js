@@ -11,6 +11,7 @@ const OSKILL_LEVEL_CAP = 150;
  *   allSkillsBonus?: number,
  *   classSkillsBonus?: number,
  *   itemPoints?: number,
+ *   itemSoft?: number,
  *   relicSoft?: number,
  *   relicOSkillGrant?: number,
  *   isOSkill?: boolean,
@@ -36,7 +37,8 @@ function nonNegInt(value) {
 /**
  * Allocate displayed SOURCES amounts. Level math still uses total itemPoints
  * (charms + relics) plus relic soft. Display split:
- * Item = charm/gear oSkill slvl; Relic = relic oSkill slvl + relic soft.
+ * Item = charm/gear oSkill slvl, or tree soft from gear `+# to Skill (Class Only)`;
+ * Relic = relic oSkill slvl + relic soft.
  *
  * Cap leftover order: All skills, Class skills (tree only), Item, Relic remainder.
  *
@@ -48,6 +50,7 @@ export function computeSkillBonusSourceAmounts(input = {}) {
   const allSkillsBonus = nonNegInt(input.allSkillsBonus);
   const classSkillsBonus = nonNegInt(input.classSkillsBonus);
   const itemPoints = nonNegInt(input.itemPoints);
+  const itemSoft = nonNegInt(input.itemSoft);
   const relicSoft = nonNegInt(input.relicSoft);
   const relicOSkillGrant = nonNegInt(input.relicOSkillGrant);
   const isOSkill = Boolean(input.isOSkill);
@@ -55,7 +58,7 @@ export function computeSkillBonusSourceAmounts(input = {}) {
   const itemGrant = isOSkill ? Math.max(0, itemPoints - relicOSkillGrant) : 0;
   const softTotal = isOSkill
     ? allSkillsBonus + relicSoft + itemPoints
-    : allSkillsBonus + classSkillsBonus + relicSoft;
+    : allSkillsBonus + classSkillsBonus + itemSoft + relicSoft;
   const effectiveLevel = isOSkill
     ? Math.min(OSKILL_LEVEL_CAP, baseLevel + softTotal)
     : baseLevel + softTotal;
@@ -67,10 +70,14 @@ export function computeSkillBonusSourceAmounts(input = {}) {
   const appliedClassSkillsBonus = isOSkill ? 0 : Math.min(classSkillsBonus, remainingSoft);
   if (!isOSkill) remainingSoft -= appliedClassSkillsBonus;
 
-  const appliedItemBonus = isOSkill ? Math.min(itemGrant, remainingSoft) : 0;
+  const appliedItemBonus = isOSkill
+    ? Math.min(itemGrant, remainingSoft)
+    : Math.min(itemSoft, remainingSoft);
   remainingSoft -= appliedItemBonus;
 
-  const appliedRelicBonus = isOSkill ? Math.max(0, remainingSoft) : relicSoft;
+  const appliedRelicBonus = isOSkill
+    ? Math.max(0, remainingSoft)
+    : Math.min(relicSoft, remainingSoft);
 
   return {
     effectiveLevel,

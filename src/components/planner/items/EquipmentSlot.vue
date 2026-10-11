@@ -73,6 +73,7 @@ const reqsUnmet = computed(() => {
   void reqRefreshTick.value;
   // Depend on this slot and its pair (quiver active only with a matching bow/xbow).
   void itemsStore.equipment[props.slotKey];
+  void itemsStore.viewerClassName;
   const pair = pairedWeaponSlot(props.slotKey);
   if (pair) void itemsStore.equipment[pair];
   if (!def.value) return false;

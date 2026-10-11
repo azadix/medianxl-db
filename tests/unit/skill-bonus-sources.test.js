@@ -58,7 +58,7 @@ describe('computeSkillBonusSourceAmounts', () => {
     });
   });
 
-  it('keeps tree-skill relic soft on Relic and hides item grant', () => {
+  it('keeps tree-skill relic soft on Relic and ignores oSkill itemPoints', () => {
     expect(
       computeSkillBonusSourceAmounts({
         baseLevel: 10,
@@ -75,6 +75,25 @@ describe('computeSkillBonusSourceAmounts', () => {
       appliedClassSkillsBonus: 2,
       appliedItemBonus: 0,
       appliedRelicBonus: 3,
+    });
+  });
+
+  it('puts tree gear Class Only soft on Item, not Class skills', () => {
+    expect(
+      computeSkillBonusSourceAmounts({
+        baseLevel: 20,
+        allSkillsBonus: 0,
+        classSkillsBonus: 2,
+        itemSoft: 5,
+        relicSoft: 0,
+        isOSkill: false,
+      })
+    ).toEqual({
+      effectiveLevel: 27,
+      appliedAllSkillsBonus: 0,
+      appliedClassSkillsBonus: 2,
+      appliedItemBonus: 5,
+      appliedRelicBonus: 0,
     });
   });
 

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   canEquipForClass,
+  classEquipBlockedReason,
   canEquipInSlot,
   equipBlockedReason,
   isActiveWeaponSetSlot,
@@ -42,6 +43,13 @@ describe('canEquipForClass', () => {
     expect(canEquipForClass(def, 'Paladin')).toBe(true);
     expect(canEquipForClass(def, 'Barbarian')).toBe(false);
     expect(canEquipForClass(def, null)).toBe(false);
+  });
+
+  it('returns a class blocked reason for wrong class', () => {
+    const def = { classRestriction: 'Amazon Only' };
+    expect(classEquipBlockedReason(def, 'Amazon')).toBeNull();
+    expect(classEquipBlockedReason(def, 'Barbarian')).toBe('Amazon Only');
+    expect(classEquipBlockedReason({}, 'Barbarian')).toBeNull();
   });
 });
 

@@ -322,7 +322,7 @@ function resolveSkillClass(skillId, skillClass) {
  * Overview all/class inputs are separate — do not include them here.
  * Relics below the character's level do not contribute.
  *
- * // TODO: Items — sum +skills from equipped gear (only when reqs are met)
+ * Equipped-gear soft is handled by {@link getEquippedGearSkillBonusForSkill}.
  *
  * @param {{
  *   skillId?: string,
@@ -346,8 +346,6 @@ export function getRelicSkillBonusForSkill(options = {}) {
       className = character?.className != null ? String(character.className).trim() : '';
     }
     const characterLevel = character?.level ?? null;
-
-    // TODO: Items — sum +skills from equipped gear (only when reqs are met)
 
     const itemsStore = useItemsStore();
     /** @type {Array<{ def: object, rolls?: Record<string, number>|null }>} */

@@ -128,11 +128,12 @@ const inactiveNotice = computed(() => {
   const sel = selectedSlot.value;
   if (sel?.location !== 'equipment') return '';
   const slot = String(sel.slot);
-  // Track this slot and its pair so the notice updates when a bow is added/removed.
+  // Track this slot, its pair, and class so the notice updates on equip/class change.
   void itemsStore.equipment[slot];
+  void itemsStore.viewerClassName;
   const other = pairedWeaponSlot(slot);
   if (other) void itemsStore.equipment[other];
-  return itemsStore.quiverInactiveReasonForSlot(slot) || '';
+  return itemsStore.equipmentSlotInactiveReason(slot) || '';
 });
 
 function loadRolls() {

@@ -12,6 +12,7 @@ import {
   emptyInventory,
   canEquipInSlot,
   canEquipForClass,
+  classEquipBlockedReason,
   canPlaceInInventory,
   isInventoryOnlyGear,
   isActiveWeaponSetSlot,
@@ -407,11 +408,21 @@ export const useItemsStore = defineStore('items', {
     enabledRelicCount() {
       return Object.keys(this.enabledRelics).length;
     },
+    /**
+     * Planner class used for equipped-item usability checks.
+     * @returns {string|null}
+     */
+    effectiveViewerClassName() {
+      return this.viewerClassName ?? getCharacterInstance()?.className ?? null;
+    },
+
     /** Highest Required Level among active-set gear and enabled charms/relics. */
     maxActiveItemReqLevel() {
       let max = 0;
+      const className = this.effectiveViewerClassName;
       const consider = (def) => {
-        const req = Number(def?.reqLevel);
+        if (!def || !canEquipForClass(def, className)) return;
+        const req = Number(def.reqLevel);
         if (Number.isFinite(req) && req > max) max = req;
       };
       for (const slot of EQUIPMENT_SLOTS) {
@@ -429,8 +440,11 @@ export const useItemsStore = defineStore('items', {
     maxActiveItemReqStats() {
       let reqStr = 0;
       let reqDex = 0;
+      const className = this.effectiveViewerClassName;
       const consider = (instanceId) => {
         if (instanceId == null) return;
+        const def = this.getDefForInstance(instanceId);
+        if (!def || !canEquipForClass(def, className)) return;
         const reqs = this.getRequirementsForInstance(instanceId);
         if (!reqs) return;
         if (reqs.reqStr > reqStr) reqStr = reqs.reqStr;
@@ -627,7 +641,7 @@ export const useItemsStore = defineStore('items', {
     },
 
     /**
-     * Whether an equipment slot's item is active (level/str/dex + quiver pairing).
+     * Whether an equipment slot's item is active (class + level/str/dex + quiver pairing).
      * Empty slots count as met. Quivers are inactive without a matching bow/crossbow.
      * @param {string} slot
      * @returns {boolean}
@@ -638,6 +652,8 @@ export const useItemsStore = defineStore('items', {
       if (id == null) return true;
       const def = this.getDefForInstance(id);
       if (!def) return true;
+      const className = this.effectiveViewerClassName;
+      if (!canEquipForClass(def, className)) return false;
       const reqs = this.getRequirementsForInstance(id);
       const stats = this.getCharacterRequirementStats();
       if (!characterMeetsItemRequirements(reqs, stats)) return false;
@@ -649,6 +665,7 @@ export const useItemsStore = defineStore('items', {
         const otherDef = this.getDefForInstance(otherId);
         if (!isQuiverEffectActive(def, otherDef)) return false;
         // Partner must also meet its own requirements to "count" as equipped.
+        if (!canEquipForClass(otherDef, className)) return false;
         const otherReqs = this.getRequirementsForInstance(otherId);
         if (!characterMeetsItemRequirements(otherReqs, stats)) return false;
       }
@@ -667,6 +684,23 @@ export const useItemsStore = defineStore('items', {
     },
 
     /**
+     * Why an equipped item is inactive for UI notices (class / quiver), or null.
+     * Level/str/dex failures are shown via the requirements line instead.
+     * @param {string} slot
+     * @returns {string|null}
+     */
+    equipmentSlotInactiveReason(slot) {
+      const key = String(slot);
+      const id = this.equipment[key];
+      if (id == null) return null;
+      const def = this.getDefForInstance(id);
+      if (!def) return null;
+      const classReason = classEquipBlockedReason(def, this.effectiveViewerClassName);
+      if (classReason) return classReason;
+      return this.quiverInactiveReasonForSlot(key);
+    },
+
+    /**
      * Why an equipped quiver is inactive, or null when active / not a quiver.
      * @param {string} slot
      * @returns {string|null}
@@ -678,6 +712,8 @@ export const useItemsStore = defineStore('items', {
       const def = this.getDefForInstance(id);
       if (!isQuiverItem(def)) return null;
       if (this.equipmentSlotMeetsRequirements(key)) return null;
+      // Class / level / str / dex failures are not quiver-pairing messages.
+      if (!canEquipForClass(def, this.effectiveViewerClassName)) return null;
       const reqs = this.getRequirementsForInstance(id);
       if (!characterMeetsItemRequirements(reqs, this.getCharacterRequirementStats())) return null;
       return QUIVER_INACTIVE_REASON;
@@ -736,11 +772,11 @@ export const useItemsStore = defineStore('items', {
         const def = this.getDefForInstance(id);
         if (!def) continue;
         if (this.equipmentSlotMeetsRequirements(slot)) continue;
-        const quiverReason = this.quiverInactiveReasonForSlot(slot);
-        if (quiverReason) {
+        const inactiveReason = this.equipmentSlotInactiveReason(slot);
+        if (inactiveReason) {
           out.push({
             name: String(def.name || def.id || slot),
-            requirementsLine: quiverReason,
+            requirementsLine: inactiveReason,
           });
           continue;
         }
@@ -1217,20 +1253,20 @@ export const useItemsStore = defineStore('items', {
      */
     getTooltipOptionsForDef(def, equipSlot = null) {
       const ch = getCharacterInstance();
-      const className = ch?.className ?? null;
+      const className = this.effectiveViewerClassName;
       const characterLevel = ch?.level ?? null;
       const characterStrength = ch && typeof ch.getStat === 'function' ? ch.getStat('strength') : null;
       const characterDexterity = ch && typeof ch.getStat === 'function' ? ch.getStat('dexterity') : null;
       /** @type {Record<string, unknown>} */
       const extras = { className, characterLevel, characterStrength, characterDexterity };
-      if (isQuiverItem(def)) {
-        const slot =
-          equipSlot != null
-            ? String(equipSlot)
-            : this.selectedSlot?.location === 'equipment'
-              ? String(this.selectedSlot.slot)
-              : '';
-        const reason = slot ? this.quiverInactiveReasonForSlot(slot) : null;
+      const slot =
+        equipSlot != null
+          ? String(equipSlot)
+          : this.selectedSlot?.location === 'equipment'
+            ? String(this.selectedSlot.slot)
+            : '';
+      if (slot && this.equipment[slot] != null) {
+        const reason = this.equipmentSlotInactiveReason(slot);
         if (reason) extras.inactiveNotice = reason;
       }
       if (!def?.setId) return extras;

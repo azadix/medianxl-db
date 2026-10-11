@@ -126,11 +126,15 @@ export async function initializeTreePage() {
         initializeCharacter(newClass, currentLevel);
         clearAllStats();
         applyClassBaselineStatsToCharacter(newClass);
+        const itemsStore = useItemsStore();
+        // Update viewer class before auto-match so class-only gear is included/excluded correctly.
+        itemsStore.syncViewerClassName(newClass);
+        // Class switch resets str/dex to baseline; re-bump for equipped item reqs when enabled.
+        itemsStore.syncCharacterStatsToItemReqs();
         clearSkillVariants();
         applySkillVariantDefaultsForClass(newClass);
         updateClassSkillsBonusLabel(newClass);
         refreshPlannerStatsPanelFromCharacter();
-        useItemsStore().syncViewerClassName(newClass);
         syncItemGrantedOSkills();
         window.dispatchEvent(new CustomEvent('characterStatsChanged', { detail: { classChange: true } }));
         const currentSkillsList = getSkillsList();
