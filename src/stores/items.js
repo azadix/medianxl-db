@@ -47,6 +47,7 @@ import {
   resolveItemRequirements,
 } from '@/items/item-requirements.js';
 import { getPlannerAutoMatchHighestStatRequirements } from '@/planner/planner-options.js';
+import { isTswSocketedRuneDump } from '@/planner/tsw-item-rolls.js';
 import {
   countEquippedSetPieces,
   resolveSetBonuses,
@@ -207,7 +208,8 @@ function parseExtrasList(raw) {
   const out = [];
   for (const line of raw) {
     const text = String(line || '').trim();
-    if (text) out.push(text);
+    if (!text || isTswSocketedRuneDump(text)) continue;
+    out.push(text);
   }
   return out;
 }

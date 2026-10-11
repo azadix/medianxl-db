@@ -316,11 +316,11 @@ describe('tsw-build-import', () => {
     expect(snapshot.equipment.tors).toMatchObject({
       defId: 'rw:lionheart:@14',
       icon: 'invful',
-      extras: expect.arrayContaining([
-        'remainders of a once powerful armor...',
-        'OhmOhmOhm',
-      ]),
+      extras: expect.arrayContaining(['remainders of a once powerful armor...']),
     });
+    expect(snapshot.equipment.tors?.extras).not.toEqual(
+      expect.arrayContaining(['OhmOhmOhm'])
+    );
   });
 
   it('resolves catalog ids used by the mapper', () => {

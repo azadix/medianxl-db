@@ -41,7 +41,36 @@ import {
 
 /** Boilerplate / flags that are not planner modifier lines. */
 const TSW_EXTRA_SKIP_RE =
-  /^(Defense:|One-Hand Damage|Two-Hand Damage|Throw Damage|Required |Durability|Item Level|Quality Level|Prefixes:|Suffixes:|Socketed \(|Can be Inserted|Ethereal|Corrupted|Already Upgraded|Quantity|Chance to Block|\(.*\)$)/i;
+  /^(Defense:|One-Hand Damage|Two-Hand Damage|Throw Damage|Required |Durability|Item Level|Quality Level|Prefixes:|Suffixes:|Socketed \(|Can be Inserted|Ethereal|Corrupted|Already Upgraded|Quantity|Chance to Block|Innate \w+ Damage:|\(.*\)$)/i;
+
+/** TSW dumps socketed runes as a no-space concat (e.g. FelFelFelFalFal). */
+const TSW_SOCKETED_RUNE_DUMP_RE = /^[A-Z][a-z]*(?:[A-Z][a-z]*)+$/;
+
+/**
+ * @param {string|null|undefined} text
+ * @returns {boolean}
+ */
+export function isTswSocketedRuneDump(text) {
+  return TSW_SOCKETED_RUNE_DUMP_RE.test(String(text || '').trim());
+}
+
+/**
+ * Concatenated short names of socketed runes (Fel + Fal -> FelFal), if any.
+ * @param {object|null|undefined} row
+ * @returns {string}
+ */
+function tswSocketedRuneDump(row) {
+  const socks = Array.isArray(row?.socketables) ? row.socketables : [];
+  /** @type {string[]} */
+  const names = [];
+  for (const sock of socks) {
+    const raw = String(sock?.name || '').trim();
+    const m = raw.match(/^([A-Za-z]+)\s+Rune\b/i);
+    if (!m) continue;
+    names.push(m[1]);
+  }
+  return names.join('');
+}
 
 const STOP = new Set([
   'a',
@@ -81,7 +110,10 @@ function signature(text) {
     .replace(/\+\((-?\d+(?:\.\d+)?)\s+to\s+(-?\d+(?:\.\d+)?)\)/g, '#')
     .replace(/\((-?\d+(?:\.\d+)?)\s+to\s+(-?\d+(?:\.\d+)?)\)/g, '#')
     .replace(/[+-]?\d+(?:\.\d+)?/g, '#')
-    .replace(/[^a-z#]+/g, '');
+    .replace(/[^a-z#]+/g, '')
+    // Collapse so "Innate Lightning Damage: 719 (62.0% of Dexterity)" matches
+    // catalog "Innate Lightning Damage: (62.0% of Dexterity)".
+    .replace(/#+/g, '#');
 }
 
 /**
@@ -467,9 +499,28 @@ export function extrasFromTswItem(row, def) {
   const name = tswRowName(row);
   const type = row?.type != null ? String(row.type).trim() : '';
   const base = stripTswBaseLabel(type || name);
+  const defBaseName = def?.baseName != null ? String(def.baseName).trim() : '';
+  const runeDump = tswSocketedRuneDump(row);
   /** @type {Set<string>} */
   const skip = new Set(
-    [name, type, base, stripTswBaseLabel(name), def?.name != null ? String(def.name) : '']
+    [
+      name,
+      type,
+      base,
+      stripTswBaseLabel(name),
+      defBaseName,
+      stripTswBaseLabel(defBaseName),
+      def?.name != null ? String(def.name) : '',
+      runeDump,
+    ]
+      .map((s) => String(s || '')
+        .trim()
+        .toLowerCase())
+      .filter(Boolean)
+  );
+  /** @type {Set<string>} */
+  const skipStrippedBases = new Set(
+    [base, stripTswBaseLabel(name), stripTswBaseLabel(type), stripTswBaseLabel(defBaseName)]
       .map((s) => String(s || '')
         .trim()
         .toLowerCase())
@@ -481,8 +532,13 @@ export function extrasFromTswItem(row, def) {
   for (const line of tswDescriptionTexts(row.description_lines)) {
     const text = plain(line);
     if (!text) continue;
-    if (skip.has(text.toLowerCase())) continue;
+    const lower = text.toLowerCase();
+    if (skip.has(lower)) continue;
+    // "Wrist Blade (Sacred)" must not become an extra when type is "Wrist Blade (SSU)".
+    if (skipStrippedBases.has(stripTswBaseLabel(text).toLowerCase())) continue;
     if (TSW_EXTRA_SKIP_RE.test(text)) continue;
+    // Socketed rune name dump (FelFelFelFalFal), even if socketables were omitted.
+    if (isTswSocketedRuneDump(text)) continue;
     if (templates.some((tmpl) => lineMatchesCatalogTemplate(tmpl, text))) continue;
     out.push(text);
   }
