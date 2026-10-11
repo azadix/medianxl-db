@@ -168,6 +168,68 @@ function asColoredLine(line) {
 }
 
 /**
+ * @param {string} text
+ * @returns {boolean}
+ */
+function isPipeOnlyText(text) {
+  return /^\|+$/.test(String(text || '').trim());
+}
+
+/**
+ * Wiki often paints `|` separators orange while the labels are grey, which
+ * splits one logical line across many sibling spans.
+ * @param {ColoredStatLine} prev
+ * @param {ColoredStatLine} next
+ * @returns {boolean}
+ */
+function shouldJoinPipeSeparatedLines(prev, next) {
+  const left = String(prev?.text || '').trim();
+  const right = String(next?.text || '').trim();
+  if (!left || !right) return false;
+  return (
+    isPipeOnlyText(left) ||
+    isPipeOnlyText(right) ||
+    left.endsWith('|') ||
+    right.startsWith('|')
+  );
+}
+
+/**
+ * @param {ColoredStatLine} prev
+ * @param {ColoredStatLine} next
+ * @returns {string}
+ */
+function colorForJoinedPipeLine(prev, next) {
+  if (isPipeOnlyText(prev.text)) return next.color || prev.color;
+  if (isPipeOnlyText(next.text)) return prev.color || next.color;
+  if (prev.color === 'grey' || next.color === 'grey') return 'grey';
+  return prev.color || next.color || 'magic';
+}
+
+/**
+ * @param {ColoredStatLine[]} lines
+ * @returns {ColoredStatLine[]}
+ */
+function joinPipeSeparatedColoredLines(lines) {
+  /** @type {ColoredStatLine[]} */
+  const out = [];
+  for (const line of lines) {
+    const text = String(line.text || '').trim();
+    if (!text) continue;
+    const prev = out[out.length - 1];
+    if (prev && shouldJoinPipeSeparatedLines(prev, { ...line, text })) {
+      const next = { text, color: line.color || 'magic' };
+      const joinedColor = colorForJoinedPipeLine(prev, next);
+      prev.text = `${prev.text} ${text}`.replace(/\s*\|\s*/g, ' | ').replace(/\s+/g, ' ').trim();
+      prev.color = joinedColor;
+      continue;
+    }
+    out.push({ text, color: line.color || 'magic' });
+  }
+  return out;
+}
+
+/**
  * Join stat labels and values split across sibling wiki spans.
  * @param {Array<string|ColoredStatLine>} lines
  * @returns {ColoredStatLine[]}
@@ -210,7 +272,7 @@ export function joinSplitColoredStatLines(lines) {
       color: line.color,
     });
   }
-  return out;
+  return joinPipeSeparatedColoredLines(out);
 }
 
 /**

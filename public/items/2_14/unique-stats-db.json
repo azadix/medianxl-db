@@ -2363,7 +2363,7 @@
     {
       "name": "Elemental Trance",
       "quality": "SU",
-      "stats": "Defense:\n(1113 - 1302) to (1147 - 1342)\nRequired Level: 100\nRequired Strength: 500\nItem Level: 130\n{orange}Gain 0.75% of your Highest Attribute as Elemental Pierce to an element\n{grey}Str: Fire\n{orange}|\n{grey}Dex: Cold\n{orange}|\n{grey}Ene: Lightning\n{orange}|\n{grey}Vita: Poison\n{orange}|\n{grey}Multiple if tied\n(10 to 40)% Movement Speed\n(6 to 10)% Innate Elemental Damage\n+(71 to 100)% Enhanced Defense\n(0 to 20)% to Strength\n(0 to 20)% to Dexterity\n(0 to 20)% to Vitality\n(0 to 20)% to Energy\n(30 to 50)% Gold Find\nSocketed (4)",
+      "stats": "Defense:\n(1113 - 1302) to (1147 - 1342)\nRequired Level: 100\nRequired Strength: 500\nItem Level: 130\n{orange}Gain 0.75% of your Highest Attribute as Elemental Pierce to an element\n{grey}Str: Fire | Dex: Cold | Ene: Lightning | Vita: Poison | Multiple if tied\n(10 to 40)% Movement Speed\n(6 to 10)% Innate Elemental Damage\n+(71 to 100)% Enhanced Defense\n(0 to 20)% to Strength\n(0 to 20)% to Dexterity\n(0 to 20)% to Vitality\n(0 to 20)% to Energy\n(30 to 50)% Gold Find\nSocketed (4)",
       "type": "Boots (Sacred)"
     },
     {

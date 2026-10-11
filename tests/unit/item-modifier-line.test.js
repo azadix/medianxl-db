@@ -119,6 +119,32 @@ describe('wiki orange and grey lines', () => {
       '30% Movement Speed',
     ]);
   });
+
+  it('rejoins pipe-separated orange/grey fragments into one grey line', () => {
+    const html = `
+      <p class="genbig"><b>Boots</b></p>
+      <table class="uniques">
+        <tr><th colspan="4">Boots</th></tr>
+        <tr>
+          <td><img src="invbot.jpg"></td>
+          <td>
+            <span class="item-unique margin_bottom"><b>Elemental Trance</b></span><br>
+            <span class="item-basic">Required Level: 100<br></span>
+            <span class="item-orange">Gain 0.75% of your Highest Attribute as Elemental Pierce to an element<br></span>
+            <span class="item-runeword">Str: Fire</span><span class="item-orange">|</span><span class="item-runeword">Dex: Cold</span><span class="item-orange">|</span><span class="item-runeword">Ene: Lightning</span><span class="item-orange">|</span><span class="item-runeword">Vita: Poison</span><span class="item-orange">|</span><span class="item-runeword">Multiple if tied<br></span>
+            <span class="item-magic">(10 to 40)% Movement Speed<br></span>
+          </td>
+        </tr>
+      </table>
+    `;
+    const [entry] = parseSacredUniquesWiki(html);
+    expect(entry.name).toBe('Elemental Trance');
+    expect(parseItemStats(entry.stats).modifiers).toEqual([
+      '{orange}Gain 0.75% of your Highest Attribute as Elemental Pierce to an element',
+      '{grey}Str: Fire | Dex: Cold | Ene: Lightning | Vita: Poison | Multiple if tied',
+      '(10 to 40)% Movement Speed',
+    ]);
+  });
 });
 
 describe('always-on parsers skip grey effect lines', () => {
