@@ -8,6 +8,22 @@ import { isRelicItem } from '@/items/relic-items.js';
 
 /** @typedef {'magic'|'rare'|'crafted'|'honorific'|'angelic'} CustomItemQuality */
 
+/**
+ * @typedef {{
+ *   quality: CustomItemQuality,
+ *   name?: string,
+ *   modifiers: string[],
+ *   reqLevel?: number,
+ *   reqStr?: number,
+ *   reqDex?: number,
+ *   defenseDisplay?: string,
+ *   damage1hDisplay?: string,
+ *   damage2hDisplay?: string,
+ *   throwDamageDisplay?: string,
+ *   sockets?: number,
+ * }} CustomItemPayload
+ */
+
 /** @type {ReadonlyArray<CustomItemQuality>} */
 export const CUSTOM_ITEM_QUALITIES = Object.freeze([
   'magic',
@@ -26,6 +42,15 @@ const TSW_BASE_SUFFIX_RE =
 const NOT_STATS_RE =
   /^(Defense:|One-Hand Damage|Two-Hand Damage|Throw Damage|Required |Durability|Item Level|Quality Level|Prefixes:|Suffixes:|Socketed \(|Can be Inserted|Ethereal|Quantity|Chance to Block|\(.*\)$)/i;
 
+const DEFENSE_RE = /^Defense:\s*(.+)$/i;
+const DAMAGE_1H_RE = /^One-Hand Damage:\s*(.+)$/i;
+const DAMAGE_2H_RE = /^Two-Hand Damage:\s*(.+)$/i;
+const THROW_DAMAGE_RE = /^Throw Damage:\s*(.+)$/i;
+const REQ_LEVEL_LINE_RE = /^Required Level:\s*(\d+)\s*$/i;
+const REQ_STR_LINE_RE = /^Required Strength:\s*(\d+)\s*$/i;
+const REQ_DEX_LINE_RE = /^Required Dexterity:\s*(\d+)\s*$/i;
+const SOCKETED_RE = /^Socketed \((\d+)(?:\/(\d+))?\)$/i;
+
 const ANGELIC_RE = /\(Angelic\)/i;
 const HONORIFIC_RE = /\(Honorific\)/i;
 const TIER_LABEL_RE = /\s*\((?:\d+|sacred)\)$/i;
@@ -42,12 +67,31 @@ export function normalizeCustomQuality(value) {
 }
 
 /**
+ * @param {unknown} value
+ * @returns {number|undefined}
+ */
+function optionalNonNegInt(value) {
+  const n = Number(value);
+  if (!Number.isFinite(n) || n < 0) return undefined;
+  return Math.floor(n);
+}
+
+/**
+ * @param {unknown} value
+ * @returns {string|undefined}
+ */
+function optionalDisplay(value) {
+  const text = value != null ? String(value).trim() : '';
+  return text || undefined;
+}
+
+/**
  * @param {unknown} raw
- * @returns {{ quality: CustomItemQuality, name?: string, modifiers: string[] }|null}
+ * @returns {CustomItemPayload|null}
  */
 export function parseCustomPayload(raw) {
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
-  const rec = /** @type {{ quality?: unknown, name?: unknown, modifiers?: unknown }} */ (raw);
+  const rec = /** @type {Record<string, unknown>} */ (raw);
   const quality = normalizeCustomQuality(rec.quality);
   if (!quality) return null;
   const name = rec.name != null ? String(rec.name).trim() : '';
@@ -59,9 +103,25 @@ export function parseCustomPayload(raw) {
       if (text) modifiers.push(text);
     }
   }
-  /** @type {{ quality: CustomItemQuality, name?: string, modifiers: string[] }} */
+  /** @type {CustomItemPayload} */
   const out = { quality, modifiers };
   if (name) out.name = name;
+  const reqLevel = optionalNonNegInt(rec.reqLevel);
+  const reqStr = optionalNonNegInt(rec.reqStr);
+  const reqDex = optionalNonNegInt(rec.reqDex);
+  const sockets = optionalNonNegInt(rec.sockets);
+  const defenseDisplay = optionalDisplay(rec.defenseDisplay);
+  const damage1hDisplay = optionalDisplay(rec.damage1hDisplay);
+  const damage2hDisplay = optionalDisplay(rec.damage2hDisplay);
+  const throwDamageDisplay = optionalDisplay(rec.throwDamageDisplay);
+  if (reqLevel != null) out.reqLevel = reqLevel;
+  if (reqStr != null) out.reqStr = reqStr;
+  if (reqDex != null) out.reqDex = reqDex;
+  if (sockets != null) out.sockets = sockets;
+  if (defenseDisplay) out.defenseDisplay = defenseDisplay;
+  if (damage1hDisplay) out.damage1hDisplay = damage1hDisplay;
+  if (damage2hDisplay) out.damage2hDisplay = damage2hDisplay;
+  if (throwDamageDisplay) out.throwDamageDisplay = throwDamageDisplay;
   return out;
 }
 
@@ -83,7 +143,8 @@ export function applyCustomOverlayToDef(def, customRaw) {
   if (!def || typeof def !== 'object') return def ?? null;
   const custom = parseCustomPayload(customRaw);
   if (!custom) return def;
-  return {
+  /** @type {Record<string, unknown>} */
+  const out = {
     ...def,
     name: custom.name || def.name,
     rarity: custom.quality,
@@ -92,6 +153,33 @@ export function applyCustomOverlayToDef(def, customRaw) {
     baseName: def.baseName || def.name,
     modifiers: custom.modifiers.slice(),
   };
+  if (custom.reqLevel != null) out.reqLevel = custom.reqLevel;
+  if (custom.reqStr != null) {
+    out.reqStr = custom.reqStr;
+    // TSW "Required Strength:" is already post Requirements +/-%.
+    out.reqStrFinal = true;
+  }
+  if (custom.reqDex != null) {
+    out.reqDex = custom.reqDex;
+    out.reqDexFinal = true;
+  }
+  if (custom.sockets != null) out.sockets = custom.sockets;
+  if (custom.defenseDisplay) {
+    out.defenseDisplay = custom.defenseDisplay;
+    out.defense = undefined;
+  }
+  if (custom.damage1hDisplay) {
+    out.damage1hDisplay = custom.damage1hDisplay;
+    out.damage1h = undefined;
+  }
+  if (custom.damage2hDisplay) {
+    out.damage2hDisplay = custom.damage2hDisplay;
+    out.damage2h = undefined;
+  }
+  if (custom.throwDamageDisplay) {
+    out.throwDamageDisplay = custom.throwDamageDisplay;
+  }
+  return out;
 }
 
 /**
@@ -194,6 +282,75 @@ export function tswCustomModifiers(row) {
   return out;
 }
 
+const REQ_LEVEL_BONUS_LINE_RE = /^\+?\s*(\d+)\s+Required Level$/i;
+
+/**
+ * Defense / damage / req / socket lines from a TSW custom item description.
+ * TSW `Required Level:` is the final total (including orb bonuses), while
+ * `+N Required Level` is also listed as a mod — store the pre-bonus base so
+ * `resolveItemRequirements` can add the bonus once.
+ * @param {object|null|undefined} row
+ * @returns {Omit<CustomItemPayload, 'quality'|'name'|'modifiers'>}
+ */
+export function tswCustomBaseFields(row) {
+  /** @type {Omit<CustomItemPayload, 'quality'|'name'|'modifiers'>} */
+  const out = {};
+  let reqLevelTotal = /** @type {number|null} */ (null);
+  let reqLevelBonus = 0;
+  for (const line of tswDescriptionTexts(row?.description_lines)) {
+    const defense = DEFENSE_RE.exec(line);
+    if (defense) {
+      out.defenseDisplay = defense[1].replace(/\s+/g, ' ').trim();
+      continue;
+    }
+    const d1 = DAMAGE_1H_RE.exec(line);
+    if (d1) {
+      out.damage1hDisplay = d1[1].replace(/\s+/g, ' ').trim();
+      continue;
+    }
+    const d2 = DAMAGE_2H_RE.exec(line);
+    if (d2) {
+      out.damage2hDisplay = d2[1].replace(/\s+/g, ' ').trim();
+      continue;
+    }
+    const thrown = THROW_DAMAGE_RE.exec(line);
+    if (thrown) {
+      out.throwDamageDisplay = thrown[1].replace(/\s+/g, ' ').trim();
+      continue;
+    }
+    const reqLevel = REQ_LEVEL_LINE_RE.exec(line);
+    if (reqLevel) {
+      reqLevelTotal = Number(reqLevel[1]);
+      continue;
+    }
+    const reqBonus = REQ_LEVEL_BONUS_LINE_RE.exec(line);
+    if (reqBonus) {
+      reqLevelBonus += Number(reqBonus[1]) || 0;
+      continue;
+    }
+    const reqStr = REQ_STR_LINE_RE.exec(line);
+    if (reqStr) {
+      out.reqStr = Number(reqStr[1]);
+      continue;
+    }
+    const reqDex = REQ_DEX_LINE_RE.exec(line);
+    if (reqDex) {
+      out.reqDex = Number(reqDex[1]);
+      continue;
+    }
+    const sock = SOCKETED_RE.exec(line);
+    if (sock) {
+      const filled = Number(sock[1]);
+      const max = sock[2] != null ? Number(sock[2]) : filled;
+      if (Number.isFinite(max) && max >= 0) out.sockets = max;
+    }
+  }
+  if (reqLevelTotal != null && Number.isFinite(reqLevelTotal)) {
+    out.reqLevel = Math.max(0, reqLevelTotal - reqLevelBonus);
+  }
+  return out;
+}
+
 /**
  * @param {object|null|undefined} def
  * @returns {boolean}
@@ -250,7 +407,12 @@ export function resolveCustomBaseDefId(row, cat, quality = null) {
     return wants.includes(have) || wants.includes(stripped);
   });
   if (!hits.length) return null;
-  const preferSacred = quality === 'angelic' || quality === 'honorific';
+  const typeRaw = String(row?.type || '');
+  const preferSacred =
+    quality === 'crafted' ||
+    quality === 'honorific' ||
+    quality === 'angelic' ||
+    /\(Sacred\)/i.test(typeRaw);
   if (preferSacred) {
     const sacred = hits.find((d) => /\(sacred\)$/i.test(String(d.name || '')));
     if (sacred?.id) return String(sacred.id);
@@ -265,7 +427,7 @@ export function resolveCustomBaseDefId(row, cat, quality = null) {
  * @param {object} row
  * @param {string} defId
  * @param {CustomItemQuality} quality
- * @returns {{ defId: string, custom: { quality: CustomItemQuality, name?: string, modifiers: string[] }, icon?: string }}
+ * @returns {{ defId: string, custom: CustomItemPayload, icon?: string }}
  */
 export function tswCustomSnapshotEntry(row, defId, quality) {
   const name = tswRowName(row);
@@ -273,8 +435,9 @@ export function tswCustomSnapshotEntry(row, defId, quality) {
     quality,
     name,
     modifiers: tswCustomModifiers(row),
+    ...tswCustomBaseFields(row),
   });
-  /** @type {{ defId: string, custom: { quality: CustomItemQuality, name?: string, modifiers: string[] }, icon?: string }} */
+  /** @type {{ defId: string, custom: CustomItemPayload, icon?: string }} */
   const entry = { defId, custom: custom || { quality, modifiers: [] } };
   const icon = row?.image != null ? String(row.image).trim() : '';
   if (icon) entry.icon = icon;

@@ -126,7 +126,19 @@ async function fetchCatalogFile(url) {
  *   defenseDisplay?: string,
  * }} ItemDef
  * @typedef {{ id: string, name: string, bonuses: Array<{ required: number|string, modifiers: string[] }> }} SetDef
- * @typedef {{ quality: 'magic'|'rare'|'crafted'|'honorific'|'angelic', name?: string, modifiers: string[] }} CustomItemPayload
+ * @typedef {{
+ *   quality: 'magic'|'rare'|'crafted'|'honorific'|'angelic',
+ *   name?: string,
+ *   modifiers: string[],
+ *   reqLevel?: number,
+ *   reqStr?: number,
+ *   reqDex?: number,
+ *   defenseDisplay?: string,
+ *   damage1hDisplay?: string,
+ *   damage2hDisplay?: string,
+ *   throwDamageDisplay?: string,
+ *   sockets?: number,
+ * }} CustomItemPayload
  * @typedef {{ defId: string, icon: string, rolls?: Record<string, number>, custom?: CustomItemPayload }} ItemInstance
  * @typedef {{
  *   defId: string,

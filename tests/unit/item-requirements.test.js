@@ -4,6 +4,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   formatItemRequirementsLine,
+  parseRequiredLevelBonus,
   parseRequirementsReductionPct,
   resolveItemRequirements,
 } from '@/items/item-requirements.js';
@@ -13,6 +14,10 @@ describe('parseRequirementsReductionPct', () => {
   it('parses flat Requirements -N%', () => {
     expect(parseRequirementsReductionPct('Requirements -20%')).toBe(20);
     expect(parseRequirementsReductionPct('Requirements -50%')).toBe(50);
+  });
+
+  it('treats Requirements +N% as a requirement increase', () => {
+    expect(parseRequirementsReductionPct('Requirements +21%')).toBe(-21);
   });
 
   it('parses Requirements Reduced by N%', () => {
@@ -26,6 +31,14 @@ describe('parseRequirementsReductionPct', () => {
   it('ignores unrelated reduced-by lines', () => {
     expect(parseRequirementsReductionPct('Physical Damage Taken Reduced by 20')).toBe(0);
     expect(parseRequirementsReductionPct('+20% Enhanced Defense')).toBe(0);
+  });
+});
+
+describe('parseRequiredLevelBonus', () => {
+  it('parses mystic-orb required level bonuses', () => {
+    expect(parseRequiredLevelBonus('+40 Required Level')).toBe(40);
+    expect(parseRequiredLevelBonus('40 Required Level')).toBe(40);
+    expect(parseRequiredLevelBonus('+10 to Strength')).toBe(0);
   });
 });
 
@@ -83,6 +96,33 @@ describe('resolveItemRequirements', () => {
         }
       )
     ).toEqual({ reqLevel: 25, reqStr: 85, reqDex: 42, reductionPct: 15 });
+  });
+
+  it('adds +Required Level from modifiers and can raise Requirements +%', () => {
+    expect(
+      resolveItemRequirements({
+        rarity: 'rare',
+        customQuality: 'rare',
+        baseId: 'rin',
+        reqLevel: 0,
+        reqStr: 100,
+        modifiers: ['+40 Required Level', 'Requirements +20%'],
+      })
+    ).toEqual({ reqLevel: 40, reqStr: 120, reqDex: 0, reductionPct: -20 });
+  });
+
+  it('keeps TSW final strength when reqStrFinal is set', () => {
+    expect(
+      resolveItemRequirements({
+        rarity: 'crafted',
+        customQuality: 'crafted',
+        baseId: 'cap',
+        reqLevel: 30,
+        reqStr: 495,
+        reqStrFinal: true,
+        modifiers: ['Requirements -10%', '+20 Required Level'],
+      })
+    ).toEqual({ reqLevel: 50, reqStr: 495, reqDex: 0, reductionPct: 10 });
   });
 });
 

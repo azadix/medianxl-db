@@ -25,12 +25,14 @@ import { getOverlayStatLines, isOverlayItem } from '@/items/item-overlays.js';
  */
 
 const REQ_REDUCED_BY_RE = /^Requirements\s+Reduced\s+by\s+(\d+(?:\.\d+)?)\s*%$/i;
-const REQ_FLAT_RE = /^Requirements\s*(-?\d+(?:\.\d+)?)\s*%$/i;
+const REQ_FLAT_RE = /^Requirements\s*([+-]?\d+(?:\.\d+)?)\s*%$/i;
 const REQ_RANGE_RE =
   /^Requirements\s*-\(\s*(-?\d+(?:\.\d+)?)\s+to\s+(-?\d+(?:\.\d+)?)\s*\)\s*%$/i;
+const REQ_LEVEL_BONUS_RE = /^\+?\s*(\d+)\s+Required Level$/i;
 
 /**
  * Percent reduction from a single modifier line (`Requirements -20%`).
+ * `Requirements +N%` returns a negative value (requirement increase).
  * @param {string|null|undefined} text
  * @returns {number}
  */
@@ -49,8 +51,28 @@ export function parseRequirementsReductionPct(text) {
     return Math.abs((a + b) / 2);
   }
   const flat = REQ_FLAT_RE.exec(s);
-  if (flat) return Math.abs(Number(flat[1])) || 0;
+  if (flat) {
+    const n = Number(flat[1]);
+    if (!Number.isFinite(n) || n === 0) return 0;
+    // Negative game text (`Requirements -20%`) reduces; positive increases.
+    return n < 0 ? Math.abs(n) : -n;
+  }
   return 0;
+}
+
+/**
+ * Flat required-level bonus from mystic orbs (`+40 Required Level`).
+ * @param {string|null|undefined} text
+ * @returns {number}
+ */
+export function parseRequiredLevelBonus(text) {
+  const decoded = decodeModifierLine(text);
+  if (decoded.color === 'grey') return 0;
+  const s = stripDisplayedRollRanges(decoded.text).replace(/\s+/g, ' ').trim();
+  const match = REQ_LEVEL_BONUS_RE.exec(s);
+  if (!match) return 0;
+  const n = Number(match[1]);
+  return Number.isFinite(n) && n > 0 ? n : 0;
 }
 
 /**
@@ -122,12 +144,13 @@ export function resolveItemRequirements(def, options = {}) {
 
   for (const text of collectRequirementModifierTexts(def, options.rolls ?? null, socketables)) {
     reductionPct += parseRequirementsReductionPct(text);
+    reqLevel += parseRequiredLevelBonus(text);
   }
 
-  if (reductionPct > 0) {
+  if (reductionPct !== 0) {
     const factor = Math.max(0, 1 - reductionPct / 100);
-    reqStr = Math.floor(reqStr * factor);
-    reqDex = Math.floor(reqDex * factor);
+    if (!def?.reqStrFinal) reqStr = Math.floor(reqStr * factor);
+    if (!def?.reqDexFinal) reqDex = Math.floor(reqDex * factor);
   }
 
   return { reqLevel, reqStr, reqDex, reductionPct };

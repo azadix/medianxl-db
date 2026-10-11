@@ -215,7 +215,12 @@ describe('tsw-build-import', () => {
     });
     expect(snapshot.equipment.head).toMatchObject({
       defId: 'cap-sacred',
-      custom: { quality: 'honorific', name: 'Cap (Honorific)', modifiers: ['+5% Enhanced Defense'] },
+      custom: {
+        quality: 'honorific',
+        name: 'Cap (Honorific)',
+        reqLevel: 1,
+        modifiers: ['+5% Enhanced Defense'],
+      },
     });
     expect(snapshot.equipment.glov).toMatchObject({
       defId: '@36',
