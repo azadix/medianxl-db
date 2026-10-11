@@ -11061,6 +11061,12 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "floor(floor((6*lvl)/2)*(100+((5*ulvl)/4))/100)"
+      },
+      {
+        "statKey": "unleashes_spirits",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "2+blvl/5"
       }
     ],
     "description": [
@@ -11072,7 +11078,7 @@
     "skillEffect": [
       "{{converts_phys_to_magic}}",
       "{{weapon_damage}}",
-      "Unleashes 3 spirits",
+      "{{unleashes_spirits}}",
       "{{bonus_magic_damage}}",
       "{{mana_cost}}"
     ],

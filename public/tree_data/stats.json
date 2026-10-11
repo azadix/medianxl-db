@@ -2996,5 +2996,11 @@
     "key": "fire_pierce_to_servants",
     "name": "Fire Pierce to Servants",
     "format": "Fire Pierce to Servants: {value0}%"
+  },
+  {
+    "id": 410,
+    "key": "unleashes_spirits",
+    "name": "Unleashes Spirits",
+    "format": "Unleashes {value0} spirits"
   }
 ]
