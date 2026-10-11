@@ -5,7 +5,7 @@ import OverlayExtrasControls from './OverlayExtrasControls.vue';
 import ItemRollRow from './ItemRollRow.vue';
 import { formatItemOverlayMeta, formatItemRarityBadge } from '@/items/item-stats.js';
 import { formatItemModifierLineHtml } from '@/items/item-granted-oskills.js';
-import { decodeModifierLine, modifierColorCssClass } from '@/items/item-modifier-line.js';
+import { modifierLineCssClass } from '@/items/item-modifier-line.js';
 import {
   formatItemRequirementsLine,
   resolveItemRequirements,
@@ -73,8 +73,16 @@ function modLineHtml(text) {
  * @returns {string}
  */
 function modLineClass(row) {
-  const color = row?.color || row?.stat?.color || decodeModifierLine(row?.text).color;
-  return modifierColorCssClass(color);
+  const line =
+    row?.text != null
+      ? row.text
+      : row?.stat?.raw != null
+        ? row.stat.raw
+        : row?.stat?.text != null
+          ? row.stat.text
+          : '';
+  if (line) return modifierLineCssClass(line);
+  return '';
 }
 </script>
 

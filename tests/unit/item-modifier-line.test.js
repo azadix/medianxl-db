@@ -6,7 +6,10 @@ import {
   decodeModifierLine,
   encodeModifierLine,
   isConditionalModifierLine,
+  isModifierLineActive,
+  modifierLineShowConditions,
 } from '../../src/items/item-modifier-line.js';
+import { selectedConditions } from '../../src/stores/planner-config-store.js';
 import { parseItemStats } from '../../src/items/unique-stats-catalog.js';
 import { parseSkillBonusFromModifierLine } from '../../src/items/skill-bonus-from-modifiers.js';
 import { parseProcFromModifierLine } from '../../src/items/item-procs.js';
@@ -32,7 +35,31 @@ describe('item modifier color encoding', () => {
     expect(decodeModifierLine('{orange}+200% Enhanced Weapon Damage')).toEqual({
       text: '+200% Enhanced Weapon Damage',
       color: 'orange',
+      showCondition: [],
     });
+  });
+
+  it('parses explicit and inferred showCondition gates', () => {
+    expect(
+      decodeModifierLine('{orange}{cond:while_in_heroic_duncraig}+30% Magic Resist in Heroic Duncraig')
+    ).toEqual({
+      text: '+30% Magic Resist in Heroic Duncraig',
+      color: 'orange',
+      showCondition: ['while_in_heroic_duncraig'],
+    });
+    expect(modifierLineShowConditions('{orange}+30% Magic Resist in Heroic Duncraig')).toEqual([
+      'while_in_heroic_duncraig',
+    ]);
+    expect(isConditionalModifierLine('{orange}+30% Magic Resist in Heroic Duncraig')).toBe(true);
+  });
+
+  it('activates condition-gated mods only when the planner condition is selected', () => {
+    const line = '{orange}{cond:while_in_heroic_duncraig}+30% Magic Resist in Heroic Duncraig';
+    for (const key of Object.keys(selectedConditions)) delete selectedConditions[key];
+    expect(isModifierLineActive(line)).toBe(false);
+    selectedConditions.while_in_heroic_duncraig = true;
+    expect(isModifierLineActive(line)).toBe(true);
+    delete selectedConditions.while_in_heroic_duncraig;
   });
 });
 

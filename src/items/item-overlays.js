@@ -197,10 +197,15 @@ export function collectOverlayAffixSources(def, rolls = null) {
       continue;
     }
     if (typeof mod !== 'string' || !mod.trim()) continue;
-    const { text, color } = decodeModifierLine(mod);
+    const { text, color, showCondition } = decodeModifierLine(mod);
     if (!text) continue;
     if (innateText && text.trim() === innateText) continue;
-    out.push({ sourceKey: `base:m${i}`, text, color });
+    out.push({
+      sourceKey: `base:m${i}`,
+      text,
+      color,
+      showCondition: Array.isArray(showCondition) ? showCondition : [],
+    });
     i += 1;
   }
   return out;
@@ -336,7 +341,7 @@ export function getOverlayStatLines(def, rolls = null, options = {}) {
       showRollRanges,
     });
     if (text == null) continue;
-    lines.push(encodeModifierLine(text, source.color));
+    lines.push(encodeModifierLine(text, source.color, source.showCondition));
   }
   return lines;
 }

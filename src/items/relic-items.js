@@ -184,18 +184,23 @@ export function isRelicBonusActive(def, characterLevel, options = {}) {
 
 /**
  * @param {object|null|undefined} def
- * @returns {{ sourceKey: string, text: string, color: string }[]}
+ * @returns {{ sourceKey: string, text: string, color: string, showCondition: string[] }[]}
  */
 export function collectRelicAffixSources(def) {
-  /** @type {{ sourceKey: string, text: string, color: string }[]} */
+  /** @type {{ sourceKey: string, text: string, color: string, showCondition: string[] }[]} */
   const out = [];
   if (!def || typeof def !== 'object') return out;
   let i = 0;
   for (const mod of Array.isArray(def.modifiers) ? def.modifiers : []) {
     if (typeof mod !== 'string' || !mod.trim()) continue;
-    const { text, color } = decodeModifierLine(mod);
+    const { text, color, showCondition } = decodeModifierLine(mod);
     if (!text) continue;
-    out.push({ sourceKey: `base:m${i}`, text, color });
+    out.push({
+      sourceKey: `base:m${i}`,
+      text,
+      color,
+      showCondition: Array.isArray(showCondition) ? showCondition : [],
+    });
     i += 1;
   }
   return out;
@@ -259,7 +264,7 @@ export function getRelicStatLines(def, rolls = null, options = {}) {
       showRollRanges,
     });
     if (text == null) continue;
-    lines.push(encodeModifierLine(text, source.color));
+    lines.push(encodeModifierLine(text, source.color, source.showCondition));
   }
   return lines;
 }
@@ -328,7 +333,11 @@ export function getRelicDetailStatRows(def, rolls = null) {
     }
     const text = resolveRelicAffixText(source.text, source.sourceKey, rolls, false);
     if (text == null) continue;
-    rows.push({ kind: 'text', text, color: source.color || 'magic' });
+    rows.push({
+      kind: 'text',
+      text: encodeModifierLine(text, source.color, source.showCondition),
+      color: source.color || 'magic',
+    });
   }
   return rows;
 }

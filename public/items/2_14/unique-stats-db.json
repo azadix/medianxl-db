@@ -10675,7 +10675,7 @@
     {
       "name": "Skinrender's Ear",
       "quality": "Relic",
-      "stats": "Required Level: 140\nItem Level: 139\n{orange}+30% Magic Resist in Heroic Duncraig\n+150 Life Regenerated per Second",
+      "stats": "Required Level: 140\nItem Level: 139\n{orange}{cond:while_in_heroic_duncraig}+30% Magic Resist in Heroic Duncraig\n+150 Life Regenerated per Second",
       "source": "secret",
       "type": "Relic",
       "icon": "relicskin"

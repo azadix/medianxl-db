@@ -625,6 +625,11 @@
     padding-left: 0.55em;
 }
 
+.item-mod--inactive {
+    color: var(--item-mod-grey, #a8a8a8) !important;
+    opacity: 0.75;
+}
+
 /* Info blue at ~80% saturation for affix roll ranges like [10-20] */
 .item-mod-roll-range {
     color: hsl(var(--bulma-info-h), calc(var(--bulma-info-s) * 0.8), var(--bulma-info-l));

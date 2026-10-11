@@ -4,10 +4,7 @@
  */
 
 import { escapeHtmlText, getItemIconUrl } from '@/shared/utils.js';
-import {
-  decodeModifierLine,
-  modifierColorCssClass,
-} from '@/items/item-modifier-line.js';
+import { modifierLineCssClass } from '@/items/item-modifier-line.js';
 import { formatItemModifierLineHtml } from '@/items/item-granted-oskills.js';
 import {
   formatItemTooltipSubtitle,
@@ -68,7 +65,7 @@ function itemTooltipIconSrc(stem) {
 function renderStatLines(lines) {
   return lines
     .map((line) => {
-      const cls = modifierColorCssClass(decodeModifierLine(line).color);
+      const cls = modifierLineCssClass(line);
       const classAttr = cls ? ` ${cls}` : '';
       return `<div class="item-tooltip-line${classAttr}">${formatItemModifierLineHtml(line)}</div>`;
     })
@@ -205,7 +202,7 @@ function buildSetBonusSectionHtml(setBonuses) {
         : 'item-tooltip-set-bonus item-tooltip-set-bonus--inactive';
       const mods = (bonus.modifiers || [])
         .map((mod) => {
-          const cls = modifierColorCssClass(decodeModifierLine(mod).color);
+          const cls = modifierLineCssClass(mod);
           const classAttr = cls ? ` ${cls}` : '';
           return `<div class="item-tooltip-set-bonus-mod${classAttr}">${formatItemModifierLineHtml(mod)}</div>`;
         })

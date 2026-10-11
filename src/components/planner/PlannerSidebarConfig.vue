@@ -3,8 +3,11 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { getActiveInternalSkillIdsForConditions } from '@/character/planner-core.js';
 import { getFileSkillStore } from '@/shared/skill-data-store.js';
 import { toggleCondition, selectedConditions } from '@/stores/planner-config-store.js';
+import { useItemsStore } from '@/stores/items.js';
+import { collectShowConditionKeysFromEnabledItems } from '@/items/item-modifier-conditions.js';
 
 const refreshCount = ref(0);
+const itemsStore = useItemsStore();
 
 function refreshConditions() {
   refreshCount.value += 1;
@@ -14,17 +17,24 @@ onMounted(() => {
   window.addEventListener('skillPointsChanged', refreshConditions);
   window.addEventListener('skillDataStoreInitialized', refreshConditions);
   window.addEventListener('plannerConfigChanged', refreshConditions);
+  window.addEventListener('characterLevelChanged', refreshConditions);
 });
 
 onBeforeUnmount(() => {
   window.removeEventListener('skillPointsChanged', refreshConditions);
   window.removeEventListener('skillDataStoreInitialized', refreshConditions);
   window.removeEventListener('plannerConfigChanged', refreshConditions);
+  window.removeEventListener('characterLevelChanged', refreshConditions);
 });
 
 const conditions = computed(() => {
   // Use reactive counter to refresh when skill points change or data loads.
   refreshCount.value;
+  // Touch item enable maps so relic/charm toggles refresh visible conditions.
+  void itemsStore.enabledCharms;
+  void itemsStore.enabledRelics;
+  void itemsStore.equipment;
+  void itemsStore.instances;
   const s = getFileSkillStore();
   const all = s && Array.isArray(s.conditions) ? s.conditions : [];
   const activeSkills = getActiveInternalSkillIdsForConditions();
@@ -42,6 +52,9 @@ const conditions = computed(() => {
         used.add(String(k).toLowerCase());
       }
     }
+  }
+  for (const k of collectShowConditionKeysFromEnabledItems()) {
+    used.add(String(k).toLowerCase());
   }
   return all.filter((c) => {
     if (!c || !c.key) return false;

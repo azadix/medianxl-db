@@ -3,7 +3,7 @@
  * @module items/item-procs
  */
 
-import { decodeModifierLine } from '@/items/item-modifier-line.js';
+import { isModifierLineActive, modifierLineText } from '@/items/item-modifier-line.js';
 import { resolveCatalogRowBySkillRef } from '@/character/planner-build-io.js';
 import {
   isCharmItem,
@@ -96,9 +96,8 @@ export function stripProcLinePrefix(line) {
  * @returns {ParsedItemProc|null}
  */
 export function parseProcFromModifierLine(line) {
-  const decoded = decodeModifierLine(line);
-  if (decoded.color === 'grey') return null;
-  const text = stripProcLinePrefix(decoded.text);
+  if (!isModifierLineActive(line)) return null;
+  const text = stripProcLinePrefix(modifierLineText(line));
   if (!text) return null;
   const match = CHANCE_LINE_RE.exec(text);
   if (!match) return null;
