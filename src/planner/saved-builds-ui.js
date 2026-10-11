@@ -37,6 +37,7 @@ import { findMissingCharmSkillUnlocks } from '@/items/charm-skill-unlocks.js';
 import { isCharmItem } from '@/items/charm-items.js';
 import { getSelectedConditionKeys, setCondition as setPlannerCondition } from '@/stores/planner-config-store.js';
 import { useItemsStore, itemsSnapshotHasState } from '@/stores/items.js';
+import { getPlannerAutoMatchHighestStatRequirements } from '@/planner/planner-options.js';
 import { syncPlannerCharacterStatsTextareaFromCharacter, refreshPlannerStatsPanelFromCharacter } from '@/character/planner-stats-panel.js';
 import {
   getSavedBuilds,
@@ -254,10 +255,7 @@ export function loadBuildData(build, buildIndex = null) {
                 if (unmetReqReport) {
                     toastUnmetItemRequirements(unmetReqReport, { charms: true, relics: true, gear: false });
                     if (toastGear) {
-                        toastUnmetItemRequirements(
-                            { unmetGear: itemsStore.listUnmetEquippedItems() },
-                            { charms: false, relics: false, gear: true }
-                        );
+                        toastUnmetEquippedItemRequirements(itemsStore);
                     } else {
                         pendingGearUnmetToast = true;
                     }
@@ -344,10 +342,7 @@ export function loadBuildData(build, buildIndex = null) {
     }
     if (itemsAppliedSync && pendingGearUnmetToast) {
         try {
-            toastUnmetItemRequirements(
-                { unmetGear: useItemsStore().listUnmetEquippedItems() },
-                { charms: false, relics: false, gear: true }
-            );
+            toastUnmetEquippedItemRequirements(useItemsStore());
         } catch (e) {
             console.warn('Failed to toast unmet gear requirements:', e);
         }
@@ -518,6 +513,10 @@ function toastMissingCharmSkillUnlocks(className, itemsStore) {
 
 function toastSkippedTswItems(skipped) {
     if (!Array.isArray(skipped) || skipped.length === 0) return;
+    console.warn(
+        `[TSW import] Skipped ${skipped.length} item${skipped.length > 1 ? 's' : ''} not in the catalog:`,
+        skipped
+    );
     const names = skipped.map((s) => exportLabelForToast(s.name || '(unnamed)'));
     const shown = names.slice(0, 8);
     const extra = names.length - shown.length;
@@ -539,6 +538,20 @@ function formatUnmetItemToastList(rows, formatRow) {
     const shown = labels.slice(0, 8);
     const extra = labels.length - shown.length;
     return extra > 0 ? `${shown.join(', ')}, and ${extra} more` : shown.join(', ');
+}
+
+/**
+ * After import stats are applied: bump str/dex when auto-match is on, then toast remaining gear unmet.
+ * @param {ReturnType<typeof useItemsStore>} itemsStore
+ */
+function toastUnmetEquippedItemRequirements(itemsStore) {
+    if (getPlannerAutoMatchHighestStatRequirements()) {
+        itemsStore.syncCharacterStatsToItemReqs();
+    }
+    toastUnmetItemRequirements(
+        { unmetGear: itemsStore.listUnmetEquippedItems() },
+        { charms: false, relics: false, gear: true }
+    );
 }
 
 /**

@@ -116,6 +116,44 @@ export function tswItemDisplayName(row) {
 }
 
 /**
+ * @param {object} row
+ * @param {string} reason
+ * @returns {{ name: string, reason: string, item?: string, display_name?: string, type?: string, quality?: string, display_quality?: string, code?: string, image?: string, location?: string, slot?: string, eth?: boolean, corrupted?: boolean, is_rw?: boolean, is_charm?: boolean, is_trophy?: boolean, is_class_charm?: boolean, is_upgraded?: boolean, has_trophy?: boolean, ilvl?: number|null, quantity?: number|null, area?: string, storage?: number|null, row?: number|null, col?: number|null, locid?: number|null, name_color?: number|null, description_lines?: unknown }}
+ */
+function skippedTswItem(row, reason) {
+  const name = tswItemDisplayName(row) || '(unnamed)';
+  /** @type {{ name: string, reason: string, item?: string, display_name?: string, type?: string, quality?: string, display_quality?: string, code?: string, image?: string, location?: string, slot?: string, eth?: boolean, corrupted?: boolean, is_rw?: boolean, is_charm?: boolean, is_trophy?: boolean, is_class_charm?: boolean, is_upgraded?: boolean, has_trophy?: boolean, ilvl?: number|null, quantity?: number|null, area?: string, storage?: number|null, row?: number|null, col?: number|null, locid?: number|null, name_color?: number|null, description_lines?: unknown }} */
+  const out = { name, reason };
+  if (row?.item != null) out.item = String(row.item);
+  if (row?.display_name != null) out.display_name = String(row.display_name);
+  if (row?.type != null) out.type = String(row.type);
+  if (row?.quality != null) out.quality = String(row.quality);
+  if (row?.display_quality != null) out.display_quality = String(row.display_quality);
+  if (row?.code != null) out.code = String(row.code);
+  if (row?.image != null) out.image = String(row.image);
+  if (row?.location != null) out.location = String(row.location);
+  if (row?.slot != null) out.slot = String(row.slot);
+  if (typeof row?.eth === 'boolean') out.eth = row.eth;
+  if (typeof row?.corrupted === 'boolean') out.corrupted = row.corrupted;
+  if (typeof row?.is_rw === 'boolean') out.is_rw = row.is_rw;
+  if (typeof row?.is_charm === 'boolean') out.is_charm = row.is_charm;
+  if (typeof row?.is_trophy === 'boolean') out.is_trophy = row.is_trophy;
+  if (typeof row?.is_class_charm === 'boolean') out.is_class_charm = row.is_class_charm;
+  if (typeof row?.is_upgraded === 'boolean') out.is_upgraded = row.is_upgraded;
+  if (typeof row?.has_trophy === 'boolean') out.has_trophy = row.has_trophy;
+  if (row?.ilvl != null) out.ilvl = row.ilvl;
+  if (row?.quantity != null) out.quantity = row.quantity;
+  if (row?.area != null) out.area = String(row.area);
+  if (row?.storage != null) out.storage = row.storage;
+  if (row?.row != null) out.row = row.row;
+  if (row?.col != null) out.col = row.col;
+  if (row?.locid != null) out.locid = row.locid;
+  if (row?.name_color != null) out.name_color = row.name_color;
+  if (row?.description_lines != null) out.description_lines = row.description_lines;
+  return out;
+}
+
+/**
  * @param {string|null|undefined} text
  * @returns {string}
  */
@@ -386,7 +424,7 @@ function snapshotWithRolls(row, defId, def, className) {
  * @param {unknown} rows
  * @param {object} catalog
  * @param {string|null|undefined} [className]
- * @returns {{ snapshot: { weaponSet: 0, equipment: Record<string, { defId: string, custom?: object, icon?: string, rolls?: Record<string, number> }|null>, charms: Array<{ defId: string, rolls?: Record<string, number> }>, relics: Array<{ defId: string, rolls?: Record<string, number> }> }, skipped: Array<{ name: string, reason: string }> }}
+ * @returns {{ snapshot: { weaponSet: 0, equipment: Record<string, { defId: string, custom?: object, icon?: string, rolls?: Record<string, number> }|null>, charms: Array<{ defId: string, rolls?: Record<string, number> }>, relics: Array<{ defId: string, rolls?: Record<string, number> }> }, skipped: Array<ReturnType<typeof skippedTswItem>> }}
  */
 export function mapTswItemsToSnapshot(rows, catalog, className = null) {
   const cat = catalogIndex(catalog);
@@ -401,34 +439,33 @@ export function mapTswItemsToSnapshot(rows, catalog, className = null) {
   const seenCharms = new Set();
   /** @type {Set<string>} */
   const seenRelics = new Set();
-  /** @type {Array<{ name: string, reason: string }>} */
+  /** @type {Array<ReturnType<typeof skippedTswItem>>} */
   const skipped = [];
 
   const list = Array.isArray(rows) ? rows : [];
   for (const row of list) {
     if (!row || typeof row !== 'object') continue;
-    const name = tswItemDisplayName(row) || '(unnamed)';
     const location = String(row.location || '').trim();
     if (location !== 'Gear' && location !== 'Inventory') {
-      skipped.push({ name, reason: 'stash' });
+      skipped.push(skippedTswItem(row, 'stash'));
       continue;
     }
 
     const customQuality = tswCustomQuality(row);
     if (customQuality) {
       if (location !== 'Gear') {
-        skipped.push({ name, reason: 'uncatalogued' });
+        skipped.push(skippedTswItem(row, 'uncatalogued'));
         continue;
       }
       const slotKey = TSW_SLOT_TO_EQUIPMENT[String(row.slot || '')];
       if (!slotKey) {
-        skipped.push({ name, reason: 'unknown-slot' });
+        skipped.push(skippedTswItem(row, 'unknown-slot'));
         continue;
       }
       const defId = resolveCustomBaseDefId(row, cat, customQuality);
       const def = defId ? cat.byId[defId] : null;
       if (!defId || !def) {
-        skipped.push({ name, reason: 'uncatalogued' });
+        skipped.push(skippedTswItem(row, 'uncatalogued'));
         continue;
       }
       equipment[slotKey] = tswCustomSnapshotEntry(row, defId, customQuality);
@@ -437,17 +474,17 @@ export function mapTswItemsToSnapshot(rows, catalog, className = null) {
 
     if (row?.is_rw || qualityBadge(row) === 'RW') {
       if (location !== 'Gear') {
-        skipped.push({ name, reason: 'uncatalogued' });
+        skipped.push(skippedTswItem(row, 'uncatalogued'));
         continue;
       }
       const slotKey = TSW_SLOT_TO_EQUIPMENT[String(row.slot || '')];
       if (!slotKey) {
-        skipped.push({ name, reason: 'unknown-slot' });
+        skipped.push(skippedTswItem(row, 'unknown-slot'));
         continue;
       }
       const defId = resolveTswRunewordDefId(row, cat);
       if (!defId) {
-        skipped.push({ name, reason: 'uncatalogued' });
+        skipped.push(skippedTswItem(row, 'uncatalogued'));
         continue;
       }
       /** @type {{ defId: string, icon?: string }} */
@@ -461,18 +498,18 @@ export function mapTswItemsToSnapshot(rows, catalog, className = null) {
     const defId = resolveTswItemDefId(row, cat);
     const def = defId ? cat.byId[defId] : null;
     if (!defId || !def || !isCatalogBacked(row, def)) {
-      skipped.push({ name, reason: 'uncatalogued' });
+      skipped.push(skippedTswItem(row, 'uncatalogued'));
       continue;
     }
 
     if (location === 'Gear') {
       const slotKey = TSW_SLOT_TO_EQUIPMENT[String(row.slot || '')];
       if (!slotKey) {
-        skipped.push({ name, reason: 'unknown-slot' });
+        skipped.push(skippedTswItem(row, 'unknown-slot'));
         continue;
       }
       if (isCharmItem(def) || isRelicItem(def)) {
-        skipped.push({ name, reason: 'uncatalogued' });
+        skipped.push(skippedTswItem(row, 'uncatalogued'));
         continue;
       }
       equipment[slotKey] = snapshotWithRolls(row, defId, def, className);
@@ -481,7 +518,7 @@ export function mapTswItemsToSnapshot(rows, catalog, className = null) {
 
     if (isRelicItem(def) || looksLikeRelic(row)) {
       if (seenRelics.has(defId) || relics.length >= MAX_RELICS) {
-        skipped.push({ name, reason: 'relic-cap' });
+        skipped.push(skippedTswItem(row, 'relic-cap'));
         continue;
       }
       seenRelics.add(defId);
@@ -496,7 +533,7 @@ export function mapTswItemsToSnapshot(rows, catalog, className = null) {
       continue;
     }
 
-    skipped.push({ name, reason: 'uncatalogued' });
+    skipped.push(skippedTswItem(row, 'uncatalogued'));
   }
 
   return {
