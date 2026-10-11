@@ -141,10 +141,6 @@ function switchItemsTab(tabId) {
       </div>
     </div>
 
-    <footer class="notification is-danger mt-3 mb-0 py-2 planner-items-footer">
-      Work in progress. This page might not work properly and the data might be outdated.
-    </footer>
-
     <ItemPickerModal />
     <ItemTooltipHost />
   </div>
