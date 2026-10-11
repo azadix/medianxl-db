@@ -180,6 +180,50 @@ describe('parseCharacterStatBonusFromModifierLine', () => {
     expect(attrs.every((r) => r.amount === 35)).toBe(true);
   });
 
+  it('expands combat speeds, spell damage, life/mana, and related charm aliases', () => {
+    const speeds = parseCharacterStatBonusesFromModifierLine('10% Combat Speeds');
+    expect(speeds.map((r) => r.key).sort()).toEqual([
+      'attack_speed',
+      'block_speed',
+      'cast_speed',
+      'hit_recovery',
+    ]);
+    expect(speeds.every((r) => r.amount === 10)).toBe(true);
+
+    expect(parseCharacterStatBonusFromModifierLine('Maximum Block Chance +10%')).toEqual({
+      key: 'max_block_chance',
+      amount: 10,
+    });
+
+    expect(parseCharacterStatBonusFromModifierLine('-5 Physical damage taken')).toEqual({
+      key: 'physical_damage_taken_reduced',
+      amount: 5,
+    });
+
+    const spell = parseCharacterStatBonusesFromModifierLine('+14% to Spell Damage');
+    expect(spell.map((r) => r.key).sort()).toEqual([
+      'cold_spell_damage',
+      'fire_spell_damage',
+      'lightning_spell_damage',
+      'physical_magic_spell_damage',
+      'poison_spell_damage',
+    ]);
+    expect(spell.every((r) => r.amount === 14)).toBe(true);
+
+    const pctAttrs = parseCharacterStatBonusesFromModifierLine('10% All Attributes');
+    expect(pctAttrs.map((r) => r.key).sort()).toEqual([
+      'percent_dexterity',
+      'percent_energy',
+      'percent_strength',
+      'percent_vitality',
+    ]);
+    expect(pctAttrs.every((r) => r.amount === 10)).toBe(true);
+
+    const lifeMana = parseCharacterStatBonusesFromModifierLine('Maximum Life and Mana +2%');
+    expect(lifeMana.map((r) => r.key).sort()).toEqual(['maximum_life', 'maximum_mana']);
+    expect(lifeMana.every((r) => r.amount === 2)).toBe(true);
+  });
+
   it('expands Elemental Resists onto all elemental resist keys', () => {
 
     const list = parseCharacterStatBonusesFromModifierLine('Elemental Resists +12%');

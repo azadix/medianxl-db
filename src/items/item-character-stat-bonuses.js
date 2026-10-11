@@ -86,6 +86,21 @@ const PERCENT_ALL_ATTRIBUTE_KEYS = Object.freeze([
   'percent_energy',
 ]);
 
+const COMBAT_SPEED_KEYS = Object.freeze([
+  'hit_recovery',
+  'block_speed',
+  'attack_speed',
+  'cast_speed',
+]);
+
+const SPELL_DAMAGE_KEYS = Object.freeze([
+  'fire_spell_damage',
+  'cold_spell_damage',
+  'lightning_spell_damage',
+  'poison_spell_damage',
+  'physical_magic_spell_damage',
+]);
+
 /** Planner keys that should not get auto patterns from the key name. */
 const SKIP_KEY_AUTO_PATTERNS = new Set([
   'unspent_stat_points',
@@ -194,8 +209,29 @@ const EXTRA_LINE_PATTERNS = [
     keys: [...ALL_ATTRIBUTE_KEYS],
   },
   {
-    re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+to\s+All Attributes$/i,
+    re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+(?:to\s+)?All Attributes$/i,
     keys: [...PERCENT_ALL_ATTRIBUTE_KEYS],
+  },
+  {
+    re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+Combat Speeds?$/i,
+    keys: [...COMBAT_SPEED_KEYS],
+  },
+  {
+    re: /^Maximum Block Chance \+?([+-]?\d+(?:\.\d+)?)%$/i,
+    key: 'max_block_chance',
+  },
+  // Item text uses a leading minus; planner stores the reduced-by magnitude as positive.
+  {
+    re: /^-([+-]?\d+(?:\.\d+)?)\s+Physical damage taken$/i,
+    key: 'physical_damage_taken_reduced',
+  },
+  {
+    re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+to\s+Spell Damage$/i,
+    keys: [...SPELL_DAMAGE_KEYS],
+  },
+  {
+    re: /^Maximum Life and Mana \+?([+-]?\d+(?:\.\d+)?)%$/i,
+    keys: ['maximum_life', 'maximum_mana'],
   },
   // Leading minus is display syntax; planner stores the magnitude as a positive pierce value.
   {

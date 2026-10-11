@@ -957,6 +957,10 @@
       {
         "valueIndex": 0,
         "plannerKey": "poison_spell_damage"
+      },
+      {
+        "valueIndex": 0,
+        "plannerKey": "physical_magic_spell_damage"
       }
     ]
   },
