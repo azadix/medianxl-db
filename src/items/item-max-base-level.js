@@ -31,7 +31,7 @@ const MAX_BASE_LEVEL_RE = /^([+-]?\d+(?:\.\d+)?)\s+to\s+Maximum\s+(.+?)\s+Base L
  * @param {Record<string, number>|null|undefined} rolls
  * @returns {string[]}
  */
-function resolvedEquipmentModifierLines(def, rolls = null) {
+function resolvedEquipmentModifierLines(def, rolls = null, extras = null) {
   /** @type {string[]} */
   const lines = [];
   if (!def || typeof def !== 'object') return lines;
@@ -53,6 +53,12 @@ function resolvedEquipmentModifierLines(def, rolls = null) {
     i += 1;
     if (resolved == null) continue;
     lines.push(encodeModifierLine(resolved, color, showCondition));
+  }
+  if (Array.isArray(extras)) {
+    for (const line of extras) {
+      const text = String(line || '').trim();
+      if (text) lines.push(text);
+    }
   }
   return lines;
 }
@@ -192,7 +198,8 @@ export function getEquippedMaxBaseLevelBonusForSkill(options = {}) {
       const def = itemsStore.getDefForInstance?.(instanceId);
       if (!def) continue;
       const rolls = itemsStore.getRollsForInstance?.(instanceId) ?? null;
-      lines.push(...resolvedEquipmentModifierLines(def, rolls));
+      const extras = itemsStore.getExtrasForInstance?.(instanceId) ?? [];
+      lines.push(...resolvedEquipmentModifierLines(def, rolls, extras));
     }
 
     return sumMaxBaseLevelBonusFromModifierLines(lines, { skillId, displayName });

@@ -59,7 +59,8 @@ export function collectLiveBroadSkillBonuses(className = null, characterLevel = 
       const def = itemsStore.getDefForInstance?.(instanceId);
       if (!def) continue;
       const rolls = itemsStore.getRollsForInstance?.(instanceId) ?? null;
-      addLines(resolvedEquipmentModifierLines(def, rolls));
+      const extras = itemsStore.getExtrasForInstance?.(instanceId) ?? [];
+      addLines(resolvedEquipmentModifierLines(def, rolls, extras));
     }
 
     const equippedDefs = itemsStore.activeEquippedDefs || [];

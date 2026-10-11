@@ -354,6 +354,7 @@ export function formatChanceToBlockLine(block, className = null) {
  *   className?: string|null,
  *   charmHeaderOnly?: boolean,
  *   socketables?: Array<object>|null,
+ *   extras?: string[]|null,
  * }} [options]
  * @returns {ItemStatSections}
  */
@@ -469,6 +470,13 @@ export function getItemStatSections(def, rolls = null, options = {}) {
     if (isRunewordItem(def)) mods.push(...formatRunewordSocketFillerLines(def));
   }
 
+  if (Array.isArray(options.extras)) {
+    for (const line of options.extras) {
+      const text = String(line || '').trim();
+      if (text) mods.push(text);
+    }
+  }
+
   return {
     base,
     scaling,
@@ -476,6 +484,7 @@ export function getItemStatSections(def, rolls = null, options = {}) {
     requirements: resolveItemRequirements(def, {
       rolls,
       socketables: options.socketables ?? null,
+      extras: options.extras ?? null,
     }),
   };
 }
@@ -484,7 +493,7 @@ export function getItemStatSections(def, rolls = null, options = {}) {
  * Static + rolled stat lines for tooltips / detail panel (no requirements footer).
  * @param {object|null|undefined} def
  * @param {Record<string, number>|null|undefined} [rolls]
- * @param {{ hideRollableRanges?: boolean, showRollRanges?: boolean, characterLevel?: number|null, charmInInventory?: boolean, className?: string|null, charmHeaderOnly?: boolean, socketables?: Array<object>|null }} [options]
+ * @param {{ hideRollableRanges?: boolean, showRollRanges?: boolean, characterLevel?: number|null, charmInInventory?: boolean, className?: string|null, charmHeaderOnly?: boolean, socketables?: Array<object>|null, extras?: string[]|null }} [options]
  * @returns {string[]}
  */
 export function getItemStatLines(def, rolls = null, options = {}) {
@@ -497,13 +506,15 @@ export function getItemStatLines(def, rolls = null, options = {}) {
  * @typedef {{ kind: 'text', text: string, section?: 'base'|'mod' } | { kind: 'roll', stat: RollableStat, section?: 'base'|'mod' }} ItemDetailStatRow
  * @param {object|null|undefined} def
  * @param {Record<string, number>|null|undefined} [rolls]
- * @param {{ characterLevel?: number|null, charmInInventory?: boolean, className?: string|null }} [options]
+ * @param {{ characterLevel?: number|null, charmInInventory?: boolean, className?: string|null, extras?: string[]|null }} [options]
  * @returns {ItemDetailStatRow[]}
  */
 export function getItemDetailStatRows(def, rolls = null, options = {}) {
   if (!def || typeof def !== 'object') return [];
   const className = options.className ?? null;
+  const extras = Array.isArray(options.extras) ? options.extras : [];
   // Match tooltip sectioning (base/scaling vs mods); Socketed is last in the base block.
+  // Pass extras only after overlay/charm rows so they appear under catalog affixes.
   const sections = getItemStatSections(def, rolls, {
     hideRollableRanges: true,
     characterLevel: options.characterLevel ?? null,
@@ -529,13 +540,24 @@ export function getItemDetailStatRows(def, rolls = null, options = {}) {
    * @returns {ItemDetailStatRow[]}
    */
   const asMod = (extra) => extra.map((row) => ({ ...row, section: row.section || 'mod' }));
+  /**
+   * @returns {ItemDetailStatRow[]}
+   */
+  const withExtras = () => {
+    for (const line of extras) {
+      const text = String(line || '').trim();
+      if (!text) continue;
+      rows.push({ kind: /** @type {const} */ ('text'), text, section: /** @type {const} */ ('mod') });
+    }
+    return rows;
+  };
   if (isCharmItem(def)) {
     rows.push(...asMod(getCharmDetailStatRows(def, rolls, className)));
-    return rows;
+    return withExtras();
   }
   if (isRelicItem(def)) {
     rows.push(...asMod(getRelicDetailStatRows(def, rolls)));
-    return rows;
+    return withExtras();
   }
   if (isOverlayItem(def)) {
     rows.push(...asMod(getOverlayDetailStatRows(def, rolls)));
@@ -548,11 +570,11 @@ export function getItemDetailStatRows(def, rolls = null, options = {}) {
         }))
       );
     }
-    return rows;
+    return withExtras();
   }
   for (const stat of getRollableStats(def, rolls, { className })) {
     const section = stat.key === 'sockets' ? 'base' : 'mod';
     rows.push({ kind: 'roll', stat, section });
   }
-  return rows;
+  return withExtras();
 }

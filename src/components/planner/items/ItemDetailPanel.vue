@@ -11,6 +11,7 @@ import {
   resolveItemRequirements,
 } from '@/items/item-requirements.js';
 import { itemRarityNameClass } from '@/items/item-tooltip.js';
+import { formatMysticOrbLine, normalizeMysticOrbs } from '@/items/mystic-orbs.js';
 import { formatRunewordBadge, isRunewordItem } from '@/items/runeword-items.js';
 import { computed } from 'vue';
 
@@ -24,6 +25,11 @@ const props = defineProps({
     type: /** @type {import('vue').PropType<Record<string, number>>} */ (Object),
     required: true,
   },
+  extras: { type: /** @type {import('vue').PropType<string[]>} */ (Array), default: () => [] },
+  mysticOrbs: {
+    type: /** @type {import('vue').PropType<Array<[number, string]>>} */ (Array),
+    default: () => [],
+  },
   emptyText: { type: String, default: 'Select an item to view stats' },
 });
 
@@ -31,10 +37,16 @@ const emit = defineEmits(['update:rolls', 'set-roll']);
 
 const subtitle = computed(() => formatItemTooltipSubtitle(props.def));
 const rarityNameClass = computed(() => itemRarityNameClass(props.def?.rarity));
+const mysticOrbLines = computed(() =>
+  normalizeMysticOrbs(props.mysticOrbs).map(([count, name]) => formatMysticOrbLine(count, name))
+);
 
 const requirementsLine = computed(() =>
   formatItemRequirementsLine(
-    resolveItemRequirements(props.def, { rolls: props.effectiveRolls })
+    resolveItemRequirements(props.def, {
+      rolls: props.effectiveRolls,
+      extras: props.extras,
+    })
   )
 );
 
@@ -172,6 +184,19 @@ function modLineClass(row) {
       <div v-if="requirementsLine" class="item-tooltip-reqs">{{ requirementsLine }}</div>
     </div>
 
+    <div
+      v-if="mysticOrbLines.length"
+      class="item-mystic-orbs"
+      aria-label="Mystic Orbs"
+    >
+      <p class="item-mystic-orbs__heading is-size-7 has-text-grey mb-2">Mystic Orbs</p>
+      <ul class="item-mystic-orbs__list">
+        <li v-for="(line, idx) in mysticOrbLines" :key="'mo-' + idx" class="item-mystic-orbs__line">
+          {{ line }}
+        </li>
+      </ul>
+    </div>
+
     <CharmExtrasControls
       v-if="def"
       :def="def"
@@ -186,3 +211,32 @@ function modLineClass(row) {
     />
   </div>
 </template>
+
+<style scoped>
+.item-mystic-orbs {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.item-mystic-orbs__heading {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.item-mystic-orbs__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item-mystic-orbs__line {
+  font-size: 0.9rem;
+  line-height: 1.35;
+  color: #e8e8e8;
+}
+
+.item-mystic-orbs__line + .item-mystic-orbs__line {
+  margin-top: 0.2rem;
+}
+</style>

@@ -42,9 +42,10 @@ const EQUIP_AFFIX_ROLL_PREFIX = 'modAffix:';
  * Resolve equipped unique/runeword modifier strings (incl. orange) without item-stats cycle.
  * @param {object|null|undefined} def
  * @param {Record<string, number>|null|undefined} rolls
+ * @param {string[]|null|undefined} [extras]
  * @returns {string[]}
  */
-export function resolvedEquipmentModifierLines(def, rolls = null) {
+export function resolvedEquipmentModifierLines(def, rolls = null, extras = null) {
   /** @type {string[]} */
   const lines = [];
   if (!def || typeof def !== 'object') return lines;
@@ -66,6 +67,12 @@ export function resolvedEquipmentModifierLines(def, rolls = null) {
     i += 1;
     if (resolved == null) continue;
     lines.push(encodeModifierLine(resolved, color, showCondition));
+  }
+  if (Array.isArray(extras)) {
+    for (const line of extras) {
+      const text = String(line || '').trim();
+      if (text) lines.push(text);
+    }
   }
   return lines;
 }
@@ -499,7 +506,7 @@ export function collectEnabledRelicOSkillGrants(options = {}) {
 
 /**
  * Collect oSkill grants from equipped gear that meets requirements.
- * @param {Array<{ def: object, rolls?: Record<string, number>|null }>} gear
+ * @param {Array<{ def: object, rolls?: Record<string, number>|null, extras?: string[]|null }>} gear
  * @param {{ className?: string|null }} [ctx]
  * @returns {Record<string, number>}
  */
@@ -511,7 +518,8 @@ export function collectOSkillGrantsFromEquippedDefs(gear, ctx = {}) {
     const def = entry?.def;
     if (!def) continue;
     const rolls = entry.rolls && typeof entry.rolls === 'object' ? entry.rolls : null;
-    const lines = resolvedEquipmentModifierLines(def, rolls);
+    const extras = Array.isArray(entry.extras) ? entry.extras : null;
+    const lines = resolvedEquipmentModifierLines(def, rolls, extras);
     const grants = collectOSkillGrantsFromModifierLines(lines, { className });
     for (const [id, amount] of Object.entries(grants)) {
       out[id] = (out[id] || 0) + amount;
@@ -529,7 +537,7 @@ export function collectEnabledEquippedOSkillGrants(options = {}) {
   try {
     const className = resolveGrantClassName(options);
     const itemsStore = useItemsStore();
-    /** @type {Array<{ def: object, rolls?: Record<string, number>|null }>} */
+    /** @type {Array<{ def: object, rolls?: Record<string, number>|null, extras?: string[] }>} */
     const gear = [];
     for (const slot of EQUIPMENT_SLOTS) {
       if (!itemsStore.equipmentSlotContributesBonuses?.(slot)) continue;
@@ -538,7 +546,8 @@ export function collectEnabledEquippedOSkillGrants(options = {}) {
       const def = itemsStore.getDefForInstance?.(instanceId);
       if (!def) continue;
       const rolls = itemsStore.getRollsForInstance?.(instanceId) ?? null;
-      gear.push({ def, rolls });
+      const extras = itemsStore.getExtrasForInstance?.(instanceId) ?? [];
+      gear.push({ def, rolls, extras });
     }
     const fromGear = collectOSkillGrantsFromEquippedDefs(gear, { className });
 
@@ -608,7 +617,8 @@ export function getEquippedGearSkillBonusForSkill(options = {}) {
       const def = itemsStore.getDefForInstance?.(instanceId);
       if (!def) continue;
       const rolls = itemsStore.getRollsForInstance?.(instanceId) ?? null;
-      lines.push(...resolvedEquipmentModifierLines(def, rolls));
+      const extras = itemsStore.getExtrasForInstance?.(instanceId) ?? [];
+      lines.push(...resolvedEquipmentModifierLines(def, rolls, extras));
     }
     const equippedDefs = itemsStore.activeEquippedDefs || [];
     const counts = countEquippedSetPieces(equippedDefs);

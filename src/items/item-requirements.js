@@ -100,9 +100,10 @@ function pushSourceModifierTexts(source, texts) {
  * @param {object|null|undefined} def
  * @param {Record<string, number>|null|undefined} rolls
  * @param {ItemRequirementSource[]} socketables
+ * @param {string[]} extras
  * @returns {string[]}
  */
-function collectRequirementModifierTexts(def, rolls, socketables) {
+function collectRequirementModifierTexts(def, rolls, socketables, extras) {
   /** @type {string[]} */
   const texts = [];
   if (def && isOverlayItem(def)) {
@@ -111,6 +112,9 @@ function collectRequirementModifierTexts(def, rolls, socketables) {
     pushSourceModifierTexts(def, texts);
   }
   for (const sock of socketables) pushSourceModifierTexts(sock, texts);
+  for (const line of extras) {
+    if (typeof line === 'string' && line.trim()) texts.push(line);
+  }
   return texts;
 }
 
@@ -120,11 +124,13 @@ function collectRequirementModifierTexts(def, rolls, socketables) {
  * @param {{
  *   rolls?: Record<string, number>|null,
  *   socketables?: ItemRequirementSource[]|null,
+ *   extras?: string[]|null,
  * }} [options]
  * @returns {ItemRequirements}
  */
 export function resolveItemRequirements(def, options = {}) {
   const socketables = Array.isArray(options.socketables) ? options.socketables : [];
+  const extras = Array.isArray(options.extras) ? options.extras : [];
   let reqLevel = nonNeg(def?.reqLevel);
   let reqStr = nonNeg(def?.reqStr);
   let reqDex = nonNeg(def?.reqDex);
@@ -140,7 +146,12 @@ export function resolveItemRequirements(def, options = {}) {
     }
   }
 
-  for (const text of collectRequirementModifierTexts(def, options.rolls ?? null, socketables)) {
+  for (const text of collectRequirementModifierTexts(
+    def,
+    options.rolls ?? null,
+    socketables,
+    extras
+  )) {
     reductionPct += parseRequirementsReductionPct(text);
     reqLevel += parseRequiredLevelBonus(text);
   }

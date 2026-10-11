@@ -90,6 +90,18 @@ const effectiveRolls = computed(() => {
   return mergeRollsForDef(def, rolls.value, rollOptions.value);
 });
 
+const instanceExtras = computed(() => {
+  const id = instanceId.value;
+  if (id == null) return [];
+  return itemsStore.getExtrasForInstance(id);
+});
+
+const instanceMysticOrbs = computed(() => {
+  const id = instanceId.value;
+  if (id == null) return [];
+  return itemsStore.getMysticOrbsForInstance(id);
+});
+
 const detailStatRows = computed(() => {
   const def = itemDef.value;
   if (!def) return [];
@@ -97,6 +109,7 @@ const detailStatRows = computed(() => {
     characterLevel: getEffectivePlannerLevel(),
     charmInInventory: true,
     className: className.value,
+    extras: instanceExtras.value,
   });
 });
 
@@ -300,6 +313,8 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown));
       :rolls="rolls"
       :effective-rolls="effectiveRolls"
       :detail-stat-rows="detailStatRows"
+      :extras="instanceExtras"
+      :mystic-orbs="instanceMysticOrbs"
       :empty-text="emptyText"
       @update:rolls="onRollsUpdate"
       @set-roll="setRoll"

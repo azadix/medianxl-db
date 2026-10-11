@@ -84,6 +84,30 @@ describe('buildItemTooltipHtml', () => {
     expect(reqsAt).toBeGreaterThan(innateAt);
   });
 
+  it('attaches a mystic orbs side panel when orbs are present', () => {
+    const html = buildItemTooltipHtml(
+      {
+        name: 'Silks of the Victor',
+        rarity: 'unique',
+        category: 'armor',
+      },
+      null,
+      null,
+      {
+        mysticOrbs: [
+          [5, 'MO - Total Char Defense'],
+          [1, 'Weight of Talent'],
+        ],
+      }
+    );
+    expect(html).toContain('item-tooltip-layout');
+    expect(html).toContain('item-tooltip-sidepanel');
+    expect(html).toContain('Mystic Orbs');
+    expect(html).toContain('5x MO - Total Char Defense');
+    expect(html).toContain('Weight of Talent');
+    expect(html).not.toContain('1x Weight of Talent');
+  });
+
   it('groups set bonuses separately from item stats', () => {
     const html = buildItemTooltipHtml(
       {

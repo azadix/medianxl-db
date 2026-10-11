@@ -112,6 +112,24 @@ describe('resolveItemRequirements', () => {
     ).toEqual({ reqLevel: 40, reqStr: 120, reqDex: 0, reductionPct: -20 });
   });
 
+  it('applies +Required Level and Requirements -% from instance extras', () => {
+    expect(
+      resolveItemRequirements(
+        {
+          rarity: 'unique',
+          baseId: 'base',
+          reqLevel: 100,
+          reqStr: 770,
+          reqDex: 0,
+          modifiers: ['+(172 to 200)% Enhanced Defense'],
+        },
+        {
+          extras: ['+35 Required Level', 'Requirements -5%'],
+        }
+      )
+    ).toEqual({ reqLevel: 135, reqStr: 731, reqDex: 0, reductionPct: 5 });
+  });
+
   it('keeps TSW final strength when reqStrFinal is set', () => {
     expect(
       resolveItemRequirements({

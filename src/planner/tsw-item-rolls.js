@@ -19,10 +19,15 @@ import {
   isCharmItem,
   isModifierPool,
 } from '@/items/charm-items.js';
-import { tswDescriptionTexts } from '@/items/custom-items.js';
+import {
+  stripTswBaseLabel,
+  tswDescriptionTexts,
+  tswRowIsEthereal,
+} from '@/items/custom-items.js';
 import {
   collectOverlayAffixSources,
   getOverlayOptionalModifiers,
+  isOptionalModifier,
   isOverlayItem,
   overlayAffixRollKey,
 } from '@/items/item-overlays.js';
@@ -33,6 +38,10 @@ import {
   relicAffixRollKey,
   collectRelicAffixSources,
 } from '@/items/relic-items.js';
+
+/** Boilerplate / flags that are not planner modifier lines. */
+const TSW_EXTRA_SKIP_RE =
+  /^(Defense:|One-Hand Damage|Two-Hand Damage|Throw Damage|Required |Durability|Item Level|Quality Level|Prefixes:|Suffixes:|Socketed \(|Can be Inserted|Ethereal|Corrupted|Already Upgraded|Quantity|Chance to Block|\(.*\)$)/i;
 
 const STOP = new Set([
   'a',
@@ -259,6 +268,127 @@ export function inferTswClassSkillsBonus(rows, className) {
     }
   }
   return Math.max(0, Math.floor(total));
+}
+
+/**
+ * @param {object|null|undefined} row
+ * @returns {string}
+ */
+function tswRowName(row) {
+  const display = row?.display_name != null ? String(row.display_name).trim() : '';
+  if (display) return display;
+  return row?.item != null ? String(row.item).trim() : '';
+}
+
+/**
+ * Catalog / overlay modifier templates used to claim TSW description lines.
+ * @param {object|null|undefined} def
+ * @returns {string[]}
+ */
+export function catalogModifierTemplates(def) {
+  /** @type {string[]} */
+  const out = [];
+  if (!def || typeof def !== 'object') return out;
+  const push = (raw) => {
+    const text = plain(raw);
+    if (text) out.push(text);
+  };
+  for (const mod of Array.isArray(def.modifiers) ? def.modifiers : []) {
+    if (isOptionalModifier(mod)) {
+      push(mod.text);
+      continue;
+    }
+    if (typeof mod === 'string') push(mod);
+  }
+  for (const optional of getOverlayOptionalModifiers(def)) {
+    push(optional.text);
+  }
+  if (def.adds != null) push(def.adds);
+  if (def.innate != null) {
+    for (const line of String(def.innate).split(/\r?\n/)) push(line);
+  }
+  return out;
+}
+
+/**
+ * @param {string} template
+ * @param {string} actual
+ * @returns {boolean}
+ */
+function lineMatchesCatalogTemplate(template, actual) {
+  if (matchAffixTemplate(template, actual)) return true;
+  const sigT = signature(template);
+  const sigA = signature(actual);
+  // Claim by signature so BCL formulas / stacked fixed mods are not duplicated as extras.
+  return Boolean(sigT && sigA && sigT === sigA);
+}
+
+/**
+ * Non-boilerplate TSW description lines not claimed by catalog affixes (MOs, jewels, etc.).
+ * @param {object|null|undefined} row
+ * @param {object|null|undefined} def
+ * @returns {string[]}
+ */
+export function extrasFromTswItem(row, def) {
+  if (!row || typeof row !== 'object') return [];
+  const name = tswRowName(row);
+  const type = row?.type != null ? String(row.type).trim() : '';
+  const base = stripTswBaseLabel(type || name);
+  /** @type {Set<string>} */
+  const skip = new Set(
+    [name, type, base, stripTswBaseLabel(name), def?.name != null ? String(def.name) : '']
+      .map((s) => String(s || '')
+        .trim()
+        .toLowerCase())
+      .filter(Boolean)
+  );
+  const templates = catalogModifierTemplates(def);
+  /** @type {string[]} */
+  const out = [];
+  for (const line of tswDescriptionTexts(row.description_lines)) {
+    const text = plain(line);
+    if (!text) continue;
+    if (skip.has(text.toLowerCase())) continue;
+    if (TSW_EXTRA_SKIP_RE.test(text)) continue;
+    if (templates.some((tmpl) => lineMatchesCatalogTemplate(tmpl, text))) continue;
+    out.push(text);
+  }
+  return out;
+}
+
+/**
+ * @param {unknown} raw
+ * @returns {Array<[number, string]>}
+ */
+export function parseTswMysticOrbs(raw) {
+  if (!Array.isArray(raw)) return [];
+  /** @type {Array<[number, string]>} */
+  const out = [];
+  for (const entry of raw) {
+    if (!Array.isArray(entry) || entry.length < 2) continue;
+    const count = Math.floor(Number(entry[0]));
+    const name = String(entry[1] ?? '').trim();
+    if (!Number.isFinite(count) || count < 1 || !name) continue;
+    out.push([count, name]);
+  }
+  return out;
+}
+
+/**
+ * Snapshot fields for catalog / runeword TSW gear beyond defId + rolls.
+ * @param {object|null|undefined} row
+ * @param {object|null|undefined} def
+ * @returns {{ extras?: string[], mysticOrbs?: Array<[number, string]>, ethereal?: boolean }}
+ */
+export function tswInstanceExtras(row, def) {
+  /** @type {{ extras?: string[], mysticOrbs?: Array<[number, string]>, ethereal?: boolean }} */
+  const out = {};
+  const extras = extrasFromTswItem(row, def);
+  if (extras.length) out.extras = extras;
+  const mysticOrbs = parseTswMysticOrbs(row?.mystic_orbs);
+  if (mysticOrbs.length) out.mysticOrbs = mysticOrbs;
+  if (tswRowIsEthereal(row)) out.ethereal = true;
+  return out;
 }
 
 /**

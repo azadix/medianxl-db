@@ -11,6 +11,7 @@ import {
   getItemStatSections,
 } from '@/items/item-stats.js';
 import { formatSetBonusLabel } from '@/items/item-overlays.js';
+import { formatMysticOrbLines } from '@/items/mystic-orbs.js';
 import { formatRunewordBadge, isRunewordItem } from '@/items/runeword-items.js';
 
 /** @type {Readonly<Record<string, string>>} */
@@ -118,6 +119,8 @@ function buildRequirementsHtml(reqs, options) {
  *   setBonuses?: Array<{ required: number|string, modifiers: string[], active: boolean }>,
  *   setName?: string|null,
  *   socketables?: Array<object>|null,
+ *   extras?: string[]|null,
+ *   mysticOrbs?: Array<[number, string]>|null,
  *   inactiveNotice?: string|null,
  * }} [options]
  * @returns {string} HTML
@@ -155,6 +158,7 @@ export function buildItemTooltipHtml(def, iconKey = null, rolls = null, options 
     charmInInventory: options.charmInInventory !== false,
     className: options.className ?? null,
     socketables: options.socketables ?? null,
+    extras: options.extras ?? null,
   });
 
   const baseBlock = renderStatLines([...sections.base, ...sections.scaling]);
@@ -183,7 +187,27 @@ export function buildItemTooltipHtml(def, iconKey = null, rolls = null, options 
     buildSetBonusSectionHtml(options.setBonuses),
   ].join('');
 
-  return `<div class="tooltip-content item-tooltip-card ${frameClass}">${header}${body}</div>`;
+  const card = `<div class="tooltip-content item-tooltip-card ${frameClass}">${header}${body}</div>`;
+  const side = buildMysticOrbsSidepanelHtml(options.mysticOrbs);
+  if (!side) return card;
+  return `<div class="item-tooltip-layout">${card}${side}</div>`;
+}
+
+/**
+ * Side panel listing applied mystic orbs (right of the main tooltip card).
+ * @param {unknown} mysticOrbs
+ * @returns {string}
+ */
+function buildMysticOrbsSidepanelHtml(mysticOrbs) {
+  const lines = formatMysticOrbLines(mysticOrbs);
+  if (!lines.length) return '';
+  const rows = lines
+    .map((line) => `<div class="item-tooltip-sidepanel__line">${escapeHtmlText(line)}</div>`)
+    .join('');
+  return `<aside class="item-tooltip-sidepanel" aria-label="Mystic Orbs">
+    <div class="item-tooltip-sidepanel__title">Mystic Orbs</div>
+    ${rows}
+  </aside>`;
 }
 
 /**

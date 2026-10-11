@@ -635,12 +635,14 @@ export function collectEnabledItemCharacterStatBonuses(options = {}) {
       const def = itemsStore.getDefForInstance?.(instanceId);
       if (!def) continue;
       const rolls = itemsStore.getRollsForInstance?.(instanceId) ?? null;
+      const extras = itemsStore.getExtrasForInstance?.(instanceId) ?? [];
       const lines = getItemStatLines(def, rolls, {
         hideRollableRanges: false,
         showRollRanges: false,
         characterLevel,
         charmInInventory: true,
         className,
+        extras,
       });
       accumulateLines(lines, sourceLabelForDef(def), bonuses, modifiersByKey, unknownModifiers);
     }

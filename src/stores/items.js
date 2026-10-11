@@ -62,6 +62,7 @@ import {
   runewordFitsEquipSlot,
 } from '@/items/runeword-items.js';
 import { applyCustomOverlayToDef, parseCustomPayload } from '@/items/custom-items.js';
+import { normalizeMysticOrbs } from '@/items/mystic-orbs.js';
 
 /** When true, equip/enable paths skip raising planner level for item reqs. */
 let skipItemReqLevelSync = false;
@@ -160,12 +161,23 @@ async function fetchCatalogFile(url) {
  *   sockets?: number,
  *   ethereal?: boolean,
  * }} CustomItemPayload
- * @typedef {{ defId: string, icon: string, rolls?: Record<string, number>, custom?: CustomItemPayload }} ItemInstance
+ * @typedef {{
+ *   defId: string,
+ *   icon: string,
+ *   rolls?: Record<string, number>,
+ *   custom?: CustomItemPayload,
+ *   extras?: string[],
+ *   mysticOrbs?: Array<[number, string]>,
+ *   ethereal?: boolean,
+ * }} ItemInstance
  * @typedef {{
  *   defId: string,
  *   icon?: string,
  *   rolls?: Record<string, number>,
- *   custom?: CustomItemPayload
+ *   custom?: CustomItemPayload,
+ *   extras?: string[],
+ *   mysticOrbs?: Array<[number, string]>,
+ *   ethereal?: boolean,
  * }} ItemSnapshotEntry
  * @typedef {{
  *   weaponSet: 0|1,
@@ -185,18 +197,69 @@ async function fetchCatalogFile(url) {
  * @param {ItemInstance|null|undefined} inst
  * @returns {ItemSnapshotEntry|string|null}
  */
+/**
+ * @param {unknown} raw
+ * @returns {string[]}
+ */
+function parseExtrasList(raw) {
+  if (!Array.isArray(raw)) return [];
+  /** @type {string[]} */
+  const out = [];
+  for (const line of raw) {
+    const text = String(line || '').trim();
+    if (text) out.push(text);
+  }
+  return out;
+}
+
+/**
+ * @param {unknown} raw
+ * @returns {Array<[number, string]>}
+ */
+function parseMysticOrbsList(raw) {
+  return normalizeMysticOrbs(raw);
+}
+
+/**
+ * @param {ItemInstance|null|undefined} inst
+ * @param {{
+ *   extras?: string[]|null,
+ *   mysticOrbs?: Array<[number, string]>|null,
+ *   ethereal?: boolean,
+ * }|null|undefined} meta
+ */
+function applyInstanceMeta(inst, meta) {
+  if (!inst || !meta || typeof meta !== 'object') return;
+  const extras = parseExtrasList(meta.extras);
+  if (extras.length) inst.extras = extras;
+  else delete inst.extras;
+  const mysticOrbs = parseMysticOrbsList(meta.mysticOrbs);
+  if (mysticOrbs.length) inst.mysticOrbs = mysticOrbs;
+  else delete inst.mysticOrbs;
+  if (meta.ethereal === true) inst.ethereal = true;
+  else delete inst.ethereal;
+}
+
 function snapshotInstanceEntry(inst) {
   const defId = inst?.defId;
   if (!defId) return null;
   const hasIcon = Boolean(inst.icon);
   const hasRolls = Boolean(inst.rolls && Object.keys(inst.rolls).length);
   const custom = parseCustomPayload(inst.custom);
-  if (!hasIcon && !hasRolls && !custom) return defId;
+  const extras = parseExtrasList(inst?.extras);
+  const mysticOrbs = parseMysticOrbsList(inst?.mysticOrbs);
+  const ethereal = inst?.ethereal === true;
+  if (!hasIcon && !hasRolls && !custom && !extras.length && !mysticOrbs.length && !ethereal) {
+    return defId;
+  }
   /** @type {ItemSnapshotEntry} */
   const entry = { defId };
   if (hasIcon) entry.icon = inst.icon;
   if (hasRolls) entry.rolls = { ...inst.rolls };
   if (custom) entry.custom = custom;
+  if (extras.length) entry.extras = extras;
+  if (mysticOrbs.length) entry.mysticOrbs = mysticOrbs;
+  if (ethereal) entry.ethereal = true;
   return entry;
 }
 
@@ -637,6 +700,7 @@ export const useItemsStore = defineStore('items', {
       if (!def) return null;
       return resolveItemRequirements(def, {
         rolls: this.getRollsForInstance(instanceId),
+        extras: this.getExtrasForInstance(instanceId),
       });
     },
 
@@ -849,9 +913,14 @@ export const useItemsStore = defineStore('items', {
      * @param {string|null|undefined} [icon]
      * @param {Record<string, number>|null|undefined} [rolls]
      * @param {unknown} [custom]
+     * @param {{
+     *   extras?: string[]|null,
+     *   mysticOrbs?: Array<[number, string]>|null,
+     *   ethereal?: boolean,
+     * }|null|undefined} [meta]
      * @returns {number}
      */
-    createInstance(defId, icon = null, rolls = null, custom = null) {
+    createInstance(defId, icon = null, rolls = null, custom = null, meta = null) {
       const id = this.nextInstanceId++;
       const def = this.catalogById[defId];
       /** @type {ItemInstance} */
@@ -864,6 +933,7 @@ export const useItemsStore = defineStore('items', {
       }
       const parsedCustom = parseCustomPayload(custom);
       if (parsedCustom) inst.custom = parsedCustom;
+      applyInstanceMeta(inst, meta);
       this.instances[id] = inst;
       return id;
     },
@@ -896,6 +966,26 @@ export const useItemsStore = defineStore('items', {
       const inst = this.instances[instanceId];
       if (!inst?.rolls || typeof inst.rolls !== 'object') return null;
       return inst.rolls;
+    },
+
+    /**
+     * Extra modifier lines (MOs / jewels / corruption) on an instance.
+     * @param {number} instanceId
+     * @returns {string[]}
+     */
+    getExtrasForInstance(instanceId) {
+      const inst = this.instances[instanceId];
+      return parseExtrasList(inst?.extras);
+    },
+
+    /**
+     * Applied mystic orbs on an instance (`[count, name]` tuples).
+     * @param {number} instanceId
+     * @returns {Array<[number, string]>}
+     */
+    getMysticOrbsForInstance(instanceId) {
+      const inst = this.instances[instanceId];
+      return parseMysticOrbsList(inst?.mysticOrbs);
     },
 
     /**
@@ -1196,7 +1286,12 @@ export const useItemsStore = defineStore('items', {
       const inst = this.instances[instanceId];
       if (!inst) return null;
       const def = this.catalogById[inst.defId] ?? null;
-      return applyCustomOverlayToDef(def, inst.custom);
+      const withCustom = applyCustomOverlayToDef(def, inst.custom);
+      if (!withCustom) return null;
+      if (inst.ethereal === true && !withCustom.ethereal) {
+        return { ...withCustom, ethereal: true };
+      }
+      return withCustom;
     },
 
     /**
@@ -1258,7 +1353,7 @@ export const useItemsStore = defineStore('items', {
       const characterStrength = ch && typeof ch.getStat === 'function' ? ch.getStat('strength') : null;
       const characterDexterity = ch && typeof ch.getStat === 'function' ? ch.getStat('dexterity') : null;
       /** @type {Record<string, unknown>} */
-      const extras = { className, characterLevel, characterStrength, characterDexterity };
+      const opts = { className, characterLevel, characterStrength, characterDexterity };
       const slot =
         equipSlot != null
           ? String(equipSlot)
@@ -1267,16 +1362,21 @@ export const useItemsStore = defineStore('items', {
             : '';
       if (slot && this.equipment[slot] != null) {
         const reason = this.equipmentSlotInactiveReason(slot);
-        if (reason) extras.inactiveNotice = reason;
+        if (reason) opts.inactiveNotice = reason;
+        const instanceId = this.equipment[slot];
+        const instanceExtras = this.getExtrasForInstance(instanceId);
+        if (instanceExtras.length) opts.extras = instanceExtras;
+        const mysticOrbs = this.getMysticOrbsForInstance(instanceId);
+        if (mysticOrbs.length) opts.mysticOrbs = mysticOrbs;
       }
-      if (!def?.setId) return extras;
+      if (!def?.setId) return opts;
       const setDef = this.setsById[def.setId];
-      if (!setDef) return { ...extras, setName: def.setName };
+      if (!setDef) return { ...opts, setName: def.setName };
       const counts = countEquippedSetPieces(this.activeEquippedDefs);
       const equippedCount = counts[def.setId] || 0;
       const totalPieces = this.catalog.filter((d) => d.setId === def.setId).length;
       return {
-        ...extras,
+        ...opts,
         setName: setDef.name || def.setName,
         setBonuses: resolveSetBonuses(setDef, equippedCount, totalPieces),
       };
@@ -1661,7 +1761,15 @@ export const useItemsStore = defineStore('items', {
 
       /**
        * @param {unknown} entry
-       * @returns {{ defId: string, icon: string|null, rolls: Record<string, number>|null, custom: CustomItemPayload|null }|null}
+       * @returns {{
+       *   defId: string,
+       *   icon: string|null,
+       *   rolls: Record<string, number>|null,
+       *   custom: CustomItemPayload|null,
+       *   extras: string[],
+       *   mysticOrbs: Array<[number, string]>,
+       *   ethereal: boolean,
+       * }|null}
        */
       const parseEntry = (entry) => {
         /** @type {string|undefined} */
@@ -1672,13 +1780,22 @@ export const useItemsStore = defineStore('items', {
         let rollsRaw = null;
         /** @type {unknown} */
         let customRaw = null;
+        /** @type {unknown} */
+        let extrasRaw = null;
+        /** @type {unknown} */
+        let mysticOrbsRaw = null;
+        let ethereal = false;
         if (typeof entry === 'string') {
           defId = entry;
         } else if (entry && typeof entry === 'object') {
-          defId = /** @type {{ defId?: unknown }} */ (entry).defId;
-          icon = /** @type {{ icon?: unknown }} */ (entry).icon;
-          rollsRaw = /** @type {{ rolls?: unknown }} */ (entry).rolls;
-          customRaw = /** @type {{ custom?: unknown }} */ (entry).custom;
+          const rec = /** @type {Record<string, unknown>} */ (entry);
+          defId = /** @type {string|undefined} */ (rec.defId);
+          icon = rec.icon;
+          rollsRaw = rec.rolls;
+          customRaw = rec.custom;
+          extrasRaw = rec.extras;
+          mysticOrbsRaw = rec.mysticOrbs;
+          ethereal = rec.ethereal === true;
         } else {
           return null;
         }
@@ -1706,6 +1823,9 @@ export const useItemsStore = defineStore('items', {
           icon: typeof icon === 'string' ? icon : null,
           rolls,
           custom: parseCustomPayload(customRaw),
+          extras: parseExtrasList(extrasRaw),
+          mysticOrbs: parseMysticOrbsList(mysticOrbsRaw),
+          ethereal,
         };
       };
 
@@ -1737,7 +1857,11 @@ export const useItemsStore = defineStore('items', {
           for (const slot of EQUIPMENT_SLOTS) {
             const parsed = parseEntry(/** @type {Record<string, unknown>} */ (eq)[slot]);
             if (!parsed || !this.catalogById[parsed.defId]) continue;
-            const id = this.createInstance(parsed.defId, parsed.icon, parsed.rolls, parsed.custom);
+            const id = this.createInstance(parsed.defId, parsed.icon, parsed.rolls, parsed.custom, {
+              extras: parsed.extras,
+              mysticOrbs: parsed.mysticOrbs,
+              ethereal: parsed.ethereal,
+            });
             this.equipment[slot] = id;
           }
         }
@@ -1778,7 +1902,11 @@ export const useItemsStore = defineStore('items', {
               enableFromSnap(parsed.defId, parsed.rolls, 'relics');
               continue;
             }
-            const id = this.createInstance(parsed.defId, parsed.icon, parsed.rolls, parsed.custom);
+            const id = this.createInstance(parsed.defId, parsed.icon, parsed.rolls, parsed.custom, {
+              extras: parsed.extras,
+              mysticOrbs: parsed.mysticOrbs,
+              ethereal: parsed.ethereal,
+            });
             const getSize = this.getInstanceSize;
             if (canPlace(this.inventory, slot, def.invWidth || 1, def.invHeight || 1, getSize)) {
               this.inventory = placeAt(this.inventory, slot, id, getSize);

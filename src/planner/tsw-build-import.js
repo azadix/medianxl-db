@@ -11,7 +11,11 @@ import {
 } from '@/character/planner-build-io.js';
 import { isCharmItem, isDimensionalKeyCharm } from '@/items/charm-items.js';
 import { isRelicItem, MAX_RELICS } from '@/items/relic-items.js';
-import { rollsFromTswItem } from '@/planner/tsw-item-rolls.js';
+import {
+  parseTswMysticOrbs,
+  rollsFromTswItem,
+  tswInstanceExtras,
+} from '@/planner/tsw-item-rolls.js';
 import { EQUIPMENT_SLOTS } from '@/items/item-types.js';
 import { slugify } from '@/items/unique-stats-catalog.js';
 import {
@@ -403,19 +407,47 @@ function isCatalogBacked(row, def) {
 }
 
 /**
+ * @param {object} entry
+ * @param {object} row
+ * @param {object|null|undefined} def
+ * @returns {void}
+ */
+function attachTswInstanceExtras(entry, row, def) {
+  const meta = tswInstanceExtras(row, def);
+  if (meta.extras?.length) entry.extras = meta.extras;
+  if (meta.mysticOrbs?.length) entry.mysticOrbs = meta.mysticOrbs;
+  if (meta.ethereal) entry.ethereal = true;
+}
+
+/**
  * @param {object} row
  * @param {string} defId
  * @param {object|null} def
  * @param {string|null|undefined} className
- * @returns {{ defId: string, rolls?: Record<string, number> }}
+ * @returns {{
+ *   defId: string,
+ *   rolls?: Record<string, number>,
+ *   icon?: string,
+ *   extras?: string[],
+ *   mysticOrbs?: Array<[number, string]>,
+ *   ethereal?: boolean,
+ * }}
  */
 function snapshotWithRolls(row, defId, def, className) {
-  /** @type {{ defId: string, rolls?: Record<string, number>, icon?: string }} */
+  /** @type {{
+   *   defId: string,
+   *   rolls?: Record<string, number>,
+   *   icon?: string,
+   *   extras?: string[],
+   *   mysticOrbs?: Array<[number, string]>,
+   *   ethereal?: boolean,
+   * }} */
   const entry = { defId };
   const rolls = rollsFromTswItem(row, def, className);
   if (rolls && Object.keys(rolls).length) entry.rolls = rolls;
   const icon = row?.image != null ? String(row.image).trim() : '';
   if (icon) entry.icon = icon;
+  attachTswInstanceExtras(entry, row, def);
   return entry;
 }
 
@@ -468,7 +500,10 @@ export function mapTswItemsToSnapshot(rows, catalog, className = null) {
         skipped.push(skippedTswItem(row, 'uncatalogued'));
         continue;
       }
-      equipment[slotKey] = tswCustomSnapshotEntry(row, defId, customQuality);
+      const customEntry = tswCustomSnapshotEntry(row, defId, customQuality);
+      const mysticOrbs = parseTswMysticOrbs(row.mystic_orbs);
+      if (mysticOrbs.length) customEntry.mysticOrbs = mysticOrbs;
+      equipment[slotKey] = customEntry;
       continue;
     }
 
@@ -487,10 +522,19 @@ export function mapTswItemsToSnapshot(rows, catalog, className = null) {
         skipped.push(skippedTswItem(row, 'uncatalogued'));
         continue;
       }
-      /** @type {{ defId: string, icon?: string }} */
+      const templateId = String(defId).split(':').slice(0, 2).join(':');
+      const rwDef = cat.byId[defId] || cat.byId[templateId] || null;
+      /** @type {{
+       *   defId: string,
+       *   icon?: string,
+       *   extras?: string[],
+       *   mysticOrbs?: Array<[number, string]>,
+       *   ethereal?: boolean,
+       * }} */
       const entry = { defId };
       const icon = row?.image != null ? String(row.image).trim() : '';
       if (icon) entry.icon = icon;
+      attachTswInstanceExtras(entry, row, rwDef);
       equipment[slotKey] = entry;
       continue;
     }

@@ -111,6 +111,8 @@ function onItemTooltipEnter(e, instanceId) {
       characterLevel: getEffectivePlannerLevel(),
       charmInInventory: true,
       ...itemsStore.getTooltipOptionsForDef(def),
+      extras: itemsStore.getExtrasForInstance(instanceId),
+      mysticOrbs: itemsStore.getMysticOrbsForInstance(instanceId),
     }
   );
 }

@@ -313,7 +313,14 @@ describe('tsw-build-import', () => {
     expect(resolveTswItemDefId(row, cat)).toBe('rw:lionheart:@14');
     const { snapshot, skipped } = mapTswItemsToSnapshot([row], byIdCatalog());
     expect(skipped).toEqual([]);
-    expect(snapshot.equipment.tors).toEqual({ defId: 'rw:lionheart:@14', icon: 'invful' });
+    expect(snapshot.equipment.tors).toMatchObject({
+      defId: 'rw:lionheart:@14',
+      icon: 'invful',
+      extras: expect.arrayContaining([
+        'remainders of a once powerful armor...',
+        'OhmOhmOhm',
+      ]),
+    });
   });
 
   it('resolves catalog ids used by the mapper', () => {
@@ -354,10 +361,43 @@ describe('tsw-build-import', () => {
     );
     expect(snapshot.equipment.lrin?.defId).toBe('rin');
     expect(snapshot.equipment.lrin?.custom?.quality).toBe('rare');
+    expect(snapshot.equipment.lrin?.custom?.modifiers).toEqual(
+      expect.arrayContaining([
+        'Physical Damage Taken Reduced by 25',
+        '+60 Life on Melee Attack',
+        '+40 Required Level',
+      ])
+    );
+    expect(snapshot.equipment.lrin?.mysticOrbs).toEqual([
+      [5, 'MO - Damage Reduced'],
+      [2, "Farnham's Lost Marble"],
+    ]);
     expect(snapshot.equipment.rrin?.custom?.quality).toBe('rare');
     expect(snapshot.equipment.neck?.custom?.quality).toBe('rare');
     expect(snapshot.equipment.glov?.custom?.quality).toBe('angelic');
+    expect(snapshot.equipment.glov?.mysticOrbs).toEqual(
+      expect.arrayContaining([
+        [5, 'MO - Total Char Defense'],
+        [1, "Zayl's Soul Orb"],
+        [1, 'Rare MO - Fire Resist'],
+      ])
+    );
     expect(snapshot.equipment.feet?.custom?.quality).toBe('angelic');
+    expect(snapshot.equipment.tors).toMatchObject({
+      defId: 'u:silks-of-the-victor:su',
+      ethereal: true,
+      mysticOrbs: [
+        [5, 'MO - Total Char Defense'],
+        [1, 'Weight of Talent'],
+      ],
+    });
+    expect(snapshot.equipment.tors?.extras).toEqual(
+      expect.arrayContaining([
+        '+35 Required Level',
+        'Requirements -5%',
+        '+25% Bonus to Defense',
+      ])
+    );
     expect(skipped.every((row) => row.reason === 'uncatalogued' || row.reason === 'stash')).toBe(true);
     expect(skipped.some((row) => row.name === 'Ring')).toBe(false);
     expect(skipped.some((row) => /Angelic/.test(row.name))).toBe(false);
@@ -397,11 +437,25 @@ describe('tsw-build-import', () => {
     expect(store.getEquipmentDef('rarm')?.id).toBe('u:mekanism:su');
     expect(store.getEquipmentDef('lrin')?.customQuality).toBe('rare');
     expect(store.getEquipmentDef('glov')?.customQuality).toBe('angelic');
+    expect(store.getEquipmentDef('tors')?.ethereal).toBe(true);
+    const torsId = store.equipment.tors;
+    expect(store.getExtrasForInstance(torsId)).toEqual(
+      expect.arrayContaining(['+35 Required Level', 'Requirements -5%'])
+    );
+    expect(store.getRequirementsForInstance(torsId)?.reqLevel).toBeGreaterThanOrEqual(135);
     expect(store.enabledCharms.a68).toBeTruthy();
     expect(store.enabledCharms['ebw-primordia']).toBeTruthy();
     expect(Object.keys(store.enabledRelics).sort()).toEqual(
       ['relic:hailstorm', 'relic:lightning-wall', 'relic:whirlwind'].sort()
     );
+    const roundTrip = store.toSnapshot();
+    expect(roundTrip.equipment.tors).toMatchObject({
+      ethereal: true,
+      mysticOrbs: [
+        [5, 'MO - Total Char Defense'],
+        [1, 'Weight of Talent'],
+      ],
+    });
   });
 
   it('sets Miss_Peeled charm, relic, and unique rolls from description lines', () => {
