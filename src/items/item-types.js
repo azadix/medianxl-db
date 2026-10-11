@@ -80,6 +80,7 @@ export const ITEM_CATEGORIES = Object.freeze([
   { id: 'weapons', name: 'Weapons' },
   { id: 'armor', name: 'Armor' },
   { id: 'jewelry', name: 'Jewelry' },
+  { id: 'quivers', name: 'Quivers' },
   { id: 'uniques', name: 'Uniques' },
   { id: 'sets', name: 'Sets' },
   { id: 'runewords', name: 'Runewords' },
@@ -232,6 +233,74 @@ export function isShieldItem(def) {
 }
 
 /**
+ * Arrow / bolt quiver (base or unique overlay). Off-hand ammo for bows/crossbows.
+ * @param {object|null|undefined} def
+ * @returns {boolean}
+ */
+export function isQuiverItem(def) {
+  if (!def || typeof def !== 'object') return false;
+  if (def.category === 'quivers') return true;
+  const type = String(def.type || '');
+  return type === 'bowq' || type === 'xboq';
+}
+
+/**
+ * @param {object|null|undefined} def
+ * @returns {boolean}
+ */
+export function isArrowWeapon(def) {
+  if (!def) return false;
+  const group = String(def.group || '');
+  return /bows/i.test(group) && !/crossbows/i.test(group);
+}
+
+/**
+ * @param {object|null|undefined} def
+ * @returns {boolean}
+ */
+export function isBoltWeapon(def) {
+  if (!def) return false;
+  return /crossbows/i.test(String(def.group || ''));
+}
+
+/**
+ * @param {object|null|undefined} def
+ * @returns {boolean}
+ */
+export function isBowOrCrossbow(def) {
+  return isArrowWeapon(def) || isBoltWeapon(def);
+}
+
+/**
+ * Whether a quiver may pair with a missile weapon (arrow↔bow, bolt↔crossbow).
+ * Bag of Tricks has both forms in the catalog; each form still pairs only with its weapon type.
+ * @param {object|null|undefined} quiver
+ * @param {object|null|undefined} weapon
+ * @returns {boolean}
+ */
+export function quiverMatchesMissileWeapon(quiver, weapon) {
+  if (!isQuiverItem(quiver) || !weapon) return false;
+  const type = String(quiver.type || '');
+  if (type === 'bowq') return isArrowWeapon(weapon);
+  if (type === 'xboq') return isBoltWeapon(weapon);
+  return isBowOrCrossbow(weapon);
+}
+
+/** Shown when a quiver is equipped without a usable matching bow/crossbow. */
+export const QUIVER_INACTIVE_REASON = 'Requires a matching bow or crossbow in the other hand.';
+
+/**
+ * Whether an equipped quiver is active (matching bow/crossbow in the other hand).
+ * Empty / wrong / missing partner => inactive (no bonuses).
+ * @param {object|null|undefined} quiver
+ * @param {object|null|undefined} otherHandDef
+ * @returns {boolean}
+ */
+export function isQuiverEffectActive(quiver, otherHandDef) {
+  return quiverMatchesMissileWeapon(quiver, otherHandDef);
+}
+
+/**
  * @param {object|null|undefined} def
  * @returns {boolean}
  */
@@ -242,12 +311,12 @@ function isStaffItem(def) {
 }
 
 /**
- * Weapon that occupies a hand slot (not a shield).
+ * Weapon that occupies a hand slot (not a shield or quiver).
  * @param {object|null|undefined} def
  * @returns {boolean}
  */
 export function isHandWeapon(def) {
-  if (!def || isShieldItem(def)) return false;
+  if (!def || isShieldItem(def) || isQuiverItem(def)) return false;
   if (def.category === 'weapons') return true;
   if (hasOneHandDamage(def) || hasTwoHandDamage(def)) return true;
   const group = String(def.group || '');
@@ -262,7 +331,7 @@ export function isHandWeapon(def) {
  * @returns {boolean}
  */
 export function isStrictTwoHandedWeapon(def) {
-  if (!def || isShieldItem(def)) return false;
+  if (!def || isShieldItem(def) || isQuiverItem(def)) return false;
   if (isStaffItem(def)) return true;
   if (STRICT_TWO_HAND_GROUPS.has(String(def.group || ''))) return true;
   return hasTwoHandDamage(def) && !hasOneHandDamage(def);
@@ -274,7 +343,7 @@ export function isStrictTwoHandedWeapon(def) {
  * @returns {boolean}
  */
 export function isTwoHandedWeapon(def) {
-  if (!def || isShieldItem(def)) return false;
+  if (!def || isShieldItem(def) || isQuiverItem(def)) return false;
   if (isStrictTwoHandedWeapon(def)) return true;
   if (String(def.group || '') === 'Two-Handed Swords') return true;
   return hasOneHandDamage(def) && hasTwoHandDamage(def);
@@ -283,6 +352,7 @@ export function isTwoHandedWeapon(def) {
 /**
  * Whether two items may occupy paired weapon slots together.
  * Only Barbarian may dual-wield when either item is two-handed. Staves are two-handed.
+ * Quivers are the off-hand partner for bows / crossbows.
  * @param {object|null|undefined} a
  * @param {object|null|undefined} b
  * @param {string|null|undefined} [className]
@@ -290,6 +360,12 @@ export function isTwoHandedWeapon(def) {
  */
 export function canDualWieldPair(a, b, className) {
   if (!a || !b) return true;
+  if (isQuiverItem(a) || isQuiverItem(b)) {
+    const quiver = isQuiverItem(a) ? a : b;
+    const other = isQuiverItem(a) ? b : a;
+    if (isQuiverItem(other)) return false;
+    return quiverMatchesMissileWeapon(quiver, other);
+  }
   const barb = isBarbarianClass(className);
   if (isStrictTwoHandedWeapon(a) || isStrictTwoHandedWeapon(b)) return barb;
   if (isHandWeapon(a) && isHandWeapon(b) && (isTwoHandedWeapon(a) || isTwoHandedWeapon(b))) {
@@ -358,6 +434,9 @@ export function equipBlockedReason(def, equipSlot, className = undefined, option
   if (other) {
     const pairClass = className !== undefined ? className : options.className;
     if (!canDualWieldPair(def, other, pairClass)) {
+      if (isQuiverItem(def) || isQuiverItem(other)) {
+        return 'Quivers only pair with a matching bow or crossbow.';
+      }
       return 'Only Barbarian can dual-wield with a two-handed weapon.';
     }
   }
@@ -374,6 +453,19 @@ export function equipBlockedReason(def, equipSlot, className = undefined, option
  */
 export function canPlaceInInventory(def) {
   return !!def;
+}
+
+/**
+ * Inventory-only gear (jewels, …) — no paperdoll slot, not charm/relic/runeword/quiver.
+ * @param {object|null|undefined} def
+ * @returns {boolean}
+ */
+export function isInventoryOnlyGear(def) {
+  if (!def || typeof def !== 'object') return false;
+  if (isCharmItem(def) || isRelicItem(def) || isQuiverItem(def)) return false;
+  if (def.rarity === 'runeword') return false;
+  if (def.slot != null) return false;
+  return true;
 }
 
 /**

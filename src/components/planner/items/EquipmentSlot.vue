@@ -1,7 +1,7 @@
 <script setup>
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
 import { useItemsStore } from '@/stores/items.js';
-import { canEquipInSlot, EQUIPMENT_SLOT_CELLS } from '@/items/item-types.js';
+import { canEquipInSlot, EQUIPMENT_SLOT_CELLS, pairedWeaponSlot } from '@/items/item-types.js';
 import { formatItemRarityBadge } from '@/items/item-stats.js';
 import { getCharacterInstance } from '@/character/planner-core.js';
 import { usePlannerRevisionRefresh } from '@/composables/usePlannerRevisionRefresh.js';
@@ -64,6 +64,10 @@ const rarityFrameClass = computed(() => (def.value ? itemRarityFrameClass(def.va
 
 const reqsUnmet = computed(() => {
   void reqRefreshTick.value;
+  // Depend on this slot and its pair (quiver active only with a matching bow/xbow).
+  void itemsStore.equipment[props.slotKey];
+  const pair = pairedWeaponSlot(props.slotKey);
+  if (pair) void itemsStore.equipment[pair];
   if (!def.value) return false;
   return !itemsStore.equipmentSlotMeetsRequirements(props.slotKey);
 });
@@ -120,7 +124,7 @@ function onItemMouseEnter(e) {
     e.clientX,
     e.clientY,
     itemsStore.getRollsForInstance(instanceId.value),
-    itemsStore.getTooltipOptionsForDef(def.value)
+    itemsStore.getTooltipOptionsForDef(def.value, props.slotKey)
   );
 }
 

@@ -7,6 +7,8 @@ import {
   canEquipForClass,
   canEquipInSlot,
   equipBlockedReason,
+  isInventoryOnlyGear,
+  isQuiverItem,
   isRunewordPickerItem,
   isUniquePickerItem,
   matchesItemPickerSearch,
@@ -66,6 +68,7 @@ function matchesCategory(item, cat) {
   if (cat === 'uniques') return isUniquePickerItem(item);
   if (cat === 'sets') return item.rarity === 'set';
   if (cat === 'runewords') return isRunewordPickerItem(item);
+  if (cat === 'quivers') return isQuiverItem(item);
   // Hide unique/set/runeword overlays from base weapon/armor/jewelry lists
   if (cat === 'weapons' || cat === 'armor' || cat === 'jewelry') {
     if (item.rarity === 'unique' || item.rarity === 'set' || item.rarity === 'runeword') {
@@ -163,6 +166,7 @@ const canEquipPreview = computed(() => {
   if (isRelicItem(def) || isCharmItem(def)) return false;
   if (!canSelectPickerItem(previewTemplate.value)) return false;
   if (isRunewordTemplate(previewTemplate.value) && !selectedBaseId.value) return false;
+  if (isInventoryOnlyGear(def)) return true;
   if (sel.location === 'equipment') {
     return fitsEquipSlot(def, String(sel.slot), className.value);
   }
@@ -183,6 +187,7 @@ const addBlockedReason = computed(() => {
       ? 'No compatible bases for this class.'
       : 'Select a base item.';
   }
+  if (isInventoryOnlyGear(def)) return '';
   if (sel.location === 'equipment') {
     return (
       equipBlockedReason(def, String(sel.slot), className.value, {
@@ -314,7 +319,11 @@ function onEquip(defId) {
   if (!def) return;
   if (!canSelectPickerItem(picked) || !canEquipForClass(def, className.value)) return;
   const sel = selectedSlot.value;
-  if (sel?.location === 'equipment' && !fitsEquipSlot(def, String(sel.slot), className.value)) {
+  if (
+    sel?.location === 'equipment' &&
+    !isInventoryOnlyGear(def) &&
+    !fitsEquipSlot(def, String(sel.slot), className.value)
+  ) {
     return;
   }
   const nextRolls = mergeRollsForDef(

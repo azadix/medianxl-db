@@ -34,6 +34,7 @@ export const ITEM_CATEGORY_LABEL = Object.freeze({
   weapons: 'Weapon',
   armor: 'Armor',
   jewelry: 'Jewelry',
+  quivers: 'Quiver',
   charms: 'Charm',
   relics: 'Relic',
   other: 'Other',

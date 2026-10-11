@@ -20,6 +20,7 @@ ICON_ALIASES = {
     "invamu4": "invamu",  # docs has invamu1-3 + invamu; no invamu4.jpg
     "invrin4": "invrin1",
     "invrin5": "invrin2",
+    "invcqvr": "invcqv",  # legacy misc typo; real DC6 stem is invcqv
 }
 
 

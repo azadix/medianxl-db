@@ -13,7 +13,11 @@ import {
   canEquipInSlot,
   canEquipForClass,
   canPlaceInInventory,
+  isInventoryOnlyGear,
+  isQuiverItem,
+  isQuiverEffectActive,
   pairedWeaponSlot,
+  QUIVER_INACTIVE_REASON,
 } from '@/items/item-types.js';
 import { getCharacterInstance, raiseCharacterLevelForItemReq } from '@/character/planner-instance.js';
 import {
@@ -350,6 +354,7 @@ export const useItemsStore = defineStore('items', {
       if (!sel) return this.catalog;
       if (sel.location === 'equipment') {
         // List every item that fits the slot. Class restrictions only block Add/equip.
+        // Jewels (inventory-only) stay visible so they remain browsable from gear slots.
         const slot = String(sel.slot);
         const otherHandDef = this.otherHandDefForEquip(slot);
         const className = this.viewerClassName;
@@ -357,6 +362,7 @@ export const useItemsStore = defineStore('items', {
         const fits = (item, s, cls) =>
           canEquipInSlot(item, s, cls, { ...equipOpts, otherHandDef, className });
         return this.catalog.filter((d) => {
+          if (isInventoryOnlyGear(d)) return true;
           if (isRunewordTemplate(d)) {
             return runewordFitsEquipSlot(d, slot, this.catalog, undefined, fits);
           }
@@ -572,16 +578,49 @@ export const useItemsStore = defineStore('items', {
     },
 
     /**
-     * Whether an equipment slot's item meets character level/str/dex reqs.
-     * Empty slots count as met.
+     * Whether an equipment slot's item is active (level/str/dex + quiver pairing).
+     * Empty slots count as met. Quivers are inactive without a matching bow/crossbow.
      * @param {string} slot
      * @returns {boolean}
      */
     equipmentSlotMeetsRequirements(slot) {
-      const id = this.equipment[String(slot)];
+      const key = String(slot);
+      const id = this.equipment[key];
       if (id == null) return true;
+      const def = this.getDefForInstance(id);
+      if (!def) return true;
       const reqs = this.getRequirementsForInstance(id);
-      return characterMeetsItemRequirements(reqs, this.getCharacterRequirementStats());
+      const stats = this.getCharacterRequirementStats();
+      if (!characterMeetsItemRequirements(reqs, stats)) return false;
+      if (isQuiverItem(def)) {
+        const otherSlot = pairedWeaponSlot(key);
+        if (!otherSlot) return false;
+        const otherId = this.equipment[otherSlot];
+        if (otherId == null) return false;
+        const otherDef = this.getDefForInstance(otherId);
+        if (!isQuiverEffectActive(def, otherDef)) return false;
+        // Partner must also meet its own requirements to "count" as equipped.
+        const otherReqs = this.getRequirementsForInstance(otherId);
+        if (!characterMeetsItemRequirements(otherReqs, stats)) return false;
+      }
+      return true;
+    },
+
+    /**
+     * Why an equipped quiver is inactive, or null when active / not a quiver.
+     * @param {string} slot
+     * @returns {string|null}
+     */
+    quiverInactiveReasonForSlot(slot) {
+      const key = String(slot);
+      const id = this.equipment[key];
+      if (id == null) return null;
+      const def = this.getDefForInstance(id);
+      if (!isQuiverItem(def)) return null;
+      if (this.equipmentSlotMeetsRequirements(key)) return null;
+      const reqs = this.getRequirementsForInstance(id);
+      if (!characterMeetsItemRequirements(reqs, this.getCharacterRequirementStats())) return null;
+      return QUIVER_INACTIVE_REASON;
     },
 
     /**
@@ -631,14 +670,21 @@ export const useItemsStore = defineStore('items', {
     listUnmetEquippedItems() {
       /** @type {Array<{ name: string, requirementsLine: string }>} */
       const out = [];
-      const stats = this.getCharacterRequirementStats();
       for (const slot of EQUIPMENT_SLOTS) {
         const id = this.equipment[slot];
         if (id == null) continue;
         const def = this.getDefForInstance(id);
         if (!def) continue;
+        if (this.equipmentSlotMeetsRequirements(slot)) continue;
+        const quiverReason = this.quiverInactiveReasonForSlot(slot);
+        if (quiverReason) {
+          out.push({
+            name: String(def.name || def.id || slot),
+            requirementsLine: quiverReason,
+          });
+          continue;
+        }
         const reqs = this.getRequirementsForInstance(id);
-        if (characterMeetsItemRequirements(reqs, stats)) continue;
         const line = formatItemRequirementsLine(reqs).replace(/^Requires:\s*/i, '');
         out.push({
           name: String(def.name || def.id || slot),
@@ -1099,17 +1145,29 @@ export const useItemsStore = defineStore('items', {
     },
 
     /**
-     * Tooltip extras for set items (active bonuses from currently equipped pieces).
+     * Tooltip extras for set items / quiver inactive state.
      * @param {object|null|undefined} def
-     * @returns {{ className?: string|null, setBonuses?: Array<{ required: number|string, modifiers: string[], active: boolean }>, setName?: string }}
+     * @param {string|null|undefined} [equipSlot] - equipment slot key when known
+     * @returns {{ className?: string|null, setBonuses?: Array<{ required: number|string, modifiers: string[], active: boolean }>, setName?: string, inactiveNotice?: string }}
      */
-    getTooltipOptionsForDef(def) {
+    getTooltipOptionsForDef(def, equipSlot = null) {
       const ch = getCharacterInstance();
       const className = ch?.className ?? null;
       const characterLevel = ch?.level ?? null;
       const characterStrength = ch && typeof ch.getStat === 'function' ? ch.getStat('strength') : null;
       const characterDexterity = ch && typeof ch.getStat === 'function' ? ch.getStat('dexterity') : null;
+      /** @type {Record<string, unknown>} */
       const extras = { className, characterLevel, characterStrength, characterDexterity };
+      if (isQuiverItem(def)) {
+        const slot =
+          equipSlot != null
+            ? String(equipSlot)
+            : this.selectedSlot?.location === 'equipment'
+              ? String(this.selectedSlot.slot)
+              : '';
+        const reason = slot ? this.quiverInactiveReasonForSlot(slot) : null;
+        if (reason) extras.inactiveNotice = reason;
+      }
       if (!def?.setId) return extras;
       const setDef = this.setsById[def.setId];
       if (!setDef) return { ...extras, setName: def.setName };
@@ -1135,6 +1193,38 @@ export const useItemsStore = defineStore('items', {
       const def = this.catalogById[defId];
       if (!def) return false;
 
+      // Quivers/jewels always go on the inventory grid (even if a gear slot is selected).
+      if (isInventoryOnlyGear(def) || sel.location === 'inventory') {
+        if (!canPlaceInInventory(def)) return false;
+        if (isCharmItem(def) || isRelicItem(def)) return false;
+        const preferred = sel.location === 'inventory' ? Number(sel.slot) : 0;
+        const id = this.createInstance(defId, null, rolls);
+        const size = { invWidth: def.invWidth || 1, invHeight: def.invHeight || 1 };
+        const getSize = this.getInstanceSize;
+        const anchor = findAnchorForClick(
+          this.inventory,
+          preferred,
+          size.invWidth,
+          size.invHeight,
+          getSize
+        );
+        if (anchor < 0) {
+          delete this.instances[id];
+          return false;
+        }
+        // Evicted instances from placeAt
+        const before = new Set(this.inventory.filter((v) => v != null));
+        this.inventory = placeAt(this.inventory, anchor, id, getSize);
+        for (const oldId of before) {
+          if (!this.inventory.includes(oldId) && oldId !== id) {
+            this.destroyInstanceIfOrphaned(oldId);
+          }
+        }
+        this.selectedSlot = { location: 'inventory', slot: anchor };
+        this.editingInstanceId = id;
+        return true;
+      }
+
       if (sel.location === 'equipment') {
         const slot = String(sel.slot);
         const className = this.viewerClassName ?? getCharacterInstance()?.className ?? null;
@@ -1148,39 +1238,6 @@ export const useItemsStore = defineStore('items', {
         if (prev != null) this.destroyInstanceIfOrphaned(prev);
         this.editingInstanceId = id;
         this.syncCharacterLevelToItemReqs();
-        return true;
-      }
-
-      if (sel.location === 'inventory') {
-        if (!canPlaceInInventory(def)) return false;
-        if (isCharmItem(def) || isRelicItem(def)) return false;
-        const preferred = Number(sel.slot);
-        const id = this.createInstance(defId, null, rolls);
-        const size = { invWidth: def.invWidth || 1, invHeight: def.invHeight || 1 };
-        const getSize = this.getInstanceSize;
-        let anchor = findAnchorForClick(
-          this.inventory,
-          preferred,
-          size.invWidth,
-          size.invHeight,
-          getSize
-        );
-        if (anchor < 0) {
-          delete this.instances[id];
-          return false;
-        }
-        // Evicted instances from placeAt
-        const before = new Set(
-          this.inventory.filter((v) => v != null)
-        );
-        this.inventory = placeAt(this.inventory, anchor, id, getSize);
-        for (const oldId of before) {
-          if (!this.inventory.includes(oldId) && oldId !== id) {
-            this.destroyInstanceIfOrphaned(oldId);
-          }
-        }
-        this.selectedSlot = { location: 'inventory', slot: anchor };
-        this.editingInstanceId = id;
         return true;
       }
 

@@ -157,6 +157,18 @@ describe('two-handed pairing', () => {
     expect(canEquipInSlot(shield, 'larm', 'Barbarian', { otherHandDef: staff })).toBe(true);
   });
 
+  it('allows a quiver with a bow, but not a shield with a bow', () => {
+    const quiver = {
+      slot: 'arms',
+      category: 'quivers',
+      type: 'bowq',
+      group: 'Arrow Quivers',
+    };
+    expect(canEquipInSlot(quiver, 'larm', 'Amazon', { otherHandDef: bow })).toBe(true);
+    expect(canEquipInSlot(bow, 'rarm', 'Amazon', { otherHandDef: quiver })).toBe(true);
+    expect(canEquipInSlot(shield, 'larm', 'Amazon', { otherHandDef: bow })).toBe(false);
+  });
+
   it('treats 2h hammers as two-handed from damage, not the mixed group', () => {
     expect(isStrictTwoHandedWeapon(hammer2h)).toBe(true);
     expect(canEquipInSlot(sword, 'larm', 'Paladin', { otherHandDef: hammer2h })).toBe(false);

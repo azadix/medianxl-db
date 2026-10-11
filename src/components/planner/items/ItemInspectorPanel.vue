@@ -8,7 +8,7 @@ import {
   clampRoll,
   ITEM_CATEGORY_LABEL,
 } from '@/items/item-stats.js';
-import { EQUIPMENT_SLOT_LABELS } from '@/items/item-types.js';
+import { EQUIPMENT_SLOT_LABELS, pairedWeaponSlot } from '@/items/item-types.js';
 import { MAX_RELICS, isRelicItem } from '@/items/relic-items.js';
 import { isCharmItem } from '@/items/charm-items.js';
 import ItemDetailPanel from './ItemDetailPanel.vue';
@@ -122,6 +122,17 @@ const emptyText = computed(() => {
     return 'Select a charm or relic to view and edit rolls.';
   }
   return 'Select an equipped item to edit rolls.';
+});
+
+const inactiveNotice = computed(() => {
+  const sel = selectedSlot.value;
+  if (sel?.location !== 'equipment') return '';
+  const slot = String(sel.slot);
+  // Track this slot and its pair so the notice updates when a bow is added/removed.
+  void itemsStore.equipment[slot];
+  const other = pairedWeaponSlot(slot);
+  if (other) void itemsStore.equipment[other];
+  return itemsStore.quiverInactiveReasonForSlot(slot) || '';
 });
 
 function loadRolls() {
@@ -276,6 +287,10 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown));
         </button>
       </div>
     </div>
+
+    <p v-if="inactiveNotice" class="is-size-7 has-text-danger px-3 mb-2" role="status">
+      {{ inactiveNotice }}
+    </p>
 
     <ItemDetailPanel
       :def="itemDef"

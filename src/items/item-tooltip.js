@@ -121,6 +121,7 @@ function buildRequirementsHtml(reqs, options) {
  *   setBonuses?: Array<{ required: number|string, modifiers: string[], active: boolean }>,
  *   setName?: string|null,
  *   socketables?: Array<object>|null,
+ *   inactiveNotice?: string|null,
  * }} [options]
  * @returns {string} HTML
  */
@@ -162,6 +163,11 @@ export function buildItemTooltipHtml(def, iconKey = null, rolls = null, options 
   const baseBlock = renderStatLines([...sections.base, ...sections.scaling]);
   const modsBlock = renderStatLines(sections.mods);
   const reqsHtml = buildRequirementsHtml(sections.requirements, options);
+  const inactiveNotice = options.inactiveNotice
+    ? `<div class="item-tooltip-reqs"><span class="item-tooltip-req item-tooltip-req--unmet">${escapeHtmlText(
+        String(options.inactiveNotice)
+      )}</span></div>`
+    : '';
 
   const header = `<div class="item-tooltip-header">
       <div class="item-tooltip-header-text">
@@ -176,6 +182,7 @@ export function buildItemTooltipHtml(def, iconKey = null, rolls = null, options 
     baseBlock ? `<div class="item-tooltip-section item-tooltip-section--base">${baseBlock}</div>` : '',
     modsBlock ? `<div class="item-tooltip-section item-tooltip-section--mods">${modsBlock}</div>` : '',
     reqsHtml,
+    inactiveNotice,
     buildSetBonusSectionHtml(options.setBonuses),
   ].join('');
 

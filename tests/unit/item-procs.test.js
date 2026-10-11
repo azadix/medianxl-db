@@ -257,7 +257,7 @@ describe('item procs', () => {
         modifiers: ['3% Chance to cast level 1 Arrow on Striking'],
       },
       {
-        id: 'u:bag-of-tricks:su',
+        id: 'u:bag-of-tricks:su:bolt-quiver',
         name: 'Bag of Tricks',
         rarity: 'unique',
         uniqueKind: 'su',

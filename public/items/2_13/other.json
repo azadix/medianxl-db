@@ -59,28 +59,30 @@
     "id": "aqv",
     "name": "Arrow Quiver",
     "type": "bowq",
-    "category": "other",
-    "slot": null,
+    "category": "quivers",
+    "slot": "arms",
     "invWidth": 1,
     "invHeight": 3,
     "rarity": "normal",
     "icon": "invqvr",
     "reqLevel": 0,
     "reqStr": 0,
-    "reqDex": 0
+    "reqDex": 0,
+    "group": "Arrow Quivers"
   },
   {
     "id": "cqv",
     "name": "Bolt Quiver",
     "type": "xboq",
-    "category": "other",
-    "slot": null,
+    "category": "quivers",
+    "slot": "arms",
     "invWidth": 1,
     "invHeight": 3,
     "rarity": "normal",
-    "icon": "invcqvr",
+    "icon": "invcqv",
     "reqLevel": 0,
     "reqStr": 0,
-    "reqDex": 0
+    "reqDex": 0,
+    "group": "Crossbow Quivers"
   }
 ]

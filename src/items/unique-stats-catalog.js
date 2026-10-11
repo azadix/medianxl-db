@@ -513,6 +513,13 @@ function overlayIdForEntry(entry, rarityInfo) {
   let id = `${idPrefix}:${slugify(entry.name)}:${qualitySlug}`;
   if (entry.quality === 'TU' && entry.tier != null) id = `${id}:${entry.tier}`;
   else if (entry.variant) id = `${id}:${slugify(entry.variant)}`;
+  // Bag of Tricks has arrow + bolt forms under the same name.
+  else if (
+    /^bag of tricks$/i.test(String(entry.name || '').trim()) &&
+    /^(arrow|bolt) quiver$/i.test(String(entry.type || '').trim())
+  ) {
+    id = `${id}:${slugify(entry.type)}`;
+  }
   return id;
 }
 
@@ -667,6 +674,11 @@ export function resolveCatalogDefId(defId, catalogById) {
   if (/^u:.+:tu$/.test(id)) {
     const t4 = `${id}:4`;
     if (catalogById && catalogById[t4]) return t4;
+  }
+  // Legacy Bag of Tricks id (pre type-suffix) → bolt form.
+  if (id === 'u:bag-of-tricks:su') {
+    const bolt = 'u:bag-of-tricks:su:bolt-quiver';
+    if (catalogById && catalogById[bolt]) return bolt;
   }
   return id;
 }
