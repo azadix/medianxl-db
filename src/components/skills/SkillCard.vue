@@ -198,7 +198,6 @@ watch(
     <div class="skill-card-level">
       <div v-if="isProc" class="is-size-6 has-text-info">
         <div>{{ procChanceText }}</div>
-        <div class="is-size-7 has-text-grey">L{{ cardData.procLevel || cardData.currentPoints || 0 }}</div>
       </div>
       <div v-else :class="[levelColorClass, 'is-size-6']">
         {{ cardData.currentPoints || 0 }} / {{ cardData.maxPoints || 0 }}
