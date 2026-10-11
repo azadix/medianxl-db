@@ -1,10 +1,9 @@
 /**
- * @file TSW one-shot import: read `#code=` from /import/tsw, POST to TSW, import JSON.
+ * @file TSW one-shot import: read `#code=` from /import/tsw, POST to azadi.pl, import JSON.
  * @module planner/tsw-code-import
  */
 
-export const TSW_CHARACTER_EXPORT_URL =
-  'https://tsw.vn.cz/api.php?resource=character_export';
+export const TSW_IMPORT_URL = 'https://azadi.pl/import/tsw';
 
 /** @type {string} */
 let pendingTswImportCode = '';
@@ -67,7 +66,7 @@ function errorMessageFromTswPayload(data) {
 }
 
 /**
- * POST {code} to TSW. Returns the envelope ({ build, items, ... }). No Bearer token.
+ * POST {code} to azadi.pl. Returns the envelope ({ build, items, ... }). No Bearer token.
  * @param {string} code
  * @returns {Promise<object>}
  */
@@ -77,7 +76,7 @@ export async function fetchTswBuildByCode(code) {
     throw new Error('Missing TSW import code');
   }
 
-  const res = await fetch(TSW_CHARACTER_EXPORT_URL, {
+  const res = await fetch(TSW_IMPORT_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ code: trimmed }),

@@ -4,7 +4,7 @@ import {
   fetchTswBuildByCode,
   parseTswImportCodeFromHash,
   takePendingTswImportCode,
-  TSW_CHARACTER_EXPORT_URL,
+  TSW_IMPORT_URL,
 } from '@/planner/tsw-code-import.js';
 
 afterEach(() => {
@@ -45,10 +45,10 @@ describe('consumeTswImportCodeFromLocation', () => {
 });
 
 describe('fetchTswBuildByCode', () => {
-  it('POSTs only {code} to TSW and returns the envelope', async () => {
+  it('POSTs only {code} to azadi.pl and returns the envelope', async () => {
     const envelope = { ok: true, build: { name: 'X', class: 'Amazon' }, items: [] };
     const fetchMock = vi.fn(async (url, init) => {
-      expect(url).toBe(TSW_CHARACTER_EXPORT_URL);
+      expect(url).toBe(TSW_IMPORT_URL);
       expect(init.method).toBe('POST');
       expect(init.headers['Content-Type']).toBe('application/json');
       expect(init.headers.Authorization).toBeUndefined();
