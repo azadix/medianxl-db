@@ -9,6 +9,7 @@ import { collectShowConditionKeysFromModifierLines } from '@/items/item-modifier
 import { isCharmBonusActive } from '@/items/charm-items.js';
 import { isRelicBonusActive } from '@/items/relic-items.js';
 import { EQUIPMENT_SLOTS } from '@/items/item-types.js';
+import { countEquippedSetPieces, resolveSetBonuses } from '@/items/item-overlays.js';
 
 /**
  * @returns {string[]}
@@ -32,12 +33,25 @@ export function collectShowConditionKeysFromEnabledItems() {
     const characterLevel = character?.level ?? null;
 
     for (const slot of EQUIPMENT_SLOTS) {
-      if (!itemsStore.equipmentSlotMeetsRequirements?.(slot)) continue;
+      if (!itemsStore.equipmentSlotContributesBonuses?.(slot)) continue;
       const instanceId = itemsStore.equipment?.[slot];
       if (instanceId == null) continue;
       const def = itemsStore.getDefForInstance?.(instanceId);
       if (!def || !Array.isArray(def.modifiers)) continue;
       addLines(def.modifiers.filter((m) => typeof m === 'string'));
+    }
+
+    const equippedDefs = itemsStore.activeEquippedDefs || [];
+    const counts = countEquippedSetPieces(equippedDefs);
+    for (const setDef of itemsStore.sets || []) {
+      if (!setDef?.id) continue;
+      const equippedCount = counts[setDef.id] || 0;
+      if (equippedCount <= 0) continue;
+      const totalPieces = (itemsStore.catalog || []).filter((d) => d.setId === setDef.id).length;
+      for (const bonus of resolveSetBonuses(setDef, equippedCount, totalPieces)) {
+        if (!bonus.active) continue;
+        addLines((bonus.modifiers || []).filter((m) => typeof m === 'string'));
+      }
     }
 
     for (const defId of Object.keys(itemsStore.enabledCharms || {})) {

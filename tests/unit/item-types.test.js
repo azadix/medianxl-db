@@ -3,11 +3,33 @@ import {
   canEquipForClass,
   canEquipInSlot,
   equipBlockedReason,
+  isActiveWeaponSetSlot,
   isStrictTwoHandedWeapon,
   isTwoHandedWeapon,
   isUniquePickerItem,
   matchesItemPickerSearch,
 } from '@/items/item-types.js';
+
+describe('isActiveWeaponSetSlot', () => {
+  it('keeps body slots on both weapon sets', () => {
+    expect(isActiveWeaponSetSlot('head', 0)).toBe(true);
+    expect(isActiveWeaponSetSlot('head', 1)).toBe(true);
+    expect(isActiveWeaponSetSlot('tors', 0)).toBe(true);
+    expect(isActiveWeaponSetSlot('neck', 1)).toBe(true);
+  });
+
+  it('only includes the selected weapon set arms', () => {
+    expect(isActiveWeaponSetSlot('rarm', 0)).toBe(true);
+    expect(isActiveWeaponSetSlot('larm', 0)).toBe(true);
+    expect(isActiveWeaponSetSlot('rarm2', 0)).toBe(false);
+    expect(isActiveWeaponSetSlot('larm2', 0)).toBe(false);
+
+    expect(isActiveWeaponSetSlot('rarm', 1)).toBe(false);
+    expect(isActiveWeaponSetSlot('larm', 1)).toBe(false);
+    expect(isActiveWeaponSetSlot('rarm2', 1)).toBe(true);
+    expect(isActiveWeaponSetSlot('larm2', 1)).toBe(true);
+  });
+});
 
 describe('canEquipForClass', () => {
   it('allows unrestricted items for any class', () => {

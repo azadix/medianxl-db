@@ -14,6 +14,7 @@ import {
   canEquipForClass,
   canPlaceInInventory,
   isInventoryOnlyGear,
+  isActiveWeaponSetSlot,
   isQuiverItem,
   isQuiverEffectActive,
   pairedWeaponSlot,
@@ -326,6 +327,7 @@ export const useItemsStore = defineStore('items', {
       /** @type {ItemDef[]} */
       const out = [];
       for (const slot of EQUIPMENT_SLOTS) {
+        if (!isActiveWeaponSetSlot(slot, this.weaponSet)) continue;
         const id = this.equipment[slot];
         if (id == null) continue;
         const def = this.getDefForInstance(id);
@@ -336,13 +338,14 @@ export const useItemsStore = defineStore('items', {
 
     /**
      * Equipped defs whose level/str/dex requirements the character meets.
+     * Inactive weapon-set slots are excluded.
      * @returns {ItemDef[]}
      */
     activeEquippedDefs() {
       /** @type {ItemDef[]} */
       const out = [];
       for (const slot of EQUIPMENT_SLOTS) {
-        if (!this.equipmentSlotMeetsRequirements(slot)) continue;
+        if (!this.equipmentSlotContributesBonuses(slot)) continue;
         const id = this.equipment[slot];
         if (id == null) continue;
         const def = this.getDefForInstance(id);
@@ -404,7 +407,7 @@ export const useItemsStore = defineStore('items', {
     enabledRelicCount() {
       return Object.keys(this.enabledRelics).length;
     },
-    /** Highest Required Level among equipped gear and enabled charms/relics. */
+    /** Highest Required Level among active-set gear and enabled charms/relics. */
     maxActiveItemReqLevel() {
       let max = 0;
       const consider = (def) => {
@@ -412,6 +415,7 @@ export const useItemsStore = defineStore('items', {
         if (Number.isFinite(req) && req > max) max = req;
       };
       for (const slot of EQUIPMENT_SLOTS) {
+        if (!isActiveWeaponSetSlot(slot, this.weaponSet)) continue;
         const id = this.equipment[slot];
         if (id == null) continue;
         const inst = this.instances[id];
@@ -421,7 +425,7 @@ export const useItemsStore = defineStore('items', {
       for (const defId of Object.keys(this.enabledRelics)) consider(this.catalogById[defId]);
       return max;
     },
-    /** Highest resolved str/dex requirements among equipped gear and enabled charms/relics. */
+    /** Highest resolved str/dex requirements among active-set gear and enabled charms/relics. */
     maxActiveItemReqStats() {
       let reqStr = 0;
       let reqDex = 0;
@@ -432,7 +436,10 @@ export const useItemsStore = defineStore('items', {
         if (reqs.reqStr > reqStr) reqStr = reqs.reqStr;
         if (reqs.reqDex > reqDex) reqDex = reqs.reqDex;
       };
-      for (const slot of EQUIPMENT_SLOTS) consider(this.equipment[slot]);
+      for (const slot of EQUIPMENT_SLOTS) {
+        if (!isActiveWeaponSetSlot(slot, this.weaponSet)) continue;
+        consider(this.equipment[slot]);
+      }
       for (const id of Object.values(this.enabledCharms)) consider(id);
       for (const id of Object.values(this.enabledRelics)) consider(id);
       return { reqStr, reqDex };
@@ -646,6 +653,17 @@ export const useItemsStore = defineStore('items', {
         if (!characterMeetsItemRequirements(otherReqs, stats)) return false;
       }
       return true;
+    },
+
+    /**
+     * Whether an equipment slot applies bonuses to the character
+     * (active weapon set + requirements met).
+     * @param {string} slot
+     * @returns {boolean}
+     */
+    equipmentSlotContributesBonuses(slot) {
+      if (!isActiveWeaponSetSlot(slot, this.weaponSet)) return false;
+      return this.equipmentSlotMeetsRequirements(slot);
     },
 
     /**

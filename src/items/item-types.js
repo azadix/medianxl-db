@@ -126,6 +126,20 @@ export function panelKeyToSlot(panelKey, weaponSet = 0) {
 }
 
 /**
+ * Whether an equipment slot belongs to the currently selected weapon set
+ * (or is a non-weapon slot that always applies).
+ * @param {string} slot
+ * @param {0|1} [weaponSet=0]
+ * @returns {boolean}
+ */
+export function isActiveWeaponSetSlot(slot, weaponSet = 0) {
+  const s = String(slot);
+  if (s === 'rarm' || s === 'larm') return weaponSet !== 1;
+  if (s === 'rarm2' || s === 'larm2') return weaponSet === 1;
+  return true;
+}
+
+/**
  * Normalize equipment slot for comparison (weapon set II → set I keys).
  * @param {string} slot
  * @returns {string}

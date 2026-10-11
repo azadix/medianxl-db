@@ -30,6 +30,7 @@ import {
   stripDisplayedRollRanges,
 } from '@/items/affix-rolls.js';
 import { EQUIPMENT_SLOTS } from '@/items/item-types.js';
+import { countEquippedSetPieces, resolveSetBonuses } from '@/items/item-overlays.js';
 import { escapeHtmlText, SCALING_DISPLAY_HTML_CLASSES } from '@/shared/utils.js';
 import { lookupMergedDisplayNameByInternalName } from '@/shared/skill-data-store.js';
 
@@ -496,7 +497,7 @@ export function collectEnabledEquippedOSkillGrants(options = {}) {
     /** @type {Array<{ def: object, rolls?: Record<string, number>|null }>} */
     const gear = [];
     for (const slot of EQUIPMENT_SLOTS) {
-      if (!itemsStore.equipmentSlotMeetsRequirements?.(slot)) continue;
+      if (!itemsStore.equipmentSlotContributesBonuses?.(slot)) continue;
       const instanceId = itemsStore.equipment?.[slot];
       if (instanceId == null) continue;
       const def = itemsStore.getDefForInstance?.(instanceId);
@@ -504,7 +505,27 @@ export function collectEnabledEquippedOSkillGrants(options = {}) {
       const rolls = itemsStore.getRollsForInstance?.(instanceId) ?? null;
       gear.push({ def, rolls });
     }
-    return collectOSkillGrantsFromEquippedDefs(gear, { className });
+    const fromGear = collectOSkillGrantsFromEquippedDefs(gear, { className });
+
+    /** @type {Record<string, number>} */
+    const fromSets = {};
+    const equippedDefs = itemsStore.activeEquippedDefs || [];
+    const counts = countEquippedSetPieces(equippedDefs);
+    for (const setDef of itemsStore.sets || []) {
+      if (!setDef?.id) continue;
+      const equippedCount = counts[setDef.id] || 0;
+      if (equippedCount <= 0) continue;
+      const totalPieces = (itemsStore.catalog || []).filter((d) => d.setId === setDef.id).length;
+      for (const bonus of resolveSetBonuses(setDef, equippedCount, totalPieces)) {
+        if (!bonus.active) continue;
+        const grants = collectOSkillGrantsFromModifierLines(bonus.modifiers, { className });
+        for (const [id, amount] of Object.entries(grants)) {
+          fromSets[id] = (fromSets[id] || 0) + amount;
+        }
+      }
+    }
+
+    return mergeGrantMaps(fromGear, fromSets);
   } catch {
     return {};
   }
@@ -546,13 +567,25 @@ export function getEquippedGearSkillBonusForSkill(options = {}) {
     /** @type {string[]} */
     const lines = [];
     for (const slot of EQUIPMENT_SLOTS) {
-      if (!itemsStore.equipmentSlotMeetsRequirements?.(slot)) continue;
+      if (!itemsStore.equipmentSlotContributesBonuses?.(slot)) continue;
       const instanceId = itemsStore.equipment?.[slot];
       if (instanceId == null) continue;
       const def = itemsStore.getDefForInstance?.(instanceId);
       if (!def) continue;
       const rolls = itemsStore.getRollsForInstance?.(instanceId) ?? null;
       lines.push(...resolvedEquipmentModifierLines(def, rolls));
+    }
+    const equippedDefs = itemsStore.activeEquippedDefs || [];
+    const counts = countEquippedSetPieces(equippedDefs);
+    for (const setDef of itemsStore.sets || []) {
+      if (!setDef?.id) continue;
+      const equippedCount = counts[setDef.id] || 0;
+      if (equippedCount <= 0) continue;
+      const totalPieces = (itemsStore.catalog || []).filter((d) => d.setId === setDef.id).length;
+      for (const bonus of resolveSetBonuses(setDef, equippedCount, totalPieces)) {
+        if (!bonus.active) continue;
+        lines.push(...(bonus.modifiers || []));
+      }
     }
     return sumSkillBonusFromModifierLines(lines, {
       displayName,

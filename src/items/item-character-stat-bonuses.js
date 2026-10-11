@@ -29,6 +29,11 @@ import {
 } from '@/items/charm-items.js';
 import { getItemStatLines } from '@/items/item-stats.js';
 import { EQUIPMENT_SLOTS } from '@/items/item-types.js';
+import {
+  countEquippedSetPieces,
+  formatSetBonusLabel,
+  resolveSetBonuses,
+} from '@/items/item-overlays.js';
 
 /**
  * @typedef {{
@@ -321,7 +326,7 @@ export function collectEnabledItemCharacterStatBonuses(options = {}) {
     const characterLevel = character?.level ?? null;
 
     for (const slot of EQUIPMENT_SLOTS) {
-      if (!itemsStore.equipmentSlotMeetsRequirements?.(slot)) continue;
+      if (!itemsStore.equipmentSlotContributesBonuses?.(slot)) continue;
       const instanceId = itemsStore.equipment?.[slot];
       if (instanceId == null) continue;
       const def = itemsStore.getDefForInstance?.(instanceId);
@@ -335,6 +340,22 @@ export function collectEnabledItemCharacterStatBonuses(options = {}) {
         className,
       });
       accumulateLines(lines, sourceLabelForDef(def), bonuses, modifiersByKey);
+    }
+
+    // Set bonus tiers — only pieces on the active weapon set count.
+    const equippedDefs = itemsStore.activeEquippedDefs || [];
+    const counts = countEquippedSetPieces(equippedDefs);
+    for (const setDef of itemsStore.sets || []) {
+      if (!setDef?.id) continue;
+      const equippedCount = counts[setDef.id] || 0;
+      if (equippedCount <= 0) continue;
+      const totalPieces = (itemsStore.catalog || []).filter((d) => d.setId === setDef.id).length;
+      for (const bonus of resolveSetBonuses(setDef, equippedCount, totalPieces)) {
+        if (!bonus.active) continue;
+        const setName = String(setDef.name || setDef.id || 'Set').trim();
+        const sourceLabel = `${setName} (${formatSetBonusLabel(bonus.required)})`;
+        accumulateLines(bonus.modifiers, sourceLabel, bonuses, modifiersByKey);
+      }
     }
 
     for (const [defId, instanceId] of Object.entries(itemsStore.enabledCharms || {})) {

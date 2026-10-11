@@ -196,5 +196,42 @@ describe('recomputePlannerStatsFromItems', () => {
 
   });
 
+  it('applies only the active weapon set gear flats', () => {
+    createCharacterInstance('Amazon', 99);
+    const ch = getCharacterInstance();
+    const before = ch.getStat('life');
+    const store = useItemsStore();
+
+    const set1 = {
+      id: 'u:wep:set1',
+      name: 'Set I Blade',
+      category: 'weapons',
+      slot: 'arms',
+      rarity: 'unique',
+      reqLevel: 1,
+      modifiers: ['+100 to Life'],
+    };
+    const set2 = {
+      id: 'u:wep:set2',
+      name: 'Set II Blade',
+      category: 'weapons',
+      slot: 'arms',
+      rarity: 'unique',
+      reqLevel: 1,
+      modifiers: ['+50 to Life'],
+    };
+    store.catalog = [set1, set2];
+    store.equipment.rarm = store.createInstance(set1.id);
+    store.equipment.rarm2 = store.createInstance(set2.id);
+
+    store.setWeaponSet(0);
+    recomputePlannerStatsFromItems(ch);
+    expect(ch.getStat('life')).toBe(before + 100);
+
+    store.setWeaponSet(1);
+    recomputePlannerStatsFromItems(ch);
+    expect(ch.getStat('life')).toBe(before + 50);
+  });
+
 });
 

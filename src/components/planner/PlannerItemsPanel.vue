@@ -8,6 +8,7 @@ import ItemInspectorPanel from './items/ItemInspectorPanel.vue';
 import ItemTooltipHost from './items/ItemTooltipHost.vue';
 import PlannerEnableList from './items/PlannerEnableList.vue';
 import { plannerResetItemsClick } from '@/planner/planner-dom-handlers.js';
+import { runPlannerSkillStatRecompute, syncItemGrantedOSkills } from '@/character/planner-core.js';
 
 /** @typedef {'equipment' | 'charms' | 'relics'} ItemsTabId */
 
@@ -32,7 +33,10 @@ onMounted(() => {
 
 /** @param {0|1} set */
 function setWeaponSet(set) {
+  if (itemsStore.weaponSet === set) return;
   itemsStore.setWeaponSet(set);
+  syncItemGrantedOSkills();
+  runPlannerSkillStatRecompute();
 }
 
 /** @param {ItemsTabId} tabId */

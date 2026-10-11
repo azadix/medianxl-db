@@ -250,7 +250,7 @@ export function collectEnabledPlannerProcs(options = {}) {
     const rows = [];
 
     for (const slot of EQUIPMENT_SLOTS) {
-      if (!itemsStore.equipmentSlotMeetsRequirements?.(slot)) continue;
+      if (!itemsStore.equipmentSlotContributesBonuses?.(slot)) continue;
       const instanceId = itemsStore.equipment?.[slot];
       if (instanceId == null) continue;
       const def = itemsStore.getDefForInstance?.(instanceId);
