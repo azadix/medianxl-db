@@ -47,6 +47,10 @@ import {
 } from './planner-ui-updates.js';
 import { refreshCurrentTooltip } from '@/tree/tree-tooltip.js';
 import { useItemsStore } from '@/stores/items.js';
+import { setItemMaxBaseLevelBonusProvider } from '@/skills/domain/skill-calculations.js';
+import { getEquippedMaxBaseLevelBonusForSkill } from '@/items/item-max-base-level.js';
+
+setItemMaxBaseLevelBonusProvider(getEquippedMaxBaseLevelBonusForSkill);
 
 async function finalizePlannerPageAfterLoad() {
     if (!isTreeInitialized() || !getSkillsList() || !getClassSelect() || !getSkillsContainer()) return;

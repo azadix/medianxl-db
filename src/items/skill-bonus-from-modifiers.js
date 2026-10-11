@@ -42,6 +42,7 @@ const ALL_SKILLS_RE = /^([+-]?\d+(?:\.\d+)?)\s+to\s+All Skills$/i;
 const CLASS_SKILLS_RE = /^([+-]?\d+(?:\.\d+)?)\s+to\s+(.+?)\s+Skill Levels$/i;
 const CLASS_ONLY_SKILL_RE = /^([+-]?\d+(?:\.\d+)?)\s+to\s+(.+?)\s+\((.+?)\s+Only\)$/i;
 const GENERIC_TO_RE = /^([+-]?\d+(?:\.\d+)?)\s+to\s+(.+)$/i;
+const MAX_BASE_LEVEL_BONUS_RE = /^[+-]?\d+(?:\.\d+)?\s+to\s+Maximum\s+.+\s+Base Level$/i;
 
 /**
  * Wiki/item lines often say "+1 to passive Bear Stance" — same skill as Bear Stance.
@@ -88,6 +89,8 @@ export function parseSkillBonusFromModifierLine(line) {
   if (!isModifierLineActive(line)) return null;
   const text = stripDisplayedRollRanges(modifierLineText(line)).trim();
   if (!text) return null;
+  // "+N to Maximum Skill Base Level" is a cap bonus, not +skills.
+  if (MAX_BASE_LEVEL_BONUS_RE.test(text)) return null;
 
   let match = ALL_SKILLS_RE.exec(text);
   if (match) {

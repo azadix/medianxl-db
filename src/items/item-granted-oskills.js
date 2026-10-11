@@ -22,6 +22,7 @@ import {
   isSkillOnCharacterTree,
   sumSkillBonusFromModifierLines,
 } from '@/items/skill-bonus-from-modifiers.js';
+import { parseMaxBaseLevelBonusFromModifierLine } from '@/items/item-max-base-level.js';
 import { parseProcFromModifierLine } from '@/items/item-procs.js';
 import { decodeModifierLine, encodeModifierLine } from '@/items/item-modifier-line.js';
 import {
@@ -174,6 +175,25 @@ export function wrapNamedSkillGrantMarkers(line) {
     return prefix + body.replace(re, `$1[[${grant.skillId}]]$2`);
   }
 
+  const maxBase = parseMaxBaseLevelBonusFromModifierLine(body);
+  if (maxBase) {
+    const cat = resolveCatalogRowBySkillRef(maxBase.skillName);
+    if (cat?.id) {
+      const skillName =
+        cat.displayName != null && String(cat.displayName).trim() !== ''
+          ? String(cat.displayName).trim()
+          : String(maxBase.skillName).trim();
+      if (skillName) {
+        const re = new RegExp(
+          `(Maximum\\s+)${escapeRegExp(skillName)}(\\s+Base Level)`,
+          'i'
+        );
+        const replaced = body.replace(re, `$1[[${cat.id}]]$2`);
+        if (replaced !== body) return prefix + replaced;
+      }
+    }
+  }
+
   const proc = matchCatalogProcSkillFromLine(prefix + body);
   if (!proc) return text;
   const skillName = proc.skillNameInLine || proc.displayName;
@@ -278,6 +298,21 @@ export function annotateAffixDisplayPartsWithSkills(parts) {
         idx === 0
     );
     if (annotated) return annotated;
+  }
+
+  const maxBase = parseMaxBaseLevelBonusFromModifierLine(plain);
+  if (maxBase) {
+    const cat = resolveCatalogRowBySkillRef(maxBase.skillName);
+    const displayName =
+      cat?.displayName != null && String(cat.displayName).trim() !== ''
+        ? String(cat.displayName).trim()
+        : String(maxBase.skillName).trim();
+    if (displayName) {
+      const annotated = annotatePartsWithSkillName(parts, displayName, (before) =>
+        /Maximum\s+$/i.test(before)
+      );
+      if (annotated) return annotated;
+    }
   }
 
   const proc = matchCatalogProcSkillFromLine(plain);

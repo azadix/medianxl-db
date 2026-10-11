@@ -8,6 +8,39 @@ import { getFileSkillStore } from '@/shared/skill-data-store.js';
 import { isInnateSkill } from './skill-skill-types.js';
 
 /**
+ * Optional provider for item "+N to Maximum Skill Base Level" bonuses.
+ * Registered at planner init to avoid import cycles with the items layer.
+ * @type {(opts: { skillId?: string, displayName?: string }) => number}
+ */
+let itemMaxBaseLevelBonusProvider = () => 0;
+
+/**
+ * @param {(opts: { skillId?: string, displayName?: string }) => number} fn
+ */
+export function setItemMaxBaseLevelBonusProvider(fn) {
+  itemMaxBaseLevelBonusProvider = typeof fn === 'function' ? fn : () => 0;
+}
+
+/**
+ * @param {string} skillId
+ * @param {string|undefined} displayName
+ * @returns {number}
+ */
+function getItemMaxBaseLevelBonus(skillId, displayName) {
+  try {
+    const n = Number(
+      itemMaxBaseLevelBonusProvider({
+        skillId,
+        displayName,
+      })
+    );
+    return Number.isFinite(n) ? n : 0;
+  } catch {
+    return 0;
+  }
+}
+
+/**
  * Max Level Modifier Rules
  * Each rule defines how a skill affects max levels
  * Uses skill names instead of IDs for better maintainability
@@ -297,6 +330,13 @@ export function getMaxLevelModifierDescriptionsForSkill(
     }
   }
 
+  const itemBonus = getItemMaxBaseLevelBonus(internal, cat.displayName);
+  if (itemBonus !== 0) {
+    const sign = itemBonus > 0 ? '+' : '';
+    const label = `${sign}${itemBonus} to Maximum ${cat.displayName || internal} Base Level (items)`;
+    if (!seen.has(label)) out.push(label);
+  }
+
   return out;
 }
 
@@ -335,6 +375,7 @@ export function computeMaxSkillLevelAtUlvl(skillId, skillLevels = {}, ulvl = Cha
     );
     v += bonus;
   }
+  v += getItemMaxBaseLevelBonus(internal, cat.displayName);
   return Math.min(v, 150);
 }
 

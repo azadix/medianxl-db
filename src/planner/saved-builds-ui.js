@@ -16,7 +16,6 @@ import {
   getOSkillsForBuildExport,
   setAllOSkills,
   syncItemGrantedOSkills,
-  checkSkillsExceedingMaxLevel,
   getCharacterInstance,
   getCharacterLevel,
   parseStatsFromText,
@@ -358,43 +357,18 @@ export function loadBuildData(build, buildIndex = null) {
     // Show tree section
     showSection('tree');
     
-    // Check for skills exceeding max level and invalid skill point pool
-    const exceedingSkills = checkSkillsExceedingMaxLevel(getSkillsList());
+    // Over-max blvl is allowed (e.g. Atanna Khan's Dress then unequip); only warn on pool.
     const poolOverBudget = isPlannerSkillPointPoolOverBudget();
     if (poolOverBudget) {
         toastManager.showToast('Spent skill points exceed available amount.', false, 'warning');
-    }
-    if (exceedingSkills.length > 0) {
-        const skillList = exceedingSkills
-            .map(skill => `${skill.skillName} (${skill.currentPoints}/${skill.maxLevel})`)
-            .join(', ');
-        
-        toastManager.showToast(
-            `Warning: Skills exceed maximum level: ${skillList}. Build loaded but may be invalid.`,
-            false,
-            'danger'
-        );
-    } else if (!poolOverBudget) {
+    } else {
         toastManager.showToast(`Build "${exportLabelForToast(build.name)}" loaded successfully!`, true, 'info');
     }
 }
 
 export function validateBuildBeforeSave() {
-    // Check for skills exceeding max level BEFORE any save operation
-    const exceedingSkills = checkSkillsExceedingMaxLevel(getSkillsList());
-    if (exceedingSkills.length > 0) {
-        const skillList = exceedingSkills
-            .map(skill => `${skill.skillName} (${skill.currentPoints}/${skill.maxLevel})`)
-            .join(', ');
-        
-        toastManager.showToast(
-            `Cannot save build: Skills exceed maximum level: ${skillList}. Please fix these skills before saving.`,
-            false,
-            'danger'
-        );
-        return false; // Validation failed
-    }
-    return true; // Validation passed
+    // Over-max blvl is legal in-game after temporary max-level item bonuses; do not block save.
+    return true;
 }
 
 /**
