@@ -157,6 +157,28 @@ export function resolveItemRequirements(def, options = {}) {
 }
 
 /**
+ * Whether character level/str/dex satisfy resolved item requirements.
+ * Missing character values fail any positive corresponding requirement.
+ * @param {ItemRequirements|null|undefined} reqs
+ * @param {{
+ *   level?: number|null,
+ *   strength?: number|null,
+ *   dexterity?: number|null,
+ * }} [character]
+ * @returns {boolean}
+ */
+export function characterMeetsItemRequirements(reqs, character = {}) {
+  if (!reqs) return true;
+  const level = Number(character.level);
+  const strength = Number(character.strength);
+  const dexterity = Number(character.dexterity);
+  if (reqs.reqLevel > 0 && (!Number.isFinite(level) || level < reqs.reqLevel)) return false;
+  if (reqs.reqStr > 0 && (!Number.isFinite(strength) || strength < reqs.reqStr)) return false;
+  if (reqs.reqDex > 0 && (!Number.isFinite(dexterity) || dexterity < reqs.reqDex)) return false;
+  return true;
+}
+
+/**
  * Single footer line: `Requires: Level 90, 368 Strength, 95 Dexterity`.
  * @param {ItemRequirements|null|undefined} reqs
  * @returns {string}

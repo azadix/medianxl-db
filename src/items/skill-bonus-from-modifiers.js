@@ -298,11 +298,9 @@ function resolveSkillClass(skillId, skillClass) {
 /**
  * Relic skill-level bonus for one skill from enabled planner relics.
  * Overview all/class inputs are separate — do not include them here.
+ * Relics below the character's level do not contribute.
  *
- * Enabled relics always count for planner soft levels (reqLevel is shown on the
- * item, but does not zero the Alt sources / effective level while building).
- *
- * // TODO: Items — sum +skills from equipped gear
+ * // TODO: Items — sum +skills from equipped gear (only when reqs are met)
  *
  * @param {{
  *   skillId?: string,
@@ -325,8 +323,9 @@ export function getRelicSkillBonusForSkill(options = {}) {
     if (!className) {
       className = character?.className != null ? String(character.className).trim() : '';
     }
+    const characterLevel = character?.level ?? null;
 
-    // TODO: Items — sum +skills from equipped gear
+    // TODO: Items — sum +skills from equipped gear (only when reqs are met)
 
     const itemsStore = useItemsStore();
     /** @type {Array<{ def: object, rolls?: Record<string, number>|null }>} */
@@ -343,7 +342,8 @@ export function getRelicSkillBonusForSkill(options = {}) {
       skillClass,
       isOSkill,
       className,
-      requireLevel: false,
+      characterLevel,
+      requireLevel: true,
     });
   } catch {
     return 0;

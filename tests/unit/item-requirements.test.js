@@ -3,6 +3,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import {
+  characterMeetsItemRequirements,
   formatItemRequirementsLine,
   parseRequiredLevelBonus,
   parseRequirementsReductionPct,
@@ -137,5 +138,28 @@ describe('formatItemRequirementsLine', () => {
     expect(formatItemRequirementsLine({ reqLevel: 0, reqStr: 0, reqDex: 0, reductionPct: 0 })).toBe(
       ''
     );
+  });
+});
+
+describe('characterMeetsItemRequirements', () => {
+  const reqs = { reqLevel: 30, reqStr: 100, reqDex: 50, reductionPct: 0 };
+
+  it('passes when level str and dex are sufficient', () => {
+    expect(
+      characterMeetsItemRequirements(reqs, { level: 30, strength: 100, dexterity: 50 })
+    ).toBe(true);
+  });
+
+  it('fails when any requirement is unmet or missing', () => {
+    expect(
+      characterMeetsItemRequirements(reqs, { level: 29, strength: 100, dexterity: 50 })
+    ).toBe(false);
+    expect(
+      characterMeetsItemRequirements(reqs, { level: 30, strength: 99, dexterity: 50 })
+    ).toBe(false);
+    expect(
+      characterMeetsItemRequirements(reqs, { level: 30, strength: 100, dexterity: 49 })
+    ).toBe(false);
+    expect(characterMeetsItemRequirements(reqs, { level: 99 })).toBe(false);
   });
 });

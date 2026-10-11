@@ -21,8 +21,37 @@ const katarTu = {
   rarity: 'unique',
   uniqueKind: 'tiered',
   reqLevel: 46,
+  reqStr: 0,
+  reqDex: 0,
   invWidth: 1,
   invHeight: 3,
+};
+
+const highCharm = {
+  id: 'charm-high',
+  name: 'High Level Charm',
+  type: 'charm',
+  category: 'charms',
+  keepInInventory: true,
+  reqLevel: 90,
+  reqStr: 0,
+  reqDex: 0,
+  invWidth: 1,
+  invHeight: 1,
+};
+
+const highRelic = {
+  id: 'relic-high',
+  name: 'High Level Relic',
+  type: 'jewl',
+  category: 'relics',
+  rarity: 'relic',
+  keepInInventory: true,
+  reqLevel: 100,
+  reqStr: 0,
+  reqDex: 0,
+  invWidth: 1,
+  invHeight: 1,
 };
 
 describe('raiseCharacterLevelForItemReq', () => {
@@ -67,5 +96,39 @@ describe('equipFromPicker raises level', () => {
     store.selectSlot({ location: 'equipment', slot: 'rarm' });
     expect(store.equipFromPicker(katarTu.id)).toBe(true);
     expect(getCharacterInstance().level).toBe(46);
+  });
+});
+
+describe('fromSnapshot does not raise level for item reqs', () => {
+  /** @type {ReturnType<typeof useItemsStore>} */
+  let store;
+
+  beforeEach(() => {
+    setActivePinia(createPinia());
+    store = useItemsStore();
+    store.catalog = [katarTu, highCharm, highRelic];
+    store.catalogLoaded = true;
+    createCharacterInstance('Assassin', 20);
+  });
+
+  afterEach(() => {
+    setCharacterInstance(null);
+  });
+
+  it('keeps character level, disables unmet charms/relics, leaves gear equipped', () => {
+    const report = store.fromSnapshot({
+      equipment: { rarm: { defId: katarTu.id } },
+      charms: [{ defId: highCharm.id }],
+      relics: [{ defId: highRelic.id }],
+    });
+
+    expect(getCharacterInstance().level).toBe(20);
+    expect(store.equipment.rarm).not.toBeNull();
+    expect(store.enabledCharms[highCharm.id]).toBeUndefined();
+    expect(store.enabledRelics[highRelic.id]).toBeUndefined();
+    expect(report.disabledCharms).toEqual([{ name: highCharm.name, reqLevel: 90 }]);
+    expect(report.disabledRelics).toEqual([{ name: highRelic.name, reqLevel: 100 }]);
+    expect(report.unmetGear.some((row) => row.name === katarTu.name)).toBe(true);
+    expect(store.equipmentSlotMeetsRequirements('rarm')).toBe(false);
   });
 });

@@ -1356,6 +1356,17 @@
   outline-offset: -2px;
 }
 
+.planner-slot--equipment.planner-slot--filled.planner-slot--reqs-unmet .planner-slot__body {
+  background: #ff3030;
+  background-image: none;
+  border-color: #ff3030;
+  box-shadow: none;
+}
+
+.planner-slot--equipment.planner-slot--filled.planner-slot--reqs-unmet .planner-slot__body::before {
+  display: none;
+}
+
 .planner-slot--inventory {
   width: var(--planner-inv-cell);
   height: var(--planner-inv-cell);

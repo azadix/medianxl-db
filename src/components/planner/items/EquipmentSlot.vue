@@ -4,6 +4,7 @@ import { useItemsStore } from '@/stores/items.js';
 import { canEquipInSlot, EQUIPMENT_SLOT_CELLS } from '@/items/item-types.js';
 import { formatItemRarityBadge } from '@/items/item-stats.js';
 import { getCharacterInstance } from '@/character/planner-core.js';
+import { usePlannerRevisionRefresh } from '@/composables/usePlannerRevisionRefresh.js';
 import {
   showItemTooltip,
   moveItemTooltip,
@@ -20,6 +21,10 @@ const props = defineProps({
 });
 
 const itemsStore = useItemsStore();
+const reqRefreshTick = ref(0);
+usePlannerRevisionRefresh(() => {
+  reqRefreshTick.value += 1;
+});
 
 const cells = computed(() => EQUIPMENT_SLOT_CELLS[props.slotKey] || { w: 2, h: 2 });
 
@@ -56,6 +61,12 @@ const isCompact = computed(() => isTiny.value || cells.value.h <= 1);
 
 const rarityBadge = computed(() => formatItemRarityBadge(def.value));
 const rarityFrameClass = computed(() => (def.value ? itemRarityFrameClass(def.value.rarity) : ''));
+
+const reqsUnmet = computed(() => {
+  void reqRefreshTick.value;
+  if (!def.value) return false;
+  return !itemsStore.equipmentSlotMeetsRequirements(props.slotKey);
+});
 
 const dropState = ref(/** @type {''|'accept'|'reject'} */ (''));
 const nameEl = ref(null);
@@ -221,6 +232,7 @@ function onDrop(e) {
         'planner-slot--filled': !!def,
         'planner-slot--tiny': isTiny,
         'planner-slot--compact': isCompact,
+        'planner-slot--reqs-unmet': reqsUnmet,
       },
       rarityFrameClass,
     ]"

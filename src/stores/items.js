@@ -25,11 +25,17 @@ import {
 } from '@/items/inventory-placement.js';
 import { pickItemIcon } from '@/items/item-icons.js';
 import {
+  charmMeetsLevel,
   getCharmUpgradeEntries,
   isCharmItem,
   isDimensionalKeyCharm,
 } from '@/items/charm-items.js';
-import { isRelicItem, MAX_RELICS } from '@/items/relic-items.js';
+import { isRelicItem, MAX_RELICS, relicMeetsLevel } from '@/items/relic-items.js';
+import {
+  characterMeetsItemRequirements,
+  formatItemRequirementsLine,
+  resolveItemRequirements,
+} from '@/items/item-requirements.js';
 import {
   countEquippedSetPieces,
   resolveSetBonuses,
@@ -45,6 +51,9 @@ import {
   runewordFitsEquipSlot,
 } from '@/items/runeword-items.js';
 import { applyCustomOverlayToDef, parseCustomPayload } from '@/items/custom-items.js';
+
+/** When true, equip/enable paths skip raising planner level for item reqs. */
+let skipItemReqLevelSync = false;
 
 /** @type {WeakMap<object, { folder: string, promise: Promise<void> }>} */
 const catalogLoadInflight = new WeakMap();
@@ -316,6 +325,23 @@ export const useItemsStore = defineStore('items', {
     },
 
     /**
+     * Equipped defs whose level/str/dex requirements the character meets.
+     * @returns {ItemDef[]}
+     */
+    activeEquippedDefs() {
+      /** @type {ItemDef[]} */
+      const out = [];
+      for (const slot of EQUIPMENT_SLOTS) {
+        if (!this.equipmentSlotMeetsRequirements(slot)) continue;
+        const id = this.equipment[slot];
+        if (id == null) continue;
+        const def = this.getDefForInstance(id);
+        if (def) out.push(def);
+      }
+      return out;
+    },
+
+    /**
      * Defs valid for the currently selected slot.
      * @returns {ItemDef[]}
      */
@@ -513,7 +539,113 @@ export const useItemsStore = defineStore('items', {
      * @returns {boolean}
      */
     syncCharacterLevelToItemReqs() {
+      if (skipItemReqLevelSync) return false;
       return raiseCharacterLevelForItemReq({ reqLevel: this.maxActiveItemReqLevel });
+    },
+
+    /**
+     * Character attributes used for item requirement checks.
+     * @returns {{ level: number|null, strength: number|null, dexterity: number|null }}
+     */
+    getCharacterRequirementStats() {
+      const ch = getCharacterInstance();
+      if (!ch) return { level: null, strength: null, dexterity: null };
+      return {
+        level: ch.level ?? null,
+        strength: typeof ch.getStat === 'function' ? ch.getStat('strength') : null,
+        dexterity: typeof ch.getStat === 'function' ? ch.getStat('dexterity') : null,
+      };
+    },
+
+    /**
+     * Resolved requirements for an equipped/inventory instance.
+     * @param {number|null|undefined} instanceId
+     * @returns {import('@/items/item-requirements.js').ItemRequirements|null}
+     */
+    getRequirementsForInstance(instanceId) {
+      if (instanceId == null) return null;
+      const def = this.getDefForInstance(instanceId);
+      if (!def) return null;
+      return resolveItemRequirements(def, {
+        rolls: this.getRollsForInstance(instanceId),
+      });
+    },
+
+    /**
+     * Whether an equipment slot's item meets character level/str/dex reqs.
+     * Empty slots count as met.
+     * @param {string} slot
+     * @returns {boolean}
+     */
+    equipmentSlotMeetsRequirements(slot) {
+      const id = this.equipment[String(slot)];
+      if (id == null) return true;
+      const reqs = this.getRequirementsForInstance(id);
+      return characterMeetsItemRequirements(reqs, this.getCharacterRequirementStats());
+    },
+
+    /**
+     * Disable charms/relics whose level req exceeds character level.
+     * @returns {{
+     *   charms: Array<{ name: string, reqLevel: number }>,
+     *   relics: Array<{ name: string, reqLevel: number }>,
+     * }}
+     */
+    disableEnabledItemsBelowLevel() {
+      /** @type {Array<{ name: string, reqLevel: number }>} */
+      const charms = [];
+      /** @type {Array<{ name: string, reqLevel: number }>} */
+      const relics = [];
+      const ch = getCharacterInstance();
+      // Without a known character level, keep enables (unit tests / early load).
+      // Note: Number(null) === 0, so do not coerce a missing level.
+      if (!ch || ch.level == null) return { charms, relics };
+      const levelNum = Number(ch.level);
+      if (!Number.isFinite(levelNum)) return { charms, relics };
+
+      for (const defId of Object.keys(this.enabledCharms)) {
+        const def = this.catalogById[defId];
+        if (!def || charmMeetsLevel(def, levelNum)) continue;
+        charms.push({
+          name: String(def.name || defId),
+          reqLevel: Number(def.reqLevel) || 0,
+        });
+        this.toggleCharm(defId, false);
+      }
+      for (const defId of Object.keys(this.enabledRelics)) {
+        const def = this.catalogById[defId];
+        if (!def || relicMeetsLevel(def, levelNum)) continue;
+        relics.push({
+          name: String(def.name || defId),
+          reqLevel: Number(def.reqLevel) || 0,
+        });
+        this.toggleRelic(defId, false);
+      }
+      return { charms, relics };
+    },
+
+    /**
+     * Equipped items that fail level/str/dex requirements (for import toasts).
+     * @returns {Array<{ name: string, requirementsLine: string }>}
+     */
+    listUnmetEquippedItems() {
+      /** @type {Array<{ name: string, requirementsLine: string }>} */
+      const out = [];
+      const stats = this.getCharacterRequirementStats();
+      for (const slot of EQUIPMENT_SLOTS) {
+        const id = this.equipment[slot];
+        if (id == null) continue;
+        const def = this.getDefForInstance(id);
+        if (!def) continue;
+        const reqs = this.getRequirementsForInstance(id);
+        if (characterMeetsItemRequirements(reqs, stats)) continue;
+        const line = formatItemRequirementsLine(reqs).replace(/^Requires:\s*/i, '');
+        out.push({
+          name: String(def.name || def.id || slot),
+          requirementsLine: line || 'requirements not met',
+        });
+      }
+      return out;
     },
 
     /**
@@ -981,7 +1113,7 @@ export const useItemsStore = defineStore('items', {
       if (!def?.setId) return extras;
       const setDef = this.setsById[def.setId];
       if (!setDef) return { ...extras, setName: def.setName };
-      const counts = countEquippedSetPieces(this.equippedDefs);
+      const counts = countEquippedSetPieces(this.activeEquippedDefs);
       const equippedCount = counts[def.setId] || 0;
       const totalPieces = this.catalog.filter((d) => d.setId === def.setId).length;
       return {
@@ -1338,10 +1470,23 @@ export const useItemsStore = defineStore('items', {
     },
 
     /**
-     * Restore from build snapshot.
+     * Restore from build snapshot. Does not raise character level for item reqs;
+     * disables charms/relics the character cannot use yet.
      * @param {unknown} raw
+     * @returns {{
+     *   disabledCharms: Array<{ name: string, reqLevel: number }>,
+     *   disabledRelics: Array<{ name: string, reqLevel: number }>,
+     *   unmetGear: Array<{ name: string, requirementsLine: string }>,
+     * }}
      */
     fromSnapshot(raw) {
+      /** @type {{
+       *   disabledCharms: Array<{ name: string, reqLevel: number }>,
+       *   disabledRelics: Array<{ name: string, reqLevel: number }>,
+       *   unmetGear: Array<{ name: string, requirementsLine: string }>,
+       * }} */
+      const result = { disabledCharms: [], disabledRelics: [], unmetGear: [] };
+
       this.equipment = emptyEquipment();
       this.inventory = emptyInventory();
       this.enabledCharms = {};
@@ -1351,7 +1496,7 @@ export const useItemsStore = defineStore('items', {
       this.selectedSlot = null;
       this.editingInstanceId = null;
 
-      if (!raw || typeof raw !== 'object') return;
+      if (!raw || typeof raw !== 'object') return result;
       const data = /** @type {Record<string, unknown>} */ (raw);
 
       this.weaponSet = data.weaponSet === 1 ? 1 : 0;
@@ -1426,62 +1571,73 @@ export const useItemsStore = defineStore('items', {
         this.enabledRelics = { ...this.enabledRelics, [defId]: id };
       };
 
-      const eq = data.equipment;
-      if (eq && typeof eq === 'object' && !Array.isArray(eq)) {
-        for (const slot of EQUIPMENT_SLOTS) {
-          const parsed = parseEntry(/** @type {Record<string, unknown>} */ (eq)[slot]);
-          if (!parsed || !this.catalogById[parsed.defId]) continue;
-          const id = this.createInstance(parsed.defId, parsed.icon, parsed.rolls, parsed.custom);
-          this.equipment[slot] = id;
+      const prevSkip = skipItemReqLevelSync;
+      skipItemReqLevelSync = true;
+      try {
+        const eq = data.equipment;
+        if (eq && typeof eq === 'object' && !Array.isArray(eq)) {
+          for (const slot of EQUIPMENT_SLOTS) {
+            const parsed = parseEntry(/** @type {Record<string, unknown>} */ (eq)[slot]);
+            if (!parsed || !this.catalogById[parsed.defId]) continue;
+            const id = this.createInstance(parsed.defId, parsed.icon, parsed.rolls, parsed.custom);
+            this.equipment[slot] = id;
+          }
         }
-      }
 
-      const charmsSnap = data.charms;
-      if (Array.isArray(charmsSnap)) {
-        for (const row of charmsSnap) {
-          const parsed = parseEntry(row);
-          if (!parsed) continue;
-          enableFromSnap(parsed.defId, parsed.rolls, 'charms');
-        }
-      }
-
-      const relicsSnap = data.relics;
-      if (Array.isArray(relicsSnap)) {
-        for (const row of relicsSnap) {
-          const parsed = parseEntry(row);
-          if (!parsed) continue;
-          enableFromSnap(parsed.defId, parsed.rolls, 'relics');
-        }
-      }
-
-      const inv = data.inventory;
-      if (Array.isArray(inv)) {
-        for (const row of inv) {
-          if (!row || typeof row !== 'object') continue;
-          const slot = Number(/** @type {{ slot?: unknown }} */ (row).slot);
-          const parsed = parseEntry(row);
-          if (!Number.isFinite(slot) || !parsed) continue;
-          if (!this.catalogById[parsed.defId]) continue;
-          const def = this.catalogById[parsed.defId];
-          // Migrate legacy inventory charms/relics into enable maps.
-          if (isCharmItem(def)) {
+        const charmsSnap = data.charms;
+        if (Array.isArray(charmsSnap)) {
+          for (const row of charmsSnap) {
+            const parsed = parseEntry(row);
+            if (!parsed) continue;
             enableFromSnap(parsed.defId, parsed.rolls, 'charms');
-            continue;
-          }
-          if (isRelicItem(def)) {
-            enableFromSnap(parsed.defId, parsed.rolls, 'relics');
-            continue;
-          }
-          const id = this.createInstance(parsed.defId, parsed.icon, parsed.rolls, parsed.custom);
-          const getSize = this.getInstanceSize;
-          if (canPlace(this.inventory, slot, def.invWidth || 1, def.invHeight || 1, getSize)) {
-            this.inventory = placeAt(this.inventory, slot, id, getSize);
-          } else {
-            delete this.instances[id];
           }
         }
+
+        const relicsSnap = data.relics;
+        if (Array.isArray(relicsSnap)) {
+          for (const row of relicsSnap) {
+            const parsed = parseEntry(row);
+            if (!parsed) continue;
+            enableFromSnap(parsed.defId, parsed.rolls, 'relics');
+          }
+        }
+
+        const inv = data.inventory;
+        if (Array.isArray(inv)) {
+          for (const row of inv) {
+            if (!row || typeof row !== 'object') continue;
+            const slot = Number(/** @type {{ slot?: unknown }} */ (row).slot);
+            const parsed = parseEntry(row);
+            if (!Number.isFinite(slot) || !parsed) continue;
+            if (!this.catalogById[parsed.defId]) continue;
+            const def = this.catalogById[parsed.defId];
+            // Migrate legacy inventory charms/relics into enable maps.
+            if (isCharmItem(def)) {
+              enableFromSnap(parsed.defId, parsed.rolls, 'charms');
+              continue;
+            }
+            if (isRelicItem(def)) {
+              enableFromSnap(parsed.defId, parsed.rolls, 'relics');
+              continue;
+            }
+            const id = this.createInstance(parsed.defId, parsed.icon, parsed.rolls, parsed.custom);
+            const getSize = this.getInstanceSize;
+            if (canPlace(this.inventory, slot, def.invWidth || 1, def.invHeight || 1, getSize)) {
+              this.inventory = placeAt(this.inventory, slot, id, getSize);
+            } else {
+              delete this.instances[id];
+            }
+          }
+        }
+
+        const disabled = this.disableEnabledItemsBelowLevel();
+        result.disabledCharms = disabled.charms;
+        result.disabledRelics = disabled.relics;
+        result.unmetGear = this.listUnmetEquippedItems();
+      } finally {
+        skipItemReqLevelSync = prevSkip;
       }
-      this.syncCharacterLevelToItemReqs();
+      return result;
     },
 
     resetItems() {

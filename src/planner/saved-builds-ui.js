@@ -226,22 +226,42 @@ export function loadBuildData(build, buildIndex = null) {
         }
     }
 
-    // Load equipment / inventory / charms / relics (async catalog)
+    // Load equipment / inventory / charms / relics (async catalog).
+    // Gear unmet toasts wait until str/dex are applied (see after stats below).
+    let itemsAppliedSync = false;
+    let pendingGearUnmetToast = false;
     try {
         const itemsStore = useItemsStore();
-        const applyItems = () => {
+        const applyItems = ({ toastGear = false } = {}) => {
             try {
                 itemsStore.syncViewerClassName(build.class);
+                /** @type {{
+                 *   disabledCharms: Array<{ name: string, reqLevel: number }>,
+                 *   disabledRelics: Array<{ name: string, reqLevel: number }>,
+                 *   unmetGear: Array<{ name: string, requirementsLine: string }>,
+                 * } | null} */
+                let unmetReqReport = null;
                 if (tswItems) {
                     const { snapshot, skipped } = mapTswItemsToSnapshot(tswItems, itemsStore, build.class);
-                    itemsStore.fromSnapshot(snapshot);
+                    unmetReqReport = itemsStore.fromSnapshot(snapshot);
                     toastSkippedTswItems(skipped);
                 } else if (build.items != null) {
-                    itemsStore.fromSnapshot(build.items);
+                    unmetReqReport = itemsStore.fromSnapshot(build.items);
                 } else {
                     itemsStore.resetItems();
                 }
                 itemsStore.pruneClassRestrictedEnableList();
+                if (unmetReqReport) {
+                    toastUnmetItemRequirements(unmetReqReport, { charms: true, relics: true, gear: false });
+                    if (toastGear) {
+                        toastUnmetItemRequirements(
+                            { unmetGear: itemsStore.listUnmetEquippedItems() },
+                            { charms: false, relics: false, gear: true }
+                        );
+                    } else {
+                        pendingGearUnmetToast = true;
+                    }
+                }
                 syncItemGrantedOSkills();
                 if (tswItems) {
                     const left = applyTswOSkillLeftovers(build.oSkills);
@@ -262,9 +282,12 @@ export function loadBuildData(build, buildIndex = null) {
                 console.warn('Failed to apply build items:', err);
             }
         };
-        if (itemsStore.isCatalogCurrent) applyItems();
-        else {
-            itemsStore.loadCatalog().then(applyItems).catch((err) => {
+        if (itemsStore.isCatalogCurrent) {
+            applyItems({ toastGear: false });
+            itemsAppliedSync = true;
+        } else {
+            // Catalog load finishes after stats below are applied — toast gear then.
+            itemsStore.loadCatalog().then(() => applyItems({ toastGear: true })).catch((err) => {
                 console.warn('Failed to apply build items:', err);
             });
         }
@@ -318,6 +341,16 @@ export function loadBuildData(build, buildIndex = null) {
             console.warn('Stats parsing errors when loading build:', statErrors);
         }
         runPlannerSkillStatRecompute({ immediate: true });
+    }
+    if (itemsAppliedSync && pendingGearUnmetToast) {
+        try {
+            toastUnmetItemRequirements(
+                { unmetGear: useItemsStore().listUnmetEquippedItems() },
+                { charms: false, relics: false, gear: true }
+            );
+        } catch (e) {
+            console.warn('Failed to toast unmet gear requirements:', e);
+        }
     }
     syncPlannerCharacterStatsTextareaFromCharacter();
     refreshPlannerStatsPanelFromCharacter();
@@ -494,6 +527,74 @@ function toastSkippedTswItems(skipped) {
         false,
         'warning'
     );
+}
+
+/**
+ * @param {Array<{ name?: string, reqLevel?: number, requirementsLine?: string }>} rows
+ * @param {(row: { name?: string, reqLevel?: number, requirementsLine?: string }) => string} formatRow
+ * @returns {string}
+ */
+function formatUnmetItemToastList(rows, formatRow) {
+    const labels = rows.map((row) => formatRow(row));
+    const shown = labels.slice(0, 8);
+    const extra = labels.length - shown.length;
+    return extra > 0 ? `${shown.join(', ')}, and ${extra} more` : shown.join(', ');
+}
+
+/**
+ * Warning toasts after import when charms/relics were left disabled or gear fails reqs.
+ * @param {{
+ *   disabledCharms?: Array<{ name: string, reqLevel: number }>,
+ *   disabledRelics?: Array<{ name: string, reqLevel: number }>,
+ *   unmetGear?: Array<{ name: string, requirementsLine: string }>,
+ * }|null|undefined} report
+ * @param {{ charms?: boolean, relics?: boolean, gear?: boolean }} [parts]
+ */
+function toastUnmetItemRequirements(report, parts = {}) {
+    if (!report || typeof report !== 'object') return;
+    const showCharms = parts.charms !== false;
+    const showRelics = parts.relics !== false;
+    const showGear = parts.gear !== false;
+    const charms = showCharms && Array.isArray(report.disabledCharms) ? report.disabledCharms : [];
+    const relics = showRelics && Array.isArray(report.disabledRelics) ? report.disabledRelics : [];
+    const gear = showGear && Array.isArray(report.unmetGear) ? report.unmetGear : [];
+
+    if (charms.length) {
+        const list = formatUnmetItemToastList(charms, (row) => {
+            const name = exportLabelForToast(row.name || '(unnamed)');
+            const req = Number(row.reqLevel) || 0;
+            return req > 0 ? `${name} (req ${req})` : name;
+        });
+        toastManager.showToast(
+            `Charm${charms.length > 1 ? 's' : ''} left disabled (level too low): ${list}.`,
+            false,
+            'warning'
+        );
+    }
+    if (relics.length) {
+        const list = formatUnmetItemToastList(relics, (row) => {
+            const name = exportLabelForToast(row.name || '(unnamed)');
+            const req = Number(row.reqLevel) || 0;
+            return req > 0 ? `${name} (req ${req})` : name;
+        });
+        toastManager.showToast(
+            `Relic${relics.length > 1 ? 's' : ''} left disabled (level too low): ${list}.`,
+            false,
+            'warning'
+        );
+    }
+    if (gear.length) {
+        const list = formatUnmetItemToastList(gear, (row) => {
+            const name = exportLabelForToast(row.name || '(unnamed)');
+            const req = String(row.requirementsLine || '').trim();
+            return req ? `${name} (${req})` : name;
+        });
+        toastManager.showToast(
+            `Equipped item${gear.length > 1 ? 's' : ''} requirements not met: ${list}.`,
+            false,
+            'warning'
+        );
+    }
 }
 
 /**

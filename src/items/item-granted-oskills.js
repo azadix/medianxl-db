@@ -8,11 +8,13 @@ import { getCharacterInstance } from '@/character/planner-instance.js';
 import { resolveCatalogRowBySkillRef } from '@/character/planner-build-io.js';
 import {
   getCharmAffixSources,
+  isCharmBonusActive,
   resolveCharmAffixText,
   defaultCharmRollsForDef,
 } from '@/items/charm-items.js';
 import {
   getRelicStatLines,
+  isRelicBonusActive,
   defaultRelicAffixRolls,
 } from '@/items/relic-items.js';
 import {
@@ -284,14 +286,16 @@ function resolveGrantClassName(options = {}) {
 /**
  * @param {Record<string, string>|null|undefined} enabledMap
  * @param {object} itemsStore
+ * @param {(def: object) => boolean} [isActive]
  * @returns {Array<{ def: object, rolls?: Record<string, number>|null }>}
  */
-function enabledDefsWithRolls(enabledMap, itemsStore) {
+function enabledDefsWithRolls(enabledMap, itemsStore, isActive = null) {
   /** @type {Array<{ def: object, rolls?: Record<string, number>|null }>} */
   const out = [];
   for (const [defId, instanceId] of Object.entries(enabledMap || {})) {
     const def = itemsStore.catalogById?.[defId];
     if (!def) continue;
+    if (typeof isActive === 'function' && !isActive(def)) continue;
     const rolls = itemsStore.getRollsForInstance?.(instanceId) ?? null;
     out.push({ def, rolls });
   }
@@ -322,7 +326,10 @@ export function collectEnabledCharmOSkillGrants(options = {}) {
   try {
     const className = resolveGrantClassName(options);
     const itemsStore = useItemsStore();
-    const charms = enabledDefsWithRolls(itemsStore.enabledCharms, itemsStore);
+    const characterLevel = getCharacterInstance()?.level ?? null;
+    const charms = enabledDefsWithRolls(itemsStore.enabledCharms, itemsStore, (def) =>
+      isCharmBonusActive(def, characterLevel, { inInventory: true })
+    );
     return collectOSkillGrantsFromCharmDefs(charms, { className });
   } catch {
     return {};
@@ -338,7 +345,10 @@ export function collectEnabledRelicOSkillGrants(options = {}) {
   try {
     const className = resolveGrantClassName(options);
     const itemsStore = useItemsStore();
-    const relics = enabledDefsWithRolls(itemsStore.enabledRelics, itemsStore);
+    const characterLevel = getCharacterInstance()?.level ?? null;
+    const relics = enabledDefsWithRolls(itemsStore.enabledRelics, itemsStore, (def) =>
+      isRelicBonusActive(def, characterLevel, { inInventory: true })
+    );
     return collectOSkillGrantsFromRelicDefs(relics, { className });
   } catch {
     return {};
