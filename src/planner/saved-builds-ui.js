@@ -30,8 +30,11 @@ import {
   applyLoadedSkillBonusToggles,
   isPlannerSkillPointPoolOverBudget,
   getSpentSkillPoints,
+  getAllSkillPoints,
   getAllSkillPointsById,
 } from '@/character/planner-core.js';
+import { findMissingCharmSkillUnlocks } from '@/items/charm-skill-unlocks.js';
+import { isCharmItem } from '@/items/charm-items.js';
 import { getSelectedConditionKeys, setCondition as setPlannerCondition } from '@/stores/planner-config-store.js';
 import { useItemsStore, itemsSnapshotHasState } from '@/stores/items.js';
 import { syncPlannerCharacterStatsTextareaFromCharacter, refreshPlannerStatsPanelFromCharacter } from '@/character/planner-stats-panel.js';
@@ -252,6 +255,7 @@ export function loadBuildData(build, buildIndex = null) {
                             'warning'
                         );
                     }
+                    toastMissingCharmSkillUnlocks(build.class, itemsStore);
                 }
                 runPlannerSkillStatRecompute({ immediate: true });
             } catch (err) {
@@ -447,6 +451,38 @@ function isValidSavedQuestDifficultyValue(v) {
 /**
  * @param {Array<{ name: string, reason?: string }>} skipped
  */
+/**
+ * @param {string|null|undefined} className
+ * @param {{ enabledCharms?: Record<string, string>, catalog?: object[] }} itemsStore
+ */
+function toastMissingCharmSkillUnlocks(className, itemsStore) {
+  const charms = (Array.isArray(itemsStore?.catalog) ? itemsStore.catalog : []).filter((def) =>
+    isCharmItem(def)
+  );
+  /** @type {Record<string, string>} */
+  const skillDisplayNames = {};
+  for (const skill of getSkillsList() || []) {
+    if (skill?.id) skillDisplayNames[String(skill.id)] = String(skill.displayName || skill.id);
+  }
+  const missing = findMissingCharmSkillUnlocks({
+    skillPoints: getAllSkillPoints(),
+    ownedCharmIds: Object.keys(itemsStore?.enabledCharms || {}),
+    charms,
+    className,
+    skillDisplayNames,
+  });
+  if (!missing.length) return;
+  const parts = missing.map((row) => {
+    const charm = row.charmNames.join(' / ');
+    return `${exportLabelForToast(row.skillName)} (needs ${exportLabelForToast(charm)})`;
+  });
+  toastManager.showToast(
+    `Skill point${missing.length > 1 ? 's' : ''} spent without required charm in inventory: ${parts.join(', ')}.`,
+    false,
+    'warning'
+  );
+}
+
 function toastSkippedTswItems(skipped) {
     if (!Array.isArray(skipped) || skipped.length === 0) return;
     const names = skipped.map((s) => exportLabelForToast(s.name || '(unnamed)'));
