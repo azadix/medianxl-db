@@ -143,8 +143,11 @@ const {
       </div>
     </div>
     <div
+      id="patch-note-skill-tooltip-portal"
       ref="tooltipElement"
       class="skill-tooltip patch-note-skill-tooltip"
+      style="display: none"
+      aria-hidden="true"
     />
   </section>
 </template>
@@ -248,8 +251,6 @@ const {
 
 .patch-note-skill-tooltip {
   position: fixed;
-  left: -9999px;
-  top: -9999px;
   z-index: 10000;
   max-width: 50vw;
   min-width: 300px;

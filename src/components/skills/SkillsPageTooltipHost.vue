@@ -2,16 +2,21 @@
 /**
  * Portal roots for skills-page proc tooltips (distinct from planner keep-alive IDs).
  */
-import { onMounted, onUnmounted } from 'vue';
+import { onActivated, onMounted, onUnmounted } from 'vue';
 import {
   SKILLS_PAGE_ITEM_TOOLTIP_ID,
   SKILLS_PAGE_SKILL_TOOLTIP_ID,
+  bindSkillsPageNestedSkillTooltipHandlers,
   destroySkillsPageTooltips,
   initSkillsPageTooltips,
 } from '@/skills/skills-page-tooltip-runtime.js';
 
 onMounted(() => {
   initSkillsPageTooltips();
+});
+
+onActivated(() => {
+  bindSkillsPageNestedSkillTooltipHandlers();
 });
 
 onUnmounted(() => {

@@ -2,15 +2,26 @@
  * @file Patch notes skill highlight tooltips (hover/focus).
  * @module src/composables/usePatchSkillTooltip
  */
-import { onMounted, onUnmounted, ref } from 'vue';
+import { onActivated, onDeactivated, onMounted, onUnmounted, ref, watch } from 'vue';
 import {
   buildTooltipHtmlForSkill,
   getCachedPatchSkillTooltipHtml,
   getSkillRecordFromElement,
 } from './usePatchNotesData.js';
+import { buildFixedLevelSkillTooltipHtml } from '@/skills/fixed-level-skill-tooltip.js';
+import {
+  bindLiveTooltip,
+  initTooltipPinning,
+  maybeAltStickLiveTooltip,
+  setNestedSkillTooltipHandlers,
+  shouldSuppressLiveTooltipHide,
+  updateLiveTooltipBinding,
+} from '@/shared/tooltip-pinning.js';
+export const PATCH_NOTE_SKILL_TOOLTIP_ID = 'patch-note-skill-tooltip-portal';
 
 const TOOLTIP_OFFSET = 18;
 const TOOLTIP_VIEWPORT_MARGIN = 12;
+const NESTED_SKILL_TOOLTIP_Z = '10070';
 
 /**
  * @param {object} opts
@@ -26,6 +37,11 @@ export function usePatchSkillTooltip({ patchNotesRoot, loadPatchData }) {
   let pendingClientY = 0;
   /** @type {HTMLElement|null} */
   let currentHoveredTarget = null;
+  /** @type {string} */
+  let lastHtml = '';
+  /** @type {object|null} */
+  let lastSkillRecord = null;
+  let nestedActive = false;
 
   function isTooltipShowing() {
     const node = tooltipElement.value;
@@ -58,26 +74,53 @@ export function usePatchSkillTooltip({ patchNotesRoot, loadPatchData }) {
     });
   }
 
-  function presentTooltip(node, html, clientX, clientY) {
-    node.innerHTML = html;
-    node.style.display = 'block';
-    updateTooltipPosition(clientX, clientY);
+  /**
+   * @returns {string}
+   */
+  function rebuildLastHtml() {
+    if (lastHtml) return lastHtml;
+    if (!lastSkillRecord) return '';
+    return getCachedPatchSkillTooltipHtml(lastSkillRecord) || '';
   }
 
-  function hideSkillTooltip() {
+  function presentTooltip(node, html, clientX, clientY) {
+    lastHtml = html;
+    node.innerHTML = html;
+    node.style.display = 'block';
+    // Sync position before Alt-stick can promote (avoid -9999px flash).
+    applyTooltipPosition(node, clientX, clientY);
+    updateLiveTooltipBinding(node, {
+      getHtml: () => rebuildLastHtml(),
+      meta: {
+        skillId: lastSkillRecord?.id ?? null,
+        nested: nestedActive,
+      },
+    });
+    maybeAltStickLiveTooltip(node);
+  }
+
+  /**
+   * @param {boolean} [force]
+   */
+  function hideSkillTooltip(force = false) {
+    const node = tooltipElement.value;
+    if (!force && shouldSuppressLiveTooltipHide(node)) return;
     if (positionRafId) {
       cancelAnimationFrame(positionRafId);
       positionRafId = 0;
     }
     currentHoveredTarget = null;
-    const node = tooltipElement.value;
-    if (node) node.style.display = 'none';
+    nestedActive = false;
+    if (node) {
+      node.style.display = 'none';
+      node.style.zIndex = '';
+    }
   }
 
   async function showSkillTooltip(target, clientX, clientY) {
     const skillRecord = getSkillRecordFromElement(target);
     if (!skillRecord) {
-      hideSkillTooltip();
+      hideSkillTooltip(true);
       return;
     }
 
@@ -90,6 +133,9 @@ export function usePatchSkillTooltip({ patchNotesRoot, loadPatchData }) {
     }
 
     currentHoveredTarget = target;
+    lastSkillRecord = skillRecord;
+    nestedActive = false;
+    node.style.zIndex = '';
 
     const cached = getCachedPatchSkillTooltipHtml(skillRecord);
     if (cached) {
@@ -106,12 +152,55 @@ export function usePatchSkillTooltip({ patchNotesRoot, loadPatchData }) {
     }
     if (token !== tooltipTokenCounter) return;
     if (!html) {
-      hideSkillTooltip();
+      hideSkillTooltip(true);
       return;
     }
     if (currentHoveredTarget !== target) return;
 
     presentTooltip(node, html, clientX, clientY);
+  }
+
+  /**
+   * Nested skill tooltip from a pinned/stuck patch-note tooltip.
+   * @param {string} skillId
+   * @param {number} clientX
+   * @param {number} clientY
+   */
+  async function showNestedSkillTooltip(skillId, clientX, clientY) {
+    const node = tooltipElement.value;
+    const id = String(skillId || '').trim();
+    if (!node || !id) return;
+    nestedActive = true;
+    currentHoveredTarget = null;
+    lastSkillRecord = { id };
+    node.style.left = `${Math.max(0, clientX + TOOLTIP_OFFSET)}px`;
+    node.style.top = `${Math.max(0, clientY + TOOLTIP_OFFSET)}px`;
+    node.style.zIndex = NESTED_SKILL_TOOLTIP_Z;
+    const html = await buildFixedLevelSkillTooltipHtml(id, 1);
+    if (!html || !nestedActive) return;
+    presentTooltip(node, html, clientX, clientY);
+    node.style.zIndex = NESTED_SKILL_TOOLTIP_Z;
+  }
+
+  function attachPinningAndNestedHandlers() {
+    const node = tooltipElement.value;
+    if (!node) return;
+    if (!node.id) node.id = PATCH_NOTE_SKILL_TOOLTIP_ID;
+    initTooltipPinning();
+    bindLiveTooltip(node, {
+      kind: 'skill',
+      getHtml: () => rebuildLastHtml(),
+      meta: {},
+      onHideLive: () => {
+        currentHoveredTarget = null;
+      },
+    });
+    setNestedSkillTooltipHandlers({
+      showSkill: (skillId, clientX, clientY) => showNestedSkillTooltip(skillId, clientX, clientY),
+      moveSkill: (clientX, clientY) => updateTooltipPosition(clientX, clientY),
+      hideSkill: () => hideSkillTooltip(true),
+      isShowing: () => isTooltipShowing(),
+    });
   }
 
   function closestSkillTarget(eventTarget) {
@@ -164,29 +253,22 @@ export function usePatchSkillTooltip({ patchNotesRoot, loadPatchData }) {
 
   function onPatchKeyDown(event) {
     if (event.key === 'Escape') {
-      hideSkillTooltip();
+      hideSkillTooltip(true);
     }
   }
 
-  onMounted(async () => {
-    await loadPatchData();
+  function bindRootListeners() {
     const root = patchNotesRoot.value;
     if (!root) return;
-    const node = tooltipElement.value;
-    if (node) node.style.display = 'none';
     root.addEventListener('mouseover', onPatchMouseOver);
     root.addEventListener('mousemove', onPatchMouseMove);
     root.addEventListener('mouseout', onPatchMouseOut);
     root.addEventListener('focusin', onPatchFocusIn);
     root.addEventListener('focusout', onPatchFocusOut);
     root.addEventListener('keydown', onPatchKeyDown);
-  });
+  }
 
-  onUnmounted(() => {
-    if (positionRafId) {
-      cancelAnimationFrame(positionRafId);
-      positionRafId = 0;
-    }
+  function unbindRootListeners() {
     const root = patchNotesRoot.value;
     if (!root) return;
     root.removeEventListener('mouseover', onPatchMouseOver);
@@ -195,6 +277,37 @@ export function usePatchSkillTooltip({ patchNotesRoot, loadPatchData }) {
     root.removeEventListener('focusin', onPatchFocusIn);
     root.removeEventListener('focusout', onPatchFocusOut);
     root.removeEventListener('keydown', onPatchKeyDown);
+  }
+
+  onMounted(async () => {
+    await loadPatchData();
+    const node = tooltipElement.value;
+    if (node) node.style.display = 'none';
+    bindRootListeners();
+    attachPinningAndNestedHandlers();
+  });
+
+  onActivated(() => {
+    attachPinningAndNestedHandlers();
+  });
+
+  onDeactivated(() => {
+    hideSkillTooltip(true);
+    setNestedSkillTooltipHandlers(null);
+  });
+
+  onUnmounted(() => {
+    if (positionRafId) {
+      cancelAnimationFrame(positionRafId);
+      positionRafId = 0;
+    }
+    unbindRootListeners();
+    hideSkillTooltip(true);
+    setNestedSkillTooltipHandlers(null);
+  });
+
+  watch(tooltipElement, (node) => {
+    if (node) attachPinningAndNestedHandlers();
   });
 
   return {

@@ -582,6 +582,7 @@ function isLiveFollowTooltip(el) {
   return (
     el.id === 'skill-tooltip-portal' ||
     el.id === 'skills-page-skill-tooltip' ||
+    el.id === 'patch-note-skill-tooltip-portal' ||
     el.id === 'item-tooltip-portal' ||
     el.id === 'skills-page-item-tooltip' ||
     liveBindings.has(el)

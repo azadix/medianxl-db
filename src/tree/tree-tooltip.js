@@ -251,16 +251,7 @@ export function initializeTooltip() {
         getHtml: () => rebuildCurrentSkillTooltipHtml(),
         meta: {},
     });
-    setNestedSkillTooltipHandlers({
-        showSkill: (skillId, clientX, clientY) => showNestedSkillTooltip(skillId, clientX, clientY),
-        moveSkill: (clientX, clientY) => {
-            lastMouseX = clientX;
-            lastMouseY = clientY;
-            updateTooltipPosition(clientX, clientY);
-        },
-        hideSkill: () => hideTooltip(true),
-        isShowing: () => Boolean(tooltipElement && tooltipElement.style.display !== 'none'),
-    });
+    bindPlannerNestedSkillTooltipHandlers();
 
     // Add event delegation for skill card images
     document.addEventListener('mouseover', handleMouseOver);
@@ -508,6 +499,27 @@ async function showTooltip(skillId, mouseX, mouseY, hoveredCard = null) {
     });
     updateTooltipPosition(mouseX, mouseY);
     maybeAltStickLiveTooltip(tooltipElement);
+}
+
+/**
+ * Re-bind nested skill-name hover handlers for the planner skill tooltip portal.
+ * Safe to call after other pages (patch notes / skills) temporarily override them.
+ */
+export function bindPlannerNestedSkillTooltipHandlers() {
+    if (!tooltipElement) {
+        tooltipElement = document.getElementById('skill-tooltip-portal');
+    }
+    if (!tooltipElement) return;
+    setNestedSkillTooltipHandlers({
+        showSkill: (skillId, clientX, clientY) => showNestedSkillTooltip(skillId, clientX, clientY),
+        moveSkill: (clientX, clientY) => {
+            lastMouseX = clientX;
+            lastMouseY = clientY;
+            updateTooltipPosition(clientX, clientY);
+        },
+        hideSkill: () => hideTooltip(true),
+        isShowing: () => Boolean(tooltipElement && tooltipElement.style.display !== 'none'),
+    });
 }
 
 /**

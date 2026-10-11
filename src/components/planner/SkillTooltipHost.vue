@@ -2,8 +2,13 @@
 /**
  * Portal root for planner skill tooltips (`tree-tooltip.js`).
  * `initializeTooltip()` attaches to `#skill-tooltip-portal` (innerHTML + positioning).
- * Patch notes use inline tooltip markup in `PatchNotesView.vue` until a shared builder exists.
  */
+import { onActivated } from 'vue';
+import { bindPlannerNestedSkillTooltipHandlers } from '@/tree/tree-tooltip.js';
+
+onActivated(() => {
+  bindPlannerNestedSkillTooltipHandlers();
+});
 </script>
 
 <template>

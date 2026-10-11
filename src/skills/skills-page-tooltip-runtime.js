@@ -52,6 +52,18 @@ export function initSkillsPageTooltips() {
       meta: {},
     });
   }
+  bindSkillsPageNestedSkillTooltipHandlers();
+}
+
+/**
+ * Re-bind nested skill-name hover handlers for the skills-page portals.
+ * Call on keep-alive activate after other pages override the global handlers.
+ */
+export function bindSkillsPageNestedSkillTooltipHandlers() {
+  if (!skillPortal) {
+    skillPortal = document.getElementById(SKILLS_PAGE_SKILL_TOOLTIP_ID);
+  }
+  if (!skillPortal) return;
   setNestedSkillTooltipHandlers({
     showSkill: async (skillId, clientX, clientY) => {
       if (!skillPortal) return;
