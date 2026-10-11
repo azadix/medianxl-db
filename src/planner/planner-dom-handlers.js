@@ -54,7 +54,7 @@ import {
   fallbackCopyToClipboard,
 } from './saved-builds-ui.js';
 import { main, ensurePlannerTreeInitialized } from './planner-init.js';
-import { fetchTswBuildByCode } from './tsw-code-import.js';
+import { takePendingTswImportEnvelope } from './tsw-code-import.js';
 
 export async function plannerMenuNewBuild() {
     showSection('tree');
@@ -102,7 +102,7 @@ export async function plannerMenuImportBuildFromText(jsonString) {
  */
 export async function plannerMenuImportBuildFromTswCode(code) {
     try {
-        const dataPromise = fetchTswBuildByCode(code);
+        const dataPromise = takePendingTswImportEnvelope(code);
         await ensurePlannerTreeInitialized();
         const data = await dataPromise;
         if (!isTreeInitialized()) {

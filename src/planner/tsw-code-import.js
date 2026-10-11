@@ -8,6 +8,9 @@ export const TSW_IMPORT_URL = 'https://azadi.pl/import/tsw';
 /** @type {string} */
 let pendingTswImportCode = '';
 
+/** @type {Promise<object>|null} */
+let pendingTswImportFetch = null;
+
 /**
  * @param {string} [hash]
  * @returns {string}
@@ -22,7 +25,20 @@ export function parseTswImportCodeFromHash(hash) {
 }
 
 /**
- * Read `#code=`, stash it, and drop it from the address bar (replaceState).
+ * Start (or reuse) the azadi.pl POST for the stashed code.
+ * @returns {Promise<object>|null}
+ */
+export function beginPendingTswImportFetch() {
+  const code = pendingTswImportCode;
+  if (!code) return null;
+  if (!pendingTswImportFetch) {
+    pendingTswImportFetch = fetchTswBuildByCode(code);
+  }
+  return pendingTswImportFetch;
+}
+
+/**
+ * Read `#code=`, stash it, drop it from the address bar, and prefetch the envelope.
  * @param {Pick<Location, 'hash' | 'pathname' | 'search'>} [loc]
  * @param {Pick<History, 'state' | 'replaceState'>} [hist]
  * @returns {string}
@@ -35,11 +51,20 @@ export function consumeTswImportCodeFromLocation(
   const code = parseTswImportCodeFromHash(loc.hash);
   if (!code) return pendingTswImportCode;
   pendingTswImportCode = code;
+  pendingTswImportFetch = null;
   const params = new URLSearchParams(loc.hash.startsWith('#') ? loc.hash.slice(1) : loc.hash);
   params.delete('code');
   const rest = params.toString();
   hist.replaceState(hist.state, '', `${loc.pathname}${loc.search}${rest ? `#${rest}` : ''}`);
+  beginPendingTswImportFetch();
   return code;
+}
+
+/**
+ * @returns {string}
+ */
+export function peekPendingTswImportCode() {
+  return pendingTswImportCode;
 }
 
 /**
@@ -49,6 +74,31 @@ export function takePendingTswImportCode() {
   const code = pendingTswImportCode;
   pendingTswImportCode = '';
   return code;
+}
+
+/** Clear stashed code and in-flight prefetch (tests / abort). */
+export function clearPendingTswImportState() {
+  pendingTswImportCode = '';
+  pendingTswImportFetch = null;
+}
+
+/**
+ * Resolve the stashed/prefetched envelope for `code`, or fetch fresh if needed.
+ * Clears the pending code and prefetch promise.
+ * @param {string} code
+ * @returns {Promise<object>}
+ */
+export function takePendingTswImportEnvelope(code) {
+  const trimmed = String(code ?? '').trim();
+  const pending = pendingTswImportFetch;
+  const pendingCode = pendingTswImportCode;
+  pendingTswImportCode = '';
+  pendingTswImportFetch = null;
+
+  if (pending && (!pendingCode || pendingCode === trimmed)) {
+    return pending;
+  }
+  return fetchTswBuildByCode(trimmed);
 }
 
 /**

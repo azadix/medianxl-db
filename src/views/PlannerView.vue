@@ -5,7 +5,7 @@ export default {
 </script>
 
 <script setup>
-import { onMounted, onUnmounted, onActivated, nextTick } from 'vue';
+import { onMounted, onUnmounted, onActivated, nextTick, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { usePlannerStore } from '@/stores/planner.js';
 import { attachPlannerWindowSync } from '@/composables/usePlannerRevisionRefresh.js';
@@ -17,9 +17,9 @@ import { ensurePlannerTreeInitialized } from '@/planner/planner-init.js';
 import { plannerMenuImportBuildFromTswCode } from '@/planner/planner-dom-handlers.js';
 import {
   consumeTswImportCodeFromLocation,
+  peekPendingTswImportCode,
   takePendingTswImportCode,
 } from '@/planner/tsw-code-import.js';
-import { isTreeInitialized } from '@/planner/planner-session.js';
 import { initializeVersionSelector } from '@/shared/version-config.js';
 import '@/styles/tree-styles.css';
 import '@/styles/dropdown-style.css';
@@ -32,21 +32,23 @@ import SkillTooltipHost from '@/components/planner/SkillTooltipHost.vue';
 const plannerStore = usePlannerStore();
 const { activeSection } = storeToRefs(plannerStore);
 
+const tswImportLoading = ref(false);
+
 let initStarted = false;
 let unbindPlannerSync = () => {};
 let tswImportInFlight = false;
 
 async function runPendingTswImport() {
   consumeTswImportCodeFromLocation();
-  await ensurePlannerTreeInitialized();
-  if (!isTreeInitialized()) return;
   const tswCode = takePendingTswImportCode();
   if (!tswCode || tswImportInFlight) return;
   tswImportInFlight = true;
+  tswImportLoading.value = true;
   try {
     await plannerMenuImportBuildFromTswCode(tswCode);
   } finally {
     tswImportInFlight = false;
+    tswImportLoading.value = false;
   }
 }
 
@@ -55,20 +57,30 @@ onMounted(() => {
   initStarted = true;
   unbindPlannerSync = attachPlannerWindowSync();
   registerPlannerSectionSetter((section) => plannerStore.setActiveSection(section));
+  if (peekPendingTswImportCode()) {
+    tswImportLoading.value = true;
+  }
   void (async () => {
     await nextTick();
+    // Tree init runs inside plannerMenuImportBuildFromTswCode; kick import immediately
+    // so the azadi.pl prefetch overlaps boot. Also ensure tree for non-import visits.
+    const importPromise = runPendingTswImport();
     await ensurePlannerTreeInitialized();
-    await runPendingTswImport();
+    await importPromise;
   })();
 });
 
 onActivated(async () => {
+  if (peekPendingTswImportCode()) {
+    tswImportLoading.value = true;
+  }
+  const importPromise = runPendingTswImport();
   await ensurePlannerTreeInitialized();
   const sel = document.getElementById('version-selector');
   if (sel) {
     await initializeVersionSelector(sel);
   }
-  await runPendingTswImport();
+  await importPromise;
 });
 
 onUnmounted(() => {
@@ -80,6 +92,14 @@ onUnmounted(() => {
 
 <template>
   <div class="planner-route section px-1 py-0">
+    <div
+      v-if="tswImportLoading"
+      class="notification is-info is-light tsw-import-loading"
+      role="status"
+      aria-live="polite"
+    >
+      Loading build...
+    </div>
     <SkillTooltipHost />
     <PlannerMenuSection v-show="activeSection === 'menu'" />
     <PlannerTreeSection v-show="activeSection === 'tree'" />
@@ -91,5 +111,16 @@ onUnmounted(() => {
 .planner-route {
   margin-top: 0;
   overflow: visible;
+}
+
+.tsw-import-loading {
+  position: fixed;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 40;
+  margin: 0;
+  padding: 0.75rem 1.25rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
 }
 </style>
