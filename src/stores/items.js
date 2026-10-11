@@ -19,7 +19,11 @@ import {
   pairedWeaponSlot,
   QUIVER_INACTIVE_REASON,
 } from '@/items/item-types.js';
-import { getCharacterInstance, raiseCharacterLevelForItemReq } from '@/character/planner-instance.js';
+import {
+  getCharacterInstance,
+  raiseCharacterLevelForItemReq,
+  raiseCharacterStatsForItemReq,
+} from '@/character/planner-instance.js';
 import {
   canPlace,
   placeAt,
@@ -40,6 +44,7 @@ import {
   formatItemRequirementsLine,
   resolveItemRequirements,
 } from '@/items/item-requirements.js';
+import { getPlannerAutoMatchHighestStatRequirements } from '@/planner/planner-options.js';
 import {
   countEquippedSetPieces,
   resolveSetBonuses,
@@ -415,6 +420,22 @@ export const useItemsStore = defineStore('items', {
       for (const defId of Object.keys(this.enabledRelics)) consider(this.catalogById[defId]);
       return max;
     },
+    /** Highest resolved str/dex requirements among equipped gear and enabled charms/relics. */
+    maxActiveItemReqStats() {
+      let reqStr = 0;
+      let reqDex = 0;
+      const consider = (instanceId) => {
+        if (instanceId == null) return;
+        const reqs = this.getRequirementsForInstance(instanceId);
+        if (!reqs) return;
+        if (reqs.reqStr > reqStr) reqStr = reqs.reqStr;
+        if (reqs.reqDex > reqDex) reqDex = reqs.reqDex;
+      };
+      for (const slot of EQUIPMENT_SLOTS) consider(this.equipment[slot]);
+      for (const id of Object.values(this.enabledCharms)) consider(id);
+      for (const id of Object.values(this.enabledRelics)) consider(id);
+      return { reqStr, reqDex };
+    },
     isCatalogCurrent() {
       return (
         this.catalogLoaded &&
@@ -547,6 +568,26 @@ export const useItemsStore = defineStore('items', {
     syncCharacterLevelToItemReqs() {
       if (skipItemReqLevelSync) return false;
       return raiseCharacterLevelForItemReq({ reqLevel: this.maxActiveItemReqLevel });
+    },
+
+    /**
+     * Raise planner str/dex to cover equipped/enabled item requirements (when option enabled).
+     * @returns {boolean}
+     */
+    syncCharacterStatsToItemReqs() {
+      if (skipItemReqLevelSync) return false;
+      if (!getPlannerAutoMatchHighestStatRequirements()) return false;
+      return raiseCharacterStatsForItemReq(this.maxActiveItemReqStats);
+    },
+
+    /**
+     * Raise planner level and (optionally) str/dex for active item requirements.
+     * @returns {boolean}
+     */
+    syncCharacterToItemReqs() {
+      const levelChanged = this.syncCharacterLevelToItemReqs();
+      const statsChanged = this.syncCharacterStatsToItemReqs();
+      return levelChanged || statsChanged;
     },
 
     /**
@@ -815,6 +856,11 @@ export const useItemsStore = defineStore('items', {
       } else {
         delete inst.rolls;
       }
+      const active =
+        Object.values(this.equipment).includes(instanceId) ||
+        Object.values(this.enabledCharms).includes(instanceId) ||
+        Object.values(this.enabledRelics).includes(instanceId);
+      if (active) this.syncCharacterToItemReqs();
       return true;
     },
 
@@ -886,7 +932,7 @@ export const useItemsStore = defineStore('items', {
         const id = this.createInstance(defId, null, rolls);
         this.enabledCharms = { ...this.enabledCharms, [defId]: id };
         this.selectEnabledItem('charms', defId);
-        this.syncCharacterLevelToItemReqs();
+        this.syncCharacterToItemReqs();
         return true;
       }
       if (existing == null) return true;
@@ -947,7 +993,7 @@ export const useItemsStore = defineStore('items', {
       this.nextInstanceId = nextId;
       this.instances = nextInstances;
       this.enabledCharms = nextEnabled;
-      this.syncCharacterLevelToItemReqs();
+      this.syncCharacterToItemReqs();
       return added;
     },
 
@@ -1016,7 +1062,7 @@ export const useItemsStore = defineStore('items', {
         const id = this.createInstance(defId, null, rolls);
         this.enabledRelics = { ...this.enabledRelics, [defId]: id };
         this.selectEnabledItem('relics', defId);
-        this.syncCharacterLevelToItemReqs();
+        this.syncCharacterToItemReqs();
         return true;
       }
       if (existing == null) return true;
@@ -1237,7 +1283,7 @@ export const useItemsStore = defineStore('items', {
         this.equipment[slot] = id;
         if (prev != null) this.destroyInstanceIfOrphaned(prev);
         this.editingInstanceId = id;
-        this.syncCharacterLevelToItemReqs();
+        this.syncCharacterToItemReqs();
         return true;
       }
 
@@ -1393,7 +1439,7 @@ export const useItemsStore = defineStore('items', {
         }
 
         this.equipment[toSlot] = fromId;
-        this.syncCharacterLevelToItemReqs();
+        this.syncCharacterToItemReqs();
         return true;
       }
 

@@ -37,6 +37,39 @@ export function raiseCharacterLevelForItemReq(def) {
 }
 
 /**
+ * Raise displayed strength/dexterity to item requirements (never lowers).
+ * @param {{ reqStr?: number, reqDex?: number }|null|undefined} def
+ * @returns {boolean} True if either attribute changed
+ */
+export function raiseCharacterStatsForItemReq(def) {
+  if (!characterInstance || !def) return false;
+  let changed = false;
+  const reqStr = Number(def.reqStr);
+  if (Number.isFinite(reqStr) && reqStr > 0) {
+    const current = characterInstance.getStat('strength');
+    if (!Number.isFinite(current) || current < reqStr) {
+      characterInstance.setStat('strength', reqStr);
+      changed = true;
+    }
+  }
+  const reqDex = Number(def.reqDex);
+  if (Number.isFinite(reqDex) && reqDex > 0) {
+    const current = characterInstance.getStat('dexterity');
+    if (!Number.isFinite(current) || current < reqDex) {
+      characterInstance.setStat('dexterity', reqDex);
+      changed = true;
+    }
+  }
+  if (!changed) return false;
+  notifyPlannerStateChanged({ source: 'itemReqStats' });
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('characterStatsChanged', { detail: { source: 'itemReqStats' } }));
+    window.dispatchEvent(new CustomEvent('plannerStatsPanelRefresh'));
+  }
+  return true;
+}
+
+/**
  * @param {Record<string, unknown>} [detail]
  */
 export function notifyPlannerStateChanged(detail = {}) {

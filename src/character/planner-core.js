@@ -12,7 +12,7 @@ import {
   getClassPlannerStatDefaults,
   computeClassDerivedLifeManaBreakdown
 } from './class-baselines.js';
-import { getPlannerAutoLevelFromSpentSkillPoints } from '@/planner/planner-level-options.js';
+import { getPlannerAutoLevelFromSpentSkillPoints } from '@/planner/planner-options.js';
 import { recomputePlannerStatsFromSkillAllocations } from './planner-stat-modifiers.js';
 import { calculateMaxLevel } from '@/skills/domain/skill-calculations.js';
 import { extractStatReferences } from '@/skills/domain/formula-evaluator.js';

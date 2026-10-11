@@ -24,15 +24,20 @@ import Character from '@/character/Character.js';
 import {
   getPlannerAutoLevelFromSpentSkillPoints,
   setPlannerAutoLevelFromSpentSkillPoints,
-} from '@/planner/planner-level-options.js';
+  getPlannerAutoMatchHighestStatRequirements,
+  setPlannerAutoMatchHighestStatRequirements,
+} from '@/planner/planner-options.js';
+import { useItemsStore } from '@/stores/items.js';
 
 const className = ref('');
 const buildName = ref('Untitled build');
 
 const { spentPoints, effectiveLevel } = usePlannerSkillPoints();
+const itemsStore = useItemsStore();
 
 const showOptionsModal = ref(false);
 const draftAutoLevelFromSp = ref(true);
+const draftAutoMatchStatReqs = ref(true);
 const draftCharacterLevel = ref(1);
 
 const minLv = Character.MIN_LEVEL;
@@ -53,6 +58,7 @@ function refreshHeaderState() {
 
 function openPlannerOptions() {
   draftAutoLevelFromSp.value = getPlannerAutoLevelFromSpentSkillPoints();
+  draftAutoMatchStatReqs.value = getPlannerAutoMatchHighestStatRequirements();
   draftCharacterLevel.value = getCharacterLevel();
   showOptionsModal.value = true;
 }
@@ -63,6 +69,7 @@ function closePlannerOptions() {
 
 function applyPlannerOptions() {
   setPlannerAutoLevelFromSpentSkillPoints(draftAutoLevelFromSp.value);
+  setPlannerAutoMatchHighestStatRequirements(draftAutoMatchStatReqs.value);
   if (draftAutoLevelFromSp.value) {
     syncPlannerCharacterLevelIfAuto();
   } else {
@@ -71,6 +78,9 @@ function applyPlannerOptions() {
       ? Math.max(minLv, Math.min(maxLv, n))
       : Character.clampLevel(getCharacterLevel());
     setCharacterLevel(clamped);
+  }
+  if (draftAutoMatchStatReqs.value) {
+    itemsStore.syncCharacterStatsToItemReqs();
   }
   plannerRefreshAfterLevelOptions();
   closePlannerOptions();
@@ -163,7 +173,7 @@ onUnmounted(() => {
           <div class="planner-export-modal__title">
             <p id="plannerOptionsModalTitle" class="modal-card-title mb-0">Planner options</p>
             <p class="is-size-7 has-text-grey-light mb-0">
-              Adjust how character level and skill points interact.
+              Adjust how character level, skill points, and item requirements interact.
             </p>
           </div>
           <button type="button" class="delete" aria-label="Close" @click="closePlannerOptions"></button>
@@ -193,6 +203,16 @@ onUnmounted(() => {
               />
             </div>
             <p class="help">Allowed range: {{ minLv }} to {{ maxLv }}.</p>
+          </div>
+          <div class="field">
+            <label class="checkbox">
+              <input v-model="draftAutoMatchStatReqs" type="checkbox" />
+              Automatically match the highest stat requirements
+            </label>
+            <p class="help">
+              When on, strength and dexterity rise to the highest requirements among equipped and enabled items
+              (default). When off, attributes stay as you set them.
+            </p>
           </div>
         </section>
         <footer class="modal-card-foot planner-export-modal__foot p-4">
