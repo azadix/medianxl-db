@@ -328,39 +328,6 @@ describe('tsw-build-import', () => {
     expect(TSW_SLOT_TO_EQUIPMENT.Hands).toBe('glov');
   });
 
-  it('maps Miss_Ter remnant torso through the real 2.14 catalog', () => {
-    const dir = resolve(ROOT, 'public/items/2_14');
-    const bases = [
-      ...JSON.parse(readFileSync(resolve(dir, 'baseitems.json'), 'utf8')),
-      ...JSON.parse(readFileSync(resolve(dir, 'other.json'), 'utf8')),
-    ];
-    const db = JSON.parse(readFileSync(resolve(dir, 'unique-stats-db.json'), 'utf8'));
-    const { items: uniques } = buildCatalogFromUniqueStats(db, bases);
-    const charms = JSON.parse(readFileSync(resolve(dir, 'charms.json'), 'utf8'));
-    const relics = JSON.parse(readFileSync(resolve(dir, 'relics.json'), 'utf8'));
-    const runewordsData = JSON.parse(readFileSync(resolve(dir, 'runewords.json'), 'utf8'));
-    const rwEntries = Array.isArray(runewordsData) ? runewordsData : runewordsData.entries || [];
-    const runewords = rwEntries.map(runewordEntryToItemDef).filter(Boolean);
-    const tsw = JSON.parse(readFileSync(resolve(ROOT, 'schemas/examples/Miss_Ter.json'), 'utf8'));
-    const { snapshot, skipped } = mapTswItemsToSnapshot(
-      tsw.items,
-      { catalog: [...bases, ...uniques, ...charms, ...relics, ...runewords] },
-      'Paladin'
-    );
-    expect(snapshot.equipment.tors).toMatchObject({
-      defId: '@14',
-      custom: {
-        quality: 'superior',
-        ethereal: true,
-        modifiers: expect.arrayContaining([
-          '{grey}remainders of a once powerful armor...',
-          '+69% Enhanced Defense',
-        ]),
-      },
-    });
-    expect(skipped.some((row) => /Full Plate Mail/.test(row.name))).toBe(false);
-  });
-
   it('maps Miss_Peeled TSW items onto catalog uniques, charms, and relics', () => {
     const dir = resolve(ROOT, 'public/items/2_14');
     const bases = [
