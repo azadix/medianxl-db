@@ -5,8 +5,9 @@
 
 import { isCharmItem } from '@/items/charm-items.js';
 import { isRelicItem } from '@/items/relic-items.js';
+import { encodeModifierLine, MODIFIER_COLOR_GREY } from '@/items/item-modifier-line.js';
 
-/** @typedef {'magic'|'rare'|'crafted'|'honorific'|'angelic'} CustomItemQuality */
+/** @typedef {'magic'|'rare'|'crafted'|'honorific'|'angelic'|'superior'|'normal'} CustomItemQuality */
 
 /**
  * @typedef {{
@@ -21,6 +22,7 @@ import { isRelicItem } from '@/items/relic-items.js';
  *   damage2hDisplay?: string,
  *   throwDamageDisplay?: string,
  *   sockets?: number,
+ *   ethereal?: boolean,
  * }} CustomItemPayload
  */
 
@@ -31,16 +33,22 @@ export const CUSTOM_ITEM_QUALITIES = Object.freeze([
   'crafted',
   'honorific',
   'angelic',
+  'superior',
+  'normal',
 ]);
 
 const CUSTOM_QUALITY_SET = new Set(CUSTOM_ITEM_QUALITIES);
 
 const TSW_BASE_PREFIX_RE = /^(Superior |Ethereal |Low Quality |Cracked |Damaged |Crude )+/i;
+const TSW_BASE_ETH_RE = /\s*\[eth\]\s*$/i;
 const TSW_BASE_SUFFIX_RE =
   /\s*\((?:\d+|Sacred|Angelic|MC|TU|SU|SSU|SSSU|Honorific|Crafted|Rare|Magic|Mastercrafted)\)$/i;
 
 const NOT_STATS_RE =
   /^(Defense:|One-Hand Damage|Two-Hand Damage|Throw Damage|Required |Durability|Item Level|Quality Level|Prefixes:|Suffixes:|Socketed \(|Can be Inserted|Ethereal|Quantity|Chance to Block|\(.*\)$)/i;
+
+/** Sleep-awakening remnant armor flavor (show as grey, like Ethereal). */
+const REMNANT_FLAVOR_RE = /^remainders? of a once powerful/i;
 
 const DEFENSE_RE = /^Defense:\s*(.+)$/i;
 const DAMAGE_1H_RE = /^One-Hand Damage:\s*(.+)$/i;
@@ -122,6 +130,7 @@ export function parseCustomPayload(raw) {
   if (damage1hDisplay) out.damage1hDisplay = damage1hDisplay;
   if (damage2hDisplay) out.damage2hDisplay = damage2hDisplay;
   if (throwDamageDisplay) out.throwDamageDisplay = throwDamageDisplay;
+  if (rec.ethereal === true) out.ethereal = true;
   return out;
 }
 
@@ -179,6 +188,7 @@ export function applyCustomOverlayToDef(def, customRaw) {
   if (custom.throwDamageDisplay) {
     out.throwDamageDisplay = custom.throwDamageDisplay;
   }
+  if (custom.ethereal) out.ethereal = true;
   return out;
 }
 
@@ -189,7 +199,9 @@ export function applyCustomOverlayToDef(def, customRaw) {
 export function stripTswBaseLabel(text) {
   return String(text || '')
     .replace(TSW_BASE_PREFIX_RE, '')
+    .replace(TSW_BASE_ETH_RE, '')
     .replace(TSW_BASE_SUFFIX_RE, '')
+    .replace(TSW_BASE_ETH_RE, '')
     .trim();
 }
 
@@ -227,6 +239,9 @@ export function tswCustomQuality(row) {
   if (badge === 'CRAFTED') return 'crafted';
   if (badge === 'MAGIC') return 'magic';
   if (badge === 'RARE') return 'rare';
+  // Sleep-awakening remnant armor (and plain greys) arrive as High/Superior/Normal.
+  if (badge === 'SUPERIOR' || badge === 'HIGH') return 'superior';
+  if (badge === 'NORMAL') return 'normal';
   return null;
 }
 
@@ -258,7 +273,21 @@ export function tswDescriptionTexts(lines) {
 }
 
 /**
+ * Whether a TSW row is ethereal (`eth` / `is_eth` / `[eth]` type / Ethereal line).
+ * @param {object|null|undefined} row
+ * @returns {boolean}
+ */
+export function tswRowIsEthereal(row) {
+  if (!row || typeof row !== 'object') return false;
+  if (row.eth === true || row.is_eth === true) return true;
+  const type = row.type != null ? String(row.type) : '';
+  if (TSW_BASE_ETH_RE.test(type) || /\[eth\]/i.test(type)) return true;
+  return tswDescriptionTexts(row.description_lines).some((line) => /^Ethereal$/i.test(line));
+}
+
+/**
  * Rolled affix lines from a TSW item, minus name / defense / req / socket boilerplate.
+ * Remnant flavor is kept as a grey line; Ethereal is stored on the payload flag instead.
  * @param {object|null|undefined} row
  * @returns {string[]}
  */
@@ -277,6 +306,11 @@ export function tswCustomModifiers(row) {
   for (const line of tswDescriptionTexts(row?.description_lines)) {
     if (skip.has(line.toLowerCase())) continue;
     if (NOT_STATS_RE.test(line)) continue;
+    if (REMNANT_FLAVOR_RE.test(line)) {
+      const encoded = encodeModifierLine(line, MODIFIER_COLOR_GREY);
+      if (encoded) out.push(encoded);
+      continue;
+    }
     out.push(line);
   }
   return out;
@@ -348,6 +382,7 @@ export function tswCustomBaseFields(row) {
   if (reqLevelTotal != null && Number.isFinite(reqLevelTotal)) {
     out.reqLevel = Math.max(0, reqLevelTotal - reqLevelBonus);
   }
+  if (tswRowIsEthereal(row)) out.ethereal = true;
   return out;
 }
 
@@ -412,7 +447,8 @@ export function resolveCustomBaseDefId(row, cat, quality = null) {
     quality === 'crafted' ||
     quality === 'honorific' ||
     quality === 'angelic' ||
-    /\(Sacred\)/i.test(typeRaw);
+    /\(Sacred\)/i.test(typeRaw) ||
+    /\(Sacred\)/i.test(tswRowName(row));
   if (preferSacred) {
     const sacred = hits.find((d) => /\(sacred\)$/i.test(String(d.name || '')));
     if (sacred?.id) return String(sacred.id);

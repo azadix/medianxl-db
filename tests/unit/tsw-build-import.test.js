@@ -9,9 +9,11 @@ import {
   isTswEnvelope,
   mapTswItemsToSnapshot,
   resolveTswItemDefId,
+  resolveTswRunewordDefId,
   inferTswQuestsCompleted,
   TSW_SLOT_TO_EQUIPMENT,
 } from '@/planner/tsw-build-import.js';
+import { runewordEntryToItemDef } from '@/items/runeword-items.js';
 import { inferTswClassSkillsBonus } from '@/planner/tsw-item-rolls.js';
 import { CHARM_ROLL_KEYS, charmAffixRollKey } from '@/items/charm-items.js';
 import { relicAffixRollKey } from '@/items/relic-items.js';
@@ -21,6 +23,7 @@ const ROOT = resolve(import.meta.dirname, '../..');
 const catalog = {
   catalog: [
     { id: '@17', name: 'Skull Cap', rarity: 'normal', category: 'armor' },
+    { id: '@14', name: 'Full Plate Mail (Sacred)', rarity: 'normal', category: 'armor', slot: 'tors', sockets: 6 },
     { id: 'rin', name: 'Ring', rarity: 'normal', category: 'jewelry' },
     { id: 'amu', name: 'Amulet', rarity: 'normal', category: 'jewelry' },
     { id: '@36', name: 'Light Gauntlets (Sacred)', rarity: 'normal', category: 'armor', slot: 'glov' },
@@ -41,7 +44,16 @@ const catalog = {
       category: 'relics',
       rarity: 'relic',
     },
-  ],
+    runewordEntryToItemDef({
+      id: 'rw:lionheart',
+      name: 'Lionheart',
+      runeCode: 'OhmThulFal',
+      runes: ['Ohm', 'Thul', 'Fal'],
+      reqLevel: 80,
+      allowedTypes: ['Body Armors'],
+      modifiers: ['+20% Enhanced Damage'],
+    }),
+  ].filter(Boolean),
 };
 
 function byIdCatalog() {
@@ -233,6 +245,77 @@ describe('tsw-build-import', () => {
     });
   });
 
+  it('maps Sleep-awakening remnant superior Full Plate Mail onto the sacred base', () => {
+    const rows = [
+      {
+        item: 'Superior Full Plate Mail (Sacred)',
+        display_name: 'Superior Full Plate Mail (Sacred)',
+        type: 'Superior Full Plate Mail (Sacred) [eth]',
+        quality: 'High',
+        display_quality: 'Superior',
+        code: '@14',
+        image: 'invful',
+        eth: true,
+        is_rw: false,
+        location: 'Gear',
+        slot: 'Torso',
+        description_lines: [
+          [['Superior Full Plate Mail (Sacred)', 5]],
+          [['Defense: ', -1], ['8062', 3], [' (4771)', -1]],
+          [['Required Level: 30', -1]],
+          [['Required Strength: 690', -1]],
+          [['Ethereal', 5]],
+          [['remainders of a once powerful armor...', 5]],
+          [['+69% Enhanced Defense', 3]],
+          [['Socketed (0/6)', 3]],
+        ],
+      },
+    ];
+    const { snapshot, skipped } = mapTswItemsToSnapshot(rows, byIdCatalog());
+    expect(skipped).toEqual([]);
+    expect(snapshot.equipment.tors).toMatchObject({
+      defId: '@14',
+      icon: 'invful',
+      custom: {
+        quality: 'superior',
+        name: 'Superior Full Plate Mail (Sacred)',
+        defenseDisplay: '8062 (4771)',
+        reqLevel: 30,
+        reqStr: 690,
+        sockets: 6,
+        ethereal: true,
+        modifiers: ['{grey}remainders of a once powerful armor...', '+69% Enhanced Defense'],
+      },
+    });
+  });
+
+  it('maps a runeword in remnant Full Plate Mail to template + base id', () => {
+    const row = {
+      item: 'Lionheart',
+      display_name: 'Lionheart',
+      type: 'Superior Full Plate Mail (Sacred) [eth]',
+      quality: 'Unique',
+      display_quality: 'RW',
+      code: '@14',
+      image: 'invful',
+      is_rw: true,
+      location: 'Gear',
+      slot: 'Torso',
+      description_lines: [
+        [['Lionheart', 4]],
+        [['Full Plate Mail (Sacred)', -1]],
+        [['remainders of a once powerful armor...', 5]],
+        [['OhmOhmOhm', 4]],
+      ],
+    };
+    const cat = catalogIndexForTests();
+    expect(resolveTswRunewordDefId(row, cat)).toBe('rw:lionheart:@14');
+    expect(resolveTswItemDefId(row, cat)).toBe('rw:lionheart:@14');
+    const { snapshot, skipped } = mapTswItemsToSnapshot([row], byIdCatalog());
+    expect(skipped).toEqual([]);
+    expect(snapshot.equipment.tors).toEqual({ defId: 'rw:lionheart:@14', icon: 'invful' });
+  });
+
   it('resolves catalog ids used by the mapper', () => {
     const cat = catalogIndexForTests();
     expect(
@@ -243,6 +326,39 @@ describe('tsw-build-import', () => {
     ).toBe('u:lacuni-cowl:su');
     expect(resolveTswItemDefId({ display_name: "Horazon's Focus", code: 'a68' }, cat)).toBe('a68');
     expect(TSW_SLOT_TO_EQUIPMENT.Hands).toBe('glov');
+  });
+
+  it('maps Miss_Ter remnant torso through the real 2.14 catalog', () => {
+    const dir = resolve(ROOT, 'public/items/2_14');
+    const bases = [
+      ...JSON.parse(readFileSync(resolve(dir, 'baseitems.json'), 'utf8')),
+      ...JSON.parse(readFileSync(resolve(dir, 'other.json'), 'utf8')),
+    ];
+    const db = JSON.parse(readFileSync(resolve(dir, 'unique-stats-db.json'), 'utf8'));
+    const { items: uniques } = buildCatalogFromUniqueStats(db, bases);
+    const charms = JSON.parse(readFileSync(resolve(dir, 'charms.json'), 'utf8'));
+    const relics = JSON.parse(readFileSync(resolve(dir, 'relics.json'), 'utf8'));
+    const runewordsData = JSON.parse(readFileSync(resolve(dir, 'runewords.json'), 'utf8'));
+    const rwEntries = Array.isArray(runewordsData) ? runewordsData : runewordsData.entries || [];
+    const runewords = rwEntries.map(runewordEntryToItemDef).filter(Boolean);
+    const tsw = JSON.parse(readFileSync(resolve(ROOT, 'schemas/examples/Miss_Ter.json'), 'utf8'));
+    const { snapshot, skipped } = mapTswItemsToSnapshot(
+      tsw.items,
+      { catalog: [...bases, ...uniques, ...charms, ...relics, ...runewords] },
+      'Paladin'
+    );
+    expect(snapshot.equipment.tors).toMatchObject({
+      defId: '@14',
+      custom: {
+        quality: 'superior',
+        ethereal: true,
+        modifiers: expect.arrayContaining([
+          '{grey}remainders of a once powerful armor...',
+          '+69% Enhanced Defense',
+        ]),
+      },
+    });
+    expect(skipped.some((row) => /Full Plate Mail/.test(row.name))).toBe(false);
   });
 
   it('maps Miss_Peeled TSW items onto catalog uniques, charms, and relics', () => {

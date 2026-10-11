@@ -34,12 +34,15 @@ describe('custom-items', () => {
     expect(tswCustomQuality({ quality: 'Honorific' })).toBe('honorific');
     expect(tswCustomQuality({ quality: 'Magic' })).toBe('magic');
     expect(tswCustomQuality({ quality: 'Crafted' })).toBe('crafted');
+    expect(tswCustomQuality({ quality: 'High', display_quality: 'Superior' })).toBe('superior');
+    expect(tswCustomQuality({ quality: 'Normal', display_quality: 'Normal' })).toBe('normal');
   });
 
   it('strips TSW base labels and drops header lines from modifiers', () => {
     expect(stripTswBaseLabel('Superior Light Gauntlets (Angelic)')).toBe('Light Gauntlets');
     expect(stripTswBaseLabel('Cap (Sacred)')).toBe('Cap');
     expect(stripTswBaseLabel('Soulbinder Gloves (Mastercrafted)')).toBe('Soulbinder Gloves');
+    expect(stripTswBaseLabel('Superior Full Plate Mail (Sacred) [eth]')).toBe('Full Plate Mail');
     expect(
       tswCustomModifiers({
         display_name: 'Ring',
@@ -53,6 +56,69 @@ describe('custom-items', () => {
         ],
       })
     ).toEqual(['+1 to All Skills']);
+    expect(
+      tswCustomModifiers({
+        display_name: 'Superior Full Plate Mail (Sacred)',
+        type: 'Superior Full Plate Mail (Sacred) [eth]',
+        description_lines: [
+          [['Superior Full Plate Mail (Sacred)', 5]],
+          [['Defense: 8062 (4771)', -1]],
+          [['Ethereal', 5]],
+          [['remainders of a once powerful armor...', 5]],
+          [['+69% Enhanced Defense', 3]],
+          [['Socketed (0/6)', 3]],
+        ],
+      })
+    ).toEqual(['{grey}remainders of a once powerful armor...', '+69% Enhanced Defense']);
+  });
+
+  it('snapshots Sleep-awakening remnant superior armor onto the sacred base', () => {
+    const entry = tswCustomSnapshotEntry(
+      {
+        display_name: 'Superior Full Plate Mail (Sacred)',
+        type: 'Superior Full Plate Mail (Sacred) [eth]',
+        quality: 'High',
+        display_quality: 'Superior',
+        code: '@14',
+        image: 'invful',
+        eth: true,
+        description_lines: [
+          [['Superior Full Plate Mail (Sacred)', 5]],
+          [['Defense: ', -1], ['8062', 3], [' (4771)', -1]],
+          [['Required Level: 30', -1]],
+          [['Required Strength: 690', -1]],
+          [['Ethereal', 5]],
+          [['remainders of a once powerful armor...', 5]],
+          [['+69% Enhanced Defense', 3]],
+          [['Socketed (0/6)', 3]],
+        ],
+      },
+      '@14',
+      'superior'
+    );
+    expect(entry).toMatchObject({
+      defId: '@14',
+      icon: 'invful',
+      custom: {
+        quality: 'superior',
+        name: 'Superior Full Plate Mail (Sacred)',
+        defenseDisplay: '8062 (4771)',
+        reqLevel: 30,
+        reqStr: 690,
+        sockets: 6,
+        ethereal: true,
+        modifiers: ['{grey}remainders of a once powerful armor...', '+69% Enhanced Defense'],
+      },
+    });
+    const def = applyCustomOverlayToDef(
+      { id: '@14', name: 'Full Plate Mail (Sacred)', rarity: 'normal' },
+      entry.custom
+    );
+    expect(formatItemRarityBadge(def)).toBe('Superior');
+    expect(def.ethereal).toBe(true);
+    expect(getItemStatLines(def)).toEqual(
+      expect.arrayContaining(['{grey}Ethereal', '{grey}remainders of a once powerful armor...'])
+    );
   });
 
   it('overlays rarity, name, and modifiers onto a catalog base', () => {

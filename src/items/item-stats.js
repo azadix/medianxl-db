@@ -68,6 +68,7 @@ export function formatItemRarityBadge(def) {
   if (rarity === 'crafted') return 'Crafted';
   if (rarity === 'rare') return 'Rare';
   if (rarity === 'magic') return 'Magic';
+  if (rarity === 'superior') return 'Superior';
   if (rarity === 'relic') return 'Relic';
   return '';
 }
@@ -256,6 +257,7 @@ const RARITY_SUBTITLE_WORD = Object.freeze({
   crafted: 'Crafted',
   honorific: 'Honorific',
   angelic: 'Angelic',
+  superior: 'Superior',
 });
 
 /**
@@ -284,7 +286,8 @@ export function formatItemTooltipSubtitle(def) {
   const typeWord = def.group || ITEM_CATEGORY_LABEL[def.category] || def.category || '';
   const left = [rarityWord, typeWord].filter(Boolean).join(' ').toUpperCase();
   const badge = formatItemRarityBadge(def);
-  const skipBadge = !badge || /^(Unique|Set|RW|Crafted|Rare|Magic|Relic|Honorific|Angelic)$/i.test(badge);
+  const skipBadge =
+    !badge || /^(Unique|Set|RW|Crafted|Rare|Magic|Relic|Honorific|Angelic|Superior)$/i.test(badge);
   if (!skipBadge && badge) return left ? `${left} · ${badge}` : badge;
   return left;
 }
@@ -409,6 +412,7 @@ export function getItemStatSections(def, rolls = null, options = {}) {
   if (def.range != null) base.push(`Melee range: ${def.range}`);
   if (def.speed != null) base.push(`Attack Speed Modifier: ${def.speed}`);
   if (def.movePenalty != null) base.push(`Movement Speed Penalty: ${def.movePenalty}`);
+  if (def.ethereal) base.push('{grey}Ethereal');
 
   if (def.strDamageBonus != null) {
     scaling.push(`Strength Damage Bonus: (${def.strDamageBonus} per Strength)%`);

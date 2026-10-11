@@ -19,6 +19,11 @@ import {
   tswCustomQuality,
   tswCustomSnapshotEntry,
 } from '@/items/custom-items.js';
+import {
+  isRunewordTemplate,
+  mergedRunewordId,
+  resolveRunewordTemplateId,
+} from '@/items/runeword-items.js';
 
 /** @type {Readonly<Record<string, string>>} */
 export const TSW_SLOT_TO_EQUIPMENT = Object.freeze({
@@ -261,11 +266,41 @@ function defMatchesRow(def, row) {
 }
 
 /**
+ * Runeword template + grey base → `rw:name:baseId` (merged at snapshot load).
+ * Remnant / superior Full Plate Mail uses the same sacred base as other greys.
+ * @param {object} row
+ * @param {{ list: object[], byId: Record<string, object> }} cat
+ * @returns {string|null}
+ */
+export function resolveTswRunewordDefId(row, cat) {
+  const name = tswItemDisplayName(row);
+  const slug = slugify(name);
+  if (!slug) return null;
+
+  let templateId = resolveRunewordTemplateId(`rw:${slug}`);
+  if (!cat.byId[templateId]) {
+    const want = normName(name);
+    const hits = cat.list.filter((def) => isRunewordTemplate(def) && normName(def.name) === want);
+    if (hits.length !== 1 || hits[0]?.id == null) return null;
+    templateId = resolveRunewordTemplateId(String(hits[0].id));
+  }
+  if (!cat.byId[templateId] || !isRunewordTemplate(cat.byId[templateId])) return null;
+
+  const baseId = resolveCustomBaseDefId(row, cat, null);
+  if (!baseId || !cat.byId[baseId]) return null;
+  return mergedRunewordId(templateId, baseId);
+}
+
+/**
  * @param {object} row
  * @param {{ list: object[], byId: Record<string, object> }} cat
  * @returns {string|null}
  */
 export function resolveTswItemDefId(row, cat) {
+  if (row?.is_rw || qualityBadge(row) === 'RW') {
+    return resolveTswRunewordDefId(row, cat);
+  }
+
   const code = row?.code != null ? String(row.code).trim() : '';
   const codeDef = code ? cat.byId[code] : null;
   // Unique gear codes collide with base item ids (e.g. Lacuni Cowl `@17`). Only trust
@@ -397,6 +432,29 @@ export function mapTswItemsToSnapshot(rows, catalog, className = null) {
         continue;
       }
       equipment[slotKey] = tswCustomSnapshotEntry(row, defId, customQuality);
+      continue;
+    }
+
+    if (row?.is_rw || qualityBadge(row) === 'RW') {
+      if (location !== 'Gear') {
+        skipped.push({ name, reason: 'uncatalogued' });
+        continue;
+      }
+      const slotKey = TSW_SLOT_TO_EQUIPMENT[String(row.slot || '')];
+      if (!slotKey) {
+        skipped.push({ name, reason: 'unknown-slot' });
+        continue;
+      }
+      const defId = resolveTswRunewordDefId(row, cat);
+      if (!defId) {
+        skipped.push({ name, reason: 'uncatalogued' });
+        continue;
+      }
+      /** @type {{ defId: string, icon?: string }} */
+      const entry = { defId };
+      const icon = row?.image != null ? String(row.image).trim() : '';
+      if (icon) entry.icon = icon;
+      equipment[slotKey] = entry;
       continue;
     }
 
