@@ -172,7 +172,9 @@ describe('getItemStatSections', () => {
     expect(innateLines).toEqual(['Innate Fire Damage: (80.0% of Strength)']);
     expect(sections.base).not.toContain('Fire Damage');
     expect(sections.scaling).toContain('Innate Fire Damage: (80.0% of Strength)');
+    expect(sections.scaling.at(-1)).toBe('Socketed (6)');
     expect(sections.mods).toContain('Adds 250-350 Fire Damage');
     expect(sections.mods).not.toContain('Innate Fire Damage: (80.0% of Strength)');
+    expect(sections.mods).not.toContain('Socketed (6)');
   });
 });

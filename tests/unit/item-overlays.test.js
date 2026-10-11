@@ -97,7 +97,7 @@ describe('overlay affix rolls', () => {
     expect(rows.some((r) => r.kind === 'roll' && r.stat.key === 'defense')).toBe(false);
     expect(rows.some((r) => r.kind === 'roll' && r.stat.key.startsWith('modAffix:'))).toBe(true);
     const socketRow = rows.find((r) => r.kind === 'text' && String(r.text).includes('Socketed'));
-    expect(socketRow?.section).toBe('mod');
+    expect(socketRow?.section).toBe('base');
   });
 
   it('keeps orange encoding on static detail rows', () => {

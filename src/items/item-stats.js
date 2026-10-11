@@ -427,6 +427,20 @@ export function getItemStatSections(def, rolls = null, options = {}) {
     }
   }
 
+  // Socketed sits at the bottom of the base block (after damage/defense/scaling).
+  if (def.sockets > 0) {
+    const filled = rolls && Number.isFinite(rolls.sockets) ? rolls.sockets : null;
+    if (rollableKeys?.has('sockets')) {
+      // Roll controls shown elsewhere - skip static sockets line.
+    } else if (overlay) {
+      scaling.push(`Socketed (${def.sockets})`);
+    } else if (filled != null) {
+      if (filled > 0) scaling.push(`Socketed (${filled})`);
+    } else {
+      scaling.push(`Socketed (${def.sockets})`);
+    }
+  }
+
   if (def.adds) {
     const adds = String(def.adds);
     const alreadyListed =
@@ -434,18 +448,6 @@ export function getItemStatSections(def, rolls = null, options = {}) {
     if (!alreadyListed) mods.push(adds);
   }
   if (!overlay && def.attackModifier) mods.push(String(def.attackModifier));
-  if (def.sockets > 0) {
-    const filled = rolls && Number.isFinite(rolls.sockets) ? rolls.sockets : null;
-    if (rollableKeys?.has('sockets')) {
-      // Roll controls shown elsewhere - skip static sockets line.
-    } else if (overlay) {
-      mods.push(`Socketed (${def.sockets})`);
-    } else if (filled != null) {
-      if (filled > 0) mods.push(`Socketed (${filled})`);
-    } else {
-      mods.push(`Socketed (${def.sockets})`);
-    }
-  }
 
   if (isCharmItem(def)) {
     mods.push(
@@ -501,7 +503,7 @@ export function getItemStatLines(def, rolls = null, options = {}) {
 export function getItemDetailStatRows(def, rolls = null, options = {}) {
   if (!def || typeof def !== 'object') return [];
   const className = options.className ?? null;
-  // Match tooltip sectioning (base/scaling vs mods) so Socketed etc. sit with affixes.
+  // Match tooltip sectioning (base/scaling vs mods); Socketed is last in the base block.
   const sections = getItemStatSections(def, rolls, {
     hideRollableRanges: true,
     characterLevel: options.characterLevel ?? null,
@@ -549,7 +551,8 @@ export function getItemDetailStatRows(def, rolls = null, options = {}) {
     return rows;
   }
   for (const stat of getRollableStats(def, rolls, { className })) {
-    rows.push({ kind: 'roll', stat, section: 'mod' });
+    const section = stat.key === 'sockets' ? 'base' : 'mod';
+    rows.push({ kind: 'roll', stat, section });
   }
   return rows;
 }
