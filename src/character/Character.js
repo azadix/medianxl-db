@@ -9,7 +9,10 @@ import {
   createEmptyRegisteredStatsObject
 } from './planner-stats-config.js';
 import { getPlannerSkillsSnapshot } from './planner-snapshot.js';
-import { minCharacterLevelForAllocatedSkillPoints } from '@/skills/domain/skill-calculations.js';
+import {
+  minCharacterLevelForAllocatedSkillPoints,
+  minCharacterLevelForSkillRank,
+} from '@/skills/domain/skill-calculations.js';
 import { catalogRowUsesPlannerBonusToggle } from '@/skills/domain/skill-skill-types.js';
 import { getFileSkillStore } from '@/shared/skill-data-store.js';
 
@@ -852,7 +855,7 @@ export default class Character {
               if (Number.isFinite(requiredLevel)) {
                 minLevelFromPrerequisites = Math.max(
                   minLevelFromPrerequisites,
-                  requiredLevel
+                  minCharacterLevelForSkillRank(requiredLevel, pointsInSkill)
                 );
               }
             }

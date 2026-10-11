@@ -397,6 +397,21 @@ export function skillMaxLevelScalesWithCharacterLevel(skillId, skillLevels = {})
 }
 
 /**
+ * Minimum character level to hold `hardPoints` in a skill with base reqlevel.
+ * Matches Median XL skpoints gate: reqlevel + hardpoints - 1 (skcp/skcn = 0).
+ * @param {number} reqLevel - skills.txt reqlevel / tree character_level prereq
+ * @param {number} hardPoints - Allocated hard points (blvl) in this skill
+ * @returns {number}
+ */
+export function minCharacterLevelForSkillRank(reqLevel, hardPoints) {
+  const points = Math.floor(Number(hardPoints) || 0);
+  if (points <= 0) return Character.MIN_LEVEL;
+  const req = Math.floor(Number(reqLevel) || 0);
+  if (!Number.isFinite(req) || req <= 0) return Character.MIN_LEVEL;
+  return req + points - 1;
+}
+
+/**
  * Minimum character level (ulvl) needed to legally hold `points` in this skill, from max-level modifiers only.
  * Returns {@link Character.MIN_LEVEL} when the skill does not scale max with ulvl.
  * @param {string} skillId
