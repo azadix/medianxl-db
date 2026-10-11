@@ -23,20 +23,22 @@ const tooltipHtmlByKey = new Map();
 /**
  * @param {string} skillId
  * @param {number} level
+ * @param {boolean} showFormulas
  * @returns {string}
  */
-function tooltipCacheKey(skillId, level) {
+function tooltipCacheKey(skillId, level, showFormulas) {
   const folder = versionToTreeAssetFolder(getCurrentVersion());
-  return `${folder}:${skillId}:lvl${level}`;
+  return `${folder}:${skillId}:lvl${level}:f${showFormulas ? 1 : 0}`;
 }
 
 /**
  * @param {object} detail
  * @param {string|null|undefined} text
  * @param {number} level
+ * @param {boolean} showFormulas
  * @returns {Promise<string>}
  */
-async function expandAtLevel(detail, text, level) {
+async function expandAtLevel(detail, text, level, showFormulas) {
   const source = String(text || '').trim();
   if (!source) return '';
   const skillId = String(detail.id);
@@ -54,24 +56,27 @@ async function expandAtLevel(detail, text, level) {
     source,
     skillId,
     characterState,
-    false,
+    showFormulas,
     null
   );
   return String(expanded || '');
 }
 
 /**
- * Build tooltip HTML for a skill as if it were exactly `level` (proc slvl).
+ * Build tooltip HTML for a skill as if it were exactly `level` (proc/grant slvl).
+ * No planner sources panel — fixed preview only.
  * @param {string} skillId
  * @param {number} level
+ * @param {{ showFormulas?: boolean }} [options]
  * @returns {Promise<string>}
  */
-export async function buildFixedLevelSkillTooltipHtml(skillId, level) {
+export async function buildFixedLevelSkillTooltipHtml(skillId, level, options = {}) {
   const id = String(skillId || '').trim();
   const lvl = Math.max(1, Math.floor(Number(level) || 1));
+  const showFormulas = Boolean(options?.showFormulas);
   if (!id) return '';
 
-  const cacheKey = tooltipCacheKey(id, lvl);
+  const cacheKey = tooltipCacheKey(id, lvl, showFormulas);
   if (tooltipHtmlByKey.has(cacheKey)) {
     return tooltipHtmlByKey.get(cacheKey) || '';
   }
@@ -91,9 +96,9 @@ export async function buildFixedLevelSkillTooltipHtml(skillId, level) {
   let expandedBlocks;
   try {
     expandedBlocks = {
-      descriptionExpanded: await expandAtLevel(detail, detail.description, lvl),
-      effectExpanded: await expandAtLevel(detail, detail.skill_effect, lvl),
-      restrictionExpanded: await expandAtLevel(detail, detail.restriction, lvl),
+      descriptionExpanded: await expandAtLevel(detail, detail.description, lvl, showFormulas),
+      effectExpanded: await expandAtLevel(detail, detail.skill_effect, lvl, showFormulas),
+      restrictionExpanded: await expandAtLevel(detail, detail.restriction, lvl, showFormulas),
     };
   } catch (error) {
     console.warn('Fixed-level skill tooltip expansion failed:', error);

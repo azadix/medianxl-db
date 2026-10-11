@@ -9,6 +9,7 @@ import {
   buildSkillTooltipRestrictionBlock,
   buildSkillTooltipScalingBlockHtml,
   wrapSkillTooltipContent,
+  NESTED_SKILL_LEVEL_ATTR,
 } from '@/shared/tooltip-html.js';
 import {
   getSkillPoints,
@@ -94,7 +95,18 @@ const POINTER_AWAY_HIDE_MS = 1000;
 let ctrlKeyPressed = false;
 /** True while the live skill tooltip was opened from a nested skill name hover. */
 let nestedSkillTooltipActive = false;
+/** Fixed grant/proc level for nested item tooltips; null = use planner/tree path. */
+let nestedFixedLevel = null;
 const NESTED_SKILL_TOOLTIP_Z = '10070';
+
+/**
+ * @param {string} skillId
+ * @param {number} level
+ * @returns {Promise<string>}
+ */
+function buildNestedFixedLevelHtml(skillId, level) {
+    return buildFixedLevelSkillTooltipHtml(skillId, level, { showFormulas: ctrlKeyPressed });
+}
 
 /**
  * Refresh the open tooltip when Ctrl modifier state flips (raw formulas).
@@ -102,7 +114,10 @@ const NESTED_SKILL_TOOLTIP_Z = '10070';
 function refreshTooltipForModifierKeys() {
     if (tooltipElement && tooltipElement.style.display !== 'none' && currentHoveredSkill) {
         handleSkillPointsChanged(null);
+        return;
     }
+    // Pinned hosts keep getHtml that reads ctrlKeyPressed; refresh even if live portal is gone.
+    void refreshPinnedHosts((host) => host.kind === 'skill');
 }
 
 function tooltipDataSourceReady() {
@@ -317,6 +332,7 @@ async function handleMouseOver(e) {
     }
     clearPointerAwayHideTimer();
     nestedSkillTooltipActive = false;
+    nestedFixedLevel = null;
     if (tooltipElement) tooltipElement.style.zIndex = '';
 
     currentHoveredSkill = skillId;
@@ -416,6 +432,29 @@ async function handleSkillPointsChanged(preferredCard = null) {
     if (currentHoveredSkill && tooltipElement && tooltipElement.style.display !== 'none') {
         if (!tooltipDataSourceReady()) return;
 
+        // Item grant/proc nested previews stay on the fixed-level path (no sources panel).
+        if (nestedSkillTooltipActive && nestedFixedLevel != null) {
+            const content = await buildNestedFixedLevelHtml(
+                currentHoveredSkill,
+                nestedFixedLevel
+            );
+            if (content) {
+                tooltipElement.innerHTML = content;
+                updateLiveTooltipBinding(tooltipElement, {
+                    getHtml: () =>
+                        buildNestedFixedLevelHtml(currentHoveredSkill, nestedFixedLevel),
+                    meta: {
+                        skillId: currentHoveredSkill,
+                        nested: true,
+                        fixedLevel: nestedFixedLevel,
+                    },
+                });
+                updateTooltipPosition(lastMouseX, lastMouseY);
+            }
+            await refreshPinnedHosts((host) => host.kind === 'skill');
+            return;
+        }
+
         const skillCard = pickSkillCardForTooltip(preferredCard);
         const classIdNum = parseClassIdDataset(skillCard?.dataset?.classId);
         const skillData = getSkillDataFromStore(currentHoveredSkill, classIdNum);
@@ -511,7 +550,8 @@ export function bindPlannerNestedSkillTooltipHandlers() {
     }
     if (!tooltipElement) return;
     setNestedSkillTooltipHandlers({
-        showSkill: (skillId, clientX, clientY) => showNestedSkillTooltip(skillId, clientX, clientY),
+        showSkill: (skillId, clientX, clientY, fromEl) =>
+            showNestedSkillTooltip(skillId, clientX, clientY, fromEl),
         moveSkill: (clientX, clientY) => {
             lastMouseX = clientX;
             lastMouseY = clientY;
@@ -523,24 +563,58 @@ export function bindPlannerNestedSkillTooltipHandlers() {
 }
 
 /**
+ * @param {HTMLElement|null|undefined} fromEl
+ * @returns {number|null}
+ */
+function readNestedFixedLevel(fromEl) {
+    if (!(fromEl instanceof Element)) return null;
+    const raw = fromEl.getAttribute(NESTED_SKILL_LEVEL_ATTR);
+    if (raw == null || String(raw).trim() === '') return null;
+    const lvl = Math.floor(Number(raw));
+    return Number.isFinite(lvl) && lvl > 0 ? lvl : null;
+}
+
+/**
  * Nested skill tooltip from a pinned/stuck tooltip skill name.
- * Prefers the live planner tooltip when the skill is on the tree; else fixed-level.
+ * Item grant/proc lines with a fixed level always use that level (no sources panel).
+ * Otherwise prefers the live planner tooltip when the skill is on the tree.
  * @param {string} skillId
  * @param {number} clientX
  * @param {number} clientY
+ * @param {HTMLElement|null|undefined} [fromEl]
  */
-async function showNestedSkillTooltip(skillId, clientX, clientY) {
+async function showNestedSkillTooltip(skillId, clientX, clientY, fromEl = null) {
     const id = String(skillId || '').trim();
     if (!id || !tooltipElement) return;
     nestedSkillTooltipActive = true;
+    nestedFixedLevel = readNestedFixedLevel(fromEl);
     clearPointerAwayHideTimer();
     lastMouseX = clientX;
     lastMouseY = clientY;
     currentHoveredSkill = id;
+    lastHoveredSkillCard = null;
     // Position before paint so the portal never flashes at its static (body-end) spot.
     tooltipElement.style.left = `${Math.max(0, clientX + 15)}px`;
     tooltipElement.style.top = `${Math.max(0, clientY + 15)}px`;
     tooltipElement.style.zIndex = NESTED_SKILL_TOOLTIP_Z;
+
+    if (nestedFixedLevel != null) {
+        const level = nestedFixedLevel;
+        const html = await buildNestedFixedLevelHtml(id, level);
+        if (!html) return;
+        if (!nestedSkillTooltipActive || currentHoveredSkill !== id || nestedFixedLevel !== level) {
+            return;
+        }
+        tooltipElement.innerHTML = html;
+        tooltipElement.style.display = 'block';
+        updateLiveTooltipBinding(tooltipElement, {
+            getHtml: () => buildNestedFixedLevelHtml(id, level),
+            meta: { skillId: id, nested: true, fixedLevel: level },
+        });
+        updateTooltipPosition(clientX, clientY);
+        maybeAltStickLiveTooltip(tooltipElement);
+        return;
+    }
 
     const treeCard = document.querySelector(`.skill-card[data-skill-id="${id}"]`);
     if (treeCard) {
@@ -553,14 +627,14 @@ async function showNestedSkillTooltip(skillId, clientX, clientY) {
         return;
     }
 
-    const html = await buildFixedLevelSkillTooltipHtml(id, 1);
+    const html = await buildNestedFixedLevelHtml(id, 1);
     if (!html) return;
     // Abort if hover already moved on during await.
     if (!nestedSkillTooltipActive || currentHoveredSkill !== id) return;
     tooltipElement.innerHTML = html;
     tooltipElement.style.display = 'block';
     updateLiveTooltipBinding(tooltipElement, {
-        getHtml: () => buildFixedLevelSkillTooltipHtml(id, 1),
+        getHtml: () => buildNestedFixedLevelHtml(id, 1),
         meta: { skillId: id, nested: true },
     });
     updateTooltipPosition(clientX, clientY);
@@ -572,9 +646,12 @@ async function showNestedSkillTooltip(skillId, clientX, clientY) {
  */
 async function rebuildCurrentSkillTooltipHtml() {
     if (!currentHoveredSkill || !tooltipDataSourceReady()) return '';
+    if (nestedFixedLevel != null) {
+        return buildNestedFixedLevelHtml(currentHoveredSkill, nestedFixedLevel);
+    }
     const skillCard = pickSkillCardForTooltip(lastHoveredSkillCard);
     if (!skillCard) {
-        return buildFixedLevelSkillTooltipHtml(currentHoveredSkill, 1);
+        return buildNestedFixedLevelHtml(currentHoveredSkill, 1);
     }
     const classIdNum = parseClassIdDataset(skillCard?.dataset?.classId);
     const skillData = getSkillDataFromStore(currentHoveredSkill, classIdNum);
@@ -602,6 +679,7 @@ function hideTooltip(force = false) {
     if (!force && shouldSuppressLiveTooltipHide(tooltipElement)) return;
     clearPointerAwayHideTimer();
     nestedSkillTooltipActive = false;
+    nestedFixedLevel = null;
     if (tooltipElement) {
         tooltipElement.style.display = 'none';
         tooltipElement.style.zIndex = '';
@@ -1223,6 +1301,8 @@ export function destroyTooltip() {
     
     // Reset Ctrl key state
     ctrlKeyPressed = false;
+    nestedSkillTooltipActive = false;
+    nestedFixedLevel = null;
 }
 
 function resolveTooltipContext(skillCard, skillData, skillId) {

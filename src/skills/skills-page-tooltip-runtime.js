@@ -65,17 +65,21 @@ export function bindSkillsPageNestedSkillTooltipHandlers() {
   }
   if (!skillPortal) return;
   setNestedSkillTooltipHandlers({
-    showSkill: async (skillId, clientX, clientY) => {
+    showSkill: async (skillId, clientX, clientY, fromEl) => {
       if (!skillPortal) return;
       skillPortal.style.left = `${Math.max(0, clientX + 15)}px`;
       skillPortal.style.top = `${Math.max(0, clientY + 15)}px`;
       skillPortal.style.zIndex = '10070';
-      const html = await buildFixedLevelSkillTooltipHtml(skillId, 1);
+      const rawLevel = fromEl instanceof Element ? fromEl.getAttribute('data-tooltip-skill-level') : null;
+      const parsedLevel = Math.floor(Number(rawLevel));
+      const level =
+        rawLevel != null && Number.isFinite(parsedLevel) && parsedLevel > 0 ? parsedLevel : 1;
+      const html = await buildFixedLevelSkillTooltipHtml(skillId, level);
       if (!html) return;
-      lastPresent = { kind: 'skill', target: null, skillId, level: 1 };
+      lastPresent = { kind: 'skill', target: null, skillId, level };
       present(skillPortal, html, clientX, clientY, {
-        getHtml: () => buildFixedLevelSkillTooltipHtml(skillId, 1),
-        meta: { skillId, nested: true },
+        getHtml: () => buildFixedLevelSkillTooltipHtml(skillId, level),
+        meta: { skillId, nested: true, fixedLevel: level },
       });
       if (skillPortal) skillPortal.style.zIndex = '10070';
     },

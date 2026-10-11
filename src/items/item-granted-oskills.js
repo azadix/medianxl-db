@@ -38,7 +38,10 @@ import { EQUIPMENT_SLOTS } from '@/items/item-types.js';
 import { countEquippedSetPieces, resolveSetBonuses } from '@/items/item-overlays.js';
 import { escapeHtmlText, SCALING_DISPLAY_HTML_CLASSES } from '@/shared/utils.js';
 import { lookupMergedDisplayNameByInternalName } from '@/shared/skill-data-store.js';
-import { wrapNestedSkillTooltipHtml } from '@/shared/tooltip-html.js';
+import {
+  parseNestedSkillMarker,
+  wrapNestedSkillTooltipHtml,
+} from '@/shared/tooltip-html.js';
 
 /** Must match {@link overlayAffixRollKey} prefix in item-overlays (avoid import cycle). */
 const EQUIP_AFFIX_ROLL_PREFIX = 'modAffix:';
@@ -136,7 +139,7 @@ export function matchCatalogSkillGrantFromLine(line) {
 /**
  * Match a chance-to-cast line to a catalog skill for green name markup.
  * @param {string|null|undefined} line
- * @returns {{ skillId: string, displayName: string, skillNameInLine: string }|null}
+ * @returns {{ skillId: string, displayName: string, skillNameInLine: string, level: number }|null}
  */
 export function matchCatalogProcSkillFromLine(line) {
   const parsed = parseProcFromModifierLine(line);
@@ -147,10 +150,12 @@ export function matchCatalogProcSkillFromLine(line) {
     cat.displayName != null && String(cat.displayName).trim() !== ''
       ? String(cat.displayName).trim()
       : String(parsed.skillName).trim();
+  const level = Math.floor(Number(parsed.level));
   return {
     skillId: String(cat.id),
     displayName,
     skillNameInLine: String(parsed.skillName).trim(),
+    level: Number.isFinite(level) && level > 0 ? level : 1,
   };
 }
 
@@ -169,6 +174,10 @@ export function wrapNamedSkillGrantMarkers(line) {
   if (grant) {
     const skillName = String(grant.displayName || '').trim();
     if (!skillName) return text;
+    const marker =
+      Number.isFinite(grant.amount) && grant.amount > 0
+        ? `${grant.skillId}:${Math.floor(grant.amount)}`
+        : grant.skillId;
     // Allow "+1 to passive Bear Stance" — keep "passive" as plain text, wrap the skill.
     const re = grant.classOnly
       ? new RegExp(
@@ -179,7 +188,7 @@ export function wrapNamedSkillGrantMarkers(line) {
           `(\\s+to\\s+)(?:passive\\s+)?${escapeRegExp(skillName)}(\\s*)$`,
           'i'
         );
-    return prefix + body.replace(re, `$1[[${grant.skillId}]]$2`);
+    return prefix + body.replace(re, `$1[[${marker}]]$2`);
   }
 
   const maxBase = parseMaxBaseLevelBonusFromModifierLine(body);
@@ -205,11 +214,15 @@ export function wrapNamedSkillGrantMarkers(line) {
   if (!proc) return text;
   const skillName = proc.skillNameInLine || proc.displayName;
   if (!skillName) return text;
+  const marker =
+    Number.isFinite(proc.level) && proc.level > 0
+      ? `${proc.skillId}:${Math.floor(proc.level)}`
+      : proc.skillId;
   const re = new RegExp(
     `(level\\s+\\d+\\s+)${escapeRegExp(skillName)}(\\s+(?:on|when)\\s+)`,
     'i'
   );
-  const replaced = body.replace(re, `$1[[${proc.skillId}]]$2`);
+  const replaced = body.replace(re, `$1[[${marker}]]$2`);
   if (replaced === body) return text;
   return prefix + replaced;
 }
@@ -235,12 +248,13 @@ export function formatItemModifierLineHtml(line) {
   let match;
   while ((match = re.exec(marked)) !== null) {
     out += escapeHtmlText(marked.slice(cursor, match.index));
-    const id = String(match[1] || '').trim();
-    const display = lookupMergedDisplayNameByInternalName(id) || id;
+    const { skillId, level } = parseNestedSkillMarker(match[1]);
+    const display = lookupMergedDisplayNameByInternalName(skillId) || skillId;
     out += wrapNestedSkillTooltipHtml(
-      id,
+      skillId,
       escapeHtmlText(display),
-      SCALING_DISPLAY_HTML_CLASSES.skill
+      SCALING_DISPLAY_HTML_CLASSES.skill,
+      level
     );
     cursor = match.index + match[0].length;
   }

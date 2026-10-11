@@ -7,6 +7,8 @@ import {
   buildSkillTooltipScalingBlockHtml,
   buildSkillBonusSourcesTableHtml,
   wrapSkillTooltipContent,
+  wrapNestedSkillTooltipHtml,
+  parseNestedSkillMarker,
   buildSkillTooltipDisabledBannerHtml,
   buildSkillTooltipPrerequisiteWarningHtml,
 } from '@/shared/tooltip-html.js';
@@ -121,6 +123,28 @@ describe('buildSkillTooltipScalingBlockHtml', () => {
     expect(html).toContain('tooltip-scaling');
     expect(html).toContain('a &lt;b&gt; &amp; &quot;c&quot;');
     expect(html).not.toContain('<b>');
+  });
+});
+
+describe('wrapNestedSkillTooltipHtml', () => {
+  it('wraps skill id and optional fixed level', () => {
+    const html = wrapNestedSkillTooltipHtml('amatoxin', 'Amatoxin', 'has-text-success', 23);
+    expect(html).toContain('data-tooltip-skill-id="amatoxin"');
+    expect(html).toContain('data-tooltip-skill-level="23"');
+    expect(html).toContain('Amatoxin');
+  });
+
+  it('omits level attr when level is missing', () => {
+    const html = wrapNestedSkillTooltipHtml('amatoxin', 'Amatoxin');
+    expect(html).toContain('data-tooltip-skill-id="amatoxin"');
+    expect(html).not.toContain('data-tooltip-skill-level');
+  });
+});
+
+describe('parseNestedSkillMarker', () => {
+  it('parses id and level', () => {
+    expect(parseNestedSkillMarker('teleport:9')).toEqual({ skillId: 'teleport', level: 9 });
+    expect(parseNestedSkillMarker('teleport')).toEqual({ skillId: 'teleport', level: null });
   });
 });
 

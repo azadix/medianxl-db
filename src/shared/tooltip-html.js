@@ -130,20 +130,46 @@ export function buildSkillTooltipDescriptionBlock(options) {
 }
 
 export const NESTED_SKILL_ATTR = 'data-tooltip-skill-id';
+export const NESTED_SKILL_LEVEL_ATTR = 'data-tooltip-skill-level';
 
 /**
  * Wrap a skill display name as a nested-hover target.
  * @param {string} skillId
  * @param {string} displayHtmlAlreadyEscaped
  * @param {string} [className]
+ * @param {number|null|undefined} [level] - Fixed skill level from the host line (grant/proc)
  * @returns {string}
  */
-export function wrapNestedSkillTooltipHtml(skillId, displayHtmlAlreadyEscaped, className = '') {
+export function wrapNestedSkillTooltipHtml(
+  skillId,
+  displayHtmlAlreadyEscaped,
+  className = '',
+  level = null
+) {
   const id = String(skillId || '').trim();
   if (!id) return displayHtmlAlreadyEscaped;
   const cls = ['js-nested-tooltip-skill', className].filter(Boolean).join(' ');
   const safeId = id.replace(/"/g, '&quot;');
-  return `<span class="${cls}" ${NESTED_SKILL_ATTR}="${safeId}">${displayHtmlAlreadyEscaped}</span>`;
+  const lvl = Math.floor(Number(level));
+  const levelAttr =
+    Number.isFinite(lvl) && lvl > 0 ? ` ${NESTED_SKILL_LEVEL_ATTR}="${lvl}"` : '';
+  return `<span class="${cls}" ${NESTED_SKILL_ATTR}="${safeId}"${levelAttr}>${displayHtmlAlreadyEscaped}</span>`;
+}
+
+/**
+ * Parse optional fixed level from a nested skill marker like `id` or `id:23`.
+ * @param {string|null|undefined} raw
+ * @returns {{ skillId: string, level: number|null }}
+ */
+export function parseNestedSkillMarker(raw) {
+  const text = String(raw || '').trim();
+  if (!text) return { skillId: '', level: null };
+  const colon = text.lastIndexOf(':');
+  if (colon <= 0) return { skillId: text, level: null };
+  const skillId = text.slice(0, colon).trim();
+  const lvl = Math.floor(Number(text.slice(colon + 1)));
+  if (!skillId || !Number.isFinite(lvl) || lvl <= 0) return { skillId: text, level: null };
+  return { skillId, level: lvl };
 }
 
 /**

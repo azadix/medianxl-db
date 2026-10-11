@@ -159,10 +159,11 @@ describe('item-granted oSkills', () => {
   });
 
   it('wraps Teleport with [[teleport]] markers', () => {
-    expect(wrapNamedSkillGrantMarkers('+9 to Teleport')).toBe('+9 to [[teleport]]');
+    expect(wrapNamedSkillGrantMarkers('+9 to Teleport')).toBe('+9 to [[teleport:9]]');
     const html = formatItemModifierLineHtml('+9 to Teleport');
     expect(html).toContain(SCALING_DISPLAY_HTML_CLASSES.skill);
     expect(html).toContain('data-tooltip-skill-id=');
+    expect(html).toContain('data-tooltip-skill-level="9"');
     expect(html).toContain('Teleport');
     expect(html).not.toContain('[[');
     // Space before the skill span must survive (flex parents collapse bare trailing spaces).
@@ -171,10 +172,11 @@ describe('item-granted oSkills', () => {
 
   it('wraps chance-to-cast skill names in green markers', () => {
     const marked = wrapNamedSkillGrantMarkers('5% Chance to cast level 9 Bloodlust on Kill');
-    expect(marked).toMatch(/level 9 \[\[.+\]\] on Kill/i);
+    expect(marked).toMatch(/level 9 \[\[.+:9\]\] on Kill/i);
     const html = formatItemModifierLineHtml('5% Chance to cast level 9 Bloodlust on Kill');
     expect(html).toContain(SCALING_DISPLAY_HTML_CLASSES.skill);
     expect(html).toContain('data-tooltip-skill-id=');
+    expect(html).toContain('data-tooltip-skill-level="9"');
     expect(html).toContain('Bloodlust');
     expect(html).toMatch(/level 9 <span class="/);
     expect(html).not.toContain('[[');

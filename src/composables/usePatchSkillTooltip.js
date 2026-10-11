@@ -166,7 +166,7 @@ export function usePatchSkillTooltip({ patchNotesRoot, loadPatchData }) {
    * @param {number} clientX
    * @param {number} clientY
    */
-  async function showNestedSkillTooltip(skillId, clientX, clientY) {
+  async function showNestedSkillTooltip(skillId, clientX, clientY, fromEl = null) {
     const node = tooltipElement.value;
     const id = String(skillId || '').trim();
     if (!node || !id) return;
@@ -176,7 +176,11 @@ export function usePatchSkillTooltip({ patchNotesRoot, loadPatchData }) {
     node.style.left = `${Math.max(0, clientX + TOOLTIP_OFFSET)}px`;
     node.style.top = `${Math.max(0, clientY + TOOLTIP_OFFSET)}px`;
     node.style.zIndex = NESTED_SKILL_TOOLTIP_Z;
-    const html = await buildFixedLevelSkillTooltipHtml(id, 1);
+    const rawLevel = fromEl instanceof Element ? fromEl.getAttribute('data-tooltip-skill-level') : null;
+    const parsedLevel = Math.floor(Number(rawLevel));
+    const level =
+      rawLevel != null && Number.isFinite(parsedLevel) && parsedLevel > 0 ? parsedLevel : 1;
+    const html = await buildFixedLevelSkillTooltipHtml(id, level);
     if (!html || !nestedActive) return;
     presentTooltip(node, html, clientX, clientY);
     node.style.zIndex = NESTED_SKILL_TOOLTIP_Z;
@@ -196,7 +200,8 @@ export function usePatchSkillTooltip({ patchNotesRoot, loadPatchData }) {
       },
     });
     setNestedSkillTooltipHandlers({
-      showSkill: (skillId, clientX, clientY) => showNestedSkillTooltip(skillId, clientX, clientY),
+      showSkill: (skillId, clientX, clientY, fromEl) =>
+        showNestedSkillTooltip(skillId, clientX, clientY, fromEl),
       moveSkill: (clientX, clientY) => updateTooltipPosition(clientX, clientY),
       hideSkill: () => hideSkillTooltip(true),
       isShowing: () => isTooltipShowing(),
