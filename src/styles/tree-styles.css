@@ -12,6 +12,7 @@
     --item-rarity-relic: #c7b377;
     --item-rarity-crafted: #e88d18;
     --item-rarity-honorific: #1aa01a;
+    --item-rarity-unmet: #ff3030;
     --item-mod-orange: #e88d18;
     --item-mod-grey: #a8a8a8;
     --item-rarity-color: var(--item-rarity-normal);

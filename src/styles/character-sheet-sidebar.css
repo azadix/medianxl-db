@@ -1357,14 +1357,12 @@
 }
 
 .planner-slot--equipment.planner-slot--filled.planner-slot--reqs-unmet .planner-slot__body {
-  background: #ff3030;
-  background-image: none;
-  border-color: #ff3030;
-  box-shadow: none;
-}
-
-.planner-slot--equipment.planner-slot--filled.planner-slot--reqs-unmet .planner-slot__body::before {
-  display: none;
+  --item-rarity-color: var(--item-rarity-unmet);
+  --item-rarity-fill-color: var(--item-rarity-unmet);
+  --item-rarity-fill-center-mix: 34%;
+  --item-rarity-fill-mid-mix: 16%;
+  --item-rarity-fill-edge-mix: 7%;
+  --item-rarity-fill-top-mix: 22%;
 }
 
 .planner-slot--inventory {
