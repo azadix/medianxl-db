@@ -1554,22 +1554,24 @@
 
 .item-icon--rarity-magic .item-icon__glyph,
 .item-icon--rarity-magic .item-icon__name {
-  color: #6969ff;
+  color: var(--item-rarity-magic, #6969ff);
 }
 
 .item-icon--rarity-rare .item-icon__glyph,
-.item-icon--rarity-rare .item-icon__name {
-  color: #ffff64;
+.item-icon--rarity-rare .item-icon__name,
+.item-icon--rarity-angelic .item-icon__glyph,
+.item-icon--rarity-angelic .item-icon__name {
+  color: var(--item-rarity-rare, #ffff64);
 }
 
 .item-icon--rarity-unique .item-icon__glyph,
 .item-icon--rarity-unique .item-icon__name {
-  color: #c7b377;
+  color: var(--item-rarity-unique, #c7b377);
 }
 
 .item-icon--rarity-set .item-icon__glyph,
 .item-icon--rarity-set .item-icon__name {
-  color: #00c000;
+  color: var(--item-rarity-set, #00c000);
 }
 
 .item-icon--rarity-runeword .item-icon__glyph,
@@ -1579,7 +1581,17 @@
 
 .item-icon--rarity-relic .item-icon__glyph,
 .item-icon--rarity-relic .item-icon__name {
-  color: #c7b377;
+  color: var(--item-rarity-relic, #c7b377);
+}
+
+.item-icon--rarity-crafted .item-icon__glyph,
+.item-icon--rarity-crafted .item-icon__name {
+  color: var(--item-rarity-crafted, #e88d18);
+}
+
+.item-icon--rarity-honorific .item-icon__glyph,
+.item-icon--rarity-honorific .item-icon__name {
+  color: var(--item-rarity-honorific, #1aa01a);
 }
 
 /* Item modify modal */
@@ -1775,19 +1787,20 @@
 }
 
 .item-picker-modal__row--magic .item-picker-modal__row-name {
-  color: #6969ff;
+  color: var(--item-rarity-magic, #6969ff);
 }
 
-.item-picker-modal__row--rare .item-picker-modal__row-name {
-  color: #ffff64;
+.item-picker-modal__row--rare .item-picker-modal__row-name,
+.item-picker-modal__row--angelic .item-picker-modal__row-name {
+  color: var(--item-rarity-rare, #ffff64);
 }
 
 .item-picker-modal__row--unique .item-picker-modal__row-name {
-  color: #c7b377;
+  color: var(--item-rarity-unique, #c7b377);
 }
 
 .item-picker-modal__row--set .item-picker-modal__row-name {
-  color: #00c000;
+  color: var(--item-rarity-set, #00c000);
 }
 
 .item-picker-modal__row--runeword .item-picker-modal__row-name {
@@ -1795,7 +1808,15 @@
 }
 
 .item-picker-modal__row--relic .item-picker-modal__row-name {
-  color: #c7b377;
+  color: var(--item-rarity-relic, #c7b377);
+}
+
+.item-picker-modal__row--crafted .item-picker-modal__row-name {
+  color: var(--item-rarity-crafted, #e88d18);
+}
+
+.item-picker-modal__row--honorific .item-picker-modal__row-name {
+  color: var(--item-rarity-honorific, #1aa01a);
 }
 
 .item-picker-modal__charm-warning {

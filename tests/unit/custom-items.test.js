@@ -138,9 +138,11 @@ describe('custom-items', () => {
     expect(formatItemRarityBadge({ rarity: 'angelic' })).toBe('Angelic');
   });
 
-  it('uses orange crafted and green honorific name classes', () => {
+  it('uses crafted, honorific, angelic, and magic name classes', () => {
     expect(itemRarityNameClass('crafted')).toBe('item-tooltip-name--crafted');
     expect(itemRarityNameClass('honorific')).toBe('item-tooltip-name--honorific');
+    expect(itemRarityNameClass('angelic')).toBe('item-tooltip-name--angelic');
+    expect(itemRarityNameClass('magic')).toBe('item-tooltip-name--magic');
   });
 
   it('parses TSW defense, reqs, and sockets onto custom overlays', () => {

@@ -15,7 +15,7 @@ import {
   hideItemTooltip,
 } from '@/items/item-tooltip-runtime.js';
 import { refreshCurrentTooltip } from '@/tree/tree-tooltip.js';
-import { itemRarityFrameClass } from '@/items/item-tooltip.js';
+import { itemRarityFrameClass, itemRarityNameClass } from '@/items/item-tooltip.js';
 import { useItemSlotContextMenu } from '@/composables/useItemSlotContextMenu.js';
 import ItemIcon from './ItemIcon.vue';
 import ItemSlotContextMenu from './ItemSlotContextMenu.vue';
@@ -68,6 +68,7 @@ const isCompact = computed(() => isTiny.value || cells.value.h <= 1);
 
 const rarityBadge = computed(() => formatItemRarityBadge(def.value));
 const rarityFrameClass = computed(() => (def.value ? itemRarityFrameClass(def.value.rarity) : ''));
+const rarityNameClass = computed(() => (def.value ? itemRarityNameClass(def.value.rarity) : ''));
 
 const reqsUnmet = computed(() => {
   void reqRefreshTick.value;
@@ -284,15 +285,12 @@ function onDrop(e) {
         />
       </div>
       <span v-if="def && rarityBadge" class="planner-slot__badge">{{ rarityBadge }}</span>
-      <div
-        v-if="def"
-        class="planner-slot__meta"
-        :class="'item-picker-modal__row--' + (def.rarity || 'normal')"
-      >
+      <div v-if="def" class="planner-slot__meta">
         <span class="planner-slot__name-wrap">
           <span
             ref="nameEl"
-            class="planner-slot__name item-picker-modal__row-name"
+            class="planner-slot__name"
+            :class="rarityNameClass"
             :style="nameScale < 1 ? { transform: `scale(${nameScale})` } : undefined"
           >{{ def.name }}</span>
         </span>
