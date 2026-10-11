@@ -36,6 +36,16 @@ import { relicOSkillIdsFromGrants } from '@/skills/domain/lightning-shield-elem-
 import { itemRarityNameClass } from '@/items/item-tooltip.js';
 import { computeSkillBonusSourceAmounts } from './skill-bonus-sources.js';
 import Character from '@/character/Character.js';
+import {
+  bindLiveTooltip,
+  initTooltipPinning,
+  maybeAltStickLiveTooltip,
+  refreshPinnedHosts,
+  setNestedSkillTooltipHandlers,
+  shouldSuppressLiveTooltipHide,
+  updateLiveTooltipBinding,
+} from '@/shared/tooltip-pinning.js';
+import { buildFixedLevelSkillTooltipHtml } from '@/skills/fixed-level-skill-tooltip.js';
 
 /**
  * @param {{ chance?: number, chanceMax?: number }|null|undefined} src
@@ -82,6 +92,9 @@ let tooltipHideTimeout = null;
 let pointerAwayHideTimeout = null;
 const POINTER_AWAY_HIDE_MS = 1000;
 let ctrlKeyPressed = false;
+/** True while the live skill tooltip was opened from a nested skill name hover. */
+let nestedSkillTooltipActive = false;
+const NESTED_SKILL_TOOLTIP_Z = '10070';
 
 /**
  * Refresh the open tooltip when Ctrl modifier state flips (raw formulas).
@@ -232,6 +245,23 @@ export function initializeTooltip() {
         document.body.appendChild(tooltipElement);
     }
 
+    initTooltipPinning();
+    bindLiveTooltip(tooltipElement, {
+        kind: 'skill',
+        getHtml: () => rebuildCurrentSkillTooltipHtml(),
+        meta: {},
+    });
+    setNestedSkillTooltipHandlers({
+        showSkill: (skillId, clientX, clientY) => showNestedSkillTooltip(skillId, clientX, clientY),
+        moveSkill: (clientX, clientY) => {
+            lastMouseX = clientX;
+            lastMouseY = clientY;
+            updateTooltipPosition(clientX, clientY);
+        },
+        hideSkill: () => hideTooltip(true),
+        isShowing: () => Boolean(tooltipElement && tooltipElement.style.display !== 'none'),
+    });
+
     // Add event delegation for skill card images
     document.addEventListener('mouseover', handleMouseOver);
     document.addEventListener('mouseout', handleMouseOut);
@@ -295,6 +325,8 @@ async function handleMouseOver(e) {
         tooltipHideTimeout = null;
     }
     clearPointerAwayHideTimer();
+    nestedSkillTooltipActive = false;
+    if (tooltipElement) tooltipElement.style.zIndex = '';
 
     currentHoveredSkill = skillId;
     lastHoveredSkillCard = skillCard;
@@ -342,7 +374,9 @@ function handleMouseOut(e) {
     }
 
     hideTooltip();
-    currentHoveredSkill = null;
+    if (!shouldSuppressLiveTooltipHide(tooltipElement)) {
+        currentHoveredSkill = null;
+    }
 }
 
 /**
@@ -350,6 +384,19 @@ function handleMouseOut(e) {
  */
 function handleMouseMove(e) {
     if (tooltipElement && tooltipElement.style.display !== 'none') {
+        // Nested hovers are positioned by tooltip-pinning; card-leave hide must not run.
+        if (nestedSkillTooltipActive) {
+            const wasCtrlPressed = ctrlKeyPressed;
+            const isCtrlPressedNow = e.ctrlKey;
+            if (wasCtrlPressed !== isCtrlPressedNow) {
+                ctrlKeyPressed = isCtrlPressedNow;
+                if (currentHoveredSkill) {
+                    handleSkillPointsChanged(null);
+                }
+            }
+            return;
+        }
+
         lastMouseX = e.clientX;
         lastMouseY = e.clientY;
         updateTooltipPosition(e.clientX, e.clientY);
@@ -397,8 +444,13 @@ async function handleSkillPointsChanged(preferredCard = null) {
         );
         
         tooltipElement.innerHTML = content;
+        updateLiveTooltipBinding(tooltipElement, {
+            getHtml: () => rebuildCurrentSkillTooltipHtml(),
+            meta: { skillId: currentHoveredSkill },
+        });
         updateTooltipPosition(lastMouseX, lastMouseY);
     }
+    await refreshPinnedHosts((host) => host.kind === 'skill');
 }
 
 /**
@@ -450,16 +502,97 @@ async function showTooltip(skillId, mouseX, mouseY, hoveredCard = null) {
     // Update tooltip
     tooltipElement.innerHTML = content;
     tooltipElement.style.display = 'block';
+    updateLiveTooltipBinding(tooltipElement, {
+        getHtml: () => rebuildCurrentSkillTooltipHtml(),
+        meta: { skillId },
+    });
     updateTooltipPosition(mouseX, mouseY);
+    maybeAltStickLiveTooltip(tooltipElement);
+}
+
+/**
+ * Nested skill tooltip from a pinned/stuck tooltip skill name.
+ * Prefers the live planner tooltip when the skill is on the tree; else fixed-level.
+ * @param {string} skillId
+ * @param {number} clientX
+ * @param {number} clientY
+ */
+async function showNestedSkillTooltip(skillId, clientX, clientY) {
+    const id = String(skillId || '').trim();
+    if (!id || !tooltipElement) return;
+    nestedSkillTooltipActive = true;
+    clearPointerAwayHideTimer();
+    lastMouseX = clientX;
+    lastMouseY = clientY;
+    currentHoveredSkill = id;
+    // Position before paint so the portal never flashes at its static (body-end) spot.
+    tooltipElement.style.left = `${Math.max(0, clientX + 15)}px`;
+    tooltipElement.style.top = `${Math.max(0, clientY + 15)}px`;
+    tooltipElement.style.zIndex = NESTED_SKILL_TOOLTIP_Z;
+
+    const treeCard = document.querySelector(`.skill-card[data-skill-id="${id}"]`);
+    if (treeCard) {
+        lastHoveredSkillCard = treeCard;
+        await showTooltip(id, clientX, clientY, treeCard);
+        if (nestedSkillTooltipActive && tooltipElement) {
+            tooltipElement.style.zIndex = NESTED_SKILL_TOOLTIP_Z;
+            updateTooltipPosition(clientX, clientY);
+        }
+        return;
+    }
+
+    const html = await buildFixedLevelSkillTooltipHtml(id, 1);
+    if (!html) return;
+    // Abort if hover already moved on during await.
+    if (!nestedSkillTooltipActive || currentHoveredSkill !== id) return;
+    tooltipElement.innerHTML = html;
+    tooltipElement.style.display = 'block';
+    updateLiveTooltipBinding(tooltipElement, {
+        getHtml: () => buildFixedLevelSkillTooltipHtml(id, 1),
+        meta: { skillId: id, nested: true },
+    });
+    updateTooltipPosition(clientX, clientY);
+    maybeAltStickLiveTooltip(tooltipElement);
+}
+
+/**
+ * @returns {Promise<string>}
+ */
+async function rebuildCurrentSkillTooltipHtml() {
+    if (!currentHoveredSkill || !tooltipDataSourceReady()) return '';
+    const skillCard = pickSkillCardForTooltip(lastHoveredSkillCard);
+    if (!skillCard) {
+        return buildFixedLevelSkillTooltipHtml(currentHoveredSkill, 1);
+    }
+    const classIdNum = parseClassIdDataset(skillCard?.dataset?.classId);
+    const skillData = getSkillDataFromStore(currentHoveredSkill, classIdNum);
+    if (!skillData) return '';
+    const context = resolveTooltipContext(skillCard, skillData, currentHoveredSkill);
+    applySkillVariantTextOverrides(skillData, context.variantKey);
+    return buildTooltipContent(
+        skillData,
+        context.currentLevel,
+        context.warningMessage,
+        context.isOSkill,
+        context.variantKey,
+        context.oskillSlotId,
+        context.hasDisableToggle,
+        context.isProc,
+        context.procMeta
+    );
 }
 
 /**
  * Hide tooltip
+ * @param {boolean} [force]
  */
-function hideTooltip() {
+function hideTooltip(force = false) {
+    if (!force && shouldSuppressLiveTooltipHide(tooltipElement)) return;
     clearPointerAwayHideTimer();
+    nestedSkillTooltipActive = false;
     if (tooltipElement) {
         tooltipElement.style.display = 'none';
+        tooltipElement.style.zIndex = '';
     }
     lastHoveredSkillCard = null;
 }
@@ -472,7 +605,7 @@ export function notifySkillGridDomReset() {
         clearTimeout(tooltipHideTimeout);
         tooltipHideTimeout = null;
     }
-    hideTooltip();
+    hideTooltip(true);
     currentHoveredSkill = null;
 }
 
@@ -481,6 +614,8 @@ export function notifySkillGridDomReset() {
  * (fast hovers often skip mouseout; immediate hide was too aggressive).
  */
 function scheduleTooltipHideWhenPointerLeavesCard(clientX, clientY) {
+    if (nestedSkillTooltipActive) return;
+    if (shouldSuppressLiveTooltipHide(tooltipElement)) return;
     if (!currentHoveredSkill || !tooltipElement || tooltipElement.style.display === 'none') {
         return;
     }

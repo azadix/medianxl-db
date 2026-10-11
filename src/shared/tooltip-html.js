@@ -129,6 +129,23 @@ export function buildSkillTooltipDescriptionBlock(options) {
   return html;
 }
 
+export const NESTED_SKILL_ATTR = 'data-tooltip-skill-id';
+
+/**
+ * Wrap a skill display name as a nested-hover target.
+ * @param {string} skillId
+ * @param {string} displayHtmlAlreadyEscaped
+ * @param {string} [className]
+ * @returns {string}
+ */
+export function wrapNestedSkillTooltipHtml(skillId, displayHtmlAlreadyEscaped, className = '') {
+  const id = String(skillId || '').trim();
+  if (!id) return displayHtmlAlreadyEscaped;
+  const cls = ['js-nested-tooltip-skill', className].filter(Boolean).join(' ');
+  const safeId = id.replace(/"/g, '&quot;');
+  return `<span class="${cls}" ${NESTED_SKILL_ATTR}="${safeId}">${displayHtmlAlreadyEscaped}</span>`;
+}
+
 /**
  * @typedef {{ label: string, valueHtml: string }} SkillBonusSourceRow
  */

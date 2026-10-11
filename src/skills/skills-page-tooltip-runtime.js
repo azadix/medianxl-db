@@ -6,6 +6,14 @@
 import { buildItemTooltipHtml } from '@/items/item-tooltip.js';
 import { useItemsStore } from '@/stores/items.js';
 import { buildFixedLevelSkillTooltipHtml } from '@/skills/fixed-level-skill-tooltip.js';
+import {
+  bindLiveTooltip,
+  initTooltipPinning,
+  maybeAltStickLiveTooltip,
+  setNestedSkillTooltipHandlers,
+  shouldSuppressLiveTooltipHide,
+  updateLiveTooltipBinding,
+} from '@/shared/tooltip-pinning.js';
 
 export const SKILLS_PAGE_ITEM_TOOLTIP_ID = 'skills-page-item-tooltip';
 export const SKILLS_PAGE_SKILL_TOOLTIP_ID = 'skills-page-skill-tooltip';
@@ -23,20 +31,75 @@ let pendingClientY = 0;
 /** @type {HTMLElement|null} */
 let activePortal = null;
 
+/** @type {{ kind: 'item'|'skill', target: HTMLElement|null, skillId?: string, level?: number }|null} */
+let lastPresent = null;
+
 export function initSkillsPageTooltips() {
   itemPortal = document.getElementById(SKILLS_PAGE_ITEM_TOOLTIP_ID);
   skillPortal = document.getElementById(SKILLS_PAGE_SKILL_TOOLTIP_ID);
+  initTooltipPinning();
+  if (itemPortal) {
+    bindLiveTooltip(itemPortal, {
+      kind: 'item',
+      getHtml: () => rebuildLastHtml(),
+      meta: {},
+    });
+  }
+  if (skillPortal) {
+    bindLiveTooltip(skillPortal, {
+      kind: 'skill',
+      getHtml: () => rebuildLastHtml(),
+      meta: {},
+    });
+  }
+  setNestedSkillTooltipHandlers({
+    showSkill: async (skillId, clientX, clientY) => {
+      if (!skillPortal) return;
+      skillPortal.style.left = `${Math.max(0, clientX + 15)}px`;
+      skillPortal.style.top = `${Math.max(0, clientY + 15)}px`;
+      skillPortal.style.zIndex = '10070';
+      const html = await buildFixedLevelSkillTooltipHtml(skillId, 1);
+      if (!html) return;
+      lastPresent = { kind: 'skill', target: null, skillId, level: 1 };
+      present(skillPortal, html, clientX, clientY, {
+        getHtml: () => buildFixedLevelSkillTooltipHtml(skillId, 1),
+        meta: { skillId, nested: true },
+      });
+      if (skillPortal) skillPortal.style.zIndex = '10070';
+    },
+    moveSkill: (clientX, clientY) => moveSkillsPageTooltip(clientX, clientY),
+    hideSkill: () => hideSkillsPageTooltips(true),
+    isShowing: () => isShowing(skillPortal),
+  });
 }
 
 export function destroySkillsPageTooltips() {
-  hideSkillsPageTooltips();
+  hideSkillsPageTooltips(true);
   itemPortal = null;
   skillPortal = null;
   activePortal = null;
+  lastPresent = null;
 }
 
 function isShowing(node) {
   return Boolean(node && node.style.display !== 'none');
+}
+
+/**
+ * @returns {string|Promise<string>}
+ */
+function rebuildLastHtml() {
+  if (!lastPresent) return '';
+  if (lastPresent.kind === 'item' && lastPresent.target) {
+    return buildSkillsPageItemTooltipHtml(lastPresent.target);
+  }
+  if (lastPresent.kind === 'skill') {
+    if (lastPresent.target) return buildSkillsPageSkillTooltipHtml(lastPresent.target);
+    if (lastPresent.skillId) {
+      return buildFixedLevelSkillTooltipHtml(lastPresent.skillId, lastPresent.level || 1);
+    }
+  }
+  return '';
 }
 
 /**
@@ -74,17 +137,33 @@ export function moveSkillsPageTooltip(clientX, clientY) {
   });
 }
 
-export function hideSkillsPageTooltips() {
+/**
+ * @param {boolean} [force]
+ */
+export function hideSkillsPageTooltips(force = false) {
+  if (!force) {
+    if (shouldSuppressLiveTooltipHide(activePortal)) return;
+    if (shouldSuppressLiveTooltipHide(itemPortal) || shouldSuppressLiveTooltipHide(skillPortal)) {
+      return;
+    }
+  }
   if (positionRafId) {
     cancelAnimationFrame(positionRafId);
     positionRafId = 0;
   }
   for (const node of [itemPortal, skillPortal]) {
     if (!node) continue;
+    if (!force && shouldSuppressLiveTooltipHide(node)) continue;
     node.style.display = 'none';
     node.innerHTML = '';
+    node.style.zIndex = '';
   }
-  activePortal = null;
+  if (
+    force ||
+    (!isShowing(itemPortal) && !isShowing(skillPortal))
+  ) {
+    activePortal = null;
+  }
 }
 
 /**
@@ -92,17 +171,28 @@ export function hideSkillsPageTooltips() {
  * @param {string} html
  * @param {number} clientX
  * @param {number} clientY
+ * @param {{ getHtml?: () => string|Promise<string>, meta?: Record<string, unknown> }} [binding]
  */
-function present(node, html, clientX, clientY) {
+function present(node, html, clientX, clientY, binding = {}) {
   if (!node || !html) {
     hideSkillsPageTooltips();
     return;
   }
-  hideSkillsPageTooltips();
+  for (const other of [itemPortal, skillPortal]) {
+    if (!other || other === node) continue;
+    if (shouldSuppressLiveTooltipHide(other)) continue;
+    other.style.display = 'none';
+    other.innerHTML = '';
+  }
   node.innerHTML = html;
   node.style.display = 'block';
   activePortal = node;
+  updateLiveTooltipBinding(node, {
+    getHtml: binding.getHtml || (() => rebuildLastHtml()),
+    meta: binding.meta || {},
+  });
   moveSkillsPageTooltip(clientX, clientY);
+  maybeAltStickLiveTooltip(node);
 }
 
 /**
@@ -149,7 +239,14 @@ export function buildSkillsPageItemTooltipHtml(target) {
  * @param {number} clientY
  */
 export function showSkillsPageItemTooltipFromTarget(target, clientX, clientY) {
-  present(itemPortal, buildSkillsPageItemTooltipHtml(target), clientX, clientY);
+  lastPresent = { kind: 'item', target };
+  present(itemPortal, buildSkillsPageItemTooltipHtml(target), clientX, clientY, {
+    getHtml: () => buildSkillsPageItemTooltipHtml(target),
+    meta: {
+      itemId: target.getAttribute('data-proc-item-id'),
+      setId: target.getAttribute('data-proc-set-id'),
+    },
+  });
 }
 
 /**
@@ -168,7 +265,23 @@ export async function buildSkillsPageSkillTooltipHtml(target) {
  * @param {string} html
  * @param {number} clientX
  * @param {number} clientY
+ * @param {HTMLElement|null} [target]
  */
-export function presentSkillsPageSkillTooltip(html, clientX, clientY) {
-  present(skillPortal, html, clientX, clientY);
+export function presentSkillsPageSkillTooltip(html, clientX, clientY, target = null) {
+  if (target) {
+    const skillId = target.getAttribute('data-proc-skill-id') || '';
+    const levelRaw = parseInt(String(target.getAttribute('data-proc-level') || '1'), 10);
+    lastPresent = {
+      kind: 'skill',
+      target,
+      skillId,
+      level: Number.isFinite(levelRaw) ? levelRaw : 1,
+    };
+  }
+  present(skillPortal, html, clientX, clientY, {
+    getHtml: () => rebuildLastHtml(),
+    meta: {
+      skillId: lastPresent?.skillId || target?.getAttribute?.('data-proc-skill-id'),
+    },
+  });
 }

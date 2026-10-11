@@ -133,7 +133,11 @@ function onItemMouseEnter(e) {
     e.clientX,
     e.clientY,
     itemsStore.getRollsForInstance(instanceId.value),
-    itemsStore.getTooltipOptionsForDef(def.value, props.slotKey)
+    {
+      ...itemsStore.getTooltipOptionsForDef(def.value, props.slotKey),
+      instanceId: instanceId.value,
+      equipSlot: props.slotKey,
+    }
   );
 }
 

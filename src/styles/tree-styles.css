@@ -411,6 +411,85 @@
     line-height: 1.4;
 }
 
+.tooltip-pin-root {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 10040;
+}
+
+.tooltip-pin-host {
+    pointer-events: auto;
+}
+
+.skill-tooltip.tooltip-interactive,
+.skill-tooltip.tooltip-stuck,
+.skill-tooltip.tooltip-pinned {
+    pointer-events: auto;
+    cursor: grab;
+}
+
+.skill-tooltip.tooltip-dragging {
+    cursor: grabbing;
+    user-select: none;
+}
+
+.tooltip-pin-btn {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    z-index: 5;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    border: 1px solid #777;
+    border-radius: 4px;
+    background: rgba(20, 20, 20, 0.92);
+    color: #c8c8c8;
+    cursor: pointer;
+    pointer-events: auto;
+    line-height: 1;
+}
+
+.tooltip-pin-btn:hover,
+.tooltip-pin-btn:focus-visible {
+    color: #fff;
+    border-color: #bbb;
+    outline: none;
+}
+
+.tooltip-pin-btn.is-pinned {
+    color: #f0d78c;
+    border-color: #c9a84c;
+    background: rgba(50, 40, 10, 0.95);
+}
+
+.tooltip-pin-btn__icon {
+    width: 14px;
+    height: 14px;
+    display: block;
+}
+
+.js-nested-tooltip-skill {
+    cursor: help;
+    text-decoration: underline dotted;
+    text-underline-offset: 2px;
+}
+
+.skill-tooltip.item-tooltip .tooltip-pin-btn,
+.skill-tooltip:has(> .skill-tooltip-panels) .tooltip-pin-btn {
+    top: 10px;
+    right: 10px;
+}
+
+.skill-tooltip.item-tooltip .item-tooltip-card,
+.skill-tooltip .tooltip-content {
+    padding-right: 34px;
+}
+
 /* Alt-held sources: outer shell becomes a transparent flex host for two chrome boxes */
 .skill-tooltip:has(> .skill-tooltip-panels) {
     background: transparent;

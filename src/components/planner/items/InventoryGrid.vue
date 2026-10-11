@@ -113,6 +113,7 @@ function onItemTooltipEnter(e, instanceId) {
       ...itemsStore.getTooltipOptionsForDef(def),
       extras: itemsStore.getExtrasForInstance(instanceId),
       mysticOrbs: itemsStore.getMysticOrbsForInstance(instanceId),
+      instanceId,
     }
   );
 }

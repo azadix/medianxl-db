@@ -54,7 +54,7 @@ export function useSkillsPageTooltips({ rootEl }) {
       hideSkillsPageTooltips();
       return;
     }
-    presentSkillsPageSkillTooltip(html, clientX, clientY);
+    presentSkillsPageSkillTooltip(html, clientX, clientY, target);
   }
 
   function onMouseOver(event) {

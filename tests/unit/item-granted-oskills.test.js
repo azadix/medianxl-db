@@ -161,7 +161,8 @@ describe('item-granted oSkills', () => {
   it('wraps Teleport with [[teleport]] markers', () => {
     expect(wrapNamedSkillGrantMarkers('+9 to Teleport')).toBe('+9 to [[teleport]]');
     const html = formatItemModifierLineHtml('+9 to Teleport');
-    expect(html).toContain(`class="${SCALING_DISPLAY_HTML_CLASSES.skill}"`);
+    expect(html).toContain(SCALING_DISPLAY_HTML_CLASSES.skill);
+    expect(html).toContain('data-tooltip-skill-id=');
     expect(html).toContain('Teleport');
     expect(html).not.toContain('[[');
     // Space before the skill span must survive (flex parents collapse bare trailing spaces).
@@ -172,7 +173,8 @@ describe('item-granted oSkills', () => {
     const marked = wrapNamedSkillGrantMarkers('5% Chance to cast level 9 Bloodlust on Kill');
     expect(marked).toMatch(/level 9 \[\[.+\]\] on Kill/i);
     const html = formatItemModifierLineHtml('5% Chance to cast level 9 Bloodlust on Kill');
-    expect(html).toContain(`class="${SCALING_DISPLAY_HTML_CLASSES.skill}"`);
+    expect(html).toContain(SCALING_DISPLAY_HTML_CLASSES.skill);
+    expect(html).toContain('data-tooltip-skill-id=');
     expect(html).toContain('Bloodlust');
     expect(html).toMatch(/level 9 <span class="/);
     expect(html).not.toContain('[[');
@@ -186,7 +188,7 @@ describe('item-granted oSkills', () => {
 
   it('colors roll range suffixes with a desaturated info class', () => {
     const html = formatItemModifierLineHtml('+15 to Lightning Shield [10-20]');
-    expect(html).toContain(`class="${SCALING_DISPLAY_HTML_CLASSES.skill}"`);
+    expect(html).toContain(SCALING_DISPLAY_HTML_CLASSES.skill);
     expect(html).toContain('Lightning Shield');
     expect(html).toContain('<span class="item-mod-roll-range">[10-20]</span>');
   });

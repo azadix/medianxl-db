@@ -14,7 +14,7 @@ Mana cost: <span class="has-text-info">19</span>  ",
   "ancestral_endurance": {
     "description": "Increases your damage mitigation after using Spirit Reave",
     "level": 1,
-    "skillEffect": "<span class='has-text-success'>Spirit Reave</span>
+    "skillEffect": "<span class='has-text-success js-nested-tooltip-skill' data-tooltip-skill-id="spirit_reave">Spirit Reave</span>
 Grit: <span class="has-text-white">20</span>%
 Duration: <span class="has-text-white">frames(500*(1+[[continuity]].{{skill_duration}}/100))</span> seconds",
     "variantKey": null,

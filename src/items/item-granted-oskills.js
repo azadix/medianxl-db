@@ -38,6 +38,7 @@ import { EQUIPMENT_SLOTS } from '@/items/item-types.js';
 import { countEquippedSetPieces, resolveSetBonuses } from '@/items/item-overlays.js';
 import { escapeHtmlText, SCALING_DISPLAY_HTML_CLASSES } from '@/shared/utils.js';
 import { lookupMergedDisplayNameByInternalName } from '@/shared/skill-data-store.js';
+import { wrapNestedSkillTooltipHtml } from '@/shared/tooltip-html.js';
 
 /** Must match {@link overlayAffixRollKey} prefix in item-overlays (avoid import cycle). */
 const EQUIP_AFFIX_ROLL_PREFIX = 'modAffix:';
@@ -236,7 +237,11 @@ export function formatItemModifierLineHtml(line) {
     out += escapeHtmlText(marked.slice(cursor, match.index));
     const id = String(match[1] || '').trim();
     const display = lookupMergedDisplayNameByInternalName(id) || id;
-    out += `<span class="${SCALING_DISPLAY_HTML_CLASSES.skill}">${escapeHtmlText(display)}</span>`;
+    out += wrapNestedSkillTooltipHtml(
+      id,
+      escapeHtmlText(display),
+      SCALING_DISPLAY_HTML_CLASSES.skill
+    );
     cursor = match.index + match[0].length;
   }
   out += escapeHtmlText(marked.slice(cursor));

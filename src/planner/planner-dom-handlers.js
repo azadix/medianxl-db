@@ -554,6 +554,7 @@ function showHelpModal() {
                     <li><strong>Click:</strong> Add or remove 1 skill point</li>
                     <li><strong>Shift + Click:</strong> Add or remove 25 skill points at once</li>
                     <li><strong>Ctrl + Hover:</strong> Hold Ctrl on a skill tooltip to see raw formulas</li>
+                    <li><strong>Alt:</strong> Hold Alt to freeze the current item/skill tooltip in place; release Alt to unfreeze. Use the tooltip pin button for a permanent pin (drag to move; hover skill names inside for nested tooltips)</li>
                 </ul>
                 <h4 class="title is-5 mb-3 mt-5">Stat Colors</h4>
                 <p>Numbers in skill descriptions are color-coded by type:</p>

@@ -14,11 +14,17 @@ import { isCharmItem } from '@/items/charm-items.js';
 import ItemDetailPanel from './ItemDetailPanel.vue';
 import { getEffectivePlannerLevel, getCharacterInstance, runPlannerSkillStatRecompute, syncItemGrantedOSkills } from '@/character/planner-core.js';
 import { refreshCurrentTooltip } from '@/tree/tree-tooltip.js';
+import { refreshItemTooltips } from '@/items/item-tooltip-runtime.js';
 
 function afterItemSkillSourcesChanged() {
   syncItemGrantedOSkills();
   refreshCurrentTooltip();
   runPlannerSkillStatRecompute();
+}
+
+function refreshOpenItemTooltipsForInstance(id) {
+  if (id == null) return;
+  void refreshItemTooltips({ instanceId: id });
 }
 
 /** Delay before writing slider rolls to the store / character stats. */
@@ -54,6 +60,7 @@ function flushPendingRollApply() {
   // Instance may already be gone (e.g. charm disabled while dragging a slider).
   if (!itemsStore.instances[pending.instanceId]) return;
   itemsStore.updateInstanceRolls(pending.instanceId, pending.rolls);
+  refreshOpenItemTooltipsForInstance(pending.instanceId);
   if (pending.def && (isRelicItem(pending.def) || isCharmItem(pending.def))) {
     afterItemSkillSourcesChanged();
   } else if (Object.values(itemsStore.equipment).includes(pending.instanceId)) {
@@ -228,6 +235,7 @@ watch(
       const merged = def ? mergeRollsForDef(def, rolls.value, rollOptions.value) : rolls.value;
       rolls.value = merged;
       itemsStore.updateInstanceRolls(newId, { ...merged });
+      refreshOpenItemTooltipsForInstance(newId);
       if (def && (isRelicItem(def) || isCharmItem(def))) {
         afterItemSkillSourcesChanged();
       }
@@ -255,6 +263,7 @@ function persistRolls(nextRolls) {
   const id = instanceId.value;
   if (id == null) return;
   itemsStore.updateInstanceRolls(id, { ...merged });
+  refreshOpenItemTooltipsForInstance(id);
   if (def && (isRelicItem(def) || isCharmItem(def))) {
     afterItemSkillSourcesChanged();
   }

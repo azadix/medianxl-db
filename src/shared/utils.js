@@ -604,7 +604,8 @@ export async function expandPlaceholdersWithScaling(skillId, level, description,
         try {
             const displayName = lookupMergedDisplayNameByInternalName(trimmed);
             if (displayName) {
-                return `<span class='${SCALING_DISPLAY_HTML_CLASSES.skill}'>${displayName}</span>`;
+                const safeId = String(trimmed).replace(/"/g, '&quot;');
+                return `<span class='${SCALING_DISPLAY_HTML_CLASSES.skill} js-nested-tooltip-skill' data-tooltip-skill-id="${safeId}">${displayName}</span>`;
             }
             return `<span class="${SCALING_DISPLAY_HTML_CLASSES.unknown}">[unknown skill:${trimmed}]</span>`;
         } catch (error) {
