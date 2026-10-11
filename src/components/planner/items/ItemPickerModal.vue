@@ -172,7 +172,7 @@ const canEquipPreview = computed(() => {
   if (isRelicItem(def) || isCharmItem(def)) return false;
   if (!canSelectPickerItem(previewTemplate.value)) return false;
   if (isRunewordTemplate(previewTemplate.value) && !selectedBaseId.value) return false;
-  if (isInventoryOnlyGear(def)) return true;
+  if (isInventoryOnlyGear(def)) return sel.location === 'inventory';
   if (sel.location === 'equipment') {
     return fitsEquipSlot(def, String(sel.slot), className.value);
   }
@@ -193,7 +193,9 @@ const addBlockedReason = computed(() => {
       ? 'No compatible bases for this class.'
       : 'Select a base item.';
   }
-  if (isInventoryOnlyGear(def)) return '';
+  if (isInventoryOnlyGear(def)) {
+    return sel.location === 'equipment' ? 'Socketables go in inventory, not gear slots.' : '';
+  }
   if (sel.location === 'equipment') {
     return (
       equipBlockedReason(def, String(sel.slot), className.value, {

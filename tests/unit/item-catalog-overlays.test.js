@@ -108,6 +108,18 @@ describe('unique-stats-db catalog', () => {
     const voidTouched = items.find((u) => u.name === 'Void-Touched');
     expect(voidTouched?.innate).toBe('Innate Fire Damage: (80.0% of Strength)');
     expect(voidTouched?.modifiers.filter((mod) => /Innate Fire Damage/i.test(mod))).toEqual([]);
+
+    const sterrenvogel = items.find((u) => u.name === 'Sterrenvogel' && u.tier === 1);
+    expect(sterrenvogel?.slot).toBe('arms');
+    expect(sterrenvogel?.baseId).toBe('149');
+    expect(sterrenvogel?.baseName).toBe('Throwing Axe (1)');
+    expect(sterrenvogel?.group).toBe('Throwing Axes');
+    expect(sterrenvogel?.invWidth).toBe(1);
+    expect(sterrenvogel?.invHeight).toBe(2);
+
+    const jewels = items.filter((u) => u.baseType === 'Jewel' || u.type === 'jewl');
+    expect(jewels.length).toBeGreaterThan(0);
+    expect(jewels.every((u) => u.slot == null)).toBe(true);
   });
 
   it('other.json includes quiver bases', () => {
@@ -176,6 +188,89 @@ describe('unique-stats-db catalog', () => {
     expect(findBaseForType('Short Sword (1)', 'TU', bases)?.id).toBe('a1');
     expect(findBaseForType('Helm', 'Sacred Set', bases)?.id).toBe('b');
     expect(findBaseForType('Ring', 'SU', bases)?.id).toBe('c');
+  });
+
+  it('matches Throwing Axe TUs to Throwing Axe greys, not Balanced Axe', () => {
+    const bases = [
+      {
+        id: 'bal1',
+        name: 'Balanced Axe (1)',
+        type: 'taxe',
+        category: 'weapons',
+        slot: 'arms',
+        invWidth: 2,
+        invHeight: 3,
+        group: 'Barbarian Throwing Axes',
+      },
+      {
+        id: '149',
+        name: 'Throwing Axe (1)',
+        type: 'taxe',
+        category: 'weapons',
+        slot: 'arms',
+        invWidth: 1,
+        invHeight: 2,
+        group: 'Throwing Axes',
+        innate: 'Innate Lightning Damage: (13.0% of Strength)',
+      },
+      {
+        id: 'taxS',
+        name: 'Throwing Axe (Sacred)',
+        type: 'qtax',
+        category: 'weapons',
+        slot: 'arms',
+        invWidth: 1,
+        invHeight: 2,
+        group: 'Throwing Axes',
+        innate: 'Innate Lightning Damage: (55.0% of Strength)',
+      },
+    ];
+    expect(findBaseForType('Throwing Axe (1)', 'TU', bases)?.id).toBe('149');
+    expect(findBaseForType('Throwing Axe (Sacred)', 'SU', bases)?.id).toBe('taxS');
+
+    const def = entryToItemDef(
+      {
+        name: 'Sterrenvogel',
+        quality: 'TU',
+        tier: 1,
+        type: 'Throwing Axe (1)',
+        stats:
+          'Required Level: 1\nInnate Lightning Damage: (13.0% of Strength)\nSocketed (1)\n+100 to Attack Rating',
+      },
+      bases
+    );
+    expect(def?.slot).toBe('arms');
+    expect(def?.baseId).toBe('149');
+    expect(def?.baseName).toBe('Throwing Axe (1)');
+    expect(def?.group).toBe('Throwing Axes');
+    expect(def?.invWidth).toBe(1);
+    expect(def?.invHeight).toBe(2);
+  });
+
+  it('uses sacred shape when a TU wiki type has no grey tier', () => {
+    const bases = [
+      {
+        id: 'cs',
+        name: 'Crystal Sword (Sacred)',
+        type: 'qcrs',
+        category: 'weapons',
+        slot: 'arms',
+        group: 'Crystal Swords',
+      },
+    ];
+    const def = entryToItemDef(
+      {
+        name: 'Iceflayer',
+        quality: 'TU',
+        tier: 1,
+        type: 'Crystal Sword (1)',
+        stats: 'Required Level: 10\nSocketed (1)\n+10 to Strength',
+      },
+      bases
+    );
+    expect(def?.slot).toBe('arms');
+    expect(def?.baseId).toBeUndefined();
+    expect(def?.baseName).toBe('Crystal Sword (1)');
   });
 
   it('suffixes TU overlay ids with the numeric tier', () => {

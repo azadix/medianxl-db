@@ -1171,7 +1171,7 @@
       "max": 7
     },
     "strDamageBonus": 0.11,
-    "group": "Throwing Axes"
+    "group": "Barbarian Throwing Axes"
   },
   {
     "id": "286",
@@ -1195,7 +1195,7 @@
       "max": 16
     },
     "strDamageBonus": 0.11,
-    "group": "Throwing Axes"
+    "group": "Barbarian Throwing Axes"
   },
   {
     "id": "422",
@@ -1219,7 +1219,7 @@
       "max": 32
     },
     "strDamageBonus": 0.11,
-    "group": "Throwing Axes"
+    "group": "Barbarian Throwing Axes"
   },
   {
     "id": "490",
@@ -1243,7 +1243,7 @@
       "max": 37
     },
     "strDamageBonus": 0.11,
-    "group": "Throwing Axes"
+    "group": "Barbarian Throwing Axes"
   },
   {
     "id": "51@",
@@ -1267,7 +1267,7 @@
       "max": 47
     },
     "strDamageBonus": 0.14,
-    "group": "Throwing Axes"
+    "group": "Barbarian Throwing Axes"
   },
   {
     "id": "148",
@@ -21588,6 +21588,86 @@
     "strDamageBonus": 0.16,
     "attackModifier": "Amazing Grace",
     "group": "Paladin Spears"
+  },
+  {
+    "id": "149",
+    "name": "Throwing Axe (1)",
+    "type": "taxe",
+    "category": "weapons",
+    "slot": "arms",
+    "invWidth": 1,
+    "invHeight": 2,
+    "rarity": "normal",
+    "icon": "invtax",
+    "reqLevel": 0,
+    "reqStr": 15,
+    "reqDex": 0,
+    "qlvl": 1,
+    "sockets": 1,
+    "speed": -20,
+    "innate": "Innate Lightning Damage: (13.0% of Strength)",
+    "adds": "Adds 5-6 Lightning Damage",
+    "group": "Throwing Axes"
+  },
+  {
+    "id": "285",
+    "name": "Throwing Axe (2)",
+    "type": "taxe",
+    "category": "weapons",
+    "slot": "arms",
+    "invWidth": 1,
+    "invHeight": 2,
+    "rarity": "normal",
+    "icon": "invtax",
+    "reqLevel": 12,
+    "reqStr": 36,
+    "reqDex": 0,
+    "qlvl": 31,
+    "sockets": 2,
+    "speed": -20,
+    "innate": "Innate Lightning Damage: (20.0% of Strength)",
+    "adds": "Adds 14-20 Lightning Damage",
+    "group": "Throwing Axes"
+  },
+  {
+    "id": "421",
+    "name": "Throwing Axe (3)",
+    "type": "taxe",
+    "category": "weapons",
+    "slot": "arms",
+    "invWidth": 1,
+    "invHeight": 2,
+    "rarity": "normal",
+    "icon": "invtax",
+    "reqLevel": 21,
+    "reqStr": 81,
+    "reqDex": 0,
+    "qlvl": 51,
+    "sockets": 2,
+    "speed": -20,
+    "innate": "Innate Lightning Damage: (26.0% of Strength)",
+    "adds": "Adds 40-60 Lightning Damage",
+    "group": "Throwing Axes"
+  },
+  {
+    "id": "489",
+    "name": "Throwing Axe (4)",
+    "type": "taxe",
+    "category": "weapons",
+    "slot": "arms",
+    "invWidth": 1,
+    "invHeight": 2,
+    "rarity": "normal",
+    "icon": "invtax",
+    "reqLevel": 26,
+    "reqStr": 167,
+    "reqDex": 0,
+    "qlvl": 77,
+    "sockets": 2,
+    "speed": -20,
+    "innate": "Innate Lightning Damage: (33.0% of Strength)",
+    "adds": "Adds 120-160 Lightning Damage",
+    "group": "Throwing Axes"
   },
   {
     "id": "50@",

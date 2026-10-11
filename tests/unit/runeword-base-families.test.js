@@ -60,4 +60,14 @@ describe('runeword wiki type families', () => {
     expect(got).not.toContain('Assassin Claws');
     expect(got).not.toContain('Necromancer Daggers');
   });
+
+  it('Throwing Axes runewords include Throwing Axe and Balanced Axe greys', () => {
+    const bases = listEligibleRunewordBases(template('Cheetah'), baseitems);
+    const names = bases.map((b) => String(b.name));
+    expect(names.some((n) => n.startsWith('Throwing Axe'))).toBe(true);
+    expect(names.some((n) => n.startsWith('Balanced Axe'))).toBe(true);
+    expect(groups('Cheetah')).toEqual(
+      expect.arrayContaining(['Throwing Axes', 'Barbarian Throwing Axes'])
+    );
+  });
 });

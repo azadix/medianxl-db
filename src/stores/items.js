@@ -363,7 +363,7 @@ export const useItemsStore = defineStore('items', {
       if (!sel) return this.catalog;
       if (sel.location === 'equipment') {
         // List every item that fits the slot. Class restrictions only block Add/equip.
-        // Jewels (inventory-only) stay visible so they remain browsable from gear slots.
+        // Jewels/socketables are inventory-only and must not appear in gear-slot lists.
         const slot = String(sel.slot);
         const otherHandDef = this.otherHandDefForEquip(slot);
         const className = this.viewerClassName;
@@ -371,7 +371,7 @@ export const useItemsStore = defineStore('items', {
         const fits = (item, s, cls) =>
           canEquipInSlot(item, s, cls, { ...equipOpts, otherHandDef, className });
         return this.catalog.filter((d) => {
-          if (isInventoryOnlyGear(d)) return true;
+          if (isInventoryOnlyGear(d)) return false;
           if (isRunewordTemplate(d)) {
             return runewordFitsEquipSlot(d, slot, this.catalog, undefined, fits);
           }

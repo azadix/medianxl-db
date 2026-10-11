@@ -43,6 +43,7 @@ export const WIKI_TYPE_FAMILIES = Object.freeze({
     'Barbarian One-Handed Axes',
     'Barbarian Two-Handed Axes',
     'Throwing Axes',
+    'Barbarian Throwing Axes',
     'Two-Handed Axes',
   ]),
   'Two-Handed Axes': Object.freeze(['Two-Handed Axes', 'Barbarian Two-Handed Axes']),
@@ -50,6 +51,9 @@ export const WIKI_TYPE_FAMILIES = Object.freeze({
     'Barbarian One-Handed Axes',
     'Barbarian Two-Handed Axes',
   ]),
+  // Throwing Axe greys + Barbarian-only Balanced Axe greys.
+  'Throwing Axes': Object.freeze(['Throwing Axes', 'Barbarian Throwing Axes']),
+  'Barbarian Throwing Axes': Object.freeze(['Barbarian Throwing Axes']),
   Daggers: Object.freeze(['Daggers', 'Throwing Knives', 'Necromancer Daggers']),
   Hammers: Object.freeze(['Hammers', 'Paladin Hammers']),
   Maces: Object.freeze(['Maces', 'Paladin Maces']),

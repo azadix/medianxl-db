@@ -36,6 +36,7 @@ export const KNOWN_WIKI_TYPES = Object.freeze([
   'Barbarian One-Handed Axes',
   'Barbarian Shields',
   'Barbarian Swords',
+  'Barbarian Throwing Axes',
   'Barbarian Two-Handed Axes',
   'Belts',
   'Body Armors',

@@ -392,12 +392,63 @@ export function parseItemStats(stats) {
 }
 
 /**
- * @param {string|null|undefined} typeName
+ * Wiki tiered names that map to a different grey-item family.
+ * Applied only when the wiki type itself is missing from the catalog.
+ * Do not alias distinct same-group bases (e.g. Throwing Axe ≠ Balanced Axe).
+ */
+const TYPE_FAMILY_ALIASES = Object.freeze({
+  Hexblade: 'Spirit Edge',
+  'Stag Bow': 'Reflex Bow',
+  'Mammen Axe': 'Hammerhead Axe',
+  'Wrist Blade': 'Katar',
+});
+
+/**
+ * @param {string} typeName
+ * @returns {string}
+ */
+function applyTypeFamilyAlias(typeName) {
+  const type = String(typeName || '').trim();
+  const m = /^(.*?)\s+(\((?:[1-4]|Sacred)\))$/i.exec(type);
+  if (!m) {
+    const alias = TYPE_FAMILY_ALIASES[type];
+    return alias || type;
+  }
+  const alias = TYPE_FAMILY_ALIASES[m[1]];
+  return alias ? `${alias} ${m[2]}` : type;
+}
+
+/**
+ * @param {string} typeName
+ * @returns {{ family: string, tier: string|null, sacred: boolean }}
+ */
+function splitTypeName(typeName) {
+  const type = String(typeName || '').trim();
+  const tier = /\(([1-4])\)\s*$/.exec(type);
+  if (tier) {
+    return {
+      family: type.slice(0, tier.index).trim(),
+      tier: tier[1],
+      sacred: false,
+    };
+  }
+  if (/\(Sacred\)\s*$/i.test(type)) {
+    return {
+      family: type.replace(/\s*\(Sacred\)\s*$/i, '').trim(),
+      tier: null,
+      sacred: true,
+    };
+  }
+  return { family: type, tier: null, sacred: false };
+}
+
+/**
+ * @param {string} typeName
  * @param {string} quality
  * @param {Array<{ id?: string, name?: string }>} bases
  * @returns {{ id?: string, name?: string }|null}
  */
-export function findBaseForType(typeName, quality, bases) {
+function findBaseForTypeExact(typeName, quality, bases) {
   const type = String(typeName || '').trim();
   if (!type || !Array.isArray(bases)) return null;
 
@@ -425,8 +476,28 @@ export function findBaseForType(typeName, quality, bases) {
   }
 
   // Already a full base name like "Short Sword (4)"
-  const asIs = bases.find((b) => b.name === type);
-  return asIs || null;
+  return bases.find((b) => b.name === type) || null;
+}
+
+/**
+ * @param {string|null|undefined} typeName
+ * @param {string} quality
+ * @param {Array<{ id?: string, name?: string }>} bases
+ * @returns {{ id?: string, name?: string }|null}
+ */
+export function findBaseForType(typeName, quality, bases) {
+  const type = String(typeName || '').trim();
+  if (!type || !Array.isArray(bases)) return null;
+
+  const direct = findBaseForTypeExact(type, quality, bases);
+  if (direct) return direct;
+
+  const aliased = applyTypeFamilyAlias(type);
+  if (aliased !== type) {
+    return findBaseForTypeExact(aliased, quality, bases);
+  }
+
+  return null;
 }
 
 /** Unique-only bases that are missing from the grey catalog. */
@@ -450,26 +521,34 @@ const TYPE_SHAPE_FALLBACKS = Object.freeze({
 export function findShapeBaseForType(typeName, quality, bases) {
   const type = String(typeName || '').trim();
   if (!type || !Array.isArray(bases)) return null;
-  const named = TYPE_SHAPE_FALLBACKS[type];
-  if (named) {
+
+  const { family } = splitTypeName(type);
+  for (const key of [type, family]) {
+    const named = TYPE_SHAPE_FALLBACKS[key];
+    if (!named) continue;
     const hit = bases.find((b) => b.name === named);
     if (hit) return hit;
   }
+
+  // Sacred twin carries the correct slot/size when tiered greys are missing.
+  const sacredTwin = bases.find((b) => b.name === `${family} (Sacred)`);
+  if (sacredTwin) return sacredTwin;
+
   const sacred = quality === 'SU' || quality === 'Sacred Set';
   /** @type {Array<[RegExp, string, string]>} */
   const heuristics = [
     [/ring|sigil/i, 'Ring', 'Ring'],
     [/amulet/i, 'Amulet', 'Amulet'],
     [/jewel/i, 'Jewel', 'Jewel'],
-    [/bow/i, 'Maple Bow (Sacred)', 'Maple Bow (4)'],
+    [/bow/i, 'Maple Bow (Sacred)', 'Maple Bow (Sacred)'],
     [/staff/i, 'War Staff (Sacred)', 'War Staff (4)'],
-    [/blade|sword/i, 'Crystal Sword (Sacred)', 'Crystal Sword (4)'],
+    [/blade|sword/i, 'Crystal Sword (Sacred)', 'Crystal Sword (Sacred)'],
     [/plate|mail|armor|robe/i, 'Full Plate Mail (Sacred)', 'Full Plate Mail (4)'],
   ];
   for (const [re, sacredName, tierName] of heuristics) {
     if (!re.test(type)) continue;
     const want = sacred ? sacredName : tierName;
-    const hit = bases.find((b) => b.name === want);
+    const hit = bases.find((b) => b.name === want) || bases.find((b) => b.name === sacredName);
     if (hit) return hit;
   }
   return null;
