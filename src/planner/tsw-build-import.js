@@ -337,10 +337,12 @@ function isCatalogBacked(row, def) {
  * @returns {{ defId: string, rolls?: Record<string, number> }}
  */
 function snapshotWithRolls(row, defId, def, className) {
-  /** @type {{ defId: string, rolls?: Record<string, number> }} */
+  /** @type {{ defId: string, rolls?: Record<string, number>, icon?: string }} */
   const entry = { defId };
   const rolls = rollsFromTswItem(row, def, className);
   if (rolls && Object.keys(rolls).length) entry.rolls = rolls;
+  const icon = row?.image != null ? String(row.image).trim() : '';
+  if (icon) entry.icon = icon;
   return entry;
 }
 

@@ -80,6 +80,10 @@ describe('unique-stats-db catalog', () => {
     const boc1 = items.find((r) => r.id === 'relic:blood-of-creation-version-1');
     expect(boc1?.classRestriction).toBe('Amazon Only');
     expect(boc1?.icon).toBe('darkremnant');
+    expect(items.find((u) => u.name === 'Ring of Woe')?.icon).toBe('invrrow');
+    expect(items.find((u) => u.name === 'Signet of the Gladiator')?.icon).toBe('blackhandsigil');
+    expect(items.find((u) => u.name === "Bonehexer's Puzzlebox")?.icon).toBe('relicbone');
+    expect(items.find((u) => u.name === "Skinrender's Ear")?.icon).toBe('relicskin');
     expect((boc1?.modifiers || []).filter((m) => /Crystalline Arsenal/i.test(m))).toHaveLength(1);
     expect(items.find((c) => c.id === 'charm:essence-of-time')).toBeUndefined();
 

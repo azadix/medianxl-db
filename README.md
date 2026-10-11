@@ -109,7 +109,7 @@ Python is not required for tests (only for atlas generation / `tools/py/` utilit
 - `python tools/py/convert_extractor_missing_skills.py` - build `skills_missing.json` from extractor exports
 - `python tools/atlas_generation/extract_icons.py --input-dir path/to/dc6` - convert icons-*.dc6 via qdc6 into class folders
 - `python tools/atlas_generation/make_all_atlases.py --version 2.13` - rebuild class atlases
-- `python tools/item_icons/extract_item_icons.py --version 2.14` - convert `tools/item_icons/icons/*.dc6` via qdc6
+- `python tools/item_icons/extract_item_icons.py --version 2.14` - pull item DC6s from the game MPQs, then convert via qdc6
 - `python tools/item_icons/publish_item_icons.py --version 2.14` - PNG → WebP under `public/icons/item_icons/`
 
 Extractor scripts resolve `mxl-extractor` via `--extractor`, `MXL_EXTRACTOR_ROOT`,
@@ -145,27 +145,25 @@ Pass `--qdc6` to override the path in `tools/tools.local.json`. Use `--overwrite
 Inventory icons are individual WebP files (variable size, not atlases), keyed by the
 catalog `icon` field (e.g. `invpa4` → `public/icons/item_icons/invpa4.webp`).
 
-Source DC6s live in `tools/item_icons/icons/` (inventory / item sprites from game `.mpq`
-archives — typically under `data/global/ui/inv/` or the Median XL classic_sigma UI path).
+Item DC6s come from the game MPQs (`data/global/items/*.dc6` in `d2data.mpq`,
+`d2exp.mpq`, and Median’s `itemsgfx` archive). Set `d2_game_dir` and `qdc6_exe`
+in `tools/tools.local.json`.
 
-1. Ensure `tools/tools.local.json` has `qdc6_exe` set (same as skill atlases)
-2. Convert DC6s into working PNGs (defaults to `tools/item_icons/icons/`):
+1. Extract DC6s from the install and convert them to PNGs:
 
 ```bash
-python tools/item_icons/extract_item_icons.py --version 2.14
+python tools/item_icons/extract_item_icons.py --version 2.14 --overwrite
 ```
 
-3. Publish WebPs (optionally filter to icons referenced by the version item files):
+Pass `--skip-mpq` to convert DC6s already in `tools/item_icons/input/`.
+
+2. Publish WebPs (optionally filter to icons referenced by the version item files):
 
 ```bash
 python tools/item_icons/publish_item_icons.py --version 2.14
 ```
 
 Item data lives in `public/items/<version>/` as `baseitems.json`, `charms.json`, and `other.json`.
-
-Note: the current catalog mostly uses vanilla inventory stems (`invpa4`, `invamu`, …).
-Custom MXL DC6s in `tools/item_icons/icons/` are published by filename stem and will
-show up once matching catalog `icon` values exist.
 
 ## Spellcheck
 

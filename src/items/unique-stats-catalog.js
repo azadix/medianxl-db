@@ -574,6 +574,7 @@ export function entryToItemDef(entry, bases) {
     def.invWidth = 1;
     def.invHeight = 1;
     def.slot = null;
+    if (entry.icon) def.icon = String(entry.icon).trim();
   }
 
   if (parsed.reqLevel != null) def.reqLevel = parsed.reqLevel;
@@ -630,6 +631,8 @@ export function entryToItemDef(entry, bases) {
     def.setName = entry.setName;
     def.setId = `set:${slugify(entry.setName)}`;
   }
+
+  if (entry.icon) def.icon = String(entry.icon).trim();
 
   return def;
 }

@@ -95,6 +95,8 @@ describe('parseSecretItemsWiki', () => {
       ['Version 7', 'Druid Only'],
     ]);
     expect(blood.every((e) => e.icon === 'darkremnant')).toBe(true);
+    expect(entries.find((e) => e.name === "Bonehexer's Puzzlebox")?.icon).toBe('relicbone');
+    expect(entries.find((e) => e.name === "Skinrender's Ear")?.icon).toBe('relicskin');
     const v1Lines = blood[0].stats.split('\n').filter((line) =>
       /^\+1 to Crystalline Arsenal$/i.test(line.replace(/^\{(orange|grey)\}/, '').trim())
     );

@@ -11,20 +11,25 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 TOOLS_DIR = SCRIPT_DIR.parent
 CONFIG_PATH = TOOLS_DIR / "tools.local.json"
 DEFAULT_INPUT_DIR = SCRIPT_DIR / "input"
+DEFAULT_GAME_DIR = Path(r"C:\Games\median-xl")
+ITEM_DC6_PREFIX = "data\\global\\items\\"
+MPQ_NAMES = (
+    "d2data.mpq",
+    "d2exp.mpq",
+    "patch_d2.mpq",
+    "medianxl-aXRlbXNnZng.mpq",
+)
 
 
-def _load_qdc6_from_config() -> Path | None:
+def _load_config() -> dict:
     if not CONFIG_PATH.is_file():
-        return None
+        return {}
     try:
         data = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as e:
         print(f"WARNING: Could not read {CONFIG_PATH}: {e}", file=sys.stderr)
-        return None
-    raw = data.get("qdc6_exe")
-    if not raw or not isinstance(raw, str):
-        return None
-    return Path(raw)
+        return {}
+    return data if isinstance(data, dict) else {}
 
 
 def _snapshot_outputs(input_dir: Path, stem: str) -> set[Path]:
@@ -37,7 +42,7 @@ def _snapshot_outputs(input_dir: Path, stem: str) -> set[Path]:
     return out
 
 
-def _resolve_qdc6(cli_path: str | None) -> Path:
+def _resolve_qdc6(cli_path: str | None, config: dict) -> Path:
     if cli_path:
         path = Path(cli_path)
         if not path.is_absolute():
@@ -45,9 +50,9 @@ def _resolve_qdc6(cli_path: str | None) -> Path:
             path = script_local if script_local.exists() else path
         return path.resolve()
 
-    from_config = _load_qdc6_from_config()
-    if from_config is not None:
-        return from_config.resolve()
+    raw = config.get("qdc6_exe")
+    if isinstance(raw, str) and raw.strip():
+        return Path(raw).resolve()
 
     print(
         "qdc6.exe path not set. Pass --qdc6 or create "
@@ -55,6 +60,15 @@ def _resolve_qdc6(cli_path: str | None) -> Path:
         file=sys.stderr,
     )
     raise SystemExit(2)
+
+
+def _resolve_game_dir(cli_path: str | None, config: dict) -> Path:
+    if cli_path:
+        return Path(cli_path).resolve()
+    raw = config.get("d2_game_dir")
+    if isinstance(raw, str) and raw.strip():
+        return Path(raw)
+    return DEFAULT_GAME_DIR
 
 
 def _version_folder(version: str) -> str:
@@ -66,57 +80,51 @@ def _safe_output_name(stem: str) -> str:
     return stem
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(
-        description=(
-            "Run qdc6.exe on each *.dc6 in tools/item_icons/input/ and install "
-            "PNGs into tools/item_icons/<major>_<minor>/."
-        )
-    )
-    parser.add_argument(
-        "--input-dir",
-        default=str(DEFAULT_INPUT_DIR),
-        help=f"Directory containing *.dc6 files (default: {DEFAULT_INPUT_DIR}).",
-    )
-    parser.add_argument(
-        "--version",
-        required=True,
-        help='Game patch, e.g. "2.14" (output: tools/item_icons/2_14/).',
-    )
-    parser.add_argument(
-        "--output-dir",
-        default=None,
-        help="Override output directory (default: tools/item_icons/<major>_<minor>/).",
-    )
-    parser.add_argument(
-        "--qdc6",
-        default=None,
-        help="Path to qdc6.exe (overrides tools/tools.local.json).",
-    )
-    parser.add_argument(
-        "--overwrite",
-        action="store_true",
-        help="Replace existing PNGs in the output folder.",
-    )
-    parser.add_argument(
-        "--pattern",
-        default="*.dc6",
-        help='Glob for DC6 files (default: "*.dc6"). Use "inv*.dc6" to limit.',
-    )
-    args = parser.parse_args()
+def _extract_dc6_from_mpq(game_dir: Path, input_dir: Path) -> int:
+    sys.path.insert(0, str(TOOLS_DIR / "skill_animator" / "app" / "engine"))
+    from mpq import MPQ
 
-    input_dir = Path(args.input_dir).resolve()
-    version = args.version.strip()
-    if not version:
-        parser.error("--version must be non-empty")
+    if not game_dir.is_dir():
+        print(f"game dir not found: {game_dir}", file=sys.stderr)
+        return 2
 
-    if args.output_dir:
-        output_dir = Path(args.output_dir).resolve()
-    else:
-        output_dir = (SCRIPT_DIR / _version_folder(version)).resolve()
+    archives = []
+    for name in MPQ_NAMES:
+        path = game_dir / name
+        if not path.is_file():
+            print(f"skip missing {path}")
+            continue
+        try:
+            archives.append((name, MPQ(str(path))))
+        except Exception as e:
+            print(f"skip {name}: {e}")
+    if not archives:
+        print("no MPQs opened", file=sys.stderr)
+        return 2
 
-    qdc6_path = _resolve_qdc6(args.qdc6)
+    input_dir.mkdir(parents=True, exist_ok=True)
+    written = 0
+    for name, archive in archives:
+        listing = archive.read("(listfile)") or b""
+        paths = [
+            ln.strip()
+            for ln in listing.decode("latin-1", errors="replace").splitlines()
+            if ln.strip().lower().startswith(ITEM_DC6_PREFIX)
+            and ln.strip().lower().endswith(".dc6")
+        ]
+        print(f"{name}: {len(paths)} item dc6")
+        for rel in paths:
+            data = archive.read(rel.replace("/", "\\"))
+            if not data:
+                continue
+            stem = Path(rel.replace("\\", "/")).stem.lower()
+            (input_dir / f"{stem}.dc6").write_bytes(data)
+            written += 1
+    print(f"wrote {written} dc6 files -> {input_dir}")
+    return 0
 
+
+def _convert_dc6(input_dir: Path, output_dir: Path, qdc6_path: Path, pattern: str, overwrite: bool) -> int:
     if not input_dir.is_dir():
         print(f"Input dir not found: {input_dir}", file=sys.stderr)
         return 2
@@ -126,10 +134,10 @@ def main() -> int:
 
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    dc6_files = sorted(input_dir.glob(args.pattern))
+    dc6_files = sorted(input_dir.glob(pattern))
     dc6_files = [p for p in dc6_files if p.suffix.lower() == ".dc6"]
     if not dc6_files:
-        print(f"No files matching {args.pattern} in {input_dir}")
+        print(f"No files matching {pattern} in {input_dir}")
         return 0
 
     failures: list[tuple[Path, int]] = []
@@ -165,7 +173,7 @@ def main() -> int:
 
             dest = output_dir / f"{out_stem}{p.suffix.lower()}"
             try:
-                if dest.exists() and not args.overwrite:
+                if dest.exists() and not overwrite:
                     p.unlink(missing_ok=True)
                     cleaned += 1
                     continue
@@ -198,6 +206,79 @@ def main() -> int:
         for f, code in failures:
             print(f"  - {f.name}: exit {code}", file=sys.stderr)
         return 1
+    return 0
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        description=(
+            "Extract item DC6s from the game MPQs into tools/item_icons/input/, "
+            "then run qdc6.exe and install PNGs into tools/item_icons/<major>_<minor>/."
+        )
+    )
+    parser.add_argument(
+        "--input-dir",
+        default=str(DEFAULT_INPUT_DIR),
+        help=f"Directory for extracted *.dc6 files (default: {DEFAULT_INPUT_DIR}).",
+    )
+    parser.add_argument(
+        "--version",
+        required=True,
+        help='Game patch, e.g. "2.14" (output: tools/item_icons/2_14/).',
+    )
+    parser.add_argument(
+        "--output-dir",
+        default=None,
+        help="Override PNG output directory (default: tools/item_icons/<major>_<minor>/).",
+    )
+    parser.add_argument(
+        "--qdc6",
+        default=None,
+        help="Path to qdc6.exe (overrides tools/tools.local.json).",
+    )
+    parser.add_argument(
+        "--game-dir",
+        default=None,
+        help="Diablo II / Median XL install (overrides tools/tools.local.json d2_game_dir).",
+    )
+    parser.add_argument(
+        "--skip-mpq",
+        action="store_true",
+        help="Skip MPQ extract; convert DC6s already in --input-dir.",
+    )
+    parser.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="Replace existing PNGs in the output folder.",
+    )
+    parser.add_argument(
+        "--pattern",
+        default="*.dc6",
+        help='Glob for DC6 files (default: "*.dc6"). Use "inv*.dc6" to limit.',
+    )
+    args = parser.parse_args()
+
+    input_dir = Path(args.input_dir).resolve()
+    version = args.version.strip()
+    if not version:
+        parser.error("--version must be non-empty")
+
+    if args.output_dir:
+        output_dir = Path(args.output_dir).resolve()
+    else:
+        output_dir = (SCRIPT_DIR / _version_folder(version)).resolve()
+
+    config = _load_config()
+    if not args.skip_mpq:
+        game_dir = _resolve_game_dir(args.game_dir, config)
+        extracted = _extract_dc6_from_mpq(game_dir, input_dir)
+        if extracted != 0:
+            return extracted
+
+    qdc6_path = _resolve_qdc6(args.qdc6, config)
+    converted = _convert_dc6(input_dir, output_dir, qdc6_path, args.pattern, args.overwrite)
+    if converted != 0:
+        return converted
 
     print(
         "\nPublish WebPs with: "

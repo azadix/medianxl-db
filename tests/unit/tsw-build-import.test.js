@@ -259,6 +259,7 @@ describe('tsw-build-import', () => {
     expect(snapshot.equipment.head).toMatchObject({ defId: 'u:lacuni-cowl:su' });
     expect(snapshot.equipment.rarm?.defId).toBe('u:mekanism:su');
     expect(snapshot.charms.some((row) => row.defId === 'a68')).toBe(true);
+    expect(snapshot.charms.find((row) => row.defId === 'a68')?.icon).toBe('invhorazon');
     expect(snapshot.charms.some((row) => row.defId === 'ebw-primordia')).toBe(true);
     expect(snapshot.relics.map((row) => row.defId).sort()).toEqual(
       ['relic:hailstorm', 'relic:lightning-wall', 'relic:whirlwind'].sort()

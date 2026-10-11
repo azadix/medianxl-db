@@ -5,9 +5,10 @@
 
 /** @type {Record<string, string[]>} */
 export const ITEM_ICON_VARIANTS = {
-  jewl: ['invjw1', 'invjw2', 'invjw3', 'invjw4'],
-  ring: ['invrin1', 'invrin2', 'invrin3'],
-  amul: ['invamu1', 'invamu2', 'invamu3', 'invamu4'],
+  jewl: ['invjw1', 'invjw2', 'invjw3', 'invjw4', 'invjw5', 'invjw6'],
+  ring: ['invrin', 'invrin1', 'invrin2', 'invrin3', 'invrin4', 'invrin5'],
+  amul: ['invamu', 'invamu1', 'invamu2', 'invamu3', 'invamu4'],
+  relic: ['relic01', 'relic02', 'relic03', 'relic04', 'relic05', 'relic06'],
 };
 
 /**
@@ -33,9 +34,9 @@ export function iconVariantsForDef(def) {
  * @returns {string}
  */
 export function pickItemIcon(def, preferred = null) {
+  const stem = preferred != null ? String(preferred).trim() : '';
+  if (stem) return stem;
   const pool = iconVariantsForDef(def);
-  if (preferred && pool.includes(preferred)) return preferred;
-  if (preferred && !pool.length) return preferred;
   if (pool.length > 1) {
     return pool[Math.floor(Math.random() * pool.length)];
   }

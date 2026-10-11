@@ -18,6 +18,8 @@ OUT_DIR = REPO_ROOT / "public" / "icons" / "item_icons"
 ICON_ALIASES = {
     "invgswe": "invgsw",  # Perfect Diamond (gem) — dump has invgsw only
     "invamu4": "invamu",  # docs has invamu1-3 + invamu; no invamu4.jpg
+    "invrin4": "invrin1",
+    "invrin5": "invrin2",
 }
 
 

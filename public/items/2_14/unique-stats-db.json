@@ -1692,7 +1692,8 @@
       "name": "Arrogance",
       "quality": "SU",
       "stats": "Defense:\n(8308 - 9198) to (10078 - 11157)\nRequired Level: 120\nRequired Strength:\n1350\nItem Level: 130\n{orange}Restitution\n(Based on Restore Percentage)\n{grey}+50% Combat Speeds\n{grey}Physical Resist +15%\n{grey}Maximum Life +7%\nCube with Heavenly Soul: Restore +4%\n25% Movement Speed\nAdds 15-25 Damage\n+(18 to 32) to Stormlord\n5% Deadly Strike\n+(171 to 200)% Enhanced Defense\n+(40 to 50) to all Attributes\nRequirements +100%\nSocketed (6)",
-      "type": "Gothic Plate (Sacred)"
+      "type": "Gothic Plate (Sacred)",
+      "icon": "invarrogance"
     },
     {
       "name": "Asgardsreia",
@@ -1782,7 +1783,8 @@
       "name": "Azgar's Crystal",
       "quality": "SU",
       "stats": "One-Hand Damage: 42 to 45\nTwo-Hand Damage: 65 to 67\n(Druid Only)\nRequired Level: 100\nRequired Strength: 480\nItem Level: 130\nStrength Damage Bonus: (0.16 per Strength)%\n{orange}While in Werewolf Form:\n{orange}Adds 50% of Current Mana as Cold Damage\n{orange}10% Grit\n100% Attack Speed\n150% Bonus to Attack Rating\n-100% to Enemy Cold Resistance\nMaximum Cold Resist +(2 to 5)%\nCannot Be Frozen\nSocketed (4)",
-      "type": "Giant Sword (Sacred)"
+      "type": "Giant Sword (Sacred)",
+      "icon": "invbswu"
     },
     {
       "name": "Azgar's Mark",
@@ -1794,13 +1796,15 @@
       "name": "Azurewrath",
       "quality": "SU",
       "stats": "Required Level: 100\nRequired Dexterity:\n1020\nItem Level: 130\nInnate Cold Damage: (49.0% of Dexterity)\n{orange}100% of Vitality Added as Cold Damage to Weapon\n{orange}Max Life gained per point of Vitality reduced by 0.9\n{orange}You Cannot Deal Fire, Lightning or Poison Damage\n40% Chance to cast level 30 Azure Orb on Melee Attack\nAdds 160-250 Cold Damage\n-100% to Enemy Cold Resistance\nSlow Target 25%\nMaximum Cold Resist +10%\nPhysical Resist 10%\n100% Bonus to Defense\nCannot Be Frozen\nRequirements +100%\nSocketed (6)",
-      "type": "Crystal Sword (Sacred)"
+      "type": "Crystal Sword (Sacred)",
+      "icon": "invcrsu"
     },
     {
       "name": "Back To The Abyss",
       "quality": "SU",
       "stats": "Defense: 1448 to 1766\nChance to Block: 2%\n(Necromancer Only)\nRequired Level: 100\nRequired Dexterity: 445\nItem Level: 120\n{orange}Abyss Knights and Night Hawks Die After Being Summoned\n{orange}+6% Total Damage to Night Hawks\n+(2 to 3) to Necromancer Skill Levels\n+150% to Summon Damage\n+(101 to 150) to Energy\n+200 Life Regenerated per Second\nMaximum Life -10%\nPhysical Resist 20%\n50% Magic Find\nSocketed (4)",
-      "type": "Demon Head (Sacred)"
+      "type": "Demon Head (Sacred)",
+      "icon": "invbackabyss"
     },
     {
       "name": "Bad Mood",
@@ -1890,13 +1894,15 @@
       "name": "Black Hand Sigil",
       "quality": "SU",
       "stats": "Required Level: 100\nItem Level: 120\n4% Chance to cast level 50 Shuriken Flurry on Death Blow\n4% Chance to cast level 50 Drakemaw on Death Blow\n4% Chance to cast level 50 Doom on Death Blow\nElemental Resists -25%",
-      "type": "Ring"
+      "type": "Ring",
+      "icon": "blackhandsigil"
     },
     {
       "name": "Black Ice",
       "quality": "SU",
       "stats": "Two-Hand Damage: 71 to 100\n(Assassin Only)\nRequired Level: 70\nRequired Dexterity: 558\nItem Level: 120\nDexterity Damage Bonus: (0.15 per Dexterity)%\nInnate Cold Damage: (45.0% of Vitality)\n{orange}Area Effect Attack\n{grey}100% Chance to Cast on Attack: Deals 50% normal attack damage in a radius of 5 yards.\nOrb Effects Applied to this Item are Doubled\n+(10 to 15) to Assassin Skill Levels\n200% Bonus to Attack Rating\n20% Innate Elemental Damage\n-30% to Enemy Cold Resistance\n+(3 to 9) to Whirlpool\nMaximum Elemental Resists +(1 to 2)%\n+4 Life on Striking\nSocketed (6)",
-      "type": "Halberd (Sacred)"
+      "type": "Halberd (Sacred)",
+      "icon": "invvou"
     },
     {
       "name": "Black Masquerade",
@@ -1998,7 +2004,8 @@
       "name": "Buriza-Do Kyanon",
       "quality": "SU",
       "stats": "Two-Hand Damage:\n(238 - 485) to (488 - 595)\nRequired Level: 120\nRequired Strength: 614\nItem Level: 120\nStrength Damage Bonus: (0.11 per Strength)%\n3% Chance to cast level 60 Blizzard on Striking\n20% Attack Speed\nAdds (1 to 200)-(201 to 250) Damage\nIgnore Target's Defense\nAdds 350-400 Cold Damage\n+(150 to 200)% Enhanced Damage\n+(50 to 75)% to Cold Spell Damage\n-(50 to 75)% to Enemy Cold Resistance\nSocketed (6)",
-      "type": "Heavy Crossbow (Sacred)"
+      "type": "Heavy Crossbow (Sacred)",
+      "icon": "invhxbu"
     },
     {
       "name": "Cagebreaker",
@@ -2035,7 +2042,8 @@
       "quality": "SU",
       "stats": "Required Level: 125\nItem Level: 110\n{grey}Level 20 Warp Field Aura\n{grey}Reduces enemy Movement Speed by 20%\n{grey}Nullifies range of most Teleport skills\n{grey}8 Yard Radius\n+(2 to 5) to All Skills\n1% Chance to cast level 5 Gift of Celerity on Death Blow\n5% Innate Elemental Damage\n+20% to Spell Damage\n5% Deadly Strike\nLightning Resist -100%",
       "source": "secret",
-      "type": "Amulet"
+      "type": "Amulet",
+      "icon": "sigilx"
     },
     {
       "name": "Champion of the Triune",
@@ -2173,7 +2181,8 @@
       "name": "Death Sentence",
       "quality": "SU",
       "stats": "Defense: 695 to 805\nChance to Block: 4%\n(Assassin Only)\nRequired Level: 100\nRequired Dexterity: 527\nItem Level: 120\n{orange}Familiars Cast Crucify when Killed/Unsummoned\n+5 to Assassin Skill Levels\n10% Chance to cast level 60 Doom on Melee Attack\n100% Hit Recovery\nAdds 90-110 Damage\n25% to Dexterity\n+666 to Life\nMaximum Block Chance -50%\nSocketed (6)",
-      "type": "Totem Shield (Sacred)"
+      "type": "Totem Shield (Sacred)",
+      "icon": "invspku"
     },
     {
       "name": "Death Ward",
@@ -2618,7 +2627,8 @@
       "name": "Hand of Rathma",
       "quality": "SU",
       "stats": "One-Hand Damage: 35 to 36\n(Necromancer Only)\nRequired Level: 80\nRequired Dexterity: 166\nItem Level: 120\nDexterity Damage Bonus: (0.06 per Dexterity)%\n{orange}+1% Maximum Elemental Resists per Totem of that Element\n{orange}+1.5% Physical Resist per Resurgence Base Level\nOrb Effects Applied to this Item are Doubled\n-33% to Enemy Elemental Resistances\n+(76 to 100)% to Summon Damage\n+5000 Defense\nSocketed (2)",
-      "type": "Wand (Sacred)"
+      "type": "Wand (Sacred)",
+      "icon": "invmagicwand"
     },
     {
       "name": "Hanfod Tan",
@@ -2858,7 +2868,8 @@
       "name": "Knight's Grace",
       "quality": "SU",
       "stats": "Defense:\n(2232 - 2481) to (2519 - 2799)\nRequired Level: 100\nRequired Strength:\n780\nItem Level: 120\n+1 to All Skills\n(10 to 40)% Movement Speed\n2% Chance to cast level 35 Knife Throw on Striking\n25% Attack Speed\nAdds 10-25 Damage\n+(170 to 200)% Enhanced Defense\n+(15 to 25) to all Attributes\nPhysical Resist 5%\nRequirements +20%\nSocketed (4)",
-      "type": "Greaves (Sacred)"
+      "type": "Greaves (Sacred)",
+      "icon": "greavessu3"
     },
     {
       "name": "Kraken's Cutlass",
@@ -2954,7 +2965,8 @@
       "name": "Lilith's Temptation",
       "quality": "SU",
       "stats": "Defense:\n(3680 - 4089) to (4031 - 4479)\nRequired Level: 100\nItem Level: 105\n{orange}Goblin Glee lasts 3 extra seconds but reduces your maximum life by 66%\nLevel 7 Goblin Glee (30/30 Charges)\n+(170 to 200)% Enhanced Defense\n-100 to Life\n+35 Life after each Kill\n(60 to 100)% Magic Find\nRequirements -100%\n{grey}Cube with Sacred Essence and Ist rune to recharge\nSocketed (2)",
-      "type": "Plated Belt (Sacred)"
+      "type": "Plated Belt (Sacred)",
+      "icon": "invblt"
     },
     {
       "name": "Lionblood Crest",
@@ -3105,7 +3117,8 @@
       "name": "Natalya's Deception",
       "quality": "SU",
       "stats": "Defense: 2263 to 2331\nRequired Level: 65\nRequired Strength: 500\nItem Level: 130\n{orange}Orb Effects Applied to this Item are Quadrupled\nSocketed (6)",
-      "type": "Quilted Armor (Sacred)"
+      "type": "Quilted Armor (Sacred)",
+      "icon": "invqltz"
     },
     {
       "name": "Natasha's Legacy",
@@ -3232,7 +3245,8 @@
       "name": "Quov Tsin's Talisman",
       "quality": "SU",
       "stats": "Required Level: 110\nItem Level: 110\n15% Innate Elemental Damage\n-(20 to 30)% to Enemy Elemental Resistances",
-      "type": "Amulet"
+      "type": "Amulet",
+      "icon": "superammy"
     },
     {
       "name": "Radiance",
@@ -3325,7 +3339,8 @@
       "name": "Ring of Woe",
       "quality": "SU",
       "stats": "Required Level: 80\nItem Level: 120\nCorrupted\n(Cube with Oil of Craft to Reveal)\n+200 to Life\n{grey}Can be corrupted any number of times\n{grey}60% Success | 33% to Add 50 Required Level\n{grey}7% to Remove 10 Required Level",
-      "type": "Ring"
+      "type": "Ring",
+      "icon": "invrrow"
     },
     {
       "name": "Robe of Steel",
@@ -3439,7 +3454,8 @@
       "name": "Shadowfang",
       "quality": "SU",
       "stats": "One-Hand Damage: 44 to 47\nTwo-Hand Damage: 70 to 72\n(Necromancer Only)\nRequired Level: 100\nRequired Strength: 535\nItem Level: 120\nStrength Damage Bonus: (0.16 per Strength)%\n{orange}Pestilence: duration reduced by 50%\n{orange}Pestilence: regenerates 4% of Maximum Life per Second\n50% Chance to cast level 50 Veil King Plague Grasp on Melee Attack\n200% Bonus to Attack Rating\n+100% to Poison Spell Damage\n+60 to Stormlord\nSlow Target 25%\n+200 Life after each Kill\n2% Reanimate as: Veil Terror\nSocketed (4)",
-      "type": "Bastard Sword (Sacred)"
+      "type": "Bastard Sword (Sacred)",
+      "icon": "inv2hsu"
     },
     {
       "name": "Shadowfiend",
@@ -3523,7 +3539,8 @@
       "name": "Signet of the Gladiator",
       "quality": "SU",
       "stats": "Required Level: 100\nItem Level: 120\n+1 to All Skills\n25% Chance to cast level 20 Retaliate on Block\n1% Base Block Chance\nColosseum Cooldown Reduced by 0 seconds\nElemental Resists -15%",
-      "type": "Ring"
+      "type": "Ring",
+      "icon": "blackhandsigil"
     },
     {
       "name": "Silks of the Victor",
@@ -3565,7 +3582,8 @@
       "name": "Sky Murder",
       "quality": "SU",
       "stats": "Throw Damage:\n(253 - 272) to (280 - 300)\nOne-Hand Damage:\n(192 - 204) to (217 - 230)\nRequired Level: 100\nRequired Dexterity: 612\nItem Level: 120\nDexterity Damage Bonus: (0.11 per Dexterity)%\n{orange}+1 Extra Target to Storm Crows\n+(3 to 4) to Assassin Skill Levels\n50% Attack Speed\nAdds 90-110 Damage\n-30% to Enemy Elemental Resistances\n+(151 to 180)% Enhanced Damage\n5% Deadly Strike\nMaximum Lightning Resist +(2 to 4)%\nSocketed (2)",
-      "type": "Balanced Knife (Sacred)"
+      "type": "Balanced Knife (Sacred)",
+      "icon": "invtk3"
     },
     {
       "name": "Sky Spirit",
@@ -3577,7 +3595,8 @@
       "name": "Smokeless Fire",
       "quality": "SU",
       "stats": "One-Hand Damage: 39 to 44\n(Necromancer Only)\nRequired Level: 100\nRequired Dexterity: 172\nItem Level: 120\nDexterity Damage Bonus: (0.06 per Dexterity)%\n{orange}+1 Extra Fireheart Totem\n+(2 to 3) to Necromancer Skill Levels\n1% Base Block Chance\n+66% to Fire Spell Damage\n+(51 to 75)% to Summon Damage\n(11 to 20)% to All Attributes\nFire Absorb 5%\n+(101 to 200) Life after each Kill\nSocketed (2)",
-      "type": "Grim Wand (Sacred)"
+      "type": "Grim Wand (Sacred)",
+      "icon": "invwndur"
     },
     {
       "name": "Solar Scion",
@@ -3643,7 +3662,8 @@
       "name": "Steel Punisher",
       "quality": "SU",
       "stats": "One-Hand Damage:\n(192 - 207) to (312 - 338)\n(Sorceress Only)\nRequired Level: 100\nRequired Dexterity: 400\nItem Level: 120\nDexterity Damage Bonus: (0.13 per Dexterity)%\n{orange}Area Effect Attack\n{grey}100% Chance to Cast on Attack: Deals 50% normal attack damage in a radius of 5 yards.\n{orange}Spiral Dance: +300% Bonus Magic Damage\n+(1 to 2) to Sorceress Skill Levels\n15% Chance to cast level 25 ATMG Sentry on Melee Attack\nAdds 60-80 Damage\n(15 to 20)% Life stolen per Hit\n+(170 to 200)% Enhanced Damage\n10% Deadly Strike\nPhysical Resist 10%\nSocketed (6)",
-      "type": "Warp Blade (Sacred)"
+      "type": "Warp Blade (Sacred)",
+      "icon": "warpbbl"
     },
     {
       "name": "Stone Guardian",
@@ -3709,7 +3729,8 @@
       "name": "Strixclaw",
       "quality": "SU",
       "stats": "One-Hand Damage:\n(233 - 245) to (239 - 251)\nRequired Level: 120\nRequired Dexterity:\n2928\nItem Level: 120\nDexterity Damage Bonus: (0.11 per Dexterity)%\n{orange}-100% to Enemy Lightning Resistance (Requires 100% Crushing Blow)\n8% Chance to cast level 50 Egg Trap on Kill\n15% Chance to cast level 50 Egg Trap when Struck\n+125 Damage\nAdds 2000-3000 Lightning Damage\n+(172 to 200)% Enhanced Damage\n+10 to\nRanged Egg Trap\nRequirements +500%\nSocketed (3)",
-      "type": "Blade (Sacred)"
+      "type": "Blade (Sacred)",
+      "icon": "invstrixclaw"
     },
     {
       "name": "Stygian Fury",
@@ -3745,19 +3766,22 @@
       "name": "The Awakening",
       "quality": "SU",
       "stats": "Defense:\n11673 to 14304\nRequired Level: 130\nRequired Strength: 690\nItem Level: 130\n{grey}Ethereal\n{orange}When Cubed with The Sleep, Enables an Additional Awakening\n{orange}(The Armor will be Disenchanted by the Recipe)\n+(1 to 4) to All Skills\n5% Chance to cast level 50 Banish on Death Blow\n50% Combat Speeds\n-(31 to 35)% to Enemy Elemental Resistances\n+200% Enhanced Defense\n+25 Maximum Stamina\nMagic Resist +5%\nSocketed (6)",
-      "type": "Full Plate Mail (Sacred)"
+      "type": "Full Plate Mail (Sacred)",
+      "icon": "invawaken"
     },
     {
       "name": "The Biting Frost",
       "quality": "SU",
       "stats": "Two-Hand Damage: 48 to 51\n(Druid Only)\nRequired Level: 100\nRequired Strength: 240\nItem Level: 120\nStrength Damage Bonus: (0.06 per Strength)%\n{orange}Ember Spirit Nullified\n+2 Hunting Banshee Projectiles\n+(9 to 10) to Druid Skill Levels\n+150 Spell Focus\n25% Cast Speed\n+(25 to 40)% to Cold Spell Damage\n-(20 to 30)% to Enemy Cold Resistance\n15% to Energy\nPhysical Resist 5%\n5% Reanimate as: Random Monster\nSocketed (4)",
-      "type": "Flamen Staff (Sacred)"
+      "type": "Flamen Staff (Sacred)",
+      "icon": "flammeen"
     },
     {
       "name": "The Book of Kalen",
       "quality": "SU",
       "stats": "Defense:\n(3513 - 4471) to (3737 - 4757)\nChance to Block: 3%\n(Paladin Only)\nRequired Level: 100\nRequired Dexterity: 437\nItem Level: 105\n{orange}Dragon's Blessing Attribute Bonus Halved\n1% Base Block Chance\n30% Hit Recovery\n+(20 to 40) to Smite\n+(120 to 180)% Enhanced Defense\n+2000 Defense vs. Missile\nMaximum Life +3%\n+20 to Light Radius\nSocketed (4)",
-      "type": "Targe (Sacred)"
+      "type": "Targe (Sacred)",
+      "icon": "invbbb"
     },
     {
       "name": "The Captain",
@@ -3817,7 +3841,8 @@
       "name": "The Grandfather",
       "quality": "SU",
       "stats": "One-Hand Damage:\n(229 - 314) to (327 - 336)\nTwo-Hand Damage:\n(322 - 407) to (414 - 423)\nRequired Level: 120\nRequired Strength:\n1340\nItem Level: 120\nStrength Damage Bonus: (0.16 per Strength)%\n{orange}+400% Deadly Strike\n{orange}-5% Deadly Strike per 1% Attack Speed\nAdds (85 to 170)-(171 to 180) Damage\n(150 to 300)% Bonus to Attack Rating\n+200% Enhanced Damage\n+(30 to 40) to Ancients' Hand\n+50 to all Attributes\nMaximum Life +(5 to 7)%\nRequirements +100%\nSocketed (6)",
-      "type": "Great Sword (Sacred)"
+      "type": "Great Sword (Sacred)",
+      "icon": "invgsdu"
     },
     {
       "name": "The Intrepid",
@@ -3853,7 +3878,8 @@
       "name": "The Point of No Return",
       "quality": "SU",
       "stats": "Two-Hand Damage: 59 to 62\nRequired Level: 50\nRequired Dexterity: 218\nItem Level: 130\nDexterity Damage Bonus: (0.15 per Dexterity)%\nCorrupted\n{orange}Can be corrupted 10 times\n{orange}Empowered corruption outcomes\n{orange}Failed corruptions do not increase Required Level\n{orange}Successful corruptions increase Required Level by 10\n{orange}Orb of Annihilation: +10% Total Damage per Corrupted Item worn\n101% Movement Speed\n+25 to Orb of Annihilation\nRegenerate Mana +202%\nSocketed (4)",
-      "type": "Gnarled Staff (Sacred)"
+      "type": "Gnarled Staff (Sacred)",
+      "icon": "invhst"
     },
     {
       "name": "The Pride of Caldeum",
@@ -3889,7 +3915,8 @@
       "name": "The Searing Heat",
       "quality": "SU",
       "stats": "Two-Hand Damage: 48 to 51\n(Druid Only)\nRequired Level: 100\nRequired Strength: 240\nItem Level: 120\nStrength Damage Bonus: (0.06 per Strength)%\n{orange}Hunting Banshee Nullified\n+3 Ember Spirit Projectiles\n+(9 to 10) to Druid Skill Levels\n+150 Spell Focus\n25% Cast Speed\n+(25 to 40)% to Fire Spell Damage\n-(20 to 30)% to Enemy Fire Resistance\n15% to Energy\nPhysical Resist 5%\n5% Reanimate as: Random Monster\nSocketed (4)",
-      "type": "Flamen Staff (Sacred)"
+      "type": "Flamen Staff (Sacred)",
+      "icon": "flammeen"
     },
     {
       "name": "The Sentinel's Sorrow",
@@ -3985,25 +4012,29 @@
       "name": "Tyrael's Might",
       "quality": "SU",
       "stats": "Defense:\n11859 to 14685\nRequired Level: 130\nItem Level: 130\n{grey}Ethereal\n50% Movement Speed\n+100% Damage to Demons\n+100% Damage to Undead\n+200% Enhanced Defense\nMaximum Elemental Resists +15%\nPhysical Resist 50%\nCannot Be Frozen\nRequirements -100%\nCeleri Caelesti Iustitia\nSocketed (6)",
-      "type": "Ancient Armor (Sacred)"
+      "type": "Ancient Armor (Sacred)",
+      "icon": "tyrmight"
     },
     {
       "name": "Undead Crown",
       "quality": "SU",
       "stats": "Defense:\n4437 to 4914\nRequired Level: 110\nRequired Strength: 675\nItem Level: 120\n{orange}10% of Minion Damage Increases Added as Deadly Strike\n{orange}65% of Minion Life Increases Added as Bonus to Defense\n{orange}Deal No Crushing Blows\nOrb Effects Applied to this Item are Doubled\n50% Attack Speed\n+200% Enhanced Defense\nSocketed (4)",
-      "type": "Crown (Sacred)"
+      "type": "Crown (Sacred)",
+      "icon": "undeadcrown"
     },
     {
       "name": "Unveiling Eye",
       "quality": "SU",
       "stats": "Defense: 505 to 571\nRequired Level: 130\nRequired Dexterity: 262\nItem Level: 130\n{orange}Hidden Reliquary\n(Bonus for each equipped Hidden Craft Item)\n{grey}+50 Spell Focus\n{grey}+20% to Elemental Spell Damage\n{grey}+2 to All Skills\n-(21 to 30)% to Enemy Elemental Resistances\nMaximum Elemental Resists +(1 to 2)%\nSlain Monsters Rest in Peace\n50% Magic Find\nSocketed (4)",
-      "type": "Circlet (Sacred)"
+      "type": "Circlet (Sacred)",
+      "icon": "invsoulseek"
     },
     {
       "name": "Vaetia's Wall",
       "quality": "SU",
       "stats": "Defense:\n(4603 - 5157) to (5543 - 6210)\nChance to Block: -1% + Class %\n(Sorceress Only)\nRequired Level: 100\nRequired Strength:\n460\nRequired Dexterity:\n471\nItem Level: 105\n-1% Base Block Chance\n-(11 to 15)% to Enemy Elemental Resistances\n+(4 to 8) to Vengeful Power (Sorceress Only)\n+(4 to 8) to Warp Armor (Sorceress Only)\n+(4 to 8) to Snow Queen (Sorceress Only)\n+(4 to 8) to Living Flame (Sorceress Only)\n+(141 to 170)% Enhanced Defense\nMaximum Mana +(11 to 25)%\nMaximum Elemental Resists +(0 to 1)%\nRequirements -20%\nSocketed (6)",
-      "type": "Tower Shield (Sacred)"
+      "type": "Tower Shield (Sacred)",
+      "icon": "invtowu"
     },
     {
       "name": "Valkyrie's Prime",
@@ -4083,13 +4114,15 @@
       "quality": "SU",
       "stats": "Item Level: 140\n{orange}Erupting Strike grants 16% extra bonus fire damage per character level above 137\n25% Chance to cast level 1 Corrupted Vines on Death Blow\n-40% to Enemy Fire Resistance\nPhysical Resist 20%\n100% Magic Find\nRequirements +600%\n{orange}And the Abyss Stares Back",
       "source": "secret",
-      "type": "Maple Bow (Sacred)"
+      "type": "Maple Bow (Sacred)",
+      "icon": "voidmaple"
     },
     {
       "name": "Void-Touched",
       "quality": "SU",
       "stats": "(Druid Only)\nRequired Level: 100\nRequired Strength:\n3000\nItem Level: 120\nInnate Fire Damage: (80.0% of Strength)\n{orange}Erupting Strike grants 8% extra bonus fire damage per character level above 137\n15% Chance to cast level 1 Corrupted Vines on Death Blow\nAdds 250-350 Fire Damage\n-20% to Enemy Fire Resistance\nPhysical Resist 10%\n50% Magic Find\nRequirements +400%\nHunter Only Upgrade:\nMust have at least 3000 Strength\nSurvive the Edge of Nothingness battle for 11 minutes\nTransmute in the Horadric Cube to Upgrade\nSocketed (6)",
-      "type": "Maple Bow (Sacred)"
+      "type": "Maple Bow (Sacred)",
+      "icon": "voidmaple"
     },
     {
       "name": "Warmonger",
@@ -10623,14 +10656,16 @@
       "quality": "Relic",
       "stats": "Required Level: 140\nItem Level: 139",
       "source": "secret",
-      "type": "Relic"
+      "type": "Relic",
+      "icon": "relicbone"
     },
     {
       "name": "Time-Lost Relic",
       "quality": "Relic",
       "stats": "Required Level: 75\nItem Level: 1\n{orange}Cube with Essence of Time to uncover a Skill, Recipe or Unique item mod\n{orange}from the Future, Past, or from a different Timeline entirely...",
       "source": "secret",
-      "type": "Relic"
+      "type": "Relic",
+      "icon": "invtimerelic"
     },
     {
       "name": "Time-Lost Relic",
@@ -10638,7 +10673,8 @@
       "stats": "Required Level: 75\n{orange}Chance to Cast level 60 Cone of Cold on Melee Attack equal to your Deadly/Critical Strike chance\n{orange}Cone of Cold Size increased by 50% per 10 Trophied Charms you have",
       "source": "secret",
       "variant": "Outcome 1",
-      "type": "Relic"
+      "type": "Relic",
+      "icon": "invtimerelic"
     },
     {
       "name": "Time-Lost Relic",
@@ -10646,7 +10682,8 @@
       "stats": "Required Level: 75\n{orange}While your uncapped Lightning Resist, Lightning Spell Damage and Spell Focus sum up to exactly 2000\n{orange}Become Lightning Enchanted\n{orange}(4% Chance to Cast level 50 Spark Nova when Damaged)",
       "source": "secret",
       "variant": "Outcome 2",
-      "type": "Relic"
+      "type": "Relic",
+      "icon": "invtimerelic"
     },
     {
       "name": "Time-Lost Relic",
@@ -10654,7 +10691,8 @@
       "stats": "Required Level: 75\n+(12 to 16) to Fire Cannonade",
       "source": "secret",
       "variant": "Outcome 3",
-      "type": "Relic"
+      "type": "Relic",
+      "icon": "invtimerelic"
     },
     {
       "name": "Time-Lost Relic",
@@ -10662,7 +10700,8 @@
       "stats": "Required Level: 75\n+(10 to 16) to Judgement Day",
       "source": "secret",
       "variant": "Outcome 4",
-      "type": "Relic"
+      "type": "Relic",
+      "icon": "invtimerelic"
     },
     {
       "name": "Time-Lost Relic",
@@ -10670,13 +10709,15 @@
       "stats": "Required Level: 75\n+25 to Resurrect\n+1 to Body of the Savior",
       "source": "secret",
       "variant": "Outcome 5",
-      "type": "Relic"
+      "type": "Relic",
+      "icon": "invtimerelic"
     },
     {
       "name": "Skinrender's Ear",
       "quality": "Charm",
       "stats": "Required Level: 140\nItem Level: 139\n{orange}+30% Magic Resist in Heroic Duncraig\n+150 Life Regenerated per Second",
-      "source": "secret"
+      "source": "secret",
+      "icon": "relicskin"
     }
   ]
 }

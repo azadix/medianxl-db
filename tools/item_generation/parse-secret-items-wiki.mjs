@@ -43,6 +43,13 @@ const BLOOD_OF_CREATION_CLASS_BY_VERSION = {
 };
 
 const BLOOD_OF_CREATION_ICON = 'darkremnant';
+const SECRET_ITEM_ICONS = {
+  'Blood of Creation': BLOOD_OF_CREATION_ICON,
+  "Bonehexer's Puzzlebox": 'relicbone',
+  "Skinrender's Ear": 'relicskin',
+  'Time-Lost Relic': 'invtimerelic',
+  'Celestial Sigil': 'sigilx',
+}
 
 /**
  * Class restriction, red-bottle art, and Version 1 duplicate skill line.
@@ -50,8 +57,9 @@ const BLOOD_OF_CREATION_ICON = 'darkremnant';
  * @returns {UniqueStatsEntry}
  */
 function applyBloodOfCreationFixes(entry) {
+  const secretIcon = SECRET_ITEM_ICONS[entry.name];
+  if (secretIcon) entry.icon = secretIcon;
   if (entry.name !== 'Blood of Creation') return entry;
-  entry.icon = BLOOD_OF_CREATION_ICON;
   const classOnly = BLOOD_OF_CREATION_CLASS_BY_VERSION[entry.variant || ''];
   if (classOnly) {
     const lines = String(entry.stats || '').split('\n');
