@@ -21,12 +21,63 @@ function afterItemSkillSourcesChanged() {
   runPlannerSkillStatRecompute();
 }
 
+/** Delay before writing slider rolls to the store / character stats. */
+const ROLL_APPLY_DELAY_MS = 300;
+
 const itemsStore = useItemsStore();
 const { selectedSlot, editingInstanceId, isPickerOpen, enabledRelicCount } =
   storeToRefs(itemsStore);
 
 /** @type {import('vue').Ref<Record<string, number>>} */
 const rolls = ref({});
+
+/** @type {ReturnType<typeof setTimeout>|null} */
+let rollApplyTimer = null;
+/** @type {{ instanceId: number, rolls: Record<string, number>, def: object|null }|null} */
+let pendingRollApply = null;
+
+function clearRollApplyTimer() {
+  if (rollApplyTimer != null) {
+    clearTimeout(rollApplyTimer);
+    rollApplyTimer = null;
+  }
+}
+
+/**
+ * Apply the last pending slider rolls to the store (and character stats when relevant).
+ */
+function flushPendingRollApply() {
+  clearRollApplyTimer();
+  const pending = pendingRollApply;
+  pendingRollApply = null;
+  if (!pending) return;
+  // Instance may already be gone (e.g. charm disabled while dragging a slider).
+  if (!itemsStore.instances[pending.instanceId]) return;
+  itemsStore.updateInstanceRolls(pending.instanceId, pending.rolls);
+  if (pending.def && (isRelicItem(pending.def) || isCharmItem(pending.def))) {
+    afterItemSkillSourcesChanged();
+  } else if (Object.values(itemsStore.equipment).includes(pending.instanceId)) {
+    runPlannerSkillStatRecompute();
+  }
+}
+
+/**
+ * @param {Record<string, number>} merged
+ */
+function scheduleRollApply(merged) {
+  const id = instanceId.value;
+  if (id == null) return;
+  pendingRollApply = {
+    instanceId: id,
+    rolls: { ...merged },
+    def: itemDef.value,
+  };
+  clearRollApplyTimer();
+  rollApplyTimer = setTimeout(() => {
+    rollApplyTimer = null;
+    flushPendingRollApply();
+  }, ROLL_APPLY_DELAY_MS);
+}
 
 const instanceId = computed(() => editingInstanceId.value);
 
@@ -167,6 +218,7 @@ function loadRolls() {
 watch(
   [instanceId, () => itemDef.value?.id ?? null],
   (curr, prev) => {
+    flushPendingRollApply();
     const [newId, newDefId] = curr;
     const prevId = prev?.[0] ?? null;
     const prevDefId = prev?.[1] ?? null;
@@ -195,6 +247,8 @@ watch(
  * @param {Record<string, number>} nextRolls
  */
 function persistRolls(nextRolls) {
+  clearRollApplyTimer();
+  pendingRollApply = null;
   const def = itemDef.value;
   const merged = def ? mergeRollsForDef(def, nextRolls, rollOptions.value) : nextRolls;
   rolls.value = merged;
@@ -207,6 +261,7 @@ function persistRolls(nextRolls) {
 }
 
 /**
+ * Slider / number edits: update the inspector immediately, apply stats after idle.
  * @param {string} key
  * @param {number} min
  * @param {number} max
@@ -214,7 +269,11 @@ function persistRolls(nextRolls) {
  */
 function setRoll(key, min, max, raw) {
   const nextVal = clampRoll(Number(raw), min, max);
-  persistRolls({ ...rolls.value, [key]: nextVal });
+  const def = itemDef.value;
+  const nextRolls = { ...rolls.value, [key]: nextVal };
+  const merged = def ? mergeRollsForDef(def, nextRolls, rollOptions.value) : nextRolls;
+  rolls.value = merged;
+  scheduleRollApply(merged);
 }
 
 /**
@@ -264,7 +323,10 @@ function onKeydown(e) {
 }
 
 onMounted(() => window.addEventListener('keydown', onKeydown));
-onUnmounted(() => window.removeEventListener('keydown', onKeydown));
+onUnmounted(() => {
+  flushPendingRollApply();
+  window.removeEventListener('keydown', onKeydown);
+});
 </script>
 
 <template>
