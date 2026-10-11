@@ -7768,6 +7768,34 @@
     "group": "Druid Staves"
   },
   {
+    "id": "mz05",
+    "name": "Flying Kinzhal",
+    "type": "qtkn",
+    "category": "weapons",
+    "slot": "arms",
+    "invWidth": 1,
+    "invHeight": 2,
+    "rarity": "normal",
+    "icon": "mastercraftedtknife",
+    "reqLevel": 30,
+    "reqStr": 0,
+    "reqDex": 519,
+    "qlvl": 200,
+    "sockets": 2,
+    "speed": -20,
+    "damage1h": {
+      "min": 41,
+      "max": 45
+    },
+    "damageThrow": {
+      "min": 68,
+      "max": 75
+    },
+    "dexDamageBonus": 0.13,
+    "innate": "1% Deadly Strike per 7% Movement Speed",
+    "group": "Throwing Knives"
+  },
+  {
     "id": "147",
     "name": "Flying Knife (1)",
     "type": "tkni",
@@ -13259,6 +13287,29 @@
     "group": "Daggers"
   },
   {
+    "id": "mz02",
+    "name": "Kukri",
+    "type": "qknf",
+    "category": "weapons",
+    "slot": "arms",
+    "invWidth": 1,
+    "invHeight": 3,
+    "rarity": "normal",
+    "icon": "mastercraftedknife",
+    "reqLevel": 30,
+    "reqStr": 0,
+    "reqDex": 550,
+    "qlvl": 200,
+    "sockets": 3,
+    "damage1h": {
+      "min": 45,
+      "max": 50
+    },
+    "dexDamageBonus": 0.14,
+    "innate": "+1 Lightning Damage per 1% Total Physical Weapon Damage Bonus\n+1 Lightning Damage per 1% Bonus to Defense",
+    "group": "Daggers"
+  },
+  {
     "id": "!55",
     "name": "Labrys (Sacred)",
     "type": "s2hx",
@@ -15073,6 +15124,30 @@
     },
     "strDamageBonus": 0.11,
     "group": "Maces"
+  },
+  {
+    "id": "mz01",
+    "name": "Maiden Bow",
+    "type": "qbow",
+    "category": "weapons",
+    "slot": "arms",
+    "invWidth": 2,
+    "invHeight": 4,
+    "rarity": "normal",
+    "icon": "mastercraftedbow",
+    "reqLevel": 30,
+    "reqStr": 0,
+    "reqDex": 750,
+    "qlvl": 200,
+    "sockets": 6,
+    "speed": 20,
+    "damage2h": {
+      "min": 77,
+      "max": 85
+    },
+    "dexDamageBonus": 0.18,
+    "innate": "+1% Chance to Avoid Damage per 500 Dexterity",
+    "group": "Bows"
   },
   {
     "id": "j19",
@@ -20078,6 +20153,28 @@
     "classRestriction": "Sorceress Only",
     "dexDamageBonus": 0.11,
     "group": "Sorceress Orbs"
+  },
+  {
+    "id": "mz21",
+    "name": "Soulbinder Gloves",
+    "type": "qglv",
+    "category": "armor",
+    "slot": "glov",
+    "invWidth": 2,
+    "invHeight": 2,
+    "rarity": "normal",
+    "icon": "mastercraftedgloves",
+    "reqLevel": 100,
+    "reqStr": 350,
+    "reqDex": 0,
+    "qlvl": 200,
+    "sockets": 4,
+    "defense": {
+      "min": 492,
+      "max": 522
+    },
+    "innate": "Can spawn any oSkill from Rare Affixes",
+    "group": "Gloves"
   },
   {
     "id": "3@M",

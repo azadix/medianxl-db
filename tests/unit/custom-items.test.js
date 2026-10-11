@@ -36,6 +36,7 @@ describe('custom-items', () => {
   it('strips TSW base labels and drops header lines from modifiers', () => {
     expect(stripTswBaseLabel('Superior Light Gauntlets (Angelic)')).toBe('Light Gauntlets');
     expect(stripTswBaseLabel('Cap (Sacred)')).toBe('Cap');
+    expect(stripTswBaseLabel('Soulbinder Gloves (Mastercrafted)')).toBe('Soulbinder Gloves');
     expect(
       tswCustomModifiers({
         display_name: 'Ring',

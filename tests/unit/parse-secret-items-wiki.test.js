@@ -50,13 +50,20 @@ const SNIPPET = `
 describe('parseSecretItemsWiki', () => {
   it('skips locked, herding, soulstone, essence of time, disabled outcomes, and the disabled section', () => {
     const entries = parseSecretItemsWiki(SNIPPET);
-    expect(entries.map((e) => e.name)).toEqual(['Maleficence']);
+    expect(entries.map((e) => e.name)).toEqual(['Maleficence', "Assur's Bane"]);
     expect(entries[0]).toMatchObject({
       quality: 'SU',
       type: 'Tyrannical Blade',
       source: 'secret',
     });
     expect(entries[0].stats).toContain('+200% Enhanced Damage');
+    expect(entries[1]).toMatchObject({
+      name: "Assur's Bane",
+      quality: 'SU',
+      type: 'Ring',
+      icon: 'ring08',
+      source: 'secret',
+    });
   });
 
   it('parses the live Secret Items fixture', () => {
@@ -82,7 +89,23 @@ describe('parseSecretItemsWiki', () => {
     ]);
 
     const relics = entries.filter((e) => e.quality === 'Relic');
-    expect(relics.filter((e) => e.name === 'Time-Lost Relic')).toHaveLength(6);
+    const timeLost = relics.filter((e) => e.name === 'Time-Lost Relic');
+    expect(timeLost.map((e) => e.variant).sort()).toEqual(
+      [
+        'Body of the Savior',
+        'Cone of Cold',
+        'Fire Cannonade',
+        'Judgement Day',
+        'Lightning Enchanted',
+      ].sort()
+    );
+    expect(timeLost.every((e) => e.icon === 'invtimerelic')).toBe(true);
+    expect(entries.some((e) => e.name === 'Time-Lost Relic' && !e.variant)).toBe(false);
+    expect(entries.find((e) => e.name === "Assur's Bane")).toMatchObject({
+      quality: 'SU',
+      type: 'Ring',
+      icon: 'ring08',
+    });
     const blood = relics.filter((e) => e.name === 'Blood of Creation');
     expect(blood).toHaveLength(7);
     expect(blood.map((e) => [e.variant, e.stats.match(/^\(([^)]+Only)\)/m)?.[1]])).toEqual([
@@ -96,7 +119,11 @@ describe('parseSecretItemsWiki', () => {
     ]);
     expect(blood.every((e) => e.icon === 'darkremnant')).toBe(true);
     expect(entries.find((e) => e.name === "Bonehexer's Puzzlebox")?.icon).toBe('relicbone');
-    expect(entries.find((e) => e.name === "Skinrender's Ear")?.icon).toBe('relicskin');
+    expect(entries.find((e) => e.name === "Skinrender's Ear")).toMatchObject({
+      quality: 'Relic',
+      type: 'Relic',
+      icon: 'relicskin',
+    });
     const v1Lines = blood[0].stats.split('\n').filter((line) =>
       /^\+1 to Crystalline Arsenal$/i.test(line.replace(/^\{(orange|grey)\}/, '').trim())
     );

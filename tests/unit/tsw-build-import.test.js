@@ -343,6 +343,15 @@ describe('tsw-build-import', () => {
     const pact = snapshot.charms.find((row) => row.defId === '##.');
     expect(pact?.rolls?.[CHARM_ROLL_KEYS.trophy]).toBe(1);
 
+    const sleep = snapshot.charms.find((row) => row.defId === 'ths');
+    expect(sleep?.rolls?.[CHARM_ROLL_KEYS.trophyIndex]).toBe(16); // Astrogha
+    expect(sleep?.rolls?.[CHARM_ROLL_KEYS.awakening]).toBe(1);
+    expect(sleep?.rolls?.[CHARM_ROLL_KEYS.trophyIndex2]).toBe(19); // Nephalem's Sacrifice
+
+    const medallion = snapshot.charms.find((row) => row.defId === 'lok');
+    expect(medallion?.rolls?.[CHARM_ROLL_KEYS.upgradePrefix + '0']).toBe(1);
+    expect(medallion?.rolls?.[CHARM_ROLL_KEYS.trophy]).toBe(1);
+
     const hammer = snapshot.charms.find((row) => row.defId === '0u1');
     expect(hammer?.rolls?.[CHARM_ROLL_KEYS.paragonPath]).toBe(2);
     expect(hammer?.rolls?.[`${CHARM_ROLL_KEYS.paragonRegularPrefix}0`]).toBe(1);

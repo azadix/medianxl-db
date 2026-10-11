@@ -412,7 +412,12 @@ export function getItemStatSections(def, rolls = null, options = {}) {
   if (def.dexDamageBonus != null) {
     scaling.push(`Dexterity Damage Bonus: (${def.dexDamageBonus} per Dexterity)%`);
   }
-  if (def.innate) scaling.push(String(def.innate));
+  if (def.innate) {
+    for (const line of String(def.innate).split(/\r?\n/)) {
+      const text = line.trim();
+      if (text) scaling.push(text);
+    }
+  }
 
   if (def.adds) {
     const adds = String(def.adds);

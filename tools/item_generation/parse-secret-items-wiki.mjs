@@ -29,7 +29,21 @@ const SKIP_NAMES = new Set([
 ]);
 const SKIP_SECTIONS = new Set(['Disabled_items', 'Summary', 'Version_history', 'mw-toc-heading']);
 const RELIC_SECTIONS = new Set(['Relics_and_special_items', 'Time-Lost_Relics', 'Blood_of_Creation']);
-const RELIC_NAMES = new Set(["Bonehexer's Puzzlebox", 'Time-Lost Relic', 'Blood of Creation']);
+const RELIC_NAMES = new Set([
+  "Bonehexer's Puzzlebox",
+  "Skinrender's Ear",
+  'Time-Lost Relic',
+  'Blood of Creation',
+]);
+
+/** Outcome labels from Time-Lost Relic stats (base cube item is dropped). */
+const TIME_LOST_RELIC_VARIANTS = [
+  { test: /Cone of Cold/i, variant: 'Cone of Cold' },
+  { test: /Lightning Enchanted/i, variant: 'Lightning Enchanted' },
+  { test: /Fire Cannonade/i, variant: 'Fire Cannonade' },
+  { test: /Judgement Day/i, variant: 'Judgement Day' },
+  { test: /Body of the Savior/i, variant: 'Body of the Savior' },
+];
 
 /** uniqueitems.txt RemnantDarkness / pr260 class ids (1=Amazon … 7=Assassin). */
 const BLOOD_OF_CREATION_CLASS_BY_VERSION = {
@@ -49,30 +63,74 @@ const SECRET_ITEM_ICONS = {
   "Skinrender's Ear": 'relicskin',
   'Time-Lost Relic': 'invtimerelic',
   'Celestial Sigil': 'sigilx',
+  "Assur's Bane": 'ring08',
+};
+
+/** Base Assur's Bane (scroll upgrades omitted). Not listed on Secret Items wiki. */
+export const ASSUR_BANE_ENTRY = {
+  name: "Assur's Bane",
+  quality: 'SU',
+  type: 'Ring',
+  source: 'secret',
+  icon: 'ring08',
+  stats: [
+    'Required Level: 100',
+    'Item Level: 1',
+    '+1 to All Skills',
+    'Adds 7-13 Damage',
+    '+30% Damage to Undead',
+    '+1 to Purify',
+    'Maximum Life +3%',
+    'Maximum Mana +10%',
+    '+2 to Light Radius',
+    "{orange}Assur's Curse",
+    '{grey}If two of these rings are equipped:',
+    '{orange}Maximum Elemental Resists -10%',
+  ].join('\n'),
+};
+
+/**
+ * Drop the inert base Time-Lost Relic; name outcomes by their granted effect.
+ * @param {UniqueStatsEntry} entry
+ * @returns {UniqueStatsEntry|null}
+ */
+function applyTimeLostRelicFixes(entry) {
+  if (entry.name !== 'Time-Lost Relic') return entry;
+  const stats = String(entry.stats || '');
+  if (/Cube with Essence of Time/i.test(stats)) return null;
+  for (const { test, variant } of TIME_LOST_RELIC_VARIANTS) {
+    if (test.test(stats)) {
+      entry.variant = variant;
+      return entry;
+    }
+  }
+  return null;
 }
 
 /**
  * Class restriction, red-bottle art, and Version 1 duplicate skill line.
  * @param {UniqueStatsEntry} entry
- * @returns {UniqueStatsEntry}
+ * @returns {UniqueStatsEntry|null}
  */
-function applyBloodOfCreationFixes(entry) {
+function applySecretItemFixes(entry) {
   const secretIcon = SECRET_ITEM_ICONS[entry.name];
   if (secretIcon) entry.icon = secretIcon;
-  if (entry.name !== 'Blood of Creation') return entry;
-  const classOnly = BLOOD_OF_CREATION_CLASS_BY_VERSION[entry.variant || ''];
+  const timed = applyTimeLostRelicFixes(entry);
+  if (!timed) return null;
+  if (timed.name !== 'Blood of Creation') return timed;
+  const classOnly = BLOOD_OF_CREATION_CLASS_BY_VERSION[timed.variant || ''];
   if (classOnly) {
-    const lines = String(entry.stats || '').split('\n');
+    const lines = String(timed.stats || '').split('\n');
     if (!lines.some((line) => /^\([^)]+Only\)$/i.test(line.trim()))) {
       const reqIdx = lines.findIndex((line) => /^Required Level:/i.test(line));
       const insertAt = reqIdx >= 0 ? reqIdx + 1 : 0;
       lines.splice(insertAt, 0, `(${classOnly})`);
-      entry.stats = lines.join('\n');
+      timed.stats = lines.join('\n');
     }
   }
-  if (entry.variant === 'Version 1') {
+  if (timed.variant === 'Version 1') {
     let seenCrystalline = false;
-    entry.stats = String(entry.stats || '')
+    timed.stats = String(timed.stats || '')
       .split('\n')
       .filter((line) => {
         const text = line.replace(/^\{(orange|grey)\}/, '').trim();
@@ -84,7 +142,7 @@ function applyBloodOfCreationFixes(entry) {
       })
       .join('\n');
   }
-  return entry;
+  return timed;
 }
 
 /**
@@ -213,7 +271,12 @@ export function parseSecretItemsWiki(html) {
       if (type) entry.type = type;
     }
 
-    entries.push(applyBloodOfCreationFixes(entry));
+    const fixed = applySecretItemFixes(entry);
+    if (fixed) entries.push(fixed);
+  }
+
+  if (!entries.some((e) => e.name === "Assur's Bane")) {
+    entries.push({ ...ASSUR_BANE_ENTRY });
   }
 
   return entries;

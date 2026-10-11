@@ -15,6 +15,7 @@ import {
   getCharmTrophyOptions,
   getCharmUpgradeEntries,
   getParagonHammerConfig,
+  hasCharmExtraAwakening,
   isCharmItem,
   isModifierPool,
 } from '@/items/charm-items.js';
@@ -134,6 +135,7 @@ export function matchAffixTemplate(template, actual) {
     }
   }
   if (signature(tmpl) === signature(act)) {
+    if (!ranges.length && !sameAbsoluteNumbers(tmpl, act)) return null;
     return ranges.length ? numbers(act).slice(0, ranges.length) : [];
   }
   const ta = tokens(tmpl);
@@ -142,10 +144,63 @@ export function matchAffixTemplate(template, actual) {
   const [small, large] = ta.length <= tb.length ? [ta, tb] : [tb, ta];
   const hit = small.filter((w) => large.includes(w)).length;
   if (hit < Math.min(2, small.length) || hit / small.length < 0.7) return null;
-  const na = numbers(tmpl).map((n) => Math.abs(n)).sort((a, b) => a - b);
-  const nb = numbers(act).map((n) => Math.abs(n)).sort((a, b) => a - b);
-  if (na.length && (na.length !== nb.length || na.some((n, i) => n !== nb[i]))) return null;
+  if (!sameAbsoluteNumbers(tmpl, act)) return null;
   return ranges.length ? numbers(act).slice(0, ranges.length) : [];
+}
+
+/**
+ * @param {string} a
+ * @param {string} b
+ * @returns {boolean}
+ */
+function sameAbsoluteNumbers(a, b) {
+  const na = numbers(a)
+    .map((n) => Math.abs(n))
+    .sort((x, y) => x - y);
+  const nb = numbers(b)
+    .map((n) => Math.abs(n))
+    .sort((x, y) => x - y);
+  if (!na.length && !nb.length) return true;
+  if (!na.length || !nb.length) return true;
+  return na.length === nb.length && na.every((n, i) => n === nb[i]);
+}
+
+/**
+ * @param {string} label
+ * @param {string[]} lines
+ * @returns {boolean}
+ */
+function labelInLines(label, lines) {
+  const want = plain(label)
+    .replace(/^[-–—\s]+|[-–—\s]+$/g, '')
+    .toLowerCase();
+  if (!want) return false;
+  return lines.some((line) => {
+    const have = plain(line)
+      .replace(/^[-–—\s]+|[-–—\s]+$/g, '')
+      .toLowerCase();
+    return have === want || have.includes(want);
+  });
+}
+
+/**
+ * @param {{ label: string, affixes: string[] }[]} options
+ * @param {string[]} lines
+ * @returns {Array<{ index: number, score: number }>}
+ */
+function rankTrophyOptions(options, lines) {
+  /** @type {Array<{ index: number, score: number }>} */
+  const ranked = [];
+  options.forEach((opt, index) => {
+    let score = 0;
+    for (const text of opt.affixes) {
+      if (findLine(text, lines)) score += 1;
+    }
+    if (labelInLines(opt.label, lines)) score += opt.affixes.length || 1;
+    if (score > 0) ranked.push({ index, score });
+  });
+  ranked.sort((a, b) => b.score - a.score || a.index - b.index);
+  return ranked;
 }
 
 /**
@@ -248,33 +303,58 @@ export function rollsFromTswItem(row, def, className = null) {
       }
     }
 
-    const upgrades = getCharmUpgradeEntries(def, className);
     const upgraded = Boolean(row.is_upgraded);
-    for (const entry of upgrades) {
-      const matched = entry.affixes.filter((text) => findLine(text, lines));
-      if (matched.length || (upgraded && upgrades.length === 1)) {
-        rolls[entry.key] = 1;
+    const hasTrophy = Boolean(row.has_trophy);
+    const upgrades = getCharmUpgradeEntries(def, className);
+    if (upgraded) {
+      for (const entry of upgrades) {
+        const matched = entry.affixes.filter((text) => findLine(text, lines));
+        if (matched.length || upgrades.length === 1) {
+          rolls[entry.key] = 1;
+        }
+        entry.affixes.forEach((text, affixIndex) => {
+          applyRanged(text, `upgrade:${entry.index}:${affixIndex}`, charmAffixRollKey, lines, rolls);
+        });
       }
-      entry.affixes.forEach((text, affixIndex) => {
-        applyRanged(text, `upgrade:${entry.index}:${affixIndex}`, charmAffixRollKey, lines, rolls);
-      });
     }
 
     const trophy = getCharmTrophyEntry(def);
-    if (trophy) {
-      const matched = trophy.affixes.some((text) => findLine(text, lines));
-      if (matched || row.has_trophy) rolls[CHARM_ROLL_KEYS.trophy] = 1;
+    if (hasTrophy && trophy) {
+      rolls[CHARM_ROLL_KEYS.trophy] = 1;
       trophy.affixes.forEach((text, affixIndex) => {
         applyRanged(text, `trophy:${affixIndex}`, charmAffixRollKey, lines, rolls);
       });
     }
 
     const trophyOptions = getCharmTrophyOptions(def);
-    trophyOptions.forEach((opt, i) => {
-      if (opt.affixes.some((text) => findLine(text, lines))) {
-        rolls[CHARM_ROLL_KEYS.trophyIndex] = i + 1;
+    if (hasTrophy && trophyOptions.length) {
+      const ranked = rankTrophyOptions(trophyOptions, lines);
+      if (ranked.length) {
+        const primary = ranked[0];
+        rolls[CHARM_ROLL_KEYS.trophyIndex] = primary.index + 1;
+        trophyOptions[primary.index].affixes.forEach((text, affixIndex) => {
+          applyRanged(text, `trophyOpt:${primary.index + 1}:${affixIndex}`, charmAffixRollKey, lines, rolls);
+        });
+        const awakened =
+          upgraded || lines.some((line) => /\bawakened\b/i.test(plain(line)));
+        if (hasCharmExtraAwakening(def) && awakened && ranked.length > 1) {
+          const secondary = ranked.find((entry) => entry.index !== primary.index);
+          if (secondary) {
+            rolls[CHARM_ROLL_KEYS.awakening] = 1;
+            rolls[CHARM_ROLL_KEYS.trophyIndex2] = secondary.index + 1;
+            trophyOptions[secondary.index].affixes.forEach((text, affixIndex) => {
+              applyRanged(
+                text,
+                `trophyOpt2:${secondary.index + 1}:${affixIndex}`,
+                charmAffixRollKey,
+                lines,
+                rolls
+              );
+            });
+          }
+        }
       }
-    });
+    }
 
     const paragon = getParagonHammerConfig(def);
     if (paragon) {
