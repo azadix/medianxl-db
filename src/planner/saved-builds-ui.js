@@ -73,6 +73,7 @@ import {
   applyTswOSkillLeftovers,
   inferTswQuestsCompleted,
 } from './tsw-build-import.js';
+import { inferTswClassSkillsBonus } from './tsw-item-rolls.js';
 import Tree from '@/tree/Tree.js';
 import {
   updateSkillPointsDisplay,
@@ -202,6 +203,8 @@ export function loadBuildData(build, buildIndex = null) {
     }
     if (build.classSkillsBonus !== undefined) {
         setClassSkillsBonus(build.classSkillsBonus);
+    } else if (tswItems) {
+        setClassSkillsBonus(inferTswClassSkillsBonus(tswItems, build.class));
     } else {
         setClassSkillsBonus(0);
     }
@@ -227,7 +230,7 @@ export function loadBuildData(build, buildIndex = null) {
             try {
                 itemsStore.syncViewerClassName(build.class);
                 if (tswItems) {
-                    const { snapshot, skipped } = mapTswItemsToSnapshot(tswItems, itemsStore);
+                    const { snapshot, skipped } = mapTswItemsToSnapshot(tswItems, itemsStore, build.class);
                     itemsStore.fromSnapshot(snapshot);
                     toastSkippedTswItems(skipped);
                 } else if (build.items != null) {

@@ -3,7 +3,7 @@ import { resolve } from 'node:path';
 import { readJson } from '../helpers/tree-data.js';
 
 const ROOT = resolve(import.meta.dirname, '../..');
-const SCHEMA_PATH = resolve(ROOT, 'schemas/planner-build-full.schema.json');
+const SCHEMA_PATH = resolve(ROOT, 'schemas/planner-build.schema.json');
 const EXAMPLE_PATH = resolve(ROOT, 'schemas/examples/Miss_Peeled.json');
 
 /**
@@ -177,7 +177,7 @@ describe('planner build full schema', () => {
 
   it('is the TSW envelope schema', () => {
     expect(schema.$schema).toBe('https://json-schema.org/draft/2020-12/schema');
-    expect(schema.$id).toBe('https://github.com/azadix/medianxl-db/schemas/planner-build-full.schema.json');
+    expect(schema.$id).toBe('https://github.com/azadix/medianxl-db/schemas/planner-build.schema.json');
     expect(schema.type).toBe('object');
     expect(schema.required).toEqual(['build', 'items']);
     expect(schema.properties.build.$ref).toBe('#/$defs/TswBuild');

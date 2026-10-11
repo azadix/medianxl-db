@@ -1,0 +1,323 @@
+/**
+ * @file Map TSW description lines onto planner affix roll keys.
+ * @module planner/tsw-item-rolls
+ */
+
+import { parseAffixRanges } from '@/items/affix-rolls.js';
+import {
+  CHARM_ROLL_KEYS,
+  charmAffixRollKey,
+  charmPoolHighRollKey,
+  charmPoolOptionSourceKey,
+  charmPoolOptionTexts,
+  getCharmModifierPools,
+  getCharmTrophyEntry,
+  getCharmTrophyOptions,
+  getCharmUpgradeEntries,
+  getParagonHammerConfig,
+  isCharmItem,
+  isModifierPool,
+} from '@/items/charm-items.js';
+import { tswDescriptionTexts } from '@/items/custom-items.js';
+import {
+  collectOverlayAffixSources,
+  getOverlayOptionalModifiers,
+  isOverlayItem,
+  overlayAffixRollKey,
+} from '@/items/item-overlays.js';
+import { decodeModifierLine } from '@/items/item-modifier-line.js';
+import { parseSkillBonusFromModifierLine } from '@/items/skill-bonus-from-modifiers.js';
+import {
+  isRelicItem,
+  relicAffixRollKey,
+  collectRelicAffixSources,
+} from '@/items/relic-items.js';
+
+const STOP = new Set([
+  'a',
+  'an',
+  'and',
+  'as',
+  'at',
+  'by',
+  'from',
+  'in',
+  'of',
+  'on',
+  'or',
+  'per',
+  'the',
+  'to',
+  'when',
+  'with',
+  'your',
+]);
+
+/**
+ * @param {string} text
+ * @returns {string}
+ */
+function plain(text) {
+  return decodeModifierLine(text).text || String(text || '').trim();
+}
+
+/**
+ * @param {string} text
+ * @returns {string}
+ */
+function signature(text) {
+  return plain(text)
+    .toLowerCase()
+    .replace(/\+\((-?\d+(?:\.\d+)?)\s+to\s+(-?\d+(?:\.\d+)?)\)/g, '#')
+    .replace(/\((-?\d+(?:\.\d+)?)\s+to\s+(-?\d+(?:\.\d+)?)\)/g, '#')
+    .replace(/[+-]?\d+(?:\.\d+)?/g, '#')
+    .replace(/[^a-z#]+/g, '');
+}
+
+/**
+ * @param {string} text
+ * @returns {string[]}
+ */
+function tokens(text) {
+  return plain(text)
+    .toLowerCase()
+    .replace(/[+-]?\d+(?:\.\d+)?/g, ' ')
+    .split(/[^a-z]+/)
+    .map((w) => w.replace(/(?:ing|ed|es|s)$/, ''))
+    .filter((w) => w.length > 1 && !STOP.has(w));
+}
+
+/**
+ * @param {string} text
+ * @returns {number[]}
+ */
+function numbers(text) {
+  return [...plain(text).matchAll(/[+-]?\d+(?:\.\d+)?/g)].map((m) => Number(m[0]));
+}
+
+/**
+ * @param {string} s
+ * @returns {string}
+ */
+function escapeRe(s) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/**
+ * @param {string} template
+ * @param {string} actual
+ * @returns {number[]|null}
+ */
+export function matchAffixTemplate(template, actual) {
+  const tmpl = plain(template);
+  const act = plain(actual);
+  if (!tmpl || !act) return null;
+  const ranges = parseAffixRanges(tmpl);
+  if (ranges.length) {
+    let pattern = '';
+    let last = 0;
+    for (const range of ranges) {
+      pattern += escapeRe(tmpl.slice(last, range.start));
+      pattern += '\\+?([+-]?\\d+(?:\\.\\d+)?)';
+      last = range.end;
+    }
+    pattern += escapeRe(tmpl.slice(last));
+    const re = new RegExp(`^${pattern}$`, 'i');
+    const m = re.exec(act);
+    if (m) {
+      const values = ranges.map((range, i) => {
+        const n = Number(m[i + 1]);
+        if (!Number.isFinite(n)) return range.min;
+        return Math.min(range.max, Math.max(range.min, n));
+      });
+      return values;
+    }
+  }
+  if (signature(tmpl) === signature(act)) {
+    return ranges.length ? numbers(act).slice(0, ranges.length) : [];
+  }
+  const ta = tokens(tmpl);
+  const tb = tokens(act);
+  if (!ta.length || !tb.length) return null;
+  const [small, large] = ta.length <= tb.length ? [ta, tb] : [tb, ta];
+  const hit = small.filter((w) => large.includes(w)).length;
+  if (hit < Math.min(2, small.length) || hit / small.length < 0.7) return null;
+  const na = numbers(tmpl).map((n) => Math.abs(n)).sort((a, b) => a - b);
+  const nb = numbers(act).map((n) => Math.abs(n)).sort((a, b) => a - b);
+  if (na.length && (na.length !== nb.length || na.some((n, i) => n !== nb[i]))) return null;
+  return ranges.length ? numbers(act).slice(0, ranges.length) : [];
+}
+
+/**
+ * @param {string} template
+ * @param {string[]} lines
+ * @returns {{ line: string, values: number[] }|null}
+ */
+function findLine(template, lines) {
+  for (const line of lines) {
+    const values = matchAffixTemplate(template, line);
+    if (values) return { line, values };
+  }
+  return null;
+}
+
+/**
+ * @param {string} text
+ * @param {string} sourceKey
+ * @param {(sourceKey: string, rangeIndex: number) => string} keyFn
+ * @param {string[]} lines
+ * @param {Record<string, number>} rolls
+ */
+function applyRanged(text, sourceKey, keyFn, lines, rolls) {
+  const ranges = parseAffixRanges(text);
+  if (!ranges.length) return;
+  const hit = findLine(text, lines);
+  if (!hit) return;
+  ranges.forEach((range, i) => {
+    const n = Number(hit.values[i]);
+    rolls[keyFn(sourceKey, i)] = Number.isFinite(n)
+      ? Math.min(range.max, Math.max(range.min, n))
+      : range.min;
+  });
+}
+
+/**
+ * @param {unknown} rows
+ * @param {string} className
+ * @returns {number}
+ */
+export function inferTswClassSkillsBonus(rows, className) {
+  const want = String(className || '').trim().toLowerCase();
+  if (!want) return 0;
+  let total = 0;
+  const list = Array.isArray(rows) ? rows : [];
+  for (const row of list) {
+    if (!row || typeof row !== 'object') continue;
+    const location = String(row.location || '').trim();
+    if (location !== 'Gear' && location !== 'Inventory') continue;
+    for (const text of tswDescriptionTexts(row.description_lines)) {
+      const parsed = parseSkillBonusFromModifierLine(text);
+      if (parsed?.kind !== 'class') continue;
+      if (String(parsed.className || '').trim().toLowerCase() !== want) continue;
+      const n = Number(parsed.amount);
+      if (Number.isFinite(n)) total += n;
+    }
+  }
+  return Math.max(0, Math.floor(total));
+}
+
+/**
+ * @param {object} row
+ * @param {object|null|undefined} def
+ * @param {string|null|undefined} [className]
+ * @returns {Record<string, number>}
+ */
+export function rollsFromTswItem(row, def, className = null) {
+  /** @type {Record<string, number>} */
+  const rolls = {};
+  if (!row || !def) return rolls;
+  const lines = tswDescriptionTexts(row.description_lines);
+
+  if (isCharmItem(def)) {
+    let modIndex = 0;
+    let poolIndex = 0;
+    for (const mod of Array.isArray(def.modifiers) ? def.modifiers : []) {
+      if (isModifierPool(mod)) {
+        const pooled = getCharmModifierPools(def).find((p) => p.poolIndex === poolIndex);
+        const opts = pooled ? pooled.options : [];
+        let selected = -1;
+        let high = 0;
+        opts.forEach((option, optionIndex) => {
+          for (const text of charmPoolOptionTexts(option)) {
+            if (!findLine(text, lines)) continue;
+            selected = optionIndex;
+            if (option.high && findLine(option.high, lines)) high = 1;
+            applyRanged(text, charmPoolOptionSourceKey(poolIndex, optionIndex), charmAffixRollKey, lines, rolls);
+          }
+        });
+        if (selected >= 0) {
+          rolls[`${CHARM_ROLL_KEYS.poolPrefix}${poolIndex}`] = selected;
+          if (high) rolls[charmPoolHighRollKey(poolIndex)] = 1;
+        }
+        poolIndex += 1;
+        continue;
+      }
+      if (typeof mod === 'string') {
+        applyRanged(mod, `base:m${modIndex}`, charmAffixRollKey, lines, rolls);
+        modIndex += 1;
+      }
+    }
+
+    const upgrades = getCharmUpgradeEntries(def, className);
+    const upgraded = Boolean(row.is_upgraded);
+    for (const entry of upgrades) {
+      const matched = entry.affixes.filter((text) => findLine(text, lines));
+      if (matched.length || (upgraded && upgrades.length === 1)) {
+        rolls[entry.key] = 1;
+      }
+      entry.affixes.forEach((text, affixIndex) => {
+        applyRanged(text, `upgrade:${entry.index}:${affixIndex}`, charmAffixRollKey, lines, rolls);
+      });
+    }
+
+    const trophy = getCharmTrophyEntry(def);
+    if (trophy) {
+      const matched = trophy.affixes.some((text) => findLine(text, lines));
+      if (matched || row.has_trophy) rolls[CHARM_ROLL_KEYS.trophy] = 1;
+      trophy.affixes.forEach((text, affixIndex) => {
+        applyRanged(text, `trophy:${affixIndex}`, charmAffixRollKey, lines, rolls);
+      });
+    }
+
+    const trophyOptions = getCharmTrophyOptions(def);
+    trophyOptions.forEach((opt, i) => {
+      if (opt.affixes.some((text) => findLine(text, lines))) {
+        rolls[CHARM_ROLL_KEYS.trophyIndex] = i + 1;
+      }
+    });
+
+    const paragon = getParagonHammerConfig(def);
+    if (paragon) {
+      const regulars = Array.isArray(paragon.regularUpgrades) ? paragon.regularUpgrades : [];
+      regulars.forEach((step, index) => {
+        const affixes = Array.isArray(step?.affixes) ? step.affixes : [];
+        if (affixes.some((text) => findLine(String(text), lines))) {
+          rolls[`${CHARM_ROLL_KEYS.paragonRegularPrefix}${index}`] = 1;
+        }
+        affixes.forEach((text, affixIndex) => {
+          applyRanged(String(text), `paragonRegular:${index}:${affixIndex}`, charmAffixRollKey, lines, rolls);
+        });
+      });
+      const paths = Array.isArray(paragon.paragonPaths) ? paragon.paragonPaths : [];
+      paths.forEach((path, i) => {
+        const affixes = Array.isArray(path?.affixes) ? path.affixes : [];
+        if (affixes.some((text) => findLine(String(text), lines))) {
+          rolls[CHARM_ROLL_KEYS.paragonPath] = i + 1;
+        }
+      });
+      if (paragon.justicar) {
+        const affixes = Array.isArray(paragon.justicar.affixes) ? paragon.justicar.affixes : [];
+        if (affixes.some((text) => findLine(String(text), lines))) {
+          rolls[CHARM_ROLL_KEYS.paragonJusticar] = 1;
+        }
+      }
+    }
+  }
+
+  if (isRelicItem(def)) {
+    for (const source of collectRelicAffixSources(def)) {
+      applyRanged(source.text, source.sourceKey, relicAffixRollKey, lines, rolls);
+    }
+  }
+
+  if (isOverlayItem(def)) {
+    for (const optional of getOverlayOptionalModifiers(def)) {
+      if (findLine(optional.text, lines)) rolls[optional.key] = 1;
+    }
+    for (const source of collectOverlayAffixSources(def, rolls)) {
+      applyRanged(source.text, source.sourceKey, overlayAffixRollKey, lines, rolls);
+    }
+  }
+
+  return rolls;
+}

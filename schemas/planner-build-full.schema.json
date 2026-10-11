@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/azadix/medianxl-db/schemas/planner-build-full.schema.json",
+  "$id": "https://github.com/azadix/medianxl-db/schemas/planner-build.schema.json",
   "title": "TSW planner build export",
   "$comment": "NotArmory/TSW character export envelope. Native planner saves are a different JSON shape and are not this schema. Import unwraps build and maps catalog-backed items.",
   "type": "object",

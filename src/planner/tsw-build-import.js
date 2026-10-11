@@ -11,6 +11,7 @@ import {
 } from '@/character/planner-build-io.js';
 import { isCharmItem, isDimensionalKeyCharm } from '@/items/charm-items.js';
 import { isRelicItem, MAX_RELICS } from '@/items/relic-items.js';
+import { rollsFromTswItem } from '@/planner/tsw-item-rolls.js';
 import { EQUIPMENT_SLOTS } from '@/items/item-types.js';
 import { slugify } from '@/items/unique-stats-catalog.js';
 import {
@@ -329,12 +330,28 @@ function isCatalogBacked(row, def) {
 }
 
 /**
+ * @param {object} row
+ * @param {string} defId
+ * @param {object|null} def
+ * @param {string|null|undefined} className
+ * @returns {{ defId: string, rolls?: Record<string, number> }}
+ */
+function snapshotWithRolls(row, defId, def, className) {
+  /** @type {{ defId: string, rolls?: Record<string, number> }} */
+  const entry = { defId };
+  const rolls = rollsFromTswItem(row, def, className);
+  if (rolls && Object.keys(rolls).length) entry.rolls = rolls;
+  return entry;
+}
+
+/**
  * Map a TSW items dump onto `{ weaponSet, equipment, charms, relics }`.
  * @param {unknown} rows
  * @param {object} catalog
- * @returns {{ snapshot: { weaponSet: 0, equipment: Record<string, { defId: string, custom?: object, icon?: string }|null>, charms: Array<{ defId: string }>, relics: Array<{ defId: string }> }, skipped: Array<{ name: string, reason: string }> }}
+ * @param {string|null|undefined} [className]
+ * @returns {{ snapshot: { weaponSet: 0, equipment: Record<string, { defId: string, custom?: object, icon?: string, rolls?: Record<string, number> }|null>, charms: Array<{ defId: string, rolls?: Record<string, number> }>, relics: Array<{ defId: string, rolls?: Record<string, number> }> }, skipped: Array<{ name: string, reason: string }> }}
  */
-export function mapTswItemsToSnapshot(rows, catalog) {
+export function mapTswItemsToSnapshot(rows, catalog, className = null) {
   const cat = catalogIndex(catalog);
   /** @type {Record<string, { defId: string, custom?: object, icon?: string }|null>} */
   const equipment = {};
@@ -398,7 +415,7 @@ export function mapTswItemsToSnapshot(rows, catalog) {
         skipped.push({ name, reason: 'uncatalogued' });
         continue;
       }
-      equipment[slotKey] = { defId };
+      equipment[slotKey] = snapshotWithRolls(row, defId, def, className);
       continue;
     }
 
@@ -408,14 +425,14 @@ export function mapTswItemsToSnapshot(rows, catalog) {
         continue;
       }
       seenRelics.add(defId);
-      relics.push({ defId });
+      relics.push(snapshotWithRolls(row, defId, def, className));
       continue;
     }
 
     if (isCharmItem(def) || row.is_charm) {
       if (seenCharms.has(defId)) continue;
       seenCharms.add(defId);
-      charms.push({ defId });
+      charms.push(snapshotWithRolls(row, defId, def, className));
       continue;
     }
 

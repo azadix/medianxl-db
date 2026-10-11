@@ -12,6 +12,9 @@ import {
   inferTswQuestsCompleted,
   TSW_SLOT_TO_EQUIPMENT,
 } from '@/planner/tsw-build-import.js';
+import { inferTswClassSkillsBonus } from '@/planner/tsw-item-rolls.js';
+import { CHARM_ROLL_KEYS, charmAffixRollKey } from '@/items/charm-items.js';
+import { relicAffixRollKey } from '@/items/relic-items.js';
 
 const ROOT = resolve(import.meta.dirname, '../..');
 
@@ -149,13 +152,13 @@ describe('tsw-build-import', () => {
       },
     ];
     const { snapshot, skipped } = mapTswItemsToSnapshot(rows, byIdCatalog());
-    expect(snapshot.equipment.head).toEqual({ defId: 'u:lacuni-cowl:su' });
+    expect(snapshot.equipment.head).toMatchObject({ defId: 'u:lacuni-cowl:su' });
     expect(snapshot.equipment.lrin).toEqual({
       defId: 'rin',
       custom: { quality: 'rare', name: 'Ring', modifiers: ['+1 to All Skills'] },
     });
-    expect(snapshot.charms).toEqual([{ defId: 'a68' }, { defId: 'ebw-primordia' }]);
-    expect(snapshot.relics).toEqual([{ defId: 'relic:lightning-wall' }]);
+    expect(snapshot.charms.map((row) => row.defId)).toEqual(['a68', 'ebw-primordia']);
+    expect(snapshot.relics.map((row) => row.defId)).toEqual(['relic:lightning-wall']);
     expect(skipped.some((s) => s.name === 'Ring')).toBe(false);
   });
 
@@ -248,10 +251,12 @@ describe('tsw-build-import', () => {
     const charms = JSON.parse(readFileSync(resolve(dir, 'charms.json'), 'utf8'));
     const relics = JSON.parse(readFileSync(resolve(dir, 'relics.json'), 'utf8'));
     const tsw = JSON.parse(readFileSync(resolve(ROOT, 'schemas/examples/Miss_Peeled.json'), 'utf8'));
-    const { snapshot, skipped } = mapTswItemsToSnapshot(tsw.items, {
-      catalog: [...bases, ...uniques, ...charms, ...relics],
-    });
-    expect(snapshot.equipment.head).toEqual({ defId: 'u:lacuni-cowl:su' });
+    const { snapshot, skipped } = mapTswItemsToSnapshot(
+      tsw.items,
+      { catalog: [...bases, ...uniques, ...charms, ...relics] },
+      'Assassin'
+    );
+    expect(snapshot.equipment.head).toMatchObject({ defId: 'u:lacuni-cowl:su' });
     expect(snapshot.equipment.rarm?.defId).toBe('u:mekanism:su');
     expect(snapshot.charms.some((row) => row.defId === 'a68')).toBe(true);
     expect(snapshot.charms.some((row) => row.defId === 'ebw-primordia')).toBe(true);
@@ -308,6 +313,49 @@ describe('tsw-build-import', () => {
     expect(Object.keys(store.enabledRelics).sort()).toEqual(
       ['relic:hailstorm', 'relic:lightning-wall', 'relic:whirlwind'].sort()
     );
+  });
+
+  it('sets Miss_Peeled charm, relic, and unique rolls from description lines', () => {
+    const dir = resolve(ROOT, 'public/items/2_14');
+    const bases = [
+      ...JSON.parse(readFileSync(resolve(dir, 'baseitems.json'), 'utf8')),
+      ...JSON.parse(readFileSync(resolve(dir, 'other.json'), 'utf8')),
+    ];
+    const db = JSON.parse(readFileSync(resolve(dir, 'unique-stats-db.json'), 'utf8'));
+    const { items: uniques } = buildCatalogFromUniqueStats(db, bases);
+    const charms = JSON.parse(readFileSync(resolve(dir, 'charms.json'), 'utf8'));
+    const relics = JSON.parse(readFileSync(resolve(dir, 'relics.json'), 'utf8'));
+    const tsw = JSON.parse(readFileSync(resolve(ROOT, 'schemas/examples/Miss_Peeled.json'), 'utf8'));
+    const { snapshot } = mapTswItemsToSnapshot(
+      tsw.items,
+      { catalog: [...bases, ...uniques, ...charms, ...relics] },
+      'Assassin'
+    );
+
+    const horazon = snapshot.charms.find((row) => row.defId === 'a68');
+    expect(horazon?.rolls?.[charmAffixRollKey('base:m0', 0)]).toBe(4);
+    expect(horazon?.rolls?.[charmAffixRollKey('base:m2', 0)]).toBe(24);
+
+    const vortex = snapshot.charms.find((row) => row.defId === 'x02');
+    expect(vortex?.rolls?.[CHARM_ROLL_KEYS.upgradePrefix + '0']).toBe(1);
+
+    const pact = snapshot.charms.find((row) => row.defId === '##.');
+    expect(pact?.rolls?.[CHARM_ROLL_KEYS.trophy]).toBe(1);
+
+    const hammer = snapshot.charms.find((row) => row.defId === '0u1');
+    expect(hammer?.rolls?.[CHARM_ROLL_KEYS.paragonPath]).toBe(2);
+    expect(hammer?.rolls?.[`${CHARM_ROLL_KEYS.paragonRegularPrefix}0`]).toBe(1);
+    expect(hammer?.rolls?.[`${CHARM_ROLL_KEYS.paragonRegularPrefix}1`]).toBe(1);
+
+    const wall = snapshot.relics.find((row) => row.defId === 'relic:lightning-wall');
+    expect(wall?.rolls?.[relicAffixRollKey('base:m0', 0)]).toBe(7);
+    expect(wall?.rolls?.[relicAffixRollKey('base:m1', 0)]).toBe(19);
+    expect(wall?.rolls?.[relicAffixRollKey('base:m2', 0)]).toBe(2);
+
+    expect(Object.values(snapshot.equipment.head?.rolls || {})).toEqual(
+      expect.arrayContaining([19, 24, 149])
+    );
+    expect(inferTswClassSkillsBonus(tsw.items, 'Assassin')).toBe(20);
   });
 });
 
