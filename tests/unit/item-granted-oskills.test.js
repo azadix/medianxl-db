@@ -127,6 +127,16 @@ describe('item-granted oSkills', () => {
     expect(html).toMatch(/to <span class="/);
   });
 
+  it('wraps chance-to-cast skill names in green markers', () => {
+    const marked = wrapNamedSkillGrantMarkers('5% Chance to cast level 9 Bloodlust on Kill');
+    expect(marked).toMatch(/level 9 \[\[.+\]\] on Kill/i);
+    const html = formatItemModifierLineHtml('5% Chance to cast level 9 Bloodlust on Kill');
+    expect(html).toContain(`class="${SCALING_DISPLAY_HTML_CLASSES.skill}"`);
+    expect(html).toContain('Bloodlust');
+    expect(html).toMatch(/level 9 <span class="/);
+    expect(html).not.toContain('[[');
+  });
+
   it('keeps space before Summon Edyrem skill span', () => {
     const html = formatItemModifierLineHtml('+1 to Summon Edyrem');
     expect(html).toMatch(/to <span class="/);
@@ -147,6 +157,14 @@ describe('item-granted oSkills', () => {
       { kind: 'text', text: ' to Teleport' },
     ]);
     expect(parts.some((p) => p.kind === 'skill' && p.text === 'Teleport')).toBe(true);
+  });
+
+  it('annotates chance-to-cast affix parts with skill kind', () => {
+    const parts = annotateAffixDisplayPartsWithSkills([
+      { kind: 'value', text: '5' },
+      { kind: 'text', text: '% Chance to cast level 9 Bloodlust on Kill' },
+    ]);
+    expect(parts.some((p) => p.kind === 'skill' && /bloodlust/i.test(p.text))).toBe(true);
   });
 
   it('enabled relic grants stay separate from the merged charm+relic collector', () => {

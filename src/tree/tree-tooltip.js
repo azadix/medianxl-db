@@ -353,7 +353,9 @@ async function handleSkillPointsChanged(preferredCard = null) {
             context.isOSkill,
             context.variantKey,
             context.oskillSlotId,
-            context.hasDisableToggle
+            context.hasDisableToggle,
+            context.isProc,
+            context.procMeta
         );
         
         tooltipElement.innerHTML = content;
@@ -402,7 +404,9 @@ async function showTooltip(skillId, mouseX, mouseY, hoveredCard = null) {
         context.isOSkill,
         context.variantKey,
         context.oskillSlotId,
-        context.hasDisableToggle
+        context.hasDisableToggle,
+        context.isProc,
+        context.procMeta
     );
     
     // Update tooltip
@@ -605,6 +609,8 @@ function getSkillCategoryTags(skillId) {
  * @param {number} level - Current skill level
  * @param {string} warningMessage - Optional warning message (e.g., prerequisite not met)
  * @param {string|null} [oskillSlotId] - Planner oSkill row id (data-oskill-slot-id); tree skills omit
+ * @param {boolean} [isProc] - Chance-to-cast proc from the Procs tab
+ * @param {{ chanceLabel?: string, condition?: string }|null} [procMeta]
  */
 async function buildTooltipContent(
   skillData,
@@ -613,13 +619,22 @@ async function buildTooltipContent(
   isOSkill = false,
   variantKey = null,
   oskillSlotId = null,
-  hasDisableToggle = false
+  hasDisableToggle = false,
+  isProc = false,
+  procMeta = null
 ) {
-    // Get skill soft-level bonuses for effective level calculation
+    // Get skill soft-level bonuses for effective level calculation.
+    // Proc CTC levels are fixed item values and ignore all-skills / class / relic soft.
     const allSkillsBonusInput = document.getElementById('allSkillsBonus');
-    const allSkillsBonus = allSkillsBonusInput ? Math.max(0, parseInt(allSkillsBonusInput.value) || 0) : 0;
+    const allSkillsBonus = isProc
+      ? 0
+      : allSkillsBonusInput
+        ? Math.max(0, parseInt(allSkillsBonusInput.value) || 0)
+        : 0;
     const classSkillsBonusInput = document.getElementById('classSkillsBonus');
-    const classSkillsBonus = classSkillsBonusInput
+    const classSkillsBonus = isProc
+      ? 0
+      : classSkillsBonusInput
         ? Math.max(0, parseInt(classSkillsBonusInput.value) || 0)
         : 0;
     const character = getCharacterInstance();
@@ -628,13 +643,15 @@ async function buildTooltipContent(
         skillData.displayName != null && String(skillData.displayName).trim() !== ''
             ? String(skillData.displayName).trim()
             : String(skillData.id || '');
-    const relicBonus = getRelicSkillBonusForSkill({
-        skillId: skillData.id,
-        displayName: skillDisplayName,
-        isOSkill,
-        className: charClassName,
-        skillClass: skillData.className || skillData.class || '',
-    });
+    const relicBonus = isProc
+      ? 0
+      : getRelicSkillBonusForSkill({
+          skillId: skillData.id,
+          displayName: skillDisplayName,
+          isOSkill,
+          className: charClassName,
+          skillClass: skillData.className || skillData.class || '',
+        });
     const itemOSkillBonus = isOSkill ? getOSkillItemPoints(skillData.id) : 0;
     const relicOSkillGrants = collectEnabledRelicOSkillGrants({ className: charClassName });
     const relicOSkillGrant = isOSkill
@@ -657,8 +674,16 @@ async function buildTooltipContent(
         appliedClassSkillsBonus,
         appliedItemBonus,
         appliedRelicBonus,
-    } = sourceAmounts;
-    const scalingLevel = isOSkill ? effectiveLevel : level;
+    } = isProc
+      ? {
+          effectiveLevel: level,
+          appliedAllSkillsBonus: 0,
+          appliedClassSkillsBonus: 0,
+          appliedItemBonus: 0,
+          appliedRelicBonus: 0,
+        }
+      : sourceAmounts;
+    const scalingLevel = isProc ? level : isOSkill ? effectiveLevel : level;
     
     const iconFolder = versionToTreeAssetFolder(getCurrentVersion());
     const iconHtml = getSkillIconHTML(skillData.image, skillData.className, 'is-64x64', iconFolder);
@@ -679,34 +704,65 @@ async function buildTooltipContent(
         subskillHtml = `<p class="is-size-7 has-text-grey-lighter">Subskill of <span class="has-text-weight-semibold">${escapeHtmlText(parentName)}</span></p>`;
     }
 
-    const levelSectionHtml = `<div class="is-size-6 has-text-weight-bold has-text-warning-light">
+    const procChanceLabel =
+      procMeta?.chanceLabel != null && String(procMeta.chanceLabel).trim() !== ''
+        ? String(procMeta.chanceLabel).trim()
+        : '';
+    const procCondition =
+      procMeta?.condition != null && String(procMeta.condition).trim() !== ''
+        ? String(procMeta.condition).trim()
+        : '';
+    const levelSectionHtml = isProc
+      ? `<div class="is-size-6 has-text-weight-bold has-text-warning-light">
+                        Level ${effectiveLevel}
+                    </div>
+                    <div class="is-size-7 has-text-info">${escapeHtmlText(procChanceLabel ? `${procChanceLabel}%` : '')}${
+          procCondition ? ` ${escapeHtmlText(procCondition)}` : ''
+        }</div>`
+      : `<div class="is-size-6 has-text-weight-bold has-text-warning-light">
                         Level ${effectiveLevel}
                     </div>`;
 
-    const sourceRows = [
-        {
+    /** @type {Array<{ label: string, valueHtml: string }>} */
+    const sourceRows = isProc
+      ? [
+          {
+            label: 'Proc level',
+            valueHtml: `<span class="has-text-white">${level}</span>`,
+          },
+          {
+            label: 'Chance',
+            valueHtml: `<span class="has-text-info">${escapeHtmlText(
+              procChanceLabel ? `${procChanceLabel}%` : '—'
+            )}</span>`,
+          },
+        ]
+      : [
+          {
             label: 'Base',
             valueHtml: `<span class="has-text-white">${level}</span>`,
-        },
-        {
+          },
+          {
             label: 'All skills',
             valueHtml: `<span class="has-text-info">+${appliedAllSkillsBonus}</span>`,
-        },
-        {
+          },
+          {
             label: 'Class skills',
             valueHtml: `<span class="skill-bonus-class">+${appliedClassSkillsBonus}</span>`,
-        },
-    ];
-    if (isOSkill) {
+          },
+        ];
+    if (!isProc && isOSkill) {
         sourceRows.push({
             label: 'Item',
             valueHtml: `<span class="skill-bonus-item">+${appliedItemBonus}</span>`,
         });
     }
-    sourceRows.push({
+    if (!isProc) {
+      sourceRows.push({
         label: 'Relic',
         valueHtml: `<span class="skill-bonus-relic">+${appliedRelicBonus}</span>`,
-    });
+      });
+    }
     const sourcesHtml = buildSkillBonusSourcesTableHtml(sourceRows);
 
     const bodyParts = [
@@ -855,6 +911,12 @@ async function buildTooltipContent(
             characterState.lvl[skillName] = allSkillsBonus + classSkillsBonus + skillRelic;
         }
     }
+
+    // Proc CTC level is the packed item level only (no soft stacking).
+    if (isProc) {
+        characterState.blvl[currentSkillName] = level;
+        characterState.lvl[currentSkillName] = 0;
+    }
     
     // Check if Ctrl key is pressed (for formula display)
     const showFormulas = ctrlKeyPressed;
@@ -966,6 +1028,7 @@ export function destroyTooltip() {
 
 function resolveTooltipContext(skillCard, skillData, skillId) {
     const isOSkill = Boolean(skillCard && skillCard.closest('#tab-oSkills'));
+    const isProc = Boolean(skillCard && skillCard.closest('#tab-Procs'));
     const rawSlot = skillCard?.dataset?.oskillSlotId;
     const oskillSlotId =
         rawSlot != null && String(rawSlot).trim() !== '' ? String(rawSlot).trim() : null;
@@ -974,15 +1037,40 @@ function resolveTooltipContext(skillCard, skillData, skillId) {
         skillData &&
         isInnateSkill({ id: skillData.id })
     );
-    const currentLevel = isOSkill
-        ? getOSkillManualPoints(skillId)
-        : isInnate
+    const procLevelRaw = skillCard?.dataset?.procLevel;
+    const procLevel = Number(procLevelRaw);
+    const currentLevel = isProc
+        ? (Number.isFinite(procLevel) && procLevel > 0 ? procLevel : 1)
+        : isOSkill
+          ? getOSkillManualPoints(skillId)
+          : isInnate
             ? 1
             : getSkillPoints(skillId);
-    const warningMessage = isOSkill
+    const warningMessage = isOSkill || isProc
         ? ''
         : (skillCard?.querySelector('.skill-plus-btn')?.dataset?.warningMessage || '');
     const variantKey = resolveVariantKeyForTooltip(skillData.id, skillCard);
     const hasDisableToggle = Boolean(skillCard?.querySelector('.skill-disable-toggle'));
-    return { isOSkill, currentLevel, warningMessage, variantKey, oskillSlotId, hasDisableToggle };
+    const procMeta = isProc
+      ? {
+          chanceLabel:
+            skillCard?.dataset?.procChance != null
+              ? String(skillCard.dataset.procChance)
+              : '',
+          condition:
+            skillCard?.dataset?.procCondition != null
+              ? String(skillCard.dataset.procCondition)
+              : '',
+        }
+      : null;
+    return {
+      isOSkill,
+      isProc,
+      currentLevel,
+      warningMessage,
+      variantKey,
+      oskillSlotId,
+      hasDisableToggle,
+      procMeta,
+    };
 }

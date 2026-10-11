@@ -70,9 +70,12 @@ const levelColorClass = computed(() =>
   getLevelColorClass(props.cardData.currentPoints || 0, props.cardData.maxPoints || 0)
 );
 
+const isProc = computed(() => Boolean(props.cardData.isProc));
+
 const showDisableToggle = computed(() => {
   const cd = props.cardData;
   if (cd.isInnate) return false;
+  if (cd.isProc) return false;
   if (cd.isPassive === true) return false;
   if (cd.isUpgrade === true) return false;
   if (String(cd.tabName || '').trim().toLowerCase() === 'mastery') return false;
@@ -88,6 +91,13 @@ const disableButtonTitle = computed(() =>
 
 const plusTitle = computed(() => getRestrictionMessage(props.cardData.restrictions) || '');
 
+const procChanceText = computed(() => {
+  const label = props.cardData.procChanceLabel;
+  if (label != null && String(label).trim() !== '') return `${label}%`;
+  const chance = Number(props.cardData.procChance);
+  return Number.isFinite(chance) ? `${chance}%` : '';
+});
+
 watch(
   () => props.cardData,
   () => variantEpoch.value++,
@@ -98,10 +108,16 @@ watch(
 <template>
   <div
     class="skill-card"
-    :class="{ 'skill-card--variants': variants.length > 0 }"
+    :class="{
+      'skill-card--variants': variants.length > 0,
+      'skill-card--proc': isProc,
+    }"
     :data-skill-id="String(cardData.skillId)"
     :data-class-id="cardData.classId != null ? String(cardData.classId) : undefined"
     :data-oskill-slot-id="cardData.oskillSlotId != null ? String(cardData.oskillSlotId) : undefined"
+    :data-proc-level="isProc ? String(cardData.procLevel ?? cardData.currentPoints ?? '') : undefined"
+    :data-proc-chance="isProc ? String(cardData.procChanceLabel ?? cardData.procChance ?? '') : undefined"
+    :data-proc-condition="isProc && cardData.procCondition ? String(cardData.procCondition) : undefined"
     v-bind="skillVariantAttr"
   >
     <div class="skill-card-header">
@@ -119,7 +135,7 @@ watch(
       </div>
       <SkillCardImage :icon-markup="cardData.iconHTML" />
       <SkillCardButtons
-        v-if="!cardData.isInnate"
+        v-if="!cardData.isInnate && !isProc"
         :skill-id="cardData.skillId"
         :plus-disabled="plusDisabled"
         :minus-disabled="minusDisabled"
@@ -151,9 +167,17 @@ watch(
         Subskill
       </span>
       <span class="skill-card-name-variant has-text-grey is-size-7">{{ variantLabel }}</span>
+      <span
+        v-if="isProc && cardData.procCondition"
+        class="skill-card-proc-condition has-text-grey is-size-7"
+      >{{ cardData.procCondition }}</span>
     </div>
     <div class="skill-card-level">
-      <div :class="[levelColorClass, 'is-size-6']">
+      <div v-if="isProc" class="is-size-6 has-text-info">
+        <div>{{ procChanceText }}</div>
+        <div class="is-size-7 has-text-grey">L{{ cardData.procLevel || cardData.currentPoints || 0 }}</div>
+      </div>
+      <div v-else :class="[levelColorClass, 'is-size-6']">
         {{ cardData.currentPoints || 0 }} / {{ cardData.maxPoints || 0 }}
       </div>
     </div>

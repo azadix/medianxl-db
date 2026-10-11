@@ -1,5 +1,6 @@
 import { computed, watch } from 'vue';
 import { usePlannerStore } from '@/stores/planner.js';
+import { useItemsStore } from '@/stores/items.js';
 import {
   buildPlannerSkillCardData,
   updateTabColors,
@@ -15,8 +16,14 @@ import {
   hasAnyOSkillAllocations
 } from '@/character/planner-core.js';
 import { enrichOskillForDisplay } from '@/tree/tree-render.js';
+import {
+  collectEnabledPlannerProcs,
+  hasAnyPlannerProcs,
+} from '@/items/item-granted-procs.js';
+import { getFileSkillStore } from '@/shared/skill-data-store.js';
 
 const OSKILL_COLS = 3;
+const PROC_COLS = 3;
 
 /**
  * @param {object} opts
@@ -27,6 +34,7 @@ const OSKILL_COLS = 3;
  */
 export function usePlannerSkillsTree({ payload, classSkills, activeTab, gridRange }) {
   const store = usePlannerStore();
+  const itemsStore = useItemsStore();
 
   function cardDataForSkill(skill) {
     store.revision;
@@ -126,10 +134,69 @@ export function usePlannerSkillsTree({ payload, classSkills, activeTab, gridRang
     changeOSkillPoints(oskillIdentifier(cardData), delta);
   }
 
+  const procCardRows = computed(() => {
+    store.revision;
+    // Touch items store fields so equip/enable/roll changes refresh the tab.
+    void itemsStore.equipment;
+    void itemsStore.enabledCharms;
+    void itemsStore.enabledRelics;
+    void itemsStore.instances;
+    void itemsStore.catalogLoaded;
+    const out = [];
+    for (const row of collectEnabledPlannerProcs()) {
+      const det = getFileSkillStore()?.getSkillDetail?.(row.skillId);
+      const hasDescription =
+        (det?.description && String(det.description).trim().length > 0) ||
+        (det?.skill_effect && String(det.skill_effect).trim().length > 0);
+      out.push({
+        skillId: row.skillId,
+        displayName: row.displayName,
+        iconHTML: getSkillIcon(row.skillImage || '', row.skillClass || ''),
+        hasDescription: Boolean(hasDescription),
+        currentPoints: row.level,
+        maxPoints: row.level,
+        canAllocate: false,
+        restrictions: [],
+        isInnate: false,
+        isProc: true,
+        tabName: 'Proc',
+        isPassive: false,
+        isUpgrade: false,
+        isDisabled: false,
+        variants: [],
+        procChance: row.chance,
+        procChanceMax: row.chanceMax,
+        procChanceLabel: row.chanceLabel,
+        procCondition: row.condition,
+        procLevel: row.level,
+      });
+    }
+    return out;
+  });
+
+  const procGridStyle = computed(() => {
+    const n = procCardRows.value.length;
+    if (n === 0) return {};
+    const rows = Math.ceil(n / PROC_COLS);
+    return {
+      gridTemplateRows: `repeat(${rows}, auto)`,
+      gridTemplateColumns: `repeat(${PROC_COLS}, 1fr)`
+    };
+  });
+
+  function procGridArea(index) {
+    const row = Math.floor(index / PROC_COLS) + 1;
+    const col = (index % PROC_COLS) + 1;
+    return {
+      gridRow: row,
+      gridColumn: col
+    };
+  }
+
   function scheduleArrows() {
     if (!payload.value) return;
     const tab = activeTab.value;
-    if (!tab || tab === 'oSkills') return;
+    if (!tab || tab === 'oSkills' || tab === 'Procs') return;
     const grid = document.getElementById(`tab-${tab}`);
     if (!grid) return;
     const tabSkills = classSkills.value.filter((s) => s.tabName === tab);
@@ -150,6 +217,10 @@ export function usePlannerSkillsTree({ payload, classSkills, activeTab, gridRang
 
   const tabsWithPoints = computed(() => {
     store.revision;
+    void itemsStore.equipment;
+    void itemsStore.enabledCharms;
+    void itemsStore.enabledRelics;
+    void itemsStore.instances;
     const s = new Set();
     if (!payload.value) return s;
     const list = payload.value.skillsList;
@@ -161,6 +232,7 @@ export function usePlannerSkillsTree({ payload, classSkills, activeTab, gridRang
       }
     }
     if (hasAnyOSkillAllocations()) s.add('oSkills');
+    if (hasAnyPlannerProcs()) s.add('Procs');
     return s;
   });
 
@@ -184,6 +256,9 @@ export function usePlannerSkillsTree({ payload, classSkills, activeTab, gridRang
     oskillIdentifier,
     onOskillPlus,
     onOskillMinus,
+    procCardRows,
+    procGridStyle,
+    procGridArea,
     scheduleArrows
   };
 }

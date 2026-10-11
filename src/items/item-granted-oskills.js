@@ -21,6 +21,7 @@ import {
   parseSkillBonusFromModifierLine,
   isSkillOnCharacterTree,
 } from '@/items/skill-bonus-from-modifiers.js';
+import { parseProcFromModifierLine } from '@/items/item-procs.js';
 import { decodeModifierLine } from '@/items/item-modifier-line.js';
 import { stripDisplayedRollRanges } from '@/items/affix-rolls.js';
 import { escapeHtmlText, SCALING_DISPLAY_HTML_CLASSES } from '@/shared/utils.js';
@@ -83,6 +84,27 @@ export function matchCatalogSkillGrantFromLine(line) {
 }
 
 /**
+ * Match a chance-to-cast line to a catalog skill for green name markup.
+ * @param {string|null|undefined} line
+ * @returns {{ skillId: string, displayName: string, skillNameInLine: string }|null}
+ */
+export function matchCatalogProcSkillFromLine(line) {
+  const parsed = parseProcFromModifierLine(line);
+  if (!parsed?.skillName) return null;
+  const cat = resolveCatalogRowBySkillRef(parsed.skillName);
+  if (!cat?.id) return null;
+  const displayName =
+    cat.displayName != null && String(cat.displayName).trim() !== ''
+      ? String(cat.displayName).trim()
+      : String(parsed.skillName).trim();
+  return {
+    skillId: String(cat.id),
+    displayName,
+    skillNameInLine: String(parsed.skillName).trim(),
+  };
+}
+
+/**
  * Wrap catalog skill names in `[[internal_id]]` for later HTML expansion.
  * @param {string|null|undefined} line
  * @returns {string}
@@ -94,15 +116,28 @@ export function wrapNamedSkillGrantMarkers(line) {
   const prefix = prefixMatch ? prefixMatch[1] : '';
   const body = prefixMatch ? prefixMatch[2] : text;
   const grant = matchCatalogSkillGrantFromLine(body);
-  if (!grant) return text;
-  const skillName = String(
-    parseSkillBonusFromModifierLine(stripCharmDisplayPrefix(body))?.skillName || grant.displayName
-  ).trim();
+  if (grant) {
+    const skillName = String(
+      parseSkillBonusFromModifierLine(stripCharmDisplayPrefix(body))?.skillName || grant.displayName
+    ).trim();
+    if (!skillName) return text;
+    const re = grant.classOnly
+      ? new RegExp(`(\\s+to\\s+)${escapeRegExp(skillName)}(\\s+\\()`, 'i')
+      : new RegExp(`(\\s+to\\s+)${escapeRegExp(skillName)}(\\s*)$`, 'i');
+    return prefix + body.replace(re, `$1[[${grant.skillId}]]$2`);
+  }
+
+  const proc = matchCatalogProcSkillFromLine(prefix + body);
+  if (!proc) return text;
+  const skillName = proc.skillNameInLine || proc.displayName;
   if (!skillName) return text;
-  const re = grant.classOnly
-    ? new RegExp(`(\\s+to\\s+)${escapeRegExp(skillName)}(\\s+\\()`, 'i')
-    : new RegExp(`(\\s+to\\s+)${escapeRegExp(skillName)}(\\s*)$`, 'i');
-  return prefix + body.replace(re, `$1[[${grant.skillId}]]$2`);
+  const re = new RegExp(
+    `(level\\s+\\d+\\s+)${escapeRegExp(skillName)}(\\s+(?:on|when)\\s+)`,
+    'i'
+  );
+  const replaced = body.replace(re, `$1[[${proc.skillId}]]$2`);
+  if (replaced === body) return text;
+  return prefix + replaced;
 }
 
 /**
@@ -139,17 +174,12 @@ export function formatItemModifierLineHtml(line) {
 }
 
 /**
- * Annotate affix display parts so skill names use kind 'skill'.
  * @param {Array<{ kind: string, text: string }>} parts
- * @returns {Array<{ kind: string, text: string }>}
+ * @param {string} displayName
+ * @param {(before: string, idx: number) => boolean} looksLikeMatch
+ * @returns {Array<{ kind: string, text: string }>|null}
  */
-export function annotateAffixDisplayPartsWithSkills(parts) {
-  if (!Array.isArray(parts) || !parts.length) return parts || [];
-  const plain = parts.map((p) => String(p?.text ?? '')).join('');
-  const grant = matchCatalogSkillGrantFromLine(plain);
-  if (!grant) return parts;
-
-  const displayName = grant.displayName;
+function annotatePartsWithSkillName(parts, displayName, looksLikeMatch) {
   const lowerName = displayName.toLowerCase();
   /** @type {Array<{ kind: string, text: string }>} */
   const out = [];
@@ -167,12 +197,9 @@ export function annotateAffixDisplayPartsWithSkills(parts) {
       out.push({ kind, text });
       continue;
     }
-    // Prefer a " to SkillName" occurrence.
     const before = text.slice(0, idx);
     const after = text.slice(idx + displayName.length);
-    const looksLikeGrant =
-      /\sto\s+$/i.test(before) || before.toLowerCase().endsWith('to ');
-    if (!looksLikeGrant && idx !== 0) {
+    if (!looksLikeMatch(before, idx)) {
       out.push({ kind, text });
       continue;
     }
@@ -181,7 +208,37 @@ export function annotateAffixDisplayPartsWithSkills(parts) {
     if (after) out.push({ kind: 'text', text: after });
     replaced = true;
   }
-  return replaced ? out : parts;
+  return replaced ? out : null;
+}
+
+/**
+ * Annotate affix display parts so skill names use kind 'skill'.
+ * @param {Array<{ kind: string, text: string }>} parts
+ * @returns {Array<{ kind: string, text: string }>}
+ */
+export function annotateAffixDisplayPartsWithSkills(parts) {
+  if (!Array.isArray(parts) || !parts.length) return parts || [];
+  const plain = parts.map((p) => String(p?.text ?? '')).join('');
+  const grant = matchCatalogSkillGrantFromLine(plain);
+  if (grant) {
+    const annotated = annotatePartsWithSkillName(
+      parts,
+      grant.displayName,
+      (before, idx) =>
+        /\sto\s+$/i.test(before) || before.toLowerCase().endsWith('to ') || idx === 0
+    );
+    if (annotated) return annotated;
+  }
+
+  const proc = matchCatalogProcSkillFromLine(plain);
+  if (!proc) return parts;
+  const name = proc.skillNameInLine || proc.displayName;
+  const annotated = annotatePartsWithSkillName(
+    parts,
+    name,
+    (before) => /level\s+\d+\s+$/i.test(before)
+  );
+  return annotated || parts;
 }
 
 /**

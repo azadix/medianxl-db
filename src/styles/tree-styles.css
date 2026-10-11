@@ -190,6 +190,11 @@
     padding: 0 4px;
 }
 
+.skill-card-proc-condition {
+    display: block;
+    margin-top: 0.15rem;
+}
+
 .skill-card-level {
     text-align: center;
 }

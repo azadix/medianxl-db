@@ -138,16 +138,23 @@ const {
   oskillGridArea,
   onOskillPlus,
   onOskillMinus,
+  procCardRows,
+  procGridStyle,
+  procGridArea,
   scheduleArrows,
 } = usePlannerSkillsTree({ payload, classSkills, activeTab, gridRange });
 
-function switchTab(tabName) {
-  syncTabToUrl(tabName);
-  activeTab.value = tabName;
+function syncOskillPanel(tabName) {
   const oskillPanel = document.getElementById('oskillPanel');
   if (oskillPanel) {
     oskillPanel.style.display = tabName === 'oSkills' ? 'flex' : 'none';
   }
+}
+
+function switchTab(tabName) {
+  syncTabToUrl(tabName);
+  activeTab.value = tabName;
+  syncOskillPanel(tabName);
   nextTick(() => scheduleArrows());
 }
 
@@ -160,18 +167,16 @@ function onFullRender(detail) {
   };
   const names = sortedTabNames.value;
   const first = names[0];
-  const next =
-    detail.preserveTab && (names.includes(detail.preserveTab) || detail.preserveTab === 'oSkills')
-      ? detail.preserveTab
-      : first;
+  const preserved =
+    detail.preserveTab === 'oSkills' ||
+    detail.preserveTab === 'Procs' ||
+    names.includes(detail.preserveTab);
+  const next = detail.preserveTab && preserved ? detail.preserveTab : first;
   activeTab.value = next || '';
   if (next) {
     syncTabToUrl(next);
   }
-  const oskillPanel = document.getElementById('oskillPanel');
-  if (oskillPanel) {
-    oskillPanel.style.display = next === 'oSkills' ? 'flex' : 'none';
-  }
+  syncOskillPanel(next);
   nextTick(() => scheduleArrows());
 }
 
@@ -233,6 +238,9 @@ onUnmounted(() => {
         </li>
         <li :class="{ 'is-active': activeTab === 'oSkills' }">
           <a href="#" data-tab="oSkills" @click.prevent="switchTab('oSkills')">oSkills</a>
+        </li>
+        <li :class="{ 'is-active': activeTab === 'Procs' }">
+          <a href="#" data-tab="Procs" @click.prevent="switchTab('Procs')">Procs</a>
         </li>
       </ul>
       <div class="planner-tab-actions">
@@ -333,6 +341,20 @@ onUnmounted(() => {
           :planner-revision="store.revision"
           @plus="(d) => onOskillPlus(cd, d)"
           @minus="(d) => onOskillMinus(cd, d)"
+        />
+      </div>
+
+      <div
+        id="tab-Procs"
+        class="skills-grid"
+        :style="{ display: activeTab === 'Procs' ? 'grid' : 'none', ...procGridStyle }"
+      >
+        <SkillCard
+          v-for="(cd, idx) in procCardRows"
+          :key="'proc-' + idx + '-' + String(cd.skillId ?? '') + '-' + String(cd.procLevel ?? '') + '-' + String(cd.procCondition ?? '')"
+          :style="procGridArea(idx)"
+          :card-data="cd"
+          :planner-revision="store.revision"
         />
       </div>
     </div>
