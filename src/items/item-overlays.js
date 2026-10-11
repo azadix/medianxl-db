@@ -211,14 +211,22 @@ export function collectOverlayAffixSources(def, rolls = null) {
  * @param {string} sourceKey
  * @param {Record<string, number>|null|undefined} rolls
  * @param {boolean} [hideRollableRanges]
+ * @param {{ showRollRanges?: boolean }} [options]
  * @returns {string|null}
  */
-export function resolveOverlayAffixText(text, sourceKey, rolls = null, hideRollableRanges = false) {
+export function resolveOverlayAffixText(
+  text,
+  sourceKey,
+  rolls = null,
+  hideRollableRanges = false,
+  options = {}
+) {
   const ranges = parseAffixRanges(text);
   if (!ranges.length) return text;
   if (hideRollableRanges) return null;
   return applyAffixRolls(text, rolls, (i) => overlayAffixRollKey(sourceKey, i), {
     hideRanges: hideRollableRanges,
+    showRollRanges: options.showRollRanges === true,
   });
 }
 
@@ -315,15 +323,18 @@ export function defaultOverlayAffixRolls(def) {
 /**
  * @param {object|null|undefined} def
  * @param {Record<string, number>|null|undefined} rolls
- * @param {{ hideRollableRanges?: boolean }} [options]
+ * @param {{ hideRollableRanges?: boolean, showRollRanges?: boolean }} [options]
  * @returns {string[]}
  */
 export function getOverlayStatLines(def, rolls = null, options = {}) {
   /** @type {string[]} */
   const lines = [];
   const hide = options.hideRollableRanges === true;
+  const showRollRanges = options.showRollRanges === true;
   for (const source of collectOverlayAffixSources(def, rolls)) {
-    const text = resolveOverlayAffixText(source.text, source.sourceKey, rolls, hide);
+    const text = resolveOverlayAffixText(source.text, source.sourceKey, rolls, hide, {
+      showRollRanges,
+    });
     if (text == null) continue;
     lines.push(encodeModifierLine(text, source.color));
   }

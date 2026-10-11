@@ -4,6 +4,7 @@
  */
 
 import { decodeModifierLine } from '@/items/item-modifier-line.js';
+import { stripDisplayedRollRanges } from '@/items/affix-rolls.js';
 import { getOverlayStatLines, isOverlayItem } from '@/items/item-overlays.js';
 
 /**
@@ -36,7 +37,7 @@ const REQ_RANGE_RE =
 export function parseRequirementsReductionPct(text) {
   const decoded = decodeModifierLine(text);
   if (decoded.color === 'grey') return 0;
-  const s = decoded.text.replace(/\s+/g, ' ').trim();
+  const s = stripDisplayedRollRanges(decoded.text).replace(/\s+/g, ' ').trim();
   if (!s) return 0;
   const reducedBy = REQ_REDUCED_BY_RE.exec(s);
   if (reducedBy) return Math.abs(Number(reducedBy[1])) || 0;

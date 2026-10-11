@@ -582,9 +582,16 @@ export function getCharmAffixSources(def, rolls = null, className = null, option
  * @param {string} sourceKey
  * @param {Record<string, number>|null|undefined} rolls
  * @param {boolean} [hideRollableRanges]
+ * @param {{ showRollRanges?: boolean }} [options]
  * @returns {string|null}
  */
-export function resolveCharmAffixText(text, sourceKey, rolls = null, hideRollableRanges = false) {
+export function resolveCharmAffixText(
+  text,
+  sourceKey,
+  rolls = null,
+  hideRollableRanges = false,
+  options = {}
+) {
   const ranges = parseAffixRanges(text);
   if (!ranges.length) return text;
   // When roll controls are shown elsewhere, omit every ranged affix line (even if rolls exist).
@@ -593,6 +600,7 @@ export function resolveCharmAffixText(text, sourceKey, rolls = null, hideRollabl
   }
   return applyAffixRolls(text, rolls, (i) => charmAffixRollKey(sourceKey, i), {
     hideRanges: hideRollableRanges,
+    showRollRanges: options.showRollRanges === true,
   });
 }
 
@@ -785,7 +793,7 @@ export function resolveCharmTrophyModifiers(def, rolls = null) {
 /**
  * @param {object|null|undefined} def
  * @param {number|null|undefined} characterLevel
- * @param {{ inInventory?: boolean, rolls?: Record<string, number>|null, className?: string|null, hideRollableRanges?: boolean, headerOnly?: boolean }} [options]
+ * @param {{ inInventory?: boolean, rolls?: Record<string, number>|null, className?: string|null, hideRollableRanges?: boolean, showRollRanges?: boolean, headerOnly?: boolean }} [options]
  * @returns {string[]}
  */
 export function getCharmStatLines(def, characterLevel, options = {}) {
@@ -793,6 +801,7 @@ export function getCharmStatLines(def, characterLevel, options = {}) {
   const rolls = options.rolls ?? null;
   const className = options.className ?? null;
   const hideRollableRanges = options.hideRollableRanges === true;
+  const showRollRanges = options.showRollRanges === true;
   /** @type {string[]} */
   const lines = [];
   if (def.dungeon) lines.push(String(def.dungeon));
@@ -804,7 +813,9 @@ export function getCharmStatLines(def, characterLevel, options = {}) {
   };
 
   for (const source of getCharmAffixSources(def, rolls, className, { activeOnly: true })) {
-    const text = resolveCharmAffixText(source.text, source.sourceKey, rolls, hideRollableRanges);
+    const text = resolveCharmAffixText(source.text, source.sourceKey, rolls, hideRollableRanges, {
+      showRollRanges,
+    });
     if (text == null) continue;
     pushMod(text, source.prefix);
   }

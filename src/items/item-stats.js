@@ -344,6 +344,7 @@ export function formatChanceToBlockLine(block, className = null) {
  * @param {Record<string, number>|null|undefined} [rolls]
  * @param {{
  *   hideRollableRanges?: boolean,
+ *   showRollRanges?: boolean,
  *   characterLevel?: number|null,
  *   charmInInventory?: boolean,
  *   className?: string|null,
@@ -363,6 +364,8 @@ export function getItemStatSections(def, rolls = null, options = {}) {
   if (!def || typeof def !== 'object') return empty;
 
   const hideRollableRanges = options.hideRollableRanges === true;
+  const showRollRanges =
+    options.showRollRanges != null ? options.showRollRanges === true : !hideRollableRanges;
   /** @type {Set<string>|null} */
   const rollableKeys = hideRollableRanges
     ? new Set(getRollableStats(def, rolls, { className: options.className ?? null }).map((s) => s.key))
@@ -446,15 +449,16 @@ export function getItemStatSections(def, rolls = null, options = {}) {
         rolls,
         className: options.className ?? null,
         hideRollableRanges,
+        showRollRanges,
         headerOnly: options.charmHeaderOnly === true,
       })
     );
   } else if (isRelicItem(def) && !options.charmHeaderOnly) {
     if (options.charmInInventory !== false) {
-      mods.push(...getRelicStatLines(def, rolls, { hideRollableRanges }));
+      mods.push(...getRelicStatLines(def, rolls, { hideRollableRanges, showRollRanges }));
     }
   } else if (overlay && !options.charmHeaderOnly) {
-    mods.push(...getOverlayStatLines(def, rolls, { hideRollableRanges }));
+    mods.push(...getOverlayStatLines(def, rolls, { hideRollableRanges, showRollRanges }));
     if (isRunewordItem(def)) mods.push(...formatRunewordSocketFillerLines(def));
   }
 
@@ -473,7 +477,7 @@ export function getItemStatSections(def, rolls = null, options = {}) {
  * Static + rolled stat lines for tooltips / detail panel (no requirements footer).
  * @param {object|null|undefined} def
  * @param {Record<string, number>|null|undefined} [rolls]
- * @param {{ hideRollableRanges?: boolean, characterLevel?: number|null, charmInInventory?: boolean, className?: string|null, charmHeaderOnly?: boolean, socketables?: Array<object>|null }} [options]
+ * @param {{ hideRollableRanges?: boolean, showRollRanges?: boolean, characterLevel?: number|null, charmInInventory?: boolean, className?: string|null, charmHeaderOnly?: boolean, socketables?: Array<object>|null }} [options]
  * @returns {string[]}
  */
 export function getItemStatLines(def, rolls = null, options = {}) {

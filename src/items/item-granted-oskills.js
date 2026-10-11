@@ -20,8 +20,11 @@ import {
   isSkillOnCharacterTree,
 } from '@/items/skill-bonus-from-modifiers.js';
 import { decodeModifierLine } from '@/items/item-modifier-line.js';
+import { stripDisplayedRollRanges } from '@/items/affix-rolls.js';
 import { escapeHtmlText, SCALING_DISPLAY_HTML_CLASSES } from '@/shared/utils.js';
 import { lookupMergedDisplayNameByInternalName } from '@/shared/skill-data-store.js';
+
+const DISPLAYED_ROLL_RANGE_RE = / \[(-?\d+(?:\.\d+)?)-(-?\d+(?:\.\d+)?)\]/g;
 
 const CHARM_PREFIX_RE = /^\[(?:Upgrade|Trophy)\]\s*/i;
 
@@ -53,7 +56,7 @@ function escapeRegExp(s) {
  * }|null}
  */
 export function matchCatalogSkillGrantFromLine(line) {
-  const body = stripCharmDisplayPrefix(line);
+  const body = stripDisplayedRollRanges(stripCharmDisplayPrefix(line));
   if (!body) return null;
   const parsed = parseSkillBonusFromModifierLine(body);
   if (!parsed || parsed.kind !== 'skill') return null;
@@ -102,11 +105,19 @@ export function wrapNamedSkillGrantMarkers(line) {
 
 /**
  * Escape a modifier line and expand `[[skill_id]]` to has-text-success spans.
+ * Roll suffixes like ` [10-20]` use `.item-mod-roll-range` (desaturated info).
  * @param {string|null|undefined} line
  * @returns {string}
  */
 export function formatItemModifierLineHtml(line) {
-  const marked = wrapNamedSkillGrantMarkers(decodeModifierLine(line).text);
+  const text = decodeModifierLine(line).text;
+  /** @type {string[]} */
+  const rollRanges = [];
+  const withoutRollRanges = String(text ?? '').replace(DISPLAYED_ROLL_RANGE_RE, (_, min, max) => {
+    rollRanges.push(`[${min}-${max}]`);
+    return '';
+  });
+  const marked = wrapNamedSkillGrantMarkers(withoutRollRanges);
   let out = '';
   let cursor = 0;
   const re = /\[\[(.*?)\]\]/g;
@@ -119,6 +130,9 @@ export function formatItemModifierLineHtml(line) {
     cursor = match.index + match[0].length;
   }
   out += escapeHtmlText(marked.slice(cursor));
+  for (const label of rollRanges) {
+    out += ` <span class="item-mod-roll-range">${escapeHtmlText(label)}</span>`;
+  }
   return out;
 }
 

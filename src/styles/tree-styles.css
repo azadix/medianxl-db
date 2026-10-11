@@ -619,6 +619,11 @@
     padding-left: 0.55em;
 }
 
+/* Info blue at ~80% saturation for affix roll ranges like [10-20] */
+.item-mod-roll-range {
+    color: hsl(var(--bulma-info-h), calc(var(--bulma-info-s) * 0.8), var(--bulma-info-l));
+}
+
 .item-tooltip-reqs {
     margin-top: 8px;
     padding-top: 8px;

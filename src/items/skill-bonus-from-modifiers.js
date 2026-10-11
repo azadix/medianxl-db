@@ -12,6 +12,7 @@ import {
   isRelicBonusActive,
 } from '@/items/relic-items.js';
 import { decodeModifierLine } from '@/items/item-modifier-line.js';
+import { stripDisplayedRollRanges } from '@/items/affix-rolls.js';
 
 /**
  * Soft levels when a relic's generic `+# to Skill` applies to a skill already
@@ -73,7 +74,7 @@ export function isSkillOnCharacterTree(ctx = {}) {
 export function parseSkillBonusFromModifierLine(line) {
   const decoded = decodeModifierLine(line);
   if (decoded.color === 'grey') return null;
-  const text = decoded.text;
+  const text = stripDisplayedRollRanges(decoded.text).trim();
   if (!text) return null;
 
   let match = ALL_SKILLS_RE.exec(text);

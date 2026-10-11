@@ -133,6 +133,13 @@ describe('item-granted oSkills', () => {
     expect(html).toContain('Summon Edyrem');
   });
 
+  it('colors roll range suffixes with a desaturated info class', () => {
+    const html = formatItemModifierLineHtml('+15 to Lightning Shield [10-20]');
+    expect(html).toContain(`class="${SCALING_DISPLAY_HTML_CLASSES.skill}"`);
+    expect(html).toContain('Lightning Shield');
+    expect(html).toContain('<span class="item-mod-roll-range">[10-20]</span>');
+  });
+
   it('annotates roll display parts with skill kind', () => {
     const parts = annotateAffixDisplayPartsWithSkills([
       { kind: 'text', text: '+' },

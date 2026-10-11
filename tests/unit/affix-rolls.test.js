@@ -25,6 +25,18 @@ describe('affix-rolls', () => {
     expect(rolled).toBe('+23 to all Attributes');
   });
 
+  it('appends roll ranges when showRollRanges is set', () => {
+    const text = '+(10 to 20) to Lightning Shield';
+    const key = charmAffixRollKey('base:m0', 0);
+    const rolled = applyAffixRolls(
+      text,
+      { [key]: 15 },
+      (i) => charmAffixRollKey('base:m0', i),
+      { showRollRanges: true }
+    );
+    expect(rolled).toBe('+15 to Lightning Shield [10-20]');
+  });
+
   it('builds display parts highlighting the rolled variable', () => {
     const text = '+(21 to 25) to all Attributes';
     const key = charmAffixRollKey('base:m0', 0);

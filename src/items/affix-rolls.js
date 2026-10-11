@@ -67,17 +67,40 @@ export function formatAffixRollReplacement(raw, value) {
   return String(value);
 }
 
+/** Trailing / inline display suffix: ` [10-20]` after a rolled value. */
+const DISPLAYED_ROLL_RANGE_RE = / \[(-?\d+(?:\.\d+)?)-(-?\d+(?:\.\d+)?)\]/g;
+
+/**
+ * Remove tooltip roll-range suffixes (` [10-20]`) from a resolved affix line.
+ * @param {string|null|undefined} text
+ * @returns {string}
+ */
+export function stripDisplayedRollRanges(text) {
+  return String(text ?? '').replace(DISPLAYED_ROLL_RANGE_RE, '');
+}
+
+/**
+ * @param {number} min
+ * @param {number} max
+ * @returns {string}
+ */
+export function formatDisplayedRollRange(min, max) {
+  return ` [${min}-${max}]`;
+}
+
 /**
  * @param {string} text
  * @param {Record<string, number>|null|undefined} rolls
  * @param {(rangeIndex: number) => string} rollKeyForIndex
- * @param {{ hideRanges?: boolean }} [options]
+ * @param {{ hideRanges?: boolean, showRollRanges?: boolean }} [options]
  * @returns {string}
  */
 export function applyAffixRolls(text, rolls, rollKeyForIndex, options = {}) {
   const ranges = parseAffixRanges(text);
   if (!ranges.length) return text;
   let result = text;
+  /** @type {{ min: number, max: number }[]} */
+  const shownRanges = [];
   for (let i = ranges.length - 1; i >= 0; i--) {
     const range = ranges[i];
     const key = rollKeyForIndex(i);
@@ -86,6 +109,12 @@ export function applyAffixRolls(text, rolls, rollKeyForIndex, options = {}) {
     const value = rolled != null ? clampRoll(rolled, range.min, range.max) : defaultRollValue(range.min, range.max);
     const replacement = formatAffixRollReplacement(range.raw, value);
     result = result.slice(0, range.start) + replacement + result.slice(range.end);
+    if (options.showRollRanges && range.min !== range.max) {
+      shownRanges.unshift({ min: range.min, max: range.max });
+    }
+  }
+  if (shownRanges.length) {
+    result += shownRanges.map((r) => formatDisplayedRollRange(r.min, r.max)).join('');
   }
   return result;
 }
