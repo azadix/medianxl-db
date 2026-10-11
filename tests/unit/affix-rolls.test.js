@@ -37,6 +37,24 @@ describe('affix-rolls', () => {
     expect(rolled).toBe('+15 to Lightning Shield [10-20]');
   });
 
+  it('keeps rolled values above catalog max (socket-boosted totals)', () => {
+    const text = '+(500 to 1000) to Life';
+    const key = charmAffixRollKey('base:m0', 0);
+    const rolled = applyAffixRolls(
+      text,
+      { [key]: 1003 },
+      (i) => charmAffixRollKey('base:m0', i),
+      { showRollRanges: true }
+    );
+    expect(rolled).toBe('+1003 to Life [500-1000]');
+    const parts = buildAffixDisplayParts(text, { [key]: 1003 }, (i) => charmAffixRollKey('base:m0', i), 0);
+    expect(parts).toEqual([
+      { kind: 'text', text: '+' },
+      { kind: 'value', text: '1003' },
+      { kind: 'text', text: ' to Life' },
+    ]);
+  });
+
   it('builds display parts highlighting the rolled variable', () => {
     const text = '+(21 to 25) to all Attributes';
     const key = charmAffixRollKey('base:m0', 0);

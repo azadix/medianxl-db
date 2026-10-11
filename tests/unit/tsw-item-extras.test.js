@@ -1,9 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import {
   extrasFromTswItem,
+  matchAffixTemplate,
   parseTswMysticOrbs,
+  rollsFromTswItem,
   tswInstanceExtras,
 } from '@/planner/tsw-item-rolls.js';
+import { overlayAffixRollKey } from '@/items/item-overlays.js';
 
 describe('tsw item extras', () => {
   const silksDef = {
@@ -67,6 +70,13 @@ describe('tsw item extras', () => {
     ]);
     expect(parseTswMysticOrbs([])).toEqual([]);
     expect(parseTswMysticOrbs(null)).toEqual([]);
+  });
+
+  it('keeps socket-boosted life above the catalog roll max', () => {
+    expect(matchAffixTemplate('+(500 to 1000) to Life', '+1003 to Life')).toEqual([1003]);
+    const rolls = rollsFromTswItem(silksRow, silksDef);
+    const lifeKey = overlayAffixRollKey('base:m8', 0);
+    expect(rolls[lifeKey]).toBe(1003);
   });
 
   it('keeps MO / jewel leftovers and skips catalog + boilerplate lines', () => {

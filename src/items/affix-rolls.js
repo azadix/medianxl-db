@@ -19,17 +19,18 @@ function defaultRollValue(min, max) {
 }
 
 /**
+ * Resolve a stored roll. Trust values outside [min, max] (e.g. TSW totals with
+ * socket bonuses). UI sliders still clamp on edit via item-stats clampRoll.
  * @param {number} value
  * @param {number} min
  * @param {number} max
  * @returns {number}
  */
-function clampRoll(value, min, max) {
+function resolveRollValue(value, min, max) {
   const n = Number(value);
-  if (!Number.isFinite(n)) return min;
-  let v = Math.min(max, Math.max(min, n));
-  if (Number.isInteger(min) && Number.isInteger(max)) v = Math.round(v);
-  return v;
+  if (!Number.isFinite(n)) return defaultRollValue(min, max);
+  if (Number.isInteger(min) && Number.isInteger(max)) return Math.round(n);
+  return n;
 }
 
 /**
@@ -106,7 +107,8 @@ export function applyAffixRolls(text, rolls, rollKeyForIndex, options = {}) {
     const key = rollKeyForIndex(i);
     const rolled = rolls && Number.isFinite(rolls[key]) ? rolls[key] : null;
     if (options.hideRanges && rolled == null) continue;
-    const value = rolled != null ? clampRoll(rolled, range.min, range.max) : defaultRollValue(range.min, range.max);
+    const value =
+      rolled != null ? resolveRollValue(rolled, range.min, range.max) : defaultRollValue(range.min, range.max);
     const replacement = formatAffixRollReplacement(range.raw, value);
     result = result.slice(0, range.start) + replacement + result.slice(range.end);
     if (options.showRollRanges && range.min !== range.max) {
@@ -159,7 +161,7 @@ export function buildAffixDisplayParts(text, rolls, rollKeyForIndex, highlightIn
     const key = rollKeyForIndex(i);
     const rolled = rolls && Number.isFinite(rolls[key]) ? rolls[key] : null;
     const value =
-      rolled != null ? clampRoll(rolled, range.min, range.max) : defaultRollValue(range.min, range.max);
+      rolled != null ? resolveRollValue(rolled, range.min, range.max) : defaultRollValue(range.min, range.max);
     const replacement = formatAffixRollReplacement(range.raw, value);
     if (i === highlightIndex) {
       if (range.raw.startsWith('+(') && value > 0) {

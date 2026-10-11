@@ -169,8 +169,9 @@ export function matchAffixTemplate(template, actual) {
     if (m) {
       const values = ranges.map((range, i) => {
         const n = Number(m[i + 1]);
+        // Keep values outside [min, max] — TSW merges base roll + socket bonuses.
         if (!Number.isFinite(n)) return range.min;
-        return Math.min(range.max, Math.max(range.min, n));
+        return n;
       });
       return values;
     }
@@ -404,9 +405,8 @@ function applyRanged(text, sourceKey, keyFn, lines, rolls) {
   if (!hit) return;
   ranges.forEach((range, i) => {
     const n = Number(hit.values[i]);
-    rolls[keyFn(sourceKey, i)] = Number.isFinite(n)
-      ? Math.min(range.max, Math.max(range.min, n))
-      : range.min;
+    // Do not clamp to catalog range — socketables can push the shown total past max.
+    rolls[keyFn(sourceKey, i)] = Number.isFinite(n) ? n : range.min;
   });
 }
 
