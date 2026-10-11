@@ -542,14 +542,16 @@
     box-shadow: none;
     padding: 0;
     min-width: 0;
-    max-width: min(92vw, 52rem);
+    width: max-content;
+    max-width: 95vw;
 }
 
 .item-tooltip-layout {
     display: flex;
     align-items: flex-start;
     gap: 8px;
-    max-width: min(92vw, 52rem);
+    width: max-content;
+    max-width: 95vw;
 }
 
 .item-tooltip-sidepanel {
@@ -590,8 +592,9 @@
     --item-rarity-fill: #1a1a1a;
     box-sizing: border-box;
     min-width: 17.5rem;
-    max-width: min(75vw, 36rem);
-    flex: 1 1 auto;
+    width: max-content;
+    max-width: none;
+    flex: 0 0 auto;
     padding: 12px 14px 10px;
     color: #e8e8e8;
     gap: 0;
@@ -687,6 +690,12 @@
     font-size: 0.9rem;
     line-height: 1.35;
     text-align: left;
+}
+
+/* Floating tooltips size to the longest mod (incl. blue [min-max] ranges). */
+.item-tooltip-card .item-tooltip-line,
+.item-tooltip-card .item-tooltip-set-bonus-mod {
+    white-space: nowrap;
 }
 
 .item-mod--orange {
