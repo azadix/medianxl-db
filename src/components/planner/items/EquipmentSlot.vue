@@ -16,7 +16,9 @@ import {
 } from '@/items/item-tooltip-runtime.js';
 import { refreshCurrentTooltip } from '@/tree/tree-tooltip.js';
 import { itemRarityFrameClass } from '@/items/item-tooltip.js';
+import { useItemSlotContextMenu } from '@/composables/useItemSlotContextMenu.js';
 import ItemIcon from './ItemIcon.vue';
+import ItemSlotContextMenu from './ItemSlotContextMenu.vue';
 
 const props = defineProps({
   /** Slot display name used for aria-label. */
@@ -142,8 +144,14 @@ function onItemMouseLeave() {
   hideItemTooltip();
 }
 
+const { menu, openMenu, onChangeItem, onRemoveItem } = useItemSlotContextMenu();
+
 function onContextMenu(e) {
-  e.preventDefault();
+  if (instanceId.value == null) {
+    e.preventDefault();
+    return;
+  }
+  openMenu(e, { location: 'equipment', slot: props.slotKey });
 }
 
 function onDragStart(e) {
@@ -289,5 +297,10 @@ function onDrop(e) {
         </span>
       </div>
     </div>
+    <ItemSlotContextMenu
+      :menu="menu"
+      @change="onChangeItem"
+      @remove="onRemoveItem"
+    />
   </div>
 </template>

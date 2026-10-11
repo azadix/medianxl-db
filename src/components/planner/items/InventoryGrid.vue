@@ -23,6 +23,8 @@ import {
 } from '@/character/planner-core.js';
 import { itemRarityFrameClass } from '@/items/item-tooltip.js';
 import { refreshCurrentTooltip } from '@/tree/tree-tooltip.js';
+import { useItemSlotContextMenu } from '@/composables/useItemSlotContextMenu.js';
+import ItemSlotContextMenu from './ItemSlotContextMenu.vue';
 
 const itemsStore = useItemsStore();
 const { placedInventoryItems, selectedSlot, dragPayload } = storeToRefs(itemsStore);
@@ -121,9 +123,10 @@ function onItemTooltipLeave() {
   hideItemTooltip();
 }
 
-function onItemContextMenu(e) {
-  e.preventDefault();
-  e.stopPropagation();
+const { menu, openMenu, onChangeItem, onRemoveItem } = useItemSlotContextMenu();
+
+function onItemContextMenu(e, anchor) {
+  openMenu(e, { location: 'inventory', slot: anchor });
 }
 
 function onDragStart(e, anchor, instanceId) {
@@ -266,7 +269,7 @@ function onDrop(e) {
         :style="overlayStyle(item)"
         draggable="true"
         @click="onItemClick($event, item.anchor)"
-        @contextmenu="onItemContextMenu($event)"
+        @contextmenu="onItemContextMenu($event, item.anchor)"
         @dragstart="onDragStart($event, item.anchor, item.instanceId)"
         @dragend="onDragEnd"
         @mouseenter="onItemTooltipEnter($event, item.instanceId)"
@@ -289,5 +292,11 @@ function onDrop(e) {
         :style="overlayStyle(dropPreview)"
       />
     </div>
+
+    <ItemSlotContextMenu
+      :menu="menu"
+      @change="onChangeItem"
+      @remove="onRemoveItem"
+    />
   </div>
 </template>
