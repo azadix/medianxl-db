@@ -1380,7 +1380,7 @@
     {
       "name": "Curse of the Zakarum",
       "quality": "Set",
-      "stats": "Set Bonus with 2 or more set items:\nMaximum Life +3%\nMaximum Fire Resist +4%\n\nSet Bonus with 3 or more set items:\n40% Movement Speed\n70% Attack Speed\n70% Hit Recovery\n(40 to 70)% Chance of Crushing Blow\nWeapon Physical Damage +20%\n\nSet Bonus with complete set:\n+2 to All Skills\n+84 Fire Damage\n+50% to Fire Spell Damage\n-60% to Enemy Fire Resistance\n+3 to Path of Flames\n+75 to all Attributes"
+      "stats": "Set Bonus with 2 or more set items:\nMaximum Life +3%\nMaximum Fire Resist +4%\n\nSet Bonus with 3 or more set items:\n40% Movement Speed\n70% Attack Speed\n70% Hit Recovery\n10% Chance of Crushing Blow\nWeapon Physical Damage +20%\n\nSet Bonus with complete set:\n+2 to All Skills\n+84 Fire Damage\n+50% to Fire Spell Damage\n-60% to Enemy Fire Resistance\n+3 to Path of Flames\n+75 to all Attributes"
     },
     {
       "name": "Elemental Children",
