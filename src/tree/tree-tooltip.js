@@ -33,8 +33,43 @@ import {
   getEquippedGearSkillBonusForSkill,
 } from '@/items/item-granted-oskills.js';
 import { relicOSkillIdsFromGrants } from '@/skills/domain/lightning-shield-elem-dr.js';
+import { itemRarityNameClass } from '@/items/item-tooltip.js';
 import { computeSkillBonusSourceAmounts } from './skill-bonus-sources.js';
 import Character from '@/character/Character.js';
+
+/**
+ * @param {{ chance?: number, chanceMax?: number }|null|undefined} src
+ * @returns {string}
+ */
+function formatProcSourceChanceLabel(src) {
+  const chance = Number(src?.chance);
+  const chanceMax = Number(src?.chanceMax);
+  if (!Number.isFinite(chance)) return '';
+  if (!Number.isFinite(chanceMax) || chance === chanceMax) return String(chance);
+  return `${chance}-${chanceMax}`;
+}
+
+/**
+ * @param {string|null|undefined} raw
+ * @returns {Array<{ label: string, rarity: string, chance: number, chanceMax: number }>}
+ */
+function parseProcSourcesAttr(raw) {
+  if (raw == null || String(raw).trim() === '') return [];
+  try {
+    const parsed = JSON.parse(String(raw));
+    if (!Array.isArray(parsed)) return [];
+    return parsed
+      .map((entry) => ({
+        label: entry?.label != null ? String(entry.label) : '',
+        rarity: entry?.rarity != null ? String(entry.rarity) : '',
+        chance: Number(entry?.chance) || 0,
+        chanceMax: Number(entry?.chanceMax) || Number(entry?.chance) || 0,
+      }))
+      .filter((entry) => entry.label);
+  } catch {
+    return [];
+  }
+}
 
 let tooltipElement = null;
 let currentHoveredSkill = null;
@@ -613,7 +648,11 @@ function getSkillCategoryTags(skillId) {
  * @param {string} warningMessage - Optional warning message (e.g., prerequisite not met)
  * @param {string|null} [oskillSlotId] - Planner oSkill row id (data-oskill-slot-id); tree skills omit
  * @param {boolean} [isProc] - Chance-to-cast proc from the Procs tab
- * @param {{ chanceLabel?: string, condition?: string }|null} [procMeta]
+ * @param {{
+ *   chanceLabel?: string,
+ *   condition?: string,
+ *   sources?: Array<{ label: string, rarity: string, chance: number, chanceMax: number }>,
+ * }|null} [procMeta]
  */
 async function buildTooltipContent(
   skillData,
@@ -730,10 +769,6 @@ async function buildTooltipContent(
     const sourceRows = isProc
       ? [
           {
-            label: 'Proc level',
-            valueHtml: `<span class="has-text-white">${level}</span>`,
-          },
-          {
             label: 'Chance',
             valueHtml: `<span class="has-text-info">${escapeHtmlText(
               procChanceLabel ? `${procChanceLabel}%` : '—'
@@ -754,6 +789,18 @@ async function buildTooltipContent(
             valueHtml: `<span class="skill-bonus-class">+${appliedClassSkillsBonus}</span>`,
           },
         ];
+    if (isProc) {
+      const procSources = Array.isArray(procMeta?.sources) ? procMeta.sources : [];
+      for (const src of procSources) {
+        const chanceText = formatProcSourceChanceLabel(src);
+        if (!chanceText) continue;
+        const rarityClass = itemRarityNameClass(src.rarity);
+        sourceRows.push({
+          label: `<span class="${rarityClass}">${escapeHtmlText(src.label)}</span>`,
+          valueHtml: `<span class="has-text-info">${escapeHtmlText(`${chanceText}%`)}</span>`,
+        });
+      }
+    }
     if (!isProc && isOSkill) {
         sourceRows.push({
             label: 'Item',
@@ -1065,6 +1112,7 @@ function resolveTooltipContext(skillCard, skillData, skillId) {
             skillCard?.dataset?.procCondition != null
               ? String(skillCard.dataset.procCondition)
               : '',
+          sources: parseProcSourcesAttr(skillCard?.dataset?.procSources),
         }
       : null;
     return {

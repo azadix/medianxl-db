@@ -66,6 +66,18 @@
     align-items: center;
 }
 
+/* oSkills / Procs: fill available width with as many card columns as fit */
+.skills-grid.skills-grid--autofit {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    transform: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    justify-items: center;
+    align-items: start;
+}
+
 .empty-skill-card {
     padding: 0.5rem;
     width: 210px;
@@ -194,6 +206,25 @@
 .skill-card-proc-condition {
     display: block;
     margin-top: 0.15rem;
+}
+
+.planner-proc-sections {
+    width: 100%;
+}
+
+.planner-proc-section-title {
+    margin: 0 0 0.65rem;
+    padding: 0.2rem 0.15rem 0.45rem;
+    border-bottom: 1px solid #555;
+    color: #c8c8c8;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-align: left;
+}
+
+.planner-proc-section .skills-grid--autofit {
+    width: 100%;
 }
 
 .skill-card-level {
@@ -824,6 +855,11 @@
         width: 95%;
         margin: 0 2.5%;
         transform: none;
+    }
+
+    .skills-grid.skills-grid--autofit {
+        width: 100%;
+        margin: 0;
     }
     
     /* Adjust skill cards for mobile */

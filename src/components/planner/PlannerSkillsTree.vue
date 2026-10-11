@@ -134,13 +134,9 @@ function cellsForTab(tabName) {
 const {
   cardDataForSkill,
   oskillCardRows,
-  oskillGridStyle,
-  oskillGridArea,
   onOskillPlus,
   onOskillMinus,
-  procCardRows,
-  procGridStyle,
-  procGridArea,
+  procSections,
   scheduleArrows,
 } = usePlannerSkillsTree({ payload, classSkills, activeTab, gridRange });
 
@@ -330,13 +326,12 @@ onUnmounted(() => {
 
       <div
         id="tab-oSkills"
-        class="skills-grid"
-        :style="{ display: activeTab === 'oSkills' ? 'grid' : 'none', ...oskillGridStyle }"
+        class="skills-grid skills-grid--autofit"
+        :style="{ display: activeTab === 'oSkills' ? 'grid' : 'none' }"
       >
         <SkillCard
           v-for="(cd, idx) in oskillCardRows"
           :key="'os-' + idx + '-' + String(cd.skillId ?? '')"
-          :style="oskillGridArea(idx)"
           :card-data="cd"
           :planner-revision="store.revision"
           @plus="(d) => onOskillPlus(cd, d)"
@@ -346,16 +341,33 @@ onUnmounted(() => {
 
       <div
         id="tab-Procs"
-        class="skills-grid"
-        :style="{ display: activeTab === 'Procs' ? 'grid' : 'none', ...procGridStyle }"
+        class="planner-proc-sections"
+        :style="{ display: activeTab === 'Procs' ? 'block' : 'none' }"
       >
-        <SkillCard
-          v-for="(cd, idx) in procCardRows"
-          :key="'proc-' + idx + '-' + String(cd.skillId ?? '') + '-' + String(cd.procLevel ?? '') + '-' + String(cd.procCondition ?? '')"
-          :style="procGridArea(idx)"
-          :card-data="cd"
-          :planner-revision="store.revision"
-        />
+        <div
+          v-for="section in procSections"
+          :key="'proc-section-' + section.condition"
+          class="planner-proc-section mb-3"
+        >
+          <h3 class="planner-proc-section-title">{{ section.condition }}</h3>
+          <div class="skills-grid skills-grid--autofit">
+            <SkillCard
+              v-for="(cd, idx) in section.cards"
+              :key="
+                'proc-' +
+                section.condition +
+                '-' +
+                idx +
+                '-' +
+                String(cd.skillId ?? '') +
+                '-' +
+                String(cd.procLevel ?? '')
+              "
+              :card-data="cd"
+              :planner-revision="store.revision"
+            />
+          </div>
+        </div>
       </div>
     </div>
   </div>

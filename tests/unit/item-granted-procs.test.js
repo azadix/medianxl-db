@@ -126,10 +126,75 @@ describe('groupPlannerProcRows', () => {
     ]);
 
     expect(grouped).toHaveLength(3);
-    expect(grouped.map((r) => `${r.level}|${r.condition}|${r.chance}`).sort()).toEqual([
-      '1|on Kill|4',
-      '1|on Striking|5',
-      '6|on Striking|17',
+    // Known triggers keep PROC_TRIGGERS order; alphabetical within a trigger.
+    expect(grouped.map((r) => `${r.condition}|${r.level}|${r.chance}`)).toEqual([
+      'on Striking|1|5',
+      'on Striking|6|17',
+      'on Kill|1|4',
+    ]);
+  });
+
+  it('sorts by trigger group then skill name', () => {
+    const grouped = groupPlannerProcRows([
+      {
+        skillId: 'zeal',
+        skillName: 'zeal',
+        displayName: 'Zeal',
+        skillImage: null,
+        skillClass: '',
+        level: 1,
+        condition: 'on Kill',
+        chance: 2,
+        chanceMax: 2,
+        chanceLabel: '2',
+        sources: [],
+      },
+      {
+        skillId: 'arrow',
+        skillName: 'arrow',
+        displayName: 'Arrow',
+        skillImage: null,
+        skillClass: '',
+        level: 1,
+        condition: 'on Striking',
+        chance: 5,
+        chanceMax: 5,
+        chanceLabel: '5',
+        sources: [],
+      },
+      {
+        skillId: 'bloodlust',
+        skillName: 'bloodlust',
+        displayName: 'Bloodlust',
+        skillImage: null,
+        skillClass: '',
+        level: 1,
+        condition: 'on Striking',
+        chance: 3,
+        chanceMax: 3,
+        chanceLabel: '3',
+        sources: [],
+      },
+      {
+        skillId: 'nova',
+        skillName: 'nova',
+        displayName: 'Nova',
+        skillImage: null,
+        skillClass: '',
+        level: 1,
+        condition: 'on Kill',
+        chance: 4,
+        chanceMax: 4,
+        chanceLabel: '4',
+        sources: [],
+      },
+    ]);
+
+    expect(grouped.map((r) => `${r.condition}|${r.displayName}`)).toEqual([
+      'on Striking|Arrow',
+      'on Striking|Bloodlust',
+      'on Kill|Nova',
+      'on Kill|Zeal',
     ]);
   });
 

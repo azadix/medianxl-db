@@ -98,6 +98,28 @@ const procChanceText = computed(() => {
   return Number.isFinite(chance) ? `${chance}%` : '';
 });
 
+const showProcCondition = computed(
+  () => isProc.value && props.cardData.procCondition && props.cardData.showProcCondition !== false
+);
+
+const procSourcesAttr = computed(() => {
+  if (!isProc.value) return undefined;
+  const sources = Array.isArray(props.cardData.procSources) ? props.cardData.procSources : [];
+  if (!sources.length) return undefined;
+  try {
+    return JSON.stringify(
+      sources.map((src) => ({
+        label: src?.sourceLabel != null ? String(src.sourceLabel) : '',
+        rarity: src?.sourceRarity != null ? String(src.sourceRarity) : '',
+        chance: Number(src?.chance) || 0,
+        chanceMax: Number(src?.chanceMax) || Number(src?.chance) || 0,
+      }))
+    );
+  } catch {
+    return undefined;
+  }
+});
+
 watch(
   () => props.cardData,
   () => variantEpoch.value++,
@@ -118,6 +140,7 @@ watch(
     :data-proc-level="isProc ? String(cardData.procLevel ?? cardData.currentPoints ?? '') : undefined"
     :data-proc-chance="isProc ? String(cardData.procChanceLabel ?? cardData.procChance ?? '') : undefined"
     :data-proc-condition="isProc && cardData.procCondition ? String(cardData.procCondition) : undefined"
+    :data-proc-sources="isProc ? procSourcesAttr : undefined"
     v-bind="skillVariantAttr"
   >
     <div class="skill-card-header">
@@ -168,7 +191,7 @@ watch(
       </span>
       <span class="skill-card-name-variant has-text-grey is-size-7">{{ variantLabel }}</span>
       <span
-        v-if="isProc && cardData.procCondition"
+        v-if="showProcCondition"
         class="skill-card-proc-condition has-text-grey is-size-7"
       >{{ cardData.procCondition }}</span>
     </div>

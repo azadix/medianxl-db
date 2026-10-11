@@ -22,9 +22,6 @@ import {
 } from '@/items/item-granted-procs.js';
 import { getFileSkillStore } from '@/shared/skill-data-store.js';
 
-const OSKILL_COLS = 3;
-const PROC_COLS = 3;
-
 /**
  * @param {object} opts
  * @param {import('vue').Ref<object|null>} opts.payload planner render payload
@@ -103,25 +100,6 @@ export function usePlannerSkillsTree({ payload, classSkills, activeTab, gridRang
     return out;
   });
 
-  const oskillGridStyle = computed(() => {
-    const n = oskillCardRows.value.length;
-    if (n === 0) return {};
-    const rows = Math.ceil(n / OSKILL_COLS);
-    return {
-      gridTemplateRows: `repeat(${rows}, auto)`,
-      gridTemplateColumns: `repeat(${OSKILL_COLS}, 1fr)`
-    };
-  });
-
-  function oskillGridArea(index) {
-    const row = Math.floor(index / OSKILL_COLS) + 1;
-    const col = (index % OSKILL_COLS) + 1;
-    return {
-      gridRow: row,
-      gridColumn: col
-    };
-  }
-
   function oskillIdentifier(cardData) {
     return cardData.variantStateKey ?? cardData.skillId;
   }
@@ -169,29 +147,30 @@ export function usePlannerSkillsTree({ payload, classSkills, activeTab, gridRang
         procChanceLabel: row.chanceLabel,
         procCondition: row.condition,
         procLevel: row.level,
+        procSources: Array.isArray(row.sources) ? row.sources : [],
+        showProcCondition: false,
       });
     }
     return out;
   });
 
-  const procGridStyle = computed(() => {
-    const n = procCardRows.value.length;
-    if (n === 0) return {};
-    const rows = Math.ceil(n / PROC_COLS);
-    return {
-      gridTemplateRows: `repeat(${rows}, auto)`,
-      gridTemplateColumns: `repeat(${PROC_COLS}, 1fr)`
-    };
+  const procSections = computed(() => {
+    /** @type {Array<{ condition: string, cards: typeof procCardRows.value }>} */
+    const sections = [];
+    for (const card of procCardRows.value) {
+      const condition =
+        card.procCondition != null && String(card.procCondition).trim() !== ''
+          ? String(card.procCondition).trim()
+          : 'Other';
+      const last = sections[sections.length - 1];
+      if (!last || last.condition !== condition) {
+        sections.push({ condition, cards: [card] });
+      } else {
+        last.cards.push(card);
+      }
+    }
+    return sections;
   });
-
-  function procGridArea(index) {
-    const row = Math.floor(index / PROC_COLS) + 1;
-    const col = (index % PROC_COLS) + 1;
-    return {
-      gridRow: row,
-      gridColumn: col
-    };
-  }
 
   function scheduleArrows() {
     if (!payload.value) return;
@@ -251,14 +230,11 @@ export function usePlannerSkillsTree({ payload, classSkills, activeTab, gridRang
   return {
     cardDataForSkill,
     oskillCardRows,
-    oskillGridStyle,
-    oskillGridArea,
     oskillIdentifier,
     onOskillPlus,
     onOskillMinus,
     procCardRows,
-    procGridStyle,
-    procGridArea,
+    procSections,
     scheduleArrows
   };
 }

@@ -23,6 +23,7 @@ import {
 } from '@/items/item-overlays.js';
 import { getItemStatLines } from '@/items/item-stats.js';
 import {
+  PROC_TRIGGERS,
   parseProcFromModifierLine,
   formatProcItemSourceLabel,
   formatProcSetBonusSourceLabel,
@@ -181,14 +182,31 @@ export function groupPlannerProcRows(rows) {
     );
   }
   out.sort((a, b) => {
+    const aCond = procTriggerSortIndex(a.condition);
+    const bCond = procTriggerSortIndex(b.condition);
+    if (aCond !== bCond) return aCond - bCond;
+    if (aCond >= PROC_TRIGGERS.length) {
+      const byCond = String(a.condition).localeCompare(String(b.condition), undefined, {
+        sensitivity: 'base',
+      });
+      if (byCond) return byCond;
+    }
     const byName = a.displayName.localeCompare(b.displayName, undefined, {
       sensitivity: 'base',
     });
     if (byName) return byName;
-    if (a.level !== b.level) return a.level - b.level;
-    return a.condition.localeCompare(b.condition, undefined, { sensitivity: 'base' });
+    return a.level - b.level;
   });
   return out;
+}
+
+/**
+ * @param {string|null|undefined} condition
+ * @returns {number}
+ */
+function procTriggerSortIndex(condition) {
+  const idx = PROC_TRIGGERS.indexOf(String(condition || ''));
+  return idx === -1 ? PROC_TRIGGERS.length : idx;
 }
 
 /**
