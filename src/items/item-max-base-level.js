@@ -6,6 +6,7 @@
 import { useItemsStore } from '@/stores/items.js';
 import { getFileSkillStore } from '@/shared/skill-data-store.js';
 import {
+  applyResolvedRandomReanimates,
   isModifierLineActive,
   modifierLineText,
   decodeModifierLine,
@@ -54,13 +55,8 @@ function resolvedEquipmentModifierLines(def, rolls = null, extras = null) {
     if (resolved == null) continue;
     lines.push(encodeModifierLine(resolved, color, showCondition));
   }
-  if (Array.isArray(extras)) {
-    for (const line of extras) {
-      const text = String(line || '').trim();
-      if (text) lines.push(text);
-    }
-  }
-  return lines;
+  const merged = applyResolvedRandomReanimates(lines, extras);
+  return [...merged.mods, ...merged.extras];
 }
 
 /**

@@ -154,6 +154,34 @@ describe('buildItemTooltipHtml', () => {
 });
 
 describe('getItemStatSections', () => {
+  it('replaces Random Monster reanimate with the TSW-resolved monster extra', () => {
+    const sections = getItemStatSections(
+      {
+        rarity: 'unique',
+        uniqueKind: 'su',
+        modifiers: [
+          'Orb Effects Applied to this Item are Doubled',
+          '+(130 to 150)% Enhanced Defense',
+          '2% Reanimate as: Random Monster',
+        ],
+      },
+      null,
+      {
+        extras: [
+          '+14 Spell Focus',
+          '2% Reanimate as: Undead Marksman',
+          '+1% to Experience Gained',
+        ],
+      }
+    );
+    expect(sections.mods).toContain('2% Reanimate as: Undead Marksman');
+    expect(sections.mods).not.toContain('2% Reanimate as: Random Monster');
+    expect(sections.mods.filter((line) => /Reanimate as:/i.test(line))).toHaveLength(1);
+    expect(sections.mods).toEqual(
+      expect.arrayContaining(['+14 Spell Focus', '+1% to Experience Gained'])
+    );
+  });
+
   it('puts damage type and innate with str/dex bonuses, not requirements', () => {
     const sections = getItemStatSections({
       damage1h: { min: 10, max: 20 },

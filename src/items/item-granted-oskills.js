@@ -24,7 +24,11 @@ import {
 } from '@/items/skill-bonus-from-modifiers.js';
 import { parseMaxBaseLevelBonusFromModifierLine } from '@/items/item-max-base-level.js';
 import { parseProcFromModifierLine } from '@/items/item-procs.js';
-import { decodeModifierLine, encodeModifierLine } from '@/items/item-modifier-line.js';
+import {
+  applyResolvedRandomReanimates,
+  decodeModifierLine,
+  encodeModifierLine,
+} from '@/items/item-modifier-line.js';
 import {
   applyAffixRolls,
   parseAffixRanges,
@@ -68,13 +72,8 @@ export function resolvedEquipmentModifierLines(def, rolls = null, extras = null)
     if (resolved == null) continue;
     lines.push(encodeModifierLine(resolved, color, showCondition));
   }
-  if (Array.isArray(extras)) {
-    for (const line of extras) {
-      const text = String(line || '').trim();
-      if (text) lines.push(text);
-    }
-  }
-  return lines;
+  const merged = applyResolvedRandomReanimates(lines, extras);
+  return [...merged.mods, ...merged.extras];
 }
 
 const DISPLAYED_ROLL_RANGE_RE = / \[(-?\d+(?:\.\d+)?)-(-?\d+(?:\.\d+)?)\]/g;

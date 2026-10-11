@@ -147,6 +147,40 @@ export function decodeModifierLine(line) {
   return { text, color: MODIFIER_COLOR_MAGIC, showCondition: explicit };
 }
 
+const RANDOM_REANIMATE_RE = /^(\d+(?:\.\d+)?)%\s*Reanimate as:\s*Random Monster$/i;
+const ANY_REANIMATE_RE = /^(\d+(?:\.\d+)?)%\s*Reanimate as:\s*(.+)$/i;
+
+/**
+ * Replace catalog "N% Reanimate as: Random Monster" with a TSW-resolved monster extra.
+ * @param {string[]} modLines
+ * @param {string[]|null|undefined} extras
+ * @returns {{ mods: string[], extras: string[] }}
+ */
+export function applyResolvedRandomReanimates(modLines, extras) {
+  /** @type {string[]} */
+  const remaining = Array.isArray(extras)
+    ? extras.map((line) => String(line || '').trim()).filter(Boolean)
+    : [];
+  const mods = (Array.isArray(modLines) ? modLines : []).map((mod) => {
+    const decoded = decodeModifierLine(mod);
+    const plainMod = decoded.text || String(mod || '').trim();
+    const m = plainMod.match(RANDOM_REANIMATE_RE);
+    if (!m) return mod;
+    const pct = m[1];
+    const idx = remaining.findIndex((extra) => {
+      const plainExtra = decodeModifierLine(extra).text || extra;
+      const em = plainExtra.match(ANY_REANIMATE_RE);
+      if (!em || em[1] !== pct) return false;
+      return !/^Random Monster$/i.test(String(em[2] || '').trim());
+    });
+    if (idx < 0) return mod;
+    const [resolved] = remaining.splice(idx, 1);
+    const resolvedText = decodeModifierLine(resolved).text || resolved;
+    return encodeModifierLine(resolvedText, decoded.color, decoded.showCondition);
+  });
+  return { mods, extras: remaining };
+}
+
 /**
  * @param {string|null|undefined} line
  * @returns {string}

@@ -28,6 +28,7 @@ import {
 import { formatRunewordBadge, formatRunewordSocketFillerLines, isRunewordItem } from '@/items/runeword-items.js';
 import { getShieldClassBlockPercent } from '@/character/class-baselines.js';
 import { resolveItemRequirements } from '@/items/item-requirements.js';
+import { applyResolvedRandomReanimates } from '@/items/item-modifier-line.js';
 
 /** @type {Readonly<Record<string, string>>} */
 export const ITEM_CATEGORY_LABEL = Object.freeze({
@@ -470,12 +471,13 @@ export function getItemStatSections(def, rolls = null, options = {}) {
     if (isRunewordItem(def)) mods.push(...formatRunewordSocketFillerLines(def));
   }
 
-  if (Array.isArray(options.extras)) {
-    for (const line of options.extras) {
-      const text = String(line || '').trim();
-      if (text) mods.push(text);
-    }
-  }
+  /** @type {string[]} */
+  const extras = Array.isArray(options.extras)
+    ? options.extras.map((line) => String(line || '').trim()).filter(Boolean)
+    : [];
+  const merged = applyResolvedRandomReanimates(mods, extras);
+  mods.length = 0;
+  mods.push(...merged.mods, ...merged.extras);
 
   return {
     base,
@@ -544,7 +546,22 @@ export function getItemDetailStatRows(def, rolls = null, options = {}) {
    * @returns {ItemDetailStatRow[]}
    */
   const withExtras = () => {
-    for (const line of extras) {
+    /** @type {number[]} */
+    const modIndexes = [];
+    /** @type {string[]} */
+    const modTexts = [];
+    rows.forEach((row, index) => {
+      if (row.kind === 'text' && row.section === 'mod') {
+        modIndexes.push(index);
+        modTexts.push(row.text);
+      }
+    });
+    const merged = applyResolvedRandomReanimates(modTexts, extras);
+    merged.mods.forEach((text, i) => {
+      const row = rows[modIndexes[i]];
+      if (row && row.kind === 'text') row.text = text;
+    });
+    for (const line of merged.extras) {
       const text = String(line || '').trim();
       if (!text) continue;
       rows.push({ kind: /** @type {const} */ ('text'), text, section: /** @type {const} */ ('mod') });
