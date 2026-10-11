@@ -96,8 +96,6 @@ const unknownStatRows = computed(() => {
   return [...byText.values()].sort((a, b) => a.text.localeCompare(b.text));
 });
 
-const unknownStatCount = computed(() => unknownStatRows.value.length);
-
 /** @param {{ allowNegative?: boolean, min: number|null }} def */
 function statInputMin(def) {
   if (def.allowNegative) {
@@ -210,16 +208,10 @@ usePlannerRevisionRefresh(refreshHandler);
           :key="filter.id"
           type="button"
           class="button is-small planner-filter-chip"
-          :class="{
-            'is-active': statFilter === filter.id,
-            'has-unknown': filter.id === 'unknown' && unknownStatCount > 0,
-          }"
+          :class="{ 'is-active': statFilter === filter.id }"
           @click="statFilter = filter.id"
         >
           {{ filter.label }}
-          <span v-if="filter.id === 'unknown' && unknownStatCount > 0" class="planner-filter-chip-count">
-            {{ unknownStatCount }}
-          </span>
         </button>
       </div>
 

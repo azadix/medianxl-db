@@ -480,15 +480,6 @@
   color: #fff;
 }
 
-.planner-filter-chip.has-unknown {
-  border-color: hsl(48, 100%, 40%);
-}
-
-.planner-filter-chip-count {
-  margin-left: 0.3rem;
-  opacity: 0.85;
-}
-
 .planner-unknown-stats {
   display: flex;
   flex-direction: column;
