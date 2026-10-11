@@ -67,6 +67,21 @@ describe('tsw-build-import', () => {
     expect(unwrapTswOrNativeBuild(native).tswItems).toBeNull();
   });
 
+  it('turns TSW stats objects into key=value text', () => {
+    const { build } = unwrapTswOrNativeBuild({
+      ok: true,
+      build: {
+        name: 'X',
+        class: 'Necromancer',
+        level: 150,
+        skillPoints: {},
+        stats: { life: 100, mana: 40 },
+      },
+      items: [],
+    });
+    expect(build.stats).toBe('life=100\nmana=40');
+  });
+
   it('infers Inquisitor of the Triune hell complete when TSW level is above 110', () => {
     const quests = {
       den_of_evil: { normal: true, nightmare: true, hell: true },

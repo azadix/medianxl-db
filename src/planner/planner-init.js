@@ -144,6 +144,23 @@ export async function initializeTreePage() {
     await finalizePlannerPageAfterLoad();
 }
 
+/** @type {Promise<void>|null} */
+let treePageInitPromise = null;
+
+/**
+ * Run planner tree init once. TSW import must wait for this so catalog/stats exist.
+ * @returns {Promise<void>}
+ */
+export function ensurePlannerTreeInitialized() {
+    if (isTreeInitialized()) return Promise.resolve();
+    if (!treePageInitPromise) {
+        treePageInitPromise = initializeTreePage().finally(() => {
+            if (!isTreeInitialized()) treePageInitPromise = null;
+        });
+    }
+    return treePageInitPromise;
+}
+
 function setupGlobalEventListeners() {
   if (isPlannerTreeGlobalListenersAttached()) return;
   setPlannerTreeGlobalListenersAttached(true);

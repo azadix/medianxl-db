@@ -53,7 +53,7 @@ import {
   downloadCurrentBuildAsJson,
   fallbackCopyToClipboard,
 } from './saved-builds-ui.js';
-import { main } from './planner-init.js';
+import { main, ensurePlannerTreeInitialized } from './planner-init.js';
 import { fetchTswBuildByCode } from './tsw-code-import.js';
 
 export async function plannerMenuNewBuild() {
@@ -101,11 +101,14 @@ export async function plannerMenuImportBuildFromText(jsonString) {
  * @returns {Promise<boolean>}
  */
 export async function plannerMenuImportBuildFromTswCode(code) {
-    if (!isTreeInitialized()) {
-        await main();
-    }
     try {
-        const data = await fetchTswBuildByCode(code);
+        const dataPromise = fetchTswBuildByCode(code);
+        await ensurePlannerTreeInitialized();
+        const data = await dataPromise;
+        if (!isTreeInitialized()) {
+            toastManager.showToast('Planner is not ready', false, 'danger');
+            return false;
+        }
         return importBuildFromJsonText(JSON.stringify(data));
     } catch (error) {
         const message = error instanceof Error ? error.message : 'TSW import failed';

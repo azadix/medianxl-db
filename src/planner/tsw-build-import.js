@@ -67,8 +67,14 @@ export function unwrapTswOrNativeBuild(data) {
     return { build: /** @type {object} */ (data), tswItems: null };
   }
   const rec = /** @type {{ build: object, items?: unknown }} */ (data);
+  const build = { ...rec.build, __tswEnvelope: true };
+  if (build.stats && typeof build.stats === 'object' && !Array.isArray(build.stats)) {
+    build.stats = Object.entries(/** @type {Record<string, unknown>} */ (build.stats))
+      .map(([k, v]) => `${k}=${v}`)
+      .join('\n');
+  }
   return {
-    build: { ...rec.build, __tswEnvelope: true },
+    build,
     tswItems: Array.isArray(rec.items) ? rec.items : null,
   };
 }
