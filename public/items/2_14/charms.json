@@ -84,7 +84,7 @@
     "name": "Books of Kalan",
     "keepInInventory": true,
     "rarity": "unique",
-    "icon": "invbbb",
+    "icon": "invkalan",
     "reqLevel": 130,
     "modifiers": [
       "+1 to All Skills",

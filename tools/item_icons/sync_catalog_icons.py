@@ -28,7 +28,6 @@ NAME_ALIASES = {
     "relicskinrender": "skinrender's ear",
     "relicxx": "time-lost relic",
     "bookofakarat": "book of akara",
-    "thebookofkalen": "books of kalan",
     "uniquedemonsbane": "demonsbane",
     "ancientrepositories": "the ancient repositories",
     "uldyssiancharm3": "neutrality pact",
