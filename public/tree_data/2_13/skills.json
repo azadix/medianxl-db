@@ -5919,13 +5919,6 @@
         "value0": "frames(max(185-12.5*blvl,50))"
       },
       {
-        "statKey": "lightning_damage",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "1",
-        "value1": "1"
-      },
-      {
         "statKey": "mana_cost",
         "occurrenceIndex": 0,
         "variantKey": "",

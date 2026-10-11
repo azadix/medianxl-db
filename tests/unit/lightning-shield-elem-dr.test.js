@@ -49,15 +49,16 @@ describe('lightningShieldElemDrFactor', () => {
 });
 
 describe('scaleLightningShieldElemDrValue', () => {
-  it('truncates relic 1/3 of 3+3*lvl', () => {
-    expect(scaleLightningShieldElemDrValue(33, 1 / 3)).toBe(11);
+  it('truncates relic 1/3 of 3*lvl+2*blvl', () => {
+    expect(scaleLightningShieldElemDrValue(50, 1 / 3)).toBe(16);
+    expect(scaleLightningShieldElemDrValue(30, 1 / 3)).toBe(10);
     expect(scaleLightningShieldElemDrValue(6, 1 / 3)).toBe(2);
   });
 });
 
 describe('applyLightningShieldElemDrToScaling', () => {
   it('rewrites formula display for relic 1/3', () => {
-    const scaling = { value0: '3+3*lvl', value0_evaluated: '33' };
+    const scaling = { value0: '3*lvl+2*blvl', value0_evaluated: '30' };
     applyLightningShieldElemDrToScaling(
       'lightning_shield',
       'elemental_magic_damage_reduced_flat',
@@ -69,8 +70,8 @@ describe('applyLightningShieldElemDrToScaling', () => {
       },
       true
     );
-    expect(scaling.value0).toBe('(3+3*lvl)/3');
-    expect(scaling.value0_evaluated).toBe('11');
+    expect(scaling.value0).toBe('(3*lvl+2*blvl)/3');
+    expect(scaling.value0_evaluated).toBe('10');
   });
 });
 
@@ -110,7 +111,8 @@ describe('lightning shield EMR scaling values', () => {
       },
       99
     );
-    expect(Number(values?.value0)).toBe(33);
+    // Amazon tree: 3*lvl+2*blvl with lvl=blvl=10 → 50
+    expect(Number(values?.value0)).toBe(50);
   });
 
   it('zeros EMR for oSkill without relic', async () => {
@@ -147,6 +149,7 @@ describe('lightning shield EMR scaling values', () => {
       },
       99
     );
-    expect(Number(values?.value0)).toBe(11);
+    // Relic oSkill: 3*lvl+2*blvl with lvl=10, blvl=0 → 30, then /3 → 10
+    expect(Number(values?.value0)).toBe(10);
   });
 });
