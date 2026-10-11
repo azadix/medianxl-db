@@ -724,6 +724,10 @@ function validateBuildData(buildData) {
  * Import a build from build data
  * @param {object} buildData - The build data to import
  */
+function switchPlannerWorkspaceToItems() {
+    window.dispatchEvent(new CustomEvent('plannerWorkspaceMode', { detail: { mode: 'items' } }));
+}
+
 export function importBuild(buildData) {
     try {
         // Check if build version differs from current version
@@ -741,12 +745,13 @@ export function importBuild(buildData) {
 
             setBuildVersionOverride(buildVersion);
 
-            reloadSkillDataAndLoadBuild(buildData, null);
+            reloadSkillDataAndLoadBuild(buildData, null).then(switchPlannerWorkspaceToItems);
             return;
         }
         
         // Load build data directly (same version)
         loadBuildData(buildData, null);
+        switchPlannerWorkspaceToItems();
         
     } catch (error) {
         console.error('Failed to import build:', error);
