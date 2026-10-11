@@ -64,6 +64,8 @@ const SECRET_ITEM_ICONS = {
   'Time-Lost Relic': 'invtimerelic',
   'Celestial Sigil': 'sigilx',
   "Assur's Bane": 'ring08',
+  'Ring of Pride': 'invrinquest',
+  'Ring of Virtue': 'invrinquest',
 };
 
 /** Base Assur's Bane (scroll upgrades omitted). Not listed on Secret Items wiki. */

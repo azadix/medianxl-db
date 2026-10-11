@@ -106,6 +106,8 @@ describe('parseSecretItemsWiki', () => {
       type: 'Ring',
       icon: 'ring08',
     });
+    expect(entries.find((e) => e.name === 'Ring of Pride')?.icon).toBe('invrinquest');
+    expect(entries.find((e) => e.name === 'Ring of Virtue')?.icon).toBe('invrinquest');
     const blood = relics.filter((e) => e.name === 'Blood of Creation');
     expect(blood).toHaveLength(7);
     expect(blood.map((e) => [e.variant, e.stats.match(/^\(([^)]+Only)\)/m)?.[1]])).toEqual([

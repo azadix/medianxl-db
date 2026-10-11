@@ -3340,14 +3340,16 @@
       "quality": "SU",
       "stats": "Item Level: 1",
       "source": "secret",
-      "type": "Ring"
+      "type": "Ring",
+      "icon": "invrinquest"
     },
     {
       "name": "Ring of Virtue",
       "quality": "SU",
       "stats": "{orange}Quest Ring\nRequired Level: 130\nItem Level: 1\n+1 to Scream of Trag'Oul\n+(26 to 50) to all Attributes\n+200 to Life\n+100 to Mana\n+(6 to 15) to Light Radius",
       "source": "secret",
-      "type": "Sigil of Deadly Sins"
+      "type": "Sigil of Deadly Sins",
+      "icon": "invrinquest"
     },
     {
       "name": "Ring of Woe",

@@ -22,6 +22,8 @@ NAME_ALIASES = {
     "signetofthegladiator": "signet of the gladiator",
     "blackhandsigil": "black hand sigil",
     "ringofwoe": "ring of woe",
+    "bosssummonerring": "ring of pride",
+    "upgradedbosssummonerring": "ring of virtue",
     "relicbonehexer": "bonehexer's puzzlebox",
     "relicskinrender": "skinrender's ear",
     "relicxx": "time-lost relic",
