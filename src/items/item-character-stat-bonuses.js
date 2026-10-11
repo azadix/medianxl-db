@@ -44,10 +44,17 @@ import {
  * }} PlannerStatItemModifier
  *
  * @typedef {{ key: string, amount: number }} ParsedCharacterStatBonus
+ *
+ * @typedef {{
+ *   text: string,
+ *   sourceLabel: string,
+ * }} UnknownItemStatModifier
  */
 
 /** @type {Record<string, PlannerStatItemModifier[]>} */
 let _plannerStatItemModifiersByKey = {};
+/** @type {UnknownItemStatModifier[]} */
+let _plannerUnknownItemStatModifiers = [];
 
 const ELEMENTAL_RESIST_KEYS = Object.freeze([
   'fire_resistance',
@@ -56,37 +63,157 @@ const ELEMENTAL_RESIST_KEYS = Object.freeze([
   'poison_resistance',
 ]);
 
+const ENEMY_ELEMENTAL_RESIST_KEYS = Object.freeze([
+  'enemy_fire_resistance',
+  'enemy_cold_resistance',
+  'enemy_lightning_resistance',
+  'enemy_poison_resistance',
+]);
+
+const MAXIMUM_ELEMENTAL_RESIST_KEYS = Object.freeze([
+  'maximum_fire_resistance',
+  'maximum_lightning_resistance',
+  'maximum_cold_resistance',
+  'maximum_poison_resist',
+]);
+
+const ALL_ATTRIBUTE_KEYS = Object.freeze(['strength', 'dexterity', 'vitality', 'energy']);
+
+const PERCENT_ALL_ATTRIBUTE_KEYS = Object.freeze([
+  'percent_strength',
+  'percent_dexterity',
+  'percent_vitality',
+  'percent_energy',
+]);
+
+/** Planner keys that should not get auto patterns from the key name. */
+const SKIP_KEY_AUTO_PATTERNS = new Set([
+  'unspent_stat_points',
+  'unspent_skill_points',
+  'life',
+  'base_life',
+  'current_life',
+  'mana',
+  'base_mana',
+  'current_mana',
+  'current_stamina',
+  'maximum_stamina',
+  'combined_percent_spell_focus',
+  'total_vitality_bonus_from_paragon',
+  'runes_contributing_to_gematria',
+]);
+
 /**
- * Item-text aliases that do not match character_stats labels 1:1.
+ * Item-text aliases for affix wording that differs from planner keys / stats.json.
  * `keys` expands one line onto several planner stats (e.g. Elemental Resists).
- * @type {Array<{ re: RegExp, key?: string, keys?: string[] }>}
+ * @type {Array<{ re: RegExp, key?: string, keys?: string[], abs?: boolean }>}
  */
 const EXTRA_LINE_PATTERNS = [
   { re: /^([+-]?\d+(?:\.\d+)?)\s+to\s+Life$/i, key: 'life' },
   { re: /^([+-]?\d+(?:\.\d+)?)\s+to\s+Mana$/i, key: 'mana' },
-  { re: /^Maximum Mana \+([+-]?\d+(?:\.\d+)?)%$/i, key: 'maximum_mana' },
-  { re: /^Maximum Life \+([+-]?\d+(?:\.\d+)?)%$/i, key: 'maximum_life' },
-  { re: /^Maximum Fire Resist \+([+-]?\d+(?:\.\d+)?)%$/i, key: 'maximum_fire_resistance' },
-  { re: /^Maximum Lightning Resist \+([+-]?\d+(?:\.\d+)?)%$/i, key: 'maximum_lightning_resistance' },
-  { re: /^Maximum Cold Resist \+([+-]?\d+(?:\.\d+)?)%$/i, key: 'maximum_cold_resistance' },
-  { re: /^Maximum Poison Resist \+([+-]?\d+(?:\.\d+)?)%$/i, key: 'maximum_poison_resist' },
+  { re: /^Maximum Mana \+?([+-]?\d+(?:\.\d+)?)%$/i, key: 'maximum_mana' },
+  { re: /^Maximum Life \+?([+-]?\d+(?:\.\d+)?)%$/i, key: 'maximum_life' },
+  { re: /^Maximum Fire Resist \+?([+-]?\d+(?:\.\d+)?)%$/i, key: 'maximum_fire_resistance' },
+  { re: /^Maximum Lightning Resist \+?([+-]?\d+(?:\.\d+)?)%$/i, key: 'maximum_lightning_resistance' },
+  { re: /^Maximum Cold Resist \+?([+-]?\d+(?:\.\d+)?)%$/i, key: 'maximum_cold_resistance' },
+  { re: /^Maximum Poison Resist \+?([+-]?\d+(?:\.\d+)?)%$/i, key: 'maximum_poison_resist' },
+  {
+    re: /^Maximum Elemental Resists? \+?([+-]?\d+(?:\.\d+)?)%$/i,
+    keys: [...MAXIMUM_ELEMENTAL_RESIST_KEYS],
+  },
   { re: /^([+-]?\d+(?:\.\d+)?)%\s+to\s+Strength$/i, key: 'percent_strength' },
   { re: /^([+-]?\d+(?:\.\d+)?)%\s+to\s+Dexterity$/i, key: 'percent_dexterity' },
   { re: /^([+-]?\d+(?:\.\d+)?)%\s+to\s+Vitality$/i, key: 'percent_vitality' },
   { re: /^([+-]?\d+(?:\.\d+)?)%\s+to\s+Energy$/i, key: 'percent_energy' },
   {
-    re: /^\+([+-]?\d+(?:\.\d+)?)%\s+to\s+Summon Elemental Resistances$/i,
+    re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+to\s+Summon Elemental Resistances$/i,
     key: 'summoned_minion_resistances',
   },
-  { re: /^\+([+-]?\d+(?:\.\d+)?)%\s+to\s+Summon Life$/i, key: 'summoned_minion_life' },
-  { re: /^\+([+-]?\d+(?:\.\d+)?)%\s+to\s+Summon Damage$/i, key: 'summoned_minion_damage' },
-  { re: /^Elemental Resists \+([+-]?\d+(?:\.\d+)?)%$/i, keys: [...ELEMENTAL_RESIST_KEYS] },
-  { re: /^All Resists \+([+-]?\d+(?:\.\d+)?)%$/i, keys: [...ELEMENTAL_RESIST_KEYS] },
+  { re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+to\s+Summon Life$/i, key: 'summoned_minion_life' },
+  { re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+to\s+Summon Damage$/i, key: 'summoned_minion_damage' },
+  { re: /^Elemental Resists \+?([+-]?\d+(?:\.\d+)?)%$/i, keys: [...ELEMENTAL_RESIST_KEYS] },
+  { re: /^All Resists \+?([+-]?\d+(?:\.\d+)?)%$/i, keys: [...ELEMENTAL_RESIST_KEYS] },
+  // Item text uses "Enhanced Defense"; character_stats label is "Bonus Defense".
+  { re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+Enhanced Defense$/i, key: 'enhanced_defense' },
+  { re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+Bonus to Defense$/i, key: 'enhanced_defense' },
+  { re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+Bonus Defense$/i, key: 'enhanced_defense' },
+  {
+    re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+to\s+Physical\/Magic Spell Damage$/i,
+    key: 'physical_magic_spell_damage',
+  },
+  // Life regen item text vs label / stats.json "Life Regeneration".
+  {
+    re: /^\+?([+-]?\d+(?:\.\d+)?)\s+Life Regenerat(?:ed|ion) per Second$/i,
+    key: 'life_regenerated_per_second',
+  },
+  // Activation Frequency affixes: "Activation Frequency +6%" / "20% Activation Frequency".
+  { re: /^Activation Frequency \+?([+-]?\d+(?:\.\d+)?)%$/i, key: 'activation_frequency' },
+  { re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+Activation Frequency$/i, key: 'activation_frequency' },
+  {
+    re: /^Activation Frequency of Periodic (?:Fire|Lightning|Cold|Poison) Skills?\s*:?\s*\+?([+-]?\d+(?:\.\d+)?)%$/i,
+    key: 'activation_frequency',
+  },
+  { re: /^Physical Resist \+?([+-]?\d+(?:\.\d+)?)%$/i, key: 'physical_resistance' },
+  { re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+Physical Resist$/i, key: 'physical_resistance' },
+  {
+    re: /^Weapon Physical Damage \+?([+-]?\d+(?:\.\d+)?)%$/i,
+    key: 'enhanced_weapon_damage',
+  },
+  {
+    re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+Weapon Physical Damage$/i,
+    key: 'enhanced_weapon_damage',
+  },
+  { re: /^Slow(?:s)? Target(?: by)? \+?([+-]?\d+(?:\.\d+)?)%$/i, key: 'slows_target_by' },
+  { re: /^Slows Attacker(?: by)? \+?([+-]?\d+(?:\.\d+)?)%$/i, key: 'slows_attacker' },
+  {
+    re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+Innate Elemental Damage$/i,
+    key: 'innate_elemental_damage',
+  },
+  {
+    re: /^Innate Elemental Damage \+?([+-]?\d+(?:\.\d+)?)%$/i,
+    key: 'innate_elemental_damage',
+  },
+  {
+    re: /^Poison Length Reduction:?\s*\+?([+-]?\d+(?:\.\d+)?)%$/i,
+    key: 'poison_length_reduction',
+  },
+  {
+    re: /^Curse Length Reduction:?\s*\+?([+-]?\d+(?:\.\d+)?)%$/i,
+    key: 'curse_length_reduction',
+  },
+  {
+    re: /^\+?([+-]?\d+(?:\.\d+)?)\s+Mana after each Kill$/i,
+    key: 'mana_after_each_kill',
+  },
+  {
+    re: /^\+?([+-]?\d+(?:\.\d+)?)\s+Life after each Kill$/i,
+    key: 'life_after_each_kill',
+  },
+  {
+    re: /^\+?([+-]?\d+(?:\.\d+)?)\s+to\s+all Attributes$/i,
+    keys: [...ALL_ATTRIBUTE_KEYS],
+  },
+  {
+    re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+to\s+All Attributes$/i,
+    keys: [...PERCENT_ALL_ATTRIBUTE_KEYS],
+  },
+  // Leading minus is display syntax; planner stores the magnitude as a positive pierce value.
+  {
+    re: /^-([+-]?\d+(?:\.\d+)?)%\s+to\s+Enemy Elemental Resistances$/i,
+    keys: [...ENEMY_ELEMENTAL_RESIST_KEYS],
+  },
+  {
+    re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+to\s+Enemy Elemental Resistances$/i,
+    keys: [...ENEMY_ELEMENTAL_RESIST_KEYS],
+    abs: true,
+  },
 ];
 
 /** @type {Array<{ re: RegExp, key: string }>|null} */
-let _labelPatternsCache = null;
+let _keyPatternsCache = null;
 /** @type {Array<{ re: RegExp, key: string }>|null} */
+let _labelAliasPatternsCache = null;
+/** @type {Array<{ re: RegExp, keys: string[] }>|null} */
 let _statsFormatPatternsCache = null;
 
 /**
@@ -100,42 +227,145 @@ function normalizeMatchText(text) {
 }
 
 /**
- * Build a case-insensitive regex from a character_stats label (`#` = number).
- * @param {string} label
- * @returns {RegExp|null}
+ * @param {string} key
+ * @returns {string}
  */
-function labelToPattern(label) {
-  const raw = String(label || '').trim();
-  if (!raw || !raw.includes('#')) return null;
-  // Replace # placeholders first, then escape the rest.
-  const parts = raw.split('#');
-  const escaped = parts.map((p) => p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-  const withNum = escaped.join('([+-]?\\d+(?:\\.\\d+)?)');
-  return new RegExp(`^\\+?${withNum}$`, 'i');
+function humanizePlannerStatKey(key) {
+  return String(key || '')
+    .trim()
+    .toLowerCase()
+    .split('_')
+    .filter(Boolean)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ');
 }
 
 /**
+ * Escape a literal for use inside a RegExp source string.
+ * @param {string} text
+ * @returns {string}
+ */
+function escapeRegExp(text) {
+  return String(text || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/**
+ * Build item-text regexes from a planner stat **key** (not the UI label).
+ * Labels are display-only and must not gate whether a mod is counted.
+ * @param {string} key
  * @returns {Array<{ re: RegExp, key: string }>}
  */
-function getLabelPatterns() {
-  if (_labelPatternsCache) return _labelPatternsCache;
+function keyToPatterns(key) {
+  const k = String(key || '')
+    .trim()
+    .toLowerCase();
+  if (!k || SKIP_KEY_AUTO_PATTERNS.has(k)) return [];
+  if (/\(0\s*\/\s*1\)/i.test(k)) return [];
+
+  const name = humanizePlannerStatKey(k);
+  if (!name) return [];
+  const esc = escapeRegExp(name);
+  const num = '([+-]?\\d+(?:\\.\\d+)?)';
+  /** @type {string[]} */
+  const sources = [
+    `^${esc}\\s*\\+?${num}%?$`,
+    `^\\+?${num}%?\\s+${esc}$`,
+    `^\\+?${num}%\\s+to\\s+${esc}$`,
+    `^\\+?${num}\\s+to\\s+${esc}$`,
+    `^${esc}\\s*\\+?${num}%$`,
+  ];
+  if (k.startsWith('enemy_')) {
+    sources.push(`^-${num}%\\s+to\\s+${esc}$`);
+  }
   /** @type {Array<{ re: RegExp, key: string }>} */
   const out = [];
-  for (const def of getPlannerCharacterStatDefs()) {
-    const re = labelToPattern(def.label);
-    if (!re) continue;
-    out.push({ re, key: def.key });
+  for (const src of sources) {
+    try {
+      out.push({ re: new RegExp(src, 'i'), key: k });
+    } catch {
+      // ignore bad pattern
+    }
   }
-  _labelPatternsCache = out;
   return out;
 }
 
 /**
  * @returns {Array<{ re: RegExp, key: string }>}
  */
+function getKeyPatterns() {
+  if (_keyPatternsCache) return _keyPatternsCache;
+  /** @type {Array<{ re: RegExp, key: string }>} */
+  const out = [];
+  for (const def of getPlannerCharacterStatDefs()) {
+    out.push(...keyToPatterns(def.key));
+  }
+  _keyPatternsCache = out;
+  return out;
+}
+
+/**
+ * Optional aliases from character_stats labels when they contain `#`.
+ * Labels never gate counting — keys / stats.json / EXTRA always apply first.
+ * @param {string} label
+ * @param {string} key
+ * @returns {Array<{ re: RegExp, key: string }>}
+ */
+function labelAliasPatterns(label, key) {
+  const raw = String(label || '').trim();
+  const k = String(key || '')
+    .trim()
+    .toLowerCase();
+  if (!raw || !k || !raw.includes('#')) return [];
+  const parts = raw.split('#');
+  const escaped = parts.map((p, i) => {
+    let body = p;
+    let optionalPlus = false;
+    let optionalColon = false;
+    if (i < parts.length - 1) {
+      if (body.endsWith('+')) {
+        optionalPlus = true;
+        body = body.slice(0, -1);
+      }
+      if (/:\s*$/.test(body)) {
+        optionalColon = true;
+        body = body.replace(/:\s*$/, '');
+      }
+    }
+    let e = escapeRegExp(body);
+    if (optionalColon) e += ':?\\s*';
+    if (optionalPlus) e += '\\+?';
+    return e;
+  });
+  const withNum = escaped.join('([+-]?\\d+(?:\\.\\d+)?)');
+  try {
+    return [{ re: new RegExp(`^\\+?${withNum}$`, 'i'), key: k }];
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * @returns {Array<{ re: RegExp, key: string }>}
+ */
+function getLabelAliasPatterns() {
+  if (_labelAliasPatternsCache) return _labelAliasPatternsCache;
+  /** @type {Array<{ re: RegExp, key: string }>} */
+  const out = [];
+  for (const def of getPlannerCharacterStatDefs()) {
+    out.push(...labelAliasPatterns(def.label, def.key));
+  }
+  _labelAliasPatternsCache = out;
+  return out;
+}
+
+/**
+ * Patterns from stats.json format strings + pairedStat planner keys.
+ * Supports multi-key rows (e.g. enemy elemental resists).
+ * @returns {Array<{ re: RegExp, keys: string[] }>}
+ */
 function getStatsFormatPatterns() {
   if (_statsFormatPatternsCache) return _statsFormatPatternsCache;
-  /** @type {Array<{ re: RegExp, key: string }>} */
+  /** @type {Array<{ re: RegExp, keys: string[] }>} */
   const out = [];
   const store = getFileSkillStore();
   const stats = store?.stats;
@@ -145,16 +375,19 @@ function getStatsFormatPatterns() {
   }
   for (const row of stats) {
     const paired = Array.isArray(row?.pairedStat) ? row.pairedStat : [];
+    /** @type {string[]} */
+    const plannerKeys = [];
     /** @type {Set<string>} */
-    const plannerKeys = new Set();
+    const seen = new Set();
     for (const entry of paired) {
       const token =
         entry?.plannerKey ?? entry?.stat ?? entry?.key ?? entry?.characterStat ?? entry?.character_stat;
       const k = token != null ? String(token).trim().toLowerCase() : '';
-      if (k && isPlannerBaseStatKey(k)) plannerKeys.add(k);
+      if (!k || !isPlannerBaseStatKey(k) || seen.has(k)) continue;
+      seen.add(k);
+      plannerKeys.push(k);
     }
-    if (plannerKeys.size !== 1) continue;
-    const plannerKey = [...plannerKeys][0];
+    if (!plannerKeys.length) continue;
     const format = String(row?.format || '').trim();
     if (!format || !format.includes('{value0}')) continue;
     const parts = format.split('{value0}');
@@ -166,7 +399,7 @@ function getStatsFormatPatterns() {
     );
     const withNum = escaped.join('([+-]?\\d+(?:\\.\\d+)?)');
     try {
-      out.push({ re: new RegExp(`^\\+?${withNum}$`, 'i'), key: plannerKey });
+      out.push({ re: new RegExp(`^\\+?${withNum}$`, 'i'), keys: plannerKeys });
     } catch {
       // ignore bad format rows
     }
@@ -177,7 +410,8 @@ function getStatsFormatPatterns() {
 
 /** Drop caches when skill data reloads (tests / version switch). */
 export function clearItemCharacterStatBonusCaches() {
-  _labelPatternsCache = null;
+  _keyPatternsCache = null;
+  _labelAliasPatternsCache = null;
   _statsFormatPatternsCache = null;
 }
 
@@ -193,12 +427,20 @@ function shouldSkipNonStatLine(text) {
   if (/\bon (Kill|Striking|Attack|Death|Melee)\b/i.test(t)) return true;
   if (/^Adds\b/i.test(t)) return true;
   if (/Required Level/i.test(t)) return true;
+  if (/^Requirements\b/i.test(t)) return true;
   if (/Keep in Inventory/i.test(t)) return true;
   if (/Socketed\s*\(/i.test(t)) return true;
   if (/Damage:/i.test(t) || /Defense:/i.test(t)) return true;
   if (/Melee range:/i.test(t) || /Attack Speed Modifier:/i.test(t)) return true;
   // Skill-specific flavour ("Arrow Swarm: +2 Projectiles") — not sheet stats.
-  if (/^[A-Za-z0-9][^:]{0,40}:\s/.test(t) && !/Resist/i.test(t)) return true;
+  // Keep Activation Frequency / resist lines (colon is common in those affixes).
+  if (
+    /^[A-Za-z0-9][^:]{0,40}:\s/.test(t) &&
+    !/Resist/i.test(t) &&
+    !/Activation Frequency/i.test(t)
+  ) {
+    return true;
+  }
   return false;
 }
 
@@ -219,46 +461,98 @@ function bonusesForKeys(keys, amount) {
 }
 
 /**
- * Parse one resolved modifier line into planner character-stat delta(s).
  * @param {string|null|undefined} line
- * @returns {ParsedCharacterStatBonus[]}
+ * @returns {{
+ *   text: string,
+ *   kind: 'inactive'|'skip'|'skill'|'parsed'|'unknown',
+ *   bonuses: ParsedCharacterStatBonus[],
+ * }}
  */
-export function parseCharacterStatBonusesFromModifierLine(line) {
-  if (!isModifierLineActive(line)) return [];
+export function classifyCharacterStatModifierLine(line) {
+  if (!isModifierLineActive(line)) {
+    return { text: '', kind: 'inactive', bonuses: [] };
+  }
   const text = stripDisplayedRollRanges(
     stripProcLinePrefix(modifierLineText(line))
   ).trim();
-  if (!text || shouldSkipNonStatLine(text)) return [];
+  if (!text || shouldSkipNonStatLine(text)) {
+    return { text, kind: 'skip', bonuses: [] };
+  }
 
-  // Skill soft-levels / catalog oSkill grants are handled elsewhere.
-  // Keep generic "+N to Life/Mana" as character stats (not skill grants).
+  // All-skills / class-skills / catalog oSkills are handled elsewhere.
   const skillBonus = parseSkillBonusFromModifierLine(line);
-  if (skillBonus && (skillBonus.kind === 'all' || skillBonus.kind === 'class')) return [];
-  if (matchCatalogSkillGrantFromLine(line)) return [];
+  if (skillBonus && (skillBonus.kind === 'all' || skillBonus.kind === 'class')) {
+    return { text, kind: 'skill', bonuses: [] };
+  }
+  if (matchCatalogSkillGrantFromLine(line)) {
+    return { text, kind: 'skill', bonuses: [] };
+  }
 
   const normalized = normalizeMatchText(text);
+  /** @type {ParsedCharacterStatBonus[]} */
+  let bonuses = [];
 
   for (const pattern of EXTRA_LINE_PATTERNS) {
     const m = pattern.re.exec(normalized);
     if (!m) continue;
-    const amount = Number(m[1]);
+    let amount = Number(m[1]);
+    if (pattern.abs && Number.isFinite(amount)) amount = Math.abs(amount);
     const keys = pattern.keys || (pattern.key ? [pattern.key] : []);
-    return bonusesForKeys(keys, amount);
+    bonuses = bonusesForKeys(keys, amount);
+    break;
   }
 
-  for (const { re, key } of getLabelPatterns()) {
-    const m = re.exec(normalized) || re.exec(normalized.replace(/^\+/, ''));
-    if (!m) continue;
-    return bonusesForKeys([key], Number(m[1]));
+  if (!bonuses.length) {
+    for (const { re, keys } of getStatsFormatPatterns()) {
+      const m = re.exec(normalized) || re.exec(normalized.replace(/^\+/, ''));
+      if (!m) continue;
+      bonuses = bonusesForKeys(keys, Number(m[1]));
+      if (bonuses.length) break;
+    }
   }
 
-  for (const { re, key } of getStatsFormatPatterns()) {
-    const m = re.exec(normalized) || re.exec(normalized.replace(/^\+/, ''));
-    if (!m) continue;
-    return bonusesForKeys([key], Number(m[1]));
+  if (!bonuses.length) {
+    for (const { re, key } of getKeyPatterns()) {
+      const m = re.exec(normalized) || re.exec(normalized.replace(/^\+/, ''));
+      if (!m) continue;
+      bonuses = bonusesForKeys([key], Number(m[1]));
+      if (bonuses.length) break;
+    }
   }
 
-  return [];
+  // Label aliases last — helpful when wording differs from the key, never required.
+  if (!bonuses.length) {
+    for (const { re, key } of getLabelAliasPatterns()) {
+      const m = re.exec(normalized) || re.exec(normalized.replace(/^\+/, ''));
+      if (!m) continue;
+      bonuses = bonusesForKeys([key], Number(m[1]));
+      if (bonuses.length) break;
+    }
+  }
+
+  if (bonuses.length) return { text, kind: 'parsed', bonuses };
+
+  // Named "+N to Skill" lines that did not also match a character-stat key.
+  if (skillBonus && skillBonus.kind === 'skill') {
+    return { text, kind: 'skill', bonuses: [] };
+  }
+
+  // Numeric affix-like lines that did not map to a planner key.
+  if (/\d/.test(normalized)) {
+    return { text: normalized, kind: 'unknown', bonuses: [] };
+  }
+  return { text, kind: 'skip', bonuses: [] };
+}
+
+/**
+ * Parse one resolved modifier line into planner character-stat delta(s).
+ * Matching uses item aliases, stats.json formats, and planner **keys** —
+ * character_stats labels are display-only and do not affect counting.
+ * @param {string|null|undefined} line
+ * @returns {ParsedCharacterStatBonus[]}
+ */
+export function parseCharacterStatBonusesFromModifierLine(line) {
+  return classifyCharacterStatModifierLine(line).bonuses;
 }
 
 /**
@@ -275,10 +569,16 @@ export function parseCharacterStatBonusFromModifierLine(line) {
  * @param {string} sourceLabel
  * @param {Record<string, number>} bonuses
  * @param {Record<string, PlannerStatItemModifier[]>} modsByKey
+ * @param {UnknownItemStatModifier[]} unknownOut
  */
-function accumulateLines(lines, sourceLabel, bonuses, modsByKey) {
+function accumulateLines(lines, sourceLabel, bonuses, modsByKey, unknownOut) {
   for (const line of Array.isArray(lines) ? lines : []) {
-    for (const parsed of parseCharacterStatBonusesFromModifierLine(line)) {
+    const classified = classifyCharacterStatModifierLine(line);
+    if (classified.kind === 'unknown') {
+      unknownOut.push({ text: classified.text, sourceLabel });
+      continue;
+    }
+    for (const parsed of classified.bonuses) {
       const { key, amount } = parsed;
       bonuses[key] = (bonuses[key] || 0) + amount;
       if (!modsByKey[key]) modsByKey[key] = [];
@@ -308,6 +608,7 @@ function sourceLabelForDef(def) {
  * @returns {{
  *   bonuses: Record<string, number>,
  *   modifiersByKey: Record<string, PlannerStatItemModifier[]>,
+ *   unknownModifiers: UnknownItemStatModifier[],
  * }}
  */
 export function collectEnabledItemCharacterStatBonuses(options = {}) {
@@ -315,6 +616,8 @@ export function collectEnabledItemCharacterStatBonuses(options = {}) {
   const bonuses = {};
   /** @type {Record<string, PlannerStatItemModifier[]>} */
   const modifiersByKey = {};
+  /** @type {UnknownItemStatModifier[]} */
+  const unknownModifiers = [];
 
   try {
     const itemsStore = useItemsStore();
@@ -339,7 +642,7 @@ export function collectEnabledItemCharacterStatBonuses(options = {}) {
         charmInInventory: true,
         className,
       });
-      accumulateLines(lines, sourceLabelForDef(def), bonuses, modifiersByKey);
+      accumulateLines(lines, sourceLabelForDef(def), bonuses, modifiersByKey, unknownModifiers);
     }
 
     // Set bonus tiers — only pieces on the active weapon set count.
@@ -354,7 +657,7 @@ export function collectEnabledItemCharacterStatBonuses(options = {}) {
         if (!bonus.active) continue;
         const setName = String(setDef.name || setDef.id || 'Set').trim();
         const sourceLabel = `${setName} (${formatSetBonusLabel(bonus.required)})`;
-        accumulateLines(bonus.modifiers, sourceLabel, bonuses, modifiersByKey);
+        accumulateLines(bonus.modifiers, sourceLabel, bonuses, modifiersByKey, unknownModifiers);
       }
     }
 
@@ -371,7 +674,7 @@ export function collectEnabledItemCharacterStatBonuses(options = {}) {
         if (text == null) continue;
         lines.push(text);
       }
-      accumulateLines(lines, sourceLabelForDef(def), bonuses, modifiersByKey);
+      accumulateLines(lines, sourceLabelForDef(def), bonuses, modifiersByKey, unknownModifiers);
     }
 
     for (const [defId, instanceId] of Object.entries(itemsStore.enabledRelics || {})) {
@@ -384,17 +687,17 @@ export function collectEnabledItemCharacterStatBonuses(options = {}) {
         hideRollableRanges: false,
         showRollRanges: false,
       });
-      accumulateLines(lines, sourceLabelForDef(def), bonuses, modifiersByKey);
+      accumulateLines(lines, sourceLabelForDef(def), bonuses, modifiersByKey, unknownModifiers);
     }
   } catch {
-    return { bonuses: {}, modifiersByKey: {} };
+    return { bonuses: {}, modifiersByKey: {}, unknownModifiers: [] };
   }
 
   for (const k of Object.keys(bonuses)) {
     bonuses[k] = normalizePlannerStatValue(k, bonuses[k]);
   }
 
-  return { bonuses, modifiersByKey };
+  return { bonuses, modifiersByKey, unknownModifiers };
 }
 
 /**
@@ -404,10 +707,13 @@ export function collectEnabledItemCharacterStatBonuses(options = {}) {
  */
 export function recomputePlannerStatsFromItems(character, options = {}) {
   _plannerStatItemModifiersByKey = {};
+  _plannerUnknownItemStatModifiers = [];
   if (!character || typeof character.setPlannerItemStatBonuses !== 'function') return;
 
-  const { bonuses, modifiersByKey } = collectEnabledItemCharacterStatBonuses(options);
+  const { bonuses, modifiersByKey, unknownModifiers } =
+    collectEnabledItemCharacterStatBonuses(options);
   _plannerStatItemModifiersByKey = modifiersByKey;
+  _plannerUnknownItemStatModifiers = unknownModifiers;
   character.setPlannerItemStatBonuses(bonuses);
 }
 
@@ -418,4 +724,12 @@ export function recomputePlannerStatsFromItems(character, options = {}) {
 export function getPlannerStatItemModifiers(statKey) {
   const k = String(statKey || '').trim().toLowerCase();
   return _plannerStatItemModifiersByKey[k] || [];
+}
+
+/**
+ * Item modifier lines that look numeric/stat-like but did not map to a planner key.
+ * @returns {UnknownItemStatModifier[]}
+ */
+export function getPlannerUnknownItemStatModifiers() {
+  return _plannerUnknownItemStatModifiers.slice();
 }

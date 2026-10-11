@@ -480,6 +480,45 @@
   color: #fff;
 }
 
+.planner-filter-chip.has-unknown {
+  border-color: hsl(48, 100%, 40%);
+}
+
+.planner-filter-chip-count {
+  margin-left: 0.3rem;
+  opacity: 0.85;
+}
+
+.planner-unknown-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 0.35rem 0.15rem;
+}
+
+.planner-unknown-empty {
+  margin: 0.5rem 0.25rem;
+  font-size: 0.85rem;
+}
+
+.planner-unknown-row {
+  padding: 0.4rem 0.45rem;
+  border: 1px solid hsl(0, 0%, 24%);
+  border-radius: 4px;
+  background: hsl(0, 0%, 10%);
+}
+
+.planner-unknown-text {
+  font-size: 0.88rem;
+  color: #f0f0f0;
+  word-break: break-word;
+}
+
+.planner-unknown-sources {
+  margin-top: 0.2rem;
+  font-size: 0.75rem;
+}
+
 #sidebarPaneStats {
   height: 100%;
   padding-bottom: 0;

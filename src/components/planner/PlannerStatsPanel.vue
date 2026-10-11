@@ -7,12 +7,15 @@ import { setupPlannerStatRowTooltips, applyPlannerStatInput } from '@/character/
 import { getFileSkillStore } from '@/shared/skill-data-store.js';
 import { usePlannerSkillReferencedStats } from '@/composables/usePlannerSkillReferencedStats.js';
 import { isPlannerStatConditionInactive } from '@/character/planner-stat-modifiers.js';
+import { getPlannerUnknownItemStatModifiers } from '@/items/item-character-stat-bonuses.js';
 
 const statTooltipRoot = ref(null);
 /** @type {import('vue').Ref<{ key: string, label: string, min: number|null, max: number|null, allowNegative?: boolean, default?: number, alwaysVisible?: boolean, sortOrder?: number, section?: string }[]>} */
 const statDefs = ref(getPlannerCharacterStatDefs());
 /** @type {import('vue').Ref<Record<string, number>>} */
 const stats = ref({});
+/** @type {import('vue').Ref<{ text: string, sourceLabel: string }[]>} */
+const unknownItemModifiers = ref([]);
 /** Stat row whose input is focused (keeps row visible while editing down to default). */
 const activeStatKey = ref(/** @type {string|null} */ (null));
 /** Bump to force recompute of non-reactive derived data (skill store load, skill point changes). */
@@ -27,6 +30,7 @@ const statFilters = [
   { id: 'defense', label: 'Defense' },
   { id: 'minions', label: 'Minions' },
   { id: 'misc', label: 'Misc' },
+  { id: 'unknown', label: 'Unknown' },
 ];
 
 const { skillReferencedStatKeys } = usePlannerSkillReferencedStats(refreshTick);
@@ -70,8 +74,29 @@ function statSectionForDef(def) {
 
 const filteredStatDefs = computed(() => {
   if (statFilter.value === 'all') return visibleStatDefs.value;
+  if (statFilter.value === 'unknown') return [];
   return visibleStatDefs.value.filter((def) => statSectionForDef(def) === statFilter.value);
 });
+
+const unknownStatRows = computed(() => {
+  void refreshTick.value;
+  /** @type {Map<string, { text: string, sources: string[] }>} */
+  const byText = new Map();
+  for (const row of unknownItemModifiers.value) {
+    const text = String(row?.text || '').trim();
+    if (!text) continue;
+    const source = String(row?.sourceLabel || '').trim() || 'Item';
+    const existing = byText.get(text);
+    if (existing) {
+      if (!existing.sources.includes(source)) existing.sources.push(source);
+    } else {
+      byText.set(text, { text, sources: [source] });
+    }
+  }
+  return [...byText.values()].sort((a, b) => a.text.localeCompare(b.text));
+});
+
+const unknownStatCount = computed(() => unknownStatRows.value.length);
 
 /** @param {{ allowNegative?: boolean, min: number|null }} def */
 function statInputMin(def) {
@@ -101,6 +126,7 @@ function pullStats() {
   }
   const ch = getCharacterInstance();
   stats.value = ch ? { ...ch.getAllStats() } : {};
+  unknownItemModifiers.value = getPlannerUnknownItemStatModifiers();
 }
 
 function onStatInput(statKey, e) {
@@ -184,15 +210,37 @@ usePlannerRevisionRefresh(refreshHandler);
           :key="filter.id"
           type="button"
           class="button is-small planner-filter-chip"
-          :class="{ 'is-active': statFilter === filter.id }"
+          :class="{
+            'is-active': statFilter === filter.id,
+            'has-unknown': filter.id === 'unknown' && unknownStatCount > 0,
+          }"
           @click="statFilter = filter.id"
         >
           {{ filter.label }}
+          <span v-if="filter.id === 'unknown' && unknownStatCount > 0" class="planner-filter-chip-count">
+            {{ unknownStatCount }}
+          </span>
         </button>
       </div>
 
       <div id="plannerStatsPanel" class="planner-stats-panel planner-card mb-2">
-        <div class="planner-stats-baseline planner-stats-registry-scroll">
+        <div
+          v-if="statFilter === 'unknown'"
+          class="planner-stats-baseline planner-stats-registry-scroll planner-unknown-stats"
+        >
+          <p v-if="!unknownStatRows.length" class="planner-unknown-empty has-text-grey">
+            No unmapped item stats on this character.
+          </p>
+          <div
+            v-for="row in unknownStatRows"
+            :key="row.text"
+            class="planner-unknown-row"
+          >
+            <div class="planner-unknown-text">{{ row.text }}</div>
+            <div class="planner-unknown-sources has-text-grey">{{ row.sources.join(', ') }}</div>
+          </div>
+        </div>
+        <div v-else class="planner-stats-baseline planner-stats-registry-scroll">
           <div
             v-for="def in filteredStatDefs"
             :key="def.key"

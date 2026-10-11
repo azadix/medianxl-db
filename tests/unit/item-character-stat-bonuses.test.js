@@ -12,6 +12,10 @@ import {
 
   clearItemCharacterStatBonusCaches,
 
+  classifyCharacterStatModifierLine,
+
+  getPlannerUnknownItemStatModifiers,
+
   parseCharacterStatBonusFromModifierLine,
 
   parseCharacterStatBonusesFromModifierLine,
@@ -118,6 +122,64 @@ describe('parseCharacterStatBonusFromModifierLine', () => {
 
   });
 
+  it('maps common item-text aliases that diverge from character_stats labels', () => {
+    expect(parseCharacterStatBonusFromModifierLine('Activation Frequency +6%')).toEqual({
+      key: 'activation_frequency',
+      amount: 6,
+    });
+    expect(parseCharacterStatBonusFromModifierLine('Activation Frequency 20%')).toEqual({
+      key: 'activation_frequency',
+      amount: 20,
+    });
+    expect(parseCharacterStatBonusFromModifierLine('+103 Life Regenerated per Second')).toEqual({
+      key: 'life_regenerated_per_second',
+      amount: 103,
+    });
+    expect(parseCharacterStatBonusFromModifierLine('+69% Enhanced Defense')).toEqual({
+      key: 'enhanced_defense',
+      amount: 69,
+    });
+    expect(parseCharacterStatBonusFromModifierLine('Physical Resist 5%')).toEqual({
+      key: 'physical_resistance',
+      amount: 5,
+    });
+    expect(parseCharacterStatBonusFromModifierLine('Weapon Physical Damage +13%')).toEqual({
+      key: 'enhanced_weapon_damage',
+      amount: 13,
+    });
+    expect(parseCharacterStatBonusFromModifierLine('Slow Target 21%')).toEqual({
+      key: 'slows_target_by',
+      amount: 21,
+    });
+    expect(parseCharacterStatBonusFromModifierLine('15% Innate Elemental Damage')).toEqual({
+      key: 'innate_elemental_damage',
+      amount: 15,
+    });
+    expect(parseCharacterStatBonusFromModifierLine('Poison Length Reduction 50%')).toEqual({
+      key: 'poison_length_reduction',
+      amount: 50,
+    });
+    expect(parseCharacterStatBonusFromModifierLine('Maximum Mana -50%')).toEqual({
+      key: 'maximum_mana',
+      amount: -50,
+    });
+  });
+
+  it('expands enemy elemental and all-attribute lines', () => {
+    const enemy = parseCharacterStatBonusesFromModifierLine('-14% to Enemy Elemental Resistances');
+    expect(enemy.map((r) => r.key).sort()).toEqual([
+      'enemy_cold_resistance',
+      'enemy_fire_resistance',
+      'enemy_lightning_resistance',
+      'enemy_poison_resistance',
+    ]);
+    expect(enemy.every((r) => r.amount === 14)).toBe(true);
+
+    const attrs = parseCharacterStatBonusesFromModifierLine('+35 to all Attributes');
+    expect(attrs.map((r) => r.key).sort()).toEqual(['dexterity', 'energy', 'strength', 'vitality']);
+    expect(attrs.every((r) => r.amount === 35)).toBe(true);
+  });
+
   it('expands Elemental Resists onto all elemental resist keys', () => {
 
     const list = parseCharacterStatBonusesFromModifierLine('Elemental Resists +12%');
@@ -150,6 +212,19 @@ describe('parseCharacterStatBonusFromModifierLine', () => {
 
     ).toBeNull();
 
+  });
+
+  it('classifies unmapped numeric affixes as unknown (labels do not gate counting)', () => {
+    expect(classifyCharacterStatModifierLine('Activation Frequency +6%')).toMatchObject({
+      kind: 'parsed',
+      bonuses: [{ key: 'activation_frequency', amount: 6 }],
+    });
+    expect(classifyCharacterStatModifierLine('Some Made Up Affix +12%')).toMatchObject({
+      kind: 'unknown',
+      text: 'Some Made Up Affix +12%',
+      bonuses: [],
+    });
+    expect(classifyCharacterStatModifierLine('+1 to All Skills').kind).toBe('skill');
   });
 
 });
@@ -231,6 +306,32 @@ describe('recomputePlannerStatsFromItems', () => {
     store.setWeaponSet(1);
     recomputePlannerStatsFromItems(ch);
     expect(ch.getStat('life')).toBe(before + 50);
+  });
+
+  it('lists unmapped item affixes under unknown modifiers', () => {
+    createCharacterInstance('Amazon', 99);
+    const ch = getCharacterInstance();
+    const store = useItemsStore();
+    const ring = {
+      id: 'rin',
+      name: 'Ring',
+      category: 'jewelry',
+      slot: 'ring',
+      rarity: 'normal',
+      reqLevel: 1,
+    };
+    store.catalog = [ring];
+    store.equipment.rrin = store.createInstance(ring.id, null, null, {
+      quality: 'rare',
+      name: 'Test Ring',
+      modifiers: ['Activation Frequency +6%', 'Weird Unknown Affix +9%'],
+    });
+
+    recomputePlannerStatsFromItems(ch);
+    expect(ch.getStat('activation_frequency')).toBe(6);
+    const unknown = getPlannerUnknownItemStatModifiers();
+    expect(unknown.some((u) => u.text === 'Weird Unknown Affix +9%')).toBe(true);
+    expect(unknown.some((u) => /Activation Frequency/i.test(u.text))).toBe(false);
   });
 
 });

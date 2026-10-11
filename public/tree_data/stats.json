@@ -658,7 +658,13 @@
     "id": 99,
     "key": "weapon_physical_damage",
     "name": "Weapon Physical Damage",
-    "format": "Weapon Physical Damage: {value0}%"
+    "format": "Weapon Physical Damage: {value0}%",
+    "pairedStat": [
+      {
+        "valueIndex": 0,
+        "plannerKey": "enhanced_weapon_damage"
+      }
+    ]
   },
   {
     "id": 100,
@@ -2851,7 +2857,13 @@
     "key": "activation_frequency",
     "name": "#% Activation Frequency",
     "format": "{value0}% Activation Frequency",
-    "signed": true
+    "signed": true,
+    "pairedStat": [
+      {
+        "valueIndex": 0,
+        "plannerKey": "activation_frequency"
+      }
+    ]
   },
   {
     "id": 391,
