@@ -20,12 +20,53 @@ import {
 import {
   parseSkillBonusFromModifierLine,
   isSkillOnCharacterTree,
+  sumSkillBonusFromModifierLines,
 } from '@/items/skill-bonus-from-modifiers.js';
 import { parseProcFromModifierLine } from '@/items/item-procs.js';
-import { decodeModifierLine } from '@/items/item-modifier-line.js';
-import { stripDisplayedRollRanges } from '@/items/affix-rolls.js';
+import { decodeModifierLine, encodeModifierLine } from '@/items/item-modifier-line.js';
+import {
+  applyAffixRolls,
+  parseAffixRanges,
+  stripDisplayedRollRanges,
+} from '@/items/affix-rolls.js';
+import { EQUIPMENT_SLOTS } from '@/items/item-types.js';
 import { escapeHtmlText, SCALING_DISPLAY_HTML_CLASSES } from '@/shared/utils.js';
 import { lookupMergedDisplayNameByInternalName } from '@/shared/skill-data-store.js';
+
+/** Must match {@link overlayAffixRollKey} prefix in item-overlays (avoid import cycle). */
+const EQUIP_AFFIX_ROLL_PREFIX = 'modAffix:';
+
+/**
+ * Resolve equipped unique/runeword modifier strings (incl. orange) without item-stats cycle.
+ * @param {object|null|undefined} def
+ * @param {Record<string, number>|null|undefined} rolls
+ * @returns {string[]}
+ */
+function resolvedEquipmentModifierLines(def, rolls = null) {
+  /** @type {string[]} */
+  const lines = [];
+  if (!def || typeof def !== 'object') return lines;
+  let i = 0;
+  for (const mod of Array.isArray(def.modifiers) ? def.modifiers : []) {
+    if (typeof mod !== 'string' || !mod.trim()) continue;
+    const { text, color, showCondition } = decodeModifierLine(mod);
+    if (!text) continue;
+    const sourceKey = `base:m${i}`;
+    let resolved = text;
+    if (parseAffixRanges(text).length) {
+      resolved = applyAffixRolls(
+        text,
+        rolls,
+        (rangeIndex) => `${EQUIP_AFFIX_ROLL_PREFIX}${sourceKey}:r${rangeIndex}`,
+        { hideRanges: false, showRollRanges: false }
+      );
+    }
+    i += 1;
+    if (resolved == null) continue;
+    lines.push(encodeModifierLine(resolved, color, showCondition));
+  }
+  return lines;
+}
 
 const DISPLAYED_ROLL_RANGE_RE = / \[(-?\d+(?:\.\d+)?)-(-?\d+(?:\.\d+)?)\]/g;
 
@@ -117,13 +158,18 @@ export function wrapNamedSkillGrantMarkers(line) {
   const body = prefixMatch ? prefixMatch[2] : text;
   const grant = matchCatalogSkillGrantFromLine(body);
   if (grant) {
-    const skillName = String(
-      parseSkillBonusFromModifierLine(stripCharmDisplayPrefix(body))?.skillName || grant.displayName
-    ).trim();
+    const skillName = String(grant.displayName || '').trim();
     if (!skillName) return text;
+    // Allow "+1 to passive Bear Stance" — keep "passive" as plain text, wrap the skill.
     const re = grant.classOnly
-      ? new RegExp(`(\\s+to\\s+)${escapeRegExp(skillName)}(\\s+\\()`, 'i')
-      : new RegExp(`(\\s+to\\s+)${escapeRegExp(skillName)}(\\s*)$`, 'i');
+      ? new RegExp(
+          `(\\s+to\\s+)(?:passive\\s+)?${escapeRegExp(skillName)}(\\s+\\()`,
+          'i'
+        )
+      : new RegExp(
+          `(\\s+to\\s+)(?:passive\\s+)?${escapeRegExp(skillName)}(\\s*)$`,
+          'i'
+        );
     return prefix + body.replace(re, `$1[[${grant.skillId}]]$2`);
   }
 
@@ -225,7 +271,10 @@ export function annotateAffixDisplayPartsWithSkills(parts) {
       parts,
       grant.displayName,
       (before, idx) =>
-        /\sto\s+$/i.test(before) || before.toLowerCase().endsWith('to ') || idx === 0
+        /\sto\s+(?:passive\s+)?$/i.test(before) ||
+        before.toLowerCase().endsWith('to ') ||
+        before.toLowerCase().endsWith('passive ') ||
+        idx === 0
     );
     if (annotated) return annotated;
   }
@@ -413,13 +462,106 @@ export function collectEnabledRelicOSkillGrants(options = {}) {
 }
 
 /**
- * Collect item-granted oSkill levels from enabled charms + relics in the store.
+ * Collect oSkill grants from equipped gear that meets requirements.
+ * @param {Array<{ def: object, rolls?: Record<string, number>|null }>} gear
+ * @param {{ className?: string|null }} [ctx]
+ * @returns {Record<string, number>}
+ */
+export function collectOSkillGrantsFromEquippedDefs(gear, ctx = {}) {
+  /** @type {Record<string, number>} */
+  const out = {};
+  const className = ctx.className ?? null;
+  for (const entry of Array.isArray(gear) ? gear : []) {
+    const def = entry?.def;
+    if (!def) continue;
+    const rolls = entry.rolls && typeof entry.rolls === 'object' ? entry.rolls : null;
+    const lines = resolvedEquipmentModifierLines(def, rolls);
+    const grants = collectOSkillGrantsFromModifierLines(lines, { className });
+    for (const [id, amount] of Object.entries(grants)) {
+      out[id] = (out[id] || 0) + amount;
+    }
+  }
+  return out;
+}
+
+/**
+ * Collect oSkill grants from equipped planner gear (reqs met).
+ * @param {{ className?: string|null }} [options]
+ * @returns {Record<string, number>}
+ */
+export function collectEnabledEquippedOSkillGrants(options = {}) {
+  try {
+    const className = resolveGrantClassName(options);
+    const itemsStore = useItemsStore();
+    /** @type {Array<{ def: object, rolls?: Record<string, number>|null }>} */
+    const gear = [];
+    for (const slot of EQUIPMENT_SLOTS) {
+      if (!itemsStore.equipmentSlotMeetsRequirements?.(slot)) continue;
+      const instanceId = itemsStore.equipment?.[slot];
+      if (instanceId == null) continue;
+      const def = itemsStore.getDefForInstance?.(instanceId);
+      if (!def) continue;
+      const rolls = itemsStore.getRollsForInstance?.(instanceId) ?? null;
+      gear.push({ def, rolls });
+    }
+    return collectOSkillGrantsFromEquippedDefs(gear, { className });
+  } catch {
+    return {};
+  }
+}
+
+/**
+ * Collect item-granted oSkill levels from equipped gear + charms + relics.
  * @param {{ className?: string|null }} [options]
  * @returns {Record<string, number>} skillId -> total item points
  */
 export function collectEnabledItemOSkillGrants(options = {}) {
   return mergeGrantMaps(
+    collectEnabledEquippedOSkillGrants(options),
     collectEnabledCharmOSkillGrants(options),
     collectEnabledRelicOSkillGrants(options)
   );
+}
+
+/**
+ * Soft +skills from equipped gear for an on-tree skill (rolled amount, not relic +3).
+ * Off-tree generic grants are oSkill itemPoints — skipped here.
+ * @param {{
+ *   skillId?: string,
+ *   displayName?: string,
+ *   isOSkill?: boolean,
+ *   className?: string,
+ *   skillClass?: string,
+ * }} [options]
+ * @returns {number}
+ */
+export function getEquippedGearSkillBonusForSkill(options = {}) {
+  if (options.isOSkill) return 0;
+  try {
+    const className =
+      String(options.className || '').trim() || resolveGrantClassName(options);
+    const displayName = String(options.displayName || '').trim();
+    if (!displayName) return 0;
+    const itemsStore = useItemsStore();
+    /** @type {string[]} */
+    const lines = [];
+    for (const slot of EQUIPMENT_SLOTS) {
+      if (!itemsStore.equipmentSlotMeetsRequirements?.(slot)) continue;
+      const instanceId = itemsStore.equipment?.[slot];
+      if (instanceId == null) continue;
+      const def = itemsStore.getDefForInstance?.(instanceId);
+      if (!def) continue;
+      const rolls = itemsStore.getRollsForInstance?.(instanceId) ?? null;
+      lines.push(...resolvedEquipmentModifierLines(def, rolls));
+    }
+    return sumSkillBonusFromModifierLines(lines, {
+      displayName,
+      skillClass: options.skillClass,
+      isOSkill: false,
+      className,
+      onTreeGenericMode: 'amount',
+    });
+  } catch {
+    return 0;
+  }
 }

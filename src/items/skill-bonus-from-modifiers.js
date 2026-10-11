@@ -34,6 +34,7 @@ export const RELIC_ON_TREE_SKILL_BONUS = 3;
  *   isOSkill?: boolean,
  *   className?: string,
  *   skillClass?: string,
+ *   onTreeGenericMode?: 'relic' | 'amount',
  * }} SkillBonusContext
  */
 
@@ -41,6 +42,18 @@ const ALL_SKILLS_RE = /^([+-]?\d+(?:\.\d+)?)\s+to\s+All Skills$/i;
 const CLASS_SKILLS_RE = /^([+-]?\d+(?:\.\d+)?)\s+to\s+(.+?)\s+Skill Levels$/i;
 const CLASS_ONLY_SKILL_RE = /^([+-]?\d+(?:\.\d+)?)\s+to\s+(.+?)\s+\((.+?)\s+Only\)$/i;
 const GENERIC_TO_RE = /^([+-]?\d+(?:\.\d+)?)\s+to\s+(.+)$/i;
+
+/**
+ * Wiki/item lines often say "+1 to passive Bear Stance" — same skill as Bear Stance.
+ * @param {string|null|undefined} name
+ * @returns {string}
+ */
+export function normalizeItemSkillGrantName(name) {
+  return String(name || '')
+    .trim()
+    .replace(/^passive\s+/i, '')
+    .trim();
+}
 
 /**
  * @param {string|null|undefined} a
@@ -94,7 +107,7 @@ export function parseSkillBonusFromModifierLine(line) {
   match = CLASS_ONLY_SKILL_RE.exec(text);
   if (match) {
     const amount = Number(match[1]);
-    const skillName = String(match[2] || '').trim();
+    const skillName = normalizeItemSkillGrantName(match[2]);
     const className = String(match[3] || '').trim();
     if (!Number.isFinite(amount) || !skillName || !className) return null;
     return { kind: 'skill', amount, skillName, className };
@@ -103,7 +116,7 @@ export function parseSkillBonusFromModifierLine(line) {
   match = GENERIC_TO_RE.exec(text);
   if (match) {
     const amount = Number(match[1]);
-    const skillName = String(match[2] || '').trim();
+    const skillName = normalizeItemSkillGrantName(match[2]);
     if (!Number.isFinite(amount) || !skillName) return null;
     if (/^All Skills\b/i.test(skillName) || /\bwhen\b/i.test(skillName)) return null;
     return { kind: 'skill', amount, skillName };
@@ -147,8 +160,10 @@ export function skillBonusAmountForContext(parsed, ctx = {}) {
     }
     // Generic per-skill grants become oSkill itemPoints (slvl) when off-tree; do not soft-stack.
     if (isOSkill) return 0;
-    // Generic alone: +3 on-tree.
-    if (onTree) return RELIC_ON_TREE_SKILL_BONUS;
+    // Generic alone: relics +3 on-tree; gear uses rolled amount.
+    if (onTree) {
+      return ctx.onTreeGenericMode === 'amount' ? amount : RELIC_ON_TREE_SKILL_BONUS;
+    }
     return amount === 0 ? 0 : amount;
   }
 
@@ -160,7 +175,7 @@ export function skillBonusAmountForContext(parsed, ctx = {}) {
  *
  * Rules for per-skill lines targeting this skill:
  * - Matching Class Only → that value only (generic line ignored).
- * - Generic only + skill on character tree → +3.
+ * - Generic only + skill on character tree → +3 (relics) or rolled amount (gear).
  * - Generic only + skill not on tree → rolled amount (tree soft path only).
  * - Generic + oSkill context → 0 (grant is oSkill itemPoints / slvl, not extra relic soft).
  *
@@ -173,6 +188,7 @@ export function sumSkillBonusFromModifierLines(lines, ctx = {}) {
   const className = String(ctx.className || '').trim();
   const isOSkill = Boolean(ctx.isOSkill);
   const onTree = isSkillOnCharacterTree(ctx);
+  const onTreeGenericMode = ctx.onTreeGenericMode === 'amount' ? 'amount' : 'relic';
 
   let total = 0;
   let classOnlySum = 0;
@@ -219,7 +235,11 @@ export function sumSkillBonusFromModifierLines(lines, ctx = {}) {
     // Class Only replaces the on-tree +3 / generic roll for this skill.
     total += classOnlySum;
   } else if (hasGeneric) {
-    total += onTree ? RELIC_ON_TREE_SKILL_BONUS : genericSum;
+    total += onTree
+      ? onTreeGenericMode === 'amount'
+        ? genericSum
+        : RELIC_ON_TREE_SKILL_BONUS
+      : genericSum;
   }
 
   return total;

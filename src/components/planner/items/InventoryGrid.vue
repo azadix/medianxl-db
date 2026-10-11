@@ -16,8 +16,13 @@ import {
   moveItemTooltip,
   hideItemTooltip,
 } from '@/items/item-tooltip-runtime.js';
-import { getEffectivePlannerLevel } from '@/character/planner-core.js';
+import {
+  getEffectivePlannerLevel,
+  syncItemGrantedOSkills,
+  runPlannerSkillStatRecompute,
+} from '@/character/planner-core.js';
 import { itemRarityFrameClass } from '@/items/item-tooltip.js';
+import { refreshCurrentTooltip } from '@/tree/tree-tooltip.js';
 
 const itemsStore = useItemsStore();
 const { placedInventoryItems, selectedSlot, dragPayload } = storeToRefs(itemsStore);
@@ -205,12 +210,19 @@ function onDrop(e) {
   if (preview) {
     slot = coordsToSlot(preview.col, preview.row);
   }
+  const fromEquipment = payload.from.location === 'equipment';
   const ok = itemsStore.moveItem(payload.from, { location: 'inventory', slot });
   if (!ok) {
     dropState.value = 'reject';
     setTimeout(() => {
       dropState.value = '';
     }, 200);
+    return;
+  }
+  if (fromEquipment) {
+    syncItemGrantedOSkills();
+    refreshCurrentTooltip();
+    runPlannerSkillStatRecompute();
   }
 }
 </script>

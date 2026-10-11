@@ -28,7 +28,10 @@ import { getFileSkillStore, withBaseAttributeFormulaStats } from '@/shared/skill
 import { isInnateSkill } from '@/skills/domain/skill-skill-types.js';
 import { getMaxLevelModifierDescriptionsForSkill } from '@/skills/domain/skill-calculations.js';
 import { getRelicSkillBonusForSkill } from '@/items/skill-bonus-from-modifiers.js';
-import { collectEnabledRelicOSkillGrants } from '@/items/item-granted-oskills.js';
+import {
+  collectEnabledRelicOSkillGrants,
+  getEquippedGearSkillBonusForSkill,
+} from '@/items/item-granted-oskills.js';
 import { relicOSkillIdsFromGrants } from '@/skills/domain/lightning-shield-elem-dr.js';
 import { computeSkillBonusSourceAmounts } from './skill-bonus-sources.js';
 import Character from '@/character/Character.js';
@@ -841,7 +844,7 @@ async function buildTooltipContent(
             skillStore?.lookupDisplayNameByInternalName?.(skillName) ||
             skillStore?.lookupDisplayNameByInternalName?.(String(skillName)) ||
             skillName;
-        return getRelicSkillBonusForSkill({
+        const softCtx = {
             skillId: skillName,
             displayName: rowDisplay,
             isOSkill: skillIsOSkill,
@@ -849,7 +852,8 @@ async function buildTooltipContent(
             skillClass: skillStore?.getSkillDetail?.(skillName)?.class
                 || skillStore?.catalogByInternalId?.get?.(skillName)?.class
                 || '',
-        });
+        };
+        return getRelicSkillBonusForSkill(softCtx) + getEquippedGearSkillBonusForSkill(softCtx);
     }
     
     // Populate blvl based on whether this is a regular skill or oSkill

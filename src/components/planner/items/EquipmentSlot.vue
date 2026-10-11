@@ -3,13 +3,18 @@ import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
 import { useItemsStore } from '@/stores/items.js';
 import { canEquipInSlot, EQUIPMENT_SLOT_CELLS, pairedWeaponSlot } from '@/items/item-types.js';
 import { formatItemRarityBadge } from '@/items/item-stats.js';
-import { getCharacterInstance } from '@/character/planner-core.js';
+import {
+  getCharacterInstance,
+  syncItemGrantedOSkills,
+  runPlannerSkillStatRecompute,
+} from '@/character/planner-core.js';
 import { usePlannerRevisionRefresh } from '@/composables/usePlannerRevisionRefresh.js';
 import {
   showItemTooltip,
   moveItemTooltip,
   hideItemTooltip,
 } from '@/items/item-tooltip-runtime.js';
+import { refreshCurrentTooltip } from '@/tree/tree-tooltip.js';
 import { itemRarityFrameClass } from '@/items/item-tooltip.js';
 import ItemIcon from './ItemIcon.vue';
 
@@ -222,6 +227,9 @@ function onDrop(e) {
     return;
   }
   itemsStore.moveItem(payload.from, { location: 'equipment', slot: props.slotKey });
+  syncItemGrantedOSkills();
+  refreshCurrentTooltip();
+  runPlannerSkillStatRecompute();
 }
 </script>
 

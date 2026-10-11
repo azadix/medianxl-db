@@ -17,7 +17,10 @@ import {
 import Skill from '@/skills/domain/Skill.js';
 import { getFileSkillStore, withBaseAttributeFormulaStats } from '@/shared/skill-data-store.js';
 import { getRelicSkillBonusForSkill } from '@/items/skill-bonus-from-modifiers.js';
-import { collectEnabledRelicOSkillGrants } from '@/items/item-granted-oskills.js';
+import {
+  collectEnabledRelicOSkillGrants,
+  getEquippedGearSkillBonusForSkill,
+} from '@/items/item-granted-oskills.js';
 import {
   oSkillIdsFromCharacter,
   relicOSkillIdsFromGrants,
@@ -257,15 +260,17 @@ export async function recomputePlannerStatsFromSkillAllocations(character, ctx) 
       cat?.displayName != null && String(cat.displayName).trim() !== ''
         ? String(cat.displayName).trim()
         : String(skillKey);
-    const relicBonus = getRelicSkillBonusForSkill({
+    const softCtx = {
       skillId: skillKey,
       displayName,
       isOSkill: !getsClassBonus,
       className: charClass,
       skillClass,
-    });
+    };
+    const relicBonus = getRelicSkillBonusForSkill(softCtx);
+    const gearSoft = getEquippedGearSkillBonusForSkill(softCtx);
     const itemSlvl = Character.clampOSkillPoints(character.getOSkillItemPoints(skillKey));
-    return slvlAll + (getsClassBonus ? slvlClass : 0) + relicBonus + itemSlvl;
+    return slvlAll + (getsClassBonus ? slvlClass : 0) + relicBonus + gearSoft + itemSlvl;
   }
 
   /** @type {Record<string, number>} */

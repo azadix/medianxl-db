@@ -28,7 +28,13 @@ import {
   mergeRunewordWithBase,
 } from '@/items/runeword-items.js';
 import ItemDetailPanel from './ItemDetailPanel.vue';
-import { getEffectivePlannerLevel, getCharacterInstance } from '@/character/planner-core.js';
+import {
+  getEffectivePlannerLevel,
+  getCharacterInstance,
+  syncItemGrantedOSkills,
+  runPlannerSkillStatRecompute,
+} from '@/character/planner-core.js';
+import { refreshCurrentTooltip } from '@/tree/tree-tooltip.js';
 
 const itemsStore = useItemsStore();
 const { selectedSlot, isPickerOpen } = storeToRefs(itemsStore);
@@ -334,12 +340,20 @@ function onEquip(defId) {
   previewId.value = pickedId;
   rolls.value = nextRolls;
   itemsStore.equipFromPicker(id, nextRolls);
+  afterEquipChanged();
+}
+
+function afterEquipChanged() {
+  syncItemGrantedOSkills();
+  refreshCurrentTooltip();
+  runPlannerSkillStatRecompute();
 }
 
 function onClear() {
   if (selectedSlot.value) {
     itemsStore.removeItem(selectedSlot.value);
     itemsStore.clearSelection();
+    afterEquipChanged();
   }
 }
 

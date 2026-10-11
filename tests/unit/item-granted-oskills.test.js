@@ -12,6 +12,7 @@ import {
   collectOSkillGrantsFromModifierLines,
   collectOSkillGrantsFromCharmDefs,
   collectOSkillGrantsFromRelicDefs,
+  collectOSkillGrantsFromEquippedDefs,
   collectEnabledCharmOSkillGrants,
   collectEnabledRelicOSkillGrants,
   collectEnabledItemOSkillGrants,
@@ -19,6 +20,7 @@ import {
   formatItemModifierLineHtml,
   annotateAffixDisplayPartsWithSkills,
 } from '@/items/item-granted-oskills.js';
+import { normalizeItemSkillGrantName } from '@/items/skill-bonus-from-modifiers.js';
 import { charmAffixRollKey } from '@/items/charm-items.js';
 import { relicAffixRollKey } from '@/items/relic-items.js';
 import { SCALING_DISPLAY_HTML_CLASSES } from '@/shared/utils.js';
@@ -76,6 +78,45 @@ describe('item-granted oSkills', () => {
     });
     expect(matchCatalogSkillGrantFromLine('+25 to Life')).toBeNull();
     expect(matchCatalogSkillGrantFromLine('+1 to All Skills')).toBeNull();
+  });
+
+  it('maps "+1 to passive Bear Stance" to bear_stance oSkill grants', () => {
+    expect(normalizeItemSkillGrantName('passive Bear Stance')).toBe('Bear Stance');
+    expect(matchCatalogSkillGrantFromLine('{orange}+1 to passive Bear Stance')).toMatchObject({
+      skillId: 'bear_stance',
+      displayName: 'Bear Stance',
+      amount: 1,
+      classOnly: false,
+    });
+    // Bear Stance is Barbarian — for Paladin/Amazon it is an oSkill grant.
+    expect(
+      collectOSkillGrantsFromModifierLines(['{orange}+1 to passive Bear Stance'], {
+        className: 'Paladin',
+      })
+    ).toEqual({ bear_stance: 1 });
+    // On-tree Barbarian → soft path, not oSkill duplicate
+    expect(
+      collectOSkillGrantsFromModifierLines(['{orange}+1 to passive Bear Stance'], {
+        className: 'Barbarian',
+      })
+    ).toEqual({});
+    expect(
+      collectOSkillGrantsFromEquippedDefs(
+        [
+          {
+            def: {
+              id: 'rw:test-bear',
+              name: 'Test Bear RW',
+              modifiers: ['{orange}+1 to passive Bear Stance'],
+            },
+          },
+        ],
+        { className: 'Paladin' }
+      )
+    ).toEqual({ bear_stance: 1 });
+    expect(formatItemModifierLineHtml('{orange}+1 to passive Bear Stance')).toContain(
+      SCALING_DISPLAY_HTML_CLASSES.skill
+    );
   });
 
   it('collects Books of Kalan Teleport grant at rolled value', () => {

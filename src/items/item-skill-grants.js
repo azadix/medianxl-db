@@ -12,6 +12,7 @@ import {
   procSourceRarityForItem,
   stripProcLinePrefix,
 } from '@/items/item-procs.js';
+import { normalizeItemSkillGrantName } from '@/items/skill-bonus-from-modifiers.js';
 
 const GRANT_LINE_RE =
   /^\+?(?:(\d+(?:\.\d+)?)|\((\d+)\s+to\s+(\d+)\))\s+to\s+(.+)$/i;
@@ -76,7 +77,8 @@ export function parseSkillGrantFromModifierLine(line) {
   if (isNonSkillGrantRest(rest)) return null;
 
   const classOnlyMatch = CLASS_ONLY_REST_RE.exec(rest);
-  const skillName = classOnlyMatch ? String(classOnlyMatch[1] || '').trim() : rest;
+  const rawName = classOnlyMatch ? String(classOnlyMatch[1] || '').trim() : rest;
+  const skillName = normalizeItemSkillGrantName(rawName);
   const className = classOnlyMatch ? String(classOnlyMatch[2] || '').trim() : '';
   if (!skillName) return null;
 

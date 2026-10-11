@@ -219,6 +219,7 @@ function onRemove() {
   if (selectedSlot.value) {
     itemsStore.removeItem(selectedSlot.value);
     itemsStore.clearSelection();
+    afterItemSkillSourcesChanged();
   }
 }
 
