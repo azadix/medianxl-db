@@ -80,7 +80,44 @@ def _safe_output_name(stem: str) -> str:
     return stem
 
 
-def _extract_dc6_from_mpq(game_dir: Path, input_dir: Path) -> int:
+def _catalog_icon_stems(version_folder: str) -> set[str]:
+    """Icon stems referenced by public/items/<version> catalogs (incl. unique-stats-db)."""
+    items_dir = TOOLS_DIR.parent / "public" / "items" / version_folder
+    stems: set[str] = set()
+    if not items_dir.is_dir():
+        return stems
+    for path in sorted(items_dir.glob("*.json")):
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        rows = data
+        if isinstance(data, dict):
+            rows = data.get("entries")
+        if not isinstance(rows, list):
+            continue
+        for row in rows:
+            if not isinstance(row, dict):
+                continue
+            icon = row.get("icon")
+            if isinstance(icon, str) and icon.strip():
+                stems.add(icon.strip().lower())
+    return stems
+
+
+def _read_item_dc6(archives: list, stem: str) -> bytes | None:
+    rel = f"{ITEM_DC6_PREFIX}{stem}.dc6"
+    for _name, archive in archives:
+        try:
+            data = archive.read(rel)
+        except Exception:
+            data = None
+        if data:
+            return data
+    return None
+
+
+def _extract_dc6_from_mpq(game_dir: Path, input_dir: Path, version_folder: str = "") -> int:
     sys.path.insert(0, str(TOOLS_DIR / "skill_animator" / "app" / "engine"))
     from mpq import MPQ
 
@@ -120,6 +157,24 @@ def _extract_dc6_from_mpq(game_dir: Path, input_dir: Path) -> int:
             stem = Path(rel.replace("\\", "/")).stem.lower()
             (input_dir / f"{stem}.dc6").write_bytes(data)
             written += 1
+
+    # Some vanilla unique inv*u.dc6 files exist in d2data.mpq but are absent from
+    # (listfile). Pull any catalog-referenced stems still missing after the dump.
+    catalog_stems = _catalog_icon_stems(version_folder) if version_folder else set()
+    filled = 0
+    for stem in sorted(catalog_stems):
+        dest = input_dir / f"{stem}.dc6"
+        if dest.is_file():
+            continue
+        data = _read_item_dc6(archives, stem)
+        if not data:
+            continue
+        dest.write_bytes(data)
+        filled += 1
+    if filled:
+        print(f"filled {filled} catalog icon(s) missing from listfiles")
+        written += filled
+
     print(f"wrote {written} dc6 files -> {input_dir}")
     return 0
 
@@ -271,7 +326,7 @@ def main() -> int:
     config = _load_config()
     if not args.skip_mpq:
         game_dir = _resolve_game_dir(args.game_dir, config)
-        extracted = _extract_dc6_from_mpq(game_dir, input_dir)
+        extracted = _extract_dc6_from_mpq(game_dir, input_dir, _version_folder(version))
         if extracted != 0:
             return extracted
 
