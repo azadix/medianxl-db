@@ -63,7 +63,7 @@ const riftwalker = {
   type: 'charm',
   category: 'charms',
   keepInInventory: true,
-  upgrades: [['+1 to All Skills'], ['Increase Maximum Life and Mana 2%'], ['Maximum Elemental Resists +1%']],
+  upgrades: [['+1 to All Skills'], ['Maximum Life and Mana +2%'], ['Maximum Elemental Resists +1%']],
 };
 
 describe('charm-items', () => {

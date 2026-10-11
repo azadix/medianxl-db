@@ -494,6 +494,20 @@ describe('tsw-build-import', () => {
     expect(medallion?.rolls?.[CHARM_ROLL_KEYS.upgradePrefix + '0']).toBe(1);
     expect(medallion?.rolls?.[CHARM_ROLL_KEYS.trophy]).toBe(1);
 
+    const vial = snapshot.charms.find((row) => row.defId === 'ebx');
+    expect(vial?.rolls?.[CHARM_ROLL_KEYS.upgradePrefix + '0']).toBe(1);
+
+    const twinSeas = snapshot.charms.find((row) => row.defId === 'twi');
+    expect(twinSeas?.rolls?.[CHARM_ROLL_KEYS.upgradePrefix + '0']).toBe(1);
+    expect(twinSeas?.rolls?.[CHARM_ROLL_KEYS.upgradePrefix + '1']).toBe(1);
+    expect(twinSeas?.rolls?.[CHARM_ROLL_KEYS.upgradePrefix + '2']).toBe(1);
+
+    const riftwalker = snapshot.charms.find((row) => row.defId === 'ktzx');
+    expect(riftwalker?.rolls?.[CHARM_ROLL_KEYS.upgradePrefix + '0']).toBe(1);
+    expect(riftwalker?.rolls?.[CHARM_ROLL_KEYS.upgradePrefix + '1']).toBe(1);
+    expect(riftwalker?.rolls?.[CHARM_ROLL_KEYS.upgradePrefix + '2']).toBe(1);
+    expect(riftwalker?.rolls?.[CHARM_ROLL_KEYS.upgradePrefix + '3']).toBe(1);
+
     const hammer = snapshot.charms.find((row) => row.defId === '0u1');
     expect(hammer?.rolls?.[CHARM_ROLL_KEYS.paragonPath]).toBe(2);
     expect(hammer?.rolls?.[`${CHARM_ROLL_KEYS.paragonRegularPrefix}0`]).toBe(1);

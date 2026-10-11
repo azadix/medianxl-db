@@ -227,6 +227,139 @@ function findLine(template, lines) {
 
 /**
  * @param {string} text
+ * @returns {number|null}
+ */
+function firstNumber(text) {
+  const ns = numbers(text);
+  return ns.length ? ns[0] : null;
+}
+
+/**
+ * @param {string} template
+ * @param {string[]} lines
+ * @returns {string|null}
+ */
+function findLineTextBySignature(template, lines) {
+  const sig = signature(template);
+  if (!sig) return null;
+  for (const line of lines) {
+    if (signature(line) === sig) return plain(line);
+  }
+  return null;
+}
+
+/**
+ * @param {object|null|undefined} def
+ * @returns {string[]}
+ */
+function charmBaseModifierTexts(def) {
+  /** @type {string[]} */
+  const out = [];
+  for (const mod of Array.isArray(def?.modifiers) ? def.modifiers : []) {
+    if (typeof mod === 'string') {
+      const text = plain(mod);
+      if (text) out.push(text);
+    }
+  }
+  return out;
+}
+
+/**
+ * How many identical fixed-number upgrade steps are implied by a stacked TSW line.
+ * @param {string} stepText
+ * @param {string[]} baseTexts
+ * @param {string[]} lines
+ * @returns {number}
+ */
+function stackedUpgradeCount(stepText, baseTexts, lines) {
+  if (parseAffixRanges(stepText).length) return 0;
+  const step = firstNumber(stepText);
+  const sig = signature(stepText);
+  if (step == null || !sig || !step) return 0;
+  const actualLine = findLineTextBySignature(stepText, lines);
+  if (!actualLine) return 0;
+  const actual = firstNumber(actualLine);
+  if (actual == null) return 0;
+  let base = 0;
+  for (const text of baseTexts) {
+    if (signature(text) !== sig) continue;
+    const n = firstNumber(text);
+    if (n != null) base += n;
+  }
+  const delta = Math.abs(actual) - Math.abs(base);
+  if (delta <= 0) return 0;
+  const count = Math.round(delta / Math.abs(step));
+  return count > 0 ? count : 0;
+}
+
+/**
+ * Mark charm upgrade roll keys from TSW description lines (labels, exact affixes, stacks).
+ * @param {object} def
+ * @param {ReturnType<typeof getCharmUpgradeEntries>} upgrades
+ * @param {string[]} lines
+ * @param {Record<string, number>} rolls
+ * @param {boolean} upgradedFlag
+ */
+function applyCharmUpgradeRolls(def, upgrades, lines, rolls, upgradedFlag) {
+  if (!upgrades.length) return;
+  const baseTexts = charmBaseModifierTexts(def);
+  /** @type {Set<number>} */
+  const marked = new Set();
+
+  for (const entry of upgrades) {
+    const customLabel =
+      entry.label && !/^Upgrade\s+\d+$/i.test(entry.label) ? entry.label : '';
+    if (customLabel && labelInLines(customLabel, lines)) {
+      rolls[entry.key] = 1;
+      marked.add(entry.index);
+    } else if (entry.affixes.some((text) => findLine(text, lines))) {
+      rolls[entry.key] = 1;
+      marked.add(entry.index);
+    } else if (
+      // Multi-affix bundles: any stacked component means the whole upgrade is present.
+      // Single-affix repeats are allocated by count in stackGroups below.
+      entry.affixes.length > 1 &&
+      entry.affixes.some((text) => stackedUpgradeCount(text, baseTexts, lines) >= 1)
+    ) {
+      rolls[entry.key] = 1;
+      marked.add(entry.index);
+    }
+    entry.affixes.forEach((text, affixIndex) => {
+      applyRanged(text, `upgrade:${entry.index}:${affixIndex}`, charmAffixRollKey, lines, rolls);
+    });
+  }
+
+  /** @type {Map<string, { stepText: string, entries: typeof upgrades }>} */
+  const stackGroups = new Map();
+  for (const entry of upgrades) {
+    if (entry.affixes.length !== 1) continue;
+    const stepText = entry.affixes[0];
+    if (parseAffixRanges(stepText).length) continue;
+    const sig = signature(stepText);
+    if (!sig || firstNumber(stepText) == null) continue;
+    const group = stackGroups.get(sig) || { stepText, entries: [] };
+    group.entries.push(entry);
+    stackGroups.set(sig, group);
+  }
+  for (const group of stackGroups.values()) {
+    const count = stackedUpgradeCount(group.stepText, baseTexts, lines);
+    if (count < 1) continue;
+    let remaining = Math.min(count, group.entries.length);
+    for (const entry of group.entries) {
+      if (remaining <= 0) break;
+      rolls[entry.key] = 1;
+      marked.add(entry.index);
+      remaining -= 1;
+    }
+  }
+
+  if (upgradedFlag && upgrades.length === 1 && !marked.has(upgrades[0].index)) {
+    rolls[upgrades[0].key] = 1;
+  }
+}
+
+/**
+ * @param {string} text
  * @param {string} sourceKey
  * @param {(sourceKey: string, rangeIndex: number) => string} keyFn
  * @param {string[]} lines
@@ -436,17 +569,7 @@ export function rollsFromTswItem(row, def, className = null) {
     const upgraded = Boolean(row.is_upgraded);
     const hasTrophy = Boolean(row.has_trophy);
     const upgrades = getCharmUpgradeEntries(def, className);
-    if (upgraded) {
-      for (const entry of upgrades) {
-        const matched = entry.affixes.filter((text) => findLine(text, lines));
-        if (matched.length || upgrades.length === 1) {
-          rolls[entry.key] = 1;
-        }
-        entry.affixes.forEach((text, affixIndex) => {
-          applyRanged(text, `upgrade:${entry.index}:${affixIndex}`, charmAffixRollKey, lines, rolls);
-        });
-      }
-    }
+    applyCharmUpgradeRolls(def, upgrades, lines, rolls, upgraded);
 
     const trophy = getCharmTrophyEntry(def);
     if (hasTrophy && trophy) {

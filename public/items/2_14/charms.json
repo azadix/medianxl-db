@@ -322,7 +322,7 @@
           "+20% Attack Speed",
           "+20% Cast Speed",
           "+30% Block Speed",
-          "+30% Movement Speed",
+          "+30% Hit Recovery",
           "+5% Movement Speed"
         ]
       },
@@ -694,7 +694,7 @@
         "+1 to All Skills"
       ],
       [
-        "Increase Maximum Life and Mana 2%"
+        "Maximum Life and Mana +2%"
       ],
       [
         "Maximum Elemental Resists +1%"
