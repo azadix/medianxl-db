@@ -160,6 +160,13 @@ export function updateClassSkillsBonusLabel(className) {
     label.textContent = `+# to ${name} Skills`;
 }
 
+import {
+  syncOverviewBroadSkillBonuses,
+  resetOverviewBroadSkillBonusTracking,
+} from '@/items/broad-skill-bonuses.js';
+
+export { syncOverviewBroadSkillBonuses, resetOverviewBroadSkillBonusTracking };
+
 export function exportLabelForToast(name) {
     if (name == null) return '(unnamed)';
     const t = String(name).trim();
@@ -262,6 +269,11 @@ export function handleSkillPointsChanged() {
     const skillsContainer = getSkillsContainer();
     const currentClass = classSelect.value;
     const savedTab = getCurrentTab();
+    // Level bumps can activate/deactivate charm/relic all/class skill lines.
+    syncOverviewBroadSkillBonuses({
+      className: currentClass,
+      characterLevel: getEffectivePlannerLevel(),
+    });
     renderSkills(currentClass, skillsList, skillsContainer, savedTab, false);
     updateSkillPointsDisplay();
     updateDevotionDisplay();

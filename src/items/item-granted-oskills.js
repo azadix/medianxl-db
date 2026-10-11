@@ -44,7 +44,7 @@ const EQUIP_AFFIX_ROLL_PREFIX = 'modAffix:';
  * @param {Record<string, number>|null|undefined} rolls
  * @returns {string[]}
  */
-function resolvedEquipmentModifierLines(def, rolls = null) {
+export function resolvedEquipmentModifierLines(def, rolls = null) {
   /** @type {string[]} */
   const lines = [];
   if (!def || typeof def !== 'object') return lines;

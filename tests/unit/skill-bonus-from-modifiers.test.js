@@ -3,6 +3,7 @@ import {
   parseSkillBonusFromModifierLine,
   skillBonusAmountForContext,
   sumSkillBonusFromModifierLines,
+  sumBroadSkillBonusesFromModifierLines,
   sumRelicSkillBonusFromDefs,
   RELIC_ON_TREE_SKILL_BONUS,
 } from '@/items/skill-bonus-from-modifiers.js';
@@ -177,11 +178,11 @@ describe('sumSkillBonusFromModifierLines / sumRelicSkillBonusFromDefs', () => {
         characterLevel: 99,
       }
     );
-    // +1 all + 7 class-only; generic ignored when Class Only matches
-    expect(total).toBe(8);
+    // Class Only only; +1 all-skills is Overview (not per-skill relic soft)
+    expect(total).toBe(7);
   });
 
-  it('Dream Eater as oSkill keeps all-skills soft only (generic becomes itemPoints slvl)', () => {
+  it('Dream Eater as oSkill soft is 0 (all-skills is Overview; generic is itemPoints)', () => {
     const classOnlyKey = relicAffixRollKey('base:m1', 0);
     const genericKey = relicAffixRollKey('base:m2', 0);
     const total = sumRelicSkillBonusFromDefs(
@@ -199,8 +200,7 @@ describe('sumSkillBonusFromModifierLines / sumRelicSkillBonusFromDefs', () => {
         characterLevel: 99,
       }
     );
-    // +1 all only; Class Only skipped (wrong class); generic skipped for oSkill soft
-    expect(total).toBe(1);
+    expect(total).toBe(0);
   });
 
   it('Ecstatic Frenzy relic as oSkill soft is 0 (grant is itemPoints slvl)', () => {
@@ -233,7 +233,7 @@ describe('sumSkillBonusFromModifierLines / sumRelicSkillBonusFromDefs', () => {
     expect(total).toBe(RELIC_ON_TREE_SKILL_BONUS);
   });
 
-  it('oSkill soft keeps all-skills and skips generic per-skill', () => {
+  it('oSkill soft skips all/class and generic per-skill', () => {
     const lines = ['+1 to All Skills', '+1 to Necromancer Skill Levels', '+5 to Dream Eater'];
     expect(
       sumSkillBonusFromModifierLines(lines, {
@@ -242,10 +242,10 @@ describe('sumSkillBonusFromModifierLines / sumRelicSkillBonusFromDefs', () => {
         skillClass: 'Necromancer',
         isOSkill: true,
       })
-    ).toBe(1);
+    ).toBe(0);
   });
 
-  it('skips conditional Apple all-skills line', () => {
+  it('skips conditional Apple all-skills; class skills are Overview not soft', () => {
     const total = sumRelicSkillBonusFromDefs([{ def: appleRelic, rolls: null }], {
       displayName: 'Fury',
       className: 'Druid',
@@ -253,7 +253,10 @@ describe('sumSkillBonusFromModifierLines / sumRelicSkillBonusFromDefs', () => {
       isOSkill: false,
       characterLevel: 99,
     });
-    expect(total).toBe(1);
+    expect(total).toBe(0);
+    expect(
+      sumBroadSkillBonusesFromModifierLines(appleRelic.modifiers, 'Druid')
+    ).toEqual({ all: 0, class: 1 });
   });
 
   it('returns 0 when relic level req is not met', () => {
@@ -265,5 +268,32 @@ describe('sumSkillBonusFromModifierLines / sumRelicSkillBonusFromDefs', () => {
       characterLevel: 50,
     });
     expect(total).toBe(0);
+  });
+
+  it('Wychwind +1 Assassin Skill Levels is broad/Overview, not per-skill relic soft', () => {
+    const wychwindRelic = {
+      id: 'relic:wychwind',
+      name: 'Relic (Wychwind)',
+      rarity: 'relic',
+      keepInInventory: true,
+      reqLevel: 75,
+      modifiers: [
+        '{orange}+5% physical resistance during wychwind vulnerability',
+        '+1 to Assassin Skill Levels',
+        '+(9 to 17) to Wychwind',
+      ],
+    };
+    expect(
+      sumBroadSkillBonusesFromModifierLines(wychwindRelic.modifiers, 'Assassin')
+    ).toEqual({ all: 0, class: 1 });
+    expect(
+      sumRelicSkillBonusFromDefs([{ def: wychwindRelic, rolls: null }], {
+        displayName: 'Noctule',
+        className: 'Assassin',
+        skillClass: 'Assassin',
+        isOSkill: false,
+        characterLevel: 99,
+      })
+    ).toBe(0);
   });
 });

@@ -259,7 +259,8 @@ export function loadBuildData(build, buildIndex = null) {
                         pendingGearUnmetToast = true;
                     }
                 }
-                syncItemGrantedOSkills();
+                // Seed live all/class tracking so Overview values from the build/TSW are not doubled.
+                syncItemGrantedOSkills({ seedBroadSkillBonuses: true });
                 if (tswItems) {
                     const left = applyTswOSkillLeftovers(build.oSkills);
                     if (left.skipped.length > 0) {

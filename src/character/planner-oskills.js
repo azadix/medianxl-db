@@ -7,6 +7,7 @@ import Character from './Character.js';
 import { getFileSkillStore } from '@/shared/skill-data-store.js';
 import { MISSING_IMAGE_NAME } from '@/shared/utils.js';
 import { collectEnabledItemOSkillGrants } from '@/items/item-granted-oskills.js';
+import { syncOverviewBroadSkillBonuses } from '@/items/broad-skill-bonuses.js';
 import {
   getCharacterInstance,
   notifyOSkillPointsChanged,
@@ -195,12 +196,25 @@ export function setAllOSkills(oSkills) {
 
 /**
  * Sync oSkill `itemPoints` from enabled charms/relics skill grants.
- * @param {{ className?: string|null, quiet?: boolean }} [options]
- * @returns {boolean} Whether any row changed
+ * Also folds all-skills / class-skills from gear/charms/relics into Overview inputs.
+ * @param {{
+ *   className?: string|null,
+ *   quiet?: boolean,
+ *   seedBroadSkillBonuses?: boolean,
+ *   characterLevel?: number|null,
+ * }} [options]
+ * @returns {boolean} Whether any oSkill row changed
  */
 export function syncItemGrantedOSkills(options = {}) {
   const characterInstance = getCharacterInstance();
-  if (!characterInstance) return false;
+  if (!characterInstance) {
+    syncOverviewBroadSkillBonuses({
+      seed: options.seedBroadSkillBonuses === true,
+      className: options.className,
+      characterLevel: options.characterLevel,
+    });
+    return false;
+  }
 
   const grants = collectEnabledItemOSkillGrants({
     className: options.className ?? characterInstance.className,
@@ -233,6 +247,12 @@ export function syncItemGrantedOSkills(options = {}) {
     );
     if (result !== 'unchanged') changed = true;
   }
+
+  syncOverviewBroadSkillBonuses({
+    seed: options.seedBroadSkillBonuses === true,
+    className: options.className ?? characterInstance.className,
+    characterLevel: options.characterLevel,
+  });
 
   if (!changed) return false;
 

@@ -38,7 +38,9 @@ import {
   updateClassSkillsBonusLabel,
   updateSkillPointsDisplay,
   updateDevotionDisplay,
+  resetOverviewBroadSkillBonusTracking,
 } from './planner-ui-updates.js';
+import { syncItemGrantedOSkills } from '@/character/planner-core.js';
 import {
   sanitizeBuildNameForExportStorage,
   getCurrentBuildNamePrefill,
@@ -462,6 +464,7 @@ export function plannerRenameBuildClick() {
 
 export function resetPlannerItems() {
     useItemsStore().resetItems();
+    syncItemGrantedOSkills();
     runPlannerSkillStatRecompute({ immediate: true });
 }
 
@@ -479,6 +482,7 @@ export function resetTree(showToast = true) {
     window.dispatchEvent(new CustomEvent('characterStatsChanged', { detail: { reset: true } }));
     setAllSkillsBonus(0);
     setClassSkillsBonus(0);
+    resetOverviewBroadSkillBonusTracking();
     updateClassSkillsBonusLabel(currentClass);
 
     clearSkillVariants();
@@ -565,9 +569,9 @@ function showHelpModal() {
                 <ul>
                     <li><span class="has-text-white">Base</span> - points spent on the skill (0 for item-granted oSkills)</li>
                     <li><span class="has-text-info">All skills</span> - "+# to All Skills" (also applies to oSkills)</li>
-                    <li><span class="skill-bonus-class">Class skills</span> - "+# to Class Skills" (class tree only, not oSkills)</li>
+                    <li><span class="skill-bonus-class">Class skills</span> - "+# to Class Skills" from Overview (includes gear/charm/relic "+# to Class Skill Levels")</li>
                     <li><span class="skill-bonus-item">Item</span> - oSkill grants from gear/charms, and tree soft from gear "+# to Skill (Class Only)"</li>
-                    <li><span class="skill-bonus-relic">Relic</span> - skill bonuses from enabled relics, including oSkill grants</li>
+                    <li><span class="skill-bonus-relic">Relic</span> - per-skill relic soft and relic oSkill grants (not class-wide "+# to Skill Levels")</li>
                 </ul>
                 <h4 class="title is-5 mb-3 mt-5">Tips</h4>
                 <ul>

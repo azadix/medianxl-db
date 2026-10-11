@@ -174,7 +174,41 @@ export function skillBonusAmountForContext(parsed, ctx = {}) {
 }
 
 /**
- * Sum skill bonuses from resolved modifier lines for one skill context.
+ * Sum all-skills / class-skills amounts from resolved modifier lines.
+ * Used by Overview sync — not per-skill Relic/Item soft.
+ *
+ * @param {string[]} lines
+ * @param {string} [className]
+ * @returns {{ all: number, class: number }}
+ */
+export function sumBroadSkillBonusesFromModifierLines(lines, className = '') {
+  const wantClass = String(className || '').trim();
+  let all = 0;
+  let classTotal = 0;
+  for (const line of Array.isArray(lines) ? lines : []) {
+    const parsed = parseSkillBonusFromModifierLine(line);
+    if (!parsed) continue;
+    const amount = Number(parsed.amount);
+    if (!Number.isFinite(amount) || amount === 0) continue;
+    if (parsed.kind === 'all') {
+      all += amount;
+      continue;
+    }
+    if (parsed.kind === 'class') {
+      if (!wantClass || !namesEqual(parsed.className, wantClass)) continue;
+      classTotal += amount;
+    }
+  }
+  return {
+    all: Math.max(0, Math.floor(all)),
+    class: Math.max(0, Math.floor(classTotal)),
+  };
+}
+
+/**
+ * Sum per-skill soft bonuses from resolved modifier lines for one skill context.
+ *
+ * All-skills / class-skills lines are excluded (Overview inputs own those).
  *
  * Rules for per-skill lines targeting this skill:
  * - Matching Class Only → that value only (generic line ignored).
@@ -203,19 +237,8 @@ export function sumSkillBonusFromModifierLines(lines, ctx = {}) {
     const parsed = parseSkillBonusFromModifierLine(line);
     if (!parsed) continue;
 
-    if (parsed.kind === 'all') {
-      const amount = Number(parsed.amount);
-      if (Number.isFinite(amount) && amount !== 0) total += amount;
-      continue;
-    }
-
-    if (parsed.kind === 'class') {
-      if (isOSkill) continue;
-      if (!namesEqual(parsed.className, className)) continue;
-      const amount = Number(parsed.amount);
-      if (Number.isFinite(amount) && amount !== 0) total += amount;
-      continue;
-    }
+    // Broad +skills are applied via Overview all/class inputs (see syncOverviewBroadSkillBonuses).
+    if (parsed.kind === 'all' || parsed.kind === 'class') continue;
 
     if (parsed.kind === 'skill') {
       if (!namesEqual(parsed.skillName, displayName)) continue;
@@ -318,8 +341,8 @@ function resolveSkillClass(skillId, skillClass) {
 }
 
 /**
- * Relic skill-level bonus for one skill from enabled planner relics.
- * Overview all/class inputs are separate — do not include them here.
+ * Per-skill relic soft for one skill from enabled planner relics.
+ * All-skills / class-skills lines sync into Overview inputs instead.
  * Relics below the character's level do not contribute.
  *
  * Equipped-gear soft is handled by {@link getEquippedGearSkillBonusForSkill}.

@@ -73,7 +73,7 @@ import {
   setAllOSkills,
   getOSkillIdentifierSet,
   hasAnyOSkillAllocations,
-  syncItemGrantedOSkills,
+  syncItemGrantedOSkills as syncItemGrantedOSkillsImpl,
 } from './planner-oskills.js';
 
 export { Character, getCharacterInstance };
@@ -113,8 +113,26 @@ export {
   setAllOSkills,
   getOSkillIdentifierSet,
   hasAnyOSkillAllocations,
-  syncItemGrantedOSkills,
 };
+
+/**
+ * Sync item-granted oSkills and Overview all/class skill bonuses.
+ * Uses effective planner level so relic/charm reqs match the build level.
+ * @param {{
+ *   className?: string|null,
+ *   quiet?: boolean,
+ *   seedBroadSkillBonuses?: boolean,
+ *   characterLevel?: number|null,
+ * }} [options]
+ * @returns {boolean}
+ */
+export function syncItemGrantedOSkills(options = {}) {
+  return syncItemGrantedOSkillsImpl({
+    ...options,
+    characterLevel:
+      options.characterLevel != null ? options.characterLevel : getEffectivePlannerLevel(),
+  });
+}
 
 /**
  * Initialize character state for a class
