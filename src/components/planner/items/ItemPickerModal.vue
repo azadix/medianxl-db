@@ -433,7 +433,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown));
                   v-model="search"
                   class="input"
                   type="search"
-                  placeholder="Search..."
+                  placeholder="Search name, set, base..."
                   autocomplete="off"
                   spellcheck="false"
                 />

@@ -524,7 +524,7 @@ export function isRelicPickerItem(item) {
 }
 
 /**
- * Haystack for the item picker search box (name, base, type family).
+ * Haystack for the item picker search box (name, set name, base, type family).
  * @param {object|null|undefined} item
  * @returns {string}
  */

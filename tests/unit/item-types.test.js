@@ -290,4 +290,21 @@ describe('matchesItemPickerSearch', () => {
     expect(matchesItemPickerSearch(hive, 'rw')).toBe(true);
     expect(matchesItemPickerSearch(hive, 'bow')).toBe(false);
   });
+
+  it('matches set items by set name', () => {
+    const wyand = {
+      name: "Wyand's Perfidy",
+      id: 's:wyands-perfidy',
+      rarity: 'set',
+      type: 'belt',
+      baseName: 'Heavy Belt (Sacred)',
+      setName: 'Curse of the Zakarum',
+      setId: 'set:curse-of-the-zakarum',
+      group: 'Belts',
+    };
+    expect(matchesItemPickerSearch(wyand, 'Curse of the Zakarum')).toBe(true);
+    expect(matchesItemPickerSearch(wyand, 'zakarum')).toBe(true);
+    expect(matchesItemPickerSearch(wyand, 'curse zakarum')).toBe(true);
+    expect(matchesItemPickerSearch(wyand, 'pantheon')).toBe(false);
+  });
 });
