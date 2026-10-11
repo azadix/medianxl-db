@@ -3,13 +3,15 @@ import ItemIcon from './ItemIcon.vue';
 import CharmExtrasControls from './CharmExtrasControls.vue';
 import OverlayExtrasControls from './OverlayExtrasControls.vue';
 import ItemRollRow from './ItemRollRow.vue';
-import { formatItemOverlayMeta, formatItemRarityBadge } from '@/items/item-stats.js';
+import { formatItemTooltipSubtitle } from '@/items/item-stats.js';
 import { formatItemModifierLineHtml } from '@/items/item-granted-oskills.js';
 import { modifierLineCssClass } from '@/items/item-modifier-line.js';
 import {
   formatItemRequirementsLine,
   resolveItemRequirements,
 } from '@/items/item-requirements.js';
+import { itemRarityNameClass } from '@/items/item-tooltip.js';
+import { formatRunewordBadge, isRunewordItem } from '@/items/runeword-items.js';
 import { computed } from 'vue';
 
 const props = defineProps({
@@ -27,13 +29,17 @@ const props = defineProps({
 
 const emit = defineEmits(['update:rolls', 'set-roll']);
 
-const previewMeta = computed(() => formatItemOverlayMeta(props.def));
-const rarityBadge = computed(() => formatItemRarityBadge(props.def));
+const subtitle = computed(() => formatItemTooltipSubtitle(props.def));
+const rarityNameClass = computed(() => itemRarityNameClass(props.def?.rarity));
 
 const requirementsLine = computed(() =>
   formatItemRequirementsLine(
     resolveItemRequirements(props.def, { rolls: props.effectiveRolls })
   )
+);
+
+const runewordBadge = computed(() =>
+  isRunewordItem(props.def) ? formatRunewordBadge(props.def) : ''
 );
 
 const REQ_LINE_RE = /^(Required (Level|Strength|Dexterity):|Requires:)/i;
@@ -69,7 +75,7 @@ function modLineHtml(text) {
 }
 
 /**
- * @param {{ text?: string, color?: string, stat?: { color?: string } }} row
+ * @param {{ text?: string, color?: string, stat?: { color?: string, raw?: string, text?: string } }} row
  * @returns {string}
  */
 function modLineClass(row) {
@@ -90,55 +96,42 @@ function modLineClass(row) {
   <div v-if="!def" class="item-picker-modal__detail-empty">
     {{ emptyText }}
   </div>
-  <div v-else class="item-picker-modal__detail-preview">
-    <div class="item-picker-modal__detail-head">
-      <div class="item-picker-modal__detail-head-main">
-        <div class="item-picker-modal__detail-icon">
+  <div v-else class="item-detail-panel">
+    <div class="item-detail-panel__body">
+      <div class="item-tooltip-header">
+        <div class="item-tooltip-header-text">
+          <div class="item-tooltip-name" :class="rarityNameClass">{{ def.name }}</div>
+          <div v-if="subtitle" class="item-tooltip-subtitle">{{ subtitle }}</div>
+          <div
+            v-if="def.baseName || runewordBadge || def.setName || def.classRestriction"
+            class="item-tooltip-tags"
+          >
+            <div v-if="def.baseName" class="item-tooltip-tag">{{ def.baseName }}</div>
+            <div v-if="runewordBadge" class="item-tooltip-tag item-tooltip-tag--runeword">
+              {{ runewordBadge }}
+            </div>
+            <div v-if="def.setName" class="item-tooltip-tag item-tooltip-tag--set">
+              {{ def.setName }}
+            </div>
+            <div v-if="def.classRestriction" class="item-tooltip-tag">
+              {{ def.classRestriction }}
+            </div>
+          </div>
+        </div>
+        <div class="item-tooltip-art item-detail-panel__art">
           <ItemIcon :def="def" :icon="icon || undefined" fill />
         </div>
-        <div class="item-picker-modal__detail-titles">
-          <p
-            class="item-picker-modal__detail-name mb-1"
-            :class="'item-picker-modal__row--' + (def.rarity || 'normal')"
-          >
-            <span class="item-picker-modal__row-name">{{ def.name }}</span>
-            <span v-if="rarityBadge" class="item-detail__badge">{{ rarityBadge }}</span>
-          </p>
-          <p class="is-size-7 has-text-grey mb-0">{{ previewMeta }}</p>
-          <p v-if="requirementsLine" class="is-size-7 has-text-grey mb-0">
-            {{ requirementsLine }}
-          </p>
-          <p v-if="def.baseName" class="is-size-7 has-text-grey-light mb-0">
-            Base: {{ def.baseName }}
-          </p>
-          <p v-if="def.classRestriction" class="is-size-7 has-text-grey-light mb-0">
-            {{ def.classRestriction }}
-          </p>
-        </div>
       </div>
-    </div>
 
-    <section v-if="baseRows.length" class="item-detail__section" aria-label="Base properties">
-      <h4 class="item-detail__section-title">Base properties</h4>
-      <div class="item-picker-modal__detail-stats">
-        <p v-for="(row, idx) in baseRows" :key="'base-' + idx" class="item-picker-modal__stat-line">
-          {{ row.text }}
-        </p>
-      </div>
-    </section>
-
-    <section
-      v-if="modRows.length"
-      class="item-detail__section"
-      :class="{ 'item-detail__section--after-base': baseRows.length > 0 }"
-      aria-label="Item modifiers"
-    >
-      <h4 class="item-detail__section-title">Item modifiers</h4>
-      <div class="item-picker-modal__detail-stats">
-        <template v-for="(row, idx) in modRows" :key="'mod-' + idx">
+      <div
+        v-if="baseRows.length"
+        class="item-tooltip-section item-tooltip-section--base item-detail-panel__section"
+        aria-label="Base properties"
+      >
+        <template v-for="(row, idx) in baseRows" :key="'base-' + idx">
           <p
             v-if="row.kind === 'text'"
-            class="item-picker-modal__stat-line"
+            class="item-tooltip-line item-picker-modal__stat-line"
             :class="modLineClass(row)"
           >
             <!-- eslint-disable-next-line vue/no-v-html -- escaped skill-name markup -->
@@ -152,7 +145,32 @@ function modLineClass(row) {
           />
         </template>
       </div>
-    </section>
+
+      <div
+        v-if="modRows.length"
+        class="item-tooltip-section item-tooltip-section--mods item-detail-panel__section"
+        aria-label="Item modifiers"
+      >
+        <template v-for="(row, idx) in modRows" :key="'mod-' + idx">
+          <p
+            v-if="row.kind === 'text'"
+            class="item-tooltip-line item-picker-modal__stat-line"
+            :class="modLineClass(row)"
+          >
+            <!-- eslint-disable-next-line vue/no-v-html -- escaped skill-name markup -->
+            <span class="item-picker-modal__stat-line-text" v-html="modLineHtml(row.text)"></span>
+          </p>
+          <ItemRollRow
+            v-else
+            :stat="row.stat"
+            :value="effectiveRolls[row.stat.key] ?? row.stat.min"
+            @update="onRollUpdate(row.stat.key, row.stat.min, row.stat.max, $event)"
+          />
+        </template>
+      </div>
+
+      <div v-if="requirementsLine" class="item-tooltip-reqs">{{ requirementsLine }}</div>
+    </div>
 
     <CharmExtrasControls
       v-if="def"

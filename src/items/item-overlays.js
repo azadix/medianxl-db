@@ -299,7 +299,11 @@ export function getOverlayDetailStatRows(def, rolls = null) {
     }
     const text = resolveOverlayAffixText(source.text, source.sourceKey, rolls, false);
     if (text == null) continue;
-    rows.push({ kind: 'text', text, color: source.color || 'magic' });
+    rows.push({
+      kind: 'text',
+      text: encodeModifierLine(text, source.color, source.showCondition),
+      color: source.color || 'magic',
+    });
   }
   return rows;
 }

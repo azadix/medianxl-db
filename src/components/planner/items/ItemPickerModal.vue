@@ -51,17 +51,24 @@ const baseSearch = ref('');
 /** @type {import('vue').Ref<string|null>} */
 const selectedBaseId = ref(null);
 
+function resetPickerPreview() {
+  search.value = '';
+  category.value = 'all';
+  previewId.value = null;
+  rolls.value = {};
+  baseSearch.value = '';
+  selectedBaseId.value = null;
+}
+
 watch(isPickerOpen, async (open) => {
-  if (open) {
-    search.value = '';
-    category.value = 'all';
-    previewId.value = null;
-    rolls.value = {};
-    baseSearch.value = '';
-    selectedBaseId.value = null;
-    await nextTick();
-    searchInput.value?.focus();
+  if (!open) {
+    // Drop preview so closed-modal watches don't keep scanning the catalog.
+    resetPickerPreview();
+    return;
   }
+  resetPickerPreview();
+  await nextTick();
+  searchInput.value?.focus();
 });
 
 /**
@@ -87,6 +94,9 @@ function matchesCategory(item, cat) {
 }
 
 const filteredItems = computed(() => {
+  // Avoid scanning the full catalog while the modal is closed — a watch on
+  // filteredItems would otherwise re-run pickerCatalog on every slot click.
+  if (!isPickerOpen.value) return [];
   let list = itemsStore.pickerCatalog.filter((d) => !isCharmItem(d) && !isRelicItem(d));
   if (category.value !== 'all') {
     list = list.filter((d) => matchesCategory(d, category.value));
@@ -134,6 +144,7 @@ function canSelectPickerItem(item) {
 }
 
 const eligibleBases = computed(() => {
+  if (!isPickerOpen.value) return [];
   const template = previewTemplate.value;
   if (!isRunewordTemplate(template)) return [];
   const sel = selectedSlot.value;
@@ -216,6 +227,7 @@ const effectiveRolls = computed(() => {
 });
 
 const detailStatRows = computed(() => {
+  if (!isPickerOpen.value) return [];
   const def = previewDef.value;
   if (!def) return [];
   return getItemDetailStatRows(def, effectiveRolls.value, {
@@ -225,8 +237,8 @@ const detailStatRows = computed(() => {
   });
 });
 
-watch(filteredItems, (list) => {
-  if (!previewId.value) return;
+watch([isPickerOpen, filteredItems], ([open, list]) => {
+  if (!open || !previewId.value) return;
   if (!list.some((d) => d.id === previewId.value)) {
     previewId.value = null;
     rolls.value = {};
@@ -235,8 +247,8 @@ watch(filteredItems, (list) => {
   }
 });
 
-
-watch([previewId, eligibleBases], () => {
+watch([isPickerOpen, previewId, eligibleBases], ([open]) => {
+  if (!open) return;
   const template = previewTemplate.value;
   if (!isRunewordTemplate(template)) {
     selectedBaseId.value = null;
@@ -249,7 +261,8 @@ watch([previewId, eligibleBases], () => {
   }
 });
 
-watch(previewDef, (def) => {
+watch([isPickerOpen, previewDef], ([open, def]) => {
+  if (!open) return;
   rolls.value = def ? mergeRollsForDef(def, null, rollOptions.value) : {};
 });
 

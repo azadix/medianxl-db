@@ -501,7 +501,8 @@ export function getItemStatLines(def, rolls = null, options = {}) {
 export function getItemDetailStatRows(def, rolls = null, options = {}) {
   if (!def || typeof def !== 'object') return [];
   const className = options.className ?? null;
-  const headerLines = getItemStatLines(def, rolls, {
+  // Match tooltip sectioning (base/scaling vs mods) so Socketed etc. sit with affixes.
+  const sections = getItemStatSections(def, rolls, {
     hideRollableRanges: true,
     characterLevel: options.characterLevel ?? null,
     charmInInventory: options.charmInInventory,
@@ -509,7 +510,18 @@ export function getItemDetailStatRows(def, rolls = null, options = {}) {
     charmHeaderOnly: true,
   });
   /** @type {ItemDetailStatRow[]} */
-  const rows = headerLines.map((text) => ({ kind: /** @type {const} */ ('text'), text, section: /** @type {const} */ ('base') }));
+  const rows = [
+    ...[...sections.base, ...sections.scaling].map((text) => ({
+      kind: /** @type {const} */ ('text'),
+      text,
+      section: /** @type {const} */ ('base'),
+    })),
+    ...sections.mods.map((text) => ({
+      kind: /** @type {const} */ ('text'),
+      text,
+      section: /** @type {const} */ ('mod'),
+    })),
+  ];
   /**
    * @param {ItemDetailStatRow[]} extra
    * @returns {ItemDetailStatRow[]}

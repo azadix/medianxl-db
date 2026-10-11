@@ -8,6 +8,7 @@ import {
   formatOverlayBadge,
   defaultOverlayAffixRolls,
   getOverlayStatLines,
+  getOverlayDetailStatRows,
   countEquippedSetPieces,
   resolveSetBonuses,
   overlayAffixRollKey,
@@ -16,6 +17,7 @@ import {
 } from '@/items/item-overlays.js';
 import { defaultRollsForDef, mergeRollsForDef, getItemDetailStatRows } from '@/items/item-stats.js';
 import { parseAffixRanges } from '@/items/affix-rolls.js';
+import { modifierLineCssClass } from '@/items/item-modifier-line.js';
 
 const baseSword = {
   id: '100',
@@ -94,6 +96,22 @@ describe('overlay affix rolls', () => {
     const rows = getItemDetailStatRows(grimFang, rolls);
     expect(rows.some((r) => r.kind === 'roll' && r.stat.key === 'defense')).toBe(false);
     expect(rows.some((r) => r.kind === 'roll' && r.stat.key.startsWith('modAffix:'))).toBe(true);
+    const socketRow = rows.find((r) => r.kind === 'text' && String(r.text).includes('Socketed'));
+    expect(socketRow?.section).toBe('mod');
+  });
+
+  it('keeps orange encoding on static detail rows', () => {
+    const rows = getOverlayDetailStatRows({
+      rarity: 'unique',
+      uniqueKind: 'su',
+      modifiers: [
+        '{orange}Adds 5 - 7 Fire Damage to Weapon per 2% Attack Speed',
+        'Weapon Physical Damage -150%',
+      ],
+    });
+    const orange = rows.find((r) => r.kind === 'text' && String(r.text).includes('Fire Damage'));
+    expect(orange?.text).toMatch(/^\{orange\}/);
+    expect(modifierLineCssClass(orange?.text)).toBe('item-mod--orange');
   });
 
   it('applies rolled values in overlay stat lines', () => {
