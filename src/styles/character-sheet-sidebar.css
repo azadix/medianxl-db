@@ -1343,9 +1343,9 @@
 
 .planner-slot__item-visual > .item-icon {
   position: absolute;
-  inset: 2.5%;
-  width: 95%;
-  height: 95%;
+  inset: 7.25%;
+  width: 85.5%;
+  height: 85.5%;
   padding: 0;
 }
 
