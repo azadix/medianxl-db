@@ -47,7 +47,6 @@ export const QUEST_DIFF_NAMES = {
 
 /**
  * One bracket string per quest: e.g. [+1 Skill Point(s)], [+40 Life], or per-diff only when values differ.
- * Stat-point and signet-cap rewards are shown for tracking only; they do not change the planner stat pool.
  * @param {string} questId
  * @returns {string}
  */

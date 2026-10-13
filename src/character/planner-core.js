@@ -52,7 +52,6 @@ import {
 import {
   updateQuestCompletion,
   getQuestCompletion,
-  getTotalQuestStatPoints,
   importQuestsCompleted,
   getQuestsCompletedForSave,
   getQuestCompletionOptOutForSave,
@@ -95,7 +94,6 @@ export {
   importCharacterState,
   updateQuestCompletion,
   getQuestCompletion,
-  getTotalQuestStatPoints,
   importQuestsCompleted,
   getQuestsCompletedForSave,
   getQuestCompletionOptOutForSave,

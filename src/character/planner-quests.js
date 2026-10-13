@@ -31,15 +31,6 @@ export function getQuestCompletion(questId) {
 }
 
 /**
- * @param {number} [characterLevel]
- * @returns {number}
- */
-export function getTotalQuestStatPoints(characterLevel = Character.MAX_LEVEL) {
-  const characterInstance = getCharacterInstance();
-  return characterInstance ? characterInstance.getTotalQuestStatPoints(characterLevel) : 0;
-}
-
-/**
  * @param {Record<string, { normal?: boolean, nightmare?: boolean, hell?: boolean }>} quests
  * @param {Record<string, { normal?: boolean, nightmare?: boolean, hell?: boolean }>} questCompletionOptOut
  */

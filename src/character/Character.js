@@ -265,16 +265,6 @@ export default class Character {
   }
 
   /**
-   * Stat points from leveling: 5 per level-up from level 1 through 149 (character levels 2..150).
-   * @param {number} level
-   * @returns {number}
-   */
-  static getBaseStatPoints(level) {
-    const L = Character.clampLevel(level);
-    return 5 * Math.max(0, Math.min(L, Character.MAX_LEVEL) - 1);
-  }
-
-  /**
    * Create a new Character instance
    * @param {string} className - Character class name
    * @param {number} level - Character level
@@ -600,52 +590,6 @@ export default class Character {
       total += Character.sumQuestRewardAmounts(def, difficulties);
     }
     return total;
-  }
-
-  /**
-   * Total stat points from completed stat_points quests (no level gate).
-   * @param {number} [_characterLevel] - unused; kept for call-site compatibility
-   * @returns {number}
-   */
-  getTotalQuestStatPoints(_characterLevel = Character.MAX_LEVEL) {
-    let total = 0;
-    for (const [questId, difficulties] of Object.entries(this.questsCompleted)) {
-      const def = Character.QUESTS[questId];
-      if (!def || def.type !== 'stat_points') continue;
-      total += Character.sumQuestRewardAmounts(def, difficulties);
-    }
-    return total;
-  }
-
-  /**
-   * Sum of stat points spent on strength/dexterity/vitality/energy allocation.
-   * @returns {number}
-   */
-  getSpentStatPoints() {
-    let total = 0;
-    for (const k of Character.STAT_ALLOCATION_KEYS) {
-      total += Math.max(0, Math.floor(Number(this.statAllocation[k]) || 0));
-    }
-    return total;
-  }
-
-  /**
-   * Total stat points available before spending (level-based pool only; quest stat rewards and signets are not applied).
-   * @param {number} characterLevel
-   * @returns {number}
-   */
-  getTotalAvailableStatPoints(characterLevel = Character.MAX_LEVEL) {
-    const L = Character.clampLevel(characterLevel);
-    return Character.getBaseStatPoints(L);
-  }
-
-  /**
-   * Unspent stat points from the pool.
-   * @param {number} characterLevel
-   * @returns {number}
-   */
-  getRemainingStatPoints(characterLevel = Character.MAX_LEVEL) {
-    return Math.max(0, this.getTotalAvailableStatPoints(characterLevel) - this.getSpentStatPoints());
   }
 
   /**

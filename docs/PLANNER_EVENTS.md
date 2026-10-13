@@ -17,7 +17,7 @@ Custom events on `window` bridge legacy DOM modules, Vue components, and Pinia. 
 |-------|----------|-----------|---------|
 | `characterStatsChanged` | `Character.js`, `planner-core.js`, `planner-stats-panel.js`, `planner-init.js`, `planner-dom-handlers.js`, `saved-builds-ui.js` | `planner-init.js`, `planner-stats-panel.js`, `PlannerSavedBuildsList.vue` | Stat values or build load; refresh stat tooltips and portraits |
 | `plannerStatsPanelRefresh` | `planner-core.js`, `planner-stats-panel.js` | `planner-stats-panel.js` | Re-render open stat tooltip after passive recompute |
-| `statAllocationChanged` | `Character.js` | (quest/stat panel internals) | Stat point allocation from quest rewards |
+| `statAllocationChanged` | `Character.js` | (quest/stat panel internals) | Strength/dexterity/vitality/energy allocation changed |
 | `tooltipRefresh` | `planner-ui-updates.js`, `SkillCard.vue` | `tree-tooltip.js` | Force skill tooltip HTML refresh |
 
 ## Planner UI sections
