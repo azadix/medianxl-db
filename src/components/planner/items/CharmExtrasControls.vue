@@ -16,6 +16,8 @@ import {
 } from '@/items/charm-items.js';
 import { getCharacterInstance } from '@/character/planner-core.js';
 import { useItemsStore } from '@/stores/items.js';
+import WormholeCyclesControls from './WormholeCyclesControls.vue';
+import { isCorruptedWormhole } from '@/items/wormhole-cycles.js';
 
 const props = defineProps({
   def: { type: /** @type {import('vue').PropType<object|null>} */ (Object), default: null },
@@ -29,6 +31,7 @@ const className = computed(
   () => itemsStore.viewerClassName ?? getCharacterInstance()?.className ?? null
 );
 const showPanel = computed(() => isCharmItem(props.def) && hasCharmExtras(props.def));
+const showWormholeCycles = computed(() => isCorruptedWormhole(props.def));
 const pools = computed(() => getCharmModifierPools(props.def));
 const upgradeEntries = computed(() => getCharmUpgradeEntries(props.def, className.value));
 const trophyEntry = computed(() => getCharmTrophyEntry(props.def));
@@ -120,6 +123,13 @@ function setParagonPath(path) {
 <template>
   <div v-if="showPanel" class="charm-extras-controls">
     <p class="charm-extras-controls__heading is-size-7 has-text-grey mb-2">Charm options</p>
+
+    <WormholeCyclesControls
+      v-if="showWormholeCycles"
+      :def="def"
+      :rolls="rolls"
+      @update:rolls="emit('update:rolls', $event)"
+    />
 
     <div v-for="pool in pools" :key="'pool-' + pool.poolIndex" class="charm-extras-controls__pool">
       <label class="label is-size-7 mb-1">{{ pool.label || 'Modifier choice' }}</label>

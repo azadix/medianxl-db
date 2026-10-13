@@ -54,10 +54,11 @@ export function collectShowConditionKeysFromEnabledItems() {
       }
     }
 
-    for (const defId of Object.keys(itemsStore.enabledCharms || {})) {
+    for (const [defId, instanceId] of Object.entries(itemsStore.enabledCharms || {})) {
       const def = itemsStore.catalogById?.[defId];
       if (!def) continue;
-      if (!isCharmBonusActive(def, characterLevel, { inInventory: true })) continue;
+      const rolls = itemsStore.getRollsForInstance?.(instanceId) ?? null;
+      if (!isCharmBonusActive(def, characterLevel, { inInventory: true, rolls })) continue;
       if (!Array.isArray(def.modifiers)) continue;
       addLines(def.modifiers.filter((m) => typeof m === 'string'));
     }

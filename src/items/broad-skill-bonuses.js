@@ -79,10 +79,10 @@ export function collectLiveBroadSkillBonuses(className = null, characterLevel = 
     for (const [defId, instanceId] of Object.entries(itemsStore.enabledCharms || {})) {
       const def = itemsStore.catalogById?.[defId];
       if (!def) continue;
-      if (!isCharmBonusActive(def, level, { inInventory: true })) continue;
       const rolls =
         itemsStore.getRollsForInstance?.(instanceId) ??
         defaultCharmRollsForDef(def, resolvedClass);
+      if (!isCharmBonusActive(def, level, { inInventory: true, rolls })) continue;
       /** @type {string[]} */
       const lines = [];
       for (const source of getCharmAffixSources(def, rolls, resolvedClass, { activeOnly: true })) {

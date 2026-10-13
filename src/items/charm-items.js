@@ -10,6 +10,12 @@ import {
 } from '@/items/affix-rolls.js';
 import { annotateAffixDisplayPartsWithSkills } from '@/items/item-granted-oskills.js';
 import { defaultRollValue } from '@/items/item-stats.js';
+import {
+  isCorruptedWormhole,
+  isWormholeCyclePlaceholderMod,
+  getWormholeCycleAffixSources,
+  getWormholeCycleReqLevelBonus,
+} from '@/items/wormhole-cycles.js';
 
 /** @type {Readonly<Record<string, string>>} */
 export const CHARM_ROLL_KEYS = Object.freeze({
@@ -217,13 +223,29 @@ export function isDimensionalKeyCharm(def) {
 }
 
 /**
+ * Effective charm required level (includes Corrupted Wormhole cycle bonuses).
+ * @param {object|null|undefined} def
+ * @param {Record<string, number>|null|undefined} [rolls]
+ * @returns {number}
+ */
+export function getCharmRequiredLevel(def, rolls = null) {
+  if (!isCharmItem(def)) return 0;
+  let req = Number(def.reqLevel) || 0;
+  if (isCorruptedWormhole(def)) {
+    req += getWormholeCycleReqLevelBonus(rolls);
+  }
+  return req;
+}
+
+/**
  * @param {object|null|undefined} def
  * @param {number|null|undefined} characterLevel
+ * @param {Record<string, number>|null|undefined} [rolls]
  * @returns {boolean}
  */
-export function charmMeetsLevel(def, characterLevel) {
+export function charmMeetsLevel(def, characterLevel, rolls = null) {
   if (!isCharmItem(def)) return true;
-  const req = Number(def.reqLevel) || 0;
+  const req = getCharmRequiredLevel(def, rolls);
   const level = Number(characterLevel);
   if (!Number.isFinite(level)) return false;
   return level >= req;
@@ -233,13 +255,13 @@ export function charmMeetsLevel(def, characterLevel) {
  * Charm bonuses apply only while the item is in inventory and level req is met.
  * @param {object|null|undefined} def
  * @param {number|null|undefined} characterLevel
- * @param {{ inInventory?: boolean }} [options]
+ * @param {{ inInventory?: boolean, rolls?: Record<string, number>|null }} [options]
  * @returns {boolean}
  */
 export function isCharmBonusActive(def, characterLevel, options = {}) {
   if (!isCharmItem(def)) return true;
   if (options.inInventory === false) return false;
-  return charmMeetsLevel(def, characterLevel);
+  return charmMeetsLevel(def, characterLevel, options.rolls ?? null);
 }
 
 /**
@@ -380,7 +402,8 @@ export function hasCharmExtras(def) {
     hasCharmTrophy(def) ||
     getCharmModifierPools(def).length > 0 ||
     getCharmTrophyOptions(def).length > 0 ||
-    getParagonHammerConfig(def) != null
+    getParagonHammerConfig(def) != null ||
+    isCorruptedWormhole(def)
   );
 }
 
@@ -444,6 +467,9 @@ export function collectCharmAffixSources(def, rolls = null, className = null) {
       continue;
     }
     if (typeof mod === 'string') {
+      if (isCorruptedWormhole(def) && isWormholeCyclePlaceholderMod(mod)) {
+        continue;
+      }
       if (paragon) {
         if (/^Charges:/i.test(mod)) continue;
         if (/^Can be upgraded in Heroic/i.test(mod) && regularLimit && regularUsed >= regularLimit) {
@@ -457,6 +483,19 @@ export function collectCharmAffixSources(def, rolls = null, className = null) {
         prefix: '',
       });
       modIndex += 1;
+    }
+  }
+
+  if (isCorruptedWormhole(def)) {
+    const cycleSources = getWormholeCycleAffixSources(rolls);
+    if (cycleSources.length) {
+      out.push(...cycleSources);
+    } else {
+      out.push({
+        sourceKey: 'base:cycles-hint',
+        text: 'Add Cycles to apply specific bonuses',
+        prefix: '',
+      });
     }
   }
 
@@ -560,6 +599,7 @@ export function getCharmAffixSources(def, rolls = null, className = null, option
   if (!options.activeOnly) return sources;
   return sources.filter((source) => {
     if (source.sourceKey.startsWith('base:')) return true;
+    if (source.sourceKey.startsWith('cycle:')) return true;
     if (source.sourceKey.startsWith('upgrade:')) {
       const upgradeIndex = Number(source.sourceKey.split(':')[1]);
       return Boolean(rolls?.[`${CHARM_ROLL_KEYS.upgradePrefix}${upgradeIndex}`]);

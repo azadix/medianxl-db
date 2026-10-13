@@ -110,6 +110,7 @@
     "rarity": "unique",
     "icon": "invlucion",
     "reqLevel": 100,
+    "dungeon": "The Triune",
     "modifiers": [
       "Add Cycles to apply specific bonuses"
     ],

@@ -462,8 +462,8 @@ function enabledDefsWithRolls(enabledMap, itemsStore, isActive = null) {
   for (const [defId, instanceId] of Object.entries(enabledMap || {})) {
     const def = itemsStore.catalogById?.[defId];
     if (!def) continue;
-    if (typeof isActive === 'function' && !isActive(def)) continue;
     const rolls = itemsStore.getRollsForInstance?.(instanceId) ?? null;
+    if (typeof isActive === 'function' && !isActive(def, rolls)) continue;
     out.push({ def, rolls });
   }
   return out;
@@ -494,8 +494,8 @@ export function collectEnabledCharmOSkillGrants(options = {}) {
     const className = resolveGrantClassName(options);
     const itemsStore = useItemsStore();
     const characterLevel = getCharacterInstance()?.level ?? null;
-    const charms = enabledDefsWithRolls(itemsStore.enabledCharms, itemsStore, (def) =>
-      isCharmBonusActive(def, characterLevel, { inInventory: true })
+    const charms = enabledDefsWithRolls(itemsStore.enabledCharms, itemsStore, (def, rolls) =>
+      isCharmBonusActive(def, characterLevel, { inInventory: true, rolls })
     );
     return collectOSkillGrantsFromCharmDefs(charms, { className });
   } catch {

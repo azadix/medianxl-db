@@ -290,9 +290,9 @@ export function collectEnabledPlannerProcs(options = {}) {
     for (const [defId, instanceId] of Object.entries(itemsStore.enabledCharms || {})) {
       const def = itemsStore.catalogById?.[defId];
       if (!def) continue;
-      if (!isCharmBonusActive(def, characterLevel, { inInventory: true })) continue;
       const rolls =
         itemsStore.getRollsForInstance?.(instanceId) ?? defaultCharmRollsForDef(def, className);
+      if (!isCharmBonusActive(def, characterLevel, { inInventory: true, rolls })) continue;
       /** @type {string[]} */
       const lines = [];
       for (const source of getCharmAffixSources(def, rolls, className, { activeOnly: true })) {

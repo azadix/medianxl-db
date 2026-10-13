@@ -36,6 +36,7 @@ import {
 import { pickItemIcon } from '@/items/item-icons.js';
 import {
   charmMeetsLevel,
+  getCharmRequiredLevel,
   getCharmUpgradeEntries,
   isCharmItem,
   isDimensionalKeyCharm,
@@ -485,9 +486,11 @@ export const useItemsStore = defineStore('items', {
     maxActiveItemReqLevel() {
       let max = 0;
       const className = this.effectiveViewerClassName;
-      const consider = (def) => {
+      const consider = (def, rolls = null) => {
         if (!def || !canEquipForClass(def, className)) return;
-        const req = Number(def.reqLevel);
+        const req = isCharmItem(def)
+          ? getCharmRequiredLevel(def, rolls)
+          : Number(def.reqLevel);
         if (Number.isFinite(req) && req > max) max = req;
       };
       for (const slot of EQUIPMENT_SLOTS) {
@@ -495,10 +498,14 @@ export const useItemsStore = defineStore('items', {
         const id = this.equipment[slot];
         if (id == null) continue;
         const inst = this.instances[id];
-        consider(inst ? this.catalogById[inst.defId] : null);
+        consider(inst ? this.catalogById[inst.defId] : null, inst?.rolls ?? null);
       }
-      for (const defId of Object.keys(this.enabledCharms)) consider(this.catalogById[defId]);
-      for (const defId of Object.keys(this.enabledRelics)) consider(this.catalogById[defId]);
+      for (const [defId, instanceId] of Object.entries(this.enabledCharms)) {
+        consider(this.catalogById[defId], this.getRollsForInstance(instanceId));
+      }
+      for (const defId of Object.keys(this.enabledRelics)) {
+        consider(this.catalogById[defId]);
+      }
       return max;
     },
     /** Highest resolved str/dex requirements among active-set gear and enabled charms/relics. */
@@ -806,10 +813,11 @@ export const useItemsStore = defineStore('items', {
 
       for (const defId of Object.keys(this.enabledCharms)) {
         const def = this.catalogById[defId];
-        if (!def || charmMeetsLevel(def, levelNum)) continue;
+        const rolls = this.getRollsForInstance(this.enabledCharms[defId]);
+        if (!def || charmMeetsLevel(def, levelNum, rolls)) continue;
         charms.push({
           name: String(def.name || defId),
-          reqLevel: Number(def.reqLevel) || 0,
+          reqLevel: getCharmRequiredLevel(def, rolls),
         });
         this.toggleCharm(defId, false);
       }

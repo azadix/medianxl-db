@@ -6,6 +6,10 @@
 import { isModifierLineActive, modifierLineText } from '@/items/item-modifier-line.js';
 import { stripDisplayedRollRanges } from '@/items/affix-rolls.js';
 import { getOverlayStatLines, isOverlayItem } from '@/items/item-overlays.js';
+import {
+  getWormholeCycleReqLevelBonus,
+  isCorruptedWormhole,
+} from '@/items/wormhole-cycles.js';
 
 /**
  * @typedef {{
@@ -135,6 +139,10 @@ export function resolveItemRequirements(def, options = {}) {
   let reqStr = nonNeg(def?.reqStr);
   let reqDex = nonNeg(def?.reqDex);
   let reductionPct = 0;
+
+  if (isCorruptedWormhole(def)) {
+    reqLevel += getWormholeCycleReqLevelBonus(options.rolls ?? null);
+  }
 
   for (const sock of socketables) {
     if (!sock || typeof sock !== 'object') continue;
