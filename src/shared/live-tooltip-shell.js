@@ -6,7 +6,6 @@
 import {
   bindLiveTooltip,
   initTooltipPinning,
-  maybeAltStickLiveTooltip,
   setNestedSkillTooltipHandlers,
   shouldSuppressLiveTooltipHide,
   updateLiveTooltipBinding,
@@ -39,6 +38,7 @@ export const NESTED_SKILL_TOOLTIP_Z = '10070';
 
 /**
  * Clamp a tooltip portal near the cursor inside the viewport.
+ * Wide skill+SOURCES rows stack vertically when they cannot fit beside the cursor.
  * @param {HTMLElement} node
  * @param {number} clientX
  * @param {number} clientY
@@ -48,15 +48,38 @@ export function applyTooltipPosition(node, clientX, clientY, opts = {}) {
   if (!node) return;
   const offset = opts.offset ?? TOOLTIP_OFFSET;
   const margin = opts.viewportMargin ?? TOOLTIP_VIEWPORT_MARGIN;
-  const baseLeft = clientX + offset;
-  const baseTop = clientY + offset;
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const availWidth = Math.max(0, vw - margin * 2);
+
+  const panels = node.querySelector('.skill-tooltip-panels');
+  if (panels instanceof HTMLElement) {
+    panels.classList.remove('is-stacked');
+    const rowWidth = Math.max(panels.scrollWidth, node.getBoundingClientRect().width);
+    if (rowWidth > availWidth) {
+      panels.classList.add('is-stacked');
+    }
+  }
+
   const rect = node.getBoundingClientRect();
-  let nextLeft = baseLeft;
-  let nextTop = baseTop;
-  const maxLeft = window.innerWidth - rect.width - margin;
-  const maxTop = window.innerHeight - rect.height - margin;
+  const spaceRight = vw - clientX - offset - margin;
+  const spaceLeft = clientX - offset - margin;
+  let nextLeft;
+  if (rect.width <= spaceRight) {
+    nextLeft = clientX + offset;
+  } else if (rect.width <= spaceLeft) {
+    nextLeft = clientX - offset - rect.width;
+  } else {
+    nextLeft = Math.max(margin, vw - rect.width - margin);
+  }
+  if (nextLeft < margin) nextLeft = margin;
+  const maxLeft = vw - rect.width - margin;
   if (nextLeft > maxLeft) nextLeft = Math.max(margin, maxLeft);
+
+  let nextTop = clientY + offset;
+  const maxTop = vh - rect.height - margin;
   if (nextTop > maxTop) nextTop = Math.max(margin, maxTop);
+
   node.style.left = `${nextLeft}px`;
   node.style.top = `${nextTop}px`;
 }
@@ -80,6 +103,7 @@ export function createLiveTooltipShell(options = {}) {
   let pendingClientX = 0;
   let pendingClientY = 0;
   let attached = false;
+  let hideGeneration = 0;
 
   function resolvePortal() {
     if (portal && portal.isConnected) return portal;
@@ -158,7 +182,8 @@ export function createLiveTooltipShell(options = {}) {
       hide(true);
       return false;
     }
-    if (!attached) attach();
+    hideGeneration += 1;
+    attach();
     const getHtml = opts.getHtml !== undefined ? opts.getHtml : defaultGetHtml;
     if (opts.getHtml !== undefined) defaultGetHtml = opts.getHtml || null;
     node.innerHTML = html;
@@ -174,7 +199,6 @@ export function createLiveTooltipShell(options = {}) {
       getHtml: getHtml || null,
       meta: opts.meta && typeof opts.meta === 'object' ? opts.meta : {},
     });
-    maybeAltStickLiveTooltip(node);
     return true;
   }
 
@@ -189,6 +213,7 @@ export function createLiveTooltipShell(options = {}) {
   function updateContent(html, opts = {}) {
     const node = resolvePortal();
     if (!node || !html || !isShowing()) return false;
+    hideGeneration += 1;
     const getHtml = opts.getHtml !== undefined ? opts.getHtml : defaultGetHtml;
     if (opts.getHtml !== undefined) defaultGetHtml = opts.getHtml || null;
     node.innerHTML = html;
@@ -226,13 +251,17 @@ export function createLiveTooltipShell(options = {}) {
     const node = resolvePortal();
     if (!force && shouldSuppressLiveTooltipHide(node)) return;
     if (!force && opts.deferIfOverPortal) {
+      const gen = hideGeneration;
       requestAnimationFrame(() => {
+        if (gen !== hideGeneration) return;
         if (shouldSuppressLiveTooltipHide(resolvePortal())) return;
         if (isPointerOverPortal()) return;
+        hideGeneration += 1;
         clearPortal();
       });
       return;
     }
+    hideGeneration += 1;
     clearPortal();
   }
 

@@ -5,13 +5,11 @@ import {
   createPinnedHost,
   destroyTooltipPinning,
   initTooltipPinning,
-  isTooltipAltHeld,
+  isTooltipLocked,
   listPinnedHosts,
   maybeAltStickLiveTooltip,
   promoteLiveTooltip,
   refreshPinnedHosts,
-  releaseAltStuckHosts,
-  shouldSuppressLiveTooltipHide,
   updateLiveTooltipBinding,
 } from '@/shared/tooltip-pinning.js';
 import { wrapNestedSkillTooltipHtml } from '@/shared/tooltip-html.js';
@@ -62,19 +60,126 @@ describe('tooltip pinning', () => {
     expect(listPinnedHosts()[0].el.querySelector('.tooltip-pin-btn.is-pinned')).toBeTruthy();
   });
 
-  it('Alt-sticks the live tooltip and releases it when Alt is lifted', () => {
+  it('Alt keydown locks the live tooltip; keyup does not unlock', () => {
     portal.innerHTML = '<div class="tooltip-content">Sticky</div>';
     portal.style.display = 'block';
 
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Alt', code: 'AltLeft', bubbles: true }));
-    expect(isTooltipAltHeld()).toBe(true);
+    expect(isTooltipLocked()).toBe(true);
     expect(listPinnedHosts()).toHaveLength(1);
     expect(listPinnedHosts()[0].mode).toBe('alt');
-    expect(shouldSuppressLiveTooltipHide(portal)).toBe(true);
+    expect(listPinnedHosts()[0].el.querySelector('.tooltip-pin-btn.is-locked')).toBeTruthy();
+    expect(listPinnedHosts()[0].el.querySelector('.tooltip-pin-btn.is-pinned')).toBeFalsy();
+    expect(portal.style.display).toBe('none');
 
     document.dispatchEvent(new KeyboardEvent('keyup', { key: 'Alt', code: 'AltLeft', bubbles: true }));
-    expect(isTooltipAltHeld()).toBe(false);
+    expect(isTooltipLocked()).toBe(true);
+    expect(listPinnedHosts()).toHaveLength(1);
+  });
+
+  it('Alt locks a nested live tooltip without unlocking the parent', () => {
+    portal.innerHTML = '<div class="tooltip-content">Parent</div>';
+    portal.style.display = 'block';
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Alt', code: 'AltLeft', bubbles: true }));
+    expect(listPinnedHosts()).toHaveLength(1);
+    expect(listPinnedHosts()[0].el.textContent).toContain('Parent');
+
+    const nestedPortal = document.createElement('div');
+    nestedPortal.id = 'skill-tooltip-portal';
+    nestedPortal.className = 'skill-tooltip';
+    nestedPortal.style.display = 'block';
+    nestedPortal.innerHTML = '<div class="tooltip-content">Nested skill</div>';
+    document.body.appendChild(nestedPortal);
+    bindLiveTooltip(nestedPortal, {
+      kind: 'skill',
+      getHtml: () => '<div class="tooltip-content">Nested skill</div>',
+      meta: { skillId: 'fireball', nested: true },
+    });
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Alt', code: 'AltLeft', bubbles: true }));
+    expect(listPinnedHosts()).toHaveLength(2);
+    expect(listPinnedHosts().some((h) => h.el.textContent.includes('Parent'))).toBe(true);
+    expect(listPinnedHosts().some((h) => h.el.textContent.includes('Nested skill'))).toBe(true);
+    expect(listPinnedHosts().filter((h) => h.mode === 'alt')).toHaveLength(2);
+    const nestedHost = listPinnedHosts().find((h) => h.el.textContent.includes('Nested skill'));
+    expect(nestedHost?.el.querySelector('.tooltip-pin-btn.is-locked')).toBeTruthy();
+  });
+
+  it('second Alt with no live tooltip unlocks the nearest Alt-locked host', () => {
+    portal.innerHTML = '<div class="tooltip-content">Sticky</div>';
+    portal.style.display = 'block';
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Alt', code: 'AltLeft', bubbles: true }));
+    expect(listPinnedHosts()).toHaveLength(1);
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Alt', code: 'AltLeft', bubbles: true }));
+    expect(isTooltipLocked()).toBe(false);
     expect(listPinnedHosts()).toHaveLength(0);
+  });
+
+  it('Alt unlocks only the locked tooltip closest to the pointer', () => {
+    const near = createPinnedHost({
+      html: '<div class="tooltip-content">Near</div>',
+      left: 10,
+      top: 10,
+      className: 'skill-tooltip',
+      kind: 'skill',
+      mode: 'alt',
+      getHtml: null,
+      meta: { skillId: 'near' },
+    });
+    const far = createPinnedHost({
+      html: '<div class="tooltip-content">Far</div>',
+      left: 400,
+      top: 400,
+      className: 'skill-tooltip',
+      kind: 'skill',
+      mode: 'alt',
+      getHtml: null,
+      meta: { skillId: 'far' },
+    });
+    near.el.getBoundingClientRect = () => ({
+      left: 10,
+      top: 10,
+      right: 110,
+      bottom: 60,
+      width: 100,
+      height: 50,
+      x: 10,
+      y: 10,
+      toJSON() {},
+    });
+    far.el.getBoundingClientRect = () => ({
+      left: 400,
+      top: 400,
+      right: 500,
+      bottom: 450,
+      width: 100,
+      height: 50,
+      x: 400,
+      y: 400,
+      toJSON() {},
+    });
+
+    document.dispatchEvent(new MouseEvent('mousemove', { clientX: 20, clientY: 20, bubbles: true }));
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Alt', code: 'AltLeft', bubbles: true }));
+    expect(listPinnedHosts()).toHaveLength(1);
+    expect(listPinnedHosts()[0].el.textContent).toContain('Far');
+    expect(isTooltipLocked()).toBe(true);
+  });
+
+  it('Escape unlocks Alt-locked hosts and keeps permanent pins', () => {
+    portal.innerHTML = '<div class="tooltip-content">Keep</div>';
+    portal.style.display = 'block';
+    promoteLiveTooltip(portal, 'pin');
+
+    portal.innerHTML = '<div class="tooltip-content">Locked</div>';
+    portal.style.display = 'block';
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Alt', code: 'AltLeft', bubbles: true }));
+    expect(listPinnedHosts()).toHaveLength(2);
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', code: 'Escape', bubbles: true }));
+    expect(listPinnedHosts()).toHaveLength(1);
+    expect(listPinnedHosts()[0].mode).toBe('pin');
   });
 
   it('dedupes Alt-stuck hosts for the same skill id', () => {
@@ -105,62 +210,64 @@ describe('tooltip pinning', () => {
     expect(listPinnedHosts()[0].el.textContent).toContain('Fireball v2');
     expect(listPinnedHosts()[0].meta.skillId).toBe('fireball');
 
-    document.dispatchEvent(new KeyboardEvent('keyup', { key: 'Alt', code: 'AltLeft', bubbles: true }));
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', code: 'Escape', bubbles: true }));
+    expect(listPinnedHosts()).toHaveLength(0);
   });
 
-  it('Alt-stick works across multiple press cycles', () => {
+  it('Alt lock works across multiple press cycles', () => {
     for (let i = 0; i < 3; i += 1) {
       portal.innerHTML = `<div class="tooltip-content">Cycle ${i}</div>`;
       portal.style.display = 'block';
       document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Alt', code: 'AltLeft', bubbles: true }));
       expect(listPinnedHosts()).toHaveLength(1);
       expect(listPinnedHosts()[0].el.textContent).toContain(`Cycle ${i}`);
-      document.dispatchEvent(new KeyboardEvent('keyup', { key: 'Alt', code: 'AltLeft', bubbles: true }));
-      expect(isTooltipAltHeld()).toBe(false);
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Alt', code: 'AltLeft', bubbles: true }));
+      expect(isTooltipLocked()).toBe(false);
       expect(listPinnedHosts()).toHaveLength(0);
     }
   });
 
-  it('heals stuck Alt state from mouse altKey', () => {
-    portal.innerHTML = '<div class="tooltip-content">Heal</div>';
+  it('mouse move without Alt does not unlock', () => {
+    portal.innerHTML = '<div class="tooltip-content">Stay</div>';
     portal.style.display = 'block';
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Alt', code: 'AltLeft', bubbles: true }));
-    expect(isTooltipAltHeld()).toBe(true);
-    // Simulate swallowed Alt keyup, then a mouse move without Alt.
+    expect(isTooltipLocked()).toBe(true);
     document.dispatchEvent(new MouseEvent('mousemove', { altKey: false, bubbles: true }));
-    expect(isTooltipAltHeld()).toBe(false);
-    expect(listPinnedHosts()).toHaveLength(0);
-
-    portal.innerHTML = '<div class="tooltip-content">Again</div>';
-    portal.style.display = 'block';
-    document.dispatchEvent(new MouseEvent('mousemove', { altKey: true, bubbles: true }));
-    expect(isTooltipAltHeld()).toBe(true);
+    expect(isTooltipLocked()).toBe(true);
     expect(listPinnedHosts()).toHaveLength(1);
   });
 
-  it('keeps permanent pins when Alt is released', () => {
+  it('keeps permanent pins when Alt-locked hosts are released', () => {
     portal.innerHTML = '<div class="tooltip-content">Keep</div>';
     portal.style.display = 'block';
     promoteLiveTooltip(portal, 'pin');
 
+    portal.innerHTML = '<div class="tooltip-content">Locked</div>';
+    portal.style.display = 'block';
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Alt', bubbles: true }));
-    document.dispatchEvent(new KeyboardEvent('keyup', { key: 'Alt', bubbles: true }));
+    expect(listPinnedHosts()).toHaveLength(2);
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Alt', bubbles: true }));
     expect(listPinnedHosts()).toHaveLength(1);
     expect(listPinnedHosts()[0].mode).toBe('pin');
   });
 
-  it('maybeAltStickLiveTooltip only sticks while Alt is held', () => {
-    portal.innerHTML = '<div class="tooltip-content">Later</div>';
-    portal.style.display = 'block';
-    expect(maybeAltStickLiveTooltip(portal)).toBe(false);
-
-    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Alt', bubbles: true }));
-    // Already stuck by keydown handler; create a fresh live tooltip.
-    releaseAltStuckHosts();
+  it('maybeAltStickLiveTooltip locks a visible live tooltip', () => {
     portal.innerHTML = '<div class="tooltip-content">Later</div>';
     portal.style.display = 'block';
     expect(maybeAltStickLiveTooltip(portal)).toBe(true);
     expect(listPinnedHosts().some((h) => h.mode === 'alt')).toBe(true);
+  });
+
+  it('pin click on a locked host unpins it', () => {
+    portal.innerHTML = '<div class="tooltip-content">Lock then unpin</div>';
+    portal.style.display = 'block';
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Alt', bubbles: true }));
+    const host = listPinnedHosts()[0];
+    expect(host.mode).toBe('alt');
+    expect(host.el.querySelector('.tooltip-pin-btn.is-locked')).toBeTruthy();
+    const btn = host.el.querySelector('.tooltip-pin-btn');
+    btn.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+    expect(listPinnedHosts()).toHaveLength(0);
   });
 
   it('refreshes pinned host html from getHtml', async () => {
@@ -180,6 +287,18 @@ describe('tooltip pinning', () => {
     });
     await refreshPinnedHosts((h) => h.kind === 'item');
     expect(listPinnedHosts()[0].el.textContent).toContain('v2');
+  });
+
+  it('pin click on a live tooltip pins it in one step', () => {
+    portal.innerHTML = '<div class="tooltip-content">Open pin</div>';
+    portal.style.display = 'block';
+    updateLiveTooltipBinding(portal, {});
+    const btn = portal.querySelector('.tooltip-pin-btn');
+    expect(btn).toBeTruthy();
+    btn.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+    expect(listPinnedHosts()).toHaveLength(1);
+    expect(listPinnedHosts()[0].mode).toBe('pin');
+    expect(portal.style.display).toBe('none');
   });
 
   it('unpins when the pin button is clicked', () => {
@@ -206,6 +325,42 @@ describe('tooltip pinning', () => {
       });
     }
     expect(listPinnedHosts()).toHaveLength(5);
+  });
+
+  it('nested skill hover on a live unlocked tooltip does not show', async () => {
+    const { setNestedSkillTooltipHandlers } = await import('@/shared/tooltip-pinning.js');
+    /** @type {string[]} */
+    const shown = [];
+    setNestedSkillTooltipHandlers({
+      showSkill: (id) => {
+        shown.push(id);
+      },
+    });
+    portal.innerHTML =
+      '<div class="tooltip-content"><span class="js-nested-tooltip-skill" data-tooltip-skill-id="fireball">Fireball</span></div>';
+    portal.style.display = 'block';
+    const skillEl = portal.querySelector('[data-tooltip-skill-id="fireball"]');
+    skillEl.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, clientX: 8, clientY: 8 }));
+    expect(shown).toEqual([]);
+  });
+
+  it('nested skill hover works on an Alt-locked host', async () => {
+    const { setNestedSkillTooltipHandlers } = await import('@/shared/tooltip-pinning.js');
+    /** @type {string[]} */
+    const shown = [];
+    setNestedSkillTooltipHandlers({
+      showSkill: (id) => {
+        shown.push(id);
+      },
+    });
+    portal.innerHTML =
+      '<div class="tooltip-content"><span class="js-nested-tooltip-skill" data-tooltip-skill-id="fireball">Fireball</span></div>';
+    portal.style.display = 'block';
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Alt', bubbles: true }));
+    const host = listPinnedHosts()[0];
+    const skillEl = host.el.querySelector('[data-tooltip-skill-id="fireball"]');
+    skillEl.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, clientX: 8, clientY: 8 }));
+    expect(shown).toEqual(['fireball']);
   });
 
   it('nested skill leave inside parent pin host clears hover target', async () => {

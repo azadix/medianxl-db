@@ -22,7 +22,6 @@ const PIN_ICON_SVG = `<svg class="tooltip-pin-btn__icon" viewBox="0 0 24 24" ari
 
 /** @type {HTMLElement|null} */
 let pinRoot = null;
-let altHeld = false;
 let listenersBound = false;
 let nextHostId = 1;
 
@@ -54,6 +53,9 @@ const hosts = new Map();
 /** @type {WeakMap<HTMLElement, LiveTooltipBinding>} */
 const liveBindings = new WeakMap();
 
+/** @type {Set<HTMLElement>} */
+const livePortals = new Set();
+
 /**
  * @typedef {{
  *   showSkill: (skillId: string, clientX: number, clientY: number, fromEl: HTMLElement) => void|Promise<void>,
@@ -72,11 +74,24 @@ let nestedSkillTarget = null;
 /** @type {{ hostId: number, startX: number, startY: number, origLeft: number, origTop: number }|null} */
 let dragState = null;
 
+/** Last known pointer position (for Alt unlock closest-to-cursor). */
+let lastPointerX = 0;
+let lastPointerY = 0;
+
 /**
+ * True when at least one Alt-locked (stuck) host is open.
  * @returns {boolean}
  */
+export function isTooltipLocked() {
+  for (const host of hosts.values()) {
+    if (host.mode === 'alt') return true;
+  }
+  return false;
+}
+
+/** @deprecated Use {@link isTooltipLocked}. */
 export function isTooltipAltHeld() {
-  return altHeld;
+  return isTooltipLocked();
 }
 
 /**
@@ -103,8 +118,6 @@ export function initTooltipPinning() {
   if (listenersBound) return;
   listenersBound = true;
   document.addEventListener('keydown', onKeyDown, true);
-  document.addEventListener('keyup', onKeyUp, true);
-  window.addEventListener('blur', onWindowBlur);
   document.addEventListener('mousemove', onDocumentMouseMove, true);
   document.addEventListener('mouseup', onDocumentMouseUp, true);
   document.addEventListener('click', onDocumentPinClick, true);
@@ -124,8 +137,6 @@ export function destroyTooltipPinning() {
   if (!listenersBound) return;
   listenersBound = false;
   document.removeEventListener('keydown', onKeyDown, true);
-  document.removeEventListener('keyup', onKeyUp, true);
-  window.removeEventListener('blur', onWindowBlur);
   document.removeEventListener('mousemove', onDocumentMouseMove, true);
   document.removeEventListener('mouseup', onDocumentMouseUp, true);
   document.removeEventListener('click', onDocumentPinClick, true);
@@ -135,6 +146,7 @@ export function destroyTooltipPinning() {
   nestedSkillHandlers = null;
   nestedSkillTarget = null;
   dragState = null;
+  livePortals.clear();
 }
 
 /**
@@ -156,6 +168,7 @@ export function setNestedSkillTooltipHandlers(handlers) {
  */
 export function bindLiveTooltip(portal, binding) {
   if (!portal) return;
+  livePortals.add(portal);
   liveBindings.set(portal, {
     portal,
     kind: String(binding.kind || 'tooltip'),
@@ -182,12 +195,11 @@ export function updateLiveTooltipBinding(portal, patch = {}) {
 }
 
 /**
- * Whether hide should be skipped for a live portal (Alt held, or pointer over pin UI).
+ * Whether hide should be skipped for a live portal (already locked/pinned in place).
  * @param {HTMLElement|null|undefined} portal
  * @returns {boolean}
  */
 export function shouldSuppressLiveTooltipHide(portal) {
-  if (altHeld) return true;
   if (!portal) return false;
   if (portal.classList.contains(STUCK_CLASS) || portal.classList.contains(PINNED_CLASS)) {
     return true;
@@ -231,13 +243,13 @@ function findMatchingAltHost(kind, meta) {
 }
 
 /**
- * If Alt is held and the live tooltip is visible, promote it to an Alt-stuck host.
+ * Promote a visible live tooltip to an Alt-locked host.
  * Reuses an existing Alt-stuck host for the same skill/item instead of stacking copies.
  * @param {HTMLElement|null|undefined} portal
  * @returns {boolean} true if promoted
  */
 export function maybeAltStickLiveTooltip(portal) {
-  if (!altHeld || !portal || portal.style.display === 'none') return false;
+  if (!portal || portal.style.display === 'none') return false;
   if (!portal.innerHTML || !String(portal.innerHTML).trim()) return false;
   promoteLiveTooltip(portal, 'alt');
   return true;
@@ -274,7 +286,7 @@ export function promoteLiveTooltip(portal, mode = 'pin') {
       existing.el.style.top = `${Math.max(0, rect.top)}px`;
       existing.getHtml = getHtml;
       existing.meta = meta;
-      ensurePinButton(existing.el, { live: false, hostId: existing.id, pinned: false });
+      ensurePinButton(existing.el, { live: false, hostId: existing.id, pinned: false, locked: true });
       bindHostDrag(existing.el, existing.id);
       bumpHostZ(existing.el);
       host = existing;
@@ -342,7 +354,12 @@ export function createPinnedHost(opts) {
     meta: opts.meta && typeof opts.meta === 'object' ? { ...opts.meta } : {},
   };
   hosts.set(id, host);
-  ensurePinButton(el, { live: false, hostId: id, pinned: opts.mode === 'pin' });
+  ensurePinButton(el, {
+    live: false,
+    hostId: id,
+    pinned: opts.mode === 'pin',
+    locked: opts.mode === 'alt',
+  });
   bindHostDrag(el, id);
   bumpHostZ(el);
   return host;
@@ -402,6 +419,7 @@ export async function refreshPinnedHosts(predicate) {
           live: false,
           hostId: host.id,
           pinned: host.mode === 'pin',
+          locked: host.mode === 'alt',
         });
         bindHostDrag(host.el, host.id);
       } catch (err) {
@@ -427,64 +445,89 @@ function isAltKeyEvent(e) {
 }
 
 /**
- * Promote every visible live tooltip portal into an Alt-stuck host.
+ * Promote every visible live tooltip portal into an Alt-locked host.
+ * @returns {boolean} true if at least one portal was locked
  */
 function stickAllLiveTooltips() {
-  document.querySelectorAll('.skill-tooltip:not(.tooltip-pin-host)').forEach((node) => {
-    if (!(node instanceof HTMLElement)) return;
-    if (!liveBindings.has(node)) return;
-    maybeAltStickLiveTooltip(node);
-  });
+  let stuck = false;
+  for (const node of [...livePortals]) {
+    if (!(node instanceof HTMLElement) || !node.isConnected) {
+      livePortals.delete(node);
+      continue;
+    }
+    if (node.classList.contains(PIN_HOST_CLASS)) continue;
+    if (maybeAltStickLiveTooltip(node)) stuck = true;
+  }
+  return stuck;
 }
 
 /**
- * Keep Alt state in sync from mouse/keyboard modifiers.
- * Mouse `altKey` heals cases where Alt keyup is swallowed (common on Windows).
- * @param {{ altKey?: boolean }|null|undefined} e
+ * Distance from a point to a host element (0 if inside).
+ * @param {HTMLElement} el
+ * @param {number} x
+ * @param {number} y
+ * @returns {number}
  */
-function syncAltFromModifier(e) {
-  if (!e || typeof e.altKey !== 'boolean') return;
-  if (e.altKey === altHeld) return;
-  altHeld = e.altKey;
-  if (altHeld) stickAllLiveTooltips();
-  else releaseAltStuckHosts();
+function distanceToHost(el, x, y) {
+  const rect = el.getBoundingClientRect();
+  const dx = x < rect.left ? rect.left - x : x > rect.right ? x - rect.right : 0;
+  const dy = y < rect.top ? rect.top - y : y > rect.bottom ? y - rect.bottom : 0;
+  return Math.hypot(dx, dy);
+}
+
+/**
+ * Unlock only the Alt-stuck host closest to the pointer. Esc clears all.
+ * @param {number} [clientX]
+ * @param {number} [clientY]
+ * @returns {boolean} true if a host was removed
+ */
+function releaseClosestAltStuckHost(clientX = lastPointerX, clientY = lastPointerY) {
+  /** @type {PinnedTooltipHost|null} */
+  let best = null;
+  let bestDist = Infinity;
+  for (const host of hosts.values()) {
+    if (host.mode !== 'alt') continue;
+    const dist = distanceToHost(host.el, clientX, clientY);
+    if (dist < bestDist) {
+      bestDist = dist;
+      best = host;
+    }
+  }
+  if (!best) return false;
+  removePinnedHost(best.id);
+  return true;
+}
+
+/**
+ * Alt toggles lock: lock the current live tooltip (including nested levels),
+ * or unlock the Alt-stuck host closest to the cursor when nothing live is showing.
+ */
+function toggleTooltipLock() {
+  if (stickAllLiveTooltips()) return;
+  // Nested hover uses a separate live portal; never dismiss the parent while exploring it.
+  if (nestedSkillTarget) return;
+  if (nestedSkillHandlers?.isShowing?.()) return;
+  releaseClosestAltStuckHost();
 }
 
 /**
  * @param {KeyboardEvent} e
  */
 function onKeyDown(e) {
-  if (!isAltKeyEvent(e) && !e.altKey) return;
-  if (e.repeat) return;
-  altHeld = true;
-  stickAllLiveTooltips();
-}
-
-/**
- * @param {KeyboardEvent} e
- */
-function onKeyUp(e) {
-  if (isAltKeyEvent(e)) {
-    altHeld = false;
+  if (e.key === 'Escape' || e.code === 'Escape') {
+    if (e.repeat) return;
     releaseAltStuckHosts();
     return;
   }
-  // Heal stuck Alt state when modifiers report Alt is no longer down.
-  if (altHeld && !e.altKey) {
-    altHeld = false;
-    releaseAltStuckHosts();
-  }
-}
-
-function onWindowBlur() {
-  if (!altHeld) return;
-  altHeld = false;
-  releaseAltStuckHosts();
+  if (!isAltKeyEvent(e)) return;
+  if (e.repeat || e.ctrlKey || e.metaKey || e.shiftKey) return;
+  e.preventDefault();
+  toggleTooltipLock();
 }
 
 /**
  * @param {HTMLElement} el
- * @param {{ live: boolean, hostId?: number, pinned?: boolean }} opts
+ * @param {{ live: boolean, hostId?: number, pinned?: boolean, locked?: boolean }} opts
  */
 function ensurePinButton(el, opts) {
   if (!el) return;
@@ -497,17 +540,19 @@ function ensurePinButton(el, opts) {
     el.appendChild(btn);
   }
   const pinned = Boolean(opts.pinned);
+  const locked = Boolean(opts.locked) && !pinned;
   const isLive = Boolean(opts.live);
   btn.classList.toggle('is-pinned', pinned);
+  btn.classList.toggle('is-locked', locked);
   btn.dataset.tooltipPinLive = isLive ? '1' : '0';
   if (!isLive && opts.hostId != null) {
     btn.dataset.tooltipPinHostId = String(opts.hostId);
   } else {
     delete btn.dataset.tooltipPinHostId;
   }
-  btn.setAttribute('aria-pressed', pinned ? 'true' : 'false');
-  btn.setAttribute('aria-label', pinned ? 'Unpin tooltip' : 'Pin tooltip');
-  btn.title = pinned ? 'Unpin' : 'Pin';
+  btn.setAttribute('aria-pressed', pinned || locked ? 'true' : 'false');
+  btn.setAttribute('aria-label', pinned || locked ? 'Unpin tooltip' : 'Pin tooltip');
+  btn.title = pinned || locked ? 'Unpin' : 'Pin';
   // Keep pin clickable even when the live portal has pointer-events: none.
   btn.style.pointerEvents = 'auto';
 }
@@ -532,11 +577,8 @@ function onDocumentPinClick(e) {
   const hostId = Number(btn.dataset.tooltipPinHostId || shell.dataset.tooltipPinId);
   const host = hosts.get(hostId);
   if (!host) return;
-  if (host.mode === 'pin') {
-    removePinnedHost(hostId);
-    return;
-  }
-  convertHostToPinned(hostId);
+  // Locked (Alt) and permanent pins both dismiss on pin click.
+  removePinnedHost(hostId);
 }
 
 /**
@@ -573,7 +615,8 @@ function bindHostDrag(el, hostId) {
  * @param {MouseEvent} e
  */
 function onDocumentMouseMove(e) {
-  syncAltFromModifier(e);
+  lastPointerX = e.clientX;
+  lastPointerY = e.clientY;
   if (!dragState) return;
   const host = hosts.get(dragState.hostId);
   if (!host) {
@@ -684,6 +727,29 @@ function onNestedSkillOut(e) {
   if (leaving !== nestedSkillTarget) return;
   const entering = closestNestedSkill(e.relatedTarget);
   if (entering === nestedSkillTarget) return;
+
+  // Alt / window chrome often sets relatedTarget to null and would hide the nested
+  // live tooltip before the lock keydown can promote it.
+  if (!(e.relatedTarget instanceof Element)) {
+    const leavingEl = nestedSkillTarget;
+    requestAnimationFrame(() => {
+      if (nestedSkillTarget !== leavingEl) return;
+      let el = null;
+      try {
+        el = document.elementFromPoint(e.clientX, e.clientY);
+      } catch {
+        return;
+      }
+      if (el instanceof Element) {
+        if (closestNestedSkill(el) === leavingEl) return;
+        const liveTip = el.closest('.skill-tooltip');
+        if (liveTip && isLiveFollowTooltip(liveTip)) return;
+      }
+      nestedSkillTarget = null;
+      nestedSkillHandlers?.hideSkill?.();
+    });
+    return;
+  }
 
   if (e.relatedTarget instanceof Element) {
     // Keep open when moving onto the live skill tooltip chrome (pin button).

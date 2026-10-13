@@ -461,10 +461,11 @@
     outline: none;
 }
 
+.tooltip-pin-btn.is-locked,
 .tooltip-pin-btn.is-pinned {
-    color: #f0d78c;
-    border-color: #c9a84c;
-    background: rgba(50, 40, 10, 0.95);
+    color: #7dce8a;
+    border-color: #4ea85c;
+    background: rgba(12, 40, 18, 0.95);
 }
 
 .tooltip-pin-btn__icon {
@@ -505,6 +506,10 @@
     flex-direction: row;
     align-items: flex-start;
     gap: 8px;
+}
+
+.skill-tooltip-panels.is-stacked {
+    flex-direction: column;
 }
 
 .skill-tooltip-panels > .tooltip-content,

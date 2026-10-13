@@ -8,7 +8,7 @@ import {
 } from '@/shared/live-tooltip-shell.js';
 import {
   destroyTooltipPinning,
-  isTooltipAltHeld,
+  isTooltipLocked,
   listPinnedHosts,
 } from '@/shared/tooltip-pinning.js';
 
@@ -50,13 +50,12 @@ describe('live tooltip shell', () => {
     expect(portal.style.top).toBe(`${50 + TOOLTIP_OFFSET}px`);
   });
 
-  it('Alt-sticks on present while Alt is held and clears the live portal', () => {
+  it('Alt keydown locks a visible live tooltip; keyup does not unlock', () => {
+    shell.present('<div class="tooltip-content">Sticky</div>', 30, 40);
     document.dispatchEvent(
       new KeyboardEvent('keydown', { key: 'Alt', code: 'AltLeft', bubbles: true })
     );
-    expect(isTooltipAltHeld()).toBe(true);
-
-    shell.present('<div class="tooltip-content">Sticky</div>', 30, 40);
+    expect(isTooltipLocked()).toBe(true);
     expect(shell.isShowing()).toBe(false);
     expect(listPinnedHosts()).toHaveLength(1);
     expect(listPinnedHosts()[0].mode).toBe('alt');
@@ -65,28 +64,58 @@ describe('live tooltip shell', () => {
     document.dispatchEvent(
       new KeyboardEvent('keyup', { key: 'Alt', code: 'AltLeft', bubbles: true })
     );
-    expect(listPinnedHosts()).toHaveLength(0);
+    expect(isTooltipLocked()).toBe(true);
+    expect(listPinnedHosts()).toHaveLength(1);
   });
 
-  it('suppresses hide while Alt is held', () => {
-    shell.present('<div class="tooltip-content">Keep</div>', 20, 20);
-    document.dispatchEvent(
-      new KeyboardEvent('keydown', { key: 'Alt', code: 'AltLeft', bubbles: true })
-    );
-    // Present while Alt held promotes; show again then try hide.
-    portal.innerHTML = '<div class="tooltip-content">Live</div>';
-    portal.style.display = 'block';
-    shell.hide(false);
-    // After Alt stick from keydown, live may already be promoted; force path still works.
-    shell.present('<div class="tooltip-content">Again</div>', 25, 25);
-    expect(isTooltipAltHeld()).toBe(true);
-    // Live was promoted; hide(false) on empty portal is a no-op.
-    shell.hide(false);
-    expect(listPinnedHosts().some((h) => h.mode === 'alt')).toBe(true);
+  it('deferred hide does not clear a re-presented tooltip', async () => {
+    shell.present('<div class="tooltip-content">A</div>', 10, 10);
+    shell.hide(false, { deferIfOverPortal: true });
+    shell.present('<div class="tooltip-content">B</div>', 20, 20);
+    await new Promise((resolve) => {
+      requestAnimationFrame(() => resolve());
+    });
+    expect(shell.isShowing()).toBe(true);
+    expect(portal.textContent).toContain('B');
+  });
 
-    document.dispatchEvent(
-      new KeyboardEvent('keyup', { key: 'Alt', code: 'AltLeft', bubbles: true })
-    );
+  it('places a wide tooltip to the left of the cursor when it would overflow', () => {
+    Object.defineProperty(window, 'innerWidth', { configurable: true, value: 400 });
+    Object.defineProperty(window, 'innerHeight', { configurable: true, value: 400 });
+    portal.style.width = '220px';
+    portal.style.height = '80px';
+    Object.defineProperty(portal, 'getBoundingClientRect', {
+      configurable: true,
+      value: () => ({
+        width: 220,
+        height: 80,
+        top: 0,
+        left: 0,
+        right: 220,
+        bottom: 80,
+        x: 0,
+        y: 0,
+        toJSON() {},
+      }),
+    });
+    applyTooltipPosition(portal, 360, 40, {
+      offset: TOOLTIP_OFFSET,
+      viewportMargin: TOOLTIP_VIEWPORT_MARGIN,
+    });
+    const left = Number.parseFloat(portal.style.left);
+    expect(left).toBe(360 - TOOLTIP_OFFSET - 220);
+    expect(left).toBeGreaterThanOrEqual(TOOLTIP_VIEWPORT_MARGIN);
+  });
+
+  it('stacks skill+SOURCES panels when the row cannot fit the viewport', () => {
+    Object.defineProperty(window, 'innerWidth', { configurable: true, value: 320 });
+    Object.defineProperty(window, 'innerHeight', { configurable: true, value: 400 });
+    portal.innerHTML =
+      '<div class="skill-tooltip-panels"><div class="tooltip-content">Skill</div><div class="skill-tooltip-sources">SOURCES</div></div>';
+    const panels = portal.querySelector('.skill-tooltip-panels');
+    Object.defineProperty(panels, 'scrollWidth', { configurable: true, value: 500 });
+    applyTooltipPosition(portal, 40, 40);
+    expect(panels.classList.contains('is-stacked')).toBe(true);
   });
 
   it('force hide clears the live portal', () => {
