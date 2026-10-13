@@ -131,7 +131,7 @@ export function panelKeyToSlot(panelKey, weaponSet = 0) {
  * Whether an equipment slot belongs to the currently selected weapon set
  * (or is a non-weapon slot that always applies).
  * @param {string} slot
- * @param {0|1} [weaponSet=0]
+ * @param {0|1} [weaponSet]
  * @returns {boolean}
  */
 export function isActiveWeaponSetSlot(slot, weaponSet = 0) {

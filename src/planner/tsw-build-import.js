@@ -466,14 +466,15 @@ function attachTswInstanceExtras(entry, row, def) {
  * }}
  */
 function snapshotWithRolls(row, defId, def, className) {
-  /** @type {{
+  /**
+   * @type {{
    *   defId: string,
    *   rolls?: Record<string, number>,
    *   icon?: string,
    *   extras?: string[],
    *   mysticOrbs?: Array<[number, string]>,
    *   ethereal?: boolean,
-   * }} */
+    }} */
   const entry = { defId };
   const rolls = rollsFromTswItem(row, def, className);
   if (rolls && Object.keys(rolls).length) entry.rolls = rolls;
@@ -556,13 +557,14 @@ export function mapTswItemsToSnapshot(rows, catalog, className = null) {
       }
       const templateId = String(defId).split(':').slice(0, 2).join(':');
       const rwDef = cat.byId[defId] || cat.byId[templateId] || null;
-      /** @type {{
+      /**
+       * @type {{
        *   defId: string,
        *   icon?: string,
        *   extras?: string[],
        *   mysticOrbs?: Array<[number, string]>,
        *   ethereal?: boolean,
-       * }} */
+        }} */
       const entry = { defId };
       const icon = row?.image != null ? String(row.image).trim() : '';
       if (icon) entry.icon = icon;

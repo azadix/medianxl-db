@@ -235,11 +235,12 @@ export function loadBuildData(build, buildIndex = null) {
         const applyItems = ({ toastGear = false } = {}) => {
             try {
                 itemsStore.syncViewerClassName(build.class);
-                /** @type {{
+                /**
+                 * @type {{
                  *   disabledCharms: Array<{ name: string, reqLevel: number }>,
                  *   disabledRelics: Array<{ name: string, reqLevel: number }>,
                  *   unmetGear: Array<{ name: string, requirementsLine: string }>,
-                 * } | null} */
+                  } | null} */
                 let unmetReqReport = null;
                 if (tswItems) {
                     const { snapshot, skipped } = mapTswItemsToSnapshot(tswItems, itemsStore, build.class);

@@ -734,7 +734,7 @@ function onNestedSkillOut(e) {
     const leavingEl = nestedSkillTarget;
     requestAnimationFrame(() => {
       if (nestedSkillTarget !== leavingEl) return;
-      let el = null;
+      let el;
       try {
         el = document.elementFromPoint(e.clientX, e.clientY);
       } catch {

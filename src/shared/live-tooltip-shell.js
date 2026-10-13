@@ -102,7 +102,6 @@ export function createLiveTooltipShell(options = {}) {
   let positionRafId = 0;
   let pendingClientX = 0;
   let pendingClientY = 0;
-  let attached = false;
   let hideGeneration = 0;
 
   function resolvePortal() {
@@ -157,13 +156,11 @@ export function createLiveTooltipShell(options = {}) {
         onHideLive?.();
       },
     });
-    attached = true;
     return true;
   }
 
   function detach() {
     hide(true);
-    attached = false;
   }
 
   /**

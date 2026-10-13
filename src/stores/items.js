@@ -1748,11 +1748,12 @@ export const useItemsStore = defineStore('items', {
      * }}
      */
     fromSnapshot(raw) {
-      /** @type {{
+      /**
+       * @type {{
        *   disabledCharms: Array<{ name: string, reqLevel: number }>,
        *   disabledRelics: Array<{ name: string, reqLevel: number }>,
        *   unmetGear: Array<{ name: string, requirementsLine: string }>,
-       * }} */
+        }} */
       const result = { disabledCharms: [], disabledRelics: [], unmetGear: [] };
 
       this.equipment = emptyEquipment();

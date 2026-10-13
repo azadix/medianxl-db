@@ -355,13 +355,13 @@ onUnmounted(() => {
               v-for="(cd, idx) in section.cards"
               :key="
                 'proc-' +
-                section.condition +
-                '-' +
-                idx +
-                '-' +
-                String(cd.skillId ?? '') +
-                '-' +
-                String(cd.procLevel ?? '')
+                  section.condition +
+                  '-' +
+                  idx +
+                  '-' +
+                  String(cd.skillId ?? '') +
+                  '-' +
+                  String(cd.procLevel ?? '')
               "
               :card-data="cd"
               :planner-revision="store.revision"
