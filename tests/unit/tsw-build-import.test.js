@@ -11,6 +11,7 @@ import {
   resolveTswItemDefId,
   resolveTswRunewordDefId,
   inferTswQuestsCompleted,
+  tswTierFromRow,
   TSW_SLOT_TO_EQUIPMENT,
 } from '@/planner/tsw-build-import.js';
 import { runewordEntryToItemDef } from '@/items/runeword-items.js';
@@ -29,6 +30,38 @@ const catalog = {
     { id: '@36', name: 'Light Gauntlets (Sacred)', rarity: 'normal', category: 'armor', slot: 'glov' },
     { id: 'cap-sacred', name: 'Cap (Sacred)', rarity: 'normal', category: 'armor', slot: 'head' },
     { id: 'u:lacuni-cowl:su', name: 'Lacuni Cowl', uniqueKind: 'su', rarity: 'unique' },
+    {
+      id: 'u:acidblood:tu:1',
+      name: 'Acidblood',
+      uniqueKind: 'tiered',
+      tier: 1,
+      rarity: 'unique',
+      baseType: 'Leather Armor (1)',
+    },
+    {
+      id: 'u:acidblood:tu:2',
+      name: 'Acidblood',
+      uniqueKind: 'tiered',
+      tier: 2,
+      rarity: 'unique',
+      baseType: 'Leather Armor (2)',
+    },
+    {
+      id: 'u:acidblood:tu:3',
+      name: 'Acidblood',
+      uniqueKind: 'tiered',
+      tier: 3,
+      rarity: 'unique',
+      baseType: 'Leather Armor (3)',
+    },
+    {
+      id: 'u:acidblood:tu:4',
+      name: 'Acidblood',
+      uniqueKind: 'tiered',
+      tier: 4,
+      rarity: 'unique',
+      baseType: 'Leather Armor (4)',
+    },
     { id: 'a68', name: "Horazon's Focus", type: 'charm', category: 'charms', keepInInventory: true },
     {
       id: 'ebw-primordia',
@@ -59,7 +92,14 @@ const catalog = {
 function byIdCatalog() {
   /** @type {Record<string, object>} */
   const catalogById = {};
-  for (const def of catalog.catalog) catalogById[def.id] = def;
+  for (const def of catalog.catalog) {
+    catalogById[def.id] = def;
+    // Mirror store alias: bare `:tu` → T4
+    if (def.uniqueKind === 'tiered' && Number(def.tier) === 4 && typeof def.id === 'string') {
+      const alias = def.id.replace(/:4$/, '');
+      if (alias.endsWith(':tu') && catalogById[alias] == null) catalogById[alias] = def;
+    }
+  }
   return { catalog: catalog.catalog, catalogById };
 }
 
@@ -335,6 +375,57 @@ describe('tsw-build-import', () => {
     expect(TSW_SLOT_TO_EQUIPMENT.Hands).toBe('glov');
   });
 
+  it('resolves TU tiers from TSW type instead of always aliasing to T4', () => {
+    const cat = catalogIndexForTests();
+    expect(tswTierFromRow({ type: 'Leather Armor (2)' })).toBe(2);
+    expect(tswTierFromRow({ type: 'Leather Armor (3) [eth]' })).toBe(3);
+    expect(tswTierFromRow({ type: 'Cap (Sacred)' })).toBe(null);
+
+    expect(
+      resolveTswItemDefId(
+        { display_name: 'Acidblood', display_quality: 'TU', type: 'Leather Armor (1)' },
+        cat
+      )
+    ).toBe('u:acidblood:tu:1');
+    expect(
+      resolveTswItemDefId(
+        { display_name: 'Acidblood', display_quality: 'TU', type: 'Leather Armor (2)' },
+        cat
+      )
+    ).toBe('u:acidblood:tu:2');
+    expect(
+      resolveTswItemDefId(
+        { display_name: 'Acidblood', display_quality: 'TU', type: 'Leather Armor (3) [eth]' },
+        cat
+      )
+    ).toBe('u:acidblood:tu:3');
+    expect(
+      resolveTswItemDefId(
+        { display_name: 'Acidblood', display_quality: 'TU', type: 'Leather Armor (4)' },
+        cat
+      )
+    ).toBe('u:acidblood:tu:4');
+    // No tier marker → legacy bare `:tu` alias (T4)
+    expect(
+      resolveTswItemDefId({ display_name: 'Acidblood', display_quality: 'TU' }, cat)
+    ).toBe('u:acidblood:tu');
+
+    const { snapshot, skipped } = mapTswItemsToSnapshot(
+      [
+        {
+          display_name: 'Acidblood',
+          display_quality: 'TU',
+          type: 'Leather Armor (2)',
+          location: 'Gear',
+          slot: 'Torso',
+        },
+      ],
+      byIdCatalog()
+    );
+    expect(skipped).toEqual([]);
+    expect(snapshot.equipment.tors?.defId).toBe('u:acidblood:tu:2');
+  });
+
   it('maps Miss_Peeled TSW items onto catalog uniques, charms, and relics', () => {
     const dir = resolve(ROOT, 'public/items/2_14');
     const bases = [
@@ -526,8 +617,6 @@ describe('tsw-build-import', () => {
 });
 
 function catalogIndexForTests() {
-  /** @type {Record<string, object>} */
-  const byId = {};
-  for (const def of catalog.catalog) byId[def.id] = def;
-  return { list: catalog.catalog, byId };
+  const { catalog: list, catalogById } = byIdCatalog();
+  return { list, byId: catalogById };
 }

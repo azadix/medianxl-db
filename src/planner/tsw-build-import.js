@@ -237,6 +237,20 @@ function relicSkillHint(row) {
 }
 
 /**
+ * Numeric TU tier from a TSW `type` label (`Leather Armor (2)`, optional `[eth]`).
+ * Bare `u:name:tu` catalog aliases point at T4 — callers must prefer `:tu:N`.
+ * @param {object} row
+ * @returns {number|null}
+ */
+export function tswTierFromRow(row) {
+  const type = String(row?.type || '')
+    .replace(/\s*\[eth\]\s*$/i, '')
+    .trim();
+  const m = /\(([1-4])\)\s*$/.exec(type);
+  return m ? Number(m[1]) : null;
+}
+
+/**
  * @param {object} row
  * @returns {string[]}
  */
@@ -257,7 +271,14 @@ function uniqueIdCandidates(row) {
     push(`s:${slug}:sacred-set`);
     push(`s:${slug}:set`);
   }
-  if (badge) push(`u:${slug}:${badge}`);
+  if (badge === 'tu') {
+    const tier = tswTierFromRow(row);
+    if (tier != null) push(`u:${slug}:tu:${tier}`);
+    // Only fall back to bare `:tu` (T4 alias) when the export has no tier marker.
+    else push(`u:${slug}:tu`);
+  } else if (badge) {
+    push(`u:${slug}:${badge}`);
+  }
   if (badge === 'ssu' || badge === 'sssu') push(`u:${slug}:su`);
   if (badge === 'unique') {
     push(`u:${slug}:su`);
@@ -382,6 +403,15 @@ export function resolveTswItemDefId(row, cat) {
             : badge === 'TU'
               ? 'tiered'
               : null;
+    if (kind === 'tiered') {
+      const tier = tswTierFromRow(row);
+      if (tier != null) {
+        const byTier = hits.find(
+          (d) => d.uniqueKind === 'tiered' && Number(d.tier) === tier
+        );
+        if (byTier?.id) return String(byTier.id);
+      }
+    }
     const byKind = kind ? hits.find((d) => d.uniqueKind === kind) : null;
     if (byKind?.id) return String(byKind.id);
     if (row?.is_charm) {
