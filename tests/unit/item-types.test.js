@@ -9,7 +9,16 @@ import {
   isTwoHandedWeapon,
   isUniquePickerItem,
   matchesItemPickerSearch,
+  panelKeyToSlot,
 } from '@/items/item-types.js';
+
+describe('panelKeyToSlot', () => {
+  it('mirrors ring slots like the in-game paperdoll', () => {
+    // Character faces you: right-hand ring on screen-left, left-hand on screen-right.
+    expect(panelKeyToSlot('Ring Left')).toBe('rrin');
+    expect(panelKeyToSlot('Ring Right')).toBe('lrin');
+  });
+});
 
 describe('isActiveWeaponSetSlot', () => {
   it('keeps body slots on both weapon sets', () => {

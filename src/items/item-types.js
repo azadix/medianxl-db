@@ -117,8 +117,10 @@ export function panelKeyToSlot(panelKey, weaponSet = 0) {
     Belt: 'belt',
     Gloves: 'glov',
     Boots: 'feet',
-    'Ring Left': 'lrin',
-    'Ring Right': 'rrin',
+    // Screen-left/right match the in-game paperdoll (character faces you):
+    // right-hand ring (rrin) is on the left, left-hand ring (lrin) on the right.
+    'Ring Left': 'rrin',
+    'Ring Right': 'lrin',
     Weapon: weaponSet === 1 ? 'rarm2' : 'rarm',
     'Off-hand': weaponSet === 1 ? 'larm2' : 'larm',
   };

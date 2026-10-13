@@ -104,9 +104,9 @@ function switchItemsTab(tabId) {
               <EquipmentSlot label="Head" slot-key="head" class="planner-equipment-head" />
               <EquipmentSlot label="Amulet" slot-key="neck" class="planner-equipment-amulet" />
               <EquipmentSlot label="Torso" slot-key="tors" class="planner-equipment-torso" />
-              <EquipmentSlot label="Ring Left" slot-key="lrin" class="planner-equipment-ring-l" />
+              <EquipmentSlot label="Ring Left" slot-key="rrin" class="planner-equipment-ring-l" />
               <EquipmentSlot label="Belt" slot-key="belt" class="planner-equipment-belt" />
-              <EquipmentSlot label="Ring Right" slot-key="rrin" class="planner-equipment-ring-r" />
+              <EquipmentSlot label="Ring Right" slot-key="lrin" class="planner-equipment-ring-r" />
             </div>
 
             <div class="planner-equipment-weapon-col planner-equipment-weapon-col--right">

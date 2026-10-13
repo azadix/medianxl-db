@@ -37,6 +37,8 @@ export const TSW_SLOT_TO_EQUIPMENT = Object.freeze({
   Hands: 'glov',
   Feet: 'feet',
   Waist: 'belt',
+  // Bodylocs match D2/TSW: RightFinger=rrin, LeftFinger=lrin.
+  // Paperdoll is mirrored (rrin draws on screen-left); see panelKeyToSlot.
   RightFinger: 'rrin',
   LeftFinger: 'lrin',
   RightHandMain: 'rarm',
