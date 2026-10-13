@@ -139,4 +139,28 @@ describe('computeSkillBonusSourceAmounts', () => {
       appliedRelicBonus: 10,
     });
   });
+
+  it('hard-caps tree skills at 150 like oSkills', () => {
+    const amounts = computeSkillBonusSourceAmounts({
+      baseLevel: 140,
+      allSkillsBonus: 5,
+      classSkillsBonus: 4,
+      itemSoft: 3,
+      relicSoft: 2,
+      isOSkill: false,
+    });
+    expect(amounts).toEqual({
+      effectiveLevel: 150,
+      appliedAllSkillsBonus: 5,
+      appliedClassSkillsBonus: 4,
+      appliedItemBonus: 1,
+      appliedRelicBonus: 0,
+    });
+    expect(
+      amounts.appliedAllSkillsBonus +
+        amounts.appliedClassSkillsBonus +
+        amounts.appliedItemBonus +
+        amounts.appliedRelicBonus
+    ).toBe(10);
+  });
 });

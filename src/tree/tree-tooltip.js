@@ -1102,8 +1102,7 @@ async function buildTooltipContent(
         }
     }
     
-    // Calculate lvl for each skill (soft bonuses only, not including base points).
-    // oSkills: all-skills + relic + item grants (capped so total <= 150). Tree skills: class + all + relic.
+    // Soft only (not base). Cap so blvl + soft <= 150 for tree and oSkill.
     for (const [skillName, points] of Object.entries(characterState.blvl)) {
         if (characterState.lvl[skillName] != null) continue;
         const skillIsOSkill =
@@ -1113,14 +1112,18 @@ async function buildTooltipContent(
             ? Character.clampOSkillPoints(oSkillRowsByName.get(skillName)?.itemPoints ?? 0)
             : 0;
         const pointsOnly = Math.max(0, Math.floor(Number(points) || 0));
+        const softRoom = Math.max(0, 150 - pointsOnly);
 
         if (skillIsOSkill) {
             characterState.lvl[skillName] = Math.min(
                 allSkillsBonus + skillRelic + itemSlvl,
-                Math.max(0, 150 - pointsOnly)
+                softRoom
             );
         } else {
-            characterState.lvl[skillName] = allSkillsBonus + classSkillsBonus + skillRelic;
+            characterState.lvl[skillName] = Math.min(
+                allSkillsBonus + classSkillsBonus + skillRelic,
+                softRoom
+            );
         }
     }
 

@@ -270,7 +270,10 @@ export async function recomputePlannerStatsFromSkillAllocations(character, ctx) 
     const relicBonus = getRelicSkillBonusForSkill(softCtx);
     const gearSoft = getEquippedGearSkillBonusForSkill(softCtx);
     const itemSlvl = Character.clampOSkillPoints(character.getOSkillItemPoints(skillKey));
-    return slvlAll + (getsClassBonus ? slvlClass : 0) + relicBonus + gearSoft + itemSlvl;
+    const soft =
+      slvlAll + (getsClassBonus ? slvlClass : 0) + relicBonus + gearSoft + itemSlvl;
+    const blvl = Math.max(0, Math.floor(Number(mergedBlvl?.[skillKey]) || 0));
+    return Math.min(soft, Math.max(0, Character.OSKILL_MAX_POINTS - blvl));
   }
 
   /** @type {Record<string, number>} */

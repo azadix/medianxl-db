@@ -3,7 +3,8 @@
  * @module tree/skill-bonus-sources
  */
 
-const OSKILL_LEVEL_CAP = 150;
+/** Hard cap on total skill level (blvl + soft), tree and oSkill. */
+const SKILL_LEVEL_CAP = 150;
 
 /**
  * @typedef {{
@@ -59,9 +60,7 @@ export function computeSkillBonusSourceAmounts(input = {}) {
   const softTotal = isOSkill
     ? allSkillsBonus + relicSoft + itemPoints
     : allSkillsBonus + classSkillsBonus + itemSoft + relicSoft;
-  const effectiveLevel = isOSkill
-    ? Math.min(OSKILL_LEVEL_CAP, baseLevel + softTotal)
-    : baseLevel + softTotal;
+  const effectiveLevel = Math.min(SKILL_LEVEL_CAP, baseLevel + softTotal);
 
   let remainingSoft = Math.max(0, effectiveLevel - baseLevel);
   const appliedAllSkillsBonus = Math.min(allSkillsBonus, remainingSoft);
