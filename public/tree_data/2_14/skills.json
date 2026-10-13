@@ -6137,7 +6137,9 @@
     "description": [
       "Miasma temporarily increases your Poison Spell Damage and Duration"
     ],
-    "restriction": [],
+    "restriction": [
+      "Requires 5 points to unlock effect"
+    ],
     "skillEffect": [
       "[[miasma]]",
       "{{poison_spell_damage_for_seconds}}",
@@ -12274,7 +12276,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(250)"
+        "value0": "frames(250*(1+[[continuity]].{{skill_duration}}/100))"
       }
     ],
     "description": [
@@ -23470,7 +23472,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(750)"
+        "value0": "frames(750*(1+[[continuity]].{{skill_duration}}/100))"
       },
       {
         "statKey": "minions_inherit_proc_chance",
