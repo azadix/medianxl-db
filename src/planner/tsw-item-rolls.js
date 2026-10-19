@@ -30,6 +30,7 @@ import {
   getOverlayOptionalModifiers,
   isOptionalModifier,
   isOverlayItem,
+  isSetItem,
   overlayAffixRollKey,
 } from '@/items/item-overlays.js';
 import { decodeModifierLine, encodeModifierLine } from '@/items/item-modifier-line.js';
@@ -43,6 +44,9 @@ import {
 /** Boilerplate / flags that are not planner modifier lines. */
 const TSW_EXTRA_SKIP_RE =
   /^(Defense:|One-Hand Damage|Two-Hand Damage|Throw Damage|Required |Durability|Item Level|Quality Level|Prefixes:|Suffixes:|Socketed \(|Can be Inserted|Ethereal|Corrupted|Already Upgraded|Quantity|Chance to Block|Innate \w+ Damage:|\(.*\)$)/i;
+
+/** In-game set-tooltip headers that TSW appends after item mods. */
+const SET_BONUS_HEADER_RE = /^Set Bonus with (complete set|\d+ or more set items):?$/i;
 
 /** TSW dumps socketed runes as a no-space concat (e.g. FelFelFelFalFal). */
 const TSW_SOCKETED_RUNE_DUMP_RE = /^[A-Z][a-z]*(?:[A-Z][a-z]*)+$/;
@@ -490,12 +494,109 @@ function lineMatchesCatalogTemplate(template, actual) {
 }
 
 /**
+ * Flavor / section headers in set-bonus text (e.g. "Medals of Honor"), not affixes.
+ * @param {string} text
+ * @returns {boolean}
+ */
+function looksLikeSetFlavorHeader(text) {
+  const t = String(text || '').trim();
+  if (!t) return false;
+  if (/[0-9%]/.test(t) || /^[+-]/.test(t)) return false;
+  return /^[A-Za-z]/.test(t) && t.split(/\s+/).length >= 2;
+}
+
+/**
+ * @typedef {{
+ *   dumpLines: Set<string>,
+ *   structuralLines: Set<string>,
+ * }} SetDumpSkipContext
+ */
+
+/**
+ * Build skip context so TSW's trailing in-game set dump is not kept as extras.
+ * @param {object|null|undefined} def
+ * @param {{
+ *   setDef?: { bonuses?: Array<{ modifiers?: string[] }> }|null,
+ *   siblingNames?: string[]|null,
+ * }|null|undefined} [options]
+ * @returns {SetDumpSkipContext|null}
+ */
+export function buildSetDumpSkipContext(def, options = null) {
+  if (!isSetItem(def)) return null;
+  /** @type {Set<string>} */
+  const dumpLines = new Set();
+  /** @type {Set<string>} */
+  const structuralLines = new Set();
+  /**
+   * @param {string|null|undefined} raw
+   * @param {boolean} [structural]
+   */
+  const add = (raw, structural = false) => {
+    const lower = plain(raw).toLowerCase();
+    if (!lower) return;
+    dumpLines.add(lower);
+    if (structural) structuralLines.add(lower);
+  };
+
+  const setName = def?.setName != null ? String(def.setName).trim() : '';
+  if (setName) add(setName, true);
+
+  const ownName = def?.name != null ? String(def.name).trim().toLowerCase() : '';
+  for (const sibling of Array.isArray(options?.siblingNames) ? options.siblingNames : []) {
+    const name = String(sibling || '').trim();
+    if (!name || name.toLowerCase() === ownName) continue;
+    add(name, true);
+  }
+
+  const bonuses = Array.isArray(options?.setDef?.bonuses) ? options.setDef.bonuses : [];
+  for (const bonus of bonuses) {
+    for (const mod of Array.isArray(bonus?.modifiers) ? bonus.modifiers : []) {
+      const text = plain(mod);
+      if (!text) continue;
+      add(text, looksLikeSetFlavorHeader(text));
+    }
+  }
+
+  if (!dumpLines.size && !structuralLines.size) return null;
+  return { dumpLines, structuralLines };
+}
+
+/**
+ * Drop a trailing run of set-dump lines when a structural marker is present.
+ * Keeps MO/jewel leftovers that merely share a set-bonus affix string.
+ * @param {string[]} extras
+ * @param {SetDumpSkipContext|null|undefined} ctx
+ * @returns {string[]}
+ */
+export function stripTrailingSetDumpExtras(extras, ctx) {
+  if (!ctx || !Array.isArray(extras) || !extras.length) return extras || [];
+  let end = extras.length;
+  let sawStructural = false;
+  while (end > 0) {
+    const text = plain(extras[end - 1]);
+    if (!text) {
+      end -= 1;
+      continue;
+    }
+    const lower = text.toLowerCase();
+    const isHeader = SET_BONUS_HEADER_RE.test(text);
+    const isDump = isHeader || ctx.dumpLines.has(lower);
+    if (!isDump) break;
+    if (isHeader || ctx.structuralLines.has(lower)) sawStructural = true;
+    end -= 1;
+  }
+  if (!sawStructural || end === extras.length) return extras;
+  return extras.slice(0, end);
+}
+
+/**
  * Non-boilerplate TSW description lines not claimed by catalog affixes (MOs, jewels, etc.).
  * @param {object|null|undefined} row
  * @param {object|null|undefined} def
+ * @param {SetDumpSkipContext|null|undefined} [setDumpCtx]
  * @returns {string[]}
  */
-export function extrasFromTswItem(row, def) {
+export function extrasFromTswItem(row, def, setDumpCtx = null) {
   if (!row || typeof row !== 'object') return [];
   const name = tswRowName(row);
   const type = row?.type != null ? String(row.type).trim() : '';
@@ -543,7 +644,7 @@ export function extrasFromTswItem(row, def) {
     if (templates.some((tmpl) => lineMatchesCatalogTemplate(tmpl, text))) continue;
     out.push(encodeModifierLine(text, line.color) || text);
   }
-  return out;
+  return stripTrailingSetDumpExtras(out, setDumpCtx);
 }
 
 /**
@@ -568,12 +669,13 @@ export function parseTswMysticOrbs(raw) {
  * Snapshot fields for catalog / runeword TSW gear beyond defId + rolls.
  * @param {object|null|undefined} row
  * @param {object|null|undefined} def
+ * @param {SetDumpSkipContext|null|undefined} [setDumpCtx]
  * @returns {{ extras?: string[], mysticOrbs?: Array<[number, string]>, ethereal?: boolean }}
  */
-export function tswInstanceExtras(row, def) {
+export function tswInstanceExtras(row, def, setDumpCtx = null) {
   /** @type {{ extras?: string[], mysticOrbs?: Array<[number, string]>, ethereal?: boolean }} */
   const out = {};
-  const extras = extrasFromTswItem(row, def);
+  const extras = extrasFromTswItem(row, def, setDumpCtx);
   if (extras.length) out.extras = extras;
   const mysticOrbs = parseTswMysticOrbs(row?.mystic_orbs);
   if (mysticOrbs.length) out.mysticOrbs = mysticOrbs;

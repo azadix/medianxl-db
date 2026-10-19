@@ -12,11 +12,13 @@ import {
 import { isCharmItem, isDimensionalKeyCharm } from '@/items/charm-items.js';
 import { isRelicItem, MAX_RELICS } from '@/items/relic-items.js';
 import {
+  buildSetDumpSkipContext,
   parseTswMysticOrbs,
   rollsFromTswItem,
   tswInstanceExtras,
 } from '@/planner/tsw-item-rolls.js';
 import { EQUIPMENT_SLOTS } from '@/items/item-types.js';
+import { isSetItem } from '@/items/item-overlays.js';
 import { slugify } from '@/items/unique-stats-catalog.js';
 import {
   resolveCustomBaseDefId,
@@ -171,11 +173,21 @@ function normName(text) {
 
 /**
  * @param {unknown} catalog
- * @returns {{ list: object[], byId: Record<string, object> }}
+ * @returns {{
+ *   list: object[],
+ *   byId: Record<string, object>,
+ *   sets: object[],
+ *   setsById: Record<string, object>,
+ * }}
  */
 function catalogIndex(catalog) {
-  if (!catalog || typeof catalog !== 'object') return { list: [], byId: {} };
-  const rec = /** @type {{ catalog?: object[], catalogById?: Record<string, object> }} */ (catalog);
+  if (!catalog || typeof catalog !== 'object') {
+    return { list: [], byId: {}, sets: [], setsById: {} };
+  }
+  const rec =
+    /** @type {{ catalog?: object[], catalogById?: Record<string, object>, sets?: object[], setsById?: Record<string, object> }} */ (
+      catalog
+    );
   /** @type {object[]} */
   const list = Array.isArray(rec.catalog)
     ? rec.catalog
@@ -194,7 +206,40 @@ function catalogIndex(catalog) {
       byId[id] = def;
     }
   }
-  return { list, byId };
+  /** @type {object[]} */
+  const sets = Array.isArray(rec.sets) ? rec.sets : [];
+  /** @type {Record<string, object>} */
+  const setsById = {};
+  if (rec.setsById && typeof rec.setsById === 'object' && !Array.isArray(rec.setsById)) {
+    for (const [id, setDef] of Object.entries(rec.setsById)) {
+      if (!id || !setDef) continue;
+      setsById[id] = setDef;
+    }
+  }
+  for (const setDef of sets) {
+    if (setDef?.id == null || !String(setDef.id)) continue;
+    const id = String(setDef.id);
+    if (setsById[id] == null) setsById[id] = setDef;
+  }
+  return { list, byId, sets, setsById };
+}
+
+/**
+ * @param {object|null|undefined} def
+ * @param {{ list: object[], setsById: Record<string, object> }} cat
+ * @returns {ReturnType<typeof buildSetDumpSkipContext>}
+ */
+function setDumpContextForDef(def, cat) {
+  if (!isSetItem(def) || !def?.setId) return null;
+  const setId = String(def.setId);
+  const setDef = cat.setsById[setId] || null;
+  /** @type {string[]} */
+  const siblingNames = [];
+  for (const piece of cat.list) {
+    if (!piece || String(piece.setId || '') !== setId) continue;
+    if (piece.name != null) siblingNames.push(String(piece.name));
+  }
+  return buildSetDumpSkipContext(def, { setDef, siblingNames });
 }
 
 /**
@@ -458,10 +503,11 @@ function isCatalogBacked(row, def) {
  * @param {object} entry
  * @param {object} row
  * @param {object|null|undefined} def
+ * @param {ReturnType<typeof buildSetDumpSkipContext>} [setDumpCtx]
  * @returns {void}
  */
-function attachTswInstanceExtras(entry, row, def) {
-  const meta = tswInstanceExtras(row, def);
+function attachTswInstanceExtras(entry, row, def, setDumpCtx = null) {
+  const meta = tswInstanceExtras(row, def, setDumpCtx);
   if (meta.extras?.length) entry.extras = meta.extras;
   if (meta.mysticOrbs?.length) entry.mysticOrbs = meta.mysticOrbs;
   if (meta.ethereal) entry.ethereal = true;
@@ -472,6 +518,7 @@ function attachTswInstanceExtras(entry, row, def) {
  * @param {string} defId
  * @param {object|null} def
  * @param {string|null|undefined} className
+ * @param {ReturnType<typeof buildSetDumpSkipContext>} [setDumpCtx]
  * @returns {{
  *   defId: string,
  *   rolls?: Record<string, number>,
@@ -482,7 +529,7 @@ function attachTswInstanceExtras(entry, row, def) {
  *   name?: string,
  * }}
  */
-function snapshotWithRolls(row, defId, def, className) {
+function snapshotWithRolls(row, defId, def, className, setDumpCtx = null) {
   /**
    * @type {{
    *   defId: string,
@@ -498,7 +545,7 @@ function snapshotWithRolls(row, defId, def, className) {
   if (rolls && Object.keys(rolls).length) entry.rolls = rolls;
   const icon = row?.image != null ? String(row.image).trim() : '';
   if (icon) entry.icon = icon;
-  attachTswInstanceExtras(entry, row, def);
+  attachTswInstanceExtras(entry, row, def, setDumpCtx);
   if (isMindflayerMayhemRow(row)) {
     const name = tswItemDisplayName(row);
     if (name && name !== def?.name) entry.name = name;
@@ -613,7 +660,13 @@ export function mapTswItemsToSnapshot(rows, catalog, className = null) {
         skipped.push(skippedTswItem(row, 'uncatalogued'));
         continue;
       }
-      equipment[slotKey] = snapshotWithRolls(row, defId, def, className);
+      equipment[slotKey] = snapshotWithRolls(
+        row,
+        defId,
+        def,
+        className,
+        setDumpContextForDef(def, cat)
+      );
       continue;
     }
 

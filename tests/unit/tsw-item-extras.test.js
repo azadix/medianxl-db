@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  buildSetDumpSkipContext,
   extrasFromTswItem,
   matchAffixTemplate,
   parseTswMysticOrbs,
@@ -262,5 +263,138 @@ describe('tsw item extras', () => {
       ],
       extras: expect.arrayContaining(['+35 Required Level']),
     });
+  });
+
+  it('strips Trophy Hunter set dump from Conqueror extras but keeps MO leftovers', () => {
+    const conquerorDef = {
+      id: 's:the-conqueror:sacred-set',
+      name: 'The Conqueror',
+      rarity: 'set',
+      setId: 'set:trophy-hunter',
+      setName: 'Trophy Hunter',
+      baseName: 'Crown (Sacred)',
+      modifiers: [
+        '+1 to All Skills',
+        'Adds 35-40 Damage',
+        '-(11 to 15)% to Enemy Elemental Resistances',
+        '+(171 to 200)% Enhanced Defense',
+        '+3333 Defense',
+        'Magic Resist +(2 to 5)%',
+        '(21 to 25)% Gold Find',
+      ],
+    };
+    const setDumpCtx = buildSetDumpSkipContext(conquerorDef, {
+      siblingNames: ['The Conqueror', 'Idol of Fortune'],
+      setDef: {
+        id: 'set:trophy-hunter',
+        name: 'Trophy Hunter',
+        bonuses: [
+          {
+            required: 'complete',
+            modifiers: [
+              '{orange}Medals of Honor',
+              '(Based on Trophies)',
+              '{grey}+10 Life after each Kill',
+              '{grey}+1% Physical Resist',
+              '{grey}+5% Magic Find',
+              '{grey}+25 to Mana',
+              '{grey}+50 to Life',
+            ],
+          },
+        ],
+      },
+    });
+    const row = {
+      item: 'The Conqueror',
+      display_name: 'The Conqueror',
+      type: 'Crown (Sacred)',
+      display_quality: 'Set',
+      description_lines: [
+        [['The Conqueror', 2]],
+        [['Crown (Sacred)', 2]],
+        [['Defense: ', -1], ['7800', 3]],
+        [['Required Level: 150', -1]],
+        [['Required Strength: 1012', 1]],
+        [['+1 to All Skills', 3]],
+        [['Adds 35-40 Damage', 3]],
+        [['-15% to Enemy Elemental Resistances', 3]],
+        [['+193% Enhanced Defense', 3]],
+        [['+3333 Defense', 3]],
+        [['Magic Resist +5%', 3]],
+        [['23% Gold Find', 3]],
+        [['-25% Attack Speed', 3]],
+        [['Slow Target +5%', 3]],
+        [['+28% to Strength', 3]],
+        [['+26% to Strength', 3]],
+        [['+26% to Dexterity', 3]],
+        [['+20% to Energy', 3]],
+        [['Physical Resist +1%', 3]],
+        [['Requirements +50%', 3]],
+        [['+30 Required Level', 3]],
+        [['Socketed (4)', 3]],
+        [['Medals of Honor', 0]],
+        [['+10 Life after each Kill', 0]],
+        [['+1% Physical Resist', 0]],
+        [['+5% Magic Find', 0]],
+        [['+25 to Mana', 0]],
+        [['+50 to Life', 0]],
+        [['Trophy Hunter', 8]],
+        [['Idol of Fortune', 0]],
+      ],
+    };
+
+    const extras = extrasFromTswItem(row, conquerorDef, setDumpCtx);
+    expect(extras).toEqual(
+      expect.arrayContaining([
+        '-25% Attack Speed',
+        'Slow Target +5%',
+        '+28% to Strength',
+        '+26% to Strength',
+        '+26% to Dexterity',
+        '+20% to Energy',
+        'Physical Resist +1%',
+        'Requirements +50%',
+        '+30 Required Level',
+      ])
+    );
+    expect(extras).not.toContain('Medals of Honor');
+    expect(extras).not.toContain('+10 Life after each Kill');
+    expect(extras).not.toContain('+1% Physical Resist');
+    expect(extras).not.toContain('+5% Magic Find');
+    expect(extras).not.toContain('+25 to Mana');
+    expect(extras).not.toContain('+50 to Life');
+    expect(extras).not.toContain('Trophy Hunter');
+    expect(extras).not.toContain('Idol of Fortune');
+  });
+
+  it('keeps a lone set-bonus-looking jewel extra when no structural dump marker is present', () => {
+    const def = {
+      id: 's:emerald-earth:sacred-set',
+      name: 'Emerald Earth',
+      rarity: 'set',
+      setId: 'set:rainbow-warrior',
+      setName: 'Rainbow Warrior',
+      modifiers: ['+125% Enhanced Defense'],
+    };
+    const setDumpCtx = buildSetDumpSkipContext(def, {
+      siblingNames: ['Emerald Earth'],
+      setDef: {
+        bonuses: [{ required: 'complete', modifiers: ['+50 to Life'] }],
+      },
+    });
+    const extras = extrasFromTswItem(
+      {
+        display_name: 'Emerald Earth',
+        type: 'Bone Helm (Sacred)',
+        description_lines: [
+          [['Emerald Earth', 2]],
+          [['+125% Enhanced Defense', 3]],
+          [['+50 to Life', 3]],
+        ],
+      },
+      def,
+      setDumpCtx
+    );
+    expect(extras).toEqual(['+50 to Life']);
   });
 });
