@@ -723,10 +723,12 @@ function closestNestedSkill(target) {
  * @param {HTMLElement} skillEl
  * @returns {boolean}
  */
-const NESTED_SKILL_STATIC_HOST_SELECTOR = '.item-detail-panel, .item-picker-modal';
+const NESTED_SKILL_STATIC_HOST_SELECTOR =
+  '.item-detail-panel, .item-picker-modal, .home-skill-detail-host';
 
 /**
- * Nested skill links work from pinned/stuck tooltips and the item inspector / picker.
+ * Nested skill links work from pinned/stuck tooltips, item inspector / picker,
+ * and the skills-page detail host.
  * @param {HTMLElement} skillEl
  * @returns {boolean}
  */

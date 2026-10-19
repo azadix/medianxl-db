@@ -396,6 +396,25 @@ describe('tooltip pinning', () => {
     expect(shown).toEqual(['searing_glow']);
   });
 
+  it('nested skill hover works on the skills page detail host', async () => {
+    const { setNestedSkillTooltipHandlers } = await import('@/shared/tooltip-pinning.js');
+    /** @type {string[]} */
+    const shown = [];
+    setNestedSkillTooltipHandlers({
+      showSkill: (id) => {
+        shown.push(id);
+      },
+    });
+    const host = document.createElement('div');
+    host.className = 'home-skill-detail-host';
+    host.innerHTML =
+      '<span class="js-nested-tooltip-skill" data-tooltip-skill-id="blood_thorns">Blood Thorns</span>';
+    document.body.appendChild(host);
+    const skillEl = host.querySelector('[data-tooltip-skill-id="blood_thorns"]');
+    skillEl.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, clientX: 8, clientY: 8 }));
+    expect(shown).toEqual(['blood_thorns']);
+  });
+
   it('nested skill hover on a live unlocked tooltip does not show', async () => {
     const { setNestedSkillTooltipHandlers } = await import('@/shared/tooltip-pinning.js');
     /** @type {string[]} */
