@@ -246,8 +246,9 @@ function runPlannerSkillStatRecomputeImpl() {
           }
         }
         // Items first so skill scaling formulas see current relic/charm/gear flats.
+        // Skill allocation recompute is sync (in-memory scaling) so build load stays one turn.
         recomputePlannerStatsFromItems(getCharacterInstance());
-        await recomputePlannerStatsFromSkillAllocations(getCharacterInstance(), {
+        recomputePlannerStatsFromSkillAllocations(getCharacterInstance(), {
           effectiveLevel: getEffectivePlannerLevel(),
           treeSkillsCache: getTreeSkillsCache(),
           allSkillsBonus,

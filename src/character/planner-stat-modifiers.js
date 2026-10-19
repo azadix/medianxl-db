@@ -231,7 +231,7 @@ function formatModifierDisplayValue(value) {
  * @param {import('./Character.js').default} character
  * @param {PlannerSkillStatRecomputeContext} ctx
  */
-export async function recomputePlannerStatsFromSkillAllocations(character, ctx) {
+export function recomputePlannerStatsFromSkillAllocations(character, ctx) {
   _plannerStatSkillModifiersByKey = {};
   if (!character) return;
 
@@ -307,13 +307,14 @@ export async function recomputePlannerStatsFromSkillAllocations(character, ctx) 
    * Apply one catalog row's scalingConstants at a given blvlPoints.
    * Rows with `minCognition` are applied in a second pass so the gate uses cognition
    * from all other scaling rows (e.g. Cognition skill formula before the 150+ EMR line).
+   * Sync: Skill.getScalingValues is in-memory only (no microtask yields during build load).
    * @param {object} catRow
    * @param {string} internalKeyForLookup - key used for stored variant selection fallback
    * @param {number} blvlPoints
    * @param {object} effectiveCharacterState
    * @param {{ skipMinCognitionRows?: boolean, onlyMinCognitionRows?: boolean }} [rowPhase]
    */
-  async function applyScalingConstantsForCatalogRow(
+  function applyScalingConstantsForCatalogRow(
     catRow,
     internalKeyForLookup,
     blvlPoints,
@@ -404,7 +405,7 @@ export async function recomputePlannerStatsFromSkillAllocations(character, ctx) 
 
       let scalingValues;
       try {
-        scalingValues = await skill.getScalingValues(
+        scalingValues = skill.getScalingValues(
           blvlPoints,
           statKey,
           occurrenceIndex,
@@ -463,10 +464,10 @@ export async function recomputePlannerStatsFromSkillAllocations(character, ctx) 
       : blvlPoints;
 
     // Apply the allocated (parent) skill row itself (then cognition-gated rows).
-    await applyScalingConstantsForCatalogRow(catRow, internalKey, scalingLevel, characterState, {
+    applyScalingConstantsForCatalogRow(catRow, internalKey, scalingLevel, characterState, {
       skipMinCognitionRows: true
     });
-    await applyScalingConstantsForCatalogRow(catRow, internalKey, scalingLevel, characterState, {
+    applyScalingConstantsForCatalogRow(catRow, internalKey, scalingLevel, characterState, {
       onlyMinCognitionRows: true
     });
 
@@ -483,10 +484,10 @@ export async function recomputePlannerStatsFromSkillAllocations(character, ctx) 
         blvl: { ...(characterState.blvl || {}), [subInternalId]: blvlPoints },
         lvl: { ...(characterState.lvl || {}), [subInternalId]: softLevelForSkillKey(subInternalId) }
       };
-      await applyScalingConstantsForCatalogRow(sub, subInternalId, scalingLevel, patchedState, {
+      applyScalingConstantsForCatalogRow(sub, subInternalId, scalingLevel, patchedState, {
         skipMinCognitionRows: true
       });
-      await applyScalingConstantsForCatalogRow(sub, subInternalId, scalingLevel, patchedState, {
+      applyScalingConstantsForCatalogRow(sub, subInternalId, scalingLevel, patchedState, {
         onlyMinCognitionRows: true
       });
     }

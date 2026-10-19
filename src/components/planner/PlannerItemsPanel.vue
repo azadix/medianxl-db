@@ -136,8 +136,9 @@ function switchItemsTab(tabId) {
           </div>
         </section>
 
-        <PlannerEnableList v-show="activeItemsTab === 'charms'" kind="charms" />
-        <PlannerEnableList v-show="activeItemsTab === 'relics'" kind="relics" />
+        <!-- v-if: avoid mounting full charm/relic catalogs during build import (equipment tab). -->
+        <PlannerEnableList v-if="activeItemsTab === 'charms'" kind="charms" />
+        <PlannerEnableList v-if="activeItemsTab === 'relics'" kind="relics" />
       </div>
 
       <div class="planner-items-side">

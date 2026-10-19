@@ -176,13 +176,22 @@ function normName(text) {
  * @returns {{
  *   list: object[],
  *   byId: Record<string, object>,
+ *   byNormName: Map<string, object[]>,
+ *   setSiblingNamesById: Map<string, string[]>,
  *   sets: object[],
  *   setsById: Record<string, object>,
  * }}
  */
 function catalogIndex(catalog) {
   if (!catalog || typeof catalog !== 'object') {
-    return { list: [], byId: {}, sets: [], setsById: {} };
+    return {
+      list: [],
+      byId: {},
+      byNormName: new Map(),
+      setSiblingNamesById: new Map(),
+      sets: [],
+      setsById: {},
+    };
   }
   const rec =
     /** @type {{ catalog?: object[], catalogById?: Record<string, object>, sets?: object[], setsById?: Record<string, object> }} */ (
@@ -196,8 +205,24 @@ function catalogIndex(catalog) {
       : [];
   /** @type {Record<string, object>} */
   const byId = {};
+  /** @type {Map<string, object[]>} */
+  const byNormName = new Map();
+  /** @type {Map<string, string[]>} */
+  const setSiblingNamesById = new Map();
   for (const def of list) {
     if (def?.id != null && String(def.id)) byId[String(def.id)] = def;
+    const n = normName(def?.name);
+    if (n) {
+      const bucket = byNormName.get(n);
+      if (bucket) bucket.push(def);
+      else byNormName.set(n, [def]);
+    }
+    const setId = def?.setId != null ? String(def.setId) : '';
+    if (setId && def?.name != null) {
+      const siblings = setSiblingNamesById.get(setId);
+      if (siblings) siblings.push(String(def.name));
+      else setSiblingNamesById.set(setId, [String(def.name)]);
+    }
   }
   // Keep catalogById aliases (e.g. u:name:tu -> T4) that are not list ids.
   if (rec.catalogById && typeof rec.catalogById === 'object' && !Array.isArray(rec.catalogById)) {
@@ -221,24 +246,23 @@ function catalogIndex(catalog) {
     const id = String(setDef.id);
     if (setsById[id] == null) setsById[id] = setDef;
   }
-  return { list, byId, sets, setsById };
+  return { list, byId, byNormName, setSiblingNamesById, sets, setsById };
 }
 
 /**
  * @param {object|null|undefined} def
- * @param {{ list: object[], setsById: Record<string, object> }} cat
+ * @param {{
+ *   list: object[],
+ *   setsById: Record<string, object>,
+ *   setSiblingNamesById?: Map<string, string[]>,
+ * }} cat
  * @returns {ReturnType<typeof buildSetDumpSkipContext>}
  */
 function setDumpContextForDef(def, cat) {
   if (!isSetItem(def) || !def?.setId) return null;
   const setId = String(def.setId);
   const setDef = cat.setsById[setId] || null;
-  /** @type {string[]} */
-  const siblingNames = [];
-  for (const piece of cat.list) {
-    if (!piece || String(piece.setId || '') !== setId) continue;
-    if (piece.name != null) siblingNames.push(String(piece.name));
-  }
+  const siblingNames = cat.setSiblingNamesById?.get(setId) ?? [];
   return buildSetDumpSkipContext(def, { setDef, siblingNames });
 }
 
@@ -388,10 +412,34 @@ function defMatchesRow(def, row) {
 }
 
 /**
+ * Prefer name-indexed lookup; fall back to rare dimensional-key / relic suffix matches.
+ * @param {object} row
+ * @param {{ list: object[], byNormName?: Map<string, object[]> }} cat
+ * @returns {object[]}
+ */
+function defsMatchingRow(row, cat) {
+  const want = normName(tswItemDisplayName(row));
+  if (!want) return [];
+  /** @type {object[]} */
+  const exact = cat.byNormName?.get(want) ?? [];
+  if (exact.length) return exact.slice();
+  // Dimensional Key / relic catalog names can differ from the TSW short name.
+  /** @type {object[]} */
+  const hits = [];
+  for (const def of cat.list || []) {
+    if (!def) continue;
+    if (!isDimensionalKeyCharm(def) && !isRelicItem(def)) continue;
+    if (!defMatchesRow(def, row)) continue;
+    hits.push(def);
+  }
+  return hits;
+}
+
+/**
  * Runeword template + grey base → `rw:name:baseId` (merged at snapshot load).
  * Remnant / superior Full Plate Mail uses the same sacred base as other greys.
  * @param {object} row
- * @param {{ list: object[], byId: Record<string, object> }} cat
+ * @param {{ list: object[], byId: Record<string, object>, byNormName?: Map<string, object[]> }} cat
  * @returns {string|null}
  */
 export function resolveTswRunewordDefId(row, cat) {
@@ -402,7 +450,8 @@ export function resolveTswRunewordDefId(row, cat) {
   let templateId = resolveRunewordTemplateId(`rw:${slug}`);
   if (!cat.byId[templateId]) {
     const want = normName(name);
-    const hits = cat.list.filter((def) => isRunewordTemplate(def) && normName(def.name) === want);
+    const named = cat.byNormName?.get(want) ?? [];
+    const hits = named.filter((def) => isRunewordTemplate(def));
     if (hits.length !== 1 || hits[0]?.id == null) return null;
     templateId = resolveRunewordTemplateId(String(hits[0].id));
   }
@@ -415,7 +464,7 @@ export function resolveTswRunewordDefId(row, cat) {
 
 /**
  * @param {object} row
- * @param {{ list: object[], byId: Record<string, object> }} cat
+ * @param {{ list: object[], byId: Record<string, object>, byNormName?: Map<string, object[]> }} cat
  * @returns {string|null}
  */
 export function resolveTswItemDefId(row, cat) {
@@ -450,7 +499,7 @@ export function resolveTswItemDefId(row, cat) {
     if (cat.byId[id]) return id;
   }
 
-  const hits = cat.list.filter((def) => defMatchesRow(def, row));
+  const hits = defsMatchingRow(row, cat);
   if (hits.length === 1) return String(hits[0].id);
   if (hits.length > 1) {
     const badge = qualityBadge(row);

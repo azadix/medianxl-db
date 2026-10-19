@@ -150,8 +150,9 @@ export default class Skill {
 
     /**
      * Replace [[ref]].{{stat}} with numeric literals for formula evaluation.
+     * Sync: balance data is already in memory via the file skill store.
      */
-    static async _resolveCrossSkillStatPlaceholdersInFormula(formula, characterState, characterLevel, crossSkillDepth) {
+    static _resolveCrossSkillStatPlaceholdersInFormula(formula, characterState, characterLevel, crossSkillDepth) {
         if (!formula || typeof formula !== 'string') return formula;
         if (crossSkillDepth > MAX_CROSS_SKILL_DEPTH) {
             CROSS_SKILL_DOT_STAT_PATTERN.lastIndex = 0;
@@ -184,7 +185,7 @@ export default class Skill {
                 continue;
             }
             const other = new Skill({ id: internalName, name: resolved.displayName });
-            const scaling = await other.getScalingValues(
+            const scaling = other.getScalingValues(
                 refLvl,
                 statKey,
                 0,
@@ -247,7 +248,7 @@ export default class Skill {
             }
 
             const skill = new Skill({ id: internalName, name: displayName });
-            const scaling = await skill.getScalingValues(
+            const scaling = skill.getScalingValues(
                 refLvl,
                 statKey,
                 0,
@@ -263,11 +264,11 @@ export default class Skill {
     }
 
     /**
-     * Load balance JSON for this skill into the file store cache.
+     * Ensure balance for this skill is present in the file store cache (already sync in memory).
      */
-    async _ensureFileBalance() {
+    _ensureFileBalance() {
         const s = getFileSkillStore();
-        if (s) await s.loadSkillBalance(this.id);
+        if (s) s.getSkillBalanceSync(this.id);
     }
 
     async hasScalingData() {
@@ -275,7 +276,7 @@ export default class Skill {
         if (!getFileSkillStore()) return false;
 
         try {
-            await this._ensureFileBalance();
+            this._ensureFileBalance();
             const versionIds = getBalanceVersionIdsForFallback();
             if (versionIds.length === 0) return false;
 
@@ -296,7 +297,7 @@ export default class Skill {
         if (!getFileSkillStore()) return [];
 
         try {
-            await this._ensureFileBalance();
+            this._ensureFileBalance();
             const versionIds = getBalanceVersionIdsForFallback();
             if (versionIds.length === 0) {
                 return [];
@@ -363,9 +364,9 @@ export default class Skill {
      * @param {object} variables - Variables for formula evaluation
      * @param {number} crossSkillDepth - recursion guard for cross-skill stat tokens
      * @param {boolean} silentWarn - if true, omit console.warn on evaluation failure
-     * @returns {Promise<object>} Result with evaluated value and formula flag
+     * @returns {{ value: unknown, wasFormula: boolean }}
      */
-    async _evaluateValue(value, formulaEvaluator, variables, crossSkillDepth = 0, silentWarn = false) {
+    _evaluateValue(value, formulaEvaluator, variables, crossSkillDepth = 0, silentWarn = false) {
         // Convert value to string for processing
         let stringValue = value != null ? String(value).trim() : '';
         
@@ -389,7 +390,7 @@ export default class Skill {
         CROSS_SKILL_DOT_STAT_PATTERN.lastIndex = 0;
         if (getFileSkillStore() && variables.characterState && CROSS_SKILL_DOT_STAT_PATTERN.test(stringValue)) {
             CROSS_SKILL_DOT_STAT_PATTERN.lastIndex = 0;
-            stringValue = await Skill._resolveCrossSkillStatPlaceholdersInFormula(
+            stringValue = Skill._resolveCrossSkillStatPlaceholdersInFormula(
                 stringValue,
                 variables.characterState,
                 variables.ulvl ?? 1,
@@ -426,7 +427,7 @@ export default class Skill {
      * @param {object} formulaEvaluator - Formula evaluator instance
      * @param {object} variables - Variables for formula evaluation
      */
-    async _processValuesForFormulas(result, formulaEvaluator, variables, showFormulas = false, crossSkillDepth = 0) {
+    _processValuesForFormulas(result, formulaEvaluator, variables, showFormulas = false, crossSkillDepth = 0) {
         if (!variables || !result) return;
         
         for (const valueKey of ['value0', 'value1', 'value2', 'value3']) {
@@ -446,7 +447,7 @@ export default class Skill {
                 result[`${valueKey}_original`] = stringValue;
             }
             
-            const { value, wasFormula } = await this._evaluateValue(
+            const { value, wasFormula } = this._evaluateValue(
                 stringValue,
                 formulaEvaluator,
                 variables,
@@ -476,8 +477,8 @@ export default class Skill {
      * @param {number} occurrenceIndex - Occurrence index for duplicate stats
      * @returns {object | null} Scaling values object or null if not found
      */
-    async _getScalingRow(level, statKey, occurrenceIndex, variantKey = null) {
-        await this._ensureFileBalance();
+    _getScalingRow(level, statKey, occurrenceIndex, variantKey = null) {
+        this._ensureFileBalance();
         const versionIds = getBalanceVersionIdsForFallback();
         if (versionIds.length === 0) {
             console.warn(`_getScalingRow: No balance version IDs for skill ${this.id}, level ${level}, stat ${statKey}`);
@@ -502,8 +503,8 @@ export default class Skill {
      * @param {number} occurrenceIndex - Occurrence index for duplicate stats
      * @returns {object | null} Constant values object or null if not found
      */
-    async _getConstantsRow(statKey, occurrenceIndex, variantKey = null) {
-        await this._ensureFileBalance();
+    _getConstantsRow(statKey, occurrenceIndex, variantKey = null) {
+        this._ensureFileBalance();
         const versionIds = getBalanceVersionIdsForFallback();
         if (versionIds.length === 0) {
             console.warn(`_getConstantsRow: No balance version IDs for skill ${this.id}`);
@@ -521,9 +522,9 @@ export default class Skill {
      * @param {object} constantValues - Constant values from skill data
      * @param {object} formulaEvaluator - Formula evaluator instance
      * @param {object} variables - Variables for formula evaluation
-     * @returns {Promise<object>} Merged result object
+     * @returns {object} Merged result object
      */
-    async _mergeConstants(result, constantValues, formulaEvaluator, variables, showFormulas = false, crossSkillDepth = 0) {
+    _mergeConstants(result, constantValues, formulaEvaluator, variables, showFormulas = false, crossSkillDepth = 0) {
         if (!constantValues) return result;
         
         if (!result) {
@@ -561,7 +562,7 @@ export default class Skill {
             // If constant flag is set, process this value
             if (isConstantFlag) {
                 if (stringValue) {
-                    const { value, wasFormula } = await this._evaluateValue(
+                    const { value, wasFormula } = this._evaluateValue(
                         stringValue,
                         formulaEvaluator,
                         variables,
@@ -603,7 +604,7 @@ export default class Skill {
                         !looksLikePlainTextScalingConstant(stringValue) &&
                         /[a-zA-Z_]+|\+|-|\*|\//.test(stringValue);
                     if (looksLikeFormula && variables) {
-                        const { value, wasFormula } = await this._evaluateValue(
+                        const { value, wasFormula } = this._evaluateValue(
                             stringValue,
                             formulaEvaluator,
                             variables,
@@ -644,13 +645,15 @@ export default class Skill {
     }
 
     /**
-     * Get scaling values for a specific stat at a given level
+     * Get scaling values for a specific stat at a given level.
+     * Sync: balance rows and formula evaluation are in-memory only.
+     * Callers may still `await` this; a non-Promise return works with await.
      * @param {number} level - Skill level
      * @param {string} statKey - Stat key to get values for
      * @param {number} occurrenceIndex - Occurrence index for duplicate stats (default: 0)
      * @returns {object | null} Scaling values object or null if not found
      */
-    async getScalingValues(
+    getScalingValues(
         level,
         statKey,
         occurrenceIndex = 0,
@@ -672,15 +675,15 @@ export default class Skill {
             const variables = baseVariables;
             
             // Get level-specific values
-            let result = await this._getScalingRow(level, statKey, occurrenceIndex, variantKey);
+            let result = this._getScalingRow(level, statKey, occurrenceIndex, variantKey);
 
             // Get and merge constant values (constants might have formulas too).
             // minCharacterLevel on a row is enforced only in planner stat aggregation
             // (recomputePlannerStatsFromSkillAllocations), not here, so tooltips and formulas always resolve.
-            const constantValues = await this._getConstantsRow(statKey, occurrenceIndex, variantKey);
+            const constantValues = this._getConstantsRow(statKey, occurrenceIndex, variantKey);
 
             if (constantValues) {
-                result = await this._mergeConstants(
+                result = this._mergeConstants(
                     result,
                     constantValues,
                     formulaEvaluator,
@@ -693,7 +696,7 @@ export default class Skill {
             // Evaluate formulas in ALL values (scaling + constants) if character state available
             // Do this AFTER merging constants so we evaluate all formulas, including those in constants
             if (result && variables) {
-                await this._processValuesForFormulas(
+                this._processValuesForFormulas(
                     result,
                     formulaEvaluator,
                     variables,

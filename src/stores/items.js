@@ -249,6 +249,29 @@ function applyInstanceMeta(inst, meta) {
   else delete inst.name;
 }
 
+/**
+ * Stable id → def map. Rebuilt when catalog / runtime overlays change (not on every getter read).
+ * @param {ItemDef[]} catalog
+ * @param {ItemDef[]} runtimeOverlayDefs
+ * @returns {Record<string, ItemDef>}
+ */
+function buildCatalogByIdMap(catalog, runtimeOverlayDefs) {
+  /** @type {Record<string, ItemDef>} */
+  const map = {};
+  for (const d of catalog || []) {
+    if (!d?.id) continue;
+    map[d.id] = d;
+    if (d.uniqueKind === 'tiered' && Number(d.tier) === 4 && typeof d.id === 'string') {
+      const alias = d.id.replace(/:4$/, '');
+      if (alias.endsWith(':tu') && map[alias] == null) map[alias] = d;
+    }
+  }
+  for (const d of runtimeOverlayDefs || []) {
+    if (d?.id) map[d.id] = d;
+  }
+  return map;
+}
+
 function snapshotInstanceEntry(inst) {
   const defId = inst?.defId;
   if (!defId) return null;
@@ -301,6 +324,11 @@ export const useItemsStore = defineStore('items', {
      * @type {ItemDef[]}
      */
     runtimeOverlayDefs: [],
+    /**
+     * Persisted catalog id lookup (rebuilt on catalog / overlay changes).
+     * @type {Record<string, ItemDef>}
+     */
+    catalogByIdMap: {},
     /** @type {Record<number, ItemInstance>} */
     instances: {},
     nextInstanceId: 1,
@@ -367,19 +395,16 @@ export const useItemsStore = defineStore('items', {
 
     /** @returns {Record<string, ItemDef>} */
     catalogById(state) {
-      /** @type {Record<string, ItemDef>} */
-      const map = {};
-      for (const d of state.catalog) {
-        map[d.id] = d;
-        if (d.uniqueKind === 'tiered' && Number(d.tier) === 4 && typeof d.id === 'string') {
-          const alias = d.id.replace(/:4$/, '');
-          if (alias.endsWith(':tu') && map[alias] == null) map[alias] = d;
-        }
+      // Production always keeps catalogByIdMap in sync. Fallback covers unit tests that
+      // assign `catalog` without rebuilding the map.
+      if (
+        Object.keys(state.catalogByIdMap).length === 0 &&
+        Array.isArray(state.catalog) &&
+        state.catalog.length > 0
+      ) {
+        return buildCatalogByIdMap(state.catalog, state.runtimeOverlayDefs);
       }
-      for (const d of state.runtimeOverlayDefs) {
-        if (d?.id) map[d.id] = d;
-      }
-      return map;
+      return state.catalogByIdMap;
     },
 
     /** @returns {Record<string, SetDef>} */
@@ -633,6 +658,7 @@ export const useItemsStore = defineStore('items', {
           this.catalog = [...baseItems, ...charms, ...other, ...overlays, ...relics, ...runewords];
           this.sets = sets;
           this.runtimeOverlayDefs = [];
+          this.catalogByIdMap = buildCatalogByIdMap(this.catalog, this.runtimeOverlayDefs);
           this.catalogVersionFolder = versionFolder;
           this.catalogLoaded = true;
         } catch (e) {
@@ -643,6 +669,7 @@ export const useItemsStore = defineStore('items', {
             this.catalog = [];
             this.sets = [];
             this.runtimeOverlayDefs = [];
+            this.catalogByIdMap = {};
             this.catalogVersionFolder = null;
             this.catalogLoaded = false;
           }
@@ -967,13 +994,19 @@ export const useItemsStore = defineStore('items', {
       if (!templateId || !baseId) return null;
       const resolvedTemplateId = resolveRunewordTemplateId(templateId);
       const id = `${resolvedTemplateId}:${baseId}`;
-      if (this.catalogById[id]) return id;
+      // Materialize map if tests assigned catalog without rebuilding.
+      if (Object.keys(this.catalogByIdMap).length === 0 && this.catalog.length > 0) {
+        this.catalogByIdMap = buildCatalogByIdMap(this.catalog, this.runtimeOverlayDefs);
+      }
+      if (this.catalogByIdMap[id]) return id;
       const merged = mergeRunewordWithBase(
-        this.catalogById[resolvedTemplateId],
-        this.catalogById[baseId]
+        this.catalogByIdMap[resolvedTemplateId],
+        this.catalogByIdMap[baseId]
       );
       if (!merged) return null;
       this.runtimeOverlayDefs = [...this.runtimeOverlayDefs, merged];
+      // Incremental map update — avoid rescanning the full unique catalog.
+      this.catalogByIdMap = { ...this.catalogByIdMap, [merged.id]: merged };
       return merged.id;
     },
 
@@ -1772,19 +1805,66 @@ export const useItemsStore = defineStore('items', {
         }} */
       const result = { disabledCharms: [], disabledRelics: [], unmetGear: [] };
 
-      this.equipment = emptyEquipment();
-      this.inventory = emptyInventory();
-      this.enabledCharms = {};
-      this.enabledRelics = {};
-      this.instances = {};
-      this.nextInstanceId = 1;
-      this.selectedSlot = null;
-      this.editingInstanceId = null;
-
-      if (!raw || typeof raw !== 'object') return result;
+      if (!raw || typeof raw !== 'object') {
+        this.equipment = emptyEquipment();
+        this.inventory = emptyInventory();
+        this.enabledCharms = {};
+        this.enabledRelics = {};
+        this.instances = {};
+        this.nextInstanceId = 1;
+        this.selectedSlot = null;
+        this.editingInstanceId = null;
+        return result;
+      }
+      // Materialize map if tests assigned catalog without rebuilding.
+      if (Object.keys(this.catalogByIdMap).length === 0 && this.catalog.length > 0) {
+        this.catalogByIdMap = buildCatalogByIdMap(this.catalog, this.runtimeOverlayDefs);
+      }
       const data = /** @type {Record<string, unknown>} */ (raw);
 
-      this.weaponSet = data.weaponSet === 1 ? 1 : 0;
+      /** @type {Record<string, number|null>} */
+      const nextEquipment = emptyEquipment();
+      /** @type {(number|null)[]} */
+      let nextInventory = emptyInventory();
+      /** @type {Record<string, number>} */
+      const nextEnabledCharms = {};
+      /** @type {Record<string, number>} */
+      const nextEnabledRelics = {};
+      /** @type {Record<number, ItemInstance>} */
+      const nextInstances = {};
+      let nextId = 1;
+      let hasDimensionalKey = false;
+
+      /**
+       * @param {string} defId
+       * @param {string|null} icon
+       * @param {Record<string, number>|null} rolls
+       * @param {CustomItemPayload|null} custom
+       * @param {{
+       *   extras?: string[]|null,
+       *   mysticOrbs?: Array<[number, string]>|null,
+       *   ethereal?: boolean,
+       *   name?: string|null,
+       * }|null} [meta]
+       * @returns {number}
+       */
+      const makeInstance = (defId, icon, rolls, custom, meta = null) => {
+        const id = nextId++;
+        const def = this.catalogByIdMap[defId];
+        /** @type {ItemInstance} */
+        const inst = {
+          defId,
+          icon: pickItemIcon(def, icon),
+        };
+        if (rolls && typeof rolls === 'object' && Object.keys(rolls).length) {
+          inst.rolls = { ...rolls };
+        }
+        const parsedCustom = parseCustomPayload(custom);
+        if (parsedCustom) inst.custom = parsedCustom;
+        applyInstanceMeta(inst, meta);
+        nextInstances[id] = inst;
+        return id;
+      };
 
       /**
        * @param {unknown} entry
@@ -1831,8 +1911,8 @@ export const useItemsStore = defineStore('items', {
           return null;
         }
         if (typeof defId !== 'string') return null;
-        defId = resolveCatalogDefId(defId, this.catalogById);
-        if (!this.catalogById[defId]) {
+        defId = resolveCatalogDefId(defId, this.catalogByIdMap);
+        if (!this.catalogByIdMap[defId]) {
           const parsed = parseRunewordInstanceId(defId);
           if (parsed) {
             const ensured = this.ensureRunewordDef(parsed.templateId, parsed.baseId);
@@ -1866,20 +1946,34 @@ export const useItemsStore = defineStore('items', {
        * @param {Record<string, number>|null} rolls
        * @param {'charms'|'relics'} kind
        */
+      const className = this.viewerClassName;
       const enableFromSnap = (defId, rolls, kind) => {
-        const def = this.catalogById[defId];
+        const def = this.catalogByIdMap[defId];
         if (!def) return;
         if (kind === 'charms') {
-          if (!isCharmItem(def) || this.enabledCharms[defId] != null) return;
-          // Use toggleCharm so Dimensional Key exclusivity applies. Do not
-          // select the last enabled charm into the inspector (build load).
-          this.toggleCharm(defId, true, rolls, { select: false });
+          if (!isCharmItem(def) || nextEnabledCharms[defId] != null) return;
+          // Match toggleCharm: class-restricted charms stay disabled for the wrong class.
+          if (!canEquipForClass(def, className)) return;
+          if (isDimensionalKeyCharm(def)) {
+            if (hasDimensionalKey) return;
+            hasDimensionalKey = true;
+          }
+          nextEnabledCharms[defId] = makeInstance(defId, null, rolls, null);
           return;
         }
-        if (!isRelicItem(def) || this.enabledRelics[defId] != null) return;
-        if (Object.keys(this.enabledRelics).length >= MAX_RELICS) return;
-        const id = this.createInstance(defId, null, rolls);
-        this.enabledRelics = { ...this.enabledRelics, [defId]: id };
+        if (!isRelicItem(def) || nextEnabledRelics[defId] != null) return;
+        if (!canEquipForClass(def, className)) return;
+        if (Object.keys(nextEnabledRelics).length >= MAX_RELICS) return;
+        nextEnabledRelics[defId] = makeInstance(defId, null, rolls, null);
+      };
+
+      /** @param {number} id */
+      const getSize = (id) => {
+        const inst = nextInstances[id];
+        if (!inst) return null;
+        const def = this.catalogByIdMap[inst.defId];
+        if (!def) return null;
+        return { invWidth: def.invWidth || 1, invHeight: def.invHeight || 1 };
       };
 
       const prevSkip = skipItemReqLevelSync;
@@ -1889,14 +1983,19 @@ export const useItemsStore = defineStore('items', {
         if (eq && typeof eq === 'object' && !Array.isArray(eq)) {
           for (const slot of EQUIPMENT_SLOTS) {
             const parsed = parseEntry(/** @type {Record<string, unknown>} */ (eq)[slot]);
-            if (!parsed || !this.catalogById[parsed.defId]) continue;
-            const id = this.createInstance(parsed.defId, parsed.icon, parsed.rolls, parsed.custom, {
-              extras: parsed.extras,
-              mysticOrbs: parsed.mysticOrbs,
-              ethereal: parsed.ethereal,
-              name: parsed.name,
-            });
-            this.equipment[slot] = id;
+            if (!parsed || !this.catalogByIdMap[parsed.defId]) continue;
+            nextEquipment[slot] = makeInstance(
+              parsed.defId,
+              parsed.icon,
+              parsed.rolls,
+              parsed.custom,
+              {
+                extras: parsed.extras,
+                mysticOrbs: parsed.mysticOrbs,
+                ethereal: parsed.ethereal,
+                name: parsed.name,
+              }
+            );
           }
         }
 
@@ -1925,8 +2024,8 @@ export const useItemsStore = defineStore('items', {
             const slot = Number(/** @type {{ slot?: unknown }} */ (row).slot);
             const parsed = parseEntry(row);
             if (!Number.isFinite(slot) || !parsed) continue;
-            if (!this.catalogById[parsed.defId]) continue;
-            const def = this.catalogById[parsed.defId];
+            if (!this.catalogByIdMap[parsed.defId]) continue;
+            const def = this.catalogByIdMap[parsed.defId];
             // Migrate legacy inventory charms/relics into enable maps.
             if (isCharmItem(def)) {
               enableFromSnap(parsed.defId, parsed.rolls, 'charms');
@@ -1936,20 +2035,30 @@ export const useItemsStore = defineStore('items', {
               enableFromSnap(parsed.defId, parsed.rolls, 'relics');
               continue;
             }
-            const id = this.createInstance(parsed.defId, parsed.icon, parsed.rolls, parsed.custom, {
+            const id = makeInstance(parsed.defId, parsed.icon, parsed.rolls, parsed.custom, {
               extras: parsed.extras,
               mysticOrbs: parsed.mysticOrbs,
               ethereal: parsed.ethereal,
               name: parsed.name,
             });
-            const getSize = this.getInstanceSize;
-            if (canPlace(this.inventory, slot, def.invWidth || 1, def.invHeight || 1, getSize)) {
-              this.inventory = placeAt(this.inventory, slot, id, getSize);
+            if (canPlace(nextInventory, slot, def.invWidth || 1, def.invHeight || 1, getSize)) {
+              nextInventory = placeAt(nextInventory, slot, id, getSize);
             } else {
-              delete this.instances[id];
+              delete nextInstances[id];
             }
           }
         }
+
+        // Single store write so Vue does not re-render per charm/gear piece.
+        this.weaponSet = data.weaponSet === 1 ? 1 : 0;
+        this.equipment = nextEquipment;
+        this.inventory = nextInventory;
+        this.enabledCharms = nextEnabledCharms;
+        this.enabledRelics = nextEnabledRelics;
+        this.instances = nextInstances;
+        this.nextInstanceId = nextId;
+        this.selectedSlot = null;
+        this.editingInstanceId = null;
 
         const disabled = this.disableEnabledItemsBelowLevel();
         result.disabledCharms = disabled.charms;
