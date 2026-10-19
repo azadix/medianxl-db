@@ -4,7 +4,7 @@ import pluginJSDoc from 'eslint-plugin-jsdoc';
 import globals from 'globals';
 
 export default [
-  { ignores: ['dist/**', 'node_modules/**', 'public/**'] },
+  { ignores: ['dist/**', 'node_modules/**', 'public/**', 'todo/**'] },
   js.configs.recommended,
   ...pluginVue.configs['flat/recommended'],
   {

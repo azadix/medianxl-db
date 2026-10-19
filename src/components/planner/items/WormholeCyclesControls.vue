@@ -113,103 +113,103 @@ function onClear() {
     </button>
 
     <div v-if="matrixOpen" id="wormhole-cycles-matrix">
-    <p class="wormhole-cycles__hint is-size-7 has-text-grey mb-2">
-      Required Level bonus: {{ reqBonus }} / {{ WORMHOLE_CYCLE_REQ_LEVEL_CAP }}
-      <span v-if="!applyCheck.ok && selectedId"> · {{ applyCheck.reason }}</span>
-    </p>
+      <p class="wormhole-cycles__hint is-size-7 has-text-grey mb-2">
+        Required Level bonus: {{ reqBonus }} / {{ WORMHOLE_CYCLE_REQ_LEVEL_CAP }}
+        <span v-if="!applyCheck.ok && selectedId"> · {{ applyCheck.reason }}</span>
+      </p>
 
-    <div class="wormhole-cycles__matrix" role="grid">
-      <div class="wormhole-cycles__head wormhole-cycles__head--type is-size-7">Cycle type</div>
-      <div
-        v-for="col in matrix.sizes"
-        :key="'head-' + col.size"
-        class="wormhole-cycles__head is-size-7"
-      >
-        {{ col.label }}
-      </div>
-
-      <template v-for="row in matrix.rows" :key="row.type">
-        <div class="wormhole-cycles__type">
-          <span class="wormhole-cycles__type-name">{{ row.label }}</span>
-          <span class="wormhole-cycles__type-mods">{{ row.mods }}</span>
+      <div class="wormhole-cycles__matrix" role="grid">
+        <div class="wormhole-cycles__head wormhole-cycles__head--type is-size-7">Cycle type</div>
+        <div
+          v-for="col in matrix.sizes"
+          :key="'head-' + col.size"
+          class="wormhole-cycles__head is-size-7"
+        >
+          {{ col.label }}
         </div>
-        <template v-if="row.spanning">
-          <button
-            type="button"
-            class="wormhole-cycles__cell wormhole-cycles__cell--span button is-small"
-            :class="{
-              'is-link': selectedId === row.cells.golden.id,
-              'wormhole-cycles__cell--capped': !canApplyWormholeCycle(rolls, row.cells.golden.id).ok,
-            }"
-            :aria-pressed="selectedId === row.cells.golden.id"
-            :title="cellTitle(row.cells.golden)"
-            @click="selectCycle(row.cells.golden.id)"
-          >
-            <span class="wormhole-cycles__cell-main">{{ formatWormholeCycleSummary(row.cells.golden) }}</span>
-            <span class="wormhole-cycles__cell-rl">No Req. Lvl</span>
-          </button>
-        </template>
-        <template v-else>
-          <template v-for="col in matrix.sizes" :key="row.type + '-' + col.size">
+
+        <template v-for="row in matrix.rows" :key="row.type">
+          <div class="wormhole-cycles__type">
+            <span class="wormhole-cycles__type-name">{{ row.label }}</span>
+            <span class="wormhole-cycles__type-mods">{{ row.mods }}</span>
+          </div>
+          <template v-if="row.spanning">
             <button
-              v-if="row.cells[col.size]"
               type="button"
-              class="wormhole-cycles__cell button is-small"
+              class="wormhole-cycles__cell wormhole-cycles__cell--span button is-small"
               :class="{
-                'is-link': selectedId === row.cells[col.size].id,
-                'wormhole-cycles__cell--capped': !canApplyWormholeCycle(rolls, row.cells[col.size].id).ok,
+                'is-link': selectedId === row.cells.golden.id,
+                'wormhole-cycles__cell--capped': !canApplyWormholeCycle(rolls, row.cells.golden.id).ok,
               }"
-              :aria-pressed="selectedId === row.cells[col.size].id"
-              :title="cellTitle(row.cells[col.size])"
-              @click="selectCycle(row.cells[col.size].id)"
+              :aria-pressed="selectedId === row.cells.golden.id"
+              :title="cellTitle(row.cells.golden)"
+              @click="selectCycle(row.cells.golden.id)"
             >
-              <span class="wormhole-cycles__cell-rl">
-                {{ row.cells[col.size].reqLevelBonus ? '+' + row.cells[col.size].reqLevelBonus + ' Req. Lvl' : 'No Req. Lvl' }}
-              </span>
-            </button>
-            <button
-              v-else
-              type="button"
-              class="wormhole-cycles__cell wormhole-cycles__cell--blocked button is-small"
-              disabled
-              aria-disabled="true"
-              :title="`No ${col.label} ${row.label} cycle`"
-            >
-              <span class="wormhole-cycles__cell-rl">&ndash;</span>
+              <span class="wormhole-cycles__cell-main">{{ formatWormholeCycleSummary(row.cells.golden) }}</span>
+              <span class="wormhole-cycles__cell-rl">No Req. Lvl</span>
             </button>
           </template>
+          <template v-else>
+            <template v-for="col in matrix.sizes" :key="row.type + '-' + col.size">
+              <button
+                v-if="row.cells[col.size]"
+                type="button"
+                class="wormhole-cycles__cell button is-small"
+                :class="{
+                  'is-link': selectedId === row.cells[col.size].id,
+                  'wormhole-cycles__cell--capped': !canApplyWormholeCycle(rolls, row.cells[col.size].id).ok,
+                }"
+                :aria-pressed="selectedId === row.cells[col.size].id"
+                :title="cellTitle(row.cells[col.size])"
+                @click="selectCycle(row.cells[col.size].id)"
+              >
+                <span class="wormhole-cycles__cell-rl">
+                  {{ row.cells[col.size].reqLevelBonus ? '+' + row.cells[col.size].reqLevelBonus + ' Req. Lvl' : 'No Req. Lvl' }}
+                </span>
+              </button>
+              <button
+                v-else
+                type="button"
+                class="wormhole-cycles__cell wormhole-cycles__cell--blocked button is-small"
+                disabled
+                aria-disabled="true"
+                :title="`No ${col.label} ${row.label} cycle`"
+              >
+                <span class="wormhole-cycles__cell-rl">&ndash;</span>
+              </button>
+            </template>
+          </template>
         </template>
-      </template>
-    </div>
+      </div>
 
-    <div class="wormhole-cycles__actions">
-      <button
-        type="button"
-        class="button is-small is-link"
-        :disabled="!applyCheck.ok"
-        @click="onApply"
-      >
-        Apply
-      </button>
-      <button
-        type="button"
-        class="button is-small"
-        :disabled="!hasCycles"
-        @click="onClear"
-      >
-        Clear applied
-      </button>
-    </div>
+      <div class="wormhole-cycles__actions">
+        <button
+          type="button"
+          class="button is-small is-link"
+          :disabled="!applyCheck.ok"
+          @click="onApply"
+        >
+          Apply
+        </button>
+        <button
+          type="button"
+          class="button is-small"
+          :disabled="!hasCycles"
+          @click="onClear"
+        >
+          Clear applied
+        </button>
+      </div>
 
-    <div v-if="selectedCycle" class="wormhole-cycles__preview is-size-7">
-      <p class="has-text-grey mb-1">Selected</p>
-      <ul class="wormhole-cycles__affixes">
-        <li v-for="(affix, idx) in selectedCycle.affixes" :key="'sel-' + idx">{{ affix }}</li>
-        <li v-if="selectedCycle.reqLevelBonus">+{{ selectedCycle.reqLevelBonus }} Required Level</li>
-        <li v-else>Does not increase Required Level</li>
-        <li v-if="selectedCycle.limit">Limit: {{ selectedCycle.limit }}</li>
-      </ul>
-    </div>
+      <div v-if="selectedCycle" class="wormhole-cycles__preview is-size-7">
+        <p class="has-text-grey mb-1">Selected</p>
+        <ul class="wormhole-cycles__affixes">
+          <li v-for="(affix, idx) in selectedCycle.affixes" :key="'sel-' + idx">{{ affix }}</li>
+          <li v-if="selectedCycle.reqLevelBonus">+{{ selectedCycle.reqLevelBonus }} Required Level</li>
+          <li v-else>Does not increase Required Level</li>
+          <li v-if="selectedCycle.limit">Limit: {{ selectedCycle.limit }}</li>
+        </ul>
+      </div>
     </div>
 
     <div v-if="hasCycles" class="wormhole-cycles__applied">
