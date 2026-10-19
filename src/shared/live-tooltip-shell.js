@@ -37,6 +37,36 @@ export const NESTED_SKILL_TOOLTIP_Z = '10070';
  */
 
 /**
+ * Inner node that should scroll when an item tooltip is taller than the viewport.
+ * @param {HTMLElement} node
+ * @returns {HTMLElement|null}
+ */
+export function getItemTooltipScrollNode(node) {
+  if (!node?.classList?.contains('item-tooltip')) return null;
+  const layout = node.querySelector(':scope > .item-tooltip-layout');
+  if (layout instanceof HTMLElement) return layout;
+  const card = node.querySelector(':scope > .item-tooltip-card');
+  return card instanceof HTMLElement ? card : node;
+}
+
+/**
+ * Cap item tooltips to the viewport and scroll the card (pin stays put).
+ * @param {HTMLElement} node
+ * @param {number} maxHeight
+ */
+export function applyItemTooltipOverflow(node, maxHeight) {
+  if (!node?.classList?.contains('item-tooltip')) {
+    node?.classList?.remove('tooltip-overflow');
+    return;
+  }
+  const maxH = Math.max(0, maxHeight);
+  node.style.setProperty('--tooltip-max-height', `${maxH}px`);
+  const scroller = getItemTooltipScrollNode(node);
+  const overflowing = Boolean(scroller && scroller.scrollHeight > maxH + 1);
+  node.classList.toggle('tooltip-overflow', overflowing);
+}
+
+/**
  * Clamp a tooltip portal near the cursor inside the viewport.
  * Wide skill+SOURCES rows stack vertically when they cannot fit beside the cursor.
  * @param {HTMLElement} node
@@ -60,6 +90,8 @@ export function applyTooltipPosition(node, clientX, clientY, opts = {}) {
       panels.classList.add('is-stacked');
     }
   }
+
+  applyItemTooltipOverflow(node, vh - margin * 2);
 
   const rect = node.getBoundingClientRect();
   const spaceRight = vw - clientX - offset - margin;
@@ -137,6 +169,8 @@ export function createLiveTooltipShell(options = {}) {
     node.style.display = 'none';
     node.innerHTML = '';
     node.style.zIndex = '';
+    node.classList.remove('tooltip-overflow');
+    node.style.removeProperty('--tooltip-max-height');
   }
 
   /**
@@ -218,6 +252,7 @@ export function createLiveTooltipShell(options = {}) {
       getHtml: getHtml || null,
       meta: opts.meta && typeof opts.meta === 'object' ? opts.meta : {},
     });
+    applyTooltipPosition(node, pendingClientX, pendingClientY, { offset, viewportMargin });
     return true;
   }
 

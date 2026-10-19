@@ -125,6 +125,37 @@ describe('live tooltip shell', () => {
     expect(portal.innerHTML).toBe('');
   });
 
+  it('caps overflowing item tooltips to the viewport and enables scrolling', () => {
+    Object.defineProperty(window, 'innerWidth', { configurable: true, value: 800 });
+    Object.defineProperty(window, 'innerHeight', { configurable: true, value: 200 });
+    portal.classList.add('item-tooltip');
+    portal.innerHTML = '<div class="item-tooltip-card tooltip-content">tall</div>';
+    const card = portal.querySelector('.item-tooltip-card');
+    Object.defineProperty(card, 'scrollHeight', { configurable: true, value: 900 });
+    Object.defineProperty(portal, 'getBoundingClientRect', {
+      configurable: true,
+      value: () => ({
+        width: 280,
+        height: 176,
+        top: 0,
+        left: 0,
+        right: 280,
+        bottom: 176,
+        x: 0,
+        y: 0,
+        toJSON() {},
+      }),
+    });
+    applyTooltipPosition(portal, 40, 80, {
+      offset: TOOLTIP_OFFSET,
+      viewportMargin: TOOLTIP_VIEWPORT_MARGIN,
+    });
+    const maxH = 200 - TOOLTIP_VIEWPORT_MARGIN * 2;
+    expect(portal.style.getPropertyValue('--tooltip-max-height')).toBe(`${maxH}px`);
+    expect(portal.classList.contains('tooltip-overflow')).toBe(true);
+    expect(Number.parseFloat(portal.style.top)).toBe(TOOLTIP_VIEWPORT_MARGIN);
+  });
+
   it('clamps position inside the viewport', () => {
     Object.defineProperty(window, 'innerWidth', { configurable: true, value: 200 });
     Object.defineProperty(window, 'innerHeight', { configurable: true, value: 200 });

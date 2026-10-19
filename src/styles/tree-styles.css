@@ -621,6 +621,7 @@
 }
 
 .skill-tooltip.item-tooltip {
+    --tooltip-max-height: calc(100vh - 24px);
     background: transparent;
     border: none;
     box-shadow: none;
@@ -628,6 +629,32 @@
     min-width: 0;
     width: max-content;
     max-width: 95vw;
+    max-height: var(--tooltip-max-height);
+}
+
+.skill-tooltip.item-tooltip.tooltip-overflow {
+    pointer-events: auto;
+}
+
+.skill-tooltip.item-tooltip > .item-tooltip-layout,
+.skill-tooltip.item-tooltip > .item-tooltip-card {
+    max-height: var(--tooltip-max-height);
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-color: #777 #1a1a1a;
+    scrollbar-width: thin;
+}
+
+.skill-tooltip.item-tooltip > .item-tooltip-layout::-webkit-scrollbar,
+.skill-tooltip.item-tooltip > .item-tooltip-card::-webkit-scrollbar {
+    width: 8px;
+}
+
+.skill-tooltip.item-tooltip > .item-tooltip-layout::-webkit-scrollbar-thumb,
+.skill-tooltip.item-tooltip > .item-tooltip-card::-webkit-scrollbar-thumb {
+    background: #777;
+    border-radius: 4px;
 }
 
 .item-tooltip-layout {
