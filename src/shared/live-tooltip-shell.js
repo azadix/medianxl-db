@@ -39,14 +39,13 @@ export const NESTED_SKILL_TOOLTIP_Z = '10070';
 
 /**
  * Inner node that should scroll when an item tooltip is taller than the viewport.
+ * Always the item card so mystic-orb / side panels stay put.
  * @param {HTMLElement} node
  * @returns {HTMLElement|null}
  */
 export function getItemTooltipScrollNode(node) {
   if (!node?.classList?.contains('item-tooltip')) return null;
-  const layout = node.querySelector(':scope > .item-tooltip-layout');
-  if (layout instanceof HTMLElement) return layout;
-  const card = node.querySelector(':scope > .item-tooltip-card');
+  const card = node.querySelector('.item-tooltip-card');
   return card instanceof HTMLElement ? card : node;
 }
 

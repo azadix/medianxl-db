@@ -5,6 +5,7 @@ import {
   TOOLTIP_VIEWPORT_MARGIN,
   applyTooltipPosition,
   createLiveTooltipShell,
+  getItemTooltipScrollNode,
 } from '@/shared/live-tooltip-shell.js';
 import {
   destroyTooltipPinning,
@@ -162,6 +163,40 @@ describe('live tooltip shell', () => {
     expect(portal.style.getPropertyValue('--tooltip-max-height')).toBe(`${maxH}px`);
     expect(portal.classList.contains('tooltip-overflow')).toBe(true);
     expect(Number.parseFloat(portal.style.top)).toBe(TOOLTIP_VIEWPORT_MARGIN);
+    expect(getItemTooltipScrollNode(portal)).toBe(card);
+  });
+
+  it('scrolls the item card instead of the mystic orb layout', () => {
+    Object.defineProperty(window, 'innerWidth', { configurable: true, value: 800 });
+    Object.defineProperty(window, 'innerHeight', { configurable: true, value: 200 });
+    portal.classList.add('item-tooltip');
+    portal.innerHTML =
+      '<div class="item-tooltip-layout"><div class="item-tooltip-card tooltip-content">tall</div><aside class="item-tooltip-sidepanel">MO</aside></div>';
+    const card = portal.querySelector('.item-tooltip-card');
+    const layout = portal.querySelector('.item-tooltip-layout');
+    Object.defineProperty(card, 'scrollHeight', { configurable: true, value: 900 });
+    Object.defineProperty(layout, 'scrollHeight', { configurable: true, value: 900 });
+    Object.defineProperty(portal, 'getBoundingClientRect', {
+      configurable: true,
+      value: () => ({
+        width: 420,
+        height: 176,
+        top: 0,
+        left: 0,
+        right: 420,
+        bottom: 176,
+        x: 0,
+        y: 0,
+        toJSON() {},
+      }),
+    });
+    applyTooltipPosition(portal, 40, 80, {
+      offset: TOOLTIP_OFFSET,
+      viewportMargin: TOOLTIP_VIEWPORT_MARGIN,
+    });
+    expect(getItemTooltipScrollNode(portal)).toBe(card);
+    expect(getItemTooltipScrollNode(portal)).not.toBe(layout);
+    expect(portal.classList.contains('tooltip-overflow')).toBe(true);
   });
 
   it('clamps position inside the viewport', () => {
