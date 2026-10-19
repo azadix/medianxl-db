@@ -10,7 +10,12 @@ import {
   tswCustomQuality,
   tswCustomSnapshotEntry,
 } from '@/items/custom-items.js';
-import { formatItemRarityBadge, getItemStatLines, getItemStatSections } from '@/items/item-stats.js';
+import {
+  formatItemRarityBadge,
+  formatItemTooltipSubtitle,
+  getItemStatLines,
+  getItemStatSections,
+} from '@/items/item-stats.js';
 import { itemRarityNameClass } from '@/items/item-tooltip.js';
 
 describe('custom-items', () => {
@@ -136,6 +141,11 @@ describe('custom-items', () => {
   it('shows honorific and angelic badges', () => {
     expect(formatItemRarityBadge({ rarity: 'honorific' })).toBe('Honorific');
     expect(formatItemRarityBadge({ rarity: 'angelic' })).toBe('Angelic');
+  });
+
+  it('does not repeat Relic in the tooltip subtitle', () => {
+    expect(formatItemTooltipSubtitle({ rarity: 'relic', category: 'relics' })).toBe('RELIC');
+    expect(formatItemTooltipSubtitle({ rarity: 'unique', category: 'weapons' })).toBe('UNIQUE WEAPON');
   });
 
   it('uses crafted, honorific, angelic, and magic name classes', () => {

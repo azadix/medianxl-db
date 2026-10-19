@@ -667,8 +667,17 @@ function closestNestedSkill(target) {
  * @param {HTMLElement} skillEl
  * @returns {boolean}
  */
+const NESTED_SKILL_STATIC_HOST_SELECTOR = '.item-detail-panel, .item-picker-modal';
+
+/**
+ * Nested skill links work from pinned/stuck tooltips and the item inspector / picker.
+ * @param {HTMLElement} skillEl
+ * @returns {boolean}
+ */
 function isNestedSkillFromInteractiveTooltip(skillEl) {
-  const tip = skillEl.closest(`.${PIN_HOST_CLASS}, .${INTERACTIVE_CLASS}, .${STUCK_CLASS}, .${PINNED_CLASS}`);
+  const tip = skillEl.closest(
+    `.${PIN_HOST_CLASS}, .${INTERACTIVE_CLASS}, .${STUCK_CLASS}, .${PINNED_CLASS}, ${NESTED_SKILL_STATIC_HOST_SELECTOR}`
+  );
   return Boolean(tip);
 }
 

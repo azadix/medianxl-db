@@ -4,9 +4,11 @@
  */
 import { computed } from 'vue';
 import { modifierColorCssClass } from '@/items/item-modifier-line.js';
+import { wrapNestedSkillTooltipHtml } from '@/shared/tooltip-html.js';
+import { escapeHtmlText, SCALING_DISPLAY_HTML_CLASSES } from '@/shared/utils.js';
 
 const props = defineProps({
-  /** @type {{ key: string, display: string, displayParts?: { kind: string, text: string }[], min: number, max: number, color?: string }} */
+  /** @type {{ key: string, display: string, displayParts?: { kind: string, text: string, skillId?: string, skillLevel?: number|null }[], min: number, max: number, color?: string }} */
   stat: { type: Object, required: true },
   value: { type: Number, required: true },
 });
@@ -14,6 +16,19 @@ const props = defineProps({
 const emit = defineEmits(['update']);
 
 const colorClass = computed(() => modifierColorCssClass(props.stat?.color));
+
+/**
+ * @param {{ text?: string, skillId?: string, skillLevel?: number|null }} part
+ * @returns {string}
+ */
+function skillPartHtml(part) {
+  return wrapNestedSkillTooltipHtml(
+    part?.skillId,
+    escapeHtmlText(part?.text),
+    SCALING_DISPLAY_HTML_CLASSES.skill,
+    part?.skillLevel
+  );
+}
 
 /**
  * @param {string|number} raw
@@ -35,7 +50,8 @@ function onChange(raw) {
         <span v-if="part.kind === 'value'" class="item-picker-modal__roll-value">{{
           part.text
         }}</span>
-        <span v-else-if="part.kind === 'skill'" class="has-text-success">{{ part.text }}</span>
+        <!-- eslint-disable-next-line vue/no-v-html -- escaped nested skill markup -->
+        <span v-else-if="part.kind === 'skill'" v-html="skillPartHtml(part)"></span>
         <template v-else>{{ part.text }}</template>
       </template>
     </span>

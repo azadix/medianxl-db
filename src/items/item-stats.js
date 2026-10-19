@@ -284,7 +284,14 @@ export function formatItemTooltipSubtitle(def) {
   if (!def || typeof def !== 'object') return '';
   const rarity = String(def.rarity || 'normal');
   const rarityWord = RARITY_SUBTITLE_WORD[rarity] || '';
-  const typeWord = def.group || ITEM_CATEGORY_LABEL[def.category] || def.category || '';
+  let typeWord = def.group || ITEM_CATEGORY_LABEL[def.category] || def.category || '';
+  if (
+    rarityWord &&
+    typeWord &&
+    String(rarityWord).toLowerCase() === String(typeWord).toLowerCase()
+  ) {
+    typeWord = '';
+  }
   const left = [rarityWord, typeWord].filter(Boolean).join(' ').toUpperCase();
   const badge = formatItemRarityBadge(def);
   const skipBadge =

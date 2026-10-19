@@ -271,9 +271,9 @@ export function formatItemModifierLineHtml(line) {
  * @param {(before: string, idx: number) => boolean} looksLikeMatch
  * @returns {Array<{ kind: string, text: string }>|null}
  */
-function annotatePartsWithSkillName(parts, displayName, looksLikeMatch) {
+function annotatePartsWithSkillName(parts, displayName, looksLikeMatch, extra = {}) {
   const lowerName = displayName.toLowerCase();
-  /** @type {Array<{ kind: string, text: string }>} */
+  /** @type {Array<{ kind: string, text: string, skillId?: string, skillLevel?: number|null }>} */
   const out = [];
   let replaced = false;
 
@@ -281,7 +281,7 @@ function annotatePartsWithSkillName(parts, displayName, looksLikeMatch) {
     const kind = part?.kind || 'text';
     const text = String(part?.text ?? '');
     if (replaced || kind === 'value' || kind === 'skill') {
-      out.push({ kind, text });
+      out.push({ ...part, kind, text });
       continue;
     }
     const idx = text.toLowerCase().lastIndexOf(lowerName);
@@ -296,7 +296,12 @@ function annotatePartsWithSkillName(parts, displayName, looksLikeMatch) {
       continue;
     }
     if (before) out.push({ kind: 'text', text: before });
-    out.push({ kind: 'skill', text: displayName });
+    out.push({
+      kind: 'skill',
+      text: displayName,
+      skillId: extra.skillId,
+      skillLevel: extra.skillLevel ?? null,
+    });
     if (after) out.push({ kind: 'text', text: after });
     replaced = true;
   }
@@ -320,7 +325,11 @@ export function annotateAffixDisplayPartsWithSkills(parts) {
         /\sto\s+(?:passive\s+)?$/i.test(before) ||
         before.toLowerCase().endsWith('to ') ||
         before.toLowerCase().endsWith('passive ') ||
-        idx === 0
+        idx === 0,
+      {
+        skillId: grant.skillId,
+        skillLevel: Number.isFinite(grant.amount) && grant.amount > 0 ? Math.floor(grant.amount) : null,
+      }
     );
     if (annotated) return annotated;
   }
@@ -333,8 +342,11 @@ export function annotateAffixDisplayPartsWithSkills(parts) {
         ? String(cat.displayName).trim()
         : String(maxBase.skillName).trim();
     if (displayName) {
-      const annotated = annotatePartsWithSkillName(parts, displayName, (before) =>
-        /Maximum\s+$/i.test(before)
+      const annotated = annotatePartsWithSkillName(
+        parts,
+        displayName,
+        (before) => /Maximum\s+$/i.test(before),
+        { skillId: cat?.id ? String(cat.id) : undefined, skillLevel: null }
       );
       if (annotated) return annotated;
     }
@@ -346,7 +358,11 @@ export function annotateAffixDisplayPartsWithSkills(parts) {
   const annotated = annotatePartsWithSkillName(
     parts,
     name,
-    (before) => /level\s+\d+\s+$/i.test(before)
+    (before) => /level\s+\d+\s+$/i.test(before),
+    {
+      skillId: proc.skillId,
+      skillLevel: Number.isFinite(proc.level) && proc.level > 0 ? Math.floor(proc.level) : null,
+    }
   );
   return annotated || parts;
 }

@@ -201,7 +201,8 @@ describe('item-granted oSkills', () => {
       { kind: 'value', text: '9' },
       { kind: 'text', text: ' to Teleport' },
     ]);
-    expect(parts.some((p) => p.kind === 'skill' && p.text === 'Teleport')).toBe(true);
+    const skill = parts.find((p) => p.kind === 'skill' && p.text === 'Teleport');
+    expect(skill).toMatchObject({ skillId: 'teleport', skillLevel: 9 });
   });
 
   it('annotates chance-to-cast affix parts with skill kind', () => {
@@ -209,7 +210,9 @@ describe('item-granted oSkills', () => {
       { kind: 'value', text: '5' },
       { kind: 'text', text: '% Chance to cast level 9 Bloodlust on Kill' },
     ]);
-    expect(parts.some((p) => p.kind === 'skill' && /bloodlust/i.test(p.text))).toBe(true);
+    const skill = parts.find((p) => p.kind === 'skill' && /bloodlust/i.test(p.text));
+    expect(skill?.skillId).toBeTruthy();
+    expect(skill?.skillLevel).toBe(9);
   });
 
   it('enabled relic grants stay separate from the merged charm+relic collector', () => {

@@ -327,6 +327,25 @@ describe('tooltip pinning', () => {
     expect(listPinnedHosts()).toHaveLength(5);
   });
 
+  it('nested skill hover works in the item inspector panel', async () => {
+    const { setNestedSkillTooltipHandlers } = await import('@/shared/tooltip-pinning.js');
+    /** @type {string[]} */
+    const shown = [];
+    setNestedSkillTooltipHandlers({
+      showSkill: (id) => {
+        shown.push(id);
+      },
+    });
+    const panel = document.createElement('div');
+    panel.className = 'item-detail-panel';
+    panel.innerHTML =
+      '<span class="js-nested-tooltip-skill" data-tooltip-skill-id="searing_glow">Searing Glow</span>';
+    document.body.appendChild(panel);
+    const skillEl = panel.querySelector('[data-tooltip-skill-id="searing_glow"]');
+    skillEl.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, clientX: 8, clientY: 8 }));
+    expect(shown).toEqual(['searing_glow']);
+  });
+
   it('nested skill hover on a live unlocked tooltip does not show', async () => {
     const { setNestedSkillTooltipHandlers } = await import('@/shared/tooltip-pinning.js');
     /** @type {string[]} */
