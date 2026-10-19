@@ -19,6 +19,7 @@ import {
   TSW_SLOT_TO_EQUIPMENT,
 } from '@/planner/tsw-build-import.js';
 import { runewordEntryToItemDef } from '@/items/runeword-items.js';
+import { canEquipInSlot } from '@/items/item-types.js';
 import { inferTswClassSkillsBonus } from '@/planner/tsw-item-rolls.js';
 import { CHARM_ROLL_KEYS, charmAffixRollKey } from '@/items/charm-items.js';
 import { relicAffixRollKey } from '@/items/relic-items.js';
@@ -34,6 +35,32 @@ const catalog = {
     { id: '@36', name: 'Light Gauntlets (Sacred)', rarity: 'normal', category: 'armor', slot: 'glov' },
     { id: 'cap-sacred', name: 'Cap (Sacred)', rarity: 'normal', category: 'armor', slot: 'head' },
     { id: 'u:lacuni-cowl:su', name: 'Lacuni Cowl', uniqueKind: 'su', rarity: 'unique' },
+    {
+      id: 'u:tinkers-gambit:su',
+      name: "Tinker's Gambit",
+      uniqueKind: 'su',
+      rarity: 'unique',
+      slot: 'head',
+      classRestriction: 'Assassin Only',
+      modifiers: ['+3 to Assassin Skill Levels'],
+    },
+    {
+      id: 'u:lionblood-crest:su',
+      name: 'Lionblood Crest',
+      uniqueKind: 'su',
+      rarity: 'unique',
+      slot: 'head',
+      classRestriction: 'Amazon Only',
+      modifiers: ['+100% Damage to Demons'],
+    },
+    {
+      id: 'u:mindflayers-mayhem:su',
+      name: "Mindflayer's Mayhem",
+      uniqueKind: 'su',
+      rarity: 'unique',
+      slot: 'feet',
+      modifiers: ['+40% Movement Speed'],
+    },
     {
       id: 'u:acidblood:tu:1',
       name: 'Acidblood',
@@ -216,6 +243,112 @@ describe('tsw-build-import', () => {
     expect(snapshot.charms.map((row) => row.defId)).toEqual(['a68', 'ebw-primordia']);
     expect(snapshot.relics.map((row) => row.defId)).toEqual(['relic:lightning-wall']);
     expect(skipped.some((s) => s.name === 'Ring')).toBe(false);
+  });
+
+  it('maps Mindflayer boots as the boots unique, keeping the helm name and dropping class restriction', () => {
+    const rows = [
+      {
+        item: "Tinker's Gambit",
+        display_name: "Tinker's Gambit",
+        type: "Mindflayer's Mayhem",
+        quality: 'Unique',
+        display_quality: 'SSU',
+        code: 'DU1',
+        image: 'mfboots',
+        location: 'Gear',
+        slot: 'Feet',
+        mystic_orbs: [[1, 'MO - HP']],
+        description_lines: [
+          [["Tinker's Gambit", 4]],
+          [["Mindflayer's Mayhem", 4]],
+          [['Defense: 888', -1]],
+          [['Required Level: 100', -1]],
+          [['+1% Trap Damage per 5 Base Strength', 8]],
+          [['+3 to Assassin Skill Levels', 3]],
+          [['+40% Movement Speed', 3]],
+        ],
+      },
+      {
+        item: 'Lionblood Crest',
+        display_name: 'Lionblood Crest',
+        type: "Mindflayer's Mayhem",
+        quality: 'Unique',
+        display_quality: 'SU',
+        code: 'DU1',
+        image: 'mfboots',
+        location: 'Gear',
+        slot: 'Feet',
+        description_lines: [
+          [['Lionblood Crest', 4]],
+          [["Mindflayer's Mayhem", 4]],
+          [['(Amazon Only)', -1]],
+          [['+100% Damage to Demons', 3]],
+          [['+40% Movement Speed', 3]],
+        ],
+      },
+    ];
+    const cat = byIdCatalog();
+    expect(resolveTswItemDefId(rows[0], catalogIndexForTests())).toBe('u:mindflayers-mayhem:su');
+    const assassin = mapTswItemsToSnapshot([rows[0]], cat, 'Assassin');
+    expect(assassin.skipped).toEqual([]);
+    expect(assassin.snapshot.equipment.feet).toMatchObject({
+      defId: 'u:mindflayers-mayhem:su',
+      icon: 'mfboots',
+      name: "Tinker's Gambit",
+      extras: ['+1% Trap Damage per 5 Base Strength', '+3 to Assassin Skill Levels'],
+    });
+    expect(assassin.snapshot.equipment.feet.mysticOrbs).toBeUndefined();
+    expect(assassin.snapshot.equipment.head).toBeNull();
+
+    const amazonHelmOnSin = mapTswItemsToSnapshot([rows[1]], cat, 'Assassin');
+    expect(amazonHelmOnSin.skipped).toEqual([]);
+    expect(amazonHelmOnSin.snapshot.equipment.feet).toMatchObject({
+      defId: 'u:mindflayers-mayhem:su',
+      name: 'Lionblood Crest',
+      extras: ['+100% Damage to Demons'],
+    });
+  });
+
+  it('loads mirrored Mindflayer boots from Azalea and dabomei TSW dumps', () => {
+    const dir = resolve(ROOT, 'public/items/2_14');
+    const baseItems = JSON.parse(readFileSync(resolve(dir, 'baseitems.json'), 'utf8'));
+    const other = JSON.parse(readFileSync(resolve(dir, 'other.json'), 'utf8'));
+    const db = JSON.parse(readFileSync(resolve(dir, 'unique-stats-db.json'), 'utf8'));
+    const { items: overlays } = buildCatalogFromUniqueStats(db, [...baseItems, ...other]);
+    setActivePinia(createPinia());
+    const store = useItemsStore();
+    store.catalog = [...baseItems, ...other, ...overlays];
+    store.catalogLoaded = true;
+    store.catalogVersionFolder = '2_14';
+
+    const azalea = JSON.parse(readFileSync(resolve(ROOT, 'todo/bugs mediandb/Azalea.json'), 'utf8'));
+    const { snapshot: azaleaSnap, skipped: azaleaSkipped } = mapTswItemsToSnapshot(
+      azalea.items,
+      store,
+      'Assassin'
+    );
+    expect(azaleaSkipped.some((row) => /Tinker|Mindflayer/i.test(row.name))).toBe(false);
+    store.fromSnapshot(azaleaSnap);
+    const azaleaFeet = store.getEquipmentDef('feet');
+    expect(azaleaFeet?.id).toBe('u:mindflayers-mayhem:su');
+    expect(azaleaFeet?.name).toBe("Tinker's Gambit");
+    expect(azaleaFeet?.classRestriction).toBeFalsy();
+    expect(canEquipInSlot(azaleaFeet, 'feet', 'Assassin')).toBe(true);
+    expect(canEquipInSlot(azaleaFeet, 'feet', 'Amazon')).toBe(true);
+
+    const dabomei = JSON.parse(readFileSync(resolve(ROOT, 'todo/bugs mediandb/dabomei.json'), 'utf8'));
+    const { snapshot: dabomeiSnap, skipped: dabomeiSkipped } = mapTswItemsToSnapshot(
+      dabomei.items,
+      store,
+      'Assassin'
+    );
+    expect(dabomeiSkipped.some((row) => /Lionblood|Mindflayer/i.test(row.name))).toBe(false);
+    store.fromSnapshot(dabomeiSnap);
+    const dabomeiFeet = store.getEquipmentDef('feet');
+    expect(dabomeiFeet?.id).toBe('u:mindflayers-mayhem:su');
+    expect(dabomeiFeet?.name).toBe('Lionblood Crest');
+    expect(dabomeiFeet?.classRestriction).toBeFalsy();
+    expect(canEquipInSlot(dabomeiFeet, 'feet', 'Assassin')).toBe(true);
   });
 
   it('maps magic, honorific, and angelic gear onto the matching base', () => {

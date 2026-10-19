@@ -171,6 +171,7 @@ async function fetchCatalogFile(url) {
  *   extras?: string[],
  *   mysticOrbs?: Array<[number, string]>,
  *   ethereal?: boolean,
+ *   name?: string,
  * }} ItemInstance
  * @typedef {{
  *   defId: string,
@@ -180,6 +181,7 @@ async function fetchCatalogFile(url) {
  *   extras?: string[],
  *   mysticOrbs?: Array<[number, string]>,
  *   ethereal?: boolean,
+ *   name?: string,
  * }} ItemSnapshotEntry
  * @typedef {{
  *   weaponSet: 0|1,
@@ -229,6 +231,7 @@ function parseMysticOrbsList(raw) {
  *   extras?: string[]|null,
  *   mysticOrbs?: Array<[number, string]>|null,
  *   ethereal?: boolean,
+ *   name?: string|null,
  * }|null|undefined} meta
  */
 function applyInstanceMeta(inst, meta) {
@@ -241,6 +244,9 @@ function applyInstanceMeta(inst, meta) {
   else delete inst.mysticOrbs;
   if (meta.ethereal === true) inst.ethereal = true;
   else delete inst.ethereal;
+  const name = meta.name != null ? String(meta.name).trim() : '';
+  if (name) inst.name = name;
+  else delete inst.name;
 }
 
 function snapshotInstanceEntry(inst) {
@@ -252,7 +258,8 @@ function snapshotInstanceEntry(inst) {
   const extras = parseExtrasList(inst?.extras);
   const mysticOrbs = parseMysticOrbsList(inst?.mysticOrbs);
   const ethereal = inst?.ethereal === true;
-  if (!hasIcon && !hasRolls && !custom && !extras.length && !mysticOrbs.length && !ethereal) {
+  const name = inst?.name != null ? String(inst.name).trim() : '';
+  if (!hasIcon && !hasRolls && !custom && !extras.length && !mysticOrbs.length && !ethereal && !name) {
     return defId;
   }
   /** @type {ItemSnapshotEntry} */
@@ -263,6 +270,7 @@ function snapshotInstanceEntry(inst) {
   if (extras.length) entry.extras = extras;
   if (mysticOrbs.length) entry.mysticOrbs = mysticOrbs;
   if (ethereal) entry.ethereal = true;
+  if (name) entry.name = name;
   return entry;
 }
 
@@ -927,6 +935,7 @@ export const useItemsStore = defineStore('items', {
      *   extras?: string[]|null,
      *   mysticOrbs?: Array<[number, string]>|null,
      *   ethereal?: boolean,
+     *   name?: string|null,
      * }|null|undefined} [meta]
      * @returns {number}
      */
@@ -1298,10 +1307,15 @@ export const useItemsStore = defineStore('items', {
       const def = this.catalogById[inst.defId] ?? null;
       const withCustom = applyCustomOverlayToDef(def, inst.custom);
       if (!withCustom) return null;
-      if (inst.ethereal === true && !withCustom.ethereal) {
-        return { ...withCustom, ethereal: true };
+      /** @type {Record<string, unknown>} */
+      const out = { ...withCustom };
+      if (inst.ethereal === true && !withCustom.ethereal) out.ethereal = true;
+      const name = inst.name != null ? String(inst.name).trim() : '';
+      if (name) {
+        out.name = name;
+        delete out.classRestriction;
       }
-      return withCustom;
+      return out;
     },
 
     /**
@@ -1780,6 +1794,7 @@ export const useItemsStore = defineStore('items', {
        *   extras: string[],
        *   mysticOrbs: Array<[number, string]>,
        *   ethereal: boolean,
+       *   name: string|null,
        * }|null}
        */
       const parseEntry = (entry) => {
@@ -1796,6 +1811,8 @@ export const useItemsStore = defineStore('items', {
         /** @type {unknown} */
         let mysticOrbsRaw = null;
         let ethereal = false;
+        /** @type {unknown} */
+        let nameRaw = null;
         if (typeof entry === 'string') {
           defId = entry;
         } else if (entry && typeof entry === 'object') {
@@ -1807,6 +1824,7 @@ export const useItemsStore = defineStore('items', {
           extrasRaw = rec.extras;
           mysticOrbsRaw = rec.mysticOrbs;
           ethereal = rec.ethereal === true;
+          nameRaw = rec.name;
         } else {
           return null;
         }
@@ -1837,6 +1855,7 @@ export const useItemsStore = defineStore('items', {
           extras: parseExtrasList(extrasRaw),
           mysticOrbs: parseMysticOrbsList(mysticOrbsRaw),
           ethereal,
+          name: typeof nameRaw === 'string' ? nameRaw.trim() : null,
         };
       };
 
@@ -1872,6 +1891,7 @@ export const useItemsStore = defineStore('items', {
               extras: parsed.extras,
               mysticOrbs: parsed.mysticOrbs,
               ethereal: parsed.ethereal,
+              name: parsed.name,
             });
             this.equipment[slot] = id;
           }
@@ -1917,6 +1937,7 @@ export const useItemsStore = defineStore('items', {
               extras: parsed.extras,
               mysticOrbs: parsed.mysticOrbs,
               ethereal: parsed.ethereal,
+              name: parsed.name,
             });
             const getSize = this.getInstanceSize;
             if (canPlace(this.inventory, slot, def.invWidth || 1, def.invHeight || 1, getSize)) {

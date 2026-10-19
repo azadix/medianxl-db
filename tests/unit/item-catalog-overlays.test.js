@@ -75,6 +75,19 @@ describe('unique-stats-db catalog', () => {
     expect(maleficence?.id).toBe('u:maleficence:su');
     expect(maleficence?.slot).toBe('arms');
     expect(maleficence?.baseName).toBe('Tyrannical Blade');
+
+    const mayhem = items.find((u) => u.name === "Mindflayer's Mayhem");
+    expect(mayhem).toMatchObject({
+      id: 'u:mindflayers-mayhem:su',
+      slot: 'feet',
+      reqLevel: 140,
+      icon: 'mfboots',
+      baseName: "Mindflayer's Mayhem",
+    });
+    expect(mayhem?.classRestriction).toBeUndefined();
+    expect(mayhem?.sockets).toBeUndefined();
+    expect(mayhem?.modifiers?.some((m) => /Cannot have any sockets or enhancements/.test(m))).toBe(true);
+    expect(mayhem?.modifiers?.some((m) => /\+40% Movement Speed/.test(m))).toBe(true);
     expect(items.filter((u) => u.name === "Akara's Robe")).toHaveLength(3);
     expect(items.some((r) => r.id === 'relic:blood-of-creation-version-1')).toBe(true);
     const boc1 = items.find((r) => r.id === 'relic:blood-of-creation-version-1');

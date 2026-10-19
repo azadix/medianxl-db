@@ -50,7 +50,7 @@ const SNIPPET = `
 describe('parseSecretItemsWiki', () => {
   it('skips locked, herding, soulstone, essence of time, disabled outcomes, and the disabled section', () => {
     const entries = parseSecretItemsWiki(SNIPPET);
-    expect(entries.map((e) => e.name)).toEqual(['Maleficence', "Assur's Bane"]);
+    expect(entries.map((e) => e.name)).toEqual(['Maleficence', "Assur's Bane", "Mindflayer's Mayhem"]);
     expect(entries[0]).toMatchObject({
       quality: 'SU',
       type: 'Tyrannical Blade',
@@ -64,6 +64,15 @@ describe('parseSecretItemsWiki', () => {
       icon: 'ring08',
       source: 'secret',
     });
+    expect(entries[2]).toMatchObject({
+      name: "Mindflayer's Mayhem",
+      quality: 'SU',
+      type: "Mindflayer's Mayhem",
+      icon: 'mfboots',
+      source: 'secret',
+    });
+    expect(entries[2].stats).toContain('+40% Movement Speed');
+    expect(entries[2].stats).toContain('Required Level: 140');
   });
 
   it('parses the live Secret Items fixture', () => {
@@ -105,6 +114,11 @@ describe('parseSecretItemsWiki', () => {
       quality: 'SU',
       type: 'Ring',
       icon: 'ring08',
+    });
+    expect(entries.find((e) => e.name === "Mindflayer's Mayhem")).toMatchObject({
+      quality: 'SU',
+      type: "Mindflayer's Mayhem",
+      icon: 'mfboots',
     });
     expect(entries.find((e) => e.name === 'Ring of Pride')?.icon).toBe('invrinquest');
     expect(entries.find((e) => e.name === 'Ring of Virtue')?.icon).toBe('invrinquest');
@@ -162,6 +176,16 @@ describe('secret item catalog overlays', () => {
         invHeight: 1,
         icon: 'invrin',
       },
+      {
+        id: 'hbt',
+        name: 'Heavy Boots (Sacred)',
+        type: 'boot',
+        category: 'armor',
+        slot: 'feet',
+        invWidth: 2,
+        invHeight: 2,
+        icon: 'invvbt',
+      },
     ];
     const maleficence = entryToItemDef(
       {
@@ -177,6 +201,27 @@ describe('secret item catalog overlays', () => {
     expect(maleficence?.baseName).toBe('Tyrannical Blade');
     expect(maleficence?.baseId).toBeUndefined();
     expect(maleficence?.id).toBe('u:maleficence:su');
+
+    const mayhem = entryToItemDef(
+      {
+        name: "Mindflayer's Mayhem",
+        quality: 'SU',
+        type: "Mindflayer's Mayhem",
+        stats: 'Defense: 888\nRequired Level: 140\n{grey}Cannot have any sockets or enhancements\n+40% Movement Speed',
+        source: 'secret',
+        icon: 'mfboots',
+      },
+      bases
+    );
+    expect(mayhem).toMatchObject({
+      id: 'u:mindflayers-mayhem:su',
+      slot: 'feet',
+      baseName: "Mindflayer's Mayhem",
+      reqLevel: 140,
+      icon: 'mfboots',
+    });
+    expect(mayhem?.baseId).toBeUndefined();
+    expect(mayhem?.classRestriction).toBeUndefined();
 
     const relic = entryToItemDef(
       {

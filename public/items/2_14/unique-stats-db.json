@@ -3104,6 +3104,14 @@
       "type": "Claws (Sacred)"
     },
     {
+      "name": "Mindflayer's Mayhem",
+      "quality": "SU",
+      "type": "Mindflayer's Mayhem",
+      "source": "secret",
+      "icon": "mfboots",
+      "stats": "Defense: 888\nRequired Level: 140\nItem Level: 99\n{grey}Cannot have any sockets or enhancements\n+40% Movement Speed"
+    },
+    {
       "name": "Mistress of Pain",
       "quality": "SU",
       "stats": "One-Hand Damage: 36 to 37\n(Sorceress Only)\nRequired Level: 100\nRequired Dexterity: 177\nItem Level: 120\nDexterity Damage Bonus: (0.11 per Dexterity)%\n{orange}If You Have any Points in Vengeful Power, Living Flame or Snow Queen\n{grey}20 Second Cooldown to All Lightning Tree Spells\n+(9 to 10) to Sorceress Skill Levels\n25% Movement Speed\n+(40 to 60)% to Lightning Spell Damage\n-(30 to 40)% to Enemy Lightning Resistance\n+(4000 to 5000) Defense\n+(175 to 225) to Energy\n(10 to 15)% Chance to Avoid Damage\nSocketed (2)",

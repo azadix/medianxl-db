@@ -237,6 +237,18 @@ function relicSkillHint(row) {
 }
 
 /**
+ * Unique-only boots that keep a mirrored helm's name and stats.
+ * @param {object|null|undefined} row
+ * @returns {boolean}
+ */
+export function isMindflayerMayhemRow(row) {
+  const type = normName(row?.type);
+  if (type === "mindflayer's mayhem") return true;
+  const code = row?.code != null ? String(row.code).trim() : '';
+  return code === 'DU1';
+}
+
+/**
  * Numeric TU tier from a TSW `type` label (`Leather Armor (2)`, optional `[eth]`).
  * Bare `u:name:tu` catalog aliases point at T4 — callers must prefer `:tu:N`.
  * @param {object} row
@@ -366,6 +378,10 @@ export function resolveTswItemDefId(row, cat) {
     return resolveTswRunewordDefId(row, cat);
   }
 
+  if (isMindflayerMayhemRow(row) && cat.byId['u:mindflayers-mayhem:su']) {
+    return 'u:mindflayers-mayhem:su';
+  }
+
   const code = row?.code != null ? String(row.code).trim() : '';
   const codeDef = code ? cat.byId[code] : null;
   // Unique gear codes collide with base item ids (e.g. Lacuni Cowl `@17`). Only trust
@@ -463,6 +479,7 @@ function attachTswInstanceExtras(entry, row, def) {
  *   extras?: string[],
  *   mysticOrbs?: Array<[number, string]>,
  *   ethereal?: boolean,
+ *   name?: string,
  * }}
  */
 function snapshotWithRolls(row, defId, def, className) {
@@ -474,6 +491,7 @@ function snapshotWithRolls(row, defId, def, className) {
    *   extras?: string[],
    *   mysticOrbs?: Array<[number, string]>,
    *   ethereal?: boolean,
+   *   name?: string,
     }} */
   const entry = { defId };
   const rolls = rollsFromTswItem(row, def, className);
@@ -481,6 +499,11 @@ function snapshotWithRolls(row, defId, def, className) {
   const icon = row?.image != null ? String(row.image).trim() : '';
   if (icon) entry.icon = icon;
   attachTswInstanceExtras(entry, row, def);
+  if (isMindflayerMayhemRow(row)) {
+    const name = tswItemDisplayName(row);
+    if (name && name !== def?.name) entry.name = name;
+    delete entry.mysticOrbs;
+  }
   return entry;
 }
 

@@ -64,6 +64,7 @@ const SECRET_ITEM_ICONS = {
   'Time-Lost Relic': 'invtimerelic',
   'Celestial Sigil': 'sigilx',
   "Assur's Bane": 'ring08',
+  "Mindflayer's Mayhem": 'mfboots',
   'Ring of Pride': 'invrinquest',
   'Ring of Virtue': 'invrinquest',
 };
@@ -88,6 +89,22 @@ export const ASSUR_BANE_ENTRY = {
     "{orange}Assur's Curse",
     '{grey}If two of these rings are equipped:',
     '{orange}Maximum Elemental Resists -10%',
+  ].join('\n'),
+};
+
+/** Unique-only boots base from Mindflayer's Mirror. Not listed on Secret Items wiki. */
+export const MINDFLAYER_MAYHEM_ENTRY = {
+  name: "Mindflayer's Mayhem",
+  quality: 'SU',
+  type: "Mindflayer's Mayhem",
+  source: 'secret',
+  icon: 'mfboots',
+  stats: [
+    'Defense: 888',
+    'Required Level: 140',
+    'Item Level: 99',
+    '{grey}Cannot have any sockets or enhancements',
+    '+40% Movement Speed',
   ].join('\n'),
 };
 
@@ -279,6 +296,9 @@ export function parseSecretItemsWiki(html) {
 
   if (!entries.some((e) => e.name === "Assur's Bane")) {
     entries.push({ ...ASSUR_BANE_ENTRY });
+  }
+  if (!entries.some((e) => e.name === "Mindflayer's Mayhem")) {
+    entries.push({ ...MINDFLAYER_MAYHEM_ENTRY });
   }
 
   return entries;

@@ -509,6 +509,7 @@ const TYPE_SHAPE_FALLBACKS = Object.freeze({
   'Ornate Plate': 'Full Plate Mail (Sacred)',
   'Sigil of Deadly Sins': 'Ring',
   'Ring of Pride': 'Ring',
+  "Mindflayer's Mayhem": 'Heavy Boots (Sacred)',
 });
 
 /**
