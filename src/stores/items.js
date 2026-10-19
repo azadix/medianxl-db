@@ -1072,17 +1072,19 @@ export const useItemsStore = defineStore('items', {
      * @param {string} defId
      * @param {boolean} enabled
      * @param {Record<string, number>|null|undefined} [rolls] - seed rolls when creating
+     * @param {{ select?: boolean }} [options] - select:false skips inspector (build load)
      * @returns {boolean}
      */
-    toggleCharm(defId, enabled, rolls = null) {
+    toggleCharm(defId, enabled, rolls = null, options = {}) {
       const def = this.catalogById[defId];
       if (!def || !isCharmItem(def)) return false;
       const className = this.viewerClassName;
       if (enabled && !canEquipForClass(def, className)) return false;
       const existing = this.enabledCharms[defId];
+      const shouldSelect = options?.select !== false;
       if (enabled) {
         if (existing != null) {
-          this.selectEnabledItem('charms', defId);
+          if (shouldSelect) this.selectEnabledItem('charms', defId);
           return true;
         }
         // Only one Dimensional Key base may be active.
@@ -1095,7 +1097,7 @@ export const useItemsStore = defineStore('items', {
         }
         const id = this.createInstance(defId, null, rolls);
         this.enabledCharms = { ...this.enabledCharms, [defId]: id };
-        this.selectEnabledItem('charms', defId);
+        if (shouldSelect) this.selectEnabledItem('charms', defId);
         this.syncCharacterToItemReqs();
         return true;
       }
@@ -1869,8 +1871,9 @@ export const useItemsStore = defineStore('items', {
         if (!def) return;
         if (kind === 'charms') {
           if (!isCharmItem(def) || this.enabledCharms[defId] != null) return;
-          // Use toggleCharm so Dimensional Key exclusivity applies.
-          this.toggleCharm(defId, true, rolls);
+          // Use toggleCharm so Dimensional Key exclusivity applies. Do not
+          // select the last enabled charm into the inspector (build load).
+          this.toggleCharm(defId, true, rolls, { select: false });
           return;
         }
         if (!isRelicItem(def) || this.enabledRelics[defId] != null) return;
@@ -1955,6 +1958,8 @@ export const useItemsStore = defineStore('items', {
       } finally {
         skipItemReqLevelSync = prevSkip;
       }
+      this.selectedSlot = null;
+      this.editingInstanceId = null;
       return result;
     },
 

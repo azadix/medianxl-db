@@ -240,6 +240,21 @@ describe('items store enable lists', () => {
     expect(store.toggleRelic(relicD.id, true)).toBe(true);
   });
 
+  it('does not select a charm in the inspector when loading a snapshot', () => {
+    store.toggleCharm(charmA.id, true);
+    expect(store.selectedSlot).toEqual({ location: 'charms', slot: charmA.id });
+    store.toggleCharm(charmB.id, true);
+    expect(store.selectedSlot).toEqual({ location: 'charms', slot: charmB.id });
+    const snap = store.toSnapshot();
+    store.resetItems();
+    seedCatalog(store);
+    store.fromSnapshot(snap);
+    expect(store.isEnabled('charms', charmA.id)).toBe(true);
+    expect(store.isEnabled('charms', charmB.id)).toBe(true);
+    expect(store.selectedSlot).toBeNull();
+    expect(store.editingInstanceId).toBeNull();
+  });
+
   it('roundtrips charms/relics in snapshot', () => {
     store.toggleCharm(charmA.id, true);
     store.toggleRelic(relicA.id, true);
@@ -253,6 +268,8 @@ describe('items store enable lists', () => {
     store.resetItems();
     seedCatalog(store);
     store.fromSnapshot(snap);
+    expect(store.selectedSlot).toBeNull();
+    expect(store.editingInstanceId).toBeNull();
     expect(store.isEnabled('charms', charmA.id)).toBe(true);
     expect(store.getRollsForInstance(store.enabledCharms[charmA.id])).toEqual({
       charmTrophy: 1,
