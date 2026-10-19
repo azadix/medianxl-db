@@ -1,5 +1,6 @@
 # Ignore extracted PNGs, DC6 sources, and other local leftovers.
-# Keep the Python scripts and this file.
+# Keep the Python scripts, README, and this file.
 *
 !.gitignore
+!README.md
 !*.py
