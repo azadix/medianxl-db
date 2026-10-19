@@ -359,7 +359,7 @@ const {
 }
 
 :deep(.patch-skill-highlight:focus-visible) {
-  outline: 1px dashed rgba(255, 221, 87, 0.85);
+  outline: 1px dashed rgba(72, 199, 116, 0.85);
   outline-offset: 2px;
 }
 

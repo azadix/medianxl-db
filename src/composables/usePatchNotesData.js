@@ -9,6 +9,7 @@ import {
   escapeHtmlText,
   getAssetUrl,
   getSkillIconHTML,
+  SCALING_DISPLAY_HTML_CLASSES,
 } from '@/shared/utils.js';
 import {
   buildSkillTooltipDescriptionBlock,
@@ -447,7 +448,7 @@ export function highlightSkillNamesInRenderedHtml(renderedHtml, folderKey) {
       }
 
       const spanEl = doc.createElement('span');
-      spanEl.className = 'patch-skill-highlight has-text-warning has-text-weight-bold';
+      spanEl.className = `patch-skill-highlight ${SCALING_DISPLAY_HTML_CLASSES.skill} has-text-weight-bold`;
       spanEl.textContent = skillRecord.displayName || markerInner;
       spanEl.setAttribute('tabindex', '0');
       spanEl.setAttribute('role', 'button');
