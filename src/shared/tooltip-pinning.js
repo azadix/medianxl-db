@@ -15,6 +15,9 @@ const STUCK_CLASS = 'tooltip-stuck';
 const PINNED_CLASS = 'tooltip-pinned';
 const DRAGGING_CLASS = 'tooltip-dragging';
 const PIN_HOST_CLASS = 'tooltip-pin-host';
+const PIN_PANEL_GAP_PX = 8;
+/** Pin sits just outside the main card (button 26px + 6px gap). */
+const PIN_HANG_OUTSIDE_PX = 32;
 
 const PIN_ICON_SVG = `<svg class="tooltip-pin-btn__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
   <path fill="currentColor" d="M16 3a1 1 0 0 1 .8 1.6l-1.7 2.27 1.45 5.08a1 1 0 0 1-.3.98l-2.05 1.9V21a1 1 0 1 1-2 0v-6.17l-2.05-1.9a1 1 0 0 1-.3-.98l1.45-5.08L8.2 4.6A1 1 0 0 1 9 3h7z"/>
@@ -192,6 +195,35 @@ export function updateLiveTooltipBinding(portal, patch = {}) {
     prev.meta = { ...prev.meta, ...patch.meta };
   }
   ensurePinButton(portal, { live: true });
+}
+
+/**
+ * Keep the pin on the main tooltip card, not a SOURCES / Mystic Orbs side panel.
+ * @param {HTMLElement|null|undefined} el
+ */
+export function syncTooltipPinPlacement(el) {
+  if (!el) return;
+  const stacked = Boolean(el.querySelector('.skill-tooltip-panels.is-stacked'));
+  /** @type {Element|null} */
+  let side = null;
+  if (!stacked) {
+    const layout = el.querySelector(':scope > .item-tooltip-layout');
+    const panels = el.querySelector(':scope > .skill-tooltip-panels');
+    if (layout) {
+      side = layout.querySelector(':scope > .item-tooltip-sidepanel');
+    } else if (panels) {
+      side = panels.querySelector(':scope > .skill-tooltip-sources');
+    }
+  }
+  if (!(side instanceof HTMLElement)) {
+    el.style.setProperty('--tooltip-pin-inset-right', `-${PIN_HANG_OUTSIDE_PX}px`);
+    return;
+  }
+  const width = side.getBoundingClientRect().width;
+  el.style.setProperty(
+    '--tooltip-pin-inset-right',
+    `${width + PIN_PANEL_GAP_PX - PIN_HANG_OUTSIDE_PX}px`
+  );
 }
 
 /**
@@ -445,17 +477,31 @@ function isAltKeyEvent(e) {
 }
 
 /**
- * Promote every visible live tooltip portal into an Alt-locked host.
- * @returns {boolean} true if at least one portal was locked
+ * @returns {HTMLElement[]}
  */
-function stickAllLiveTooltips() {
-  let stuck = false;
+function getVisibleLivePortals() {
+  /** @type {HTMLElement[]} */
+  const nodes = [];
   for (const node of [...livePortals]) {
     if (!(node instanceof HTMLElement) || !node.isConnected) {
       livePortals.delete(node);
       continue;
     }
     if (node.classList.contains(PIN_HOST_CLASS)) continue;
+    if (node.style.display === 'none') continue;
+    if (!node.innerHTML || !String(node.innerHTML).trim()) continue;
+    nodes.push(node);
+  }
+  return nodes;
+}
+
+/**
+ * Promote every visible live tooltip portal into an Alt-locked host.
+ * @returns {boolean} true if at least one portal was locked
+ */
+function stickAllLiveTooltips() {
+  let stuck = false;
+  for (const node of getVisibleLivePortals()) {
     if (maybeAltStickLiveTooltip(node)) stuck = true;
   }
   return stuck;
@@ -499,15 +545,45 @@ function releaseClosestAltStuckHost(clientX = lastPointerX, clientY = lastPointe
 }
 
 /**
- * Alt toggles lock: lock the current live tooltip (including nested levels),
- * or unlock the Alt-stuck host closest to the cursor when nothing live is showing.
+ * Alt toggles lock on the nearest tooltip: lock a live hover (and any other
+ * visible live portals, e.g. nested), or unlock that same tooltip if it is
+ * already Alt-stuck. With nothing live under the cursor, unlock the closest
+ * Alt-stuck host.
  */
 function toggleTooltipLock() {
-  if (stickAllLiveTooltips()) return;
+  const liveNodes = getVisibleLivePortals();
+  /** @type {{ kind: 'live'|'host', el: HTMLElement, host?: PinnedTooltipHost }[]} */
+  const candidates = liveNodes.map((el) => ({ kind: 'live', el }));
+  for (const host of hosts.values()) {
+    if (host.mode === 'alt') candidates.push({ kind: 'host', el: host.el, host });
+  }
+  if (!candidates.length) return;
+
+  let best = candidates[0];
+  let bestDist = distanceToHost(best.el, lastPointerX, lastPointerY);
+  for (let i = 1; i < candidates.length; i += 1) {
+    const dist = distanceToHost(candidates[i].el, lastPointerX, lastPointerY);
+    if (dist < bestDist) {
+      bestDist = dist;
+      best = candidates[i];
+    }
+  }
+
+  if (best.kind === 'live') {
+    const binding = liveBindings.get(best.el);
+    const existing = findMatchingAltHost(binding?.kind || 'tooltip', binding?.meta);
+    if (existing) {
+      removePinnedHost(existing.id);
+      return;
+    }
+    stickAllLiveTooltips();
+    return;
+  }
+
   // Nested hover uses a separate live portal; never dismiss the parent while exploring it.
   if (nestedSkillTarget) return;
   if (nestedSkillHandlers?.isShowing?.()) return;
-  releaseClosestAltStuckHost();
+  if (best.host) removePinnedHost(best.host.id);
 }
 
 /**
@@ -555,6 +631,7 @@ function ensurePinButton(el, opts) {
   btn.title = pinned || locked ? 'Unpin' : 'Pin';
   // Keep pin clickable even when the live portal has pointer-events: none.
   btn.style.pointerEvents = 'auto';
+  syncTooltipPinPlacement(el);
 }
 
 /**

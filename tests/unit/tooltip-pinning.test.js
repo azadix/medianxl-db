@@ -10,6 +10,7 @@ import {
   maybeAltStickLiveTooltip,
   promoteLiveTooltip,
   refreshPinnedHosts,
+  syncTooltipPinPlacement,
   updateLiveTooltipBinding,
 } from '@/shared/tooltip-pinning.js';
 import { wrapNestedSkillTooltipHtml } from '@/shared/tooltip-html.js';
@@ -43,6 +44,57 @@ describe('tooltip pinning', () => {
     expect(html).toContain('data-tooltip-skill-id="fire_splash"');
     expect(html).toContain('js-nested-tooltip-skill');
     expect(html).toContain('Fire Splash');
+  });
+
+  it('hangs the pin outside an item tooltip with no side panel', () => {
+    portal.innerHTML = '<div class="item-tooltip-card tooltip-content">Item</div>';
+    updateLiveTooltipBinding(portal, {});
+    expect(portal.style.getPropertyValue('--tooltip-pin-inset-right')).toBe('-32px');
+  });
+
+  it('offsets the pin onto the main card when a side panel is present', () => {
+    portal.innerHTML =
+      '<div class="item-tooltip-layout"><div class="item-tooltip-card tooltip-content">Item</div><aside class="item-tooltip-sidepanel">MO</aside></div>';
+    const side = portal.querySelector('.item-tooltip-sidepanel');
+    Object.defineProperty(side, 'getBoundingClientRect', {
+      configurable: true,
+      value: () => ({
+        width: 120,
+        height: 40,
+        top: 0,
+        left: 280,
+        right: 400,
+        bottom: 40,
+        x: 280,
+        y: 0,
+        toJSON() {},
+      }),
+    });
+    updateLiveTooltipBinding(portal, {});
+    expect(portal.style.getPropertyValue('--tooltip-pin-inset-right')).toBe('96px');
+  });
+
+  it('keeps the pin on the main skill tooltip when SOURCES is stacked', () => {
+    portal.className = 'skill-tooltip';
+    portal.innerHTML =
+      '<div class="skill-tooltip-panels is-stacked"><div class="tooltip-content">Skill</div><div class="skill-tooltip-sources">SOURCES</div></div>';
+    const side = portal.querySelector('.skill-tooltip-sources');
+    Object.defineProperty(side, 'getBoundingClientRect', {
+      configurable: true,
+      value: () => ({
+        width: 200,
+        height: 40,
+        top: 80,
+        left: 0,
+        right: 200,
+        bottom: 120,
+        x: 0,
+        y: 80,
+        toJSON() {},
+      }),
+    });
+    syncTooltipPinPlacement(portal);
+    expect(portal.style.getPropertyValue('--tooltip-pin-inset-right')).toBe('-32px');
   });
 
   it('promotes a live tooltip into a permanent pin host', () => {
@@ -103,6 +155,19 @@ describe('tooltip pinning', () => {
     expect(listPinnedHosts().filter((h) => h.mode === 'alt')).toHaveLength(2);
     const nestedHost = listPinnedHosts().find((h) => h.el.textContent.includes('Nested skill'));
     expect(nestedHost?.el.querySelector('.tooltip-pin-btn.is-locked')).toBeTruthy();
+  });
+
+  it('Alt on a re-shown live tooltip unlocks the matching Alt-locked host', () => {
+    portal.innerHTML = '<div class="tooltip-content">Sticky</div>';
+    portal.style.display = 'block';
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Alt', code: 'AltLeft', bubbles: true }));
+    expect(listPinnedHosts()).toHaveLength(1);
+
+    portal.innerHTML = '<div class="tooltip-content">Sticky</div>';
+    portal.style.display = 'block';
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Alt', code: 'AltLeft', bubbles: true }));
+    expect(isTooltipLocked()).toBe(false);
+    expect(listPinnedHosts()).toHaveLength(0);
   });
 
   it('second Alt with no live tooltip unlocks the nearest Alt-locked host', () => {

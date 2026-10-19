@@ -398,6 +398,7 @@
 .skill-tooltip {
     position: fixed;
     z-index: 10000;
+    overflow: visible;
     background: #1a1a1a;
     border: 2px solid #8a8a8a;
     border-radius: 6px;
@@ -437,7 +438,7 @@
 .tooltip-pin-btn {
     position: absolute;
     top: 6px;
-    right: 6px;
+    right: var(--tooltip-pin-inset-right, -32px);
     z-index: 5;
     display: inline-flex;
     align-items: center;
@@ -480,15 +481,9 @@
     text-underline-offset: 2px;
 }
 
-.skill-tooltip.item-tooltip .tooltip-pin-btn,
-.skill-tooltip:has(> .skill-tooltip-panels) .tooltip-pin-btn {
-    top: 10px;
-    right: 10px;
-}
-
-.skill-tooltip.item-tooltip .item-tooltip-card,
-.skill-tooltip .tooltip-content {
-    padding-right: 34px;
+.skill-tooltip .tooltip-pin-btn {
+    top: 8px;
+    right: var(--tooltip-pin-inset-right, -32px);
 }
 
 /* Alt-held sources: outer shell becomes a transparent flex host for two chrome boxes */
@@ -622,6 +617,7 @@
 
 .skill-tooltip.item-tooltip {
     --tooltip-max-height: calc(100vh - 24px);
+    overflow: visible;
     background: transparent;
     border: none;
     box-shadow: none;

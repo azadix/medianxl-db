@@ -8,6 +8,7 @@ import {
   initTooltipPinning,
   setNestedSkillTooltipHandlers,
   shouldSuppressLiveTooltipHide,
+  syncTooltipPinPlacement,
   updateLiveTooltipBinding,
 } from '@/shared/tooltip-pinning.js';
 
@@ -114,6 +115,7 @@ export function applyTooltipPosition(node, clientX, clientY, opts = {}) {
 
   node.style.left = `${nextLeft}px`;
   node.style.top = `${nextTop}px`;
+  syncTooltipPinPlacement(node);
 }
 
 /**
