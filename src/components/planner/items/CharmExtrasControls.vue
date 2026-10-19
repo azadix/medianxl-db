@@ -124,6 +124,20 @@ function setParagonPath(path) {
   <div v-if="showPanel" class="charm-extras-controls">
     <p class="charm-extras-controls__heading is-size-7 has-text-grey mb-2">Charm options</p>
 
+    <div v-if="trophyEntry" class="charm-extras-controls__group">
+      <label class="checkbox charm-extras-controls__check">
+        <input
+          type="checkbox"
+          :checked="Boolean(rolls[trophyEntry.key])"
+          @change="setChecked(trophyEntry.key, $event.target.checked)"
+        />
+        {{ trophyEntry.label }}
+      </label>
+      <ul class="charm-extras-controls__affixes">
+        <li v-for="(affix, idx) in trophyEntry.affixes" :key="idx">{{ affix }}</li>
+      </ul>
+    </div>
+
     <WormholeCyclesControls
       v-if="showWormholeCycles"
       :def="def"
@@ -189,20 +203,6 @@ function setParagonPath(path) {
       <p v-else class="charm-extras-controls__affixes charm-extras-controls__affixes--empty is-size-7 has-text-grey">
         No upgrade bonus for this class
       </p>
-    </div>
-
-    <div v-if="trophyEntry" class="charm-extras-controls__group">
-      <label class="checkbox charm-extras-controls__check">
-        <input
-          type="checkbox"
-          :checked="Boolean(rolls[trophyEntry.key])"
-          @change="setChecked(trophyEntry.key, $event.target.checked)"
-        />
-        {{ trophyEntry.label }}
-      </label>
-      <ul class="charm-extras-controls__affixes">
-        <li v-for="(affix, idx) in trophyEntry.affixes" :key="idx">{{ affix }}</li>
-      </ul>
     </div>
 
     <div v-if="trophyOptions.length" class="charm-extras-controls__pool">

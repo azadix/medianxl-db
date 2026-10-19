@@ -9,6 +9,10 @@ import {
   WORMHOLE_CYCLE_REQ_LEVEL_CAP,
   WORMHOLE_CYCLE_SIZE_ORDER,
   WORMHOLE_CYCLE_SIZE_LABELS,
+  WORMHOLE_CYCLE_TYPES,
+  WORMHOLE_CYCLE_MATRIX_SIZES,
+  WORMHOLE_BASE_REQ_LEVEL,
+  WORMHOLE_MAX_CHARACTER_LEVEL,
 } from '@/items/wormhole-cycles-data.js';
 
 /**
@@ -27,6 +31,10 @@ export {
   WORMHOLE_CYCLE_REQ_LEVEL_CAP,
   WORMHOLE_CYCLE_SIZE_ORDER,
   WORMHOLE_CYCLE_SIZE_LABELS,
+  WORMHOLE_CYCLE_TYPES,
+  WORMHOLE_CYCLE_MATRIX_SIZES,
+  WORMHOLE_BASE_REQ_LEVEL,
+  WORMHOLE_MAX_CHARACTER_LEVEL,
 };
 
 /** @type {Readonly<Record<string, string>>} */
@@ -34,6 +42,10 @@ export const WORMHOLE_CYCLE_ROLL_KEYS = Object.freeze({
   count: 'charmCycleCount',
   indexPrefix: 'charmCycle',
   affixPrefix: 'charmAffix:cycle:agg:',
+  statPrefix: 'charmCycleStat:',
+  cyclesPrefix: 'charmCycleUses:',
+  reqLevel: 'charmCycleReqLevel',
+  golden: 'charmCycleGolden',
 });
 
 const CORRUPTED_WORMHOLE_ID = '\\\\8';
@@ -107,6 +119,8 @@ export function wormholeCycleAffixSourceSlug(mergeKey) {
 }
 
 /**
+ * Legacy reader: cycle ids from the old list format (charmCycleCount + charmCycleN).
+ * New rolls store summed totals instead and return [].
  * @param {Record<string, number>|null|undefined} rolls
  * @returns {string[]}
  */
@@ -142,51 +156,125 @@ export function getWormholeCycleById(cycleId) {
 }
 
 /**
- * @param {Record<string, number>|null|undefined} rolls
+ * @typedef {{ slug: string, template: string }} WormholeCycleStatDef
+ * @typedef {WormholeCycleStatDef & { value: number, text: string }} WormholeCycleStatTotal
+ */
+
+/**
+ * @param {string} template affix text with the value replaced by '#'
+ * @returns {string}
+ */
+function statSlug(template) {
+  return String(template || '')
+    .toLowerCase()
+    .replace(/%/g, ' pct ')
+    .replace(/#/g, ' ')
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_|_$/g, '')
+    .slice(0, 80);
+}
+
+/**
+ * Split a single cycle affix line into its stat and the value one cycle adds
+ * (fixed value, or the rounded midpoint of a rolled range).
+ * @param {string} affix
+ * @returns {{ slug: string, template: string, value: number }}
+ */
+export function parseWormholeCycleAffix(affix) {
+  const template = wormholeCycleAffixMergeKey(affix).replace(/\(\*\)/g, FIXED_TOKEN);
+  const parts = extractAffixParts(affix);
+  let value = 0;
+  if (parts.ranges.length) value = defaultRollValue(parts.ranges[0].min, parts.ranges[0].max);
+  else if (parts.fixedValues.length) value = parts.fixedValues[0];
+  return { slug: statSlug(template), template, value };
+}
+
+/** @type {ReadonlyArray<WormholeCycleStatDef>|null} */
+let statCatalog = null;
+
+/**
+ * Every stat any cycle can add, in catalog order.
+ * @returns {ReadonlyArray<WormholeCycleStatDef>}
+ */
+export function getWormholeCycleStatCatalog() {
+  if (!statCatalog) {
+    /** @type {Map<string, WormholeCycleStatDef>} */
+    const map = new Map();
+    for (const cycle of WORMHOLE_CYCLES) {
+      for (const affix of cycle.affixes) {
+        const { slug, template } = parseWormholeCycleAffix(affix);
+        if (!map.has(slug)) map.set(slug, Object.freeze({ slug, template }));
+      }
+    }
+    statCatalog = Object.freeze([...map.values()]);
+  }
+  return statCatalog;
+}
+
+/**
+ * @param {string} slug
+ * @returns {string}
+ */
+export function wormholeCycleStatRollKey(slug) {
+  return `${WORMHOLE_CYCLE_ROLL_KEYS.statPrefix}${slug}`;
+}
+
+/**
+ * Slider key used by charm affix rows (`charmAffix:cycle:agg:{slug}:r0`).
+ * @param {string} slug
+ * @returns {string}
+ */
+export function wormholeCycleAggRollKey(slug) {
+  return `${WORMHOLE_CYCLE_ROLL_KEYS.affixPrefix}${slug}:r0`;
+}
+
+/**
+ * Cycle types whose UI is "number of cycles used" (Life & Mana). All types store uses; these also get count editors.
+ * @type {ReadonlyArray<string>}
+ */
+export const WORMHOLE_COUNTED_CYCLE_TYPES = Object.freeze(['lifemana']);
+
+/**
+ * @param {import('./wormhole-cycles-data.js').WormholeCycleDef|null|undefined} cycle
+ * @returns {boolean}
+ */
+export function isCountedWormholeCycle(cycle) {
+  return Boolean(cycle && WORMHOLE_COUNTED_CYCLE_TYPES.includes(cycle.type));
+}
+
+/**
+ * @param {string} cycleId
+ * @returns {string}
+ */
+export function wormholeCycleUsesRollKey(cycleId) {
+  return `${WORMHOLE_CYCLE_ROLL_KEYS.cyclesPrefix}${cycleId}`;
+}
+
+/**
+ * @param {unknown} value
  * @returns {number}
  */
-export function getWormholeCycleReqLevelBonus(rolls) {
-  let total = 0;
-  for (const cycle of getAppliedWormholeCycles(rolls)) {
-    total += Number(cycle.reqLevelBonus) || 0;
-  }
-  return Math.min(WORMHOLE_CYCLE_REQ_LEVEL_CAP, total);
+function toCount(value) {
+  const n = Math.floor(Number(value));
+  return Number.isFinite(n) && n > 0 ? n : 0;
+}
+
+/**
+ * @param {number} value
+ * @returns {number}
+ */
+function clampReqLevel(value) {
+  const n = Math.round(Number(value) || 0);
+  return Math.max(0, Math.min(WORMHOLE_CYCLE_REQ_LEVEL_CAP, n));
 }
 
 /**
  * @param {Record<string, number>|null|undefined} rolls
- * @param {string} cycleId
- * @returns {{ ok: true } | { ok: false, reason: string }}
+ * @returns {boolean}
  */
-export function canApplyWormholeCycle(rolls, cycleId) {
-  const cycle = getWormholeCycleById(cycleId);
-  if (!cycle) return { ok: false, reason: 'Unknown cycle' };
-  const applied = getAppliedWormholeCycles(rolls);
-  if (cycle.limit != null) {
-    const used = applied.filter((c) => c.id === cycle.id).length;
-    if (used >= cycle.limit) {
-      return { ok: false, reason: `Limit ${cycle.limit}` };
-    }
-  }
-  const nextBonus = (Number(cycle.reqLevelBonus) || 0) + getWormholeCycleReqLevelBonus(rolls);
-  // Cap only counts non-golden bonuses already summed in getWormholeCycleReqLevelBonus.
-  if ((Number(cycle.reqLevelBonus) || 0) > 0 && nextBonus > WORMHOLE_CYCLE_REQ_LEVEL_CAP) {
-    return {
-      ok: false,
-      reason: `Required Level bonus cap (${WORMHOLE_CYCLE_REQ_LEVEL_CAP})`,
-    };
-  }
-  return { ok: true };
+function isLegacyCycleRolls(rolls) {
+  return rolls != null && Object.prototype.hasOwnProperty.call(rolls, WORMHOLE_CYCLE_ROLL_KEYS.count);
 }
-
-/**
- * @typedef {{
- *   mergeKey: string,
- *   slug: string,
- *   text: string,
- *   ranges: Array<{ min: number, max: number }>,
- * }} WormholeAggregatedAffix
- */
 
 /**
  * @param {string} template
@@ -231,86 +319,432 @@ function extractAffixParts(text) {
 }
 
 /**
- * Merge applied cycle affixes into slider-ready lines (only relevant stats).
+ * @param {Record<string, number>} state
+ * @returns {number}
+ */
+function reqLevelFromUses(state) {
+  let total = 0;
+  for (const cycle of WORMHOLE_CYCLES) {
+    total += toCount(state[wormholeCycleUsesRollKey(cycle.id)]) * (Number(cycle.reqLevelBonus) || 0);
+  }
+  return clampReqLevel(total);
+}
+
+/**
+ * @typedef {{
+ *   mergeKey: string,
+ *   slug: string,
+ *   text: string,
+ *   ranges: Array<{ min: number, max: number }>,
+ * }} WormholeAggregatedAffix
+ */
+
+/**
+ * Merge applied cycle affixes. Uses `charmCycleUses:*` counts, or the legacy
+ * `charmCycleN` list when that is what `rolls` still contains.
  * @param {Record<string, number>|null|undefined} rolls
+ * @param {(cycle: import('./wormhole-cycles-data.js').WormholeCycleDef) => boolean} [include]
  * @returns {WormholeAggregatedAffix[]}
  */
-export function getWormholeAggregatedAffixes(rolls) {
-  /** @type {Map<string, { template: string, fixedValues: number[], ranges: Array<{ min: number, max: number }> }>} */
+export function getWormholeAggregatedAffixes(rolls, include = () => true) {
+  /** @type {Map<string, { template: string, slug: string, fixed: number, min: number, max: number, hasRange: boolean }>} */
   const groups = new Map();
 
-  for (const cycle of getAppliedWormholeCycles(rolls)) {
+  /**
+   * @param {import('./wormhole-cycles-data.js').WormholeCycleDef} cycle
+   * @param {number} count
+   */
+  const addCycle = (cycle, count) => {
+    if (!count || !include(cycle)) return;
     for (const affix of cycle.affixes) {
-      const mergeKey = wormholeCycleAffixMergeKey(affix);
+      const parsed = parseWormholeCycleAffix(affix);
       const parts = extractAffixParts(affix);
-      const existing = groups.get(mergeKey);
-      if (!existing) {
-        groups.set(mergeKey, {
-          template: mergeKey,
-          fixedValues: parts.fixedValues.slice(),
-          ranges: parts.ranges.map((r) => ({ ...r })),
-        });
-        continue;
+      let group = groups.get(parsed.template);
+      if (!group) {
+        group = { template: parsed.template, slug: parsed.slug, fixed: 0, min: 0, max: 0, hasRange: false };
+        groups.set(parsed.template, group);
       }
-      parts.fixedValues.forEach((value, i) => {
-        existing.fixedValues[i] = (existing.fixedValues[i] || 0) + value;
-      });
-      parts.ranges.forEach((range, i) => {
-        if (!existing.ranges[i]) {
-          existing.ranges[i] = { min: range.min, max: range.max };
-        } else {
-          existing.ranges[i].min += range.min;
-          existing.ranges[i].max += range.max;
-        }
-      });
+      if (parts.ranges.length) {
+        group.hasRange = true;
+        group.min += parts.ranges[0].min * count;
+        group.max += parts.ranges[0].max * count;
+      } else if (parts.fixedValues.length) {
+        group.fixed += parts.fixedValues[0] * count;
+      }
+    }
+  };
+
+  if (isLegacyCycleRolls(rolls)) {
+    for (const cycle of getAppliedWormholeCycles(rolls)) addCycle(cycle, 1);
+  } else {
+    const state = rolls || {};
+    for (const cycle of WORMHOLE_CYCLES) {
+      addCycle(cycle, toCount(state[wormholeCycleUsesRollKey(cycle.id)]));
     }
   }
 
   /** @type {WormholeAggregatedAffix[]} */
   const out = [];
-  for (const [mergeKey, group] of groups) {
-    const text = rebuildAffixText(group.template, group.fixedValues, group.ranges);
+  for (const group of groups.values()) {
+    const ranges = group.hasRange ? [{ min: group.min + group.fixed, max: group.max + group.fixed }] : [];
+    const mergeKey = group.hasRange ? group.template.replace(FIXED_TOKEN, RANGE_TOKEN) : group.template;
+    const text = rebuildAffixText(mergeKey, group.hasRange ? [] : [group.fixed], ranges);
+    out.push({ mergeKey, slug: group.slug, text, ranges });
+  }
+  return out;
+}
+
+/**
+ * @param {Record<string, number>} state
+ * @returns {Record<string, { min: number, max: number }>}
+ */
+function snapshotAggRanges(state) {
+  /** @type {Record<string, { min: number, max: number }>} */
+  const out = {};
+  for (const affix of getWormholeAggregatedAffixes(state)) {
+    if (affix.ranges[0]) out[affix.slug] = affix.ranges[0];
+  }
+  return out;
+}
+
+/**
+ * @param {Record<string, number>} state
+ * @param {import('./wormhole-cycles-data.js').WormholeCycleDef} cycle
+ * @param {number} times
+ */
+function addCycleRangeDefaults(state, cycle, times) {
+  if (!times) return;
+  for (const affix of cycle.affixes) {
+    const parts = extractAffixParts(affix);
+    if (!parts.ranges.length) continue;
+    const { slug } = parseWormholeCycleAffix(affix);
+    const key = wormholeCycleAggRollKey(slug);
+    const add = times * defaultRollValue(parts.ranges[0].min, parts.ranges[0].max);
+    const prev = Number(state[key]);
+    state[key] = (Number.isFinite(prev) ? prev : 0) + add;
+  }
+}
+
+/**
+ * Seed / clamp slider rolls to the current aggregated ranges.
+ * @param {Record<string, number>} state
+ * @param {Record<string, { min: number, max: number }>} previousRanges
+ */
+function reconcileAggRolls(state, previousRanges) {
+  const live = new Set();
+  for (const affix of getWormholeAggregatedAffixes(state)) {
+    if (!affix.ranges.length) continue;
+    const { min, max } = affix.ranges[0];
+    const key = wormholeCycleAggRollKey(affix.slug);
+    live.add(key);
+    const old = previousRanges[affix.slug];
+    if (!old) {
+      const seeded = Number(state[key]);
+      state[key] =
+        Number.isFinite(seeded) && seeded >= min && seeded <= max
+          ? seeded
+          : defaultRollValue(min, max);
+      continue;
+    }
+    let prev = Number(state[key]);
+    if (!Number.isFinite(prev)) prev = defaultRollValue(old.min, old.max);
+    const minShift = min - old.min;
+    const maxShift = max - old.max;
+    if (minShift === maxShift && minShift !== 0) prev += minShift;
+    state[key] = Math.min(max, Math.max(min, prev));
+  }
+  for (const key of Object.keys(state)) {
+    if (key.startsWith(WORMHOLE_CYCLE_ROLL_KEYS.affixPrefix) && !live.has(key)) delete state[key];
+  }
+}
+
+/**
+ * Counted cycles (one entry per Life & Mana size) with per-cycle expected ranges.
+ * @param {Record<string, number>|null|undefined} rolls
+ * @returns {Array<{
+ *   cycle: import('./wormhole-cycles-data.js').WormholeCycleDef,
+ *   count: number,
+ *   stats: Array<{ slug: string, template: string, value: number, text: string }>,
+ * }>}
+ */
+export function getWormholeCycleCounts(rolls) {
+  const state = migrateWormholeCycleRolls(rolls);
+  return WORMHOLE_CYCLES.filter(isCountedWormholeCycle).map((cycle) => {
+    const count = toCount(state[wormholeCycleUsesRollKey(cycle.id)]);
+    const stats = cycle.affixes.map((affix) => {
+      const parsed = parseWormholeCycleAffix(affix);
+      const parts = extractAffixParts(affix);
+      if (parts.ranges.length && count) {
+        const min = parts.ranges[0].min * count;
+        const max = parts.ranges[0].max * count;
+        return {
+          slug: parsed.slug,
+          template: parsed.template,
+          value: defaultRollValue(min, max),
+          text: parsed.template.replace(FIXED_TOKEN, `(${min} to ${max})`),
+        };
+      }
+      const value = parsed.value * count;
+      return { slug: parsed.slug, template: parsed.template, value, text: parsed.template.replace(FIXED_TOKEN, String(value)) };
+    });
+    return { cycle, count, stats };
+  });
+}
+
+/**
+ * Set how many cycles of a counted type are used. Clamped to 0 and to the Req. Lvl cap.
+ * @param {Record<string, number>|null|undefined} rolls
+ * @param {string} cycleId
+ * @param {number} count
+ * @returns {Record<string, number>}
+ */
+export function setWormholeCycleCount(rolls, cycleId, count) {
+  const cycle = getWormholeCycleById(cycleId);
+  const next = migrateWormholeCycleRolls(rolls);
+  if (!isCountedWormholeCycle(cycle)) return next;
+  const key = wormholeCycleUsesRollKey(cycleId);
+  const current = toCount(next[key]);
+  let wanted = toCount(count);
+  const bonus = Number(cycle?.reqLevelBonus) || 0;
+  if (bonus > 0 && wanted > current) {
+    const room = WORMHOLE_CYCLE_REQ_LEVEL_CAP - getWormholeCycleReqLevelBonus(next);
+    wanted = Math.min(wanted, current + Math.max(0, Math.floor(room / bonus)));
+  }
+  const previousRanges = snapshotAggRanges(next);
+  next[key] = wanted;
+  addCycleRangeDefaults(next, cycle, wanted - current);
+  reconcileAggRolls(next, previousRanges);
+  if (toCount(next[wormholeCycleUsesRollKey('golden')])) next[WORMHOLE_CYCLE_ROLL_KEYS.golden] = 1;
+  else delete next[WORMHOLE_CYCLE_ROLL_KEYS.golden];
+  next[WORMHOLE_CYCLE_ROLL_KEYS.reqLevel] = reqLevelFromUses(next);
+  if (!next[WORMHOLE_CYCLE_ROLL_KEYS.reqLevel]) delete next[WORMHOLE_CYCLE_ROLL_KEYS.reqLevel];
+  return next;
+}
+
+/**
+ * Convert legacy list / old summed-total keys into per-cycle uses + aggregate sliders.
+ * @param {Record<string, number>|null|undefined} rolls
+ * @returns {Record<string, number>}
+ */
+export function migrateWormholeCycleRolls(rolls) {
+  if (isLegacyCycleRolls(rolls)) {
+    const applied = getAppliedWormholeCycles(rolls);
+    /** @type {Record<string, number>} */
+    const next = stripWormholeCycleRolls(rolls);
+    for (const cycle of applied) {
+      const key = wormholeCycleUsesRollKey(cycle.id);
+      next[key] = toCount(next[key]) + 1;
+    }
+    for (const [key, value] of Object.entries(rolls || {})) {
+      if (key.startsWith(WORMHOLE_CYCLE_ROLL_KEYS.affixPrefix)) next[key] = value;
+    }
+    reconcileAggRolls(next, {});
+    if (toCount(next[wormholeCycleUsesRollKey('golden')])) next[WORMHOLE_CYCLE_ROLL_KEYS.golden] = 1;
+    next[WORMHOLE_CYCLE_ROLL_KEYS.reqLevel] = reqLevelFromUses(next);
+    if (!next[WORMHOLE_CYCLE_ROLL_KEYS.reqLevel]) delete next[WORMHOLE_CYCLE_ROLL_KEYS.reqLevel];
+    return next;
+  }
+
+  /** @type {Record<string, number>} */
+  const next = { ...(rolls || {}) };
+  for (const [key, value] of Object.entries(next)) {
+    if (!key.startsWith(WORMHOLE_CYCLE_ROLL_KEYS.statPrefix)) continue;
+    const slug = key.slice(WORMHOLE_CYCLE_ROLL_KEYS.statPrefix.length);
+    const aggKey = wormholeCycleAggRollKey(slug);
+    if (!(aggKey in next)) next[aggKey] = value;
+    delete next[key];
+  }
+  const hasUses = WORMHOLE_CYCLES.some((cycle) => toCount(next[wormholeCycleUsesRollKey(cycle.id)]));
+  if (hasUses) {
+    reconcileAggRolls(next, snapshotAggRanges(next));
+    if (toCount(next[wormholeCycleUsesRollKey('golden')])) next[WORMHOLE_CYCLE_ROLL_KEYS.golden] = 1;
+    else delete next[WORMHOLE_CYCLE_ROLL_KEYS.golden];
+    next[WORMHOLE_CYCLE_ROLL_KEYS.reqLevel] = reqLevelFromUses(next);
+    if (!next[WORMHOLE_CYCLE_ROLL_KEYS.reqLevel]) delete next[WORMHOLE_CYCLE_ROLL_KEYS.reqLevel];
+  }
+  return next;
+}
+
+/**
+ * Current cycle stats (rolled value inside the aggregated range, or the fixed sum).
+ * @param {Record<string, number>|null|undefined} rolls
+ * @returns {WormholeCycleStatTotal[]}
+ */
+export function getWormholeCycleStatTotals(rolls) {
+  const state = migrateWormholeCycleRolls(rolls);
+  const bySlug = new Map(getWormholeAggregatedAffixes(state).map((affix) => [affix.slug, affix]));
+  /** @type {WormholeCycleStatTotal[]} */
+  const out = [];
+  for (const stat of getWormholeCycleStatCatalog()) {
+    const affix = bySlug.get(stat.slug);
+    if (!affix) continue;
+    let value;
+    if (affix.ranges.length) {
+      const stored = Number(state[wormholeCycleAggRollKey(stat.slug)]);
+      value = Number.isFinite(stored)
+        ? stored
+        : defaultRollValue(affix.ranges[0].min, affix.ranges[0].max);
+    } else {
+      value = extractAffixParts(affix.text).fixedValues[0] || 0;
+    }
+    if (!value && !affix.ranges.length) continue;
+    out.push({ ...stat, value, text: stat.template.replace(FIXED_TOKEN, String(value)) });
+  }
+  return out;
+}
+
+/**
+ * Range sliders for aggregated cycle stats (same keys as charm modifier rows).
+ * @param {Record<string, number>|null|undefined} rolls
+ * @returns {Array<{ key: string, slug: string, display: string, min: number, max: number, value: number }>}
+ */
+export function getWormholeCycleRollableStats(rolls) {
+  const state = migrateWormholeCycleRolls(rolls);
+  /** @type {Array<{ key: string, slug: string, display: string, min: number, max: number, value: number }>} */
+  const out = [];
+  for (const affix of getWormholeAggregatedAffixes(state)) {
+    if (!affix.ranges.length) continue;
+    const { min, max } = affix.ranges[0];
+    const key = wormholeCycleAggRollKey(affix.slug);
+    const stored = Number(state[key]);
+    const value = Number.isFinite(stored) ? stored : defaultRollValue(min, max);
     out.push({
-      mergeKey,
-      slug: wormholeCycleAffixSourceSlug(mergeKey),
-      text,
-      ranges: group.ranges.map((r) => ({ ...r })),
+      key,
+      slug: affix.slug,
+      display: affix.text.replace(`(${min} to ${max})`, String(value)),
+      min,
+      max,
+      value,
     });
   }
   return out;
 }
 
 /**
- * Affix sources for charm tooltips / roll rows.
+ * @param {Record<string, number>|null|undefined} rolls
+ * @returns {string[]}
+ */
+export function getWormholeCycleFixedAffixes(rolls) {
+  return getWormholeAggregatedAffixes(migrateWormholeCycleRolls(rolls))
+    .filter((affix) => !affix.ranges.length)
+    .map((affix) => affix.text)
+    .filter((text) => text && !/^#?0\b/.test(text) && !/\+0\b/.test(text));
+}
+
+/**
+ * @param {Record<string, number>|null|undefined} rolls
+ * @returns {boolean}
+ */
+export function hasWormholeCycles(rolls) {
+  const state = migrateWormholeCycleRolls(rolls);
+  return WORMHOLE_CYCLES.some((cycle) => toCount(state[wormholeCycleUsesRollKey(cycle.id)]));
+}
+
+/**
+ * @param {Record<string, number>|null|undefined} rolls
+ * @returns {number}
+ */
+export function getWormholeCycleReqLevelBonus(rolls) {
+  const state = migrateWormholeCycleRolls(rolls);
+  const fromUses = reqLevelFromUses(state);
+  if (fromUses) return fromUses;
+  return clampReqLevel(Number(state[WORMHOLE_CYCLE_ROLL_KEYS.reqLevel]) || 0);
+}
+
+/**
+ * @param {Record<string, number>|null|undefined} rolls
+ * @returns {boolean}
+ */
+export function hasWormholeGoldenCycle(rolls) {
+  const state = migrateWormholeCycleRolls(rolls);
+  return toCount(state[wormholeCycleUsesRollKey('golden')]) > 0 || Boolean(state[WORMHOLE_CYCLE_ROLL_KEYS.golden]);
+}
+
+/**
+ * @param {Record<string, number>|null|undefined} rolls
+ * @param {string} cycleId
+ * @returns {{ ok: true } | { ok: false, reason: string }}
+ */
+export function canApplyWormholeCycle(rolls, cycleId) {
+  const cycle = getWormholeCycleById(cycleId);
+  if (!cycle) return { ok: false, reason: 'Unknown cycle' };
+  if (cycle.limit != null && cycle.size === 'golden' && hasWormholeGoldenCycle(rolls)) {
+    return { ok: false, reason: `Limit ${cycle.limit}` };
+  }
+  const bonus = Number(cycle.reqLevelBonus) || 0;
+  if (bonus > 0 && bonus + getWormholeCycleReqLevelBonus(rolls) > WORMHOLE_CYCLE_REQ_LEVEL_CAP) {
+    return { ok: false, reason: `Required Level bonus cap (${WORMHOLE_CYCLE_REQ_LEVEL_CAP})` };
+  }
+  return { ok: true };
+}
+
+/**
+ * Add one cycle: increment its use count and expand stat slider ranges.
+ * @param {Record<string, number>|null|undefined} rolls
+ * @param {string} cycleId
+ * @returns {{ ok: true, rolls: Record<string, number> } | { ok: false, reason: string }}
+ */
+export function applyWormholeCycle(rolls, cycleId) {
+  const check = canApplyWormholeCycle(rolls, cycleId);
+  if (!check.ok) return check;
+  const cycle = /** @type {import('./wormhole-cycles-data.js').WormholeCycleDef} */ (getWormholeCycleById(cycleId));
+  const next = migrateWormholeCycleRolls(rolls);
+  const previousRanges = snapshotAggRanges(next);
+  const key = wormholeCycleUsesRollKey(cycle.id);
+  next[key] = toCount(next[key]) + 1;
+  addCycleRangeDefaults(next, cycle, 1);
+  reconcileAggRolls(next, previousRanges);
+  if (cycle.size === 'golden') next[WORMHOLE_CYCLE_ROLL_KEYS.golden] = 1;
+  next[WORMHOLE_CYCLE_ROLL_KEYS.reqLevel] = reqLevelFromUses(next);
+  if (!next[WORMHOLE_CYCLE_ROLL_KEYS.reqLevel]) delete next[WORMHOLE_CYCLE_ROLL_KEYS.reqLevel];
+  return { ok: true, rolls: next };
+}
+
+/**
+ * Set a ranged cycle stat, clamped to the aggregated min/max from applied cycles.
+ * @param {Record<string, number>|null|undefined} rolls
+ * @param {string} slug
+ * @param {number} value
+ * @returns {Record<string, number>}
+ */
+export function setWormholeCycleStatTotal(rolls, slug, value) {
+  const next = migrateWormholeCycleRolls(rolls);
+  const affix = getWormholeAggregatedAffixes(next).find((row) => row.slug === slug);
+  if (!affix?.ranges.length) return next;
+  const n = Number(value);
+  const { min, max } = affix.ranges[0];
+  next[wormholeCycleAggRollKey(slug)] = Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : defaultRollValue(min, max);
+  return next;
+}
+
+/**
+ * Affix sources for charm tooltips / stat rows. Ranged lines keep `(min to max)` so sliders appear.
  * @param {Record<string, number>|null|undefined} rolls
  * @returns {Array<{ sourceKey: string, text: string, prefix: string }>}
  */
 export function getWormholeCycleAffixSources(rolls) {
-  return getWormholeAggregatedAffixes(rolls).map((affix) => ({
-    sourceKey: `cycle:agg:${affix.slug}`,
-    text: affix.text,
-    prefix: '',
-  }));
-}
-
-/**
- * @param {Record<string, number>|null|undefined} rolls
- * @returns {Record<string, number>}
- */
-export function defaultWormholeCycleAffixRolls(rolls) {
-  /** @type {Record<string, number>} */
-  const out = {};
-  for (const affix of getWormholeAggregatedAffixes(rolls)) {
-    const sourceKey = `cycle:agg:${affix.slug}`;
-    affix.ranges.forEach((range, rangeIndex) => {
-      out[`charmAffix:${sourceKey}:r${rangeIndex}`] = defaultRollValue(range.min, range.max);
+  const state = migrateWormholeCycleRolls(rolls);
+  const bySlug = new Map(getWormholeAggregatedAffixes(state).map((affix) => [affix.slug, affix]));
+  /** @type {Array<{ sourceKey: string, text: string, prefix: string }>} */
+  const out = [];
+  for (const stat of getWormholeCycleStatCatalog()) {
+    const affix = bySlug.get(stat.slug);
+    if (!affix) continue;
+    if (!affix.ranges.length) {
+      const value = extractAffixParts(affix.text).fixedValues[0] || 0;
+      if (!value) continue;
+    }
+    out.push({
+      sourceKey: `cycle:agg:${affix.slug}`,
+      text: affix.text,
+      prefix: '',
     });
   }
   return out;
 }
 
 /**
- * Drop stale cycle list + aggregate roll keys, keep unrelated charm rolls.
+ * Drop all cycle keys (legacy list, legacy aggregates, totals), keep unrelated charm rolls.
  * @param {Record<string, number>|null|undefined} rolls
  * @returns {Record<string, number>}
  */
@@ -319,68 +753,15 @@ export function stripWormholeCycleRolls(rolls) {
   const out = {};
   for (const [key, value] of Object.entries(rolls || {})) {
     if (key === WORMHOLE_CYCLE_ROLL_KEYS.count) continue;
-    if (key.startsWith(WORMHOLE_CYCLE_ROLL_KEYS.indexPrefix)) continue;
+    if (key === WORMHOLE_CYCLE_ROLL_KEYS.reqLevel) continue;
+    if (key === WORMHOLE_CYCLE_ROLL_KEYS.golden) continue;
+    if (key.startsWith(WORMHOLE_CYCLE_ROLL_KEYS.statPrefix)) continue;
+    if (key.startsWith(WORMHOLE_CYCLE_ROLL_KEYS.cyclesPrefix)) continue;
+    if (/^charmCycle\d+$/.test(key)) continue;
     if (key.startsWith(WORMHOLE_CYCLE_ROLL_KEYS.affixPrefix)) continue;
-    if (key.startsWith('charmAffix:cycle:agg:')) continue;
     out[key] = value;
   }
   return out;
-}
-
-/**
- * Encode applied cycle id list into roll keys and refresh aggregate roll defaults.
- * Preserves existing aggregate values when still in range.
- * @param {Record<string, number>|null|undefined} rolls
- * @param {string[]} cycleIds
- * @returns {Record<string, number>}
- */
-export function setAppliedWormholeCycleIds(rolls, cycleIds) {
-  const ids = Array.isArray(cycleIds) ? cycleIds : [];
-  const base = stripWormholeCycleRolls(rolls);
-  /** @type {Record<string, number>} */
-  const next = { ...base, [WORMHOLE_CYCLE_ROLL_KEYS.count]: ids.length };
-  ids.forEach((id, listIndex) => {
-    const cycleIndex = getCycleIdToIndex().get(id);
-    if (cycleIndex == null) return;
-    next[wormholeCycleListRollKey(listIndex)] = cycleIndex;
-  });
-
-  const previous = rolls || {};
-  for (const affix of getWormholeAggregatedAffixes(next)) {
-    const sourceKey = `cycle:agg:${affix.slug}`;
-    affix.ranges.forEach((range, rangeIndex) => {
-      const key = `charmAffix:${sourceKey}:r${rangeIndex}`;
-      const prev = Number(previous[key]);
-      if (Number.isFinite(prev) && prev >= range.min && prev <= range.max) {
-        next[key] = prev;
-      } else {
-        next[key] = defaultRollValue(range.min, range.max);
-      }
-    });
-  }
-  return next;
-}
-
-/**
- * @param {Record<string, number>|null|undefined} rolls
- * @param {string} cycleId
- * @returns {{ ok: true, rolls: Record<string, number> } | { ok: false, reason: string }}
- */
-export function applyWormholeCycle(rolls, cycleId) {
-  const check = canApplyWormholeCycle(rolls, cycleId);
-  if (!check.ok) return check;
-  const ids = [...getAppliedWormholeCycleIds(rolls), cycleId];
-  return { ok: true, rolls: setAppliedWormholeCycleIds(rolls, ids) };
-}
-
-/**
- * @param {Record<string, number>|null|undefined} rolls
- * @param {number} listIndex
- * @returns {Record<string, number>}
- */
-export function removeWormholeCycleAt(rolls, listIndex) {
-  const ids = getAppliedWormholeCycleIds(rolls).filter((_, i) => i !== listIndex);
-  return setAppliedWormholeCycleIds(rolls, ids);
 }
 
 /**
@@ -388,7 +769,7 @@ export function removeWormholeCycleAt(rolls, listIndex) {
  * @returns {Record<string, number>}
  */
 export function clearWormholeCycles(rolls) {
-  return setAppliedWormholeCycleIds(rolls, []);
+  return stripWormholeCycleRolls(rolls);
 }
 
 /**
@@ -401,6 +782,43 @@ export function getWormholeCycleMatrix() {
     label: WORMHOLE_CYCLE_SIZE_LABELS[size] || size,
     cycles: WORMHOLE_CYCLES.filter((cycle) => cycle.size === size),
   }));
+}
+
+/**
+ * Type x size matrix for the picker UI. Rows are cycle types; `cells[size]` is the cycle
+ * for that size or null when the type has no such variant. Golden is a single-cell row
+ * (`spanning: true`, cycle under `cells.golden`).
+ * @returns {{
+ *   sizes: Array<{ size: string, label: string }>,
+ *   rows: Array<{
+ *     type: string,
+ *     label: string,
+ *     mods: string,
+ *     spanning: boolean,
+ *     cells: Record<string, import('./wormhole-cycles-data.js').WormholeCycleDef|null>,
+ *   }>,
+ * }}
+ */
+export function getWormholeCycleTypeMatrix() {
+  const sizes = WORMHOLE_CYCLE_MATRIX_SIZES.map((size) => ({
+    size,
+    label: (WORMHOLE_CYCLE_SIZE_LABELS[size] || size).replace(/\s*Cycle$/i, ''),
+  }));
+  const rows = WORMHOLE_CYCLE_TYPES.map((type) => {
+    const ofType = WORMHOLE_CYCLES.filter((cycle) => cycle.type === type.id);
+    const spanning = ofType.length > 0 && ofType.every((cycle) => cycle.size === 'golden');
+    /** @type {Record<string, import('./wormhole-cycles-data.js').WormholeCycleDef|null>} */
+    const cells = {};
+    if (spanning) {
+      cells.golden = ofType[0];
+    } else {
+      for (const size of WORMHOLE_CYCLE_MATRIX_SIZES) {
+        cells[size] = ofType.find((cycle) => cycle.size === size) || null;
+      }
+    }
+    return { type: type.id, label: type.label, mods: type.mods, spanning, cells };
+  }).filter((row) => Object.values(row.cells).some(Boolean));
+  return { sizes, rows };
 }
 
 /**
