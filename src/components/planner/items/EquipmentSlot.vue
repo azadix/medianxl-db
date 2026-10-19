@@ -84,18 +84,50 @@ const reqsUnmet = computed(() => {
 const dropState = ref(/** @type {''|'accept'|'reject'} */ (''));
 const nameEl = ref(null);
 const nameScale = ref(1);
+const nameWrap = ref(false);
 let nameResizeObserver = null;
+/** @type {HTMLCanvasElement|null} */
+let nameMeasureCanvas = null;
+
+/** Scale below this on one line wraps the name onto two lines instead. */
+const MIN_SINGLE_LINE_SCALE = 0.8;
+
+/**
+ * @param {HTMLElement} el
+ * @param {string} text
+ * @returns {number}
+ */
+function measureNameWidth(el, text) {
+  const cs = getComputedStyle(el);
+  if (!nameMeasureCanvas) nameMeasureCanvas = document.createElement('canvas');
+  const ctx = nameMeasureCanvas.getContext('2d');
+  if (!ctx) return el.scrollWidth;
+  ctx.font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+  const letterSpacing = Number.parseFloat(cs.letterSpacing);
+  const extra =
+    Number.isFinite(letterSpacing) && text.length > 1 ? letterSpacing * (text.length - 1) : 0;
+  return ctx.measureText(text).width + extra;
+}
 
 function fitName() {
   const el = nameEl.value;
   if (!el) {
     nameScale.value = 1;
+    nameWrap.value = false;
     return;
   }
   const available = el.parentElement?.clientWidth ?? 0;
   if (available <= 0) return;
-  const natural = el.scrollWidth;
-  nameScale.value = natural > 0 ? Math.min(1, available / natural) : 1;
+  const text = (el.textContent || '').trim();
+  const natural = measureNameWidth(el, text);
+  const singleScale = natural > 0 ? Math.min(1, available / natural) : 1;
+  if (singleScale >= MIN_SINGLE_LINE_SCALE) {
+    nameWrap.value = false;
+    nameScale.value = singleScale;
+    return;
+  }
+  nameWrap.value = true;
+  nameScale.value = 1;
 }
 
 function observeName() {
@@ -294,8 +326,8 @@ function onDrop(e) {
           <span
             ref="nameEl"
             class="planner-slot__name"
-            :class="rarityNameClass"
-            :style="nameScale < 1 ? { transform: `scale(${nameScale})` } : undefined"
+            :class="[rarityNameClass, { 'is-wrapped': nameWrap }]"
+            :style="!nameWrap && nameScale < 1 ? { transform: `scale(${nameScale})` } : undefined"
           >{{ def.name }}</span>
         </span>
       </div>

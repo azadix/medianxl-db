@@ -641,9 +641,10 @@
 .item-tooltip-sidepanel {
     --item-rarity-fill: #1a1a1a;
     box-sizing: border-box;
-    flex: 0 1 12.5rem;
+    flex: 0 0 auto;
+    width: max-content;
     min-width: 9.5rem;
-    max-width: 14rem;
+    max-width: none;
     padding: 10px 12px;
     color: #e8e8e8;
     border: 2px solid rgba(255, 255, 255, 0.85);
@@ -666,6 +667,7 @@
     font-size: 0.82rem;
     line-height: 1.35;
     color: white;
+    white-space: nowrap;
 }
 
 .item-tooltip-sidepanel__line + .item-tooltip-sidepanel__line {
