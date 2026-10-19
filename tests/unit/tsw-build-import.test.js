@@ -295,7 +295,7 @@ describe('tsw-build-import', () => {
       defId: 'u:mindflayers-mayhem:su',
       icon: 'mfboots',
       name: "Tinker's Gambit",
-      extras: ['+1% Trap Damage per 5 Base Strength', '+3 to Assassin Skill Levels'],
+      extras: ['{orange}+1% Trap Damage per 5 Base Strength', '+3 to Assassin Skill Levels'],
     });
     expect(assassin.snapshot.equipment.feet.mysticOrbs).toBeUndefined();
     expect(assassin.snapshot.equipment.head).toBeNull();
@@ -552,7 +552,7 @@ describe('tsw-build-import', () => {
     expect(snapshot.equipment.tors).toMatchObject({
       defId: 'rw:lionheart:@14',
       icon: 'invful',
-      extras: expect.arrayContaining(['remainders of a once powerful armor...']),
+      extras: expect.arrayContaining(['{grey}remainders of a once powerful armor...']),
     });
     expect(snapshot.equipment.tors?.extras).not.toEqual(
       expect.arrayContaining(['OhmOhmOhm'])
