@@ -321,34 +321,54 @@ describe('tsw-build-import', () => {
     store.catalogLoaded = true;
     store.catalogVersionFolder = '2_14';
 
-    const azalea = JSON.parse(readFileSync(resolve(ROOT, 'todo/bugs mediandb/Azalea.json'), 'utf8'));
-    const { snapshot: azaleaSnap, skipped: azaleaSkipped } = mapTswItemsToSnapshot(
-      azalea.items,
+    let testedItem = {
+      item: "Tinker's Gambit",
+      display_name: "Tinker's Gambit",
+      type: "Mindflayer's Mayhem",
+      quality: 'Unique',
+      display_quality: 'SSU',
+      code: 'DU1',
+      image: 'mfboots',
+      location: 'Gear',
+      slot: 'Feet',
+    };
+    const { snapshot: tinkerSnap, skipped: tinkerSkipped } = mapTswItemsToSnapshot(
+      [testedItem],
       store,
       'Assassin'
     );
-    expect(azaleaSkipped.some((row) => /Tinker|Mindflayer/i.test(row.name))).toBe(false);
-    store.fromSnapshot(azaleaSnap);
-    const azaleaFeet = store.getEquipmentDef('feet');
-    expect(azaleaFeet?.id).toBe('u:mindflayers-mayhem:su');
-    expect(azaleaFeet?.name).toBe("Tinker's Gambit");
-    expect(azaleaFeet?.classRestriction).toBeFalsy();
-    expect(canEquipInSlot(azaleaFeet, 'feet', 'Assassin')).toBe(true);
-    expect(canEquipInSlot(azaleaFeet, 'feet', 'Amazon')).toBe(true);
+    expect(tinkerSkipped.some((row) => /Tinker|Mindflayer/i.test(row.name))).toBe(false);
+    store.fromSnapshot(tinkerSnap);
+    const tinkerFeet = store.getEquipmentDef('feet');
+    expect(tinkerFeet?.id).toBe('u:mindflayers-mayhem:su');
+    expect(tinkerFeet?.name).toBe("Tinker's Gambit");
+    expect(tinkerFeet?.classRestriction).toBeFalsy();
+    expect(canEquipInSlot(tinkerFeet, 'feet', 'Assassin')).toBe(true);
+    expect(canEquipInSlot(tinkerFeet, 'feet', 'Amazon')).toBe(true);
 
-    const dabomei = JSON.parse(readFileSync(resolve(ROOT, 'todo/bugs mediandb/dabomei.json'), 'utf8'));
-    const { snapshot: dabomeiSnap, skipped: dabomeiSkipped } = mapTswItemsToSnapshot(
-      dabomei.items,
+    testedItem = {
+      item: 'Lionblood Crest',
+      display_name: 'Lionblood Crest',
+      type: "Mindflayer's Mayhem",
+      quality: 'Unique',
+      display_quality: 'SU',
+      code: 'DU1',
+      image: 'mfboots',
+      location: 'Gear',
+      slot: 'Feet',
+    };
+    const { snapshot: lionbloodSnap, skipped: lionbloodSkipped } = mapTswItemsToSnapshot(
+      [testedItem],
       store,
       'Assassin'
     );
-    expect(dabomeiSkipped.some((row) => /Lionblood|Mindflayer/i.test(row.name))).toBe(false);
-    store.fromSnapshot(dabomeiSnap);
-    const dabomeiFeet = store.getEquipmentDef('feet');
-    expect(dabomeiFeet?.id).toBe('u:mindflayers-mayhem:su');
-    expect(dabomeiFeet?.name).toBe('Lionblood Crest');
-    expect(dabomeiFeet?.classRestriction).toBeFalsy();
-    expect(canEquipInSlot(dabomeiFeet, 'feet', 'Assassin')).toBe(true);
+    expect(lionbloodSkipped.some((row) => /Lionblood|Mindflayer/i.test(row.name))).toBe(false);
+    store.fromSnapshot(lionbloodSnap);
+    const lionbloodFeet = store.getEquipmentDef('feet');
+    expect(lionbloodFeet?.id).toBe('u:mindflayers-mayhem:su');
+    expect(lionbloodFeet?.name).toBe('Lionblood Crest');
+    expect(lionbloodFeet?.classRestriction).toBeFalsy();
+    expect(canEquipInSlot(lionbloodFeet, 'feet', 'Assassin')).toBe(true);
   });
 
   it('loads Valthek quest set pieces from NgucBu-ViE.json', () => {
@@ -364,20 +384,20 @@ describe('tsw-build-import', () => {
     store.catalogLoaded = true;
     store.catalogVersionFolder = '2_14';
 
-    const dump = JSON.parse(readFileSync(resolve(ROOT, 'todo/bugs mediandb/NgucBu-ViE.json'), 'utf8'));
-    const { snapshot, skipped } = mapTswItemsToSnapshot(dump.items, store, 'Amazon');
-    const valthekNames = [
-      "Horazon's Guard",
-      "Zoltun's Gauntlets",
-      "Bartuc's Blood",
-      "Deckard Cain's Gem",
-      "Jered Cain's Diamond",
-      "Tal Rasha's Talisman",
-      "Quov Tsin's Crown",
-      "Radament's Greaves",
-      "Valthek's Blade",
-      "Nor Tiraj's Safeguard",
+    const valthekItems = [
+      { display_name: "Horazon's Guard", quality: 'Set', display_quality: 'Set', location: 'Gear', slot: 'Torso' },
+      { display_name: "Zoltun's Gauntlets", quality: 'Set', display_quality: 'Set', location: 'Gear', slot: 'Hands' },
+      { display_name: "Bartuc's Blood", quality: 'Set', display_quality: 'Set', location: 'Gear', slot: 'Waist' },
+      { display_name: "Deckard Cain's Gem", quality: 'Set', display_quality: 'Set', location: 'Gear', slot: 'LeftFinger' },
+      { display_name: "Jered Cain's Diamond", quality: 'Set', display_quality: 'Set', location: 'Gear', slot: 'RightFinger' },
+      { display_name: "Tal Rasha's Talisman", quality: 'Set', display_quality: 'Set', location: 'Gear', slot: 'Neck' },
+      { display_name: "Quov Tsin's Crown", quality: 'Set', display_quality: 'Set', location: 'Gear', slot: 'Head' },
+      { display_name: "Radament's Greaves", quality: 'Set', display_quality: 'Set', location: 'Gear', slot: 'Feet' },
+      { display_name: "Valthek's Blade", quality: 'Set', display_quality: 'Set', location: 'Gear', slot: 'RightHandMain' },
+      { display_name: "Nor Tiraj's Safeguard", quality: 'Set', display_quality: 'Set', location: 'Gear', slot: 'LeftHandMain' },
     ];
+    const { snapshot, skipped } = mapTswItemsToSnapshot(valthekItems, store, 'Amazon');
+    const valthekNames = valthekItems.map((row) => row.display_name);
     expect(skipped.filter((row) => valthekNames.includes(row.name))).toEqual([]);
     expect(snapshot.equipment.tors?.defId).toBe('s:horazons-guard:sacred-set');
     expect(snapshot.equipment.rarm?.defId).toBe('s:valtheks-blade:sacred-set');
@@ -402,8 +422,19 @@ describe('tsw-build-import', () => {
       reqLevel: 1,
     });
 
-    const garden = JSON.parse(readFileSync(resolve(ROOT, 'todo/bugs mediandb/garden.json'), 'utf8'));
-    const { snapshot, skipped } = mapTswItemsToSnapshot(garden.items, {
+    const testedItem = {
+      item: 'I Am Rich',
+      display_name: 'I Am Rich',
+      type: 'Charm',
+      quality: 'Unique',
+      display_quality: 'Charm',
+      code: 'u@+',
+      image: 'redgem',
+      is_charm: true,
+      location: 'Inventory',
+      slot: null,
+    };
+    const { snapshot, skipped } = mapTswItemsToSnapshot([testedItem], {
       catalog: charms.map((c) => ({ ...c, type: 'charm', category: 'charms', keepInInventory: true })),
     });
     expect(skipped.some((row) => /I Am Rich/i.test(row.name))).toBe(false);
