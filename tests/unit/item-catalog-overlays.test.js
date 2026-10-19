@@ -88,6 +88,11 @@ describe('unique-stats-db catalog', () => {
     expect(mayhem?.sockets).toBeUndefined();
     expect(mayhem?.modifiers?.some((m) => /Cannot have any sockets or enhancements/.test(m))).toBe(true);
     expect(mayhem?.modifiers?.some((m) => /\+40% Movement Speed/.test(m))).toBe(true);
+
+    const tyrael = items.find((u) => u.name === "Tyrael's Might");
+    expect(tyrael?.ethereal).toBe(true);
+    expect(tyrael?.modifiers).not.toEqual(expect.arrayContaining(['Ethereal', '{grey}Ethereal']));
+    expect(tyrael?.modifiers).toContain('{orange}Celeri Caelesti Iustitia');
     expect(items.filter((u) => u.name === "Akara's Robe")).toHaveLength(3);
     expect(items.some((r) => r.id === 'relic:blood-of-creation-version-1')).toBe(true);
     const boc1 = items.find((r) => r.id === 'relic:blood-of-creation-version-1');
@@ -152,6 +157,17 @@ describe('unique-stats-db catalog', () => {
     expect(parsed.sockets).toBe(4);
     expect(parsed.defenseDisplay).toContain('100');
     expect(parsed.modifiers).toContain('+(10 to 20)% Enhanced Defense');
+
+    const tyraelStats = parseItemStats(
+      'Defense: 11859 to 14685\nRequired Level: 130\n{grey}Ethereal\n50% Movement Speed\nCannot Be Frozen\nCeleri Caelesti Iustitia\nSocketed (6)'
+    );
+    expect(tyraelStats.ethereal).toBe(true);
+    expect(tyraelStats.sockets).toBe(6);
+    expect(tyraelStats.modifiers).toEqual([
+      '50% Movement Speed',
+      'Cannot Be Frozen',
+      '{orange}Celeri Caelesti Iustitia',
+    ]);
 
     const bonuses = parseSetBonusStats(
       'Set Bonus with 2 or more set items:\n+1 to All Skills\n\nSet Bonus with complete set:\nPhysical Resist 5%'

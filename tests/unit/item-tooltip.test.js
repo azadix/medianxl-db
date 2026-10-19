@@ -204,6 +204,25 @@ describe('getItemStatSections', () => {
     });
   });
 
+  it('shows always-ethereal uniques with one Ethereal line and orange flavor', () => {
+    const sections = getItemStatSections({
+      rarity: 'unique',
+      uniqueKind: 'su',
+      ethereal: true,
+      modifiers: [
+        '{grey}Ethereal',
+        '50% Movement Speed',
+        '{orange}Celeri Caelesti Iustitia',
+      ],
+    });
+    const ethereal = [...sections.base, ...sections.scaling, ...sections.mods].filter((line) =>
+      /Ethereal/i.test(line)
+    );
+    expect(ethereal).toEqual(['{grey}Ethereal']);
+    expect(sections.mods).toContain('{orange}Celeri Caelesti Iustitia');
+    expect(sections.mods).not.toContain('Celeri Caelesti Iustitia');
+  });
+
   it('lists innate once and does not label it as regular fire damage', () => {
     const sections = getItemStatSections({
       rarity: 'unique',

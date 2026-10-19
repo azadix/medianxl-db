@@ -21,6 +21,7 @@ import {
 } from '@/items/charm-items.js';
 import {
   stripTswBaseLabel,
+  tswDescriptionColoredTexts,
   tswDescriptionTexts,
   tswRowIsEthereal,
 } from '@/items/custom-items.js';
@@ -31,7 +32,7 @@ import {
   isOverlayItem,
   overlayAffixRollKey,
 } from '@/items/item-overlays.js';
-import { decodeModifierLine } from '@/items/item-modifier-line.js';
+import { decodeModifierLine, encodeModifierLine } from '@/items/item-modifier-line.js';
 import { parseSkillBonusFromModifierLine } from '@/items/skill-bonus-from-modifiers.js';
 import {
   isRelicItem,
@@ -529,8 +530,8 @@ export function extrasFromTswItem(row, def) {
   const templates = catalogModifierTemplates(def);
   /** @type {string[]} */
   const out = [];
-  for (const line of tswDescriptionTexts(row.description_lines)) {
-    const text = plain(line);
+  for (const line of tswDescriptionColoredTexts(row.description_lines)) {
+    const text = plain(line.text);
     if (!text) continue;
     const lower = text.toLowerCase();
     if (skip.has(lower)) continue;
@@ -540,7 +541,7 @@ export function extrasFromTswItem(row, def) {
     // Socketed rune name dump (FelFelFelFalFal), even if socketables were omitted.
     if (isTswSocketedRuneDump(text)) continue;
     if (templates.some((tmpl) => lineMatchesCatalogTemplate(tmpl, text))) continue;
-    out.push(text);
+    out.push(encodeModifierLine(text, line.color) || text);
   }
   return out;
 }

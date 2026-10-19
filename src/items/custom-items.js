@@ -5,7 +5,11 @@
 
 import { isCharmItem } from '@/items/charm-items.js';
 import { isRelicItem } from '@/items/relic-items.js';
-import { encodeModifierLine, MODIFIER_COLOR_GREY } from '@/items/item-modifier-line.js';
+import {
+  encodeModifierLine,
+  MODIFIER_COLOR_GREY,
+  MODIFIER_COLOR_ORANGE,
+} from '@/items/item-modifier-line.js';
 
 /** @typedef {'magic'|'rare'|'crafted'|'honorific'|'angelic'|'superior'|'normal'} CustomItemQuality */
 
@@ -258,18 +262,44 @@ export function isTswCustomQuality(row) {
  * @returns {string[]}
  */
 export function tswDescriptionTexts(lines) {
+  return tswDescriptionColoredTexts(lines).map((row) => row.text);
+}
+
+/**
+ * @param {unknown} lines
+ * @returns {Array<{ text: string, color: string }>}
+ */
+export function tswDescriptionColoredTexts(lines) {
   if (!Array.isArray(lines)) return [];
-  /** @type {string[]} */
+  /** @type {Array<{ text: string, color: string }>} */
   const out = [];
   for (const line of lines) {
     if (!Array.isArray(line)) continue;
-    const text = line
-      .map((seg) => (Array.isArray(seg) ? String(seg[0] || '') : ''))
-      .join('')
-      .trim();
-    if (text) out.push(text);
+    let text = '';
+    /** @type {number|null} */
+    let code = null;
+    for (const seg of line) {
+      if (!Array.isArray(seg)) continue;
+      text += String(seg[0] || '');
+      const n = Number(seg[1]);
+      if (code == null && Number.isFinite(n) && n >= 0) code = n;
+    }
+    text = text.trim();
+    if (!text) continue;
+    out.push({ text, color: tswColorToModifierColor(code) });
   }
   return out;
+}
+
+/**
+ * TSW description color ids: 3 magic, 4/7/8/9 unique-gold/orange, 5 grey.
+ * @param {number|null|undefined} code
+ * @returns {string}
+ */
+function tswColorToModifierColor(code) {
+  if (code === 5) return MODIFIER_COLOR_GREY;
+  if (code === 4 || code === 7 || code === 8 || code === 9) return MODIFIER_COLOR_ORANGE;
+  return '';
 }
 
 /**

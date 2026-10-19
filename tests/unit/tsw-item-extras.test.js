@@ -97,6 +97,38 @@ describe('tsw item extras', () => {
     expect(extras).not.toEqual(expect.arrayContaining(['+2 to All Skills']));
   });
 
+  it('does not extra Tyrael flavor or Ethereal when they are catalog lines', () => {
+    const def = {
+      id: 'u:tyraels-might:su',
+      name: "Tyrael's Might",
+      uniqueKind: 'su',
+      rarity: 'unique',
+      ethereal: true,
+      modifiers: [
+        '50% Movement Speed',
+        '+100% Damage to Demons',
+        '{orange}Celeri Caelesti Iustitia',
+      ],
+    };
+    const extras = extrasFromTswItem(
+      {
+        display_name: "Tyrael's Might",
+        type: 'Ancient Armor (SSSU) [eth]',
+        eth: true,
+        description_lines: [
+          [["Tyrael's Might", 4]],
+          [['Ancient Armor (Sacred)', 4]],
+          [['Ethereal', 5]],
+          [['+50% Movement Speed', 3]],
+          [['Celeri Caelesti Iustitia', 7]],
+          [['+20 Required Level', 3]],
+        ],
+      },
+      def
+    );
+    expect(extras).toEqual(['+20 Required Level']);
+  });
+
   it('skips sacred base label and calculated innate lines for uniques', () => {
     const mekanismDef = {
       id: 'u:mekanism:su',

@@ -199,6 +199,7 @@ export function collectOverlayAffixSources(def, rolls = null) {
     if (typeof mod !== 'string' || !mod.trim()) continue;
     const { text, color, showCondition } = decodeModifierLine(mod);
     if (!text) continue;
+    if (/^Ethereal$/i.test(text)) continue;
     if (innateText && text.trim() === innateText) continue;
     out.push({
       sourceKey: `base:m${i}`,

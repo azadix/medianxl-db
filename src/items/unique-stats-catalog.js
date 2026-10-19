@@ -209,6 +209,7 @@ function isHeaderLine(line) {
  *   throwDamageDisplay?: string,
  *   block?: string,
  *   innate?: string,
+ *   ethereal?: boolean,
  *   modifiers: string[],
  * }}
  */
@@ -327,6 +328,10 @@ export function parseItemStats(stats) {
       }
       continue;
     }
+    if (/^Ethereal$/i.test(stripModifierColorPrefix(line))) {
+      out.ethereal = true;
+      continue;
+    }
     const sock = /^Socketed\s*\((\d+)\)\s*$/i.exec(line);
     if (sock) {
       out.sockets = Number(sock[1]);
@@ -388,7 +393,36 @@ export function parseItemStats(stats) {
     }
   }
   flushDisplay();
+  out.modifiers = out.modifiers.map((mod) => {
+    if (typeof mod !== 'string') return mod;
+    const stripped = stripModifierColorPrefix(mod);
+    if (stripped !== String(mod).trim()) return mod;
+    return looksLikeUniqueFlavorLine(stripped) ? `{orange}${stripped}` : mod;
+  });
   return out;
+}
+
+/** Bare affixes that have no numbers but are still real mods, not flavor. */
+const BARE_AFFIX_RE =
+  /^(Cannot Be Frozen|Indestructible|Knockback|Ignore Target'?s Defense|Prevent Monster Heal|Half Freeze Duration|Piercing Attack|Replenish Life|Drain Life)$/i;
+
+/**
+ * Unique gold flavor (e.g. Tyrael's "Celeri Caelesti Iustitia") has no affix shape.
+ * @param {string} text
+ * @returns {boolean}
+ */
+function looksLikeUniqueFlavorLine(text) {
+  const t = String(text || '').trim();
+  if (!t || BARE_AFFIX_RE.test(t)) return false;
+  if (/[0-9%]/.test(t) || /^[+-]/.test(t)) return false;
+  if (
+    /^(Adds |Chance |Level |Maximum |Minimum |Required |Requirements |Socketed |Keep in |Item Level |Cube |Transmute |Unlocks |Weapon |Physical |Elemental |Fire |Cold |Lightning |Poison |Magic |Slow |Cannot |Slain |Regenerate |Attacker |Target |Hit |Cast |Attack |Block |Movement |Defense |Damage |Life |Mana |Bonus |Reanimate |Ignore |Prevent |Gives )/i.test(
+      t
+    )
+  ) {
+    return false;
+  }
+  return /^[A-Za-z]/.test(t) && t.split(/\s+/).length >= 2;
 }
 
 /**
@@ -676,6 +710,7 @@ export function entryToItemDef(entry, bases) {
   if (parsed.throwDamageDisplay) def.throwDamageDisplay = parsed.throwDamageDisplay;
   if (parsed.block) def.block = parsed.block;
   if (parsed.innate) def.innate = parsed.innate;
+  if (parsed.ethereal) def.ethereal = true;
 
   if (entry.class) def.group = entry.class;
 
