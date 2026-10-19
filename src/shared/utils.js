@@ -723,9 +723,11 @@ export async function expandPlaceholdersWithScaling(skillId, level, description,
                 ) {
                     output = '';
                 } else if (scalingValues) {
-                    const blvl = effectiveCharacterState?.blvl?.[actualSkillName] || 0;
-                    const slvl = effectiveCharacterState?.lvl?.[actualSkillName] || 0;
-                    const lvl = (Number(blvl) || 0) + (Number(slvl) || 0) || Math.max(1, Number(effectiveLevel) || 1);
+                    const blvlRaw = Number(effectiveCharacterState?.blvl?.[actualSkillName]);
+                    const slvlRaw = Number(effectiveCharacterState?.lvl?.[actualSkillName]);
+                    const blvl = Number.isFinite(blvlRaw) ? blvlRaw : 0;
+                    const slvl = Number.isFinite(slvlRaw) ? slvlRaw : 0;
+                    const lvl = blvl + slvl || Math.max(1, Number(effectiveLevel) || 1);
                     const formulaVariables = {
                         blvl,
                         slvl,

@@ -6,6 +6,7 @@
 import { buildItemTooltipHtml } from '@/items/item-tooltip.js';
 import { useItemsStore } from '@/stores/items.js';
 import { buildFixedLevelSkillTooltipHtml } from '@/skills/fixed-level-skill-tooltip.js';
+import { readNestedSkillTooltipAttrs } from '@/shared/tooltip-html.js';
 import { shouldSuppressLiveTooltipHide } from '@/shared/tooltip-pinning.js';
 import {
   NESTED_SKILL_TOOLTIP_Z,
@@ -53,16 +54,15 @@ export function bindSkillsPageNestedSkillTooltipHandlers() {
   skillShell.attach();
   skillShell.setNestedHandlers({
     showSkill: async (skillId, clientX, clientY, fromEl) => {
-      const rawLevel = fromEl instanceof Element ? fromEl.getAttribute('data-tooltip-skill-level') : null;
-      const parsedLevel = Math.floor(Number(rawLevel));
-      const level =
-        rawLevel != null && Number.isFinite(parsedLevel) && parsedLevel > 0 ? parsedLevel : 1;
-      const html = await buildFixedLevelSkillTooltipHtml(skillId, level);
+      const nested = readNestedSkillTooltipAttrs(fromEl instanceof Element ? fromEl : null);
+      const level = nested.level != null ? nested.level : 1;
+      const asProc = nested.asProc;
+      const html = await buildFixedLevelSkillTooltipHtml(skillId, level, { asProc });
       if (!html) return;
-      lastPresent = { kind: 'skill', target: null, skillId, level };
+      lastPresent = { kind: 'skill', target: null, skillId, level, asProc };
       presentOnShell(skillShell, 'skill', html, clientX, clientY, {
-        getHtml: () => buildFixedLevelSkillTooltipHtml(skillId, level),
-        meta: { skillId, nested: true, fixedLevel: level },
+        getHtml: () => buildFixedLevelSkillTooltipHtml(skillId, level, { asProc }),
+        meta: { skillId, nested: true, fixedLevel: level, asProc },
         zIndex: NESTED_SKILL_TOOLTIP_Z,
       });
     },
@@ -92,7 +92,9 @@ function rebuildLastHtml() {
   if (lastPresent.kind === 'skill') {
     if (lastPresent.target) return buildSkillsPageSkillTooltipHtml(lastPresent.target);
     if (lastPresent.skillId) {
-      return buildFixedLevelSkillTooltipHtml(lastPresent.skillId, lastPresent.level || 1);
+      return buildFixedLevelSkillTooltipHtml(lastPresent.skillId, lastPresent.level || 1, {
+        asProc: Boolean(lastPresent.asProc),
+      });
     }
   }
   return '';
@@ -210,7 +212,7 @@ export async function buildSkillsPageSkillTooltipHtml(target) {
   if (!skillId) return '';
   const levelRaw = parseInt(String(target.getAttribute('data-proc-level') || '1'), 10);
   const level = Number.isFinite(levelRaw) ? levelRaw : 1;
-  return buildFixedLevelSkillTooltipHtml(skillId, level);
+  return buildFixedLevelSkillTooltipHtml(skillId, level, { asProc: true });
 }
 
 /**

@@ -216,8 +216,8 @@ export function wrapNamedSkillGrantMarkers(line) {
   if (!skillName) return text;
   const marker =
     Number.isFinite(proc.level) && proc.level > 0
-      ? `${proc.skillId}:${Math.floor(proc.level)}`
-      : proc.skillId;
+      ? `${proc.skillId}:${Math.floor(proc.level)}:proc`
+      : `${proc.skillId}:proc`;
   const re = new RegExp(
     `(level\\s+\\d+\\s+)${escapeRegExp(skillName)}(\\s+(?:on|when)\\s+)`,
     'i'
@@ -248,13 +248,14 @@ export function formatItemModifierLineHtml(line) {
   let match;
   while ((match = re.exec(marked)) !== null) {
     out += escapeHtmlText(marked.slice(cursor, match.index));
-    const { skillId, level } = parseNestedSkillMarker(match[1]);
+    const { skillId, level, asProc } = parseNestedSkillMarker(match[1]);
     const display = lookupMergedDisplayNameByInternalName(skillId) || skillId;
     out += wrapNestedSkillTooltipHtml(
       skillId,
       escapeHtmlText(display),
       SCALING_DISPLAY_HTML_CLASSES.skill,
-      level
+      level,
+      asProc
     );
     cursor = match.index + match[0].length;
   }
@@ -301,6 +302,7 @@ function annotatePartsWithSkillName(parts, displayName, looksLikeMatch, extra = 
       text: displayName,
       skillId: extra.skillId,
       skillLevel: extra.skillLevel ?? null,
+      skillAsProc: extra.skillAsProc === true,
     });
     if (after) out.push({ kind: 'text', text: after });
     replaced = true;
@@ -362,6 +364,7 @@ export function annotateAffixDisplayPartsWithSkills(parts) {
     {
       skillId: proc.skillId,
       skillLevel: Number.isFinite(proc.level) && proc.level > 0 ? Math.floor(proc.level) : null,
+      skillAsProc: true,
     }
   );
   return annotated || parts;

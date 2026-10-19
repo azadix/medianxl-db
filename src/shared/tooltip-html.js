@@ -131,6 +131,7 @@ export function buildSkillTooltipDescriptionBlock(options) {
 
 export const NESTED_SKILL_ATTR = 'data-tooltip-skill-id';
 export const NESTED_SKILL_LEVEL_ATTR = 'data-tooltip-skill-level';
+export const NESTED_SKILL_AS_PROC_ATTR = 'data-tooltip-skill-as-proc';
 
 /**
  * Wrap a skill display name as a nested-hover target.
@@ -138,13 +139,15 @@ export const NESTED_SKILL_LEVEL_ATTR = 'data-tooltip-skill-level';
  * @param {string} displayHtmlAlreadyEscaped
  * @param {string} [className]
  * @param {number|null|undefined} [level] - Fixed skill level from the host line (grant/proc)
+ * @param {boolean} [asProc] - CTC packed level; blvl stays tree hard points
  * @returns {string}
  */
 export function wrapNestedSkillTooltipHtml(
   skillId,
   displayHtmlAlreadyEscaped,
   className = '',
-  level = null
+  level = null,
+  asProc = false
 ) {
   const id = String(skillId || '').trim();
   if (!id) return displayHtmlAlreadyEscaped;
@@ -153,23 +156,48 @@ export function wrapNestedSkillTooltipHtml(
   const lvl = Math.floor(Number(level));
   const levelAttr =
     Number.isFinite(lvl) && lvl > 0 ? ` ${NESTED_SKILL_LEVEL_ATTR}="${lvl}"` : '';
-  return `<span class="${cls}" ${NESTED_SKILL_ATTR}="${safeId}"${levelAttr}>${displayHtmlAlreadyEscaped}</span>`;
+  const procAttr = asProc ? ` ${NESTED_SKILL_AS_PROC_ATTR}="1"` : '';
+  return `<span class="${cls}" ${NESTED_SKILL_ATTR}="${safeId}"${levelAttr}${procAttr}>${displayHtmlAlreadyEscaped}</span>`;
 }
 
 /**
- * Parse optional fixed level from a nested skill marker like `id` or `id:23`.
+ * Parse optional fixed level from a nested skill marker like `id`, `id:23`, or `id:23:proc`.
  * @param {string|null|undefined} raw
- * @returns {{ skillId: string, level: number|null }}
+ * @returns {{ skillId: string, level: number|null, asProc: boolean }}
  */
 export function parseNestedSkillMarker(raw) {
   const text = String(raw || '').trim();
-  if (!text) return { skillId: '', level: null };
-  const colon = text.lastIndexOf(':');
-  if (colon <= 0) return { skillId: text, level: null };
-  const skillId = text.slice(0, colon).trim();
-  const lvl = Math.floor(Number(text.slice(colon + 1)));
-  if (!skillId || !Number.isFinite(lvl) || lvl <= 0) return { skillId: text, level: null };
-  return { skillId, level: lvl };
+  if (!text) return { skillId: '', level: null, asProc: false };
+  let asProc = false;
+  let rest = text;
+  if (/:proc$/i.test(rest)) {
+    asProc = true;
+    rest = rest.slice(0, -5);
+  }
+  const colon = rest.lastIndexOf(':');
+  if (colon <= 0) return { skillId: rest, level: null, asProc };
+  const skillId = rest.slice(0, colon).trim();
+  const lvl = Math.floor(Number(rest.slice(colon + 1)));
+  if (!skillId || !Number.isFinite(lvl) || lvl <= 0) return { skillId: text, level: null, asProc };
+  return { skillId, level: lvl, asProc };
+}
+
+/**
+ * @param {Element|null|undefined} fromEl
+ * @returns {{ level: number|null, asProc: boolean }}
+ */
+export function readNestedSkillTooltipAttrs(fromEl) {
+  if (!(fromEl instanceof Element)) return { level: null, asProc: false };
+  const raw = fromEl.getAttribute(NESTED_SKILL_LEVEL_ATTR);
+  const parsed = Math.floor(Number(raw));
+  const level =
+    raw != null && String(raw).trim() !== '' && Number.isFinite(parsed) && parsed > 0
+      ? parsed
+      : null;
+  return {
+    level,
+    asProc: fromEl.getAttribute(NESTED_SKILL_AS_PROC_ATTR) === '1',
+  };
 }
 
 /**

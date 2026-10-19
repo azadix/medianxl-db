@@ -330,9 +330,11 @@ export default class Skill {
     _buildFormulaVariables(characterState, characterLevel) {
         if (!characterState) return null;
         
-        const blvl = characterState.blvl?.[this.id] || 0;
-        const slvl = characterState.lvl?.[this.id] || 0; // Soft levels (class/all skills bonuses)
-        const lvl = blvl + slvl; // Total effective skill level
+        const blvlRaw = Number(characterState.blvl?.[this.id]);
+        const slvlRaw = Number(characterState.lvl?.[this.id]);
+        const blvl = Number.isFinite(blvlRaw) ? blvlRaw : 0;
+        const slvl = Number.isFinite(slvlRaw) ? slvlRaw : 0;
+        const lvl = blvl + slvl;
         
         // Build variables object
         const variables = {

@@ -18,7 +18,7 @@ const emit = defineEmits(['update']);
 const colorClass = computed(() => modifierColorCssClass(props.stat?.color));
 
 /**
- * @param {{ text?: string, skillId?: string, skillLevel?: number|null }} part
+ * @param {{ text?: string, skillId?: string, skillLevel?: number|null, skillAsProc?: boolean }} part
  * @returns {string}
  */
 function skillPartHtml(part) {
@@ -26,7 +26,8 @@ function skillPartHtml(part) {
     part?.skillId,
     escapeHtmlText(part?.text),
     SCALING_DISPLAY_HTML_CLASSES.skill,
-    part?.skillLevel
+    part?.skillLevel,
+    part?.skillAsProc === true
   );
 }
 

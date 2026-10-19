@@ -172,11 +172,12 @@ describe('item-granted oSkills', () => {
 
   it('wraps chance-to-cast skill names in green markers', () => {
     const marked = wrapNamedSkillGrantMarkers('5% Chance to cast level 9 Bloodlust on Kill');
-    expect(marked).toMatch(/level 9 \[\[.+:9\]\] on Kill/i);
+    expect(marked).toMatch(/level 9 \[\[.+:9:proc\]\] on Kill/i);
     const html = formatItemModifierLineHtml('5% Chance to cast level 9 Bloodlust on Kill');
     expect(html).toContain(SCALING_DISPLAY_HTML_CLASSES.skill);
     expect(html).toContain('data-tooltip-skill-id=');
     expect(html).toContain('data-tooltip-skill-level="9"');
+    expect(html).toContain('data-tooltip-skill-as-proc="1"');
     expect(html).toContain('Bloodlust');
     expect(html).toMatch(/level 9 <span class="/);
     expect(html).not.toContain('[[');
@@ -213,6 +214,7 @@ describe('item-granted oSkills', () => {
     const skill = parts.find((p) => p.kind === 'skill' && /bloodlust/i.test(p.text));
     expect(skill?.skillId).toBeTruthy();
     expect(skill?.skillLevel).toBe(9);
+    expect(skill?.skillAsProc).toBe(true);
   });
 
   it('enabled relic grants stay separate from the merged charm+relic collector', () => {

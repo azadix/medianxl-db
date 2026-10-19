@@ -9,7 +9,7 @@ import {
   buildSkillTooltipRestrictionBlock,
   buildSkillTooltipScalingBlockHtml,
   wrapSkillTooltipContent,
-  NESTED_SKILL_LEVEL_ATTR,
+  readNestedSkillTooltipAttrs,
 } from '@/shared/tooltip-html.js';
 import {
   getSkillPoints,
@@ -45,7 +45,10 @@ import {
   NESTED_SKILL_TOOLTIP_Z,
   createLiveTooltipShell,
 } from '@/shared/live-tooltip-shell.js';
-import { buildFixedLevelSkillTooltipHtml } from '@/skills/fixed-level-skill-tooltip.js';
+import {
+  buildFixedLevelSkillTooltipHtml,
+  procFormulaLevelParts,
+} from '@/skills/fixed-level-skill-tooltip.js';
 
 /**
  * @param {{ chance?: number, chanceMax?: number }|null|undefined} src
@@ -96,6 +99,8 @@ let ctrlKeyPressed = false;
 let nestedSkillTooltipActive = false;
 /** Fixed grant/proc level for nested item tooltips; null = use planner/tree path. */
 let nestedFixedLevel = null;
+/** CTC nested tooltip: packed level is lvl, not tree blvl. */
+let nestedFixedAsProc = false;
 
 const shell = createLiveTooltipShell({
   portalId: 'skill-tooltip-portal',
@@ -113,8 +118,11 @@ function syncTooltipElement() {
  * @param {number} level
  * @returns {Promise<string>}
  */
-function buildNestedFixedLevelHtml(skillId, level) {
-    return buildFixedLevelSkillTooltipHtml(skillId, level, { showFormulas: ctrlKeyPressed });
+function buildNestedFixedLevelHtml(skillId, level, asProc = false) {
+    return buildFixedLevelSkillTooltipHtml(skillId, level, {
+        showFormulas: ctrlKeyPressed,
+        asProc,
+    });
 }
 
 /**
@@ -355,6 +363,7 @@ async function handleMouseOver(e) {
 
     nestedSkillTooltipActive = false;
     nestedFixedLevel = null;
+    nestedFixedAsProc = false;
 
     currentHoveredSkill = skillId;
     lastHoveredSkillCard = skillCard;
@@ -546,18 +555,6 @@ export function bindPlannerNestedSkillTooltipHandlers() {
 }
 
 /**
- * @param {HTMLElement|null|undefined} fromEl
- * @returns {number|null}
- */
-function readNestedFixedLevel(fromEl) {
-    if (!(fromEl instanceof Element)) return null;
-    const raw = fromEl.getAttribute(NESTED_SKILL_LEVEL_ATTR);
-    if (raw == null || String(raw).trim() === '') return null;
-    const lvl = Math.floor(Number(raw));
-    return Number.isFinite(lvl) && lvl > 0 ? lvl : null;
-}
-
-/**
  * Nested skill tooltip from a pinned/stuck tooltip skill name.
  * Item grant/proc lines with a fixed level always use that level (no sources panel).
  * Otherwise prefers the live planner tooltip when the skill is on the tree.
@@ -572,7 +569,9 @@ async function showNestedSkillTooltip(skillId, clientX, clientY, fromEl = null) 
     syncTooltipElement();
     if (!tooltipElement) return;
     nestedSkillTooltipActive = true;
-    nestedFixedLevel = readNestedFixedLevel(fromEl);
+    const nestedAttrs = readNestedSkillTooltipAttrs(fromEl);
+    nestedFixedLevel = nestedAttrs.level;
+    nestedFixedAsProc = nestedAttrs.asProc;
     clearPointerAwayHideTimer();
     lastMouseX = clientX;
     lastMouseY = clientY;
@@ -581,14 +580,15 @@ async function showNestedSkillTooltip(skillId, clientX, clientY, fromEl = null) 
 
     if (nestedFixedLevel != null) {
         const level = nestedFixedLevel;
-        const html = await buildNestedFixedLevelHtml(id, level);
+        const asProc = nestedFixedAsProc;
+        const html = await buildNestedFixedLevelHtml(id, level, asProc);
         if (!html) return;
         if (!nestedSkillTooltipActive || currentHoveredSkill !== id || nestedFixedLevel !== level) {
             return;
         }
         shell.present(html, clientX, clientY, {
-            getHtml: () => buildNestedFixedLevelHtml(id, level),
-            meta: { skillId: id, nested: true, fixedLevel: level },
+            getHtml: () => buildNestedFixedLevelHtml(id, level, asProc),
+            meta: { skillId: id, nested: true, fixedLevel: level, asProc },
             zIndex: NESTED_SKILL_TOOLTIP_Z,
         });
         syncTooltipElement();
@@ -620,7 +620,11 @@ async function showNestedSkillTooltip(skillId, clientX, clientY, fromEl = null) 
 async function rebuildCurrentSkillTooltipHtml() {
     if (!currentHoveredSkill || !tooltipDataSourceReady()) return '';
     if (nestedFixedLevel != null) {
-        return buildNestedFixedLevelHtml(currentHoveredSkill, nestedFixedLevel);
+        return buildNestedFixedLevelHtml(
+            currentHoveredSkill,
+            nestedFixedLevel,
+            nestedFixedAsProc
+        );
     }
     const skillCard = pickSkillCardForTooltip(lastHoveredSkillCard);
     if (!skillCard) {
@@ -653,6 +657,7 @@ function hideTooltip(force = false) {
     clearPointerAwayHideTimer();
     nestedSkillTooltipActive = false;
     nestedFixedLevel = null;
+    nestedFixedAsProc = false;
     shell.hide(force);
     syncTooltipElement();
     lastHoveredSkillCard = null;
@@ -1127,10 +1132,15 @@ async function buildTooltipContent(
         }
     }
 
-    // Proc CTC level is the packed item level only (no soft stacking).
+    // Proc CTC packed level is `lvl`; `blvl` stays tree hard points (Doom pierce, synergies).
     if (isProc) {
-        characterState.blvl[currentSkillName] = level;
-        characterState.lvl[currentSkillName] = 0;
+        const treeBlvl = Math.max(
+            0,
+            Math.floor(Number(getSkillPoints(currentSkillName)) || 0)
+        );
+        const parts = procFormulaLevelParts(level, treeBlvl);
+        characterState.blvl[currentSkillName] = parts.blvl;
+        characterState.lvl[currentSkillName] = parts.slvl;
     }
     
     // Check if Ctrl key is pressed (for formula display)
@@ -1240,6 +1250,7 @@ export function destroyTooltip() {
     ctrlKeyPressed = false;
     nestedSkillTooltipActive = false;
     nestedFixedLevel = null;
+    nestedFixedAsProc = false;
 }
 
 function resolveTooltipContext(skillCard, skillData, skillId) {

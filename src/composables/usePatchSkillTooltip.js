@@ -9,6 +9,7 @@ import {
   getSkillRecordFromElement,
 } from './usePatchNotesData.js';
 import { buildFixedLevelSkillTooltipHtml } from '@/skills/fixed-level-skill-tooltip.js';
+import { readNestedSkillTooltipAttrs } from '@/shared/tooltip-html.js';
 import {
   NESTED_SKILL_TOOLTIP_Z,
   createLiveTooltipShell,
@@ -127,11 +128,9 @@ export function usePatchSkillTooltip({ patchNotesRoot, loadPatchData }) {
     nestedActive = true;
     currentHoveredTarget = null;
     lastSkillRecord = { id };
-    const rawLevel = fromEl instanceof Element ? fromEl.getAttribute('data-tooltip-skill-level') : null;
-    const parsedLevel = Math.floor(Number(rawLevel));
-    const level =
-      rawLevel != null && Number.isFinite(parsedLevel) && parsedLevel > 0 ? parsedLevel : 1;
-    const html = await buildFixedLevelSkillTooltipHtml(id, level);
+    const nested = readNestedSkillTooltipAttrs(fromEl instanceof Element ? fromEl : null);
+    const level = nested.level != null ? nested.level : 1;
+    const html = await buildFixedLevelSkillTooltipHtml(id, level, { asProc: nested.asProc });
     if (!html || !nestedActive) return;
     presentTooltip(html, clientX, clientY);
   }

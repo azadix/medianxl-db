@@ -299,4 +299,39 @@ describe('tooltip expansion', () => {
       new RegExp(`Attack Rating:\\s*<span[^>]*>${expectedAr}</span>%`)
     );
   });
+
+  it('Doom proc uses packed CTC as lvl and tree points as blvl', async () => {
+    const procState = {
+      level: 120,
+      blvl: { doom: 0 },
+      lvl: { doom: 60 },
+      stats: {},
+      treeSkillsCache: {},
+    };
+    const treeState = {
+      ...procState,
+      blvl: { doom: 15 },
+      lvl: { doom: 0 },
+    };
+    const procHtml = await expandPlaceholdersWithScaling(
+      'doom',
+      60,
+      '{{enemy_magic_resistance}}',
+      'doom',
+      procState,
+      false,
+      null
+    );
+    const treeHtml = await expandPlaceholdersWithScaling(
+      'doom',
+      15,
+      '{{enemy_magic_resistance}}',
+      'doom',
+      treeState,
+      false,
+      null
+    );
+    expect(procHtml).toContain('>-5</span>% Enemy Magic Resistance');
+    expect(treeHtml).toContain('>-20</span>% Enemy Magic Resistance');
+  });
 });

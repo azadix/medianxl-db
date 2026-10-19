@@ -131,7 +131,14 @@ describe('wrapNestedSkillTooltipHtml', () => {
     const html = wrapNestedSkillTooltipHtml('amatoxin', 'Amatoxin', 'has-text-success', 23);
     expect(html).toContain('data-tooltip-skill-id="amatoxin"');
     expect(html).toContain('data-tooltip-skill-level="23"');
+    expect(html).not.toContain('data-tooltip-skill-as-proc');
     expect(html).toContain('Amatoxin');
+  });
+
+  it('marks proc nested skills', () => {
+    const html = wrapNestedSkillTooltipHtml('doom', 'Doom', '', 60, true);
+    expect(html).toContain('data-tooltip-skill-level="60"');
+    expect(html).toContain('data-tooltip-skill-as-proc="1"');
   });
 
   it('omits level attr when level is missing', () => {
@@ -143,8 +150,21 @@ describe('wrapNestedSkillTooltipHtml', () => {
 
 describe('parseNestedSkillMarker', () => {
   it('parses id and level', () => {
-    expect(parseNestedSkillMarker('teleport:9')).toEqual({ skillId: 'teleport', level: 9 });
-    expect(parseNestedSkillMarker('teleport')).toEqual({ skillId: 'teleport', level: null });
+    expect(parseNestedSkillMarker('teleport:9')).toEqual({
+      skillId: 'teleport',
+      level: 9,
+      asProc: false,
+    });
+    expect(parseNestedSkillMarker('teleport')).toEqual({
+      skillId: 'teleport',
+      level: null,
+      asProc: false,
+    });
+    expect(parseNestedSkillMarker('doom:60:proc')).toEqual({
+      skillId: 'doom',
+      level: 60,
+      asProc: true,
+    });
   });
 });
 
