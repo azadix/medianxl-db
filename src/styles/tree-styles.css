@@ -438,7 +438,7 @@
 .tooltip-pin-btn {
     position: absolute;
     top: 6px;
-    right: var(--tooltip-pin-inset-right, -32px);
+    left: var(--tooltip-pin-inset-left, -32px);
     z-index: 5;
     display: inline-flex;
     align-items: center;
@@ -483,7 +483,7 @@
 
 .skill-tooltip .tooltip-pin-btn {
     top: 8px;
-    right: var(--tooltip-pin-inset-right, -32px);
+    left: var(--tooltip-pin-inset-left, -32px);
 }
 
 /* Alt-held sources: outer shell becomes a transparent flex host for two chrome boxes */

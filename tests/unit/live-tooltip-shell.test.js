@@ -107,26 +107,11 @@ describe('live tooltip shell', () => {
     expect(left).toBeGreaterThanOrEqual(TOOLTIP_VIEWPORT_MARGIN);
   });
 
-  it('offsets the pin onto the skill tooltip when SOURCES sits beside it', () => {
+  it('hangs the pin on the left when SOURCES sits beside it', () => {
     portal.innerHTML =
       '<div class="skill-tooltip-panels"><div class="tooltip-content">Skill</div><div class="skill-tooltip-sources">SOURCES</div></div>';
-    const side = portal.querySelector('.skill-tooltip-sources');
-    Object.defineProperty(side, 'getBoundingClientRect', {
-      configurable: true,
-      value: () => ({
-        width: 140,
-        height: 40,
-        top: 0,
-        left: 300,
-        right: 440,
-        bottom: 40,
-        x: 300,
-        y: 0,
-        toJSON() {},
-      }),
-    });
     applyTooltipPosition(portal, 40, 40);
-    expect(portal.style.getPropertyValue('--tooltip-pin-inset-right')).toBe('116px');
+    expect(portal.style.getPropertyValue('--tooltip-pin-inset-left')).toBe('-32px');
   });
 
   it('stacks skill+SOURCES panels when the row cannot fit the viewport', () => {
@@ -138,7 +123,7 @@ describe('live tooltip shell', () => {
     Object.defineProperty(panels, 'scrollWidth', { configurable: true, value: 500 });
     applyTooltipPosition(portal, 40, 40);
     expect(panels.classList.contains('is-stacked')).toBe(true);
-    expect(portal.style.getPropertyValue('--tooltip-pin-inset-right')).toBe('-32px');
+    expect(portal.style.getPropertyValue('--tooltip-pin-inset-left')).toBe('-32px');
   });
 
   it('force hide clears the live portal', () => {

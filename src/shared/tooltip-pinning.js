@@ -15,8 +15,7 @@ const STUCK_CLASS = 'tooltip-stuck';
 const PINNED_CLASS = 'tooltip-pinned';
 const DRAGGING_CLASS = 'tooltip-dragging';
 const PIN_HOST_CLASS = 'tooltip-pin-host';
-const PIN_PANEL_GAP_PX = 8;
-/** Pin sits just outside the main card (button 26px + 6px gap). */
+/** Pin sits just outside the full tooltip (button 26px + 6px gap). */
 const PIN_HANG_OUTSIDE_PX = 32;
 
 const PIN_ICON_SVG = `<svg class="tooltip-pin-btn__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -198,32 +197,12 @@ export function updateLiveTooltipBinding(portal, patch = {}) {
 }
 
 /**
- * Keep the pin on the main tooltip card, not a SOURCES / Mystic Orbs side panel.
+ * Hang the pin just outside the left of the tooltip (clear of right-side panels).
  * @param {HTMLElement|null|undefined} el
  */
 export function syncTooltipPinPlacement(el) {
   if (!el) return;
-  const stacked = Boolean(el.querySelector('.skill-tooltip-panels.is-stacked'));
-  /** @type {Element|null} */
-  let side = null;
-  if (!stacked) {
-    const layout = el.querySelector(':scope > .item-tooltip-layout');
-    const panels = el.querySelector(':scope > .skill-tooltip-panels');
-    if (layout) {
-      side = layout.querySelector(':scope > .item-tooltip-sidepanel');
-    } else if (panels) {
-      side = panels.querySelector(':scope > .skill-tooltip-sources');
-    }
-  }
-  if (!(side instanceof HTMLElement)) {
-    el.style.setProperty('--tooltip-pin-inset-right', `-${PIN_HANG_OUTSIDE_PX}px`);
-    return;
-  }
-  const width = side.getBoundingClientRect().width;
-  el.style.setProperty(
-    '--tooltip-pin-inset-right',
-    `${width + PIN_PANEL_GAP_PX - PIN_HANG_OUTSIDE_PX}px`
-  );
+  el.style.setProperty('--tooltip-pin-inset-left', `-${PIN_HANG_OUTSIDE_PX}px`);
 }
 
 /**

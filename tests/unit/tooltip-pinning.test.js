@@ -46,32 +46,17 @@ describe('tooltip pinning', () => {
     expect(html).toContain('Fire Splash');
   });
 
-  it('hangs the pin outside an item tooltip with no side panel', () => {
+  it('hangs the pin on the left of an item tooltip with no side panel', () => {
     portal.innerHTML = '<div class="item-tooltip-card tooltip-content">Item</div>';
     updateLiveTooltipBinding(portal, {});
-    expect(portal.style.getPropertyValue('--tooltip-pin-inset-right')).toBe('-32px');
+    expect(portal.style.getPropertyValue('--tooltip-pin-inset-left')).toBe('-32px');
   });
 
-  it('offsets the pin onto the main card when a side panel is present', () => {
+  it('hangs the pin on the left when a side panel is present', () => {
     portal.innerHTML =
       '<div class="item-tooltip-layout"><div class="item-tooltip-card tooltip-content">Item</div><aside class="item-tooltip-sidepanel">MO</aside></div>';
-    const side = portal.querySelector('.item-tooltip-sidepanel');
-    Object.defineProperty(side, 'getBoundingClientRect', {
-      configurable: true,
-      value: () => ({
-        width: 120,
-        height: 40,
-        top: 0,
-        left: 280,
-        right: 400,
-        bottom: 40,
-        x: 280,
-        y: 0,
-        toJSON() {},
-      }),
-    });
     updateLiveTooltipBinding(portal, {});
-    expect(portal.style.getPropertyValue('--tooltip-pin-inset-right')).toBe('96px');
+    expect(portal.style.getPropertyValue('--tooltip-pin-inset-left')).toBe('-32px');
   });
 
   it('keeps the pin on the main skill tooltip when SOURCES is stacked', () => {
@@ -94,7 +79,7 @@ describe('tooltip pinning', () => {
       }),
     });
     syncTooltipPinPlacement(portal);
-    expect(portal.style.getPropertyValue('--tooltip-pin-inset-right')).toBe('-32px');
+    expect(portal.style.getPropertyValue('--tooltip-pin-inset-left')).toBe('-32px');
   });
 
   it('promotes a live tooltip into a permanent pin host', () => {
