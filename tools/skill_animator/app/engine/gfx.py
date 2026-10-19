@@ -64,14 +64,6 @@ class Sprites:
             cand = 'data\\global\\missiles\\poisonNova.dcc'
             if self.gd.read(cand):
                 p = cand
-        # Invisible carriers (Arrowside/Broadside) draw their hit-sub cel.
-        if not p:
-            for col in ('HitSubMissile1', 'CltHitSubMissile1'):
-                sub = (r or {}).get(col)
-                if sub and sub != mid:
-                    p = self.mis_path(sub)
-                    if p:
-                        break
         self._path[mid] = p
         return p
 
@@ -119,9 +111,15 @@ class Sprites:
                     p = cand
                     break
         rec = dict(rec)
-        rec['Trans'] = int(rec.get('Trans') or 3)
+        # Blank Trans compiles to 0 (25% translucent), not 5.
+        try:
+            rec['Trans'] = int(rec.get('Trans'))
+        except (TypeError, ValueError):
+            rec['Trans'] = 0
         rec['Xoffset'] = int(rec.get('Xoffset') or 0)
         rec['Yoffset'] = int(rec.get('Yoffset') or 0)
+        for hk in ('Height1', 'Height2', 'Height3', 'Height4'):
+            rec[hk] = int(rec.get(hk) or 0)
         rec['AnimRate'] = int(rec.get('AnimRate') or 16)
         self._ovl[key] = (p, rec)
         return p, rec

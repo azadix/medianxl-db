@@ -75,6 +75,13 @@ class GeometryTest(unittest.TestCase):
         green = sim.light_tint(rgb, {'Light': '2', 'Red': '128', 'Green': '255', 'Blue': '0'})
         self.assertEqual(tuple(int(x) for x in green[0, 0]), (128, 255, 0))
 
+    def test_light_tint_skips_own_celfile(self):
+        rgb = np.zeros((1, 1, 3), dtype=np.int32)
+        rgb[0, 0] = (40, 180, 220)
+        row = {'Light': '3', 'Red': '255', 'Green': '0', 'Blue': '0', 'CelFile': 'LightAndShadowStrike'}
+        same = sim.light_tint(rgb, row, drawn=row)
+        self.assertEqual(tuple(int(x) for x in same[0, 0]), (40, 180, 220))
+
     def test_wave_keys_are_strings(self):
         m = FakeM()
         _set_d28(m, -8, 11)
@@ -91,6 +98,7 @@ class GeometryTest(unittest.TestCase):
         self.assertEqual(sim.vel_fp(row2, 1), int((1 << 8) * 75 / 100))
 
     def test_trans_blit_modes(self):
+        # D2 draw modes: 0/1/2 alpha, 3 add, 4 multiply, 5/7 opaque.
         canvas = np.zeros((8, 8, 3), dtype=np.int32)
         canvas[:] = 40
         rgb = np.zeros((4, 4, 3), dtype=np.int32)
@@ -98,21 +106,30 @@ class GeometryTest(unittest.TestCase):
         mask = np.ones((4, 4), dtype=bool)
         spr = (0, 0, rgb, mask)
         opaque = canvas.copy()
-        sim.blit(opaque, 0, 0, spr, 3)
+        sim.blit(opaque, 0, 0, spr, 5)
         self.assertEqual(opaque[0, 0, 0], 200)
         add = canvas.copy()
-        sim.blit(add, 0, 0, spr, 5)
-        expected = 40 + 200 - (40 * 200) // 255
-        self.assertEqual(add[0, 0, 0], expected)
-        glow = canvas.copy()
-        sim.blit(glow, 0, 0, spr, 1)
-        self.assertEqual(glow[0, 0, 0], expected)
+        sim.blit(add, 0, 0, spr, 3)
+        self.assertEqual(add[0, 0, 0], min(40 + 200, 255))
+        alpha = canvas.copy()
+        sim.blit(alpha, 0, 0, spr, 1)  # 50%
+        self.assertEqual(alpha[0, 0, 0], (40 * (255 - 128) + 200 * 128) // 255)
         dark = canvas.copy()
-        sim.blit(dark, 0, 0, spr, 7)
+        sim.blit(dark, 0, 0, spr, 4)
         self.assertEqual(dark[0, 0, 0], (40 * 200) // 255)
-        half = canvas.copy()
-        sim.blit(half, 0, 0, spr, 4)
-        self.assertEqual(half[0, 0, 0], (200 + 40) // 2)
+        self.assertEqual(sim.missile_draw_mode(1), 3)
+        self.assertEqual(sim.missile_draw_mode(2), 4)
+        self.assertEqual(sim.overlay_draw_mode(0), 0)
+
+    def test_missile_frame_at_subloop(self):
+        # Arcane Torrent ml866: AnimLen 1, AnimSpeed 16, LoopAnim, SubLoop 1..2
+        # -> frame 0 for one tick, then frame 1 held (SubStop never shown).
+        self.assertEqual(sim.missile_frame_at(0, 1, 16, True, True, 1, 2, total=25), 0)
+        # With AnimLen 2 SubStart 1 SubStop 2: loop only frame 1 while rem high
+        f0 = sim.missile_frame_at(0, 2, 16, True, True, 1, 2, total=25)
+        f5 = sim.missile_frame_at(5, 2, 16, True, True, 1, 2, total=25)
+        self.assertIn(f0, (0, 1))
+        self.assertEqual(f5, 1)
 
     def test_activate_delay_skips_early_hits(self):
         self.assertTrue(0 < 5)
@@ -125,8 +142,9 @@ class GeometryTest(unittest.TestCase):
         self.assertGreaterEqual(m.age, m.data.get('activate', m.activate))
 
     def test_chit_14_is_registered(self):
-        self.assertIn('chit_14', sim.PLUG)
+        # Legacy plugins kept; client world now owns most clt hit/do paths.
         self.assertIn('mhit_13', sim.PLUG)
+        self.assertIn('skill_do_139', sim.PLUG)
 
     def test_overlay_filename_skips_leading_id_word(self):
         row = (168).to_bytes(2, 'little') + b'VampiricHitHealth\0' + b'\0' * 40

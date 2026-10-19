@@ -25,14 +25,21 @@ def main():
     sim.init(gd)
     skills_path, _folder = latest_skills_json()
     unique, _dup = catalog_by_safe_name(skills_path)
+    osk = {}
+    osk_path = os.path.join(HERE, 'app', 'engine', 'oskills.json')
+    if os.path.isfile(osk_path):
+        for o in json.load(open(osk_path, encoding='utf-8')):
+            osk[int(o['sid'])] = o['name']
     out = os.path.join(HERE, 'output')
     os.makedirs(out, exist_ok=True)
     DEST_DIR.mkdir(parents=True, exist_ok=True)
     for sid, row in enumerate(gd.SK):
         name = (row.get('skill') or '').strip()
-        if name.casefold() not in names:
+        display = osk.get(sid) or name
+        key = safe(display).casefold()
+        raw = safe(name).casefold()
+        if name.casefold() not in names and key not in names and raw not in names and str(sid) not in names:
             continue
-        key = safe(name).casefold()
         fr, sc, info = sim.render_skill(sid, lvl=20, max_frames=160)
         if fr is None:
             print('blank', sid, name, info)
@@ -42,8 +49,12 @@ def main():
         skill_id = unique.get(key)
         if skill_id:
             shutil.copy2(path, DEST_DIR / ('%s.gif' % skill_id))
-        print('ok', sid, name, 'kb', size // 1024, 'frames', info.get('frames'))
+        print('ok', sid, safe(display), 'kb', size // 1024, 'frames', info.get('frames'))
 
 
 if __name__ == '__main__':
+    try:
+        sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+    except Exception:
+        pass
     main()

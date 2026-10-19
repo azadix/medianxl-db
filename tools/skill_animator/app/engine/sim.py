@@ -7,7 +7,8 @@ velocity (Vel<<8)*75/100, and the flag-0x400 frame count dist*65536/(vel*16) => 
 import math, random, json, os, traceback
 import numpy as np
 from PIL import Image
-from . import plugins_a, plugins_b, plugins_c, plugins_d
+from . import plugins_a, plugins_b, plugins_c, plugins_d, plugins_e
+from . import client as CLT
 from .gfx import JUNK, nearest_dir, safe, Sprites
 from .calcvm import Calc
 from .plugins_c import COS64, SIN64
@@ -15,7 +16,7 @@ from .plugins_c import COS64, SIN64
 VSCALE = 3 / 64.0
 GIF_W, GIF_H = 800, 400
 GIF_OUT_W, GIF_OUT_H = 600, 300
-GIF_COLORS = 128
+GIF_COLORS = 256
 GIF_FRAME_MS = 40  # Diablo II runs at 25 fps
 MIN_LOOP_FRAMES = 25
 CASTER_SX, CASTER_SY = 100, 267
@@ -39,21 +40,58 @@ def init(gd):
 LVL = 20
 
 PLUG = {}
-for mod in (plugins_a, plugins_b, plugins_c, plugins_d):
+for mod in (plugins_a, plugins_b, plugins_c, plugins_d, plugins_e):
     for k in dir(mod):
         if k.split('_')[0] in ('skill', 'mdo', 'mhit', 'cdo', 'chit') and callable(getattr(mod, k)):
             PLUG[k] = getattr(mod, k)
-
-# server functions that never spawn anything visible: client mirror visuals may run instead
-SRV_SILENT_DO = {0, 1, 3}
-SRV_SILENT_HIT = {0, 1, 6, 13, 14, 18, 21, 24, 69, 71, 73}
-
 
 def n(r, c, d=0):
     try:
         return int(float((r or {}).get(c) or d))
     except (ValueError, TypeError):
         return d
+
+
+def missile_draw_mode(trans):
+    """missiles.bin Trans (+0x18d) -> D2gfx draw mode (D2Client 0x6fb1cf2a)."""
+    t = n({'t': trans}, 't', 5)
+    if t == 1:
+        return 3  # additive
+    if t == 2:
+        return 4  # multiply
+    return 5      # opaque
+
+
+def overlay_draw_mode(trans):
+    """overlay.bin Trans is the draw mode itself (blank = 0)."""
+    try:
+        t = int(float(trans))
+    except (TypeError, ValueError):
+        t = 0
+    return t if 0 <= t <= 7 else 0
+
+
+def missile_frame_at(age, anim_len, anim_speed, loop_anim, sub_loop, sub_start, sub_stop, total=None, start=0):
+    """Client missile frame index (AnimSpeed << 4 per tick; SubStop never shown)."""
+    count = max(int(anim_len or 1), 1) << 8
+    speed = max(int(anim_speed or 16), 0) << 4
+    fp = (int(start) << 8) + int(age) * speed
+    if not loop_anim:
+        fp = min(fp, count - 1) if count else 0
+    elif sub_loop and total is not None:
+        # While frames left exceed AnimLen - SubStop + 1, loop SubStart..SubStop-1.
+        rem = max(int(total) - int(age), 0)
+        threshold = max(int(anim_len or 1) - int(sub_stop or 0) + 1, 0)
+        if rem > threshold:
+            span = max((int(sub_stop or 0) - int(sub_start or 0)) << 8, 1)
+            base = int(sub_start or 0) << 8
+            # Advance within the loop window; SubStop itself is never shown.
+            fp = base + (fp - base) % span
+        else:
+            fp = fp % count if count else 0
+    else:
+        fp = fp % count if count else 0
+    return min(fp >> 8, max(int(anim_len or 1) - 1, 0))
 
 
 def ring_vec(k):
@@ -100,23 +138,26 @@ def tint_row(mid, seen=None):
     return r
 
 
-def light_tint(rgb, row):
-    """Recolor a missile sprite by missiles.txt Light RGB (luminance * tint)."""
+def own_cel(row):
+    """True when the row ships its own DCC (Light RGB is then a glow, not a sprite tint)."""
+    cel = ((row or {}).get('CelFile') or '').strip().lower()
+    return bool(cel) and cel != 'null' and not JUNK.search(cel)
+
+
+def light_tint(rgb, row, drawn=None):
+    """Recolor generic arrow/dagger art by missiles.txt Light RGB.
+
+    Light/Red/Green/Blue is the in-game dynamic light. Applying it to a real
+    CelFile (LightAndShadowStrike, etc.) washes the sprite to that color.
+    """
+    if drawn is not None and own_cel(drawn):
+        return rgb
     if not _colored_light(row):
         return rgb
     r, g, b = n(row, 'Red'), n(row, 'Green'), n(row, 'Blue')
     lum = rgb.max(axis=2, keepdims=True)
     peak = int(lum.max()) or 1
     return np.clip((lum * np.array([r, g, b], dtype=np.int32)) // peak, 0, 255)
-
-
-def trans_mode(v):
-    """missiles.txt / overlay.txt Trans -> D2 draw mode 0.7."""
-    try:
-        t = int(float(v))
-    except (TypeError, ValueError):
-        t = 3
-    return t if 0 <= t <= 7 else 3
 
 
 def hammer_step(m, sim):
@@ -168,13 +209,22 @@ class M:
         s.path = SPR.mis_path(mid)
         s.tint_r = tint_row(mid)
         s.ndir = SPR.ndir(s.path) if s.path else 1
-        s.trans = trans_mode(n(s.r, 'Trans'))
-        s.add = s.trans in (5, 6)
+        s.trans = n(s.r, 'Trans')
         s.activate = n(s.r, 'Activate')
         s.loop = n(s.r, 'LoopAnim') > 0
-        s.anim = (n(s.r, 'AnimRate') or 1024) / 1024.0
+        s.anim_len = max(n(s.r, 'AnimLen'), 1)
+        s.anim_speed = n(s.r, 'AnimSpeed') or 16
+        s.sub_loop = n(s.r, 'SubLoop') > 0
+        s.sub_start = n(s.r, 'SubStart')
+        s.sub_stop = n(s.r, 'SubStop')
+        s.anim_start = 0
         if n(s.r, 'RandStart'):
-            s.data['frame_offset'] = sim.rng.randrange(max(n(s.r, 'AnimLen'), 1))
+            s.anim_start = sim.rng.randrange(s.anim_len)
+            s.data['frame_offset'] = s.anim_start
+        s.draw_mode = missile_draw_mode(n(s.r, 'Trans'))
+        s.client_send = bool(s.r.get('ClientSend'))
+        s.uid = sim.next_uid()
+        s.exploded = False
 
     # -------- built-in server do
     def do(s):
@@ -188,9 +238,6 @@ class M:
                 vx, vy = ring_vec(s.counter)
                 if sub:
                     sim.spawn(sub, s.x, s.y, vx, vy, sid=s.sid, lvl=s.lvl)
-                csub = s.r.get('CltSubMissile1')
-                if csub and csub != sub:
-                    sim.spawn(csub, s.x, s.y, vx, vy, sid=s.sid, lvl=s.lvl)
                 s.counter = (s.counter + P[1]) % 64
         elif f == 16:
             # x' = (x - y)/2, y' = (x + y)/2 on the +0x28 (x) / +0x2c (y) path offset
@@ -209,18 +256,23 @@ class M:
                     sim.spawn(sub, s.x + rx, s.y + ry, s.dx, s.dy, sid=s.sid, lvl=s.lvl)
         elif 'mdo_%d' % f in PLUG:
             res = PLUG['mdo_%d' % f](s, sim)
-        # client visuals
-        cf = n(s.r, 'pCltDoFunc')
-        if cf == 9 and s.age == 0:
-            c1, c3 = max(n(s.r, 'CltParam1'), 1), max(n(s.r, 'CltParam3'), 1)
-            for col in ('CltSubMissile1', 'CltSubMissile2'):
-                sub = s.r.get(col)
-                if sub:
-                    sim.spawn(sub, s.x, s.y, s.dx, s.dy, vel=0, z=c3 * c1, vz=c3, range=c1 + 1)
-        elif f in SRV_SILENT_DO and 'cdo_%d' % cf in PLUG:
-            r2 = PLUG['cdo_%d' % cf](s, sim)
-            res = res or r2
         return res
+
+    def explode_stand_in(s):
+        """Arena stand-in for ExplosionMissile (client hit handler draws it for server rows)."""
+        if s.exploded:
+            return
+        mid = s.r.get('ExplosionMissile')
+        if not mid or mid not in MIS:
+            return
+        s.exploded = True
+        # flags 0x20 aimed at map origin: a MOVING explosion is refused (100-cell rule);
+        # a standing one is made at the parent. Match that for the GIF stand-in.
+        if CLT.rowMoves(CLT.ml_to_id(mid), s.lvl, getattr(s.sim, 'client_rows', None) or {}):
+            return
+        child = s.sim.spawn(mid, s.x, s.y, s.dx, s.dy, sid=s.sid, lvl=s.lvl, vel=0)
+        if child is not None:
+            child.data['explosion_stand_in'] = True
 
     def hit(s, unit=None):
         sim = s.sim
@@ -253,17 +305,8 @@ class M:
             po = s.r.get('ProgOverlay')
             if po not in (None, '', '0', '65535'):
                 sim.add_overlay(po, unit[0], unit[1])
-        cf = n(s.r, 'pCltHitFunc')
-        if f in SRV_SILENT_HIT:
-            if cf == 18:
-                sub = s.r.get('CltHitSubMissile1')
-                if sub:
-                    sim.spawn(sub, s.x, s.y, s.dx, s.dy, sid=s.sid, lvl=s.lvl)
-            elif 'chit_%d' % cf in PLUG:
-                try:
-                    PLUG['chit_%d' % cf](s, sim, unit)
-                except Exception:
-                    sim.errors.append('chit_%d' % cf)
+        # Server missiles: explosion stand-in (client world handles ClientSend mirrors separately).
+        s.explode_stand_in()
         return res
 
     def move(s):
@@ -316,6 +359,9 @@ class M:
             s.dead = True
             if n(s.r, 'AlwaysExplode') > 0:
                 s.hit()
+            else:
+                # Range end without AlwaysExplode: no explosion (client hit handler rule).
+                pass
 
 
 class Sim:
@@ -330,6 +376,17 @@ class Sim:
         s.depth = 0
         s.overlays = []
         s.tick_i = 0
+        s._uid = 1
+        s.client = None
+        s.client_rows = {}
+        s.client_skills = {}
+        s.mirrors = {}  # server uid -> client missile
+        s._born_server = {}  # mid_id -> last birth tick (stand-in pairing)
+
+    def next_uid(s):
+        u = s._uid
+        s._uid += 1
+        return u
 
     def add_overlay(s, oid, x, y):
         if oid in (None, '', '0', '-1'):
@@ -371,6 +428,82 @@ class Sim:
         finally:
             s.depth -= 1
 
+    def _server_view(s, m):
+        mid = CLT.ml_to_id(m.id)
+        return {
+            'id': m.uid,
+            'defId': mid,
+            'x': int(m.x * CLT.SUBTILE + CLT.SUBTILE // 2),
+            'y': int(m.y * CLT.SUBTILE + CLT.SUBTILE // 2),
+            'dirX': int(m.dx * 4096),
+            'dirY': int(m.dy * 4096),
+            'velocity': int(m.vel * 4096),
+            'frames': max(m.range - m.age, 0),
+            'totalFrames': m.range,
+            'level': m.lvl,
+            'skillId': m.sid,
+        }
+
+    def _sync_client(s):
+        """Mirror ClientSend server missiles; settle stand-ins; step client world."""
+        cw = s.client
+        if not cw:
+            return
+        # Units: caster + stand-in enemies
+        units = [{
+            'id': 'player', 'x': int(s.caster[0] * CLT.SUBTILE + CLT.SUBTILE // 2),
+            'y': int(s.caster[1] * CLT.SUBTILE + CLT.SUBTILE // 2),
+            'cell': [int(math.floor(s.caster[0])), int(math.floor(s.caster[1]))],
+            'size': 2, 'alive': True, 'hostile': False, 'player': True,
+            'facing': [1, 1], 'local': True,
+        }]
+        for i, (tx, ty) in enumerate(s.targets):
+            units.append({
+                'id': 'enemy%d' % i,
+                'x': int(tx * CLT.SUBTILE + CLT.SUBTILE // 2),
+                'y': int(ty * CLT.SUBTILE + CLT.SUBTILE // 2),
+                'cell': [int(math.floor(tx)), int(math.floor(ty))],
+                'size': 2, 'alive': True, 'hostile': True, 'player': False,
+            })
+        live_uids = {m.uid for m in s.ms if not m.dead}
+        # Create / sync mirrors for ClientSend rows
+        for m in s.ms:
+            if m.dead or not m.client_send:
+                continue
+            view = s._server_view(m)
+            if m.uid not in s.mirrors:
+                owner = units[0]
+                cm = CLT.mirrorServerMissile(cw, view, owner=owner, ctx=CLT.skill_ctx(s.client_skills.get(s.sid) or {}, s.lvl))
+                if cm:
+                    s.mirrors[m.uid] = cm
+            else:
+                CLT.syncMirror(s.mirrors[m.uid], view)
+        # End mirrors whose server twin is gone
+        for uid in list(s.mirrors):
+            if uid not in live_uids:
+                CLT.endMirror(cw, s.mirrors.pop(uid), rangeEnd=True, gone=True)
+        # Stand-in grace: hide client copies of server rows while a twin is live
+        born = {}
+        for m in s.ms:
+            if not m.dead:
+                mid = CLT.ml_to_id(m.id)
+                born[mid] = s.tick_i
+        for cm in list(cw.get('missiles') or []):
+            if cm.get('dead') or not cm.get('standIn'):
+                continue
+            mid = cm.get('defId')
+            age = cw.get('tick', 0) - cm.get('born', 0)
+            if mid in born and age <= CLT.STAND_IN_GRACE:
+                continue
+            if mid not in born and age > CLT.STAND_IN_GRACE:
+                CLT.releaseStandIn(cw, cm)
+            elif mid in born:
+                # still shadowed
+                pass
+            else:
+                CLT.releaseStandIn(cw, cm)
+        CLT.stepClientWorld(cw, units)
+
     def tick(s):
         p2 = []
         for item in s.pending:
@@ -394,12 +527,52 @@ class Sim:
         for o in s.overlays:
             o['age'] += 1
         s.overlays = [o for o in s.overlays if o['age'] < 48]
+        s._sync_client()
         s.tick_i += 1
+
+
+def _ensure_client(sim):
+    if sim.client is not None:
+        return
+    if not hasattr(_ensure_client, '_cache') or _ensure_client._gd is not GD:
+        rows, skills = CLT.build_client_rows(type('GD', (), {'MIS': MIS, 'SK': SK})())
+        _ensure_client._cache = (rows, skills)
+        _ensure_client._gd = GD
+        # clientCalc('#cN', level, params) -> number via Calc VM (sid unknown: use 0).
+        CLT.set_calc_evaluator(lambda expr, lvl, params=None: CALCVM.value(0, expr, lvl, 0) if expr else 0)
+    rows, skills = _ensure_client._cache
+    sim.client_rows, sim.client_skills = rows, skills
+    sim.client = CLT.createClientWorld(missiles=rows, skills=skills, seed=7)
+    # Player unit view for cast
+    sim.client['player'] = {
+        'id': 'player',
+        'x': int(sim.caster[0] * CLT.SUBTILE + CLT.SUBTILE // 2),
+        'y': int(sim.caster[1] * CLT.SUBTILE + CLT.SUBTILE // 2),
+        'facing': [1, 1], 'local': True, 'states': {},
+    }
 
 
 def launch(sim, sid, tx, ty, cx=None, cy=None):
     row = SK[sid]
     cx, cy = (sim.caster if cx is None else (cx, cy))
+    _ensure_client(sim)
+    # Client cast start (swing begin)
+    cast = {
+        'skillId': sid,
+        'level': sim.lvl,
+        'caster': sim.client['player'],
+        'target': [int(math.floor(tx)), int(math.floor(ty))],
+        'targetUnit': {'id': 'enemy0', 'cell': [int(math.floor(tx)), int(math.floor(ty))],
+                       'x': int(tx * CLT.SUBTILE + CLT.SUBTILE // 2),
+                       'y': int(ty * CLT.SUBTILE + CLT.SUBTILE // 2),
+                       'alive': True, 'hostile': True} if sim.targets else None,
+        'ctx': CLT.skill_ctx(sim.client_skills.get(sid) or {}, sim.lvl),
+        'charges': sim.charges,
+    }
+    try:
+        CLT.clientCastStart(sim.client, cast)
+    except Exception:
+        sim.errors.append('clientCastStart %s' % traceback.format_exc(limit=1))
     f = n(row, 'srvdofunc')
     if f == 28 or f == 80:
         mid = row.get('srvmissilea')
@@ -416,22 +589,13 @@ def launch(sim, sid, tx, ty, cx=None, cy=None):
     if mid:
         cx, cy = sim.caster
         sim.spawn(mid, cx, cy, tx - cx, ty - cy, target=(tx, ty), sid=sid)
-    clt = row.get('cltmissile')
-    if clt and clt != mid:
-        sim.spawn(clt, cx, cy, tx - cx, ty - cy, target=(tx, ty), sid=sid)
-    elif not mid and f in SRV_SILENT_DO and not row.get('srvmissilea'):
-        for col in ('cltmissilea', 'cltmissileb'):
-            cmid = row.get(col)
-            if cmid:
-                sim.spawn(cmid, cx, cy, tx - cx, ty - cy, target=(tx, ty), sid=sid)
-                break
-    for col, pos in (
-        ('castoverlay', (cx, cy)),
-        ('cltoverlaya', (cx, cy)),
-        ('cltoverlayb', (cx, cy)),
-        ('tgtoverlay', (tx, ty)),
-    ):
-        sim.add_overlay(row.get(col), *pos)
+    # Client release (cltmissile tail + cltdofunc) — replaces the old cltmissile spawn
+    try:
+        CLT.clientCast(sim.client, cast)
+    except Exception:
+        sim.errors.append('clientCast %s' % traceback.format_exc(limit=1))
+    # castoverlay at swing start (server/client both draw it)
+    sim.add_overlay(row.get('castoverlay'), cx, cy)
 
 
 # ---------------------------------------------------------------- drawing
@@ -439,7 +603,8 @@ def screen(x, y):
     return (x - y) * 16, (x + y) * 8
 
 
-def blit(c, X, Y, spr, trans=3):
+def blit(c, X, Y, spr, mode=5):
+    """Blit spr with D2gfx draw mode: 0/1/2 alpha, 3 add, 4 multiply, 5/7 opaque."""
     ox, oy, rgb, m = spr
     h, w = m.shape
     H, W = c.shape[:2]
@@ -450,15 +615,16 @@ def blit(c, X, Y, spr, trans=3):
     src = rgb[y1 - Y:y2 - Y, x1 - X:x2 - X]
     mm = m[y1 - Y:y2 - Y, x1 - X:x2 - X]
     base = c[y1:y2, x1:x2]
-    t = trans if not isinstance(trans, bool) else (5 if trans else 3)
-    if t in (1, 2, 5, 6):
-        mixed = np.clip(base + src - (base * src) // 255, 0, 255)
-        base[mm] = mixed[mm]
-    elif t == 7:
-        mixed = (base * src) // 255
+    t = mode if not isinstance(mode, bool) else (5 if mode else 3)
+    if t == 3:
+        mixed = np.clip(base + src, 0, 255)
         base[mm] = mixed[mm]
     elif t == 4:
-        mixed = (src + base) // 2
+        mixed = (base * src) // 255
+        base[mm] = mixed[mm]
+    elif t in (0, 1, 2):
+        alpha = (64, 128, 192)[t]  # 25 / 50 / 75 %
+        mixed = (base * (255 - alpha) + src * alpha) // 255
         base[mm] = mixed[mm]
     else:
         base[mm] = src[mm]
@@ -540,12 +706,52 @@ def sprite_frame(m):
     if not fr:
         return _prog_overlay_frame(m)
     if m.frame is not None:
-        i = int(m.frame)
+        i = int(m.frame) % len(fr)
     else:
-        i = int(m.age * m.anim) + m.data.get('frame_offset', 0)
-    i = i % len(fr) if m.loop or m.frame is not None else min(i, len(fr) - 1)
+        i = missile_frame_at(
+            m.age, m.anim_len, m.anim_speed, m.loop, m.sub_loop,
+            m.sub_start, m.sub_stop, total=m.range, start=m.anim_start,
+        )
+        i = min(i, len(fr) - 1)
     ox, oy, rgb, mask = fr[i]
-    return ox, oy, light_tint(rgb, getattr(m, 'tint_r', None) or m.r), mask
+    return ox, oy, light_tint(rgb, getattr(m, 'tint_r', None) or m.r, drawn=m.r), mask
+
+
+def client_missile_sprite(cm):
+    """Draw a non-shadow client missile from the client world."""
+    if cm.get('shadow') or cm.get('standIn') or cm.get('dead'):
+        return None
+    mid = CLT.id_to_ml(cm.get('defId'))
+    if not mid or mid not in MIS:
+        return None
+    path = SPR.mis_path(mid)
+    row = MIS[mid]
+    if not path or JUNK.search(row.get('CelFile', '') or ''):
+        po = row.get('ProgOverlay')
+        if po in (None, '', '0', '65535'):
+            return None
+        ang = 0
+        if cm.get('dirX') or cm.get('dirY'):
+            ang = math.degrees(math.atan2(*screen(cm.get('dirX', 0) / 4096.0, cm.get('dirY', 0) / 4096.0)[::-1]))
+        return overlay_frame(po, cm.get('total', 1) - cm.get('frames', 0), ang)[0]
+    nd = SPR.ndir(path)
+    dx = cm.get('dirX', 0) / 4096.0
+    dy = cm.get('dirY', 0) / 4096.0
+    ang = math.degrees(math.atan2(*screen(dx or 1, dy or 0)[::-1]))
+    d = nearest_dir(nd, ang)
+    fr = SPR.sprite(path, d)
+    if not fr:
+        return None
+    age = max((cm.get('total') or 1) - (cm.get('frames') or 0), 0)
+    i = missile_frame_at(
+        age, n(row, 'AnimLen') or 1, n(row, 'AnimSpeed') or 16,
+        n(row, 'LoopAnim') > 0, n(row, 'SubLoop') > 0,
+        n(row, 'SubStart'), n(row, 'SubStop'),
+        total=cm.get('total'), start=cm.get('animStart') or 0,
+    )
+    i = min(i, len(fr) - 1)
+    ox, oy, rgb, mask = fr[i]
+    return ox, oy, light_tint(rgb, tint_row(mid), drawn=row), mask
 
 
 
@@ -565,20 +771,51 @@ def simulate(sid, layout, frames=240, lvl=LVL, seed=7):
     launch(sim, sid, *sim.target)
     snaps = []
     osnaps = []
+    csnaps = []
     for t in range(frames):
         sim.tick()
-        snaps.append([(m.path, m, sprite_frame(m), m.x, m.y, m.z, m.trans)
+        snaps.append([(m.path, m, sprite_frame(m), m.x, m.y, m.z, m.draw_mode)
                       for m in sorted(sim.ms, key=lambda m: m.x + m.y) if visible(m)])
         osnaps.append([(o['id'], o['x'], o['y'], o['age']) for o in sim.overlays])
-        if not sim.ms and not sim.new and not sim.pending and not sim.overlays:
+        # Client overlays from clientCast (unit-attached) -> world coords
+        if sim.client:
+            for o in sim.client.get('overlays') or []:
+                # place on caster / target by unitId
+                uid = o.get('unitId')
+                if uid == 'player':
+                    ox, oy = sim.caster
+                elif sim.targets:
+                    ox, oy = sim.targets[0]
+                else:
+                    ox, oy = sim.target
+                osnaps[-1].append((o.get('name'), ox, oy, sim.client.get('tick', 0) - o.get('born', 0)))
+        frame_c = []
+        if sim.client:
+            for cm in sim.client.get('missiles') or []:
+                if cm.get('shadow') or cm.get('standIn') or cm.get('dead'):
+                    continue
+                # Skip if a live server missile of the same row is drawn (stand-in already hidden)
+                spr = client_missile_sprite(cm)
+                if spr is None:
+                    continue
+                mid = CLT.id_to_ml(cm.get('defId'))
+                mode = missile_draw_mode(n(MIS.get(mid) or {}, 'Trans'))
+                hoff = CLT.heightOffset(cm.get('height')) or {'x': 0, 'y': 0}
+                frame_c.append((cm, spr, mode, hoff['x'], hoff['y']))
+        csnaps.append(frame_c)
+        client_live = bool(sim.client and any(not m.get('dead') for m in (sim.client.get('missiles') or [])))
+        if not sim.ms and not sim.new and not sim.pending and not sim.overlays and not client_live:
             break
     sim.overlay_snaps = osnaps
+    sim.client_snaps = csnaps
     return sim, snaps
 
 
-def snaps_have_skill_gfx(snaps, overlay_snaps=None):
+def snaps_have_skill_gfx(snaps, overlay_snaps=None, client_snaps=None):
     """True if any missile sprite or loadable overlay would actually draw (ignores the caster)."""
     if any(item[2] is not None for fr in snaps or () for item in fr):
+        return True
+    if any(fr for fr in client_snaps or ()):
         return True
     for fr in overlay_snaps or ():
         for item in fr:
@@ -588,25 +825,27 @@ def snaps_have_skill_gfx(snaps, overlay_snaps=None):
     return False
 
 
-def overlay_frame(oid, age, ang=0):
+def overlay_frame(oid, age, ang=0, on_player=True):
     if SPR is None:
-        return None, 3
+        return None, 5
     path, rec = SPR.ovl_path(oid)
     if not path:
-        return None, 3
+        return None, 5
     nd = SPR.ndir(path)
     d = nearest_dir(nd, ang) if nd > 1 else 0
     fr = SPR.sprite(path, d)
     if not fr:
-        return None, 3
+        return None, 5
     rate = max(int(rec.get('AnimRate') or 16), 1)
     i = min(age * rate // 16, len(fr) - 1)
     ox, oy, rgb, m = fr[i]
-    return (ox + rec.get('Xoffset', 0), oy + rec.get('Yoffset', 0), rgb, m), trans_mode(rec.get('Trans', 3))
+    # Player uses Height2 (k=1 -> Height1..4 index); k=0 would add +75.
+    y_extra = rec.get('Height2', 0) if on_player else rec.get('Height1', 0)
+    return (ox + rec.get('Xoffset', 0), oy + rec.get('Yoffset', 0) + y_extra, rgb, m), overlay_draw_mode(rec.get('Trans', 0))
 
 
 def render(sim, snaps, maxw=GIF_W, maxh=GIF_H, focus=None):
-    if not snaps_have_skill_gfx(snaps, getattr(sim, 'overlay_snaps', None)):
+    if not snaps_have_skill_gfx(snaps, getattr(sim, 'overlay_snaps', None), getattr(sim, 'client_snaps', None)):
         return None
     cx, cy = CASTER_SX, CASTER_SY
     render.origin = (cx, cy)
@@ -614,6 +853,7 @@ def render(sim, snaps, maxw=GIF_W, maxh=GIF_H, focus=None):
     out = []
     toward = sim.target or (8, -8)
     ang = _face_ang(sim.caster, toward)
+    client_snaps = getattr(sim, 'client_snaps', None) or []
     for t, fr in enumerate(snaps):
         c = floor.copy()
         for oid, ox, oy, age in (sim.overlay_snaps[t] if t < len(getattr(sim, 'overlay_snaps', ())) else ()):
@@ -622,14 +862,23 @@ def render(sim, snaps, maxw=GIF_W, maxh=GIF_H, focus=None):
                 continue
             X, Y = screen(ox, oy)
             blit(c, cx + X, cy + Y, spr, tr)
-        for path, m, f, x, y, z, add in fr:
+        for path, m, f, x, y, z, mode in fr:
             if f is not None:
                 X, Y = screen(x, y)
-                blit(c, cx + X, cy + Y - z, f, add)
+                blit(c, cx + X, cy + Y - z, f, mode)
+        # Client-only missiles (non-shadow)
+        if t < len(client_snaps):
+            for cm, spr, mode, hx, hy in client_snaps[t]:
+                if spr is None:
+                    continue
+                x = cm['x'] / CLT.SUBTILE
+                y = cm['y'] / CLT.SUBTILE
+                X, Y = screen(x, y)
+                blit(c, cx + X + hx, cy + Y + hy, spr, mode)
         # Units last so missile tints/palettes never recolor the amazon or dummy.
         for pos, spr in _actor_draws(sim, t):
             X, Y = screen(*pos)
-            blit(c, cx + X, cy + Y, spr, 3)
+            blit(c, cx + X, cy + Y, spr, 5)
         out.append(c)
     return out, 1.0
 
@@ -797,7 +1046,7 @@ def render_skill(sid, lvl=LVL, distance=11, enemies='auto', max_w=GIF_W, max_h=G
     info = {'errors': sim.errors[:6], 'sim_frames': len(snaps)}
     r = render(sim, snaps)
     if not r or frame_energy(r[0]) < 2000:
-        if not snaps_have_skill_gfx(snaps, getattr(sim, 'overlay_snaps', None)):
+        if not snaps_have_skill_gfx(snaps, getattr(sim, 'overlay_snaps', None), getattr(sim, 'client_snaps', None)):
             info['why'] = 'no missile or overlay graphics'
         else:
             info['why'] = 'nothing visible (this skill\'s graphics come from code the emulator does not cover)'
@@ -808,6 +1057,6 @@ def render_skill(sid, lvl=LVL, distance=11, enemies='auto', max_w=GIF_W, max_h=G
 
 
 def save_gif(frames, path, scale=1.0):
-    """Write the GIF at 25 fps, 600x300, 128 colors."""
+    """Write the GIF at 25 fps, 600x300, 256 colors."""
     save(frames, path, scale, colors=GIF_COLORS)
     return os.path.getsize(path)

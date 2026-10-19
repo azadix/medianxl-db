@@ -92,6 +92,9 @@ class GameData:
                 else:
                     r[k] = str(d[p])
             r['AnimRate'] = r.get('animrate', '')
+            # missiles.bin +4 bit 0x20 = ClientSend (server syncs to client)
+            flags4 = struct.unpack_from('<I', d, b + 4)[0] if b + 8 <= len(d) else 0
+            r['ClientSend'] = '1' if (flags4 & 0x20) else ''
             out[r['Missile']] = r
         return out
 
@@ -159,12 +162,18 @@ class GameData:
                 if b + off < b + rs:
                     return d[b + off]
                 return default
+            # Sigma overlay.bin 132-byte rows: Height1..4 at +0x60..+0x6c,
+            # AnimRate +0x70, Trans +0x7c (blank = 0, not 5).
             rec = {
                 'Filename': fn,
                 'Xoffset': _i(0x58),
                 'Yoffset': _i(0x5c),
+                'Height1': _i(0x60),
+                'Height2': _i(0x64),
+                'Height3': _i(0x68),
+                'Height4': _i(0x6c),
                 'AnimRate': _i(0x70) or 16,
-                'Trans': _b(0x78, 3),
+                'Trans': _b(0x7c, 0),
                 'NumDirections': _b(0x7e, 1) or 1,
             }
             out[i] = rec
