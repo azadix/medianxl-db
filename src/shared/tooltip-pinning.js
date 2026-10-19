@@ -15,8 +15,6 @@ const STUCK_CLASS = 'tooltip-stuck';
 const PINNED_CLASS = 'tooltip-pinned';
 const DRAGGING_CLASS = 'tooltip-dragging';
 const PIN_HOST_CLASS = 'tooltip-pin-host';
-/** Pin sits just outside the full tooltip (button 26px + 6px gap). */
-const PIN_HANG_OUTSIDE_PX = 32;
 
 const PIN_ICON_SVG = `<svg class="tooltip-pin-btn__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
   <path fill="currentColor" d="M16 3a1 1 0 0 1 .8 1.6l-1.7 2.27 1.45 5.08a1 1 0 0 1-.3.98l-2.05 1.9V21a1 1 0 1 1-2 0v-6.17l-2.05-1.9a1 1 0 0 1-.3-.98l1.45-5.08L8.2 4.6A1 1 0 0 1 9 3h7z"/>
@@ -197,12 +195,13 @@ export function updateLiveTooltipBinding(portal, patch = {}) {
 }
 
 /**
- * Hang the pin just outside the left of the tooltip (clear of right-side panels).
+ * Pin is laid out in CSS (top-right, inside the tooltip). Kept as a no-op hook
+ * so callers can re-sync after HTML/layout changes.
  * @param {HTMLElement|null|undefined} el
  */
 export function syncTooltipPinPlacement(el) {
   if (!el) return;
-  el.style.setProperty('--tooltip-pin-inset-left', `-${PIN_HANG_OUTSIDE_PX}px`);
+  el.style.removeProperty('--tooltip-pin-inset-left');
 }
 
 /**
@@ -524,32 +523,32 @@ function releaseClosestAltStuckHost(clientX = lastPointerX, clientY = lastPointe
 }
 
 /**
- * Alt toggles lock on the nearest tooltip: lock a live hover (and any other
- * visible live portals, e.g. nested), or unlock that same tooltip if it is
- * already Alt-stuck. With nothing live under the cursor, unlock the closest
- * Alt-stuck host.
+ * Alt toggles lock on live tooltips first, then nearest Alt-stuck hosts.
+ * Nested skill hovers sit offset from the cursor (which stays on the parent),
+ * so unmatched live portals are pinned even when a parent host is closer.
  */
 function toggleTooltipLock() {
   const liveNodes = getVisibleLivePortals();
-  /** @type {{ kind: 'live'|'host', el: HTMLElement, host?: PinnedTooltipHost }[]} */
-  const candidates = liveNodes.map((el) => ({ kind: 'live', el }));
-  for (const host of hosts.values()) {
-    if (host.mode === 'alt') candidates.push({ kind: 'host', el: host.el, host });
-  }
-  if (!candidates.length) return;
-
-  let best = candidates[0];
-  let bestDist = distanceToHost(best.el, lastPointerX, lastPointerY);
-  for (let i = 1; i < candidates.length; i += 1) {
-    const dist = distanceToHost(candidates[i].el, lastPointerX, lastPointerY);
-    if (dist < bestDist) {
-      bestDist = dist;
-      best = candidates[i];
+  if (liveNodes.length) {
+    const unmatched = liveNodes.filter((node) => {
+      const binding = liveBindings.get(node);
+      return !findMatchingAltHost(binding?.kind || 'tooltip', binding?.meta);
+    });
+    if (unmatched.length) {
+      stickAllLiveTooltips();
+      return;
     }
-  }
 
-  if (best.kind === 'live') {
-    const binding = liveBindings.get(best.el);
+    let bestLive = liveNodes[0];
+    let bestDist = distanceToHost(bestLive, lastPointerX, lastPointerY);
+    for (let i = 1; i < liveNodes.length; i += 1) {
+      const dist = distanceToHost(liveNodes[i], lastPointerX, lastPointerY);
+      if (dist < bestDist) {
+        bestDist = dist;
+        bestLive = liveNodes[i];
+      }
+    }
+    const binding = liveBindings.get(bestLive);
     const existing = findMatchingAltHost(binding?.kind || 'tooltip', binding?.meta);
     if (existing) {
       removePinnedHost(existing.id);
@@ -562,7 +561,7 @@ function toggleTooltipLock() {
   // Nested hover uses a separate live portal; never dismiss the parent while exploring it.
   if (nestedSkillTarget) return;
   if (nestedSkillHandlers?.isShowing?.()) return;
-  if (best.host) removePinnedHost(best.host.id);
+  releaseClosestAltStuckHost();
 }
 
 /**
@@ -581,18 +580,37 @@ function onKeyDown(e) {
 }
 
 /**
+ * Mount the pin on the main skill card when SOURCES sits beside it.
+ * Item pins stay on the outer shell so overflow scroll does not clip them.
+ * @param {HTMLElement} el
+ * @returns {HTMLElement}
+ */
+function getPinMountEl(el) {
+  const panels = el.querySelector(':scope > .skill-tooltip-panels');
+  if (panels) {
+    const main = panels.querySelector(':scope > .tooltip-content');
+    if (main instanceof HTMLElement) return main;
+  }
+  return el;
+}
+
+/**
  * @param {HTMLElement} el
  * @param {{ live: boolean, hostId?: number, pinned?: boolean, locked?: boolean }} opts
  */
 function ensurePinButton(el, opts) {
   if (!el) return;
-  let btn = el.querySelector(`:scope > .${PIN_BTN_CLASS}`);
+  const mount = getPinMountEl(el);
+  let btn = mount.querySelector(`:scope > .${PIN_BTN_CLASS}`);
+  el.querySelectorAll(`.${PIN_BTN_CLASS}`).forEach((node) => {
+    if (node !== btn) node.remove();
+  });
   if (!btn) {
     btn = document.createElement('button');
     btn.type = 'button';
     btn.className = PIN_BTN_CLASS;
     btn.innerHTML = PIN_ICON_SVG;
-    el.appendChild(btn);
+    mount.appendChild(btn);
   }
   const pinned = Boolean(opts.pinned);
   const locked = Boolean(opts.locked) && !pinned;

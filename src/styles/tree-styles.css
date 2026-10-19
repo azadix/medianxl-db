@@ -438,16 +438,17 @@
 .tooltip-pin-btn {
     position: absolute;
     top: 6px;
-    left: var(--tooltip-pin-inset-left, -32px);
+    right: 6px;
+    left: auto;
     z-index: 5;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 26px;
-    height: 26px;
+    width: 16px;
+    height: 16px;
     padding: 0;
     border: 1px solid #777;
-    border-radius: 4px;
+    border-radius: 3px;
     background: rgba(20, 20, 20, 0.92);
     color: #c8c8c8;
     cursor: pointer;
@@ -470,8 +471,8 @@
 }
 
 .tooltip-pin-btn__icon {
-    width: 14px;
-    height: 14px;
+    width: 10px;
+    height: 10px;
     display: block;
 }
 
@@ -482,8 +483,9 @@
 }
 
 .skill-tooltip .tooltip-pin-btn {
-    top: 8px;
-    left: var(--tooltip-pin-inset-left, -32px);
+    top: 6px;
+    right: 6px;
+    left: auto;
 }
 
 /* Alt-held sources: outer shell becomes a transparent flex host for two chrome boxes */
@@ -517,6 +519,7 @@
 }
 
 .skill-tooltip-panels > .tooltip-content {
+    position: relative;
     min-width: 300px;
     max-width: 50vw;
 }
@@ -594,6 +597,10 @@
 .tooltip-level-section {
     text-align: right;
     flex-shrink: 0;
+}
+
+.skill-tooltip:has(.tooltip-pin-btn) .tooltip-level-section {
+    padding-right: 16px;
 }
 
 /* Control field label width to prevent wrapping - each label sizes itself */
@@ -730,6 +737,14 @@
     align-items: flex-start;
     justify-content: space-between;
     gap: 12px;
+}
+
+.skill-tooltip.item-tooltip .item-tooltip-header {
+    padding-right: 12px;
+}
+
+.skill-tooltip.item-tooltip:has(.item-tooltip-sidepanel) .item-tooltip-sidepanel {
+    padding-right: 26px;
 }
 
 .item-tooltip-header-text {
