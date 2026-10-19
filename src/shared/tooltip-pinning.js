@@ -194,14 +194,30 @@ export function updateLiveTooltipBinding(portal, patch = {}) {
   ensurePinButton(portal, { live: true });
 }
 
+const PIN_INSET_PX = 6;
+const ITEM_LAYOUT_GAP_FALLBACK_PX = 8;
+
 /**
- * Pin is laid out in CSS (top-right, inside the tooltip). Kept as a no-op hook
- * so callers can re-sync after HTML/layout changes.
+ * Keep the pin on the item card: offset it left of any mystic-orb side panel.
  * @param {HTMLElement|null|undefined} el
  */
 export function syncTooltipPinPlacement(el) {
   if (!el) return;
   el.style.removeProperty('--tooltip-pin-inset-left');
+  const side = el.querySelector('.item-tooltip-sidepanel');
+  if (!(side instanceof HTMLElement)) {
+    el.style.setProperty('--tooltip-pin-inset-right', `${PIN_INSET_PX}px`);
+    return;
+  }
+  const layout = el.querySelector('.item-tooltip-layout');
+  const gapRaw =
+    layout instanceof HTMLElement
+      ? getComputedStyle(layout).columnGap || getComputedStyle(layout).gap
+      : '';
+  const gap = Number.parseFloat(gapRaw);
+  const gapPx = Number.isFinite(gap) ? gap : ITEM_LAYOUT_GAP_FALLBACK_PX;
+  const sideWidth = side.getBoundingClientRect().width;
+  el.style.setProperty('--tooltip-pin-inset-right', `${PIN_INSET_PX + sideWidth + gapPx}px`);
 }
 
 /**

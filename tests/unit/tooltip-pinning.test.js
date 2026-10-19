@@ -51,14 +51,31 @@ describe('tooltip pinning', () => {
     updateLiveTooltipBinding(portal, {});
     expect(portal.querySelector(':scope > .tooltip-pin-btn')).toBeTruthy();
     expect(portal.style.getPropertyValue('--tooltip-pin-inset-left')).toBe('');
+    expect(portal.style.getPropertyValue('--tooltip-pin-inset-right')).toBe('6px');
   });
 
-  it('keeps a single pin on the item shell when a mystic orb panel is present', () => {
+  it('offsets the pin onto the item card when a mystic orb panel is present', () => {
     portal.innerHTML =
       '<div class="item-tooltip-layout"><div class="item-tooltip-card tooltip-content">Item</div><aside class="item-tooltip-sidepanel">MO</aside></div>';
+    const side = portal.querySelector('.item-tooltip-sidepanel');
+    Object.defineProperty(side, 'getBoundingClientRect', {
+      configurable: true,
+      value: () => ({
+        width: 120,
+        height: 80,
+        top: 0,
+        left: 300,
+        right: 420,
+        bottom: 80,
+        x: 300,
+        y: 0,
+        toJSON() {},
+      }),
+    });
     updateLiveTooltipBinding(portal, {});
     expect(portal.querySelectorAll('.tooltip-pin-btn')).toHaveLength(1);
     expect(portal.querySelector(':scope > .tooltip-pin-btn')).toBeTruthy();
+    expect(portal.style.getPropertyValue('--tooltip-pin-inset-right')).toBe('134px');
   });
 
   it('mounts the skill pin on the main card when SOURCES sits beside it', () => {

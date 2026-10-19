@@ -488,6 +488,10 @@
     left: auto;
 }
 
+.skill-tooltip.item-tooltip > .tooltip-pin-btn {
+    right: var(--tooltip-pin-inset-right, 6px);
+}
+
 /* Alt-held sources: outer shell becomes a transparent flex host for two chrome boxes */
 .skill-tooltip:has(> .skill-tooltip-panels) {
     background: transparent;
@@ -741,10 +745,6 @@
 
 .skill-tooltip.item-tooltip .item-tooltip-header {
     padding-right: 12px;
-}
-
-.skill-tooltip.item-tooltip:has(.item-tooltip-sidepanel) .item-tooltip-sidepanel {
-    padding-right: 26px;
 }
 
 .item-tooltip-header-text {
