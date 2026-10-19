@@ -621,14 +621,34 @@ export function mapTswItemsToSnapshot(rows, catalog, className = null) {
 }
 
 /**
+ * @param {unknown} payload
+ * @returns {Record<string, number>}
+ */
+function oskillImportPayloadToMap(payload) {
+  if (payload && typeof payload === 'object' && !Array.isArray(payload)) {
+    return /** @type {Record<string, number>} */ (payload);
+  }
+  /** @type {Record<string, number>} */
+  const map = {};
+  if (!Array.isArray(payload)) return map;
+  for (const row of payload) {
+    const id = row?.skillName != null ? String(row.skillName).trim() : '';
+    if (!id) continue;
+    map[id] = (map[id] || 0) + Character.clampOSkillPoints(row.points ?? 0);
+  }
+  return map;
+}
+
+/**
  * After item-granted oSkills are synced, add leftover TSW totals as hard points.
  * @param {unknown} tswOSkills
  * @returns {{ skipped: Array<{ key: string, wantedLevel: number }> }}
  */
 export function applyTswOSkillLeftovers(tswOSkills) {
   const character = getCharacterInstance();
-  const { map, skipped } = normalizeBuildOSkillsForImport(tswOSkills);
+  const { payload, skipped } = normalizeBuildOSkillsForImport(tswOSkills);
   if (!character) return { skipped };
+  const map = oskillImportPayloadToMap(payload);
   for (const [id, wantedRaw] of Object.entries(map)) {
     const wanted = Character.clampOSkillPoints(wantedRaw);
     const itemPts = Character.clampOSkillPoints(character.getOSkillItemPoints(id));

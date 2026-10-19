@@ -1,9 +1,12 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { createPinia, setActivePinia } from 'pinia';
 import { buildCatalogFromUniqueStats } from '@/items/unique-stats-catalog.js';
 import { useItemsStore } from '@/stores/items.js';
+import Character from '@/character/Character.js';
+import { setCharacterInstance } from '@/character/planner-instance.js';
+import * as skillDataStore from '@/shared/skill-data-store.js';
 import {
   unwrapTswOrNativeBuild,
   isTswEnvelope,
@@ -12,6 +15,7 @@ import {
   resolveTswRunewordDefId,
   inferTswQuestsCompleted,
   tswTierFromRow,
+  applyTswOSkillLeftovers,
   TSW_SLOT_TO_EQUIPMENT,
 } from '@/planner/tsw-build-import.js';
 import { runewordEntryToItemDef } from '@/items/runeword-items.js';
@@ -620,3 +624,32 @@ function catalogIndexForTests() {
   const { catalog: list, catalogById } = byIdCatalog();
   return { list, byId: catalogById };
 }
+
+describe('applyTswOSkillLeftovers', () => {
+  afterEach(() => {
+    setCharacterInstance(null);
+    vi.restoreAllMocks();
+  });
+
+  it('applies leftover TSW oSkill map points without throwing', () => {
+    vi.spyOn(skillDataStore, 'getFileSkillStore').mockReturnValue({
+      catalog: [
+        { id: 'lightning-fury', displayName: 'Lightning Fury', class: 'Amazon', image: 'lf' },
+      ],
+    });
+    const ch = new Character('Amazon', 150);
+    ch.oSkills = [{ skillName: 'lightning-fury', points: 0, itemPoints: 10, slotId: 's1' }];
+    setCharacterInstance(ch);
+
+    const result = applyTswOSkillLeftovers({ 'Lightning Fury': 25 });
+    expect(result.skipped).toEqual([]);
+    expect(ch.oSkills[0].points).toBe(15);
+  });
+
+  it('does not throw when oSkills are missing', () => {
+    const ch = new Character('Amazon', 150);
+    setCharacterInstance(ch);
+    expect(() => applyTswOSkillLeftovers(undefined)).not.toThrow();
+    expect(ch.oSkills).toEqual([]);
+  });
+});
