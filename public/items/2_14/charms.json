@@ -481,6 +481,19 @@
     ]
   },
   {
+    "id": "u@+",
+    "name": "I Am Rich",
+    "keepInInventory": true,
+    "rarity": "unique",
+    "icon": "redgem",
+    "reqLevel": 1,
+    "modifiers": [
+      "This item does nothing and required the Archbishop Lazarus Trophy",
+      "the Essence of Time and the Vial of Elder Blood to create, destroying them.",
+      "{orange}- I can afford this because I am wealthy and powerful. -"
+    ]
+  },
+  {
     "id": "a66",
     "name": "Idol of Vanity",
     "keepInInventory": true,

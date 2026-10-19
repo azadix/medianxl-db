@@ -351,6 +351,25 @@ describe('tsw-build-import', () => {
     expect(canEquipInSlot(dabomeiFeet, 'feet', 'Assassin')).toBe(true);
   });
 
+  it('loads the I Am Rich secret charm from garden.json', () => {
+    const dir = resolve(ROOT, 'public/items/2_14');
+    const charms = JSON.parse(readFileSync(resolve(dir, 'charms.json'), 'utf8'));
+    const rich = charms.find((c) => c.id === 'u@+' || c.name === 'I Am Rich');
+    expect(rich).toMatchObject({
+      id: 'u@+',
+      name: 'I Am Rich',
+      icon: 'redgem',
+      reqLevel: 1,
+    });
+
+    const garden = JSON.parse(readFileSync(resolve(ROOT, 'todo/bugs mediandb/garden.json'), 'utf8'));
+    const { snapshot, skipped } = mapTswItemsToSnapshot(garden.items, {
+      catalog: charms.map((c) => ({ ...c, type: 'charm', category: 'charms', keepInInventory: true })),
+    });
+    expect(skipped.some((row) => /I Am Rich/i.test(row.name))).toBe(false);
+    expect(snapshot.charms.some((row) => row.defId === 'u@+')).toBe(true);
+  });
+
   it('maps magic, honorific, and angelic gear onto the matching base', () => {
     const rows = [
       {
