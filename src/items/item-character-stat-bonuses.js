@@ -205,12 +205,16 @@ const EXTRA_LINE_PATTERNS = [
     key: 'life_after_each_kill',
   },
   {
-    re: /^\+?([+-]?\d+(?:\.\d+)?)\s+to\s+all Attributes$/i,
+    re: /^\+?([+-]?\d+(?:\.\d+)?)\s+(?:to\s+)?all Attributes$/i,
     keys: [...ALL_ATTRIBUTE_KEYS],
   },
   {
     re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+(?:to\s+)?All Attributes$/i,
     keys: [...PERCENT_ALL_ATTRIBUTE_KEYS],
+  },
+  {
+    re: /^([+-]?\d+(?:\.\d+)?)%\s+to\s+All Vendor Prices$/i,
+    key: 'all_vendor_prices',
   },
   {
     re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+Combat Speeds?$/i,
@@ -235,11 +239,11 @@ const EXTRA_LINE_PATTERNS = [
   },
   // Leading minus is display syntax; planner stores the magnitude as a positive pierce value.
   {
-    re: /^-([+-]?\d+(?:\.\d+)?)%\s+to\s+Enemy Elemental Resistances$/i,
+    re: /^-([+-]?\d+(?:\.\d+)?)%\s+to\s+(?:Enemy Elemental|All Enemy) Resistances$/i,
     keys: [...ENEMY_ELEMENTAL_RESIST_KEYS],
   },
   {
-    re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+to\s+Enemy Elemental Resistances$/i,
+    re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+to\s+(?:Enemy Elemental|All Enemy) Resistances$/i,
     keys: [...ENEMY_ELEMENTAL_RESIST_KEYS],
     abs: true,
   },
@@ -488,10 +492,14 @@ function shouldSkipNonStatLine(text) {
 function bonusesForKeys(keys, amount) {
   /** @type {ParsedCharacterStatBonus[]} */
   const out = [];
-  if (!Number.isFinite(amount) || amount === 0) return out;
+  if (!Number.isFinite(amount)) return out;
   for (const key of keys) {
     if (!isPlannerBaseStatKey(key)) continue;
-    out.push({ key, amount });
+    let n = amount;
+    // Item text is always "-X% to Enemy … Resistance"; there is no positive form.
+    if (ENEMY_ELEMENTAL_RESIST_KEYS.includes(key)) n = Math.abs(n);
+    if (n === 0) continue;
+    out.push({ key, amount: n });
   }
   return out;
 }
@@ -618,6 +626,13 @@ function accumulateLines(lines, sourceLabel, bonuses, modsByKey, unknownOut) {
       const { key, amount } = parsed;
       bonuses[key] = (bonuses[key] || 0) + amount;
       if (!modsByKey[key]) modsByKey[key] = [];
+      const existing = modsByKey[key].find((m) => m.sourceLabel === sourceLabel);
+      if (existing) {
+        existing.value += amount;
+        const sign = existing.value >= 0 ? '+' : '';
+        existing.description = `${sign}${existing.value}`;
+        continue;
+      }
       const sign = amount >= 0 ? '+' : '';
       modsByKey[key].push({
         sourceLabel,

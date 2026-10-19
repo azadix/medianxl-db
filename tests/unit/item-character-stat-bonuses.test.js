@@ -22,6 +22,8 @@ import {
 
   recomputePlannerStatsFromItems,
 
+  getPlannerStatItemModifiers,
+
 } from '@/items/item-character-stat-bonuses.js';
 
 import {
@@ -175,9 +177,45 @@ describe('parseCharacterStatBonusFromModifierLine', () => {
     ]);
     expect(enemy.every((r) => r.amount === 14)).toBe(true);
 
+    const allEnemy = parseCharacterStatBonusesFromModifierLine('-5% to All Enemy Resistances');
+    expect(allEnemy.map((r) => r.key).sort()).toEqual([
+      'enemy_cold_resistance',
+      'enemy_fire_resistance',
+      'enemy_lightning_resistance',
+      'enemy_poison_resistance',
+    ]);
+    expect(allEnemy.every((r) => r.amount === 5)).toBe(true);
+
     const attrs = parseCharacterStatBonusesFromModifierLine('+35 to all Attributes');
     expect(attrs.map((r) => r.key).sort()).toEqual(['dexterity', 'energy', 'strength', 'vitality']);
     expect(attrs.every((r) => r.amount === 35)).toBe(true);
+
+    const attrsNoTo = parseCharacterStatBonusesFromModifierLine('+20 All Attributes');
+    expect(attrsNoTo.map((r) => r.key).sort()).toEqual(['dexterity', 'energy', 'strength', 'vitality']);
+    expect(attrsNoTo.every((r) => r.amount === 20)).toBe(true);
+  });
+
+  it('stores enemy pierce as a positive magnitude', () => {
+    expect(parseCharacterStatBonusFromModifierLine('-5% to Enemy Fire Resistance')).toEqual({
+      key: 'enemy_fire_resistance',
+      amount: 5,
+    });
+    expect(parseCharacterStatBonusFromModifierLine('-5% to Enemy Lightning Resistance')).toEqual({
+      key: 'enemy_lightning_resistance',
+      amount: 5,
+    });
+  });
+
+  it('maps vendor prices onto the misc planner stat', () => {
+    expect(parseCharacterStatBonusFromModifierLine('-5% to All Vendor Prices')).toEqual({
+      key: 'all_vendor_prices',
+      amount: -5,
+    });
+    expect(parseCharacterStatBonusFromModifierLine('10% to All Vendor Prices')).toEqual({
+      key: 'all_vendor_prices',
+      amount: 10,
+    });
+    expect(classifyCharacterStatModifierLine('-5% to All Vendor Prices').kind).toBe('parsed');
   });
 
   it('expands combat speeds, spell damage, life/mana, and related charm aliases', () => {
@@ -376,6 +414,50 @@ describe('recomputePlannerStatsFromItems', () => {
     const unknown = getPlannerUnknownItemStatModifiers();
     expect(unknown.some((u) => u.text === 'Weird Unknown Affix +9%')).toBe(true);
     expect(unknown.some((u) => /Activation Frequency/i.test(u.text))).toBe(false);
+  });
+
+  it('merges duplicate enemy pierce from the same item and treats sunstone-style lines as pierce', () => {
+    createCharacterInstance('Amazon', 99);
+    const ch = getCharacterInstance();
+    const store = useItemsStore();
+    const vial = {
+      id: 'ebx',
+      name: 'Vial of Elder Blood',
+      category: 'charms',
+      keepInInventory: true,
+      rarity: 'unique',
+      reqLevel: 1,
+      modifiers: ['-5% to Enemy Elemental Resistances'],
+      upgrades: [
+        {
+          label: 'Champion of Sanctuary',
+          affixes: ['-5% to Enemy Elemental Resistances'],
+        },
+      ],
+    };
+    const sunstone = {
+      id: 'twi',
+      name: 'Sunstone of the Twin Seas',
+      category: 'charms',
+      keepInInventory: true,
+      rarity: 'unique',
+      reqLevel: 1,
+      modifiers: ['-5% to Enemy Fire Resistance'],
+    };
+    store.catalog = [vial, sunstone];
+    expect(store.toggleCharm(vial.id, true, { charmUpgrade0: 1 })).toBe(true);
+    expect(store.toggleCharm(sunstone.id, true)).toBe(true);
+
+    recomputePlannerStatsFromItems(ch);
+    expect(ch.getStat('enemy_fire_resistance')).toBe(15);
+    const fireMods = getPlannerStatItemModifiers('enemy_fire_resistance');
+    expect(fireMods).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ sourceLabel: 'Vial of Elder Blood', value: 10 }),
+        expect.objectContaining({ sourceLabel: 'Sunstone of the Twin Seas', value: 5 }),
+      ])
+    );
+    expect(fireMods.filter((m) => m.sourceLabel === 'Vial of Elder Blood')).toHaveLength(1);
   });
 
 });

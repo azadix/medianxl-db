@@ -1739,6 +1739,14 @@
     "section": "misc"
   },
   {
+    "id": 511,
+    "key": "all_vendor_prices",
+    "label": "#% To All Vendor Prices",
+    "min": null,
+    "max": null,
+    "section": "misc"
+  },
+  {
     "id": 904,
     "key": "combined_percent_spell_focus",
     "label": "Spell Focus cap (max 100%)",
