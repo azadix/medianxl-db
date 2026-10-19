@@ -81,8 +81,6 @@ onActivated(async () => {
     await initializeVersionSelector(sel);
   }
   await importPromise;
-  const { bindPlannerNestedSkillTooltipHandlers } = await import('@/tree/tree-tooltip.js');
-  bindPlannerNestedSkillTooltipHandlers();
 });
 
 onUnmounted(() => {

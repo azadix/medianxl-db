@@ -12,6 +12,8 @@ import {
 import { formulaEvaluator } from '@/skills/domain/formula-evaluator.js';
 import { formatScalingValuesToDescriptionHtml } from '@/skills/domain/scaling-display-html.js';
 import { DEFAULT_TREE_ASSET_FOLDER } from '@/shared/version-constants.js';
+import Character from '@/character/Character.js';
+import { getCharacterInstance } from '@/character/planner-instance.js';
 
 // --- Icon Atlas Helper ---
 const ICON_SIZE = 48;
@@ -334,7 +336,6 @@ export function applyManaCostMultiplier(cost, percentIncrease, options = {}) {
  */
 export async function getPlannerManaCostOfSkillsPercent(characterState) {
     try {
-        const { getCharacterInstance } = await import('@/character/planner-instance.js');
         const character = getCharacterInstance();
         if (character && typeof character.getStat === 'function') {
             const fromChar = Math.trunc(Number(character.getStat('mana_cost_of_skills')) || 0);
@@ -371,7 +372,6 @@ export async function sumPlannerManaCostMultiplierPercent(characterState) {
     /** @type {{ isSkillDisabled?: (id: string) => boolean, oSkills?: object[] } | null} */
     let character = null;
     try {
-        const { getCharacterInstance } = await import('@/character/planner-instance.js');
         character = getCharacterInstance();
     } catch {
         // keep character null when planner instance is unavailable
@@ -382,7 +382,6 @@ export async function sumPlannerManaCostMultiplierPercent(characterState) {
     /** @type {Record<string, number>} */
     const slvlMap = { ...(characterState.lvl || {}) };
     if (character && Array.isArray(character.oSkills)) {
-        const { default: Character } = await import('@/character/Character.js');
         for (const row of character.oSkills) {
             const name = row?.skillName != null ? String(row.skillName).trim() : '';
             if (!name) continue;
