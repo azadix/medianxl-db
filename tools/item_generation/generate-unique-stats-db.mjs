@@ -107,6 +107,35 @@ function mergeSecretEntries(existing, secret) {
 }
 
 /**
+ * Yshari / Valthek quest set pieces are not on the wiki.
+ * @returns {UniqueStatsEntry[]}
+ */
+function loadQuestEntries() {
+  const filePath = path.join(
+    ROOT,
+    'tools',
+    'item_generation',
+    'quest-set-entries.json'
+  );
+  if (!existsSync(filePath)) return [];
+  const data = JSON.parse(readFileSync(filePath, 'utf8'));
+  return Array.isArray(data) ? data : [];
+}
+
+/**
+ * @param {UniqueStatsEntry[]} existing
+ * @param {UniqueStatsEntry[]} quest
+ * @returns {UniqueStatsEntry[]}
+ */
+function mergeQuestEntries(existing, quest) {
+  const incoming = new Set(quest.map(entryKey));
+  const kept = existing.filter(
+    (entry) => entry.source !== 'quest' && !incoming.has(entryKey(entry))
+  );
+  return [...kept, ...quest];
+}
+
+/**
  * @param {string} filePath
  * @returns {UniqueStatsEntry[]}
  */
@@ -268,14 +297,18 @@ export async function main(argv = process.argv.slice(2)) {
 
   const outputPath = path.join(ROOT, 'public', 'items', folder, 'unique-stats-db.json');
   const existing = loadExisting(outputPath);
+  const quest = loadQuestEntries();
   console.log(`Fetching secret items from ${SECRET_ITEMS_WIKI_URL}...`);
   const secret = parseSecretItemsWiki(await loadSecretItemsHtml());
   console.log(`Parsed ${secret.length} secret item entries.`);
+  console.log(`Loaded ${quest.length} quest set entries.`);
 
   /** @type {UniqueStatsEntry[]} */
   let entries;
   if (flags.has('--secrets-only')) {
-    entries = mergeSecretEntries(existing, secret).sort(compareEntries);
+    entries = mergeQuestEntries(mergeSecretEntries(existing, secret), quest).sort(
+      compareEntries
+    );
   } else {
     console.log('Fetching tiered uniques, sacred uniques, and sets from Median XL docs...');
     const [tieredHtml, sacredHtml, setsHtml] = await Promise.all([
@@ -287,7 +320,10 @@ export async function main(argv = process.argv.slice(2)) {
     const tiered = parseTieredUniquesWiki(tieredHtml);
     const sacred = selectStableVariants(parseSacredUniquesWiki(sacredHtml), existing);
     const sets = parseSetsWiki(setsHtml);
-    entries = mergeSecretEntries([...sets, ...sacred, ...tiered], secret).sort(compareEntries);
+    entries = mergeQuestEntries(
+      mergeSecretEntries([...sets, ...sacred, ...tiered], secret),
+      quest
+    ).sort(compareEntries);
   }
 
   validateEntries(entries);

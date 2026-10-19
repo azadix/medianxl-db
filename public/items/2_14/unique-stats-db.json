@@ -107,6 +107,15 @@
       "type": "Ancient Armor (Sacred)"
     },
     {
+      "name": "Bartuc's Blood",
+      "quality": "Sacred Set",
+      "stats": "Defense: 1381\nRequired Level: 120\nItem Level: 99\nRequirements -100%\nBrotherhood of the Vizjerei\n{orange}(Valthek Quest Set)",
+      "setName": "Brotherhood of the Vizjerei",
+      "type": "Mana Belt",
+      "icon": "lab_belt",
+      "source": "quest"
+    },
+    {
       "name": "Bear's Warding",
       "quality": "Sacred Set",
       "stats": "Defense:\n(6226 - 7782) to (7630 - 9537)\nRequired Level: 80\nRequired Strength: 700\nItem Level: 1\n+(1 to 3) to Barbarian Skill Levels\nSlows Attacker by (11 to 15)%\n+(100 to 150)% Enhanced Defense\n20% to Strength\n+(31 to 50) to Energy\n(11 to 15)% Bonus to Defense\nSocketed (6)",
@@ -238,6 +247,15 @@
       "stats": "Defense: 2263 to 2331\nRequired Level: 100\nRequired Strength: 500\nItem Level: 118\n+(1 to 2) to Assassin Skill Levels\n(15 to 30)% Cast Speed\n-(10 to 20)% to Enemy Elemental Resistances\n+(21 to 50) to all Attributes\nCurse Length Reduction -25%\nPhysical Resist -5%\nSocketed (6)",
       "setName": "Battle Devices",
       "type": "Quilted Armor (Sacred)"
+    },
+    {
+      "name": "Deckard Cain's Gem",
+      "quality": "Sacred Set",
+      "stats": "Required Level: 120\nItem Level: 99\nBrotherhood of the Horadrim\n{orange}(Valthek Quest Set)",
+      "setName": "Brotherhood of the Horadrim",
+      "type": "Arcane Seal",
+      "icon": "lab_rn2",
+      "source": "quest"
     },
     {
       "name": "Destiny",
@@ -464,6 +482,15 @@
       "type": "Long Sword (Sacred)"
     },
     {
+      "name": "Horazon's Guard",
+      "quality": "Sacred Set",
+      "stats": "Defense: 3124\nRequired Level: 120\nItem Level: 99\nRequirements -100%\nBrotherhood of the Vizjerei\n{orange}(Valthek Quest Set)",
+      "setName": "Brotherhood of the Vizjerei",
+      "type": "Mage's Plate",
+      "icon": "lab_armor",
+      "source": "quest"
+    },
+    {
       "name": "Hunter's Camouflage",
       "quality": "Sacred Set",
       "stats": "Defense:\n7013 to 7814\nChance to Block: 1%\n(Barbarian Only)\nRequired Level: 90\nRequired Strength: 600\nItem Level: 1\n+(1 to 2) to Barbarian Skill Levels\n(8 to 15)% Life stolen per Hit\n+200% Enhanced Defense\n+500 Defense\n+(31 to 50) to Strength\n+(31 to 150) to Vitality\n5% Chance to Avoid Damage\nSocketed (4)",
@@ -539,6 +566,15 @@
       "stats": "Defense: 651 to 671\nRequired Level: 90\nRequired Strength:\n300\nItem Level: 1\n+1 to Paladin Skill Levels\n(20 to 50)% Movement Speed\n+(21 to 25) Spell Focus\n20% Cast Speed\nRequirements -40%\nSocketed (4)",
       "setName": "Imperius' Edict",
       "type": "Boots (Sacred)"
+    },
+    {
+      "name": "Jered Cain's Diamond",
+      "quality": "Sacred Set",
+      "stats": "Required Level: 120\nItem Level: 99\nBrotherhood of the Horadrim\n{orange}(Valthek Quest Set)",
+      "setName": "Brotherhood of the Horadrim",
+      "type": "Arcane Seal",
+      "icon": "lab_rn1",
+      "source": "quest"
     },
     {
       "name": "Killing Vector",
@@ -716,6 +752,15 @@
       "type": "Compound Bow (Sacred)"
     },
     {
+      "name": "Nor Tiraj's Safeguard",
+      "quality": "Sacred Set",
+      "stats": "Defense: 1081\nRequired Level: 120\nItem Level: 99\nRequirements -100%\nBrotherhood of the Vizjerei\n{orange}(Valthek Quest Set)",
+      "setName": "Brotherhood of the Vizjerei",
+      "type": "Divine Guard",
+      "icon": "lab_shield",
+      "source": "quest"
+    },
+    {
       "name": "Pentacle",
       "quality": "Sacred Set",
       "stats": "Defense:\n(6091 - 6852) to (6492 - 7303)\n(Sorceress Only)\nRequired Level: 100\nRequired Dexterity: 486\nItem Level: 1\n+3 to Sorceress Skill Levels\nAdds 35-40 Damage\n5% Chance of Crushing Blow\n+(140 to 170)% Enhanced Defense\n+(31 to 50) to all Attributes\nPhysical Resist 10%\n(21 to 25)% Bonus to Defense\nSocketed (6)",
@@ -728,6 +773,24 @@
       "stats": "Defense:\n(1339 - 1506) to (1567 - 1763)\nRequired Level: 80\nRequired Strength:\n375\nItem Level: 1\n+(16 to 20)% to Physical/Magic Spell Damage\n+(140 to 170)% Enhanced Defense\n+125 to Energy\nMaximum Mana +(11 to 15)%\n(16 to 20)% Magic Find\nRequirements -40%\nSocketed (4)",
       "setName": "Universal Law",
       "type": "Gauntlets (Sacred)"
+    },
+    {
+      "name": "Quov Tsin's Crown",
+      "quality": "Sacred Set",
+      "stats": "Defense: 1617\nRequired Level: 120\nItem Level: 99\nRequirements -100%\nBrotherhood of the Vizjerei\n{orange}(Valthek Quest Set)",
+      "setName": "Brotherhood of the Vizjerei",
+      "type": "Sorcerer's Mask",
+      "icon": "lab_helm",
+      "source": "quest"
+    },
+    {
+      "name": "Radament's Greaves",
+      "quality": "Sacred Set",
+      "stats": "Defense: 880\nRequired Level: 120\nItem Level: 99\n+20% Movement Speed\nRequirements -100%\nBrotherhood of the Horadrim\n{orange}(Valthek Quest Set)",
+      "setName": "Brotherhood of the Horadrim",
+      "type": "Winged Feet",
+      "icon": "lab_boots",
+      "source": "quest"
     },
     {
       "name": "Rathma's Chase",
@@ -905,6 +968,15 @@
       "type": "Boots (Sacred)"
     },
     {
+      "name": "Tal Rasha's Talisman",
+      "quality": "Sacred Set",
+      "stats": "Required Level: 120\nItem Level: 99\nBrotherhood of the Vizjerei\n{orange}(Valthek Quest Set)",
+      "setName": "Brotherhood of the Vizjerei",
+      "type": "Necklace",
+      "icon": "lab_amu",
+      "source": "quest"
+    },
+    {
       "name": "Tetrad",
       "quality": "Sacred Set",
       "stats": "Defense:\n(1030 - 1287) to (1130 - 1412)\nRequired Level: 90\nRequired Strength:\n345\nItem Level: 1\n+(21 to 25) Spell Focus\n30% Hit Recovery\n+(100 to 150)% Enhanced Defense\n+(31 to 40) to Strength\n+(31 to 40) to Energy\n(31 to 40)% Bonus to Defense\nRequirements -40%\nSocketed (4)",
@@ -1050,6 +1122,15 @@
       "stats": "One-Hand Damage:\n(252 - 278) to (262 - 290)\n(Barbarian Only)\nRequired Level: 80\nRequired Strength: 630\nItem Level: 1\nStrength Damage Bonus: (0.14 per Strength)%\n+(2 to 3) to Barbarian Skill Levels\n25% Attack Speed\n+125 Damage\n+(150 to 200)% Enhanced Damage\n5% Chance of Crushing Blow\n+100 to Life\nSocketed (6)",
       "setName": "Tundra Walker",
       "type": "Hammerhead Axe (Sacred)"
+    },
+    {
+      "name": "Valthek's Blade",
+      "quality": "Sacred Set",
+      "stats": "One-Hand Damage: 25 to 38\nRequired Level: 120\nItem Level: 99\nRequirements -100%\nBrotherhood of the Vizjerei\n{orange}(Valthek Quest Set)",
+      "setName": "Brotherhood of the Vizjerei",
+      "type": "Mystical Blade",
+      "icon": "lab_sword",
+      "source": "quest"
     },
     {
       "name": "Vasily's Crescent",
@@ -1318,6 +1399,15 @@
       "type": "Setzschild (Sacred)"
     },
     {
+      "name": "Zoltun's Gauntlets",
+      "quality": "Sacred Set",
+      "stats": "Defense: 634\nRequired Level: 120\nItem Level: 99\nRequirements -100%\nBrotherhood of the Horadrim\n{orange}(Valthek Quest Set)",
+      "setName": "Brotherhood of the Horadrim",
+      "type": "Warkeepers",
+      "icon": "lab_gloves",
+      "source": "quest"
+    },
+    {
       "name": "Achilios' Wake",
       "quality": "Set",
       "stats": "Set Bonus with 2 or more set items:\n+20 to Maximum Damage\n+50 to Strength\n\nSet Bonus with 3 or more set items:\n+2 to Necromancer Skill Levels\nElemental Resists +50%\n\nSet Bonus with complete set:\n50% Attack Speed\nAdds 55-70 Damage\n10% Chance of Crushing Blow\n50% to Strength\nElemental Resists +45%\nPhysical Resist 15%\n2% Reanimate as: Returned Archer"
@@ -1351,6 +1441,18 @@
       "name": "Big Game Hunter",
       "quality": "Set",
       "stats": "Set Bonus with 2 or more set items:\n6% Life stolen per Hit\n50% Bonus to Defense\n\nSet Bonus with 3 or more set items:\nAdds 25-50 Damage\n6% Life stolen per Hit\n\nSet Bonus with complete set:\n+4 to Barbarian Skill Levels\n4% Chance to cast level 13 Blast Wave on Kill\n8% Life stolen per Hit\nMaximum Life +10%\nMaximum Poison Resist +5%\nPoison Length Reduction 75%\nPhysical Resist 10%"
+    },
+    {
+      "name": "Brotherhood of the Horadrim",
+      "quality": "Set",
+      "stats": "Set Bonus with complete set:\n+100% Combat Speeds\n+1000 to Life\nElemental Resists -200%\nSlain Monsters Rest in Peace",
+      "source": "quest"
+    },
+    {
+      "name": "Brotherhood of the Vizjerei",
+      "quality": "Set",
+      "stats": "Set Bonus with complete set:\n+50 to Arcane Blast\n+50 to Holybolt\nMaximum Elemental Resists +15%\nElemental Resists +400%\nPhysical Resist +50%\nTotal Defense = 0",
+      "source": "quest"
     },
     {
       "name": "Caoi Dulra",

@@ -544,6 +544,15 @@ const TYPE_SHAPE_FALLBACKS = Object.freeze({
   'Sigil of Deadly Sins': 'Ring',
   'Ring of Pride': 'Ring',
   "Mindflayer's Mayhem": 'Heavy Boots (Sacred)',
+  "Mage's Plate": 'Full Plate Mail (Sacred)',
+  'Mystical Blade': 'Crystal Sword (Sacred)',
+  'Divine Guard': 'Tower Shield (Sacred)',
+  "Sorcerer's Mask": 'Mask (Sacred)',
+  'Mana Belt': 'Belt (Sacred)',
+  Necklace: 'Amulet',
+  Warkeepers: 'Gauntlets (Sacred)',
+  'Winged Feet': 'Greaves (Sacred)',
+  'Arcane Seal': 'Ring',
 });
 
 /**
@@ -735,8 +744,10 @@ export function entryToItemDef(entry, bases) {
     if (src.range != null) def.range = src.range;
     if (src.strDamageBonus != null) def.strDamageBonus = src.strDamageBonus;
     if (src.dexDamageBonus != null) def.dexDamageBonus = src.dexDamageBonus;
-    if (!def.innate && src.innate) def.innate = src.innate;
-    if (src.adds) def.adds = src.adds;
+    if (asCatalogBase) {
+      if (!def.innate && src.innate) def.innate = src.innate;
+      if (src.adds) def.adds = src.adds;
+    }
   };
 
   if (entry.quality !== 'Relic' && entry.quality !== 'Charm') {

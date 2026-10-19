@@ -138,6 +138,25 @@ describe('unique-stats-db catalog', () => {
     const jewels = items.filter((u) => u.baseType === 'Jewel' || u.type === 'jewl');
     expect(jewels.length).toBeGreaterThan(0);
     expect(jewels.every((u) => u.slot == null)).toBe(true);
+
+    const valthekBlade = items.find((s) => s.name === "Valthek's Blade");
+    expect(valthekBlade).toMatchObject({
+      id: 's:valtheks-blade:sacred-set',
+      rarity: 'set',
+      setName: 'Brotherhood of the Vizjerei',
+      setId: 'set:brotherhood-of-the-vizjerei',
+      slot: 'arms',
+      reqLevel: 120,
+      icon: 'lab_sword',
+      baseName: 'Mystical Blade',
+    });
+    expect(valthekBlade?.innate).toBeUndefined();
+    const horadrim = sets.find((s) => s.id === 'set:brotherhood-of-the-horadrim');
+    expect(horadrim?.bonuses?.some((b) => b.required === 'complete')).toBe(true);
+    expect(items.find((s) => s.name === "Horazon's Guard")?.slot).toBe('tors');
+    expect(items.find((s) => s.name === "Zoltun's Gauntlets")?.slot).toBe('glov');
+    expect(items.find((s) => s.name === "Tal Rasha's Talisman")?.slot).toBe('neck');
+    expect(items.find((s) => s.name === "Deckard Cain's Gem")?.slot).toBe('ring');
   });
 
   it('other.json includes quiver bases', () => {

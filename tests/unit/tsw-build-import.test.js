@@ -351,6 +351,46 @@ describe('tsw-build-import', () => {
     expect(canEquipInSlot(dabomeiFeet, 'feet', 'Assassin')).toBe(true);
   });
 
+  it('loads Valthek quest set pieces from NgucBu-ViE.json', () => {
+    const dir = resolve(ROOT, 'public/items/2_14');
+    const baseItems = JSON.parse(readFileSync(resolve(dir, 'baseitems.json'), 'utf8'));
+    const other = JSON.parse(readFileSync(resolve(dir, 'other.json'), 'utf8'));
+    const db = JSON.parse(readFileSync(resolve(dir, 'unique-stats-db.json'), 'utf8'));
+    const { items: overlays, sets } = buildCatalogFromUniqueStats(db, [...baseItems, ...other]);
+    setActivePinia(createPinia());
+    const store = useItemsStore();
+    store.catalog = [...baseItems, ...other, ...overlays];
+    store.sets = sets;
+    store.catalogLoaded = true;
+    store.catalogVersionFolder = '2_14';
+
+    const dump = JSON.parse(readFileSync(resolve(ROOT, 'todo/bugs mediandb/NgucBu-ViE.json'), 'utf8'));
+    const { snapshot, skipped } = mapTswItemsToSnapshot(dump.items, store, 'Amazon');
+    const valthekNames = [
+      "Horazon's Guard",
+      "Zoltun's Gauntlets",
+      "Bartuc's Blood",
+      "Deckard Cain's Gem",
+      "Jered Cain's Diamond",
+      "Tal Rasha's Talisman",
+      "Quov Tsin's Crown",
+      "Radament's Greaves",
+      "Valthek's Blade",
+      "Nor Tiraj's Safeguard",
+    ];
+    expect(skipped.filter((row) => valthekNames.includes(row.name))).toEqual([]);
+    expect(snapshot.equipment.tors?.defId).toBe('s:horazons-guard:sacred-set');
+    expect(snapshot.equipment.rarm?.defId).toBe('s:valtheks-blade:sacred-set');
+    expect(snapshot.equipment.larm?.defId).toBe('s:nor-tirajs-safeguard:sacred-set');
+    expect(snapshot.equipment.head?.defId).toBe('s:quov-tsins-crown:sacred-set');
+    expect(snapshot.equipment.glov?.defId).toBe('s:zoltuns-gauntlets:sacred-set');
+    expect(snapshot.equipment.belt?.defId).toBe('s:bartucs-blood:sacred-set');
+    expect(snapshot.equipment.feet?.defId).toBe('s:radaments-greaves:sacred-set');
+    expect(snapshot.equipment.neck?.defId).toBe('s:tal-rashas-talisman:sacred-set');
+    expect(snapshot.equipment.lrin?.defId).toBe('s:deckard-cains-gem:sacred-set');
+    expect(snapshot.equipment.rrin?.defId).toBe('s:jered-cains-diamond:sacred-set');
+  });
+
   it('loads the I Am Rich secret charm from garden.json', () => {
     const dir = resolve(ROOT, 'public/items/2_14');
     const charms = JSON.parse(readFileSync(resolve(dir, 'charms.json'), 'utf8'));

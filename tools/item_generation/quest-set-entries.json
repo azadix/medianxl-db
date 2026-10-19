@@ -1,0 +1,104 @@
+[
+  {
+    "name": "Bartuc's Blood",
+    "quality": "Sacred Set",
+    "stats": "Defense: 1381\nRequired Level: 120\nItem Level: 99\nRequirements -100%\nBrotherhood of the Vizjerei\n{orange}(Valthek Quest Set)",
+    "setName": "Brotherhood of the Vizjerei",
+    "type": "Mana Belt",
+    "icon": "lab_belt",
+    "source": "quest"
+  },
+  {
+    "name": "Deckard Cain's Gem",
+    "quality": "Sacred Set",
+    "stats": "Required Level: 120\nItem Level: 99\nBrotherhood of the Horadrim\n{orange}(Valthek Quest Set)",
+    "setName": "Brotherhood of the Horadrim",
+    "type": "Arcane Seal",
+    "icon": "lab_rn2",
+    "source": "quest"
+  },
+  {
+    "name": "Horazon's Guard",
+    "quality": "Sacred Set",
+    "stats": "Defense: 3124\nRequired Level: 120\nItem Level: 99\nRequirements -100%\nBrotherhood of the Vizjerei\n{orange}(Valthek Quest Set)",
+    "setName": "Brotherhood of the Vizjerei",
+    "type": "Mage's Plate",
+    "icon": "lab_armor",
+    "source": "quest"
+  },
+  {
+    "name": "Jered Cain's Diamond",
+    "quality": "Sacred Set",
+    "stats": "Required Level: 120\nItem Level: 99\nBrotherhood of the Horadrim\n{orange}(Valthek Quest Set)",
+    "setName": "Brotherhood of the Horadrim",
+    "type": "Arcane Seal",
+    "icon": "lab_rn1",
+    "source": "quest"
+  },
+  {
+    "name": "Nor Tiraj's Safeguard",
+    "quality": "Sacred Set",
+    "stats": "Defense: 1081\nRequired Level: 120\nItem Level: 99\nRequirements -100%\nBrotherhood of the Vizjerei\n{orange}(Valthek Quest Set)",
+    "setName": "Brotherhood of the Vizjerei",
+    "type": "Divine Guard",
+    "icon": "lab_shield",
+    "source": "quest"
+  },
+  {
+    "name": "Quov Tsin's Crown",
+    "quality": "Sacred Set",
+    "stats": "Defense: 1617\nRequired Level: 120\nItem Level: 99\nRequirements -100%\nBrotherhood of the Vizjerei\n{orange}(Valthek Quest Set)",
+    "setName": "Brotherhood of the Vizjerei",
+    "type": "Sorcerer's Mask",
+    "icon": "lab_helm",
+    "source": "quest"
+  },
+  {
+    "name": "Radament's Greaves",
+    "quality": "Sacred Set",
+    "stats": "Defense: 880\nRequired Level: 120\nItem Level: 99\n+20% Movement Speed\nRequirements -100%\nBrotherhood of the Horadrim\n{orange}(Valthek Quest Set)",
+    "setName": "Brotherhood of the Horadrim",
+    "type": "Winged Feet",
+    "icon": "lab_boots",
+    "source": "quest"
+  },
+  {
+    "name": "Tal Rasha's Talisman",
+    "quality": "Sacred Set",
+    "stats": "Required Level: 120\nItem Level: 99\nBrotherhood of the Vizjerei\n{orange}(Valthek Quest Set)",
+    "setName": "Brotherhood of the Vizjerei",
+    "type": "Necklace",
+    "icon": "lab_amu",
+    "source": "quest"
+  },
+  {
+    "name": "Valthek's Blade",
+    "quality": "Sacred Set",
+    "stats": "One-Hand Damage: 25 to 38\nRequired Level: 120\nItem Level: 99\nRequirements -100%\nBrotherhood of the Vizjerei\n{orange}(Valthek Quest Set)",
+    "setName": "Brotherhood of the Vizjerei",
+    "type": "Mystical Blade",
+    "icon": "lab_sword",
+    "source": "quest"
+  },
+  {
+    "name": "Zoltun's Gauntlets",
+    "quality": "Sacred Set",
+    "stats": "Defense: 634\nRequired Level: 120\nItem Level: 99\nRequirements -100%\nBrotherhood of the Horadrim\n{orange}(Valthek Quest Set)",
+    "setName": "Brotherhood of the Horadrim",
+    "type": "Warkeepers",
+    "icon": "lab_gloves",
+    "source": "quest"
+  },
+  {
+    "name": "Brotherhood of the Horadrim",
+    "quality": "Set",
+    "stats": "Set Bonus with complete set:\n+100% Combat Speeds\n+1000 to Life\nElemental Resists -200%\nSlain Monsters Rest in Peace",
+    "source": "quest"
+  },
+  {
+    "name": "Brotherhood of the Vizjerei",
+    "quality": "Set",
+    "stats": "Set Bonus with complete set:\n+50 to Arcane Blast\n+50 to Holybolt\nMaximum Elemental Resists +15%\nElemental Resists +400%\nPhysical Resist +50%\nTotal Defense = 0",
+    "source": "quest"
+  }
+]
