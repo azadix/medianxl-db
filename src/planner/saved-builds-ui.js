@@ -9,6 +9,8 @@ import {
   initializeCharacter,
   applyClassBaselineStatsToCharacter,
   runPlannerSkillStatRecompute,
+  beginPlannerBuildLoad,
+  endPlannerBuildLoad,
   setAllSkillPoints,
   normalizeBuildSkillPointsForImport,
   normalizeBuildOSkillsForImport,
@@ -127,7 +129,9 @@ export async function reloadSkillDataAndLoadBuild(build, buildIndex) {
         if (versionSelector) {
             await initializeVersionSelector(versionSelector);
         }
-        loadBuildData(build, buildIndex);
+        // Skill catalog changed with the version switch — rebuild oSkills picker once.
+        initializeOSkillsDropdown();
+        await loadBuildData(build, buildIndex);
     } catch (error) {
         console.error('Failed to reload skill data:', error);
         toastManager.showToast(`Failed to reload skill data: ${error.message}`, false, 'danger');
@@ -135,104 +139,108 @@ export async function reloadSkillDataAndLoadBuild(build, buildIndex) {
 }
 
 /**
- * Load build data without version checking (used after skill data reload)
+ * Load build data without version checking (used after skill data reload).
+ * Batches Vue bumps and runs a single skill-stat recompute after items + stats.
  * @param {object} build - The build object to load
  * @param {number} buildIndex - The index of the build in the saved builds array
+ * @returns {Promise<void>}
  */
-export function loadBuildData(build, buildIndex = null) {
-    setCurrentBuildDisplayName(build.name || '');
-    const classSelect = getClassSelect();
-    const skillsContainer = getSkillsContainer();
-    // Set class
-    if (classSelect) {
-        classSelect.value = build.class;
-    }
-    updateClassSkillsBonusLabel(build.class);
-    
-    // Initialize character with loaded class and level first
-    initializeCharacter(build.class, build.level);
-
-    const tswEnvelope = Boolean(build.__tswEnvelope) || Array.isArray(build.__tswItems);
-    const quests = tswEnvelope ? inferTswQuestsCompleted(build) : build.questsCompleted;
-    if (quests && typeof quests === 'object') {
-        importQuestsCompleted(quests, tswEnvelope ? undefined : build.questCompletionOptOut);
-    }
-    
-    // Load skill points (display name or internal id -> runtime internal ids)
-    if (build.skillPoints) {
-        const { map, skipped } = normalizeBuildSkillPointsForImport(build.skillPoints);
-        setAllSkillPoints(map);
-        if (skipped.length > 0) {
-            const parts = skipped.map(
-                (s) => `${exportLabelForToast(s.key)} (skill level: ${s.wantedLevel})`
-            );
-            const list = parts.join(', ');
-            toastManager.showToast(
-                `Unknown tree skill${skipped.length > 1 ? 's' : ''} not loaded: ${list}.`,
-                false,
-                'warning'
-            );
-        }
-    }
-
-    // TSW envelope oSkills are character-sheet totals; apply leftovers after items.
-    const tswItems = Array.isArray(build.__tswItems) ? build.__tswItems : null;
-    if (!tswItems) {
-        const oNorm = normalizeBuildOSkillsForImport(build.oSkills ?? []);
-        setAllOSkills(oNorm.payload);
-        if (oNorm.skipped.length > 0) {
-            const parts = oNorm.skipped.map(
-                (s) => `${exportLabelForToast(s.key)} (skill level: ${s.wantedLevel})`
-            );
-            const list = parts.join(', ');
-            toastManager.showToast(
-                `Unknown oSkill${oNorm.skipped.length > 1 ? 's' : ''} not loaded: ${list}.`,
-                false,
-                'warning'
-            );
-        }
-    }
-
-    applyLoadedSkillBonusToggles({
-      enabledSkills: build.enabledSkills,
-      disabledSkills: build.disabledSkills,
-      enabledOSkillSlots: build.enabledOSkillSlots,
-      disabledOSkillSlots: build.disabledOSkillSlots,
-    });
-    
-    // Load soft-level bonuses
-    if (build.allSkillsBonus !== undefined) {
-        setAllSkillsBonus(build.allSkillsBonus);
-    }
-    if (build.classSkillsBonus !== undefined) {
-        setClassSkillsBonus(build.classSkillsBonus);
-    } else if (tswItems) {
-        setClassSkillsBonus(inferTswClassSkillsBonus(tswItems, build.class));
-    } else {
-        setClassSkillsBonus(0);
-    }
-
-    // Load planner config conditions (selected checkboxes)
-    if (Array.isArray(build.configConditions)) {
-        try {
-            // Reset/set each condition key
-            for (const k of build.configConditions) {
-                if (typeof k === 'string' && String(k).trim() !== '') {
-                    setPlannerCondition(k, true);
-                }
-            }
-        } catch (e) {
-            console.warn('Failed to apply build configConditions:', e);
-        }
-    }
-
-    // Load equipment / inventory / charms / relics (async catalog).
-    // Gear unmet toasts wait until str/dex are applied (see after stats below).
-    let itemsAppliedSync = false;
-    let pendingGearUnmetToast = false;
+export async function loadBuildData(build, buildIndex = null) {
+    beginPlannerBuildLoad();
     try {
-        const itemsStore = useItemsStore();
-        const applyItems = ({ toastGear = false } = {}) => {
+        setCurrentBuildDisplayName(build.name || '');
+        const classSelect = getClassSelect();
+        const skillsContainer = getSkillsContainer();
+        // Set class
+        if (classSelect) {
+            classSelect.value = build.class;
+        }
+        updateClassSkillsBonusLabel(build.class);
+
+        // Initialize character with loaded class and level first
+        initializeCharacter(build.class, build.level);
+
+        const tswEnvelope = Boolean(build.__tswEnvelope) || Array.isArray(build.__tswItems);
+        const quests = tswEnvelope ? inferTswQuestsCompleted(build) : build.questsCompleted;
+        if (quests && typeof quests === 'object') {
+            importQuestsCompleted(quests, tswEnvelope ? undefined : build.questCompletionOptOut);
+        }
+
+        // Load skill points (display name or internal id -> runtime internal ids)
+        if (build.skillPoints) {
+            const { map, skipped } = normalizeBuildSkillPointsForImport(build.skillPoints);
+            setAllSkillPoints(map);
+            if (skipped.length > 0) {
+                const parts = skipped.map(
+                    (s) => `${exportLabelForToast(s.key)} (skill level: ${s.wantedLevel})`
+                );
+                const list = parts.join(', ');
+                toastManager.showToast(
+                    `Unknown tree skill${skipped.length > 1 ? 's' : ''} not loaded: ${list}.`,
+                    false,
+                    'warning'
+                );
+            }
+        }
+
+        // TSW envelope oSkills are character-sheet totals; apply leftovers after items.
+        const tswItems = Array.isArray(build.__tswItems) ? build.__tswItems : null;
+        if (!tswItems) {
+            const oNorm = normalizeBuildOSkillsForImport(build.oSkills ?? []);
+            setAllOSkills(oNorm.payload);
+            if (oNorm.skipped.length > 0) {
+                const parts = oNorm.skipped.map(
+                    (s) => `${exportLabelForToast(s.key)} (skill level: ${s.wantedLevel})`
+                );
+                const list = parts.join(', ');
+                toastManager.showToast(
+                    `Unknown oSkill${oNorm.skipped.length > 1 ? 's' : ''} not loaded: ${list}.`,
+                    false,
+                    'warning'
+                );
+            }
+        }
+
+        applyLoadedSkillBonusToggles({
+            enabledSkills: build.enabledSkills,
+            disabledSkills: build.disabledSkills,
+            enabledOSkillSlots: build.enabledOSkillSlots,
+            disabledOSkillSlots: build.disabledOSkillSlots,
+        });
+
+        // Load soft-level bonuses
+        if (build.allSkillsBonus !== undefined) {
+            setAllSkillsBonus(build.allSkillsBonus);
+        }
+        if (build.classSkillsBonus !== undefined) {
+            setClassSkillsBonus(build.classSkillsBonus);
+        } else if (tswItems) {
+            setClassSkillsBonus(inferTswClassSkillsBonus(tswItems, build.class));
+        } else {
+            setClassSkillsBonus(0);
+        }
+
+        // Load planner config conditions (selected checkboxes)
+        if (Array.isArray(build.configConditions)) {
+            try {
+                for (const k of build.configConditions) {
+                    if (typeof k === 'string' && String(k).trim() !== '') {
+                        setPlannerCondition(k, true);
+                    }
+                }
+            } catch (e) {
+                console.warn('Failed to apply build configConditions:', e);
+            }
+        }
+
+        // Load equipment / inventory / charms / relics (await catalog so oSkills leftovers see gear).
+        // Gear unmet toasts wait until str/dex are applied (see after stats below).
+        let pendingGearUnmetToast = false;
+        try {
+            const itemsStore = useItemsStore();
+            if (!itemsStore.isCatalogCurrent) {
+                await itemsStore.loadCatalog();
+            }
             try {
                 itemsStore.syncViewerClassName(build.class);
                 /**
@@ -254,11 +262,7 @@ export function loadBuildData(build, buildIndex = null) {
                 itemsStore.pruneClassRestrictedEnableList();
                 if (unmetReqReport) {
                     toastUnmetItemRequirements(unmetReqReport, { charms: true, relics: true, gear: false });
-                    if (toastGear) {
-                        toastUnmetEquippedItemRequirements(itemsStore);
-                    } else {
-                        pendingGearUnmetToast = true;
-                    }
+                    pendingGearUnmetToast = true;
                 }
                 // Seed live all/class tracking so Overview values from the build/TSW are not doubled.
                 syncItemGrantedOSkills({ seedBroadSkillBonuses: true });
@@ -276,95 +280,89 @@ export function loadBuildData(build, buildIndex = null) {
                     }
                     toastMissingCharmSkillUnlocks(build.class, itemsStore);
                 }
-                runPlannerSkillStatRecompute({ immediate: true });
             } catch (err) {
                 console.warn('Failed to apply build items:', err);
             }
-        };
-        if (itemsStore.isCatalogCurrent) {
-            applyItems({ toastGear: false });
-            itemsAppliedSync = true;
-        } else {
-            // Catalog load finishes after stats below are applied — toast gear then.
-            itemsStore.loadCatalog().then(() => applyItems({ toastGear: true })).catch((err) => {
-                console.warn('Failed to apply build items:', err);
-            });
-        }
-    } catch (e) {
-        console.warn('Failed to apply build items:', e);
-    }
-    
-    // Class baseline stats only when the build has no stats blob (saved builds carry raw stat lines).
-    const importedStatsText = build.stats != null ? String(build.stats).trim() : '';
-    if (!importedStatsText && build.class) {
-        applyClassBaselineStatsToCharacter(build.class);
-    }
-    runPlannerSkillStatRecompute({ immediate: true });
-    
-    clearSkillVariants();
-    applySkillVariantDefaultsForClass(build.class);
-    
-    // Initialize tooltip functionality (needed for skill tooltips to work)
-    initializeTooltip();
-    
-    // Initialize oSkills dropdown
-    initializeOSkillsDropdown();
-    
-    // Render skills
-    const skillsList = getSkillsList();
-    if (skillsList) {
-        // If build has oSkills, switch to oSkills tab after rendering
-        const hasOSkills = build.oSkills && (
-            Array.isArray(build.oSkills)
-                ? build.oSkills.length > 0
-                : typeof build.oSkills === 'object' && Object.keys(build.oSkills).length > 0
-        );
-        renderSkills(build.class, skillsList, skillsContainer, hasOSkills ? 'oSkills' : null);
-    }
-
-    window.dispatchEvent(new CustomEvent('plannerSidebarTabQuestsRefresh'));
-    
-    // Add event listener for skill point changes (needed for UI updates)
-    // Remove any existing listener first to avoid duplicates
-    window.removeEventListener('skillPointsChanged', handleSkillPointsChanged);
-    window.addEventListener('skillPointsChanged', handleSkillPointsChanged);
-    
-    // Update displays (updateMinimumLevelDisplay -> recomputeClassDerivedLifeMana overwrites life/mana)
-    updateSkillPointsDisplay();
-    updateDevotionDisplay();
-
-    // Re-apply saved raw stats after pool UI derived life/mana so imports match the JSON blob.
-    if (importedStatsText) {
-        const statErrors = parseStatsFromText(build.stats);
-        if (statErrors.length > 0) {
-            console.warn('Stats parsing errors when loading build:', statErrors);
-        }
-        runPlannerSkillStatRecompute({ immediate: true });
-    }
-    if (itemsAppliedSync && pendingGearUnmetToast) {
-        try {
-            toastUnmetEquippedItemRequirements(useItemsStore());
         } catch (e) {
-            console.warn('Failed to toast unmet gear requirements:', e);
+            console.warn('Failed to apply build items:', e);
         }
-    }
-    syncPlannerCharacterStatsTextareaFromCharacter();
-    refreshPlannerStatsPanelFromCharacter();
-    window.dispatchEvent(new CustomEvent('characterStatsChanged', { detail: { buildLoad: true } }));
-    
-    // Set current build index so "Save" button works
-    if (buildIndex !== null) {
-        setCurrentBuildIndex(buildIndex);
-    }
-    // Show tree section
-    showSection('tree');
-    
-    // Over-max blvl is allowed (e.g. Atanna Khan's Dress then unequip); only warn on pool.
-    const poolOverBudget = isPlannerSkillPointPoolOverBudget();
-    if (poolOverBudget) {
-        toastManager.showToast('Spent skill points exceed available amount.', false, 'warning');
-    } else {
-        toastManager.showToast(`Build "${exportLabelForToast(build.name)}" loaded successfully!`, true, 'info');
+
+        // Class baseline stats only when the build has no stats blob (saved builds carry raw stat lines).
+        const importedStatsText = build.stats != null ? String(build.stats).trim() : '';
+        if (!importedStatsText && build.class) {
+            applyClassBaselineStatsToCharacter(build.class);
+        }
+
+        clearSkillVariants();
+        applySkillVariantDefaultsForClass(build.class);
+
+        // Initialize tooltip functionality (needed for skill tooltips to work)
+        initializeTooltip();
+
+        // oSkills dropdown is built in main() / reloadSkillDataAndLoadBuild; catalog is unchanged on same-version load.
+
+        // Render skills
+        const skillsList = getSkillsList();
+        if (skillsList) {
+            // If build has oSkills, switch to oSkills tab after rendering
+            const hasOSkills = build.oSkills && (
+                Array.isArray(build.oSkills)
+                    ? build.oSkills.length > 0
+                    : typeof build.oSkills === 'object' && Object.keys(build.oSkills).length > 0
+            );
+            renderSkills(build.class, skillsList, skillsContainer, hasOSkills ? 'oSkills' : null);
+        }
+
+        window.dispatchEvent(new CustomEvent('plannerSidebarTabQuestsRefresh'));
+
+        // Add event listener for skill point changes (needed for UI updates)
+        // Remove any existing listener first to avoid duplicates
+        window.removeEventListener('skillPointsChanged', handleSkillPointsChanged);
+        window.addEventListener('skillPointsChanged', handleSkillPointsChanged);
+
+        // Update displays (updateMinimumLevelDisplay -> recomputeClassDerivedLifeMana overwrites life/mana)
+        updateSkillPointsDisplay();
+        updateDevotionDisplay();
+
+        // Re-apply saved raw stats after pool UI derived life/mana so imports match the JSON blob.
+        if (importedStatsText) {
+            const statErrors = parseStatsFromText(build.stats);
+            if (statErrors.length > 0) {
+                console.warn('Stats parsing errors when loading build:', statErrors);
+            }
+        }
+
+        // Single skill-stat recompute after items + stats are applied.
+        await runPlannerSkillStatRecompute({ immediate: true, force: true });
+
+        if (pendingGearUnmetToast) {
+            try {
+                toastUnmetEquippedItemRequirements(useItemsStore());
+            } catch (e) {
+                console.warn('Failed to toast unmet gear requirements:', e);
+            }
+        }
+        syncPlannerCharacterStatsTextareaFromCharacter();
+        refreshPlannerStatsPanelFromCharacter();
+        window.dispatchEvent(new CustomEvent('characterStatsChanged', { detail: { buildLoad: true } }));
+        window.dispatchEvent(new CustomEvent('plannerStatsPanelRefresh'));
+
+        // Set current build index so "Save" button works
+        if (buildIndex !== null) {
+            setCurrentBuildIndex(buildIndex);
+        }
+        // Show tree section
+        showSection('tree');
+
+        // Over-max blvl is allowed (e.g. Atanna Khan's Dress then unequip); only warn on pool.
+        const poolOverBudget = isPlannerSkillPointPoolOverBudget();
+        if (poolOverBudget) {
+            toastManager.showToast('Spent skill points exceed available amount.', false, 'warning');
+        } else {
+            toastManager.showToast(`Build "${exportLabelForToast(build.name)}" loaded successfully!`, true, 'info');
+        }
+    } finally {
+        endPlannerBuildLoad();
     }
 }
 
@@ -737,11 +735,9 @@ export function importBuild(buildData) {
             reloadSkillDataAndLoadBuild(buildData, null).then(switchPlannerWorkspaceToItems);
             return;
         }
-        
-        // Load build data directly (same version)
-        loadBuildData(buildData, null);
-        switchPlannerWorkspaceToItems();
-        
+
+        // Load build data directly (same version); switch workspace after apply finishes.
+        loadBuildData(buildData, null).then(switchPlannerWorkspaceToItems);
     } catch (error) {
         console.error('Failed to import build:', error);
         toastManager.showToast(`Failed to import build: ${error.message}`,true,  'danger');
@@ -1014,9 +1010,9 @@ export function loadBuild(index) {
         toastManager.showToast('Build not found!', true, 'danger');
         return;
     }
-    
+
     const build = builds[index];
-    
+
     // Check if build version differs from current version
     const currentVersion = getCurrentVersion();
     const currentVersionString = versionToString(currentVersion);
@@ -1032,7 +1028,7 @@ export function loadBuild(index) {
 
         setBuildVersionOverride(buildVersion);
 
-        reloadSkillDataAndLoadBuild(build, index);
+        void reloadSkillDataAndLoadBuild(build, index);
         return;
     } else if (!build.version) {
         // Handle builds without version information (older saves)
@@ -1042,9 +1038,9 @@ export function loadBuild(index) {
             'info'
         );
     }
-    
+
     // Load build data directly (same version)
-    loadBuildData(build, index);
+    void loadBuildData(build, index);
 }
 
 export function deleteBuild(index) {

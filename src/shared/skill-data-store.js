@@ -95,6 +95,8 @@ export class SkillFileStore {
         this.catalog = [];
         /** @type {Map<string, object>} internal skill id -> catalog row */
         this.catalogByInternalId = new Map();
+        /** @type {Map<string, object[]>} parent skill id -> subskill catalog rows */
+        this.catalogByParentSkillId = new Map();
         /** @type {Map<string, object>} */
         this.balanceCache = new Map();
         /** @type {Array<{id?:number,key:string,label:string,min?:number|null,max?:number|null,allowNegative?:boolean,default?:number,alwaysVisible?:boolean,sortOrder?:number,section?:string}>} */
@@ -400,34 +402,82 @@ export class SkillFileStore {
     }
 
     /**
+     * Match original `Number(x) === Number(y)` semantics for index keys (NaN stays distinct).
+     * @param {unknown} v
+     * @returns {string}
+     */
+    _occIndexKey(v) {
+        const n = Number(v);
+        return Number.isFinite(n) ? String(n) : 'NaN';
+    }
+
+    /**
+     * Lazy index: `${versionId}|${level}|${statKey}|${occ}|${variantKey}` -> scaling row.
+     * @param {{ scaling?: object[], _scalingByKey?: Map<string, object> }} bal
+     * @returns {Map<string, object>}
+     */
+    _ensureScalingByKey(bal) {
+        if (bal._scalingByKey) return bal._scalingByKey;
+        /** @type {Map<string, object>} */
+        const map = new Map();
+        for (const r of bal.scaling || []) {
+            const vid = Number(r.versionId);
+            const lvl = Number(r.level);
+            const sk = String(r.statKey || '').toLowerCase();
+            const occ = this._occIndexKey(r.occurrenceIndex);
+            const vk =
+                r.variantKey != null && String(r.variantKey).trim() !== ''
+                    ? String(r.variantKey).trim()
+                    : '';
+            map.set(`${vid}|${lvl}|${sk}|${occ}|${vk}`, r);
+        }
+        bal._scalingByKey = map;
+        return map;
+    }
+
+    /**
+     * Lazy index: `${versionIdOrStar}|${statKey}|${occ}|${variantKey}` -> constants row.
+     * versionId null rows are indexed under `*`.
+     * @param {{ scalingConstants?: object[], _constantsByKey?: Map<string, object> }} bal
+     * @returns {Map<string, object>}
+     */
+    _ensureConstantsByKey(bal) {
+        if (bal._constantsByKey) return bal._constantsByKey;
+        /** @type {Map<string, object>} */
+        const map = new Map();
+        for (const r of bal.scalingConstants || []) {
+            const vid = r.versionId == null ? '*' : String(Number(r.versionId));
+            const sk = String(r.statKey || '').toLowerCase();
+            const occ = this._occIndexKey(r.occurrenceIndex);
+            const vk =
+                r.variantKey != null && String(r.variantKey).trim() !== ''
+                    ? String(r.variantKey).trim()
+                    : '';
+            map.set(`${vid}|${sk}|${occ}|${vk}`, r);
+        }
+        bal._constantsByKey = map;
+        return map;
+    }
+
+    /**
      * @param {number[]} versionIds
      */
     findScalingRow(skillInternalName, versionIds, level, statKeyLower, occurrenceIndex, variantKey) {
         const bal = this.getSkillBalanceSync(skillInternalName);
         if (!bal?.scaling?.length) return null;
         const sk = String(statKeyLower).toLowerCase();
-        const occ = occurrenceIndex ?? 0;
-        const vk = variantKey != null && String(variantKey).trim() !== '' ? String(variantKey).trim() : null;
+        const occ = this._occIndexKey(occurrenceIndex ?? 0);
+        const vk = variantKey != null && String(variantKey).trim() !== '' ? String(variantKey).trim() : '';
+        const lvl = Number(level);
+        const index = this._ensureScalingByKey(bal);
 
         for (const vid of versionIds) {
-            const rows = bal.scaling.filter((r) => Number(r.versionId) === Number(vid));
+            const nVid = Number(vid);
             if (vk) {
-                const hit = rows.find(
-                    (r) =>
-                        Number(r.level) === Number(level) &&
-                        String(r.statKey).toLowerCase() === sk &&
-                        Number(r.occurrenceIndex) === occ &&
-                        String(r.variantKey || '') === vk
-                );
+                const hit = index.get(`${nVid}|${lvl}|${sk}|${occ}|${vk}`);
                 if (hit) return this._formatScalingHit(hit);
             }
-            const hit = rows.find(
-                (r) =>
-                    Number(r.level) === Number(level) &&
-                    String(r.statKey).toLowerCase() === sk &&
-                    Number(r.occurrenceIndex) === occ &&
-                    (!r.variantKey || String(r.variantKey).trim() === '')
-            );
+            const hit = index.get(`${nVid}|${lvl}|${sk}|${occ}|`);
             if (hit) return this._formatScalingHit(hit);
         }
         return null;
@@ -464,29 +514,21 @@ export class SkillFileStore {
         const bal = this.getSkillBalanceSync(skillInternalName);
         if (!bal?.scalingConstants?.length) return null;
         const sk = String(statKeyLower).toLowerCase();
-        const occ = occurrenceIndex ?? 0;
-        const vk = variantKey != null && String(variantKey).trim() !== '' ? String(variantKey).trim() : null;
+        const occ = this._occIndexKey(occurrenceIndex ?? 0);
+        const vk = variantKey != null && String(variantKey).trim() !== '' ? String(variantKey).trim() : '';
+        const index = this._ensureConstantsByKey(bal);
 
         for (const vid of versionIds) {
-            const rows = bal.scalingConstants.filter(
-                (r) => r.versionId == null || Number(r.versionId) === Number(vid)
-            );
-            if (vk) {
-                const hit = rows.find(
-                    (r) =>
-                        String(r.statKey).toLowerCase() === sk &&
-                        Number(r.occurrenceIndex) === occ &&
-                        String(r.variantKey || '') === vk
-                );
+            const nVid = String(Number(vid));
+            // Prefer version-specific rows, then version-agnostic (`*`).
+            for (const vidKey of [nVid, '*']) {
+                if (vk) {
+                    const hit = index.get(`${vidKey}|${sk}|${occ}|${vk}`);
+                    if (hit) return this._formatConstHit(hit);
+                }
+                const hit = index.get(`${vidKey}|${sk}|${occ}|`);
                 if (hit) return this._formatConstHit(hit);
             }
-            const hit = rows.find(
-                (r) =>
-                    String(r.statKey).toLowerCase() === sk &&
-                    Number(r.occurrenceIndex) === occ &&
-                    (!r.variantKey || String(r.variantKey).trim() === '')
-            );
-            if (hit) return this._formatConstHit(hit);
         }
         return null;
     }
@@ -695,9 +737,19 @@ export async function initSkillDataStore(defaultVersion = DEFAULT_GAME_VERSION) 
         store.currentVersionId = vRow?.id ?? null;
         store.catalog = [...skills, ...subskills];
         store.catalogByInternalId = new Map();
+        store.catalogByParentSkillId = new Map();
         for (const row of store.catalog) {
             row._plannerClassIds = store.computePlannerClassIdsForRow(row);
             store.catalogByInternalId.set(String(row.id), row);
+            const parentId =
+                row?.parentSkillId != null && String(row.parentSkillId).trim() !== ''
+                    ? String(row.parentSkillId).trim()
+                    : '';
+            if (parentId) {
+                const list = store.catalogByParentSkillId.get(parentId);
+                if (list) list.push(row);
+                else store.catalogByParentSkillId.set(parentId, [row]);
+            }
             const safe = String(row.id).replace(/\//g, '_');
             store.balanceCache.set(safe, balanceObjectFromMergedRow(row));
         }

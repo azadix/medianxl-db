@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import { isPlannerBuildLoadInProgress } from '@/character/planner-instance.js';
 
 /** @typedef {'menu'|'tree'|'load'|'defaults'} PlannerSection */
 
@@ -20,7 +21,11 @@ export const usePlannerStore = defineStore('planner', {
       this.revision++;
     },
     attachWindowSync() {
-      const bump = () => this.bump();
+      const bump = () => {
+        // Avoid Vue re-render storm while applying a JSON/saved build.
+        if (isPlannerBuildLoadInProgress()) return;
+        this.bump();
+      };
       const events = [
         'skillPointsChanged',
         'plannerStateChanged',

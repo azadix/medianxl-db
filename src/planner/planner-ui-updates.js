@@ -12,6 +12,7 @@ import {
   getAllSkillPoints,
   getTotalQuestSkillPoints,
   getEffectivePlannerLevel,
+  isPlannerBuildLoadInProgress,
 } from '@/character/planner-core.js';
 import { getCurrentDevotion, getDevotionDisplayName } from '@/skills/domain/skill-calculations.js';
 import { DropdownList } from '@/tree/DropdownList.js';
@@ -260,6 +261,8 @@ export function initializeOSkillsDropdown() {
 }
 
 export function handleSkillPointsChanged() {
+  // loadBuildData applies skills/quests then renders once; skip intermediate tree rebuilds.
+  if (isPlannerBuildLoadInProgress()) return;
   if (getSkillCardUpdateTimer()) {
     clearTimeout(getSkillCardUpdateTimer());
   }

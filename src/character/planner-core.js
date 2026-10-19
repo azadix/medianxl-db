@@ -26,6 +26,13 @@ import {
   createCharacterInstance,
   notifyPlannerStateChanged,
   notifySkillPointsChanged,
+  isPlannerBuildLoadInProgress,
+} from './planner-instance.js';
+
+export {
+  beginPlannerBuildLoad,
+  endPlannerBuildLoad,
+  isPlannerBuildLoadInProgress,
 } from './planner-instance.js';
 import {
   setPlannerSkillsSnapshot,
@@ -146,6 +153,10 @@ export function initializeCharacter(className, level = Character.DEFAULT_LEVEL) 
 
 /** @type {ReturnType<typeof setTimeout>|null} */
 let _plannerSkillStatRecomputeTimer = null;
+/** In-flight impl promise; concurrent callers await the same chain. */
+let _plannerSkillStatRecomputePromise = null;
+/** Request another pass after the in-flight impl finishes (never overlap). */
+let _plannerSkillStatRecomputeQueued = false;
 
 /**
  * Resolve merged skill levels (internal id -> blvl) for passive stat aggregation.
@@ -211,52 +222,70 @@ export function getActiveInternalSkillIdsForConditions() {
   return new Set(Object.keys(buildMergedSkillLevelsForStatRecompute(getCharacterInstance())));
 }
 
-async function runPlannerSkillStatRecomputeImpl() {
-  if (!getCharacterInstance()) return;
-  const mergedBlvl = buildMergedSkillLevelsForStatRecompute(getCharacterInstance());
-  let allSkillsBonus = 0;
-  let classSkillsBonus = 0;
-  if (typeof document !== 'undefined') {
-    const allInp = document.getElementById('allSkillsBonus');
-    if (allInp instanceof HTMLInputElement) {
-      allSkillsBonus = Math.max(0, Math.floor(parseInt(allInp.value, 10) || 0));
-    }
-    const classInp = document.getElementById('classSkillsBonus');
-    if (classInp instanceof HTMLInputElement) {
-      classSkillsBonus = Math.max(0, Math.floor(parseInt(classInp.value, 10) || 0));
-    }
+function runPlannerSkillStatRecomputeImpl() {
+  if (_plannerSkillStatRecomputePromise) {
+    _plannerSkillStatRecomputeQueued = true;
+    return _plannerSkillStatRecomputePromise;
   }
-  // Items first so skill scaling formulas see current relic/charm/gear flats.
-  recomputePlannerStatsFromItems(getCharacterInstance());
-  await recomputePlannerStatsFromSkillAllocations(getCharacterInstance(), {
-    effectiveLevel: getEffectivePlannerLevel(),
-    treeSkillsCache: getTreeSkillsCache(),
-    allSkillsBonus,
-    classSkillsBonus,
-    mergedBlvl
-  });
-  if (typeof window !== 'undefined') {
-    window.dispatchEvent(new CustomEvent('plannerStatsPanelRefresh'));
-  }
+  _plannerSkillStatRecomputePromise = (async () => {
+    try {
+      do {
+        _plannerSkillStatRecomputeQueued = false;
+        if (!getCharacterInstance()) continue;
+        const mergedBlvl = buildMergedSkillLevelsForStatRecompute(getCharacterInstance());
+        let allSkillsBonus = 0;
+        let classSkillsBonus = 0;
+        if (typeof document !== 'undefined') {
+          const allInp = document.getElementById('allSkillsBonus');
+          if (allInp instanceof HTMLInputElement) {
+            allSkillsBonus = Math.max(0, Math.floor(parseInt(allInp.value, 10) || 0));
+          }
+          const classInp = document.getElementById('classSkillsBonus');
+          if (classInp instanceof HTMLInputElement) {
+            classSkillsBonus = Math.max(0, Math.floor(parseInt(classInp.value, 10) || 0));
+          }
+        }
+        // Items first so skill scaling formulas see current relic/charm/gear flats.
+        recomputePlannerStatsFromItems(getCharacterInstance());
+        await recomputePlannerStatsFromSkillAllocations(getCharacterInstance(), {
+          effectiveLevel: getEffectivePlannerLevel(),
+          treeSkillsCache: getTreeSkillsCache(),
+          allSkillsBonus,
+          classSkillsBonus,
+          mergedBlvl
+        });
+        if (typeof window !== 'undefined' && !isPlannerBuildLoadInProgress()) {
+          window.dispatchEvent(new CustomEvent('plannerStatsPanelRefresh'));
+        }
+      } while (_plannerSkillStatRecomputeQueued);
+    } finally {
+      _plannerSkillStatRecomputePromise = null;
+    }
+  })();
+  return _plannerSkillStatRecomputePromise;
 }
 
 /**
  * Debounced passive stat recompute from allocated skills (scalingConstants).
- * @param {{ immediate?: boolean }} [options]
+ * During {@link beginPlannerBuildLoad}, calls are ignored unless `force: true`.
+ * Concurrent impls are coalesced into at most one follow-up pass.
+ * @param {{ immediate?: boolean, force?: boolean }} [options]
+ * @returns {void|Promise<void>}
  */
 export function runPlannerSkillStatRecompute(options = {}) {
   if (!getCharacterInstance()) return;
+  if (isPlannerBuildLoadInProgress() && options.force !== true) {
+    return;
+  }
   if (options.immediate === true) {
     if (_plannerSkillStatRecomputeTimer != null && typeof window !== 'undefined') {
       window.clearTimeout(_plannerSkillStatRecomputeTimer);
       _plannerSkillStatRecomputeTimer = null;
     }
-    void runPlannerSkillStatRecomputeImpl();
-    return;
+    return runPlannerSkillStatRecomputeImpl();
   }
   if (typeof window === 'undefined') {
-    void runPlannerSkillStatRecomputeImpl();
-    return;
+    return runPlannerSkillStatRecomputeImpl();
   }
   if (_plannerSkillStatRecomputeTimer != null) {
     window.clearTimeout(_plannerSkillStatRecomputeTimer);

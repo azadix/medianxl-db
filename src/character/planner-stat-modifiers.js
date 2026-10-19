@@ -472,14 +472,7 @@ export async function recomputePlannerStatsFromSkillAllocations(character, ctx) 
 
     // Apply any linked subskills with the same points as their parent.
     const parentInternalId = String(catRow.id);
-    const subskills = Array.isArray(store.catalog)
-      ? store.catalog.filter(
-          (r) =>
-            r?.parentSkillId != null &&
-            String(r.parentSkillId).trim() !== '' &&
-            String(r.parentSkillId).trim() === parentInternalId
-        )
-      : [];
+    const subskills = store.catalogByParentSkillId?.get(parentInternalId) ?? [];
     for (const sub of subskills) {
       if (!isSubskillActive(sub, characterState)) {
         continue;

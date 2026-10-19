@@ -8,6 +8,38 @@ import Character from './Character.js';
 /** @type {Character | null} */
 let characterInstance = null;
 
+/** Nested depth of {@link beginPlannerBuildLoad} / {@link endPlannerBuildLoad}. */
+let _buildLoadDepth = 0;
+/** @type {Record<string, unknown>|null} */
+let _pendingPlannerStateDetail = null;
+
+/**
+ * Suspend intermediate Vue bumps / recomputes while applying a saved build.
+ * Nestable; call {@link endPlannerBuildLoad} in a finally block.
+ */
+export function beginPlannerBuildLoad() {
+  _buildLoadDepth += 1;
+}
+
+/**
+ * End a build-load batch. Flushes one coalesced `plannerStateChanged` if any were deferred.
+ */
+export function endPlannerBuildLoad() {
+  if (_buildLoadDepth > 0) _buildLoadDepth -= 1;
+  if (_buildLoadDepth > 0) return;
+  if (_pendingPlannerStateDetail == null) return;
+  const detail = _pendingPlannerStateDetail;
+  _pendingPlannerStateDetail = null;
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('plannerStateChanged', { detail }));
+  }
+}
+
+/** @returns {boolean} */
+export function isPlannerBuildLoadInProgress() {
+  return _buildLoadDepth > 0;
+}
+
 /** @returns {Character | null} */
 export function getCharacterInstance() {
   return characterInstance;
@@ -73,6 +105,10 @@ export function raiseCharacterStatsForItemReq(def) {
  * @param {Record<string, unknown>} [detail]
  */
 export function notifyPlannerStateChanged(detail = {}) {
+  if (_buildLoadDepth > 0) {
+    _pendingPlannerStateDetail = { ...detail, source: detail.source || 'buildLoad' };
+    return;
+  }
   if (typeof window !== 'undefined') {
     window.dispatchEvent(new CustomEvent('plannerStateChanged', { detail }));
   }
