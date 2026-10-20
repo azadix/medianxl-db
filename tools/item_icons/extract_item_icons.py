@@ -19,6 +19,18 @@ MPQ_NAMES = (
     "patch_d2.mpq",
     "medianxl-aXRlbXNnZng.mpq",
 )
+# Present in itemsgfx but often missing from (listfile); always try to pull these.
+EXTRA_ITEM_DC6_STEMS = (
+    "r-d-02",
+    "r-d-05",
+    "r-d-11",
+    "fire-rune",
+    "phys-rune",
+    "magic-rune",
+    "pois-rune",
+    "ltng-rune",
+    "cold-rune",
+)
 
 
 def _load_config() -> dict:
@@ -158,11 +170,12 @@ def _extract_dc6_from_mpq(game_dir: Path, input_dir: Path, version_folder: str =
             (input_dir / f"{stem}.dc6").write_bytes(data)
             written += 1
 
-    # Some vanilla unique inv*u.dc6 files exist in d2data.mpq but are absent from
-    # (listfile). Pull any catalog-referenced stems still missing after the dump.
+    # Some DC6s exist in MPQs but are absent from (listfile). Pull catalog-
+    # referenced stems plus known great/elemental rune stems.
     catalog_stems = _catalog_icon_stems(version_folder) if version_folder else set()
+    probe_stems = set(catalog_stems) | {s.lower() for s in EXTRA_ITEM_DC6_STEMS}
     filled = 0
-    for stem in sorted(catalog_stems):
+    for stem in sorted(probe_stems):
         dest = input_dir / f"{stem}.dc6"
         if dest.is_file():
             continue
@@ -172,7 +185,7 @@ def _extract_dc6_from_mpq(game_dir: Path, input_dir: Path, version_folder: str =
         dest.write_bytes(data)
         filled += 1
     if filled:
-        print(f"filled {filled} catalog icon(s) missing from listfiles")
+        print(f"filled {filled} icon(s) missing from listfiles")
         written += filled
 
     print(f"wrote {written} dc6 files -> {input_dir}")

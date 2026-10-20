@@ -23,4 +23,5 @@ Pass `--skip-mpq` to convert DC6s already in `tools/item_icons/input/`.
 python tools/item_icons/publish_item_icons.py --version 2.14
 ```
 
-Item data lives in `public/items/<version>/` as `baseitems.json`, `charms.json`, and `other.json`.
+Item data lives in `public/items/<version>/` as `baseitems.json`, `charms.json`,
+`other.json`, and `socketables.json`.

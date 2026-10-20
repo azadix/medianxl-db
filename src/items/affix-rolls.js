@@ -96,6 +96,28 @@ export function formatDisplayedRollRange(min, max) {
  * @param {{ hideRanges?: boolean, showRollRanges?: boolean }} [options]
  * @returns {string}
  */
+/**
+ * True when any rolled value for this affix template sits outside [min, max].
+ * @param {string|null|undefined} text
+ * @param {Record<string, number>|null|undefined} rolls
+ * @param {(rangeIndex: number) => string} rollKeyForIndex
+ * @returns {boolean}
+ */
+export function affixRollsAreBoosted(text, rolls, rollKeyForIndex) {
+  const ranges = parseAffixRanges(text);
+  if (!ranges.length || !rolls) return false;
+  for (let i = 0; i < ranges.length; i++) {
+    const range = ranges[i];
+    const key = rollKeyForIndex(i);
+    const rolled = Number.isFinite(rolls[key]) ? rolls[key] : null;
+    if (rolled == null) continue;
+    const lo = Math.min(range.min, range.max);
+    const hi = Math.max(range.min, range.max);
+    if (rolled < lo || rolled > hi) return true;
+  }
+  return false;
+}
+
 export function applyAffixRolls(text, rolls, rollKeyForIndex, options = {}) {
   const ranges = parseAffixRanges(text);
   if (!ranges.length) return text;

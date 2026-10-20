@@ -23,6 +23,7 @@ import {
   stripTswBaseLabel,
   tswDescriptionColoredTexts,
   tswDescriptionTexts,
+  tswRowIsCorrupted,
   tswRowIsEthereal,
 } from '@/items/custom-items.js';
 import {
@@ -32,6 +33,7 @@ import {
   isOverlayItem,
   isSetItem,
   overlayAffixRollKey,
+  overlayFixedBoostRollKey,
 } from '@/items/item-overlays.js';
 import { decodeModifierLine, encodeModifierLine } from '@/items/item-modifier-line.js';
 import { parseSkillBonusFromModifierLine } from '@/items/skill-bonus-from-modifiers.js';
@@ -40,6 +42,7 @@ import {
   relicAffixRollKey,
   collectRelicAffixSources,
 } from '@/items/relic-items.js';
+import { parseTswSocketables } from '@/items/socketables.js';
 
 /** Boilerplate / flags that are not planner modifier lines. */
 const TSW_EXTRA_SKIP_RE =
@@ -135,11 +138,13 @@ function tokens(text) {
 }
 
 /**
+ * Extract numbers from affix text. A hyphen between digits (`43-61`) is a range
+ * separator, not a negative sign — otherwise "Adds 43-61 Damage" becomes [43, -61].
  * @param {string} text
  * @returns {number[]}
  */
 function numbers(text) {
-  return [...plain(text).matchAll(/[+-]?\d+(?:\.\d+)?/g)].map((m) => Number(m[0]));
+  return [...plain(text).matchAll(/(?<!\d)[+-]?\d+(?:\.\d+)?/g)].map((m) => Number(m[0]));
 }
 
 /**
@@ -416,6 +421,43 @@ function applyRanged(text, sourceKey, keyFn, lines, rolls) {
 }
 
 /**
+ * Find a TSW line by signature only (allows different fixed numbers).
+ * @param {string} template
+ * @param {string[]} lines
+ * @returns {{ line: string, values: number[] }|null}
+ */
+function findLineBySignature(template, lines) {
+  const sig = signature(template);
+  if (!sig) return null;
+  for (const line of lines) {
+    if (signature(line) !== sig) continue;
+    return { line: plain(line), values: numbers(line) };
+  }
+  return null;
+}
+
+/**
+ * Store fixed-number overrides when TSW shows different values than the catalog template
+ * (e.g. +1 to All Skills → +2; Adds 7-13 Damage → Adds 43-61 Damage).
+ * @param {string} text
+ * @param {string} sourceKey
+ * @param {string[]} lines
+ * @param {Record<string, number>} rolls
+ */
+function applyFixedBoost(text, sourceKey, lines, rolls) {
+  if (parseAffixRanges(text).length) return;
+  const tmplNums = numbers(text);
+  if (!tmplNums.length) return;
+  const hit = findLineBySignature(text, lines);
+  if (!hit?.values?.length) return;
+  if (tmplNums.length !== hit.values.length) return;
+  if (tmplNums.every((n, i) => n === hit.values[i])) return;
+  hit.values.forEach((value, i) => {
+    rolls[overlayFixedBoostRollKey(sourceKey, i)] = value;
+  });
+}
+
+/**
  * @param {unknown} rows
  * @param {string} className
  * @returns {number}
@@ -670,16 +712,31 @@ export function parseTswMysticOrbs(raw) {
  * @param {object|null|undefined} row
  * @param {object|null|undefined} def
  * @param {SetDumpSkipContext|null|undefined} [setDumpCtx]
- * @returns {{ extras?: string[], mysticOrbs?: Array<[number, string]>, ethereal?: boolean }}
+ * @returns {{
+ *   extras?: string[],
+ *   mysticOrbs?: Array<[number, string]>,
+ *   socketables?: import('@/items/socketables.js').SocketableEntry[],
+ *   ethereal?: boolean,
+ *   corrupted?: boolean,
+ * }}
  */
 export function tswInstanceExtras(row, def, setDumpCtx = null) {
-  /** @type {{ extras?: string[], mysticOrbs?: Array<[number, string]>, ethereal?: boolean }} */
+  /** @type {{
+   *   extras?: string[],
+   *   mysticOrbs?: Array<[number, string]>,
+   *   socketables?: import('@/items/socketables.js').SocketableEntry[],
+   *   ethereal?: boolean,
+   *   corrupted?: boolean,
+   * }} */
   const out = {};
   const extras = extrasFromTswItem(row, def, setDumpCtx);
   if (extras.length) out.extras = extras;
   const mysticOrbs = parseTswMysticOrbs(row?.mystic_orbs);
   if (mysticOrbs.length) out.mysticOrbs = mysticOrbs;
+  const socketables = parseTswSocketables(row);
+  if (socketables.length) out.socketables = socketables;
   if (tswRowIsEthereal(row)) out.ethereal = true;
+  if (tswRowIsCorrupted(row)) out.corrupted = true;
   return out;
 }
 
@@ -808,6 +865,7 @@ export function rollsFromTswItem(row, def, className = null) {
     }
     for (const source of collectOverlayAffixSources(def, rolls)) {
       applyRanged(source.text, source.sourceKey, overlayAffixRollKey, lines, rolls);
+      applyFixedBoost(source.text, source.sourceKey, lines, rolls);
     }
   }
 

@@ -1,0 +1,1124 @@
+[
+  {
+    "name": "El Rune",
+    "type": "Rune",
+    "icon": "invrEl",
+    "code": "r01",
+    "level": 6,
+    "weapon": "+3 to all Attributes",
+    "armor": "+3 to all Attributes",
+    "shield": "+3 to all Attributes"
+  },
+  {
+    "name": "Eld Rune",
+    "type": "Rune",
+    "icon": "invreldc",
+    "code": "r02",
+    "level": 8,
+    "weapon": "+5 to Maximum Damage",
+    "armor": "+3 to Maximum Damage",
+    "shield": "+3 to Maximum Damage"
+  },
+  {
+    "name": "Tir Rune",
+    "type": "Rune",
+    "icon": "invrTir",
+    "code": "r03",
+    "level": 10,
+    "weapon": "+3% to Fire Spell Damage",
+    "armor": "+3% to Fire Spell Damage",
+    "shield": "+3% to Fire Spell Damage"
+  },
+  {
+    "name": "Nef Rune",
+    "type": "Rune",
+    "icon": "invrNef",
+    "code": "r04",
+    "level": 13,
+    "weapon": "+3% to Lightning Spell Damage",
+    "armor": "+3% to Lightning Spell Damage",
+    "shield": "+3% to Lightning Spell Damage"
+  },
+  {
+    "name": "Eth Rune",
+    "type": "Rune",
+    "icon": "invrEth",
+    "code": "r05",
+    "level": 15,
+    "weapon": "+3% to Cold Spell Damage",
+    "armor": "+3% to Cold Spell Damage",
+    "shield": "+3% to Cold Spell Damage"
+  },
+  {
+    "name": "Ith Rune",
+    "type": "Rune",
+    "icon": "invrIth",
+    "code": "r06",
+    "level": 18,
+    "weapon": "+3% to Poison Spell Damage",
+    "armor": "+3% to Poison Spell Damage",
+    "shield": "+3% to Poison Spell Damage"
+  },
+  {
+    "name": "Tal Rune",
+    "type": "Rune",
+    "icon": "invrTal",
+    "code": "r07",
+    "level": 20,
+    "weapon": "+3% to Physical/Magic Spell Damage",
+    "armor": "+3% to Physical/Magic Spell Damage",
+    "shield": "+3% to Physical/Magic Spell Damage"
+  },
+  {
+    "name": "Ral Rune",
+    "type": "Rune",
+    "icon": "invrRal",
+    "code": "r08",
+    "level": 23,
+    "weapon": "Fire Resist +30%",
+    "armor": "Fire Resist +25%",
+    "shield": "Fire Resist +25%"
+  },
+  {
+    "name": "Ort Rune",
+    "type": "Rune",
+    "icon": "invrOrt",
+    "code": "r09",
+    "level": 25,
+    "weapon": "Lightning Resist +30%",
+    "armor": "Lightning Resist +25%",
+    "shield": "Lightning Resist +25%"
+  },
+  {
+    "name": "Thul Rune",
+    "type": "Rune",
+    "icon": "invrThul",
+    "code": "r10",
+    "level": 28,
+    "weapon": "Cold Resist +30%",
+    "armor": "Cold Resist +25%",
+    "shield": "Cold Resist +25%"
+  },
+  {
+    "name": "Amn Rune",
+    "type": "Rune",
+    "icon": "invrAmn",
+    "code": "r11",
+    "level": 30,
+    "weapon": "Poison Resist +30%",
+    "armor": "Poison Resist +25%",
+    "shield": "Poison Resist +25%"
+  },
+  {
+    "name": "Sol Rune",
+    "type": "Rune",
+    "icon": "invrSol",
+    "code": "r12",
+    "level": 33,
+    "weapon": "+60 to Mana",
+    "armor": "+40 to Mana",
+    "shield": "+40 to Mana"
+  },
+  {
+    "name": "Shael Rune",
+    "type": "Rune",
+    "icon": "invrShae",
+    "code": "r13",
+    "level": 35,
+    "weapon": "+15% Bonus to Poison Skill Duration",
+    "armor": "+10% Bonus to Poison Skill Duration",
+    "shield": "+10% Bonus to Poison Skill Duration"
+  },
+  {
+    "name": "Dol Rune",
+    "type": "Rune",
+    "icon": "invrDol",
+    "code": "r14",
+    "level": 38,
+    "weapon": "+10% to Summon Life",
+    "armor": "+10% to Summon Life",
+    "shield": "+10% to Summon Life"
+  },
+  {
+    "name": "Hel Rune",
+    "type": "Rune",
+    "icon": "invrHel",
+    "code": "r15",
+    "level": 40,
+    "weapon": "+5% to Summon Damage",
+    "armor": "+5% to Summon Damage",
+    "shield": "+5% to Summon Damage"
+  },
+  {
+    "name": "Io Rune",
+    "type": "Rune",
+    "icon": "invrIo",
+    "code": "r16",
+    "level": 43,
+    "weapon": "+50% to Summon Attack Rating",
+    "armor": "+50% to Summon Attack Rating",
+    "shield": "+50% to Summon Attack Rating"
+  },
+  {
+    "name": "Lum Rune",
+    "type": "Rune",
+    "icon": "invrLum",
+    "code": "r17",
+    "level": 45,
+    "weapon": "+5% to Summon Elemental Resistances",
+    "armor": "+5% to Summon Elemental Resistances",
+    "shield": "+5% to Summon Elemental Resistances"
+  },
+  {
+    "name": "Ko Rune",
+    "type": "Rune",
+    "icon": "invrKo",
+    "code": "r18",
+    "level": 48,
+    "weapon": "5% to Strength",
+    "armor": "5% to Strength",
+    "shield": "5% to Strength"
+  },
+  {
+    "name": "Fal Rune",
+    "type": "Rune",
+    "icon": "invrFal",
+    "code": "r19",
+    "level": 50,
+    "weapon": "5% to Dexterity",
+    "armor": "5% to Dexterity",
+    "shield": "5% to Dexterity"
+  },
+  {
+    "name": "Lem Rune",
+    "type": "Rune",
+    "icon": "invrLem",
+    "code": "r20",
+    "level": 53,
+    "weapon": "4% to Vitality",
+    "armor": "4% to Vitality",
+    "shield": "4% to Vitality"
+  },
+  {
+    "name": "Pul Rune",
+    "type": "Rune",
+    "icon": "invrPul",
+    "code": "r21",
+    "level": 55,
+    "weapon": "5% to Energy",
+    "armor": "5% to Energy",
+    "shield": "5% to Energy"
+  },
+  {
+    "name": "Um Rune",
+    "type": "Rune",
+    "icon": "invrUm",
+    "code": "r22",
+    "level": 58,
+    "weapon": "Elemental Resists +10%",
+    "armor": "Elemental Resists +10%",
+    "shield": "Elemental Resists +10%"
+  },
+  {
+    "name": "Mal Rune",
+    "type": "Rune",
+    "icon": "invrMal",
+    "code": "r23",
+    "level": 60,
+    "weapon": "3% to All Attributes",
+    "armor": "3% to All Attributes",
+    "shield": "3% to All Attributes"
+  },
+  {
+    "name": "Ist Rune",
+    "type": "Rune",
+    "icon": "invrIst",
+    "code": "r24",
+    "level": 63,
+    "weapon": "10% Magic Find",
+    "armor": "7% Magic Find",
+    "shield": "7% Magic Find"
+  },
+  {
+    "name": "Gul Rune",
+    "type": "Rune",
+    "icon": "invrGul",
+    "code": "r25",
+    "level": 65,
+    "weapon": "15% Attack Speed",
+    "armor": "15% Attack Speed",
+    "shield": "15% Attack Speed"
+  },
+  {
+    "name": "Vex Rune",
+    "type": "Rune",
+    "icon": "invrvex",
+    "code": "r26",
+    "level": 68,
+    "weapon": "15% Cast Speed",
+    "armor": "15% Cast Speed",
+    "shield": "15% Cast Speed"
+  },
+  {
+    "name": "Ohm Rune",
+    "type": "Rune",
+    "icon": "invrOhm",
+    "code": "r27",
+    "level": 70,
+    "weapon": "15% Hit Recovery",
+    "armor": "15% Hit Recovery",
+    "shield": "15% Hit Recovery"
+  },
+  {
+    "name": "Lo Rune",
+    "type": "Rune",
+    "icon": "invrLo",
+    "code": "r28",
+    "level": 73,
+    "weapon": "15% Block Speed",
+    "armor": "15% Block Speed",
+    "shield": "15% Block Speed"
+  },
+  {
+    "name": "Sur Rune",
+    "type": "Rune",
+    "icon": "invrSur",
+    "code": "r29",
+    "level": 75,
+    "weapon": "Regenerate Mana +15%",
+    "armor": "Regenerate Mana +5%",
+    "shield": "Regenerate Mana +5%"
+  },
+  {
+    "name": "Ber Rune",
+    "type": "Rune",
+    "icon": "invrBer",
+    "code": "r30",
+    "level": 78,
+    "weapon": "Slow Target 3%",
+    "armor": "Slows Attacker by 2%",
+    "shield": "Slows Attacker by 2%"
+  },
+  {
+    "name": "Jah Rune",
+    "type": "Rune",
+    "icon": "invrJo",
+    "code": "r31",
+    "level": 80,
+    "weapon": "+15% Enhanced Damage",
+    "armor": "+15% Enhanced Defense",
+    "shield": "+15% Enhanced Defense"
+  },
+  {
+    "name": "Cham Rune",
+    "type": "Rune",
+    "icon": "invrCham",
+    "code": "r32",
+    "level": 83,
+    "weapon": "Maximum Mana +3%",
+    "armor": "Maximum Mana +2%",
+    "shield": "Maximum Mana +2%"
+  },
+  {
+    "name": "Zod Rune",
+    "type": "Rune",
+    "icon": "invrZod",
+    "code": "r33",
+    "level": 85,
+    "weapon": "+15 Life after each Kill",
+    "armor": "+15 Life after each Kill",
+    "shield": "+15 Life after each Kill"
+  },
+  {
+    "name": "Ol Rune",
+    "type": "Rune",
+    "icon": "invrolc",
+    "code": "rx01",
+    "level": 90,
+    "weapon": "+13 to all Attributes",
+    "armor": "+13 to all Attributes",
+    "shield": "+13 to all Attributes"
+  },
+  {
+    "name": "Elq Rune",
+    "type": "Rune",
+    "icon": "invrelqc",
+    "code": "rx02",
+    "level": 90,
+    "weapon": "+20 to Maximum Damage",
+    "armor": "+10 to Maximum Damage",
+    "shield": "+10 to Maximum Damage"
+  },
+  {
+    "name": "Tyr Rune",
+    "type": "Rune",
+    "icon": "invrtyrc",
+    "code": "rx03",
+    "level": 90,
+    "weapon": "+5% to Fire Spell Damage",
+    "armor": "+5% to Fire Spell Damage",
+    "shield": "+5% to Fire Spell Damage"
+  },
+  {
+    "name": "Nif Rune",
+    "type": "Rune",
+    "icon": "invrnifc",
+    "code": "rx04",
+    "level": 95,
+    "weapon": "+5% to Lightning Spell Damage",
+    "armor": "+5% to Lightning Spell Damage",
+    "shield": "+5% to Lightning Spell Damage"
+  },
+  {
+    "name": "Xeth Rune",
+    "type": "Rune",
+    "icon": "invrxethc",
+    "code": "rx05",
+    "level": 95,
+    "weapon": "+5% to Cold Spell Damage",
+    "armor": "+5% to Cold Spell Damage",
+    "shield": "+5% to Cold Spell Damage"
+  },
+  {
+    "name": "Xith Rune",
+    "type": "Rune",
+    "icon": "invrxithc",
+    "code": "rx06",
+    "level": 95,
+    "weapon": "+5% to Poison Spell Damage",
+    "armor": "+5% to Poison Spell Damage",
+    "shield": "+5% to Poison Spell Damage"
+  },
+  {
+    "name": "Thal Rune",
+    "type": "Rune",
+    "icon": "invrthalc",
+    "code": "rx07",
+    "level": 100,
+    "weapon": "+5% to Physical/Magic Spell Damage",
+    "armor": "+5% to Physical/Magic Spell Damage",
+    "shield": "+5% to Physical/Magic Spell Damage"
+  },
+  {
+    "name": "Rhal Rune",
+    "type": "Rune",
+    "icon": "invrrhalc",
+    "code": "rx08",
+    "level": 100,
+    "weapon": "Fire Resist +35%",
+    "armor": "Fire Resist +35%",
+    "shield": "Fire Resist +45%"
+  },
+  {
+    "name": "Urt Rune",
+    "type": "Rune",
+    "icon": "invrurtc",
+    "code": "rx09",
+    "level": 100,
+    "weapon": "Lightning Resist +35%",
+    "armor": "Lightning Resist +35%",
+    "shield": "Lightning Resist +45%"
+  },
+  {
+    "name": "Tuul Rune",
+    "type": "Rune",
+    "icon": "invrtuulc",
+    "code": "rx10",
+    "level": 100,
+    "weapon": "Cold Resist +35%",
+    "armor": "Cold Resist +35%",
+    "shield": "Cold Resist +45%"
+  },
+  {
+    "name": "Ahmn Rune",
+    "type": "Rune",
+    "icon": "invrahmnc",
+    "code": "rx11",
+    "level": 100,
+    "weapon": "Poison Resist +35%",
+    "armor": "Poison Resist +35%",
+    "shield": "Poison Resist +45%"
+  },
+  {
+    "name": "Zol Rune",
+    "type": "Rune",
+    "icon": "invrzolc",
+    "code": "rx12",
+    "level": 100,
+    "weapon": "+100 to Mana",
+    "armor": "+75 to Mana",
+    "shield": "+75 to Mana"
+  },
+  {
+    "name": "Shaen Rune",
+    "type": "Rune",
+    "icon": "invrshaenc",
+    "code": "rx13",
+    "level": 105,
+    "weapon": "+20% Bonus to Poison Skill Duration",
+    "armor": "+13% Bonus to Poison Skill Duration",
+    "shield": "+13% Bonus to Poison Skill Duration"
+  },
+  {
+    "name": "Doj Rune",
+    "type": "Rune",
+    "icon": "invrdojc",
+    "code": "rx14",
+    "level": 105,
+    "weapon": "+20% to Summon Life",
+    "armor": "+20% to Summon Life",
+    "shield": "+20% to Summon Life"
+  },
+  {
+    "name": "Hem Rune",
+    "type": "Rune",
+    "icon": "invrhemc",
+    "code": "rx15",
+    "level": 105,
+    "weapon": "+10% to Summon Damage",
+    "armor": "+10% to Summon Damage",
+    "shield": "+10% to Summon Damage"
+  },
+  {
+    "name": "Iu Rune",
+    "type": "Rune",
+    "icon": "invriuc",
+    "code": "rx16",
+    "level": 105,
+    "weapon": "+70% to Summon Attack Rating",
+    "armor": "+70% to Summon Attack Rating",
+    "shield": "+70% to Summon Attack Rating"
+  },
+  {
+    "name": "Lux Rune",
+    "type": "Rune",
+    "icon": "invrluxc",
+    "code": "rx17",
+    "level": 105,
+    "weapon": "+7% to Summon Elemental Resistances",
+    "armor": "+7% to Summon Elemental Resistances",
+    "shield": "+7% to Summon Elemental Resistances"
+  },
+  {
+    "name": "Ka Rune",
+    "type": "Rune",
+    "icon": "invrkac",
+    "code": "rx18",
+    "level": 105,
+    "weapon": "7% to Strength",
+    "armor": "7% to Strength",
+    "shield": "7% to Strength"
+  },
+  {
+    "name": "Fel Rune",
+    "type": "Rune",
+    "icon": "invrfelc",
+    "code": "rx19",
+    "level": 110,
+    "weapon": "7% to Dexterity",
+    "armor": "7% to Dexterity",
+    "shield": "7% to Dexterity"
+  },
+  {
+    "name": "Lew Rune",
+    "type": "Rune",
+    "icon": "invrlewc",
+    "code": "rx20",
+    "level": 110,
+    "weapon": "6% to Vitality",
+    "armor": "6% to Vitality",
+    "shield": "6% to Vitality"
+  },
+  {
+    "name": "Phul Rune",
+    "type": "Rune",
+    "icon": "invrphulc",
+    "code": "rx21",
+    "level": 110,
+    "weapon": "7% to Energy",
+    "armor": "7% to Energy",
+    "shield": "7% to Energy"
+  },
+  {
+    "name": "Un Rune",
+    "type": "Rune",
+    "icon": "invrunc",
+    "code": "rx22",
+    "level": 110,
+    "weapon": "Elemental Resists +13%",
+    "armor": "Elemental Resists +13%",
+    "shield": "Elemental Resists +13%"
+  },
+  {
+    "name": "Mhal Rune",
+    "type": "Rune",
+    "icon": "invrmhalc",
+    "code": "rx23",
+    "level": 110,
+    "weapon": "4% to All Attributes",
+    "armor": "4% to All Attributes",
+    "shield": "4% to All Attributes"
+  },
+  {
+    "name": "Yst Rune",
+    "type": "Rune",
+    "icon": "invrystc",
+    "code": "rx24",
+    "level": 110,
+    "weapon": "13% Magic Find",
+    "armor": "10% Magic Find",
+    "shield": "10% Magic Find"
+  },
+  {
+    "name": "Gur Rune",
+    "type": "Rune",
+    "icon": "invrgurc",
+    "code": "rx25",
+    "level": 115,
+    "weapon": "40% Attack Speed",
+    "armor": "30% Attack Speed",
+    "shield": "30% Attack Speed"
+  },
+  {
+    "name": "Vez Rune",
+    "type": "Rune",
+    "icon": "invrvezc",
+    "code": "rx26",
+    "level": 115,
+    "weapon": "40% Cast Speed",
+    "armor": "30% Cast Speed",
+    "shield": "30% Cast Speed"
+  },
+  {
+    "name": "Ohn Rune",
+    "type": "Rune",
+    "icon": "invrohnc",
+    "code": "rx27",
+    "level": 115,
+    "weapon": "30% Hit Recovery",
+    "armor": "30% Hit Recovery",
+    "shield": "40% Hit Recovery"
+  },
+  {
+    "name": "Loz Rune",
+    "type": "Rune",
+    "icon": "invrlozc",
+    "code": "rx28",
+    "level": 115,
+    "weapon": "+4% to Summon Physical Resist",
+    "armor": "+3% to Summon Physical Resist",
+    "shield": "60% Block Speed"
+  },
+  {
+    "name": "Zur Rune",
+    "type": "Rune",
+    "icon": "invrzurc",
+    "code": "rx29",
+    "level": 115,
+    "weapon": "Regenerate Mana +22%",
+    "armor": "Regenerate Mana +11%",
+    "shield": "Regenerate Mana +11%"
+  },
+  {
+    "name": "Bur Rune",
+    "type": "Rune",
+    "icon": "invrburc",
+    "code": "rx30",
+    "level": 115,
+    "weapon": "Slow Target 5%",
+    "armor": "Slows Attacker by 4%",
+    "shield": "Slows Attacker by 5%"
+  },
+  {
+    "name": "Iah Rune",
+    "type": "Rune",
+    "icon": "invriahc",
+    "code": "rx31",
+    "level": 120,
+    "weapon": "+25% Enhanced Damage",
+    "armor": "+25% Enhanced Defense",
+    "shield": "+25% Enhanced Defense"
+  },
+  {
+    "name": "Yham Rune",
+    "type": "Rune",
+    "icon": "invryhamc",
+    "code": "rx32",
+    "level": 120,
+    "weapon": "Maximum Mana +5%",
+    "armor": "Maximum Life and Mana +2%",
+    "shield": "Maximum Life +3%"
+  },
+  {
+    "name": "Xod Rune",
+    "type": "Rune",
+    "icon": "invrxodc",
+    "code": "rx33",
+    "level": 120,
+    "weapon": "+1 to All Skills",
+    "armor": "+1 to All Skills",
+    "shield": "+1 to All Skills"
+  },
+  {
+    "name": "Taha Rune",
+    "type": "Rune",
+    "icon": "r-d-02",
+    "code": "r51",
+    "level": 100,
+    "weapon": "-3% to Enemy Elemental Resistances",
+    "armor": "-2% to Enemy Elemental Resistances",
+    "shield": "-2% to Enemy Elemental Resistances"
+  },
+  {
+    "name": "Ghal Rune",
+    "type": "Rune",
+    "icon": "r-d-05",
+    "code": "r52",
+    "level": 100,
+    "weapon": "+25 Spell Focus",
+    "armor": "+15 Spell Focus",
+    "shield": "+15 Spell Focus"
+  },
+  {
+    "name": "Qor Rune",
+    "type": "Rune",
+    "icon": "r-d-11",
+    "code": "r53",
+    "level": 100,
+    "weapon": "3% Deadly Strike",
+    "armor": "2% Deadly Strike",
+    "shield": "2% Deadly Strike"
+  },
+  {
+    "name": "Fire Rune",
+    "type": "Rune",
+    "icon": "fire-rune",
+    "code": "r57",
+    "level": 100,
+    "weapon": "-5% to Enemy Fire Resistance",
+    "armor": "-3% to Enemy Fire Resistance",
+    "shield": "Fire Absorb 1%"
+  },
+  {
+    "name": "Stone Rune",
+    "type": "Rune",
+    "icon": "phys-rune",
+    "code": "r58",
+    "level": 100,
+    "weapon": "Adds 8-12 Damage",
+    "armor": "Adds 4-6 Damage",
+    "shield": "Physical Resist 1%"
+  },
+  {
+    "name": "Arcane Rune",
+    "type": "Rune",
+    "icon": "magic-rune",
+    "code": "r59",
+    "level": 100,
+    "weapon": "+4% Bonus to Spell Focus",
+    "armor": "+2% Bonus to Spell Focus",
+    "shield": "Magic Resist +1%"
+  },
+  {
+    "name": "Poison Rune",
+    "type": "Rune",
+    "icon": "pois-rune",
+    "code": "r60",
+    "level": 100,
+    "weapon": "-5% to Enemy Poison Resistance",
+    "armor": "-3% to Enemy Poison Resistance",
+    "shield": "Poison Length Reduction 15%"
+  },
+  {
+    "name": "Light Rune",
+    "type": "Rune",
+    "icon": "ltng-rune",
+    "code": "r61",
+    "level": 100,
+    "weapon": "-5% to Enemy Lightning Resistance",
+    "armor": "-3% to Enemy Lightning Resistance",
+    "shield": "Lightning Absorb 1%"
+  },
+  {
+    "name": "Ice Rune",
+    "type": "Rune",
+    "icon": "cold-rune",
+    "code": "r62",
+    "level": 100,
+    "weapon": "-5% to Enemy Cold Resistance",
+    "armor": "-3% to Enemy Cold Resistance",
+    "shield": "Cold Absorb 1%"
+  },
+  {
+    "name": "Diamond",
+    "type": "Gem",
+    "icon": "invgswc",
+    "code": "gsw",
+    "level": 12,
+    "weapon": "+2% to Spell Damage",
+    "armor": "3% to Strength",
+    "shield": "Elemental Resists +3%"
+  },
+  {
+    "name": "Flawless Diamond",
+    "type": "Gem",
+    "icon": "invgswd",
+    "code": "glw",
+    "level": 15,
+    "weapon": "+2% to Spell Damage",
+    "armor": "4% to Strength",
+    "shield": "Elemental Resists +4%"
+  },
+  {
+    "name": "Perfect Diamond",
+    "type": "Gem",
+    "icon": "invgswe",
+    "code": "gpw",
+    "level": 18,
+    "weapon": "+3% to Spell Damage",
+    "armor": "5% to Strength",
+    "shield": "Elemental Resists +5%"
+  },
+  {
+    "name": "Amethyst",
+    "type": "Gem",
+    "icon": "invgsvc",
+    "code": "gsv",
+    "level": 12,
+    "weapon": "30% Bonus to Attack Rating",
+    "armor": "3% to Dexterity",
+    "shield": "+3 Mana when Struck by an Enemy"
+  },
+  {
+    "name": "Flawless Amethyst",
+    "type": "Gem",
+    "icon": "invgsvd",
+    "code": "gzv",
+    "level": 15,
+    "weapon": "40% Bonus to Attack Rating",
+    "armor": "4% to Dexterity",
+    "shield": "+4 Mana when Struck by an Enemy"
+  },
+  {
+    "name": "Perfect Amethyst",
+    "type": "Gem",
+    "icon": "invgsve",
+    "code": "gpv",
+    "level": 18,
+    "weapon": "50% Bonus to Attack Rating",
+    "armor": "5% to Dexterity",
+    "shield": "+5 Mana when Struck by an Enemy"
+  },
+  {
+    "name": "Ruby",
+    "type": "Gem",
+    "icon": "invgsrc",
+    "code": "gsr",
+    "level": 12,
+    "weapon": "+6 Life after each Kill",
+    "armor": "2% to Vitality",
+    "shield": "Fire Resist +18%"
+  },
+  {
+    "name": "Flawless Ruby",
+    "type": "Gem",
+    "icon": "invgsrd",
+    "code": "glr",
+    "level": 15,
+    "weapon": "+8 Life after each Kill",
+    "armor": "3% to Vitality",
+    "shield": "Fire Resist +24%"
+  },
+  {
+    "name": "Perfect Ruby",
+    "type": "Gem",
+    "icon": "invgsre",
+    "code": "gpr",
+    "level": 18,
+    "weapon": "+10 Life after each Kill",
+    "armor": "4% to Vitality",
+    "shield": "Fire Resist +30%"
+  },
+  {
+    "name": "Topaz",
+    "type": "Gem",
+    "icon": "invgsyc",
+    "code": "gsy",
+    "level": 12,
+    "weapon": "+8 Spell Focus",
+    "armor": "3% to Energy",
+    "shield": "Lightning Resist +18%"
+  },
+  {
+    "name": "Flawless Topaz",
+    "type": "Gem",
+    "icon": "invgsyd",
+    "code": "gly",
+    "level": 15,
+    "weapon": "+9 Spell Focus",
+    "armor": "4% to Energy",
+    "shield": "Lightning Resist +24%"
+  },
+  {
+    "name": "Perfect Topaz",
+    "type": "Gem",
+    "icon": "invgsye",
+    "code": "gpy",
+    "level": 18,
+    "weapon": "+10 Spell Focus",
+    "armor": "5% to Energy",
+    "shield": "Lightning Resist +30%"
+  },
+  {
+    "name": "Bloodstone",
+    "type": "Gem",
+    "icon": "invgscc",
+    "code": "9$c",
+    "level": 12,
+    "weapon": "+6% to Summon Life",
+    "armor": "Fire Resist +12%",
+    "shield": "+3% to Summon Elemental Resistances"
+  },
+  {
+    "name": "Flawless Bloodstone",
+    "type": "Gem",
+    "icon": "invgscd",
+    "code": "9$d",
+    "level": 15,
+    "weapon": "+8% to Summon Life",
+    "armor": "Fire Resist +16%",
+    "shield": "+4% to Summon Elemental Resistances"
+  },
+  {
+    "name": "Perfect Bloodstone",
+    "type": "Gem",
+    "icon": "invgsce",
+    "code": "9$e",
+    "level": 18,
+    "weapon": "+10% to Summon Life",
+    "armor": [
+      "Fire Resist +20%",
+      "Maximum Fire Resist +1%"
+    ],
+    "shield": "+5% to Summon Elemental Resistances"
+  },
+  {
+    "name": "Onyx",
+    "type": "Gem",
+    "icon": "invgsoc",
+    "code": "g$c",
+    "level": 12,
+    "weapon": "+3% to Summon Damage",
+    "armor": "Cold Resist +12%",
+    "shield": "Slow Target 1%"
+  },
+  {
+    "name": "Flawless Onyx",
+    "type": "Gem",
+    "icon": "invgsod",
+    "code": "g$d",
+    "level": 15,
+    "weapon": "+4% to Summon Damage",
+    "armor": "Cold Resist +16%",
+    "shield": "Slow Target 2%"
+  },
+  {
+    "name": "Perfect Onyx",
+    "type": "Gem",
+    "icon": "invgsoe",
+    "code": "g$e",
+    "level": 18,
+    "weapon": "+5% to Summon Damage",
+    "armor": [
+      "Cold Resist +20%",
+      "Maximum Cold Resist +1%"
+    ],
+    "shield": "Slow Target 2%"
+  },
+  {
+    "name": "Amber",
+    "type": "Gem",
+    "icon": "invgsac",
+    "code": "5$c",
+    "level": 12,
+    "weapon": "1% Reanimate as: Walker",
+    "armor": "Lightning Resist +12%",
+    "shield": "Slows Attacker by 1%"
+  },
+  {
+    "name": "Flawless Amber",
+    "type": "Gem",
+    "icon": "invgsad",
+    "code": "5$d",
+    "level": 15,
+    "weapon": "1% Reanimate as: Walker",
+    "armor": "Lightning Resist +16%",
+    "shield": "Slows Attacker by 2%"
+  },
+  {
+    "name": "Perfect Amber",
+    "type": "Gem",
+    "icon": "invgsae",
+    "code": "5$e",
+    "level": 18,
+    "weapon": "2% Reanimate as: Walker",
+    "armor": [
+      "Lightning Resist +20%",
+      "Maximum Lightning Resist +1%"
+    ],
+    "shield": "Slows Attacker by 2%"
+  },
+  {
+    "name": "Turquoise",
+    "type": "Gem",
+    "icon": "invgstc",
+    "code": "7$c",
+    "level": 12,
+    "weapon": "Regenerate Mana +6%",
+    "armor": "Poison Resist +12%",
+    "shield": "4% Magic Find"
+  },
+  {
+    "name": "Flawless Turquoise",
+    "type": "Gem",
+    "icon": "invgstd",
+    "code": "7$d",
+    "level": 15,
+    "weapon": "Regenerate Mana +8%",
+    "armor": "Poison Resist +16%",
+    "shield": "6% Magic Find"
+  },
+  {
+    "name": "Perfect Turquoise",
+    "type": "Gem",
+    "icon": "invgste",
+    "code": "7$e",
+    "level": 18,
+    "weapon": "Regenerate Mana +10%",
+    "armor": [
+      "Poison Resist +20%",
+      "Maximum Poison Resist +1%"
+    ],
+    "shield": "8% Magic Find"
+  },
+  {
+    "name": "Sapphire",
+    "type": "Gem",
+    "icon": "invgsbc",
+    "code": "gsb",
+    "level": 12,
+    "weapon": "+5 Mana after each Kill",
+    "armor": "Cold Resist +12%",
+    "shield": "Cold Resist +18%"
+  },
+  {
+    "name": "Flawless Sapphire",
+    "type": "Gem",
+    "icon": "invgsbd",
+    "code": "glb",
+    "level": 15,
+    "weapon": "+6 Mana after each Kill",
+    "armor": "Cold Resist +16%",
+    "shield": "Cold Resist +24%"
+  },
+  {
+    "name": "Perfect Sapphire",
+    "type": "Gem",
+    "icon": "invgsbe",
+    "code": "gpb",
+    "level": 18,
+    "weapon": "+8 Mana after each Kill",
+    "armor": "Cold Resist +20%",
+    "shield": "Cold Resist +30%"
+  },
+  {
+    "name": "Emerald",
+    "type": "Gem",
+    "icon": "invgsgc",
+    "code": "gsg",
+    "level": 12,
+    "weapon": "+3 to Maximum Damage",
+    "armor": "+6 Life Regenerated per Second",
+    "shield": "Poison Resist +18%"
+  },
+  {
+    "name": "Flawless Emerald",
+    "type": "Gem",
+    "icon": "invgsgd",
+    "code": "glg",
+    "level": 15,
+    "weapon": "+4 to Maximum Damage",
+    "armor": "+8 Life Regenerated per Second",
+    "shield": "Poison Resist +24%"
+  },
+  {
+    "name": "Perfect Emerald",
+    "type": "Gem",
+    "icon": "invgsge",
+    "code": "gpg",
+    "level": 18,
+    "weapon": "+5 to Maximum Damage",
+    "armor": "+10 Life Regenerated per Second",
+    "shield": "Poison Resist +30%"
+  },
+  {
+    "name": "Rainbow Stone",
+    "type": "Gem",
+    "icon": "og3",
+    "code": "yo3",
+    "level": 12,
+    "weapon": "2% Innate Elemental Damage",
+    "armor": "4% Gold Find",
+    "shield": "Curse Length Reduction 4%"
+  },
+  {
+    "name": "Flawless Rainbow Stone",
+    "type": "Gem",
+    "icon": "og4",
+    "code": "yo4",
+    "level": 15,
+    "weapon": "2% Innate Elemental Damage",
+    "armor": "6% Gold Find",
+    "shield": "Curse Length Reduction 5%"
+  },
+  {
+    "name": "Perfect Rainbow Stone",
+    "type": "Gem",
+    "icon": "og5",
+    "code": "yo5",
+    "level": 18,
+    "weapon": "3% Innate Elemental Damage",
+    "armor": "8% Gold Find",
+    "shield": "Curse Length Reduction 6%"
+  },
+  {
+    "name": "Skull",
+    "type": "Gem",
+    "icon": "invsku",
+    "code": "sku",
+    "level": 12,
+    "weapon": "+7% Enhanced Damage",
+    "armor": "+7% Enhanced Defense",
+    "shield": "Poison Length Reduction 3%"
+  },
+  {
+    "name": "Flawless Skull",
+    "type": "Gem",
+    "icon": "invskl",
+    "code": "skl",
+    "level": 15,
+    "weapon": "+8% Enhanced Damage",
+    "armor": "+8% Enhanced Defense",
+    "shield": "Poison Length Reduction 4%"
+  },
+  {
+    "name": "Perfect Skull",
+    "type": "Gem",
+    "icon": "invskz",
+    "code": "skz",
+    "level": 18,
+    "weapon": "+10% Enhanced Damage",
+    "armor": "+10% Enhanced Defense",
+    "shield": "Poison Length Reduction 5%"
+  }
+]

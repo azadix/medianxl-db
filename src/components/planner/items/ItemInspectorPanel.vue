@@ -160,6 +160,12 @@ const instanceMysticOrbs = computed(() => {
   return itemsStore.getMysticOrbsForInstance(id);
 });
 
+const instanceSocketables = computed(() => {
+  const id = instanceId.value;
+  if (id == null) return [];
+  return itemsStore.getSocketablesForInstance(id);
+});
+
 const detailStatRows = computed(() => {
   const def = itemDef.value;
   if (!def) return [];
@@ -168,6 +174,7 @@ const detailStatRows = computed(() => {
     charmInInventory: true,
     className: className.value,
     extras: instanceExtras.value,
+    socketables: instanceSocketables.value,
   });
 });
 
@@ -386,6 +393,7 @@ onUnmounted(() => {
       :detail-stat-rows="detailStatRows"
       :extras="instanceExtras"
       :mystic-orbs="instanceMysticOrbs"
+      :socketables="instanceSocketables"
       :empty-text="emptyText"
       @update:rolls="onRollsUpdate"
       @set-roll="setRoll"

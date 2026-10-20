@@ -13,6 +13,11 @@ import {
 import { formatSetBonusLabel } from '@/items/item-overlays.js';
 import { formatMysticOrbLines } from '@/items/mystic-orbs.js';
 import { formatRunewordBadge, isRunewordItem } from '@/items/runeword-items.js';
+import {
+  getSocketableBonusLines,
+  normalizeSocketables,
+  socketableNameCssClass,
+} from '@/items/socketables.js';
 
 /** @type {Readonly<Record<string, string>>} */
 export const ITEM_RARITY_NAME_CLASS = Object.freeze({
@@ -188,26 +193,78 @@ export function buildItemTooltipHtml(def, iconKey = null, rolls = null, options 
   ].join('');
 
   const card = `<div class="tooltip-content item-tooltip-card ${frameClass}">${header}${body}</div>`;
-  const side = buildMysticOrbsSidepanelHtml(options.mysticOrbs);
+  const side = buildItemTooltipSidepanelHtml(options.socketables, options.mysticOrbs, {
+    sockets: def.sockets,
+    rolls,
+    hostDef: def,
+  });
   if (!side) return card;
   return `<div class="item-tooltip-layout">${card}${side}</div>`;
 }
 
 /**
- * Side panel listing applied mystic orbs (right of the main tooltip card).
- * @param {unknown} mysticOrbs
+ * @param {import('@/items/socketables.js').SocketableEntry} sock
+ * @param {object|null|undefined} [hostDef]
  * @returns {string}
  */
-function buildMysticOrbsSidepanelHtml(mysticOrbs) {
-  const lines = formatMysticOrbLines(mysticOrbs);
-  if (!lines.length) return '';
-  const rows = lines
-    .map((line) => `<div class="item-tooltip-sidepanel__line">${escapeHtmlText(line)}</div>`)
+function buildSocketableRowHtml(sock, hostDef) {
+  const name = escapeHtmlText(sock.name || '');
+  const nameCls = socketableNameCssClass(sock);
+  const nameClassAttr = nameCls ? ` ${nameCls}` : '';
+  const iconStem = sock.icon ? String(sock.icon).trim() : '';
+  const iconUrl = iconStem ? itemTooltipIconSrc(iconStem) : '';
+  const art = iconUrl
+    ? `<img class="item-tooltip-sock__icon" src="${escapeHtmlText(iconUrl)}" alt="" onerror="this.classList.add('item-tooltip-sock__icon--missing');this.removeAttribute('src')">`
+    : `<span class="item-tooltip-sock__icon item-tooltip-sock__icon--empty" aria-hidden="true"></span>`;
+  const mods = getSocketableBonusLines(sock, hostDef)
+    .map((line) => `<div class="item-tooltip-sock__mod">${escapeHtmlText(line)}</div>`)
     .join('');
-  return `<aside class="item-tooltip-sidepanel" aria-label="Mystic Orbs">
-    <div class="item-tooltip-sidepanel__title">Mystic Orbs</div>
-    ${rows}
-  </aside>`;
+  return `<div class="item-tooltip-sock">
+    <div class="item-tooltip-sock__head">${art}<span class="item-tooltip-sock__name${nameClassAttr}">${name}</span></div>
+    ${mods ? `<div class="item-tooltip-sock__mods">${mods}</div>` : ''}
+  </div>`;
+}
+
+/**
+ * Side panel: socket fillers then mystic orbs.
+ * @param {unknown} socketables
+ * @param {unknown} mysticOrbs
+ * @param {{ sockets?: number|null, rolls?: Record<string, number>|null, hostDef?: object|null }} [ctx]
+ * @returns {string}
+ */
+function buildItemTooltipSidepanelHtml(socketables, mysticOrbs, ctx = {}) {
+  const socks = normalizeSocketables(socketables);
+  const orbLines = formatMysticOrbLines(mysticOrbs);
+  if (!socks.length && !orbLines.length) return '';
+
+  /** @type {string[]} */
+  const blocks = [];
+  if (socks.length) {
+    const rows = socks.map((s) => buildSocketableRowHtml(s, ctx.hostDef)).join('');
+    const maxSockets = Number(ctx.sockets);
+    const filled = socks.length;
+    const empty =
+      Number.isFinite(maxSockets) && maxSockets > filled
+        ? Array.from({ length: maxSockets - filled }, () => {
+            return `<div class="item-tooltip-sock item-tooltip-sock--empty"><div class="item-tooltip-sock__head"><span class="item-tooltip-sock__icon item-tooltip-sock__icon--empty" aria-hidden="true"></span><span class="item-tooltip-sock__name">Empty</span></div></div>`;
+          }).join('')
+        : '';
+    blocks.push(`<div class="item-tooltip-sidepanel__block">
+      <div class="item-tooltip-sidepanel__title">Sockets</div>
+      ${rows}${empty}
+    </div>`);
+  }
+  if (orbLines.length) {
+    const rows = orbLines
+      .map((line) => `<div class="item-tooltip-sidepanel__line">${escapeHtmlText(line)}</div>`)
+      .join('');
+    blocks.push(`<div class="item-tooltip-sidepanel__block">
+      <div class="item-tooltip-sidepanel__title">Mystic Orbs</div>
+      ${rows}
+    </div>`);
+  }
+
+  return `<aside class="item-tooltip-sidepanel" aria-label="Item upgrades">${blocks.join('')}</aside>`;
 }
 
 /**

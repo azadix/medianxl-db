@@ -28,7 +28,10 @@ import {
 import { formatRunewordBadge, formatRunewordSocketFillerLines, isRunewordItem } from '@/items/runeword-items.js';
 import { getShieldClassBlockPercent } from '@/character/class-baselines.js';
 import { resolveItemRequirements } from '@/items/item-requirements.js';
-import { applyResolvedRandomReanimates } from '@/items/item-modifier-line.js';
+import {
+  applyResolvedRandomReanimates,
+  markModifierLineAdded,
+} from '@/items/item-modifier-line.js';
 
 /** @type {Readonly<Record<string, string>>} */
 export const ITEM_CATEGORY_LABEL = Object.freeze({
@@ -475,7 +478,11 @@ export function getItemStatSections(def, rolls = null, options = {}) {
     }
   } else if (overlay && !options.charmHeaderOnly) {
     mods.push(...getOverlayStatLines(def, rolls, { hideRollableRanges, showRollRanges }));
-    if (isRunewordItem(def)) mods.push(...formatRunewordSocketFillerLines(def));
+    const hasSocketables =
+      Array.isArray(options.socketables) && options.socketables.length > 0;
+    if (isRunewordItem(def) && !hasSocketables) {
+      mods.push(...formatRunewordSocketFillerLines(def));
+    }
   }
 
   /** @type {string[]} */
@@ -484,7 +491,7 @@ export function getItemStatSections(def, rolls = null, options = {}) {
     : [];
   const merged = applyResolvedRandomReanimates(mods, extras);
   mods.length = 0;
-  mods.push(...merged.mods, ...merged.extras);
+  mods.push(...merged.mods, ...merged.extras.map((line) => markModifierLineAdded(line)));
 
   return {
     base,
@@ -515,13 +522,14 @@ export function getItemStatLines(def, rolls = null, options = {}) {
  * @typedef {{ kind: 'text', text: string, section?: 'base'|'mod' } | { kind: 'roll', stat: RollableStat, section?: 'base'|'mod' }} ItemDetailStatRow
  * @param {object|null|undefined} def
  * @param {Record<string, number>|null|undefined} [rolls]
- * @param {{ characterLevel?: number|null, charmInInventory?: boolean, className?: string|null, extras?: string[]|null }} [options]
+ * @param {{ characterLevel?: number|null, charmInInventory?: boolean, className?: string|null, extras?: string[]|null, socketables?: Array<object>|null }} [options]
  * @returns {ItemDetailStatRow[]}
  */
 export function getItemDetailStatRows(def, rolls = null, options = {}) {
   if (!def || typeof def !== 'object') return [];
   const className = options.className ?? null;
   const extras = Array.isArray(options.extras) ? options.extras : [];
+  const hasSocketables = Array.isArray(options.socketables) && options.socketables.length > 0;
   // Match tooltip sectioning (base/scaling vs mods); Socketed is last in the base block.
   // Pass extras only after overlay/charm rows so they appear under catalog affixes.
   const sections = getItemStatSections(def, rolls, {
@@ -530,6 +538,7 @@ export function getItemDetailStatRows(def, rolls = null, options = {}) {
     charmInInventory: options.charmInInventory,
     className,
     charmHeaderOnly: true,
+    socketables: options.socketables ?? null,
   });
   /** @type {ItemDetailStatRow[]} */
   const rows = [
@@ -569,7 +578,7 @@ export function getItemDetailStatRows(def, rolls = null, options = {}) {
       if (row && row.kind === 'text') row.text = text;
     });
     for (const line of merged.extras) {
-      const text = String(line || '').trim();
+      const text = markModifierLineAdded(String(line || '').trim());
       if (!text) continue;
       rows.push({ kind: /** @type {const} */ ('text'), text, section: /** @type {const} */ ('mod') });
     }
@@ -585,7 +594,7 @@ export function getItemDetailStatRows(def, rolls = null, options = {}) {
   }
   if (isOverlayItem(def)) {
     rows.push(...asMod(getOverlayDetailStatRows(def, rolls)));
-    if (isRunewordItem(def)) {
+    if (isRunewordItem(def) && !hasSocketables) {
       rows.push(
         ...formatRunewordSocketFillerLines(def).map((text) => ({
           kind: /** @type {const} */ ('text'),

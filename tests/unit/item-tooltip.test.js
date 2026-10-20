@@ -1,5 +1,6 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, beforeEach } from 'vitest';
 import { buildItemTooltipHtml } from '@/items/item-tooltip.js';
+import { loadSocketablesCatalog } from '@/items/socketables.js';
 import { getItemStatSections } from '@/items/item-stats.js';
 
 describe('buildItemTooltipHtml', () => {
@@ -108,6 +109,68 @@ describe('buildItemTooltipHtml', () => {
     expect(html).not.toContain('1x Weight of Talent');
   });
 
+  it('lists socketables above mystic orbs with icons and marks added extras', () => {
+    loadSocketablesCatalog([
+      {
+        name: 'Qor Rune',
+        code: 'r53',
+        type: 'Rune',
+        icon: 'r-d-11',
+        weapon: '3% Deadly Strike',
+        armor: '2% Deadly Strike',
+        shield: '2% Deadly Strike',
+      },
+    ]);
+    const html = buildItemTooltipHtml(
+      {
+        name: 'Endless Pride',
+        rarity: 'unique',
+        uniqueKind: 'sssu',
+        category: 'armor',
+        sockets: 4,
+        modifiers: ['+(1 to 50)% Magic Find'],
+      },
+      'invcap',
+      { 'modAffix:base:m0:r0': 26 },
+      {
+        extras: ['+5% Cast Speed', '+30 Required Level'],
+        mysticOrbs: [
+          [1, 'Solitude'],
+          [2, 'Crystal of Tears'],
+        ],
+        socketables: [
+          {
+            slot: 1,
+            name: "Zann Esu's Stone",
+            type: 'Jewel',
+            quality: 'Unique',
+            code: 'jew',
+            icon: 'invjw6',
+            modifiers: ['+5% Cast Speed', '+3% to Spell Damage'],
+          },
+          { slot: 2, name: 'Qor Rune', type: 'Rune', code: 'r53', icon: 'r-d-11' },
+          { slot: 3, name: 'Qor Rune', type: 'Rune', code: 'r53', icon: 'r-d-11' },
+          { slot: 4, name: 'Qor Rune', type: 'Rune', code: 'r53', icon: 'r-d-11' },
+        ],
+      }
+    );
+    expect(html).toContain('Sockets');
+    expect(html).toContain('Mystic Orbs');
+    expect(html).toContain("Zann Esu's Stone");
+    expect(html).toContain('Qor Rune');
+    expect(html).toContain('invjw6.webp');
+    expect(html).toContain('r-d-11.webp');
+    expect(html).toContain('item-mod--added');
+    expect(html).toContain('* +5% Cast Speed *');
+    expect(html).toContain('* +30 Required Level *');
+    expect(html.indexOf('Sockets')).toBeLessThan(html.indexOf('Mystic Orbs'));
+    expect(html).toContain('item-tooltip-sock__mod');
+    expect(html).toContain('+5% Cast Speed');
+    expect(html).toContain('2% Deadly Strike');
+    expect(html.indexOf("Zann Esu's Stone")).toBeLessThan(html.indexOf('+5% Cast Speed'));
+    expect(html.indexOf('+5% Cast Speed')).toBeLessThan(html.indexOf('Qor Rune'));
+  });
+
   it('groups set bonuses separately from item stats', () => {
     const html = buildItemTooltipHtml(
       {
@@ -178,8 +241,53 @@ describe('getItemStatSections', () => {
     expect(sections.mods).not.toContain('2% Reanimate as: Random Monster');
     expect(sections.mods.filter((line) => /Reanimate as:/i.test(line))).toHaveLength(1);
     expect(sections.mods).toEqual(
-      expect.arrayContaining(['+14 Spell Focus', '+1% to Experience Gained'])
+      expect.arrayContaining(['{added}+14 Spell Focus', '{added}+1% to Experience Gained'])
     );
+  });
+
+  it('marks extras as added and catalog rolls past max as boosted', () => {
+    const sections = getItemStatSections(
+      {
+        rarity: 'unique',
+        uniqueKind: 'su',
+        modifiers: ['+(500 to 1000) to Life', '+1 to All Skills'],
+      },
+      {
+        'modAffix:base:m0:r0': 1003,
+        'modFixed:base:m1': 2,
+      },
+      {
+        extras: ['+25% Bonus to Defense', '+35 Required Level'],
+      }
+    );
+    expect(sections.mods).toEqual(
+      expect.arrayContaining([
+        expect.stringMatching(/^\{boosted\}\+1003 to Life/),
+        '{boosted}+2 to All Skills',
+        '{added}+25% Bonus to Defense',
+        '{added}+35 Required Level',
+      ])
+    );
+  });
+
+  it('replaces both numbers in fixed Adds min-max damage lines', () => {
+    const sections = getItemStatSections(
+      {
+        rarity: 'unique',
+        uniqueKind: 'su',
+        modifiers: ['Adds 7-13 Damage', 'Adds 90-110 Damage'],
+      },
+      {
+        'modFixed:base:m0': 43,
+        'modFixed:base:m0:n1': 61,
+        'modFixed:base:m1': 112,
+        'modFixed:base:m1:n1': 139,
+      }
+    );
+    expect(sections.mods).toContain('{boosted}Adds 43-61 Damage');
+    expect(sections.mods).toContain('{boosted}Adds 112-139 Damage');
+    expect(sections.mods.join('\n')).not.toMatch(/Adds 43-13/);
+    expect(sections.mods.join('\n')).not.toMatch(/Adds 112-110/);
   });
 
   it('puts damage type and innate with str/dex bonuses, not requirements', () => {

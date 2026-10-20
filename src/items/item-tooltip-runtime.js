@@ -65,6 +65,7 @@ function buildHtmlFromState(state) {
           ...baseOpts,
           extras: store.getExtrasForInstance(instanceId),
           mysticOrbs: store.getMysticOrbsForInstance(instanceId),
+          socketables: store.getSocketablesForInstance(instanceId),
           instanceId,
           equipSlot,
         }

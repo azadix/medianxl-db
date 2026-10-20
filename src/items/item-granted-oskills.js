@@ -234,7 +234,9 @@ export function wrapNamedSkillGrantMarkers(line) {
  * @returns {string}
  */
 export function formatItemModifierLineHtml(line) {
-  const text = decodeModifierLine(line).text;
+  const decoded = decodeModifierLine(line);
+  const text = decoded.text;
+  const added = decoded.color === 'added';
   /** @type {string[]} */
   const rollRanges = [];
   const withoutRollRanges = String(text ?? '').replace(DISPLAYED_ROLL_RANGE_RE, (_, min, max) => {
@@ -263,6 +265,7 @@ export function formatItemModifierLineHtml(line) {
   for (const label of rollRanges) {
     out += ` <span class="item-mod-roll-range">${escapeHtmlText(label)}</span>`;
   }
+  if (added && out) return `* ${out} *`;
   return out;
 }
 

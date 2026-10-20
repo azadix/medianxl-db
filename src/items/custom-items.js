@@ -316,6 +316,17 @@ export function tswRowIsEthereal(row) {
 }
 
 /**
+ * Whether a TSW row is corrupted (`corrupted` flag or Corrupted description line).
+ * @param {object|null|undefined} row
+ * @returns {boolean}
+ */
+export function tswRowIsCorrupted(row) {
+  if (!row || typeof row !== 'object') return false;
+  if (row.corrupted === true) return true;
+  return tswDescriptionTexts(row.description_lines).some((line) => /^Corrupted$/i.test(line));
+}
+
+/**
  * Rolled affix lines from a TSW item, minus name / defense / req / socket boilerplate.
  * Remnant flavor is kept as a grey line; Ethereal is stored on the payload flag instead.
  * @param {object|null|undefined} row

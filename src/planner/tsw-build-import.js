@@ -13,7 +13,6 @@ import { isCharmItem, isDimensionalKeyCharm } from '@/items/charm-items.js';
 import { isRelicItem, MAX_RELICS } from '@/items/relic-items.js';
 import {
   buildSetDumpSkipContext,
-  parseTswMysticOrbs,
   rollsFromTswItem,
   tswInstanceExtras,
 } from '@/planner/tsw-item-rolls.js';
@@ -559,7 +558,9 @@ function attachTswInstanceExtras(entry, row, def, setDumpCtx = null) {
   const meta = tswInstanceExtras(row, def, setDumpCtx);
   if (meta.extras?.length) entry.extras = meta.extras;
   if (meta.mysticOrbs?.length) entry.mysticOrbs = meta.mysticOrbs;
+  if (meta.socketables?.length) entry.socketables = meta.socketables;
   if (meta.ethereal) entry.ethereal = true;
+  if (meta.corrupted) entry.corrupted = true;
 }
 
 /**
@@ -653,8 +654,12 @@ export function mapTswItemsToSnapshot(rows, catalog, className = null) {
         continue;
       }
       const customEntry = tswCustomSnapshotEntry(row, defId, customQuality);
-      const mysticOrbs = parseTswMysticOrbs(row.mystic_orbs);
-      if (mysticOrbs.length) customEntry.mysticOrbs = mysticOrbs;
+      // Custom modifiers already live on `custom`; only attach upgrades (not extras).
+      const meta = tswInstanceExtras(row, def);
+      if (meta.mysticOrbs?.length) customEntry.mysticOrbs = meta.mysticOrbs;
+      if (meta.socketables?.length) customEntry.socketables = meta.socketables;
+      if (meta.ethereal) customEntry.ethereal = true;
+      if (meta.corrupted) customEntry.corrupted = true;
       equipment[slotKey] = customEntry;
       continue;
     }

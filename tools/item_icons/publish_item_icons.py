@@ -16,7 +16,6 @@ OUT_DIR = REPO_ROOT / "public" / "icons" / "item_icons"
 # Catalog / items.txt stems missing from the DC6 dump that have a close stand-in.
 # dest_stem -> source_stem (copy published WebP after convert).
 ICON_ALIASES = {
-    "invgswe": "invgsw",  # Perfect Diamond (gem) — dump has invgsw only
     "invamu4": "invamu",  # docs has invamu1-3 + invamu; no invamu4.jpg
     "invrin4": "invrin1",
     "invrin5": "invrin2",
@@ -28,7 +27,25 @@ def _version_folder(version: str) -> str:
     return version.strip().replace(".", "_")
 
 
-def _load_catalog_icon_keys(catalog_path: Path) -> set[str] | None:
+# Always publish these inventory prefixes with --catalog-only (socketables / orbs / oils).
+SOCKETABLE_ICON_PREFIXES = (
+    "invr",
+    "invjw",
+    "invgs",
+    "orb_",
+    "oil_",
+    "r-d-",
+    "r-a-",
+)
+
+SOCKETABLE_ICON_SUFFIXES = (
+    "-rune",
+)
+
+
+def _load_catalog_icon_keys(
+    catalog_path: Path, icons_dir: Path | None = None
+) -> set[str] | None:
     paths = [catalog_path]
     if catalog_path.is_dir():
         paths = sorted(catalog_path.glob("*.json"))
@@ -38,6 +55,7 @@ def _load_catalog_icon_keys(catalog_path: Path) -> set[str] | None:
             version_dir / "baseitems.json",
             version_dir / "charms.json",
             version_dir / "other.json",
+            version_dir / "socketables.json",
         ]
 
     keys: set[str] = set()
@@ -62,6 +80,22 @@ def _load_catalog_icon_keys(catalog_path: Path) -> set[str] | None:
     if not loaded:
         print(f"WARNING: Catalog not found: {catalog_path}", file=sys.stderr)
         return None
+
+    # Socketable / orb / oil stems from the PNG source dir (or published webps).
+    for scan in (icons_dir, OUT_DIR):
+        if not scan or not scan.is_dir():
+            continue
+        for p in scan.iterdir():
+            if not p.is_file():
+                continue
+            if p.suffix.lower() not in {".png", ".bmp", ".webp"}:
+                continue
+            stem = p.stem
+            low = stem.lower()
+            if any(low.startswith(prefix) for prefix in SOCKETABLE_ICON_PREFIXES) or any(
+                low.endswith(suffix) for suffix in SOCKETABLE_ICON_SUFFIXES
+            ):
+                keys.add(stem)
     return keys
 
 
@@ -128,7 +162,7 @@ def main() -> int:
             if args.catalog
             else (REPO_ROOT / "public" / "items" / folder)
         )
-        filter_keys = _load_catalog_icon_keys(catalog_path)
+        filter_keys = _load_catalog_icon_keys(catalog_path, icons_dir)
 
     if filter_keys is not None:
         keys = sorted(filter_keys)

@@ -10,8 +10,12 @@ import { isConditionSelected } from '@/stores/planner-config-store.js';
 export const MODIFIER_COLOR_MAGIC = 'magic';
 export const MODIFIER_COLOR_ORANGE = 'orange';
 export const MODIFIER_COLOR_GREY = 'grey';
+/** Non-baseline extras (MOs / jewels / corruption leftovers). */
+export const MODIFIER_COLOR_ADDED = 'added';
+/** Catalog affix whose rolled value is outside the unique min/max. */
+export const MODIFIER_COLOR_BOOSTED = 'boosted';
 
-const COLOR_PREFIX_RE = /^\{(orange|grey)\}/;
+const COLOR_PREFIX_RE = /^\{(orange|grey|added|boosted)\}/;
 const COND_PREFIX_RE = /^\{cond:([a-zA-Z0-9_]+)\}/;
 
 /** @type {ReadonlyArray<{ re: RegExp, key: string }>} */
@@ -76,6 +80,8 @@ export function encodeModifierLine(text, color, showCondition = null) {
   let out = value;
   if (color === MODIFIER_COLOR_ORANGE) out = `{orange}${out}`;
   else if (color === MODIFIER_COLOR_GREY) out = `{grey}${out}`;
+  else if (color === MODIFIER_COLOR_ADDED) out = `{added}${out}`;
+  else if (color === MODIFIER_COLOR_BOOSTED) out = `{boosted}${out}`;
   const conds = Array.isArray(showCondition)
     ? showCondition.filter((k) => k != null && String(k).trim() !== '')
     : [];
@@ -83,6 +89,38 @@ export function encodeModifierLine(text, color, showCondition = null) {
     out = `{cond:${String(conds[i]).trim()}}${out}`;
   }
   return out;
+}
+
+/**
+ * Mark a modifier line as non-baseline (extras). Preserves orange/grey if present.
+ * @param {string|null|undefined} line
+ * @returns {string}
+ */
+export function markModifierLineAdded(line) {
+  const raw = String(line ?? '').trim();
+  if (!raw) return '';
+  const decoded = decodeModifierLine(raw);
+  if (decoded.color === MODIFIER_COLOR_ADDED || decoded.color === MODIFIER_COLOR_BOOSTED) {
+    return raw;
+  }
+  // Keep orange/grey as nested after {added} for rarer cases; decode reads first color only,
+  // so prefer added as the display color and drop conflicting color prefixes from the text.
+  return encodeModifierLine(decoded.text, MODIFIER_COLOR_ADDED, decoded.showCondition);
+}
+
+/**
+ * Mark a catalog line as socket/MO-boosted past its roll range.
+ * @param {string|null|undefined} line
+ * @returns {string}
+ */
+export function markModifierLineBoosted(line) {
+  const raw = String(line ?? '').trim();
+  if (!raw) return '';
+  const decoded = decodeModifierLine(raw);
+  if (decoded.color === MODIFIER_COLOR_ADDED || decoded.color === MODIFIER_COLOR_BOOSTED) {
+    return raw;
+  }
+  return encodeModifierLine(decoded.text, MODIFIER_COLOR_BOOSTED, decoded.showCondition);
 }
 
 /**
@@ -145,6 +183,24 @@ export function decodeModifierLine(line) {
     explicit.push(key);
   }
   return { text, color: MODIFIER_COLOR_MAGIC, showCondition: explicit };
+}
+
+/**
+ * Whether the line is a non-baseline extra (asterisks in tooltip).
+ * @param {string|null|undefined} line
+ * @returns {boolean}
+ */
+export function isAddedModifierLine(line) {
+  return decodeModifierLine(line).color === MODIFIER_COLOR_ADDED;
+}
+
+/**
+ * Whether the line is a catalog affix boosted past its range (color only, no asterisks).
+ * @param {string|null|undefined} line
+ * @returns {boolean}
+ */
+export function isBoostedModifierLine(line) {
+  return decodeModifierLine(line).color === MODIFIER_COLOR_BOOSTED;
 }
 
 const RANDOM_REANIMATE_RE = /^(\d+(?:\.\d+)?)%\s*Reanimate as:\s*Random Monster$/i;
@@ -235,6 +291,9 @@ export function isModifierLineActive(line) {
 export function modifierColorCssClass(color) {
   if (color === MODIFIER_COLOR_ORANGE) return 'item-mod--orange';
   if (color === MODIFIER_COLOR_GREY) return 'item-mod--grey';
+  if (color === MODIFIER_COLOR_ADDED || color === MODIFIER_COLOR_BOOSTED) {
+    return 'item-mod--added';
+  }
   return '';
 }
 

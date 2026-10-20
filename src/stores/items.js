@@ -65,6 +65,7 @@ import {
 } from '@/items/runeword-items.js';
 import { applyCustomOverlayToDef, parseCustomPayload } from '@/items/custom-items.js';
 import { normalizeMysticOrbs } from '@/items/mystic-orbs.js';
+import { loadSocketablesCatalog, normalizeSocketables } from '@/items/socketables.js';
 
 /** When true, equip/enable paths skip raising planner level for item reqs. */
 let skipItemReqLevelSync = false;
@@ -170,7 +171,9 @@ async function fetchCatalogFile(url) {
  *   custom?: CustomItemPayload,
  *   extras?: string[],
  *   mysticOrbs?: Array<[number, string]>,
+ *   socketables?: import('@/items/socketables.js').SocketableEntry[],
  *   ethereal?: boolean,
+ *   corrupted?: boolean,
  *   name?: string,
  * }} ItemInstance
  * @typedef {{
@@ -180,7 +183,9 @@ async function fetchCatalogFile(url) {
  *   custom?: CustomItemPayload,
  *   extras?: string[],
  *   mysticOrbs?: Array<[number, string]>,
+ *   socketables?: import('@/items/socketables.js').SocketableEntry[],
  *   ethereal?: boolean,
+ *   corrupted?: boolean,
  *   name?: string,
  * }} ItemSnapshotEntry
  * @typedef {{
@@ -226,11 +231,21 @@ function parseMysticOrbsList(raw) {
 }
 
 /**
+ * @param {unknown} raw
+ * @returns {import('@/items/socketables.js').SocketableEntry[]}
+ */
+function parseSocketablesList(raw) {
+  return normalizeSocketables(raw);
+}
+
+/**
  * @param {ItemInstance|null|undefined} inst
  * @param {{
  *   extras?: string[]|null,
  *   mysticOrbs?: Array<[number, string]>|null,
+ *   socketables?: import('@/items/socketables.js').SocketableEntry[]|null,
  *   ethereal?: boolean,
+ *   corrupted?: boolean,
  *   name?: string|null,
  * }|null|undefined} meta
  */
@@ -242,8 +257,13 @@ function applyInstanceMeta(inst, meta) {
   const mysticOrbs = parseMysticOrbsList(meta.mysticOrbs);
   if (mysticOrbs.length) inst.mysticOrbs = mysticOrbs;
   else delete inst.mysticOrbs;
+  const socketables = parseSocketablesList(meta.socketables);
+  if (socketables.length) inst.socketables = socketables;
+  else delete inst.socketables;
   if (meta.ethereal === true) inst.ethereal = true;
   else delete inst.ethereal;
+  if (meta.corrupted === true) inst.corrupted = true;
+  else delete inst.corrupted;
   const name = meta.name != null ? String(meta.name).trim() : '';
   if (name) inst.name = name;
   else delete inst.name;
@@ -280,9 +300,21 @@ function snapshotInstanceEntry(inst) {
   const custom = parseCustomPayload(inst.custom);
   const extras = parseExtrasList(inst?.extras);
   const mysticOrbs = parseMysticOrbsList(inst?.mysticOrbs);
+  const socketables = parseSocketablesList(inst?.socketables);
   const ethereal = inst?.ethereal === true;
+  const corrupted = inst?.corrupted === true;
   const name = inst?.name != null ? String(inst.name).trim() : '';
-  if (!hasIcon && !hasRolls && !custom && !extras.length && !mysticOrbs.length && !ethereal && !name) {
+  if (
+    !hasIcon &&
+    !hasRolls &&
+    !custom &&
+    !extras.length &&
+    !mysticOrbs.length &&
+    !socketables.length &&
+    !ethereal &&
+    !corrupted &&
+    !name
+  ) {
     return defId;
   }
   /** @type {ItemSnapshotEntry} */
@@ -292,7 +324,9 @@ function snapshotInstanceEntry(inst) {
   if (custom) entry.custom = custom;
   if (extras.length) entry.extras = extras;
   if (mysticOrbs.length) entry.mysticOrbs = mysticOrbs;
+  if (socketables.length) entry.socketables = socketables;
   if (ethereal) entry.ethereal = true;
+  if (corrupted) entry.corrupted = true;
   if (name) entry.name = name;
   return entry;
 }
@@ -580,7 +614,12 @@ export const useItemsStore = defineStore('items', {
 
       const promise = (async () => {
         const required = ['baseitems.json', 'charms.json', 'other.json'];
-        const optional = ['relics.json', 'unique-stats-db.json', 'runewords.json'];
+        const optional = [
+          'relics.json',
+          'unique-stats-db.json',
+          'runewords.json',
+          'socketables.json',
+        ];
         try {
           const requiredRes = await Promise.all(
             required.map((file) => fetch(getAssetUrl(`items/${versionFolder}/${file}`)))
@@ -654,6 +693,8 @@ export const useItemsStore = defineStore('items', {
               .map(runewordEntryToItemDef)
               .filter(Boolean);
           }
+          const socketablesData = await readJsonIfOk(optionalRes[3]);
+          loadSocketablesCatalog(Array.isArray(socketablesData) ? socketablesData : []);
 
           this.catalog = [...baseItems, ...charms, ...other, ...overlays, ...relics, ...runewords];
           this.sets = sets;
@@ -745,6 +786,7 @@ export const useItemsStore = defineStore('items', {
       return resolveItemRequirements(def, {
         rolls: this.getRollsForInstance(instanceId),
         extras: this.getExtrasForInstance(instanceId),
+        socketables: this.getSocketablesForInstance(instanceId),
       });
     },
 
@@ -961,7 +1003,9 @@ export const useItemsStore = defineStore('items', {
      * @param {{
      *   extras?: string[]|null,
      *   mysticOrbs?: Array<[number, string]>|null,
+     *   socketables?: import('@/items/socketables.js').SocketableEntry[]|null,
      *   ethereal?: boolean,
+     *   corrupted?: boolean,
      *   name?: string|null,
      * }|null|undefined} [meta]
      * @returns {number}
@@ -1038,6 +1082,16 @@ export const useItemsStore = defineStore('items', {
     getMysticOrbsForInstance(instanceId) {
       const inst = this.instances[instanceId];
       return parseMysticOrbsList(inst?.mysticOrbs);
+    },
+
+    /**
+     * Socket fillers (jewels / runes / gems) on an instance.
+     * @param {number} instanceId
+     * @returns {import('@/items/socketables.js').SocketableEntry[]}
+     */
+    getSocketablesForInstance(instanceId) {
+      const inst = this.instances[instanceId];
+      return parseSocketablesList(inst?.socketables);
     },
 
     /**
@@ -1427,6 +1481,8 @@ export const useItemsStore = defineStore('items', {
         if (instanceExtras.length) opts.extras = instanceExtras;
         const mysticOrbs = this.getMysticOrbsForInstance(instanceId);
         if (mysticOrbs.length) opts.mysticOrbs = mysticOrbs;
+        const socketables = this.getSocketablesForInstance(instanceId);
+        if (socketables.length) opts.socketables = socketables;
       }
       if (!def?.setId) return opts;
       const setDef = this.setsById[def.setId];
@@ -1843,7 +1899,9 @@ export const useItemsStore = defineStore('items', {
        * @param {{
        *   extras?: string[]|null,
        *   mysticOrbs?: Array<[number, string]>|null,
+       *   socketables?: import('@/items/socketables.js').SocketableEntry[]|null,
        *   ethereal?: boolean,
+       *   corrupted?: boolean,
        *   name?: string|null,
        * }|null} [meta]
        * @returns {number}
@@ -1875,7 +1933,9 @@ export const useItemsStore = defineStore('items', {
        *   custom: CustomItemPayload|null,
        *   extras: string[],
        *   mysticOrbs: Array<[number, string]>,
+       *   socketables: import('@/items/socketables.js').SocketableEntry[],
        *   ethereal: boolean,
+       *   corrupted: boolean,
        *   name: string|null,
        * }|null}
        */
@@ -1892,7 +1952,10 @@ export const useItemsStore = defineStore('items', {
         let extrasRaw = null;
         /** @type {unknown} */
         let mysticOrbsRaw = null;
+        /** @type {unknown} */
+        let socketablesRaw = null;
         let ethereal = false;
+        let corrupted = false;
         /** @type {unknown} */
         let nameRaw = null;
         if (typeof entry === 'string') {
@@ -1905,7 +1968,9 @@ export const useItemsStore = defineStore('items', {
           customRaw = rec.custom;
           extrasRaw = rec.extras;
           mysticOrbsRaw = rec.mysticOrbs;
+          socketablesRaw = rec.socketables;
           ethereal = rec.ethereal === true;
+          corrupted = rec.corrupted === true;
           nameRaw = rec.name;
         } else {
           return null;
@@ -1936,7 +2001,9 @@ export const useItemsStore = defineStore('items', {
           custom: parseCustomPayload(customRaw),
           extras: parseExtrasList(extrasRaw),
           mysticOrbs: parseMysticOrbsList(mysticOrbsRaw),
+          socketables: parseSocketablesList(socketablesRaw),
           ethereal,
+          corrupted,
           name: typeof nameRaw === 'string' ? nameRaw.trim() : null,
         };
       };
@@ -1992,7 +2059,9 @@ export const useItemsStore = defineStore('items', {
               {
                 extras: parsed.extras,
                 mysticOrbs: parsed.mysticOrbs,
+                socketables: parsed.socketables,
                 ethereal: parsed.ethereal,
+                corrupted: parsed.corrupted,
                 name: parsed.name,
               }
             );
@@ -2038,7 +2107,9 @@ export const useItemsStore = defineStore('items', {
             const id = makeInstance(parsed.defId, parsed.icon, parsed.rolls, parsed.custom, {
               extras: parsed.extras,
               mysticOrbs: parsed.mysticOrbs,
+              socketables: parsed.socketables,
               ethereal: parsed.ethereal,
+              corrupted: parsed.corrupted,
               name: parsed.name,
             });
             if (canPlace(nextInventory, slot, def.invWidth || 1, def.invHeight || 1, getSize)) {

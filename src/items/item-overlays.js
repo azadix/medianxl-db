@@ -4,12 +4,17 @@
  */
 
 import {
+  affixRollsAreBoosted,
   applyAffixRolls,
   parseAffixRanges,
   buildAffixDisplayParts,
 } from '@/items/affix-rolls.js';
 import { annotateAffixDisplayPartsWithSkills } from '@/items/item-granted-oskills.js';
-import { decodeModifierLine, encodeModifierLine } from '@/items/item-modifier-line.js';
+import {
+  decodeModifierLine,
+  encodeModifierLine,
+  markModifierLineBoosted,
+} from '@/items/item-modifier-line.js';
 
 /**
  * @param {number} min
@@ -91,6 +96,69 @@ export function isSetItem(def) {
  */
 export function overlayAffixRollKey(sourceKey, rangeIndex) {
   return `${OVERLAY_ROLL_KEYS.affixPrefix}${sourceKey}:r${rangeIndex}`;
+}
+
+/**
+ * Roll key for a fixed (non-range) catalog affix number overridden by TSW.
+ * Index 0 is also readable via legacy `modFixed:${sourceKey}` (no `:n0` suffix).
+ * @param {string} sourceKey
+ * @param {number} [numberIndex=0]
+ * @returns {string}
+ */
+export function overlayFixedBoostRollKey(sourceKey, numberIndex = 0) {
+  const i = Math.max(0, Math.floor(Number(numberIndex)) || 0);
+  if (i === 0) return `modFixed:${sourceKey}`;
+  return `modFixed:${sourceKey}:n${i}`;
+}
+
+/**
+ * Replace signed numbers in affix text left-to-right with `values`.
+ * Used for fixed templates like `Adds 7-13 Damage` → `Adds 43-61 Damage`.
+ * @param {string} text
+ * @param {number[]} values
+ * @returns {string}
+ */
+export function replaceAffixNumbers(text, values) {
+  if (!Array.isArray(values) || !values.length) return text;
+  let i = 0;
+  return String(text ?? '').replace(/([+-]?)(\d+(?:\.\d+)?)/g, (full, sign) => {
+    if (i >= values.length) return full;
+    const n = Number(values[i++]);
+    if (!Number.isFinite(n)) return full;
+    if (sign === '+' || sign === '-') {
+      if (n < 0) return String(n);
+      return sign === '-' && n > 0 ? `-${n}` : `+${n}`;
+    }
+    return String(n);
+  });
+}
+
+/**
+ * Replace the first signed number in affix text.
+ * @param {string} text
+ * @param {number} value
+ * @returns {string}
+ */
+export function replaceFirstAffixNumber(text, value) {
+  return replaceAffixNumbers(text, [value]);
+}
+
+/**
+ * Collect fixed-boost override numbers for a source key from rolls.
+ * @param {string} sourceKey
+ * @param {Record<string, number>|null|undefined} rolls
+ * @returns {number[]}
+ */
+export function readFixedBoostValues(sourceKey, rolls) {
+  if (!rolls || typeof rolls !== 'object') return [];
+  /** @type {number[]} */
+  const out = [];
+  for (let i = 0; i < 16; i++) {
+    const key = overlayFixedBoostRollKey(sourceKey, i);
+    if (!Number.isFinite(rolls[key])) break;
+    out.push(rolls[key]);
+  }
+  return out;
 }
 
 /**
@@ -228,12 +296,28 @@ export function resolveOverlayAffixText(
   options = {}
 ) {
   const ranges = parseAffixRanges(text);
-  if (!ranges.length) return text;
+  if (!ranges.length) {
+    const fixedValues = readFixedBoostValues(sourceKey, rolls);
+    if (fixedValues.length) return replaceAffixNumbers(text, fixedValues);
+    return text;
+  }
   if (hideRollableRanges) return null;
   return applyAffixRolls(text, rolls, (i) => overlayAffixRollKey(sourceKey, i), {
     hideRanges: hideRollableRanges,
     showRollRanges: options.showRollRanges === true,
   });
+}
+
+/**
+ * @param {string} text
+ * @param {string} sourceKey
+ * @param {Record<string, number>|null|undefined} rolls
+ * @returns {boolean}
+ */
+export function overlayAffixIsBoosted(text, sourceKey, rolls = null) {
+  if (!rolls) return false;
+  if (readFixedBoostValues(sourceKey, rolls).length) return true;
+  return affixRollsAreBoosted(text, rolls, (i) => overlayAffixRollKey(sourceKey, i));
 }
 
 /**
@@ -346,7 +430,11 @@ export function getOverlayStatLines(def, rolls = null, options = {}) {
       showRollRanges,
     });
     if (text == null) continue;
-    lines.push(encodeModifierLine(text, source.color, source.showCondition));
+    let line = encodeModifierLine(text, source.color, source.showCondition);
+    if (overlayAffixIsBoosted(source.text, source.sourceKey, rolls)) {
+      line = markModifierLineBoosted(line);
+    }
+    lines.push(line);
   }
   return lines;
 }

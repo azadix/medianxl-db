@@ -30,6 +30,10 @@ const props = defineProps({
     type: /** @type {import('vue').PropType<Array<[number, string]>>} */ (Array),
     default: () => [],
   },
+  socketables: {
+    type: /** @type {import('vue').PropType<Array<object>>} */ (Array),
+    default: () => [],
+  },
   emptyText: { type: String, default: 'Select an item to view stats' },
 });
 
@@ -46,6 +50,7 @@ const requirementsLine = computed(() =>
     resolveItemRequirements(props.def, {
       rolls: props.effectiveRolls,
       extras: props.extras,
+      socketables: props.socketables,
     })
   )
 );

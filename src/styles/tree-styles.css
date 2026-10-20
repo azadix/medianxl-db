@@ -711,6 +711,83 @@
     margin-top: 3px;
 }
 
+.item-tooltip-sidepanel__block + .item-tooltip-sidepanel__block {
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.item-tooltip-sock {
+    font-size: 0.82rem;
+    line-height: 1.35;
+}
+
+.item-tooltip-sock + .item-tooltip-sock {
+    margin-top: 6px;
+}
+
+.item-tooltip-sock__head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.item-tooltip-sock__mods {
+    margin: 2px 0 0 1.7rem;
+}
+
+.item-tooltip-sock__mod {
+    color: var(--item-mod-grey, #a8a8a8);
+    font-size: 0.78rem;
+    white-space: nowrap;
+}
+
+.item-tooltip-sock__icon {
+    width: 1.35rem;
+    height: 1.35rem;
+    object-fit: contain;
+    image-rendering: pixelated;
+    flex-shrink: 0;
+}
+
+.item-tooltip-sock__icon--empty,
+.item-tooltip-sock__icon--missing {
+    display: inline-block;
+    box-sizing: border-box;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 2px;
+    background: rgba(0, 0, 0, 0.35);
+}
+
+.item-tooltip-sock--empty .item-tooltip-sock__name {
+    color: #8a8a8a;
+}
+
+.item-tooltip-sock__name--unique {
+    color: var(--item-rarity-unique, #c7b377);
+}
+
+.item-tooltip-sock__name--set {
+    color: var(--item-rarity-set, #00ff00);
+}
+
+.item-tooltip-sock__name--rare {
+    color: var(--item-rarity-rare, #ffff64);
+}
+
+.item-tooltip-sock__name--magic {
+    color: var(--item-rarity-magic, #6969ff);
+}
+
+.item-tooltip-sock__name--crafted {
+    color: var(--item-rarity-crafted, #e88d18);
+}
+
+.item-tooltip-sock__name--rune {
+    color: #ab1994;
+}
+
 .item-tooltip-card {
     --item-rarity-fill: #1a1a1a;
     box-sizing: border-box;
@@ -832,6 +909,10 @@
 .item-mod--grey {
     color: var(--item-mod-grey, #a8a8a8);
     padding-left: 0.55em;
+}
+
+.item-mod--added {
+    color: var(--item-mod-added, #3fd0c9);
 }
 
 .item-mod--inactive {
