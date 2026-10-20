@@ -11,7 +11,7 @@ import {
   resolveItemRequirements,
 } from '@/items/item-requirements.js';
 import { itemRarityNameClass } from '@/items/item-tooltip.js';
-import { formatMysticOrbLine, normalizeMysticOrbs } from '@/items/mystic-orbs.js';
+import { formatMysticOrbRows } from '@/items/mystic-orbs.js';
 import { formatRunewordBadge, isRunewordItem } from '@/items/runeword-items.js';
 import { computed } from 'vue';
 
@@ -41,9 +41,7 @@ const emit = defineEmits(['update:rolls', 'set-roll']);
 
 const subtitle = computed(() => formatItemTooltipSubtitle(props.def));
 const rarityNameClass = computed(() => itemRarityNameClass(props.def?.rarity));
-const mysticOrbLines = computed(() =>
-  normalizeMysticOrbs(props.mysticOrbs).map(([count, name]) => formatMysticOrbLine(count, name))
-);
+const mysticOrbRows = computed(() => formatMysticOrbRows(props.mysticOrbs));
 
 const requirementsLine = computed(() =>
   formatItemRequirementsLine(
@@ -190,14 +188,27 @@ function modLineClass(row) {
     </div>
 
     <div
-      v-if="mysticOrbLines.length"
+      v-if="mysticOrbRows.length"
       class="item-mystic-orbs"
       aria-label="Mystic Orbs"
     >
       <p class="item-mystic-orbs__heading is-size-7 has-text-grey mb-2">Mystic Orbs</p>
       <ul class="item-mystic-orbs__list">
-        <li v-for="(line, idx) in mysticOrbLines" :key="'mo-' + idx" class="item-mystic-orbs__line">
-          {{ line }}
+        <li v-for="(orb, idx) in mysticOrbRows" :key="'mo-' + idx" class="item-mystic-orbs__item">
+          <div
+            class="item-mystic-orbs__line"
+            :class="{
+              'item-mystic-orbs__line--unique': orb.kind === 'unique',
+              'item-mystic-orbs__line--rare': orb.kind === 'rare',
+            }"
+          >
+            {{ orb.label }}
+          </div>
+          <div v-if="orb.mods.length" class="item-mystic-orbs__mods">
+            <div v-for="(mod, midx) in orb.mods" :key="'mo-mod-' + idx + '-' + midx" class="item-mystic-orbs__mod">
+              {{ mod }}
+            </div>
+          </div>
         </li>
       </ul>
     </div>
@@ -235,13 +246,31 @@ function modLineClass(row) {
   list-style: none;
 }
 
+.item-mystic-orbs__item + .item-mystic-orbs__item {
+  margin-top: 0.45rem;
+}
+
 .item-mystic-orbs__line {
   font-size: 0.9rem;
   line-height: 1.35;
   color: #e8e8e8;
 }
 
-.item-mystic-orbs__line + .item-mystic-orbs__line {
-  margin-top: 0.2rem;
+.item-mystic-orbs__line--unique {
+  color: var(--item-rarity-unique, #c7b377);
+}
+
+.item-mystic-orbs__line--rare {
+  color: var(--item-rarity-rare, #ffff64);
+}
+
+.item-mystic-orbs__mods {
+  margin: 0.1rem 0 0 0.7rem;
+}
+
+.item-mystic-orbs__mod {
+  font-size: 0.82rem;
+  line-height: 1.3;
+  color: #a8a8a8;
 }
 </style>

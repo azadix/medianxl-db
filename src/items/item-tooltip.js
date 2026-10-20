@@ -11,7 +11,7 @@ import {
   getItemStatSections,
 } from '@/items/item-stats.js';
 import { formatSetBonusLabel } from '@/items/item-overlays.js';
-import { formatMysticOrbLines } from '@/items/mystic-orbs.js';
+import { formatMysticOrbRows, mysticOrbKind } from '@/items/mystic-orbs.js';
 import { formatRunewordBadge, isRunewordItem } from '@/items/runeword-items.js';
 import {
   getSocketableBonusLines,
@@ -226,6 +226,16 @@ function buildSocketableRowHtml(sock, hostDef) {
 }
 
 /**
+ * @param {string} kind
+ * @returns {string}
+ */
+function mysticOrbNameClass(kind) {
+  if (kind === 'unique') return ' item-tooltip-sock__name--unique';
+  if (kind === 'rare') return ' item-tooltip-sock__name--rare';
+  return '';
+}
+
+/**
  * Side panel: socket fillers then mystic orbs.
  * @param {unknown} socketables
  * @param {unknown} mysticOrbs
@@ -234,8 +244,8 @@ function buildSocketableRowHtml(sock, hostDef) {
  */
 function buildItemTooltipSidepanelHtml(socketables, mysticOrbs, ctx = {}) {
   const socks = normalizeSocketables(socketables);
-  const orbLines = formatMysticOrbLines(mysticOrbs);
-  if (!socks.length && !orbLines.length) return '';
+  const orbRows = formatMysticOrbRows(mysticOrbs);
+  if (!socks.length && !orbRows.length) return '';
 
   /** @type {string[]} */
   const blocks = [];
@@ -254,9 +264,18 @@ function buildItemTooltipSidepanelHtml(socketables, mysticOrbs, ctx = {}) {
       ${rows}${empty}
     </div>`);
   }
-  if (orbLines.length) {
-    const rows = orbLines
-      .map((line) => `<div class="item-tooltip-sidepanel__line">${escapeHtmlText(line)}</div>`)
+  if (orbRows.length) {
+    const rows = orbRows
+      .map((orb) => {
+        const kind = orb.kind || mysticOrbKind(orb.name);
+        const mods = (orb.mods || [])
+          .map((line) => `<div class="item-tooltip-sock__mod">${escapeHtmlText(line)}</div>`)
+          .join('');
+        return `<div class="item-tooltip-sock">
+    <div class="item-tooltip-sock__head"><span class="item-tooltip-sock__name${mysticOrbNameClass(kind)}">${escapeHtmlText(orb.label)}</span></div>
+    ${mods ? `<div class="item-tooltip-sock__mods">${mods}</div>` : ''}
+  </div>`;
+      })
       .join('');
     blocks.push(`<div class="item-tooltip-sidepanel__block">
       <div class="item-tooltip-sidepanel__title">Mystic Orbs</div>

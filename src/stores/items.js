@@ -64,7 +64,7 @@ import {
   runewordFitsEquipSlot,
 } from '@/items/runeword-items.js';
 import { applyCustomOverlayToDef, parseCustomPayload } from '@/items/custom-items.js';
-import { normalizeMysticOrbs } from '@/items/mystic-orbs.js';
+import { loadMysticOrbsCatalog, normalizeMysticOrbs } from '@/items/mystic-orbs.js';
 import { loadSocketablesCatalog, normalizeSocketables } from '@/items/socketables.js';
 
 /** When true, equip/enable paths skip raising planner level for item reqs. */
@@ -619,6 +619,7 @@ export const useItemsStore = defineStore('items', {
           'unique-stats-db.json',
           'runewords.json',
           'socketables.json',
+          'mystic-orbs.json',
         ];
         try {
           const requiredRes = await Promise.all(
@@ -695,6 +696,8 @@ export const useItemsStore = defineStore('items', {
           }
           const socketablesData = await readJsonIfOk(optionalRes[3]);
           loadSocketablesCatalog(Array.isArray(socketablesData) ? socketablesData : []);
+          const mysticOrbsData = await readJsonIfOk(optionalRes[4]);
+          loadMysticOrbsCatalog(Array.isArray(mysticOrbsData) ? mysticOrbsData : []);
 
           this.catalog = [...baseItems, ...charms, ...other, ...overlays, ...relics, ...runewords];
           this.sets = sets;

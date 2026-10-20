@@ -1,9 +1,20 @@
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { describe, expect, it, beforeEach } from 'vitest';
 import { buildItemTooltipHtml } from '@/items/item-tooltip.js';
+import { loadMysticOrbsCatalog } from '@/items/mystic-orbs.js';
 import { loadSocketablesCatalog } from '@/items/socketables.js';
 import { getItemStatSections } from '@/items/item-stats.js';
 
+const mysticOrbsCatalog = JSON.parse(
+  readFileSync(resolve('public/items/2_14/mystic-orbs.json'), 'utf8')
+);
+
 describe('buildItemTooltipHtml', () => {
+  beforeEach(() => {
+    loadMysticOrbsCatalog(mysticOrbsCatalog);
+  });
+
   it('returns empty for missing def', () => {
     expect(buildItemTooltipHtml(null)).toBe('');
     expect(buildItemTooltipHtml(undefined)).toBe('');
@@ -105,8 +116,9 @@ describe('buildItemTooltipHtml', () => {
     expect(html).toContain('item-tooltip-sidepanel');
     expect(html).toContain('Mystic Orbs');
     expect(html).toContain('5x MO - Total Char Defense');
-    expect(html).toContain('Weight of Talent');
-    expect(html).not.toContain('1x Weight of Talent');
+    expect(html).toContain('+25% Total Character Defense');
+    expect(html).toContain('1x Weight of Talent');
+    expect(html).toContain('+1 to All Skills');
   });
 
   it('lists socketables above mystic orbs with icons and marks added extras', () => {
@@ -167,8 +179,9 @@ describe('buildItemTooltipHtml', () => {
     expect(html).toContain('item-tooltip-sock__mod');
     expect(html).toContain('+5% Cast Speed');
     expect(html).toContain('2% Deadly Strike');
-    expect(html.indexOf("Zann Esu's Stone")).toBeLessThan(html.indexOf('+5% Cast Speed'));
-    expect(html.indexOf('+5% Cast Speed')).toBeLessThan(html.indexOf('Qor Rune'));
+    expect(html).toContain('Adds 6-12 Damage');
+    expect(html.indexOf("Zann Esu's Stone")).toBeLessThan(html.indexOf('+3% to Spell Damage'));
+    expect(html.indexOf('+3% to Spell Damage')).toBeLessThan(html.indexOf('Qor Rune'));
   });
 
   it('groups set bonuses separately from item stats', () => {
