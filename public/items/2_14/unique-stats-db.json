@@ -2352,7 +2352,7 @@
     {
       "name": "Despondence",
       "quality": "SU",
-      "stats": "Required Level: 125\nItem Level: 110\n{grey}Despair\n{grey}Nearby Enemies: -30% Attack Rating and -25% Weapon Physical Damage\n{grey}16.6 Yard Radius\n+50% to Spell Damage\n-(20 to 30)% to Enemy Cold Resistance\n+1 to Vindicate\n+(20 to 30) to Voidstar\n+(600 to 1000) to Life\nLightning Resist -100%",
+      "stats": "Required Level: 125\nItem Level: 110\n{orange}Despair\n{grey}Nearby Enemies: -30% Attack Rating and -25% Weapon Physical Damage\n{grey}16.6 Yard Radius\n+50% to Spell Damage\n-(20 to 30)% to Enemy Cold Resistance\n+1 to Vindicate\n+(20 to 30) to Voidstar\n+(600 to 1000) to Life\nLightning Resist -100%",
       "source": "secret",
       "type": "Voidforged Staff"
     },
