@@ -1948,7 +1948,26 @@
 .item-picker-modal__stat-line.item-mod--grey,
 .item-picker-modal__roll-row.item-mod--grey .item-picker-modal__roll-display {
   color: var(--item-mod-grey, #a8a8a8);
+}
+
+.item-tooltip-section--mods .item-picker-modal__stat-line.item-mod--grey,
+.item-tooltip-section--mods .item-picker-modal__roll-row.item-mod--grey .item-picker-modal__roll-display {
   padding-left: 0.55em;
+}
+
+.item-picker-modal__stat-line.item-mod--red,
+.item-picker-modal__roll-row.item-mod--red .item-picker-modal__roll-display {
+  color: var(--item-mod-red, #ff4040);
+}
+
+.item-picker-modal__stat-line.item-mod--green,
+.item-picker-modal__roll-row.item-mod--green .item-picker-modal__roll-display {
+  color: var(--item-mod-green, var(--item-rarity-set, #00c000));
+}
+
+.item-picker-modal__stat-line.item-mod--darkgreen,
+.item-picker-modal__roll-row.item-mod--darkgreen .item-picker-modal__roll-display {
+  color: var(--item-mod-darkgreen, #1a8a1a);
 }
 
 .item-picker-modal__stat-line.item-mod--inactive,

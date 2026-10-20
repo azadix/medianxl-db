@@ -10,12 +10,15 @@ import { isConditionSelected } from '@/stores/planner-config-store.js';
 export const MODIFIER_COLOR_MAGIC = 'magic';
 export const MODIFIER_COLOR_ORANGE = 'orange';
 export const MODIFIER_COLOR_GREY = 'grey';
+export const MODIFIER_COLOR_RED = 'red';
+export const MODIFIER_COLOR_GREEN = 'green';
+export const MODIFIER_COLOR_DARKGREEN = 'darkgreen';
 /** Non-baseline extras (MOs / jewels / corruption leftovers). */
 export const MODIFIER_COLOR_ADDED = 'added';
 /** Catalog affix whose rolled value is outside the unique min/max. */
 export const MODIFIER_COLOR_BOOSTED = 'boosted';
 
-const COLOR_PREFIX_RE = /^\{(orange|grey|added|boosted)\}/;
+const COLOR_PREFIX_RE = /^\{(orange|grey|added|boosted|red|green|darkgreen)\}/;
 const COND_PREFIX_RE = /^\{cond:([a-zA-Z0-9_]+)\}/;
 
 /** @type {ReadonlyArray<{ re: RegExp, key: string }>} */
@@ -80,6 +83,9 @@ export function encodeModifierLine(text, color, showCondition = null) {
   let out = value;
   if (color === MODIFIER_COLOR_ORANGE) out = `{orange}${out}`;
   else if (color === MODIFIER_COLOR_GREY) out = `{grey}${out}`;
+  else if (color === MODIFIER_COLOR_RED) out = `{red}${out}`;
+  else if (color === MODIFIER_COLOR_GREEN) out = `{green}${out}`;
+  else if (color === MODIFIER_COLOR_DARKGREEN) out = `{darkgreen}${out}`;
   else if (color === MODIFIER_COLOR_ADDED) out = `{added}${out}`;
   else if (color === MODIFIER_COLOR_BOOSTED) out = `{boosted}${out}`;
   const conds = Array.isArray(showCondition)
@@ -291,6 +297,9 @@ export function isModifierLineActive(line) {
 export function modifierColorCssClass(color) {
   if (color === MODIFIER_COLOR_ORANGE) return 'item-mod--orange';
   if (color === MODIFIER_COLOR_GREY) return 'item-mod--grey';
+  if (color === MODIFIER_COLOR_RED) return 'item-mod--red';
+  if (color === MODIFIER_COLOR_GREEN) return 'item-mod--green';
+  if (color === MODIFIER_COLOR_DARKGREEN) return 'item-mod--darkgreen';
   if (color === MODIFIER_COLOR_ADDED || color === MODIFIER_COLOR_BOOSTED) {
     return 'item-mod--added';
   }

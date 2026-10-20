@@ -46,7 +46,7 @@ import { parseTswSocketables } from '@/items/socketables.js';
 
 /** Boilerplate / flags that are not planner modifier lines. */
 const TSW_EXTRA_SKIP_RE =
-  /^(Defense:|One-Hand Damage|Two-Hand Damage|Throw Damage|Required |Durability|Item Level|Quality Level|Prefixes:|Suffixes:|Socketed \(|Can be Inserted|Ethereal|Corrupted|Already Upgraded|Quantity|Chance to Block|Innate \w+ Damage:|\(.*\)$)/i;
+  /^(Defense:|One-Hand Damage|Two-Hand Damage|Throw Damage|Required |Durability|Item Level|Quality Level|Prefixes:|Suffixes:|Socketed \(|Can be Inserted|Ethereal|Corrupted|Quantity|Chance to Block|Innate \w+ Damage:|\(.*\)$)/i;
 
 /** In-game set-tooltip headers that TSW appends after item mods. */
 const SET_BONUS_HEADER_RE = /^Set Bonus with (complete set|\d+ or more set items):?$/i;

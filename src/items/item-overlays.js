@@ -15,6 +15,7 @@ import {
   encodeModifierLine,
   markModifierLineBoosted,
 } from '@/items/item-modifier-line.js';
+import { isItemStateFlagLine } from '@/items/item-state-flags.js';
 
 /**
  * @param {number} min
@@ -267,7 +268,7 @@ export function collectOverlayAffixSources(def, rolls = null) {
     if (typeof mod !== 'string' || !mod.trim()) continue;
     const { text, color, showCondition } = decodeModifierLine(mod);
     if (!text) continue;
-    if (/^Ethereal$/i.test(text)) continue;
+    if (isItemStateFlagLine(text)) continue;
     if (innateText && text.trim() === innateText) continue;
     out.push({
       sourceKey: `base:m${i}`,

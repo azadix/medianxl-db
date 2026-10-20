@@ -1402,6 +1402,7 @@ export const useItemsStore = defineStore('items', {
       /** @type {Record<string, unknown>} */
       const out = { ...withCustom };
       if (inst.ethereal === true && !withCustom.ethereal) out.ethereal = true;
+      if (inst.corrupted === true && !withCustom.corrupted) out.corrupted = true;
       const name = inst.name != null ? String(inst.name).trim() : '';
       if (name) {
         out.name = name;

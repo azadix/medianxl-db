@@ -84,6 +84,7 @@ describe('tsw item extras', () => {
     const extras = extrasFromTswItem(silksRow, silksDef);
     expect(extras).toEqual(
       expect.arrayContaining([
+        'Already Upgraded',
         '+25% Bonus to Defense',
         'Requirements -5%',
         '+35 Required Level',

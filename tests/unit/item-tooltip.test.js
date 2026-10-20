@@ -252,6 +252,8 @@ describe('getItemStatSections', () => {
         ],
       }
     );
+    expect(sections.base).toContain('{darkgreen}Orb Effects Applied to this Item are Doubled');
+    expect(sections.mods).not.toContain('Orb Effects Applied to this Item are Doubled');
     expect(sections.mods).toContain('2% Reanimate as: Undead Marksman');
     expect(sections.mods).not.toContain('2% Reanimate as: Random Monster');
     expect(sections.mods.filter((line) => /Reanimate as:/i.test(line))).toHaveLength(1);

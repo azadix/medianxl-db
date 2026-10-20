@@ -32,6 +32,10 @@ import {
   applyResolvedRandomReanimates,
   markModifierLineAdded,
 } from '@/items/item-modifier-line.js';
+import {
+  collectItemStateFlagLines,
+  stripItemStateFlagLines,
+} from '@/items/item-state-flags.js';
 
 /** @type {Readonly<Record<string, string>>} */
 export const ITEM_CATEGORY_LABEL = Object.freeze({
@@ -424,7 +428,14 @@ export function getItemStatSections(def, rolls = null, options = {}) {
   if (def.range != null) base.push(`Melee range: ${def.range}`);
   if (def.speed != null) base.push(`Attack Speed Modifier: ${def.speed}`);
   if (def.movePenalty != null) base.push(`Movement Speed Penalty: ${def.movePenalty}`);
-  if (def.ethereal) base.push('{grey}Ethereal');
+  base.push(
+    ...collectItemStateFlagLines({
+      ethereal: def.ethereal === true,
+      corrupted: def.corrupted === true,
+      modifiers: def.modifiers,
+      extras: options.extras ?? null,
+    })
+  );
 
   if (def.strDamageBonus != null) {
     scaling.push(`Strength Damage Bonus: (${def.strDamageBonus} per Strength)%`);
@@ -486,9 +497,11 @@ export function getItemStatSections(def, rolls = null, options = {}) {
   }
 
   /** @type {string[]} */
-  const extras = Array.isArray(options.extras)
-    ? options.extras.map((line) => String(line || '').trim()).filter(Boolean)
-    : [];
+  const extras = stripItemStateFlagLines(
+    Array.isArray(options.extras)
+      ? options.extras.map((line) => String(line || '').trim()).filter(Boolean)
+      : []
+  );
   const merged = applyResolvedRandomReanimates(mods, extras);
   mods.length = 0;
   mods.push(...merged.mods, ...merged.extras.map((line) => markModifierLineAdded(line)));
@@ -532,6 +545,7 @@ export function getItemDetailStatRows(def, rolls = null, options = {}) {
   const hasSocketables = Array.isArray(options.socketables) && options.socketables.length > 0;
   // Match tooltip sectioning (base/scaling vs mods); Socketed is last in the base block.
   // Pass extras only after overlay/charm rows so they appear under catalog affixes.
+  // Extras are merged after overlay rows; still hoist state flags into base first.
   const sections = getItemStatSections(def, rolls, {
     hideRollableRanges: true,
     characterLevel: options.characterLevel ?? null,
@@ -540,13 +554,21 @@ export function getItemDetailStatRows(def, rolls = null, options = {}) {
     charmHeaderOnly: true,
     socketables: options.socketables ?? null,
   });
+  const flagLines = collectItemStateFlagLines({
+    ethereal: def.ethereal === true,
+    corrupted: def.corrupted === true,
+    modifiers: def.modifiers,
+    extras,
+  });
   /** @type {ItemDetailStatRow[]} */
   const rows = [
-    ...[...sections.base, ...sections.scaling].map((text) => ({
-      kind: /** @type {const} */ ('text'),
-      text,
-      section: /** @type {const} */ ('base'),
-    })),
+    ...[...stripItemStateFlagLines(sections.base), ...flagLines, ...sections.scaling].map(
+      (text) => ({
+        kind: /** @type {const} */ ('text'),
+        text,
+        section: /** @type {const} */ ('base'),
+      })
+    ),
     ...sections.mods.map((text) => ({
       kind: /** @type {const} */ ('text'),
       text,
@@ -572,7 +594,7 @@ export function getItemDetailStatRows(def, rolls = null, options = {}) {
         modTexts.push(row.text);
       }
     });
-    const merged = applyResolvedRandomReanimates(modTexts, extras);
+    const merged = applyResolvedRandomReanimates(modTexts, stripItemStateFlagLines(extras));
     merged.mods.forEach((text, i) => {
       const row = rows[modIndexes[i]];
       if (row && row.kind === 'text') row.text = text;

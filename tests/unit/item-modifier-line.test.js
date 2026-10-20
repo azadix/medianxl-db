@@ -27,6 +27,11 @@ describe('item modifier color encoding', () => {
       '{grey}+200% to Fire Spell Damage'
     );
     expect(encodeModifierLine('+1 to All Skills', 'magic')).toBe('+1 to All Skills');
+    expect(encodeModifierLine('Corrupted', 'red')).toBe('{red}Corrupted');
+    expect(encodeModifierLine('Already Upgraded', 'green')).toBe('{green}Already Upgraded');
+    expect(encodeModifierLine('Orb Effects Applied to this Item are Doubled', 'darkgreen')).toBe(
+      '{darkgreen}Orb Effects Applied to this Item are Doubled'
+    );
   });
 
   it('treats grey lines as conditional effects', () => {

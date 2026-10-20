@@ -15,6 +15,9 @@
     --item-rarity-unmet: #ff3030;
     --item-mod-orange: #e88d18;
     --item-mod-grey: #a8a8a8;
+    --item-mod-red: #ff4040;
+    --item-mod-green: var(--item-rarity-set);
+    --item-mod-darkgreen: #1a8a1a;
     --item-rarity-color: var(--item-rarity-normal);
     --item-rarity-fill-center-mix: 34%;
     --item-rarity-fill-mid-mix: 16%;
@@ -949,7 +952,23 @@
 
 .item-mod--grey {
     color: var(--item-mod-grey, #a8a8a8);
+}
+
+/* Indented grey sub-lines under orange flavor; base flags (Ethereal) stay flush. */
+.item-tooltip-section--mods .item-mod--grey {
     padding-left: 0.55em;
+}
+
+.item-mod--red {
+    color: var(--item-mod-red, #ff4040);
+}
+
+.item-mod--green {
+    color: var(--item-mod-green, var(--item-rarity-set, #00c000));
+}
+
+.item-mod--darkgreen {
+    color: var(--item-mod-darkgreen, #1a8a1a);
 }
 
 .item-mod--added {
