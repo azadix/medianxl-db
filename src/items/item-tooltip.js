@@ -226,6 +226,18 @@ function buildSocketableRowHtml(sock, hostDef) {
 }
 
 /**
+ * Collapsed-by-default section header (mods expand on click).
+ * @param {string} title
+ * @returns {string}
+ */
+function sidepanelToggleHtml(title) {
+  return `<button type="button" class="item-tooltip-sidepanel__toggle" aria-expanded="false">
+      <span class="item-tooltip-sidepanel__arrow" aria-hidden="true"></span>
+      <span class="item-tooltip-sidepanel__title">${escapeHtmlText(title)}</span>
+    </button>`;
+}
+
+/**
  * @param {string} kind
  * @returns {string}
  */
@@ -260,7 +272,7 @@ function buildItemTooltipSidepanelHtml(socketables, mysticOrbs, ctx = {}) {
           }).join('')
         : '';
     blocks.push(`<div class="item-tooltip-sidepanel__block">
-      <div class="item-tooltip-sidepanel__title">Sockets</div>
+      ${sidepanelToggleHtml('Sockets')}
       ${rows}${empty}
     </div>`);
   }
@@ -278,7 +290,7 @@ function buildItemTooltipSidepanelHtml(socketables, mysticOrbs, ctx = {}) {
       })
       .join('');
     blocks.push(`<div class="item-tooltip-sidepanel__block">
-      <div class="item-tooltip-sidepanel__title">Mystic Orbs</div>
+      ${sidepanelToggleHtml('Mystic Orbs')}
       ${rows}
     </div>`);
   }

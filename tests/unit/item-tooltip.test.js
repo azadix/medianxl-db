@@ -114,6 +114,8 @@ describe('buildItemTooltipHtml', () => {
     );
     expect(html).toContain('item-tooltip-layout');
     expect(html).toContain('item-tooltip-sidepanel');
+    expect(html).toContain('item-tooltip-sidepanel__toggle');
+    expect(html).toContain('aria-expanded="false"');
     expect(html).toContain('Mystic Orbs');
     expect(html).toContain('5x MO - Total Char Defense');
     expect(html).toContain('+25% Total Character Defense');

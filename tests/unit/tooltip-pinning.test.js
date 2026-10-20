@@ -78,6 +78,26 @@ describe('tooltip pinning', () => {
     expect(portal.style.getPropertyValue('--tooltip-pin-inset-right')).toBe('134px');
   });
 
+  it('expands socket and mystic orb mods from the section header', () => {
+    portal.innerHTML = `<div class="item-tooltip-layout">
+      <div class="item-tooltip-card tooltip-content">Item</div>
+      <aside class="item-tooltip-sidepanel">
+        <div class="item-tooltip-sidepanel__block">
+          <button type="button" class="item-tooltip-sidepanel__toggle" aria-expanded="false">Sockets</button>
+          <div class="item-tooltip-sock__mods">+5% Cast Speed</div>
+        </div>
+      </aside>
+    </div>`;
+    const toggle = portal.querySelector('.item-tooltip-sidepanel__toggle');
+    const block = portal.querySelector('.item-tooltip-sidepanel__block');
+    toggle.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+    expect(block.classList.contains('is-expanded')).toBe(true);
+    expect(toggle.getAttribute('aria-expanded')).toBe('true');
+    toggle.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+    expect(block.classList.contains('is-expanded')).toBe(false);
+    expect(toggle.getAttribute('aria-expanded')).toBe('false');
+  });
+
   it('mounts the skill pin on the main card when SOURCES sits beside it', () => {
     portal.className = 'skill-tooltip';
     portal.innerHTML =

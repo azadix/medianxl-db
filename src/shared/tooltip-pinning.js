@@ -121,6 +121,7 @@ export function initTooltipPinning() {
   document.addEventListener('mousemove', onDocumentMouseMove, true);
   document.addEventListener('mouseup', onDocumentMouseUp, true);
   document.addEventListener('click', onDocumentPinClick, true);
+  document.addEventListener('click', onDocumentSidepanelToggle, true);
   document.addEventListener('mouseover', onNestedSkillOver, true);
   document.addEventListener('mousemove', onNestedSkillMove, true);
   document.addEventListener('mouseout', onNestedSkillOut, true);
@@ -140,6 +141,7 @@ export function destroyTooltipPinning() {
   document.removeEventListener('mousemove', onDocumentMouseMove, true);
   document.removeEventListener('mouseup', onDocumentMouseUp, true);
   document.removeEventListener('click', onDocumentPinClick, true);
+  document.removeEventListener('click', onDocumentSidepanelToggle, true);
   document.removeEventListener('mouseover', onNestedSkillOver, true);
   document.removeEventListener('mousemove', onNestedSkillMove, true);
   document.removeEventListener('mouseout', onNestedSkillOut, true);
@@ -645,6 +647,25 @@ function ensurePinButton(el, opts) {
   // Keep pin clickable even when the live portal has pointer-events: none.
   btn.style.pointerEvents = 'auto';
   syncTooltipPinPlacement(el);
+}
+
+/**
+ * Expand / collapse socket and mystic-orb bonus lines.
+ * @param {MouseEvent} e
+ */
+function onDocumentSidepanelToggle(e) {
+  const t = e.target;
+  if (!(t instanceof Element)) return;
+  const toggle = t.closest('.item-tooltip-sidepanel__toggle');
+  if (!toggle) return;
+  const block = toggle.closest('.item-tooltip-sidepanel__block');
+  if (!(block instanceof HTMLElement)) return;
+  e.preventDefault();
+  e.stopPropagation();
+  const expanded = block.classList.toggle('is-expanded');
+  toggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+  const shell = toggle.closest('.skill-tooltip, .tooltip-pin-host');
+  if (shell instanceof HTMLElement) syncTooltipPinPlacement(shell);
 }
 
 /**
