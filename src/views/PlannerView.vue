@@ -92,18 +92,26 @@ onUnmounted(() => {
 
 <template>
   <div class="planner-route section px-1 py-0">
-    <div
-      v-if="tswImportLoading"
-      class="notification is-info is-light tsw-import-loading"
-      role="status"
-      aria-live="polite"
-    >
-      Loading build...
+    <div class="container is-hidden-tablet planner-mobile-unsupported">
+      <div class="notification is-warning is-light">
+        <p class="has-text-weight-semibold mb-2">Planner is not supported on mobile.</p>
+        <p class="mb-0">Use a tablet or desktop browser to plan builds.</p>
+      </div>
     </div>
-    <SkillTooltipHost />
-    <PlannerMenuSection v-show="activeSection === 'menu'" />
-    <PlannerTreeSection v-show="activeSection === 'tree'" />
-    <PlannerLoadSection v-show="activeSection === 'load'" />
+    <div class="is-hidden-mobile">
+      <div
+        v-if="tswImportLoading"
+        class="notification is-info is-light tsw-import-loading"
+        role="status"
+        aria-live="polite"
+      >
+        Loading build...
+      </div>
+      <SkillTooltipHost />
+      <PlannerMenuSection v-show="activeSection === 'menu'" />
+      <PlannerTreeSection v-show="activeSection === 'tree'" />
+      <PlannerLoadSection v-show="activeSection === 'load'" />
+    </div>
   </div>
 </template>
 
@@ -111,6 +119,11 @@ onUnmounted(() => {
 .planner-route {
   margin-top: 0;
   overflow: visible;
+}
+
+.planner-mobile-unsupported {
+  max-width: 32rem;
+  padding: 1.5rem 0.75rem;
 }
 
 .tsw-import-loading {

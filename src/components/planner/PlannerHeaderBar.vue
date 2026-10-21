@@ -36,6 +36,7 @@ const { spentPoints, effectiveLevel } = usePlannerSkillPoints();
 const itemsStore = useItemsStore();
 
 const showOptionsModal = ref(false);
+const showMoreMenu = ref(false);
 const draftAutoLevelFromSp = ref(true);
 const draftAutoMatchStatReqs = ref(true);
 const draftCharacterLevel = ref(1);
@@ -65,6 +66,39 @@ function openPlannerOptions() {
 
 function closePlannerOptions() {
   showOptionsModal.value = false;
+}
+
+function toggleMoreMenu() {
+  showMoreMenu.value = !showMoreMenu.value;
+}
+
+function closeMoreMenu() {
+  showMoreMenu.value = false;
+}
+
+/**
+ * @param {() => void} action
+ */
+function runMoreAction(action) {
+  closeMoreMenu();
+  action();
+}
+
+/**
+ * @param {Event} e
+ */
+function onGlobalPointerDown(e) {
+  const el = /** @type {HTMLElement | null} */ (e.target);
+  if (!el?.closest) return;
+  if (el.closest('.planner-header-more')) return;
+  closeMoreMenu();
+}
+
+/**
+ * @param {KeyboardEvent} e
+ */
+function onGlobalKeydown(e) {
+  if (e.key === 'Escape') closeMoreMenu();
 }
 
 function applyPlannerOptions() {
@@ -103,12 +137,16 @@ onMounted(() => {
   onRefresh();
   setBuildNameLabel(getCurrentBuildDisplayName());
   window.addEventListener('plannerBuildNameChanged', onBuildNameChanged);
+  document.addEventListener('pointerdown', onGlobalPointerDown, true);
+  document.addEventListener('keydown', onGlobalKeydown);
 });
 
 usePlannerRevisionRefresh(onRefresh);
 
 onUnmounted(() => {
   window.removeEventListener('plannerBuildNameChanged', onBuildNameChanged);
+  document.removeEventListener('pointerdown', onGlobalPointerDown, true);
+  document.removeEventListener('keydown', onGlobalKeydown);
 });
 </script>
 
@@ -119,24 +157,44 @@ onUnmounted(() => {
         <span class="icon"><i class="fa-solid fa-arrow-left"></i></span>
         <span>Menu</span>
       </button>
-      <button id="saveBuildBtn" class="button is-success is-outlined" type="button" @click="plannerSaveBuildClick">
+      <button
+        id="saveBuildBtn"
+        class="button is-success is-outlined is-hidden-mobile"
+        type="button"
+        @click="plannerSaveBuildClick"
+      >
         <span class="icon"><i class="fa-solid fa-floppy-disk"></i></span>
         <span>Save</span>
       </button>
-      <button id="saveAsBuildBtn" class="button is-success is-outlined" type="button" @click="plannerSaveAsBuildClick">
+      <button
+        id="saveAsBuildBtn"
+        class="button is-success is-outlined is-hidden-mobile"
+        type="button"
+        @click="plannerSaveAsBuildClick"
+      >
         <span>Save As</span>
       </button>
-      <button id="exportBuildBtn" class="button is-link is-outlined" type="button" @click="plannerExportBuildClick">
+      <button
+        id="exportBuildBtn"
+        class="button is-link is-outlined is-hidden-mobile"
+        type="button"
+        @click="plannerExportBuildClick"
+      >
         <span class="icon"><i class="fa-solid fa-arrow-up-from-bracket"></i></span>
         <span>Export</span>
       </button>
-      <button id="resetBuildBtn" class="button is-danger is-outlined" type="button" @click="plannerResetBuildClick">
+      <button
+        id="resetBuildBtn"
+        class="button is-danger is-outlined is-hidden-mobile"
+        type="button"
+        @click="plannerResetBuildClick"
+      >
         <span class="icon"><i class="fa-solid fa-rotate-left"></i></span>
         <span>Reset</span>
       </button>
       <button
         id="plannerOptionsBtn"
-        class="button is-light is-outlined"
+        class="button is-light is-outlined is-hidden-mobile"
         type="button"
         title="Planner options"
         aria-label="Planner options"
@@ -146,7 +204,7 @@ onUnmounted(() => {
       </button>
       <button
         id="plannerHelpBtn"
-        class="button is-info is-outlined"
+        class="button is-info is-outlined is-hidden-mobile"
         type="button"
         title="Planner help"
         aria-label="Planner help"
@@ -154,6 +212,43 @@ onUnmounted(() => {
       >
         <span>?</span>
       </button>
+      <div class="dropdown planner-header-more is-hidden-tablet" :class="{ 'is-active': showMoreMenu }">
+        <div class="dropdown-trigger">
+          <button
+            type="button"
+            class="button is-light is-outlined planner-header-more-trigger"
+            title="More planner actions"
+            aria-label="More planner actions"
+            :aria-expanded="showMoreMenu"
+            @click.stop="toggleMoreMenu"
+          >
+            <span class="icon"><i class="fa-solid fa-ellipsis-vertical"></i></span>
+          </button>
+        </div>
+        <div class="dropdown-menu" role="menu">
+          <div class="dropdown-content">
+            <button type="button" class="dropdown-item" role="menuitem" @click="runMoreAction(plannerSaveBuildClick)">
+              Save
+            </button>
+            <button type="button" class="dropdown-item" role="menuitem" @click="runMoreAction(plannerSaveAsBuildClick)">
+              Save As
+            </button>
+            <button type="button" class="dropdown-item" role="menuitem" @click="runMoreAction(plannerExportBuildClick)">
+              Export
+            </button>
+            <button type="button" class="dropdown-item" role="menuitem" @click="runMoreAction(plannerResetBuildClick)">
+              Reset
+            </button>
+            <hr class="dropdown-divider" />
+            <button type="button" class="dropdown-item" role="menuitem" @click="runMoreAction(openPlannerOptions)">
+              Options
+            </button>
+            <button type="button" class="dropdown-item" role="menuitem" @click="runMoreAction(plannerMenuOpenHelp)">
+              Help
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div
