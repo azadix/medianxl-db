@@ -440,7 +440,11 @@
     ],
     "kind": "umo",
     "slots": "jewelry",
-    "maxStacks": 2
+    "maxStacks": 2,
+    "reqLevelPerStack": 10,
+    "aliases": [
+      "Kara's Trinket"
+    ]
   },
   {
     "name": "Monsterball",
@@ -452,7 +456,11 @@
     ],
     "kind": "umo",
     "slots": "jewelry",
-    "maxStacks": 2
+    "maxStacks": 2,
+    "reqLevelPerStack": 10,
+    "aliases": [
+      "Monsterball"
+    ]
   },
   {
     "name": "Heart of Frost",
@@ -463,13 +471,14 @@
     ],
     "kind": "umo",
     "slots": "jewelry",
-    "maxStacks": 2
+    "maxStacks": 2,
+    "reqLevelPerStack": 10,
+    "aliases": [
+      "Heart of Frost"
+    ]
   },
   {
-    "name": "Relic of Yaerius",
-    "aliases": [
-      "Hand of Yaerius"
-    ],
+    "name": "Hand of Yaerius",
     "modifiers": [
       "+5 to Maximum Damage",
       "+12% Damage to Undead",
@@ -478,13 +487,14 @@
     ],
     "kind": "umo",
     "slots": "jewelry",
-    "maxStacks": 2
+    "maxStacks": 2,
+    "reqLevelPerStack": 10,
+    "aliases": [
+      "Hand of Yaerius"
+    ]
   },
   {
     "name": "The Endless Light",
-    "aliases": [
-      "Endless Light"
-    ],
     "modifiers": [
       "-3% to Enemy Elemental Resistances",
       "+100 Defense",
@@ -492,7 +502,104 @@
     ],
     "kind": "umo",
     "slots": "jewelry",
-    "maxStacks": 2
+    "maxStacks": 2,
+    "reqLevelPerStack": 10,
+    "aliases": [
+      "The Endless Light"
+    ]
+  },
+  {
+    "name": "Farnham's Lost Marble",
+    "modifiers": [
+      "1% Movement Speed",
+      "+30 Life on Melee Attack",
+      "+30 Mana on Melee Attack"
+    ],
+    "kind": "umo",
+    "slots": "jewelry",
+    "maxStacks": 2,
+    "reqLevelPerStack": 10,
+    "aliases": [
+      "Farnham's Lost Marble"
+    ]
+  },
+  {
+    "name": "Eye of Malic",
+    "modifiers": [
+      "3% Chance to cast level 60 Flash on Melee Attack",
+      "-3% to Enemy Lightning Resistance",
+      "Lightning Resist +10%"
+    ],
+    "kind": "umo",
+    "slots": "jewelry",
+    "maxStacks": 2,
+    "reqLevelPerStack": 10,
+    "aliases": [
+      "Eye of Malic"
+    ]
+  },
+  {
+    "name": "Explorer's Globe",
+    "modifiers": [
+      "-2 to all Attributes",
+      "2% to All Attributes"
+    ],
+    "kind": "umo",
+    "slots": "jewelry",
+    "maxStacks": 2,
+    "reqLevelPerStack": 10,
+    "aliases": [
+      "Explorer's Globe"
+    ]
+  },
+  {
+    "name": "Imperfect Sphere (Fire/Lightning)",
+    "modifiers": [
+      "Maximum Fire Resist +1%",
+      "Maximum Lightning Resist +1%",
+      "Maximum Cold Resist -1%"
+    ],
+    "kind": "umo",
+    "slots": "jewelry",
+    "maxStacks": 1,
+    "reqLevelPerStack": 9,
+    "aliases": [
+      "Imperfect Sphere",
+      "Imperfect Sphere - no cold",
+      "Imperfect Sphere"
+    ]
+  },
+  {
+    "name": "Imperfect Sphere (Lightning/Cold)",
+    "modifiers": [
+      "Maximum Fire Resist -1%",
+      "Maximum Lightning Resist +1%",
+      "Maximum Cold Resist +1%"
+    ],
+    "kind": "umo",
+    "slots": "jewelry",
+    "maxStacks": 1,
+    "reqLevelPerStack": 9,
+    "aliases": [
+      "Imperfect Sphere",
+      "Imperfect Sphere - no fire"
+    ]
+  },
+  {
+    "name": "Imperfect Sphere (Fire/Cold)",
+    "modifiers": [
+      "Maximum Fire Resist +1%",
+      "Maximum Lightning Resist -1%",
+      "Maximum Cold Resist +1%"
+    ],
+    "kind": "umo",
+    "slots": "jewelry",
+    "maxStacks": 1,
+    "reqLevelPerStack": 9,
+    "aliases": [
+      "Imperfect Sphere",
+      "Imperfect Sphere - no light"
+    ]
   },
   {
     "name": "Marksman's Eye",
@@ -504,40 +611,11 @@
     ],
     "kind": "umo",
     "slots": "all",
-    "maxStacks": 2
-  },
-  {
-    "name": "Farnham's Lost Marble",
-    "modifiers": [
-      "1% Movement Speed",
-      "+30 Life on Melee Attack",
-      "+30 Mana on Melee Attack"
-    ],
-    "kind": "umo",
-    "slots": "jewelry",
-    "maxStacks": 2
-  },
-  {
-    "name": "Zayl's Soul Orb",
-    "modifiers": [
-      "2% to Energy",
-      "+100 to Mana",
-      "Half Freeze Duration"
-    ],
-    "kind": "umo",
-    "slots": "armor",
-    "maxStacks": 2
-  },
-  {
-    "name": "Eye of Malic",
-    "modifiers": [
-      "3% Chance to cast level 60 Flash on Melee Attack",
-      "-3% to Enemy Lightning Resistance",
-      "Lightning Resist +10%"
-    ],
-    "kind": "umo",
-    "slots": "jewelry",
-    "maxStacks": 2
+    "maxStacks": 2,
+    "reqLevelPerStack": 10,
+    "aliases": [
+      "Marksman's Eye"
+    ]
   },
   {
     "name": "Apple of Discord",
@@ -549,13 +627,15 @@
     ],
     "kind": "umo",
     "slots": "all",
-    "maxStacks": 2
+    "maxStacks": 2,
+    "reqLevelPerStack": 12,
+    "aliases": [
+      "Apple of Discord",
+      "Apple of Discord (Life)"
+    ]
   },
   {
     "name": "Apple of Discord 2",
-    "aliases": [
-      "Apple of Discord (Mana)"
-    ],
     "modifiers": [
       "-60 to Life",
       "Maximum Life +2%",
@@ -564,7 +644,28 @@
     ],
     "kind": "umo",
     "slots": "all",
-    "maxStacks": 2
+    "maxStacks": 2,
+    "reqLevelPerStack": 12,
+    "aliases": [
+      "Apple of Discord",
+      "Apple of Discord (Mana)",
+      "Apple of Discord 2"
+    ]
+  },
+  {
+    "name": "Zayl's Soul Orb",
+    "modifiers": [
+      "2% to Energy",
+      "+100 to Mana",
+      "Half Freeze Duration"
+    ],
+    "kind": "umo",
+    "slots": "armor",
+    "maxStacks": 2,
+    "reqLevelPerStack": 10,
+    "aliases": [
+      "Zayl's Soul Orb"
+    ]
   },
   {
     "name": "Idol of Stars",
@@ -575,7 +676,11 @@
     ],
     "kind": "umo",
     "slots": "armor",
-    "maxStacks": 2
+    "maxStacks": 2,
+    "reqLevelPerStack": 10,
+    "aliases": [
+      "Idol of Stars"
+    ]
   },
   {
     "name": "Nagapearl",
@@ -586,13 +691,14 @@
     ],
     "kind": "umo",
     "slots": "armor",
-    "maxStacks": 2
+    "maxStacks": 2,
+    "reqLevelPerStack": 10,
+    "aliases": [
+      "Nagapearl"
+    ]
   },
   {
     "name": "The Moon Crystal",
-    "aliases": [
-      "Moon Crystal"
-    ],
     "modifiers": [
       "10% Cast Speed",
       "Regenerate Mana +15%",
@@ -601,7 +707,11 @@
     ],
     "kind": "umo",
     "slots": "armor",
-    "maxStacks": 2
+    "maxStacks": 2,
+    "reqLevelPerStack": 10,
+    "aliases": [
+      "The Moon Crystal"
+    ]
   },
   {
     "name": "Auriel's Focus",
@@ -613,121 +723,27 @@
     ],
     "kind": "umo",
     "slots": "armor",
-    "maxStacks": 2
+    "maxStacks": 2,
+    "reqLevelPerStack": 10,
+    "aliases": [
+      "Auriel's Focus"
+    ]
   },
   {
     "name": "Solitude",
     "modifiers": [
-      "Adds your current mana percentage as Weapon Physical Damage (Max +100% at full mana)",
+      "Adds your current mana percentage as Weapon Physical Damage",
+      "(Max +100% at full mana)",
       "-25% Attack Speed"
     ],
     "kind": "umo",
     "slots": "armor",
     "maxStacks": 1,
-    "restrictToSlot": "head"
-  },
-  {
-    "name": "Larzuk's Round Shot",
-    "modifiers": [
-      "+10% Enhanced Damage",
-      "2% Chance of Crushing Blow",
-      "Weapon Physical Damage +30%",
-      "+20 to Strength"
-    ],
-    "kind": "umo",
-    "slots": "weapon",
-    "maxStacks": 2
-  },
-  {
-    "name": "Vizjun's Ball Bearing",
-    "modifiers": [
-      "2% Chance to cast level 19 ATMG Sentry on Kill",
-      "3% Deadly Strike",
-      "+25 to Dexterity"
-    ],
-    "kind": "umo",
-    "slots": "weapon",
-    "maxStacks": 2
-  },
-  {
-    "name": "Nor Tiraj's Flaming Sphere",
-    "modifiers": [
-      "1% Chance to cast level 63 Apocalypse on Death Blow",
-      "5% Chance to cast level 42 Flamefront on Melee Attack",
-      "+6% to Fire Spell Damage"
-    ],
-    "kind": "umo",
-    "slots": "weapon",
-    "maxStacks": 2
-  },
-  {
-    "name": "The Demon Core",
+    "reqLevelPerStack": 20,
     "aliases": [
-      "Demon's Core",
-      "Demon Core"
+      "Solitude"
     ],
-    "modifiers": [
-      "1% Chance to cast level 58 Gamma Field on Death Blow",
-      "+10% Bonus to Poison Skill Duration",
-      "+6% to Poison Spell Damage"
-    ],
-    "kind": "umo",
-    "slots": "weapon",
-    "maxStacks": 2
-  },
-  {
-    "name": "Uldyssian's Spirit",
-    "modifiers": [
-      "+15 Spell Focus",
-      "+30% Damage to Demons",
-      "+3% to Spell Damage"
-    ],
-    "kind": "umo",
-    "slots": "weapon",
-    "maxStacks": 2
-  },
-  {
-    "name": "Orb of Annihilation",
-    "modifiers": [
-      "1% Chance to cast level 10 Orb of Annihilation on Death Blow",
-      "+5% to Physical/Magic Spell Damage",
-      "5% to Energy"
-    ],
-    "kind": "umo",
-    "slots": "weapon",
-    "maxStacks": 2
-  },
-  {
-    "name": "Warbringer",
-    "modifiers": [
-      "3% Chance to cast level 5 Arrow on Striking",
-      "Adds 3-4 Damage"
-    ],
-    "kind": "umo",
-    "slots": "weapon",
-    "maxStacks": 2
-  },
-  {
-    "name": "Ten Pin Striker",
-    "modifiers": [
-      "100% Bonus to Attack Rating",
-      "5% to Strength",
-      "Target Takes Additional Damage of 100"
-    ],
-    "kind": "umo",
-    "slots": "weapon",
-    "maxStacks": 2
-  },
-  {
-    "name": "Wrathspirit",
-    "modifiers": [
-      "1% Chance to cast level 46 Punishers when Struck",
-      "+3% to Spell Damage",
-      "+15 Life after each Kill"
-    ],
-    "kind": "umo",
-    "slots": "weapon",
-    "maxStacks": 2
+    "restrictToSlot": "head"
   },
   {
     "name": "Crystal of Tears",
@@ -736,7 +752,11 @@
     ],
     "kind": "umo",
     "slots": "armor",
-    "maxStacks": 2
+    "maxStacks": 2,
+    "reqLevelPerStack": 10,
+    "aliases": [
+      "Crystal of Tears"
+    ]
   },
   {
     "name": "Essence of Itherael",
@@ -746,7 +766,11 @@
     ],
     "kind": "umo",
     "slots": "armor",
-    "maxStacks": 2
+    "maxStacks": 2,
+    "reqLevelPerStack": 10,
+    "aliases": [
+      "Essence of Itherael"
+    ]
   },
   {
     "name": "Periapt of Life",
@@ -756,13 +780,14 @@
     ],
     "kind": "umo",
     "slots": "armor",
-    "maxStacks": 2
+    "maxStacks": 2,
+    "reqLevelPerStack": 10,
+    "aliases": [
+      "Periapt of Life"
+    ]
   },
   {
-    "name": "The Lodestone",
-    "aliases": [
-      "Lodestone"
-    ],
+    "name": "Lodestone",
     "modifiers": [
       "+6 Spell Focus",
       "+6% to Spell Damage",
@@ -770,31 +795,11 @@
     ],
     "kind": "umo",
     "slots": "armor",
-    "maxStacks": 2
-  },
-  {
-    "name": "Explorers Globe",
+    "maxStacks": 2,
+    "reqLevelPerStack": 10,
     "aliases": [
-      "Explorer's Globe"
-    ],
-    "modifiers": [
-      "-2 to all Attributes",
-      "2% to All Attributes"
-    ],
-    "kind": "umo",
-    "slots": "jewelry",
-    "maxStacks": 2
-  },
-  {
-    "name": "Eye of the Storm",
-    "modifiers": [
-      "3% Chance to cast level 50 Supernova on Melee Attack",
-      "+5% to Lightning Spell Damage",
-      "+12 to Energy"
-    ],
-    "kind": "umo",
-    "slots": "weapon",
-    "maxStacks": 2
+      "Lodestone"
+    ]
   },
   {
     "name": "Invisible",
@@ -805,155 +810,11 @@
     ],
     "kind": "umo",
     "slots": "armor",
-    "maxStacks": 1
-  },
-  {
-    "name": "Rare MO - Physical Resist",
-    "modifiers": [
-      "Physical Resist +1%"
-    ],
-    "kind": "smo",
-    "slots": "armor",
-    "maxStacks": 5,
-    "requiresAngelic": true
-  },
-  {
-    "name": "Rare MO - No Freeze",
-    "modifiers": [
-      "Cannot Be Frozen"
-    ],
-    "kind": "smo",
-    "slots": "armor",
     "maxStacks": 1,
-    "requiresAngelic": true
-  },
-  {
-    "name": "Rare MO - Fire Resist",
-    "modifiers": [
-      "Maximum Fire Resist +1%",
-      "Fire Resist -10%"
-    ],
-    "kind": "smo",
-    "slots": "armor",
-    "maxStacks": 1,
-    "requiresAngelic": true
-  },
-  {
-    "name": "Rare MO - Cold Resist",
-    "modifiers": [
-      "Maximum Cold Resist +1%",
-      "Cold Resist -10%"
-    ],
-    "kind": "smo",
-    "slots": "armor",
-    "maxStacks": 1,
-    "requiresAngelic": true
-  },
-  {
-    "name": "Rare MO - Lightning Resist",
-    "modifiers": [
-      "Maximum Lightning Resist +1%",
-      "Lightning Resist -10%"
-    ],
-    "kind": "smo",
-    "slots": "armor",
-    "maxStacks": 1,
-    "requiresAngelic": true
-  },
-  {
-    "name": "Rare MO - Poison Resist",
-    "modifiers": [
-      "Maximum Poison Resist +1%",
-      "Poison Resist -10%"
-    ],
-    "kind": "smo",
-    "slots": "armor",
-    "maxStacks": 1,
-    "requiresAngelic": true
-  },
-  {
-    "name": "Rare MO - IED",
-    "modifiers": [
-      "+1% Innate Elemental Damage"
-    ],
-    "kind": "smo",
-    "slots": "armor",
-    "maxStacks": 5,
-    "requiresAngelic": true
-  },
-  {
-    "name": "Rare MO - Block Up",
-    "modifiers": [
-      "+1% Base Block Chance",
-      "-10% Block Speed"
-    ],
-    "kind": "smo",
-    "slots": "armor",
-    "maxStacks": 2,
-    "requiresAngelic": true,
-    "restrictToCategory": "shield"
-  },
-  {
-    "name": "Rare MO - Block Down",
-    "modifiers": [
-      "-2% Base Block Chance"
-    ],
-    "kind": "smo",
-    "slots": "armor",
-    "maxStacks": 2,
-    "requiresAngelic": true,
-    "restrictToCategory": "shield"
-  },
-  {
-    "name": "Rare MO - Max Life",
-    "modifiers": [
-      "Maximum Life +1%"
-    ],
-    "kind": "smo",
-    "slots": "armor",
-    "maxStacks": 5,
-    "requiresAngelic": true,
-    "restrictToSlot": "tors"
-  },
-  {
-    "name": "Rare MO - Pierce Fire",
-    "modifiers": [
-      "-1% to Enemy Fire Resistance"
-    ],
-    "kind": "smo",
-    "slots": "armor",
-    "maxStacks": 5,
-    "requiresAngelic": true
-  },
-  {
-    "name": "Rare MO - Pierce Cold",
-    "modifiers": [
-      "-1% to Enemy Cold Resistance"
-    ],
-    "kind": "smo",
-    "slots": "armor",
-    "maxStacks": 5,
-    "requiresAngelic": true
-  },
-  {
-    "name": "Rare MO - Pierce Lightning",
-    "modifiers": [
-      "-1% to Enemy Lightning Resistance"
-    ],
-    "kind": "smo",
-    "slots": "armor",
-    "maxStacks": 5,
-    "requiresAngelic": true
-  },
-  {
-    "name": "Rare MO - Pierce Poison",
-    "modifiers": [
-      "-1% to Enemy Poison Resistance"
-    ],
-    "kind": "smo",
-    "slots": "armor",
-    "maxStacks": 5,
-    "requiresAngelic": true
+    "reqLevelPerStack": 10,
+    "aliases": [
+      "Invisible"
+    ]
   },
   {
     "name": "Weight of Talent",
@@ -965,60 +826,11 @@
     "kind": "umo",
     "slots": "armor",
     "maxStacks": 1,
+    "reqLevelPerStack": 15,
+    "aliases": [
+      "Weight of Talent"
+    ],
     "restrictToSlot": "tors"
-  },
-  {
-    "name": "Imperfect Sphere - no cold",
-    "modifiers": [
-      "Maximum Fire Resist +1%",
-      "Maximum Lightning Resist +1%",
-      "Maximum Cold Resist -1%"
-    ],
-    "kind": "umo",
-    "slots": "jewelry",
-    "maxStacks": 1
-  },
-  {
-    "name": "Imperfect Sphere - no fire",
-    "modifiers": [
-      "Maximum Fire Resist -1%",
-      "Maximum Lightning Resist +1%",
-      "Maximum Cold Resist +1%"
-    ],
-    "kind": "umo",
-    "slots": "jewelry",
-    "maxStacks": 1
-  },
-  {
-    "name": "Imperfect Sphere - no light",
-    "modifiers": [
-      "Maximum Fire Resist +1%",
-      "Maximum Lightning Resist -1%",
-      "Maximum Cold Resist +1%"
-    ],
-    "kind": "umo",
-    "slots": "jewelry",
-    "maxStacks": 1
-  },
-  {
-    "name": "Rare MO - Demon Damage",
-    "modifiers": [
-      "+15% Damage to Demons"
-    ],
-    "kind": "smo",
-    "slots": "armor",
-    "maxStacks": 3,
-    "requiresAngelic": true
-  },
-  {
-    "name": "Rare MO - Undead Damage",
-    "modifiers": [
-      "+15% Damage to Undead"
-    ],
-    "kind": "smo",
-    "slots": "armor",
-    "maxStacks": 3,
-    "requiresAngelic": true
   },
   {
     "name": "Eye of Beholder",
@@ -1031,6 +843,513 @@
     "kind": "umo",
     "slots": "armor",
     "maxStacks": 1,
+    "reqLevelPerStack": 10,
+    "aliases": [
+      "Eye of Beholder"
+    ],
     "restrictToCategory": "shield"
+  },
+  {
+    "name": "Larzuk's Round Shot",
+    "modifiers": [
+      "+10% Enhanced Damage",
+      "2% Chance of Crushing Blow",
+      "Weapon Physical Damage +30%",
+      "+20 to Strength"
+    ],
+    "kind": "umo",
+    "slots": "weapon",
+    "maxStacks": 2,
+    "reqLevelPerStack": 10,
+    "aliases": [
+      "Larzuk's Round Shot"
+    ]
+  },
+  {
+    "name": "Vizjun's Ball Bearing",
+    "modifiers": [
+      "2% Chance to cast level 19 ATMG Sentry on Kill",
+      "3% Deadly Strike",
+      "+25 to Dexterity"
+    ],
+    "kind": "umo",
+    "slots": "weapon",
+    "maxStacks": 2,
+    "reqLevelPerStack": 10,
+    "aliases": [
+      "Vizjun's Ball Bearing"
+    ]
+  },
+  {
+    "name": "Nor Tiraj's Flaming Sphere",
+    "modifiers": [
+      "1% Chance to cast level 63 Apocalypse on Death Blow",
+      "5% Chance to cast level 42 Flamefront on Melee Attack",
+      "+6% to Fire Spell Damage"
+    ],
+    "kind": "umo",
+    "slots": "weapon",
+    "maxStacks": 2,
+    "reqLevelPerStack": 10,
+    "aliases": [
+      "Nor Tiraj's Flaming Sphere"
+    ]
+  },
+  {
+    "name": "The Demon Core",
+    "modifiers": [
+      "1% Chance to cast level 58 Gamma Field on Death Blow",
+      "+10% Bonus to Poison Skill Duration",
+      "+6% to Poison Spell Damage"
+    ],
+    "kind": "umo",
+    "slots": "weapon",
+    "maxStacks": 2,
+    "reqLevelPerStack": 10,
+    "aliases": [
+      "The Demon Core"
+    ]
+  },
+  {
+    "name": "Uldyssian's Spirit",
+    "modifiers": [
+      "+15 Spell Focus",
+      "+30% Damage to Demons",
+      "+3% to Spell Damage"
+    ],
+    "kind": "umo",
+    "slots": "weapon",
+    "maxStacks": 2,
+    "reqLevelPerStack": 10,
+    "aliases": [
+      "Uldyssian's Spirit"
+    ]
+  },
+  {
+    "name": "Orb of Annihilation",
+    "modifiers": [
+      "1% Chance to cast level 10 Orb of Annihilation on Death Blow",
+      "+5% to Physical/Magic Spell Damage",
+      "5% to Energy"
+    ],
+    "kind": "umo",
+    "slots": "weapon",
+    "maxStacks": 2,
+    "reqLevelPerStack": 10,
+    "aliases": [
+      "Orb of Annihilation"
+    ]
+  },
+  {
+    "name": "Warbringer",
+    "modifiers": [
+      "3% Chance to cast level 5 Arrow on Striking",
+      "Adds 3-4 Damage"
+    ],
+    "kind": "umo",
+    "slots": "weapon",
+    "maxStacks": 2,
+    "reqLevelPerStack": 10,
+    "aliases": [
+      "Warbringer"
+    ]
+  },
+  {
+    "name": "Ten Pin Striker",
+    "modifiers": [
+      "100% Bonus to Attack Rating",
+      "5% to Strength",
+      "Target Takes Additional Damage of 100"
+    ],
+    "kind": "umo",
+    "slots": "weapon",
+    "maxStacks": 2,
+    "reqLevelPerStack": 10,
+    "aliases": [
+      "Ten Pin Striker"
+    ]
+  },
+  {
+    "name": "Wrathspirit",
+    "modifiers": [
+      "1% Chance to cast level 46 Punishers when Struck",
+      "+3% to Spell Damage",
+      "+15 Life after each Kill"
+    ],
+    "kind": "umo",
+    "slots": "weapon",
+    "maxStacks": 2,
+    "reqLevelPerStack": 10,
+    "aliases": [
+      "Wrathspirit"
+    ]
+  },
+  {
+    "name": "Eye of the Storm",
+    "modifiers": [
+      "3% Chance to cast level 50 Supernova on Melee Attack",
+      "+5% to Lightning Spell Damage",
+      "+12 to Energy"
+    ],
+    "kind": "umo",
+    "slots": "weapon",
+    "maxStacks": 2,
+    "reqLevelPerStack": 10,
+    "aliases": [
+      "Eye of the Storm"
+    ]
+  },
+  {
+    "name": "Physical Resist +1%",
+    "modifiers": [
+      "Physical Resist +1%"
+    ],
+    "kind": "smo",
+    "slots": "armor",
+    "maxStacks": 5,
+    "reqLevelPerStack": 5,
+    "aliases": [
+      "Physical Resist +1%"
+    ]
+  },
+  {
+    "name": "Cannot be Frozen",
+    "modifiers": [
+      "Cannot be Frozen"
+    ],
+    "kind": "smo",
+    "slots": "armor",
+    "maxStacks": 1,
+    "reqLevelPerStack": 12,
+    "aliases": [
+      "Cannot be Frozen"
+    ]
+  },
+  {
+    "name": "Max Fire Resist +1%",
+    "modifiers": [
+      "Max Fire Resist +1%",
+      "Fire Resist -10%"
+    ],
+    "kind": "smo",
+    "slots": "armor",
+    "maxStacks": 1,
+    "reqLevelPerStack": 6,
+    "aliases": [
+      "Max Fire Resist +1%"
+    ]
+  },
+  {
+    "name": "Max Cold Resist +1%",
+    "modifiers": [
+      "Max Cold Resist +1%",
+      "Cold Resist -10%"
+    ],
+    "kind": "smo",
+    "slots": "armor",
+    "maxStacks": 1,
+    "reqLevelPerStack": 6,
+    "aliases": [
+      "Max Cold Resist +1%"
+    ]
+  },
+  {
+    "name": "Max Lightning Resist +1%",
+    "modifiers": [
+      "Max Lightning Resist +1%",
+      "Lightning Resist -10%"
+    ],
+    "kind": "smo",
+    "slots": "armor",
+    "maxStacks": 1,
+    "reqLevelPerStack": 6,
+    "aliases": [
+      "Max Lightning Resist +1%"
+    ]
+  },
+  {
+    "name": "Max Poison Resist +1%",
+    "modifiers": [
+      "Max Poison Resist +1%",
+      "Poison Resist -10%"
+    ],
+    "kind": "smo",
+    "slots": "armor",
+    "maxStacks": 1,
+    "reqLevelPerStack": 6,
+    "aliases": [
+      "Max Poison Resist +1%"
+    ]
+  },
+  {
+    "name": "+1% Innate Elemental Damage",
+    "modifiers": [
+      "+1% Innate Elemental Damage"
+    ],
+    "kind": "smo",
+    "slots": "armor",
+    "maxStacks": 5,
+    "reqLevelPerStack": 5,
+    "aliases": [
+      "+1% Innate Elemental Damage"
+    ]
+  },
+  {
+    "name": "+1% Base Block Chance",
+    "modifiers": [
+      "+1% Base Block Chance",
+      "-10% Block Speed"
+    ],
+    "kind": "smo",
+    "slots": "armor",
+    "maxStacks": 2,
+    "reqLevelPerStack": 6,
+    "aliases": [
+      "+1% Base Block Chance"
+    ],
+    "restrictToCategory": "shield"
+  },
+  {
+    "name": "-2% Base Block Chance",
+    "modifiers": [
+      "-2% Base Block Chance"
+    ],
+    "kind": "smo",
+    "slots": "armor",
+    "maxStacks": 2,
+    "reqLevelPerStack": 5,
+    "aliases": [
+      "-2% Base Block Chance"
+    ],
+    "restrictToCategory": "shield"
+  },
+  {
+    "name": "Maximum Life +1%",
+    "modifiers": [
+      "Maximum Life +1%"
+    ],
+    "kind": "smo",
+    "slots": "armor",
+    "maxStacks": 5,
+    "reqLevelPerStack": 5,
+    "aliases": [
+      "Maximum Life +1%"
+    ],
+    "restrictToSlot": "tors"
+  },
+  {
+    "name": "-1% to Enemy Fire Resistance",
+    "modifiers": [
+      "-1% to Enemy Fire Resistance"
+    ],
+    "kind": "smo",
+    "slots": "armor",
+    "maxStacks": 5,
+    "reqLevelPerStack": 4,
+    "aliases": [
+      "-1% to Enemy Fire Resistance"
+    ]
+  },
+  {
+    "name": "-1% to Enemy Cold Resistance",
+    "modifiers": [
+      "-1% to Enemy Cold Resistance"
+    ],
+    "kind": "smo",
+    "slots": "armor",
+    "maxStacks": 5,
+    "reqLevelPerStack": 4,
+    "aliases": [
+      "-1% to Enemy Cold Resistance"
+    ]
+  },
+  {
+    "name": "-1% to Enemy Lightning Resistance",
+    "modifiers": [
+      "-1% to Enemy Lightning Resistance"
+    ],
+    "kind": "smo",
+    "slots": "armor",
+    "maxStacks": 5,
+    "reqLevelPerStack": 4,
+    "aliases": [
+      "-1% to Enemy Lightning Resistance"
+    ]
+  },
+  {
+    "name": "-1% to Enemy Poison Resistance",
+    "modifiers": [
+      "-1% to Enemy Poison Resistance"
+    ],
+    "kind": "smo",
+    "slots": "armor",
+    "maxStacks": 5,
+    "reqLevelPerStack": 4,
+    "aliases": [
+      "-1% to Enemy Poison Resistance"
+    ]
+  },
+  {
+    "name": "+15% Damage to Demons",
+    "modifiers": [
+      "+15% Damage to Demons"
+    ],
+    "kind": "smo",
+    "slots": "armor",
+    "maxStacks": 3,
+    "reqLevelPerStack": 5,
+    "aliases": [
+      "+15% Damage to Demons"
+    ]
+  },
+  {
+    "name": "+15% Damage to Undead",
+    "modifiers": [
+      "+15% Damage to Undead"
+    ],
+    "kind": "smo",
+    "slots": "armor",
+    "maxStacks": 3,
+    "reqLevelPerStack": 5,
+    "aliases": [
+      "+15% Damage to Undead"
+    ]
+  },
+  {
+    "name": "Craftsman's Brand",
+    "modifiers": [
+      "Orb Effects Applied to this Item are Doubled"
+    ],
+    "kind": "effigy",
+    "slots": "jewelry",
+    "maxStacks": 1,
+    "reqLevelPerStack": 18,
+    "restrictToCategory": "quiver",
+    "aliases": [
+      "Craftsman's Brand"
+    ]
+  },
+  {
+    "name": "Celestial Wind",
+    "modifiers": [
+      "Set Movement Speed to 40%",
+      "15% Faster Stamina Drain"
+    ],
+    "kind": "effigy",
+    "slots": "armor",
+    "maxStacks": 1,
+    "restrictToSlot": "feet",
+    "aliases": [
+      "Celestial Wind"
+    ]
+  },
+  {
+    "name": "Sigil of Absolution",
+    "modifiers": [
+      "Requirements +25%"
+    ],
+    "kind": "effigy",
+    "slots": "all",
+    "maxStacks": 2,
+    "reqLevelPerStack": -5,
+    "aliases": [
+      "Sigil of Absolution"
+    ]
+  },
+  {
+    "name": "Path of Brutality",
+    "modifiers": [
+      "Transforms every +1 to All Skills to +3% Deadly Strike",
+      "Item Becomes (Your Class Only)"
+    ],
+    "kind": "effigy",
+    "slots": "jewelry",
+    "maxStacks": 1,
+    "reqLevelPerStack": 10,
+    "aliases": [
+      "Path of Brutality"
+    ]
+  },
+  {
+    "name": "Empyrean Touch",
+    "modifiers": [
+      "Item Becomes Ethereal"
+    ],
+    "kind": "effigy",
+    "slots": "all",
+    "maxStacks": 1,
+    "reqLevelPerStack": 10,
+    "aliases": [
+      "Empyrean Touch"
+    ]
+  },
+  {
+    "name": "Elemental Ire",
+    "modifiers": [
+      "1% Chance to cast level 4 Life Spark on Striking"
+    ],
+    "kind": "effigy",
+    "slots": "weapon",
+    "maxStacks": 2,
+    "reqLevelPerStack": 5,
+    "baseKind": "elemental_ranged",
+    "aliases": [
+      "Elemental Ire"
+    ]
+  },
+  {
+    "name": "Breath of Thaumaturgy",
+    "modifiers": [
+      "Item can be blessed Again"
+    ],
+    "kind": "effigy",
+    "slots": "all",
+    "reqLevelPerStack": 25,
+    "aliases": [
+      "Breath of Thaumaturgy"
+    ]
+  },
+  {
+    "name": "Elemental Dominion",
+    "modifiers": [
+      "4% Chance to cast level 5 Life Spark on Melee Attack"
+    ],
+    "kind": "effigy",
+    "slots": "weapon",
+    "maxStacks": 2,
+    "reqLevelPerStack": 5,
+    "baseKind": "elemental_melee",
+    "aliases": [
+      "Elemental Dominion"
+    ]
+  },
+  {
+    "name": "Arcane Hunger",
+    "modifiers": [
+      "All Life Leech transformed to +20% Spell Damage",
+      "Item Cannot be Unsocketed"
+    ],
+    "kind": "effigy",
+    "slots": "weapon",
+    "maxStacks": 1,
+    "reqLevelPerStack": 10,
+    "aliases": [
+      "Arcane Hunger"
+    ]
+  },
+  {
+    "name": "Northern Winds",
+    "modifiers": [
+      "Half Freeze Duration",
+      "If armor already has Half Freeze Duration: Upgrade it to Cannot Be Frozen",
+      "If armor already has Cannot be Frozen: Maximum Cold Resist +1%"
+    ],
+    "kind": "effigy",
+    "slots": "armor",
+    "maxStacks": 3,
+    "reqLevelPerStack": 8,
+    "aliases": [
+      "Northern Winds"
+    ]
   }
 ]

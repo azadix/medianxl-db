@@ -38,6 +38,7 @@ import {
 } from '@/items/item-modifier-line.js';
 import { getMysticOrbBonusLines, normalizeMysticOrbs } from '@/items/mystic-orbs.js';
 import { getSocketableBonusLines, normalizeSocketables } from '@/items/socketables.js';
+import { getItemUpgradeBonusLines, getItemUpgradeFlags } from '@/items/item-upgrades.js';
 import {
   collectItemStateFlagLines,
   stripItemStateFlagLines,
@@ -78,8 +79,8 @@ export function formatItemRarityBadge(def) {
   if (rarity === 'set') return 'Set';
   if (rarity === 'unique') return 'Unique';
   if (rarity === 'honorific') return 'Honorific';
-  if (rarity === 'angelic') return 'Angelic';
   if (rarity === 'crafted') return 'Crafted';
+  if (rarity === 'angelic') return 'Rare';
   if (rarity === 'rare') return 'Rare';
   if (rarity === 'magic') return 'Magic';
   if (rarity === 'superior') return 'Superior';
@@ -98,7 +99,11 @@ export function formatItemOverlayMeta(def) {
     ITEM_CATEGORY_LABEL[def.category] || def.category,
     formatItemSlots(def.slot),
   ].filter(Boolean);
-  if (isOverlayItem(def)) {
+  if (def.angelic === true || def.rarity === 'angelic' || def.customQuality === 'angelic') {
+    const base = def.baseName || '';
+    if (base) parts.push(base);
+    else parts.push('Angelic');
+  } else if (isOverlayItem(def)) {
     if (isRunewordItem(def)) {
       const badge = formatRunewordBadge(def);
       const base = def.baseName || '';
@@ -369,7 +374,7 @@ export function formatChanceToBlockLine(block, className = null) {
  * Matching extras (e.g. TSW leftovers) are consumed so they are not doubled.
  * @param {string[]|null|undefined} extras
  * @param {object|null|undefined} def
- * @param {{ mysticOrbs?: unknown, socketables?: Array<object>|null }} [options]
+ * @param {{ mysticOrbs?: unknown, socketables?: Array<object>|null, oil?: string|null, corruptions?: string[]|null, blessing?: string|null, shrine?: string|null, mechanics?: Record<string, number>|null, honorific?: boolean }} [options]
  * @returns {string[]}
  */
 export function extrasWithAppliedItemBonuses(extras, def, options = {}) {
@@ -402,7 +407,28 @@ export function extrasWithAppliedItemBonuses(extras, def, options = {}) {
   for (const [count, name] of normalizeMysticOrbs(options.mysticOrbs)) {
     for (const line of getMysticOrbBonusLines(name, count)) appendBonus(line);
   }
+  for (const line of getItemUpgradeBonusLines(def, {
+    oil: options.oil,
+    corruptions: options.corruptions,
+    blessing: options.blessing,
+    shrine: options.shrine,
+    mechanics: options.mechanics,
+    honorific: options.honorific,
+  })) {
+    appendBonus(line);
+  }
   return list;
+}
+
+/**
+ * +25% rounded down, matching Median XL ethereal.
+ * @param {number} n
+ * @returns {number}
+ */
+export function applyEtherealBonus(n) {
+  const v = Number(n);
+  if (!Number.isFinite(v)) return n;
+  return v + Math.trunc((v * 25) / 100);
 }
 
 /**
@@ -446,10 +472,19 @@ export function getItemStatSections(def, rolls = null, options = {}) {
   /** @type {string[]} */
   const mods = [];
 
+  const ethereal = def.ethereal === true;
+  /**
+   * @param {number} n
+   */
+  const eth = (n) => (ethereal ? applyEtherealBonus(n) : n);
   if (def.damage1hDisplay) base.push(`One-Hand Damage: ${def.damage1hDisplay}`);
-  else if (def.damage1h) base.push(`One-Hand Damage: ${def.damage1h.min} to ${def.damage1h.max}`);
+  else if (def.damage1h) {
+    base.push(`One-Hand Damage: ${eth(def.damage1h.min)} to ${eth(def.damage1h.max)}`);
+  }
   if (def.damage2hDisplay) base.push(`Two-Hand Damage: ${def.damage2hDisplay}`);
-  else if (def.damage2h) base.push(`Two-Hand Damage: ${def.damage2h.min} to ${def.damage2h.max}`);
+  else if (def.damage2h) {
+    base.push(`Two-Hand Damage: ${eth(def.damage2h.min)} to ${eth(def.damage2h.max)}`);
+  }
   if (def.throwDamageDisplay) base.push(`Throw Damage: ${def.throwDamageDisplay}`);
 
   if (def.defenseDisplay) {
@@ -459,9 +494,9 @@ export function getItemStatSections(def, rolls = null, options = {}) {
     if (rollableKeys?.has('defense')) {
       // Roll controls shown elsewhere - skip static defense line.
     } else if (rolled != null) {
-      base.push(`Defense: ${rolled}`);
+      base.push(`Defense: ${eth(rolled)}`);
     } else {
-      base.push(`Defense: ${def.defense.min} to ${def.defense.max}`);
+      base.push(`Defense: ${eth(def.defense.min)} to ${eth(def.defense.max)}`);
     }
   }
 
@@ -476,10 +511,18 @@ export function getItemStatSections(def, rolls = null, options = {}) {
   if (def.range != null) base.push(`Melee range: ${def.range}`);
   if (def.speed != null) base.push(`Attack Speed Modifier: ${def.speed}`);
   if (def.movePenalty != null) base.push(`Movement Speed Penalty: ${def.movePenalty}`);
+  const upgradeFlags = getItemUpgradeFlags({
+    oil: options.oil,
+    corruptions: options.corruptions,
+    blessing: options.blessing,
+    shrine: options.shrine,
+  });
   base.push(
     ...collectItemStateFlagLines({
-      ethereal: def.ethereal === true,
-      corrupted: def.corrupted === true,
+      ethereal: def.ethereal === true || upgradeFlags.etherealFromCorruption,
+      corrupted: def.corrupted === true || upgradeFlags.corrupted,
+      alreadyUpgraded: upgradeFlags.alreadyUpgraded,
+      shrineBlessed: upgradeFlags.shrineBlessed,
       modifiers: def.modifiers,
       extras: options.extras ?? null,
     })
@@ -559,8 +602,9 @@ export function getItemStatSections(def, rolls = null, options = {}) {
     requirements: resolveItemRequirements(def, {
       rolls,
       socketables: options.socketables ?? null,
-      extras: options.extras ?? null,
+      extras,
       mysticOrbs: options.mysticOrbs ?? null,
+      corruptions: options.corruptions ?? null,
     }),
   };
 }
@@ -601,9 +645,12 @@ export function getItemDetailStatRows(def, rolls = null, options = {}) {
     charmHeaderOnly: true,
     socketables: options.socketables ?? null,
   });
+  const upgradeFlags = getItemUpgradeFlags(options);
   const flagLines = collectItemStateFlagLines({
-    ethereal: def.ethereal === true,
-    corrupted: def.corrupted === true,
+    ethereal: def.ethereal === true || upgradeFlags.etherealFromCorruption,
+    corrupted: def.corrupted === true || upgradeFlags.corrupted,
+    alreadyUpgraded: upgradeFlags.alreadyUpgraded,
+    shrineBlessed: upgradeFlags.shrineBlessed,
     modifiers: def.modifiers,
     extras,
   });

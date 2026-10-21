@@ -5,15 +5,18 @@ import {
   getSocketableBonusLines,
   listJewelSocketablesFromItems,
   listSocketablesCatalog,
+  normalizeCustomJewelRarity,
   normalizeSocketables,
   resolveSocketableIcon,
   socketableFromCatalogRow,
+  socketableLibraryGroup,
   socketableNameCssClass,
 } from '@/items/socketables.js';
 import { useItemsStore } from '@/stores/items.js';
 import { getItemIconUrl } from '@/shared/utils.js';
 import { hideItemTooltip } from '@/items/item-tooltip-runtime.js';
 import { hidePlannerSkillTooltip } from '@/tree/tree-tooltip.js';
+import CustomJewelBuilder from './CustomJewelBuilder.vue';
 
 const props = defineProps({
   def: { type: /** @type {import('vue').PropType<object|null>} */ (Object), default: null },
@@ -26,14 +29,24 @@ const emit = defineEmits(['update:socketables', 'set-roll']);
 
 const itemsStore = useItemsStore();
 const openIndex = ref(-1);
+const chip = ref('all');
+const showJewelBuilder = ref(false);
+
+const SOCKET_CHIPS = [
+  { id: 'all', label: 'All' },
+  { id: 'Gem', label: 'Gems' },
+  { id: 'Rune', label: 'Runes' },
+  { id: 'Enhanced', label: 'Enhanced Runes' },
+  { id: 'Elemental', label: 'Elemental Runes' },
+  { id: 'Jewel', label: 'Jewels' },
+];
 
 const catalogGroups = computed(() => {
   /** @type {Record<string, import('@/items/socketables.js').SocketableCatalogRow[]>} */
-  const groups = { Rune: [], Gem: [], Jewel: [] };
+  const groups = { Rune: [], Gem: [], Enhanced: [], Elemental: [], Jewel: [] };
   const jewelNames = new Set();
   for (const row of listSocketablesCatalog()) {
-    const type = String(row.type || '');
-    const key = /rune/i.test(type) ? 'Rune' : /gem/i.test(type) ? 'Gem' : 'Jewel';
+    const key = socketableLibraryGroup(row);
     groups[key].push(row);
     if (key === 'Jewel') jewelNames.add(String(row.name || '').toLowerCase());
   }
@@ -43,8 +56,20 @@ const catalogGroups = computed(() => {
     groups.Jewel.push(row);
     jewelNames.add(name);
   }
+  for (const jewel of itemsStore.customJewels) {
+    const rarity = normalizeCustomJewelRarity(jewel.rarity);
+    groups.Jewel.push({
+      name: jewel.name,
+      type: 'Jewel',
+      quality: rarity.charAt(0).toUpperCase() + rarity.slice(1),
+      code: jewel.id,
+      icon: 'jewl',
+      modifiers: jewel.modifiers,
+    });
+  }
   groups.Jewel.sort((a, b) => a.name.localeCompare(b.name));
-  return groups;
+  if (chip.value === 'all') return groups;
+  return { [chip.value]: groups[chip.value] || [] };
 });
 
 const filled = computed(() => normalizeSocketables(props.socketables));
@@ -78,7 +103,7 @@ function rowKey(row) {
  */
 function optionLabel(entry) {
   if (!entry?.name) return 'Empty';
-  return entry.quality ? `${entry.name} (${entry.quality})` : entry.name;
+  return entry.name;
 }
 
 /**
@@ -174,6 +199,22 @@ function sockMods(sock) {
 <template>
   <div class="item-upgrade-section" aria-label="Sockets">
     <p class="item-upgrade-section__heading is-size-7 has-text-grey mb-2">Sockets</p>
+    <div v-if="editable && slotCount > 0" class="mb-2">
+      <button
+        v-for="row in SOCKET_CHIPS"
+        :key="row.id"
+        type="button"
+        class="button is-small mr-1 mb-1"
+        :class="{ 'is-link': chip === row.id }"
+        @click="chip = row.id"
+      >
+        {{ row.label }}
+      </button>
+      <button type="button" class="button is-small mb-1" @click="showJewelBuilder = !showJewelBuilder">
+        Manage custom jewels
+      </button>
+    </div>
+    <CustomJewelBuilder v-if="showJewelBuilder && editable" class="mb-2" />
     <p v-if="slotCount < 1" class="item-upgrade-section__empty is-size-7 has-text-grey">
       This item has no sockets.
     </p>
@@ -218,38 +259,38 @@ function sockMods(sock) {
               </button>
               <template v-for="(rows, label) in catalogGroups" :key="label">
                 <template v-if="rows.length">
-                <div class="item-sockets-editor__group">{{ label }}</div>
-                <button
-                  v-for="row in rows"
-                  :key="rowKey(row)"
-                  type="button"
-                  class="item-sockets-editor__option"
-                  role="option"
-                  :aria-selected="catalogKey(sock) === rowKey(row)"
-                  @click.stop="onSelect(idx, rowKey(row))"
-                >
-                  <img
-                    v-if="optionIconUrl(row)"
-                    class="item-sockets-editor__icon"
-                    :src="optionIconUrl(row)"
-                    alt=""
-                  />
-                  <span
-                    v-else
-                    class="item-sockets-editor__icon item-sockets-editor__icon--empty"
-                    aria-hidden="true"
-                  ></span>
-                  <span class="item-sockets-editor__option-text">
-                    <span :class="socketableNameCssClass(row)">{{ optionLabel(row) }}</span>
+                  <div class="item-sockets-editor__group">{{ label }}</div>
+                  <button
+                    v-for="row in rows"
+                    :key="rowKey(row)"
+                    type="button"
+                    class="item-sockets-editor__option"
+                    role="option"
+                    :aria-selected="catalogKey(sock) === rowKey(row)"
+                    @click.stop="onSelect(idx, rowKey(row))"
+                  >
+                    <img
+                      v-if="optionIconUrl(row)"
+                      class="item-sockets-editor__icon"
+                      :src="optionIconUrl(row)"
+                      alt=""
+                    />
                     <span
-                      v-for="(mod, midx) in sockMods(row)"
-                      :key="rowKey(row) + '-mod-' + midx"
-                      class="item-sockets-editor__option-bonus"
-                    >
-                      {{ mod }}
+                      v-else
+                      class="item-sockets-editor__icon item-sockets-editor__icon--empty"
+                      aria-hidden="true"
+                    ></span>
+                    <span class="item-sockets-editor__option-text">
+                      <span :class="socketableNameCssClass(row)">{{ optionLabel(row) }}</span>
+                      <span
+                        v-for="(mod, midx) in sockMods(row)"
+                        :key="rowKey(row) + '-mod-' + midx"
+                        class="item-sockets-editor__option-bonus"
+                      >
+                        {{ mod }}
+                      </span>
                     </span>
-                  </span>
-                </button>
+                  </button>
                 </template>
               </template>
             </div>

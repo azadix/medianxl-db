@@ -14,6 +14,12 @@ import { itemRarityNameClass } from '@/items/item-tooltip.js';
 import { formatRunewordBadge, isRunewordItem } from '@/items/runeword-items.js';
 import ItemSocketsEditor from './ItemSocketsEditor.vue';
 import ItemMysticOrbsEditor from './ItemMysticOrbsEditor.vue';
+import ItemOilEditor from './ItemOilEditor.vue';
+import ItemCorruptionsEditor from './ItemCorruptionsEditor.vue';
+import ItemShrineEditor from './ItemShrineEditor.vue';
+import ItemMechanicsEditor from './ItemMechanicsEditor.vue';
+import CustomItemBuilder from './CustomItemBuilder.vue';
+import { isCustomItemDef } from '@/items/custom-items.js';
 import { computed } from 'vue';
 
 const props = defineProps({
@@ -35,14 +41,34 @@ const props = defineProps({
     type: /** @type {import('vue').PropType<Array<object>>} */ (Array),
     default: () => [],
   },
-  /** @type {import('vue').PropType<'base'|'sockets'|'mysticOrbs'|'oils'|'corruptions'|'effigies'>} */
+  /** @type {import('vue').PropType<'base'|'sockets'|'mysticOrbs'|'oils'|'corruptions'|'effigies'|'blessing'|'shrine'|'mechanics'>} */
   activeTab: { type: String, default: 'base' },
   canEdit: { type: Boolean, default: false },
   emptyText: { type: String, default: 'Select an item to view stats' },
   characterLevel: { type: Number, default: null },
+  equipSlot: { type: String, default: '' },
+  oil: { type: String, default: '' },
+  corruptions: { type: Array, default: () => [] },
+  blessing: { type: String, default: '' },
+  shrine: { type: String, default: '' },
+  mechanics: { type: Object, default: () => ({}) },
+  custom: { type: Object, default: null },
+  ethereal: { type: Boolean, default: false },
 });
 
-const emit = defineEmits(['update:rolls', 'set-roll', 'update:socketables', 'update:mystic-orbs']);
+const emit = defineEmits([
+  'update:rolls',
+  'set-roll',
+  'update:socketables',
+  'update:mystic-orbs',
+  'update:oil',
+  'update:corruptions',
+  'update:blessing',
+  'update:shrine',
+  'update:mechanics',
+  'update:custom',
+  'update:ethereal',
+]);
 
 const subtitle = computed(() => formatItemTooltipSubtitle(props.def));
 const rarityNameClass = computed(() => itemRarityNameClass(props.def?.rarity));
@@ -54,9 +80,12 @@ const requirementsLine = computed(() =>
       extras: props.extras,
       socketables: props.socketables,
       mysticOrbs: props.mysticOrbs,
+      corruptions: props.corruptions,
     })
   )
 );
+
+const isCustom = computed(() => isCustomItemDef(props.def));
 
 const runewordBadge = computed(() =>
   isRunewordItem(props.def) ? formatRunewordBadge(props.def) : ''
@@ -79,18 +108,12 @@ const modRows = computed(() => props.detailStatRows.filter((row) => row.section 
 const isBaseTab = computed(() => props.activeTab === 'base');
 const isSocketsTab = computed(() => props.activeTab === 'sockets');
 const isMysticOrbsTab = computed(() => props.activeTab === 'mysticOrbs');
-const isPlaceholderTab = computed(() =>
-  props.activeTab === 'oils' ||
-  props.activeTab === 'corruptions' ||
-  props.activeTab === 'effigies'
-);
-
-const placeholderCopy = computed(() => {
-  if (props.activeTab === 'oils') return 'No oils applied.';
-  if (props.activeTab === 'corruptions') return 'No corruptions applied.';
-  if (props.activeTab === 'effigies') return 'No effigies applied.';
-  return '';
-});
+const isEffigiesTab = computed(() => props.activeTab === 'effigies');
+const isOilsTab = computed(() => props.activeTab === 'oils');
+const isCorruptionsTab = computed(() => props.activeTab === 'corruptions');
+const isBlessingTab = computed(() => props.activeTab === 'blessing');
+const isShrineTab = computed(() => props.activeTab === 'shrine');
+const isMechanicsTab = computed(() => props.activeTab === 'mechanics');
 
 /**
  * @param {string} key
@@ -206,6 +229,21 @@ function modLineClass(row) {
           </template>
         </div>
 
+        <label v-if="canEdit" class="checkbox is-size-7 mt-2">
+          <input
+            type="checkbox"
+            :checked="ethereal"
+            @change="emit('update:ethereal', $event.target.checked)"
+          />
+          Ethereal
+        </label>
+        <CustomItemBuilder
+          v-if="isCustom && custom"
+          class="mt-3"
+          :custom="custom"
+          :editable="canEdit"
+          @update:custom="emit('update:custom', $event)"
+        />
         <div v-if="requirementsLine" class="item-tooltip-reqs">{{ requirementsLine }}</div>
       </template>
 
@@ -228,18 +266,68 @@ function modLineClass(row) {
         :mystic-orbs="mysticOrbs"
         :character-level="characterLevel"
         :editable="canEdit"
+        :kinds="['mo', 'umo', 'smo']"
         @update:mystic-orbs="emit('update:mystic-orbs', $event)"
       />
 
-      <div
-        v-else-if="isPlaceholderTab"
-        class="item-upgrade-section"
-        :aria-label="activeTab"
-      >
-        <p class="item-upgrade-section__empty is-size-7 has-text-grey">
-          {{ placeholderCopy }}
-        </p>
-      </div>
+      <ItemMysticOrbsEditor
+        v-else-if="isEffigiesTab"
+        :def="def"
+        :rolls="rolls"
+        :extras="extras"
+        :socketables="socketables"
+        :mystic-orbs="mysticOrbs"
+        :character-level="characterLevel"
+        :editable="canEdit"
+        :kinds="['effigy']"
+        heading="Occult Effigies"
+        empty-text="No effigies applied."
+        add-label="Add occult effigy…"
+        @update:mystic-orbs="emit('update:mystic-orbs', $event)"
+      />
+
+      <ItemOilEditor
+        v-else-if="isOilsTab"
+        :def="def"
+        :equip-slot="equipSlot"
+        :oil="oil"
+        :editable="canEdit"
+        @update:oil="emit('update:oil', $event)"
+      />
+
+      <ItemCorruptionsEditor
+        v-else-if="isCorruptionsTab"
+        :def="def"
+        :equip-slot="equipSlot"
+        :corruptions="corruptions"
+        :editable="canEdit"
+        @update:corruptions="emit('update:corruptions', $event)"
+      />
+
+      <ItemShrineEditor
+        v-else-if="isBlessingTab"
+        :def="def"
+        :shrine="blessing"
+        honorific
+        :editable="canEdit"
+        @update:shrine="emit('update:blessing', $event)"
+      />
+
+      <ItemShrineEditor
+        v-else-if="isShrineTab"
+        :def="def"
+        :shrine="shrine"
+        :editable="canEdit"
+        @update:shrine="emit('update:shrine', $event)"
+      />
+
+      <ItemMechanicsEditor
+        v-else-if="isMechanicsTab"
+        :def="def"
+        :mechanics="mechanics"
+        :editable="canEdit"
+        @update:mechanics="emit('update:mechanics', $event)"
+      />
     </div>
 
     <CharmExtrasControls

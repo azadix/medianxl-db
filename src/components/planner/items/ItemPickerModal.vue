@@ -27,7 +27,14 @@ import {
   listEligibleRunewordBases,
   mergeRunewordWithBase,
 } from '@/items/runeword-items.js';
+import {
+  ANGELIC_RARITIES,
+  angelicBaseDisplayName,
+  isAngelicEligibleBase,
+  normalizeAngelicRarity,
+} from '@/items/angelic-items.js';
 import ItemDetailPanel from './ItemDetailPanel.vue';
+import { applyCustomOverlayToDef } from '@/items/custom-items.js';
 import {
   getEffectivePlannerLevel,
   getCharacterInstance,
@@ -50,6 +57,10 @@ const rolls = ref({});
 const baseSearch = ref('');
 /** @type {import('vue').Ref<string|null>} */
 const selectedBaseId = ref(null);
+/** @type {import('vue').Ref<'crafted'|'angelic'|'honorific'|null>} */
+const customQuality = ref(null);
+/** @type {import('vue').Ref<'rare'|'crafted'|'honorific'>} */
+const angelicRarity = ref('rare');
 
 function resetPickerPreview() {
   search.value = '';
@@ -58,6 +69,8 @@ function resetPickerPreview() {
   rolls.value = {};
   baseSearch.value = '';
   selectedBaseId.value = null;
+  customQuality.value = null;
+  angelicRarity.value = 'rare';
 }
 
 watch(isPickerOpen, async (open) => {
@@ -98,7 +111,20 @@ const filteredItems = computed(() => {
   // filteredItems would otherwise re-run pickerCatalog on every slot click.
   if (!isPickerOpen.value) return [];
   let list = itemsStore.pickerCatalog.filter((d) => !isCharmItem(d) && !isRelicItem(d));
-  if (category.value !== 'all') {
+  if (customQuality.value === 'angelic') {
+    list = list.filter((d) => isAngelicEligibleBase(d));
+  } else if (customQuality.value) {
+    list = list.filter(
+      (d) =>
+        (d.category === 'weapons' || d.category === 'armor' || d.category === 'jewelry') &&
+        d.rarity !== 'unique' &&
+        d.rarity !== 'set' &&
+        d.rarity !== 'runeword'
+    );
+    if (category.value === 'weapons' || category.value === 'armor' || category.value === 'jewelry') {
+      list = list.filter((d) => d.category === category.value);
+    }
+  } else if (category.value !== 'all') {
     list = list.filter((d) => matchesCategory(d, category.value));
   }
   const q = search.value.trim();
@@ -172,6 +198,26 @@ const previewDef = computed(() => {
   if (isRunewordTemplate(template) && selectedBaseId.value) {
     const base = itemsStore.catalogById[selectedBaseId.value];
     return mergeRunewordWithBase(template, base) || template;
+  }
+  if (customQuality.value === 'angelic') {
+    const rarity = normalizeAngelicRarity(angelicRarity.value);
+    const label = rarity.charAt(0).toUpperCase() + rarity.slice(1);
+    return applyCustomOverlayToDef(template, {
+      quality: rarity,
+      angelic: true,
+      name: `${label} ${angelicBaseDisplayName(template)}`,
+      modifiers: [],
+      sockets: Number(template.sockets) || 0,
+    });
+  }
+  if (customQuality.value) {
+    const label = customQuality.value === 'honorific' ? 'Honorific' : 'Crafted';
+    return applyCustomOverlayToDef(template, {
+      quality: customQuality.value,
+      name: `${label} ${template.baseName || template.name}`,
+      modifiers: [],
+      sockets: Number(template.sockets) || 0,
+    });
   }
   return template;
 });
@@ -277,8 +323,17 @@ const slotTitle = computed(() => {
  * @param {object} item
  * @returns {string}
  */
+function pickerItemName(item) {
+  if (customQuality.value === 'angelic') return angelicBaseDisplayName(item);
+  return item.name;
+}
+
 function rowSubtitle(item) {
   const parts = [];
+  if (customQuality.value === 'angelic') {
+    const rarity = normalizeAngelicRarity(angelicRarity.value);
+    parts.push(rarity.charAt(0).toUpperCase() + rarity.slice(1));
+  }
   if (isRunewordTemplate(item)) {
     const recipe = formatRunewordRecipe(item);
     if (recipe) parts.push(recipe);
@@ -354,7 +409,30 @@ function onEquip(defId) {
   );
   previewId.value = pickedId;
   rolls.value = nextRolls;
-  itemsStore.equipFromPicker(id, nextRolls);
+  /** @type {import('@/items/custom-items.js').CustomItemPayload|null} */
+  let custom = null;
+  if (customQuality.value) {
+    if (customQuality.value === 'angelic') {
+      const rarity = normalizeAngelicRarity(angelicRarity.value);
+      const label = rarity.charAt(0).toUpperCase() + rarity.slice(1);
+      custom = {
+        quality: rarity,
+        angelic: true,
+        name: `${label} ${angelicBaseDisplayName(def)}`,
+        modifiers: [],
+        sockets: Number(def.sockets) || 0,
+      };
+    } else {
+      const label = customQuality.value === 'honorific' ? 'Honorific' : 'Crafted';
+      custom = {
+        quality: customQuality.value,
+        name: `${label} ${def.baseName || def.name}`,
+        modifiers: [],
+        sockets: Number(def.sockets) || 0,
+      };
+    }
+  }
+  itemsStore.equipFromPicker(id, nextRolls, custom);
   afterEquipChanged();
 }
 
@@ -418,10 +496,34 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown));
               :key="cat.id"
               type="button"
               class="item-picker-modal__cat"
-              :class="{ 'is-active': category === cat.id }"
-              @click="category = cat.id"
+              :class="{ 'is-active': !customQuality && category === cat.id }"
+              @click="customQuality = null; category = cat.id"
             >
               {{ cat.name }}
+            </button>
+            <button
+              type="button"
+              class="item-picker-modal__cat"
+              :class="{ 'is-active': customQuality === 'crafted' }"
+              @click="customQuality = 'crafted'; category = 'weapons'"
+            >
+              + Crafted Item
+            </button>
+            <button
+              type="button"
+              class="item-picker-modal__cat"
+              :class="{ 'is-active': customQuality === 'angelic' }"
+              @click="customQuality = 'angelic'; category = 'all'"
+            >
+              + Angelic Item
+            </button>
+            <button
+              type="button"
+              class="item-picker-modal__cat"
+              :class="{ 'is-active': customQuality === 'honorific' }"
+              @click="customQuality = 'honorific'; category = 'weapons'"
+            >
+              + Honorific Item
             </button>
           </aside>
 
@@ -441,6 +543,22 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown));
               </div>
             </div>
 
+            <div v-if="customQuality === 'angelic'" class="item-picker-modal__search field mb-0">
+              <p class="is-size-7 has-text-grey mb-1">Angelic rarity</p>
+              <div class="buttons are-small mb-0">
+                <button
+                  v-for="row in ANGELIC_RARITIES"
+                  :key="row"
+                  type="button"
+                  class="button"
+                  :class="{ 'is-link': angelicRarity === row }"
+                  @click="angelicRarity = row"
+                >
+                  {{ row.charAt(0).toUpperCase() + row.slice(1) }}
+                </button>
+              </div>
+            </div>
+
             <ul class="item-picker-modal__list" role="listbox" aria-label="Items">
               <li v-if="filteredItems.length === 0" class="item-picker-modal__empty">
                 No matching items
@@ -450,7 +568,10 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown));
                 :key="item.id"
                 class="item-picker-modal__row"
                 :class="[
-                  'item-picker-modal__row--' + (item.rarity || 'normal'),
+                  'item-picker-modal__row--' +
+                    (customQuality === 'angelic'
+                      ? angelicRarity
+                      : customQuality || item.rarity || 'normal'),
                   {
                     'is-selected': previewId === item.id,
                     'is-disabled': !canSelectPickerItem(item),
@@ -465,7 +586,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown));
                 @keydown.enter.prevent="onSelect(item.id)"
                 @dblclick.prevent="canSelectPickerItem(item) && onEquip(item.id)"
               >
-                <span class="item-picker-modal__row-name">{{ item.name }}</span>
+                <span class="item-picker-modal__row-name">{{ pickerItemName(item) }}</span>
                 <span v-if="rowSubtitle(item)" class="item-picker-modal__row-meta">{{
                   rowSubtitle(item)
                 }}</span>

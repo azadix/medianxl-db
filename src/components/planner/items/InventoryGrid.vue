@@ -114,6 +114,7 @@ function onItemTooltipEnter(e, instanceId) {
       extras: itemsStore.getExtrasForInstance(instanceId),
       mysticOrbs: itemsStore.getMysticOrbsForInstance(instanceId),
       socketables: itemsStore.getSocketablesForInstance(instanceId),
+      ...itemsStore.getItemBonusOptionsForInstance(instanceId),
       instanceId,
     }
   );

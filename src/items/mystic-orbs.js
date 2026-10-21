@@ -11,7 +11,7 @@ import { isHandWeapon, isQuiverItem, isShieldItem } from '@/items/item-types.js'
  *   name: string,
  *   aliases?: string[],
  *   modifiers?: string[],
- *   kind?: 'mo'|'umo'|'smo',
+ *   kind?: 'mo'|'umo'|'smo'|'effigy',
  *   slots?: 'all'|'weapon'|'armor'|'jewelry',
  *   maxStacks?: number,
  *   restrictToSlot?: string,
@@ -61,7 +61,9 @@ export function loadMysticOrbsCatalog(rows) {
         ? row.aliases.map((a) => String(a || '').trim()).filter(Boolean)
         : [];
       if (aliases.length) entry.aliases = aliases;
-      if (row.kind === 'mo' || row.kind === 'umo' || row.kind === 'smo') entry.kind = row.kind;
+      if (row.kind === 'mo' || row.kind === 'umo' || row.kind === 'smo' || row.kind === 'effigy') {
+        entry.kind = row.kind;
+      }
       if (row.slots === 'all' || row.slots === 'weapon' || row.slots === 'armor' || row.slots === 'jewelry') {
         entry.slots = row.slots;
       }
@@ -72,9 +74,9 @@ export function loadMysticOrbsCatalog(rows) {
       const restrictToCategory = row.restrictToCategory != null ? String(row.restrictToCategory).trim() : '';
       if (restrictToCategory) entry.restrictToCategory = restrictToCategory;
       if (row.requiresAngelic === true) entry.requiresAngelic = true;
-      const reqLevelPerStack = Math.floor(Number(row.reqLevelPerStack));
-      if (Number.isFinite(reqLevelPerStack) && reqLevelPerStack > 0) {
-        entry.reqLevelPerStack = reqLevelPerStack;
+      if (row.reqLevelPerStack != null && row.reqLevelPerStack !== '') {
+        const reqLevelPerStack = Math.floor(Number(row.reqLevelPerStack));
+        if (Number.isFinite(reqLevelPerStack)) entry.reqLevelPerStack = reqLevelPerStack;
       }
       byName.set(normKey(name), entry);
       for (const alias of aliases) byName.set(normKey(alias), entry);
@@ -150,12 +152,13 @@ export function getMysticOrbBonusLines(name, count = 1) {
 /**
  * Unique mystic orbs vs vendor / soulforged MOs.
  * @param {string|null|undefined} name
- * @returns {'unique'|'rare'|'normal'}
+ * @returns {'unique'|'rare'|'normal'|'effigy'}
  */
 export function mysticOrbKind(name) {
   const row = lookupMysticOrb(name);
   if (row?.kind === 'smo') return 'rare';
   if (row?.kind === 'mo') return 'normal';
+  if (row?.kind === 'effigy') return 'effigy';
   if (row?.kind === 'umo') return 'unique';
   const label = String(name || '').trim();
   if (/^rare\s+mo\b/i.test(label)) return 'rare';
@@ -170,6 +173,7 @@ export function mysticOrbKind(name) {
  */
 export function mysticOrbIcon(orb) {
   const row = typeof orb === 'string' ? lookupMysticOrb(orb) : orb && typeof orb === 'object' ? orb : null;
+  if ((row?.kind || '') === 'effigy') return 'occultorb';
   const slots = row?.slots;
   if (slots === 'weapon') return 'orb_weap';
   if (slots === 'armor') return 'orb_armo';
@@ -213,7 +217,8 @@ export function mysticOrbSlotCategory(def) {
  */
 function isAngelicItem(def) {
   if (!def || typeof def !== 'object') return false;
-  const blob = [def.uniqueKind, def.rarity, def.quality, def.name, def.baseName]
+  if (def.angelic === true) return true;
+  const blob = [def.uniqueKind, def.rarity, def.quality, def.customQuality, def.name, def.baseName]
     .map((v) => String(v || ''))
     .join(' ');
   return /angelic/i.test(blob);
@@ -270,8 +275,10 @@ export function mysticOrbMaxStacks(name) {
  */
 export function mysticOrbReqLevelPerStack(name) {
   const row = lookupMysticOrb(name);
-  const explicit = Math.floor(Number(row?.reqLevelPerStack));
-  if (Number.isFinite(explicit) && explicit > 0) return explicit;
+  if (row?.reqLevelPerStack != null && row.reqLevelPerStack !== '') {
+    const explicit = Math.floor(Number(row.reqLevelPerStack));
+    if (Number.isFinite(explicit)) return explicit;
+  }
   if (row?.kind === 'mo') return 4;
   if (row?.kind === 'umo' || row?.kind === 'smo') return 10;
   const label = String(name || '').trim();

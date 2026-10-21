@@ -140,7 +140,8 @@ describe('custom-items', () => {
 
   it('shows honorific and angelic badges', () => {
     expect(formatItemRarityBadge({ rarity: 'honorific' })).toBe('Honorific');
-    expect(formatItemRarityBadge({ rarity: 'angelic' })).toBe('Angelic');
+    expect(formatItemRarityBadge({ rarity: 'angelic' })).toBe('Rare');
+    expect(formatItemRarityBadge({ rarity: 'crafted', angelic: true })).toBe('Crafted');
   });
 
   it('does not repeat Relic in the tooltip subtitle', () => {

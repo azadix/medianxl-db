@@ -1,0 +1,1482 @@
+[
+  {
+    "id": "edmg",
+    "label": "+x% Enhanced Damage",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "weaponPhysDmg",
+    "label": "+x% Weapon Physical Damage",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "addsDmgMin",
+    "label": "+x to Minimum Damage",
+    "type": "flat",
+    "category": "offense"
+  },
+  {
+    "id": "addsDmgMax",
+    "label": "+x to Maximum Damage",
+    "type": "flat",
+    "category": "offense"
+  },
+  {
+    "id": "addsFireDmgMin",
+    "label": "+x Min Fire Damage",
+    "type": "flat",
+    "category": "offense"
+  },
+  {
+    "id": "addsFireDmgMax",
+    "label": "+x Max Fire Damage",
+    "type": "flat",
+    "category": "offense"
+  },
+  {
+    "id": "addsColdDmgMin",
+    "label": "+x Min Cold Damage",
+    "type": "flat",
+    "category": "offense"
+  },
+  {
+    "id": "addsColdDmgMax",
+    "label": "+x Max Cold Damage",
+    "type": "flat",
+    "category": "offense"
+  },
+  {
+    "id": "addsLightDmgMin",
+    "label": "+x Min Lightning Damage",
+    "type": "flat",
+    "category": "offense"
+  },
+  {
+    "id": "addsLightDmgMax",
+    "label": "+x Max Lightning Damage",
+    "type": "flat",
+    "category": "offense"
+  },
+  {
+    "id": "addsPoisonDmgMin",
+    "label": "+x Min Poison Damage over 1 Second",
+    "type": "flat",
+    "category": "offense"
+  },
+  {
+    "id": "addsPoisonDmgMax",
+    "label": "+x Max Poison Damage over 1 Second",
+    "type": "flat",
+    "category": "offense"
+  },
+  {
+    "id": "poisonSkillDur",
+    "label": "+x% Bonus to Poison Skill Duration",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "addsMagicDmgMin",
+    "label": "+x Min Magic Damage",
+    "type": "flat",
+    "category": "offense"
+  },
+  {
+    "id": "addsMagicDmgMax",
+    "label": "+x Max Magic Damage",
+    "type": "flat",
+    "category": "offense"
+  },
+  {
+    "id": "fireSpellDmg",
+    "label": "+x% Fire Spell Damage",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "coldSpellDmg",
+    "label": "+x% Cold Spell Damage",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "lightSpellDmg",
+    "label": "+x% Lightning Spell Damage",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "poisonSpellDmg",
+    "label": "+x% Poison Spell Damage",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "physMagicSpellDmg",
+    "label": "+x% Physical/Magic Spell Damage",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "spellDmg",
+    "label": "+x% Spell Damage",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "crushingBlow",
+    "label": "+x% Chance of Crushing Blow",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "deadlyStrike",
+    "label": "+x% Deadly Strike",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "criticalStrikeChance",
+    "label": "+x% Critical Strike Chance",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "trapDamage",
+    "label": "+x% Trap Damage",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "attackRating",
+    "label": "+x Attack Rating",
+    "type": "flat",
+    "category": "offense"
+  },
+  {
+    "id": "arPercent",
+    "label": "+x% Bonus to Attack Rating",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "dmgToDemons",
+    "label": "+x% Damage to Demons",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "dmgToUndead",
+    "label": "+x% Damage to Undead",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "targetExtraDmg",
+    "label": "+x Target Takes Additional Damage",
+    "type": "flat",
+    "category": "offense"
+  },
+  {
+    "id": "enemyFireRes",
+    "label": "-x% Enemy Fire Resistance",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "enemyColdRes",
+    "label": "-x% Enemy Cold Resistance",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "enemyLightRes",
+    "label": "-x% Enemy Lightning Resistance",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "enemyPoisonRes",
+    "label": "-x% Enemy Poison Resistance",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "enemyElemRes",
+    "label": "-x% Enemy Elemental Resistances",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "enemyPhysRes",
+    "label": "-x% Enemy Physical Resistance",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "enemyMagicRes",
+    "label": "-x% Enemy Magic Resistance",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "enemyDamage",
+    "label": "x% Enemy Damage",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "enemyElemDamage",
+    "label": "x% Enemy Elemental Damage",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "enemyElemDamageTaken",
+    "label": "+x Enemy Elemental/Magic Damage Taken",
+    "type": "flat",
+    "category": "offense"
+  },
+  {
+    "id": "enemyPhysDamageTaken",
+    "label": "+x Enemy Physical Damage Taken",
+    "type": "flat",
+    "category": "offense"
+  },
+  {
+    "id": "enemyCastSpeed",
+    "label": "x% Enemy Cast Speed",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "enemyMovement",
+    "label": "x% Enemy Movement Speed",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "enemyAttackRating",
+    "label": "x% Enemy Attack Rating",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "enemyDefense",
+    "label": "x% Enemy Defense",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "enemyAttackSpeed",
+    "label": "x% Enemy Attack Speed",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "innateElemDmg",
+    "label": "+x% Innate Elemental Damage",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "emberSpiritProjectile",
+    "label": "+x Ember Spirit Projectiles",
+    "type": "flat",
+    "category": "offense"
+  },
+  {
+    "id": "huntingBansheeProjectile",
+    "label": "+x Hunting Banshee Projectiles",
+    "type": "flat",
+    "category": "offense"
+  },
+  {
+    "id": "huntingEmberProjectile",
+    "label": "+x Hunting Banshee/Ember Spirit Projectiles",
+    "type": "flat",
+    "category": "offense"
+  },
+  {
+    "id": "spellFocus",
+    "label": "+x Spell Focus",
+    "type": "flat",
+    "category": "offense"
+  },
+  {
+    "id": "spellFocusPercent",
+    "label": "+x% Bonus to Spell Focus",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "bloodlustDmg",
+    "label": "+x% Bonus Damage to Bloodlust",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "bloodlustEleDmg",
+    "label": "+x% Bonus Elemental Damage to Bloodlust",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "protectorBloodlustDmg",
+    "label": "+x% Damage to Protector Spirit Bloodlust",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "curaeTotalDmg",
+    "label": "+x% Total Damage to Curare",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "additionalStrDmgBonus",
+    "label": "+x% Additional Strength Damage Bonus",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "additionalDexDmgBonus",
+    "label": "+x% Additional Dexterity Damage Bonus",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "vesselJusticeDmg",
+    "label": "+x% Damage to Vessel of Justice",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "vesselRetributionDmg",
+    "label": "+x% Damage to Vessel of Retribution",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "markOfTheWildDmg",
+    "label": "+x% Bonus Damage to Mark of the Wild",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "markOfTheWildEleDmg",
+    "label": "+x% Bonus Elemental Damage to Mark of the Wild",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "markOfTheWildDur",
+    "label": "+x% Duration Bonus to Mark of the Wild",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "dmgReflect",
+    "label": "+x% Damage Reflected",
+    "type": "percent",
+    "category": "defense"
+  },
+  {
+    "id": "defense",
+    "label": "+x Defense",
+    "type": "flat",
+    "category": "defense"
+  },
+  {
+    "id": "defPercent",
+    "label": "+x% Enhanced Defense",
+    "type": "percent",
+    "category": "defense"
+  },
+  {
+    "id": "defBonus",
+    "label": "+x% Bonus to Defense",
+    "type": "percent",
+    "category": "defense"
+  },
+  {
+    "id": "defFinalMult",
+    "label": "+x% Total Defense Multiplier",
+    "type": "percent",
+    "category": "defense"
+  },
+  {
+    "id": "block",
+    "label": "+x% Block Chance",
+    "type": "percent",
+    "category": "defense"
+  },
+  {
+    "id": "dmgReduceFlat",
+    "label": "+x Physical Damage Taken Reduced",
+    "type": "flat",
+    "category": "defense"
+  },
+  {
+    "id": "attackerTakesDamage",
+    "label": "+x Attacker Takes Damage",
+    "type": "flat",
+    "category": "defense"
+  },
+  {
+    "id": "totalDefenseZero",
+    "label": "Total Defense = 0",
+    "type": "flag",
+    "category": "defense"
+  },
+  {
+    "id": "attackerTakesFireDmg",
+    "label": "+x Attacker Takes Fire Damage",
+    "type": "flat",
+    "category": "defense"
+  },
+  {
+    "id": "attackerTakesColdDmg",
+    "label": "+x Attacker Takes Cold Damage",
+    "type": "flat",
+    "category": "defense"
+  },
+  {
+    "id": "attackerTakesLightningDmg",
+    "label": "+x Attacker Takes Lightning Damage",
+    "type": "flat",
+    "category": "defense"
+  },
+  {
+    "id": "attackerTakesMagicDmg",
+    "label": "+x Attacker Takes Magic Damage",
+    "type": "flat",
+    "category": "defense"
+  },
+  {
+    "id": "freezesTarget",
+    "label": "+x Freezes Target",
+    "type": "flat",
+    "category": "defense"
+  },
+  {
+    "id": "blindsTarget",
+    "label": "+x Blinds Target",
+    "type": "flat",
+    "category": "defense"
+  },
+  {
+    "id": "maxBlock",
+    "label": "+x% Maximum Block Chance",
+    "type": "percent",
+    "category": "defense"
+  },
+  {
+    "id": "maxAvoid",
+    "label": "+x% Maximum Avoid Chance",
+    "type": "percent",
+    "category": "defense"
+  },
+  {
+    "id": "avoidChance",
+    "label": "+x% Avoid Chance",
+    "type": "percent",
+    "category": "defense"
+  },
+  {
+    "id": "clawBlock",
+    "label": "+x% Claw Block",
+    "type": "percent",
+    "category": "defense"
+  },
+  {
+    "id": "grit",
+    "label": "+x% Grit",
+    "type": "percent",
+    "category": "defense"
+  },
+  {
+    "id": "gritFromStrDoubled",
+    "label": "Grit Gained from Strength is Doubled",
+    "type": "flag",
+    "category": "defense"
+  },
+  {
+    "id": "physResist",
+    "label": "+x% Physical Resist",
+    "type": "percent",
+    "category": "defense"
+  },
+  {
+    "id": "elemDmgReduce",
+    "label": "+x Elemental/Magic Damage Reduced",
+    "type": "flat",
+    "category": "defense"
+  },
+  {
+    "id": "slowTarget",
+    "label": "+x% Slow Target",
+    "type": "percent",
+    "category": "defense"
+  },
+  {
+    "id": "slowAttacker",
+    "label": "+x% Slows Attacker",
+    "type": "percent",
+    "category": "defense"
+  },
+  {
+    "id": "attackerFlees",
+    "label": "+x% Attacker Flees",
+    "type": "percent",
+    "category": "defense"
+  },
+  {
+    "id": "life",
+    "label": "+x Life",
+    "type": "flat",
+    "category": "resources"
+  },
+  {
+    "id": "lifePercent",
+    "label": "+x% Maximum Life",
+    "type": "percent",
+    "category": "resources"
+  },
+  {
+    "id": "mana",
+    "label": "+x Mana",
+    "type": "flat",
+    "category": "resources"
+  },
+  {
+    "id": "lifeAndMana",
+    "label": "+x to Life and Mana",
+    "type": "flat",
+    "category": "resources",
+    "hidden": true
+  },
+  {
+    "id": "lifeManaOnStrike",
+    "label": "+x Life and Mana on Striking",
+    "type": "flat",
+    "category": "resources",
+    "hidden": true
+  },
+  {
+    "id": "attackerTakesElemDmg",
+    "label": "Attacker Takes Elemental Damage of x",
+    "type": "flat",
+    "category": "defense",
+    "hidden": true
+  },
+  {
+    "id": "manaPercent",
+    "label": "+x% Maximum Mana",
+    "type": "percent",
+    "category": "resources"
+  },
+  {
+    "id": "lifeRegen",
+    "label": "+x Life Regenerated per Second",
+    "type": "flat",
+    "category": "resources"
+  },
+  {
+    "id": "maxLifeRegen",
+    "label": "+x% of Maximum Life Regenerated per Second",
+    "type": "percent",
+    "category": "resources"
+  },
+  {
+    "id": "manaRegen",
+    "label": "+x% Regenerate Mana",
+    "type": "percent",
+    "category": "resources"
+  },
+  {
+    "id": "lifeSteal",
+    "label": "+x% Life Stolen per Hit",
+    "type": "percent",
+    "category": "resources"
+  },
+  {
+    "id": "manaSteal",
+    "label": "+x% Mana Stolen per Hit",
+    "type": "percent",
+    "category": "resources"
+  },
+  {
+    "id": "lifeManaSteal",
+    "label": "+x% Life and Mana Stolen per Hit",
+    "type": "percent",
+    "category": "resources"
+  },
+  {
+    "id": "lifeOnKill",
+    "label": "+x Life after each Kill",
+    "type": "flat",
+    "category": "resources"
+  },
+  {
+    "id": "manaOnKill",
+    "label": "+x Mana after each Kill",
+    "type": "flat",
+    "category": "resources"
+  },
+  {
+    "id": "lifeManaOnKill",
+    "label": "+x Life and Mana after each Kill",
+    "type": "flat",
+    "category": "resources"
+  },
+  {
+    "id": "lifeOnMelee",
+    "label": "+x Life on Melee Attack",
+    "type": "flat",
+    "category": "resources"
+  },
+  {
+    "id": "manaOnMelee",
+    "label": "+x Mana on Melee Attack",
+    "type": "flat",
+    "category": "resources"
+  },
+  {
+    "id": "lifeOnStrike",
+    "label": "+x Life on Striking",
+    "type": "flat",
+    "category": "resources"
+  },
+  {
+    "id": "manaOnStrike",
+    "label": "+x Mana on Striking",
+    "type": "flat",
+    "category": "resources"
+  },
+  {
+    "id": "lifeWhenStruck",
+    "label": "+x Life when Struck by Enemy",
+    "type": "flat",
+    "category": "resources"
+  },
+  {
+    "id": "manaWhenStruck",
+    "label": "+x Mana when Struck by Enemy",
+    "type": "flat",
+    "category": "resources"
+  },
+  {
+    "id": "weaponDmgToMana",
+    "label": "+x% Weapon Damage Taken Restores Mana",
+    "type": "percent",
+    "category": "resources"
+  },
+  {
+    "id": "manaCostPercent",
+    "label": "+x% Mana Cost of Skills",
+    "type": "percent",
+    "category": "resources"
+  },
+  {
+    "id": "resFire",
+    "label": "+x% Fire Resistance",
+    "type": "flat",
+    "category": "resistance"
+  },
+  {
+    "id": "resCold",
+    "label": "+x% Cold Resistance",
+    "type": "flat",
+    "category": "resistance"
+  },
+  {
+    "id": "resLightning",
+    "label": "+x% Lightning Resistance",
+    "type": "flat",
+    "category": "resistance"
+  },
+  {
+    "id": "resPoison",
+    "label": "+x% Poison Resistance",
+    "type": "flat",
+    "category": "resistance"
+  },
+  {
+    "id": "resMagic",
+    "label": "+x% Magic Resistance",
+    "type": "flat",
+    "category": "resistance"
+  },
+  {
+    "id": "resElem",
+    "label": "+x% Elemental Resistances",
+    "type": "flat",
+    "category": "resistance"
+  },
+  {
+    "id": "maxResFire",
+    "label": "+x% Maximum Fire Resist",
+    "type": "flat",
+    "category": "resistance"
+  },
+  {
+    "id": "maxResCold",
+    "label": "+x% Maximum Cold Resist",
+    "type": "flat",
+    "category": "resistance"
+  },
+  {
+    "id": "maxResLight",
+    "label": "+x% Maximum Lightning Resist",
+    "type": "flat",
+    "category": "resistance"
+  },
+  {
+    "id": "maxResPois",
+    "label": "+x% Maximum Poison Resist",
+    "type": "flat",
+    "category": "resistance"
+  },
+  {
+    "id": "maxResElem",
+    "label": "+x% Maximum Elemental Resists",
+    "type": "flat",
+    "category": "resistance"
+  },
+  {
+    "id": "maxResRandElem",
+    "label": "+x% Maximum Random Elemental Resist",
+    "type": "flat",
+    "category": "resistance",
+    "hidden": true
+  },
+  {
+    "id": "absorbFire",
+    "label": "+x% Fire Absorb",
+    "type": "percent",
+    "category": "resistance"
+  },
+  {
+    "id": "absorbCold",
+    "label": "+x% Cold Absorb",
+    "type": "percent",
+    "category": "resistance"
+  },
+  {
+    "id": "absorbLight",
+    "label": "+x% Lightning Absorb",
+    "type": "percent",
+    "category": "resistance"
+  },
+  {
+    "id": "absorbPoison",
+    "label": "+x% Poison Absorb",
+    "type": "percent",
+    "category": "resistance"
+  },
+  {
+    "id": "absorbMagic",
+    "label": "+x% Magic Absorb",
+    "type": "percent",
+    "category": "resistance"
+  },
+  {
+    "id": "absorbFireFlat",
+    "label": "+x Fire Absorb",
+    "type": "flat",
+    "category": "resistance"
+  },
+  {
+    "id": "absorbColdFlat",
+    "label": "+x Cold Absorb",
+    "type": "flat",
+    "category": "resistance"
+  },
+  {
+    "id": "absorbLightFlat",
+    "label": "+x Lightning Absorb",
+    "type": "flat",
+    "category": "resistance"
+  },
+  {
+    "id": "absorbPoisonFlat",
+    "label": "+x Poison Absorb",
+    "type": "flat",
+    "category": "resistance"
+  },
+  {
+    "id": "absorbMagicFlat",
+    "label": "+x Magic Absorb",
+    "type": "flat",
+    "category": "resistance"
+  },
+  {
+    "id": "manaShieldAbsorb",
+    "label": "+x% of Direct Damage Taken from Mana",
+    "type": "percent",
+    "category": "resistance"
+  },
+  {
+    "id": "curseLenReduce",
+    "label": "+x% Curse Length Reduction",
+    "type": "percent",
+    "category": "resistance"
+  },
+  {
+    "id": "poisonLenReduce",
+    "label": "+x% Poison Length Reduction",
+    "type": "percent",
+    "category": "resistance"
+  },
+  {
+    "id": "halfFreeze",
+    "label": "Half Freeze Duration",
+    "type": "special",
+    "category": "resistance"
+  },
+  {
+    "id": "noFireDamage",
+    "label": "You deal no Fire Damage",
+    "type": "special",
+    "category": "offense"
+  },
+  {
+    "id": "noColdDamage",
+    "label": "You deal no Cold Damage",
+    "type": "special",
+    "category": "offense"
+  },
+  {
+    "id": "noLightDamage",
+    "label": "You deal no Lightning Damage",
+    "type": "special",
+    "category": "offense"
+  },
+  {
+    "id": "noPoisonDamage",
+    "label": "You deal no Poison Damage",
+    "type": "special",
+    "category": "offense"
+  },
+  {
+    "id": "cannotFreeze",
+    "label": "Cannot Be Frozen",
+    "type": "special",
+    "category": "resistance"
+  },
+  {
+    "id": "ias",
+    "label": "+x% Attack Speed",
+    "type": "percent",
+    "category": "speed"
+  },
+  {
+    "id": "fcr",
+    "label": "+x% Cast Speed",
+    "type": "percent",
+    "category": "speed"
+  },
+  {
+    "id": "fhr",
+    "label": "+x% Hit Recovery",
+    "type": "percent",
+    "category": "speed"
+  },
+  {
+    "id": "fbr",
+    "label": "+x% Block Speed",
+    "type": "percent",
+    "category": "speed"
+  },
+  {
+    "id": "frw",
+    "label": "+x% Movement Speed",
+    "type": "percent",
+    "category": "speed"
+  },
+  {
+    "id": "combatSpeeds",
+    "label": "+x% Combat Speeds",
+    "type": "percent",
+    "category": "speed"
+  },
+  {
+    "id": "activationFreq",
+    "label": "+x% to Activation Frequency",
+    "type": "percent",
+    "category": "speed"
+  },
+  {
+    "id": "activationFreqFire",
+    "label": "+x% Fire Activation Frequency",
+    "type": "percent",
+    "category": "speed"
+  },
+  {
+    "id": "activationFreqCold",
+    "label": "+x% Cold Activation Frequency",
+    "type": "percent",
+    "category": "speed"
+  },
+  {
+    "id": "activationFreqLight",
+    "label": "+x% Lightning Activation Frequency",
+    "type": "percent",
+    "category": "speed"
+  },
+  {
+    "id": "activationFreqPoison",
+    "label": "+x% Poison Activation Frequency",
+    "type": "percent",
+    "category": "speed"
+  },
+  {
+    "id": "activationFreqSpell",
+    "label": "+x% Spell Activation Frequency",
+    "type": "percent",
+    "category": "speed"
+  },
+  {
+    "id": "activationFreqWdm",
+    "label": "+x% Weapon Damage Activation Frequency",
+    "type": "percent",
+    "category": "speed"
+  },
+  {
+    "id": "allSkills",
+    "label": "+x to All Skills",
+    "type": "flat",
+    "category": "skills"
+  },
+  {
+    "id": "amazonSkills",
+    "label": "+x to Amazon Skill Levels",
+    "type": "flat",
+    "category": "skills"
+  },
+  {
+    "id": "assassinSkills",
+    "label": "+x to Assassin Skill Levels",
+    "type": "flat",
+    "category": "skills"
+  },
+  {
+    "id": "barbarianSkills",
+    "label": "+x to Barbarian Skill Levels",
+    "type": "flat",
+    "category": "skills"
+  },
+  {
+    "id": "druidSkills",
+    "label": "+x to Druid Skill Levels",
+    "type": "flat",
+    "category": "skills"
+  },
+  {
+    "id": "necromancerSkills",
+    "label": "+x to Necromancer Skill Levels",
+    "type": "flat",
+    "category": "skills"
+  },
+  {
+    "id": "paladinSkills",
+    "label": "+x to Paladin Skill Levels",
+    "type": "flat",
+    "category": "skills"
+  },
+  {
+    "id": "sorceressSkills",
+    "label": "+x to Sorceress Skill Levels",
+    "type": "flat",
+    "category": "skills"
+  },
+  {
+    "id": "oskill",
+    "label": "+x to Skill (Oskill)",
+    "type": "flat",
+    "category": "skills"
+  },
+  {
+    "id": "classSkill",
+    "label": "+x to Skill (Class Only)",
+    "type": "flat",
+    "category": "skills"
+  },
+  {
+    "id": "anySkill",
+    "label": "+x to Skill",
+    "type": "flat",
+    "category": "skills"
+  },
+  {
+    "id": "str",
+    "label": "+x to Strength",
+    "type": "flat",
+    "category": "attributes"
+  },
+  {
+    "id": "dex",
+    "label": "+x to Dexterity",
+    "type": "flat",
+    "category": "attributes"
+  },
+  {
+    "id": "vit",
+    "label": "+x to Vitality",
+    "type": "flat",
+    "category": "attributes"
+  },
+  {
+    "id": "egy",
+    "label": "+x to Energy",
+    "type": "flat",
+    "category": "attributes"
+  },
+  {
+    "id": "strPercent",
+    "label": "+x% to Strength",
+    "type": "percent",
+    "category": "attributes"
+  },
+  {
+    "id": "dexPercent",
+    "label": "+x% to Dexterity",
+    "type": "percent",
+    "category": "attributes"
+  },
+  {
+    "id": "vitPercent",
+    "label": "+x% to Vitality",
+    "type": "percent",
+    "category": "attributes"
+  },
+  {
+    "id": "egyPercent",
+    "label": "+x% to Energy",
+    "type": "percent",
+    "category": "attributes"
+  },
+  {
+    "id": "allAttr",
+    "label": "+x to All Attributes",
+    "type": "flat",
+    "category": "attributes"
+  },
+  {
+    "id": "allAttrPercent",
+    "label": "+x% All Attributes",
+    "type": "percent",
+    "category": "attributes"
+  },
+  {
+    "id": "magicFind",
+    "label": "+x% Magic Find",
+    "type": "percent",
+    "category": "utility"
+  },
+  {
+    "id": "goldFind",
+    "label": "+x% Gold Find",
+    "type": "percent",
+    "category": "utility"
+  },
+  {
+    "id": "expBonus",
+    "label": "+x% Experience Bonus",
+    "type": "percent",
+    "category": "utility"
+  },
+  {
+    "id": "lightRadius",
+    "label": "+x Light Radius",
+    "type": "flat",
+    "category": "utility"
+  },
+  {
+    "id": "requirements",
+    "label": "+x% Requirements",
+    "type": "percent",
+    "category": "utility"
+  },
+  {
+    "id": "skillDuration",
+    "label": "+x% Skill Duration",
+    "type": "percent",
+    "category": "utility"
+  },
+  {
+    "id": "potionEffectiveness",
+    "label": "+x% Potion Effectiveness",
+    "type": "percent",
+    "category": "utility"
+  },
+  {
+    "id": "potionLife",
+    "label": "+x% Healing from Potions",
+    "type": "percent",
+    "category": "utility"
+  },
+  {
+    "id": "potionMana",
+    "label": "+x% Mana Restored from Potions",
+    "type": "percent",
+    "category": "utility"
+  },
+  {
+    "id": "maxNecroMinions",
+    "label": "+x to Maximum Necromancer Minions",
+    "type": "flat",
+    "category": "utility"
+  },
+  {
+    "id": "maxBarbMinions",
+    "label": "+x to Maximum Barbarian Minions",
+    "type": "flat",
+    "category": "utility"
+  },
+  {
+    "id": "maxPalaMinions",
+    "label": "+x to Maximum Paladin Minions",
+    "type": "flat",
+    "category": "utility"
+  },
+  {
+    "id": "maxExodiaMinions",
+    "label": "+x to Maximum Exodia Minions",
+    "type": "flat",
+    "category": "utility"
+  },
+  {
+    "id": "maxStamina",
+    "label": "+x Maximum Stamina",
+    "type": "flat",
+    "category": "utility"
+  },
+  {
+    "id": "staminaDrain",
+    "label": "+x% Faster Stamina Drain",
+    "type": "percent",
+    "category": "utility"
+  },
+  {
+    "id": "requiredLevelMod",
+    "label": "+x Required Level",
+    "type": "flat",
+    "category": "utility"
+  },
+  {
+    "id": "summonLife",
+    "label": "+x% Summon Life",
+    "type": "percent",
+    "category": "utility"
+  },
+  {
+    "id": "edyremLife",
+    "label": "+x% Summoned Edyrem Life",
+    "type": "percent",
+    "category": "utility"
+  },
+  {
+    "id": "summonDmg",
+    "label": "+x% Summon Damage",
+    "type": "percent",
+    "category": "utility"
+  },
+  {
+    "id": "summonTotalDmg",
+    "label": "+x% Minion Total Damage",
+    "type": "percent",
+    "category": "utility"
+  },
+  {
+    "id": "summonAR",
+    "label": "+x% Summon Attack Rating",
+    "type": "percent",
+    "category": "utility"
+  },
+  {
+    "id": "summonRes",
+    "label": "+x% Summon Elemental Resistances",
+    "type": "percent",
+    "category": "utility"
+  },
+  {
+    "id": "summonPhysRes",
+    "label": "+x% Summon Physical Resist",
+    "type": "percent",
+    "category": "utility"
+  },
+  {
+    "id": "proc",
+    "label": "Chance to Cast",
+    "type": "special",
+    "category": "procs"
+  },
+  {
+    "id": "reanimate",
+    "label": "Reanimate as",
+    "type": "special",
+    "category": "procs"
+  },
+  {
+    "id": "stunAttack",
+    "label": "Stun Attack",
+    "type": "special",
+    "category": "special"
+  },
+  {
+    "id": "slainMonstersRestInPeace",
+    "label": "Slain Monsters Rest in Peace",
+    "type": "special",
+    "category": "special"
+  },
+  {
+    "id": "shrineBlessed",
+    "label": "Shrine Blessed",
+    "type": "special",
+    "category": "special",
+    "color": "green",
+    "displayOnly": true
+  },
+  {
+    "id": "jitansGateCooldown",
+    "label": "Jitan's Gate Cooldown Reduced by +x Seconds",
+    "type": "flat",
+    "category": "special"
+  },
+  {
+    "id": "bendTheShadowsCooldown",
+    "label": "Bend the Shadows Cooldown Reduced by +x Seconds",
+    "type": "flat",
+    "category": "special"
+  },
+  {
+    "id": "broadsideCooldown",
+    "label": "Broadside Cooldown Reduced by +x Seconds",
+    "type": "flat",
+    "category": "special"
+  },
+  {
+    "id": "angelOfDeathCooldown",
+    "label": "Angel of Death Cooldown Reduced by +x Seconds",
+    "type": "flat",
+    "category": "special"
+  },
+  {
+    "id": "blinkCooldown",
+    "label": "Blink Cooldown Reduced by +x Seconds",
+    "type": "flat",
+    "category": "special"
+  },
+  {
+    "id": "carnageCooldown",
+    "label": "Smite Cooldown Reduced by +x Seconds",
+    "type": "flat",
+    "category": "special"
+  },
+  {
+    "id": "glacialNovaCooldown",
+    "label": "Glacial Nova Cooldown Reduced by +x Seconds",
+    "type": "flat",
+    "category": "special"
+  },
+  {
+    "id": "manaSweepCooldown",
+    "label": "Mana Sweep Cooldown Reduced by +x Seconds",
+    "type": "flat",
+    "category": "special"
+  },
+  {
+    "id": "spiritWalkCooldown",
+    "label": "Spirit Walk Cooldown Reduced by +x Seconds",
+    "type": "flat",
+    "category": "special"
+  },
+  {
+    "id": "teleportCooldown",
+    "label": "Teleport Cooldown Reduced by +x Seconds",
+    "type": "flat",
+    "category": "special"
+  },
+  {
+    "id": "thunderSlamCooldown",
+    "label": "Thunder Slam Cooldown Reduced by +x Seconds",
+    "type": "flat",
+    "category": "special"
+  },
+  {
+    "id": "winterAvatarCooldown",
+    "label": "Winter Avatar Cooldown Reduced by +x Seconds",
+    "type": "flat",
+    "category": "special"
+  },
+  {
+    "id": "firedanceCooldown",
+    "label": "Firedance Cooldown Reduced by +x Seconds",
+    "type": "flat",
+    "category": "special"
+  },
+  {
+    "id": "wintertideCooldown",
+    "label": "Wintertide Cooldown Reduced by +x Seconds",
+    "type": "flat",
+    "category": "special"
+  },
+  {
+    "id": "colosseumCooldown",
+    "label": "Colosseum Cooldown Reduced by +x Seconds",
+    "type": "flat",
+    "category": "special"
+  },
+  {
+    "id": "aura",
+    "label": "Aura / Special",
+    "type": "special",
+    "category": "special"
+  },
+  {
+    "id": "addsDmg",
+    "label": "+x Damage",
+    "type": "flat",
+    "category": "offense"
+  },
+  {
+    "id": "addsFireDmg",
+    "label": "+x Fire Damage",
+    "type": "flat",
+    "category": "offense",
+    "hidden": true
+  },
+  {
+    "id": "addsColdDmg",
+    "label": "+x Cold Damage",
+    "type": "flat",
+    "category": "offense",
+    "hidden": true
+  },
+  {
+    "id": "addsLightDmg",
+    "label": "+x Lightning Damage",
+    "type": "flat",
+    "category": "offense",
+    "hidden": true
+  },
+  {
+    "id": "addsMagicDmg",
+    "label": "+x Magic Damage",
+    "type": "flat",
+    "category": "offense",
+    "hidden": true
+  },
+  {
+    "id": "addsPoisonDmg",
+    "label": "+x Poison Damage",
+    "type": "flat",
+    "category": "offense",
+    "hidden": true
+  },
+  {
+    "id": "minDamage",
+    "label": "+x to Minimum Damage",
+    "type": "flat",
+    "category": "offense",
+    "hidden": true
+  },
+  {
+    "id": "maxDamage",
+    "label": "+x to Maximum Damage",
+    "type": "flat",
+    "category": "offense",
+    "hidden": true
+  },
+  {
+    "id": "poisonDPS",
+    "label": "+x Poison Damage per Second",
+    "type": "flat",
+    "category": "offense",
+    "hidden": true
+  },
+  {
+    "id": "maxLifeAndManaPercent",
+    "label": "+x% Maximum Life and Mana",
+    "type": "percent",
+    "category": "defense"
+  },
+  {
+    "id": "additionalDmgBonus",
+    "label": "+x% Additional Strength Damage Bonus",
+    "type": "percent",
+    "category": "offense",
+    "hidden": true
+  },
+  {
+    "id": "defenseVsMelee",
+    "label": "+x Defense vs. Melee",
+    "type": "flat",
+    "category": "defense"
+  },
+  {
+    "id": "defenseVsMissile",
+    "label": "+x Defense vs. Missile",
+    "type": "flat",
+    "category": "defense"
+  },
+  {
+    "id": "lifeOnDemonKill",
+    "label": "+x Life after each Demon Kill",
+    "type": "flat",
+    "category": "defense"
+  },
+  {
+    "id": "lifeOnUndeadKill",
+    "label": "+x Life after each Undead Kill",
+    "type": "flat",
+    "category": "defense"
+  },
+  {
+    "id": "dmgToZakarum",
+    "label": "+x% Damage to The Zakarum",
+    "type": "percent",
+    "category": "offense"
+  },
+  {
+    "id": "runemasterDefBonus",
+    "label": "+x% to Runemaster Defense Bonus",
+    "type": "percent",
+    "category": "special"
+  },
+  {
+    "id": "skillCooldown",
+    "label": "Skill Cooldown Reduced by +x Seconds",
+    "type": "special",
+    "category": "special",
+    "hidden": true
+  },
+  {
+    "id": "skillProjectile",
+    "label": "+x Projectiles",
+    "type": "flat",
+    "category": "special",
+    "hidden": true
+  },
+  {
+    "id": "passiveBearStance",
+    "label": "+1 to Bear Stance (Passive)",
+    "type": "special",
+    "category": "special",
+    "baseCategories": [
+      "paladin shields"
+    ],
+    "orangeLine": "+1 to passive Bear Stance"
+  },
+  {
+    "id": "pierceChance",
+    "label": "+x% Pierce Chance",
+    "type": "percent",
+    "category": "offense",
+    "hidden": true
+  }
+]

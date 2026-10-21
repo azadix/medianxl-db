@@ -5,10 +5,12 @@ import {
   formatMysticOrbRows,
   getMysticOrbBonusLines,
   listMysticOrbsCatalog,
+  lookupMysticOrb,
   mysticOrbIcon,
   mysticOrbKind,
   mysticOrbMaxStacks,
   mysticOrbNameCssClass,
+  mysticOrbsRequiredLevelBonus,
   normalizeMysticOrbs,
 } from '@/items/mystic-orbs.js';
 import { itemRequirementsExceedCharacterLevel } from '@/items/item-requirements.js';
@@ -24,13 +26,28 @@ const props = defineProps({
   mysticOrbs: { type: Array, default: () => [] },
   characterLevel: { type: Number, default: null },
   editable: { type: Boolean, default: false },
+  kinds: { type: Array, default: null },
+  heading: { type: String, default: 'Mystic Orbs' },
+  emptyText: { type: String, default: 'No mystic orbs applied.' },
+  addLabel: { type: String, default: 'Add mystic orb…' },
 });
 
 const emit = defineEmits(['update:mystic-orbs']);
 
 const menuOpen = ref(false);
 
-const applied = computed(() => normalizeMysticOrbs(props.mysticOrbs));
+/**
+ * @param {string} name
+ */
+function matchesKinds(name) {
+  if (!Array.isArray(props.kinds) || !props.kinds.length) return true;
+  const kind = lookupMysticOrb(name)?.kind || 'umo';
+  return props.kinds.includes(kind);
+}
+
+const allOrbs = computed(() => normalizeMysticOrbs(props.mysticOrbs));
+const applied = computed(() => allOrbs.value.filter((entry) => matchesKinds(entry[1])));
+const reqLevelBonus = computed(() => mysticOrbsRequiredLevelBonus(applied.value));
 
 const countByName = computed(() => {
   /** @type {Record<string, number>} */
@@ -63,7 +80,7 @@ function fitsCharacterLevel(next) {
  * @returns {Array<[number, string]>}
  */
 function orbsWithCount(name, count) {
-  const next = applied.value.map((entry) => /** @type {[number, string]} */ ([entry[0], entry[1]]));
+  const next = allOrbs.value.map((entry) => /** @type {[number, string]} */ ([entry[0], entry[1]]));
   const idx = next.findIndex((entry) => entry[1] === name);
   if (count < 1) {
     if (idx >= 0) next.splice(idx, 1);
@@ -76,6 +93,10 @@ function orbsWithCount(name, count) {
 
 const addable = computed(() =>
   listMysticOrbsCatalog().filter((row) => {
+    if (Array.isArray(props.kinds) && props.kinds.length) {
+      const kind = row.kind || 'umo';
+      if (!props.kinds.includes(kind)) return false;
+    }
     const have = countByName.value[row.name] || 0;
     if (!canUseMysticOrbOnItem(row, props.def, have)) return false;
     return fitsCharacterLevel(orbsWithCount(row.name, have + 1));
@@ -84,10 +105,17 @@ const addable = computed(() =>
 
 const catalogGroups = computed(() => {
   /** @type {Record<string, ReturnType<typeof listMysticOrbsCatalog>>} */
-  const groups = { Unique: [], Rare: [], 'Mystic Orb': [] };
+  const groups = { Unique: [], Rare: [], 'Mystic Orb': [], Effigy: [] };
   for (const row of addable.value) {
     const kind = mysticOrbKind(row.name);
-    const key = kind === 'unique' ? 'Unique' : kind === 'rare' ? 'Rare' : 'Mystic Orb';
+    const key =
+      kind === 'unique'
+        ? 'Unique'
+        : kind === 'rare'
+          ? 'Rare'
+          : kind === 'effigy'
+            ? 'Effigy'
+            : 'Mystic Orb';
     groups[key].push(row);
   }
   return groups;
@@ -140,7 +168,7 @@ function setCount(name, raw) {
  * @param {string} name
  */
 function removeOrb(name) {
-  persist(applied.value.filter((entry) => entry[1] !== name));
+  persist(allOrbs.value.filter((entry) => entry[1] !== name));
 }
 
 function dismissHoverTooltips() {
@@ -182,8 +210,11 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="item-upgrade-section" aria-label="Mystic Orbs">
-    <p class="item-upgrade-section__heading is-size-7 has-text-grey mb-2">Mystic Orbs</p>
+  <div class="item-upgrade-section" :aria-label="heading">
+    <p class="item-upgrade-section__heading is-size-7 has-text-grey mb-2">
+      {{ heading }}
+      <span v-if="reqLevelBonus">+{{ reqLevelBonus }} Required Level</span>
+    </p>
     <div v-if="editable" class="item-mo-editor__add">
       <div class="item-sockets-editor__picker item-mo-editor__picker" @mousedown="dismissHoverTooltips">
         <button
@@ -195,7 +226,7 @@ onUnmounted(() => {
           @click.stop="toggleMenu"
         >
           <span class="item-sockets-editor__icon item-sockets-editor__icon--empty" aria-hidden="true"></span>
-          <span class="item-sockets-editor__empty-label">Add mystic orb…</span>
+          <span class="item-sockets-editor__empty-label">{{ addLabel }}</span>
         </button>
         <div v-if="menuOpen" class="item-sockets-editor__menu" role="listbox">
           <template v-for="(groupRows, label) in catalogGroups" :key="label">
@@ -261,7 +292,7 @@ onUnmounted(() => {
             :max="mysticOrbMaxStacks(orb.name)"
             step="1"
             :value="countByName[orb.name] || 1"
-            :aria-label="'Stacks of ' + orb.name"
+            :aria-label="'Stacks of ' + orb.name + ' (' + (countByName[orb.name] || 1) + '/' + mysticOrbMaxStacks(orb.name) + ')'"
             @change="setCount(orb.name, $event.target.value)"
           />
           <button
@@ -285,7 +316,7 @@ onUnmounted(() => {
       </li>
     </ul>
     <p v-else class="item-upgrade-section__empty is-size-7 has-text-grey">
-      No mystic orbs applied.
+      {{ emptyText }}
     </p>
   </div>
 </template>

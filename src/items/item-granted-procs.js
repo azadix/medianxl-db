@@ -245,7 +245,8 @@ function resolvedLinesForDef(
   characterLevel,
   extras = null,
   mysticOrbs = null,
-  socketables = null
+  socketables = null,
+  extraOptions = null
 ) {
   if (!def) return [];
   return getItemStatLines(def, rolls, {
@@ -257,6 +258,7 @@ function resolvedLinesForDef(
     extras,
     mysticOrbs,
     socketables,
+    ...(extraOptions && typeof extraOptions === 'object' ? extraOptions : {}),
   });
 }
 
@@ -293,7 +295,8 @@ export function collectEnabledPlannerProcs(options = {}) {
         characterLevel,
         extras,
         itemsStore.getMysticOrbsForInstance?.(instanceId) ?? [],
-        itemsStore.getSocketablesForInstance?.(instanceId) ?? []
+        itemsStore.getSocketablesForInstance?.(instanceId) ?? [],
+        itemsStore.getItemBonusOptionsForInstance?.(instanceId) ?? null
       );
       rows.push(
         ...collectProcsFromLines(lines, {

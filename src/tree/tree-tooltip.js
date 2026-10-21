@@ -436,7 +436,7 @@ function handleMouseMove(e) {
 
         lastMouseX = e.clientX;
         lastMouseY = e.clientY;
-        let overSameCard = false;
+        let overSameCard;
         try {
             const el = document.elementFromPoint(e.clientX, e.clientY);
             const card = el && el.closest('.skill-card');

@@ -5,6 +5,7 @@
 
 import { isCharmItem } from '@/items/charm-items.js';
 import { isRelicItem } from '@/items/relic-items.js';
+import { angelicBaseDisplayName } from '@/items/angelic-items.js';
 import {
   encodeModifierLine,
   MODIFIER_COLOR_GREY,
@@ -16,6 +17,7 @@ import {
 /**
  * @typedef {{
  *   quality: CustomItemQuality,
+ *   angelic?: boolean,
  *   name?: string,
  *   modifiers: string[],
  *   reqLevel?: number,
@@ -117,6 +119,7 @@ export function parseCustomPayload(raw) {
   }
   /** @type {CustomItemPayload} */
   const out = { quality, modifiers };
+  if (rec.angelic === true || quality === 'angelic') out.angelic = true;
   if (name) out.name = name;
   const reqLevel = optionalNonNegInt(rec.reqLevel);
   const reqStr = optionalNonNegInt(rec.reqStr);
@@ -166,6 +169,10 @@ export function applyCustomOverlayToDef(def, customRaw) {
     baseName: def.baseName || def.name,
     modifiers: custom.modifiers.slice(),
   };
+  if (custom.angelic || custom.quality === 'angelic') {
+    out.angelic = true;
+    out.baseName = angelicBaseDisplayName(def);
+  }
   if (custom.reqLevel != null) out.reqLevel = custom.reqLevel;
   if (custom.reqStr != null) {
     out.reqStr = custom.reqStr;

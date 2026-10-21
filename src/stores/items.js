@@ -68,11 +68,19 @@ import {
   runewordFitsEquipSlot,
 } from '@/items/runeword-items.js';
 import { applyCustomOverlayToDef, parseCustomPayload } from '@/items/custom-items.js';
+import { angelicBaseDisplayName } from '@/items/angelic-items.js';
 import { loadMysticOrbsCatalog, normalizeMysticOrbs } from '@/items/mystic-orbs.js';
+import { loadOilsCatalog } from '@/items/oils.js';
+import { loadCorruptionsCatalog, normalizeCorruptions } from '@/items/corruptions.js';
+import { loadHonorificBlessings, loadShrinesCatalog } from '@/items/blessings.js';
+import { loadAffixTemplates } from '@/items/affix-templates.js';
+import { loadItemMechanics } from '@/items/item-mechanics.js';
+import { getItemUpgradeFlags } from '@/items/item-upgrades.js';
 import {
   getItemSocketCount,
   loadSocketablesCatalog,
   mergeJewelItemsIntoSocketablesCatalog,
+  normalizeCustomJewelRarity,
   normalizeSocketables,
   trimSocketablesToCount,
 } from '@/items/socketables.js';
@@ -184,6 +192,11 @@ async function fetchCatalogFile(url) {
  *   socketables?: import('@/items/socketables.js').SocketableEntry[],
  *   ethereal?: boolean,
  *   corrupted?: boolean,
+ *   oil?: string,
+ *   corruptions?: string[],
+ *   blessing?: string,
+ *   shrine?: string,
+ *   mechanics?: Record<string, number>,
  *   name?: string,
  * }} ItemInstance
  * @typedef {{
@@ -196,6 +209,11 @@ async function fetchCatalogFile(url) {
  *   socketables?: import('@/items/socketables.js').SocketableEntry[],
  *   ethereal?: boolean,
  *   corrupted?: boolean,
+ *   oil?: string,
+ *   corruptions?: string[],
+ *   blessing?: string,
+ *   shrine?: string,
+ *   mechanics?: Record<string, number>,
  *   name?: string,
  * }} ItemSnapshotEntry
  * @typedef {{
@@ -203,7 +221,8 @@ async function fetchCatalogFile(url) {
  *   equipment: Record<string, string|ItemSnapshotEntry|null>,
  *   inventory: Array<{ slot: number } & ItemSnapshotEntry>,
  *   charms: Array<{ defId: string, rolls?: Record<string, number> }>,
- *   relics: Array<{ defId: string, rolls?: Record<string, number> }>
+ *   relics: Array<{ defId: string, rolls?: Record<string, number> }>,
+ *   customJewels?: Array<{ id: string, name: string, modifiers: string[], rarity?: string }>,
  * }} ItemsSnapshot
  */
 
@@ -270,9 +289,39 @@ function applyInstanceMeta(inst, meta) {
   const socketables = parseSocketablesList(meta.socketables);
   if (socketables.length) inst.socketables = socketables;
   else delete inst.socketables;
-  if (meta.ethereal === true) inst.ethereal = true;
+  const oil = meta.oil != null ? String(meta.oil).trim() : '';
+  if (oil) inst.oil = oil;
+  else delete inst.oil;
+  const corruptions = normalizeCorruptions(meta.corruptions);
+  if (corruptions.length) inst.corruptions = corruptions;
+  else delete inst.corruptions;
+  const blessing = meta.blessing != null ? String(meta.blessing).trim() : '';
+  if (blessing) inst.blessing = blessing;
+  else delete inst.blessing;
+  const shrine = meta.shrine != null ? String(meta.shrine).trim() : '';
+  if (shrine) inst.shrine = shrine;
+  else delete inst.shrine;
+  if (meta.mechanics && typeof meta.mechanics === 'object' && !Array.isArray(meta.mechanics)) {
+    /** @type {Record<string, number>} */
+    const mechanics = {};
+    for (const [k, v] of Object.entries(meta.mechanics)) {
+      const n = Number(v);
+      if (Number.isFinite(n)) mechanics[k] = n;
+    }
+    if (Object.keys(mechanics).length) inst.mechanics = mechanics;
+    else delete inst.mechanics;
+  } else {
+    delete inst.mechanics;
+  }
+  const flags = getItemUpgradeFlags({
+    oil: inst.oil,
+    corruptions: inst.corruptions,
+    blessing: inst.blessing,
+    shrine: inst.shrine,
+  });
+  if (meta.ethereal === true || flags.etherealFromCorruption) inst.ethereal = true;
   else delete inst.ethereal;
-  if (meta.corrupted === true) inst.corrupted = true;
+  if (meta.corrupted === true || flags.corrupted) inst.corrupted = true;
   else delete inst.corrupted;
   const name = meta.name != null ? String(meta.name).trim() : '';
   if (name) inst.name = name;
@@ -313,6 +362,12 @@ function snapshotInstanceEntry(inst) {
   const socketables = parseSocketablesList(inst?.socketables);
   const ethereal = inst?.ethereal === true;
   const corrupted = inst?.corrupted === true;
+  const oil = inst?.oil != null ? String(inst.oil).trim() : '';
+  const corruptions = normalizeCorruptions(inst?.corruptions);
+  const blessing = inst?.blessing != null ? String(inst.blessing).trim() : '';
+  const shrine = inst?.shrine != null ? String(inst.shrine).trim() : '';
+  const mechanics =
+    inst?.mechanics && typeof inst.mechanics === 'object' ? { ...inst.mechanics } : null;
   const name = inst?.name != null ? String(inst.name).trim() : '';
   if (
     !hasIcon &&
@@ -323,6 +378,11 @@ function snapshotInstanceEntry(inst) {
     !socketables.length &&
     !ethereal &&
     !corrupted &&
+    !oil &&
+    !corruptions.length &&
+    !blessing &&
+    !shrine &&
+    !mechanics &&
     !name
   ) {
     return defId;
@@ -337,6 +397,11 @@ function snapshotInstanceEntry(inst) {
   if (socketables.length) entry.socketables = socketables;
   if (ethereal) entry.ethereal = true;
   if (corrupted) entry.corrupted = true;
+  if (oil) entry.oil = oil;
+  if (corruptions.length) entry.corruptions = corruptions;
+  if (blessing) entry.blessing = blessing;
+  if (shrine) entry.shrine = shrine;
+  if (mechanics && Object.keys(mechanics).length) entry.mechanics = mechanics;
   if (name) entry.name = name;
   return entry;
 }
@@ -407,6 +472,11 @@ export const useItemsStore = defineStore('items', {
      * @type {{ instanceId: number, from: SlotRef }|null}
      */
     dragPayload: null,
+    /**
+     * User-crafted jewels available to socket.
+     * @type {Array<{ id: string, name: string, modifiers: string[] }>}
+     */
+    customJewels: [],
   }),
 
   getters: {
@@ -632,6 +702,12 @@ export const useItemsStore = defineStore('items', {
           'runewords.json',
           'socketables.json',
           'mystic-orbs.json',
+          'oils.json',
+          'corruptions.json',
+          'affix-templates.json',
+          'item-mechanics.json',
+          'blessings.json',
+          'shrines.json',
         ];
         try {
           const requiredRes = await Promise.all(
@@ -710,6 +786,12 @@ export const useItemsStore = defineStore('items', {
           loadSocketablesCatalog(Array.isArray(socketablesData) ? socketablesData : []);
           const mysticOrbsData = await readJsonIfOk(optionalRes[4]);
           loadMysticOrbsCatalog(Array.isArray(mysticOrbsData) ? mysticOrbsData : []);
+          loadOilsCatalog(await readJsonIfOk(optionalRes[5]));
+          loadCorruptionsCatalog(await readJsonIfOk(optionalRes[6]));
+          loadAffixTemplates(await readJsonIfOk(optionalRes[7]));
+          loadItemMechanics(await readJsonIfOk(optionalRes[8]));
+          loadHonorificBlessings(await readJsonIfOk(optionalRes[9]));
+          loadShrinesCatalog(await readJsonIfOk(optionalRes[10]));
 
           this.catalog = [...baseItems, ...charms, ...other, ...overlays, ...relics, ...runewords];
           mergeJewelItemsIntoSocketablesCatalog(this.catalog);
@@ -1112,6 +1194,41 @@ export const useItemsStore = defineStore('items', {
     },
 
     /**
+     * Crafting fields used by tooltip/stat merge.
+     * @param {number} instanceId
+     */
+    getUpgradeStateForInstance(instanceId) {
+      const inst = this.instances[instanceId];
+      const def = this.getDefForInstance(instanceId);
+      return {
+        oil: inst?.oil || '',
+        corruptions: normalizeCorruptions(inst?.corruptions),
+        blessing: inst?.blessing || '',
+        shrine: inst?.shrine || '',
+        mechanics: inst?.mechanics || null,
+        honorific: def?.rarity === 'honorific' || def?.customQuality === 'honorific',
+      };
+    },
+
+    /**
+     * @param {number} instanceId
+     */
+    getItemBonusOptionsForInstance(instanceId) {
+      const upgrades = this.getUpgradeStateForInstance(instanceId);
+      return {
+        extras: this.getExtrasForInstance(instanceId),
+        mysticOrbs: this.getMysticOrbsForInstance(instanceId),
+        socketables: this.getSocketablesForInstance(instanceId),
+        oil: upgrades.oil || null,
+        corruptions: upgrades.corruptions,
+        blessing: upgrades.blessing || null,
+        shrine: upgrades.shrine || null,
+        mechanics: upgrades.mechanics,
+        honorific: upgrades.honorific,
+      };
+    },
+
+    /**
      * @param {number} instanceId
      * @param {Record<string, number>|null|undefined} rolls
      * @returns {boolean}
@@ -1197,6 +1314,204 @@ export const useItemsStore = defineStore('items', {
         Object.values(this.enabledRelics).includes(instanceId);
       if (active) this.syncCharacterToItemReqs();
       return true;
+    },
+
+    /**
+     * @param {number} instanceId
+     */
+    syncInstanceUpgradeFlags(instanceId) {
+      const inst = this.instances[instanceId];
+      if (!inst) return;
+      const flags = getItemUpgradeFlags({
+        oil: inst.oil,
+        corruptions: inst.corruptions,
+        blessing: inst.blessing,
+        shrine: inst.shrine,
+      });
+      if (flags.etherealFromCorruption) inst.ethereal = true;
+      if (flags.corrupted) inst.corrupted = true;
+      else delete inst.corrupted;
+    },
+
+    /**
+     * @param {number} instanceId
+     * @param {string|null|undefined} oil
+     */
+    updateInstanceOil(instanceId, oil) {
+      const inst = this.instances[instanceId];
+      if (!inst) return false;
+      const next = String(oil || '').trim();
+      if (next) inst.oil = next;
+      else delete inst.oil;
+      this.syncInstanceUpgradeFlags(instanceId);
+      return true;
+    },
+
+    /**
+     * @param {number} instanceId
+     * @param {string[]|null|undefined} corruptions
+     */
+    updateInstanceCorruptions(instanceId, corruptions) {
+      const inst = this.instances[instanceId];
+      if (!inst) return false;
+      const next = normalizeCorruptions(corruptions);
+      if (next.length) inst.corruptions = next;
+      else delete inst.corruptions;
+      this.syncInstanceUpgradeFlags(instanceId);
+      return true;
+    },
+
+    /**
+     * @param {number} instanceId
+     * @param {string|null|undefined} blessing
+     */
+    updateInstanceBlessing(instanceId, blessing) {
+      const inst = this.instances[instanceId];
+      if (!inst) return false;
+      const next = String(blessing || '').trim();
+      if (next) inst.blessing = next;
+      else delete inst.blessing;
+      return true;
+    },
+
+    /**
+     * @param {number} instanceId
+     * @param {string|null|undefined} shrine
+     */
+    updateInstanceShrine(instanceId, shrine) {
+      const inst = this.instances[instanceId];
+      if (!inst) return false;
+      const next = String(shrine || '').trim();
+      if (next) inst.shrine = next;
+      else delete inst.shrine;
+      return true;
+    },
+
+    /**
+     * @param {number} instanceId
+     * @param {Record<string, number>|null|undefined} mechanics
+     */
+    updateInstanceMechanics(instanceId, mechanics) {
+      const inst = this.instances[instanceId];
+      if (!inst) return false;
+      if (mechanics && typeof mechanics === 'object' && Object.keys(mechanics).length) {
+        inst.mechanics = { ...mechanics };
+      } else {
+        delete inst.mechanics;
+      }
+      return true;
+    },
+
+    /**
+     * @param {number} instanceId
+     * @param {boolean} ethereal
+     */
+    setInstanceEthereal(instanceId, ethereal) {
+      const inst = this.instances[instanceId];
+      if (!inst) return false;
+      if (ethereal) inst.ethereal = true;
+      else delete inst.ethereal;
+      return true;
+    },
+
+    /**
+     * @param {number} instanceId
+     * @param {unknown} custom
+     */
+    updateInstanceCustom(instanceId, custom) {
+      const inst = this.instances[instanceId];
+      if (!inst) return false;
+      const parsed = parseCustomPayload(custom);
+      if (parsed) inst.custom = parsed;
+      else delete inst.custom;
+      return true;
+    },
+
+    /**
+     * @param {string} baseId
+     * @param {'crafted'|'angelic'|'honorific'|'rare'} quality
+     * @returns {number|null}
+     */
+    createCustomInstance(baseId, quality) {
+      const def = this.catalogById[baseId];
+      if (!def) return null;
+      const rarity = quality === 'angelic' ? 'rare' : quality;
+      const label = rarity === 'honorific' ? 'Honorific' : rarity === 'rare' ? 'Rare' : 'Crafted';
+      const baseLabel =
+        quality === 'angelic' ? angelicBaseDisplayName(def) : def.baseName || def.name;
+      const custom = {
+        quality: rarity,
+        name: `${label} ${baseLabel}`,
+        modifiers: [],
+        sockets: Number(def.sockets) || 0,
+      };
+      if (quality === 'angelic') custom.angelic = true;
+      const rolls = Number(def.sockets) > 0 ? { sockets: Number(def.sockets) } : null;
+      return this.createInstance(baseId, def.icon, rolls, custom);
+    },
+
+    /**
+     * @param {{ name?: string, modifiers?: string[], rarity?: string }} jewel
+     */
+    addCustomJewel(jewel) {
+      const id = `cj-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
+      const name = String(jewel?.name || 'Custom Jewel').trim() || 'Custom Jewel';
+      const modifiers = Array.isArray(jewel?.modifiers)
+        ? jewel.modifiers.map((l) => String(l || '').trim()).filter(Boolean)
+        : [];
+      const rarity = normalizeCustomJewelRarity(jewel?.rarity);
+      this.customJewels = [...this.customJewels, { id, name, modifiers, rarity }];
+      return id;
+    },
+
+    /**
+     * @param {string} id
+     * @param {{ name?: string, modifiers?: string[], rarity?: string }} patch
+     */
+    updateCustomJewel(id, patch) {
+      let nextJewel = null;
+      this.customJewels = this.customJewels.map((row) => {
+        if (row.id !== id) return row;
+        nextJewel = {
+          ...row,
+          name: patch.name != null ? String(patch.name).trim() || row.name : row.name,
+          modifiers: Array.isArray(patch.modifiers)
+            ? patch.modifiers.map((l) => String(l || '').trim()).filter(Boolean)
+            : row.modifiers,
+          rarity: patch.rarity != null ? normalizeCustomJewelRarity(patch.rarity) : normalizeCustomJewelRarity(row.rarity),
+        };
+        return nextJewel;
+      });
+      if (!nextJewel) return;
+      const quality = nextJewel.rarity.charAt(0).toUpperCase() + nextJewel.rarity.slice(1);
+      const nextInstances = { ...this.instances };
+      let changed = false;
+      for (const [key, inst] of Object.entries(nextInstances)) {
+        if (!inst || !Array.isArray(inst.socketables)) continue;
+        let sockChanged = false;
+        const socketables = inst.socketables.map((sock) => {
+          if (!sock || sock.code !== id) return sock;
+          sockChanged = true;
+          return {
+            ...sock,
+            name: nextJewel.name,
+            modifiers: nextJewel.modifiers,
+            quality,
+            type: 'Jewel',
+          };
+        });
+        if (!sockChanged) continue;
+        nextInstances[key] = { ...inst, socketables };
+        changed = true;
+      }
+      if (changed) this.instances = nextInstances;
+    },
+
+    /**
+     * @param {string} id
+     */
+    removeCustomJewel(id) {
+      this.customJewels = this.customJewels.filter((row) => row.id !== id);
     },
 
     /**
@@ -1562,12 +1877,7 @@ export const useItemsStore = defineStore('items', {
         const reason = this.equipmentSlotInactiveReason(slot);
         if (reason) opts.inactiveNotice = reason;
         const instanceId = this.equipment[slot];
-        const instanceExtras = this.getExtrasForInstance(instanceId);
-        if (instanceExtras.length) opts.extras = instanceExtras;
-        const mysticOrbs = this.getMysticOrbsForInstance(instanceId);
-        if (mysticOrbs.length) opts.mysticOrbs = mysticOrbs;
-        const socketables = this.getSocketablesForInstance(instanceId);
-        if (socketables.length) opts.socketables = socketables;
+        Object.assign(opts, this.getItemBonusOptionsForInstance(instanceId));
       }
       if (!def?.setId) return opts;
       const setDef = this.setsById[def.setId];
@@ -1586,9 +1896,10 @@ export const useItemsStore = defineStore('items', {
      * Equip or place a catalog item into the selected slot.
      * @param {string} defId
      * @param {Record<string, number>|null|undefined} [rolls]
+     * @param {import('@/items/custom-items.js').CustomItemPayload|null} [custom]
      * @returns {boolean}
      */
-    equipFromPicker(defId, rolls = null) {
+    equipFromPicker(defId, rolls = null, custom = null) {
       const sel = this.selectedSlot;
       if (!sel) return false;
       const def = this.catalogById[defId];
@@ -1599,7 +1910,7 @@ export const useItemsStore = defineStore('items', {
         if (!canPlaceInInventory(def)) return false;
         if (isCharmItem(def) || isRelicItem(def)) return false;
         const preferred = sel.location === 'inventory' ? Number(sel.slot) : 0;
-        const id = this.createInstance(defId, null, rolls);
+        const id = this.createInstance(defId, null, rolls, custom);
         const size = { invWidth: def.invWidth || 1, invHeight: def.invHeight || 1 };
         const getSize = this.getInstanceSize;
         const anchor = findAnchorForClick(
@@ -1634,7 +1945,7 @@ export const useItemsStore = defineStore('items', {
           return false;
         }
         const prev = this.equipment[slot];
-        const id = this.createInstance(defId, null, rolls);
+        const id = this.createInstance(defId, null, rolls, custom);
         this.equipment[slot] = id;
         if (prev != null) this.destroyInstanceIfOrphaned(prev);
         this.editingInstanceId = id;
@@ -1918,13 +2229,16 @@ export const useItemsStore = defineStore('items', {
         return out;
       };
 
-      return {
+      /** @type {ItemsSnapshot} */
+      const snap = {
         weaponSet: this.weaponSet,
         equipment,
         inventory,
         charms: enabledList(this.enabledCharms),
         relics: enabledList(this.enabledRelics),
       };
+      if (this.customJewels.length) snap.customJewels = this.customJewels.map((j) => ({ ...j }));
+      return snap;
     },
 
     /**
@@ -2042,6 +2356,16 @@ export const useItemsStore = defineStore('items', {
         let ethereal = false;
         let corrupted = false;
         /** @type {unknown} */
+        let oilRaw = null;
+        /** @type {unknown} */
+        let corruptionsRaw = null;
+        /** @type {unknown} */
+        let blessingRaw = null;
+        /** @type {unknown} */
+        let shrineRaw = null;
+        /** @type {unknown} */
+        let mechanicsRaw = null;
+        /** @type {unknown} */
         let nameRaw = null;
         if (typeof entry === 'string') {
           defId = entry;
@@ -2056,6 +2380,11 @@ export const useItemsStore = defineStore('items', {
           socketablesRaw = rec.socketables;
           ethereal = rec.ethereal === true;
           corrupted = rec.corrupted === true;
+          oilRaw = rec.oil;
+          corruptionsRaw = rec.corruptions;
+          blessingRaw = rec.blessing;
+          shrineRaw = rec.shrine;
+          mechanicsRaw = rec.mechanics;
           nameRaw = rec.name;
         } else {
           return null;
@@ -2089,6 +2418,14 @@ export const useItemsStore = defineStore('items', {
           socketables: parseSocketablesList(socketablesRaw),
           ethereal,
           corrupted,
+          oil: typeof oilRaw === 'string' ? oilRaw : null,
+          corruptions: normalizeCorruptions(corruptionsRaw),
+          blessing: typeof blessingRaw === 'string' ? blessingRaw : null,
+          shrine: typeof shrineRaw === 'string' ? shrineRaw : null,
+          mechanics:
+            mechanicsRaw && typeof mechanicsRaw === 'object' && !Array.isArray(mechanicsRaw)
+              ? /** @type {Record<string, number>} */ (mechanicsRaw)
+              : null,
           name: typeof nameRaw === 'string' ? nameRaw.trim() : null,
         };
       };
@@ -2147,6 +2484,11 @@ export const useItemsStore = defineStore('items', {
                 socketables: parsed.socketables,
                 ethereal: parsed.ethereal,
                 corrupted: parsed.corrupted,
+                oil: parsed.oil,
+                corruptions: parsed.corruptions,
+                blessing: parsed.blessing,
+                shrine: parsed.shrine,
+                mechanics: parsed.mechanics,
                 name: parsed.name,
               }
             );
@@ -2195,6 +2537,11 @@ export const useItemsStore = defineStore('items', {
               socketables: parsed.socketables,
               ethereal: parsed.ethereal,
               corrupted: parsed.corrupted,
+              oil: parsed.oil,
+              corruptions: parsed.corruptions,
+              blessing: parsed.blessing,
+              shrine: parsed.shrine,
+              mechanics: parsed.mechanics,
               name: parsed.name,
             });
             if (canPlace(nextInventory, slot, def.invWidth || 1, def.invHeight || 1, getSize)) {
@@ -2215,6 +2562,15 @@ export const useItemsStore = defineStore('items', {
         this.nextInstanceId = nextId;
         this.selectedSlot = null;
         this.editingInstanceId = null;
+        const jewels = Array.isArray(data.customJewels) ? data.customJewels : [];
+        this.customJewels = jewels
+          .filter((j) => j && typeof j === 'object' && j.id)
+          .map((j) => ({
+            id: String(j.id),
+            name: String(j.name || 'Custom Jewel'),
+            modifiers: Array.isArray(j.modifiers) ? j.modifiers.map(String) : [],
+            rarity: normalizeCustomJewelRarity(j.rarity),
+          }));
 
         const disabled = this.disableEnabledItemsBelowLevel();
         result.disabledCharms = disabled.charms;

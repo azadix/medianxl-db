@@ -11,6 +11,7 @@ import {
   isCorruptedWormhole,
 } from '@/items/wormhole-cycles.js';
 import { mysticOrbsRequiredLevelBonus } from '@/items/mystic-orbs.js';
+import { corruptionRequiredLevelBonus } from '@/items/corruptions.js';
 
 /**
  * @typedef {{
@@ -147,6 +148,7 @@ export function extrasWithMysticOrbRequiredLevel(extras, mysticOrbs) {
  *   socketables?: ItemRequirementSource[]|null,
  *   extras?: string[]|null,
  *   mysticOrbs?: unknown,
+ *   corruptions?: string[]|null,
  * }} [options]
  * @returns {ItemRequirements}
  */
@@ -161,6 +163,7 @@ export function resolveItemRequirements(def, options = {}) {
   if (isCorruptedWormhole(def)) {
     reqLevel += getWormholeCycleReqLevelBonus(options.rolls ?? null);
   }
+  reqLevel += corruptionRequiredLevelBonus(options.corruptions);
 
   for (const sock of socketables) {
     if (!sock || typeof sock !== 'object') continue;

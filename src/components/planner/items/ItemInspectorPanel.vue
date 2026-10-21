@@ -17,8 +17,12 @@ import { getEffectivePlannerLevel, getCharacterInstance, runPlannerSkillStatReco
 import { getPlannerItemReqLevelCap } from '@/planner/planner-options.js';
 import { hidePlannerSkillTooltip, refreshCurrentTooltip } from '@/tree/tree-tooltip.js';
 import { hideItemTooltip, refreshItemTooltips } from '@/items/item-tooltip-runtime.js';
+import { isItemCorruptible } from '@/items/corruptions.js';
+import { listOilsForItem } from '@/items/oils.js';
+import { defHasItemMechanic } from '@/items/item-mechanics.js';
+import { canUseMysticOrbOnItem, listMysticOrbsCatalog } from '@/items/mystic-orbs.js';
 
-/** @typedef {'base'|'sockets'|'mysticOrbs'|'oils'|'corruptions'|'effigies'} InspectorTabId */
+/** @typedef {'base'|'sockets'|'mysticOrbs'|'oils'|'corruptions'|'effigies'|'blessing'|'shrine'|'mechanics'} InspectorTabId */
 
 function afterItemSkillSourcesChanged() {
   syncItemGrantedOSkills();
@@ -173,9 +177,74 @@ const instanceSocketables = computed(() => {
   return itemsStore.getSocketablesForInstance(id);
 });
 
+const equipSlot = computed(() => {
+  const sel = selectedSlot.value;
+  return sel?.location === 'equipment' ? String(sel.slot) : '';
+});
+
+const inspectorTabs = computed(() => {
+  const def = itemDef.value;
+  /** @type {Array<{ id: InspectorTabId, label: string }>} */
+  const tabs = [{ id: 'base', label: 'Base' }];
+  if (!def) return tabs;
+  if (isCharmItem(def) || isRelicItem(def)) return tabs;
+  if (Number(def.sockets) > 0) tabs.push({ id: 'sockets', label: 'Sockets' });
+  tabs.push({ id: 'mysticOrbs', label: 'Orbs' });
+  const hasEffigy = listMysticOrbsCatalog().some(
+    (row) => (row.kind || '') === 'effigy' && canUseMysticOrbOnItem(row, def, 0)
+  );
+  if (hasEffigy) tabs.push({ id: 'effigies', label: 'Effigies' });
+  if (listOilsForItem(def, equipSlot.value).length) tabs.push({ id: 'oils', label: 'Oil' });
+  const honorific = def.rarity === 'honorific' || def.customQuality === 'honorific';
+  if (honorific) tabs.push({ id: 'blessing', label: 'Blessing' });
+  else if (isItemCorruptible(def)) tabs.push({ id: 'corruptions', label: 'Corrupt' });
+  if (def.rarity === 'crafted' || def.customQuality === 'crafted') {
+    tabs.push({ id: 'shrine', label: 'Shrine' });
+  }
+  if (defHasItemMechanic(def)) tabs.push({ id: 'mechanics', label: 'Mechanics' });
+  return tabs;
+});
+
+const instanceOil = computed(() => {
+  const id = instanceId.value;
+  if (id == null) return '';
+  return itemsStore.instances[id]?.oil || '';
+});
+const instanceCorruptions = computed(() => {
+  const id = instanceId.value;
+  if (id == null) return [];
+  return itemsStore.instances[id]?.corruptions || [];
+});
+const instanceBlessing = computed(() => {
+  const id = instanceId.value;
+  if (id == null) return '';
+  return itemsStore.instances[id]?.blessing || '';
+});
+const instanceShrine = computed(() => {
+  const id = instanceId.value;
+  if (id == null) return '';
+  return itemsStore.instances[id]?.shrine || '';
+});
+const instanceMechanics = computed(() => {
+  const id = instanceId.value;
+  if (id == null) return {};
+  return itemsStore.instances[id]?.mechanics || {};
+});
+const instanceCustom = computed(() => {
+  const id = instanceId.value;
+  if (id == null) return null;
+  return itemsStore.instances[id]?.custom || null;
+});
+const instanceEthereal = computed(() => {
+  const id = instanceId.value;
+  if (id == null) return false;
+  return itemsStore.instances[id]?.ethereal === true;
+});
+
 const detailStatRows = computed(() => {
   const def = itemDef.value;
   if (!def) return [];
+  const id = instanceId.value;
   return getItemDetailStatRows(def, effectiveRolls.value, {
     characterLevel: getEffectivePlannerLevel(),
     charmInInventory: true,
@@ -183,6 +252,7 @@ const detailStatRows = computed(() => {
     extras: instanceExtras.value,
     socketables: instanceSocketables.value,
     mysticOrbs: instanceMysticOrbs.value,
+    ...(id != null ? itemsStore.getItemBonusOptionsForInstance(id) : {}),
   });
 });
 
@@ -268,6 +338,14 @@ watch(
   { immediate: true }
 );
 
+watch(
+  inspectorTabs,
+  (tabs) => {
+    if (!tabs.some((tab) => tab.id === activeTab.value)) activeTab.value = 'base';
+  },
+  { immediate: true }
+);
+
 /**
  * Update local rolls; persist only when an enabled instance exists.
  * @param {Record<string, number>} nextRolls
@@ -344,6 +422,44 @@ function onMysticOrbsUpdate(next) {
   if (Object.values(itemsStore.equipment).includes(id)) {
     runPlannerSkillStatRecompute();
   }
+}
+
+/**
+ * @param {() => void} write
+ */
+function persistUpgrade(write) {
+  const id = instanceId.value;
+  if (id == null) return;
+  hideItemTooltip(true);
+  hidePlannerSkillTooltip(true);
+  write();
+  refreshOpenItemTooltipsForInstance(id);
+  if (Object.values(itemsStore.equipment).includes(id)) {
+    itemsStore.syncCharacterToItemReqs();
+    runPlannerSkillStatRecompute();
+  }
+}
+
+function onOilUpdate(next) {
+  persistUpgrade(() => itemsStore.updateInstanceOil(instanceId.value, next));
+}
+function onCorruptionsUpdate(next) {
+  persistUpgrade(() => itemsStore.updateInstanceCorruptions(instanceId.value, next));
+}
+function onBlessingUpdate(next) {
+  persistUpgrade(() => itemsStore.updateInstanceBlessing(instanceId.value, next));
+}
+function onShrineUpdate(next) {
+  persistUpgrade(() => itemsStore.updateInstanceShrine(instanceId.value, next));
+}
+function onMechanicsUpdate(next) {
+  persistUpgrade(() => itemsStore.updateInstanceMechanics(instanceId.value, next));
+}
+function onCustomUpdate(next) {
+  persistUpgrade(() => itemsStore.updateInstanceCustom(instanceId.value, next));
+}
+function onEtherealUpdate(next) {
+  persistUpgrade(() => itemsStore.setInstanceEthereal(instanceId.value, Boolean(next)));
 }
 
 function onChangeItem() {
@@ -428,7 +544,7 @@ onUnmounted(() => {
           </button>
         </div>
       </div>
-      <ItemInspectorTabs v-if="itemDef" v-model="activeTab" />
+      <ItemInspectorTabs v-if="itemDef" v-model="activeTab" :tabs="inspectorTabs" />
     </div>
 
     <p v-if="inactiveNotice" class="is-size-7 has-text-danger px-3 mb-2" role="status">
@@ -448,10 +564,25 @@ onUnmounted(() => {
       :can-edit="instanceId != null"
       :empty-text="emptyText"
       :character-level="getPlannerItemReqLevelCap(getEffectivePlannerLevel())"
+      :equip-slot="equipSlot"
+      :oil="instanceOil"
+      :corruptions="instanceCorruptions"
+      :blessing="instanceBlessing"
+      :shrine="instanceShrine"
+      :mechanics="instanceMechanics"
+      :custom="instanceCustom"
+      :ethereal="instanceEthereal"
       @update:rolls="onRollsUpdate"
       @set-roll="setRoll"
       @update:socketables="onSocketablesUpdate"
       @update:mystic-orbs="onMysticOrbsUpdate"
+      @update:oil="onOilUpdate"
+      @update:corruptions="onCorruptionsUpdate"
+      @update:blessing="onBlessingUpdate"
+      @update:shrine="onShrineUpdate"
+      @update:mechanics="onMechanicsUpdate"
+      @update:custom="onCustomUpdate"
+      @update:ethereal="onEtherealUpdate"
     />
   </section>
 </template>

@@ -1,0 +1,1234 @@
+{
+  "categories": [
+    {
+      "id": "all",
+      "label": "All"
+    },
+    {
+      "id": "defensive",
+      "label": "Defensive"
+    },
+    {
+      "id": "attributes",
+      "label": "Attributes"
+    },
+    {
+      "id": "skills",
+      "label": "Skills & Spells"
+    },
+    {
+      "id": "combat",
+      "label": "Combat"
+    },
+    {
+      "id": "minion",
+      "label": "Minion"
+    },
+    {
+      "id": "speed",
+      "label": "Speed"
+    },
+    {
+      "id": "utility",
+      "label": "Utility"
+    }
+  ],
+  "sacredUniqueCorruptionLimit": 2,
+  "entries": [
+    {
+      "id": "nothing",
+      "label": "Nothing (failed corruption)",
+      "category": "utility",
+      "allPools": true,
+      "mods": [],
+      "modifiers": [],
+      "isFailure": true
+    },
+    {
+      "id": "avoidDamage",
+      "label": "2% Chance to Avoid Damage",
+      "category": "defensive",
+      "mods": [
+        {
+          "affixId": "avoidChance",
+          "value": 2
+        }
+      ],
+      "modifiers": [
+        "+2% Avoid Chance"
+      ]
+    },
+    {
+      "id": "maxElemRes",
+      "label": "+1 to Maximum Elemental Resistances",
+      "category": "defensive",
+      "mods": [
+        {
+          "affixId": "maxResElem",
+          "value": 1
+        }
+      ],
+      "modifiers": [
+        "+1% Maximum Elemental Resists"
+      ]
+    },
+    {
+      "id": "maxFireRes",
+      "label": "Maximum Fire Resist +1%",
+      "category": "defensive",
+      "mods": [
+        {
+          "affixId": "maxResFire",
+          "value": 1
+        }
+      ],
+      "modifiers": [
+        "+1% Maximum Fire Resist"
+      ]
+    },
+    {
+      "id": "maxColdRes",
+      "label": "Maximum Cold Resist +1%",
+      "category": "defensive",
+      "mods": [
+        {
+          "affixId": "maxResCold",
+          "value": 1
+        }
+      ],
+      "modifiers": [
+        "+1% Maximum Cold Resist"
+      ]
+    },
+    {
+      "id": "maxLightningRes",
+      "label": "Maximum Lightning Resist +1%",
+      "category": "defensive",
+      "mods": [
+        {
+          "affixId": "maxResLight",
+          "value": 1
+        }
+      ],
+      "modifiers": [
+        "+1% Maximum Lightning Resist"
+      ]
+    },
+    {
+      "id": "maxPoisonRes",
+      "label": "Maximum Poison Resist +1%",
+      "category": "defensive",
+      "mods": [
+        {
+          "affixId": "maxResPois",
+          "value": 1
+        }
+      ],
+      "modifiers": [
+        "+1% Maximum Poison Resist"
+      ]
+    },
+    {
+      "id": "activationFreq",
+      "label": "8% Activation Frequency",
+      "category": "combat",
+      "mods": [
+        {
+          "affixId": "activationFreq",
+          "value": 8
+        }
+      ],
+      "modifiers": [
+        "+8% to Activation Frequency"
+      ]
+    },
+    {
+      "id": "elemAbsorb",
+      "label": "+1% Fire/Lightning/Cold Absorb",
+      "category": "defensive",
+      "mods": [
+        {
+          "affixId": "absorbFire",
+          "value": 1
+        },
+        {
+          "affixId": "absorbLight",
+          "value": 1
+        },
+        {
+          "affixId": "absorbCold",
+          "value": 1
+        }
+      ],
+      "modifiers": [
+        "+1% Fire Absorb",
+        "+1% Lightning Absorb",
+        "+1% Cold Absorb"
+      ]
+    },
+    {
+      "id": "fireRes",
+      "label": "Fire Resist +20%",
+      "category": "defensive",
+      "mods": [
+        {
+          "affixId": "resFire",
+          "value": 20
+        }
+      ],
+      "modifiers": [
+        "+20% Fire Resistance"
+      ]
+    },
+    {
+      "id": "coldRes",
+      "label": "Cold Resist +20%",
+      "category": "defensive",
+      "mods": [
+        {
+          "affixId": "resCold",
+          "value": 20
+        }
+      ],
+      "modifiers": [
+        "+20% Cold Resistance"
+      ]
+    },
+    {
+      "id": "lightningRes",
+      "label": "Lightning Resist +20%",
+      "category": "defensive",
+      "mods": [
+        {
+          "affixId": "resLightning",
+          "value": 20
+        }
+      ],
+      "modifiers": [
+        "+20% Lightning Resistance"
+      ]
+    },
+    {
+      "id": "poisonRes",
+      "label": "Poison Resist +20%",
+      "category": "defensive",
+      "mods": [
+        {
+          "affixId": "resPoison",
+          "value": 20
+        }
+      ],
+      "modifiers": [
+        "+20% Poison Resistance"
+      ]
+    },
+    {
+      "id": "allRes",
+      "label": "+10% All Resistances",
+      "category": "defensive",
+      "mods": [
+        {
+          "affixId": "resElem",
+          "value": 10
+        }
+      ],
+      "modifiers": [
+        "+10% Elemental Resistances"
+      ]
+    },
+    {
+      "id": "curseLenReduce",
+      "label": "Curse Length Reduction +15%",
+      "category": "defensive",
+      "mods": [
+        {
+          "affixId": "curseLenReduce",
+          "value": 15
+        }
+      ],
+      "modifiers": [
+        "+15% Curse Length Reduction"
+      ]
+    },
+    {
+      "id": "ethereal",
+      "label": "Ethereal",
+      "category": "utility",
+      "restriction": "non_jewelry_non_elemental",
+      "mods": [],
+      "modifiers": [],
+      "setsEthereal": true
+    },
+    {
+      "id": "magicAbsorb",
+      "label": "+1% Magic Absorb",
+      "category": "defensive",
+      "restriction": "jewelry",
+      "mods": [
+        {
+          "affixId": "absorbMagic",
+          "value": 1
+        }
+      ],
+      "modifiers": [
+        "+1% Magic Absorb"
+      ]
+    },
+    {
+      "id": "poisonLenReduce",
+      "label": "20% Poison Length Reduction",
+      "category": "defensive",
+      "mods": [
+        {
+          "affixId": "poisonLenReduce",
+          "value": 20
+        }
+      ],
+      "modifiers": [
+        "+20% Poison Length Reduction"
+      ]
+    },
+    {
+      "id": "physResist",
+      "label": "Physical Resist +5%",
+      "category": "defensive",
+      "mods": [
+        {
+          "affixId": "physResist",
+          "value": 5
+        }
+      ],
+      "modifiers": [
+        "+5% Physical Resist"
+      ]
+    },
+    {
+      "id": "blockChance",
+      "label": "1% Base Block Chance",
+      "category": "defensive",
+      "restriction": "shield",
+      "mods": [
+        {
+          "affixId": "block",
+          "value": 1
+        }
+      ],
+      "modifiers": [
+        "+1% Block Chance"
+      ]
+    },
+    {
+      "id": "allAttribPercent",
+      "label": "10% To All Attributes",
+      "category": "attributes",
+      "mods": [
+        {
+          "affixId": "strPercent",
+          "value": 10
+        },
+        {
+          "affixId": "dexPercent",
+          "value": 10
+        },
+        {
+          "affixId": "vitPercent",
+          "value": 10
+        },
+        {
+          "affixId": "egyPercent",
+          "value": 10
+        }
+      ],
+      "modifiers": [
+        "+10% to Strength",
+        "+10% to Dexterity",
+        "+10% to Vitality",
+        "+10% to Energy"
+      ]
+    },
+    {
+      "id": "allAttrib",
+      "label": "+15 to All Attributes",
+      "category": "attributes",
+      "restriction": "non_weapon_shield",
+      "mods": [
+        {
+          "affixId": "str",
+          "value": 15
+        },
+        {
+          "affixId": "dex",
+          "value": 15
+        },
+        {
+          "affixId": "vit",
+          "value": 15
+        },
+        {
+          "affixId": "egy",
+          "value": 15
+        }
+      ],
+      "modifiers": [
+        "+15 to Strength",
+        "+15 to Dexterity",
+        "+15 to Vitality",
+        "+15 to Energy"
+      ]
+    },
+    {
+      "id": "flatAttrib",
+      "label": "+35 to Attribute",
+      "category": "attributes",
+      "mods": [],
+      "modifiers": []
+    },
+    {
+      "id": "jewelryStrDex",
+      "label": "+20 Strength; +20 Dexterity",
+      "category": "attributes",
+      "restriction": "jewelry",
+      "mods": [
+        {
+          "affixId": "str",
+          "value": 20
+        },
+        {
+          "affixId": "dex",
+          "value": 20
+        }
+      ],
+      "modifiers": [
+        "+20 to Strength",
+        "+20 to Dexterity"
+      ]
+    },
+    {
+      "id": "lifePercent",
+      "label": "+5% Life",
+      "category": "attributes",
+      "mods": [
+        {
+          "affixId": "lifePercent",
+          "value": 5
+        }
+      ],
+      "modifiers": [
+        "+5% Maximum Life"
+      ]
+    },
+    {
+      "id": "manaPercent",
+      "label": "+10% Mana",
+      "category": "attributes",
+      "mods": [
+        {
+          "affixId": "manaPercent",
+          "value": 10
+        }
+      ],
+      "modifiers": [
+        "+10% Maximum Mana"
+      ]
+    },
+    {
+      "id": "flatLife",
+      "label": "+150 Life",
+      "category": "attributes",
+      "mods": [
+        {
+          "affixId": "life",
+          "value": 150
+        }
+      ],
+      "modifiers": [
+        "+150 Life"
+      ]
+    },
+    {
+      "id": "flatMana",
+      "label": "+150 Mana",
+      "category": "attributes",
+      "mods": [
+        {
+          "affixId": "mana",
+          "value": 150
+        }
+      ],
+      "modifiers": [
+        "+150 Mana"
+      ]
+    },
+    {
+      "id": "lifeRegen",
+      "label": "+50 Life Regenerated per Second",
+      "category": "attributes",
+      "mods": [
+        {
+          "affixId": "lifeRegen",
+          "value": 50
+        }
+      ],
+      "modifiers": [
+        "+50 Life Regenerated per Second"
+      ]
+    },
+    {
+      "id": "manaRegen",
+      "label": "Regenerate Mana +10%",
+      "category": "attributes",
+      "mods": [
+        {
+          "affixId": "manaRegen",
+          "value": 10
+        }
+      ],
+      "modifiers": [
+        "+10% Regenerate Mana"
+      ]
+    },
+    {
+      "id": "allSkills",
+      "label": "+1 to All Skills",
+      "category": "skills",
+      "mods": [
+        {
+          "affixId": "allSkills",
+          "value": 1
+        }
+      ],
+      "modifiers": [
+        "+1 to All Skills"
+      ]
+    },
+    {
+      "id": "spellFocus",
+      "label": "+60 Spell Focus",
+      "category": "skills",
+      "mods": [
+        {
+          "affixId": "spellFocus",
+          "value": 60
+        }
+      ],
+      "modifiers": [
+        "+60 Spell Focus"
+      ]
+    },
+    {
+      "id": "spellDmg",
+      "label": "10% Spell Damage",
+      "category": "skills",
+      "mods": [
+        {
+          "affixId": "spellDmg",
+          "value": 10
+        }
+      ],
+      "modifiers": [
+        "+10% Spell Damage"
+      ]
+    },
+    {
+      "id": "fireSpellDmg",
+      "label": "13% Fire Spell Damage",
+      "category": "skills",
+      "mods": [
+        {
+          "affixId": "fireSpellDmg",
+          "value": 13
+        }
+      ],
+      "modifiers": [
+        "+13% Fire Spell Damage"
+      ]
+    },
+    {
+      "id": "lightningSpellDmg",
+      "label": "13% Lightning Spell Damage",
+      "category": "skills",
+      "mods": [
+        {
+          "affixId": "lightSpellDmg",
+          "value": 13
+        }
+      ],
+      "modifiers": [
+        "+13% Lightning Spell Damage"
+      ]
+    },
+    {
+      "id": "coldSpellDmg",
+      "label": "13% Cold Spell Damage",
+      "category": "skills",
+      "mods": [
+        {
+          "affixId": "coldSpellDmg",
+          "value": 13
+        }
+      ],
+      "modifiers": [
+        "+13% Cold Spell Damage"
+      ]
+    },
+    {
+      "id": "poisonSpellDmg",
+      "label": "13% Poison Spell Damage",
+      "category": "skills",
+      "mods": [
+        {
+          "affixId": "poisonSpellDmg",
+          "value": 13
+        }
+      ],
+      "modifiers": [
+        "+13% Poison Spell Damage"
+      ]
+    },
+    {
+      "id": "physMagicSpellDmg",
+      "label": "13% Physical/Magic Spell Damage",
+      "category": "skills",
+      "mods": [
+        {
+          "affixId": "physMagicSpellDmg",
+          "value": 13
+        }
+      ],
+      "modifiers": [
+        "+13% Physical/Magic Spell Damage"
+      ]
+    },
+    {
+      "id": "enemyElemRes",
+      "label": "-10% to Enemy Elemental Resistances",
+      "category": "skills",
+      "mods": [
+        {
+          "affixId": "enemyElemRes",
+          "value": -10
+        }
+      ],
+      "modifiers": [
+        "--10% Enemy Elemental Resistances"
+      ]
+    },
+    {
+      "id": "enemyFireRes",
+      "label": "-10% to Enemy Fire Resistance",
+      "category": "skills",
+      "mods": [
+        {
+          "affixId": "enemyFireRes",
+          "value": -10
+        }
+      ],
+      "modifiers": [
+        "--10% Enemy Fire Resistance"
+      ]
+    },
+    {
+      "id": "enemyLightningRes",
+      "label": "-10% to Enemy Lightning Resistance",
+      "category": "skills",
+      "mods": [
+        {
+          "affixId": "enemyLightRes",
+          "value": -10
+        }
+      ],
+      "modifiers": [
+        "--10% Enemy Lightning Resistance"
+      ]
+    },
+    {
+      "id": "enemyColdRes",
+      "label": "-10% to Enemy Cold Resistance",
+      "category": "skills",
+      "mods": [
+        {
+          "affixId": "enemyColdRes",
+          "value": -10
+        }
+      ],
+      "modifiers": [
+        "--10% Enemy Cold Resistance"
+      ]
+    },
+    {
+      "id": "enemyPoisonRes",
+      "label": "-10% to Enemy Poison Resistance",
+      "category": "skills",
+      "mods": [
+        {
+          "affixId": "enemyPoisonRes",
+          "value": -10
+        }
+      ],
+      "modifiers": [
+        "--10% Enemy Poison Resistance"
+      ]
+    },
+    {
+      "id": "deadlyStrike",
+      "label": "5% Deadly Strike",
+      "category": "combat",
+      "restriction": "not_elemental_weapon",
+      "mods": [
+        {
+          "affixId": "deadlyStrike",
+          "value": 5
+        }
+      ],
+      "modifiers": [
+        "+5% Deadly Strike"
+      ]
+    },
+    {
+      "id": "maxDamage",
+      "label": "Adds 7-8 Damage",
+      "category": "combat",
+      "mods": [
+        {
+          "affixId": "addsDmgMin",
+          "value": 7
+        },
+        {
+          "affixId": "addsDmgMax",
+          "value": 8
+        }
+      ],
+      "modifiers": [
+        "+7 to Minimum Damage",
+        "+8 to Maximum Damage"
+      ]
+    },
+    {
+      "id": "enhancedDmg",
+      "label": "+40% Weapon Physical Damage",
+      "category": "combat",
+      "mods": [
+        {
+          "affixId": "weaponPhysDmg",
+          "value": 40
+        }
+      ],
+      "modifiers": [
+        "+40% Weapon Physical Damage"
+      ]
+    },
+    {
+      "id": "slowTarget",
+      "label": "Slow Target 5%",
+      "category": "combat",
+      "mods": [
+        {
+          "affixId": "slowTarget",
+          "value": 5
+        }
+      ],
+      "modifiers": [
+        "+5% Slow Target"
+      ]
+    },
+    {
+      "id": "slowAttacker",
+      "label": "Slows Attacker by 5%",
+      "category": "combat",
+      "mods": [
+        {
+          "affixId": "slowAttacker",
+          "value": 5
+        }
+      ],
+      "modifiers": [
+        "+5% Slows Attacker"
+      ]
+    },
+    {
+      "id": "innateElemDmg",
+      "label": "5% Innate Elemental Damage",
+      "category": "combat",
+      "restriction": "not_non_elemental_weapon",
+      "mods": [
+        {
+          "affixId": "innateElemDmg",
+          "value": 5
+        }
+      ],
+      "modifiers": [
+        "+5% Innate Elemental Damage"
+      ]
+    },
+    {
+      "id": "innateElemDmgElemWeapon",
+      "label": "10% Innate Elemental Damage (Elemental Weapon only)",
+      "category": "combat",
+      "restriction": "elemental_weapon",
+      "mods": [
+        {
+          "affixId": "innateElemDmg",
+          "value": 10
+        }
+      ],
+      "modifiers": [
+        "+10% Innate Elemental Damage"
+      ]
+    },
+    {
+      "id": "lifeLeech",
+      "label": "15% Life Leech (Weapon only)",
+      "category": "combat",
+      "restriction": "non_elemental_weapon",
+      "mods": [
+        {
+          "affixId": "lifeSteal",
+          "value": 15
+        }
+      ],
+      "modifiers": [
+        "+15% Life Stolen per Hit"
+      ]
+    },
+    {
+      "id": "lifeOnStrikeElemWeapon",
+      "label": "+2 Life on Striking (Elemental Weapon only)",
+      "category": "combat",
+      "restriction": "elemental_weapon",
+      "mods": [
+        {
+          "affixId": "lifeOnStrike",
+          "value": 2
+        }
+      ],
+      "modifiers": [
+        "+2 Life on Striking"
+      ]
+    },
+    {
+      "id": "minionDmgAR",
+      "label": "10% Minion Damage + 15% Minion Attack Rating",
+      "category": "minion",
+      "mods": [
+        {
+          "affixId": "summonDmg",
+          "value": 10
+        },
+        {
+          "affixId": "summonAR",
+          "value": 15
+        }
+      ],
+      "modifiers": [
+        "+10% Summon Damage",
+        "+15% Summon Attack Rating"
+      ]
+    },
+    {
+      "id": "minionLifeRes",
+      "label": "10% Minion Life + 5% Minion Resists",
+      "category": "minion",
+      "mods": [
+        {
+          "affixId": "summonLife",
+          "value": 10
+        },
+        {
+          "affixId": "summonRes",
+          "value": 5
+        }
+      ],
+      "modifiers": [
+        "+10% Summon Life",
+        "+5% Summon Elemental Resistances"
+      ]
+    },
+    {
+      "id": "attackSpeed",
+      "label": "20% Attack Speed",
+      "category": "speed",
+      "mods": [
+        {
+          "affixId": "ias",
+          "value": 20
+        }
+      ],
+      "modifiers": [
+        "+20% Attack Speed"
+      ]
+    },
+    {
+      "id": "blockSpeed",
+      "label": "20% Block Speed",
+      "category": "speed",
+      "restriction": "not_two_handed",
+      "mods": [
+        {
+          "affixId": "fbr",
+          "value": 20
+        }
+      ],
+      "modifiers": [
+        "+20% Block Speed"
+      ]
+    },
+    {
+      "id": "castSpeed",
+      "label": "20% Faster Cast Rate",
+      "category": "speed",
+      "mods": [
+        {
+          "affixId": "fcr",
+          "value": 20
+        }
+      ],
+      "modifiers": [
+        "+20% Cast Speed"
+      ]
+    },
+    {
+      "id": "hitRecovery",
+      "label": "20% Faster Hit Recovery",
+      "category": "speed",
+      "mods": [
+        {
+          "affixId": "fhr",
+          "value": 20
+        }
+      ],
+      "modifiers": [
+        "+20% Hit Recovery"
+      ]
+    },
+    {
+      "id": "combatSpeeds",
+      "label": "10% Combat Speeds",
+      "category": "speed",
+      "mods": [
+        {
+          "affixId": "ias",
+          "value": 10
+        },
+        {
+          "affixId": "fbr",
+          "value": 10
+        },
+        {
+          "affixId": "fcr",
+          "value": 10
+        },
+        {
+          "affixId": "fhr",
+          "value": 10
+        }
+      ],
+      "modifiers": [
+        "+10% Attack Speed",
+        "+10% Block Speed",
+        "+10% Cast Speed",
+        "+10% Hit Recovery"
+      ]
+    },
+    {
+      "id": "magicFind",
+      "label": "+25% Magic Find",
+      "category": "utility",
+      "mods": [
+        {
+          "affixId": "magicFind",
+          "value": 25
+        }
+      ],
+      "modifiers": [
+        "+25% Magic Find"
+      ]
+    },
+    {
+      "id": "goldFind",
+      "label": "30% Gold Find",
+      "category": "utility",
+      "mods": [
+        {
+          "affixId": "goldFind",
+          "value": 30
+        }
+      ],
+      "modifiers": [
+        "+30% Gold Find"
+      ]
+    },
+    {
+      "id": "expGained",
+      "label": "5% Experience Gained",
+      "category": "utility",
+      "mods": [
+        {
+          "affixId": "expBonus",
+          "value": 5
+        }
+      ],
+      "modifiers": [
+        "+5% Experience Bonus"
+      ]
+    },
+    {
+      "id": "movementSpeed",
+      "label": "15% Movement Speed",
+      "category": "utility",
+      "mods": [
+        {
+          "affixId": "frw",
+          "value": 15
+        }
+      ],
+      "modifiers": [
+        "+15% Movement Speed"
+      ]
+    },
+    {
+      "id": "reqReduce",
+      "label": "Requirements -20%",
+      "category": "utility",
+      "restriction": "non_jewelry",
+      "mods": [
+        {
+          "affixId": "requirements",
+          "value": -20
+        }
+      ],
+      "modifiers": [
+        "-20% Requirements"
+      ]
+    },
+    {
+      "id": "lightRadius",
+      "label": "+3 Light Radius",
+      "category": "utility",
+      "mods": [
+        {
+          "affixId": "lightRadius",
+          "value": 3
+        }
+      ],
+      "modifiers": [
+        "+3 Light Radius"
+      ]
+    },
+    {
+      "id": "ponr_allSkills",
+      "label": "+4 to All Skills",
+      "category": "skills",
+      "pool": "point_of_no_return",
+      "mods": [
+        {
+          "affixId": "allSkills",
+          "value": 4
+        }
+      ],
+      "modifiers": [
+        "+4 to All Skills"
+      ]
+    },
+    {
+      "id": "ponr_maxElemRes",
+      "label": "+2% to Maximum Fire/Lightning/Cold/Poison Resistances",
+      "category": "defensive",
+      "pool": "point_of_no_return",
+      "mods": [
+        {
+          "affixId": "maxResFire",
+          "value": 2
+        },
+        {
+          "affixId": "maxResLight",
+          "value": 2
+        },
+        {
+          "affixId": "maxResCold",
+          "value": 2
+        },
+        {
+          "affixId": "maxResPois",
+          "value": 2
+        }
+      ],
+      "modifiers": [
+        "+2% Maximum Fire Resist",
+        "+2% Maximum Lightning Resist",
+        "+2% Maximum Cold Resist",
+        "+2% Maximum Poison Resist"
+      ]
+    },
+    {
+      "id": "ponr_spellDmg",
+      "label": "+30% Fire/Lightning/Cold/Poison/Physical-Magic Spell Damage",
+      "category": "skills",
+      "pool": "point_of_no_return",
+      "mods": [
+        {
+          "affixId": "fireSpellDmg",
+          "value": 30
+        },
+        {
+          "affixId": "lightSpellDmg",
+          "value": 30
+        },
+        {
+          "affixId": "coldSpellDmg",
+          "value": 30
+        },
+        {
+          "affixId": "poisonSpellDmg",
+          "value": 30
+        },
+        {
+          "affixId": "physMagicSpellDmg",
+          "value": 30
+        }
+      ],
+      "modifiers": [
+        "+30% Fire Spell Damage",
+        "+30% Lightning Spell Damage",
+        "+30% Cold Spell Damage",
+        "+30% Poison Spell Damage",
+        "+30% Physical/Magic Spell Damage"
+      ]
+    },
+    {
+      "id": "ponr_lifePercent",
+      "label": "+10% Maximum Life",
+      "category": "attributes",
+      "pool": "point_of_no_return",
+      "mods": [
+        {
+          "affixId": "lifePercent",
+          "value": 10
+        }
+      ],
+      "modifiers": [
+        "+10% Maximum Life"
+      ]
+    },
+    {
+      "id": "ponr_manaPercent",
+      "label": "+25% Maximum Mana",
+      "category": "attributes",
+      "pool": "point_of_no_return",
+      "mods": [
+        {
+          "affixId": "manaPercent",
+          "value": 25
+        }
+      ],
+      "modifiers": [
+        "+25% Maximum Mana"
+      ]
+    },
+    {
+      "id": "ponr_enemyRes",
+      "label": "-20% to Enemy Fire/Lightning/Cold/Poison Resistances",
+      "category": "combat",
+      "pool": "point_of_no_return",
+      "mods": [
+        {
+          "affixId": "enemyFireRes",
+          "value": -20
+        },
+        {
+          "affixId": "enemyLightRes",
+          "value": -20
+        },
+        {
+          "affixId": "enemyColdRes",
+          "value": -20
+        },
+        {
+          "affixId": "enemyPoisonRes",
+          "value": -20
+        }
+      ],
+      "modifiers": [
+        "--20% Enemy Fire Resistance",
+        "--20% Enemy Lightning Resistance",
+        "--20% Enemy Cold Resistance",
+        "--20% Enemy Poison Resistance"
+      ]
+    },
+    {
+      "id": "ponr_physResist",
+      "label": "+10% Physical Resist",
+      "category": "defensive",
+      "pool": "point_of_no_return",
+      "mods": [
+        {
+          "affixId": "physResist",
+          "value": 10
+        }
+      ],
+      "modifiers": [
+        "+10% Physical Resist"
+      ]
+    },
+    {
+      "id": "ponr_allAttrPercent",
+      "label": "+20% to All Attributes",
+      "category": "attributes",
+      "pool": "point_of_no_return",
+      "mods": [
+        {
+          "affixId": "strPercent",
+          "value": 20
+        },
+        {
+          "affixId": "dexPercent",
+          "value": 20
+        },
+        {
+          "affixId": "vitPercent",
+          "value": 20
+        },
+        {
+          "affixId": "egyPercent",
+          "value": 20
+        }
+      ],
+      "modifiers": [
+        "+20% to Strength",
+        "+20% to Dexterity",
+        "+20% to Vitality",
+        "+20% to Energy"
+      ]
+    },
+    {
+      "id": "ponr_lifeRegen",
+      "label": "+150 Life Regenerated per Second",
+      "category": "defensive",
+      "pool": "point_of_no_return",
+      "mods": [
+        {
+          "affixId": "lifeRegen",
+          "value": 150
+        }
+      ],
+      "modifiers": [
+        "+150 Life Regenerated per Second"
+      ]
+    },
+    {
+      "id": "woe_reqLevelPlus50",
+      "label": "Failed corruption: +50 Required Level",
+      "category": "utility",
+      "pool": "ring_of_woe",
+      "mods": [],
+      "modifiers": []
+    },
+    {
+      "id": "woe_reqLevelMinus10",
+      "label": "Failed corruption: -10 Required Level",
+      "category": "utility",
+      "pool": "ring_of_woe",
+      "mods": [],
+      "modifiers": []
+    }
+  ]
+}

@@ -687,6 +687,7 @@ export function collectEnabledItemCharacterStatBonuses(options = {}) {
       if (!def) continue;
       const rolls = itemsStore.getRollsForInstance?.(instanceId) ?? null;
       const extras = itemsStore.getExtrasForInstance?.(instanceId) ?? [];
+      const bonusOpts = itemsStore.getItemBonusOptionsForInstance?.(instanceId) ?? {};
       const lines = getItemStatLines(def, rolls, {
         hideRollableRanges: false,
         showRollRanges: false,
@@ -696,6 +697,7 @@ export function collectEnabledItemCharacterStatBonuses(options = {}) {
         extras,
         mysticOrbs: itemsStore.getMysticOrbsForInstance?.(instanceId) ?? [],
         socketables: itemsStore.getSocketablesForInstance?.(instanceId) ?? [],
+        ...bonusOpts,
       });
       accumulateLines(lines, sourceLabelForDef(def), bonuses, modifiersByKey, unknownModifiers);
     }

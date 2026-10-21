@@ -3,22 +3,20 @@
  * Upgrade section tabs for the item inspector.
  */
 
-/** @typedef {'base'|'sockets'|'mysticOrbs'|'oils'|'corruptions'|'effigies'} InspectorTabId */
-
-/** @type {ReadonlyArray<{ id: InspectorTabId, label: string }>} */
-const INSPECTOR_TABS = Object.freeze([
-  { id: 'base', label: 'Base' },
-  { id: 'sockets', label: 'Sockets' },
-  { id: 'mysticOrbs', label: 'Orbs' },
-  { id: 'oils', label: 'Oils' },
-  { id: 'corruptions', label: 'Corrupt' },
-  { id: 'effigies', label: 'Effigies' },
-]);
+/** @typedef {'base'|'sockets'|'mysticOrbs'|'oils'|'corruptions'|'effigies'|'blessing'|'shrine'|'mechanics'} InspectorTabId */
 
 const props = defineProps({
   modelValue: {
     type: String,
     default: 'base',
+  },
+  tabs: {
+    type: Array,
+    default: () => [
+      { id: 'base', label: 'Base' },
+      { id: 'sockets', label: 'Sockets' },
+      { id: 'mysticOrbs', label: 'Orbs' },
+    ],
   },
 });
 
@@ -40,7 +38,7 @@ function selectTab(id) {
     aria-label="Item upgrade sections"
   >
     <button
-      v-for="tab in INSPECTOR_TABS"
+      v-for="tab in tabs"
       :key="tab.id"
       type="button"
       role="tab"

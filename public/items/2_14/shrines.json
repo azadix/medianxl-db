@@ -1,0 +1,858 @@
+[
+  {
+    "id": "abandoned",
+    "name": "Abandoned",
+    "variants": [
+      {
+        "appliesTo": [
+          "1h_weapon",
+          "armor_non_body"
+        ],
+        "bonuses": [
+          {
+            "text": "(24 to 120)% Bonus to Attack Rating",
+            "affixId": "arPercent",
+            "min": 24,
+            "max": 120
+          },
+          {
+            "text": "+(4 to 20) to Dexterity",
+            "affixId": "dex",
+            "min": 4,
+            "max": 20
+          },
+          {
+            "text": "(4 to 5)% to Dexterity",
+            "affixId": "dexPercent",
+            "min": 4,
+            "max": 5
+          }
+        ]
+      },
+      {
+        "appliesTo": [
+          "2h_weapon",
+          "body_armor"
+        ],
+        "bonuses": [
+          {
+            "text": "(36 to 170)% Bonus to Attack Rating",
+            "affixId": "arPercent",
+            "min": 36,
+            "max": 170
+          },
+          {
+            "text": "+(6 to 28) to Dexterity",
+            "affixId": "dex",
+            "min": 6,
+            "max": 28
+          },
+          {
+            "text": "(6 to 12)% to Dexterity",
+            "affixId": "dexPercent",
+            "min": 6,
+            "max": 12
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "weird",
+    "name": "Weird",
+    "variants": [
+      {
+        "appliesTo": [
+          "armor_non_body"
+        ],
+        "bonuses": [
+          {
+            "text": "Adds (1 to 3)-(1 to 6) Damage",
+            "min": 1,
+            "max": 3
+          }
+        ]
+      },
+      {
+        "appliesTo": [
+          "body_armor"
+        ],
+        "bonuses": [
+          {
+            "text": "Adds (1 to 4)-(1 to 10) Damage",
+            "min": 1,
+            "max": 4
+          }
+        ]
+      },
+      {
+        "appliesTo": [
+          "1h_weapon"
+        ],
+        "bonuses": [
+          {
+            "text": "Adds (2 to 6)-(2 to 12) Damage",
+            "min": 2,
+            "max": 6
+          },
+          {
+            "text": "+(25 to 40)% Enhanced Damage",
+            "affixId": "edmg",
+            "min": 25,
+            "max": 40
+          }
+        ]
+      },
+      {
+        "appliesTo": [
+          "2h_weapon"
+        ],
+        "bonuses": [
+          {
+            "text": "Adds (3 to 9)-(3 to 18) Damage",
+            "min": 3,
+            "max": 9
+          },
+          {
+            "text": "+(30 to 55)% Enhanced Damage",
+            "affixId": "edmg",
+            "min": 30,
+            "max": 55
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "tainted",
+    "name": "Tainted",
+    "variants": [
+      {
+        "appliesTo": [
+          "1h_weapon",
+          "armor_non_body"
+        ],
+        "bonuses": [
+          {
+            "text": "+(8 to 25)% to Summon Damage",
+            "affixId": "summonDmg",
+            "min": 8,
+            "max": 25
+          },
+          {
+            "text": "+(16 to 50)% to Summon Attack Rating",
+            "affixId": "summonAr",
+            "min": 16,
+            "max": 50
+          }
+        ]
+      },
+      {
+        "appliesTo": [
+          "2h_weapon",
+          "body_armor"
+        ],
+        "bonuses": [
+          {
+            "text": "+(15 to 35)% to Summon Damage",
+            "affixId": "summonDmg",
+            "min": 15,
+            "max": 35
+          },
+          {
+            "text": "+(30 to 70)% to Summon Attack Rating",
+            "affixId": "summonAr",
+            "min": 30,
+            "max": 70
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "eerie",
+    "name": "Eerie",
+    "variants": [
+      {
+        "appliesTo": [
+          "1h_weapon",
+          "armor_non_body"
+        ],
+        "bonuses": [
+          {
+            "text": "+(20 to 30) Spell Focus",
+            "affixId": "spellFocus",
+            "min": 20,
+            "max": 30
+          },
+          {
+            "text": "+(4 to 20) to Energy",
+            "affixId": "egy",
+            "min": 4,
+            "max": 20
+          },
+          {
+            "text": "(4 to 5)% to Energy",
+            "affixId": "egyPercent",
+            "min": 4,
+            "max": 5
+          }
+        ]
+      },
+      {
+        "appliesTo": [
+          "2h_weapon",
+          "body_armor"
+        ],
+        "bonuses": [
+          {
+            "text": "+(40 to 60) Spell Focus",
+            "affixId": "spellFocus",
+            "min": 40,
+            "max": 60
+          },
+          {
+            "text": "+(6 to 28) to Energy",
+            "affixId": "egy",
+            "min": 6,
+            "max": 28
+          },
+          {
+            "text": "(6 to 12)% to Energy",
+            "affixId": "egyPercent",
+            "min": 6,
+            "max": 12
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "sacred",
+    "name": "Sacred",
+    "variants": [
+      {
+        "appliesTo": [
+          "1h_weapon",
+          "armor_non_body"
+        ],
+        "bonuses": [
+          {
+            "text": "+(2 to 8)% to Cold Spell Damage",
+            "affixId": "coldSpellDmg",
+            "min": 2,
+            "max": 8
+          },
+          {
+            "text": "-(3 to 5)% to Enemy Cold Resistance",
+            "affixId": "enemyColdRes",
+            "min": 3,
+            "max": 5
+          }
+        ]
+      },
+      {
+        "appliesTo": [
+          "2h_weapon",
+          "body_armor"
+        ],
+        "bonuses": [
+          {
+            "text": "+(2 to 15)% to Cold Spell Damage",
+            "affixId": "coldSpellDmg",
+            "min": 2,
+            "max": 15
+          },
+          {
+            "text": "-(5 to 10)% to Enemy Cold Resistance",
+            "affixId": "enemyColdRes",
+            "min": 5,
+            "max": 10
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "fascinating",
+    "name": "Fascinating",
+    "variants": [
+      {
+        "appliesTo": [
+          "1h_weapon",
+          "armor_non_body"
+        ],
+        "bonuses": [
+          {
+            "text": "+(2 to 8)% to Fire Spell Damage",
+            "affixId": "fireSpellDmg",
+            "min": 2,
+            "max": 8
+          },
+          {
+            "text": "-(3 to 5)% to Enemy Fire Resistance",
+            "affixId": "enemyFireRes",
+            "min": 3,
+            "max": 5
+          }
+        ]
+      },
+      {
+        "appliesTo": [
+          "2h_weapon",
+          "body_armor"
+        ],
+        "bonuses": [
+          {
+            "text": "+(2 to 15)% to Fire Spell Damage",
+            "affixId": "fireSpellDmg",
+            "min": 2,
+            "max": 15
+          },
+          {
+            "text": "-(5 to 10)% to Enemy Fire Resistance",
+            "affixId": "enemyFireRes",
+            "min": 5,
+            "max": 10
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "ornate",
+    "name": "Ornate",
+    "variants": [
+      {
+        "appliesTo": [
+          "1h_weapon",
+          "armor_non_body"
+        ],
+        "bonuses": [
+          {
+            "text": "+(2 to 8)% to Lightning Spell Damage",
+            "affixId": "lightSpellDmg",
+            "min": 2,
+            "max": 8
+          },
+          {
+            "text": "-(3 to 5)% to Enemy Lightning Resistance",
+            "affixId": "enemyLightRes",
+            "min": 3,
+            "max": 5
+          }
+        ]
+      },
+      {
+        "appliesTo": [
+          "2h_weapon",
+          "body_armor"
+        ],
+        "bonuses": [
+          {
+            "text": "+(2 to 15)% to Lightning Spell Damage",
+            "affixId": "lightSpellDmg",
+            "min": 2,
+            "max": 15
+          },
+          {
+            "text": "-(5 to 10)% to Enemy Lightning Resistance",
+            "affixId": "enemyLightRes",
+            "min": 5,
+            "max": 10
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "shimmering",
+    "name": "Shimmering",
+    "variants": [
+      {
+        "appliesTo": [
+          "1h_weapon",
+          "armor_non_body"
+        ],
+        "bonuses": [
+          {
+            "text": "+(2 to 8)% to Poison Spell Damage",
+            "affixId": "poisonSpellDmg",
+            "min": 2,
+            "max": 8
+          },
+          {
+            "text": "-(3 to 5)% to Enemy Poison Resistance",
+            "affixId": "enemyPoisRes",
+            "min": 3,
+            "max": 5
+          }
+        ]
+      },
+      {
+        "appliesTo": [
+          "2h_weapon",
+          "body_armor"
+        ],
+        "bonuses": [
+          {
+            "text": "+(2 to 15)% to Poison Spell Damage",
+            "affixId": "poisonSpellDmg",
+            "min": 2,
+            "max": 15
+          },
+          {
+            "text": "-(5 to 10)% to Enemy Poison Resistance",
+            "affixId": "enemyPoisRes",
+            "min": 5,
+            "max": 10
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "spiritual",
+    "name": "Spiritual",
+    "variants": [
+      {
+        "appliesTo": [
+          "1h_weapon",
+          "armor_non_body"
+        ],
+        "bonuses": [
+          {
+            "text": "(5 to 10)% Cast Speed",
+            "affixId": "fcr",
+            "min": 5,
+            "max": 10
+          },
+          {
+            "text": "Maximum Mana +4%",
+            "affixId": "manaPercent",
+            "min": 4,
+            "max": 4,
+            "isFixed": true
+          },
+          {
+            "text": "Regenerate Mana +(10 to 20)%",
+            "affixId": "regenMana",
+            "min": 10,
+            "max": 20
+          }
+        ]
+      },
+      {
+        "appliesTo": [
+          "2h_weapon",
+          "body_armor"
+        ],
+        "bonuses": [
+          {
+            "text": "(10 to 15)% Cast Speed",
+            "affixId": "fcr",
+            "min": 10,
+            "max": 15
+          },
+          {
+            "text": "Maximum Mana +12%",
+            "affixId": "manaPercent",
+            "min": 12,
+            "max": 12,
+            "isFixed": true
+          },
+          {
+            "text": "Regenerate Mana +(30 to 45)%",
+            "affixId": "regenMana",
+            "min": 30,
+            "max": 45
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "magical",
+    "name": "Magical",
+    "variants": [
+      {
+        "appliesTo": [
+          "1h_weapon",
+          "armor_non_body"
+        ],
+        "bonuses": [
+          {
+            "text": "+(4 to 30)% to Summon Life",
+            "affixId": "summonLife",
+            "min": 4,
+            "max": 30
+          },
+          {
+            "text": "+(4 to 15)% to Summon Elemental Resistances",
+            "affixId": "summonElemRes",
+            "min": 4,
+            "max": 15
+          }
+        ]
+      },
+      {
+        "appliesTo": [
+          "2h_weapon",
+          "body_armor"
+        ],
+        "bonuses": [
+          {
+            "text": "+(6 to 50)% to Summon Life",
+            "affixId": "summonLife",
+            "min": 6,
+            "max": 50
+          },
+          {
+            "text": "+(6 to 25)% to Summon Elemental Resistances",
+            "affixId": "summonElemRes",
+            "min": 6,
+            "max": 25
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "hidden",
+    "name": "Hidden",
+    "variants": [
+      {
+        "appliesTo": [
+          "1h_weapon",
+          "armor_non_body"
+        ],
+        "bonuses": [
+          {
+            "text": "1% Reanimate as: Random Monster",
+            "min": 1,
+            "max": 1,
+            "isFixed": true
+          }
+        ]
+      },
+      {
+        "appliesTo": [
+          "2h_weapon",
+          "body_armor"
+        ],
+        "bonuses": [
+          {
+            "text": "1% Reanimate as: Random Monster",
+            "min": 1,
+            "max": 1,
+            "isFixed": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "trinity",
+    "name": "Trinity",
+    "variants": [
+      {
+        "appliesTo": [
+          "1h_weapon",
+          "armor_non_body"
+        ],
+        "bonuses": [
+          {
+            "text": "(3 to 4)% Innate Elemental Damage",
+            "affixId": "innateElem",
+            "min": 3,
+            "max": 4
+          },
+          {
+            "text": "+(6 to 10) to all Attributes",
+            "affixId": "allAttr",
+            "min": 6,
+            "max": 10
+          }
+        ]
+      },
+      {
+        "appliesTo": [
+          "2h_weapon",
+          "body_armor"
+        ],
+        "bonuses": [
+          {
+            "text": "(6 to 8)% Innate Elemental Damage",
+            "affixId": "innateElem",
+            "min": 6,
+            "max": 8
+          },
+          {
+            "text": "(2 to 4)% to All Attributes",
+            "affixId": "allAttrPercent",
+            "min": 2,
+            "max": 4
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "creepy",
+    "name": "Creepy",
+    "variants": [
+      {
+        "appliesTo": [
+          "1h_weapon",
+          "armor_non_body"
+        ],
+        "bonuses": [
+          {
+            "text": "(2 to 4)% Chance of Crushing Blow",
+            "affixId": "crushingBlow",
+            "min": 2,
+            "max": 4
+          },
+          {
+            "text": "+(4 to 20) to Strength",
+            "affixId": "str",
+            "min": 4,
+            "max": 20
+          },
+          {
+            "text": "(4 to 5)% to Strength",
+            "affixId": "strPercent",
+            "min": 4,
+            "max": 5
+          }
+        ]
+      },
+      {
+        "appliesTo": [
+          "2h_weapon",
+          "body_armor"
+        ],
+        "bonuses": [
+          {
+            "text": "(4 to 7)% Chance of Crushing Blow",
+            "affixId": "crushingBlow",
+            "min": 4,
+            "max": 7
+          },
+          {
+            "text": "+(6 to 28) to Strength",
+            "affixId": "str",
+            "min": 6,
+            "max": 28
+          },
+          {
+            "text": "(6 to 12)% to Strength",
+            "affixId": "strPercent",
+            "min": 6,
+            "max": 12
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "intimidating",
+    "name": "Intimidating",
+    "variants": [
+      {
+        "appliesTo": [
+          "armor_non_body"
+        ],
+        "bonuses": [
+          {
+            "text": "+(11 to 30)% Enhanced Defense",
+            "affixId": "defPercent",
+            "min": 11,
+            "max": 30
+          },
+          {
+            "text": "Physical Resist (0 to 1)%",
+            "affixId": "physResist",
+            "min": 0,
+            "max": 1
+          }
+        ]
+      },
+      {
+        "appliesTo": [
+          "body_armor"
+        ],
+        "bonuses": [
+          {
+            "text": "+(21 to 50)% Enhanced Defense",
+            "affixId": "defPercent",
+            "min": 21,
+            "max": 50
+          },
+          {
+            "text": "Physical Resist (1 to 2)%",
+            "affixId": "physResist",
+            "min": 1,
+            "max": 2
+          }
+        ]
+      },
+      {
+        "appliesTo": [
+          "1h_weapon"
+        ],
+        "bonuses": [
+          {
+            "text": "+(20 to 35)% Enhanced Damage",
+            "affixId": "edmg",
+            "min": 20,
+            "max": 35
+          },
+          {
+            "text": "(2 to 3)% Deadly Strike",
+            "affixId": "deadlyStrike",
+            "min": 2,
+            "max": 3
+          },
+          {
+            "text": "Requirements +20%",
+            "affixId": "reqPercent",
+            "min": 20,
+            "max": 20,
+            "isFixed": true
+          }
+        ]
+      },
+      {
+        "appliesTo": [
+          "2h_weapon"
+        ],
+        "bonuses": [
+          {
+            "text": "+(35 to 50)% Enhanced Damage",
+            "affixId": "edmg",
+            "min": 35,
+            "max": 50
+          },
+          {
+            "text": "(2 to 4)% Deadly Strike",
+            "affixId": "deadlyStrike",
+            "min": 2,
+            "max": 4
+          },
+          {
+            "text": "Requirements +30%",
+            "affixId": "reqPercent",
+            "min": 30,
+            "max": 30,
+            "isFixed": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "quiet",
+    "name": "Quiet",
+    "variants": [
+      {
+        "appliesTo": [
+          "1h_weapon",
+          "armor_non_body"
+        ],
+        "bonuses": [
+          {
+            "text": "+(4 to 20) to Vitality",
+            "affixId": "vit",
+            "min": 4,
+            "max": 20
+          },
+          {
+            "text": "(4 to 5)% to Vitality",
+            "affixId": "vitPercent",
+            "min": 4,
+            "max": 5
+          },
+          {
+            "text": "+(1 to 10) Life Regenerated per Second",
+            "affixId": "lifeRegen",
+            "min": 1,
+            "max": 10
+          }
+        ]
+      },
+      {
+        "appliesTo": [
+          "2h_weapon",
+          "body_armor"
+        ],
+        "bonuses": [
+          {
+            "text": "+(6 to 28) to Vitality",
+            "affixId": "vit",
+            "min": 6,
+            "max": 28
+          },
+          {
+            "text": "(6 to 12)% to Vitality",
+            "affixId": "vitPercent",
+            "min": 6,
+            "max": 12
+          },
+          {
+            "text": "+(3 to 15) Life Regenerated per Second",
+            "affixId": "lifeRegen",
+            "min": 3,
+            "max": 15
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "enchanted",
+    "name": "Enchanted",
+    "variants": [
+      {
+        "appliesTo": [
+          "1h_weapon",
+          "armor_non_body"
+        ],
+        "bonuses": [
+          {
+            "text": "+(4 to 10)% to Physical/Magic Spell Damage",
+            "affixId": "physMagicSpellDmg",
+            "min": 4,
+            "max": 10
+          },
+          {
+            "text": "Magic Resist +(1 to 2)%",
+            "affixId": "resMagic",
+            "min": 1,
+            "max": 2
+          }
+        ]
+      },
+      {
+        "appliesTo": [
+          "2h_weapon",
+          "body_armor"
+        ],
+        "bonuses": [
+          {
+            "text": "+(6 to 20)% to Physical/Magic Spell Damage",
+            "affixId": "physMagicSpellDmg",
+            "min": 6,
+            "max": 20
+          },
+          {
+            "text": "Magic Resist +(2 to 4)%",
+            "affixId": "resMagic",
+            "min": 2,
+            "max": 4
+          }
+        ]
+      }
+    ]
+  }
+]

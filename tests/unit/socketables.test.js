@@ -11,6 +11,7 @@ import {
   normalizeSocketables,
   parseTswSocketables,
   resolveSocketableIcon,
+  socketableLibraryGroup,
   socketableNameCssClass,
   trimSocketablesToCount,
 } from '@/items/socketables.js';
@@ -76,6 +77,19 @@ describe('socketables', () => {
       },
       { name: 'Jewel', code: 'jew', type: 'Jewel', icon: 'invjw1' },
     ]);
+  });
+
+  it('splits runes into normal, enhanced (Ol–Xod), and elemental', () => {
+    expect(socketableLibraryGroup({ type: 'Rune', name: 'El Rune', code: 'r01' })).toBe('Rune');
+    expect(socketableLibraryGroup({ type: 'Rune', name: 'Zod Rune', code: 'r33' })).toBe('Rune');
+    expect(socketableLibraryGroup({ type: 'Rune', name: 'Qor Rune', code: 'r53' })).toBe('Rune');
+    expect(socketableLibraryGroup({ type: 'Rune', name: 'Ol Rune', code: 'rx01' })).toBe('Enhanced');
+    expect(socketableLibraryGroup({ type: 'Rune', name: 'Elq Rune', code: 'rx02' })).toBe('Enhanced');
+    expect(socketableLibraryGroup({ type: 'Rune', name: 'Xod Rune', code: 'rx33' })).toBe('Enhanced');
+    expect(socketableLibraryGroup({ type: 'Rune', name: 'Fire Rune', code: 'r57' })).toBe('Elemental');
+    expect(socketableLibraryGroup({ type: 'Rune', name: 'Stone Rune', code: 'r58' })).toBe('Elemental');
+    expect(socketableLibraryGroup({ type: 'Rune', name: 'Ice Rune', code: 'r62' })).toBe('Elemental');
+    expect(socketableLibraryGroup({ type: 'Gem', name: 'Ruby' })).toBe('Gem');
   });
 
   it('resolves game/TSW great-rune invfile stems like r-d-11', () => {
@@ -200,6 +214,15 @@ describe('socketables', () => {
     expect(socks[1].modifiers).toContain('+2% Deadly Strike');
     expect(socketableNameCssClass(socks[0])).toBe('item-tooltip-sock__name--unique');
     expect(socketableNameCssClass(socks[1])).toBe('item-tooltip-sock__name--rune');
+    expect(socketableNameCssClass({ type: 'Jewel', quality: 'Magic' })).toBe(
+      'item-tooltip-sock__name--magic'
+    );
+    expect(socketableNameCssClass({ type: 'customjewel', quality: 'rare' })).toBe(
+      'item-tooltip-sock__name--rare'
+    );
+    expect(socketableNameCssClass({ type: 'Jewel', quality: 'Crafted' })).toBe(
+      'item-tooltip-sock__name--crafted'
+    );
   });
 
   it('stores socketables and corrupted on tswInstanceExtras', () => {

@@ -1,7 +1,7 @@
 /**
  * Unified item catalog generation.
  *
- * Default: unique-stats, relics, and runewords from Median XL docs HTML.
+ * Default: unique-stats, relics, runewords, and upgrade catalogs from wiki/docs.
  * Charms need the TSW API (in-game IP within 24h) and are opt-in.
  *
  * Usage:
@@ -9,7 +9,8 @@
  *   npm run generate:items -- --check
  *   npm run generate:items -- charms
  *   npm run generate:items -- all
- *   npm run generate:items -- uniques relics runewords 2.14 --check
+ *   npm run generate:items -- upgrades
+ *   npm run generate:items -- uniques relics runewords upgrades 2.14 --check
  *   npm run generate:items -- uniques --secrets-only
  *   npm run generate:items -- runewords --from-html path/to/page.html
  */
@@ -20,15 +21,17 @@ import { main as generateUniques } from './generate-unique-stats-db.mjs';
 import { main as generateRelics } from './generate-relics-from-wiki.mjs';
 import { main as generateRunewords } from './generate-runewords-from-wiki.mjs';
 import { main as generateCharms } from './generate-relics-charms-from-tsw.mjs';
+import { main as generateUpgrades } from './generate-upgrade-catalogs.mjs';
 
 const TASKS = Object.freeze({
   uniques: generateUniques,
   relics: generateRelics,
   runewords: generateRunewords,
   charms: generateCharms,
+  upgrades: generateUpgrades,
 });
 const TASK_NAMES = new Set([...Object.keys(TASKS), 'all']);
-const WIKI_DEFAULT = Object.freeze(['uniques', 'relics', 'runewords']);
+const WIKI_DEFAULT = Object.freeze(['uniques', 'relics', 'runewords', 'upgrades']);
 
 /**
  * @param {string[]} argv

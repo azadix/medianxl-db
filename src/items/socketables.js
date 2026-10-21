@@ -249,7 +249,7 @@ export function isInventoryIconStem(image) {
   if (/^r-[a-z]?-\d+$/i.test(s)) return true;
   if (/^(fire|phys|magic|pois|ltng|cold|ultra)-rune$/i.test(s)) return true;
   if (/^og\d+$/i.test(s)) return true;
-  return /^(inv|xis|orb_|oil_)/i.test(s);
+  return /^(inv|xis|orb_|oil_|occultorb|greater_luck)/i.test(s);
 }
 
 /**
@@ -341,6 +341,32 @@ export function socketHostSlot(def) {
   return 'armor';
 }
 
+export const CUSTOM_JEWEL_RARITIES = Object.freeze(['magic', 'rare', 'crafted']);
+
+/**
+ * @param {string|null|undefined} value
+ * @returns {'magic'|'rare'|'crafted'}
+ */
+export function normalizeCustomJewelRarity(value) {
+  const key = String(value || '').trim().toLowerCase();
+  if (key === 'magic' || key === 'rare' || key === 'crafted') return key;
+  return 'rare';
+}
+
+/**
+ * @param {{ type?: string, code?: string }|null|undefined} sock
+ * @returns {boolean}
+ */
+function isJewelSocketable(sock) {
+  const type = String(sock?.type || '').toLowerCase();
+  return (
+    type === 'jewel' ||
+    type === 'jewl' ||
+    type === 'customjewel' ||
+    /^jew/i.test(String(sock?.code || ''))
+  );
+}
+
 /**
  * Bonus lines this socketable grants in the host item.
  * Jewels use their own modifiers; runes/gems use catalog weapon/armor/shield.
@@ -350,9 +376,7 @@ export function socketHostSlot(def) {
  */
 export function getSocketableBonusLines(sock, hostDef) {
   if (!sock || typeof sock !== 'object') return [];
-  const type = String(sock.type || '').toLowerCase();
-  const isJewel = type === 'jewel' || type === 'jewl' || /^jew/i.test(String(sock.code || ''));
-  if (isJewel) {
+  if (isJewelSocketable(sock)) {
     if (!Array.isArray(sock.modifiers)) return [];
     return sock.modifiers
       .map((line) => decodeModifierLine(line).text.trim())
@@ -362,6 +386,28 @@ export function getSocketableBonusLines(sock, hostDef) {
   if (!row) return [];
   const slot = socketHostSlot(hostDef);
   return flattenSlotBonus(row[slot]);
+}
+
+const ELEMENTAL_RUNE_NAMES = new Set(['fire', 'stone', 'arcane', 'poison', 'light', 'ice']);
+
+/**
+ * Socket picker chip group for a catalog row.
+ * Enhanced runes are Ol–Xod (`rx*`). Elemental runes are Fire, Stone, Arcane, Poison, Light, Ice.
+ * @param {{ type?: string, name?: string, code?: string }|null|undefined} row
+ * @returns {'Gem'|'Rune'|'Enhanced'|'Elemental'|'Jewel'}
+ */
+export function socketableLibraryGroup(row) {
+  const type = String(row?.type || '');
+  if (/gem/i.test(type)) return 'Gem';
+  if (!/rune/i.test(type)) return 'Jewel';
+  const code = String(row?.code || '').trim().toLowerCase();
+  if (/^rx\d+/i.test(code)) return 'Enhanced';
+  const base = String(row?.name || '')
+    .replace(/\s+Rune$/i, '')
+    .trim()
+    .toLowerCase();
+  if (ELEMENTAL_RUNE_NAMES.has(base)) return 'Elemental';
+  return 'Rune';
 }
 
 /**
@@ -571,9 +617,7 @@ export function parseTswSocketables(row) {
  */
 export function socketableNameCssClass(sock) {
   if (!sock) return '';
-  const type = String(sock.type || '').toLowerCase();
-  const isJewel = type === 'jewel' || type === 'jewl' || /^jew/i.test(String(sock.code || ''));
-  if (isJewel) {
+  if (isJewelSocketable(sock)) {
     const quality = String(sock.quality || '').toLowerCase();
     if (quality === 'unique') return 'item-tooltip-sock__name--unique';
     if (quality === 'rare') return 'item-tooltip-sock__name--rare';

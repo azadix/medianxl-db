@@ -1,0 +1,735 @@
+[
+  {
+    "id": "oil_weapon_ed",
+    "label": "+20% Enhanced Damage",
+    "slotType": "weapon",
+    "oilKind": "luck",
+    "requiresUnique": false,
+    "mods": [
+      {
+        "affixId": "edmg",
+        "value": 20
+      }
+    ],
+    "modifiers": [
+      "+20% Enhanced Damage"
+    ],
+    "notOnHonorifics": true,
+    "notOnRegular": true
+  },
+  {
+    "id": "oil_weapon_ar",
+    "label": "100% Bonus to Attack Rating",
+    "slotType": "weapon",
+    "oilKind": "luck",
+    "requiresUnique": false,
+    "mods": [
+      {
+        "affixId": "arPercent",
+        "value": 100
+      }
+    ],
+    "modifiers": [
+      "+100% Bonus to Attack Rating"
+    ],
+    "notOnHonorifics": true,
+    "notOnRegular": true
+  },
+  {
+    "id": "oil_weapon_ed_ar",
+    "label": "+20% Enhanced Damage; 100% Bonus to Attack Rating",
+    "slotType": "weapon",
+    "oilKind": "luck",
+    "requiresUnique": false,
+    "mods": [
+      {
+        "affixId": "edmg",
+        "value": 20
+      },
+      {
+        "affixId": "arPercent",
+        "value": 100
+      }
+    ],
+    "modifiers": [
+      "+20% Enhanced Damage",
+      "+100% Bonus to Attack Rating"
+    ],
+    "notOnHonorifics": true,
+    "notOnRegular": true
+  },
+  {
+    "id": "oil_weapon_spelldmg",
+    "label": "+10% to Spell Damage",
+    "slotType": "weapon",
+    "oilKind": "conjuration",
+    "requiresUnique": false,
+    "mods": [
+      {
+        "affixId": "spellDmg",
+        "value": 10
+      }
+    ],
+    "modifiers": [
+      "+10% Spell Damage"
+    ],
+    "extraSlotTypes": [
+      "elemental_weapon"
+    ]
+  },
+  {
+    "id": "oil_elemwep_ias",
+    "label": "+20% Attack Speed",
+    "slotType": "elemental_weapon",
+    "oilKind": "luck",
+    "requiresUnique": false,
+    "mods": [
+      {
+        "affixId": "ias",
+        "value": 20
+      }
+    ],
+    "modifiers": [
+      "+20% Attack Speed"
+    ],
+    "notOnHonorifics": true,
+    "notOnRegular": true
+  },
+  {
+    "id": "oil_elemwep_ar",
+    "label": "100% Bonus to Attack Rating",
+    "slotType": "elemental_weapon",
+    "oilKind": "luck",
+    "requiresUnique": false,
+    "mods": [
+      {
+        "affixId": "arPercent",
+        "value": 100
+      }
+    ],
+    "modifiers": [
+      "+100% Bonus to Attack Rating"
+    ],
+    "notOnHonorifics": true,
+    "notOnRegular": true
+  },
+  {
+    "id": "oil_elemwep_ias_ar",
+    "label": "+20% Attack Speed; 100% Bonus to Attack Rating",
+    "slotType": "elemental_weapon",
+    "oilKind": "luck",
+    "requiresUnique": false,
+    "mods": [
+      {
+        "affixId": "ias",
+        "value": 20
+      },
+      {
+        "affixId": "arPercent",
+        "value": 100
+      }
+    ],
+    "modifiers": [
+      "+20% Attack Speed",
+      "+100% Bonus to Attack Rating"
+    ],
+    "notOnHonorifics": true,
+    "notOnRegular": true
+  },
+  {
+    "id": "oil_armor_ed",
+    "label": "+20% Enhanced Defense",
+    "slotType": "armor",
+    "oilKind": "luck",
+    "requiresUnique": false,
+    "mods": [
+      {
+        "affixId": "defPercent",
+        "value": 20
+      }
+    ],
+    "modifiers": [
+      "+20% Enhanced Defense"
+    ],
+    "notOnHonorifics": true,
+    "notOnRegular": true
+  },
+  {
+    "id": "oil_armor_dr",
+    "label": "Damage Reduced by 1%",
+    "slotType": "armor",
+    "oilKind": "luck",
+    "requiresUnique": false,
+    "mods": [
+      {
+        "affixId": "physResist",
+        "value": 1
+      }
+    ],
+    "modifiers": [
+      "Damage Reduced by 1%"
+    ],
+    "notOnHonorifics": true,
+    "notOnRegular": true
+  },
+  {
+    "id": "oil_armor_ed_dr",
+    "label": "+20% Enhanced Defense; Damage Reduced by 1%",
+    "slotType": "armor",
+    "oilKind": "luck",
+    "requiresUnique": false,
+    "mods": [
+      {
+        "affixId": "defPercent",
+        "value": 20
+      },
+      {
+        "affixId": "physResist",
+        "value": 1
+      }
+    ],
+    "modifiers": [
+      "+20% Enhanced Defense",
+      "Damage Reduced by 1%"
+    ],
+    "notOnHonorifics": true,
+    "notOnRegular": true
+  },
+  {
+    "id": "oil_amulet_skills",
+    "label": "+1 to All Skills",
+    "slotType": "amulet",
+    "oilKind": "luck",
+    "requiresUnique": false,
+    "mods": [
+      {
+        "affixId": "allSkills",
+        "value": 1
+      }
+    ],
+    "modifiers": [
+      "+1 to All Skills"
+    ],
+    "notOnHonorifics": true,
+    "notOnRegular": true
+  },
+  {
+    "id": "oil_ring_spelldmg",
+    "label": "+5% to Spell Damage",
+    "slotType": "ring",
+    "oilKind": "luck",
+    "requiresUnique": false,
+    "mods": [
+      {
+        "affixId": "spellDmg",
+        "value": 5
+      }
+    ],
+    "modifiers": [
+      "+5% Spell Damage"
+    ],
+    "notOnHonorifics": true,
+    "notOnRegular": true
+  },
+  {
+    "id": "oil_quiver_attributes",
+    "label": "5% Bonus to All Attributes",
+    "slotType": "quiver",
+    "oilKind": "luck",
+    "requiresUnique": false,
+    "mods": [
+      {
+        "affixId": "strPercent",
+        "value": 5
+      },
+      {
+        "affixId": "dexPercent",
+        "value": 5
+      },
+      {
+        "affixId": "vitPercent",
+        "value": 5
+      },
+      {
+        "affixId": "egyPercent",
+        "value": 5
+      }
+    ],
+    "modifiers": [
+      "+5% to Strength",
+      "+5% to Dexterity",
+      "+5% to Vitality",
+      "+5% to Energy"
+    ],
+    "notOnHonorifics": true,
+    "notOnRegular": true
+  },
+  {
+    "id": "oil_jewel_str",
+    "label": "+2 to Strength",
+    "slotType": "jewel",
+    "oilKind": "luck",
+    "requiresUnique": false,
+    "mods": [
+      {
+        "affixId": "str",
+        "value": 2
+      }
+    ],
+    "modifiers": [
+      "+2 to Strength"
+    ],
+    "notOnHonorifics": true,
+    "notOnRegular": true
+  },
+  {
+    "id": "oil_jewel_dex",
+    "label": "+2 to Dexterity",
+    "slotType": "jewel",
+    "oilKind": "luck",
+    "requiresUnique": false,
+    "mods": [
+      {
+        "affixId": "dex",
+        "value": 2
+      }
+    ],
+    "modifiers": [
+      "+2 to Dexterity"
+    ],
+    "notOnHonorifics": true,
+    "notOnRegular": true
+  },
+  {
+    "id": "oil_jewel_str_dex",
+    "label": "+2 to Strength; +2 to Dexterity",
+    "slotType": "jewel",
+    "oilKind": "luck",
+    "requiresUnique": false,
+    "mods": [
+      {
+        "affixId": "str",
+        "value": 2
+      },
+      {
+        "affixId": "dex",
+        "value": 2
+      }
+    ],
+    "modifiers": [
+      "+2 to Strength",
+      "+2 to Dexterity"
+    ],
+    "notOnHonorifics": true,
+    "notOnRegular": true
+  },
+  {
+    "id": "oil_jewel_egy",
+    "label": "+2 to Energy",
+    "slotType": "jewel",
+    "oilKind": "luck",
+    "requiresUnique": false,
+    "mods": [
+      {
+        "affixId": "egy",
+        "value": 2
+      }
+    ],
+    "modifiers": [
+      "+2 to Energy"
+    ],
+    "notOnHonorifics": true,
+    "notOnRegular": true
+  },
+  {
+    "id": "oil_jewel_str_egy",
+    "label": "+2 to Strength; +2 to Energy",
+    "slotType": "jewel",
+    "oilKind": "luck",
+    "requiresUnique": false,
+    "mods": [
+      {
+        "affixId": "str",
+        "value": 2
+      },
+      {
+        "affixId": "egy",
+        "value": 2
+      }
+    ],
+    "modifiers": [
+      "+2 to Strength",
+      "+2 to Energy"
+    ],
+    "notOnHonorifics": true,
+    "notOnRegular": true
+  },
+  {
+    "id": "oil_jewel_dex_egy",
+    "label": "+2 to Dexterity; +2 to Energy",
+    "slotType": "jewel",
+    "oilKind": "luck",
+    "requiresUnique": false,
+    "mods": [
+      {
+        "affixId": "dex",
+        "value": 2
+      },
+      {
+        "affixId": "egy",
+        "value": 2
+      }
+    ],
+    "modifiers": [
+      "+2 to Dexterity",
+      "+2 to Energy"
+    ],
+    "notOnHonorifics": true,
+    "notOnRegular": true
+  },
+  {
+    "id": "oil_jewel_str_dex_egy",
+    "label": "+2 to Strength; +2 to Dexterity; +2 to Energy",
+    "slotType": "jewel",
+    "oilKind": "luck",
+    "requiresUnique": false,
+    "mods": [
+      {
+        "affixId": "str",
+        "value": 2
+      },
+      {
+        "affixId": "dex",
+        "value": 2
+      },
+      {
+        "affixId": "egy",
+        "value": 2
+      }
+    ],
+    "modifiers": [
+      "+2 to Strength",
+      "+2 to Dexterity",
+      "+2 to Energy"
+    ],
+    "notOnHonorifics": true,
+    "notOnRegular": true
+  },
+  {
+    "id": "oil_jewel_vit",
+    "label": "+2 to Vitality",
+    "slotType": "jewel",
+    "oilKind": "luck",
+    "requiresUnique": false,
+    "mods": [
+      {
+        "affixId": "vit",
+        "value": 2
+      }
+    ],
+    "modifiers": [
+      "+2 to Vitality"
+    ],
+    "notOnHonorifics": true,
+    "notOnRegular": true
+  },
+  {
+    "id": "oil_jewel_str_vit",
+    "label": "+2 to Strength; +2 to Vitality",
+    "slotType": "jewel",
+    "oilKind": "luck",
+    "requiresUnique": false,
+    "mods": [
+      {
+        "affixId": "str",
+        "value": 2
+      },
+      {
+        "affixId": "vit",
+        "value": 2
+      }
+    ],
+    "modifiers": [
+      "+2 to Strength",
+      "+2 to Vitality"
+    ],
+    "notOnHonorifics": true,
+    "notOnRegular": true
+  },
+  {
+    "id": "oil_jewel_dex_vit",
+    "label": "+2 to Dexterity; +2 to Vitality",
+    "slotType": "jewel",
+    "oilKind": "luck",
+    "requiresUnique": false,
+    "mods": [
+      {
+        "affixId": "dex",
+        "value": 2
+      },
+      {
+        "affixId": "vit",
+        "value": 2
+      }
+    ],
+    "modifiers": [
+      "+2 to Dexterity",
+      "+2 to Vitality"
+    ],
+    "notOnHonorifics": true,
+    "notOnRegular": true
+  },
+  {
+    "id": "oil_jewel_str_dex_vit",
+    "label": "+2 to Strength; +2 to Dexterity; +2 to Vitality",
+    "slotType": "jewel",
+    "oilKind": "luck",
+    "requiresUnique": false,
+    "mods": [
+      {
+        "affixId": "str",
+        "value": 2
+      },
+      {
+        "affixId": "dex",
+        "value": 2
+      },
+      {
+        "affixId": "vit",
+        "value": 2
+      }
+    ],
+    "modifiers": [
+      "+2 to Strength",
+      "+2 to Dexterity",
+      "+2 to Vitality"
+    ],
+    "notOnHonorifics": true,
+    "notOnRegular": true
+  },
+  {
+    "id": "oil_jewel_egy_vit",
+    "label": "+2 to Energy; +2 to Vitality",
+    "slotType": "jewel",
+    "oilKind": "luck",
+    "requiresUnique": false,
+    "mods": [
+      {
+        "affixId": "egy",
+        "value": 2
+      },
+      {
+        "affixId": "vit",
+        "value": 2
+      }
+    ],
+    "modifiers": [
+      "+2 to Energy",
+      "+2 to Vitality"
+    ],
+    "notOnHonorifics": true,
+    "notOnRegular": true
+  },
+  {
+    "id": "oil_jewel_str_egy_vit",
+    "label": "+2 to Strength; +2 to Energy; +2 to Vitality",
+    "slotType": "jewel",
+    "oilKind": "luck",
+    "requiresUnique": false,
+    "mods": [
+      {
+        "affixId": "str",
+        "value": 2
+      },
+      {
+        "affixId": "egy",
+        "value": 2
+      },
+      {
+        "affixId": "vit",
+        "value": 2
+      }
+    ],
+    "modifiers": [
+      "+2 to Strength",
+      "+2 to Energy",
+      "+2 to Vitality"
+    ],
+    "notOnHonorifics": true,
+    "notOnRegular": true
+  },
+  {
+    "id": "oil_jewel_dex_egy_vit",
+    "label": "+2 to Dexterity; +2 to Energy; +2 to Vitality",
+    "slotType": "jewel",
+    "oilKind": "luck",
+    "requiresUnique": false,
+    "mods": [
+      {
+        "affixId": "dex",
+        "value": 2
+      },
+      {
+        "affixId": "egy",
+        "value": 2
+      },
+      {
+        "affixId": "vit",
+        "value": 2
+      }
+    ],
+    "modifiers": [
+      "+2 to Dexterity",
+      "+2 to Energy",
+      "+2 to Vitality"
+    ],
+    "notOnHonorifics": true,
+    "notOnRegular": true
+  },
+  {
+    "id": "oil_jewel_str_dex_egy_vit",
+    "label": "+2 to Strength; +2 to Dexterity; +2 to Energy; +2 to Vitality",
+    "slotType": "jewel",
+    "oilKind": "luck",
+    "requiresUnique": false,
+    "mods": [
+      {
+        "affixId": "str",
+        "value": 2
+      },
+      {
+        "affixId": "dex",
+        "value": 2
+      },
+      {
+        "affixId": "egy",
+        "value": 2
+      },
+      {
+        "affixId": "vit",
+        "value": 2
+      }
+    ],
+    "modifiers": [
+      "+2 to Strength",
+      "+2 to Dexterity",
+      "+2 to Energy",
+      "+2 to Vitality"
+    ],
+    "notOnHonorifics": true,
+    "notOnRegular": true
+  },
+  {
+    "id": "oil_unique_wep_ar_lvl",
+    "label": "2% Attack Rating per Character Level",
+    "slotType": "weapon",
+    "oilKind": "lottery",
+    "requiresUnique": true,
+    "mods": [
+      {
+        "affixId": "arPercent",
+        "value": 2,
+        "basedOnLevel": true
+      }
+    ],
+    "modifiers": [
+      "+2% Bonus to Attack Rating"
+    ],
+    "extraSlotTypes": [
+      "elemental_weapon"
+    ]
+  },
+  {
+    "id": "oil_unique_armor_life",
+    "label": "Increase Maximum Life 3%",
+    "slotType": "armor",
+    "oilKind": "lottery",
+    "requiresUnique": true,
+    "mods": [
+      {
+        "affixId": "lifePercent",
+        "value": 3
+      }
+    ],
+    "modifiers": [
+      "+3% Maximum Life"
+    ]
+  },
+  {
+    "id": "oil_unique_amulet_mr",
+    "label": "Magic Resist +5%",
+    "slotType": "amulet",
+    "oilKind": "lottery",
+    "requiresUnique": true,
+    "mods": [
+      {
+        "affixId": "resMagic",
+        "value": 5
+      }
+    ],
+    "modifiers": [
+      "+5% Magic Resistance"
+    ],
+    "notOnSets": true
+  },
+  {
+    "id": "oil_unique_ring_skills",
+    "label": "+1 to All Skills",
+    "slotType": "ring",
+    "oilKind": "lottery",
+    "requiresUnique": true,
+    "mods": [
+      {
+        "affixId": "allSkills",
+        "value": 1
+      }
+    ],
+    "modifiers": [
+      "+1 to All Skills"
+    ],
+    "notOnSets": true
+  },
+  {
+    "id": "oil_unique_quiver_mf",
+    "label": "50% Better Chance of Getting Magic Items",
+    "slotType": "quiver",
+    "oilKind": "lottery",
+    "requiresUnique": true,
+    "mods": [
+      {
+        "affixId": "magicFind",
+        "value": 50
+      }
+    ],
+    "modifiers": [
+      "+50% Magic Find"
+    ],
+    "notOnSets": true
+  },
+  {
+    "id": "oil_unique_jewel_allres",
+    "label": "All Resists +10%",
+    "slotType": "jewel",
+    "oilKind": "lottery",
+    "requiresUnique": true,
+    "mods": [
+      {
+        "affixId": "resElem",
+        "value": 10
+      }
+    ],
+    "modifiers": [
+      "+10% Elemental Resistances"
+    ],
+    "notOnSets": true
+  },
+  {
+    "id": "nothing",
+    "label": "Nothing (failed oil)",
+    "slotType": null,
+    "oilKind": "fail",
+    "requiresUnique": false,
+    "mods": [],
+    "modifiers": []
+  }
+]

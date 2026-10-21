@@ -30,6 +30,12 @@ export const ITEM_STATE_FLAGS = Object.freeze([
     label: 'Already Upgraded',
   },
   {
+    id: 'shrineBlessed',
+    re: /^Shrine Blessed$/i,
+    color: MODIFIER_COLOR_GREEN,
+    label: 'Shrine Blessed',
+  },
+  {
     id: 'orbEffects',
     re: /^Orb Effects Applied to this Item are (Doubled|Quadrupled)$/i,
     color: MODIFIER_COLOR_DARKGREEN,
@@ -87,6 +93,8 @@ export function encodeItemStateFlagLine(text) {
  * @param {{
  *   ethereal?: boolean,
  *   corrupted?: boolean,
+ *   alreadyUpgraded?: boolean,
+ *   shrineBlessed?: boolean,
  *   modifiers?: Array<string|{text?: string}|null|undefined>|null,
  *   extras?: string[]|null,
  * }} [options]
@@ -108,6 +116,8 @@ export function collectItemStateFlagLines(options = {}) {
 
   if (options.ethereal === true) consider('Ethereal');
   if (options.corrupted === true) consider('Corrupted');
+  if (options.alreadyUpgraded === true) consider('Already Upgraded');
+  if (options.shrineBlessed === true) consider('Shrine Blessed');
 
   for (const mod of Array.isArray(options.modifiers) ? options.modifiers : []) {
     if (typeof mod === 'string') consider(mod);

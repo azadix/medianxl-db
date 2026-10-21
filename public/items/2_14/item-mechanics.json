@@ -1,0 +1,77 @@
+{
+  "restore": {
+    "su_arrogance": {
+      "itemId": "su_arrogance",
+      "label": "Restore",
+      "step": 4,
+      "maxApplications": 25,
+      "hint": "Repeatable · 25 reaches the listed values",
+      "outputs": [
+        {
+          "affixId": "fhr",
+          "coefficient": 50
+        },
+        {
+          "affixId": "fbr",
+          "coefficient": 50
+        },
+        {
+          "affixId": "fcr",
+          "coefficient": 50
+        },
+        {
+          "affixId": "ias",
+          "coefficient": 50
+        },
+        {
+          "affixId": "physResist",
+          "coefficient": 15
+        },
+        {
+          "affixId": "lifePercent",
+          "coefficient": 7
+        }
+      ]
+    },
+    "su_endless_pride": {
+      "itemId": "su_endless_pride",
+      "label": "Restore",
+      "step": 20,
+      "maxApplications": 5,
+      "hint": "Repeatable · 5 reaches the listed values",
+      "outputs": [
+        {
+          "affixId": "allSkills",
+          "coefficient": 2
+        },
+        {
+          "affixId": "defBonus",
+          "coefficient": 50
+        },
+        {
+          "affixId": "maxResFire",
+          "coefficient": 3
+        },
+        {
+          "affixId": "maxResLight",
+          "coefficient": 3
+        },
+        {
+          "affixId": "maxResCold",
+          "coefficient": 3
+        },
+        {
+          "affixId": "maxResPois",
+          "coefficient": 3
+        }
+      ]
+    }
+  },
+  "wintry": {},
+  "dynamo": {
+    "su_clockwork_slippers": {
+      "itemId": "su_clockwork_slippers",
+      "label": "Dynamo charges"
+    }
+  }
+}

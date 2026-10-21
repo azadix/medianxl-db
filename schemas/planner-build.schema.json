@@ -112,6 +112,38 @@
       "type": ["object", "array"],
       "$comment": "NotArmory sometimes emits {} maps and sometimes []."
     },
+    "PlannerItemInstance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["defId"],
+      "properties": {
+        "defId": { "type": "string", "minLength": 1 },
+        "icon": { "type": "string" },
+        "rolls": { "type": "object", "additionalProperties": { "type": "number" } },
+        "custom": { "type": "object", "additionalProperties": true },
+        "extras": { "type": "array", "items": { "type": "string" } },
+        "mysticOrbs": { "$ref": "#/$defs/MysticOrbs" },
+        "socketables": { "type": "array", "items": { "$ref": "#/$defs/Socketable" } },
+        "ethereal": { "type": "boolean" },
+        "corrupted": { "type": "boolean" },
+        "oil": { "type": "string" },
+        "corruptions": { "type": "array", "items": { "type": "string" }, "maxItems": 2 },
+        "blessing": { "type": "string" },
+        "shrine": { "type": "string" },
+        "mechanics": { "type": "object", "additionalProperties": { "type": "number" } },
+        "name": { "type": "string" }
+      }
+    },
+    "CustomJewel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "modifiers": { "type": "array", "items": { "type": "string" } }
+      }
+    },
     "Socketable": {
       "type": "object",
       "additionalProperties": true,

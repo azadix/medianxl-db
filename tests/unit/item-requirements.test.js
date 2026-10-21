@@ -14,11 +14,15 @@ import {
 } from '@/items/item-requirements.js';
 import { overlayAffixRollKey } from '@/items/item-overlays.js';
 import { loadMysticOrbsCatalog } from '@/items/mystic-orbs.js';
+import { loadCorruptionsCatalog } from '@/items/corruptions.js';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 loadMysticOrbsCatalog(
   JSON.parse(readFileSync(resolve('public/items/2_14/mystic-orbs.json'), 'utf8'))
+);
+loadCorruptionsCatalog(
+  JSON.parse(readFileSync(resolve('public/items/2_14/corruptions.json'), 'utf8'))
 );
 
 describe('parseRequirementsReductionPct', () => {
@@ -164,7 +168,7 @@ describe('resolveItemRequirements', () => {
           ],
         }
       ).reqLevel
-    ).toBe(130);
+    ).toBe(135);
   });
 
   it('does not double mystic orb required level when extras already list it', () => {
@@ -180,6 +184,15 @@ describe('resolveItemRequirements', () => {
         }
       ).reqLevel
     ).toBe(135);
+  });
+
+  it('adds required level from applied corruptions', () => {
+    expect(
+      resolveItemRequirements(
+        { reqLevel: 90, reqStr: 100 },
+        { corruptions: ['avoidDamage', 'nothing'] }
+      ).reqLevel
+    ).toBe(91);
   });
 
   it('keeps TSW final strength when reqStrFinal is set', () => {

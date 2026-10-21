@@ -121,19 +121,20 @@ describe('mystic-orbs', () => {
     expect(mysticOrbIcon('MO - Enhanced Damage')).toBe('orb_weap');
     expect(mysticOrbIcon("Kara's Trinket")).toBe('orb_misc');
     expect(mysticOrbIcon('MO - Fire Spell Damage')).toBe('orb_any');
+    expect(mysticOrbIcon('Celestial Wind')).toBe('occultorb');
     expect(mysticOrbNameCssClass('Weight of Talent')).toBe('item-tooltip-sock__name--unique');
     expect(mysticOrbNameCssClass('MO - Strength')).toBe('item-tooltip-sock__name--magic');
   });
 
   it('uses 4 required level per generic MO stack and 10 per unique', () => {
     expect(mysticOrbReqLevelPerStack('MO - Total Char Defense')).toBe(4);
-    expect(mysticOrbReqLevelPerStack('Weight of Talent')).toBe(10);
+    expect(mysticOrbReqLevelPerStack('Weight of Talent')).toBe(15);
     expect(
       mysticOrbsRequiredLevelBonus([
         [5, 'MO - Total Char Defense'],
         [1, 'Weight of Talent'],
       ])
-    ).toBe(30);
+    ).toBe(35);
   });
 
   it('adds mystic orb and socket bonuses to item stat lines', () => {
