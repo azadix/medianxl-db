@@ -19,7 +19,9 @@ import ItemCorruptionsEditor from './ItemCorruptionsEditor.vue';
 import ItemShrineEditor from './ItemShrineEditor.vue';
 import ItemMechanicsEditor from './ItemMechanicsEditor.vue';
 import CustomItemBuilder from './CustomItemBuilder.vue';
+import RandomElementPicker from './RandomElementPicker.vue';
 import { isCustomItemDef } from '@/items/custom-items.js';
+import { defHasRandomElementChoice } from '@/items/random-element.js';
 import { computed } from 'vue';
 
 const props = defineProps({
@@ -54,6 +56,8 @@ const props = defineProps({
   mechanics: { type: Object, default: () => ({}) },
   custom: { type: Object, default: null },
   ethereal: { type: Boolean, default: false },
+  etherealLocked: { type: Boolean, default: false },
+  randomElement: { type: String, default: 'fire' },
 });
 
 const emit = defineEmits([
@@ -68,6 +72,7 @@ const emit = defineEmits([
   'update:mechanics',
   'update:custom',
   'update:ethereal',
+  'update:random-element',
 ]);
 
 const subtitle = computed(() => formatItemTooltipSubtitle(props.def));
@@ -86,6 +91,7 @@ const requirementsLine = computed(() =>
 );
 
 const isCustom = computed(() => isCustomItemDef(props.def));
+const showRandomElement = computed(() => defHasRandomElementChoice(props.def));
 
 const runewordBadge = computed(() =>
   isRunewordItem(props.def) ? formatRunewordBadge(props.def) : ''
@@ -229,10 +235,18 @@ function modLineClass(row) {
           </template>
         </div>
 
+        <RandomElementPicker
+          v-if="showRandomElement"
+          class="mt-2"
+          :model-value="randomElement"
+          :disabled="!canEdit"
+          @update:model-value="emit('update:random-element', $event)"
+        />
         <label v-if="canEdit" class="checkbox is-size-7 mt-2">
           <input
             type="checkbox"
             :checked="ethereal"
+            :disabled="etherealLocked"
             @change="emit('update:ethereal', $event.target.checked)"
           />
           Ethereal
@@ -267,6 +281,8 @@ function modLineClass(row) {
         :character-level="characterLevel"
         :editable="canEdit"
         :kinds="['mo', 'umo', 'smo']"
+        :shrine="shrine"
+        :blessing="blessing"
         @update:mystic-orbs="emit('update:mystic-orbs', $event)"
       />
 
@@ -280,6 +296,8 @@ function modLineClass(row) {
         :character-level="characterLevel"
         :editable="canEdit"
         :kinds="['effigy']"
+        :shrine="shrine"
+        :blessing="blessing"
         heading="Occult Effigies"
         empty-text="No effigies applied."
         add-label="Add occult effigy…"

@@ -134,10 +134,10 @@ export function cubeRecipeOils() {
     oilRow('oil_armor_ed', '+20% Enhanced Defense', 'armor', luck, [
       { affixId: 'defPercent', value: 20 },
     ]),
-    oilRow('oil_armor_dr', 'Damage Reduced by 1%', 'armor', luck, [
+    oilRow('oil_armor_dr', 'Physical Resist +1%', 'armor', luck, [
       { affixId: 'physResist', value: 1 },
     ]),
-    oilRow('oil_armor_ed_dr', '+20% Enhanced Defense; Damage Reduced by 1%', 'armor', luck, [
+    oilRow('oil_armor_ed_dr', '+20% Enhanced Defense; Physical Resist +1%', 'armor', luck, [
       { affixId: 'defPercent', value: 20 },
       { affixId: 'physResist', value: 1 },
     ]),
@@ -183,13 +183,9 @@ export function cubeRecipeOils() {
     oilRow('oil_unique_armor_life', 'Increase Maximum Life 3%', 'armor', lottery, [
       { affixId: 'lifePercent', value: 3 },
     ]),
-    oilRow(
-      'oil_unique_amulet_mr',
-      'Magic Resist +5%',
-      'amulet',
-      { ...lottery, notOnSets: true },
-      [{ affixId: 'resMagic', value: 5 }]
-    ),
+    oilRow('oil_unique_amulet_mr', 'Magic Resist +5%', 'amulet', lottery, [
+      { affixId: 'resMagic', value: 5 },
+    ]),
     oilRow(
       'oil_unique_ring_skills',
       '+1 to All Skills',
@@ -213,7 +209,7 @@ export function cubeRecipeOils() {
     ),
     {
       id: 'nothing',
-      label: 'Nothing (failed oil)',
+      label: 'Nothing',
       slotType: null,
       oilKind: 'fail',
       requiresUnique: false,
@@ -239,7 +235,7 @@ function oilRow(id, label, slotType, flags, mods, extraSlotTypes) {
     if (mod.affixId === 'arPercent') return `+${mod.value}% Bonus to Attack Rating`;
     if (mod.affixId === 'ias') return `+${mod.value}% Attack Speed`;
     if (mod.affixId === 'defPercent') return `+${mod.value}% Enhanced Defense`;
-    if (mod.affixId === 'physResist') return `Damage Reduced by ${mod.value}%`;
+    if (mod.affixId === 'physResist') return `Physical Resist +${mod.value}%`;
     if (mod.affixId === 'allSkills') return `+${mod.value} to All Skills`;
     if (mod.affixId === 'spellDmg') return `+${mod.value}% Spell Damage`;
     if (mod.affixId === 'strPercent') return `+${mod.value}% to Strength`;
@@ -522,6 +518,7 @@ export function occultEffigiesFromWiki() {
       maxStacks: 1,
       reqLevelPerStack: 18,
       restrictToCategory: 'quiver',
+      requiresMagic: true,
       aliases: ["Craftsman's Brand"],
     },
     {
@@ -530,6 +527,7 @@ export function occultEffigiesFromWiki() {
       kind: 'effigy',
       slots: 'armor',
       maxStacks: 1,
+      reqLevelPerStack: 0,
       restrictToSlot: 'feet',
       aliases: ['Celestial Wind'],
     },
@@ -537,9 +535,11 @@ export function occultEffigiesFromWiki() {
       name: 'Sigil of Absolution',
       modifiers: ['Requirements +25%'],
       kind: 'effigy',
-      slots: 'all',
+      slots: 'gear',
       maxStacks: 2,
       reqLevelPerStack: -5,
+      minHostReqLevel: 5,
+      notOnRunewords: true,
       aliases: ['Sigil of Absolution'],
     },
     {
@@ -552,13 +552,15 @@ export function occultEffigiesFromWiki() {
       slots: 'jewelry',
       maxStacks: 1,
       reqLevelPerStack: 10,
+      restrictToCategory: 'jewelry',
+      requiresUnique: true,
       aliases: ['Path of Brutality'],
     },
     {
       name: 'Empyrean Touch',
       modifiers: ['Item Becomes Ethereal'],
       kind: 'effigy',
-      slots: 'all',
+      slots: 'gear',
       maxStacks: 1,
       reqLevelPerStack: 10,
       aliases: ['Empyrean Touch'],
@@ -577,8 +579,11 @@ export function occultEffigiesFromWiki() {
       name: 'Breath of Thaumaturgy',
       modifiers: ['Item can be blessed Again'],
       kind: 'effigy',
-      slots: 'all',
+      slots: 'gear',
+      maxStacks: 1,
       reqLevelPerStack: 25,
+      requiresCrafted: true,
+      requiresShrine: true,
       aliases: ['Breath of Thaumaturgy'],
     },
     {
@@ -598,6 +603,8 @@ export function occultEffigiesFromWiki() {
       slots: 'weapon',
       maxStacks: 1,
       reqLevelPerStack: 10,
+      requiresOneHanded: true,
+      minLifeLeech: 15,
       aliases: ['Arcane Hunger'],
     },
     {
@@ -611,6 +618,7 @@ export function occultEffigiesFromWiki() {
       slots: 'armor',
       maxStacks: 3,
       reqLevelPerStack: 8,
+      forbidMaxColdResist: true,
       aliases: ['Northern Winds'],
     },
   ];

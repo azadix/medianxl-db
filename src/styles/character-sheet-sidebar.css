@@ -311,16 +311,10 @@
   min-height: 0;
 }
 
-.planner-sidebar-overview-summary {
-  display: none;
-}
-
-@media screen and (min-width: 769px) {
-  .planner-sidebar-overview-wrap > .sidebar-pane-scroll {
-    display: block !important;
-    flex: 1 1 auto;
-    min-height: 0;
-  }
+.planner-sidebar-overview-wrap > .sidebar-pane-scroll {
+  display: block;
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 .planner-card {
@@ -784,16 +778,6 @@
     flex: 0 0 auto;
     min-height: 0;
     padding: 0 0.35rem 0.35rem;
-  }
-
-  .planner-sidebar-overview-summary {
-    display: block;
-    cursor: pointer;
-    user-select: none;
-    padding: 0.4rem 0.15rem;
-    color: #b5b5b5;
-    font-size: 0.82rem;
-    font-weight: 600;
   }
 
   .planner-sidebar-overview-wrap .sidebar-pane-scroll {

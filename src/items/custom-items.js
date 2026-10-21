@@ -5,7 +5,8 @@
 
 import { isCharmItem } from '@/items/charm-items.js';
 import { isRelicItem } from '@/items/relic-items.js';
-import { angelicBaseDisplayName } from '@/items/angelic-items.js';
+import { angelicBaseDisplayName, isAngelicEligibleBase, isSacredBaseItem } from '@/items/angelic-items.js';
+import { isMastercraftedBaseItem } from '@/items/mastercrafted-items.js';
 import {
   encodeModifierLine,
   MODIFIER_COLOR_GREY,
@@ -147,6 +148,23 @@ export function parseCustomPayload(raw) {
  */
 export function isCustomItemDef(def) {
   return Boolean(def && normalizeCustomQuality(def.customQuality));
+}
+
+/**
+ * Crafted items only exist on angelic, sacred, and mastercrafted bases
+ * (plus jewelry, which has no tier). Not T1–T4.
+ * @param {object|null|undefined} def
+ * @returns {boolean}
+ */
+export function isCraftedEligibleBase(def) {
+  if (!def || typeof def !== 'object') return false;
+  if (def.rarity === 'unique' || def.rarity === 'set' || def.rarity === 'runeword') return false;
+  if (isCharmItem(def) || isRelicItem(def)) return false;
+  const cat = String(def.category || '');
+  if (cat !== 'weapons' && cat !== 'armor' && cat !== 'jewelry') return false;
+  if (isMastercraftedBaseItem(def)) return true;
+  if (isAngelicEligibleBase(def) || isSacredBaseItem(def)) return true;
+  return cat === 'jewelry';
 }
 
 /**
@@ -491,6 +509,11 @@ export function resolveCustomBaseDefId(row, cat, quality = null) {
   });
   if (!hits.length) return null;
   const typeRaw = String(row?.type || '');
+  const preferMc = /\((?:Mastercrafted|MC)\)/i.test(typeRaw) || /\((?:Mastercrafted|MC)\)/i.test(tswRowName(row));
+  if (preferMc) {
+    const mc = hits.find((d) => isMastercraftedBaseItem(d));
+    if (mc?.id) return String(mc.id);
+  }
   const preferSacred =
     quality === 'crafted' ||
     quality === 'honorific' ||

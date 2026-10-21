@@ -3,7 +3,8 @@ import { computed, onMounted, onUnmounted, ref } from 'vue';
 import {
   canUseMysticOrbOnItem,
   formatMysticOrbRows,
-  getMysticOrbBonusLines,
+  formatRequiredLevelBonusLine,
+  getMysticOrbDisplayLines,
   listMysticOrbsCatalog,
   lookupMysticOrb,
   mysticOrbIcon,
@@ -13,7 +14,10 @@ import {
   mysticOrbsRequiredLevelBonus,
   normalizeMysticOrbs,
 } from '@/items/mystic-orbs.js';
-import { itemRequirementsExceedCharacterLevel } from '@/items/item-requirements.js';
+import {
+  itemAllowsMysticOrbReqLevel,
+  itemRequirementsExceedCharacterLevel,
+} from '@/items/item-requirements.js';
 import { getItemIconUrl } from '@/shared/utils.js';
 import { hideItemTooltip } from '@/items/item-tooltip-runtime.js';
 import { hidePlannerSkillTooltip } from '@/tree/tree-tooltip.js';
@@ -30,6 +34,8 @@ const props = defineProps({
   heading: { type: String, default: 'Mystic Orbs' },
   emptyText: { type: String, default: 'No mystic orbs applied.' },
   addLabel: { type: String, default: 'Add mystic orb…' },
+  shrine: { type: String, default: '' },
+  blessing: { type: String, default: '' },
 });
 
 const emit = defineEmits(['update:mystic-orbs']);
@@ -58,18 +64,28 @@ const countByName = computed(() => {
 
 const rows = computed(() => formatMysticOrbRows(applied.value));
 
+const hostState = computed(() => ({
+  shrine: props.shrine,
+  blessing: props.blessing,
+  extras: props.extras,
+}));
+
 /**
  * @param {Array<[number, string]>} next
  */
+function orbReqOptions(next) {
+  return {
+    rolls: props.rolls,
+    extras: props.extras,
+    socketables: props.socketables,
+    mysticOrbs: next,
+  };
+}
+
 function fitsCharacterLevel(next) {
   return !itemRequirementsExceedCharacterLevel(
     props.def,
-    {
-      rolls: props.rolls,
-      extras: props.extras,
-      socketables: props.socketables,
-      mysticOrbs: next,
-    },
+    orbReqOptions(next),
     props.characterLevel
   );
 }
@@ -98,8 +114,12 @@ const addable = computed(() =>
       if (!props.kinds.includes(kind)) return false;
     }
     const have = countByName.value[row.name] || 0;
-    if (!canUseMysticOrbOnItem(row, props.def, have)) return false;
-    return fitsCharacterLevel(orbsWithCount(row.name, have + 1));
+    if (!canUseMysticOrbOnItem(row, props.def, have, hostState.value)) return false;
+    const next = orbsWithCount(row.name, have + 1);
+    if (!itemAllowsMysticOrbReqLevel(props.def, orbReqOptions(next), row.name, have + 1)) {
+      return false;
+    }
+    return fitsCharacterLevel(next);
   })
 );
 
@@ -141,8 +161,9 @@ function orbIconUrl(orb) {
 function addOrb(name) {
   const label = String(name || '').trim();
   const have = countByName.value[label] || 0;
-  if (!label || !canUseMysticOrbOnItem(label, props.def, have)) return;
+  if (!label || !canUseMysticOrbOnItem(label, props.def, have, hostState.value)) return;
   const next = orbsWithCount(label, have + 1);
+  if (!itemAllowsMysticOrbReqLevel(props.def, orbReqOptions(next), label, have + 1)) return;
   if (!fitsCharacterLevel(next)) return;
   persist(next);
   menuOpen.value = false;
@@ -158,8 +179,12 @@ function setCount(name, raw) {
   if (!Number.isFinite(value)) return;
   if (value < 1) value = 1;
   value = Math.min(max, value);
-  while (value > 1 && !canUseMysticOrbOnItem(name, props.def, value - 1)) value -= 1;
+  while (value > 1 && !canUseMysticOrbOnItem(name, props.def, value - 1, hostState.value)) value -= 1;
+  while (value > 1 && !itemAllowsMysticOrbReqLevel(props.def, orbReqOptions(orbsWithCount(name, value)), name, value)) {
+    value -= 1;
+  }
   while (value > 1 && !fitsCharacterLevel(orbsWithCount(name, value))) value -= 1;
+  if (!itemAllowsMysticOrbReqLevel(props.def, orbReqOptions(orbsWithCount(name, value)), name, value)) return;
   if (!fitsCharacterLevel(orbsWithCount(name, value))) return;
   persist(orbsWithCount(name, value));
 }
@@ -213,7 +238,7 @@ onUnmounted(() => {
   <div class="item-upgrade-section" :aria-label="heading">
     <p class="item-upgrade-section__heading is-size-7 has-text-grey mb-2">
       {{ heading }}
-      <span v-if="reqLevelBonus">+{{ reqLevelBonus }} Required Level</span>
+      <span v-if="reqLevelBonus">{{ formatRequiredLevelBonusLine(reqLevelBonus) }}</span>
     </p>
     <div v-if="editable" class="item-mo-editor__add">
       <div class="item-sockets-editor__picker item-mo-editor__picker" @mousedown="dismissHoverTooltips">
@@ -254,7 +279,7 @@ onUnmounted(() => {
                 <span class="item-sockets-editor__option-text">
                   <span :class="mysticOrbNameCssClass(row.name)">{{ row.name }}</span>
                   <span
-                    v-for="(mod, midx) in getMysticOrbBonusLines(row.name, 1)"
+                    v-for="(mod, midx) in getMysticOrbDisplayLines(row.name, 1)"
                     :key="row.name + '-mod-' + midx"
                     class="item-sockets-editor__option-bonus"
                   >

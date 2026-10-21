@@ -38,12 +38,11 @@ function selectMode(mode) {
           </li>
         </ul>
       </div>
-      <details class="planner-sidebar-overview-wrap">
-        <summary class="planner-sidebar-overview-summary">Class and bonuses</summary>
+      <div class="planner-sidebar-overview-wrap">
         <div class="sidebar-pane-scroll pr-2">
           <PlannerSidebarOverview />
         </div>
-      </details>
+      </div>
     </div>
   </div>
 </template>

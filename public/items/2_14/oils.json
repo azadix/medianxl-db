@@ -156,7 +156,7 @@
   },
   {
     "id": "oil_armor_dr",
-    "label": "Damage Reduced by 1%",
+    "label": "Physical Resist +1%",
     "slotType": "armor",
     "oilKind": "luck",
     "requiresUnique": false,
@@ -167,14 +167,14 @@
       }
     ],
     "modifiers": [
-      "Damage Reduced by 1%"
+      "Physical Resist +1%"
     ],
     "notOnHonorifics": true,
     "notOnRegular": true
   },
   {
     "id": "oil_armor_ed_dr",
-    "label": "+20% Enhanced Defense; Damage Reduced by 1%",
+    "label": "+20% Enhanced Defense; Physical Resist +1%",
     "slotType": "armor",
     "oilKind": "luck",
     "requiresUnique": false,
@@ -190,7 +190,7 @@
     ],
     "modifiers": [
       "+20% Enhanced Defense",
-      "Damage Reduced by 1%"
+      "Physical Resist +1%"
     ],
     "notOnHonorifics": true,
     "notOnRegular": true
@@ -669,8 +669,7 @@
     ],
     "modifiers": [
       "+5% Magic Resistance"
-    ],
-    "notOnSets": true
+    ]
   },
   {
     "id": "oil_unique_ring_skills",
@@ -725,7 +724,7 @@
   },
   {
     "id": "nothing",
-    "label": "Nothing (failed oil)",
+    "label": "Nothing",
     "slotType": null,
     "oilKind": "fail",
     "requiresUnique": false,

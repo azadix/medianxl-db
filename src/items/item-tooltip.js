@@ -11,7 +11,7 @@ import {
   getItemStatSections,
 } from '@/items/item-stats.js';
 import { formatSetBonusLabel } from '@/items/item-overlays.js';
-import { formatMysticOrbRows, mysticOrbKind } from '@/items/mystic-orbs.js';
+import { formatMysticOrbRows, mysticOrbIcon, mysticOrbKind } from '@/items/mystic-orbs.js';
 import { formatRunewordBadge, isRunewordItem } from '@/items/runeword-items.js';
 import {
   getItemSocketCount,
@@ -63,6 +63,18 @@ function itemTooltipIconSrc(stem) {
   if (!key) return '';
   if (typeof window === 'undefined') return `icons/item_icons/${key}.webp`;
   return getItemIconUrl(key);
+}
+
+/**
+ * @param {string|null|undefined} stem
+ * @returns {string}
+ */
+function sidepanelIconHtml(stem) {
+  const iconUrl = itemTooltipIconSrc(stem);
+  if (!iconUrl) {
+    return `<span class="item-tooltip-sock__icon item-tooltip-sock__icon--empty" aria-hidden="true"></span>`;
+  }
+  return `<img class="item-tooltip-sock__icon" src="${escapeHtmlText(iconUrl)}" alt="">`;
 }
 
 /**
@@ -127,6 +139,12 @@ function buildRequirementsHtml(reqs, options) {
  *   socketables?: Array<object>|null,
  *   extras?: string[]|null,
  *   mysticOrbs?: Array<[number, string]>|null,
+ *   oil?: string|null,
+ *   corruptions?: string[]|null,
+ *   blessing?: string|null,
+ *   shrine?: string|null,
+ *   mechanics?: Record<string, number>|null,
+ *   honorific?: boolean,
  *   inactiveNotice?: string|null,
  * }} [options]
  * @returns {string} HTML
@@ -166,6 +184,12 @@ export function buildItemTooltipHtml(def, iconKey = null, rolls = null, options 
     socketables: options.socketables ?? null,
     extras: options.extras ?? null,
     mysticOrbs: options.mysticOrbs ?? null,
+    oil: options.oil,
+    corruptions: options.corruptions,
+    blessing: options.blessing,
+    shrine: options.shrine,
+    mechanics: options.mechanics,
+    honorific: options.honorific,
   });
 
   const baseBlock = renderStatLines([...sections.base, ...sections.scaling]);
@@ -213,11 +237,7 @@ function buildSocketableRowHtml(sock, hostDef) {
   const name = escapeHtmlText(sock.name || '');
   const nameCls = socketableNameCssClass(sock);
   const nameClassAttr = nameCls ? ` ${nameCls}` : '';
-  const iconStem = sock.icon ? String(sock.icon).trim() : '';
-  const iconUrl = iconStem ? itemTooltipIconSrc(iconStem) : '';
-  const art = iconUrl
-    ? `<img class="item-tooltip-sock__icon" src="${escapeHtmlText(iconUrl)}" alt="" onerror="this.classList.add('item-tooltip-sock__icon--missing');this.removeAttribute('src')">`
-    : `<span class="item-tooltip-sock__icon item-tooltip-sock__icon--empty" aria-hidden="true"></span>`;
+  const art = sidepanelIconHtml(sock.icon);
   const mods = getSocketableBonusLines(sock, hostDef)
     .map((line) => `<div class="item-tooltip-sock__mod">${escapeHtmlText(line)}</div>`)
     .join('');
@@ -246,11 +266,32 @@ function sidepanelToggleHtml(title) {
 function mysticOrbNameClass(kind) {
   if (kind === 'unique') return ' item-tooltip-sock__name--unique';
   if (kind === 'rare') return ' item-tooltip-sock__name--rare';
+  if (kind === 'effigy') return ' item-tooltip-sock__name--unique';
   return '';
 }
 
 /**
- * Side panel: socket fillers then mystic orbs.
+ * @param {Array<{ label: string, name: string, kind: string, mods: string[] }>} rows
+ * @returns {string}
+ */
+function mysticOrbSidepanelRowsHtml(rows) {
+  return rows
+    .map((orb) => {
+      const kind = orb.kind || mysticOrbKind(orb.name);
+      const art = sidepanelIconHtml(orb.icon || mysticOrbIcon(orb.name));
+      const mods = (orb.mods || [])
+        .map((line) => `<div class="item-tooltip-sock__mod">${escapeHtmlText(line)}</div>`)
+        .join('');
+      return `<div class="item-tooltip-sock">
+    <div class="item-tooltip-sock__head">${art}<span class="item-tooltip-sock__name${mysticOrbNameClass(kind)}">${escapeHtmlText(orb.label)}</span></div>
+    ${mods ? `<div class="item-tooltip-sock__mods">${mods}</div>` : ''}
+  </div>`;
+    })
+    .join('');
+}
+
+/**
+ * Side panel: socket fillers, mystic orbs, then occult effigies.
  * @param {unknown} socketables
  * @param {unknown} mysticOrbs
  * @param {{ sockets?: number|null, rolls?: Record<string, number>|null, hostDef?: object|null }} [ctx]
@@ -259,7 +300,16 @@ function mysticOrbNameClass(kind) {
 function buildItemTooltipSidepanelHtml(socketables, mysticOrbs, ctx = {}) {
   const socks = normalizeSocketables(socketables);
   const orbRows = formatMysticOrbRows(mysticOrbs);
-  if (!socks.length && !orbRows.length) return '';
+  /** @type {typeof orbRows} */
+  const moRows = [];
+  /** @type {typeof orbRows} */
+  const effigyRows = [];
+  for (const orb of orbRows) {
+    const kind = orb.kind || mysticOrbKind(orb.name);
+    if (kind === 'effigy') effigyRows.push(orb);
+    else moRows.push(orb);
+  }
+  if (!socks.length && !moRows.length && !effigyRows.length) return '';
 
   /** @type {string[]} */
   const blocks = [];
@@ -278,22 +328,16 @@ function buildItemTooltipSidepanelHtml(socketables, mysticOrbs, ctx = {}) {
       ${rows}${empty}
     </div>`);
   }
-  if (orbRows.length) {
-    const rows = orbRows
-      .map((orb) => {
-        const kind = orb.kind || mysticOrbKind(orb.name);
-        const mods = (orb.mods || [])
-          .map((line) => `<div class="item-tooltip-sock__mod">${escapeHtmlText(line)}</div>`)
-          .join('');
-        return `<div class="item-tooltip-sock">
-    <div class="item-tooltip-sock__head"><span class="item-tooltip-sock__name${mysticOrbNameClass(kind)}">${escapeHtmlText(orb.label)}</span></div>
-    ${mods ? `<div class="item-tooltip-sock__mods">${mods}</div>` : ''}
-  </div>`;
-      })
-      .join('');
+  if (moRows.length) {
     blocks.push(`<div class="item-tooltip-sidepanel__block">
       ${sidepanelToggleHtml('Mystic Orbs')}
-      ${rows}
+      ${mysticOrbSidepanelRowsHtml(moRows)}
+    </div>`);
+  }
+  if (effigyRows.length) {
+    blocks.push(`<div class="item-tooltip-sidepanel__block">
+      ${sidepanelToggleHtml('Effigies')}
+      ${mysticOrbSidepanelRowsHtml(effigyRows)}
     </div>`);
   }
 

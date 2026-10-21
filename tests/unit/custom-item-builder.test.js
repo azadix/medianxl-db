@@ -1,9 +1,18 @@
 import { describe, expect, it } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
 import { useItemsStore } from '@/stores/items.js';
-import { applyCustomOverlayToDef } from '@/items/custom-items.js';
+import { applyCustomOverlayToDef, isCraftedEligibleBase } from '@/items/custom-items.js';
 import { isAngelicEligibleBase } from '@/items/angelic-items.js';
-import { extrasWithAppliedItemBonuses, applyEtherealBonus } from '@/items/item-stats.js';
+import {
+  isMastercraftedBaseItem,
+  mastercraftedBaseDisplayName,
+} from '@/items/mastercrafted-items.js';
+import {
+  extrasWithAppliedItemBonuses,
+  applyEtherealBonus,
+  getItemStatSections,
+  getRollableStats,
+} from '@/items/item-stats.js';
 
 describe('custom-item-builder', () => {
   it('overlays crafted affixes onto a base', () => {
@@ -67,6 +76,44 @@ describe('custom-item-builder', () => {
     ).toBe(false);
   });
 
+  it('allows crafted overlays only on sacred, angelic, and mastercrafted bases', () => {
+    expect(
+      isCraftedEligibleBase({ name: 'Crystal Sword (Sacred)', rarity: 'normal', category: 'weapons' })
+    ).toBe(true);
+    expect(
+      isCraftedEligibleBase({
+        name: 'Military Pick (Sacred)',
+        rarity: 'normal',
+        category: 'weapons',
+      })
+    ).toBe(true);
+    expect(
+      isCraftedEligibleBase({
+        name: 'Kukri',
+        rarity: 'normal',
+        category: 'weapons',
+        icon: 'mastercraftedknife',
+      })
+    ).toBe(true);
+    expect(
+      isCraftedEligibleBase({ name: 'Soulbinder Gloves (Mastercrafted)', rarity: 'normal', category: 'armor' })
+    ).toBe(true);
+    expect(isCraftedEligibleBase({ name: 'Ring', rarity: 'normal', category: 'jewelry' })).toBe(true);
+    expect(
+      isCraftedEligibleBase({ name: 'Crystal Sword (1)', rarity: 'normal', category: 'weapons' })
+    ).toBe(false);
+    expect(
+      isCraftedEligibleBase({ name: 'Cap (4)', rarity: 'normal', category: 'armor' })
+    ).toBe(false);
+  });
+
+  it('labels mastercrafted catalog bases', () => {
+    const kukri = { name: 'Kukri', rarity: 'normal', category: 'weapons', icon: 'mastercraftedknife' };
+    expect(isMastercraftedBaseItem(kukri)).toBe(true);
+    expect(mastercraftedBaseDisplayName(kukri)).toBe('Kukri (Mastercrafted)');
+    expect(isMastercraftedBaseItem({ name: 'Crystal Sword (Sacred)', icon: 'invcrs' })).toBe(false);
+  });
+
   it('overlays crafted angelic rarity on an eligible base', () => {
     const def = applyCustomOverlayToDef(
       { id: '18@', name: 'Military Pick (Sacred)', rarity: 'normal', sockets: 6, reqLevel: 30 },
@@ -80,6 +127,18 @@ describe('custom-item-builder', () => {
   it('applies ethereal +25% truncated', () => {
     expect(applyEtherealBonus(100)).toBe(125);
     expect(applyEtherealBonus(101)).toBe(126);
+  });
+
+  it('uses max catalog defense and boosts it by 25% when ethereal', () => {
+    const def = {
+      name: 'Cap (Sacred)',
+      rarity: 'normal',
+      category: 'armor',
+      defense: { min: 80, max: 120 },
+      ethereal: true,
+    };
+    expect(getRollableStats(def, { defense: 100 }).some((row) => row.key === 'defense')).toBe(false);
+    expect(getItemStatSections(def, { defense: 100 }).base).toContain('Defense: 150');
   });
 
   it('merges oil extras without doubling matching lines', () => {

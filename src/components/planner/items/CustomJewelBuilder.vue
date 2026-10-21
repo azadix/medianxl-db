@@ -24,6 +24,17 @@ function nameClass(row) {
   return socketableNameCssClass({ type: 'Jewel', quality });
 }
 
+/**
+ * @param {string} quality
+ * @returns {string}
+ */
+function rarityColor(quality) {
+  const key = normalizeCustomJewelRarity(quality);
+  if (key === 'magic') return 'var(--item-rarity-magic)';
+  if (key === 'crafted') return 'var(--item-rarity-crafted)';
+  return 'var(--item-rarity-rare)';
+}
+
 function save() {
   const payload = {
     name: name.value,
@@ -73,19 +84,20 @@ function remove(id) {
     </ul>
     <p v-else class="item-upgrade-section__empty is-size-7 has-text-grey mb-2">No custom jewels yet.</p>
     <input v-model="name" class="input is-small mb-2" type="text" placeholder="Jewel name" />
-    <label class="item-upgrade-section__heading is-size-7 has-text-grey mb-1" for="custom-jewel-rarity">
-      Rarity
-    </label>
-    <select
-      id="custom-jewel-rarity"
-      v-model="rarity"
-      class="input is-small mb-2"
-      :class="nameClass({ rarity })"
-    >
-      <option v-for="row in CUSTOM_JEWEL_RARITIES" :key="row" :value="row">
+    <p class="item-upgrade-section__heading is-size-7 has-text-grey mb-1">Rarity</p>
+    <div class="buttons are-small mb-2" role="group" aria-label="Jewel rarity">
+      <button
+        v-for="row in CUSTOM_JEWEL_RARITIES"
+        :key="row"
+        type="button"
+        class="button"
+        :class="[{ 'is-link': rarity === row }, nameClass({ rarity: row })]"
+        :style="{ color: rarityColor(row) }"
+        @click="rarity = row"
+      >
         {{ row.charAt(0).toUpperCase() + row.slice(1) }}
-      </option>
-    </select>
+      </button>
+    </div>
     <CustomAffixAdder v-model:modifiers="modifiers" editable />
     <div class="mt-2">
       <button type="button" class="button is-small is-link" @click="save">Save jewel</button>

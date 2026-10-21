@@ -1225,6 +1225,7 @@
     "maxStacks": 1,
     "reqLevelPerStack": 18,
     "restrictToCategory": "quiver",
+    "requiresMagic": true,
     "aliases": [
       "Craftsman's Brand"
     ]
@@ -1238,6 +1239,7 @@
     "kind": "effigy",
     "slots": "armor",
     "maxStacks": 1,
+    "reqLevelPerStack": 0,
     "restrictToSlot": "feet",
     "aliases": [
       "Celestial Wind"
@@ -1249,9 +1251,11 @@
       "Requirements +25%"
     ],
     "kind": "effigy",
-    "slots": "all",
+    "slots": "gear",
     "maxStacks": 2,
     "reqLevelPerStack": -5,
+    "minHostReqLevel": 5,
+    "notOnRunewords": true,
     "aliases": [
       "Sigil of Absolution"
     ]
@@ -1266,6 +1270,8 @@
     "slots": "jewelry",
     "maxStacks": 1,
     "reqLevelPerStack": 10,
+    "restrictToCategory": "jewelry",
+    "requiresUnique": true,
     "aliases": [
       "Path of Brutality"
     ]
@@ -1276,9 +1282,10 @@
       "Item Becomes Ethereal"
     ],
     "kind": "effigy",
-    "slots": "all",
+    "slots": "gear",
     "maxStacks": 1,
     "reqLevelPerStack": 10,
+    "setsEthereal": true,
     "aliases": [
       "Empyrean Touch"
     ]
@@ -1303,8 +1310,11 @@
       "Item can be blessed Again"
     ],
     "kind": "effigy",
-    "slots": "all",
+    "slots": "gear",
+    "maxStacks": 1,
     "reqLevelPerStack": 25,
+    "requiresCrafted": true,
+    "requiresShrine": true,
     "aliases": [
       "Breath of Thaumaturgy"
     ]
@@ -1333,6 +1343,8 @@
     "slots": "weapon",
     "maxStacks": 1,
     "reqLevelPerStack": 10,
+    "requiresOneHanded": true,
+    "minLifeLeech": 15,
     "aliases": [
       "Arcane Hunger"
     ]
@@ -1348,6 +1360,7 @@
     "slots": "armor",
     "maxStacks": 3,
     "reqLevelPerStack": 8,
+    "forbidMaxColdResist": true,
     "aliases": [
       "Northern Winds"
     ]

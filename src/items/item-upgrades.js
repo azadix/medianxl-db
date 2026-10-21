@@ -3,6 +3,7 @@
  * @module items/item-upgrades
  */
 
+import { mysticOrbsSetEthereal } from '@/items/mystic-orbs.js';
 import { getOilBonusLines, lookupOil } from '@/items/oils.js';
 import {
   getCorruptionBonusLines,
@@ -20,6 +21,7 @@ import { getMechanicBonusLines } from '@/items/item-mechanics.js';
  *   shrine?: string|null,
  *   mechanics?: Record<string, number>|null,
  *   honorific?: boolean,
+ *   mysticOrbs?: unknown,
  * }} ItemUpgradeState
  */
 
@@ -46,7 +48,7 @@ export function getItemUpgradeBonusLines(def, state = {}) {
 
 /**
  * @param {ItemUpgradeState} [state]
- * @returns {{ alreadyUpgraded: boolean, shrineBlessed: boolean, etherealFromCorruption: boolean, corrupted: boolean }}
+ * @returns {{ alreadyUpgraded: boolean, shrineBlessed: boolean, etherealFromCorruption: boolean, etherealForced: boolean, corrupted: boolean }}
  */
 export function getItemUpgradeFlags(state = {}) {
   const oil = lookupOil(state.oil);
@@ -59,10 +61,12 @@ export function getItemUpgradeFlags(state = {}) {
     if (!row.isFailure) corrupted = true;
     if (row.setsEthereal || row.id === 'ethereal') etherealFromCorruption = true;
   }
+  const etherealForced = etherealFromCorruption || mysticOrbsSetEthereal(state.mysticOrbs);
   return {
     alreadyUpgraded: Boolean(oil && oil.id !== 'nothing'),
     shrineBlessed: Boolean(String(state.shrine || '').trim() || String(state.blessing || '').trim()),
     etherealFromCorruption,
+    etherealForced,
     corrupted,
   };
 }

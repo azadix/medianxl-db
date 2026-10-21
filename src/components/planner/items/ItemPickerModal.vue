@@ -34,7 +34,11 @@ import {
   normalizeAngelicRarity,
 } from '@/items/angelic-items.js';
 import ItemDetailPanel from './ItemDetailPanel.vue';
-import { applyCustomOverlayToDef } from '@/items/custom-items.js';
+import { applyCustomOverlayToDef, isCraftedEligibleBase } from '@/items/custom-items.js';
+import {
+  isMastercraftedBaseItem,
+  mastercraftedBaseDisplayName,
+} from '@/items/mastercrafted-items.js';
 import {
   getEffectivePlannerLevel,
   getCharacterInstance,
@@ -113,6 +117,11 @@ const filteredItems = computed(() => {
   let list = itemsStore.pickerCatalog.filter((d) => !isCharmItem(d) && !isRelicItem(d));
   if (customQuality.value === 'angelic') {
     list = list.filter((d) => isAngelicEligibleBase(d));
+  } else if (customQuality.value === 'crafted') {
+    list = list.filter((d) => isCraftedEligibleBase(d));
+    if (category.value === 'weapons' || category.value === 'armor' || category.value === 'jewelry') {
+      list = list.filter((d) => d.category === category.value);
+    }
   } else if (customQuality.value) {
     list = list.filter(
       (d) =>
@@ -126,6 +135,9 @@ const filteredItems = computed(() => {
     }
   } else if (category.value !== 'all') {
     list = list.filter((d) => matchesCategory(d, category.value));
+  }
+  if (!customQuality.value) {
+    list = list.filter((d) => !isMastercraftedBaseItem(d));
   }
   const q = search.value.trim();
   if (q) {
@@ -212,9 +224,12 @@ const previewDef = computed(() => {
   }
   if (customQuality.value) {
     const label = customQuality.value === 'honorific' ? 'Honorific' : 'Crafted';
+    const baseLabel = isMastercraftedBaseItem(template)
+      ? mastercraftedBaseDisplayName(template)
+      : template.baseName || template.name;
     return applyCustomOverlayToDef(template, {
       quality: customQuality.value,
-      name: `${label} ${template.baseName || template.name}`,
+      name: `${label} ${baseLabel}`,
       modifiers: [],
       sockets: Number(template.sockets) || 0,
     });
@@ -325,6 +340,9 @@ const slotTitle = computed(() => {
  */
 function pickerItemName(item) {
   if (customQuality.value === 'angelic') return angelicBaseDisplayName(item);
+  if (customQuality.value && isMastercraftedBaseItem(item)) {
+    return mastercraftedBaseDisplayName(item);
+  }
   return item.name;
 }
 
@@ -424,9 +442,12 @@ function onEquip(defId) {
       };
     } else {
       const label = customQuality.value === 'honorific' ? 'Honorific' : 'Crafted';
+      const baseLabel = isMastercraftedBaseItem(def)
+        ? mastercraftedBaseDisplayName(def)
+        : def.baseName || def.name;
       custom = {
         quality: customQuality.value,
-        name: `${label} ${def.baseName || def.name}`,
+        name: `${label} ${baseLabel}`,
         modifiers: [],
         sockets: Number(def.sockets) || 0,
       };
@@ -505,7 +526,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown));
               type="button"
               class="item-picker-modal__cat"
               :class="{ 'is-active': customQuality === 'crafted' }"
-              @click="customQuality = 'crafted'; category = 'weapons'"
+              @click="customQuality = 'crafted'; category = 'all'"
             >
               + Crafted Item
             </button>

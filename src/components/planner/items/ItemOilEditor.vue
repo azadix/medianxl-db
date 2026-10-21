@@ -1,6 +1,13 @@
 <script setup>
 import { computed, ref } from 'vue';
-import { getOilBonusLines, listOilsForItem, lookupOil, oilIcon } from '@/items/oils.js';
+import {
+  getOilBonusLines,
+  listOilsForItem,
+  lookupOil,
+  oilIcon,
+  oilKindLabel,
+  oilSearchText,
+} from '@/items/oils.js';
 import { getItemIconUrl } from '@/shared/utils.js';
 
 const props = defineProps({
@@ -20,8 +27,24 @@ const options = computed(() => {
   const q = query.value.trim().toLowerCase();
   return listOilsForItem(props.def, props.equipSlot).filter((row) => {
     if (!q) return true;
-    return `${row.label} ${row.id}`.toLowerCase().includes(q);
+    return oilSearchText(row).includes(q);
   });
+});
+
+const groupedOptions = computed(() => {
+  /** @type {Record<string, ReturnType<typeof listOilsForItem>>} */
+  const groups = {
+    'Oil of Luck': [],
+    'Oil of Conjuration': [],
+    'Lottery bonus': [],
+    'Failed oil': [],
+    Other: [],
+  };
+  for (const row of options.value) {
+    const key = oilKindLabel(row);
+    (groups[key] || groups.Other).push(row);
+  }
+  return groups;
 });
 
 const lines = computed(() => getOilBonusLines(props.oil));
@@ -65,22 +88,24 @@ function clear() {
       </button>
       <div v-if="open" class="item-sockets-editor__menu">
         <input v-model="query" class="input is-small mb-2" type="search" placeholder="Search oils..." />
-        <button
-          v-for="row in options"
-          :key="row.id"
-          type="button"
-          class="item-sockets-editor__option"
-          :aria-selected="row.id === oil"
-          @click="select(row.id)"
-        >
-          <img v-if="iconUrl(row)" class="item-sockets-editor__icon" :src="iconUrl(row)" alt="" />
-          <span class="item-sockets-editor__option-text">
-            <span>{{ row.label }}</span>
-            <span v-if="row.oilKind === 'lottery' || row.requiresUnique" class="item-sockets-editor__option-bonus">Lottery</span>
-            <span v-else-if="row.oilKind === 'luck'" class="item-sockets-editor__option-bonus">Luck</span>
-            <span v-else-if="row.oilKind === 'conjuration'" class="item-sockets-editor__option-bonus">Conjuration</span>
-          </span>
-        </button>
+        <template v-for="(groupRows, label) in groupedOptions" :key="label">
+          <template v-if="groupRows.length">
+            <div class="item-sockets-editor__group">{{ label }}</div>
+            <button
+              v-for="row in groupRows"
+              :key="row.id"
+              type="button"
+              class="item-sockets-editor__option"
+              :aria-selected="row.id === oil"
+              @click="select(row.id)"
+            >
+              <img v-if="iconUrl(row)" class="item-sockets-editor__icon" :src="iconUrl(row)" alt="" />
+              <span class="item-sockets-editor__option-text">
+                <span>{{ row.label }}</span>
+              </span>
+            </button>
+          </template>
+        </template>
       </div>
     </div>
   </div>

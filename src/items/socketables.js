@@ -7,6 +7,12 @@ import { tswDescriptionColoredTexts } from '@/items/custom-items.js';
 import { decodeModifierLine, encodeModifierLine } from '@/items/item-modifier-line.js';
 import { isOverlayItem } from '@/items/item-overlays.js';
 import { isHandWeapon, isShieldItem } from '@/items/item-types.js';
+import {
+  inferRandomElementFromLines,
+  linesHaveRandomElementChoice,
+  normalizeRandomElement,
+  resolveRandomElementInLines,
+} from '@/items/random-element.js';
 
 /**
  * @typedef {{
@@ -19,6 +25,7 @@ import { isHandWeapon, isShieldItem } from '@/items/item-types.js';
  *   nameColor?: number,
  *   modifiers?: string[],
  *   reqLevel?: number,
+ *   randomElement?: string,
  * }} SocketableEntry
  */
 
@@ -202,6 +209,7 @@ export function socketableFromCatalogRow(row, slot = 0) {
       modifiers: row.modifiers,
       reqLevel: row.reqLevel,
       slot: slot > 0 ? slot : undefined,
+      randomElement: linesHaveRandomElementChoice(row.modifiers) ? 'fire' : undefined,
     },
   ]);
   return entry || null;
@@ -376,16 +384,37 @@ function isJewelSocketable(sock) {
  */
 export function getSocketableBonusLines(sock, hostDef) {
   if (!sock || typeof sock !== 'object') return [];
+  /** @type {string[]} */
+  let lines = [];
   if (isJewelSocketable(sock)) {
-    if (!Array.isArray(sock.modifiers)) return [];
-    return sock.modifiers
-      .map((line) => decodeModifierLine(line).text.trim())
-      .filter(Boolean);
+    if (Array.isArray(sock.modifiers)) {
+      lines = sock.modifiers.map((line) => decodeModifierLine(line).text.trim()).filter(Boolean);
+    }
+  } else {
+    const row = lookupCatalogRow(sock.code, sock.name);
+    if (!row) return [];
+    const slot = socketHostSlot(hostDef);
+    lines = flattenSlotBonus(row[slot]);
   }
-  const row = lookupCatalogRow(sock.code, sock.name);
-  if (!row) return [];
-  const slot = socketHostSlot(hostDef);
-  return flattenSlotBonus(row[slot]);
+  if (!socketableHasRandomElementChoice(sock, lines)) return lines;
+  const element =
+    normalizeRandomElement(sock.randomElement) || inferRandomElementFromLines(lines) || 'fire';
+  return resolveRandomElementInLines(lines, element, { rewriteResolvedMax: true });
+}
+
+/**
+ * @param {SocketableEntry|null|undefined} sock
+ * @param {string[]} [lines]
+ * @returns {boolean}
+ */
+export function socketableHasRandomElementChoice(sock, lines) {
+  if (!sock || typeof sock !== 'object') return false;
+  if (normalizeRandomElement(sock.randomElement)) return true;
+  if (linesHaveRandomElementChoice(sock.modifiers)) return true;
+  if (linesHaveRandomElementChoice(lines)) return true;
+  const byName = catalogByName?.get(normKey(sock.name)) || null;
+  const row = byName || lookupCatalogRow(sock.code, sock.name);
+  return linesHaveRandomElementChoice(row?.modifiers);
 }
 
 const ELEMENTAL_RUNE_NAMES = new Set(['fire', 'stone', 'arcane', 'poison', 'light', 'ice']);
@@ -533,6 +562,8 @@ export function normalizeSocketables(raw) {
       if (catalog > 0) reqLevel = catalog;
     }
     if (Number.isFinite(reqLevel) && reqLevel > 0) entry.reqLevel = reqLevel;
+    const randomElement = normalizeRandomElement(rec.randomElement);
+    if (randomElement) entry.randomElement = randomElement;
     const icon = resolveSocketableIcon({
       code,
       name,
@@ -594,6 +625,13 @@ export function parseTswSocketables(row) {
       const encoded = encodeModifierLine(text, line.color) || text;
       modifiers.push(encoded);
     }
+    const catalogByJewelName = catalogByName?.get(normKey(name)) || null;
+    const catalog = catalogByJewelName || lookupCatalogRow(sock.code, name);
+    /** @type {string|undefined} */
+    let randomElement;
+    if (linesHaveRandomElementChoice(modifiers) || linesHaveRandomElementChoice(catalog?.modifiers)) {
+      randomElement = inferRandomElementFromLines(modifiers) || 'fire';
+    }
     raw.push({
       slot: sock.slot,
       name,
@@ -605,6 +643,7 @@ export function parseTswSocketables(row) {
       nameColor: sock.name_color,
       modifiers,
       reqLevel: reqLevel > 0 ? reqLevel : undefined,
+      randomElement,
     });
   }
   return normalizeSocketables(raw);

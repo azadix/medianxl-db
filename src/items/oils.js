@@ -87,13 +87,13 @@ export function lookupOil(id) {
  * @param {object|null|undefined} def
  * @returns {boolean}
  */
+const INNATE_ELEMENTAL_RE =
+  /Innate\s+(Elemental|Fire|Cold|Lightning|Poison|Magic|Shadow|Tri-Elemental)\s+Damage/i;
+
 export function itemHasInnateElemental(def) {
   if (!def || typeof def !== 'object') return false;
-  if (def.innate) return true;
-  const blob = [def.innate, def.adds, ...(Array.isArray(def.modifiers) ? def.modifiers : [])]
-    .map((v) => String(v || ''))
-    .join('\n');
-  return /innate elemental/i.test(blob);
+  const blob = [def.innate, def.adds].map((v) => String(v || '')).join('\n');
+  return INNATE_ELEMENTAL_RE.test(blob);
 }
 
 /**
@@ -129,9 +129,12 @@ export function itemUpgradeSlotType(def, equipSlot = null) {
  * @param {object|null|undefined} def
  * @returns {boolean}
  */
-function isUniqueOrSet(def) {
-  const rarity = String(def?.rarity || '');
-  return rarity === 'unique' || rarity === 'set';
+function isUniqueItem(def) {
+  return String(def?.rarity || '') === 'unique';
+}
+
+function isSetItem(def) {
+  return String(def?.rarity || '') === 'set';
 }
 
 /**
@@ -148,8 +151,10 @@ export function canUseOilOnItem(oil, def, equipSlot = null) {
   if (oil.slotType && oil.slotType !== slotType && !(oil.extraSlotTypes || []).includes(slotType)) {
     return false;
   }
-  if (oil.requiresUnique && !isUniqueOrSet(def)) return false;
-  if (oil.notOnSets && def.rarity === 'set') return false;
+  if (oil.requiresUnique && !isUniqueItem(def) && !(isSetItem(def) && !oil.notOnSets)) {
+    return false;
+  }
+  if (oil.notOnSets && isSetItem(def)) return false;
   if (oil.notOnRunewords && isRunewordItem(def)) return false;
   if (oil.notOnHonorifics && (def.rarity === 'honorific' || def.customQuality === 'honorific')) {
     return false;
@@ -185,7 +190,30 @@ export function getOilBonusLines(id) {
 }
 
 /**
- * Inventory icon for an oil outcome (Oil of Luck vs Oil of Enhancement).
+ * Display grouping for the oil picker.
+ * @param {OilCatalogRow|null|undefined} row
+ * @returns {string}
+ */
+export function oilKindLabel(row) {
+  if (!row || typeof row !== 'object') return 'Other';
+  if (row.oilKind === 'lottery' || (row.requiresUnique && row.oilKind !== 'luck')) return 'Lottery bonus';
+  if (row.oilKind === 'luck') return 'Oil of Luck';
+  if (row.oilKind === 'conjuration') return 'Oil of Conjuration';
+  if (row.oilKind === 'fail') return 'Failed oil';
+  return 'Other';
+}
+
+/**
+ * @param {OilCatalogRow|null|undefined} row
+ * @returns {string}
+ */
+export function oilSearchText(row) {
+  if (!row) return '';
+  return `${row.label} ${row.id} ${oilKindLabel(row)} ${row.oilKind || ''}`.toLowerCase();
+}
+
+/**
+ * Inventory icon for an oil outcome (Oil of Luck vs Oil of Conjuration).
  * @param {string|OilCatalogRow|null|undefined} oil
  * @returns {string}
  */

@@ -3,6 +3,7 @@ import { resolve } from 'node:path';
 import { describe, expect, it, beforeEach } from 'vitest';
 import { buildItemTooltipHtml } from '@/items/item-tooltip.js';
 import { loadMysticOrbsCatalog } from '@/items/mystic-orbs.js';
+import { loadOilsCatalog } from '@/items/oils.js';
 import { loadSocketablesCatalog } from '@/items/socketables.js';
 import { getItemStatSections } from '@/items/item-stats.js';
 
@@ -121,6 +122,74 @@ describe('buildItemTooltipHtml', () => {
     expect(html).toContain('+25% Total Character Defense');
     expect(html).toContain('1x Weight of Talent');
     expect(html).toContain('+1 to All Skills');
+    expect(html).toContain('orb_armo.webp');
+    expect(html).toContain('item-tooltip-sock__icon');
+  });
+
+  it('renders mystic orb icons in the side panel', () => {
+    const html = buildItemTooltipHtml(
+      { name: 'War Sword (Sacred)', rarity: 'unique', category: 'weapons' },
+      null,
+      null,
+      {
+        mysticOrbs: [
+          [5, 'MO - Fire Spell Damage'],
+          [2, "Nor Tiraj's Flaming Sphere"],
+        ],
+      }
+    );
+    expect(html).toContain('orb_any.webp');
+    expect(html).toContain('orb_weap.webp');
+    expect(html).toContain('5x MO - Fire Spell Damage');
+    expect(html).toContain("2x Nor Tiraj's Flaming Sphere");
+  });
+
+  it('shows oil and blessing flags in the tooltip body', () => {
+    loadOilsCatalog(JSON.parse(readFileSync(resolve('public/items/2_14/oils.json'), 'utf8')));
+    const html = buildItemTooltipHtml(
+      {
+        name: 'Dajer',
+        rarity: 'honorific',
+        category: 'weapons',
+        customQuality: 'honorific',
+      },
+      null,
+      null,
+      {
+        oil: 'oil_weapon_ed',
+        blessing: 'abandoned',
+      }
+    );
+    expect(html).toContain('Already Upgraded');
+    expect(html).toContain('Shrine Blessed');
+    expect(html).toContain('item-mod--green');
+  });
+
+  it('lists occult effigies in their own side panel section', () => {
+    const html = buildItemTooltipHtml(
+      {
+        name: 'War Sword (Sacred)',
+        rarity: 'unique',
+        category: 'weapons',
+      },
+      null,
+      null,
+      {
+        mysticOrbs: [
+          [5, 'MO - Total Char Defense'],
+          [1, 'Elemental Dominion'],
+        ],
+      }
+    );
+    expect(html).toContain('Mystic Orbs');
+    expect(html).toContain('Effigies');
+    expect(html).toContain('1x Elemental Dominion');
+    expect(html).toContain('orb_armo.webp');
+    expect(html).toContain('occultorb.webp');
+    expect(html).toContain('+5 Required Level');
+    expect(html.indexOf('Mystic Orbs')).toBeLessThan(html.indexOf('Effigies'));
+    expect(html.indexOf('5x MO - Total Char Defense')).toBeLessThan(html.indexOf('Effigies'));
+    expect(html.indexOf('Effigies')).toBeLessThan(html.indexOf('1x Elemental Dominion'));
   });
 
   it('lists socketables above mystic orbs with icons and marks added extras', () => {

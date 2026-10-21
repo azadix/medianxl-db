@@ -3,6 +3,7 @@ import { computed, onMounted, onUnmounted, ref } from 'vue';
 import {
   getItemSocketCount,
   getSocketableBonusLines,
+  socketableHasRandomElementChoice,
   listJewelSocketablesFromItems,
   listSocketablesCatalog,
   normalizeCustomJewelRarity,
@@ -17,6 +18,8 @@ import { getItemIconUrl } from '@/shared/utils.js';
 import { hideItemTooltip } from '@/items/item-tooltip-runtime.js';
 import { hidePlannerSkillTooltip } from '@/tree/tree-tooltip.js';
 import CustomJewelBuilder from './CustomJewelBuilder.vue';
+import RandomElementPicker from './RandomElementPicker.vue';
+import { normalizeRandomElement } from '@/items/random-element.js';
 
 const props = defineProps({
   def: { type: /** @type {import('vue').PropType<object|null>} */ (Object), default: null },
@@ -194,6 +197,33 @@ onUnmounted(() => {
 function sockMods(sock) {
   return sock ? getSocketableBonusLines(sock, props.def) : [];
 }
+
+/**
+ * @param {object|null|undefined} sock
+ */
+function sockNeedsElement(sock) {
+  return socketableHasRandomElementChoice(sock);
+}
+
+/**
+ * @param {object|null|undefined} sock
+ * @returns {string}
+ */
+function sockElement(sock) {
+  return normalizeRandomElement(sock?.randomElement) || 'fire';
+}
+
+/**
+ * @param {number} index
+ * @param {string} element
+ */
+function setSockElement(index, element) {
+  const next = slots.value.slice();
+  const sock = next[index];
+  if (!sock) return;
+  next[index] = { ...sock, randomElement: normalizeRandomElement(element) || 'fire' };
+  persist(next);
+}
 </script>
 
 <template>
@@ -296,6 +326,13 @@ function sockMods(sock) {
             </div>
           </div>
         </div>
+        <RandomElementPicker
+          v-if="sock && sockNeedsElement(sock)"
+          class="mt-2"
+          :model-value="sockElement(sock)"
+          :disabled="!editable"
+          @update:model-value="setSockElement(idx, $event)"
+        />
         <div v-if="sock && sockMods(sock).length" class="item-upgrade-section__mods">
           <div
             v-for="(mod, midx) in sockMods(sock)"

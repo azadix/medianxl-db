@@ -21,6 +21,7 @@ import { isItemCorruptible } from '@/items/corruptions.js';
 import { listOilsForItem } from '@/items/oils.js';
 import { defHasItemMechanic } from '@/items/item-mechanics.js';
 import { canUseMysticOrbOnItem, listMysticOrbsCatalog } from '@/items/mystic-orbs.js';
+import { getItemUpgradeFlags } from '@/items/item-upgrades.js';
 
 /** @typedef {'base'|'sockets'|'mysticOrbs'|'oils'|'corruptions'|'effigies'|'blessing'|'shrine'|'mechanics'} InspectorTabId */
 
@@ -182,6 +183,17 @@ const equipSlot = computed(() => {
   return sel?.location === 'equipment' ? String(sel.slot) : '';
 });
 
+const instanceBlessing = computed(() => {
+  const id = instanceId.value;
+  if (id == null) return '';
+  return itemsStore.instances[id]?.blessing || '';
+});
+const instanceShrine = computed(() => {
+  const id = instanceId.value;
+  if (id == null) return '';
+  return itemsStore.instances[id]?.shrine || '';
+});
+
 const inspectorTabs = computed(() => {
   const def = itemDef.value;
   /** @type {Array<{ id: InspectorTabId, label: string }>} */
@@ -190,8 +202,13 @@ const inspectorTabs = computed(() => {
   if (isCharmItem(def) || isRelicItem(def)) return tabs;
   if (Number(def.sockets) > 0) tabs.push({ id: 'sockets', label: 'Sockets' });
   tabs.push({ id: 'mysticOrbs', label: 'Orbs' });
+  const host = {
+    shrine: instanceShrine.value,
+    blessing: instanceBlessing.value,
+    extras: instanceExtras.value,
+  };
   const hasEffigy = listMysticOrbsCatalog().some(
-    (row) => (row.kind || '') === 'effigy' && canUseMysticOrbOnItem(row, def, 0)
+    (row) => (row.kind || '') === 'effigy' && canUseMysticOrbOnItem(row, def, 0, host)
   );
   if (hasEffigy) tabs.push({ id: 'effigies', label: 'Effigies' });
   if (listOilsForItem(def, equipSlot.value).length) tabs.push({ id: 'oils', label: 'Oil' });
@@ -215,16 +232,6 @@ const instanceCorruptions = computed(() => {
   if (id == null) return [];
   return itemsStore.instances[id]?.corruptions || [];
 });
-const instanceBlessing = computed(() => {
-  const id = instanceId.value;
-  if (id == null) return '';
-  return itemsStore.instances[id]?.blessing || '';
-});
-const instanceShrine = computed(() => {
-  const id = instanceId.value;
-  if (id == null) return '';
-  return itemsStore.instances[id]?.shrine || '';
-});
 const instanceMechanics = computed(() => {
   const id = instanceId.value;
   if (id == null) return {};
@@ -235,9 +242,20 @@ const instanceCustom = computed(() => {
   if (id == null) return null;
   return itemsStore.instances[id]?.custom || null;
 });
+const etherealLocked = computed(() => {
+  const id = instanceId.value;
+  if (id == null) return false;
+  return getItemUpgradeFlags(itemsStore.getUpgradeStateForInstance(id)).etherealForced;
+});
+const instanceRandomElement = computed(() => {
+  const id = instanceId.value;
+  if (id == null) return 'fire';
+  return itemsStore.instances[id]?.randomElement || 'fire';
+});
 const instanceEthereal = computed(() => {
   const id = instanceId.value;
   if (id == null) return false;
+  if (etherealLocked.value) return true;
   return itemsStore.instances[id]?.ethereal === true;
 });
 
@@ -461,6 +479,9 @@ function onCustomUpdate(next) {
 function onEtherealUpdate(next) {
   persistUpgrade(() => itemsStore.setInstanceEthereal(instanceId.value, Boolean(next)));
 }
+function onRandomElementUpdate(next) {
+  persistUpgrade(() => itemsStore.setInstanceRandomElement(instanceId.value, next));
+}
 
 function onChangeItem() {
   if (isEnableListSlot.value) return;
@@ -572,6 +593,8 @@ onUnmounted(() => {
       :mechanics="instanceMechanics"
       :custom="instanceCustom"
       :ethereal="instanceEthereal"
+      :ethereal-locked="etherealLocked"
+      :random-element="instanceRandomElement"
       @update:rolls="onRollsUpdate"
       @set-roll="setRoll"
       @update:socketables="onSocketablesUpdate"
@@ -583,6 +606,7 @@ onUnmounted(() => {
       @update:mechanics="onMechanicsUpdate"
       @update:custom="onCustomUpdate"
       @update:ethereal="onEtherealUpdate"
+      @update:random-element="onRandomElementUpdate"
     />
   </section>
 </template>

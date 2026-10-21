@@ -76,6 +76,13 @@ describe('socketables', () => {
         armor: ['Fire Resist +20%', 'Maximum Fire Resist +1%'],
       },
       { name: 'Jewel', code: 'jew', type: 'Jewel', icon: 'invjw1' },
+      {
+        name: "Zann Esu's Stone",
+        type: 'Jewel',
+        quality: 'Unique',
+        icon: 'invjw6',
+        modifiers: ['Maximum [Random Elemental] Resist +1%'],
+      },
     ]);
   });
 
@@ -202,6 +209,10 @@ describe('socketables', () => {
     });
     expect(socks[0].modifiers).toEqual(
       expect.arrayContaining(['+5% Cast Speed', '+3% to Spell Damage', 'Maximum Cold Resist +1%'])
+    );
+    expect(socks[0].randomElement).toBe('cold');
+    expect(getSocketableBonusLines(socks[0], { category: 'armor' })).toContain(
+      'Maximum Cold Resist +1%'
     );
     expect(socks[1]).toMatchObject({
       name: 'Qor Rune',

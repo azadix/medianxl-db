@@ -10,7 +10,13 @@ import {
   getWormholeCycleReqLevelBonus,
   isCorruptedWormhole,
 } from '@/items/wormhole-cycles.js';
-import { mysticOrbsRequiredLevelBonus } from '@/items/mystic-orbs.js';
+import {
+  getMysticOrbBonusLines,
+  lookupMysticOrb,
+  mysticOrbReqLevelPerStack,
+  mysticOrbsRequiredLevelBonus,
+  normalizeMysticOrbs,
+} from '@/items/mystic-orbs.js';
 import { corruptionRequiredLevelBonus } from '@/items/corruptions.js';
 
 /**
@@ -34,7 +40,7 @@ const REQ_REDUCED_BY_RE = /^Requirements\s+Reduced\s+by\s+(\d+(?:\.\d+)?)\s*%$/i
 const REQ_FLAT_RE = /^Requirements\s*([+-]?\d+(?:\.\d+)?)\s*%$/i;
 const REQ_RANGE_RE =
   /^Requirements\s*-\(\s*(-?\d+(?:\.\d+)?)\s+to\s+(-?\d+(?:\.\d+)?)\s*\)\s*%$/i;
-const REQ_LEVEL_BONUS_RE = /^\+?\s*(\d+)\s+Required Level$/i;
+const REQ_LEVEL_BONUS_RE = /^\+?\s*(-?\d+)\s+Required Level$/i;
 
 /**
  * Percent reduction from a single modifier line (`Requirements -20%`).
@@ -76,7 +82,7 @@ export function parseRequiredLevelBonus(text) {
   const match = REQ_LEVEL_BONUS_RE.exec(s);
   if (!match) return 0;
   const n = Number(match[1]);
-  return Number.isFinite(n) && n > 0 ? n : 0;
+  return Number.isFinite(n) && n !== 0 ? n : 0;
 }
 
 /**
@@ -129,13 +135,42 @@ function collectHostRequirementModifierTexts(def, rolls, extras) {
  * @param {unknown} mysticOrbs
  * @returns {string[]}
  */
+/**
+ * Sigil of Absolution (and similar) cannot apply when the host is below min required level.
+ * @param {object|null|undefined} def
+ * @param {{
+ *   rolls?: Record<string, number>|null,
+ *   socketables?: ItemRequirementSource[]|null,
+ *   extras?: string[]|null,
+ *   mysticOrbs?: unknown,
+ *   corruptions?: string[]|null,
+ * }} [options]
+ * @param {string|null|undefined} name
+ * @param {number} nextCount
+ * @returns {boolean}
+ */
+export function itemAllowsMysticOrbReqLevel(def, options = {}, name, nextCount) {
+  const min = Number(lookupMysticOrb(name)?.minHostReqLevel);
+  if (!Number.isFinite(min) || min <= 0) return true;
+  const without = normalizeMysticOrbs(options.mysticOrbs).filter(([, orbName]) => orbName !== name);
+  let req = resolveItemRequirements(def, { ...options, mysticOrbs: without }).reqLevel;
+  const delta = mysticOrbReqLevelPerStack(name);
+  const stacks = Math.max(0, Math.floor(Number(nextCount) || 0));
+  for (let i = 0; i < stacks; i += 1) {
+    if (req < min) return false;
+    req += delta;
+  }
+  return true;
+}
+
 export function extrasWithMysticOrbRequiredLevel(extras, mysticOrbs) {
   const list = Array.isArray(extras)
     ? extras.map((line) => String(line || '').trim()).filter(Boolean)
     : [];
-  if (list.some((line) => parseRequiredLevelBonus(line) > 0)) return list;
+  if (list.some((line) => parseRequiredLevelBonus(line) !== 0)) return list;
   const bonus = mysticOrbsRequiredLevelBonus(mysticOrbs);
   if (bonus > 0) return [...list, `+${bonus} Required Level`];
+  if (bonus < 0) return [...list, `${bonus} Required Level`];
   return list;
 }
 
@@ -186,6 +221,15 @@ export function resolveItemRequirements(def, options = {}) {
     reqLevel += parseRequiredLevelBonus(text);
   }
 
+  const extrasHaveReqPct = extras.some((text) => parseRequirementsReductionPct(text) !== 0);
+  if (!extrasHaveReqPct) {
+    for (const [count, name] of normalizeMysticOrbs(options.mysticOrbs)) {
+      for (const line of getMysticOrbBonusLines(name, count)) {
+        reductionPct += parseRequirementsReductionPct(line);
+      }
+    }
+  }
+
   for (const sock of socketables) {
     if (!sock || !Array.isArray(sock.modifiers)) continue;
     for (const text of sock.modifiers) {
@@ -200,7 +244,7 @@ export function resolveItemRequirements(def, options = {}) {
     if (!def?.reqDexFinal) reqDex = Math.floor(reqDex * factor);
   }
 
-  return { reqLevel, reqStr, reqDex, reductionPct };
+  return { reqLevel: Math.max(0, reqLevel), reqStr, reqDex, reductionPct };
 }
 
 /**

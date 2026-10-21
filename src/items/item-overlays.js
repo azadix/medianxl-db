@@ -16,6 +16,11 @@ import {
   markModifierLineBoosted,
 } from '@/items/item-modifier-line.js';
 import { isItemStateFlagLine } from '@/items/item-state-flags.js';
+import {
+  defHasRandomElementChoice,
+  normalizeRandomElement,
+  resolveRandomElementInLines,
+} from '@/items/random-element.js';
 
 /**
  * @param {number} min
@@ -437,7 +442,9 @@ export function getOverlayStatLines(def, rolls = null, options = {}) {
     }
     lines.push(line);
   }
-  return lines;
+  const element =
+    normalizeRandomElement(def.randomElement) || (defHasRandomElementChoice(def) ? 'fire' : null);
+  return resolveRandomElementInLines(lines, element);
 }
 
 /**

@@ -8,6 +8,7 @@ import {
   formatItemRequirementsLine,
   parseRequiredLevelBonus,
   parseRequirementsReductionPct,
+  itemAllowsMysticOrbReqLevel,
   itemRequirementsExceedCharacterLevel,
   requiredLevelExceedsCharacter,
   resolveItemRequirements,
@@ -53,6 +54,7 @@ describe('parseRequiredLevelBonus', () => {
   it('parses mystic-orb required level bonuses', () => {
     expect(parseRequiredLevelBonus('+40 Required Level')).toBe(40);
     expect(parseRequiredLevelBonus('40 Required Level')).toBe(40);
+    expect(parseRequiredLevelBonus('-5 Required Level')).toBe(-5);
     expect(parseRequiredLevelBonus('+10 to Strength')).toBe(0);
   });
 });
@@ -66,6 +68,28 @@ describe('resolveItemRequirements', () => {
         reqDex: 0,
       })
     ).toEqual({ reqLevel: 90, reqStr: 460, reqDex: 0, reductionPct: 0 });
+  });
+
+  it('applies occult effigy required-level and Requirements +%', () => {
+    expect(
+      resolveItemRequirements(
+        { reqLevel: 90, reqStr: 100, reqDex: 0 },
+        { mysticOrbs: [[1, 'Sigil of Absolution']] }
+      )
+    ).toEqual({ reqLevel: 85, reqStr: 125, reqDex: 0, reductionPct: -25 });
+  });
+
+  it('blocks Sigil of Absolution when required level is below 5', () => {
+    const def = { reqLevel: 4, reqStr: 10, reqDex: 0 };
+    expect(itemAllowsMysticOrbReqLevel(def, { mysticOrbs: [] }, 'Sigil of Absolution', 1)).toBe(
+      false
+    );
+    expect(
+      itemAllowsMysticOrbReqLevel({ reqLevel: 5 }, { mysticOrbs: [] }, 'Sigil of Absolution', 1)
+    ).toBe(true);
+    expect(
+      itemAllowsMysticOrbReqLevel({ reqLevel: 6 }, { mysticOrbs: [] }, 'Sigil of Absolution', 2)
+    ).toBe(false);
   });
 
   it('reduces str and dex from Requirements -% on a unique', () => {
@@ -214,6 +238,9 @@ describe('extrasWithMysticOrbRequiredLevel', () => {
   it('synthesizes a required-level line from mystic orbs', () => {
     expect(extrasWithMysticOrbRequiredLevel([], [[5, 'MO - Strength']])).toEqual([
       '+20 Required Level',
+    ]);
+    expect(extrasWithMysticOrbRequiredLevel([], [[1, 'Sigil of Absolution']])).toEqual([
+      '-5 Required Level',
     ]);
   });
 });

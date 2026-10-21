@@ -134,7 +134,7 @@ export function showItemTooltip(def, iconKey, clientX, clientY, rolls = null, op
     options: options && typeof options === 'object' ? { ...options } : {},
   };
   lastState = state;
-  const html = buildItemTooltipHtml(def, iconKey, rolls, options);
+  const html = buildHtmlFromState(state);
   if (!html) {
     hideItemTooltip(true);
     return;

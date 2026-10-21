@@ -127,8 +127,8 @@ export function formatItemOverlayMeta(def) {
 
 /**
  * Catalog fields that roll a single value between min and max on drop.
- * (Weapon "X to Y" damage is a damage range, not a base roll.)
- * Uniques/sets lock sockets at max and skip defense rolls (docs display used instead).
+ * Base defense always uses the catalog max (Median items drop at max defense).
+ * Uniques/sets lock sockets at max (docs defense display used instead).
  * @param {object|null|undefined} def
  * @param {Record<string, number>|null|undefined} [rolls]
  * @param {{ className?: string|null }} [options]
@@ -139,29 +139,6 @@ export function getRollableStats(def, rolls = null, options = {}) {
   /** @type {RollableStat[]} */
   const out = [];
   const overlay = isOverlayItem(def);
-
-  if (
-    !overlay &&
-    def.defense &&
-    Number.isFinite(def.defense.min) &&
-    Number.isFinite(def.defense.max)
-  ) {
-    const rolled =
-      rolls && Number.isFinite(rolls.defense)
-        ? rolls.defense
-        : defaultRollValue(def.defense.min, def.defense.max);
-    out.push({
-      key: 'defense',
-      label: 'Defense',
-      display: `Defense: ${rolled}`,
-      displayParts: [
-        { kind: 'text', text: 'Defense: ' },
-        { kind: 'value', text: String(rolled) },
-      ],
-      min: def.defense.min,
-      max: def.defense.max,
-    });
-  }
 
   if (def.sockets > 0 && !overlay) {
     const rolled =
@@ -432,6 +409,20 @@ export function applyEtherealBonus(n) {
 }
 
 /**
+ * Catalog defense always uses the maximum (items drop at max defense).
+ * @param {object|null|undefined} def
+ * @returns {number|null}
+ */
+export function itemBaseDefense(def) {
+  const d = def?.defense;
+  if (!d || typeof d !== 'object') return null;
+  const max = Number(d.max);
+  if (Number.isFinite(max)) return max;
+  const min = Number(d.min);
+  return Number.isFinite(min) ? min : null;
+}
+
+/**
  * @param {object|null|undefined} def
  * @param {Record<string, number>|null|undefined} [rolls]
  * @param {{
@@ -472,7 +463,14 @@ export function getItemStatSections(def, rolls = null, options = {}) {
   /** @type {string[]} */
   const mods = [];
 
-  const ethereal = def.ethereal === true;
+  const upgradeFlags = getItemUpgradeFlags({
+    oil: options.oil,
+    corruptions: options.corruptions,
+    blessing: options.blessing,
+    shrine: options.shrine,
+    mysticOrbs: options.mysticOrbs,
+  });
+  const ethereal = def.ethereal === true || upgradeFlags.etherealForced;
   /**
    * @param {number} n
    */
@@ -489,15 +487,9 @@ export function getItemStatSections(def, rolls = null, options = {}) {
 
   if (def.defenseDisplay) {
     base.push(`Defense: ${def.defenseDisplay}`);
-  } else if (def.defense) {
-    const rolled = rolls && Number.isFinite(rolls.defense) ? rolls.defense : null;
-    if (rollableKeys?.has('defense')) {
-      // Roll controls shown elsewhere - skip static defense line.
-    } else if (rolled != null) {
-      base.push(`Defense: ${eth(rolled)}`);
-    } else {
-      base.push(`Defense: ${eth(def.defense.min)} to ${eth(def.defense.max)}`);
-    }
+  } else {
+    const defense = itemBaseDefense(def);
+    if (defense != null) base.push(`Defense: ${eth(defense)}`);
   }
 
   if (def.block) {
@@ -511,15 +503,9 @@ export function getItemStatSections(def, rolls = null, options = {}) {
   if (def.range != null) base.push(`Melee range: ${def.range}`);
   if (def.speed != null) base.push(`Attack Speed Modifier: ${def.speed}`);
   if (def.movePenalty != null) base.push(`Movement Speed Penalty: ${def.movePenalty}`);
-  const upgradeFlags = getItemUpgradeFlags({
-    oil: options.oil,
-    corruptions: options.corruptions,
-    blessing: options.blessing,
-    shrine: options.shrine,
-  });
   base.push(
     ...collectItemStateFlagLines({
-      ethereal: def.ethereal === true || upgradeFlags.etherealFromCorruption,
+      ethereal,
       corrupted: def.corrupted === true || upgradeFlags.corrupted,
       alreadyUpgraded: upgradeFlags.alreadyUpgraded,
       shrineBlessed: upgradeFlags.shrineBlessed,
@@ -644,10 +630,15 @@ export function getItemDetailStatRows(def, rolls = null, options = {}) {
     className,
     charmHeaderOnly: true,
     socketables: options.socketables ?? null,
+    mysticOrbs: options.mysticOrbs ?? null,
+    oil: options.oil,
+    corruptions: options.corruptions,
+    blessing: options.blessing,
+    shrine: options.shrine,
   });
   const upgradeFlags = getItemUpgradeFlags(options);
   const flagLines = collectItemStateFlagLines({
-    ethereal: def.ethereal === true || upgradeFlags.etherealFromCorruption,
+    ethereal: def.ethereal === true || upgradeFlags.etherealForced,
     corrupted: def.corrupted === true || upgradeFlags.corrupted,
     alreadyUpgraded: upgradeFlags.alreadyUpgraded,
     shrineBlessed: upgradeFlags.shrineBlessed,

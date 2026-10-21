@@ -45,6 +45,7 @@ import { isRelicItem, MAX_RELICS, relicMeetsLevel } from '@/items/relic-items.js
 import {
   characterMeetsItemRequirements,
   formatItemRequirementsLine,
+  itemAllowsMysticOrbReqLevel,
   itemRequirementsExceedCharacterLevel,
   resolveItemRequirements,
 } from '@/items/item-requirements.js';
@@ -68,8 +69,17 @@ import {
   runewordFitsEquipSlot,
 } from '@/items/runeword-items.js';
 import { applyCustomOverlayToDef, parseCustomPayload } from '@/items/custom-items.js';
+import { normalizeRandomElement } from '@/items/random-element.js';
 import { angelicBaseDisplayName } from '@/items/angelic-items.js';
-import { loadMysticOrbsCatalog, normalizeMysticOrbs } from '@/items/mystic-orbs.js';
+import {
+  isMastercraftedBaseItem,
+  mastercraftedBaseDisplayName,
+} from '@/items/mastercrafted-items.js';
+import {
+  canUseMysticOrbOnItem,
+  loadMysticOrbsCatalog,
+  normalizeMysticOrbs,
+} from '@/items/mystic-orbs.js';
 import { loadOilsCatalog } from '@/items/oils.js';
 import { loadCorruptionsCatalog, normalizeCorruptions } from '@/items/corruptions.js';
 import { loadHonorificBlessings, loadShrinesCatalog } from '@/items/blessings.js';
@@ -197,6 +207,7 @@ async function fetchCatalogFile(url) {
  *   blessing?: string,
  *   shrine?: string,
  *   mechanics?: Record<string, number>,
+ *   randomElement?: string,
  *   name?: string,
  * }} ItemInstance
  * @typedef {{
@@ -214,6 +225,7 @@ async function fetchCatalogFile(url) {
  *   blessing?: string,
  *   shrine?: string,
  *   mechanics?: Record<string, number>,
+ *   randomElement?: string,
  *   name?: string,
  * }} ItemSnapshotEntry
  * @typedef {{
@@ -318,11 +330,15 @@ function applyInstanceMeta(inst, meta) {
     corruptions: inst.corruptions,
     blessing: inst.blessing,
     shrine: inst.shrine,
+    mysticOrbs: inst.mysticOrbs,
   });
-  if (meta.ethereal === true || flags.etherealFromCorruption) inst.ethereal = true;
+  if (meta.ethereal === true || flags.etherealForced) inst.ethereal = true;
   else delete inst.ethereal;
   if (meta.corrupted === true || flags.corrupted) inst.corrupted = true;
   else delete inst.corrupted;
+  const randomElement = normalizeRandomElement(meta.randomElement);
+  if (randomElement) inst.randomElement = randomElement;
+  else delete inst.randomElement;
   const name = meta.name != null ? String(meta.name).trim() : '';
   if (name) inst.name = name;
   else delete inst.name;
@@ -369,6 +385,7 @@ function snapshotInstanceEntry(inst) {
   const mechanics =
     inst?.mechanics && typeof inst.mechanics === 'object' ? { ...inst.mechanics } : null;
   const name = inst?.name != null ? String(inst.name).trim() : '';
+  const randomElement = normalizeRandomElement(inst?.randomElement);
   if (
     !hasIcon &&
     !hasRolls &&
@@ -383,6 +400,7 @@ function snapshotInstanceEntry(inst) {
     !blessing &&
     !shrine &&
     !mechanics &&
+    !randomElement &&
     !name
   ) {
     return defId;
@@ -402,6 +420,7 @@ function snapshotInstanceEntry(inst) {
   if (blessing) entry.blessing = blessing;
   if (shrine) entry.shrine = shrine;
   if (mechanics && Object.keys(mechanics).length) entry.mechanics = mechanics;
+  if (randomElement) entry.randomElement = randomElement;
   if (name) entry.name = name;
   return entry;
 }
@@ -1207,6 +1226,7 @@ export const useItemsStore = defineStore('items', {
         shrine: inst?.shrine || '',
         mechanics: inst?.mechanics || null,
         honorific: def?.rarity === 'honorific' || def?.customQuality === 'honorific',
+        mysticOrbs: this.getMysticOrbsForInstance(instanceId),
       };
     },
 
@@ -1291,16 +1311,33 @@ export const useItemsStore = defineStore('items', {
       if (!inst) return false;
       const next = parseMysticOrbsList(mysticOrbs);
       const def = this.getDefForInstance(instanceId);
+      const host = {
+        shrine: inst.shrine || '',
+        blessing: inst.blessing || '',
+        extras: this.getExtrasForInstance(instanceId),
+      };
+      const reqOptions = {
+        rolls: this.getRollsForInstance(instanceId),
+        extras: this.getExtrasForInstance(instanceId),
+        socketables: this.getSocketablesForInstance(instanceId),
+        mysticOrbs: next,
+        corruptions: inst.corruptions,
+      };
+      if (
+        def &&
+        next.some(
+          ([count, name]) =>
+            !canUseMysticOrbOnItem(name, def, count - 1, host) ||
+            !itemAllowsMysticOrbReqLevel(def, reqOptions, name, count)
+        )
+      ) {
+        return false;
+      }
       if (
         def &&
         itemRequirementsExceedCharacterLevel(
           def,
-          {
-            rolls: this.getRollsForInstance(instanceId),
-            extras: this.getExtrasForInstance(instanceId),
-            socketables: this.getSocketablesForInstance(instanceId),
-            mysticOrbs: next,
-          },
+          reqOptions,
           getPlannerItemReqLevelCap(this.getCharacterRequirementStats().level)
         )
       ) {
@@ -1308,6 +1345,7 @@ export const useItemsStore = defineStore('items', {
       }
       if (next.length) inst.mysticOrbs = next;
       else delete inst.mysticOrbs;
+      this.syncInstanceUpgradeFlags(instanceId);
       const active =
         Object.values(this.equipment).includes(instanceId) ||
         Object.values(this.enabledCharms).includes(instanceId) ||
@@ -1327,8 +1365,9 @@ export const useItemsStore = defineStore('items', {
         corruptions: inst.corruptions,
         blessing: inst.blessing,
         shrine: inst.shrine,
+        mysticOrbs: inst.mysticOrbs,
       });
-      if (flags.etherealFromCorruption) inst.ethereal = true;
+      if (flags.etherealForced) inst.ethereal = true;
       if (flags.corrupted) inst.corrupted = true;
       else delete inst.corrupted;
     },
@@ -1404,11 +1443,28 @@ export const useItemsStore = defineStore('items', {
 
     /**
      * @param {number} instanceId
-     * @param {boolean} ethereal
+     * @param {string|null|undefined} element
      */
+    setInstanceRandomElement(instanceId, element) {
+      const inst = this.instances[instanceId];
+      if (!inst) return false;
+      const next = normalizeRandomElement(element);
+      if (next) inst.randomElement = next;
+      else delete inst.randomElement;
+      return true;
+    },
+
     setInstanceEthereal(instanceId, ethereal) {
       const inst = this.instances[instanceId];
       if (!inst) return false;
+      const flags = getItemUpgradeFlags({
+        oil: inst.oil,
+        corruptions: inst.corruptions,
+        blessing: inst.blessing,
+        shrine: inst.shrine,
+        mysticOrbs: inst.mysticOrbs,
+      });
+      if (!ethereal && flags.etherealForced) return false;
       if (ethereal) inst.ethereal = true;
       else delete inst.ethereal;
       return true;
@@ -1437,8 +1493,9 @@ export const useItemsStore = defineStore('items', {
       if (!def) return null;
       const rarity = quality === 'angelic' ? 'rare' : quality;
       const label = rarity === 'honorific' ? 'Honorific' : rarity === 'rare' ? 'Rare' : 'Crafted';
-      const baseLabel =
-        quality === 'angelic' ? angelicBaseDisplayName(def) : def.baseName || def.name;
+      let baseLabel = def.baseName || def.name;
+      if (quality === 'angelic') baseLabel = angelicBaseDisplayName(def);
+      else if (isMastercraftedBaseItem(def)) baseLabel = mastercraftedBaseDisplayName(def);
       const custom = {
         quality: rarity,
         name: `${label} ${baseLabel}`,
@@ -1799,6 +1856,8 @@ export const useItemsStore = defineStore('items', {
       const out = { ...withCustom };
       if (inst.ethereal === true && !withCustom.ethereal) out.ethereal = true;
       if (inst.corrupted === true && !withCustom.corrupted) out.corrupted = true;
+      const randomElement = normalizeRandomElement(inst.randomElement);
+      if (randomElement) out.randomElement = randomElement;
       const name = inst.name != null ? String(inst.name).trim() : '';
       if (name) {
         out.name = name;
@@ -2366,6 +2425,8 @@ export const useItemsStore = defineStore('items', {
         /** @type {unknown} */
         let mechanicsRaw = null;
         /** @type {unknown} */
+        let randomElementRaw = null;
+        /** @type {unknown} */
         let nameRaw = null;
         if (typeof entry === 'string') {
           defId = entry;
@@ -2385,6 +2446,7 @@ export const useItemsStore = defineStore('items', {
           blessingRaw = rec.blessing;
           shrineRaw = rec.shrine;
           mechanicsRaw = rec.mechanics;
+          randomElementRaw = rec.randomElement;
           nameRaw = rec.name;
         } else {
           return null;
@@ -2426,6 +2488,7 @@ export const useItemsStore = defineStore('items', {
             mechanicsRaw && typeof mechanicsRaw === 'object' && !Array.isArray(mechanicsRaw)
               ? /** @type {Record<string, number>} */ (mechanicsRaw)
               : null,
+          randomElement: normalizeRandomElement(randomElementRaw),
           name: typeof nameRaw === 'string' ? nameRaw.trim() : null,
         };
       };
@@ -2489,6 +2552,7 @@ export const useItemsStore = defineStore('items', {
                 blessing: parsed.blessing,
                 shrine: parsed.shrine,
                 mechanics: parsed.mechanics,
+                randomElement: parsed.randomElement,
                 name: parsed.name,
               }
             );
@@ -2542,6 +2606,7 @@ export const useItemsStore = defineStore('items', {
               blessing: parsed.blessing,
               shrine: parsed.shrine,
               mechanics: parsed.mechanics,
+              randomElement: parsed.randomElement,
               name: parsed.name,
             });
             if (canPlace(nextInventory, slot, def.invWidth || 1, def.invHeight || 1, getSize)) {

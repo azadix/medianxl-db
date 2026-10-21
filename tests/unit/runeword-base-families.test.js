@@ -4,7 +4,12 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { listEligibleRunewordBases, runewordEntryToItemDef } from '@/items/runeword-items.js';
+import {
+  listEligibleRunewordBases,
+  mergeRunewordWithBase,
+  runewordEntryToItemDef,
+  runewordTemplateAllowsBase,
+} from '@/items/runeword-items.js';
 
 const ROOT = resolve(import.meta.dirname, '../..');
 const runewords = JSON.parse(
@@ -59,6 +64,19 @@ describe('runeword wiki type families', () => {
     expect(got).toContain('One-Handed Swords');
     expect(got).not.toContain('Assassin Claws');
     expect(got).not.toContain('Necromancer Daggers');
+  });
+
+  it('excludes mastercrafted bases such as Maiden Bow from Amok', () => {
+    const amok = template('Amok');
+    const names = listEligibleRunewordBases(amok, baseitems).map((b) => String(b.name));
+    expect(names).not.toContain('Maiden Bow');
+    expect(names).not.toContain('Kukri');
+    const maiden = baseitems.find((b) => b.name === 'Maiden Bow');
+    const kukri = baseitems.find((b) => b.name === 'Kukri');
+    expect(runewordTemplateAllowsBase(amok, maiden)).toBe(false);
+    expect(mergeRunewordWithBase(amok, maiden)).toBeNull();
+    const shark = template('Shark');
+    expect(runewordTemplateAllowsBase(shark, kukri)).toBe(false);
   });
 
   it('Throwing Axes runewords include Throwing Axe and Balanced Axe greys', () => {
