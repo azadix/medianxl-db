@@ -450,13 +450,13 @@ function iconMarkup(skill) {
               </button>
             </th>
             <th class="skills-col-tags is-hidden-mobile">Tags</th>
-            <th class="is-hidden-mobile">
+            <th class="skills-th-class">
               <button type="button" class="button is-ghost p-0 skills-sort-btn" @click="toggleSortColumn('class')">
                 Class
                 <span v-if="sortKey === 'class'" class="has-text-grey pl-1 is-size-7">{{ sortHint }}</span>
               </button>
             </th>
-            <th class="is-hidden-mobile">
+            <th class="skills-th-tab">
               <button type="button" class="button is-ghost p-0 skills-sort-btn" @click="toggleSortColumn('tab')">
                 Tab
                 <span v-if="sortKey === 'tab'" class="has-text-grey pl-1 is-size-7">{{ sortHint }}</span>
@@ -473,7 +473,7 @@ function iconMarkup(skill) {
               <td class="skills-col-icon skills-td-clip">
                 <SkillCardImage :icon-markup="iconMarkup(skill)" />
               </td>
-              <td class="skills-td-clip">
+              <td class="skills-td-clip skills-td-name">
                 <RouterLink
                   :to="{ name: SKILLS_ROUTE_NAME, query: homeQueryForSkill(skill.id) }"
                   class="has-text-weight-medium skills-td-link"
@@ -481,6 +481,10 @@ function iconMarkup(skill) {
                 >
                   {{ skill.name }}
                 </RouterLink>
+                <p class="skills-td-meta">
+                  <span>{{ skill.class }}</span>
+                  <span v-if="skill.tabName"> · {{ skill.tabName }}</span>
+                </p>
               </td>
               <td class="skills-col-tags is-hidden-mobile skills-td-tags">
                 <div v-if="skill.tags && skill.tags.length" class="tags">
@@ -668,21 +672,128 @@ function iconMarkup(skill) {
   border: 0;
 }
 
+.skills-td-meta {
+  display: none;
+}
+
 @media screen and (max-width: 768px) {
+  .skills-browse-root {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .skills-dd-trigger {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .skills-filter-dd,
+  .skills-filter-dd .dropdown-trigger,
+  .skills-filter-dd-row-inner,
+  .skills-filter-dd-row > .control:not(.filter-help-control),
+  .skills-filter-dd-row .select,
+  .skills-filter-dd-row .select select {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .skills-filter-dd-row > .control {
+    margin-right: 0;
+  }
+
+  .filter-help-control {
+    margin-left: 0;
+  }
+
+  .skills-table-container {
+    overflow-x: visible;
+  }
+
   .skills-browse-table {
+    display: block;
     font-size: 0.875rem;
+    min-width: 0;
+    width: 100%;
   }
 
-  .skills-browse-table :deep(td),
-  .skills-browse-table :deep(th) {
-    padding: 0.5rem 0.25rem;
+  .skills-browse-table colgroup {
+    display: none;
   }
 
-  .skills-browse-table :deep(.tags) {
+  .skills-browse-table thead {
+    display: block;
+  }
+
+  .skills-browse-table thead tr {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.25rem;
-    margin: 0;
+    align-items: center;
+    gap: 0.25rem 0.85rem;
+  }
+
+  .skills-browse-table thead th {
+    display: block;
+    width: auto;
+    padding: 0.35rem 0;
+    border: 0;
+  }
+
+  .skills-browse-table thead .skills-col-icon,
+  .skills-browse-table thead .skills-col-tags {
+    display: none;
+  }
+
+  .skills-browse-table tbody {
+    display: block;
+  }
+
+  .skills-browse-table tbody tr {
+    display: grid;
+    grid-template-columns: 3rem minmax(0, 1fr);
+    column-gap: 0.65rem;
+    align-items: center;
+    padding: 0.45rem 0;
+    border-bottom: 1px solid hsl(0, 0%, 20%);
+  }
+
+  .skills-browse-table tbody td {
+    display: block;
+    max-width: none;
+    width: auto;
+    padding: 0;
+    border: 0;
+    overflow: visible;
+    white-space: normal;
+  }
+
+  .skills-browse-table tbody td[colspan] {
+    grid-column: 1 / -1;
+  }
+
+  .skills-browse-table tbody .skills-col-icon {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .skills-browse-table tbody .skills-td-name {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .skills-td-link {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+    overflow-wrap: anywhere;
+  }
+
+  .skills-td-meta {
+    display: block;
+    margin: 0.15rem 0 0;
+    color: #9a9aa8;
+    font-size: 0.75rem;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
   }
 }
 </style>

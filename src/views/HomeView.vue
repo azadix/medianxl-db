@@ -160,6 +160,12 @@ watch(
 </template>
 
 <style scoped>
+.home-skills-page {
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: clip;
+}
+
 .home-skills-view-tabs {
   margin-bottom: 0.75rem;
 }
@@ -265,6 +271,10 @@ watch(
   display: block;
   cursor: pointer;
   font-weight: 600;
+}
+
+:deep(.skill-src-mobile-meta) {
+  display: none;
 }
 
 :deep(.skill-proc-sources-table .skills-sort-btn) {
@@ -373,6 +383,43 @@ watch(
 }
 
 @media screen and (max-width: 768px) {
+  .home-skills-page {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  .home-skills-view-tabs :deep(ul) {
+    flex-wrap: wrap;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .home-skills-view-tabs :deep(a) {
+    font-size: 1.15rem;
+    padding-left: 0.85em;
+    padding-right: 0.85em;
+  }
+
+  :deep(.skill-proc-sources-table td),
+  :deep(.skill-proc-sources-table td:not(:last-child)) {
+    white-space: normal;
+    overflow-wrap: break-word;
+  }
+
+  :deep(.skill-proc-sources-table .skill-src-chance),
+  :deep(.skill-proc-sources-table .skill-src-condition),
+  :deep(.skill-proc-sources-table .skill-src-level) {
+    display: none;
+  }
+
+  :deep(.skill-src-mobile-meta) {
+    display: block;
+    margin: 0 0 0.2rem;
+    color: #9a9aa8;
+    font-size: 0.75rem;
+    line-height: 1.3;
+  }
+
   :deep(.skill-detail-shell) {
     display: flex;
     flex-direction: column;

@@ -328,8 +328,9 @@ function sourcesSortHintHtml(activeKey, key, dir) {
  * @param {1|-1} sortDir
  * @returns {string}
  */
-function sourcesSortTh(label, key, sortKey, sortDir) {
-  return `<th><button type="button" class="button is-ghost p-0 skills-sort-btn js-skill-sources-sort" data-sort-key="${escapeHtmlText(
+function sourcesSortTh(label, key, sortKey, sortDir, extraClass = '') {
+  const cls = extraClass ? ` class="${escapeHtmlText(extraClass)}"` : '';
+  return `<th${cls}><button type="button" class="button is-ghost p-0 skills-sort-btn js-skill-sources-sort" data-sort-key="${escapeHtmlText(
     key
   )}">${escapeHtmlText(label)} ${sourcesSortHintHtml(sortKey, key, sortDir)}</button></th>`;
 }
@@ -355,10 +356,10 @@ function grantSourcesHeadHtml(showRestriction, sortKey, sortDir) {
  */
 function procSourcesHeadHtml(sortKey, sortDir) {
   return (
-    sourcesSortTh('Chance', 'chance', sortKey, sortDir) +
-    sourcesSortTh('Condition', 'condition', sortKey, sortDir) +
-    sourcesSortTh('Level', 'level', sortKey, sortDir) +
-    sourcesSortTh('Source', 'source', sortKey, sortDir)
+    sourcesSortTh('Chance', 'chance', sortKey, sortDir, 'skill-src-chance') +
+    sourcesSortTh('Condition', 'condition', sortKey, sortDir, 'skill-src-condition') +
+    sourcesSortTh('Level', 'level', sortKey, sortDir, 'skill-src-level') +
+    sourcesSortTh('Source', 'source', sortKey, sortDir, 'skill-src-source')
   );
 }
 
@@ -381,11 +382,17 @@ function grantSourcesRowHtml(row, showRestriction) {
  * @returns {string}
  */
 function procSourcesRowHtml(row) {
+  const condition = row.condition ? ` · ${escapeHtmlText(row.condition)}` : '';
   return `<tr>
-          <td>${escapeHtmlText(row.chanceLabel)}%</td>
-          <td>${escapeHtmlText(row.condition)}</td>
-          <td>${escapeHtmlText(String(row.level))}</td>
-          <td>${sourceSpansHtml(row)}</td>
+          <td class="skill-src-chance">${escapeHtmlText(row.chanceLabel)}%</td>
+          <td class="skill-src-condition">${escapeHtmlText(row.condition)}</td>
+          <td class="skill-src-level">${escapeHtmlText(String(row.level))}</td>
+          <td class="skill-src-source">
+            <p class="skill-src-mobile-meta">${escapeHtmlText(row.chanceLabel)}% · lvl ${escapeHtmlText(
+              String(row.level)
+            )}${condition}</p>
+            ${sourceSpansHtml(row)}
+          </td>
         </tr>`;
 }
 

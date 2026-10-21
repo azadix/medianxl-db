@@ -94,7 +94,7 @@ const {
               <p class="result-title has-text-info mb-0">
                 Patch {{ card.version }}
                 <span v-if="card.releaseDate" class="patch-release">{{ formatPatchReleaseDate(card.releaseDate) }}</span>
-                <span class="patch-meta">({{ card.matchCount }} match{{ card.matchCount === 1 ? '' : 'es' }})</span>
+                <span class="patch-meta"> ({{ card.matchCount }} match{{ card.matchCount === 1 ? '' : 'es' }})</span>
               </p>
               <button
                 type="button"
@@ -157,6 +157,9 @@ const {
   --patch-sticky-offset: 3rem;
   --patch-notes-start-cap: 20vh;
   --patch-section-scroll-margin: calc(var(--patch-sticky-offset) + 6.5rem);
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: clip;
 }
 
 .patch-search-container,
@@ -224,6 +227,8 @@ const {
 .patch-title,
 .result-title {
   font-weight: 700;
+  min-width: 0;
+  overflow-wrap: break-word;
 }
 
 .patch-release {
@@ -243,8 +248,8 @@ const {
   overflow-x: hidden;
   line-height: 1.3rem;
   white-space: normal;
-  overflow-wrap: anywhere;
-  word-break: break-word;
+  overflow-wrap: break-word;
+  word-break: normal;
   max-width: 100%;
   min-width: 0;
 }
@@ -401,15 +406,123 @@ mark {
 .markdown-content:deep(pre),
 .markdown-content:deep(code) {
   white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  word-break: break-word;
+  overflow-wrap: break-word;
+  word-break: normal;
+  max-width: 100%;
+}
+
+.markdown-content:deep(table) {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.markdown-content:deep(pre),
+.markdown-content:deep(img) {
   max-width: 100%;
 }
 
 @media screen and (max-width: 768px) {
+  .patch-notes-view {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  .patch-search-sticky {
+    padding: 0.5rem 0.65rem;
+    margin: 0;
+  }
+
+  .patch-search-container > .field {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 0.5rem;
+    row-gap: 0.4rem;
+  }
+
+  .patch-search-sticky .label {
+    grid-column: 1;
+    grid-row: 1;
+    margin-bottom: 0;
+  }
+
+  .patch-search-sticky .patch-search-controls {
+    display: contents;
+  }
+
+  .patch-search-input-control {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .patch-search-controls > .control:last-child {
+    grid-column: 2;
+    grid-row: 1;
+    margin-right: 0;
+    width: auto;
+  }
+
+  .patch-jump-top-button {
+    width: auto;
+    min-width: 0;
+    white-space: nowrap;
+  }
+
+  .patch-summary,
+  .result-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+  }
+
+  .patch-meta {
+    flex-shrink: 0;
+  }
+
+  .patch-release {
+    display: inline-block;
+    margin-left: 0.35rem;
+  }
+
+  .markdown-content:deep(h1) {
+    font-size: 1.25rem;
+    margin: 0.5rem 0 0.35rem;
+  }
+
+  .markdown-content:deep(h2) {
+    font-size: 1.1rem;
+    margin: 0.45rem 0 0.3rem;
+  }
+
+  .markdown-content:deep(h3),
+  .markdown-content:deep(h4) {
+    font-size: 1rem;
+    margin: 0.4rem 0 0.25rem;
+  }
+
+  .markdown-content:deep(ul),
+  .markdown-content:deep(ol) {
+    margin-left: 0.25rem;
+  }
+
   .patch-note-skill-tooltip {
-    max-width: 90vw;
-    min-width: 250px;
+    max-width: calc(100vw - 1.25rem);
+    min-width: 0;
+    width: min(22rem, calc(100vw - 1.25rem));
+  }
+
+  .patch-note-skill-tooltip .tooltip-header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .patch-note-skill-tooltip :deep(.tooltip-icon .image) {
+    width: 48px;
+    height: 48px;
   }
 }
 </style>

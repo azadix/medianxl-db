@@ -309,31 +309,31 @@ function sourceKey(source, index) {
         <thead>
           <tr>
             <th class="skills-col-icon">Image</th>
-            <th>
+            <th class="skills-th-skill">
               <button type="button" class="button is-ghost p-0 skills-sort-btn" @click="toggleSortColumn('skill')">
                 Skill
                 <span v-if="sortKey === 'skill'" class="has-text-grey pl-1 is-size-7">{{ sortHint }}</span>
               </button>
             </th>
-            <th>
+            <th class="skills-th-chance">
               <button type="button" class="button is-ghost p-0 skills-sort-btn" @click="toggleSortColumn('chance')">
                 Chance
                 <span v-if="sortKey === 'chance'" class="has-text-grey pl-1 is-size-7">{{ sortHint }}</span>
               </button>
             </th>
-            <th class="is-hidden-mobile">
+            <th class="skills-th-condition">
               <button type="button" class="button is-ghost p-0 skills-sort-btn" @click="toggleSortColumn('condition')">
                 Condition
                 <span v-if="sortKey === 'condition'" class="has-text-grey pl-1 is-size-7">{{ sortHint }}</span>
               </button>
             </th>
-            <th>
+            <th class="skills-th-level">
               <button type="button" class="button is-ghost p-0 skills-sort-btn" @click="toggleSortColumn('level')">
                 Level
                 <span v-if="sortKey === 'level'" class="has-text-grey pl-1 is-size-7">{{ sortHint }}</span>
               </button>
             </th>
-            <th>
+            <th class="skills-th-source">
               <button type="button" class="button is-ghost p-0 skills-sort-btn" @click="toggleSortColumn('source')">
                 Source
                 <span v-if="sortKey === 'source'" class="has-text-grey pl-1 is-size-7">{{ sortHint }}</span>
@@ -349,7 +349,7 @@ function sourceKey(source, index) {
             <td class="skills-col-icon skills-td-clip">
               <SkillCardImage :icon-markup="iconMarkup(row)" />
             </td>
-            <td class="skills-td-clip">
+            <td class="skills-td-clip skills-td-name">
               <RouterLink
                 :to="{ name: SKILLS_ROUTE_NAME, query: skillQuery(row) }"
                 class="has-text-weight-medium skills-td-link js-proc-skill"
@@ -358,10 +358,14 @@ function sourceKey(source, index) {
               >
                 {{ row.skillName }}
               </RouterLink>
+              <p class="skills-td-meta">
+                {{ row.chanceLabel }}% · lvl {{ row.level }}
+                <template v-if="row.condition"> · {{ row.condition }}</template>
+              </p>
             </td>
-            <td>{{ row.chanceLabel }}%</td>
+            <td class="is-hidden-mobile">{{ row.chanceLabel }}%</td>
             <td class="is-hidden-mobile skills-td-clip">{{ row.condition }}</td>
-            <td>{{ row.level }}</td>
+            <td class="is-hidden-mobile">{{ row.level }}</td>
             <td class="skills-td-sources">
               <span
                 v-for="(source, index) in procRowSources(row)"
@@ -547,10 +551,134 @@ function sourceKey(source, index) {
   border: 0;
 }
 
+.skills-td-meta {
+  display: none;
+}
+
 @media screen and (max-width: 768px) {
+  .skills-browse-root {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .skills-dd-trigger {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .skills-filter-dd,
+  .skills-filter-dd .dropdown-trigger,
+  .skills-filter-dd-row-inner,
+  .skills-filter-dd-row > .control,
+  .skills-filter-dd-row .select,
+  .skills-filter-dd-row .select select {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .skills-filter-dd-row > .control {
+    margin-right: 0;
+  }
+
+  .skills-table-container {
+    overflow-x: visible;
+  }
+
   .skills-procs-table {
+    display: block;
     font-size: 0.875rem;
     min-width: 0;
+    width: 100%;
+  }
+
+  .skills-procs-table colgroup {
+    display: none;
+  }
+
+  .skills-procs-table thead {
+    display: block;
+  }
+
+  .skills-procs-table thead tr {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem 0.85rem;
+  }
+
+  .skills-procs-table thead th {
+    display: block;
+    width: auto;
+    padding: 0.35rem 0;
+    border: 0;
+  }
+
+  .skills-procs-table thead .skills-col-icon {
+    display: none;
+  }
+
+  .skills-procs-table tbody {
+    display: block;
+  }
+
+  .skills-procs-table tbody tr {
+    display: grid;
+    grid-template-columns: 3rem minmax(0, 1fr);
+    column-gap: 0.65rem;
+    row-gap: 0.2rem;
+    align-items: start;
+    padding: 0.55rem 0;
+    border-bottom: 1px solid hsl(0, 0%, 20%);
+  }
+
+  .skills-procs-table tbody td {
+    display: block;
+    max-width: none;
+    width: auto;
+    padding: 0;
+    border: 0;
+    overflow: visible;
+    white-space: normal;
+  }
+
+  .skills-procs-table tbody td[colspan] {
+    grid-column: 1 / -1;
+  }
+
+  .skills-procs-table tbody .skills-col-icon {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .skills-procs-table tbody .skills-td-name {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .skills-procs-table tbody .skills-td-sources {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    padding-left: 3.65rem;
+  }
+
+  .skills-td-link {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+    overflow-wrap: anywhere;
+  }
+
+  .skills-td-meta {
+    display: block;
+    margin: 0.15rem 0 0;
+    color: #9a9aa8;
+    font-size: 0.75rem;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+  }
+
+  .skills-td-sources {
+    overflow: visible;
   }
 }
 </style>
