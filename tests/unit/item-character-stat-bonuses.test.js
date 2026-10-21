@@ -39,6 +39,13 @@ import {
 import { initSkillDataStore } from '@/shared/skill-data-store.js';
 
 import { useItemsStore } from '@/stores/items.js';
+import { loadMysticOrbsCatalog } from '@/items/mystic-orbs.js';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+
+loadMysticOrbsCatalog(
+  JSON.parse(readFileSync(resolve('public/items/2_14/mystic-orbs.json'), 'utf8'))
+);
 
 import { installTreeDataFetchMock } from '../helpers/mock-fetch-tree-data.js';
 
@@ -388,6 +395,31 @@ describe('recomputePlannerStatsFromItems', () => {
     store.setWeaponSet(1);
     recomputePlannerStatsFromItems(ch);
     expect(ch.getStat('life')).toBe(before + 50);
+  });
+
+  it('applies mystic orb and socket bonuses from equipped gear', () => {
+    createCharacterInstance('Amazon', 150);
+    const ch = getCharacterInstance();
+    const beforeIas = ch.getStat('attack_speed');
+    const store = useItemsStore();
+    const saber = {
+      id: 'u:alnair:su',
+      name: 'Alnair',
+      type: 'swor',
+      category: 'weapons',
+      slot: 'arms',
+      rarity: 'unique',
+      uniqueKind: 'su',
+      reqLevel: 100,
+      modifiers: ['+200% Enhanced Damage'],
+    };
+    store.catalog = [saber];
+    store.selectSlot({ location: 'equipment', slot: 'rarm' });
+    expect(store.equipFromPicker(saber.id)).toBe(true);
+    const id = store.equipment.rarm;
+    expect(store.updateInstanceMysticOrbs(id, [[1, 'MO - Attack Speed']])).toBe(true);
+    recomputePlannerStatsFromItems(ch);
+    expect(ch.getStat('attack_speed')).toBe(beforeIas + 6);
   });
 
   it('lists unmapped item affixes under unknown modifiers', () => {

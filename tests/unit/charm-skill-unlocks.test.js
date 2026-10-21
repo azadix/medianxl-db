@@ -51,6 +51,8 @@ describe('charm-skill-unlocks', () => {
       },
     });
     expect(missing.map((row) => row.skillId).sort()).toEqual(['endurance', 'tenacity']);
+    expect(missing.find((row) => row.skillId === 'tenacity')?.skillName).toBe('Tenacity');
+    expect(missing.find((row) => row.skillId === 'endurance')?.skillName).toBe('Endurance');
     expect(missing.find((row) => row.skillId === 'tenacity')?.charmNames).toContain('Optical Detector');
   });
 
@@ -62,5 +64,23 @@ describe('charm-skill-unlocks', () => {
       skillPoints: { tenacity: 3, endurance: 1, prismatic_cloak: 1 },
     });
     expect(missing).toEqual([]);
+  });
+
+  it('uses charm-text skill names when display-name map is missing', () => {
+    const missing = findMissingCharmSkillUnlocks({
+      className: 'Assassin',
+      charms,
+      ownedCharmIds: [],
+      skillPoints: {
+        chemistry: 1,
+        paragon_of_fate: 1,
+        prismatic_cloak: 1,
+        specialization: 1,
+      },
+    });
+    expect(missing.find((row) => row.skillId === 'chemistry')?.skillName).toBe('Chemistry');
+    expect(missing.find((row) => row.skillId === 'paragon_of_fate')?.skillName).toBe('Paragon of Fate');
+    expect(missing.find((row) => row.skillId === 'prismatic_cloak')?.skillName).toBe('Prismatic Cloak');
+    expect(missing.find((row) => row.skillId === 'specialization')?.skillName).toBe('Specialization');
   });
 });

@@ -182,8 +182,9 @@ describe('buildItemTooltipHtml', () => {
     expect(html).toContain('+5% Cast Speed');
     expect(html).toContain('2% Deadly Strike');
     expect(html).toContain('Adds 6-12 Damage');
-    expect(html.indexOf("Zann Esu's Stone")).toBeLessThan(html.indexOf('+3% to Spell Damage'));
-    expect(html.indexOf('+3% to Spell Damage')).toBeLessThan(html.indexOf('Qor Rune'));
+    const side = html.slice(html.indexOf('item-tooltip-sidepanel'));
+    expect(side.indexOf("Zann Esu's Stone")).toBeLessThan(side.indexOf('+3% to Spell Damage'));
+    expect(side.indexOf('+3% to Spell Damage')).toBeLessThan(side.indexOf('Qor Rune'));
   });
 
   it('groups set bonuses separately from item stats', () => {

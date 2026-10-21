@@ -12,9 +12,13 @@ import { EQUIPMENT_SLOT_LABELS, pairedWeaponSlot } from '@/items/item-types.js';
 import { MAX_RELICS, isRelicItem } from '@/items/relic-items.js';
 import { isCharmItem } from '@/items/charm-items.js';
 import ItemDetailPanel from './ItemDetailPanel.vue';
+import ItemInspectorTabs from './ItemInspectorTabs.vue';
 import { getEffectivePlannerLevel, getCharacterInstance, runPlannerSkillStatRecompute, syncItemGrantedOSkills } from '@/character/planner-core.js';
-import { refreshCurrentTooltip } from '@/tree/tree-tooltip.js';
-import { refreshItemTooltips } from '@/items/item-tooltip-runtime.js';
+import { getPlannerItemReqLevelCap } from '@/planner/planner-options.js';
+import { hidePlannerSkillTooltip, refreshCurrentTooltip } from '@/tree/tree-tooltip.js';
+import { hideItemTooltip, refreshItemTooltips } from '@/items/item-tooltip-runtime.js';
+
+/** @typedef {'base'|'sockets'|'mysticOrbs'|'oils'|'corruptions'|'effigies'} InspectorTabId */
 
 function afterItemSkillSourcesChanged() {
   syncItemGrantedOSkills();
@@ -36,6 +40,9 @@ const { selectedSlot, editingInstanceId, isPickerOpen, enabledRelicCount } =
 
 /** @type {import('vue').Ref<Record<string, number>>} */
 const rolls = ref({});
+
+/** @type {import('vue').Ref<InspectorTabId>} */
+const activeTab = ref(/** @type {InspectorTabId} */ ('base'));
 
 /** @type {ReturnType<typeof setTimeout>|null} */
 let rollApplyTimer = null;
@@ -175,6 +182,7 @@ const detailStatRows = computed(() => {
     className: className.value,
     extras: instanceExtras.value,
     socketables: instanceSocketables.value,
+    mysticOrbs: instanceMysticOrbs.value,
   });
 });
 
@@ -237,6 +245,9 @@ watch(
     const prevId = prev?.[0] ?? null;
     const prevDefId = prev?.[1] ?? null;
     const sameDef = newDefId != null && newDefId === prevDefId;
+    if (!sameDef) {
+      activeTab.value = 'base';
+    }
     if (sameDef && prevId == null && newId != null && Object.keys(rolls.value).length) {
       const def = itemsStore.getDefForInstance(newId) || itemDef.value;
       const merged = def ? mergeRollsForDef(def, rolls.value, rollOptions.value) : rolls.value;
@@ -273,6 +284,8 @@ function persistRolls(nextRolls) {
   refreshOpenItemTooltipsForInstance(id);
   if (def && (isRelicItem(def) || isCharmItem(def))) {
     afterItemSkillSourcesChanged();
+  } else if (Object.values(itemsStore.equipment).includes(id)) {
+    runPlannerSkillStatRecompute();
   }
 }
 
@@ -289,6 +302,10 @@ function setRoll(key, min, max, raw) {
   const nextRolls = { ...rolls.value, [key]: nextVal };
   const merged = def ? mergeRollsForDef(def, nextRolls, rollOptions.value) : nextRolls;
   rolls.value = merged;
+  if (key === 'sockets') {
+    persistRolls(merged);
+    return;
+  }
   scheduleRollApply(merged);
 }
 
@@ -297,6 +314,36 @@ function setRoll(key, min, max, raw) {
  */
 function onRollsUpdate(next) {
   persistRolls(next);
+}
+
+/**
+ * @param {Array<object>} next
+ */
+function onSocketablesUpdate(next) {
+  const id = instanceId.value;
+  if (id == null) return;
+  hideItemTooltip(true);
+  hidePlannerSkillTooltip(true);
+  itemsStore.updateInstanceSocketables(id, next);
+  refreshOpenItemTooltipsForInstance(id);
+  if (Object.values(itemsStore.equipment).includes(id)) {
+    runPlannerSkillStatRecompute();
+  }
+}
+
+/**
+ * @param {Array<[number, string]>} next
+ */
+function onMysticOrbsUpdate(next) {
+  const id = instanceId.value;
+  if (id == null) return;
+  hideItemTooltip(true);
+  hidePlannerSkillTooltip(true);
+  itemsStore.updateInstanceMysticOrbs(id, next);
+  refreshOpenItemTooltipsForInstance(id);
+  if (Object.values(itemsStore.equipment).includes(id)) {
+    runPlannerSkillStatRecompute();
+  }
 }
 
 function onChangeItem() {
@@ -348,37 +395,40 @@ onUnmounted(() => {
 <template>
   <section class="planner-item-inspector" aria-labelledby="planner-item-inspector-title">
     <div class="planner-item-inspector__top">
-      <h3 id="planner-item-inspector-title" class="planner-items-section-title">
-        {{ itemDef ? categoryLabel : 'Item' }}
-      </h3>
-      <div v-if="showActions" class="planner-item-inspector__actions">
-        <button
-          v-if="!isEnableListSlot"
-          type="button"
-          class="button is-small"
-          @click="onChangeItem"
-        >
-          Change
-        </button>
-        <button
-          v-if="isEnableListSlot"
-          type="button"
-          class="button is-small"
-          :class="isListItemEnabled ? 'is-danger is-outlined' : 'is-success is-outlined'"
-          :disabled="!isListItemEnabled && !canEnableListItem"
-          @click="onToggleEnableListItem"
-        >
-          {{ isListItemEnabled ? 'Disable' : 'Enable' }}
-        </button>
-        <button
-          v-else
-          type="button"
-          class="button is-small is-danger is-outlined"
-          @click="onRemove"
-        >
-          Remove
-        </button>
+      <div class="planner-item-inspector__bar">
+        <h3 id="planner-item-inspector-title" class="planner-items-section-title">
+          {{ itemDef ? categoryLabel : 'Item' }}
+        </h3>
+        <div v-if="showActions" class="planner-item-inspector__actions">
+          <button
+            v-if="!isEnableListSlot"
+            type="button"
+            class="button is-small"
+            @click="onChangeItem"
+          >
+            Change
+          </button>
+          <button
+            v-if="isEnableListSlot"
+            type="button"
+            class="button is-small"
+            :class="isListItemEnabled ? 'is-danger is-outlined' : 'is-success is-outlined'"
+            :disabled="!isListItemEnabled && !canEnableListItem"
+            @click="onToggleEnableListItem"
+          >
+            {{ isListItemEnabled ? 'Disable' : 'Enable' }}
+          </button>
+          <button
+            v-else
+            type="button"
+            class="button is-small is-danger is-outlined"
+            @click="onRemove"
+          >
+            Remove
+          </button>
+        </div>
       </div>
+      <ItemInspectorTabs v-if="itemDef" v-model="activeTab" />
     </div>
 
     <p v-if="inactiveNotice" class="is-size-7 has-text-danger px-3 mb-2" role="status">
@@ -394,9 +444,14 @@ onUnmounted(() => {
       :extras="instanceExtras"
       :mystic-orbs="instanceMysticOrbs"
       :socketables="instanceSocketables"
+      :active-tab="activeTab"
+      :can-edit="instanceId != null"
       :empty-text="emptyText"
+      :character-level="getPlannerItemReqLevelCap(getEffectivePlannerLevel())"
       @update:rolls="onRollsUpdate"
       @set-roll="setRoll"
+      @update:socketables="onSocketablesUpdate"
+      @update:mystic-orbs="onMysticOrbsUpdate"
     />
   </section>
 </template>

@@ -3,13 +3,28 @@
  * @module items/mystic-orbs
  */
 
+import { isHandWeapon, isQuiverItem, isShieldItem } from '@/items/item-types.js';
+
 /**
  * @typedef {[number, string]} MysticOrbEntry
- * @typedef {{ name: string, aliases?: string[], modifiers?: string[] }} MysticOrbCatalogRow
+ * @typedef {{
+ *   name: string,
+ *   aliases?: string[],
+ *   modifiers?: string[],
+ *   kind?: 'mo'|'umo'|'smo',
+ *   slots?: 'all'|'weapon'|'armor'|'jewelry',
+ *   maxStacks?: number,
+ *   restrictToSlot?: string,
+ *   restrictToCategory?: string,
+ *   requiresAngelic?: boolean,
+ *   reqLevelPerStack?: number,
+ * }} MysticOrbCatalogRow
  */
 
 /** @type {Map<string, MysticOrbCatalogRow>|null} */
 let catalogByName = null;
+/** @type {MysticOrbCatalogRow[]} */
+let catalogRows = [];
 
 /**
  * @param {string|null|undefined} s
@@ -28,6 +43,8 @@ function normKey(s) {
 export function loadMysticOrbsCatalog(rows) {
   /** @type {Map<string, MysticOrbCatalogRow>} */
   const byName = new Map();
+  /** @type {MysticOrbCatalogRow[]} */
+  const list = [];
   if (Array.isArray(rows)) {
     for (const row of rows) {
       if (!row || typeof row !== 'object') continue;
@@ -44,11 +61,35 @@ export function loadMysticOrbsCatalog(rows) {
         ? row.aliases.map((a) => String(a || '').trim()).filter(Boolean)
         : [];
       if (aliases.length) entry.aliases = aliases;
+      if (row.kind === 'mo' || row.kind === 'umo' || row.kind === 'smo') entry.kind = row.kind;
+      if (row.slots === 'all' || row.slots === 'weapon' || row.slots === 'armor' || row.slots === 'jewelry') {
+        entry.slots = row.slots;
+      }
+      const maxStacks = Math.floor(Number(row.maxStacks));
+      if (Number.isFinite(maxStacks) && maxStacks > 0) entry.maxStacks = maxStacks;
+      const restrictToSlot = row.restrictToSlot != null ? String(row.restrictToSlot).trim() : '';
+      if (restrictToSlot) entry.restrictToSlot = restrictToSlot;
+      const restrictToCategory = row.restrictToCategory != null ? String(row.restrictToCategory).trim() : '';
+      if (restrictToCategory) entry.restrictToCategory = restrictToCategory;
+      if (row.requiresAngelic === true) entry.requiresAngelic = true;
+      const reqLevelPerStack = Math.floor(Number(row.reqLevelPerStack));
+      if (Number.isFinite(reqLevelPerStack) && reqLevelPerStack > 0) {
+        entry.reqLevelPerStack = reqLevelPerStack;
+      }
       byName.set(normKey(name), entry);
       for (const alias of aliases) byName.set(normKey(alias), entry);
+      list.push(entry);
     }
   }
   catalogByName = byName;
+  catalogRows = list;
+}
+
+/**
+ * @returns {MysticOrbCatalogRow[]}
+ */
+export function listMysticOrbsCatalog() {
+  return catalogRows.slice();
 }
 
 /**
@@ -112,10 +153,143 @@ export function getMysticOrbBonusLines(name, count = 1) {
  * @returns {'unique'|'rare'|'normal'}
  */
 export function mysticOrbKind(name) {
+  const row = lookupMysticOrb(name);
+  if (row?.kind === 'smo') return 'rare';
+  if (row?.kind === 'mo') return 'normal';
+  if (row?.kind === 'umo') return 'unique';
   const label = String(name || '').trim();
   if (/^rare\s+mo\b/i.test(label)) return 'rare';
   if (/^mo\s*-/i.test(label)) return 'normal';
   return 'unique';
+}
+
+/**
+ * Inventory icon stem for a mystic orb (slot-based DC6: orb_weap / orb_armo / orb_misc / orb_any).
+ * @param {string|MysticOrbCatalogRow|null|undefined} orb
+ * @returns {string}
+ */
+export function mysticOrbIcon(orb) {
+  const row = typeof orb === 'string' ? lookupMysticOrb(orb) : orb && typeof orb === 'object' ? orb : null;
+  const slots = row?.slots;
+  if (slots === 'weapon') return 'orb_weap';
+  if (slots === 'armor') return 'orb_armo';
+  if (slots === 'jewelry') return 'orb_misc';
+  return 'orb_any';
+}
+
+/**
+ * CSS class for mystic orb name color.
+ * @param {string|null|undefined} nameOrKind
+ * @returns {string}
+ */
+export function mysticOrbNameCssClass(nameOrKind) {
+  const kind =
+    nameOrKind === 'unique' || nameOrKind === 'rare' || nameOrKind === 'normal'
+      ? nameOrKind
+      : mysticOrbKind(nameOrKind);
+  if (kind === 'unique') return 'item-tooltip-sock__name--unique';
+  if (kind === 'rare') return 'item-tooltip-sock__name--rare';
+  return 'item-tooltip-sock__name--magic';
+}
+
+/**
+ * Host slot group used by mystic orb restrictions.
+ * @param {object|null|undefined} def
+ * @returns {'weapon'|'armor'|'jewelry'|null}
+ */
+export function mysticOrbSlotCategory(def) {
+  if (!def || typeof def !== 'object') return null;
+  const slot = String(def.slot || '').toLowerCase();
+  if (slot === 'ring' || slot === 'neck' || slot === 'rrin' || slot === 'lrin') return 'jewelry';
+  if (def.category === 'jewelry' || def.category === 'quivers') return 'jewelry';
+  if (isQuiverItem(def)) return 'jewelry';
+  if (isHandWeapon(def)) return 'weapon';
+  return 'armor';
+}
+
+/**
+ * @param {object|null|undefined} def
+ * @returns {boolean}
+ */
+function isAngelicItem(def) {
+  if (!def || typeof def !== 'object') return false;
+  const blob = [def.uniqueKind, def.rarity, def.quality, def.name, def.baseName]
+    .map((v) => String(v || ''))
+    .join(' ');
+  return /angelic/i.test(blob);
+}
+
+/**
+ * Planner equipment slot for restrictToSlot (head / tors / glov / feet).
+ * @param {object|null|undefined} def
+ * @returns {string}
+ */
+function mysticOrbEquipSlot(def) {
+  return String(def?.slot || '').toLowerCase();
+}
+
+/**
+ * Whether this catalog orb can be applied to the given item.
+ * @param {string|MysticOrbCatalogRow|null|undefined} orb
+ * @param {object|null|undefined} def
+ * @param {number} [currentCount]
+ * @returns {boolean}
+ */
+export function canUseMysticOrbOnItem(orb, def, currentCount = 0) {
+  const row = typeof orb === 'string' ? lookupMysticOrb(orb) : orb && typeof orb === 'object' ? orb : null;
+  if (!row || !def) return false;
+  const category = mysticOrbSlotCategory(def);
+  if (!category) return false;
+  if (row.slots && row.slots !== 'all' && row.slots !== category) return false;
+  if (row.restrictToSlot && mysticOrbEquipSlot(def) !== String(row.restrictToSlot).toLowerCase()) {
+    return false;
+  }
+  if (row.restrictToCategory === 'shield' && !isShieldItem(def)) return false;
+  if (row.restrictToCategory === 'quiver' && !isQuiverItem(def)) return false;
+  if (row.requiresAngelic && !isAngelicItem(def)) return false;
+  const max = Number.isFinite(row.maxStacks) ? Number(row.maxStacks) : 5;
+  const have = Math.max(0, Math.floor(Number(currentCount) || 0));
+  if (have >= max) return false;
+  return true;
+}
+
+/**
+ * @param {string|null|undefined} name
+ * @returns {number}
+ */
+export function mysticOrbMaxStacks(name) {
+  const row = lookupMysticOrb(name);
+  const max = Number(row?.maxStacks);
+  return Number.isFinite(max) && max > 0 ? max : 5;
+}
+
+/**
+ * Required-level added per applied stack (generic MO 4, unique/rare 10).
+ * @param {string|null|undefined} name
+ * @returns {number}
+ */
+export function mysticOrbReqLevelPerStack(name) {
+  const row = lookupMysticOrb(name);
+  const explicit = Math.floor(Number(row?.reqLevelPerStack));
+  if (Number.isFinite(explicit) && explicit > 0) return explicit;
+  if (row?.kind === 'mo') return 4;
+  if (row?.kind === 'umo' || row?.kind === 'smo') return 10;
+  const label = String(name || '').trim();
+  if (/^mo\s*-/i.test(label)) return 4;
+  return 10;
+}
+
+/**
+ * Total +Required Level from applied mystic orb stacks.
+ * @param {unknown} raw
+ * @returns {number}
+ */
+export function mysticOrbsRequiredLevelBonus(raw) {
+  let total = 0;
+  for (const [count, name] of normalizeMysticOrbs(raw)) {
+    total += mysticOrbReqLevelPerStack(name) * count;
+  }
+  return total;
 }
 
 /**

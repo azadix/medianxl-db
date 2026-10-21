@@ -41,7 +41,7 @@ function formatInnateKind(kind) {
  */
 function stripModifierColorPrefix(line) {
   return String(line || '')
-    .replace(/^\{(orange|grey)\}/, '')
+    .replace(/^\{(orange|grey|red|green|darkgreen|added|boosted)\}/, '')
     .trim();
 }
 
@@ -337,7 +337,7 @@ export function parseItemStats(stats) {
       out.sockets = Number(sock[1]);
       continue;
     }
-    const classOnly = /^\(([^)]+Only)\)$/i.exec(line);
+    const classOnly = /^\(([^)]+Only)\)$/i.exec(stripModifierColorPrefix(line));
     if (classOnly) {
       out.classRestriction = classOnly[1];
       continue;

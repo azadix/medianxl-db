@@ -182,11 +182,11 @@ onUnmounted(() => {
           <div class="field">
             <label class="checkbox">
               <input v-model="draftAutoLevelFromSp" type="checkbox" />
-              Automatically set level from skill points spent
+              Automatically set character level to maximum required
             </label>
             <p class="help">
-              When on, level is at least the minimum required by your build (default). When off, set level manually;
-              available skill points follow that level.
+              When on, level is raised to the highest requirement from skills and items (default). When off, set level
+              manually; mystic orbs cannot exceed that level.
             </p>
           </div>
           <div class="field">

@@ -1,55 +1,446 @@
 [
-  { "name": "MO - Strength", "modifiers": ["+5 to Strength"] },
-  { "name": "MO - Dex", "modifiers": ["+5 to Dexterity"] },
-  { "name": "MO - Energy", "modifiers": ["+5 to Energy"] },
-  { "name": "MO - Vitality", "modifiers": ["+5 to Vitality"] },
-  { "name": "MO - Fire Spell Damage", "modifiers": ["+2% to Fire Spell Damage"] },
-  { "name": "MO - Cold Spell Damage", "modifiers": ["+2% to Cold Spell Damage"] },
-  { "name": "MO - Lightning Spell Damage", "modifiers": ["+2% to Lightning Spell Damage"] },
-  { "name": "MO - Poison Spell Damage", "modifiers": ["+2% to Poison Spell Damage"] },
-  { "name": "MO - Magic Spell Damage", "modifiers": ["+2% to Physical/Magic Spell Damage"] },
-  { "name": "MO - Damage Reduced", "modifiers": ["Physical Damage Taken Reduced by 5"] },
-  { "name": "MO - Mana Regen", "modifiers": ["Regenerate Mana +5%"] },
-  { "name": "MO - Summon Damage", "modifiers": ["+2% to Summon Damage"] },
-  { "name": "MO - Summon HP", "modifiers": ["+4% to Summon Life"] },
-  { "name": "MO - Summon Resists", "modifiers": ["+2% to Summon Elemental Resistances"] },
-  { "name": "MO - Magic Find", "modifiers": ["3% Magic Find"] },
-  { "name": "MO - HP", "modifiers": ["+25 to Life"] },
-  { "name": "MO - Flat Def", "modifiers": ["+100 Defense"] },
-  { "name": "MO - Poison Length Reduced", "modifiers": ["Poison Length Reduction 4%"] },
-  { "name": "MO - Fire Res", "modifiers": ["Fire Resist +7%"] },
-  { "name": "MO - Cold Res", "modifiers": ["Cold Resist +7%"] },
-  { "name": "MO - Lightning Res", "modifiers": ["Lightning Resist +7%"] },
-  { "name": "MO - Poison Res", "modifiers": ["Poison Resist +7%"] },
-  { "name": "MO - Curse Length Reduction", "modifiers": ["Curse Length Reduction 3%"] },
-  { "name": "MO - Enhanced Defense", "modifiers": ["+15% Enhanced Defense"] },
-  { "name": "MO - Total Char Defense", "modifiers": ["+5% Total Character Defense"] },
-  { "name": "MO - Spell Focus", "modifiers": ["+6 Spell Focus"] },
-  { "name": "MO - Experience", "modifiers": ["+2% to Experience Gained"] },
-  { "name": "MO - Lifesteal", "modifiers": ["3% Life stolen per Hit"] },
-  { "name": "MO - Mana Cost", "modifiers": ["-2% Mana Cost of Skills"] },
-  { "name": "MO - Attack Rating", "modifiers": ["50% Bonus to Attack Rating"] },
-  { "name": "MO - Enhanced Damage", "modifiers": ["+15% Enhanced Damage"] },
-  { "name": "MO - Max Damage", "modifiers": ["+6 to Maximum Damage"] },
-  { "name": "MO - Deadly Strike", "modifiers": ["1% Deadly Strike"] },
-  { "name": "MO - Crushing Blow", "modifiers": ["3% Chance of Crushing Blow"] },
-  { "name": "MO - Life After Kill", "modifiers": ["+10 Life after each Kill"] },
-  { "name": "MO - Allres", "modifiers": ["Elemental Resists +3%"] },
-  { "name": "MO - Requirements", "modifiers": ["Requirements -4%"] },
-  { "name": "MO - Max Dmg Armor", "modifiers": ["+2 to Maximum Damage"] },
-  { "name": "MO - Block Speed", "modifiers": ["6% Block Speed"] },
-  { "name": "MO - Gold Find", "modifiers": ["5% Gold Find"] },
-  { "name": "MO - FHR", "modifiers": ["6% Hit Recovery"] },
-  { "name": "MO - HP Regen", "modifiers": ["+12 Life Regenerated per Second"] },
-  { "name": "MO - Life on Attack", "modifiers": ["+25 Life on Melee Attack"] },
-  { "name": "MO - Mana on Attack", "modifiers": ["+20 Mana on Melee Attack"] },
-  { "name": "MO - IED", "modifiers": ["+2% Innate Elemental Damage"] },
-  { "name": "MO - Enhanced Weapon Damage", "modifiers": ["Weapon Physical Damage +12%"] },
-  { "name": "MO - Cast Speed", "modifiers": ["6% Cast Speed"] },
-  { "name": "MO - Attack Speed", "modifiers": ["6% Attack Speed"] },
+  {
+    "name": "MO - Strength",
+    "modifiers": [
+      "+5 to Strength"
+    ],
+    "kind": "mo",
+    "slots": "armor",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - Dex",
+    "modifiers": [
+      "+5 to Dexterity"
+    ],
+    "kind": "mo",
+    "slots": "armor",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - Energy",
+    "modifiers": [
+      "+5 to Energy"
+    ],
+    "kind": "mo",
+    "slots": "armor",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - Vitality",
+    "modifiers": [
+      "+5 to Vitality"
+    ],
+    "kind": "mo",
+    "slots": "armor",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - Fire Spell Damage",
+    "modifiers": [
+      "+2% to Fire Spell Damage"
+    ],
+    "kind": "mo",
+    "slots": "all",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - Cold Spell Damage",
+    "modifiers": [
+      "+2% to Cold Spell Damage"
+    ],
+    "kind": "mo",
+    "slots": "all",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - Lightning Spell Damage",
+    "modifiers": [
+      "+2% to Lightning Spell Damage"
+    ],
+    "kind": "mo",
+    "slots": "all",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - Poison Spell Damage",
+    "modifiers": [
+      "+2% to Poison Spell Damage"
+    ],
+    "kind": "mo",
+    "slots": "all",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - Magic Spell Damage",
+    "modifiers": [
+      "+2% to Physical/Magic Spell Damage"
+    ],
+    "kind": "mo",
+    "slots": "all",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - Damage Reduced",
+    "modifiers": [
+      "Physical Damage Taken Reduced by 5"
+    ],
+    "kind": "mo",
+    "slots": "jewelry",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - Mana Regen",
+    "modifiers": [
+      "Regenerate Mana +5%"
+    ],
+    "kind": "mo",
+    "slots": "jewelry",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - Summon Damage",
+    "modifiers": [
+      "+2% to Summon Damage"
+    ],
+    "kind": "mo",
+    "slots": "all",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - Summon HP",
+    "modifiers": [
+      "+4% to Summon Life"
+    ],
+    "kind": "mo",
+    "slots": "all",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - Summon Resists",
+    "modifiers": [
+      "+2% to Summon Elemental Resistances"
+    ],
+    "kind": "mo",
+    "slots": "all",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - Magic Find",
+    "modifiers": [
+      "3% Magic Find"
+    ],
+    "kind": "mo",
+    "slots": "all",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - HP",
+    "modifiers": [
+      "+25 to Life"
+    ],
+    "kind": "mo",
+    "slots": "jewelry",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - Flat Def",
+    "modifiers": [
+      "+100 Defense"
+    ],
+    "kind": "mo",
+    "slots": "jewelry",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - Poison Length Reduced",
+    "modifiers": [
+      "Poison Length Reduction 4%"
+    ],
+    "kind": "mo",
+    "slots": "jewelry",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - Fire Res",
+    "modifiers": [
+      "Fire Resist +7%"
+    ],
+    "kind": "mo",
+    "slots": "jewelry",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - Cold Res",
+    "modifiers": [
+      "Cold Resist +7%"
+    ],
+    "kind": "mo",
+    "slots": "jewelry",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - Lightning Res",
+    "modifiers": [
+      "Lightning Resist +7%"
+    ],
+    "kind": "mo",
+    "slots": "jewelry",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - Poison Res",
+    "modifiers": [
+      "Poison Resist +7%"
+    ],
+    "kind": "mo",
+    "slots": "jewelry",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - Curse Length Reduction",
+    "modifiers": [
+      "Curse Length Reduction 3%"
+    ],
+    "kind": "mo",
+    "slots": "armor",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - Enhanced Defense",
+    "modifiers": [
+      "+15% Enhanced Defense"
+    ],
+    "kind": "mo",
+    "slots": "armor",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - Total Char Defense",
+    "modifiers": [
+      "+5% Total Character Defense"
+    ],
+    "kind": "mo",
+    "slots": "armor",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - Spell Focus",
+    "modifiers": [
+      "+6 Spell Focus"
+    ],
+    "kind": "mo",
+    "slots": "armor",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - Experience",
+    "modifiers": [
+      "+2% to Experience Gained"
+    ],
+    "kind": "mo",
+    "slots": "weapon",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - Lifesteal",
+    "modifiers": [
+      "3% Life stolen per Hit"
+    ],
+    "kind": "mo",
+    "slots": "weapon",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - Mana Cost",
+    "modifiers": [
+      "-2% Mana Cost of Skills"
+    ],
+    "kind": "mo",
+    "slots": "weapon",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - Attack Rating",
+    "modifiers": [
+      "50% Bonus to Attack Rating"
+    ],
+    "kind": "mo",
+    "slots": "weapon",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - Enhanced Damage",
+    "modifiers": [
+      "+15% Enhanced Damage"
+    ],
+    "kind": "mo",
+    "slots": "weapon",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - Max Damage",
+    "modifiers": [
+      "+6 to Maximum Damage"
+    ],
+    "kind": "mo",
+    "slots": "weapon",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - Deadly Strike",
+    "modifiers": [
+      "1% Deadly Strike"
+    ],
+    "kind": "mo",
+    "slots": "weapon",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - Crushing Blow",
+    "modifiers": [
+      "3% Chance of Crushing Blow"
+    ],
+    "kind": "mo",
+    "slots": "weapon",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - Life After Kill",
+    "modifiers": [
+      "+10 Life after each Kill"
+    ],
+    "kind": "mo",
+    "slots": "weapon",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - Allres",
+    "modifiers": [
+      "Elemental Resists +3%"
+    ],
+    "kind": "mo",
+    "slots": "armor",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - Requirements",
+    "modifiers": [
+      "Requirements -4%"
+    ],
+    "kind": "mo",
+    "slots": "armor",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - Max Dmg Armor",
+    "modifiers": [
+      "+2 to Maximum Damage"
+    ],
+    "kind": "mo",
+    "slots": "armor",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - Block Speed",
+    "modifiers": [
+      "6% Block Speed"
+    ],
+    "kind": "mo",
+    "slots": "armor",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - Gold Find",
+    "modifiers": [
+      "5% Gold Find"
+    ],
+    "kind": "mo",
+    "slots": "armor",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - FHR",
+    "modifiers": [
+      "6% Hit Recovery"
+    ],
+    "kind": "mo",
+    "slots": "armor",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - HP Regen",
+    "modifiers": [
+      "+12 Life Regenerated per Second"
+    ],
+    "kind": "mo",
+    "slots": "armor",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - Life on Attack",
+    "modifiers": [
+      "+25 Life on Melee Attack"
+    ],
+    "kind": "mo",
+    "slots": "weapon",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - Mana on Attack",
+    "modifiers": [
+      "+20 Mana on Melee Attack"
+    ],
+    "kind": "mo",
+    "slots": "weapon",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - IED",
+    "modifiers": [
+      "+2% Innate Elemental Damage"
+    ],
+    "kind": "mo",
+    "slots": "weapon",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - Enhanced Weapon Damage",
+    "modifiers": [
+      "Weapon Physical Damage +12%"
+    ],
+    "kind": "mo",
+    "slots": "weapon",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - Cast Speed",
+    "modifiers": [
+      "6% Cast Speed"
+    ],
+    "kind": "mo",
+    "slots": "weapon",
+    "maxStacks": 5
+  },
+  {
+    "name": "MO - Attack Speed",
+    "modifiers": [
+      "6% Attack Speed"
+    ],
+    "kind": "mo",
+    "slots": "weapon",
+    "maxStacks": 5
+  },
   {
     "name": "Kara's Trinket",
-    "modifiers": ["+5% to Summon Life", "+4% to Summon Physical Resist", "-3% Mana Cost of Skills"]
+    "modifiers": [
+      "+5% to Summon Life",
+      "+4% to Summon Physical Resist",
+      "-3% Mana Cost of Skills"
+    ],
+    "kind": "umo",
+    "slots": "jewelry",
+    "maxStacks": 2
   },
   {
     "name": "Monsterball",
@@ -58,7 +449,10 @@
       "+10% to Summon Life",
       "+3% to Summon Damage",
       "+2% to Summon Elemental Resistances"
-    ]
+    ],
+    "kind": "umo",
+    "slots": "jewelry",
+    "maxStacks": 2
   },
   {
     "name": "Heart of Frost",
@@ -66,34 +460,73 @@
       "2% Chance to cast level 40 Ice Bolt Nova on Melee Attack",
       "+5% to Cold Spell Damage",
       "Weapon Physical Damage +9%"
-    ]
+    ],
+    "kind": "umo",
+    "slots": "jewelry",
+    "maxStacks": 2
   },
   {
     "name": "Relic of Yaerius",
-    "aliases": ["Hand of Yaerius"],
+    "aliases": [
+      "Hand of Yaerius"
+    ],
     "modifiers": [
       "+5 to Maximum Damage",
       "+12% Damage to Undead",
       "+20 Life Regenerated per Second",
       "+10 Life after each Kill"
-    ]
+    ],
+    "kind": "umo",
+    "slots": "jewelry",
+    "maxStacks": 2
   },
   {
     "name": "The Endless Light",
-    "aliases": ["Endless Light"],
-    "modifiers": ["-3% to Enemy Elemental Resistances", "+100 Defense", "3% Bonus to Defense"]
+    "aliases": [
+      "Endless Light"
+    ],
+    "modifiers": [
+      "-3% to Enemy Elemental Resistances",
+      "+100 Defense",
+      "3% Bonus to Defense"
+    ],
+    "kind": "umo",
+    "slots": "jewelry",
+    "maxStacks": 2
   },
   {
     "name": "Marksman's Eye",
-    "modifiers": ["5% Attack Speed", "+3 to Minimum Damage", "10% Bonus to Attack Rating", "2% to Dexterity"]
+    "modifiers": [
+      "5% Attack Speed",
+      "+3 to Minimum Damage",
+      "10% Bonus to Attack Rating",
+      "2% to Dexterity"
+    ],
+    "kind": "umo",
+    "slots": "all",
+    "maxStacks": 2
   },
   {
     "name": "Farnham's Lost Marble",
-    "modifiers": ["1% Movement Speed", "+30 Life on Melee Attack", "+30 Mana on Melee Attack"]
+    "modifiers": [
+      "1% Movement Speed",
+      "+30 Life on Melee Attack",
+      "+30 Mana on Melee Attack"
+    ],
+    "kind": "umo",
+    "slots": "jewelry",
+    "maxStacks": 2
   },
   {
     "name": "Zayl's Soul Orb",
-    "modifiers": ["2% to Energy", "+100 to Mana", "Half Freeze Duration"]
+    "modifiers": [
+      "2% to Energy",
+      "+100 to Mana",
+      "Half Freeze Duration"
+    ],
+    "kind": "umo",
+    "slots": "armor",
+    "maxStacks": 2
   },
   {
     "name": "Eye of Malic",
@@ -101,29 +534,74 @@
       "3% Chance to cast level 60 Flash on Melee Attack",
       "-3% to Enemy Lightning Resistance",
       "Lightning Resist +10%"
-    ]
+    ],
+    "kind": "umo",
+    "slots": "jewelry",
+    "maxStacks": 2
   },
   {
     "name": "Apple of Discord",
-    "modifiers": ["+100 to Life", "Maximum Life -1%", "-60 to Mana", "Maximum Mana +2%"]
+    "modifiers": [
+      "+100 to Life",
+      "Maximum Life -1%",
+      "-60 to Mana",
+      "Maximum Mana +2%"
+    ],
+    "kind": "umo",
+    "slots": "all",
+    "maxStacks": 2
   },
   {
     "name": "Apple of Discord 2",
-    "aliases": ["Apple of Discord (Mana)"],
-    "modifiers": ["-60 to Life", "Maximum Life +2%", "+100 to Mana", "Maximum Mana -1%"]
+    "aliases": [
+      "Apple of Discord (Mana)"
+    ],
+    "modifiers": [
+      "-60 to Life",
+      "Maximum Life +2%",
+      "+100 to Mana",
+      "Maximum Mana -1%"
+    ],
+    "kind": "umo",
+    "slots": "all",
+    "maxStacks": 2
   },
   {
     "name": "Idol of Stars",
-    "modifiers": ["+13 to Strength", "+13 to Dexterity", "+10 to Energy"]
+    "modifiers": [
+      "+13 to Strength",
+      "+13 to Dexterity",
+      "+10 to Energy"
+    ],
+    "kind": "umo",
+    "slots": "armor",
+    "maxStacks": 2
   },
   {
     "name": "Nagapearl",
-    "modifiers": ["Stun Attack", "15% Gold Find", "10% Magic Find"]
+    "modifiers": [
+      "Stun Attack",
+      "15% Gold Find",
+      "10% Magic Find"
+    ],
+    "kind": "umo",
+    "slots": "armor",
+    "maxStacks": 2
   },
   {
     "name": "The Moon Crystal",
-    "aliases": ["Moon Crystal"],
-    "modifiers": ["10% Cast Speed", "Regenerate Mana +15%", "Lightning Resist +15%", "Cold Resist +15%"]
+    "aliases": [
+      "Moon Crystal"
+    ],
+    "modifiers": [
+      "10% Cast Speed",
+      "Regenerate Mana +15%",
+      "Lightning Resist +15%",
+      "Cold Resist +15%"
+    ],
+    "kind": "umo",
+    "slots": "armor",
+    "maxStacks": 2
   },
   {
     "name": "Auriel's Focus",
@@ -132,14 +610,21 @@
       "+25% Enhanced Defense",
       "+15 to Energy",
       "Poison Length Reduction 5%"
-    ]
+    ],
+    "kind": "umo",
+    "slots": "armor",
+    "maxStacks": 2
   },
   {
     "name": "Solitude",
     "modifiers": [
       "Adds your current mana percentage as Weapon Physical Damage (Max +100% at full mana)",
       "-25% Attack Speed"
-    ]
+    ],
+    "kind": "umo",
+    "slots": "armor",
+    "maxStacks": 1,
+    "restrictToSlot": "head"
   },
   {
     "name": "Larzuk's Round Shot",
@@ -148,7 +633,10 @@
       "2% Chance of Crushing Blow",
       "Weapon Physical Damage +30%",
       "+20 to Strength"
-    ]
+    ],
+    "kind": "umo",
+    "slots": "weapon",
+    "maxStacks": 2
   },
   {
     "name": "Vizjun's Ball Bearing",
@@ -156,7 +644,10 @@
       "2% Chance to cast level 19 ATMG Sentry on Kill",
       "3% Deadly Strike",
       "+25 to Dexterity"
-    ]
+    ],
+    "kind": "umo",
+    "slots": "weapon",
+    "maxStacks": 2
   },
   {
     "name": "Nor Tiraj's Flaming Sphere",
@@ -164,20 +655,36 @@
       "1% Chance to cast level 63 Apocalypse on Death Blow",
       "5% Chance to cast level 42 Flamefront on Melee Attack",
       "+6% to Fire Spell Damage"
-    ]
+    ],
+    "kind": "umo",
+    "slots": "weapon",
+    "maxStacks": 2
   },
   {
     "name": "The Demon Core",
-    "aliases": ["Demon's Core", "Demon Core"],
+    "aliases": [
+      "Demon's Core",
+      "Demon Core"
+    ],
     "modifiers": [
       "1% Chance to cast level 58 Gamma Field on Death Blow",
       "+10% Bonus to Poison Skill Duration",
       "+6% to Poison Spell Damage"
-    ]
+    ],
+    "kind": "umo",
+    "slots": "weapon",
+    "maxStacks": 2
   },
   {
     "name": "Uldyssian's Spirit",
-    "modifiers": ["+15 Spell Focus", "+30% Damage to Demons", "+3% to Spell Damage"]
+    "modifiers": [
+      "+15 Spell Focus",
+      "+30% Damage to Demons",
+      "+3% to Spell Damage"
+    ],
+    "kind": "umo",
+    "slots": "weapon",
+    "maxStacks": 2
   },
   {
     "name": "Orb of Annihilation",
@@ -185,15 +692,31 @@
       "1% Chance to cast level 10 Orb of Annihilation on Death Blow",
       "+5% to Physical/Magic Spell Damage",
       "5% to Energy"
-    ]
+    ],
+    "kind": "umo",
+    "slots": "weapon",
+    "maxStacks": 2
   },
   {
     "name": "Warbringer",
-    "modifiers": ["3% Chance to cast level 5 Arrow on Striking", "Adds 3-4 Damage"]
+    "modifiers": [
+      "3% Chance to cast level 5 Arrow on Striking",
+      "Adds 3-4 Damage"
+    ],
+    "kind": "umo",
+    "slots": "weapon",
+    "maxStacks": 2
   },
   {
     "name": "Ten Pin Striker",
-    "modifiers": ["100% Bonus to Attack Rating", "5% to Strength", "Target Takes Additional Damage of 100"]
+    "modifiers": [
+      "100% Bonus to Attack Rating",
+      "5% to Strength",
+      "Target Takes Additional Damage of 100"
+    ],
+    "kind": "umo",
+    "slots": "weapon",
+    "maxStacks": 2
   },
   {
     "name": "Wrathspirit",
@@ -201,29 +724,66 @@
       "1% Chance to cast level 46 Punishers when Struck",
       "+3% to Spell Damage",
       "+15 Life after each Kill"
-    ]
+    ],
+    "kind": "umo",
+    "slots": "weapon",
+    "maxStacks": 2
   },
   {
     "name": "Crystal of Tears",
-    "modifiers": ["Adds 3-6 Damage"]
+    "modifiers": [
+      "Adds 3-6 Damage"
+    ],
+    "kind": "umo",
+    "slots": "armor",
+    "maxStacks": 2
   },
   {
     "name": "Essence of Itherael",
-    "modifiers": ["Weapon Physical Damage +9%", "15% Bonus to Defense"]
+    "modifiers": [
+      "Weapon Physical Damage +9%",
+      "15% Bonus to Defense"
+    ],
+    "kind": "umo",
+    "slots": "armor",
+    "maxStacks": 2
   },
   {
     "name": "Periapt of Life",
-    "modifiers": ["4% to Vitality", "+40 Life Regenerated per Second"]
+    "modifiers": [
+      "4% to Vitality",
+      "+40 Life Regenerated per Second"
+    ],
+    "kind": "umo",
+    "slots": "armor",
+    "maxStacks": 2
   },
   {
     "name": "The Lodestone",
-    "aliases": ["Lodestone"],
-    "modifiers": ["+6 Spell Focus", "+6% to Spell Damage", "Requirements +10%"]
+    "aliases": [
+      "Lodestone"
+    ],
+    "modifiers": [
+      "+6 Spell Focus",
+      "+6% to Spell Damage",
+      "Requirements +10%"
+    ],
+    "kind": "umo",
+    "slots": "armor",
+    "maxStacks": 2
   },
   {
     "name": "Explorers Globe",
-    "aliases": ["Explorer's Globe"],
-    "modifiers": ["-2 to all Attributes", "2% to All Attributes"]
+    "aliases": [
+      "Explorer's Globe"
+    ],
+    "modifiers": [
+      "-2 to all Attributes",
+      "2% to All Attributes"
+    ],
+    "kind": "umo",
+    "slots": "jewelry",
+    "maxStacks": 2
   },
   {
     "name": "Eye of the Storm",
@@ -231,91 +791,234 @@
       "3% Chance to cast level 50 Supernova on Melee Attack",
       "+5% to Lightning Spell Damage",
       "+12 to Energy"
-    ]
+    ],
+    "kind": "umo",
+    "slots": "weapon",
+    "maxStacks": 2
   },
   {
     "name": "Invisible",
-    "modifiers": ["12% Block Speed", "12% Hit Recovery", "1% Chance to Avoid Damage"]
+    "modifiers": [
+      "12% Block Speed",
+      "12% Hit Recovery",
+      "1% Chance to Avoid Damage"
+    ],
+    "kind": "umo",
+    "slots": "armor",
+    "maxStacks": 1
   },
   {
     "name": "Rare MO - Physical Resist",
-    "modifiers": ["Physical Resist +1%"]
+    "modifiers": [
+      "Physical Resist +1%"
+    ],
+    "kind": "smo",
+    "slots": "armor",
+    "maxStacks": 5,
+    "requiresAngelic": true
   },
   {
     "name": "Rare MO - No Freeze",
-    "modifiers": ["Cannot Be Frozen"]
+    "modifiers": [
+      "Cannot Be Frozen"
+    ],
+    "kind": "smo",
+    "slots": "armor",
+    "maxStacks": 1,
+    "requiresAngelic": true
   },
   {
     "name": "Rare MO - Fire Resist",
-    "modifiers": ["Maximum Fire Resist +1%", "Fire Resist -10%"]
+    "modifiers": [
+      "Maximum Fire Resist +1%",
+      "Fire Resist -10%"
+    ],
+    "kind": "smo",
+    "slots": "armor",
+    "maxStacks": 1,
+    "requiresAngelic": true
   },
   {
     "name": "Rare MO - Cold Resist",
-    "modifiers": ["Maximum Cold Resist +1%", "Cold Resist -10%"]
+    "modifiers": [
+      "Maximum Cold Resist +1%",
+      "Cold Resist -10%"
+    ],
+    "kind": "smo",
+    "slots": "armor",
+    "maxStacks": 1,
+    "requiresAngelic": true
   },
   {
     "name": "Rare MO - Lightning Resist",
-    "modifiers": ["Maximum Lightning Resist +1%", "Lightning Resist -10%"]
+    "modifiers": [
+      "Maximum Lightning Resist +1%",
+      "Lightning Resist -10%"
+    ],
+    "kind": "smo",
+    "slots": "armor",
+    "maxStacks": 1,
+    "requiresAngelic": true
   },
   {
     "name": "Rare MO - Poison Resist",
-    "modifiers": ["Maximum Poison Resist +1%", "Poison Resist -10%"]
+    "modifiers": [
+      "Maximum Poison Resist +1%",
+      "Poison Resist -10%"
+    ],
+    "kind": "smo",
+    "slots": "armor",
+    "maxStacks": 1,
+    "requiresAngelic": true
   },
   {
     "name": "Rare MO - IED",
-    "modifiers": ["+1% Innate Elemental Damage"]
+    "modifiers": [
+      "+1% Innate Elemental Damage"
+    ],
+    "kind": "smo",
+    "slots": "armor",
+    "maxStacks": 5,
+    "requiresAngelic": true
   },
   {
     "name": "Rare MO - Block Up",
-    "modifiers": ["+1% Base Block Chance", "-10% Block Speed"]
+    "modifiers": [
+      "+1% Base Block Chance",
+      "-10% Block Speed"
+    ],
+    "kind": "smo",
+    "slots": "armor",
+    "maxStacks": 2,
+    "requiresAngelic": true,
+    "restrictToCategory": "shield"
   },
   {
     "name": "Rare MO - Block Down",
-    "modifiers": ["-2% Base Block Chance"]
+    "modifiers": [
+      "-2% Base Block Chance"
+    ],
+    "kind": "smo",
+    "slots": "armor",
+    "maxStacks": 2,
+    "requiresAngelic": true,
+    "restrictToCategory": "shield"
   },
   {
     "name": "Rare MO - Max Life",
-    "modifiers": ["Maximum Life +1%"]
+    "modifiers": [
+      "Maximum Life +1%"
+    ],
+    "kind": "smo",
+    "slots": "armor",
+    "maxStacks": 5,
+    "requiresAngelic": true,
+    "restrictToSlot": "tors"
   },
   {
     "name": "Rare MO - Pierce Fire",
-    "modifiers": ["-1% to Enemy Fire Resistance"]
+    "modifiers": [
+      "-1% to Enemy Fire Resistance"
+    ],
+    "kind": "smo",
+    "slots": "armor",
+    "maxStacks": 5,
+    "requiresAngelic": true
   },
   {
     "name": "Rare MO - Pierce Cold",
-    "modifiers": ["-1% to Enemy Cold Resistance"]
+    "modifiers": [
+      "-1% to Enemy Cold Resistance"
+    ],
+    "kind": "smo",
+    "slots": "armor",
+    "maxStacks": 5,
+    "requiresAngelic": true
   },
   {
     "name": "Rare MO - Pierce Lightning",
-    "modifiers": ["-1% to Enemy Lightning Resistance"]
+    "modifiers": [
+      "-1% to Enemy Lightning Resistance"
+    ],
+    "kind": "smo",
+    "slots": "armor",
+    "maxStacks": 5,
+    "requiresAngelic": true
   },
   {
     "name": "Rare MO - Pierce Poison",
-    "modifiers": ["-1% to Enemy Poison Resistance"]
+    "modifiers": [
+      "-1% to Enemy Poison Resistance"
+    ],
+    "kind": "smo",
+    "slots": "armor",
+    "maxStacks": 5,
+    "requiresAngelic": true
   },
   {
     "name": "Weight of Talent",
-    "modifiers": ["+1 to All Skills", "+5% to Experience Gained", "Requirements +15%"]
+    "modifiers": [
+      "+1 to All Skills",
+      "+5% to Experience Gained",
+      "Requirements +15%"
+    ],
+    "kind": "umo",
+    "slots": "armor",
+    "maxStacks": 1,
+    "restrictToSlot": "tors"
   },
   {
     "name": "Imperfect Sphere - no cold",
-    "modifiers": ["Maximum Fire Resist +1%", "Maximum Lightning Resist +1%", "Maximum Cold Resist -1%"]
+    "modifiers": [
+      "Maximum Fire Resist +1%",
+      "Maximum Lightning Resist +1%",
+      "Maximum Cold Resist -1%"
+    ],
+    "kind": "umo",
+    "slots": "jewelry",
+    "maxStacks": 1
   },
   {
     "name": "Imperfect Sphere - no fire",
-    "modifiers": ["Maximum Fire Resist -1%", "Maximum Lightning Resist +1%", "Maximum Cold Resist +1%"]
+    "modifiers": [
+      "Maximum Fire Resist -1%",
+      "Maximum Lightning Resist +1%",
+      "Maximum Cold Resist +1%"
+    ],
+    "kind": "umo",
+    "slots": "jewelry",
+    "maxStacks": 1
   },
   {
     "name": "Imperfect Sphere - no light",
-    "modifiers": ["Maximum Fire Resist +1%", "Maximum Lightning Resist -1%", "Maximum Cold Resist +1%"]
+    "modifiers": [
+      "Maximum Fire Resist +1%",
+      "Maximum Lightning Resist -1%",
+      "Maximum Cold Resist +1%"
+    ],
+    "kind": "umo",
+    "slots": "jewelry",
+    "maxStacks": 1
   },
   {
     "name": "Rare MO - Demon Damage",
-    "modifiers": ["+15% Damage to Demons"]
+    "modifiers": [
+      "+15% Damage to Demons"
+    ],
+    "kind": "smo",
+    "slots": "armor",
+    "maxStacks": 3,
+    "requiresAngelic": true
   },
   {
     "name": "Rare MO - Undead Damage",
-    "modifiers": ["+15% Damage to Undead"]
+    "modifiers": [
+      "+15% Damage to Undead"
+    ],
+    "kind": "smo",
+    "slots": "armor",
+    "maxStacks": 3,
+    "requiresAngelic": true
   },
   {
     "name": "Eye of Beholder",
@@ -324,6 +1027,10 @@
       "-2% Base Block Chance",
       "Curse Length Reduction 10%",
       "Elemental/Magic Damage Taken Reduced by 15"
-    ]
+    ],
+    "kind": "umo",
+    "slots": "armor",
+    "maxStacks": 1,
+    "restrictToCategory": "shield"
   }
 ]

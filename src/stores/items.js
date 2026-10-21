@@ -45,9 +45,13 @@ import { isRelicItem, MAX_RELICS, relicMeetsLevel } from '@/items/relic-items.js
 import {
   characterMeetsItemRequirements,
   formatItemRequirementsLine,
+  itemRequirementsExceedCharacterLevel,
   resolveItemRequirements,
 } from '@/items/item-requirements.js';
-import { getPlannerAutoMatchHighestStatRequirements } from '@/planner/planner-options.js';
+import {
+  getPlannerAutoMatchHighestStatRequirements,
+  getPlannerItemReqLevelCap,
+} from '@/planner/planner-options.js';
 import { isTswSocketedRuneDump } from '@/planner/tsw-item-rolls.js';
 import {
   countEquippedSetPieces,
@@ -65,7 +69,13 @@ import {
 } from '@/items/runeword-items.js';
 import { applyCustomOverlayToDef, parseCustomPayload } from '@/items/custom-items.js';
 import { loadMysticOrbsCatalog, normalizeMysticOrbs } from '@/items/mystic-orbs.js';
-import { loadSocketablesCatalog, normalizeSocketables } from '@/items/socketables.js';
+import {
+  getItemSocketCount,
+  loadSocketablesCatalog,
+  mergeJewelItemsIntoSocketablesCatalog,
+  normalizeSocketables,
+  trimSocketablesToCount,
+} from '@/items/socketables.js';
 
 /** When true, equip/enable paths skip raising planner level for item reqs. */
 let skipItemReqLevelSync = false;
@@ -553,11 +563,13 @@ export const useItemsStore = defineStore('items', {
     maxActiveItemReqLevel() {
       let max = 0;
       const className = this.effectiveViewerClassName;
-      const consider = (def, rolls = null) => {
+      const consider = (def, rolls = null, instanceId = null) => {
         if (!def || !canEquipForClass(def, className)) return;
         const req = isCharmItem(def)
           ? getCharmRequiredLevel(def, rolls)
-          : Number(def.reqLevel);
+          : instanceId != null
+            ? this.getRequirementsForInstance(instanceId)?.reqLevel
+            : Number(def.reqLevel);
         if (Number.isFinite(req) && req > max) max = req;
       };
       for (const slot of EQUIPMENT_SLOTS) {
@@ -565,7 +577,7 @@ export const useItemsStore = defineStore('items', {
         const id = this.equipment[slot];
         if (id == null) continue;
         const inst = this.instances[id];
-        consider(inst ? this.catalogById[inst.defId] : null, inst?.rolls ?? null);
+        consider(inst ? this.catalogById[inst.defId] : null, inst?.rolls ?? null, id);
       }
       for (const [defId, instanceId] of Object.entries(this.enabledCharms)) {
         consider(this.catalogById[defId], this.getRollsForInstance(instanceId));
@@ -700,6 +712,7 @@ export const useItemsStore = defineStore('items', {
           loadMysticOrbsCatalog(Array.isArray(mysticOrbsData) ? mysticOrbsData : []);
 
           this.catalog = [...baseItems, ...charms, ...other, ...overlays, ...relics, ...runewords];
+          mergeJewelItemsIntoSocketablesCatalog(this.catalog);
           this.sets = sets;
           this.runtimeOverlayDefs = [];
           this.catalogByIdMap = buildCatalogByIdMap(this.catalog, this.runtimeOverlayDefs);
@@ -790,6 +803,7 @@ export const useItemsStore = defineStore('items', {
         rolls: this.getRollsForInstance(instanceId),
         extras: this.getExtrasForInstance(instanceId),
         socketables: this.getSocketablesForInstance(instanceId),
+        mysticOrbs: this.getMysticOrbsForInstance(instanceId),
       });
     },
 
@@ -1110,6 +1124,73 @@ export const useItemsStore = defineStore('items', {
       } else {
         delete inst.rolls;
       }
+      const def = this.getDefForInstance(instanceId);
+      if (def) {
+        const cap = getItemSocketCount(def, inst.rolls ?? null);
+        const cur = parseSocketablesList(inst.socketables);
+        if (cur.length > cap) {
+          const next = trimSocketablesToCount(cur, cap);
+          if (next.length) inst.socketables = next;
+          else delete inst.socketables;
+        }
+      }
+      const active =
+        Object.values(this.equipment).includes(instanceId) ||
+        Object.values(this.enabledCharms).includes(instanceId) ||
+        Object.values(this.enabledRelics).includes(instanceId);
+      if (active) this.syncCharacterToItemReqs();
+      return true;
+    },
+
+    /**
+     * @param {number} instanceId
+     * @param {import('@/items/socketables.js').SocketableEntry[]|null|undefined} socketables
+     * @returns {boolean}
+     */
+    updateInstanceSocketables(instanceId, socketables) {
+      const inst = this.instances[instanceId];
+      if (!inst) return false;
+      const next = parseSocketablesList(socketables).map((entry, i) => ({
+        ...entry,
+        slot: i + 1,
+      }));
+      if (next.length) inst.socketables = next;
+      else delete inst.socketables;
+      const active =
+        Object.values(this.equipment).includes(instanceId) ||
+        Object.values(this.enabledCharms).includes(instanceId) ||
+        Object.values(this.enabledRelics).includes(instanceId);
+      if (active) this.syncCharacterToItemReqs();
+      return true;
+    },
+
+    /**
+     * @param {number} instanceId
+     * @param {Array<[number, string]>|null|undefined} mysticOrbs
+     * @returns {boolean}
+     */
+    updateInstanceMysticOrbs(instanceId, mysticOrbs) {
+      const inst = this.instances[instanceId];
+      if (!inst) return false;
+      const next = parseMysticOrbsList(mysticOrbs);
+      const def = this.getDefForInstance(instanceId);
+      if (
+        def &&
+        itemRequirementsExceedCharacterLevel(
+          def,
+          {
+            rolls: this.getRollsForInstance(instanceId),
+            extras: this.getExtrasForInstance(instanceId),
+            socketables: this.getSocketablesForInstance(instanceId),
+            mysticOrbs: next,
+          },
+          getPlannerItemReqLevelCap(this.getCharacterRequirementStats().level)
+        )
+      ) {
+        return false;
+      }
+      if (next.length) inst.mysticOrbs = next;
+      else delete inst.mysticOrbs;
       const active =
         Object.values(this.equipment).includes(instanceId) ||
         Object.values(this.enabledCharms).includes(instanceId) ||

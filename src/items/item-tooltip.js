@@ -14,6 +14,7 @@ import { formatSetBonusLabel } from '@/items/item-overlays.js';
 import { formatMysticOrbRows, mysticOrbKind } from '@/items/mystic-orbs.js';
 import { formatRunewordBadge, isRunewordItem } from '@/items/runeword-items.js';
 import {
+  getItemSocketCount,
   getSocketableBonusLines,
   normalizeSocketables,
   socketableNameCssClass,
@@ -164,6 +165,7 @@ export function buildItemTooltipHtml(def, iconKey = null, rolls = null, options 
     className: options.className ?? null,
     socketables: options.socketables ?? null,
     extras: options.extras ?? null,
+    mysticOrbs: options.mysticOrbs ?? null,
   });
 
   const baseBlock = renderStatLines([...sections.base, ...sections.scaling]);
@@ -194,7 +196,7 @@ export function buildItemTooltipHtml(def, iconKey = null, rolls = null, options 
 
   const card = `<div class="tooltip-content item-tooltip-card ${frameClass}">${header}${body}</div>`;
   const side = buildItemTooltipSidepanelHtml(options.socketables, options.mysticOrbs, {
-    sockets: def.sockets,
+    sockets: getItemSocketCount(def, rolls),
     rolls,
     hostDef: def,
   });

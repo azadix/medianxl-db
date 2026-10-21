@@ -694,6 +694,8 @@ export function collectEnabledItemCharacterStatBonuses(options = {}) {
         charmInInventory: true,
         className,
         extras,
+        mysticOrbs: itemsStore.getMysticOrbsForInstance?.(instanceId) ?? [],
+        socketables: itemsStore.getSocketablesForInstance?.(instanceId) ?? [],
       });
       accumulateLines(lines, sourceLabelForDef(def), bonuses, modifiersByKey, unknownModifiers);
     }

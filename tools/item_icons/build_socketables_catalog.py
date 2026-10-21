@@ -30,7 +30,7 @@ RUNE_ROWS: list[dict] = [
     {
         "name": "Eld",
         "code": "r02",
-        "icon": "invreldc",
+        "icon": "invrEld",
         "level": 8,
         "weapon": "+5 to Maximum Damage",
         "armor": "+3 to Maximum Damage",
@@ -315,11 +315,11 @@ RUNE_ROWS: list[dict] = [
         "armor": "+15 Life after each Kill",
         "shield": "+15 Life after each Kill",
     },
-    # Enchanted runes
+    # Enchanted runes use Median xis* invfiles (yellow rune art), not invr* / *C.
     {
         "name": "Ol",
         "code": "rx01",
-        "icon": "invrolc",
+        "icon": "xisEl",
         "level": 90,
         "weapon": "+13 to all Attributes",
         "armor": "+13 to all Attributes",
@@ -328,7 +328,7 @@ RUNE_ROWS: list[dict] = [
     {
         "name": "Elq",
         "code": "rx02",
-        "icon": "invrelqc",
+        "icon": "xisEld",
         "level": 90,
         "weapon": "+20 to Maximum Damage",
         "armor": "+10 to Maximum Damage",
@@ -337,7 +337,7 @@ RUNE_ROWS: list[dict] = [
     {
         "name": "Tyr",
         "code": "rx03",
-        "icon": "invrtyrc",
+        "icon": "xisTir",
         "level": 90,
         "weapon": "+5% to Fire Spell Damage",
         "armor": "+5% to Fire Spell Damage",
@@ -346,7 +346,7 @@ RUNE_ROWS: list[dict] = [
     {
         "name": "Nif",
         "code": "rx04",
-        "icon": "invrnifc",
+        "icon": "xisNef",
         "level": 95,
         "weapon": "+5% to Lightning Spell Damage",
         "armor": "+5% to Lightning Spell Damage",
@@ -355,7 +355,7 @@ RUNE_ROWS: list[dict] = [
     {
         "name": "Xeth",
         "code": "rx05",
-        "icon": "invrxethc",
+        "icon": "xisEth",
         "level": 95,
         "weapon": "+5% to Cold Spell Damage",
         "armor": "+5% to Cold Spell Damage",
@@ -364,7 +364,7 @@ RUNE_ROWS: list[dict] = [
     {
         "name": "Xith",
         "code": "rx06",
-        "icon": "invrxithc",
+        "icon": "xisIth",
         "level": 95,
         "weapon": "+5% to Poison Spell Damage",
         "armor": "+5% to Poison Spell Damage",
@@ -373,7 +373,7 @@ RUNE_ROWS: list[dict] = [
     {
         "name": "Thal",
         "code": "rx07",
-        "icon": "invrthalc",
+        "icon": "xisTal",
         "level": 100,
         "weapon": "+5% to Physical/Magic Spell Damage",
         "armor": "+5% to Physical/Magic Spell Damage",
@@ -382,7 +382,7 @@ RUNE_ROWS: list[dict] = [
     {
         "name": "Rhal",
         "code": "rx08",
-        "icon": "invrrhalc",
+        "icon": "xisRal",
         "level": 100,
         "weapon": "Fire Resist +35%",
         "armor": "Fire Resist +35%",
@@ -391,7 +391,7 @@ RUNE_ROWS: list[dict] = [
     {
         "name": "Urt",
         "code": "rx09",
-        "icon": "invrurtc",
+        "icon": "xisOrt",
         "level": 100,
         "weapon": "Lightning Resist +35%",
         "armor": "Lightning Resist +35%",
@@ -400,7 +400,7 @@ RUNE_ROWS: list[dict] = [
     {
         "name": "Tuul",
         "code": "rx10",
-        "icon": "invrtuulc",
+        "icon": "xisThul",
         "level": 100,
         "weapon": "Cold Resist +35%",
         "armor": "Cold Resist +35%",
@@ -409,7 +409,7 @@ RUNE_ROWS: list[dict] = [
     {
         "name": "Ahmn",
         "code": "rx11",
-        "icon": "invrahmnc",
+        "icon": "xisAmn",
         "level": 100,
         "weapon": "Poison Resist +35%",
         "armor": "Poison Resist +35%",
@@ -418,7 +418,7 @@ RUNE_ROWS: list[dict] = [
     {
         "name": "Zol",
         "code": "rx12",
-        "icon": "invrzolc",
+        "icon": "xisSol",
         "level": 100,
         "weapon": "+100 to Mana",
         "armor": "+75 to Mana",
@@ -427,7 +427,7 @@ RUNE_ROWS: list[dict] = [
     {
         "name": "Shaen",
         "code": "rx13",
-        "icon": "invrshaenc",
+        "icon": "xisShael",
         "level": 105,
         "weapon": "+20% Bonus to Poison Skill Duration",
         "armor": "+13% Bonus to Poison Skill Duration",
@@ -436,7 +436,7 @@ RUNE_ROWS: list[dict] = [
     {
         "name": "Doj",
         "code": "rx14",
-        "icon": "invrdojc",
+        "icon": "xisDol",
         "level": 105,
         "weapon": "+20% to Summon Life",
         "armor": "+20% to Summon Life",
@@ -445,7 +445,7 @@ RUNE_ROWS: list[dict] = [
     {
         "name": "Hem",
         "code": "rx15",
-        "icon": "invrhemc",
+        "icon": "xisHel",
         "level": 105,
         "weapon": "+10% to Summon Damage",
         "armor": "+10% to Summon Damage",
@@ -454,7 +454,7 @@ RUNE_ROWS: list[dict] = [
     {
         "name": "Iu",
         "code": "rx16",
-        "icon": "invriuc",
+        "icon": "xisIo",
         "level": 105,
         "weapon": "+70% to Summon Attack Rating",
         "armor": "+70% to Summon Attack Rating",
@@ -463,7 +463,7 @@ RUNE_ROWS: list[dict] = [
     {
         "name": "Lux",
         "code": "rx17",
-        "icon": "invrluxc",
+        "icon": "xisLum",
         "level": 105,
         "weapon": "+7% to Summon Elemental Resistances",
         "armor": "+7% to Summon Elemental Resistances",
@@ -472,7 +472,7 @@ RUNE_ROWS: list[dict] = [
     {
         "name": "Ka",
         "code": "rx18",
-        "icon": "invrkac",
+        "icon": "xisKo",
         "level": 105,
         "weapon": "7% to Strength",
         "armor": "7% to Strength",
@@ -481,7 +481,7 @@ RUNE_ROWS: list[dict] = [
     {
         "name": "Fel",
         "code": "rx19",
-        "icon": "invrfelc",
+        "icon": "xisFal",
         "level": 110,
         "weapon": "7% to Dexterity",
         "armor": "7% to Dexterity",
@@ -490,7 +490,7 @@ RUNE_ROWS: list[dict] = [
     {
         "name": "Lew",
         "code": "rx20",
-        "icon": "invrlewc",
+        "icon": "xisLem",
         "level": 110,
         "weapon": "6% to Vitality",
         "armor": "6% to Vitality",
@@ -499,7 +499,7 @@ RUNE_ROWS: list[dict] = [
     {
         "name": "Phul",
         "code": "rx21",
-        "icon": "invrphulc",
+        "icon": "xisPul",
         "level": 110,
         "weapon": "7% to Energy",
         "armor": "7% to Energy",
@@ -508,7 +508,7 @@ RUNE_ROWS: list[dict] = [
     {
         "name": "Un",
         "code": "rx22",
-        "icon": "invrunc",
+        "icon": "xisUm",
         "level": 110,
         "weapon": "Elemental Resists +13%",
         "armor": "Elemental Resists +13%",
@@ -517,7 +517,7 @@ RUNE_ROWS: list[dict] = [
     {
         "name": "Mhal",
         "code": "rx23",
-        "icon": "invrmhalc",
+        "icon": "xisMal",
         "level": 110,
         "weapon": "4% to All Attributes",
         "armor": "4% to All Attributes",
@@ -526,7 +526,7 @@ RUNE_ROWS: list[dict] = [
     {
         "name": "Yst",
         "code": "rx24",
-        "icon": "invrystc",
+        "icon": "xisIst",
         "level": 110,
         "weapon": "13% Magic Find",
         "armor": "10% Magic Find",
@@ -535,7 +535,7 @@ RUNE_ROWS: list[dict] = [
     {
         "name": "Gur",
         "code": "rx25",
-        "icon": "invrgurc",
+        "icon": "xisGul",
         "level": 115,
         "weapon": "40% Attack Speed",
         "armor": "30% Attack Speed",
@@ -544,7 +544,7 @@ RUNE_ROWS: list[dict] = [
     {
         "name": "Vez",
         "code": "rx26",
-        "icon": "invrvezc",
+        "icon": "xisVex",
         "level": 115,
         "weapon": "40% Cast Speed",
         "armor": "30% Cast Speed",
@@ -553,7 +553,7 @@ RUNE_ROWS: list[dict] = [
     {
         "name": "Ohn",
         "code": "rx27",
-        "icon": "invrohnc",
+        "icon": "xisOhm",
         "level": 115,
         "weapon": "30% Hit Recovery",
         "armor": "30% Hit Recovery",
@@ -562,7 +562,7 @@ RUNE_ROWS: list[dict] = [
     {
         "name": "Loz",
         "code": "rx28",
-        "icon": "invrlozc",
+        "icon": "xisLo",
         "level": 115,
         "weapon": "+4% to Summon Physical Resist",
         "armor": "+3% to Summon Physical Resist",
@@ -571,7 +571,7 @@ RUNE_ROWS: list[dict] = [
     {
         "name": "Zur",
         "code": "rx29",
-        "icon": "invrzurc",
+        "icon": "xisSur",
         "level": 115,
         "weapon": "Regenerate Mana +22%",
         "armor": "Regenerate Mana +11%",
@@ -580,7 +580,7 @@ RUNE_ROWS: list[dict] = [
     {
         "name": "Bur",
         "code": "rx30",
-        "icon": "invrburc",
+        "icon": "xisBer",
         "level": 115,
         "weapon": "Slow Target 5%",
         "armor": "Slows Attacker by 4%",
@@ -589,7 +589,7 @@ RUNE_ROWS: list[dict] = [
     {
         "name": "Iah",
         "code": "rx31",
-        "icon": "invriahc",
+        "icon": "xisJah",
         "level": 120,
         "weapon": "+25% Enhanced Damage",
         "armor": "+25% Enhanced Defense",
@@ -598,7 +598,7 @@ RUNE_ROWS: list[dict] = [
     {
         "name": "Yham",
         "code": "rx32",
-        "icon": "invryhamc",
+        "icon": "xisCham",
         "level": 120,
         "weapon": "Maximum Mana +5%",
         "armor": "Maximum Life and Mana +2%",
@@ -607,7 +607,7 @@ RUNE_ROWS: list[dict] = [
     {
         "name": "Xod",
         "code": "rx33",
-        "icon": "invrxodc",
+        "icon": "xisZod",
         "level": 120,
         "weapon": "+1 to All Skills",
         "armor": "+1 to All Skills",

@@ -30,6 +30,39 @@ EXTRA_ITEM_DC6_STEMS = (
     "pois-rune",
     "ltng-rune",
     "cold-rune",
+    "xisEl",
+    "xisEld",
+    "xisTir",
+    "xisNef",
+    "xisEth",
+    "xisIth",
+    "xisTal",
+    "xisRal",
+    "xisOrt",
+    "xisThul",
+    "xisAmn",
+    "xisSol",
+    "xisShael",
+    "xisDol",
+    "xisHel",
+    "xisIo",
+    "xisLum",
+    "xisKo",
+    "xisFal",
+    "xisLem",
+    "xisPul",
+    "xisUm",
+    "xisMal",
+    "xisIst",
+    "xisGul",
+    "xisVex",
+    "xisOhm",
+    "xisLo",
+    "xisSur",
+    "xisBer",
+    "xisJah",
+    "xisCham",
+    "xisZod",
 )
 
 
@@ -45,11 +78,14 @@ def _load_config() -> dict:
 
 
 def _snapshot_outputs(input_dir: Path, stem: str) -> set[Path]:
-    # qdc6 writes next to the input file using the input stem prefix,
-    # e.g. invpa4.png
+    # qdc6 writes next to the input file using the input stem
+    # (foo.png or foo_0.png). Prefix glob would also match fooBar.dc6.
     out: set[Path] = set()
-    for p in input_dir.glob(f"{stem}*"):
-        if p.is_file():
+    for p in input_dir.iterdir():
+        if not p.is_file():
+            continue
+        name = p.name
+        if name == f"{stem}{p.suffix}" or name.startswith(f"{stem}_"):
             out.add(p.resolve())
     return out
 

@@ -11,8 +11,9 @@ import {
   resolveItemRequirements,
 } from '@/items/item-requirements.js';
 import { itemRarityNameClass } from '@/items/item-tooltip.js';
-import { formatMysticOrbRows } from '@/items/mystic-orbs.js';
 import { formatRunewordBadge, isRunewordItem } from '@/items/runeword-items.js';
+import ItemSocketsEditor from './ItemSocketsEditor.vue';
+import ItemMysticOrbsEditor from './ItemMysticOrbsEditor.vue';
 import { computed } from 'vue';
 
 const props = defineProps({
@@ -34,14 +35,17 @@ const props = defineProps({
     type: /** @type {import('vue').PropType<Array<object>>} */ (Array),
     default: () => [],
   },
+  /** @type {import('vue').PropType<'base'|'sockets'|'mysticOrbs'|'oils'|'corruptions'|'effigies'>} */
+  activeTab: { type: String, default: 'base' },
+  canEdit: { type: Boolean, default: false },
   emptyText: { type: String, default: 'Select an item to view stats' },
+  characterLevel: { type: Number, default: null },
 });
 
-const emit = defineEmits(['update:rolls', 'set-roll']);
+const emit = defineEmits(['update:rolls', 'set-roll', 'update:socketables', 'update:mystic-orbs']);
 
 const subtitle = computed(() => formatItemTooltipSubtitle(props.def));
 const rarityNameClass = computed(() => itemRarityNameClass(props.def?.rarity));
-const mysticOrbRows = computed(() => formatMysticOrbRows(props.mysticOrbs));
 
 const requirementsLine = computed(() =>
   formatItemRequirementsLine(
@@ -49,6 +53,7 @@ const requirementsLine = computed(() =>
       rolls: props.effectiveRolls,
       extras: props.extras,
       socketables: props.socketables,
+      mysticOrbs: props.mysticOrbs,
     })
   )
 );
@@ -70,6 +75,22 @@ const baseRows = computed(() =>
   })
 );
 const modRows = computed(() => props.detailStatRows.filter((row) => row.section !== 'base'));
+
+const isBaseTab = computed(() => props.activeTab === 'base');
+const isSocketsTab = computed(() => props.activeTab === 'sockets');
+const isMysticOrbsTab = computed(() => props.activeTab === 'mysticOrbs');
+const isPlaceholderTab = computed(() =>
+  props.activeTab === 'oils' ||
+  props.activeTab === 'corruptions' ||
+  props.activeTab === 'effigies'
+);
+
+const placeholderCopy = computed(() => {
+  if (props.activeTab === 'oils') return 'No oils applied.';
+  if (props.activeTab === 'corruptions') return 'No corruptions applied.';
+  if (props.activeTab === 'effigies') return 'No effigies applied.';
+  return '';
+});
 
 /**
  * @param {string} key
@@ -138,139 +159,100 @@ function modLineClass(row) {
         </div>
       </div>
 
-      <div
-        v-if="baseRows.length"
-        class="item-tooltip-section item-tooltip-section--base item-detail-panel__section"
-        aria-label="Base properties"
-      >
-        <template v-for="(row, idx) in baseRows" :key="'base-' + idx">
-          <p
-            v-if="row.kind === 'text'"
-            class="item-tooltip-line item-picker-modal__stat-line"
-            :class="modLineClass(row)"
-          >
-            <!-- eslint-disable-next-line vue/no-v-html -- escaped skill-name markup -->
-            <span class="item-picker-modal__stat-line-text" v-html="modLineHtml(row.text)"></span>
-          </p>
-          <ItemRollRow
-            v-else
-            :stat="row.stat"
-            :value="effectiveRolls[row.stat.key] ?? row.stat.min"
-            @update="onRollUpdate(row.stat.key, row.stat.min, row.stat.max, $event)"
-          />
-        </template>
-      </div>
+      <template v-if="isBaseTab">
+        <div
+          v-if="baseRows.length"
+          class="item-tooltip-section item-tooltip-section--base item-detail-panel__section"
+          aria-label="Base properties"
+        >
+          <template v-for="(row, idx) in baseRows" :key="'base-' + idx">
+            <p
+              v-if="row.kind === 'text'"
+              class="item-tooltip-line item-picker-modal__stat-line"
+              :class="modLineClass(row)"
+            >
+              <!-- eslint-disable-next-line vue/no-v-html -- escaped skill-name markup -->
+              <span class="item-picker-modal__stat-line-text" v-html="modLineHtml(row.text)"></span>
+            </p>
+            <ItemRollRow
+              v-else
+              :stat="row.stat"
+              :value="effectiveRolls[row.stat.key] ?? row.stat.min"
+              @update="onRollUpdate(row.stat.key, row.stat.min, row.stat.max, $event)"
+            />
+          </template>
+        </div>
+
+        <div
+          v-if="modRows.length"
+          class="item-tooltip-section item-tooltip-section--mods item-detail-panel__section"
+          aria-label="Item modifiers"
+        >
+          <template v-for="(row, idx) in modRows" :key="'mod-' + idx">
+            <p
+              v-if="row.kind === 'text'"
+              class="item-tooltip-line item-picker-modal__stat-line"
+              :class="modLineClass(row)"
+            >
+              <!-- eslint-disable-next-line vue/no-v-html -- escaped skill-name markup -->
+              <span class="item-picker-modal__stat-line-text" v-html="modLineHtml(row.text)"></span>
+            </p>
+            <ItemRollRow
+              v-else
+              :stat="row.stat"
+              :value="effectiveRolls[row.stat.key] ?? row.stat.min"
+              @update="onRollUpdate(row.stat.key, row.stat.min, row.stat.max, $event)"
+            />
+          </template>
+        </div>
+
+        <div v-if="requirementsLine" class="item-tooltip-reqs">{{ requirementsLine }}</div>
+      </template>
+
+      <ItemSocketsEditor
+        v-else-if="isSocketsTab"
+        :def="def"
+        :rolls="rolls"
+        :socketables="socketables"
+        :editable="canEdit"
+        @update:socketables="emit('update:socketables', $event)"
+        @set-roll="(key, min, max, raw) => emit('set-roll', key, min, max, raw)"
+      />
+
+      <ItemMysticOrbsEditor
+        v-else-if="isMysticOrbsTab"
+        :def="def"
+        :rolls="rolls"
+        :extras="extras"
+        :socketables="socketables"
+        :mystic-orbs="mysticOrbs"
+        :character-level="characterLevel"
+        :editable="canEdit"
+        @update:mystic-orbs="emit('update:mystic-orbs', $event)"
+      />
 
       <div
-        v-if="modRows.length"
-        class="item-tooltip-section item-tooltip-section--mods item-detail-panel__section"
-        aria-label="Item modifiers"
+        v-else-if="isPlaceholderTab"
+        class="item-upgrade-section"
+        :aria-label="activeTab"
       >
-        <template v-for="(row, idx) in modRows" :key="'mod-' + idx">
-          <p
-            v-if="row.kind === 'text'"
-            class="item-tooltip-line item-picker-modal__stat-line"
-            :class="modLineClass(row)"
-          >
-            <!-- eslint-disable-next-line vue/no-v-html -- escaped skill-name markup -->
-            <span class="item-picker-modal__stat-line-text" v-html="modLineHtml(row.text)"></span>
-          </p>
-          <ItemRollRow
-            v-else
-            :stat="row.stat"
-            :value="effectiveRolls[row.stat.key] ?? row.stat.min"
-            @update="onRollUpdate(row.stat.key, row.stat.min, row.stat.max, $event)"
-          />
-        </template>
+        <p class="item-upgrade-section__empty is-size-7 has-text-grey">
+          {{ placeholderCopy }}
+        </p>
       </div>
-
-      <div v-if="requirementsLine" class="item-tooltip-reqs">{{ requirementsLine }}</div>
-    </div>
-
-    <div
-      v-if="mysticOrbRows.length"
-      class="item-mystic-orbs"
-      aria-label="Mystic Orbs"
-    >
-      <p class="item-mystic-orbs__heading is-size-7 has-text-grey mb-2">Mystic Orbs</p>
-      <ul class="item-mystic-orbs__list">
-        <li v-for="(orb, idx) in mysticOrbRows" :key="'mo-' + idx" class="item-mystic-orbs__item">
-          <div
-            class="item-mystic-orbs__line"
-            :class="{
-              'item-mystic-orbs__line--unique': orb.kind === 'unique',
-              'item-mystic-orbs__line--rare': orb.kind === 'rare',
-            }"
-          >
-            {{ orb.label }}
-          </div>
-          <div v-if="orb.mods.length" class="item-mystic-orbs__mods">
-            <div v-for="(mod, midx) in orb.mods" :key="'mo-mod-' + idx + '-' + midx" class="item-mystic-orbs__mod">
-              {{ mod }}
-            </div>
-          </div>
-        </li>
-      </ul>
     </div>
 
     <CharmExtrasControls
-      v-if="def"
+      v-if="def && isBaseTab"
       :def="def"
       :rolls="rolls"
       @update:rolls="emit('update:rolls', $event)"
     />
     <OverlayExtrasControls
-      v-if="def"
+      v-if="def && isBaseTab"
       :def="def"
       :rolls="rolls"
       @update:rolls="emit('update:rolls', $event)"
     />
   </div>
 </template>
-
-<style scoped>
-.item-mystic-orbs {
-  margin-top: 0.75rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.item-mystic-orbs__heading {
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.item-mystic-orbs__list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.item-mystic-orbs__item + .item-mystic-orbs__item {
-  margin-top: 0.45rem;
-}
-
-.item-mystic-orbs__line {
-  font-size: 0.9rem;
-  line-height: 1.35;
-  color: #e8e8e8;
-}
-
-.item-mystic-orbs__line--unique {
-  color: var(--item-rarity-unique, #c7b377);
-}
-
-.item-mystic-orbs__line--rare {
-  color: var(--item-rarity-rare, #ffff64);
-}
-
-.item-mystic-orbs__mods {
-  margin: 0.1rem 0 0 0.7rem;
-}
-
-.item-mystic-orbs__mod {
-  font-size: 0.82rem;
-  line-height: 1.3;
-  color: #a8a8a8;
-}
-</style>

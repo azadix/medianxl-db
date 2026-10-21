@@ -4,12 +4,22 @@
 import { describe, expect, it } from 'vitest';
 import {
   characterMeetsItemRequirements,
+  extrasWithMysticOrbRequiredLevel,
   formatItemRequirementsLine,
   parseRequiredLevelBonus,
   parseRequirementsReductionPct,
+  itemRequirementsExceedCharacterLevel,
+  requiredLevelExceedsCharacter,
   resolveItemRequirements,
 } from '@/items/item-requirements.js';
 import { overlayAffixRollKey } from '@/items/item-overlays.js';
+import { loadMysticOrbsCatalog } from '@/items/mystic-orbs.js';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+
+loadMysticOrbsCatalog(
+  JSON.parse(readFileSync(resolve('public/items/2_14/mystic-orbs.json'), 'utf8'))
+);
 
 describe('parseRequirementsReductionPct', () => {
   it('parses flat Requirements -N%', () => {
@@ -130,6 +140,48 @@ describe('resolveItemRequirements', () => {
     ).toEqual({ reqLevel: 135, reqStr: 731, reqDex: 0, reductionPct: 5 });
   });
 
+  it('applies +Required Level after socket-raised req', () => {
+    expect(
+      resolveItemRequirements(
+        { reqLevel: 80, reqStr: 100 },
+        {
+          socketables: [{ reqLevel: 100, modifiers: ['+3% to Spell Damage'] }],
+          extras: ['+20 Required Level'],
+        }
+      )
+    ).toEqual({ reqLevel: 120, reqStr: 100, reqDex: 0, reductionPct: 0 });
+  });
+
+  it('adds mystic orb required level after sockets when extras omit the line', () => {
+    expect(
+      resolveItemRequirements(
+        { reqLevel: 80 },
+        {
+          socketables: [{ reqLevel: 100 }],
+          mysticOrbs: [
+            [5, 'MO - Total Char Defense'],
+            [1, 'Weight of Talent'],
+          ],
+        }
+      ).reqLevel
+    ).toBe(130);
+  });
+
+  it('does not double mystic orb required level when extras already list it', () => {
+    expect(
+      resolveItemRequirements(
+        { reqLevel: 100 },
+        {
+          extras: ['+35 Required Level'],
+          mysticOrbs: [
+            [5, 'MO - Total Char Defense'],
+            [1, 'Weight of Talent'],
+          ],
+        }
+      ).reqLevel
+    ).toBe(135);
+  });
+
   it('keeps TSW final strength when reqStrFinal is set', () => {
     expect(
       resolveItemRequirements({
@@ -142,6 +194,46 @@ describe('resolveItemRequirements', () => {
         modifiers: ['Requirements -10%', '+20 Required Level'],
       })
     ).toEqual({ reqLevel: 50, reqStr: 495, reqDex: 0, reductionPct: 10 });
+  });
+});
+
+describe('extrasWithMysticOrbRequiredLevel', () => {
+  it('synthesizes a required-level line from mystic orbs', () => {
+    expect(extrasWithMysticOrbRequiredLevel([], [[5, 'MO - Strength']])).toEqual([
+      '+20 Required Level',
+    ]);
+  });
+});
+
+describe('requiredLevelExceedsCharacter', () => {
+  it('is true only when req is above a known character level', () => {
+    expect(requiredLevelExceedsCharacter(100, 90)).toBe(true);
+    expect(requiredLevelExceedsCharacter(90, 90)).toBe(false);
+    expect(requiredLevelExceedsCharacter(100, null)).toBe(false);
+  });
+});
+
+describe('itemRequirementsExceedCharacterLevel', () => {
+  it('counts mystic orb required-level stacks against character level', () => {
+    const def = { name: 'Alnair', reqLevel: 100 };
+    expect(
+      itemRequirementsExceedCharacterLevel(def, { mysticOrbs: [[1, 'MO - Attack Speed']] }, 150)
+    ).toBe(false);
+    expect(
+      itemRequirementsExceedCharacterLevel(
+        def,
+        {
+          mysticOrbs: [
+            [1, 'MO - Attack Speed'],
+            [1, 'Ten Pin Striker'],
+            [2, 'MO - IED'],
+            [2, "Marksman's Eye"],
+            [1, 'Apple of Discord 2'],
+          ],
+        },
+        150
+      )
+    ).toBe(true);
   });
 });
 

@@ -3,10 +3,16 @@ import { createPinia, setActivePinia } from 'pinia';
 import { useItemsStore } from '@/stores/items.js';
 import {
   getSocketableBonusLines,
+  jewelSocketableFromItem,
+  listJewelSocketablesFromItems,
+  listSocketablesCatalog,
   loadSocketablesCatalog,
+  mergeJewelItemsIntoSocketablesCatalog,
   normalizeSocketables,
   parseTswSocketables,
   resolveSocketableIcon,
+  socketableNameCssClass,
+  trimSocketablesToCount,
 } from '@/items/socketables.js';
 import { tswInstanceExtras, rollsFromTswItem } from '@/planner/tsw-item-rolls.js';
 import { overlayAffixRollKey, overlayFixedBoostRollKey } from '@/items/item-overlays.js';
@@ -60,6 +66,7 @@ describe('socketables', () => {
         shield: '2% Deadly Strike',
       },
       { name: 'Jah Rune', code: 'r31', type: 'Rune', icon: 'invrJo' },
+      { name: 'Elq Rune', code: 'rx02', type: 'Rune', icon: 'xisEld' },
       {
         name: 'Perfect Bloodstone',
         code: '9$e',
@@ -118,6 +125,58 @@ describe('socketables', () => {
     expect(resolveSocketableIcon({ name: 'Jah Rune', type: 'Rune', code: '31' })).toBe('invrJo');
   });
 
+  it('lists unique jewels from item defs and skips relics and blank jewels', () => {
+    const arkenstone = {
+      id: 'u:arkenstone:su',
+      name: 'Arkenstone',
+      type: 'jewl',
+      baseType: 'Jewel',
+      rarity: 'unique',
+      uniqueKind: 'su',
+      slot: null,
+      reqLevel: 100,
+      icon: 'invjw6',
+      modifiers: [
+        'Can be Inserted into Socketed Items',
+        'Physical Resist 3%',
+        'Cannot Be Frozen',
+        '{orange}Crown Jewel',
+      ],
+    };
+    const relic = {
+      name: 'Fake Relic',
+      type: 'jewl',
+      rarity: 'relic',
+      category: 'relics',
+      modifiers: ['+1 to All Skills'],
+    };
+    const blank = { name: 'Jewel', type: 'jewl', rarity: 'normal', slot: null };
+    const row = jewelSocketableFromItem(arkenstone);
+    expect(row).toMatchObject({
+      name: 'Arkenstone',
+      type: 'Jewel',
+      quality: 'Unique',
+      reqLevel: 100,
+      icon: 'invjw6',
+    });
+    expect(row?.modifiers).toEqual(['Physical Resist 3%', 'Cannot Be Frozen', '{orange}Crown Jewel']);
+    expect(jewelSocketableFromItem(relic)).toBeNull();
+    expect(jewelSocketableFromItem(blank)).toBeNull();
+    expect(listJewelSocketablesFromItems([blank, relic, arkenstone]).map((r) => r.name)).toEqual([
+      'Arkenstone',
+    ]);
+    mergeJewelItemsIntoSocketablesCatalog([arkenstone]);
+    expect(listSocketablesCatalog().some((r) => r.name === 'Arkenstone')).toBe(true);
+    expect(
+      getSocketableBonusLines(normalizeSocketables([row])[0], { category: 'weapons' })
+    ).toEqual(['Physical Resist 3%', 'Cannot Be Frozen', 'Crown Jewel']);
+  });
+
+  it('maps enchanted Elq to yellow xisEld art, not classic invrEld', () => {
+    expect(resolveSocketableIcon({ name: 'Elq Rune', type: 'Rune', code: 'rx02' })).toBe('xisEld');
+    expect(resolveSocketableIcon({ image: 'xisEld', type: 'Rune', name: 'Elq Rune' })).toBe('xisEld');
+  });
+
   it('parses dabomei-style TSW socketables with modifiers and icons', () => {
     const socks = parseTswSocketables({ socketables: dabomeiHelmSocketables });
     expect(socks).toHaveLength(2);
@@ -136,7 +195,11 @@ describe('socketables', () => {
       code: 'r53',
       icon: 'r-d-11',
     });
+    expect(socks[0].reqLevel).toBe(100);
+    expect(socks[1].reqLevel).toBe(100);
     expect(socks[1].modifiers).toContain('+2% Deadly Strike');
+    expect(socketableNameCssClass(socks[0])).toBe('item-tooltip-sock__name--unique');
+    expect(socketableNameCssClass(socks[1])).toBe('item-tooltip-sock__name--rune');
   });
 
   it('stores socketables and corrupted on tswInstanceExtras', () => {
@@ -269,5 +332,47 @@ describe('socketables', () => {
       'Qor Rune',
     ]);
     expect(store.instances[restoredId].corrupted).toBe(true);
+  });
+
+  it('trims fillers to a socket count', () => {
+    const socks = trimSocketablesToCount(
+      [
+        { name: 'El Rune', type: 'Rune', code: 'r01' },
+        { name: 'Eld Rune', type: 'Rune', code: 'r02' },
+        { name: 'Tir Rune', type: 'Rune', code: 'r03' },
+      ],
+      1
+    );
+    expect(socks.map((s) => s.name)).toEqual(['El Rune']);
+    expect(socks[0].slot).toBe(1);
+    expect(trimSocketablesToCount(socks, 0)).toEqual([]);
+  });
+
+  it('drops extra fillers when socket rolls shrink', () => {
+    setActivePinia(createPinia());
+    const store = useItemsStore();
+    store.catalog = [
+      {
+        id: 'knife',
+        name: 'Balanced Knife',
+        type: 'tkni',
+        category: 'weapons',
+        slot: 'arms',
+        sockets: 3,
+        invWidth: 1,
+        invHeight: 3,
+      },
+    ];
+    store.catalogByIdMap = Object.fromEntries(store.catalog.map((d) => [d.id, d]));
+    const id = store.createInstance('knife', null, { sockets: 3 }, null, {
+      socketables: [
+        { name: 'Bur Rune', type: 'Rune', code: 'rx30' },
+        { name: 'El Rune', type: 'Rune', code: 'r01' },
+      ],
+    });
+    expect(store.updateInstanceRolls(id, { sockets: 1 })).toBe(true);
+    expect(store.getSocketablesForInstance(id).map((s) => s.name)).toEqual(['Bur Rune']);
+    expect(store.updateInstanceRolls(id, { sockets: 0 })).toBe(true);
+    expect(store.getSocketablesForInstance(id)).toEqual([]);
   });
 });

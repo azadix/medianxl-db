@@ -200,9 +200,10 @@ export function findMissingCharmSkillUnlocks(opts = {}) {
     const req = reqs.get(skillId);
     if (!req) continue;
     if (req.charmIds.some((id) => owned.has(id))) continue;
+    const mapped = String(names[skillId] || '').trim();
     missing.push({
       skillId,
-      skillName: names[skillId] || req.skillName,
+      skillName: mapped || req.skillName || skillId,
       charmNames: req.charmNames.slice(),
       points,
     });

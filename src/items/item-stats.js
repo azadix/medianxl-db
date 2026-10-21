@@ -27,11 +27,17 @@ import {
 } from '@/items/item-overlays.js';
 import { formatRunewordBadge, formatRunewordSocketFillerLines, isRunewordItem } from '@/items/runeword-items.js';
 import { getShieldClassBlockPercent } from '@/character/class-baselines.js';
-import { resolveItemRequirements } from '@/items/item-requirements.js';
+import {
+  extrasWithMysticOrbRequiredLevel,
+  resolveItemRequirements,
+} from '@/items/item-requirements.js';
 import {
   applyResolvedRandomReanimates,
+  decodeModifierLine,
   markModifierLineAdded,
 } from '@/items/item-modifier-line.js';
+import { getMysticOrbBonusLines, normalizeMysticOrbs } from '@/items/mystic-orbs.js';
+import { getSocketableBonusLines, normalizeSocketables } from '@/items/socketables.js';
 import {
   collectItemStateFlagLines,
   stripItemStateFlagLines,
@@ -359,6 +365,47 @@ export function formatChanceToBlockLine(block, className = null) {
  */
 
 /**
+ * Append socket and mystic-orb bonus lines onto extras.
+ * Matching extras (e.g. TSW leftovers) are consumed so they are not doubled.
+ * @param {string[]|null|undefined} extras
+ * @param {object|null|undefined} def
+ * @param {{ mysticOrbs?: unknown, socketables?: Array<object>|null }} [options]
+ * @returns {string[]}
+ */
+export function extrasWithAppliedItemBonuses(extras, def, options = {}) {
+  const list = extrasWithMysticOrbRequiredLevel(extras, options.mysticOrbs);
+  /** @type {Map<string, number>} */
+  const leftover = new Map();
+  for (const line of list) {
+    const key = decodeModifierLine(line).text.trim().toLowerCase();
+    if (!key) continue;
+    leftover.set(key, (leftover.get(key) || 0) + 1);
+  }
+  /**
+   * @param {string} line
+   */
+  const appendBonus = (line) => {
+    const text = String(line || '').trim();
+    if (!text) return;
+    const key = decodeModifierLine(text).text.trim().toLowerCase();
+    if (!key) return;
+    const n = leftover.get(key) || 0;
+    if (n > 0) {
+      leftover.set(key, n - 1);
+      return;
+    }
+    list.push(text);
+  };
+  for (const sock of normalizeSocketables(options.socketables)) {
+    for (const line of getSocketableBonusLines(sock, def)) appendBonus(line);
+  }
+  for (const [count, name] of normalizeMysticOrbs(options.mysticOrbs)) {
+    for (const line of getMysticOrbBonusLines(name, count)) appendBonus(line);
+  }
+  return list;
+}
+
+/**
  * @param {object|null|undefined} def
  * @param {Record<string, number>|null|undefined} [rolls]
  * @param {{
@@ -370,6 +417,7 @@ export function formatChanceToBlockLine(block, className = null) {
  *   charmHeaderOnly?: boolean,
  *   socketables?: Array<object>|null,
  *   extras?: string[]|null,
+ *   mysticOrbs?: unknown,
  * }} [options]
  * @returns {ItemStatSections}
  */
@@ -498,9 +546,7 @@ export function getItemStatSections(def, rolls = null, options = {}) {
 
   /** @type {string[]} */
   const extras = stripItemStateFlagLines(
-    Array.isArray(options.extras)
-      ? options.extras.map((line) => String(line || '').trim()).filter(Boolean)
-      : []
+    extrasWithAppliedItemBonuses(options.extras, def, options)
   );
   const merged = applyResolvedRandomReanimates(mods, extras);
   mods.length = 0;
@@ -514,6 +560,7 @@ export function getItemStatSections(def, rolls = null, options = {}) {
       rolls,
       socketables: options.socketables ?? null,
       extras: options.extras ?? null,
+      mysticOrbs: options.mysticOrbs ?? null,
     }),
   };
 }
@@ -535,13 +582,13 @@ export function getItemStatLines(def, rolls = null, options = {}) {
  * @typedef {{ kind: 'text', text: string, section?: 'base'|'mod' } | { kind: 'roll', stat: RollableStat, section?: 'base'|'mod' }} ItemDetailStatRow
  * @param {object|null|undefined} def
  * @param {Record<string, number>|null|undefined} [rolls]
- * @param {{ characterLevel?: number|null, charmInInventory?: boolean, className?: string|null, extras?: string[]|null, socketables?: Array<object>|null }} [options]
+ * @param {{ characterLevel?: number|null, charmInInventory?: boolean, className?: string|null, extras?: string[]|null, socketables?: Array<object>|null, mysticOrbs?: unknown }} [options]
  * @returns {ItemDetailStatRow[]}
  */
 export function getItemDetailStatRows(def, rolls = null, options = {}) {
   if (!def || typeof def !== 'object') return [];
   const className = options.className ?? null;
-  const extras = Array.isArray(options.extras) ? options.extras : [];
+  const extras = extrasWithAppliedItemBonuses(options.extras, def, options);
   const hasSocketables = Array.isArray(options.socketables) && options.socketables.length > 0;
   // Match tooltip sectioning (base/scaling vs mods); Socketed is last in the base block.
   // Pass extras only after overlay/charm rows so they appear under catalog affixes.

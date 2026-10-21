@@ -12,7 +12,7 @@
   {
     "name": "Eld Rune",
     "type": "Rune",
-    "icon": "invreldc",
+    "icon": "invrEld",
     "code": "r02",
     "level": 8,
     "weapon": "+5 to Maximum Damage",
@@ -332,7 +332,7 @@
   {
     "name": "Ol Rune",
     "type": "Rune",
-    "icon": "invrolc",
+    "icon": "xisel",
     "code": "rx01",
     "level": 90,
     "weapon": "+13 to all Attributes",
@@ -342,7 +342,7 @@
   {
     "name": "Elq Rune",
     "type": "Rune",
-    "icon": "invrelqc",
+    "icon": "xisEld",
     "code": "rx02",
     "level": 90,
     "weapon": "+20 to Maximum Damage",
@@ -352,7 +352,7 @@
   {
     "name": "Tyr Rune",
     "type": "Rune",
-    "icon": "invrtyrc",
+    "icon": "xistir",
     "code": "rx03",
     "level": 90,
     "weapon": "+5% to Fire Spell Damage",
@@ -362,7 +362,7 @@
   {
     "name": "Nif Rune",
     "type": "Rune",
-    "icon": "invrnifc",
+    "icon": "xisnef",
     "code": "rx04",
     "level": 95,
     "weapon": "+5% to Lightning Spell Damage",
@@ -372,7 +372,7 @@
   {
     "name": "Xeth Rune",
     "type": "Rune",
-    "icon": "invrxethc",
+    "icon": "xiseth",
     "code": "rx05",
     "level": 95,
     "weapon": "+5% to Cold Spell Damage",
@@ -382,7 +382,7 @@
   {
     "name": "Xith Rune",
     "type": "Rune",
-    "icon": "invrxithc",
+    "icon": "xisith",
     "code": "rx06",
     "level": 95,
     "weapon": "+5% to Poison Spell Damage",
@@ -392,7 +392,7 @@
   {
     "name": "Thal Rune",
     "type": "Rune",
-    "icon": "invrthalc",
+    "icon": "xistal",
     "code": "rx07",
     "level": 100,
     "weapon": "+5% to Physical/Magic Spell Damage",
@@ -402,7 +402,7 @@
   {
     "name": "Rhal Rune",
     "type": "Rune",
-    "icon": "invrrhalc",
+    "icon": "xisral",
     "code": "rx08",
     "level": 100,
     "weapon": "Fire Resist +35%",
@@ -412,7 +412,7 @@
   {
     "name": "Urt Rune",
     "type": "Rune",
-    "icon": "invrurtc",
+    "icon": "xisort",
     "code": "rx09",
     "level": 100,
     "weapon": "Lightning Resist +35%",
@@ -422,7 +422,7 @@
   {
     "name": "Tuul Rune",
     "type": "Rune",
-    "icon": "invrtuulc",
+    "icon": "xisthul",
     "code": "rx10",
     "level": 100,
     "weapon": "Cold Resist +35%",
@@ -432,7 +432,7 @@
   {
     "name": "Ahmn Rune",
     "type": "Rune",
-    "icon": "invrahmnc",
+    "icon": "xisamn",
     "code": "rx11",
     "level": 100,
     "weapon": "Poison Resist +35%",
@@ -442,7 +442,7 @@
   {
     "name": "Zol Rune",
     "type": "Rune",
-    "icon": "invrzolc",
+    "icon": "xissol",
     "code": "rx12",
     "level": 100,
     "weapon": "+100 to Mana",
@@ -452,7 +452,7 @@
   {
     "name": "Shaen Rune",
     "type": "Rune",
-    "icon": "invrshaenc",
+    "icon": "xisshael",
     "code": "rx13",
     "level": 105,
     "weapon": "+20% Bonus to Poison Skill Duration",
@@ -462,7 +462,7 @@
   {
     "name": "Doj Rune",
     "type": "Rune",
-    "icon": "invrdojc",
+    "icon": "xisdol",
     "code": "rx14",
     "level": 105,
     "weapon": "+20% to Summon Life",
@@ -472,7 +472,7 @@
   {
     "name": "Hem Rune",
     "type": "Rune",
-    "icon": "invrhemc",
+    "icon": "xishel",
     "code": "rx15",
     "level": 105,
     "weapon": "+10% to Summon Damage",
@@ -482,7 +482,7 @@
   {
     "name": "Iu Rune",
     "type": "Rune",
-    "icon": "invriuc",
+    "icon": "xisio",
     "code": "rx16",
     "level": 105,
     "weapon": "+70% to Summon Attack Rating",
@@ -492,7 +492,7 @@
   {
     "name": "Lux Rune",
     "type": "Rune",
-    "icon": "invrluxc",
+    "icon": "xislum",
     "code": "rx17",
     "level": 105,
     "weapon": "+7% to Summon Elemental Resistances",
@@ -502,7 +502,7 @@
   {
     "name": "Ka Rune",
     "type": "Rune",
-    "icon": "invrkac",
+    "icon": "xisko",
     "code": "rx18",
     "level": 105,
     "weapon": "7% to Strength",
@@ -512,7 +512,7 @@
   {
     "name": "Fel Rune",
     "type": "Rune",
-    "icon": "invrfelc",
+    "icon": "xisfal",
     "code": "rx19",
     "level": 110,
     "weapon": "7% to Dexterity",
@@ -522,7 +522,7 @@
   {
     "name": "Lew Rune",
     "type": "Rune",
-    "icon": "invrlewc",
+    "icon": "xislem",
     "code": "rx20",
     "level": 110,
     "weapon": "6% to Vitality",
@@ -532,7 +532,7 @@
   {
     "name": "Phul Rune",
     "type": "Rune",
-    "icon": "invrphulc",
+    "icon": "xispul",
     "code": "rx21",
     "level": 110,
     "weapon": "7% to Energy",
@@ -542,7 +542,7 @@
   {
     "name": "Un Rune",
     "type": "Rune",
-    "icon": "invrunc",
+    "icon": "xisum",
     "code": "rx22",
     "level": 110,
     "weapon": "Elemental Resists +13%",
@@ -552,7 +552,7 @@
   {
     "name": "Mhal Rune",
     "type": "Rune",
-    "icon": "invrmhalc",
+    "icon": "xismal",
     "code": "rx23",
     "level": 110,
     "weapon": "4% to All Attributes",
@@ -562,7 +562,7 @@
   {
     "name": "Yst Rune",
     "type": "Rune",
-    "icon": "invrystc",
+    "icon": "xisist",
     "code": "rx24",
     "level": 110,
     "weapon": "13% Magic Find",
@@ -572,7 +572,7 @@
   {
     "name": "Gur Rune",
     "type": "Rune",
-    "icon": "invrgurc",
+    "icon": "xisgul",
     "code": "rx25",
     "level": 115,
     "weapon": "40% Attack Speed",
@@ -582,7 +582,7 @@
   {
     "name": "Vez Rune",
     "type": "Rune",
-    "icon": "invrvezc",
+    "icon": "xisvex",
     "code": "rx26",
     "level": 115,
     "weapon": "40% Cast Speed",
@@ -592,7 +592,7 @@
   {
     "name": "Ohn Rune",
     "type": "Rune",
-    "icon": "invrohnc",
+    "icon": "xisohm",
     "code": "rx27",
     "level": 115,
     "weapon": "30% Hit Recovery",
@@ -602,7 +602,7 @@
   {
     "name": "Loz Rune",
     "type": "Rune",
-    "icon": "invrlozc",
+    "icon": "xislo",
     "code": "rx28",
     "level": 115,
     "weapon": "+4% to Summon Physical Resist",
@@ -612,7 +612,7 @@
   {
     "name": "Zur Rune",
     "type": "Rune",
-    "icon": "invrzurc",
+    "icon": "xissur",
     "code": "rx29",
     "level": 115,
     "weapon": "Regenerate Mana +22%",
@@ -622,7 +622,7 @@
   {
     "name": "Bur Rune",
     "type": "Rune",
-    "icon": "invrburc",
+    "icon": "xisber",
     "code": "rx30",
     "level": 115,
     "weapon": "Slow Target 5%",
@@ -632,7 +632,7 @@
   {
     "name": "Iah Rune",
     "type": "Rune",
-    "icon": "invriahc",
+    "icon": "xisjah",
     "code": "rx31",
     "level": 120,
     "weapon": "+25% Enhanced Damage",
@@ -642,7 +642,7 @@
   {
     "name": "Yham Rune",
     "type": "Rune",
-    "icon": "invryhamc",
+    "icon": "xischam",
     "code": "rx32",
     "level": 120,
     "weapon": "Maximum Mana +5%",
@@ -652,7 +652,7 @@
   {
     "name": "Xod Rune",
     "type": "Rune",
-    "icon": "invrxodc",
+    "icon": "xiszod",
     "code": "rx33",
     "level": 120,
     "weapon": "+1 to All Skills",

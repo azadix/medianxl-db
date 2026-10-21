@@ -5,6 +5,7 @@
 
 import { tswDescriptionColoredTexts } from '@/items/custom-items.js';
 import { decodeModifierLine, encodeModifierLine } from '@/items/item-modifier-line.js';
+import { isOverlayItem } from '@/items/item-overlays.js';
 import { isHandWeapon, isShieldItem } from '@/items/item-types.js';
 
 /**
@@ -17,15 +18,18 @@ import { isHandWeapon, isShieldItem } from '@/items/item-types.js';
  *   icon?: string,
  *   nameColor?: number,
  *   modifiers?: string[],
+ *   reqLevel?: number,
  * }} SocketableEntry
  */
 
-/** @typedef {{ code?: string, name: string, type?: string, icon: string, weapon?: string|string[], armor?: string|string[], shield?: string|string[] }} SocketableCatalogRow */
+/** @typedef {{ code?: string, name: string, type?: string, quality?: string, icon: string, modifiers?: string[], reqLevel?: number, level?: number, weapon?: string|string[], armor?: string|string[], shield?: string|string[] }} SocketableCatalogRow */
 
 /** @type {Map<string, SocketableCatalogRow>|null} */
 let catalogByCode = null;
 /** @type {Map<string, SocketableCatalogRow>|null} */
 let catalogByName = null;
+/** @type {SocketableCatalogRow[]} */
+let catalogRows = [];
 
 /**
  * @param {string|null|undefined} s
@@ -46,6 +50,8 @@ export function loadSocketablesCatalog(rows) {
   const byCode = new Map();
   /** @type {Map<string, SocketableCatalogRow>} */
   const byName = new Map();
+  /** @type {SocketableCatalogRow[]} */
+  const list = [];
   if (Array.isArray(rows)) {
     for (const row of rows) {
       if (!row || typeof row !== 'object') continue;
@@ -58,21 +64,180 @@ export function loadSocketablesCatalog(rows) {
       if (code) entry.code = code;
       const type = row.type != null ? String(row.type).trim() : '';
       if (type) entry.type = type;
+      const quality = row.quality != null ? String(row.quality).trim() : '';
+      if (quality) entry.quality = quality;
+      if (Array.isArray(row.modifiers)) {
+        entry.modifiers = row.modifiers.map((line) => String(line || '').trim()).filter(Boolean);
+      }
+      const reqLevel = Math.floor(Number(row.reqLevel ?? row.level));
+      if (Number.isFinite(reqLevel) && reqLevel > 0) entry.reqLevel = reqLevel;
       for (const key of /** @type {const} */ (['weapon', 'armor', 'shield'])) {
         if (row[key] != null) entry[key] = row[key];
       }
-      if (code) byCode.set(normKey(code), entry);
+      if (code && !byCode.has(normKey(code))) byCode.set(normKey(code), entry);
       byName.set(normKey(name), entry);
       const runeBase = name.replace(/\s+Rune$/i, '').trim();
       if (runeBase && runeBase !== name) byName.set(normKey(runeBase), entry);
+      list.push(entry);
     }
   }
   catalogByCode = byCode;
   catalogByName = byName;
+  catalogRows = list;
 }
 
 /**
- * Whether a stem is a real item_icons webp key (inv*, orb_*, r-d-N, ogN, *-rune).
+ * @returns {SocketableCatalogRow[]}
+ */
+export function listSocketablesCatalog() {
+  return catalogRows.slice();
+}
+
+/**
+ * Unique/set jewels that can be inserted into sockets (not relics or jewelry).
+ * @param {object|null|undefined} def
+ * @returns {boolean}
+ */
+export function isSocketableJewelItem(def) {
+  if (!def || typeof def !== 'object') return false;
+  if (def.rarity === 'relic' || def.category === 'relics') return false;
+  if (def.slot != null && def.slot !== '') return false;
+  const type = String(def.type || '').toLowerCase();
+  const baseType = String(def.baseType || '').toLowerCase();
+  const baseName = String(def.baseName || '').toLowerCase();
+  const jewelish =
+    type === 'jewl' || type === 'jewel' || baseType === 'jewel' || baseName === 'jewel';
+  if (!jewelish) return false;
+  return def.rarity === 'unique' || def.rarity === 'set';
+}
+
+/**
+ * @param {object|null|undefined} def
+ * @returns {string[]}
+ */
+function jewelModifierLines(def) {
+  if (!Array.isArray(def?.modifiers)) return [];
+  return def.modifiers
+    .map((line) => String(line || '').trim())
+    .filter((line) => {
+      const text = decodeModifierLine(line).text.trim();
+      return text && !isSocketableBoilerplate(text);
+    });
+}
+
+/**
+ * Catalog row for a unique/set jewel item def.
+ * @param {object|null|undefined} def
+ * @returns {SocketableCatalogRow|null}
+ */
+export function jewelSocketableFromItem(def) {
+  if (!isSocketableJewelItem(def)) return null;
+  const name = String(def.name || '').trim();
+  if (!name) return null;
+  const quality = def.rarity === 'unique' ? 'Unique' : def.rarity === 'set' ? 'Set' : '';
+  /** @type {SocketableCatalogRow} */
+  const row = {
+    name,
+    type: 'Jewel',
+    icon: String(def.icon || '').trim() || (quality === 'Unique' ? 'invjw6' : 'invjw1'),
+    modifiers: jewelModifierLines(def),
+  };
+  if (quality) row.quality = quality;
+  const reqLevel = Math.floor(Number(def.reqLevel));
+  if (Number.isFinite(reqLevel) && reqLevel > 0) row.reqLevel = reqLevel;
+  return row;
+}
+
+/**
+ * Unique/set jewels from the item catalog, sorted by name.
+ * @param {Array<object>|null|undefined} items
+ * @returns {SocketableCatalogRow[]}
+ */
+export function listJewelSocketablesFromItems(items) {
+  /** @type {SocketableCatalogRow[]} */
+  const out = [];
+  const seen = new Set();
+  if (!Array.isArray(items)) return out;
+  for (const def of items) {
+    const row = jewelSocketableFromItem(def);
+    if (!row) continue;
+    const key = normKey(row.name);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(row);
+  }
+  out.sort((a, b) => a.name.localeCompare(b.name));
+  return out;
+}
+
+/**
+ * Add unique/set jewels into the socketables catalog (for req-level / name lookup).
+ * @param {Array<object>|null|undefined} items
+ */
+export function mergeJewelItemsIntoSocketablesCatalog(items) {
+  if (!catalogByCode) catalogByCode = new Map();
+  if (!catalogByName) catalogByName = new Map();
+  for (const row of listJewelSocketablesFromItems(items)) {
+    const key = normKey(row.name);
+    if (catalogByName.has(key)) continue;
+    catalogByName.set(key, row);
+    catalogRows.push(row);
+  }
+}
+
+/**
+ * @param {SocketableCatalogRow|null|undefined} row
+ * @param {number} [slot]
+ * @returns {SocketableEntry|null}
+ */
+export function socketableFromCatalogRow(row, slot = 0) {
+  if (!row || typeof row !== 'object') return null;
+  const [entry] = normalizeSocketables([
+    {
+      name: row.name,
+      type: row.type,
+      quality: row.quality,
+      code: row.code,
+      icon: row.icon,
+      modifiers: row.modifiers,
+      reqLevel: row.reqLevel,
+      slot: slot > 0 ? slot : undefined,
+    },
+  ]);
+  return entry || null;
+}
+
+/**
+ * Open sockets on this item (rolled count, locked overlay max, or 0).
+ * @param {object|null|undefined} def
+ * @param {Record<string, number>|null|undefined} rolls
+ * @returns {number}
+ */
+export function getItemSocketCount(def, rolls = null) {
+  const max = Math.max(0, Math.floor(Number(def?.sockets) || 0));
+  if (max <= 0) return 0;
+  if (isOverlayItem(def)) return max;
+  if (rolls && Number.isFinite(Number(rolls.sockets))) {
+    return Math.max(0, Math.min(max, Math.floor(Number(rolls.sockets))));
+  }
+  return max;
+}
+
+/**
+ * Keep the first `count` socket fillers (re-index slots from 1).
+ * @param {unknown} raw
+ * @param {number} count
+ * @returns {SocketableEntry[]}
+ */
+export function trimSocketablesToCount(raw, count) {
+  const n = Math.max(0, Math.floor(Number(count) || 0));
+  return normalizeSocketables(raw)
+    .slice(0, n)
+    .map((entry, i) => ({ ...entry, slot: i + 1 }));
+}
+
+/**
+ * Whether a stem is a real item_icons webp key (inv*, xis*, orb_*, r-d-N, ogN, *-rune).
  * Rejects TSW leftovers like `jah` / `31` that would 404.
  * @param {string|null|undefined} image
  * @returns {boolean}
@@ -84,7 +249,7 @@ export function isInventoryIconStem(image) {
   if (/^r-[a-z]?-\d+$/i.test(s)) return true;
   if (/^(fire|phys|magic|pois|ltng|cold|ultra)-rune$/i.test(s)) return true;
   if (/^og\d+$/i.test(s)) return true;
-  return /^(inv|orb_|oil_)/i.test(s);
+  return /^(inv|xis|orb_|oil_)/i.test(s);
 }
 
 /**
@@ -115,6 +280,27 @@ function catalogCodeKey(code) {
  */
 function catalogIconFromName(name) {
   return lookupCatalogRow(null, name)?.icon || '';
+}
+
+/**
+ * Catalog required level, preferring name so unique jewels sharing `jew` match correctly.
+ * @param {string|null|undefined} name
+ * @param {string|null|undefined} type
+ * @param {string|null|undefined} code
+ * @returns {number}
+ */
+function lookupCatalogReqLevel(name, type, code) {
+  const cleaned = catalogNameKey(name);
+  if (cleaned && catalogByName?.has(normKey(cleaned))) {
+    const n = Math.floor(Number(catalogByName.get(normKey(cleaned))?.reqLevel));
+    if (Number.isFinite(n) && n > 0) return n;
+  }
+  const lowerType = String(type || '').toLowerCase();
+  const isJewel = lowerType === 'jewel' || lowerType === 'jewl' || /^jew/i.test(String(code || ''));
+  if (isJewel) return 0;
+  const row = lookupCatalogRow(code, name);
+  const n = Math.floor(Number(row?.reqLevel));
+  return Number.isFinite(n) && n > 0 ? n : 0;
 }
 
 /**
@@ -295,6 +481,12 @@ export function normalizeSocketables(raw) {
       modifiers = rec.modifiers.map((m) => String(m || '').trim()).filter(Boolean);
     }
     if (modifiers.length) entry.modifiers = modifiers;
+    let reqLevel = Math.floor(Number(rec.reqLevel));
+    if (!Number.isFinite(reqLevel) || reqLevel <= 0) {
+      const catalog = lookupCatalogReqLevel(name, type, code);
+      if (catalog > 0) reqLevel = catalog;
+    }
+    if (Number.isFinite(reqLevel) && reqLevel > 0) entry.reqLevel = reqLevel;
     const icon = resolveSocketableIcon({
       code,
       name,
@@ -336,6 +528,7 @@ export function parseTswSocketables(row) {
     if (!name) continue;
     /** @type {string[]} */
     const modifiers = [];
+    let reqLevel = 0;
     const skip = new Set(
       [name, sock.type, sock.quality]
         .map((s) => String(s || '').trim().toLowerCase())
@@ -345,6 +538,12 @@ export function parseTswSocketables(row) {
       const text = String(line.text || '').trim();
       if (!text) continue;
       if (skip.has(text.toLowerCase())) continue;
+      const reqMatch = /^Required Level:\s*(-?\d+)\s*$/i.exec(text);
+      if (reqMatch) {
+        const n = Math.floor(Number(reqMatch[1]));
+        if (Number.isFinite(n) && n > 0) reqLevel = n;
+        continue;
+      }
       if (isSocketableBoilerplate(text)) continue;
       const encoded = encodeModifierLine(text, line.color) || text;
       modifiers.push(encoded);
@@ -359,6 +558,7 @@ export function parseTswSocketables(row) {
       name_color: sock.name_color,
       nameColor: sock.name_color,
       modifiers,
+      reqLevel: reqLevel > 0 ? reqLevel : undefined,
     });
   }
   return normalizeSocketables(raw);

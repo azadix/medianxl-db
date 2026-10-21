@@ -463,8 +463,12 @@ function toastMissingCharmSkillUnlocks(className, itemsStore) {
   );
   /** @type {Record<string, string>} */
   const skillDisplayNames = {};
+  const store = getFileSkillStore();
   for (const skill of getSkillsList() || []) {
-    if (skill?.id) skillDisplayNames[String(skill.id)] = String(skill.displayName || skill.id);
+    const id = skill?.id != null ? String(skill.id).trim() : '';
+    if (!id) continue;
+    const label = String(skill.displayName || skill.name || '').trim();
+    if (label) skillDisplayNames[id] = label;
   }
   const missing = findMissingCharmSkillUnlocks({
     skillPoints: getAllSkillPoints(),
@@ -476,7 +480,12 @@ function toastMissingCharmSkillUnlocks(className, itemsStore) {
   if (!missing.length) return;
   const parts = missing.map((row) => {
     const charm = row.charmNames.join(' / ');
-    return `${exportLabelForToast(row.skillName)} (needs ${exportLabelForToast(charm)})`;
+    const fromStore = store?.lookupDisplayNameByInternalName?.(row.skillId);
+    const skillLabel =
+      (fromStore && fromStore !== row.skillId ? fromStore : '') ||
+      row.skillName ||
+      row.skillId;
+    return `${exportLabelForToast(skillLabel)} (needs ${exportLabelForToast(charm)})`;
   });
   toastManager.showToast(
     `Skill point${missing.length > 1 ? 's' : ''} spent without required charm in inventory: ${parts.join(', ')}.`,

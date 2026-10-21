@@ -30,6 +30,7 @@ def _version_folder(version: str) -> str:
 # Always publish these inventory prefixes with --catalog-only (socketables / orbs / oils).
 SOCKETABLE_ICON_PREFIXES = (
     "invr",
+    "xis",
     "invjw",
     "invgs",
     "orb_",

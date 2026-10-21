@@ -436,7 +436,18 @@ function handleMouseMove(e) {
 
         lastMouseX = e.clientX;
         lastMouseY = e.clientY;
-        shell.move(e.clientX, e.clientY);
+        let overSameCard = false;
+        try {
+            const el = document.elementFromPoint(e.clientX, e.clientY);
+            const card = el && el.closest('.skill-card');
+            overSameCard =
+                Boolean(card) && String(card.dataset.skillId) === String(currentHoveredSkill);
+        } catch {
+            overSameCard = false;
+        }
+        if (overSameCard) {
+            shell.move(e.clientX, e.clientY);
+        }
 
         // Refresh when Ctrl state changes while the tooltip is open
         const wasCtrlPressed = ctrlKeyPressed;
@@ -661,6 +672,15 @@ function hideTooltip(force = false) {
     shell.hide(force);
     syncTooltipElement();
     lastHoveredSkillCard = null;
+}
+
+/**
+ * Force-hide the live planner skill tooltip (item inspector clicks, etc.).
+ * @param {boolean} [force]
+ */
+export function hidePlannerSkillTooltip(force = true) {
+    currentHoveredSkill = null;
+    hideTooltip(force);
 }
 
 /**

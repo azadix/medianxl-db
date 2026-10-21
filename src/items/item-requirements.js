@@ -10,6 +10,7 @@ import {
   getWormholeCycleReqLevelBonus,
   isCorruptedWormhole,
 } from '@/items/wormhole-cycles.js';
+import { mysticOrbsRequiredLevelBonus } from '@/items/mystic-orbs.js';
 
 /**
  * @typedef {{
@@ -103,11 +104,10 @@ function pushSourceModifierTexts(source, texts) {
  * Overlay items use rolled affix lines so `Requirements -(40 to 50)%` resolves.
  * @param {object|null|undefined} def
  * @param {Record<string, number>|null|undefined} rolls
- * @param {ItemRequirementSource[]} socketables
  * @param {string[]} extras
  * @returns {string[]}
  */
-function collectRequirementModifierTexts(def, rolls, socketables, extras) {
+function collectHostRequirementModifierTexts(def, rolls, extras) {
   /** @type {string[]} */
   const texts = [];
   if (def && isOverlayItem(def)) {
@@ -115,7 +115,6 @@ function collectRequirementModifierTexts(def, rolls, socketables, extras) {
   } else if (Array.isArray(def?.modifiers)) {
     pushSourceModifierTexts(def, texts);
   }
-  for (const sock of socketables) pushSourceModifierTexts(sock, texts);
   for (const line of extras) {
     if (typeof line === 'string' && line.trim()) texts.push(line);
   }
@@ -123,18 +122,37 @@ function collectRequirementModifierTexts(def, rolls, socketables, extras) {
 }
 
 /**
- * Catalog reqs, raised by socketable reqs, then str/dex reduced by Requirements -%.
+ * Keep a displayed `+N Required Level` line (TSW extras / effigies). If none is
+ * present, synthesize one from applied mystic orb stacks.
+ * @param {string[]|null|undefined} extras
+ * @param {unknown} mysticOrbs
+ * @returns {string[]}
+ */
+export function extrasWithMysticOrbRequiredLevel(extras, mysticOrbs) {
+  const list = Array.isArray(extras)
+    ? extras.map((line) => String(line || '').trim()).filter(Boolean)
+    : [];
+  if (list.some((line) => parseRequiredLevelBonus(line) > 0)) return list;
+  const bonus = mysticOrbsRequiredLevelBonus(mysticOrbs);
+  if (bonus > 0) return [...list, `+${bonus} Required Level`];
+  return list;
+}
+
+/**
+ * Catalog reqs, raised by socketable reqs, then `+N Required Level` (MOs / effigies)
+ * applied after that post-socket value. Str/dex reduced by Requirements -%.
  * @param {object|null|undefined} def
  * @param {{
  *   rolls?: Record<string, number>|null,
  *   socketables?: ItemRequirementSource[]|null,
  *   extras?: string[]|null,
+ *   mysticOrbs?: unknown,
  * }} [options]
  * @returns {ItemRequirements}
  */
 export function resolveItemRequirements(def, options = {}) {
   const socketables = Array.isArray(options.socketables) ? options.socketables : [];
-  const extras = Array.isArray(options.extras) ? options.extras : [];
+  const extras = extrasWithMysticOrbRequiredLevel(options.extras, options.mysticOrbs);
   let reqLevel = nonNeg(def?.reqLevel);
   let reqStr = nonNeg(def?.reqStr);
   let reqDex = nonNeg(def?.reqDex);
@@ -152,16 +170,25 @@ export function resolveItemRequirements(def, options = {}) {
     if (Number.isFinite(Number(sock.reductionPct))) {
       reductionPct += Math.abs(Number(sock.reductionPct)) || 0;
     }
+    if (Array.isArray(sock.modifiers)) {
+      for (const text of sock.modifiers) {
+        if (typeof text !== 'string' || !text.trim()) continue;
+        reductionPct += parseRequirementsReductionPct(text);
+      }
+    }
   }
 
-  for (const text of collectRequirementModifierTexts(
-    def,
-    options.rolls ?? null,
-    socketables,
-    extras
-  )) {
+  for (const text of collectHostRequirementModifierTexts(def, options.rolls ?? null, extras)) {
     reductionPct += parseRequirementsReductionPct(text);
     reqLevel += parseRequiredLevelBonus(text);
+  }
+
+  for (const sock of socketables) {
+    if (!sock || !Array.isArray(sock.modifiers)) continue;
+    for (const text of sock.modifiers) {
+      if (typeof text !== 'string' || !text.trim()) continue;
+      reqLevel += parseRequiredLevelBonus(text);
+    }
   }
 
   if (reductionPct !== 0) {
@@ -171,6 +198,41 @@ export function resolveItemRequirements(def, options = {}) {
   }
 
   return { reqLevel, reqStr, reqDex, reductionPct };
+}
+
+/**
+ * Whether a resolved required level is above the planner character level.
+ * Missing/invalid character level does not block.
+ * @param {number} reqLevel
+ * @param {number|null|undefined} characterLevel
+ * @returns {boolean}
+ */
+export function requiredLevelExceedsCharacter(reqLevel, characterLevel) {
+  const req = Number(reqLevel);
+  const cap = Number(characterLevel);
+  if (!Number.isFinite(req) || req <= 0) return false;
+  if (!Number.isFinite(cap) || cap <= 0) return false;
+  return req > cap;
+}
+
+/**
+ * Whether applying these rolls/orbs/sockets would push the item above character level.
+ * @param {object|null|undefined} def
+ * @param {{
+ *   rolls?: Record<string, number>|null,
+ *   socketables?: ItemRequirementSource[]|null,
+ *   extras?: string[]|null,
+ *   mysticOrbs?: unknown,
+ * }} [options]
+ * @param {number|null|undefined} characterLevel
+ * @returns {boolean}
+ */
+export function itemRequirementsExceedCharacterLevel(def, options = {}, characterLevel) {
+  if (!def) return false;
+  return requiredLevelExceedsCharacter(
+    resolveItemRequirements(def, options).reqLevel,
+    characterLevel
+  );
 }
 
 /**

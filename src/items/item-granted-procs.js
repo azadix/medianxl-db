@@ -238,7 +238,15 @@ function collectProcsFromLines(lines, source) {
  * @param {number|null} characterLevel
  * @returns {string[]}
  */
-function resolvedLinesForDef(def, rolls, className, characterLevel, extras = null) {
+function resolvedLinesForDef(
+  def,
+  rolls,
+  className,
+  characterLevel,
+  extras = null,
+  mysticOrbs = null,
+  socketables = null
+) {
   if (!def) return [];
   return getItemStatLines(def, rolls, {
     hideRollableRanges: false,
@@ -247,6 +255,8 @@ function resolvedLinesForDef(def, rolls, className, characterLevel, extras = nul
     charmInInventory: true,
     className,
     extras,
+    mysticOrbs,
+    socketables,
   });
 }
 
@@ -276,7 +286,15 @@ export function collectEnabledPlannerProcs(options = {}) {
       if (!def) continue;
       const rolls = itemsStore.getRollsForInstance?.(instanceId) ?? null;
       const extras = itemsStore.getExtrasForInstance?.(instanceId) ?? [];
-      const lines = resolvedLinesForDef(def, rolls, className, characterLevel, extras);
+      const lines = resolvedLinesForDef(
+        def,
+        rolls,
+        className,
+        characterLevel,
+        extras,
+        itemsStore.getMysticOrbsForInstance?.(instanceId) ?? [],
+        itemsStore.getSocketablesForInstance?.(instanceId) ?? []
+      );
       rows.push(
         ...collectProcsFromLines(lines, {
           sourceKind: 'item',
