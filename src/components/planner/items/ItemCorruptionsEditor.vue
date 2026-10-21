@@ -59,6 +59,9 @@ function clear(index) {
 <template>
   <div class="item-upgrade-section" aria-label="Corruptions">
     <p class="item-upgrade-section__heading is-size-7 has-text-grey mb-2">Corruption</p>
+    <p class="item-upgrade-section__note is-size-7 has-text-grey">
+      Corruptions cannot be detected automatically when importing. Add them here if needed.
+    </p>
     <div v-if="slots > 1 && editable" class="item-upgrade-section__mods mb-2">
       <button
         v-for="(_, idx) in applied"

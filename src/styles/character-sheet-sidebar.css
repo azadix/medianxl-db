@@ -1252,6 +1252,11 @@
   letter-spacing: 0.04em;
 }
 
+.item-upgrade-section__note {
+  margin: -0.25rem 0 0.65rem;
+  line-height: 1.35;
+}
+
 .item-upgrade-section__list {
   margin: 0;
   padding: 0;

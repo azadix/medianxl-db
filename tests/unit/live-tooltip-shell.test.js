@@ -80,6 +80,37 @@ describe('live tooltip shell', () => {
     expect(portal.textContent).toContain('B');
   });
 
+  it('deferred hide clears after the pointer leaves the portal', async () => {
+    shell.present('<div class="tooltip-content">Stuck</div>', 10, 10);
+    portal.matches = (sel) => sel === ':hover';
+    shell.hide(false, { deferIfOverPortal: true });
+    await new Promise((resolve) => {
+      requestAnimationFrame(() => resolve());
+    });
+    expect(shell.isShowing()).toBe(true);
+
+    portal.matches = () => false;
+    portal.dispatchEvent(new Event('pointerleave', { bubbles: true }));
+    expect(shell.isShowing()).toBe(false);
+    expect(portal.innerHTML).toBe('');
+  });
+
+  it('deferred hide clears on pointermove off the portal', async () => {
+    shell.present('<div class="tooltip-content">Stuck</div>', 10, 10);
+    portal.matches = (sel) => sel === ':hover';
+    shell.hide(false, { deferIfOverPortal: true });
+    await new Promise((resolve) => {
+      requestAnimationFrame(() => resolve());
+    });
+    expect(shell.isShowing()).toBe(true);
+
+    const origFromPoint = document.elementFromPoint;
+    document.elementFromPoint = () => document.body;
+    document.dispatchEvent(new PointerEvent('pointermove', { clientX: 400, clientY: 20, bubbles: true }));
+    document.elementFromPoint = origFromPoint;
+    expect(shell.isShowing()).toBe(false);
+  });
+
   it('places a wide tooltip to the left of the cursor when it would overflow', () => {
     Object.defineProperty(window, 'innerWidth', { configurable: true, value: 400 });
     Object.defineProperty(window, 'innerHeight', { configurable: true, value: 400 });

@@ -136,6 +136,8 @@ export function createLiveTooltipShell(options = {}) {
   let pendingClientX = 0;
   let pendingClientY = 0;
   let hideGeneration = 0;
+  /** @type {(() => void)|null} */
+  let portalLeaveCleanup = null;
 
   function resolvePortal() {
     if (portal && portal.isConnected) return portal;
@@ -160,7 +162,53 @@ export function createLiveTooltipShell(options = {}) {
     }
   }
 
+  function unbindPortalLeaveHide() {
+    portalLeaveCleanup?.();
+    portalLeaveCleanup = null;
+  }
+
+  /**
+   * Overflowing item tooltips capture the pointer, so a fast leave from the doll
+   * can land on the portal and cancel hide. Keep it only while the pointer stays there.
+   */
+  function bindPortalLeaveHide() {
+    unbindPortalLeaveHide();
+    const node = resolvePortal();
+    if (!node) return;
+
+    const finish = () => {
+      unbindPortalLeaveHide();
+      if (!isShowing()) return;
+      if (shouldSuppressLiveTooltipHide(resolvePortal())) return;
+      hide(true);
+    };
+
+    const onPointerLeave = (e) => {
+      if (e.relatedTarget instanceof Node && node.contains(e.relatedTarget)) return;
+      finish();
+    };
+
+    const onPointerMove = (e) => {
+      let el = null;
+      try {
+        el = document.elementFromPoint(e.clientX, e.clientY);
+      } catch {
+        return;
+      }
+      if (el instanceof Node && node.contains(el)) return;
+      finish();
+    };
+
+    node.addEventListener('pointerleave', onPointerLeave);
+    document.addEventListener('pointermove', onPointerMove, true);
+    portalLeaveCleanup = () => {
+      node.removeEventListener('pointerleave', onPointerLeave);
+      document.removeEventListener('pointermove', onPointerMove, true);
+    };
+  }
+
   function clearPortal() {
+    unbindPortalLeaveHide();
     if (positionRafId) {
       cancelAnimationFrame(positionRafId);
       positionRafId = 0;
@@ -214,6 +262,7 @@ export function createLiveTooltipShell(options = {}) {
       hide(true);
       return false;
     }
+    unbindPortalLeaveHide();
     hideGeneration += 1;
     attach();
     const getHtml = opts.getHtml !== undefined ? opts.getHtml : defaultGetHtml;
@@ -288,7 +337,10 @@ export function createLiveTooltipShell(options = {}) {
       requestAnimationFrame(() => {
         if (gen !== hideGeneration) return;
         if (shouldSuppressLiveTooltipHide(resolvePortal())) return;
-        if (isPointerOverPortal()) return;
+        if (isPointerOverPortal()) {
+          bindPortalLeaveHide();
+          return;
+        }
         hideGeneration += 1;
         clearPortal();
       });

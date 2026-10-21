@@ -69,6 +69,9 @@ function clear() {
 <template>
   <div class="item-upgrade-section" aria-label="Oil">
     <p class="item-upgrade-section__heading is-size-7 has-text-grey mb-2">Oil</p>
+    <p class="item-upgrade-section__note is-size-7 has-text-grey">
+      Oils cannot be detected automatically when importing. Add them here if needed.
+    </p>
     <div v-if="applied" class="item-upgrade-section__item">
       <div class="item-mo-editor__row">
         <img v-if="iconUrl(applied)" class="item-sockets-editor__icon" :src="iconUrl(applied)" alt="" />

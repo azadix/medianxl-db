@@ -34,6 +34,7 @@ const props = defineProps({
   heading: { type: String, default: 'Mystic Orbs' },
   emptyText: { type: String, default: 'No mystic orbs applied.' },
   addLabel: { type: String, default: 'Add mystic orb…' },
+  importNote: { type: String, default: '' },
   shrine: { type: String, default: '' },
   blessing: { type: String, default: '' },
 });
@@ -240,6 +241,7 @@ onUnmounted(() => {
       {{ heading }}
       <span v-if="reqLevelBonus">{{ formatRequiredLevelBonusLine(reqLevelBonus) }}</span>
     </p>
+    <p v-if="importNote" class="item-upgrade-section__note is-size-7 has-text-grey">{{ importNote }}</p>
     <div v-if="editable" class="item-mo-editor__add">
       <div class="item-sockets-editor__picker item-mo-editor__picker" @mousedown="dismissHoverTooltips">
         <button

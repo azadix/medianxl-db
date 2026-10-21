@@ -301,6 +301,7 @@ function modLineClass(row) {
         heading="Occult Effigies"
         empty-text="No effigies applied."
         add-label="Add occult effigy…"
+        import-note="Effigies cannot be detected automatically when importing. Add them here if needed."
         @update:mystic-orbs="emit('update:mystic-orbs', $event)"
       />
 
