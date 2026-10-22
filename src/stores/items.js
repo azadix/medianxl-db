@@ -2547,29 +2547,34 @@ export const useItemsStore = defineStore('items', {
       };
 
       /**
-       * @param {string} defId
-       * @param {Record<string, number>|null} rolls
+       * @param {{ defId: string, rolls: Record<string, number>|null, extras: string[], mysticOrbs: Array<[number, string]>, socketables: import('@/items/socketables.js').SocketableEntry[] }|null} parsed
        * @param {'charms'|'relics'} kind
        */
       const className = this.viewerClassName;
-      const enableFromSnap = (defId, rolls, kind) => {
-        const def = this.catalogByIdMap[defId];
+      const enableFromSnap = (parsed, kind) => {
+        if (!parsed) return;
+        const def = this.catalogByIdMap[parsed.defId];
         if (!def) return;
+        const meta = {
+          extras: parsed.extras,
+          mysticOrbs: parsed.mysticOrbs,
+          socketables: parsed.socketables,
+        };
         if (kind === 'charms') {
-          if (!isCharmItem(def) || nextEnabledCharms[defId] != null) return;
+          if (!isCharmItem(def) || nextEnabledCharms[parsed.defId] != null) return;
           // Match toggleCharm: class-restricted charms stay disabled for the wrong class.
           if (!canEquipForClass(def, className)) return;
           if (isDimensionalKeyCharm(def)) {
             if (hasDimensionalKey) return;
             hasDimensionalKey = true;
           }
-          nextEnabledCharms[defId] = makeInstance(defId, null, rolls, null);
+          nextEnabledCharms[parsed.defId] = makeInstance(parsed.defId, null, parsed.rolls, null, meta);
           return;
         }
-        if (!isRelicItem(def) || nextEnabledRelics[defId] != null) return;
+        if (!isRelicItem(def) || nextEnabledRelics[parsed.defId] != null) return;
         if (!canEquipForClass(def, className)) return;
         if (Object.keys(nextEnabledRelics).length >= MAX_RELICS) return;
-        nextEnabledRelics[defId] = makeInstance(defId, null, rolls, null);
+        nextEnabledRelics[parsed.defId] = makeInstance(parsed.defId, null, parsed.rolls, null, meta);
       };
 
       /** @param {number} id */
@@ -2617,7 +2622,7 @@ export const useItemsStore = defineStore('items', {
           for (const row of charmsSnap) {
             const parsed = parseEntry(row);
             if (!parsed) continue;
-            enableFromSnap(parsed.defId, parsed.rolls, 'charms');
+            enableFromSnap(parsed, 'charms');
           }
         }
 
@@ -2626,7 +2631,7 @@ export const useItemsStore = defineStore('items', {
           for (const row of relicsSnap) {
             const parsed = parseEntry(row);
             if (!parsed) continue;
-            enableFromSnap(parsed.defId, parsed.rolls, 'relics');
+            enableFromSnap(parsed, 'relics');
           }
         }
 
@@ -2641,11 +2646,11 @@ export const useItemsStore = defineStore('items', {
             const def = this.catalogByIdMap[parsed.defId];
             // Migrate legacy inventory charms/relics into enable maps.
             if (isCharmItem(def)) {
-              enableFromSnap(parsed.defId, parsed.rolls, 'charms');
+              enableFromSnap(parsed, 'charms');
               continue;
             }
             if (isRelicItem(def)) {
-              enableFromSnap(parsed.defId, parsed.rolls, 'relics');
+              enableFromSnap(parsed, 'relics');
               continue;
             }
             const id = makeInstance(parsed.defId, parsed.icon, parsed.rolls, parsed.custom, {

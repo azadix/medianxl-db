@@ -777,6 +777,10 @@ export function collectEnabledItemCharacterStatBonuses(options = {}) {
         if (text == null) continue;
         lines.push(text);
       }
+      const charmExtras = itemsStore.getExtrasForInstance?.(instanceId) ?? [];
+      for (const extra of charmExtras) {
+        if (extra) lines.push(extra);
+      }
       accumulateLines(lines, sourceLabelForDef(def), bonuses, modifiersByKey, unknownModifiers, characterLevel);
     }
 
@@ -786,10 +790,16 @@ export function collectEnabledItemCharacterStatBonuses(options = {}) {
       if (!isRelicBonusActive(def, characterLevel, { inInventory: true })) continue;
       const rolls =
         itemsStore.getRollsForInstance?.(instanceId) ?? defaultRelicAffixRolls(def);
-      const lines = getRelicStatLines(def, rolls, {
-        hideRollableRanges: false,
-        showRollRanges: false,
-      });
+      const lines = [
+        ...getRelicStatLines(def, rolls, {
+          hideRollableRanges: false,
+          showRollRanges: false,
+        }),
+      ];
+      const relicExtras = itemsStore.getExtrasForInstance?.(instanceId) ?? [];
+      for (const extra of relicExtras) {
+        if (extra) lines.push(extra);
+      }
       accumulateLines(lines, sourceLabelForDef(def), bonuses, modifiersByKey, unknownModifiers, characterLevel);
     }
   } catch {

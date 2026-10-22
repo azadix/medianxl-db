@@ -447,4 +447,28 @@ describe('tsw item extras', () => {
     );
     expect(extras).toContain('+100 Required Level');
   });
+
+  it('does not treat percent-to-stat as the same affix as flat +stat', () => {
+    expect(matchAffixTemplate('15% to Dexterity', '+50 to Dexterity')).toBeNull();
+    expect(matchAffixTemplate('+50 to Dexterity', '+15% to Dexterity')).toBeNull();
+    const def = {
+      id: 's:stareyes-claws',
+      name: "Stareye's Claws",
+      rarity: 'set',
+      uniqueKind: 'set',
+      setId: 'set:henchmen-trophies',
+      modifiers: ['15% to Dexterity', '+50 to Dexterity'],
+    };
+    const row = {
+      item: "Stareye's Claws",
+      description_lines: [
+        [["Stareye's Claws", 2]],
+        [['+15% to Dexterity', 3]],
+        [['+50 to Dexterity', 3]],
+      ],
+    };
+    expect(extrasFromTswItem(row, def)).toEqual([]);
+    const rolls = rollsFromTswItem(row, def);
+    expect(Object.values(rolls).some((n) => n === 15)).toBe(false);
+  });
 });

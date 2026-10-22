@@ -122,10 +122,19 @@ function signature(text) {
     .replace(/\+\((-?\d+(?:\.\d+)?)\s+to\s+(-?\d+(?:\.\d+)?)\)/g, '#')
     .replace(/\((-?\d+(?:\.\d+)?)\s+to\s+(-?\d+(?:\.\d+)?)\)/g, '#')
     .replace(/[+-]?\d+(?:\.\d+)?/g, '#')
-    .replace(/[^a-z#]+/g, '')
+    // Keep `%` so "15% to Dexterity" does not claim "+50 to Dexterity".
+    .replace(/[^a-z#%]+/g, '')
     // Collapse so "Innate Lightning Damage: 719 (62.0% of Dexterity)" matches
     // catalog "Innate Lightning Damage: (62.0% of Dexterity)".
     .replace(/#+/g, '#');
+}
+
+/**
+ * @param {string} text
+ * @returns {boolean}
+ */
+function affixHasPercent(text) {
+  return /%/.test(plain(text));
 }
 
 /**
@@ -168,6 +177,7 @@ export function matchAffixTemplate(template, actual) {
   const tmpl = plain(template);
   const act = plain(actual);
   if (!tmpl || !act) return null;
+  if (affixHasPercent(tmpl) !== affixHasPercent(act)) return null;
   const ranges = parseAffixRanges(tmpl);
   if (ranges.length) {
     let pattern = '';
@@ -532,6 +542,7 @@ export function catalogModifierTemplates(def) {
  * @returns {boolean}
  */
 function lineMatchesCatalogTemplate(template, actual) {
+  if (affixHasPercent(template) !== affixHasPercent(actual)) return false;
   if (matchAffixTemplate(template, actual)) return true;
   const sigT = signature(template);
   const sigA = signature(actual);

@@ -53,7 +53,7 @@ function loadPlannerCatalog() {
     keepInInventory: true,
   }));
   const db = JSON.parse(readFileSync(resolve(dir, 'unique-stats-db.json'), 'utf8'));
-  const { items: overlays } = buildCatalogFromUniqueStats(db, [...baseItems, ...other]);
+  const { items: overlays, sets } = buildCatalogFromUniqueStats(db, [...baseItems, ...other]);
   const runewordsData = JSON.parse(readFileSync(resolve(dir, 'runewords.json'), 'utf8'));
   const entries = Array.isArray(runewordsData) ? runewordsData : runewordsData.entries || [];
   const runewords = entries.map(runewordEntryToItemDef).filter(Boolean);
@@ -61,7 +61,7 @@ function loadPlannerCatalog() {
   loadMysticOrbsCatalog(JSON.parse(readFileSync(resolve(dir, 'mystic-orbs.json'), 'utf8')));
   const catalog = [...baseItems, ...charms, ...other, ...overlays, ...relics, ...runewords];
   mergeJewelItemsIntoSocketablesCatalog(catalog);
-  return catalog;
+  return { catalog, sets };
 }
 
 /**
@@ -87,12 +87,13 @@ function tswRequiredStats(row) {
  * @param {string} file
  * @returns {string[]}
  */
-function auditBuildFile(catalog, file) {
+function auditBuildFile(catalog, file, sets = []) {
   const raw = JSON.parse(readFileSync(resolve(BUILDS_DIR, file), 'utf8'));
   const { build, tswItems } = unwrapTswOrNativeBuild(raw);
   setActivePinia(createPinia());
   const store = useItemsStore();
   store.catalog = catalog;
+  store.sets = Array.isArray(sets) ? sets : [];
   store.catalogLoaded = true;
   store.catalogVersionFolder = '2_14';
   const ch = createCharacterInstance(build.class || 'Amazon', Number(build.level) || 150);
@@ -165,7 +166,7 @@ const files = existsSync(BUILDS_DIR)
   : [];
 
 describe.skipIf(files.length === 0)('TSW build audit', () => {
-  const catalog = loadPlannerCatalog();
+  const { catalog, sets } = loadPlannerCatalog();
   /** @type {(() => void) | null} */
   let restoreFetch = null;
 
@@ -185,7 +186,7 @@ describe.skipIf(files.length === 0)('TSW build audit', () => {
 
   for (const file of files) {
     it(file, () => {
-      const problems = auditBuildFile(catalog, file);
+      const problems = auditBuildFile(catalog, file, sets);
       expect(problems, problems.join('\n')).toEqual([]);
     });
   }
