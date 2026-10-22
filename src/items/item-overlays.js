@@ -108,7 +108,7 @@ export function overlayAffixRollKey(sourceKey, rangeIndex) {
  * Roll key for a fixed (non-range) catalog affix number overridden by TSW.
  * Index 0 is also readable via legacy `modFixed:${sourceKey}` (no `:n0` suffix).
  * @param {string} sourceKey
- * @param {number} [numberIndex=0]
+ * @param {number} [numberIndex]
  * @returns {string}
  */
 export function overlayFixedBoostRollKey(sourceKey, numberIndex = 0) {

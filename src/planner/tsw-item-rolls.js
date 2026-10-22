@@ -741,13 +741,6 @@ export function parseTswMysticOrbs(raw) {
  * }}
  */
 export function tswInstanceExtras(row, def, setDumpCtx = null) {
-  /** @type {{
-   *   extras?: string[],
-   *   mysticOrbs?: Array<[number, string]>,
-   *   socketables?: import('@/items/socketables.js').SocketableEntry[],
-   *   ethereal?: boolean,
-   *   corrupted?: boolean,
-   * }} */
   const out = {};
   const extras = extrasFromTswItem(row, def, setDumpCtx);
   if (extras.length) out.extras = extras;

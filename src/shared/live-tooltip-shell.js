@@ -189,7 +189,7 @@ export function createLiveTooltipShell(options = {}) {
     };
 
     const onPointerMove = (e) => {
-      let el = null;
+      let el;
       try {
         el = document.elementFromPoint(e.clientX, e.clientY);
       } catch {

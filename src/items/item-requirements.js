@@ -148,22 +148,6 @@ function collectOverlayRequirementModifierTexts(def, rolls) {
 }
 
 /**
- * Modifier texts used to parse Requirements -% and +Required Level.
- * @param {object|null|undefined} def
- * @param {Record<string, number>|null|undefined} rolls
- * @param {string[]} extras
- * @returns {string[]}
- */
-function collectHostRequirementModifierTexts(def, rolls, extras) {
-  /** @type {string[]} */
-  const texts = collectOverlayRequirementModifierTexts(def, rolls);
-  for (const line of extras) {
-    if (typeof line === 'string' && line.trim()) texts.push(line);
-  }
-  return texts;
-}
-
-/**
  * Sigil of Absolution (and similar) cannot apply when the host is below min required level.
  * @param {object|null|undefined} def
  * @param {{
