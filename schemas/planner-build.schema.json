@@ -52,7 +52,14 @@
           "$comment": "Hard points per tree skill. Keys are display names."
         },
         "oSkills": {
-          "$ref": "#/$defs/SkillPointsMap",
+          "oneOf": [
+            { "$ref": "#/$defs/SkillPointsMap" },
+            {
+              "type": "array",
+              "items": { "type": "object", "additionalProperties": true },
+              "$comment": "NotArmory sometimes emits [] when there are no oSkills."
+            }
+          ],
           "$comment": "Character-sheet oSkill totals (item grants included)."
         },
         "allSkillsBonus": { "type": "integer", "minimum": 0 },
@@ -181,6 +188,14 @@
         "is_upgraded": { "type": "boolean" },
         "has_trophy": { "type": "boolean" },
         "area": { "type": "string" },
+        "ilvl": { "type": ["integer", "null"] },
+        "ilvl_original": { "type": ["integer", "null"] },
+        "quantity": { "type": ["integer", "null"] },
+        "compactable": { "type": "boolean" },
+        "storage": { "type": ["integer", "null"] },
+        "row": { "type": ["integer", "null"] },
+        "col": { "type": ["integer", "null"] },
+        "locid": { "type": ["integer", "null"] },
         "location": { "type": "string", "minLength": 1 },
         "slot": { "type": ["string", "null"] },
         "description_lines": { "$ref": "#/$defs/DescriptionLines" },

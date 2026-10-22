@@ -57,6 +57,7 @@ import {
 } from './saved-builds-ui.js';
 import { main, ensurePlannerTreeInitialized } from './planner-init.js';
 import { takePendingTswImportEnvelope } from './tsw-code-import.js';
+import { setSavedBuildName, tswExportLabel, wrapPlannerBuildForTswExport } from './tsw-build-export.js';
 
 export async function plannerMenuNewBuild() {
     showSection('tree');
@@ -405,8 +406,11 @@ export function showExportBuildNameModal(opts) {
                 className: 'button is-info is-outlined',
                 async onClick(name, closeModal) {
                     closeModal();
-                    const snap = buildCurrentBuildSnapshot(name);
-                    const encoded = await compressBuildToUrlParam(JSON.stringify(snap));
+                    const envelope = wrapPlannerBuildForTswExport(
+                        buildCurrentBuildSnapshot(name),
+                        useItemsStore()
+                    );
+                    const encoded = await compressBuildToUrlParam(JSON.stringify(envelope));
                     setBuildUrlParam(encoded);
                     const shareUrl = window.location.href;
                     if (navigator.clipboard && window.isSecureContext) {
@@ -428,8 +432,14 @@ export function plannerExportBuildClick() {
     }
     showExportBuildNameModal({
         onConfirm(name) {
-            const snap = buildCurrentBuildSnapshot(name);
-            exportBuildJsonString(JSON.stringify(snap), exportLabelForToast(name));
+            const envelope = wrapPlannerBuildForTswExport(
+                buildCurrentBuildSnapshot(name),
+                useItemsStore()
+            );
+            exportBuildJsonString(
+                JSON.stringify(envelope),
+                exportLabelForToast(tswExportLabel(envelope) || name)
+            );
         },
     });
 }
@@ -440,7 +450,7 @@ function renameCurrentBuild(name) {
     const builds = getSavedBuilds();
     if (getCurrentBuildIndex() !== null && getCurrentBuildIndex() >= 0 && getCurrentBuildIndex() < builds.length) {
         const ref = builds[getCurrentBuildIndex()];
-        ref.name = name;
+        setSavedBuildName(ref, name);
         setSavedBuilds(builds);
         setCurrentBuildIndex(builds.indexOf(ref));
         notifySavedBuildsListRefresh();

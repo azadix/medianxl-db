@@ -6,8 +6,10 @@ export const SAVED_BUILDS_STORAGE_KEY = 'medianxl-builds';
  * @returns {number}
  */
 function savedAtMs(b) {
-  if (!b || typeof b.savedAt !== 'string') return 0;
-  const t = Date.parse(b.savedAt);
+  const inner = b && typeof b === 'object' && b.build && typeof b.build === 'object' ? b.build : b;
+  const raw = inner && typeof inner.savedAt === 'string' ? inner.savedAt : b && typeof b.savedAt === 'string' ? b.savedAt : '';
+  if (!raw) return 0;
+  const t = Date.parse(raw);
   return Number.isFinite(t) ? t : 0;
 }
 

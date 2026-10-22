@@ -78,6 +78,12 @@ import {
   applyTswOSkillLeftovers,
   inferTswQuestsCompleted,
 } from './tsw-build-import.js';
+import {
+  savedBuildName,
+  setSavedBuildName,
+  tswExportLabel,
+  wrapPlannerBuildForTswExport,
+} from './tsw-build-export.js';
 import { inferTswClassSkillsBonus } from './tsw-item-rolls.js';
 import Tree from '@/tree/Tree.js';
 import {
@@ -765,7 +771,7 @@ export function updateCurrentBuild() {
         return;
     }
     
-    const keptName = builds[idx].name;
+    const keptName = savedBuildName(builds[idx]);
     setCurrentBuildDisplayName(keptName || '');
     const snap = buildCurrentBuildSnapshot(keptName);
     builds[idx] = snap;
@@ -774,7 +780,7 @@ export function updateCurrentBuild() {
     setCurrentBuildIndex(builds.indexOf(snap));
     notifySavedBuildsListRefresh();
 
-    toastManager.showToast(`Build "${exportLabelForToast(snap.name)}" updated!`, true, 'info');
+    toastManager.showToast(`Build "${exportLabelForToast(tswExportLabel(snap))}" updated!`, true, 'info');
 }
 
 /**
@@ -786,7 +792,7 @@ export function updateCurrentBuild() {
 function uniquifyNewBuildNameAmongSaved(desiredName, builds) {
     const base = String(desiredName ?? '').trim();
     const used = new Set(
-        (builds || []).map((b) => String(b?.name ?? '').trim()).filter((s) => s !== '')
+        (builds || []).map((b) => savedBuildName(b).trim()).filter((s) => s !== '')
     );
     if (!used.has(base)) return base;
     let n = 2;
@@ -842,8 +848,8 @@ export function exportBuild(index) {
         return;
     }
     
-    const build = builds[index];
-    exportBuildJsonString(JSON.stringify(build), exportLabelForToast(build.name));
+    const envelope = wrapPlannerBuildForTswExport(builds[index], useItemsStore());
+    exportBuildJsonString(JSON.stringify(envelope), exportLabelForToast(tswExportLabel(envelope)));
 }
 
 /**
@@ -857,11 +863,11 @@ export function downloadSavedBuildAsJson(index) {
         return;
     }
 
-    const build = builds[index];
-    const filename = buildJsonDownloadFilename(build.name);
-    downloadTextAsJsonFile(JSON.stringify(build, null, 2), filename);
+    const envelope = wrapPlannerBuildForTswExport(builds[index], useItemsStore());
+    const filename = buildJsonDownloadFilename(tswExportLabel(envelope));
+    downloadTextAsJsonFile(JSON.stringify(envelope, null, 2), filename);
     toastManager.showToast(
-        `Build "${exportLabelForToast(build.name)}" downloaded as JSON!`,
+        `Build "${exportLabelForToast(tswExportLabel(envelope))}" downloaded as JSON!`,
         true,
         'success'
     );
@@ -872,11 +878,11 @@ export function downloadSavedBuildAsJson(index) {
  * @param {string} name
  */
 export function downloadCurrentBuildAsJson(name) {
-    const snap = buildCurrentBuildSnapshot(name);
-    const filename = buildJsonDownloadFilename(snap.name);
-    downloadTextAsJsonFile(JSON.stringify(snap, null, 2), filename);
+    const envelope = wrapPlannerBuildForTswExport(buildCurrentBuildSnapshot(name), useItemsStore());
+    const filename = buildJsonDownloadFilename(tswExportLabel(envelope));
+    downloadTextAsJsonFile(JSON.stringify(envelope, null, 2), filename);
     toastManager.showToast(
-        `Build "${exportLabelForToast(snap.name)}" downloaded as JSON!`,
+        `Build "${exportLabelForToast(tswExportLabel(envelope))}" downloaded as JSON!`,
         true,
         'success'
     );
@@ -1013,6 +1019,17 @@ function showExportModal(jsonText, buildName) {
 /**
  * Show help modal with keyboard shortcuts and tips
  */
+/**
+ * Unwrap a local/TSW saved record into the inner build loadBuildData expects.
+ * @param {object} raw
+ * @returns {object}
+ */
+function storedBuildForLoad(raw) {
+    const { build, tswItems } = unwrapTswOrNativeBuild(raw);
+    if (tswItems) build.__tswItems = tswItems;
+    return build;
+}
+
 export function loadBuild(index) {
     const builds = getSavedBuilds();
     if (index < 0 || index >= builds.length) {
@@ -1020,7 +1037,7 @@ export function loadBuild(index) {
         return;
     }
 
-    const build = builds[index];
+    const build = storedBuildForLoad(builds[index]);
 
     // Check if build version differs from current version
     const currentVersion = getCurrentVersion();
@@ -1058,7 +1075,7 @@ export function deleteBuild(index) {
         return;
     }
     
-    const buildName = builds[index].name;
+    const buildName = savedBuildName(builds[index]);
     const label = exportLabelForToast(buildName);
     
     if (confirm(`Delete build "${label}"?`)) {
@@ -1098,11 +1115,11 @@ export function renameBuild(index) {
         helpText: 'Used for the saved build. Empty names become "Unnamed Build".',
         primaryText: 'Rename build',
         primaryIconClass: 'fa-check',
-        initialName: currentBuild.name ?? '',
+        initialName: savedBuildName(currentBuild),
         onConfirm(name) {
             const nameExists =
                 name !== 'Unnamed Build' &&
-                builds.some((build, i) => i !== index && build.name === name);
+                builds.some((build, i) => i !== index && savedBuildName(build) === name);
             if (nameExists) {
                 toastManager.showToast(`Build name "${name}" already exists!`, true, 'danger');
                 return;
@@ -1110,7 +1127,7 @@ export function renameBuild(index) {
 
             const ref = builds[index];
             const wasCurrent = getCurrentBuildIndex() === index;
-            ref.name = name;
+            setSavedBuildName(ref, name);
             setSavedBuilds(builds);
 
             if (wasCurrent) {
@@ -1143,7 +1160,7 @@ export function getCurrentBuildNamePrefill() {
   const builds = getSavedBuilds();
   const idx = getCurrentBuildIndex();
   if (idx !== null && idx >= 0 && idx < builds.length) {
-    return String(builds[idx].name ?? '');
+    return savedBuildName(builds[idx]);
   }
   return getCurrentBuildDisplayName();
 }
@@ -1200,7 +1217,7 @@ export function buildCurrentBuildSnapshot(name) {
     if (Object.keys(qc).length === 0) delete snap.questsCompleted;
     if (Object.keys(qo).length === 0) delete snap.questCompletionOptOut;
   }
-  return snap;
+  return wrapPlannerBuildForTswExport(snap, useItemsStore());
 }
 
 export function exportBuildJsonString(jsonString, labelForUi) {

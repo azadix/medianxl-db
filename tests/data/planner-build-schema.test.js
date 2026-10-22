@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { readJson } from '../helpers/tree-data.js';
 
@@ -148,8 +149,8 @@ const FIXTURE = {
     version: '2.14',
     class: 'Amazon',
     level: 120,
-    skillPoints: { 'Fury Funnel': 20 },
-    oSkills: { 'Fast Attack': 5 },
+    skillPoints: { Barrage: 20 },
+    oSkills: { "Jitan's Gate": 5 },
     allSkillsBonus: 8,
     stats: '{{life}}=1000\n{{mana}}=200',
     questsCompleted: { den_of_evil: { normal: true, nightmare: true, hell: true } },
@@ -192,6 +193,21 @@ describe('planner build full schema', () => {
   it('accepts a TSW envelope fixture', () => {
     const errors = validate(schema, schema, FIXTURE);
     expect(errors, errors.join('\n')).toEqual([]);
+  });
+
+  it('accepts every dump in tests/fixtures/tsw-builds', () => {
+    const dir = resolve(ROOT, 'tests/fixtures/tsw-builds');
+    if (!existsSync(dir)) return;
+    const files = readdirSync(dir).filter((name) => name.toLowerCase().endsWith('.json')).sort();
+    expect(files.length).toBeGreaterThan(0);
+    /** @type {string[]} */
+    const problems = [];
+    for (const file of files) {
+      const data = JSON.parse(readFileSync(resolve(dir, file), 'utf8'));
+      const errors = validate(schema, schema, data);
+      if (errors.length) problems.push(`${file}: ${errors.join('; ')}`);
+    }
+    expect(problems, problems.join('\n')).toEqual([]);
   });
 
   it('accepts the Miss_Peeled TSW export', () => {

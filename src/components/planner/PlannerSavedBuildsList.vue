@@ -3,6 +3,7 @@ import { ref, onMounted, onUnmounted, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { usePlannerStore } from '@/stores/planner.js';
 import { getSavedBuilds } from '@/planner/saved-builds-storage.js';
+import { savedBuildInner, savedBuildName } from '@/planner/tsw-build-export.js';
 import { calculateArmorImageNumber } from '@/planner/planner-ui-updates.js';
 import {
   loadBuild,
@@ -38,8 +39,9 @@ function bumpPortraitsIfLoad() {
   }
 }
 
-function portraitSrc(build) {
+function portraitSrc(raw) {
   void portraitTick.value;
+  const build = savedBuildInner(raw);
   const cs = document.getElementById('classSelect');
   const currentClass = cs ? cs.value : '';
   const spent = getSpentSkillPoints();
@@ -120,25 +122,25 @@ watch(activeSection, (s) => {
 <template>
   <div id="saved-builds-list">
     <p v-if="builds.length === 0" class="has-text-grey-light">No saved builds found</p>
-    <div v-for="(build, index) in builds" :key="`${build.savedAt || 'legacy'}-${index}`" class="box mb-3">
+    <div v-for="(raw, index) in builds" :key="`${savedBuildInner(raw).savedAt || 'legacy'}-${index}`" class="box mb-3">
       <div class="columns is-vcentered">
         <div class="column is-narrow py-0">
           <img
-            :src="portraitSrc(build)"
-            :alt="build.class"
+            :src="portraitSrc(raw)"
+            :alt="savedBuildInner(raw).class"
             class="image is-64x64"
             style="object-fit: contain"
           />
         </div>
         <div class="column p-0">
           <p class="title is-4 has-text-weight-bold mb-2">
-            <span v-if="String(build.name || '').trim() !== ''">{{ build.name }}</span>
+            <span v-if="savedBuildName(raw).trim() !== ''">{{ savedBuildName(raw) }}</span>
             <span v-else class="has-text-grey">Unnamed build</span>
           </p>
           <p class="subtitle is-6 mb-1">
-            <span class="tag has-text-info">Level {{ build.level }} {{ build.class }}</span>
-            <span class="tag">{{ build.spentPoints }} points spent</span>
-            <span class="tag">v{{ build.version || 'unknown' }}</span>
+            <span class="tag has-text-info">Level {{ savedBuildInner(raw).level }} {{ savedBuildInner(raw).class }}</span>
+            <span class="tag">{{ savedBuildInner(raw).spentPoints }} points spent</span>
+            <span class="tag">v{{ savedBuildInner(raw).version || 'unknown' }}</span>
           </p>
         </div>
         <div class="column is-narrow">
