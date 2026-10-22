@@ -80,6 +80,29 @@ describe('tsw item extras', () => {
     expect(rolls[lifeKey]).toBe(1003);
   });
 
+  it('keeps leftover Requirements % even when the unique has a different amount', () => {
+    const extras = extrasFromTswItem(
+      {
+        item: 'Black Masquerade',
+        display_name: 'Black Masquerade',
+        type: 'Bone Helm (SSU)',
+        description_lines: [
+          [['Black Masquerade', 4]],
+          [['Bone Helm (Sacred)', 4]],
+          [['Required Strength: 438', 1]],
+          [['Requirements -30%', 3]],
+        ],
+      },
+      {
+        id: 'u:black-masquerade:su',
+        name: 'Black Masquerade',
+        rarity: 'unique',
+        modifiers: ['Requirements -100%'],
+      }
+    );
+    expect(extras).toContain('Requirements -30%');
+  });
+
   it('keeps MO / jewel leftovers and skips catalog + boilerplate lines', () => {
     const extras = extrasFromTswItem(silksRow, silksDef);
     expect(extras).toEqual(
@@ -251,6 +274,7 @@ describe('tsw item extras', () => {
         '+10% to Summon Attack Rating',
         '+1% to Strength',
         '+5 to all Attributes',
+        'Requirements +100%',
       ])
     );
   });

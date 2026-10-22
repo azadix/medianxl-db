@@ -166,6 +166,7 @@ export function plannerItemToTswRow(def, inst, loc) {
     mysticOrbs,
     socketables,
     corruptions: inst?.corruptions,
+    ethereal: eth,
   });
   const statLines = getItemStatLines(def, rolls, {
     hideRollableRanges: true,

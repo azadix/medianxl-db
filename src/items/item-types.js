@@ -142,6 +142,19 @@ export function isActiveWeaponSetSlot(slot, weaponSet = 0) {
 }
 
 /**
+ * Weapon set that owns a slot's str/dex (0 = I, 1 = II). Body slots are null
+ * (always equipped; either set's stats may satisfy them).
+ * @param {string} slot
+ * @returns {0|1|null}
+ */
+export function weaponSetForEquipSlot(slot) {
+  const s = String(slot);
+  if (s === 'rarm' || s === 'larm') return 0;
+  if (s === 'rarm2' || s === 'larm2') return 1;
+  return null;
+}
+
+/**
  * Normalize equipment slot for comparison (weapon set II → set I keys).
  * @param {string} slot
  * @returns {string}

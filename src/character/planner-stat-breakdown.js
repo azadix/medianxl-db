@@ -208,6 +208,25 @@ export function buildPlannerStatBreakdownHtml(statKey) {
       });
     }
     pushItemBonusSection(key, sections);
+    const pctKey = Character.attributePercentKey(key);
+    if (pctKey) {
+      const pctMods = getPlannerStatSkillModifiers(pctKey);
+      if (pctMods.length > 0) {
+        sections.push({
+          title: 'Skills (% to attribute)',
+          rows: pctMods.map((m) => ({
+            label: m.displayName,
+            value: m.description,
+            active: m.active !== false,
+          })),
+        });
+      }
+      pushItemBonusSection(pctKey, sections);
+    }
+    sections.push({
+      title: 'Total',
+      rows: [{ label: formatStatDisplayValue(displayedNum), value: undefined }],
+    });
   } else if (isPlannerNegativeAllowedBaseStat(key)) {
     const rawOnly = character.getRawStat(key);
     const mods = getPlannerStatSkillModifiers(key);

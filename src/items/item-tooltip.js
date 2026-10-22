@@ -190,6 +190,7 @@ export function buildItemTooltipHtml(def, iconKey = null, rolls = null, options 
     shrine: options.shrine,
     mechanics: options.mechanics,
     honorific: options.honorific,
+    ethereal: options.ethereal === true,
   });
 
   const baseBlock = renderStatLines([...sections.base, ...sections.scaling]);

@@ -16,6 +16,7 @@ import {
   canPlaceInInventory,
   isInventoryOnlyGear,
   isActiveWeaponSetSlot,
+  weaponSetForEquipSlot,
   isQuiverItem,
   isQuiverEffectActive,
   pairedWeaponSlot,
@@ -86,6 +87,7 @@ import { loadHonorificBlessings, loadShrinesCatalog } from '@/items/blessings.js
 import { loadAffixTemplates } from '@/items/affix-templates.js';
 import { loadItemMechanics } from '@/items/item-mechanics.js';
 import { getItemUpgradeFlags } from '@/items/item-upgrades.js';
+import { recomputePlannerStatsFromItems } from '@/items/item-character-stat-bonuses.js';
 import {
   getItemSocketCount,
   loadSocketablesCatalog,
@@ -845,7 +847,31 @@ export const useItemsStore = defineStore('items', {
 
     /** @param {0|1} set */
     setWeaponSet(set) {
-      this.weaponSet = set === 1 ? 1 : 0;
+      const next = set === 1 ? 1 : 0;
+      if (this.weaponSet === next) return;
+      this.weaponSet = next;
+      recomputePlannerStatsFromItems(getCharacterInstance());
+    },
+
+    /**
+     * Run `fn` with item bonuses from a given weapon set, then restore the previous set.
+     * @template T
+     * @param {0|1} set
+     * @param {() => T} fn
+     * @returns {T}
+     */
+    runWithWeaponSet(set, fn) {
+      const next = set === 1 ? 1 : 0;
+      const prev = this.weaponSet === 1 ? 1 : 0;
+      if (next === prev) return fn();
+      this.weaponSet = next;
+      recomputePlannerStatsFromItems(getCharacterInstance());
+      try {
+        return fn();
+      } finally {
+        this.weaponSet = prev;
+        recomputePlannerStatsFromItems(getCharacterInstance());
+      }
     },
 
     /**
@@ -906,6 +932,7 @@ export const useItemsStore = defineStore('items', {
         socketables: this.getSocketablesForInstance(instanceId),
         mysticOrbs: this.getMysticOrbsForInstance(instanceId),
         corruptions: this.instances[instanceId]?.corruptions,
+        ethereal: this.instances[instanceId]?.ethereal === true,
       });
     },
 
@@ -917,6 +944,10 @@ export const useItemsStore = defineStore('items', {
      */
     equipmentSlotMeetsRequirements(slot) {
       const key = String(slot);
+      const setIdx = weaponSetForEquipSlot(key);
+      if (setIdx != null && setIdx !== this.weaponSet) {
+        return this.runWithWeaponSet(setIdx, () => this.equipmentSlotMeetsRequirements(key));
+      }
       const id = this.equipment[key];
       if (id == null) return true;
       const def = this.getDefForInstance(id);
@@ -925,7 +956,12 @@ export const useItemsStore = defineStore('items', {
       if (!canEquipForClass(def, className)) return false;
       const reqs = this.getRequirementsForInstance(id);
       const stats = this.getCharacterRequirementStats();
-      if (!characterMeetsItemRequirements(reqs, stats)) return false;
+      if (!characterMeetsItemRequirements(reqs, stats)) {
+        if (setIdx == null && this.weaponSet === 0) {
+          return this.runWithWeaponSet(1, () => this.equipmentSlotMeetsRequirements(key));
+        }
+        return false;
+      }
       if (isQuiverItem(def)) {
         const otherSlot = pairedWeaponSlot(key);
         if (!otherSlot) return false;
@@ -942,14 +978,29 @@ export const useItemsStore = defineStore('items', {
     },
 
     /**
-     * Whether an equipment slot applies bonuses to the character
-     * (active weapon set + requirements met).
+     * Whether an equipment slot applies bonuses to the character.
+     * Active weapon set, class, level, and quiver pairing. Str/dex are not
+     * required so an item's own +str / % to Strength can satisfy its reqs.
      * @param {string} slot
      * @returns {boolean}
      */
     equipmentSlotContributesBonuses(slot) {
       if (!isActiveWeaponSetSlot(slot, this.weaponSet)) return false;
-      return this.equipmentSlotMeetsRequirements(slot);
+      const key = String(slot);
+      const id = this.equipment[key];
+      if (id == null) return false;
+      const def = this.getDefForInstance(id);
+      if (!def) return false;
+      const className = this.effectiveViewerClassName;
+      if (!canEquipForClass(def, className)) return false;
+      if (this.quiverInactiveReasonForSlot(key)) return false;
+      const reqs = this.getRequirementsForInstance(id);
+      const reqLevel = Number(reqs?.reqLevel) || 0;
+      if (reqLevel > 0) {
+        const level = Number(this.getCharacterRequirementStats().level);
+        if (!Number.isFinite(level) || level < reqLevel) return false;
+      }
+      return true;
     },
 
     /**
@@ -1246,6 +1297,7 @@ export const useItemsStore = defineStore('items', {
         shrine: upgrades.shrine || null,
         mechanics: upgrades.mechanics,
         honorific: upgrades.honorific,
+        ethereal: this.instances[instanceId]?.ethereal === true,
       };
     },
 

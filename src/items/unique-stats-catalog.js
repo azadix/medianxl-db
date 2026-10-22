@@ -744,6 +744,8 @@ export function entryToItemDef(entry, bases) {
     if (src.range != null) def.range = src.range;
     if (src.strDamageBonus != null) def.strDamageBonus = src.strDamageBonus;
     if (src.dexDamageBonus != null) def.dexDamageBonus = src.dexDamageBonus;
+    if (src.reqStr != null) def.baseReqStr = Number(src.reqStr) || 0;
+    if (src.reqDex != null) def.baseReqDex = Number(src.reqDex) || 0;
     if (asCatalogBase) {
       if (!def.innate && src.innate) def.innate = src.innate;
       if (src.adds) def.adds = src.adds;

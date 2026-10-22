@@ -105,6 +105,10 @@ describe('unique-stats-db catalog', () => {
     expect((boc1?.modifiers || []).filter((m) => /Crystalline Arsenal/i.test(m))).toHaveLength(1);
     expect(items.find((c) => c.id === 'charm:essence-of-time')).toBeUndefined();
 
+    const azurewrath = items.find((u) => u.name === 'Azurewrath');
+    expect(azurewrath?.reqDex).toBe(1020);
+    expect(azurewrath?.baseReqDex).toBe(510);
+
     const storm = items.find((s) => s.name === 'Elemental Storm');
     expect(storm?.reqDex).toBe(109);
     expect(storm?.modifiers).not.toContain('Required Dexterity:');

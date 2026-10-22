@@ -477,7 +477,8 @@ export function getItemStatSections(def, rolls = null, options = {}) {
     shrine: options.shrine,
     mysticOrbs: options.mysticOrbs,
   });
-  const ethereal = def.ethereal === true || upgradeFlags.etherealForced;
+  const ethereal =
+    options.ethereal === true || def.ethereal === true || upgradeFlags.etherealForced;
   /**
    * @param {number} n
    */
@@ -598,6 +599,7 @@ export function getItemStatSections(def, rolls = null, options = {}) {
       extras,
       mysticOrbs: options.mysticOrbs ?? null,
       corruptions: options.corruptions ?? null,
+      ethereal,
     }),
   };
 }
@@ -642,10 +644,11 @@ export function getItemDetailStatRows(def, rolls = null, options = {}) {
     corruptions: options.corruptions,
     blessing: options.blessing,
     shrine: options.shrine,
+    ethereal: options.ethereal === true,
   });
   const upgradeFlags = getItemUpgradeFlags(options);
   const flagLines = collectItemStateFlagLines({
-    ethereal: def.ethereal === true || upgradeFlags.etherealForced,
+    ethereal: options.ethereal === true || def.ethereal === true || upgradeFlags.etherealForced,
     corrupted: def.corrupted === true || upgradeFlags.corrupted,
     alreadyUpgraded: upgradeFlags.alreadyUpgraded,
     shrineBlessed: upgradeFlags.shrineBlessed,

@@ -135,7 +135,7 @@ describe('resolveItemRequirements', () => {
           ],
         }
       )
-    ).toEqual({ reqLevel: 25, reqStr: 85, reqDex: 42, reductionPct: 15 });
+    ).toEqual({ reqLevel: 25, reqStr: 85, reqDex: 43, reductionPct: 15 });
   });
 
   it('adds +Required Level from modifiers and can raise Requirements +%', () => {
@@ -166,7 +166,7 @@ describe('resolveItemRequirements', () => {
           extras: ['+35 Required Level', 'Requirements -5%'],
         }
       )
-    ).toEqual({ reqLevel: 135, reqStr: 731, reqDex: 0, reductionPct: 5 });
+    ).toEqual({ reqLevel: 135, reqStr: 732, reqDex: 0, reductionPct: 5 });
   });
 
   it('applies +Required Level after socket-raised req', () => {
@@ -366,6 +366,83 @@ describe('resolveItemRequirements', () => {
         modifiers: ['Requirements -10%', '+20 Required Level'],
       })
     ).toEqual({ reqLevel: 50, reqStr: 495, reqDex: 0, reductionPct: 10 });
+  });
+
+  it('applies unique Requirements +% to base reqs, not the wiki header', () => {
+    expect(
+      resolveItemRequirements({
+        rarity: 'unique',
+        baseId: 'helm',
+        reqLevel: 100,
+        reqStr: 1150,
+        baseReqStr: 575,
+        modifiers: ['Requirements +100%'],
+      })
+    ).toMatchObject({ reqLevel: 100, reqStr: 1150, reductionPct: -100 });
+  });
+
+  it('uses leftover Requirements +% as the net total on base reqs', () => {
+    expect(
+      resolveItemRequirements(
+        {
+          rarity: 'unique',
+          baseId: 'qcrs',
+          reqLevel: 100,
+          reqDex: 1020,
+          baseReqDex: 510,
+          modifiers: ['Requirements +100%'],
+        },
+        { extras: ['Requirements +150%'] }
+      )
+    ).toMatchObject({ reqDex: 1275, reductionPct: -150 });
+  });
+
+  it('ignores unique Requirements -100% when leftover is the net %', () => {
+    expect(
+      resolveItemRequirements(
+        {
+          rarity: 'unique',
+          baseId: 'qbhe',
+          reqLevel: 80,
+          reqStr: 0,
+          baseReqStr: 625,
+          modifiers: ['Requirements -100%'],
+        },
+        { extras: ['Requirements -30%'] }
+      )
+    ).toMatchObject({ reqStr: 438, reductionPct: 30 });
+  });
+
+  it('subtracts 10 from ethereal base reqs before Requirements %', () => {
+    expect(
+      resolveItemRequirements(
+        {
+          rarity: 'unique',
+          baseId: 'boot',
+          reqLevel: 100,
+          reqStr: 625,
+          baseReqStr: 625,
+          modifiers: [],
+        },
+        { ethereal: true, extras: ['Requirements +50%'] }
+      )
+    ).toMatchObject({ reqStr: 922, reductionPct: -50 });
+  });
+
+  it('applies leftover Requirements +% to Natalya base strength', () => {
+    expect(
+      resolveItemRequirements(
+        {
+          rarity: 'unique',
+          baseId: 'qtor',
+          reqLevel: 65,
+          reqStr: 500,
+          baseReqStr: 500,
+          modifiers: ['Orb Effects Applied to this Item are Quadrupled'],
+        },
+        { extras: ['Requirements +180%'] }
+      )
+    ).toMatchObject({ reqStr: 1400, reductionPct: -180 });
   });
 });
 

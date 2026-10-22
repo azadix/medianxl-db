@@ -194,6 +194,8 @@ export function resolveItemDef(base, overlay) {
     icon: overlay.icon || base.icon,
     baseId: overlay.baseId || base.id,
     baseName: overlay.baseName || base.name,
+    baseReqStr: overlay.baseReqStr ?? base.baseReqStr ?? base.reqStr,
+    baseReqDex: overlay.baseReqDex ?? base.baseReqDex ?? base.reqDex,
     modifiers: Array.isArray(overlay.modifiers) ? overlay.modifiers : [],
     // Prefer overlay sockets (max); fall back to base
     sockets: overlay.sockets != null ? overlay.sockets : base.sockets,

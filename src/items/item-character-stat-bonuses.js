@@ -127,6 +127,7 @@ const EXTRA_LINE_PATTERNS = [
   { re: /^([+-]?\d+(?:\.\d+)?)\s+to\s+Life$/i, key: 'life' },
   { re: /^([+-]?\d+(?:\.\d+)?)\s+to\s+Mana$/i, key: 'mana' },
   { re: /^Maximum Mana \+?([+-]?\d+(?:\.\d+)?)%$/i, key: 'maximum_mana' },
+  { re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+Maximum Mana$/i, key: 'maximum_mana' },
   { re: /^Maximum Life \+?([+-]?\d+(?:\.\d+)?)%$/i, key: 'maximum_life' },
   { re: /^Maximum Fire Resist \+?([+-]?\d+(?:\.\d+)?)%$/i, key: 'maximum_fire_resistance' },
   { re: /^Maximum Lightning Resist \+?([+-]?\d+(?:\.\d+)?)%$/i, key: 'maximum_lightning_resistance' },
@@ -141,13 +142,19 @@ const EXTRA_LINE_PATTERNS = [
   { re: /^([+-]?\d+(?:\.\d+)?)%\s+to\s+Vitality$/i, key: 'percent_vitality' },
   { re: /^([+-]?\d+(?:\.\d+)?)%\s+to\s+Energy$/i, key: 'percent_energy' },
   {
-    re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+to\s+Summon Elemental Resistances$/i,
+    re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+(?:to\s+)?Summon(?:ed Minion)?(?: Elemental)? Resistances$/i,
     key: 'summoned_minion_resistances',
   },
   { re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+to\s+Summon Life$/i, key: 'summoned_minion_life' },
   { re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+to\s+Summon Damage$/i, key: 'summoned_minion_damage' },
   { re: /^Elemental Resists \+?([+-]?\d+(?:\.\d+)?)%$/i, keys: [...ELEMENTAL_RESIST_KEYS] },
+  {
+    re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+(?:to\s+)?Elemental Resists$/i,
+    keys: [...ELEMENTAL_RESIST_KEYS],
+  },
   { re: /^All Resists \+?([+-]?\d+(?:\.\d+)?)%$/i, keys: [...ELEMENTAL_RESIST_KEYS] },
+  { re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+(?:to\s+)?Magic Find$/i, key: 'magic_find' },
+  { re: /^Regenerate mana \+?([+-]?\d+(?:\.\d+)?)%$/i, key: 'regenerate_mana' },
   // Item text uses "Enhanced Defense"; character_stats label is "Bonus Defense".
   { re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+Enhanced Defense$/i, key: 'enhanced_defense' },
   { re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+Bonus to Defense$/i, key: 'enhanced_defense' },
@@ -489,6 +496,23 @@ function shouldSkipNonStatLine(text) {
  * @param {number} amount
  * @returns {ParsedCharacterStatBonus[]}
  */
+const PER_LEVEL_ABOVE_RE = /\s+per Character Level above (\d+)$/i;
+
+/**
+ * @param {string} text
+ * @param {unknown} characterLevel
+ * @returns {{ text: string, multiplier: number }}
+ */
+function peelPerCharacterLevelAbove(text, characterLevel) {
+  const m = PER_LEVEL_ABOVE_RE.exec(text);
+  if (!m) return { text, multiplier: 1 };
+  const threshold = Number(m[1]);
+  const lvl = Number(characterLevel);
+  const above =
+    Number.isFinite(lvl) && Number.isFinite(threshold) ? Math.max(0, Math.floor(lvl) - threshold) : 0;
+  return { text: text.slice(0, m.index).trim(), multiplier: above };
+}
+
 function bonusesForKeys(keys, amount) {
   /** @type {ParsedCharacterStatBonus[]} */
   const out = [];
@@ -506,13 +530,14 @@ function bonusesForKeys(keys, amount) {
 
 /**
  * @param {string|null|undefined} line
+ * @param {{ characterLevel?: number|null }} [options]
  * @returns {{
  *   text: string,
  *   kind: 'inactive'|'skip'|'skill'|'parsed'|'unknown',
  *   bonuses: ParsedCharacterStatBonus[],
  * }}
  */
-export function classifyCharacterStatModifierLine(line) {
+export function classifyCharacterStatModifierLine(line, options = {}) {
   if (!isModifierLineActive(line)) {
     return { text: '', kind: 'inactive', bonuses: [] };
   }
@@ -533,48 +558,62 @@ export function classifyCharacterStatModifierLine(line) {
   }
 
   const normalized = normalizeMatchText(text);
+  const peeled = peelPerCharacterLevelAbove(normalized, options.characterLevel);
+  const matchText = peeled.text;
+  const matchNoPlus = matchText.replace(/^\+/, '');
   /** @type {ParsedCharacterStatBonus[]} */
   let bonuses = [];
+  let matched = false;
+
+  /**
+   * @param {string[]} keys
+   * @param {number} amount
+   * @param {{ abs?: boolean }} [flags]
+   */
+  const take = (keys, amount, flags = {}) => {
+    let n = amount;
+    if (flags.abs && Number.isFinite(n)) n = Math.abs(n);
+    bonuses = bonusesForKeys(keys, n * peeled.multiplier);
+    matched = true;
+  };
 
   for (const pattern of EXTRA_LINE_PATTERNS) {
-    const m = pattern.re.exec(normalized);
+    const m = pattern.re.exec(matchText);
     if (!m) continue;
-    let amount = Number(m[1]);
-    if (pattern.abs && Number.isFinite(amount)) amount = Math.abs(amount);
     const keys = pattern.keys || (pattern.key ? [pattern.key] : []);
-    bonuses = bonusesForKeys(keys, amount);
+    take(keys, Number(m[1]), { abs: pattern.abs });
     break;
   }
 
-  if (!bonuses.length) {
+  if (!matched) {
     for (const { re, keys } of getStatsFormatPatterns()) {
-      const m = re.exec(normalized) || re.exec(normalized.replace(/^\+/, ''));
+      const m = re.exec(matchText) || re.exec(matchNoPlus);
       if (!m) continue;
-      bonuses = bonusesForKeys(keys, Number(m[1]));
-      if (bonuses.length) break;
+      take(keys, Number(m[1]));
+      break;
     }
   }
 
-  if (!bonuses.length) {
+  if (!matched) {
     for (const { re, key } of getKeyPatterns()) {
-      const m = re.exec(normalized) || re.exec(normalized.replace(/^\+/, ''));
+      const m = re.exec(matchText) || re.exec(matchNoPlus);
       if (!m) continue;
-      bonuses = bonusesForKeys([key], Number(m[1]));
-      if (bonuses.length) break;
+      take([key], Number(m[1]));
+      break;
     }
   }
 
   // Label aliases last — helpful when wording differs from the key, never required.
-  if (!bonuses.length) {
+  if (!matched) {
     for (const { re, key } of getLabelAliasPatterns()) {
-      const m = re.exec(normalized) || re.exec(normalized.replace(/^\+/, ''));
+      const m = re.exec(matchText) || re.exec(matchNoPlus);
       if (!m) continue;
-      bonuses = bonusesForKeys([key], Number(m[1]));
-      if (bonuses.length) break;
+      take([key], Number(m[1]));
+      break;
     }
   }
 
-  if (bonuses.length) return { text, kind: 'parsed', bonuses };
+  if (bonuses.length || matched) return { text, kind: 'parsed', bonuses };
 
   // Named "+N to Skill" lines that did not also match a character-stat key.
   if (skillBonus && skillBonus.kind === 'skill') {
@@ -615,9 +654,9 @@ export function parseCharacterStatBonusFromModifierLine(line) {
  * @param {Record<string, PlannerStatItemModifier[]>} modsByKey
  * @param {UnknownItemStatModifier[]} unknownOut
  */
-function accumulateLines(lines, sourceLabel, bonuses, modsByKey, unknownOut) {
+function accumulateLines(lines, sourceLabel, bonuses, modsByKey, unknownOut, characterLevel = null) {
   for (const line of Array.isArray(lines) ? lines : []) {
-    const classified = classifyCharacterStatModifierLine(line);
+    const classified = classifyCharacterStatModifierLine(line, { characterLevel });
     if (classified.kind === 'unknown') {
       unknownOut.push({ text: classified.text, sourceLabel });
       continue;
@@ -699,7 +738,7 @@ export function collectEnabledItemCharacterStatBonuses(options = {}) {
         socketables: itemsStore.getSocketablesForInstance?.(instanceId) ?? [],
         ...bonusOpts,
       });
-      accumulateLines(lines, sourceLabelForDef(def), bonuses, modifiersByKey, unknownModifiers);
+      accumulateLines(lines, sourceLabelForDef(def), bonuses, modifiersByKey, unknownModifiers, characterLevel);
     }
 
     // Set bonus tiers — only pieces on the active weapon set count.
@@ -714,7 +753,14 @@ export function collectEnabledItemCharacterStatBonuses(options = {}) {
         if (!bonus.active) continue;
         const setName = String(setDef.name || setDef.id || 'Set').trim();
         const sourceLabel = `${setName} (${formatSetBonusLabel(bonus.required)})`;
-        accumulateLines(bonus.modifiers, sourceLabel, bonuses, modifiersByKey, unknownModifiers);
+        accumulateLines(
+          bonus.modifiers,
+          sourceLabel,
+          bonuses,
+          modifiersByKey,
+          unknownModifiers,
+          characterLevel
+        );
       }
     }
 
@@ -731,7 +777,7 @@ export function collectEnabledItemCharacterStatBonuses(options = {}) {
         if (text == null) continue;
         lines.push(text);
       }
-      accumulateLines(lines, sourceLabelForDef(def), bonuses, modifiersByKey, unknownModifiers);
+      accumulateLines(lines, sourceLabelForDef(def), bonuses, modifiersByKey, unknownModifiers, characterLevel);
     }
 
     for (const [defId, instanceId] of Object.entries(itemsStore.enabledRelics || {})) {
@@ -744,7 +790,7 @@ export function collectEnabledItemCharacterStatBonuses(options = {}) {
         hideRollableRanges: false,
         showRollRanges: false,
       });
-      accumulateLines(lines, sourceLabelForDef(def), bonuses, modifiersByKey, unknownModifiers);
+      accumulateLines(lines, sourceLabelForDef(def), bonuses, modifiersByKey, unknownModifiers, characterLevel);
     }
   } catch {
     return { bonuses: {}, modifiersByKey: {}, unknownModifiers: [] };

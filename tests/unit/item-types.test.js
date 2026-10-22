@@ -5,6 +5,7 @@ import {
   canEquipInSlot,
   equipBlockedReason,
   isActiveWeaponSetSlot,
+  weaponSetForEquipSlot,
   isStrictTwoHandedWeapon,
   isTwoHandedWeapon,
   isUniquePickerItem,
@@ -38,6 +39,16 @@ describe('isActiveWeaponSetSlot', () => {
     expect(isActiveWeaponSetSlot('larm', 1)).toBe(false);
     expect(isActiveWeaponSetSlot('rarm2', 1)).toBe(true);
     expect(isActiveWeaponSetSlot('larm2', 1)).toBe(true);
+  });
+});
+
+describe('weaponSetForEquipSlot', () => {
+  it('maps each hand slot to its weapon set', () => {
+    expect(weaponSetForEquipSlot('rarm')).toBe(0);
+    expect(weaponSetForEquipSlot('larm')).toBe(0);
+    expect(weaponSetForEquipSlot('rarm2')).toBe(1);
+    expect(weaponSetForEquipSlot('larm2')).toBe(1);
+    expect(weaponSetForEquipSlot('head')).toBeNull();
   });
 });
 

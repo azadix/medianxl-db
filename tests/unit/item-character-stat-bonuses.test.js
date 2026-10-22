@@ -40,6 +40,7 @@ import { initSkillDataStore } from '@/shared/skill-data-store.js';
 
 import { useItemsStore } from '@/stores/items.js';
 import { loadMysticOrbsCatalog } from '@/items/mystic-orbs.js';
+import { setPlannerAutoMatchHighestStatRequirements } from '@/planner/planner-options.js';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
@@ -223,6 +224,56 @@ describe('parseCharacterStatBonusFromModifierLine', () => {
       amount: 10,
     });
     expect(classifyCharacterStatModifierLine('-5% to All Vendor Prices').kind).toBe('parsed');
+  });
+
+  it('scales Paragon Hammer mods per character level above a threshold', () => {
+    const opts = { characterLevel: 150 };
+    const attrs = classifyCharacterStatModifierLine(
+      '+2 to All Attributes per Character Level above 130',
+      opts
+    );
+    expect(attrs.kind).toBe('parsed');
+    expect(attrs.bonuses.find((b) => b.key === 'dexterity')?.amount).toBe(40);
+
+    expect(
+      classifyCharacterStatModifierLine('+3% to Magic Find per Character Level above 130', opts)
+        .bonuses
+    ).toEqual([{ key: 'magic_find', amount: 60 }]);
+
+    const minion = classifyCharacterStatModifierLine(
+      '+2% to Summoned Minion Resistances per Character Level above 130',
+      opts
+    );
+    expect(minion.bonuses).toEqual([{ key: 'summoned_minion_resistances', amount: 40 }]);
+
+    const resists = classifyCharacterStatModifierLine(
+      '+3% to Elemental Resists per Character Level above 130',
+      opts
+    );
+    expect(resists.bonuses.find((b) => b.key === 'fire_resistance')?.amount).toBe(60);
+
+    expect(
+      classifyCharacterStatModifierLine('+1% Maximum Mana per Character Level above 130', opts)
+        .bonuses
+    ).toEqual([{ key: 'maximum_mana', amount: 20 }]);
+
+    expect(
+      classifyCharacterStatModifierLine('Regenerate mana +2% per Character Level above 130', opts)
+        .bonuses
+    ).toEqual([{ key: 'regenerate_mana', amount: 40 }]);
+
+    expect(
+      classifyCharacterStatModifierLine('Maximum Elemental Resists +1%').bonuses.find(
+        (b) => b.key === 'maximum_fire_resistance'
+      )?.amount
+    ).toBe(1);
+
+    const below = classifyCharacterStatModifierLine(
+      '+2 to All Attributes per Character Level above 130',
+      { characterLevel: 120 }
+    );
+    expect(below.kind).toBe('parsed');
+    expect(below.bonuses).toEqual([]);
   });
 
   it('expands combat speeds, spell damage, life/mana, and related charm aliases', () => {
@@ -490,6 +541,57 @@ describe('recomputePlannerStatsFromItems', () => {
       ])
     );
     expect(fireMods.filter((m) => m.sourceLabel === 'Vial of Elder Blood')).toHaveLength(1);
+  });
+
+  it('applies percent to Strength on getStat and inverts setStat', () => {
+    createCharacterInstance('Amazon', 99);
+    const ch = getCharacterInstance();
+    ch.setRawStat('strength', 100);
+    const store = useItemsStore();
+    const helm = {
+      id: 'u:pct-str:tu',
+      name: 'Pct Helm',
+      category: 'armor',
+      slot: 'head',
+      rarity: 'unique',
+      reqLevel: 1,
+      modifiers: ['+10% to Strength'],
+    };
+    store.catalog = [helm];
+    store.equipment.head = store.createInstance(helm.id);
+    recomputePlannerStatsFromItems(ch);
+    expect(ch.getStat('strength')).toBe(110);
+    expect(ch.getRawStat('strength')).toBe(100);
+    ch.setStat('strength', 110);
+    expect(ch.getRawStat('strength')).toBe(100);
+    expect(ch.getStat('strength')).toBe(110);
+  });
+
+  it('meets TSW gear reqs after applying item flats and percent', () => {
+    setPlannerAutoMatchHighestStatRequirements(false);
+    createCharacterInstance('Assassin', 150);
+    const ch = getCharacterInstance();
+    const store = useItemsStore();
+    const armor = {
+      id: 'u:nat-pct:sssu',
+      name: "Natalya's Deception",
+      category: 'armor',
+      slot: 'tors',
+      rarity: 'unique',
+      reqLevel: 1,
+      reqStr: 1400,
+      modifiers: ['+50% to Strength', '+100 to Strength'],
+    };
+    store.catalog = [armor];
+    store.catalogLoaded = true;
+    store.fromSnapshot({ equipment: { tors: { defId: armor.id } } });
+    ch.parseStatsFromText('{{strength}}=1000');
+    recomputePlannerStatsFromItems(ch);
+    expect(ch.getRawStat('strength')).toBe(1000);
+    expect(ch.getStat('strength')).toBe(1650);
+    expect(store.equipmentSlotMeetsRequirements('tors')).toBe(true);
+    expect(store.listUnmetEquippedItems()).toEqual([]);
+    setPlannerAutoMatchHighestStatRequirements(true);
   });
 
 });

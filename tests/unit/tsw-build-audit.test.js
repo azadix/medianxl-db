@@ -6,7 +6,7 @@
  */
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
 import { buildCatalogFromUniqueStats } from '@/items/unique-stats-catalog.js';
 import { runewordEntryToItemDef } from '@/items/runeword-items.js';
@@ -15,6 +15,7 @@ import { loadSocketablesCatalog, mergeJewelItemsIntoSocketablesCatalog } from '@
 import { tswDescriptionTexts } from '@/items/custom-items.js';
 import { EQUIPMENT_SLOTS } from '@/items/item-types.js';
 import { formatItemRequirementsLine } from '@/items/item-requirements.js';
+import { recomputePlannerStatsFromItems } from '@/items/item-character-stat-bonuses.js';
 import {
   unwrapTswOrNativeBuild,
   mapTswItemsToSnapshot,
@@ -23,6 +24,8 @@ import {
 } from '@/planner/tsw-build-import.js';
 import { useItemsStore } from '@/stores/items.js';
 import { createCharacterInstance, setCharacterInstance } from '@/character/planner-instance.js';
+import { initSkillDataStore } from '@/shared/skill-data-store.js';
+import { installTreeDataFetchMock } from '../helpers/mock-fetch-tree-data.js';
 
 const ROOT = resolve(import.meta.dirname, '../..');
 const BUILDS_DIR = process.env.TSW_BUILDS_DIR || resolve(ROOT, 'tests/fixtures/tsw-builds');
@@ -93,10 +96,11 @@ function auditBuildFile(catalog, file) {
   store.catalogLoaded = true;
   store.catalogVersionFolder = '2_14';
   const ch = createCharacterInstance(build.class || 'Amazon', Number(build.level) || 150);
-  if (build.stats) ch.parseStatsFromText(String(build.stats));
   store.syncViewerClassName(build.class);
   const { snapshot, skipped } = mapTswItemsToSnapshot(tswItems || [], store, build.class);
   const report = store.fromSnapshot(snapshot);
+  if (build.stats) ch.parseStatsFromText(String(build.stats));
+  recomputePlannerStatsFromItems(ch);
 
   /** @type {string[]} */
   const problems = [];
@@ -162,6 +166,18 @@ const files = existsSync(BUILDS_DIR)
 
 describe.skipIf(files.length === 0)('TSW build audit', () => {
   const catalog = loadPlannerCatalog();
+  /** @type {(() => void) | null} */
+  let restoreFetch = null;
+
+  beforeAll(async () => {
+    restoreFetch = installTreeDataFetchMock();
+    await initSkillDataStore();
+  });
+
+  afterAll(() => {
+    restoreFetch?.();
+    restoreFetch = null;
+  });
 
   it('lists every saved build file', () => {
     expect(files.length).toBeGreaterThan(0);

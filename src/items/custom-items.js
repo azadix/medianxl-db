@@ -191,6 +191,8 @@ export function applyCustomOverlayToDef(def, customRaw) {
     out.angelic = true;
     out.baseName = angelicBaseDisplayName(def);
   }
+  if (out.baseReqStr == null && def.reqStr != null) out.baseReqStr = def.reqStr;
+  if (out.baseReqDex == null && def.reqDex != null) out.baseReqDex = def.reqDex;
   if (custom.reqLevel != null) out.reqLevel = custom.reqLevel;
   if (custom.reqStr != null) {
     out.reqStr = custom.reqStr;

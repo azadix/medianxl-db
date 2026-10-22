@@ -23,6 +23,10 @@ import {
   itemForbidsSocketsAndEnhancements,
   uniqueCorruptionReqLevelPerSuccess,
 } from '@/items/item-unique-rules.js';
+import { getItemUpgradeFlags } from '@/items/item-upgrades.js';
+
+/** Ethereal items subtract this from base str/dex before Requirements +/-%. */
+export const ETHEREAL_BASE_REQ_FLAT = 10;
 
 /**
  * @typedef {{
@@ -100,6 +104,20 @@ function nonNeg(value) {
 }
 
 /**
+ * Median: `base + trunc(base * signedPct / 100)` (64-bit integer div toward 0).
+ * @param {number} base
+ * @param {number} signedPct
+ * @returns {number}
+ */
+function applyItemReqPercent(base, signedPct) {
+  const n = Number(base);
+  const pct = Number(signedPct);
+  if (!Number.isFinite(n) || n <= 0) return 0;
+  if (!Number.isFinite(pct) || pct === 0) return n;
+  return Math.max(0, n + Math.trunc((n * pct) / 100));
+}
+
+/**
  * @param {ItemRequirementSource|null|undefined} source
  * @param {string[]} texts
  * @returns {void}
@@ -112,14 +130,13 @@ function pushSourceModifierTexts(source, texts) {
 }
 
 /**
- * Modifier texts used to parse Requirements -%.
+ * Unique/set overlay (or plain modifier) lines used for Requirements -%.
  * Overlay items use rolled affix lines so `Requirements -(40 to 50)%` resolves.
  * @param {object|null|undefined} def
  * @param {Record<string, number>|null|undefined} rolls
- * @param {string[]} extras
  * @returns {string[]}
  */
-function collectHostRequirementModifierTexts(def, rolls, extras) {
+function collectOverlayRequirementModifierTexts(def, rolls) {
   /** @type {string[]} */
   const texts = [];
   if (def && isOverlayItem(def)) {
@@ -127,6 +144,19 @@ function collectHostRequirementModifierTexts(def, rolls, extras) {
   } else if (Array.isArray(def?.modifiers)) {
     pushSourceModifierTexts(def, texts);
   }
+  return texts;
+}
+
+/**
+ * Modifier texts used to parse Requirements -% and +Required Level.
+ * @param {object|null|undefined} def
+ * @param {Record<string, number>|null|undefined} rolls
+ * @param {string[]} extras
+ * @returns {string[]}
+ */
+function collectHostRequirementModifierTexts(def, rolls, extras) {
+  /** @type {string[]} */
+  const texts = collectOverlayRequirementModifierTexts(def, rolls);
   for (const line of extras) {
     if (typeof line === 'string' && line.trim()) texts.push(line);
   }
@@ -203,7 +233,9 @@ export function combinedRequiredLevelBonus(textBonus, positiveBonus = 0, negativ
 
 /**
  * Catalog reqs, raised by socketable reqs, then `+N Required Level` (MOs / effigies)
- * applied after that post-socket value. Str/dex reduced by Requirements -%.
+ * applied after that post-socket value. Str/dex use base reqs, then Requirements -%.
+ * A TSW leftover `Requirements +/-%` is the net unique+jewel+MO total.
+ * Ethereal subtracts 10 from base str/dex before %.
  * @param {object|null|undefined} def
  * @param {{
  *   rolls?: Record<string, number>|null,
@@ -211,6 +243,7 @@ export function combinedRequiredLevelBonus(textBonus, positiveBonus = 0, negativ
  *   extras?: string[]|null,
  *   mysticOrbs?: unknown,
  *   corruptions?: string[]|null,
+ *   ethereal?: boolean,
  * }} [options]
  * @returns {ItemRequirements}
  */
@@ -220,9 +253,24 @@ export function resolveItemRequirements(def, options = {}) {
     ? options.extras.map((line) => String(line || '').trim()).filter(Boolean)
     : [];
   let reqLevel = nonNeg(def?.reqLevel);
-  let reqStr = nonNeg(def?.reqStr);
-  let reqDex = nonNeg(def?.reqDex);
+  const ethereal =
+    options.ethereal === true ||
+    def?.ethereal === true ||
+    getItemUpgradeFlags({
+      corruptions: options.corruptions,
+      mysticOrbs: options.mysticOrbs,
+    }).etherealForced;
+  const ethFlat = ethereal ? ETHEREAL_BASE_REQ_FLAT : 0;
+  const baseStr = nonNeg(def?.baseReqStr ?? def?.reqStr);
+  const baseDex = nonNeg(def?.baseReqDex ?? def?.reqDex);
+  let reqStr = def?.reqStrFinal
+    ? nonNeg(def?.reqStr)
+    : Math.max(0, baseStr - (baseStr > 0 ? ethFlat : 0));
+  let reqDex = def?.reqDexFinal
+    ? nonNeg(def?.reqDex)
+    : Math.max(0, baseDex - (baseDex > 0 ? ethFlat : 0));
   let reductionPct = 0;
+  const extrasHaveReqPct = extras.some((text) => parseRequirementsReductionPct(text) !== 0);
 
   if (itemForbidsSocketsAndEnhancements(def)) {
     return { reqLevel, reqStr, reqDex, reductionPct: 0 };
@@ -237,16 +285,16 @@ export function resolveItemRequirements(def, options = {}) {
     if (!sock || typeof sock !== 'object') continue;
     reqStr = Math.max(reqStr, nonNeg(sock.reqStr));
     reqDex = Math.max(reqDex, nonNeg(sock.reqDex));
-    if (Number.isFinite(Number(sock.reductionPct))) {
-      reductionPct += Math.abs(Number(sock.reductionPct)) || 0;
-    }
     let sockReqBonus = 0;
     if (Array.isArray(sock.modifiers)) {
       for (const text of sock.modifiers) {
         if (typeof text !== 'string' || !text.trim()) continue;
-        reductionPct += parseRequirementsReductionPct(text);
+        if (!extrasHaveReqPct) reductionPct += parseRequirementsReductionPct(text);
         sockReqBonus += parseRequiredLevelBonus(text);
       }
+    }
+    if (!extrasHaveReqPct && Number.isFinite(Number(sock.reductionPct))) {
+      reductionPct += Math.abs(Number(sock.reductionPct)) || 0;
     }
     // Jewels with `+N Required Level` raise the host via that affix, not Required Level:.
     if (sockReqBonus === 0) reqLevel = Math.max(reqLevel, nonNeg(sock.reqLevel));
@@ -254,14 +302,18 @@ export function resolveItemRequirements(def, options = {}) {
   }
 
   let hostReqBonus = 0;
-  for (const text of collectHostRequirementModifierTexts(def, options.rolls ?? null, extras)) {
-    reductionPct += parseRequirementsReductionPct(text);
+  const overlayTexts = collectOverlayRequirementModifierTexts(def, options.rolls ?? null);
+  for (const text of overlayTexts) {
     hostReqBonus += parseRequiredLevelBonus(text);
+    if (!extrasHaveReqPct) reductionPct += parseRequirementsReductionPct(text);
+  }
+  for (const text of extras) {
+    hostReqBonus += parseRequiredLevelBonus(text);
+    reductionPct += parseRequirementsReductionPct(text);
   }
   // TSW leftover already includes socket `+Required Level` (e.g. Suicide Note).
   const textReqBonus = hostReqBonus !== 0 ? hostReqBonus : socketReqBonus;
 
-  const extrasHaveReqPct = extras.some((text) => parseRequirementsReductionPct(text) !== 0);
   if (!extrasHaveReqPct) {
     for (const [count, name] of normalizeMysticOrbs(options.mysticOrbs)) {
       for (const line of getMysticOrbBonusLines(name, count)) {
@@ -283,9 +335,9 @@ export function resolveItemRequirements(def, options = {}) {
   }
 
   if (reductionPct !== 0) {
-    const factor = Math.max(0, 1 - reductionPct / 100);
-    if (!def?.reqStrFinal) reqStr = Math.floor(reqStr * factor);
-    if (!def?.reqDexFinal) reqDex = Math.floor(reqDex * factor);
+    const signedPct = -reductionPct;
+    if (!def?.reqStrFinal) reqStr = applyItemReqPercent(reqStr, signedPct);
+    if (!def?.reqDexFinal) reqDex = applyItemReqPercent(reqDex, signedPct);
   }
 
   return { reqLevel: Math.max(0, reqLevel), reqStr, reqDex, reductionPct };

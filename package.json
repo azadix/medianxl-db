@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "npm test && vite",
+    "dev": "vitest run --exclude tests/unit/tsw-build-audit.test.js && vite",
     "lint": "eslint .",
     "build": "npm run lint && npm test && vite build && node tools/copy-spa-404.mjs",
     "preview": "vite preview",

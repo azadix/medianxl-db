@@ -109,3 +109,45 @@ describe('weapon set set-piece counting', () => {
     expect(ch.getStat('life')).toBe(beforeLife + 15);
   });
 });
+
+describe('weapon set requirement stats', () => {
+  it('checks each hand against stats from its own weapon set', () => {
+    createCharacterInstance('Amazon', 99);
+    const ch = getCharacterInstance();
+    ch.setRawStat('dexterity', 50);
+    const store = useItemsStore();
+    const setI = {
+      id: 'u:set-i:tu',
+      name: 'Set I Blade',
+      category: 'weapons',
+      slot: 'arms',
+      rarity: 'unique',
+      reqLevel: 1,
+      reqDex: 100,
+      modifiers: ['+1 to Dexterity'],
+    };
+    const setII = {
+      id: 'u:set-ii:tu',
+      name: 'Set II Blade',
+      category: 'weapons',
+      slot: 'arms',
+      rarity: 'unique',
+      reqLevel: 1,
+      reqDex: 100,
+      modifiers: ['+200 to Dexterity'],
+    };
+    store.catalog = [setI, setII];
+    store.catalogLoaded = true;
+    store.equipment.rarm = store.createInstance(setI.id);
+    store.equipment.rarm2 = store.createInstance(setII.id);
+    store.setWeaponSet(0);
+    recomputePlannerStatsFromItems(ch);
+
+    expect(store.equipmentSlotMeetsRequirements('rarm')).toBe(false);
+    expect(store.equipmentSlotMeetsRequirements('rarm2')).toBe(true);
+    const unmet = store.listUnmetEquippedItems();
+    expect(unmet.some((row) => row.name === setI.name)).toBe(true);
+    expect(unmet.some((row) => row.name === setII.name)).toBe(false);
+    expect(store.weaponSet).toBe(0);
+  });
+});

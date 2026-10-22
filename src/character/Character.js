@@ -1251,6 +1251,51 @@ export default class Character {
 
   // ===== STATS MANAGEMENT METHODS =====
 
+  /** @type {Readonly<Record<string, string>>} */
+  static ATTRIBUTE_PERCENT_KEYS = Object.freeze({
+    strength: 'percent_strength',
+    dexterity: 'percent_dexterity',
+    vitality: 'percent_vitality',
+    energy: 'percent_energy',
+  });
+
+  /**
+   * @param {string} statKey
+   * @returns {string|null}
+   */
+  static attributePercentKey(statKey) {
+    const k = String(statKey || '').toLowerCase();
+    return Character.ATTRIBUTE_PERCENT_KEYS[k] || null;
+  }
+
+  /**
+   * @param {number} flatTotal
+   * @param {number} percentTotal
+   * @returns {number}
+   */
+  static applyAttributePercent(flatTotal, percentTotal) {
+    const flat = Number(flatTotal);
+    const pct = Number(percentTotal) || 0;
+    if (!Number.isFinite(flat)) return 0;
+    if (!Number.isFinite(pct) || pct === 0) return flat;
+    return Math.floor((flat * (100 + pct)) / 100);
+  }
+
+  /**
+   * @param {string} statKey
+   * @param {{ includeSkill?: boolean, includeItem?: boolean }} [layers]
+   * @returns {number}
+   */
+  _attributePercentTotal(statKey, layers = {}) {
+    const pctKey = Character.attributePercentKey(statKey);
+    if (!pctKey) return 0;
+    const includeSkill = layers.includeSkill !== false;
+    const includeItem = layers.includeItem !== false;
+    const skillBonus = includeSkill ? Number(this._plannerSkillStatBonuses?.[pctKey]) || 0 : 0;
+    const itemBonus = includeItem ? Number(this._plannerItemStatBonuses?.[pctKey]) || 0 : 0;
+    return skillBonus + itemBonus;
+  }
+
   /**
    * Stored stat only (manual / saved / class-written), without passive skill bonuses.
    * @param {string} statKey
@@ -1275,7 +1320,11 @@ export default class Character {
     const raw = this.getRawStat(k);
     const skillBonus = Number(this._plannerSkillStatBonuses?.[k]) || 0;
     const itemBonus = Number(this._plannerItemStatBonuses?.[k]) || 0;
-    return normalizePlannerStatValue(k, raw + skillBonus + itemBonus);
+    const flat = raw + skillBonus + itemBonus;
+    if (!Character.attributePercentKey(k)) {
+      return normalizePlannerStatValue(k, flat);
+    }
+    return normalizePlannerStatValue(k, Character.applyAttributePercent(flat, this._attributePercentTotal(k)));
   }
 
   /**
@@ -1289,8 +1338,23 @@ export default class Character {
     const skillBonus = Number(this._plannerSkillStatBonuses?.[k]) || 0;
     const itemBonus = Number(this._plannerItemStatBonuses?.[k]) || 0;
     const displayNum = typeof value === 'number' ? value : parseFloat(String(value).trim());
-    const storedBase = Number.isFinite(displayNum) ? displayNum - skillBonus - itemBonus : 0;
+    const extras = skillBonus + itemBonus;
+    const pct = this._attributePercentTotal(k);
+    let storedBase = 0;
+    if (Number.isFinite(displayNum)) {
+      if (Character.attributePercentKey(k) && Number.isFinite(pct) && 100 + pct > 0) {
+        storedBase = (displayNum * 100) / (100 + pct) - extras;
+      } else {
+        storedBase = displayNum - extras;
+      }
+    }
     this.stats[k] = normalizePlannerStatValue(k, storedBase);
+    if (!Number.isFinite(displayNum) || !Character.attributePercentKey(k)) return;
+    let guard = 0;
+    while (this.getStat(k) < displayNum && guard < 8) {
+      this.stats[k] = normalizePlannerStatValue(k, this.getRawStat(k) + 1);
+      guard += 1;
+    }
   }
 
   /**
@@ -1349,7 +1413,13 @@ export default class Character {
       if (!isPlannerBaseStatKey(k)) continue;
       const raw = this.getRawStat(k);
       const itemBonus = Number(this._plannerItemStatBonuses?.[k]) || 0;
-      out[k] = normalizePlannerStatValue(k, raw + itemBonus);
+      const flat = raw + itemBonus;
+      if (!Character.attributePercentKey(k)) {
+        out[k] = normalizePlannerStatValue(k, flat);
+        continue;
+      }
+      const pct = this._attributePercentTotal(k, { includeSkill: false, includeItem: true });
+      out[k] = normalizePlannerStatValue(k, Character.applyAttributePercent(flat, pct));
     }
     return out;
   }
