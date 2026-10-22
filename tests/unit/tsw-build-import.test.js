@@ -342,6 +342,7 @@ describe('tsw-build-import', () => {
     const tinkerFeet = store.getEquipmentDef('feet');
     expect(tinkerFeet?.id).toBe('u:mindflayers-mayhem:su');
     expect(tinkerFeet?.name).toBe("Tinker's Gambit");
+    expect(tinkerFeet?.reqLevel).toBe(140);
     expect(tinkerFeet?.classRestriction).toBeFalsy();
     expect(canEquipInSlot(tinkerFeet, 'feet', 'Assassin')).toBe(true);
     expect(canEquipInSlot(tinkerFeet, 'feet', 'Amazon')).toBe(true);

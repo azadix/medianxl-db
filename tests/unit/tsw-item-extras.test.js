@@ -398,4 +398,29 @@ describe('tsw item extras', () => {
     );
     expect(extras).toEqual(['+50 to Life']);
   });
+
+  it('keeps leftover +Required Level instead of unique flavor text', () => {
+    const extras = extrasFromTswItem(
+      {
+        display_name: 'The Point of No Return',
+        type: 'Gnarled Staff (Sacred)',
+        description_lines: [
+          [['The Point of No Return', 4]],
+          [['Required Level: 150', -1]],
+          [['+100 Required Level', 3]],
+          [['Successful corruptions increase Required Level by 10', 8]],
+          [['Failed corruptions do not increase Required Level', 8]],
+        ],
+      },
+      {
+        name: 'The Point of No Return',
+        modifiers: [
+          'Can be corrupted 10 times',
+          'Failed corruptions do not increase Required Level',
+          'Successful corruptions increase Required Level by 10',
+        ],
+      }
+    );
+    expect(extras).toContain('+100 Required Level');
+  });
 });

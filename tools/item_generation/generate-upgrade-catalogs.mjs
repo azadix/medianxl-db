@@ -473,6 +473,26 @@ function umoFromLines(name, lines, section) {
  * @param {string} html
  * @returns {object[]}
  */
+/** Wiki first-stat line -> in-game / TSW mysticorb name. */
+const SOULFORGED_MO_NAMES = Object.freeze({
+  'Physical Resist +1%': 'Rare MO - Physical Resist',
+  'Cannot be Frozen': 'Rare MO - No Freeze',
+  'Max Fire Resist +1%': 'Rare MO - Fire Resist',
+  'Max Cold Resist +1%': 'Rare MO - Cold Resist',
+  'Max Lightning Resist +1%': 'Rare MO - Lightning Resist',
+  'Max Poison Resist +1%': 'Rare MO - Poison Resist',
+  '+1% Innate Elemental Damage': 'Rare MO - IED',
+  '+1% Base Block Chance': 'Rare MO - Block Up',
+  '-2% Base Block Chance': 'Rare MO - Block Down',
+  'Maximum Life +1%': 'Rare MO - Max Life',
+  '-1% to Enemy Fire Resistance': 'Rare MO - Pierce Fire',
+  '-1% to Enemy Cold Resistance': 'Rare MO - Pierce Cold',
+  '-1% to Enemy Lightning Resistance': 'Rare MO - Pierce Lightning',
+  '-1% to Enemy Poison Resistance': 'Rare MO - Pierce Poison',
+  '+15% Damage to Demons': 'Rare MO - Demon Damage',
+  '+15% Damage to Undead': 'Rare MO - Undead Damage',
+});
+
 export function parseSoulforgedMysticOrbsWiki(html) {
   /** @type {object[]} */
   const out = [];
@@ -487,15 +507,21 @@ export function parseSoulforgedMysticOrbsWiki(html) {
       .filter(Boolean);
     const reqLevelPerStack = Number((/\+?(\d+)/.exec(req) || [])[1] || 5);
     const maxStacks = Number((/(\d+)/.exec(limit) || [])[1] || 1);
+    const wikiName = modifiers[0];
+    const name = SOULFORGED_MO_NAMES[wikiName] || wikiName;
+    /** @type {string[]} */
+    const aliases = [name];
+    if (wikiName && wikiName !== name) aliases.push(wikiName);
     /** @type {object} */
     const row = {
-      name: modifiers[0],
+      name,
       modifiers,
       kind: 'smo',
       slots: /Shield/i.test(item) ? 'armor' : /Body Armor/i.test(item) ? 'armor' : 'armor',
       maxStacks,
       reqLevelPerStack,
-      aliases: [modifiers[0]],
+      requiresRare: true,
+      aliases,
     };
     if (/Shield/i.test(item)) row.restrictToCategory = 'shield';
     if (/Body Armor/i.test(item)) row.restrictToSlot = 'tors';

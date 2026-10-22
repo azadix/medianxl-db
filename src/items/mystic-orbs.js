@@ -13,6 +13,7 @@ import {
 } from '@/items/item-types.js';
 import { itemHasInnateElemental } from '@/items/oils.js';
 import { isRunewordItem } from '@/items/runeword-items.js';
+import { itemForbidsSocketsAndEnhancements } from '@/items/item-unique-rules.js';
 
 /**
  * @typedef {[number, string]} MysticOrbEntry
@@ -25,8 +26,9 @@ import { isRunewordItem } from '@/items/runeword-items.js';
  *   maxStacks?: number,
  *   restrictToSlot?: string,
  *   restrictToCategory?: string,
- *   requiresAngelic?: boolean,
- *   requiresUnique?: boolean,
+   *   requiresAngelic?: boolean,
+   *   requiresRare?: boolean,
+   *   requiresUnique?: boolean,
  *   requiresMagic?: boolean,
  *   requiresCrafted?: boolean,
  *   requiresShrine?: boolean,
@@ -105,6 +107,7 @@ export function loadMysticOrbsCatalog(rows) {
       const restrictToCategory = row.restrictToCategory != null ? String(row.restrictToCategory).trim() : '';
       if (restrictToCategory) entry.restrictToCategory = restrictToCategory;
       if (row.requiresAngelic === true) entry.requiresAngelic = true;
+      if (row.requiresRare === true) entry.requiresRare = true;
       if (row.requiresUnique === true) entry.requiresUnique = true;
       if (row.requiresMagic === true) entry.requiresMagic = true;
       if (row.requiresCrafted === true) entry.requiresCrafted = true;
@@ -299,6 +302,20 @@ function isAngelicItem(def) {
 }
 
 /**
+ * Soulforged MOs apply to rare items (Angelic is rare quality in-game).
+ * @param {object|null|undefined} def
+ * @returns {boolean}
+ */
+function isRareItem(def) {
+  if (!def || typeof def !== 'object') return false;
+  if (isAngelicItem(def)) return true;
+  const quality = String(def.customQuality || def.rarity || '')
+    .trim()
+    .toLowerCase();
+  return quality === 'rare';
+}
+
+/**
  * Planner equipment slot for restrictToSlot (head / tors / glov / feet).
  * @param {object|null|undefined} def
  * @returns {string}
@@ -391,6 +408,7 @@ function mysticOrbSlotsMatch(row, category) {
 export function canUseMysticOrbOnItem(orb, def, currentCount = 0, host = null) {
   const row = typeof orb === 'string' ? lookupMysticOrb(orb) : orb && typeof orb === 'object' ? orb : null;
   if (!def) return false;
+  if (itemForbidsSocketsAndEnhancements(def)) return false;
   if (!row || !row.name) return true;
   const category = mysticOrbSlotCategory(def);
   if (!category) return false;
@@ -404,6 +422,7 @@ export function canUseMysticOrbOnItem(orb, def, currentCount = 0, host = null) {
     return false;
   }
   if (row.requiresAngelic && !isAngelicItem(def)) return false;
+  if (row.requiresRare && !isRareItem(def)) return false;
   if (row.requiresUnique && !isUniqueItem(def)) return false;
   if (row.requiresMagic && !isMagicItem(def)) return false;
   if (row.requiresCrafted && !isCraftedItem(def)) return false;
@@ -480,16 +499,30 @@ export function mysticOrbsSetEthereal(raw) {
 }
 
 /**
+ * Positive vs negative required-level from applied mystic orb stacks.
+ * Sigil of Absolution is -5 per stack; TSW leftover `+N Required Level` is the
+ * positive total and does not include that penalty.
+ * @param {unknown} raw
+ * @returns {{ positive: number, negative: number, total: number }}
+ */
+export function mysticOrbsRequiredLevelParts(raw) {
+  let positive = 0;
+  let negative = 0;
+  for (const [count, name] of normalizeMysticOrbs(raw)) {
+    const n = mysticOrbReqLevelPerStack(name) * count;
+    if (n >= 0) positive += n;
+    else negative += n;
+  }
+  return { positive, negative, total: positive + negative };
+}
+
+/**
  * Total +Required Level from applied mystic orb stacks.
  * @param {unknown} raw
  * @returns {number}
  */
 export function mysticOrbsRequiredLevelBonus(raw) {
-  let total = 0;
-  for (const [count, name] of normalizeMysticOrbs(raw)) {
-    total += mysticOrbReqLevelPerStack(name) * count;
-  }
-  return total;
+  return mysticOrbsRequiredLevelParts(raw).total;
 }
 
 /**

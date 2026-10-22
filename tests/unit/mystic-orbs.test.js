@@ -79,6 +79,11 @@ describe('mystic-orbs', () => {
       '+6% to Spell Damage',
       'Requirements +10%',
     ]);
+    expect(getMysticOrbBonusLines('Rare MO - Fire Resist', 1)).toEqual([
+      'Max Fire Resist +1%',
+      'Fire Resist -10%',
+    ]);
+    expect(mysticOrbReqLevelPerStack('Rare MO - Fire Resist')).toBe(6);
   });
 
   it('does not scale skill levels in proc lines', () => {
@@ -109,6 +114,15 @@ describe('mystic-orbs', () => {
     const ring = { category: 'other', slot: 'ring' };
     expect(mysticOrbSlotCategory(weapon)).toBe('weapon');
     expect(mysticOrbSlotCategory(ring)).toBe('jewelry');
+    expect(
+      canUseMysticOrbOnItem('MO - Strength', {
+        id: 'u:mindflayers-mayhem:su',
+        name: "Mindflayer's Mayhem",
+        category: 'armor',
+        group: 'Boots',
+        slot: 'feet',
+      })
+    ).toBe(false);
     expect(canUseMysticOrbOnItem('MO - Enhanced Damage', weapon)).toBe(true);
     expect(canUseMysticOrbOnItem('MO - Enhanced Damage', armor)).toBe(false);
     expect(canUseMysticOrbOnItem('MO - Strength', armor)).toBe(true);
@@ -121,6 +135,16 @@ describe('mystic-orbs', () => {
     expect(canUseMysticOrbOnItem('Kara\'s Trinket', ring)).toBe(true);
     expect(canUseMysticOrbOnItem('Kara\'s Trinket', weapon)).toBe(false);
     expect(canUseMysticOrbOnItem('MO - Attack Speed', weapon, 5)).toBe(false);
+    expect(canUseMysticOrbOnItem('Rare MO - Fire Resist', { rarity: 'angelic', category: 'armor' })).toBe(
+      true
+    );
+    expect(
+      canUseMysticOrbOnItem('Rare MO - Fire Resist', {
+        rarity: 'unique',
+        uniqueKind: 'su',
+        category: 'armor',
+      })
+    ).toBe(false);
   });
 
   it('maps mystic orb icons from slot type', () => {
@@ -182,6 +206,21 @@ describe('mystic-orbs', () => {
         socketables,
       })
     ).toEqual(['12% Attack Speed', '+8 Required Level', '3% Deadly Strike']);
+  });
+
+  it('does not restack mystic orb mods already on a custom item', () => {
+    const def = {
+      name: 'Belt (Angelic)',
+      rarity: 'angelic',
+      customQuality: 'angelic',
+      category: 'armor',
+      modifiers: ['Adds 6-12 Damage', '+83 Required Level'],
+    };
+    expect(
+      extrasWithAppliedItemBonuses([], def, {
+        mysticOrbs: [[2, 'Crystal of Tears']],
+      })
+    ).toEqual([]);
   });
 
   it('forces ethereal from Empyrean Touch', () => {

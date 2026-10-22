@@ -1000,7 +1000,7 @@
     ]
   },
   {
-    "name": "Physical Resist +1%",
+    "name": "Rare MO - Physical Resist",
     "modifiers": [
       "Physical Resist +1%"
     ],
@@ -1009,11 +1009,13 @@
     "maxStacks": 5,
     "reqLevelPerStack": 5,
     "aliases": [
+      "Rare MO - Physical Resist",
       "Physical Resist +1%"
-    ]
+    ],
+    "requiresRare": true
   },
   {
-    "name": "Cannot be Frozen",
+    "name": "Rare MO - No Freeze",
     "modifiers": [
       "Cannot be Frozen"
     ],
@@ -1022,11 +1024,13 @@
     "maxStacks": 1,
     "reqLevelPerStack": 12,
     "aliases": [
+      "Rare MO - No Freeze",
       "Cannot be Frozen"
-    ]
+    ],
+    "requiresRare": true
   },
   {
-    "name": "Max Fire Resist +1%",
+    "name": "Rare MO - Fire Resist",
     "modifiers": [
       "Max Fire Resist +1%",
       "Fire Resist -10%"
@@ -1036,11 +1040,13 @@
     "maxStacks": 1,
     "reqLevelPerStack": 6,
     "aliases": [
+      "Rare MO - Fire Resist",
       "Max Fire Resist +1%"
-    ]
+    ],
+    "requiresRare": true
   },
   {
-    "name": "Max Cold Resist +1%",
+    "name": "Rare MO - Cold Resist",
     "modifiers": [
       "Max Cold Resist +1%",
       "Cold Resist -10%"
@@ -1050,11 +1056,13 @@
     "maxStacks": 1,
     "reqLevelPerStack": 6,
     "aliases": [
+      "Rare MO - Cold Resist",
       "Max Cold Resist +1%"
-    ]
+    ],
+    "requiresRare": true
   },
   {
-    "name": "Max Lightning Resist +1%",
+    "name": "Rare MO - Lightning Resist",
     "modifiers": [
       "Max Lightning Resist +1%",
       "Lightning Resist -10%"
@@ -1064,11 +1072,13 @@
     "maxStacks": 1,
     "reqLevelPerStack": 6,
     "aliases": [
+      "Rare MO - Lightning Resist",
       "Max Lightning Resist +1%"
-    ]
+    ],
+    "requiresRare": true
   },
   {
-    "name": "Max Poison Resist +1%",
+    "name": "Rare MO - Poison Resist",
     "modifiers": [
       "Max Poison Resist +1%",
       "Poison Resist -10%"
@@ -1078,11 +1088,13 @@
     "maxStacks": 1,
     "reqLevelPerStack": 6,
     "aliases": [
+      "Rare MO - Poison Resist",
       "Max Poison Resist +1%"
-    ]
+    ],
+    "requiresRare": true
   },
   {
-    "name": "+1% Innate Elemental Damage",
+    "name": "Rare MO - IED",
     "modifiers": [
       "+1% Innate Elemental Damage"
     ],
@@ -1091,11 +1103,13 @@
     "maxStacks": 5,
     "reqLevelPerStack": 5,
     "aliases": [
+      "Rare MO - IED",
       "+1% Innate Elemental Damage"
-    ]
+    ],
+    "requiresRare": true
   },
   {
-    "name": "+1% Base Block Chance",
+    "name": "Rare MO - Block Up",
     "modifiers": [
       "+1% Base Block Chance",
       "-10% Block Speed"
@@ -1105,12 +1119,14 @@
     "maxStacks": 2,
     "reqLevelPerStack": 6,
     "aliases": [
+      "Rare MO - Block Up",
       "+1% Base Block Chance"
     ],
-    "restrictToCategory": "shield"
+    "restrictToCategory": "shield",
+    "requiresRare": true
   },
   {
-    "name": "-2% Base Block Chance",
+    "name": "Rare MO - Block Down",
     "modifiers": [
       "-2% Base Block Chance"
     ],
@@ -1119,12 +1135,14 @@
     "maxStacks": 2,
     "reqLevelPerStack": 5,
     "aliases": [
+      "Rare MO - Block Down",
       "-2% Base Block Chance"
     ],
-    "restrictToCategory": "shield"
+    "restrictToCategory": "shield",
+    "requiresRare": true
   },
   {
-    "name": "Maximum Life +1%",
+    "name": "Rare MO - Max Life",
     "modifiers": [
       "Maximum Life +1%"
     ],
@@ -1133,12 +1151,14 @@
     "maxStacks": 5,
     "reqLevelPerStack": 5,
     "aliases": [
+      "Rare MO - Max Life",
       "Maximum Life +1%"
     ],
-    "restrictToSlot": "tors"
+    "restrictToSlot": "tors",
+    "requiresRare": true
   },
   {
-    "name": "-1% to Enemy Fire Resistance",
+    "name": "Rare MO - Pierce Fire",
     "modifiers": [
       "-1% to Enemy Fire Resistance"
     ],
@@ -1147,11 +1167,13 @@
     "maxStacks": 5,
     "reqLevelPerStack": 4,
     "aliases": [
+      "Rare MO - Pierce Fire",
       "-1% to Enemy Fire Resistance"
-    ]
+    ],
+    "requiresRare": true
   },
   {
-    "name": "-1% to Enemy Cold Resistance",
+    "name": "Rare MO - Pierce Cold",
     "modifiers": [
       "-1% to Enemy Cold Resistance"
     ],
@@ -1160,11 +1182,13 @@
     "maxStacks": 5,
     "reqLevelPerStack": 4,
     "aliases": [
+      "Rare MO - Pierce Cold",
       "-1% to Enemy Cold Resistance"
-    ]
+    ],
+    "requiresRare": true
   },
   {
-    "name": "-1% to Enemy Lightning Resistance",
+    "name": "Rare MO - Pierce Lightning",
     "modifiers": [
       "-1% to Enemy Lightning Resistance"
     ],
@@ -1173,11 +1197,13 @@
     "maxStacks": 5,
     "reqLevelPerStack": 4,
     "aliases": [
+      "Rare MO - Pierce Lightning",
       "-1% to Enemy Lightning Resistance"
-    ]
+    ],
+    "requiresRare": true
   },
   {
-    "name": "-1% to Enemy Poison Resistance",
+    "name": "Rare MO - Pierce Poison",
     "modifiers": [
       "-1% to Enemy Poison Resistance"
     ],
@@ -1186,11 +1212,13 @@
     "maxStacks": 5,
     "reqLevelPerStack": 4,
     "aliases": [
+      "Rare MO - Pierce Poison",
       "-1% to Enemy Poison Resistance"
-    ]
+    ],
+    "requiresRare": true
   },
   {
-    "name": "+15% Damage to Demons",
+    "name": "Rare MO - Demon Damage",
     "modifiers": [
       "+15% Damage to Demons"
     ],
@@ -1199,11 +1227,13 @@
     "maxStacks": 3,
     "reqLevelPerStack": 5,
     "aliases": [
+      "Rare MO - Demon Damage",
       "+15% Damage to Demons"
-    ]
+    ],
+    "requiresRare": true
   },
   {
-    "name": "+15% Damage to Undead",
+    "name": "Rare MO - Undead Damage",
     "modifiers": [
       "+15% Damage to Undead"
     ],
@@ -1212,8 +1242,10 @@
     "maxStacks": 3,
     "reqLevelPerStack": 5,
     "aliases": [
+      "Rare MO - Undead Damage",
       "+15% Damage to Undead"
-    ]
+    ],
+    "requiresRare": true
   },
   {
     "name": "Craftsman's Brand",

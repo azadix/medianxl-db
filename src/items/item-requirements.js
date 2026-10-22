@@ -15,9 +15,14 @@ import {
   lookupMysticOrb,
   mysticOrbReqLevelPerStack,
   mysticOrbsRequiredLevelBonus,
+  mysticOrbsRequiredLevelParts,
   normalizeMysticOrbs,
 } from '@/items/mystic-orbs.js';
-import { corruptionRequiredLevelBonus } from '@/items/corruptions.js';
+import { corruptionRequiredLevelBonus, successfulCorruptionCount } from '@/items/corruptions.js';
+import {
+  itemForbidsSocketsAndEnhancements,
+  uniqueCorruptionReqLevelPerSuccess,
+} from '@/items/item-unique-rules.js';
 
 /**
  * @typedef {{
@@ -129,13 +134,6 @@ function collectHostRequirementModifierTexts(def, rolls, extras) {
 }
 
 /**
- * Keep a displayed `+N Required Level` line (TSW extras / effigies). If none is
- * present, synthesize one from applied mystic orb stacks.
- * @param {string[]|null|undefined} extras
- * @param {unknown} mysticOrbs
- * @returns {string[]}
- */
-/**
  * Sigil of Absolution (and similar) cannot apply when the host is below min required level.
  * @param {object|null|undefined} def
  * @param {{
@@ -163,15 +161,44 @@ export function itemAllowsMysticOrbReqLevel(def, options = {}, name, nextCount) 
   return true;
 }
 
-export function extrasWithMysticOrbRequiredLevel(extras, mysticOrbs) {
+/**
+ * Keep a displayed `+N Required Level` line (TSW extras / item mods). If none is
+ * present, synthesize one from applied mystic orb stacks.
+ * @param {string[]|null|undefined} extras
+ * @param {unknown} mysticOrbs
+ * @param {string[]|null|undefined} [hostLines]
+ * @returns {string[]}
+ */
+export function extrasWithMysticOrbRequiredLevel(extras, mysticOrbs, hostLines = null) {
   const list = Array.isArray(extras)
     ? extras.map((line) => String(line || '').trim()).filter(Boolean)
     : [];
-  if (list.some((line) => parseRequiredLevelBonus(line) !== 0)) return list;
+  const hosts = Array.isArray(hostLines) ? hostLines : [];
+  if ([...list, ...hosts].some((line) => parseRequiredLevelBonus(line) !== 0)) return list;
   const bonus = mysticOrbsRequiredLevelBonus(mysticOrbs);
   if (bonus > 0) return [...list, `+${bonus} Required Level`];
   if (bonus < 0) return [...list, `${bonus} Required Level`];
   return list;
+}
+
+/**
+ * TSW leftover `+N Required Level` is the net orb bonus (Sigil of Absolution is
+ * often missing from `mystic_orbs` but already subtracted there). Trust that
+ * leftover when it disagrees with catalog stacks. If leftover matches the
+ * positive stack total, apply listed negative effigies. If there is no leftover,
+ * use mystic orb stacks.
+ * @param {number} textBonus
+ * @param {number} [positiveBonus]
+ * @param {number} [negativeBonus]
+ * @returns {number}
+ */
+export function combinedRequiredLevelBonus(textBonus, positiveBonus = 0, negativeBonus = 0) {
+  const text = Number.isFinite(Number(textBonus)) ? Number(textBonus) : 0;
+  const positive = Number.isFinite(Number(positiveBonus)) ? Number(positiveBonus) : 0;
+  const negative = Number.isFinite(Number(negativeBonus)) ? Number(negativeBonus) : 0;
+  if (text === 0) return positive + negative;
+  if (text === positive) return text + negative;
+  return text;
 }
 
 /**
@@ -189,37 +216,50 @@ export function extrasWithMysticOrbRequiredLevel(extras, mysticOrbs) {
  */
 export function resolveItemRequirements(def, options = {}) {
   const socketables = Array.isArray(options.socketables) ? options.socketables : [];
-  const extras = extrasWithMysticOrbRequiredLevel(options.extras, options.mysticOrbs);
+  const extras = Array.isArray(options.extras)
+    ? options.extras.map((line) => String(line || '').trim()).filter(Boolean)
+    : [];
   let reqLevel = nonNeg(def?.reqLevel);
   let reqStr = nonNeg(def?.reqStr);
   let reqDex = nonNeg(def?.reqDex);
   let reductionPct = 0;
 
+  if (itemForbidsSocketsAndEnhancements(def)) {
+    return { reqLevel, reqStr, reqDex, reductionPct: 0 };
+  }
+
   if (isCorruptedWormhole(def)) {
     reqLevel += getWormholeCycleReqLevelBonus(options.rolls ?? null);
   }
-  reqLevel += corruptionRequiredLevelBonus(options.corruptions);
 
+  let socketReqBonus = 0;
   for (const sock of socketables) {
     if (!sock || typeof sock !== 'object') continue;
-    reqLevel = Math.max(reqLevel, nonNeg(sock.reqLevel));
     reqStr = Math.max(reqStr, nonNeg(sock.reqStr));
     reqDex = Math.max(reqDex, nonNeg(sock.reqDex));
     if (Number.isFinite(Number(sock.reductionPct))) {
       reductionPct += Math.abs(Number(sock.reductionPct)) || 0;
     }
+    let sockReqBonus = 0;
     if (Array.isArray(sock.modifiers)) {
       for (const text of sock.modifiers) {
         if (typeof text !== 'string' || !text.trim()) continue;
         reductionPct += parseRequirementsReductionPct(text);
+        sockReqBonus += parseRequiredLevelBonus(text);
       }
     }
+    // Jewels with `+N Required Level` raise the host via that affix, not Required Level:.
+    if (sockReqBonus === 0) reqLevel = Math.max(reqLevel, nonNeg(sock.reqLevel));
+    socketReqBonus += sockReqBonus;
   }
 
+  let hostReqBonus = 0;
   for (const text of collectHostRequirementModifierTexts(def, options.rolls ?? null, extras)) {
     reductionPct += parseRequirementsReductionPct(text);
-    reqLevel += parseRequiredLevelBonus(text);
+    hostReqBonus += parseRequiredLevelBonus(text);
   }
+  // TSW leftover already includes socket `+Required Level` (e.g. Suicide Note).
+  const textReqBonus = hostReqBonus !== 0 ? hostReqBonus : socketReqBonus;
 
   const extrasHaveReqPct = extras.some((text) => parseRequirementsReductionPct(text) !== 0);
   if (!extrasHaveReqPct) {
@@ -230,12 +270,16 @@ export function resolveItemRequirements(def, options = {}) {
     }
   }
 
-  for (const sock of socketables) {
-    if (!sock || !Array.isArray(sock.modifiers)) continue;
-    for (const text of sock.modifiers) {
-      if (typeof text !== 'string' || !text.trim()) continue;
-      reqLevel += parseRequiredLevelBonus(text);
-    }
+  const uniquePer = uniqueCorruptionReqLevelPerSuccess(def);
+  const uniqueFromIds = uniquePer > 0 ? uniquePer * successfulCorruptionCount(options.corruptions) : 0;
+  const moReq = mysticOrbsRequiredLevelParts(options.mysticOrbs);
+  if (uniquePer > 0 && hostReqBonus !== 0) {
+    // TSW leftover is this unique's extra req (corruptions, net of orbs/effigies).
+    reqLevel += hostReqBonus;
+  } else {
+    if (uniquePer > 0) reqLevel += uniqueFromIds;
+    else reqLevel += corruptionRequiredLevelBonus(options.corruptions);
+    reqLevel += combinedRequiredLevelBonus(textReqBonus, moReq.positive, moReq.negative);
   }
 
   if (reductionPct !== 0) {

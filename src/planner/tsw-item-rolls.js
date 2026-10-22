@@ -43,6 +43,7 @@ import {
   collectRelicAffixSources,
 } from '@/items/relic-items.js';
 import { parseTswSocketables } from '@/items/socketables.js';
+import { parseRequiredLevelBonus } from '@/items/item-requirements.js';
 
 /** Boilerplate / flags that are not planner modifier lines. */
 const TSW_EXTRA_SKIP_RE =
@@ -683,6 +684,11 @@ export function extrasFromTswItem(row, def, setDumpCtx = null) {
     if (TSW_EXTRA_SKIP_RE.test(text)) continue;
     // Socketed rune name dump (FelFelFelFalFal), even if socketables were omitted.
     if (isTswSocketedRuneDump(text)) continue;
+    // Leftover `+N Required Level` is net MO/jewel/corruption req, not unique flavor.
+    if (parseRequiredLevelBonus(text) !== 0) {
+      out.push(encodeModifierLine(text, line.color) || text);
+      continue;
+    }
     if (templates.some((tmpl) => lineMatchesCatalogTemplate(tmpl, text))) continue;
     out.push(encodeModifierLine(text, line.color) || text);
   }

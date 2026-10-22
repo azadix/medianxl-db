@@ -905,6 +905,7 @@ export const useItemsStore = defineStore('items', {
         extras: this.getExtrasForInstance(instanceId),
         socketables: this.getSocketablesForInstance(instanceId),
         mysticOrbs: this.getMysticOrbsForInstance(instanceId),
+        corruptions: this.instances[instanceId]?.corruptions,
       });
     },
 

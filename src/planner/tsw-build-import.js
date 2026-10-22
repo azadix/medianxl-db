@@ -600,6 +600,7 @@ function snapshotWithRolls(row, defId, def, className, setDumpCtx = null) {
     const name = tswItemDisplayName(row);
     if (name && name !== def?.name) entry.name = name;
     delete entry.mysticOrbs;
+    delete entry.socketables;
   }
   return entry;
 }

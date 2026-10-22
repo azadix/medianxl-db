@@ -8,6 +8,7 @@
     "build": "npm run lint && npm test && vite build && node tools/copy-spa-404.mjs",
     "preview": "vite preview",
     "test": "vitest run",
+    "audit": "vitest run tests/unit/tsw-build-audit.test.js",
     "test:unit": "vitest run tests/unit",
     "test:data": "vitest run tests/data",
     "spellcheck": "vitest run tests/data/spellcheck.test.js",

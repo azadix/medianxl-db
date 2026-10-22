@@ -4,6 +4,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   characterMeetsItemRequirements,
+  combinedRequiredLevelBonus,
   extrasWithMysticOrbRequiredLevel,
   formatItemRequirementsLine,
   parseRequiredLevelBonus,
@@ -180,6 +181,86 @@ describe('resolveItemRequirements', () => {
     ).toEqual({ reqLevel: 120, reqStr: 100, reqDex: 0, reductionPct: 0 });
   });
 
+  it('does not double TSW leftover with socket +Required Level jewels', () => {
+    expect(
+      resolveItemRequirements(
+        { reqLevel: 100 },
+        {
+          extras: ['+10 Required Level'],
+          socketables: [
+            { name: 'Suicide Note', reqLevel: 110, modifiers: ['+10 Required Level'] },
+          ],
+        }
+      ).reqLevel
+    ).toBe(110);
+  });
+
+  it('raises from jewel +Required Level when extras omit leftover', () => {
+    expect(
+      resolveItemRequirements(
+        { reqLevel: 100 },
+        {
+          socketables: [
+            { name: 'Suicide Note', reqLevel: 110, modifiers: ['+10 Required Level'] },
+          ],
+        }
+      ).reqLevel
+    ).toBe(110);
+  });
+
+  it('keeps Mindflayer Mayhem at catalog required level', () => {
+    expect(
+      resolveItemRequirements(
+        {
+          id: 'u:mindflayers-mayhem:su',
+          name: "Mindflayer's Mayhem",
+          reqLevel: 140,
+          modifiers: ['{grey}Cannot have any sockets or enhancements'],
+        },
+        {
+          extras: ['+40 Required Level'],
+          mysticOrbs: [[1, 'Sigil of Absolution']],
+          socketables: [{ reqLevel: 110, modifiers: ['+10 Required Level'] }],
+        }
+      ).reqLevel
+    ).toBe(140);
+  });
+
+  it('raises Point of No Return by 10 per successful corruption', () => {
+    const def = {
+      name: 'The Point of No Return',
+      reqLevel: 50,
+      modifiers: [
+        '{orange}Can be corrupted 10 times',
+        '{orange}Successful corruptions increase Required Level by 10',
+      ],
+    };
+    expect(
+      resolveItemRequirements(def, {
+        corruptions: Array.from({ length: 10 }, () => 'avoidDamage'),
+      }).reqLevel
+    ).toBe(150);
+    expect(
+      resolveItemRequirements(def, {
+        extras: ['+100 Required Level'],
+        mysticOrbs: [[1, "Uldyssian's Spirit"]],
+        corruptions: Array.from({ length: 10 }, () => 'avoidDamage'),
+      }).reqLevel
+    ).toBe(150);
+  });
+
+  it('still maxes rune or jewel Required Level when there is no +Required Level affix', () => {
+    expect(
+      resolveItemRequirements(
+        { reqLevel: 100 },
+        {
+          extras: ['+20 Required Level'],
+          socketables: [{ name: 'Atomus', reqLevel: 120, modifiers: ['+1 to All Skills'] }],
+        }
+      ).reqLevel
+    ).toBe(140);
+  });
+
   it('adds mystic orb required level after sockets when extras omit the line', () => {
     expect(
       resolveItemRequirements(
@@ -208,6 +289,60 @@ describe('resolveItemRequirements', () => {
         }
       ).reqLevel
     ).toBe(135);
+  });
+
+  it('does not double TSW +Required Level on custom modifiers with mystic orbs', () => {
+    expect(
+      resolveItemRequirements(
+        {
+          rarity: 'angelic',
+          customQuality: 'angelic',
+          reqLevel: 30,
+          modifiers: ['+83 Required Level', 'Requirements +25%'],
+        },
+        {
+          mysticOrbs: [
+            [2, 'Crystal of Tears'],
+            [2, 'Essence of Itherael'],
+            [1, 'Rare MO - Fire Resist'],
+            [1, 'Rare MO - Cold Resist'],
+            [1, 'Rare MO - Lightning Resist'],
+            [1, 'Rare MO - Poison Resist'],
+          ],
+        }
+      ).reqLevel
+    ).toBe(113);
+  });
+
+  it('trusts TSW leftover when it is lower than mystic orb stacks (unlisted Sigil)', () => {
+    expect(
+      resolveItemRequirements(
+        { reqLevel: 120, reqStr: 675 },
+        {
+          extras: ['+30 Required Level', 'Requirements +50%'],
+          mysticOrbs: [
+            [2, 'Idol of Stars'],
+            [1, 'Solitude'],
+          ],
+        }
+      )
+    ).toMatchObject({ reqLevel: 150, reductionPct: -50 });
+  });
+
+  it('applies Sigil of Absolution when TSW leftover omitted the -5', () => {
+    expect(
+      resolveItemRequirements(
+        { reqLevel: 120, reqStr: 500 },
+        {
+          extras: ['+40 Required Level'],
+          mysticOrbs: [
+            [5, 'MO - Total Char Defense'],
+            [2, 'Crystal of Tears'],
+            [2, 'Sigil of Absolution'],
+          ],
+        }
+      )
+    ).toEqual({ reqLevel: 150, reqStr: 750, reqDex: 0, reductionPct: -50 });
   });
 
   it('adds required level from applied corruptions', () => {
@@ -242,6 +377,30 @@ describe('extrasWithMysticOrbRequiredLevel', () => {
     expect(extrasWithMysticOrbRequiredLevel([], [[1, 'Sigil of Absolution']])).toEqual([
       '-5 Required Level',
     ]);
+  });
+
+  it('does not synthesize when host modifiers already list required level', () => {
+    expect(
+      extrasWithMysticOrbRequiredLevel([], [[2, 'Crystal of Tears']], ['+83 Required Level'])
+    ).toEqual([]);
+  });
+});
+
+describe('combinedRequiredLevelBonus', () => {
+  it('uses mystic orbs when no text bonus is present', () => {
+    expect(combinedRequiredLevelBonus(0, 35, 0)).toBe(35);
+    expect(combinedRequiredLevelBonus(0, 0, -5)).toBe(-5);
+  });
+
+  it('keeps leftover text when it disagrees with positive mystic orb stacks', () => {
+    expect(combinedRequiredLevelBonus(83, 64, 0)).toBe(83);
+    expect(combinedRequiredLevelBonus(30, 40, 0)).toBe(30);
+  });
+
+  it('applies listed Sigil stacks when leftover matches the positive total', () => {
+    expect(combinedRequiredLevelBonus(40, 40, -5)).toBe(35);
+    expect(combinedRequiredLevelBonus(40, 40, -10)).toBe(30);
+    expect(combinedRequiredLevelBonus(35, 40, -5)).toBe(35);
   });
 });
 

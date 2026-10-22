@@ -7,6 +7,10 @@ import { formatAffixModLine } from '@/items/affix-templates.js';
 import { itemHasInnateElemental, itemUpgradeSlotType } from '@/items/oils.js';
 import { isRunewordItem } from '@/items/runeword-items.js';
 import { isHandWeapon, isQuiverItem, isShieldItem, isTwoHandedWeapon } from '@/items/item-types.js';
+import {
+  itemForbidsSocketsAndEnhancements,
+  uniqueCorruptionMaxCount,
+} from '@/items/item-unique-rules.js';
 
 /**
  * @typedef {{
@@ -116,6 +120,7 @@ export function isSacredUniqueItem(def) {
  */
 export function isItemCorruptible(def) {
   if (!def || typeof def !== 'object') return false;
+  if (itemForbidsSocketsAndEnhancements(def)) return false;
   if (def.rarity === 'honorific' || def.customQuality === 'honorific') return false;
   if (def.category === 'charms' || def.category === 'relics') return false;
   return true;
@@ -127,6 +132,8 @@ export function isItemCorruptible(def) {
  */
 export function corruptionSlotCount(def) {
   if (!isItemCorruptible(def)) return 0;
+  const uniqueMax = uniqueCorruptionMaxCount(def);
+  if (uniqueMax > 0) return uniqueMax;
   return isSacredUniqueItem(def) ? sacredUniqueLimit : 1;
 }
 
@@ -199,11 +206,11 @@ export function normalizeCorruptions(ids) {
 }
 
 /**
- * Extra required level from applied corruptions (non-failed).
+ * Count of non-failed applied corruptions.
  * @param {unknown} ids
  * @returns {number}
  */
-export function corruptionRequiredLevelBonus(ids) {
+export function successfulCorruptionCount(ids) {
   let n = 0;
   for (const id of normalizeCorruptions(ids)) {
     const row = lookupCorruption(id);
@@ -211,6 +218,15 @@ export function corruptionRequiredLevelBonus(ids) {
     n += 1;
   }
   return n;
+}
+
+/**
+ * Extra required level from applied corruptions (non-failed).
+ * @param {unknown} ids
+ * @returns {number}
+ */
+export function corruptionRequiredLevelBonus(ids) {
+  return successfulCorruptionCount(ids);
 }
 
 /**

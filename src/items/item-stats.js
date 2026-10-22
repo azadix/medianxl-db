@@ -355,13 +355,20 @@ export function formatChanceToBlockLine(block, className = null) {
  * @returns {string[]}
  */
 export function extrasWithAppliedItemBonuses(extras, def, options = {}) {
-  const list = extrasWithMysticOrbRequiredLevel(extras, options.mysticOrbs);
+  const list = extrasWithMysticOrbRequiredLevel(extras, options.mysticOrbs, def?.modifiers);
   /** @type {Map<string, number>} */
   const leftover = new Map();
-  for (const line of list) {
+  /**
+   * @param {unknown} line
+   */
+  const countLeftover = (line) => {
     const key = decodeModifierLine(line).text.trim().toLowerCase();
-    if (!key) continue;
+    if (!key) return;
     leftover.set(key, (leftover.get(key) || 0) + 1);
+  };
+  for (const line of list) countLeftover(line);
+  if (Array.isArray(def?.modifiers)) {
+    for (const line of def.modifiers) countLeftover(line);
   }
   /**
    * @param {string} line

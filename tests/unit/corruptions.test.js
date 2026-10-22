@@ -34,6 +34,25 @@ describe('corruptions', () => {
     expect(corruptionSlotCount(honorific)).toBe(0);
   });
 
+  it('gives Point of No Return ten corruption slots and blocks Mindflayer', () => {
+    expect(
+      corruptionSlotCount({
+        name: 'The Point of No Return',
+        rarity: 'unique',
+        uniqueKind: 'sssu',
+        modifiers: ['{orange}Can be corrupted 10 times'],
+      })
+    ).toBe(10);
+    expect(
+      isItemCorruptible({
+        id: 'u:mindflayers-mayhem:su',
+        name: "Mindflayer's Mayhem",
+        rarity: 'unique',
+        uniqueKind: 'su',
+      })
+    ).toBe(false);
+  });
+
   it('filters jewelry restrictions', () => {
     const jewelryIds = listCorruptionsForItem(ring, 'rrin').map((row) => row.id);
     expect(jewelryIds).toContain('nothing');
