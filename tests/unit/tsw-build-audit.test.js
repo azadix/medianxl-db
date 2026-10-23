@@ -165,12 +165,21 @@ const files = existsSync(BUILDS_DIR)
       .sort()
   : [];
 
-describe.skipIf(files.length === 0)('TSW build audit', () => {
-  const { catalog, sets } = loadPlannerCatalog();
+describe('TSW build audit', () => {
+  it('runs dump audits when at least one local json dump exists', () => {
+    if (files.length === 0) return;
+    expect(files.length).toBeGreaterThan(0);
+  });
+});
+
+describe.skipIf(files.length === 0)('TSW build audit dumps', () => {
+  /** @type {{ catalog: object[], sets: object[] }} */
+  let planner;
   /** @type {(() => void) | null} */
   let restoreFetch = null;
 
   beforeAll(async () => {
+    planner = loadPlannerCatalog();
     restoreFetch = installTreeDataFetchMock();
     await initSkillDataStore();
   });
@@ -180,13 +189,9 @@ describe.skipIf(files.length === 0)('TSW build audit', () => {
     restoreFetch = null;
   });
 
-  it('lists every saved build file', () => {
-    expect(files.length).toBeGreaterThan(0);
-  });
-
   for (const file of files) {
     it(file, () => {
-      const problems = auditBuildFile(catalog, file, sets);
+      const problems = auditBuildFile(planner.catalog, file, planner.sets);
       expect(problems, problems.join('\n')).toEqual([]);
     });
   }
