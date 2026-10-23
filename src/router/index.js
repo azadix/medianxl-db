@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '@/views/HomeView.vue';
 import PlannerView from '@/views/PlannerView.vue';
 import PatchNotesView from '@/views/PatchNotesView.vue';
+import SpeedCalcView from '@/views/SpeedCalcView.vue';
 import { DEV_ROUTE_DEFS } from '@/shared/dev-routes.js';
 import { consumeTswImportCodeFromLocation } from '@/planner/tsw-code-import.js';
 
@@ -26,6 +27,12 @@ const routes = [
     path: '/patch-notes',
     name: 'patchNotes',
     component: PatchNotesView,
+    meta: { keepAlive: true },
+  },
+  {
+    path: '/speedcalc',
+    name: 'speedCalc',
+    component: SpeedCalcView,
     meta: { keepAlive: true },
   },
 ];

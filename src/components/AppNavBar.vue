@@ -45,6 +45,9 @@ onMounted(() => {
         <router-link :class="linkClass('patchNotes')" to="/patch-notes">
           <strong>Patch notes</strong>
         </router-link>
+        <router-link :class="linkClass('speedCalc')" to="/speedcalc">
+          <strong>Speed calc</strong>
+        </router-link>
         <template v-if="isDev">
           <router-link
             v-for="def in DEV_ROUTE_DEFS"
