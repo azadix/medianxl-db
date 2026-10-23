@@ -1,7 +1,11 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { getWalkRunBase } from '@/speedcalc/movement-baselines.js';
+import {
+  getWalkRunBase,
+  morphsForClass,
+  parseSpeedCalcClassKey,
+} from '@/speedcalc/movement-baselines.js';
 import {
   activeItemsFolder,
   collectMovePenaltyOptions,
@@ -9,9 +13,17 @@ import {
   stripBaseItemTier,
 } from '@/speedcalc/movement-armor-options.js';
 import {
+  MOVE_CURSE_GROUPS,
+  MOVE_CURSE_OPTIONS,
+  formatMoveCurseOption,
+  navigatorSkillFrw,
+  sumSelectedMoveCurses,
+} from '@/speedcalc/movement-curse-options.js';
+import {
   FRAME_DISTANCE_YARDS,
   annotateBreakpointRows,
   buildBreakpointRows,
+  buildSpeedGraphSeries,
   computeMovement,
   computeSpeedCalc,
   effectiveItemFrw,
@@ -32,7 +44,17 @@ describe('movement-speed', () => {
     expect(getWalkRunBase('Sorceress', 'none')).toEqual({ walk: 11, run: 15 });
     expect(getWalkRunBase('Barbarian', 'none')).toEqual({ walk: 10, run: 14 });
     expect(getWalkRunBase('Druid', 'wereowl')).toEqual({ walk: 11, run: 16 });
+    expect(getWalkRunBase('Amazon', 'wereowl')).toEqual({ walk: 10, run: 15 });
     expect(getWalkRunBase('Sorceress', 'deathlord')).toEqual({ walk: 11, run: 15 });
+    expect(morphsForClass('Druid').map((row) => row.id)).toEqual(['werewolf', 'wereowl', 'werebear']);
+    expect(morphsForClass('Barbarian').map((row) => row.id)).toEqual(['treewarden']);
+    expect(morphsForClass('Paladin').map((row) => row.id)).toEqual(['superbeast']);
+    expect(morphsForClass('Assassin')).toEqual([]);
+    expect(getWalkRunBase('Barbarian', 'treewarden')).toEqual({ walk: 10, run: 11 });
+    expect(getWalkRunBase('Paladin', 'superbeast')).toEqual({ walk: 10, run: 15 });
+    expect(morphsForClass('Amazon')).toEqual([]);
+    expect(parseSpeedCalcClassKey('Druid:wereowl')).toEqual({ className: 'Druid', morphId: 'wereowl' });
+    expect(parseSpeedCalcClassKey('Amazon:wereowl')).toEqual({ className: 'Amazon', morphId: 'none' });
   });
 
   it('walks 10 and sprints 15 with no gear on Amazon', () => {
@@ -44,17 +66,40 @@ describe('movement-speed', () => {
     expect(walk.speedPct).toBe(100);
     expect(walk.yardsPerSec).toBe(10);
     expect(walk.frames).toBe(25);
-    expect(sprint.speedPct).toBe(150);
+    expect(sprint.speedPct).toBe(100);
     expect(sprint.yardsPerSec).toBe(15);
     expect(sprint.frames).toBe(17);
+  });
+
+  it('sprints at RunVelocity for Sorceress', () => {
+    const { walk, sprint } = computeMovement({
+      className: 'Sorceress',
+      morphId: 'none',
+      itemFrw: 0,
+    });
+    expect(walk.yardsPerSec).toBe(11);
+    expect(sprint.speedPct).toBe(100);
+    expect(sprint.yardsPerSec).toBe(15);
   });
 
   it('counts integer frames for 10 floored yards', () => {
     expect(FRAME_DISTANCE_YARDS).toBe(10);
     const walkVel = internalVelocity(10, 100);
     expect(framesForDistance(walkVel)).toBe(25);
-    const sprintVel = internalVelocity(10, 150);
+    const sprintVel = internalVelocity(15, 100);
     expect(framesForDistance(sprintVel)).toBe(17);
+  });
+
+  it('builds walk and sprint graph points across item FRW', () => {
+    const series = buildSpeedGraphSeries({
+      className: 'Amazon',
+      morphId: 'none',
+    }, 100);
+    expect(series.walk).toHaveLength(101);
+    expect(series.walk[0]).toMatchObject({ itemFrw: 0, yardsPerSec: 10 });
+    expect(series.sprint[0]).toMatchObject({ itemFrw: 0, yardsPerSec: 15 });
+    expect(series.walk[100].yardsPerSec).toBe(16);
+    expect(series.sprint[100].yardsPerSec).toBe(24);
   });
 
   it('adds 100 item FRW as 60 effective', () => {
@@ -65,8 +110,8 @@ describe('movement-speed', () => {
     });
     expect(walk.speedPct).toBe(160);
     expect(walk.yardsPerSec).toBe(16);
-    expect(sprint.speedPct).toBe(210);
-    expect(sprint.yardsPerSec).toBe(21);
+    expect(sprint.speedPct).toBe(160);
+    expect(sprint.yardsPerSec).toBe(24);
   });
 
   it('subtracts armor penalty outside the curve', () => {
@@ -96,6 +141,34 @@ describe('movement-speed', () => {
       skillFrw: 30,
     });
     expect(walk.speedPct).toBe(190);
+  });
+
+  it('applies decrepify as linear velocitypercent', () => {
+    const { walk } = computeMovement({
+      className: 'Amazon',
+      morphId: 'none',
+      itemFrw: 0,
+      skillFrw: -30,
+    });
+    expect(walk.speedPct).toBe(70);
+    expect(walk.yardsPerSec).toBe(7);
+  });
+
+  it('applies unseelie item FRW on the 150 curve', () => {
+    const { walk } = computeMovement({
+      className: 'Amazon',
+      morphId: 'none',
+      itemFrw: 0,
+      curseItemFrw: -100,
+    });
+    expect(walk.speedPct).toBe(25);
+    const stacked = computeMovement({
+      className: 'Amazon',
+      morphId: 'none',
+      itemFrw: 100,
+      curseItemFrw: -100,
+    });
+    expect(stacked.walk.speedPct).toBe(100);
   });
 
   it('annotates +N on the next breakpoint', () => {
@@ -146,5 +219,27 @@ describe('movement-armor-options', () => {
     expect(shields.some((row) => row.name.toLowerCase().includes('shield') || row.penalty > 0)).toBe(
       true
     );
+  });
+});
+
+describe('movement-curse-options', () => {
+  it('lists monster movement curses with engine amounts', () => {
+    const decrep = MOVE_CURSE_OPTIONS.find((row) => row.key === 'decrepify');
+    const unseelie = MOVE_CURSE_OPTIONS.find((row) => row.key === 'unseelie');
+    expect(decrep).toMatchObject({ skillFrw: -30, itemFrw: 0 });
+    expect(unseelie).toMatchObject({ skillFrw: 0, itemFrw: -100 });
+    expect(formatMoveCurseOption(decrep)).toBe('Decrepify (-30%)');
+    expect(formatMoveCurseOption(unseelie)).toBe('Unseelie Curse (-100%)');
+    expect(MOVE_CURSE_GROUPS.map((g) => g.id)).toEqual(['item', 'after']);
+    expect(sumSelectedMoveCurses(['decrepify', 'unseelie'])).toEqual({ skillFrw: -30, itemFrw: -100 });
+    const phoboss = MOVE_CURSE_OPTIONS.find((row) => row.key === 'phoboss');
+    const navigator = MOVE_CURSE_OPTIONS.find((row) => row.key === 'navigator');
+    expect(phoboss).toMatchObject({ skillFrw: -20, itemFrw: 0 });
+    expect(navigatorSkillFrw(1)).toBe(-40);
+    expect(navigatorSkillFrw(10)).toBe(-58);
+    expect(formatMoveCurseOption(phoboss)).toBe('Phoboss (-20%)');
+    expect(formatMoveCurseOption(navigator, 1)).toBe('Navigator (-40%)');
+    expect(formatMoveCurseOption(navigator, 10)).toBe('Navigator (-58%)');
+    expect(sumSelectedMoveCurses(['navigator'], 10)).toEqual({ skillFrw: -58, itemFrw: 0 });
   });
 });

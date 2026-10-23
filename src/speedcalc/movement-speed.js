@@ -6,7 +6,10 @@
 import { getWalkRunBase } from './movement-baselines.js';
 
 export const ITEM_FRW_CURVE = 150;
-export const MIN_SPEED_PCT = 25;
+export const MIN_WALK_PCT = 25;
+export const MIN_RUN_PCT = 15;
+export const MAX_RUN_PCT = 175;
+export const MIN_SPEED_PCT = MIN_WALK_PCT;
 export const ITEM_FRW_MAX = 500;
 export const GAME_FPS = 25;
 export const FRAME_DISTANCE_YARDS = 10;
@@ -24,35 +27,26 @@ export function effectiveItemFrw(itemFrw) {
 }
 
 /**
- * @param {number} walk
- * @param {number} run
- * @returns {number}
- */
-export function runBonusPercent(walk, run) {
-  const w = Math.max(1, Math.trunc(walk) || 1);
-  const r = Math.max(0, Math.trunc(run) || 0);
-  return Math.floor((100 * r) / w) - 100;
-}
-
-/**
  * @param {{
  *   itemFrw?: number,
+ *   curseItemFrw?: number,
  *   skillFrw?: number,
  *   armorPenalty?: number,
  *   shieldPenalty?: number,
  *   sprint?: boolean,
- *   walk?: number,
- *   run?: number,
  * }} opts
  * @returns {number}
  */
 export function movementSpeedPercent(opts = {}) {
-  const item = effectiveItemFrw(opts.itemFrw);
+  const item = effectiveItemFrw(
+    Math.trunc(Number(opts.itemFrw) || 0) + Math.trunc(Number(opts.curseItemFrw) || 0)
+  );
   const skill = Math.trunc(Number(opts.skillFrw) || 0);
   const armor = Math.trunc(Number(opts.armorPenalty) || 0);
   const shield = Math.trunc(Number(opts.shieldPenalty) || 0);
-  const sprintBonus = opts.sprint ? runBonusPercent(opts.walk, opts.run) : 0;
-  return Math.max(MIN_SPEED_PCT, 100 + item + skill - armor - shield + sprintBonus);
+  const raw = 100 + item + skill - armor - shield;
+  if (opts.sprint) return Math.min(MAX_RUN_PCT, Math.max(MIN_RUN_PCT, raw));
+  return Math.max(MIN_WALK_PCT, raw);
 }
 
 /**
@@ -93,6 +87,7 @@ export function framesForDistance(vel, yards = FRAME_DISTANCE_YARDS) {
  *   className: string,
  *   morphId: string,
  *   itemFrw: number,
+ *   curseItemFrw?: number,
  *   skillFrw?: number,
  *   armorPenalty?: number,
  *   shieldPenalty?: number,
@@ -103,14 +98,13 @@ export function computeMovementMode(input) {
   const { walk, run } = getWalkRunBase(input.className, input.morphId);
   const speedPct = movementSpeedPercent({
     itemFrw: input.itemFrw,
+    curseItemFrw: input.curseItemFrw,
     skillFrw: input.skillFrw,
     armorPenalty: input.armorPenalty,
     shieldPenalty: input.shieldPenalty,
     sprint: input.sprint,
-    walk,
-    run,
   });
-  const vel = internalVelocity(walk, speedPct);
+  const vel = internalVelocity(input.sprint ? run : walk, speedPct);
   const yardsPerSec = yardsPerSecondFromVelocity(vel);
   const frames = framesForDistance(vel);
   return {
@@ -216,4 +210,36 @@ export function computeSpeedCalc(input) {
     result.sprint.frames
   );
   return { ...result, walkRows, sprintRows };
+}
+
+/**
+ * Walk and sprint yards/s at each item FRW in [0, maxFrw].
+ * @param {Omit<Parameters<typeof computeMovementMode>[0], 'itemFrw'|'sprint'>} input
+ * @param {number} [maxFrw]
+ * @returns {{
+ *   walk: { itemFrw: number, yardsPerSec: number, frames: number, speedPct: number }[],
+ *   sprint: { itemFrw: number, yardsPerSec: number, frames: number, speedPct: number }[],
+ * }}
+ */
+export function buildSpeedGraphSeries(input, maxFrw = ITEM_FRW_MAX) {
+  const cap = Math.max(0, Math.trunc(Number(maxFrw) || ITEM_FRW_MAX));
+  const walk = [];
+  const sprint = [];
+  for (let itemFrw = 0; itemFrw <= cap; itemFrw += 1) {
+    const w = computeMovementMode({ ...input, itemFrw, sprint: false });
+    const s = computeMovementMode({ ...input, itemFrw, sprint: true });
+    walk.push({
+      itemFrw,
+      yardsPerSec: w.yardsPerSec,
+      frames: w.frames,
+      speedPct: w.speedPct,
+    });
+    sprint.push({
+      itemFrw,
+      yardsPerSec: s.yardsPerSec,
+      frames: s.frames,
+      speedPct: s.speedPct,
+    });
+  }
+  return { walk, sprint };
 }

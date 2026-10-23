@@ -6,20 +6,35 @@ export default {
 
 <script setup>
 import { computed, onMounted, ref } from 'vue';
-import { SPEED_CALC_CLASSES, SPEED_CALC_MORPHS } from '@/speedcalc/movement-baselines.js';
+import {
+  SPEED_CALC_CLASS_GROUPS,
+  encodeSpeedCalcClassKey,
+  parseSpeedCalcClassKey,
+} from '@/speedcalc/movement-baselines.js';
 import {
   NONE_MOVE_PENALTY_OPTION,
   findMovePenaltyOption,
   formatMovePenaltyOption,
   loadMovePenaltyOptions,
 } from '@/speedcalc/movement-armor-options.js';
-import { FRAME_DISTANCE_YARDS, computeSpeedCalc } from '@/speedcalc/movement-speed.js';
+import {
+  LAB_LEVEL_MAX,
+  LAB_LEVEL_MIN,
+  MOVE_CURSE_GROUPS,
+  formatMoveCurseOption,
+  sumSelectedMoveCurses,
+} from '@/speedcalc/movement-curse-options.js';
+import { FRAME_DISTANCE_YARDS, buildSpeedGraphSeries, computeSpeedCalc } from '@/speedcalc/movement-speed.js';
+import SpeedCalcSpeedGraph from '@/components/speedcalc/SpeedCalcSpeedGraph.vue';
 import SpeedCalcYardMap from '@/components/speedcalc/SpeedCalcYardMap.vue';
 
-const className = ref('Amazon');
-const morphId = ref('none');
+const classKey = ref(encodeSpeedCalcClassKey('Amazon', 'none'));
+const selectedClass = computed(() => parseSpeedCalcClassKey(classKey.value));
+const className = computed(() => selectedClass.value.className);
+const morphId = computed(() => selectedClass.value.morphId);
 const itemFrw = ref(0);
-const skillFrw = ref(0);
+const labLevel = ref(1);
+const curseKeys = ref([]);
 const armorKey = ref(NONE_MOVE_PENALTY_OPTION.key);
 const shieldKey = ref(NONE_MOVE_PENALTY_OPTION.key);
 const armorOptions = ref([NONE_MOVE_PENALTY_OPTION]);
@@ -32,13 +47,26 @@ function toInt(value) {
 
 const selectedArmor = computed(() => findMovePenaltyOption(armorOptions.value, armorKey.value));
 const selectedShield = computed(() => findMovePenaltyOption(shieldOptions.value, shieldKey.value));
+const selectedCurses = computed(() => sumSelectedMoveCurses(curseKeys.value, labLevel.value));
+
+function isCurseSelected(key) {
+  return curseKeys.value.includes(key);
+}
+
+function toggleCurse(key) {
+  const next = curseKeys.value.includes(key)
+    ? curseKeys.value.filter((k) => k !== key)
+    : [...curseKeys.value, key];
+  curseKeys.value = next;
+}
 
 const result = computed(() =>
   computeSpeedCalc({
     className: className.value,
     morphId: morphId.value,
     itemFrw: toInt(itemFrw.value),
-    skillFrw: toInt(skillFrw.value),
+    curseItemFrw: selectedCurses.value.itemFrw,
+    skillFrw: selectedCurses.value.skillFrw,
     armorPenalty: selectedArmor.value.penalty,
     shieldPenalty: selectedShield.value.penalty,
   })
@@ -57,6 +85,17 @@ const walkCurrent = computed(() => currentRow(result.value.walkRows));
 const walkNext = computed(() => nextRow(result.value.walkRows));
 const sprintCurrent = computed(() => currentRow(result.value.sprintRows));
 const sprintNext = computed(() => nextRow(result.value.sprintRows));
+const showGraph = ref(true);
+const graphSeries = computed(() =>
+  buildSpeedGraphSeries({
+    className: className.value,
+    morphId: morphId.value,
+    curseItemFrw: selectedCurses.value.itemFrw,
+    skillFrw: selectedCurses.value.skillFrw,
+    armorPenalty: selectedArmor.value.penalty,
+    shieldPenalty: selectedShield.value.penalty,
+  })
+);
 
 function formatYards(n) {
   return (Math.floor(n * 100) / 100).toFixed(2);
@@ -80,7 +119,7 @@ onMounted(async () => {
         <div>
           <h1 class="title is-3 mb-2">Movement speed calculator</h1>
           <p class="speedcalc-subtitle">
-            Item speed uses the engine curve. Skill speed and armor penalties apply at full value.
+            Item speed uses the engine curve. Armor penalties apply at full value. Actual speed grows linearly with velocity; frame counts are only the aproximations needed for {{ FRAME_DISTANCE_YARDS }} yards.
           </p>
         </div>
       </header>
@@ -91,18 +130,18 @@ onMounted(async () => {
             <label class="label speedcalc-label" for="sc-class">Class</label>
             <div class="control">
               <div class="select is-fullwidth">
-                <select id="sc-class" v-model="className">
-                  <option v-for="name in SPEED_CALC_CLASSES" :key="name" :value="name">{{ name }}</option>
-                </select>
-              </div>
-            </div>
-          </div>
-          <div class="field mb-0">
-            <label class="label speedcalc-label" for="sc-morph">Morph</label>
-            <div class="control">
-              <div class="select is-fullwidth">
-                <select id="sc-morph" v-model="morphId">
-                  <option v-for="morph in SPEED_CALC_MORPHS" :key="morph.id" :value="morph.id">{{ morph.label }}</option>
+                <select id="sc-class" v-model="classKey">
+                  <template v-for="group in SPEED_CALC_CLASS_GROUPS" :key="group.className">
+                    <option :value="encodeSpeedCalcClassKey(group.className, 'none')">{{ group.className }}</option>
+                    <option
+                      v-for="morph in group.morphs"
+                      :key="group.className + ':' + morph.id"
+                      class="speedcalc-morph-option"
+                      :value="encodeSpeedCalcClassKey(group.className, morph.id)"
+                    >
+                      {{ '\u00a0\u00a0' + morph.label }}
+                    </option>
+                  </template>
                 </select>
               </div>
             </div>
@@ -131,18 +170,50 @@ onMounted(async () => {
               </div>
             </div>
           </div>
-          <div class="field mb-0">
-            <label class="label speedcalc-label" for="sc-item-frw">Item movement speed</label>
+        </div>
+        <div class="speedcalc-curses">
+          <div v-for="group in MOVE_CURSE_GROUPS" :key="group.id" class="speedcalc-curse-group">
+            <h3 class="speedcalc-curse-title">{{ group.title }}</h3>
+            <p class="speedcalc-curse-hint">{{ group.hint }}</p>
+            <div class="speedcalc-curse-list">
+              <label
+                v-for="opt in group.options"
+                :key="opt.key"
+                class="speedcalc-curse-check"
+                :class="{ 'is-selected': isCurseSelected(opt.key) }"
+              >
+                <input
+                  type="checkbox"
+                  class="mr-2"
+                  :checked="isCurseSelected(opt.key)"
+                  :aria-label="formatMoveCurseOption(opt, labLevel)"
+                  @change="toggleCurse(opt.key)"
+                >
+                <span>{{ formatMoveCurseOption(opt, labLevel) }}</span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="speedcalc-extra-fields">
+          <div class="field mb-0 speedcalc-item-frw">
+            <label class="label speedcalc-label" for="sc-item-frw">Movement speed</label>
             <div class="control speedcalc-number">
               <input id="sc-item-frw" v-model.number="itemFrw" class="input" type="number" step="1">
               <span class="speedcalc-suffix">%</span>
             </div>
           </div>
-          <div class="field mb-0">
-            <label class="label speedcalc-label" for="sc-skill-frw">Skill movement speed</label>
-            <div class="control speedcalc-number">
-              <input id="sc-skill-frw" v-model.number="skillFrw" class="input" type="number" step="1">
-              <span class="speedcalc-suffix">%</span>
+          <div v-if="isCurseSelected('navigator')" class="field mb-0 speedcalc-item-frw">
+            <label class="label speedcalc-label" for="sc-lab">Lab level</label>
+            <div class="control">
+              <input
+                id="sc-lab"
+                v-model.number="labLevel"
+                class="input"
+                type="number"
+                :min="LAB_LEVEL_MIN"
+                :max="LAB_LEVEL_MAX"
+                step="1"
+              >
             </div>
           </div>
         </div>
@@ -186,7 +257,31 @@ onMounted(async () => {
         </article>
       </div>
 
-      <div class="speedcalc-tables">
+      <div class="speedcalc-breakdown">
+        <div class="speedcalc-breakdown-bar">
+          <div class="speedcalc-mode-switch" role="group" aria-label="Breakpoint view">
+            <button type="button" :class="{ 'is-selected': !showGraph }" @click="showGraph = false">Table</button>
+            <button type="button" :class="{ 'is-selected': showGraph }" @click="showGraph = true">Graph</button>
+          </div>
+        </div>
+        <article v-if="showGraph" class="speedcalc-panel speedcalc-graph-card">
+          <header class="speedcalc-card-head speedcalc-graph-head">
+            <div>
+              <h2 class="speedcalc-card-title">Walk and sprint speed</h2>
+              <p class="speedcalc-card-hint">Hover the lines for yards/s and frames at that movement speed.</p>
+            </div>
+            <div class="speedcalc-graph-legend" aria-hidden="true">
+              <span class="is-walk">Walk</span>
+              <span class="is-sprint">Sprint</span>
+            </div>
+          </header>
+          <SpeedCalcSpeedGraph
+            :walk="graphSeries.walk"
+            :sprint="graphSeries.sprint"
+            :current-item-frw="toInt(itemFrw)"
+          />
+        </article>
+        <div v-else class="speedcalc-tables">
         <article class="speedcalc-panel speedcalc-table-card">
           <header class="speedcalc-card-head">
             <h2 class="speedcalc-card-title">Walk breakpoints</h2>
@@ -246,6 +341,7 @@ onMounted(async () => {
             </table>
           </div>
         </article>
+        </div>
       </div>
 
       <SpeedCalcYardMap class="mt-5" />
@@ -287,14 +383,70 @@ onMounted(async () => {
 }
 .speedcalc-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.9rem 1rem;
+}
+.speedcalc-curses {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--sc-panel-border);
+}
+.speedcalc-extra-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--sc-panel-border);
+}
+.speedcalc-item-frw {
+  max-width: 16rem;
+}
+.speedcalc-curse-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 0.2rem;
+}
+.speedcalc-curse-hint {
+  font-size: 0.78rem;
+  color: var(--bulma-text-weak, #a8adb8);
+  margin-bottom: 0.55rem;
+}
+.speedcalc-curse-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.45rem;
+}
+.speedcalc-curse-check {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  white-space: nowrap;
+  margin: 0;
+  padding: 0.28rem 0.55rem;
+  border-radius: 0.35rem;
+  border: 1px solid hsl(0, 0%, 30%);
+  color: #b5b5b5;
+  font-size: 0.82rem;
+}
+.speedcalc-curse-check.is-selected {
+  border-color: hsla(153, 47%, 49%, 0.9);
+  background: hsla(153, 47%, 49%, 0.16);
+  color: #fff;
 }
 .speedcalc-label {
   font-size: 0.78rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   margin-bottom: 0.4rem;
+}
+.speedcalc-morph-option {
+  color: #6b7280;
 }
 .speedcalc-number {
   position: relative;
@@ -378,6 +530,53 @@ onMounted(async () => {
   font-size: 0.75rem;
   color: var(--bulma-text-weak, #a8adb8);
 }
+.speedcalc-breakdown-bar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.65rem;
+}
+.speedcalc-mode-switch {
+  display: inline-flex;
+  gap: 0.35rem;
+}
+.speedcalc-mode-switch button {
+  cursor: pointer;
+  margin: 0;
+  padding: 0.28rem 0.7rem;
+  border-radius: 0.35rem;
+  border: 1px solid hsl(0, 0%, 30%);
+  background: transparent;
+  color: #b5b5b5;
+  font-size: 0.82rem;
+}
+.speedcalc-mode-switch button.is-selected {
+  border-color: hsla(153, 47%, 49%, 0.9);
+  background: hsla(153, 47%, 49%, 0.16);
+  color: #fff;
+}
+.speedcalc-graph-card {
+  overflow: hidden;
+  padding-bottom: 0.35rem;
+}
+.speedcalc-graph-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.speedcalc-graph-legend {
+  display: flex;
+  gap: 0.75rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.speedcalc-graph-legend .is-walk {
+  color: var(--sc-walk);
+}
+.speedcalc-graph-legend .is-sprint {
+  color: var(--sc-sprint);
+}
 .speedcalc-tables {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -450,6 +649,7 @@ onMounted(async () => {
     align-items: flex-start;
   }
   .speedcalc-grid,
+  .speedcalc-curses,
   .speedcalc-results,
   .speedcalc-tables {
     grid-template-columns: 1fr;
