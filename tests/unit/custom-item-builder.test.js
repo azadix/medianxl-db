@@ -9,6 +9,7 @@ import {
   parseCustomPayload,
 } from '@/items/custom-items.js';
 import {
+  angelicBaseDisplayName,
   isAngelicBaseItem,
   isAngelicEligibleBase,
   listAngelicBaseItems,
@@ -195,6 +196,7 @@ describe('custom-item-builder', () => {
     expect(clones).toHaveLength(1);
     expect(clones[0].id).toBe('18@:angelic');
     expect(clones[0].name).toBe('Military Pick (Angelic)');
+    expect(angelicBaseDisplayName(clones[0])).toBe('Military Pick (Angelic)');
     expect(isAngelicBaseItem(clones[0])).toBe(true);
     expect(canUseCustomQuality(clones[0], null)).toBe(false);
     expect(canUseCustomQuality(clones[0], 'magic')).toBe(true);

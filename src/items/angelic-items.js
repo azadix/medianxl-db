@@ -138,6 +138,8 @@ export function isAngelicItemDef(def) {
  * @returns {string}
  */
 export function angelicBaseDisplayName(def) {
-  const family = baseNameWithoutTier(def?.baseName || def?.name);
+  const family = baseNameWithoutTier(def?.baseName || def?.name)
+    .replace(/\s*\(Angelic\)\s*$/i, '')
+    .trim();
   return family ? `${family} (Angelic)` : 'Angelic';
 }
