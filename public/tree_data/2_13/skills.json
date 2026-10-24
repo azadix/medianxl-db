@@ -9170,10 +9170,9 @@
     "description": [
       "Ice missile that shatters on impact, damaging nearby enemies"
     ],
-    "restriction": [
-      "Initial target takes no damage"
-    ],
+    "restriction": [],
     "skillEffect": [
+      "Initial target takes no damage",
       "{{cold_damage}}",
       "{{mana_cost}}"
     ],
