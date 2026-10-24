@@ -8,7 +8,12 @@ import {
   isCraftedEligibleBase,
   parseCustomPayload,
 } from '@/items/custom-items.js';
-import { isAngelicEligibleBase, normalizeAngelicRarity } from '@/items/angelic-items.js';
+import {
+  isAngelicBaseItem,
+  isAngelicEligibleBase,
+  listAngelicBaseItems,
+  normalizeAngelicRarity,
+} from '@/items/angelic-items.js';
 import {
   isMastercraftedBaseItem,
   mastercraftedBaseDisplayName,
@@ -180,6 +185,21 @@ describe('custom-item-builder', () => {
         null
       )
     ).toBe(true);
+  });
+
+  it('lists angelic counterparts as their own bases', () => {
+    const clones = listAngelicBaseItems([
+      { id: '18@', name: 'Military Pick (Sacred)', rarity: 'normal', category: 'weapons' },
+      { id: 'crs', name: 'Crystal Sword (Sacred)', rarity: 'normal', category: 'weapons' },
+    ]);
+    expect(clones).toHaveLength(1);
+    expect(clones[0].id).toBe('18@:angelic');
+    expect(clones[0].name).toBe('Military Pick (Angelic)');
+    expect(isAngelicBaseItem(clones[0])).toBe(true);
+    expect(canUseCustomQuality(clones[0], null)).toBe(false);
+    expect(canUseCustomQuality(clones[0], 'magic')).toBe(true);
+    expect(canUseCustomQuality(clones[0], 'rare')).toBe(true);
+    expect(defaultCustomQualityForBase(clones[0])).toBe('magic');
   });
 
   it('labels mastercrafted catalog bases', () => {

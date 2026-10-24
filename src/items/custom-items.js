@@ -5,7 +5,12 @@
 
 import { isCharmItem } from '@/items/charm-items.js';
 import { isRelicItem } from '@/items/relic-items.js';
-import { angelicBaseDisplayName, isAngelicEligibleBase, isSacredBaseItem } from '@/items/angelic-items.js';
+import {
+  angelicBaseDisplayName,
+  isAngelicBaseItem,
+  isAngelicEligibleBase,
+  isSacredBaseItem,
+} from '@/items/angelic-items.js';
 import { isMastercraftedBaseItem } from '@/items/mastercrafted-items.js';
 import { isQuiverItem } from '@/items/item-types.js';
 import {
@@ -78,7 +83,7 @@ const SOCKETED_RE = /^Socketed \((\d+)(?:\/(\d+))?\)$/i;
 
 const ANGELIC_RE = /\(Angelic\)/i;
 const HONORIFIC_RE = /\(Honorific\)/i;
-const TIER_LABEL_RE = /\s*\((?:\d+|sacred)\)$/i;
+const TIER_LABEL_RE = /\s*\((?:\d+|sacred|angelic|mastercrafted|mc)\)$/i;
 
 /**
  * @param {unknown} value
@@ -178,7 +183,7 @@ export function isCraftedEligibleBase(def) {
   if (isCharmItem(def) || isRelicItem(def)) return false;
   const cat = String(def.category || '');
   if (cat !== 'weapons' && cat !== 'armor' && cat !== 'jewelry') return false;
-  if (isMastercraftedBaseItem(def)) return true;
+  if (isMastercraftedBaseItem(def) || isAngelicBaseItem(def)) return true;
   if (isAngelicEligibleBase(def) || isSacredBaseItem(def)) return true;
   return cat === 'jewelry';
 }
@@ -208,21 +213,20 @@ export function isHonorificEligibleBase(def) {
 }
 
 /**
- * Mastercrafted bases are magic+ only (no white/normal, no angelic).
+ * Mastercrafted and Angelic bases are magic+ only (no white/normal).
  * @param {object|null|undefined} def
  * @param {'magic'|'rare'|'crafted'|'angelic'|'honorific'|null|undefined} quality
  * @returns {boolean}
  */
 export function canUseCustomQuality(def, quality) {
   const key = quality == null || quality === '' ? null : String(quality).toLowerCase();
-  if (isMastercraftedBaseItem(def)) {
+  if (isMastercraftedBaseItem(def) || isAngelicBaseItem(def)) {
     if (!key || key === 'normal' || key === 'angelic') return false;
   }
   if (!key) return true;
   if (key === 'magic' || key === 'rare') return isMagicRareEligibleBase(def);
   if (key === 'crafted') return isCraftedEligibleBase(def);
   if (key === 'honorific') return isHonorificEligibleBase(def);
-  if (key === 'angelic') return isAngelicEligibleBase(def);
   return false;
 }
 
@@ -231,7 +235,7 @@ export function canUseCustomQuality(def, quality) {
  * @returns {'magic'|null}
  */
 export function defaultCustomQualityForBase(def) {
-  if (isMastercraftedBaseItem(def)) return 'magic';
+  if (isMastercraftedBaseItem(def) || isAngelicBaseItem(def)) return 'magic';
   return null;
 }
 
@@ -277,7 +281,7 @@ export function applyCustomOverlayToDef(def, customRaw) {
     baseName: def.baseName || def.name,
     modifiers: custom.modifiers.slice(),
   };
-  if (custom.angelic || custom.quality === 'angelic') {
+  if (custom.angelic || custom.quality === 'angelic' || isAngelicBaseItem(def)) {
     out.angelic = true;
     out.baseName = angelicBaseDisplayName(def);
   }
@@ -346,12 +350,19 @@ function tswRowHaystack(row) {
 
 /**
  * @param {object|null|undefined} row
+ * @returns {boolean}
+ */
+export function tswRowIsAngelic(row) {
+  return ANGELIC_RE.test(tswRowHaystack(row));
+}
+
+/**
+ * @param {object|null|undefined} row
  * @returns {CustomItemQuality|null}
  */
 export function tswCustomQuality(row) {
   if (!row || typeof row !== 'object') return null;
   const hay = tswRowHaystack(row);
-  if (ANGELIC_RE.test(hay)) return 'angelic';
   if (HONORIFIC_RE.test(hay)) return 'honorific';
   const badge = String(row.display_quality || row.quality || '')
     .trim()
@@ -363,6 +374,7 @@ export function tswCustomQuality(row) {
   // Sleep-awakening remnant armor (and plain greys) arrive as High/Superior/Normal.
   if (badge === 'SUPERIOR' || badge === 'HIGH') return 'superior';
   if (badge === 'NORMAL') return 'normal';
+  if (tswRowIsAngelic(row)) return 'rare';
   return null;
 }
 
@@ -606,6 +618,12 @@ export function resolveCustomBaseDefId(row, cat, quality = null) {
     const mc = hits.find((d) => isMastercraftedBaseItem(d));
     if (mc?.id) return String(mc.id);
   }
+  const preferAngelic =
+    quality === 'angelic' || /\(Angelic\)/i.test(typeRaw) || /\(Angelic\)/i.test(tswRowName(row));
+  if (preferAngelic) {
+    const angelic = hits.find((d) => isAngelicBaseItem(d));
+    if (angelic?.id) return String(angelic.id);
+  }
   const preferSacred =
     quality === 'crafted' ||
     quality === 'honorific' ||
@@ -634,6 +652,7 @@ export function tswCustomSnapshotEntry(row, defId, quality) {
     quality,
     name,
     modifiers: tswCustomModifiers(row),
+    angelic: tswRowIsAngelic(row) || undefined,
     ...tswCustomBaseFields(row),
   });
   /** @type {{ defId: string, custom: CustomItemPayload, icon?: string }} */

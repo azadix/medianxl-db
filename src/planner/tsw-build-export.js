@@ -3,6 +3,7 @@
  * @module planner/tsw-build-export
  */
 
+import { isAngelicItemDef } from '@/items/angelic-items.js';
 import { applyCustomOverlayToDef } from '@/items/custom-items.js';
 import { pickItemIcon } from '@/items/item-icons.js';
 import { decodeModifierLine } from '@/items/item-modifier-line.js';
@@ -62,7 +63,7 @@ function tswQuality(def) {
     return { quality: 'Unique', display_quality: display, name_color: 4 };
   }
   if (badge === 'Unique') return { quality: 'Unique', display_quality: 'SU', name_color: 4 };
-  if (badge === 'Rare' || def?.rarity === 'angelic' || def?.customQuality === 'angelic') {
+  if (badge === 'Rare') {
     return { quality: 'Rare', display_quality: 'Rare', name_color: 9 };
   }
   if (badge === 'Magic' || def?.customQuality === 'magic') {
@@ -84,7 +85,7 @@ function tswType(def, displayQuality) {
   if (isCharmItem(def) || isRelicItem(def)) return 'Charm';
   const raw = String(def?.baseName || def?.type || '').trim();
   const stem = raw.replace(/\s*\((Sacred|Set|SU|SSU|SSSU|TU|Angelic|RW)\)\s*$/i, '').trim() || raw;
-  if (def?.rarity === 'angelic' || def?.customQuality === 'angelic') {
+  if (isAngelicItemDef(def)) {
     return stem.includes('Angelic') ? stem : `${stem} (Angelic)`;
   }
   if (displayQuality === 'Set') return `${stem} (Set)`;

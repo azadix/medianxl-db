@@ -27,12 +27,7 @@ import {
   listEligibleRunewordBases,
   mergeRunewordWithBase,
 } from '@/items/runeword-items.js';
-import {
-  ANGELIC_RARITIES,
-  angelicBaseDisplayName,
-  isAngelicEligibleBase,
-  normalizeAngelicRarity,
-} from '@/items/angelic-items.js';
+import { angelicBaseDisplayName, isAngelicBaseItem } from '@/items/angelic-items.js';
 import ItemDetailPanel from './ItemDetailPanel.vue';
 import {
   applyCustomOverlayToDef,
@@ -69,10 +64,8 @@ const rolls = ref({});
 const baseSearch = ref('');
 /** @type {import('vue').Ref<string|null>} */
 const selectedBaseId = ref(null);
-/** @type {import('vue').Ref<'magic'|'rare'|'crafted'|'angelic'|'honorific'|null>} */
+/** @type {import('vue').Ref<'magic'|'rare'|'crafted'|'honorific'|null>} */
 const customQuality = ref(null);
-/** @type {import('vue').Ref<'rare'|'crafted'|'honorific'>} */
-const angelicRarity = ref('rare');
 
 function resetPickerPreview() {
   search.value = '';
@@ -82,7 +75,6 @@ function resetPickerPreview() {
   baseSearch.value = '';
   selectedBaseId.value = null;
   customQuality.value = null;
-  angelicRarity.value = 'rare';
 }
 
 watch(isPickerOpen, async (open) => {
@@ -128,7 +120,6 @@ function isCustomRarityBase(def) {
   return (
     isMagicRareEligibleBase(def) ||
     isCraftedEligibleBase(def) ||
-    isAngelicEligibleBase(def) ||
     isHonorificEligibleBase(def)
   );
 }
@@ -139,7 +130,6 @@ const CUSTOM_RARITY_CHOICES = Object.freeze([
   { id: /** @type {const} */ ('rare'), label: 'Rare' },
   { id: /** @type {const} */ ('crafted'), label: 'Crafted' },
   { id: /** @type {const} */ ('honorific'), label: 'Honorific' },
-  { id: /** @type {const} */ ('angelic'), label: 'Angelic' },
 ]);
 
 const filteredItems = computed(() => {
@@ -222,18 +212,6 @@ const previewDef = computed(() => {
     const base = itemsStore.catalogById[selectedBaseId.value];
     return mergeRunewordWithBase(template, base) || template;
   }
-  if (customQuality.value === 'angelic') {
-    const rarity = normalizeAngelicRarity(angelicRarity.value);
-    const label = rarity.charAt(0).toUpperCase() + rarity.slice(1);
-    return applyCustomOverlayToDef(template, {
-      quality: rarity,
-      angelic: true,
-      name: `${label} ${angelicBaseDisplayName(template)}`,
-      modifiers: [],
-      sockets: Number(template.sockets) || 0,
-      ilvl: DEFAULT_ITEM_AFFIX_ILVL,
-    });
-  }
   if (customQuality.value) {
     const label =
       customQuality.value === 'honorific'
@@ -243,11 +221,14 @@ const previewDef = computed(() => {
           : customQuality.value === 'magic'
             ? 'Magic'
             : 'Crafted';
-    const baseLabel = isMastercraftedBaseItem(template)
-      ? mastercraftedBaseDisplayName(template)
-      : template.baseName || template.name;
+    const baseLabel = isAngelicBaseItem(template)
+      ? angelicBaseDisplayName(template)
+      : isMastercraftedBaseItem(template)
+        ? mastercraftedBaseDisplayName(template)
+        : template.baseName || template.name;
     return applyCustomOverlayToDef(template, {
       quality: customQuality.value,
+      angelic: isAngelicBaseItem(template) || undefined,
       name: `${label} ${baseLabel}`,
       modifiers: [],
       sockets: Number(template.sockets) || 0,
@@ -360,7 +341,7 @@ watch(previewTemplate, (def) => {
 const showRarityPicker = computed(() => isCustomRarityBase(previewTemplate.value));
 
 /**
- * @param {'magic'|'rare'|'crafted'|'angelic'|'honorific'|null} quality
+ * @param {'magic'|'rare'|'crafted'|'honorific'|null} quality
  */
 function setCustomQuality(quality) {
   if (!canUseCustomQuality(previewTemplate.value, quality)) return;
@@ -379,13 +360,14 @@ const slotTitle = computed(() => {
  * @returns {string}
  */
 function pickerItemName(item) {
+  if (isAngelicBaseItem(item)) return angelicBaseDisplayName(item);
   if (isMastercraftedBaseItem(item)) return mastercraftedBaseDisplayName(item);
   return item.name;
 }
 
 function rowRarityClass(item) {
   if (previewId.value === item.id && customQuality.value) {
-    return customQuality.value === 'angelic' ? angelicRarity.value : customQuality.value;
+    return customQuality.value;
   }
   return item.rarity || 'normal';
 }
@@ -472,37 +454,27 @@ function onEquip(defId) {
   let quality = customQuality.value;
   if (!canUseCustomQuality(def, quality)) quality = defaultCustomQualityForBase(def);
   if (quality) {
-    if (quality === 'angelic') {
-      const rarity = normalizeAngelicRarity(angelicRarity.value);
-      const label = rarity.charAt(0).toUpperCase() + rarity.slice(1);
-      custom = {
-        quality: rarity,
-        angelic: true,
-        name: `${label} ${angelicBaseDisplayName(def)}`,
-        modifiers: [],
-        sockets: Number(def.sockets) || 0,
-        ilvl: DEFAULT_ITEM_AFFIX_ILVL,
-      };
-    } else {
-      const label =
-        quality === 'honorific'
-          ? 'Honorific'
-          : quality === 'rare'
-            ? 'Rare'
-            : quality === 'magic'
-              ? 'Magic'
-              : 'Crafted';
-      const baseLabel = isMastercraftedBaseItem(def)
+    const label =
+      quality === 'honorific'
+        ? 'Honorific'
+        : quality === 'rare'
+          ? 'Rare'
+          : quality === 'magic'
+            ? 'Magic'
+            : 'Crafted';
+    const baseLabel = isAngelicBaseItem(def)
+      ? angelicBaseDisplayName(def)
+      : isMastercraftedBaseItem(def)
         ? mastercraftedBaseDisplayName(def)
         : def.baseName || def.name;
-      custom = {
-        quality,
-        name: `${label} ${baseLabel}`,
-        modifiers: [],
-        sockets: Number(def.sockets) || 0,
-        ilvl: DEFAULT_ITEM_AFFIX_ILVL,
-      };
-    }
+    custom = {
+      quality,
+      angelic: isAngelicBaseItem(def) || undefined,
+      name: `${label} ${baseLabel}`,
+      modifiers: [],
+      sockets: Number(def.sockets) || 0,
+      ilvl: DEFAULT_ITEM_AFFIX_ILVL,
+    };
   }
   itemsStore.equipFromPicker(id, nextRolls, custom);
   afterEquipChanged();
@@ -639,21 +611,6 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown));
                   {{ row.label }}
                 </button>
               </div>
-              <template v-if="customQuality === 'angelic'">
-                <p class="item-picker-modal__base-picker-label">Angelic rarity</p>
-                <div class="buttons are-small mb-0" role="group" aria-label="Angelic rarity">
-                  <button
-                    v-for="row in ANGELIC_RARITIES"
-                    :key="row"
-                    type="button"
-                    class="button"
-                    :class="{ 'is-link': angelicRarity === row }"
-                    @click="angelicRarity = row"
-                  >
-                    {{ row.charAt(0).toUpperCase() + row.slice(1) }}
-                  </button>
-                </div>
-              </template>
             </div>
             <div
               v-if="isRunewordTemplate(previewTemplate)"

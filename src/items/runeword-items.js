@@ -4,6 +4,7 @@
  */
 
 import { resolveItemDef } from '@/items/item-overlays.js';
+import { isAngelicBaseItem } from '@/items/angelic-items.js';
 import { isMastercraftedBaseItem } from '@/items/mastercrafted-items.js';
 import {
   extractInnateFromModifiers,
@@ -103,7 +104,7 @@ export function wikiTypeMatchesBase(type, base) {
  */
 export function runewordTemplateAllowsBase(template, base) {
   if (!template || !base || base.rarity !== 'normal') return false;
-  if (isMastercraftedBaseItem(base)) return false;
+  if (isMastercraftedBaseItem(base) || isAngelicBaseItem(base)) return false;
   return templateAllowsBaseFields(template, base);
 }
 
@@ -193,7 +194,7 @@ export function parseRunewordInstanceId(defId) {
  */
 export function mergeRunewordWithBase(template, base) {
   if (!isRunewordItem(template) || !base?.id) return null;
-  if (isMastercraftedBaseItem(base)) return null;
+  if (isMastercraftedBaseItem(base) || isAngelicBaseItem(base)) return null;
   const overlay = {
     ...template,
     id: mergedRunewordId(template.id, base.id),

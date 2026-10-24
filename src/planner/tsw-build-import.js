@@ -19,6 +19,7 @@ import {
 import { EQUIPMENT_SLOTS } from '@/items/item-types.js';
 import { isSetItem } from '@/items/item-overlays.js';
 import { slugify } from '@/items/unique-stats-catalog.js';
+import { listAngelicBaseItems } from '@/items/angelic-items.js';
 import {
   resolveCustomBaseDefId,
   tswCustomQuality,
@@ -197,11 +198,12 @@ function catalogIndex(catalog) {
       catalog
     );
   /** @type {object[]} */
-  const list = Array.isArray(rec.catalog)
+  const rawList = Array.isArray(rec.catalog)
     ? rec.catalog
     : rec.catalogById && typeof rec.catalogById === 'object' && !Array.isArray(rec.catalogById)
       ? Object.values(rec.catalogById)
       : [];
+  const list = [...rawList, ...listAngelicBaseItems(rawList)];
   /** @type {Record<string, object>} */
   const byId = {};
   /** @type {Map<string, object[]>} */

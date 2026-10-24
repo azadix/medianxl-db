@@ -76,7 +76,7 @@ import {
   parseCustomPayload,
 } from '@/items/custom-items.js';
 import { normalizeRandomElement } from '@/items/random-element.js';
-import { angelicBaseDisplayName } from '@/items/angelic-items.js';
+import { angelicBaseDisplayName, isAngelicBaseItem, listAngelicBaseItems } from '@/items/angelic-items.js';
 import {
   isMastercraftedBaseItem,
   mastercraftedBaseDisplayName,
@@ -359,10 +359,20 @@ function applyInstanceMeta(inst, meta) {
  * @param {ItemDef[]} runtimeOverlayDefs
  * @returns {Record<string, ItemDef>}
  */
+/**
+ * @param {ItemDef[]|null|undefined} catalog
+ * @returns {ItemDef[]}
+ */
+function catalogWithAngelicBases(catalog) {
+  const list = Array.isArray(catalog) ? catalog : [];
+  return [...list, ...listAngelicBaseItems(list)];
+}
+
 function buildCatalogByIdMap(catalog, runtimeOverlayDefs) {
   /** @type {Record<string, ItemDef>} */
   const map = {};
-  for (const d of catalog || []) {
+  const list = [...(catalog || []), ...listAngelicBaseItems(catalog)];
+  for (const d of list) {
     if (!d?.id) continue;
     map[d.id] = d;
     if (d.uniqueKind === 'tiered' && Number(d.tier) === 4 && typeof d.id === 'string') {
@@ -612,7 +622,8 @@ export const useItemsStore = defineStore('items', {
         const equipOpts = this.equipCheckOptions(slot);
         const fits = (item, s, cls) =>
           canEquipInSlot(item, s, cls, { ...equipOpts, otherHandDef, className });
-        return this.catalog.filter((d) => {
+        const catalog = catalogWithAngelicBases(this.catalog);
+        return catalog.filter((d) => {
           if (isInventoryOnlyGear(d)) return false;
           if (isRunewordTemplate(d)) {
             return runewordFitsEquipSlot(d, slot, this.catalog, undefined, fits);
@@ -622,9 +633,11 @@ export const useItemsStore = defineStore('items', {
       }
       if (sel.location === 'inventory') {
         // Charms/relics use dedicated enable lists — not the inventory grid.
-        return this.catalog.filter((d) => canPlaceInInventory(d) && !isCharmItem(d) && !isRelicItem(d));
+        return catalogWithAngelicBases(this.catalog).filter(
+          (d) => canPlaceInInventory(d) && !isCharmItem(d) && !isRelicItem(d)
+        );
       }
-      return this.catalog.filter((d) => canPlaceInInventory(d));
+      return catalogWithAngelicBases(this.catalog).filter((d) => canPlaceInInventory(d));
     },
 
     /** @returns {ItemDef[]} */
@@ -827,7 +840,15 @@ export const useItemsStore = defineStore('items', {
           loadHonorificBlessings(await readJsonIfOk(optionalRes[10]));
           loadShrinesCatalog(await readJsonIfOk(optionalRes[11]));
 
-          this.catalog = [...baseItems, ...charms, ...other, ...overlays, ...relics, ...runewords];
+          this.catalog = [
+            ...baseItems,
+            ...listAngelicBaseItems(baseItems),
+            ...charms,
+            ...other,
+            ...overlays,
+            ...relics,
+            ...runewords,
+          ];
           mergeJewelItemsIntoSocketablesCatalog(this.catalog);
           this.sets = sets;
           this.runtimeOverlayDefs = [];
@@ -1560,7 +1581,7 @@ export const useItemsStore = defineStore('items', {
       const def = this.catalogById[baseId];
       if (!def) return null;
       let requested = quality;
-      if (!canUseCustomQuality(def, requested === 'angelic' ? 'angelic' : requested)) {
+      if (!canUseCustomQuality(def, requested)) {
         requested = defaultCustomQualityForBase(def);
       }
       if (!requested) return null;
@@ -1574,7 +1595,7 @@ export const useItemsStore = defineStore('items', {
               ? 'Magic'
               : 'Crafted';
       let baseLabel = def.baseName || def.name;
-      if (requested === 'angelic') baseLabel = angelicBaseDisplayName(def);
+      if (requested === 'angelic' || isAngelicBaseItem(def)) baseLabel = angelicBaseDisplayName(def);
       else if (isMastercraftedBaseItem(def)) baseLabel = mastercraftedBaseDisplayName(def);
       const custom = {
         quality: rarity,
@@ -1583,7 +1604,7 @@ export const useItemsStore = defineStore('items', {
         sockets: Number(def.sockets) || 0,
         ilvl: DEFAULT_ITEM_AFFIX_ILVL,
       };
-      if (requested === 'angelic') custom.angelic = true;
+      if (requested === 'angelic' || isAngelicBaseItem(def)) custom.angelic = true;
       const rolls = Number(def.sockets) > 0 ? { sockets: 0 } : null;
       return this.createInstance(baseId, def.icon, rolls, custom);
     },

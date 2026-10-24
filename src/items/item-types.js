@@ -582,6 +582,9 @@ function itemPickerQualityAlias(item) {
   if (kind === 'ssu') return 'SSU';
   if (kind === 'sssu') return 'SSSU';
   if (kind === 'runeword') return 'RW runeword';
+  if (item.angelicBase === true || /\(Angelic\)/i.test(String(item.name || item.baseName || ''))) {
+    return 'angelic';
+  }
   return '';
 }
 

@@ -503,10 +503,11 @@ describe('tsw-build-import', () => {
       },
     });
     expect(snapshot.equipment.glov).toMatchObject({
-      defId: '@36',
+      defId: '@36:angelic',
       icon: 'angelicgloves',
       custom: {
-        quality: 'angelic',
+        quality: 'rare',
+        angelic: true,
         name: 'Light Gauntlets (Angelic)',
         modifiers: ['+3 to All Skills'],
       },
@@ -693,7 +694,9 @@ describe('tsw-build-import', () => {
     ]);
     expect(snapshot.equipment.rrin?.custom?.quality).toBe('rare');
     expect(snapshot.equipment.neck?.custom?.quality).toBe('rare');
-    expect(snapshot.equipment.glov?.custom?.quality).toBe('angelic');
+    expect(snapshot.equipment.glov?.custom?.quality).toBe('rare');
+    expect(snapshot.equipment.glov?.custom?.angelic).toBe(true);
+    expect(snapshot.equipment.glov?.defId).toBe('@36:angelic');
     expect(snapshot.equipment.glov?.mysticOrbs).toEqual(
       expect.arrayContaining([
         [5, 'MO - Total Char Defense'],
@@ -701,7 +704,8 @@ describe('tsw-build-import', () => {
         [1, 'Rare MO - Fire Resist'],
       ])
     );
-    expect(snapshot.equipment.feet?.custom?.quality).toBe('angelic');
+    expect(snapshot.equipment.feet?.custom?.quality).toBe('rare');
+    expect(snapshot.equipment.feet?.custom?.angelic).toBe(true);
     expect(snapshot.equipment.tors).toMatchObject({
       defId: 'u:silks-of-the-victor:su',
       ethereal: true,
@@ -755,7 +759,8 @@ describe('tsw-build-import', () => {
     expect(store.getEquipmentDef('head')?.id).toBe('u:lacuni-cowl:su');
     expect(store.getEquipmentDef('rarm')?.id).toBe('u:mekanism:su');
     expect(store.getEquipmentDef('lrin')?.customQuality).toBe('rare');
-    expect(store.getEquipmentDef('glov')?.customQuality).toBe('angelic');
+    expect(store.getEquipmentDef('glov')?.customQuality).toBe('rare');
+    expect(store.getEquipmentDef('glov')?.angelic).toBe(true);
     expect(store.getEquipmentDef('tors')?.ethereal).toBe(true);
     const torsId = store.equipment.tors;
     expect(store.getExtrasForInstance(torsId)).toEqual(

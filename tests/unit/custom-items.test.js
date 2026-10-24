@@ -28,14 +28,14 @@ describe('custom-items', () => {
     expect(parseCustomPayload({ quality: 'unique' })).toBeNull();
   });
 
-  it('classifies TSW angelic gear as angelic even when quality is Rare', () => {
+  it('keeps TSW angelic gear on its real rarity', () => {
     expect(
       tswCustomQuality({
         display_name: 'Light Gauntlets (Angelic)',
         quality: 'Rare',
         display_quality: 'Rare',
       })
-    ).toBe('angelic');
+    ).toBe('rare');
     expect(tswCustomQuality({ quality: 'Honorific' })).toBe('honorific');
     expect(tswCustomQuality({ quality: 'Magic' })).toBe('magic');
     expect(tswCustomQuality({ quality: 'Crafted' })).toBe('crafted');
