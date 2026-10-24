@@ -18,12 +18,14 @@ import {
   isRelicItem,
 } from '@/items/relic-items.js';
 import {
+  buildOverlaySourceRollableStats,
   defaultOverlayAffixRolls,
   formatOverlayBadge,
   getOverlayDetailStatRows,
   getOverlayRollableStats,
   getOverlayStatLines,
   isOverlayItem,
+  overlayAffixRollKey,
 } from '@/items/item-overlays.js';
 import { formatRunewordBadge, formatRunewordSocketFillerLines, isRunewordItem } from '@/items/runeword-items.js';
 import { getShieldClassBlockPercent } from '@/character/class-baselines.js';
@@ -38,7 +40,12 @@ import {
 } from '@/items/item-modifier-line.js';
 import { getMysticOrbBonusLines, normalizeMysticOrbs } from '@/items/mystic-orbs.js';
 import { getSocketableBonusLines, normalizeSocketables } from '@/items/socketables.js';
-import { getItemUpgradeBonusLines, getItemUpgradeFlags } from '@/items/item-upgrades.js';
+import { applyAffixRolls, parseAffixRanges } from '@/items/affix-rolls.js';
+import {
+  collectShrineUpgradeSources,
+  getItemUpgradeBonusLines,
+  getItemUpgradeFlags,
+} from '@/items/item-upgrades.js';
 import {
   collectItemStateFlagLines,
   stripItemStateFlagLines,
@@ -222,7 +229,26 @@ export function defaultRollsForDef(def, options = {}) {
   if (isOverlayItem(def)) {
     // Lock sockets at max for uniques/sets/runewords
     if (def.sockets > 0) rolls.sockets = def.sockets;
-    return { ...rolls, ...defaultOverlayAffixRolls(def) };
+    return { ...rolls, ...defaultOverlayAffixRolls(def), ...defaultShrineUpgradeRolls(def, options) };
+  }
+  return { ...rolls, ...defaultShrineUpgradeRolls(def, options) };
+}
+
+/**
+ * @param {object|null|undefined} def
+ * @param {{ shrine?: string|null, blessing?: string|null }} [options]
+ * @returns {Record<string, number>}
+ */
+function defaultShrineUpgradeRolls(def, options = {}) {
+  /** @type {Record<string, number>} */
+  const rolls = {};
+  for (const source of collectShrineUpgradeSources(def, options)) {
+    parseAffixRanges(source.text).forEach((range, rangeIndex) => {
+      rolls[overlayAffixRollKey(source.sourceKey, rangeIndex)] = defaultRollValue(
+        range.min,
+        range.max
+      );
+    });
   }
   return rolls;
 }
@@ -351,7 +377,7 @@ export function formatChanceToBlockLine(block, className = null) {
  * Matching extras (e.g. TSW leftovers) are consumed so they are not doubled.
  * @param {string[]|null|undefined} extras
  * @param {object|null|undefined} def
- * @param {{ mysticOrbs?: unknown, socketables?: Array<object>|null, oil?: string|null, corruptions?: string[]|null, blessing?: string|null, shrine?: string|null, mechanics?: Record<string, number>|null, honorific?: boolean }} [options]
+ * @param {{ mysticOrbs?: unknown, socketables?: Array<object>|null, oil?: string|null, corruptions?: string[]|null, blessing?: string|null, shrine?: string|null, mechanics?: Record<string, number>|null, honorific?: boolean, rolls?: Record<string, number>|null, includeShrines?: boolean, hideRollableRanges?: boolean, showRollRanges?: boolean }} [options]
  * @returns {string[]}
  */
 export function extrasWithAppliedItemBonuses(extras, def, options = {}) {
@@ -400,6 +426,16 @@ export function extrasWithAppliedItemBonuses(extras, def, options = {}) {
     honorific: options.honorific,
   })) {
     appendBonus(line);
+  }
+  if (options.includeShrines !== false) {
+    for (const source of collectShrineUpgradeSources(def, options)) {
+      appendBonus(
+        applyAffixRolls(source.text, options.rolls, (i) => overlayAffixRollKey(source.sourceKey, i), {
+          hideRanges: options.hideRollableRanges === true,
+          showRollRanges: options.showRollRanges === true,
+        })
+      );
+    }
   }
   return list;
 }
@@ -583,7 +619,12 @@ export function getItemStatSections(def, rolls = null, options = {}) {
 
   /** @type {string[]} */
   const extras = stripItemStateFlagLines(
-    extrasWithAppliedItemBonuses(options.extras, def, options)
+    extrasWithAppliedItemBonuses(options.extras, def, {
+      ...options,
+      rolls,
+      hideRollableRanges,
+      showRollRanges,
+    })
   );
   const merged = applyResolvedRandomReanimates(mods, extras);
   mods.length = 0;
@@ -627,7 +668,11 @@ export function getItemStatLines(def, rolls = null, options = {}) {
 export function getItemDetailStatRows(def, rolls = null, options = {}) {
   if (!def || typeof def !== 'object') return [];
   const className = options.className ?? null;
-  const extras = extrasWithAppliedItemBonuses(options.extras, def, options);
+  const extras = extrasWithAppliedItemBonuses(options.extras, def, {
+    ...options,
+    rolls,
+    includeShrines: false,
+  });
   const hasSocketables = Array.isArray(options.socketables) && options.socketables.length > 0;
   // Match tooltip sectioning (base/scaling vs mods); Socketed is last in the base block.
   // Pass extras only after overlay/charm rows so they appear under catalog affixes.
@@ -645,6 +690,7 @@ export function getItemDetailStatRows(def, rolls = null, options = {}) {
     blessing: options.blessing,
     shrine: options.shrine,
     ethereal: options.ethereal === true,
+    includeShrines: false,
   });
   const upgradeFlags = getItemUpgradeFlags(options);
   const flagLines = collectItemStateFlagLines({
@@ -675,6 +721,17 @@ export function getItemDetailStatRows(def, rolls = null, options = {}) {
    * @returns {ItemDetailStatRow[]}
    */
   const asMod = (extra) => extra.map((row) => ({ ...row, section: row.section || 'mod' }));
+  const pushShrineRows = () => {
+    for (const source of collectShrineUpgradeSources(def, options)) {
+      const stats = buildOverlaySourceRollableStats(source, rolls);
+      if (stats.length) {
+        rows.push(...asMod(stats.map((stat) => ({ kind: /** @type {const} */ ('roll'), stat }))));
+        continue;
+      }
+      const text = markModifierLineAdded(source.text);
+      if (text) rows.push({ kind: 'text', text, section: /** @type {const} */ ('mod') });
+    }
+  };
   /**
    * @returns {ItemDetailStatRow[]}
    */
@@ -703,10 +760,12 @@ export function getItemDetailStatRows(def, rolls = null, options = {}) {
   };
   if (isCharmItem(def)) {
     rows.push(...asMod(getCharmDetailStatRows(def, rolls, className)));
+    pushShrineRows();
     return withExtras();
   }
   if (isRelicItem(def)) {
     rows.push(...asMod(getRelicDetailStatRows(def, rolls)));
+    pushShrineRows();
     return withExtras();
   }
   if (isOverlayItem(def)) {
@@ -720,11 +779,13 @@ export function getItemDetailStatRows(def, rolls = null, options = {}) {
         }))
       );
     }
+    pushShrineRows();
     return withExtras();
   }
   for (const stat of getRollableStats(def, rolls, { className })) {
     const section = stat.key === 'sockets' ? 'base' : 'mod';
     rows.push({ kind: 'roll', stat, section });
   }
+  pushShrineRows();
   return withExtras();
 }

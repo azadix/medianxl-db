@@ -11,9 +11,10 @@ const props = defineProps({
   /** @type {{ key: string, display: string, displayParts?: { kind: string, text: string, skillId?: string, skillLevel?: number|null }[], min: number, max: number, color?: string }} */
   stat: { type: Object, required: true },
   value: { type: Number, required: true },
+  removable: { type: Boolean, default: false },
 });
 
-const emit = defineEmits(['update']);
+const emit = defineEmits(['update', 'remove']);
 
 const colorClass = computed(() => modifierColorCssClass(props.stat?.color));
 
@@ -40,7 +41,10 @@ function onChange(raw) {
 </script>
 
 <template>
-  <div class="item-picker-modal__roll-row" :class="colorClass">
+  <div
+    class="item-picker-modal__roll-row"
+    :class="[colorClass, { 'item-picker-modal__roll-row--removable': removable }]"
+  >
     <span class="item-picker-modal__roll-display">
       <template
         v-for="(part, i) in stat.displayParts?.length
@@ -76,5 +80,14 @@ function onChange(raw) {
         @change="onChange($event.target.value)"
       />
     </div>
+    <button
+      v-if="removable"
+      type="button"
+      class="item-picker-modal__roll-remove"
+      aria-label="Remove affix"
+      @click="emit('remove')"
+    >
+      ×
+    </button>
   </div>
 </template>

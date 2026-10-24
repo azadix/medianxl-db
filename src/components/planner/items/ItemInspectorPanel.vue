@@ -150,15 +150,7 @@ const className = computed(
   () => itemsStore.viewerClassName ?? getCharacterInstance()?.className ?? null
 );
 
-const rollOptions = computed(() => ({ className: className.value }));
-
 const showActions = computed(() => itemDef.value != null);
-
-const effectiveRolls = computed(() => {
-  const def = itemDef.value;
-  if (!def) return rolls.value;
-  return mergeRollsForDef(def, rolls.value, rollOptions.value);
-});
 
 const instanceExtras = computed(() => {
   const id = instanceId.value;
@@ -194,6 +186,18 @@ const instanceShrine = computed(() => {
   return itemsStore.instances[id]?.shrine || '';
 });
 
+const rollOptions = computed(() => ({
+  className: className.value,
+  shrine: instanceShrine.value,
+  blessing: instanceBlessing.value,
+}));
+
+const effectiveRolls = computed(() => {
+  const def = itemDef.value;
+  if (!def) return rolls.value;
+  return mergeRollsForDef(def, rolls.value, rollOptions.value);
+});
+
 const inspectorTabs = computed(() => {
   const def = itemDef.value;
   /** @type {Array<{ id: InspectorTabId, label: string }>} */
@@ -213,10 +217,12 @@ const inspectorTabs = computed(() => {
   if (hasEffigy) tabs.push({ id: 'effigies', label: 'Effigies' });
   if (listOilsForItem(def, equipSlot.value).length) tabs.push({ id: 'oils', label: 'Oil' });
   const honorific = def.rarity === 'honorific' || def.customQuality === 'honorific';
+  const crafted = def.rarity === 'crafted' || def.customQuality === 'crafted';
   if (honorific) tabs.push({ id: 'blessing', label: 'Blessing' });
   else if (isItemCorruptible(def)) tabs.push({ id: 'corruptions', label: 'Corrupt' });
-  if (def.rarity === 'crafted' || def.customQuality === 'crafted') {
+  if (crafted) {
     tabs.push({ id: 'shrine', label: 'Shrine' });
+    tabs.push({ id: 'blessing', label: 'Blessing' });
   }
   if (defHasItemMechanic(def)) tabs.push({ id: 'mechanics', label: 'Mechanics' });
   return tabs;

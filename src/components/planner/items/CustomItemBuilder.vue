@@ -1,17 +1,21 @@
 <script setup>
 import { computed } from 'vue';
 import CustomAffixAdder from './CustomAffixAdder.vue';
+import CustomItemAffixPicker from './CustomItemAffixPicker.vue';
 
 const props = defineProps({
   custom: { type: Object, default: () => ({ quality: 'crafted', modifiers: [] }) },
+  def: { type: Object, default: null },
   editable: { type: Boolean, default: false },
 });
 
 const emit = defineEmits(['update:custom']);
 
-const qualityLabel = computed(() => {
-  const q = String(props.custom?.quality || 'crafted');
-  return q.charAt(0).toUpperCase() + q.slice(1);
+const quality = computed(() => String(props.custom?.quality || 'crafted'));
+const qualityLabel = computed(() => quality.value.charAt(0).toUpperCase() + quality.value.slice(1));
+const usesRareAffixes = computed(() => {
+  const q = quality.value;
+  return q === 'magic' || q === 'rare' || q === 'crafted';
 });
 
 const modifiers = computed(() =>
@@ -29,25 +33,16 @@ function patchCustom(patch) {
 <template>
   <div class="item-upgrade-section" aria-label="Custom item">
     <p class="item-upgrade-section__heading is-size-7 has-text-grey mb-2">{{ qualityLabel }} item</p>
-    <input
-      class="input is-small mb-2"
-      type="text"
-      :value="custom.name || ''"
-      :disabled="!editable"
-      placeholder="Item name"
-      @change="patchCustom({ name: $event.target.value })"
-    />
-    <label class="is-size-7 has-text-grey">Required Level (base)</label>
-    <input
-      class="input is-small mb-2"
-      type="number"
-      min="0"
-      :value="custom.reqLevel ?? ''"
-      :disabled="!editable"
-      placeholder="Catalog default"
-      @change="patchCustom({ reqLevel: Number($event.target.value) || 0 })"
+    <CustomItemAffixPicker
+      v-if="usesRareAffixes"
+      :custom="custom"
+      :def="def"
+      :editable="editable"
+      :list-picked="false"
+      @update:custom="emit('update:custom', $event)"
     />
     <CustomAffixAdder
+      v-else
       :modifiers="modifiers"
       :editable="editable"
       @update:modifiers="patchCustom({ modifiers: $event })"

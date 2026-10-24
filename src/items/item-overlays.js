@@ -386,7 +386,7 @@ export function getOverlayDetailStatRows(def, rolls = null) {
     const ranges = parseAffixRanges(source.text);
     if (ranges.length) {
       for (const stat of buildOverlaySourceRollableStats(source, rolls)) {
-        rows.push({ kind: 'roll', stat });
+        rows.push({ kind: 'roll', stat, sourceKey: source.sourceKey });
       }
       continue;
     }
@@ -396,6 +396,7 @@ export function getOverlayDetailStatRows(def, rolls = null) {
       kind: 'text',
       text: encodeModifierLine(text, source.color, source.showCondition),
       color: source.color || 'magic',
+      sourceKey: source.sourceKey,
     });
   }
   return rows;

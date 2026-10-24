@@ -13,6 +13,7 @@ import {
   socketableLibraryGroup,
   socketableNameCssClass,
 } from '@/items/socketables.js';
+import { customJewelModifierLines } from '@/items/jewelcrafting.js';
 import { useItemsStore } from '@/stores/items.js';
 import { getItemIconUrl } from '@/shared/utils.js';
 import { hideItemTooltip } from '@/items/item-tooltip-runtime.js';
@@ -67,7 +68,7 @@ const catalogGroups = computed(() => {
       quality: rarity.charAt(0).toUpperCase() + rarity.slice(1),
       code: jewel.id,
       icon: 'jewl',
-      modifiers: jewel.modifiers,
+      modifiers: customJewelModifierLines(jewel),
     });
   }
   groups.Jewel.sort((a, b) => a.name.localeCompare(b.name));

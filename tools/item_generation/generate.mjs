@@ -1,7 +1,7 @@
 /**
  * Unified item catalog generation.
  *
- * Default: unique-stats, relics, runewords, and upgrade catalogs from wiki/docs.
+ * Default: unique-stats, relics, runewords, upgrades, and affixes from wiki/docs.
  * Charms need the TSW API (in-game IP within 24h) and are opt-in.
  *
  * Usage:
@@ -13,6 +13,7 @@
  *   npm run generate:items -- uniques relics runewords upgrades 2.14 --check
  *   npm run generate:items -- uniques --secrets-only
  *   npm run generate:items -- runewords --from-html path/to/page.html
+ *   npm run generate:items -- affixes --from-html path/to/page.html
  */
 
 import { fileURLToPath } from 'node:url';
@@ -22,6 +23,7 @@ import { main as generateRelics } from './generate-relics-from-wiki.mjs';
 import { main as generateRunewords } from './generate-runewords-from-wiki.mjs';
 import { main as generateCharms } from './generate-relics-charms-from-tsw.mjs';
 import { main as generateUpgrades } from './generate-upgrade-catalogs.mjs';
+import { main as generateAffixes } from './generate-affixes-from-wiki.mjs';
 
 const TASKS = Object.freeze({
   uniques: generateUniques,
@@ -29,9 +31,10 @@ const TASKS = Object.freeze({
   runewords: generateRunewords,
   charms: generateCharms,
   upgrades: generateUpgrades,
+  affixes: generateAffixes,
 });
 const TASK_NAMES = new Set([...Object.keys(TASKS), 'all']);
-const WIKI_DEFAULT = Object.freeze(['uniques', 'relics', 'runewords', 'upgrades']);
+const WIKI_DEFAULT = Object.freeze(['uniques', 'relics', 'runewords', 'upgrades', 'affixes']);
 
 /**
  * @param {string[]} argv
@@ -58,7 +61,7 @@ function parseArgv(argv) {
  * @returns {string[]}
  */
 function argsFor(task, rest) {
-  if (task === 'runewords') return rest;
+  if (task === 'runewords' || task === 'affixes') return rest;
   const out = [];
   for (let i = 0; i < rest.length; i += 1) {
     if (rest[i] === '--from-html') {

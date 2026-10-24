@@ -102,27 +102,17 @@ export function lookupShrine(id) {
 
 /**
  * @param {{ text?: string, affixId?: string, min?: number, max?: number, isFixed?: boolean }} bonus
- * @param {number|null} [roll]
  * @returns {string}
  */
-function formatBonus(bonus, roll = null) {
-  const min = Number(bonus.min);
-  const max = Number(bonus.max);
-  const value =
-    roll != null && Number.isFinite(roll)
-      ? roll
-      : Number.isFinite(max)
-        ? max
-        : Number.isFinite(min)
-          ? min
-          : null;
-  if (bonus.text && (bonus.min == null || String(bonus.text).includes(' to '))) {
-    if (value != null && String(bonus.text).includes(' to ')) {
-      return formatAffixIdLine(bonus.affixId, value, bonus.text.replace(/\([^)]*to[^)]*\)/g, '').trim());
-    }
-    if (bonus.isFixed || min === max) return String(bonus.text);
-  }
-  return formatAffixIdLine(bonus.affixId, value, bonus.text);
+function formatBonus(bonus) {
+  const text = String(bonus?.text || '').trim();
+  if (text) return text;
+  const value = Number.isFinite(Number(bonus?.max))
+    ? Number(bonus.max)
+    : Number.isFinite(Number(bonus?.min))
+      ? Number(bonus.min)
+      : null;
+  return formatAffixIdLine(bonus?.affixId, value, '');
 }
 
 /**

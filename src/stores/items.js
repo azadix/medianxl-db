@@ -85,6 +85,7 @@ import { loadOilsCatalog } from '@/items/oils.js';
 import { loadCorruptionsCatalog, normalizeCorruptions } from '@/items/corruptions.js';
 import { loadHonorificBlessings, loadShrinesCatalog } from '@/items/blessings.js';
 import { loadAffixTemplates } from '@/items/affix-templates.js';
+import { DEFAULT_ITEM_AFFIX_ILVL, loadItemAffixes } from '@/items/item-affixes.js';
 import { loadItemMechanics } from '@/items/item-mechanics.js';
 import { getItemUpgradeFlags } from '@/items/item-upgrades.js';
 import { recomputePlannerStatsFromItems } from '@/items/item-character-stat-bonuses.js';
@@ -96,6 +97,7 @@ import {
   normalizeSocketables,
   trimSocketablesToCount,
 } from '@/items/socketables.js';
+import { customJewelModifierLines, parseJewelcraftRolls } from '@/items/jewelcrafting.js';
 
 /** When true, equip/enable paths skip raising planner level for item reqs. */
 let skipItemReqLevelSync = false;
@@ -236,7 +238,7 @@ async function fetchCatalogFile(url) {
  *   inventory: Array<{ slot: number } & ItemSnapshotEntry>,
  *   charms: Array<{ defId: string, rolls?: Record<string, number> }>,
  *   relics: Array<{ defId: string, rolls?: Record<string, number> }>,
- *   customJewels?: Array<{ id: string, name: string, modifiers: string[], rarity?: string }>,
+ *   customJewels?: Array<{ id: string, name: string, modifiers: string[], rarity?: string, ilvl?: number, pickedAffixes?: object, jewelcraft?: string, jewelcraftRolls?: Record<string, number> }>,
  * }} ItemsSnapshot
  */
 
@@ -730,6 +732,7 @@ export const useItemsStore = defineStore('items', {
           'oils.json',
           'corruptions.json',
           'affix-templates.json',
+          'item-affixes.json',
           'item-mechanics.json',
           'blessings.json',
           'shrines.json',
@@ -814,9 +817,10 @@ export const useItemsStore = defineStore('items', {
           loadOilsCatalog(await readJsonIfOk(optionalRes[5]));
           loadCorruptionsCatalog(await readJsonIfOk(optionalRes[6]));
           loadAffixTemplates(await readJsonIfOk(optionalRes[7]));
-          loadItemMechanics(await readJsonIfOk(optionalRes[8]));
-          loadHonorificBlessings(await readJsonIfOk(optionalRes[9]));
-          loadShrinesCatalog(await readJsonIfOk(optionalRes[10]));
+          loadItemAffixes(await readJsonIfOk(optionalRes[8]));
+          loadItemMechanics(await readJsonIfOk(optionalRes[9]));
+          loadHonorificBlessings(await readJsonIfOk(optionalRes[10]));
+          loadShrinesCatalog(await readJsonIfOk(optionalRes[11]));
 
           this.catalog = [...baseItems, ...charms, ...other, ...overlays, ...relics, ...runewords];
           mergeJewelItemsIntoSocketablesCatalog(this.catalog);
@@ -1535,21 +1539,30 @@ export const useItemsStore = defineStore('items', {
       const inst = this.instances[instanceId];
       if (!inst) return false;
       const parsed = parseCustomPayload(custom);
-      if (parsed) inst.custom = parsed;
-      else delete inst.custom;
+      const next = { ...inst };
+      if (parsed) next.custom = parsed;
+      else delete next.custom;
+      this.instances = { ...this.instances, [instanceId]: next };
       return true;
     },
 
     /**
      * @param {string} baseId
-     * @param {'crafted'|'angelic'|'honorific'|'rare'} quality
+     * @param {'crafted'|'angelic'|'honorific'|'rare'|'magic'} quality
      * @returns {number|null}
      */
     createCustomInstance(baseId, quality) {
       const def = this.catalogById[baseId];
       if (!def) return null;
       const rarity = quality === 'angelic' ? 'rare' : quality;
-      const label = rarity === 'honorific' ? 'Honorific' : rarity === 'rare' ? 'Rare' : 'Crafted';
+      const label =
+        rarity === 'honorific'
+          ? 'Honorific'
+          : rarity === 'rare'
+            ? 'Rare'
+            : rarity === 'magic'
+              ? 'Magic'
+              : 'Crafted';
       let baseLabel = def.baseName || def.name;
       if (quality === 'angelic') baseLabel = angelicBaseDisplayName(def);
       else if (isMastercraftedBaseItem(def)) baseLabel = mastercraftedBaseDisplayName(def);
@@ -1558,6 +1571,7 @@ export const useItemsStore = defineStore('items', {
         name: `${label} ${baseLabel}`,
         modifiers: [],
         sockets: Number(def.sockets) || 0,
+        ilvl: DEFAULT_ITEM_AFFIX_ILVL,
       };
       if (quality === 'angelic') custom.angelic = true;
       const rolls = Number(def.sockets) > 0 ? { sockets: Number(def.sockets) } : null;
@@ -1565,7 +1579,7 @@ export const useItemsStore = defineStore('items', {
     },
 
     /**
-     * @param {{ name?: string, modifiers?: string[], rarity?: string }} jewel
+     * @param {{ name?: string, modifiers?: string[], rarity?: string, ilvl?: number, pickedAffixes?: object, jewelcraft?: string, jewelcraftRolls?: Record<string, number> }} jewel
      */
     addCustomJewel(jewel) {
       const id = `cj-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
@@ -1574,7 +1588,16 @@ export const useItemsStore = defineStore('items', {
         ? jewel.modifiers.map((l) => String(l || '').trim()).filter(Boolean)
         : [];
       const rarity = normalizeCustomJewelRarity(jewel?.rarity);
-      this.customJewels = [...this.customJewels, { id, name, modifiers, rarity }];
+      const next = { id, name, modifiers, rarity };
+      if (jewel?.ilvl != null) next.ilvl = Number(jewel.ilvl);
+      if (jewel?.pickedAffixes) next.pickedAffixes = jewel.pickedAffixes;
+      const craft = String(jewel?.jewelcraft || '').trim();
+      if (rarity === 'crafted' && craft) {
+        next.jewelcraft = craft;
+        const rolls = parseJewelcraftRolls(jewel?.jewelcraftRolls);
+        if (Object.keys(rolls).length) next.jewelcraftRolls = rolls;
+      }
+      this.customJewels = [...this.customJewels, next];
       return id;
     },
 
@@ -1594,6 +1617,21 @@ export const useItemsStore = defineStore('items', {
             : row.modifiers,
           rarity: patch.rarity != null ? normalizeCustomJewelRarity(patch.rarity) : normalizeCustomJewelRarity(row.rarity),
         };
+        if (patch.ilvl != null) nextJewel.ilvl = Number(patch.ilvl);
+        if (patch.pickedAffixes !== undefined) nextJewel.pickedAffixes = patch.pickedAffixes;
+        if (patch.jewelcraft !== undefined) {
+          const craft = String(patch.jewelcraft || '').trim();
+          if (nextJewel.rarity === 'crafted' && craft) nextJewel.jewelcraft = craft;
+          else delete nextJewel.jewelcraft;
+        }
+        if (patch.jewelcraftRolls !== undefined) {
+          const rolls = parseJewelcraftRolls(patch.jewelcraftRolls);
+          if (nextJewel.rarity === 'crafted' && nextJewel.jewelcraft && Object.keys(rolls).length) {
+            nextJewel.jewelcraftRolls = rolls;
+          } else {
+            delete nextJewel.jewelcraftRolls;
+          }
+        }
         return nextJewel;
       });
       if (!nextJewel) return;
@@ -1609,7 +1647,7 @@ export const useItemsStore = defineStore('items', {
           return {
             ...sock,
             name: nextJewel.name,
-            modifiers: nextJewel.modifiers,
+            modifiers: customJewelModifierLines(nextJewel),
             quality,
             type: 'Jewel',
           };
@@ -2697,6 +2735,10 @@ export const useItemsStore = defineStore('items', {
             name: String(j.name || 'Custom Jewel'),
             modifiers: Array.isArray(j.modifiers) ? j.modifiers.map(String) : [],
             rarity: normalizeCustomJewelRarity(j.rarity),
+            ...(j.ilvl != null ? { ilvl: Number(j.ilvl) } : {}),
+            ...(j.pickedAffixes ? { pickedAffixes: j.pickedAffixes } : {}),
+            ...(j.jewelcraft ? { jewelcraft: String(j.jewelcraft) } : {}),
+            ...(j.jewelcraftRolls ? { jewelcraftRolls: parseJewelcraftRolls(j.jewelcraftRolls) } : {}),
           }));
 
         const disabled = this.disableEnabledItemsBelowLevel();

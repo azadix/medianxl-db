@@ -7,6 +7,14 @@ import { isCharmItem } from '@/items/charm-items.js';
 import { isRelicItem } from '@/items/relic-items.js';
 import { angelicBaseDisplayName, isAngelicEligibleBase, isSacredBaseItem } from '@/items/angelic-items.js';
 import { isMastercraftedBaseItem } from '@/items/mastercrafted-items.js';
+import { isQuiverItem } from '@/items/item-types.js';
+import {
+  DEFAULT_ITEM_AFFIX_ILVL,
+  clampItemLevel,
+  modifiersFromPickedAffixes,
+  parsePickedAffixes,
+  requiredLevelFromPickedAffixes,
+} from '@/items/item-affixes.js';
 import {
   encodeModifierLine,
   MODIFIER_COLOR_GREY,
@@ -30,6 +38,8 @@ import {
  *   throwDamageDisplay?: string,
  *   sockets?: number,
  *   ethereal?: boolean,
+ *   ilvl?: number,
+ *   pickedAffixes?: { prefixes: Array<{ id: string, properties?: string }>, suffixes: Array<{ id: string, properties?: string }> },
  * }} CustomItemPayload
  */
 
@@ -139,6 +149,12 @@ export function parseCustomPayload(raw) {
   if (damage2hDisplay) out.damage2hDisplay = damage2hDisplay;
   if (throwDamageDisplay) out.throwDamageDisplay = throwDamageDisplay;
   if (rec.ethereal === true) out.ethereal = true;
+  if (rec.ilvl != null) out.ilvl = clampItemLevel(rec.ilvl);
+  const picked = parsePickedAffixes(rec.pickedAffixes);
+  if (picked.prefixes.length || picked.suffixes.length) {
+    out.pickedAffixes = picked;
+    if (!out.modifiers.length) out.modifiers = modifiersFromPickedAffixes(picked);
+  }
   return out;
 }
 
@@ -165,6 +181,42 @@ export function isCraftedEligibleBase(def) {
   if (isMastercraftedBaseItem(def)) return true;
   if (isAngelicEligibleBase(def) || isSacredBaseItem(def)) return true;
   return cat === 'jewelry';
+}
+
+/**
+ * Magic / rare overlays can sit on any grey gear base (including T1–T4 and quivers).
+ * @param {object|null|undefined} def
+ * @returns {boolean}
+ */
+export function isMagicRareEligibleBase(def) {
+  if (!def || typeof def !== 'object') return false;
+  if (def.rarity === 'unique' || def.rarity === 'set' || def.rarity === 'runeword') return false;
+  if (isCharmItem(def) || isRelicItem(def)) return false;
+  const cat = String(def.category || '');
+  if (cat === 'weapons' || cat === 'armor' || cat === 'jewelry' || cat === 'quivers') return true;
+  return isQuiverItem(def);
+}
+
+/**
+ * Rebuild modifier lines and required level from prefix/suffix picks.
+ * @param {unknown} customRaw
+ * @param {object|null|undefined} def
+ * @returns {CustomItemPayload|null}
+ */
+export function syncCustomPickedAffixes(customRaw, def) {
+  const custom = parseCustomPayload(customRaw);
+  if (!custom) return null;
+  const picked = parsePickedAffixes(custom.pickedAffixes);
+  if (!picked.prefixes.length && !picked.suffixes.length) {
+    delete custom.pickedAffixes;
+    return custom;
+  }
+  custom.pickedAffixes = picked;
+  custom.modifiers = modifiersFromPickedAffixes(picked);
+  if (custom.ilvl == null) custom.ilvl = DEFAULT_ITEM_AFFIX_ILVL;
+  const reqLevel = requiredLevelFromPickedAffixes(def, picked, custom.quality);
+  if (reqLevel != null) custom.reqLevel = reqLevel;
+  return custom;
 }
 
 /**

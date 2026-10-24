@@ -13,7 +13,7 @@ const emit = defineEmits(['update:shrine']);
 
 const open = ref(false);
 const query = ref('');
-const title = computed(() => (props.honorific ? 'Blessing' : 'Shrine'));
+const title = computed(() => (props.honorific ? 'Blessing' : 'Craft shrine'));
 const applied = computed(() => lookupShrine(props.shrine));
 const options = computed(() => {
   const q = query.value.trim().toLowerCase();

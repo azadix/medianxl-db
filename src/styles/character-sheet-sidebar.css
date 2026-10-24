@@ -1465,6 +1465,26 @@
   background: hsl(0, 0%, 20%);
 }
 
+.item-affix-picker__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.item-affix-picker__actions .item-sockets-editor__trigger {
+  width: auto;
+  flex: 1 1 8rem;
+}
+
+.item-sockets-editor__menu--flow {
+  position: relative;
+  top: auto;
+  left: auto;
+  right: auto;
+  z-index: 1;
+  margin-top: 0.35rem;
+}
+
 .item-sockets-editor__icon {
   width: 1.35rem;
   height: 1.35rem;
@@ -2091,6 +2111,36 @@
   margin: 0;
 }
 
+.item-picker-modal__roll-row--removable {
+  grid-template-columns: minmax(0, 1fr) minmax(10.5rem, 12.5rem) 1.35rem;
+}
+
+.item-picker-modal__stat-line--removable {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 1.35rem;
+  gap: 0.75rem;
+  align-items: start;
+}
+
+.item-picker-modal__roll-remove {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: #e05252;
+  width: 1.35rem;
+  height: 1.55rem;
+  padding: 0;
+  margin: 0;
+  font-size: 1.15rem;
+  line-height: 1.55rem;
+  cursor: pointer;
+}
+
+.item-picker-modal__roll-remove:hover,
+.item-picker-modal__roll-remove:focus-visible {
+  color: #ff6b6b;
+}
+
 .item-picker-modal__roll-display {
   font-size: 0.9rem;
   color: #e8e8e8;
@@ -2365,6 +2415,17 @@
 
 .item-detail-panel__section {
   gap: 0.35rem;
+}
+
+.item-detail-panel__ethereal {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  cursor: pointer;
+}
+
+.item-detail-panel__ethereal input {
+  margin: 0;
 }
 
 .item-picker-modal__stat-line {

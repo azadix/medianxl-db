@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
 import { useItemsStore } from '@/stores/items.js';
-import { applyCustomOverlayToDef, isCraftedEligibleBase } from '@/items/custom-items.js';
+import { applyCustomOverlayToDef, isCraftedEligibleBase, parseCustomPayload } from '@/items/custom-items.js';
 import { isAngelicEligibleBase } from '@/items/angelic-items.js';
 import {
   isMastercraftedBaseItem,
@@ -15,6 +15,50 @@ import {
 } from '@/items/item-stats.js';
 
 describe('custom-item-builder', () => {
+  it('stores picked prefixes on a custom instance', () => {
+    setActivePinia(createPinia());
+    const store = useItemsStore();
+    store.catalog = [
+      {
+        id: 'cap',
+        name: 'Cap (Sacred)',
+        rarity: 'normal',
+        category: 'armor',
+        slot: 'head',
+        group: 'Helms',
+        sockets: 2,
+        invWidth: 2,
+        invHeight: 2,
+      },
+    ];
+    store.catalogById = { cap: store.catalog[0] };
+    const id = store.createCustomInstance('cap', 'magic');
+    expect(id).toBeTruthy();
+    store.updateInstanceCustom(id, {
+      quality: 'magic',
+      name: 'Magic Cap (Sacred)',
+      modifiers: ['+(150 to 160)% Enhanced Defense'],
+      pickedAffixes: {
+        prefixes: [{ id: 'p-test', properties: '+(150 to 160)% Enhanced Defense' }],
+        suffixes: [],
+      },
+    });
+    expect(store.instances[id].custom.pickedAffixes.prefixes[0].properties).toContain(
+      'Enhanced Defense'
+    );
+    expect(store.instances[id].custom.modifiers[0]).toContain('Enhanced Defense');
+  });
+
+  it('keeps TSW modifier strings when pickedAffixes is absent', () => {
+    const parsed = parseCustomPayload({
+      quality: 'rare',
+      name: 'Rare Ring',
+      modifiers: ['+10 to Strength', '+5% Magic Find'],
+    });
+    expect(parsed.pickedAffixes).toBeUndefined();
+    expect(parsed.modifiers).toEqual(['+10 to Strength', '+5% Magic Find']);
+  });
+
   it('overlays crafted affixes onto a base', () => {
     const def = applyCustomOverlayToDef(
       { id: 'crs', name: 'Crystal Sword', rarity: 'normal', sockets: 4, reqLevel: 1 },

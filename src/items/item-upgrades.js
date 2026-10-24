@@ -26,6 +26,34 @@ import { getMechanicBonusLines } from '@/items/item-mechanics.js';
  */
 
 /**
+ * Craft shrine / blessing lines with wiki roll ranges.
+ * @param {object|null|undefined} def
+ * @param {ItemUpgradeState} [state]
+ * @returns {{ sourceKey: string, text: string, color: string }[]}
+ */
+export function collectShrineUpgradeSources(def, state = {}) {
+  /** @type {{ sourceKey: string, text: string, color: string }[]} */
+  const sources = [];
+  const blessing = String(state.blessing || '').trim();
+  const shrine = String(state.shrine || '').trim();
+  const craftLines = shrine ? getShrineBonusLines(shrine, def, false) : [];
+  if (blessing) {
+    const blessingLines = getShrineBonusLines(blessing, def, true);
+    const extra =
+      !shrine || blessing !== shrine
+        ? blessingLines
+        : blessingLines.filter((line) => !craftLines.includes(line));
+    extra.forEach((text, i) => {
+      if (text) sources.push({ sourceKey: `upgrade:blessing:${i}`, text, color: 'magic' });
+    });
+  }
+  craftLines.forEach((text, i) => {
+    if (text) sources.push({ sourceKey: `upgrade:shrine:${i}`, text, color: 'magic' });
+  });
+  return sources;
+}
+
+/**
  * @param {object|null|undefined} def
  * @param {ItemUpgradeState} [state]
  * @returns {string[]}
@@ -38,10 +66,6 @@ export function getItemUpgradeBonusLines(def, state = {}) {
   for (const id of normalizeCorruptions(state.corruptions)) {
     out.push(...getCorruptionBonusLines(id));
   }
-  const blessing = String(state.blessing || '').trim();
-  if (blessing) out.push(...getShrineBonusLines(blessing, def, true));
-  const shrine = String(state.shrine || '').trim();
-  if (shrine) out.push(...getShrineBonusLines(shrine, def, false));
   out.push(...getMechanicBonusLines(def, state.mechanics || null));
   return out.filter(Boolean);
 }
@@ -64,7 +88,7 @@ export function getItemUpgradeFlags(state = {}) {
   const etherealForced = etherealFromCorruption || mysticOrbsSetEthereal(state.mysticOrbs);
   return {
     alreadyUpgraded: Boolean(oil && oil.id !== 'nothing'),
-    shrineBlessed: Boolean(String(state.shrine || '').trim() || String(state.blessing || '').trim()),
+    shrineBlessed: Boolean(String(state.blessing || '').trim()),
     etherealFromCorruption,
     etherealForced,
     corrupted,

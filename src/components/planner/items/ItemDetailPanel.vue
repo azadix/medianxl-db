@@ -20,7 +20,12 @@ import ItemShrineEditor from './ItemShrineEditor.vue';
 import ItemMechanicsEditor from './ItemMechanicsEditor.vue';
 import CustomItemBuilder from './CustomItemBuilder.vue';
 import RandomElementPicker from './RandomElementPicker.vue';
-import { isCustomItemDef } from '@/items/custom-items.js';
+import { isCustomItemDef, syncCustomPickedAffixes } from '@/items/custom-items.js';
+import {
+  flattenPickedAffixes,
+  parsePickedAffixes,
+} from '@/items/item-affixes.js';
+import { encodeItemStateFlagLine, matchItemStateFlag } from '@/items/item-state-flags.js';
 import { defHasRandomElementChoice } from '@/items/random-element.js';
 import { computed } from 'vue';
 
@@ -109,6 +114,39 @@ const baseRows = computed(() =>
     return true;
   })
 );
+
+/**
+ * @param {{ kind?: string, text?: string, stat?: { key?: string } }|null|undefined} row
+ * @returns {boolean}
+ */
+function isEtherealRow(row) {
+  if (row?.kind === 'ethereal') return true;
+  if (row?.kind !== 'text') return false;
+  return matchItemStateFlag(row.text)?.id === 'ethereal';
+}
+
+/**
+ * @param {{ kind?: string, text?: string, stat?: { key?: string } }|null|undefined} row
+ * @returns {boolean}
+ */
+function isSocketedRow(row) {
+  if (row?.kind === 'roll' && row.stat?.key === 'sockets') return true;
+  if (row?.kind !== 'text') return false;
+  return /Socketed\s*\(/i.test(String(row.text || ''));
+}
+
+const displayBaseRows = computed(() => {
+  const rows = baseRows.value.filter((row) => !isEtherealRow(row));
+  if (!props.canEdit && !props.ethereal) return rows;
+  const etherealRow = props.canEdit
+    ? { kind: 'ethereal', text: 'Ethereal', section: 'base' }
+    : { kind: 'text', text: encodeItemStateFlagLine('Ethereal'), section: 'base' };
+  const sockIdx = rows.findIndex(isSocketedRow);
+  if (sockIdx >= 0) rows.splice(sockIdx, 0, etherealRow);
+  else rows.push(etherealRow);
+  return rows;
+});
+
 const modRows = computed(() => props.detailStatRows.filter((row) => row.section !== 'base'));
 
 const isBaseTab = computed(() => props.activeTab === 'base');
@@ -155,6 +193,87 @@ function modLineClass(row) {
   if (line) return modifierLineCssClass(line);
   return '';
 }
+
+/**
+ * @param {{ kind?: string, sourceKey?: string, stat?: { key?: string } }|null|undefined} row
+ * @returns {string}
+ */
+function overlaySourceKeyForRow(row) {
+  const fromRow = String(row?.sourceKey || '').trim();
+  if (fromRow) return fromRow;
+  const key = String(row?.stat?.key || '');
+  const m = key.match(/^(?:modAffix|modFixed):(base:m\d+)/);
+  return m ? m[1] : '';
+}
+
+/**
+ * @param {string} sourceKey
+ * @returns {number}
+ */
+function pickedIndexForSourceKey(sourceKey) {
+  const m = String(sourceKey || '').match(/^base:m(\d+)$/);
+  if (!m) return -1;
+  const i = Number(m[1]);
+  const picked = flattenPickedAffixes(props.custom?.pickedAffixes);
+  if (!picked.length) return -1;
+  const mods = Array.isArray(props.custom?.modifiers) ? props.custom.modifiers : [];
+  const offset = Math.max(0, mods.length - picked.length);
+  const idx = i - offset;
+  return idx >= 0 && idx < picked.length ? idx : -1;
+}
+
+/**
+ * @param {{ kind?: string, sourceKey?: string, stat?: { key?: string } }} row
+ * @param {number} idx
+ * @returns {boolean}
+ */
+function canRemoveModRow(row, idx) {
+  if (!props.canEdit || !isCustom.value) return false;
+  const key = overlaySourceKeyForRow(row);
+  if (pickedIndexForSourceKey(key) < 0) return false;
+  if (idx > 0 && overlaySourceKeyForRow(modRows.value[idx - 1]) === key) return false;
+  return true;
+}
+
+/**
+ * @param {Record<string, number>} rolls
+ * @param {number} removedIndex
+ * @returns {Record<string, number>}
+ */
+function shiftOverlayModifierRolls(rolls, removedIndex) {
+  /** @type {Record<string, number>} */
+  const next = { ...rolls };
+  /** @type {Record<string, number>} */
+  const moved = {};
+  const re = /^(modAffix:|modFixed:)base:m(\d+)(.*)$/;
+  for (const [key, value] of Object.entries(next)) {
+    const m = key.match(re);
+    if (!m) continue;
+    delete next[key];
+    const idx = Number(m[2]);
+    if (idx === removedIndex) continue;
+    const newIdx = idx > removedIndex ? idx - 1 : idx;
+    moved[`${m[1]}base:m${newIdx}${m[3]}`] = value;
+  }
+  return { ...next, ...moved };
+}
+
+/**
+ * @param {{ kind?: string, sourceKey?: string, stat?: { key?: string } }} row
+ */
+function removePickedAffixRow(row) {
+  const pickedIndex = pickedIndexForSourceKey(overlaySourceKeyForRow(row));
+  if (pickedIndex < 0) return;
+  const next = parsePickedAffixes(props.custom?.pickedAffixes);
+  const prefixes = next.prefixes.length;
+  if (pickedIndex < prefixes) next.prefixes.splice(pickedIndex, 1);
+  else next.suffixes.splice(pickedIndex - prefixes, 1);
+  const custom = syncCustomPickedAffixes({ ...props.custom, pickedAffixes: next }, props.def);
+  emit('update:custom', custom || { ...props.custom, pickedAffixes: next });
+  const source = overlaySourceKeyForRow(row);
+  const m = source.match(/^base:m(\d+)$/);
+  if (m) emit('update:rolls', shiftOverlayModifierRolls(props.rolls, Number(m[1])));
+}
 </script>
 
 <template>
@@ -194,9 +313,21 @@ function modLineClass(row) {
           class="item-tooltip-section item-tooltip-section--base item-detail-panel__section"
           aria-label="Base properties"
         >
-          <template v-for="(row, idx) in baseRows" :key="'base-' + idx">
+          <template v-for="(row, idx) in displayBaseRows" :key="'base-' + idx">
+            <label
+              v-if="isEtherealRow(row) && canEdit"
+              class="item-tooltip-line item-picker-modal__stat-line item-mod--grey item-detail-panel__ethereal"
+            >
+              <input
+                type="checkbox"
+                :checked="ethereal"
+                :disabled="etherealLocked"
+                @change="emit('update:ethereal', $event.target.checked)"
+              />
+              Ethereal
+            </label>
             <p
-              v-if="row.kind === 'text'"
+              v-else-if="row.kind === 'text'"
               class="item-tooltip-line item-picker-modal__stat-line"
               :class="modLineClass(row)"
             >
@@ -221,16 +352,27 @@ function modLineClass(row) {
             <p
               v-if="row.kind === 'text'"
               class="item-tooltip-line item-picker-modal__stat-line"
-              :class="modLineClass(row)"
+              :class="[modLineClass(row), { 'item-picker-modal__stat-line--removable': canRemoveModRow(row, idx) }]"
             >
               <!-- eslint-disable-next-line vue/no-v-html -- escaped skill-name markup -->
               <span class="item-picker-modal__stat-line-text" v-html="modLineHtml(row.text)"></span>
+              <button
+                v-if="canRemoveModRow(row, idx)"
+                type="button"
+                class="item-picker-modal__roll-remove"
+                aria-label="Remove affix"
+                @click="removePickedAffixRow(row)"
+              >
+                ×
+              </button>
             </p>
             <ItemRollRow
               v-else
               :stat="row.stat"
               :value="effectiveRolls[row.stat.key] ?? row.stat.min"
+              :removable="canRemoveModRow(row, idx)"
               @update="onRollUpdate(row.stat.key, row.stat.min, row.stat.max, $event)"
+              @remove="removePickedAffixRow(row)"
             />
           </template>
         </div>
@@ -242,19 +384,11 @@ function modLineClass(row) {
           :disabled="!canEdit"
           @update:model-value="emit('update:random-element', $event)"
         />
-        <label v-if="canEdit" class="checkbox is-size-7 mt-2">
-          <input
-            type="checkbox"
-            :checked="ethereal"
-            :disabled="etherealLocked"
-            @change="emit('update:ethereal', $event.target.checked)"
-          />
-          Ethereal
-        </label>
         <CustomItemBuilder
           v-if="isCustom && custom"
           class="mt-3"
           :custom="custom"
+          :def="def"
           :editable="canEdit"
           @update:custom="emit('update:custom', $event)"
         />
