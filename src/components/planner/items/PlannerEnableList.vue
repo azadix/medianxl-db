@@ -53,7 +53,26 @@ const availableFiltered = computed(() => filtered.value.filter((d) => !isEnabled
 
 const listSections = computed(() => {
   if (!isRelics.value) {
-    return [{ id: 'all', title: null, defs: filtered.value, empty: 'No matching items' }];
+    const defs = filtered.value;
+    if (defs.length === 0) {
+      return [{ id: 'all', title: null, defs: [], empty: 'No matching items' }];
+    }
+    /** @type {Map<number, object[]>} */
+    const byLevel = new Map();
+    for (const def of defs) {
+      const lvl = Number(def.reqLevel) || 0;
+      const bucket = byLevel.get(lvl);
+      if (bucket) bucket.push(def);
+      else byLevel.set(lvl, [def]);
+    }
+    return [...byLevel.keys()]
+      .sort((a, b) => a - b)
+      .map((lvl) => ({
+        id: `lvl-${lvl}`,
+        title: `Required Level ${lvl}`,
+        defs: byLevel.get(lvl) || [],
+        empty: 'No matching items',
+      }));
   }
   return [
     {
@@ -179,55 +198,60 @@ function onEnableAllCharms() {
     </div>
 
     <div
-      v-for="section in listSections"
-      :key="section.id"
-      class="planner-enable-list__group"
-      :class="'planner-enable-list__group--' + section.id"
+      class="planner-enable-list__groups"
+      :class="{ 'planner-enable-list__groups--charms': isCharms }"
     >
-      <h3 v-if="section.title" class="planner-enable-list__heading">{{ section.title }}</h3>
-      <ul
-        class="planner-enable-list__rows"
-        role="listbox"
-        :aria-label="section.title || (isCharms ? 'Charm list' : 'Relic list')"
+      <div
+        v-for="section in listSections"
+        :key="section.id"
+        class="planner-enable-list__group"
+        :class="'planner-enable-list__group--' + section.id"
       >
-        <li v-if="section.defs.length === 0" class="planner-enable-list__empty">{{ section.empty }}</li>
-        <li
-          v-for="def in section.defs"
-          :key="def.id"
-          class="planner-enable-list__row"
-          :class="[
-            'planner-enable-list__row--' + (def.rarity || 'normal'),
-            {
-              'is-selected': isSelected(def),
-              'is-enabled': isEnabled(def),
-              'is-disabled': checkboxDisabled(def),
-            },
-          ]"
-          role="option"
-          :aria-selected="isSelected(def)"
-          tabindex="0"
-          @click="onSelectRow(def)"
-          @keydown.enter.prevent="onSelectRow(def)"
+        <h3 v-if="section.title" class="planner-enable-list__heading">{{ section.title }}</h3>
+        <ul
+          class="planner-enable-list__rows"
+          role="listbox"
+          :aria-label="section.title || (isCharms ? 'Charm list' : 'Relic list')"
         >
-          <label class="planner-enable-list__check" @click.stop>
-            <input
-              type="checkbox"
-              :checked="isEnabled(def)"
-              :disabled="checkboxDisabled(def)"
-              :aria-label="'Enable ' + def.name"
-              @change="onCheckboxChange(def, $event)"
-            />
-          </label>
-          <div class="planner-enable-list__icon">
-            <SkillCardImage
-              v-if="isRelics && relicIconMarkup(def)"
-              :icon-markup="relicIconMarkup(def)"
-            />
-            <ItemIcon v-else :def="def" fill />
-          </div>
-          <span class="planner-enable-list__name">{{ def.name }}</span>
-        </li>
-      </ul>
+          <li v-if="section.defs.length === 0" class="planner-enable-list__empty">{{ section.empty }}</li>
+          <li
+            v-for="def in section.defs"
+            :key="def.id"
+            class="planner-enable-list__row"
+            :class="[
+              'planner-enable-list__row--' + (def.rarity || 'normal'),
+              {
+                'is-selected': isSelected(def),
+                'is-enabled': isEnabled(def),
+                'is-disabled': checkboxDisabled(def),
+              },
+            ]"
+            role="option"
+            :aria-selected="isSelected(def)"
+            tabindex="0"
+            @click="onSelectRow(def)"
+            @keydown.enter.prevent="onSelectRow(def)"
+          >
+            <label class="planner-enable-list__check" @click.stop>
+              <input
+                type="checkbox"
+                :checked="isEnabled(def)"
+                :disabled="checkboxDisabled(def)"
+                :aria-label="'Enable ' + def.name"
+                @change="onCheckboxChange(def, $event)"
+              />
+            </label>
+            <div class="planner-enable-list__icon">
+              <SkillCardImage
+                v-if="isRelics && relicIconMarkup(def)"
+                :icon-markup="relicIconMarkup(def)"
+              />
+              <ItemIcon v-else :def="def" fill />
+            </div>
+            <span class="planner-enable-list__name">{{ def.name }}</span>
+          </li>
+        </ul>
+      </div>
     </div>
   </section>
 </template>

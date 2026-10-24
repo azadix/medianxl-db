@@ -626,7 +626,11 @@ export const useItemsStore = defineStore('items', {
       return this.catalog
         .filter((d) => isCharmItem(d) && canEquipForClass(d, className))
         .slice()
-        .sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
+        .sort((a, b) => {
+          const byLevel = (Number(a.reqLevel) || 0) - (Number(b.reqLevel) || 0);
+          if (byLevel !== 0) return byLevel;
+          return String(a.name || '').localeCompare(String(b.name || ''));
+        });
     },
 
     /** @returns {ItemDef[]} */

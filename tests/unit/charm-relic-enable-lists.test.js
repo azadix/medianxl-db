@@ -298,6 +298,15 @@ describe('items store enable lists', () => {
     expect(store.inventory.every((v) => v == null)).toBe(true);
   });
 
+  it('sorts charm catalog by required level then name', () => {
+    const low = { ...charmA, id: 'low', name: 'Zebra Charm', reqLevel: 50 };
+    const highA = { ...charmA, id: 'high-a', name: 'Alpha Charm', reqLevel: 120 };
+    const highB = { ...charmA, id: 'high-b', name: 'Beta Charm', reqLevel: 120 };
+    store.catalog = [highB, low, highA];
+    store.syncViewerClassName('Amazon');
+    expect(store.charmCatalog.map((d) => d.id)).toEqual(['low', 'high-a', 'high-b']);
+  });
+
   it('selectEnabledItem wires inspector slot', () => {
     store.toggleCharm(charmA.id, true);
     expect(store.selectEnabledItem('charms', charmA.id)).toBe(true);
@@ -333,7 +342,7 @@ describe('items store enable lists', () => {
     expect(store.toggleRelic(raidRelic.id, true)).toBe(false);
 
     store.syncViewerClassName('Druid');
-    expect(store.charmCatalog.map((d) => d.id).sort()).toEqual([charmA.id, druidCharm.id].sort());
+    expect(store.charmCatalog.map((d) => d.id)).toEqual([druidCharm.id, charmA.id]);
     expect(store.toggleRelic(raidRelic.id, true)).toBe(true);
     expect(store.isEnabled('relics', raidRelic.id)).toBe(true);
 
