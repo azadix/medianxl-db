@@ -627,9 +627,68 @@
     white-space: nowrap;
 }
 
+.tooltip-icon {
+    position: relative;
+    flex-shrink: 0;
+}
+
 .tooltip-icon .image {
     width: 64px;
     height: 64px;
+}
+
+.skill-preview-play {
+    position: absolute;
+    top: 26px;
+    right: 6px;
+    left: auto;
+    z-index: 6;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    padding: 0;
+    border: 1px solid #777;
+    border-radius: 3px;
+    background: rgba(20, 20, 20, 0.92);
+    color: #e8e8e8;
+    cursor: pointer;
+    pointer-events: auto;
+    line-height: 1;
+}
+
+.skill-preview-play:hover,
+.skill-preview-play:focus-visible {
+    color: #fff;
+    border-color: #bbb;
+    outline: none;
+}
+
+.skill-preview-play__icon {
+    width: 10px;
+    height: 10px;
+    display: block;
+}
+
+.skill-preview-tooltip {
+    z-index: 10080;
+    pointer-events: auto;
+    min-width: 0;
+    max-width: none;
+    padding: 6px;
+}
+
+.skill-preview-tooltip.tooltip-interactive,
+.skill-preview-tooltip.tooltip-stuck,
+.skill-preview-tooltip.tooltip-pinned {
+    cursor: grab;
+}
+
+.skill-preview-tooltip-frame img {
+    display: block;
+    max-width: min(400px, 90vw);
+    height: auto;
 }
 
 .skill-tooltip.item-tooltip {

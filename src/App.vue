@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 import AppNavBar from './components/AppNavBar.vue';
+import SkillPreviewTooltipHost from './components/SkillPreviewTooltipHost.vue';
 import { DEV_KEEP_ALIVE_NAMES } from './shared/dev-routes.js';
 
 const route = useRoute();
@@ -13,6 +14,7 @@ const useKeepAlive = computed(() => Boolean(route.meta?.keepAlive));
 
 <template>
   <AppNavBar />
+  <SkillPreviewTooltipHost />
   <router-view v-slot="{ Component }">
     <keep-alive v-if="useKeepAlive" :include="cachedNames">
       <component :is="Component" :key="route.name" />

@@ -17,6 +17,7 @@ import {
 import { getFileSkillStore } from '@/shared/skill-data-store.js';
 import { getCurrentVersion, versionToTreeAssetFolder } from '@/shared/version-config.js';
 import { getSkillPoints } from '@/character/planner-core.js';
+import { ensureSkillPreviewManifest } from '@/skills/skill-preview-catalog.js';
 
 /**
  * CTC packed level is `lvl`; `blvl` is tree hard points (not the proc number).
@@ -103,6 +104,8 @@ export async function buildFixedLevelSkillTooltipHtml(skillId, level, options = 
   const asProc = Boolean(options?.asProc);
   if (!id) return '';
 
+  await ensureSkillPreviewManifest();
+
   const treeBlvl = asProc ? treeHardPoints(id) : 0;
   const cacheKey = tooltipCacheKey(id, lvl, showFormulas, asProc, treeBlvl);
   if (tooltipHtmlByKey.has(cacheKey)) {
@@ -147,6 +150,7 @@ export async function buildFixedLevelSkillTooltipHtml(skillId, level, options = 
     nameInnerHtml: escapeHtmlText(detail.display_name || id),
     tagsHtml,
     levelSectionHtml: `<div class="is-size-6 has-text-weight-bold has-text-warning-light">Level ${lvl}</div>`,
+    previewSkillId: id,
   });
 
   const bodyParts = [

@@ -14,6 +14,7 @@ import {
   NESTED_SKILL_TOOLTIP_Z,
   createLiveTooltipShell,
 } from '@/shared/live-tooltip-shell.js';
+import { hideSkillPreviewTooltip, isSkillPreviewUiTarget } from '@/skills/skill-preview-tooltip.js';
 
 export const PATCH_NOTE_SKILL_TOOLTIP_ID = 'patch-note-skill-tooltip-portal';
 
@@ -69,6 +70,7 @@ export function usePatchSkillTooltip({ patchNotesRoot, loadPatchData }) {
    * @param {boolean} [force]
    */
   function hideSkillTooltip(force = false) {
+    hideSkillPreviewTooltip();
     shell.hide(force);
     if (force || !shell.isShowing()) {
       currentHoveredTarget = null;
@@ -182,6 +184,7 @@ export function usePatchSkillTooltip({ patchNotesRoot, loadPatchData }) {
     const stillInside = closestSkillTarget(event.relatedTarget);
     if (stillInside === leavingFrom) return;
     if (stillInside) return;
+    if (isSkillPreviewUiTarget(event.relatedTarget)) return;
     hideSkillTooltip();
   }
 

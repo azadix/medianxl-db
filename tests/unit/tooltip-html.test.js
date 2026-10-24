@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import {
   toTooltipLineHtml,
   buildSkillTooltipHeaderHtml,
@@ -12,6 +12,7 @@ import {
   buildSkillTooltipDisabledBannerHtml,
   buildSkillTooltipPrerequisiteWarningHtml,
 } from '@/shared/tooltip-html.js';
+import { resetSkillPreviewCatalogForTests, setSkillPreviewIdsForTests } from '@/skills/skill-preview-catalog.js';
 
 describe('toTooltipLineHtml', () => {
   it('wraps non-empty lines in the given class', () => {
@@ -63,6 +64,45 @@ describe('buildSkillTooltipHeaderHtml', () => {
     expect(html).not.toContain('tooltip-icon');
     expect(html).toContain('Sword');
   });
+
+  it('adds a Play button when the skill has a preview gif', () => {
+    setSkillPreviewIdsForTests(['frozen_crown']);
+    const html = buildSkillTooltipHeaderHtml({
+      iconHtml: '<img>',
+      nameInnerHtml: 'Frozen Crown',
+      levelSectionHtml: 'Lv 30',
+      previewSkillId: 'frozen_crown',
+    });
+    expect(html).toContain('js-skill-preview-play');
+    expect(html).toContain('data-skill-preview-id="frozen_crown"');
+    expect(html).toContain('tooltip-icon');
+  });
+
+  it('still adds Play when there is no icon', () => {
+    setSkillPreviewIdsForTests(['frozen_crown']);
+    const html = buildSkillTooltipHeaderHtml({
+      nameInnerHtml: 'Frozen Crown',
+      levelSectionHtml: '',
+      previewSkillId: 'frozen_crown',
+    });
+    expect(html).toContain('js-skill-preview-play');
+    expect(html).not.toContain('tooltip-icon');
+  });
+
+  it('omits Play when the skill has no preview gif', () => {
+    setSkillPreviewIdsForTests(['other_skill']);
+    const html = buildSkillTooltipHeaderHtml({
+      iconHtml: '<img>',
+      nameInnerHtml: 'Frozen Crown',
+      levelSectionHtml: '',
+      previewSkillId: 'frozen_crown',
+    });
+    expect(html).not.toContain('js-skill-preview-play');
+  });
+});
+
+afterEach(() => {
+  resetSkillPreviewCatalogForTests();
 });
 
 describe('buildSkillTooltipDescriptionBlock', () => {

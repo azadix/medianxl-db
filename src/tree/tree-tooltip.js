@@ -45,6 +45,11 @@ import {
   NESTED_SKILL_TOOLTIP_Z,
   createLiveTooltipShell,
 } from '@/shared/live-tooltip-shell.js';
+import { ensureSkillPreviewManifest } from '@/skills/skill-preview-catalog.js';
+import {
+  hideSkillPreviewTooltip,
+  isSkillPreviewUiTarget,
+} from '@/skills/skill-preview-tooltip.js';
 import {
   buildFixedLevelSkillTooltipHtml,
   procFormulaLevelParts,
@@ -280,6 +285,7 @@ export function initializeTooltip() {
     shell.attach({ getHtml: () => rebuildCurrentSkillTooltipHtml() });
     syncTooltipElement();
     bindPlannerNestedSkillTooltipHandlers();
+    void ensureSkillPreviewManifest();
 
     // Add event delegation for skill card images
     document.addEventListener('mouseover', handleMouseOver);
@@ -382,6 +388,9 @@ function handleMouseOut(e) {
     if (relatedTarget && skillCard.contains(relatedTarget)) {
         return; // Still hovering within the same skill card
     }
+    if (isSkillPreviewUiTarget(relatedTarget)) {
+        return;
+    }
 
     // Browsers often set relatedTarget to null during rapid clicks or in-place DOM updates
     // (e.g. + button state). Re-check pointer position before hiding to avoid flicker.
@@ -399,6 +408,9 @@ function handleMouseOut(e) {
                 }
                 const card = el && el.closest('.skill-card');
                 if (card && String(card.dataset.skillId) === String(skillId)) {
+                    return;
+                }
+                if (isSkillPreviewUiTarget(el)) {
                     return;
                 }
                 hideTooltip();
@@ -669,6 +681,7 @@ function hideTooltip(force = false) {
     nestedSkillTooltipActive = false;
     nestedFixedLevel = null;
     nestedFixedAsProc = false;
+    hideSkillPreviewTooltip();
     shell.hide(force);
     syncTooltipElement();
     lastHoveredSkillCard = null;
@@ -715,7 +728,7 @@ function scheduleTooltipHideWhenPointerLeavesCard(clientX, clientY) {
     const overSameCard =
         card && String(card.dataset.skillId) === String(currentHoveredSkill);
 
-    if (overSameCard) {
+    if (overSameCard || isSkillPreviewUiTarget(el)) {
         clearPointerAwayHideTimer();
         return;
     }
@@ -850,6 +863,7 @@ async function buildTooltipContent(
   isProc = false,
   procMeta = null
 ) {
+    await ensureSkillPreviewManifest();
     // Get skill soft-level bonuses for effective level calculation.
     // Proc CTC levels are fixed item values and ignore all-skills / class / relic soft.
     const allSkillsBonusInput = document.getElementById('allSkillsBonus');
@@ -1008,6 +1022,7 @@ async function buildTooltipContent(
             tagsHtml,
             subskillHtml,
             levelSectionHtml,
+            previewSkillId: skillData.id,
         }),
     ];
 

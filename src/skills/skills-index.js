@@ -4,9 +4,9 @@ import {
   expandPlaceholdersWithScaling,
   showSkillDataLoadError,
   escapeHtmlText,
-  getAssetUrl,
   getSkillPreviewUrl,
 } from '@/shared/utils.js';
+import { ensureSkillPreviewManifest, hasSkillPreview } from '@/skills/skill-preview-catalog.js';
 import { getTreeSkillsCache } from '@/character/planner-core.js';
 import { getCurrentVersion, versionToTreeAssetFolder, initializeVersionSelector } from '@/shared/version-config.js';
 import { DEFAULT_GAME_VERSION } from '@/shared/version-constants.js';
@@ -151,9 +151,6 @@ let clearLoadError = null;
 let skillsList = [];
 /** `tree_data` subfolder (e.g. "2_14"); from versionToTreeAssetFolder after JSON load */
 let skillIconGameVersionFolder = null;
-/** Skill ids that have a GIF in public/skill-previews */
-let skillPreviewIds = new Set();
-
 /** Avoid redundant re-render when router.replace mirrors the current skill detail */
 let lastDisplayedSkillKey = null;
 
@@ -510,7 +507,7 @@ function bindSkillSourcesTableSort(host, kind, rows, cleanupFns) {
 
 function buildSkillPreviewHtml(skillInfo) {
   const id = String(skillInfo?.id || '').trim();
-  if (!id || !skillPreviewIds.has(id)) return '';
+  if (!id || !hasSkillPreview(id)) return '';
   const src = getSkillPreviewUrl(id);
   if (!src) return '';
   const alt = `${skillInfo.name || id} preview`;
@@ -540,21 +537,6 @@ function bindSkillPreviewError(host, cleanupFns) {
   };
   img.addEventListener('error', onError);
   cleanupFns.push(() => img.removeEventListener('error', onError));
-}
-
-async function loadSkillPreviewManifest() {
-  try {
-    const res = await fetch(getAssetUrl('skill-previews/manifest.json'));
-    if (!res.ok) {
-      skillPreviewIds = new Set();
-      return;
-    }
-    const data = await res.json();
-    const ids = Array.isArray(data?.ids) ? data.ids : [];
-    skillPreviewIds = new Set(ids.map((id) => String(id)));
-  } catch {
-    skillPreviewIds = new Set();
-  }
 }
 
 async function displaySkillDetail(skillId) {
@@ -980,7 +962,7 @@ async function loadSkillsFromTreeDataPage() {
       return String(a.name || '').localeCompare(String(b.name || ''));
     });
     skillsList = loadedSkills;
-    await loadSkillPreviewManifest();
+    await ensureSkillPreviewManifest();
     setSkillsCatalog?.(loadedSkills, skillIconGameVersionFolder);
     clearLoadError?.();
 
@@ -992,7 +974,6 @@ async function loadSkillsFromTreeDataPage() {
   } catch (error) {
     console.error('Error loading skills from tree_data:', error);
     skillsList = [];
-    skillPreviewIds = new Set();
     setSkillsCatalog?.([], null);
     if (setLoadError) {
       setLoadError(error.message);
@@ -1058,7 +1039,6 @@ export function unmountSkillsIndex() {
   clearLoadError = null;
   skillsList = [];
   skillIconGameVersionFolder = null;
-  skillPreviewIds = new Set();
   lastDisplayedSkillKey = null;
 }
 

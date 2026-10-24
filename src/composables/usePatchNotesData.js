@@ -28,6 +28,7 @@ import {
   setBuildVersionOverride,
 } from '@/shared/version-config.js';
 import { parseFolderVersion } from '@/shared/version-resolver.js';
+import { ensureSkillPreviewManifest } from '@/skills/skill-preview-catalog.js';
 
 const SKILL_MARKER_REGEX = /\{\{([^{}]+)\}\}/g;
 const TOOLTIP_CACHE_LEVEL = 1;
@@ -333,6 +334,7 @@ async function expandTooltipLines(skillRecord, sourceLines) {
  */
 export async function buildTooltipHtmlForSkill(skillRecord) {
   if (!skillRecord) return '';
+  await ensureSkillPreviewManifest();
   const tooltipKey = buildTooltipKey(skillRecord);
   if (tooltipHtmlBySkillKey.has(tooltipKey)) {
     return tooltipHtmlBySkillKey.get(tooltipKey) || '';
@@ -375,6 +377,7 @@ export async function buildTooltipHtmlForSkill(skillRecord) {
     nameInnerHtml: escapeHtmlText(skillRecord.displayName || 'Unknown skill'),
     tagsHtml,
     levelSectionHtml: `<div class="is-size-6 has-text-weight-bold has-text-warning-light">Level 1</div>`,
+    previewSkillId: skillRecord.id,
   });
 
   const bodyParts = [
@@ -492,6 +495,7 @@ export function usePatchNotesData() {
     loadError.value = '';
 
     try {
+      void ensureSkillPreviewManifest();
       const availableFolderKeys = await loadAvailableTreeDataFolders();
       const manifestResponse = await fetch(getAssetUrl('patch_notes/index.json'));
       if (!manifestResponse.ok) {

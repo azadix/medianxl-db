@@ -3,6 +3,24 @@
  * @module src/shared/tooltip-html
  */
 
+import { hasSkillPreview } from '@/skills/skill-preview-catalog.js';
+
+export const SKILL_PREVIEW_ID_ATTR = 'data-skill-preview-id';
+export const SKILL_PREVIEW_PLAY_CLASS = 'js-skill-preview-play';
+
+const PLAY_ICON_SVG = `<svg class="skill-preview-play__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>`;
+
+/**
+ * @param {string|null|undefined} skillId
+ * @returns {string}
+ */
+export function buildSkillPreviewPlayButtonHtml(skillId) {
+  const id = String(skillId || '').trim();
+  if (!id || !hasSkillPreview(id)) return '';
+  const safeId = id.replace(/"/g, '&quot;');
+  return `<button type="button" class="${SKILL_PREVIEW_PLAY_CLASS} skill-preview-play" ${SKILL_PREVIEW_ID_ATTR}="${safeId}" aria-label="Play skill animation">${PLAY_ICON_SVG}</button>`;
+}
+
 /**
  * @typedef {object} SkillTooltipHeaderOptions
  * @property {string} [iconHtml] - Output of `getSkillIconHTML`; omit to hide the icon column
@@ -10,6 +28,7 @@
  * @property {string} [tagsHtml] - Optional tags paragraph HTML
  * @property {string} [subskillHtml] - Optional subskill-of line HTML
  * @property {string} levelSectionHtml - Inner HTML for the level column
+ * @property {string} [previewSkillId] - Catalog skill id; Play button if a GIF exists
  */
 
 /**
@@ -56,11 +75,12 @@ export function buildSkillTooltipHeaderHtml(options) {
     tagsHtml = '',
     subskillHtml = '',
     levelSectionHtml,
+    previewSkillId = '',
   } = options;
 
-  const iconBlock = String(iconHtml || '').trim()
-    ? `<div class="tooltip-icon">${iconHtml}</div>`
-    : '';
+  const hasIcon = Boolean(String(iconHtml || '').trim());
+  const playBtn = buildSkillPreviewPlayButtonHtml(previewSkillId);
+  const iconBlock = hasIcon ? `<div class="tooltip-icon">${iconHtml}</div>` : '';
 
   return `<div class="tooltip-header">
       ${iconBlock}
@@ -76,6 +96,7 @@ export function buildSkillTooltipHeaderHtml(options) {
           ${levelSectionHtml}
         </div>
       </div>
+      ${playBtn}
     </div>`;
 }
 

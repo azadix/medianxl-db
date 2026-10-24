@@ -12,6 +12,7 @@ import {
   NESTED_SKILL_TOOLTIP_Z,
   createLiveTooltipShell,
 } from '@/shared/live-tooltip-shell.js';
+import { hideSkillPreviewTooltip } from '@/skills/skill-preview-tooltip.js';
 
 export const SKILLS_PAGE_ITEM_TOOLTIP_ID = 'skills-page-item-tooltip';
 export const SKILLS_PAGE_SKILL_TOOLTIP_ID = 'skills-page-skill-tooltip';
@@ -142,6 +143,7 @@ export function hideSkillsPageTooltips(force = false) {
       return;
     }
   }
+  hideSkillPreviewTooltip();
   itemShell.hide(force);
   skillShell.hide(force);
   if (force || (!itemShell.isShowing() && !skillShell.isShowing())) {
