@@ -5,7 +5,7 @@
 
 import { tswDescriptionColoredTexts } from '@/items/custom-items.js';
 import { decodeModifierLine, encodeModifierLine } from '@/items/item-modifier-line.js';
-import { isOverlayItem } from '@/items/item-overlays.js';
+import { itemHasFixedSockets } from '@/items/item-overlays.js';
 import { isHandWeapon, isShieldItem } from '@/items/item-types.js';
 import {
   inferRandomElementFromLines,
@@ -224,7 +224,7 @@ export function socketableFromCatalogRow(row, slot = 0) {
 export function getItemSocketCount(def, rolls = null) {
   const max = Math.max(0, Math.floor(Number(def?.sockets) || 0));
   if (max <= 0) return 0;
-  if (isOverlayItem(def)) return max;
+  if (itemHasFixedSockets(def)) return max;
   if (rolls && Number.isFinite(Number(rolls.sockets))) {
     return Math.max(0, Math.min(max, Math.floor(Number(rolls.sockets))));
   }

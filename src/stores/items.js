@@ -69,7 +69,12 @@ import {
   runewordEntryToItemDef,
   runewordFitsEquipSlot,
 } from '@/items/runeword-items.js';
-import { applyCustomOverlayToDef, parseCustomPayload } from '@/items/custom-items.js';
+import {
+  applyCustomOverlayToDef,
+  canUseCustomQuality,
+  defaultCustomQualityForBase,
+  parseCustomPayload,
+} from '@/items/custom-items.js';
 import { normalizeRandomElement } from '@/items/random-element.js';
 import { angelicBaseDisplayName } from '@/items/angelic-items.js';
 import {
@@ -1554,7 +1559,12 @@ export const useItemsStore = defineStore('items', {
     createCustomInstance(baseId, quality) {
       const def = this.catalogById[baseId];
       if (!def) return null;
-      const rarity = quality === 'angelic' ? 'rare' : quality;
+      let requested = quality;
+      if (!canUseCustomQuality(def, requested === 'angelic' ? 'angelic' : requested)) {
+        requested = defaultCustomQualityForBase(def);
+      }
+      if (!requested) return null;
+      const rarity = requested === 'angelic' ? 'rare' : requested;
       const label =
         rarity === 'honorific'
           ? 'Honorific'
@@ -1564,7 +1574,7 @@ export const useItemsStore = defineStore('items', {
               ? 'Magic'
               : 'Crafted';
       let baseLabel = def.baseName || def.name;
-      if (quality === 'angelic') baseLabel = angelicBaseDisplayName(def);
+      if (requested === 'angelic') baseLabel = angelicBaseDisplayName(def);
       else if (isMastercraftedBaseItem(def)) baseLabel = mastercraftedBaseDisplayName(def);
       const custom = {
         quality: rarity,
@@ -1573,8 +1583,8 @@ export const useItemsStore = defineStore('items', {
         sockets: Number(def.sockets) || 0,
         ilvl: DEFAULT_ITEM_AFFIX_ILVL,
       };
-      if (quality === 'angelic') custom.angelic = true;
-      const rolls = Number(def.sockets) > 0 ? { sockets: Number(def.sockets) } : null;
+      if (requested === 'angelic') custom.angelic = true;
+      const rolls = Number(def.sockets) > 0 ? { sockets: 0 } : null;
       return this.createInstance(baseId, def.icon, rolls, custom);
     },
 

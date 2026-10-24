@@ -1,8 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
 import { useItemsStore } from '@/stores/items.js';
-import { applyCustomOverlayToDef, isCraftedEligibleBase, parseCustomPayload } from '@/items/custom-items.js';
-import { isAngelicEligibleBase } from '@/items/angelic-items.js';
+import {
+  applyCustomOverlayToDef,
+  canUseCustomQuality,
+  defaultCustomQualityForBase,
+  isCraftedEligibleBase,
+  parseCustomPayload,
+} from '@/items/custom-items.js';
+import { isAngelicEligibleBase, normalizeAngelicRarity } from '@/items/angelic-items.js';
 import {
   isMastercraftedBaseItem,
   mastercraftedBaseDisplayName,
@@ -10,9 +16,12 @@ import {
 import {
   extrasWithAppliedItemBonuses,
   applyEtherealBonus,
+  defaultRollsForDef,
+  getItemDetailStatRows,
   getItemStatSections,
   getRollableStats,
 } from '@/items/item-stats.js';
+import { getItemSocketCount } from '@/items/socketables.js';
 
 describe('custom-item-builder', () => {
   it('stores picked prefixes on a custom instance', () => {
@@ -102,6 +111,11 @@ describe('custom-item-builder', () => {
     expect(store.customJewels[0].rarity).toBe('magic');
   });
 
+  it('allows magic as an angelic rarity', () => {
+    expect(normalizeAngelicRarity('magic')).toBe('magic');
+    expect(normalizeAngelicRarity('rare')).toBe('rare');
+  });
+
   it('limits angelic items to wiki Sacred families', () => {
     expect(
       isAngelicEligibleBase({ name: 'Military Pick (Sacred)', rarity: 'normal', category: 'weapons' })
@@ -151,6 +165,23 @@ describe('custom-item-builder', () => {
     ).toBe(false);
   });
 
+  it('disallows white and angelic mastercrafted items', () => {
+    const kukri = { name: 'Kukri', rarity: 'normal', category: 'weapons', icon: 'mastercraftedknife' };
+    expect(canUseCustomQuality(kukri, null)).toBe(false);
+    expect(canUseCustomQuality(kukri, 'angelic')).toBe(false);
+    expect(canUseCustomQuality(kukri, 'magic')).toBe(true);
+    expect(canUseCustomQuality(kukri, 'rare')).toBe(true);
+    expect(canUseCustomQuality(kukri, 'crafted')).toBe(true);
+    expect(canUseCustomQuality(kukri, 'honorific')).toBe(true);
+    expect(defaultCustomQualityForBase(kukri)).toBe('magic');
+    expect(
+      canUseCustomQuality(
+        { name: 'Crystal Sword (Sacred)', rarity: 'normal', category: 'weapons' },
+        null
+      )
+    ).toBe(true);
+  });
+
   it('labels mastercrafted catalog bases', () => {
     const kukri = { name: 'Kukri', rarity: 'normal', category: 'weapons', icon: 'mastercraftedknife' };
     expect(isMastercraftedBaseItem(kukri)).toBe(true);
@@ -188,5 +219,32 @@ describe('custom-item-builder', () => {
   it('merges oil extras without doubling matching lines', () => {
     const lines = extrasWithAppliedItemBonuses(['+20% Enhanced Damage'], { name: 'Sword' }, {});
     expect(lines.filter((l) => l.includes('Enhanced Damage')).length).toBe(1);
+  });
+
+  it('lets magic and rare items roll sockets instead of locking max', () => {
+    const rare = applyCustomOverlayToDef(
+      { id: 'cap', name: 'Cap (Sacred)', rarity: 'normal', sockets: 4, category: 'armor' },
+      { quality: 'rare', name: 'Rare Cap (Sacred)', modifiers: [], sockets: 4 }
+    );
+    const unique = {
+      id: 'u:cap',
+      name: 'Unique Cap',
+      rarity: 'unique',
+      baseId: 'cap',
+      sockets: 4,
+      modifiers: [],
+    };
+    expect(getRollableStats(rare).some((row) => row.key === 'sockets')).toBe(true);
+    expect(getRollableStats(unique).some((row) => row.key === 'sockets')).toBe(false);
+    expect(defaultRollsForDef(rare).sockets).toBe(0);
+    expect(defaultRollsForDef(unique).sockets).toBe(4);
+    expect(getItemSocketCount(rare, { sockets: 2 })).toBe(2);
+    expect(getItemSocketCount(unique, { sockets: 2 })).toBe(4);
+    expect(
+      getItemDetailStatRows(rare, { sockets: 2 }).some(
+        (row) => row.kind === 'roll' && row.stat?.key === 'sockets'
+      )
+    ).toBe(true);
+    expect(getItemStatSections(rare, { sockets: 2 }).scaling).toContain('Socketed (2)');
   });
 });

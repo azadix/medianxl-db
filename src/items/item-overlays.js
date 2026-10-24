@@ -79,6 +79,20 @@ export function isOverlayItem(def) {
   );
 }
 
+const ROLLABLE_CUSTOM_SOCKET_QUALITIES = new Set(['magic', 'rare', 'crafted', 'honorific']);
+
+/**
+ * Uniques/sets/runewords always spawn at max sockets.
+ * Magic/rare/crafted/honorific custom items roll 0–max like white bases.
+ * @param {object|null|undefined} def
+ * @returns {boolean}
+ */
+export function itemHasFixedSockets(def) {
+  if (!isOverlayItem(def)) return false;
+  const quality = String(def.customQuality || '').toLowerCase();
+  return !ROLLABLE_CUSTOM_SOCKET_QUALITIES.has(quality);
+}
+
 /**
  * @param {object|null|undefined} def
  * @returns {boolean}

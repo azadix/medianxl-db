@@ -25,6 +25,7 @@ import {
   getOverlayRollableStats,
   getOverlayStatLines,
   isOverlayItem,
+  itemHasFixedSockets,
   overlayAffixRollKey,
 } from '@/items/item-overlays.js';
 import { formatRunewordBadge, formatRunewordSocketFillerLines, isRunewordItem } from '@/items/runeword-items.js';
@@ -135,7 +136,7 @@ export function formatItemOverlayMeta(def) {
 /**
  * Catalog fields that roll a single value between min and max on drop.
  * Base defense always uses the catalog max (Median items drop at max defense).
- * Uniques/sets lock sockets at max (docs defense display used instead).
+ * Uniques/sets/runewords lock sockets at max (docs defense display used instead).
  * @param {object|null|undefined} def
  * @param {Record<string, number>|null|undefined} [rolls]
  * @param {{ className?: string|null }} [options]
@@ -147,7 +148,7 @@ export function getRollableStats(def, rolls = null, options = {}) {
   const out = [];
   const overlay = isOverlayItem(def);
 
-  if (def.sockets > 0 && !overlay) {
+  if (def.sockets > 0 && !itemHasFixedSockets(def)) {
     const rolled =
       rolls && Number.isFinite(rolls.sockets)
         ? rolls.sockets
@@ -227,8 +228,7 @@ export function defaultRollsForDef(def, options = {}) {
     return { ...rolls, ...defaultRelicAffixRolls(def) };
   }
   if (isOverlayItem(def)) {
-    // Lock sockets at max for uniques/sets/runewords
-    if (def.sockets > 0) rolls.sockets = def.sockets;
+    if (itemHasFixedSockets(def) && def.sockets > 0) rolls.sockets = def.sockets;
     return { ...rolls, ...defaultOverlayAffixRolls(def), ...defaultShrineUpgradeRolls(def, options) };
   }
   return { ...rolls, ...defaultShrineUpgradeRolls(def, options) };
@@ -576,7 +576,7 @@ export function getItemStatSections(def, rolls = null, options = {}) {
     const filled = rolls && Number.isFinite(rolls.sockets) ? rolls.sockets : null;
     if (rollableKeys?.has('sockets')) {
       // Roll controls shown elsewhere - skip static sockets line.
-    } else if (overlay) {
+    } else if (itemHasFixedSockets(def)) {
       scaling.push(`Socketed (${def.sockets})`);
     } else if (filled != null) {
       if (filled > 0) scaling.push(`Socketed (${filled})`);
@@ -770,6 +770,8 @@ export function getItemDetailStatRows(def, rolls = null, options = {}) {
   }
   if (isOverlayItem(def)) {
     rows.push(...asMod(getOverlayDetailStatRows(def, rolls)));
+    const socketStat = getRollableStats(def, rolls, { className }).find((stat) => stat.key === 'sockets');
+    if (socketStat) rows.push({ kind: /** @type {const} */ ('roll'), stat: socketStat, section: 'base' });
     if (isRunewordItem(def) && !hasSocketables) {
       rows.push(
         ...formatRunewordSocketFillerLines(def).map((text) => ({

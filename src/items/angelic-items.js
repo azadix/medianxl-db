@@ -1,7 +1,7 @@
 /**
  * Angelic bases from wiki.median-xl.com/Angelic_Items.
- * Angelic is a base tier (above Sacred). Items on these bases can be rare,
- * crafted, or honorific — never a normal white base, so never a runeword.
+ * Angelic is a base tier (above Sacred). Items on these bases can be magic,
+ * rare, crafted, or honorific — never a normal white base, so never a runeword.
  * @module items/angelic-items
  */
 
@@ -30,15 +30,15 @@ export const ANGELIC_BASE_FAMILIES = Object.freeze([
 
 const FAMILY_SET = new Set(ANGELIC_BASE_FAMILIES.map((name) => name.toLowerCase()));
 
-export const ANGELIC_RARITIES = Object.freeze(['rare', 'crafted', 'honorific']);
+export const ANGELIC_RARITIES = Object.freeze(['magic', 'rare', 'crafted', 'honorific']);
 
 /**
  * @param {string|null|undefined} value
- * @returns {'rare'|'crafted'|'honorific'}
+ * @returns {'magic'|'rare'|'crafted'|'honorific'}
  */
 export function normalizeAngelicRarity(value) {
   const key = String(value || '').trim().toLowerCase();
-  if (key === 'crafted' || key === 'honorific' || key === 'rare') return key;
+  if (key === 'magic' || key === 'crafted' || key === 'honorific' || key === 'rare') return key;
   if (key === 'angelic') return 'rare';
   return 'rare';
 }

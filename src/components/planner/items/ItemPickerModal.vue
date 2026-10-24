@@ -36,7 +36,10 @@ import {
 import ItemDetailPanel from './ItemDetailPanel.vue';
 import {
   applyCustomOverlayToDef,
+  canUseCustomQuality,
+  defaultCustomQualityForBase,
   isCraftedEligibleBase,
+  isHonorificEligibleBase,
   isMagicRareEligibleBase,
 } from '@/items/custom-items.js';
 import { DEFAULT_ITEM_AFFIX_ILVL } from '@/items/item-affixes.js';
@@ -119,16 +122,6 @@ function matchesCategory(item, cat) {
  * @param {object|null|undefined} def
  * @returns {boolean}
  */
-function isHonorificEligibleBase(def) {
-  if (!isMagicRareEligibleBase(def)) return false;
-  const cat = String(def?.category || '');
-  return cat === 'weapons' || cat === 'armor' || cat === 'jewelry';
-}
-
-/**
- * @param {object|null|undefined} def
- * @returns {boolean}
- */
 function isCustomRarityBase(def) {
   if (!def || typeof def !== 'object') return false;
   if (isRunewordTemplate(def) || isUniquePickerItem(def) || def.rarity === 'set') return false;
@@ -138,20 +131,6 @@ function isCustomRarityBase(def) {
     isAngelicEligibleBase(def) ||
     isHonorificEligibleBase(def)
   );
-}
-
-/**
- * @param {object|null|undefined} def
- * @param {'magic'|'rare'|'crafted'|'angelic'|'honorific'|null|undefined} quality
- * @returns {boolean}
- */
-function canUseCustomQuality(def, quality) {
-  if (!quality) return true;
-  if (quality === 'magic' || quality === 'rare') return isMagicRareEligibleBase(def);
-  if (quality === 'crafted') return isCraftedEligibleBase(def);
-  if (quality === 'honorific') return isHonorificEligibleBase(def);
-  if (quality === 'angelic') return isAngelicEligibleBase(def);
-  return false;
 }
 
 const CUSTOM_RARITY_CHOICES = Object.freeze([
@@ -369,8 +348,12 @@ watch([isPickerOpen, previewDef], ([open, def]) => {
 });
 
 watch(previewTemplate, (def) => {
-  if (!isCustomRarityBase(def) || !canUseCustomQuality(def, customQuality.value)) {
+  if (!isCustomRarityBase(def)) {
     customQuality.value = null;
+    return;
+  }
+  if (!canUseCustomQuality(def, customQuality.value)) {
+    customQuality.value = defaultCustomQualityForBase(def);
   }
 });
 
@@ -380,7 +363,7 @@ const showRarityPicker = computed(() => isCustomRarityBase(previewTemplate.value
  * @param {'magic'|'rare'|'crafted'|'angelic'|'honorific'|null} quality
  */
 function setCustomQuality(quality) {
-  if (quality && !canUseCustomQuality(previewTemplate.value, quality)) return;
+  if (!canUseCustomQuality(previewTemplate.value, quality)) return;
   customQuality.value = quality;
 }
 
@@ -486,8 +469,10 @@ function onEquip(defId) {
   rolls.value = nextRolls;
   /** @type {import('@/items/custom-items.js').CustomItemPayload|null} */
   let custom = null;
-  if (customQuality.value) {
-    if (customQuality.value === 'angelic') {
+  let quality = customQuality.value;
+  if (!canUseCustomQuality(def, quality)) quality = defaultCustomQualityForBase(def);
+  if (quality) {
+    if (quality === 'angelic') {
       const rarity = normalizeAngelicRarity(angelicRarity.value);
       const label = rarity.charAt(0).toUpperCase() + rarity.slice(1);
       custom = {
@@ -500,18 +485,18 @@ function onEquip(defId) {
       };
     } else {
       const label =
-        customQuality.value === 'honorific'
+        quality === 'honorific'
           ? 'Honorific'
-          : customQuality.value === 'rare'
+          : quality === 'rare'
             ? 'Rare'
-            : customQuality.value === 'magic'
+            : quality === 'magic'
               ? 'Magic'
               : 'Crafted';
       const baseLabel = isMastercraftedBaseItem(def)
         ? mastercraftedBaseDisplayName(def)
         : def.baseName || def.name;
       custom = {
-        quality: customQuality.value,
+        quality,
         name: `${label} ${baseLabel}`,
         modifiers: [],
         sockets: Number(def.sockets) || 0,
@@ -648,7 +633,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown));
                   type="button"
                   class="button"
                   :class="{ 'is-link': customQuality === row.id }"
-                  :disabled="row.id != null && !canUseCustomQuality(previewTemplate, row.id)"
+                  :disabled="!canUseCustomQuality(previewTemplate, row.id)"
                   @click="setCustomQuality(row.id)"
                 >
                   {{ row.label }}

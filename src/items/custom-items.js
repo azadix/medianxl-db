@@ -198,6 +198,44 @@ export function isMagicRareEligibleBase(def) {
 }
 
 /**
+ * @param {object|null|undefined} def
+ * @returns {boolean}
+ */
+export function isHonorificEligibleBase(def) {
+  if (!isMagicRareEligibleBase(def)) return false;
+  const cat = String(def?.category || '');
+  return cat === 'weapons' || cat === 'armor' || cat === 'jewelry';
+}
+
+/**
+ * Mastercrafted bases are magic+ only (no white/normal, no angelic).
+ * @param {object|null|undefined} def
+ * @param {'magic'|'rare'|'crafted'|'angelic'|'honorific'|null|undefined} quality
+ * @returns {boolean}
+ */
+export function canUseCustomQuality(def, quality) {
+  const key = quality == null || quality === '' ? null : String(quality).toLowerCase();
+  if (isMastercraftedBaseItem(def)) {
+    if (!key || key === 'normal' || key === 'angelic') return false;
+  }
+  if (!key) return true;
+  if (key === 'magic' || key === 'rare') return isMagicRareEligibleBase(def);
+  if (key === 'crafted') return isCraftedEligibleBase(def);
+  if (key === 'honorific') return isHonorificEligibleBase(def);
+  if (key === 'angelic') return isAngelicEligibleBase(def);
+  return false;
+}
+
+/**
+ * @param {object|null|undefined} def
+ * @returns {'magic'|null}
+ */
+export function defaultCustomQualityForBase(def) {
+  if (isMastercraftedBaseItem(def)) return 'magic';
+  return null;
+}
+
+/**
  * Rebuild modifier lines and required level from prefix/suffix picks.
  * @param {unknown} customRaw
  * @param {object|null|undefined} def
