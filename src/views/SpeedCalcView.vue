@@ -23,7 +23,7 @@ import {
   MOVE_CURSE_GROUPS,
   formatMoveCurseOption,
   sumSelectedMoveCurses,
-} from '@/speedcalc/movement-curse-options.js';
+} from '@/speedcalc/movement-debuff-options.js';
 import { FRAME_DISTANCE_YARDS, buildSpeedGraphSeries, computeSpeedCalc } from '@/speedcalc/movement-speed.js';
 import SpeedCalcSpeedGraph from '@/components/speedcalc/SpeedCalcSpeedGraph.vue';
 import SpeedCalcYardMap from '@/components/speedcalc/SpeedCalcYardMap.vue';
@@ -172,6 +172,7 @@ onMounted(async () => {
           </div>
         </div>
         <div class="speedcalc-curses">
+          <h2 class="speedcalc-curse-heading">Debuff</h2>
           <div v-for="group in MOVE_CURSE_GROUPS" :key="group.id" class="speedcalc-curse-group">
             <h3 class="speedcalc-curse-title">{{ group.title }}</h3>
             <p class="speedcalc-curse-hint">{{ group.hint }}</p>
@@ -393,6 +394,14 @@ onMounted(async () => {
   margin-top: 1rem;
   padding-top: 1rem;
   border-top: 1px solid var(--sc-panel-border);
+}
+.speedcalc-curse-heading {
+  grid-column: 1 / -1;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin: 0;
 }
 .speedcalc-extra-fields {
   display: flex;

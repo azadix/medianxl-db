@@ -18,7 +18,7 @@ import {
   formatMoveCurseOption,
   navigatorSkillFrw,
   sumSelectedMoveCurses,
-} from '@/speedcalc/movement-curse-options.js';
+} from '@/speedcalc/movement-debuff-options.js';
 import {
   FRAME_DISTANCE_YARDS,
   annotateBreakpointRows,
@@ -222,7 +222,7 @@ describe('movement-armor-options', () => {
   });
 });
 
-describe('movement-curse-options', () => {
+describe('movement-debuff-options', () => {
   it('lists monster movement curses with engine amounts', () => {
     const decrep = MOVE_CURSE_OPTIONS.find((row) => row.key === 'decrepify');
     const unseelie = MOVE_CURSE_OPTIONS.find((row) => row.key === 'unseelie');
@@ -241,5 +241,8 @@ describe('movement-curse-options', () => {
     expect(formatMoveCurseOption(navigator, 1)).toBe('Navigator (-40%)');
     expect(formatMoveCurseOption(navigator, 10)).toBe('Navigator (-58%)');
     expect(sumSelectedMoveCurses(['navigator'], 10)).toEqual({ skillFrw: -58, itemFrw: 0 });
+    const whirlwind = MOVE_CURSE_OPTIONS.find((row) => row.key === 'whirlwind');
+    expect(whirlwind).toMatchObject({ skillFrw: -10, itemFrw: 0 });
+    expect(formatMoveCurseOption(whirlwind)).toBe('Whirlwinding (-10%)');
   });
 });

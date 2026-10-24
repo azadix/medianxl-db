@@ -27,6 +27,7 @@ export const MOVE_CURSE_OPTIONS = Object.freeze([
   { key: 'soul_of_greed', name: 'Soul of Greed', skillFrw: -50, itemFrw: 0 },
   { key: 'lucion', name: 'Lucion', skillFrw: -25, itemFrw: 0 },
   { key: 'venomous_spirit', name: 'Venomous Spirit', skillFrw: -10, itemFrw: 0 },
+  { key: 'whirlwind', name: 'Whirlwinding', skillFrw: -10, itemFrw: 0 },
   { key: 'phoboss', name: 'Phoboss', skillFrw: -20, itemFrw: 0 },
   { key: 'navigator', name: 'Navigator', skillFrw: -40, itemFrw: 0 },
 ]);
