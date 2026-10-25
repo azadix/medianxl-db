@@ -10,6 +10,7 @@ import {
   resolveCatalogRowBySkillRef,
 } from '@/character/planner-build-io.js';
 import { isCharmItem, isDimensionalKeyCharm } from '@/items/charm-items.js';
+import { DIM_KEY_CATALOG_ID, DIM_KEY_VARIANT_IDS } from '@/items/dimensional-key.js';
 import { isRelicItem, MAX_RELICS } from '@/items/relic-items.js';
 import {
   buildSetDumpSkipContext,
@@ -49,13 +50,10 @@ export const TSW_SLOT_TO_EQUIPMENT = Object.freeze({
   LeftHandAlternate: 'larm2',
 });
 
-/** @type {Readonly<Record<string, string>>} */
-const DIMENSIONAL_KEY_IDS = Object.freeze({
-  arcana: 'ebw',
-  mandate: 'ebw-mandate',
-  onslaught: 'ebw-onslaught',
-  primordia: 'ebw-primordia',
-});
+/** @type {Readonly<Record<string, true>>} */
+const DIMENSIONAL_KEY_VARIANTS = Object.freeze(
+  Object.fromEntries(DIM_KEY_VARIANT_IDS.map((id) => [id, true]))
+);
 
 /**
  * @param {unknown} data
@@ -375,9 +373,8 @@ function uniqueIdCandidates(row) {
  */
 function dimensionalKeyVariant(row) {
   const name = normName(tswItemDisplayName(row));
-  if (DIMENSIONAL_KEY_IDS[name]) return name;
-  const stripped = name.replace(/^dimensional key\s*-+\s*/, '');
-  if (DIMENSIONAL_KEY_IDS[stripped]) return stripped;
+  const stripped = name.replace(/^nephalem\s+/, '').replace(/^dimensional key\s*-+\s*/, '');
+  if (DIMENSIONAL_KEY_VARIANTS[stripped]) return stripped;
   const lines = Array.isArray(row?.description_lines) ? row.description_lines : [];
   let sawKey = /dimensional key/.test(name);
   for (const line of lines) {
@@ -387,10 +384,12 @@ function dimensionalKeyVariant(row) {
       .join('')
       .toLowerCase();
     if (/dimensional key/.test(text)) sawKey = true;
+    const hit = DIM_KEY_VARIANT_IDS.find((id) => new RegExp(`\\b${id}\\b`, 'i').test(text));
+    if (hit) return hit;
   }
-  if (sawKey && DIMENSIONAL_KEY_IDS[name]) return name;
-  if (sawKey) return name;
-  return DIMENSIONAL_KEY_IDS[name] ? name : null;
+  if (sawKey && DIMENSIONAL_KEY_VARIANTS[stripped]) return stripped;
+  if (sawKey) return stripped || 'arcana';
+  return DIMENSIONAL_KEY_VARIANTS[name] ? name : null;
 }
 
 /**
@@ -486,8 +485,8 @@ export function resolveTswItemDefId(row, cat) {
   }
 
   const dim = dimensionalKeyVariant(row);
-  if (dim && DIMENSIONAL_KEY_IDS[dim] && cat.byId[DIMENSIONAL_KEY_IDS[dim]]) {
-    return DIMENSIONAL_KEY_IDS[dim];
+  if (dim && cat.byId[DIM_KEY_CATALOG_ID]) {
+    return DIM_KEY_CATALOG_ID;
   }
 
   const relicHint = relicSkillHint(row);

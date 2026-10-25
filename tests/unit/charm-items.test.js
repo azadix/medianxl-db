@@ -327,4 +327,34 @@ describe('charm-items', () => {
     expect(lines).toContain('[Justicar] Maximum Elemental Resists +1%');
   });
 
+  it('treats Dimensional Key extras as progression instead of maxed catalog mods', () => {
+    const key = {
+      id: 'ebw',
+      name: 'Dimensional Key',
+      type: 'charm',
+      category: 'charms',
+      keepInInventory: true,
+      modifiers: ['+35% to Spell Damage', '75% Magic Find'],
+    };
+    expect(getCharmStatLines(key, 150, { inInventory: true })).toEqual([]);
+    const lines = getCharmStatLines(key, 150, {
+      inInventory: true,
+      rolls: {
+        charmDimKeyStar1: 1,
+        charmDimKeyStar2: 1,
+        charmDimKeyStar3: 1,
+        charmDimKeyStar4: 1,
+        charmDimKeyDream1: 1,
+        charmDimKeyDream2: 1,
+        charmDimKeyDream3: 1,
+        charmDimKeyDream4: 1,
+        charmDimKeyDream5: 1,
+        charmDimKeyLabs: 9,
+      },
+    });
+    expect(lines).toContain('+35% to Spell Damage');
+    expect(lines).toContain('+63% Magic Find');
+    expect(lines).not.toContain('75% Magic Find');
+  });
+
 });

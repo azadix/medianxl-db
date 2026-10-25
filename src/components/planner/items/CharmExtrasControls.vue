@@ -11,6 +11,7 @@ import {
   getParagonHammerConfig,
   countParagonRegularUpgrades,
   isCharmItem,
+  isDimensionalKeyCharm,
   charmPoolHighRollKey,
   formatCharmPoolRollButton,
 } from '@/items/charm-items.js';
@@ -18,6 +19,22 @@ import { getCharacterInstance } from '@/character/planner-core.js';
 import { useItemsStore } from '@/stores/items.js';
 import WormholeCyclesControls from './WormholeCyclesControls.vue';
 import { isCorruptedWormhole } from '@/items/wormhole-cycles.js';
+import {
+  DIM_KEY_DREAM_COUNT,
+  DIM_KEY_DREAM_POINTS,
+  DIM_KEY_LAB_MAGIC_FIND,
+  DIM_KEY_LAB_MAX,
+  DIM_KEY_ROLL_KEYS,
+  DIM_KEY_STAR_COUNT,
+  DIM_KEY_STAR_POINTS,
+  DIM_KEY_VARIANT_IDS,
+  DIM_KEY_VARIANT_LABELS,
+  dimensionalKeyTrialsReadyForNephalem,
+  dimensionalKeyVariantIndex,
+  dimKeyPieceRollKey,
+  getDimensionalKeyVariant,
+  getDimensionalKeyVariantId,
+} from '@/items/dimensional-key.js';
 
 const props = defineProps({
   def: { type: /** @type {import('vue').PropType<object|null>} */ (Object), default: null },
@@ -40,6 +57,13 @@ const extraAwakening = computed(() => hasCharmExtraAwakening(props.def));
 const paragon = computed(() => getParagonHammerConfig(props.def));
 const paragonRegularUsed = computed(() => countParagonRegularUpgrades(props.def, props.rolls));
 const paragonRegularLimit = computed(() => Number(paragon.value?.regularLimit) || 0);
+const dimKey = computed(() => isDimensionalKeyCharm(props.def));
+const dimKeyVariant = computed(() => getDimensionalKeyVariant(props.def, props.rolls));
+const dimKeyVariantId = computed(() => getDimensionalKeyVariantId(props.rolls));
+const dimKeyNephalemReady = computed(() => dimensionalKeyTrialsReadyForNephalem(props.rolls));
+const dimKeyStars = Array.from({ length: DIM_KEY_STAR_COUNT }, (_, i) => i + 1);
+const dimKeyDreams = Array.from({ length: DIM_KEY_DREAM_COUNT }, (_, i) => i + 1);
+const dimKeyLabOptions = Array.from({ length: DIM_KEY_LAB_MAX + 1 }, (_, i) => i);
 
 /**
  * @param {Record<string, number>} patch
@@ -118,6 +142,62 @@ function setParagonRegular(index, checked) {
 function setParagonPath(path) {
   patchRolls({ [CHARM_ROLL_KEYS.paragonPath]: path });
 }
+
+/**
+ * @param {string} prefix
+ * @param {number} n
+ * @param {boolean} checked
+ */
+function setDimKeyPiece(prefix, n, checked) {
+  /** @type {Record<string, number>} */
+  const patch = { [dimKeyPieceRollKey(prefix, n)]: checked ? 1 : 0 };
+  const next = { ...props.rolls, ...patch };
+  if (!dimensionalKeyTrialsReadyForNephalem(next)) {
+    patch[DIM_KEY_ROLL_KEYS.nephalem] = 0;
+  }
+  patchRolls(patch);
+}
+
+/**
+ * @param {number} labs
+ */
+function setDimKeyLabs(labs) {
+  /** @type {Record<string, number>} */
+  const patch = { [DIM_KEY_ROLL_KEYS.labs]: labs };
+  const next = { ...props.rolls, ...patch };
+  if (!dimensionalKeyTrialsReadyForNephalem(next)) {
+    patch[DIM_KEY_ROLL_KEYS.nephalem] = 0;
+  }
+  patchRolls(patch);
+}
+
+/**
+ * @param {boolean} checked
+ */
+function setDimKeyInvasion(checked) {
+  /** @type {Record<string, number>} */
+  const patch = { [DIM_KEY_ROLL_KEYS.invasion]: checked ? 1 : 0 };
+  const next = { ...props.rolls, ...patch };
+  if (!dimensionalKeyTrialsReadyForNephalem(next)) {
+    patch[DIM_KEY_ROLL_KEYS.nephalem] = 0;
+  }
+  patchRolls(patch);
+}
+
+/**
+ * @param {boolean} checked
+ */
+function setDimKeyNephalem(checked) {
+  if (checked && !dimKeyNephalemReady.value) return;
+  patchRolls({ [DIM_KEY_ROLL_KEYS.nephalem]: checked ? 1 : 0 });
+}
+
+/**
+ * @param {string} id
+ */
+function setDimKeyVariant(id) {
+  patchRolls({ [DIM_KEY_ROLL_KEYS.variant]: dimensionalKeyVariantIndex(id) });
+}
 </script>
 
 <template>
@@ -144,6 +224,89 @@ function setParagonPath(path) {
       :rolls="rolls"
       @update:rolls="emit('update:rolls', $event)"
     />
+
+    <div v-if="dimKey && dimKeyVariant" class="charm-extras-controls__group">
+      <div class="charm-extras-controls__pool">
+        <label class="label is-size-7 mb-1">Key type</label>
+        <div class="select is-small is-fullwidth">
+          <select
+            :value="dimKeyVariantId"
+            @change="setDimKeyVariant($event.target.value)"
+          >
+            <option v-for="id in DIM_KEY_VARIANT_IDS" :key="id" :value="id">
+              {{ DIM_KEY_VARIANT_LABELS[id] }}
+            </option>
+          </select>
+        </div>
+      </div>
+      <p class="is-size-7 has-text-grey mb-2 mt-2">Star Chart</p>
+      <div class="charm-extras-controls__pieces">
+        <label
+          v-for="n in dimKeyStars"
+          :key="'star-' + n"
+          class="checkbox charm-extras-controls__piece"
+        >
+          <input
+            type="checkbox"
+            :checked="Boolean(rolls[dimKeyPieceRollKey(DIM_KEY_ROLL_KEYS.starPrefix, n)])"
+            @change="setDimKeyPiece(DIM_KEY_ROLL_KEYS.starPrefix, n, $event.target.checked)"
+          />
+          {{ n }} +{{ DIM_KEY_STAR_POINTS[n - 1] }}
+        </label>
+      </div>
+      <p class="is-size-7 has-text-grey mb-2 mt-2">Dream Fragments</p>
+      <div class="charm-extras-controls__pieces">
+        <label
+          v-for="n in dimKeyDreams"
+          :key="'dream-' + n"
+          class="checkbox charm-extras-controls__piece"
+        >
+          <input
+            type="checkbox"
+            :checked="Boolean(rolls[dimKeyPieceRollKey(DIM_KEY_ROLL_KEYS.dreamPrefix, n)])"
+            @change="setDimKeyPiece(DIM_KEY_ROLL_KEYS.dreamPrefix, n, $event.target.checked)"
+          />
+          {{ n }} +{{ DIM_KEY_DREAM_POINTS[n - 1] }}
+        </label>
+      </div>
+      <div class="charm-extras-controls__pool mt-2">
+        <label class="label is-size-7 mb-1">Labs added</label>
+        <div class="select is-small is-fullwidth">
+          <select
+            :value="rolls[DIM_KEY_ROLL_KEYS.labs] ?? 0"
+            @change="setDimKeyLabs(Number($event.target.value))"
+          >
+            <option v-for="lab in dimKeyLabOptions" :key="'lab-' + lab" :value="lab">
+              <template v-if="lab === 0">None</template>
+              <template v-else>T{{ lab }} +{{ DIM_KEY_LAB_MAGIC_FIND[lab] }}% Magic Find</template>
+            </option>
+          </select>
+        </div>
+      </div>
+      <label class="checkbox charm-extras-controls__check mt-2">
+        <input
+          type="checkbox"
+          :checked="Boolean(rolls[DIM_KEY_ROLL_KEYS.invasion])"
+          @change="setDimKeyInvasion($event.target.checked)"
+        />
+        End the Invasion
+      </label>
+      <ul v-if="dimKeyVariant.invasion?.length" class="charm-extras-controls__affixes">
+        <li v-for="(affix, idx) in dimKeyVariant.invasion" :key="'inv-' + idx">{{ affix }}</li>
+      </ul>
+      <label class="checkbox charm-extras-controls__check mt-2">
+        <input
+          type="checkbox"
+          :checked="Boolean(rolls[DIM_KEY_ROLL_KEYS.nephalem])"
+          :disabled="!rolls[DIM_KEY_ROLL_KEYS.nephalem] && !dimKeyNephalemReady"
+          @change="setDimKeyNephalem($event.target.checked)"
+        />
+        Trial of the Nephalem
+      </label>
+      <p class="charm-extras-controls__affixes is-size-7 has-text-grey">
+        Requires all Star Charts, Dream Fragments, T10 labs, and End the Invasion
+      </p>
+    </div>
 
     <div v-for="pool in pools" :key="'pool-' + pool.poolIndex" class="charm-extras-controls__pool">
       <label class="label is-size-7 mb-1">{{ pool.label || 'Modifier choice' }}</label>
@@ -346,6 +509,19 @@ function setParagonPath(path) {
   flex-wrap: wrap;
   gap: 0.4rem;
   margin-top: 0.5rem;
+}
+
+.charm-extras-controls__pieces {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.85rem;
+}
+
+.charm-extras-controls__piece {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
 }
 
 .charm-extras-controls__check {

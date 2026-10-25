@@ -16,6 +16,11 @@ import {
   getWormholeCycleAffixSources,
   getWormholeCycleReqLevelBonus,
 } from '@/items/wormhole-cycles.js';
+import {
+  collectDimensionalKeyAffixSources,
+  defaultDimensionalKeyRolls,
+  isDimensionalKeyGeneratedStatLine,
+} from '@/items/dimensional-key.js';
 
 /** @type {Readonly<Record<string, string>>} */
 export const CHARM_ROLL_KEYS = Object.freeze({
@@ -210,8 +215,7 @@ export function isCharmItem(def) {
 }
 
 /**
- * Dimensional Key variants (Arcana / Mandate / Onslaught / Primordia).
- * Only one may be enabled at a time.
+ * Single Dimensional Key catalog row (variant is chosen on the charm).
  * @param {object|null|undefined} def
  * @returns {boolean}
  */
@@ -403,7 +407,8 @@ export function hasCharmExtras(def) {
     getCharmModifierPools(def).length > 0 ||
     getCharmTrophyOptions(def).length > 0 ||
     getParagonHammerConfig(def) != null ||
-    isCorruptedWormhole(def)
+    isCorruptedWormhole(def) ||
+    isDimensionalKeyCharm(def)
   );
 }
 
@@ -468,6 +473,9 @@ export function collectCharmAffixSources(def, rolls = null, className = null) {
     }
     if (typeof mod === 'string') {
       if (isCorruptedWormhole(def) && isWormholeCyclePlaceholderMod(mod)) {
+        continue;
+      }
+      if (isDimensionalKeyCharm(def) && isDimensionalKeyGeneratedStatLine(def, mod)) {
         continue;
       }
       if (paragon) {
@@ -584,6 +592,10 @@ export function collectCharmAffixSources(def, rolls = null, className = null) {
     }
   }
 
+  if (isDimensionalKeyCharm(def)) {
+    out.push(...collectDimensionalKeyAffixSources(def, rolls));
+  }
+
   return out;
 }
 
@@ -611,6 +623,9 @@ export function getCharmAffixSources(def, rolls = null, className = null, option
       return true;
     }
     if (source.sourceKey.startsWith('paragon')) {
+      return true;
+    }
+    if (source.sourceKey.startsWith('dimkey:')) {
       return true;
     }
     return true;
@@ -788,6 +803,9 @@ export function defaultCharmRollsForDef(def, className = null) {
     if (pool.options.some((opt) => Boolean(opt.low && opt.high))) {
       rolls[charmPoolHighRollKey(pool.poolIndex)] = 0;
     }
+  }
+  if (isDimensionalKeyCharm(def)) {
+    Object.assign(rolls, defaultDimensionalKeyRolls());
   }
   return { ...rolls, ...defaultCharmAffixRolls(def, className) };
 }

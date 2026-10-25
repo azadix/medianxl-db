@@ -22,6 +22,7 @@ import { runewordEntryToItemDef } from '@/items/runeword-items.js';
 import { canEquipInSlot } from '@/items/item-types.js';
 import { inferTswClassSkillsBonus } from '@/planner/tsw-item-rolls.js';
 import { CHARM_ROLL_KEYS, charmAffixRollKey } from '@/items/charm-items.js';
+import { DIM_KEY_ROLL_KEYS } from '@/items/dimensional-key.js';
 import { relicAffixRollKey } from '@/items/relic-items.js';
 
 const ROOT = resolve(import.meta.dirname, '../..');
@@ -95,8 +96,8 @@ const catalog = {
     },
     { id: 'a68', name: "Horazon's Focus", type: 'charm', category: 'charms', keepInInventory: true },
     {
-      id: 'ebw-primordia',
-      name: 'Dimensional Key - Primordia',
+      id: 'ebw',
+      name: 'Dimensional Key',
       type: 'charm',
       category: 'charms',
       keepInInventory: true,
@@ -240,9 +241,89 @@ describe('tsw-build-import', () => {
       defId: 'rin',
       custom: { quality: 'rare', name: 'Ring', modifiers: ['+1 to All Skills'] },
     });
-    expect(snapshot.charms.map((row) => row.defId)).toEqual(['a68', 'ebw-primordia']);
+    expect(snapshot.charms.map((row) => row.defId)).toEqual(['a68', 'ebw']);
+    expect(snapshot.charms[1].rolls?.[DIM_KEY_ROLL_KEYS.variant]).toBe(3);
     expect(snapshot.relics.map((row) => row.defId)).toEqual(['relic:lightning-wall']);
     expect(skipped.some((s) => s.name === 'Ring')).toBe(false);
+  });
+
+  it('maps Dimensional Key Star Chart, Dream Fragment, and lab progression from TSW lines', () => {
+    const rows = [
+      {
+        item: 'Primordia',
+        display_name: 'Primordia',
+        code: 'eby',
+        type: 'Charm',
+        is_charm: true,
+        location: 'Inventory',
+        description_lines: [
+          [['Primordia', 4]],
+          [['Dimensional Key', 4]],
+          [['Dream Fragment (2)', 2]],
+          [['Dream Fragment (3)', 2]],
+          [['Star Chart (1)', 2]],
+          [['Star Chart (4)', 2]],
+          [['+10% Innate Elemental Damage', 3]],
+          [['+52% Magic Find', 3]],
+          [['Adds 100-200 Fire Damage', 3]],
+        ],
+      },
+    ];
+    const { snapshot } = mapTswItemsToSnapshot(rows, byIdCatalog());
+    expect(snapshot.charms).toHaveLength(1);
+    expect(snapshot.charms[0].defId).toBe('ebw');
+    expect(snapshot.charms[0].rolls).toMatchObject({
+      [DIM_KEY_ROLL_KEYS.variant]: 3,
+      [`${DIM_KEY_ROLL_KEYS.starPrefix}1`]: 1,
+      [`${DIM_KEY_ROLL_KEYS.starPrefix}4`]: 1,
+      [`${DIM_KEY_ROLL_KEYS.dreamPrefix}2`]: 1,
+      [`${DIM_KEY_ROLL_KEYS.dreamPrefix}3`]: 1,
+      [DIM_KEY_ROLL_KEYS.labs]: 8,
+      [DIM_KEY_ROLL_KEYS.invasion]: 1,
+    });
+    expect(snapshot.charms[0].extras || []).not.toEqual(
+      expect.arrayContaining([
+        expect.stringMatching(/Dream Fragment/i),
+        expect.stringMatching(/Star Chart/i),
+        expect.stringMatching(/Magic Find/i),
+      ])
+    );
+  });
+
+  it('maps each TSW Dimensional Key unique onto catalog ebw with the matching variant', () => {
+    const cases = [
+      { item: 'Arcana', code: 'ebw', variant: 0 },
+      { item: 'Mandate', code: 'ebv', variant: 1 },
+      { item: 'Onslaught', code: 'ebu', variant: 2 },
+      { item: 'Primordia', code: 'eby', variant: 3 },
+      { item: 'Nephalem Mandate', code: 'ebv', variant: 1, nephalem: true },
+    ];
+    for (const row of cases) {
+      const { snapshot } = mapTswItemsToSnapshot(
+        [
+          {
+            item: row.item,
+            display_name: row.item,
+            code: row.code,
+            type: 'Charm',
+            is_charm: true,
+            location: 'Inventory',
+            description_lines: [
+              [[row.item, 4]],
+              [['Dimensional Key', 4]],
+              ...(row.nephalem ? [[['Occult Smithing Unlocked', 3]], [['+1 to Void Armor', 3]]] : []),
+            ],
+          },
+        ],
+        byIdCatalog()
+      );
+      expect(snapshot.charms).toHaveLength(1);
+      expect(snapshot.charms[0].defId).toBe('ebw');
+      expect(snapshot.charms[0].rolls?.[DIM_KEY_ROLL_KEYS.variant]).toBe(row.variant);
+      if (row.nephalem) {
+        expect(snapshot.charms[0].rolls?.[DIM_KEY_ROLL_KEYS.nephalem]).toBe(1);
+      }
+    }
   });
 
   it('maps Mindflayer boots as the boots unique, keeping the helm name and dropping class restriction', () => {
@@ -675,7 +756,9 @@ describe('tsw-build-import', () => {
     expect(snapshot.equipment.rarm?.defId).toBe('u:mekanism:su');
     expect(snapshot.charms.some((row) => row.defId === 'a68')).toBe(true);
     expect(snapshot.charms.find((row) => row.defId === 'a68')?.icon).toBe('invhorazon');
-    expect(snapshot.charms.some((row) => row.defId === 'ebw-primordia')).toBe(true);
+    const dimKey = snapshot.charms.find((row) => row.defId === 'ebw');
+    expect(dimKey).toBeTruthy();
+    expect(dimKey?.rolls?.[DIM_KEY_ROLL_KEYS.variant]).toBe(3);
     expect(snapshot.relics.map((row) => row.defId).sort()).toEqual(
       ['relic:hailstorm', 'relic:lightning-wall', 'relic:whirlwind'].sort()
     );
@@ -768,7 +851,8 @@ describe('tsw-build-import', () => {
     );
     expect(store.getRequirementsForInstance(torsId)?.reqLevel).toBeGreaterThanOrEqual(135);
     expect(store.enabledCharms.a68).toBeTruthy();
-    expect(store.enabledCharms['ebw-primordia']).toBeTruthy();
+    expect(store.enabledCharms.ebw).toBeTruthy();
+    expect(store.instances[store.enabledCharms.ebw]?.rolls?.[DIM_KEY_ROLL_KEYS.variant]).toBe(3);
     expect(Object.keys(store.enabledRelics).sort()).toEqual(
       ['relic:hailstorm', 'relic:lightning-wall', 'relic:whirlwind'].sort()
     );
@@ -817,6 +901,9 @@ describe('tsw-build-import', () => {
     const medallion = snapshot.charms.find((row) => row.defId === 'lok');
     expect(medallion?.rolls?.[CHARM_ROLL_KEYS.upgradePrefix + '0']).toBe(1);
     expect(medallion?.rolls?.[CHARM_ROLL_KEYS.trophy]).toBe(1);
+
+    const dimKey = snapshot.charms.find((row) => row.defId === 'ebw');
+    expect(dimKey?.rolls?.[DIM_KEY_ROLL_KEYS.variant]).toBe(3);
 
     const vial = snapshot.charms.find((row) => row.defId === 'ebx');
     expect(vial?.rolls?.[CHARM_ROLL_KEYS.upgradePrefix + '0']).toBe(1);

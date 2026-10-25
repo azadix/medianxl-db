@@ -47,6 +47,7 @@ import {
   isCharmItem,
   isDimensionalKeyCharm,
 } from '@/items/charm-items.js';
+import { maxDimensionalKeyRolls, normalizeDimensionalKeySnapshot } from '@/items/dimensional-key.js';
 import { isRelicItem, MAX_RELICS, relicMeetsLevel } from '@/items/relic-items.js';
 import {
   characterMeetsItemRequirements,
@@ -1850,12 +1851,14 @@ export const useItemsStore = defineStore('items', {
         const upgradeRolls = Object.fromEntries(
           getCharmUpgradeEntries(def, this.viewerClassName).map((entry) => [entry.key, 1])
         );
+        const dimKeyRolls = isDimensionalKeyCharm(def) ? maxDimensionalKeyRolls() : {};
+        const extraRolls = { ...upgradeRolls, ...dimKeyRolls };
         const existingId = nextEnabled[def.id];
         if (existingId != null) {
-          if (Object.keys(upgradeRolls).length && nextInstances[existingId]) {
+          if (Object.keys(extraRolls).length && nextInstances[existingId]) {
             nextInstances[existingId] = {
               ...nextInstances[existingId],
-              rolls: { ...nextInstances[existingId].rolls, ...upgradeRolls },
+              rolls: { ...nextInstances[existingId].rolls, ...extraRolls },
             };
           }
           continue;
@@ -1868,7 +1871,7 @@ export const useItemsStore = defineStore('items', {
         nextInstances[id] = {
           defId: def.id,
           icon: pickItemIcon(def),
-          ...(Object.keys(upgradeRolls).length ? { rolls: upgradeRolls } : {}),
+          ...(Object.keys(extraRolls).length ? { rolls: extraRolls } : {}),
         };
         nextEnabled[def.id] = id;
         added += 1;
@@ -2656,6 +2659,12 @@ export const useItemsStore = defineStore('items', {
             if (Number.isFinite(n)) rolls[k] = n;
           }
           if (!Object.keys(rolls).length) rolls = null;
+        }
+        const dimNorm = normalizeDimensionalKeySnapshot(defId, rolls);
+        defId = dimNorm.defId;
+        rolls = dimNorm.rolls;
+        if (!this.catalogByIdMap[defId]) {
+          defId = resolveCatalogDefId(defId, this.catalogByIdMap);
         }
         return {
           defId,

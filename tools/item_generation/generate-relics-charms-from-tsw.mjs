@@ -6,9 +6,10 @@
  * charms.json (preserves id, icon, trophy, upgrades). Does not auto-add
  * Heroic / Pearl-of-Wisdom junk. Dimensional Key is stored in TSW under the
  * unique base names Arcana / Mandate / Onslaught / Primordia (and Nephalem
- * forms); the generator expands the legacy single entry into those four.
- * Catalog omits inventory fields (type/category/slot/inv size/reqStr/reqDex);
- * the store fills defaults.
+ * forms); the planner stores one catalog row (`Dimensional Key`) and selects
+ * the variant on the charm. Combat bonuses come from Star Chart / Dream
+ * Fragment / lab progression. Catalog omits inventory fields
+ * (type/category/slot/inv size/reqStr/reqDex); the store fills defaults.
  *
  * Run locally only — API requires an IP seen in-game within 24h.
  *
@@ -70,12 +71,13 @@ const DIMENSIONAL_KEY_VARIANTS = Object.freeze([
  * Prefer Nephalem forms first (they carry the combat bonuses).
  * @type {Readonly<Record<string, string[]>>}
  */
-const CHARM_TSW_LOOKUP = Object.freeze(
-  Object.fromEntries([
+const CHARM_TSW_LOOKUP = Object.freeze({
+  'Dimensional Key': ['Nephalem Arcana', 'Arcana'],
+  ...Object.fromEntries([
     ...DIMENSIONAL_KEY_VARIANTS.map((v) => [v.name, v.tswNames]),
     ...DIMENSIONAL_KEY_VARIANTS.map((v) => [v.base, v.tswNames]),
-  ])
-);
+  ]),
+});
 
 /** Lines that are flavor / instructions, not planner modifiers. */
 const CHARM_SKIP_LINE =
@@ -213,52 +215,34 @@ async function fetchCharmFromTsw(catalogName) {
 }
 
 /**
- * Expand legacy "Dimensional Key" into the four TSW unique bases.
- * Also renames short base names to "Dimensional Key - …".
+ * Keep a single Dimensional Key catalog row; variant is chosen in the planner.
  * @param {object[]} existing
  * @returns {object[]}
  */
-function expandDimensionalKeyCatalog(existing) {
-  /** @type {Map<string, (typeof DIMENSIONAL_KEY_VARIANTS)[number]>} */
-  const variantById = new Map(DIMENSIONAL_KEY_VARIANTS.map((v) => [v.id, v]));
-  const hasVariants = DIMENSIONAL_KEY_VARIANTS.every((v) =>
-    existing.some(
-      (c) => c.id === v.id || c.name === v.name || c.name === v.base || c.name === `Relic (${v.base})`
-    )
-  );
-
-  if (hasVariants) {
-    return existing
-      .filter((c) => c.name !== 'Dimensional Key')
-      .map((c) => {
-        const variant = variantById.get(c.id);
-        return variant ? { ...c, name: variant.name } : c;
-      });
-  }
-
-  const legacy = existing.find((c) => c.name === 'Dimensional Key' || c.id === 'ebw');
-  if (!legacy) return existing;
-
+function collapseDimensionalKeyCatalog(existing) {
   /** @type {object[]} */
   const out = [];
   let inserted = false;
   for (const prev of existing) {
-    if (prev.name === 'Dimensional Key' || prev.id === 'ebw') {
-      if (inserted) continue;
-      for (const variant of DIMENSIONAL_KEY_VARIANTS) {
-        out.push({
-          ...prev,
-          id: variant.id,
-          name: variant.name,
-        });
-      }
-      inserted = true;
+    const id = String(prev.id || '');
+    const name = String(prev.name || '');
+    const isDim =
+      id === 'ebw' ||
+      id.startsWith('ebw-') ||
+      /^Dimensional Key\b/i.test(name) ||
+      DIMENSIONAL_KEY_VARIANTS.some((v) => v.base === name);
+    if (!isDim) {
+      out.push(prev);
       continue;
     }
-    if (DIMENSIONAL_KEY_VARIANTS.some((v) => v.id === prev.id || v.base === prev.name)) {
-      continue;
-    }
-    out.push(prev);
+    if (inserted) continue;
+    out.push({
+      ...prev,
+      id: 'ebw',
+      name: 'Dimensional Key',
+      modifiers: [],
+    });
+    inserted = true;
   }
   return out;
 }
@@ -450,11 +434,9 @@ async function generateCharms(outDir) {
     return 0;
   }
 
-  const existing = expandDimensionalKeyCatalog(existingRaw);
+  const existing = collapseDimensionalKeyCatalog(existingRaw);
   if (existing.length !== existingRaw.length) {
-    console.log(
-      `Expanded Dimensional Key → ${DIMENSIONAL_KEY_VARIANTS.map((v) => v.name).join(', ')}`
-    );
+    console.log('Collapsed Dimensional Key variants into a single catalog row');
   }
 
   console.log(`Refreshing ${existing.length} local charms from TSW...`);
@@ -476,6 +458,9 @@ async function generateCharms(outDir) {
         const next = stripCatalogInventoryFields(/** @type {Record<string, unknown>} */ ({ ...prev }));
         next.reqLevel = parsed.reqLevel;
         next.modifiers = parsed.modifiers.length ? parsed.modifiers : prev.modifiers;
+        if (next.id === 'ebw' || /^Dimensional Key\b/i.test(String(next.name || ''))) {
+          next.modifiers = [];
+        }
         if (parsed.classRestriction) next.classRestriction = parsed.classRestriction;
         else delete next.classRestriction;
         out.push(next);

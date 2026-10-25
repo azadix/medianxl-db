@@ -167,57 +167,12 @@
   },
   {
     "id": "ebw",
-    "name": "Dimensional Key - Arcana",
+    "name": "Dimensional Key",
     "keepInInventory": true,
     "rarity": "unique",
     "icon": "dimensionalkey",
     "reqLevel": 130,
-    "modifiers": [
-      "+5% Bonus to Spell Focus",
-      "+35% to Spell Damage",
-      "75% Magic Find"
-    ]
-  },
-  {
-    "id": "ebw-mandate",
-    "name": "Dimensional Key - Mandate",
-    "keepInInventory": true,
-    "rarity": "unique",
-    "icon": "dimensionalkey",
-    "reqLevel": 130,
-    "modifiers": [
-      "+100% to Summoned Minion Damage",
-      "Maximum Life and Mana +5%",
-      "75% Magic Find"
-    ]
-  },
-  {
-    "id": "ebw-onslaught",
-    "name": "Dimensional Key - Onslaught",
-    "keepInInventory": true,
-    "rarity": "unique",
-    "icon": "dimensionalkey",
-    "reqLevel": 130,
-    "modifiers": [
-      "5% Deadly Strike",
-      "Weapon Physical Damage +75%",
-      "75% Magic Find"
-    ]
-  },
-  {
-    "id": "ebw-primordia",
-    "name": "Dimensional Key - Primordia",
-    "keepInInventory": true,
-    "rarity": "unique",
-    "icon": "dimensionalkey",
-    "reqLevel": 130,
-    "modifiers": [
-      "Adds 100-200 Fire Damage",
-      "Adds 100-200 Lightning Damage",
-      "Adds 100-200 Cold Damage",
-      "16% Innate Elemental Damage",
-      "75% Magic Find"
-    ]
+    "modifiers": []
   },
   {
     "id": "|dc",

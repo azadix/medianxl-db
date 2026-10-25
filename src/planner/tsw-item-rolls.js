@@ -17,8 +17,14 @@ import {
   getParagonHammerConfig,
   hasCharmExtraAwakening,
   isCharmItem,
+  isDimensionalKeyCharm,
   isModifierPool,
 } from '@/items/charm-items.js';
+import {
+  isDimensionalKeyGeneratedStatLine,
+  isDimensionalKeyProgressLine,
+  parseDimensionalKeyRollsFromLines,
+} from '@/items/dimensional-key.js';
 import {
   stripTswBaseLabel,
   tswDescriptionColoredTexts,
@@ -696,6 +702,9 @@ export function extrasFromTswItem(row, def, setDumpCtx = null) {
     // "Wrist Blade (Sacred)" must not become an extra when type is "Wrist Blade (SSU)".
     if (skipStrippedBases.has(stripTswBaseLabel(text).toLowerCase())) continue;
     if (TSW_EXTRA_SKIP_RE.test(text)) continue;
+    if (isDimensionalKeyCharm(def) && (isDimensionalKeyProgressLine(text) || isDimensionalKeyGeneratedStatLine(def, text))) {
+      continue;
+    }
     // Socketed rune name dump (FelFelFelFalFal), even if socketables were omitted.
     if (isTswSocketedRuneDump(text)) continue;
     // Leftover `+N Required Level` / `Requirements +/-%` is the net TSW total.
@@ -836,6 +845,11 @@ export function rollsFromTswItem(row, def, className = null) {
           }
         }
       }
+    }
+
+    if (isDimensionalKeyCharm(def)) {
+      const nameBits = [row.display_name, row.item].filter(Boolean).map(String);
+      Object.assign(rolls, parseDimensionalKeyRollsFromLines(def, [...nameBits, ...lines]));
     }
 
     const paragon = getParagonHammerConfig(def);

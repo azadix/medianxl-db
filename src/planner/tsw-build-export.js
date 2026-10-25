@@ -5,7 +5,11 @@
 
 import Character from '@/character/Character.js';
 import { isAngelicItemDef } from '@/items/angelic-items.js';
-import { CHARM_ROLL_KEYS, isCharmItem } from '@/items/charm-items.js';
+import { CHARM_ROLL_KEYS, isCharmItem, isDimensionalKeyCharm } from '@/items/charm-items.js';
+import {
+  dimensionalKeyTswDisplayName,
+  dimensionalKeyTswProgressLines,
+} from '@/items/dimensional-key.js';
 import { applyCustomOverlayToDef } from '@/items/custom-items.js';
 import { pickItemIcon } from '@/items/item-icons.js';
 import { decodeModifierLine } from '@/items/item-modifier-line.js';
@@ -300,12 +304,16 @@ export function plannerItemToTswRow(def, inst, loc) {
   const catalogName = String(inst?.name || def.name || '').trim() || 'Item';
   const relic = isRelicItem(def);
   const charm = isCharmItem(def);
-  const displayName = relic ? tswRelicDisplayName(catalogName) : catalogName;
   const type = tswType(def, q.display_quality);
   const rolls =
     inst?.rolls && typeof inst.rolls === 'object' && Object.keys(inst.rolls).length
       ? inst.rolls
       : defaultRollsForDef(def);
+  const displayName = relic
+    ? tswRelicDisplayName(catalogName)
+    : charm && isDimensionalKeyCharm(def)
+      ? dimensionalKeyTswDisplayName(rolls)
+      : catalogName;
   const extras = Array.isArray(inst?.extras) ? inst.extras : [];
   const mysticOrbs = Array.isArray(inst?.mysticOrbs) ? inst.mysticOrbs : [];
   const socketables = Array.isArray(inst?.socketables) ? inst.socketables : [];
@@ -341,6 +349,11 @@ export function plannerItemToTswRow(def, inst, loc) {
     if (type) description_lines.push(seg(type, q.name_color === 2 ? 2 : 4));
     const restriction = tswClassRestriction(def.classRestriction);
     if (restriction) description_lines.push(seg(restriction, -1));
+  }
+  if (charm && isDimensionalKeyCharm(def)) {
+    for (const text of dimensionalKeyTswProgressLines(rolls)) {
+      description_lines.push(seg(text, 2));
+    }
   }
   for (const line of statLines) {
     const decoded = decodeModifierLine(line);

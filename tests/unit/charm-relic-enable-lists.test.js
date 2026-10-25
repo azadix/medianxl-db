@@ -353,34 +353,32 @@ describe('items store enable lists', () => {
     expect(store.relicCatalog.map((d) => d.id)).toEqual([relicA.id]);
   });
 
-  it('allows only one Dimensional Key enabled at a time', () => {
-    const arcana = {
+  it('loads a single Dimensional Key and remaps legacy variant catalog ids', () => {
+    const key = {
       id: 'ebw',
-      name: 'Dimensional Key - Arcana',
+      name: 'Dimensional Key',
       type: 'charm',
       category: 'charms',
       keepInInventory: true,
       rarity: 'unique',
     };
-    const mandate = {
-      id: 'ebw-mandate',
-      name: 'Dimensional Key - Mandate',
-      type: 'charm',
-      category: 'charms',
-      keepInInventory: true,
-      rarity: 'unique',
-    };
-    store.catalog = [charmA, arcana, mandate];
+    store.catalog = [charmA, key];
 
-    expect(store.toggleCharm(arcana.id, true)).toBe(true);
-    expect(store.toggleCharm(mandate.id, true)).toBe(true);
-    expect(store.isEnabled('charms', arcana.id)).toBe(false);
-    expect(store.isEnabled('charms', mandate.id)).toBe(true);
-
+    expect(store.toggleCharm(key.id, true)).toBe(true);
     const added = store.enableAllCharms();
     expect(added).toBe(1);
     expect(store.isEnabled('charms', charmA.id)).toBe(true);
-    expect(Object.keys(store.enabledCharms).filter((id) => id.startsWith('ebw'))).toHaveLength(1);
+    expect(Object.keys(store.enabledCharms).filter((id) => id === 'ebw')).toHaveLength(1);
+
+    store.fromSnapshot({
+      charms: [{ defId: 'ebw-mandate', rolls: { charmDimKeyLabs: 3 } }],
+    });
+    expect(store.enabledCharms.ebw).toBeTruthy();
+    expect(store.enabledCharms['ebw-mandate']).toBeFalsy();
+    expect(store.instances[store.enabledCharms.ebw]?.rolls).toMatchObject({
+      charmDimKeyVariant: 1,
+      charmDimKeyLabs: 3,
+    });
   });
 
   it('treats charms-only and relics-only snapshots as persistable', () => {

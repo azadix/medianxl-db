@@ -74,4 +74,4 @@ npm run generate:items -- charms 2.14
 
 Only `public/items/2_14/charms.json` is written.
 
-Dimensional Key is stored in TSW under unique base names (`Arcana`, `Mandate`, `Onslaught`, `Primordia`) and Nephalem upgraded forms. The charms generator expands the legacy single entry into four catalog rows named `Dimensional Key - …` and prefers Nephalem stats (combat bonuses). Only one Dimensional Key may be enabled at a time.
+Dimensional Key is stored in TSW under unique base names (`Arcana`, `Mandate`, `Onslaught`, `Primordia`) and Nephalem upgraded forms. The catalog keeps one `Dimensional Key` row; the planner picks the variant on the charm. Combat bonuses come from Star Chart pieces, Dream Fragments, labs (riftstones), End the Invasion, and Trial of the Nephalem.
