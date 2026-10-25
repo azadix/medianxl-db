@@ -46,7 +46,6 @@ describe('custom-item-builder', () => {
         invHeight: 2,
       },
     ];
-    store.catalogById = { cap: store.catalog[0] };
     const id = store.createCustomInstance('cap', 'magic');
     expect(id).toBeTruthy();
     store.updateInstanceCustom(id, {

@@ -283,65 +283,65 @@ onMounted(async () => {
           />
         </article>
         <div v-else class="speedcalc-tables">
-        <article class="speedcalc-panel speedcalc-table-card">
-          <header class="speedcalc-card-head">
-            <h2 class="speedcalc-card-title">Walk breakpoints</h2>
-            <p v-if="walkCurrent" class="speedcalc-card-hint">
-              Now {{ walkCurrent.frames }} frm
-              <span v-if="walkNext"> · next {{ walkNext.frames }} frm at {{ walkNext.value }}<span v-if="walkNext.extra != null"> (+{{ walkNext.extra }})</span></span>
-            </p>
-          </header>
-          <div class="speedcalc-table-wrap">
-            <table class="table is-narrow is-fullwidth speedcalc-table">
-              <thead>
-                <tr>
-                  <th>Frm</th>
-                  <th>Item speed</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr
-                  v-for="row in result.walkRows"
-                  :key="'w' + row.frames + '-' + row.value"
-                  :class="{ 'is-current': row.current }"
-                >
-                  <td class="speedcalc-frm">{{ row.frames }}</td>
-                  <td>{{ row.value }}<span v-if="row.extra != null" class="speedcalc-extra"> +{{ row.extra }}</span></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </article>
+          <article class="speedcalc-panel speedcalc-table-card">
+            <header class="speedcalc-card-head">
+              <h2 class="speedcalc-card-title">Walk breakpoints</h2>
+              <p v-if="walkCurrent" class="speedcalc-card-hint">
+                Now {{ walkCurrent.frames }} frm
+                <span v-if="walkNext"> · next {{ walkNext.frames }} frm at {{ walkNext.value }}<span v-if="walkNext.extra != null"> (+{{ walkNext.extra }})</span></span>
+              </p>
+            </header>
+            <div class="speedcalc-table-wrap">
+              <table class="table is-narrow is-fullwidth speedcalc-table">
+                <thead>
+                  <tr>
+                    <th>Frm</th>
+                    <th>Item speed</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    v-for="row in result.walkRows"
+                    :key="'w' + row.frames + '-' + row.value"
+                    :class="{ 'is-current': row.current }"
+                  >
+                    <td class="speedcalc-frm">{{ row.frames }}</td>
+                    <td>{{ row.value }}<span v-if="row.extra != null" class="speedcalc-extra"> +{{ row.extra }}</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
 
-        <article class="speedcalc-panel speedcalc-table-card">
-          <header class="speedcalc-card-head">
-            <h2 class="speedcalc-card-title">Sprint breakpoints</h2>
-            <p v-if="sprintCurrent" class="speedcalc-card-hint">
-              Now {{ sprintCurrent.frames }} frm
-              <span v-if="sprintNext"> · next {{ sprintNext.frames }} frm at {{ sprintNext.value }}<span v-if="sprintNext.extra != null"> (+{{ sprintNext.extra }})</span></span>
-            </p>
-          </header>
-          <div class="speedcalc-table-wrap">
-            <table class="table is-narrow is-fullwidth speedcalc-table">
-              <thead>
-                <tr>
-                  <th>Frm</th>
-                  <th>Item speed</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr
-                  v-for="row in result.sprintRows"
-                  :key="'s' + row.frames + '-' + row.value"
-                  :class="{ 'is-current': row.current }"
-                >
-                  <td class="speedcalc-frm">{{ row.frames }}</td>
-                  <td>{{ row.value }}<span v-if="row.extra != null" class="speedcalc-extra"> +{{ row.extra }}</span></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </article>
+          <article class="speedcalc-panel speedcalc-table-card">
+            <header class="speedcalc-card-head">
+              <h2 class="speedcalc-card-title">Sprint breakpoints</h2>
+              <p v-if="sprintCurrent" class="speedcalc-card-hint">
+                Now {{ sprintCurrent.frames }} frm
+                <span v-if="sprintNext"> · next {{ sprintNext.frames }} frm at {{ sprintNext.value }}<span v-if="sprintNext.extra != null"> (+{{ sprintNext.extra }})</span></span>
+              </p>
+            </header>
+            <div class="speedcalc-table-wrap">
+              <table class="table is-narrow is-fullwidth speedcalc-table">
+                <thead>
+                  <tr>
+                    <th>Frm</th>
+                    <th>Item speed</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    v-for="row in result.sprintRows"
+                    :key="'s' + row.frames + '-' + row.value"
+                    :class="{ 'is-current': row.current }"
+                  >
+                    <td class="speedcalc-frm">{{ row.frames }}</td>
+                    <td>{{ row.value }}<span v-if="row.extra != null" class="speedcalc-extra"> +{{ row.extra }}</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
         </div>
       </div>
 
