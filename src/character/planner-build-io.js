@@ -188,7 +188,9 @@ export function getOSkillsForBuildExport() {
   /** @type {Record<string, number>} */
   const out = {};
   for (const row of characterInstance.oSkills || []) {
-    const level = Character.clampOSkillPoints(row?.points ?? 0);
+    const hard = Character.clampOSkillPoints(row?.points ?? 0);
+    const item = Character.clampOSkillPoints(row?.itemPoints ?? 0);
+    const level = hard + item;
     if (level <= 0) continue;
     let cat = null;
     if (row.skillName) cat = store?.catalog?.find((c) => c.id === row.skillName) ?? null;

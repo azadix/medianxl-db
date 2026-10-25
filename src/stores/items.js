@@ -36,6 +36,11 @@ import {
 } from '@/items/inventory-placement.js';
 import { pickItemIcon } from '@/items/item-icons.js';
 import {
+  EQUIPMENT_TO_TSW_SLOT,
+  syncStoreInstanceTswRow,
+  syncStoreTswRows,
+} from '@/planner/tsw-build-export.js';
+import {
   charmMeetsLevel,
   getCharmRequiredLevel,
   getCharmUpgradeEntries,
@@ -217,26 +222,28 @@ async function fetchCatalogFile(url) {
  *   shrine?: string,
  *   mechanics?: Record<string, number>,
  *   randomElement?: string,
- *   name?: string,
- * }} ItemInstance
- * @typedef {{
- *   defId: string,
- *   icon?: string,
- *   rolls?: Record<string, number>,
- *   custom?: CustomItemPayload,
- *   extras?: string[],
- *   mysticOrbs?: Array<[number, string]>,
- *   socketables?: import('@/items/socketables.js').SocketableEntry[],
- *   ethereal?: boolean,
- *   corrupted?: boolean,
- *   oil?: string,
- *   corruptions?: string[],
- *   blessing?: string,
- *   shrine?: string,
- *   mechanics?: Record<string, number>,
- *   randomElement?: string,
- *   name?: string,
- * }} ItemSnapshotEntry
+   *   name?: string,
+   *   tswRow?: object,
+   * }} ItemInstance
+   * @typedef {{
+   *   defId: string,
+   *   icon?: string,
+   *   rolls?: Record<string, number>,
+   *   custom?: CustomItemPayload,
+   *   extras?: string[],
+   *   mysticOrbs?: Array<[number, string]>,
+   *   socketables?: import('@/items/socketables.js').SocketableEntry[],
+   *   ethereal?: boolean,
+   *   corrupted?: boolean,
+   *   oil?: string,
+   *   corruptions?: string[],
+   *   blessing?: string,
+   *   shrine?: string,
+   *   mechanics?: Record<string, number>,
+   *   randomElement?: string,
+   *   name?: string,
+   *   tswRow?: object,
+   * }} ItemSnapshotEntry
  * @typedef {{
  *   weaponSet: 0|1,
  *   equipment: Record<string, string|ItemSnapshotEntry|null>,
@@ -286,6 +293,19 @@ function parseMysticOrbsList(raw) {
  */
 function parseSocketablesList(raw) {
   return normalizeSocketables(raw);
+}
+
+/**
+ * @param {unknown} raw
+ * @returns {object|null}
+ */
+function cloneTswRow(raw) {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+  try {
+    return JSON.parse(JSON.stringify(raw));
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -351,6 +371,9 @@ function applyInstanceMeta(inst, meta) {
   const name = meta.name != null ? String(meta.name).trim() : '';
   if (name) inst.name = name;
   else delete inst.name;
+  const tswRow = cloneTswRow(meta.tswRow);
+  if (tswRow) inst.tswRow = tswRow;
+  else delete inst.tswRow;
 }
 
 /**
@@ -386,7 +409,7 @@ function buildCatalogByIdMap(catalog, runtimeOverlayDefs) {
   return map;
 }
 
-function snapshotInstanceEntry(inst) {
+function snapshotInstanceEntry(inst, loc = null) {
   const defId = inst?.defId;
   if (!defId) return null;
   const hasIcon = Boolean(inst.icon);
@@ -420,7 +443,8 @@ function snapshotInstanceEntry(inst) {
     !shrine &&
     !mechanics &&
     !randomElement &&
-    !name
+    !name &&
+    !inst.tswRow
   ) {
     return defId;
   }
@@ -441,6 +465,12 @@ function snapshotInstanceEntry(inst) {
   if (mechanics && Object.keys(mechanics).length) entry.mechanics = mechanics;
   if (randomElement) entry.randomElement = randomElement;
   if (name) entry.name = name;
+  const tswRow = cloneTswRow(inst.tswRow);
+  if (tswRow) {
+    entry.tswRow = loc
+      ? { ...tswRow, location: loc.location, slot: loc.slot }
+      : tswRow;
+  }
   return entry;
 }
 
@@ -1229,7 +1259,15 @@ export const useItemsStore = defineStore('items', {
       if (parsedCustom) inst.custom = parsedCustom;
       applyInstanceMeta(inst, meta);
       this.instances[id] = inst;
+      this.syncTswRow(id);
       return id;
+    },
+
+    /**
+     * @param {number} instanceId
+     */
+    syncTswRow(instanceId) {
+      syncStoreInstanceTswRow(this, instanceId);
     },
 
     /**
@@ -1363,6 +1401,7 @@ export const useItemsStore = defineStore('items', {
         Object.values(this.enabledCharms).includes(instanceId) ||
         Object.values(this.enabledRelics).includes(instanceId);
       if (active) this.syncCharacterToItemReqs();
+      this.syncTswRow(instanceId);
       return true;
     },
 
@@ -1385,6 +1424,7 @@ export const useItemsStore = defineStore('items', {
         Object.values(this.enabledCharms).includes(instanceId) ||
         Object.values(this.enabledRelics).includes(instanceId);
       if (active) this.syncCharacterToItemReqs();
+      this.syncTswRow(instanceId);
       return true;
     },
 
@@ -1438,6 +1478,7 @@ export const useItemsStore = defineStore('items', {
         Object.values(this.enabledCharms).includes(instanceId) ||
         Object.values(this.enabledRelics).includes(instanceId);
       if (active) this.syncCharacterToItemReqs();
+      this.syncTswRow(instanceId);
       return true;
     },
 
@@ -1470,6 +1511,7 @@ export const useItemsStore = defineStore('items', {
       if (next) inst.oil = next;
       else delete inst.oil;
       this.syncInstanceUpgradeFlags(instanceId);
+      this.syncTswRow(instanceId);
       return true;
     },
 
@@ -1484,6 +1526,7 @@ export const useItemsStore = defineStore('items', {
       if (next.length) inst.corruptions = next;
       else delete inst.corruptions;
       this.syncInstanceUpgradeFlags(instanceId);
+      this.syncTswRow(instanceId);
       return true;
     },
 
@@ -1497,6 +1540,7 @@ export const useItemsStore = defineStore('items', {
       const next = String(blessing || '').trim();
       if (next) inst.blessing = next;
       else delete inst.blessing;
+      this.syncTswRow(instanceId);
       return true;
     },
 
@@ -1510,6 +1554,7 @@ export const useItemsStore = defineStore('items', {
       const next = String(shrine || '').trim();
       if (next) inst.shrine = next;
       else delete inst.shrine;
+      this.syncTswRow(instanceId);
       return true;
     },
 
@@ -1525,6 +1570,7 @@ export const useItemsStore = defineStore('items', {
       } else {
         delete inst.mechanics;
       }
+      this.syncTswRow(instanceId);
       return true;
     },
 
@@ -1538,6 +1584,7 @@ export const useItemsStore = defineStore('items', {
       const next = normalizeRandomElement(element);
       if (next) inst.randomElement = next;
       else delete inst.randomElement;
+      this.syncTswRow(instanceId);
       return true;
     },
 
@@ -1554,6 +1601,7 @@ export const useItemsStore = defineStore('items', {
       if (!ethereal && flags.etherealForced) return false;
       if (ethereal) inst.ethereal = true;
       else delete inst.ethereal;
+      this.syncTswRow(instanceId);
       return true;
     },
 
@@ -1569,6 +1617,7 @@ export const useItemsStore = defineStore('items', {
       if (parsed) next.custom = parsed;
       else delete next.custom;
       this.instances = { ...this.instances, [instanceId]: next };
+      this.syncTswRow(instanceId);
       return true;
     },
 
@@ -2134,6 +2183,7 @@ export const useItemsStore = defineStore('items', {
         this.equipment[slot] = id;
         if (prev != null) this.destroyInstanceIfOrphaned(prev);
         this.editingInstanceId = id;
+        this.syncTswRow(id);
         this.syncCharacterToItemReqs();
         return true;
       }
@@ -2290,6 +2340,7 @@ export const useItemsStore = defineStore('items', {
         }
 
         this.equipment[toSlot] = fromId;
+        this.syncTswRow(fromId);
         this.syncCharacterToItemReqs();
         return true;
       }
@@ -2374,7 +2425,10 @@ export const useItemsStore = defineStore('items', {
           equipment[slot] = null;
           continue;
         }
-        equipment[slot] = snapshotInstanceEntry(this.instances[id]);
+        equipment[slot] = snapshotInstanceEntry(this.instances[id], {
+          location: 'Gear',
+          slot: EQUIPMENT_TO_TSW_SLOT[slot] || null,
+        });
       }
       /** @type {Array<{ slot: number, defId: string, icon?: string, rolls?: Record<string, number> }>} */
       const inventory = [];
@@ -2409,6 +2463,10 @@ export const useItemsStore = defineStore('items', {
           /** @type {{ defId: string, rolls?: Record<string, number> }} */
           const row = { defId };
           if (inst.rolls && Object.keys(inst.rolls).length) row.rolls = { ...inst.rolls };
+          const tswRow = cloneTswRow(inst.tswRow);
+          if (tswRow) {
+            row.tswRow = { ...tswRow, location: 'Inventory', slot: null };
+          }
           out.push(row);
         }
         return out;
@@ -2554,6 +2612,8 @@ export const useItemsStore = defineStore('items', {
         let randomElementRaw = null;
         /** @type {unknown} */
         let nameRaw = null;
+        /** @type {unknown} */
+        let tswRowRaw = null;
         if (typeof entry === 'string') {
           defId = entry;
         } else if (entry && typeof entry === 'object') {
@@ -2574,6 +2634,7 @@ export const useItemsStore = defineStore('items', {
           mechanicsRaw = rec.mechanics;
           randomElementRaw = rec.randomElement;
           nameRaw = rec.name;
+          tswRowRaw = rec.tswRow;
         } else {
           return null;
         }
@@ -2616,6 +2677,7 @@ export const useItemsStore = defineStore('items', {
               : null,
           randomElement: normalizeRandomElement(randomElementRaw),
           name: typeof nameRaw === 'string' ? nameRaw.trim() : null,
+          tswRow: cloneTswRow(tswRowRaw),
         };
       };
 
@@ -2632,6 +2694,7 @@ export const useItemsStore = defineStore('items', {
           extras: parsed.extras,
           mysticOrbs: parsed.mysticOrbs,
           socketables: parsed.socketables,
+          tswRow: parsed.tswRow,
         };
         if (kind === 'charms') {
           if (!isCharmItem(def) || nextEnabledCharms[parsed.defId] != null) return;
@@ -2685,6 +2748,7 @@ export const useItemsStore = defineStore('items', {
                 mechanics: parsed.mechanics,
                 randomElement: parsed.randomElement,
                 name: parsed.name,
+                tswRow: parsed.tswRow,
               }
             );
           }
@@ -2739,6 +2803,7 @@ export const useItemsStore = defineStore('items', {
               mechanics: parsed.mechanics,
               randomElement: parsed.randomElement,
               name: parsed.name,
+              tswRow: parsed.tswRow,
             });
             if (canPlace(nextInventory, slot, def.invWidth || 1, def.invHeight || 1, getSize)) {
               nextInventory = placeAt(nextInventory, slot, id, getSize);
@@ -2776,6 +2841,7 @@ export const useItemsStore = defineStore('items', {
         result.disabledCharms = disabled.charms;
         result.disabledRelics = disabled.relics;
         result.unmetGear = this.listUnmetEquippedItems();
+        syncStoreTswRows(this, { rewrite: false });
       } finally {
         skipItemReqLevelSync = prevSkip;
       }

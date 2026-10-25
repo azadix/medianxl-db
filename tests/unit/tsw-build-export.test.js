@@ -1,11 +1,18 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
+import Character from '@/character/Character.js';
+import { getOSkillsForBuildExport } from '@/character/planner-build-io.js';
+import { setCharacterInstance } from '@/character/planner-instance.js';
+import { CHARM_ROLL_KEYS } from '@/items/charm-items.js';
+import * as skillDataStore from '@/shared/skill-data-store.js';
 import { useItemsStore } from '@/stores/items.js';
 import { isTswEnvelope, mapTswItemsToSnapshot } from '@/planner/tsw-build-import.js';
 import {
   plannerItemToTswRow,
   savedBuildName,
   setSavedBuildName,
+  tswRelicDisplayName,
+  tswStatsText,
   wrapPlannerBuildForTswExport,
 } from '@/planner/tsw-build-export.js';
 
@@ -75,5 +82,170 @@ describe('tsw build export', () => {
     expect(savedBuildName(envelope)).toBe('Test');
     setSavedBuildName(envelope, 'Renamed');
     expect(savedBuildName(envelope)).toBe('Renamed');
+    expect(envelope.build.spentPoints).toBeUndefined();
+    expect(envelope.build.questCompletionOptOut).toBeUndefined();
+  });
+
+  it('emits TSW quest objects and strips mirrored current pool stats', () => {
+    const envelope = wrapPlannerBuildForTswExport({
+      name: 'Q',
+      class: 'Druid',
+      level: 150,
+      skillPoints: {},
+      oSkills: { Teleport: 12 },
+      allSkillsBonus: 1,
+      stats: '{{life}}=10\n{{current_life}}=10\n{{mana}}=4\n{{current_mana}}=3',
+      questsCompleted: { den_of_evil: [1, 1, 1] },
+      spentPoints: 99,
+      classSkillsBonus: 20,
+    });
+    expect(envelope.build.questsCompleted.den_of_evil).toEqual({
+      normal: true,
+      nightmare: true,
+      hell: true,
+    });
+    expect(envelope.build.spentPoints).toBeUndefined();
+    expect(envelope.build.classSkillsBonus).toBeUndefined();
+    expect(envelope.build.stats).toBe('{{life}}=10\n{{mana}}=4\n{{current_mana}}=3');
   });
 });
+
+function descTexts(row) {
+  return (row.description_lines || []).map((line) =>
+    Array.isArray(line) ? line.map((seg) => (Array.isArray(seg) ? seg[0] : String(seg))).join('') : String(line)
+  );
+}
+
+const horazon = {
+  id: 'cm:horazon',
+  name: "Horazon's Focus",
+  category: 'charms',
+  rarity: 'unique',
+  keepInInventory: true,
+  reqLevel: 80,
+  modifiers: ['+(3 to 5)% Life stolen per Hit', '+(21 to 25) to all Attributes'],
+  trophy: ['+1 to All Skills'],
+};
+
+const relicHb = {
+  id: 'relic:hunting-banshee',
+  name: 'Relic (Hunting Banshee)',
+  category: 'relics',
+  rarity: 'relic',
+  keepInInventory: true,
+  modifiers: ['+1 to Hunting Banshee'],
+};
+
+describe('canonical TSW item rows', () => {
+  it('keeps ranged charm affixes and TSW inventory header', () => {
+    const row = plannerItemToTswRow(
+      horazon,
+      { rolls: { [`${CHARM_ROLL_KEYS.affixPrefix}base:m0:r0`]: 4, [`${CHARM_ROLL_KEYS.affixPrefix}base:m1:r0`]: 21 } },
+      { location: 'Inventory', slot: null }
+    );
+    const texts = descTexts(row);
+    expect(texts).toContain('Keep in Inventory to Gain Bonus');
+    expect(texts.some((t) => /Life stolen per Hit/i.test(t))).toBe(true);
+    expect(texts.some((t) => /to all Attributes/i.test(t))).toBe(true);
+    expect(texts).not.toContain('Charm');
+    expect(texts.some((t) => t.startsWith('[Upgrade]'))).toBe(false);
+  });
+
+  it('sets relic display names, trophy, and upgrade flags', () => {
+    expect(tswRelicDisplayName('Relic (Hunting Banshee)')).toBe('Relic: Hunting Banshee');
+    const relicRow = plannerItemToTswRow(relicHb, {}, { location: 'Inventory', slot: null });
+    expect(relicRow.item).toBe('Relic');
+    expect(relicRow.display_name).toBe('Relic: Hunting Banshee');
+    const trophyRow = plannerItemToTswRow(
+      horazon,
+      { rolls: { [CHARM_ROLL_KEYS.trophy]: 1, [`${CHARM_ROLL_KEYS.upgradePrefix}0`]: 1 } },
+      { location: 'Inventory', slot: null }
+    );
+    expect(trophyRow.has_trophy).toBe(true);
+    expect(trophyRow.is_upgraded).toBe(true);
+    expect(descTexts(trophyRow).some((t) => t.startsWith('[Trophy]'))).toBe(false);
+  });
+
+  it('scratch charm rows match imported-then-normalized shape', () => {
+    setActivePinia(createPinia());
+    const store = useItemsStore();
+    store.catalog = [horazon];
+    store.catalogLoaded = true;
+    const scratch = plannerItemToTswRow(horazon, {}, { location: 'Inventory', slot: null });
+    const { snapshot } = mapTswItemsToSnapshot([scratch], store, 'Druid');
+    store.fromSnapshot(snapshot);
+    const id = store.enabledCharms[horazon.id];
+    const live = store.instances[id].tswRow;
+    expect(live.type).toBe(scratch.type);
+    expect(live.quality).toBe(scratch.quality);
+    expect(live.display_quality).toBe(scratch.display_quality);
+    expect(live.is_charm).toBe(true);
+    expect(descTexts(live)).toContain('Keep in Inventory to Gain Bonus');
+    expect(Object.keys(live).sort()).toEqual(Object.keys(scratch).sort());
+  });
+
+  it('keeps socketable mods off the parent description', () => {
+    const row = plannerItemToTswRow(
+      helm,
+      {
+        socketables: [
+          { name: 'Jewel', type: 'Jewel', quality: 'Crafted', modifiers: ['+50% Enhanced Damage'] },
+        ],
+      },
+      { location: 'Gear', slot: 'Torso' }
+    );
+    expect(descTexts(row).some((t) => /Enhanced Damage/.test(t) && !/Enhanced Defense/.test(t))).toBe(false);
+    expect(row.socketables).toHaveLength(1);
+    expect(row.socketables[0].name).toBe('Jewel');
+  });
+});
+
+describe('live tswRow on instances', () => {
+  afterEach(() => {
+    setCharacterInstance(null);
+  });
+
+  it('stores tswRow on create, updates on roll edit, and snapshot round-trips it', () => {
+    setActivePinia(createPinia());
+    setCharacterInstance(new Character('Druid', 150));
+    const store = useItemsStore();
+    store.catalog = [horazon];
+    store.catalogLoaded = true;
+    expect(store.toggleCharm(horazon.id, true)).toBe(true);
+    const id = store.enabledCharms[horazon.id];
+    expect(store.instances[id].tswRow.display_name).toBe("Horazon's Focus");
+    expect(descTexts(store.instances[id].tswRow)).toContain('Keep in Inventory to Gain Bonus');
+    store.updateInstanceRolls(id, { [CHARM_ROLL_KEYS.trophy]: 1 });
+    expect(store.instances[id].tswRow.has_trophy).toBe(true);
+    const snap = store.toSnapshot();
+    expect(snap.charms[0].tswRow.has_trophy).toBe(true);
+    store.fromSnapshot({ equipment: {}, charms: [], relics: [] });
+    store.fromSnapshot(snap);
+    const id2 = store.enabledCharms[horazon.id];
+    expect(store.instances[id2].tswRow.has_trophy).toBe(true);
+  });
+});
+
+describe('tsw oSkill export totals', () => {
+  afterEach(() => {
+    setCharacterInstance(null);
+    vi.restoreAllMocks();
+  });
+
+  it('includes item-granted oSkill points', () => {
+    vi.spyOn(skillDataStore, 'getFileSkillStore').mockReturnValue({
+      catalog: [{ id: 'teleport', displayName: 'Teleport', class: 'Sorceress', image: 'tp' }],
+    });
+    const ch = new Character('Druid', 150);
+    ch.oSkills = [{ skillName: 'teleport', displayName: 'Teleport', points: 1, itemPoints: 11, slotId: 's1' }];
+    setCharacterInstance(ch);
+    expect(getOSkillsForBuildExport()).toEqual({ Teleport: 12 });
+  });
+});
+
+describe('tswStatsText', () => {
+  it('drops current pools that match max', () => {
+    expect(tswStatsText('{{life}}=10\n{{current_life}}=10\n{{mana}}=2')).toBe('{{life}}=10\n{{mana}}=2');
+  });
+});
+

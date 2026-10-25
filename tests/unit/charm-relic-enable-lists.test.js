@@ -262,7 +262,9 @@ describe('items store enable lists', () => {
     store.updateInstanceRolls(id, { charmTrophy: 1 });
 
     const snap = store.toSnapshot();
-    expect(snap.charms).toEqual([{ defId: charmA.id, rolls: { charmTrophy: 1 } }]);
+    expect(snap.charms[0].defId).toBe(charmA.id);
+    expect(snap.charms[0].rolls).toEqual({ charmTrophy: 1 });
+    expect(snap.charms[0].tswRow?.has_trophy).toBe(true);
     expect(snap.relics.map((r) => r.defId)).toEqual([relicA.id]);
 
     store.resetItems();
