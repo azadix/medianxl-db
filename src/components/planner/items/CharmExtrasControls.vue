@@ -21,17 +21,16 @@ import WormholeCyclesControls from './WormholeCyclesControls.vue';
 import { isCorruptedWormhole } from '@/items/wormhole-cycles.js';
 import {
   DIM_KEY_DREAM_COUNT,
-  DIM_KEY_DREAM_POINTS,
   DIM_KEY_LAB_MAGIC_FIND,
   DIM_KEY_LAB_MAX,
   DIM_KEY_ROLL_KEYS,
   DIM_KEY_STAR_COUNT,
-  DIM_KEY_STAR_POINTS,
   DIM_KEY_VARIANT_IDS,
   DIM_KEY_VARIANT_LABELS,
   dimensionalKeyTrialsReadyForNephalem,
   dimensionalKeyVariantIndex,
   dimKeyPieceRollKey,
+  getDimensionalKeyLabs,
   getDimensionalKeyVariant,
   getDimensionalKeyVariantId,
 } from '@/items/dimensional-key.js';
@@ -63,7 +62,12 @@ const dimKeyVariantId = computed(() => getDimensionalKeyVariantId(props.rolls));
 const dimKeyNephalemReady = computed(() => dimensionalKeyTrialsReadyForNephalem(props.rolls));
 const dimKeyStars = Array.from({ length: DIM_KEY_STAR_COUNT }, (_, i) => i + 1);
 const dimKeyDreams = Array.from({ length: DIM_KEY_DREAM_COUNT }, (_, i) => i + 1);
-const dimKeyLabOptions = Array.from({ length: DIM_KEY_LAB_MAX + 1 }, (_, i) => i);
+const dimKeyLabs = computed(() => getDimensionalKeyLabs(props.rolls));
+const dimKeyLabsLabel = computed(() => {
+  const n = dimKeyLabs.value;
+  if (n <= 0) return 'None';
+  return `T${n}  +${DIM_KEY_LAB_MAGIC_FIND[n]}% Magic Find`;
+});
 
 /**
  * @param {Record<string, number>} patch
@@ -244,14 +248,17 @@ function setDimKeyVariant(id) {
         <label
           v-for="n in dimKeyStars"
           :key="'star-' + n"
-          class="checkbox charm-extras-controls__piece"
+          class="charm-extras-controls__piece"
+          :class="{ 'is-on': Boolean(rolls[dimKeyPieceRollKey(DIM_KEY_ROLL_KEYS.starPrefix, n)]) }"
         >
           <input
             type="checkbox"
+            class="is-sr-only"
             :checked="Boolean(rolls[dimKeyPieceRollKey(DIM_KEY_ROLL_KEYS.starPrefix, n)])"
+            :aria-label="'Star Chart ' + n"
             @change="setDimKeyPiece(DIM_KEY_ROLL_KEYS.starPrefix, n, $event.target.checked)"
           />
-          {{ n }} +{{ DIM_KEY_STAR_POINTS[n - 1] }}
+          <span class="charm-extras-controls__piece-n">{{ n }}</span>
         </label>
       </div>
       <p class="is-size-7 has-text-grey mb-2 mt-2">Dream Fragments</p>
@@ -259,29 +266,34 @@ function setDimKeyVariant(id) {
         <label
           v-for="n in dimKeyDreams"
           :key="'dream-' + n"
-          class="checkbox charm-extras-controls__piece"
+          class="charm-extras-controls__piece"
+          :class="{ 'is-on': Boolean(rolls[dimKeyPieceRollKey(DIM_KEY_ROLL_KEYS.dreamPrefix, n)]) }"
         >
           <input
             type="checkbox"
+            class="is-sr-only"
             :checked="Boolean(rolls[dimKeyPieceRollKey(DIM_KEY_ROLL_KEYS.dreamPrefix, n)])"
+            :aria-label="'Dream Fragment ' + n"
             @change="setDimKeyPiece(DIM_KEY_ROLL_KEYS.dreamPrefix, n, $event.target.checked)"
           />
-          {{ n }} +{{ DIM_KEY_DREAM_POINTS[n - 1] }}
+          <span class="charm-extras-controls__piece-n">{{ n }}</span>
         </label>
       </div>
-      <div class="charm-extras-controls__pool mt-2">
-        <label class="label is-size-7 mb-1">Labs added</label>
-        <div class="select is-small is-fullwidth">
-          <select
-            :value="rolls[DIM_KEY_ROLL_KEYS.labs] ?? 0"
-            @change="setDimKeyLabs(Number($event.target.value))"
-          >
-            <option v-for="lab in dimKeyLabOptions" :key="'lab-' + lab" :value="lab">
-              <template v-if="lab === 0">None</template>
-              <template v-else>T{{ lab }} +{{ DIM_KEY_LAB_MAGIC_FIND[lab] }}% Magic Find</template>
-            </option>
-          </select>
+      <div class="charm-extras-controls__labs mt-2">
+        <div class="charm-extras-controls__labs-head">
+          <label class="label is-size-7 mb-0" for="dim-key-labs">Labs added</label>
+          <span class="charm-extras-controls__labs-value is-size-7">{{ dimKeyLabsLabel }}</span>
         </div>
+        <input
+          id="dim-key-labs"
+          class="item-picker-modal__roll-slider"
+          type="range"
+          min="0"
+          :max="DIM_KEY_LAB_MAX"
+          step="1"
+          :value="dimKeyLabs"
+          @input="setDimKeyLabs(Number($event.target.value))"
+        />
       </div>
       <label class="checkbox charm-extras-controls__check mt-2">
         <input
@@ -514,14 +526,63 @@ function setDimKeyVariant(id) {
 .charm-extras-controls__pieces {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem 0.85rem;
+  gap: 0.3rem;
+}
+
+.is-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .charm-extras-controls__piece {
+  position: relative;
   display: flex;
+  flex: 0 0 1.9rem;
   align-items: center;
-  gap: 0.35rem;
-  font-size: 0.8rem;
+  justify-content: center;
+  margin: 0;
+  padding: 0.28rem 0;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.03);
+  cursor: pointer;
+  user-select: none;
+}
+
+.charm-extras-controls__piece:hover {
+  border-color: rgba(122, 156, 255, 0.55);
+}
+
+.charm-extras-controls__piece.is-on {
+  border-color: #7a9cff;
+  background: rgba(122, 156, 255, 0.18);
+}
+
+.charm-extras-controls__piece-n {
+  pointer-events: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1.15;
+}
+
+.charm-extras-controls__labs-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.charm-extras-controls__labs-value {
+  color: rgba(255, 255, 255, 0.75);
+  white-space: nowrap;
 }
 
 .charm-extras-controls__check {
