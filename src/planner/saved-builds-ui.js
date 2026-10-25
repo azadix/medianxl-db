@@ -37,7 +37,7 @@ import {
 import { findMissingCharmSkillUnlocks } from '@/items/charm-skill-unlocks.js';
 import { isCharmItem } from '@/items/charm-items.js';
 import { getSelectedConditionKeys, setCondition as setPlannerCondition } from '@/stores/planner-config-store.js';
-import { useItemsStore, itemsSnapshotHasState } from '@/stores/items.js';
+import { useItemsStore } from '@/stores/items.js';
 import { getPlannerAutoMatchHighestStatRequirements } from '@/planner/planner-options.js';
 import { syncPlannerCharacterStatsTextareaFromCharacter, refreshPlannerStatsPanelFromCharacter } from '@/character/planner-stats-panel.js';
 import {
@@ -1203,15 +1203,7 @@ export function buildCurrentBuildSnapshot(name) {
     } catch {
         // ignore
     }
-  try {
-    const itemsStore = useItemsStore();
-    const itemsSnap = itemsStore.toSnapshot();
-    if (itemsSnapshotHasState(itemsSnap)) {
-      snap.items = itemsSnap;
-    }
-  } catch {
-    // ignore
-  }
+  // Items come from the live store in wrapPlannerBuildForTswExport (skip toSnapshot clone).
   if (Character.isDefaultQuestState(getCharacterLevel(), snap.questsCompleted, snap.questCompletionOptOut)) {
     delete snap.questsCompleted;
     delete snap.questCompletionOptOut;

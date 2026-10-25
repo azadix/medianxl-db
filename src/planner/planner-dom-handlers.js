@@ -397,33 +397,41 @@ export function showExportBuildNameModal(opts) {
                 className: 'button is-link is-outlined',
                 onClick(name, closeModal) {
                     closeModal();
-                    downloadCurrentBuildAsJson(name);
+                    setTimeout(() => {
+                        downloadCurrentBuildAsJson(name);
+                    }, 0);
                 },
             },
             {
                 text: 'Share link',
                 iconClass: 'fa-link',
                 className: 'button is-info is-outlined',
-                async onClick(name, closeModal) {
+                onClick(name, closeModal) {
                     closeModal();
-                    const envelope = wrapPlannerBuildForTswExport(
-                        buildCurrentBuildSnapshot(name),
-                        useItemsStore()
-                    );
-                    const encoded = await compressBuildToUrlParam(JSON.stringify(envelope));
-                    setBuildUrlParam(encoded);
-                    const shareUrl = window.location.href;
-                    if (navigator.clipboard && window.isSecureContext) {
-                        navigator.clipboard.writeText(shareUrl)
-                            .then(() => toastManager.showToast('Share link copied to clipboard!', true, 'success'))
-                            .catch(() => fallbackCopyToClipboard(shareUrl, 'share link'));
-                    } else {
-                        fallbackCopyToClipboard(shareUrl, 'share link');
-                    }
+                    setTimeout(() => {
+                        void shareCurrentBuildLink(name);
+                    }, 0);
                 },
             },
         ],
     });
+}
+
+async function shareCurrentBuildLink(name) {
+    const envelope = wrapPlannerBuildForTswExport(
+        buildCurrentBuildSnapshot(name),
+        useItemsStore()
+    );
+    const encoded = await compressBuildToUrlParam(JSON.stringify(envelope));
+    setBuildUrlParam(encoded);
+    const shareUrl = window.location.href;
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(shareUrl)
+            .then(() => toastManager.showToast('Share link copied to clipboard!', true, 'success'))
+            .catch(() => fallbackCopyToClipboard(shareUrl, 'share link'));
+    } else {
+        fallbackCopyToClipboard(shareUrl, 'share link');
+    }
 }
 
 export function plannerExportBuildClick() {
@@ -432,14 +440,16 @@ export function plannerExportBuildClick() {
     }
     showExportBuildNameModal({
         onConfirm(name) {
-            const envelope = wrapPlannerBuildForTswExport(
-                buildCurrentBuildSnapshot(name),
-                useItemsStore()
-            );
-            exportBuildJsonString(
-                JSON.stringify(envelope),
-                exportLabelForToast(tswExportLabel(envelope) || name)
-            );
+            setTimeout(() => {
+                const envelope = wrapPlannerBuildForTswExport(
+                    buildCurrentBuildSnapshot(name),
+                    useItemsStore()
+                );
+                exportBuildJsonString(
+                    JSON.stringify(envelope),
+                    exportLabelForToast(tswExportLabel(envelope) || name)
+                );
+            }, 0);
         },
     });
 }

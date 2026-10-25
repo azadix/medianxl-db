@@ -492,6 +492,7 @@ describe('item catalog version reload', () => {
   });
 
   it('keeps required catalog items when unique-stats JSON is invalid', async () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
     vi.spyOn(versionConfig, 'getCurrentVersion').mockReturnValue({ major: 2, minor: 14 });
     vi.spyOn(utils, 'getAssetUrl').mockImplementation((p) => `http://local/${p}`);
 
@@ -525,6 +526,7 @@ describe('item catalog version reload', () => {
   });
 
   it('does not stick an empty catalog after a required-file failure', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
     vi.spyOn(versionConfig, 'getCurrentVersion').mockReturnValue({ major: 2, minor: 14 });
     vi.spyOn(utils, 'getAssetUrl').mockImplementation((p) => `http://local/${p}`);
 

@@ -3,6 +3,7 @@
  * @module planner/tsw-build-export
  */
 
+import { toRaw } from 'vue';
 import Character from '@/character/Character.js';
 import { isAngelicItemDef } from '@/items/angelic-items.js';
 import { CHARM_ROLL_KEYS, isCharmItem, isDimensionalKeyCharm } from '@/items/charm-items.js';
@@ -21,6 +22,42 @@ import { isRunewordItem } from '@/items/runeword-items.js';
 import { EQUIPMENT_SLOTS } from '@/items/item-types.js';
 import { resolveItemRequirements } from '@/items/item-requirements.js';
 import { isTswEnvelope, TSW_SLOT_TO_EQUIPMENT } from '@/planner/tsw-build-import.js';
+
+/**
+ * Deep-clone a TSW item row without JSON.stringify of Vue proxies.
+ * @param {unknown} raw
+ * @returns {object|null}
+ */
+export function cloneTswRow(raw) {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+  try {
+    return /** @type {object} */ (clonePlain(raw));
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * @param {unknown} value
+ * @param {WeakSet<object>} [seen]
+ * @returns {unknown}
+ */
+function clonePlain(value, seen = new WeakSet()) {
+  if (value == null || typeof value !== 'object') return value;
+  const plain = toRaw(value);
+  if (plain == null || typeof plain !== 'object') return plain;
+  if (seen.has(plain)) return null;
+  seen.add(plain);
+  if (Array.isArray(plain)) {
+    return plain.map((item) => clonePlain(item, seen));
+  }
+  /** @type {Record<string, unknown>} */
+  const out = {};
+  for (const key of Object.keys(plain)) {
+    out[key] = clonePlain(plain[key], seen);
+  }
+  return out;
+}
 
 /** @type {Readonly<Record<string, string>>} */
 export const EQUIPMENT_TO_TSW_SLOT = Object.freeze(
@@ -455,7 +492,10 @@ export function syncStoreTswRows(store, options = {}) {
     const inst = store.instances[id];
     if (!rewrite && inst?.tswRow && typeof inst.tswRow === 'object') {
       const loc = tswLocationForInstance(store, id);
-      inst.tswRow = { ...inst.tswRow, location: loc.location, slot: loc.slot };
+      const cloned = cloneTswRow(inst.tswRow) || { ...inst.tswRow };
+      cloned.location = loc.location;
+      cloned.slot = loc.slot;
+      inst.tswRow = cloned;
       continue;
     }
     syncStoreInstanceTswRow(store, id);
@@ -469,8 +509,11 @@ export function syncStoreTswRows(store, options = {}) {
  * @returns {object|null}
  */
 function rowFromInstance(inst, def, loc) {
-  if (inst?.tswRow && typeof inst.tswRow === 'object') {
-    return { ...inst.tswRow, location: loc.location, slot: loc.slot };
+  const cloned = cloneTswRow(inst?.tswRow);
+  if (cloned) {
+    cloned.location = loc.location;
+    cloned.slot = loc.slot;
+    return cloned;
   }
   return plannerItemToTswRow(def, inst, loc);
 }
@@ -522,8 +565,11 @@ export function plannerItemsSnapshotToTswItems(snap, store) {
     if (!entry) continue;
     const inst = snapshotEntryAsInst(entry);
     const loc = { location: 'Gear', slot: EQUIPMENT_TO_TSW_SLOT[slot] || null };
-    if (inst.tswRow && typeof inst.tswRow === 'object') {
-      out.push({ ...inst.tswRow, location: loc.location, slot: loc.slot });
+    const clonedGear = cloneTswRow(inst.tswRow);
+    if (clonedGear) {
+      clonedGear.location = loc.location;
+      clonedGear.slot = loc.slot;
+      out.push(clonedGear);
       continue;
     }
     const base = byId[inst.defId];
@@ -535,8 +581,11 @@ export function plannerItemsSnapshotToTswItems(snap, store) {
     for (const entry of Array.isArray(list) ? list : []) {
       const inst = snapshotEntryAsInst(entry);
       const loc = { location: 'Inventory', slot: null };
-      if (inst.tswRow && typeof inst.tswRow === 'object') {
-        out.push({ ...inst.tswRow, location: loc.location, slot: loc.slot });
+      const clonedInv = cloneTswRow(inst.tswRow);
+      if (clonedInv) {
+        clonedInv.location = loc.location;
+        clonedInv.slot = loc.slot;
+        out.push(clonedInv);
         continue;
       }
       const base = byId[inst.defId];

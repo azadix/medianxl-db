@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
+import { reactive } from 'vue';
 import Character from '@/character/Character.js';
 import { getOSkillsForBuildExport } from '@/character/planner-build-io.js';
 import { setCharacterInstance } from '@/character/planner-instance.js';
@@ -8,6 +9,7 @@ import * as skillDataStore from '@/shared/skill-data-store.js';
 import { useItemsStore } from '@/stores/items.js';
 import { isTswEnvelope, mapTswItemsToSnapshot } from '@/planner/tsw-build-import.js';
 import {
+  cloneTswRow,
   plannerItemToTswRow,
   savedBuildName,
   setSavedBuildName,
@@ -246,6 +248,84 @@ describe('tsw oSkill export totals', () => {
 describe('tswStatsText', () => {
   it('drops current pools that match max', () => {
     expect(tswStatsText('{{life}}=10\n{{current_life}}=10\n{{mana}}=2')).toBe('{{life}}=10\n{{mana}}=2');
+  });
+});
+
+describe('cloneTswRow', () => {
+  it('deep-clones Vue reactive rows without sharing nested objects', () => {
+    const row = reactive({
+      display_name: 'Fat Charm',
+      nested: { n: 1 },
+      description_lines: [[['Keep in Inventory to Gain Bonus', -1]]],
+    });
+    const cloned = cloneTswRow(row);
+    expect(cloned).not.toBeNull();
+    cloned.nested.n = 9;
+    cloned.description_lines.push([['extra', 3]]);
+    expect(row.nested.n).toBe(1);
+    expect(row.description_lines).toHaveLength(1);
+    expect(cloned.display_name).toBe('Fat Charm');
+  });
+});
+
+describe('large TSW item export', () => {
+  it('wraps many cached tswRows without nesting snap.items on the build', () => {
+    setActivePinia(createPinia());
+    const store = useItemsStore();
+    const description_lines = Array.from({ length: 40 }, (_, i) => [[`+${i} to Strength`, 3]]);
+    const charms = Array.from({ length: 50 }, (_, i) => ({
+      id: `cm:export-${i}`,
+      name: `Export Charm ${i}`,
+      type: 'charm',
+      category: 'charms',
+      keepInInventory: true,
+      rarity: 'unique',
+      reqLevel: 1,
+      modifiers: ['+1 to Strength'],
+    }));
+    store.catalog = charms;
+    store.catalogLoaded = true;
+    store.fromSnapshot({
+      weaponSet: 0,
+      equipment: {},
+      charms: charms.map((c) => ({
+        defId: c.id,
+        tswRow: {
+          item: c.name,
+          display_name: c.name,
+          type: 'Charm',
+          quality: 'Unique',
+          display_quality: 'Charm',
+          is_charm: true,
+          location: 'Inventory',
+          slot: null,
+          description_lines,
+          socketables: [],
+          mystic_orbs: [],
+        },
+      })),
+      relics: [],
+    });
+    const started = Date.now();
+    const envelope = wrapPlannerBuildForTswExport(
+      {
+        name: 'RiseWasGood',
+        class: 'Paladin',
+        level: 150,
+        skillPoints: {},
+        oSkills: { Disintegrate: 47 },
+        allSkillsBonus: 23,
+        stats: '{{life}}=14635',
+        items: { should: 'be-dropped' },
+      },
+      store
+    );
+    expect(Date.now() - started).toBeLessThan(5000);
+    expect(isTswEnvelope(envelope)).toBe(true);
+    expect(envelope.build.items).toBeUndefined();
+    expect(envelope.items).toHaveLength(50);
+    expect(envelope.items[0].display_name).toBe('Export Charm 0');
+    expect(JSON.stringify(envelope).length).toBeGreaterThan(1000);
   });
 });
 

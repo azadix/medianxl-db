@@ -37,6 +37,7 @@ import {
 import { pickItemIcon } from '@/items/item-icons.js';
 import {
   EQUIPMENT_TO_TSW_SLOT,
+  cloneTswRow,
   syncStoreInstanceTswRow,
   syncStoreTswRows,
 } from '@/planner/tsw-build-export.js';
@@ -223,28 +224,28 @@ async function fetchCatalogFile(url) {
  *   shrine?: string,
  *   mechanics?: Record<string, number>,
  *   randomElement?: string,
-   *   name?: string,
-   *   tswRow?: object,
-   * }} ItemInstance
-   * @typedef {{
-   *   defId: string,
-   *   icon?: string,
-   *   rolls?: Record<string, number>,
-   *   custom?: CustomItemPayload,
-   *   extras?: string[],
-   *   mysticOrbs?: Array<[number, string]>,
-   *   socketables?: import('@/items/socketables.js').SocketableEntry[],
-   *   ethereal?: boolean,
-   *   corrupted?: boolean,
-   *   oil?: string,
-   *   corruptions?: string[],
-   *   blessing?: string,
-   *   shrine?: string,
-   *   mechanics?: Record<string, number>,
-   *   randomElement?: string,
-   *   name?: string,
-   *   tswRow?: object,
-   * }} ItemSnapshotEntry
+ *   name?: string,
+ *   tswRow?: object,
+ * }} ItemInstance
+ * @typedef {{
+ *   defId: string,
+ *   icon?: string,
+ *   rolls?: Record<string, number>,
+ *   custom?: CustomItemPayload,
+ *   extras?: string[],
+ *   mysticOrbs?: Array<[number, string]>,
+ *   socketables?: import('@/items/socketables.js').SocketableEntry[],
+ *   ethereal?: boolean,
+ *   corrupted?: boolean,
+ *   oil?: string,
+ *   corruptions?: string[],
+ *   blessing?: string,
+ *   shrine?: string,
+ *   mechanics?: Record<string, number>,
+ *   randomElement?: string,
+ *   name?: string,
+ *   tswRow?: object,
+ * }} ItemSnapshotEntry
  * @typedef {{
  *   weaponSet: 0|1,
  *   equipment: Record<string, string|ItemSnapshotEntry|null>,
@@ -294,19 +295,6 @@ function parseMysticOrbsList(raw) {
  */
 function parseSocketablesList(raw) {
   return normalizeSocketables(raw);
-}
-
-/**
- * @param {unknown} raw
- * @returns {object|null}
- */
-function cloneTswRow(raw) {
-  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
-  try {
-    return JSON.parse(JSON.stringify(raw));
-  } catch {
-    return null;
-  }
 }
 
 /**
