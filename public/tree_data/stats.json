@@ -1545,7 +1545,13 @@
     "id": 204,
     "key": "regenerate_life_percent",
     "name": "#% Maximum Life Regenerated per second",
-    "format": "{value0}% Maximum Life Regenerated per second"
+    "format": "{value0}% Maximum Life Regenerated per second",
+    "pairedStat": [
+      {
+        "valueIndex": 0,
+        "plannerKey": "regenerate_life_percent"
+      }
+    ]
   },
   {
     "id": 205,
@@ -2555,7 +2561,13 @@
     "id": 343,
     "key": "increased_potion_effectiveness",
     "name": "#% increased effectiveness of potions",
-    "format": "{value0}% increased effectiveness of potions"
+    "format": "{value0}% increased effectiveness of potions",
+    "pairedStat": [
+      {
+        "valueIndex": 0,
+        "plannerKey": "increased_potion_effectiveness"
+      }
+    ]
   },
   {
     "id": 344,
@@ -3006,5 +3018,17 @@
     "key": "unleashes_spirits",
     "name": "Unleashes Spirits",
     "format": "Unleashes {value0} spirits"
+  },
+  {
+    "id": 411,
+    "key": "spell_focus_bonus",
+    "name": "Spell Focus Bonus",
+    "format": "{value0}% Bonus to Spell Focus",
+    "pairedStat": [
+      {
+        "valueIndex": 0,
+        "plannerKey": "percent_spell_focus"
+      }
+    ]
   }
 ]

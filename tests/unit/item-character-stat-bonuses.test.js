@@ -320,6 +320,69 @@ describe('parseCharacterStatBonusFromModifierLine', () => {
     expect(lifeMana.every((r) => r.amount === 2)).toBe(true);
   });
 
+  it('maps unkstats item-text aliases onto planner keys', () => {
+    expect(parseCharacterStatBonusFromModifierLine('Max Fire Resist +1%')).toEqual({
+      key: 'maximum_fire_resistance',
+      amount: 1,
+    });
+    expect(parseCharacterStatBonusFromModifierLine('Max Cold Resist +1%')).toEqual({
+      key: 'maximum_cold_resistance',
+      amount: 1,
+    });
+    expect(parseCharacterStatBonusFromModifierLine('Max Lightning Resist +1%')).toEqual({
+      key: 'maximum_lightning_resistance',
+      amount: 1,
+    });
+    expect(parseCharacterStatBonusFromModifierLine('Max Poison Resist +1%')).toEqual({
+      key: 'maximum_poison_resist',
+      amount: 1,
+    });
+    expect(parseCharacterStatBonusFromModifierLine('+10% to Summon Physical Resist')).toEqual({
+      key: 'summon_physical_resistance',
+      amount: 10,
+    });
+    expect(parseCharacterStatBonusFromModifierLine('Target Takes Additional Damage of 200')).toEqual({
+      key: 'target_takes_additional_damage',
+      amount: 200,
+    });
+    expect(parseCharacterStatBonusFromModifierLine('+10% Potion Effectiveness')).toEqual({
+      key: 'increased_potion_effectiveness',
+      amount: 10,
+    });
+    expect(parseCharacterStatBonusFromModifierLine('18% Potion Effectiveness')).toEqual({
+      key: 'increased_potion_effectiveness',
+      amount: 18,
+    });
+    expect(parseCharacterStatBonusFromModifierLine('+5% Bonus to Spell Focus')).toEqual({
+      key: 'percent_spell_focus',
+      amount: 5,
+    });
+    expect(parseCharacterStatBonusFromModifierLine('+15% Move Speed')).toEqual({
+      key: 'movement_speed',
+      amount: 15,
+    });
+    expect(parseCharacterStatBonusFromModifierLine('6% Avoid')).toEqual({
+      key: 'avoid_chance',
+      amount: 6,
+    });
+    expect(parseCharacterStatBonusFromModifierLine('5% Max Life')).toEqual({
+      key: 'maximum_life',
+      amount: 5,
+    });
+    expect(parseCharacterStatBonusFromModifierLine('+100% Damage to Vessel of Justice')).toEqual({
+      key: 'bonus_damage_to_vessel_of_judgement',
+      amount: 100,
+    });
+    expect(parseCharacterStatBonusFromModifierLine('+100% Damage to Vessel of Retribution')).toEqual({
+      key: 'bonus_damage_to_vessel_of_retribution',
+      amount: 100,
+    });
+    expect(parseCharacterStatBonusFromModifierLine('Drains 5% of Maximum Life per second')).toEqual({
+      key: 'regenerate_life_percent',
+      amount: -5,
+    });
+  });
+
   it('expands Elemental Resists onto all elemental resist keys', () => {
 
     const list = parseCharacterStatBonusesFromModifierLine('Elemental Resists +12%');

@@ -124,7 +124,7 @@ const SKIP_KEY_AUTO_PATTERNS = new Set([
 /**
  * Item-text aliases for affix wording that differs from planner keys / stats.json.
  * `keys` expands one line onto several planner stats (e.g. Elemental Resists).
- * @type {Array<{ re: RegExp, key?: string, keys?: string[], abs?: boolean }>}
+ * @type {Array<{ re: RegExp, key?: string, keys?: string[], abs?: boolean, negate?: boolean }>}
  */
 const EXTRA_LINE_PATTERNS = [
   { re: /^([+-]?\d+(?:\.\d+)?)\s+to\s+Life$/i, key: 'life' },
@@ -132,10 +132,11 @@ const EXTRA_LINE_PATTERNS = [
   { re: /^Maximum Mana \+?([+-]?\d+(?:\.\d+)?)%$/i, key: 'maximum_mana' },
   { re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+Maximum Mana$/i, key: 'maximum_mana' },
   { re: /^Maximum Life \+?([+-]?\d+(?:\.\d+)?)%$/i, key: 'maximum_life' },
-  { re: /^Maximum Fire Resist \+?([+-]?\d+(?:\.\d+)?)%$/i, key: 'maximum_fire_resistance' },
-  { re: /^Maximum Lightning Resist \+?([+-]?\d+(?:\.\d+)?)%$/i, key: 'maximum_lightning_resistance' },
-  { re: /^Maximum Cold Resist \+?([+-]?\d+(?:\.\d+)?)%$/i, key: 'maximum_cold_resistance' },
-  { re: /^Maximum Poison Resist \+?([+-]?\d+(?:\.\d+)?)%$/i, key: 'maximum_poison_resist' },
+  { re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+Max(?:imum)? Life$/i, key: 'maximum_life' },
+  { re: /^Max(?:imum)? Fire Resist \+?([+-]?\d+(?:\.\d+)?)%$/i, key: 'maximum_fire_resistance' },
+  { re: /^Max(?:imum)? Lightning Resist \+?([+-]?\d+(?:\.\d+)?)%$/i, key: 'maximum_lightning_resistance' },
+  { re: /^Max(?:imum)? Cold Resist \+?([+-]?\d+(?:\.\d+)?)%$/i, key: 'maximum_cold_resistance' },
+  { re: /^Max(?:imum)? Poison Resist \+?([+-]?\d+(?:\.\d+)?)%$/i, key: 'maximum_poison_resist' },
   {
     re: /^Maximum Elemental Resists? \+?([+-]?\d+(?:\.\d+)?)%$/i,
     keys: [...MAXIMUM_ELEMENTAL_RESIST_KEYS],
@@ -150,6 +151,10 @@ const EXTRA_LINE_PATTERNS = [
   },
   { re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+to\s+Summon Life$/i, key: 'summoned_minion_life' },
   { re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+to\s+Summon Damage$/i, key: 'summoned_minion_damage' },
+  {
+    re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+to\s+Summon Physical Resist(?:ance)?$/i,
+    key: 'summon_physical_resistance',
+  },
   { re: /^Elemental Resists \+?([+-]?\d+(?:\.\d+)?)%$/i, keys: [...ELEMENTAL_RESIST_KEYS] },
   {
     re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+(?:to\s+)?Elemental Resists$/i,
@@ -256,6 +261,37 @@ const EXTRA_LINE_PATTERNS = [
     re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+to\s+(?:Enemy Elemental|All Enemy) Resistances$/i,
     keys: [...ENEMY_ELEMENTAL_RESIST_KEYS],
     abs: true,
+  },
+  {
+    re: /^Target Takes Additional Damage of \+?([+-]?\d+(?:\.\d+)?)$/i,
+    key: 'target_takes_additional_damage',
+  },
+  {
+    re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+Potion Effectiveness$/i,
+    key: 'increased_potion_effectiveness',
+  },
+  {
+    re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+Bonus to Spell Focus$/i,
+    key: 'percent_spell_focus',
+  },
+  { re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+Move Speed$/i, key: 'movement_speed' },
+  { re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+Avoid$/i, key: 'avoid_chance' },
+  {
+    re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+Damage to Vessel of Justice$/i,
+    key: 'bonus_damage_to_vessel_of_judgement',
+  },
+  {
+    re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+Damage to Vessel of Retribution$/i,
+    key: 'bonus_damage_to_vessel_of_retribution',
+  },
+  {
+    re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+(?:of\s+)?Maximum Life Regenerated per second$/i,
+    key: 'regenerate_life_percent',
+  },
+  {
+    re: /^Drains \+?([+-]?\d+(?:\.\d+)?)%\s+of Maximum Life per second$/i,
+    key: 'regenerate_life_percent',
+    negate: true,
   },
 ];
 
@@ -571,11 +607,12 @@ export function classifyCharacterStatModifierLine(line, options = {}) {
   /**
    * @param {string[]} keys
    * @param {number} amount
-   * @param {{ abs?: boolean }} [flags]
+   * @param {{ abs?: boolean, negate?: boolean }} [flags]
    */
   const take = (keys, amount, flags = {}) => {
     let n = amount;
     if (flags.abs && Number.isFinite(n)) n = Math.abs(n);
+    if (flags.negate && Number.isFinite(n)) n = -n;
     bonuses = bonusesForKeys(keys, n * peeled.multiplier);
     matched = true;
   };
@@ -584,7 +621,7 @@ export function classifyCharacterStatModifierLine(line, options = {}) {
     const m = pattern.re.exec(matchText);
     if (!m) continue;
     const keys = pattern.keys || (pattern.key ? [pattern.key] : []);
-    take(keys, Number(m[1]), { abs: pattern.abs });
+    take(keys, Number(m[1]), { abs: pattern.abs, negate: pattern.negate });
     break;
   }
 

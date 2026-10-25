@@ -350,7 +350,7 @@
     "min": null,
     "max": null,
     "sortOrder": 13,
-    "section": "misc"
+    "section": "resists"
   },
   {
     "id": 48,
@@ -468,6 +468,14 @@
     "id": 74,
     "key": "life_regenerated_per_second",
     "label": "Life regenerated per second",
+    "min": null,
+    "max": null,
+    "section": "defense"
+  },
+  {
+    "id": 513,
+    "key": "regenerate_life_percent",
+    "label": "#% Maximum Life Regenerated per second",
     "min": null,
     "max": null,
     "section": "defense"
@@ -1550,6 +1558,14 @@
     "id": 448,
     "key": "increased_healing_from_potions",
     "label": "#% increased Healing from Potions",
+    "min": null,
+    "max": null,
+    "section": "misc"
+  },
+  {
+    "id": 512,
+    "key": "increased_potion_effectiveness",
+    "label": "+#% Potion Effectiveness",
     "min": null,
     "max": null,
     "section": "misc"
