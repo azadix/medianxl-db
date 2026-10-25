@@ -13,7 +13,7 @@ const props = defineProps({
   tabs: {
     type: Array,
     default: () => [
-      { id: 'base', label: 'Base' },
+      { id: 'base', label: 'Base item' },
       { id: 'sockets', label: 'Sockets' },
       { id: 'mysticOrbs', label: 'Orbs' },
     ],

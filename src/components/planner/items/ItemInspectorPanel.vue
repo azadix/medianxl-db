@@ -201,7 +201,7 @@ const effectiveRolls = computed(() => {
 const inspectorTabs = computed(() => {
   const def = itemDef.value;
   /** @type {Array<{ id: InspectorTabId, label: string }>} */
-  const tabs = [{ id: 'base', label: 'Base' }];
+  const tabs = [{ id: 'base', label: 'Base item' }];
   if (!def) return tabs;
   if (isCharmItem(def) || isRelicItem(def)) return tabs;
   if (Number(def.sockets) > 0) tabs.push({ id: 'sockets', label: 'Sockets' });
