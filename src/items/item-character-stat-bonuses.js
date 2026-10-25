@@ -14,7 +14,10 @@ import { getFileSkillStore } from '@/shared/skill-data-store.js';
 import { isModifierLineActive, modifierLineText } from '@/items/item-modifier-line.js';
 import { stripDisplayedRollRanges } from '@/items/affix-rolls.js';
 import { parseSkillBonusFromModifierLine } from '@/items/skill-bonus-from-modifiers.js';
-import { matchCatalogSkillGrantFromLine } from '@/items/item-granted-oskills.js';
+import {
+  matchCatalogChargedSkillFromLine,
+  matchCatalogSkillGrantFromLine,
+} from '@/items/item-granted-oskills.js';
 import { stripProcLinePrefix } from '@/items/item-procs.js';
 import {
   defaultRelicAffixRolls,
@@ -553,7 +556,7 @@ export function classifyCharacterStatModifierLine(line, options = {}) {
   if (skillBonus && (skillBonus.kind === 'all' || skillBonus.kind === 'class')) {
     return { text, kind: 'skill', bonuses: [] };
   }
-  if (matchCatalogSkillGrantFromLine(line)) {
+  if (matchCatalogSkillGrantFromLine(line) || matchCatalogChargedSkillFromLine(line)) {
     return { text, kind: 'skill', bonuses: [] };
   }
 

@@ -365,6 +365,9 @@ describe('parseCharacterStatBonusFromModifierLine', () => {
       bonuses: [],
     });
     expect(classifyCharacterStatModifierLine('+1 to All Skills').kind).toBe('skill');
+    expect(classifyCharacterStatModifierLine('Level 5 Blast Wave (40/40 Charges)').kind).toBe(
+      'skill'
+    );
   });
 
 });

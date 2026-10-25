@@ -9,6 +9,7 @@ import {
 import { installTreeDataFetchMock } from '../helpers/mock-fetch-tree-data.js';
 import {
   matchCatalogSkillGrantFromLine,
+  matchCatalogChargedSkillFromLine,
   collectOSkillGrantsFromModifierLines,
   collectOSkillGrantsFromCharmDefs,
   collectOSkillGrantsFromRelicDefs,
@@ -168,6 +169,37 @@ describe('item-granted oSkills', () => {
     expect(html).not.toContain('[[');
     // Space before the skill span must survive (flex parents collapse bare trailing spaces).
     expect(html).toMatch(/to <span class="/);
+  });
+
+  it('treats charged skill lines as oSkill grants and highlights the name', () => {
+    expect(matchCatalogChargedSkillFromLine('Level 5 Blast Wave (40/40 Charges)')).toMatchObject({
+      skillId: 'blast_wave',
+      displayName: 'Blast Wave',
+      amount: 5,
+      classOnly: false,
+    });
+    expect(matchCatalogChargedSkillFromLine('Level 10 Nephalem Weapons')).toBeNull();
+    expect(
+      collectOSkillGrantsFromModifierLines(['Level 7 Goblin Glee (9/30 Charges)'], {
+        className: 'Amazon',
+      })
+    ).toEqual({ goblin_glee: 7 });
+    expect(wrapNamedSkillGrantMarkers('Level 5 Blast Wave (40/40 Charges)')).toBe(
+      'Level 5 [[blast_wave:5]] (40/40 Charges)'
+    );
+    const html = formatItemModifierLineHtml('Level 5 Blast Wave (40/40 Charges)');
+    expect(html).toContain(SCALING_DISPLAY_HTML_CLASSES.skill);
+    expect(html).toContain('data-tooltip-skill-id=');
+    expect(html).toContain('data-tooltip-skill-level="5"');
+    expect(html).not.toContain('data-tooltip-skill-as-proc');
+    expect(html).toMatch(/Level 5 <span class="/);
+    expect(html).toContain('Blast Wave');
+    const parts = annotateAffixDisplayPartsWithSkills([
+      { kind: 'text', text: 'Level 5 Blast Wave (40/40 Charges)' },
+    ]);
+    const skill = parts.find((p) => p.kind === 'skill' && /blast wave/i.test(p.text));
+    expect(skill).toMatchObject({ skillId: 'blast_wave', skillLevel: 5 });
+    expect(skill?.skillAsProc).not.toBe(true);
   });
 
   it('wraps chance-to-cast skill names in green markers', () => {

@@ -28,6 +28,8 @@ import {
   applyResolvedRandomReanimates,
   decodeModifierLine,
   encodeModifierLine,
+  isModifierLineActive,
+  modifierLineText,
 } from '@/items/item-modifier-line.js';
 import {
   applyAffixRolls,
@@ -83,6 +85,7 @@ export function resolvedEquipmentModifierLines(def, rolls = null, extras = null)
 const DISPLAYED_ROLL_RANGE_RE = / \[(-?\d+(?:\.\d+)?)-(-?\d+(?:\.\d+)?)\]/g;
 
 const CHARM_PREFIX_RE = /^\[(?:Upgrade|Trophy)\]\s*/i;
+const CHARGED_SKILL_RE = /^Level\s+(\d+)\s+(.+?)\s+\((\d+)\s*\/\s*(\d+)\s+Charges\)$/i;
 
 /**
  * @param {string} text
@@ -98,6 +101,62 @@ function stripCharmDisplayPrefix(text) {
  */
 function escapeRegExp(s) {
   return String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/**
+ * @param {object|null|undefined} cat
+ * @param {string} fallbackName
+ * @returns {{ skillId: string, displayName: string, skillClass: string }|null}
+ */
+function catalogSkillFromRow(cat, fallbackName) {
+  if (!cat?.id) return null;
+  const parentId = cat.parentSkillId != null ? String(cat.parentSkillId).trim() : '';
+  if (parentId) return null;
+  const displayName =
+    cat.displayName != null && String(cat.displayName).trim() !== ''
+      ? String(cat.displayName).trim()
+      : String(fallbackName || '').trim();
+  if (!displayName) return null;
+  return {
+    skillId: String(cat.id),
+    displayName,
+    skillClass: cat.class != null ? String(cat.class).trim() : '',
+  };
+}
+
+/**
+ * Match `Level X SkillName (Y/Z Charges)` to a catalog skill.
+ * Charge counts are ignored until the charge system is implemented.
+ * @param {string|null|undefined} line
+ * @returns {{
+ *   skillId: string,
+ *   displayName: string,
+ *   amount: number,
+ *   skillClass: string,
+ *   classOnly: boolean,
+ *   skillNameInLine: string,
+ * }|null}
+ */
+export function matchCatalogChargedSkillFromLine(line) {
+  if (!isModifierLineActive(line)) return null;
+  const body = stripDisplayedRollRanges(
+    stripCharmDisplayPrefix(modifierLineText(line))
+  ).trim();
+  if (!body) return null;
+  const match = CHARGED_SKILL_RE.exec(body);
+  if (!match) return null;
+  const amount = Number(match[1]);
+  const skillNameInLine = String(match[2] || '').trim();
+  if (!Number.isFinite(amount) || amount <= 0 || !skillNameInLine) return null;
+  const cat = resolveCatalogRowBySkillRef(skillNameInLine);
+  const resolved = catalogSkillFromRow(cat, skillNameInLine);
+  if (!resolved) return null;
+  return {
+    ...resolved,
+    amount,
+    classOnly: false,
+    skillNameInLine,
+  };
 }
 
 /**
@@ -119,19 +178,11 @@ export function matchCatalogSkillGrantFromLine(line) {
   const amount = Number(parsed.amount);
   if (!Number.isFinite(amount) || amount === 0) return null;
   const cat = resolveCatalogRowBySkillRef(parsed.skillName);
-  if (!cat?.id) return null;
-  const parentId = cat.parentSkillId != null ? String(cat.parentSkillId).trim() : '';
-  if (parentId) return null;
-  const displayName =
-    cat.displayName != null && String(cat.displayName).trim() !== ''
-      ? String(cat.displayName).trim()
-      : String(parsed.skillName).trim();
-  const skillClass = cat.class != null ? String(cat.class).trim() : '';
+  const resolved = catalogSkillFromRow(cat, parsed.skillName);
+  if (!resolved) return null;
   return {
-    skillId: String(cat.id),
-    displayName,
+    ...resolved,
     amount,
-    skillClass,
     classOnly: Boolean(parsed.className),
   };
 }
@@ -170,6 +221,23 @@ export function wrapNamedSkillGrantMarkers(line) {
   const prefixMatch = text.match(/^(\[(?:Upgrade|Trophy)\]\s*)(.*)$/i);
   const prefix = prefixMatch ? prefixMatch[1] : '';
   const body = prefixMatch ? prefixMatch[2] : text;
+  const charged = matchCatalogChargedSkillFromLine(body);
+  if (charged) {
+    const skillName = charged.skillNameInLine || charged.displayName;
+    if (skillName) {
+      const marker =
+        Number.isFinite(charged.amount) && charged.amount > 0
+          ? `${charged.skillId}:${Math.floor(charged.amount)}`
+          : charged.skillId;
+      const re = new RegExp(
+        `(Level\\s+\\d+\\s+)${escapeRegExp(skillName)}(\\s+\\()`,
+        'i'
+      );
+      const replaced = body.replace(re, `$1[[${marker}]]$2`);
+      if (replaced !== body) return prefix + replaced;
+    }
+  }
+
   const grant = matchCatalogSkillGrantFromLine(body);
   if (grant) {
     const skillName = String(grant.displayName || '').trim();
@@ -321,6 +389,24 @@ function annotatePartsWithSkillName(parts, displayName, looksLikeMatch, extra = 
 export function annotateAffixDisplayPartsWithSkills(parts) {
   if (!Array.isArray(parts) || !parts.length) return parts || [];
   const plain = parts.map((p) => String(p?.text ?? '')).join('');
+  const charged = matchCatalogChargedSkillFromLine(plain);
+  if (charged) {
+    const name = charged.skillNameInLine || charged.displayName;
+    const annotated = annotatePartsWithSkillName(
+      parts,
+      name,
+      (before) => /Level\s+\d+\s+$/i.test(before),
+      {
+        skillId: charged.skillId,
+        skillLevel:
+          Number.isFinite(charged.amount) && charged.amount > 0
+            ? Math.floor(charged.amount)
+            : null,
+      }
+    );
+    if (annotated) return annotated;
+  }
+
   const grant = matchCatalogSkillGrantFromLine(plain);
   if (grant) {
     const annotated = annotatePartsWithSkillName(
@@ -385,7 +471,8 @@ export function collectOSkillGrantsFromModifierLines(lines, ctx = {}) {
   const out = {};
   const className = String(ctx.className || '').trim();
   for (const line of Array.isArray(lines) ? lines : []) {
-    const grant = matchCatalogSkillGrantFromLine(line);
+    const grant =
+      matchCatalogSkillGrantFromLine(line) || matchCatalogChargedSkillFromLine(line);
     if (!grant || grant.classOnly) continue;
     if (
       isSkillOnCharacterTree({
