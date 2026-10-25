@@ -86,6 +86,7 @@ const DISPLAYED_ROLL_RANGE_RE = / \[(-?\d+(?:\.\d+)?)-(-?\d+(?:\.\d+)?)\]/g;
 
 const CHARM_PREFIX_RE = /^\[(?:Upgrade|Trophy)\]\s*/i;
 const CHARGED_SKILL_RE = /^Level\s+(\d+)\s+(.+?)\s+\((\d+)\s*\/\s*(\d+)\s+Charges\)$/i;
+const LEVEL_SKILL_GRANT_RE = /^Level\s+(\d+)\s+(.+)$/i;
 
 /**
  * @param {string} text
@@ -125,6 +126,23 @@ function catalogSkillFromRow(cat, fallbackName) {
 }
 
 /**
+ * Always-on item grants (`Level 1 Eagle Stance`) prefer `passive X` catalog clones.
+ * @param {string} skillName
+ * @param {{ preferPassive?: boolean }} [opts]
+ * @returns {object|null}
+ */
+function resolveGrantCatalogRow(skillName, opts = {}) {
+  const raw = String(skillName || '').trim();
+  if (!raw) return null;
+  if (opts.preferPassive) {
+    const passiveKey = /^passive\s+/i.test(raw) ? raw : `passive ${raw}`;
+    const passive = resolveCatalogRowBySkillRef(passiveKey);
+    if (passive) return passive;
+  }
+  return resolveCatalogRowBySkillRef(raw);
+}
+
+/**
  * Match `Level X SkillName (Y/Z Charges)` to a catalog skill.
  * Charge counts are ignored until the charge system is implemented.
  * @param {string|null|undefined} line
@@ -148,7 +166,42 @@ export function matchCatalogChargedSkillFromLine(line) {
   const amount = Number(match[1]);
   const skillNameInLine = String(match[2] || '').trim();
   if (!Number.isFinite(amount) || amount <= 0 || !skillNameInLine) return null;
-  const cat = resolveCatalogRowBySkillRef(skillNameInLine);
+  const cat = resolveGrantCatalogRow(skillNameInLine);
+  const resolved = catalogSkillFromRow(cat, skillNameInLine);
+  if (!resolved) return null;
+  return {
+    ...resolved,
+    amount,
+    classOnly: false,
+    skillNameInLine,
+  };
+}
+
+/**
+ * Match `Level X SkillName` (no charges) to a catalog skill, preferring passive clones.
+ * @param {string|null|undefined} line
+ * @returns {{
+ *   skillId: string,
+ *   displayName: string,
+ *   amount: number,
+ *   skillClass: string,
+ *   classOnly: boolean,
+ *   skillNameInLine: string,
+ * }|null}
+ */
+export function matchCatalogLevelSkillGrantFromLine(line) {
+  if (!isModifierLineActive(line)) return null;
+  const body = stripDisplayedRollRanges(
+    stripCharmDisplayPrefix(modifierLineText(line))
+  ).trim();
+  if (!body) return null;
+  if (CHARGED_SKILL_RE.test(body)) return null;
+  const match = LEVEL_SKILL_GRANT_RE.exec(body);
+  if (!match) return null;
+  const amount = Number(match[1]);
+  const skillNameInLine = String(match[2] || '').trim();
+  if (!Number.isFinite(amount) || amount <= 0 || !skillNameInLine) return null;
+  const cat = resolveGrantCatalogRow(skillNameInLine, { preferPassive: true });
   const resolved = catalogSkillFromRow(cat, skillNameInLine);
   if (!resolved) return null;
   return {
@@ -177,14 +230,28 @@ export function matchCatalogSkillGrantFromLine(line) {
   if (!parsed || parsed.kind !== 'skill') return null;
   const amount = Number(parsed.amount);
   if (!Number.isFinite(amount) || amount === 0) return null;
-  const cat = resolveCatalogRowBySkillRef(parsed.skillName);
+  const cat = resolveGrantCatalogRow(parsed.skillName);
   const resolved = catalogSkillFromRow(cat, parsed.skillName);
   if (!resolved) return null;
   return {
     ...resolved,
     amount,
     classOnly: Boolean(parsed.className),
+    skillNameInLine: parsed.skillName,
   };
+}
+
+/**
+ * Charged, +N to skill, or Level N skill grant.
+ * @param {string|null|undefined} line
+ * @returns {ReturnType<typeof matchCatalogSkillGrantFromLine>|ReturnType<typeof matchCatalogChargedSkillFromLine>|ReturnType<typeof matchCatalogLevelSkillGrantFromLine>}
+ */
+export function matchAnyCatalogSkillGrantFromLine(line) {
+  return (
+    matchCatalogChargedSkillFromLine(line) ||
+    matchCatalogSkillGrantFromLine(line) ||
+    matchCatalogLevelSkillGrantFromLine(line)
+  );
 }
 
 /**
@@ -238,22 +305,38 @@ export function wrapNamedSkillGrantMarkers(line) {
     }
   }
 
+  const levelGrant = matchCatalogLevelSkillGrantFromLine(body);
+  if (levelGrant) {
+    const skillName = levelGrant.skillNameInLine || levelGrant.displayName;
+    if (skillName) {
+      const marker =
+        Number.isFinite(levelGrant.amount) && levelGrant.amount > 0
+          ? `${levelGrant.skillId}:${Math.floor(levelGrant.amount)}`
+          : levelGrant.skillId;
+      const re = new RegExp(
+        `(Level\\s+\\d+\\s+)${escapeRegExp(skillName)}(\\s*)$`,
+        'i'
+      );
+      const replaced = body.replace(re, `$1[[${marker}]]$2`);
+      if (replaced !== body) return prefix + replaced;
+    }
+  }
+
   const grant = matchCatalogSkillGrantFromLine(body);
   if (grant) {
-    const skillName = String(grant.displayName || '').trim();
+    const skillName = String(grant.skillNameInLine || grant.displayName || '').trim();
     if (!skillName) return text;
     const marker =
       Number.isFinite(grant.amount) && grant.amount > 0
         ? `${grant.skillId}:${Math.floor(grant.amount)}`
         : grant.skillId;
-    // Allow "+1 to passive Bear Stance" — keep "passive" as plain text, wrap the skill.
     const re = grant.classOnly
       ? new RegExp(
-          `(\\s+to\\s+)(?:passive\\s+)?${escapeRegExp(skillName)}(\\s+\\()`,
+          `(\\s+to\\s+)${escapeRegExp(skillName)}(\\s+\\()`,
           'i'
         )
       : new RegExp(
-          `(\\s+to\\s+)(?:passive\\s+)?${escapeRegExp(skillName)}(\\s*)$`,
+          `(\\s+to\\s+)${escapeRegExp(skillName)}(\\s*)$`,
           'i'
         );
     return prefix + body.replace(re, `$1[[${marker}]]$2`);
@@ -407,15 +490,32 @@ export function annotateAffixDisplayPartsWithSkills(parts) {
     if (annotated) return annotated;
   }
 
+  const levelGrant = matchCatalogLevelSkillGrantFromLine(plain);
+  if (levelGrant) {
+    const name = levelGrant.skillNameInLine || levelGrant.displayName;
+    const annotated = annotatePartsWithSkillName(
+      parts,
+      name,
+      (before) => /Level\s+\d+\s+$/i.test(before),
+      {
+        skillId: levelGrant.skillId,
+        skillLevel:
+          Number.isFinite(levelGrant.amount) && levelGrant.amount > 0
+            ? Math.floor(levelGrant.amount)
+            : null,
+      }
+    );
+    if (annotated) return annotated;
+  }
+
   const grant = matchCatalogSkillGrantFromLine(plain);
   if (grant) {
     const annotated = annotatePartsWithSkillName(
       parts,
-      grant.displayName,
+      grant.skillNameInLine || grant.displayName,
       (before, idx) =>
-        /\sto\s+(?:passive\s+)?$/i.test(before) ||
+        /\sto\s+$/i.test(before) ||
         before.toLowerCase().endsWith('to ') ||
-        before.toLowerCase().endsWith('passive ') ||
         idx === 0,
       {
         skillId: grant.skillId,
@@ -471,8 +571,7 @@ export function collectOSkillGrantsFromModifierLines(lines, ctx = {}) {
   const out = {};
   const className = String(ctx.className || '').trim();
   for (const line of Array.isArray(lines) ? lines : []) {
-    const grant =
-      matchCatalogSkillGrantFromLine(line) || matchCatalogChargedSkillFromLine(line);
+    const grant = matchAnyCatalogSkillGrantFromLine(line);
     if (!grant || grant.classOnly) continue;
     if (
       isSkillOnCharacterTree({

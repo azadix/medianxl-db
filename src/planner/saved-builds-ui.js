@@ -500,13 +500,17 @@ function toastMissingCharmSkillUnlocks(className, itemsStore) {
   );
 }
 
+const TSW_SKIP_TOAST_REASONS = new Set(['uncatalogued', 'unknown-slot', 'relic-cap']);
+
 function toastSkippedTswItems(skipped) {
     if (!Array.isArray(skipped) || skipped.length === 0) return;
+    const warned = skipped.filter((s) => TSW_SKIP_TOAST_REASONS.has(String(s?.reason || '')));
+    if (warned.length === 0) return;
     console.warn(
-        `[TSW import] Skipped ${skipped.length} item${skipped.length > 1 ? 's' : ''} not in the catalog:`,
-        skipped
+        `[TSW import] Skipped ${warned.length} item${warned.length > 1 ? 's' : ''} not in the catalog:`,
+        warned
     );
-    const names = skipped.map((s) => exportLabelForToast(s.name || '(unnamed)'));
+    const names = warned.map((s) => exportLabelForToast(s.name || '(unnamed)'));
     const shown = names.slice(0, 8);
     const extra = names.length - shown.length;
     const list = extra > 0 ? `${shown.join(', ')}, and ${extra} more` : shown.join(', ');
@@ -610,12 +614,19 @@ function validateBuildData(buildData) {
         return false;
     }
 
-    const requiredFields = ['class', 'level', 'skillPoints'];
+    const requiredFields = ['class', 'level'];
     for (const field of requiredFields) {
         if (buildData[field] === undefined || buildData[field] === null) {
             toastManager.showToast(`Missing required field: ${field}`, 'danger');
             return false;
         }
+    }
+    if (
+      buildData.skillPoints == null ||
+      Array.isArray(buildData.skillPoints) ||
+      typeof buildData.skillPoints !== 'object'
+    ) {
+      buildData.skillPoints = {};
     }
     
     if (typeof buildData.class !== 'string') {
@@ -628,11 +639,6 @@ function validateBuildData(buildData) {
         return false;
     }
     
-    if (typeof buildData.skillPoints !== 'object' || Array.isArray(buildData.skillPoints)) {
-        toastManager.showToast('Skill points must be an object', 'danger');
-        return false;
-    }
-
     for (const v of Object.values(buildData.skillPoints)) {
         if (typeof v !== 'number' || Number.isNaN(v)) {
             toastManager.showToast('Skill points values must be numbers', 'danger');

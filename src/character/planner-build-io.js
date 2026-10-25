@@ -5,6 +5,7 @@
 
 import Character from './Character.js';
 import { getFileSkillStore } from '@/shared/skill-data-store.js';
+import { isAttributeGrantName } from '@/items/attribute-grant-name.js';
 import { getCharacterInstance } from './planner-instance.js';
 import { notifyPlannerStateChanged } from './planner-instance.js';
 
@@ -111,8 +112,11 @@ export function normalizeBuildOSkillsForImport(input) {
       const points = Character.clampOSkillPoints(row?.level ?? row?.points ?? 0);
       if (points <= 0) continue;
       const r = normalizeSingleOSkillImportRow(row);
-      if (!r) skipped.push({ key: oskillRowSkipLabel(row), wantedLevel: points });
-      else out.push(r);
+      if (!r) {
+        const label = oskillRowSkipLabel(row);
+        if (isAttributeGrantName(label)) continue;
+        skipped.push({ key: label, wantedLevel: points });
+      } else out.push(r);
     }
     return { payload: out, skipped };
   }
@@ -125,7 +129,7 @@ export function normalizeBuildOSkillsForImport(input) {
       if (pts <= 0) continue;
       const cat = resolveCatalogRowBySkillRef(k, store);
       if (cat) internalMap[cat.id] = (internalMap[cat.id] || 0) + pts;
-      else skipped.push({ key: String(k), wantedLevel: pts });
+      else if (!isAttributeGrantName(k)) skipped.push({ key: String(k), wantedLevel: pts });
     }
     return { payload: internalMap, skipped };
   }

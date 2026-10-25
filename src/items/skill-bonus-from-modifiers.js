@@ -13,6 +13,7 @@ import {
 } from '@/items/relic-items.js';
 import { isModifierLineActive, modifierLineText } from '@/items/item-modifier-line.js';
 import { stripDisplayedRollRanges } from '@/items/affix-rolls.js';
+import { isAttributeGrantName } from '@/items/attribute-grant-name.js';
 
 /**
  * Soft levels when a relic's generic `+# to Skill` applies to a skill already
@@ -45,15 +46,12 @@ const GENERIC_TO_RE = /^([+-]?\d+(?:\.\d+)?)\s+to\s+(.+)$/i;
 const MAX_BASE_LEVEL_BONUS_RE = /^[+-]?\d+(?:\.\d+)?\s+to\s+Maximum\s+.+\s+Base Level$/i;
 
 /**
- * Wiki/item lines often say "+1 to passive Bear Stance" — same skill as Bear Stance.
+ * Keep "passive Bear Stance" as its own catalog name (always-on oSkill clone).
  * @param {string|null|undefined} name
  * @returns {string}
  */
 export function normalizeItemSkillGrantName(name) {
-  return String(name || '')
-    .trim()
-    .replace(/^passive\s+/i, '')
-    .trim();
+  return String(name || '').trim();
 }
 
 /**
@@ -122,6 +120,7 @@ export function parseSkillBonusFromModifierLine(line) {
     const skillName = normalizeItemSkillGrantName(match[2]);
     if (!Number.isFinite(amount) || !skillName) return null;
     if (/^All Skills\b/i.test(skillName) || /\bwhen\b/i.test(skillName)) return null;
+    if (isAttributeGrantName(skillName)) return null;
     return { kind: 'skill', amount, skillName };
   }
 

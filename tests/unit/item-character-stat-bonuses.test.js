@@ -318,6 +318,10 @@ describe('parseCharacterStatBonusFromModifierLine', () => {
     const lifeMana = parseCharacterStatBonusesFromModifierLine('Maximum Life and Mana +2%');
     expect(lifeMana.map((r) => r.key).sort()).toEqual(['maximum_life', 'maximum_mana']);
     expect(lifeMana.every((r) => r.amount === 2)).toBe(true);
+
+    const flatLifeMana = parseCharacterStatBonusesFromModifierLine('+40 to Life and Mana');
+    expect(flatLifeMana.map((r) => r.key).sort()).toEqual(['life', 'mana']);
+    expect(flatLifeMana.every((r) => r.amount === 40)).toBe(true);
   });
 
   it('maps unkstats item-text aliases onto planner keys', () => {

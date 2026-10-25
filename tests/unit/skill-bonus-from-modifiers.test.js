@@ -50,6 +50,11 @@ describe('parseSkillBonusFromModifierLine', () => {
   it('ignores percent attribute lines', () => {
     expect(parseSkillBonusFromModifierLine('+15% to Summoned Minion Resistances')).toBeNull();
   });
+
+  it('ignores flat life/mana grants', () => {
+    expect(parseSkillBonusFromModifierLine('+40 to Life and Mana')).toBeNull();
+    expect(parseSkillBonusFromModifierLine('+40 to Life')).toBeNull();
+  });
 });
 
 describe('skillBonusAmountForContext', () => {

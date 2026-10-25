@@ -10,6 +10,7 @@ import { installTreeDataFetchMock } from '../helpers/mock-fetch-tree-data.js';
 import {
   matchCatalogSkillGrantFromLine,
   matchCatalogChargedSkillFromLine,
+  matchCatalogLevelSkillGrantFromLine,
   collectOSkillGrantsFromModifierLines,
   collectOSkillGrantsFromCharmDefs,
   collectOSkillGrantsFromRelicDefs,
@@ -81,26 +82,24 @@ describe('item-granted oSkills', () => {
     expect(matchCatalogSkillGrantFromLine('+1 to All Skills')).toBeNull();
   });
 
-  it('maps "+1 to passive Bear Stance" to bear_stance oSkill grants', () => {
-    expect(normalizeItemSkillGrantName('passive Bear Stance')).toBe('Bear Stance');
+  it('maps "+1 to passive Bear Stance" to the passive oSkill clone', () => {
+    expect(normalizeItemSkillGrantName('passive Bear Stance')).toBe('passive Bear Stance');
     expect(matchCatalogSkillGrantFromLine('{orange}+1 to passive Bear Stance')).toMatchObject({
-      skillId: 'bear_stance',
-      displayName: 'Bear Stance',
+      skillId: 'passive_bear_stance',
+      displayName: 'passive Bear Stance',
       amount: 1,
       classOnly: false,
     });
-    // Bear Stance is Barbarian — for Paladin/Amazon it is an oSkill grant.
     expect(
       collectOSkillGrantsFromModifierLines(['{orange}+1 to passive Bear Stance'], {
         className: 'Paladin',
       })
-    ).toEqual({ bear_stance: 1 });
-    // On-tree Barbarian → soft path, not oSkill duplicate
+    ).toEqual({ passive_bear_stance: 1 });
     expect(
       collectOSkillGrantsFromModifierLines(['{orange}+1 to passive Bear Stance'], {
         className: 'Barbarian',
       })
-    ).toEqual({});
+    ).toEqual({ passive_bear_stance: 1 });
     expect(
       collectOSkillGrantsFromEquippedDefs(
         [
@@ -114,9 +113,29 @@ describe('item-granted oSkills', () => {
         ],
         { className: 'Paladin' }
       )
-    ).toEqual({ bear_stance: 1 });
+    ).toEqual({ passive_bear_stance: 1 });
+    expect(wrapNamedSkillGrantMarkers('{orange}+1 to passive Bear Stance')).toContain(
+      '[[passive_bear_stance:1]]'
+    );
     expect(formatItemModifierLineHtml('{orange}+1 to passive Bear Stance')).toContain(
       SCALING_DISPLAY_HTML_CLASSES.skill
+    );
+  });
+
+  it('maps "Level 1 Eagle Stance" to the passive oSkill clone', () => {
+    expect(matchCatalogLevelSkillGrantFromLine('Level 1 Eagle Stance')).toMatchObject({
+      skillId: 'passive_eagle_stance',
+      displayName: 'passive Eagle Stance',
+      amount: 1,
+      skillNameInLine: 'Eagle Stance',
+    });
+    expect(
+      collectOSkillGrantsFromModifierLines(['Level 1 Eagle Stance'], {
+        className: 'Sorceress',
+      })
+    ).toEqual({ passive_eagle_stance: 1 });
+    expect(wrapNamedSkillGrantMarkers('Level 1 Eagle Stance')).toBe(
+      'Level 1 [[passive_eagle_stance:1]]'
     );
   });
 

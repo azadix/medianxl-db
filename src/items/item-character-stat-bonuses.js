@@ -14,10 +14,7 @@ import { getFileSkillStore } from '@/shared/skill-data-store.js';
 import { isModifierLineActive, modifierLineText } from '@/items/item-modifier-line.js';
 import { stripDisplayedRollRanges } from '@/items/affix-rolls.js';
 import { parseSkillBonusFromModifierLine } from '@/items/skill-bonus-from-modifiers.js';
-import {
-  matchCatalogChargedSkillFromLine,
-  matchCatalogSkillGrantFromLine,
-} from '@/items/item-granted-oskills.js';
+import { matchAnyCatalogSkillGrantFromLine } from '@/items/item-granted-oskills.js';
 import { stripProcLinePrefix } from '@/items/item-procs.js';
 import {
   defaultRelicAffixRolls,
@@ -127,6 +124,7 @@ const SKIP_KEY_AUTO_PATTERNS = new Set([
  * @type {Array<{ re: RegExp, key?: string, keys?: string[], abs?: boolean, negate?: boolean }>}
  */
 const EXTRA_LINE_PATTERNS = [
+  { re: /^([+-]?\d+(?:\.\d+)?)\s+to\s+Life and Mana$/i, keys: ['life', 'mana'] },
   { re: /^([+-]?\d+(?:\.\d+)?)\s+to\s+Life$/i, key: 'life' },
   { re: /^([+-]?\d+(?:\.\d+)?)\s+to\s+Mana$/i, key: 'mana' },
   { re: /^Maximum Mana \+?([+-]?\d+(?:\.\d+)?)%$/i, key: 'maximum_mana' },
@@ -592,7 +590,7 @@ export function classifyCharacterStatModifierLine(line, options = {}) {
   if (skillBonus && (skillBonus.kind === 'all' || skillBonus.kind === 'class')) {
     return { text, kind: 'skill', bonuses: [] };
   }
-  if (matchCatalogSkillGrantFromLine(line) || matchCatalogChargedSkillFromLine(line)) {
+  if (matchAnyCatalogSkillGrantFromLine(line)) {
     return { text, kind: 'skill', bonuses: [] };
   }
 

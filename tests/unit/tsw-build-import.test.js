@@ -9,8 +9,10 @@ import { setCharacterInstance } from '@/character/planner-instance.js';
 import * as skillDataStore from '@/shared/skill-data-store.js';
 import {
   unwrapTswOrNativeBuild,
+  coerceSkillPointsMap,
   isTswEnvelope,
   mapTswItemsToSnapshot,
+  isIgnoredTswItem,
   resolveTswItemDefId,
   resolveTswRunewordDefId,
   inferTswQuestsCompleted,
@@ -169,6 +171,24 @@ describe('tsw-build-import', () => {
     expect(build.stats).toBe('life=100\nmana=40');
   });
 
+  it('coerces empty TSW skillPoints arrays to an object', () => {
+    expect(coerceSkillPointsMap([])).toEqual({});
+    expect(coerceSkillPointsMap(null)).toEqual({});
+    const { build } = unwrapTswOrNativeBuild({
+      ok: true,
+      build: {
+        name: 'ZHoNG-JKLSP',
+        class: 'Druid',
+        level: 150,
+        skillPoints: [],
+        oSkills: { Teleport: 4 },
+      },
+      items: [],
+    });
+    expect(build.skillPoints).toEqual({});
+    expect(build.oSkills).toEqual({ Teleport: 4 });
+  });
+
   it('infers Inquisitor of the Triune hell complete when TSW level is above 110', () => {
     const quests = {
       den_of_evil: { normal: true, nightmare: true, hell: true },
@@ -245,6 +265,39 @@ describe('tsw-build-import', () => {
     expect(snapshot.charms[1].rolls?.[DIM_KEY_ROLL_KEYS.variant]).toBe(3);
     expect(snapshot.relics.map((row) => row.defId)).toEqual(['relic:lightning-wall']);
     expect(skipped.some((s) => s.name === 'Ring')).toBe(false);
+  });
+
+  it('silently ignores Horadric Cube instead of treating it as uncatalogued', () => {
+    expect(
+      isIgnoredTswItem({
+        item: 'Horadric Cube',
+        display_name: 'Horadric Cube',
+        code: 'box',
+        image: 'invbox',
+        location: 'Inventory',
+      })
+    ).toBe(true);
+    const { snapshot, skipped } = mapTswItemsToSnapshot(
+      [
+        {
+          item: 'Horadric Cube',
+          display_name: 'Horadric Cube',
+          code: 'box',
+          location: 'Inventory',
+        },
+        {
+          item: 'Mystery Unique',
+          display_name: 'Mystery Unique',
+          display_quality: 'SU',
+          location: 'Inventory',
+        },
+      ],
+      byIdCatalog()
+    );
+    expect(snapshot.charms).toEqual([]);
+    expect(snapshot.relics).toEqual([]);
+    expect(skipped.find((s) => s.name === 'Horadric Cube')?.reason).toBe('ignored');
+    expect(skipped.find((s) => s.name === 'Mystery Unique')?.reason).toBe('uncatalogued');
   });
 
   it('maps Dimensional Key Star Chart, Dream Fragment, and lab progression from TSW lines', () => {
@@ -967,5 +1020,23 @@ describe('applyTswOSkillLeftovers', () => {
     setCharacterInstance(ch);
     expect(() => applyTswOSkillLeftovers(undefined)).not.toThrow();
     expect(ch.oSkills).toEqual([]);
+  });
+
+  it('skips TSW stat grants listed as oSkills', () => {
+    vi.spyOn(skillDataStore, 'getFileSkillStore').mockReturnValue({
+      catalog: [
+        { id: 'lightning-fury', displayName: 'Lightning Fury', class: 'Amazon', image: 'lf' },
+      ],
+    });
+    const ch = new Character('Amazon', 150);
+    setCharacterInstance(ch);
+    const result = applyTswOSkillLeftovers({
+      'Life and Mana': 40,
+      'Lightning Fury': 12,
+    });
+    expect(result.skipped).toEqual([]);
+    expect(ch.oSkills).toEqual([
+      expect.objectContaining({ skillName: 'lightning-fury', points: 12 }),
+    ]);
   });
 });

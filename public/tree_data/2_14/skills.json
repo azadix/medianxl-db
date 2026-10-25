@@ -2429,6 +2429,52 @@
     "image": "icons-bar_46"
   },
   {
+    "id": "passive_bear_stance",
+    "displayName": "passive Bear Stance",
+    "classId": 1,
+    "tab": 65,
+    "class": "Other",
+    "tabName": "oSkill",
+    "tags": [
+      "Passive",
+      "Stance"
+    ],
+    "baseMaxLevel": 0,
+    "affectedBySpecialization": false,
+    "variants": [],
+    "scalingConstants": [
+      {
+        "statKey": "bonus_defense",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "12*lvl"
+      },
+      {
+        "statKey": "physical_resistance",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "min(lvl+20,50)"
+      },
+      {
+        "statKey": "summoned_minion_physical_resistance",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "min(lvl+20,50)"
+      }
+    ],
+    "description": [
+      "Greatly increases defensive fortitude"
+    ],
+    "restriction": [],
+    "skillEffect": [
+      "{{stance_affects_you}}",
+      "{{physical_resistance}}",
+      "{{summoned_minion_physical_resistance}}",
+      "{{bonus_defense}}"
+    ],
+    "image": "icons-shared_315"
+  },
+  {
     "id": "bend_the_shadows_innate",
     "displayName": "Bend the Shadows (Innate)",
     "classId": 4,
@@ -7421,6 +7467,53 @@
       "{{mana_regeneration_rate}}",
       "{{innate_elemental_damage}}",
       "{{regenerates_percent_life_over_time}}"
+    ],
+    "image": "icons-bar_48"
+  },
+  {
+    "id": "passive_eagle_stance",
+    "displayName": "passive Eagle Stance",
+    "classId": 1,
+    "tab": 65,
+    "class": "Other",
+    "tabName": "oSkill",
+    "tags": [
+      "Passive",
+      "Stance"
+    ],
+    "baseMaxLevel": 0,
+    "affectedBySpecialization": false,
+    "variants": [],
+    "scalingConstants": [
+      {
+        "statKey": "life_steal",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "1+lvl/2"
+      },
+      {
+        "statKey": "mana_regeneration_rate",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "40+10*lvl"
+      },
+      {
+        "statKey": "regenerates_percent_life_over_time",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100",
+        "value1": "frames(max(1000-(((220*lvl)*340)/(100*(lvl+50))+100),100))"
+      }
+    ],
+    "description": [
+      "Replenish the body and focus the elements"
+    ],
+    "restriction": [],
+    "skillEffect": [
+      "{{stance_affects_you}}",
+      "{{regenerates_percent_life_over_time}}",
+      "{{mana_regeneration_rate}}",
+      "{{life_steal}}"
     ],
     "image": "icons-bar_48"
   },

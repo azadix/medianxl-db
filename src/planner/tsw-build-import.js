@@ -71,15 +71,33 @@ export function isTswEnvelope(data) {
 }
 
 /**
+ * NotArmory emits `[]` when no tree points are spent (same as empty oSkills).
+ * @param {unknown} value
+ * @returns {Record<string, number>}
+ */
+export function coerceSkillPointsMap(value) {
+  if (value == null || Array.isArray(value) || typeof value !== 'object') return {};
+  return /** @type {Record<string, number>} */ (value);
+}
+
+/**
  * @param {unknown} data
  * @returns {{ build: object, tswItems: object[]|null }}
  */
 export function unwrapTswOrNativeBuild(data) {
   if (!isTswEnvelope(data)) {
-    return { build: /** @type {object} */ (data), tswItems: null };
+    const rec = /** @type {object} */ (data);
+    if (rec && typeof rec === 'object' && !Array.isArray(rec)) {
+      rec.skillPoints = coerceSkillPointsMap(rec.skillPoints);
+    }
+    return { build: rec, tswItems: null };
   }
   const rec = /** @type {{ build: object, items?: unknown }} */ (data);
   const build = { ...rec.build, __tswEnvelope: true };
+  build.skillPoints = coerceSkillPointsMap(build.skillPoints);
+  if (Array.isArray(build.oSkills) && build.oSkills.length === 0) {
+    build.oSkills = {};
+  }
   if (build.stats && typeof build.stats === 'object' && !Array.isArray(build.stats)) {
     build.stats = Object.entries(/** @type {Record<string, unknown>} */ (build.stats))
       .map(([k, v]) => `${k}=${v}`)
@@ -273,6 +291,20 @@ function qualityBadge(row) {
   return String(row?.display_quality || row?.quality || '')
     .trim()
     .toUpperCase();
+}
+
+/**
+ * Always-present inventory junk the planner does not model (everyone has a cube).
+ * @param {object} row
+ * @returns {boolean}
+ */
+export function isIgnoredTswItem(row) {
+  const name = normName(tswItemDisplayName(row));
+  if (name === 'horadric cube') return true;
+  const code = row?.code != null ? String(row.code).trim().toLowerCase() : '';
+  if (code === 'box') return true;
+  const image = row?.image != null ? String(row.image).trim().toLowerCase() : '';
+  return image === 'invbox' || image === 'box';
 }
 
 /**
@@ -635,6 +667,11 @@ export function mapTswItemsToSnapshot(rows, catalog, className = null) {
     const location = String(row.location || '').trim();
     if (location !== 'Gear' && location !== 'Inventory') {
       skipped.push(skippedTswItem(row, 'stash'));
+      continue;
+    }
+
+    if (isIgnoredTswItem(row)) {
+      skipped.push(skippedTswItem(row, 'ignored'));
       continue;
     }
 
