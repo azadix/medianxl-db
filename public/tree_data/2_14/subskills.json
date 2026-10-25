@@ -250,7 +250,14 @@
     "id": "ice_elementals_frost_essence_aura",
     "displayName": "Frost Essence Aura",
     "parentSkillId": "ice_elementals",
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "max_cold_resistance",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "5"
+      }
+    ],
     "description": [],
     "skillEffect": [
       "+20% to Total Defense",
@@ -530,6 +537,12 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "(10+3*(lvl-1))"
+      },
+      {
+        "statKey": "maximum_life",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "12"
       }
     ],
     "description": [],

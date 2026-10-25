@@ -1166,6 +1166,18 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(500)"
+      },
+      {
+        "statKey": "energy_percent",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "15"
+      },
+      {
+        "statKey": "maximum_mana",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "15"
       }
     ],
     "description": [
@@ -2734,6 +2746,18 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "min(10+(blvl-1)*2,50)"
+      },
+      {
+        "statKey": "physical_damage_reduced_flat",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(25+min(max(lvl-1,0),7)*3+min(max(lvl-8,0),8)*4+min(max(lvl-16,0),6)*5+min(max(lvl-22,0),6)*5+max(lvl-28,0)*5)/2"
+      },
+      {
+        "statKey": "healing_rate_from_apples",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "((220*lvl)*99)/(100*(lvl+50))+11"
       }
     ],
     "description": [
@@ -3105,6 +3129,12 @@
         "value0": "53",
         "value1": "20",
         "value2": "5"
+      },
+      {
+        "statKey": "shoots_times",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "3"
       }
     ],
     "description": [
@@ -4478,6 +4508,12 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "-1*min(((220*lvl)*(50-10))/(100*(lvl+50))+10,60)"
+      },
+      {
+        "statKey": "enemy_feedback_resistance",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "-min(5+lvl/3,25)"
       }
     ],
     "description": [
@@ -4801,6 +4837,18 @@
         "value0": "440",
         "value1": "37",
         "value2": "5"
+      },
+      {
+        "statKey": "cooldown",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(175-blvl*5)"
+      },
+      {
+        "statKey": "bonus_fire_damage_based_on_str_or_dex",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "ln(40,2,lvl)"
       }
     ],
     "description": [
@@ -6809,6 +6857,24 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(50*(1+[[continuity]].{{skill_duration}}/100))"
+      },
+      {
+        "statKey": "cooldown",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(75)"
+      },
+      {
+        "statKey": "range",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "range(25)"
+      },
+      {
+        "statKey": "radius",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "range(25)"
       }
     ],
     "description": [
@@ -7822,6 +7888,12 @@
         "value0": "132",
         "value1": "15",
         "value2": "5"
+      },
+      {
+        "statKey": "enemy_elemental_resistances",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "-((20+4*blvl)/4)"
       }
     ],
     "description": [
@@ -8315,6 +8387,12 @@
         "value0": "8",
         "value1": "8",
         "value2": "5"
+      },
+      {
+        "statKey": "javelins",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "1+blvl/5"
       }
     ],
     "description": [
@@ -9678,6 +9756,12 @@
         "value0": "22",
         "value1": "18",
         "value2": "5"
+      },
+      {
+        "statKey": "bolts",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "min(5+lvl/6,10)"
       }
     ],
     "description": [
@@ -11105,6 +11189,30 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(15000*(1+[[continuity]].{{skill_duration}}/100))"
+      },
+      {
+        "statKey": "enemy_weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "-30"
+      },
+      {
+        "statKey": "enemy_attack_speed",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "-20"
+      },
+      {
+        "statKey": "enemy_cast_speed",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "-20"
+      },
+      {
+        "statKey": "enemy_attack_rating",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "-1*(10+lvl/2)"
       }
     ],
     "description": [
@@ -12725,7 +12833,7 @@
         "statKey": "cooldown",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(30*[[ice_elemental]].{{minions}})"
+        "value0": "frames(30*[[ice_elementals]].{{minions}})"
       },
       {
         "statKey": "minion_mana_cost",
@@ -13135,6 +13243,12 @@
         "value0": "44",
         "value1": "24",
         "value2": "5"
+      },
+      {
+        "statKey": "bonus_physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(ulvl*ulvl)/7"
       }
     ],
     "description": [
@@ -13954,6 +14068,12 @@
         "value0": "26",
         "value1": "20",
         "value2": "5"
+      },
+      {
+        "statKey": "wraiths",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "8"
       }
     ],
     "description": [
@@ -14836,6 +14956,18 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames((15000+250*(lvl-1))*(1+[[continuity]].{{skill_duration}}/100))"
+      },
+      {
+        "statKey": "percent_str_or_dex_added_as_vitality",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "33"
+      },
+      {
+        "statKey": "physical_damage_percent",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "6*blvl"
       }
     ],
     "description": [
@@ -14874,6 +15006,12 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "60+((blvl*blvl)*9)/5"
+      },
+      {
+        "statKey": "regenerate_life",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "((26+min(max(lvl-1,0),7)*26+min(max(lvl-8,0),8)*40+min(max(lvl-16,0),6)*70+min(max(lvl-22,0),6)*104+max(lvl-28,0)*130)*25)/256"
       }
     ],
     "description": [
@@ -15010,6 +15148,12 @@
         "value0": "8",
         "value1": "23",
         "value2": "5"
+      },
+      {
+        "statKey": "bolts",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "min(6+lvl/5,15)"
       }
     ],
     "description": [
@@ -15123,6 +15267,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(max(520-blvl*40,0))"
+      },
+      {
+        "statKey": "feedback_damage_range_percent",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "if(lvl<29,(min(100+ulvl,220)*(128+5*(lvl-1)))/1600,(min(100+ulvl,220)*(212+2*(lvl-1)))/1600)",
+        "value1": "if(lvl<29,(min(100+ulvl,220)*(192+5*(lvl-1)))/1600,(min(100+ulvl,220)*(276+2*(lvl-1)))/1600)"
       }
     ],
     "description": [
@@ -15720,7 +15871,14 @@
         "statKey": "bolt_per_energy",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "min(1200-100,1200-100*blvl)"
+        "value0": "1",
+        "value1": "max(1200-100*blvl,1)"
+      },
+      {
+        "statKey": "maximum_tempest_bolts",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "8+blvl"
       }
     ],
     "description": [
@@ -15843,6 +16001,12 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "(((10+ulvl/2)*(100+8*blvl))/100)"
+      },
+      {
+        "statKey": "weapon_physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "ln(30,9,blvl)*(1-min(1,[[crystalline_barrier]]))*(1-min(1,[[primordial_might]]))"
       }
     ],
     "description": [
@@ -17620,6 +17784,30 @@
         "value0": "26",
         "value1": "15",
         "value2": "5"
+      },
+      {
+        "statKey": "attack_rating_percent",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "50*max(blvl,1)"
+      },
+      {
+        "statKey": "hit_recovery",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "25*max(blvl,1)"
+      },
+      {
+        "statKey": "bonus_defense",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "25*max(blvl,1)"
+      },
+      {
+        "statKey": "chance_to_dodge_projectiles",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "min(25+blvl,35)"
       }
     ],
     "description": [
@@ -19339,6 +19527,12 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "max(blvl,1)*5"
+      },
+      {
+        "statKey": "wpd_per_flat_str_or_dex",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "10000/(60*max(blvl,1))"
       }
     ],
     "description": [
@@ -19582,6 +19776,24 @@
         "value0": "330",
         "value1": "44",
         "value2": "6"
+      },
+      {
+        "statKey": "physical_damage_percent",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "ln(20,2,lvl)+{{summoned_minion_damage}}/2"
+      },
+      {
+        "statKey": "spell_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "ln(20,2,lvl)"
+      },
+      {
+        "statKey": "minion_life_percent",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "ln(300,5,lvl)+{{summoned_minion_life}}"
       }
     ],
     "description": [
@@ -19631,6 +19843,12 @@
         "value0": "8",
         "value1": "8",
         "value2": "5"
+      },
+      {
+        "statKey": "bonus_fire_damage_based_on_str_or_dex",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(ln(15,3,lvl)/4*(100+max(0,121-ulvl)))/100"
       }
     ],
     "description": [
@@ -19689,6 +19907,12 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "650*[[ward_of_fate]]"
+      },
+      {
+        "statKey": "regenerate_life",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "[[ward_of_fate]].{{regenerate_life}}"
       }
     ],
     "description": [
@@ -20315,6 +20539,12 @@
         "value0": "440",
         "value1": "48",
         "value2": "5"
+      },
+      {
+        "statKey": "loma",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(ln(30,3,lvl)*(100+6*blvl))/100"
       }
     ],
     "description": [
@@ -20395,8 +20625,7 @@
     "description": [
       "The power of the light strengthens you in combat"
     ],
-    "restriction": [
-    ],
+    "restriction": [],
     "skillEffect": [
       "[[solar_flare]]",
       "{{fire_spell_damage}}",
@@ -23236,7 +23465,14 @@
     "baseMaxLevel": 25,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "all_attributes",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(((13+min(max(lvl-1,0),7)*4+min(max(lvl-8,0),8)*3+min(max(lvl-16,0),6)*2+min(max(lvl-22,0),6)*1+max(lvl-28,0)*1)/2*(100+6*blvl))/100)*(1+[[acumen]])"
+      }
+    ],
     "description": [
       "Bonus to Strength, Dexterity, Vitality and Energy"
     ],
@@ -23905,6 +24141,18 @@
         "value1": "0",
         "value2": "8",
         "min_mana": "250"
+      },
+      {
+        "statKey": "range",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "range(18)"
+      },
+      {
+        "statKey": "cooldown",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(max((150-(({{energy}}*1750)/({{energy}}+1750))/10)-50*[[entanglement]],0))"
       }
     ],
     "description": [
@@ -24122,6 +24370,31 @@
         "value0": "440",
         "value1": "44",
         "value2": "5"
+      },
+      {
+        "statKey": "spell_focus",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "8*max(blvl,1)"
+      },
+      {
+        "statKey": "regenerates_percent_life_over_time",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100",
+        "value1": "frames(max(1125-((130*blvl)*500)/(100*(blvl+6)),375))"
+      },
+      {
+        "statKey": "bonus_defense",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "lvl*5+25*blvl"
+      },
+      {
+        "statKey": "poison_resistance",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "ln(10,3,lvl)"
       }
     ],
     "description": [
@@ -24383,6 +24656,12 @@
         "value0": "53",
         "value1": "18",
         "value2": "5"
+      },
+      {
+        "statKey": "releases_bolts",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "min(5+lvl/10,8)+min({{energy}}/max(1200-100*[[mind_spark]],1),[[mind_spark]].{{maximum_tempest_bolts}})"
       }
     ],
     "description": [
@@ -26153,6 +26432,30 @@
         "value0": "50",
         "value1": "15",
         "value2": "8"
+      },
+      {
+        "statKey": "cooldown",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(750)"
+      },
+      {
+        "statKey": "vitality",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "30*blvl"
+      },
+      {
+        "statKey": "energy",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "30*blvl"
+      },
+      {
+        "statKey": "bonus_physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(lvl*(10+blvl))/20"
       }
     ],
     "description": [
@@ -26482,7 +26785,20 @@
         "statKey": "regenerates_percent_life_over_time",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "100"
+        "value0": "100",
+        "value1": "frames(1125-ulvl*2)"
+      },
+      {
+        "statKey": "weapon_physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "5+(ulvl*2)/5"
+      },
+      {
+        "statKey": "duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames((750+ulvl*25)*(1+[[continuity]].{{skill_duration}}/100))"
       }
     ],
     "description": [
@@ -27207,6 +27523,18 @@
         "value0": "880",
         "value1": "132",
         "value2": "5"
+      },
+      {
+        "statKey": "cooldown",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(425)"
+      },
+      {
+        "statKey": "regenerate_life",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "((270+min(max(lvl-1,0),7)*90+min(max(lvl-8,0),8)*78+min(max(lvl-16,0),6)*67+min(max(lvl-22,0),6)*54+max(lvl-28,0)*4)*(100+10*blvl)/100*25)/256"
       }
     ],
     "description": [
@@ -28067,7 +28395,7 @@
         "statKey": "regenerates_percent_life_over_time",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "",
+        "value0": "(4*(100+{{cold_spell_damage}}))/100",
         "value1": "frames(100)"
       },
       {
@@ -28083,6 +28411,12 @@
         "value0": "150",
         "value1": "0",
         "value2": "8"
+      },
+      {
+        "statKey": "freeze_duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames((15+(lvl-1))*(100+[[rime]].{{freeze_length_to_wintertide}})/100)"
       }
     ],
     "description": [
