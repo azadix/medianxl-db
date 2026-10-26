@@ -7,7 +7,7 @@ import { setCharacterInstance } from '@/character/planner-instance.js';
 import { CHARM_ROLL_KEYS } from '@/items/charm-items.js';
 import * as skillDataStore from '@/shared/skill-data-store.js';
 import { useItemsStore } from '@/stores/items.js';
-import { isTswEnvelope, mapTswItemsToSnapshot } from '@/planner/tsw-build-import.js';
+import { applyTswOSkillLeftovers, isTswEnvelope, mapTswItemsToSnapshot } from '@/planner/tsw-build-import.js';
 import {
   cloneTswRow,
   plannerItemToTswRow,
@@ -40,7 +40,20 @@ describe('tsw build export', () => {
     expect(row.slot).toBe('Torso');
     expect(row.quality).toBe('Unique');
     expect(row.display_quality).toBe('SSU');
-    expect(row.type).toBe('Hard Leather Armor (SSU)');
+    expect(row.type).toBe('Hard Leather Armor (Sacred)');
+    expect(row).toMatchObject({
+      ilvl: null,
+      ilvl_original: null,
+      quantity: null,
+      compactable: false,
+      area: 'character',
+      storage: null,
+      row: null,
+      col: null,
+      locid: null,
+    });
+    expect(row.stat_ranges).toEqual([]);
+    expect(row.charm_ranges).toEqual([]);
     expect(Array.isArray(row.description_lines)).toBe(true);
     expect(row.mystic_orbs).toEqual([]);
     expect(row.socketables).toEqual([]);
@@ -109,6 +122,38 @@ describe('tsw build export', () => {
     expect(envelope.build.spentPoints).toBeUndefined();
     expect(envelope.build.classSkillsBonus).toBeUndefined();
     expect(envelope.build.stats).toBe('{{life}}=10\n{{mana}}=4\n{{current_mana}}=3');
+    expect(envelope.meta.marker_warmed_at).toBeNull();
+  });
+
+  it('omits inferred inquisitor and keeps magic resistance 0', () => {
+    const envelope = wrapPlannerBuildForTswExport({
+      name: 'Q',
+      version: '2.14',
+      class: 'Druid',
+      level: 150,
+      skillPoints: {},
+      oSkills: {},
+      allSkillsBonus: 0,
+      stats: '{{life}}=10\n{{fire_resistance}}=1',
+      questsCompleted: {
+        den_of_evil: [1, 1, 1],
+        inquisitor_of_the_triune: { normal: false, nightmare: false, hell: true },
+      },
+    });
+    expect(envelope.build.questsCompleted.inquisitor_of_the_triune).toBeUndefined();
+    expect(envelope.build.stats).toContain('{{magic_resistance}}=0');
+    expect(Object.keys(envelope.build)).toEqual([
+      'name',
+      'version',
+      'class',
+      'level',
+      'skillPoints',
+      'oSkills',
+      'allSkillsBonus',
+      'stats',
+      'questsCompleted',
+      'savedAt',
+    ]);
   });
 });
 
@@ -243,6 +288,17 @@ describe('tsw oSkill export totals', () => {
     setCharacterInstance(ch);
     expect(getOSkillsForBuildExport()).toEqual({ Teleport: 12 });
   });
+
+  it('exports TSW oSkill totals after leftover import', () => {
+    vi.spyOn(skillDataStore, 'getFileSkillStore').mockReturnValue({
+      catalog: [{ id: 'purify', displayName: 'Purify', class: 'Paladin', image: 'pu' }],
+    });
+    const ch = new Character('Assassin', 150);
+    ch.oSkills = [{ skillName: 'purify', displayName: 'Purify', points: 0, itemPoints: 1, slotId: 's1' }];
+    setCharacterInstance(ch);
+    applyTswOSkillLeftovers({ Purify: 4 });
+    expect(getOSkillsForBuildExport()).toEqual({ Purify: 4 });
+  });
 });
 
 describe('tswStatsText', () => {
@@ -326,6 +382,64 @@ describe('large TSW item export', () => {
     expect(envelope.items).toHaveLength(50);
     expect(envelope.items[0].display_name).toBe('Export Charm 0');
     expect(JSON.stringify(envelope).length).toBeGreaterThan(1000);
+  });
+});
+
+describe('TSW import/export round-trip', () => {
+  it('keeps original rows, order, and passthrough stash items', () => {
+    setActivePinia(createPinia());
+    setCharacterInstance(new Character('Assassin', 150));
+    const store = useItemsStore();
+    store.catalog = [helm, horazon];
+    store.catalogLoaded = true;
+    const charmRow = {
+      item: "Horazon's Focus",
+      display_name: "Horazon's Focus",
+      code: 'a59',
+      ilvl: 99,
+      ilvl_original: 99,
+      location: 'Inventory',
+      slot: null,
+      display_quality: 'Charm',
+      is_charm: true,
+      description_lines: [[['Horazon original', 4]]],
+    };
+    const stashRow = {
+      item: 'Jewel',
+      display_name: 'Jewel',
+      code: 'jew',
+      ilvl: 1,
+      location: 'Stash',
+      slot: null,
+      display_quality: 'Normal',
+      description_lines: [[['Jewel', 0]]],
+    };
+    const helmRow = {
+      item: 'The Petulant',
+      display_name: 'The Petulant',
+      code: '@67',
+      ilvl: 99,
+      location: 'Gear',
+      slot: 'Torso',
+      display_quality: 'SSSU',
+      description_lines: [[['The Petulant', 4]], [['Hard Leather Armor (Sacred)', 4]]],
+    };
+    const mapped = mapTswItemsToSnapshot([charmRow, stashRow, helmRow], store);
+    expect(mapped.snapshot.tswPassthroughItems).toHaveLength(1);
+    store.fromSnapshot(mapped.snapshot);
+    const envelope = wrapPlannerBuildForTswExport({ name: 'Siny', class: 'Assassin', level: 150 }, store);
+    expect(envelope.items.map((row) => row.display_name)).toEqual([
+      "Horazon's Focus",
+      'Jewel',
+      'The Petulant',
+    ]);
+    expect(envelope.items[0].description_lines).toEqual(charmRow.description_lines);
+    expect(envelope.items[0].code).toBe('a59');
+    expect(envelope.items[0].ilvl).toBe(99);
+    expect(envelope.items[1].location).toBe('Stash');
+    expect(envelope.items[2].code).toBe('@67');
+    expect(envelope.items[2].display_quality).toBe('SSSU');
+    expect(envelope.items[2].description_lines).toEqual(helmRow.description_lines);
   });
 });
 

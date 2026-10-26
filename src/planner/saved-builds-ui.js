@@ -871,7 +871,7 @@ export function downloadSavedBuildAsJson(index) {
 
     const envelope = wrapPlannerBuildForTswExport(builds[index], useItemsStore());
     const filename = buildJsonDownloadFilename(tswExportLabel(envelope));
-    downloadTextAsJsonFile(JSON.stringify(envelope, null, 2), filename);
+    downloadTextAsJsonFile(JSON.stringify(envelope, null, 4), filename);
     toastManager.showToast(
         `Build "${exportLabelForToast(tswExportLabel(envelope))}" downloaded as JSON!`,
         true,
@@ -886,7 +886,7 @@ export function downloadSavedBuildAsJson(index) {
 export function downloadCurrentBuildAsJson(name) {
     const envelope = wrapPlannerBuildForTswExport(buildCurrentBuildSnapshot(name), useItemsStore());
     const filename = buildJsonDownloadFilename(tswExportLabel(envelope));
-    downloadTextAsJsonFile(JSON.stringify(envelope, null, 2), filename);
+    downloadTextAsJsonFile(JSON.stringify(envelope, null, 4), filename);
     toastManager.showToast(
         `Build "${exportLabelForToast(tswExportLabel(envelope))}" downloaded as JSON!`,
         true,

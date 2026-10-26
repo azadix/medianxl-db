@@ -243,6 +243,7 @@ async function fetchCatalogFile(url) {
  *   randomElement?: string,
  *   name?: string,
  *   tswRow?: object,
+ *   tswIndex?: number,
  * }} ItemInstance
  * @typedef {{
  *   defId: string,
@@ -262,6 +263,7 @@ async function fetchCatalogFile(url) {
  *   randomElement?: string,
  *   name?: string,
  *   tswRow?: object,
+ *   tswIndex?: number,
  * }} ItemSnapshotEntry
  * @typedef {{
  *   weaponSet: 0|1,
@@ -269,6 +271,7 @@ async function fetchCatalogFile(url) {
  *   inventory: Array<{ slot: number } & ItemSnapshotEntry>,
  *   charms: Array<{ defId: string, rolls?: Record<string, number> }>,
  *   relics: Array<{ defId: string, rolls?: Record<string, number> }>,
+ *   tswPassthroughItems?: Array<{ tswIndex: number, tswRow: object }>,
  *   customJewels?: Array<{ id: string, name: string, modifiers: string[], rarity?: string, ilvl?: number, pickedAffixes?: object, jewelcraft?: string, jewelcraftRolls?: Record<string, number> }>,
  * }} ItemsSnapshot
  */
@@ -312,6 +315,25 @@ function parseMysticOrbsList(raw) {
  */
 function parseSocketablesList(raw) {
   return normalizeSocketables(raw);
+}
+
+/**
+ * @param {unknown} raw
+ * @returns {Array<{ tswIndex: number, tswRow: object }>}
+ */
+function parseTswPassthroughItems(raw) {
+  if (!Array.isArray(raw)) return [];
+  /** @type {Array<{ tswIndex: number, tswRow: object }>} */
+  const out = [];
+  for (const entry of raw) {
+    if (!entry || typeof entry !== 'object') continue;
+    const rec = /** @type {Record<string, unknown>} */ (entry);
+    const row = cloneTswRow(rec.tswRow || rec);
+    if (!row) continue;
+    const index = Number(rec.tswIndex);
+    out.push({ tswIndex: Number.isFinite(index) ? index : out.length, tswRow: row });
+  }
+  return out;
 }
 
 /**
@@ -380,6 +402,11 @@ function applyInstanceMeta(inst, meta) {
   const tswRow = cloneTswRow(meta.tswRow);
   if (tswRow) inst.tswRow = tswRow;
   else delete inst.tswRow;
+  if (meta.tswIndex != null && Number.isFinite(Number(meta.tswIndex))) {
+    inst.tswIndex = Number(meta.tswIndex);
+  } else {
+    delete inst.tswIndex;
+  }
 }
 
 /**
@@ -450,7 +477,8 @@ function snapshotInstanceEntry(inst, loc = null) {
     !mechanics &&
     !randomElement &&
     !name &&
-    !inst.tswRow
+    !inst.tswRow &&
+    inst.tswIndex == null
   ) {
     return defId;
   }
@@ -477,6 +505,7 @@ function snapshotInstanceEntry(inst, loc = null) {
       ? { ...tswRow, location: loc.location, slot: loc.slot }
       : tswRow;
   }
+  if (Number.isFinite(Number(inst.tswIndex))) entry.tswIndex = Number(inst.tswIndex);
   return entry;
 }
 
@@ -490,6 +519,7 @@ export function itemsSnapshotHasState(snap) {
   if (Array.isArray(snap.inventory) && snap.inventory.length > 0) return true;
   if (Array.isArray(snap.charms) && snap.charms.length > 0) return true;
   if (Array.isArray(snap.relics) && snap.relics.length > 0) return true;
+  if (Array.isArray(snap.tswPassthroughItems) && snap.tswPassthroughItems.length > 0) return true;
   return false;
 }
 
@@ -535,6 +565,11 @@ export const useItemsStore = defineStore('items', {
      * @type {string|null}
      */
     viewerClassName: null,
+    /**
+     * Skipped TSW dump rows re-emitted on export (stash / extras), original order.
+     * @type {Array<{ tswIndex: number, tswRow: object }>}
+     */
+    tswPassthroughItems: [],
     /** @type {0|1} */
     weaponSet: /** @type {0|1} */ (0),
     /** @type {SlotRef|null} */
@@ -2472,6 +2507,7 @@ export const useItemsStore = defineStore('items', {
           if (tswRow) {
             row.tswRow = { ...tswRow, location: 'Inventory', slot: null };
           }
+          if (Number.isFinite(Number(inst.tswIndex))) row.tswIndex = Number(inst.tswIndex);
           out.push(row);
         }
         return out;
@@ -2486,6 +2522,12 @@ export const useItemsStore = defineStore('items', {
         relics: enabledList(this.enabledRelics),
       };
       if (this.customJewels.length) snap.customJewels = this.customJewels.map((j) => ({ ...j }));
+      if (this.tswPassthroughItems.length) {
+        snap.tswPassthroughItems = this.tswPassthroughItems.map((row) => ({
+          tswIndex: row.tswIndex,
+          tswRow: cloneTswRow(row.tswRow) || row.tswRow,
+        }));
+      }
       return snap;
     },
 
@@ -2515,6 +2557,7 @@ export const useItemsStore = defineStore('items', {
         this.enabledRelics = {};
         this.instances = {};
         this.nextInstanceId = 1;
+        this.tswPassthroughItems = [];
         this.selectedSlot = null;
         this.editingInstanceId = null;
         return result;
@@ -2619,6 +2662,8 @@ export const useItemsStore = defineStore('items', {
         let nameRaw = null;
         /** @type {unknown} */
         let tswRowRaw = null;
+        /** @type {unknown} */
+        let tswIndexRaw = null;
         if (typeof entry === 'string') {
           defId = entry;
         } else if (entry && typeof entry === 'object') {
@@ -2640,6 +2685,7 @@ export const useItemsStore = defineStore('items', {
           randomElementRaw = rec.randomElement;
           nameRaw = rec.name;
           tswRowRaw = rec.tswRow;
+          tswIndexRaw = rec.tswIndex;
         } else {
           return null;
         }
@@ -2689,6 +2735,7 @@ export const useItemsStore = defineStore('items', {
           randomElement: normalizeRandomElement(randomElementRaw),
           name: typeof nameRaw === 'string' ? nameRaw.trim() : null,
           tswRow: cloneTswRow(tswRowRaw),
+          tswIndex: Number.isFinite(Number(tswIndexRaw)) ? Number(tswIndexRaw) : null,
         };
       };
 
@@ -2706,6 +2753,7 @@ export const useItemsStore = defineStore('items', {
           mysticOrbs: parsed.mysticOrbs,
           socketables: parsed.socketables,
           tswRow: parsed.tswRow,
+          tswIndex: parsed.tswIndex,
         };
         if (kind === 'charms') {
           if (!isCharmItem(def) || nextEnabledCharms[parsed.defId] != null) return;
@@ -2760,6 +2808,7 @@ export const useItemsStore = defineStore('items', {
                 randomElement: parsed.randomElement,
                 name: parsed.name,
                 tswRow: parsed.tswRow,
+                tswIndex: parsed.tswIndex,
               }
             );
           }
@@ -2815,6 +2864,7 @@ export const useItemsStore = defineStore('items', {
               randomElement: parsed.randomElement,
               name: parsed.name,
               tswRow: parsed.tswRow,
+              tswIndex: parsed.tswIndex,
             });
             if (canPlace(nextInventory, slot, def.invWidth || 1, def.invHeight || 1, getSize)) {
               nextInventory = placeAt(nextInventory, slot, id, getSize);
@@ -2830,6 +2880,7 @@ export const useItemsStore = defineStore('items', {
         this.inventory = nextInventory;
         this.enabledCharms = nextEnabledCharms;
         this.enabledRelics = nextEnabledRelics;
+        this.tswPassthroughItems = parseTswPassthroughItems(data.tswPassthroughItems);
         this.instances = nextInstances;
         this.nextInstanceId = nextId;
         this.selectedSlot = null;
@@ -2868,6 +2919,7 @@ export const useItemsStore = defineStore('items', {
       this.enabledRelics = {};
       this.instances = {};
       this.nextInstanceId = 1;
+      this.tswPassthroughItems = [];
       this.weaponSet = 0;
       this.selectedSlot = null;
       this.editingInstanceId = null;

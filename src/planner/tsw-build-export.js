@@ -73,14 +73,15 @@ const KEEP_IN_INVENTORY = 'Keep in Inventory to Gain Bonus';
  * @returns {number}
  */
 function tswColorId(color, text) {
-  if (/^(Required |Defense:|One-Hand Damage|Two-Hand Damage|Throw Damage|Item Level|Quality Level|Socketed \(|Keep in Inventory)/i.test(text)) {
+  if (/^(Required |Defense:|One-Hand Damage|Two-Hand Damage|Throw Damage|Item Level|Quality Level|Keep in Inventory)/i.test(text)) {
     return -1;
   }
+  if (/^Socketed \(/i.test(text)) return 3;
   if (/^Corrupted$/i.test(text)) return 1;
   if (/^Already Upgraded$/i.test(text)) return 2;
   if (/^Ethereal$/i.test(text)) return 1;
   if (color === 'grey') return 5;
-  if (color === 'orange') return 4;
+  if (color === 'orange') return 8;
   if (color === 'red') return 1;
   return 3;
 }
@@ -92,6 +93,21 @@ function tswColorId(color, text) {
  */
 function seg(text, color) {
   return [[text, color]];
+}
+
+/**
+ * @param {string} text
+ * @returns {Array<[string, number]>}
+ */
+function headerValueSegs(text) {
+  const match = /^(Defense:|One-Hand Damage:|Two-Hand Damage:|Throw Damage:|Chance to Block:)\s*(.*)$/i.exec(
+    text
+  );
+  if (!match || !String(match[2] || '').trim()) return seg(text, -1);
+  return [
+    [`${match[1]} `, -1],
+    [String(match[2]).trim(), 3],
+  ];
 }
 
 /**
@@ -135,8 +151,13 @@ function tswType(def, displayQuality) {
     return stem.includes('Angelic') ? stem : `${stem} (Angelic)`;
   }
   if (displayQuality === 'Set') return `${stem} (Set)`;
-  if (displayQuality === 'TU' || displayQuality === 'SU' || displayQuality === 'SSU' || displayQuality === 'SSSU' || displayQuality === 'RW') {
-    return `${stem} (${displayQuality})`;
+  if (displayQuality === 'RW') return raw || `${stem} (RW)`;
+  if (displayQuality === 'TU' || displayQuality === 'T1' || displayQuality === 'T2' || displayQuality === 'T3' || displayQuality === 'T4') {
+    return raw || stem;
+  }
+  if (displayQuality === 'SU' || displayQuality === 'SSU' || displayQuality === 'SSSU') {
+    if (/\(Sacred\)\s*$/i.test(raw)) return raw;
+    return stem ? `${stem} (Sacred)` : raw;
   }
   return raw || stem;
 }
@@ -148,10 +169,14 @@ function tswType(def, displayQuality) {
 function tswCode(def) {
   const code = String(def?.code || '').trim();
   if (code && !code.includes(':')) return code;
+  const baseId = String(def?.baseId || '').trim();
+  if (baseId && !baseId.includes(':')) return baseId;
   const id = String(def?.id || '').trim();
   const last = id.split(':').pop() || '';
-  if (last && !last.includes(':') && (/^@[0-9a-z]+$/i.test(last) || last.length <= 4)) return last;
-  return code || id;
+  if (last && last !== 'su' && last !== 'tu' && !last.includes(':') && (/^@[0-9a-z]+$/i.test(last) || last.length <= 4)) {
+    return last;
+  }
+  return code || baseId || id;
 }
 
 /**
@@ -303,13 +328,21 @@ export function tswStatsText(text) {
   if (values['{{current_mana}}'] != null && values['{{current_mana}}'] === values['{{mana}}']) {
     skip.add('{{current_mana}}');
   }
-  return lines
+  let out = lines
     .filter((line) => {
       const i = line.indexOf('=');
       if (i < 0) return Boolean(line);
       return !skip.has(line.slice(0, i));
     })
     .join('\n');
+  if (
+    out &&
+    !/\{\{magic_resistance\}\}=/.test(out) &&
+    /\{\{(?:fire|cold|lightning|poison|physical)_resistance\}\}=/.test(out)
+  ) {
+    out = `${out}\n{{magic_resistance}}=0`;
+  }
+  return out;
 }
 
 /**
@@ -321,6 +354,7 @@ export function questsToTswExport(raw) {
   /** @type {Record<string, { normal: boolean, nightmare: boolean, hell: boolean }>} */
   const out = {};
   for (const [id, val] of Object.entries(raw)) {
+    if (id === 'inquisitor_of_the_triune') continue;
     const n = Character.normalizeQuestDifficultiesFromSave(val);
     if (!n) continue;
     if (!n.normal && !n.nightmare && !n.hell) continue;
@@ -377,6 +411,15 @@ export function plannerItemToTswRow(def, inst, loc) {
   });
   /** @type {Array<Array<[string, number]>>} */
   const description_lines = [seg(displayName, q.name_color)];
+  /** @type {Array<Array<[string, number]>>} */
+  const headerLines = [];
+  /** @type {Array<Array<[string, number]>>} */
+  const flagLines = [];
+  /** @type {Array<Array<[string, number]>>} */
+  const modLines = [];
+  /** @type {Array<Array<[string, number]>>} */
+  const socketLines = [];
+  const upgraded = instanceIsUpgraded(inst, inst?.rolls || rolls);
   if (charm || relic) {
     if (reqs.reqLevel > 0) description_lines.push(seg(`Required Level: ${reqs.reqLevel}`, -1));
     description_lines.push(seg(KEEP_IN_INVENTORY, -1));
@@ -397,19 +440,40 @@ export function plannerItemToTswRow(def, inst, loc) {
     const text = String(decoded.text || line || '').trim().replace(TSW_PLANNER_PREFIX_RE, '');
     if (!text) continue;
     if (/^Keep in Inventory/i.test(text)) continue;
-    if (/^Required Level:/i.test(text)) continue;
+    if (/^Required (Level|Strength|Dexterity):/i.test(text)) continue;
     if (charm || relic) {
       if (/^Charm$/i.test(text) || /^Relic$/i.test(text)) continue;
+      description_lines.push(modifierToSeg(text));
+      continue;
     }
-    description_lines.push(modifierToSeg(text));
+    if (/^(Defense:|One-Hand Damage:|Two-Hand Damage:|Throw Damage:|Chance to Block:)/i.test(text)) {
+      headerLines.push(headerValueSegs(text));
+      continue;
+    }
+    if (/^Socketed \(/i.test(text)) {
+      socketLines.push(seg(text, 3));
+      continue;
+    }
+    if (/^(Ethereal|Corrupted|Already Upgraded|Shrine Blessed)$/i.test(text)) {
+      flagLines.push(modifierToSeg(text));
+      continue;
+    }
+    modLines.push(modifierToSeg(text));
   }
   if (!charm && !relic) {
+    description_lines.push(...headerLines);
     if (reqs.reqLevel > 0) description_lines.push(seg(`Required Level: ${reqs.reqLevel}`, -1));
     if (reqs.reqStr > 0) description_lines.push(seg(`Required Strength: ${reqs.reqStr}`, -1));
     if (reqs.reqDex > 0) description_lines.push(seg(`Required Dexterity: ${reqs.reqDex}`, -1));
+    const flagTexts = new Set(flagLines.map((line) => String(line?.[0]?.[0] || '')));
+    if (eth && !flagTexts.has('Ethereal')) flagLines.push(seg('Ethereal', 1));
+    if (corrupted && !flagTexts.has('Corrupted')) flagLines.push(seg('Corrupted', 1));
+    if (upgraded && !flagTexts.has('Already Upgraded')) flagLines.push(seg('Already Upgraded', 2));
+    description_lines.push(...flagLines, ...modLines, ...socketLines);
+  } else {
+    if (eth) description_lines.push(seg('Ethereal', 1));
+    if (corrupted) description_lines.push(seg('Corrupted', 1));
   }
-  if (eth) description_lines.push(seg('Ethereal', 1));
-  if (corrupted) description_lines.push(seg('Corrupted', 1));
 
   const bags = tswRangeBags(def);
   return {
@@ -417,7 +481,6 @@ export function plannerItemToTswRow(def, inst, loc) {
     display_name: displayName,
     type,
     quality: q.quality,
-    display_quality: q.display_quality,
     code: tswCode(def),
     image: String(inst?.icon || pickItemIcon(def) || ''),
     name_color: q.name_color,
@@ -427,10 +490,20 @@ export function plannerItemToTswRow(def, inst, loc) {
     is_trophy: false,
     is_class_charm: Boolean(def.isClassCharm || (charm && def.classRestriction)),
     is_rw: isRunewordItem(def),
-    is_upgraded: instanceIsUpgraded(inst, inst?.rolls || rolls),
+    is_upgraded: upgraded,
     has_trophy: instanceHasTrophy(inst?.rolls || rolls),
+    ilvl: inst?.ilvl != null ? Number(inst.ilvl) : null,
+    ilvl_original: inst?.ilvl_original != null ? Number(inst.ilvl_original) : null,
+    quantity: null,
+    compactable: false,
+    area: 'character',
     location: loc.location,
     slot: loc.slot,
+    storage: null,
+    row: null,
+    col: null,
+    locid: null,
+    display_quality: q.display_quality,
     description_lines,
     socketables: socketables.map((sock, i) => socketableToTsw(sock, i)),
     mystic_orbs: mysticOrbs.map((tuple) => [Number(tuple[0]) || 1, String(tuple[1] || '')]),
@@ -519,34 +592,63 @@ function rowFromInstance(inst, def, loc) {
 }
 
 /**
+ * @param {Array<{ idx: number, row: object }>} indexed
+ * @param {object[]} rest
+ * @returns {object[]}
+ */
+function mergeTswExportRows(indexed, rest) {
+  indexed.sort((a, b) => a.idx - b.idx);
+  return [...indexed.map((row) => row.row), ...rest];
+}
+
+/**
  * @param {object} store
  * @returns {object[]}
  */
 export function itemsStoreToTswItems(store) {
   if (!store) return [];
+  /** @type {Array<{ idx: number, row: object }>} */
+  const indexed = [];
   /** @type {object[]} */
-  const out = [];
+  const rest = [];
+  /**
+   * @param {object|null|undefined} inst
+   * @param {object|null|undefined} def
+   * @param {{ location: string, slot: string|null }} loc
+   */
+  const take = (inst, def, loc) => {
+    const row = rowFromInstance(inst, def, loc);
+    if (!row) return;
+    const idx = Number(inst?.tswIndex);
+    if (Number.isFinite(idx)) indexed.push({ idx, row });
+    else rest.push(row);
+  };
   for (const slot of EQUIPMENT_SLOTS) {
     const id = store.equipment?.[slot];
     if (id == null) continue;
     const inst = store.instances?.[id];
     const def = store.getDefForInstance?.(id) || store.catalogById?.[inst?.defId];
     const loc = { location: 'Gear', slot: EQUIPMENT_TO_TSW_SLOT[slot] || null };
-    const row = rowFromInstance(inst, def, loc);
-    if (row) out.push(row);
+    take(inst, def, loc);
   }
   const pushEnabled = (map) => {
     for (const instanceId of Object.values(map || {})) {
       const inst = store.instances?.[instanceId];
       const def = store.getDefForInstance?.(instanceId) || store.catalogById?.[inst?.defId];
       const loc = { location: 'Inventory', slot: null };
-      const row = rowFromInstance(inst, def, loc);
-      if (row) out.push(row);
+      take(inst, def, loc);
     }
   };
   pushEnabled(store.enabledCharms);
   pushEnabled(store.enabledRelics);
-  return out;
+  for (const entry of Array.isArray(store.tswPassthroughItems) ? store.tswPassthroughItems : []) {
+    const row = cloneTswRow(entry?.tswRow);
+    if (!row) continue;
+    const idx = Number(entry.tswIndex);
+    if (Number.isFinite(idx)) indexed.push({ idx, row });
+    else rest.push(row);
+  }
+  return mergeTswExportRows(indexed, rest);
 }
 
 /**
@@ -557,46 +659,52 @@ export function itemsStoreToTswItems(store) {
 export function plannerItemsSnapshotToTswItems(snap, store) {
   if (!snap || typeof snap !== 'object') return [];
   const byId = store?.catalogById || {};
+  /** @type {Array<{ idx: number, row: object }>} */
+  const indexed = [];
   /** @type {object[]} */
-  const out = [];
+  const rest = [];
+  /**
+   * @param {object} inst
+   * @param {{ location: string, slot: string|null }} loc
+   */
+  const take = (inst, loc) => {
+    const cloned = cloneTswRow(inst.tswRow);
+    /** @type {object|null} */
+    let row;
+    if (cloned) {
+      cloned.location = loc.location;
+      cloned.slot = loc.slot;
+      row = cloned;
+    } else {
+      const base = byId[inst.defId];
+      const def = applyCustomOverlayToDef(base, inst.custom) || base;
+      row = plannerItemToTswRow(def, inst, loc);
+    }
+    if (!row) return;
+    const idx = Number(inst.tswIndex);
+    if (Number.isFinite(idx)) indexed.push({ idx, row });
+    else rest.push(row);
+  };
   const equipment = snap.equipment && typeof snap.equipment === 'object' ? snap.equipment : {};
   for (const slot of EQUIPMENT_SLOTS) {
     const entry = equipment[slot];
     if (!entry) continue;
-    const inst = snapshotEntryAsInst(entry);
-    const loc = { location: 'Gear', slot: EQUIPMENT_TO_TSW_SLOT[slot] || null };
-    const clonedGear = cloneTswRow(inst.tswRow);
-    if (clonedGear) {
-      clonedGear.location = loc.location;
-      clonedGear.slot = loc.slot;
-      out.push(clonedGear);
-      continue;
-    }
-    const base = byId[inst.defId];
-    const def = applyCustomOverlayToDef(base, inst.custom) || base;
-    const row = plannerItemToTswRow(def, inst, loc);
-    if (row) out.push(row);
+    take(snapshotEntryAsInst(entry), { location: 'Gear', slot: EQUIPMENT_TO_TSW_SLOT[slot] || null });
   }
-  const pushList = (list) => {
-    for (const entry of Array.isArray(list) ? list : []) {
-      const inst = snapshotEntryAsInst(entry);
-      const loc = { location: 'Inventory', slot: null };
-      const clonedInv = cloneTswRow(inst.tswRow);
-      if (clonedInv) {
-        clonedInv.location = loc.location;
-        clonedInv.slot = loc.slot;
-        out.push(clonedInv);
-        continue;
-      }
-      const base = byId[inst.defId];
-      const def = applyCustomOverlayToDef(base, inst.custom) || base;
-      const row = plannerItemToTswRow(def, inst, loc);
-      if (row) out.push(row);
-    }
-  };
-  pushList(snap.charms);
-  pushList(snap.relics);
-  return out;
+  for (const entry of Array.isArray(snap.charms) ? snap.charms : []) {
+    take(snapshotEntryAsInst(entry), { location: 'Inventory', slot: null });
+  }
+  for (const entry of Array.isArray(snap.relics) ? snap.relics : []) {
+    take(snapshotEntryAsInst(entry), { location: 'Inventory', slot: null });
+  }
+  for (const entry of Array.isArray(snap.tswPassthroughItems) ? snap.tswPassthroughItems : []) {
+    const row = cloneTswRow(entry?.tswRow || entry);
+    if (!row) continue;
+    const idx = Number(entry?.tswIndex);
+    if (Number.isFinite(idx)) indexed.push({ idx, row });
+    else rest.push(row);
+  }
+  return mergeTswExportRows(indexed, rest);
 }
 
 /**
@@ -608,6 +716,7 @@ function storeHasEquippedItems(store) {
   if (EQUIPMENT_SLOTS.some((slot) => store.equipment?.[slot] != null)) return true;
   if (store.enabledCharms && Object.keys(store.enabledCharms).length) return true;
   if (store.enabledRelics && Object.keys(store.enabledRelics).length) return true;
+  if (Array.isArray(store.tswPassthroughItems) && store.tswPassthroughItems.length) return true;
   return false;
 }
 
@@ -620,17 +729,17 @@ export function tswBuildFieldsFromNative(native) {
   /** @type {Record<string, unknown>} */
   const build = {
     name: rec.name != null ? String(rec.name) : '',
-    class: rec.class != null ? String(rec.class) : '',
-    level: Number(rec.level) || 1,
-    skillPoints: rec.skillPoints && typeof rec.skillPoints === 'object' ? rec.skillPoints : {},
-    oSkills: rec.oSkills && typeof rec.oSkills === 'object' ? rec.oSkills : {},
-    allSkillsBonus: Number(rec.allSkillsBonus) || 0,
-    stats: tswStatsText(rec.stats != null ? String(rec.stats) : ''),
-    savedAt: rec.savedAt != null ? String(rec.savedAt) : new Date().toISOString(),
   };
   if (rec.version) build.version = rec.version;
+  build.class = rec.class != null ? String(rec.class) : '';
+  build.level = Number(rec.level) || 1;
+  build.skillPoints = rec.skillPoints && typeof rec.skillPoints === 'object' ? rec.skillPoints : {};
+  build.oSkills = rec.oSkills && typeof rec.oSkills === 'object' ? rec.oSkills : {};
+  build.allSkillsBonus = Number(rec.allSkillsBonus) || 0;
+  build.stats = tswStatsText(rec.stats != null ? String(rec.stats) : '');
   const quests = questsToTswExport(rec.questsCompleted);
   if (quests) build.questsCompleted = quests;
+  build.savedAt = rec.savedAt != null ? String(rec.savedAt) : new Date().toISOString();
   return build;
 }
 
@@ -647,6 +756,7 @@ export function wrapTswBuildEnvelope(build, items) {
       realm: 'TSW',
       cached: false,
       generated_at: new Date().toISOString(),
+      marker_warmed_at: null,
     },
     build,
     items: Array.isArray(items) ? items : [],

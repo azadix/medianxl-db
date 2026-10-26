@@ -587,6 +587,15 @@ function isCatalogBacked(row, def) {
  * @param {ReturnType<typeof buildSetDumpSkipContext>} [setDumpCtx]
  * @returns {void}
  */
+function cloneImportedTswRow(row) {
+  if (!row || typeof row !== 'object' || Array.isArray(row)) return null;
+  try {
+    return JSON.parse(JSON.stringify(row));
+  } catch {
+    return null;
+  }
+}
+
 function attachTswInstanceExtras(entry, row, def, setDumpCtx = null) {
   const meta = tswInstanceExtras(row, def, setDumpCtx);
   if (meta.extras?.length) entry.extras = meta.extras;
@@ -594,6 +603,19 @@ function attachTswInstanceExtras(entry, row, def, setDumpCtx = null) {
   if (meta.socketables?.length) entry.socketables = meta.socketables;
   if (meta.ethereal) entry.ethereal = true;
   if (meta.corrupted) entry.corrupted = true;
+}
+
+/**
+ * @param {object} entry
+ * @param {object} row
+ * @param {number} index
+ * @returns {object}
+ */
+function attachImportedTsw(entry, row, index) {
+  const cloned = cloneImportedTswRow(row);
+  if (cloned) entry.tswRow = cloned;
+  if (Number.isFinite(index)) entry.tswIndex = index;
+  return entry;
 }
 
 /**
@@ -612,7 +634,7 @@ function attachTswInstanceExtras(entry, row, def, setDumpCtx = null) {
  *   name?: string,
  * }}
  */
-function snapshotWithRolls(row, defId, def, className, setDumpCtx = null) {
+function snapshotWithRolls(row, defId, def, className, setDumpCtx = null, index = null) {
   /**
    * @type {{
    *   defId: string,
@@ -629,6 +651,7 @@ function snapshotWithRolls(row, defId, def, className, setDumpCtx = null) {
   const icon = row?.image != null ? String(row.image).trim() : '';
   if (icon) entry.icon = icon;
   attachTswInstanceExtras(entry, row, def, setDumpCtx);
+  attachImportedTsw(entry, row, index);
   if (isMindflayerMayhemRow(row)) {
     const name = tswItemDisplayName(row);
     if (name && name !== def?.name) entry.name = name;
@@ -643,7 +666,7 @@ function snapshotWithRolls(row, defId, def, className, setDumpCtx = null) {
  * @param {unknown} rows
  * @param {object} catalog
  * @param {string|null|undefined} [className]
- * @returns {{ snapshot: { weaponSet: 0, equipment: Record<string, { defId: string, custom?: object, icon?: string, rolls?: Record<string, number> }|null>, charms: Array<{ defId: string, rolls?: Record<string, number> }>, relics: Array<{ defId: string, rolls?: Record<string, number> }> }, skipped: Array<ReturnType<typeof skippedTswItem>> }}
+ * @returns {{ snapshot: { weaponSet: 0, equipment: Record<string, { defId: string, custom?: object, icon?: string, rolls?: Record<string, number> }|null>, charms: Array<{ defId: string, rolls?: Record<string, number> }>, relics: Array<{ defId: string, rolls?: Record<string, number> }>, tswPassthroughItems: Array<{ tswIndex: number, tswRow: object }> }, skipped: Array<ReturnType<typeof skippedTswItem>> }}
  */
 export function mapTswItemsToSnapshot(rows, catalog, className = null) {
   const cat = catalogIndex(catalog);
@@ -660,36 +683,51 @@ export function mapTswItemsToSnapshot(rows, catalog, className = null) {
   const seenRelics = new Set();
   /** @type {Array<ReturnType<typeof skippedTswItem>>} */
   const skipped = [];
+  /** @type {Array<{ tswIndex: number, tswRow: object }>} */
+  const tswPassthroughItems = [];
+
+  /**
+   * @param {object} row
+   * @param {string} reason
+   * @param {number} index
+   * @param {{ toast?: boolean }} [opts]
+   */
+  const skipRow = (row, reason, index, opts = {}) => {
+    if (opts.toast !== false) skipped.push(skippedTswItem(row, reason));
+    const cloned = cloneImportedTswRow(row);
+    if (cloned) tswPassthroughItems.push({ tswIndex: index, tswRow: cloned });
+  };
 
   const list = Array.isArray(rows) ? rows : [];
-  for (const row of list) {
+  for (let index = 0; index < list.length; index += 1) {
+    const row = list[index];
     if (!row || typeof row !== 'object') continue;
     const location = String(row.location || '').trim();
     if (location !== 'Gear' && location !== 'Inventory') {
-      skipped.push(skippedTswItem(row, 'stash'));
+      skipRow(row, 'stash', index);
       continue;
     }
 
     if (isIgnoredTswItem(row)) {
-      skipped.push(skippedTswItem(row, 'ignored'));
+      skipRow(row, 'ignored', index);
       continue;
     }
 
     const customQuality = tswCustomQuality(row);
     if (customQuality) {
       if (location !== 'Gear') {
-        skipped.push(skippedTswItem(row, 'uncatalogued'));
+        skipRow(row, 'uncatalogued', index);
         continue;
       }
       const slotKey = TSW_SLOT_TO_EQUIPMENT[String(row.slot || '')];
       if (!slotKey) {
-        skipped.push(skippedTswItem(row, 'unknown-slot'));
+        skipRow(row, 'unknown-slot', index);
         continue;
       }
       const defId = resolveCustomBaseDefId(row, cat, customQuality);
       const def = defId ? cat.byId[defId] : null;
       if (!defId || !def) {
-        skipped.push(skippedTswItem(row, 'uncatalogued'));
+        skipRow(row, 'uncatalogued', index);
         continue;
       }
       const customEntry = tswCustomSnapshotEntry(row, defId, customQuality);
@@ -699,23 +737,23 @@ export function mapTswItemsToSnapshot(rows, catalog, className = null) {
       if (meta.socketables?.length) customEntry.socketables = meta.socketables;
       if (meta.ethereal) customEntry.ethereal = true;
       if (meta.corrupted) customEntry.corrupted = true;
-      equipment[slotKey] = customEntry;
+      equipment[slotKey] = attachImportedTsw(customEntry, row, index);
       continue;
     }
 
     if (row?.is_rw || qualityBadge(row) === 'RW') {
       if (location !== 'Gear') {
-        skipped.push(skippedTswItem(row, 'uncatalogued'));
+        skipRow(row, 'uncatalogued', index);
         continue;
       }
       const slotKey = TSW_SLOT_TO_EQUIPMENT[String(row.slot || '')];
       if (!slotKey) {
-        skipped.push(skippedTswItem(row, 'unknown-slot'));
+        skipRow(row, 'unknown-slot', index);
         continue;
       }
       const defId = resolveTswRunewordDefId(row, cat);
       if (!defId) {
-        skipped.push(skippedTswItem(row, 'uncatalogued'));
+        skipRow(row, 'uncatalogued', index);
         continue;
       }
       const templateId = String(defId).split(':').slice(0, 2).join(':');
@@ -732,25 +770,25 @@ export function mapTswItemsToSnapshot(rows, catalog, className = null) {
       const icon = row?.image != null ? String(row.image).trim() : '';
       if (icon) entry.icon = icon;
       attachTswInstanceExtras(entry, row, rwDef);
-      equipment[slotKey] = entry;
+      equipment[slotKey] = attachImportedTsw(entry, row, index);
       continue;
     }
 
     const defId = resolveTswItemDefId(row, cat);
     const def = defId ? cat.byId[defId] : null;
     if (!defId || !def || !isCatalogBacked(row, def)) {
-      skipped.push(skippedTswItem(row, 'uncatalogued'));
+      skipRow(row, 'uncatalogued', index);
       continue;
     }
 
     if (location === 'Gear') {
       const slotKey = TSW_SLOT_TO_EQUIPMENT[String(row.slot || '')];
       if (!slotKey) {
-        skipped.push(skippedTswItem(row, 'unknown-slot'));
+        skipRow(row, 'unknown-slot', index);
         continue;
       }
       if (isCharmItem(def) || isRelicItem(def)) {
-        skipped.push(skippedTswItem(row, 'uncatalogued'));
+        skipRow(row, 'uncatalogued', index);
         continue;
       }
       equipment[slotKey] = snapshotWithRolls(
@@ -758,33 +796,37 @@ export function mapTswItemsToSnapshot(rows, catalog, className = null) {
         defId,
         def,
         className,
-        setDumpContextForDef(def, cat)
+        setDumpContextForDef(def, cat),
+        index
       );
       continue;
     }
 
     if (isRelicItem(def) || looksLikeRelic(row)) {
       if (seenRelics.has(defId) || relics.length >= MAX_RELICS) {
-        skipped.push(skippedTswItem(row, 'relic-cap'));
+        skipRow(row, 'relic-cap', index);
         continue;
       }
       seenRelics.add(defId);
-      relics.push(snapshotWithRolls(row, defId, def, className));
+      relics.push(snapshotWithRolls(row, defId, def, className, null, index));
       continue;
     }
 
     if (isCharmItem(def) || row.is_charm) {
-      if (seenCharms.has(defId)) continue;
+      if (seenCharms.has(defId)) {
+        skipRow(row, 'duplicate', index, { toast: false });
+        continue;
+      }
       seenCharms.add(defId);
-      charms.push(snapshotWithRolls(row, defId, def, className));
+      charms.push(snapshotWithRolls(row, defId, def, className, null, index));
       continue;
     }
 
-    skipped.push(skippedTswItem(row, 'uncatalogued'));
+    skipRow(row, 'uncatalogued', index);
   }
 
   return {
-    snapshot: { weaponSet: 0, equipment, charms, relics },
+    snapshot: { weaponSet: 0, equipment, charms, relics, tswPassthroughItems },
     skipped,
   };
 }

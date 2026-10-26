@@ -257,10 +257,13 @@ describe('tsw-build-import', () => {
     ];
     const { snapshot, skipped } = mapTswItemsToSnapshot(rows, byIdCatalog());
     expect(snapshot.equipment.head).toMatchObject({ defId: 'u:lacuni-cowl:su' });
-    expect(snapshot.equipment.lrin).toEqual({
+    expect(snapshot.equipment.lrin).toMatchObject({
       defId: 'rin',
       custom: { quality: 'rare', name: 'Ring', modifiers: ['+1 to All Skills'] },
+      tswIndex: expect.any(Number),
     });
+    expect(snapshot.equipment.lrin.tswRow.display_name).toBe('Ring');
+    expect(snapshot.equipment.head.tswRow.display_name).toBe('Lacuni Cowl');
     expect(snapshot.charms.map((row) => row.defId)).toEqual(['a68', 'ebw']);
     expect(snapshot.charms[1].rolls?.[DIM_KEY_ROLL_KEYS.variant]).toBe(3);
     expect(snapshot.relics.map((row) => row.defId)).toEqual(['relic:lightning-wall']);
@@ -285,19 +288,15 @@ describe('tsw-build-import', () => {
           code: 'box',
           location: 'Inventory',
         },
-        {
-          item: 'Mystery Unique',
-          display_name: 'Mystery Unique',
-          display_quality: 'SU',
-          location: 'Inventory',
-        },
       ],
       byIdCatalog()
     );
     expect(snapshot.charms).toEqual([]);
     expect(snapshot.relics).toEqual([]);
     expect(skipped.find((s) => s.name === 'Horadric Cube')?.reason).toBe('ignored');
-    expect(skipped.find((s) => s.name === 'Mystery Unique')?.reason).toBe('uncatalogued');
+    expect(snapshot.tswPassthroughItems.map((row) => row.tswRow.display_name)).toEqual([
+      'Horadric Cube',
+    ]);
   });
 
   it('maps Dimensional Key Star Chart, Dream Fragment, and lab progression from TSW lines', () => {

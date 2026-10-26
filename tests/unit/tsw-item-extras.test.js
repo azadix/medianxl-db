@@ -517,4 +517,50 @@ describe('tsw item extras', () => {
     const rolls = rollsFromTswItem(row, def);
     expect(Object.values(rolls).some((n) => n === 15)).toBe(false);
   });
+
+  it('keeps TSW leftover Requirements +0% as the net unique+jewel percent', () => {
+    const def = {
+      id: 'u:dementia:su',
+      name: 'Dementia',
+      rarity: 'unique',
+      uniqueKind: 'su',
+      baseReqStr: 575,
+      modifiers: ['Requirements +20%', '+500 Defense'],
+    };
+    const extras = extrasFromTswItem(
+      {
+        item: 'Dementia',
+        description_lines: [
+          [['Dementia', 4]],
+          [['Required Strength: 575', 1]],
+          [['Requirements +0%', 3]],
+        ],
+      },
+      def
+    );
+    expect(extras).toContain('Requirements +0%');
+  });
+
+  it('synthesizes Requirements +0% when TSW shows the unreduced base req', () => {
+    const def = {
+      id: 'u:lorekeeper:su',
+      name: 'Lorekeeper',
+      rarity: 'unique',
+      uniqueKind: 'su',
+      baseReqStr: 600,
+      modifiers: ['Requirements -50%', '+3 to All Skills'],
+    };
+    const extras = extrasFromTswItem(
+      {
+        item: 'Lorekeeper',
+        description_lines: [
+          [['Lorekeeper', 4]],
+          [['Required Strength: 600', 1]],
+          [['+3 to All Skills', 3]],
+        ],
+      },
+      def
+    );
+    expect(extras).toContain('Requirements +0%');
+  });
 });
