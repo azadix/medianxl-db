@@ -694,6 +694,8 @@ export function extrasFromTswItem(row, def, setDumpCtx = null) {
   const templates = catalogModifierTemplates(def);
   /** @type {string[]} */
   const out = [];
+  let keptReqPctLeftover = false;
+  let keptReqLevelLeftover = false;
   for (const line of tswDescriptionColoredTexts(row.description_lines)) {
     const text = plain(line.text);
     if (!text) continue;
@@ -708,7 +710,30 @@ export function extrasFromTswItem(row, def, setDumpCtx = null) {
     // Socketed rune name dump (FelFelFelFalFal), even if socketables were omitted.
     if (isTswSocketedRuneDump(text)) continue;
     // Leftover `+N Required Level` / `Requirements +/-%` is the net TSW total.
-    if (parseRequiredLevelBonus(text) !== 0 || parseRequirementsReductionPct(text) !== 0) {
+    // Skip catalog affixes (overlay/rolls apply those). Keep one leftover of each kind so
+    // planner re-exports that repeat catalog + jewel component lines are not summed.
+    const reqPct = parseRequirementsReductionPct(text);
+    const reqLevel = parseRequiredLevelBonus(text);
+    if (reqPct !== 0 || reqLevel !== 0) {
+      const catalogHit = templates.some((tmpl) => {
+        const tmplPct = parseRequirementsReductionPct(tmpl);
+        const tmplLevel = parseRequiredLevelBonus(tmpl);
+        if (reqPct !== 0) {
+          if (tmplPct === 0) return false;
+          if (matchAffixTemplate(tmpl, text) != null) return true;
+          return Math.sign(tmplPct) === Math.sign(reqPct) && Math.abs(Math.abs(tmplPct) - Math.abs(reqPct)) <= 1;
+        }
+        if (tmplLevel === 0) return false;
+        return matchAffixTemplate(tmpl, text) != null;
+      });
+      if (catalogHit) continue;
+      if (reqPct !== 0) {
+        if (keptReqPctLeftover) continue;
+        keptReqPctLeftover = true;
+      } else {
+        if (keptReqLevelLeftover) continue;
+        keptReqLevelLeftover = true;
+      }
       out.push(encodeModifierLine(text, line.color) || text);
       continue;
     }

@@ -103,6 +103,52 @@ describe('tsw item extras', () => {
     expect(extras).toContain('Requirements -30%');
   });
 
+  it('keeps one net Requirements leftover from planner re-exports', () => {
+    const extras = extrasFromTswItem(
+      {
+        item: 'Arrogance',
+        display_name: 'Arrogance',
+        type: 'Gothic Plate (SU)',
+        description_lines: [
+          [['Arrogance', 4]],
+          [['Requirements +150%', 3]],
+          [['Requirements +150%', 3]],
+          [['Requirements +10%', 3]],
+          [['Required Strength: 1687', -1]],
+        ],
+      },
+      {
+        id: 'u:arrogance:su',
+        name: 'Arrogance',
+        rarity: 'unique',
+        modifiers: ['Requirements +100%'],
+      }
+    );
+    expect(extras.filter((line) => /Requirements/i.test(line))).toEqual(['Requirements +150%']);
+  });
+
+  it('does not treat a 1% wiki rounding as a Requirements leftover', () => {
+    const extras = extrasFromTswItem(
+      {
+        item: 'Raven Mantle',
+        display_name: 'Raven Mantle',
+        type: 'Ring Mail (SU)',
+        description_lines: [
+          [['Raven Mantle', 4]],
+          [['Requirements -32%', 3]],
+          [['Requirements +32%', 3]],
+          [['Required Strength: 726', -1]],
+        ],
+      },
+      {
+        name: 'Raven Mantle',
+        rarity: 'unique',
+        modifiers: ['Requirements -33%'],
+      }
+    );
+    expect(extras.filter((line) => /Requirements/i.test(line))).toEqual(['Requirements +32%']);
+  });
+
   it('keeps MO / jewel leftovers and skips catalog + boilerplate lines', () => {
     const extras = extrasFromTswItem(silksRow, silksDef);
     expect(extras).toEqual(
@@ -274,9 +320,9 @@ describe('tsw item extras', () => {
         '+10% to Summon Attack Rating',
         '+1% to Strength',
         '+5 to all Attributes',
-        'Requirements +100%',
       ])
     );
+    expect(extras).not.toContain('Requirements +100%');
   });
 
   it('bundles extras, mystic orbs, and ethereal for snapshots', () => {

@@ -114,6 +114,23 @@ import { customJewelModifierLines, parseJewelcraftRolls } from '@/items/jewelcra
 /** When true, equip/enable paths skip raising planner level for item reqs. */
 let skipItemReqLevelSync = false;
 
+/**
+ * Non-reactive override for requirement peeks at the inactive weapon set.
+ * Writing `store.weaponSet` from a Vue computed (paperdoll unmet-req checks)
+ * retriggers render forever.
+ * @type {0|1|null}
+ */
+let weaponSetPeek = null;
+
+/**
+ * @param {{ weaponSet?: 0|1 }} store
+ * @returns {0|1}
+ */
+function effectiveWeaponSet(store) {
+  if (weaponSetPeek != null) return weaponSetPeek;
+  return store.weaponSet === 1 ? 1 : 0;
+}
+
 /** @type {WeakMap<object, { folder: string, promise: Promise<void> }>} */
 const catalogLoadInflight = new WeakMap();
 
@@ -598,7 +615,7 @@ export const useItemsStore = defineStore('items', {
       /** @type {ItemDef[]} */
       const out = [];
       for (const slot of EQUIPMENT_SLOTS) {
-        if (!isActiveWeaponSetSlot(slot, this.weaponSet)) continue;
+        if (!isActiveWeaponSetSlot(slot, effectiveWeaponSet(this))) continue;
         const id = this.equipment[slot];
         if (id == null) continue;
         const def = this.getDefForInstance(id);
@@ -707,7 +724,7 @@ export const useItemsStore = defineStore('items', {
         if (Number.isFinite(req) && req > max) max = req;
       };
       for (const slot of EQUIPMENT_SLOTS) {
-        if (!isActiveWeaponSetSlot(slot, this.weaponSet)) continue;
+        if (!isActiveWeaponSetSlot(slot, effectiveWeaponSet(this))) continue;
         const id = this.equipment[slot];
         if (id == null) continue;
         const inst = this.instances[id];
@@ -736,7 +753,7 @@ export const useItemsStore = defineStore('items', {
         if (reqs.reqDex > reqDex) reqDex = reqs.reqDex;
       };
       for (const slot of EQUIPMENT_SLOTS) {
-        if (!isActiveWeaponSetSlot(slot, this.weaponSet)) continue;
+        if (!isActiveWeaponSetSlot(slot, effectiveWeaponSet(this))) continue;
         consider(this.equipment[slot]);
       }
       for (const id of Object.values(this.enabledCharms)) consider(id);
@@ -915,14 +932,15 @@ export const useItemsStore = defineStore('items', {
      */
     runWithWeaponSet(set, fn) {
       const next = set === 1 ? 1 : 0;
-      const prev = this.weaponSet === 1 ? 1 : 0;
+      const prevPeek = weaponSetPeek;
+      const prev = effectiveWeaponSet(this);
       if (next === prev) return fn();
-      this.weaponSet = next;
+      weaponSetPeek = next;
       recomputePlannerStatsFromItems(getCharacterInstance());
       try {
         return fn();
       } finally {
-        this.weaponSet = prev;
+        weaponSetPeek = prevPeek;
         recomputePlannerStatsFromItems(getCharacterInstance());
       }
     },
@@ -998,7 +1016,7 @@ export const useItemsStore = defineStore('items', {
     equipmentSlotMeetsRequirements(slot) {
       const key = String(slot);
       const setIdx = weaponSetForEquipSlot(key);
-      if (setIdx != null && setIdx !== this.weaponSet) {
+      if (setIdx != null && setIdx !== effectiveWeaponSet(this)) {
         return this.runWithWeaponSet(setIdx, () => this.equipmentSlotMeetsRequirements(key));
       }
       const id = this.equipment[key];
@@ -1010,9 +1028,6 @@ export const useItemsStore = defineStore('items', {
       const reqs = this.getRequirementsForInstance(id);
       const stats = this.getCharacterRequirementStats();
       if (!characterMeetsItemRequirements(reqs, stats)) {
-        if (setIdx == null && this.weaponSet === 0) {
-          return this.runWithWeaponSet(1, () => this.equipmentSlotMeetsRequirements(key));
-        }
         return false;
       }
       if (isQuiverItem(def)) {
@@ -1038,7 +1053,7 @@ export const useItemsStore = defineStore('items', {
      * @returns {boolean}
      */
     equipmentSlotContributesBonuses(slot) {
-      if (!isActiveWeaponSetSlot(slot, this.weaponSet)) return false;
+      if (!isActiveWeaponSetSlot(slot, effectiveWeaponSet(this))) return false;
       const key = String(slot);
       const id = this.equipment[key];
       if (id == null) return false;

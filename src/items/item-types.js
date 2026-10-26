@@ -143,7 +143,7 @@ export function isActiveWeaponSetSlot(slot, weaponSet = 0) {
 
 /**
  * Weapon set that owns a slot's str/dex (0 = I, 1 = II). Body slots are null
- * (always equipped; either set's stats may satisfy them).
+ * (always equipped; checked against the current weapon set's stats).
  * @param {string} slot
  * @returns {0|1|null}
  */

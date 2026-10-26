@@ -2,6 +2,7 @@
  * @file Active weapon set must own set-piece counts and set-bonus stats.
  */
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { computed } from 'vue';
 import { createPinia, setActivePinia } from 'pinia';
 import {
   clearItemCharacterStatBonusCaches,
@@ -149,5 +150,48 @@ describe('weapon set requirement stats', () => {
     expect(unmet.some((row) => row.name === setI.name)).toBe(true);
     expect(unmet.some((row) => row.name === setII.name)).toBe(false);
     expect(store.weaponSet).toBe(0);
+  });
+
+  it('does not write weaponSet when a body slot fails reqs (paperdoll computed)', () => {
+    createCharacterInstance('Paladin', 150);
+    const ch = getCharacterInstance();
+    ch.setRawStat('strength', 25);
+    const store = useItemsStore();
+    const boots = {
+      id: 'u:boots:tu',
+      name: 'Heavy Boots',
+      category: 'armor',
+      slot: 'feet',
+      rarity: 'unique',
+      reqLevel: 1,
+      reqStr: 1000,
+      modifiers: ['+10 to Strength'],
+    };
+    const altStaff = {
+      id: 'u:staff:tu',
+      name: 'Alt Staff',
+      category: 'weapons',
+      slot: 'arms',
+      rarity: 'unique',
+      reqLevel: 1,
+      reqDex: 1,
+      modifiers: ['+1 to Dexterity'],
+    };
+    store.catalog = [boots, altStaff];
+    store.catalogLoaded = true;
+    store.equipment.feet = store.createInstance(boots.id);
+    store.equipment.rarm2 = store.createInstance(altStaff.id);
+    store.setWeaponSet(0);
+    recomputePlannerStatsFromItems(ch);
+
+    const seen = [];
+    const unmet = computed(() => {
+      seen.push(store.weaponSet);
+      return store.equipmentSlotMeetsRequirements('feet');
+    });
+    expect(unmet.value).toBe(false);
+    expect(unmet.value).toBe(false);
+    expect(store.weaponSet).toBe(0);
+    expect(seen.every((v) => v === 0)).toBe(true);
   });
 });
