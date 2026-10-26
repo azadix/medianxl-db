@@ -33,7 +33,7 @@ import { getShieldClassBlockPercent } from '@/character/class-baselines.js';
 import {
   extrasWithMysticOrbRequiredLevel,
   parseRequiredLevelBonus,
-  parseRequirementsReductionPct,
+  isRequirementsPercentLine,
   resolveItemRequirements,
 } from '@/items/item-requirements.js';
 import {
@@ -384,7 +384,7 @@ export function formatChanceToBlockLine(block, className = null) {
  */
 export function extrasWithAppliedItemBonuses(extras, def, options = {}) {
   const list = extrasWithMysticOrbRequiredLevel(extras, options.mysticOrbs, def?.modifiers);
-  const extrasHaveReqPct = list.some((line) => parseRequirementsReductionPct(line) !== 0);
+  const extrasHaveReqPct = list.some((line) => isRequirementsPercentLine(line));
   const extrasHaveReqLevel = list.some((line) => parseRequiredLevelBonus(line) !== 0);
   /** @type {Map<string, number>} */
   const leftover = new Map();
@@ -406,7 +406,7 @@ export function extrasWithAppliedItemBonuses(extras, def, options = {}) {
   const appendBonus = (line) => {
     const text = String(line || '').trim();
     if (!text) return;
-    if (extrasHaveReqPct && parseRequirementsReductionPct(text) !== 0) return;
+    if (extrasHaveReqPct && isRequirementsPercentLine(text)) return;
     if (extrasHaveReqLevel && parseRequiredLevelBonus(text) !== 0) return;
     const key = decodeModifierLine(text).text.trim().toLowerCase();
     if (!key) return;

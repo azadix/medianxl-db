@@ -24,6 +24,7 @@ import {
 } from '@/planner/tsw-build-import.js';
 import { useItemsStore } from '@/stores/items.js';
 import { createCharacterInstance, setCharacterInstance } from '@/character/planner-instance.js';
+import { setPlannerAutoMatchHighestStatRequirements } from '@/planner/planner-options.js';
 import { initSkillDataStore } from '@/shared/skill-data-store.js';
 import { installTreeDataFetchMock } from '../helpers/mock-fetch-tree-data.js';
 
@@ -102,6 +103,7 @@ function auditBuildFile(catalog, file, sets = []) {
   const report = store.fromSnapshot(snapshot);
   if (build.stats) ch.parseStatsFromText(String(build.stats));
   recomputePlannerStatsFromItems(ch);
+  store.syncCharacterToItemReqs();
 
   /** @type {string[]} */
   const problems = [];
@@ -179,6 +181,7 @@ describe.skipIf(files.length === 0)('TSW build audit dumps', () => {
   let restoreFetch = null;
 
   beforeAll(async () => {
+    setPlannerAutoMatchHighestStatRequirements(true);
     planner = loadPlannerCatalog();
     restoreFetch = installTreeDataFetchMock();
     await initSkillDataStore();

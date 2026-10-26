@@ -738,7 +738,7 @@ export const useItemsStore = defineStore('items', {
       }
       return max;
     },
-    /** Highest resolved str/dex requirements among active-set gear and enabled charms/relics. */
+    /** Highest resolved str/dex requirements among equipped gear (both weapon sets) and enabled charms/relics. */
     maxActiveItemReqStats() {
       let reqStr = 0;
       let reqDex = 0;
@@ -753,7 +753,6 @@ export const useItemsStore = defineStore('items', {
         if (reqs.reqDex > reqDex) reqDex = reqs.reqDex;
       };
       for (const slot of EQUIPMENT_SLOTS) {
-        if (!isActiveWeaponSetSlot(slot, effectiveWeaponSet(this))) continue;
         consider(this.equipment[slot]);
       }
       for (const id of Object.values(this.enabledCharms)) consider(id);

@@ -7,6 +7,7 @@ import {
   combinedRequiredLevelBonus,
   extrasWithMysticOrbRequiredLevel,
   formatItemRequirementsLine,
+  isRequirementsPercentLine,
   parseRequiredLevelBonus,
   parseRequirementsReductionPct,
   itemAllowsMysticOrbReqLevel,
@@ -35,6 +36,13 @@ describe('parseRequirementsReductionPct', () => {
 
   it('treats Requirements +N% as a requirement increase', () => {
     expect(parseRequirementsReductionPct('Requirements +21%')).toBe(-21);
+  });
+
+  it('treats Requirements +0% as a leftover percent line with no change', () => {
+    expect(parseRequirementsReductionPct('Requirements +0%')).toBe(0);
+    expect(isRequirementsPercentLine('Requirements +0%')).toBe(true);
+    expect(isRequirementsPercentLine('Requirements -50%')).toBe(true);
+    expect(isRequirementsPercentLine('+10 to Strength')).toBe(false);
   });
 
   it('parses Requirements Reduced by N%', () => {
@@ -395,6 +403,22 @@ describe('resolveItemRequirements', () => {
         { extras: ['Requirements +150%'] }
       )
     ).toMatchObject({ reqDex: 1275, reductionPct: -150 });
+  });
+
+  it('keeps unique Requirements +% off when leftover is Requirements +0%', () => {
+    expect(
+      resolveItemRequirements(
+        {
+          rarity: 'unique',
+          baseId: 'belt',
+          reqLevel: 100,
+          reqStr: 690,
+          baseReqStr: 575,
+          modifiers: ['Requirements +20%'],
+        },
+        { extras: ['Requirements +0%'] }
+      )
+    ).toMatchObject({ reqStr: 575, reductionPct: 0 });
   });
 
   it('ignores unique Requirements -100% when leftover is the net %', () => {

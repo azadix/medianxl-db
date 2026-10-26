@@ -81,6 +81,18 @@ export function parseRequirementsReductionPct(text) {
 }
 
 /**
+ * True for any `Requirements +/-N%` line, including `Requirements +0%` leftovers.
+ * @param {string|null|undefined} text
+ * @returns {boolean}
+ */
+export function isRequirementsPercentLine(text) {
+  if (!isModifierLineActive(text)) return false;
+  const s = stripDisplayedRollRanges(modifierLineText(text)).replace(/\s+/g, ' ').trim();
+  if (!s) return false;
+  return REQ_REDUCED_BY_RE.test(s) || REQ_RANGE_RE.test(s) || REQ_FLAT_RE.test(s);
+}
+
+/**
  * Flat required-level bonus from mystic orbs (`+40 Required Level`).
  * @param {string|null|undefined} text
  * @returns {number}
@@ -254,7 +266,7 @@ export function resolveItemRequirements(def, options = {}) {
     ? nonNeg(def?.reqDex)
     : Math.max(0, baseDex - (baseDex > 0 ? ethFlat : 0));
   let reductionPct = 0;
-  const extrasHaveReqPct = extras.some((text) => parseRequirementsReductionPct(text) !== 0);
+  const extrasHaveReqPct = extras.some((text) => isRequirementsPercentLine(text));
 
   if (itemForbidsSocketsAndEnhancements(def)) {
     return { reqLevel, reqStr, reqDex, reductionPct: 0 };

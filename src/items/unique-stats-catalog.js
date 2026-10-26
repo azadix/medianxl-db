@@ -555,6 +555,12 @@ const TYPE_SHAPE_FALLBACKS = Object.freeze({
   'Arcane Seal': 'Ring',
 });
 
+/** Unique-only bases whose str/dex reqs are not the shape-fallback grey item. */
+const UNIQUE_ONLY_BASE_REQS = Object.freeze({
+  'Ornate Plate': { reqStr: 600, reqDex: 0 },
+  'Sacred Bow': { reqStr: 666, reqDex: 666 },
+});
+
 /**
  * Copy slot/size from a similar catalog base when the wiki type has no row.
  * @param {string|null|undefined} typeName
@@ -754,8 +760,14 @@ export function entryToItemDef(entry, bases) {
 
   if (entry.quality !== 'Relic' && entry.quality !== 'Charm') {
     if (matchedBase) applyBaseShape(matchedBase, { asCatalogBase: true });
-    else if (shapeBase) applyBaseShape(shapeBase, { asCatalogBase: false });
-    else {
+    else if (shapeBase) {
+      applyBaseShape(shapeBase, { asCatalogBase: false });
+      const onlyReqs = UNIQUE_ONLY_BASE_REQS[String(entry.type || '').trim()];
+      if (onlyReqs) {
+        def.baseReqStr = onlyReqs.reqStr;
+        def.baseReqDex = onlyReqs.reqDex;
+      }
+    } else {
       def.category = def.category || 'other';
       def.invWidth = def.invWidth || 1;
       def.invHeight = def.invHeight || 1;

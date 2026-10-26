@@ -116,6 +116,15 @@ describe('equipFromPicker raises stats when option is on', () => {
     expect(getCharacterInstance().getStat('dexterity')).toBe(150);
   });
 
+  it('auto-matches the inactive weapon set as well', () => {
+    store.selectSlot({ location: 'equipment', slot: 'rarm' });
+    expect(store.equipFromPicker(heavyWeapon.id)).toBe(true);
+    store.equipment.rarm2 = store.createInstance(dexWeapon.id);
+    expect(store.syncCharacterStatsToItemReqs()).toBe(true);
+    expect(getCharacterInstance().getStat('strength')).toBe(200);
+    expect(getCharacterInstance().getStat('dexterity')).toBe(150);
+  });
+
   it('does not raise stats when the option is off', () => {
     setPlannerAutoMatchHighestStatRequirements(false);
     store.selectSlot({ location: 'equipment', slot: 'rarm' });

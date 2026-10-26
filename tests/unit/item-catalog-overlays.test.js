@@ -109,6 +109,12 @@ describe('unique-stats-db catalog', () => {
     expect(azurewrath?.reqDex).toBe(1020);
     expect(azurewrath?.baseReqDex).toBe(510);
 
+    const natasha = items.find((u) => u.name === "Natasha's Legacy");
+    expect(natasha?.baseReqStr).toBe(600);
+    const valkyrie = items.find((u) => u.name === "Valkyrie's Prime");
+    expect(valkyrie?.baseReqStr).toBe(666);
+    expect(valkyrie?.baseReqDex).toBe(666);
+
     const storm = items.find((s) => s.name === 'Elemental Storm');
     expect(storm?.reqDex).toBe(109);
     expect(storm?.modifiers).not.toContain('Required Dexterity:');

@@ -50,6 +50,8 @@ import {
 } from '@/items/relic-items.js';
 import { parseTswSocketables } from '@/items/socketables.js';
 import {
+  ETHEREAL_BASE_REQ_FLAT,
+  isRequirementsPercentLine,
   parseRequiredLevelBonus,
   parseRequirementsReductionPct,
 } from '@/items/item-requirements.js';
@@ -696,6 +698,10 @@ export function extrasFromTswItem(row, def, setDumpCtx = null) {
   const out = [];
   let keptReqPctLeftover = false;
   let keptReqLevelLeftover = false;
+  /** @type {number|null} */
+  let tswReqStr = null;
+  /** @type {number|null} */
+  let tswReqDex = null;
   for (const line of tswDescriptionColoredTexts(row.description_lines)) {
     const text = plain(line.text);
     if (!text) continue;
@@ -703,6 +709,16 @@ export function extrasFromTswItem(row, def, setDumpCtx = null) {
     if (skip.has(lower)) continue;
     // "Wrist Blade (Sacred)" must not become an extra when type is "Wrist Blade (SSU)".
     if (skipStrippedBases.has(stripTswBaseLabel(text).toLowerCase())) continue;
+    const reqStrLine = /^Required Strength:\s*(\d+)\s*$/i.exec(text);
+    if (reqStrLine) {
+      tswReqStr = Number(reqStrLine[1]);
+      continue;
+    }
+    const reqDexLine = /^Required Dexterity:\s*(\d+)\s*$/i.exec(text);
+    if (reqDexLine) {
+      tswReqDex = Number(reqDexLine[1]);
+      continue;
+    }
     if (TSW_EXTRA_SKIP_RE.test(text)) continue;
     if (isDimensionalKeyCharm(def) && (isDimensionalKeyProgressLine(text) || isDimensionalKeyGeneratedStatLine(def, text))) {
       continue;
@@ -714,20 +730,27 @@ export function extrasFromTswItem(row, def, setDumpCtx = null) {
     // planner re-exports that repeat catalog + jewel component lines are not summed.
     const reqPct = parseRequirementsReductionPct(text);
     const reqLevel = parseRequiredLevelBonus(text);
-    if (reqPct !== 0 || reqLevel !== 0) {
-      const catalogHit = templates.some((tmpl) => {
-        const tmplPct = parseRequirementsReductionPct(tmpl);
-        const tmplLevel = parseRequiredLevelBonus(tmpl);
-        if (reqPct !== 0) {
-          if (tmplPct === 0) return false;
-          if (matchAffixTemplate(tmpl, text) != null) return true;
-          return Math.sign(tmplPct) === Math.sign(reqPct) && Math.abs(Math.abs(tmplPct) - Math.abs(reqPct)) <= 1;
-        }
-        if (tmplLevel === 0) return false;
-        return matchAffixTemplate(tmpl, text) != null;
-      });
+    const isReqPctLine = isRequirementsPercentLine(text);
+    if (isReqPctLine || reqLevel !== 0) {
+      const catalogHit =
+        isReqPctLine && reqPct === 0
+          ? false
+          : templates.some((tmpl) => {
+              const tmplPct = parseRequirementsReductionPct(tmpl);
+              const tmplLevel = parseRequiredLevelBonus(tmpl);
+              if (isReqPctLine) {
+                if (tmplPct === 0 && !isRequirementsPercentLine(tmpl)) return false;
+                if (matchAffixTemplate(tmpl, text) != null) return true;
+                return (
+                  Math.sign(tmplPct) === Math.sign(reqPct) &&
+                  Math.abs(Math.abs(tmplPct) - Math.abs(reqPct)) <= 1
+                );
+              }
+              if (tmplLevel === 0) return false;
+              return matchAffixTemplate(tmpl, text) != null;
+            });
       if (catalogHit) continue;
-      if (reqPct !== 0) {
+      if (isReqPctLine) {
         if (keptReqPctLeftover) continue;
         keptReqPctLeftover = true;
       } else {
@@ -739,6 +762,15 @@ export function extrasFromTswItem(row, def, setDumpCtx = null) {
     }
     if (templates.some((tmpl) => lineMatchesCatalogTemplate(tmpl, text))) continue;
     out.push(encodeModifierLine(text, line.color) || text);
+  }
+  if (!keptReqPctLeftover && Array.isArray(def?.modifiers) && def.modifiers.some(isRequirementsPercentLine)) {
+    const ethFlat = tswRowIsEthereal(row) ? ETHEREAL_BASE_REQ_FLAT : 0;
+    const unreducedStr = Math.max(0, (Number(def.baseReqStr ?? def.reqStr) || 0) - ethFlat);
+    const unreducedDex = Math.max(0, (Number(def.baseReqDex ?? def.reqDex) || 0) - ethFlat);
+    const matchesUnreduced =
+      (tswReqStr != null && unreducedStr > 0 && tswReqStr === unreducedStr) ||
+      (tswReqDex != null && unreducedDex > 0 && tswReqDex === unreducedDex);
+    if (matchesUnreduced) out.push('Requirements +0%');
   }
   return stripTrailingSetDumpExtras(out, setDumpCtx);
 }
