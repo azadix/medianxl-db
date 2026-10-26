@@ -294,17 +294,12 @@ function qualityBadge(row) {
 }
 
 /**
- * Always-present inventory junk the planner does not model (everyone has a cube).
+ * Mouse-held TSW `Cursor` items. The planner doll has no such slot.
  * @param {object} row
  * @returns {boolean}
  */
 export function isIgnoredTswItem(row) {
-  const name = normName(tswItemDisplayName(row));
-  if (name === 'horadric cube') return true;
-  const code = row?.code != null ? String(row.code).trim().toLowerCase() : '';
-  if (code === 'box') return true;
-  const image = row?.image != null ? String(row.image).trim().toLowerCase() : '';
-  return image === 'invbox' || image === 'box';
+  return String(row?.slot || '').trim().toLowerCase() === 'cursor';
 }
 
 /**
@@ -690,10 +685,11 @@ export function mapTswItemsToSnapshot(rows, catalog, className = null) {
    * @param {object} row
    * @param {string} reason
    * @param {number} index
-   * @param {{ toast?: boolean }} [opts]
+   * @param {{ toast?: boolean, passthrough?: boolean }} [opts]
    */
   const skipRow = (row, reason, index, opts = {}) => {
     if (opts.toast !== false) skipped.push(skippedTswItem(row, reason));
+    if (opts.passthrough === false) return;
     const cloned = cloneImportedTswRow(row);
     if (cloned) tswPassthroughItems.push({ tswIndex: index, tswRow: cloned });
   };
@@ -709,7 +705,7 @@ export function mapTswItemsToSnapshot(rows, catalog, className = null) {
     }
 
     if (isIgnoredTswItem(row)) {
-      skipRow(row, 'ignored', index);
+      skipRow(row, 'ignored', index, { passthrough: false });
       continue;
     }
 

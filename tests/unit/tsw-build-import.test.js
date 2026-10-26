@@ -270,23 +270,34 @@ describe('tsw-build-import', () => {
     expect(skipped.some((s) => s.name === 'Ring')).toBe(false);
   });
 
-  it('silently ignores Horadric Cube instead of treating it as uncatalogued', () => {
+  it('silently ignores Cursor-slot items instead of treating them as uncatalogued', () => {
     expect(
       isIgnoredTswItem({
         item: 'Horadric Cube',
         display_name: 'Horadric Cube',
         code: 'box',
         image: 'invbox',
-        location: 'Inventory',
+        location: 'Gear',
+        slot: 'Cursor',
       })
     ).toBe(true);
+    expect(
+      isIgnoredTswItem({
+        item: 'Horadric Cube',
+        display_name: 'Horadric Cube',
+        code: 'box',
+        location: 'Inventory',
+        slot: null,
+      })
+    ).toBe(false);
     const { snapshot, skipped } = mapTswItemsToSnapshot(
       [
         {
           item: 'Horadric Cube',
           display_name: 'Horadric Cube',
           code: 'box',
-          location: 'Inventory',
+          location: 'Gear',
+          slot: 'Cursor',
         },
       ],
       byIdCatalog()
@@ -294,9 +305,7 @@ describe('tsw-build-import', () => {
     expect(snapshot.charms).toEqual([]);
     expect(snapshot.relics).toEqual([]);
     expect(skipped.find((s) => s.name === 'Horadric Cube')?.reason).toBe('ignored');
-    expect(snapshot.tswPassthroughItems.map((row) => row.tswRow.display_name)).toEqual([
-      'Horadric Cube',
-    ]);
+    expect(snapshot.tswPassthroughItems).toEqual([]);
   });
 
   it('maps Dimensional Key Star Chart, Dream Fragment, and lab progression from TSW lines', () => {
