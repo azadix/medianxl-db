@@ -63,6 +63,9 @@ EXTRA_ITEM_DC6_STEMS = (
     "xisJah",
     "xisCham",
     "xisZod",
+    # Unique/set invfile variants omitted from some listfiles.
+    "invaxfu",
+    "invbshu",
 )
 
 
