@@ -32,7 +32,7 @@ Confirm `class-*.webp` land in `public/tree_data/<major>_<minor>/`.
 
 1. Add markdown under `public/patch_notes/` (version string in front matter or filename per existing convention).
 2. Update `public/patch_notes/index.json` (`{ "file": "2.14.0.md", "date": "2026-07-29" }`).
-3. Smoke-test `/patch-notes`: search, `{{Skill Name}}` markers, tooltips per folder.
+3. Smoke-test `/patch-notes`: search, `{{Skill Name}}` / `[[Item Name]]` markers, skill and item tooltips per folder.
 
 ## 5. App smoke routes
 

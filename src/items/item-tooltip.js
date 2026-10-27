@@ -10,7 +10,7 @@ import {
   formatItemTooltipSubtitle,
   getItemStatSections,
 } from '@/items/item-stats.js';
-import { formatSetBonusLabel } from '@/items/item-overlays.js';
+import { formatSetBonusLabel, resolveSetBonuses } from '@/items/item-overlays.js';
 import { formatMysticOrbRows, mysticOrbIcon, mysticOrbKind } from '@/items/mystic-orbs.js';
 import { formatRunewordBadge, isRunewordItem } from '@/items/runeword-items.js';
 import {
@@ -373,4 +373,84 @@ function buildSetBonusSectionHtml(setBonuses) {
     .join('');
 
   return `<div class="item-tooltip-set-bonuses">${groups}</div>`;
+}
+
+/**
+ * Patch-note / catalog set overview: name, piece list, bonus tiers.
+ * @param {{ name?: string, bonuses?: Array<{ required: number|string, modifiers: string[] }> }|null|undefined} setDef
+ * @param {Array<{ name?: string }>|null|undefined} pieces
+ * @param {{ allBonusesActive?: boolean }} [options]
+ * @returns {string}
+ */
+export function buildSetOverviewTooltipHtml(setDef, pieces = [], options = {}) {
+  const name = escapeHtmlText(setDef?.name || 'Unknown set');
+  const pieceList = (Array.isArray(pieces) ? pieces : [])
+    .map((piece) => escapeHtmlText(piece?.name || ''))
+    .filter(Boolean);
+  const pieceHtml = pieceList.length
+    ? `<div class="item-tooltip-set-pieces">${pieceList
+        .map((pieceName) => `<div class="item-tooltip-name--set">${pieceName}</div>`)
+        .join('')}</div>`
+    : '';
+  const total = pieceList.length;
+  const equipped = options.allBonusesActive ? total : 0;
+  const bonuses = buildSetBonusSectionHtml(resolveSetBonuses(setDef, equipped, total));
+  const header = `<div class="item-tooltip-header">
+      <div class="item-tooltip-header-text">
+        <div class="item-tooltip-name item-tooltip-name--set">${name}</div>
+      </div>
+    </div>`;
+  return `<div class="tooltip-content item-tooltip-card item-rarity--set">${header}${pieceHtml}${bonuses}</div>`;
+}
+
+/**
+ * Standalone rune tooltip (patch notes). Does not use the global socketable catalog.
+ * @param {object|null|undefined} row
+ * @returns {string}
+ */
+export function buildRuneTooltipHtml(row) {
+  if (!row || typeof row !== 'object') return '';
+  const name = escapeHtmlText(row.name || 'Rune');
+  const lines = [
+    row.weapon ? `Weapon: ${row.weapon}` : '',
+    row.armor ? `Armor: ${row.armor}` : '',
+    row.shield ? `Shield: ${row.shield}` : '',
+  ].filter(Boolean);
+  const body = lines
+    .map((line) => `<div class="item-tooltip-line">${escapeHtmlText(line)}</div>`)
+    .join('');
+  return `<div class="tooltip-content item-tooltip-card"><div class="item-tooltip-header">
+      <div class="item-tooltip-header-text">
+        <div class="item-tooltip-name item-tooltip-sock__name--rune">${name}</div>
+      </div>
+    </div>${body ? `<div class="item-tooltip-section item-tooltip-section--mods">${body}</div>` : ''}</div>`;
+}
+
+/**
+ * Standalone mystic-orb tooltip (patch notes). Does not use the global MO catalog.
+ * @param {object|null|undefined} row
+ * @returns {string}
+ */
+export function buildMysticOrbTooltipHtml(row) {
+  if (!row || typeof row !== 'object') return '';
+  const name = escapeHtmlText(row.name || 'Mystic Orb');
+  const kind = String(row.kind || '');
+  let nameClass = 'item-tooltip-sock__name--unique';
+  if (kind === 'smo' || /^rare\s+mo\b/i.test(String(row.name || ''))) {
+    nameClass = 'item-tooltip-sock__name--rare';
+  } else if (kind === 'mo' || /^mo\s*-/i.test(String(row.name || ''))) {
+    nameClass = 'item-tooltip-sock__name--magic';
+  }
+  const mods = (Array.isArray(row.modifiers) ? row.modifiers : [])
+    .map((mod) => {
+      const cls = modifierLineCssClass(mod);
+      const classAttr = cls ? ` ${cls}` : '';
+      return `<div class="item-tooltip-line${classAttr}">${formatItemModifierLineHtml(mod)}</div>`;
+    })
+    .join('');
+  return `<div class="tooltip-content item-tooltip-card"><div class="item-tooltip-header">
+      <div class="item-tooltip-header-text">
+        <div class="item-tooltip-name ${nameClass}">${name}</div>
+      </div>
+    </div>${mods ? `<div class="item-tooltip-section item-tooltip-section--mods">${mods}</div>` : ''}</div>`;
 }

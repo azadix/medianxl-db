@@ -22,3 +22,9 @@ const useKeepAlive = computed(() => Boolean(route.meta?.keepAlive));
     <component v-else-if="Component" :is="Component" :key="route.name" />
   </router-view>
 </template>
+
+<style>
+:root {
+  --bulma-body-color: #f2f2f2;
+}
+</style>

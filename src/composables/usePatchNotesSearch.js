@@ -4,7 +4,7 @@
  */
 import { computed, nextTick, ref, watch } from 'vue';
 import { marked } from 'marked';
-import { highlightSkillNamesInRenderedHtml } from './usePatchNotesData.js';
+import { highlightPatchNoteMarkers } from './usePatchNotesData.js';
 
 const MAX_RESULTS = 200;
 const SCROLL_TARGET_TOLERANCE = 2;
@@ -17,6 +17,7 @@ const SCROLL_TARGET_TOLERANCE = 2;
  * @param {import('vue').Ref<HTMLElement|null>} opts.patchNotesRoot
  * @param {import('vue').Ref<HTMLElement|null>} opts.patchSearchSticky
  * @param {() => void} opts.hideSkillTooltip
+ * @param {() => void} [opts.hideItemTooltip]
  * @returns {object}
  */
 export function usePatchNotesSearch({
@@ -26,6 +27,7 @@ export function usePatchNotesSearch({
   patchNotesRoot,
   patchSearchSticky,
   hideSkillTooltip,
+  hideItemTooltip,
 }) {
   const query = ref('');
 
@@ -148,6 +150,7 @@ export function usePatchNotesSearch({
     const lineNeedle = markdownToPlainText(normalizedLine);
     query.value = '';
     hideSkillTooltip();
+    hideItemTooltip?.();
     await nextTick();
 
     const targetSection = findPatchSectionByVersion(String(version));
@@ -283,7 +286,7 @@ export function usePatchNotesSearch({
 
   function renderSearchMarkdown(lines, needle, folderKey) {
     const source = lines.map((line) => normalizeSearchLineForMarkdown(line.text)).join('\n');
-    const rendered = highlightSkillNamesInRenderedHtml(renderMarkdown(source), folderKey);
+    const rendered = highlightPatchNoteMarkers(renderMarkdown(source), folderKey);
     if (!needle) return rendered;
     return highlightRenderedHtml(rendered, needle);
   }

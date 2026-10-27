@@ -9,15 +9,25 @@ import { ref } from 'vue';
 import { usePatchNotesData } from '@/composables/usePatchNotesData.js';
 import { usePatchNotesSearch } from '@/composables/usePatchNotesSearch.js';
 import { usePatchSkillTooltip } from '@/composables/usePatchSkillTooltip.js';
+import { usePatchItemTooltip } from '@/composables/usePatchItemTooltip.js';
 
 const patchNotesRoot = ref(null);
 const patchSearchSticky = ref(null);
+const itemTooltipApi = { hide: () => {} };
 
 const { patchSections, isLoading, isBackfillLoading, loadError, loadPatchData, renderSectionMarkdown, formatPatchReleaseDate } =
   usePatchNotesData();
 
 const { tooltipElement, hideSkillTooltip } =
-  usePatchSkillTooltip({ patchNotesRoot, loadPatchData });
+  usePatchSkillTooltip({
+    patchNotesRoot,
+    loadPatchData,
+    hideItemTooltip: () => itemTooltipApi.hide(),
+  });
+
+const { itemTooltipElement, hideItemTooltip } =
+  usePatchItemTooltip({ patchNotesRoot, hideSkillTooltip });
+itemTooltipApi.hide = hideItemTooltip;
 
 const {
   query,
@@ -35,6 +45,7 @@ const {
   patchNotesRoot,
   patchSearchSticky,
   hideSkillTooltip,
+  hideItemTooltip,
 });
 </script>
 
@@ -149,6 +160,13 @@ const {
       style="display: none"
       aria-hidden="true"
     />
+    <div
+      id="patch-note-item-tooltip-portal"
+      ref="itemTooltipElement"
+      class="skill-tooltip item-tooltip patch-note-item-tooltip"
+      style="display: none"
+      aria-hidden="true"
+    />
   </section>
 </template>
 
@@ -252,6 +270,10 @@ const {
   word-break: normal;
   max-width: 100%;
   min-width: 0;
+}
+
+.patch-note-item-tooltip {
+  z-index: 10000;
 }
 
 .patch-note-skill-tooltip {
@@ -359,13 +381,15 @@ const {
   color: #aaa;
 }
 
-:deep(.patch-skill-highlight) {
+:deep(.patch-skill-highlight),
+:deep(.patch-item-highlight) {
   cursor: help;
   text-decoration: underline dotted;
   text-underline-offset: 2px;
 }
 
-:deep(.patch-skill-highlight:focus-visible) {
+:deep(.patch-skill-highlight:focus-visible),
+:deep(.patch-item-highlight:focus-visible) {
   outline: 1px dashed rgba(72, 199, 116, 0.85);
   outline-offset: 2px;
 }

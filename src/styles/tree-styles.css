@@ -1100,6 +1100,13 @@
     color: var(--item-rarity-rare);
 }
 
+.item-tooltip .item-tooltip-set-pieces {
+    margin: 6px 0 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
 .item-tooltip .item-tooltip-set-bonuses {
     margin-top: 8px;
     display: flex;

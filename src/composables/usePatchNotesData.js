@@ -29,8 +29,17 @@ import {
 } from '@/shared/version-config.js';
 import { parseFolderVersion } from '@/shared/version-resolver.js';
 import { ensureSkillPreviewManifest } from '@/skills/skill-preview-catalog.js';
+import {
+  getPatchItemRecordByLoweredName,
+  hasPatchItemCatalog,
+  loadPatchItemCatalogForFolder,
+  mysticOrbHighlightClass,
+  normalizePatchItemName,
+} from '@/items/patch-item-catalog.js';
+import { itemRarityNameClass } from '@/items/item-tooltip.js';
 
 const SKILL_MARKER_REGEX = /\{\{([^{}]+)\}\}/g;
+const ITEM_MARKER_REGEX = /\[\[([^[\]]+)\]\]/g;
 const TOOLTIP_CACHE_LEVEL = 1;
 /** Newest patch notes to fetch before first paint; older ones load in the background. */
 const INITIAL_PATCH_COUNT = 10;
@@ -132,7 +141,11 @@ async function preloadMatchersForSections(sections, availableFolderKeys) {
     (folderKey) => availableFolderKeys.has(folderKey)
   );
   if (uniqueFolders.length) {
-    await Promise.all(uniqueFolders.map((folderKey) => loadSkillMatcherForFolder(folderKey)));
+    await Promise.all(
+      uniqueFolders.map((folderKey) =>
+        Promise.all([loadSkillMatcherForFolder(folderKey), loadPatchItemCatalogForFolder(folderKey)])
+      )
+    );
   }
 }
 
@@ -232,7 +245,7 @@ async function loadSkillMatcherForFolder(folderKey) {
   }
 }
 
-async function ensureSkillStoreForFolder(folderKey) {
+export async function ensureSkillStoreForFolder(folderKey) {
   if (!folderKey) return null;
   const parsed = parseFolderVersion(folderKey);
   if (!parsed) return null;
@@ -416,7 +429,7 @@ export function highlightSkillNamesInRenderedHtml(renderedHtml, folderKey) {
       raw &&
       parentTag !== 'SCRIPT' &&
       parentTag !== 'STYLE' &&
-      !parentElement?.closest('.patch-skill-highlight')
+      !parentElement?.closest('.patch-skill-highlight, .patch-item-highlight')
     ) {
       textNodes.push(node);
     }
@@ -451,7 +464,7 @@ export function highlightSkillNamesInRenderedHtml(renderedHtml, folderKey) {
       }
 
       const spanEl = doc.createElement('span');
-      spanEl.className = `patch-skill-highlight ${SCALING_DISPLAY_HTML_CLASSES.skill} has-text-weight-bold`;
+      spanEl.className = `patch-skill-highlight ${SCALING_DISPLAY_HTML_CLASSES.skill}`;
       spanEl.textContent = skillRecord.displayName || markerInner;
       spanEl.setAttribute('tabindex', '0');
       spanEl.setAttribute('role', 'button');
@@ -470,6 +483,97 @@ export function highlightSkillNamesInRenderedHtml(renderedHtml, folderKey) {
   }
 
   return root.innerHTML;
+}
+
+/**
+ * @param {object} record
+ * @returns {string}
+ */
+function highlightClassForItemRecord(record) {
+  if (record?.kind === 'set') return itemRarityNameClass('set');
+  if (record?.kind === 'rune') return 'item-tooltip-sock__name--rune';
+  if (record?.kind === 'mo') return mysticOrbHighlightClass(record.row);
+  return itemRarityNameClass(record?.rarity);
+}
+
+export function highlightItemNamesInRenderedHtml(renderedHtml, folderKey) {
+  if (!hasPatchItemCatalog(folderKey)) return renderedHtml;
+
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(`<div id="patch-markdown-root">${renderedHtml}</div>`, 'text/html');
+  const root = doc.getElementById('patch-markdown-root');
+  if (!root) return renderedHtml;
+
+  const textNodes = [];
+  const walker = doc.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  let node = walker.nextNode();
+  while (node) {
+    const parentElement = node.parentElement;
+    const parentTag = parentElement?.tagName;
+    const raw = node.nodeValue || '';
+    if (
+      raw &&
+      parentTag !== 'SCRIPT' &&
+      parentTag !== 'STYLE' &&
+      !parentElement?.closest('.patch-skill-highlight, .patch-item-highlight')
+    ) {
+      textNodes.push(node);
+    }
+    node = walker.nextNode();
+  }
+
+  for (const textNode of textNodes) {
+    const raw = textNode.nodeValue || '';
+    ITEM_MARKER_REGEX.lastIndex = 0;
+    const matches = [...raw.matchAll(ITEM_MARKER_REGEX)];
+    if (!matches.length) continue;
+
+    const fragment = doc.createDocumentFragment();
+    let cursor = 0;
+    for (const markerMatch of matches) {
+      const markerText = markerMatch[0];
+      const markerInner = normalizePatchItemName(markerMatch[1]);
+      const markerStart = markerMatch.index ?? -1;
+      const markerEnd = markerStart + markerText.length;
+
+      if (markerStart < 0 || markerStart < cursor) continue;
+      if (markerStart > cursor) {
+        fragment.appendChild(doc.createTextNode(raw.slice(cursor, markerStart)));
+      }
+
+      const loweredMarker = markerInner.toLowerCase();
+      const itemRecord = getPatchItemRecordByLoweredName(folderKey, loweredMarker);
+      if (!itemRecord) {
+        fragment.appendChild(doc.createTextNode(markerText));
+        cursor = markerEnd;
+        continue;
+      }
+
+      const spanEl = doc.createElement('span');
+      spanEl.className = `patch-item-highlight ${highlightClassForItemRecord(itemRecord)}`;
+      spanEl.textContent = itemRecord.displayName || markerInner;
+      spanEl.setAttribute('tabindex', '0');
+      spanEl.setAttribute('role', 'button');
+      spanEl.dataset.itemFolder = folderKey;
+      spanEl.dataset.itemLoweredName = loweredMarker;
+      spanEl.dataset.itemKind = itemRecord.kind || 'item';
+      spanEl.dataset.itemName = itemRecord.displayName || markerInner;
+      fragment.appendChild(spanEl);
+      cursor = markerEnd;
+    }
+
+    if (cursor < raw.length) {
+      fragment.appendChild(doc.createTextNode(raw.slice(cursor)));
+    }
+    textNode.parentNode?.replaceChild(fragment, textNode);
+  }
+
+  return root.innerHTML;
+}
+
+export function highlightPatchNoteMarkers(renderedHtml, folderKey) {
+  const withSkills = highlightSkillNamesInRenderedHtml(renderedHtml, folderKey);
+  return highlightItemNamesInRenderedHtml(withSkills, folderKey);
 }
 
 /**
@@ -556,7 +660,7 @@ export function usePatchNotesData() {
 
   function renderSectionMarkdown(lines, folderKey) {
     const rendered = renderMarkdown(lines.join('\n'));
-    return highlightSkillNamesInRenderedHtml(rendered, folderKey);
+    return highlightPatchNoteMarkers(rendered, folderKey);
   }
 
   return {

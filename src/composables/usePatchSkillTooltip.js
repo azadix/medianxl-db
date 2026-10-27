@@ -22,9 +22,10 @@ export const PATCH_NOTE_SKILL_TOOLTIP_ID = 'patch-note-skill-tooltip-portal';
  * @param {object} opts
  * @param {import('vue').Ref<HTMLElement|null>} opts.patchNotesRoot
  * @param {() => Promise<void>} opts.loadPatchData
+ * @param {() => void} [opts.hideItemTooltip]
  * @returns {object}
  */
-export function usePatchSkillTooltip({ patchNotesRoot, loadPatchData }) {
+export function usePatchSkillTooltip({ patchNotesRoot, loadPatchData, hideItemTooltip }) {
   const tooltipElement = ref(null);
   let tooltipTokenCounter = 0;
   /** @type {HTMLElement|null} */
@@ -90,6 +91,7 @@ export function usePatchSkillTooltip({ patchNotesRoot, loadPatchData }) {
       return;
     }
 
+    hideItemTooltip?.();
     currentHoveredTarget = target;
     lastSkillRecord = skillRecord;
     nestedActive = false;

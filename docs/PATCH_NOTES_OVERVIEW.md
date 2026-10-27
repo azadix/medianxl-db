@@ -1,6 +1,6 @@
 # Patch Notes Overview
 
-How patch notes content, search, and skill tooltips work.
+How patch notes content, search, and skill/item tooltips work.
 
 ## Entry points
 
@@ -10,13 +10,14 @@ How patch notes content, search, and skill tooltips work.
   - `src/composables/usePatchNotesData.js`
   - `src/composables/usePatchNotesSearch.js`
   - `src/composables/usePatchSkillTooltip.js`
+  - `src/composables/usePatchItemTooltip.js`
 
 ## Data pipeline
 
 1. Load patch manifest from `public/patch_notes/index.json` (`[{ "file": "2.13.5.md", "date": "2026-04-24" }, ...]`).
 2. Fetch each markdown file from `public/patch_notes/*.md` (newest 10 first, then backfill).
 3. Convert version labels (for example `2.13.5`) to tree-data folder keys (`2_13`) with `patchVersionToFolderKey` from `src/shared/version-config.js`.
-4. Preload skill matcher maps from `tree_data/<folder>/skills.json` for marker lookup.
+4. Preload skill matcher maps from `tree_data/<folder>/skills.json` and item catalogs from `items/<folder>/` for marker lookup.
 5. Render markdown with `marked`.
 
 ## Skill marker and tooltip pipeline
@@ -28,6 +29,13 @@ How patch notes content, search, and skill tooltips work.
   - `buildTooltipHtmlForSkill` in `usePatchNotesData.js`
   - shared builders in `src/shared/tooltip-html.js`
 - Placeholder expansion uses `expandPlaceholdersWithScaling` and tree skill store data for the matching folder/version.
+
+## Item marker and tooltip pipeline
+
+- Item markers use `[[Item Name]]` syntax in markdown.
+- Lookup uses `src/items/patch-item-catalog.js` (uniques, sets, set pieces, relics, charms, runewords, bases, runes, mystic orbs) for the patch section folder. It does not use the planner Pinia catalog.
+- Set names show an overview tooltip (set name, pieces, bonus tiers). Other matches show the normal item / rune / mystic-orb tooltip.
+- Highlight color follows item rarity (`item-tooltip-name--unique`, `--set`, `--runeword`, `--relic`, rune/MO socket name classes).
 
 ## Search behavior
 
