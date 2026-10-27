@@ -361,6 +361,8 @@ const {
 
 :deep(.patch-skill-highlight) {
   cursor: help;
+  text-decoration: underline dotted;
+  text-underline-offset: 2px;
 }
 
 :deep(.patch-skill-highlight:focus-visible) {
