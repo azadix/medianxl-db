@@ -81,6 +81,26 @@ const REQ_STR_LINE_RE = /^Required Strength:\s*(\d+)\s*$/i;
 const REQ_DEX_LINE_RE = /^Required Dexterity:\s*(\d+)\s*$/i;
 const SOCKETED_RE = /^Socketed \((\d+)(?:\/(\d+))?\)$/i;
 
+/**
+ * TSW `Socketed (filled)` or `Socketed (filled/max)` — `sockets` is the item's hole count.
+ * @param {object|null|undefined} row
+ * @returns {{ filled: number, sockets: number }|null}
+ */
+export function parseTswSocketedCount(row) {
+  for (const line of tswDescriptionTexts(row?.description_lines)) {
+    const sock = SOCKETED_RE.exec(line);
+    if (!sock) continue;
+    const filled = Number(sock[1]);
+    const sockets = sock[2] != null ? Number(sock[2]) : filled;
+    if (!Number.isFinite(sockets) || sockets < 0) continue;
+    return {
+      filled: Number.isFinite(filled) && filled >= 0 ? Math.floor(filled) : Math.floor(sockets),
+      sockets: Math.floor(sockets),
+    };
+  }
+  return null;
+}
+
 const ANGELIC_RE = /\(Angelic\)/i;
 const HONORIFIC_RE = /\(Honorific\)/i;
 const TIER_LABEL_RE = /\s*\((?:\d+|sacred|angelic|mastercrafted|mc)\)$/i;
@@ -542,13 +562,9 @@ export function tswCustomBaseFields(row) {
       out.reqDex = Number(reqDex[1]);
       continue;
     }
-    const sock = SOCKETED_RE.exec(line);
-    if (sock) {
-      const filled = Number(sock[1]);
-      const max = sock[2] != null ? Number(sock[2]) : filled;
-      if (Number.isFinite(max) && max >= 0) out.sockets = max;
-    }
   }
+  const sock = parseTswSocketedCount(row);
+  if (sock) out.sockets = sock.sockets;
   if (reqLevelTotal != null && Number.isFinite(reqLevelTotal)) {
     out.reqLevel = Math.max(0, reqLevelTotal - reqLevelBonus);
   }

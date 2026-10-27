@@ -42,7 +42,7 @@ import {
   markModifierLineAdded,
 } from '@/items/item-modifier-line.js';
 import { getMysticOrbBonusLines, normalizeMysticOrbs } from '@/items/mystic-orbs.js';
-import { getSocketableBonusLines, normalizeSocketables } from '@/items/socketables.js';
+import { getItemSocketCount, getSocketableBonusLines, normalizeSocketables } from '@/items/socketables.js';
 import { applyAffixRolls, parseAffixRanges } from '@/items/affix-rolls.js';
 import {
   collectShrineUpgradeSources,
@@ -583,7 +583,8 @@ export function getItemStatSections(def, rolls = null, options = {}) {
     if (rollableKeys?.has('sockets')) {
       // Roll controls shown elsewhere - skip static sockets line.
     } else if (itemHasFixedSockets(def)) {
-      scaling.push(`Socketed (${def.sockets})`);
+      const count = getItemSocketCount(def, rolls);
+      if (count > 0) scaling.push(`Socketed (${count})`);
     } else if (filled != null) {
       if (filled > 0) scaling.push(`Socketed (${filled})`);
     } else {

@@ -6,6 +6,7 @@
 import { tswDescriptionColoredTexts } from '@/items/custom-items.js';
 import { decodeModifierLine, encodeModifierLine } from '@/items/item-modifier-line.js';
 import { itemHasFixedSockets } from '@/items/item-overlays.js';
+import { isRunewordItem } from '@/items/runeword-items.js';
 import { isHandWeapon, isShieldItem } from '@/items/item-types.js';
 import {
   inferRandomElementFromLines,
@@ -224,10 +225,15 @@ export function socketableFromCatalogRow(row, slot = 0) {
 export function getItemSocketCount(def, rolls = null) {
   const max = Math.max(0, Math.floor(Number(def?.sockets) || 0));
   if (max <= 0) return 0;
-  if (itemHasFixedSockets(def)) return max;
-  if (rolls && Number.isFinite(Number(rolls.sockets))) {
-    return Math.max(0, Math.min(max, Math.floor(Number(rolls.sockets))));
+  const rolled =
+    rolls && Number.isFinite(Number(rolls.sockets))
+      ? Math.max(0, Math.min(max, Math.floor(Number(rolls.sockets))))
+      : null;
+  if (itemHasFixedSockets(def)) {
+    if (isRunewordItem(def) && rolled != null) return rolled;
+    return max;
   }
+  if (rolled != null) return rolled;
   return max;
 }
 

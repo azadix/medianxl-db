@@ -24,6 +24,7 @@ import {
 import { isOverlayItem, formatOverlayBadge } from '@/items/item-overlays.js';
 import { canEquipInSlot } from '@/items/item-types.js';
 import { getItemStatSections } from '@/items/item-stats.js';
+import { getItemSocketCount } from '@/items/socketables.js';
 
 describe('relic helpers', () => {
   const relic = {
@@ -386,6 +387,9 @@ describe('runeword helpers', () => {
     expect(formatRunewordSocketFillerLines(merged)).toEqual([
       'Sockets: Jewel, Jewel, Jewel, Eld Rune',
     ]);
+    expect(getItemSocketCount(merged)).toBe(4);
+    expect(getItemSocketCount(merged, { sockets: 1 })).toBe(1);
+    expect(getItemStatSections(merged, { sockets: 1 }).scaling).toContain('Socketed (1)');
   });
 
   it('lifts runeword innate damage into the header', () => {

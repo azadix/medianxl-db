@@ -734,6 +734,32 @@ describe('tsw-build-import', () => {
     );
   });
 
+  it('imports runeword socket count from Socketed (n/m), not the base max', () => {
+    const row = {
+      item: 'Lionheart',
+      display_name: 'Lionheart',
+      type: 'Superior Full Plate Mail (Sacred)',
+      quality: 'RW',
+      display_quality: 'RW',
+      code: '@14',
+      image: 'invful',
+      is_rw: true,
+      location: 'Gear',
+      slot: 'Torso',
+      description_lines: [
+        [['Lionheart', 4]],
+        [['Superior Full Plate Mail (Sacred)', 5]],
+        [['Socketed (1/1)', 3]],
+      ],
+    };
+    const { snapshot, skipped } = mapTswItemsToSnapshot([row], byIdCatalog());
+    expect(skipped).toEqual([]);
+    expect(snapshot.equipment.tors).toMatchObject({
+      defId: 'rw:lionheart:@14',
+      rolls: { sockets: 1 },
+    });
+  });
+
   it('resolves catalog ids used by the mapper', () => {
     const cat = catalogIndexForTests();
     expect(

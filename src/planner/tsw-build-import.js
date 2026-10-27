@@ -22,6 +22,7 @@ import { isSetItem } from '@/items/item-overlays.js';
 import { slugify } from '@/items/unique-stats-catalog.js';
 import { listAngelicBaseItems } from '@/items/angelic-items.js';
 import {
+  parseTswSocketedCount,
   resolveCustomBaseDefId,
   tswCustomQuality,
   tswCustomSnapshotEntry,
@@ -765,6 +766,8 @@ export function mapTswItemsToSnapshot(rows, catalog, className = null) {
       const entry = { defId };
       const icon = row?.image != null ? String(row.image).trim() : '';
       if (icon) entry.icon = icon;
+      const sock = parseTswSocketedCount(row);
+      if (sock) entry.rolls = { sockets: sock.sockets };
       attachTswInstanceExtras(entry, row, rwDef);
       equipment[slotKey] = attachImportedTsw(entry, row, index);
       continue;

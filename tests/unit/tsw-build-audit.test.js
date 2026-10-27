@@ -9,10 +9,14 @@ import { resolve } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
 import { buildCatalogFromUniqueStats } from '@/items/unique-stats-catalog.js';
-import { runewordEntryToItemDef } from '@/items/runeword-items.js';
+import { isRunewordItem, runewordEntryToItemDef } from '@/items/runeword-items.js';
 import { loadMysticOrbsCatalog } from '@/items/mystic-orbs.js';
-import { loadSocketablesCatalog, mergeJewelItemsIntoSocketablesCatalog } from '@/items/socketables.js';
-import { tswDescriptionTexts } from '@/items/custom-items.js';
+import {
+  getItemSocketCount,
+  loadSocketablesCatalog,
+  mergeJewelItemsIntoSocketablesCatalog,
+} from '@/items/socketables.js';
+import { parseTswSocketedCount, tswDescriptionTexts } from '@/items/custom-items.js';
 import { EQUIPMENT_SLOTS } from '@/items/item-types.js';
 import { formatItemRequirementsLine } from '@/items/item-requirements.js';
 import { recomputePlannerStatsFromItems } from '@/items/item-character-stat-bonuses.js';
@@ -136,9 +140,10 @@ function auditBuildFile(catalog, file, sets = []) {
     const row = bySlot.get(slot);
     if (!row) continue;
     const tsw = tswRequiredStats(row);
+    const def = store.getDefForInstance(id);
     const got = store.getRequirementsForInstance(id);
     if (!got) continue;
-    const name = store.getDefForInstance(id)?.name || slot;
+    const name = def?.name || slot;
     if (isMindflayerMayhemRow(row)) {
       if (got.reqLevel !== 140) {
         problems.push(`${slot} ${name}: planner level ${got.reqLevel} expected 140`);
@@ -155,6 +160,13 @@ function auditBuildFile(catalog, file, sets = []) {
     }
     if (tsw.reqDex != null && got.reqDex !== tsw.reqDex) {
       problems.push(`${slot} ${name}: dex planner=${got.reqDex} tsw=${tsw.reqDex}`);
+    }
+    const tswSockets = parseTswSocketedCount(row)?.sockets;
+    if (tswSockets != null && isRunewordItem(def)) {
+      const plannerSockets = getItemSocketCount(def, store.getRollsForInstance(id));
+      if (plannerSockets !== tswSockets) {
+        problems.push(`${slot} ${name}: sockets planner=${plannerSockets} tsw=${tswSockets}`);
+      }
     }
   }
   setCharacterInstance(null);

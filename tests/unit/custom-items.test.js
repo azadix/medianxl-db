@@ -9,6 +9,7 @@ import {
   tswCustomModifiers,
   tswCustomQuality,
   tswCustomSnapshotEntry,
+  parseTswSocketedCount,
 } from '@/items/custom-items.js';
 import {
   formatItemRarityBadge,
@@ -154,6 +155,24 @@ describe('custom-items', () => {
     expect(itemRarityNameClass('honorific')).toBe('item-tooltip-name--honorific');
     expect(itemRarityNameClass('angelic')).toBe('item-tooltip-name--angelic');
     expect(itemRarityNameClass('magic')).toBe('item-tooltip-name--magic');
+  });
+
+  it('parses Socketed (filled/max) as the item hole count', () => {
+    expect(
+      parseTswSocketedCount({
+        description_lines: [[['Socketed (1/1)', 3]]],
+      })
+    ).toEqual({ filled: 1, sockets: 1 });
+    expect(
+      parseTswSocketedCount({
+        description_lines: [[['Socketed (0/6)', 3]]],
+      })
+    ).toEqual({ filled: 0, sockets: 6 });
+    expect(
+      parseTswSocketedCount({
+        description_lines: [[['Socketed (4)', 3]]],
+      })
+    ).toEqual({ filled: 4, sockets: 4 });
   });
 
   it('parses TSW defense, reqs, and sockets onto custom overlays', () => {
