@@ -67,8 +67,9 @@ describe('affix level', () => {
     expect(calcCraftedAffixLevel(85, 80)).toBe(71);
   });
 
-  it('reduces jewel crafted item level to 95%', () => {
-    expect(calcCraftedAffixLevel(99, 1, { jewel: true })).toBe(calcRareAffixLevel(94, 1));
+  it('uses rare affix level for crafted jewels without reducing ilvl', () => {
+    expect(calcCraftedAffixLevel(99, 1, { jewel: true })).toBe(calcRareAffixLevel(99, 1));
+    expect(calcCraftedAffixLevel(120, 1, { jewel: true })).toBe(99);
   });
 });
 

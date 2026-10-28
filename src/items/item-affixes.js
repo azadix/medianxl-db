@@ -229,7 +229,6 @@ export function calcCraftedAffixLevel(ilvl, qlvl, options = {}) {
   if (!Number.isFinite(itemLevel)) itemLevel = DEFAULT_ILVL;
   itemLevel = Math.max(1, Math.floor(itemLevel));
   if (options.jewel) {
-    itemLevel = Math.max(1, Math.floor(itemLevel * 0.95));
     return calcRareAffixLevel(Math.min(99, itemLevel), 1);
   }
   let qualityLevel = Number(qlvl);
