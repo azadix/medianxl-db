@@ -9,6 +9,7 @@ import {
   createEmptyRegisteredStatsObject
 } from './planner-stats-config.js';
 import { getPlannerSkillsSnapshot } from './planner-snapshot.js';
+import { parsePrereqTriple } from './prereq-utils.js';
 import {
   minCharacterLevelForAllocatedSkillPoints,
   minCharacterLevelForSkillRank,
@@ -793,9 +794,9 @@ export default class Character {
 
             if (!sk.prerequisites || !sk.prerequisites.length) continue;
             for (const prereq of sk.prerequisites) {
-              const parts = String(prereq).split(':');
-              if (parts[0] !== 'character_level') continue;
-              const requiredLevel = parseInt(parts[1], 10);
+              const { type, value } = parsePrereqTriple(prereq);
+              if (type !== 'character_level') continue;
+              const requiredLevel = parseInt(value, 10);
               if (Number.isFinite(requiredLevel)) {
                 minLevelFromPrerequisites = Math.max(
                   minLevelFromPrerequisites,

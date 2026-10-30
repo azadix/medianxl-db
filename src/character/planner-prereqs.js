@@ -4,6 +4,7 @@
  */
 
 import {
+  parsePrereqTriple,
   normalizePrereqSkillTargetKey,
   displayNameForPrereqSkillTarget,
 } from './prereq-utils.js';
@@ -32,7 +33,7 @@ export function getSkillPointsForPrereqs(skillName) {
  * @returns {{ met: boolean, message: string|null }}
  */
 function evaluateSkillLevelAny(prereq, allSkills) {
-  const [, value, target] = prereq.split(':');
+  const { value, target } = parsePrereqTriple(prereq);
   const requiredPoints = parseInt(value, 10);
   const ids = String(target || '')
     .split('|')
@@ -73,7 +74,7 @@ export function checkPrerequisites(skill, allSkills = []) {
   const reasonsWithTypes = [];
 
   for (const prereq of skill.prerequisites) {
-    const [type, value, target] = prereq.split(':');
+    const { type, value, target } = parsePrereqTriple(prereq);
 
     if (type === 'character_level') {
       continue;

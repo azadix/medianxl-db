@@ -19,6 +19,7 @@ import { calculateMaxLevel } from '@/skills/domain/skill-calculations.js';
 import { extractStatReferences } from '@/skills/domain/formula-evaluator.js';
 import { getFileSkillStore, resolveCharacterStatKeyForToken } from '@/shared/skill-data-store.js';
 import {
+  parsePrereqTriple,
   normalizePrereqSkillTargetKey,
 } from './prereq-utils.js';
 import {
@@ -1033,7 +1034,7 @@ function getMinimumRequiredPointsWithBlockingSkills(skillName, allSkills) {
     const blockerName = skill.name || allocatedSkillName;
 
     for (const prereq of skill.prerequisites) {
-      const [type, value, target] = prereq.split(':');
+      const { type, value, target } = parsePrereqTriple(prereq);
       const requiredPoints = parseInt(value, 10);
 
       if (type === 'skill_level') {

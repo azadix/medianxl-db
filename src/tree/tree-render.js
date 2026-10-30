@@ -78,7 +78,7 @@ export function enrichOskillForDisplay(oskill) {
 import {
   getSkillPoints,
   getAllSkillPoints,
-  getCharacterLevel,
+  getEffectivePlannerLevel,
   calculateEffectiveMaxLevel,
   getSkillRestrictions,
   canAllocateSkillPoints,
@@ -147,7 +147,7 @@ export function renderSkills(selectedClass, skillsList, skillsContainer, preserv
  * @param {Array} allSkills - Array of all skills (for validation)
  */
 export function handleSkillPointChange(skill, delta, allSkills = []) {
-    const characterLevel = getCharacterLevel();
+    const characterLevel = getEffectivePlannerLevel();
     const skillLevels = getAllSkillPoints();
 
     const effectiveMaxLevel = calculateEffectiveMaxLevel(
@@ -169,7 +169,7 @@ export function handleSkillPointChange(skill, delta, allSkills = []) {
                     skill.id,
                     'regular',
                     currentSkillLevels,
-                    getCharacterLevel()
+                    getEffectivePlannerLevel()
                 ) || skill.baseMaxLevel;
             };
             
@@ -213,7 +213,7 @@ export function buildPlannerSkillCardData(skillEntry, opts = {}) {
     const allSkills = Array.isArray(opts.allSkills) ? opts.allSkills : [];
     const getIconFn = opts.getIconFn || null;
     const skillLevels = getAllSkillPoints();
-    const characterLevel = getCharacterLevel();
+    const characterLevel = getEffectivePlannerLevel();
     const isOSkill = skillType === 'oskill';
     const itemPoints = isOSkill
         ? Character.clampOSkillPoints(skillEntry.itemPoints ?? 0)
