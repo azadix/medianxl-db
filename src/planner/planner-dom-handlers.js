@@ -3,7 +3,7 @@
  * @module planner/planner-dom-handlers
  */
 import { renderSkills, getCurrentTab } from '@/tree/tree-render.js';
-import { setBuildUrlParam, updatePlannerUrlTab } from '@/planner/tree-url-sync.js';
+import { updatePlannerUrlTab } from '@/planner/tree-url-sync.js';
 import Character from '@/character/Character.js';
 import {
   initializeCharacter,
@@ -14,7 +14,6 @@ import {
 import { useItemsStore } from '@/stores/items.js';
 import { refreshPlannerStatsPanelFromCharacter } from '@/character/planner-stats-panel.js';
 import { clearSkillVariants, applySkillVariantDefaultsForClass } from '@/tree/skill-variants.js';
-import { compressBuildToUrlParam } from '@/planner/build-url-codec.js';
 import {
   getSavedBuilds,
   setSavedBuilds,
@@ -53,7 +52,6 @@ import {
   buildCurrentBuildSnapshot,
   exportBuildJsonString,
   downloadCurrentBuildAsJson,
-  fallbackCopyToClipboard,
 } from './saved-builds-ui.js';
 import { main, ensurePlannerTreeInitialized } from './planner-init.js';
 import { takePendingTswImportEnvelope } from './tsw-code-import.js';
@@ -384,7 +382,7 @@ export function showExportBuildNameModal(opts) {
     showBuildNameModal({
         title: 'Export build',
         titleId: 'exportBuildModalTitle',
-        subtitle: 'Copy JSON, save a file, or create a shareable planner link.',
+        subtitle: 'Copy JSON or save a file.',
         iconClass: 'fa-arrow-up-from-bracket',
         helpText: 'Stored inside the exported build. Empty names become "Unnamed Build".',
         primaryText: 'Export JSON',
@@ -402,36 +400,8 @@ export function showExportBuildNameModal(opts) {
                     }, 0);
                 },
             },
-            {
-                text: 'Share link',
-                iconClass: 'fa-link',
-                className: 'button is-info is-outlined',
-                onClick(name, closeModal) {
-                    closeModal();
-                    setTimeout(() => {
-                        void shareCurrentBuildLink(name);
-                    }, 0);
-                },
-            },
         ],
     });
-}
-
-async function shareCurrentBuildLink(name) {
-    const envelope = wrapPlannerBuildForTswExport(
-        buildCurrentBuildSnapshot(name),
-        useItemsStore()
-    );
-    const encoded = await compressBuildToUrlParam(JSON.stringify(envelope));
-    setBuildUrlParam(encoded);
-    const shareUrl = window.location.href;
-    if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(shareUrl)
-            .then(() => toastManager.showToast('Share link copied to clipboard!', true, 'success'))
-            .catch(() => fallbackCopyToClipboard(shareUrl, 'share link'));
-    } else {
-        fallbackCopyToClipboard(shareUrl, 'share link');
-    }
 }
 
 export function plannerExportBuildClick() {
