@@ -929,12 +929,13 @@ export function removeSkillPointsBatch(skillName, amount, allSkills = []) {
       break; // Some points were removed successfully
     }
     
-    // Check if this skill affects max levels of other skills (only check on first removal)
-    if (pointsRemoved === 0) {
-      const maxLevelCheck = checkMaxLevelDependencies(skillName, allSkills);
-      if (!maxLevelCheck.allowed) {
+    // Check if this skill affects max levels of other skills
+    const maxLevelCheck = checkMaxLevelDependencies(skillName, allSkills);
+    if (!maxLevelCheck.allowed) {
+      if (pointsRemoved === 0) {
         return { success: false, pointsRemoved: 0, reason: maxLevelCheck.reason };
       }
+      break;
     }
     
     // Remove the point (skip event dispatch during batch)
