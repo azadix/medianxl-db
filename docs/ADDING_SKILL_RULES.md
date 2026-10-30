@@ -27,4 +27,3 @@ Each rule implements `checkRestriction(allSkills)` returning `{ allowed: boolean
 ## Related docs
 
 - `docs/PATCH_RELEASE.md` — new `tree_data` folder workflow
-- `improvements.md` Phase 2 — consolidating allocation subclasses into `skill-allocation-rules.js`

@@ -1,10 +1,11 @@
 <script setup>
-import { onMounted } from 'vue';
+import { ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { DEV_ROUTE_DEFS, routeShowsVersionSelector } from '@/shared/dev-routes.js';
 
 const route = useRoute();
 const isDev = import.meta.env.DEV;
+const menuOpen = ref(false);
 
 const repoUrl = 'https://github.com/azadix/medianxl-db';
 
@@ -12,14 +13,9 @@ function linkClass(name) {
   return ['navbar-item', { 'is-selected': route.name === name }];
 }
 
-onMounted(() => {
-  const burger = document.querySelector('[data-burger]');
-  const menu = document.querySelector('[data-navbar-menu]');
-  burger?.addEventListener('click', () => {
-    burger.classList.toggle('is-active');
-    menu?.classList.toggle('is-active');
-  });
-});
+function toggleMenu() {
+  menuOpen.value = !menuOpen.value;
+}
 </script>
 
 <template>
@@ -28,13 +24,20 @@ onMounted(() => {
       <router-link class="navbar-item" to="/">
         <strong>MedianDB</strong>
       </router-link>
-      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-burger>
+      <a
+        role="button"
+        class="navbar-burger"
+        :class="{ 'is-active': menuOpen }"
+        aria-label="menu"
+        :aria-expanded="menuOpen"
+        @click="toggleMenu"
+      >
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
       </a>
     </div>
-    <div class="navbar-menu" data-navbar-menu>
+    <div class="navbar-menu" :class="{ 'is-active': menuOpen }">
       <div class="navbar-start">
         <router-link id="nav-all-skills" :class="linkClass('skills')" to="/skills">
           <strong>Skills</strong>
