@@ -112,6 +112,22 @@ export function loadPlannerClassNames(skillsListFallback) {
         .sort((a, b) => String(a).localeCompare(String(b)));
 }
 
+/** Serializes import/load so a version switch cannot overlap another apply. */
+let plannerBuildApplyQueue = Promise.resolve();
+
+/**
+ * @param {() => Promise<void>} applyFn
+ * @returns {Promise<void>}
+ */
+function enqueuePlannerBuildApply(applyFn) {
+    const run = plannerBuildApplyQueue.then(applyFn, applyFn);
+    plannerBuildApplyQueue = run.then(
+        () => undefined,
+        () => undefined
+    );
+    return run;
+}
+
 export async function reloadSkillDataAndLoadBuild(build, buildIndex) {
     try {
         // Drop cached store so init picks up the build version override (not the prior folder).
@@ -137,9 +153,11 @@ export async function reloadSkillDataAndLoadBuild(build, buildIndex) {
         // Skill catalog changed with the version switch — rebuild oSkills picker once.
         initializeOSkillsDropdown();
         await loadBuildData(build, buildIndex);
+        return true;
     } catch (error) {
         console.error('Failed to reload skill data:', error);
         toastManager.showToast(`Failed to reload skill data: ${error.message}`, false, 'danger');
+        return false;
     }
 }
 
@@ -375,9 +393,9 @@ export function validateBuildBeforeSave() {
 /**
  * Parse, validate, and import build JSON text.
  * @param {string} jsonString
- * @returns {boolean} True if import started successfully
+ * @returns {Promise<boolean>} True if import finished successfully
  */
-export function importBuildFromJsonText(jsonString) {
+export async function importBuildFromJsonText(jsonString) {
     if (!jsonString || String(jsonString).trim() === '') {
         toastManager.showToast('Paste build JSON or load a file first', false, 'danger');
         return false;
@@ -390,7 +408,7 @@ export function importBuildFromJsonText(jsonString) {
         if (!validateBuildData(build)) {
             return false;
         }
-        importBuild(build);
+        await importBuild(build);
         return true;
     } catch (error) {
         toastManager.showToast(`Invalid JSON: ${error.message}`, false, 'danger');
@@ -723,17 +741,25 @@ function validateBuildData(buildData) {
     return true;
 }
 
-/**
- * Import a build from build data
- * @param {object} buildData - The build data to import
- */
 function switchPlannerWorkspaceToItems() {
     window.dispatchEvent(new CustomEvent('plannerWorkspaceMode', { detail: { mode: 'items' } }));
 }
 
-export function importBuild(buildData) {
+/**
+ * Import a build from build data
+ * @param {object} buildData - The build data to import
+ * @returns {Promise<void>}
+ */
+export async function importBuild(buildData) {
+    return enqueuePlannerBuildApply(() => applyImportedBuild(buildData));
+}
+
+/**
+ * @param {object} buildData
+ * @returns {Promise<void>}
+ */
+async function applyImportedBuild(buildData) {
     try {
-        // Check if build version differs from current version
         const currentVersion = getCurrentVersion();
         const currentVersionString = versionToString(currentVersion);
 
@@ -748,12 +774,15 @@ export function importBuild(buildData) {
 
             setBuildVersionOverride(buildVersion);
 
-            reloadSkillDataAndLoadBuild(buildData, null).then(switchPlannerWorkspaceToItems);
+            const reloaded = await reloadSkillDataAndLoadBuild(buildData, null);
+            if (reloaded) {
+                switchPlannerWorkspaceToItems();
+            }
             return;
         }
 
-        // Load build data directly (same version); switch workspace after apply finishes.
-        loadBuildData(buildData, null).then(switchPlannerWorkspaceToItems);
+        await loadBuildData(buildData, null);
+        switchPlannerWorkspaceToItems();
     } catch (error) {
         console.error('Failed to import build:', error);
         toastManager.showToast(`Failed to import build: ${error.message}`,true,  'danger');
@@ -1031,7 +1060,15 @@ function storedBuildForLoad(raw) {
     return build;
 }
 
-export function loadBuild(index) {
+export async function loadBuild(index) {
+    return enqueuePlannerBuildApply(() => applyLoadedBuild(index));
+}
+
+/**
+ * @param {number} index
+ * @returns {Promise<void>}
+ */
+async function applyLoadedBuild(index) {
     const builds = getSavedBuilds();
     if (index < 0 || index >= builds.length) {
         toastManager.showToast('Build not found!', true, 'danger');
@@ -1040,7 +1077,6 @@ export function loadBuild(index) {
 
     const build = storedBuildForLoad(builds[index]);
 
-    // Check if build version differs from current version
     const currentVersion = getCurrentVersion();
     const currentVersionString = versionToString(currentVersion);
 
@@ -1055,10 +1091,9 @@ export function loadBuild(index) {
 
         setBuildVersionOverride(buildVersion);
 
-        void reloadSkillDataAndLoadBuild(build, index);
+        await reloadSkillDataAndLoadBuild(build, index);
         return;
     } else if (!build.version) {
-        // Handle builds without version information (older saves)
         toastManager.showToast(
             `Build was saved before version tracking was implemented. Loading with current version ${currentVersionString}.`,
             false,
@@ -1066,8 +1101,7 @@ export function loadBuild(index) {
         );
     }
 
-    // Load build data directly (same version)
-    void loadBuildData(build, index);
+    await loadBuildData(build, index);
 }
 
 export function deleteBuild(index) {

@@ -206,7 +206,7 @@ export async function main() {
         if (buildParam) {
             try {
                 const buildData = await decompressBuildFromUrlParam(buildParam);
-                importBuild(buildData);
+                await importBuild(buildData);
                 return;
             } catch (e) {
                 console.warn('Invalid build URL param, ignoring.', e);
