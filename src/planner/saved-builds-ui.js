@@ -89,7 +89,6 @@ import Tree from '@/tree/Tree.js';
 import {
   updateSkillPointsDisplay,
   updateDevotionDisplay,
-  handleSkillPointsChanged,
   initializeOSkillsDropdown,
   showSection,
   setAllSkillsBonus,
@@ -321,11 +320,6 @@ export async function loadBuildData(build, buildIndex = null) {
         }
 
         window.dispatchEvent(new CustomEvent('plannerSidebarTabQuestsRefresh'));
-
-        // Add event listener for skill point changes (needed for UI updates)
-        // Remove any existing listener first to avoid duplicates
-        window.removeEventListener('skillPointsChanged', handleSkillPointsChanged);
-        window.addEventListener('skillPointsChanged', handleSkillPointsChanged);
 
         // Update displays (updateMinimumLevelDisplay -> recomputeClassDerivedLifeMana overwrites life/mana)
         updateSkillPointsDisplay();
