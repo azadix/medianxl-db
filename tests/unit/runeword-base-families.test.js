@@ -79,6 +79,23 @@ describe('runeword wiki type families', () => {
     expect(runewordTemplateAllowsBase(shark, kukri)).toBe(false);
   });
 
+  it('One-Handed Swords runewords do not include two-handed swords', () => {
+    const got = groups('Crescent Moon');
+    expect(got).toEqual(
+      expect.arrayContaining(['One-Handed Swords', 'Barbarian Swords', 'Crystal Swords'])
+    );
+    expect(got).not.toContain('Two-Handed Swords');
+    expect(groups('Minefield')).not.toContain('Two-Handed Swords');
+    expect(groups('Wintermourne')).toContain('Two-Handed Swords');
+  });
+
+  it('One-Handed Axes runewords do not include two-handed axes', () => {
+    const got = groups('Instinct');
+    expect(got).toEqual(expect.arrayContaining(['One-Handed Axes', 'Barbarian One-Handed Axes']));
+    expect(got).not.toContain('Two-Handed Axes');
+    expect(got).not.toContain('Barbarian Two-Handed Axes');
+  });
+
   it('Throwing Axes runewords include Throwing Axe and Balanced Axe greys', () => {
     const bases = listEligibleRunewordBases(template('Cheetah'), baseitems);
     const names = bases.map((b) => String(b.name));
