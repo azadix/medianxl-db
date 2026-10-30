@@ -44,11 +44,11 @@ def main():
         if fr is None:
             print('blank', sid, name, info)
             continue
-        path = os.path.join(out, key + '.gif')
+        path = os.path.join(out, key + '.webp')
         size = sim.save_gif(fr, path, sc)
         skill_id = unique.get(key)
         if skill_id:
-            shutil.copy2(path, DEST_DIR / ('%s.gif' % skill_id))
+            shutil.copy2(path, DEST_DIR / ('%s.webp' % skill_id))
         print('ok', sid, safe(display), 'kb', size // 1024, 'frames', info.get('frames'))
 
 

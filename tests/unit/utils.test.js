@@ -38,10 +38,10 @@ describe('getSkillPreviewUrl', () => {
     expect(getSkillPreviewUrl(null)).toBe('');
   });
 
-  it('builds a skill-previews gif path', () => {
+  it('builds a skill-previews webp path', () => {
     vi.stubGlobal('window', { location: { origin: 'http://local' } });
     expect(getSkillPreviewUrl('apf-20_maelstrom_mki')).toContain(
-      'skill-previews/apf-20_maelstrom_mki.gif'
+      'skill-previews/apf-20_maelstrom_mki.webp'
     );
   });
 });

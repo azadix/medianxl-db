@@ -969,7 +969,16 @@ def save(frames, path, scale=1.0, maxframes=200, colors=GIF_COLORS):
         if im.size != (GIF_OUT_W, GIF_OUT_H):
             im = im.resize((GIF_OUT_W, GIF_OUT_H), Image.NEAREST)
         imgs.append(im)
-    _quantize_save(imgs, path, colors, loop=0)
+    imgs[0].save(
+        path,
+        format='WEBP',
+        save_all=True,
+        append_images=imgs[1:],
+        duration=GIF_FRAME_MS,
+        loop=0,
+        quality=80,
+        method=4,
+    )
     return imgs, 0
 
 
@@ -1057,6 +1066,6 @@ def render_skill(sid, lvl=LVL, distance=11, enemies='auto', max_w=GIF_W, max_h=G
 
 
 def save_gif(frames, path, scale=1.0):
-    """Write the GIF at 25 fps, 600x300, 256 colors."""
-    save(frames, path, scale, colors=GIF_COLORS)
+    """Write a looping 25 fps 600x300 WebP. Name kept for existing callers."""
+    save(frames, path, scale)
     return os.path.getsize(path)

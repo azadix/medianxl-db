@@ -1,5 +1,5 @@
 /**
- * @file Catalog of skill ids that have a GIF under public/skill-previews.
+ * @file Catalog of skill ids that have a WebP under public/skill-previews.
  * @module skills/skill-preview-catalog
  */
 

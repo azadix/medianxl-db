@@ -118,14 +118,14 @@ export function getAssetUrl(relativePath) {
 }
 
 /**
- * Canonical skill-preview GIF for a catalog skill id.
+ * Canonical skill-preview WebP for a catalog skill id.
  * @param {string|null|undefined} skillId
  * @returns {string} Absolute URL, or empty string when `skillId` is missing
  */
 export function getSkillPreviewUrl(skillId) {
     const id = (skillId && String(skillId).trim()) || '';
     if (!id) return '';
-    return getAssetUrl(`skill-previews/${encodeURIComponent(id)}.gif`);
+    return getAssetUrl(`skill-previews/${encodeURIComponent(id)}.webp`);
 }
 
 /**

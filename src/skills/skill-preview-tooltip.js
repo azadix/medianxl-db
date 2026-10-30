@@ -1,5 +1,5 @@
 /**
- * @file Hover Play button -> scaled skill-preview GIF tooltip.
+ * @file Hover Play button -> scaled skill-preview WebP tooltip.
  * @module skills/skill-preview-tooltip
  */
 
@@ -64,7 +64,7 @@ function closestPreviewTooltip(node) {
 }
 
 /**
- * True when the node is the Play button or a live/pinned preview GIF tooltip.
+ * True when the node is the Play button or a live/pinned preview WebP tooltip.
  * @param {EventTarget|Node|null|undefined} node
  * @returns {boolean}
  */

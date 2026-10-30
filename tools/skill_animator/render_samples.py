@@ -60,7 +60,7 @@ def main():
             print('blank', name, info)
             fail += 1
             continue
-        path = os.path.join(out, safe(name) + '.gif')
+        path = os.path.join(out, safe(name) + '.webp')
         size = sim.save_gif(fr, path, sc)
         print('ok', name, 'sid', sid, 'kb', size // 1024, 'frames', info.get('frames'), 'err', info.get('errors'))
         ok += 1

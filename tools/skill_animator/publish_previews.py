@@ -1,4 +1,4 @@
-"""Copy animator GIFs into public/skill-previews/{skill-id}.gif.
+"""Copy animator WebPs into public/skill-previews/{skill-id}.webp.
 
 Matches output filenames (safe display names) to skills.json ids and writes
 public/skill-previews/manifest.json. Animator output stays the work folder.
@@ -66,31 +66,31 @@ def main():
     skills_path, folder = latest_skills_json()
     unique, duplicates = catalog_by_safe_name(skills_path)
     dup_keys = {name for name, _ in duplicates}
-    gifs = sorted(OUT_DIR.glob("*.gif"))
-    if not gifs:
-        raise SystemExit(f"No GIFs in {OUT_DIR}")
+    webps = sorted(OUT_DIR.glob("*.webp"))
+    if not webps:
+        raise SystemExit(f"No WebPs in {OUT_DIR}")
 
     DEST_DIR.mkdir(parents=True, exist_ok=True)
     published = []
     unmatched = []
     skipped_dup = []
 
-    for gif in gifs:
-        key = name_key(gif.stem)
+    for webp in webps:
+        key = name_key(webp.stem)
         if key in dup_keys:
-            skipped_dup.append(gif.name)
+            skipped_dup.append(webp.name)
             continue
         skill_id = unique.get(key)
         if not skill_id:
-            unmatched.append(gif.name)
+            unmatched.append(webp.name)
             continue
-        dest = DEST_DIR / f"{skill_id}.gif"
-        shutil.copy2(gif, dest)
+        dest = DEST_DIR / f"{skill_id}.webp"
+        shutil.copy2(webp, dest)
         published.append(skill_id)
 
     published_set = set(published)
-    for stale in DEST_DIR.glob("*.gif"):
-        if stale.stem not in published_set:
+    for stale in list(DEST_DIR.glob("*.webp")) + list(DEST_DIR.glob("*.gif")):
+        if stale.suffix.lower() == ".gif" or stale.stem not in published_set:
             stale.unlink()
 
     ids = sorted(published_set)
@@ -100,17 +100,17 @@ def main():
     )
 
     print(f"Catalog: {skills_path.relative_to(REPO)} ({folder})")
-    print(f"Copied {len(ids)} GIF(s) to {DEST_DIR.relative_to(REPO)}")
+    print(f"Copied {len(ids)} WebP(s) to {DEST_DIR.relative_to(REPO)}")
     if duplicates:
         print("Duplicate display names (skipped):")
         for name, ids_for_name in duplicates:
             print(f"  {name}: {', '.join(ids_for_name)}")
     if skipped_dup:
-        print("GIFs skipped because display name is shared:")
+        print("WebPs skipped because display name is shared:")
         for name in skipped_dup:
             print(f"  {name}")
     if unmatched:
-        print("Unmatched GIFs:")
+        print("Unmatched WebPs:")
         for name in unmatched:
             print(f"  {name}")
 

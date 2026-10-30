@@ -53,7 +53,7 @@ def main():
         if fr is None:
             print('blank', name, info)
             continue
-        path = os.path.join(out, safe(name) + '.gif')
+        path = os.path.join(out, safe(name) + '.webp')
         size = sim.save_gif(fr, path, sc)
         print('ok', name, 'sid', sid, 'kb', size // 1024, 'frames', info.get('frames'), info.get('errors'))
 

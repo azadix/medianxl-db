@@ -16,7 +16,7 @@ TOOLS_LOCAL = os.path.join(os.path.dirname(os.path.dirname(APP)), 'tools.local.j
 DEFAULTS = {
     'game_dir': r'C:\Games\median-xl',
     'out_dir': os.path.join(os.path.dirname(APP), 'output'),
-    'file_pattern': 'Oskill {name}.gif',
+    'file_pattern': 'Oskill {name}.webp',
     'port': 8765,
 }
 OSKILLS = json.load(open(os.path.join(APP, 'engine', 'oskills.json')))

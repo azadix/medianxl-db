@@ -28,7 +28,7 @@ export function buildSkillPreviewPlayButtonHtml(skillId) {
  * @property {string} [tagsHtml] - Optional tags paragraph HTML
  * @property {string} [subskillHtml] - Optional subskill-of line HTML
  * @property {string} levelSectionHtml - Inner HTML for the level column
- * @property {string} [previewSkillId] - Catalog skill id; Play button if a GIF exists
+ * @property {string} [previewSkillId] - Catalog skill id; Play button if a preview exists
  */
 
 /**

@@ -42,7 +42,7 @@ describe('skill preview tooltip', () => {
     expect(portal.style.display).toBe('block');
     const img = portal.querySelector('img');
     expect(img).toBeTruthy();
-    expect(img.getAttribute('src')).toContain('skill-previews/frozen_crown.gif');
+    expect(img.getAttribute('src')).toContain('skill-previews/frozen_crown.webp');
     expect(isSkillPreviewUiTarget(play)).toBe(true);
     expect(isSkillPreviewUiTarget(img)).toBe(true);
 
@@ -74,7 +74,7 @@ describe('skill preview tooltip', () => {
     expect(hosts).toHaveLength(1);
     expect(hosts[0].mode).toBe('pin');
     expect(hosts[0].el.querySelector('img')?.getAttribute('src')).toContain(
-      'skill-previews/frozen_crown.gif'
+      'skill-previews/frozen_crown.webp'
     );
 
     play.dispatchEvent(

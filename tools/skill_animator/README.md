@@ -1,13 +1,13 @@
 # Skill animator
 
-Renders Median XL skill animations as GIFs (the same engine used for the oskill GIFs on wiki.median-xl.com).
+Renders Median XL skill animations as WebP (the same engine used for the oskill GIFs on wiki.median-xl.com).
 
 ## Start
 
 1. Run `start.py` (double-click, or `python\python.exe start.py` from this folder).
    The first time, it installs numpy and Pillow into this folder (needs internet, once).
 2. Your browser opens the app at `http://127.0.0.1:8765` (local only).
-3. Pick a skill on the left and press Render. GIFs are saved in the `output` folder next to `start.py`.
+3. Pick a skill on the left and press Render. WebPs are saved in the `output` folder next to `start.py`.
    **Render all in list** renders every skill currently shown (use the search box to narrow it).
 4. Close the console window to quit.
 
@@ -20,7 +20,7 @@ Renders Median XL skill animations as GIFs (the same engine used for the oskill 
 - **Skill level, target distance, stand-in enemies, random seed:** the scene being replayed.
   The caster is an amazon (cast then idle) at a fixed screen position; at most one zombie stand-in.
 - Camera is static 800x400 so skill area can be compared. The floor is a 1-yard isometric checkerboard.
-  GIFs use a 256-color palette (GIF maximum).
+  Site previews are lossy animated WebP at 600x300, 25 fps.
 
 ## What it can and can't show
 
@@ -42,18 +42,24 @@ After rendering, from this folder run:
 python\python.exe publish_previews.py
 ```
 
-That copies GIFs to `public/skill-previews/{skill-id}.gif` (matched by display name)
+That copies WebPs to `public/skill-previews/{skill-id}.webp` (matched by display name)
 and writes `public/skill-previews/manifest.json` for the skills page.
+
+To re-render every unique skill name and publish:
+
+```bash
+python\python.exe render_site_previews.py --force
+```
 
 ## Files
 
 | File | Role |
 | --- | --- |
 | `start.py` | launcher |
-| `publish_previews.py` | copy GIFs into `public/skill-previews` |
+| `publish_previews.py` | copy WebPs into `public/skill-previews` |
 | `python/` | a private copy of Python 3.12 (nothing is installed on your system) |
 | `app/server.py` | local web server |
 | `app/ui/index.html` | interface |
 | `app/engine/` | emulator (`gamedata.py`, `calcvm.py`, `sim.py`, `client.py`, `client_tables.json`, `plugins_a-e.py`, `gfx.py`, `dcc.py`, `mpq.py`, `actor.py`) |
 | `extract_client_tables.py` | rebuild `client_tables.json` from a Median XL install |
-| `output/` | rendered GIFs (created on first render) |
+| `output/` | rendered WebPs (created on first render) |

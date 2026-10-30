@@ -1,6 +1,6 @@
 <script setup>
 /**
- * Always-mounted portal for skill-preview GIF tooltips.
+ * Always-mounted portal for skill-preview WebP tooltips.
  */
 import { onMounted, onUnmounted } from 'vue';
 import { ensureSkillPreviewManifest } from '@/skills/skill-preview-catalog.js';

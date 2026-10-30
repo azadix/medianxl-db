@@ -40,9 +40,11 @@ def is_blank_kind(skill_id, tags):
     return bool(tags.get(skill_id, ()) & BLANK_TAGS)
 
 
-def drop_gif(path):
-    if os.path.isfile(path):
-        os.remove(path)
+def drop_preview(path):
+    stem, _ext = os.path.splitext(path)
+    for p in (path, stem + '.webp', stem + '.gif'):
+        if os.path.isfile(p):
+            os.remove(p)
 
 
 def main():
@@ -79,16 +81,16 @@ def main():
         if blank_only and not blank_kind:
             continue
         sid = osk.get(key, by_game.get(key))
-        path = os.path.join(out, key + '.gif')
-        old = DEST_DIR / ('%s.gif' % skill_id)
+        path = os.path.join(out, key + '.webp')
+        old = DEST_DIR / ('%s.webp' % skill_id)
         if sid is None:
             skip += 1
-            drop_gif(path)
+            drop_preview(path)
             say('[%d/%d] no sid' % (i, len(items)), key)
             continue
         if blank_kind and not sim.has_graphics(sid):
             skip += 1
-            drop_gif(path)
+            drop_preview(path)
             say('[%d/%d] skip buff/summon' % (i, len(items)), key)
             continue
         if (not force and not blank_kind and os.path.isfile(path)
@@ -100,12 +102,12 @@ def main():
             fr, sc, info = sim.render_skill(sid, lvl=20, max_frames=160)
         except Exception as e:
             skip += 1
-            drop_gif(path)
+            drop_preview(path)
             say('[%d/%d] error' % (i, len(items)), name, e)
             continue
         if fr is None:
             skip += 1
-            drop_gif(path)
+            drop_preview(path)
             say('[%d/%d] blank' % (i, len(items)), name, info.get('why', ''))
             continue
         size = sim.save_gif(fr, path, sc)
