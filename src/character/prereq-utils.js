@@ -28,16 +28,3 @@ export function displayNameForPrereqSkillTarget(target, allSkills) {
   const sk = allSkills.find((s) => String(s.id).toLowerCase() === key);
   return sk?.name || String(target).replace(/_/g, " ");
 }
-
-/**
- * Split type:value:target (target may be omitted for some types).
- * @param {string} prereq
- * @returns {{ type: string, value: string, target: string }}
- */
-export function parsePrereqTriple(prereq) {
-  const parts = String(prereq).split(":");
-  const type = parts[0] ?? "";
-  const value = parts[1] ?? "";
-  const target = parts.length > 2 ? parts.slice(2).join(":") : "";
-  return { type, value, target };
-}

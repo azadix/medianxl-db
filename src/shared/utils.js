@@ -139,34 +139,8 @@ export function getItemIconUrl(iconKey) {
     return getAssetUrl(`icons/item_icons/${key}.webp`);
 }
 
-export function getUrlParams() {
-    return Object.fromEntries(new URLSearchParams(window.location.search).entries());
-}
-
-export function updateUrl(skillId = null) {
-    const url = new URL(window.location.href);
-    if (skillId) {
-        url.searchParams.set('skill', skillId);
-        // Preserve filter state when navigating to skill detail
-        const currentFilter = url.searchParams.get('filter');
-        if (currentFilter) {
-            // Filter is already in URL, keep it
-        }
-    } else {
-        url.searchParams.delete('skill');
-    }
-    window.history.pushState({ skillId }, '', url.toString());
-}
-
 export function sanitizeSkillId(skillId) {
     return skillId.replace(/[^a-zA-Z0-9_-]/g, ''); // safe only
-}
-
-// --- Formatting ---
-export function formatStatName(stat) {
-    return stat.split('_').map(word =>
-        word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ');
 }
 
 /**
@@ -959,14 +933,4 @@ function replaceFirstStandaloneStatPlaceholder(text, placeholder, replacement) {
         }
         return before + replacement + text.slice(idx + placeholder.length);
     }
-}
-
-/**
- * Check if the page is running on localhost (for development vs production)
- * @returns {boolean} True if running on localhost, false if on GitHub Pages or other hosting
- */
-export function isLocalhost() {
-    return window.location.hostname === 'localhost' || 
-           window.location.hostname === '127.0.0.1' || 
-           window.location.hostname === '';
 }

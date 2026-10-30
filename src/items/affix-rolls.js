@@ -144,19 +144,6 @@ export function applyAffixRolls(text, rolls, rollKeyForIndex, options = {}) {
 }
 
 /**
- * @param {string} text
- * @param {Record<string, number>|null|undefined} rolls
- * @param {(rangeIndex: number) => string} rollKeyForIndex
- * @returns {boolean}
- */
-export function affixRangesNeedRolls(text, rolls, rollKeyForIndex) {
-  return parseAffixRanges(text).some((_, i) => {
-    const key = rollKeyForIndex(i);
-    return !rolls || !Number.isFinite(rolls[key]);
-  });
-}
-
-/**
  * @typedef {{ kind: 'text' | 'value', text: string }} AffixDisplayPart
  */
 
