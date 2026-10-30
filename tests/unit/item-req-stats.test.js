@@ -14,7 +14,10 @@ import { useItemsStore } from '@/stores/items.js';
 import {
   getPlannerAutoMatchHighestStatRequirements,
   setPlannerAutoMatchHighestStatRequirements,
+  getPlannerRequireStrDexForItemBonuses,
+  setPlannerRequireStrDexForItemBonuses,
 } from '@/planner/planner-options.js';
+import { recomputePlannerStatsFromItems } from '@/items/item-character-stat-bonuses.js';
 import { installTreeDataFetchMock } from '../helpers/mock-fetch-tree-data.js';
 
 const heavyWeapon = {
@@ -58,6 +61,7 @@ beforeEach(async () => {
 afterEach(() => {
   setCharacterInstance(null);
   setPlannerAutoMatchHighestStatRequirements(true);
+  setPlannerRequireStrDexForItemBonuses(false);
   restoreFetch?.();
   restoreFetch = null;
 });
@@ -238,6 +242,72 @@ describe('class-restricted equipped gear', () => {
     store.syncViewerClassName('Amazon');
     expect(store.syncCharacterStatsToItemReqs()).toBe(true);
     expect(ch.getStat('dexterity')).toBe(134);
+  });
+});
+
+describe('require str/dex for item bonuses', () => {
+  /** @type {ReturnType<typeof useItemsStore>} */
+  let store;
+
+  const strHelm = {
+    id: 'u:str-helm:tu',
+    name: 'Str Helm',
+    type: 'helm',
+    category: 'armor',
+    slot: 'head',
+    rarity: 'unique',
+    uniqueKind: 'tiered',
+    reqLevel: 50,
+    reqStr: 200,
+    reqDex: 0,
+    invWidth: 2,
+    invHeight: 2,
+    modifiers: ['+100 to Strength'],
+  };
+
+  beforeEach(() => {
+    setActivePinia(createPinia());
+    store = useItemsStore();
+    store.catalog = [strHelm, heavyWeapon];
+    store.catalogLoaded = true;
+    createCharacterInstance('Assassin', 80);
+    const ch = getCharacterInstance();
+    ch.setStat('strength', 120);
+    ch.setStat('dexterity', 50);
+    setPlannerAutoMatchHighestStatRequirements(false);
+    setPlannerRequireStrDexForItemBonuses(false);
+  });
+
+  it('defaults to applying bonuses with unmet str/dex', () => {
+    localStorage.removeItem('medianxl-planner-require-str-dex-for-item-bonuses');
+    expect(getPlannerRequireStrDexForItemBonuses()).toBe(false);
+    store.selectSlot({ location: 'equipment', slot: 'head' });
+    expect(store.equipFromPicker(strHelm.id)).toBe(true);
+    expect(store.equipmentSlotMeetsRequirements('head')).toBe(false);
+    expect(store.equipmentSlotContributesBonuses('head')).toBe(true);
+    recomputePlannerStatsFromItems(getCharacterInstance());
+    expect(getCharacterInstance().getStat('strength')).toBe(220);
+  });
+
+  it('does not apply bonuses when the option is on and str/dex are unmet', () => {
+    setPlannerRequireStrDexForItemBonuses(true);
+    store.selectSlot({ location: 'equipment', slot: 'head' });
+    expect(store.equipFromPicker(strHelm.id)).toBe(true);
+    expect(store.equipmentSlotContributesBonuses('head')).toBe(false);
+    recomputePlannerStatsFromItems(getCharacterInstance());
+    expect(getCharacterInstance().getStat('strength')).toBe(120);
+    expect(getCharacterInstance().getStatWithoutItemBonuses('strength')).toBe(120);
+  });
+
+  it('applies bonuses when allocated strength already meets the requirement', () => {
+    setPlannerRequireStrDexForItemBonuses(true);
+    const ch = getCharacterInstance();
+    ch.setStat('strength', 200);
+    store.selectSlot({ location: 'equipment', slot: 'head' });
+    expect(store.equipFromPicker(strHelm.id)).toBe(true);
+    expect(store.equipmentSlotContributesBonuses('head')).toBe(true);
+    recomputePlannerStatsFromItems(ch);
+    expect(ch.getStat('strength')).toBe(300);
   });
 });
 

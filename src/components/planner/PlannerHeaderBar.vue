@@ -26,6 +26,8 @@ import {
   setPlannerAutoLevelFromSpentSkillPoints,
   getPlannerAutoMatchHighestStatRequirements,
   setPlannerAutoMatchHighestStatRequirements,
+  getPlannerRequireStrDexForItemBonuses,
+  setPlannerRequireStrDexForItemBonuses,
 } from '@/planner/planner-options.js';
 import { useItemsStore } from '@/stores/items.js';
 
@@ -39,6 +41,7 @@ const showOptionsModal = ref(false);
 const showMoreMenu = ref(false);
 const draftAutoLevelFromSp = ref(true);
 const draftAutoMatchStatReqs = ref(true);
+const draftRequireStrDexForItemBonuses = ref(false);
 const draftCharacterLevel = ref(1);
 
 const minLv = Character.MIN_LEVEL;
@@ -60,6 +63,7 @@ function refreshHeaderState() {
 function openPlannerOptions() {
   draftAutoLevelFromSp.value = getPlannerAutoLevelFromSpentSkillPoints();
   draftAutoMatchStatReqs.value = getPlannerAutoMatchHighestStatRequirements();
+  draftRequireStrDexForItemBonuses.value = getPlannerRequireStrDexForItemBonuses();
   draftCharacterLevel.value = getCharacterLevel();
   showOptionsModal.value = true;
 }
@@ -104,6 +108,7 @@ function onGlobalKeydown(e) {
 function applyPlannerOptions() {
   setPlannerAutoLevelFromSpentSkillPoints(draftAutoLevelFromSp.value);
   setPlannerAutoMatchHighestStatRequirements(draftAutoMatchStatReqs.value);
+  setPlannerRequireStrDexForItemBonuses(draftRequireStrDexForItemBonuses.value);
   if (draftAutoLevelFromSp.value) {
     syncPlannerCharacterLevelIfAuto();
   } else {
@@ -307,6 +312,17 @@ onUnmounted(() => {
             <p class="help">
               When on, strength and dexterity rise to the highest requirements among equipped and enabled items
               (default). When off, attributes stay as you set them.
+            </p>
+          </div>
+          <div class="field">
+            <label class="checkbox">
+              <input v-model="draftRequireStrDexForItemBonuses" type="checkbox" />
+              Require strength and dexterity for item bonuses
+            </label>
+            <p class="help">
+              When off, equipped items still apply stats if strength or dexterity is unmet, so an item's own
+              +strength can satisfy its requirements (default). When on, bonuses apply only when allocated
+              strength and dexterity already meet those requirements.
             </p>
           </div>
         </section>

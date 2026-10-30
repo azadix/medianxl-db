@@ -6,6 +6,10 @@ const AUTO_LEVEL_STORAGE_KEY = 'medianxl-planner-auto-level-from-spent-skill-poi
 /** localStorage key: when true (default), raise str/dex to highest active item requirements. */
 const AUTO_STAT_REQS_STORAGE_KEY = 'medianxl-planner-auto-match-highest-stat-requirements';
 
+/** localStorage key: when true, gear bonuses apply only if allocated+skill str/dex meet reqs. */
+const REQUIRE_STAT_REQS_FOR_ITEM_BONUSES_STORAGE_KEY =
+  'medianxl-planner-require-str-dex-for-item-bonuses';
+
 /** @type {Record<string, boolean>} */
 const memoryFlags = {};
 
@@ -29,6 +33,18 @@ function writeBoolFlag(key, value) {
   memoryFlags[key] = value === true;
   if (typeof localStorage === 'undefined') return;
   localStorage.setItem(key, value ? '1' : '0');
+}
+
+/**
+ * @param {string} key
+ * @returns {boolean}
+ */
+function readDefaultFalseFlag(key) {
+  if (Object.prototype.hasOwnProperty.call(memoryFlags, key)) return memoryFlags[key];
+  if (typeof localStorage === 'undefined') return false;
+  const v = localStorage.getItem(key);
+  if (v === null) return false;
+  return v === '1' || v === 'true';
 }
 
 /**
@@ -69,4 +85,18 @@ export function getPlannerAutoMatchHighestStatRequirements() {
  */
 export function setPlannerAutoMatchHighestStatRequirements(value) {
   writeBoolFlag(AUTO_STAT_REQS_STORAGE_KEY, value);
+}
+
+/**
+ * @returns {boolean}
+ */
+export function getPlannerRequireStrDexForItemBonuses() {
+  return readDefaultFalseFlag(REQUIRE_STAT_REQS_FOR_ITEM_BONUSES_STORAGE_KEY);
+}
+
+/**
+ * @param {boolean} value
+ */
+export function setPlannerRequireStrDexForItemBonuses(value) {
+  writeBoolFlag(REQUIRE_STAT_REQS_FOR_ITEM_BONUSES_STORAGE_KEY, value);
 }

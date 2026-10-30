@@ -1328,6 +1328,27 @@ export default class Character {
   }
 
   /**
+   * Allocated + skill passives, excluding item/relic/charm bonuses.
+   * Used to gate gear bonuses on str/dex without counting the item's own +str.
+   * @param {string} statKey
+   * @returns {number}
+   */
+  getStatWithoutItemBonuses(statKey) {
+    const k = String(statKey || '').toLowerCase();
+    if (!isPlannerBaseStatKey(k)) return 0;
+    const raw = this.getRawStat(k);
+    const skillBonus = Number(this._plannerSkillStatBonuses?.[k]) || 0;
+    const flat = raw + skillBonus;
+    if (!Character.attributePercentKey(k)) {
+      return normalizePlannerStatValue(k, flat);
+    }
+    return normalizePlannerStatValue(
+      k,
+      Character.applyAttributePercent(flat, this._attributePercentTotal(k, { includeItem: false }))
+    );
+  }
+
+  /**
    * Set stored stat from a **displayed** value (panel input): underlying save excludes passive skill/item bonuses.
    * @param {string} statKey - Stat key (e.g., 'strength', 'dexterity')
    * @param {number|string} value - Value shown in the planner

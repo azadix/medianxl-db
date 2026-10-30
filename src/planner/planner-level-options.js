@@ -4,4 +4,6 @@ export {
   setPlannerAutoLevelFromSpentSkillPoints,
   getPlannerAutoMatchHighestStatRequirements,
   setPlannerAutoMatchHighestStatRequirements,
+  getPlannerRequireStrDexForItemBonuses,
+  setPlannerRequireStrDexForItemBonuses,
 } from '@/planner/planner-options.js';

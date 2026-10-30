@@ -60,6 +60,7 @@ import {
 import {
   getPlannerAutoMatchHighestStatRequirements,
   getPlannerItemReqLevelCap,
+  getPlannerRequireStrDexForItemBonuses,
 } from '@/planner/planner-options.js';
 import { isTswSocketedRuneDump } from '@/planner/tsw-item-rolls.js';
 import {
@@ -1081,8 +1082,10 @@ export const useItemsStore = defineStore('items', {
 
     /**
      * Whether an equipment slot applies bonuses to the character.
-     * Active weapon set, class, level, and quiver pairing. Str/dex are not
-     * required so an item's own +str / % to Strength can satisfy its reqs.
+     * Active weapon set, class, level, and quiver pairing. Str/dex are skipped
+     * by default so an item's own +str / % to Strength can satisfy its reqs.
+     * Enable Require str/dex for item bonuses in planner options to gate on
+     * allocated+skill stats (item bonuses do not count toward the gate).
      * @param {string} slot
      * @returns {boolean}
      */
@@ -1097,10 +1100,26 @@ export const useItemsStore = defineStore('items', {
       if (!canEquipForClass(def, className)) return false;
       if (this.quiverInactiveReasonForSlot(key)) return false;
       const reqs = this.getRequirementsForInstance(id);
+      const charStats = this.getCharacterRequirementStats();
       const reqLevel = Number(reqs?.reqLevel) || 0;
       if (reqLevel > 0) {
-        const level = Number(this.getCharacterRequirementStats().level);
+        const level = Number(charStats.level);
         if (!Number.isFinite(level) || level < reqLevel) return false;
+      }
+      if (getPlannerRequireStrDexForItemBonuses()) {
+        const ch = getCharacterInstance();
+        const stats = {
+          level: charStats.level,
+          strength:
+            typeof ch?.getStatWithoutItemBonuses === 'function'
+              ? ch.getStatWithoutItemBonuses('strength')
+              : charStats.strength,
+          dexterity:
+            typeof ch?.getStatWithoutItemBonuses === 'function'
+              ? ch.getStatWithoutItemBonuses('dexterity')
+              : charStats.dexterity,
+        };
+        if (!characterMeetsItemRequirements(reqs, stats)) return false;
       }
       return true;
     },
