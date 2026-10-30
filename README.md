@@ -51,9 +51,10 @@ Icons live under `public/icons/pwa/`. After changing icon art, rebuild before `p
 ## Testing
 
 ```bash
-npm test            # all Vitest suites (unit + skill data)
-npm run test:unit   # domain logic + tooltip expansion
+npm test            # Vitest suites except TSW build audit (unit + skill data)
+npm run test:unit   # domain logic + tooltip expansion (excludes TSW audit)
 npm run test:data   # schema, placeholders, refs, scaling, spellcheck
+npm run audit       # TSW dump vs planner requirement audit
 npm run spellcheck  # skill text spelling only (dicts in tools/spellcheck/)
 ```
 
@@ -99,7 +100,8 @@ Python is not required for tests (only for atlas generation / `tools/py/` utilit
 ## Useful scripts
 
 - `npm run lint` - ESLint
-- `npm test` / `npm run test:unit` / `npm run test:data` - Vitest suites
+- `npm test` / `npm run test:unit` / `npm run test:data` - Vitest suites (excludes TSW audit)
+- `npm run audit` - TSW dump vs planner requirement audit
 - `npm run spellcheck` - skill text spelling (`tools/spellcheck/`)
 - `npm run generate:items` - refresh unique-stats, relics, and runewords from wiki HTML
 - `npm run generate:items -- charms` - refresh charms from the TSW API
