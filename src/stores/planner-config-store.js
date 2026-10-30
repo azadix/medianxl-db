@@ -60,6 +60,15 @@ export function setCondition(key, value) {
   }
 }
 
+export function clearAllConditions() {
+  const keys = Object.keys(_selected).filter((k) => Boolean(_selected[k]));
+  if (keys.length === 0) return;
+  for (const k of keys) {
+    _selected[k] = false;
+  }
+  emitPlannerConfigChanged('', false);
+}
+
 export function getSelectedConditionKeys() {
   return Object.keys(_selected).filter((k) => Boolean(_selected[k]));
 }
@@ -69,5 +78,6 @@ export default {
   isConditionSelected,
   toggleCondition,
   setCondition,
+  clearAllConditions,
   getSelectedConditionKeys
 };

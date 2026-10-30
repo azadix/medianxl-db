@@ -36,7 +36,7 @@ import {
 } from '@/character/planner-core.js';
 import { findMissingCharmSkillUnlocks } from '@/items/charm-skill-unlocks.js';
 import { isCharmItem } from '@/items/charm-items.js';
-import { getSelectedConditionKeys, setCondition as setPlannerCondition } from '@/stores/planner-config-store.js';
+import { getSelectedConditionKeys, setCondition as setPlannerCondition, clearAllConditions as clearPlannerConditions } from '@/stores/planner-config-store.js';
 import { useItemsStore } from '@/stores/items.js';
 import { getPlannerAutoMatchHighestStatRequirements } from '@/planner/planner-options.js';
 import { syncPlannerCharacterStatsTextareaFromCharacter, refreshPlannerStatsPanelFromCharacter } from '@/character/planner-stats-panel.js';
@@ -226,17 +226,18 @@ export async function loadBuildData(build, buildIndex = null) {
             setClassSkillsBonus(0);
         }
 
-        // Load planner config conditions (selected checkboxes)
-        if (Array.isArray(build.configConditions)) {
-            try {
+        // Replace planner config conditions (do not leak the previous build's checkboxes)
+        try {
+            clearPlannerConditions();
+            if (Array.isArray(build.configConditions)) {
                 for (const k of build.configConditions) {
                     if (typeof k === 'string' && String(k).trim() !== '') {
                         setPlannerCondition(k, true);
                     }
                 }
-            } catch (e) {
-                console.warn('Failed to apply build configConditions:', e);
             }
+        } catch (e) {
+            console.warn('Failed to apply build configConditions:', e);
         }
 
         // Load equipment / inventory / charms / relics (await catalog so oSkills leftovers see gear).
