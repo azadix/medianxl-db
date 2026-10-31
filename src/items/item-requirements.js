@@ -276,7 +276,15 @@ export function resolveItemRequirements(def, options = {}) {
   const extrasHaveReqPct = extras.some((text) => isRequirementsPercentLine(text));
 
   if (itemForbidsSocketsAndEnhancements(def)) {
-    return { reqLevel, reqStr, reqDex, reductionPct: 0 };
+    // Assur's Bane's per-item scroll mechanic still honors a leftover `+N Required Level`
+    // that the TSW importer emits as the net upgraded requirement.
+    let leftoverReqLevel = 0;
+    if (String(def?.name || '').trim() === "Assur's Bane") {
+      for (const text of extras) {
+        leftoverReqLevel += parseRequiredLevelBonus(text);
+      }
+    }
+    return { reqLevel: Math.max(0, reqLevel + leftoverReqLevel), reqStr, reqDex, reductionPct: 0 };
   }
 
   if (isCorruptedWormhole(def)) {
