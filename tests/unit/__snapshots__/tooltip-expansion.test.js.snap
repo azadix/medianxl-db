@@ -7,7 +7,7 @@ exports[`tooltip expansion > snapshots expanded description/effect for represent
     "level": 1,
     "skillEffect": "Sphere does no damage
 Vortex hits 13 times per second
-Cold Damage: <span class="has-text-danger">???</span>-<span class="has-text-danger">???</span>
+Cold Damage: <span class="has-text-white">floor((70+if(lvl<=1,0,if(lvl<=8,18*(lvl-1),if(lvl<=16,7*18+12*(lvl-8),if(lvl<=22,7*18+8*12+12*(lvl-16),if(lvl<=28,7*18+8*12+6*12+12*(lvl-22),7*18+8*12+6*12+6*12+8*(lvl-28)))))))/32)</span>-<span class="has-text-white">floor((80+if(lvl<=1,0,if(lvl<=8,24*(lvl-1),if(lvl<=16,7*24+16*(lvl-8),if(lvl<=22,7*24+8*16+16*(lvl-16),if(lvl<=28,7*24+8*16+6*16+16*(lvl-22),7*24+8*16+6*16+6*16+12*(lvl-28)))))))/32)</span>
 Mana cost: <span class="has-text-info">19</span>  ",
     "variantKey": null,
   },

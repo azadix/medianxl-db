@@ -1,0 +1,248 @@
+#!/usr/bin/env python3
+"""Generate base damage scalingConstants for skills.json from mxl-extractor skills_full.tsv.
+
+Reads skills_full.tsv (tab-separated) and the existing 2_14 skills.json, computes the
+D2MOO base damage (lev_scaled_damage, piecewise-linear) for each skill, and reports /
+merges the resulting scalingConstants entries.
+
+Usage:
+  python generate_skill_damage.py            # report only (stdout)
+  python generate_skill_damage.py --apply    # write skills.json in place (backup first)
+"""
+import argparse
+import csv
+import json
+import re
+import sys
+from pathlib import Path
+
+TOOLS_DIR = Path(__file__).resolve().parent
+REPO_ROOT = TOOLS_DIR.parent
+CONFIG_PATH = TOOLS_DIR / "tools.local.json"
+SKILLS_JSON = REPO_ROOT / "public" / "tree_data" / "2_14" / "skills.json"
+
+
+def _resolve_repo_path(raw):
+    path = Path(raw)
+    if not path.is_absolute():
+        path = REPO_ROOT / path
+    return path.resolve()
+
+
+def skills_full_path():
+    if not CONFIG_PATH.is_file():
+        print(f"Missing {CONFIG_PATH} (see tools/tools.local.json.example).", file=sys.stderr)
+        raise SystemExit(2)
+    try:
+        config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as e:
+        print(f"Could not read {CONFIG_PATH}: {e}", file=sys.stderr)
+        raise SystemExit(2)
+    raw = config.get("skills_full_tsv") if isinstance(config, dict) else None
+    if not isinstance(raw, str) or not raw.strip():
+        print("Set skills_full_tsv in tools/tools.local.json.", file=sys.stderr)
+        raise SystemExit(2)
+    path = _resolve_repo_path(raw.strip())
+    if not path.is_file():
+        print(f"skills_full_tsv not found: {path}", file=sys.stderr)
+        raise SystemExit(2)
+    return path
+
+# EType -> stats.json statKey (base damage types requested).
+ETYPE_STATKEY = {
+    "fire": "fire_damage",
+    "cold": "cold_damage",
+    "ltng": "lightning_damage",
+    "mag": "magic_damage",
+    "pois": "poison_dot",
+    "burn": "fire_dot",
+    "frze": "cold_damage",
+}
+
+
+def parse_int(raw):
+    if isinstance(raw, int):
+        return raw
+    s = str(raw or "").strip()
+    if not s:
+        return 0
+    try:
+        return int(s)
+    except ValueError:
+        return 0
+
+
+def damage_bonus_formula(p):
+    """String formula for D2MOO SKILLS_CalculateDamageBonusByLevel (in `lvl`)."""
+    p = list(p[:5])
+    while len(p) < 5:
+        p.append(0)
+    p0, p1, p2, p3, p4 = p
+    if not any(p):
+        return "0"
+    # All brackets equal -> the piecewise collapses to a simple linear ramp.
+    if p0 == p1 == p2 == p3 == p4:
+        return f"{p0}*(lvl-1)"
+    # Linear-only (higher brackets 0) -> flat after lvl 8.
+    if p1 == 0 and p2 == 0 and p3 == 0 and p4 == 0:
+        return f"if(lvl<=8,{p0}*(lvl-1),7*{p0})"
+    return (
+        f"if(lvl<=1,0,"
+        f"if(lvl<=8,{p0}*(lvl-1),"
+        f"if(lvl<=16,7*{p0}+{p1}*(lvl-8),"
+        f"if(lvl<=22,7*{p0}+8*{p1}+{p2}*(lvl-16),"
+        f"if(lvl<=28,7*{p0}+8*{p1}+6*{p2}+{p3}*(lvl-22),"
+        f"7*{p0}+8*{p1}+6*{p2}+6*{p3}+{p4}*(lvl-28))))))"
+    )
+
+
+def lev_scaled_formula(base, per_level):
+    """Formula string for base + damage_bonus_by_level (raw table units)."""
+    bonus = damage_bonus_formula(per_level)
+    if bonus == "0":
+        return str(base)
+    return f"{base}+{bonus}"
+
+
+def display_formula(raw, hs, is_poison=False, elen=0):
+    """Wrap a raw damage formula in the D2 display conversion (HitShift + poison length)."""
+    if is_poison:
+        if elen > 1:
+            # (value << HitShift) * ELen / 256 -> total over duration.
+            return f"floor(({raw})*{1 << hs}*{elen}/256)"
+        # Instant poison: value - max(0, 8 - HitShift).
+        off = max(0, 8 - hs)
+        return f"({raw})-{off}" if off else raw
+    # Non-poison: (value << HitShift) >> 8.
+    if hs >= 8:
+        return f"({raw})*{1 << (hs - 8)}" if hs > 8 else raw
+    return f"floor(({raw})/{1 << (8 - hs)})"
+
+
+def load_skills_full():
+    with open(skills_full_path(), "r", encoding="utf-8", newline="") as f:
+        reader = csv.DictReader(f, delimiter="\t")
+        by_name = {}
+        for row in reader:
+            name = (row.get("skill") or "").strip()
+            if name:
+                by_name[name] = row
+    return by_name
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--apply", action="store_true", help="write skills.json in place")
+    ap.add_argument("--limit", type=int, default=0, help="only process first N skills (debug)")
+    args = ap.parse_args()
+
+    full = load_skills_full()
+    data = json.loads(SKILLS_JSON.read_text(encoding="utf-8"))
+
+    added = 0
+    skipped_hitshift = 0
+    skipped_etype = 0
+    samples = []
+
+    for skill in data:
+        sid = skill.get("id", "")
+        name = skill.get("displayName") or sid
+        row = full.get(name)
+        if row is None:
+            continue
+
+        etype = (row.get("EType") or "").strip().lower()
+        element = (row.get("element") or "").strip()
+        hit_shift = parse_int(row.get("HitShift", "")) or 8
+        elen = parse_int(row.get("ELen", ""))
+
+        existing_keys = {c.get("statKey") for c in skill.get("scalingConstants", [])}
+
+        new_entries = []
+
+        # --- elemental damage ---
+        emin = parse_int(row.get("EMin", ""))
+        emax = parse_int(row.get("EMax", ""))
+        emin_lev = [parse_int(row.get(f"EMinLev{i}", "")) for i in range(1, 6)]
+        emax_lev = [parse_int(row.get(f"EMaxLev{i}", "")) for i in range(1, 6)]
+        if (emin or emax) and etype in ETYPE_STATKEY:
+            key = ETYPE_STATKEY[etype]
+            if key not in existing_keys:
+                is_poison = key == "poison_dot"
+                entry = {
+                    "statKey": key,
+                    "occurrenceIndex": 0,
+                    "variantKey": "",
+                    "value0": display_formula(
+                        lev_scaled_formula(emin, emin_lev), hit_shift, is_poison, elen
+                    ),
+                    "value1": display_formula(
+                        lev_scaled_formula(emax, emax_lev), hit_shift, is_poison, elen
+                    ),
+                }
+                if key == "poison_dot" and elen > 1:
+                    entry["value2"] = f"frames({elen})"
+                new_entries.append(entry)
+        elif (emin or emax) and etype not in ETYPE_STATKEY:
+            skipped_etype += 1
+
+        # --- physical damage ---
+        mindam = parse_int(row.get("MinDam", ""))
+        maxdam = parse_int(row.get("MaxDam", ""))
+        mindam_lev = [parse_int(row.get(f"MinLevDam{i}", "")) for i in range(1, 6)]
+        maxdam_lev = [parse_int(row.get(f"MaxLevDam{i}", "")) for i in range(1, 6)]
+        if (mindam or maxdam) and "physical_damage" not in existing_keys:
+            new_entries.append({
+                "statKey": "physical_damage",
+                "occurrenceIndex": 0,
+                "variantKey": "",
+                "value0": display_formula(lev_scaled_formula(mindam, mindam_lev), hit_shift),
+                "value1": display_formula(lev_scaled_formula(maxdam, maxdam_lev), hit_shift),
+            })
+
+        # --- weapon damage (SrcDam %) ---
+        src_dam = (row.get("SrcDam") or "").strip()
+        if src_dam and "weapon_damage" not in existing_keys:
+            m = re.match(r"^\s*([\d.]+)\s*%", src_dam)
+            if m:
+                new_entries.append({
+                    "statKey": "weapon_damage",
+                    "occurrenceIndex": 0,
+                    "variantKey": "",
+                    "value0": str(int(float(m.group(1)))),
+                })
+
+        if not new_entries:
+            continue
+
+        if hit_shift != 8:
+            skipped_hitshift += 1
+
+        added += 1
+        if len(samples) < 30:
+            samples.append((name, etype, element, hit_shift, new_entries))
+
+        skill.setdefault("scalingConstants", []).extend(new_entries)
+
+        if args.limit and added >= args.limit:
+            break
+
+    print(f"skills processed: {len(data)}")
+    print(f"skills with damage added: {added}")
+    print(f"elemental with unsupported EType skipped: {skipped_etype}")
+    print(f"skills with HitShift != 8 (shift applied): {skipped_hitshift}")
+    print()
+    for name, etype, element, hs, entries in samples:
+        for e in entries:
+            print(f"{name} [{etype or element or 'phys'}] hitShift={hs}")
+            print(f"    {json.dumps(e, ensure_ascii=False)}")
+
+    if args.apply:
+        backup = SKILLS_JSON.with_suffix(".json.bak")
+        backup.write_text(SKILLS_JSON.read_text(encoding="utf-8"), encoding="utf-8")
+        SKILLS_JSON.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+        print(f"\nWrote {SKILLS_JSON} (backup: {backup})")
+
+
+if __name__ == "__main__":
+    main()

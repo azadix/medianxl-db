@@ -32,6 +32,20 @@
         "value0": "80",
         "value1": "22",
         "value2": "6"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((128)/64)",
+        "value1": "floor((160)/64)"
+      },
+      {
+        "statKey": "physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((128)/64)",
+        "value1": "floor((160)/64)"
       }
     ],
     "description": [
@@ -72,6 +86,13 @@
         "value0": "154",
         "value1": "31",
         "value2": "5"
+      },
+      {
+        "statKey": "cold_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((70+if(lvl<=1,0,if(lvl<=8,18*(lvl-1),if(lvl<=16,7*18+12*(lvl-8),if(lvl<=22,7*18+8*12+12*(lvl-16),if(lvl<=28,7*18+8*12+6*12+12*(lvl-22),7*18+8*12+6*12+6*12+8*(lvl-28)))))))/32)",
+        "value1": "floor((80+if(lvl<=1,0,if(lvl<=8,24*(lvl-1),if(lvl<=16,7*24+16*(lvl-8),if(lvl<=22,7*24+8*16+16*(lvl-16),if(lvl<=28,7*24+8*16+6*16+16*(lvl-22),7*24+8*16+6*16+6*16+12*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -599,6 +620,13 @@
         "value0": "66",
         "value1": "11",
         "value2": "6"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((2)/2)",
+        "value1": "floor((4)/2)"
       }
     ],
     "description": [
@@ -658,6 +686,12 @@
         "value0": "",
         "value1": "",
         "value2": "frames((10+5*min(lvl-1,7))*(100+blvl*10+{{bonus_to_poison_skill_duration}})/100)"
+      },
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100"
       }
     ],
     "description": [
@@ -708,6 +742,13 @@
         "value0": "88",
         "value1": "50",
         "value2": "6"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((150+if(lvl<=1,0,if(lvl<=8,29*(lvl-1),if(lvl<=16,7*29+29*(lvl-8),if(lvl<=22,7*29+8*29+29*(lvl-16),if(lvl<=28,7*29+8*29+6*29+15*(lvl-22),7*29+8*29+6*29+6*15+1*(lvl-28)))))))/16)",
+        "value1": "floor((220+if(lvl<=1,0,if(lvl<=8,32*(lvl-1),if(lvl<=16,7*32+32*(lvl-8),if(lvl<=22,7*32+8*32+32*(lvl-16),if(lvl<=28,7*32+8*32+6*32+16*(lvl-22),7*32+8*32+6*32+6*16+4*(lvl-28)))))))/16)"
       }
     ],
     "description": [
@@ -856,6 +897,13 @@
         "value0": "45",
         "value1": "12",
         "value2": "5"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "10+if(lvl<=1,0,if(lvl<=8,4*(lvl-1),if(lvl<=16,7*4+4*(lvl-8),if(lvl<=22,7*4+8*4+4*(lvl-16),if(lvl<=28,7*4+8*4+6*4+4*(lvl-22),7*4+8*4+6*4+6*4+2*(lvl-28))))))",
+        "value1": "10+if(lvl<=1,0,if(lvl<=8,4*(lvl-1),if(lvl<=16,7*4+4*(lvl-8),if(lvl<=22,7*4+8*4+4*(lvl-16),if(lvl<=28,7*4+8*4+6*4+4*(lvl-22),7*4+8*4+6*4+6*4+2*(lvl-28))))))"
       }
     ],
     "description": [
@@ -897,6 +945,13 @@
         "value1": "0",
         "value2": "8",
         "min_mana": "250"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((936)/16)",
+        "value1": "floor((936)/16)"
       }
     ],
     "description": [
@@ -1120,7 +1175,15 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((50000)/16)",
+        "value1": "floor((50000)/16)"
+      }
+    ],
     "description": [
       "Use the magical force to create a storm of devastating power!"
     ],
@@ -1246,6 +1309,13 @@
         "value0": "110",
         "value1": "12",
         "value2": "6"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((204+3*(lvl-1))/64)",
+        "value1": "floor((234+5*(lvl-1))/64)"
       }
     ],
     "description": [
@@ -1285,6 +1355,20 @@
         "value0": "22",
         "value1": "26",
         "value2": "6"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((14+1*(lvl-1))/4)",
+        "value1": "floor((24+1*(lvl-1))/4)"
+      },
+      {
+        "statKey": "physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((20+1*(lvl-1))/4)",
+        "value1": "floor((30+1*(lvl-1))/4)"
       }
     ],
     "description": [
@@ -1336,6 +1420,13 @@
         "value0": "100",
         "value1": "10",
         "value2": "8"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((40+if(lvl<=1,0,if(lvl<=8,15*(lvl-1),if(lvl<=16,7*15+13*(lvl-8),if(lvl<=22,7*15+8*13+8*(lvl-16),if(lvl<=28,7*15+8*13+6*8+8*(lvl-22),7*15+8*13+6*8+6*8+6*(lvl-28)))))))/4)",
+        "value1": "floor((46+if(lvl<=1,0,if(lvl<=8,18*(lvl-1),if(lvl<=16,7*18+15*(lvl-8),if(lvl<=22,7*18+8*15+9*(lvl-16),if(lvl<=28,7*18+8*15+6*9+9*(lvl-22),7*18+8*15+6*9+6*9+7*(lvl-28)))))))/4)"
       }
     ],
     "description": [
@@ -1509,6 +1600,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "((299+lvl)*(100+blvl))/100"
+      },
+      {
+        "statKey": "lightning_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "300+1*(lvl-1)",
+        "value1": "300+1*(lvl-1)"
       }
     ],
     "description": [
@@ -1550,6 +1648,13 @@
         "value0": "88",
         "value1": "0",
         "value2": "5"
+      },
+      {
+        "statKey": "lightning_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "6",
+        "value1": "12+4*(lvl-1)"
       }
     ],
     "description": [],
@@ -1602,6 +1707,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(50+2*(lvl-1))"
+      },
+      {
+        "statKey": "lightning_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((1)/4)",
+        "value1": "floor((1)/4)"
       }
     ],
     "description": [
@@ -1673,6 +1785,13 @@
         "value0": "110",
         "value1": "24",
         "value2": "6"
+      },
+      {
+        "statKey": "cold_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((28+if(lvl<=1,0,if(lvl<=8,14*(lvl-1),if(lvl<=16,7*14+7*(lvl-8),if(lvl<=22,7*14+8*7+7*(lvl-16),if(lvl<=28,7*14+8*7+6*7+7*(lvl-22),7*14+8*7+6*7+6*7+7*(lvl-28)))))))/8)",
+        "value1": "floor((36+if(lvl<=1,0,if(lvl<=8,18*(lvl-1),if(lvl<=16,7*18+9*(lvl-8),if(lvl<=22,7*18+8*9+9*(lvl-16),if(lvl<=28,7*18+8*9+6*9+9*(lvl-22),7*18+8*9+6*9+6*9+9*(lvl-28)))))))/8)"
       }
     ],
     "description": [
@@ -1713,6 +1832,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "100"
+      },
+      {
+        "statKey": "cold_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((2)/2)",
+        "value1": "floor((2)/2)"
       }
     ],
     "description": [
@@ -2147,6 +2273,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "floor((max(3,min(3*lvl,66))*(100+lvl*lvl))/100)"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "2",
+        "value1": "2"
       }
     ],
     "description": [
@@ -2198,6 +2331,13 @@
         "value0": "132",
         "value1": "11",
         "value2": "5"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((3+if(lvl<=1,0,if(lvl<=8,3*(lvl-1),if(lvl<=16,7*3+4*(lvl-8),if(lvl<=22,7*3+8*4+5*(lvl-16),if(lvl<=28,7*3+8*4+6*5+6*(lvl-22),7*3+8*4+6*5+6*6+7*(lvl-28)))))))/2)",
+        "value1": "floor((3+if(lvl<=1,0,if(lvl<=8,3*(lvl-1),if(lvl<=16,7*3+4*(lvl-8),if(lvl<=22,7*3+8*4+5*(lvl-16),if(lvl<=28,7*3+8*4+6*5+6*(lvl-22),7*3+8*4+6*5+6*6+7*(lvl-28)))))))/2)"
       }
     ],
     "description": [
@@ -2263,6 +2403,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "((8*lvl)/2)*(100+(20*blvl))/100"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((8+8*(lvl-1))/2)",
+        "value1": "floor((8+8*(lvl-1))/2)"
       }
     ],
     "description": [
@@ -2309,6 +2456,20 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(200)"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((960+if(lvl<=1,0,if(lvl<=8,96*(lvl-1),if(lvl<=16,7*96+64*(lvl-8),if(lvl<=22,7*96+8*64+48*(lvl-16),if(lvl<=28,7*96+8*64+6*48+48*(lvl-22),7*96+8*64+6*48+6*48+32*(lvl-28)))))))/32)",
+        "value1": "floor((960+if(lvl<=1,0,if(lvl<=8,96*(lvl-1),if(lvl<=16,7*96+64*(lvl-8),if(lvl<=22,7*96+8*64+48*(lvl-16),if(lvl<=28,7*96+8*64+6*48+48*(lvl-22),7*96+8*64+6*48+6*48+32*(lvl-28)))))))/32)"
+      },
+      {
+        "statKey": "physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((1600+if(lvl<=1,0,if(lvl<=8,160*(lvl-1),if(lvl<=16,7*160+154*(lvl-8),if(lvl<=22,7*160+8*154+115*(lvl-16),if(lvl<=28,7*160+8*154+6*115+90*(lvl-22),7*160+8*154+6*115+6*90+51*(lvl-28)))))))/32)",
+        "value1": "floor((2000+if(lvl<=1,0,if(lvl<=8,160*(lvl-1),if(lvl<=16,7*160+154*(lvl-8),if(lvl<=22,7*160+8*154+115*(lvl-16),if(lvl<=28,7*160+8*154+6*115+90*(lvl-22),7*160+8*154+6*115+6*90+51*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -2632,6 +2793,13 @@
         "value0": "132",
         "value1": "42",
         "value2": "6"
+      },
+      {
+        "statKey": "physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((1)/2)",
+        "value1": "floor((1)/2)"
       }
     ],
     "description": [
@@ -2689,6 +2857,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "80-(lvl-1)"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((5+5*(lvl-1))/8)",
+        "value1": "floor((5+5*(lvl-1))/8)"
       }
     ],
     "description": [
@@ -2758,6 +2933,13 @@
         "value0": "352",
         "value1": "35",
         "value2": "5"
+      },
+      {
+        "statKey": "physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((24+if(lvl<=1,0,if(lvl<=8,4*(lvl-1),if(lvl<=16,7*4+2*(lvl-8),if(lvl<=22,7*4+8*2+2*(lvl-16),if(lvl<=28,7*4+8*2+6*2+2*(lvl-22),7*4+8*2+6*2+6*2+2*(lvl-28)))))))/32)",
+        "value1": "floor((96+if(lvl<=1,0,if(lvl<=8,16*(lvl-1),if(lvl<=16,7*16+8*(lvl-8),if(lvl<=22,7*16+8*8+8*(lvl-16),if(lvl<=28,7*16+8*8+6*8+8*(lvl-22),7*16+8*8+6*8+6*8+8*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -2992,6 +3174,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(10)"
+      },
+      {
+        "statKey": "cold_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((120+if(lvl<=1,0,if(lvl<=8,25*(lvl-1),if(lvl<=16,7*25+10*(lvl-8),if(lvl<=22,7*25+8*10+10*(lvl-16),if(lvl<=28,7*25+8*10+6*10+10*(lvl-22),7*25+8*10+6*10+6*10+10*(lvl-28)))))))/8)",
+        "value1": "floor((150+if(lvl<=1,0,if(lvl<=8,40*(lvl-1),if(lvl<=16,7*40+13*(lvl-8),if(lvl<=22,7*40+8*13+13*(lvl-16),if(lvl<=28,7*40+8*13+6*13+13*(lvl-22),7*40+8*13+6*13+6*13+13*(lvl-28)))))))/8)"
       }
     ],
     "description": [
@@ -3181,6 +3370,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "3"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((102+if(lvl<=1,0,if(lvl<=8,12*(lvl-1),if(lvl<=16,7*12+11*(lvl-8),if(lvl<=22,7*12+8*11+11*(lvl-16),if(lvl<=28,7*12+8*11+6*11+11*(lvl-22),7*12+8*11+6*11+6*11+7*(lvl-28)))))))/16)",
+        "value1": "floor((121+if(lvl<=1,0,if(lvl<=8,16*(lvl-1),if(lvl<=16,7*16+12*(lvl-8),if(lvl<=22,7*16+8*12+12*(lvl-16),if(lvl<=28,7*16+8*12+6*12+12*(lvl-22),7*16+8*12+6*12+6*12+8*(lvl-28)))))))/16)"
       }
     ],
     "description": [
@@ -3341,6 +3537,13 @@
         "value0": "18",
         "value1": "13",
         "value2": "5"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((24+if(lvl<=1,0,if(lvl<=8,10*(lvl-1),if(lvl<=16,7*10+6*(lvl-8),if(lvl<=22,7*10+8*6+6*(lvl-16),if(lvl<=28,7*10+8*6+6*6+6*(lvl-22),7*10+8*6+6*6+6*6+6*(lvl-28)))))))/8)",
+        "value1": "floor((32+if(lvl<=1,0,if(lvl<=8,16*(lvl-1),if(lvl<=16,7*16+8*(lvl-8),if(lvl<=22,7*16+8*8+8*(lvl-16),if(lvl<=28,7*16+8*8+6*8+8*(lvl-22),7*16+8*8+6*8+6*8+8*(lvl-28)))))))/8)"
       }
     ],
     "description": [
@@ -3376,6 +3579,13 @@
         "value0": "2",
         "value1": "26",
         "value2": "7"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((180+if(lvl<=1,0,if(lvl<=8,17*(lvl-1),if(lvl<=16,7*17+11*(lvl-8),if(lvl<=22,7*17+8*11+11*(lvl-16),if(lvl<=28,7*17+8*11+6*11+11*(lvl-22),7*17+8*11+6*11+6*11+10*(lvl-28)))))))/32)",
+        "value1": "floor((200+if(lvl<=1,0,if(lvl<=8,19*(lvl-1),if(lvl<=16,7*19+13*(lvl-8),if(lvl<=22,7*19+8*13+13*(lvl-16),if(lvl<=28,7*19+8*13+6*13+13*(lvl-22),7*19+8*13+6*13+6*13+12*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -3578,6 +3788,13 @@
         "value0": "53",
         "value1": "18",
         "value2": "6"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "25+if(lvl<=1,0,if(lvl<=8,8*(lvl-1),if(lvl<=16,7*8+4*(lvl-8),if(lvl<=22,7*8+8*4+4*(lvl-16),if(lvl<=28,7*8+8*4+6*4+4*(lvl-22),7*8+8*4+6*4+6*4+4*(lvl-28))))))",
+        "value1": "40+if(lvl<=1,0,if(lvl<=8,10*(lvl-1),if(lvl<=16,7*10+5*(lvl-8),if(lvl<=22,7*10+8*5+5*(lvl-16),if(lvl<=28,7*10+8*5+6*5+5*(lvl-22),7*10+8*5+6*5+6*5+5*(lvl-28))))))"
       }
     ],
     "description": [
@@ -3632,6 +3849,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "60+6*lvl"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((5+if(lvl<=1,0,if(lvl<=8,2*(lvl-1),if(lvl<=16,7*2+2*(lvl-8),if(lvl<=22,7*2+8*2+3*(lvl-16),if(lvl<=28,7*2+8*2+6*3+3*(lvl-22),7*2+8*2+6*3+6*3+3*(lvl-28)))))))/2)",
+        "value1": "floor((5+if(lvl<=1,0,if(lvl<=8,2*(lvl-1),if(lvl<=16,7*2+2*(lvl-8),if(lvl<=22,7*2+8*2+3*(lvl-16),if(lvl<=28,7*2+8*2+6*3+3*(lvl-22),7*2+8*2+6*3+6*3+3*(lvl-28)))))))/2)"
       }
     ],
     "description": [
@@ -3784,6 +4008,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "30+3*(lvl-1)"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "5+if(lvl<=1,0,if(lvl<=8,6*(lvl-1),if(lvl<=16,7*6+6*(lvl-8),if(lvl<=22,7*6+8*6+6*(lvl-16),if(lvl<=28,7*6+8*6+6*6+6*(lvl-22),7*6+8*6+6*6+6*6+5*(lvl-28))))))",
+        "value1": "5+if(lvl<=1,0,if(lvl<=8,6*(lvl-1),if(lvl<=16,7*6+6*(lvl-8),if(lvl<=22,7*6+8*6+6*(lvl-16),if(lvl<=28,7*6+8*6+6*6+6*(lvl-22),7*6+8*6+6*6+6*6+5*(lvl-28))))))"
       }
     ],
     "description": [
@@ -3850,6 +4081,13 @@
         "value0": "120",
         "value1": "9",
         "value2": "5"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((2+if(lvl<=1,0,if(lvl<=8,1*(lvl-1),if(lvl<=16,7*1+4*(lvl-8),if(lvl<=22,7*1+8*4+18*(lvl-16),if(lvl<=28,7*1+8*4+6*18+28*(lvl-22),7*1+8*4+6*18+6*28+40*(lvl-28)))))))/2)",
+        "value1": "floor((3+if(lvl<=1,0,if(lvl<=8,2*(lvl-1),if(lvl<=16,7*2+5*(lvl-8),if(lvl<=22,7*2+8*5+22*(lvl-16),if(lvl<=28,7*2+8*5+6*22+33*(lvl-22),7*2+8*5+6*22+6*33+45*(lvl-28)))))))/2)"
       }
     ],
     "description": [
@@ -3892,6 +4130,13 @@
         "value0": "132",
         "value1": "48",
         "value2": "5"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100",
+        "value1": "100"
       }
     ],
     "description": [
@@ -4026,6 +4271,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "10+[[alchemical_preparation]]"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((4+if(lvl<=1,0,if(lvl<=8,2*(lvl-1),if(lvl<=16,7*2+3*(lvl-8),if(lvl<=22,7*2+8*3+16*(lvl-16),if(lvl<=28,7*2+8*3+6*16+25*(lvl-22),7*2+8*3+6*16+6*25+30*(lvl-28)))))))/2)",
+        "value1": "floor((6+if(lvl<=1,0,if(lvl<=8,3*(lvl-1),if(lvl<=16,7*3+4*(lvl-8),if(lvl<=22,7*3+8*4+20*(lvl-16),if(lvl<=28,7*3+8*4+6*20+30*(lvl-22),7*3+8*4+6*20+6*30+35*(lvl-28)))))))/2)"
       }
     ],
     "description": [
@@ -4273,6 +4525,13 @@
         "value0": "60",
         "value1": "18",
         "value2": "6"
+      },
+      {
+        "statKey": "lightning_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((170+if(lvl<=1,0,if(lvl<=8,32*(lvl-1),if(lvl<=16,7*32+16*(lvl-8),if(lvl<=22,7*32+8*16+16*(lvl-16),if(lvl<=28,7*32+8*16+6*16+16*(lvl-22),7*32+8*16+6*16+6*16+16*(lvl-28)))))))/16)",
+        "value1": "floor((190+if(lvl<=1,0,if(lvl<=8,40*(lvl-1),if(lvl<=16,7*40+20*(lvl-8),if(lvl<=22,7*40+8*20+20*(lvl-16),if(lvl<=28,7*40+8*20+6*20+20*(lvl-22),7*40+8*20+6*20+6*20+20*(lvl-28)))))))/16)"
       }
     ],
     "description": [
@@ -4324,6 +4583,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "1+lvl/6"
+      },
+      {
+        "statKey": "lightning_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((4+4*(lvl-1))/2)",
+        "value1": "floor((20+8*(lvl-1))/2)"
       }
     ],
     "description": [
@@ -4610,6 +4876,13 @@
         "value0": "44",
         "value1": "33",
         "value2": "6"
+      },
+      {
+        "statKey": "cold_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((68+if(lvl<=1,0,if(lvl<=8,35*(lvl-1),if(lvl<=16,7*35+17*(lvl-8),if(lvl<=22,7*35+8*17+17*(lvl-16),if(lvl<=28,7*35+8*17+6*17+17*(lvl-22),7*35+8*17+6*17+6*17+17*(lvl-28)))))))/32)",
+        "value1": "floor((86+if(lvl<=1,0,if(lvl<=8,42*(lvl-1),if(lvl<=16,7*42+21*(lvl-8),if(lvl<=22,7*42+8*21+21*(lvl-16),if(lvl<=28,7*42+8*21+6*21+21*(lvl-22),7*42+8*21+6*21+6*21+21*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -4685,6 +4958,13 @@
         "value0": "125",
         "value1": "15",
         "value2": "8"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((12+1*(lvl-1))/128)",
+        "value1": "floor((15+if(lvl<=1,0,if(lvl<=8,3*(lvl-1),if(lvl<=16,7*3+3*(lvl-8),if(lvl<=22,7*3+8*3+2*(lvl-16),if(lvl<=28,7*3+8*3+6*2+1*(lvl-22),7*3+8*3+6*2+6*1+1*(lvl-28)))))))/128)"
       }
     ],
     "description": [
@@ -4720,6 +5000,13 @@
         "value0": "35",
         "value1": "22",
         "value2": "5"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((65+if(lvl<=1,0,if(lvl<=8,21*(lvl-1),if(lvl<=16,7*21+13*(lvl-8),if(lvl<=22,7*21+8*13+13*(lvl-16),if(lvl<=28,7*21+8*13+6*13+13*(lvl-22),7*21+8*13+6*13+6*13+10*(lvl-28)))))))/32)",
+        "value1": "floor((100+if(lvl<=1,0,if(lvl<=8,33*(lvl-1),if(lvl<=16,7*33+18*(lvl-8),if(lvl<=22,7*33+8*18+18*(lvl-16),if(lvl<=28,7*33+8*18+6*18+18*(lvl-22),7*33+8*18+6*18+6*18+14*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -4895,6 +5182,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "ln(40,2,lvl)"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((80+1*(lvl-1))/2)",
+        "value1": "floor((80+1*(lvl-1))/2)"
       }
     ],
     "description": [
@@ -5065,6 +5359,13 @@
         "value0": "44",
         "value1": "26",
         "value2": "5"
+      },
+      {
+        "statKey": "cold_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((26+if(lvl<=1,0,if(lvl<=8,26*(lvl-1),if(lvl<=16,7*26+12*(lvl-8),if(lvl<=22,7*26+8*12+12*(lvl-16),if(lvl<=28,7*26+8*12+6*12+12*(lvl-22),7*26+8*12+6*12+6*12+12*(lvl-28)))))))/32)",
+        "value1": "floor((31+if(lvl<=1,0,if(lvl<=8,31*(lvl-1),if(lvl<=16,7*31+16*(lvl-8),if(lvl<=22,7*31+8*16+16*(lvl-16),if(lvl<=28,7*31+8*16+6*16+16*(lvl-22),7*31+8*16+6*16+6*16+16*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -5159,6 +5460,12 @@
         "value0": "9",
         "value1": "4",
         "value2": "6"
+      },
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "145"
       }
     ],
     "description": [
@@ -5432,6 +5739,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "floor(floor((8*lvl)/2)*(100+((16*ulvl)/4))/100)"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((8+8*(lvl-1))/2)",
+        "value1": "floor((8+8*(lvl-1))/2)"
       }
     ],
     "description": [
@@ -5468,6 +5782,20 @@
         "value0": "62",
         "value1": "20",
         "value2": "5"
+      },
+      {
+        "statKey": "cold_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((96+if(lvl<=1,0,if(lvl<=8,32*(lvl-1),if(lvl<=16,7*32+16*(lvl-8),if(lvl<=22,7*32+8*16+16*(lvl-16),if(lvl<=28,7*32+8*16+6*16+16*(lvl-22),7*32+8*16+6*16+6*16+16*(lvl-28)))))))/32)",
+        "value1": "floor((108+if(lvl<=1,0,if(lvl<=8,36*(lvl-1),if(lvl<=16,7*36+18*(lvl-8),if(lvl<=22,7*36+8*18+18*(lvl-16),if(lvl<=28,7*36+8*18+6*18+18*(lvl-22),7*36+8*18+6*18+6*18+18*(lvl-28)))))))/32)"
+      },
+      {
+        "statKey": "physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((16)/32)",
+        "value1": "floor((16)/32)"
       }
     ],
     "description": [
@@ -5510,6 +5838,12 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "50"
+      },
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100"
       }
     ],
     "description": [
@@ -5562,6 +5896,13 @@
         "value0": "20",
         "value1": "10",
         "value2": "8"
+      },
+      {
+        "statKey": "cold_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((200+if(lvl<=1,0,if(lvl<=8,64*(lvl-1),if(lvl<=16,7*64+40*(lvl-8),if(lvl<=22,7*64+8*40+30*(lvl-16),if(lvl<=28,7*64+8*40+6*30+30*(lvl-22),7*64+8*40+6*30+6*30+0*(lvl-28)))))))/16)",
+        "value1": "floor((200+if(lvl<=1,0,if(lvl<=8,64*(lvl-1),if(lvl<=16,7*64+40*(lvl-8),if(lvl<=22,7*64+8*40+30*(lvl-16),if(lvl<=28,7*64+8*40+6*30+30*(lvl-22),7*64+8*40+6*30+6*30+0*(lvl-28)))))))/16)"
       }
     ],
     "description": [
@@ -5765,6 +6106,13 @@
         "value0": "40",
         "value1": "20",
         "value2": "5"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((140+if(lvl<=1,0,if(lvl<=8,36*(lvl-1),if(lvl<=16,7*36+19*(lvl-8),if(lvl<=22,7*36+8*19+19*(lvl-16),if(lvl<=28,7*36+8*19+6*19+19*(lvl-22),7*36+8*19+6*19+6*19+19*(lvl-28)))))))/16)",
+        "value1": "floor((160+if(lvl<=1,0,if(lvl<=8,42*(lvl-1),if(lvl<=16,7*42+20*(lvl-8),if(lvl<=22,7*42+8*20+20*(lvl-16),if(lvl<=28,7*42+8*20+6*20+20*(lvl-22),7*42+8*20+6*20+6*20+20*(lvl-28)))))))/16)"
       }
     ],
     "description": [
@@ -5833,6 +6181,20 @@
         "value0": "30",
         "value1": "24",
         "value2": "5"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((35+if(lvl<=1,0,if(lvl<=8,10*(lvl-1),if(lvl<=16,7*10+8*(lvl-8),if(lvl<=22,7*10+8*8+6*(lvl-16),if(lvl<=28,7*10+8*8+6*6+5*(lvl-22),7*10+8*8+6*6+6*5+4*(lvl-28)))))))/8)",
+        "value1": "floor((40+if(lvl<=1,0,if(lvl<=8,13*(lvl-1),if(lvl<=16,7*13+9*(lvl-8),if(lvl<=22,7*13+8*9+6*(lvl-16),if(lvl<=28,7*13+8*9+6*6+5*(lvl-22),7*13+8*9+6*6+6*5+4*(lvl-28)))))))/8)"
+      },
+      {
+        "statKey": "physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((35+if(lvl<=1,0,if(lvl<=8,10*(lvl-1),if(lvl<=16,7*10+8*(lvl-8),if(lvl<=22,7*10+8*8+6*(lvl-16),if(lvl<=28,7*10+8*8+6*6+5*(lvl-22),7*10+8*8+6*6+6*5+5*(lvl-28)))))))/8)",
+        "value1": "floor((40+if(lvl<=1,0,if(lvl<=8,13*(lvl-1),if(lvl<=16,7*13+9*(lvl-8),if(lvl<=22,7*13+8*9+6*(lvl-16),if(lvl<=28,7*13+8*9+6*6+5*(lvl-22),7*13+8*9+6*6+6*5+5*(lvl-28)))))))/8)"
       }
     ],
     "description": [
@@ -5979,6 +6341,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "4+lvl/40"
+      },
+      {
+        "statKey": "cold_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((4+if(lvl<=1,0,if(lvl<=8,3*(lvl-1),if(lvl<=16,7*3+9*(lvl-8),if(lvl<=22,7*3+8*9+32*(lvl-16),if(lvl<=28,7*3+8*9+6*32+48*(lvl-22),7*3+8*9+6*32+6*48+64*(lvl-28)))))))/2)",
+        "value1": "floor((6+if(lvl<=1,0,if(lvl<=8,4*(lvl-1),if(lvl<=16,7*4+11*(lvl-8),if(lvl<=22,7*4+8*11+40*(lvl-16),if(lvl<=28,7*4+8*11+6*40+60*(lvl-22),7*4+8*11+6*40+6*60+80*(lvl-28)))))))/2)"
       }
     ],
     "description": [
@@ -6079,6 +6448,12 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "5+blvl"
+      },
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100"
       }
     ],
     "description": [
@@ -6127,6 +6502,13 @@
         "value0": "88",
         "value1": "11",
         "value2": "5"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((6+6*(lvl-1))/2)",
+        "value1": "floor((6+6*(lvl-1))/2)"
       }
     ],
     "description": [
@@ -6337,6 +6719,13 @@
         "value0": "100",
         "value1": "0",
         "value2": "8"
+      },
+      {
+        "statKey": "cold_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "1",
+        "value1": "1"
       }
     ],
     "description": [
@@ -6724,6 +7113,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames((4500+150*(lvl-1))*(1+[[continuity]].{{skill_duration}}/100))"
+      },
+      {
+        "statKey": "lightning_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "50",
+        "value1": "50"
       }
     ],
     "description": [
@@ -6860,6 +7256,20 @@
         "value1": "0",
         "value2": "6",
         "min_mana": "400"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((1000)/32)",
+        "value1": "floor((1100)/32)"
+      },
+      {
+        "statKey": "physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((1000)/32)",
+        "value1": "floor((1100)/32)"
       }
     ],
     "description": [
@@ -7095,6 +7505,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "-(5+blvl)"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "12",
+        "value1": "12"
       }
     ],
     "description": [
@@ -7132,6 +7549,13 @@
         "value0": "8",
         "value1": "12",
         "value2": "6"
+      },
+      {
+        "statKey": "physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((170+if(lvl<=1,0,if(lvl<=8,64*(lvl-1),if(lvl<=16,7*64+102*(lvl-8),if(lvl<=22,7*64+8*102+130*(lvl-16),if(lvl<=28,7*64+8*102+6*130+162*(lvl-22),7*64+8*102+6*130+6*162+12*(lvl-28)))))))/64)",
+        "value1": "floor((190+if(lvl<=1,0,if(lvl<=8,78*(lvl-1),if(lvl<=16,7*78+124*(lvl-8),if(lvl<=22,7*78+8*124+156*(lvl-16),if(lvl<=28,7*78+8*124+6*156+194*(lvl-22),7*78+8*124+6*156+6*194+15*(lvl-28)))))))/64)"
       }
     ],
     "description": [
@@ -7373,6 +7797,13 @@
         "value0": "44",
         "value1": "22",
         "value2": "5"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((57+if(lvl<=1,0,if(lvl<=8,35*(lvl-1),if(lvl<=16,7*35+11*(lvl-8),if(lvl<=22,7*35+8*11+11*(lvl-16),if(lvl<=28,7*35+8*11+6*11+11*(lvl-22),7*35+8*11+6*11+6*11+12*(lvl-28)))))))/32)",
+        "value1": "floor((102+if(lvl<=1,0,if(lvl<=8,45*(lvl-1),if(lvl<=16,7*45+15*(lvl-8),if(lvl<=22,7*45+8*15+15*(lvl-16),if(lvl<=28,7*45+8*15+6*15+15*(lvl-22),7*45+8*15+6*15+6*15+14*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -7412,6 +7843,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "8*(100+3*ulvl)/100"
+      },
+      {
+        "statKey": "physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((182+if(lvl<=1,0,if(lvl<=8,62*(lvl-1),if(lvl<=16,7*62+50*(lvl-8),if(lvl<=22,7*62+8*50+39*(lvl-16),if(lvl<=28,7*62+8*50+6*39+27*(lvl-22),7*62+8*50+6*39+6*27+19*(lvl-28)))))))/32)",
+        "value1": "floor((187+if(lvl<=1,0,if(lvl<=8,65*(lvl-1),if(lvl<=16,7*65+54*(lvl-8),if(lvl<=22,7*65+8*54+42*(lvl-16),if(lvl<=28,7*65+8*54+6*42+30*(lvl-22),7*65+8*54+6*42+6*30+21*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -7552,6 +7990,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(15+(lvl-1))"
+      },
+      {
+        "statKey": "lightning_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "50",
+        "value1": "100"
       }
     ],
     "description": [
@@ -7591,6 +8036,19 @@
         "value0": "6",
         "value1": "4",
         "value2": "7"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((3+if(lvl<=1,0,if(lvl<=8,3*(lvl-1),if(lvl<=16,7*3+3*(lvl-8),if(lvl<=22,7*3+8*3+3*(lvl-16),if(lvl<=28,7*3+8*3+6*3+3*(lvl-22),7*3+8*3+6*3+6*3+0*(lvl-28)))))))/4)",
+        "value1": "floor((3+if(lvl<=1,0,if(lvl<=8,3*(lvl-1),if(lvl<=16,7*3+3*(lvl-8),if(lvl<=22,7*3+8*3+3*(lvl-16),if(lvl<=28,7*3+8*3+6*3+3*(lvl-22),7*3+8*3+6*3+6*3+0*(lvl-28)))))))/4)"
+      },
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "145"
       }
     ],
     "description": [
@@ -7746,6 +8204,13 @@
         "value0": "40",
         "value1": "31",
         "value2": "5"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((180+if(lvl<=1,0,if(lvl<=8,17*(lvl-1),if(lvl<=16,7*17+11*(lvl-8),if(lvl<=22,7*17+8*11+11*(lvl-16),if(lvl<=28,7*17+8*11+6*11+11*(lvl-22),7*17+8*11+6*11+6*11+10*(lvl-28)))))))/16)",
+        "value1": "floor((200+if(lvl<=1,0,if(lvl<=8,19*(lvl-1),if(lvl<=16,7*19+13*(lvl-8),if(lvl<=22,7*19+8*13+13*(lvl-16),if(lvl<=28,7*19+8*13+6*13+13*(lvl-22),7*19+8*13+6*13+6*13+12*(lvl-28)))))))/16)"
       }
     ],
     "description": [
@@ -7780,6 +8245,13 @@
         "value0": "22",
         "value1": "15",
         "value2": "5"
+      },
+      {
+        "statKey": "lightning_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((36+if(lvl<=1,0,if(lvl<=8,18*(lvl-1),if(lvl<=16,7*18+9*(lvl-8),if(lvl<=22,7*18+8*9+9*(lvl-16),if(lvl<=28,7*18+8*9+6*9+9*(lvl-22),7*18+8*9+6*9+6*9+9*(lvl-28)))))))/32)",
+        "value1": "floor((44+if(lvl<=1,0,if(lvl<=8,22*(lvl-1),if(lvl<=16,7*22+11*(lvl-8),if(lvl<=22,7*22+8*11+11*(lvl-16),if(lvl<=28,7*22+8*11+6*11+11*(lvl-22),7*22+8*11+6*11+6*11+11*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -8141,6 +8613,13 @@
         "value0": "26",
         "value1": "29",
         "value2": "5"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((44+if(lvl<=1,0,if(lvl<=8,15*(lvl-1),if(lvl<=16,7*15+14*(lvl-8),if(lvl<=22,7*15+8*14+8*(lvl-16),if(lvl<=28,7*15+8*14+6*8+8*(lvl-22),7*15+8*14+6*8+6*8+6*(lvl-28)))))))/32)",
+        "value1": "floor((52+if(lvl<=1,0,if(lvl<=8,22*(lvl-1),if(lvl<=16,7*22+18*(lvl-8),if(lvl<=22,7*22+8*18+11*(lvl-16),if(lvl<=28,7*22+8*18+6*11+11*(lvl-22),7*22+8*18+6*11+6*11+8*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -8346,6 +8825,13 @@
         "value0": "132",
         "value1": "37",
         "value2": "5"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((16+if(lvl<=1,0,if(lvl<=8,8*(lvl-1),if(lvl<=16,7*8+4*(lvl-8),if(lvl<=22,7*8+8*4+4*(lvl-16),if(lvl<=28,7*8+8*4+6*4+4*(lvl-22),7*8+8*4+6*4+6*4+4*(lvl-28)))))))/32)",
+        "value1": "floor((80+if(lvl<=1,0,if(lvl<=8,40*(lvl-1),if(lvl<=16,7*40+20*(lvl-8),if(lvl<=22,7*40+8*20+20*(lvl-16),if(lvl<=28,7*40+8*20+6*20+20*(lvl-22),7*40+8*20+6*20+6*20+20*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -8486,6 +8972,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "1+blvl/5"
+      },
+      {
+        "statKey": "physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((4+if(lvl<=1,0,if(lvl<=8,3*(lvl-1),if(lvl<=16,7*3+3*(lvl-8),if(lvl<=22,7*3+8*3+2*(lvl-16),if(lvl<=28,7*3+8*3+6*2+2*(lvl-22),7*3+8*3+6*2+6*2+1*(lvl-28)))))))/4)",
+        "value1": "floor((4+if(lvl<=1,0,if(lvl<=8,3*(lvl-1),if(lvl<=16,7*3+3*(lvl-8),if(lvl<=22,7*3+8*3+2*(lvl-16),if(lvl<=28,7*3+8*3+6*2+2*(lvl-22),7*3+8*3+6*2+6*2+1*(lvl-28)))))))/4)"
       }
     ],
     "description": [
@@ -8588,6 +9081,13 @@
         "value0": "666",
         "value1": "6",
         "value2": "8"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((80+if(lvl<=1,0,if(lvl<=8,16*(lvl-1),if(lvl<=16,7*16+8*(lvl-8),if(lvl<=22,7*16+8*8+8*(lvl-16),if(lvl<=28,7*16+8*8+6*8+8*(lvl-22),7*16+8*8+6*8+6*8+8*(lvl-28)))))))/8)",
+        "value1": "floor((200+if(lvl<=1,0,if(lvl<=8,40*(lvl-1),if(lvl<=16,7*40+20*(lvl-8),if(lvl<=22,7*40+8*20+20*(lvl-16),if(lvl<=28,7*40+8*20+6*20+20*(lvl-22),7*40+8*20+6*20+6*20+20*(lvl-28)))))))/8)"
       }
     ],
     "description": [
@@ -9177,6 +9677,21 @@
         "value0": "200",
         "value1": "20",
         "value2": "6"
+      },
+      {
+        "statKey": "poison_dot",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((50000+40*(lvl-1))*256*150/256)",
+        "value1": "floor((50000+40*(lvl-1))*256*150/256)",
+        "value2": "frames(150)"
+      },
+      {
+        "statKey": "physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "1",
+        "value1": "1"
       }
     ],
     "description": [
@@ -9285,6 +9800,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(200*(1+[[continuity]].{{skill_duration}}/100))"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "50",
+        "value1": "50"
       }
     ],
     "description": [
@@ -9385,6 +9907,13 @@
         "variantKey": "",
         "value0": "100",
         "value1": "Kill/Death Blow"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((135)/32)",
+        "value1": "floor((200)/32)"
       }
     ],
     "description": [
@@ -9446,6 +9975,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "10+[[alchemical_preparation]]"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((6+if(lvl<=1,0,if(lvl<=8,4*(lvl-1),if(lvl<=16,7*4+6*(lvl-8),if(lvl<=22,7*4+8*6+17*(lvl-16),if(lvl<=28,7*4+8*6+6*17+26*(lvl-22),7*4+8*6+6*17+6*26+31*(lvl-28)))))))/2)",
+        "value1": "floor((8+if(lvl<=1,0,if(lvl<=8,5*(lvl-1),if(lvl<=16,7*5+8*(lvl-8),if(lvl<=22,7*5+8*8+21*(lvl-16),if(lvl<=28,7*5+8*8+6*21+31*(lvl-22),7*5+8*8+6*21+6*31+36*(lvl-28)))))))/2)"
       }
     ],
     "description": [
@@ -9537,7 +10073,15 @@
         "restriction_override": null
       }
     ],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "4000",
+        "value1": "5000"
+      }
+    ],
     "description": [
       "Calls down a massive pillar of flames from the sky"
     ],
@@ -9579,6 +10123,13 @@
         "value1": "15",
         "value2": "5",
         "min_mana": "5"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100",
+        "value1": "100"
       }
     ],
     "description": [
@@ -9619,6 +10170,13 @@
         "value0": "18",
         "value1": "13",
         "value2": "6"
+      },
+      {
+        "statKey": "lightning_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "23",
+        "value1": "23"
       }
     ],
     "description": [
@@ -9855,6 +10413,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "min(5+lvl/6,10)"
+      },
+      {
+        "statKey": "lightning_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((38+if(lvl<=1,0,if(lvl<=8,24*(lvl-1),if(lvl<=16,7*24+13*(lvl-8),if(lvl<=22,7*24+8*13+9*(lvl-16),if(lvl<=28,7*24+8*13+6*9+9*(lvl-22),7*24+8*13+6*9+6*9+9*(lvl-28)))))))/32)",
+        "value1": "floor((50+if(lvl<=1,0,if(lvl<=8,30*(lvl-1),if(lvl<=16,7*30+18*(lvl-8),if(lvl<=22,7*30+8*18+13*(lvl-16),if(lvl<=28,7*30+8*18+6*13+13*(lvl-22),7*30+8*18+6*13+6*13+13*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -10117,6 +10682,13 @@
         "value0": "40",
         "value1": "26",
         "value2": "5"
+      },
+      {
+        "statKey": "cold_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((69+if(lvl<=1,0,if(lvl<=8,34*(lvl-1),if(lvl<=16,7*34+17*(lvl-8),if(lvl<=22,7*34+8*17+17*(lvl-16),if(lvl<=28,7*34+8*17+6*17+17*(lvl-22),7*34+8*17+6*17+6*17+17*(lvl-28)))))))/32)",
+        "value1": "floor((82+if(lvl<=1,0,if(lvl<=8,41*(lvl-1),if(lvl<=16,7*41+21*(lvl-8),if(lvl<=22,7*41+8*21+21*(lvl-16),if(lvl<=28,7*41+8*21+6*21+21*(lvl-22),7*41+8*21+6*21+6*21+21*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -10246,6 +10818,13 @@
         "variantKey": "",
         "value0": "100",
         "value1": "Kill/Death Blow"
+      },
+      {
+        "statKey": "cold_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((420)/32)",
+        "value1": "floor((480)/32)"
       }
     ],
     "description": [
@@ -10282,6 +10861,13 @@
         "value0": "26",
         "value1": "18",
         "value2": "5"
+      },
+      {
+        "statKey": "cold_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((8+if(lvl<=1,0,if(lvl<=8,4*(lvl-1),if(lvl<=16,7*4+2*(lvl-8),if(lvl<=22,7*4+8*2+2*(lvl-16),if(lvl<=28,7*4+8*2+6*2+2*(lvl-22),7*4+8*2+6*2+6*2+2*(lvl-28)))))))/32)",
+        "value1": "floor((72+if(lvl<=1,0,if(lvl<=8,24*(lvl-1),if(lvl<=16,7*24+12*(lvl-8),if(lvl<=22,7*24+8*12+12*(lvl-16),if(lvl<=28,7*24+8*12+6*12+12*(lvl-22),7*24+8*12+6*12+6*12+12*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -10316,6 +10902,13 @@
         "value0": "220",
         "value1": "36",
         "value2": "5"
+      },
+      {
+        "statKey": "cold_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((400+if(lvl<=1,0,if(lvl<=8,40*(lvl-1),if(lvl<=16,7*40+20*(lvl-8),if(lvl<=22,7*40+8*20+20*(lvl-16),if(lvl<=28,7*40+8*20+6*20+20*(lvl-22),7*40+8*20+6*20+6*20+20*(lvl-28)))))))/32)",
+        "value1": "floor((460+if(lvl<=1,0,if(lvl<=8,46*(lvl-1),if(lvl<=16,7*46+23*(lvl-8),if(lvl<=22,7*46+8*23+23*(lvl-16),if(lvl<=28,7*46+8*23+6*23+23*(lvl-22),7*46+8*23+6*23+6*23+23*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -10389,6 +10982,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames((1500+750*(lvl-1))*(1+[[continuity]].{{skill_duration}}/100))"
+      },
+      {
+        "statKey": "cold_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((190+if(lvl<=1,0,if(lvl<=8,40*(lvl-1),if(lvl<=16,7*40+20*(lvl-8),if(lvl<=22,7*40+8*20+20*(lvl-16),if(lvl<=28,7*40+8*20+6*20+20*(lvl-22),7*40+8*20+6*20+6*20+20*(lvl-28)))))))/4)",
+        "value1": "floor((130+if(lvl<=1,0,if(lvl<=8,60*(lvl-1),if(lvl<=16,7*60+30*(lvl-8),if(lvl<=22,7*60+8*30+30*(lvl-16),if(lvl<=28,7*60+8*30+6*30+30*(lvl-22),7*60+8*30+6*30+6*30+30*(lvl-28)))))))/4)"
       }
     ],
     "description": [
@@ -10431,6 +11031,13 @@
         "value0": "60",
         "value1": "24",
         "value2": "6"
+      },
+      {
+        "statKey": "cold_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((112+30*(lvl-1))/32)",
+        "value1": "floor((125+36*(lvl-1))/32)"
       }
     ],
     "description": [
@@ -10483,6 +11090,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(50)"
+      },
+      {
+        "statKey": "cold_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100",
+        "value1": "100"
       }
     ],
     "description": [
@@ -10527,6 +11141,13 @@
         "value0": "22",
         "value1": "24",
         "value2": "6"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((20+if(lvl<=1,0,if(lvl<=8,15*(lvl-1),if(lvl<=16,7*15+11*(lvl-8),if(lvl<=22,7*15+8*11+11*(lvl-16),if(lvl<=28,7*15+8*11+6*11+11*(lvl-22),7*15+8*11+6*11+6*11+11*(lvl-28)))))))/4)",
+        "value1": "floor((22+if(lvl<=1,0,if(lvl<=8,18*(lvl-1),if(lvl<=16,7*18+12*(lvl-8),if(lvl<=22,7*18+8*12+12*(lvl-16),if(lvl<=28,7*18+8*12+6*12+12*(lvl-22),7*18+8*12+6*12+6*12+12*(lvl-28)))))))/4)"
       }
     ],
     "description": [
@@ -10587,6 +11208,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "range(9)"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "3",
+        "value1": "3"
       }
     ],
     "description": [
@@ -10701,6 +11329,14 @@
         "value0": "106",
         "value1": "18",
         "value2": "5"
+      },
+      {
+        "statKey": "poison_dot",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((30+if(lvl<=1,0,if(lvl<=8,8*(lvl-1),if(lvl<=16,7*8+7*(lvl-8),if(lvl<=22,7*8+8*7+7*(lvl-16),if(lvl<=28,7*8+8*7+6*7+7*(lvl-22),7*8+8*7+6*7+6*7+7*(lvl-28)))))))*256*100/256)",
+        "value1": "floor((100+if(lvl<=1,0,if(lvl<=8,14*(lvl-1),if(lvl<=16,7*14+13*(lvl-8),if(lvl<=22,7*14+8*13+13*(lvl-16),if(lvl<=28,7*14+8*13+6*13+13*(lvl-22),7*14+8*13+6*13+6*13+13*(lvl-28)))))))*256*100/256)",
+        "value2": "frames(100)"
       }
     ],
     "description": [
@@ -10919,6 +11555,13 @@
         "value0": "493",
         "value1": "39",
         "value2": "5"
+      },
+      {
+        "statKey": "cold_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((240+if(lvl<=1,0,if(lvl<=8,24*(lvl-1),if(lvl<=16,7*24+12*(lvl-8),if(lvl<=22,7*24+8*12+12*(lvl-16),if(lvl<=28,7*24+8*12+6*12+12*(lvl-22),7*24+8*12+6*12+6*12+12*(lvl-28)))))))/32)",
+        "value1": "floor((320+if(lvl<=1,0,if(lvl<=8,32*(lvl-1),if(lvl<=16,7*32+16*(lvl-8),if(lvl<=22,7*32+8*16+16*(lvl-16),if(lvl<=28,7*32+8*16+6*16+16*(lvl-22),7*32+8*16+6*16+6*16+16*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -10955,6 +11598,13 @@
         "value0": "30",
         "value1": "20",
         "value2": "6"
+      },
+      {
+        "statKey": "cold_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((108+if(lvl<=1,0,if(lvl<=8,30*(lvl-1),if(lvl<=16,7*30+16*(lvl-8),if(lvl<=22,7*30+8*16+16*(lvl-16),if(lvl<=28,7*30+8*16+6*16+16*(lvl-22),7*30+8*16+6*16+6*16+13*(lvl-28)))))))/32)",
+        "value1": "floor((130+if(lvl<=1,0,if(lvl<=8,35*(lvl-1),if(lvl<=16,7*35+20*(lvl-8),if(lvl<=22,7*35+8*20+20*(lvl-16),if(lvl<=28,7*35+8*20+6*20+20*(lvl-22),7*35+8*20+6*20+6*20+18*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -11245,6 +11895,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "2+blvl/5"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((6+6*(lvl-1))/2)",
+        "value1": "floor((6+6*(lvl-1))/2)"
       }
     ],
     "description": [
@@ -11647,6 +12304,13 @@
         "value0": "550",
         "value1": "24",
         "value2": "5"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "5+if(lvl<=1,0,if(lvl<=8,5*(lvl-1),if(lvl<=16,7*5+5*(lvl-8),if(lvl<=22,7*5+8*5+5*(lvl-16),if(lvl<=28,7*5+8*5+6*5+4*(lvl-22),7*5+8*5+6*5+6*4+4*(lvl-28))))))",
+        "value1": "6+if(lvl<=1,0,if(lvl<=8,6*(lvl-1),if(lvl<=16,7*6+6*(lvl-8),if(lvl<=22,7*6+8*6+6*(lvl-16),if(lvl<=28,7*6+8*6+6*6+5*(lvl-22),7*6+8*6+6*6+6*5+5*(lvl-28))))))"
       }
     ],
     "description": [
@@ -11693,6 +12357,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(0)"
+      },
+      {
+        "statKey": "cold_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((110+if(lvl<=1,0,if(lvl<=8,17*(lvl-1),if(lvl<=16,7*17+9*(lvl-8),if(lvl<=22,7*17+8*9+9*(lvl-16),if(lvl<=28,7*17+8*9+6*9+9*(lvl-22),7*17+8*9+6*9+6*9+9*(lvl-28)))))))/32)",
+        "value1": "floor((140+if(lvl<=1,0,if(lvl<=8,24*(lvl-1),if(lvl<=16,7*24+11*(lvl-8),if(lvl<=22,7*24+8*11+11*(lvl-16),if(lvl<=28,7*24+8*11+6*11+11*(lvl-22),7*24+8*11+6*11+6*11+11*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -11742,6 +12413,13 @@
         "value0": "44",
         "value1": "31",
         "value2": "4"
+      },
+      {
+        "statKey": "lightning_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((8+if(lvl<=1,0,if(lvl<=8,5*(lvl-1),if(lvl<=16,7*5+5*(lvl-8),if(lvl<=22,7*5+8*5+7*(lvl-16),if(lvl<=28,7*5+8*5+6*7+7*(lvl-22),7*5+8*5+6*7+6*7+7*(lvl-28)))))))/2)",
+        "value1": "floor((16+if(lvl<=1,0,if(lvl<=8,7*(lvl-1),if(lvl<=16,7*7+7*(lvl-8),if(lvl<=22,7*7+8*7+10*(lvl-16),if(lvl<=28,7*7+8*7+6*10+10*(lvl-22),7*7+8*7+6*10+6*10+10*(lvl-28)))))))/2)"
       }
     ],
     "description": [
@@ -11854,6 +12532,13 @@
         "value0": "22",
         "value1": "15",
         "value2": "6"
+      },
+      {
+        "statKey": "cold_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "20+if(lvl<=1,0,if(lvl<=8,10*(lvl-1),if(lvl<=16,7*10+12*(lvl-8),if(lvl<=22,7*10+8*12+14*(lvl-16),if(lvl<=28,7*10+8*12+6*14+16*(lvl-22),7*10+8*12+6*14+6*16+18*(lvl-28))))))",
+        "value1": "24+if(lvl<=1,0,if(lvl<=8,14*(lvl-1),if(lvl<=16,7*14+16*(lvl-8),if(lvl<=22,7*14+8*16+18*(lvl-16),if(lvl<=28,7*14+8*16+6*18+20*(lvl-22),7*14+8*16+6*18+6*20+22*(lvl-28))))))"
       }
     ],
     "description": [
@@ -12006,6 +12691,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(30)"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((335+if(lvl<=1,0,if(lvl<=8,85*(lvl-1),if(lvl<=16,7*85+43*(lvl-8),if(lvl<=22,7*85+8*43+43*(lvl-16),if(lvl<=28,7*85+8*43+6*43+43*(lvl-22),7*85+8*43+6*43+6*43+31*(lvl-28)))))))/16)",
+        "value1": "floor((432+if(lvl<=1,0,if(lvl<=8,108*(lvl-1),if(lvl<=16,7*108+58*(lvl-8),if(lvl<=22,7*108+8*58+58*(lvl-16),if(lvl<=28,7*108+8*58+6*58+58*(lvl-22),7*108+8*58+6*58+6*58+43*(lvl-28)))))))/16)"
       }
     ],
     "description": [
@@ -12055,6 +12747,13 @@
         "value0": "660",
         "value1": "0",
         "value2": "5"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "10+if(lvl<=1,0,if(lvl<=8,12*(lvl-1),if(lvl<=16,7*12+14*(lvl-8),if(lvl<=22,7*12+8*14+16*(lvl-16),if(lvl<=28,7*12+8*14+6*16+18*(lvl-22),7*12+8*14+6*16+6*18+20*(lvl-28))))))",
+        "value1": "10+if(lvl<=1,0,if(lvl<=8,12*(lvl-1),if(lvl<=16,7*12+14*(lvl-8),if(lvl<=22,7*12+8*14+16*(lvl-16),if(lvl<=28,7*12+8*14+6*16+18*(lvl-22),7*12+8*14+6*16+6*18+20*(lvl-28))))))"
       }
     ],
     "description": [
@@ -12181,6 +12880,13 @@
         "value0": "240",
         "value1": "9",
         "value2": "5"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((6+if(lvl<=1,0,if(lvl<=8,6*(lvl-1),if(lvl<=16,7*6+12*(lvl-8),if(lvl<=22,7*6+8*12+20*(lvl-16),if(lvl<=28,7*6+8*12+6*20+30*(lvl-22),7*6+8*12+6*20+6*30+35*(lvl-28)))))))/2)",
+        "value1": "floor((8+if(lvl<=1,0,if(lvl<=8,8*(lvl-1),if(lvl<=16,7*8+20*(lvl-8),if(lvl<=22,7*8+8*20+25*(lvl-16),if(lvl<=28,7*8+8*20+6*25+35*(lvl-22),7*8+8*20+6*25+6*35+40*(lvl-28)))))))/2)"
       }
     ],
     "description": [
@@ -12369,6 +13075,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "5+max(blvl-1,0)"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((116+20*(lvl-1))/32)",
+        "value1": "floor((172+if(lvl<=1,0,if(lvl<=8,26*(lvl-1),if(lvl<=16,7*26+27*(lvl-8),if(lvl<=22,7*26+8*27+27*(lvl-16),if(lvl<=28,7*26+8*27+6*27+27*(lvl-22),7*26+8*27+6*27+6*27+27*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -12409,6 +13122,13 @@
         "variantKey": "",
         "value0": "30000*if([[paragon_of_sanctity]],if(ulvl>=136,1.2,1),1)",
         "value1": "frames(5)"
+      },
+      {
+        "statKey": "fire_dot",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((10000)/2)",
+        "value1": "floor((10000)/2)"
       }
     ],
     "description": [
@@ -12743,6 +13463,13 @@
         "value0": "53",
         "value1": "33",
         "value2": "5"
+      },
+      {
+        "statKey": "cold_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((180+if(lvl<=1,0,if(lvl<=8,58*(lvl-1),if(lvl<=16,7*58+27*(lvl-8),if(lvl<=22,7*58+8*27+14*(lvl-16),if(lvl<=28,7*58+8*27+6*14+7*(lvl-22),7*58+8*27+6*14+6*7+5*(lvl-28)))))))/32)",
+        "value1": "floor((216+if(lvl<=1,0,if(lvl<=8,72*(lvl-1),if(lvl<=16,7*72+36*(lvl-8),if(lvl<=22,7*72+8*36+18*(lvl-16),if(lvl<=28,7*72+8*36+6*18+9*(lvl-22),7*72+8*36+6*18+6*9+5*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -12793,6 +13520,13 @@
         "value0": "51",
         "value1": "9",
         "value2": "5"
+      },
+      {
+        "statKey": "physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((360+if(lvl<=1,0,if(lvl<=8,90*(lvl-1),if(lvl<=16,7*90+30*(lvl-8),if(lvl<=22,7*90+8*30+30*(lvl-16),if(lvl<=28,7*90+8*30+6*30+30*(lvl-22),7*90+8*30+6*30+6*30+15*(lvl-28)))))))/32)",
+        "value1": "floor((400+if(lvl<=1,0,if(lvl<=8,100*(lvl-1),if(lvl<=16,7*100+40*(lvl-8),if(lvl<=22,7*100+8*40+40*(lvl-16),if(lvl<=28,7*100+8*40+6*40+40*(lvl-22),7*100+8*40+6*40+6*40+18*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -12878,6 +13612,13 @@
         "value0": "220",
         "value1": "22",
         "value2": "5"
+      },
+      {
+        "statKey": "cold_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "90",
+        "value1": "90"
       }
     ],
     "description": [
@@ -12982,6 +13723,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "1+lvl/50"
+      },
+      {
+        "statKey": "cold_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((32+if(lvl<=1,0,if(lvl<=8,16*(lvl-1),if(lvl<=16,7*16+8*(lvl-8),if(lvl<=22,7*16+8*8+8*(lvl-16),if(lvl<=28,7*16+8*8+6*8+8*(lvl-22),7*16+8*8+6*8+6*8+8*(lvl-28)))))))/8)",
+        "value1": "floor((48+if(lvl<=1,0,if(lvl<=8,24*(lvl-1),if(lvl<=16,7*24+12*(lvl-8),if(lvl<=22,7*24+8*12+12*(lvl-16),if(lvl<=28,7*24+8*12+6*12+12*(lvl-22),7*24+8*12+6*12+6*12+12*(lvl-28)))))))/8)"
       }
     ],
     "description": [
@@ -13035,6 +13783,13 @@
         "value0": "44",
         "value1": "20",
         "value2": "5"
+      },
+      {
+        "statKey": "cold_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((1)/2)",
+        "value1": "floor((2)/2)"
       }
     ],
     "description": [
@@ -13084,6 +13839,19 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(if([[ancestral_force]],100,1000)*(1+[[continuity]].{{skill_duration}}/100))"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((4000)/2)",
+        "value1": "floor((4000)/2)"
+      },
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "60"
       }
     ],
     "description": [
@@ -13206,6 +13974,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "if(lvl<29,(min(100+2*ulvl,220)*(52+13*(lvl-1)))/160,(min(100+2*ulvl,220)*(214+7*(lvl-1)))/160)"
+      },
+      {
+        "statKey": "physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((52+if(lvl<=1,0,if(lvl<=8,13*(lvl-1),if(lvl<=16,7*13+13*(lvl-8),if(lvl<=22,7*13+8*13+13*(lvl-16),if(lvl<=28,7*13+8*13+6*13+13*(lvl-22),7*13+8*13+6*13+6*13+7*(lvl-28)))))))/32)",
+        "value1": "floor((52+if(lvl<=1,0,if(lvl<=8,13*(lvl-1),if(lvl<=16,7*13+13*(lvl-8),if(lvl<=22,7*13+8*13+13*(lvl-16),if(lvl<=28,7*13+8*13+6*13+13*(lvl-22),7*13+8*13+6*13+6*13+7*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -13245,6 +14020,13 @@
         "value0": "141",
         "value1": "22",
         "value2": "5"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((40+if(lvl<=1,0,if(lvl<=8,8*(lvl-1),if(lvl<=16,7*8+4*(lvl-8),if(lvl<=22,7*8+8*4+4*(lvl-16),if(lvl<=28,7*8+8*4+6*4+4*(lvl-22),7*8+8*4+6*4+6*4+4*(lvl-28)))))))/32)",
+        "value1": "floor((120+if(lvl<=1,0,if(lvl<=8,24*(lvl-1),if(lvl<=16,7*24+12*(lvl-8),if(lvl<=22,7*24+8*12+12*(lvl-16),if(lvl<=28,7*24+8*12+6*12+12*(lvl-22),7*24+8*12+6*12+6*12+12*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -13342,6 +14124,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "(ulvl*ulvl)/7"
+      },
+      {
+        "statKey": "physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((8+if(lvl<=1,0,if(lvl<=8,6*(lvl-1),if(lvl<=16,7*6+4*(lvl-8),if(lvl<=22,7*6+8*4+3*(lvl-16),if(lvl<=28,7*6+8*4+6*3+2*(lvl-22),7*6+8*4+6*3+6*2+1*(lvl-28)))))))/8)",
+        "value1": "floor((8+if(lvl<=1,0,if(lvl<=8,6*(lvl-1),if(lvl<=16,7*6+4*(lvl-8),if(lvl<=22,7*6+8*4+3*(lvl-16),if(lvl<=28,7*6+8*4+6*3+2*(lvl-22),7*6+8*4+6*3+6*2+1*(lvl-28)))))))/8)"
       }
     ],
     "description": [
@@ -13440,6 +14229,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(250)"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((120+if(lvl<=1,0,if(lvl<=8,27*(lvl-1),if(lvl<=16,7*27+36*(lvl-8),if(lvl<=22,7*27+8*36+45*(lvl-16),if(lvl<=28,7*27+8*36+6*45+60*(lvl-22),7*27+8*36+6*45+6*60+80*(lvl-28)))))))/16)",
+        "value1": "floor((130+if(lvl<=1,0,if(lvl<=8,30*(lvl-1),if(lvl<=16,7*30+40*(lvl-8),if(lvl<=22,7*30+8*40+50*(lvl-16),if(lvl<=28,7*30+8*40+6*50+68*(lvl-22),7*30+8*40+6*50+6*68+79*(lvl-28)))))))/16)"
       }
     ],
     "description": [
@@ -14030,6 +14826,13 @@
         "value0": "18",
         "value1": "13",
         "value2": "5"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((9+9*(lvl-1))/2)",
+        "value1": "floor((9+9*(lvl-1))/2)"
       }
     ],
     "description": [
@@ -14078,6 +14881,13 @@
         "value0": "80",
         "value1": "43",
         "value2": "5"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((200+if(lvl<=1,0,if(lvl<=8,36*(lvl-1),if(lvl<=16,7*36+22*(lvl-8),if(lvl<=22,7*36+8*22+20*(lvl-16),if(lvl<=28,7*36+8*22+6*20+20*(lvl-22),7*36+8*22+6*20+6*20+20*(lvl-28)))))))/16)",
+        "value1": "floor((230+if(lvl<=1,0,if(lvl<=8,42*(lvl-1),if(lvl<=16,7*42+30*(lvl-8),if(lvl<=22,7*42+8*30+28*(lvl-16),if(lvl<=28,7*42+8*30+6*28+28*(lvl-22),7*42+8*30+6*28+6*28+26*(lvl-28)))))))/16)"
       }
     ],
     "description": [
@@ -14167,6 +14977,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "8"
+      },
+      {
+        "statKey": "cold_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((110+if(lvl<=1,0,if(lvl<=8,34*(lvl-1),if(lvl<=16,7*34+24*(lvl-8),if(lvl<=22,7*34+8*24+24*(lvl-16),if(lvl<=28,7*34+8*24+6*24+24*(lvl-22),7*34+8*24+6*24+6*24+14*(lvl-28)))))))/32)",
+        "value1": "floor((126+if(lvl<=1,0,if(lvl<=8,41*(lvl-1),if(lvl<=16,7*41+28*(lvl-8),if(lvl<=22,7*41+8*28+28*(lvl-16),if(lvl<=28,7*41+8*28+6*28+28*(lvl-22),7*41+8*28+6*28+6*28+17*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -14377,6 +15194,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames((250*(100+{{bonus_to_poison_skill_duration}}+[[continuity]].{{skill_duration}}))/100)"
+      },
+      {
+        "statKey": "poison_dot",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((1040+if(lvl<=1,0,if(lvl<=8,104*(lvl-1),if(lvl<=16,7*104+52*(lvl-8),if(lvl<=22,7*104+8*52+52*(lvl-16),if(lvl<=28,7*104+8*52+6*52+52*(lvl-22),7*104+8*52+6*52+6*52+52*(lvl-28)))))))*256*50/256)",
+        "value1": "floor((1760+if(lvl<=1,0,if(lvl<=8,176*(lvl-1),if(lvl<=16,7*176+88*(lvl-8),if(lvl<=22,7*176+8*88+88*(lvl-16),if(lvl<=28,7*176+8*88+6*88+88*(lvl-22),7*176+8*88+6*88+6*88+88*(lvl-28)))))))*256*50/256)",
+        "value2": "frames(50)"
       }
     ],
     "description": [
@@ -14510,6 +15335,13 @@
         "value0": "53",
         "value1": "18",
         "value2": "5"
+      },
+      {
+        "statKey": "cold_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((420)/16)",
+        "value1": "floor((480)/16)"
       }
     ],
     "description": [],
@@ -14641,6 +15473,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(1500+500*(lvl-1))*(1+[[continuity]].{{skill_duration}}/100)"
+      },
+      {
+        "statKey": "lightning_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((12+if(lvl<=1,0,if(lvl<=8,4*(lvl-1),if(lvl<=16,7*4+2*(lvl-8),if(lvl<=22,7*4+8*2+2*(lvl-16),if(lvl<=28,7*4+8*2+6*2+2*(lvl-22),7*4+8*2+6*2+6*2+2*(lvl-28)))))))/32)",
+        "value1": "floor((36+if(lvl<=1,0,if(lvl<=8,12*(lvl-1),if(lvl<=16,7*12+6*(lvl-8),if(lvl<=22,7*12+8*6+6*(lvl-16),if(lvl<=28,7*12+8*6+6*6+6*(lvl-22),7*12+8*6+6*6+6*6+6*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -14687,6 +15526,13 @@
         "value0": "110",
         "value1": "40",
         "value2": "5"
+      },
+      {
+        "statKey": "lightning_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((1)/2)",
+        "value1": "floor((800+if(lvl<=1,0,if(lvl<=8,50*(lvl-1),if(lvl<=16,7*50+55*(lvl-8),if(lvl<=22,7*50+8*55+60*(lvl-16),if(lvl<=28,7*50+8*55+6*60+65*(lvl-22),7*50+8*55+6*60+6*65+70*(lvl-28)))))))/2)"
       }
     ],
     "description": [
@@ -14795,6 +15641,13 @@
         "value0": "317",
         "value1": "79",
         "value2": "5"
+      },
+      {
+        "statKey": "lightning_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((48+if(lvl<=1,0,if(lvl<=8,12*(lvl-1),if(lvl<=16,7*12+4*(lvl-8),if(lvl<=22,7*12+8*4+4*(lvl-16),if(lvl<=28,7*12+8*4+6*4+4*(lvl-22),7*12+8*4+6*4+6*4+4*(lvl-28)))))))/16)",
+        "value1": "floor((64+if(lvl<=1,0,if(lvl<=8,16*(lvl-1),if(lvl<=16,7*16+8*(lvl-8),if(lvl<=22,7*16+8*8+8*(lvl-16),if(lvl<=28,7*16+8*8+6*8+8*(lvl-22),7*16+8*8+6*8+6*8+8*(lvl-28)))))))/16)"
       }
     ],
     "description": [
@@ -14838,6 +15691,13 @@
         "value0": "172",
         "value1": "20",
         "value2": "5"
+      },
+      {
+        "statKey": "lightning_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((100+if(lvl<=1,0,if(lvl<=8,24*(lvl-1),if(lvl<=16,7*24+13*(lvl-8),if(lvl<=22,7*24+8*13+13*(lvl-16),if(lvl<=28,7*24+8*13+6*13+13*(lvl-22),7*24+8*13+6*13+6*13+13*(lvl-28)))))))/32)",
+        "value1": "floor((120+if(lvl<=1,0,if(lvl<=8,32*(lvl-1),if(lvl<=16,7*32+15*(lvl-8),if(lvl<=22,7*32+8*15+15*(lvl-16),if(lvl<=28,7*32+8*15+6*15+15*(lvl-22),7*32+8*15+6*15+6*15+15*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -14891,6 +15751,13 @@
         "value0": "62",
         "value1": "37",
         "value2": "5"
+      },
+      {
+        "statKey": "cold_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((45+if(lvl<=1,0,if(lvl<=8,14*(lvl-1),if(lvl<=16,7*14+7*(lvl-8),if(lvl<=22,7*14+8*7+7*(lvl-16),if(lvl<=28,7*14+8*7+6*7+7*(lvl-22),7*14+8*7+6*7+6*7+6*(lvl-28)))))))/32)",
+        "value1": "floor((55+if(lvl<=1,0,if(lvl<=8,20*(lvl-1),if(lvl<=16,7*20+9*(lvl-8),if(lvl<=22,7*20+8*9+9*(lvl-16),if(lvl<=28,7*20+8*9+6*9+9*(lvl-22),7*20+8*9+6*9+6*9+8*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -15194,6 +16061,19 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "60"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "5+if(lvl<=1,0,if(lvl<=8,2*(lvl-1),if(lvl<=16,7*2+2*(lvl-8),if(lvl<=22,7*2+8*2+2*(lvl-16),if(lvl<=28,7*2+8*2+6*2+2*(lvl-22),7*2+8*2+6*2+6*2+1*(lvl-28))))))",
+        "value1": "5+if(lvl<=1,0,if(lvl<=8,2*(lvl-1),if(lvl<=16,7*2+2*(lvl-8),if(lvl<=22,7*2+8*2+2*(lvl-16),if(lvl<=28,7*2+8*2+6*2+2*(lvl-22),7*2+8*2+6*2+6*2+1*(lvl-28))))))"
+      },
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "50"
       }
     ],
     "description": [
@@ -15247,6 +16127,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "min(6+lvl/5,15)"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((105+if(lvl<=1,0,if(lvl<=8,39*(lvl-1),if(lvl<=16,7*39+15*(lvl-8),if(lvl<=22,7*39+8*15+13*(lvl-16),if(lvl<=28,7*39+8*15+6*13+12*(lvl-22),7*39+8*15+6*13+6*12+11*(lvl-28)))))))/32)",
+        "value1": "floor((128+if(lvl<=1,0,if(lvl<=8,46*(lvl-1),if(lvl<=16,7*46+27*(lvl-8),if(lvl<=22,7*46+8*27+17*(lvl-16),if(lvl<=28,7*46+8*27+6*17+16*(lvl-22),7*46+8*27+6*17+6*16+14*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -15288,6 +16175,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(45*(1+[[continuity]].{{skill_duration}}/100))"
+      },
+      {
+        "statKey": "cold_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((20+if(lvl<=1,0,if(lvl<=8,15*(lvl-1),if(lvl<=16,7*15+15*(lvl-8),if(lvl<=22,7*15+8*15+25*(lvl-16),if(lvl<=28,7*15+8*15+6*25+40*(lvl-22),7*15+8*15+6*25+6*40+50*(lvl-28)))))))/2)",
+        "value1": "floor((20+if(lvl<=1,0,if(lvl<=8,15*(lvl-1),if(lvl<=16,7*15+15*(lvl-8),if(lvl<=22,7*15+8*15+25*(lvl-16),if(lvl<=28,7*15+8*15+6*25+40*(lvl-22),7*15+8*15+6*25+6*40+50*(lvl-28)))))))/2)"
       }
     ],
     "description": [
@@ -15367,6 +16261,13 @@
         "variantKey": "",
         "value0": "if(lvl<29,(min(100+ulvl,220)*(128+5*(lvl-1)))/1600,(min(100+ulvl,220)*(212+2*(lvl-1)))/1600)",
         "value1": "if(lvl<29,(min(100+ulvl,220)*(192+5*(lvl-1)))/1600,(min(100+ulvl,220)*(276+2*(lvl-1)))/1600)"
+      },
+      {
+        "statKey": "physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((128+if(lvl<=1,0,if(lvl<=8,5*(lvl-1),if(lvl<=16,7*5+5*(lvl-8),if(lvl<=22,7*5+8*5+5*(lvl-16),if(lvl<=28,7*5+8*5+6*5+5*(lvl-22),7*5+8*5+6*5+6*5+2*(lvl-28)))))))/16)",
+        "value1": "floor((192+if(lvl<=1,0,if(lvl<=8,5*(lvl-1),if(lvl<=16,7*5+5*(lvl-8),if(lvl<=22,7*5+8*5+5*(lvl-16),if(lvl<=28,7*5+8*5+6*5+5*(lvl-22),7*5+8*5+6*5+6*5+2*(lvl-28)))))))/16)"
       }
     ],
     "description": [
@@ -15600,6 +16501,13 @@
         "value0": "75",
         "value1": "6",
         "value2": "8"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "4",
+        "value1": "8"
       }
     ],
     "description": [
@@ -15707,6 +16615,13 @@
         "value0": "581",
         "value1": "73",
         "value2": "5"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((140+if(lvl<=1,0,if(lvl<=8,28*(lvl-1),if(lvl<=16,7*28+14*(lvl-8),if(lvl<=22,7*28+8*14+14*(lvl-16),if(lvl<=28,7*28+8*14+6*14+14*(lvl-22),7*28+8*14+6*14+6*14+14*(lvl-28)))))))/32)",
+        "value1": "floor((180+if(lvl<=1,0,if(lvl<=8,36*(lvl-1),if(lvl<=16,7*36+18*(lvl-8),if(lvl<=22,7*36+8*18+18*(lvl-16),if(lvl<=28,7*36+8*18+6*18+18*(lvl-22),7*36+8*18+6*18+6*18+18*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -15757,6 +16672,14 @@
         "value0": "53",
         "value1": "20",
         "value2": "5"
+      },
+      {
+        "statKey": "poison_dot",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((32+if(lvl<=1,0,if(lvl<=8,8*(lvl-1),if(lvl<=16,7*8+5*(lvl-8),if(lvl<=22,7*8+8*5+5*(lvl-16),if(lvl<=28,7*8+8*5+6*5+5*(lvl-22),7*8+8*5+6*5+6*5+5*(lvl-28)))))))*256*20/256)",
+        "value1": "floor((48+if(lvl<=1,0,if(lvl<=8,12*(lvl-1),if(lvl<=16,7*12+7*(lvl-8),if(lvl<=22,7*12+8*7+7*(lvl-16),if(lvl<=28,7*12+8*7+6*7+7*(lvl-22),7*12+8*7+6*7+6*7+7*(lvl-28)))))))*256*20/256)",
+        "value2": "frames(20)"
       }
     ],
     "description": [
@@ -15881,6 +16804,20 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(50*(1+[[continuity]].{{skill_duration}}/100))"
+      },
+      {
+        "statKey": "lightning_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((220+if(lvl<=1,0,if(lvl<=8,28*(lvl-1),if(lvl<=16,7*28+28*(lvl-8),if(lvl<=22,7*28+8*28+28*(lvl-16),if(lvl<=28,7*28+8*28+6*28+28*(lvl-22),7*28+8*28+6*28+6*28+14*(lvl-28)))))))/32)",
+        "value1": "floor((280+if(lvl<=1,0,if(lvl<=8,34*(lvl-1),if(lvl<=16,7*34+34*(lvl-8),if(lvl<=22,7*34+8*34+34*(lvl-16),if(lvl<=28,7*34+8*34+6*34+34*(lvl-22),7*34+8*34+6*34+6*34+16*(lvl-28)))))))/32)"
+      },
+      {
+        "statKey": "physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((110+if(lvl<=1,0,if(lvl<=8,15*(lvl-1),if(lvl<=16,7*15+15*(lvl-8),if(lvl<=22,7*15+8*15+15*(lvl-16),if(lvl<=28,7*15+8*15+6*15+15*(lvl-22),7*15+8*15+6*15+6*15+7*(lvl-28)))))))/32)",
+        "value1": "floor((140+if(lvl<=1,0,if(lvl<=8,16*(lvl-1),if(lvl<=16,7*16+16*(lvl-8),if(lvl<=22,7*16+8*16+16*(lvl-16),if(lvl<=28,7*16+8*16+6*16+16*(lvl-22),7*16+8*16+6*16+6*16+8*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -15931,6 +16868,20 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "1"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((100+if(lvl<=1,0,if(lvl<=8,20*(lvl-1),if(lvl<=16,7*20+17*(lvl-8),if(lvl<=22,7*20+8*17+14*(lvl-16),if(lvl<=28,7*20+8*17+6*14+11*(lvl-22),7*20+8*17+6*14+6*11+7*(lvl-28)))))))/4)",
+        "value1": "floor((100+if(lvl<=1,0,if(lvl<=8,20*(lvl-1),if(lvl<=16,7*20+17*(lvl-8),if(lvl<=22,7*20+8*17+14*(lvl-16),if(lvl<=28,7*20+8*17+6*14+11*(lvl-22),7*20+8*17+6*14+6*11+7*(lvl-28)))))))/4)"
+      },
+      {
+        "statKey": "physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((28+if(lvl<=1,0,if(lvl<=8,5*(lvl-1),if(lvl<=16,7*5+4*(lvl-8),if(lvl<=22,7*5+8*4+3*(lvl-16),if(lvl<=28,7*5+8*4+6*3+2*(lvl-22),7*5+8*4+6*3+6*2+1*(lvl-28)))))))/4)",
+        "value1": "floor((28+if(lvl<=1,0,if(lvl<=8,5*(lvl-1),if(lvl<=16,7*5+4*(lvl-8),if(lvl<=22,7*5+8*4+3*(lvl-16),if(lvl<=28,7*5+8*4+6*3+2*(lvl-22),7*5+8*4+6*3+6*2+1*(lvl-28)))))))/4)"
       }
     ],
     "description": [
@@ -16178,7 +17129,14 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100"
+      }
+    ],
     "description": [
       "Walk to target location"
     ],
@@ -16472,6 +17430,13 @@
         "value0": "15",
         "value1": "10",
         "value2": "6"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((12+if(lvl<=1,0,if(lvl<=8,11*(lvl-1),if(lvl<=16,7*11+10*(lvl-8),if(lvl<=22,7*11+8*10+9*(lvl-16),if(lvl<=28,7*11+8*10+6*9+8*(lvl-22),7*11+8*10+6*9+6*8+6*(lvl-28)))))))/2)",
+        "value1": "floor((12+if(lvl<=1,0,if(lvl<=8,11*(lvl-1),if(lvl<=16,7*11+10*(lvl-8),if(lvl<=22,7*11+8*10+9*(lvl-16),if(lvl<=28,7*11+8*10+6*9+8*(lvl-22),7*11+8*10+6*9+6*8+6*(lvl-28)))))))/2)"
       }
     ],
     "description": [
@@ -16513,6 +17478,13 @@
         "value1": "4",
         "value2": "4",
         "min_mana": "2"
+      },
+      {
+        "statKey": "lightning_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((38+20*(lvl-1))/32)",
+        "value1": "floor((38+24*(lvl-1))/32)"
       }
     ],
     "description": [
@@ -16547,6 +17519,13 @@
         "value0": "106",
         "value1": "22",
         "value2": "5"
+      },
+      {
+        "statKey": "lightning_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((16)/32)",
+        "value1": "floor((112+if(lvl<=1,0,if(lvl<=8,28*(lvl-1),if(lvl<=16,7*28+14*(lvl-8),if(lvl<=22,7*28+8*14+14*(lvl-16),if(lvl<=28,7*28+8*14+6*14+14*(lvl-22),7*28+8*14+6*14+6*14+14*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -16614,6 +17593,13 @@
         "value0": "440",
         "value1": "223",
         "value2": "5"
+      },
+      {
+        "statKey": "lightning_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((121+if(lvl<=1,0,if(lvl<=8,50*(lvl-1),if(lvl<=16,7*50+20*(lvl-8),if(lvl<=22,7*50+8*20+9*(lvl-16),if(lvl<=28,7*50+8*20+6*9+9*(lvl-22),7*50+8*20+6*9+6*9+9*(lvl-28)))))))/32)",
+        "value1": "floor((162+if(lvl<=1,0,if(lvl<=8,56*(lvl-1),if(lvl<=16,7*56+29*(lvl-8),if(lvl<=22,7*56+8*29+15*(lvl-16),if(lvl<=28,7*56+8*29+6*15+15*(lvl-22),7*56+8*29+6*15+6*15+14*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -16661,6 +17647,13 @@
         "value0": "330",
         "value1": "18",
         "value2": "5"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((10+10*(lvl-1))/2)",
+        "value1": "floor((10+10*(lvl-1))/2)"
       }
     ],
     "description": [
@@ -16902,6 +17895,13 @@
         "value1": "0",
         "value2": "8",
         "min_mana": "4000"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((4000+250*(lvl-1))/2)",
+        "value1": "floor((4000+250*(lvl-1))/2)"
       }
     ],
     "description": [
@@ -16953,6 +17953,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "40"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((100)/2)",
+        "value1": "floor((100)/2)"
       }
     ],
     "description": [
@@ -17131,6 +18138,13 @@
         "value0": "53",
         "value1": "13",
         "value2": "5"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((32+if(lvl<=1,0,if(lvl<=8,8*(lvl-1),if(lvl<=16,7*8+4*(lvl-8),if(lvl<=22,7*8+8*4+4*(lvl-16),if(lvl<=28,7*8+8*4+6*4+4*(lvl-22),7*8+8*4+6*4+6*4+4*(lvl-28)))))))/8)",
+        "value1": "floor((64+if(lvl<=1,0,if(lvl<=8,16*(lvl-1),if(lvl<=16,7*16+8*(lvl-8),if(lvl<=22,7*16+8*8+8*(lvl-16),if(lvl<=28,7*16+8*8+6*8+8*(lvl-22),7*16+8*8+6*8+6*8+8*(lvl-28)))))))/8)"
       }
     ],
     "description": [],
@@ -17352,6 +18366,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "4+blvl"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((4+4*(lvl-1))/2)",
+        "value1": "floor((4+4*(lvl-1))/2)"
       }
     ],
     "description": [
@@ -17521,6 +18542,13 @@
         "value0": "60",
         "value1": "3",
         "value2": "8"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "1",
+        "value1": "1"
       }
     ],
     "description": [
@@ -17574,6 +18602,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "2*min(floor({{unspent_stat_points}}/20),15)"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((132+if(lvl<=1,0,if(lvl<=8,13*(lvl-1),if(lvl<=16,7*13+5*(lvl-8),if(lvl<=22,7*13+8*5+5*(lvl-16),if(lvl<=28,7*13+8*5+6*5+5*(lvl-22),7*13+8*5+6*5+6*5+5*(lvl-28)))))))/4)",
+        "value1": "floor((154+if(lvl<=1,0,if(lvl<=8,15*(lvl-1),if(lvl<=16,7*15+7*(lvl-8),if(lvl<=22,7*15+8*7+7*(lvl-16),if(lvl<=28,7*15+8*7+6*7+7*(lvl-22),7*15+8*7+6*7+6*7+7*(lvl-28)))))))/4)"
       }
     ],
     "description": [
@@ -17756,6 +18791,13 @@
         "value0": "80",
         "value1": "20",
         "value2": "6"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((24+if(lvl<=1,0,if(lvl<=8,12*(lvl-1),if(lvl<=16,7*12+6*(lvl-8),if(lvl<=22,7*12+8*6+6*(lvl-16),if(lvl<=28,7*12+8*6+6*6+6*(lvl-22),7*12+8*6+6*6+6*6+6*(lvl-28)))))))/8)",
+        "value1": "floor((40+if(lvl<=1,0,if(lvl<=8,20*(lvl-1),if(lvl<=16,7*20+10*(lvl-8),if(lvl<=22,7*20+8*10+10*(lvl-16),if(lvl<=28,7*20+8*10+6*10+10*(lvl-22),7*20+8*10+6*10+6*10+10*(lvl-28)))))))/8)"
       }
     ],
     "description": [
@@ -18001,6 +19043,20 @@
         "value0": "44",
         "value1": "26",
         "value2": "5"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((32+if(lvl<=1,0,if(lvl<=8,16*(lvl-1),if(lvl<=16,7*16+8*(lvl-8),if(lvl<=22,7*16+8*8+8*(lvl-16),if(lvl<=28,7*16+8*8+6*8+8*(lvl-22),7*16+8*8+6*8+6*8+8*(lvl-28)))))))/16)",
+        "value1": "floor((44+if(lvl<=1,0,if(lvl<=8,22*(lvl-1),if(lvl<=16,7*22+11*(lvl-8),if(lvl<=22,7*22+8*11+11*(lvl-16),if(lvl<=28,7*22+8*11+6*11+11*(lvl-22),7*22+8*11+6*11+6*11+11*(lvl-28)))))))/16)"
+      },
+      {
+        "statKey": "physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((32+if(lvl<=1,0,if(lvl<=8,16*(lvl-1),if(lvl<=16,7*16+8*(lvl-8),if(lvl<=22,7*16+8*8+8*(lvl-16),if(lvl<=28,7*16+8*8+6*8+8*(lvl-22),7*16+8*8+6*8+6*8+8*(lvl-28)))))))/16)",
+        "value1": "floor((44+if(lvl<=1,0,if(lvl<=8,22*(lvl-1),if(lvl<=16,7*22+11*(lvl-8),if(lvl<=22,7*22+8*11+11*(lvl-16),if(lvl<=28,7*22+8*11+6*11+11*(lvl-22),7*22+8*11+6*11+6*11+11*(lvl-28)))))))/16)"
       }
     ],
     "description": [
@@ -18037,6 +19093,19 @@
         "value0": "110",
         "value1": "40",
         "value2": "4"
+      },
+      {
+        "statKey": "lightning_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100",
+        "value1": "100"
+      },
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "170"
       }
     ],
     "description": [
@@ -18278,6 +19347,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "max(4,4*blvl)"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((4)/2)",
+        "value1": "floor((4)/2)"
       }
     ],
     "description": [
@@ -18480,6 +19556,13 @@
         "value0": "110",
         "value1": "75",
         "value2": "5"
+      },
+      {
+        "statKey": "physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((25+25*(lvl-1))/8)",
+        "value1": "floor((90+30*(lvl-1))/8)"
       }
     ],
     "description": [
@@ -18569,6 +19652,13 @@
         "variantKey": "",
         "value0": "8+6*(lvl-1)",
         "value1": "8+6*(lvl-1)"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((29+if(lvl<=1,0,if(lvl<=8,22*(lvl-1),if(lvl<=16,7*22+22*(lvl-8),if(lvl<=22,7*22+8*22+22*(lvl-16),if(lvl<=28,7*22+8*22+6*22+22*(lvl-22),7*22+8*22+6*22+6*22+14*(lvl-28)))))))/4)",
+        "value1": "floor((29+if(lvl<=1,0,if(lvl<=8,22*(lvl-1),if(lvl<=16,7*22+22*(lvl-8),if(lvl<=22,7*22+8*22+22*(lvl-16),if(lvl<=28,7*22+8*22+6*22+22*(lvl-22),7*22+8*22+6*22+6*22+14*(lvl-28)))))))/4)"
       }
     ],
     "description": [
@@ -18648,6 +19738,14 @@
         "value0": "92",
         "value1": "20",
         "value2": "5"
+      },
+      {
+        "statKey": "poison_dot",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((416+if(lvl<=1,0,if(lvl<=8,104*(lvl-1),if(lvl<=16,7*104+52*(lvl-8),if(lvl<=22,7*104+8*52+52*(lvl-16),if(lvl<=28,7*104+8*52+6*52+52*(lvl-22),7*104+8*52+6*52+6*52+52*(lvl-28)))))))*256*50/256)",
+        "value1": "floor((704+if(lvl<=1,0,if(lvl<=8,176*(lvl-1),if(lvl<=16,7*176+88*(lvl-8),if(lvl<=22,7*176+8*88+88*(lvl-16),if(lvl<=28,7*176+8*88+6*88+88*(lvl-22),7*176+8*88+6*88+6*88+88*(lvl-28)))))))*256*50/256)",
+        "value2": "frames(50)"
       }
     ],
     "description": [
@@ -18688,6 +19786,14 @@
         "value0": "92",
         "value1": "20",
         "value2": "5"
+      },
+      {
+        "statKey": "poison_dot",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((416+if(lvl<=1,0,if(lvl<=8,104*(lvl-1),if(lvl<=16,7*104+52*(lvl-8),if(lvl<=22,7*104+8*52+52*(lvl-16),if(lvl<=28,7*104+8*52+6*52+52*(lvl-22),7*104+8*52+6*52+6*52+52*(lvl-28)))))))*256*50/256)",
+        "value1": "floor((704+if(lvl<=1,0,if(lvl<=8,176*(lvl-1),if(lvl<=16,7*176+88*(lvl-8),if(lvl<=22,7*176+8*88+88*(lvl-16),if(lvl<=28,7*176+8*88+6*88+88*(lvl-22),7*176+8*88+6*88+6*88+88*(lvl-28)))))))*256*50/256)",
+        "value2": "frames(50)"
       }
     ],
     "description": [
@@ -18727,6 +19833,13 @@
         "variantKey": "",
         "value0": "625*if([[paragon_of_sanctity]],if(ulvl>=136,1.2,1),1)",
         "value1": "frames(125)"
+      },
+      {
+        "statKey": "fire_dot",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "5",
+        "value1": "5"
       }
     ],
     "description": [
@@ -18882,6 +19995,13 @@
         "value0": "44",
         "value1": "22",
         "value2": "5"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "10+if(lvl<=1,0,if(lvl<=8,2*(lvl-1),if(lvl<=16,7*2+1*(lvl-8),if(lvl<=22,7*2+8*1+1*(lvl-16),if(lvl<=28,7*2+8*1+6*1+1*(lvl-22),7*2+8*1+6*1+6*1+1*(lvl-28))))))",
+        "value1": "30+if(lvl<=1,0,if(lvl<=8,6*(lvl-1),if(lvl<=16,7*6+3*(lvl-8),if(lvl<=22,7*6+8*3+3*(lvl-16),if(lvl<=28,7*6+8*3+6*3+3*(lvl-22),7*6+8*3+6*3+6*3+3*(lvl-28))))))"
       }
     ],
     "description": [
@@ -19018,6 +20138,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "2+floor(blvl/10)+bool([[progenys_blessing]])"
+      },
+      {
+        "statKey": "physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "1+if(lvl<=8,1*(lvl-1),7*1)",
+        "value1": "1+if(lvl<=8,1*(lvl-1),7*1)"
       }
     ],
     "description": [
@@ -19057,6 +20184,13 @@
         "value0": "185",
         "value1": "61",
         "value2": "5"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((96+if(lvl<=1,0,if(lvl<=8,32*(lvl-1),if(lvl<=16,7*32+20*(lvl-8),if(lvl<=22,7*32+8*20+14*(lvl-16),if(lvl<=28,7*32+8*20+6*14+14*(lvl-22),7*32+8*20+6*14+6*14+14*(lvl-28)))))))/16)",
+        "value1": "floor((135+if(lvl<=1,0,if(lvl<=8,45*(lvl-1),if(lvl<=16,7*45+25*(lvl-8),if(lvl<=22,7*45+8*25+17*(lvl-16),if(lvl<=28,7*45+8*25+6*17+17*(lvl-22),7*45+8*25+6*17+6*17+17*(lvl-28)))))))/16)"
       }
     ],
     "description": [
@@ -19162,6 +20296,13 @@
         "value0": "220",
         "value1": "13",
         "value2": "6"
+      },
+      {
+        "statKey": "lightning_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "1",
+        "value1": "1"
       }
     ],
     "description": [
@@ -19332,6 +20473,13 @@
         "value0": "5",
         "value1": "2",
         "value2": "8"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "4+if(lvl<=1,0,if(lvl<=8,6*(lvl-1),if(lvl<=16,7*6+6*(lvl-8),if(lvl<=22,7*6+8*6+6*(lvl-16),if(lvl<=28,7*6+8*6+6*6+8*(lvl-22),7*6+8*6+6*6+6*8+8*(lvl-28))))))",
+        "value1": "6+if(lvl<=1,0,if(lvl<=8,8*(lvl-1),if(lvl<=16,7*8+8*(lvl-8),if(lvl<=22,7*8+8*8+8*(lvl-16),if(lvl<=28,7*8+8*8+6*8+10*(lvl-22),7*8+8*8+6*8+6*10+10*(lvl-28))))))"
       }
     ],
     "description": [
@@ -19371,6 +20519,13 @@
         "value0": "120",
         "value1": "40",
         "value2": "7"
+      },
+      {
+        "statKey": "physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((1)/8)",
+        "value1": "floor((1)/8)"
       }
     ],
     "description": [
@@ -19486,6 +20641,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "1750*(1+(({{vitality}}/6)-({{energy}}/10))/100)"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((3500)/2)",
+        "value1": "floor((3500)/2)"
       }
     ],
     "description": [
@@ -19579,6 +20741,13 @@
         "value0": "31",
         "value1": "13",
         "value2": "5"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((3+if(lvl<=1,0,if(lvl<=8,3*(lvl-1),if(lvl<=16,7*3+3*(lvl-8),if(lvl<=22,7*3+8*3+3*(lvl-16),if(lvl<=28,7*3+8*3+6*3+3*(lvl-22),7*3+8*3+6*3+6*3+1*(lvl-28)))))))/2)",
+        "value1": "floor((3+if(lvl<=1,0,if(lvl<=8,3*(lvl-1),if(lvl<=16,7*3+3*(lvl-8),if(lvl<=22,7*3+8*3+3*(lvl-16),if(lvl<=28,7*3+8*3+6*3+3*(lvl-22),7*3+8*3+6*3+6*3+1*(lvl-28)))))))/2)"
       }
     ],
     "description": [
@@ -19626,6 +20795,12 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "10000/(60*max(blvl,1))"
+      },
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "80"
       }
     ],
     "description": [
@@ -19942,6 +21117,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "(ln(15,3,lvl)/4*(100+max(0,121-ulvl)))/100"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((2)/2)",
+        "value1": "floor((2)/2)"
       }
     ],
     "description": [
@@ -20077,6 +21259,13 @@
         "value0": "48",
         "value1": "22",
         "value2": "6"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((48+if(lvl<=1,0,if(lvl<=8,14*(lvl-1),if(lvl<=16,7*14+7*(lvl-8),if(lvl<=22,7*14+8*7+7*(lvl-16),if(lvl<=28,7*14+8*7+6*7+7*(lvl-22),7*14+8*7+6*7+6*7+7*(lvl-28)))))))/128)",
+        "value1": "floor((64+if(lvl<=1,0,if(lvl<=8,20*(lvl-1),if(lvl<=16,7*20+9*(lvl-8),if(lvl<=22,7*20+8*9+9*(lvl-16),if(lvl<=28,7*20+8*9+6*9+9*(lvl-22),7*20+8*9+6*9+6*9+9*(lvl-28)))))))/128)"
       }
     ],
     "description": [],
@@ -20116,6 +21305,13 @@
         "value0": "48",
         "value1": "22",
         "value2": "6"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((24+if(lvl<=1,0,if(lvl<=8,8*(lvl-1),if(lvl<=16,7*8+4*(lvl-8),if(lvl<=22,7*8+8*4+4*(lvl-16),if(lvl<=28,7*8+8*4+6*4+4*(lvl-22),7*8+8*4+6*4+6*4+4*(lvl-28)))))))/32)",
+        "value1": "floor((72+if(lvl<=1,0,if(lvl<=8,24*(lvl-1),if(lvl<=16,7*24+12*(lvl-8),if(lvl<=22,7*24+8*12+12*(lvl-16),if(lvl<=28,7*24+8*12+6*12+12*(lvl-22),7*24+8*12+6*12+6*12+12*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -20151,6 +21347,13 @@
         "value0": "660",
         "value1": "22",
         "value2": "6"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((200+if(lvl<=1,0,if(lvl<=8,32*(lvl-1),if(lvl<=16,7*32+12*(lvl-8),if(lvl<=22,7*32+8*12+12*(lvl-16),if(lvl<=28,7*32+8*12+6*12+12*(lvl-22),7*32+8*12+6*12+6*12+4294967264*(lvl-28)))))))/8)",
+        "value1": "floor((232+if(lvl<=1,0,if(lvl<=8,40*(lvl-1),if(lvl<=16,7*40+15*(lvl-8),if(lvl<=22,7*40+8*15+15*(lvl-16),if(lvl<=28,7*40+8*15+6*15+15*(lvl-22),7*40+8*15+6*15+6*15+4294967264*(lvl-28)))))))/8)"
       }
     ],
     "description": [
@@ -20244,6 +21447,13 @@
         "value0": "88",
         "value1": "0",
         "value2": "5"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "6+if(lvl<=1,0,if(lvl<=8,6*(lvl-1),if(lvl<=16,7*6+6*(lvl-8),if(lvl<=22,7*6+8*6+6*(lvl-16),if(lvl<=28,7*6+8*6+6*6+5*(lvl-22),7*6+8*6+6*6+6*5+4*(lvl-28))))))",
+        "value1": "6+if(lvl<=1,0,if(lvl<=8,6*(lvl-1),if(lvl<=16,7*6+6*(lvl-8),if(lvl<=22,7*6+8*6+6*(lvl-16),if(lvl<=28,7*6+8*6+6*6+5*(lvl-22),7*6+8*6+6*6+6*5+4*(lvl-28))))))"
       }
     ],
     "description": [
@@ -20283,6 +21493,14 @@
         "value0": "66",
         "value1": "44",
         "value2": "5"
+      },
+      {
+        "statKey": "poison_dot",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((84+if(lvl<=1,0,if(lvl<=8,66*(lvl-1),if(lvl<=16,7*66+24*(lvl-8),if(lvl<=22,7*66+8*24+24*(lvl-16),if(lvl<=28,7*66+8*24+6*24+24*(lvl-22),7*66+8*24+6*24+6*24+24*(lvl-28)))))))*256*50/256)",
+        "value1": "floor((132+if(lvl<=1,0,if(lvl<=8,92*(lvl-1),if(lvl<=16,7*92+34*(lvl-8),if(lvl<=22,7*92+8*34+34*(lvl-16),if(lvl<=28,7*92+8*34+6*34+34*(lvl-22),7*92+8*34+6*34+6*34+34*(lvl-28)))))))*256*50/256)",
+        "value2": "frames(50)"
       }
     ],
     "description": [
@@ -20457,6 +21675,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "max(frames(300-20*blvl),0)"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "3",
+        "value1": "4"
       }
     ],
     "description": [
@@ -20754,6 +21979,20 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "2+blvl/5"
+      },
+      {
+        "statKey": "poison_dot",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((16+if(lvl<=1,0,if(lvl<=8,8*(lvl-1),if(lvl<=16,7*8+4*(lvl-8),if(lvl<=22,7*8+8*4+4*(lvl-16),if(lvl<=28,7*8+8*4+6*4+4*(lvl-22),7*8+8*4+6*4+6*4+4*(lvl-28)))))))*256*25/256)",
+        "value1": "floor((28+if(lvl<=1,0,if(lvl<=8,14*(lvl-1),if(lvl<=16,7*14+7*(lvl-8),if(lvl<=22,7*14+8*7+7*(lvl-16),if(lvl<=28,7*14+8*7+6*7+7*(lvl-22),7*14+8*7+6*7+6*7+7*(lvl-28)))))))*256*25/256)",
+        "value2": "frames(25)"
+      },
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "50"
       }
     ],
     "description": [
@@ -20856,6 +22095,12 @@
         "value0": "44",
         "value1": "41",
         "value2": "5"
+      },
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "60"
       }
     ],
     "description": [
@@ -20909,6 +22154,13 @@
         "value0": "31",
         "value1": "20",
         "value2": "5"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((16+if(lvl<=1,0,if(lvl<=8,8*(lvl-1),if(lvl<=16,7*8+4*(lvl-8),if(lvl<=22,7*8+8*4+4*(lvl-16),if(lvl<=28,7*8+8*4+6*4+4*(lvl-22),7*8+8*4+6*4+6*4+4*(lvl-28)))))))/32)",
+        "value1": "floor((32+if(lvl<=1,0,if(lvl<=8,16*(lvl-1),if(lvl<=16,7*16+8*(lvl-8),if(lvl<=22,7*16+8*8+8*(lvl-16),if(lvl<=28,7*16+8*8+6*8+8*(lvl-22),7*16+8*8+6*8+6*8+8*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -20959,6 +22211,20 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(0*(1+[[continuity]].{{skill_duration}}/100))"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((70+if(lvl<=1,0,if(lvl<=8,36*(lvl-1),if(lvl<=16,7*36+16*(lvl-8),if(lvl<=22,7*36+8*16+16*(lvl-16),if(lvl<=28,7*36+8*16+6*16+16*(lvl-22),7*36+8*16+6*16+6*16+15*(lvl-28)))))))/32)",
+        "value1": "floor((70+if(lvl<=1,0,if(lvl<=8,36*(lvl-1),if(lvl<=16,7*36+16*(lvl-8),if(lvl<=22,7*36+8*16+16*(lvl-16),if(lvl<=28,7*36+8*16+6*16+16*(lvl-22),7*36+8*16+6*16+6*16+15*(lvl-28)))))))/32)"
+      },
+      {
+        "statKey": "physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((74+if(lvl<=1,0,if(lvl<=8,34*(lvl-1),if(lvl<=16,7*34+16*(lvl-8),if(lvl<=22,7*34+8*16+16*(lvl-16),if(lvl<=28,7*34+8*16+6*16+16*(lvl-22),7*34+8*16+6*16+6*16+16*(lvl-28)))))))/32)",
+        "value1": "floor((76+if(lvl<=1,0,if(lvl<=8,38*(lvl-1),if(lvl<=16,7*38+19*(lvl-8),if(lvl<=22,7*38+8*19+19*(lvl-16),if(lvl<=28,7*38+8*19+6*19+19*(lvl-22),7*38+8*19+6*19+6*19+19*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -21001,6 +22267,13 @@
         "value0": "13",
         "value1": "22",
         "value2": "5"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((60+if(lvl<=1,0,if(lvl<=8,32*(lvl-1),if(lvl<=16,7*32+17*(lvl-8),if(lvl<=22,7*32+8*17+17*(lvl-16),if(lvl<=28,7*32+8*17+6*17+17*(lvl-22),7*32+8*17+6*17+6*17+17*(lvl-28)))))))/32)",
+        "value1": "floor((84+if(lvl<=1,0,if(lvl<=8,40*(lvl-1),if(lvl<=16,7*40+20*(lvl-8),if(lvl<=22,7*40+8*20+20*(lvl-16),if(lvl<=28,7*40+8*20+6*20+20*(lvl-22),7*40+8*20+6*20+6*20+20*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -21082,6 +22355,20 @@
         "value0": "160",
         "value1": "22",
         "value2": "6"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((75)/64)",
+        "value1": "floor((75)/64)"
+      },
+      {
+        "statKey": "physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((75)/64)",
+        "value1": "floor((75)/64)"
       }
     ],
     "description": [
@@ -21287,6 +22574,13 @@
         "value0": "616",
         "value1": "62",
         "value2": "5"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((8000)/2)",
+        "value1": "floor((8000)/2)"
       }
     ],
     "description": [
@@ -21490,6 +22784,13 @@
         "value0": "44",
         "value1": "26",
         "value2": "5"
+      },
+      {
+        "statKey": "cold_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "12",
+        "value1": "12"
       }
     ],
     "description": [
@@ -21612,6 +22913,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "10+2*(lvl-1)"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((2)/2)",
+        "value1": "floor((2)/2)"
       }
     ],
     "description": [
@@ -21669,6 +22977,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "2+(blvl-1)/6"
+      },
+      {
+        "statKey": "lightning_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((138+if(lvl<=1,0,if(lvl<=8,44*(lvl-1),if(lvl<=16,7*44+50*(lvl-8),if(lvl<=22,7*44+8*50+50*(lvl-16),if(lvl<=28,7*44+8*50+6*50+78*(lvl-22),7*44+8*50+6*50+6*78+78*(lvl-28)))))))/32)",
+        "value1": "floor((185+if(lvl<=1,0,if(lvl<=8,52*(lvl-1),if(lvl<=16,7*52+54*(lvl-8),if(lvl<=22,7*52+8*54+54*(lvl-16),if(lvl<=28,7*52+8*54+6*54+85*(lvl-22),7*52+8*54+6*54+6*85+85*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -21765,6 +23080,13 @@
         "value0": "160",
         "value1": "16",
         "value2": "5"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100",
+        "value1": "100"
       }
     ],
     "description": [
@@ -21814,6 +23136,13 @@
         "value0": "110",
         "value1": "20",
         "value2": "5"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((1+1*(lvl-1))/2)",
+        "value1": "floor((1+1*(lvl-1))/2)"
       }
     ],
     "description": [
@@ -21854,6 +23183,20 @@
         "value0": "45",
         "value1": "25",
         "value2": "5"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((58+if(lvl<=1,0,if(lvl<=8,38*(lvl-1),if(lvl<=16,7*38+22*(lvl-8),if(lvl<=22,7*38+8*22+20*(lvl-16),if(lvl<=28,7*38+8*22+6*20+20*(lvl-22),7*38+8*22+6*20+6*20+18*(lvl-28)))))))/32)",
+        "value1": "floor((58+if(lvl<=1,0,if(lvl<=8,44*(lvl-1),if(lvl<=16,7*44+26*(lvl-8),if(lvl<=22,7*44+8*26+24*(lvl-16),if(lvl<=28,7*44+8*26+6*24+22*(lvl-22),7*44+8*26+6*24+6*22+20*(lvl-28)))))))/32)"
+      },
+      {
+        "statKey": "physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((34+if(lvl<=1,0,if(lvl<=8,16*(lvl-1),if(lvl<=16,7*16+14*(lvl-8),if(lvl<=22,7*16+8*14+12*(lvl-16),if(lvl<=28,7*16+8*14+6*12+10*(lvl-22),7*16+8*14+6*12+6*10+8*(lvl-28)))))))/32)",
+        "value1": "floor((34+if(lvl<=1,0,if(lvl<=8,24*(lvl-1),if(lvl<=16,7*24+18*(lvl-8),if(lvl<=22,7*24+8*18+16*(lvl-16),if(lvl<=28,7*24+8*18+6*16+14*(lvl-22),7*24+8*18+6*16+6*14+12*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -21947,6 +23290,13 @@
         "value0": "850",
         "value1": "85",
         "value2": "6"
+      },
+      {
+        "statKey": "physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((48+if(lvl<=1,0,if(lvl<=8,8*(lvl-1),if(lvl<=16,7*8+4*(lvl-8),if(lvl<=22,7*8+8*4+4*(lvl-16),if(lvl<=28,7*8+8*4+6*4+4*(lvl-22),7*8+8*4+6*4+6*4+4*(lvl-28)))))))/8)",
+        "value1": "floor((72+if(lvl<=1,0,if(lvl<=8,12*(lvl-1),if(lvl<=16,7*12+6*(lvl-8),if(lvl<=22,7*12+8*6+6*(lvl-16),if(lvl<=28,7*12+8*6+6*6+6*(lvl-22),7*12+8*6+6*6+6*6+6*(lvl-28)))))))/8)"
       }
     ],
     "description": [
@@ -22088,6 +23438,12 @@
         "value0": "60",
         "value1": "26",
         "value2": "5"
+      },
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "50"
       }
     ],
     "description": [
@@ -22144,6 +23500,12 @@
         "value0": "9",
         "value1": "29",
         "value2": "5"
+      },
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "112"
       }
     ],
     "description": [
@@ -22307,6 +23669,20 @@
         "value0": "33",
         "value1": "18",
         "value2": "6"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((40+if(lvl<=1,0,if(lvl<=8,10*(lvl-1),if(lvl<=16,7*10+10*(lvl-8),if(lvl<=22,7*10+8*10+10*(lvl-16),if(lvl<=28,7*10+8*10+6*10+14*(lvl-22),7*10+8*10+6*10+6*14+48*(lvl-28)))))))/32)",
+        "value1": "floor((48+if(lvl<=1,0,if(lvl<=8,12*(lvl-1),if(lvl<=16,7*12+12*(lvl-8),if(lvl<=22,7*12+8*12+12*(lvl-16),if(lvl<=28,7*12+8*12+6*12+16*(lvl-22),7*12+8*12+6*12+6*16+56*(lvl-28)))))))/32)"
+      },
+      {
+        "statKey": "physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((100+if(lvl<=1,0,if(lvl<=8,16*(lvl-1),if(lvl<=16,7*16+16*(lvl-8),if(lvl<=22,7*16+8*16+16*(lvl-16),if(lvl<=28,7*16+8*16+6*16+16*(lvl-22),7*16+8*16+6*16+6*16+30*(lvl-28)))))))/32)",
+        "value1": "floor((120+if(lvl<=1,0,if(lvl<=8,20*(lvl-1),if(lvl<=16,7*20+20*(lvl-8),if(lvl<=22,7*20+8*20+20*(lvl-16),if(lvl<=28,7*20+8*20+6*20+20*(lvl-22),7*20+8*20+6*20+6*20+36*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -22476,6 +23852,13 @@
         "value0": "440",
         "value1": "0",
         "value2": "5"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((1)/2)",
+        "value1": "floor((1)/2)"
       }
     ],
     "description": [
@@ -22854,6 +24237,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(150*if([[spirit_bond]],(1+({{maximum_barbarian_minions}}*8*[[spirit_bond]])/100),1))"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((960)/4)",
+        "value1": "floor((960)/4)"
       }
     ],
     "description": [
@@ -23025,6 +24415,13 @@
         "value0": "26",
         "value1": "13",
         "value2": "5"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((5+if(lvl<=1,0,if(lvl<=8,3*(lvl-1),if(lvl<=16,7*3+3*(lvl-8),if(lvl<=22,7*3+8*3+3*(lvl-16),if(lvl<=28,7*3+8*3+6*3+3*(lvl-22),7*3+8*3+6*3+6*3+2*(lvl-28)))))))/2)",
+        "value1": "floor((5+if(lvl<=1,0,if(lvl<=8,3*(lvl-1),if(lvl<=16,7*3+3*(lvl-8),if(lvl<=22,7*3+8*3+3*(lvl-16),if(lvl<=28,7*3+8*3+6*3+3*(lvl-22),7*3+8*3+6*3+6*3+2*(lvl-28)))))))/2)"
       }
     ],
     "description": [
@@ -23167,6 +24564,20 @@
         "value0": "12",
         "value1": "10",
         "value2": "5"
+      },
+      {
+        "statKey": "lightning_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((4+if(lvl<=1,0,if(lvl<=8,3*(lvl-1),if(lvl<=16,7*3+9*(lvl-8),if(lvl<=22,7*3+8*9+40*(lvl-16),if(lvl<=28,7*3+8*9+6*40+60*(lvl-22),7*3+8*9+6*40+6*60+70*(lvl-28)))))))/8)",
+        "value1": "floor((6+if(lvl<=1,0,if(lvl<=8,4*(lvl-1),if(lvl<=16,7*4+11*(lvl-8),if(lvl<=22,7*4+8*11+50*(lvl-16),if(lvl<=28,7*4+8*11+6*50+74*(lvl-22),7*4+8*11+6*50+6*74+90*(lvl-28)))))))/8)"
+      },
+      {
+        "statKey": "physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((3+3*(lvl-1))/8)",
+        "value1": "floor((3+3*(lvl-1))/8)"
       }
     ],
     "description": [
@@ -23231,6 +24642,13 @@
         "value0": "60",
         "value1": "9",
         "value2": "5"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((2+if(lvl<=1,0,if(lvl<=8,2*(lvl-1),if(lvl<=16,7*2+7*(lvl-8),if(lvl<=22,7*2+8*7+11*(lvl-16),if(lvl<=28,7*2+8*7+6*11+17*(lvl-22),7*2+8*7+6*11+6*17+35*(lvl-28)))))))/2)",
+        "value1": "floor((3+if(lvl<=1,0,if(lvl<=8,4*(lvl-1),if(lvl<=16,7*4+11*(lvl-8),if(lvl<=22,7*4+8*11+17*(lvl-16),if(lvl<=28,7*4+8*11+6*17+25*(lvl-22),7*4+8*11+6*17+6*25+50*(lvl-28)))))))/2)"
       }
     ],
     "description": [
@@ -23359,6 +24777,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "floor((400+min(max(lvl-1,0),7)*50+min(max(lvl-8,0),8)*14+min(max(lvl-16,0),6)*8+min(max(lvl-22,0),6)*8+max(lvl-28,0)*6+99)/100)+blvl/2"
+      },
+      {
+        "statKey": "physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "1+if(lvl<=8,1*(lvl-1),7*1)",
+        "value1": "1+if(lvl<=8,1*(lvl-1),7*1)"
       }
     ],
     "description": [
@@ -23409,6 +24834,13 @@
         "value0": "44",
         "value1": "20",
         "value2": "5"
+      },
+      {
+        "statKey": "lightning_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((1)/2)",
+        "value1": "floor((2)/2)"
       }
     ],
     "description": [
@@ -23448,6 +24880,13 @@
         "value0": "8",
         "value1": "10",
         "value2": "6"
+      },
+      {
+        "statKey": "lightning_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((150+if(lvl<=1,0,if(lvl<=8,45*(lvl-1),if(lvl<=16,7*45+40*(lvl-8),if(lvl<=22,7*45+8*40+35*(lvl-16),if(lvl<=28,7*45+8*40+6*35+30*(lvl-22),7*45+8*40+6*35+6*30+16*(lvl-28)))))))/32)",
+        "value1": "floor((200+if(lvl<=1,0,if(lvl<=8,60*(lvl-1),if(lvl<=16,7*60+55*(lvl-8),if(lvl<=22,7*60+8*55+50*(lvl-16),if(lvl<=28,7*60+8*55+6*50+45*(lvl-22),7*60+8*55+6*50+6*45+25*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -23482,6 +24921,13 @@
         "value0": "55",
         "value1": "15",
         "value2": "6"
+      },
+      {
+        "statKey": "lightning_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((52+if(lvl<=1,0,if(lvl<=8,13*(lvl-1),if(lvl<=16,7*13+6*(lvl-8),if(lvl<=22,7*13+8*6+6*(lvl-16),if(lvl<=28,7*13+8*6+6*6+6*(lvl-22),7*13+8*6+6*6+6*6+6*(lvl-28)))))))/32)",
+        "value1": "floor((78+if(lvl<=1,0,if(lvl<=8,26*(lvl-1),if(lvl<=16,7*26+13*(lvl-8),if(lvl<=22,7*26+8*13+13*(lvl-16),if(lvl<=28,7*26+8*13+6*13+13*(lvl-22),7*26+8*13+6*13+6*13+13*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -23531,6 +24977,13 @@
         "variantKey": "",
         "value0": "100",
         "value1": "Kill/Death Blow"
+      },
+      {
+        "statKey": "lightning_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((162)/32)",
+        "value1": "floor((360)/32)"
       }
     ],
     "description": [
@@ -23873,6 +25326,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "min(6*[[summon_frostwalker]].{{minions}},50)"
+      },
+      {
+        "statKey": "cold_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((168+if(lvl<=1,0,if(lvl<=8,24*(lvl-1),if(lvl<=16,7*24+12*(lvl-8),if(lvl<=22,7*24+8*12+12*(lvl-16),if(lvl<=28,7*24+8*12+6*12+12*(lvl-22),7*24+8*12+6*12+6*12+12*(lvl-28)))))))/32)",
+        "value1": "floor((224+if(lvl<=1,0,if(lvl<=8,32*(lvl-1),if(lvl<=16,7*32+16*(lvl-8),if(lvl<=22,7*32+8*16+16*(lvl-16),if(lvl<=28,7*32+8*16+6*16+16*(lvl-22),7*32+8*16+6*16+6*16+16*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -23929,6 +25389,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "min(6*[[summon_glowing_fungus]].{{minions}},50)"
+      },
+      {
+        "statKey": "lightning_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((80+if(lvl<=1,0,if(lvl<=8,15*(lvl-1),if(lvl<=16,7*15+7*(lvl-8),if(lvl<=22,7*15+8*7+7*(lvl-16),if(lvl<=28,7*15+8*7+6*7+7*(lvl-22),7*15+8*7+6*7+6*7+7*(lvl-28)))))))/16)",
+        "value1": "floor((100+if(lvl<=1,0,if(lvl<=8,20*(lvl-1),if(lvl<=16,7*20+10*(lvl-8),if(lvl<=22,7*20+8*10+10*(lvl-16),if(lvl<=28,7*20+8*10+6*10+10*(lvl-22),7*20+8*10+6*10+6*10+10*(lvl-28)))))))/16)"
       }
     ],
     "description": [
@@ -24027,6 +25494,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "min(6*[[summon_sinner]].{{minions}},50)"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((936)/16)",
+        "value1": "floor((936)/16)"
       }
     ],
     "description": [
@@ -24089,6 +25563,13 @@
         "value0": "22",
         "value1": "9",
         "value2": "5"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "8+8*(lvl-1)",
+        "value1": "10+10*(lvl-1)"
       }
     ],
     "description": [
@@ -24198,6 +25679,13 @@
         "value0": "330",
         "value1": "66",
         "value2": "5"
+      },
+      {
+        "statKey": "lightning_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100",
+        "value1": "100"
       }
     ],
     "description": [
@@ -24622,6 +26110,13 @@
         "value0": "66",
         "value1": "11",
         "value2": "5"
+      },
+      {
+        "statKey": "cold_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((2)/4)",
+        "value1": "floor((2)/4)"
       }
     ],
     "description": [
@@ -24755,6 +26250,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "min(5+lvl/10,8)+min({{energy}}/max(1200-100*[[mind_spark]],1),[[mind_spark]].{{maximum_tempest_bolts}})"
+      },
+      {
+        "statKey": "lightning_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((70+if(lvl<=1,0,if(lvl<=8,36*(lvl-1),if(lvl<=16,7*36+11*(lvl-8),if(lvl<=22,7*36+8*11+7*(lvl-16),if(lvl<=28,7*36+8*11+6*7+7*(lvl-22),7*36+8*11+6*7+6*7+7*(lvl-28)))))))/32)",
+        "value1": "floor((86+if(lvl<=1,0,if(lvl<=8,43*(lvl-1),if(lvl<=16,7*43+12*(lvl-8),if(lvl<=22,7*43+8*12+10*(lvl-16),if(lvl<=28,7*43+8*12+6*10+10*(lvl-22),7*43+8*12+6*10+6*10+10*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -24934,6 +26436,13 @@
         "value0": "220",
         "value1": "0",
         "value2": "5"
+      },
+      {
+        "statKey": "lightning_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((18+if(lvl<=1,0,if(lvl<=8,6*(lvl-1),if(lvl<=16,7*6+3*(lvl-8),if(lvl<=22,7*6+8*3+3*(lvl-16),if(lvl<=28,7*6+8*3+6*3+3*(lvl-22),7*6+8*3+6*3+6*3+3*(lvl-28)))))))/8)",
+        "value1": "floor((24+if(lvl<=1,0,if(lvl<=8,8*(lvl-1),if(lvl<=16,7*8+4*(lvl-8),if(lvl<=22,7*8+8*4+4*(lvl-16),if(lvl<=28,7*8+8*4+6*4+4*(lvl-22),7*8+8*4+6*4+6*4+4*(lvl-28)))))))/8)"
       }
     ],
     "description": [
@@ -24972,6 +26481,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "60"
+      },
+      {
+        "statKey": "physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((16+if(lvl<=1,0,if(lvl<=8,16*(lvl-1),if(lvl<=16,7*16+8*(lvl-8),if(lvl<=22,7*16+8*8+8*(lvl-16),if(lvl<=28,7*16+8*8+6*8+8*(lvl-22),7*16+8*8+6*8+6*8+8*(lvl-28)))))))/32)",
+        "value1": "floor((24+if(lvl<=1,0,if(lvl<=8,24*(lvl-1),if(lvl<=16,7*24+12*(lvl-8),if(lvl<=22,7*24+8*12+12*(lvl-16),if(lvl<=28,7*24+8*12+6*12+12*(lvl-22),7*24+8*12+6*12+6*12+12*(lvl-28)))))))/32)"
       }
     ],
     "description": [],
@@ -25003,6 +26519,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "75"
+      },
+      {
+        "statKey": "physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((16+if(lvl<=1,0,if(lvl<=8,16*(lvl-1),if(lvl<=16,7*16+8*(lvl-8),if(lvl<=22,7*16+8*8+8*(lvl-16),if(lvl<=28,7*16+8*8+6*8+8*(lvl-22),7*16+8*8+6*8+6*8+8*(lvl-28)))))))/32)",
+        "value1": "floor((24+if(lvl<=1,0,if(lvl<=8,24*(lvl-1),if(lvl<=16,7*24+12*(lvl-8),if(lvl<=22,7*24+8*12+12*(lvl-16),if(lvl<=28,7*24+8*12+6*12+12*(lvl-22),7*24+8*12+6*12+6*12+12*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -25156,6 +26679,19 @@
         "value0": "750",
         "value1": "0",
         "value2": "6"
+      },
+      {
+        "statKey": "lightning_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "1",
+        "value1": "100+if(lvl<=1,0,if(lvl<=8,100*(lvl-1),if(lvl<=16,7*100+150*(lvl-8),if(lvl<=22,7*100+8*150+200*(lvl-16),if(lvl<=28,7*100+8*150+6*200+250*(lvl-22),7*100+8*150+6*200+6*250+300*(lvl-28))))))"
+      },
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "75"
       }
     ],
     "description": [
@@ -25291,6 +26827,13 @@
         "value0": "75",
         "value1": "0",
         "value2": "8"
+      },
+      {
+        "statKey": "lightning_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100",
+        "value1": "100"
       }
     ],
     "description": [
@@ -25609,6 +27152,13 @@
         "value0": "8",
         "value1": "40",
         "value2": "5"
+      },
+      {
+        "statKey": "poison_dot",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(17+if(lvl<=1,0,if(lvl<=8,5*(lvl-1),if(lvl<=16,7*5+7*(lvl-8),if(lvl<=22,7*5+8*7+7*(lvl-16),if(lvl<=28,7*5+8*7+6*7+8*(lvl-22),7*5+8*7+6*7+6*8+4*(lvl-28)))))))-3",
+        "value1": "(17+if(lvl<=1,0,if(lvl<=8,5*(lvl-1),if(lvl<=16,7*5+7*(lvl-8),if(lvl<=22,7*5+8*7+7*(lvl-16),if(lvl<=28,7*5+8*7+6*7+8*(lvl-22),7*5+8*7+6*7+6*8+5*(lvl-28)))))))-3"
       }
     ],
     "description": [
@@ -25833,6 +27383,12 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "18"
+      },
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100"
       }
     ],
     "description": [
@@ -25872,6 +27428,13 @@
         "value0": "300",
         "value1": "13",
         "value2": "7"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((130+if(lvl<=1,0,if(lvl<=8,70*(lvl-1),if(lvl<=16,7*70+70*(lvl-8),if(lvl<=22,7*70+8*70+70*(lvl-16),if(lvl<=28,7*70+8*70+6*70+70*(lvl-22),7*70+8*70+6*70+6*70+31*(lvl-28)))))))/32)",
+        "value1": "floor((162+if(lvl<=1,0,if(lvl<=8,81*(lvl-1),if(lvl<=16,7*81+81*(lvl-8),if(lvl<=22,7*81+8*81+81*(lvl-16),if(lvl<=28,7*81+8*81+6*81+81*(lvl-22),7*81+8*81+6*81+6*81+42*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -25944,6 +27507,13 @@
         "value0": "110",
         "value1": "22",
         "value2": "5"
+      },
+      {
+        "statKey": "cold_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((60+20*(lvl-1))/2)",
+        "value1": "floor((80+30*(lvl-1))/2)"
       }
     ],
     "description": [
@@ -26261,6 +27831,13 @@
         "value0": "750",
         "value1": "0",
         "value2": "6"
+      },
+      {
+        "statKey": "physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((2)/8)",
+        "value1": "floor((2)/8)"
       }
     ],
     "description": [
@@ -26322,6 +27899,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "(8*[[batstrike]]*(100+20*[[batstrike]]))/200"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((12+12*(lvl-1))/2)",
+        "value1": "floor((12+12*(lvl-1))/2)"
       }
     ],
     "description": [
@@ -26771,6 +28355,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "2+[[life_and_death]].{{extra_targets}}"
+      },
+      {
+        "statKey": "physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((180+24*(lvl-1))/64)",
+        "value1": "floor((180+24*(lvl-1))/64)"
       }
     ],
     "description": [
@@ -26842,6 +28433,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "2+[[solstice_and_equinox]].{{extra_targets}}"
+      },
+      {
+        "statKey": "physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((180+24*(lvl-1))/64)",
+        "value1": "floor((180+24*(lvl-1))/64)"
       }
     ],
     "description": [
@@ -27090,6 +28688,20 @@
         "value0": "48",
         "value1": "33",
         "value2": "4"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((800)/16)",
+        "value1": "floor((800)/16)"
+      },
+      {
+        "statKey": "physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((800)/16)",
+        "value1": "floor((800)/16)"
       }
     ],
     "description": [
@@ -27182,6 +28794,20 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(75)"
+      },
+      {
+        "statKey": "lightning_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "175",
+        "value1": "175"
+      },
+      {
+        "statKey": "physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "30",
+        "value1": "30"
       }
     ],
     "description": [
@@ -27301,6 +28927,13 @@
         "value0": "110",
         "value1": "29",
         "value2": "6"
+      },
+      {
+        "statKey": "cold_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((48+if(lvl<=1,0,if(lvl<=8,12*(lvl-1),if(lvl<=16,7*12+3*(lvl-8),if(lvl<=22,7*12+8*3+3*(lvl-16),if(lvl<=28,7*12+8*3+6*3+3*(lvl-22),7*12+8*3+6*3+6*3+3*(lvl-28)))))))/32)",
+        "value1": "floor((60+if(lvl<=1,0,if(lvl<=8,15*(lvl-1),if(lvl<=16,7*15+4*(lvl-8),if(lvl<=22,7*15+8*4+4*(lvl-16),if(lvl<=28,7*15+8*4+6*4+4*(lvl-22),7*15+8*4+6*4+6*4+4*(lvl-28)))))))/32)"
       }
     ],
     "description": [
@@ -27393,6 +29026,13 @@
         "value0": "669",
         "value1": "84",
         "value2": "4"
+      },
+      {
+        "statKey": "lightning_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((300+if(lvl<=1,0,if(lvl<=8,30*(lvl-1),if(lvl<=16,7*30+15*(lvl-8),if(lvl<=22,7*30+8*15+15*(lvl-16),if(lvl<=28,7*30+8*15+6*15+15*(lvl-22),7*30+8*15+6*15+6*15+15*(lvl-28)))))))/16)",
+        "value1": "floor((40+if(lvl<=1,0,if(lvl<=8,42*(lvl-1),if(lvl<=16,7*42+21*(lvl-8),if(lvl<=22,7*42+8*21+21*(lvl-16),if(lvl<=28,7*42+8*21+6*21+21*(lvl-22),7*42+8*21+6*21+6*21+21*(lvl-28)))))))/16)"
       }
     ],
     "description": [
@@ -27448,6 +29088,20 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "3*floor({{energy}}/100)+3*[[mountain_king]]"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((70+if(lvl<=1,0,if(lvl<=8,16*(lvl-1),if(lvl<=16,7*16+16*(lvl-8),if(lvl<=22,7*16+8*16+18*(lvl-16),if(lvl<=28,7*16+8*16+6*18+18*(lvl-22),7*16+8*16+6*18+6*18+20*(lvl-28)))))))/16)",
+        "value1": "floor((72+if(lvl<=1,0,if(lvl<=8,18*(lvl-1),if(lvl<=16,7*18+18*(lvl-8),if(lvl<=22,7*18+8*18+20*(lvl-16),if(lvl<=28,7*18+8*18+6*20+20*(lvl-22),7*18+8*18+6*20+6*20+22*(lvl-28)))))))/16)"
+      },
+      {
+        "statKey": "physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((70+if(lvl<=1,0,if(lvl<=8,16*(lvl-1),if(lvl<=16,7*16+16*(lvl-8),if(lvl<=22,7*16+8*16+18*(lvl-16),if(lvl<=28,7*16+8*16+6*18+18*(lvl-22),7*16+8*16+6*18+6*18+20*(lvl-28)))))))/16)",
+        "value1": "floor((72+if(lvl<=1,0,if(lvl<=8,18*(lvl-1),if(lvl<=16,7*18+18*(lvl-8),if(lvl<=22,7*18+8*18+20*(lvl-16),if(lvl<=28,7*18+8*18+6*20+20*(lvl-22),7*18+8*18+6*20+6*20+22*(lvl-28)))))))/16)"
       }
     ],
     "description": [
@@ -27791,6 +29445,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "(20+3*(lvl-1))/2"
+      },
+      {
+        "statKey": "lightning_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((2+if(lvl<=1,0,if(lvl<=8,3*(lvl-1),if(lvl<=16,7*3+4*(lvl-8),if(lvl<=22,7*3+8*4+5*(lvl-16),if(lvl<=28,7*3+8*4+6*5+5*(lvl-22),7*3+8*4+6*5+6*5+5*(lvl-28)))))))/8)",
+        "value1": "floor((25+if(lvl<=1,0,if(lvl<=8,29*(lvl-1),if(lvl<=16,7*29+34*(lvl-8),if(lvl<=22,7*29+8*34+39*(lvl-16),if(lvl<=28,7*29+8*34+6*39+42*(lvl-22),7*29+8*34+6*39+6*42+45*(lvl-28)))))))/8)"
       }
     ],
     "description": [
@@ -27829,6 +29490,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "(20+3*(lvl-1))/2"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((10+if(lvl<=1,0,if(lvl<=8,12*(lvl-1),if(lvl<=16,7*12+14*(lvl-8),if(lvl<=22,7*12+8*14+16*(lvl-16),if(lvl<=28,7*12+8*14+6*16+18*(lvl-22),7*12+8*14+6*16+6*18+20*(lvl-28)))))))/8)",
+        "value1": "floor((17+if(lvl<=1,0,if(lvl<=8,22*(lvl-1),if(lvl<=16,7*22+26*(lvl-8),if(lvl<=22,7*22+8*26+28*(lvl-16),if(lvl<=28,7*22+8*26+6*28+30*(lvl-22),7*22+8*26+6*28+6*30+30*(lvl-28)))))))/8)"
       }
     ],
     "description": [
@@ -27868,6 +29536,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "(20+3*(lvl-1))/2"
+      },
+      {
+        "statKey": "cold_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((40+if(lvl<=1,0,if(lvl<=8,18*(lvl-1),if(lvl<=16,7*18+20*(lvl-8),if(lvl<=22,7*18+8*20+22*(lvl-16),if(lvl<=28,7*18+8*20+6*22+24*(lvl-22),7*18+8*20+6*22+6*24+26*(lvl-28)))))))/8)",
+        "value1": "floor((40+if(lvl<=1,0,if(lvl<=8,18*(lvl-1),if(lvl<=16,7*18+20*(lvl-8),if(lvl<=22,7*18+8*20+22*(lvl-16),if(lvl<=28,7*18+8*20+6*22+24*(lvl-22),7*18+8*20+6*22+6*24+26*(lvl-28)))))))/8)"
       }
     ],
     "description": [
@@ -27907,6 +29582,14 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "(20+3*(lvl-1))/2+max(0,(100-ulvl)*2)"
+      },
+      {
+        "statKey": "poison_dot",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((184+if(lvl<=1,0,if(lvl<=8,207*(lvl-1),if(lvl<=16,7*207+207*(lvl-8),if(lvl<=22,7*207+8*207+414*(lvl-16),if(lvl<=28,7*207+8*207+6*414+724*(lvl-22),7*207+8*207+6*414+6*724+1035*(lvl-28)))))))*32*22/256)",
+        "value1": "floor((184+if(lvl<=1,0,if(lvl<=8,345*(lvl-1),if(lvl<=16,7*345+345*(lvl-8),if(lvl<=22,7*345+8*345+621*(lvl-16),if(lvl<=28,7*345+8*345+6*621+1006*(lvl-22),7*345+8*345+6*621+6*1006+1311*(lvl-28)))))))*32*22/256)",
+        "value2": "frames(22)"
       }
     ],
     "description": [
@@ -28101,6 +29784,13 @@
         "value1": "4",
         "value2": "6",
         "min_mana": "50"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "5+5*(lvl-1)",
+        "value1": "5+5*(lvl-1)"
       }
     ],
     "description": [
@@ -28216,6 +29906,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "5+lvl/2"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((10+1*(lvl-1))/2)",
+        "value1": "floor((10+1*(lvl-1))/2)"
       }
     ],
     "description": [
@@ -28292,6 +29989,13 @@
         "value0": "17",
         "value1": "10",
         "value2": "7"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((40+if(lvl<=1,0,if(lvl<=8,20*(lvl-1),if(lvl<=16,7*20+10*(lvl-8),if(lvl<=22,7*20+8*10+10*(lvl-16),if(lvl<=28,7*20+8*10+6*10+10*(lvl-22),7*20+8*10+6*10+6*10+10*(lvl-28)))))))/64)",
+        "value1": "floor((50+if(lvl<=1,0,if(lvl<=8,25*(lvl-1),if(lvl<=16,7*25+12*(lvl-8),if(lvl<=22,7*25+8*12+12*(lvl-16),if(lvl<=28,7*25+8*12+6*12+12*(lvl-22),7*25+8*12+6*12+6*12+12*(lvl-28)))))))/64)"
       }
     ],
     "description": [
@@ -28450,6 +30154,13 @@
         "value0": "22",
         "value1": "20",
         "value2": "5"
+      },
+      {
+        "statKey": "cold_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((40+1*(lvl-1))/4)",
+        "value1": "floor((40+1*(lvl-1))/4)"
       }
     ],
     "description": [
@@ -28510,6 +30221,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames((15+(lvl-1))*(100+[[rime]].{{freeze_length_to_wintertide}})/100)"
+      },
+      {
+        "statKey": "cold_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100",
+        "value1": "100"
       }
     ],
     "description": [
@@ -28594,6 +30312,13 @@
         "variantKey": "",
         "value0": "Wolves",
         "value1": "1+(blvl-1)/3"
+      },
+      {
+        "statKey": "physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "1",
+        "value1": "1"
       }
     ],
     "description": [
@@ -28739,6 +30464,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "55"
+      },
+      {
+        "statKey": "physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((5+5*(lvl-1))/8)",
+        "value1": "floor((20+20*(lvl-1))/8)"
       }
     ],
     "description": [
@@ -28774,6 +30506,20 @@
         "value0": "55",
         "value1": "15",
         "value2": "5"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "90",
+        "value1": "90"
+      },
+      {
+        "statKey": "physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "90",
+        "value1": "90"
       }
     ],
     "description": [
@@ -28829,6 +30575,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "-10"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "1+1*(lvl-1)",
+        "value1": "1+1*(lvl-1)"
       }
     ],
     "description": [
@@ -28870,6 +30623,12 @@
         "value0": "80",
         "value1": "3",
         "value2": "8"
+      },
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "75"
       }
     ],
     "description": [
@@ -29013,6 +30772,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "[[storm_crows]].{{total_knives}}/2+3"
+      },
+      {
+        "statKey": "physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "1+if(lvl<=8,1*(lvl-1),7*1)",
+        "value1": "1+if(lvl<=8,1*(lvl-1),7*1)"
       }
     ],
     "description": [
@@ -29064,6 +30830,13 @@
         "value1": "10",
         "value2": "6",
         "min_mana": "1"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100",
+        "value1": "100"
       }
     ],
     "description": [
@@ -29116,6 +30889,13 @@
         "value0": "110",
         "value1": "22",
         "value2": "6"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100+2*(lvl-1)",
+        "value1": "100+2*(lvl-1)"
       }
     ],
     "description": [
@@ -29162,6 +30942,21 @@
         "value0": "400",
         "value1": "0",
         "value2": "8"
+      },
+      {
+        "statKey": "poison_dot",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((84+if(lvl<=1,0,if(lvl<=8,21*(lvl-1),if(lvl<=16,7*21+10*(lvl-8),if(lvl<=22,7*21+8*10+10*(lvl-16),if(lvl<=28,7*21+8*10+6*10+10*(lvl-22),7*21+8*10+6*10+6*10+10*(lvl-28)))))))*32*50/256)",
+        "value1": "floor((108+if(lvl<=1,0,if(lvl<=8,27*(lvl-1),if(lvl<=16,7*27+14*(lvl-8),if(lvl<=22,7*27+8*14+14*(lvl-16),if(lvl<=28,7*27+8*14+6*14+14*(lvl-22),7*27+8*14+6*14+6*14+14*(lvl-28)))))))*32*50/256)",
+        "value2": "frames(50)"
+      },
+      {
+        "statKey": "physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((84+if(lvl<=1,0,if(lvl<=8,21*(lvl-1),if(lvl<=16,7*21+10*(lvl-8),if(lvl<=22,7*21+8*10+10*(lvl-16),if(lvl<=28,7*21+8*10+6*10+10*(lvl-22),7*21+8*10+6*10+6*10+10*(lvl-28)))))))/8)",
+        "value1": "floor((108+if(lvl<=1,0,if(lvl<=8,27*(lvl-1),if(lvl<=16,7*27+14*(lvl-8),if(lvl<=22,7*27+8*14+14*(lvl-16),if(lvl<=28,7*27+8*14+6*14+14*(lvl-22),7*27+8*14+6*14+6*14+14*(lvl-28)))))))/8)"
       }
     ],
     "description": [
@@ -29219,6 +31014,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames((2500+750*(lvl-1))*(1+[[continuity]].{{skill_duration}}/100))"
+      },
+      {
+        "statKey": "cold_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "24+if(lvl<=1,0,if(lvl<=8,1*(lvl-1),if(lvl<=16,7*1+1*(lvl-8),if(lvl<=22,7*1+8*1+1*(lvl-16),if(lvl<=28,7*1+8*1+6*1+1*(lvl-22),7*1+8*1+6*1+6*1+4*(lvl-28))))))",
+        "value1": "34+if(lvl<=1,0,if(lvl<=8,1*(lvl-1),if(lvl<=16,7*1+1*(lvl-8),if(lvl<=22,7*1+8*1+1*(lvl-16),if(lvl<=28,7*1+8*1+6*1+1*(lvl-22),7*1+8*1+6*1+6*1+4*(lvl-28))))))"
       }
     ],
     "description": [
@@ -29350,7 +31152,14 @@
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "weapon_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100"
+      }
+    ],
     "description": [
       "Your attacks assault your foes with blasts of lunar energy"
     ],
@@ -29397,6 +31206,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "min([[blade_sentinels]].{{minions}}/3,1)"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "floor((180+18*(lvl-1))/8)",
+        "value1": "floor((200+20*(lvl-1))/8)"
       }
     ],
     "description": [
@@ -29555,6 +31371,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "20"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100+if(lvl<=1,0,if(lvl<=8,20*(lvl-1),if(lvl<=16,7*20+20*(lvl-8),if(lvl<=22,7*20+8*20+20*(lvl-16),if(lvl<=28,7*20+8*20+6*20+20*(lvl-22),7*20+8*20+6*20+6*20+15*(lvl-28))))))",
+        "value1": "100+if(lvl<=1,0,if(lvl<=8,20*(lvl-1),if(lvl<=16,7*20+20*(lvl-8),if(lvl<=22,7*20+8*20+20*(lvl-16),if(lvl<=28,7*20+8*20+6*20+20*(lvl-22),7*20+8*20+6*20+6*20+15*(lvl-28))))))"
       }
     ],
     "description": [
@@ -29616,6 +31439,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "20"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100",
+        "value1": "100"
       }
     ],
     "description": [
