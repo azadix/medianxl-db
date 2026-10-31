@@ -825,6 +825,7 @@ export const useItemsStore = defineStore('items', {
           'item-mechanics.json',
           'blessings.json',
           'shrines.json',
+          'misc.json',
         ];
         try {
           const requiredRes = await Promise.all(
@@ -865,6 +866,8 @@ export const useItemsStore = defineStore('items', {
           let sets = [];
           /** @type {ItemDef[]} */
           let runewords = [];
+          /** @type {ItemDef[]} */
+          let misc = [];
           const relicsData = await readJsonIfOk(optionalRes[0]);
           if (relicsData) {
             relics = (Array.isArray(relicsData) ? relicsData : []).map((/** @type {ItemDef} */ r) => ({
@@ -910,6 +913,8 @@ export const useItemsStore = defineStore('items', {
           loadItemMechanics(await readJsonIfOk(optionalRes[9]));
           loadHonorificBlessings(await readJsonIfOk(optionalRes[10]));
           loadShrinesCatalog(await readJsonIfOk(optionalRes[11]));
+          const miscData = await readJsonIfOk(optionalRes[12]);
+          if (miscData) misc = Array.isArray(miscData) ? miscData : [];
 
           this.catalog = [
             ...baseItems,
@@ -919,6 +924,7 @@ export const useItemsStore = defineStore('items', {
             ...overlays,
             ...relics,
             ...runewords,
+            ...misc,
           ];
           mergeJewelItemsIntoSocketablesCatalog(this.catalog);
           this.sets = sets;
@@ -1038,6 +1044,7 @@ export const useItemsStore = defineStore('items', {
         socketables: this.getSocketablesForInstance(instanceId),
         mysticOrbs: this.getMysticOrbsForInstance(instanceId),
         corruptions: this.instances[instanceId]?.corruptions,
+        mechanics: this.instances[instanceId]?.mechanics,
         ethereal: this.instances[instanceId]?.ethereal === true,
       });
     },

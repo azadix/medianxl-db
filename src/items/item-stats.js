@@ -647,6 +647,7 @@ export function getItemStatSections(def, rolls = null, options = {}) {
       extras,
       mysticOrbs: options.mysticOrbs ?? null,
       corruptions: options.corruptions ?? null,
+      mechanics: options.mechanics ?? null,
       ethereal,
     }),
   };

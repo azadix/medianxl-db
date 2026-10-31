@@ -18,6 +18,7 @@ import {
 import { overlayAffixRollKey } from '@/items/item-overlays.js';
 import { loadMysticOrbsCatalog } from '@/items/mystic-orbs.js';
 import { loadCorruptionsCatalog } from '@/items/corruptions.js';
+import { loadItemMechanics } from '@/items/item-mechanics.js';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
@@ -27,6 +28,25 @@ loadMysticOrbsCatalog(
 loadCorruptionsCatalog(
   JSON.parse(readFileSync(resolve('public/items/2_14/corruptions.json'), 'utf8'))
 );
+loadItemMechanics(
+  JSON.parse(readFileSync(resolve('public/items/2_14/item-mechanics.json'), 'utf8'))
+);
+
+describe("Assur's Bane required level", () => {
+  const assurBane = { name: "Assur's Bane", reqLevel: 100 };
+
+  it('adds the mechanic Required Level to the resolved requirement', () => {
+    expect(resolveItemRequirements(assurBane, { mechanics: { assur_du01: 2 } }).reqLevel).toBe(108);
+  });
+
+  it('stacks Required Level across different scrolls', () => {
+    expect(resolveItemRequirements(assurBane, { mechanics: { assur_du01: 1, assur_du02: 1 } }).reqLevel).toBe(116);
+  });
+
+  it('leaves the requirement unchanged without scrolls', () => {
+    expect(resolveItemRequirements(assurBane, {}).reqLevel).toBe(100);
+  });
+});
 
 describe('parseRequirementsReductionPct', () => {
   it('parses flat Requirements -N%', () => {

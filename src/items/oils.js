@@ -7,6 +7,7 @@ import { formatAffixModLine } from '@/items/affix-templates.js';
 import { isCustomItemDef } from '@/items/custom-items.js';
 import { isRunewordItem } from '@/items/runeword-items.js';
 import { isHandWeapon, isQuiverItem, isShieldItem } from '@/items/item-types.js';
+import { itemForbidsSocketsAndEnhancements } from '@/items/item-unique-rules.js';
 
 /**
  * @typedef {{
@@ -146,6 +147,7 @@ function isSetItem(def) {
 export function canUseOilOnItem(oil, def, equipSlot = null) {
   if (!oil || !def) return false;
   if (oil.id === 'nothing') return true;
+  if (itemForbidsSocketsAndEnhancements(def)) return false;
   const slotType = itemUpgradeSlotType(def, equipSlot);
   if (!slotType) return false;
   if (oil.slotType && oil.slotType !== slotType && !(oil.extraSlotTypes || []).includes(slotType)) {

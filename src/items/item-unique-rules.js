@@ -35,7 +35,8 @@ export function uniqueRuleModifierTexts(def) {
 }
 
 /**
- * Mindflayer's Mayhem (and similar): no sockets, mystic orbs, or effigies.
+ * Mindflayer's Mayhem / Assur's Bane (and similar): no sockets, mystic orbs,
+ * effigies, oils, or corruptions.
  * @param {object|null|undefined} def
  * @returns {boolean}
  */
@@ -43,6 +44,7 @@ export function itemForbidsSocketsAndEnhancements(def) {
   if (!def) return false;
   if (String(def.id || '') === 'u:mindflayers-mayhem:su') return true;
   if (String(def.name || '').trim() === "Mindflayer's Mayhem") return true;
+  if (String(def.name || '').trim() === "Assur's Bane") return true;
   return uniqueRuleModifierTexts(def).some((text) =>
     /Cannot have any sockets or enhancements/i.test(text)
   );

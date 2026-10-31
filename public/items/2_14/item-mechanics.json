@@ -73,5 +73,168 @@
       "itemId": "su_clockwork_slippers",
       "label": "Dynamo charges"
     }
+  },
+  "assur": {
+    "su_assurs_bane": {
+      "itemId": "su_assurs_bane",
+      "label": "Assur's Bane Upgrade",
+      "baseLightRadius": 2,
+      "upgrades": [
+        {
+          "id": "du01",
+          "label": "Adds 3-4 Damage",
+          "lines": [
+            "Adds 3-4 Damage"
+          ],
+          "requiredLevel": 4
+        },
+        {
+          "id": "du02",
+          "label": "+1 to All Skills",
+          "lines": [
+            "+1 to All Skills"
+          ],
+          "requiredLevel": 12
+        },
+        {
+          "id": "du03",
+          "label": "+15% Damage to Undead",
+          "lines": [
+            "+15% Damage to Undead"
+          ],
+          "requiredLevel": 4
+        },
+        {
+          "id": "du04",
+          "label": "Maximum Life +1%",
+          "lines": [
+            "Maximum Life +1%"
+          ],
+          "requiredLevel": 4
+        },
+        {
+          "id": "du05",
+          "label": "-3% to Enemy Fire Resistance",
+          "lines": [
+            "-3% to Enemy Fire Resistance"
+          ],
+          "requiredLevel": 5
+        },
+        {
+          "id": "du06",
+          "label": "-3% to Enemy Cold Resistance",
+          "lines": [
+            "-3% to Enemy Cold Resistance"
+          ],
+          "requiredLevel": 5
+        },
+        {
+          "id": "du07",
+          "label": "-3% to Enemy Lightning Resistance",
+          "lines": [
+            "-3% to Enemy Lightning Resistance"
+          ],
+          "requiredLevel": 5
+        },
+        {
+          "id": "du08",
+          "label": "-3% to Enemy Poison Resistance",
+          "lines": [
+            "-3% to Enemy Poison Resistance"
+          ],
+          "requiredLevel": 5
+        },
+        {
+          "id": "du09",
+          "label": "+40% Weapon Physical Damage",
+          "lines": [
+            "Fire Resist -10%",
+            "+40% Weapon Physical Damage"
+          ],
+          "lightRadiusCost": 1,
+          "requiresLightRadius": 1
+        },
+        {
+          "id": "du10",
+          "label": "+5% Innate Elemental Damage",
+          "lines": [
+            "Fire Resist -10%",
+            "+5% Innate Elemental Damage"
+          ],
+          "lightRadiusCost": 1,
+          "requiresLightRadius": 1
+        },
+        {
+          "id": "du11",
+          "label": "+1% Maximum Elemental Resists",
+          "lines": [
+            "Fire Resist -20%",
+            "+1% to Maximum Fire, Cold, and Poison Resistances"
+          ],
+          "lightRadiusCost": 2,
+          "requiresLightRadius": 2
+        },
+        {
+          "id": "du12",
+          "label": "+10% Spell Damage",
+          "lines": [
+            "Fire Resist -10%",
+            "+10% Spell Damage"
+          ],
+          "lightRadiusCost": 1,
+          "requiresLightRadius": 1
+        },
+        {
+          "id": "du13",
+          "label": "+1% Fire Spell Damage per 5 Spell Focus",
+          "lines": [
+            "Fire Resist -20%",
+            "1% Fire Spell Damage per 5 Spell Focus above the cap"
+          ],
+          "replacesPurify": true
+        },
+        {
+          "id": "du14",
+          "label": "+1% Lightning Spell Damage per 5 Spell Focus",
+          "lines": [
+            "Fire Resist -20%",
+            "1% Lightning Spell Damage per 5 Spell Focus above the cap"
+          ],
+          "replacesPurify": true
+        },
+        {
+          "id": "du15",
+          "label": "+1% Cold Spell Damage per 5 Spell Focus",
+          "lines": [
+            "Fire Resist -20%",
+            "1% Cold Spell Damage per 5 Spell Focus above the cap"
+          ],
+          "replacesPurify": true
+        },
+        {
+          "id": "du16",
+          "label": "+1% Poison Spell Damage per 5 Spell Focus",
+          "lines": [
+            "Fire Resist -20%",
+            "1% Poison Spell Damage per 5 Spell Focus above the cap"
+          ],
+          "replacesPurify": true
+        },
+        {
+          "id": "du17",
+          "label": "Attribute-based bonus",
+          "lines": [
+            "Fire Resist -30%",
+            "Energy: +12% Grit",
+            "Vitality: 400% of your Damage to Undead bonus added as Cold Damage to Weapon",
+            "Dexterity: +300% Weapon Physical Damage",
+            "Strength: +5000 Attack Rating",
+            "Bonus based on your highest attribute if wielding a one-handed weapon without a shield",
+            "Does not work for Barbarians"
+          ],
+          "replacesPurify": true
+        }
+      ]
+    }
   }
 }

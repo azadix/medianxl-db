@@ -91,6 +91,7 @@ const requirementsLine = computed(() =>
       socketables: props.socketables,
       mysticOrbs: props.mysticOrbs,
       corruptions: props.corruptions,
+      mechanics: props.mechanics,
     })
   )
 );
@@ -478,6 +479,12 @@ function removePickedAffixRow(row) {
         v-else-if="isMechanicsTab"
         :def="def"
         :mechanics="mechanics"
+        :rolls="effectiveRolls"
+        :extras="extras"
+        :socketables="socketables"
+        :mystic-orbs="mysticOrbs"
+        :corruptions="corruptions"
+        :character-level="characterLevel"
         :editable="canEdit"
         @update:mechanics="emit('update:mechanics', $event)"
       />

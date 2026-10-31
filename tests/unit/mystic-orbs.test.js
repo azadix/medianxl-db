@@ -123,6 +123,15 @@ describe('mystic-orbs', () => {
         slot: 'feet',
       })
     ).toBe(false);
+    // Assur's Bane only accepts its own scroll upgrades (also blocks effigies).
+    expect(
+      canUseMysticOrbOnItem('MO - Strength', {
+        name: "Assur's Bane",
+        rarity: 'unique',
+        category: 'jewelry',
+        slot: 'rrin',
+      })
+    ).toBe(false);
     expect(canUseMysticOrbOnItem('MO - Enhanced Damage', weapon)).toBe(true);
     expect(canUseMysticOrbOnItem('MO - Enhanced Damage', armor)).toBe(false);
     expect(canUseMysticOrbOnItem('MO - Strength', armor)).toBe(true);

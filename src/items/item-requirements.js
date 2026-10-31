@@ -24,6 +24,7 @@ import {
   uniqueCorruptionReqLevelPerSuccess,
 } from '@/items/item-unique-rules.js';
 import { getItemUpgradeFlags } from '@/items/item-upgrades.js';
+import { assurCounts, assurMechanicForDef, assurRequiredLevelBonus } from '@/items/item-mechanics.js';
 
 /** Ethereal items subtract this from base str/dex before Requirements +/-%. */
 export const ETHEREAL_BASE_REQ_FLAT = 10;
@@ -239,6 +240,7 @@ export function combinedRequiredLevelBonus(textBonus, positiveBonus = 0, negativ
  *   extras?: string[]|null,
  *   mysticOrbs?: unknown,
  *   corruptions?: string[]|null,
+ *   mechanics?: Record<string, number>|null,
  *   ethereal?: boolean,
  * }} [options]
  * @returns {ItemRequirements}
@@ -249,6 +251,11 @@ export function resolveItemRequirements(def, options = {}) {
     ? options.extras.map((line) => String(line || '').trim()).filter(Boolean)
     : [];
   let reqLevel = nonNeg(def?.reqLevel);
+  const assurReqBonus = assurRequiredLevelBonus(
+    assurMechanicForDef(def),
+    assurCounts(options.mechanics)
+  );
+  if (assurReqBonus > 0) reqLevel += assurReqBonus;
   const ethereal =
     options.ethereal === true ||
     def?.ethereal === true ||
