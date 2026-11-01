@@ -7,7 +7,7 @@ import {
   getSkillPreviewUrl,
 } from '@/shared/utils.js';
 import { ensureSkillPreviewManifest, hasSkillPreview } from '@/skills/skill-preview-catalog.js';
-import { getTreeSkillsCache } from '@/character/planner-core.js';
+import { getEffectivePlannerLevel, getTreeSkillsCache } from '@/character/planner-core.js';
 import { getCurrentVersion, versionToTreeAssetFolder, initializeVersionSelector } from '@/shared/version-config.js';
 import { DEFAULT_GAME_VERSION } from '@/shared/version-constants.js';
 import {
@@ -592,7 +592,7 @@ async function displaySkillDetail(skillId) {
    * @param {number} slvl
    */
   const defaultCharacterState = (blvl, slvl) => ({
-    level: Math.max(1, blvl + slvl),
+    level: getEffectivePlannerLevel(),
     blvl: { [skillInfo.id]: blvl },
     lvl: { [skillInfo.id]: slvl },
     treeSkillsCache: getTreeSkillsCache(),

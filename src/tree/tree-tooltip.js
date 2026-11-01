@@ -19,6 +19,7 @@ import {
   getTreeSkillsCache,
   getAllStats,
   getCharacterInstance,
+  getEffectivePlannerLevel,
   isSkillDisabled,
   isOSkillSlotDisabled
 } from '@/character/planner-core.js';
@@ -1043,16 +1044,7 @@ async function buildTooltipContent(
     const allSkillPoints = getAllSkillPoints();
     
     
-    // Get character level from minimum level display (this is what ulvl should use)
-    const minLevelDisplay = document.getElementById('minLevelDisplay');
-    let characterLevel = 1; // fallback
-    if (minLevelDisplay) {
-        const levelText = minLevelDisplay.textContent;
-        const levelMatch = levelText.match(/Level (\d+)/);
-        if (levelMatch) {
-            characterLevel = parseInt(levelMatch[1], 10);
-        }
-    }
+    const characterLevel = getEffectivePlannerLevel();
     
     // All Skills bonus already calculated at the top of the function
     

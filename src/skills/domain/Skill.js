@@ -12,6 +12,19 @@ import { checkPrerequisites } from '@/character/planner-prereqs.js';
 import { formulaEvaluator } from './formula-evaluator.js';
 import { formatScalingValuesToDescriptionHtml } from './scaling-display-html.js';
 import { applyLightningShieldElemDrToScaling } from './lightning-shield-elem-dr.js';
+import { resolveEngineFormula } from './skill-synergy.js';
+
+/** Stat keys whose damage is scaled by the physical synergy (DmgSymPerCalc). */
+const PHYSICAL_DAMAGE_KEYS = new Set(['physical_damage']);
+/** Stat keys whose damage is scaled by the elemental synergy (EDmgSymPerCalc). */
+const ELEMENTAL_DAMAGE_KEYS = new Set([
+    'fire_damage',
+    'cold_damage',
+    'lightning_damage',
+    'magic_damage',
+    'poison_dot',
+    'fire_dot',
+]);
 
 /** [[internal_name]].{{stat}} in formulas and descriptions (not plain {{stat}} on current skill). */
 const CROSS_SKILL_DOT_STAT_PATTERN =
@@ -328,14 +341,16 @@ export default class Skill {
      * @param {number} characterLevel - Character level
      * @returns {object} Variables object for formula evaluation
      */
-    _buildFormulaVariables(characterState, characterLevel) {
+    _buildFormulaVariables(characterState, characterLevel, skillLevel = null) {
         if (!characterState) return null;
         
         const blvlRaw = Number(characterState.blvl?.[this.id]);
         const slvlRaw = Number(characterState.lvl?.[this.id]);
         const blvl = Number.isFinite(blvlRaw) ? blvlRaw : 0;
         const slvl = Number.isFinite(slvlRaw) ? slvlRaw : 0;
-        const lvl = blvl + slvl;
+        const total = blvl + slvl;
+        const preview = Number(skillLevel);
+        const lvl = Number.isFinite(preview) && preview > 0 ? preview : total;
         
         // Build variables object
         const variables = {
@@ -466,6 +481,59 @@ export default class Skill {
             
             if (wasFormula) {
                 result[`${valueKey}_formula`] = true;
+            }
+        }
+    }
+
+    /**
+     * Apply the skill's physical/elemental synergy % to a damage scaling result.
+     * base damage × (100 + synergy%) / 100.
+     * @param {object} result
+     * @param {string} statKey
+     * @param {object} variables
+     * @param {object|null|undefined} characterState
+     */
+    _applySynergyToResult(result, statKey, variables, characterState) {
+        let kind = null;
+        if (PHYSICAL_DAMAGE_KEYS.has(statKey)) kind = 'physical';
+        else if (ELEMENTAL_DAMAGE_KEYS.has(statKey)) kind = 'elemental';
+        if (!kind) return;
+
+        const store = getFileSkillStore();
+        const row = store?.catalogByInternalId?.get(this.id);
+        const formula = row?.synergy?.[kind];
+        if (!formula) return;
+
+        const resolved = resolveEngineFormula(this.id, formula, characterState, store);
+        if (!resolved) return;
+        const evalResult = formulaEvaluator.evaluate(resolved, variables);
+        if (!evalResult?.success) return;
+        const pct = Number(evalResult.value);
+        if (!Number.isFinite(pct)) return;
+        const factor = (100 + pct) / 100;
+
+        const hs = Number(result.hitShift);
+        const sc = (row?.scalingConstants || []).find((c) => c.statKey === statKey);
+        const rawHs = Number(sc?.hitShift);
+        const hitShift = Number.isFinite(rawHs) ? rawHs : (Number.isFinite(hs) ? hs : 8);
+        const isPoison = statKey === 'poison_dot';
+        for (const [valueKey, rawKey] of [['value0', 'rawValue0'], ['value1', 'rawValue1']]) {
+            const rawFormula = sc?.[rawKey] ?? result[rawKey];
+            let raw = Number(result[valueKey]);
+            if (!isPoison && rawFormula != null && String(rawFormula).trim() !== '') {
+                const r = this._evaluateValue(String(rawFormula), formulaEvaluator, variables, 0, false);
+                const n = Number(r.value);
+                if (Number.isFinite(n)) raw = n;
+            }
+            if (!Number.isFinite(raw)) continue;
+            if (isPoison) {
+                // Poison displays total-over-duration; keep scaling the displayed total.
+                result[valueKey] = String(Math.round(raw * factor));
+            } else {
+                // (raw * (100+syn)/100) << hitShift >> 8  (synergy before the HitShift).
+                const rawSyn = Math.trunc(raw * (100 + pct) / 100);
+                const full = Math.trunc(rawSyn * Math.pow(2, hitShift - 8));
+                result[valueKey] = String(full);
             }
         }
     }
@@ -671,7 +739,7 @@ export default class Skill {
         }
 
         try {
-            const baseVariables = this._buildFormulaVariables(characterState, characterLevel);
+            const baseVariables = this._buildFormulaVariables(characterState, characterLevel, level);
             const variables = baseVariables;
             
             // Get level-specific values
@@ -703,6 +771,10 @@ export default class Skill {
                     showFormulas,
                     crossSkillDepth
                 );
+            }
+
+            if (result && variables) {
+                this._applySynergyToResult(result, statKey, variables, characterState);
             }
 
             if (result) {

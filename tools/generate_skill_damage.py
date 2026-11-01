@@ -10,54 +10,15 @@ Usage:
   python generate_skill_damage.py --apply    # write skills.json in place (backup first)
 """
 import argparse
-import csv
 import json
 import re
-import sys
-from pathlib import Path
 
-TOOLS_DIR = Path(__file__).resolve().parent
-REPO_ROOT = TOOLS_DIR.parent
-CONFIG_PATH = TOOLS_DIR / "tools.local.json"
-SKILLS_JSON = REPO_ROOT / "public" / "tree_data" / "2_14" / "skills.json"
-
-
-def _resolve_repo_path(raw):
-    path = Path(raw)
-    if not path.is_absolute():
-        path = REPO_ROOT / path
-    return path.resolve()
-
-
-def skills_full_path():
-    if not CONFIG_PATH.is_file():
-        print(f"Missing {CONFIG_PATH} (see tools/tools.local.json.example).", file=sys.stderr)
-        raise SystemExit(2)
-    try:
-        config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as e:
-        print(f"Could not read {CONFIG_PATH}: {e}", file=sys.stderr)
-        raise SystemExit(2)
-    raw = config.get("skills_full_tsv") if isinstance(config, dict) else None
-    if not isinstance(raw, str) or not raw.strip():
-        print("Set skills_full_tsv in tools/tools.local.json.", file=sys.stderr)
-        raise SystemExit(2)
-    path = _resolve_repo_path(raw.strip())
-    if not path.is_file():
-        print(f"skills_full_tsv not found: {path}", file=sys.stderr)
-        raise SystemExit(2)
-    return path
-
-# EType -> stats.json statKey (base damage types requested).
-ETYPE_STATKEY = {
-    "fire": "fire_damage",
-    "cold": "cold_damage",
-    "ltng": "lightning_damage",
-    "mag": "magic_damage",
-    "pois": "poison_dot",
-    "burn": "fire_dot",
-    "frze": "cold_damage",
-}
+from formula_translate import (
+    ETYPE_STATKEY,
+    SKILLS_JSON,
+    load_skills_full,
+    write_skills_json,
+)
 
 
 def parse_int(raw):
@@ -119,15 +80,21 @@ def display_formula(raw, hs, is_poison=False, elen=0):
     return f"floor(({raw})/{1 << (8 - hs)})"
 
 
-def load_skills_full():
-    with open(skills_full_path(), "r", encoding="utf-8", newline="") as f:
-        reader = csv.DictReader(f, delimiter="\t")
-        by_name = {}
-        for row in reader:
-            name = (row.get("skill") or "").strip()
-            if name:
-                by_name[name] = row
-    return by_name
+ELEMENTAL_KEYS = {
+    "fire_damage",
+    "cold_damage",
+    "lightning_damage",
+    "magic_damage",
+    "poison_dot",
+    "fire_dot",
+}
+
+
+def attach_raw_fields(entry, raw0, raw1, hit_shift):
+    entry["hitShift"] = hit_shift
+    entry["rawValue0"] = raw0
+    entry["rawValue1"] = raw1
+    return entry
 
 
 def main():
@@ -182,6 +149,12 @@ def main():
                 }
                 if key == "poison_dot" and elen > 1:
                     entry["value2"] = f"frames({elen})"
+                attach_raw_fields(
+                    entry,
+                    lev_scaled_formula(emin, emin_lev),
+                    lev_scaled_formula(emax, emax_lev),
+                    hit_shift,
+                )
                 new_entries.append(entry)
         elif (emin or emax) and etype not in ETYPE_STATKEY:
             skipped_etype += 1
@@ -192,13 +165,18 @@ def main():
         mindam_lev = [parse_int(row.get(f"MinLevDam{i}", "")) for i in range(1, 6)]
         maxdam_lev = [parse_int(row.get(f"MaxLevDam{i}", "")) for i in range(1, 6)]
         if (mindam or maxdam) and "physical_damage" not in existing_keys:
-            new_entries.append({
-                "statKey": "physical_damage",
-                "occurrenceIndex": 0,
-                "variantKey": "",
-                "value0": display_formula(lev_scaled_formula(mindam, mindam_lev), hit_shift),
-                "value1": display_formula(lev_scaled_formula(maxdam, maxdam_lev), hit_shift),
-            })
+            new_entries.append(attach_raw_fields(
+                {
+                    "statKey": "physical_damage",
+                    "occurrenceIndex": 0,
+                    "variantKey": "",
+                    "value0": display_formula(lev_scaled_formula(mindam, mindam_lev), hit_shift),
+                    "value1": display_formula(lev_scaled_formula(maxdam, maxdam_lev), hit_shift),
+                },
+                lev_scaled_formula(mindam, mindam_lev),
+                lev_scaled_formula(maxdam, maxdam_lev),
+                hit_shift,
+            ))
 
         # --- weapon damage (SrcDam %) ---
         src_dam = (row.get("SrcDam") or "").strip()
@@ -211,6 +189,23 @@ def main():
                     "variantKey": "",
                     "value0": str(int(float(m.group(1)))),
                 })
+
+        for c in skill.get("scalingConstants", []):
+            key = c.get("statKey")
+            if key in ELEMENTAL_KEYS:
+                attach_raw_fields(
+                    c,
+                    lev_scaled_formula(emin, emin_lev),
+                    lev_scaled_formula(emax, emax_lev),
+                    hit_shift,
+                )
+            elif key == "physical_damage":
+                attach_raw_fields(
+                    c,
+                    lev_scaled_formula(mindam, mindam_lev),
+                    lev_scaled_formula(maxdam, maxdam_lev),
+                    hit_shift,
+                )
 
         if not new_entries:
             continue
@@ -238,10 +233,7 @@ def main():
             print(f"    {json.dumps(e, ensure_ascii=False)}")
 
     if args.apply:
-        backup = SKILLS_JSON.with_suffix(".json.bak")
-        backup.write_text(SKILLS_JSON.read_text(encoding="utf-8"), encoding="utf-8")
-        SKILLS_JSON.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-        print(f"\nWrote {SKILLS_JSON} (backup: {backup})")
+        write_skills_json(data)
 
 
 if __name__ == "__main__":

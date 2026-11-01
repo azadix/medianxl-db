@@ -5,45 +5,11 @@ Evaluates each skill's damage formula at a level and compares it to the D2MOO
 lev_scaled_damage + display_damage computed straight from skills_full.tsv columns.
 Synergies are NOT applied (our data is base-only).
 """
-import csv
 import json
 import math
 import random
-import re
-import sys
-from pathlib import Path
 
-TOOLS_DIR = Path(__file__).resolve().parent
-REPO_ROOT = TOOLS_DIR.parent
-CONFIG_PATH = TOOLS_DIR / "tools.local.json"
-SKILLS_JSON = REPO_ROOT / "public" / "tree_data" / "2_14" / "skills.json"
-
-
-def _resolve_repo_path(raw):
-    path = Path(raw)
-    if not path.is_absolute():
-        path = REPO_ROOT / path
-    return path.resolve()
-
-
-def skills_full_path():
-    if not CONFIG_PATH.is_file():
-        print(f"Missing {CONFIG_PATH} (see tools/tools.local.json.example).", file=sys.stderr)
-        raise SystemExit(2)
-    try:
-        config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as e:
-        print(f"Could not read {CONFIG_PATH}: {e}", file=sys.stderr)
-        raise SystemExit(2)
-    raw = config.get("skills_full_tsv") if isinstance(config, dict) else None
-    if not isinstance(raw, str) or not raw.strip():
-        print("Set skills_full_tsv in tools/tools.local.json.", file=sys.stderr)
-        raise SystemExit(2)
-    path = _resolve_repo_path(raw.strip())
-    if not path.is_file():
-        print(f"skills_full_tsv not found: {path}", file=sys.stderr)
-        raise SystemExit(2)
-    return path
+from formula_translate import SKILLS_JSON, load_skills_full
 
 DAMAGE_KEYS = {
     "fire_damage", "cold_damage", "lightning_damage", "magic_damage",
@@ -157,13 +123,7 @@ def eval_formula(formula, lvl):
 
 
 def main():
-    full = {}
-    with open(skills_full_path(), encoding="utf-8", newline="") as f:
-        for row in csv.DictReader(f, delimiter="\t"):
-            name = (row.get("skill") or "").strip()
-            if name:
-                full[name] = row
-
+    full = load_skills_full()
     skills = json.load(open(SKILLS_JSON, encoding="utf-8"))
     with_damage = []
     for s in skills:

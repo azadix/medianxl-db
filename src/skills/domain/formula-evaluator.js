@@ -53,6 +53,11 @@ export class FormulaEvaluator {
     );
     this.registerFunction('ln', (a, b, lvl) => this.linearFromParams(a, b, lvl));
     this.registerFunction('dm', (a, b, lvl) => this.diminishingFromParams(a, b, lvl));
+    // Truncating integer division toward zero (matches the game's MSVC `/`), rhs=0 -> 0.
+    this.registerFunction('truncdiv', (a, b) => {
+      if (b === 0) return 0;
+      return Math.trunc(a / b);
+    });
   }
 
   /**
