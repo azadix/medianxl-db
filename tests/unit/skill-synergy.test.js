@@ -4,7 +4,7 @@ import {
   resetSkillDataStoreForTests,
   getFileSkillStore,
 } from '@/shared/skill-data-store.js';
-import { resolveEngineFormula, synergyPct, hasSynergy } from '@/skills/domain/skill-synergy.js';
+import { resolveEngineFormula } from '@/skills/domain/skill-synergy.js';
 import { formulaEvaluator } from '@/skills/domain/formula-evaluator.js';
 import Skill from '@/skills/domain/Skill.js';
 import { installTreeDataFetchMock } from '../helpers/mock-fetch-tree-data.js';

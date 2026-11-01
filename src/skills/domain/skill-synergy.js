@@ -17,19 +17,6 @@ import { getFileSkillStore } from '@/shared/skill-data-store.js';
 const MAX_DEPTH = 10;
 
 /**
- * @param {number} statId D2/MXL stat id
- * @param {object} store
- * @returns {string|null} lowercased planner stat key
- */
-function statIdToKey(statId, store) {
-  const reg = store?.characterStatRegistry || [];
-  for (const r of reg) {
-    if (Number(r.id) === Number(statId)) return String(r.key || '').trim().toLowerCase();
-  }
-  return null;
-}
-
-/**
  * @param {string} displayName
  * @param {object} store
  * @returns {string|null} internal skill id

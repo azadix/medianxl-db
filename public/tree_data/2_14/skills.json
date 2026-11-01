@@ -861,6 +861,18 @@
         "value0": "frames(150)"
       },
       {
+        "statKey": "fireballs",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "2+(([[combustion]]*{{physical_magic_spell_damage}})/5)/100"
+      },
+      {
+        "statKey": "area_of_effect",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "range(2*min((4*(100+((2*[[combustion]]*{{physical_magic_spell_damage}})/44))/100),13))"
+      },
+      {
         "statKey": "fire_pierce",
         "occurrenceIndex": 0,
         "variantKey": "",
@@ -891,7 +903,8 @@
     "restriction": [],
     "skillEffect": [
       "{{cooldown}}",
-      "[[combustion]]",
+      "{{fireballs}}",
+      "{{area_of_effect}}",
       "{{fire_pierce}}",
       "{{fire_damage}}",
       "{{mana_cost}}"

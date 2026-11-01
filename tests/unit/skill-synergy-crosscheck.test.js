@@ -10,14 +10,15 @@ const SKILLS = ['apocalypse', 'blizzard', 'discharge', 'catapult_shot', 'abyss',
   'amatoxin', 'curare', 'miasma', 'pestilence'];
 const LEVELS = [[1, 0], [20, 0], [1, 19], [20, 20]];
 const ULVL = 120;
-const ELEMENTAL_KEYS = ['fire_damage', 'cold_damage', 'lightning_damage', 'magic_damage', 'poison_dot', 'fire_dot'];
+// Poison/DoT display uses length/HitShift handling beyond the raw*syn path this crosscheck covers.
+const ELEMENTAL_KEYS = ['fire_damage', 'cold_damage', 'lightning_damage', 'magic_damage'];
 
 function evalNum(formula, vars) {
   const r = formulaEvaluator.evaluate(formula, vars);
   return r && r.success && Number.isFinite(r.value) ? r.value : 0;
 }
 
-describe('skill-synergy crosscheck (emits table)', () => {
+describe('skill-synergy crosscheck', () => {
   let restoreFetch;
 
   beforeAll(async () => {
@@ -31,25 +32,25 @@ describe('skill-synergy crosscheck (emits table)', () => {
     restoreFetch?.();
   });
 
-  it('prints our computed damage for comparison', () => {
+  it('manual raw+synergy path matches getScalingValues', async () => {
     const store = getFileSkillStore();
-    console.log('skill\tblvl\tslvl\tour_min\tour_max\tour_syn');
+    /** @type {string[]} */
+    const mismatches = [];
     for (const id of SKILLS) {
       const row = store.catalogByInternalId.get(id);
-      if (!row) { console.log(`# ${id} NOT FOUND`); continue; }
+      if (!row) {
+        mismatches.push(`${id}: NOT FOUND`);
+        continue;
+      }
       const byKey = {};
       for (const c of row.scalingConstants || []) byKey[c.statKey] = c;
       let ekey = null;
       for (const k of ELEMENTAL_KEYS) if (byKey[k]) { ekey = k; break; }
+      if (!ekey) continue;
+      const skill = new Skill({ id, name: row.displayName || id });
       for (const [blvl, slvl] of LEVELS) {
         const lvl = blvl + slvl;
         const charState = { blvl: { [id]: blvl }, lvl: { [id]: slvl }, stats: {} };
-        let base0 = 0, base1 = 0;
-        if (ekey) {
-          const vars = { blvl, slvl, lvl, ulvl: ULVL, characterState: charState };
-          base0 = evalNum(byKey[ekey].value0 || '0', vars);
-          base1 = evalNum(byKey[ekey].value1 || '0', vars);
-        }
         let synPct = 0;
         const syn = row.synergy?.elemental;
         if (syn) {
@@ -57,14 +58,23 @@ describe('skill-synergy crosscheck (emits table)', () => {
           const r = formulaEvaluator.evaluate(resolved, { blvl, slvl, lvl, ulvl: ULVL, characterState: charState });
           if (r?.success && Number.isFinite(r.value)) synPct = r.value;
         }
-        const hs = ekey ? (byKey[ekey].hitShift ?? 8) : 8;
-        const raw0 = ekey ? evalNum(byKey[ekey].rawValue0 || '0', { blvl, slvl, lvl, ulvl: ULVL, characterState: charState }) : 0;
-        const raw1 = ekey ? evalNum(byKey[ekey].rawValue1 || '0', { blvl, slvl, lvl, ulvl: ULVL, characterState: charState }) : 0;
+        const hs = byKey[ekey].hitShift ?? 8;
+        const raw0 = evalNum(byKey[ekey].rawValue0 || '0', { blvl, slvl, lvl, ulvl: ULVL, characterState: charState });
+        const raw1 = evalNum(byKey[ekey].rawValue1 || '0', { blvl, slvl, lvl, ulvl: ULVL, characterState: charState });
         const full0 = Math.trunc(Math.trunc(raw0 * (100 + synPct) / 100) * Math.pow(2, hs - 8));
         const full1 = Math.trunc(Math.trunc(raw1 * (100 + synPct) / 100) * Math.pow(2, hs - 8));
-        console.log(`${id}\t${blvl}\t${slvl}\t${full0}\t${full1}\t${synPct}`);
+        const av = await skill.getScalingValues(lvl, ekey, 0, charState, ULVL);
+        const got0 = Number(av?.value0);
+        const got1 = Number(av?.value1);
+        if (got0 !== full0 || got1 !== full1) {
+          mismatches.push(
+            `${id} blvl=${blvl} slvl=${slvl}: manual ${full0}-${full1} (syn ${synPct}) vs getScalingValues ${got0}-${got1}`
+          );
+        }
       }
     }
+    if (mismatches.length) console.log(mismatches.join('\n'));
+    expect(mismatches).toEqual([]);
   });
 
   it('getScalingValues applies synergy with raw+HitShift ordering', async () => {
