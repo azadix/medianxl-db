@@ -49,6 +49,8 @@ SKILLS = [
     "Apocalypse", "Blizzard", "Discharge", "Catapult Shot", "Abyss",
     "Arcane Torrent", "Earth Talons", "Bloodstar", "Disintegrate", "Solar Flare",
     "Amatoxin", "Curare", "Miasma", "Pestilence",
+    "Arachnomancy", "Death Star", "Hyena Strike", "Lorenado", "Veil King Plague Grasp",
+    "Venomcloud Totem", "Venomous Spirit", "Vine Companion", "Virulence",
 ]
 
 # (blvl, slvl) hard/soft point combos; character level fixed at 120, no character stats.

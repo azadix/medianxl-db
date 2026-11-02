@@ -134,7 +134,11 @@ def main():
         emax_lev = [parse_int(row.get(f"EMaxLev{i}", "")) for i in range(1, 6)]
         if (emin or emax) and etype in ETYPE_STATKEY:
             key = ETYPE_STATKEY[etype]
-            if key not in existing_keys:
+            existing = next(
+                (c for c in skill.get("scalingConstants", []) if c.get("statKey") == key),
+                None,
+            )
+            if existing is None or not existing.get("value0"):
                 is_poison = key == "poison_dot"
                 entry = {
                     "statKey": key,
@@ -155,7 +159,10 @@ def main():
                     lev_scaled_formula(emax, emax_lev),
                     hit_shift,
                 )
-                new_entries.append(entry)
+                if existing is not None:
+                    existing.update(entry)
+                else:
+                    new_entries.append(entry)
         elif (emin or emax) and etype not in ETYPE_STATKEY:
             skipped_etype += 1
 

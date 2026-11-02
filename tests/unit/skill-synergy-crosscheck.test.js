@@ -7,11 +7,14 @@ import { installTreeDataFetchMock } from '../helpers/mock-fetch-tree-data.js';
 
 const SKILLS = ['apocalypse', 'blizzard', 'discharge', 'catapult_shot', 'abyss',
   'arcane_torrent', 'earth_talons', 'bloodstar', 'disintegrate', 'solar_flare',
-  'amatoxin', 'curare', 'miasma', 'pestilence'];
+  'amatoxin', 'curare', 'miasma', 'pestilence',
+  'arachnomancy', 'death_star', 'hyena_strike', 'lorenado', 'veil_king_plague_grasp',
+  'venomcloud_totem', 'venomous_spirit', 'vine_companion', 'virulence'];
 const LEVELS = [[1, 0], [20, 0], [1, 19], [20, 20]];
 const ULVL = 120;
-// Poison/DoT display uses length/HitShift handling beyond the raw*syn path this crosscheck covers.
-const ELEMENTAL_KEYS = ['fire_damage', 'cold_damage', 'lightning_damage', 'magic_damage'];
+// Per-frame damage keys; poison's per-frame raw*syn path is the same (edmn/edmx). The
+// display total additionally multiplies by ELen, which this per-frame crosscheck does not cover.
+const ELEMENTAL_KEYS = ['fire_damage', 'cold_damage', 'lightning_damage', 'magic_damage', 'poison_dot'];
 
 function evalNum(formula, vars) {
   const r = formulaEvaluator.evaluate(formula, vars);
@@ -66,6 +69,14 @@ describe('skill-synergy crosscheck', () => {
         const av = await skill.getScalingValues(lvl, ekey, 0, charState, ULVL);
         const got0 = Number(av?.value0);
         const got1 = Number(av?.value1);
+        if (ekey === 'poison_dot') {
+          // Poison displays the total (per-frame * ELen); getScalingValues returns that total,
+          // so it is not equal to the per-frame. Report only (verified separately vs game edmn).
+          console.log(
+            `poison ${id} blvl=${blvl} slvl=${slvl}: per-frame ${full0}-${full1} (syn ${synPct}) -> display total ${got0}-${got1}`
+          );
+          continue;
+        }
         if (got0 !== full0 || got1 !== full1) {
           mismatches.push(
             `${id} blvl=${blvl} slvl=${slvl}: manual ${full0}-${full1} (syn ${synPct}) vs getScalingValues ${got0}-${got1}`

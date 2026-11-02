@@ -29,7 +29,7 @@ Duration: <span class="has-text-white">frames(500*(1+[[continuity]].{{skill_dura
     "description": "Casts a wave of exploding firebolts in front of you",
     "level": 1,
     "skillEffect": "Firebolts: <span class="has-text-white">(min(3+lvl/10,7)+(blvl*(max(({{current_mana}}*4)/max({{base_mana}},1),0))))</span>
-Fire Damage: <span class="has-text-danger">???</span>-<span class="has-text-danger">???</span>
+Fire Damage: <span class="has-text-white">floor((120+if(lvl<=1,0,if(lvl<=8,40*(lvl-1),if(lvl<=16,7*40+18*(lvl-8),if(lvl<=22,7*40+8*18+18*(lvl-16),if(lvl<=28,7*40+8*18+6*18+18*(lvl-22),7*40+8*18+6*18+6*18+15*(lvl-28)))))))/32)</span>-<span class="has-text-white">floor((150+if(lvl<=1,0,if(lvl<=8,53*(lvl-1),if(lvl<=16,7*53+21*(lvl-8),if(lvl<=22,7*53+8*21+21*(lvl-16),if(lvl<=28,7*53+8*21+6*21+21*(lvl-22),7*53+8*21+6*21+6*21+17*(lvl-28)))))))/32)</span>
 Mana cost: <span class="has-text-danger">???</span>  ",
     "variantKey": "non_sorceress",
   },
