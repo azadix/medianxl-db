@@ -58,26 +58,34 @@ def damage_bonus_formula(p):
 
 
 def lev_scaled_formula(base, per_level):
-    """Formula string for base + damage_bonus_by_level (raw table units)."""
-    bonus = damage_bonus_formula(per_level)
-    if bonus == "0":
-        return str(base)
-    return f"{base}+{bonus}"
+    """Formula string for base + damage_bonus_by_level (raw table units).
+
+    Emits the named `lev_scaled(base, per1..per5, lvl)` call rather than expanding
+    the D2 level brackets, so the JSON stays short and hand-editable.
+    """
+    p = list(per_level[:5])
+    while len(p) < 5:
+        p.append(0)
+    return f"lev_scaled({base},{p[0]},{p[1]},{p[2]},{p[3]},{p[4]},lvl)"
 
 
-def display_formula(raw, hs, is_poison=False, elen=0):
-    """Wrap a raw damage formula in the D2 display conversion (HitShift + poison length)."""
+def display_formula(raw, hs, is_poison=False, elen=0, elen_expr=None):
+    """Damage formula for a slot.
+
+    Non-poison damage keeps the RAW table value: the HitShift is applied once per
+    skill from the `hitShift` field (see Skill._applyHitShiftToResult), matching
+    mxlplanner's separate `damageScale`. Poison totals over duration, so it keeps
+    the shift folded in and multiplies by the LEVEL-SCALED elemental length
+    (ELen + ELevLen1..3), not the flat ELen.
+    """
     if is_poison:
-        if elen > 1:
-            # (value << HitShift) * ELen / 256 -> total over duration.
-            return f"floor(({raw})*{1 << hs}*{elen}/256)"
-        # Instant poison: value - max(0, 8 - HitShift).
+        length = elen_expr or str(elen)
+        if elen > 1 or (elen_expr and elen_expr not in ("0", "")):
+            return f"hitshift({raw},{hs})*{length}"
         off = max(0, 8 - hs)
-        return f"({raw})-{off}" if off else raw
-    # Non-poison: (value << HitShift) >> 8.
-    if hs >= 8:
-        return f"({raw})*{1 << (hs - 8)}" if hs > 8 else raw
-    return f"floor(({raw})/{1 << (8 - hs)})"
+        shifted = f"hitshift({raw},{hs})"
+        return f"({shifted})-{off}" if off else shifted
+    return raw
 
 
 ELEMENTAL_KEYS = {
@@ -122,6 +130,13 @@ def main():
         element = (row.get("element") or "").strip()
         hit_shift = parse_int(row.get("HitShift", "")) or 8
         elen = parse_int(row.get("ELen", ""))
+        # Elemental length scales by level (ELen + ELevLen1..3), same as the damage.
+        elen_lev = [parse_int(row.get(f"ELevLen{i}", "")) for i in range(1, 4)]
+        elen_expr = (
+            f"lev_elen({elen},{elen_lev[0]},{elen_lev[1]},{elen_lev[2]},lvl)"
+            if (elen or any(elen_lev))
+            else None
+        )
 
         existing_keys = {c.get("statKey") for c in skill.get("scalingConstants", [])}
 
@@ -138,31 +153,32 @@ def main():
                 (c for c in skill.get("scalingConstants", []) if c.get("statKey") == key),
                 None,
             )
-            if existing is None or not existing.get("value0"):
-                is_poison = key == "poison_dot"
-                entry = {
-                    "statKey": key,
-                    "occurrenceIndex": 0,
-                    "variantKey": "",
-                    "value0": display_formula(
-                        lev_scaled_formula(emin, emin_lev), hit_shift, is_poison, elen
-                    ),
-                    "value1": display_formula(
-                        lev_scaled_formula(emax, emax_lev), hit_shift, is_poison, elen
-                    ),
-                }
-                if key == "poison_dot" and elen > 1:
-                    entry["value2"] = f"frames({elen})"
-                attach_raw_fields(
-                    entry,
-                    lev_scaled_formula(emin, emin_lev),
-                    lev_scaled_formula(emax, emax_lev),
-                    hit_shift,
-                )
-                if existing is not None:
-                    existing.update(entry)
-                else:
-                    new_entries.append(entry)
+            # Always refresh: replaces old expanded level-bracket formulas with the
+            # named lev_scaled(...)/hitshift(...) form.
+            is_poison = key == "poison_dot"
+            entry = {
+                "statKey": key,
+                "occurrenceIndex": 0,
+                "variantKey": "",
+                "value0": display_formula(
+                    lev_scaled_formula(emin, emin_lev), hit_shift, is_poison, elen, elen_expr
+                ),
+                "value1": display_formula(
+                    lev_scaled_formula(emax, emax_lev), hit_shift, is_poison, elen, elen_expr
+                ),
+            }
+            if key == "poison_dot" and (elen > 1 or elen_expr):
+                entry["value2"] = f"frames({elen_expr or elen})"
+            attach_raw_fields(
+                entry,
+                lev_scaled_formula(emin, emin_lev),
+                lev_scaled_formula(emax, emax_lev),
+                hit_shift,
+            )
+            if existing is not None:
+                existing.update(entry)
+            else:
+                new_entries.append(entry)
         elif (emin or emax) and etype not in ETYPE_STATKEY:
             skipped_etype += 1
 
@@ -171,8 +187,8 @@ def main():
         maxdam = parse_int(row.get("MaxDam", ""))
         mindam_lev = [parse_int(row.get(f"MinLevDam{i}", "")) for i in range(1, 6)]
         maxdam_lev = [parse_int(row.get(f"MaxLevDam{i}", "")) for i in range(1, 6)]
-        if (mindam or maxdam) and "physical_damage" not in existing_keys:
-            new_entries.append(attach_raw_fields(
+        if mindam or maxdam:
+            phys_entry = attach_raw_fields(
                 {
                     "statKey": "physical_damage",
                     "occurrenceIndex": 0,
@@ -183,7 +199,15 @@ def main():
                 lev_scaled_formula(mindam, mindam_lev),
                 lev_scaled_formula(maxdam, maxdam_lev),
                 hit_shift,
-            ))
+            )
+            existing_phys = next(
+                (c for c in skill.get("scalingConstants", []) if c.get("statKey") == "physical_damage"),
+                None,
+            )
+            if existing_phys is not None:
+                existing_phys.update(phys_entry)
+            else:
+                new_entries.append(phys_entry)
 
         # --- weapon damage (SrcDam %) ---
         src_dam = (row.get("SrcDam") or "").strip()

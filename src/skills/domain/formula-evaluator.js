@@ -53,11 +53,58 @@ export class FormulaEvaluator {
     );
     this.registerFunction('ln', (a, b, lvl) => this.linearFromParams(a, b, lvl));
     this.registerFunction('dm', (a, b, lvl) => this.diminishingFromParams(a, b, lvl));
+    // D2 SKILLS_CalculateDamageBonusByLevel: base + bracket-scaled per-level gain.
+    // lev_scaled(base, per1..per5, lvl) — brackets 2-8 / 9-16 / 17-22 / 23-28 / 29+
+    this.registerFunction('lev_scaled', (base, p1, p2, p3, p4, p5, lvl) =>
+      this.levScaled(base, [p1, p2, p3, p4, p5], lvl)
+    );
+    // D2 SKILLS_GetElementalLength: ELen + brackets 2-8 / 9-16 / 17+
+    this.registerFunction('lev_elen', (base, p1, p2, p3, lvl) =>
+      this.levElen(base, [p1, p2, p3], lvl)
+    );
+    // Minion life (_minion_life in the extractor): params p2/p3/p4 + calc1 bonus + ulvl.
+    this.registerFunction('minion_life', (p2, p3, p4, calc1, lvl, ulvl) =>
+      this.minionLife(p2, p3, p4, calc1, lvl, ulvl)
+    );
+    // Minion attack rating (mnar): param5 * max(lvl - 1, 0)
+    this.registerFunction('minion_ar', (p5, lvl) => (Number(p5) || 0) * Math.max((Number(lvl) || 1) - 1, 0));
+    // HitShift application for elemental/physical damage values: (v << hs) >> 8
+    this.registerFunction('hitshift', (value, hs) => {
+      const v = Math.trunc(Number(value) || 0);
+      const h = Number(hs) || 8;
+      return Math.trunc((v * Math.pow(2, h)) / 256);
+    });
+
     // Truncating integer division toward zero (matches the game's MSVC `/`), rhs=0 -> 0.
     this.registerFunction('truncdiv', (a, b) => {
       if (b === 0) return 0;
       return Math.trunc(a / b);
     });
+    // "Standard caster synergy" (mxlplanner's energySpellDamage program):
+    //   (1 + ext) * ((50 + 10*min(clvl,120)) * (50 + 130*(energy+20)/(500+energy)
+    //                + min(spellFocus/10, 100)) / 100 - 75) + ext*100
+    // ext is the "Energy: X% increased damage" synergy as a fraction.
+    this.registerFunction('energy_synergy', (energy, spellFocus, clvl, ext) =>
+      this.energySynergy(energy, spellFocus, clvl, ext)
+    );
+  }
+
+  /**
+   * Standard caster (energy) synergy percentage, ported from mxlplanner.
+   * @param {number} energy
+   * @param {number} spellFocus
+   * @param {number} clvl character level (capped at 120)
+   * @param {number} ext energy synergy as a fraction (0.82 for 82%)
+   * @returns {number}
+   */
+  energySynergy(energy, spellFocus, clvl, ext) {
+    const lvl = Math.min(Number(clvl) || 1, 120);
+    const e = Number(energy) || 0;
+    const sf = Math.min((Number(spellFocus) || 0) / 10, 100);
+    const factor = 50 + (130 * (e + 20)) / (500 + e) + sf;
+    const base = ((50 + 10 * lvl) * factor) / 100 - 75;
+    const ex = Number(ext) || 0;
+    return (1 + ex) * base + ex * 100;
   }
 
   /**
@@ -189,6 +236,58 @@ export class FormulaEvaluator {
     const bb = Number(b) || 0;
 
     return Math.floor(aa + ((110 * level) * (bb - aa)) / (100 * (level + 6)));
+  }
+
+  /**
+   * D2 SKILLS_CalculateDamageBonusByLevel. Brackets: 2-8 / 9-16 / 17-22 / 23-28 / 29+.
+   * @param {number} base
+   * @param {number[]} per five per-level gains
+   * @param {number} lvl
+   * @returns {number}
+   */
+  levScaled(base, per, lvl) {
+    const level = Number.isFinite(Number(lvl)) ? Number(lvl) : 1;
+    const b = Number(base) || 0;
+    if (level <= 0) return 0;
+    const p = [0, 0, 0, 0, 0].map((_, i) => Number((per || [])[i]) || 0);
+    if (level <= 1) return b;
+    if (level <= 8) return b + p[0] * (level - 1);
+    if (level <= 16) return b + 7 * p[0] + p[1] * (level - 8);
+    if (level <= 22) return b + 7 * p[0] + 8 * p[1] + p[2] * (level - 16);
+    if (level <= 28) return b + 7 * p[0] + 8 * p[1] + 6 * p[2] + p[3] * (level - 22);
+    return b + 7 * p[0] + 8 * p[1] + 6 * p[2] + 6 * p[3] + p[4] * (level - 28);
+  }
+
+  /**
+   * D2 SKILLS_GetElementalLength. Brackets: 2-8 / 9-16 / 17+.
+   * @param {number} base
+   * @param {number[]} per three per-level gains
+   * @param {number} lvl
+   * @returns {number}
+   */
+  levElen(base, per, lvl) {
+    const level = Number.isFinite(Number(lvl)) ? Number(lvl) : 1;
+    const b = Number(base) || 0;
+    if (level <= 0) return 0;
+    const p = [0, 0, 0].map((_, i) => Number((per || [])[i]) || 0);
+    if (level <= 8) return b + p[0] * (level - 1);
+    if (level <= 16) return b + 7 * p[0] + p[1] * (level - 8);
+    return b + 7 * p[0] + 8 * p[1] + p[2] * (level - 16);
+  }
+
+  /**
+   * Minion life, ported from the extractor's `_minion_life`:
+   * truncdiv((p3 + (lvl-1)*p4) * (100+p2) * (100+calc1) * (100+truncdiv(ulvl,2)), 1000000)
+   * @returns {number}
+   */
+  minionLife(p2, p3, p4, calc1, lvl, ulvl) {
+    const level = Number.isFinite(Number(lvl)) ? Number(lvl) : 1;
+    const unit = Number.isFinite(Number(ulvl)) ? Number(ulvl) : 0;
+    const base = (Number(p3) || 0) + (level - 1) * (Number(p4) || 0);
+    const a = 100 + (Number(p2) || 0);
+    const b = 100 + (Number(calc1) || 0);
+    const c = 100 + Math.trunc(unit / 2);
+    return Math.trunc((base * a * b * c) / 1000000);
   }
 
   /**

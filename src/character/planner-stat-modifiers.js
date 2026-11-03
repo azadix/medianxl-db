@@ -459,9 +459,10 @@ export function recomputePlannerStatsFromSkillAllocations(character, ctx) {
     const isOSkill = (character.oSkills || []).some(
       (r) => String(r?.skillName || '').trim() === String(internalKey)
     );
-    const scalingLevel = isOSkill
-      ? Math.min(Character.OSKILL_MAX_POINTS, blvlPoints + slvl)
-      : blvlPoints;
+    // Damage scales with the EFFECTIVE level: hard points plus soft levels from
+    // "+# to All Skills", "+# to <Class> Skills", gear and relic bonuses.
+    // `blvl` stays hard-only (synergies use baseLevel), `lvl` carries the soft.
+    const scalingLevel = Math.min(Character.OSKILL_MAX_POINTS, blvlPoints + slvl);
 
     // Apply the allocated (parent) skill row itself (then cognition-gated rows).
     applyScalingConstantsForCatalogRow(catRow, internalKey, scalingLevel, characterState, {

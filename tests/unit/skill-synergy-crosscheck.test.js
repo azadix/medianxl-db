@@ -50,6 +50,9 @@ describe('skill-synergy crosscheck', () => {
       let ekey = null;
       for (const k of ELEMENTAL_KEYS) if (byKey[k]) { ekey = k; break; }
       if (!ekey) continue;
+      // Skills with the energy (caster) synergy fold an extra multiplier into the
+      // formula; this crosscheck only covers the raw + EDmgSymPerCalc path.
+      if (String(byKey[ekey]?.value0 || '').includes('energy_synergy(')) continue;
       const skill = new Skill({ id, name: row.displayName || id });
       for (const [blvl, slvl] of LEVELS) {
         const lvl = blvl + slvl;

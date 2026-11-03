@@ -928,7 +928,11 @@ async function buildTooltipContent(
           appliedRelicBonus: 0,
         }
       : sourceAmounts;
-    const scalingLevel = isProc ? level : isOSkill ? effectiveLevel : level;
+    // Values shown must use the EFFECTIVE level (hard points + +# to All/Class
+    // Skills, gear and relic soft levels), not the base level — otherwise a
+    // level-13 skill renders its level-2 damage. Procs are excluded: they have
+    // no skill points and show their granted level directly.
+    const scalingLevel = isProc ? level : effectiveLevel;
     
     const iconFolder = versionToTreeAssetFolder(getCurrentVersion());
     const iconHtml = getSkillIconHTML(skillData.image, skillData.className, 'is-64x64', iconFolder);

@@ -25,6 +25,20 @@ const ELEMENTAL_DAMAGE_KEYS = new Set([
     'poison_dot',
     'fire_dot',
 ]);
+/**
+ * Spell damage statKey -> the character stat that boosts it.
+ * Spell damage applies to spell damage only; weapon/melee physical damage is
+ * unaffected, which is why `physical_damage` is gated on the absence of a
+ * `weapon_damage` slot (see _applySpellDamageToResult).
+ */
+const SPELL_DAMAGE_STAT = Object.freeze({
+    fire_damage: 'fire_spell_damage',
+    cold_damage: 'cold_spell_damage',
+    lightning_damage: 'lightning_spell_damage',
+    poison_dot: 'poison_spell_damage',
+    magic_damage: 'physical_magic_spell_damage',
+    physical_damage: 'physical_magic_spell_damage',
+});
 
 /** [[internal_name]].{{stat}} in formulas and descriptions (not plain {{stat}} on current skill). */
 const CROSS_SKILL_DOT_STAT_PATTERN =
@@ -511,6 +525,77 @@ export default class Skill {
     }
 
     /**
+     * Apply the character's spell damage % to a spell's damage result.
+     *
+     * `fire_spell_damage` / `cold_spell_damage` / `lightning_spell_damage` /
+     * `poison_spell_damage` / `physical_magic_spell_damage` are the game's
+     * "+X% to ... Spell Damage" stats. They boost spell damage only, so
+     * physical damage is skipped when the skill also has a `weapon_damage`
+     * slot (a melee/weapon skill rather than a flat-damage spell).
+     * @param {object} result
+     * @param {string} statKey
+     * @param {object|null|undefined} characterState
+     * @param {boolean} showFormulas
+     */
+    _applySpellDamageToResult(result, statKey, characterState, showFormulas) {
+        if (!result || showFormulas || !characterState) return;
+        const charStat = SPELL_DAMAGE_STAT[statKey];
+        if (!charStat) return;
+
+        if (statKey === 'physical_damage') {
+            const store = getFileSkillStore();
+            const row = store?.catalogByInternalId?.get(this.id);
+            const hasWeaponSlot = (row?.scalingConstants || []).some(
+                (c) => c.statKey === 'weapon_damage'
+            );
+            if (hasWeaponSlot) return;
+        }
+
+        const pct = Number(characterState.stats?.[charStat]);
+        if (!Number.isFinite(pct) || pct === 0) return;
+        const factor = (100 + pct) / 100;
+
+        for (const slot of ['value0', 'value1']) {
+            const v = Number(result[slot]);
+            if (!Number.isFinite(v)) continue;
+            result[slot] = String(Math.trunc(v * factor));
+        }
+    }
+
+    /**
+     * Apply the skill-wide HitShift to damage values: (v << hs) >> 8.
+     *
+     * The scalingConstant holds the raw table value (`lev_scaled(...)`) plus a
+     * `hitShift` field, mirroring how mxlplanner keeps `elementalDamage` and
+     * `damageScale` separate. Keeping the shift out of the formula means one
+     * number per skill instead of a wrapper on every damage slot.
+     * @param {object} result
+     * @param {string} statKey
+     * @param {boolean} showFormulas - when true, leave the raw formula untouched
+     */
+    _applyHitShiftToResult(result, statKey, showFormulas) {
+        if (!result || showFormulas) return;
+        const isDamage =
+            PHYSICAL_DAMAGE_KEYS.has(statKey) || ELEMENTAL_DAMAGE_KEYS.has(statKey);
+        if (!isDamage) return;
+        // Poison totals over its duration, so its formula already folds the HitShift
+        // in (hitshift(v,hs)*ELen). Shifting again would apply it twice.
+        if (statKey === 'poison_dot') return;
+
+        const store = getFileSkillStore();
+        const row = store?.catalogByInternalId?.get(this.id);
+        const sc = (row?.scalingConstants || []).find((c) => c.statKey === statKey);
+        const hs = Number(sc?.hitShift);
+        if (!Number.isFinite(hs) || hs === 8) return;
+
+        for (const key of ['value0', 'value1']) {
+            const v = Number(result[key]);
+            if (!Number.isFinite(v)) continue;
+            result[key] = String(Math.trunc(v * Math.pow(2, hs - 8)));
+        }
+    }
+
+    /**
      * Apply the skill's physical/elemental synergy % to a damage scaling result.
      * base damage × (100 + synergy%) / 100.
      * @param {object} result
@@ -799,7 +884,15 @@ export default class Skill {
             }
 
             if (result && variables) {
+                this._applyHitShiftToResult(result, statKey, showFormulas);
+            }
+
+            if (result && variables) {
                 this._applySynergyToResult(result, statKey, variables, characterState);
+            }
+
+            if (result && variables) {
+                this._applySpellDamageToResult(result, statKey, characterState, showFormulas);
             }
 
             if (result) {
