@@ -6,7 +6,7 @@
 
   { "key": "during_torment", "name": null, "description": "" },
   { "key": "during_ravage", "name": null, "description": "" },
-  { "key": "during_whirlwinding", "name": null, "description": "" },
+  { "key": "during_whirlwinding", "name": null, "description": "", "requiresSkill": "whirlwind" },
   { "key": "during_fusillade", "name": null, "description": "" },
   { "key": "after_using_superposition", "name": null, "description": "" },
   { "key": "after_using_stampede", "name": null, "description": "" },

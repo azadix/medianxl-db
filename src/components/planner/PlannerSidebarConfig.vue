@@ -1,6 +1,9 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
-import { getActiveInternalSkillIdsForConditions } from '@/character/planner-core.js';
+import {
+  getActiveInternalSkillIdsForConditions,
+  isConditionTriggerSkillAvailable,
+} from '@/character/planner-core.js';
 import { getFileSkillStore } from '@/shared/skill-data-store.js';
 import { toggleCondition, selectedConditions } from '@/stores/planner-config-store.js';
 import { useItemsStore } from '@/stores/items.js';
@@ -58,6 +61,10 @@ const conditions = computed(() => {
   }
   return all.filter((c) => {
     if (!c || !c.key) return false;
+    // Conditions whose trigger skill is unusable (no hard/oSkill points and no
+    // named relic/gear bonus such as "+# to Whirlwind") stay hidden.
+    const req = c.requiresSkill != null ? String(c.requiresSkill).trim().toLowerCase() : '';
+    if (req && !isConditionTriggerSkillAvailable(req)) return false;
     const keyLower = String(c.key).toLowerCase();
     if (used.has(keyLower)) return true;
     if (c.defaultVisible === true) return true;

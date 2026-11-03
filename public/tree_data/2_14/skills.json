@@ -419,7 +419,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(200*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(200*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "enemy_physical_resistance",
@@ -479,7 +479,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames((3000+(100*(lvl-1)))*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames((3000+(100*(lvl-1)))*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "innate_elemental_damage",
@@ -548,7 +548,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(500*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(500*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "grit",
@@ -1405,7 +1405,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames((ln(7500,750,lvl)*(100+[[continuity]].{{skill_duration}}))/100)"
+        "value0": "frames((ln(7500,750,lvl)*(100+{{skill_duration}}))/100)"
       }
     ],
     "description": [
@@ -1487,7 +1487,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(200*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(200*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "mana_cost",
@@ -1726,7 +1726,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(7500*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(7500*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "activation_frequency_multiplier",
@@ -2311,7 +2311,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(max(4,if([[execution]],275,25)*(1+[[continuity]].{{skill_duration}}/100)))"
+        "value0": "frames(max(4,if([[execution]],275,25)*(1+{{skill_duration}}/100)))"
       }
     ],
     "description": [
@@ -2470,7 +2470,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(250*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(250*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "enemy_physical_resistance",
@@ -2514,7 +2514,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(if(blvl>0,30000,750)*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(if(blvl>0,30000,750)*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "mana_cost",
@@ -2620,7 +2620,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(250*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(250*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "bonus_elemental_magic_damage",
@@ -3710,7 +3710,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(250*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(250*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "poison_pierce",
@@ -4135,7 +4135,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames((250+5*[[shadow_dancer]])*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames((250+5*[[shadow_dancer]])*(1+{{skill_duration}}/100))"
       }
     ],
     "description": [
@@ -4170,7 +4170,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames((3000+50*(lvl-1))*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames((3000+50*(lvl-1))*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "elemental_spell_damage",
@@ -4230,7 +4230,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(7500*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(7500*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "elemental_spell_damage",
@@ -5242,7 +5242,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames((75+25*(lvl-1))*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames((75+25*(lvl-1))*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "bonus_defense",
@@ -5333,7 +5333,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(250*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(250*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "movement_speed",
@@ -5916,7 +5916,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(375*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(375*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "mana_cost",
@@ -6596,7 +6596,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(15000*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(15000*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "weapon_physical_damage",
@@ -6708,7 +6708,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames((25+12*(lvl-1))*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames((25+12*(lvl-1))*(1+{{skill_duration}}/100))"
       }
     ],
     "description": [
@@ -7314,7 +7314,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames((500+25*(lvl-1))*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames((500+25*(lvl-1))*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "magic_damage_to_party_weapons",
@@ -7773,7 +7773,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(15000*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(15000*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "base_defense_percent_of_str_and_dex",
@@ -8393,7 +8393,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(3000*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(3000*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "physical_damage_reduced_flat",
@@ -8655,7 +8655,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames((4500+150*(lvl-1))*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames((4500+150*(lvl-1))*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "lightning_damage",
@@ -8878,7 +8878,7 @@
         "statKey": "freeze_duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(50*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(50*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "cooldown",
@@ -8961,7 +8961,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(35*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(35*(1+{{skill_duration}}/100))"
       }
     ],
     "description": [
@@ -9098,7 +9098,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(((255+5*lvl)*(1+[[continuity]].{{skill_duration}}/100)))"
+        "value0": "frames(((255+5*lvl)*(1+{{skill_duration}}/100)))"
       },
       {
         "statKey": "mana_cost",
@@ -9433,7 +9433,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(((250*(100+{{fire_spell_damage}})/100)*(100+[[continuity]].{{skill_duration}}))/100)"
+        "value0": "frames(((250*(100+{{fire_spell_damage}})/100)*(100+{{skill_duration}}))/100)"
       },
       {
         "statKey": "mana_cost",
@@ -9843,7 +9843,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(15000*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(15000*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "mana_cost",
@@ -10298,7 +10298,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(750*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(750*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "mana_cost",
@@ -11186,7 +11186,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames((750+250*(lvl-1))*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames((750+250*(lvl-1))*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "mana_cost",
@@ -11416,7 +11416,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(750*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(750*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "physical_resistance",
@@ -11545,7 +11545,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(250*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(250*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "hit_recovery",
@@ -11934,7 +11934,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(200*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(200*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "fire_damage",
@@ -12532,7 +12532,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames((100+10*(lvl-1))*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames((100+10*(lvl-1))*(1+{{skill_duration}}/100))"
       }
     ],
     "description": [
@@ -12910,7 +12910,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(7500*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(7500*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "activation_delay",
@@ -13353,7 +13353,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames((1500+750*(lvl-1))*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames((1500+750*(lvl-1))*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "cold_damage",
@@ -13906,7 +13906,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(250*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(250*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "movement_speed",
@@ -13974,7 +13974,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(((1000+50*(lvl-1))*(100+{{duration_bonus_to_mark_of_the_wild}})/100)*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(((1000+50*(lvl-1))*(100+{{duration_bonus_to_mark_of_the_wild}})/100)*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "attack_speed",
@@ -14225,13 +14225,13 @@
         "statKey": "cooldown",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(175*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(175*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(175*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(175*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "mana_cost",
@@ -14350,7 +14350,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(1500*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(1500*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "activation_frequency_multiplier",
@@ -14500,7 +14500,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(15000*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(15000*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "enemy_weapon_damage",
@@ -15566,7 +15566,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(max(120+[[bear_companion]]*6,120)*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(max(120+[[bear_companion]]*6,120)*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "chance_to_cast_heart_of_the_pack",
@@ -15782,7 +15782,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames((1500+250*(lvl-1))*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames((1500+250*(lvl-1))*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "mana_cost",
@@ -16029,7 +16029,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(250*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(250*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "poison_dot",
@@ -16096,7 +16096,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames((dm(25,125,lvl)+25*(blvl-1))*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames((dm(25,125,lvl)+25*(blvl-1))*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "crushing_blow",
@@ -16826,7 +16826,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(if([[ancestral_force]],100,1000)*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(if([[ancestral_force]],100,1000)*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "fire_damage",
@@ -16946,7 +16946,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(15000*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(15000*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "drains_life_while_active",
@@ -17160,7 +17160,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(50*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(50*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "mana_cost",
@@ -17875,7 +17875,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(1500*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(1500*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "regenerate_life",
@@ -18301,7 +18301,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames((1000+50*(lvl-1))*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames((1000+50*(lvl-1))*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "knives",
@@ -18379,7 +18379,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(15000*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(15000*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "activation_frequency_multiplier",
@@ -18450,7 +18450,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames((250*(100+{{bonus_to_poison_skill_duration}}+[[continuity]].{{skill_duration}}))/100)"
+        "value0": "frames((250*(100+{{bonus_to_poison_skill_duration}}+{{skill_duration}}))/100)"
       },
       {
         "statKey": "poison_dot",
@@ -18784,7 +18784,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(1500+500*(lvl-1))*(1+[[continuity]].{{skill_duration}}/100)"
+        "value0": "frames(1500+500*(lvl-1))*(1+{{skill_duration}}/100)"
       },
       {
         "statKey": "lightning_damage",
@@ -18906,7 +18906,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(7500*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(7500*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "elemental_magic_damage_reduced_flat",
@@ -19307,7 +19307,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames((15000+250*(lvl-1))*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames((15000+250*(lvl-1))*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "percent_str_or_dex_added_as_vitality",
@@ -19614,7 +19614,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(45*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(45*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "cold_damage",
@@ -19673,7 +19673,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(15000*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(15000*(1+{{skill_duration}}/100))"
       }
     ],
     "description": [
@@ -19833,7 +19833,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(((1000+50*(lvl-1))*(100+{{duration_bonus_to_mark_of_the_wild}})/100)*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(((1000+50*(lvl-1))*(100+{{duration_bonus_to_mark_of_the_wild}})/100)*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "mana_cost",
@@ -19909,7 +19909,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(3000*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(3000*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "elemental_spell_damage",
@@ -20373,7 +20373,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(50*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(50*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "lightning_damage",
@@ -20652,7 +20652,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(((200+25*(lvl-1))/2)*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(((200+25*(lvl-1))/2)*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "mana_cost",
@@ -20814,7 +20814,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(25*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(25*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "cooldown",
@@ -21001,7 +21001,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(250*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(250*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "mana_cost",
@@ -21294,7 +21294,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(7500*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(7500*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "activation_delay",
@@ -22344,7 +22344,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames((1500+750*(lvl-1))*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames((1500+750*(lvl-1))*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "fire_damage",
@@ -22656,7 +22656,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames((250+20*max(blvl-1,0))*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames((250+20*max(blvl-1,0))*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "movement_speed",
@@ -22856,7 +22856,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(18750*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(18750*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "spell_focus",
@@ -24288,7 +24288,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames((3000+250*max(blvl-1,0))*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames((3000+250*max(blvl-1,0))*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "crushing_blow",
@@ -24891,7 +24891,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(750*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(750*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "drains_life_while_active",
@@ -26074,7 +26074,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames((50+5*(lvl-1))*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames((50+5*(lvl-1))*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "cold_damage",
@@ -26192,7 +26192,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(200*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(200*(1+{{skill_duration}}/100))"
       }
     ],
     "description": [],
@@ -26429,7 +26429,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(2250*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(2250*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "mana_cost",
@@ -26711,7 +26711,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(((125+6*blvl)*(100+[[continuity]].{{skill_duration}}))/100)"
+        "value0": "frames(((125+6*blvl)*(100+{{skill_duration}}))/100)"
       },
       {
         "statKey": "mana_cost",
@@ -26846,7 +26846,7 @@
         "statKey": "dazzle_duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(0*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(0*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "fire_damage",
@@ -27249,7 +27249,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames((100+10*(lvl-1))*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames((100+10*(lvl-1))*(1+{{skill_duration}}/100))"
       }
     ],
     "description": [
@@ -27403,7 +27403,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames((dm(200,500,lvl)+blvl*25)*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames((dm(200,500,lvl)+blvl*25)*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "physical_resistance",
@@ -27618,7 +27618,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(200*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(200*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "block_speed",
@@ -28595,7 +28595,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(750*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(750*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "cooldown",
@@ -28898,7 +28898,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(750*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(750*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "attack_speed",
@@ -29020,7 +29020,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames((100+10*(lvl-1))*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames((100+10*(lvl-1))*(1+{{skill_duration}}/100))"
       }
     ],
     "description": [
@@ -30632,7 +30632,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(750*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(750*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "minions_inherit_proc_chance",
@@ -31126,7 +31126,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames((ln(5000,250,lvl)*(100+[[continuity]].{{skill_duration}}))/100)"
+        "value0": "frames((ln(5000,250,lvl)*(100+{{skill_duration}}))/100)"
       },
       {
         "statKey": "fire_spell_damage",
@@ -31372,7 +31372,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames((60+10*max(lvl-1,0))*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames((60+10*max(lvl-1,0))*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "avoid_damage",
@@ -31511,7 +31511,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(15000*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(15000*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "mana_cost",
@@ -31597,7 +31597,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(500*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(500*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "mana_cost",
@@ -32061,7 +32061,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(1500+500*(lvl-1))*(1+[[continuity]].{{skill_duration}}/100)"
+        "value0": "frames(1500+500*(lvl-1))*(1+{{skill_duration}}/100)"
       },
       {
         "statKey": "stun_length",
@@ -32336,7 +32336,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames((7500+750*blvl)*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames((7500+750*blvl)*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "activation_frequency",
@@ -32787,7 +32787,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(3000*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(3000*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "maximum_life",
@@ -32836,7 +32836,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(3000*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(3000*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "maximum_life",
@@ -33440,7 +33440,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames((50+5*(lvl-1))*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames((50+5*(lvl-1))*(1+{{skill_duration}}/100))"
       }
     ],
     "description": [],
@@ -34012,7 +34012,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(min(375,125+blvl*25)*(100+[[continuity]].{{skill_duration}}))/100"
+        "value0": "frames(min(375,125+blvl*25)*(100+{{skill_duration}}))/100"
       },
       {
         "statKey": "mana_cost",
@@ -34299,7 +34299,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames((7500+750*(lvl-1))*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames((7500+750*(lvl-1))*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "target_seek_range",
@@ -34386,7 +34386,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames((7500+750*(lvl-1))*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames((7500+750*(lvl-1))*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "activation_frequency_multiplier",
@@ -34473,7 +34473,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames((750+ulvl*25)*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames((750+ulvl*25)*(1+{{skill_duration}}/100))"
       }
     ],
     "description": [
@@ -35288,7 +35288,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames((7500+250*(lvl-1))*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames((7500+250*(lvl-1))*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "attack_speed",
@@ -35392,7 +35392,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(min(((220*lvl)*100)/(100*(lvl+50))+50,250))*(1+[[continuity]].{{skill_duration}}/100)"
+        "value0": "frames(min(((220*lvl)*100)/(100*(lvl+50))+50,250))*(1+{{skill_duration}}/100)"
       },
       {
         "statKey": "mana_cost",
@@ -35461,7 +35461,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames(200*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames(200*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "physical_damage_reduced_flat",
@@ -37356,7 +37356,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames((3000+100*(lvl-1))*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames((3000+100*(lvl-1))*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "elemental_or_physical_damage_to_weapon_as_magic",
@@ -37524,7 +37524,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames((2500+750*(lvl-1))*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames((2500+750*(lvl-1))*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "cold_damage",
@@ -37583,7 +37583,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames((750+ulvl*25)*(1+[[continuity]].{{skill_duration}}/100))"
+        "value0": "frames((750+ulvl*25)*(1+{{skill_duration}}/100))"
       }
     ],
     "description": [

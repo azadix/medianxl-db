@@ -287,8 +287,10 @@ export function recomputePlannerStatsFromSkillAllocations(character, ctx) {
     treeSkillsCache: treeSkillsCache && typeof treeSkillsCache === 'object' ? treeSkillsCache : {},
     stats: withBaseAttributeFormulaStats(
       {
-        ...(typeof character.getAllStatsWithoutSkillBonuses === 'function'
-          ? character.getAllStatsWithoutSkillBonuses()
+        // Include prior skill stat bonuses (e.g. Continuity's skill_duration) so
+        // formulas reading {{skill_duration}} see them on the next recompute.
+        ...(typeof character.getAllStats === 'function'
+          ? character.getAllStats()
           : character.getAllRawStats()),
       },
       character
@@ -456,9 +458,6 @@ export function recomputePlannerStatsFromSkillAllocations(character, ctx) {
     const catRow = catalogRowBySkillKey(store, internalKey);
     if (!catRow?.id) continue;
 
-    const isOSkill = (character.oSkills || []).some(
-      (r) => String(r?.skillName || '').trim() === String(internalKey)
-    );
     // Damage scales with the EFFECTIVE level: hard points plus soft levels from
     // "+# to All Skills", "+# to <Class> Skills", gear and relic bonuses.
     // `blvl` stays hard-only (synergies use baseLevel), `lvl` carries the soft.

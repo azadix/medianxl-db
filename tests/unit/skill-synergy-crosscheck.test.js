@@ -74,10 +74,7 @@ describe('skill-synergy crosscheck', () => {
         const got1 = Number(av?.value1);
         if (ekey === 'poison_dot') {
           // Poison displays the total (per-frame * ELen); getScalingValues returns that total,
-          // so it is not equal to the per-frame. Report only (verified separately vs game edmn).
-          console.log(
-            `poison ${id} blvl=${blvl} slvl=${slvl}: per-frame ${full0}-${full1} (syn ${synPct}) -> display total ${got0}-${got1}`
-          );
+          // so it is not equal to the per-frame. Verified separately vs game edmn.
           continue;
         }
         if (got0 !== full0 || got1 !== full1) {
@@ -87,7 +84,6 @@ describe('skill-synergy crosscheck', () => {
         }
       }
     }
-    if (mismatches.length) console.log(mismatches.join('\n'));
     expect(mismatches).toEqual([]);
   });
 

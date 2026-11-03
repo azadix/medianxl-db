@@ -20,6 +20,7 @@ import {
   getAllStats,
   getCharacterInstance,
   getEffectivePlannerLevel,
+  isConditionTriggerSkillAvailable,
   isSkillDisabled,
   isOSkillSlotDisabled
 } from '@/character/planner-core.js';
@@ -208,7 +209,13 @@ function buildSkillTooltipConditionHtml(skillData) {
     const visible = filterTooltipConditionsByGroup(conditions);
     if (visible.length === 0) return '';
 
-    const rows = visible.map((cond) => {
+    const visibleWithTrigger = visible.filter((cond) => {
+        const req = cond?.requiresSkill != null ? String(cond.requiresSkill).trim().toLowerCase() : '';
+        return !req || isConditionTriggerSkillAvailable(req);
+    });
+    if (visibleWithTrigger.length === 0) return '';
+
+    const rows = visibleWithTrigger.map((cond) => {
         const active = isConditionSelected(cond.key);
         const label = cond.name || formatConditionLabel(cond.key || '');
         const stateClass = active ? 'has-text-success' : '';

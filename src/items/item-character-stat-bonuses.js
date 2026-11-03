@@ -183,6 +183,9 @@ const EXTRA_LINE_PATTERNS = [
   },
   { re: /^Physical Resist \+?([+-]?\d+(?:\.\d+)?)%$/i, key: 'physical_resistance' },
   { re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+Physical Resist$/i, key: 'physical_resistance' },
+  // Continuity mastery / relic "+x% Skill Duration" -> skill_duration.
+  { re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+Skill Duration$/i, key: 'skill_duration' },
+  { re: /^Skill Duration\s*\+?([+-]?\d+(?:\.\d+)?)%$/i, key: 'skill_duration' },
   {
     re: /^Weapon Physical Damage \+?([+-]?\d+(?:\.\d+)?)%$/i,
     key: 'enhanced_weapon_damage',

@@ -1,4 +1,4 @@
-﻿import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { fileURLToPath, URL } from 'node:url';
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
@@ -28,5 +28,7 @@ export default defineConfig({
   test: {
     environment: 'node',
     include: ['tests/unit/**/*.test.js', 'tests/data/**/*.test.js'],
+    // Only surface console output from failing tests; passing tests stay quiet.
+    silent: 'passed-only',
   },
 });
