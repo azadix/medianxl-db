@@ -116,6 +116,10 @@ describe('skill references', () => {
       for (const [text, origin] of sources) {
         if (!text) continue;
         for (const [, statKey] of findAll(COMPOUND_REF_RE, text)) {
+          // Engine calcs ([[x]].{{clcN}}/{{pstN}}/{{astN}}/{{synN}}) and the referenced
+          // skill's own level tokens resolve via resolveEngineFormula, not stats.json.
+          if (/^(?:clc|pst|ast|syn)\d+$/i.test(statKey)) continue;
+          if (/^(?:lvl|blvl|slvl)$/i.test(statKey)) continue;
           if (!statsMap.has(statKey.toLowerCase())) {
             failures.push(`${sid} [${origin}]: compound stat '${statKey}' not in stats.json`);
           }

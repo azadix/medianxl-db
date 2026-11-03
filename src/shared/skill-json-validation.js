@@ -20,6 +20,9 @@ export const KNOWN_FORMULA_FUNCTIONS = Object.freeze(
     'if',
     'ln',
     'dm',
+    'truncdiv',
+    'bl',
+    'bd',
   ])
 );
 

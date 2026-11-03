@@ -181,6 +181,19 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "5"
+      },
+      {
+        "statKey": "magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "pst1",
+        "value1": "pst2"
+      },
+      {
+        "statKey": "life",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(truncdiv((((((133+(((lvl-1))*45)))*((100+200)))*((100+(truncdiv((truncdiv((((truncdiv((({{summoned_minion_life}}*((100-0)))),100))*((10000+(ulvl*ulvl))))),10000)),((1+[[from_the_abyss]].{{clc2}})))))))*((100+truncdiv(ulvl,2)))),1000000))"
       }
     ],
     "description": [
@@ -742,6 +755,12 @@
         "hitShift": 7,
         "rawValue0": "2",
         "rawValue1": "4"
+      },
+      {
+        "statKey": "range",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(10+((lvl-1)))"
       }
     ],
     "description": [
@@ -1191,6 +1210,12 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "dm(10,70,blvl)"
+      },
+      {
+        "statKey": "totem_life",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "clc3"
       }
     ],
     "description": [
@@ -1581,6 +1606,12 @@
         "hitShift": 2,
         "rawValue0": "204+3*(lvl-1)",
         "rawValue1": "234+5*(lvl-1)"
+      },
+      {
+        "statKey": "projectiles",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "clc1"
       }
     ],
     "description": [
@@ -1802,6 +1833,12 @@
         "value0": "45",
         "value1": "9",
         "value2": "5"
+      },
+      {
+        "statKey": "projectiles",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "clc1"
       }
     ],
     "description": [
@@ -1840,6 +1877,12 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "75"
+      },
+      {
+        "statKey": "projectiles",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(3*(truncdiv(((8+(((lvl-1))*1))),2)))"
       }
     ],
     "description": [
@@ -2357,6 +2400,12 @@
         "hitShift": 3,
         "rawValue0": "150+if(lvl<=1,0,if(lvl<=8,48*(lvl-1),if(lvl<=16,7*48+48*(lvl-8),if(lvl<=22,7*48+8*48+24*(lvl-16),if(lvl<=28,7*48+8*48+6*24+24*(lvl-22),7*48+8*48+6*24+6*24+24*(lvl-28))))))",
         "rawValue1": "180+if(lvl<=1,0,if(lvl<=8,60*(lvl-1),if(lvl<=16,7*60+40*(lvl-8),if(lvl<=22,7*60+8*40+28*(lvl-16),if(lvl<=28,7*60+8*40+6*28+28*(lvl-22),7*60+8*40+6*28+6*28+28*(lvl-28))))))"
+      },
+      {
+        "statKey": "bonus_defense",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "ast2"
       }
     ],
     "description": [
@@ -2763,6 +2812,12 @@
         "hitShift": 7,
         "rawValue0": "3+if(lvl<=1,0,if(lvl<=8,3*(lvl-1),if(lvl<=16,7*3+4*(lvl-8),if(lvl<=22,7*3+8*4+5*(lvl-16),if(lvl<=28,7*3+8*4+6*5+6*(lvl-22),7*3+8*4+6*5+6*6+7*(lvl-28))))))",
         "rawValue1": "3+if(lvl<=1,0,if(lvl<=8,3*(lvl-1),if(lvl<=16,7*3+4*(lvl-8),if(lvl<=22,7*3+8*4+5*(lvl-16),if(lvl<=28,7*3+8*4+6*5+6*(lvl-22),7*3+8*4+6*5+6*6+7*(lvl-28))))))"
+      },
+      {
+        "statKey": "bonus_magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(floor(truncdiv(((3+if((lvl<=1),0,if((lvl<=8),(3*((lvl-1))),if((lvl<=16),((7*3)+(4*((lvl-8)))),if((lvl<=22),(((7*3)+(8*4))+(5*((lvl-16)))),if((lvl<=28),((((7*3)+(8*4))+(6*5))+(6*((lvl-22)))),(((((7*3)+(8*4))+(6*5))+(6*6))+(7*((lvl-28))))))))))),2)))"
       }
     ],
     "description": [
@@ -2989,6 +3044,12 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "min(25*[[bear_companion]].{{minions}},50)"
+      },
+      {
+        "statKey": "life",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "((truncdiv((((((440+(((lvl-1))*44)))*((100+0)))*((100+(truncdiv(((((truncdiv({{summoned_minion_life}},2)+min((((5+blvl))*((5+blvl))),900)))*((50+max(50,(ulvl+10)))))),200)))))*((100+truncdiv(ulvl,2)))),1000000))*3)"
       }
     ],
     "description": [
@@ -3290,7 +3351,8 @@
         "statKey": "minions",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "Blade Spirits"
+        "value0": "Blade Spirits",
+        "value1": "4"
       },
       {
         "statKey": "mana_cost",
@@ -3309,6 +3371,13 @@
         "hitShift": 7,
         "rawValue0": "1",
         "rawValue1": "1"
+      },
+      {
+        "statKey": "damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((((1+pst1))*((100+ast1)))),100)",
+        "value1": "truncdiv(((((11+pst1))*((100+ast1)))),100)"
       }
     ],
     "description": [
@@ -3481,6 +3550,18 @@
         "hitShift": 3,
         "rawValue0": "24+if(lvl<=1,0,if(lvl<=8,4*(lvl-1),if(lvl<=16,7*4+2*(lvl-8),if(lvl<=22,7*4+8*2+2*(lvl-16),if(lvl<=28,7*4+8*2+6*2+2*(lvl-22),7*4+8*2+6*2+6*2+2*(lvl-28))))))",
         "rawValue1": "96+if(lvl<=1,0,if(lvl<=8,16*(lvl-1),if(lvl<=16,7*16+8*(lvl-8),if(lvl<=22,7*16+8*8+8*(lvl-16),if(lvl<=28,7*16+8*8+6*8+8*(lvl-22),7*16+8*8+6*8+6*8+8*(lvl-28))))))"
+      },
+      {
+        "statKey": "stun_length",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(25)"
+      },
+      {
+        "statKey": "cooldown",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(500,((1+min(1,syn1))))"
       }
     ],
     "description": [
@@ -3917,6 +3998,19 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "if(blvl>=20,67,0)"
+      },
+      {
+        "statKey": "damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((((1+pst1))*((100+ast1)))),100)",
+        "value1": "truncdiv(((((11+pst2))*((100+ast1)))),100)"
+      },
+      {
+        "statKey": "life",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(truncdiv((((((40+(((lvl-1))*40)))*((100+200)))*((100+(truncdiv((((truncdiv(((((((1+[[bend_the_shadows]].{{clc1}}))*{{summoned_minion_life}}))*((100-0)))),100))*((10000+(ulvl*ulvl))))),10000)))))*((100+truncdiv(ulvl,2)))),1000000))"
       }
     ],
     "description": [
@@ -4064,6 +4158,24 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames((3000+50*(lvl-1))*(1+[[continuity]].{{skill_duration}}/100))"
+      },
+      {
+        "statKey": "elemental_spell_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(((truncdiv(((((220*lvl))*((25-4)))),((100*((lvl+50)))))+4))+{{bonus_elemental_damage_to_bloodlust}})"
+      },
+      {
+        "statKey": "physical_damage_percent",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "ast1"
+      },
+      {
+        "statKey": "pmsd",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(truncdiv(((((220*lvl))*((25-4)))),((100*((lvl+50)))))+4)"
       }
     ],
     "description": [
@@ -4222,6 +4334,12 @@
         "hitShift": 3,
         "rawValue0": "180+if(lvl<=1,0,if(lvl<=8,17*(lvl-1),if(lvl<=16,7*17+11*(lvl-8),if(lvl<=22,7*17+8*11+11*(lvl-16),if(lvl<=28,7*17+8*11+6*11+11*(lvl-22),7*17+8*11+6*11+6*11+10*(lvl-28))))))",
         "rawValue1": "200+if(lvl<=1,0,if(lvl<=8,19*(lvl-1),if(lvl<=16,7*19+13*(lvl-8),if(lvl<=22,7*19+8*13+13*(lvl-16),if(lvl<=28,7*19+8*13+6*13+13*(lvl-22),7*19+8*13+6*13+6*13+12*(lvl-28))))))"
+      },
+      {
+        "statKey": "duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(75+(((lvl-1))*2))"
       }
     ],
     "description": [
@@ -4459,6 +4577,12 @@
         "hitShift": 8,
         "rawValue0": "20+if(lvl<=1,0,if(lvl<=8,5*(lvl-1),if(lvl<=16,7*5+3*(lvl-8),if(lvl<=22,7*5+8*3+3*(lvl-16),if(lvl<=28,7*5+8*3+6*3+3*(lvl-22),7*5+8*3+6*3+6*3+3*(lvl-28))))))",
         "rawValue1": "32+if(lvl<=1,0,if(lvl<=8,8*(lvl-1),if(lvl<=16,7*8+4*(lvl-8),if(lvl<=22,7*8+8*4+4*(lvl-16),if(lvl<=28,7*8+8*4+6*4+4*(lvl-22),7*8+8*4+6*4+6*4+4*(lvl-28))))))"
+      },
+      {
+        "statKey": "average_fire_dot",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv((((20+if(lvl<=1,0,if(lvl<=8,5*(lvl-1),if(lvl<=16,7*5+3*(lvl-8),if(lvl<=22,7*5+8*3+3*(lvl-16),if(lvl<=28,7*5+8*3+6*3+3*(lvl-22),7*5+8*3+6*3+6*3+3*(lvl-28))))))))+((32+if(lvl<=1,0,if(lvl<=8,8*(lvl-1),if(lvl<=16,7*8+4*(lvl-8),if(lvl<=22,7*8+8*4+4*(lvl-16),if(lvl<=28,7*8+8*4+6*4+4*(lvl-22),7*8+8*4+6*4+6*4+4*(lvl-28))))))))),2)"
       }
     ],
     "description": [
@@ -4631,6 +4755,30 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "4"
+      },
+      {
+        "statKey": "elemental_spell_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((30+ulvl)),3)"
+      },
+      {
+        "statKey": "physical_damage_percent",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "ast1"
+      },
+      {
+        "statKey": "pmsd",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((30+ulvl)),3)"
+      },
+      {
+        "statKey": "enrage_duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100"
       }
     ],
     "description": [
@@ -4858,6 +5006,12 @@
         "hitShift": 3,
         "rawValue0": "100+if(lvl<=1,0,if(lvl<=8,10*(lvl-1),if(lvl<=16,7*10+5*(lvl-8),if(lvl<=22,7*10+8*5+5*(lvl-16),if(lvl<=28,7*10+8*5+6*5+5*(lvl-22),7*10+8*5+6*5+6*5+5*(lvl-28))))))",
         "rawValue1": "240+if(lvl<=1,0,if(lvl<=8,24*(lvl-1),if(lvl<=16,7*24+12*(lvl-8),if(lvl<=22,7*24+8*12+12*(lvl-16),if(lvl<=28,7*24+8*12+6*12+12*(lvl-22),7*24+8*12+6*12+6*12+12*(lvl-28))))))"
+      },
+      {
+        "statKey": "fireballs",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "32"
       }
     ],
     "description": [
@@ -5070,6 +5224,24 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames((75+25*(lvl-1))*(1+[[continuity]].{{skill_duration}}/100))"
+      },
+      {
+        "statKey": "bonus_defense",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "((25+(((lvl-1))*10)))"
+      },
+      {
+        "statKey": "physical_damage_percent",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "((25+(((lvl-1))*5)))"
+      },
+      {
+        "statKey": "physical_resistance",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(truncdiv(((((220*lvl))*((40-4)))),((100*((lvl+50)))))+4)"
       }
     ],
     "description": [
@@ -5196,6 +5368,25 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "min(6*[[champions_of_the_sun]].{{minions}},50)"
+      },
+      {
+        "statKey": "life",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((200+((lvl-1)*40))*(100+200)*(100+(truncdiv((({{summoned_minion_life}}*((100-0)))),100)))*(100+truncdiv(ulvl,2))),1000000)*4"
+      },
+      {
+        "statKey": "attack_rating",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((((50*((lvl-1))))*((100+{{summoned_minion_attack_rating}})))),100)"
+      },
+      {
+        "statKey": "damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((((1+pst1))*((100+ast2)))),100)",
+        "value1": "truncdiv(((((500+pst1))*((100+ast2)))),100)"
       }
     ],
     "description": [
@@ -5469,6 +5660,12 @@
         "value0": "110",
         "value1": "-4",
         "value2": "5"
+      },
+      {
+        "statKey": "cooldown",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "max((259-((truncdiv(((((220*((lvl+1))))*((200-0)))),((100*((((lvl+1))+50)))))+0))),5)"
       }
     ],
     "description": [
@@ -5576,6 +5773,12 @@
         "hitShift": 8,
         "rawValue0": "200",
         "rawValue1": "300"
+      },
+      {
+        "statKey": "cooldown",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "max((((160-(lvl*5)))-ast1),0)"
       }
     ],
     "description": [
@@ -5707,6 +5910,12 @@
         "hitShift": 3,
         "rawValue0": "68+if(lvl<=1,0,if(lvl<=8,35*(lvl-1),if(lvl<=16,7*35+17*(lvl-8),if(lvl<=22,7*35+8*17+17*(lvl-16),if(lvl<=28,7*35+8*17+6*17+17*(lvl-22),7*35+8*17+6*17+6*17+17*(lvl-28))))))",
         "rawValue1": "86+if(lvl<=1,0,if(lvl<=8,42*(lvl-1),if(lvl<=16,7*42+21*(lvl-8),if(lvl<=22,7*42+8*21+21*(lvl-16),if(lvl<=28,7*42+8*21+6*21+21*(lvl-22),7*42+8*21+6*21+6*21+21*(lvl-28))))))"
+      },
+      {
+        "statKey": "cold_spell_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "ast1"
       }
     ],
     "description": [
@@ -5996,6 +6205,18 @@
         "value0": "185",
         "value1": "31",
         "value2": "5"
+      },
+      {
+        "statKey": "cooldown",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(350)"
+      },
+      {
+        "statKey": "flee_duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "((75+(((lvl-1))*5)))"
       }
     ],
     "description": [
@@ -7057,6 +7278,25 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames((500+25*(lvl-1))*(1+[[continuity]].{{skill_duration}}/100))"
+      },
+      {
+        "statKey": "magic_damage_to_party_weapons",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(0)",
+        "value1": "(0)"
+      },
+      {
+        "statKey": "attack_speed",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(truncdiv(((((220*lvl))*((50-10)))),((100*((lvl+50)))))+10)"
+      },
+      {
+        "statKey": "physical_damage_percent",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "ast1"
       }
     ],
     "description": [
@@ -7640,6 +7880,12 @@
         "hitShift": 7,
         "rawValue0": "6+6*(lvl-1)",
         "rawValue1": "6+6*(lvl-1)"
+      },
+      {
+        "statKey": "bonus_magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(floor(truncdiv(((6+(6*((lvl-1))))),2)))"
       }
     ],
     "description": [
@@ -7956,6 +8202,18 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "min(6*[[defender_spirit]].{{minions}},50)"
+      },
+      {
+        "statKey": "damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((pst1*((100+ast1)))),100)"
+      },
+      {
+        "statKey": "attack_rating",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(((100*max((lvl-1),0)))+200)"
       }
     ],
     "description": [
@@ -8113,6 +8371,12 @@
         "value0": "176",
         "value1": "22",
         "value2": "5"
+      },
+      {
+        "statKey": "movement_speed",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "((25+(((lvl-1))*5)))"
       }
     ],
     "description": [
@@ -8739,6 +9003,24 @@
         "value0": "220",
         "value1": "0",
         "value2": "5"
+      },
+      {
+        "statKey": "radius",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "2"
+      },
+      {
+        "statKey": "duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "500"
+      },
+      {
+        "statKey": "cooldown",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "max((155-((truncdiv(((((220*lvl))*((100-0)))),((100*((lvl+50)))))+0))),5)"
       }
     ],
     "description": [
@@ -9440,6 +9722,12 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "145"
+      },
+      {
+        "statKey": "bonus_magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "15"
       }
     ],
     "description": [
@@ -9888,6 +10176,24 @@
         "value0": "761",
         "value1": "95",
         "value2": "5"
+      },
+      {
+        "statKey": "innate_elemental_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "pst2"
+      },
+      {
+        "statKey": "party_elemental_spell_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "((5+(((lvl-1))*2)))"
+      },
+      {
+        "statKey": "life",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(truncdiv((((((50+(((lvl-1))*0)))*((100+0)))*((100+(truncdiv([[apprenticeship]].{{clc2}},4)))))*((100+truncdiv(ulvl,2)))),1000000))"
       }
     ],
     "description": [
@@ -10030,6 +10336,12 @@
         "value0": "158",
         "value1": "53",
         "value2": "5"
+      },
+      {
+        "statKey": "life",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((350+((lvl-1)*75))*(100+200)*(100+(({{summoned_minion_life}}+(15*blvl))))*(100+truncdiv(ulvl,2))),1000000)"
       }
     ],
     "description": [
@@ -10141,6 +10453,12 @@
         "hitShift": 3,
         "rawValue0": "44+if(lvl<=1,0,if(lvl<=8,15*(lvl-1),if(lvl<=16,7*15+14*(lvl-8),if(lvl<=22,7*15+8*14+8*(lvl-16),if(lvl<=28,7*15+8*14+6*8+8*(lvl-22),7*15+8*14+6*8+6*8+6*(lvl-28))))))",
         "rawValue1": "52+if(lvl<=1,0,if(lvl<=8,22*(lvl-1),if(lvl<=16,7*22+18*(lvl-8),if(lvl<=22,7*22+8*18+11*(lvl-16),if(lvl<=28,7*22+8*18+6*11+11*(lvl-22),7*22+8*18+6*11+6*11+8*(lvl-28))))))"
+      },
+      {
+        "statKey": "average_fire_dot",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((48+if(lvl<=1,0,if(lvl<=8,18*(lvl-1),if(lvl<=16,7*18+16*(lvl-8),if(lvl<=22,7*18+8*16+9*(lvl-16),if(lvl<=28,7*18+8*16+6*9+9*(lvl-22),7*18+8*16+6*9+6*9+7*(lvl-28))))))))+((391+if(lvl<=1,0,if(lvl<=8,18*(lvl-1),if(lvl<=16,7*18+16*(lvl-8),if(lvl<=22,7*18+8*16+9*(lvl-16),if(lvl<=28,7*18+8*16+6*9+9*(lvl-22),7*18+8*16+6*9+6*9+7*(lvl-28)))))))),2)"
       }
     ],
     "description": [
@@ -10563,6 +10881,12 @@
         "hitShift": 6,
         "rawValue0": "4+if(lvl<=1,0,if(lvl<=8,3*(lvl-1),if(lvl<=16,7*3+3*(lvl-8),if(lvl<=22,7*3+8*3+2*(lvl-16),if(lvl<=28,7*3+8*3+6*2+2*(lvl-22),7*3+8*3+6*2+6*2+1*(lvl-28))))))",
         "rawValue1": "4+if(lvl<=1,0,if(lvl<=8,3*(lvl-1),if(lvl<=16,7*3+3*(lvl-8),if(lvl<=22,7*3+8*3+2*(lvl-16),if(lvl<=28,7*3+8*3+6*2+2*(lvl-22),7*3+8*3+6*2+6*2+1*(lvl-28))))))"
+      },
+      {
+        "statKey": "bonus_physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "12"
       }
     ],
     "description": [
@@ -10695,6 +11019,12 @@
         "hitShift": 3,
         "rawValue0": "220+if(lvl<=1,0,if(lvl<=8,44*(lvl-1),if(lvl<=16,7*44+22*(lvl-8),if(lvl<=22,7*44+8*22+22*(lvl-16),if(lvl<=28,7*44+8*22+6*22+22*(lvl-22),7*44+8*22+6*22+6*22+22*(lvl-28))))))",
         "rawValue1": "220+if(lvl<=1,0,if(lvl<=8,44*(lvl-1),if(lvl<=16,7*44+22*(lvl-8),if(lvl<=22,7*44+8*22+22*(lvl-16),if(lvl<=28,7*44+8*22+6*22+22*(lvl-22),7*44+8*22+6*22+6*22+22*(lvl-28))))))"
+      },
+      {
+        "statKey": "duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(125)"
       }
     ],
     "description": [
@@ -11466,6 +11796,19 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(min(10*([[fire_elementals]].{{minions}}+1),100)*(1-[[unstable_essence]]*0.20))"
+      },
+      {
+        "statKey": "life",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "((truncdiv((((((60+(((lvl-1))*21)))*((100+200)))*((100+(truncdiv((({{summoned_minion_life}}+(blvl*25))),(([[unstable_essence]]+1)))))))*((100+truncdiv(ulvl,2)))),1000000))*max(1,ast3))"
+      },
+      {
+        "statKey": "damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((((1+pst1))*((100+ast2)))),100)",
+        "value1": "truncdiv(((((11+pst1))*((100+ast2)))),100)"
       }
     ],
     "description": [
@@ -11933,6 +12276,18 @@
         "hitShift": 8,
         "rawValue0": "100",
         "rawValue1": "100"
+      },
+      {
+        "statKey": "rockets",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "clc1"
+      },
+      {
+        "statKey": "attack_rating_percent",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "toht"
       }
     ],
     "description": [
@@ -12412,6 +12767,12 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "30"
+      },
+      {
+        "statKey": "attack_rating_percent",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "toht"
       }
     ],
     "description": [
@@ -13353,6 +13714,12 @@
         "hitShift": 8,
         "rawValue0": "30+if(lvl<=1,0,if(lvl<=8,8*(lvl-1),if(lvl<=16,7*8+7*(lvl-8),if(lvl<=22,7*8+8*7+7*(lvl-16),if(lvl<=28,7*8+8*7+6*7+7*(lvl-22),7*8+8*7+6*7+6*7+7*(lvl-28))))))",
         "rawValue1": "100+if(lvl<=1,0,if(lvl<=8,14*(lvl-1),if(lvl<=16,7*14+13*(lvl-8),if(lvl<=22,7*14+8*13+13*(lvl-16),if(lvl<=28,7*14+8*13+6*13+13*(lvl-22),7*14+8*13+6*13+6*13+13*(lvl-28))))))"
+      },
+      {
+        "statKey": "duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(75)"
       }
     ],
     "description": [
@@ -13555,6 +13922,18 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "20"
+      },
+      {
+        "statKey": "elemental_spell_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(((truncdiv(((((220*lvl))*((35-2)))),((100*((lvl+50)))))+2))+{{bonus_elemental_damage_to_mark_of_the_wild}})"
+      },
+      {
+        "statKey": "physical_damage_percent",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "ast1"
       }
     ],
     "description": [
@@ -13846,6 +14225,12 @@
         "value0": "422",
         "value1": "26",
         "value2": "5"
+      },
+      {
+        "statKey": "life",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((999+((lvl-1)*100))*(100+200)*(100+(truncdiv((({{summoned_minion_life}}*((100-0)))),100)))*(100+truncdiv(ulvl,2))),1000000)"
       }
     ],
     "description": [
@@ -13925,6 +14310,12 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "max(max({{summoned_minion_damage}}/2,{{poison_spell_damage}})-1,1)"
+      },
+      {
+        "statKey": "punishers",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "clc1"
       }
     ],
     "description": [
@@ -14272,6 +14663,18 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "min(6*[[guardian_spirit]].{{minions}},50)"
+      },
+      {
+        "statKey": "damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((pst1*((100+ast1)))),100)"
+      },
+      {
+        "statKey": "attack_rating",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(((150*max((lvl-1),0)))+100)"
       }
     ],
     "description": [
@@ -14656,6 +15059,12 @@
         "value0": "125",
         "value1": "50",
         "value2": "5"
+      },
+      {
+        "statKey": "hammers_per_cast",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "if((truncdiv(clc3,2)==truncdiv(((clc3+1)),2)),truncdiv(clc3,2),(truncdiv(clc3,2)+1))"
       }
     ],
     "description": [
@@ -14861,6 +15270,19 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "min(6*[[harvesters]].{{minions}},50)"
+      },
+      {
+        "statKey": "life",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((240+((lvl-1)*64))*(100+200)*(100+((([[harvest]]*15)+{{summoned_minion_life}})))*(100+truncdiv(ulvl,2))),1000000)*2"
+      },
+      {
+        "statKey": "damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((((1+pst1))*((100+ast2)))),100)",
+        "value1": "truncdiv(((((11+pst1))*((100+ast2)))),100)"
       }
     ],
     "description": [
@@ -14993,6 +15415,18 @@
         "hitShift": 8,
         "rawValue0": "10+if(lvl<=1,0,if(lvl<=8,12*(lvl-1),if(lvl<=16,7*12+14*(lvl-8),if(lvl<=22,7*12+8*14+16*(lvl-16),if(lvl<=28,7*12+8*14+6*16+18*(lvl-22),7*12+8*14+6*16+6*18+20*(lvl-28))))))",
         "rawValue1": "10+if(lvl<=1,0,if(lvl<=8,12*(lvl-1),if(lvl<=16,7*12+14*(lvl-8),if(lvl<=22,7*12+8*14+16*(lvl-16),if(lvl<=28,7*12+8*14+6*16+18*(lvl-22),7*12+8*14+6*16+6*18+20*(lvl-28))))))"
+      },
+      {
+        "statKey": "bonus_magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "((10+if((lvl<=1),0,if((lvl<=8),(12*((lvl-1))),if((lvl<=16),((7*12)+(14*((lvl-8)))),if((lvl<=22),(((7*12)+(8*14))+(16*((lvl-16)))),if((lvl<=28),((((7*12)+(8*14))+(6*16))+(18*((lvl-22)))),(((((7*12)+(8*14))+(6*16))+(6*18))+(20*((lvl-28)))))))))))"
+      },
+      {
+        "statKey": "converts_phys_to_magic",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((((110*lvl))*100)),((100*((lvl+40)))))"
       }
     ],
     "description": [
@@ -15376,6 +15810,13 @@
         "hitShift": 3,
         "rawValue0": "116+20*(lvl-1)",
         "rawValue1": "172+if(lvl<=1,0,if(lvl<=8,26*(lvl-1),if(lvl<=16,7*26+27*(lvl-8),if(lvl<=22,7*26+8*27+27*(lvl-16),if(lvl<=28,7*26+8*27+6*27+27*(lvl-22),7*26+8*27+6*27+6*27+27*(lvl-28))))))"
+      },
+      {
+        "statKey": "bonus_fire_damage_to_weapons",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "pst1",
+        "value1": "pst2"
       }
     ],
     "description": [
@@ -15438,6 +15879,12 @@
         "hitShift": 7,
         "rawValue0": "10000",
         "rawValue1": "10000"
+      },
+      {
+        "statKey": "cooldown",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(125)"
       }
     ],
     "description": [
@@ -15726,6 +16173,12 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "range(12)"
+      },
+      {
+        "statKey": "bonus_physical_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "clc3"
       }
     ],
     "description": [
@@ -16081,6 +16534,25 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "min(6*[[ice_elementals]].{{minions}},50)"
+      },
+      {
+        "statKey": "life",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((160+((lvl-1)*29))*(100+200)*(100+(truncdiv((((({{summoned_minion_life}}+ulvl))*((100+(blvl*10))))),100)))*(100+truncdiv(ulvl,2))),1000000)*2"
+      },
+      {
+        "statKey": "damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((((1+pst1))*((100+ast2)))),100)",
+        "value1": "truncdiv(((((11+pst1))*((100+ast2)))),100)"
+      },
+      {
+        "statKey": "attack_rating",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(((300*max((lvl-1),0)))+200)"
       }
     ],
     "description": [
@@ -16344,6 +16816,19 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "5*lvl"
+      },
+      {
+        "statKey": "bonus_fire_damage_to_weapons",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "[[ignis_fatuus]].{{pst2}}",
+        "value1": "[[ignis_fatuus]].{{pst3}}"
+      },
+      {
+        "statKey": "fire_resistance",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "[[ignis_fatuus]].{{pst4}}"
       }
     ],
     "description": [
@@ -16507,6 +16992,12 @@
         "hitShift": 3,
         "rawValue0": "40+if(lvl<=1,0,if(lvl<=8,8*(lvl-1),if(lvl<=16,7*8+4*(lvl-8),if(lvl<=22,7*8+8*4+4*(lvl-16),if(lvl<=28,7*8+8*4+6*4+4*(lvl-22),7*8+8*4+6*4+6*4+4*(lvl-28))))))",
         "rawValue1": "120+if(lvl<=1,0,if(lvl<=8,24*(lvl-1),if(lvl<=16,7*24+12*(lvl-8),if(lvl<=22,7*24+8*12+12*(lvl-16),if(lvl<=28,7*24+8*12+6*12+12*(lvl-22),7*24+8*12+6*12+6*12+12*(lvl-28))))))"
+      },
+      {
+        "statKey": "fireballs",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "32"
       }
     ],
     "description": [
@@ -16930,6 +17421,19 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "500+187.5*lvl"
+      },
+      {
+        "statKey": "life",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(clc3,64)"
+      },
+      {
+        "statKey": "damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((((1+pst2))*((100+ast1)))),100)",
+        "value1": "truncdiv(((((11+pst2))*((100+ast1)))),100)"
       }
     ],
     "description": [
@@ -17108,6 +17612,13 @@
         "value0": "1700",
         "value1": "0",
         "value2": "6"
+      },
+      {
+        "statKey": "fire_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((((1+pst2))*((100+ast1)))),100)",
+        "value1": "truncdiv(((((11+pst2))*((100+ast1)))),100)"
       }
     ],
     "description": [
@@ -17437,6 +17948,12 @@
         "hitShift": 7,
         "rawValue0": "9+9*(lvl-1)",
         "rawValue1": "9+9*(lvl-1)"
+      },
+      {
+        "statKey": "bonus_magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(floor(truncdiv(((9+(9*((lvl-1))))),2)))"
       }
     ],
     "description": [
@@ -17780,6 +18297,12 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(15000*(1+[[continuity]].{{skill_duration}}/100))"
+      },
+      {
+        "statKey": "activation_frequency_multiplier",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "45"
       }
     ],
     "description": [
@@ -17901,6 +18424,12 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "max(min(ln(7,1,blvl)/4,9),1)"
+      },
+      {
+        "statKey": "physical_damage_percent",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(0)"
       }
     ],
     "description": [
@@ -18245,6 +18774,12 @@
         "hitShift": 7,
         "rawValue0": "1",
         "rawValue1": "800+if(lvl<=1,0,if(lvl<=8,50*(lvl-1),if(lvl<=16,7*50+55*(lvl-8),if(lvl<=22,7*50+8*55+60*(lvl-16),if(lvl<=28,7*50+8*55+6*60+65*(lvl-22),7*50+8*55+6*60+6*65+70*(lvl-28))))))"
+      },
+      {
+        "statKey": "releases_bolts",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "((1+(((lvl-1))*1)))"
       }
     ],
     "description": [
@@ -19160,6 +19695,18 @@
         "value0": "264",
         "value1": "31",
         "value2": "6"
+      },
+      {
+        "statKey": "party_mana_recovery_rate",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "((10+(((lvl-1))*2)))"
+      },
+      {
+        "statKey": "life",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(truncdiv((((((50+(((lvl-1))*0)))*((100+0)))*((100+(truncdiv([[apprenticeship]].{{clc2}},4)))))*((100+truncdiv(ulvl,2)))),1000000))"
       }
     ],
     "description": [
@@ -19212,6 +19759,24 @@
         "value0": "440",
         "value1": "0",
         "value2": "5"
+      },
+      {
+        "statKey": "attack_speed",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "ast6"
+      },
+      {
+        "statKey": "elemental_spell_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "ast2"
+      },
+      {
+        "statKey": "physical_damage_percent",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "ast1"
       }
     ],
     "description": [
@@ -19516,6 +20081,12 @@
         "hitShift": 3,
         "rawValue0": "140+if(lvl<=1,0,if(lvl<=8,28*(lvl-1),if(lvl<=16,7*28+14*(lvl-8),if(lvl<=22,7*28+8*14+14*(lvl-16),if(lvl<=28,7*28+8*14+6*14+14*(lvl-22),7*28+8*14+6*14+6*14+14*(lvl-28))))))",
         "rawValue1": "180+if(lvl<=1,0,if(lvl<=8,36*(lvl-1),if(lvl<=16,7*36+18*(lvl-8),if(lvl<=22,7*36+8*18+18*(lvl-16),if(lvl<=28,7*36+8*18+6*18+18*(lvl-22),7*36+8*18+6*18+6*18+18*(lvl-28))))))"
+      },
+      {
+        "statKey": "duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(125)"
       }
     ],
     "description": [
@@ -20293,6 +20864,13 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "frames(10*[[night_hawks]].{{minions}})"
+      },
+      {
+        "statKey": "damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv((((truncdiv(((((1+pst1))*((100+ast1)))),100))*88)),128)",
+        "value1": "truncdiv((((truncdiv(((((11+pst2))*((100+ast1)))),100))*88)),128)"
       }
     ],
     "description": [
@@ -20349,6 +20927,24 @@
         "value0": "106",
         "value1": "22",
         "value2": "5"
+      },
+      {
+        "statKey": "enemy_physical_resistance",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "ast3"
+      },
+      {
+        "statKey": "enemy_movement_speed",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "((-1)*min((truncdiv(((((220*lvl))*((40-9)))),((100*((lvl+50)))))+9),75))"
+      },
+      {
+        "statKey": "radius",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "((5+(((lvl-1))*1)))"
       }
     ],
     "description": [
@@ -20462,6 +21058,12 @@
         "hitShift": 7,
         "rawValue0": "2+if(lvl<=1,0,if(lvl<=8,1*(lvl-1),if(lvl<=16,7*1+2*(lvl-8),if(lvl<=22,7*1+8*2+5*(lvl-16),if(lvl<=28,7*1+8*2+6*5+7*(lvl-22),7*1+8*2+6*5+6*7+9*(lvl-28))))))",
         "rawValue1": "2+if(lvl<=1,0,if(lvl<=8,1*(lvl-1),if(lvl<=16,7*1+2*(lvl-8),if(lvl<=22,7*1+8*2+5*(lvl-16),if(lvl<=28,7*1+8*2+6*5+7*(lvl-22),7*1+8*2+6*5+6*7+9*(lvl-28))))))"
+      },
+      {
+        "statKey": "bonus_magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(floor(truncdiv(((2+if((lvl<=1),0,if((lvl<=8),(1*((lvl-1))),if((lvl<=16),((7*1)+(2*((lvl-8)))),if((lvl<=22),(((7*1)+(8*2))+(5*((lvl-16)))),if((lvl<=28),((((7*1)+(8*2))+(6*5))+(7*((lvl-22)))),(((((7*1)+(8*2))+(6*5))+(6*7))+(9*((lvl-28))))))))))),2)))"
       }
     ],
     "description": [
@@ -20566,6 +21168,12 @@
         "hitShift": 3,
         "rawValue0": "16",
         "rawValue1": "112+if(lvl<=1,0,if(lvl<=8,28*(lvl-1),if(lvl<=16,7*28+14*(lvl-8),if(lvl<=22,7*28+8*14+14*(lvl-16),if(lvl<=28,7*28+8*14+6*14+14*(lvl-22),7*28+8*14+6*14+6*14+14*(lvl-28))))))"
+      },
+      {
+        "statKey": "length_of_fuse",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(50)"
       }
     ],
     "description": [
@@ -20714,6 +21322,12 @@
         "hitShift": 7,
         "rawValue0": "10+10*(lvl-1)",
         "rawValue1": "10+10*(lvl-1)"
+      },
+      {
+        "statKey": "converts_phys_to_fire",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "100"
       }
     ],
     "description": [
@@ -20865,6 +21479,12 @@
         "value0": "5500",
         "value1": "0",
         "value2": "7"
+      },
+      {
+        "statKey": "cooldown",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(40)"
       }
     ],
     "description": [
@@ -21178,6 +21798,25 @@
         "value0": "900",
         "value1": "90",
         "value2": "6"
+      },
+      {
+        "statKey": "life",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((624+((lvl-1)*115))*(100+200)*(100+(truncdiv((((truncdiv((({{summoned_minion_life}}*((100-0)))),100))*((10000+truncdiv(((ulvl*ulvl)),2))))),10000)))*(100+truncdiv(ulvl,2))),1000000)*2"
+      },
+      {
+        "statKey": "damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((((1+pst1))*((100+ast1)))),100)",
+        "value1": "truncdiv(((((11+pst1))*((100+ast1)))),100)"
+      },
+      {
+        "statKey": "attack_rating",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(((75*max((lvl-1),0)))+200)"
       }
     ],
     "description": [
@@ -21545,6 +22184,12 @@
         "hitShift": 8,
         "rawValue0": "6+if(lvl<=1,0,if(lvl<=8,6*(lvl-1),if(lvl<=16,7*6+6*(lvl-8),if(lvl<=22,7*6+8*6+6*(lvl-16),if(lvl<=28,7*6+8*6+6*6+5*(lvl-22),7*6+8*6+6*6+6*5+4*(lvl-28))))))",
         "rawValue1": "6+if(lvl<=1,0,if(lvl<=8,6*(lvl-1),if(lvl<=16,7*6+6*(lvl-8),if(lvl<=22,7*6+8*6+6*(lvl-16),if(lvl<=28,7*6+8*6+6*6+5*(lvl-22),7*6+8*6+6*6+6*5+4*(lvl-28))))))"
+      },
+      {
+        "statKey": "bonus_magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "((6+if((lvl<=1),0,if((lvl<=8),(6*((lvl-1))),if((lvl<=16),((7*6)+(6*((lvl-8)))),if((lvl<=22),(((7*6)+(8*6))+(6*((lvl-16)))),if((lvl<=28),((((7*6)+(8*6))+(6*6))+(5*((lvl-22)))),(((((7*6)+(8*6))+(6*6))+(6*5))+(4*((lvl-28)))))))))))"
       }
     ],
     "description": [
@@ -21627,6 +22272,12 @@
         "hitShift": 8,
         "rawValue0": "48+if(lvl<=1,0,if(lvl<=8,8*(lvl-1),if(lvl<=16,7*8+4*(lvl-8),if(lvl<=22,7*8+8*4+4*(lvl-16),if(lvl<=28,7*8+8*4+6*4+4*(lvl-22),7*8+8*4+6*4+6*4+4*(lvl-28))))))",
         "rawValue1": "60+if(lvl<=1,0,if(lvl<=8,10*(lvl-1),if(lvl<=16,7*10+5*(lvl-8),if(lvl<=22,7*10+8*5+5*(lvl-16),if(lvl<=28,7*10+8*5+6*5+5*(lvl-22),7*10+8*5+6*5+6*5+5*(lvl-28))))))"
+      },
+      {
+        "statKey": "average_fire_dot",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv((((48+if(lvl<=1,0,if(lvl<=8,8*(lvl-1),if(lvl<=16,7*8+4*(lvl-8),if(lvl<=22,7*8+8*4+4*(lvl-16),if(lvl<=28,7*8+8*4+6*4+4*(lvl-22),7*8+8*4+6*4+6*4+4*(lvl-28))))))))+((60+if(lvl<=1,0,if(lvl<=8,10*(lvl-1),if(lvl<=16,7*10+5*(lvl-8),if(lvl<=22,7*10+8*5+5*(lvl-16),if(lvl<=28,7*10+8*5+6*5+5*(lvl-22),7*10+8*5+6*5+6*5+5*(lvl-28))))))))),2)"
       }
     ],
     "description": [
@@ -22036,6 +22687,12 @@
         "hitShift": 3,
         "rawValue0": "80+if(lvl<=1,0,if(lvl<=8,16*(lvl-1),if(lvl<=16,7*16+16*(lvl-8),if(lvl<=22,7*16+8*16+16*(lvl-16),if(lvl<=28,7*16+8*16+6*16+16*(lvl-22),7*16+8*16+6*16+6*16+30*(lvl-28))))))",
         "rawValue1": "100+if(lvl<=1,0,if(lvl<=8,20*(lvl-1),if(lvl<=16,7*20+20*(lvl-8),if(lvl<=22,7*20+8*20+20*(lvl-16),if(lvl<=28,7*20+8*20+6*20+20*(lvl-22),7*20+8*20+6*20+6*20+38*(lvl-28))))))"
+      },
+      {
+        "statKey": "life_restored_per_cast",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(ast1,256)"
       }
     ],
     "description": [
@@ -22882,6 +23539,18 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "5+(lvl*5)/4"
+      },
+      {
+        "statKey": "damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((pst1*((100+ast1)))),100)"
+      },
+      {
+        "statKey": "attack_rating",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(((100*max((lvl-1),0)))+200)"
       }
     ],
     "description": [
@@ -23468,6 +24137,12 @@
         "hitShift": 3,
         "rawValue0": "50+if(lvl<=1,0,if(lvl<=8,14*(lvl-1),if(lvl<=16,7*14+6*(lvl-8),if(lvl<=22,7*14+8*6+6*(lvl-16),if(lvl<=28,7*14+8*6+6*6+6*(lvl-22),7*14+8*6+6*6+6*6+8*(lvl-28))))))",
         "rawValue1": "60+if(lvl<=1,0,if(lvl<=8,22*(lvl-1),if(lvl<=16,7*22+9*(lvl-8),if(lvl<=22,7*22+8*9+9*(lvl-16),if(lvl<=28,7*22+8*9+6*9+9*(lvl-22),7*22+8*9+6*9+6*9+14*(lvl-28))))))"
+      },
+      {
+        "statKey": "average_fire_dot",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv((((50+if(lvl<=1,0,if(lvl<=8,14*(lvl-1),if(lvl<=16,7*14+6*(lvl-8),if(lvl<=22,7*14+8*6+6*(lvl-16),if(lvl<=28,7*14+8*6+6*6+6*(lvl-22),7*14+8*6+6*6+6*6+8*(lvl-28))))))))+((60+if(lvl<=1,0,if(lvl<=8,22*(lvl-1),if(lvl<=16,7*22+9*(lvl-8),if(lvl<=22,7*22+8*9+9*(lvl-16),if(lvl<=28,7*22+8*9+6*9+9*(lvl-22),7*22+8*9+6*9+6*9+14*(lvl-28))))))))),2)"
       }
     ],
     "description": [
@@ -23929,6 +24604,13 @@
         "value0": "550",
         "value1": "28",
         "value2": "7"
+      },
+      {
+        "statKey": "damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((((1+pst3))*((100+truncdiv((({{summoned_minion_damage}}*((100-0)))),100))))),100)",
+        "value1": "truncdiv(((((6+pst3))*((100+truncdiv((({{summoned_minion_damage}}*((100-0)))),100))))),100)"
       }
     ],
     "description": [
@@ -24068,6 +24750,13 @@
         "hitShift": 5,
         "rawValue0": "1",
         "rawValue1": "1"
+      },
+      {
+        "statKey": "damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((((1+pst2))*((100+truncdiv(((ast1*((100-0)))),100))))),100)",
+        "value1": "truncdiv(((((2+pst2))*((100+truncdiv(((ast1*((100-0)))),100))))),100)"
       }
     ],
     "description": [
@@ -24327,6 +25016,24 @@
         "hitShift": 7,
         "rawValue0": "3+if(lvl<=1,0,if(lvl<=8,3*(lvl-1),if(lvl<=16,7*3+3*(lvl-8),if(lvl<=22,7*3+8*3+3*(lvl-16),if(lvl<=28,7*3+8*3+6*3+3*(lvl-22),7*3+8*3+6*3+6*3+1*(lvl-28))))))",
         "rawValue1": "3+if(lvl<=1,0,if(lvl<=8,3*(lvl-1),if(lvl<=16,7*3+3*(lvl-8),if(lvl<=22,7*3+8*3+3*(lvl-16),if(lvl<=28,7*3+8*3+6*3+3*(lvl-22),7*3+8*3+6*3+6*3+1*(lvl-28))))))"
+      },
+      {
+        "statKey": "target_seek_range",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "min((30+((blvl-1))),50)"
+      },
+      {
+        "statKey": "bonus_magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(floor(truncdiv(((3+if((lvl<=1),0,if((lvl<=8),(3*((lvl-1))),if((lvl<=16),((7*3)+(3*((lvl-8)))),if((lvl<=22),(((7*3)+(8*3))+(3*((lvl-16)))),if((lvl<=28),((((7*3)+(8*3))+(6*3))+(3*((lvl-22)))),(((((7*3)+(8*3))+(6*3))+(6*3))+(1*((lvl-28))))))))))),2)))"
+      },
+      {
+        "statKey": "axes",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(15+(((blvl-1))*1))"
       }
     ],
     "description": [
@@ -24991,6 +25698,12 @@
         "hitShift": 1,
         "rawValue0": "48+if(lvl<=1,0,if(lvl<=8,16*(lvl-1),if(lvl<=16,7*16+8*(lvl-8),if(lvl<=22,7*16+8*8+8*(lvl-16),if(lvl<=28,7*16+8*8+6*8+8*(lvl-22),7*16+8*8+6*8+6*8+8*(lvl-28))))))",
         "rawValue1": "64+if(lvl<=1,0,if(lvl<=8,22*(lvl-1),if(lvl<=16,7*22+11*(lvl-8),if(lvl<=22,7*22+8*11+11*(lvl-16),if(lvl<=28,7*22+8*11+6*11+11*(lvl-22),7*22+8*11+6*11+6*11+11*(lvl-28))))))"
+      },
+      {
+        "statKey": "average_fire_dot",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv((((48+if(lvl<=1,0,if(lvl<=8,16*(lvl-1),if(lvl<=16,7*16+8*(lvl-8),if(lvl<=22,7*16+8*8+8*(lvl-16),if(lvl<=28,7*16+8*8+6*8+8*(lvl-22),7*16+8*8+6*8+6*8+8*(lvl-28))))))))+((64+if(lvl<=1,0,if(lvl<=8,22*(lvl-1),if(lvl<=16,7*22+11*(lvl-8),if(lvl<=22,7*22+8*11+11*(lvl-16),if(lvl<=28,7*22+8*11+6*11+11*(lvl-22),7*22+8*11+6*11+6*11+11*(lvl-28))))))))),2)"
       }
     ],
     "description": [
@@ -25158,6 +25871,18 @@
         "hitShift": 8,
         "rawValue0": "6+if(lvl<=1,0,if(lvl<=8,6*(lvl-1),if(lvl<=16,7*6+6*(lvl-8),if(lvl<=22,7*6+8*6+6*(lvl-16),if(lvl<=28,7*6+8*6+6*6+5*(lvl-22),7*6+8*6+6*6+6*5+4*(lvl-28))))))",
         "rawValue1": "6+if(lvl<=1,0,if(lvl<=8,6*(lvl-1),if(lvl<=16,7*6+6*(lvl-8),if(lvl<=22,7*6+8*6+6*(lvl-16),if(lvl<=28,7*6+8*6+6*6+5*(lvl-22),7*6+8*6+6*6+6*5+4*(lvl-28))))))"
+      },
+      {
+        "statKey": "bonus_magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "((6+if((lvl<=1),0,if((lvl<=8),(6*((lvl-1))),if((lvl<=16),((7*6)+(6*((lvl-8)))),if((lvl<=22),(((7*6)+(8*6))+(6*((lvl-16)))),if((lvl<=28),((((7*6)+(8*6))+(6*6))+(5*((lvl-22)))),(((((7*6)+(8*6))+(6*6))+(6*5))+(4*((lvl-28)))))))))))"
+      },
+      {
+        "statKey": "attacks_targets",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "3"
       }
     ],
     "description": [
@@ -26351,6 +27076,25 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "min(6*[[servants_of_valor]].{{minions}},50)"
+      },
+      {
+        "statKey": "life",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((133+((lvl-1)*20))*(100+200)*(100+(truncdiv((({{summoned_minion_life}}*((100-0)))),100)))*(100+truncdiv(ulvl,2))),1000000)"
+      },
+      {
+        "statKey": "damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((pst1*((100+ast2)))),100)",
+        "value1": "truncdiv(((((1+pst1))*((100+ast2)))),100)"
+      },
+      {
+        "statKey": "attack_rating",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(((300*max((lvl-1),0)))+200)"
       }
     ],
     "description": [
@@ -26969,7 +27713,14 @@
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
-    "scalingConstants": [],
+    "scalingConstants": [
+      {
+        "statKey": "duration",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(((250+(((lvl-1))*0))))"
+      }
+    ],
     "description": [
       "Morph into a shadow beast, increasing damage"
     ],
@@ -27244,6 +27995,18 @@
         "value0": "88",
         "value1": "11",
         "value2": "5"
+      },
+      {
+        "statKey": "target_seek_range",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(clc2)"
+      },
+      {
+        "statKey": "releases_bolts",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "clc1"
       }
     ],
     "description": [
@@ -27339,7 +28102,8 @@
         "statKey": "minions",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "Flayers"
+        "value0": "Flayers",
+        "value1": "if(({{disable_non_melee_skills_flag}}>0),0,min(lvl,9))"
       },
       {
         "statKey": "mana_cost",
@@ -27348,6 +28112,25 @@
         "value0": "53",
         "value1": "31",
         "value2": "5"
+      },
+      {
+        "statKey": "life",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((17+((lvl-1)*15))*(100+200)*(100+(truncdiv((((truncdiv((({{summoned_minion_life}}*((100-0)))),100))*((10000+(ulvl*ulvl))))),10000)))*(100+truncdiv(ulvl,2))),1000000)*2"
+      },
+      {
+        "statKey": "damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((((1+pst1))*((100+ast2)))),100)",
+        "value1": "truncdiv(((((11+pst1))*((100+ast2)))),100)"
+      },
+      {
+        "statKey": "attack_rating",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(((50*max((lvl-1),0)))+200)"
       }
     ],
     "description": [
@@ -27800,6 +28583,12 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "max(min(ln(3,1,blvl)/4,9),1)"
+      },
+      {
+        "statKey": "physical_damage_percent",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(0)"
       }
     ],
     "description": [
@@ -28645,6 +29434,18 @@
         "hitShift": 7,
         "rawValue0": "5+if(lvl<=1,0,if(lvl<=8,3*(lvl-1),if(lvl<=16,7*3+3*(lvl-8),if(lvl<=22,7*3+8*3+3*(lvl-16),if(lvl<=28,7*3+8*3+6*3+3*(lvl-22),7*3+8*3+6*3+6*3+2*(lvl-28))))))",
         "rawValue1": "5+if(lvl<=1,0,if(lvl<=8,3*(lvl-1),if(lvl<=16,7*3+3*(lvl-8),if(lvl<=22,7*3+8*3+3*(lvl-16),if(lvl<=28,7*3+8*3+6*3+3*(lvl-22),7*3+8*3+6*3+6*3+2*(lvl-28))))))"
+      },
+      {
+        "statKey": "bonus_magic_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(floor(truncdiv(((5+if((lvl<=1),0,if((lvl<=8),(3*((lvl-1))),if((lvl<=16),((7*3)+(3*((lvl-8)))),if((lvl<=22),(((7*3)+(8*3))+(3*((lvl-16)))),if((lvl<=28),((((7*3)+(8*3))+(6*3))+(3*((lvl-22)))),(((((7*3)+(8*3))+(6*3))+(6*3))+(2*((lvl-28))))))))))),2)))"
+      },
+      {
+        "statKey": "target_seek_range",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(min(((12+(((lvl-1))*1))),42))"
       }
     ],
     "description": [
@@ -29130,6 +29931,12 @@
         "hitShift": 7,
         "rawValue0": "1",
         "rawValue1": "2"
+      },
+      {
+        "statKey": "attack_rating_percent",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "toht"
       }
     ],
     "description": [
@@ -29239,6 +30046,12 @@
         "hitShift": 3,
         "rawValue0": "52+if(lvl<=1,0,if(lvl<=8,13*(lvl-1),if(lvl<=16,7*13+6*(lvl-8),if(lvl<=22,7*13+8*6+6*(lvl-16),if(lvl<=28,7*13+8*6+6*6+6*(lvl-22),7*13+8*6+6*6+6*6+6*(lvl-28))))))",
         "rawValue1": "78+if(lvl<=1,0,if(lvl<=8,26*(lvl-1),if(lvl<=16,7*26+13*(lvl-8),if(lvl<=22,7*26+8*13+13*(lvl-16),if(lvl<=28,7*26+8*13+6*13+13*(lvl-22),7*26+8*13+6*13+6*13+13*(lvl-28))))))"
+      },
+      {
+        "statKey": "lightning_spears",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "clc1"
       }
     ],
     "description": [
@@ -29488,7 +30301,8 @@
         "statKey": "minions",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "Darklings"
+        "value0": "Darklings",
+        "value1": "if(({{disable_non_melee_skills_flag}}>0),0,min((1+truncdiv(lvl,2)),15))"
       },
       {
         "statKey": "mana_cost",
@@ -29497,6 +30311,31 @@
         "value0": "132",
         "value1": "66",
         "value2": "5"
+      },
+      {
+        "statKey": "life",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((9+((lvl-1)*5))*(100+200)*(100+(truncdiv((({{summoned_minion_life}}*((100-0)))),100)))*(100+truncdiv(ulvl,2))),1000000)"
+      },
+      {
+        "statKey": "carapace_reduces_damage_by",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(truncdiv(ulvl,4)+truncdiv(((((ulvl*ulvl))*ulvl)),2500))"
+      },
+      {
+        "statKey": "damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((((1+pst1))*((100+ast2)))),100)",
+        "value1": "truncdiv(((((11+pst1))*((100+ast2)))),100)"
+      },
+      {
+        "statKey": "thorns_damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(truncdiv(((((((lvl+5))*((lvl+5))))*((lvl+5)))),100)+3)"
       }
     ],
     "description": [
@@ -29544,7 +30383,8 @@
         "statKey": "minions",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "Edyrems"
+        "value0": "Edyrems",
+        "value1": "10"
       },
       {
         "statKey": "mana_cost",
@@ -29553,6 +30393,25 @@
         "value0": "264",
         "value1": "0",
         "value2": "5"
+      },
+      {
+        "statKey": "life",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((1500+((lvl-1)*0))*(100+0)*(100+({{bonus_to_summoned_edyrem_life}}))*(100+truncdiv(ulvl,2))),1000000)"
+      },
+      {
+        "statKey": "damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "pst1",
+        "value1": "pst2"
+      },
+      {
+        "statKey": "attack_rating",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(((0*max((lvl-1),0)))+15000)"
       }
     ],
     "description": [
@@ -29608,6 +30467,25 @@
         "value0": "132",
         "value1": "66",
         "value2": "5"
+      },
+      {
+        "statKey": "life",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((9+((lvl-1)*10))*(100+200)*(100+(truncdiv((({{summoned_minion_life}}*((100-0)))),100)))*(100+truncdiv(ulvl,2))),1000000)"
+      },
+      {
+        "statKey": "attack_rating",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(((50*max((lvl-1),0)))+200)"
+      },
+      {
+        "statKey": "damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((((1+pst1))*((100+ast2)))),100)",
+        "value1": "truncdiv(((((11+pst1))*((100+ast2)))),100)"
       }
     ],
     "description": [
@@ -29670,6 +30548,25 @@
         "variantKey": "",
         "value0": "Familiars",
         "value1": "1+[[batstrike]]/5"
+      },
+      {
+        "statKey": "damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((((1+pst1))*((100+pst2)))),100)",
+        "value1": "truncdiv(((((1+pst1))*((100+pst2)))),100)"
+      },
+      {
+        "statKey": "attack_rating",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(((700+700))+pst4)"
+      },
+      {
+        "statKey": "life",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(truncdiv((((((52+(((lvl-1))*0)))*((100+200)))*((100+((truncdiv(((((50*(([[batstrike]].{{lvl}}-1))))*((100+{{summoned_minion_life}})))),100)+{{summoned_minion_life}})))))*((100+truncdiv(ulvl,2)))),1000000))"
       }
     ],
     "description": [
@@ -29757,6 +30654,12 @@
         "hitShift": 3,
         "rawValue0": "168+if(lvl<=1,0,if(lvl<=8,24*(lvl-1),if(lvl<=16,7*24+12*(lvl-8),if(lvl<=22,7*24+8*12+12*(lvl-16),if(lvl<=28,7*24+8*12+6*12+12*(lvl-22),7*24+8*12+6*12+6*12+12*(lvl-28))))))",
         "rawValue1": "224+if(lvl<=1,0,if(lvl<=8,32*(lvl-1),if(lvl<=16,7*32+16*(lvl-8),if(lvl<=22,7*32+8*16+16*(lvl-16),if(lvl<=28,7*32+8*16+6*16+16*(lvl-22),7*32+8*16+6*16+6*16+16*(lvl-28))))))"
+      },
+      {
+        "statKey": "life",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((160+((lvl-1)*26))*(100+200)*(100+(truncdiv((({{summoned_minion_life}}*((100-0)))),100)))*(100+truncdiv(ulvl,2))),1000000)*4"
       }
     ],
     "description": [
@@ -29837,6 +30740,12 @@
         "hitShift": 4,
         "rawValue0": "80+if(lvl<=1,0,if(lvl<=8,15*(lvl-1),if(lvl<=16,7*15+7*(lvl-8),if(lvl<=22,7*15+8*7+7*(lvl-16),if(lvl<=28,7*15+8*7+6*7+7*(lvl-22),7*15+8*7+6*7+6*7+7*(lvl-28))))))",
         "rawValue1": "100+if(lvl<=1,0,if(lvl<=8,20*(lvl-1),if(lvl<=16,7*20+10*(lvl-8),if(lvl<=22,7*20+8*10+10*(lvl-16),if(lvl<=28,7*20+8*10+6*10+10*(lvl-22),7*20+8*10+6*10+6*10+10*(lvl-28))))))"
+      },
+      {
+        "statKey": "life",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((160+((lvl-1)*26))*(100+200)*(100+(truncdiv((({{summoned_minion_life}}*((100-0)))),100)))*(100+truncdiv(ulvl,2))),1000000)*4"
       }
     ],
     "description": [
@@ -29891,7 +30800,8 @@
         "statKey": "minions",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "Shock Beasts"
+        "value0": "Shock Beasts",
+        "value1": "if(({{disable_non_melee_skills_flag}}>0),0,min((2+((lvl-1))),15))"
       },
       {
         "statKey": "mana_cost",
@@ -29900,6 +30810,25 @@
         "value0": "660",
         "value1": "0",
         "value2": "6"
+      },
+      {
+        "statKey": "life",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((9+((lvl-1)*10))*(100+200)*(100+(truncdiv((({{summoned_minion_life}}*((100-0)))),100)))*(100+truncdiv(ulvl,2))),1000000)"
+      },
+      {
+        "statKey": "attack_rating",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(((50*max((lvl-1),0)))+100)"
+      },
+      {
+        "statKey": "damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((((1+pst1))*((100+ast2)))),100)",
+        "value1": "truncdiv(((((11+pst1))*((100+ast2)))),100)"
       }
     ],
     "description": [
@@ -29967,6 +30896,12 @@
         "hitShift": 4,
         "rawValue0": "936",
         "rawValue1": "936"
+      },
+      {
+        "statKey": "life",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((160+((lvl-1)*26))*(100+200)*(100+(truncdiv((({{summoned_minion_life}}*((100-0)))),100)))*(100+truncdiv(ulvl,2))),1000000)*4"
       }
     ],
     "description": [
@@ -30682,6 +31617,12 @@
         "hitShift": 6,
         "rawValue0": "2",
         "rawValue1": "2"
+      },
+      {
+        "statKey": "bursts",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(3+truncdiv(lvl,5))"
       }
     ],
     "description": [
@@ -30948,6 +31889,12 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "37"
+      },
+      {
+        "statKey": "range",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(15+((lvl-1)))"
       }
     ],
     "description": [
@@ -31891,6 +32838,12 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "140"
+      },
+      {
+        "statKey": "twisters",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "clc1"
       }
     ],
     "description": [
@@ -32323,6 +33276,12 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "100"
+      },
+      {
+        "statKey": "cooldown",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(40)"
       }
     ],
     "description": [
@@ -32816,6 +33775,19 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "10+lvl"
+      },
+      {
+        "statKey": "life",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "((truncdiv((((((300+(((lvl-1))*25)))*((100+200)))*((100+(truncdiv((((((({{summoned_minion_life}}+(10*[[blood_skeleton]])))+syn1))*((10000+truncdiv(((ulvl*ulvl)),2))))),10000)))))*((100+truncdiv(ulvl,2)))),1000000))*ast2)"
+      },
+      {
+        "statKey": "damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((((1+pst2))*((100+ast1)))),100)",
+        "value1": "truncdiv(((((11+pst2))*((100+ast1)))),100)"
       }
     ],
     "description": [
@@ -33591,6 +34563,12 @@
         "value0": "8",
         "value1": "20",
         "value2": "6"
+      },
+      {
+        "statKey": "cooldown",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "frames(250)"
       }
     ],
     "description": [
@@ -33695,6 +34673,25 @@
         "value0": "650",
         "value1": "70",
         "value2": "6"
+      },
+      {
+        "statKey": "life",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((133+((lvl-1)*35))*(100+200)*(100+(truncdiv((((truncdiv((({{summoned_minion_life}}*((100-0)))),100))*((10000+truncdiv(((ulvl*ulvl)),2))))),10000)))*(100+truncdiv(ulvl,2))),1000000)*2"
+      },
+      {
+        "statKey": "damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((((1+pst1))*((100+ast2)))),100)",
+        "value1": "truncdiv(((((11+pst1))*((100+ast2)))),100)"
+      },
+      {
+        "statKey": "attack_rating",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(((75*max((lvl-1),0)))+200)"
       }
     ],
     "description": [
@@ -34571,6 +35568,13 @@
         "hitShift": 5,
         "rawValue0": "10+if(lvl<=1,0,if(lvl<=8,12*(lvl-1),if(lvl<=16,7*12+14*(lvl-8),if(lvl<=22,7*12+8*14+16*(lvl-16),if(lvl<=28,7*12+8*14+6*16+18*(lvl-22),7*12+8*14+6*16+6*18+20*(lvl-28))))))",
         "rawValue1": "17+if(lvl<=1,0,if(lvl<=8,22*(lvl-1),if(lvl<=16,7*22+26*(lvl-8),if(lvl<=22,7*22+8*26+28*(lvl-16),if(lvl<=28,7*22+8*26+6*28+30*(lvl-22),7*22+8*26+6*28+6*30+30*(lvl-28))))))"
+      },
+      {
+        "statKey": "bonus_fire_damage_to_weapons",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(floor(truncdiv(((10+if((lvl<=1),0,if((lvl<=8),(12*((lvl-1))),if((lvl<=16),((7*12)+(14*((lvl-8)))),if((lvl<=22),(((7*12)+(8*14))+(16*((lvl-16)))),if((lvl<=28),((((7*12)+(8*14))+(6*16))+(18*((lvl-22)))),(((((7*12)+(8*14))+(6*16))+(6*18))+(20*((lvl-28))))))))))),8)))",
+        "value1": "(floor(truncdiv(((17+if((lvl<=1),0,if((lvl<=8),(22*((lvl-1))),if((lvl<=16),((7*22)+(26*((lvl-8)))),if((lvl<=22),(((7*22)+(8*26))+(28*((lvl-16)))),if((lvl<=28),((((7*22)+(8*26))+(6*28))+(30*((lvl-22)))),(((((7*22)+(8*26))+(6*28))+(6*30))+(30*((lvl-28))))))))))),8)))"
       }
     ],
     "description": [
@@ -34630,6 +35634,13 @@
         "hitShift": 5,
         "rawValue0": "40+if(lvl<=1,0,if(lvl<=8,18*(lvl-1),if(lvl<=16,7*18+20*(lvl-8),if(lvl<=22,7*18+8*20+22*(lvl-16),if(lvl<=28,7*18+8*20+6*22+24*(lvl-22),7*18+8*20+6*22+6*24+26*(lvl-28))))))",
         "rawValue1": "40+if(lvl<=1,0,if(lvl<=8,18*(lvl-1),if(lvl<=16,7*18+20*(lvl-8),if(lvl<=22,7*18+8*20+22*(lvl-16),if(lvl<=28,7*18+8*20+6*22+24*(lvl-22),7*18+8*20+6*22+6*24+26*(lvl-28))))))"
+      },
+      {
+        "statKey": "bonus_cold_damage_to_weapons",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(floor(truncdiv(((40+if((lvl<=1),0,if((lvl<=8),(18*((lvl-1))),if((lvl<=16),((7*18)+(20*((lvl-8)))),if((lvl<=22),(((7*18)+(8*20))+(22*((lvl-16)))),if((lvl<=28),((((7*18)+(8*20))+(6*22))+(24*((lvl-22)))),(((((7*18)+(8*20))+(6*22))+(6*24))+(26*((lvl-28))))))))))),8)))",
+        "value1": "(floor(truncdiv(((40+if((lvl<=1),0,if((lvl<=8),(18*((lvl-1))),if((lvl<=16),((7*18)+(20*((lvl-8)))),if((lvl<=22),(((7*18)+(8*20))+(22*((lvl-16)))),if((lvl<=28),((((7*18)+(8*20))+(6*22))+(24*((lvl-22)))),(((((7*18)+(8*20))+(6*22))+(6*24))+(26*((lvl-28))))))))))),8)))"
       }
     ],
     "description": [
@@ -34857,6 +35868,12 @@
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "-50"
+      },
+      {
+        "statKey": "attack_rating",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "(0)"
       }
     ],
     "description": [
@@ -35157,6 +36174,12 @@
         "hitShift": 2,
         "rawValue0": "40+if(lvl<=1,0,if(lvl<=8,20*(lvl-1),if(lvl<=16,7*20+10*(lvl-8),if(lvl<=22,7*20+8*10+10*(lvl-16),if(lvl<=28,7*20+8*10+6*10+10*(lvl-22),7*20+8*10+6*10+6*10+10*(lvl-28))))))",
         "rawValue1": "50+if(lvl<=1,0,if(lvl<=8,25*(lvl-1),if(lvl<=16,7*25+12*(lvl-8),if(lvl<=22,7*25+8*12+12*(lvl-16),if(lvl<=28,7*25+8*12+6*12+12*(lvl-22),7*25+8*12+6*12+6*12+12*(lvl-28))))))"
+      },
+      {
+        "statKey": "average_fire_dot_range",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((45+if(lvl<=1,0,if(lvl<=8,22*(lvl-1),if(lvl<=16,7*22+11*(lvl-8),if(lvl<=22,7*22+8*11+11*(lvl-16),if(lvl<=28,7*22+8*11+6*11+11*(lvl-22),7*22+8*11+6*11+6*11+11*(lvl-28))))))))+((389+if(lvl<=1,0,if(lvl<=8,22*(lvl-1),if(lvl<=16,7*22+11*(lvl-8),if(lvl<=22,7*22+8*11+11*(lvl-16),if(lvl<=28,7*22+8*11+6*11+11*(lvl-22),7*22+8*11+6*11+6*11+11*(lvl-28)))))))),2)"
       }
     ],
     "description": [
@@ -35208,6 +36231,12 @@
         "value0": "264",
         "value1": "13",
         "value2": "6"
+      },
+      {
+        "statKey": "attack_rating_percent",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "toht"
       }
     ],
     "description": [
@@ -35538,6 +36567,13 @@
         "hitShift": 8,
         "rawValue0": "1",
         "rawValue1": "1"
+      },
+      {
+        "statKey": "damage",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "truncdiv(((pst4*((100+ast2)))),100)",
+        "value1": "truncdiv(((pst5*((100+ast2)))),100)"
       }
     ],
     "description": [
@@ -35781,6 +36817,12 @@
         "hitShift": 8,
         "rawValue0": "90",
         "rawValue1": "90"
+      },
+      {
+        "statKey": "fireballs",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "16"
       }
     ],
     "description": [
@@ -36800,6 +37842,12 @@
         "hitShift": 8,
         "rawValue0": "100+if(lvl<=1,0,if(lvl<=8,20*(lvl-1),if(lvl<=16,7*20+20*(lvl-8),if(lvl<=22,7*20+8*20+20*(lvl-16),if(lvl<=28,7*20+8*20+6*20+20*(lvl-22),7*20+8*20+6*20+6*20+15*(lvl-28))))))",
         "rawValue1": "100+if(lvl<=1,0,if(lvl<=8,20*(lvl-1),if(lvl<=16,7*20+20*(lvl-8),if(lvl<=22,7*20+8*20+20*(lvl-16),if(lvl<=28,7*20+8*20+6*20+20*(lvl-22),7*20+8*20+6*20+6*20+15*(lvl-28))))))"
+      },
+      {
+        "statKey": "attack_rating_percent",
+        "occurrenceIndex": 0,
+        "variantKey": "",
+        "value0": "toht"
       }
     ],
     "description": [

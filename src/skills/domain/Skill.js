@@ -31,6 +31,9 @@ const CROSS_SKILL_DOT_STAT_PATTERN =
     /\[\[([a-zA-Z_][a-zA-Z0-9_]*)\]\]\.\{\{([a-zA-Z_][a-zA-Z0-9_]*)\}\}/gi;
 const MAX_CROSS_SKILL_DEPTH = 12;
 
+/** Engine tokens that resolveEngineFormula understands inside a scaling formula. */
+const ENGINE_TOKEN_RE = /\b(?:clc\d|pst\d|ast\d|syn\d)\b|\bskill\s*\(/;
+
 /**
  * True if a scaling value is probably display text (monster names, labels), not a mis-typed formula.
  * Used to avoid console warnings when evaluate() hits "undefined variables" on plaintext.
@@ -402,6 +405,22 @@ export default class Skill {
             return { value: stringValue, wasFormula: false };
         }
 
+        // Resolve engine tokens (clcN / pstN / astN / synN / skill(...)) AND cross-skill
+        // engine refs like [[x]].{{clcN}} FIRST — they carry the other skill's calc in that
+        // skill's own level context. Doing this before the generic [[x]].{{stat}} pass keeps
+        // the calc from being zeroed as a missing scaling constant.
+        if (this.id && getFileSkillStore() && variables.characterState && ENGINE_TOKEN_RE.test(stringValue)) {
+            ENGINE_TOKEN_RE.lastIndex = 0;
+            stringValue = resolveEngineFormula(
+                this.id,
+                stringValue,
+                variables.characterState,
+                getFileSkillStore(),
+                crossSkillDepth
+            );
+        }
+        ENGINE_TOKEN_RE.lastIndex = 0;
+
         CROSS_SKILL_DOT_STAT_PATTERN.lastIndex = 0;
         if (getFileSkillStore() && variables.characterState && CROSS_SKILL_DOT_STAT_PATTERN.test(stringValue)) {
             CROSS_SKILL_DOT_STAT_PATTERN.lastIndex = 0;
@@ -412,7 +431,13 @@ export default class Skill {
                 crossSkillDepth
             );
         }
-        
+
+        // Game-state predicates (state(<n>)>0 ? ...) appear inside engine ast calcs; the
+        // planner has no monster state, so treat them as false (0) rather than failing.
+        if (/state\s*\(/i.test(stringValue)) {
+            stringValue = stringValue.replace(/\bstate\s*\(\s*\d+\s*\)/gi, '0');
+        }
+
         // Try to evaluate as formula
         const evalResult = formulaEvaluator.evaluate(stringValue, variables);
         if (evalResult.success) {
