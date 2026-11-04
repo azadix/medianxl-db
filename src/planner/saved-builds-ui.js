@@ -354,6 +354,24 @@ export async function loadBuildData(build, buildIndex = null) {
         // Single skill-stat recompute after items + stats are applied.
         await runPlannerSkillStatRecompute({ immediate: true, force: true });
 
+        // TSW dumps store FINAL in-game totals (e.g. {{life}}=12338 already includes
+        // gear + skills). parseStatsFromText stores them verbatim as base values, so
+        // the recomputed bonus would be added on top and inflate the totals.
+        // Re-derive base values so the displayed totals match the dump.
+        if (importedStatsText && (tswEnvelope || tswItems)) {
+            const ch = getCharacterInstance();
+            if (ch && typeof ch.setStat === 'function') {
+                for (const line of importedStatsText.split('\n')) {
+                    const m = /^\s*\{\{\s*([a-z0-9_]+)\s*\}\}\s*=\s*(-?\d+(?:\.\d+)?)\s*$/i.exec(line);
+                    if (!m) continue;
+                    const key = String(m[1]).toLowerCase();
+                    const value = Number(m[2]);
+                    if (!Number.isFinite(value)) continue;
+                    ch.setStat(key, value);
+                }
+            }
+        }
+
         if (pendingGearUnmetToast) {
             try {
                 toastUnmetEquippedItemRequirements(useItemsStore());

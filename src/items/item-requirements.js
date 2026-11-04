@@ -291,6 +291,15 @@ export function resolveItemRequirements(def, options = {}) {
     reqLevel += getWormholeCycleReqLevelBonus(options.rolls ?? null);
   }
 
+  // The host's own `Requirements -N%` line is already the final in-game total: the game
+  // aggregates unique + socketed jewels into that one number (Zakarum's Guidance shows
+  // `-62%` = 22% item + 2x20% jewels). Adding socket reductions on top double-counts
+  // them, so only fall back to per-socket reductions when the host has no such line.
+  const overlayTexts = collectOverlayRequirementModifierTexts(def, options.rolls ?? null);
+  const hostHasReqPct =
+    extrasHaveReqPct || overlayTexts.some((text) => isRequirementsPercentLine(text));
+  const socketPctApplies = !hostHasReqPct;
+
   let socketReqBonus = 0;
   for (const sock of socketables) {
     if (!sock || typeof sock !== 'object') continue;
@@ -300,11 +309,11 @@ export function resolveItemRequirements(def, options = {}) {
     if (Array.isArray(sock.modifiers)) {
       for (const text of sock.modifiers) {
         if (typeof text !== 'string' || !text.trim()) continue;
-        if (!extrasHaveReqPct) reductionPct += parseRequirementsReductionPct(text);
+        if (socketPctApplies) reductionPct += parseRequirementsReductionPct(text);
         sockReqBonus += parseRequiredLevelBonus(text);
       }
     }
-    if (!extrasHaveReqPct && Number.isFinite(Number(sock.reductionPct))) {
+    if (socketPctApplies && Number.isFinite(Number(sock.reductionPct))) {
       reductionPct += Math.abs(Number(sock.reductionPct)) || 0;
     }
     // Jewels with `+N Required Level` raise the host via that affix, not Required Level:.
@@ -313,7 +322,6 @@ export function resolveItemRequirements(def, options = {}) {
   }
 
   let hostReqBonus = 0;
-  const overlayTexts = collectOverlayRequirementModifierTexts(def, options.rolls ?? null);
   for (const text of overlayTexts) {
     hostReqBonus += parseRequiredLevelBonus(text);
     if (!extrasHaveReqPct) reductionPct += parseRequirementsReductionPct(text);

@@ -286,13 +286,23 @@ export function recomputePlannerStatsFromSkillAllocations(character, ctx) {
     lvl: {},
     treeSkillsCache: treeSkillsCache && typeof treeSkillsCache === 'object' ? treeSkillsCache : {},
     stats: withBaseAttributeFormulaStats(
-      {
-        // Include prior skill stat bonuses (e.g. Continuity's skill_duration) so
-        // formulas reading {{skill_duration}} see them on the next recompute.
-        ...(typeof character.getAllStats === 'function'
-          ? character.getAllStats()
-          : character.getAllRawStats()),
-      },
+      (() => {
+        // Skill formulas must not see their own output. Feeding the full
+        // getAllStats() here (which already includes the previous pass's skill
+        // bonuses) double-counts derived stats - max life/mana came out inflated.
+        const base =
+          typeof character.getAllStatsWithoutSkillBonuses === 'function'
+            ? character.getAllStatsWithoutSkillBonuses()
+            : character.getAllRawStats();
+        // `skill_duration` is a plain duration multiplier produced by Continuity and
+        // consumed by other skills' `{{skill_duration}}`, so it is the one prior-pass
+        // value that must be visible (it is not derived from any other stat).
+        const prior = Number(character?._plannerSkillStatBonuses?.skill_duration) || 0;
+        if (prior) {
+          base.skill_duration = (Number(base.skill_duration) || 0) + prior;
+        }
+        return base;
+      })(),
       character
     ),
     oSkillIds: oSkillIdsFromCharacter(character),
