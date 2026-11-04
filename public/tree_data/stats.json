@@ -3030,5 +3030,17 @@
         "plannerKey": "percent_spell_focus"
       }
     ]
+  },
+  {
+    "id": 412,
+    "key": "bonus_lightning_damage_to_weapons",
+    "name": "Bonus Lightning Damage to weapons",
+    "format": "Bonus Lightning Damage to weapons: {value0}-{value1}"
+  },
+  {
+    "id": 413,
+    "key": "bonus_magic_damage_to_weapons",
+    "name": "Bonus Magic Damage to weapons",
+    "format": "Bonus Magic Damage to weapons: {value0}-{value1}"
   }
 ]

@@ -25,6 +25,14 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  server: {
+    watch: {
+      // test fixtures are large local dumps (hundreds of JSON files, tens of MB).
+      // Watching them makes the dev server re-stat/parse on every change and slows
+      // down HMR + full page loads for no benefit.
+      ignored: ['**/tests/fixtures/**', '**/dist/**', '**/.git/**'],
+    },
+  },
   test: {
     environment: 'node',
     include: ['tests/unit/**/*.test.js', 'tests/data/**/*.test.js'],

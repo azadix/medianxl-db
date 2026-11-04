@@ -24,6 +24,12 @@ const ELEMENTAL_DAMAGE_KEYS = new Set([
     'magic_damage',
     'poison_dot',
     'fire_dot',
+    // "Bonus <element> Damage to Weapons" (Way of the Gryphon / Raven etc.) is
+    // weapon damage scaled by the same elemental synergy (EDmgSymPerCalc).
+    'bonus_fire_damage_to_weapons',
+    'bonus_cold_damage_to_weapons',
+    'bonus_lightning_damage_to_weapons',
+    'bonus_magic_damage_to_weapons',
 ]);
 /**
  * Spell damage statKey -> the character stat that boosts it.

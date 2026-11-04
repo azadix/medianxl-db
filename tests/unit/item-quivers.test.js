@@ -157,12 +157,13 @@ describe('equipped quiver activity', () => {
     setCharacterInstance(null);
   });
 
-  it('marks quiver unmet until a matching crossbow is equipped', () => {
+  it('allows a quiver alone, and with a matching crossbow', () => {
     store.selectSlot({ location: 'equipment', slot: 'larm' });
     expect(store.equipFromPicker(quiver.id)).toBe(true);
-    expect(store.equipmentSlotMeetsRequirements('larm')).toBe(false);
-    expect(store.quiverInactiveReasonForSlot('larm')).toBe(QUIVER_INACTIVE_REASON);
-    expect(store.activeEquippedDefs.some((d) => d.id === quiver.id)).toBe(false);
+    // An empty other hand is valid: the game allows a matching bow/crossbow OR nothing.
+    expect(store.equipmentSlotMeetsRequirements('larm')).toBe(true);
+    expect(store.quiverInactiveReasonForSlot('larm')).toBe(null);
+    expect(store.activeEquippedDefs.some((d) => d.id === quiver.id)).toBe(true);
 
     store.selectSlot({ location: 'equipment', slot: 'rarm' });
     expect(store.equipFromPicker(crossbow.id)).toBe(true);

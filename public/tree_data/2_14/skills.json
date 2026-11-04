@@ -24288,7 +24288,7 @@
         "statKey": "duration",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "frames((3000+250*max(blvl-1,0))*(1+{{skill_duration}}/100))"
+        "value0": "frames((3000+250*max(lvl-1,0))*(1+{{skill_duration}}/100))"
       },
       {
         "statKey": "crushing_blow",
@@ -35612,7 +35612,7 @@
         "value0": "(20+3*(lvl-1))/2"
       },
       {
-        "statKey": "lightning_damage",
+        "statKey": "bonus_lightning_damage_to_weapons",
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "lev_scaled(2,3,4,5,5,5,lvl)",
@@ -35736,21 +35736,14 @@
         "value0": "(20+3*(lvl-1))/2"
       },
       {
-        "statKey": "cold_damage",
+        "statKey": "bonus_cold_damage_to_weapons",
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "lev_scaled(40,18,20,22,24,26,lvl)",
         "value1": "lev_scaled(40,18,20,22,24,26,lvl)",
-        "hitShift": 5,
         "rawValue0": "lev_scaled(40,18,20,22,24,26,lvl)",
-        "rawValue1": "lev_scaled(40,18,20,22,24,26,lvl)"
-      },
-      {
-        "statKey": "bonus_cold_damage_to_weapons",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "(floor(truncdiv(((40+if((lvl<=1),0,if((lvl<=8),(18*((lvl-1))),if((lvl<=16),((7*18)+(20*((lvl-8)))),if((lvl<=22),(((7*18)+(8*20))+(22*((lvl-16)))),if((lvl<=28),((((7*18)+(8*20))+(6*22))+(24*((lvl-22)))),(((((7*18)+(8*20))+(6*22))+(6*24))+(26*((lvl-28))))))))))),8)))",
-        "value1": "(floor(truncdiv(((40+if((lvl<=1),0,if((lvl<=8),(18*((lvl-1))),if((lvl<=16),((7*18)+(20*((lvl-8)))),if((lvl<=22),(((7*18)+(8*20))+(22*((lvl-16)))),if((lvl<=28),((((7*18)+(8*20))+(6*22))+(24*((lvl-22)))),(((((7*18)+(8*20))+(6*22))+(6*24))+(26*((lvl-28))))))))))),8)))"
+        "rawValue1": "lev_scaled(40,18,20,22,24,26,lvl)",
+        "hitShift": 5
       }
     ],
     "description": [

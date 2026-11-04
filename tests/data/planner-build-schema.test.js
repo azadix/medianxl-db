@@ -210,6 +210,21 @@ describe('planner build full schema', () => {
     expect(problems, problems.join('\n')).toEqual([]);
   });
 
+  it('accepts every synthetic build in tests/fixtures/synthetic', () => {
+    const dir = resolve(ROOT, 'tests/fixtures/synthetic');
+    if (!existsSync(dir)) return;
+    const files = readdirSync(dir).filter((name) => name.toLowerCase().endsWith('.json')).sort();
+    if (files.length === 0) return;
+    /** @type {string[]} */
+    const problems = [];
+    for (const file of files) {
+      const data = JSON.parse(readFileSync(resolve(dir, file), 'utf8'));
+      const errors = validate(schema, schema, data);
+      if (errors.length) problems.push(`${file}: ${errors.join('; ')}`);
+    }
+    expect(problems, problems.join('\n')).toEqual([]);
+  });
+
   it('accepts the Miss_Peeled TSW export', () => {
     const example = readJson(EXAMPLE_PATH);
     const errors = validate(schema, schema, example);

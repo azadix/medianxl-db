@@ -39,7 +39,6 @@ import {
   EQUIPMENT_TO_TSW_SLOT,
   cloneTswRow,
   syncStoreInstanceTswRow,
-  syncStoreTswRows,
 } from '@/planner/tsw-build-export.js';
 import {
   charmMeetsLevel,
@@ -1076,7 +1075,9 @@ export const useItemsStore = defineStore('items', {
         const otherSlot = pairedWeaponSlot(key);
         if (!otherSlot) return false;
         const otherId = this.equipment[otherSlot];
-        if (otherId == null) return false;
+        // A quiver is valid with a matching bow/crossbow OR with nothing in the
+        // other hand. Anything else equipped there is invalid.
+        if (otherId == null) return true;
         const otherDef = this.getDefForInstance(otherId);
         if (!isQuiverEffectActive(def, otherDef)) return false;
         // Partner must also meet its own requirements to "count" as equipped.
@@ -2929,7 +2930,11 @@ export const useItemsStore = defineStore('items', {
         result.disabledCharms = disabled.charms;
         result.disabledRelics = disabled.relics;
         result.unmetGear = this.listUnmetEquippedItems();
-        syncStoreTswRows(this, { rewrite: false });
+        // No export-row resync here on purpose. Every instance already holds its
+        // imported `tswRow` (see applyInstanceMeta above), and the export path
+        // (itemsStoreToTswItems -> rowFromInstance) rewrites location/slot from live
+        // state anyway. Rebuilding here only re-derived identical rows and was the
+        // dominant cost of loading a build.
       } finally {
         skipItemReqLevelSync = prevSkip;
       }

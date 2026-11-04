@@ -129,11 +129,36 @@ export function markModifierLineBoosted(line) {
   return encodeModifierLine(decoded.text, MODIFIER_COLOR_BOOSTED, decoded.showCondition);
 }
 
+/** @type {Map<string, { text: string, color: string, showCondition: string[] }>} */
+const _decodeModifierLineCache = new Map();
+const _DECODE_MODIFIER_LINE_CACHE_MAX = 4000;
+
 /**
+ * Memoised wrapper: item descriptions re-decode the same lines on every render,
+ * and this was the hottest frame in the DevTools profile (~13% self time).
+ * Returns a fresh object each call so callers can own their `showCondition` array.
  * @param {string|null|undefined} line
  * @returns {{ text: string, color: string, showCondition: string[] }}
  */
 export function decodeModifierLine(line) {
+  const cacheKey = String(line ?? '');
+  const hit = _decodeModifierLineCache.get(cacheKey);
+  if (hit) {
+    return { text: hit.text, color: hit.color, showCondition: hit.showCondition.slice() };
+  }
+  const result = decodeModifierLineUncached(line);
+  if (_decodeModifierLineCache.size >= _DECODE_MODIFIER_LINE_CACHE_MAX) {
+    _decodeModifierLineCache.clear();
+  }
+  _decodeModifierLineCache.set(cacheKey, result);
+  return { text: result.text, color: result.color, showCondition: result.showCondition.slice() };
+}
+
+/**
+ * @param {string|null|undefined} line
+ * @returns {{ text: string, color: string, showCondition: string[] }}
+ */
+function decodeModifierLineUncached(line) {
   let raw = String(line ?? '');
   /** @type {string[]} */
   const explicit = [];
