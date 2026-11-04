@@ -1,9 +1,16 @@
-/**
+﻿/**
  * @file Pinia store for planner equipment and inventory items.
  * @module stores/items
  */
 
 import { defineStore } from 'pinia';
+
+/**
+ * Per-instance cache for getDefForInstance: cloning a def object is expensive and the
+ * result only depends on defId plus a few instance overrides (see signature there).
+ * @type {Map<number, { signature: string, value: object }>}
+ */
+const _defForInstanceCache = new Map();
 import { getAssetUrl } from '@/shared/utils.js';
 import { getCurrentVersion, versionToTreeAssetFolder } from '@/shared/version-config.js';
 import {
@@ -410,7 +417,7 @@ function applyInstanceMeta(inst, meta) {
 }
 
 /**
- * Stable id → def map. Rebuilt when catalog / runtime overlays change (not on every getter read).
+ * Stable id â†’ def map. Rebuilt when catalog / runtime overlays change (not on every getter read).
  * @param {ItemDef[]} catalog
  * @param {ItemDef[]} runtimeOverlayDefs
  * @returns {Record<string, ItemDef>}
@@ -550,12 +557,12 @@ export const useItemsStore = defineStore('items', {
     /** @type {(number|null)[]} */
     inventory: emptyInventory(),
     /**
-     * Enabled dungeon charms (defId → instance id). Not placed on the inventory grid.
+     * Enabled dungeon charms (defId â†’ instance id). Not placed on the inventory grid.
      * @type {Record<string, number>}
      */
     enabledCharms: {},
     /**
-     * Enabled relics (defId → instance id). Cap: MAX_RELICS. Not on the inventory grid.
+     * Enabled relics (defId â†’ instance id). Cap: MAX_RELICS. Not on the inventory grid.
      * @type {Record<string, number>}
      */
     enabledRelics: {},
@@ -703,7 +710,7 @@ export const useItemsStore = defineStore('items', {
         });
       }
       if (sel.location === 'inventory') {
-        // Charms/relics use dedicated enable lists — not the inventory grid.
+        // Charms/relics use dedicated enable lists â€” not the inventory grid.
         return catalogWithAngelicBases(this.catalog).filter(
           (d) => canPlaceInInventory(d) && !isCharmItem(d) && !isRelicItem(d)
         );
@@ -1356,7 +1363,7 @@ export const useItemsStore = defineStore('items', {
       );
       if (!merged) return null;
       this.runtimeOverlayDefs = [...this.runtimeOverlayDefs, merged];
-      // Incremental map update — avoid rescanning the full unique catalog.
+      // Incremental map update â€” avoid rescanning the full unique catalog.
       this.catalogByIdMap = { ...this.catalogByIdMap, [merged.id]: merged };
       return merged.id;
     },
@@ -2091,9 +2098,26 @@ export const useItemsStore = defineStore('items', {
     getDefForInstance(instanceId) {
       const inst = this.instances[instanceId];
       if (!inst) return null;
+      // This clones a whole def object per call and dominated weapon-swap time
+      // (~18% self). The result depends only on defId + the four instance overrides,
+      // so cache on that cheap signature. Rolls/orbs/sockets do not affect it.
+      const signature = [
+        String(inst.defId ?? ''),
+        inst.ethereal === true ? '1' : '0',
+        inst.corrupted === true ? '1' : '0',
+        normalizeRandomElement(inst.randomElement) || '',
+        inst.name != null ? String(inst.name).trim() : '',
+        inst.custom ? JSON.stringify(inst.custom) : '',
+      ].join('\u0001');
+      const cached = _defForInstanceCache.get(instanceId);
+      if (cached && cached.signature === signature) return cached.value;
+
       const def = this.catalogById[inst.defId] ?? null;
       const withCustom = applyCustomOverlayToDef(def, inst.custom);
-      if (!withCustom) return null;
+      if (!withCustom) {
+        _defForInstanceCache.delete(instanceId);
+        return null;
+      }
       /** @type {Record<string, unknown>} */
       const out = { ...withCustom };
       if (inst.ethereal === true && !withCustom.ethereal) out.ethereal = true;
@@ -2105,6 +2129,7 @@ export const useItemsStore = defineStore('items', {
         out.name = name;
         delete out.classRestriction;
       }
+      _defForInstanceCache.set(instanceId, { signature, value: out });
       return out;
     },
 
@@ -2363,7 +2388,7 @@ export const useItemsStore = defineStore('items', {
             ) {
               this.equipment[String(from.slot)] = toId;
             } else {
-              // Try inventory dump — or destroy if nowhere
+              // Try inventory dump â€” or destroy if nowhere
               const size = getSize(toId);
               if (size) {
                 const dump = findAnchorForClick(

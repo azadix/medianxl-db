@@ -59,6 +59,7 @@ const REQ_LEVEL_BONUS_RE = /^\+?\s*(-?\d+)\s+Required Level$/i;
  * @returns {number}
  */
 export function parseRequirementsReductionPct(text) {
+  if (typeof text !== 'string' || !text.toLowerCase().includes('requirements')) return 0;
   if (!isModifierLineActive(text)) return 0;
   const s = stripDisplayedRollRanges(modifierLineText(text)).replace(/\s+/g, ' ').trim();
   if (!s) return 0;
@@ -87,6 +88,7 @@ export function parseRequirementsReductionPct(text) {
  * @returns {boolean}
  */
 export function isRequirementsPercentLine(text) {
+  if (typeof text !== 'string' || !text.toLowerCase().includes('requirements')) return false;
   if (!isModifierLineActive(text)) return false;
   const s = stripDisplayedRollRanges(modifierLineText(text)).replace(/\s+/g, ' ').trim();
   if (!s) return false;
@@ -99,6 +101,10 @@ export function isRequirementsPercentLine(text) {
  * @returns {number}
  */
 export function parseRequiredLevelBonus(text) {
+  // Most lines in an item description are not requirement lines. A single substring
+  // test is far cheaper than isModifierLineActive() + two regexes, and this runs for
+  // every modifier of every equipped item on each recompute.
+  if (typeof text !== 'string' || !text.toLowerCase().includes('required level')) return 0;
   if (!isModifierLineActive(text)) return 0;
   const s = stripDisplayedRollRanges(modifierLineText(text)).replace(/\s+/g, ' ').trim();
   const match = REQ_LEVEL_BONUS_RE.exec(s);
