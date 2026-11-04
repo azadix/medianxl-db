@@ -7,6 +7,8 @@
     "class": "Paladin",
     "tabName": "Nephalem",
     "tags": [
+      "Magic",
+      "Physical",
       "Spell"
     ],
     "baseMaxLevel": 1,
@@ -793,7 +795,8 @@
     "tabName": "Melee",
     "tags": [
       "Poison",
-      "Warp Strike"
+      "Warp Strike",
+      "Weapon Damage"
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
@@ -1369,6 +1372,7 @@
     "tabName": "Reward",
     "tags": [
       "Buff",
+      "Duration",
       "Ultimate"
     ],
     "baseMaxLevel": 15,
@@ -1477,7 +1481,8 @@
     "class": "Sorceress",
     "tabName": "Arcane",
     "tags": [
-      "Buff"
+      "Buff",
+      "Duration"
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": false,
@@ -1645,9 +1650,10 @@
     "class": "Sorceress",
     "tabName": "Arcane",
     "tags": [
+      "Feedback",
       "Magic",
-      "Spell",
-      "Feedback"
+      "Physical",
+      "Spell"
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
@@ -1998,6 +2004,7 @@
     "class": "Other",
     "tabName": "Proc",
     "tags": [
+      "Lightning",
       "Magic",
       "Weapon Damage"
     ],
@@ -2067,6 +2074,7 @@
     "tabName": "oSkill",
     "tags": [
       "Duration",
+      "Lightning",
       "Projectile",
       "Weapon Damage"
     ],
@@ -2716,11 +2724,12 @@
     "class": "Amazon",
     "tabName": "Bow",
     "tags": [
-      "Physical",
-      "Fire",
       "Cold",
+      "Fire",
       "Lightning",
-      "Projectile"
+      "Physical",
+      "Projectile",
+      "Weapon Damage"
     ],
     "baseMaxLevel": 5,
     "affectedBySpecialization": true,
@@ -3354,6 +3363,7 @@
     "class": "Other",
     "tabName": "oSkill",
     "tags": [
+      "Physical",
       "Special Summon"
     ],
     "baseMaxLevel": 0,
@@ -3425,9 +3435,10 @@
     "class": "Sorceress",
     "tabName": "Melee",
     "tags": [
-      "Physical",
+      "Attack",
       "Magic",
-      "Attack"
+      "Physical",
+      "Weapon Damage"
     ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": true,
@@ -3540,7 +3551,8 @@
     "class": "Other",
     "tabName": "oSkill",
     "tags": [
-      "Debuff"
+      "Debuff",
+      "Physical"
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
@@ -3699,8 +3711,9 @@
     "class": "Necromancer",
     "tabName": "Melee",
     "tags": [
-      "Upgrade",
-      "Poison"
+      "Duration",
+      "Poison",
+      "Upgrade"
     ],
     "baseMaxLevel": 5,
     "affectedBySpecialization": false,
@@ -4627,6 +4640,7 @@
     "class": "Assassin",
     "tabName": "Throwing",
     "tags": [
+      "Magic",
       "Projectile",
       "Weapon Damage"
     ],
@@ -4763,7 +4777,8 @@
     "class": "Other",
     "tabName": "Proc",
     "tags": [
-      "Duration"
+      "Duration",
+      "Physical"
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
@@ -4914,6 +4929,7 @@
     "class": "Druid",
     "tabName": "Hunter",
     "tags": [
+      "Duration",
       "Fire",
       "Projectile",
       "Weapon Damage"
@@ -5218,6 +5234,8 @@
     "tags": [
       "Attack",
       "Buff",
+      "Duration",
+      "Physical",
       "Weapon Damage"
     ],
     "baseMaxLevel": 0,
@@ -5621,6 +5639,7 @@
     "class": "Druid",
     "tabName": "Wereowl",
     "tags": [
+      "Lightning",
       "Upgrade"
     ],
     "baseMaxLevel": 6,
@@ -6275,6 +6294,7 @@
     "tags": [
       "Debuff",
       "Duration",
+      "Fire",
       "Warp Strike",
       "Weapon Damage"
     ],
@@ -6586,7 +6606,8 @@
     "tabName": "Elementalist",
     "tags": [
       "Buff",
-      "Duration"
+      "Duration",
+      "Weapon Damage"
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
@@ -6994,7 +7015,10 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Cold",
+      "Physical"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
@@ -7298,7 +7322,8 @@
     "tabName": "oSkill",
     "tags": [
       "Buff",
-      "Duration"
+      "Duration",
+      "Magic"
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
@@ -7681,7 +7706,8 @@
     "tags": [
       "Attack",
       "Cold",
-      "Physical"
+      "Physical",
+      "Weapon Damage"
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
@@ -8134,6 +8160,7 @@
     "tabName": "Elementalist",
     "tags": [
       "Attack",
+      "Cold",
       "Weapon Damage"
     ],
     "baseMaxLevel": 5,
@@ -8619,6 +8646,7 @@
     "tags": [
       "Debuff",
       "Duration",
+      "Lightning",
       "Periodic"
     ],
     "baseMaxLevel": 6,
@@ -8860,6 +8888,7 @@
     "class": "Paladin",
     "tabName": "Reward",
     "tags": [
+      "Cold",
       "Warp"
     ],
     "baseMaxLevel": 15,
@@ -8931,6 +8960,7 @@
     "tabName": "Templar",
     "tags": [
       "Attack",
+      "Duration",
       "Weapon Damage"
     ],
     "baseMaxLevel": 25,
@@ -9088,6 +9118,8 @@
     "tags": [
       "Curse",
       "Duration",
+      "Fire",
+      "Physical",
       "Ultimate"
     ],
     "baseMaxLevel": 15,
@@ -9405,7 +9437,8 @@
     "class": "Paladin",
     "tabName": "Incarnation",
     "tags": [
-      "Debuff"
+      "Debuff",
+      "Duration"
     ],
     "baseMaxLevel": 8,
     "affectedBySpecialization": true,
@@ -9473,7 +9506,9 @@
     "tab": 66,
     "class": "Other",
     "tabName": "Proc",
-    "tags": [],
+    "tags": [
+      "Magic"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
@@ -9682,6 +9717,7 @@
     "tabName": "Wereowl",
     "tags": [
       "Duration",
+      "Lightning",
       "Projectile",
       "Weapon Damage"
     ],
@@ -9750,9 +9786,10 @@
     "class": "Barbarian",
     "tabName": "Earthshaker",
     "tags": [
+      "AoE",
       "Attack",
-      "Weapon Damage",
-      "AoE"
+      "Magic",
+      "Weapon Damage"
     ],
     "baseMaxLevel": 20,
     "affectedBySpecialization": true,
@@ -11517,6 +11554,7 @@
     "class": "Other",
     "tabName": "oSkill",
     "tags": [
+      "Duration",
       "Weapon Damage"
     ],
     "baseMaxLevel": 0,
@@ -11755,8 +11793,10 @@
     "class": "Other",
     "tabName": "oSkill",
     "tags": [
-      "Spell",
-      "Fire"
+      "Fire",
+      "Physical",
+      "Poison",
+      "Spell"
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
@@ -11916,6 +11956,7 @@
     "class": "Other",
     "tabName": "Proc",
     "tags": [
+      "Duration",
       "Fire"
     ],
     "baseMaxLevel": 0,
@@ -12303,6 +12344,7 @@
     "class": "Other",
     "tabName": "oSkill",
     "tags": [
+      "Fire",
       "Physical",
       "Projectile",
       "Weapon Damage"
@@ -12740,6 +12782,7 @@
     "class": "Barbarian",
     "tabName": "Warmonger",
     "tags": [
+      "Magic",
       "Projectile",
       "Weapon Damage"
     ],
@@ -13575,9 +13618,10 @@
     "class": "Sorceress",
     "tabName": "Melee",
     "tags": [
+      "Duration",
+      "Magic",
       "Projectile",
-      "Weapon Damage",
-      "Duration"
+      "Weapon Damage"
     ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": true,
@@ -14899,7 +14943,8 @@
     "tabName": "Naginata",
     "tags": [
       "Fire",
-      "Warp Strike"
+      "Warp Strike",
+      "Weapon Damage"
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
@@ -15555,8 +15600,9 @@
     "class": "Druid",
     "tabName": "Hunter",
     "tags": [
-      "Passive",
-      "Buff"
+      "Buff",
+      "Duration",
+      "Passive"
     ],
     "baseMaxLevel": 4,
     "affectedBySpecialization": false,
@@ -15922,6 +15968,7 @@
     "class": "Other",
     "tabName": "oSkill",
     "tags": [
+      "Fire",
       "Spell"
     ],
     "baseMaxLevel": 0,
@@ -15985,9 +16032,10 @@
     "class": "Other",
     "tabName": "oSkill",
     "tags": [
-      "Spell",
       "Buff",
-      "Duration"
+      "Duration",
+      "Poison",
+      "Spell"
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
@@ -16802,7 +16850,9 @@
     "tabName": "Werebear",
     "tags": [
       "Buff",
-      "Duration"
+      "Duration",
+      "Fire",
+      "Weapon Damage"
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": true,
@@ -16876,6 +16926,7 @@
     "class": "Other",
     "tabName": "Passive",
     "tags": [
+      "Fire",
       "Passive"
     ],
     "baseMaxLevel": 0,
@@ -16978,8 +17029,9 @@
     "class": "Sorceress",
     "tabName": "Arcane",
     "tags": [
-      "Spell",
-      "Feedback"
+      "Feedback",
+      "Physical",
+      "Spell"
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
@@ -17144,6 +17196,7 @@
       "Attack",
       "Debuff",
       "Duration",
+      "Physical",
       "Weapon Damage"
     ],
     "baseMaxLevel": 25,
@@ -18611,6 +18664,7 @@
     "class": "Other",
     "tabName": "Proc",
     "tags": [
+      "Cold",
       "Healing",
       "Spell"
     ],
@@ -19596,9 +19650,10 @@
     "class": "Druid",
     "tabName": "Werewolf",
     "tags": [
-      "Cold",
       "Attack",
-      "Duration"
+      "Cold",
+      "Duration",
+      "Weapon Damage"
     ],
     "baseMaxLevel": 1,
     "affectedBySpecialization": true,
@@ -19697,8 +19752,9 @@
     "class": "Sorceress",
     "tabName": "Arcane",
     "tags": [
-      "Spell",
-      "Feedback"
+      "Feedback",
+      "Physical",
+      "Spell"
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
@@ -19990,6 +20046,7 @@
     "tabName": "oSkill",
     "tags": [
       "Attack",
+      "Duration",
       "Magic",
       "Weapon Damage"
     ],
@@ -20430,8 +20487,10 @@
     "class": "Assassin",
     "tabName": "Psionic",
     "tags": [
-      "Spell",
-      "Duration"
+      "Duration",
+      "Magic",
+      "Physical",
+      "Spell"
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
@@ -20762,7 +20821,9 @@
     "tab": 69,
     "class": "Other",
     "tabName": "Innate",
-    "tags": [],
+    "tags": [
+      "Weapon Damage"
+    ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
     "variants": [],
@@ -22224,8 +22285,9 @@
     "class": "Necromancer",
     "tabName": "Melee",
     "tags": [
-      "Physical",
       "Attack",
+      "Magic",
+      "Physical",
       "Weapon Damage"
     ],
     "baseMaxLevel": 25,
@@ -22689,6 +22751,7 @@
     "class": "Amazon",
     "tabName": "Bow",
     "tags": [
+      "Duration",
       "Projectile",
       "Weapon Damage"
     ],
@@ -23526,6 +23589,7 @@
     "class": "Druid",
     "tabName": "Wereowl",
     "tags": [
+      "Duration",
       "Upgrade"
     ],
     "baseMaxLevel": 7,
@@ -24008,7 +24072,8 @@
     "class": "Other",
     "tabName": "oSkill",
     "tags": [
-      "Duration"
+      "Duration",
+      "Fire"
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
@@ -24257,8 +24322,9 @@
     "tags": [
       "Buff",
       "Duration",
-      "Weapon Damage",
-      "Periodic"
+      "Lightning",
+      "Periodic",
+      "Weapon Damage"
     ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": true,
@@ -24346,6 +24412,7 @@
     "class": "Druid",
     "tabName": "Wereowl",
     "tags": [
+      "Physical",
       "Projectile",
       "Weapon Damage"
     ],
@@ -24736,8 +24803,9 @@
     "class": "Druid",
     "tabName": "Werebear",
     "tags": [
-      "Fire",
       "Attack",
+      "Duration",
+      "Fire",
       "Weapon Damage"
     ],
     "baseMaxLevel": 25,
@@ -24816,6 +24884,7 @@
     "tabName": "Arcane",
     "tags": [
       "Buff",
+      "Physical",
       "Special Summon"
     ],
     "baseMaxLevel": 25,
@@ -25156,7 +25225,8 @@
     "class": "Amazon",
     "tabName": "Storm",
     "tags": [
-      "Passive"
+      "Passive",
+      "Weapon Damage"
     ],
     "baseMaxLevel": 20,
     "affectedBySpecialization": false,
@@ -25435,6 +25505,7 @@
     "class": "Paladin",
     "tabName": "Aspects",
     "tags": [
+      "Physical",
       "Spell"
     ],
     "baseMaxLevel": 15,
@@ -25523,8 +25594,9 @@
     "class": "Paladin",
     "tabName": "Templar",
     "tags": [
-      "Fire",
       "Attack",
+      "Fire",
+      "Magic",
       "Weapon Damage"
     ],
     "baseMaxLevel": 25,
@@ -26217,6 +26289,7 @@
     "class": "Necromancer",
     "tabName": "Deathspeaker",
     "tags": [
+      "Fire",
       "Spell"
     ],
     "baseMaxLevel": 10,
@@ -26566,7 +26639,8 @@
     "tabName": "Throwing",
     "tags": [
       "Poison",
-      "Projectile"
+      "Projectile",
+      "Weapon Damage"
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
@@ -26701,7 +26775,8 @@
     "tags": [
       "Debuff",
       "Duration",
-      "Projectile"
+      "Projectile",
+      "Weapon Damage"
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
@@ -26997,6 +27072,7 @@
     "tabName": "Nephalem",
     "tags": [
       "Magic",
+      "Physical",
       "Spell"
     ],
     "baseMaxLevel": 1,
@@ -27331,6 +27407,7 @@
     "class": "Assassin",
     "tabName": "Claw",
     "tags": [
+      "Duration",
       "Passive"
     ],
     "baseMaxLevel": 25,
@@ -27849,6 +27926,7 @@
     "tags": [
       "Attack",
       "Debuff",
+      "Magic",
       "Weapon Damage"
     ],
     "baseMaxLevel": 1,
@@ -28265,6 +28343,7 @@
     "class": "Other",
     "tabName": "oSkill",
     "tags": [
+      "Weapon Damage",
       "Duration"
     ],
     "baseMaxLevel": 0,
@@ -28321,7 +28400,8 @@
     "tabName": "Warlock",
     "tags": [
       "Lightning",
-      "Spell"
+      "Spell",
+      "Weapon Damage"
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": true,
@@ -28382,9 +28462,10 @@
     "class": "Barbarian",
     "tabName": "Warmonger",
     "tags": [
-      "Poison",
       "Debuff",
-      "Projectile"
+      "Poison",
+      "Projectile",
+      "Weapon Damage"
     ],
     "baseMaxLevel": 20,
     "affectedBySpecialization": true,
@@ -28563,11 +28644,12 @@
     "class": "Paladin",
     "tabName": "Incarnation",
     "tags": [
-      "Physical",
-      "Fire",
-      "Spell",
       "Buff",
-      "Debuff"
+      "Debuff",
+      "Duration",
+      "Fire",
+      "Physical",
+      "Spell"
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": true,
@@ -28819,6 +28901,7 @@
     "tabName": "oSkill",
     "tags": [
       "Debuff",
+      "Fire",
       "Weapon Damage"
     ],
     "baseMaxLevel": 0,
@@ -28995,7 +29078,8 @@
     "class": "Amazon",
     "tabName": "Reward",
     "tags": [
-      "Curse"
+      "Curse",
+      "Duration"
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": false,
@@ -29619,7 +29703,9 @@
     "class": "Barbarian",
     "tabName": "Warmonger",
     "tags": [
+      "Lightning",
       "Magic",
+      "Physical",
       "Projectile",
       "Weapon Damage"
     ],
@@ -29926,6 +30012,7 @@
     "class": "Assassin",
     "tabName": "Throwing",
     "tags": [
+      "Physical",
       "Projectile",
       "Weapon Damage"
     ],
@@ -29993,8 +30080,9 @@
     "class": "Other",
     "tabName": "oSkill",
     "tags": [
-      "Physical",
       "Attack",
+      "Lightning",
+      "Physical",
       "Weapon Damage"
     ],
     "baseMaxLevel": 0,
@@ -30616,6 +30704,7 @@
     "class": "Assassin",
     "tabName": "Claw",
     "tags": [
+      "Duration",
       "Summon"
     ],
     "baseMaxLevel": 1,
@@ -31116,6 +31205,7 @@
     "class": "Paladin",
     "tabName": "Reward",
     "tags": [
+      "Duration",
       "Ultimate"
     ],
     "baseMaxLevel": 15,
@@ -31686,6 +31776,7 @@
     "class": "Other",
     "tabName": "oSkill",
     "tags": [
+      "Cold",
       "Projectile",
       "Weapon Damage"
     ],
@@ -32326,7 +32417,9 @@
       "Buff",
       "Debuff",
       "Duration",
-      "Periodic"
+      "Lightning",
+      "Periodic",
+      "Weapon Damage"
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": true,
@@ -32505,6 +32598,7 @@
     "class": "Barbarian",
     "tabName": "Elementalist",
     "tags": [
+      "Lightning",
       "Projectile",
       "Weapon Damage"
     ],
@@ -33188,8 +33282,9 @@
     "class": "Other",
     "tabName": "oSkill",
     "tags": [
-      "Tri Elemental",
-      "Spell"
+      "Magic",
+      "Spell",
+      "Tri Elemental"
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
@@ -33242,8 +33337,9 @@
     "class": "Other",
     "tabName": "oSkill",
     "tags": [
-      "Tri Elemental",
-      "Spell"
+      "Lightning",
+      "Spell",
+      "Tri Elemental"
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
@@ -33646,6 +33742,8 @@
     "class": "Assassin",
     "tabName": "Reward",
     "tags": [
+      "Duration",
+      "Physical",
       "Spell"
     ],
     "baseMaxLevel": 15,
@@ -34499,6 +34597,7 @@
     "tabName": "Reward",
     "tags": [
       "Buff",
+      "Poison",
       "Special Summon",
       "Ultimate"
     ],
@@ -34705,6 +34804,7 @@
     "tabName": "Proc",
     "tags": [
       "Magic",
+      "Physical",
       "Spell"
     ],
     "baseMaxLevel": 0,
@@ -34838,7 +34938,9 @@
     "tabName": "oSkill",
     "tags": [
       "Buff",
-      "Duration"
+      "Duration",
+      "Lightning",
+      "Physical"
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
@@ -35168,6 +35270,7 @@
     "tabName": "oSkill",
     "tags": [
       "Magic",
+      "Physical",
       "Spell"
     ],
     "baseMaxLevel": 0,
@@ -36515,8 +36618,9 @@
     "class": "Sorceress",
     "tabName": "Cold",
     "tags": [
-      "Warp Strike",
-      "Healing"
+      "Cold",
+      "Healing",
+      "Warp Strike"
     ],
     "baseMaxLevel": 10,
     "affectedBySpecialization": true,
@@ -36640,6 +36744,7 @@
     "class": "Barbarian",
     "tabName": "Nomad",
     "tags": [
+      "Physical",
       "Special"
     ],
     "baseMaxLevel": 10,
@@ -36841,6 +36946,7 @@
     "tabName": "Mercenary only",
     "tags": [
       "Attack",
+      "Physical",
       "Weapon Damage"
     ],
     "baseMaxLevel": 0,
@@ -36956,6 +37062,7 @@
     "tabName": "oSkill",
     "tags": [
       "Debuff",
+      "Magic",
       "Projectile",
       "Weapon Damage"
     ],
@@ -37036,7 +37143,8 @@
     "tabName": "oSkill",
     "tags": [
       "Magic",
-      "Projectile"
+      "Projectile",
+      "Weapon Damage"
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
@@ -37194,6 +37302,7 @@
     "class": "Assassin",
     "tabName": "Throwing",
     "tags": [
+      "Physical",
       "Projectile",
       "Weapon Damage"
     ],
@@ -37988,7 +38097,8 @@
     "tags": [
       "Attack",
       "Magic",
-      "Physical"
+      "Physical",
+      "Weapon Damage"
     ],
     "baseMaxLevel": 0,
     "affectedBySpecialization": false,
