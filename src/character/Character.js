@@ -1409,6 +1409,15 @@ export default class Character {
   }
 
   /**
+   * Read the passive skill stat bonuses from the last recompute.
+   * Explicit accessor so the formula context and panels do not reach into the field.
+   * @returns {Record<string, number>}
+   */
+  getPlannerSkillStatBonuses() {
+    return { ...(this._plannerSkillStatBonuses || {}) };
+  }
+
+  /**
    * Replace item/relic/charm flat stat bonuses (recomputed when gear changes).
    * @param {Record<string, number>} bonuses
    */
@@ -1461,6 +1470,16 @@ export default class Character {
    */
   getAllStats() {
     const out = { ...this.stats };
+    // The stored snapshot can predate a stat definition (the character is created
+    // before tree_data/character_stats.json finishes loading, and build load rewrites
+    // it from whatever registry was available). If a later pass produces a bonus for
+    // a key the snapshot lacks, the page would show 0 while formulas still see the
+    // value. Seed those keys so both views agree.
+    for (const source of [this._plannerSkillStatBonuses, this._plannerItemStatBonuses]) {
+      for (const k of Object.keys(source || {})) {
+        if (out[k] == null) out[k] = 0;
+      }
+    }
     for (const k of Object.keys(out)) {
       if (!isPlannerBaseStatKey(k)) continue;
       out[k] = this.getStat(k);

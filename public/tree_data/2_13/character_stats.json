@@ -1729,5 +1729,60 @@
     "min": null,
     "max": null,
     "section": "damage"
+  },
+  {
+    "id": 905,
+    "key": "skill_duration",
+    "label": "+#% Skill Duration",
+    "min": null,
+    "max": null,
+    "allowNegative": false,
+    "alwaysVisible": true,
+    "sortOrder": 999,
+    "section": "misc"
+  },
+  {
+    "id": 906,
+    "key": "bonus_fire_damage_to_weapons",
+    "label": "Bonus Fire Damage to Weapons",
+    "min": null,
+    "max": null,
+    "allowNegative": false,
+    "alwaysVisible": false,
+    "sortOrder": 900,
+    "section": "damage"
+  },
+  {
+    "id": 907,
+    "key": "bonus_cold_damage_to_weapons",
+    "label": "Bonus Cold Damage to Weapons",
+    "min": null,
+    "max": null,
+    "allowNegative": false,
+    "alwaysVisible": false,
+    "sortOrder": 900,
+    "section": "damage"
+  },
+  {
+    "id": 908,
+    "key": "bonus_lightning_damage_to_weapons",
+    "label": "Bonus Lightning Damage to Weapons",
+    "min": null,
+    "max": null,
+    "allowNegative": false,
+    "alwaysVisible": false,
+    "sortOrder": 900,
+    "section": "damage"
+  },
+  {
+    "id": 909,
+    "key": "bonus_magic_damage_to_weapons",
+    "label": "Bonus Magic Damage to Weapons",
+    "min": null,
+    "max": null,
+    "allowNegative": false,
+    "alwaysVisible": false,
+    "sortOrder": 900,
+    "section": "damage"
   }
 ]

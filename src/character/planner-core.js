@@ -302,48 +302,103 @@ export function isConditionTriggerSkillAvailable(skillKey) {
   return relicBonus > 0 || gearSoft > 0;
 }
 
+/**
+ * One full stat pass: items, then skills. Returns the resulting skill stat bonuses.
+ * @param {Record<string, number>} mergedBlvl
+ * @param {number} allSkillsBonus
+ * @param {number} classSkillsBonus
+ * @returns {Record<string, number>}
+ */
+function runPlannerSkillStatRecomputePass(mergedBlvl, allSkillsBonus, classSkillsBonus) {
+  const character = getCharacterInstance();
+  if (!character) return {};
+  // Items first so skill scaling formulas see current relic/charm/gear flats.
+  // Skill allocation recompute is sync (in-memory scaling) so build load stays one turn.
+  recomputePlannerStatsFromItems(character);
+  recomputePlannerStatsFromSkillAllocations(character, {
+    effectiveLevel: getEffectivePlannerLevel(),
+    treeSkillsCache: getTreeSkillsCache(),
+    allSkillsBonus,
+    classSkillsBonus,
+    mergedBlvl,
+  });
+  return character.getPlannerSkillStatBonuses();
+}
+
+/**
+ * Order-independent signature of a skill-bonus map, used to detect convergence.
+ * @param {Record<string, number>} bonuses
+ * @returns {string}
+ */
+function skillStatBonusSignature(bonuses) {
+  const keys = Object.keys(bonuses || {}).sort();
+  let out = '';
+  for (const k of keys) out += `${k}=${bonuses[k]};`;
+  return out;
+}
+
+/**
+ * Upper bound on settle passes. Producer→consumer chains are 1 hop today, so 2
+ * passes converge; the extra headroom covers future multi-hop derivations.
+ */
+const MAX_SKILL_STAT_SETTLE_PASSES = 4;
+
 function runPlannerSkillStatRecomputeImpl() {
   if (_plannerSkillStatRecomputePromise) {
     _plannerSkillStatRecomputeQueued = true;
     return _plannerSkillStatRecomputePromise;
   }
-  _plannerSkillStatRecomputePromise = (async () => {
-    try {
-      do {
-        _plannerSkillStatRecomputeQueued = false;
-        if (!getCharacterInstance()) continue;
-        const mergedBlvl = buildMergedSkillLevelsForStatRecompute(getCharacterInstance());
-        let allSkillsBonus = 0;
-        let classSkillsBonus = 0;
-        if (typeof document !== 'undefined') {
-          const allInp = document.getElementById('allSkillsBonus');
-          if (allInp instanceof HTMLInputElement) {
-            allSkillsBonus = Math.max(0, Math.floor(parseInt(allInp.value, 10) || 0));
-          }
-          const classInp = document.getElementById('classSkillsBonus');
-          if (classInp instanceof HTMLInputElement) {
-            classSkillsBonus = Math.max(0, Math.floor(parseInt(classInp.value, 10) || 0));
-          }
+  // NOTE: the body below has no `await`, so it runs to completion synchronously.
+  // Clearing the promise inside a `finally` there would be undone by the assignment
+  // that follows it, leaving an already-resolved promise cached forever - every later
+  // recompute would return early and silently do nothing (all skill bonuses frozen at
+  // whatever the first, usually empty, pass produced).
+  const promise = (async () => {
+    do {
+      _plannerSkillStatRecomputeQueued = false;
+      if (!getCharacterInstance()) continue;
+      const mergedBlvl = buildMergedSkillLevelsForStatRecompute(getCharacterInstance());
+      let allSkillsBonus = 0;
+      let classSkillsBonus = 0;
+      if (typeof document !== 'undefined') {
+        const allInp = document.getElementById('allSkillsBonus');
+        if (allInp instanceof HTMLInputElement) {
+          allSkillsBonus = Math.max(0, Math.floor(parseInt(allInp.value, 10) || 0));
         }
-        // Items first so skill scaling formulas see current relic/charm/gear flats.
-        // Skill allocation recompute is sync (in-memory scaling) so build load stays one turn.
-        recomputePlannerStatsFromItems(getCharacterInstance());
-        recomputePlannerStatsFromSkillAllocations(getCharacterInstance(), {
-          effectiveLevel: getEffectivePlannerLevel(),
-          treeSkillsCache: getTreeSkillsCache(),
-          allSkillsBonus,
-          classSkillsBonus,
-          mergedBlvl
-        });
-        if (typeof window !== 'undefined' && !isPlannerBuildLoadInProgress()) {
-          window.dispatchEvent(new CustomEvent('plannerStatsPanelRefresh'));
+        const classInp = document.getElementById('classSkillsBonus');
+        if (classInp instanceof HTMLInputElement) {
+          classSkillsBonus = Math.max(0, Math.floor(parseInt(classInp.value, 10) || 0));
         }
-      } while (_plannerSkillStatRecomputeQueued);
-    } finally {
-      _plannerSkillStatRecomputePromise = null;
-    }
+      }
+      // Cross-skill derived stats (Continuity's `skill_duration` today, more later)
+      // are consumed by other skills, so the producer's value only reaches consumers
+      // on the NEXT pass. Iterate to a fixed point instead of depending on call
+      // ordering. Seeding the signature from the CURRENT map means the steady state
+      // (nothing changed) costs a single pass - it only iterates when a value moved.
+      const character = getCharacterInstance();
+      let signature = skillStatBonusSignature(character.getPlannerSkillStatBonuses());
+      for (let pass = 0; pass < MAX_SKILL_STAT_SETTLE_PASSES; pass++) {
+        const next = runPlannerSkillStatRecomputePass(mergedBlvl, allSkillsBonus, classSkillsBonus);
+        const nextSignature = skillStatBonusSignature(next);
+        if (nextSignature === signature) break;
+        signature = nextSignature;
+      }
+      if (typeof window !== 'undefined' && !isPlannerBuildLoadInProgress()) {
+        window.dispatchEvent(new CustomEvent('plannerStatsPanelRefresh'));
+      }
+    } while (_plannerSkillStatRecomputeQueued);
   })();
-  return _plannerSkillStatRecomputePromise;
+  _plannerSkillStatRecomputePromise = promise;
+  // Clear only after this exact promise is the cached one, so a newer run is not
+  // discarded by an older one finishing.
+  promise
+    .catch(() => {})
+    .finally(() => {
+      if (_plannerSkillStatRecomputePromise === promise) {
+        _plannerSkillStatRecomputePromise = null;
+      }
+    });
+  return promise;
 }
 
 /**
@@ -1467,4 +1522,18 @@ export function canAllocateSkillPoints(skill, skillType, currentPoints, maxPoint
   const regularSkillLevels = filterRegularSkillsOnly(skillLevels);
   const restrictions = getSkillRestrictions(skill, skillType, currentPoints, allSkills, regularSkillLevels);
   return restrictions.length === 0;
+}
+
+/**
+ * Dev-only inspection handle for the planner character/stat pipeline.
+ * Keeps diagnostics out of the customer path; loaded only by `vite dev`.
+ * e.g. `__plannerDebug.skillBonuses()` or `__plannerDebug.stat('skill_duration')`.
+ */
+if (typeof window !== 'undefined' && import.meta.env?.DEV) {
+  window.__plannerDebug = {
+    character: () => getCharacterInstance(),
+    skillBonuses: () => getCharacterInstance()?.getPlannerSkillStatBonuses?.() ?? null,
+    stat: (key) => getCharacterInstance()?.getStat?.(key) ?? null,
+    allStats: () => getCharacterInstance()?.getAllStats?.() ?? null,
+  };
 }

@@ -33,6 +33,7 @@ import {
   getSpentSkillPoints,
   getAllSkillPoints,
   getAllSkillPointsById,
+  buildMergedSkillLevelsForStatRecompute,
 } from '@/character/planner-core.js';
 import { findMissingCharmSkillUnlocks } from '@/items/charm-skill-unlocks.js';
 import { isCharmItem } from '@/items/charm-items.js';
@@ -150,7 +151,7 @@ export async function reloadSkillDataAndLoadBuild(build, buildIndex) {
         if (versionSelector) {
             await initializeVersionSelector(versionSelector);
         }
-        // Skill catalog changed with the version switch — rebuild oSkills picker once.
+        // Skill catalog changed with the version switch â€” rebuild oSkills picker once.
         initializeOSkillsDropdown();
         await loadBuildData(build, buildIndex);
         return true;
@@ -354,21 +355,33 @@ export async function loadBuildData(build, buildIndex = null) {
         // Single skill-stat recompute after items + stats are applied.
         await runPlannerSkillStatRecompute({ immediate: true, force: true });
 
-        // TSW dumps store FINAL in-game totals (e.g. {{life}}=12338 already includes
-        // gear + skills). parseStatsFromText stores them verbatim as base values, so
-        // the recomputed bonus would be added on top and inflate the totals.
-        // Re-derive base values so the displayed totals match the dump.
-        if (importedStatsText && (tswEnvelope || tswItems)) {
-            const ch = getCharacterInstance();
-            if (ch && typeof ch.setStat === 'function') {
-                for (const line of importedStatsText.split('\n')) {
-                    const m = /^\s*\{\{\s*([a-z0-9_]+)\s*\}\}\s*=\s*(-?\d+(?:\.\d+)?)\s*$/i.exec(line);
-                    if (!m) continue;
-                    const key = String(m[1]).toLowerCase();
-                    const value = Number(m[2]);
-                    if (!Number.isFinite(value)) continue;
-                    ch.setStat(key, value);
+        // Dev-only: one-line diagnostic so a cross-skill stat that fails to reach the
+        // panel can be diagnosed from the console without instrumenting by hand.
+        if (import.meta.env?.DEV) {
+            const dbg = getCharacterInstance();
+            if (dbg) {
+                const bonuses = dbg.getPlannerSkillStatBonuses?.() ?? {};
+                let mergedKeys = null;
+                try {
+                    mergedKeys = Object.keys(
+                        buildMergedSkillLevelsForStatRecompute(dbg)
+                    );
+                } catch (e) {
+                    mergedKeys = `error: ${e?.message}`;
                 }
+                const store = getFileSkillStore();
+                console.info('[planner debug] cross-skill stats', {
+                    bonusKeys: Object.keys(bonuses),
+                    skillDurationBonus: bonuses.skill_duration ?? null,
+                    continuityPoints:
+                        (dbg.getAllSkillPoints?.() ?? {}).continuity ??
+                        (dbg.getAllSkillPoints?.() ?? {}).Continuity ??
+                        null,
+                    mergedKeyCount: Array.isArray(mergedKeys) ? mergedKeys.length : mergedKeys,
+                    mergedKeysSample: Array.isArray(mergedKeys) ? mergedKeys.slice(0, 8) : null,
+                    storeReady: Boolean(store),
+                    catalogSize: store?.catalog?.length ?? 0
+                });
             }
         }
 
@@ -832,7 +845,7 @@ export function updateCurrentBuild() {
 }
 
 /**
- * If `desiredName` is already used by a saved build, return `desiredName (2)`, `(3)`, …
+ * If `desiredName` is already used by a saved build, return `desiredName (2)`, `(3)`, â€¦
  * @param {string} desiredName
  * @param {object[]} builds
  * @returns {string}

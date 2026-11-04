@@ -10,16 +10,25 @@ import { isPlannerStatConditionInactive } from '@/character/planner-stat-modifie
 import { getPlannerUnknownItemStatModifiers } from '@/items/item-character-stat-bonuses.js';
 
 const statTooltipRoot = ref(null);
-/** @type {import('vue').Ref<{ key: string, label: string, min: number|null, max: number|null, allowNegative?: boolean, default?: number, alwaysVisible?: boolean, sortOrder?: number, section?: string }[]>} */
-const statDefs = ref(getPlannerCharacterStatDefs());
+/** Bump to force recompute of non-reactive derived data (skill store load, skill point changes). */
+const refreshTick = ref(0);
+/**
+ * Stat definitions must follow the ACTIVE skill-data version. Capturing this once at
+ * mount left the panel rendering rows from whatever registry was loaded first, while
+ * the live registry (a different game version) no longer recognised those keys - the
+ * row showed but its value read 0 because the stat was unregistered.
+ * @type {import('vue').ComputedRef<{ key: string, label: string, min: number|null, max: number|null, allowNegative?: boolean, default?: number, alwaysVisible?: boolean, sortOrder?: number, section?: string }[]>}
+ */
+const statDefs = computed(() => {
+  refreshTick.value;
+  return getPlannerCharacterStatDefs();
+});
 /** @type {import('vue').Ref<Record<string, number>>} */
 const stats = ref({});
 /** @type {import('vue').Ref<{ text: string, sourceLabel: string }[]>} */
 const unknownItemModifiers = ref([]);
 /** Stat row whose input is focused (keeps row visible while editing down to default). */
 const activeStatKey = ref(/** @type {string|null} */ (null));
-/** Bump to force recompute of non-reactive derived data (skill store load, skill point changes). */
-const refreshTick = ref(0);
 const statFilter = ref('all');
 
 const statFilters = [
@@ -150,8 +159,8 @@ function onStatRowBlur(key) {
 }
 
 const refreshHandler = () => {
+  // `statDefs` is a computed that tracks refreshTick, so it must NOT be assigned here.
   refreshTick.value++;
-  statDefs.value = getPlannerCharacterStatDefs();
   pullStats();
 };
 

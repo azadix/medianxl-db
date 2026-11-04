@@ -228,6 +228,18 @@ function formatModifierDisplayValue(value) {
  */
 
 /**
+ * Stats produced by one skill and consumed by other skills' formulas.
+ *
+ * These are overlaid from the previous recompute pass because a single pass cannot
+ * see its own output. `runPlannerSkillStatRecompute` iterates to a fixed point, so
+ * adding a key here is all that is needed for a new cross-skill stat.
+ *
+ * `skill_duration` - Continuity's `max(4+blvl*6,10)`, read by every duration formula.
+ * @type {readonly string[]}
+ */
+const CROSS_SKILL_STAT_KEYS = Object.freeze(['skill_duration']);
+
+/**
  * @param {import('./Character.js').default} character
  * @param {PlannerSkillStatRecomputeContext} ctx
  */
@@ -242,6 +254,19 @@ export function recomputePlannerStatsFromSkillAllocations(character, ctx) {
   }
 
   const { effectiveLevel, treeSkillsCache, allSkillsBonus, classSkillsBonus, mergedBlvl } = ctx;
+
+  // Guard against transient "no skills" state during build load / version switches.
+  // mergedBlvl is derived from catalog lookups, so it can come back empty while the
+  // character still holds allocated points. Wiping here would clear every skill bonus
+  // (life/mana/skill_duration all read 0) and nothing would re-run to restore them.
+  const mergedKeyCount = Object.keys(mergedBlvl || {}).length;
+  if (mergedKeyCount === 0) {
+    const allocated = Object.values(character.getAllSkillPoints?.() || {}).some(
+      (v) => Math.max(0, Math.floor(Number(v) || 0)) > 0
+    );
+    if (allocated) return;
+  }
+
   const ulvl = Math.max(1, Math.floor(Number(effectiveLevel) || 1));
   const slvlAll = Math.max(0, Math.floor(Number(allSkillsBonus) || 0));
   const slvlClass = Math.max(0, Math.floor(Number(classSkillsBonus) || 0));
@@ -294,12 +319,17 @@ export function recomputePlannerStatsFromSkillAllocations(character, ctx) {
           typeof character.getAllStatsWithoutSkillBonuses === 'function'
             ? character.getAllStatsWithoutSkillBonuses()
             : character.getAllRawStats();
-        // `skill_duration` is a plain duration multiplier produced by Continuity and
-        // consumed by other skills' `{{skill_duration}}`, so it is the one prior-pass
-        // value that must be visible (it is not derived from any other stat).
-        const prior = Number(character?._plannerSkillStatBonuses?.skill_duration) || 0;
-        if (prior) {
-          base.skill_duration = (Number(base.skill_duration) || 0) + prior;
+        // Only stats in CROSS_SKILL_STAT_KEYS are carried over from the previous
+        // pass (produced by one skill, read by another). Everything else must come
+        // from the non-skill baseline, otherwise derived stats compound.
+        const priorAll =
+          typeof character.getPlannerSkillStatBonuses === 'function'
+            ? character.getPlannerSkillStatBonuses()
+            : character?._plannerSkillStatBonuses || {};
+        for (const key of CROSS_SKILL_STAT_KEYS) {
+          const prior = Number(priorAll[key]) || 0;
+          if (!prior) continue;
+          base[key] = (Number(base[key]) || 0) + prior;
         }
         return base;
       })(),
