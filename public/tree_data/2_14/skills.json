@@ -1102,7 +1102,7 @@
         "value2": "5"
       },
       {
-        "statKey": "magic_damage",
+        "statKey": "percent_dex_gained_as_extra_magic_damage",
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "lev_scaled(10,4,4,4,4,2,lvl)",
@@ -30591,8 +30591,8 @@
         "statKey": "damage",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "pst1",
-        "value1": "pst2"
+        "value0": "12",
+        "value1": "12"
       },
       {
         "statKey": "attack_rating",
@@ -33852,7 +33852,8 @@
         "statKey": "bonus_magic_damage",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "(8*[[batstrike]]*(100+20*[[batstrike]]))/200"
+        "value0": "[[batstrike]].{{bonus_magic_damage}}",
+        "value1": "[[batstrike]].{{bonus_magic_damage}}"
       },
       {
         "statKey": "magic_damage",
@@ -35773,21 +35774,14 @@
         "value0": "(20+3*(lvl-1))/2"
       },
       {
-        "statKey": "fire_damage",
+        "statKey": "bonus_fire_damage_to_weapons",
         "occurrenceIndex": 0,
         "variantKey": "",
         "value0": "lev_scaled(10,12,14,16,18,20,lvl)",
         "value1": "lev_scaled(17,22,26,28,30,30,lvl)",
-        "hitShift": 5,
         "rawValue0": "lev_scaled(10,12,14,16,18,20,lvl)",
-        "rawValue1": "lev_scaled(17,22,26,28,30,30,lvl)"
-      },
-      {
-        "statKey": "bonus_fire_damage_to_weapons",
-        "occurrenceIndex": 0,
-        "variantKey": "",
-        "value0": "(floor(truncdiv(((10+if((lvl<=1),0,if((lvl<=8),(12*((lvl-1))),if((lvl<=16),((7*12)+(14*((lvl-8)))),if((lvl<=22),(((7*12)+(8*14))+(16*((lvl-16)))),if((lvl<=28),((((7*12)+(8*14))+(6*16))+(18*((lvl-22)))),(((((7*12)+(8*14))+(6*16))+(6*18))+(20*((lvl-28))))))))))),8)))",
-        "value1": "(floor(truncdiv(((17+if((lvl<=1),0,if((lvl<=8),(22*((lvl-1))),if((lvl<=16),((7*22)+(26*((lvl-8)))),if((lvl<=22),(((7*22)+(8*26))+(28*((lvl-16)))),if((lvl<=28),((((7*22)+(8*26))+(6*28))+(30*((lvl-22)))),(((((7*22)+(8*26))+(6*28))+(6*30))+(30*((lvl-28))))))))))),8)))"
+        "rawValue1": "lev_scaled(17,22,26,28,30,30,lvl)",
+        "hitShift": 5
       }
     ],
     "description": [
@@ -37464,7 +37458,7 @@
         "statKey": "elemental_or_physical_damage_to_weapon_as_magic",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "(100+(lvl-1)*2)"
+        "value0": "(100+lvl*2)"
       },
       {
         "statKey": "mana_cost",
