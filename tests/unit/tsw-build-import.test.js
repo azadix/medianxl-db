@@ -1074,3 +1074,80 @@ describe('applyTswOSkillLeftovers', () => {
     ]);
   });
 });
+
+describe('tsw-build-import rare item names', () => {
+  it('recovers the generated name from the description when display_name is only the base', () => {
+    const rows = [
+      {
+        item: 'Ring',
+        display_name: 'Ring',
+        quality: 'Rare',
+        display_quality: 'Rare',
+        code: 'rin',
+        location: 'Gear',
+        slot: 'LeftFinger',
+        description_lines: [[['Viper Eye', 9]], [['+1 to All Skills', 3]]],
+      },
+    ];
+    const { snapshot } = mapTswItemsToSnapshot(rows, byIdCatalog());
+    expect(snapshot.equipment.lrin?.custom?.name).toBe('Viper Eye');
+  });
+
+  it('uses display_name when the dump already carries the generated name', () => {
+    const rows = [
+      {
+        item: 'Ring',
+        display_name: 'Viper Eye',
+        quality: 'Rare',
+        display_quality: 'Rare',
+        code: 'rin',
+        location: 'Gear',
+        slot: 'LeftFinger',
+        description_lines: [[['Viper Eye', 9]], [['+1 to All Skills', 3]]],
+      },
+    ];
+    const { snapshot } = mapTswItemsToSnapshot(rows, byIdCatalog());
+    expect(snapshot.equipment.lrin?.custom?.name).toBe('Viper Eye');
+  });
+
+  it('keeps the base type for plain rares that have no generated name', () => {
+    const rows = [
+      {
+        item: 'Ring',
+        display_name: 'Ring',
+        quality: 'Rare',
+        display_quality: 'Rare',
+        code: 'rin',
+        location: 'Gear',
+        slot: 'LeftFinger',
+        description_lines: [[['Ring', 9]], [['+1 to All Skills', 3]]],
+      },
+    ];
+    const { snapshot } = mapTswItemsToSnapshot(rows, byIdCatalog());
+    expect(snapshot.equipment.lrin?.custom?.name).toBe('Ring');
+  });
+});
+
+describe('rare item name round-trip', () => {
+  it('exports the generated rare name and re-imports it', async () => {
+    const { plannerItemsSnapshotToTswItems } = await import('@/planner/tsw-build-export.js');
+    const { mapTswItemsToSnapshot } = await import('@/planner/tsw-build-import.js');
+    const snap = {
+      weaponSet: 0,
+      equipment: {
+        lrin: {
+          defId: 'rin',
+          custom: { quality: 'rare', name: 'Viper Eye', modifiers: ['+1 to All Skills'] },
+        },
+      },
+      charms: [],
+      relics: [],
+    };
+    const store = { catalogById: byIdCatalog().catalogById, catalog: byIdCatalog().catalog };
+    const rows = plannerItemsSnapshotToTswItems(snap, store);
+    const ringRow = rows.find((r) => String(r.slot || '') === 'LeftFinger' || /Ring|Viper/.test(String(r.item || '')));
+    expect(ringRow?.display_name).toBe('Viper Eye');
+    const { snapshot } = mapTswItemsToSnapshot([ringRow], byIdCatalog());
+    expect(snapshot.equipment.lrin?.custom?.name).toBe('Viper Eye');
+  });
+});
