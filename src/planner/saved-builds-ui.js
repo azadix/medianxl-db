@@ -568,20 +568,31 @@ function toastMissingCharmSkillUnlocks(className, itemsStore) {
 
 const TSW_SKIP_TOAST_REASONS = new Set(['uncatalogued', 'unknown-slot', 'relic-cap']);
 
+/** Human labels for skip reasons that are worth surfacing. */
+const TSW_SKIP_REASON_LABELS = {
+    uncatalogued: 'not in the catalog',
+    'unknown-slot': 'unknown equipment slot',
+    'relic-cap': 'over the relic limit',
+};
+
 function toastSkippedTswItems(skipped) {
     if (!Array.isArray(skipped) || skipped.length === 0) return;
     const warned = skipped.filter((s) => TSW_SKIP_TOAST_REASONS.has(String(s?.reason || '')));
     if (warned.length === 0) return;
     console.warn(
-        `[TSW import] Skipped ${warned.length} item${warned.length > 1 ? 's' : ''} not in the catalog:`,
+        `[TSW import] Skipped ${warned.length} item${warned.length > 1 ? 's' : ''} that could not be imported:`,
         warned
     );
-    const names = warned.map((s) => exportLabelForToast(s.name || '(unnamed)'));
+    const names = warned.map((s) => {
+        const label = exportLabelForToast(s.name || '(unnamed)');
+        const reason = TSW_SKIP_REASON_LABELS[String(s?.reason || '')];
+        return reason ? `${label} (${reason})` : label;
+    });
     const shown = names.slice(0, 8);
     const extra = names.length - shown.length;
     const list = extra > 0 ? `${shown.join(', ')}, and ${extra} more` : shown.join(', ');
     toastManager.showToast(
-        `Skipped ${names.length} item${names.length > 1 ? 's' : ''} not in the catalog: ${list}.`,
+        `Skipped ${names.length} item${names.length > 1 ? 's' : ''} that could not be imported: ${list}.`,
         false,
         'warning'
     );

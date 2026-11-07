@@ -709,7 +709,7 @@ export function mapTswItemsToSnapshot(rows, catalog, className = null) {
     const wornSlot = rawLocation !== 'Gear' && rowSlot ? TSW_SLOT_TO_EQUIPMENT[rowSlot] : null;
     const location = wornSlot ? 'Gear' : rawLocation;
     if (location !== 'Gear' && location !== 'Inventory') {
-      skipRow(row, 'stash', index);
+      skipRow(row, 'unsupported-location', index);
       continue;
     }
 
@@ -832,7 +832,7 @@ export function mapTswItemsToSnapshot(rows, catalog, className = null) {
     // Catalogued gear that sits in the inventory (staves, spare armour, rings) is not
     // equippable state the planner models. It is NOT missing from the catalogue - reporting
     // it as "uncatalogued" made in-catalog uniques look unsupported.
-    skipRow(row, 'inventory', index);
+    skipRow(row, 'non-charm-inventory', index);
   }
 
   return {

@@ -1186,7 +1186,7 @@ describe('exporter quality labels', () => {
       },
     ];
     const { skipped } = mapTswItemsToSnapshot(rows, byIdCatalog());
-    expect(skipped.map((s) => s.reason)).toEqual(['inventory']);
+    expect(skipped.map((s) => s.reason)).toEqual(['non-charm-inventory']);
   });
 });
 
@@ -1225,6 +1225,6 @@ describe('exporter marks worn gear as Inventory', () => {
       },
     ];
     const { skipped } = mapTswItemsToSnapshot(rows, byIdCatalog());
-    expect(skipped.map((s) => s.reason)).toEqual(['inventory']);
+    expect(skipped.map((s) => s.reason)).toEqual(['non-charm-inventory']);
   });
 });
