@@ -1151,3 +1151,41 @@ describe('rare item name round-trip', () => {
     expect(snapshot.equipment.lrin?.custom?.name).toBe('Viper Eye');
   });
 });
+
+describe('exporter quality labels', () => {
+  it('imports uniques whose display_quality is the plain word "Unique"', () => {
+    const rows = [
+      {
+        item: 'Lacuni Cowl',
+        display_name: 'Lacuni Cowl',
+        type: 'armor',
+        quality: 'Unique',
+        display_quality: 'Unique',
+        code: '@17',
+        location: 'Gear',
+        slot: 'Head',
+        description_lines: [],
+      },
+    ];
+    const { snapshot, skipped } = mapTswItemsToSnapshot(rows, byIdCatalog());
+    expect(skipped).toEqual([]);
+    expect(snapshot.equipment.head).toMatchObject({ defId: 'u:lacuni-cowl:su' });
+  });
+
+  it('reports catalogued gear found in the inventory as inventory, not uncatalogued', () => {
+    const rows = [
+      {
+        item: 'Lacuni Cowl',
+        display_name: 'Lacuni Cowl',
+        type: 'armor',
+        quality: 'Unique',
+        display_quality: 'Unique',
+        code: '@17',
+        location: 'Inventory',
+        description_lines: [],
+      },
+    ];
+    const { skipped } = mapTswItemsToSnapshot(rows, byIdCatalog());
+    expect(skipped.map((s) => s.reason)).toEqual(['inventory']);
+  });
+});

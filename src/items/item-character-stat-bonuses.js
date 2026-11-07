@@ -588,6 +588,14 @@ export function classifyCharacterStatModifierLine(line, options = {}) {
     return { text, kind: 'skip', bonuses: [] };
   }
 
+  // Nephalem Weapons wording: "20-30% of base Strength and Dexterity",
+  // "10-15% of base Vitality". These do NOT grant the attribute — a percentage of the
+  // base attribute is added as fire and lightning damage to weapons instead. Counting
+  // them as flat/total attribute bonuses inflates strength/dexterity.
+  if (/\bof\s+base\s+(?:strength|dexterity|vitality|energy)\b/i.test(text)) {
+    return { text, kind: 'skip', bonuses: [] };
+  }
+
   // All-skills / class-skills / catalog oSkills are handled elsewhere.
   const skillBonus = parseSkillBonusFromModifierLine(line);
   if (skillBonus && (skillBonus.kind === 'all' || skillBonus.kind === 'class')) {
@@ -742,6 +750,21 @@ function sourceLabelForDef(def) {
  *   unknownModifiers: UnknownItemStatModifier[],
  * }}
  */
+/**
+ * Normalised comparison key for item stat lines, so the same bonus spelled slightly
+ * differently ("+40 to All Attributes" vs the dump's "+40 to all Attributes", or with a
+ * leading "+" omitted) is recognised as one line instead of being counted twice.
+ * @param {unknown} text
+ * @returns {string}
+ */
+function statLineCompareKey(text) {
+  return String(text ?? '')
+    .toLowerCase()
+    .replace(/^\s*\+/, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 export function collectEnabledItemCharacterStatBonuses(options = {}) {
   /** @type {Record<string, number>} */
   const bonuses = {};
@@ -813,14 +836,23 @@ export function collectEnabledItemCharacterStatBonuses(options = {}) {
       if (!isCharmBonusActive(def, characterLevel, { inInventory: true, rolls })) continue;
       /** @type {string[]} */
       const lines = [];
+      /** Lines already granted by the resolved affix rolls. */
+      const appliedCharmLines = new Set();
       for (const source of getCharmAffixSources(def, rolls, className, { activeOnly: true })) {
         const text = resolveCharmAffixText(source.text, source.sourceKey, rolls, false);
         if (text == null) continue;
         lines.push(text);
+        appliedCharmLines.add(statLineCompareKey(text));
       }
       const charmExtras = itemsStore.getExtrasForInstance?.(instanceId) ?? [];
       for (const extra of charmExtras) {
-        if (extra) lines.push(extra);
+        if (!extra) continue;
+        // The TSW description repeats lines the charm roll already granted (Dulra Aegis
+        // "Perfect Topaz" -> "+30 to Dexterity" arrived twice and counted as 60). Compare
+        // normalised text: the dump spells them slightly differently ("+40 to all
+        // Attributes" vs the affix's "+40 to All Attributes").
+        if (appliedCharmLines.has(statLineCompareKey(extra))) continue;
+        lines.push(extra);
       }
       accumulateLines(lines, sourceLabelForDef(def), bonuses, modifiersByKey, unknownModifiers, characterLevel);
     }
@@ -837,9 +869,13 @@ export function collectEnabledItemCharacterStatBonuses(options = {}) {
           showRollRanges: false,
         }),
       ];
+      const appliedRelicLines = new Set(lines.map((line) => String(line).trim()));
       const relicExtras = itemsStore.getExtrasForInstance?.(instanceId) ?? [];
       for (const extra of relicExtras) {
-        if (extra) lines.push(extra);
+        if (!extra) continue;
+        // Same TSW-description duplication as charms: skip lines the relic def already grants.
+        if (appliedRelicLines.has(String(extra).trim())) continue;
+        lines.push(extra);
       }
       accumulateLines(lines, sourceLabelForDef(def), bonuses, modifiersByKey, unknownModifiers, characterLevel);
     }

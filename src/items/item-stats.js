@@ -635,7 +635,25 @@ export function getItemStatSections(def, rolls = null, options = {}) {
   );
   const merged = applyResolvedRandomReanimates(mods, extras);
   mods.length = 0;
-  mods.push(...merged.mods, ...merged.extras.map((line) => markModifierLineAdded(line)));
+  // The TSW row's description lines echo affixes the catalogue def already renders.
+  // Appending them blindly duplicates each such line, which double-counts its stat
+  // (Silks of the Victor's "+13% to Dexterity" was being applied as +26%). Compare
+  // normalised text so casing/leading-"+" differences don't slip through; duplicates
+  // *within* extras stay, since two identical orbs legitimately produce two lines.
+  const normalizeLineKey = (line) =>
+    String(line || '')
+      .replace(/^\{(?:added|grey|boosted|orange|red|green|gold|blue|purple)\}/i, '')
+      .toLowerCase()
+      .replace(/^\s*\+/, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  const defModTexts = new Set([...base, ...scaling, ...merged.mods].map(normalizeLineKey));
+  mods.push(
+    ...merged.mods,
+    ...merged.extras
+      .map((line) => markModifierLineAdded(line))
+      .filter((line) => !defModTexts.has(normalizeLineKey(line)))
+  );
 
   return {
     base,
@@ -759,9 +777,18 @@ export function getItemDetailStatRows(def, rolls = null, options = {}) {
       const row = rows[modIndexes[i]];
       if (row && row.kind === 'text') row.text = text;
     });
+    // The TSW row's description lines echo affixes the catalogue def already carries.
+    // Pushing them blindly duplicates every such line, which double-counts its stat
+    // (e.g. Silks of the Victor's "+13% to Dexterity" became +26%). Skip extras that
+    // an existing row already renders; duplicates *within* extras are preserved
+    // because they can be legitimate (two identical orbs).
+    const existingTexts = new Set(
+      rows.filter((row) => row.kind === 'text').map((row) => String(row.text || '').trim())
+    );
     for (const line of merged.extras) {
       const text = markModifierLineAdded(String(line || '').trim());
       if (!text) continue;
+      if (existingTexts.has(String(text).trim())) continue;
       rows.push({ kind: /** @type {const} */ ('text'), text, section: /** @type {const} */ ('mod') });
     }
     return rows;

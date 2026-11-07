@@ -374,17 +374,26 @@ function applyCharmUpgradeRolls(def, upgrades, lines, rolls, upgradedFlag) {
   for (const entry of upgrades) {
     const customLabel =
       entry.label && !/^Upgrade\s+\d+$/i.test(entry.label) ? entry.label : '';
+    // Affixes that merely restate one of the charm's own base modifiers are no evidence
+    // that the upgrade is applied: the Glorious Book's upgrade repeats "+1 to All Skills",
+    // which the base charm already grants, so the upgrade (and its "+10 to all Attributes")
+    // was granted to charms that do not have it.
+    const upgradeOnlyAffixes = entry.affixes.filter((text) => !baseTexts.includes(text));
     if (customLabel && labelInLines(customLabel, lines)) {
       rolls[entry.key] = 1;
       marked.add(entry.index);
-    } else if (entry.affixes.some((text) => findLine(text, lines))) {
+    } else if (
+      entry.affixes.length > 1
+        ? upgradeOnlyAffixes.length > 0 && upgradeOnlyAffixes.every((text) => findLine(text, lines))
+        : entry.affixes.some((text) => findLine(text, lines))
+    ) {
       rolls[entry.key] = 1;
       marked.add(entry.index);
     } else if (
       // Multi-affix bundles: any stacked component means the whole upgrade is present.
       // Single-affix repeats are allocated by count in stackGroups below.
       entry.affixes.length > 1 &&
-      entry.affixes.some((text) => stackedUpgradeCount(text, baseTexts, lines) >= 1)
+      upgradeOnlyAffixes.some((text) => stackedUpgradeCount(text, baseTexts, lines) >= 1)
     ) {
       rolls[entry.key] = 1;
       marked.add(entry.index);

@@ -308,7 +308,10 @@ export function isIgnoredTswItem(row) {
  * @returns {boolean}
  */
 function isCatalogBadge(badge) {
-  return ['SU', 'SSU', 'SSSU', 'TU', 'SET', 'RW', 'CHARM'].includes(badge);
+  // Some exporters emit the plain quality word ("Unique") instead of the MXL badge
+  // (SU/SSU/...). Those items are catalogued uniques too - rejecting them skipped every
+  // unique in such builds with a misleading "uncatalogued" reason.
+  return ['SU', 'SSU', 'SSSU', 'TU', 'SET', 'RW', 'CHARM', 'UNIQUE', 'UNI'].includes(badge);
 }
 
 /**
@@ -821,7 +824,10 @@ export function mapTswItemsToSnapshot(rows, catalog, className = null) {
       continue;
     }
 
-    skipRow(row, 'uncatalogued', index);
+    // Catalogued gear that sits in the inventory (staves, spare armour, rings) is not
+    // equippable state the planner models. It is NOT missing from the catalogue - reporting
+    // it as "uncatalogued" made in-catalog uniques look unsupported.
+    skipRow(row, 'inventory', index);
   }
 
   return {

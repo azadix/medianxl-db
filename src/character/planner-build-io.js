@@ -42,6 +42,17 @@ export function resolveCatalogRowBySkillRef(key, store = null) {
 }
 
 /**
+ * Game-internal skill rows with no name of their own (skills.tsv `skill_1542`) are exported
+ * by TSW under a generated label like "Skill 1542". They belong to no tree and cannot be
+ * allocated, so they are not "unknown skills" - drop them without warning.
+ * @param {unknown} key
+ * @returns {boolean}
+ */
+function isPlaceholderSkillRef(key) {
+  return /^skill[\s_]*\d+$/i.test(String(key ?? '').trim());
+}
+
+/**
  * @param {Record<string, unknown>} map
  * @returns {{ map: Record<string, number>, skipped: Array<{ key: string, wantedLevel: number }> }}
  */
@@ -57,7 +68,7 @@ export function normalizeBuildSkillPointsForImport(map) {
     if (!Number.isFinite(points) || points <= 0) continue;
     const cat = resolveCatalogRowBySkillRef(k, store);
     if (cat) out[cat.id] = points;
-    else skipped.push({ key: String(k), wantedLevel: points });
+    else if (!isPlaceholderSkillRef(k)) skipped.push({ key: String(k), wantedLevel: points });
   }
   return { map: out, skipped };
 }
@@ -115,6 +126,7 @@ export function normalizeBuildOSkillsForImport(input) {
       if (!r) {
         const label = oskillRowSkipLabel(row);
         if (isAttributeGrantName(label)) continue;
+        if (isPlaceholderSkillRef(label)) continue;
         skipped.push({ key: label, wantedLevel: points });
       } else out.push(r);
     }
