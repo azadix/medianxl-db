@@ -355,6 +355,28 @@ export async function loadBuildData(build, buildIndex = null) {
         // Single skill-stat recompute after items + stats are applied.
         await runPlannerSkillStatRecompute({ immediate: true, force: true });
 
+        // The TSW stats blob holds FINAL in-game totals (e.g. life 12338 already includes
+        // gear). parseStatsFromText() above stores those numbers as BASE values, so the
+        // recomputed item/skill bonuses get added on top (life 15730 vs 12533 in game).
+        // setStat() interprets its argument as a displayed total and converts it back to a
+        // base by subtracting the bonuses that are live *now* - so it can only be applied
+        // here, after items and skills are in place.
+        if (importedStatsText) {
+            const statCharacter = getCharacterInstance();
+            if (statCharacter && typeof statCharacter.setStat === 'function') {
+                // The blob reports the four primary attributes as BASE values, not totals -
+                // converting those would wipe their item/skill bonuses.
+                const baseAttributes = new Set(['strength', 'dexterity', 'vitality', 'energy']);
+                for (const statLine of importedStatsText.split('\n')) {
+                    const statMatch = /^\s*\{\{\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*\}\}\s*=\s*(-?\d+(?:\.\d+)?)\s*$/.exec(statLine);
+                    if (!statMatch) continue;
+                    const statKey = String(statMatch[1]).toLowerCase();
+                    if (baseAttributes.has(statKey)) continue;
+                    statCharacter.setStat(statKey, Number(statMatch[2]));
+                }
+            }
+        }
+
         // Dev-only: one-line diagnostic so a cross-skill stat that fails to reach the
         // panel can be diagnosed from the console without instrumenting by hand.
         if (import.meta.env?.DEV) {
@@ -1242,7 +1264,7 @@ export function buildCurrentBuildSnapshot(name) {
     version: versionToString(getCurrentVersion()),
     class: currentClass,
     level: currentLevel,
-    spentPoints: getSpentSkillPoints(),
+    spentPoints: Number.isFinite(Number(getSpentSkillPoints())) ? Number(getSpentSkillPoints()) : 0,
     skillPoints: getAllSkillPointsById(),
     disabledSkills: getDisabledSkillIds(),
     enabledSkills: getEnabledSkillIds(),

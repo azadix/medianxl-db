@@ -816,6 +816,27 @@ export function savedBuildName(raw) {
 }
 
 /**
+ * Skill points spent for a saved build. The TSW envelope deliberately omits `spentPoints`
+ * from `build`, and older records may lack it too, so fall back to summing the saved skill
+ * allocation instead of rendering an empty "points spent" label.
+ * @param {object|null|undefined} raw
+ * @returns {number}
+ */
+export function savedBuildSpentPoints(raw) {
+  const build = savedBuildInner(raw) || {};
+  const recorded = Number(build.spentPoints);
+  if (Number.isFinite(recorded) && recorded >= 0) return recorded;
+  const allocation = build.skillPoints;
+  if (!allocation || typeof allocation !== 'object') return 0;
+  let total = 0;
+  for (const points of Object.values(allocation)) {
+    const n = Number(points);
+    if (Number.isFinite(n) && n > 0) total += n;
+  }
+  return total;
+}
+
+/**
  * @param {object|null|undefined} raw
  * @param {string} name
  */
