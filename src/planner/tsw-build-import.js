@@ -702,7 +702,12 @@ export function mapTswItemsToSnapshot(rows, catalog, className = null) {
   for (let index = 0; index < list.length; index += 1) {
     const row = list[index];
     if (!row || typeof row !== 'object') continue;
-    const location = String(row.location || '').trim();
+    const rowSlot = String(row.slot || '').trim();
+    const rawLocation = String(row.location || '').trim();
+    // Some exporters mark equipped gear as Inventory while still reporting its equipment
+    // slot. A real inventory item never has a slot, so trust the slot and treat it as worn.
+    const wornSlot = rawLocation !== 'Gear' && rowSlot ? TSW_SLOT_TO_EQUIPMENT[rowSlot] : null;
+    const location = wornSlot ? 'Gear' : rawLocation;
     if (location !== 'Gear' && location !== 'Inventory') {
       skipRow(row, 'stash', index);
       continue;

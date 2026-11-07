@@ -1189,3 +1189,42 @@ describe('exporter quality labels', () => {
     expect(skipped.map((s) => s.reason)).toEqual(['inventory']);
   });
 });
+
+describe('exporter marks worn gear as Inventory', () => {
+  it('treats a row with an equipment slot as worn even when location says Inventory', () => {
+    const rows = [
+      {
+        item: 'Lacuni Cowl',
+        display_name: 'Lacuni Cowl',
+        type: 'armor',
+        quality: 'Unique',
+        display_quality: 'Unique',
+        code: '@17',
+        location: 'Inventory',
+        slot: 'Head',
+        description_lines: [],
+      },
+    ];
+    const { snapshot, skipped } = mapTswItemsToSnapshot(rows, byIdCatalog());
+    expect(skipped).toEqual([]);
+    expect(snapshot.equipment.head).toMatchObject({ defId: 'u:lacuni-cowl:su' });
+  });
+
+  it('still skips genuine inventory rows that have no slot', () => {
+    const rows = [
+      {
+        item: 'Lacuni Cowl',
+        display_name: 'Lacuni Cowl',
+        type: 'armor',
+        quality: 'Unique',
+        display_quality: 'Unique',
+        code: '@17',
+        location: 'Inventory',
+        slot: null,
+        description_lines: [],
+      },
+    ];
+    const { skipped } = mapTswItemsToSnapshot(rows, byIdCatalog());
+    expect(skipped.map((s) => s.reason)).toEqual(['inventory']);
+  });
+});
