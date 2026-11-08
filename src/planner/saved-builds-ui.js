@@ -33,7 +33,6 @@ import {
   getSpentSkillPoints,
   getAllSkillPoints,
   getAllSkillPointsById,
-  buildMergedSkillLevelsForStatRecompute,
 } from '@/character/planner-core.js';
 import { findMissingCharmSkillUnlocks } from '@/items/charm-skill-unlocks.js';
 import { isCharmItem } from '@/items/charm-items.js';
@@ -453,36 +452,6 @@ export async function loadBuildData(build, buildIndex = null) {
                     if (baseAttributes.has(statKey)) continue;
                     statCharacter.setStat(statKey, Number(statMatch[2]));
                 }
-            }
-        }
-
-        // Dev-only: one-line diagnostic so a cross-skill stat that fails to reach the
-        // panel can be diagnosed from the console without instrumenting by hand.
-        if (import.meta.env?.DEV) {
-            const dbg = getCharacterInstance();
-            if (dbg) {
-                const bonuses = dbg.getPlannerSkillStatBonuses?.() ?? {};
-                let mergedKeys = null;
-                try {
-                    mergedKeys = Object.keys(
-                        buildMergedSkillLevelsForStatRecompute(dbg)
-                    );
-                } catch (e) {
-                    mergedKeys = `error: ${e?.message}`;
-                }
-                const store = getFileSkillStore();
-                console.info('[planner debug] cross-skill stats', {
-                    bonusKeys: Object.keys(bonuses),
-                    skillDurationBonus: bonuses.skill_duration ?? null,
-                    continuityPoints:
-                        (dbg.getAllSkillPoints?.() ?? {}).continuity ??
-                        (dbg.getAllSkillPoints?.() ?? {}).Continuity ??
-                        null,
-                    mergedKeyCount: Array.isArray(mergedKeys) ? mergedKeys.length : mergedKeys,
-                    mergedKeysSample: Array.isArray(mergedKeys) ? mergedKeys.slice(0, 8) : null,
-                    storeReady: Boolean(store),
-                    catalogSize: store?.catalog?.length ?? 0
-                });
             }
         }
 
