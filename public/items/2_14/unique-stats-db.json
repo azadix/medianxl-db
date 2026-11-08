@@ -2360,7 +2360,8 @@
       "quality": "SU",
       "stats": "Required Level: 125\nItem Level: 110\n{orange}Adds 4000 - 5000 Magic Damage\n1% Chance to cast level 21 Lifeblood on Striking\n5% Chance to cast level 60 Dark Power on Kill\n+1 to Ultimate Chaos\nLightning Resist -100%\nPhysical Resist (15 to 25)%\n100% Magic Find",
       "source": "secret",
-      "type": "Voidsworn Bow"
+      "type": "Voidsworn Bow",
+      "icon": "sbow"
     },
     {
       "name": "Despondence",

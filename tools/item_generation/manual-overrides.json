@@ -717,6 +717,13 @@
       "type": "Jewel",
       "tier": null,
       "icon": "invgswe"
+    },
+    {
+      "name": "Desolation",
+      "quality": "SU",
+      "type": "Voidsworn Bow",
+      "tier": null,
+      "icon": "sbow"
     }
   ],
   "runeword_corrections": [

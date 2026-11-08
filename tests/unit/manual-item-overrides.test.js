@@ -61,8 +61,11 @@ describe('manual item overrides', () => {
 
   it('keeps class restriction colors and manual icon fixes', () => {
     expect(unique.some((entry) => entry.stats.includes('{red}('))).toBe(true);
+    expect(unique.every((entry) => Boolean(entry.icon))).toBe(true);
     const stareye = unique.find((entry) => entry.name === "Stareye's Claws");
     expect(stareye?.icon).toBe('set_pewpew4');
+    const desolation = unique.find((entry) => entry.name === 'Desolation');
+    expect(desolation?.icon).toBe('sbow');
   });
 
   it('keeps the runeword color corrections', () => {
