@@ -1002,6 +1002,15 @@
     text-align: left;
 }
 
+/* Explicit text badge for modifiers no engine/handler supports yet. */
+.mod-support-badge {
+    margin-left: 0.35em;
+    color: #d9534f;
+    font-size: 0.82em;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
 /* Floating tooltips size to the longest mod (incl. blue [min-max] ranges). */
 .item-tooltip-card .item-tooltip-line,
 .item-tooltip-card .item-tooltip-set-bonus-mod {
@@ -1034,7 +1043,7 @@
 }
 
 .item-mod--added {
-    color: var(--item-mod-added, #3fd0c9);
+    color: inherit;
 }
 
 .item-mod--inactive {

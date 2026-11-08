@@ -185,6 +185,7 @@ export function sumBroadSkillBonusesFromModifierLines(lines, className = '') {
   let all = 0;
   let classTotal = 0;
   for (const line of Array.isArray(lines) ? lines : []) {
+    if (!isModifierLineActive(line)) continue;
     const parsed = parseSkillBonusFromModifierLine(line);
     if (!parsed) continue;
     const amount = Number(parsed.amount);

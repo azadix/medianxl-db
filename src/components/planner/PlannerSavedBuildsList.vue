@@ -3,7 +3,7 @@ import { ref, onMounted, onUnmounted, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { usePlannerStore } from '@/stores/planner.js';
 import { getSavedBuilds } from '@/planner/saved-builds-storage.js';
-import { savedBuildInner, savedBuildName } from '@/planner/tsw-build-export.js';
+import { savedBuildInner, savedBuildName, savedBuildSpentPoints } from '@/planner/tsw-build-export.js';
 import { calculateArmorImageNumber } from '@/planner/planner-ui-updates.js';
 import {
   loadBuild,
@@ -48,7 +48,7 @@ function portraitSrc(raw) {
   if (build.class === currentClass) {
     return `portraits/${build.class}/${calculateArmorImageNumber(spent)}.gif`;
   }
-  return `portraits/${build.class}/${calculateArmorImageNumber(build.spentPoints)}.gif`;
+  return `portraits/${build.class}/${calculateArmorImageNumber(savedBuildSpentPoints(raw))}.gif`;
 }
 
 /**
@@ -139,7 +139,7 @@ watch(activeSection, (s) => {
           </p>
           <p class="subtitle is-6 mb-1">
             <span class="tag has-text-info">Level {{ savedBuildInner(raw).level }} {{ savedBuildInner(raw).class }}</span>
-            <span class="tag">{{ savedBuildInner(raw).spentPoints }} points spent</span>
+            <span class="tag">{{ savedBuildSpentPoints(raw) }} points spent</span>
             <span class="tag">v{{ savedBuildInner(raw).version || 'unknown' }}</span>
           </p>
         </div>

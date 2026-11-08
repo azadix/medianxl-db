@@ -427,11 +427,25 @@ export function tswDescriptionColoredTexts(lines) {
     let text = '';
     /** @type {number|null} */
     let code = null;
+    let flatSegments = false;
     for (const seg of line) {
-      if (!Array.isArray(seg)) continue;
-      text += String(seg[0] || '');
-      const n = Number(seg[1]);
-      if (code == null && Number.isFinite(n) && n >= 0) code = n;
+      if (Array.isArray(seg)) {
+        text += String(seg[0] || '');
+        const n = Number(seg[1]);
+        if (code == null && Number.isFinite(n) && n >= 0) code = n;
+      } else if (typeof seg === 'string') {
+        // Socketable descriptions from TSW use flat "text colorCode" strings.
+        text += seg;
+        flatSegments = true;
+      }
+    }
+    if (flatSegments && code == null) {
+      const trailing = /(?:^|\s)(\d{1,2})\s*$/.exec(text);
+      const n = trailing ? Number(trailing[1]) : NaN;
+      if (Number.isFinite(n) && n >= 0 && n <= 11) {
+        code = n;
+        text = text.slice(0, trailing.index).trimEnd();
+      }
     }
     text = text.trim();
     if (!text) continue;
@@ -662,8 +676,49 @@ export function resolveCustomBaseDefId(row, cat, quality = null) {
  * @param {CustomItemQuality} quality
  * @returns {{ defId: string, custom: CustomItemPayload, icon?: string }}
  */
+/**
+ * Generated name for a rare/crafted item. The dump's `item`/`display_name` often carry only
+ * the base type ("Ring") while the rolled name sits on the description's first line, so fall
+ * back to that line when the row name is just the base.
+ * @param {object|null|undefined} row
+ * @returns {string}
+ */
+function tswGeneratedItemName(row) {
+  const rowName = tswRowName(row);
+  const baseType = String(row?.type ?? row?.item ?? '').trim();
+  const isGeneric = !rowName || rowName === baseType || rowName === stripTswBaseLabel(baseType);
+  if (!isGeneric) return rowName;
+  for (const entry of Array.isArray(row?.description_lines) ? row.description_lines : []) {
+    const text = descriptionLineText(entry);
+    if (!text) continue;
+    if (text === baseType || text === rowName) return rowName;
+    // A generated name never looks like a stat line or a header.
+    if (/[:%]/.test(text) || /^\d/.test(text)) return rowName;
+    return text;
+  }
+  return rowName;
+}
+
+/**
+ * @param {unknown} entry
+ * @returns {string}
+ */
+function descriptionLineText(entry) {
+  const stack = [entry];
+  while (stack.length) {
+    const value = stack.pop();
+    if (typeof value === 'string') {
+      const text = value.trim();
+      if (text) return text;
+    } else if (Array.isArray(value)) {
+      for (let i = value.length - 1; i >= 0; i -= 1) stack.push(value[i]);
+    }
+  }
+  return '';
+}
+
 export function tswCustomSnapshotEntry(row, defId, quality) {
-  const name = tswRowName(row);
+  const name = tswGeneratedItemName(row);
   const custom = parseCustomPayload({
     quality,
     name,

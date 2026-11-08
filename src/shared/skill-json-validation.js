@@ -20,6 +20,15 @@ export const KNOWN_FORMULA_FUNCTIONS = Object.freeze(
     'if',
     'ln',
     'dm',
+    'truncdiv',
+    'bl',
+    'bd',
+    'lev_scaled',
+    'lev_elen',
+    'minion_life',
+    'minion_ar',
+    'hitshift',
+    'energy_synergy',
   ])
 );
 

@@ -1,5 +1,5 @@
 /**
- * @file Parse item/relic/charm modifier lines into planner character-stat bonuses.
+ * @file Parse item modifier lines into planner character-stat bonuses.
  * @module items/item-character-stat-bonuses
  */
 
@@ -8,7 +8,6 @@ import { getCharacterInstance } from '@/character/planner-instance.js';
 import {
   getPlannerCharacterStatDefs,
   isPlannerBaseStatKey,
-  normalizePlannerStatValue,
 } from '@/character/planner-stats-config.js';
 import { getFileSkillStore } from '@/shared/skill-data-store.js';
 import { isModifierLineActive, modifierLineText } from '@/items/item-modifier-line.js';
@@ -16,24 +15,8 @@ import { stripDisplayedRollRanges } from '@/items/affix-rolls.js';
 import { parseSkillBonusFromModifierLine } from '@/items/skill-bonus-from-modifiers.js';
 import { matchAnyCatalogSkillGrantFromLine } from '@/items/item-granted-oskills.js';
 import { stripProcLinePrefix } from '@/items/item-procs.js';
-import {
-  defaultRelicAffixRolls,
-  getRelicStatLines,
-  isRelicBonusActive,
-} from '@/items/relic-items.js';
-import {
-  defaultCharmRollsForDef,
-  getCharmAffixSources,
-  isCharmBonusActive,
-  resolveCharmAffixText,
-} from '@/items/charm-items.js';
-import { getItemStatLines } from '@/items/item-stats.js';
-import { EQUIPMENT_SLOTS } from '@/items/item-types.js';
-import {
-  countEquippedSetPieces,
-  formatSetBonusLabel,
-  resolveSetBonuses,
-} from '@/items/item-overlays.js';
+import { createCharacterBucket, createStatRegistry } from '@/character/bucket/index.js';
+import { applyItemSources } from '@/character/bucket/sources/items.js';
 
 /**
  * @typedef {{
@@ -183,6 +166,9 @@ const EXTRA_LINE_PATTERNS = [
   },
   { re: /^Physical Resist \+?([+-]?\d+(?:\.\d+)?)%$/i, key: 'physical_resistance' },
   { re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+Physical Resist$/i, key: 'physical_resistance' },
+  // Continuity mastery / relic "+x% Skill Duration" -> skill_duration.
+  { re: /^\+?([+-]?\d+(?:\.\d+)?)%\s+Skill Duration$/i, key: 'skill_duration' },
+  { re: /^Skill Duration\s*\+?([+-]?\d+(?:\.\d+)?)%$/i, key: 'skill_duration' },
   {
     re: /^Weapon Physical Damage \+?([+-]?\d+(?:\.\d+)?)%$/i,
     key: 'enhanced_weapon_damage',
@@ -389,7 +375,7 @@ function getKeyPatterns() {
 
 /**
  * Optional aliases from character_stats labels when they contain `#`.
- * Labels never gate counting — keys / stats.json / EXTRA always apply first.
+ * Labels never gate counting â€” keys / stats.json / EXTRA always apply first.
  * @param {string} label
  * @param {string} key
  * @returns {Array<{ re: RegExp, key: string }>}
@@ -516,7 +502,7 @@ function shouldSkipNonStatLine(text) {
   if (/Socketed\s*\(/i.test(t)) return true;
   if (/Damage:/i.test(t) || /Defense:/i.test(t)) return true;
   if (/Melee range:/i.test(t) || /Attack Speed Modifier:/i.test(t)) return true;
-  // Skill-specific flavour ("Arrow Swarm: +2 Projectiles") — not sheet stats.
+  // Skill-specific flavour ("Arrow Swarm: +2 Projectiles") â€” not sheet stats.
   // Keep Activation Frequency / resist lines (colon is common in those affixes).
   if (
     /^[A-Za-z0-9][^:]{0,40}:\s/.test(t) &&
@@ -557,7 +543,7 @@ function bonusesForKeys(keys, amount) {
   for (const key of keys) {
     if (!isPlannerBaseStatKey(key)) continue;
     let n = amount;
-    // Item text is always "-X% to Enemy … Resistance"; there is no positive form.
+    // Item text is always "-X% to Enemy â€¦ Resistance"; there is no positive form.
     if (ENEMY_ELEMENTAL_RESIST_KEYS.includes(key)) n = Math.abs(n);
     if (n === 0) continue;
     out.push({ key, amount: n });
@@ -582,6 +568,14 @@ export function classifyCharacterStatModifierLine(line, options = {}) {
     stripProcLinePrefix(modifierLineText(line))
   ).trim();
   if (!text || shouldSkipNonStatLine(text)) {
+    return { text, kind: 'skip', bonuses: [] };
+  }
+
+  // Nephalem Weapons wording: "20-30% of base Strength and Dexterity",
+  // "10-15% of base Vitality". These do NOT grant the attribute â€” a percentage of the
+  // base attribute is added as fire and lightning damage to weapons instead. Counting
+  // them as flat/total attribute bonuses inflates strength/dexterity.
+  if (/\bof\s+base\s+(?:strength|dexterity|vitality|energy)\b/i.test(text)) {
     return { text, kind: 'skip', bonuses: [] };
   }
 
@@ -641,7 +635,7 @@ export function classifyCharacterStatModifierLine(line, options = {}) {
     }
   }
 
-  // Label aliases last — helpful when wording differs from the key, never required.
+  // Label aliases last â€” helpful when wording differs from the key, never required.
   if (!matched) {
     for (const { re, key } of getLabelAliasPatterns()) {
       const m = re.exec(matchText) || re.exec(matchNoPlus);
@@ -667,7 +661,7 @@ export function classifyCharacterStatModifierLine(line, options = {}) {
 
 /**
  * Parse one resolved modifier line into planner character-stat delta(s).
- * Matching uses item aliases, stats.json formats, and planner **keys** —
+ * Matching uses item aliases, stats.json formats, and planner **keys** â€”
  * character_stats labels are display-only and do not affect counting.
  * @param {string|null|undefined} line
  * @returns {ParsedCharacterStatBonus[]}
@@ -686,52 +680,8 @@ export function parseCharacterStatBonusFromModifierLine(line) {
 }
 
 /**
- * @param {string[]} lines
- * @param {string} sourceLabel
- * @param {Record<string, number>} bonuses
- * @param {Record<string, PlannerStatItemModifier[]>} modsByKey
- * @param {UnknownItemStatModifier[]} unknownOut
- */
-function accumulateLines(lines, sourceLabel, bonuses, modsByKey, unknownOut, characterLevel = null) {
-  for (const line of Array.isArray(lines) ? lines : []) {
-    const classified = classifyCharacterStatModifierLine(line, { characterLevel });
-    if (classified.kind === 'unknown') {
-      unknownOut.push({ text: classified.text, sourceLabel });
-      continue;
-    }
-    for (const parsed of classified.bonuses) {
-      const { key, amount } = parsed;
-      bonuses[key] = (bonuses[key] || 0) + amount;
-      if (!modsByKey[key]) modsByKey[key] = [];
-      const existing = modsByKey[key].find((m) => m.sourceLabel === sourceLabel);
-      if (existing) {
-        existing.value += amount;
-        const sign = existing.value >= 0 ? '+' : '';
-        existing.description = `${sign}${existing.value}`;
-        continue;
-      }
-      const sign = amount >= 0 ? '+' : '';
-      modsByKey[key].push({
-        sourceLabel,
-        description: `${sign}${amount}`,
-        value: amount,
-        active: true,
-      });
-    }
-  }
-}
-
-/**
- * @param {object|null|undefined} def
- * @returns {string}
- */
-function sourceLabelForDef(def) {
-  const name = def?.name != null ? String(def.name).trim() : '';
-  return name || (def?.id != null ? String(def.id) : 'Item');
-}
-
-/**
- * Sum character-stat bonuses from enabled relics / charms / equipped gear.
+ * Sum character-stat bonuses from enabled relics / charms / equipped gear through the
+ * character bucket.
  * @param {{ className?: string|null }} [options]
  * @returns {{
  *   bonuses: Record<string, number>,
@@ -740,121 +690,76 @@ function sourceLabelForDef(def) {
  * }}
  */
 export function collectEnabledItemCharacterStatBonuses(options = {}) {
-  /** @type {Record<string, number>} */
-  const bonuses = {};
-  /** @type {Record<string, PlannerStatItemModifier[]>} */
-  const modifiersByKey = {};
-  /** @type {UnknownItemStatModifier[]} */
-  const unknownModifiers = [];
-
-  try {
-    const itemsStore = useItemsStore();
-    const character = getCharacterInstance();
-    const className =
-      (options.className != null ? String(options.className).trim() : '') ||
-      (character?.className != null ? String(character.className).trim() : '') ||
-      null;
-    const characterLevel = character?.level ?? null;
-
-    for (const slot of EQUIPMENT_SLOTS) {
-      if (!itemsStore.equipmentSlotContributesBonuses?.(slot)) continue;
-      const instanceId = itemsStore.equipment?.[slot];
-      if (instanceId == null) continue;
-      const def = itemsStore.getDefForInstance?.(instanceId);
-      if (!def) continue;
-      const rolls = itemsStore.getRollsForInstance?.(instanceId) ?? null;
-      const extras = itemsStore.getExtrasForInstance?.(instanceId) ?? [];
-      const bonusOpts = itemsStore.getItemBonusOptionsForInstance?.(instanceId) ?? {};
-      const lines = getItemStatLines(def, rolls, {
-        hideRollableRanges: false,
-        showRollRanges: false,
-        characterLevel,
-        charmInInventory: true,
-        className,
-        extras,
-        mysticOrbs: itemsStore.getMysticOrbsForInstance?.(instanceId) ?? [],
-        socketables: itemsStore.getSocketablesForInstance?.(instanceId) ?? [],
-        ...bonusOpts,
-      });
-      accumulateLines(lines, sourceLabelForDef(def), bonuses, modifiersByKey, unknownModifiers, characterLevel);
+  return (
+    collectItemBonusesViaBucket(options) || {
+      bonuses: {},
+      modifiersByKey: {},
+      unknownModifiers: [],
     }
-
-    // Set bonus tiers — only pieces on the active weapon set count.
-    const equippedDefs = itemsStore.activeEquippedDefs || [];
-    const counts = countEquippedSetPieces(equippedDefs);
-    for (const setDef of itemsStore.sets || []) {
-      if (!setDef?.id) continue;
-      const equippedCount = counts[setDef.id] || 0;
-      if (equippedCount <= 0) continue;
-      const totalPieces = (itemsStore.catalog || []).filter((d) => d.setId === setDef.id).length;
-      for (const bonus of resolveSetBonuses(setDef, equippedCount, totalPieces)) {
-        if (!bonus.active) continue;
-        const setName = String(setDef.name || setDef.id || 'Set').trim();
-        const sourceLabel = `${setName} (${formatSetBonusLabel(bonus.required)})`;
-        accumulateLines(
-          bonus.modifiers,
-          sourceLabel,
-          bonuses,
-          modifiersByKey,
-          unknownModifiers,
-          characterLevel
-        );
-      }
-    }
-
-    for (const [defId, instanceId] of Object.entries(itemsStore.enabledCharms || {})) {
-      const def = itemsStore.catalogById?.[defId];
-      if (!def) continue;
-      const rolls =
-        itemsStore.getRollsForInstance?.(instanceId) ?? defaultCharmRollsForDef(def, className);
-      if (!isCharmBonusActive(def, characterLevel, { inInventory: true, rolls })) continue;
-      /** @type {string[]} */
-      const lines = [];
-      for (const source of getCharmAffixSources(def, rolls, className, { activeOnly: true })) {
-        const text = resolveCharmAffixText(source.text, source.sourceKey, rolls, false);
-        if (text == null) continue;
-        lines.push(text);
-      }
-      const charmExtras = itemsStore.getExtrasForInstance?.(instanceId) ?? [];
-      for (const extra of charmExtras) {
-        if (extra) lines.push(extra);
-      }
-      accumulateLines(lines, sourceLabelForDef(def), bonuses, modifiersByKey, unknownModifiers, characterLevel);
-    }
-
-    for (const [defId, instanceId] of Object.entries(itemsStore.enabledRelics || {})) {
-      const def = itemsStore.catalogById?.[defId];
-      if (!def) continue;
-      if (!isRelicBonusActive(def, characterLevel, { inInventory: true })) continue;
-      const rolls =
-        itemsStore.getRollsForInstance?.(instanceId) ?? defaultRelicAffixRolls(def);
-      const lines = [
-        ...getRelicStatLines(def, rolls, {
-          hideRollableRanges: false,
-          showRollRanges: false,
-        }),
-      ];
-      const relicExtras = itemsStore.getExtrasForInstance?.(instanceId) ?? [];
-      for (const extra of relicExtras) {
-        if (extra) lines.push(extra);
-      }
-      accumulateLines(lines, sourceLabelForDef(def), bonuses, modifiersByKey, unknownModifiers, characterLevel);
-    }
-  } catch {
-    return { bonuses: {}, modifiersByKey: {}, unknownModifiers: [] };
-  }
-
-  for (const k of Object.keys(bonuses)) {
-    bonuses[k] = normalizePlannerStatValue(k, bonuses[k]);
-  }
-
-  return { bonuses, modifiersByKey, unknownModifiers };
+  );
 }
 
 /**
- * Apply enabled item/relic/charm flat stats onto the character (non-persisted layer).
- * @param {import('@/character/Character.js').default|null|undefined} character
+ * @param {object} [options]
+ * @returns {{ bonuses: Record<string, number>, modifiersByKey: Record<string, PlannerStatItemModifier[]>, unknownModifiers: UnknownItemStatModifier[] }|null}
+ */
+function collectItemBonusesViaBucket(options = {}) {
+  try {
+    const itemsStore = useItemsStore();
+    const character = getCharacterInstance();
+    const registry = createStatRegistry(getPlannerCharacterStatDefs());
+    if (!character || !itemsStore) return null;
+    const bucket = createCharacterBucket({ registry, expandAliases: false });
+    applyItemSources(bucket, { itemsStore, character, className: options.className ?? null });
+    const snapshot = bucket.commit();
+    /** @type {Record<string, number>} */
+    const bonuses = {};
+    for (const [key, value] of Object.entries(snapshot.values)) {
+      const num = Number(value);
+      if (Number.isFinite(num) && num !== 0) bonuses[key] = num;
+    }
+    /** @type {Record<string, PlannerStatItemModifier[]>} */
+    const modifiersByKey = {};
+    for (const key of Object.keys(bonuses)) {
+      const breakdown = snapshot.getBreakdown(key);
+      const rows = (breakdown?.groups || []).flatMap((group) => group.rows || []);
+      if (rows.length === 0) continue;
+      /** @type {Map<string, PlannerStatItemModifier>} */
+      const bySource = new Map();
+      for (const row of rows) {
+        const sourceLabel = String(row.label || 'Item');
+        const existing = bySource.get(sourceLabel);
+        if (existing) {
+          existing.value += Number(row.value) || 0;
+          existing.description = `${existing.value >= 0 ? '+' : ''}${existing.value}`;
+          existing.active = existing.active && row.active !== false;
+        } else {
+          const value = Number(row.value) || 0;
+          bySource.set(sourceLabel, {
+            sourceLabel,
+            description: `${value >= 0 ? '+' : ''}${value}`,
+            value,
+            active: row.active !== false,
+          });
+        }
+      }
+      modifiersByKey[key] = [...bySource.values()];
+    }
+    const unknownModifiers = snapshot.unsupported.map((row) => ({
+      text: row.text,
+      sourceLabel: row.source?.label || 'Item',
+    }));
+    return { bonuses, modifiersByKey, unknownModifiers };
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Recompute item bonuses through the bucket and mirror them onto the character.
+ * @param {object} character
  * @param {{ className?: string|null }} [options]
+ * @returns {void}
  */
 export function recomputePlannerStatsFromItems(character, options = {}) {
   _plannerStatItemModifiersByKey = {};

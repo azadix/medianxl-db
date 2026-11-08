@@ -198,6 +198,24 @@ describe('socketables', () => {
     expect(resolveSocketableIcon({ image: 'xisEld', type: 'Rune', name: 'Elq Rune' })).toBe('xisEld');
   });
 
+  it('parses flat TSW jewel description lines with trailing color codes', () => {
+    const [sock] = parseTswSocketables({
+      socketables: [
+        {
+          name: 'Jewel',
+          type: 'Jewel',
+          quality: 'Crafted',
+          description_lines: [['+5 to all Attributes 3'], ['+33 to Life 3']],
+        },
+      ],
+    });
+    expect(sock.modifiers).toEqual(['+5 to all Attributes', '+33 to Life']);
+    expect(getSocketableBonusLines(sock, { category: 'armor' })).toEqual([
+      '+5 to all Attributes',
+      '+33 to Life',
+    ]);
+  });
+
   it('parses dabomei-style TSW socketables with modifiers and icons', () => {
     const socks = parseTswSocketables({ socketables: dabomeiHelmSocketables });
     expect(socks).toHaveLength(2);

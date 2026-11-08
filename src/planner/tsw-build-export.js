@@ -3,7 +3,7 @@
  * @module planner/tsw-build-export
  */
 
-import { toRaw } from 'vue';
+import { markRaw, toRaw } from 'vue';
 import Character from '@/character/Character.js';
 import { isAngelicItemDef } from '@/items/angelic-items.js';
 import { CHARM_ROLL_KEYS, isCharmItem, isDimensionalKeyCharm } from '@/items/charm-items.js';
@@ -396,6 +396,7 @@ export function plannerItemToTswRow(def, inst, loc) {
     mysticOrbs,
     socketables,
     corruptions: inst?.corruptions,
+    mechanics: inst?.mechanics,
     ethereal: eth,
   });
   const statLines = getItemStatLines(def, rolls, {
@@ -548,7 +549,10 @@ export function syncStoreInstanceTswRow(store, instanceId) {
   const def = applyCustomOverlayToDef(base, inst.custom) || base;
   const loc = tswLocationForInstance(store, instanceId);
   const row = plannerItemToTswRow(def, inst, loc);
-  if (row) inst.tswRow = row;
+  // `tswRow` is export-only payload (large `description_lines` trees) and is never
+  // mutated through reactivity. Storing it raw avoids Vue deep-proxying every nested
+  // array on assignment, which dominated build-load time in the DevTools profile.
+  if (row) inst.tswRow = markRaw(row);
   else delete inst.tswRow;
   return row;
 }
@@ -565,10 +569,10 @@ export function syncStoreTswRows(store, options = {}) {
     const inst = store.instances[id];
     if (!rewrite && inst?.tswRow && typeof inst.tswRow === 'object') {
       const loc = tswLocationForInstance(store, id);
-      const cloned = cloneTswRow(inst.tswRow) || { ...inst.tswRow };
-      cloned.location = loc.location;
-      cloned.slot = loc.slot;
-      inst.tswRow = cloned;
+      // Only location/slot need correcting here. A deep clone of the row (which
+      // carries the full description_lines tree) was ~11% of build-load time;
+      // the nested arrays are read-only in export, so a shallow copy is enough.
+      inst.tswRow = markRaw({ ...inst.tswRow, location: loc.location, slot: loc.slot });
       continue;
     }
     syncStoreInstanceTswRow(store, id);
@@ -809,6 +813,27 @@ export function savedBuildInner(raw) {
  */
 export function savedBuildName(raw) {
   return String(savedBuildInner(raw).name ?? '');
+}
+
+/**
+ * Skill points spent for a saved build. The TSW envelope deliberately omits `spentPoints`
+ * from `build`, and older records may lack it too, so fall back to summing the saved skill
+ * allocation instead of rendering an empty "points spent" label.
+ * @param {object|null|undefined} raw
+ * @returns {number}
+ */
+export function savedBuildSpentPoints(raw) {
+  const build = savedBuildInner(raw) || {};
+  const recorded = Number(build.spentPoints);
+  if (Number.isFinite(recorded) && recorded >= 0) return recorded;
+  const allocation = build.skillPoints;
+  if (!allocation || typeof allocation !== 'object') return 0;
+  let total = 0;
+  for (const points of Object.values(allocation)) {
+    const n = Number(points);
+    if (Number.isFinite(n) && n > 0) total += n;
+  }
+  return total;
 }
 
 /**

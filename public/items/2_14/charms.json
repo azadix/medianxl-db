@@ -1300,5 +1300,16 @@
       "Tramsmute with a Perfect Gem and 50,000 gold to open with Area Level 130",
       "Further progress requires the Paragon of Fate mastery and a Mark of Fate"
     ]
+  },
+  {
+    "id": "\\\\7",
+    "name": "Tome of Possession",
+    "rarity": "unique",
+    "reqLevel": 120,
+    "icon": "invbbb",
+    "keepInInventory": true,
+    "modifiers": [
+      "+1 to Mind Control"
+    ]
   }
 ]

@@ -27,6 +27,11 @@ const TEXT_CONDITION_HINTS = Object.freeze([
   { re: /\bin\s+Duncraig\s+130\+?\b/i, key: 'while_in_heroic_duncraig' },
   { re: /\bin\s+Heroic\s+Library\b/i, key: 'while_in_heroic_library' },
   { re: /\bin\s+Library\s+of\s+Fate\b/i, key: 'while_in_heroic_library' },
+  {
+    re: /\bwhen\s+using\s+an\s+Apple\b/i,
+    key: 'while_using_an_apple',
+    strip: /\s+when\s+using\s+an\s+Apple\s*$/i,
+  },
 ]);
 
 /**
@@ -69,6 +74,20 @@ export function inferShowConditionsFromModifierText(text) {
     out.push(hint.key);
   }
   return out;
+}
+
+/**
+ * Remove the display-only condition clause so the remaining text can be parsed as
+ * "+3 to All Skills" instead of failing on "when using an Apple".
+ * @param {string} text
+ * @returns {string}
+ */
+function stripConditionClause(text) {
+  let out = String(text || '');
+  for (const hint of TEXT_CONDITION_HINTS) {
+    if (hint.strip) out = out.replace(hint.strip, '');
+  }
+  return out.trim();
 }
 
 /**
@@ -129,11 +148,36 @@ export function markModifierLineBoosted(line) {
   return encodeModifierLine(decoded.text, MODIFIER_COLOR_BOOSTED, decoded.showCondition);
 }
 
+/** @type {Map<string, { text: string, color: string, showCondition: string[] }>} */
+const _decodeModifierLineCache = new Map();
+const _DECODE_MODIFIER_LINE_CACHE_MAX = 4000;
+
 /**
+ * Memoised wrapper: item descriptions re-decode the same lines on every render,
+ * and this was the hottest frame in the DevTools profile (~13% self time).
+ * Returns a fresh object each call so callers can own their `showCondition` array.
  * @param {string|null|undefined} line
  * @returns {{ text: string, color: string, showCondition: string[] }}
  */
 export function decodeModifierLine(line) {
+  const cacheKey = String(line ?? '');
+  const hit = _decodeModifierLineCache.get(cacheKey);
+  if (hit) {
+    return { text: hit.text, color: hit.color, showCondition: hit.showCondition.slice() };
+  }
+  const result = decodeModifierLineUncached(line);
+  if (_decodeModifierLineCache.size >= _DECODE_MODIFIER_LINE_CACHE_MAX) {
+    _decodeModifierLineCache.clear();
+  }
+  _decodeModifierLineCache.set(cacheKey, result);
+  return { text: result.text, color: result.color, showCondition: result.showCondition.slice() };
+}
+
+/**
+ * @param {string|null|undefined} line
+ * @returns {{ text: string, color: string, showCondition: string[] }}
+ */
+function decodeModifierLineUncached(line) {
   let raw = String(line ?? '');
   /** @type {string[]} */
   const explicit = [];
@@ -175,7 +219,7 @@ export function decodeModifierLine(line) {
         seen.add(keyLower);
         explicit.push(key);
       }
-      return { text: rest, color, showCondition: explicit };
+      return { text: stripConditionClause(rest), color, showCondition: explicit };
     }
     break;
   }
@@ -188,7 +232,11 @@ export function decodeModifierLine(line) {
     seen.add(keyLower);
     explicit.push(key);
   }
-  return { text, color: MODIFIER_COLOR_MAGIC, showCondition: explicit };
+  return {
+    text: stripConditionClause(text),
+    color: MODIFIER_COLOR_MAGIC,
+    showCondition: explicit,
+  };
 }
 
 /**

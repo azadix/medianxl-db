@@ -150,6 +150,7 @@ function putRecord(catalog, name, record, score) {
  *   bases?: unknown,
  *   charms?: unknown,
  *   other?: unknown,
+ *   misc?: unknown,
  *   relics?: unknown,
  *   uniqueStats?: unknown,
  *   runewords?: unknown,
@@ -162,6 +163,7 @@ export function buildPatchItemCatalogFromData(data = {}) {
   const folderKey = String(data.folderKey || '');
   const bases = asArray(data.bases).filter((row) => row && typeof row === 'object');
   const other = asArray(data.other).filter((row) => row && typeof row === 'object');
+  const misc = asArray(data.misc).filter((row) => row && typeof row === 'object');
   const charms = asArray(data.charms)
     .filter((row) => row && typeof row === 'object')
     .map(normalizeCharmDef);
@@ -185,7 +187,7 @@ export function buildPatchItemCatalogFromData(data = {}) {
     .map((entry) => runewordEntryToItemDef(entry))
     .filter(Boolean);
 
-  const items = [...bases, ...charms, ...other, ...overlays, ...relics, ...runewords];
+  const items = [...bases, ...charms, ...other, ...misc, ...overlays, ...relics, ...runewords];
   const setsById = new Map(sets.map((setDef) => [setDef.id, setDef]));
   const piecesBySetId = new Map();
   for (const def of items) {
@@ -298,6 +300,7 @@ export async function loadPatchItemCatalogForFolder(folderKey) {
       'runewords.json',
       'socketables.json',
       'mystic-orbs.json',
+      'misc.json',
     ];
     try {
       const requiredRes = await Promise.all(
@@ -311,7 +314,7 @@ export async function loadPatchItemCatalogForFolder(folderKey) {
       const optionalRes = await Promise.all(
         optionalNames.map((file) => fetchCatalogFile(getAssetUrl(`${prefix}/${file}`)))
       );
-      const [relics, uniqueStats, runewords, socketables, mysticOrbs] = await Promise.all(
+      const [relics, uniqueStats, runewords, socketables, mysticOrbs, misc] = await Promise.all(
         optionalRes.map((res) => readJsonIfOk(res))
       );
       const catalog = buildPatchItemCatalogFromData({
@@ -324,6 +327,7 @@ export async function loadPatchItemCatalogForFolder(folderKey) {
         runewords,
         socketables,
         mysticOrbs,
+        misc,
       });
       catalogsByFolder.set(key, catalog);
       return catalog;

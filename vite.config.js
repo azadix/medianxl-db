@@ -1,4 +1,4 @@
-﻿import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { fileURLToPath, URL } from 'node:url';
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
@@ -25,8 +25,26 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  server: {
+    watch: {
+      // test fixtures are large local dumps (hundreds of JSON files, tens of MB).
+      // Watching them makes the dev server re-stat/parse on every change and slows
+      // down HMR + full page loads for no benefit.
+      ignored: [
+        '**/tests/fixtures/**',
+        '**/dist/**',
+        '**/.git/**',
+        // Editors write atomically via a sibling temp dir; watching it makes chokidar
+        // crash with EBUSY on Windows and takes the dev server down.
+        '**/*.tmpdir/**',
+        '**/*.tmp',
+      ],
+    },
+  },
   test: {
     environment: 'node',
     include: ['tests/unit/**/*.test.js', 'tests/data/**/*.test.js'],
+    // Only surface console output from failing tests; passing tests stay quiet.
+    silent: 'passed-only',
   },
 });

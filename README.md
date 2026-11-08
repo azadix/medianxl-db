@@ -94,7 +94,7 @@ Python is not required for tests (only for atlas generation / `tools/py/` utilit
 - `tools/item_generation/` - wiki/TSW item catalog generators
 - `tools/atlas_generation/` - class icon atlas generation scripts
 - `tools/item_icons/` - inventory icon extraction / publish scripts
-- `public/items/<major>_<minor>/` - item catalogs (`baseitems.json`, `charms.json`, `other.json`)
+- `public/items/<major>_<minor>/` - item catalogs (`baseitems.json`, `charms.json`, `other.json`, `misc.json`)
 - `public/icons/item_icons/` - inventory icon WebPs (shared across versions)
 
 ## Useful scripts

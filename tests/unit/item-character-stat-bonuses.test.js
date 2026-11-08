@@ -518,7 +518,7 @@ describe('recomputePlannerStatsFromItems', () => {
     expect(ch.getStat('life')).toBe(before + 50);
   });
 
-  it('applies mystic orb and socket bonuses from equipped gear', () => {
+  it('does not apply mystic orb or socket bonuses to character stats', () => {
     createCharacterInstance('Amazon', 150);
     const ch = getCharacterInstance();
     const beforeIas = ch.getStat('attack_speed');
@@ -540,7 +540,7 @@ describe('recomputePlannerStatsFromItems', () => {
     const id = store.equipment.rarm;
     expect(store.updateInstanceMysticOrbs(id, [[1, 'MO - Attack Speed']])).toBe(true);
     recomputePlannerStatsFromItems(ch);
-    expect(ch.getStat('attack_speed')).toBe(beforeIas + 6);
+    expect(ch.getStat('attack_speed')).toBe(beforeIas);
   });
 
   it('lists unmapped item affixes under unknown modifiers', () => {

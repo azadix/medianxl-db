@@ -6,7 +6,8 @@ import {
   normalizePlannerStatValue,
   plannerStatsToTextLines,
   isPlannerBaseStatKey,
-  createEmptyRegisteredStatsObject
+  createEmptyRegisteredStatsObject,
+  getPlannerCharacterStatDefs,
 } from './planner-stats-config.js';
 import { getPlannerSkillsSnapshot } from './planner-snapshot.js';
 import { parsePrereqTriple } from './prereq-utils.js';
@@ -16,6 +17,8 @@ import {
 } from '@/skills/domain/skill-calculations.js';
 import { catalogRowUsesPlannerBonusToggle } from '@/skills/domain/skill-skill-types.js';
 import { getFileSkillStore } from '@/shared/skill-data-store.js';
+import { getCharacterSnapshot, invalidateCharacterSnapshot } from './stats-snapshot.js';
+import { createCharacterBucket, createStatRegistry, createContribution, createSource } from './bucket/index.js';
 
 export default class Character {
   // Level constraints
@@ -341,6 +344,7 @@ export default class Character {
     if (!k) return;
     if (disabled) this.enabledSkillIds.delete(k);
     else this.enabledSkillIds.add(k);
+    invalidateCharacterSnapshot();
   }
 
   /**
@@ -604,6 +608,7 @@ export default class Character {
       }
     }
     this.statAllocation = next;
+    invalidateCharacterSnapshot();
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent('statAllocationChanged', { detail: { ...next } }));
     }
@@ -897,6 +902,7 @@ export default class Character {
     this.skillPoints = { ...skillPoints };
     this.maxLevels = {}; // Clear cache
     this.pruneDisabledSkillsWithoutAllocatedPoints();
+    invalidateCharacterSnapshot();
   }
 
   /**
@@ -906,6 +912,7 @@ export default class Character {
     this.skillPoints = {};
     this.maxLevels = {};
     this.clearDisabledSkillIds();
+    invalidateCharacterSnapshot();
   }
 
   /**
@@ -928,6 +935,7 @@ export default class Character {
     this.level = L;
     this.maxLevels = {}; // Clear cache
     this.applyAutoQuestCompletionForLevel(L);
+    invalidateCharacterSnapshot();
 
     if (oldLevel !== L && typeof window !== 'undefined') {
       window.dispatchEvent(
@@ -1211,6 +1219,7 @@ export default class Character {
       });
     }
     this.pruneDisabledOSkillSlotsWithoutRows();
+    invalidateCharacterSnapshot();
   }
 
   static clampOSkillPoints(points) {
@@ -1311,6 +1320,64 @@ export default class Character {
   }
 
   /**
+   * Store-less fallback used only when the stats provider is unavailable (unit tests /
+   * early boot). It evaluates the same bucket pipeline from the cached raw stats and
+   * item/skill bonus maps instead of using separate hand-written composition.
+   * @param {{ includeSkill?: boolean, includeItem?: boolean }} [layers]
+   * @returns {Record<string, number>}
+   */
+  _localBucketValues(layers = {}) {
+    const includeSkill = layers.includeSkill !== false;
+    const includeItem = layers.includeItem !== false;
+    const defs = getPlannerCharacterStatDefs();
+    const registry = createStatRegistry(
+      defs.length > 0 ? defs : Object.keys(this.stats).map((key) => ({ key }))
+    );
+    const bucket = createCharacterBucket({ registry, expandAliases: false });
+    const source = createSource({ kind: 'class', id: 'local', label: 'Local fallback' });
+    /** @type {object[]} */
+    const contributions = [];
+    const add = (stat, value, op = 'base', stage = 'pre') => {
+      const num = Number(value);
+      if (!stat || !Number.isFinite(num) || num === 0) return;
+      contributions.push(
+        createContribution({ stat, value: num, op, stage, source, id: `local:${stat}:${op}:${stage}` })
+      );
+    };
+
+    for (const [key, value] of Object.entries(this.stats)) {
+      add(key, value);
+    }
+    if (includeSkill) {
+      for (const [key, value] of Object.entries(this._plannerSkillStatBonuses || {})) {
+        add(key, value);
+      }
+    }
+    if (includeItem) {
+      for (const [key, value] of Object.entries(this._plannerItemStatBonuses || {})) {
+        add(key, value);
+      }
+    }
+    // The legacy sheet applied `% attribute` from the bonus maps but did not apply
+    // `maximum_life`/`maximum_mana` aliases in the fallback path.
+    const percentKeys = [
+      ['percent_strength', 'strength'],
+      ['percent_dexterity', 'dexterity'],
+      ['percent_vitality', 'vitality'],
+      ['percent_energy', 'energy'],
+    ];
+    for (const [pctKey, attrKey] of percentKeys) {
+      let pct = 0;
+      if (includeSkill) pct += Number(this._plannerSkillStatBonuses?.[pctKey]) || 0;
+      if (includeItem) pct += Number(this._plannerItemStatBonuses?.[pctKey]) || 0;
+      if (pct !== 0) add(attrKey, pct, 'inc', 'pre');
+    }
+
+    bucket.setSource('base', 'local', { contributions });
+    return bucket.commit().values;
+  }
+
+  /**
    * Get stat value for a given stat key
    * @param {string} statKey - Stat key (e.g., 'strength', 'dexterity')
    * @returns {number} Stat value, or 0 if not set
@@ -1318,14 +1385,13 @@ export default class Character {
   getStat(statKey) {
     const k = String(statKey || '').toLowerCase();
     if (!isPlannerBaseStatKey(k)) return 0;
-    const raw = this.getRawStat(k);
-    const skillBonus = Number(this._plannerSkillStatBonuses?.[k]) || 0;
-    const itemBonus = Number(this._plannerItemStatBonuses?.[k]) || 0;
-    const flat = raw + skillBonus + itemBonus;
-    if (!Character.attributePercentKey(k)) {
-      return normalizePlannerStatValue(k, flat);
+    const snapshot = getCharacterSnapshot();
+    if (snapshot && !this._statsSnapshotSuppressed && k !== 'current_life' && k !== 'current_mana') {
+      const value = snapshot.getValue(k);
+      return Number.isFinite(value) ? value : 0;
     }
-    return normalizePlannerStatValue(k, Character.applyAttributePercent(flat, this._attributePercentTotal(k)));
+    const local = this._localBucketValues();
+    return Number(local[k]) || 0;
   }
 
   /**
@@ -1337,16 +1403,8 @@ export default class Character {
   getStatWithoutItemBonuses(statKey) {
     const k = String(statKey || '').toLowerCase();
     if (!isPlannerBaseStatKey(k)) return 0;
-    const raw = this.getRawStat(k);
-    const skillBonus = Number(this._plannerSkillStatBonuses?.[k]) || 0;
-    const flat = raw + skillBonus;
-    if (!Character.attributePercentKey(k)) {
-      return normalizePlannerStatValue(k, flat);
-    }
-    return normalizePlannerStatValue(
-      k,
-      Character.applyAttributePercent(flat, this._attributePercentTotal(k, { includeItem: false }))
-    );
+    const local = this._localBucketValues({ includeItem: false });
+    return Number(local[k]) || 0;
   }
 
   /**
@@ -1357,25 +1415,32 @@ export default class Character {
   setStat(statKey, value) {
     const k = String(statKey || '').trim().toLowerCase();
     if (!k || !isPlannerBaseStatKey(k)) return;
-    const skillBonus = Number(this._plannerSkillStatBonuses?.[k]) || 0;
-    const itemBonus = Number(this._plannerItemStatBonuses?.[k]) || 0;
-    const displayNum = typeof value === 'number' ? value : parseFloat(String(value).trim());
-    const extras = skillBonus + itemBonus;
-    const pct = this._attributePercentTotal(k);
-    let storedBase = 0;
-    if (Number.isFinite(displayNum)) {
-      if (Character.attributePercentKey(k) && Number.isFinite(pct) && 100 + pct > 0) {
-        storedBase = (displayNum * 100) / (100 + pct) - extras;
-      } else {
-        storedBase = displayNum - extras;
+    const previousSuppressed = this._statsSnapshotSuppressed;
+    this._statsSnapshotSuppressed = true;
+    try {
+      const skillBonus = Number(this._plannerSkillStatBonuses?.[k]) || 0;
+      const itemBonus = Number(this._plannerItemStatBonuses?.[k]) || 0;
+      const displayNum = typeof value === 'number' ? value : parseFloat(String(value).trim());
+      const extras = skillBonus + itemBonus;
+      const pct = this._attributePercentTotal(k);
+      let storedBase = 0;
+      if (Number.isFinite(displayNum)) {
+        if (Character.attributePercentKey(k) && Number.isFinite(pct) && 100 + pct > 0) {
+          storedBase = (displayNum * 100) / (100 + pct) - extras;
+        } else {
+          storedBase = displayNum - extras;
+        }
       }
-    }
-    this.stats[k] = normalizePlannerStatValue(k, storedBase);
-    if (!Number.isFinite(displayNum) || !Character.attributePercentKey(k)) return;
-    let guard = 0;
-    while (this.getStat(k) < displayNum && guard < 8) {
-      this.stats[k] = normalizePlannerStatValue(k, this.getRawStat(k) + 1);
-      guard += 1;
+      this.stats[k] = normalizePlannerStatValue(k, storedBase);
+      if (!Number.isFinite(displayNum) || !Character.attributePercentKey(k)) return;
+      let guard = 0;
+      while (this.getStat(k) < displayNum && guard < 8) {
+        this.stats[k] = normalizePlannerStatValue(k, this.getRawStat(k) + 1);
+        guard += 1;
+      }
+    } finally {
+      this._statsSnapshotSuppressed = previousSuppressed;
+      invalidateCharacterSnapshot();
     }
   }
 
@@ -1389,6 +1454,7 @@ export default class Character {
     if (!k || !isPlannerBaseStatKey(k)) return;
     const numValue = normalizePlannerStatValue(k, value);
     this.stats[k] = numValue;
+    invalidateCharacterSnapshot();
   }
 
   /**
@@ -1406,6 +1472,16 @@ export default class Character {
       next[k] = n;
     }
     this._plannerSkillStatBonuses = next;
+    invalidateCharacterSnapshot();
+  }
+
+  /**
+   * Read the passive skill stat bonuses from the last recompute.
+   * Explicit accessor so the formula context and panels do not reach into the field.
+   * @returns {Record<string, number>}
+   */
+  getPlannerSkillStatBonuses() {
+    return { ...(this._plannerSkillStatBonuses || {}) };
   }
 
   /**
@@ -1423,6 +1499,7 @@ export default class Character {
       next[k] = n;
     }
     this._plannerItemStatBonuses = next;
+    invalidateCharacterSnapshot();
   }
 
   /**
@@ -1430,20 +1507,7 @@ export default class Character {
    * @returns {Record<string, number>}
    */
   getAllStatsWithoutSkillBonuses() {
-    const out = { ...this.stats };
-    for (const k of Object.keys(out)) {
-      if (!isPlannerBaseStatKey(k)) continue;
-      const raw = this.getRawStat(k);
-      const itemBonus = Number(this._plannerItemStatBonuses?.[k]) || 0;
-      const flat = raw + itemBonus;
-      if (!Character.attributePercentKey(k)) {
-        out[k] = normalizePlannerStatValue(k, flat);
-        continue;
-      }
-      const pct = this._attributePercentTotal(k, { includeSkill: false, includeItem: true });
-      out[k] = normalizePlannerStatValue(k, Character.applyAttributePercent(flat, pct));
-    }
-    return out;
+    return this._localBucketValues({ includeSkill: false });
   }
 
   /**
@@ -1460,12 +1524,16 @@ export default class Character {
    * @returns {object} Map of stat_key -> value
    */
   getAllStats() {
-    const out = { ...this.stats };
-    for (const k of Object.keys(out)) {
-      if (!isPlannerBaseStatKey(k)) continue;
-      out[k] = this.getStat(k);
+    const snapshot = getCharacterSnapshot();
+    if (snapshot) {
+      const out = { ...this.stats };
+      for (const key of Object.keys(out)) {
+        if (key === 'current_life' || key === 'current_mana') continue;
+        out[key] = snapshot.getValue(key);
+      }
+      return out;
     }
-    return out;
+    return { ...this.stats, ...this._localBucketValues() };
   }
 
   /**
@@ -1489,6 +1557,7 @@ export default class Character {
       normalized[key] = normalizePlannerStatValue(key, v);
     }
     this.stats = normalized;
+    invalidateCharacterSnapshot();
     
     // Dispatch event if stats changed
     if (typeof window !== 'undefined') {
@@ -1506,6 +1575,7 @@ export default class Character {
     this.stats = createEmptyRegisteredStatsObject();
     this._plannerSkillStatBonuses = {};
     this._plannerItemStatBonuses = {};
+    invalidateCharacterSnapshot();
 
     // Dispatch event if stats changed
     if (typeof window !== 'undefined' && Object.keys(oldStats).length > 0) {
@@ -1571,6 +1641,7 @@ export default class Character {
       next.current_life = next.life;
     }
     this.stats = next;
+    invalidateCharacterSnapshot();
 
     return errors;
   }

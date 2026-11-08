@@ -5,6 +5,7 @@
 
 import { useItemsStore } from '@/stores/items.js';
 import { getCharacterInstance } from '@/character/planner-instance.js';
+import { isCompleteItemText } from '@/items/item-text-completeness.js';
 import { resolveCatalogRowBySkillRef } from '@/character/planner-build-io.js';
 import {
   getCharmAffixSources,
@@ -387,7 +388,6 @@ export function wrapNamedSkillGrantMarkers(line) {
 export function formatItemModifierLineHtml(line) {
   const decoded = decodeModifierLine(line);
   const text = decoded.text;
-  const added = decoded.color === 'added';
   /** @type {string[]} */
   const rollRanges = [];
   const withoutRollRanges = String(text ?? '').replace(DISPLAYED_ROLL_RANGE_RE, (_, min, max) => {
@@ -416,7 +416,6 @@ export function formatItemModifierLineHtml(line) {
   for (const label of rollRanges) {
     out += ` <span class="item-mod-roll-range">${escapeHtmlText(label)}</span>`;
   }
-  if (added && out) return `* ${out} *`;
   return out;
 }
 
@@ -834,30 +833,7 @@ export function getEquippedGearSkillBonusForSkill(options = {}) {
     const displayName = String(options.displayName || '').trim();
     if (!displayName) return 0;
     const itemsStore = useItemsStore();
-    /** @type {string[]} */
-    const lines = [];
-    for (const slot of EQUIPMENT_SLOTS) {
-      if (!itemsStore.equipmentSlotContributesBonuses?.(slot)) continue;
-      const instanceId = itemsStore.equipment?.[slot];
-      if (instanceId == null) continue;
-      const def = itemsStore.getDefForInstance?.(instanceId);
-      if (!def) continue;
-      const rolls = itemsStore.getRollsForInstance?.(instanceId) ?? null;
-      const extras = itemsStore.getExtrasForInstance?.(instanceId) ?? [];
-      lines.push(...resolvedEquipmentModifierLines(def, rolls, extras));
-    }
-    const equippedDefs = itemsStore.activeEquippedDefs || [];
-    const counts = countEquippedSetPieces(equippedDefs);
-    for (const setDef of itemsStore.sets || []) {
-      if (!setDef?.id) continue;
-      const equippedCount = counts[setDef.id] || 0;
-      if (equippedCount <= 0) continue;
-      const totalPieces = (itemsStore.catalog || []).filter((d) => d.setId === setDef.id).length;
-      for (const bonus of resolveSetBonuses(setDef, equippedCount, totalPieces)) {
-        if (!bonus.active) continue;
-        lines.push(...(bonus.modifiers || []));
-      }
-    }
+    const lines = getEquippedSoftBonusLines(itemsStore, className);
     return sumSkillBonusFromModifierLines(lines, {
       displayName,
       skillClass: options.skillClass,
@@ -868,4 +844,65 @@ export function getEquippedGearSkillBonusForSkill(options = {}) {
   } catch {
     return 0;
   }
+}
+
+/** @type {{ key: string, lines: string[] }} */
+let _equippedSoftLinesCache = { key: '', lines: [] };
+
+/**
+ * Equipped-gear modifier lines used for soft +skill levels. Rendering these for every
+ * skill is the dominant cost of soft-level computation; cache them for the current
+ * gear/class state and reuse across skills.
+ * @param {object} itemsStore
+ * @param {string} className
+ * @returns {string[]}
+ */
+function getEquippedSoftBonusLines(itemsStore, className) {
+  const signatureParts = [
+    className,
+    String(itemsStore.weaponSet ?? 0),
+    isCompleteItemText() ? 'full' : 'partial',
+  ];
+  for (const slot of EQUIPMENT_SLOTS) {
+    const instanceId = itemsStore.equipment?.[slot];
+    if (instanceId == null) {
+      signatureParts.push(`${slot}:-`);
+      continue;
+    }
+    const instance = itemsStore.instances?.[instanceId];
+    signatureParts.push(
+      `${slot}:${instanceId}:${JSON.stringify(instance?.rolls ?? null)}:${JSON.stringify(
+        instance?.extras ?? null
+      )}`
+    );
+  }
+  const key = signatureParts.join('|');
+  if (_equippedSoftLinesCache.key === key) return _equippedSoftLinesCache.lines;
+
+  /** @type {string[]} */
+  const lines = [];
+  for (const slot of EQUIPMENT_SLOTS) {
+    if (!itemsStore.equipmentSlotContributesBonuses?.(slot)) continue;
+    const instanceId = itemsStore.equipment?.[slot];
+    if (instanceId == null) continue;
+    const def = itemsStore.getDefForInstance?.(instanceId);
+    if (!def) continue;
+    const rolls = itemsStore.getRollsForInstance?.(instanceId) ?? null;
+    const extras = itemsStore.getExtrasForInstance?.(instanceId) ?? [];
+    lines.push(...resolvedEquipmentModifierLines(def, rolls, extras));
+  }
+  const equippedDefs = itemsStore.activeEquippedDefs || [];
+  const counts = countEquippedSetPieces(equippedDefs);
+  for (const setDef of itemsStore.sets || []) {
+    if (!setDef?.id) continue;
+    const equippedCount = counts[setDef.id] || 0;
+    if (equippedCount <= 0) continue;
+    const totalPieces = (itemsStore.catalog || []).filter((d) => d.setId === setDef.id).length;
+    for (const bonus of resolveSetBonuses(setDef, equippedCount, totalPieces)) {
+      if (!bonus.active) continue;
+      lines.push(...(bonus.modifiers || []));
+    }
+  }
+  _equippedSoftLinesCache = { key, lines };
+  return lines;
 }

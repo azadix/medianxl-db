@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, nextTick } from 'vue';
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue';
 import { usePlannerRevisionRefresh } from '@/composables/usePlannerRevisionRefresh.js';
 import { getPlannerCharacterStatDefs } from '@/character/planner-stats-config.js';
 import { getCharacterInstance } from '@/character/planner-core.js';
@@ -8,18 +8,30 @@ import { getFileSkillStore } from '@/shared/skill-data-store.js';
 import { usePlannerSkillReferencedStats } from '@/composables/usePlannerSkillReferencedStats.js';
 import { isPlannerStatConditionInactive } from '@/character/planner-stat-modifiers.js';
 import { getPlannerUnknownItemStatModifiers } from '@/items/item-character-stat-bonuses.js';
+import { refreshCharacterStatsSnapshot } from '@/character/stats-provider.js';
 
 const statTooltipRoot = ref(null);
-/** @type {import('vue').Ref<{ key: string, label: string, min: number|null, max: number|null, allowNegative?: boolean, default?: number, alwaysVisible?: boolean, sortOrder?: number, section?: string }[]>} */
-const statDefs = ref(getPlannerCharacterStatDefs());
+/** Bump to force recompute of non-reactive derived data (skill store load, skill point changes). */
+const refreshTick = ref(0);
+/**
+ * Stat definitions must follow the ACTIVE skill-data version. Capturing this once at
+ * mount left the panel rendering rows from whatever registry was loaded first, while
+ * the live registry (a different game version) no longer recognised those keys - the
+ * row showed but its value read 0 because the stat was unregistered.
+ * @type {import('vue').ComputedRef<{ key: string, label: string, min: number|null, max: number|null, allowNegative?: boolean, default?: number, alwaysVisible?: boolean, sortOrder?: number, section?: string }[]>}
+ */
+const statDefs = computed(() => {
+  refreshTick.value;
+  return getPlannerCharacterStatDefs();
+});
 /** @type {import('vue').Ref<Record<string, number>>} */
 const stats = ref({});
 /** @type {import('vue').Ref<{ text: string, sourceLabel: string }[]>} */
 const unknownItemModifiers = ref([]);
+/** Stat keys that have at least one unsupported contributor. */
+const unsupportedStats = ref(new Set());
 /** Stat row whose input is focused (keeps row visible while editing down to default). */
 const activeStatKey = ref(/** @type {string|null} */ (null));
-/** Bump to force recompute of non-reactive derived data (skill store load, skill point changes). */
-const refreshTick = ref(0);
 const statFilter = ref('all');
 
 const statFilters = [
@@ -30,7 +42,7 @@ const statFilters = [
   { id: 'defense', label: 'Defense' },
   { id: 'minions', label: 'Minions' },
   { id: 'misc', label: 'Misc' },
-  { id: 'unknown', label: 'Unknown' },
+  { id: 'unknown', label: 'Unsupported' },
 ];
 
 const { skillReferencedStatKeys } = usePlannerSkillReferencedStats(refreshTick);
@@ -122,9 +134,25 @@ function pullStats() {
   if (el instanceof HTMLInputElement && el.classList.contains('planner-stat-input')) {
     return;
   }
+  const snapshot = refreshCharacterStatsSnapshot();
   const ch = getCharacterInstance();
   stats.value = ch ? { ...ch.getAllStats() } : {};
-  unknownItemModifiers.value = getPlannerUnknownItemStatModifiers();
+  unknownItemModifiers.value = snapshot
+    ? snapshot.unsupported.map((row) => ({
+        text: row.text,
+        sourceLabel: row.source?.label || 'Item',
+      }))
+    : getPlannerUnknownItemStatModifiers();
+  unsupportedStats.value = new Set(
+    (snapshot?.unsupported || [])
+      .map((row) => String(row.stat || '').trim().toLowerCase())
+      .filter(Boolean)
+  );
+}
+
+/** @param {string} key */
+function isStatUnsupported(key) {
+  return unsupportedStats.value.has(String(key || '').toLowerCase());
 }
 
 function onStatInput(statKey, e) {
@@ -149,15 +177,22 @@ function onStatRowBlur(key) {
   }
 }
 
-const refreshHandler = () => {
+const refreshNow = () => {
+  // `statDefs` is a computed that tracks refreshTick, so it must NOT be assigned here.
   refreshTick.value++;
-  statDefs.value = getPlannerCharacterStatDefs();
   pullStats();
 };
 
+let refreshTimer = 0;
+const refreshHandler = () => {
+  // Trailing debounce coalesces the several events one inventory/condition change can
+  // emit before doing a full bucket rebuild + panel render.
+  if (refreshTimer) window.clearTimeout(refreshTimer);
+  refreshTimer = window.setTimeout(refreshNow, 60);
+};
+
 onMounted(() => {
-  refreshHandler();
-  // Skill data store is async and not reactive; poll briefly so we refresh once it becomes available.
+  refreshNow();  // Skill data store is async and not reactive; poll briefly so we refresh once it becomes available.
   let tries = 0;
   const maxTries = 80; // ~8s @ 100ms
   const pollStoreReady = () => {
@@ -175,6 +210,10 @@ onMounted(() => {
       setupPlannerStatRowTooltips(statTooltipRoot.value);
     }
   });
+});
+
+onUnmounted(() => {
+  if (refreshTimer) window.clearTimeout(refreshTimer);
 });
 
 usePlannerRevisionRefresh(refreshHandler);
@@ -262,6 +301,11 @@ usePlannerRevisionRefresh(refreshHandler);
                 @input="onStatInput(def.key, $event)"
                 @change="onStatInput(def.key, $event)"
               />
+              <span
+                v-if="isStatUnsupported(def.key)"
+                class="mod-support-badge"
+                title="At least one modifier for this stat is not supported"
+              >Not supported</span>
             </div>
           </div>
         </div>

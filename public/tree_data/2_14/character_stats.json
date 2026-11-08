@@ -148,7 +148,8 @@
     "label": "+#% Bonus Defense",
     "min": null,
     "max": null,
-    "section": "defense"
+    "section": "defense",
+    "alwaysVisible": true
   },
   {
     "id": 17,
@@ -164,7 +165,8 @@
     "label": "+# to Attack rating",
     "min": null,
     "max": null,
-    "section": "damage"
+    "section": "damage",
+    "alwaysVisible": true
   },
   {
     "id": 20,
@@ -173,7 +175,8 @@
     "min": null,
     "max": null,
     "sortOrder": 17,
-    "section": "defense"
+    "section": "defense",
+    "alwaysVisible": true
   },
   {
     "id": 21,
@@ -213,7 +216,8 @@
     "label": "+#% to Enhanced Weapon Damage",
     "min": null,
     "max": null,
-    "section": "damage"
+    "section": "damage",
+    "alwaysVisible": true
   },
   {
     "id": 27,
@@ -221,7 +225,8 @@
     "label": "Regenerate Mana #%",
     "min": null,
     "max": null,
-    "section": "defense"
+    "section": "defense",
+    "alwaysVisible": true
   },
   {
     "id": 28,
@@ -237,7 +242,8 @@
     "label": "+# Defense",
     "min": null,
     "max": null,
-    "section": "defense"
+    "section": "defense",
+    "alwaysVisible": true
   },
   {
     "id": 32,
@@ -261,7 +267,8 @@
     "label": "Physical Damage taken reduced by #",
     "min": null,
     "max": null,
-    "section": "defense"
+    "section": "defense",
+    "alwaysVisible": true
   },
   {
     "id": 35,
@@ -269,7 +276,8 @@
     "label": "Elemental/Magic Damage taken reduced by #",
     "min": null,
     "max": null,
-    "section": "defense"
+    "section": "defense",
+    "alwaysVisible": true
   },
   {
     "id": 36,
@@ -298,7 +306,8 @@
     "min": null,
     "max": null,
     "sortOrder": 16,
-    "section": "resists"
+    "section": "resists",
+    "alwaysVisible": true
   },
   {
     "id": 39,
@@ -317,7 +326,8 @@
     "min": null,
     "max": null,
     "sortOrder": 7,
-    "section": "resists"
+    "section": "resists",
+    "alwaysVisible": true
   },
   {
     "id": 41,
@@ -336,7 +346,8 @@
     "min": null,
     "max": null,
     "sortOrder": 11,
-    "section": "resists"
+    "section": "resists",
+    "alwaysVisible": true
   },
   {
     "id": 43,
@@ -355,7 +366,8 @@
     "min": null,
     "max": null,
     "sortOrder": 9,
-    "section": "resists"
+    "section": "resists",
+    "alwaysVisible": true
   },
   {
     "id": 45,
@@ -374,7 +386,8 @@
     "min": null,
     "max": null,
     "sortOrder": 13,
-    "section": "resists"
+    "section": "resists",
+    "alwaysVisible": true
   },
   {
     "id": 48,
@@ -462,7 +475,8 @@
     "label": "#% Life Stolen Per Hit",
     "min": null,
     "max": null,
-    "section": "misc"
+    "section": "misc",
+    "alwaysVisible": true
   },
   {
     "id": 62,
@@ -470,7 +484,8 @@
     "label": "#% Mana Stolen Per Hit",
     "min": null,
     "max": null,
-    "section": "defense"
+    "section": "defense",
+    "alwaysVisible": true
   },
   {
     "id": 64,
@@ -494,7 +509,8 @@
     "label": "Life regenerated per second",
     "min": null,
     "max": null,
-    "section": "defense"
+    "section": "defense",
+    "alwaysVisible": true
   },
   {
     "id": 513,
@@ -502,7 +518,8 @@
     "label": "#% Maximum Life Regenerated per second",
     "min": null,
     "max": null,
-    "section": "defense"
+    "section": "defense",
+    "alwaysVisible": true
   },
   {
     "id": 76,
@@ -534,7 +551,8 @@
     "label": "#% Gold Find",
     "min": null,
     "max": null,
-    "section": "misc"
+    "section": "misc",
+    "alwaysVisible": true
   },
   {
     "id": 80,
@@ -542,7 +560,8 @@
     "label": "#% Magic Find",
     "min": null,
     "max": null,
-    "section": "misc"
+    "section": "misc",
+    "alwaysVisible": true
   },
   {
     "id": 81,
@@ -574,7 +593,8 @@
     "label": "#% To Experience Gained",
     "min": null,
     "max": null,
-    "section": "misc"
+    "section": "misc",
+    "alwaysVisible": true
   },
   {
     "id": 86,
@@ -582,7 +602,8 @@
     "label": "+# Life After Each Kill",
     "min": null,
     "max": null,
-    "section": "defense"
+    "section": "defense",
+    "alwaysVisible": true
   },
   {
     "id": 89,
@@ -590,7 +611,8 @@
     "label": "+# to Light Radius",
     "min": null,
     "max": null,
-    "section": "misc"
+    "section": "misc",
+    "alwaysVisible": true
   },
   {
     "id": 93,
@@ -598,7 +620,8 @@
     "label": "#% Attack Speed",
     "min": null,
     "max": null,
-    "section": "damage"
+    "section": "damage",
+    "alwaysVisible": true
   },
   {
     "id": 96,
@@ -606,7 +629,8 @@
     "label": "#% Movement Speed",
     "min": null,
     "max": null,
-    "section": "misc"
+    "section": "misc",
+    "alwaysVisible": true
   },
   {
     "id": 97,
@@ -622,7 +646,8 @@
     "label": "#% Hit Recovery",
     "min": null,
     "max": null,
-    "section": "defense"
+    "section": "defense",
+    "alwaysVisible": true
   },
   {
     "id": 102,
@@ -630,7 +655,8 @@
     "label": "#% Block Speed",
     "min": null,
     "max": null,
-    "section": "defense"
+    "section": "defense",
+    "alwaysVisible": true
   },
   {
     "id": 105,
@@ -638,7 +664,8 @@
     "label": "#% Cast Speed",
     "min": null,
     "max": null,
-    "section": "misc"
+    "section": "misc",
+    "alwaysVisible": true
   },
   {
     "id": 107,
@@ -662,7 +689,8 @@
     "label": "Curse Length Reduction: #%",
     "min": null,
     "max": null,
-    "section": "defense"
+    "section": "defense",
+    "alwaysVisible": true
   },
   {
     "id": 110,
@@ -670,7 +698,8 @@
     "label": "Poison Length Reduction: #%",
     "min": null,
     "max": null,
-    "section": "defense"
+    "section": "defense",
+    "alwaysVisible": true
   },
   {
     "id": 111,
@@ -678,7 +707,8 @@
     "label": "Damage +#",
     "min": null,
     "max": null,
-    "section": "damage"
+    "section": "damage",
+    "alwaysVisible": true
   },
   {
     "id": 112,
@@ -734,7 +764,8 @@
     "label": "Half Freeze Duration (0/1)",
     "min": null,
     "max": null,
-    "section": "defense"
+    "section": "defense",
+    "alwaysVisible": true
   },
   {
     "id": 119,
@@ -742,7 +773,8 @@
     "label": "#% Bonus to Attack Rating",
     "min": null,
     "max": null,
-    "section": "damage"
+    "section": "damage",
+    "alwaysVisible": true
   },
   {
     "id": 120,
@@ -758,7 +790,8 @@
     "label": "+#% Damage to Demons",
     "min": null,
     "max": null,
-    "section": "damage"
+    "section": "damage",
+    "alwaysVisible": true
   },
   {
     "id": 122,
@@ -766,7 +799,8 @@
     "label": "+#% Damage to Undead",
     "min": null,
     "max": null,
-    "section": "damage"
+    "section": "damage",
+    "alwaysVisible": true
   },
   {
     "id": 123,
@@ -822,7 +856,8 @@
     "label": "#% Chance of Crushing Blow",
     "min": null,
     "max": null,
-    "section": "damage"
+    "section": "damage",
+    "alwaysVisible": true
   },
   {
     "id": 138,
@@ -830,7 +865,8 @@
     "label": "+# to Mana After Each Kill",
     "min": null,
     "max": null,
-    "section": "defense"
+    "section": "defense",
+    "alwaysVisible": true
   },
   {
     "id": 139,
@@ -846,7 +882,8 @@
     "label": "#% Deadly Strike",
     "min": null,
     "max": null,
-    "section": "damage"
+    "section": "damage",
+    "alwaysVisible": true
   },
   {
     "id": 142,
@@ -854,7 +891,8 @@
     "label": "Fire Absorb #%",
     "min": null,
     "max": null,
-    "section": "defense"
+    "section": "defense",
+    "alwaysVisible": true
   },
   {
     "id": 143,
@@ -870,7 +908,8 @@
     "label": "Lightning Absorb #%",
     "min": null,
     "max": null,
-    "section": "defense"
+    "section": "defense",
+    "alwaysVisible": true
   },
   {
     "id": 145,
@@ -886,7 +925,8 @@
     "label": "Magic Absorb #%",
     "min": null,
     "max": null,
-    "section": "defense"
+    "section": "defense",
+    "alwaysVisible": true
   },
   {
     "id": 147,
@@ -902,7 +942,8 @@
     "label": "Cold Absorb #%",
     "min": null,
     "max": null,
-    "section": "defense"
+    "section": "defense",
+    "alwaysVisible": true
   },
   {
     "id": 149,
@@ -918,7 +959,8 @@
     "label": "Slows Target by #%",
     "min": null,
     "max": null,
-    "section": "misc"
+    "section": "misc",
+    "alwaysVisible": true
   },
   {
     "id": 151,
@@ -934,7 +976,8 @@
     "label": "Cannot Be Frozen",
     "min": null,
     "max": null,
-    "section": "defense"
+    "section": "defense",
+    "alwaysVisible": true
   },
   {
     "id": 154,
@@ -999,7 +1042,8 @@
     "min": 0,
     "max": 25,
     "sortOrder": 19,
-    "section": "defense"
+    "section": "defense",
+    "alwaysVisible": true
   },
   {
     "id": 195,
@@ -1055,7 +1099,8 @@
     "label": "+# Life on striking",
     "min": null,
     "max": null,
-    "section": "defense"
+    "section": "defense",
+    "alwaysVisible": true
   },
   {
     "id": 209,
@@ -1063,7 +1108,8 @@
     "label": "+# Mana on striking",
     "min": null,
     "max": null,
-    "section": "defense"
+    "section": "defense",
+    "alwaysVisible": true
   },
   {
     "id": 210,
@@ -1071,7 +1117,8 @@
     "label": "+# Life on melee attack",
     "min": null,
     "max": null,
-    "section": "defense"
+    "section": "defense",
+    "alwaysVisible": true
   },
   {
     "id": 211,
@@ -1088,7 +1135,8 @@
     "min": null,
     "max": null,
     "sortOrder": 18,
-    "section": "defense"
+    "section": "defense",
+    "alwaysVisible": true
   },
   {
     "id": 214,
@@ -1144,7 +1192,8 @@
     "label": "Summon Physical Resistance +#%",
     "min": null,
     "max": null,
-    "section": "minions"
+    "section": "minions",
+    "alwaysVisible": true
   },
   {
     "id": 266,
@@ -1224,7 +1273,8 @@
     "label": "+# Mana on melee attack",
     "min": null,
     "max": null,
-    "section": "defense"
+    "section": "defense",
+    "alwaysVisible": true
   },
   {
     "id": 297,
@@ -1240,7 +1290,8 @@
     "label": "#% To Fire Spell Damage",
     "min": null,
     "max": null,
-    "section": "damage"
+    "section": "damage",
+    "alwaysVisible": true
   },
   {
     "id": 330,
@@ -1248,7 +1299,8 @@
     "label": "#% To Lightning Spell Damage",
     "min": null,
     "max": null,
-    "section": "damage"
+    "section": "damage",
+    "alwaysVisible": true
   },
   {
     "id": 331,
@@ -1256,7 +1308,8 @@
     "label": "#% To Cold Spell Damage",
     "min": null,
     "max": null,
-    "section": "damage"
+    "section": "damage",
+    "alwaysVisible": true
   },
   {
     "id": 332,
@@ -1264,7 +1317,8 @@
     "label": "#% To Poison Spell Damage",
     "min": null,
     "max": null,
-    "section": "damage"
+    "section": "damage",
+    "alwaysVisible": true
   },
   {
     "id": 333,
@@ -1272,7 +1326,8 @@
     "label": "-#% To Enemy Fire Resistance",
     "min": null,
     "max": null,
-    "section": "damage"
+    "section": "damage",
+    "alwaysVisible": true
   },
   {
     "id": 334,
@@ -1280,7 +1335,8 @@
     "label": "-#% To Enemy Lightning Resistance",
     "min": null,
     "max": null,
-    "section": "damage"
+    "section": "damage",
+    "alwaysVisible": true
   },
   {
     "id": 335,
@@ -1288,7 +1344,8 @@
     "label": "-#% To Enemy Cold Resistance",
     "min": null,
     "max": null,
-    "section": "damage"
+    "section": "damage",
+    "alwaysVisible": true
   },
   {
     "id": 336,
@@ -1296,7 +1353,8 @@
     "label": "-#% To Enemy Poison Resistance",
     "min": null,
     "max": null,
-    "section": "damage"
+    "section": "damage",
+    "alwaysVisible": true
   },
   {
     "id": 337,
@@ -1312,7 +1370,8 @@
     "label": "Dodge +#%",
     "min": null,
     "max": null,
-    "section": "defense"
+    "section": "defense",
+    "alwaysVisible": true
   },
   {
     "id": 339,
@@ -1320,7 +1379,8 @@
     "label": "Avoid +#%",
     "min": null,
     "max": null,
-    "section": "defense"
+    "section": "defense",
+    "alwaysVisible": true
   },
   {
     "id": 340,
@@ -1328,7 +1388,8 @@
     "label": "Evade +#%",
     "min": null,
     "max": null,
-    "section": "defense"
+    "section": "defense",
+    "alwaysVisible": true
   },
   {
     "id": 344,
@@ -1352,7 +1413,8 @@
     "label": "+#% to Physical/Magic spell damage",
     "min": null,
     "max": null,
-    "section": "damage"
+    "section": "damage",
+    "alwaysVisible": true
   },
   {
     "id": 358,
@@ -1360,7 +1422,8 @@
     "label": "-#% To Enemy Magic Resistance",
     "min": null,
     "max": null,
-    "section": "damage"
+    "section": "damage",
+    "alwaysVisible": true
   },
   {
     "id": 359,
@@ -1368,7 +1431,8 @@
     "label": "Strength +#%",
     "min": null,
     "max": null,
-    "section": "attributes"
+    "section": "attributes",
+    "alwaysVisible": true
   },
   {
     "id": 360,
@@ -1376,7 +1440,8 @@
     "label": "Dexterity +#%",
     "min": null,
     "max": null,
-    "section": "attributes"
+    "section": "attributes",
+    "alwaysVisible": true
   },
   {
     "id": 361,
@@ -1384,7 +1449,8 @@
     "label": "Energy +#%",
     "min": null,
     "max": null,
-    "section": "attributes"
+    "section": "attributes",
+    "alwaysVisible": true
   },
   {
     "id": 362,
@@ -1392,7 +1458,8 @@
     "label": "Vitality +#%",
     "min": null,
     "max": null,
-    "section": "attributes"
+    "section": "attributes",
+    "alwaysVisible": true
   },
   {
     "id": 363,
@@ -1400,7 +1467,8 @@
     "label": "Slows Attacker +#%",
     "min": null,
     "max": null,
-    "section": "misc"
+    "section": "misc",
+    "alwaysVisible": true
   },
   {
     "id": 364,
@@ -1520,7 +1588,8 @@
     "label": "Activation Frequency",
     "min": null,
     "max": null,
-    "section": "misc"
+    "section": "misc",
+    "alwaysVisible": true
   },
   {
     "id": 428,
@@ -1544,7 +1613,8 @@
     "label": "+#% Bonus to Poison skill duration",
     "min": null,
     "max": null,
-    "section": "misc"
+    "section": "misc",
+    "alwaysVisible": true
   },
   {
     "id": 439,
@@ -1576,7 +1646,8 @@
     "label": "Summon life +#%",
     "min": null,
     "max": null,
-    "section": "minions"
+    "section": "minions",
+    "alwaysVisible": true
   },
   {
     "id": 445,
@@ -1640,7 +1711,8 @@
     "label": "Summon damage +#%",
     "min": null,
     "max": null,
-    "section": "minions"
+    "section": "minions",
+    "alwaysVisible": true
   },
   {
     "id": 479,
@@ -1680,7 +1752,8 @@
     "label": "Innate Elemental damage +#%",
     "min": null,
     "max": null,
-    "section": "damage"
+    "section": "damage",
+    "alwaysVisible": true
   },
   {
     "id": 485,
@@ -1688,7 +1761,8 @@
     "label": "+# Spell Focus",
     "min": null,
     "max": null,
-    "section": "damage"
+    "section": "damage",
+    "alwaysVisible": true
   },
   {
     "id": 487,
@@ -1696,7 +1770,8 @@
     "label": "Summon Elemental Resistances +#%",
     "min": null,
     "max": null,
-    "section": "minions"
+    "section": "minions",
+    "alwaysVisible": true
   },
   {
     "id": 488,
@@ -1704,7 +1779,8 @@
     "label": "+#% Spell Focus (from items/runes)",
     "min": null,
     "max": null,
-    "section": "damage"
+    "section": "damage",
+    "alwaysVisible": true
   },
   {
     "id": 489,
@@ -1728,7 +1804,8 @@
     "label": "Summon attack rating +#%",
     "min": null,
     "max": null,
-    "section": "minions"
+    "section": "minions",
+    "alwaysVisible": true
   },
   {
     "id": 505,
@@ -1768,6 +1845,61 @@
     "label": "Spell Focus cap (max 100%)",
     "min": null,
     "max": null,
+    "section": "damage"
+  },
+  {
+    "id": 907,
+    "key": "skill_duration",
+    "label": "+#% Skill Duration",
+    "min": null,
+    "max": null,
+    "allowNegative": false,
+    "alwaysVisible": true,
+    "sortOrder": 999,
+    "section": "misc"
+  },
+  {
+    "id": 908,
+    "key": "bonus_fire_damage_to_weapons",
+    "label": "Bonus Fire Damage to Weapons",
+    "min": null,
+    "max": null,
+    "allowNegative": false,
+    "alwaysVisible": false,
+    "sortOrder": 900,
+    "section": "damage"
+  },
+  {
+    "id": 909,
+    "key": "bonus_cold_damage_to_weapons",
+    "label": "Bonus Cold Damage to Weapons",
+    "min": null,
+    "max": null,
+    "allowNegative": false,
+    "alwaysVisible": false,
+    "sortOrder": 900,
+    "section": "damage"
+  },
+  {
+    "id": 910,
+    "key": "bonus_lightning_damage_to_weapons",
+    "label": "Bonus Lightning Damage to Weapons",
+    "min": null,
+    "max": null,
+    "allowNegative": false,
+    "alwaysVisible": false,
+    "sortOrder": 900,
+    "section": "damage"
+  },
+  {
+    "id": 911,
+    "key": "bonus_magic_damage_to_weapons",
+    "label": "Bonus Magic Damage to Weapons",
+    "min": null,
+    "max": null,
+    "allowNegative": false,
+    "alwaysVisible": false,
+    "sortOrder": 900,
     "section": "damage"
   }
 ]

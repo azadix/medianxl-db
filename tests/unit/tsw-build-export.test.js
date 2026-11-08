@@ -443,3 +443,28 @@ describe('TSW import/export round-trip', () => {
   });
 });
 
+
+describe('saved build spent points', () => {
+  it('sums the skill allocation when the envelope omits spentPoints', async () => {
+    const { savedBuildSpentPoints } = await import('@/planner/tsw-build-export.js');
+    const raw = {
+      ok: true,
+      api_version: 1,
+      meta: {},
+      build: { name: 'Imported', level: 150, skillPoints: { noctule: 25, blink: 1 } },
+      items: [],
+    };
+    expect(savedBuildSpentPoints(raw)).toBe(26);
+  });
+
+  it('prefers a recorded spentPoints value', async () => {
+    const { savedBuildSpentPoints } = await import('@/planner/tsw-build-export.js');
+    expect(savedBuildSpentPoints({ name: 'x', spentPoints: 163, skillPoints: { a: 1 } })).toBe(163);
+  });
+
+  it('returns 0 for empty or malformed records', async () => {
+    const { savedBuildSpentPoints } = await import('@/planner/tsw-build-export.js');
+    expect(savedBuildSpentPoints(null)).toBe(0);
+    expect(savedBuildSpentPoints({})).toBe(0);
+  });
+});

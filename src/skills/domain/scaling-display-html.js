@@ -22,6 +22,15 @@ export function isValueSlotSigned(signed, valueIndex) {
 }
 
 /**
+ * Unknown/unsupported scaling value. The explicit words are the primary signal;
+ * the red `has-text-danger` span is secondary.
+ * @returns {string}
+ */
+function unsupportedValueHtml() {
+  return `<span class="${SCALING_DISPLAY_HTML_CLASSES.unknown}">???</span> <span class="mod-support-badge" title="This stat value is not supported yet">Not supported</span>`;
+}
+
+/**
  * Prefix `+` for non-negative pure numbers when signed display is on.
  * Leaves negatives, formulas, and non-numeric text unchanged.
  *
@@ -50,11 +59,11 @@ export function applyStatValueSign(displayValue, signed) {
 export function formatScalingValuesToDescriptionHtml(scaling, statKeyLower = '') {
 
   if (!scaling) {
-    return `<span class="${SCALING_DISPLAY_HTML_CLASSES.unknown}">???</span>`;
+    return `${unsupportedValueHtml()}`;
   }
   const sk = String(statKeyLower).toLowerCase();
   if (sk === 'mana_cost' || sk === 'minion_mana_cost') {
-    return `<span class="${SCALING_DISPLAY_HTML_CLASSES.unknown}">???</span>`;
+    return `${unsupportedValueHtml()}`;
   }
 
   const name = scaling.statName || statKeyLower;
@@ -85,7 +94,7 @@ export function formatScalingValuesToDescriptionHtml(scaling, statKeyLower = '')
     const isFormula = scaling[`value${valueIndex}_formula`];
     const isConstant = scaling[`value${valueIndex}_constant`];
     if (isEmpty && (isFormula || isConstant || hasAnyConstants)) {
-      return `<span class="${SCALING_DISPLAY_HTML_CLASSES.unknown}">???</span>`;
+      return `${unsupportedValueHtml()}`;
     }
     const shown = applyStatValueSign(defaultValue || '', isValueSlotSigned(signed, valueIndex));
     return `<span class="${getValueClass(valueIndex)}">${shown}</span>`;

@@ -6,6 +6,8 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { evaluateFormula } from '@/skills/domain/formula-evaluator.js';
+import { getFileSkillStore } from '@/shared/skill-data-store.js';
+import { resolveEngineFormula } from '@/skills/domain/skill-synergy.js';
 import { getActiveTreeDataDir } from '../helpers/mock-fetch-tree-data.js';
 
 describe('built-in function behavior', () => {
@@ -155,8 +157,23 @@ describe('scaling formula sweep (real data)', () => {
   it.each([1, 25, 60])('every scaling formula evaluates at level %i', (level) => {
     const failures = [];
     for (const { skillId, statKey, slot, formula } of formulas) {
+      // Engine tokens (clcN/pstN/astN/synN) resolve through the live skill store in the app;
+      // this raw sweep does not initialise it, so those are covered by the display tests.
+      if (/\b(?:clc\d|pst\d|ast\d|syn\d)\b|\bskill\s*\(/.test(formula)) continue;
       const { prepared, variables } = buildVariables(formula, level);
-      const result = evaluateFormula(prepared, variables);
+      // make the owning skill's level visible so engine clc/pst/ast tokens resolve
+      variables.characterState.blvl[skillId] = level;
+      variables._blvl[skillId] = level;
+      let resolved = prepared;
+      try {
+        if (getFileSkillStore()) {
+          resolved = resolveEngineFormula(skillId, prepared, variables.characterState, getFileSkillStore());
+          resolved = resolved.replace(/\bstate\s*\(\s*\d+\s*\)/gi, '0');
+        }
+      } catch {
+        resolved = prepared;
+      }
+      const result = evaluateFormula(resolved, variables);
       if (!result.success) {
         failures.push(`${skillId} [${statKey}.${slot}] "${formula}": ${result.error}`);
       } else if (!Number.isFinite(result.value)) {

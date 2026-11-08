@@ -308,7 +308,10 @@ export function isIgnoredTswItem(row) {
  * @returns {boolean}
  */
 function isCatalogBadge(badge) {
-  return ['SU', 'SSU', 'SSSU', 'TU', 'SET', 'RW', 'CHARM'].includes(badge);
+  // Some exporters emit the plain quality word ("Unique") instead of the MXL badge
+  // (SU/SSU/...). Those items are catalogued uniques too - rejecting them skipped every
+  // unique in such builds with a misleading "uncatalogued" reason.
+  return ['SU', 'SSU', 'SSSU', 'TU', 'SET', 'RW', 'CHARM', 'UNIQUE', 'UNI'].includes(badge);
 }
 
 /**
@@ -504,6 +507,14 @@ export function resolveTswItemDefId(row, cat) {
     return 'u:mindflayers-mayhem:su';
   }
 
+  // Relic rows all share a generic code (`cotw`); resolve their display-name skill hint
+  // before trusting the code, otherwise every relic maps to the same charm entry.
+  const relicHint = relicSkillHint(row);
+  if (relicHint) {
+    const relicId = `relic:${slugify(relicHint)}`;
+    if (cat.byId[relicId]) return relicId;
+  }
+
   const code = row?.code != null ? String(row.code).trim() : '';
   const codeDef = code ? cat.byId[code] : null;
   // Unique gear codes collide with base item ids (e.g. Lacuni Cowl `@17`). Only trust
@@ -515,12 +526,6 @@ export function resolveTswItemDefId(row, cat) {
   const dim = dimensionalKeyVariant(row);
   if (dim && cat.byId[DIM_KEY_CATALOG_ID]) {
     return DIM_KEY_CATALOG_ID;
-  }
-
-  const relicHint = relicSkillHint(row);
-  if (relicHint) {
-    const relicId = `relic:${slugify(relicHint)}`;
-    if (cat.byId[relicId]) return relicId;
   }
 
   for (const id of uniqueIdCandidates(row)) {
@@ -699,9 +704,14 @@ export function mapTswItemsToSnapshot(rows, catalog, className = null) {
   for (let index = 0; index < list.length; index += 1) {
     const row = list[index];
     if (!row || typeof row !== 'object') continue;
-    const location = String(row.location || '').trim();
+    const rowSlot = String(row.slot || '').trim();
+    const rawLocation = String(row.location || '').trim();
+    // Some exporters mark equipped gear as Inventory while still reporting its equipment
+    // slot. A real inventory item never has a slot, so trust the slot and treat it as worn.
+    const wornSlot = rawLocation !== 'Gear' && rowSlot ? TSW_SLOT_TO_EQUIPMENT[rowSlot] : null;
+    const location = wornSlot ? 'Gear' : rawLocation;
     if (location !== 'Gear' && location !== 'Inventory') {
-      skipRow(row, 'stash', index);
+      skipRow(row, 'unsupported-location', index);
       continue;
     }
 
@@ -821,7 +831,10 @@ export function mapTswItemsToSnapshot(rows, catalog, className = null) {
       continue;
     }
 
-    skipRow(row, 'uncatalogued', index);
+    // Catalogued gear that sits in the inventory (staves, spare armour, rings) is not
+    // equippable state the planner models. It is NOT missing from the catalogue - reporting
+    // it as "uncatalogued" made in-catalog uniques look unsupported.
+    skipRow(row, 'non-charm-inventory', index);
   }
 
   return {

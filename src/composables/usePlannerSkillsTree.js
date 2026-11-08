@@ -33,8 +33,30 @@ export function usePlannerSkillsTree({ payload, classSkills, activeTab, gridRang
   const store = usePlannerStore();
   const itemsStore = useItemsStore();
 
+  /**
+   * Card data is rebuilt per skill on every render, and a tab swap re-renders the
+   * whole grid, so cache it per (skill id, revision). Cleared whenever the planner
+   * revision changes, which is the only thing that invalidates the data.
+   * @type {Map<string, object>}
+   */
+  const _cardDataCache = new Map();
+  let _cardDataCacheRevision = null;
+
   function cardDataForSkill(skill) {
-    store.revision;
+    const rev = store.revision;
+    if (rev !== _cardDataCacheRevision) {
+      _cardDataCache.clear();
+      _cardDataCacheRevision = rev;
+    }
+    const cacheKey = `${String(skill?.id ?? '')}|${skill?.hasDetails ? 1 : 0}`;
+    const cached = _cardDataCache.get(cacheKey);
+    if (cached) return cached;
+    const built = buildCardDataForSkill(skill);
+    _cardDataCache.set(cacheKey, built);
+    return built;
+  }
+
+  function buildCardDataForSkill(skill) {
     const list = payload.value?.skillsList || [];
     let variants = [];
     try {

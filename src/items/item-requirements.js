@@ -24,6 +24,7 @@ import {
   uniqueCorruptionReqLevelPerSuccess,
 } from '@/items/item-unique-rules.js';
 import { getItemUpgradeFlags } from '@/items/item-upgrades.js';
+import { assurCounts, assurMechanicForDef, assurRequiredLevelBonus } from '@/items/item-mechanics.js';
 
 /** Ethereal items subtract this from base str/dex before Requirements +/-%. */
 export const ETHEREAL_BASE_REQ_FLAT = 10;
@@ -58,6 +59,7 @@ const REQ_LEVEL_BONUS_RE = /^\+?\s*(-?\d+)\s+Required Level$/i;
  * @returns {number}
  */
 export function parseRequirementsReductionPct(text) {
+  if (typeof text !== 'string' || !text.toLowerCase().includes('requirements')) return 0;
   if (!isModifierLineActive(text)) return 0;
   const s = stripDisplayedRollRanges(modifierLineText(text)).replace(/\s+/g, ' ').trim();
   if (!s) return 0;
@@ -86,6 +88,7 @@ export function parseRequirementsReductionPct(text) {
  * @returns {boolean}
  */
 export function isRequirementsPercentLine(text) {
+  if (typeof text !== 'string' || !text.toLowerCase().includes('requirements')) return false;
   if (!isModifierLineActive(text)) return false;
   const s = stripDisplayedRollRanges(modifierLineText(text)).replace(/\s+/g, ' ').trim();
   if (!s) return false;
@@ -98,6 +101,10 @@ export function isRequirementsPercentLine(text) {
  * @returns {number}
  */
 export function parseRequiredLevelBonus(text) {
+  // Most lines in an item description are not requirement lines. A single substring
+  // test is far cheaper than isModifierLineActive() + two regexes, and this runs for
+  // every modifier of every equipped item on each recompute.
+  if (typeof text !== 'string' || !text.toLowerCase().includes('required level')) return 0;
   if (!isModifierLineActive(text)) return 0;
   const s = stripDisplayedRollRanges(modifierLineText(text)).replace(/\s+/g, ' ').trim();
   const match = REQ_LEVEL_BONUS_RE.exec(s);
@@ -239,6 +246,7 @@ export function combinedRequiredLevelBonus(textBonus, positiveBonus = 0, negativ
  *   extras?: string[]|null,
  *   mysticOrbs?: unknown,
  *   corruptions?: string[]|null,
+ *   mechanics?: Record<string, number>|null,
  *   ethereal?: boolean,
  * }} [options]
  * @returns {ItemRequirements}
@@ -249,6 +257,11 @@ export function resolveItemRequirements(def, options = {}) {
     ? options.extras.map((line) => String(line || '').trim()).filter(Boolean)
     : [];
   let reqLevel = nonNeg(def?.reqLevel);
+  const assurReqBonus = assurRequiredLevelBonus(
+    assurMechanicForDef(def),
+    assurCounts(options.mechanics)
+  );
+  if (assurReqBonus > 0) reqLevel += assurReqBonus;
   const ethereal =
     options.ethereal === true ||
     def?.ethereal === true ||
@@ -269,12 +282,29 @@ export function resolveItemRequirements(def, options = {}) {
   const extrasHaveReqPct = extras.some((text) => isRequirementsPercentLine(text));
 
   if (itemForbidsSocketsAndEnhancements(def)) {
-    return { reqLevel, reqStr, reqDex, reductionPct: 0 };
+    // Assur's Bane's per-item scroll mechanic still honors a leftover `+N Required Level`
+    // that the TSW importer emits as the net upgraded requirement.
+    let leftoverReqLevel = 0;
+    if (String(def?.name || '').trim() === "Assur's Bane") {
+      for (const text of extras) {
+        leftoverReqLevel += parseRequiredLevelBonus(text);
+      }
+    }
+    return { reqLevel: Math.max(0, reqLevel + leftoverReqLevel), reqStr, reqDex, reductionPct: 0 };
   }
 
   if (isCorruptedWormhole(def)) {
     reqLevel += getWormholeCycleReqLevelBonus(options.rolls ?? null);
   }
+
+  // The host's own `Requirements -N%` line is already the final in-game total: the game
+  // aggregates unique + socketed jewels into that one number (Zakarum's Guidance shows
+  // `-62%` = 22% item + 2x20% jewels). Adding socket reductions on top double-counts
+  // them, so only fall back to per-socket reductions when the host has no such line.
+  const overlayTexts = collectOverlayRequirementModifierTexts(def, options.rolls ?? null);
+  const hostHasReqPct =
+    extrasHaveReqPct || overlayTexts.some((text) => isRequirementsPercentLine(text));
+  const socketPctApplies = !hostHasReqPct;
 
   let socketReqBonus = 0;
   for (const sock of socketables) {
@@ -285,11 +315,11 @@ export function resolveItemRequirements(def, options = {}) {
     if (Array.isArray(sock.modifiers)) {
       for (const text of sock.modifiers) {
         if (typeof text !== 'string' || !text.trim()) continue;
-        if (!extrasHaveReqPct) reductionPct += parseRequirementsReductionPct(text);
+        if (socketPctApplies) reductionPct += parseRequirementsReductionPct(text);
         sockReqBonus += parseRequiredLevelBonus(text);
       }
     }
-    if (!extrasHaveReqPct && Number.isFinite(Number(sock.reductionPct))) {
+    if (socketPctApplies && Number.isFinite(Number(sock.reductionPct))) {
       reductionPct += Math.abs(Number(sock.reductionPct)) || 0;
     }
     // Jewels with `+N Required Level` raise the host via that affix, not Required Level:.
@@ -298,7 +328,6 @@ export function resolveItemRequirements(def, options = {}) {
   }
 
   let hostReqBonus = 0;
-  const overlayTexts = collectOverlayRequirementModifierTexts(def, options.rolls ?? null);
   for (const text of overlayTexts) {
     hostReqBonus += parseRequiredLevelBonus(text);
     if (!extrasHaveReqPct) reductionPct += parseRequirementsReductionPct(text);

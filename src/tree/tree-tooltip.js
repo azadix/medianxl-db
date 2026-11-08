@@ -19,6 +19,8 @@ import {
   getTreeSkillsCache,
   getAllStats,
   getCharacterInstance,
+  getEffectivePlannerLevel,
+  isConditionTriggerSkillAvailable,
   isSkillDisabled,
   isOSkillSlotDisabled
 } from '@/character/planner-core.js';
@@ -207,7 +209,13 @@ function buildSkillTooltipConditionHtml(skillData) {
     const visible = filterTooltipConditionsByGroup(conditions);
     if (visible.length === 0) return '';
 
-    const rows = visible.map((cond) => {
+    const visibleWithTrigger = visible.filter((cond) => {
+        const req = cond?.requiresSkill != null ? String(cond.requiresSkill).trim().toLowerCase() : '';
+        return !req || isConditionTriggerSkillAvailable(req);
+    });
+    if (visibleWithTrigger.length === 0) return '';
+
+    const rows = visibleWithTrigger.map((cond) => {
         const active = isConditionSelected(cond.key);
         const label = cond.name || formatConditionLabel(cond.key || '');
         const stateClass = active ? 'has-text-success' : '';
@@ -927,7 +935,11 @@ async function buildTooltipContent(
           appliedRelicBonus: 0,
         }
       : sourceAmounts;
-    const scalingLevel = isProc ? level : isOSkill ? effectiveLevel : level;
+    // Values shown must use the EFFECTIVE level (hard points + +# to All/Class
+    // Skills, gear and relic soft levels), not the base level — otherwise a
+    // level-13 skill renders its level-2 damage. Procs are excluded: they have
+    // no skill points and show their granted level directly.
+    const scalingLevel = isProc ? level : effectiveLevel;
     
     const iconFolder = versionToTreeAssetFolder(getCurrentVersion());
     const iconHtml = getSkillIconHTML(skillData.image, skillData.className, 'is-64x64', iconFolder);
@@ -1043,16 +1055,7 @@ async function buildTooltipContent(
     const allSkillPoints = getAllSkillPoints();
     
     
-    // Get character level from minimum level display (this is what ulvl should use)
-    const minLevelDisplay = document.getElementById('minLevelDisplay');
-    let characterLevel = 1; // fallback
-    if (minLevelDisplay) {
-        const levelText = minLevelDisplay.textContent;
-        const levelMatch = levelText.match(/Level (\d+)/);
-        if (levelMatch) {
-            characterLevel = parseInt(levelMatch[1], 10);
-        }
-    }
+    const characterLevel = getEffectivePlannerLevel();
     
     // All Skills bonus already calculated at the top of the function
     

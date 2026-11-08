@@ -4,6 +4,13 @@
  */
 
 import { defineStore } from 'pinia';
+
+/**
+ * Per-instance cache for getDefForInstance: cloning a def object is expensive and the
+ * result only depends on defId plus a few instance overrides (see signature there).
+ * @type {Map<number, { signature: string, value: object }>}
+ */
+const _defForInstanceCache = new Map();
 import { getAssetUrl } from '@/shared/utils.js';
 import { getCurrentVersion, versionToTreeAssetFolder } from '@/shared/version-config.js';
 import {
@@ -35,11 +42,11 @@ import {
   listPlacedItems,
 } from '@/items/inventory-placement.js';
 import { pickItemIcon } from '@/items/item-icons.js';
+import { isCompleteItemText } from '@/items/item-text-completeness.js';
 import {
   EQUIPMENT_TO_TSW_SLOT,
   cloneTswRow,
   syncStoreInstanceTswRow,
-  syncStoreTswRows,
 } from '@/planner/tsw-build-export.js';
 import {
   charmMeetsLevel,
@@ -411,7 +418,7 @@ function applyInstanceMeta(inst, meta) {
 }
 
 /**
- * Stable id → def map. Rebuilt when catalog / runtime overlays change (not on every getter read).
+ * Stable id â†’ def map. Rebuilt when catalog / runtime overlays change (not on every getter read).
  * @param {ItemDef[]} catalog
  * @param {ItemDef[]} runtimeOverlayDefs
  * @returns {Record<string, ItemDef>}
@@ -551,12 +558,12 @@ export const useItemsStore = defineStore('items', {
     /** @type {(number|null)[]} */
     inventory: emptyInventory(),
     /**
-     * Enabled dungeon charms (defId → instance id). Not placed on the inventory grid.
+     * Enabled dungeon charms (defId â†’ instance id). Not placed on the inventory grid.
      * @type {Record<string, number>}
      */
     enabledCharms: {},
     /**
-     * Enabled relics (defId → instance id). Cap: MAX_RELICS. Not on the inventory grid.
+     * Enabled relics (defId â†’ instance id). Cap: MAX_RELICS. Not on the inventory grid.
      * @type {Record<string, number>}
      */
     enabledRelics: {},
@@ -704,7 +711,7 @@ export const useItemsStore = defineStore('items', {
         });
       }
       if (sel.location === 'inventory') {
-        // Charms/relics use dedicated enable lists — not the inventory grid.
+        // Charms/relics use dedicated enable lists â€” not the inventory grid.
         return catalogWithAngelicBases(this.catalog).filter(
           (d) => canPlaceInInventory(d) && !isCharmItem(d) && !isRelicItem(d)
         );
@@ -825,6 +832,7 @@ export const useItemsStore = defineStore('items', {
           'item-mechanics.json',
           'blessings.json',
           'shrines.json',
+          'misc.json',
         ];
         try {
           const requiredRes = await Promise.all(
@@ -865,6 +873,8 @@ export const useItemsStore = defineStore('items', {
           let sets = [];
           /** @type {ItemDef[]} */
           let runewords = [];
+          /** @type {ItemDef[]} */
+          let misc = [];
           const relicsData = await readJsonIfOk(optionalRes[0]);
           if (relicsData) {
             relics = (Array.isArray(relicsData) ? relicsData : []).map((/** @type {ItemDef} */ r) => ({
@@ -910,6 +920,8 @@ export const useItemsStore = defineStore('items', {
           loadItemMechanics(await readJsonIfOk(optionalRes[9]));
           loadHonorificBlessings(await readJsonIfOk(optionalRes[10]));
           loadShrinesCatalog(await readJsonIfOk(optionalRes[11]));
+          const miscData = await readJsonIfOk(optionalRes[12]);
+          if (miscData) misc = Array.isArray(miscData) ? miscData : [];
 
           this.catalog = [
             ...baseItems,
@@ -919,6 +931,7 @@ export const useItemsStore = defineStore('items', {
             ...overlays,
             ...relics,
             ...runewords,
+            ...misc,
           ];
           mergeJewelItemsIntoSocketablesCatalog(this.catalog);
           this.sets = sets;
@@ -967,16 +980,21 @@ export const useItemsStore = defineStore('items', {
      */
     runWithWeaponSet(set, fn) {
       const next = set === 1 ? 1 : 0;
+      const nested = weaponSetPeek != null;
       const prevPeek = weaponSetPeek;
       const prev = effectiveWeaponSet(this);
       if (next === prev) return fn();
       weaponSetPeek = next;
-      recomputePlannerStatsFromItems(getCharacterInstance());
+      if (!nested && !skipItemReqLevelSync) {
+        recomputePlannerStatsFromItems(getCharacterInstance());
+      }
       try {
         return fn();
       } finally {
         weaponSetPeek = prevPeek;
-        recomputePlannerStatsFromItems(getCharacterInstance());
+        if (!nested && !skipItemReqLevelSync) {
+          recomputePlannerStatsFromItems(getCharacterInstance());
+        }
       }
     },
 
@@ -996,6 +1014,11 @@ export const useItemsStore = defineStore('items', {
     syncCharacterStatsToItemReqs() {
       if (skipItemReqLevelSync) return false;
       if (!getPlannerAutoMatchHighestStatRequirements()) return false;
+      // Complete-text imports carry the character's real BASE attributes from the save
+      // (strength 70, dexterity 1160). Raising them to cover item requirements double
+      // counts: the requirements are already met by the item bonuses, and bumping raw
+      // strength to 82.27 pushed the total to 863 instead of the in-game 843.
+      if (isCompleteItemText()) return false;
       return raiseCharacterStatsForItemReq(this.maxActiveItemReqStats);
     },
 
@@ -1038,6 +1061,7 @@ export const useItemsStore = defineStore('items', {
         socketables: this.getSocketablesForInstance(instanceId),
         mysticOrbs: this.getMysticOrbsForInstance(instanceId),
         corruptions: this.instances[instanceId]?.corruptions,
+        mechanics: this.instances[instanceId]?.mechanics,
         ethereal: this.instances[instanceId]?.ethereal === true,
       });
     },
@@ -1051,7 +1075,7 @@ export const useItemsStore = defineStore('items', {
     equipmentSlotMeetsRequirements(slot) {
       const key = String(slot);
       const setIdx = weaponSetForEquipSlot(key);
-      if (setIdx != null && setIdx !== effectiveWeaponSet(this)) {
+      if (setIdx != null && setIdx !== effectiveWeaponSet(this) && !isCompleteItemText()) {
         return this.runWithWeaponSet(setIdx, () => this.equipmentSlotMeetsRequirements(key));
       }
       const id = this.equipment[key];
@@ -1069,7 +1093,9 @@ export const useItemsStore = defineStore('items', {
         const otherSlot = pairedWeaponSlot(key);
         if (!otherSlot) return false;
         const otherId = this.equipment[otherSlot];
-        if (otherId == null) return false;
+        // A quiver is valid with a matching bow/crossbow OR with nothing in the
+        // other hand. Anything else equipped there is invalid.
+        if (otherId == null) return true;
         const otherDef = this.getDefForInstance(otherId);
         if (!isQuiverEffectActive(def, otherDef)) return false;
         // Partner must also meet its own requirements to "count" as equipped.
@@ -1090,7 +1116,10 @@ export const useItemsStore = defineStore('items', {
      * @returns {boolean}
      */
     equipmentSlotContributesBonuses(slot) {
-      if (!isActiveWeaponSetSlot(slot, effectiveWeaponSet(this))) return false;
+      // Only the currently active weapon set contributes to character stats.
+      if (!isActiveWeaponSetSlot(slot, effectiveWeaponSet(this))) {
+        return false;
+      }
       const key = String(slot);
       const id = this.equipment[key];
       if (id == null) return false;
@@ -1348,7 +1377,7 @@ export const useItemsStore = defineStore('items', {
       );
       if (!merged) return null;
       this.runtimeOverlayDefs = [...this.runtimeOverlayDefs, merged];
-      // Incremental map update — avoid rescanning the full unique catalog.
+      // Incremental map update â€” avoid rescanning the full unique catalog.
       this.catalogByIdMap = { ...this.catalogByIdMap, [merged.id]: merged };
       return merged.id;
     },
@@ -1371,6 +1400,17 @@ export const useItemsStore = defineStore('items', {
     getExtrasForInstance(instanceId) {
       const inst = this.instances[instanceId];
       return parseExtrasList(inst?.extras);
+    },
+
+    /**
+     * Raw imported dump row (TSW/d2s-export) for an instance, if any. Kept so callers can
+     * read the item's complete rendered text even where `extras` filters catalogue lines.
+     * @param {number} instanceId
+     * @returns {object|null}
+     */
+    getTswRowForInstance(instanceId) {
+      const inst = this.instances[instanceId];
+      return inst?.tswRow && typeof inst.tswRow === 'object' ? inst.tswRow : null;
     },
 
     /**
@@ -2083,9 +2123,26 @@ export const useItemsStore = defineStore('items', {
     getDefForInstance(instanceId) {
       const inst = this.instances[instanceId];
       if (!inst) return null;
+      // This clones a whole def object per call and dominated weapon-swap time
+      // (~18% self). The result depends only on defId + the four instance overrides,
+      // so cache on that cheap signature. Rolls/orbs/sockets do not affect it.
+      const signature = [
+        String(inst.defId ?? ''),
+        inst.ethereal === true ? '1' : '0',
+        inst.corrupted === true ? '1' : '0',
+        normalizeRandomElement(inst.randomElement) || '',
+        inst.name != null ? String(inst.name).trim() : '',
+        inst.custom ? JSON.stringify(inst.custom) : '',
+      ].join('\u0001');
+      const cached = _defForInstanceCache.get(instanceId);
+      if (cached && cached.signature === signature) return cached.value;
+
       const def = this.catalogById[inst.defId] ?? null;
       const withCustom = applyCustomOverlayToDef(def, inst.custom);
-      if (!withCustom) return null;
+      if (!withCustom) {
+        _defForInstanceCache.delete(instanceId);
+        return null;
+      }
       /** @type {Record<string, unknown>} */
       const out = { ...withCustom };
       if (inst.ethereal === true && !withCustom.ethereal) out.ethereal = true;
@@ -2097,6 +2154,7 @@ export const useItemsStore = defineStore('items', {
         out.name = name;
         delete out.classRestriction;
       }
+      _defForInstanceCache.set(instanceId, { signature, value: out });
       return out;
     },
 
@@ -2355,7 +2413,7 @@ export const useItemsStore = defineStore('items', {
             ) {
               this.equipment[String(from.slot)] = toId;
             } else {
-              // Try inventory dump — or destroy if nowhere
+              // Try inventory dump â€” or destroy if nowhere
               const size = getSize(toId);
               if (size) {
                 const dump = findAnchorForClick(
@@ -2922,7 +2980,11 @@ export const useItemsStore = defineStore('items', {
         result.disabledCharms = disabled.charms;
         result.disabledRelics = disabled.relics;
         result.unmetGear = this.listUnmetEquippedItems();
-        syncStoreTswRows(this, { rewrite: false });
+        // No export-row resync here on purpose. Every instance already holds its
+        // imported `tswRow` (see applyInstanceMeta above), and the export path
+        // (itemsStoreToTswItems -> rowFromInstance) rewrites location/slot from live
+        // state anyway. Rebuilding here only re-derived identical rows and was the
+        // dominant cost of loading a build.
       } finally {
         skipItemReqLevelSync = prevSkip;
       }

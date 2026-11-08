@@ -7,7 +7,7 @@ exports[`tooltip expansion > snapshots expanded description/effect for represent
     "level": 1,
     "skillEffect": "Sphere does no damage
 Vortex hits 13 times per second
-Cold Damage: <span class="has-text-danger">???</span>-<span class="has-text-danger">???</span>
+Cold Damage: <span class="has-text-white">lev_scaled(70,18,12,12,12,8,lvl)*(100+energy_synergy({{energy}},{{spell_focus}},ulvl,{{poison_spell_damage}}/100))/100</span>-<span class="has-text-white">lev_scaled(80,24,16,16,16,12,lvl)*(100+energy_synergy({{energy}},{{spell_focus}},ulvl,{{poison_spell_damage}}/100))/100</span>
 Mana cost: <span class="has-text-info">19</span>  ",
     "variantKey": null,
   },
@@ -16,7 +16,7 @@ Mana cost: <span class="has-text-info">19</span>  ",
     "level": 1,
     "skillEffect": "<span class='has-text-success js-nested-tooltip-skill' data-tooltip-skill-id="spirit_reave">Spirit Reave</span>
 Grit: <span class="has-text-white">20</span>%
-Duration: <span class="has-text-white">frames(500*(1+[[continuity]].{{skill_duration}}/100))</span> seconds",
+Duration: <span class="has-text-white">frames(500*(1+{{skill_duration}}/100))</span> seconds",
     "variantKey": null,
   },
   "artifice_mastery": {
@@ -29,7 +29,7 @@ Duration: <span class="has-text-white">frames(500*(1+[[continuity]].{{skill_dura
     "description": "Casts a wave of exploding firebolts in front of you",
     "level": 1,
     "skillEffect": "Firebolts: <span class="has-text-white">(min(3+lvl/10,7)+(blvl*(max(({{current_mana}}*4)/max({{base_mana}},1),0))))</span>
-Fire Damage: <span class="has-text-danger">???</span>-<span class="has-text-danger">???</span>
+Fire Damage: <span class="has-text-white">lev_scaled(120,40,18,18,18,15,lvl)*(100+energy_synergy({{energy}},{{spell_focus}},ulvl,{{poison_spell_damage}}/100))/100</span>-<span class="has-text-white">lev_scaled(150,53,21,21,21,17,lvl)*(100+energy_synergy({{energy}},{{spell_focus}},ulvl,{{poison_spell_damage}}/100))/100</span>
 Mana cost: <span class="has-text-danger">???</span>  ",
     "variantKey": "non_sorceress",
   },

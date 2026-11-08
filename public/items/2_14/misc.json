@@ -1,0 +1,336 @@
+[
+  {
+    "id": "du01",
+    "name": "Heroic Duncraig Crafting Scroll",
+    "type": "scroll",
+    "category": "misc",
+    "slot": null,
+    "rarity": "normal",
+    "icon": "invbsc",
+    "reqLevel": 0,
+    "modifiers": [
+      "+4 Required Level",
+      "Adds 3-4 Damage",
+      "{orange}Assur's Bane Upgrade"
+    ]
+  },
+  {
+    "id": "du02",
+    "name": "Heroic Duncraig Crafting Scroll",
+    "type": "scroll",
+    "category": "misc",
+    "slot": null,
+    "rarity": "normal",
+    "icon": "invbsc",
+    "reqLevel": 0,
+    "modifiers": [
+      "+12 Required Level",
+      "+1 to All Skills",
+      "{orange}Assur's Bane Upgrade"
+    ]
+  },
+  {
+    "id": "du03",
+    "name": "Heroic Duncraig Crafting Scroll",
+    "type": "scroll",
+    "category": "misc",
+    "slot": null,
+    "rarity": "normal",
+    "icon": "invbsc",
+    "reqLevel": 0,
+    "modifiers": [
+      "+4 Required Level",
+      "+15% Damage to Undead",
+      "{orange}Assur's Bane Upgrade"
+    ]
+  },
+  {
+    "id": "du04",
+    "name": "Heroic Duncraig Crafting Scroll",
+    "type": "scroll",
+    "category": "misc",
+    "slot": null,
+    "rarity": "normal",
+    "icon": "invbsc",
+    "reqLevel": 0,
+    "modifiers": [
+      "+4 Required Level",
+      "Maximum Life +1%",
+      "{orange}Assur's Bane Upgrade"
+    ]
+  },
+  {
+    "id": "du05",
+    "name": "Heroic Duncraig Crafting Scroll",
+    "type": "scroll",
+    "category": "misc",
+    "slot": null,
+    "rarity": "normal",
+    "icon": "invbsc",
+    "reqLevel": 0,
+    "modifiers": [
+      "+5 Required Level",
+      "-3% to Enemy Fire Resistance",
+      "{orange}Assur's Bane Upgrade"
+    ]
+  },
+  {
+    "id": "du06",
+    "name": "Heroic Duncraig Crafting Scroll",
+    "type": "scroll",
+    "category": "misc",
+    "slot": null,
+    "rarity": "normal",
+    "icon": "invbsc",
+    "reqLevel": 0,
+    "modifiers": [
+      "+5 Required Level",
+      "-3% to Enemy Cold Resistance",
+      "{orange}Assur's Bane Upgrade"
+    ]
+  },
+  {
+    "id": "du07",
+    "name": "Heroic Duncraig Crafting Scroll",
+    "type": "scroll",
+    "category": "misc",
+    "slot": null,
+    "rarity": "normal",
+    "icon": "invbsc",
+    "reqLevel": 0,
+    "modifiers": [
+      "+5 Required Level",
+      "-3% to Enemy Lightning Resistance",
+      "{orange}Assur's Bane Upgrade"
+    ]
+  },
+  {
+    "id": "du08",
+    "name": "Heroic Duncraig Crafting Scroll",
+    "type": "scroll",
+    "category": "misc",
+    "slot": null,
+    "rarity": "normal",
+    "icon": "invbsc",
+    "reqLevel": 0,
+    "modifiers": [
+      "+5 Required Level",
+      "-3% to Enemy Poison Resistance",
+      "{orange}Assur's Bane Upgrade"
+    ]
+  },
+  {
+    "id": "du09",
+    "name": "Heroic Duncraig Crafting Scroll",
+    "type": "scroll",
+    "category": "misc",
+    "slot": null,
+    "rarity": "normal",
+    "icon": "invbsc",
+    "reqLevel": 0,
+    "modifiers": [
+      "Fire Resist -10%",
+      "-1 to Light Radius",
+      "+40% Weapon Physical Damage",
+      "Requires at least 1 Light Radius on item",
+      "{orange}Assur's Bane Upgrade"
+    ]
+  },
+  {
+    "id": "du10",
+    "name": "Heroic Duncraig Crafting Scroll",
+    "type": "scroll",
+    "category": "misc",
+    "slot": null,
+    "rarity": "normal",
+    "icon": "invbsc",
+    "reqLevel": 0,
+    "modifiers": [
+      "Fire Resist -10%",
+      "-1 to Light Radius",
+      "+5% Innate Elemental Damage",
+      "Requires at least 1 Light Radius on item",
+      "{orange}Assur's Bane Upgrade"
+    ]
+  },
+  {
+    "id": "du11",
+    "name": "Heroic Duncraig Crafting Scroll",
+    "type": "scroll",
+    "category": "misc",
+    "slot": null,
+    "rarity": "normal",
+    "icon": "invbsc",
+    "reqLevel": 0,
+    "modifiers": [
+      "Fire Resist -20%",
+      "-2 to Light Radius",
+      "+1% to Maximum Fire, Cold, and Poison Resistances",
+      "Requires at least 2 Light Radius on item",
+      "{orange}Assur's Bane Upgrade"
+    ]
+  },
+  {
+    "id": "du12",
+    "name": "Heroic Duncraig Crafting Scroll",
+    "type": "scroll",
+    "category": "misc",
+    "slot": null,
+    "rarity": "normal",
+    "icon": "invbsc",
+    "reqLevel": 0,
+    "modifiers": [
+      "Fire Resist -10%",
+      "-1 to Light Radius",
+      "+10% Spell Damage",
+      "Requires at least 1 Light Radius on item",
+      "{orange}Assur's Bane Upgrade"
+    ]
+  },
+  {
+    "id": "du13",
+    "name": "Heroic Duncraig Crafting Scroll",
+    "type": "scroll",
+    "category": "misc",
+    "slot": null,
+    "rarity": "normal",
+    "icon": "invbsc",
+    "reqLevel": 0,
+    "modifiers": [
+      "Fire Resist -20%",
+      "1% Fire Spell Damage per 5 Spell Focus above the cap",
+      "Replaces Purify",
+      "{orange}Assur's Bane Upgrade"
+    ]
+  },
+  {
+    "id": "du14",
+    "name": "Heroic Duncraig Crafting Scroll",
+    "type": "scroll",
+    "category": "misc",
+    "slot": null,
+    "rarity": "normal",
+    "icon": "invbsc",
+    "reqLevel": 0,
+    "modifiers": [
+      "Fire Resist -20%",
+      "1% Lightning Spell Damage per 5 Spell Focus above the cap",
+      "Replaces Purify",
+      "{orange}Assur's Bane Upgrade"
+    ]
+  },
+  {
+    "id": "du15",
+    "name": "Heroic Duncraig Crafting Scroll",
+    "type": "scroll",
+    "category": "misc",
+    "slot": null,
+    "rarity": "normal",
+    "icon": "invbsc",
+    "reqLevel": 0,
+    "modifiers": [
+      "Fire Resist -20%",
+      "1% Cold Spell Damage per 5 Spell Focus above the cap",
+      "Replaces Purify",
+      "{orange}Assur's Bane Upgrade"
+    ]
+  },
+  {
+    "id": "du16",
+    "name": "Heroic Duncraig Crafting Scroll",
+    "type": "scroll",
+    "category": "misc",
+    "slot": null,
+    "rarity": "normal",
+    "icon": "invbsc",
+    "reqLevel": 0,
+    "modifiers": [
+      "Fire Resist -20%",
+      "1% Poison Spell Damage per 5 Spell Focus above the cap",
+      "Replaces Purify",
+      "{orange}Assur's Bane Upgrade"
+    ]
+  },
+  {
+    "id": "du17",
+    "name": "Heroic Duncraig Crafting Scroll",
+    "type": "scroll",
+    "category": "misc",
+    "slot": null,
+    "rarity": "normal",
+    "icon": "invbsc",
+    "reqLevel": 0,
+    "modifiers": [
+      "Fire Resist -30%",
+      "Energy: +12% Grit",
+      "Vitality: 400% of your Damage to Undead bonus added as Cold Damage to Weapon",
+      "Dexterity: +300% Weapon Physical Damage",
+      "Strength: +5000 Attack Rating",
+      "Bonus based on your highest attribute if wielding a one-handed weapon without a shield",
+      "Does not work for Barbarians",
+      "Replaces Purify",
+      "{orange}Assur's Bane Upgrade"
+    ]
+  },
+  {
+    "id": "du18",
+    "name": "Heroic Duncraig Crafting Scroll",
+    "type": "scroll",
+    "category": "misc",
+    "slot": null,
+    "rarity": "normal",
+    "icon": "invbsc",
+    "reqLevel": 0,
+    "modifiers": [
+      "Use with Sacred Weapon/Armor",
+      "Does not work with corrupted items",
+      "{orange}Sacred Unique (105) Creation"
+    ]
+  },
+  {
+    "id": "du19",
+    "name": "Heroic Duncraig Crafting Scroll",
+    "type": "scroll",
+    "category": "misc",
+    "slot": null,
+    "rarity": "normal",
+    "icon": "invbsc",
+    "reqLevel": 0,
+    "modifiers": [
+      "Use with Sacred Unique (120) Weapon/Armor",
+      "Does not work with corrupted items",
+      "{orange}Sacred Unique (120) Stat Reroll"
+    ]
+  },
+  {
+    "id": "du20",
+    "name": "Heroic Duncraig Crafting Scroll",
+    "type": "scroll",
+    "category": "misc",
+    "slot": null,
+    "rarity": "normal",
+    "icon": "invbsc",
+    "reqLevel": 0,
+    "modifiers": [
+      "Use with Sacred Unique Weapon/Armor",
+      "Does not work with corrupted items",
+      "{orange}Sacred Unique (105-130) Item Reroll"
+    ]
+  },
+  {
+    "id": "du21",
+    "name": "Heroic Duncraig Crafting Scroll",
+    "type": "scroll",
+    "category": "misc",
+    "slot": null,
+    "rarity": "normal",
+    "icon": "invbsc",
+    "reqLevel": 0,
+    "modifiers": [
+      "Any Corrupted Sacred Unique",
+      "Allows item to be corrupted once more",
+      "Recipe cannot be repeated",
+      "{orange}Sacred Unique Double Corruption"
+    ]
+  }
+]

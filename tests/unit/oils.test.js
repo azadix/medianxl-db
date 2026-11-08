@@ -98,4 +98,9 @@ describe('oils', () => {
       canUseOilOnItem(oil, { ...sword, rarity: 'honorific', customQuality: 'honorific' }, 'rarm')
     ).toBe(false);
   });
+
+  it("blocks oils on Assur's Bane (scroll-only upgrades)", () => {
+    const assur = { name: "Assur's Bane", rarity: 'unique', category: 'jewelry', slot: 'rrin' };
+    expect(canUseOilOnItem({ id: 'oil_weapon_ed' }, assur, 'rrin')).toBe(false);
+  });
 });

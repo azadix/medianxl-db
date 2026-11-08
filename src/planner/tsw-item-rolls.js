@@ -363,9 +363,8 @@ function stackedUpgradeCount(stepText, baseTexts, lines) {
  * @param {ReturnType<typeof getCharmUpgradeEntries>} upgrades
  * @param {string[]} lines
  * @param {Record<string, number>} rolls
- * @param {boolean} upgradedFlag
  */
-function applyCharmUpgradeRolls(def, upgrades, lines, rolls, upgradedFlag) {
+function applyCharmUpgradeRolls(def, upgrades, lines, rolls) {
   if (!upgrades.length) return;
   const baseTexts = charmBaseModifierTexts(def);
   /** @type {Set<number>} */
@@ -374,17 +373,29 @@ function applyCharmUpgradeRolls(def, upgrades, lines, rolls, upgradedFlag) {
   for (const entry of upgrades) {
     const customLabel =
       entry.label && !/^Upgrade\s+\d+$/i.test(entry.label) ? entry.label : '';
+    // Affixes that merely restate one of the charm's own base modifiers are no evidence
+    // that the upgrade is applied: the Glorious Book's upgrade repeats "+1 to All Skills",
+    // which the base charm already grants, so the upgrade (and its "+10 to all Attributes")
+    // was granted to charms that do not have it.
+    const upgradeOnlyAffixes = entry.affixes.filter((text) => !baseTexts.includes(text));
     if (customLabel && labelInLines(customLabel, lines)) {
       rolls[entry.key] = 1;
       marked.add(entry.index);
-    } else if (entry.affixes.some((text) => findLine(text, lines))) {
+    } else if (
+      entry.affixes.length > 1
+        ? upgradeOnlyAffixes.length > 0 && upgradeOnlyAffixes.every((text) => findLine(text, lines))
+        : entry.affixes.some((text) => findLine(text, lines))
+    ) {
       rolls[entry.key] = 1;
       marked.add(entry.index);
     } else if (
-      // Multi-affix bundles: any stacked component means the whole upgrade is present.
-      // Single-affix repeats are allocated by count in stackGroups below.
+      // Multi-affix bundles: every non-base component must be present. A shared base
+      // line (e.g. "+1 to All Skills") is not evidence that the upgrade is applied.
       entry.affixes.length > 1 &&
-      entry.affixes.some((text) => stackedUpgradeCount(text, baseTexts, lines) >= 1)
+      upgradeOnlyAffixes.length > 0 &&
+      upgradeOnlyAffixes.every(
+        (text) => findLine(text, lines) || stackedUpgradeCount(text, baseTexts, lines) >= 1
+      )
     ) {
       rolls[entry.key] = 1;
       marked.add(entry.index);
@@ -416,10 +427,6 @@ function applyCharmUpgradeRolls(def, upgrades, lines, rolls, upgradedFlag) {
       marked.add(entry.index);
       remaining -= 1;
     }
-  }
-
-  if (upgradedFlag && upgrades.length === 1 && !marked.has(upgrades[0].index)) {
-    rolls[upgrades[0].key] = 1;
   }
 }
 
@@ -864,10 +871,13 @@ export function rollsFromTswItem(row, def, className = null) {
     const upgraded = Boolean(row.is_upgraded);
     const hasTrophy = Boolean(row.has_trophy);
     const upgrades = getCharmUpgradeEntries(def, className);
-    applyCharmUpgradeRolls(def, upgrades, lines, rolls, upgraded);
+    applyCharmUpgradeRolls(def, upgrades, lines, rolls);
 
     const trophy = getCharmTrophyEntry(def);
-    if (hasTrophy && trophy) {
+    const trophyInLines =
+      lines.some((line) => /\[Trophy\]/i.test(line)) ||
+      Boolean(trophy?.affixes?.some((text) => findLine(text, lines)));
+    if (hasTrophy && trophy && trophyInLines) {
       rolls[CHARM_ROLL_KEYS.trophy] = 1;
       trophy.affixes.forEach((text, affixIndex) => {
         applyRanged(text, `trophy:${affixIndex}`, charmAffixRollKey, lines, rolls);

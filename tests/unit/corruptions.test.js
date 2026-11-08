@@ -53,6 +53,12 @@ describe('corruptions', () => {
     ).toBe(false);
   });
 
+  it("blocks Assur's Bane from corruptions (scroll-only upgrades)", () => {
+    const assur = { name: "Assur's Bane", rarity: 'unique', uniqueKind: 'su' };
+    expect(isItemCorruptible(assur)).toBe(false);
+    expect(corruptionSlotCount(assur)).toBe(0);
+  });
+
   it('filters jewelry restrictions', () => {
     const jewelryIds = listCorruptionsForItem(ring, 'rrin').map((row) => row.id);
     expect(jewelryIds).toContain('nothing');

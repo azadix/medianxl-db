@@ -112,7 +112,15 @@ describe('skill calculations with tree_data', () => {
   it('parasite is magic conversion, not fire-tagged', () => {
     const store = getFileSkillStore();
     const row = store.catalog.find((s) => s.id === 'parasite');
-    expect(row?.tags).toEqual(['Physical', 'Attack', 'Weapon Damage']);
+    // Tags are derived from the skill's scalingConstants (see the tag/stat consistency
+    // rule), so Parasite carries Magic because it converts 50% physical to magic.
+    // Tag order is not meaningful; compare as a set.
+    expect([...(row?.tags || [])].sort()).toEqual([
+      'Attack',
+      'Magic',
+      'Physical',
+      'Weapon Damage',
+    ]);
     expect(row?.tags).not.toContain('Fire');
   });
 

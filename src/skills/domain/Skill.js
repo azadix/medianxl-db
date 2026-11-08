@@ -12,11 +12,47 @@ import { checkPrerequisites } from '@/character/planner-prereqs.js';
 import { formulaEvaluator } from './formula-evaluator.js';
 import { formatScalingValuesToDescriptionHtml } from './scaling-display-html.js';
 import { applyLightningShieldElemDrToScaling } from './lightning-shield-elem-dr.js';
+import { resolveEngineFormula } from './skill-synergy.js';
+
+/** Stat keys whose damage is scaled by the physical synergy (DmgSymPerCalc). */
+const PHYSICAL_DAMAGE_KEYS = new Set(['physical_damage']);
+/** Stat keys whose damage is scaled by the elemental synergy (EDmgSymPerCalc). */
+const ELEMENTAL_DAMAGE_KEYS = new Set([
+    'fire_damage',
+    'cold_damage',
+    'lightning_damage',
+    'magic_damage',
+    'poison_dot',
+    'fire_dot',
+    // "Bonus <element> Damage to Weapons" (Way of the Gryphon / Raven etc.) is
+    // weapon damage scaled by the same elemental synergy (EDmgSymPerCalc).
+    'bonus_fire_damage_to_weapons',
+    'bonus_cold_damage_to_weapons',
+    'bonus_lightning_damage_to_weapons',
+    'bonus_magic_damage_to_weapons',
+]);
+/**
+ * Spell damage statKey -> the character stat that boosts it.
+ * Spell damage applies to spell damage only; weapon/melee physical damage is
+ * unaffected, which is why `physical_damage` is gated on the absence of a
+ * `weapon_damage` slot (see _applySpellDamageToResult).
+ */
+const SPELL_DAMAGE_STAT = Object.freeze({
+    fire_damage: 'fire_spell_damage',
+    cold_damage: 'cold_spell_damage',
+    lightning_damage: 'lightning_spell_damage',
+    poison_dot: 'poison_spell_damage',
+    magic_damage: 'physical_magic_spell_damage',
+    physical_damage: 'physical_magic_spell_damage',
+});
 
 /** [[internal_name]].{{stat}} in formulas and descriptions (not plain {{stat}} on current skill). */
 const CROSS_SKILL_DOT_STAT_PATTERN =
     /\[\[([a-zA-Z_][a-zA-Z0-9_]*)\]\]\.\{\{([a-zA-Z_][a-zA-Z0-9_]*)\}\}/gi;
 const MAX_CROSS_SKILL_DEPTH = 12;
+
+/** Engine tokens that resolveEngineFormula understands inside a scaling formula. */
+const ENGINE_TOKEN_RE = /\b(?:clc\d|pst\d|ast\d|syn\d)\b|\bskill\s*\(/;
 
 /**
  * True if a scaling value is probably display text (monster names, labels), not a mis-typed formula.
@@ -328,14 +364,16 @@ export default class Skill {
      * @param {number} characterLevel - Character level
      * @returns {object} Variables object for formula evaluation
      */
-    _buildFormulaVariables(characterState, characterLevel) {
+    _buildFormulaVariables(characterState, characterLevel, skillLevel = null) {
         if (!characterState) return null;
         
         const blvlRaw = Number(characterState.blvl?.[this.id]);
         const slvlRaw = Number(characterState.lvl?.[this.id]);
         const blvl = Number.isFinite(blvlRaw) ? blvlRaw : 0;
         const slvl = Number.isFinite(slvlRaw) ? slvlRaw : 0;
-        const lvl = blvl + slvl;
+        const total = blvl + slvl;
+        const preview = Number(skillLevel);
+        const lvl = Number.isFinite(preview) && preview > 0 ? preview : total;
         
         // Build variables object
         const variables = {
@@ -387,6 +425,22 @@ export default class Skill {
             return { value: stringValue, wasFormula: false };
         }
 
+        // Resolve engine tokens (clcN / pstN / astN / synN / skill(...)) AND cross-skill
+        // engine refs like [[x]].{{clcN}} FIRST — they carry the other skill's calc in that
+        // skill's own level context. Doing this before the generic [[x]].{{stat}} pass keeps
+        // the calc from being zeroed as a missing scaling constant.
+        if (this.id && getFileSkillStore() && variables.characterState && ENGINE_TOKEN_RE.test(stringValue)) {
+            ENGINE_TOKEN_RE.lastIndex = 0;
+            stringValue = resolveEngineFormula(
+                this.id,
+                stringValue,
+                variables.characterState,
+                getFileSkillStore(),
+                crossSkillDepth
+            );
+        }
+        ENGINE_TOKEN_RE.lastIndex = 0;
+
         CROSS_SKILL_DOT_STAT_PATTERN.lastIndex = 0;
         if (getFileSkillStore() && variables.characterState && CROSS_SKILL_DOT_STAT_PATTERN.test(stringValue)) {
             CROSS_SKILL_DOT_STAT_PATTERN.lastIndex = 0;
@@ -397,7 +451,13 @@ export default class Skill {
                 crossSkillDepth
             );
         }
-        
+
+        // Game-state predicates (state(<n>)>0 ? ...) appear inside engine ast calcs; the
+        // planner has no monster state, so treat them as false (0) rather than failing.
+        if (/state\s*\(/i.test(stringValue)) {
+            stringValue = stringValue.replace(/\bstate\s*\(\s*\d+\s*\)/gi, '0');
+        }
+
         // Try to evaluate as formula
         const evalResult = formulaEvaluator.evaluate(stringValue, variables);
         if (evalResult.success) {
@@ -466,6 +526,130 @@ export default class Skill {
             
             if (wasFormula) {
                 result[`${valueKey}_formula`] = true;
+            }
+        }
+    }
+
+    /**
+     * Apply the character's spell damage % to a spell's damage result.
+     *
+     * `fire_spell_damage` / `cold_spell_damage` / `lightning_spell_damage` /
+     * `poison_spell_damage` / `physical_magic_spell_damage` are the game's
+     * "+X% to ... Spell Damage" stats. They boost spell damage only, so
+     * physical damage is skipped when the skill also has a `weapon_damage`
+     * slot (a melee/weapon skill rather than a flat-damage spell).
+     * @param {object} result
+     * @param {string} statKey
+     * @param {object|null|undefined} characterState
+     * @param {boolean} showFormulas
+     */
+    _applySpellDamageToResult(result, statKey, characterState, showFormulas) {
+        if (!result || showFormulas || !characterState) return;
+        const charStat = SPELL_DAMAGE_STAT[statKey];
+        if (!charStat) return;
+
+        if (statKey === 'physical_damage') {
+            const store = getFileSkillStore();
+            const row = store?.catalogByInternalId?.get(this.id);
+            const hasWeaponSlot = (row?.scalingConstants || []).some(
+                (c) => c.statKey === 'weapon_damage'
+            );
+            if (hasWeaponSlot) return;
+        }
+
+        const pct = Number(characterState.stats?.[charStat]);
+        if (!Number.isFinite(pct) || pct === 0) return;
+        const factor = (100 + pct) / 100;
+
+        for (const slot of ['value0', 'value1']) {
+            const v = Number(result[slot]);
+            if (!Number.isFinite(v)) continue;
+            result[slot] = String(Math.trunc(v * factor));
+        }
+    }
+
+    /**
+     * Apply the skill-wide HitShift to damage values: (v << hs) >> 8.
+     *
+     * The scalingConstant holds the raw table value (`lev_scaled(...)`) plus a
+     * `hitShift` field, mirroring how mxlplanner keeps `elementalDamage` and
+     * `damageScale` separate. Keeping the shift out of the formula means one
+     * number per skill instead of a wrapper on every damage slot.
+     * @param {object} result
+     * @param {string} statKey
+     * @param {boolean} showFormulas - when true, leave the raw formula untouched
+     */
+    _applyHitShiftToResult(result, statKey, showFormulas) {
+        if (!result || showFormulas) return;
+        const isDamage =
+            PHYSICAL_DAMAGE_KEYS.has(statKey) || ELEMENTAL_DAMAGE_KEYS.has(statKey);
+        if (!isDamage) return;
+        // Poison totals over its duration, so its formula already folds the HitShift
+        // in (hitshift(v,hs)*ELen). Shifting again would apply it twice.
+        if (statKey === 'poison_dot') return;
+
+        const store = getFileSkillStore();
+        const row = store?.catalogByInternalId?.get(this.id);
+        const sc = (row?.scalingConstants || []).find((c) => c.statKey === statKey);
+        const hs = Number(sc?.hitShift);
+        if (!Number.isFinite(hs) || hs === 8) return;
+
+        for (const key of ['value0', 'value1']) {
+            const v = Number(result[key]);
+            if (!Number.isFinite(v)) continue;
+            result[key] = String(Math.trunc(v * Math.pow(2, hs - 8)));
+        }
+    }
+
+    /**
+     * Apply the skill's physical/elemental synergy % to a damage scaling result.
+     * base damage × (100 + synergy%) / 100.
+     * @param {object} result
+     * @param {string} statKey
+     * @param {object} variables
+     * @param {object|null|undefined} characterState
+     */
+    _applySynergyToResult(result, statKey, variables, characterState) {
+        let kind = null;
+        if (PHYSICAL_DAMAGE_KEYS.has(statKey)) kind = 'physical';
+        else if (ELEMENTAL_DAMAGE_KEYS.has(statKey)) kind = 'elemental';
+        if (!kind) return;
+
+        const store = getFileSkillStore();
+        const row = store?.catalogByInternalId?.get(this.id);
+        const formula = row?.synergy?.[kind];
+        if (!formula) return;
+
+        const resolved = resolveEngineFormula(this.id, formula, characterState, store);
+        if (!resolved) return;
+        const evalResult = formulaEvaluator.evaluate(resolved, variables);
+        if (!evalResult?.success) return;
+        const pct = Number(evalResult.value);
+        if (!Number.isFinite(pct)) return;
+        const factor = (100 + pct) / 100;
+
+        const hs = Number(result.hitShift);
+        const sc = (row?.scalingConstants || []).find((c) => c.statKey === statKey);
+        const rawHs = Number(sc?.hitShift);
+        const hitShift = Number.isFinite(rawHs) ? rawHs : (Number.isFinite(hs) ? hs : 8);
+        const isPoison = statKey === 'poison_dot';
+        for (const [valueKey, rawKey] of [['value0', 'rawValue0'], ['value1', 'rawValue1']]) {
+            const rawFormula = sc?.[rawKey] ?? result[rawKey];
+            let raw = Number(result[valueKey]);
+            if (!isPoison && rawFormula != null && String(rawFormula).trim() !== '') {
+                const r = this._evaluateValue(String(rawFormula), formulaEvaluator, variables, 0, false);
+                const n = Number(r.value);
+                if (Number.isFinite(n)) raw = n;
+            }
+            if (!Number.isFinite(raw)) continue;
+            if (isPoison) {
+                // Poison displays total-over-duration; keep scaling the displayed total.
+                result[valueKey] = String(Math.round(raw * factor));
+            } else {
+                // (raw * (100+syn)/100) << hitShift >> 8  (synergy before the HitShift).
+                const rawSyn = Math.trunc(raw * (100 + pct) / 100);
+                const full = Math.trunc(rawSyn * Math.pow(2, hitShift - 8));
+                result[valueKey] = String(full);
             }
         }
     }
@@ -671,7 +855,7 @@ export default class Skill {
         }
 
         try {
-            const baseVariables = this._buildFormulaVariables(characterState, characterLevel);
+            const baseVariables = this._buildFormulaVariables(characterState, characterLevel, level);
             const variables = baseVariables;
             
             // Get level-specific values
@@ -703,6 +887,18 @@ export default class Skill {
                     showFormulas,
                     crossSkillDepth
                 );
+            }
+
+            if (result && variables) {
+                this._applyHitShiftToResult(result, statKey, showFormulas);
+            }
+
+            if (result && variables) {
+                this._applySynergyToResult(result, statKey, variables, characterState);
+            }
+
+            if (result && variables) {
+                this._applySpellDamageToResult(result, statKey, characterState, showFormulas);
             }
 
             if (result) {
