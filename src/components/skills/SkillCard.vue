@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { getSkillVariantKey } from '@/tree/skill-variants.js';
 import {
   getLevelColorClass,
@@ -7,12 +7,6 @@ import {
   getRestrictionMessage,
 } from '@/tree/tree-render.js';
 import { setSkillDisabled, setOSkillSlotDisabled } from '@/character/planner-core.js';
-import {
-  getEffectivePlannerLevel,
-  getSpentSkillPoints,
-  getTotalQuestSkillPoints,
-} from '@/character/planner-core.js';
-import Character from '@/character/Character.js';
 import SkillVariantMenu from './SkillVariantMenu.vue';
 import SkillCardImage from './SkillCardImage.vue';
 import SkillCardButtons from './SkillCardButtons.vue';
@@ -59,40 +53,12 @@ const skillVariantAttr = computed(() => {
   return {};
 });
 
-const pointsRemaining = computed(() => {
-  props.plannerRevision;
-  skillPointsEpoch.value;
-  if (props.cardData.oskillSlotId) return Number.POSITIVE_INFINITY;
-  const level = getEffectivePlannerLevel();
-  return (
-    Character.getBaseSkillPoints(level) +
-    getTotalQuestSkillPoints(level) -
-    getSpentSkillPoints()
-  );
-});
-
-const skillPointsEpoch = ref(0);
-const bumpPoints = () => {
-  skillPointsEpoch.value += 1;
-};
-onMounted(() => {
-  window.addEventListener('skillPointsChanged', bumpPoints);
-  window.addEventListener('characterLevelChanged', bumpPoints);
-  window.addEventListener('questCompletionChanged', bumpPoints);
-});
-onUnmounted(() => {
-  window.removeEventListener('skillPointsChanged', bumpPoints);
-  window.removeEventListener('characterLevelChanged', bumpPoints);
-  window.removeEventListener('questCompletionChanged', bumpPoints);
-});
-
 const plusDisabled = computed(
   () =>
     !canAddPoints(
       props.cardData.canAllocate,
       props.cardData.currentPoints || 0,
-      props.cardData.maxPoints || 0,
-      pointsRemaining.value
+      props.cardData.maxPoints || 0
     )
 );
 const minusDisabled = computed(() => (props.cardData.currentPoints || 0) === 0);

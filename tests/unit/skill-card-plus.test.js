@@ -13,7 +13,7 @@ describe('SkillCard plus guard', () => {
     document.body.innerHTML = '';
   });
 
-  it('disables the plus button when no skill points remain', async () => {
+  it('keeps the plus button enabled when no skill points remain', async () => {
     const character = createCharacterInstance('Amazon', 1);
     setCharacterInstance(character);
     const host = document.createElement('div');
@@ -31,7 +31,7 @@ describe('SkillCard plus guard', () => {
     await nextTick();
     const button = host.querySelector('.skill-plus-btn');
     expect(button).toBeTruthy();
-    expect(button.disabled).toBe(true);
+    expect(button.disabled).toBe(false);
     app.unmount();
   });
 });
