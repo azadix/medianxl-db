@@ -39,6 +39,12 @@ import { findMissingCharmSkillUnlocks } from '@/items/charm-skill-unlocks.js';
 import { isCharmItem } from '@/items/charm-items.js';
 import { getSelectedConditionKeys, setCondition as setPlannerCondition, clearAllConditions as clearPlannerConditions } from '@/stores/planner-config-store.js';
 import { useItemsStore } from '@/stores/items.js';
+import { collectEnabledItemCharacterStatBonuses } from '@/items/item-character-stat-bonuses.js';
+import { isCompleteItemText, detectCompleteItemText, setCompleteItemText } from '@/items/item-text-completeness.js';
+import {
+    computeClassDerivedLifeManaBreakdown,
+    getClassPlannerStatDefaults,
+} from '@/character/class-baselines.js';
 import { getPlannerAutoMatchHighestStatRequirements } from '@/planner/planner-options.js';
 import { syncPlannerCharacterStatsTextareaFromCharacter, refreshPlannerStatsPanelFromCharacter } from '@/character/planner-stats-panel.js';
 import {
@@ -209,6 +215,10 @@ export async function loadBuildData(build, buildIndex = null) {
 
         // TSW envelope oSkills are character-sheet totals; apply leftovers after items.
         const tswItems = Array.isArray(build.__tswItems) ? build.__tswItems : null;
+        // Some exporters ship complete item text and BASE stat totals (d2s-export), others
+        // send partial text and FINAL totals (TSW). Rules that trust item text, and the
+        // life/mana calibration below, depend on which flavour this build is.
+        setCompleteItemText(detectCompleteItemText(tswItems));
         if (!tswItems) {
             const oNorm = normalizeBuildOSkillsForImport(build.oSkills ?? []);
             setAllOSkills(oNorm.payload);
@@ -355,13 +365,70 @@ export async function loadBuildData(build, buildIndex = null) {
         // Single skill-stat recompute after items + stats are applied.
         await runPlannerSkillStatRecompute({ immediate: true, force: true });
 
+        // Complete-text payloads (d2s-export) put BASE life/mana in the blob, so the class
+        // formula (base + per level + vitality/energy scaling) has to be applied on top -
+        // otherwise getStat() returns raw + item bonuses only and life/mana read far short
+        // (8596 vs 12533). Coefficients come from tree_data game_meta, never guessed.
+        if (importedStatsText && isCompleteItemText()) {
+            const statCharacter = getCharacterInstance();
+            if (statCharacter && typeof statCharacter.setStat === 'function') {
+                const classRow = getClassPlannerStatDefaults(statCharacter.className);
+                if (classRow) {
+                    const breakdown = computeClassDerivedLifeManaBreakdown(
+                        statCharacter.level,
+                        statCharacter.getStat('vitality'),
+                        statCharacter.getStat('energy'),
+                        classRow
+                    );
+                    // Percent bonuses (items + allocated skills, e.g. Prismatic Cloak's
+                    // maximum_life) multiply the class-derived pool; flat item life/mana is
+                    // added afterwards. Without this step life/mana read ~18% low.
+                    const itemBonuses = collectEnabledItemCharacterStatBonuses({}).bonuses || {};
+                    const skillBonuses = statCharacter._plannerSkillStatBonuses || {};
+                    for (const [statKey, pctKey, flatKey, attrKey, perAttrKey] of [
+                        ['life', 'maximum_life', 'life', 'vitality', 'life_per_vitality'],
+                        ['mana', 'maximum_mana', 'mana', 'energy', 'mana_per_energy'],
+                    ]) {
+                        // Read the buckets explicitly: getStat('maximum_life') is still the
+                        // item-only value at this point in the load (the skill stat pass
+                        // lands afterwards), which silently dropped Prismatic Cloak's 9%.
+                        const pct =
+                            (Number(itemBonuses[pctKey]) || 0) + (Number(skillBonuses[pctKey]) || 0);
+                        const flat = Number(itemBonuses[flatKey]) || 0;
+                        // Engine layering (Stats_StatsEx, itemstatcost op 8/9/11): the
+                        // percentage multiplies the pre-op base only. Mana/life that comes
+                        // from BONUS attribute points is added outside it - that is why
+                        // mana is (base + flat) * (1 + %) + energy delta, not (base +
+                        // energy) * (1 + %). Verified in game: removing the three charms
+                        // carrying 16% of % max mana drops mana by exactly 16% of
+                        // (base + flat) = 303, and 4457 overall.
+                        const perAttr = Number(classRow?.[perAttrKey]) || 0;
+                        const attrTotal = Number(statCharacter.getStat(attrKey)) || 0;
+                        const attrBase = Number(classRow?.[attrKey]) || 0;
+                        const attrBonus = Math.max(0, attrTotal - attrBase) * perAttr;
+                        const baseMana = statKey === 'mana';
+                        const levelPart = baseMana ? breakdown.baseMana + breakdown.manaFromLevel : breakdown.baseLife + breakdown.lifeFromLevel;
+                        const total = baseMana
+                            ? (levelPart + flat) * (1 + pct / 100) + attrBonus
+                            : breakdown.life * (1 + pct / 100) + flat;
+                        if (Number.isFinite(total) && total > 0) {
+                            statCharacter.setStat(statKey, total);
+                        }
+                    }
+                }
+            }
+        }
+
         // The TSW stats blob holds FINAL in-game totals (e.g. life 12338 already includes
         // gear). parseStatsFromText() above stores those numbers as BASE values, so the
         // recomputed item/skill bonuses get added on top (life 15730 vs 12533 in game).
         // setStat() interprets its argument as a displayed total and converts it back to a
         // base by subtracting the bonuses that are live *now* - so it can only be applied
         // here, after items and skills are in place.
-        if (importedStatsText) {
+        //
+        // Only for FINAL-total payloads: the d2s exporter writes BASE life/mana (4544/1117),
+        // where the value must stay the stored base and the bonuses accumulate normally.
+        if (importedStatsText && !isCompleteItemText()) {
             const statCharacter = getCharacterInstance();
             if (statCharacter && typeof statCharacter.setStat === 'function') {
                 // The blob reports the four primary attributes as BASE values, not totals -

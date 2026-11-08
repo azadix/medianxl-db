@@ -4,6 +4,26 @@
  */
 
 import { useItemsStore } from '@/stores/items.js';
+import { isCompleteItemText } from '@/items/item-text-completeness.js';
+import { tswDescriptionTexts } from '@/items/custom-items.js';
+
+/**
+ * The full rendered item text from the imported dump, when this build's text is complete.
+ * `extras` deliberately drops lines that match catalogue templates (so tooltips do not show
+ * duplicates), but for stat aggregation those lines carry the REAL rolled values - Umbaru
+ * Treasure's dump says +50 Str / +52 Dex / +48 Vit / +42 Egy, and already includes the
+ * upgraded "+20 to all Attributes" that the catalogue def still lists separately.
+ * @param {object} itemsStore
+ * @param {number} instanceId
+ * @returns {string[]|null}
+ */
+function rawDumpLinesForInstance(itemsStore, instanceId) {
+  if (!isCompleteItemText()) return null;
+  const row = itemsStore.getTswRowForInstance?.(instanceId);
+  if (!row) return null;
+  const lines = tswDescriptionTexts(row.description_lines);
+  return lines.length ? lines : null;
+}
 import { getCharacterInstance } from '@/character/planner-instance.js';
 import {
   getPlannerCharacterStatDefs,
@@ -765,6 +785,33 @@ function statLineCompareKey(text) {
     .trim();
 }
 
+const ALL_ATTRIBUTE_NAMES = ['Strength', 'Dexterity', 'Vitality', 'Energy'];
+
+/**
+ * Some exporters expand "all Attributes" into four per-attribute lines while catalogue defs
+ * keep the single combined line ("+10 to all Attributes"). Comparing those directly fails,
+ * so the same bonus is applied twice. Expand both sides to per-attribute lines before
+ * comparing; a combined line with no per-attribute counterpart still survives as four lines.
+ * @param {unknown} text
+ * @returns {string[]}
+ */
+function expandAllAttributesStatLine(text) {
+  const raw = String(text ?? '').trim();
+  const match = /^(\+?)(\d+(?:\.\d+)?)(%?)\s+to\s+all\s+attributes$/i.exec(raw);
+  if (!match) return [raw];
+  const [, sign, amount, percent] = match;
+  return ALL_ATTRIBUTE_NAMES.map((name) => `${sign}${amount}${percent} to ${name}`);
+}
+
+/**
+ * Comparison keys for one item stat line (one key, or four when it is an all-Attributes line).
+ * @param {unknown} text
+ * @returns {string[]}
+ */
+function statLineCompareKeys(text) {
+  return expandAllAttributesStatLine(text).map(statLineCompareKey);
+}
+
 export function collectEnabledItemCharacterStatBonuses(options = {}) {
   /** @type {Record<string, number>} */
   const bonuses = {};
@@ -836,23 +883,54 @@ export function collectEnabledItemCharacterStatBonuses(options = {}) {
       if (!isCharmBonusActive(def, characterLevel, { inInventory: true, rolls })) continue;
       /** @type {string[]} */
       const lines = [];
-      /** Lines already granted by the resolved affix rolls. */
-      const appliedCharmLines = new Set();
+      const charmExtras = (rawDumpLinesForInstance(itemsStore, instanceId) ??
+        itemsStore.getExtrasForInstance?.(instanceId) ?? []).filter(Boolean);
+      /** @type {string[]} */
+      const affixLines = [];
       for (const source of getCharmAffixSources(def, rolls, className, { activeOnly: true })) {
         const text = resolveCharmAffixText(source.text, source.sourceKey, rolls, false);
-        if (text == null) continue;
-        lines.push(text);
-        appliedCharmLines.add(statLineCompareKey(text));
+        if (text != null) affixLines.push(text);
       }
-      const charmExtras = itemsStore.getExtrasForInstance?.(instanceId) ?? [];
-      for (const extra of charmExtras) {
-        if (!extra) continue;
-        // The TSW description repeats lines the charm roll already granted (Dulra Aegis
-        // "Perfect Topaz" -> "+30 to Dexterity" arrived twice and counted as 60). Compare
-        // normalised text: the dump spells them slightly differently ("+40 to all
-        // Attributes" vs the affix's "+40 to All Attributes").
-        if (appliedCharmLines.has(statLineCompareKey(extra))) continue;
-        lines.push(extra);
+      if (isCompleteItemText()) {
+        // Full-text payloads (d2s-export) render the ACTUAL rolled value into the item text
+        // (Horazon's Focus: the catalogue range resolves to 23, the real roll is 24), so the
+        // text is authoritative and re-adding the catalogue affix double-counts the stat.
+        // Dropping happens only when the text already covers every stat of the affix with an
+        // equal or larger amount, so partial-text builds are never under-counted.
+        lines.push(...charmExtras);
+        const extraAmountByKey = new Map();
+        for (const extra of charmExtras) {
+          for (const bonus of classifyCharacterStatModifierLine(extra, { characterLevel }).bonuses || []) {
+            const amount = Math.abs(Number(bonus.amount || 0));
+            extraAmountByKey.set(bonus.key, Math.max(extraAmountByKey.get(bonus.key) ?? 0, amount));
+          }
+        }
+        for (const text of affixLines) {
+          const bonuses = classifyCharacterStatModifierLine(text, { characterLevel }).bonuses || [];
+          const coveredByText =
+            bonuses.length > 0 &&
+            bonuses.every((bonus) => {
+              const textAmount = extraAmountByKey.get(bonus.key);
+              return textAmount != null && textAmount >= Math.abs(Number(bonus.amount || 0));
+            });
+          if (!coveredByText) lines.push(text);
+        }
+      } else {
+        /** Lines already granted by the resolved affix rolls. */
+        const appliedCharmLines = new Set();
+        for (const text of affixLines) {
+          lines.push(text);
+          for (const key of statLineCompareKeys(text)) appliedCharmLines.add(key);
+        }
+        for (const extra of charmExtras) {
+          // The TSW description repeats lines the charm roll already granted (Dulra Aegis
+          // "Perfect Topaz" -> "+30 to Dexterity" arrived twice and counted as 60). Compare
+          // normalised text: the dump spells them slightly differently, and expands
+          // "all Attributes" into per-attribute lines.
+          const keys = statLineCompareKeys(extra);
+          if (keys.length && keys.every((key) => appliedCharmLines.has(key))) continue;
+          lines.push(extra);
+        }
       }
       accumulateLines(lines, sourceLabelForDef(def), bonuses, modifiersByKey, unknownModifiers, characterLevel);
     }
@@ -869,13 +947,44 @@ export function collectEnabledItemCharacterStatBonuses(options = {}) {
           showRollRanges: false,
         }),
       ];
-      const appliedRelicLines = new Set(lines.map((line) => String(line).trim()));
-      const relicExtras = itemsStore.getExtrasForInstance?.(instanceId) ?? [];
-      for (const extra of relicExtras) {
-        if (!extra) continue;
-        // Same TSW-description duplication as charms: skip lines the relic def already grants.
-        if (appliedRelicLines.has(String(extra).trim())) continue;
-        lines.push(extra);
+      const relicExtras = (itemsStore.getExtrasForInstance?.(instanceId) ?? []).filter(Boolean);
+      if (isCompleteItemText() && relicExtras.length) {
+        // Full-text payloads describe the relic's real rolled stats (the save's plain
+        // "Relic" grants +4%, while the catalogue's nearest match was a Whirlwind relic at
+        // +7% - a +3% inflation on every attribute). Prefer the text; keep catalogue lines
+        // only for stats the text does not mention at all.
+        const extraAmountByKey = new Map();
+        for (const extra of relicExtras) {
+          for (const bonus of classifyCharacterStatModifierLine(extra, { characterLevel }).bonuses || []) {
+            const amount = Math.abs(Number(bonus.amount || 0));
+            extraAmountByKey.set(bonus.key, Math.max(extraAmountByKey.get(bonus.key) ?? 0, amount));
+          }
+        }
+        lines.length = 0;
+        lines.push(...relicExtras);
+        for (const line of getRelicStatLines(def, rolls, {
+          hideRollableRanges: false,
+          showRollRanges: false,
+        })) {
+          const bonuses = classifyCharacterStatModifierLine(line, { characterLevel }).bonuses || [];
+          const covered = bonuses.length > 0 &&
+            bonuses.every((bonus) => {
+              const textAmount = extraAmountByKey.get(bonus.key);
+              return textAmount != null && textAmount >= Math.abs(Number(bonus.amount || 0));
+            });
+          if (!covered) lines.push(line);
+        }
+      } else {
+        const appliedRelicLines = new Set();
+        for (const line of lines) {
+          for (const key of statLineCompareKeys(line)) appliedRelicLines.add(key);
+        }
+        for (const extra of relicExtras) {
+          // Same TSW-description duplication as charms (including the all-Attributes split).
+          const keys = statLineCompareKeys(extra);
+          if (keys.length && keys.every((key) => appliedRelicLines.has(key))) continue;
+          lines.push(extra);
+        }
       }
       accumulateLines(lines, sourceLabelForDef(def), bonuses, modifiersByKey, unknownModifiers, characterLevel);
     }

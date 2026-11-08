@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @file Pinia store for planner equipment and inventory items.
  * @module stores/items
  */
@@ -42,6 +42,7 @@ import {
   listPlacedItems,
 } from '@/items/inventory-placement.js';
 import { pickItemIcon } from '@/items/item-icons.js';
+import { isCompleteItemText } from '@/items/item-text-completeness.js';
 import {
   EQUIPMENT_TO_TSW_SLOT,
   cloneTswRow,
@@ -1008,6 +1009,11 @@ export const useItemsStore = defineStore('items', {
     syncCharacterStatsToItemReqs() {
       if (skipItemReqLevelSync) return false;
       if (!getPlannerAutoMatchHighestStatRequirements()) return false;
+      // Complete-text imports carry the character's real BASE attributes from the save
+      // (strength 70, dexterity 1160). Raising them to cover item requirements double
+      // counts: the requirements are already met by the item bonuses, and bumping raw
+      // strength to 82.27 pushed the total to 863 instead of the in-game 843.
+      if (isCompleteItemText()) return false;
       return raiseCharacterStatsForItemReq(this.maxActiveItemReqStats);
     },
 
@@ -1105,7 +1111,13 @@ export const useItemsStore = defineStore('items', {
      * @returns {boolean}
      */
     equipmentSlotContributesBonuses(slot) {
-      if (!isActiveWeaponSetSlot(slot, effectiveWeaponSet(this))) return false;
+      // Complete-text imports (d2s-export) list every worn item, including the second weapon
+      // set, and the in-game totals include them (Despondence at RightHandAlternate grants
+      // +944 life that the character sheet counts). Partial-text TSW dumps keep the strict
+      // active-set rule so switching sets still behaves.
+      if (!isCompleteItemText() && !isActiveWeaponSetSlot(slot, effectiveWeaponSet(this))) {
+        return false;
+      }
       const key = String(slot);
       const id = this.equipment[key];
       if (id == null) return false;
@@ -1386,6 +1398,17 @@ export const useItemsStore = defineStore('items', {
     getExtrasForInstance(instanceId) {
       const inst = this.instances[instanceId];
       return parseExtrasList(inst?.extras);
+    },
+
+    /**
+     * Raw imported dump row (TSW/d2s-export) for an instance, if any. Kept so callers can
+     * read the item's complete rendered text even where `extras` filters catalogue lines.
+     * @param {number} instanceId
+     * @returns {object|null}
+     */
+    getTswRowForInstance(instanceId) {
+      const inst = this.instances[instanceId];
+      return inst?.tswRow && typeof inst.tswRow === 'object' ? inst.tswRow : null;
     },
 
     /**
