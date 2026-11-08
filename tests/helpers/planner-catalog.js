@@ -1,7 +1,7 @@
 /**
  * Shared planner catalog loader for integration tests.
  */
-import { readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { buildCatalogFromUniqueStats } from '@/items/unique-stats-catalog.js';
 import { runewordEntryToItemDef } from '@/items/runeword-items.js';
@@ -12,6 +12,7 @@ import {
 } from '@/items/socketables.js';
 
 const REPO_ROOT = resolve(import.meta.dirname, '../..');
+const BUILD_FIXTURE_DIR = resolve(REPO_ROOT, 'tests/fixtures/tsw-builds');
 
 /**
  * @param {string} [version]
@@ -47,6 +48,22 @@ export function loadPlannerCatalog(version = '2_14') {
   const catalog = [...baseItems, ...charms, ...other, ...overlays, ...relics, ...runewords];
   mergeJewelItemsIntoSocketablesCatalog(catalog);
   return { catalog, sets };
+}
+
+/**
+ * @param {string} file
+ * @returns {boolean}
+ */
+export function hasBuildFixture(file) {
+  return existsSync(resolve(BUILD_FIXTURE_DIR, file));
+}
+
+/**
+ * @returns {boolean}
+ */
+export function hasBuildFixtures() {
+  if (!existsSync(BUILD_FIXTURE_DIR)) return false;
+  return readdirSync(BUILD_FIXTURE_DIR).some((name) => name.endsWith('.json'));
 }
 
 /**

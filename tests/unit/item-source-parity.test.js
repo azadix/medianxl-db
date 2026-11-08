@@ -16,7 +16,7 @@ import { initSkillDataStore, resetSkillDataStoreForTests } from '@/shared/skill-
 import { createCharacterBucket, createStatRegistry } from '@/character/bucket/index.js';
 import { getPlannerCharacterStatDefs } from '@/character/planner-stats-config.js';
 import { applyItemSources } from '@/character/bucket/sources/items.js';
-import { loadBuildFixture, loadPlannerCatalog } from '../helpers/planner-catalog.js';
+import { hasBuildFixtures, loadBuildFixture, loadPlannerCatalog } from '../helpers/planner-catalog.js';
 import { installTreeDataFetchMock } from '../helpers/mock-fetch-tree-data.js';
 
 /**
@@ -58,7 +58,7 @@ function itemBonuses(resource) {
   return { legacy, snapshot };
 }
 
-describe('item source parity', () => {
+describe.skipIf(!hasBuildFixtures())('item source parity', () => {
   let restoreFetch;
   let planner;
 

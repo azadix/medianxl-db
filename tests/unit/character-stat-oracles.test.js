@@ -7,7 +7,7 @@ import { mapTswItemsToSnapshot, unwrapTswOrNativeBuild } from '@/planner/tsw-bui
 import { detectCompleteItemText, setCompleteItemText } from '@/items/item-text-completeness.js';
 import { initSkillDataStore } from '@/shared/skill-data-store.js';
 import { invalidateCharacterStats, refreshCharacterStatsSnapshot } from '@/character/stats-provider.js';
-import { loadBuildFixture, loadPlannerCatalog } from '../helpers/planner-catalog.js';
+import { hasBuildFixture, loadBuildFixture, loadPlannerCatalog } from '../helpers/planner-catalog.js';
 import { installTreeDataFetchMock } from '../helpers/mock-fetch-tree-data.js';
 
 const ATTRS = ['strength', 'dexterity', 'vitality', 'energy', 'life', 'mana'];
@@ -44,7 +44,7 @@ const charms = (row) => row.location === 'Inventory' && row.is_charm === true;
 const item = (name) => (row) => row.location === 'Gear' && row.display_name === name;
 const withCharms = (name) => (row) => charms(row) || item(name)(row);
 
-describe('character stat game oracles', () => {
+describe.skipIf(!hasBuildFixture('Miss_Peeled_04_11_2026_10_45.json'))('character stat game oracles', () => {
   it('matches the charms-only baseline', async () => {
     expect(await computeState({ filter: charms })).toEqual({
       strength: 614, dexterity: 755, vitality: 437, energy: 431, life: 8916, mana: 3161,

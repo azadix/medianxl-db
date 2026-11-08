@@ -18,7 +18,7 @@ import { createCharacterBucket, createStatRegistry } from '@/character/bucket/in
 import { getPlannerCharacterStatDefs } from '@/character/planner-stats-config.js';
 import { applyCharacterSources } from '@/character/bucket/engine.js';
 import { parseImportedStatsText } from '@/character/bucket/sources/imports.js';
-import { loadBuildFixture, loadPlannerCatalog } from '../helpers/planner-catalog.js';
+import { hasBuildFixtures, loadBuildFixture, loadPlannerCatalog } from '../helpers/planner-catalog.js';
 import { installTreeDataFetchMock } from '../helpers/mock-fetch-tree-data.js';
 
 const FIXTURES = new URL('../fixtures/tsw-builds/', import.meta.url);
@@ -52,7 +52,7 @@ const KNOWN_COMPUTED_GAPS = new Set([
   'NgPlad_27_10_2026_14_38.json',
 ]);
 
-describe('computed stats audit', () => {
+describe.skipIf(!hasBuildFixtures())('computed stats audit', () => {
   let restoreFetch;
   let planner;
   let files;

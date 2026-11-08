@@ -13,7 +13,7 @@ import { initSkillDataStore, resetSkillDataStoreForTests } from '@/shared/skill-
 import { createCharacterBucket, createStatRegistry } from '@/character/bucket/index.js';
 import { getPlannerCharacterStatDefs } from '@/character/planner-stats-config.js';
 import { applySkillSources } from '@/character/bucket/sources/skills.js';
-import { loadBuildFixture, loadPlannerCatalog } from '../helpers/planner-catalog.js';
+import { hasBuildFixtures, loadBuildFixture, loadPlannerCatalog } from '../helpers/planner-catalog.js';
 import { installTreeDataFetchMock } from '../helpers/mock-fetch-tree-data.js';
 
 /**
@@ -39,7 +39,7 @@ function loadBuild(planner, file) {
   return { build, store, character };
 }
 
-describe('skill source parity', () => {
+describe.skipIf(!hasBuildFixtures())('skill source parity', () => {
   let restoreFetch;
   let planner;
 

@@ -16,10 +16,10 @@ import { getPlannerCharacterStatDefs } from '@/character/planner-stats-config.js
 import { createCharacterBucket, createStatRegistry } from '@/character/bucket/index.js';
 import { applyCharacterSources } from '@/character/bucket/engine.js';
 import { initSkillDataStore, resetSkillDataStoreForTests } from '@/shared/skill-data-store.js';
-import { loadBuildFixture, loadPlannerCatalog } from '../helpers/planner-catalog.js';
+import { hasBuildFixtures, loadBuildFixture, loadPlannerCatalog } from '../helpers/planner-catalog.js';
 import { installTreeDataFetchMock } from '../helpers/mock-fetch-tree-data.js';
 
-describe('engine fixture parity', () => {
+describe.skipIf(!hasBuildFixtures())('engine fixture parity', () => {
   let restoreFetch;
   let planner;
 

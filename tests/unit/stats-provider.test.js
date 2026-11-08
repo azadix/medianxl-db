@@ -13,7 +13,7 @@ import { useItemsStore } from '@/stores/items.js';
 import { buildPlannerStatBreakdownHtml } from '@/character/planner-stat-breakdown.js';
 import { setImportedStatsSource } from '@/character/stats-provider.js';
 import { mapTswItemsToSnapshot, unwrapTswOrNativeBuild } from '@/planner/tsw-build-import.js';
-import { loadBuildFixture, loadPlannerCatalog } from '../helpers/planner-catalog.js';
+import { hasBuildFixture, loadBuildFixture, loadPlannerCatalog } from '../helpers/planner-catalog.js';
 import { initSkillDataStore, resetSkillDataStoreForTests } from '@/shared/skill-data-store.js';
 import { detectCompleteItemText, setCompleteItemText } from '@/items/item-text-completeness.js';
 import { installTreeDataFetchMock } from '../helpers/mock-fetch-tree-data.js';
@@ -74,7 +74,7 @@ describe('character stats provider', () => {
     expect(second.getValue('fire_resistance')).toBe(33);
   });
 
-  it('keeps imported fixture totals as comparison values', () => {
+  it.skipIf(!hasBuildFixture('METST_Kriek_28_10_2026_17_22.json'))('keeps imported fixture totals as comparison values', () => {
     const planner = loadPlannerCatalog();
     const raw = loadBuildFixture('METST_Kriek_28_10_2026_17_22.json');
     const { build, tswItems } = unwrapTswOrNativeBuild(raw);
@@ -103,7 +103,7 @@ describe('character stats provider', () => {
     expect(character.getStat('strength')).toBe(281);
   });
 
-  it('does not add imported totals on top of calculated pools', () => {
+  it.skipIf(!hasBuildFixture('Miss_Peeled_04_11_2026_10_45.json'))('does not add imported totals on top of calculated pools', () => {
     const planner = loadPlannerCatalog();
     const raw = loadBuildFixture('Miss_Peeled_04_11_2026_10_45.json');
     const { build, tswItems } = unwrapTswOrNativeBuild(raw);

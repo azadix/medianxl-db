@@ -17,7 +17,7 @@ import { setImportedStatsSource, invalidateCharacterStats } from '@/character/st
 import { refreshCharacterStatsSnapshot } from '@/character/stats-provider.js';
 import { parseImportedStatsText } from '@/character/bucket/sources/imports.js';
 import { initSkillDataStore, resetSkillDataStoreForTests } from '@/shared/skill-data-store.js';
-import { loadBuildFixture, loadPlannerCatalog } from '../helpers/planner-catalog.js';
+import { hasBuildFixtures, loadBuildFixture, loadPlannerCatalog } from '../helpers/planner-catalog.js';
 import { installTreeDataFetchMock } from '../helpers/mock-fetch-tree-data.js';
 
 const FIXTURES = new URL('../fixtures/tsw-builds/', import.meta.url);
@@ -35,7 +35,7 @@ const AUDIT_FILES = [
   'Xiaochou.json',
 ];
 
-describe('stats audit (all TSW builds)', () => {
+describe.skipIf(!hasBuildFixtures())('stats audit (all TSW builds)', () => {
   let restoreFetch;
   let planner;
   let files;
