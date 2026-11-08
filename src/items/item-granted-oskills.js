@@ -846,6 +846,28 @@ export function getEquippedGearSkillBonusForSkill(options = {}) {
   }
 }
 
+const _equippedRefIds = new WeakMap();
+let _equippedRefSeq = 1;
+
+/**
+ * Identity key for gear state objects. Imported items carry large `extras` arrays;
+ * JSON-stringifying them once per skill made soft-level computation scale with
+ * the entire build payload. Object identity changes whenever the store replaces
+ * rolls/extras, which is enough to invalidate the cache.
+ * @param {unknown} value
+ * @returns {string}
+ */
+function gearRefKey(value) {
+  if (value == null) return '-';
+  if (typeof value !== 'object') return String(value);
+  let id = _equippedRefIds.get(value);
+  if (!id) {
+    id = _equippedRefSeq++;
+    _equippedRefIds.set(value, id);
+  }
+  return String(id);
+}
+
 /** @type {{ key: string, lines: string[] }} */
 let _equippedSoftLinesCache = { key: '', lines: [] };
 
@@ -871,9 +893,7 @@ function getEquippedSoftBonusLines(itemsStore, className) {
     }
     const instance = itemsStore.instances?.[instanceId];
     signatureParts.push(
-      `${slot}:${instanceId}:${JSON.stringify(instance?.rolls ?? null)}:${JSON.stringify(
-        instance?.extras ?? null
-      )}`
+      `${slot}:${instanceId}:${gearRefKey(instance?.rolls)}:${gearRefKey(instance?.extras)}`
     );
   }
   const key = signatureParts.join('|');
