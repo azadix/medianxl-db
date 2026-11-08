@@ -563,4 +563,43 @@ describe('tsw item extras', () => {
     );
     expect(extras).toContain('Requirements +0%');
   });
-});
+
+  it('does not duplicate the chosen Bone Chimes variant as an extra', () => {
+    const def = {
+      id: 'ir76',
+      name: 'Bone Chimes',
+      type: 'charm',
+      modifiers: [
+        'Gives stats based on the sum of your bonus damage to Undead and Demons',
+        {
+          label: 'Version',
+          oneOf: [
+            {
+              label: 'Innate Elemental Damage',
+              low: '6% added as Innate Elemental Damage',
+              high: '8% added as Innate Elemental Damage',
+            },
+          ],
+        },
+      ],
+    };
+    const extras = extrasFromTswItem(
+      {
+        item: 'Bone Chimes',
+        display_name: 'Bone Chimes',
+        type: 'Charm',
+        description_lines: [
+          [['Bone Chimes', 4]],
+          [['Required Level: 120', -1]],
+          [['Keep in Inventory to Gain Bonus', -1]],
+          [['Gives stats based on the sum of your bonus damage to Undead and Demons', 8]],
+          [['8% added as Innate Elemental Damage (Max +25%)', 3]],
+          [['Current Bonus: +128%', 3]],
+        ],
+      },
+      def
+    );
+    expect(extras).not.toContain('8% added as Innate Elemental Damage (Max +25%)');
+    expect(extras.some((line) => /Current Bonus/i.test(line))).toBe(false);
+  });
+})
