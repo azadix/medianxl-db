@@ -42,7 +42,11 @@ import {
   encodeModifierLine,
   markModifierLineAdded,
 } from '@/items/item-modifier-line.js';
-import { getMysticOrbBonusLines, normalizeMysticOrbs } from '@/items/mystic-orbs.js';
+import {
+  getMysticOrbBonusLines,
+  lookupMysticOrb,
+  normalizeMysticOrbs,
+} from '@/items/mystic-orbs.js';
 import { getItemSocketCount, getSocketableBonusLines, normalizeSocketables } from '@/items/socketables.js';
 import { applyAffixRolls, parseAffixRanges } from '@/items/affix-rolls.js';
 import {
@@ -52,6 +56,7 @@ import {
 } from '@/items/item-upgrades.js';
 import {
   collectItemStateFlagLines,
+  matchItemStateFlag,
   stripItemStateFlagLines,
 } from '@/items/item-state-flags.js';
 
@@ -375,6 +380,33 @@ export function formatChanceToBlockLine(block, className = null) {
  * }} ItemStatSections
  */
 
+
+/**
+ * Multiplier from an item's or an applied orb's "Orb Effects ... Doubled/Quadrupled".
+ * @param {object|null|undefined} def
+ * @param {unknown} mysticOrbs
+ * @param {string[]|null|undefined} [extras]
+ * @returns {number}
+ */
+function orbEffectsMultiplier(def, mysticOrbs, extras = null) {
+  let multiplier = 1;
+  /** @param {unknown} line */
+  const consider = (line) => {
+    if (typeof line !== 'string') return;
+    const flag = matchItemStateFlag(line);
+    if (flag?.id !== 'orbEffects') return;
+    multiplier = Math.max(multiplier, /Quadrupled/i.test(line) ? 4 : 2);
+  };
+  for (const mod of Array.isArray(def?.modifiers) ? def.modifiers : []) {
+    consider(typeof mod === 'string' ? mod : mod?.text);
+  }
+  for (const line of Array.isArray(extras) ? extras : []) consider(line);
+  for (const [, name] of normalizeMysticOrbs(mysticOrbs)) {
+    for (const line of lookupMysticOrb(name)?.modifiers || []) consider(line);
+  }
+  return multiplier;
+}
+
 /**
  * Append socket and mystic-orb bonus lines onto extras.
  * Matching extras (e.g. TSW leftovers) are consumed so they are not doubled.
@@ -384,6 +416,7 @@ export function formatChanceToBlockLine(block, className = null) {
  * @returns {string[]}
  */
 export function extrasWithAppliedItemBonuses(extras, def, options = {}) {
+  const orbMultiplier = orbEffectsMultiplier(def, options.mysticOrbs, options.extras);
   const list = extrasWithMysticOrbRequiredLevel(extras, options.mysticOrbs, def?.modifiers);
   const extrasHaveReqPct = list.some((line) => isRequirementsPercentLine(line));
   const extrasHaveReqLevel = list.some((line) => parseRequiredLevelBonus(line) !== 0);
@@ -422,7 +455,7 @@ export function extrasWithAppliedItemBonuses(extras, def, options = {}) {
     for (const line of getSocketableBonusLines(sock, def)) appendBonus(line);
   }
   for (const [count, name] of normalizeMysticOrbs(options.mysticOrbs)) {
-    for (const line of getMysticOrbBonusLines(name, count)) appendBonus(line);
+    for (const line of getMysticOrbBonusLines(name, count * orbMultiplier)) appendBonus(line);
   }
   for (const line of getItemUpgradeBonusLines(def, {
     oil: options.oil,
@@ -618,6 +651,12 @@ export function getItemStatSections(def, rolls = null, options = {}) {
   if (def.range != null) base.push(`Melee range: ${def.range}`);
   if (def.speed != null) base.push(`Attack Speed Modifier: ${def.speed}`);
   if (def.movePenalty != null) base.push(`Movement Speed Penalty: ${def.movePenalty}`);
+  /** @type {string[]} */
+  const appliedOrbStateLines = [];
+  const orbMultiplier = orbEffectsMultiplier(def, options.mysticOrbs, options.extras);
+  for (const [count, name] of normalizeMysticOrbs(options.mysticOrbs)) {
+    appliedOrbStateLines.push(...getMysticOrbBonusLines(name, count * orbMultiplier));
+  }
   base.push(
     ...collectItemStateFlagLines({
       ethereal,
@@ -625,7 +664,7 @@ export function getItemStatSections(def, rolls = null, options = {}) {
       alreadyUpgraded: upgradeFlags.alreadyUpgraded,
       shrineBlessed: upgradeFlags.shrineBlessed,
       modifiers: def.modifiers,
-      extras: options.extras ?? null,
+      extras: [...(options.extras ?? []), ...appliedOrbStateLines],
     })
   );
 
