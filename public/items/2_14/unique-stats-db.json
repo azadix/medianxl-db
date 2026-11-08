@@ -7,7 +7,7 @@
       "stats": "Defense:\n(2608 - 3260) to (2750 - 3437)\nRequired Level: 90\nRequired Strength:\n460\nItem Level: 1\n20% Attack Speed\n10% Hit Recovery\n+(100 to 150)% Enhanced Defense\n(21 to 30)% to Strength\n(21 to 30)% to Dexterity\nPhysical Damage Taken Reduced by (11 to 20)\n3% Reanimate as: Random Monster\nRequirements -20%\nSocketed (4)",
       "setName": "Achilios' Wake",
       "type": "Helm (Sacred)",
-      "icon": "invhlm"
+      "icon": "invcap"
     },
     {
       "name": "Achilios' Refuge",
@@ -176,7 +176,7 @@
       "stats": "Defense:\n3912 to 4125\nRequired Level: 100\nRequired Strength:\n1150\nItem Level: 115\n+(0 to 2) to All Skills\n+200% Enhanced Defense\nMaximum Life +3%\nFire Resist +50%\n+(25 to 100) Life after each Kill\nRequirements +100%\nSocketed (4)",
       "setName": "Curse of the Zakarum",
       "type": "Helm (Sacred)",
-      "icon": "invhlm"
+      "icon": "invcap"
     },
     {
       "name": "Cauldron",
@@ -465,7 +465,7 @@
       "stats": "One-Hand Damage: 35 to 36\n{red}(Necromancer Only)\nRequired Level: 90\nRequired Dexterity: 166\nItem Level: 1\nDexterity Damage Bonus: (0.06 per Dexterity)%\n+(3 to 5) to Necromancer Skill Levels\n1% Base Block Chance\n+75 Spell Focus\n+(31 to 50)% to Physical/Magic Spell Damage\n+(31 to 50)% to Poison Spell Damage\n+(101 to 105) Life after each Kill\n(51 to 63)% Gold Find\nSocketed (2)",
       "setName": "Celestial Orchard",
       "type": "Wand (Sacred)",
-      "icon": "invwnd"
+      "icon": "invbwn"
     },
     {
       "name": "Fire",
@@ -1207,7 +1207,7 @@
       "stats": "Defense:\n(2608 - 3260) to (2750 - 3437)\nRequired Level: 80\nRequired Strength:\n460 to 690\nItem Level: 1\n+2 to Necromancer Skill Levels\n20% Cast Speed\n+(11 to 13)% to Lightning Spell Damage\n+(100 to 150)% Enhanced Defense\n+(31 to 50) to Vitality\nRequirements (-20 to 20)%\nSocketed (4)",
       "setName": "The Towerlord",
       "type": "Helm (Sacred)",
-      "icon": "invhlm"
+      "icon": "invcap"
     },
     {
       "name": "Tower Rush",
@@ -2656,7 +2656,7 @@
       "quality": "SU",
       "stats": "One-Hand Damage: 44 to 50\nRequired Level: 100\nRequired Strength: 442\nItem Level: 105\nStrength Damage Bonus: (0.11 per Strength)%\n+(3 to 4) to All Skills\n+(51 to 75) Spell Focus\n50% Cast Speed\n+(16 to 20)% to Spell Damage\n+(51 to 100) to Energy\nMaximum Elemental Resists +2%\n+2 to Light Radius\nSocketed (3)",
       "type": "Mace (Sacred)",
-      "icon": "invmac"
+      "icon": "invclb"
     },
     {
       "name": "Dreamflayer",
@@ -3032,7 +3032,7 @@
       "quality": "SU",
       "stats": "One-Hand Damage: 35 to 36\n{red}(Necromancer Only)\nRequired Level: 100\nRequired Dexterity: 166\nItem Level: 105\nDexterity Damage Bonus: (0.06 per Dexterity)%\n{orange}Grim Vision: Aura Level Increased by 5\n+4 to All Skills\n+(0 to 1) to Maximum Necromancer Minions\n+(31 to 60)% to Summon Life\n+(11 to 25)% to Summon Elemental Resistances\n+10% to Summon Physical Resist\n+(101 to 150)% to Summon Attack Rating\n+(1001 to 2500) Defense\n(21 to 25)% to Vitality\nSocketed (2)",
       "type": "Wand (Sacred)",
-      "icon": "invwnd"
+      "icon": "invbwn"
     },
     {
       "name": "Gromotvod",
@@ -8183,28 +8183,32 @@
       "quality": "TU",
       "stats": "{red}(Barbarian Only)\nRequired Level: 1\nItem Level: 1\nInnate Fire Damage: (13.0% of Strength)\n7% Chance to cast level 6 Spike Nova on Melee Attack\n25% Attack Speed\nAdds (10 to 15)-(21 to 25) Fire Damage\n-(2 to 3)% to Enemy Fire Resistance\n+(5 to 10) Life after each Kill\n+1% to Experience Gained\nSocketed (1)",
       "tier": 1,
-      "type": "Mammen Axe (1)"
+      "type": "Mammen Axe (1)",
+      "icon": "invhaxu"
     },
     {
       "name": "King of the Dreadlands",
       "quality": "TU",
       "stats": "{red}(Barbarian Only)\nRequired Level: 20\nRequired Strength: 21\nItem Level: 31\nInnate Fire Damage: (20.0% of Strength)\n8% Chance to cast level 8 Spike Nova on Melee Attack\n45% Attack Speed\nAdds (25 to 28)-(50 to 58) Fire Damage\n-(4 to 6)% to Enemy Fire Resistance\n+(11 to 15) Life after each Kill\n+2% to Experience Gained\nSocketed (2)",
       "tier": 2,
-      "type": "Mammen Axe (2)"
+      "type": "Mammen Axe (2)",
+      "icon": "invhaxu"
     },
     {
       "name": "King of the Dreadlands",
       "quality": "TU",
       "stats": "{red}(Barbarian Only)\nRequired Level: 40\nRequired Strength: 59\nItem Level: 51\nInnate Fire Damage: (26.0% of Strength)\n9% Chance to cast level 10 Spike Nova on Melee Attack\n65% Attack Speed\nAdds (60 to 65)-(130 to 135) Fire Damage\n-(7 to 8)% to Enemy Fire Resistance\n+(16 to 20) Life after each Kill\n+2% to Experience Gained\nSocketed (3)",
       "tier": 3,
-      "type": "Mammen Axe (3)"
+      "type": "Mammen Axe (3)",
+      "icon": "invhaxu"
     },
     {
       "name": "King of the Dreadlands",
       "quality": "TU",
       "stats": "{red}(Barbarian Only)\nRequired Level: 50\nRequired Strength: 124\nItem Level: 77\nInnate Fire Damage: (33.0% of Strength)\n10% Chance to cast level 12 Spike Nova on Melee Attack\n75% Attack Speed\nAdds (165 to 170)-(250 to 260) Fire Damage\n-(9 to 10)% to Enemy Fire Resistance\n+(21 to 25) Life after each Kill\n+3% to Experience Gained\nSocketed (3)",
       "tier": 4,
-      "type": "Mammen Axe (4)"
+      "type": "Mammen Axe (4)",
+      "icon": "invhaxu"
     },
     {
       "name": "Koth's Lesson",
@@ -11868,28 +11872,32 @@
       "quality": "TU",
       "stats": "{red}(Necromancer Only)\nRequired Level: 4\nRequired Strength: 28\nItem Level: 1\nInnate Fire Damage: (20.0% of Strength)\n+1 to Necromancer Skill Levels\n1% Chance to cast level 1 Flametail Shot on Striking\n10% Attack Speed\n(25 to 50)% Bonus to Attack Rating\nAdds 7-9 Fire Damage\n-(2 to 5)% to Enemy Fire Resistance\n+5 Life after each Kill\nSocketed (2)",
       "tier": 1,
-      "type": "Needle Crossbow (1)"
+      "type": "Needle Crossbow (1)",
+      "icon": "invlxbu"
     },
     {
       "name": "Wicked Torch",
       "quality": "TU",
       "stats": "{red}(Necromancer Only)\nRequired Level: 23\nRequired Strength: 48\nItem Level: 31\nInnate Fire Damage: (32.0% of Strength)\n+(1 to 2) to Necromancer Skill Levels\n1% Chance to cast level 6 Flametail Shot on Striking\n15% Attack Speed\n(50 to 75)% Bonus to Attack Rating\nAdds 20-25 Fire Damage\n-(4 to 7)% to Enemy Fire Resistance\n+10 Life after each Kill\nSocketed (4)",
       "tier": 2,
-      "type": "Needle Crossbow (2)"
+      "type": "Needle Crossbow (2)",
+      "icon": "invlxbu"
     },
     {
       "name": "Wicked Torch",
       "quality": "TU",
       "stats": "{red}(Necromancer Only)\nRequired Level: 41\nRequired Strength: 100\nItem Level: 51\nInnate Fire Damage: (41.0% of Strength)\n+2 to Necromancer Skill Levels\n1% Chance to cast level 12 Flametail Shot on Striking\n20% Attack Speed\n(75 to 100)% Bonus to Attack Rating\nAdds 60-80 Fire Damage\n-(8 to 12)% to Enemy Fire Resistance\n+15 Life after each Kill\nSocketed (5)",
       "tier": 3,
-      "type": "Needle Crossbow (3)"
+      "type": "Needle Crossbow (3)",
+      "icon": "invlxbu"
     },
     {
       "name": "Wicked Torch",
       "quality": "TU",
       "stats": "{red}(Necromancer Only)\nRequired Level: 51\nRequired Strength: 200\nItem Level: 77\nInnate Fire Damage: (52.0% of Strength)\n+(2 to 3) to Necromancer Skill Levels\n1% Chance to cast level 18 Flametail Shot on Striking\n30% Attack Speed\n(100 to 150)% Bonus to Attack Rating\nAdds 150-210 Fire Damage\n-(10 to 15)% to Enemy Fire Resistance\n+20 Life after each Kill\nSocketed (6)",
       "tier": 4,
-      "type": "Needle Crossbow (4)"
+      "type": "Needle Crossbow (4)",
+      "icon": "invlxbu"
     },
     {
       "name": "Wildhunt",
@@ -12070,28 +12078,32 @@
       "quality": "TU",
       "stats": "Two-Hand Damage:\n(19 - 23) to (39 - 57)\n{red}(Barbarian Only)\nRequired Level: 12\nRequired Strength: 127\nItem Level: 29\nStrength Damage Bonus: (0.16 per Strength)%\n{orange}Thunderfury\n{grey}25% Chance to Cast on Attack: Emits charged bolts that do 36% normal attack damage as lightning.\n+1 to Barbarian Skill Levels\n+(16 to 30) to Maximum Damage\n+(24 to 46)% Enhanced Damage\n+(3 to 6) to Earthquake (Barbarian Only)\n(2 to 3)% Chance of Crushing Blow\nSlow Target (3 to 5)%\n+6 Mana on Melee Attack\n(21 to 25)% Bonus to Defense\nSocketed (2)",
       "tier": 1,
-      "type": "Labrys (1)"
+      "type": "Labrys (1)",
+      "icon": "invgaxu"
     },
     {
       "name": "Wrathchild",
       "quality": "TU",
       "stats": "Two-Hand Damage:\n(64 - 72) to (115 - 138)\n{red}(Barbarian Only)\nRequired Level: 31\nRequired Strength: 183\nItem Level: 40\nStrength Damage Bonus: (0.16 per Strength)%\n{orange}Thunderfury\n{grey}25% Chance to Cast on Attack: Emits charged bolts that do 36% normal attack damage as lightning.\n+2 to Barbarian Skill Levels\n+(46 to 60) to Maximum Damage\n+(69 to 92)% Enhanced Damage\n+(7 to 10) to Earthquake (Barbarian Only)\n(4 to 6)% Chance of Crushing Blow\nSlow Target (9 to 11)%\n+10 Mana on Melee Attack\n(31 to 35)% Bonus to Defense\nSocketed (4)",
       "tier": 2,
-      "type": "Labrys (2)"
+      "type": "Labrys (2)",
+      "icon": "invgaxu"
     },
     {
       "name": "Wrathchild",
       "quality": "TU",
       "stats": "Two-Hand Damage:\n(159 - 175) to (245 - 277)\n{red}(Barbarian Only)\nRequired Level: 52\nRequired Strength: 354\nItem Level: 67\nStrength Damage Bonus: (0.16 per Strength)%\n{orange}Thunderfury\n{grey}25% Chance to Cast on Attack: Emits charged bolts that do 36% normal attack damage as lightning.\n+3 to Barbarian Skill Levels\n+(76 to 90) to Maximum Damage\n+(115 to 137)% Enhanced Damage\n+(11 to 14) to Earthquake (Barbarian Only)\n(7 to 9)% Chance of Crushing Blow\nSlow Target (15 to 17)%\n+15 Mana on Melee Attack\n(41 to 45)% Bonus to Defense\nSocketed (5)",
       "tier": 3,
-      "type": "Labrys (3)"
+      "type": "Labrys (3)",
+      "icon": "invgaxu"
     },
     {
       "name": "Wrathchild",
       "quality": "TU",
       "stats": "Two-Hand Damage:\n(190 - 208) to (326 - 367)\n{red}(Barbarian Only)\nRequired Level: 60\nRequired Strength: 696\nItem Level: 85\nStrength Damage Bonus: (0.16 per Strength)%\n{orange}Thunderfury\n{grey}25% Chance to Cast on Attack: Emits charged bolts that do 36% normal attack damage as lightning.\n+4 to Barbarian Skill Levels\n+(91 to 110) to Maximum Damage\n+(138 to 160)% Enhanced Damage\n+(15 to 18) to Earthquake (Barbarian Only)\n(10 to 12)% Chance of Crushing Blow\nSlow Target (18 to 20)%\n+20 Mana on Melee Attack\n(46 to 50)% Bonus to Defense\nSocketed (6)",
       "tier": 4,
-      "type": "Labrys (4)"
+      "type": "Labrys (4)",
+      "icon": "invgaxu"
     },
     {
       "name": "Xorine's Ring",
@@ -12325,7 +12337,7 @@
       "quality": "SU",
       "stats": "Required Level: 100\nItem Level: 120\n1% Chance to cast level 7 Goblin Glee on Death Blow\n3% Chance to cast level 1 Knife Throw on Striking\n3% Chance to cast level 1 Arrow on Striking\n3% Chance to cast level 1 Javelin on Striking\nCube with 2 Sacred Essences to transform into an Arrow Quiver\n{grey}(Mystic Orbs and other upgrades are lost upon transformation)",
       "type": "Bolt Quiver",
-      "icon": "invqvr"
+      "icon": "invcqv"
     }
   ]
 }

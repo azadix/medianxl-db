@@ -57,7 +57,7 @@ def _is_gfx(token: str) -> bool:
 
 def _type_key(value: object) -> str:
     text = str(value or '').strip().lower()
-    return re.sub(r'\s*\(\d+\)\s*$', '', text)
+    return re.sub(r'\s*\([^)]*\)\s*$', '', text)
 
 
 def _base_icons_by_type(items_dir: Path) -> dict[str, str]:

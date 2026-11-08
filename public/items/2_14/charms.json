@@ -440,7 +440,7 @@
     "name": "I Am Rich",
     "keepInInventory": true,
     "rarity": "unique",
-    "icon": "redgem",
+    "icon": "u@+",
     "reqLevel": 1,
     "modifiers": [
       "This item does nothing and required the Archbishop Lazarus Trophy",
