@@ -8,6 +8,7 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { applyMysticOrbOverrides } from './apply-manual-overrides.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const DEFAULT_VERSION = '2.14';
@@ -803,6 +804,7 @@ export async function main(argv = process.argv.slice(2)) {
   writeOrCheck(path.join(outDir, 'shrines.json'), shrines, check);
   writeOrCheck(path.join(outDir, 'blessings.json'), {}, check);
   writeOrCheck(path.join(outDir, 'item-mechanics.json'), mechanics, check);
+  applyMysticOrbOverrides(mysticOrbs);
   writeOrCheck(path.join(outDir, 'mystic-orbs.json'), mysticOrbs, check);
 }
 

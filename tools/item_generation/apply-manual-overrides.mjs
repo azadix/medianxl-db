@@ -45,6 +45,13 @@ function writeJson(file, data) {
 }
 
 /**
+ * @returns {object}
+ */
+export function loadManualOverrides() {
+  return readJson(OVERRIDES_PATH);
+}
+
+/**
  * @param {string} version
  * @returns {string}
  */
@@ -53,22 +60,14 @@ export function itemsDirForVersion(version = DEFAULT_VERSION) {
 }
 
 /**
- * Apply all entries in the manual overrides file.
+ * Apply stat corrections, added items and icon overrides to unique entries.
  *
- * @param {{ version?: string, log?: (message: string) => void }} [options]
- * @returns {{ corrections: number, added: number, runewords: number, mysticOrbs: number, icons: number }}
+ * @param {object[]} entries
+ * @param {object} overrides
+ * @returns {{ corrections: number, added: number, icons: number }}
  */
-export function applyManualOverrides(options = {}) {
-  const version = options.version || DEFAULT_VERSION;
-  const log = options.log || (() => {});
-  const overrides = readJson(OVERRIDES_PATH);
-  const itemsDir = itemsDirForVersion(version);
-  const result = { corrections: 0, added: 0, runewords: 0, mysticOrbs: 0, icons: 0 };
-
-  const uniquePath = path.join(itemsDir, 'unique-stats-db.json');
-  const unique = readJson(uniquePath);
-  const entries = Array.isArray(unique) ? unique : unique.entries;
-  if (!Array.isArray(entries)) throw new Error('unique-stats-db.json has no entries array');
+export function applyUniqueOverrides(entries, overrides = loadManualOverrides()) {
+  const result = { corrections: 0, added: 0, icons: 0 };
 
   for (const correction of overrides.stat_corrections || []) {
     if (correction.catalog !== 'unique-stats-db') continue;
@@ -114,30 +113,80 @@ export function applyManualOverrides(options = {}) {
     result.icons += 1;
   }
 
-  writeJson(uniquePath, unique);
+  return result;
+}
 
-  const runewordsPath = path.join(itemsDir, 'runewords.json');
-  const runewords = readJson(runewordsPath);
+/**
+ * @param {{ entries?: object[] }|object[]} runewords
+ * @param {object} overrides
+ * @returns {number}
+ */
+export function applyRunewordOverrides(runewords, overrides = loadManualOverrides()) {
+  const entries = Array.isArray(runewords) ? runewords : runewords.entries;
+  let changed = 0;
   for (const correction of overrides.runeword_corrections || []) {
-    const entry = (runewords.entries || []).find((row) => row.name === correction.name);
+    const entry = (entries || []).find((row) => row.name === correction.name);
     if (!entry) continue;
     entry.modifiers = (entry.modifiers || []).map((line) =>
       line.includes(correction.find) ? line.split(correction.find).join(correction.replace) : line
     );
-    result.runewords += 1;
+    changed += 1;
   }
-  writeJson(runewordsPath, runewords);
+  return changed;
+}
 
-  const mysticPath = path.join(itemsDir, 'mystic-orbs.json');
-  const mysticOrbs = readJson(mysticPath);
+/**
+ * @param {object[]} mysticOrbs
+ * @param {object} overrides
+ * @returns {number}
+ */
+export function applyMysticOrbOverrides(mysticOrbs, overrides = loadManualOverrides()) {
+  let changed = 0;
   for (const override of overrides.mystic_orbs || []) {
     const orb = mysticOrbs.find((row) => row.name === override.name);
     if (!orb) continue;
     Object.assign(orb, override.set || {});
-    result.mysticOrbs += 1;
+    changed += 1;
   }
+  return changed;
+}
+
+/**
+ * Apply all entries in the manual overrides file to the catalog on disk.
+ *
+ * @param {{ version?: string, log?: (message: string) => void }} [options]
+ * @returns {{ corrections: number, added: number, runewords: number, mysticOrbs: number, icons: number }}
+ */
+export function applyManualOverrides(options = {}) {
+  const version = options.version || DEFAULT_VERSION;
+  const log = options.log || (() => {});
+  const overrides = loadManualOverrides();
+  const itemsDir = itemsDirForVersion(version);
+
+  const uniquePath = path.join(itemsDir, 'unique-stats-db.json');
+  const unique = readJson(uniquePath);
+  const entries = Array.isArray(unique) ? unique : unique.entries;
+  if (!Array.isArray(entries)) throw new Error('unique-stats-db.json has no entries array');
+  const uniqueResult = applyUniqueOverrides(entries, overrides);
+  writeJson(uniquePath, unique);
+
+  const runewordsPath = path.join(itemsDir, 'runewords.json');
+  const runewords = readJson(runewordsPath);
+  const runewordCount = applyRunewordOverrides(runewords, overrides);
+  writeJson(runewordsPath, runewords);
+
+  const mysticPath = path.join(itemsDir, 'mystic-orbs.json');
+  const mysticOrbs = readJson(mysticPath);
+  const mysticOrbCount = applyMysticOrbOverrides(mysticOrbs, overrides);
   writeJson(mysticPath, mysticOrbs);
 
+  const result = {
+    corrections: uniqueResult.corrections,
+    added: uniqueResult.added,
+    runewords: runewordCount,
+    mysticOrbs: mysticOrbCount,
+    icons: uniqueResult.icons,
+  };
   log(
     `manual overrides: ${result.corrections} corrections, ` +
       `${result.added} added items, ${result.runewords} runeword corrections, ` +

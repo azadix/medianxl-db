@@ -84,7 +84,7 @@ export async function main(argv = process.argv.slice(2)) {
     console.log(`\n=== ${name} ===`);
     await TASKS[name](argsFor(name, taskRest));
   }
-  if (withIcons) {
+  if (withIcons && !rest.includes('--check')) {
     console.log('\n=== item icons ===');
     const iconResult = spawnSync('python', ['tools/item_icons/sync_catalog_icons.py'], {
       cwd: ROOT,
