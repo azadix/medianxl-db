@@ -1245,12 +1245,16 @@ export const useItemsStore = defineStore('items', {
 
     /**
      * Equipped items that fail level/str/dex requirements (for import toasts).
+     * @param {{ activeOnly?: boolean }} [options]
      * @returns {Array<{ name: string, requirementsLine: string }>}
      */
-    listUnmetEquippedItems() {
+    listUnmetEquippedItems(options = {}) {
       /** @type {Array<{ name: string, requirementsLine: string }>} */
       const out = [];
+      const activeOnly = options.activeOnly === true;
+      const activeSet = effectiveWeaponSet(this);
       for (const slot of EQUIPMENT_SLOTS) {
+        if (activeOnly && !isActiveWeaponSetSlot(slot, activeSet)) continue;
         const id = this.equipment[slot];
         if (id == null) continue;
         const def = this.getDefForInstance(id);
