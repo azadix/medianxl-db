@@ -62,41 +62,6 @@ function clear(index) {
     <p class="item-upgrade-section__note is-size-7 has-text-grey">
       Corruptions cannot be detected automatically when importing. Add them here if needed.
     </p>
-    <div v-if="slots > 1 && editable" class="item-upgrade-section__mods mb-2">
-      <button
-        v-for="(_, idx) in applied"
-        :key="'tgt-' + idx"
-        type="button"
-        class="button is-small mr-1"
-        :class="{ 'is-link': target === idx }"
-        @click="target = idx"
-      >
-        Corruption {{ idx + 1 }}
-      </button>
-    </div>
-    <div v-for="(id, idx) in applied" :key="'corr-' + idx" class="item-upgrade-section__item">
-      <template v-if="lookupCorruption(id)">
-        <div class="item-mo-editor__row">
-          <img v-if="crystalIconUrl" class="item-sockets-editor__icon" :src="crystalIconUrl" alt="" />
-          <span class="item-mo-editor__name">{{ lookupCorruption(id).label }}</span>
-          <button v-if="editable" type="button" class="button is-small is-danger is-outlined" @click="clear(idx)">
-            Remove
-          </button>
-        </div>
-        <div class="item-upgrade-section__mods">
-          <div
-            v-for="(line, i) in getCorruptionBonusLines(id)"
-            :key="i"
-            class="item-upgrade-section__mod"
-          >
-            {{ line }}
-          </div>
-        </div>
-      </template>
-      <p v-else class="item-upgrade-section__empty is-size-7 has-text-grey">
-        No corruption{{ slots > 1 ? ' ' + (idx + 1) : '' }}.
-      </p>
-    </div>
     <div v-if="editable" class="item-sockets-editor__picker mt-2">
       <button type="button" class="item-sockets-editor__trigger" @click="open = !open">
         {{ open ? 'Hide corruption list' : 'Browse corruptions' }}
@@ -131,6 +96,41 @@ function clear(index) {
           </span>
         </button>
       </div>
+    </div>
+    <div v-if="slots > 1 && editable" class="item-upgrade-section__mods mb-2">
+      <button
+        v-for="(_, idx) in applied"
+        :key="'tgt-' + idx"
+        type="button"
+        class="button is-small mr-1"
+        :class="{ 'is-link': target === idx }"
+        @click="target = idx"
+      >
+        Corruption {{ idx + 1 }}
+      </button>
+    </div>
+    <div v-for="(id, idx) in applied" :key="'corr-' + idx" class="item-upgrade-section__item">
+      <template v-if="lookupCorruption(id)">
+        <div class="item-mo-editor__row">
+          <img v-if="crystalIconUrl" class="item-sockets-editor__icon" :src="crystalIconUrl" alt="" />
+          <span class="item-mo-editor__name">{{ lookupCorruption(id).label }}</span>
+          <button v-if="editable" type="button" class="button is-small is-danger is-outlined" @click="clear(idx)">
+            Remove
+          </button>
+        </div>
+        <div class="item-upgrade-section__mods">
+          <div
+            v-for="(line, i) in getCorruptionBonusLines(id)"
+            :key="i"
+            class="item-upgrade-section__mod"
+          >
+            {{ line }}
+          </div>
+        </div>
+      </template>
+      <p v-else class="item-upgrade-section__empty is-size-7 has-text-grey">
+        No corruption{{ slots > 1 ? ' ' + (idx + 1) : '' }}.
+      </p>
     </div>
   </div>
 </template>
