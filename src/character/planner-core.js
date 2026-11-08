@@ -7,6 +7,7 @@
  */
 
 import Character from './Character.js';
+import { getCharacterSnapshot, invalidateCharacterSnapshot } from './stats-snapshot.js';
 import { normalizePlannerStatValue, isPlannerBaseStatKey } from './planner-stats-config.js';
 import {
   getClassPlannerStatDefaults,
@@ -314,8 +315,11 @@ export function isConditionTriggerSkillAvailable(skillKey) {
 function runPlannerSkillStatRecomputePass(mergedBlvl, allSkillsBonus, classSkillsBonus, options = {}) {
   const character = getCharacterInstance();
   if (!character) return {};
-  // Items first so skill scaling formulas see current relic/charm/gear flats.
-  // Skill toggles do not change item lines, so callers can skip this expensive pass.
+  // The stats provider already builds one combined bucket (class + items + skills).
+  // Reusing it avoids rebuilding items and skills in separate buckets on every change.
+  invalidateCharacterSnapshot();
+  if (getCharacterSnapshot()) return {};
+  // Provider not installed (unit contexts): fall back to the focused passes.
   if (options.skipItems !== true) recomputePlannerStatsFromItems(character);
   recomputePlannerStatsFromSkillAllocations(character, {
     effectiveLevel: getEffectivePlannerLevel(),
