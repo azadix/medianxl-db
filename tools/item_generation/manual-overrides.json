@@ -1,0 +1,754 @@
+{
+  "stat_corrections": [
+    {
+      "catalog": "unique-stats-db",
+      "name": "Killing Vector",
+      "field": "stats",
+      "find": "Required Level: 90",
+      "replace": "Required Level: 80"
+    },
+    {
+      "catalog": "unique-stats-db",
+      "name": "Curse of the Zakarum",
+      "field": "stats",
+      "find": "(40 to 70)% Chance of Crushing Blow",
+      "replace": "10% Chance of Crushing Blow"
+    }
+  ],
+  "added_items": [
+    {
+      "catalog": "unique-stats-db",
+      "entry": {
+        "name": "Bag of Tricks",
+        "quality": "SU",
+        "stats": "Required Level: 100\nItem Level: 120\n1% Chance to cast level 7 Goblin Glee on Death Blow\n3% Chance to cast level 1 Knife Throw on Striking\n3% Chance to cast level 1 Arrow on Striking\n3% Chance to cast level 1 Javelin on Striking\nCube with 2 Sacred Essences to transform into a Bolt Quiver\n{grey}(Mystic Orbs and other upgrades are lost upon transformation)",
+        "type": "Arrow Quiver",
+        "icon": "invqvr"
+      }
+    },
+    {
+      "catalog": "unique-stats-db",
+      "entry": {
+        "name": "Bag of Tricks",
+        "quality": "SU",
+        "stats": "Required Level: 100\nItem Level: 120\n1% Chance to cast level 7 Goblin Glee on Death Blow\n3% Chance to cast level 1 Knife Throw on Striking\n3% Chance to cast level 1 Arrow on Striking\n3% Chance to cast level 1 Javelin on Striking\nCube with 2 Sacred Essences to transform into an Arrow Quiver\n{grey}(Mystic Orbs and other upgrades are lost upon transformation)",
+        "type": "Bolt Quiver",
+        "icon": "invqvr"
+      }
+    }
+  ],
+  "mystic_orbs": [
+    {
+      "name": "Empyrean Touch",
+      "set": {
+        "setsEthereal": true
+      }
+    }
+  ],
+  "icon_overrides": [
+    {
+      "name": "Bilefroth Skin",
+      "quality": "Sacred Set",
+      "type": "Gothic Plate (Sacred)",
+      "tier": null,
+      "icon": "set_pewpew1"
+    },
+    {
+      "name": "Blackskull's Horns",
+      "quality": "Sacred Set",
+      "type": "Crown (Sacred)",
+      "tier": null,
+      "icon": "set_pewpew2"
+    },
+    {
+      "name": "Dead Lens",
+      "quality": "Sacred Set",
+      "type": "Totem Shield (Sacred)",
+      "tier": null,
+      "icon": "invbshu"
+    },
+    {
+      "name": "Doomcloud Spine",
+      "quality": "Sacred Set",
+      "type": "Plated Belt (Sacred)",
+      "tier": null,
+      "icon": "set_pewpew3"
+    },
+    {
+      "name": "Fangskin Scales",
+      "quality": "Sacred Set",
+      "type": "Greaves (Sacred)",
+      "tier": null,
+      "icon": "set_pewpew5"
+    },
+    {
+      "name": "Idol of Fortune",
+      "quality": "Sacred Set",
+      "type": "Amulet",
+      "tier": null,
+      "icon": "invamugl"
+    },
+    {
+      "name": "Killing Vector",
+      "quality": "Sacred Set",
+      "type": "Cestus (Sacred)",
+      "tier": null,
+      "icon": "invaxfu"
+    },
+    {
+      "name": "Stareye's Claws",
+      "quality": "Sacred Set",
+      "type": "Gauntlets (Sacred)",
+      "tier": null,
+      "icon": "set_pewpew4"
+    },
+    {
+      "name": "Arkenstone",
+      "quality": "SU",
+      "type": "Jewel",
+      "tier": null,
+      "icon": "invgswe"
+    },
+    {
+      "name": "Assur's Bane",
+      "quality": "SU",
+      "type": "Ring",
+      "tier": null,
+      "icon": "ring08"
+    },
+    {
+      "name": "Atomus",
+      "quality": "SU",
+      "type": "Jewel",
+      "tier": null,
+      "icon": "invgswe"
+    },
+    {
+      "name": "Bag of Tricks",
+      "quality": "SU",
+      "type": "Bolt Quiver",
+      "tier": null,
+      "icon": "invqvr"
+    },
+    {
+      "name": "Black Dwarf",
+      "quality": "SU",
+      "type": "Amulet",
+      "tier": null,
+      "icon": "invamu"
+    },
+    {
+      "name": "Celestial Sigil",
+      "quality": "SU",
+      "type": "Amulet",
+      "tier": null,
+      "icon": "sigilx"
+    },
+    {
+      "name": "Death Ward",
+      "quality": "SU",
+      "type": "Amulet",
+      "tier": null,
+      "icon": "invamu"
+    },
+    {
+      "name": "Despondence",
+      "quality": "SU",
+      "type": "Voidforged Staff",
+      "tier": null,
+      "icon": "sstaff"
+    },
+    {
+      "name": "Farsight Globe",
+      "quality": "SU",
+      "type": "Jewel",
+      "tier": null,
+      "icon": "invgswe"
+    },
+    {
+      "name": "Gallowlaugh",
+      "quality": "SU",
+      "type": "Amulet",
+      "tier": null,
+      "icon": "invamu"
+    },
+    {
+      "name": "Heavenstone",
+      "quality": "SU",
+      "type": "Jewel",
+      "tier": null,
+      "icon": "invgswe"
+    },
+    {
+      "name": "Klaatu Barada Nikto",
+      "quality": "SU",
+      "type": "Amulet",
+      "tier": null,
+      "icon": "invamu"
+    },
+    {
+      "name": "Lionblood Crest",
+      "quality": "SU",
+      "type": "Cervelliere (Sacred)",
+      "tier": null,
+      "icon": "mfboots"
+    },
+    {
+      "name": "Maleficence",
+      "quality": "SU",
+      "type": "Tyrannical Blade",
+      "tier": null,
+      "icon": "ssword"
+    },
+    {
+      "name": "Mark of the Angiris",
+      "quality": "SU",
+      "type": "Amulet",
+      "tier": null,
+      "icon": "angiris"
+    },
+    {
+      "name": "Natasha's Legacy",
+      "quality": "SU",
+      "type": "Ornate Plate",
+      "tier": null,
+      "icon": "invnats"
+    },
+    {
+      "name": "Niradyahk",
+      "quality": "SU",
+      "type": "Amulet",
+      "tier": null,
+      "icon": "invamu"
+    },
+    {
+      "name": "Sigil of Tur Dulra",
+      "quality": "SU",
+      "type": "Ring",
+      "tier": null,
+      "icon": "invrin"
+    },
+    {
+      "name": "Tinker's Gambit",
+      "quality": "SU",
+      "type": "Cap (Sacred)",
+      "tier": null,
+      "icon": "mfboots"
+    },
+    {
+      "name": "Valkyrie's Prime",
+      "quality": "SU",
+      "type": "Sacred Bow",
+      "tier": null,
+      "icon": "newathuluabow"
+    },
+    {
+      "name": "Witchcraft",
+      "quality": "SU",
+      "type": "Ring",
+      "tier": null,
+      "icon": "invrin"
+    },
+    {
+      "name": "Witherfang",
+      "quality": "SU",
+      "type": "Flail (Sacred)",
+      "tier": null,
+      "icon": "invqf2"
+    },
+    {
+      "name": "Xepera Xeper Xeperu",
+      "quality": "SU",
+      "type": "Jewel",
+      "tier": null,
+      "icon": "invgswe"
+    },
+    {
+      "name": "Arcane Focus",
+      "quality": "TU",
+      "type": "Jewel",
+      "tier": null,
+      "icon": "invgswe"
+    },
+    {
+      "name": "Bergkaiser",
+      "quality": "TU",
+      "type": "Valaska (1)",
+      "tier": 1,
+      "icon": "invbtxu"
+    },
+    {
+      "name": "Bergkaiser",
+      "quality": "TU",
+      "type": "Valaska (2)",
+      "tier": 2,
+      "icon": "invbtxu"
+    },
+    {
+      "name": "Bergkaiser",
+      "quality": "TU",
+      "type": "Valaska (3)",
+      "tier": 3,
+      "icon": "invbtxu"
+    },
+    {
+      "name": "Bergkaiser",
+      "quality": "TU",
+      "type": "Valaska (4)",
+      "tier": 4,
+      "icon": "invbtxu"
+    },
+    {
+      "name": "Bloodbond",
+      "quality": "TU",
+      "type": "Ring",
+      "tier": null,
+      "icon": "invrin"
+    },
+    {
+      "name": "Buriza-Do Tsuru",
+      "quality": "TU",
+      "type": "Short Battle Bow (1)",
+      "tier": 1,
+      "icon": "invsbb"
+    },
+    {
+      "name": "Buriza-Do Tsuru",
+      "quality": "TU",
+      "type": "Short Battle Bow (2)",
+      "tier": 2,
+      "icon": "invsbb"
+    },
+    {
+      "name": "Buriza-Do Tsuru",
+      "quality": "TU",
+      "type": "Short Battle Bow (3)",
+      "tier": 3,
+      "icon": "invsbb"
+    },
+    {
+      "name": "Buriza-Do Tsuru",
+      "quality": "TU",
+      "type": "Short Battle Bow (4)",
+      "tier": 4,
+      "icon": "invsbb"
+    },
+    {
+      "name": "Cain's Marble",
+      "quality": "TU",
+      "type": "Jewel",
+      "tier": null,
+      "icon": "invgswe"
+    },
+    {
+      "name": "Compass of Souls",
+      "quality": "TU",
+      "type": "Hexblade (1)",
+      "tier": 1,
+      "icon": "invkrsu"
+    },
+    {
+      "name": "Compass of Souls",
+      "quality": "TU",
+      "type": "Hexblade (2)",
+      "tier": 2,
+      "icon": "invkrsu"
+    },
+    {
+      "name": "Compass of Souls",
+      "quality": "TU",
+      "type": "Hexblade (3)",
+      "tier": 3,
+      "icon": "invkrsu"
+    },
+    {
+      "name": "Compass of Souls",
+      "quality": "TU",
+      "type": "Hexblade (4)",
+      "tier": 4,
+      "icon": "invkrsu"
+    },
+    {
+      "name": "Felblood",
+      "quality": "TU",
+      "type": "Amulet",
+      "tier": null,
+      "icon": "invamu"
+    },
+    {
+      "name": "Flowerspring",
+      "quality": "TU",
+      "type": "Stag Bow (1)",
+      "tier": 1,
+      "icon": "invam1"
+    },
+    {
+      "name": "Flowerspring",
+      "quality": "TU",
+      "type": "Stag Bow (2)",
+      "tier": 2,
+      "icon": "invam1"
+    },
+    {
+      "name": "Flowerspring",
+      "quality": "TU",
+      "type": "Stag Bow (3)",
+      "tier": 3,
+      "icon": "invam1"
+    },
+    {
+      "name": "Flowerspring",
+      "quality": "TU",
+      "type": "Stag Bow (4)",
+      "tier": 4,
+      "icon": "invam1"
+    },
+    {
+      "name": "Fren Slairea",
+      "quality": "TU",
+      "type": "Amulet",
+      "tier": null,
+      "icon": "invamu"
+    },
+    {
+      "name": "Glass Shard",
+      "quality": "TU",
+      "type": "Jewel",
+      "tier": null,
+      "icon": "invgswe"
+    },
+    {
+      "name": "Hangman",
+      "quality": "TU",
+      "type": "Amulet",
+      "tier": null,
+      "icon": "invamu"
+    },
+    {
+      "name": "Hellrush",
+      "quality": "TU",
+      "type": "Jewel",
+      "tier": null,
+      "icon": "invgswe"
+    },
+    {
+      "name": "Hunger",
+      "quality": "TU",
+      "type": "Jewel",
+      "tier": null,
+      "icon": "invgswe"
+    },
+    {
+      "name": "Iceflayer",
+      "quality": "TU",
+      "type": "Crystal Sword (1)",
+      "tier": 1,
+      "icon": "invcrs"
+    },
+    {
+      "name": "Iceflayer",
+      "quality": "TU",
+      "type": "Crystal Sword (2)",
+      "tier": 2,
+      "icon": "invcrs"
+    },
+    {
+      "name": "Iceflayer",
+      "quality": "TU",
+      "type": "Crystal Sword (3)",
+      "tier": 3,
+      "icon": "invcrs"
+    },
+    {
+      "name": "Iceflayer",
+      "quality": "TU",
+      "type": "Crystal Sword (4)",
+      "tier": 4,
+      "icon": "invcrs"
+    },
+    {
+      "name": "Katamari",
+      "quality": "TU",
+      "type": "Jewel",
+      "tier": null,
+      "icon": "invgswe"
+    },
+    {
+      "name": "Koth's Lesson",
+      "quality": "TU",
+      "type": "Mace (1)",
+      "tier": 1,
+      "icon": "invmac"
+    },
+    {
+      "name": "Koth's Lesson",
+      "quality": "TU",
+      "type": "Mace (2)",
+      "tier": 2,
+      "icon": "invmac"
+    },
+    {
+      "name": "Koth's Lesson",
+      "quality": "TU",
+      "type": "Mace (3)",
+      "tier": 3,
+      "icon": "invmac"
+    },
+    {
+      "name": "Koth's Lesson",
+      "quality": "TU",
+      "type": "Mace (4)",
+      "tier": 4,
+      "icon": "invmac"
+    },
+    {
+      "name": "Lavadome",
+      "quality": "TU",
+      "type": "Helm (1)",
+      "tier": 1,
+      "icon": "invhlm"
+    },
+    {
+      "name": "Lavadome",
+      "quality": "TU",
+      "type": "Helm (2)",
+      "tier": 2,
+      "icon": "invhlm"
+    },
+    {
+      "name": "Lavadome",
+      "quality": "TU",
+      "type": "Helm (3)",
+      "tier": 3,
+      "icon": "invhlm"
+    },
+    {
+      "name": "Lavadome",
+      "quality": "TU",
+      "type": "Helm (4)",
+      "tier": 4,
+      "icon": "invhlm"
+    },
+    {
+      "name": "Oni no Ona",
+      "quality": "TU",
+      "type": "Ono (1)",
+      "tier": 1,
+      "icon": "inv9btu"
+    },
+    {
+      "name": "Oni no Ona",
+      "quality": "TU",
+      "type": "Ono (2)",
+      "tier": 2,
+      "icon": "inv9btu"
+    },
+    {
+      "name": "Oni no Ona",
+      "quality": "TU",
+      "type": "Ono (3)",
+      "tier": 3,
+      "icon": "inv9btu"
+    },
+    {
+      "name": "Oni no Ona",
+      "quality": "TU",
+      "type": "Ono (4)",
+      "tier": 4,
+      "icon": "inv9btu"
+    },
+    {
+      "name": "Rainbow Prism",
+      "quality": "TU",
+      "type": "Jewel",
+      "tier": null,
+      "icon": "invgswe"
+    },
+    {
+      "name": "Ripstar",
+      "quality": "TU",
+      "type": "Ring",
+      "tier": null,
+      "icon": "invrin"
+    },
+    {
+      "name": "Scarab of Death",
+      "quality": "TU",
+      "type": "Amulet",
+      "tier": null,
+      "icon": "invamu"
+    },
+    {
+      "name": "Skullhammer",
+      "quality": "TU",
+      "type": "Battle Axe (1)",
+      "tier": 1,
+      "icon": "invbtx"
+    },
+    {
+      "name": "Skullhammer",
+      "quality": "TU",
+      "type": "Battle Axe (2)",
+      "tier": 2,
+      "icon": "invbtx"
+    },
+    {
+      "name": "Skullhammer",
+      "quality": "TU",
+      "type": "Battle Axe (3)",
+      "tier": 3,
+      "icon": "invbtx"
+    },
+    {
+      "name": "Skullhammer",
+      "quality": "TU",
+      "type": "Battle Axe (4)",
+      "tier": 4,
+      "icon": "invbtx"
+    },
+    {
+      "name": "Spellgrip",
+      "quality": "TU",
+      "type": "Wrist Blade (1)",
+      "tier": 1,
+      "icon": "invktr"
+    },
+    {
+      "name": "Spellgrip",
+      "quality": "TU",
+      "type": "Wrist Blade (2)",
+      "tier": 2,
+      "icon": "invktr"
+    },
+    {
+      "name": "Spellgrip",
+      "quality": "TU",
+      "type": "Wrist Blade (3)",
+      "tier": 3,
+      "icon": "invktr"
+    },
+    {
+      "name": "Spellgrip",
+      "quality": "TU",
+      "type": "Wrist Blade (4)",
+      "tier": 4,
+      "icon": "invktr"
+    },
+    {
+      "name": "The Boulder",
+      "quality": "TU",
+      "type": "Jewel",
+      "tier": null,
+      "icon": "invgswe"
+    },
+    {
+      "name": "The Compensator",
+      "quality": "TU",
+      "type": "Wand (1)",
+      "tier": 1,
+      "icon": "invwnd"
+    },
+    {
+      "name": "The Compensator",
+      "quality": "TU",
+      "type": "Wand (2)",
+      "tier": 2,
+      "icon": "invwnd"
+    },
+    {
+      "name": "The Compensator",
+      "quality": "TU",
+      "type": "Wand (3)",
+      "tier": 3,
+      "icon": "invwnd"
+    },
+    {
+      "name": "The Compensator",
+      "quality": "TU",
+      "type": "Wand (4)",
+      "tier": 4,
+      "icon": "invwnd"
+    },
+    {
+      "name": "The Grubber",
+      "quality": "TU",
+      "type": "Jewel",
+      "tier": null,
+      "icon": "invgswe"
+    },
+    {
+      "name": "Wasp Sting",
+      "quality": "TU",
+      "type": "Maple Bow (1)",
+      "tier": 1,
+      "icon": "inv8s8u"
+    },
+    {
+      "name": "Wasp Sting",
+      "quality": "TU",
+      "type": "Maple Bow (2)",
+      "tier": 2,
+      "icon": "inv8s8u"
+    },
+    {
+      "name": "Wasp Sting",
+      "quality": "TU",
+      "type": "Maple Bow (3)",
+      "tier": 3,
+      "icon": "inv8s8u"
+    },
+    {
+      "name": "Wasp Sting",
+      "quality": "TU",
+      "type": "Maple Bow (4)",
+      "tier": 4,
+      "icon": "inv8s8u"
+    },
+    {
+      "name": "Weight Shift",
+      "quality": "TU",
+      "type": "Jewel",
+      "tier": null,
+      "icon": "invgswe"
+    },
+    {
+      "name": "Wishmaster",
+      "quality": "TU",
+      "type": "Jewel",
+      "tier": null,
+      "icon": "invgswe"
+    }
+  ],
+  "runeword_corrections": [
+    {
+      "name": "Demhe",
+      "find": "{orange}Stun Attack",
+      "replace": "Stun Attack"
+    },
+    {
+      "name": "Judge",
+      "find": "{orange}Stun Attack",
+      "replace": "Stun Attack"
+    },
+    {
+      "name": "Manta",
+      "find": "{orange}Worship the Crack Monkeys!",
+      "replace": "Worship the Crack Monkeys!"
+    },
+    {
+      "name": "Oris' Herald",
+      "find": "{darkgreen}Orb Effects Applied to this Item are Doubled",
+      "replace": "Orb Effects Applied to this Item are Doubled"
+    },
+    {
+      "name": "Titanomachia",
+      "find": "{orange}Stun Attack",
+      "replace": "Stun Attack"
+    },
+    {
+      "name": "Truce",
+      "find": "{orange}Stun Attack",
+      "replace": "Stun Attack"
+    }
+  ]
+}

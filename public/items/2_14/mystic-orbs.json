@@ -1008,11 +1008,11 @@
     "slots": "armor",
     "maxStacks": 5,
     "reqLevelPerStack": 5,
+    "requiresRare": true,
     "aliases": [
       "Rare MO - Physical Resist",
       "Physical Resist +1%"
-    ],
-    "requiresRare": true
+    ]
   },
   {
     "name": "Rare MO - No Freeze",
@@ -1023,11 +1023,11 @@
     "slots": "armor",
     "maxStacks": 1,
     "reqLevelPerStack": 12,
+    "requiresRare": true,
     "aliases": [
       "Rare MO - No Freeze",
       "Cannot be Frozen"
-    ],
-    "requiresRare": true
+    ]
   },
   {
     "name": "Rare MO - Fire Resist",
@@ -1039,11 +1039,11 @@
     "slots": "armor",
     "maxStacks": 1,
     "reqLevelPerStack": 6,
+    "requiresRare": true,
     "aliases": [
       "Rare MO - Fire Resist",
       "Max Fire Resist +1%"
-    ],
-    "requiresRare": true
+    ]
   },
   {
     "name": "Rare MO - Cold Resist",
@@ -1055,11 +1055,11 @@
     "slots": "armor",
     "maxStacks": 1,
     "reqLevelPerStack": 6,
+    "requiresRare": true,
     "aliases": [
       "Rare MO - Cold Resist",
       "Max Cold Resist +1%"
-    ],
-    "requiresRare": true
+    ]
   },
   {
     "name": "Rare MO - Lightning Resist",
@@ -1071,11 +1071,11 @@
     "slots": "armor",
     "maxStacks": 1,
     "reqLevelPerStack": 6,
+    "requiresRare": true,
     "aliases": [
       "Rare MO - Lightning Resist",
       "Max Lightning Resist +1%"
-    ],
-    "requiresRare": true
+    ]
   },
   {
     "name": "Rare MO - Poison Resist",
@@ -1087,11 +1087,11 @@
     "slots": "armor",
     "maxStacks": 1,
     "reqLevelPerStack": 6,
+    "requiresRare": true,
     "aliases": [
       "Rare MO - Poison Resist",
       "Max Poison Resist +1%"
-    ],
-    "requiresRare": true
+    ]
   },
   {
     "name": "Rare MO - IED",
@@ -1102,11 +1102,11 @@
     "slots": "armor",
     "maxStacks": 5,
     "reqLevelPerStack": 5,
+    "requiresRare": true,
     "aliases": [
       "Rare MO - IED",
       "+1% Innate Elemental Damage"
-    ],
-    "requiresRare": true
+    ]
   },
   {
     "name": "Rare MO - Block Up",
@@ -1118,12 +1118,12 @@
     "slots": "armor",
     "maxStacks": 2,
     "reqLevelPerStack": 6,
+    "requiresRare": true,
     "aliases": [
       "Rare MO - Block Up",
       "+1% Base Block Chance"
     ],
-    "restrictToCategory": "shield",
-    "requiresRare": true
+    "restrictToCategory": "shield"
   },
   {
     "name": "Rare MO - Block Down",
@@ -1134,12 +1134,12 @@
     "slots": "armor",
     "maxStacks": 2,
     "reqLevelPerStack": 5,
+    "requiresRare": true,
     "aliases": [
       "Rare MO - Block Down",
       "-2% Base Block Chance"
     ],
-    "restrictToCategory": "shield",
-    "requiresRare": true
+    "restrictToCategory": "shield"
   },
   {
     "name": "Rare MO - Max Life",
@@ -1150,12 +1150,12 @@
     "slots": "armor",
     "maxStacks": 5,
     "reqLevelPerStack": 5,
+    "requiresRare": true,
     "aliases": [
       "Rare MO - Max Life",
       "Maximum Life +1%"
     ],
-    "restrictToSlot": "tors",
-    "requiresRare": true
+    "restrictToSlot": "tors"
   },
   {
     "name": "Rare MO - Pierce Fire",
@@ -1166,11 +1166,11 @@
     "slots": "armor",
     "maxStacks": 5,
     "reqLevelPerStack": 4,
+    "requiresRare": true,
     "aliases": [
       "Rare MO - Pierce Fire",
       "-1% to Enemy Fire Resistance"
-    ],
-    "requiresRare": true
+    ]
   },
   {
     "name": "Rare MO - Pierce Cold",
@@ -1181,11 +1181,11 @@
     "slots": "armor",
     "maxStacks": 5,
     "reqLevelPerStack": 4,
+    "requiresRare": true,
     "aliases": [
       "Rare MO - Pierce Cold",
       "-1% to Enemy Cold Resistance"
-    ],
-    "requiresRare": true
+    ]
   },
   {
     "name": "Rare MO - Pierce Lightning",
@@ -1196,11 +1196,11 @@
     "slots": "armor",
     "maxStacks": 5,
     "reqLevelPerStack": 4,
+    "requiresRare": true,
     "aliases": [
       "Rare MO - Pierce Lightning",
       "-1% to Enemy Lightning Resistance"
-    ],
-    "requiresRare": true
+    ]
   },
   {
     "name": "Rare MO - Pierce Poison",
@@ -1211,11 +1211,11 @@
     "slots": "armor",
     "maxStacks": 5,
     "reqLevelPerStack": 4,
+    "requiresRare": true,
     "aliases": [
       "Rare MO - Pierce Poison",
       "-1% to Enemy Poison Resistance"
-    ],
-    "requiresRare": true
+    ]
   },
   {
     "name": "Rare MO - Demon Damage",
@@ -1226,11 +1226,11 @@
     "slots": "armor",
     "maxStacks": 3,
     "reqLevelPerStack": 5,
+    "requiresRare": true,
     "aliases": [
       "Rare MO - Demon Damage",
       "+15% Damage to Demons"
-    ],
-    "requiresRare": true
+    ]
   },
   {
     "name": "Rare MO - Undead Damage",
@@ -1241,11 +1241,11 @@
     "slots": "armor",
     "maxStacks": 3,
     "reqLevelPerStack": 5,
+    "requiresRare": true,
     "aliases": [
       "Rare MO - Undead Damage",
       "+15% Damage to Undead"
-    ],
-    "requiresRare": true
+    ]
   },
   {
     "name": "Craftsman's Brand",
@@ -1317,10 +1317,10 @@
     "slots": "gear",
     "maxStacks": 1,
     "reqLevelPerStack": 10,
-    "setsEthereal": true,
     "aliases": [
       "Empyrean Touch"
-    ]
+    ],
+    "setsEthereal": true
   },
   {
     "name": "Elemental Ire",

@@ -55,6 +55,37 @@ def _is_gfx(token: str) -> bool:
     return True
 
 
+def _type_key(value: object) -> str:
+    text = str(value or '').strip().lower()
+    return re.sub(r'\s*\(\d+\)\s*$', '', text)
+
+
+def _base_icons_by_type(items_dir: Path) -> dict[str, str]:
+    """Icons inherited from the base item type when a unique has no invfile."""
+    icons: dict[str, str] = {}
+    for name in ('baseitems.json', 'other.json'):
+        path = items_dir / name
+        if not path.is_file():
+            continue
+        try:
+            rows = json.loads(path.read_text(encoding='utf-8'))
+        except (OSError, json.JSONDecodeError):
+            continue
+        if not isinstance(rows, list):
+            continue
+        for row in rows:
+            if not isinstance(row, dict) or not isinstance(row.get('icon'), str):
+                continue
+            icon = row['icon'].strip()
+            if not icon:
+                continue
+            for key in (row.get('type'), row.get('name')):
+                type_key = _type_key(key)
+                if type_key and type_key not in icons:
+                    icons[type_key] = icon
+    return icons
+
+
 def _parse_uniqueitems(raw: bytes) -> list[dict]:
     import struct
 
@@ -93,12 +124,15 @@ def main() -> int:
     db_path = items_dir / "unique-stats-db.json"
     db = json.loads(db_path.read_text(encoding="utf-8"))
     entries = db["entries"] if isinstance(db, dict) else db
+    base_icons = _base_icons_by_type(items_dir)
     db_changed = 0
     for entry in entries:
         if not isinstance(entry, dict):
             continue
         name = str(entry.get("name") or "")
-        icon = by_name.get(_norm(name))
+        icon = by_name.get(_norm(name)) or by_code.get(str(entry.get("code") or "").lower())
+        if not icon:
+            icon = base_icons.get(_type_key(entry.get("type")))
         if not icon:
             continue
         if entry.get("icon") == icon:

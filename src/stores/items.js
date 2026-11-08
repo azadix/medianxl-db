@@ -833,6 +833,7 @@ export const useItemsStore = defineStore('items', {
           'blessings.json',
           'shrines.json',
           'misc.json',
+          'assur.json',
         ];
         try {
           const requiredRes = await Promise.all(
@@ -917,7 +918,12 @@ export const useItemsStore = defineStore('items', {
           loadCorruptionsCatalog(await readJsonIfOk(optionalRes[6]));
           loadAffixTemplates(await readJsonIfOk(optionalRes[7]));
           loadItemAffixes(await readJsonIfOk(optionalRes[8]));
-          loadItemMechanics(await readJsonIfOk(optionalRes[9]));
+          const mechanicsData = await readJsonIfOk(optionalRes[9]);
+          const assurData = await readJsonIfOk(optionalRes[13]);
+          loadItemMechanics({
+            ...(mechanicsData && typeof mechanicsData === 'object' ? mechanicsData : {}),
+            assur: assurData && typeof assurData === 'object' ? assurData : {},
+          });
           loadHonorificBlessings(await readJsonIfOk(optionalRes[10]));
           loadShrinesCatalog(await readJsonIfOk(optionalRes[11]));
           const miscData = await readJsonIfOk(optionalRes[12]);

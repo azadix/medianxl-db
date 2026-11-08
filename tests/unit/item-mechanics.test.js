@@ -21,7 +21,10 @@ import {
 import { loadAffixTemplates } from '@/items/affix-templates.js';
 
 loadAffixTemplates(JSON.parse(readFileSync(resolve('public/items/2_14/affix-templates.json'), 'utf8')));
-loadItemMechanics(JSON.parse(readFileSync(resolve('public/items/2_14/item-mechanics.json'), 'utf8')));
+loadItemMechanics({
+  ...JSON.parse(readFileSync(resolve('public/items/2_14/item-mechanics.json'), 'utf8')),
+  assur: JSON.parse(readFileSync(resolve('public/items/2_14/assur.json'), 'utf8')),
+});
 
 describe('item-mechanics', () => {
   const arrogance = { name: 'Arrogance' };

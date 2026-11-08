@@ -28,9 +28,10 @@ loadMysticOrbsCatalog(
 loadCorruptionsCatalog(
   JSON.parse(readFileSync(resolve('public/items/2_14/corruptions.json'), 'utf8'))
 );
-loadItemMechanics(
-  JSON.parse(readFileSync(resolve('public/items/2_14/item-mechanics.json'), 'utf8'))
-);
+loadItemMechanics({
+  ...JSON.parse(readFileSync(resolve('public/items/2_14/item-mechanics.json'), 'utf8')),
+  assur: JSON.parse(readFileSync(resolve('public/items/2_14/assur.json'), 'utf8')),
+});
 
 describe("Assur's Bane required level", () => {
   const assurBane = { name: "Assur's Bane", reqLevel: 100 };
