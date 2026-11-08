@@ -30356,7 +30356,7 @@
         "statKey": "all_attributes",
         "occurrenceIndex": 0,
         "variantKey": "",
-        "value0": "(((13+min(max(lvl-1,0),7)*4+min(max(lvl-8,0),8)*3+min(max(lvl-16,0),6)*2+min(max(lvl-22,0),6)*1+max(lvl-28,0)*1)*(100+6*blvl))/100)*(1+[[acumen]])"
+        "value0": "(((13+min(max(lvl-1,0),7)*4+min(max(lvl-8,0),8)*3+min(max(lvl-16,0),6)*2+min(max(lvl-22,0),6)*1+max(lvl-28,0)*1)/2*(100+6*blvl))/100)*(1+min([[acumen]],1))"
       }
     ],
     "description": [
