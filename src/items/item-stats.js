@@ -523,6 +523,7 @@ export function itemBaseDefense(def) {
  * @returns {ItemStatSections}
  */
 const NUMBER_RE = /^([+-]?)(\d+(?:\.\d+)?)(.*)$/;
+const TRAILING_NUMBER_RE = /^([A-Za-z][^:()]*?\s+)([+-]?\d+(?:\.\d+)?)(%)$/;
 const NON_MERGEABLE_LINE_RE =
   /\[|\]|\([^)]*to[^)]*\)|per Character Level|Chance to cast|\bon (Kill|Striking|Attack|Death|Melee)\b|Required /i;
 
@@ -541,15 +542,31 @@ function mergeNumericStatLines(lines) {
   for (const line of Array.isArray(lines) ? lines : []) {
     const decoded = decodeModifierLine(line);
     const text = String(decoded.text || '').trim();
-    const match = NUMBER_RE.exec(text);
+    const leadingMatch = NUMBER_RE.exec(text);
+    const trailingMatch = leadingMatch ? null : TRAILING_NUMBER_RE.exec(text);
+    const match = leadingMatch || trailingMatch;
     if (!match || NON_MERGEABLE_LINE_RE.test(text)) {
       output.push(line);
       continue;
     }
-    const [, sign, rawValue, suffix] = match;
+    const prefix = leadingMatch ? '' : String(trailingMatch?.[1] || '');
+    const rawNumber = String((leadingMatch || trailingMatch)?.[2] || '');
+    const suffix = String((leadingMatch || trailingMatch)?.[3] || '');
+    if (!leadingMatch && !prefix) {
+      output.push(line);
+      continue;
+    }
+    const sign = leadingMatch
+      ? leadingMatch[1]
+      : rawNumber.startsWith('-')
+        ? '-'
+        : rawNumber.startsWith('+')
+          ? '+'
+          : '';
+    const rawValue = rawNumber.replace(/^[+-]/, '');
     const mergeColor =
       decoded.color === 'orange' || decoded.color === 'grey' ? decoded.color : '';
-    const key = `${mergeColor}|${decoded.showCondition.join(',')}|${sign}|${suffix.toLowerCase()}`;
+    const key = `${mergeColor}|${decoded.showCondition.join(',')}|${prefix.toLowerCase()}|${sign}|${suffix.toLowerCase()}`;
     const value = Number(rawValue) * (sign === '-' ? -1 : 1);
     const existing = byKey.get(key);
     if (existing) {
@@ -564,7 +581,9 @@ function mergeNumericStatLines(lines) {
       color: decoded.color,
       conditions: decoded.showCondition,
       sign,
+      prefix,
       suffix,
+      trailing: !leadingMatch,
     };
     byKey.set(key, entry);
     output.push(line);
@@ -574,7 +593,8 @@ function mergeNumericStatLines(lines) {
       // Keep zero totals visible for negatives/positives merged to zero.
     }
     const numeric = Math.abs(entry.value);
-    const rendered = `${entry.value < 0 ? '-' : entry.sign === '+' ? '+' : ''}${numeric}${entry.suffix}`;
+    const signed = `${entry.value < 0 ? '-' : entry.sign === '+' ? '+' : ''}${numeric}`;
+    const rendered = entry.trailing ? `${entry.prefix}${signed}${entry.suffix}` : `${signed}${entry.suffix}`;
     output[entry.index] = encodeModifierLine(rendered, entry.color, entry.conditions);
   }
   return output.filter((line) => line != null);
