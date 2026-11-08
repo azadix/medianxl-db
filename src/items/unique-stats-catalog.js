@@ -787,11 +787,16 @@ export function entryToItemDef(entry, bases) {
 /**
  * @param {{ entries?: UniqueStatsEntry[] }|UniqueStatsEntry[]|null|undefined} db
  * @param {Array<object>} bases
+ * @param {{ entries?: object[] }|object[]|null|undefined} [setBonuses]
  * @returns {{ items: object[], sets: Array<{ id: string, name: string, bonuses: Array<{ required: number|string, modifiers: string[] }> }> }}
  */
-export function buildCatalogFromUniqueStats(db, bases) {
+export function buildCatalogFromUniqueStats(db, bases, setBonuses = null) {
   const entries = Array.isArray(db) ? db : db?.entries ?? [];
-  const sets = buildSetDefsFromEntries(entries);
+  const bonusEntries = Array.isArray(setBonuses)
+    ? setBonuses
+    : setBonuses?.entries ?? [];
+  const allEntries = [...entries, ...bonusEntries];
+  const sets = buildSetDefsFromEntries(bonusEntries.length ? bonusEntries : allEntries);
   /** @type {object[]} */
   const items = [];
   for (const entry of entries) {

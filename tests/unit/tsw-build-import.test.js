@@ -519,7 +519,8 @@ describe('tsw-build-import', () => {
     const baseItems = JSON.parse(readFileSync(resolve(dir, 'baseitems.json'), 'utf8'));
     const other = JSON.parse(readFileSync(resolve(dir, 'other.json'), 'utf8'));
     const db = JSON.parse(readFileSync(resolve(dir, 'unique-stats-db.json'), 'utf8'));
-    const { items: overlays, sets } = buildCatalogFromUniqueStats(db, [...baseItems, ...other]);
+    const setsDb = JSON.parse(readFileSync(resolve(dir, 'set-bonuses.json'), 'utf8'));
+    const { items: overlays, sets } = buildCatalogFromUniqueStats(db, [...baseItems, ...other], setsDb);
     setActivePinia(createPinia());
     const store = useItemsStore();
     store.catalog = [...baseItems, ...other, ...overlays];

@@ -36,10 +36,11 @@ export function loadPlannerCatalog(version = '2_14') {
     rarity: relic.rarity || 'relic',
     keepInInventory: true,
   }));
-  const { items: overlays, sets } = buildCatalogFromUniqueStats(read('unique-stats-db.json'), [
-    ...baseItems,
-    ...other,
-  ]);
+  const { items: overlays, sets } = buildCatalogFromUniqueStats(
+    read('unique-stats-db.json'),
+    [...baseItems, ...other],
+    existsSync(resolve(dir, 'set-bonuses.json')) ? read('set-bonuses.json') : null
+  );
   const runewordsData = read('runewords.json');
   const entries = Array.isArray(runewordsData) ? runewordsData : runewordsData.entries || [];
   const runewords = entries.map(runewordEntryToItemDef).filter(Boolean);

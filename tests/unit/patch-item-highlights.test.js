@@ -40,6 +40,7 @@ describe('patch item catalog lookup', () => {
       other: readJson('other.json'),
       relics: readJson('relics.json'),
       uniqueStats: readJson('unique-stats-db.json'),
+      setBonuses: readJson('set-bonuses.json'),
       runewords: readJson('runewords.json'),
       socketables: readJson('socketables.json'),
       mysticOrbs: readJson('mystic-orbs.json'),

@@ -10,6 +10,7 @@ describe('manual item overrides', () => {
     readFileSync(resolve('tools/item_generation/manual-overrides.json'), 'utf8')
   );
   const unique = read('unique-stats-db.json').entries;
+  const setBonuses = read('set-bonuses.json').entries;
   const byName = (name) => unique.filter((entry) => entry.name === name);
 
   it('records the manual correction groups', () => {
@@ -25,11 +26,17 @@ describe('manual item overrides', () => {
       expect(entry.stats).toContain('Required Level: 80');
       expect(entry.stats).not.toContain('Required Level: 90');
     }
-    const curse = byName('Curse of the Zakarum');
+    const curse = setBonuses.filter((entry) => entry.name === 'Curse of the Zakarum');
     expect(curse.some((entry) => entry.stats.includes('10% Chance of Crushing Blow'))).toBe(true);
     expect(
       curse.some((entry) => entry.stats.includes('(40 to 70)% Chance of Crushing Blow'))
     ).toBe(false);
+  });
+
+  it('keeps set bonuses in their own catalog', () => {
+    expect(setBonuses).toHaveLength(53);
+    expect(unique.some((entry) => entry.quality === 'Set')).toBe(false);
+    expect(setBonuses.every((entry) => entry.stats.startsWith('Set Bonus with'))).toBe(true);
   });
 
   it('keeps both Bag of Tricks variants', () => {

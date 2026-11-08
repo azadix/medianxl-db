@@ -834,6 +834,7 @@ export const useItemsStore = defineStore('items', {
           'shrines.json',
           'misc.json',
           'assur.json',
+          'set-bonuses.json',
         ];
         try {
           const requiredRes = await Promise.all(
@@ -892,9 +893,14 @@ export const useItemsStore = defineStore('items', {
             }));
           }
           const uniqueStatsData = await readJsonIfOk(optionalRes[1]);
+          const setBonusesData = await readJsonIfOk(optionalRes[14]);
           if (uniqueStatsData) {
             try {
-              const built = buildCatalogFromUniqueStats(uniqueStatsData, basesForMatch);
+              const built = buildCatalogFromUniqueStats(
+                uniqueStatsData,
+                basesForMatch,
+                setBonusesData
+              );
               overlays = built.items;
               sets = built.sets;
             } catch (e) {

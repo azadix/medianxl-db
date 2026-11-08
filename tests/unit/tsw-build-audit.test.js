@@ -58,7 +58,8 @@ function loadPlannerCatalog() {
     keepInInventory: true,
   }));
   const db = JSON.parse(readFileSync(resolve(dir, 'unique-stats-db.json'), 'utf8'));
-  const { items: overlays, sets } = buildCatalogFromUniqueStats(db, [...baseItems, ...other]);
+  const setsDb = JSON.parse(readFileSync(resolve(dir, 'set-bonuses.json'), 'utf8'));
+  const { items: overlays, sets } = buildCatalogFromUniqueStats(db, [...baseItems, ...other], setsDb);
   const runewordsData = JSON.parse(readFileSync(resolve(dir, 'runewords.json'), 'utf8'));
   const entries = Array.isArray(runewordsData) ? runewordsData : runewordsData.entries || [];
   const runewords = entries.map(runewordEntryToItemDef).filter(Boolean);

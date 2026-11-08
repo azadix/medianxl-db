@@ -145,7 +145,10 @@ def main() -> int:
     charms = json.loads(charms_path.read_text(encoding="utf-8"))
     charm_changed = 0
     for row in charms:
-        icon = by_code.get(str(row.get("id") or "").lower()) or by_name.get(_norm(str(row.get("name") or "")))
+        code_icon = by_code.get(str(row.get("id") or "").lower())
+        icon = (code_icon if code_icon and _is_gfx(code_icon) else None) or by_name.get(
+            _norm(str(row.get("name") or ""))
+        )
         if not icon or row.get("icon") == icon:
             continue
         row["icon"] = icon

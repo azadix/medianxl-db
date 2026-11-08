@@ -117,6 +117,28 @@ export function applyUniqueOverrides(entries, overrides = loadManualOverrides())
 }
 
 /**
+ * Apply stat corrections to set-bonus entries.
+ *
+ * @param {object[]} entries
+ * @param {object} overrides
+ * @returns {number}
+ */
+export function applySetBonusOverrides(entries, overrides = loadManualOverrides()) {
+  let changed = 0;
+  for (const correction of overrides.stat_corrections || []) {
+    if (correction.catalog !== 'set-bonuses') continue;
+    for (const entry of entries) {
+      if (entry.name !== correction.name) continue;
+      const value = entry[correction.field];
+      if (typeof value !== 'string' || !value.includes(correction.find)) continue;
+      entry[correction.field] = value.split(correction.find).join(correction.replace);
+      changed += 1;
+    }
+  }
+  return changed;
+}
+
+/**
  * @param {{ entries?: object[] }|object[]} runewords
  * @param {object} overrides
  * @returns {number}
@@ -169,6 +191,11 @@ export function applyManualOverrides(options = {}) {
   if (!Array.isArray(entries)) throw new Error('unique-stats-db.json has no entries array');
   const uniqueResult = applyUniqueOverrides(entries, overrides);
   writeJson(uniquePath, unique);
+
+  const setPath = path.join(itemsDir, 'set-bonuses.json');
+  const setBonuses = readJson(setPath);
+  applySetBonusOverrides(setBonuses.entries || [], overrides);
+  writeJson(setPath, setBonuses);
 
   const runewordsPath = path.join(itemsDir, 'runewords.json');
   const runewords = readJson(runewordsPath);

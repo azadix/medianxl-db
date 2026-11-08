@@ -8,7 +8,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { applyUniqueOverrides } from './apply-manual-overrides.mjs';
+import { applySetBonusOverrides, applyUniqueOverrides } from './apply-manual-overrides.mjs';
 import {
   SACRED_UNIQUES_WIKI_URL,
   parseSacredUniquesWiki,
@@ -298,6 +298,7 @@ export async function main(argv = process.argv.slice(2)) {
   }
 
   const outputPath = path.join(ROOT, 'public', 'items', folder, 'unique-stats-db.json');
+  const setOutputPath = path.join(ROOT, 'public', 'items', folder, 'set-bonuses.json');
   const existing = loadExisting(outputPath);
   const quest = loadQuestEntries();
   console.log(`Fetching secret items from ${SECRET_ITEMS_WIKI_URL}...`);
@@ -341,8 +342,16 @@ export async function main(argv = process.argv.slice(2)) {
       if (icon) entry.icon = icon;
     }
   }
-  console.log(`Parsed ${entries.length} entries: ${JSON.stringify(counts)}`);
-  printDiffSummary(existing, entries);
+  const setEntries = entries.filter(
+    (entry) =>
+      entry.quality === 'Set' && /^Set Bonus with/i.test(String(entry.stats || '').trim())
+  );
+  const uniqueEntries = entries.filter((entry) => !setEntries.includes(entry));
+  applySetBonusOverrides(setEntries);
+  setEntries.sort(compareEntries);
+  console.log(`Parsed ${entries.length} entries (${uniqueEntries.length} uniques, ${setEntries.length} set bonuses): ${JSON.stringify(counts)}`);
+  printDiffSummary(existing, uniqueEntries);
+  printDiffSummary(loadExisting(setOutputPath), setEntries);
 
   if (flags.has('--check')) {
     console.log('Check only; no files written.');
@@ -350,12 +359,19 @@ export async function main(argv = process.argv.slice(2)) {
   }
 
   mkdirSync(path.dirname(outputPath), { recursive: true });
+  const generatedAt = new Date().toISOString();
   writeFileSync(
     outputPath,
-    `${JSON.stringify({ generatedAt: new Date().toISOString(), entries }, null, 2)}\n`,
+    `${JSON.stringify({ generatedAt, entries: uniqueEntries }, null, 2)}\n`,
     'utf8'
   );
-  console.log(`Wrote ${entries.length} entries -> ${outputPath}`);
+  writeFileSync(
+    setOutputPath,
+    `${JSON.stringify({ generatedAt, entries: setEntries }, null, 2)}\n`,
+    'utf8'
+  );
+  console.log(`Wrote ${uniqueEntries.length} entries -> ${outputPath}`);
+  console.log(`Wrote ${setEntries.length} set bonuses -> ${setOutputPath}`);
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

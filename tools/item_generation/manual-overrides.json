@@ -8,7 +8,7 @@
       "replace": "Required Level: 80"
     },
     {
-      "catalog": "unique-stats-db",
+      "catalog": "set-bonuses",
       "name": "Curse of the Zakarum",
       "field": "stats",
       "find": "(40 to 70)% Chance of Crushing Blow",
