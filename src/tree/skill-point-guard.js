@@ -3,9 +3,8 @@
  * @param {boolean} canAllocate
  * @param {number} currentPoints
  * @param {number} maxPoints
- * @param {number} [pointsRemaining]
  * @returns {boolean}
  */
-export function canAddPoints(canAllocate, currentPoints, maxPoints, pointsRemaining = Infinity) {
-  return canAllocate && currentPoints < maxPoints && pointsRemaining > 0;
+export function canAddPoints(canAllocate, currentPoints, maxPoints) {
+  return canAllocate && currentPoints < maxPoints;
 }

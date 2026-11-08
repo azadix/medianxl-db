@@ -30,6 +30,8 @@ export const FLAVOR_LINE_PATTERNS = Object.freeze([
   /^[-–—]?\s*I can afford this because\b/i,
   /^the Essence of Time and the Vial of Elder Blood\b/i,
   /^Knowledge is Power\b/i,
+  /^The hunter persists\. The prey falters$/i,
+  /^While in human form:$/i,
 ]);
 
 /**

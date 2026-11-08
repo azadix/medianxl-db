@@ -7,6 +7,7 @@
  */
 
 import Character from './Character.js';
+import { getCharacterSnapshot, invalidateCharacterSnapshot } from './stats-snapshot.js';
 import { normalizePlannerStatValue, isPlannerBaseStatKey } from './planner-stats-config.js';
 import {
   getClassPlannerStatDefaults,
@@ -160,6 +161,8 @@ let _plannerSkillStatRecomputeTimer = null;
 let _plannerSkillStatRecomputePromise = null;
 /** Request another pass after the in-flight impl finishes (never overlap). */
 let _plannerSkillStatRecomputeQueued = false;
+/** Whether the next pass must also refresh item stat bonuses. */
+let _plannerSkillStatRecomputeNeedsItems = false;
 
 /**
  * Resolve merged skill levels (internal id -> blvl) for passive stat aggregation.
@@ -309,12 +312,15 @@ export function isConditionTriggerSkillAvailable(skillKey) {
  * @param {number} classSkillsBonus
  * @returns {Record<string, number>}
  */
-function runPlannerSkillStatRecomputePass(mergedBlvl, allSkillsBonus, classSkillsBonus) {
+function runPlannerSkillStatRecomputePass(mergedBlvl, allSkillsBonus, classSkillsBonus, options = {}) {
   const character = getCharacterInstance();
   if (!character) return {};
-  // Items first so skill scaling formulas see current relic/charm/gear flats.
-  // Skill allocation recompute is sync (in-memory scaling) so build load stays one turn.
-  recomputePlannerStatsFromItems(character);
+  // The stats provider already builds one combined bucket (class + items + skills).
+  // Reusing it avoids rebuilding items and skills in separate buckets on every change.
+  invalidateCharacterSnapshot();
+  if (getCharacterSnapshot()) return {};
+  // Provider not installed (unit contexts): fall back to the focused passes.
+  if (options.skipItems !== true) recomputePlannerStatsFromItems(character);
   recomputePlannerStatsFromSkillAllocations(character, {
     effectiveLevel: getEffectivePlannerLevel(),
     treeSkillsCache: getTreeSkillsCache(),
@@ -325,7 +331,8 @@ function runPlannerSkillStatRecomputePass(mergedBlvl, allSkillsBonus, classSkill
   return character.getPlannerSkillStatBonuses();
 }
 
-function runPlannerSkillStatRecomputeImpl() {
+function runPlannerSkillStatRecomputeImpl(options = {}) {
+  if (options.skipItems !== true) _plannerSkillStatRecomputeNeedsItems = true;
   if (_plannerSkillStatRecomputePromise) {
     _plannerSkillStatRecomputeQueued = true;
     return _plannerSkillStatRecomputePromise;
@@ -354,7 +361,9 @@ function runPlannerSkillStatRecomputeImpl() {
       }
       // Cross-skill values are resolved inside the bucket's skill source; a single
       // pass is enough now that the fixed-point loop is gone.
-      runPlannerSkillStatRecomputePass(mergedBlvl, allSkillsBonus, classSkillsBonus);
+      const skipItems = !_plannerSkillStatRecomputeNeedsItems;
+      _plannerSkillStatRecomputeNeedsItems = false;
+      runPlannerSkillStatRecomputePass(mergedBlvl, allSkillsBonus, classSkillsBonus, { skipItems });
       if (typeof window !== 'undefined' && !isPlannerBuildLoadInProgress()) {
         window.dispatchEvent(new CustomEvent('plannerStatsPanelRefresh'));
       }
@@ -377,7 +386,7 @@ function runPlannerSkillStatRecomputeImpl() {
  * Debounced passive stat recompute from allocated skills (scalingConstants).
  * During {@link beginPlannerBuildLoad}, calls are ignored unless `force: true`.
  * Concurrent impls are coalesced into at most one follow-up pass.
- * @param {{ immediate?: boolean, force?: boolean }} [options]
+ * @param {{ immediate?: boolean, force?: boolean, skipItems?: boolean }} [options]
  * @returns {void|Promise<void>}
  */
 export function runPlannerSkillStatRecompute(options = {}) {
@@ -390,17 +399,17 @@ export function runPlannerSkillStatRecompute(options = {}) {
       window.clearTimeout(_plannerSkillStatRecomputeTimer);
       _plannerSkillStatRecomputeTimer = null;
     }
-    return runPlannerSkillStatRecomputeImpl();
+    return runPlannerSkillStatRecomputeImpl(options);
   }
   if (typeof window === 'undefined') {
-    return runPlannerSkillStatRecomputeImpl();
+    return runPlannerSkillStatRecomputeImpl(options);
   }
   if (_plannerSkillStatRecomputeTimer != null) {
     window.clearTimeout(_plannerSkillStatRecomputeTimer);
   }
   _plannerSkillStatRecomputeTimer = window.setTimeout(() => {
     _plannerSkillStatRecomputeTimer = null;
-    void runPlannerSkillStatRecomputeImpl();
+    void runPlannerSkillStatRecomputeImpl(options);
   }, 55);
 }
 
@@ -408,7 +417,7 @@ export function runPlannerSkillStatRecompute(options = {}) {
  * Invoked when skill allocations change (debounced in tree). Extensible for skill-driven stat deltas.
  */
 export function onPlannerSkillAllocationChanged() {
-  runPlannerSkillStatRecompute();
+  runPlannerSkillStatRecompute({ skipItems: true });
 }
 
 /**
@@ -526,7 +535,7 @@ export function setSkillDisabled(internalId, disabled) {
       })
     );
   }
-  runPlannerSkillStatRecompute({ immediate: true });
+  runPlannerSkillStatRecompute({ skipItems: true });
 }
 
 /**
@@ -547,7 +556,7 @@ export function setOSkillSlotDisabled(slotId, disabled) {
       })
     );
   }
-  runPlannerSkillStatRecompute({ immediate: true });
+  runPlannerSkillStatRecompute({ skipItems: true });
 }
 
 /** @returns {string[]} */

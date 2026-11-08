@@ -1224,7 +1224,7 @@
     },
     {
       "id": "woe_reqLevelMinus10",
-      "label": "Failed corruption: -10 Required Level",
+      "label": "Remove 10 Required Level",
       "category": "utility",
       "pool": "ring_of_woe",
       "mods": [],

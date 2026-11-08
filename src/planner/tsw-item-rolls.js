@@ -49,6 +49,7 @@ import {
   collectRelicAffixSources,
 } from '@/items/relic-items.js';
 import { parseTswSocketables } from '@/items/socketables.js';
+import { canBeEthereal } from '@/items/item-types.js';
 import {
   ETHEREAL_BASE_REQ_FLAT,
   isRequirementsPercentLine,
@@ -58,7 +59,7 @@ import {
 
 /** Boilerplate / flags that are not planner modifier lines. */
 const TSW_EXTRA_SKIP_RE =
-  /^(Defense:|One-Hand Damage|Two-Hand Damage|Throw Damage|Required |Durability|Item Level|Quality Level|Prefixes:|Suffixes:|Socketed \(|Can be Inserted|Ethereal|Corrupted|Quantity|Chance to Block|Innate \w+ Damage:|\(.*\)$)/i;
+  /^(Defense:|One-Hand Damage|Two-Hand Damage|Throw Damage|Required |Durability|Item Level|Quality Level|Prefixes:|Suffixes:|Socketed \(|Can be Inserted|Ethereal|Corrupted|Quantity|Chance to Block|Current Bonus:|Innate \w+ Damage:|\(.*\)$)/i;
 
 /** In-game set-tooltip headers that TSW appends after item mods. */
 const SET_BONUS_HEADER_RE = /^Set Bonus with (complete set|\d+ or more set items):?$/i;
@@ -544,6 +545,11 @@ export function catalogModifierTemplates(def) {
   for (const optional of getOverlayOptionalModifiers(def)) {
     push(optional.text);
   }
+  for (const pool of getCharmModifierPools(def)) {
+    for (const option of pool.options) {
+      for (const text of charmPoolOptionTexts(option)) push(text);
+    }
+  }
   if (def.adds != null) push(def.adds);
   if (def.innate != null) {
     for (const line of String(def.innate).split(/\r?\n/)) push(line);
@@ -557,10 +563,11 @@ export function catalogModifierTemplates(def) {
  * @returns {boolean}
  */
 function lineMatchesCatalogTemplate(template, actual) {
-  if (affixHasPercent(template) !== affixHasPercent(actual)) return false;
-  if (matchAffixTemplate(template, actual)) return true;
+  const cleanActual = String(actual || '').replace(/\s*\(Max\s*\+?\d+%\)\s*$/i, '').trim();
+  if (affixHasPercent(template) !== affixHasPercent(cleanActual)) return false;
+  if (matchAffixTemplate(template, cleanActual)) return true;
   const sigT = signature(template);
-  const sigA = signature(actual);
+  const sigA = signature(cleanActual);
   // Claim by signature so BCL formulas / stacked fixed mods are not duplicated as extras.
   return Boolean(sigT && sigA && sigT === sigA);
 }
@@ -821,7 +828,7 @@ export function tswInstanceExtras(row, def, setDumpCtx = null) {
   if (mysticOrbs.length) out.mysticOrbs = mysticOrbs;
   const socketables = parseTswSocketables(row);
   if (socketables.length) out.socketables = socketables;
-  if (tswRowIsEthereal(row)) out.ethereal = true;
+  if (tswRowIsEthereal(row) && canBeEthereal(def)) out.ethereal = true;
   if (tswRowIsCorrupted(row)) out.corrupted = true;
   return out;
 }

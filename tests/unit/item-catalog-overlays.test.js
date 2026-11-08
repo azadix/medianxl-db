@@ -37,7 +37,8 @@ describe('unique-stats-db catalog', () => {
       ...JSON.parse(readFileSync(resolve(dir, 'other.json'), 'utf8')),
     ];
     const db = JSON.parse(readFileSync(resolve(dir, 'unique-stats-db.json'), 'utf8'));
-    const { items, sets } = buildCatalogFromUniqueStats(db, bases);
+    const setsDb = JSON.parse(readFileSync(resolve(dir, 'set-bonuses.json'), 'utf8'));
+    const { items, sets } = buildCatalogFromUniqueStats(db, bases, setsDb);
 
     expect(items.length).toBeGreaterThan(500);
     expect(sets.length).toBeGreaterThan(20);

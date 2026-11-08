@@ -260,7 +260,8 @@ export function initializeOSkillsDropdown() {
     }
 }
 
-export function handleSkillPointsChanged() {
+export function handleSkillPointsChanged(event = null) {
+  const action = event?.detail?.action;
   // loadBuildData applies skills/quests then renders once; skip intermediate tree rebuilds.
   if (isPlannerBuildLoadInProgress()) return;
   if (getSkillCardUpdateTimer()) {
@@ -280,7 +281,9 @@ export function handleSkillPointsChanged() {
     renderSkills(currentClass, skillsList, skillsContainer, savedTab, false);
     updateSkillPointsDisplay();
     updateDevotionDisplay();
-    onPlannerSkillAllocationChanged();
+    if (action !== 'toggleDisabled' && action !== 'toggleDisabledOSkill') {
+      onPlannerSkillAllocationChanged();
+    }
     setTimeout(() => {
       window.dispatchEvent(new CustomEvent('tooltipRefresh'));
     }, 10);

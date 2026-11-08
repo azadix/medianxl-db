@@ -18,12 +18,14 @@
 
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import { spawnSync } from 'node:child_process';
 import { main as generateUniques } from './generate-unique-stats-db.mjs';
 import { main as generateRelics } from './generate-relics-from-wiki.mjs';
 import { main as generateRunewords } from './generate-runewords-from-wiki.mjs';
 import { main as generateCharms } from './generate-relics-charms-from-tsw.mjs';
 import { main as generateUpgrades } from './generate-upgrade-catalogs.mjs';
 import { main as generateAffixes } from './generate-affixes-from-wiki.mjs';
+import { applyManualOverrides } from './apply-manual-overrides.mjs';
 
 const TASKS = Object.freeze({
   uniques: generateUniques,
@@ -35,6 +37,7 @@ const TASKS = Object.freeze({
 });
 const TASK_NAMES = new Set([...Object.keys(TASKS), 'all']);
 const WIKI_DEFAULT = Object.freeze(['uniques', 'relics', 'runewords', 'upgrades', 'affixes']);
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 
 /**
  * @param {string[]} argv
@@ -75,9 +78,26 @@ function argsFor(task, rest) {
 
 export async function main(argv = process.argv.slice(2)) {
   const { selected, rest } = parseArgv(argv);
+  const withIcons = rest.includes('--with-icons');
+  const taskRest = rest.filter((arg) => arg !== '--with-icons');
   for (const name of selected) {
     console.log(`\n=== ${name} ===`);
-    await TASKS[name](argsFor(name, rest));
+    await TASKS[name](argsFor(name, taskRest));
+  }
+  if (withIcons && !rest.includes('--check')) {
+    console.log('\n=== item icons ===');
+    const iconResult = spawnSync('python', ['tools/item_icons/sync_catalog_icons.py'], {
+      cwd: ROOT,
+      stdio: 'inherit',
+    });
+    if (iconResult.status !== 0) {
+      console.warn('WARNING: item icon sync failed; continuing without icon refresh.');
+    }
+  }
+  if (!rest.includes('--check')) {
+    const version = rest.find((arg) => /^\d+\.\d+$/.test(arg)) || '2.14';
+    console.log('\n=== manual overrides ===');
+    applyManualOverrides({ version, log: (message) => console.log(message) });
   }
 }
 

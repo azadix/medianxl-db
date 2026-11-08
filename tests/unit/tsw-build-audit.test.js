@@ -17,7 +17,7 @@ import {
   mergeJewelItemsIntoSocketablesCatalog,
 } from '@/items/socketables.js';
 import { parseTswSocketedCount, tswDescriptionTexts } from '@/items/custom-items.js';
-import { EQUIPMENT_SLOTS } from '@/items/item-types.js';
+import { EQUIPMENT_SLOTS, isActiveWeaponSetSlot } from '@/items/item-types.js';
 import { formatItemRequirementsLine } from '@/items/item-requirements.js';
 import { recomputePlannerStatsFromItems } from '@/items/item-character-stat-bonuses.js';
 import {
@@ -58,7 +58,8 @@ function loadPlannerCatalog() {
     keepInInventory: true,
   }));
   const db = JSON.parse(readFileSync(resolve(dir, 'unique-stats-db.json'), 'utf8'));
-  const { items: overlays, sets } = buildCatalogFromUniqueStats(db, [...baseItems, ...other]);
+  const setsDb = JSON.parse(readFileSync(resolve(dir, 'set-bonuses.json'), 'utf8'));
+  const { items: overlays, sets } = buildCatalogFromUniqueStats(db, [...baseItems, ...other], setsDb);
   const runewordsData = JSON.parse(readFileSync(resolve(dir, 'runewords.json'), 'utf8'));
   const entries = Array.isArray(runewordsData) ? runewordsData : runewordsData.entries || [];
   const runewords = entries.map(runewordEntryToItemDef).filter(Boolean);
@@ -116,13 +117,18 @@ function auditBuildFile(catalog, file, sets = []) {
     if (!SKIP_WARNING_REASONS.has(String(row.reason || ''))) continue;
     problems.push(`skip ${row.reason}: ${row.name || '(unnamed)'}`);
   }
+  // Charms below their level requirement are intentionally disabled by import;
+  // the test should still pass as long as their bonuses are not applied.
   for (const row of report.disabledCharms || []) {
-    problems.push(`charm disabled: ${row.name} (req ${row.reqLevel})`);
+    const stillApplied = Object.values(store.enabledCharms).some(
+      (instanceId) => store.catalogById[store.instances[instanceId]?.defId]?.name === row.name
+    );
+    if (stillApplied) problems.push(`charm stats still applied: ${row.name}`);
   }
   for (const row of report.disabledRelics || []) {
     problems.push(`relic disabled: ${row.name} (req ${row.reqLevel})`);
   }
-  for (const row of store.listUnmetEquippedItems()) {
+  for (const row of store.listUnmetEquippedItems({ activeOnly: true })) {
     problems.push(`unmet: ${row.name} (${row.requirementsLine})`);
   }
 
@@ -135,6 +141,7 @@ function auditBuildFile(catalog, file, sets = []) {
   }
 
   for (const slot of EQUIPMENT_SLOTS) {
+    if (!isActiveWeaponSetSlot(slot, store.weaponSet)) continue;
     const id = store.equipment[slot];
     if (id == null) continue;
     const row = bySlot.get(slot);

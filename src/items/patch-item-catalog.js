@@ -175,7 +175,7 @@ export function buildPatchItemCatalogFromData(data = {}) {
   let overlays;
   let sets;
   try {
-    const built = buildCatalogFromUniqueStats(data.uniqueStats, basesForMatch);
+    const built = buildCatalogFromUniqueStats(data.uniqueStats, basesForMatch, data.setBonuses);
     overlays = Array.isArray(built.items) ? built.items : [];
     sets = Array.isArray(built.sets) ? built.sets : [];
   } catch {
@@ -297,6 +297,7 @@ export async function loadPatchItemCatalogForFolder(folderKey) {
     const optionalNames = [
       'relics.json',
       'unique-stats-db.json',
+      'set-bonuses.json',
       'runewords.json',
       'socketables.json',
       'mystic-orbs.json',
@@ -314,9 +315,8 @@ export async function loadPatchItemCatalogForFolder(folderKey) {
       const optionalRes = await Promise.all(
         optionalNames.map((file) => fetchCatalogFile(getAssetUrl(`${prefix}/${file}`)))
       );
-      const [relics, uniqueStats, runewords, socketables, mysticOrbs, misc] = await Promise.all(
-        optionalRes.map((res) => readJsonIfOk(res))
-      );
+      const [relics, uniqueStats, setBonuses, runewords, socketables, mysticOrbs, misc] =
+        await Promise.all(optionalRes.map((res) => readJsonIfOk(res)));
       const catalog = buildPatchItemCatalogFromData({
         folderKey: key,
         bases,
@@ -324,6 +324,7 @@ export async function loadPatchItemCatalogForFolder(folderKey) {
         other,
         relics,
         uniqueStats,
+        setBonuses,
         runewords,
         socketables,
         mysticOrbs,

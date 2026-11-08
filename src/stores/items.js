@@ -24,6 +24,7 @@ import {
   isInventoryOnlyGear,
   isActiveWeaponSetSlot,
   weaponSetForEquipSlot,
+  canBeEthereal,
   isQuiverItem,
   isQuiverEffectActive,
   pairedWeaponSlot,
@@ -531,6 +532,32 @@ export function itemsSnapshotHasState(snap) {
   return false;
 }
 
+/**
+ * Identity keys for requirement-cache signatures. Item requirement resolution is
+ * expensive (affix ranges, mystic-orbs, socketable lines), and several UI surfaces
+ * ask for the same slot's requirements multiple times per revision.
+ */
+const _requirementRefIds = new WeakMap();
+let _requirementRefSeq = 1;
+
+/**
+ * @param {unknown} value
+ * @returns {string}
+ */
+function requirementRefKey(value) {
+  if (value == null) return '-';
+  if (typeof value !== 'object') return String(value);
+  let id = _requirementRefIds.get(value);
+  if (!id) {
+    id = _requirementRefSeq++;
+    _requirementRefIds.set(value, id);
+  }
+  return String(id);
+}
+
+/** @type {WeakMap<object, { key: string, value: object }>} */
+const _itemRequirementsCache = new WeakMap();
+
 export const useItemsStore = defineStore('items', {
   state: () => ({
     /** @type {ItemDef[]} */
@@ -833,6 +860,8 @@ export const useItemsStore = defineStore('items', {
           'blessings.json',
           'shrines.json',
           'misc.json',
+          'assur.json',
+          'set-bonuses.json',
         ];
         try {
           const requiredRes = await Promise.all(
@@ -891,9 +920,14 @@ export const useItemsStore = defineStore('items', {
             }));
           }
           const uniqueStatsData = await readJsonIfOk(optionalRes[1]);
+          const setBonusesData = await readJsonIfOk(optionalRes[14]);
           if (uniqueStatsData) {
             try {
-              const built = buildCatalogFromUniqueStats(uniqueStatsData, basesForMatch);
+              const built = buildCatalogFromUniqueStats(
+                uniqueStatsData,
+                basesForMatch,
+                setBonusesData
+              );
               overlays = built.items;
               sets = built.sets;
             } catch (e) {
@@ -917,7 +951,12 @@ export const useItemsStore = defineStore('items', {
           loadCorruptionsCatalog(await readJsonIfOk(optionalRes[6]));
           loadAffixTemplates(await readJsonIfOk(optionalRes[7]));
           loadItemAffixes(await readJsonIfOk(optionalRes[8]));
-          loadItemMechanics(await readJsonIfOk(optionalRes[9]));
+          const mechanicsData = await readJsonIfOk(optionalRes[9]);
+          const assurData = await readJsonIfOk(optionalRes[13]);
+          loadItemMechanics({
+            ...(mechanicsData && typeof mechanicsData === 'object' ? mechanicsData : {}),
+            assur: assurData && typeof assurData === 'object' ? assurData : {},
+          });
           loadHonorificBlessings(await readJsonIfOk(optionalRes[10]));
           loadShrinesCatalog(await readJsonIfOk(optionalRes[11]));
           const miscData = await readJsonIfOk(optionalRes[12]);
@@ -1053,17 +1092,33 @@ export const useItemsStore = defineStore('items', {
      */
     getRequirementsForInstance(instanceId) {
       if (instanceId == null) return null;
+      const inst = this.instances[instanceId];
+      if (!inst) return null;
       const def = this.getDefForInstance(instanceId);
       if (!def) return null;
-      return resolveItemRequirements(def, {
+      const cacheKey = [
+        requirementRefKey(def),
+        requirementRefKey(inst.rolls),
+        requirementRefKey(inst.extras),
+        requirementRefKey(inst.socketables),
+        requirementRefKey(inst.mysticOrbs),
+        requirementRefKey(inst.corruptions),
+        requirementRefKey(inst.mechanics),
+        inst.ethereal === true ? 'eth' : '',
+      ].join('|');
+      const cached = _itemRequirementsCache.get(inst);
+      if (cached && cached.key === cacheKey) return cached.value;
+      const value = resolveItemRequirements(def, {
         rolls: this.getRollsForInstance(instanceId),
         extras: this.getExtrasForInstance(instanceId),
         socketables: this.getSocketablesForInstance(instanceId),
         mysticOrbs: this.getMysticOrbsForInstance(instanceId),
-        corruptions: this.instances[instanceId]?.corruptions,
-        mechanics: this.instances[instanceId]?.mechanics,
-        ethereal: this.instances[instanceId]?.ethereal === true,
+        corruptions: inst.corruptions,
+        mechanics: inst.mechanics,
+        ethereal: inst.ethereal === true,
       });
+      _itemRequirementsCache.set(inst, { key: cacheKey, value });
+      return value;
     },
 
     /**
@@ -1232,12 +1287,16 @@ export const useItemsStore = defineStore('items', {
 
     /**
      * Equipped items that fail level/str/dex requirements (for import toasts).
+     * @param {{ activeOnly?: boolean }} [options]
      * @returns {Array<{ name: string, requirementsLine: string }>}
      */
-    listUnmetEquippedItems() {
+    listUnmetEquippedItems(options = {}) {
       /** @type {Array<{ name: string, requirementsLine: string }>} */
       const out = [];
+      const activeOnly = options.activeOnly === true;
+      const activeSet = effectiveWeaponSet(this);
       for (const slot of EQUIPMENT_SLOTS) {
+        if (activeOnly && !isActiveWeaponSetSlot(slot, activeSet)) continue;
         const id = this.equipment[slot];
         if (id == null) continue;
         const def = this.getDefForInstance(id);
@@ -1688,6 +1747,7 @@ export const useItemsStore = defineStore('items', {
     setInstanceEthereal(instanceId, ethereal) {
       const inst = this.instances[instanceId];
       if (!inst) return false;
+      if (ethereal && !canBeEthereal(this.getDefForInstance(instanceId))) return false;
       const flags = getItemUpgradeFlags({
         oil: inst.oil,
         corruptions: inst.corruptions,
@@ -2788,6 +2848,7 @@ export const useItemsStore = defineStore('items', {
         const dimNorm = normalizeDimensionalKeySnapshot(defId, rolls);
         defId = dimNorm.defId;
         rolls = dimNorm.rolls;
+        if (ethereal && !canBeEthereal(this.catalogByIdMap[defId])) ethereal = false;
         if (!this.catalogByIdMap[defId]) {
           defId = resolveCatalogDefId(defId, this.catalogByIdMap);
         }

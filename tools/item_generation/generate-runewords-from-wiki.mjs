@@ -9,6 +9,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { applyRunewordOverrides } from './apply-manual-overrides.mjs';
 import {
   RUNEWORDS_WIKI_URL,
   WIKI_RUNEWORD_VERSION_FOLDERS,
@@ -125,6 +126,7 @@ export async function main(argv = process.argv.slice(2)) {
   }
 
   const entries = parseRunewordsWiki(html);
+  applyRunewordOverrides(entries);
   validateEntries(entries);
   console.log(`Parsed ${entries.length} runewords.`);
   printDiffSummary(existing, entries);

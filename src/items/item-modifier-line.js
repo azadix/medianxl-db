@@ -5,8 +5,6 @@
  * @module items/item-modifier-line
  */
 
-import { isConditionSelected } from '@/stores/planner-config-store.js';
-
 export const MODIFIER_COLOR_MAGIC = 'magic';
 export const MODIFIER_COLOR_ORANGE = 'orange';
 export const MODIFIER_COLOR_GREY = 'grey';
@@ -17,6 +15,17 @@ export const MODIFIER_COLOR_DARKGREEN = 'darkgreen';
 export const MODIFIER_COLOR_ADDED = 'added';
 /** Catalog affix whose rolled value is outside the unique min/max. */
 export const MODIFIER_COLOR_BOOSTED = 'boosted';
+
+let conditionReader = () => false;
+
+/**
+ * Register the planner condition lookup without importing the UI store from this
+ * generator-safe module.
+ * @param {(key: string) => boolean} reader
+ */
+export function setModifierConditionReader(reader) {
+  conditionReader = typeof reader === 'function' ? reader : () => false;
+}
 
 const COLOR_PREFIX_RE = /^\{(orange|grey|added|boosted|red|green|darkgreen)\}/;
 const COND_PREFIX_RE = /^\{cond:([a-zA-Z0-9_]+)\}/;
@@ -335,7 +344,7 @@ export function isModifierLineActive(line) {
   const decoded = decodeModifierLine(line);
   if (decoded.color === MODIFIER_COLOR_GREY) return false;
   if (!decoded.showCondition.length) return true;
-  return decoded.showCondition.some((k) => isConditionSelected(k));
+  return decoded.showCondition.some((k) => conditionReader(k));
 }
 
 /**

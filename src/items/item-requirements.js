@@ -6,6 +6,7 @@
 import { isModifierLineActive, modifierLineText } from '@/items/item-modifier-line.js';
 import { stripDisplayedRollRanges } from '@/items/affix-rolls.js';
 import { getOverlayStatLines, isOverlayItem } from '@/items/item-overlays.js';
+import { canBeEthereal } from '@/items/item-types.js';
 import {
   getWormholeCycleReqLevelBonus,
   isCorruptedWormhole,
@@ -263,12 +264,13 @@ export function resolveItemRequirements(def, options = {}) {
   );
   if (assurReqBonus > 0) reqLevel += assurReqBonus;
   const ethereal =
-    options.ethereal === true ||
-    def?.ethereal === true ||
-    getItemUpgradeFlags({
-      corruptions: options.corruptions,
-      mysticOrbs: options.mysticOrbs,
-    }).etherealForced;
+    canBeEthereal(def) &&
+    (options.ethereal === true ||
+      def?.ethereal === true ||
+      getItemUpgradeFlags({
+        corruptions: options.corruptions,
+        mysticOrbs: options.mysticOrbs,
+      }).etherealForced);
   const ethFlat = ethereal ? ETHEREAL_BASE_REQ_FLAT : 0;
   const baseStr = nonNeg(def?.baseReqStr ?? def?.reqStr);
   const baseDex = nonNeg(def?.baseReqDex ?? def?.reqDex);

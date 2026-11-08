@@ -68,7 +68,7 @@ function chooseDefault(e) {
   e.stopPropagation();
   setSkillVariantKey(props.variantMapKey, null);
   syncLabel();
-  runPlannerSkillStatRecompute({ immediate: true });
+  runPlannerSkillStatRecompute({ immediate: true, skipItems: true });
   emit('refresh-tooltip');
   panelOpen.value = false;
   if (panelEl.value) panelEl.value.style.display = 'none';
@@ -78,7 +78,7 @@ function chooseVariant(key, e) {
   e.stopPropagation();
   setSkillVariantKey(props.variantMapKey, key);
   syncLabel();
-  runPlannerSkillStatRecompute({ immediate: true });
+  runPlannerSkillStatRecompute({ immediate: true, skipItems: true });
   emit('refresh-tooltip');
   panelOpen.value = false;
   if (panelEl.value) panelEl.value.style.display = 'none';

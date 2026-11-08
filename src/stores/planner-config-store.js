@@ -1,5 +1,6 @@
 import { reactive } from 'vue';
 import { getFileSkillStore } from '@/shared/skill-data-store.js';
+import { setModifierConditionReader } from '@/items/item-modifier-line.js';
 
 // Selected condition keys stored lowercased
 const _selected = reactive({});
@@ -72,6 +73,8 @@ export function clearAllConditions() {
 export function getSelectedConditionKeys() {
   return Object.keys(_selected).filter((k) => Boolean(_selected[k]));
 }
+
+setModifierConditionReader(isConditionSelected);
 
 export default {
   _selected,

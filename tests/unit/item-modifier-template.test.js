@@ -31,6 +31,8 @@ describe('item modifier templates', () => {
   it('classifies flavor and crafting instructions as display-only', () => {
     expect(isFlavorItemLine('Cube with a Perfect Gem to upgrade')).toBe(true);
     expect(isFlavorItemLine('Only one may be worn')).toBe(true);
+    expect(isFlavorItemLine('The hunter persists. The prey falters')).toBe(true);
+    expect(isFlavorItemLine('While in human form:')).toBe(true);
     expect(isFlavorItemLine('+40 to Vitality')).toBe(false);
     expect(getItemModifierTemplate('This item is a quest item').flavor).toBe(true);
   });
