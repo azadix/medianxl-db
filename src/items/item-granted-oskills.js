@@ -880,9 +880,13 @@ let _equippedSoftLinesCache = { key: '', lines: [] };
  * @returns {string[]}
  */
 function getEquippedSoftBonusLines(itemsStore, className) {
+  const reqStats = itemsStore.getCharacterRequirementStats?.() || {};
   const signatureParts = [
     className,
     String(itemsStore.weaponSet ?? 0),
+    String(reqStats.level ?? ''),
+    String(reqStats.strength ?? ''),
+    String(reqStats.dexterity ?? ''),
     isCompleteItemText() ? 'full' : 'partial',
   ];
   for (const slot of EQUIPMENT_SLOTS) {

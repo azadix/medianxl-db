@@ -173,6 +173,124 @@ export function sumMaxBaseLevelBonusFromModifierLines(lines, ctx = {}) {
   return total;
 }
 
+const _maxBaseRefIds = new WeakMap();
+let _maxBaseRefSeq = 1;
+
+/**
+ * @param {unknown} value
+ * @returns {string}
+ */
+function maxBaseRefKey(value) {
+  if (value == null) return '-';
+  if (typeof value !== 'object') return String(value);
+  let id = _maxBaseRefIds.get(value);
+  if (!id) {
+    id = _maxBaseRefSeq++;
+    _maxBaseRefIds.set(value, id);
+  }
+  return String(id);
+}
+
+/** @type {WeakMap<string[], Array<{ id: string, displayName: string, skillName: string, amount: number }>>} */
+const _maxBaseIndexCache = new WeakMap();
+
+/**
+ * Parse max-base-level lines once and index them by resolved skill. The previous
+ * path reparsed every gear line and searched the skill catalog for every skill.
+ * @param {string[]} lines
+ * @returns {Array<{ id: string, displayName: string, skillName: string, amount: number }>}
+ */
+function maxBaseBonusIndex(lines) {
+  const cached = _maxBaseIndexCache.get(lines);
+  if (cached) return cached;
+  /** @type {Array<{ id: string, displayName: string, skillName: string, amount: number }>} */
+  const entries = [];
+  for (const line of Array.isArray(lines) ? lines : []) {
+    const parsed = parseMaxBaseLevelBonusFromModifierLine(line);
+    if (!parsed) continue;
+    const cat = resolveSkillRef(parsed.skillName);
+    entries.push({
+      id: cat?.id || '',
+      displayName: cat?.displayName || parsed.skillName,
+      skillName: parsed.skillName,
+      amount: parsed.amount,
+    });
+  }
+  _maxBaseIndexCache.set(lines, entries);
+  return entries;
+}
+
+/**
+ * @param {string[]} lines
+ * @param {string} skillId
+ * @param {string} displayName
+ * @returns {number}
+ */
+function maxBaseBonusForSkill(lines, skillId, displayName) {
+  let total = 0;
+  for (const entry of maxBaseBonusIndex(lines)) {
+    if (skillId && entry.id && entry.id === skillId) {
+      total += entry.amount;
+      continue;
+    }
+    if (
+      namesEqual(entry.displayName, displayName) ||
+      namesEqual(entry.skillName, displayName)
+    ) {
+      total += entry.amount;
+    }
+  }
+  return total;
+}
+
+/** @type {{ key: string, lines: string[] }} */
+let _equippedMaxBaseLinesCache = { key: '', lines: [] };
+
+/**
+ * Equipped modifier lines that can carry max-base-level bonuses. Resolving these
+ * for every skill re-parses the whole gear payload; cache until gear changes.
+ * @param {object} itemsStore
+ * @returns {string[]}
+ */
+function equippedMaxBaseLines(itemsStore) {
+  const reqStats = itemsStore.getCharacterRequirementStats?.() || {};
+  const signatureParts = [
+    String(itemsStore.weaponSet ?? 0),
+    String(itemsStore.viewerClassName ?? ''),
+    String(reqStats.level ?? ''),
+    String(reqStats.strength ?? ''),
+    String(reqStats.dexterity ?? ''),
+  ];
+  for (const slot of EQUIPMENT_SLOTS) {
+    const instanceId = itemsStore.equipment?.[slot];
+    if (instanceId == null) {
+      signatureParts.push(`${slot}:-`);
+      continue;
+    }
+    const instance = itemsStore.instances?.[instanceId];
+    signatureParts.push(
+      `${slot}:${instanceId}:${maxBaseRefKey(instance?.rolls)}:${maxBaseRefKey(instance?.extras)}`
+    );
+  }
+  const key = signatureParts.join('|');
+  if (_equippedMaxBaseLinesCache.key === key) return _equippedMaxBaseLinesCache.lines;
+
+  /** @type {string[]} */
+  const lines = [];
+  for (const slot of EQUIPMENT_SLOTS) {
+    if (!itemsStore.equipmentSlotContributesBonuses?.(slot)) continue;
+    const instanceId = itemsStore.equipment?.[slot];
+    if (instanceId == null) continue;
+    const def = itemsStore.getDefForInstance?.(instanceId);
+    if (!def) continue;
+    const rolls = itemsStore.getRollsForInstance?.(instanceId) ?? null;
+    const extras = itemsStore.getExtrasForInstance?.(instanceId) ?? [];
+    lines.push(...resolvedEquipmentModifierLines(def, rolls, extras));
+  }
+  _equippedMaxBaseLinesCache = { key, lines };
+  return lines;
+}
+
 /**
  * Max base level bonus from equipped gear that meets requirements.
  * @param {{ skillId?: string, displayName?: string }} [options]
@@ -185,20 +303,7 @@ export function getEquippedMaxBaseLevelBonusForSkill(options = {}) {
     if (!skillId && !displayName) return 0;
 
     const itemsStore = useItemsStore();
-    /** @type {string[]} */
-    const lines = [];
-    for (const slot of EQUIPMENT_SLOTS) {
-      if (!itemsStore.equipmentSlotContributesBonuses?.(slot)) continue;
-      const instanceId = itemsStore.equipment?.[slot];
-      if (instanceId == null) continue;
-      const def = itemsStore.getDefForInstance?.(instanceId);
-      if (!def) continue;
-      const rolls = itemsStore.getRollsForInstance?.(instanceId) ?? null;
-      const extras = itemsStore.getExtrasForInstance?.(instanceId) ?? [];
-      lines.push(...resolvedEquipmentModifierLines(def, rolls, extras));
-    }
-
-    return sumMaxBaseLevelBonusFromModifierLines(lines, { skillId, displayName });
+    return maxBaseBonusForSkill(equippedMaxBaseLines(itemsStore), skillId, displayName);
   } catch {
     return 0;
   }

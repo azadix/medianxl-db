@@ -532,6 +532,32 @@ export function itemsSnapshotHasState(snap) {
   return false;
 }
 
+/**
+ * Identity keys for requirement-cache signatures. Item requirement resolution is
+ * expensive (affix ranges, mystic-orbs, socketable lines), and several UI surfaces
+ * ask for the same slot's requirements multiple times per revision.
+ */
+const _requirementRefIds = new WeakMap();
+let _requirementRefSeq = 1;
+
+/**
+ * @param {unknown} value
+ * @returns {string}
+ */
+function requirementRefKey(value) {
+  if (value == null) return '-';
+  if (typeof value !== 'object') return String(value);
+  let id = _requirementRefIds.get(value);
+  if (!id) {
+    id = _requirementRefSeq++;
+    _requirementRefIds.set(value, id);
+  }
+  return String(id);
+}
+
+/** @type {WeakMap<object, { key: string, value: object }>} */
+const _itemRequirementsCache = new WeakMap();
+
 export const useItemsStore = defineStore('items', {
   state: () => ({
     /** @type {ItemDef[]} */
@@ -1066,17 +1092,33 @@ export const useItemsStore = defineStore('items', {
      */
     getRequirementsForInstance(instanceId) {
       if (instanceId == null) return null;
+      const inst = this.instances[instanceId];
+      if (!inst) return null;
       const def = this.getDefForInstance(instanceId);
       if (!def) return null;
-      return resolveItemRequirements(def, {
+      const cacheKey = [
+        requirementRefKey(def),
+        requirementRefKey(inst.rolls),
+        requirementRefKey(inst.extras),
+        requirementRefKey(inst.socketables),
+        requirementRefKey(inst.mysticOrbs),
+        requirementRefKey(inst.corruptions),
+        requirementRefKey(inst.mechanics),
+        inst.ethereal === true ? 'eth' : '',
+      ].join('|');
+      const cached = _itemRequirementsCache.get(inst);
+      if (cached && cached.key === cacheKey) return cached.value;
+      const value = resolveItemRequirements(def, {
         rolls: this.getRollsForInstance(instanceId),
         extras: this.getExtrasForInstance(instanceId),
         socketables: this.getSocketablesForInstance(instanceId),
         mysticOrbs: this.getMysticOrbsForInstance(instanceId),
-        corruptions: this.instances[instanceId]?.corruptions,
-        mechanics: this.instances[instanceId]?.mechanics,
-        ethereal: this.instances[instanceId]?.ethereal === true,
+        corruptions: inst.corruptions,
+        mechanics: inst.mechanics,
+        ethereal: inst.ethereal === true,
       });
+      _itemRequirementsCache.set(inst, { key: cacheKey, value });
+      return value;
     },
 
     /**
