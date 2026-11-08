@@ -341,16 +341,8 @@ export function getLevelColorClass(currentPoints, maxPoints) {
     return currentPoints >= maxPoints ? 'has-text-warning' : 'has-text-grey';
 }
 
-/**
- * Check if skill can have points added
- * @param {boolean} canAllocate - Whether skill can allocate points
- * @param {number} currentPoints - Current skill points
- * @param {number} maxPoints - Maximum skill points
- * @returns {boolean}
- */
-export function canAddPoints(canAllocate, currentPoints, maxPoints) {
-    return canAllocate && currentPoints < maxPoints;
-}
+/** Check if skill can have points added (DOM-free guard re-exported for callers). */
+export { canAddPoints } from './skill-point-guard.js';
 
 /**
  * Get restriction text from restrictions array (all reasons, for tooltip / native title).

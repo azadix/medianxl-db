@@ -427,11 +427,25 @@ export function tswDescriptionColoredTexts(lines) {
     let text = '';
     /** @type {number|null} */
     let code = null;
+    let flatSegments = false;
     for (const seg of line) {
-      if (!Array.isArray(seg)) continue;
-      text += String(seg[0] || '');
-      const n = Number(seg[1]);
-      if (code == null && Number.isFinite(n) && n >= 0) code = n;
+      if (Array.isArray(seg)) {
+        text += String(seg[0] || '');
+        const n = Number(seg[1]);
+        if (code == null && Number.isFinite(n) && n >= 0) code = n;
+      } else if (typeof seg === 'string') {
+        // Socketable descriptions from TSW use flat "text colorCode" strings.
+        text += seg;
+        flatSegments = true;
+      }
+    }
+    if (flatSegments && code == null) {
+      const trailing = /(?:^|\s)(\d{1,2})\s*$/.exec(text);
+      const n = trailing ? Number(trailing[1]) : NaN;
+      if (Number.isFinite(n) && n >= 0 && n <= 11) {
+        code = n;
+        text = text.slice(0, trailing.index).trimEnd();
+      }
     }
     text = text.trim();
     if (!text) continue;

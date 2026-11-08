@@ -48,5 +48,7 @@
   { "key": "while_snake_stance", "name": null, "description": "", "group": "stance" },
   { "key": "while_eagle_stance", "name": null, "description": "", "group": "stance" },
   { "key": "while_wolf_stance", "name": null, "description": "", "group": "stance" },
-  { "key": "while_bear_stance", "name": null, "description": "", "group": "stance" }
+  { "key": "while_bear_stance", "name": null, "description": "", "group": "stance" },
+
+  { "key": "while_using_an_apple", "name": "While using an Apple", "description": "", "group": "potion" }
 ]

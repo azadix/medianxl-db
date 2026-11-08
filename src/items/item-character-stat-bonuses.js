@@ -1,34 +1,13 @@
 /**
- * @file Parse item/relic/charm modifier lines into planner character-stat bonuses.
+ * @file Parse item modifier lines into planner character-stat bonuses.
  * @module items/item-character-stat-bonuses
  */
 
 import { useItemsStore } from '@/stores/items.js';
-import { isCompleteItemText } from '@/items/item-text-completeness.js';
-import { tswDescriptionTexts } from '@/items/custom-items.js';
-
-/**
- * The full rendered item text from the imported dump, when this build's text is complete.
- * `extras` deliberately drops lines that match catalogue templates (so tooltips do not show
- * duplicates), but for stat aggregation those lines carry the REAL rolled values - Umbaru
- * Treasure's dump says +50 Str / +52 Dex / +48 Vit / +42 Egy, and already includes the
- * upgraded "+20 to all Attributes" that the catalogue def still lists separately.
- * @param {object} itemsStore
- * @param {number} instanceId
- * @returns {string[]|null}
- */
-function rawDumpLinesForInstance(itemsStore, instanceId) {
-  if (!isCompleteItemText()) return null;
-  const row = itemsStore.getTswRowForInstance?.(instanceId);
-  if (!row) return null;
-  const lines = tswDescriptionTexts(row.description_lines);
-  return lines.length ? lines : null;
-}
 import { getCharacterInstance } from '@/character/planner-instance.js';
 import {
   getPlannerCharacterStatDefs,
   isPlannerBaseStatKey,
-  normalizePlannerStatValue,
 } from '@/character/planner-stats-config.js';
 import { getFileSkillStore } from '@/shared/skill-data-store.js';
 import { isModifierLineActive, modifierLineText } from '@/items/item-modifier-line.js';
@@ -36,24 +15,8 @@ import { stripDisplayedRollRanges } from '@/items/affix-rolls.js';
 import { parseSkillBonusFromModifierLine } from '@/items/skill-bonus-from-modifiers.js';
 import { matchAnyCatalogSkillGrantFromLine } from '@/items/item-granted-oskills.js';
 import { stripProcLinePrefix } from '@/items/item-procs.js';
-import {
-  defaultRelicAffixRolls,
-  getRelicStatLines,
-  isRelicBonusActive,
-} from '@/items/relic-items.js';
-import {
-  defaultCharmRollsForDef,
-  getCharmAffixSources,
-  isCharmBonusActive,
-  resolveCharmAffixText,
-} from '@/items/charm-items.js';
-import { getItemStatLines } from '@/items/item-stats.js';
-import { EQUIPMENT_SLOTS } from '@/items/item-types.js';
-import {
-  countEquippedSetPieces,
-  formatSetBonusLabel,
-  resolveSetBonuses,
-} from '@/items/item-overlays.js';
+import { createCharacterBucket, createStatRegistry } from '@/character/bucket/index.js';
+import { applyItemSources } from '@/character/bucket/sources/items.js';
 
 /**
  * @typedef {{
@@ -412,7 +375,7 @@ function getKeyPatterns() {
 
 /**
  * Optional aliases from character_stats labels when they contain `#`.
- * Labels never gate counting — keys / stats.json / EXTRA always apply first.
+ * Labels never gate counting â€” keys / stats.json / EXTRA always apply first.
  * @param {string} label
  * @param {string} key
  * @returns {Array<{ re: RegExp, key: string }>}
@@ -539,7 +502,7 @@ function shouldSkipNonStatLine(text) {
   if (/Socketed\s*\(/i.test(t)) return true;
   if (/Damage:/i.test(t) || /Defense:/i.test(t)) return true;
   if (/Melee range:/i.test(t) || /Attack Speed Modifier:/i.test(t)) return true;
-  // Skill-specific flavour ("Arrow Swarm: +2 Projectiles") — not sheet stats.
+  // Skill-specific flavour ("Arrow Swarm: +2 Projectiles") â€” not sheet stats.
   // Keep Activation Frequency / resist lines (colon is common in those affixes).
   if (
     /^[A-Za-z0-9][^:]{0,40}:\s/.test(t) &&
@@ -580,7 +543,7 @@ function bonusesForKeys(keys, amount) {
   for (const key of keys) {
     if (!isPlannerBaseStatKey(key)) continue;
     let n = amount;
-    // Item text is always "-X% to Enemy … Resistance"; there is no positive form.
+    // Item text is always "-X% to Enemy â€¦ Resistance"; there is no positive form.
     if (ENEMY_ELEMENTAL_RESIST_KEYS.includes(key)) n = Math.abs(n);
     if (n === 0) continue;
     out.push({ key, amount: n });
@@ -609,7 +572,7 @@ export function classifyCharacterStatModifierLine(line, options = {}) {
   }
 
   // Nephalem Weapons wording: "20-30% of base Strength and Dexterity",
-  // "10-15% of base Vitality". These do NOT grant the attribute — a percentage of the
+  // "10-15% of base Vitality". These do NOT grant the attribute â€” a percentage of the
   // base attribute is added as fire and lightning damage to weapons instead. Counting
   // them as flat/total attribute bonuses inflates strength/dexterity.
   if (/\bof\s+base\s+(?:strength|dexterity|vitality|energy)\b/i.test(text)) {
@@ -672,7 +635,7 @@ export function classifyCharacterStatModifierLine(line, options = {}) {
     }
   }
 
-  // Label aliases last — helpful when wording differs from the key, never required.
+  // Label aliases last â€” helpful when wording differs from the key, never required.
   if (!matched) {
     for (const { re, key } of getLabelAliasPatterns()) {
       const m = re.exec(matchText) || re.exec(matchNoPlus);
@@ -698,7 +661,7 @@ export function classifyCharacterStatModifierLine(line, options = {}) {
 
 /**
  * Parse one resolved modifier line into planner character-stat delta(s).
- * Matching uses item aliases, stats.json formats, and planner **keys** —
+ * Matching uses item aliases, stats.json formats, and planner **keys** â€”
  * character_stats labels are display-only and do not affect counting.
  * @param {string|null|undefined} line
  * @returns {ParsedCharacterStatBonus[]}
@@ -717,52 +680,8 @@ export function parseCharacterStatBonusFromModifierLine(line) {
 }
 
 /**
- * @param {string[]} lines
- * @param {string} sourceLabel
- * @param {Record<string, number>} bonuses
- * @param {Record<string, PlannerStatItemModifier[]>} modsByKey
- * @param {UnknownItemStatModifier[]} unknownOut
- */
-function accumulateLines(lines, sourceLabel, bonuses, modsByKey, unknownOut, characterLevel = null) {
-  for (const line of Array.isArray(lines) ? lines : []) {
-    const classified = classifyCharacterStatModifierLine(line, { characterLevel });
-    if (classified.kind === 'unknown') {
-      unknownOut.push({ text: classified.text, sourceLabel });
-      continue;
-    }
-    for (const parsed of classified.bonuses) {
-      const { key, amount } = parsed;
-      bonuses[key] = (bonuses[key] || 0) + amount;
-      if (!modsByKey[key]) modsByKey[key] = [];
-      const existing = modsByKey[key].find((m) => m.sourceLabel === sourceLabel);
-      if (existing) {
-        existing.value += amount;
-        const sign = existing.value >= 0 ? '+' : '';
-        existing.description = `${sign}${existing.value}`;
-        continue;
-      }
-      const sign = amount >= 0 ? '+' : '';
-      modsByKey[key].push({
-        sourceLabel,
-        description: `${sign}${amount}`,
-        value: amount,
-        active: true,
-      });
-    }
-  }
-}
-
-/**
- * @param {object|null|undefined} def
- * @returns {string}
- */
-function sourceLabelForDef(def) {
-  const name = def?.name != null ? String(def.name).trim() : '';
-  return name || (def?.id != null ? String(def.id) : 'Item');
-}
-
-/**
- * Sum character-stat bonuses from enabled relics / charms / equipped gear.
+ * Sum character-stat bonuses from enabled relics / charms / equipped gear through the
+ * character bucket.
  * @param {{ className?: string|null }} [options]
  * @returns {{
  *   bonuses: Record<string, number>,
@@ -770,239 +689,77 @@ function sourceLabelForDef(def) {
  *   unknownModifiers: UnknownItemStatModifier[],
  * }}
  */
-/**
- * Normalised comparison key for item stat lines, so the same bonus spelled slightly
- * differently ("+40 to All Attributes" vs the dump's "+40 to all Attributes", or with a
- * leading "+" omitted) is recognised as one line instead of being counted twice.
- * @param {unknown} text
- * @returns {string}
- */
-function statLineCompareKey(text) {
-  return String(text ?? '')
-    .toLowerCase()
-    .replace(/^\s*\+/, '')
-    .replace(/\s+/g, ' ')
-    .trim();
-}
-
-const ALL_ATTRIBUTE_NAMES = ['Strength', 'Dexterity', 'Vitality', 'Energy'];
-
-/**
- * Some exporters expand "all Attributes" into four per-attribute lines while catalogue defs
- * keep the single combined line ("+10 to all Attributes"). Comparing those directly fails,
- * so the same bonus is applied twice. Expand both sides to per-attribute lines before
- * comparing; a combined line with no per-attribute counterpart still survives as four lines.
- * @param {unknown} text
- * @returns {string[]}
- */
-function expandAllAttributesStatLine(text) {
-  const raw = String(text ?? '').trim();
-  const match = /^(\+?)(\d+(?:\.\d+)?)(%?)\s+to\s+all\s+attributes$/i.exec(raw);
-  if (!match) return [raw];
-  const [, sign, amount, percent] = match;
-  return ALL_ATTRIBUTE_NAMES.map((name) => `${sign}${amount}${percent} to ${name}`);
-}
-
-/**
- * Comparison keys for one item stat line (one key, or four when it is an all-Attributes line).
- * @param {unknown} text
- * @returns {string[]}
- */
-function statLineCompareKeys(text) {
-  return expandAllAttributesStatLine(text).map(statLineCompareKey);
-}
-
 export function collectEnabledItemCharacterStatBonuses(options = {}) {
-  /** @type {Record<string, number>} */
-  const bonuses = {};
-  /** @type {Record<string, PlannerStatItemModifier[]>} */
-  const modifiersByKey = {};
-  /** @type {UnknownItemStatModifier[]} */
-  const unknownModifiers = [];
+  return (
+    collectItemBonusesViaBucket(options) || {
+      bonuses: {},
+      modifiersByKey: {},
+      unknownModifiers: [],
+    }
+  );
+}
 
+/**
+ * @param {object} [options]
+ * @returns {{ bonuses: Record<string, number>, modifiersByKey: Record<string, PlannerStatItemModifier[]>, unknownModifiers: UnknownItemStatModifier[] }|null}
+ */
+function collectItemBonusesViaBucket(options = {}) {
   try {
     const itemsStore = useItemsStore();
     const character = getCharacterInstance();
-    const className =
-      (options.className != null ? String(options.className).trim() : '') ||
-      (character?.className != null ? String(character.className).trim() : '') ||
-      null;
-    const characterLevel = character?.level ?? null;
-
-    for (const slot of EQUIPMENT_SLOTS) {
-      if (!itemsStore.equipmentSlotContributesBonuses?.(slot)) continue;
-      const instanceId = itemsStore.equipment?.[slot];
-      if (instanceId == null) continue;
-      const def = itemsStore.getDefForInstance?.(instanceId);
-      if (!def) continue;
-      const rolls = itemsStore.getRollsForInstance?.(instanceId) ?? null;
-      const extras = itemsStore.getExtrasForInstance?.(instanceId) ?? [];
-      const bonusOpts = itemsStore.getItemBonusOptionsForInstance?.(instanceId) ?? {};
-      const lines = getItemStatLines(def, rolls, {
-        hideRollableRanges: false,
-        showRollRanges: false,
-        characterLevel,
-        charmInInventory: true,
-        className,
-        extras,
-        mysticOrbs: itemsStore.getMysticOrbsForInstance?.(instanceId) ?? [],
-        socketables: itemsStore.getSocketablesForInstance?.(instanceId) ?? [],
-        ...bonusOpts,
-      });
-      accumulateLines(lines, sourceLabelForDef(def), bonuses, modifiersByKey, unknownModifiers, characterLevel);
+    const registry = createStatRegistry(getPlannerCharacterStatDefs());
+    if (!character || !itemsStore) return null;
+    const bucket = createCharacterBucket({ registry, expandAliases: false });
+    applyItemSources(bucket, { itemsStore, character, className: options.className ?? null });
+    const snapshot = bucket.commit();
+    /** @type {Record<string, number>} */
+    const bonuses = {};
+    for (const [key, value] of Object.entries(snapshot.values)) {
+      const num = Number(value);
+      if (Number.isFinite(num) && num !== 0) bonuses[key] = num;
     }
-
-    // Set bonus tiers — only pieces on the active weapon set count.
-    const equippedDefs = itemsStore.activeEquippedDefs || [];
-    const counts = countEquippedSetPieces(equippedDefs);
-    for (const setDef of itemsStore.sets || []) {
-      if (!setDef?.id) continue;
-      const equippedCount = counts[setDef.id] || 0;
-      if (equippedCount <= 0) continue;
-      const totalPieces = (itemsStore.catalog || []).filter((d) => d.setId === setDef.id).length;
-      for (const bonus of resolveSetBonuses(setDef, equippedCount, totalPieces)) {
-        if (!bonus.active) continue;
-        const setName = String(setDef.name || setDef.id || 'Set').trim();
-        const sourceLabel = `${setName} (${formatSetBonusLabel(bonus.required)})`;
-        accumulateLines(
-          bonus.modifiers,
-          sourceLabel,
-          bonuses,
-          modifiersByKey,
-          unknownModifiers,
-          characterLevel
-        );
-      }
-    }
-
-    for (const [defId, instanceId] of Object.entries(itemsStore.enabledCharms || {})) {
-      const def = itemsStore.catalogById?.[defId];
-      if (!def) continue;
-      const rolls =
-        itemsStore.getRollsForInstance?.(instanceId) ?? defaultCharmRollsForDef(def, className);
-      if (!isCharmBonusActive(def, characterLevel, { inInventory: true, rolls })) continue;
-      /** @type {string[]} */
-      const lines = [];
-      const charmExtras = (rawDumpLinesForInstance(itemsStore, instanceId) ??
-        itemsStore.getExtrasForInstance?.(instanceId) ?? []).filter(Boolean);
-      /** @type {string[]} */
-      const affixLines = [];
-      for (const source of getCharmAffixSources(def, rolls, className, { activeOnly: true })) {
-        const text = resolveCharmAffixText(source.text, source.sourceKey, rolls, false);
-        if (text != null) affixLines.push(text);
-      }
-      if (isCompleteItemText()) {
-        // Full-text payloads (d2s-export) render the ACTUAL rolled value into the item text
-        // (Horazon's Focus: the catalogue range resolves to 23, the real roll is 24), so the
-        // text is authoritative and re-adding the catalogue affix double-counts the stat.
-        // Dropping happens only when the text already covers every stat of the affix with an
-        // equal or larger amount, so partial-text builds are never under-counted.
-        lines.push(...charmExtras);
-        const extraAmountByKey = new Map();
-        for (const extra of charmExtras) {
-          for (const bonus of classifyCharacterStatModifierLine(extra, { characterLevel }).bonuses || []) {
-            const amount = Math.abs(Number(bonus.amount || 0));
-            extraAmountByKey.set(bonus.key, Math.max(extraAmountByKey.get(bonus.key) ?? 0, amount));
-          }
-        }
-        for (const text of affixLines) {
-          const bonuses = classifyCharacterStatModifierLine(text, { characterLevel }).bonuses || [];
-          const coveredByText =
-            bonuses.length > 0 &&
-            bonuses.every((bonus) => {
-              const textAmount = extraAmountByKey.get(bonus.key);
-              return textAmount != null && textAmount >= Math.abs(Number(bonus.amount || 0));
-            });
-          if (!coveredByText) lines.push(text);
-        }
-      } else {
-        /** Lines already granted by the resolved affix rolls. */
-        const appliedCharmLines = new Set();
-        for (const text of affixLines) {
-          lines.push(text);
-          for (const key of statLineCompareKeys(text)) appliedCharmLines.add(key);
-        }
-        for (const extra of charmExtras) {
-          // The TSW description repeats lines the charm roll already granted (Dulra Aegis
-          // "Perfect Topaz" -> "+30 to Dexterity" arrived twice and counted as 60). Compare
-          // normalised text: the dump spells them slightly differently, and expands
-          // "all Attributes" into per-attribute lines.
-          const keys = statLineCompareKeys(extra);
-          if (keys.length && keys.every((key) => appliedCharmLines.has(key))) continue;
-          lines.push(extra);
+    /** @type {Record<string, PlannerStatItemModifier[]>} */
+    const modifiersByKey = {};
+    for (const key of Object.keys(bonuses)) {
+      const breakdown = snapshot.getBreakdown(key);
+      const rows = (breakdown?.groups || []).flatMap((group) => group.rows || []);
+      if (rows.length === 0) continue;
+      /** @type {Map<string, PlannerStatItemModifier>} */
+      const bySource = new Map();
+      for (const row of rows) {
+        const sourceLabel = String(row.label || 'Item');
+        const existing = bySource.get(sourceLabel);
+        if (existing) {
+          existing.value += Number(row.value) || 0;
+          existing.description = `${existing.value >= 0 ? '+' : ''}${existing.value}`;
+          existing.active = existing.active && row.active !== false;
+        } else {
+          const value = Number(row.value) || 0;
+          bySource.set(sourceLabel, {
+            sourceLabel,
+            description: `${value >= 0 ? '+' : ''}${value}`,
+            value,
+            active: row.active !== false,
+          });
         }
       }
-      accumulateLines(lines, sourceLabelForDef(def), bonuses, modifiersByKey, unknownModifiers, characterLevel);
+      modifiersByKey[key] = [...bySource.values()];
     }
-
-    for (const [defId, instanceId] of Object.entries(itemsStore.enabledRelics || {})) {
-      const def = itemsStore.catalogById?.[defId];
-      if (!def) continue;
-      if (!isRelicBonusActive(def, characterLevel, { inInventory: true })) continue;
-      const rolls =
-        itemsStore.getRollsForInstance?.(instanceId) ?? defaultRelicAffixRolls(def);
-      const lines = [
-        ...getRelicStatLines(def, rolls, {
-          hideRollableRanges: false,
-          showRollRanges: false,
-        }),
-      ];
-      const relicExtras = (itemsStore.getExtrasForInstance?.(instanceId) ?? []).filter(Boolean);
-      if (isCompleteItemText() && relicExtras.length) {
-        // Full-text payloads describe the relic's real rolled stats (the save's plain
-        // "Relic" grants +4%, while the catalogue's nearest match was a Whirlwind relic at
-        // +7% - a +3% inflation on every attribute). Prefer the text; keep catalogue lines
-        // only for stats the text does not mention at all.
-        const extraAmountByKey = new Map();
-        for (const extra of relicExtras) {
-          for (const bonus of classifyCharacterStatModifierLine(extra, { characterLevel }).bonuses || []) {
-            const amount = Math.abs(Number(bonus.amount || 0));
-            extraAmountByKey.set(bonus.key, Math.max(extraAmountByKey.get(bonus.key) ?? 0, amount));
-          }
-        }
-        lines.length = 0;
-        lines.push(...relicExtras);
-        for (const line of getRelicStatLines(def, rolls, {
-          hideRollableRanges: false,
-          showRollRanges: false,
-        })) {
-          const bonuses = classifyCharacterStatModifierLine(line, { characterLevel }).bonuses || [];
-          const covered = bonuses.length > 0 &&
-            bonuses.every((bonus) => {
-              const textAmount = extraAmountByKey.get(bonus.key);
-              return textAmount != null && textAmount >= Math.abs(Number(bonus.amount || 0));
-            });
-          if (!covered) lines.push(line);
-        }
-      } else {
-        const appliedRelicLines = new Set();
-        for (const line of lines) {
-          for (const key of statLineCompareKeys(line)) appliedRelicLines.add(key);
-        }
-        for (const extra of relicExtras) {
-          // Same TSW-description duplication as charms (including the all-Attributes split).
-          const keys = statLineCompareKeys(extra);
-          if (keys.length && keys.every((key) => appliedRelicLines.has(key))) continue;
-          lines.push(extra);
-        }
-      }
-      accumulateLines(lines, sourceLabelForDef(def), bonuses, modifiersByKey, unknownModifiers, characterLevel);
-    }
+    const unknownModifiers = snapshot.unsupported.map((row) => ({
+      text: row.text,
+      sourceLabel: row.source?.label || 'Item',
+    }));
+    return { bonuses, modifiersByKey, unknownModifiers };
   } catch {
-    return { bonuses: {}, modifiersByKey: {}, unknownModifiers: [] };
+    return null;
   }
-
-  for (const k of Object.keys(bonuses)) {
-    bonuses[k] = normalizePlannerStatValue(k, bonuses[k]);
-  }
-
-  return { bonuses, modifiersByKey, unknownModifiers };
 }
 
 /**
- * Apply enabled item/relic/charm flat stats onto the character (non-persisted layer).
- * @param {import('@/character/Character.js').default|null|undefined} character
+ * Recompute item bonuses through the bucket and mirror them onto the character.
+ * @param {object} character
  * @param {{ className?: string|null }} [options]
+ * @returns {void}
  */
 export function recomputePlannerStatsFromItems(character, options = {}) {
   _plannerStatItemModifiersByKey = {};

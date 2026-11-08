@@ -980,16 +980,21 @@ export const useItemsStore = defineStore('items', {
      */
     runWithWeaponSet(set, fn) {
       const next = set === 1 ? 1 : 0;
+      const nested = weaponSetPeek != null;
       const prevPeek = weaponSetPeek;
       const prev = effectiveWeaponSet(this);
       if (next === prev) return fn();
       weaponSetPeek = next;
-      recomputePlannerStatsFromItems(getCharacterInstance());
+      if (!nested && !skipItemReqLevelSync) {
+        recomputePlannerStatsFromItems(getCharacterInstance());
+      }
       try {
         return fn();
       } finally {
         weaponSetPeek = prevPeek;
-        recomputePlannerStatsFromItems(getCharacterInstance());
+        if (!nested && !skipItemReqLevelSync) {
+          recomputePlannerStatsFromItems(getCharacterInstance());
+        }
       }
     },
 
@@ -1070,7 +1075,7 @@ export const useItemsStore = defineStore('items', {
     equipmentSlotMeetsRequirements(slot) {
       const key = String(slot);
       const setIdx = weaponSetForEquipSlot(key);
-      if (setIdx != null && setIdx !== effectiveWeaponSet(this)) {
+      if (setIdx != null && setIdx !== effectiveWeaponSet(this) && !isCompleteItemText()) {
         return this.runWithWeaponSet(setIdx, () => this.equipmentSlotMeetsRequirements(key));
       }
       const id = this.equipment[key];
@@ -1111,11 +1116,8 @@ export const useItemsStore = defineStore('items', {
      * @returns {boolean}
      */
     equipmentSlotContributesBonuses(slot) {
-      // Complete-text imports (d2s-export) list every worn item, including the second weapon
-      // set, and the in-game totals include them (Despondence at RightHandAlternate grants
-      // +944 life that the character sheet counts). Partial-text TSW dumps keep the strict
-      // active-set rule so switching sets still behaves.
-      if (!isCompleteItemText() && !isActiveWeaponSetSlot(slot, effectiveWeaponSet(this))) {
+      // Only the currently active weapon set contributes to character stats.
+      if (!isActiveWeaponSetSlot(slot, effectiveWeaponSet(this))) {
         return false;
       }
       const key = String(slot);

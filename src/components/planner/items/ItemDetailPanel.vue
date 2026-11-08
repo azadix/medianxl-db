@@ -11,6 +11,7 @@ import {
   resolveItemRequirements,
 } from '@/items/item-requirements.js';
 import { itemRarityNameClass } from '@/items/item-tooltip.js';
+import { getItemLineSupport } from '@/items/item-modifier-resolver.js';
 import { formatRunewordBadge, isRunewordItem } from '@/items/runeword-items.js';
 import ItemSocketsEditor from './ItemSocketsEditor.vue';
 import ItemMysticOrbsEditor from './ItemMysticOrbsEditor.vue';
@@ -82,6 +83,49 @@ const emit = defineEmits([
 
 const subtitle = computed(() => formatItemTooltipSubtitle(props.def));
 const rarityNameClass = computed(() => itemRarityNameClass(props.def?.rarity));
+
+const lineSupport = computed(() => {
+  if (!props.def) return new Map();
+  try {
+    return getItemLineSupport(props.def, props.effectiveRolls, {
+      characterLevel: props.characterLevel,
+      extras: props.extras,
+      mysticOrbs: props.mysticOrbs,
+      socketables: props.socketables,
+      oil: props.oil,
+      corruptions: props.corruptions,
+      blessing: props.blessing,
+      shrine: props.shrine,
+      mechanics: props.mechanics,
+      ethereal: props.ethereal,
+    }).byText;
+  } catch {
+    return new Map();
+  }
+});
+
+/**
+ * @param {{ text?: string, stat?: { raw?: string, text?: string } }|null|undefined} row
+ * @returns {{ reason: string, unique: boolean }|null}
+ */
+function rowSupport(row) {
+  const line =
+    row?.text != null
+      ? row.text
+      : row?.stat?.raw != null
+        ? row.stat.raw
+        : row?.stat?.text != null
+          ? row.stat.text
+          : '';
+  const key = String(line || '')
+    .replace(/^\{(?:added|grey|boosted|orange|red|green|gold|blue|purple)\}/i, '')
+    .replace(/^\[[^\]]+\]\s*/, '')
+    .replace(/^\s*\+/, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase();
+  return key ? lineSupport.value.get(key) || null : null;
+}
 
 const requirementsLine = computed(() =>
   formatItemRequirementsLine(
@@ -302,6 +346,7 @@ function removePickedAffixRow(row) {
               {{ def.classRestriction }}
             </div>
           </div>
+          <div v-if="requirementsLine" class="item-tooltip-reqs">{{ requirementsLine }}</div>
         </div>
         <div class="item-tooltip-art item-detail-panel__art">
           <ItemIcon :def="def" :icon="icon || undefined" fill />
@@ -334,6 +379,11 @@ function removePickedAffixRow(row) {
             >
               <!-- eslint-disable-next-line vue/no-v-html -- escaped skill-name markup -->
               <span class="item-picker-modal__stat-line-text" v-html="modLineHtml(row.text)"></span>
+              <span
+                v-if="rowSupport(row)"
+                class="mod-support-badge"
+                :title="rowSupport(row).reason"
+              >Not supported</span>
             </p>
             <ItemRollRow
               v-else
@@ -357,6 +407,11 @@ function removePickedAffixRow(row) {
             >
               <!-- eslint-disable-next-line vue/no-v-html -- escaped skill-name markup -->
               <span class="item-picker-modal__stat-line-text" v-html="modLineHtml(row.text)"></span>
+              <span
+                v-if="rowSupport(row)"
+                class="mod-support-badge"
+                :title="rowSupport(row).reason"
+              >Not supported</span>
               <button
                 v-if="canRemoveModRow(row, idx)"
                 type="button"
@@ -393,7 +448,6 @@ function removePickedAffixRow(row) {
           :editable="canEdit"
           @update:custom="emit('update:custom', $event)"
         />
-        <div v-if="requirementsLine" class="item-tooltip-reqs">{{ requirementsLine }}</div>
       </template>
 
       <ItemSocketsEditor

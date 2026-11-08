@@ -1,31 +1,16 @@
 /**
- * Skill-based modifiers to planner stats (life, mana, attributes, etc.).
- * Return rows here so stat tooltips can list them (e.g. Curare: +100 poison length reduction).
+ * @file Skill-based modifiers to planner stats (rows for tooltips and legacy bonus maps).
  *
- * Hook {@link recomputePlannerStatsFromSkillAllocations} runs when skill allocations change
- * (see {@link runPlannerSkillStatRecompute} in planner-core.js).
+ * Aggregation is delegated to the character bucket (`applySkillSources`); this module
+ * keeps the small lookup helpers the tooltip/condition code still needs.
+ *
+ * @module character/planner-stat-modifiers
  */
 
-import { isSubskillActive } from '@/skills/domain/conditional-subskills.js';
-import { isScalingConstantRowActive } from '@/skills/domain/show-conditions.js';
-import { getSkillVariantKey } from '@/tree/skill-variants.js';
-import {
-  getPlannerStatDef,
-  isPlannerBaseStatKey,
-  normalizePlannerStatValue
-} from './planner-stats-config.js';
-import Skill from '@/skills/domain/Skill.js';
-import { getFileSkillStore, withBaseAttributeFormulaStats } from '@/shared/skill-data-store.js';
-import { getRelicSkillBonusForSkill } from '@/items/skill-bonus-from-modifiers.js';
-import {
-  collectEnabledRelicOSkillGrants,
-  getEquippedGearSkillBonusForSkill,
-} from '@/items/item-granted-oskills.js';
-import {
-  oSkillIdsFromCharacter,
-  relicOSkillIdsFromGrants,
-} from '@/skills/domain/lightning-shield-elem-dr.js';
-import Character from './Character.js';
+import { getPlannerStatDef } from './planner-stats-config.js';
+import { createCharacterBucket, createStatRegistry } from '@/character/bucket/index.js';
+import { getPlannerCharacterStatDefs } from './planner-stats-config.js';
+import { applySkillSources } from '@/character/bucket/sources/skills.js';
 
 /**
  * @typedef {'flat' | 'percent' | 'more'} PlannerStatModifierKind
@@ -43,43 +28,7 @@ import Character from './Character.js';
 let _plannerStatSkillModifiersByKey = {};
 
 /**
- * @param {import('@/shared/skill-data-store.js').SkillFileStore|null} store
- * @param {string} skillKey
- * @returns {object|null} catalog row
- */
-function catalogRowBySkillKey(store, skillKey) {
-  const rawKey = String(skillKey ?? '').trim();
-  if (!rawKey || !store) return null;
-  let row = store.catalogByInternalId?.get(rawKey) ?? null;
-  if (row) return row;
-  const norm = rawKey.toLowerCase().replace(/'/g, '').replace(/\s+/g, '_');
-  row = store.catalogByInternalId?.get(norm) ?? null;
-  if (row) return row;
-  const hit = Array.isArray(store.catalog)
-    ? store.catalog.find((r) => String(r?.displayName || '').trim().toLowerCase() === rawKey.toLowerCase())
-    : null;
-  return hit ?? null;
-}
-
-/**
- * @param {Record<string, unknown>|null|undefined} scalingValues
- * @returns {number}
- */
-function sumEvaluatedNumericSlots(scalingValues) {
-  if (!scalingValues || typeof scalingValues !== 'object') return 0;
-  let sum = 0;
-  for (const field of ['value0', 'value1', 'value2', 'value3']) {
-    const raw = scalingValues[field];
-    if (raw == null || raw === '') continue;
-    const str = String(raw).trim();
-    const n = Number(str);
-    if (Number.isFinite(n)) sum += n;
-  }
-  return sum;
-}
-
-/**
- * Resolve a token from stats.json `pairedStat[].stat` to a planner registry key (character_stats `key`).
+ * Resolve a `pairedStat` token to a planner registry key.
  * @param {import('@/shared/skill-data-store.js').SkillFileStore|null} store
  * @param {string} tokenLower
  * @returns {string|null}
@@ -98,8 +47,6 @@ function resolvePairedStatTargetToPlannerKey(store, tokenLower) {
 }
 
 /**
- * Validated entries from stats.json `pairedStat` (optional array on the scaling-stat row).
- * Every valid object is kept: multiple rows may share the same valueIndex so one slot updates several planner stats.
  * @param {import('@/shared/skill-data-store.js').SkillFileStore|null} store
  * @param {unknown} raw
  * @returns {{ valueIndex: number, plannerKey: string }[]}
@@ -122,29 +69,10 @@ function normalizePairedStatList(store, raw) {
     const st = statRaw != null ? String(statRaw).trim().toLowerCase() : '';
     if (!st) continue;
     const plannerKey = resolvePairedStatTargetToPlannerKey(store, st);
-    if (!plannerKey) {
-      if (typeof console !== 'undefined' && console.warn) {
-        console.warn('[pairedStat] Unknown planner stat token:', st);
-      }
-      continue;
-    }
+    if (!plannerKey) continue;
     out.push({ valueIndex: n, plannerKey });
   }
   return out;
-}
-
-/**
- * @param {Record<string, unknown>|null|undefined} scalingValues
- * @param {number} valueIndex 0..3
- * @returns {number|null}
- */
-function numericValueSlot(scalingValues, valueIndex) {
-  if (!scalingValues || typeof scalingValues !== 'object') return null;
-  const field = `value${valueIndex}`;
-  const raw = scalingValues[field];
-  if (raw == null || raw === '') return null;
-  const num = Number(String(raw).trim());
-  return Number.isFinite(num) ? num : null;
 }
 
 /**
@@ -159,11 +87,9 @@ export function getPairedStatRouting(store, scalingStatKey) {
 
 /**
  * True when this planner stat only has inactive (condition-off) skill modifiers
- * and no non-default manual/saved value. Used to grey sheet rows that exist only
- * because of inactive skill contributions (e.g. Soulchain). Skill lines stay grey
- * in the tooltip via modifier.active; manual totals should not grey the row.
+ * and no non-default manual/saved value. Used to grey sheet rows.
  * @param {string} statKey
- * @param {number|string|null|undefined} [displayedValue] current panel value (raw + active bonuses)
+ * @param {number|string|null|undefined} [displayedValue]
  * @returns {boolean}
  */
 export function isPlannerStatConditionInactive(statKey, displayedValue) {
@@ -180,364 +106,71 @@ export function isPlannerStatConditionInactive(statKey, displayedValue) {
 }
 
 /**
- * @param {string} plannerKey
- * @param {number} delta
- * @param {string} internalId
- * @param {string} displayName
- * @param {string} slotLabel e.g. "value0" or "remainder"
- */
-function pushPlannerStatModifier(plannerKey, delta, internalId, displayName, slotLabel, active = true) {
-  if (!Number.isFinite(delta) || delta === 0) return;
-  const desc = `${delta >= 0 ? '+' : ''}${formatModifierDisplayValue(delta)}${slotLabel ? ` (${slotLabel})` : ''}`;
-  if (!_plannerStatSkillModifiersByKey[plannerKey]) _plannerStatSkillModifiersByKey[plannerKey] = [];
-  _plannerStatSkillModifiersByKey[plannerKey].push({
-    skillId: internalId,
-    displayName,
-    description: desc,
-    kind: 'flat',
-    value: delta,
-    active: Boolean(active)
-  });
-}
-
-/**
- * @param {Record<string, number>} bonuses
- * @param {string} plannerKey
- * @param {number} delta
- */
-function addBonus(bonuses, plannerKey, delta) {
-  if (!Number.isFinite(delta) || delta === 0) return;
-  const prev = bonuses[plannerKey] || 0;
-  bonuses[plannerKey] = prev + delta;
-}
-
-function formatModifierDisplayValue(value) {
-  const num = Number(value);
-  if (!Number.isFinite(num)) return '0';
-  return Math.abs(num - Math.round(num)) < 1e-6 ? String(Math.round(num)) : num.toFixed(2);
-}
-
-/**
- * @typedef {{
+ * Recompute skill stat bonuses through the bucket and mirror them onto `Character`
+ * for `setStat()` calibration / legacy fallbacks.
+ * @param {import('./Character.js').default} character
+ * @param {{
  *   effectiveLevel: number,
  *   treeSkillsCache: Record<string, string[]>,
  *   allSkillsBonus: number,
  *   classSkillsBonus?: number,
  *   mergedBlvl: Record<string, number>
- * }} PlannerSkillStatRecomputeContext
- */
-
-/**
- * Stats produced by one skill and consumed by other skills' formulas.
- *
- * These are overlaid from the previous recompute pass because a single pass cannot
- * see its own output. `runPlannerSkillStatRecompute` iterates to a fixed point, so
- * adding a key here is all that is needed for a new cross-skill stat.
- *
- * `skill_duration` - Continuity's `max(4+blvl*6,10)`, read by every duration formula.
- * @type {readonly string[]}
- */
-const CROSS_SKILL_STAT_KEYS = Object.freeze(['skill_duration']);
-
-/**
- * @param {import('./Character.js').default} character
- * @param {PlannerSkillStatRecomputeContext} ctx
+ * }} ctx
  */
 export function recomputePlannerStatsFromSkillAllocations(character, ctx) {
-  _plannerStatSkillModifiersByKey = {};
-  if (!character) return;
+  if (!character || !ctx) return;
+  try {
+    const registry = createStatRegistry(getPlannerCharacterStatDefs());
+    if (registry.size === 0) return;
+    const bucket = createCharacterBucket({ registry, expandAliases: false });
+    applySkillSources(bucket, {
+      character,
+      registry,
+      effectiveLevel: ctx.effectiveLevel,
+      allSkillsBonus: ctx.allSkillsBonus,
+      classSkillsBonus: ctx.classSkillsBonus,
+    });
+    const snapshot = bucket.commit();
+    /** @type {Record<string, number>} */
+    const bonuses = {};
+    for (const [key, value] of Object.entries(snapshot.values)) {
+      const num = Number(value);
+      if (Number.isFinite(num) && num !== 0) bonuses[key] = num;
+    }
+    character.setPlannerSkillStatBonuses(bonuses);
 
-  const store = getFileSkillStore();
-  if (!store || !ctx) {
-    character.setPlannerSkillStatBonuses({});
-    return;
-  }
-
-  const { effectiveLevel, treeSkillsCache, allSkillsBonus, classSkillsBonus, mergedBlvl } = ctx;
-
-  // Guard against transient "no skills" state during build load / version switches.
-  // mergedBlvl is derived from catalog lookups, so it can come back empty while the
-  // character still holds allocated points. Wiping here would clear every skill bonus
-  // (life/mana/skill_duration all read 0) and nothing would re-run to restore them.
-  const mergedKeyCount = Object.keys(mergedBlvl || {}).length;
-  if (mergedKeyCount === 0) {
-    const allocated = Object.values(character.getAllSkillPoints?.() || {}).some(
-      (v) => Math.max(0, Math.floor(Number(v) || 0)) > 0
-    );
-    if (allocated) return;
-  }
-
-  const ulvl = Math.max(1, Math.floor(Number(effectiveLevel) || 1));
-  const slvlAll = Math.max(0, Math.floor(Number(allSkillsBonus) || 0));
-  const slvlClass = Math.max(0, Math.floor(Number(classSkillsBonus) || 0));
-  const charClass = character.className != null ? String(character.className) : '';
-
-  /**
-   * Soft levels for tree skills of this class include class-skills bonus; oSkills / foreign skills do not.
-   * Relic +skills are layered on top (Overview inputs stay separate).
-   * @param {string} skillKey
-   */
-  function softLevelForSkillKey(skillKey) {
-    const cat = catalogRowBySkillKey(store, skillKey);
-    const skillClass = cat?.class != null ? String(cat.class) : '';
-    const getsClassBonus = charClass !== '' && skillClass === charClass;
-    const displayName =
-      cat?.displayName != null && String(cat.displayName).trim() !== ''
-        ? String(cat.displayName).trim()
-        : String(skillKey);
-    const softCtx = {
-      skillId: skillKey,
-      displayName,
-      isOSkill: !getsClassBonus,
-      className: charClass,
-      skillClass,
-    };
-    const relicBonus = getRelicSkillBonusForSkill(softCtx);
-    const gearSoft = getEquippedGearSkillBonusForSkill(softCtx);
-    const itemSlvl = Character.clampOSkillPoints(character.getOSkillItemPoints(skillKey));
-    const soft =
-      slvlAll + (getsClassBonus ? slvlClass : 0) + relicBonus + gearSoft + itemSlvl;
-    const blvl = Math.max(0, Math.floor(Number(mergedBlvl?.[skillKey]) || 0));
-    return Math.min(soft, Math.max(0, Character.OSKILL_MAX_POINTS - blvl));
-  }
-
-  /** @type {Record<string, number>} */
-  const bonuses = {};
-
-  const characterState = {
-    level: ulvl,
-    className: character.className,
-    blvl: { ...mergedBlvl },
-    lvl: {},
-    treeSkillsCache: treeSkillsCache && typeof treeSkillsCache === 'object' ? treeSkillsCache : {},
-    stats: withBaseAttributeFormulaStats(
-      (() => {
-        // Skill formulas must not see their own output. Feeding the full
-        // getAllStats() here (which already includes the previous pass's skill
-        // bonuses) double-counts derived stats - max life/mana came out inflated.
-        const base =
-          typeof character.getAllStatsWithoutSkillBonuses === 'function'
-            ? character.getAllStatsWithoutSkillBonuses()
-            : character.getAllRawStats();
-        // Only stats in CROSS_SKILL_STAT_KEYS are carried over from the previous
-        // pass (produced by one skill, read by another). Everything else must come
-        // from the non-skill baseline, otherwise derived stats compound.
-        const priorAll =
-          typeof character.getPlannerSkillStatBonuses === 'function'
-            ? character.getPlannerSkillStatBonuses()
-            : character?._plannerSkillStatBonuses || {};
-        for (const key of CROSS_SKILL_STAT_KEYS) {
-          const prior = Number(priorAll[key]) || 0;
-          if (!prior) continue;
-          base[key] = (Number(base[key]) || 0) + prior;
-        }
-        return base;
-      })(),
-      character
-    ),
-    oSkillIds: oSkillIdsFromCharacter(character),
-    relicOSkillIds: relicOSkillIdsFromGrants(
-      collectEnabledRelicOSkillGrants({ className: charClass })
-    ),
-  };
-
-  for (const name of Object.keys(characterState.blvl)) {
-    characterState.lvl[name] = softLevelForSkillKey(name);
-  }
-
-  /**
-   * Apply one catalog row's scalingConstants at a given blvlPoints.
-   * Rows with `minCognition` are applied in a second pass so the gate uses cognition
-   * from all other scaling rows (e.g. Cognition skill formula before the 150+ EMR line).
-   * Sync: Skill.getScalingValues is in-memory only (no microtask yields during build load).
-   * @param {object} catRow
-   * @param {string} internalKeyForLookup - key used for stored variant selection fallback
-   * @param {number} blvlPoints
-   * @param {object} effectiveCharacterState
-   * @param {{ skipMinCognitionRows?: boolean, onlyMinCognitionRows?: boolean }} [rowPhase]
-   */
-  function applyScalingConstantsForCatalogRow(
-    catRow,
-    internalKeyForLookup,
-    blvlPoints,
-    effectiveCharacterState,
-    rowPhase = {}
-  ) {
-    const { skipMinCognitionRows = false, onlyMinCognitionRows = false } = rowPhase;
-    if (!catRow?.id) return;
-
-    const internalId = String(catRow.id);
-    const displayName =
-      catRow.displayName != null && String(catRow.displayName).trim() !== ''
-        ? String(catRow.displayName)
-        : internalId;
-
-    const scalingConstants = Array.isArray(catRow.scalingConstants) ? catRow.scalingConstants : [];
-    if (scalingConstants.length === 0) return;
-
-    const skill = new Skill({ id: internalId, name: displayName });
-
-    const storedVk = getSkillVariantKey(internalId) ?? getSkillVariantKey(internalKeyForLookup);
-    const selectedVariantKey =
-      storedVk != null && String(storedVk).trim() !== '' ? String(storedVk).trim() : null;
-
-    for (const scRow of scalingConstants) {
-      const statKeyRaw = scRow?.statKey;
-      if (statKeyRaw == null || String(statKeyRaw).trim() === '') continue;
-      const statKey = String(statKeyRaw).trim().toLowerCase();
-      const pairedRouting = getPairedStatRouting(store, statKey);
-      const usePairedRouting = pairedRouting.length > 0;
-      if (!usePairedRouting && !isPlannerBaseStatKey(statKey)) continue;
-
-      const rowVariantKey =
-        scRow.variantKey != null && String(scRow.variantKey).trim() !== ''
-          ? String(scRow.variantKey).trim()
-          : null;
-      if (selectedVariantKey == null) {
-        if (rowVariantKey != null) continue;
-      } else if (rowVariantKey !== selectedVariantKey) {
-        continue;
-      }
-
-      const occurrenceIndex =
-        scRow.occurrenceIndex != null && String(scRow.occurrenceIndex).trim() !== ''
-          ? Math.max(0, Math.floor(Number(scRow.occurrenceIndex)))
-          : 0;
-      const variantKey = rowVariantKey;
-
-      const minCharLevelRaw = scRow.minCharacterLevel;
-      const minCharLevel =
-        minCharLevelRaw != null && String(minCharLevelRaw).trim() !== ''
-          ? Math.floor(Number(minCharLevelRaw))
-          : null;
-      if (
-        minCharLevel != null &&
-        Number.isFinite(minCharLevel) &&
-        minCharLevel > 0 &&
-        ulvl < minCharLevel
-      ) {
-        continue;
-      }
-
-      const minCognitionRaw = scRow.minCognition ?? scRow.min_cognition;
-      const minCognition =
-        minCognitionRaw != null && String(minCognitionRaw).trim() !== ''
-          ? Math.floor(Number(minCognitionRaw))
-          : null;
-      const hasMinCognition =
-        minCognition != null && Number.isFinite(minCognition) && minCognition > 0;
-      if (skipMinCognitionRows && hasMinCognition) {
-        continue;
-      }
-      if (onlyMinCognitionRows && !hasMinCognition) {
-        continue;
-      }
-      if (onlyMinCognitionRows && hasMinCognition) {
-        const rawCog = Number(effectiveCharacterState.stats?.cognition);
-        const bonusCog = Number(bonuses.cognition);
-        const totalCognition =
-          (Number.isFinite(rawCog) ? rawCog : 0) + (Number.isFinite(bonusCog) ? bonusCog : 0);
-        if (totalCognition < minCognition) {
-          continue;
-        }
-      }
-
-      // Per-row showCondition (e.g. Bloodthirst stance lines), not skill-wide OR
-      const rowActive = isScalingConstantRowActive(catRow, scRow);
-
-      let scalingValues;
-      try {
-        scalingValues = skill.getScalingValues(
-          blvlPoints,
-          statKey,
-          occurrenceIndex,
-          effectiveCharacterState,
-          ulvl,
-          false,
-          0,
-          variantKey
-        );
-      } catch {
-        scalingValues = null;
-      }
-
-      if (!scalingValues || typeof scalingValues !== 'object') continue;
-
-      if (usePairedRouting) {
-        const claimed = new Set(pairedRouting.map((p) => p.valueIndex));
-        for (const { valueIndex, plannerKey } of pairedRouting) {
-          const slotVal = numericValueSlot(scalingValues, valueIndex);
-          if (slotVal == null || slotVal === 0) continue;
-          if (rowActive) addBonus(bonuses, plannerKey, slotVal);
-          pushPlannerStatModifier(plannerKey, slotVal, internalId, displayName, '', rowActive);
-        }
-        if (isPlannerBaseStatKey(statKey)) {
-          for (let i = 0; i <= 3; i++) {
-            if (claimed.has(i)) continue;
-            const slotVal = numericValueSlot(scalingValues, i);
-            if (slotVal == null || slotVal === 0) continue;
-            if (rowActive) addBonus(bonuses, statKey, slotVal);
-            pushPlannerStatModifier(statKey, slotVal, internalId, displayName, `value${i} remainder`, rowActive);
+    /** @type {Record<string, PlannerStatModifier[]>} */
+    const byKey = {};
+    for (const key of Object.keys(bonuses)) {
+      const breakdown = snapshot.getBreakdown(key);
+      /** @type {Map<string, PlannerStatModifier>} */
+      const bySource = new Map();
+      for (const group of breakdown?.groups || []) {
+        for (const row of group.rows || []) {
+          const displayName = String(row.label || 'Skill');
+          const value = Number(row.value) || 0;
+          const existing = bySource.get(displayName);
+          if (existing) {
+            existing.value = Number(existing.value || 0) + value;
+            existing.description = `${existing.value >= 0 ? '+' : ''}${existing.value}`;
+            existing.active = existing.active !== false && row.active !== false;
+          } else {
+            bySource.set(displayName, {
+              displayName,
+              description: `${value >= 0 ? '+' : ''}${value}`,
+              kind: 'flat',
+              value,
+              active: row.active !== false,
+            });
           }
         }
-        continue;
       }
-
-      const delta = sumEvaluatedNumericSlots(scalingValues);
-      if (!Number.isFinite(delta) || delta === 0) continue;
-      if (rowActive) addBonus(bonuses, statKey, delta);
-      pushPlannerStatModifier(statKey, delta, internalId, displayName, '', rowActive);
+      byKey[key] = [...bySource.values()];
     }
+    _plannerStatSkillModifiersByKey = byKey;
+  } catch {
+    // Keep the previous map; the bucket is the source of truth for the UI.
   }
-
-  for (const [internalKey, rawPoints] of Object.entries(mergedBlvl || {})) {
-    const blvlPoints = Math.max(0, Math.floor(Number(rawPoints) || 0));
-    const slvl = Math.max(0, Math.floor(Number(characterState.lvl?.[internalKey]) || 0));
-    if (blvlPoints <= 0 && slvl <= 0) continue;
-
-    const catRow = catalogRowBySkillKey(store, internalKey);
-    if (!catRow?.id) continue;
-
-    // Damage scales with the EFFECTIVE level: hard points plus soft levels from
-    // "+# to All Skills", "+# to <Class> Skills", gear and relic bonuses.
-    // `blvl` stays hard-only (synergies use baseLevel), `lvl` carries the soft.
-    const scalingLevel = Math.min(Character.OSKILL_MAX_POINTS, blvlPoints + slvl);
-
-    // Apply the allocated (parent) skill row itself (then cognition-gated rows).
-    applyScalingConstantsForCatalogRow(catRow, internalKey, scalingLevel, characterState, {
-      skipMinCognitionRows: true
-    });
-    applyScalingConstantsForCatalogRow(catRow, internalKey, scalingLevel, characterState, {
-      onlyMinCognitionRows: true
-    });
-
-    // Apply any linked subskills with the same points as their parent.
-    const parentInternalId = String(catRow.id);
-    const subskills = store.catalogByParentSkillId?.get(parentInternalId) ?? [];
-    for (const sub of subskills) {
-      if (!isSubskillActive(sub, characterState)) {
-        continue;
-      }
-      const subInternalId = String(sub.id);
-      const patchedState = {
-        ...characterState,
-        blvl: { ...(characterState.blvl || {}), [subInternalId]: blvlPoints },
-        lvl: { ...(characterState.lvl || {}), [subInternalId]: softLevelForSkillKey(subInternalId) }
-      };
-      applyScalingConstantsForCatalogRow(sub, subInternalId, scalingLevel, patchedState, {
-        skipMinCognitionRows: true
-      });
-      applyScalingConstantsForCatalogRow(sub, subInternalId, scalingLevel, patchedState, {
-        onlyMinCognitionRows: true
-      });
-    }
-  }
-
-  for (const k of Object.keys(bonuses)) {
-    bonuses[k] = normalizePlannerStatValue(k, bonuses[k]);
-  }
-
-  character.setPlannerSkillStatBonuses(bonuses);
 }
 
 /**

@@ -39,6 +39,7 @@ import {
 import {
   applyResolvedRandomReanimates,
   decodeModifierLine,
+  encodeModifierLine,
   markModifierLineAdded,
 } from '@/items/item-modifier-line.js';
 import { getMysticOrbBonusLines, normalizeMysticOrbs } from '@/items/mystic-orbs.js';
@@ -487,6 +488,70 @@ export function itemBaseDefense(def) {
  * }} [options]
  * @returns {ItemStatSections}
  */
+const NUMBER_RE = /^([+-]?)(\d+(?:\.\d+)?)(.*)$/;
+const NON_MERGEABLE_LINE_RE =
+  /\[|\]|\([^)]*to[^)]*\)|per Character Level|Chance to cast|\bon (Kill|Striking|Attack|Death|Melee)\b|Required /i;
+
+/**
+ * Merge duplicate numeric stat lines on one item (e.g. three "+50% Bonus to Attack
+ * Rating" jewels) into one summed row. Lines with ranges, procs, per-level scaling or
+ * requirements are left alone.
+ * @param {string[]} lines
+ * @returns {string[]}
+ */
+function mergeNumericStatLines(lines) {
+  /** @type {Map<string, { index: number, value: number, text: string, color: string, conditions: string[], sign: string, suffix: string }>} */
+  const byKey = new Map();
+  /** @type {Array<string|null>} */
+  const output = [];
+  for (const line of Array.isArray(lines) ? lines : []) {
+    const decoded = decodeModifierLine(line);
+    const text = String(decoded.text || '').trim();
+    const match = NUMBER_RE.exec(text);
+    if (!match || NON_MERGEABLE_LINE_RE.test(text)) {
+      output.push(line);
+      continue;
+    }
+    const [, sign, rawValue, suffix] = match;
+    const mergeColor =
+      decoded.color === 'orange' || decoded.color === 'grey' ? decoded.color : '';
+    const key = `${mergeColor}|${decoded.showCondition.join(',')}|${sign}|${suffix.toLowerCase()}`;
+    const value = Number(rawValue) * (sign === '-' ? -1 : 1);
+    const existing = byKey.get(key);
+    if (existing) {
+      existing.value += value;
+      output.push(null);
+      continue;
+    }
+    const entry = {
+      index: output.length,
+      value,
+      text,
+      color: decoded.color,
+      conditions: decoded.showCondition,
+      sign,
+      suffix,
+    };
+    byKey.set(key, entry);
+    output.push(line);
+  }
+  for (const entry of byKey.values()) {
+    if (entry.value === 0 && entry.sign) {
+      // Keep zero totals visible for negatives/positives merged to zero.
+    }
+    const numeric = Math.abs(entry.value);
+    const rendered = `${entry.value < 0 ? '-' : entry.sign === '+' ? '+' : ''}${numeric}${entry.suffix}`;
+    output[entry.index] = encodeModifierLine(rendered, entry.color, entry.conditions);
+  }
+  return output.filter((line) => line != null);
+}
+
+/**
+ * @param {object|null|undefined} def
+ * @param {Record<string, number>|null|undefined} [rolls]
+ * @param {object} [options]
+ * @returns {{ base: string[], scaling: string[], mods: string[], requirements: object }}
+ */
 export function getItemStatSections(def, rolls = null, options = {}) {
   /** @type {ItemStatSections} */
   const empty = {
@@ -629,36 +694,48 @@ export function getItemStatSections(def, rolls = null, options = {}) {
     extrasWithAppliedItemBonuses(options.extras, def, {
       ...options,
       rolls,
+      socketables: null,
       hideRollableRanges,
       showRollRanges,
     })
   );
-  const merged = applyResolvedRandomReanimates(mods, extras);
-  mods.length = 0;
-  // The TSW row's description lines echo affixes the catalogue def already renders.
-  // Appending them blindly duplicates each such line, which double-counts its stat
-  // (Silks of the Victor's "+13% to Dexterity" was being applied as +26%). Compare
-  // normalised text so casing/leading-"+" differences don't slip through; duplicates
-  // *within* extras stay, since two identical orbs legitimately produce two lines.
   const normalizeLineKey = (line) =>
     String(line || '')
       .replace(/^\{(?:added|grey|boosted|orange|red|green|gold|blue|purple)\}/i, '')
+      .replace(/^\[[^\]]+\]\s*/, '')
+      .replace(/(\d+(?:\.\d+)?%?)\s+to\s+/gi, '$1 ')
       .toLowerCase()
       .replace(/^\s*\+/, '')
       .replace(/\s+/g, ' ')
       .trim();
+  // TSW descriptions often echo socketed jewel lines. Remove one echo per socket
+  // line, then add every socket line back. This keeps stats without double-counting.
+  const extrasWithoutSocketEchoes = [...extras];
+  /** @type {string[]} */
+  const socketLines = [];
+  for (const sock of normalizeSocketables(options.socketables)) {
+    for (const line of getSocketableBonusLines(sock, def)) {
+      socketLines.push(line);
+      const key = normalizeLineKey(line);
+      const echoIndex = extrasWithoutSocketEchoes.findIndex(
+        (extra) => normalizeLineKey(extra) === key
+      );
+      if (echoIndex >= 0) extrasWithoutSocketEchoes.splice(echoIndex, 1);
+    }
+  }
+  const merged = applyResolvedRandomReanimates(mods, extrasWithoutSocketEchoes);
+  mods.length = 0;
   const defModTexts = new Set([...base, ...scaling, ...merged.mods].map(normalizeLineKey));
-  mods.push(
-    ...merged.mods,
-    ...merged.extras
-      .map((line) => markModifierLineAdded(line))
-      .filter((line) => !defModTexts.has(normalizeLineKey(line)))
-  );
+  const addedExtras = merged.extras
+    .map((line) => markModifierLineAdded(line))
+    .filter((line) => !defModTexts.has(normalizeLineKey(line)));
+  for (const line of socketLines) addedExtras.push(markModifierLineAdded(line));
+  mods.push(...merged.mods, ...addedExtras);
 
   return {
-    base,
-    scaling,
-    mods,
+    base: mergeNumericStatLines(base),
+    scaling: mergeNumericStatLines(scaling),
+    mods: mergeNumericStatLines(mods),
     requirements: resolveItemRequirements(def, {
       rolls,
       socketables: options.socketables ?? null,

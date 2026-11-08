@@ -12,7 +12,7 @@
       "base_dexterity": 25,
       "base_energy": 15,
       "base_vitality": 20,
-      "life_per_level": 25.0,
+      "life_per_level": 28.75,
       "mana_per_level": 7.5,
       "life_per_vitality": 2.25,
       "mana_per_energy": 2.25
@@ -27,7 +27,7 @@
       "base_dexterity": 35,
       "base_energy": 15,
       "base_vitality": 15,
-      "life_per_level": 30.0,
+      "life_per_level": 30.5,
       "mana_per_level": 7.5,
       "life_per_vitality": 2.25,
       "mana_per_energy": 2.25
@@ -72,7 +72,7 @@
       "base_dexterity": 25,
       "base_energy": 25,
       "base_vitality": 20,
-      "life_per_level": 25.0,
+      "life_per_level": 28.75,
       "mana_per_level": 10.0,
       "life_per_vitality": 1.5,
       "mana_per_energy": 3.0
@@ -102,10 +102,10 @@
       "base_dexterity": 20,
       "base_energy": 15,
       "base_vitality": 25,
-      "life_per_level": 35.0,
+      "life_per_level": 32.5,
       "mana_per_level": 5.0,
       "life_per_vitality": 2.75,
-      "mana_per_energy": 1.5
+      "mana_per_energy": 2.0
     },
     {
       "id": 3,

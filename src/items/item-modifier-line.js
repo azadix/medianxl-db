@@ -27,6 +27,11 @@ const TEXT_CONDITION_HINTS = Object.freeze([
   { re: /\bin\s+Duncraig\s+130\+?\b/i, key: 'while_in_heroic_duncraig' },
   { re: /\bin\s+Heroic\s+Library\b/i, key: 'while_in_heroic_library' },
   { re: /\bin\s+Library\s+of\s+Fate\b/i, key: 'while_in_heroic_library' },
+  {
+    re: /\bwhen\s+using\s+an\s+Apple\b/i,
+    key: 'while_using_an_apple',
+    strip: /\s+when\s+using\s+an\s+Apple\s*$/i,
+  },
 ]);
 
 /**
@@ -69,6 +74,20 @@ export function inferShowConditionsFromModifierText(text) {
     out.push(hint.key);
   }
   return out;
+}
+
+/**
+ * Remove the display-only condition clause so the remaining text can be parsed as
+ * "+3 to All Skills" instead of failing on "when using an Apple".
+ * @param {string} text
+ * @returns {string}
+ */
+function stripConditionClause(text) {
+  let out = String(text || '');
+  for (const hint of TEXT_CONDITION_HINTS) {
+    if (hint.strip) out = out.replace(hint.strip, '');
+  }
+  return out.trim();
 }
 
 /**
@@ -200,7 +219,7 @@ function decodeModifierLineUncached(line) {
         seen.add(keyLower);
         explicit.push(key);
       }
-      return { text: rest, color, showCondition: explicit };
+      return { text: stripConditionClause(rest), color, showCondition: explicit };
     }
     break;
   }
@@ -213,7 +232,11 @@ function decodeModifierLineUncached(line) {
     seen.add(keyLower);
     explicit.push(key);
   }
-  return { text, color: MODIFIER_COLOR_MAGIC, showCondition: explicit };
+  return {
+    text: stripConditionClause(text),
+    color: MODIFIER_COLOR_MAGIC,
+    showCondition: explicit,
+  };
 }
 
 /**

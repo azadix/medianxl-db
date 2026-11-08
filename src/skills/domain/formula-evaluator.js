@@ -517,12 +517,10 @@ export class FormulaEvaluator {
     const skillRefPattern = /\[\[([a-zA-Z_][a-zA-Z0-9_]*)\]\]/g;
     
     return formula.replace(skillRefPattern, (match, skillName) => {
-      // Get blvl for the referenced skill from the full _blvl object
-      if (context._blvl && context._blvl[skillName] !== undefined) {
-        return String(context._blvl[skillName]);
-      }
-      
-      // If skill not found, return 0
+      // Bare [[skill]] references use the effective level (hard + soft bonuses).
+      const blvl = Number(context._blvl?.[skillName]) || 0;
+      const slvl = Number(context._lvl?.[skillName]) || 0;
+      if (blvl !== 0 || slvl !== 0) return String(blvl + slvl);
       return '0';
     });
   }

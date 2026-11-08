@@ -325,24 +325,6 @@ function runPlannerSkillStatRecomputePass(mergedBlvl, allSkillsBonus, classSkill
   return character.getPlannerSkillStatBonuses();
 }
 
-/**
- * Order-independent signature of a skill-bonus map, used to detect convergence.
- * @param {Record<string, number>} bonuses
- * @returns {string}
- */
-function skillStatBonusSignature(bonuses) {
-  const keys = Object.keys(bonuses || {}).sort();
-  let out = '';
-  for (const k of keys) out += `${k}=${bonuses[k]};`;
-  return out;
-}
-
-/**
- * Upper bound on settle passes. Producer→consumer chains are 1 hop today, so 2
- * passes converge; the extra headroom covers future multi-hop derivations.
- */
-const MAX_SKILL_STAT_SETTLE_PASSES = 4;
-
 function runPlannerSkillStatRecomputeImpl() {
   if (_plannerSkillStatRecomputePromise) {
     _plannerSkillStatRecomputeQueued = true;
@@ -370,19 +352,9 @@ function runPlannerSkillStatRecomputeImpl() {
           classSkillsBonus = Math.max(0, Math.floor(parseInt(classInp.value, 10) || 0));
         }
       }
-      // Cross-skill derived stats (Continuity's `skill_duration` today, more later)
-      // are consumed by other skills, so the producer's value only reaches consumers
-      // on the NEXT pass. Iterate to a fixed point instead of depending on call
-      // ordering. Seeding the signature from the CURRENT map means the steady state
-      // (nothing changed) costs a single pass - it only iterates when a value moved.
-      const character = getCharacterInstance();
-      let signature = skillStatBonusSignature(character.getPlannerSkillStatBonuses());
-      for (let pass = 0; pass < MAX_SKILL_STAT_SETTLE_PASSES; pass++) {
-        const next = runPlannerSkillStatRecomputePass(mergedBlvl, allSkillsBonus, classSkillsBonus);
-        const nextSignature = skillStatBonusSignature(next);
-        if (nextSignature === signature) break;
-        signature = nextSignature;
-      }
+      // Cross-skill values are resolved inside the bucket's skill source; a single
+      // pass is enough now that the fixed-point loop is gone.
+      runPlannerSkillStatRecomputePass(mergedBlvl, allSkillsBonus, classSkillsBonus);
       if (typeof window !== 'undefined' && !isPlannerBuildLoadInProgress()) {
         window.dispatchEvent(new CustomEvent('plannerStatsPanelRefresh'));
       }

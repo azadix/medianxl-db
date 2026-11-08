@@ -60,8 +60,9 @@ export function resolveEngineFormula(skillId, formula, characterState, store, de
     resolveSkillRef(String(id), String(stat), characterState, store, depth + 1)
   );
   s = s.replace(/\[\[([a-zA-Z_][a-zA-Z0-9_]*)\]\]/g, (m, id) => {
-    if (String(id) === String(skillId)) return 'blvl';
-    return resolveSkillRef(String(id), 'blvl', characterState, store, depth + 1);
+    // Bare skill refs use effective level (hard + soft), not just hard points.
+    if (String(id) === String(skillId)) return 'lvl';
+    return resolveSkillRef(String(id), 'lvl', characterState, store, depth + 1);
   });
   s = s.replace(/skill\("([^"]+)"#(\d+)\s*,\s*([a-zA-Z0-9_]+)\)/g, (m, name, _id, stat) =>
     resolveSkillRef(String(name), String(stat), characterState, store, depth + 1)

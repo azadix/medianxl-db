@@ -11,7 +11,10 @@ import {
 } from '../../src/items/item-modifier-line.js';
 import { selectedConditions } from '../../src/stores/planner-config-store.js';
 import { parseItemStats } from '../../src/items/unique-stats-catalog.js';
-import { parseSkillBonusFromModifierLine } from '../../src/items/skill-bonus-from-modifiers.js';
+import {
+  parseSkillBonusFromModifierLine,
+  sumBroadSkillBonusesFromModifierLines,
+} from '../../src/items/skill-bonus-from-modifiers.js';
 import { parseProcFromModifierLine } from '../../src/items/item-procs.js';
 import { parseRequirementsReductionPct } from '../../src/items/item-requirements.js';
 import { buildItemTooltipHtml } from '../../src/items/item-tooltip.js';
@@ -56,6 +59,30 @@ describe('item modifier color encoding', () => {
       'while_in_heroic_duncraig',
     ]);
     expect(isConditionalModifierLine('{orange}+30% Magic Resist in Heroic Duncraig')).toBe(true);
+  });
+
+  it('gates +All Skills when using an Apple behind a planner condition', async () => {
+    const line = '+3 to All Skills when using an Apple';
+    const decoded = decodeModifierLine(line);
+    expect(decoded.text).toBe('+3 to All Skills');
+    expect(decoded.showCondition).toEqual(['while_using_an_apple']);
+
+    const store = await import('../../src/stores/planner-config-store.js');
+    if (store.isConditionSelected('while_using_an_apple')) {
+      store.toggleCondition('while_using_an_apple');
+    }
+    expect(isModifierLineActive(line)).toBe(false);
+    expect(parseSkillBonusFromModifierLine(line)).toBeNull();
+    expect(sumBroadSkillBonusesFromModifierLines([line]).all).toBe(0);
+
+    store.toggleCondition('while_using_an_apple');
+    expect(isModifierLineActive(line)).toBe(true);
+    expect(parseSkillBonusFromModifierLine(line)).toMatchObject({
+      kind: 'all',
+      amount: 3,
+    });
+    expect(sumBroadSkillBonusesFromModifierLines([line]).all).toBe(3);
+    store.toggleCondition('while_using_an_apple');
   });
 
   it('activates condition-gated mods only when the planner condition is selected', () => {

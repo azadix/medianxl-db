@@ -40,6 +40,10 @@ import { isCharmItem } from '@/items/charm-items.js';
 import { getSelectedConditionKeys, setCondition as setPlannerCondition, clearAllConditions as clearPlannerConditions } from '@/stores/planner-config-store.js';
 import { useItemsStore } from '@/stores/items.js';
 import { collectEnabledItemCharacterStatBonuses } from '@/items/item-character-stat-bonuses.js';
+import {
+    setImportedStatsSource,
+    clearImportedStatsSource,
+} from '@/character/stats-provider.js';
 import { isCompleteItemText, detectCompleteItemText, setCompleteItemText } from '@/items/item-text-completeness.js';
 import {
     computeClassDerivedLifeManaBreakdown,
@@ -324,6 +328,14 @@ export async function loadBuildData(build, buildIndex = null) {
 
         // Class baseline stats only when the build has no stats blob (saved builds carry raw stat lines).
         const importedStatsText = build.stats != null ? String(build.stats).trim() : '';
+        if (importedStatsText) {
+            setImportedStatsSource(
+                importedStatsText,
+                isCompleteItemText() ? 'base' : 'totals'
+            );
+        } else {
+            clearImportedStatsSource();
+        }
         if (!importedStatsText && build.class) {
             applyClassBaselineStatsToCharacter(build.class);
         }

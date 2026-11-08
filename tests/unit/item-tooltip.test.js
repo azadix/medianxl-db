@@ -57,6 +57,86 @@ describe('buildItemTooltipHtml', () => {
     expect(html).toContain('item-rarity--runeword');
   });
 
+  it('does not badge Ethereal or orange lore lines as unsupported', () => {
+    const html = buildItemTooltipHtml({
+      name: 'Essence of Time',
+      rarity: 'unique',
+      category: 'armor',
+      modifiers: [
+        '{grey}Ethereal',
+        '{orange}He who fights with monsters',
+        '{orange}might take care lest he',
+        '{orange}thereby become a monster',
+        '{orange}And if you gaze for long into an abyss',
+        '{orange}the abyss gazes also into you',
+        '{orange}- I can afford this because I am wealthy and powerful.',
+        'Maximum Life +10%',
+      ],
+    });
+    expect(html).not.toContain('Not supported');
+    expect(html).toContain('Maximum Life +10%');
+  });
+
+  it('does not badge I Am Rich lore as unsupported', () => {
+    const html = buildItemTooltipHtml({
+      name: 'I Am Rich',
+      rarity: 'unique',
+      category: 'armor',
+      modifiers: [
+        'This item does nothing and required the Archbishop Lazarus Trophy',
+        'the Essence of Time and the Vial of Elder Blood to create, destroying them.',
+        '{orange}- I can afford this because I am wealthy and powerful. -',
+      ],
+    });
+    expect(html).not.toContain('Not supported');
+  });
+
+  it('does not badge the real Essence of Time / I Am Rich definitions', () => {
+    const charms = JSON.parse(readFileSync(resolve('public/items/2_14/charms.json'), 'utf8'));
+    for (const name of ['Essence of Time', 'I Am Rich']) {
+      const def = charms.find((row) => row.name === name);
+      expect(def).toBeTruthy();
+      const html = buildItemTooltipHtml(def, null, null, { charmInInventory: true, characterLevel: 150 });
+      expect(html, name).not.toContain('Not supported');
+    }
+  });
+
+  it('merges duplicate numeric stats and puts requirements before stats', () => {
+    const def = {
+      name: 'Merge Test',
+      rarity: 'unique',
+      category: 'weapons',
+      reqLevel: 10,
+      modifiers: [
+        '+50% Bonus to Attack Rating',
+        '+50% Bonus to Attack Rating',
+        '+50% Bonus to Attack Rating',
+        '+20 to Strength',
+        '+20 to Strength',
+      ],
+    };
+    const html = buildItemTooltipHtml(def);
+    expect(html).toContain('+150% Bonus to Attack Rating');
+    expect(html).not.toContain('+50% Bonus to Attack Rating');
+    expect(html).toContain('+40 to Strength');
+    expect(html.indexOf('Requires:')).toBeLessThan(html.indexOf('item-tooltip-section'));
+  });
+
+  it('does not mark socket-added stats with asterisks', () => {
+    const html = buildItemTooltipHtml({
+      name: 'Socket Test',
+      rarity: 'unique',
+      category: 'armor',
+      modifiers: ['+10 to Vitality'],
+    }, null, null, {
+      socketables: [
+        { name: 'Jewel', type: 'Jewel', quality: 'Crafted', modifiers: ['+5 to Vitality'] },
+      ],
+    });
+    expect(html).not.toContain('* ');
+    expect(html).toContain('+15 to Vitality');
+  });
+
   it('groups requirements, damage type, and scaling', () => {
     const def = {
       name: 'War Spear',
@@ -92,9 +172,9 @@ describe('buildItemTooltipHtml', () => {
     const strBonusAt = html.indexOf('Strength Damage Bonus');
     const innateAt = html.indexOf('Innate Fire Damage');
     const reqsAt = html.indexOf('Requires:');
-    expect(strBonusAt).toBeGreaterThan(-1);
-    expect(innateAt).toBeGreaterThan(strBonusAt);
-    expect(reqsAt).toBeGreaterThan(innateAt);
+    expect(reqsAt).toBeGreaterThan(-1);
+    expect(reqsAt).toBeLessThan(strBonusAt);
+    expect(reqsAt).toBeLessThan(innateAt);
   });
 
   it('attaches a mystic orbs side panel when orbs are present', () => {
@@ -244,8 +324,8 @@ describe('buildItemTooltipHtml', () => {
     expect(html).toContain('invjw6.webp');
     expect(html).toContain('r-d-11.webp');
     expect(html).toContain('item-mod--added');
-    expect(html).toContain('* +5% Cast Speed *');
-    expect(html).toContain('* +30 Required Level *');
+    expect(html).toContain('+5% Cast Speed');
+    expect(html).toContain('+30 Required Level');
     expect(html.indexOf('Sockets')).toBeLessThan(html.indexOf('Mystic Orbs'));
     expect(html).toContain('item-tooltip-sock__mod');
     expect(html).toContain('+5% Cast Speed');

@@ -507,6 +507,14 @@ export function resolveTswItemDefId(row, cat) {
     return 'u:mindflayers-mayhem:su';
   }
 
+  // Relic rows all share a generic code (`cotw`); resolve their display-name skill hint
+  // before trusting the code, otherwise every relic maps to the same charm entry.
+  const relicHint = relicSkillHint(row);
+  if (relicHint) {
+    const relicId = `relic:${slugify(relicHint)}`;
+    if (cat.byId[relicId]) return relicId;
+  }
+
   const code = row?.code != null ? String(row.code).trim() : '';
   const codeDef = code ? cat.byId[code] : null;
   // Unique gear codes collide with base item ids (e.g. Lacuni Cowl `@17`). Only trust
@@ -518,12 +526,6 @@ export function resolveTswItemDefId(row, cat) {
   const dim = dimensionalKeyVariant(row);
   if (dim && cat.byId[DIM_KEY_CATALOG_ID]) {
     return DIM_KEY_CATALOG_ID;
-  }
-
-  const relicHint = relicSkillHint(row);
-  if (relicHint) {
-    const relicId = `relic:${slugify(relicHint)}`;
-    if (cat.byId[relicId]) return relicId;
   }
 
   for (const id of uniqueIdCandidates(row)) {

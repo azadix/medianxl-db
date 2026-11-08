@@ -49,6 +49,10 @@ import { refreshCurrentTooltip } from '@/tree/tree-tooltip.js';
 import { useItemsStore } from '@/stores/items.js';
 import { setItemMaxBaseLevelBonusProvider } from '@/skills/domain/skill-calculations.js';
 import { getEquippedMaxBaseLevelBonusForSkill } from '@/items/item-max-base-level.js';
+import {
+    clearImportedStatsSource,
+    invalidateCharacterStats,
+} from '@/character/stats-provider.js';
 
 setItemMaxBaseLevelBonusProvider(getEquippedMaxBaseLevelBonusForSkill);
 
@@ -124,6 +128,8 @@ export async function initializeTreePage() {
         if (window.oskillDropdownInstance) window.oskillDropdownInstance.clearSearch();
         const currentLevel = getCharacterLevel();
         initializeCharacter(newClass, currentLevel);
+        clearImportedStatsSource();
+        invalidateCharacterStats();
         clearAllStats();
         applyClassBaselineStatsToCharacter(newClass);
         const itemsStore = useItemsStore();
@@ -176,6 +182,18 @@ function setupGlobalEventListeners() {
   window.addEventListener('characterLevelChanged', () => handleSkillPointsChanged());
   window.addEventListener('questCompletionChanged', () => handleSkillPointsChanged());
   window.addEventListener('characterStatsChanged', () => refreshCurrentTooltip());
+  for (const eventName of [
+    'characterStatsChanged',
+    'skillPointsChanged',
+    'plannerStateChanged',
+    'plannerStatsPanelRefresh',
+    'plannerConfigChanged',
+    'questCompletionChanged',
+    'characterLevelChanged',
+    'statAllocationChanged',
+  ]) {
+    window.addEventListener(eventName, () => invalidateCharacterStats());
+  }
   const onSkillBonusInput = () => {
     refreshCurrentTooltip();
     runPlannerSkillStatRecompute();

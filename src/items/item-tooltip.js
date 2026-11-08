@@ -6,6 +6,7 @@
 import { escapeHtmlText, getItemIconUrl } from '@/shared/utils.js';
 import { modifierLineCssClass } from '@/items/item-modifier-line.js';
 import { formatItemModifierLineHtml } from '@/items/item-granted-oskills.js';
+import { getItemLineSupport } from '@/items/item-modifier-resolver.js';
 import {
   formatItemTooltipSubtitle,
   getItemStatSections,
@@ -79,14 +80,26 @@ function sidepanelIconHtml(stem) {
 
 /**
  * @param {string[]} lines
+ * @param {Map<string, { reason: string, unique: boolean }>|null} [supportByText]
  * @returns {string}
  */
-function renderStatLines(lines) {
+function renderStatLines(lines, supportByText = null) {
   return lines
     .map((line) => {
       const cls = modifierLineCssClass(line);
       const classAttr = cls ? ` ${cls}` : '';
-      return `<div class="item-tooltip-line${classAttr}">${formatItemModifierLineHtml(line)}</div>`;
+      const plain = String(line || '')
+        .replace(/^\{(?:added|grey|boosted|orange|red|green|gold|blue|purple)\}/i, '')
+        .replace(/^\[[^\]]+\]\s*/, '')
+        .replace(/^\s*\+/, '')
+        .trim()
+        .toLowerCase();
+      const support = supportByText?.get(plain);
+      const badge =
+        support && support.reason !== 'non-stat'
+          ? ` <span class="mod-support-badge" title="${escapeHtmlText(support.reason)}">Not supported</span>`
+          : '';
+      return `<div class="item-tooltip-line${classAttr}">${formatItemModifierLineHtml(line)}${badge}</div>`;
     })
     .join('');
 }
@@ -193,8 +206,24 @@ export function buildItemTooltipHtml(def, iconKey = null, rolls = null, options 
     ethereal: options.ethereal === true,
   });
 
-  const baseBlock = renderStatLines([...sections.base, ...sections.scaling]);
-  const modsBlock = renderStatLines(sections.mods);
+  const support = getItemLineSupport(def, rolls, {
+    characterLevel: options.characterLevel ?? null,
+    className: options.className ?? null,
+    charmInInventory: options.charmInInventory !== false,
+    socketables: options.socketables ?? null,
+    extras: options.extras ?? null,
+    mysticOrbs: options.mysticOrbs ?? null,
+    oil: options.oil,
+    corruptions: options.corruptions,
+    blessing: options.blessing,
+    shrine: options.shrine,
+    mechanics: options.mechanics,
+    honorific: options.honorific,
+    ethereal: options.ethereal === true,
+  });
+
+  const baseBlock = renderStatLines([...sections.base, ...sections.scaling], support.byText);
+  const modsBlock = renderStatLines(sections.mods, support.byText);
   const reqsHtml = buildRequirementsHtml(sections.requirements, options);
   const inactiveNotice = options.inactiveNotice
     ? `<div class="item-tooltip-reqs"><span class="item-tooltip-req item-tooltip-req--unmet">${escapeHtmlText(
@@ -212,9 +241,9 @@ export function buildItemTooltipHtml(def, iconKey = null, rolls = null, options 
     </div>`;
 
   const body = [
+    reqsHtml,
     baseBlock ? `<div class="item-tooltip-section item-tooltip-section--base">${baseBlock}</div>` : '',
     modsBlock ? `<div class="item-tooltip-section item-tooltip-section--mods">${modsBlock}</div>` : '',
-    reqsHtml,
     inactiveNotice,
     buildSetBonusSectionHtml(options.setBonuses),
   ].join('');
