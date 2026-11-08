@@ -273,6 +273,25 @@ export function isShieldItem(def) {
   return /shield/i.test(String(def.group || ''));
 }
 
+
+/**
+ * Rings, amulets and quivers never roll ethereal in Median XL.
+ * @param {object|null|undefined} def
+ * @returns {boolean}
+ */
+export function canBeEthereal(def) {
+  if (!def || typeof def !== 'object') return false;
+  if (isQuiverItem(def)) return false;
+  if (/quiver/i.test(String(def.type || ''))) return false;
+  const category = String(def.category || '').toLowerCase();
+  if (category === 'jewelry') return false;
+  const slot = String(def.slot || '').toLowerCase();
+  if (slot === 'ring' || slot === 'neck' || slot === 'rrin' || slot === 'lrin') return false;
+  const type = String(def.type || '').toLowerCase();
+  if (type === 'ring' || type === 'amul' || type === 'amulet') return false;
+  return true;
+}
+
 /**
  * Arrow / bolt quiver (base or unique overlay). Off-hand ammo for bows/crossbows.
  * @param {object|null|undefined} def

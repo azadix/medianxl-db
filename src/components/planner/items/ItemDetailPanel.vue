@@ -28,6 +28,7 @@ import {
 } from '@/items/item-affixes.js';
 import { encodeItemStateFlagLine, matchItemStateFlag } from '@/items/item-state-flags.js';
 import { defHasRandomElementChoice } from '@/items/random-element.js';
+import { canBeEthereal } from '@/items/item-types.js';
 import { computed } from 'vue';
 
 const props = defineProps({
@@ -180,8 +181,11 @@ function isSocketedRow(row) {
   return /Socketed\s*\(/i.test(String(row.text || ''));
 }
 
+const etherealAllowed = computed(() => canBeEthereal(props.def));
+
 const displayBaseRows = computed(() => {
   const rows = baseRows.value.filter((row) => !isEtherealRow(row));
+  if (!etherealAllowed.value) return rows;
   if (!props.canEdit && !props.ethereal) return rows;
   const etherealRow = props.canEdit
     ? { kind: 'ethereal', text: 'Ethereal', section: 'base' }
@@ -367,7 +371,7 @@ function removePickedAffixRow(row) {
               <input
                 type="checkbox"
                 :checked="ethereal"
-                :disabled="etherealLocked"
+                :disabled="etherealLocked || !etherealAllowed"
                 @change="emit('update:ethereal', $event.target.checked)"
               />
               Ethereal

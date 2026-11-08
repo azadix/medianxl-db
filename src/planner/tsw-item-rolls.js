@@ -49,6 +49,7 @@ import {
   collectRelicAffixSources,
 } from '@/items/relic-items.js';
 import { parseTswSocketables } from '@/items/socketables.js';
+import { canBeEthereal } from '@/items/item-types.js';
 import {
   ETHEREAL_BASE_REQ_FLAT,
   isRequirementsPercentLine,
@@ -827,7 +828,7 @@ export function tswInstanceExtras(row, def, setDumpCtx = null) {
   if (mysticOrbs.length) out.mysticOrbs = mysticOrbs;
   const socketables = parseTswSocketables(row);
   if (socketables.length) out.socketables = socketables;
-  if (tswRowIsEthereal(row)) out.ethereal = true;
+  if (tswRowIsEthereal(row) && canBeEthereal(def)) out.ethereal = true;
   if (tswRowIsCorrupted(row)) out.corrupted = true;
   return out;
 }

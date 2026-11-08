@@ -48,6 +48,7 @@ import {
   normalizeMysticOrbs,
 } from '@/items/mystic-orbs.js';
 import { getItemSocketCount, getSocketableBonusLines, normalizeSocketables } from '@/items/socketables.js';
+import { canBeEthereal } from '@/items/item-types.js';
 import { applyAffixRolls, parseAffixRanges } from '@/items/affix-rolls.js';
 import {
   collectShrineUpgradeSources,
@@ -618,7 +619,8 @@ export function getItemStatSections(def, rolls = null, options = {}) {
     mysticOrbs: options.mysticOrbs,
   });
   const ethereal =
-    options.ethereal === true || def.ethereal === true || upgradeFlags.etherealForced;
+    canBeEthereal(def) &&
+    (options.ethereal === true || def.ethereal === true || upgradeFlags.etherealForced);
   /**
    * @param {number} n
    */

@@ -24,6 +24,7 @@ import {
   isInventoryOnlyGear,
   isActiveWeaponSetSlot,
   weaponSetForEquipSlot,
+  canBeEthereal,
   isQuiverItem,
   isQuiverEffectActive,
   pairedWeaponSlot,
@@ -1700,6 +1701,7 @@ export const useItemsStore = defineStore('items', {
     setInstanceEthereal(instanceId, ethereal) {
       const inst = this.instances[instanceId];
       if (!inst) return false;
+      if (ethereal && !canBeEthereal(this.getDefForInstance(instanceId))) return false;
       const flags = getItemUpgradeFlags({
         oil: inst.oil,
         corruptions: inst.corruptions,
@@ -2800,6 +2802,7 @@ export const useItemsStore = defineStore('items', {
         const dimNorm = normalizeDimensionalKeySnapshot(defId, rolls);
         defId = dimNorm.defId;
         rolls = dimNorm.rolls;
+        if (ethereal && !canBeEthereal(this.catalogByIdMap[defId])) ethereal = false;
         if (!this.catalogByIdMap[defId]) {
           defId = resolveCatalogDefId(defId, this.catalogByIdMap);
         }
