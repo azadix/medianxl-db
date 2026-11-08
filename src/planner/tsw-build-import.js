@@ -892,8 +892,7 @@ export function applyTswOSkillLeftovers(tswOSkills) {
       });
       continue;
     }
-    const maxManual = Math.max(0, Character.OSKILL_MAX_POINTS - itemPts);
-    row.points = Math.min(maxManual, leftover);
+    row.points = leftover;
   }
   return { skipped };
 }

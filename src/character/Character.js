@@ -25,7 +25,6 @@ export default class Character {
   static MIN_LEVEL = 1;
   static MAX_LEVEL = 150;
   static DEFAULT_LEVEL = 1;
-  static OSKILL_MAX_POINTS = 150;
   
   /**
    * All planner quests: `type` selects behavior; `reward` lists per-difficulty `amount` (and `expectedLevel` for reference).
@@ -1066,9 +1065,7 @@ export default class Character {
   addOSkill(displayName, skillName, image, className, hasDetails = false, description = null, skillEffect = null) {
     const existing = this.oSkills.find(s => s.skillName === skillName);
     if (existing) {
-      const itemPts = Character.clampOSkillPoints(existing.itemPoints ?? 0);
-      const maxManual = Math.max(0, Character.OSKILL_MAX_POINTS - itemPts);
-      existing.points = Math.min(maxManual, Character.clampOSkillPoints((existing.points ?? 0) + 1));
+      existing.points = Character.clampOSkillPoints((existing.points ?? 0) + 1);
     } else {
       const oskillData = {
         displayName,
@@ -1114,9 +1111,8 @@ export default class Character {
     if (!skill) return;
 
     const itemPts = Character.clampOSkillPoints(skill.itemPoints ?? 0);
-    const maxManual = Math.max(0, Character.OSKILL_MAX_POINTS - itemPts);
     const nextManual = Character.clampOSkillPoints((skill.points ?? 0) + amount);
-    skill.points = Math.max(0, Math.min(maxManual, nextManual));
+    skill.points = nextManual;
 
     // Remove only when both manual and item grants are gone.
     if (skill.points <= 0 && itemPts <= 0) {
@@ -1161,8 +1157,7 @@ export default class Character {
     const prev = Character.clampOSkillPoints(row.itemPoints ?? 0);
     if (prev === nextItem) return 'unchanged';
     row.itemPoints = nextItem;
-    const maxManual = Math.max(0, Character.OSKILL_MAX_POINTS - nextItem);
-    row.points = Math.min(maxManual, Character.clampOSkillPoints(row.points ?? 0));
+    row.points = Character.clampOSkillPoints(row.points ?? 0);
     if (row.points <= 0 && nextItem <= 0) {
       this.removeOSkill(skillName);
       return 'updated';
@@ -1224,7 +1219,7 @@ export default class Character {
 
   static clampOSkillPoints(points) {
     const normalized = Math.floor(Number(points) || 0);
-    return Math.max(0, Math.min(Character.OSKILL_MAX_POINTS, normalized));
+    return Math.max(0, normalized);
   }
 
   /**
@@ -1247,15 +1242,12 @@ export default class Character {
     const blvl = Character.clampOSkillPoints(row?.points ?? 0);
     const itemSlvl = Character.clampOSkillPoints(row?.itemPoints ?? 0);
     const extra = Math.max(0, Math.floor(Number(extraSoft) || 0));
-    const slvl = Math.min(
-      itemSlvl + extra,
-      Math.max(0, Character.OSKILL_MAX_POINTS - blvl)
-    );
+    const slvl = itemSlvl + extra;
     return {
       blvl,
       itemSlvl,
       slvl,
-      effective: Math.min(Character.OSKILL_MAX_POINTS, blvl + slvl),
+      effective: blvl + slvl,
     };
   }
 

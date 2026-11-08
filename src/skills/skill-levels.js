@@ -143,17 +143,13 @@ export function computeSkillLevels(input) {
     const gearSoft = Number(getEquippedGearSkillBonusForSkill(softCtx)) || 0;
     const itemSlvl = Character.clampOSkillPoints(character.getOSkillItemPoints(skillKey));
     const soft = allSkillsBonus + (getsClassBonus ? classSkillsBonus : 0) + relicBonus + gearSoft + itemSlvl;
-    const blvl = Math.max(0, Math.floor(Number(mergedBlvl?.[skillKey]) || 0));
-    return Math.min(soft, Math.max(0, Character.OSKILL_MAX_POINTS - blvl));
+    return Math.max(0, Math.floor(Number(soft) || 0));
   }
 
   for (const key of Object.keys(mergedBlvl)) {
     const soft = softLevelForSkillKey(key);
     softLevels[key] = soft;
-    levels[key] = Math.min(
-      Character.OSKILL_MAX_POINTS,
-      Math.max(0, Math.floor(Number(mergedBlvl[key]) || 0)) + soft
-    );
+    levels[key] = Math.max(0, Math.floor(Number(mergedBlvl[key]) || 0)) + soft;
   }
 
   return {

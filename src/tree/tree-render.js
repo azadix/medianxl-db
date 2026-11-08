@@ -227,9 +227,7 @@ export function buildPlannerSkillCardData(skillEntry, opts = {}) {
         skillLevels,
         characterLevel
     ) || skillEntry.baseMaxLevel;
-    const maxPoints = isOSkill
-        ? Math.max(0, Character.OSKILL_MAX_POINTS - itemPoints)
-        : catalogMax;
+    const maxPoints = isOSkill ? Number.MAX_SAFE_INTEGER : catalogMax;
     const restrictions = getSkillRestrictions(
         skillEntry,
         skillType,

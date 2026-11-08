@@ -1377,8 +1377,6 @@ registerAutoAddStatsToInput(autoAddStatsToInput);
  * @param {object} skillLevels - Object mapping skill_name/ID to points
  * @returns {object} Filtered skill levels with only regular skills
  */
-const OSKILL_HARD_CAP = 150;
-
 const SKILL_PROFILES = {
   regular: {
     maxLevel(skillId, skillLevels, characterLevel) {
@@ -1388,7 +1386,7 @@ const SKILL_PROFILES = {
   },
   oskill: {
     maxLevel() {
-      return OSKILL_HARD_CAP;
+      return Number.MAX_SAFE_INTEGER;
     },
     includeRestrictions: false
   }
