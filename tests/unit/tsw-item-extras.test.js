@@ -602,4 +602,65 @@ describe('tsw item extras', () => {
     expect(extras).not.toContain('8% added as Innate Elemental Damage (Max +25%)');
     expect(extras.some((line) => /Current Bonus/i.test(line))).toBe(false);
   });
+
+  it('does not duplicate charm trophy / awakening affixes as extras', () => {
+    const sleepDef = {
+      id: 'ths',
+      name: 'The Sleep',
+      keepInInventory: true,
+      rarity: 'unique',
+      reqLevel: 125,
+      modifiers: [
+        'Cube After Completing a Trophy Challenge to Awaken',
+        'Disenchant to open a portal to the World Nexus',
+        'Maximum Fire Resist +(0 to 1)%',
+        'Maximum Lightning Resist +(0 to 1)%',
+        'Maximum Cold Resist +(0 to 1)%',
+        'Maximum Poison Resist +(0 to 1)%',
+      ],
+      extraAwakening: true,
+      trophyOptions: [
+        {
+          label: 'Tran Athulua',
+          affixes: [
+            '100% Bonus to Attack Rating',
+            '+750 Attack Rating',
+            'Physical Damage Reduced by 50',
+          ],
+        },
+        {
+          label: 'Yshari Sanctum',
+          affixes: ['+25% to Spell Damage', 'Maximum Mana 10%', '+20 All Attributes'],
+        },
+      ],
+    };
+    const extras = extrasFromTswItem(
+      {
+        item: 'The Sleep',
+        display_name: 'The Sleep',
+        type: 'Charm',
+        description_lines: [
+          [['The Sleep', 4]],
+          [['Required Level: 125', -1]],
+          [['Keep in Inventory to Gain Bonus', -1]],
+          [['100% Bonus to Attack Rating', 3]],
+          [['+750 to Attack Rating', 3]],
+          [['+25% to Spell Damage', 3]],
+          [['+20 to all Attributes', 3]],
+          [['Maximum Mana +10%', 3]],
+          [['Physical Damage Taken Reduced by 50', 3]],
+          [['+13 to Life', 3]],
+        ],
+      },
+      sleepDef
+    );
+    const text = extras.join('\n');
+    // Trophy/awakening affixes are applied from catalog rolls; keeping the dump copies
+    // as extras summed them twice (a 10% max-mana roll became 20%).
+    expect(text).not.toMatch(/Maximum Mana/i);
+    expect(text).not.toMatch(/Physical Damage Taken Reduced/i);
+    expect(text).not.toMatch(/Attack Rating/i);
+    // A line the catalog does not model still belongs to extras.
+    expect(text).toMatch(/\+13 to Life/);
+  });
 })

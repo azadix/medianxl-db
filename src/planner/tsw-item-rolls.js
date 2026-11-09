@@ -550,6 +550,29 @@ export function catalogModifierTemplates(def) {
       for (const text of charmPoolOptionTexts(option)) push(text);
     }
   }
+  // Charm upgrades / trophies / Paragon upgrades are modelled from the catalog rolls, so
+  // the same line must not survive as an "extra" from the dump - it would be summed twice.
+  for (const entry of getCharmUpgradeEntries(def)) {
+    for (const affix of entry.affixes) push(affix);
+  }
+  const trophy = getCharmTrophyEntry(def);
+  if (trophy) {
+    for (const affix of trophy.affixes) push(affix);
+  }
+  for (const option of getCharmTrophyOptions(def)) {
+    for (const affix of option.affixes) push(affix);
+  }
+  const paragon = getParagonHammerConfig(def);
+  if (paragon) {
+    const groups = [
+      ...(Array.isArray(paragon.regularUpgrades) ? paragon.regularUpgrades : []),
+      ...(Array.isArray(paragon.paragonPaths) ? paragon.paragonPaths : []),
+      paragon.justicar,
+    ];
+    for (const group of groups) {
+      for (const affix of Array.isArray(group?.affixes) ? group.affixes : []) push(affix);
+    }
+  }
   if (def.adds != null) push(def.adds);
   if (def.innate != null) {
     for (const line of String(def.innate).split(/\r?\n/)) push(line);
