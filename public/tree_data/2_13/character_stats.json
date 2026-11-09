@@ -1784,5 +1784,27 @@
     "alwaysVisible": false,
     "sortOrder": 900,
     "section": "damage"
+  },
+  {
+    "id": 910,
+    "key": "minimum_damage",
+    "label": "+# to Minimum Damage",
+    "min": null,
+    "max": null,
+    "allowNegative": false,
+    "alwaysVisible": false,
+    "sortOrder": 900,
+    "section": "damage"
+  },
+  {
+    "id": 911,
+    "key": "maximum_damage",
+    "label": "+# to Maximum Damage",
+    "min": null,
+    "max": null,
+    "allowNegative": false,
+    "alwaysVisible": false,
+    "sortOrder": 900,
+    "section": "damage"
   }
 ]

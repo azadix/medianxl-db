@@ -1471,14 +1471,22 @@
   {
     "id": 195,
     "key": "bonus_fire_damage_to_weapons",
-    "name": "Bonus Fire Damage to weapons",
-    "format": "Bonus Fire Damage to weapons: {value0}-{value1}"
+    "name": "Fire Damage to Weapon",
+    "format": "Fire Damage to Weapon: {value0}-{value1}",
+    "pairedStat": [
+      { "valueIndex": 0, "plannerKey": "minimum_fire_damage" },
+      { "valueIndex": 1, "plannerKey": "maximum_fire_damage" }
+    ]
   },
   {
     "id": 196,
     "key": "bonus_cold_damage_to_weapons",
-    "name": "Bonus Cold Damage to weapons",
-    "format": "Bonus Cold Damage to weapons: {value0}-{value1}"
+    "name": "Cold Damage to Weapon",
+    "format": "Cold Damage to Weapon: {value0}-{value1}",
+    "pairedStat": [
+      { "valueIndex": 0, "plannerKey": "minimum_cold_damage" },
+      { "valueIndex": 1, "plannerKey": "maximum_cold_damage" }
+    ]
   },
   {
     "id": 197,
@@ -3034,13 +3042,21 @@
   {
     "id": 412,
     "key": "bonus_lightning_damage_to_weapons",
-    "name": "Bonus Lightning Damage to weapons",
-    "format": "Bonus Lightning Damage to weapons: {value0}-{value1}"
+    "name": "Lightning Damage to Weapon",
+    "format": "Lightning Damage to Weapon: {value0}-{value1}",
+    "pairedStat": [
+      { "valueIndex": 0, "plannerKey": "minimum_lightning_damage" },
+      { "valueIndex": 1, "plannerKey": "maximum_lightning_damage" }
+    ]
   },
   {
     "id": 413,
     "key": "bonus_magic_damage_to_weapons",
-    "name": "Bonus Magic Damage to weapons",
-    "format": "Bonus Magic Damage to weapons: {value0}-{value1}"
+    "name": "Magic Damage to Weapon",
+    "format": "Magic Damage to Weapon: {value0}-{value1}",
+    "pairedStat": [
+      { "valueIndex": 0, "plannerKey": "minimum_magic_damage" },
+      { "valueIndex": 1, "plannerKey": "maximum_magic_damage" }
+    ]
   }
 ]

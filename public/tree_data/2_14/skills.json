@@ -35734,7 +35734,7 @@
     "skillEffect": [
       "{{lightning_pierce}}",
       "{{lightning_spell_damage}}",
-      "{{lightning_damage}}"
+      "{{bonus_lightning_damage_to_weapons}}"
     ],
     "image": "icons-ass_84",
     "synergy": {
@@ -35756,7 +35756,8 @@
     "class": "Assassin",
     "tabName": "Naginata",
     "tags": [
-      "Fire"
+      "Fire",
+      "Passive"
     ],
     "baseMaxLevel": 25,
     "affectedBySpecialization": false,
@@ -35815,7 +35816,8 @@
     "tabName": "Reward",
     "tags": [
       "Cold",
-      "Ultimate"
+      "Ultimate",
+      "Passive"
     ],
     "baseMaxLevel": 15,
     "affectedBySpecialization": false,

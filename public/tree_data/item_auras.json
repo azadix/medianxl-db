@@ -1,0 +1,21 @@
+{
+  "nephalem_weapons": {
+    "name": "Nephalem Weapons",
+    "levels": {
+      "10": {
+        "stats": {
+          "innate_elemental_damage": 5
+        },
+        "attributeDamage": [
+          {
+            "elements": ["fire", "lightning"],
+            "sources": [
+              { "attributes": ["strength", "dexterity"], "minPercent": 20, "maxPercent": 30 },
+              { "attributes": ["vitality"], "minPercent": 10, "maxPercent": 15 }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
