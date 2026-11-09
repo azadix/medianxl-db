@@ -29,6 +29,7 @@ import {
   MODIFIER_COLOR_GREY,
   MODIFIER_COLOR_ORANGE,
 } from '@/items/item-modifier-line.js';
+import { isItemAuraDetailLine, parseItemAuraGrant } from '@/items/item-auras.js';
 
 export { isFlavorItemLine };
 
@@ -149,7 +150,7 @@ export function getItemLineSupport(def, rolls, options = {}) {
  *   slot?: string,
  *   characterLevel?: number|null,
  * }} context
- * @returns {{ contributions: object[], reports: object[], uniqueMods: object[], derived: object[] }}
+ * @returns {{ contributions: object[], reports: object[], uniqueMods: object[], derived: object[], auras: object[] }}
  */
 export function resolveModifierLines(lines, context) {
   /** @type {object[]} */
@@ -161,7 +162,11 @@ export function resolveModifierLines(lines, context) {
   /** Rules evaluated later against the finished stat snapshot (share of another stat). */
   /** @type {object[]} */
   const derived = [];
+  /** Item passives ("Level 10 Nephalem Weapons") applied by the item source. */
+  /** @type {object[]} */
+  const auras = [];
   let insideUnique = false;
+  let insideAura = false;
 
   const list = Array.isArray(lines) ? lines : [];
   for (let index = 0; index < list.length; index++) {
@@ -226,6 +231,39 @@ export function resolveModifierLines(lines, context) {
       continue;
     }
 
+    // "Level 10 Nephalem Weapons" and the descriptive lines below it: the stats come
+    // from item_auras.json (applied by the item source), the block is display-only.
+    const auraGrant = parseItemAuraGrant(plainText);
+    if (auraGrant) {
+      insideAura = true;
+      auras.push(auraGrant);
+      reports.push(
+        supportedReport({
+          id: `${lineId}:aura`,
+          text,
+          source,
+          reason: 'item-aura',
+          conditions,
+        })
+      );
+      continue;
+    }
+    if (insideAura) {
+      if (isItemAuraDetailLine(plainText)) {
+        reports.push(
+          supportedReport({
+            id: `${lineId}:aura-detail`,
+            text,
+            source,
+            reason: 'item-aura',
+            conditions,
+          })
+        );
+        continue;
+      }
+      insideAura = false;
+    }
+
     const classified = template.classified;
     // Derived conversions are mechanics we model, whatever their display colour: the
     // Jeweled Crown's "1% of total Vitality added as Energy" line is orange.
@@ -234,7 +272,9 @@ export function resolveModifierLines(lines, context) {
         derived.push({
           key: rule.key,
           sourceKey: rule.sourceKey,
+          sourceKeys: rule.sourceKeys,
           ratio: rule.ratio,
+          cap: rule.cap,
           requires: rule.requires,
           count: rule.count,
           text,
@@ -270,17 +310,21 @@ export function resolveModifierLines(lines, context) {
       continue;
     }
     if (decoded.color === MODIFIER_COLOR_GREY) {
-      const report = unsupportedReport({
-        id: `${lineId}:grey`,
-        text,
-        source,
-        reason: insideUnique ? 'unique-mechanic' : 'conditional-not-modelled',
-        conditions,
-        unique: insideUnique,
-      });
-      if (insideUnique) uniqueMods.push(report);
-      else reports.push(report);
-      continue;
+      // Grey is mostly mechanics prose, but some unique sections list real stats
+      // (e.g. Silks of the Victor's Nephalem Weapons "5% Innate Elemental Damage").
+      if (!(classified.kind === 'parsed' && classified.bonuses.length > 0)) {
+        const report = unsupportedReport({
+          id: `${lineId}:grey`,
+          text,
+          source,
+          reason: insideUnique ? 'unique-mechanic' : 'conditional-not-modelled',
+          conditions,
+          unique: insideUnique,
+        });
+        if (insideUnique) uniqueMods.push(report);
+        else reports.push(report);
+        continue;
+      }
     }
     insideUnique = false;
 
@@ -358,7 +402,7 @@ export function resolveModifierLines(lines, context) {
       })
     );
   }
-  return { contributions, reports, uniqueMods, derived };
+  return { contributions, reports, uniqueMods, derived, auras };
 }
 
 /**

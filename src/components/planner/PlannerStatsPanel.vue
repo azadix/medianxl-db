@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue';
+import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue';
 import { usePlannerRevisionRefresh } from '@/composables/usePlannerRevisionRefresh.js';
 import { getPlannerCharacterStatDefs } from '@/character/planner-stats-config.js';
 import { getCharacterInstance } from '@/character/planner-core.js';
@@ -9,6 +9,7 @@ import { usePlannerSkillReferencedStats } from '@/composables/usePlannerSkillRef
 import { isPlannerStatConditionInactive } from '@/character/planner-stat-modifiers.js';
 import { getPlannerUnknownItemStatModifiers } from '@/items/item-character-stat-bonuses.js';
 import { refreshCharacterStatsSnapshot } from '@/character/stats-provider.js';
+import { filterStatDefsByQuery } from '@/character/stat-search.js';
 
 const statTooltipRoot = ref(null);
 /** Bump to force recompute of non-reactive derived data (skill store load, skill point changes). */
@@ -33,6 +34,8 @@ const unsupportedStats = ref(new Set());
 /** Stat row whose input is focused (keeps row visible while editing down to default). */
 const activeStatKey = ref(/** @type {string|null} */ (null));
 const statFilter = ref('all');
+/** Partial search, e.g. "min dam" -> "Minimum Damage". */
+const statSearch = ref('');
 
 const statFilters = [
   { id: 'all', label: 'All' },
@@ -85,9 +88,24 @@ function statSectionForDef(def) {
 }
 
 const filteredStatDefs = computed(() => {
-  if (statFilter.value === 'all') return visibleStatDefs.value;
+  const query = statSearch.value.trim();
+  // A search looks across every stat (including rows hidden because they are at their
+  // default), while the section chips still narrow the results when not on "All".
+  const pool = query
+    ? statDefs.value.filter(
+        (def) => !['life', 'mana', 'base_life', 'base_mana'].includes(def.key)
+      )
+    : visibleStatDefs.value;
+  const matched = query ? filterStatDefsByQuery(pool, query) : pool;
   if (statFilter.value === 'unknown') return [];
-  return visibleStatDefs.value.filter((def) => statSectionForDef(def) === statFilter.value);
+  if (statFilter.value === 'all') return matched;
+  return matched.filter((def) => statSectionForDef(def) === statFilter.value);
+});
+
+watch(statSearch, (value) => {
+  if (String(value).trim() && statFilter.value === 'unknown') {
+    statFilter.value = 'all';
+  }
 });
 
 const unknownStatRows = computed(() => {
@@ -241,6 +259,16 @@ usePlannerRevisionRefresh(refreshHandler);
         </div>
       </section>
 
+      <div class="planner-stat-search">
+        <input
+          v-model="statSearch"
+          type="search"
+          class="input is-small"
+          placeholder="Search stats…"
+          aria-label="Search stats"
+        />
+      </div>
+
       <div class="planner-filter-chips">
         <button
           v-for="filter in statFilters"
@@ -272,6 +300,12 @@ usePlannerRevisionRefresh(refreshHandler);
           </div>
         </div>
         <div v-else class="planner-stats-baseline planner-stats-registry-scroll">
+          <p
+            v-if="statSearch.trim() && filteredStatDefs.length === 0"
+            class="planner-stats-empty has-text-grey"
+          >
+            No stats match “{{ statSearch.trim() }}”.
+          </p>
           <div
             v-for="def in filteredStatDefs"
             :key="def.key"
@@ -313,3 +347,14 @@ usePlannerRevisionRefresh(refreshHandler);
     </div>
   </div>
 </template>
+
+<style scoped>
+.planner-stat-search {
+  margin-bottom: 0.4rem;
+}
+
+.planner-stats-empty {
+  padding: 0.35rem 0.1rem;
+  font-size: 0.8rem;
+}
+</style>

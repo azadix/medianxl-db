@@ -251,6 +251,15 @@ export class SkillFileStore {
     }
 
     /**
+     * Item-granted passive from item_auras.json ("Nephalem Weapons", …).
+     * @param {string} name
+     * @returns {object|null}
+     */
+    getItemAuraByName(name) {
+        return this.itemAurasByName?.get(String(name).trim().toLowerCase()) ?? null;
+    }
+
+    /**
      * Playable class ids (excludes Other / class_id 1).
      * @returns {number[]}
      */
@@ -641,6 +650,13 @@ export async function initSkillDataStore(defaultVersion = DEFAULT_GAME_VERSION) 
         const cur = getRequestedTreeVersion(versions, defaultVersion);
         const folderSeg = treeAssetFolderFromMajorMinor(cur.major, cur.minor);
         const stats = await fetchJson(`${TREE_DATA_DIR}/stats.json`);
+        // Optional shared table of item-granted passives ("Level 10 Nephalem Weapons").
+        let itemAuras = null;
+        try {
+            itemAuras = await fetchJson(`${TREE_DATA_DIR}/item_auras.json`);
+        } catch (_e) {
+            // Optional file; items simply grant no auras when it is absent.
+        }
         const gameMeta = await fetchJson(`${TREE_DATA_DIR}/${folderSeg}/game_meta.json`);
         const skills = await fetchJson(`${TREE_DATA_DIR}/${folderSeg}/skills.json`);
         let subskills = [];
@@ -681,6 +697,14 @@ export async function initSkillDataStore(defaultVersion = DEFAULT_GAME_VERSION) 
         const store = new SkillFileStore();
         store.versions = versions;
         store.stats = stats;
+        store.itemAuras = itemAuras && typeof itemAuras === 'object' ? itemAuras : {};
+        store.itemAurasByName = new Map();
+        for (const [key, aura] of Object.entries(store.itemAuras)) {
+            if (!aura || typeof aura !== 'object') continue;
+            const name = String(aura.name || key).trim();
+            if (!name) continue;
+            store.itemAurasByName.set(name.toLowerCase(), { ...aura, key });
+        }
         // attach conditions and build lookup
         store.conditions = conditions;
         for (const c of conditions) {

@@ -580,39 +580,38 @@ const ADDED_AS_TARGETS = [
 ];
 
 /**
- * Parse an `X% added as <target> (Max +N%)` conversion line.
- *
- * The parenthesised "Max +N%" caps the bonus this line can grant, so the line value is
- * clamped to it (caps are per line; the registry caps only apply where they exist).
- *
- * @param {string|null|undefined} text
- * @returns {ParsedCharacterStatBonus[]|null} null when the line is not a conversion
+ * In-game caps for the Bone Chimes conversion variants (`(Max +N%)`):
+ * 150% weapon physical, 25% innate, 40% spell damage, 100% magic find.
+ * Used when the option text itself does not carry the parenthesised cap.
  */
-export function parseAddedAsDamageLine(text) {
-  const raw = String(text ?? '').trim();
-  if (!raw) return null;
-  const capMatch = /\s*\(\s*max\s*\+?(\d+(?:\.\d+)?)\s*%?\s*\)\s*$/i.exec(raw);
-  const cap = capMatch ? Number(capMatch[1]) : null;
-  const base = (capMatch ? raw.slice(0, capMatch.index) : raw).trim();
-  const match = /^\+?([+-]?\d+(?:\.\d+)?)\s*%\s+added as\s+(.+)$/i.exec(base);
-  if (!match) return null;
-  const amount = Number(match[1]);
-  if (!Number.isFinite(amount) || amount === 0) return null;
-  const target = match[2].trim().toLowerCase().replace(/\s+/g, ' ');
+const ADDED_AS_CAPS = Object.freeze({
+  enhanced_weapon_damage: 150,
+  innate_elemental_damage: 25,
+  physical_magic_spell_damage: 40,
+  fire_spell_damage: 40,
+  lightning_spell_damage: 40,
+  cold_spell_damage: 40,
+  poison_spell_damage: 40,
+  magic_find: 100,
+});
 
-  /** @type {string[]|null} */
-  let keys = null;
+/**
+ * Target stats of an `X% added as <target>` conversion.
+ * @param {string} phrase
+ * @returns {string[]|null}
+ */
+function matchAddedAsTargets(phrase) {
+  const target = String(phrase || '')
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, ' ');
+  if (!target) return null;
   for (const entry of ADDED_AS_TARGETS) {
-    const targetMatch = entry.re.exec(target);
-    if (!targetMatch) continue;
-    keys = entry.keysFromMatch ? entry.keysFromMatch(targetMatch) : entry.keys;
-    break;
+    const match = entry.re.exec(target);
+    if (!match) continue;
+    return entry.keysFromMatch ? entry.keysFromMatch(match) : entry.keys;
   }
-  if (!keys) return null;
-
-  const capped =
-    cap != null && Number.isFinite(cap) ? Math.min(Math.abs(amount), Math.abs(cap)) : amount;
-  return keys.filter((key) => isPlannerBaseStatKey(key)).map((key) => ({ key, amount: capped }));
+  return null;
 }
 
 /**
@@ -684,6 +683,41 @@ function matchDerivedTargets(phrase) {
   return null;
 }
 
+/** Flat damage added to the weapon, split by element. */
+const WEAPON_ADDED_DAMAGE_KEYS = Object.freeze({
+  '': { min: 'minimum_damage', max: 'maximum_damage' },
+  fire: { min: 'minimum_fire_damage', max: 'maximum_fire_damage' },
+  cold: { min: 'minimum_cold_damage', max: 'maximum_cold_damage' },
+  lightning: { min: 'minimum_lightning_damage', max: 'maximum_lightning_damage' },
+  magic: { min: 'minimum_magic_damage', max: 'maximum_magic_damage' },
+  poison: { min: 'minimum_poison_damage_second', max: 'maximum_poison_damage_second' },
+});
+
+/**
+ * Parse an `Adds X-Y <element> Damage` weapon line into min/max flat damage stats.
+ * These are the only "Adds …" lines that are character stats; the rest stay display-only.
+ *
+ * @param {string|null|undefined} text
+ * @returns {ParsedCharacterStatBonus[]|null}
+ */
+export function parseAddedWeaponDamageLine(text) {
+  const raw = String(text ?? '').trim();
+  if (!raw) return null;
+  const match = /^adds\s+([\d.]+)\s*(?:-|–|—|to)\s*([\d.]+)\s*(fire|cold|lightning|poison|magic)?\s*damage$/i.exec(
+    raw
+  );
+  if (!match) return null;
+  const min = Number(match[1]);
+  const max = Number(match[2]);
+  if (!Number.isFinite(min) || !Number.isFinite(max)) return null;
+  const keys = WEAPON_ADDED_DAMAGE_KEYS[String(match[3] || '').toLowerCase()];
+  if (!keys) return null;
+  return [
+    { key: keys.min, amount: min },
+    { key: keys.max, amount: max },
+  ].filter((bonus) => isPlannerBaseStatKey(bonus.key));
+}
+
 /** Suffix conditions understood by `parseDerivedStatLine`. */
 const DERIVED_SHIELD_TAIL = /\s+while\s+(?:holding|wielding)\s+a\s+shield$/i;
 const DERIVED_JEWEL_TAIL = /\s+for\s+each\s+jewel\s+in\s+your\s+gear$/i;
@@ -700,6 +734,29 @@ const DERIVED_JEWEL_TAIL = /\s+for\s+each\s+jewel\s+in\s+your\s+gear$/i;
 export function parseDerivedStatLine(text) {
   const raw = String(text ?? '').trim();
   if (!raw) return null;
+  // "X% added as <target> (Max +N%)" (all Bone Chimes versions): the share is taken
+  // from the summed bonus Damage to Demons + Undead and capped per variant.
+  const addedAs = /^\+?([\d.]+)\s*%\s+added as\s+(.+)$/i.exec(raw);
+  if (addedAs) {
+    const percent = Number(addedAs[1]);
+    if (!Number.isFinite(percent) || percent === 0) return null;
+    let phrase = addedAs[2].trim();
+    const capMatch = /\s*\(\s*max\s*\+?(\d+(?:\.\d+)?)\s*%?\s*\)\s*$/i.exec(phrase);
+    const cap = capMatch ? Number(capMatch[1]) : null;
+    if (capMatch) phrase = phrase.slice(0, capMatch.index).trim();
+    const keys = matchAddedAsTargets(phrase);
+    if (!keys || keys.length === 0) return null;
+    const ratio = percent / 100;
+    return keys
+      .filter((key) => isPlannerBaseStatKey(key))
+      .map((key) => ({
+        key,
+        sourceKey: 'damage_to_demons',
+        sourceKeys: ['damage_to_demons', 'damage_to_undead'],
+        ratio,
+        cap: cap ?? ADDED_AS_CAPS[key] ?? 100,
+      }));
+  }
   const match = /^([\d.]+)\s*%\s+of\s+(.+?)\s+added as\s+(.+)$/i.exec(raw);
   if (!match) return null;
   const percent = Number(match[1]);
@@ -752,6 +809,11 @@ export function classifyCharacterStatModifierLine(line, options = {}) {
   const text = stripDisplayedRollRanges(
     stripProcLinePrefix(modifierLineText(line))
   ).trim();
+  // "Adds 160-250 Cold Damage" is flat weapon damage, not display-only prose.
+  const addedWeaponDamage = parseAddedWeaponDamageLine(text);
+  if (addedWeaponDamage && addedWeaponDamage.length) {
+    return { text, kind: 'parsed', bonuses: addedWeaponDamage };
+  }
   if (!text || shouldSkipNonStatLine(text)) {
     return { text, kind: 'skip', bonuses: [] };
   }
@@ -764,13 +826,10 @@ export function classifyCharacterStatModifierLine(line, options = {}) {
     return { text, kind: 'skip', bonuses: [] };
   }
 
-  // "X% added as <damage>" conversions (Bone Chimes family).
-  const addedAsBonuses = parseAddedAsDamageLine(text);
-  if (addedAsBonuses) {
-    return { text, kind: 'parsed', bonuses: addedAsBonuses };
-  }
-
   // "X% of <source stat> added as <target stat>" (derived, evaluated after items).
+  // Checked before the flat "X% added as <damage>" family because Bone Chimes'
+  // "8% added as Innate Elemental Damage (Max +25%)" is a share of another stat, not a
+  // flat +8% innate bonus.
   const derivedRules = parseDerivedStatLine(text);
   if (derivedRules && derivedRules.length) {
     return { text, kind: 'derived', bonuses: [], derived: derivedRules };

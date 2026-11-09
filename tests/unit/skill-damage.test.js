@@ -7,8 +7,10 @@ import {
 } from '@/shared/skill-data-store.js';
 import { createCharacterInstance } from '@/character/planner-instance.js';
 import { collectPlannerDamageSkills } from '@/character/planner-damage.js';
+import { UNARMED_WEAPON_PROFILE } from '@/items/equipped-weapon.js';
 import {
   applyDamageMitigation,
+  collectBasicAttackDamage,
   collectSkillDamage,
   physicalCritMultiplier,
 } from '@/skills/domain/skill-damage.js';
@@ -72,6 +74,85 @@ describe('skill damage', () => {
     expect(damageFor(store, 'carnage').weaponDamagePercent).toBe(145);
   });
 
+  it('adds elemental weapon damage as its own component', () => {
+    const damage = collectSkillDamage({
+      row: skillRow(store, 'carnage'),
+      level: 20,
+      characterState: {
+        ...CHARACTER_STATE,
+        stats: { minimum_cold_damage: 100, maximum_cold_damage: 200 },
+      },
+      characterLevel: 150,
+      weapon: {
+        name: 'Test Blade',
+        twoHanded: false,
+        ethereal: false,
+        min: 10,
+        max: 20,
+        strDamageBonus: 0,
+        dexDamageBonus: 0,
+      },
+    });
+    const weapon = damage.components.find((component) => component.key === 'weapon_damage');
+    expect(weapon.label).toBe('Physical');
+    const cold = damage.components.find((component) => component.key === 'weapon_cold_damage');
+    expect(cold).toBeTruthy();
+    expect(cold.label).toBe('Cold');
+    // Added elemental damage is shown raw, not scaled by the skill percentage.
+    expect(cold.min).toBe(100);
+    expect(cold.max).toBe(200);
+  });
+
+  it('applies external flat damage to bare-handed attacks', () => {
+    const damage = collectSkillDamage({
+      row: skillRow(store, 'carnage'),
+      level: 20,
+      characterState: {
+        ...CHARACTER_STATE,
+        stats: {
+          minimum_damage: 10,
+          maximum_damage: 20,
+          bonus_cold_damage_to_weapons: 38,
+        },
+      },
+      characterLevel: 150,
+      weapon: UNARMED_WEAPON_PROFILE,
+    });
+    const weapon = damage.components.find((component) => component.key === 'weapon_damage');
+    expect(weapon.label).toBe('Physical');
+    // (1 base + 10 flat) and (2 base + 20 flat) at 145%.
+    expect(weapon.min).toBeCloseTo(11 * 1.45);
+    expect(weapon.max).toBeCloseTo(22 * 1.45);
+    const cold = damage.components.find((component) => component.key === 'weapon_cold_damage');
+    expect(cold).toBeTruthy();
+    expect(cold.min).toBe(38);
+    expect(cold.max).toBe(38);
+  });
+
+  it('adds weapon damage for attack skills when a weapon is equipped', () => {
+    const damage = collectSkillDamage({
+      row: skillRow(store, 'carnage'),
+      level: 20,
+      characterState: CHARACTER_STATE,
+      characterLevel: 150,
+      weapon: {
+        name: 'Test Blade',
+        twoHanded: false,
+        ethereal: false,
+        min: 10,
+        max: 20,
+        strDamageBonus: 0.14,
+        dexDamageBonus: 0,
+      },
+    });
+    const weapon = damage.components.find((component) => component.key === 'weapon_damage');
+    expect(weapon).toBeTruthy();
+    // 145% of a 10-20 weapon and no character stats.
+    expect(weapon.min).toBeCloseTo(14.5);
+    expect(weapon.max).toBeCloseTo(29);
+    expect(damage.totalMax).toBeGreaterThanOrEqual(weapon.max);
+  });
+
   it('sums multiple damage types into the per-hit total', () => {
     const damage = damageFor(store, 'beacon');
     const types = damage.components.map((c) => c.key);
@@ -107,6 +188,76 @@ describe('skill damage', () => {
     expect(boosted.totalMax).toBeGreaterThan(base.totalMax * 1.5);
   });
 
+  it('includes equipped weapon damage in the build summary', () => {
+    const row = skillRow(store, 'carnage');
+    const character = createCharacterInstance(row.class || 'Barbarian', 150);
+    character.setAllSkillPoints({ carnage: 20 });
+    character.setEnabledSkillIds(['carnage']);
+    const itemsStore = {
+      equipment: { rarm: 'w1' },
+      instances: { w1: {} },
+      getDefForInstance: () => ({
+        id: 'test-sword',
+        name: 'Test Sword',
+        group: 'Swords',
+        category: 'weapons',
+        damage1h: { min: 10, max: 20 },
+        strDamageBonus: 0.14,
+      }),
+      equipmentSlotContributesBonuses: () => true,
+    };
+    const rows = collectPlannerDamageSkills({
+      character,
+      store,
+      itemsStore,
+      effectiveLevel: 150,
+    });
+    const carnage = rows.find((entry) => entry.id === 'carnage');
+    expect(carnage).toBeTruthy();
+    expect(carnage.components.some((component) => component.key === 'weapon_damage')).toBe(true);
+  });
+
+  it('computes the innate basic attack from the weapon', () => {
+    const attack = collectBasicAttackDamage({
+      weapon: {
+        name: 'Test Blade',
+        unarmed: false,
+        twoHanded: false,
+        ethereal: false,
+        min: 10,
+        max: 20,
+        strDamageBonus: 0,
+        dexDamageBonus: 0,
+      },
+      stats: { minimum_cold_damage: 5, maximum_cold_damage: 9 },
+    });
+    const physical = attack.components.find((component) => component.key === 'weapon_damage');
+    expect(physical.min).toBe(10);
+    expect(physical.max).toBe(20);
+    expect(attack.components.some((component) => component.key === 'weapon_cold_damage')).toBe(
+      true
+    );
+    expect(attack.weaponDamagePercent).toBe(100);
+  });
+
+  it('always lists the innate attack first', () => {
+    const character = createCharacterInstance('Barbarian', 150);
+    const rows = collectPlannerDamageSkills({ character, store, effectiveLevel: 150 });
+    expect(rows[0]).toMatchObject({ id: 'attack', name: 'Attack', innate: true });
+  });
+
+  it('falls back to unarmed damage when no weapon is equipped', () => {
+    const row = skillRow(store, 'carnage');
+    const character = createCharacterInstance(row.class || 'Barbarian', 150);
+    character.setAllSkillPoints({ carnage: 20 });
+    character.setEnabledSkillIds(['carnage']);
+    const rows = collectPlannerDamageSkills({ character, store, effectiveLevel: 150 });
+    const carnage = rows.find((entry) => entry.id === 'carnage');
+    const weapon = carnage?.components.find((component) => component.key === 'weapon_damage');
+    expect(weapon).toBeTruthy();
+    expect(weapon.label).toBe('Physical');
+  });
+
   it('summarises the allocated damage skills of a character', () => {
     const row = skillRow(store, 'annihilation');
     const character = createCharacterInstance(row.class || 'Paladin', 150);
@@ -119,7 +270,7 @@ describe('skill damage', () => {
     expect(summary.level).toBe(20);
     expect(summary.totalMax).toBeGreaterThan(0);
     expect(summary.components.some((c) => c.key === 'fire_damage')).toBe(true);
-    expect(rows.every((entry) => entry.level > 0)).toBe(true);
+    expect(rows.every((entry) => entry.innate || entry.level > 0)).toBe(true);
   });
 });
 
@@ -174,5 +325,14 @@ describe('damage mitigation', () => {
   it('never produces negative damage at 100% resistance', () => {
     const [row] = applyDamageMitigation([fire], { baseEnemyResistPct: 120 });
     expect(row.effectiveMax).toBe(0);
+  });
+
+  it('caps enemy pierce at -100% resistance', () => {
+    const [row] = applyDamageMitigation([fire], {
+      stats: { enemy_fire_resistance: 300 },
+      baseEnemyResistPct: 50,
+    });
+    expect(row.resistPct).toBe(-100);
+    expect(row.effectiveMax).toBeCloseTo(2000);
   });
 });

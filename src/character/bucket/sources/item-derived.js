@@ -39,10 +39,22 @@ export function applyItemDerivedSources(bucket, input) {
 
   for (const rule of rules) {
     const ratio = Number(rule?.ratio);
-    const sourceValue = Number(values[String(rule?.sourceKey || '')]);
     if (!Number.isFinite(ratio) || ratio === 0) continue;
+    // Rules may read a single source or the sum of several (Bone Chimes: demons +
+    // undead). `cap` clamps the converted amount (Max +25%).
+    const sourceKeys =
+      Array.isArray(rule?.sourceKeys) && rule.sourceKeys.length > 0
+        ? rule.sourceKeys
+        : [rule?.sourceKey];
+    let sourceValue = 0;
+    for (const key of sourceKeys) {
+      const value = Number(values[String(key || '')]);
+      if (Number.isFinite(value)) sourceValue += value;
+    }
     if (!Number.isFinite(sourceValue) || sourceValue === 0) continue;
-    const amount = sourceValue * ratio;
+    let amount = sourceValue * ratio;
+    const cap = Number(rule?.cap);
+    if (Number.isFinite(cap) && cap > 0) amount = Math.min(amount, cap);
     if (!Number.isFinite(amount) || amount === 0) continue;
 
     const ownerId = String(rule.sourceId || 'item');

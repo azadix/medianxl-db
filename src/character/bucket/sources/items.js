@@ -18,6 +18,7 @@ import {
   resolveModifierLines,
 } from '@/items/item-modifier-resolver.js';
 import { defaultCharmRollsForDef, isCharmBonusActive } from '@/items/charm-items.js';
+import { buildItemAuraContributions } from '@/items/item-auras.js';
 import { defaultRelicAffixRolls, isRelicBonusActive } from '@/items/relic-items.js';
 import {
   countEquippedSetPieces,
@@ -229,15 +230,21 @@ export function applyItemSources(bucket, input) {
       slot: source.slot,
       characterLevel: character?.level ?? null,
     });
+    // Item passives ("Level 10 Nephalem Weapons") resolve from item_auras.json and need
+    // the character's base attributes, so they are applied here rather than per line.
+    const auraContributions = buildItemAuraContributions(resolved.auras, character);
+    const contributions = auraContributions.length
+      ? [...resolved.contributions, ...auraContributions]
+      : resolved.contributions;
     bucket.setSource('items', source.sourceId, {
-      contributions: resolved.contributions,
+      contributions,
       reports: resolved.reports,
     });
     if (resolved.uniqueMods.length) {
       bucket.setUniqueMods(source.sourceId, resolved.uniqueMods);
       uniqueCount += resolved.uniqueMods.length;
     }
-    contributionCount += resolved.contributions.length;
+    contributionCount += contributions.length;
     reportCount += resolved.reports.length;
     if (Array.isArray(resolved.derived) && resolved.derived.length) {
       // "(Doubled for Jewels socketed in the Crown itself)" counts the item's own

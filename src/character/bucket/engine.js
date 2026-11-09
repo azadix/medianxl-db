@@ -87,7 +87,14 @@ export function applyCharacterSources(bucket, input) {
   // Rules can chain (minion life -> bonus defense -> vitality), so iterate until the
   // stats they read stop moving (bounded; the supported set converges in 2 passes).
   if (itemDerived.length > 0) {
-    const sourceKeys = [...new Set(itemDerived.map((rule) => rule.sourceKey))];
+    const sourceKeys = [
+      ...new Set(
+        itemDerived.flatMap((rule) => [
+          rule.sourceKey,
+          ...(Array.isArray(rule.sourceKeys) ? rule.sourceKeys : []),
+        ])
+      ),
+    ].filter(Boolean);
     let previousSignature = '';
     for (let pass = 0; pass < 3; pass += 1) {
       applyItemDerivedSources(bucket, { rules: itemDerived });

@@ -38,7 +38,12 @@ import {
   stripDisplayedRollRanges,
 } from '@/items/affix-rolls.js';
 import { EQUIPMENT_SLOTS } from '@/items/item-types.js';
-import { countEquippedSetPieces, resolveSetBonuses } from '@/items/item-overlays.js';
+import {
+  countEquippedSetPieces,
+  readFixedBoostValues,
+  replaceAffixNumbers,
+  resolveSetBonuses,
+} from '@/items/item-overlays.js';
 import { escapeHtmlText, SCALING_DISPLAY_HTML_CLASSES } from '@/shared/utils.js';
 import { lookupMergedDisplayNameByInternalName } from '@/shared/skill-data-store.js';
 import {
@@ -74,6 +79,11 @@ export function resolvedEquipmentModifierLines(def, rolls = null, extras = null)
         (rangeIndex) => `${EQUIP_AFFIX_ROLL_PREFIX}${sourceKey}:r${rangeIndex}`,
         { hideRanges: false, showRollRanges: false }
       );
+    } else {
+      // Fixed values can be overridden per item ("+1 to All Skills" -> +2, "Adds 7-13
+      // Damage" -> 43-61). Ignoring them under-counts all-skills and similar bonuses.
+      const fixedValues = readFixedBoostValues(sourceKey, rolls);
+      if (fixedValues.length) resolved = replaceAffixNumbers(text, fixedValues);
     }
     i += 1;
     if (resolved == null) continue;

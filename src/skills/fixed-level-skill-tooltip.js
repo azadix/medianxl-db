@@ -16,9 +16,12 @@ import {
   wrapSkillTooltipContent,
 } from '@/shared/tooltip-html.js';
 import { collectSkillDamage } from '@/skills/domain/skill-damage.js';
+import { filterPoisonDamageEffectLines } from '@/skills/poison-damage-policy.js';
 import { getFileSkillStore } from '@/shared/skill-data-store.js';
 import { getCurrentVersion, versionToTreeAssetFolder } from '@/shared/version-config.js';
-import { getSkillPoints } from '@/character/planner-core.js';
+import { getCharacterInstance, getSkillPoints } from '@/character/planner-core.js';
+import { getWeaponProfileForDamage } from '@/items/equipped-weapon.js';
+import { useItemsStore } from '@/stores/items.js';
 import { ensureSkillPreviewManifest } from '@/skills/skill-preview-catalog.js';
 
 /**
@@ -50,9 +53,31 @@ const tooltipHtmlByKey = new Map();
  * @param {boolean} showFormulas
  * @returns {string}
  */
-function tooltipCacheKey(skillId, level, showFormulas, asProc, treeBlvl) {
+function tooltipCacheKey(skillId, level, showFormulas, asProc, treeBlvl, weaponKey) {
   const folder = versionToTreeAssetFolder(getCurrentVersion());
-  return `${folder}:${skillId}:lvl${level}:p${asProc ? 1 : 0}:b${treeBlvl}:f${showFormulas ? 1 : 0}`;
+  return `${folder}:${skillId}:lvl${level}:p${asProc ? 1 : 0}:b${treeBlvl}:f${showFormulas ? 1 : 0}:w${weaponKey}`;
+}
+
+/**
+ * Weapon the planner build is holding, if the fixed-level tooltip is being shown in the
+ * planner. Other routes (skills page, patch notes) keep the raw percentage caption.
+ *
+ * @returns {{ profile: object|null, key: string }}
+ */
+function plannerWeaponForTooltip() {
+  try {
+    const onPlannerRoute =
+      typeof window !== 'undefined' && /\/planner(\/|$)/.test(window.location.pathname);
+    if (!onPlannerRoute || !getCharacterInstance()) return { profile: null, key: 'none' };
+    // Bare-handed builds still get flat weapon damage from gear/skills.
+    const profile = getWeaponProfileForDamage(useItemsStore());
+    return {
+      profile,
+      key: `${profile.name}:${profile.min}:${profile.max}:${profile.ethereal ? 1 : 0}`,
+    };
+  } catch {
+    return { profile: null, key: 'none' };
+  }
 }
 
 /**
@@ -78,10 +103,11 @@ async function expandAtLevel(detail, text, packedLevel, showFormulas, asProc) {
     treeSkillsCache: {},
     stats: {},
   };
+  const filteredSource = filterPoisonDamageEffectLines(skillId, source);
   const expanded = await expandPlaceholdersWithScaling(
     skillId,
     packedLevel,
-    source,
+    filteredSource,
     skillId,
     characterState,
     showFormulas,
@@ -109,7 +135,8 @@ export async function buildFixedLevelSkillTooltipHtml(skillId, level, options = 
   await ensureSkillPreviewManifest();
 
   const treeBlvl = asProc ? treeHardPoints(id) : 0;
-  const cacheKey = tooltipCacheKey(id, lvl, showFormulas, asProc, treeBlvl);
+  const weapon = plannerWeaponForTooltip();
+  const cacheKey = tooltipCacheKey(id, lvl, showFormulas, asProc, treeBlvl, weapon.key);
   if (tooltipHtmlByKey.has(cacheKey)) {
     return tooltipHtmlByKey.get(cacheKey) || '';
   }
@@ -173,6 +200,7 @@ export async function buildFixedLevelSkillTooltipHtml(skillId, level, options = 
             stats: {},
           },
           characterLevel: lvl,
+          weapon: weapon.profile,
         })
       )
     : '';

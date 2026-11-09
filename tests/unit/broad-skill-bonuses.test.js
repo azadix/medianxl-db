@@ -100,6 +100,29 @@ describe('collectLiveBroadSkillBonuses', () => {
     }
   );
 
+  it('uses the item fixed roll for +All Skills, not the catalog template', () => {
+    createCharacterInstance('Assassin', 120);
+    const store = useItemsStore();
+    const def = {
+      id: 'u:test:all-skills-armor',
+      name: 'Test Armor',
+      category: 'armor',
+      slot: 'torso',
+      rarity: 'unique',
+      reqLevel: 1,
+      modifiers: ['+1 to All Skills'],
+    };
+    store.catalog = [def];
+    store.catalogLoaded = true;
+    store.syncViewerClassName('Assassin');
+    const instanceId = store.createInstance(def.id);
+    store.equipment.tors = instanceId;
+    // The game item rolled +2 while the catalog template says +1 (Silks of the Victor).
+    store.instances[instanceId].rolls = { 'modFixed:base:m0': 2 };
+
+    expect(collectLiveBroadSkillBonuses('Assassin', 120)).toEqual({ all: 2, class: 0 });
+  });
+
   it.each(allSkillRelics.map((row) => [row.def.id, row.amount]))(
     '%s adds +%i to All Skills when enabled',
     (defId, amount) => {

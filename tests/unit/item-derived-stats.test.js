@@ -233,3 +233,37 @@ describe('derived rule equipment conditions', () => {
     );
   });
 });
+
+  it('sums several sources and caps the converted amount', () => {
+    const registry = registryFor(['innate_elemental_damage', 'damage_to_demons', 'damage_to_undead']);
+    const bucket = bucketWith(registry, { damage_to_demons: 29, damage_to_undead: 0 });
+    applyItemDerivedSources(bucket, {
+      rules: [
+        {
+          key: 'innate_elemental_damage',
+          sourceKey: 'damage_to_demons',
+          sourceKeys: ['damage_to_demons', 'damage_to_undead'],
+          ratio: 0.08,
+          cap: 25,
+        },
+      ],
+    });
+    bucket.commit();
+    expect(bucket.getSnapshot().getValue('innate_elemental_damage')).toBeCloseTo(2.32, 2);
+
+    const capped = registryFor(['innate_elemental_damage', 'damage_to_demons', 'damage_to_undead']);
+    const cappedBucket = bucketWith(capped, { damage_to_demons: 1000, damage_to_undead: 1000 });
+    applyItemDerivedSources(cappedBucket, {
+      rules: [
+        {
+          key: 'innate_elemental_damage',
+          sourceKey: 'damage_to_demons',
+          sourceKeys: ['damage_to_demons', 'damage_to_undead'],
+          ratio: 0.08,
+          cap: 25,
+        },
+      ],
+    });
+    cappedBucket.commit();
+    expect(cappedBucket.getSnapshot().getValue('innate_elemental_damage')).toBe(25);
+  });

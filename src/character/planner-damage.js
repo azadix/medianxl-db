@@ -9,7 +9,11 @@
  */
 
 import { computeSkillLevels } from '@/skills/skill-levels.js';
-import { collectSkillDamage } from '@/skills/domain/skill-damage.js';
+import {
+  collectBasicAttackDamage,
+  collectSkillDamage,
+} from '@/skills/domain/skill-damage.js';
+import { getWeaponProfileForDamage } from '@/items/equipped-weapon.js';
 import { getSkillVariantKey } from '@/tree/skill-variants.js';
 import { withBaseAttributeFormulaStats } from '@/shared/skill-data-store.js';
 import { getTreeSkillsCache } from './planner-snapshot.js';
@@ -18,6 +22,7 @@ import { getTreeSkillsCache } from './planner-snapshot.js';
  * @param {{
  *   character: object,
  *   store: object,
+ *   itemsStore?: object|null,
  *   effectiveLevel?: number,
  *   allSkillsBonus?: number,
  *   classSkillsBonus?: number,
@@ -60,6 +65,17 @@ export function collectPlannerDamageSkills(input) {
     relicOSkillIds: [],
   };
 
+  // No weapon still attacks bare-handed with any flat damage from gear/skills.
+  const weapon = getWeaponProfileForDamage(input.itemsStore ?? null);
+  // The basic attack is innate to every character and is always listed.
+  const attack = {
+    id: 'attack',
+    name: 'Attack',
+    level: 0,
+    innate: true,
+    stats,
+    ...collectBasicAttackDamage({ weapon, stats }),
+  };
   const out = [];
   for (const [internalKey, level] of Object.entries(levels.levels)) {
     const skillLevel = Math.max(0, Math.floor(Number(level) || 0));
@@ -73,6 +89,7 @@ export function collectPlannerDamageSkills(input) {
       characterState,
       characterLevel: levels.effectiveLevel,
       variantKey: getSkillVariantKey(String(row.id)),
+      weapon,
     });
     if (damage.components.length === 0 && damage.weaponDamagePercent === 0) continue;
     out.push({
@@ -84,5 +101,5 @@ export function collectPlannerDamageSkills(input) {
     });
   }
   out.sort((a, b) => b.totalMax - a.totalMax || a.name.localeCompare(b.name));
-  return out;
+  return [attack, ...out];
 }

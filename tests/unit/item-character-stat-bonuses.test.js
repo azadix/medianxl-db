@@ -667,39 +667,64 @@ describe('recomputePlannerStatsFromItems', () => {
 });
 
 
-describe('added-as damage conversions', () => {
+describe('Bone Chimes conversion variants', () => {
   const cases = [
-    ['36% added as Weapon Physical Damage (Max +150%)', { enhanced_weapon_damage: 36 }],
-    ['8% added as Innate Elemental Damage (Max +25%)', { innate_elemental_damage: 8 }],
+    [
+      '36% added as Weapon Physical Damage (Max +150%)',
+      ['enhanced_weapon_damage'],
+      0.36,
+      150,
+    ],
     [
       '18% added as Cold and Poison Spell Damage (Max +40%)',
-      { cold_spell_damage: 18, poison_spell_damage: 18 },
+      ['cold_spell_damage', 'poison_spell_damage'],
+      0.18,
+      40,
     ],
     [
       '18% added as Fire and Lightning Spell Damage (Max +40%)',
-      { fire_spell_damage: 18, lightning_spell_damage: 18 },
+      ['fire_spell_damage', 'lightning_spell_damage'],
+      0.18,
+      40,
     ],
     [
       '18% added as Physical and Magic Spell Damage (Max +40%)',
-      { physical_magic_spell_damage: 18 },
+      ['physical_magic_spell_damage'],
+      0.18,
+      40,
     ],
-    ['12% added as Magic Find (Max +100%)', { magic_find: 12 }],
-    ['15% added as Physical/Magic Spell Damage', { physical_magic_spell_damage: 15 }],
-    ['5% added as Fire Spell Damage', { fire_spell_damage: 5 }],
+    ['12% added as Magic Find (Max +100%)', ['magic_find'], 0.12, 100],
+    [
+      '8% added as Innate Elemental Damage (Max +25%)',
+      ['innate_elemental_damage'],
+      0.08,
+      25,
+    ],
+    // Without a parenthesised cap the variant default applies.
+    ['5% added as Fire Spell Damage', ['fire_spell_damage'], 0.05, 40],
   ];
 
-  for (const [line, expected] of cases) {
-    it(`maps "${line}"`, () => {
-      const bonuses = parseCharacterStatBonusesFromModifierLine(line);
-      expect(Object.fromEntries(bonuses.map((b) => [b.key, b.amount]))).toEqual(expected);
+  for (const [line, keys, ratio, cap] of cases) {
+    it(`derives "${line}"`, () => {
+      const result = classifyCharacterStatModifierLine(line);
+      expect(result.kind).toBe('derived');
+      expect(result.derived.map((rule) => rule.key).sort()).toEqual([...keys].sort());
+      for (const rule of result.derived) {
+        expect(rule).toMatchObject({
+          sourceKey: 'damage_to_demons',
+          sourceKeys: ['damage_to_demons', 'damage_to_undead'],
+          ratio,
+          cap,
+        });
+      }
     });
   }
 
-  it('clamps the line value to its Max cap', () => {
-    const bonuses = parseCharacterStatBonusesFromModifierLine(
+  it('uses the line cap when present', () => {
+    const result = classifyCharacterStatModifierLine(
       '60% added as Weapon Physical Damage (Max +40%)'
     );
-    expect(bonuses).toEqual([{ key: 'enhanced_weapon_damage', amount: 40 }]);
+    expect(result.derived[0]).toMatchObject({ key: 'enhanced_weapon_damage', ratio: 0.6, cap: 40 });
   });
 
   it('does not swallow ordinary spell-damage lines', () => {
@@ -758,5 +783,53 @@ describe('derived stat conversions', () => {
     ]) {
       expect(classifyCharacterStatModifierLine(line).kind).not.toBe('derived');
     }
+  });
+});
+
+describe('weapon added damage lines', () => {
+  const cases = [
+    [
+      'Adds 160-250 Cold Damage',
+      { minimum_cold_damage: 160, maximum_cold_damage: 250 },
+    ],
+    ['Adds 3-4 Fire Damage', { minimum_fire_damage: 3, maximum_fire_damage: 4 }],
+    [
+      'Adds 10 to 20 Lightning Damage',
+      { minimum_lightning_damage: 10, maximum_lightning_damage: 20 },
+    ],
+    ['Adds 5-9 Magic Damage', { minimum_magic_damage: 5, maximum_magic_damage: 9 }],
+    ['Adds 10-20 damage', { minimum_damage: 10, maximum_damage: 20 }],
+  ];
+
+  for (const [line, expected] of cases) {
+    it(`maps "${line}"`, () => {
+      const result = classifyCharacterStatModifierLine(line);
+      expect(result.kind).toBe('parsed');
+      expect(Object.fromEntries(result.bonuses.map((b) => [b.key, b.amount]))).toEqual(expected);
+    });
+  }
+});
+
+describe('innate elemental damage sources', () => {
+  it('derives Bone Chimes from the sum of demons and undead damage', () => {
+    const result = classifyCharacterStatModifierLine(
+      '8% added as Innate Elemental Damage (Max +25%)'
+    );
+    expect(result.kind).toBe('derived');
+    expect(result.derived).toEqual([
+      {
+        key: 'innate_elemental_damage',
+        sourceKey: 'damage_to_demons',
+        sourceKeys: ['damage_to_demons', 'damage_to_undead'],
+        ratio: 0.08,
+        cap: 25,
+      },
+    ]);
+  });
+
+  it('parses the grey Nephalem Weapons stat line', () => {
+    const result = classifyCharacterStatModifierLine('5% Innate Elemental Damage');
+    expect(result.kind).toBe('parsed');
+    expect(result.bonuses).toEqual([{ key: 'innate_elemental_damage', amount: 5 }]);
   });
 });

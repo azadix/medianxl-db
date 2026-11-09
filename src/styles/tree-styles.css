@@ -1208,6 +1208,11 @@
     border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+.tooltip-damage-entry {
+    display: flex;
+    flex-direction: column;
+}
+
 .tooltip-damage-row {
     display: flex;
     justify-content: space-between;
@@ -1260,6 +1265,73 @@
 .tooltip-damage-dot {
     color: #9a9aa8;
     font-size: 0.8em;
+}
+
+/* Damage panel hover tooltip (portaled to body, so not scoped to the component) */
+.damage-tooltip {
+    min-width: 360px;
+    max-width: 520px;
+}
+
+.damage-tooltip-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 6px;
+}
+
+.damage-tooltip-name {
+    font-weight: 700;
+}
+
+.damage-tooltip-level {
+    color: #9a9aa8;
+    font-size: 0.78rem;
+}
+
+.damage-tooltip-columns,
+.damage-tooltip-row {
+    display: grid;
+    grid-template-columns: 8rem 1fr;
+    gap: 14px;
+}
+
+.damage-tooltip-columns {
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #7f7f8c;
+    margin-bottom: 2px;
+}
+
+.damage-tooltip-columns span:not(:first-child),
+.damage-tooltip-value {
+    text-align: right;
+}
+
+.damage-tooltip-row {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    font-variant-numeric: tabular-nums;
+}
+
+.damage-tooltip-value {
+    color: #e6e6ee;
+    white-space: nowrap;
+}
+
+.damage-tooltip-row.is-total {
+    margin-top: 2px;
+    padding-top: 2px;
+    border-top: 1px dashed rgba(255, 255, 255, 0.16);
+    font-weight: 600;
+}
+
+.damage-tooltip-muted {
+    color: #9a9aa8;
+    font-size: 0.78rem;
+    white-space: nowrap;
 }
 
 .subskill-inline-block {

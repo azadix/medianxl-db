@@ -199,8 +199,13 @@ watch(
       <div v-if="isProc" class="is-size-6 has-text-info">
         <div>{{ procChanceText }}</div>
       </div>
-      <div v-else :class="[levelColorClass, 'is-size-6']">
-        {{ cardData.currentPoints || 0 }} / {{ cardData.maxPoints || 0 }}
+      <div
+        v-else
+        :class="[levelColorClass, 'is-size-6']"
+        :title="cardData.unboundedPoints ? 'No level cap' : ''"
+      >
+        <template v-if="cardData.unboundedPoints">{{ cardData.effectiveLevel ?? cardData.currentPoints ?? 0 }}</template>
+        <template v-else>{{ cardData.currentPoints || 0 }} / {{ cardData.maxPoints || 0 }}</template>
       </div>
     </div>
   </div>

@@ -105,14 +105,75 @@ function catalogRowBySkillKey(store, skillKey) {
  *   levels: Record<string, number>,
  * }}
  */
-export function computeSkillLevels(input) {
-  const character = input.character;
-  if (!character) throw new Error('computeSkillLevels requires a character');
+/**
+ * Soft (+skill) levels for one skill key: All Skills, class bonus for own-class skills,
+ * relic/gear grants and item-granted oSkill levels.
+ *
+ * @param {string} skillKey
+ * @param {{ character: object, allSkillsBonus?: number, classSkillsBonus?: number }} input
+ * @returns {number}
+ */
+export function computeSoftSkillLevel(skillKey, input) {
+  const character = input?.character;
+  if (!character) return 0;
   const store = getFileSkillStore();
-  const effectiveLevel = Math.max(1, Math.floor(Number(input.effectiveLevel) || character.level || 1));
   const allSkillsBonus = Math.max(0, Math.floor(Number(input.allSkillsBonus) || 0));
   const classSkillsBonus = Math.max(0, Math.floor(Number(input.classSkillsBonus) || 0));
   const charClass = character.className != null ? String(character.className) : '';
+  const cat = catalogRowBySkillKey(store, skillKey);
+  const skillClass = cat?.class != null ? String(cat.class) : '';
+  const getsClassBonus = charClass !== '' && skillClass === charClass;
+  const displayName =
+    cat?.displayName != null && String(cat.displayName).trim() !== ''
+      ? String(cat.displayName).trim()
+      : String(skillKey);
+  const softCtx = {
+    skillId: skillKey,
+    displayName,
+    isOSkill: !getsClassBonus,
+    className: charClass,
+    skillClass,
+  };
+  const relicBonus = Number(getRelicSkillBonusForSkill(softCtx)) || 0;
+  const gearSoft = Number(getEquippedGearSkillBonusForSkill(softCtx)) || 0;
+  const itemSlvl = Character.clampOSkillPoints(character.getOSkillItemPoints(skillKey));
+  const soft = allSkillsBonus + (getsClassBonus ? classSkillsBonus : 0) + relicBonus + gearSoft + itemSlvl;
+  return Math.max(0, Math.floor(Number(soft) || 0));
+}
+
+/**
+ * Effective level (hard points + soft bonuses) for a single skill, without building the
+ * full level map. Used by oSkill cards, where hard points are 0 by design.
+ *
+ * @param {string} skillKey
+ * @param {{ character: object, allSkillsBonus?: number, classSkillsBonus?: number }} input
+ * @returns {number}
+ */
+export function getPlannerSkillEffectiveLevel(skillKey, input) {
+  const character = input?.character;
+  if (!character) return 0;
+  const key = String(skillKey ?? '').trim();
+  if (!key) return 0;
+  // oSkill hard points live on the row (manual points) and are not filtered by the
+  // buff toggle here: the card shows the level even when its bonuses are disabled.
+  const oskillRow = (character.oSkills || []).find(
+    (row) => String(row?.skillName ?? '').trim() === key
+  );
+  const hard = oskillRow
+    ? Character.clampOSkillPoints(oskillRow.points ?? 0)
+    : Math.max(
+        0,
+        Math.floor(Number(buildMergedSkillLevelsForStatRecompute(character)?.[key]) || 0)
+      );
+  return hard + computeSoftSkillLevel(key, input);
+}
+
+export function computeSkillLevels(input) {
+  const character = input.character;
+  if (!character) throw new Error('computeSkillLevels requires a character');
+  const effectiveLevel = Math.max(1, Math.floor(Number(input.effectiveLevel) || character.level || 1));
+  const allSkillsBonus = Math.max(0, Math.floor(Number(input.allSkillsBonus) || 0));
+  const classSkillsBonus = Math.max(0, Math.floor(Number(input.classSkillsBonus) || 0));
   const mergedBlvl = buildMergedSkillLevelsForStatRecompute(character);
 
   /** @type {Record<string, number>} */
@@ -120,34 +181,8 @@ export function computeSkillLevels(input) {
   /** @type {Record<string, number>} */
   const levels = {};
 
-  /**
-   * @param {string} skillKey
-   * @returns {number}
-   */
-  function softLevelForSkillKey(skillKey) {
-    const cat = catalogRowBySkillKey(store, skillKey);
-    const skillClass = cat?.class != null ? String(cat.class) : '';
-    const getsClassBonus = charClass !== '' && skillClass === charClass;
-    const displayName =
-      cat?.displayName != null && String(cat.displayName).trim() !== ''
-        ? String(cat.displayName).trim()
-        : String(skillKey);
-    const softCtx = {
-      skillId: skillKey,
-      displayName,
-      isOSkill: !getsClassBonus,
-      className: charClass,
-      skillClass,
-    };
-    const relicBonus = Number(getRelicSkillBonusForSkill(softCtx)) || 0;
-    const gearSoft = Number(getEquippedGearSkillBonusForSkill(softCtx)) || 0;
-    const itemSlvl = Character.clampOSkillPoints(character.getOSkillItemPoints(skillKey));
-    const soft = allSkillsBonus + (getsClassBonus ? classSkillsBonus : 0) + relicBonus + gearSoft + itemSlvl;
-    return Math.max(0, Math.floor(Number(soft) || 0));
-  }
-
   for (const key of Object.keys(mergedBlvl)) {
-    const soft = softLevelForSkillKey(key);
+    const soft = computeSoftSkillLevel(key, { character, allSkillsBonus, classSkillsBonus });
     softLevels[key] = soft;
     levels[key] = Math.max(0, Math.floor(Number(mergedBlvl[key]) || 0)) + soft;
   }

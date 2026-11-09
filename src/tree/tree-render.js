@@ -79,6 +79,7 @@ import {
   getSkillPoints,
   getAllSkillPoints,
   getEffectivePlannerLevel,
+  getCharacterInstance,
   calculateEffectiveMaxLevel,
   getSkillRestrictions,
   canAllocateSkillPoints,
@@ -90,10 +91,23 @@ import {
   isOSkillSlotDisabled
 } from '@/character/planner-core.js';
 import { getSkillIconHTML } from '@/shared/utils.js';
+import { getPlannerSkillEffectiveLevel } from '@/skills/skill-levels.js';
 import { getCurrentVersion, versionToTreeAssetFolder } from '@/shared/version-config.js';
 import { ToastManager } from '@/planner/toast-manager.js';
 import { listSkillVariants } from './skill-variants.js';
 import { notifySkillGridDomReset } from './tree-tooltip.js';
+
+/**
+ * Numeric value of a planner header bonus input.
+ * @param {string} id
+ * @returns {number}
+ */
+function readBonusInput(id) {
+    if (typeof document === 'undefined') return 0;
+    const el = document.getElementById(id);
+    if (!(el instanceof HTMLInputElement)) return 0;
+    return Math.max(0, Math.floor(parseInt(el.value, 10) || 0));
+}
 
 // Initialize ToastManager
 const toastManager = new ToastManager();
@@ -291,6 +305,16 @@ export function buildPlannerSkillCardData(skillEntry, opts = {}) {
 
     const slotId = skillEntry.slotId ? String(skillEntry.slotId).trim() : '';
 
+    // oSkills have no base (hard) levels: their level comes from items, relics and
+    // +All Skills. Show that effective level instead of the manual points (usually 0).
+    const effectiveLevel = internalId
+        ? getPlannerSkillEffectiveLevel(internalId, {
+              character: getCharacterInstance(),
+              allSkillsBonus: readBonusInput('allSkillsBonus'),
+              classSkillsBonus: readBonusInput('classSkillsBonus'),
+          })
+        : currentPoints + itemPoints;
+
     return {
         skillId: skillEntry.skillName || skillEntry.skillId,
         variantStateKey: variantStateKey || undefined,
@@ -310,6 +334,10 @@ export function buildPlannerSkillCardData(skillEntry, opts = {}) {
         variants: internalId != null ? listSkillVariants(internalId) : [],
         manualPoints: currentPoints,
         itemPoints,
+        effectiveLevel,
+        // oSkills no longer have the artificial 150-point cap, so the card must not
+        // render `maxPoints` (a MAX_SAFE_INTEGER sentinel) as a denominator.
+        unboundedPoints: true,
     };
 }
 

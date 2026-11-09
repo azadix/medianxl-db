@@ -329,7 +329,7 @@ function escapeTooltipText(value) {
  */
 function formatDamageAmount(value) {
   const rounded = Math.round(Number(value) || 0);
-  return String(rounded).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  return String(rounded).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
 }
 
 /**
@@ -384,12 +384,13 @@ export function buildSkillTooltipDamageBlockHtml(damage) {
           formatDamageDuration(component.durationFrames)
         )})</span>`
       : '';
-    return `<div class="tooltip-damage-row"><span class="tooltip-damage-type is-${type}">${escapeTooltipText(
+    const row = `<div class="tooltip-damage-row"><span class="tooltip-damage-type is-${type}">${escapeTooltipText(
       component.label
     )}${suffix}</span><span class="tooltip-damage-value">${formatDamageRange(
       component.min,
       component.max
     )}</span></div>`;
+    return `<div class="tooltip-damage-entry">${row}</div>`;
   });
 
   // A single damage type already shows its range above; a total only adds information
@@ -406,7 +407,10 @@ export function buildSkillTooltipDamageBlockHtml(damage) {
     );
   }
 
-  if (weaponPercent > 0) {
+  // A numeric weapon component already shows the damage; the percentage is only a
+  // fallback when no weapon is equipped/known.
+  const hasWeaponComponent = components.some((component) => component.key === 'weapon_damage');
+  if (weaponPercent > 0 && !hasWeaponComponent) {
     rows.push(
       `<div class="tooltip-damage-row"><span class="tooltip-damage-type">Weapon damage</span><span class="tooltip-damage-value">${formatDamageAmount(
         weaponPercent

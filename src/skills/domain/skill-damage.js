@@ -11,6 +11,8 @@
 
 import Skill from './Skill.js';
 import { isScalingConstantRowActive } from './show-conditions.js';
+import { computeWeaponDamage } from '@/items/equipped-weapon.js';
+import { skillKeepsPoisonDamage } from '@/skills/poison-damage-policy.js';
 
 /**
  * Stat keys that describe damage dealt. `*_dot` keys are damage over time: they are
@@ -24,6 +26,15 @@ export const DAMAGE_COMPONENTS = Object.freeze({
   magic_damage: { label: 'Magic', type: 'magic', dot: false },
   poison_dot: { label: 'Poison', type: 'poison', dot: true },
   fire_dot: { label: 'Fire over time', type: 'fire', dot: true },
+});
+
+/** Display labels for flat damage added to weapon hits. */
+const WEAPON_ELEMENT_LABELS = Object.freeze({
+  fire: 'Fire',
+  cold: 'Cold',
+  lightning: 'Lightning',
+  magic: 'Magic',
+  poison: 'Poison',
 });
 
 /** Character stat that reduces incoming damage of each element (pierce is subtracted). */
@@ -48,6 +59,65 @@ function toNumber(raw) {
 }
 
 /**
+ * Weapon-hit components: physical at `percent` of the weapon damage, then added
+ * elemental damage as raw per-element rows.
+ *
+ * @param {object|null|undefined} weapon
+ * @param {Record<string, number>|null|undefined} stats
+ * @param {number} percent
+ * @returns {object[]}
+ */
+function buildWeaponComponents(weapon, stats, percent) {
+  if (!weapon) return [];
+  const hit = computeWeaponDamage(weapon, stats || {});
+  if (!hit) return [];
+  const scale = Math.abs(percent) / 100;
+  const components = [
+    {
+      key: 'weapon_damage',
+      // The weapon hit is physical damage, so it reads like any other damage type.
+      label: 'Physical',
+      type: 'physical',
+      dot: false,
+      min: hit.physical.min * scale,
+      max: hit.physical.max * scale,
+      durationFrames: null,
+    },
+  ];
+  for (const [type, range] of Object.entries(hit.elements)) {
+    components.push({
+      key: `weapon_${type}_damage`,
+      label: WEAPON_ELEMENT_LABELS[type] || type,
+      type,
+      dot: type === 'poison',
+      // Added elemental damage is shown as the raw range from gear/skills.
+      min: range.min,
+      max: range.max,
+      durationFrames: null,
+    });
+  }
+  return components;
+}
+
+/**
+ * Basic attack (innate to every character): 100% weapon damage plus added elements.
+ *
+ * @param {{ weapon?: object|null, stats?: Record<string, number>|null }} input
+ * @returns {{ components: object[], weaponDamagePercent: number, totalMin: number, totalMax: number }}
+ */
+export function collectBasicAttackDamage(input = {}) {
+  const components = buildWeaponComponents(input.weapon || null, input.stats || {}, 100);
+  let totalMin = 0;
+  let totalMax = 0;
+  for (const component of components) {
+    if (component.dot) continue;
+    totalMin += component.min;
+    totalMax += component.max;
+  }
+  return { components, weaponDamagePercent: 100, totalMin, totalMax };
+}
+
+/**
  * Collect the damage slots of one skill.
  *
  * @param {{
@@ -56,6 +126,7 @@ function toNumber(raw) {
  *   characterState: object,
  *   characterLevel?: number|null,
  *   variantKey?: string|null,
+ *   weapon?: object|null,
  * }} input
  * @returns {{
  *   components: Array<{ key: string, label: string, type: string, dot: boolean, min: number, max: number, durationFrames: number|null }>,
@@ -100,6 +171,8 @@ export function collectSkillDamage(input) {
 
     const isDamage = Object.prototype.hasOwnProperty.call(DAMAGE_COMPONENTS, statKey);
     if (!isDamage && statKey !== 'weapon_damage') continue;
+    // Poison damage from skills is not modelled yet (Amatoxin is the exception).
+    if (statKey === 'poison_dot' && !skillKeepsPoisonDamage(row.id)) continue;
 
     let values;
     try {
@@ -148,6 +221,15 @@ export function collectSkillDamage(input) {
     max: Math.max(entry.min, entry.max),
     durationFrames: entry.durationFrames,
   }));
+
+  // Attack skills deal `weaponDamagePercent` of the equipped weapon's damage; the
+  // profile carries the base range and attribute bonuses, the character stats provide
+  // flats / enhanced damage. Elemental flats from gear ride along as their own types.
+  if (weaponDamagePercent > 0) {
+    components.unshift(
+      ...buildWeaponComponents(input.weapon, characterState.stats || {}, weaponDamagePercent)
+    );
+  }
 
   let totalMin = 0;
   let totalMax = 0;
@@ -212,9 +294,11 @@ export function applyDamageMitigation(components, options = {}) {
   const critMultiplier = physicalCritMultiplier(stats);
 
   return (Array.isArray(components) ? components : []).map((component) => {
-    const resistPct = usePierce
-      ? baseResist - enemyResistPercent(component.type, stats)
-      : baseResist;
+    // D2 clamps enemy resistance at -100%: further pierce cannot double damage twice.
+    const resistPct = Math.max(
+      -100,
+      usePierce ? baseResist - enemyResistPercent(component.type, stats) : baseResist
+    );
     const factor = Math.max(0, 1 - resistPct / 100);
     const crit = component.type === 'physical' ? critMultiplier : 1;
     return {

@@ -292,6 +292,24 @@ function findLine(template, lines) {
 }
 
 /**
+ * Charm pool options gain qualifiers in-game ("8% added as Innate Elemental Damage
+ * (Max +25%)"); ignore trailing parentheticals so the option is still recognised.
+ * @param {string} template
+ * @param {string[]} lines
+ * @returns {{ line: string, values: number[] }|null}
+ */
+function findPoolOptionLine(template, lines) {
+  const direct = findLine(template, lines);
+  if (direct) return direct;
+  const stripped = lines.map((line) =>
+    String(line)
+      .replace(/\s*\(Max\s*\+?[\d.]+%?\)\s*$/i, '')
+      .trim()
+  );
+  return findLine(template, stripped);
+}
+
+/**
  * @param {string} text
  * @returns {number|null}
  */
@@ -879,9 +897,9 @@ export function rollsFromTswItem(row, def, className = null) {
         let high = 0;
         opts.forEach((option, optionIndex) => {
           for (const text of charmPoolOptionTexts(option)) {
-            if (!findLine(text, lines)) continue;
+            if (!findPoolOptionLine(text, lines)) continue;
             selected = optionIndex;
-            if (option.high && findLine(option.high, lines)) high = 1;
+            if (option.high && findPoolOptionLine(option.high, lines)) high = 1;
             applyRanged(text, charmPoolOptionSourceKey(poolIndex, optionIndex), charmAffixRollKey, lines, rolls);
           }
         });

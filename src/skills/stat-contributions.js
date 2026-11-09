@@ -13,6 +13,10 @@ import Skill from '@/skills/domain/Skill.js';
 import { getFileSkillStore } from '@/shared/skill-data-store.js';
 import { isScalingConstantRowActive } from '@/skills/domain/show-conditions.js';
 import {
+  isPoisonDamageStatKey,
+  skillKeepsPoisonDamage,
+} from '@/skills/poison-damage-policy.js';
+import {
   createContribution,
   createSource,
   ignoredReport,
@@ -176,6 +180,20 @@ export function buildSkillContributions(input) {
     if (statKeyRaw == null || String(statKeyRaw).trim() === '') continue;
     const statKey = String(statKeyRaw).trim().toLowerCase();
     const lineId = `${source.id}:${index}:${statKey}`;
+
+    // Poison damage scaling is not modelled for now (except Amatoxin).
+    if (isPoisonDamageStatKey(statKey) && !skillKeepsPoisonDamage(skillId)) {
+      reports.push(
+        ignoredReport({
+          id: `${lineId}:poison`,
+          text: statKey,
+          source,
+          stat: statKey,
+          reason: 'poison-damage-not-modelled',
+        })
+      );
+      continue;
+    }
 
     if (isMinionStatRow(row, statKey)) {
       reports.push(

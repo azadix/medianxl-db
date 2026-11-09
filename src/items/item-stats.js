@@ -30,6 +30,7 @@ import {
 } from '@/items/item-overlays.js';
 import { formatRunewordBadge, formatRunewordSocketFillerLines, isRunewordItem } from '@/items/runeword-items.js';
 import { getShieldClassBlockPercent } from '@/character/class-baselines.js';
+import { formatInnateDamageLines } from '@/items/innate-weapon-damage.js';
 import {
   extrasWithMysticOrbRequiredLevel,
   parseRequiredLevelBonus,
@@ -670,7 +671,6 @@ export function getItemStatSections(def, rolls = null, options = {}) {
   const damageType = getItemDamageType(def);
   if (damageType) base.push(`${damageType} Damage`);
 
-  if (def.range != null) base.push(`Melee range: ${def.range}`);
   if (def.speed != null) base.push(`Attack Speed Modifier: ${def.speed}`);
   if (def.movePenalty != null) base.push(`Movement Speed Penalty: ${def.movePenalty}`);
   /** @type {string[]} */
@@ -697,10 +697,9 @@ export function getItemStatSections(def, rolls = null, options = {}) {
     scaling.push(`Dexterity Damage Bonus: (${def.dexDamageBonus} per Dexterity)%`);
   }
   if (def.innate) {
-    for (const line of String(def.innate).split(/\r?\n/)) {
-      const text = line.trim();
-      if (text) scaling.push(text);
-    }
+    // Resolve the conversion for the current character when stats are available:
+    // "Innate Lightning Damage: 4725 (99.8% of Dexterity)".
+    scaling.push(...formatInnateDamageLines(def.innate, options.characterStats ?? null));
   }
 
   // Socketed sits at the bottom of the base block (after damage/defense/scaling).

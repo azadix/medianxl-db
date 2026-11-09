@@ -1,15 +1,24 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { usePlannerRevisionRefresh } from '@/composables/usePlannerRevisionRefresh.js';
 import { getCharacterInstance, getEffectivePlannerLevel } from '@/character/planner-core.js';
 import { collectPlannerDamageSkills } from '@/character/planner-damage.js';
 import { getFileSkillStore } from '@/shared/skill-data-store.js';
-import { applyDamageMitigation } from '@/skills/domain/skill-damage.js';
+import { useItemsStore } from '@/stores/items.js';
+import { refreshPinnedHosts } from '@/shared/tooltip-pinning.js';
+import {
+  destroyDamageTooltip,
+  hideDamageTooltip,
+  initDamageTooltip,
+  moveDamageTooltip,
+  setDamageTooltipProvider,
+  showDamageTooltip,
+} from '@/planner/damage-tooltip.js';
 
-/** Damage skills of the current build, with the stats snapshot used for mitigation. */
+const itemsStore = useItemsStore();
+
+/** Damage skills of the current build (base values; no monster resists/pierce). */
 const rows = ref([]);
-const enemyResist = ref(50);
-const usePierce = ref(true);
 
 /** @param {string} id */
 function readBonusInput(id) {
@@ -30,92 +39,202 @@ function rebuild() {
   rows.value = collectPlannerDamageSkills({
     character,
     store,
+    itemsStore,
     effectiveLevel: getEffectivePlannerLevel(),
     allSkillsBonus: readBonusInput('allSkillsBonus'),
     classSkillsBonus: readBonusInput('classSkillsBonus'),
   });
+  // Keep pinned damage tooltips in sync with the new numbers.
+  void refreshPinnedHosts((host) => host.kind === 'damage');
 }
 
-const skills = computed(() =>
-  rows.value.map((row) => ({
-    ...row,
-    mitigated: applyDamageMitigation(row.components, {
-      stats: row.stats,
-      baseEnemyResistPct: enemyResist.value,
-      useCharacterPierce: usePierce.value,
-    }),
-  }))
-);
+const skills = computed(() => rows.value);
+
+/**
+ * @param {unknown} value
+ * @returns {string}
+ */
+function escapeTooltip(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
 
 /**
  * @param {number} min
  * @param {number} max
+ * @returns {string}
  */
 function formatRange(min, max) {
   const low = Math.round(Number(min) || 0);
   const high = Math.round(Number(max) || 0);
-  return low === high ? low.toLocaleString() : `${low.toLocaleString()}–${high.toLocaleString()}`;
+  return low === high ? formatAmount(low) : `${formatAmount(low)}–${formatAmount(high)}`;
+}
+
+/**
+ * Group thousands with a space so 1 000–9 999 reads like 10 531.
+ * @param {number} value
+ * @returns {string}
+ */
+function formatAmount(value) {
+  return String(Math.round(Number(value) || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
 }
 
 /**
  * D2 runs at 25 frames per second; poison lengths are stored in frames.
  * @param {number|null} frames
+ * @returns {string}
  */
 function formatDuration(frames) {
   const count = Number(frames) || 0;
   return count > 0 ? `${(count / 25).toFixed(1)}s` : 'DoT';
 }
 
+/**
+ * Base per-hit total (DoT components excluded, no resists/pierce).
+ * @param {object} skill
+ * @returns {{ min: number, max: number }|null}
+ */
+function perHitTotal(skill) {
+  const perHit = (skill.components || []).filter((component) => !component.dot);
+  if (perHit.length === 0) return null;
+  return {
+    min: perHit.reduce((sum, component) => sum + component.min, 0),
+    max: perHit.reduce((sum, component) => sum + component.max, 0),
+  };
+}
+
+/**
+ * @param {object} skill
+ * @returns {string}
+ */
+function totalLabel(skill) {
+  const total = perHitTotal(skill);
+  return total ? formatRange(total.min, total.max) : '—';
+}
+
+/**
+ * Detailed breakdown shown on hover: base damage per type plus the per-hit total.
+ * Monster resists and pierce are ignored (both treated as 0).
+ * @param {object} skill
+ * @returns {string}
+ */
+function buildDamageTooltipHtml(skill) {
+  const components = skill.components || [];
+  const entries = components.map((component) => {
+    const suffix = component.dot ? ` (${formatDuration(component.durationFrames)})` : '';
+    return `<div class="damage-tooltip-entry"><div class="damage-tooltip-row">
+        <span class="tooltip-damage-type is-${escapeTooltip(component.type)}">${escapeTooltip(
+      component.label
+    )}${suffix}</span>
+        <span class="damage-tooltip-value">${formatRange(component.min, component.max)}</span>
+      </div></div>`;
+  });
+
+  const total = perHitTotal(skill);
+  const totalRow = total
+    ? `<div class="damage-tooltip-row is-total">
+        <span class="damage-tooltip-type">Total / hit</span>
+        <span class="damage-tooltip-value">${formatRange(total.min, total.max)}</span>
+      </div>`
+    : '';
+
+  const hasWeaponHit = components.some((component) => component.key === 'weapon_damage');
+  const weaponRow =
+    skill.weaponDamagePercent > 0 && !hasWeaponHit
+      ? `<div class="damage-tooltip-row">
+          <span class="damage-tooltip-type">Weapon</span>
+          <span class="damage-tooltip-value damage-tooltip-muted">${Math.round(
+            skill.weaponDamagePercent
+          )}% of weapon damage</span>
+        </div>`
+      : '';
+
+  const level = skill.innate ? 'innate' : `level ${skill.level}`;
+  return `<div class="damage-tooltip-head">
+      <span class="damage-tooltip-name">${escapeTooltip(skill.name)}</span>
+      <span class="damage-tooltip-level">${level}</span>
+    </div>
+    <div class="damage-tooltip-columns"><span></span><span>base</span></div>
+    ${entries.join('')}${weaponRow}${totalRow}`;
+}
+
+/**
+ * @param {string} id
+ * @returns {string}
+ */
+function damageTooltipHtml(id) {
+  const skill = skills.value.find((entry) => entry.id === id);
+  return skill ? buildDamageTooltipHtml(skill) : '';
+}
+
+/**
+ * @param {MouseEvent} event
+ * @param {object} skill
+ */
+function onEnter(event, skill) {
+  showDamageTooltip(skill.id, event.clientX, event.clientY);
+}
+
+/** @param {MouseEvent} event */
+function onMove(event) {
+  moveDamageTooltip(event.clientX, event.clientY);
+}
+
+function onLeave() {
+  hideDamageTooltip();
+}
+
+/**
+ * @param {FocusEvent} event
+ * @param {object} skill
+ */
+function onFocus(event, skill) {
+  const el = /** @type {HTMLElement|null} */ (event.currentTarget);
+  const rect = el ? el.getBoundingClientRect() : null;
+  showDamageTooltip(skill.id, rect ? rect.right : 0, rect ? rect.top : 0);
+}
+
 usePlannerRevisionRefresh(rebuild);
-onMounted(rebuild);
+onMounted(() => {
+  initDamageTooltip();
+  setDamageTooltipProvider(damageTooltipHtml);
+  rebuild();
+});
+onBeforeUnmount(() => {
+  destroyDamageTooltip();
+});
 </script>
 
 <template>
   <section class="planner-card planner-damage-card">
     <div class="planner-damage-head">
       <span class="planner-card__eyebrow">Damage</span>
-      <select v-model.number="enemyResist" class="input is-small planner-damage-resist" aria-label="Enemy resistance">
-        <option :value="0">0% resist</option>
-        <option :value="33">33% resist</option>
-        <option :value="50">50% resist</option>
-        <option :value="75">75% resist</option>
-      </select>
+      <span class="planner-damage-hint">hover for details</span>
     </div>
-    <label class="checkbox is-size-7 planner-damage-pierce">
-      <input v-model="usePierce" type="checkbox" />
-      apply my pierce
-    </label>
+
+    <div class="planner-damage-list">
+      <button
+        v-for="skill in skills"
+        :key="skill.id"
+        type="button"
+        class="planner-damage-list-item"
+        @mouseenter="onEnter($event, skill)"
+        @mousemove="onMove"
+        @mouseleave="onLeave"
+        @focus="onFocus($event, skill)"
+        @blur="onLeave"
+      >
+        <span class="planner-damage-list-name">{{ skill.name }}</span>
+        <span class="planner-damage-list-total">{{ totalLabel(skill) }}</span>
+      </button>
+    </div>
 
     <p v-if="skills.length === 0" class="has-text-grey is-size-7 mb-0">
-      No damaging skills allocated.
+      No damaging skills.
     </p>
-
-    <div v-for="skill in skills" :key="skill.id" class="planner-damage-skill">
-      <div class="planner-damage-skill__head">
-        <span class="planner-damage-skill__name">{{ skill.name }}</span>
-        <span class="planner-damage-skill__level">{{ skill.level }}</span>
-      </div>
-      <div v-for="component in skill.mitigated" :key="component.key" class="planner-damage-row">
-        <span class="planner-damage-type" :class="'is-' + component.type">
-          {{ component.label }}<template v-if="component.dot"> ({{ formatDuration(component.durationFrames) }})</template>
-        </span>
-        <span class="planner-damage-base">{{ formatRange(component.min, component.max) }}</span>
-        <span
-          class="planner-damage-effective"
-          :title="`${component.resistPct}% effective enemy resistance`"
-        >{{ formatRange(component.effectiveMin, component.effectiveMax) }}</span>
-      </div>
-      <div v-if="skill.weaponDamagePercent" class="planner-damage-row">
-        <span class="planner-damage-type">Weapon</span>
-        <span class="planner-damage-base">{{ Math.round(skill.weaponDamagePercent) }}%</span>
-        <span class="planner-damage-effective has-text-grey">of weapon damage</span>
-      </div>
-      <div v-if="skill.totalMax" class="planner-damage-row is-total">
-        <span class="planner-damage-type">Total / hit</span>
-        <span class="planner-damage-base">{{ formatRange(skill.totalMin, skill.totalMax) }}</span>
-        <span />
-      </div>
-    </div>
   </section>
 </template>
 
@@ -123,7 +242,7 @@ onMounted(rebuild);
 .planner-damage-card {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.35rem;
 }
 
 .planner-damage-head {
@@ -133,78 +252,45 @@ onMounted(rebuild);
   gap: 0.5rem;
 }
 
-.planner-damage-resist {
-  max-width: 8.5rem;
-  height: 1.8rem;
-  font-size: 0.75rem;
+.planner-damage-hint {
+  font-size: 0.68rem;
+  color: #7f7f8c;
 }
 
-.planner-damage-pierce {
-  margin: 0;
-  color: #9a9aa8;
-  font-size: 0.72rem;
-}
-
-.planner-damage-skill {
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  padding-top: 0.4rem;
+.planner-damage-list {
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
+  gap: 1px;
 }
 
-.planner-damage-skill__head {
+.planner-damage-list-item {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 0.5rem;
+  width: 100%;
+  padding: 0.2rem 0.2rem;
+  border: 0;
+  border-radius: 3px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: default;
 }
 
-.planner-damage-skill__name {
-  font-size: 0.8rem;
-  font-weight: 600;
+.planner-damage-list-item:hover,
+.planner-damage-list-item:focus-visible {
+  background: rgba(255, 255, 255, 0.06);
 }
 
-.planner-damage-skill__level {
-  font-size: 0.7rem;
-  color: #9a9aa8;
+.planner-damage-list-name {
+  font-size: 0.78rem;
 }
 
-.planner-damage-row {
-  display: grid;
-  grid-template-columns: 6.5rem 1fr 1fr;
-  gap: 0.4rem;
-  font-size: 0.75rem;
-  font-variant-numeric: tabular-nums;
-}
-
-.planner-damage-row.is-total {
-  border-top: 1px dashed rgba(255, 255, 255, 0.12);
-  padding-top: 0.15rem;
-  font-weight: 600;
-}
-
-.planner-damage-type.is-physical {
-  color: #d9c58f;
-}
-.planner-damage-type.is-fire {
-  color: #ff8a65;
-}
-.planner-damage-type.is-cold {
-  color: #82c8ff;
-}
-.planner-damage-type.is-lightning {
-  color: #ffe066;
-}
-.planner-damage-type.is-poison {
-  color: #9be07a;
-}
-.planner-damage-type.is-magic {
-  color: #c9a7ff;
-}
-
-.planner-damage-effective {
-  text-align: right;
+.planner-damage-list-total {
+  font-size: 0.72rem;
   color: #b8b8c4;
+  font-variant-numeric: tabular-nums;
 }
 </style>

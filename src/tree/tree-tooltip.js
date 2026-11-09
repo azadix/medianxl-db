@@ -1,5 +1,6 @@
 // Tooltip functionality for skill tree
 import { getSkillIconHTML, expandPlaceholdersWithScaling, escapeHtmlText } from '@/shared/utils.js';
+import { filterPoisonDamageEffectLines } from '@/skills/poison-damage-policy.js';
 import {
   buildSkillBonusSourcesTableHtml,
   buildSkillTooltipDamageBlockHtml,
@@ -30,6 +31,8 @@ import { resolveVariantKeyForTooltip, formatDisplayNameWithVariantHtml } from '.
 import { getCurrentVersion, versionToTreeAssetFolder } from '@/shared/version-config.js';
 import { getFileSkillStore, withBaseAttributeFormulaStats } from '@/shared/skill-data-store.js';
 import { collectSkillDamage } from '@/skills/domain/skill-damage.js';
+import { getWeaponProfileForDamage } from '@/items/equipped-weapon.js';
+import { useItemsStore } from '@/stores/items.js';
 import { isInnateSkill } from '@/skills/domain/skill-skill-types.js';
 import { getMaxLevelModifierDescriptionsForSkill } from '@/skills/domain/skill-calculations.js';
 import { getRelicSkillBonusForSkill } from '@/items/skill-bonus-from-modifiers.js';
@@ -1187,11 +1190,12 @@ async function buildTooltipContent(
     const showFormulas = ctrlKeyPressed;
     
     let mainDescHtml = '';
-    if (skillData.description) {
+    const descriptionLines = filterPoisonDamageEffectLines(skillData.id, skillData.description);
+    if (descriptionLines) {
         mainDescHtml = await expandPlaceholdersWithScaling(
             skillData.id,
             scalingLevel,
-            skillData.description,
+            descriptionLines,
             skillData.id,
             characterState,
             showFormulas,
@@ -1205,11 +1209,12 @@ async function buildTooltipContent(
         : '';
 
     let effectExpanded = '';
-    if (skillData.skillEffect) {
+    const effectLines = filterPoisonDamageEffectLines(skillData.id, skillData.skillEffect);
+    if (effectLines) {
         effectExpanded = await expandPlaceholdersWithScaling(
             skillData.id,
             scalingLevel,
-            skillData.skillEffect,
+            effectLines,
             skillData.id,
             characterState,
             showFormulas,
@@ -1229,23 +1234,6 @@ async function buildTooltipContent(
         );
     }
 
-    // Per-hit summary (total / weapon share / DoT duration). The description already
-    // shows each damage placeholder; this adds the aggregate the placeholders cannot.
-    const damageRow = getFileSkillStore()?.catalogByInternalId?.get(String(skillData.id));
-    if (damageRow) {
-        bodyParts.push(
-            buildSkillTooltipDamageBlockHtml(
-                collectSkillDamage({
-                    row: damageRow,
-                    level: scalingLevel,
-                    characterState,
-                    characterLevel,
-                    variantKey,
-                })
-            )
-        );
-    }
-
     if (skillData.restriction) {
         const expandedRestriction = await expandPlaceholdersWithScaling(
             skillData.id,
@@ -1260,6 +1248,31 @@ async function buildTooltipContent(
     }
 
     bodyParts.push(buildSkillTooltipPrerequisiteWarningHtml(warningMessage));
+
+    // Per-hit summary (total / weapon share / DoT duration) goes below the description
+    // and any requirement/warning blocks. The description already shows each damage
+    // placeholder; this adds the aggregate it cannot.
+    const damageRow = getFileSkillStore()?.catalogByInternalId?.get(String(skillData.id));
+    if (damageRow) {
+        let weaponProfile = null;
+        try {
+            weaponProfile = getWeaponProfileForDamage(useItemsStore());
+        } catch {
+            // No Pinia context (unit tests): fall back to the percentage caption.
+        }
+        bodyParts.push(
+            buildSkillTooltipDamageBlockHtml(
+                collectSkillDamage({
+                    row: damageRow,
+                    level: scalingLevel,
+                    characterState,
+                    characterLevel,
+                    variantKey,
+                    weapon: weaponProfile,
+                })
+            )
+        );
+    }
 
     if (!isOSkill && skillData.id) {
         const scalingLines = getMaxLevelModifierDescriptionsForSkill(

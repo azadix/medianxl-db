@@ -2276,8 +2276,28 @@ export const useItemsStore = defineStore('items', {
       const characterLevel = ch?.level ?? null;
       const characterStrength = ch && typeof ch.getStat === 'function' ? ch.getStat('strength') : null;
       const characterDexterity = ch && typeof ch.getStat === 'function' ? ch.getStat('dexterity') : null;
+      // Innate weapon damage resolves from attributes + the innate damage bonus.
+      const characterStats =
+        ch && typeof ch.getStat === 'function'
+          ? Object.fromEntries(
+              [
+                'strength',
+                'dexterity',
+                'vitality',
+                'energy',
+                'innate_damage',
+                'innate_elemental_damage',
+              ].map((key) => [key, ch.getStat(key)])
+            )
+          : null;
       /** @type {Record<string, unknown>} */
-      const opts = { className, characterLevel, characterStrength, characterDexterity };
+      const opts = {
+        className,
+        characterLevel,
+        characterStrength,
+        characterDexterity,
+        characterStats,
+      };
       const slot =
         equipSlot != null
           ? String(equipSlot)

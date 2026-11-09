@@ -298,13 +298,44 @@ describe('buildSkillTooltipDamageBlockHtml', () => {
     expect(totalValue(html)).toBe('150');
   });
 
-  it('shows the weapon damage share', () => {
+  it('shows the weapon damage share when no numeric weapon hit exists', () => {
     const html = buildSkillTooltipDamageBlockHtml({
       components: [],
       weaponDamagePercent: 145,
     });
     expect(html).toContain('Weapon damage');
     expect(html).toContain('145%');
+  });
+
+  it('does not render the damage formula note', () => {
+    const html = buildSkillTooltipDamageBlockHtml({
+      components: [
+        {
+          key: 'weapon_damage',
+          label: 'Physical',
+          type: 'physical',
+          dot: false,
+          min: 10,
+          max: 20,
+          note: '41–43 base × 2.40 × 145%',
+        },
+      ],
+      weaponDamagePercent: 145,
+    });
+    expect(html).not.toContain('tooltip-damage-note');
+    expect(html).not.toContain('base ×');
+  });
+
+  it('replaces the weapon percentage with the numeric weapon row', () => {
+    const html = buildSkillTooltipDamageBlockHtml({
+      components: [
+        { key: 'weapon_damage', label: 'Weapon', type: 'physical', dot: false, min: 14, max: 29 },
+      ],
+      weaponDamagePercent: 145,
+    });
+    expect(html).toContain('14 – 29');
+    expect(html).not.toContain('145%');
+    expect(html).not.toContain('Weapon damage');
   });
 
   it('renders nothing for non-damaging skills', () => {
