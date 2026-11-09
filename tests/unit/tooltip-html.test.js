@@ -10,6 +10,7 @@ import {
   wrapNestedSkillTooltipHtml,
   parseNestedSkillMarker,
   buildSkillTooltipDisabledBannerHtml,
+  buildSkillTooltipDamageBlockHtml,
   buildSkillTooltipPrerequisiteWarningHtml,
 } from '@/shared/tooltip-html.js';
 import { resetSkillPreviewCatalogForTests, setSkillPreviewIdsForTests } from '@/skills/skill-preview-catalog.js';
@@ -242,5 +243,75 @@ describe('wrapSkillTooltipContent and banners', () => {
     expect(html).toContain('tooltip-restriction');
     expect(html).toContain('Need prereq');
     expect(buildSkillTooltipPrerequisiteWarningHtml('')).toBe('');
+  });
+});
+
+describe('buildSkillTooltipDamageBlockHtml', () => {
+  /** @param {string} html */
+  function totalValue(html) {
+    const match = /is-total[\s\S]*?tooltip-damage-value">([^<]*)</.exec(html);
+    return match ? match[1] : null;
+  }
+
+  it('renders one labelled row per damage type', () => {
+    const html = buildSkillTooltipDamageBlockHtml({
+      components: [
+        { key: 'fire_damage', label: 'Fire', type: 'fire', dot: false, min: 569, max: 672 },
+      ],
+      weaponDamagePercent: 0,
+    });
+    expect(html).toContain('tooltip-damage-type is-fire');
+    expect(html).toContain('Fire');
+    expect(html).toContain('569 – 672');
+    expect(totalValue(html)).toBeNull();
+  });
+
+  it('adds a total when several types hit together', () => {
+    const html = buildSkillTooltipDamageBlockHtml({
+      components: [
+        { key: 'physical_damage', label: 'Physical', type: 'physical', dot: false, min: 100, max: 200 },
+        { key: 'fire_damage', label: 'Fire', type: 'fire', dot: false, min: 50, max: 60 },
+      ],
+    });
+    expect(totalValue(html)).toBe('150 – 260');
+  });
+
+  it('keeps damage over time out of the total and shows its duration', () => {
+    const html = buildSkillTooltipDamageBlockHtml({
+      components: [
+        { key: 'physical_damage', label: 'Physical', type: 'physical', dot: false, min: 100, max: 100 },
+        { key: 'fire_damage', label: 'Fire', type: 'fire', dot: false, min: 50, max: 50 },
+        {
+          key: 'poison_dot',
+          label: 'Poison',
+          type: 'poison',
+          dot: true,
+          min: 400,
+          max: 500,
+          durationFrames: 50,
+        },
+      ],
+    });
+    expect(html).toContain('(2.0s)');
+    expect(html).toContain('tooltip-damage-type is-poison');
+    // Poison's 400-500 over time must not inflate the per-hit total.
+    expect(totalValue(html)).toBe('150');
+  });
+
+  it('shows the weapon damage share', () => {
+    const html = buildSkillTooltipDamageBlockHtml({
+      components: [],
+      weaponDamagePercent: 145,
+    });
+    expect(html).toContain('Weapon damage');
+    expect(html).toContain('145%');
+  });
+
+  it('renders nothing for non-damaging skills', () => {
+    expect(buildSkillTooltipDamageBlockHtml(null)).toBe('');
+    expect(buildSkillTooltipDamageBlockHtml({ components: [] })).toBe('');
+    expect(
+      buildSkillTooltipDamageBlockHtml({ components: [], weaponDamagePercent: 0 })
+    ).toBe('');
   });
 });

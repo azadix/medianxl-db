@@ -9,11 +9,13 @@ import {
   getSkillIconHTML,
 } from '@/shared/utils.js';
 import {
+  buildSkillTooltipDamageBlockHtml,
   buildSkillTooltipDescriptionBlock,
   buildSkillTooltipHeaderHtml,
   buildSkillTooltipRestrictionBlock,
   wrapSkillTooltipContent,
 } from '@/shared/tooltip-html.js';
+import { collectSkillDamage } from '@/skills/domain/skill-damage.js';
 import { getFileSkillStore } from '@/shared/skill-data-store.js';
 import { getCurrentVersion, versionToTreeAssetFolder } from '@/shared/version-config.js';
 import { getSkillPoints } from '@/character/planner-core.js';
@@ -153,6 +155,28 @@ export async function buildFixedLevelSkillTooltipHtml(skillId, level, options = 
     previewSkillId: id,
   });
 
+  // Damage preview at the shown level: fixed tooltips carry no planner stats, so this is
+  // the same numbers the description placeholders expand to, plus the aggregate.
+  const damageRow = store?.catalogByInternalId?.get?.(id) ?? null;
+  const damageParts = asProc ? procFormulaLevelParts(lvl, treeBlvl) : { blvl: lvl, slvl: 0 };
+  const damageHtml = damageRow
+    ? buildSkillTooltipDamageBlockHtml(
+        collectSkillDamage({
+          row: damageRow,
+          level: lvl,
+          characterState: {
+            level: Math.max(1, lvl),
+            className: detail.className || null,
+            blvl: { [id]: damageParts.blvl },
+            lvl: { [id]: damageParts.slvl },
+            treeSkillsCache: {},
+            stats: {},
+          },
+          characterLevel: lvl,
+        })
+      )
+    : '';
+
   const bodyParts = [
     buildSkillTooltipRestrictionBlock(restrictionExpanded),
     buildSkillTooltipDescriptionBlock({
@@ -162,6 +186,7 @@ export async function buildFixedLevelSkillTooltipHtml(skillId, level, options = 
         : '',
       effectExpanded,
     }),
+    damageHtml,
   ].filter(Boolean);
 
   const html = wrapSkillTooltipContent(headerHtml + bodyParts.join(''));

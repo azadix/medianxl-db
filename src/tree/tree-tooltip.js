@@ -2,6 +2,7 @@
 import { getSkillIconHTML, expandPlaceholdersWithScaling, escapeHtmlText } from '@/shared/utils.js';
 import {
   buildSkillBonusSourcesTableHtml,
+  buildSkillTooltipDamageBlockHtml,
   buildSkillTooltipDescriptionBlock,
   buildSkillTooltipDisabledBannerHtml,
   buildSkillTooltipHeaderHtml,
@@ -28,6 +29,7 @@ import { isConditionSelected } from '@/stores/planner-config-store.js';
 import { resolveVariantKeyForTooltip, formatDisplayNameWithVariantHtml } from './skill-variants.js';
 import { getCurrentVersion, versionToTreeAssetFolder } from '@/shared/version-config.js';
 import { getFileSkillStore, withBaseAttributeFormulaStats } from '@/shared/skill-data-store.js';
+import { collectSkillDamage } from '@/skills/domain/skill-damage.js';
 import { isInnateSkill } from '@/skills/domain/skill-skill-types.js';
 import { getMaxLevelModifierDescriptionsForSkill } from '@/skills/domain/skill-calculations.js';
 import { getRelicSkillBonusForSkill } from '@/items/skill-bonus-from-modifiers.js';
@@ -1224,6 +1226,23 @@ async function buildTooltipContent(
                 preserveBlankEffectLines: true,
                 wrapperClass: 'tooltip-description p-0',
             })
+        );
+    }
+
+    // Per-hit summary (total / weapon share / DoT duration). The description already
+    // shows each damage placeholder; this adds the aggregate the placeholders cannot.
+    const damageRow = getFileSkillStore()?.catalogByInternalId?.get(String(skillData.id));
+    if (damageRow) {
+        bodyParts.push(
+            buildSkillTooltipDamageBlockHtml(
+                collectSkillDamage({
+                    row: damageRow,
+                    level: scalingLevel,
+                    characterState,
+                    characterLevel,
+                    variantKey,
+                })
+            )
         );
     }
 

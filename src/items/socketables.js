@@ -371,7 +371,7 @@ export function normalizeCustomJewelRarity(value) {
  * @param {{ type?: string, code?: string }|null|undefined} sock
  * @returns {boolean}
  */
-function isJewelSocketable(sock) {
+export function isJewelSocketable(sock) {
   const type = String(sock?.type || '').toLowerCase();
   return (
     type === 'jewel' ||

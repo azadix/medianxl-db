@@ -1,5 +1,6 @@
 <script setup>
 import PlannerStatsPanel from './PlannerStatsPanel.vue';
+import PlannerDamagePanel from './PlannerDamagePanel.vue';
 import PlannerSidebarConfig from './PlannerSidebarConfig.vue';
 import PlannerSidebarTabQuests from './PlannerSidebarTabQuests.vue';
 </script>
@@ -11,6 +12,7 @@ import PlannerSidebarTabQuests from './PlannerSidebarTabQuests.vue';
         <PlannerStatsPanel />
       </div>
       <div class="planner-settings-side">
+        <PlannerDamagePanel />
         <PlannerSidebarConfig />
         <PlannerSidebarTabQuests />
       </div>

@@ -17,6 +17,7 @@ import { matchAnyCatalogSkillGrantFromLine } from '@/items/item-granted-oskills.
 import { stripProcLinePrefix } from '@/items/item-procs.js';
 import { createCharacterBucket, createStatRegistry } from '@/character/bucket/index.js';
 import { applyItemSources } from '@/character/bucket/sources/items.js';
+import { applyItemDerivedSources } from '@/character/bucket/sources/item-derived.js';
 
 /**
  * @typedef {{
@@ -552,12 +553,196 @@ function bonusesForKeys(keys, amount) {
 }
 
 /**
+ * Target phrases of `X% added as <target> (Max +N%)` item conversions.
+ *
+ * Item text names a share of the character's damage that is re-added as another type.
+ * For planner purposes each phrase is a bonus to the matching stat: the spell-damage
+ * variants then flow through `Skill._applySpellDamageToResult`, and the weapon/innate
+ * variants feed the damage model.
+ */
+const ADDED_AS_TARGETS = [
+  { re: /^weapon physical damage$/i, keys: ['enhanced_weapon_damage'] },
+  { re: /^innate elemental damage$/i, keys: ['innate_elemental_damage'] },
+  {
+    re: /^cold\s*(?:\/|and)\s*poison spell damage$/i,
+    keys: ['cold_spell_damage', 'poison_spell_damage'],
+  },
+  {
+    re: /^fire\s*(?:\/|and)\s*lightning spell damage$/i,
+    keys: ['fire_spell_damage', 'lightning_spell_damage'],
+  },
+  {
+    re: /^physical\s*(?:\/|and)\s*magic spell damage$/i,
+    keys: ['physical_magic_spell_damage'],
+  },
+  { re: /^magic find$/i, keys: ['magic_find'] },
+  { re: /^(fire|cold|lightning|poison) spell damage$/i, keysFromMatch: (m) => [`${m[1].toLowerCase()}_spell_damage`] },
+];
+
+/**
+ * Parse an `X% added as <target> (Max +N%)` conversion line.
+ *
+ * The parenthesised "Max +N%" caps the bonus this line can grant, so the line value is
+ * clamped to it (caps are per line; the registry caps only apply where they exist).
+ *
+ * @param {string|null|undefined} text
+ * @returns {ParsedCharacterStatBonus[]|null} null when the line is not a conversion
+ */
+export function parseAddedAsDamageLine(text) {
+  const raw = String(text ?? '').trim();
+  if (!raw) return null;
+  const capMatch = /\s*\(\s*max\s*\+?(\d+(?:\.\d+)?)\s*%?\s*\)\s*$/i.exec(raw);
+  const cap = capMatch ? Number(capMatch[1]) : null;
+  const base = (capMatch ? raw.slice(0, capMatch.index) : raw).trim();
+  const match = /^\+?([+-]?\d+(?:\.\d+)?)\s*%\s+added as\s+(.+)$/i.exec(base);
+  if (!match) return null;
+  const amount = Number(match[1]);
+  if (!Number.isFinite(amount) || amount === 0) return null;
+  const target = match[2].trim().toLowerCase().replace(/\s+/g, ' ');
+
+  /** @type {string[]|null} */
+  let keys = null;
+  for (const entry of ADDED_AS_TARGETS) {
+    const targetMatch = entry.re.exec(target);
+    if (!targetMatch) continue;
+    keys = entry.keysFromMatch ? entry.keysFromMatch(targetMatch) : entry.keys;
+    break;
+  }
+  if (!keys) return null;
+
+  const capped =
+    cap != null && Number.isFinite(cap) ? Math.min(Math.abs(amount), Math.abs(cap)) : amount;
+  return keys.filter((key) => isPlannerBaseStatKey(key)).map((key) => ({ key, amount: capped }));
+}
+
+/**
+ * `X% of <source stat> added as <target stat>` conversions. The bonus is a share of
+ * another stat's current value, so it cannot be a fixed contribution: the classifier
+ * returns a rule and the bucket evaluates it once the source stat is known.
+ */
+const DERIVED_SOURCE_STATS = [
+  { re: /^bonus to defense$/i, key: 'enhanced_defense' },
+  {
+    re: /^(fire|cold|lightning|poison) resistance$/i,
+    keysFromMatch: (m) => `${m[1].toLowerCase()}_resistance`,
+  },
+  { re: /^minion damage(?: increases)?$/i, key: 'summoned_minion_damage' },
+  { re: /^minion life(?: increases)?$/i, key: 'summoned_minion_life' },
+  { re: /^(?:maximum\s+)?life$/i, key: 'life' },
+  { re: /^vitality$/i, key: 'vitality' },
+  { re: /^energy$/i, key: 'energy' },
+];
+
+const DERIVED_TARGET_STATS = [
+  {
+    re: /^(fire|cold|lightning|poison) spell damage$/i,
+    keysFromMatch: (m) => [`${m[1].toLowerCase()}_spell_damage`],
+  },
+  // Flat cold damage added to the weapon: both ends of the damage range move together.
+  { re: /^cold damage to weapon$/i, keys: ['minimum_cold_damage', 'maximum_cold_damage'] },
+  { re: /^physical damage$/i, keys: ['damage'] },
+  { re: /^deadly strike$/i, keys: ['deadly_strike'] },
+  { re: /^bonus to defense$/i, keys: ['enhanced_defense'] },
+  { re: /^vitality$/i, keys: ['vitality'] },
+  { re: /^energy$/i, keys: ['energy'] },
+];
+
+/**
+ * @param {string} phrase
+ * @param {Array<{ re: RegExp, key?: string, keysFromMatch?: (m: RegExpExecArray) => string }>} table
+ * @returns {string|null}
+ */
+function matchDerivedStat(phrase, table) {
+  const text = String(phrase || '')
+    .trim()
+    .replace(/^(?:your|total)\s+/i, '')
+    .replace(/\s+/g, ' ');
+  if (!text) return null;
+  for (const entry of table) {
+    const match = entry.re.exec(text);
+    if (!match) continue;
+    return entry.keysFromMatch ? entry.keysFromMatch(match) : entry.key || null;
+  }
+  return null;
+}
+
+/**
+ * @param {string} phrase
+ * @returns {string[]|null}
+ */
+function matchDerivedTargets(phrase) {
+  const text = String(phrase || '')
+    .trim()
+    .replace(/^(?:your|total)\s+/i, '')
+    .replace(/\s+/g, ' ');
+  if (!text) return null;
+  for (const entry of DERIVED_TARGET_STATS) {
+    const match = entry.re.exec(text);
+    if (!match) continue;
+    return entry.keysFromMatch ? entry.keysFromMatch(match) : entry.keys || null;
+  }
+  return null;
+}
+
+/** Suffix conditions understood by `parseDerivedStatLine`. */
+const DERIVED_SHIELD_TAIL = /\s+while\s+(?:holding|wielding)\s+a\s+shield$/i;
+const DERIVED_JEWEL_TAIL = /\s+for\s+each\s+jewel\s+in\s+your\s+gear$/i;
+
+/**
+ * Parse an `X% of <source> added as <target>` derived conversion.
+ *
+ * Conditions/counts in the suffix are returned as metadata and resolved by the item
+ * source (which can see the equipment): `requires: 'shield'` and `count: 'jewels'`.
+ *
+ * @param {string|null|undefined} text
+ * @returns {Array<{ key: string, sourceKey: string, ratio: number, requires?: string, count?: string }>|null}
+ */
+export function parseDerivedStatLine(text) {
+  const raw = String(text ?? '').trim();
+  if (!raw) return null;
+  const match = /^([\d.]+)\s*%\s+of\s+(.+?)\s+added as\s+(.+)$/i.exec(raw);
+  if (!match) return null;
+  const percent = Number(match[1]);
+  if (!Number.isFinite(percent) || percent === 0) return null;
+  const sourceKey = matchDerivedStat(match[2], DERIVED_SOURCE_STATS);
+  if (!sourceKey) return null;
+
+  let targetPhrase = match[3].trim();
+  /** @type {string|undefined} */
+  let requires;
+  /** @type {string|undefined} */
+  let count;
+  if (DERIVED_SHIELD_TAIL.test(targetPhrase)) {
+    requires = 'shield';
+    targetPhrase = targetPhrase.replace(DERIVED_SHIELD_TAIL, '').trim();
+  }
+  if (DERIVED_JEWEL_TAIL.test(targetPhrase)) {
+    count = 'jewels';
+    targetPhrase = targetPhrase.replace(DERIVED_JEWEL_TAIL, '').trim();
+  }
+
+  const keys = matchDerivedTargets(targetPhrase);
+  if (!keys || keys.length === 0) return null;
+  const ratio = percent / 100;
+  return keys
+    .filter((key) => key && key !== sourceKey)
+    .map((key) => ({
+      key,
+      sourceKey,
+      ratio,
+      ...(requires ? { requires } : {}),
+      ...(count ? { count } : {}),
+    }));
+}
+
+/**
  * @param {string|null|undefined} line
  * @param {{ characterLevel?: number|null }} [options]
  * @returns {{
  *   text: string,
- *   kind: 'inactive'|'skip'|'skill'|'parsed'|'unknown',
+ *   kind: 'inactive'|'skip'|'skill'|'parsed'|'derived'|'unknown',
  *   bonuses: ParsedCharacterStatBonus[],
+ *   derived?: Array<{ key: string, sourceKey: string, ratio: number, requires?: string, count?: string }>,
  * }}
  */
 export function classifyCharacterStatModifierLine(line, options = {}) {
@@ -577,6 +762,18 @@ export function classifyCharacterStatModifierLine(line, options = {}) {
   // them as flat/total attribute bonuses inflates strength/dexterity.
   if (/\bof\s+base\s+(?:strength|dexterity|vitality|energy)\b/i.test(text)) {
     return { text, kind: 'skip', bonuses: [] };
+  }
+
+  // "X% added as <damage>" conversions (Bone Chimes family).
+  const addedAsBonuses = parseAddedAsDamageLine(text);
+  if (addedAsBonuses) {
+    return { text, kind: 'parsed', bonuses: addedAsBonuses };
+  }
+
+  // "X% of <source stat> added as <target stat>" (derived, evaluated after items).
+  const derivedRules = parseDerivedStatLine(text);
+  if (derivedRules && derivedRules.length) {
+    return { text, kind: 'derived', bonuses: [], derived: derivedRules };
   }
 
   // All-skills / class-skills / catalog oSkills are handled elsewhere.
@@ -710,8 +907,16 @@ function collectItemBonusesViaBucket(options = {}) {
     const registry = createStatRegistry(getPlannerCharacterStatDefs());
     if (!character || !itemsStore) return null;
     const bucket = createCharacterBucket({ registry, expandAliases: false });
-    applyItemSources(bucket, { itemsStore, character, className: options.className ?? null });
-    const snapshot = bucket.commit();
+    const items = applyItemSources(bucket, {
+      itemsStore,
+      character,
+      className: options.className ?? null,
+    });
+    let snapshot = bucket.commit();
+    if (Array.isArray(items?.derived) && items.derived.length) {
+      applyItemDerivedSources(bucket, { rules: items.derived });
+      snapshot = bucket.commit();
+    }
     /** @type {Record<string, number>} */
     const bonuses = {};
     for (const [key, value] of Object.entries(snapshot.values)) {

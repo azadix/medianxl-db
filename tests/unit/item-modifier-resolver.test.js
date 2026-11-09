@@ -168,3 +168,39 @@ describe('item modifier resolver', () => {
     expect(resolved.reports.filter((report) => report.status === 'flavor')).toHaveLength(4);
   });
 });
+
+describe('derived item lines', () => {
+  it('collects a derived rule and marks the line supported', () => {
+    const resolved = resolveModifierLines(
+      ['20% of Lightning Resistance Added as Lightning Spell Damage'],
+      {
+        sourceKind: 'item',
+        sourceId: 'griffons',
+        label: "Griffon's Eye",
+        characterLevel: 150,
+      }
+    );
+    expect(resolved.derived).toHaveLength(1);
+    expect(resolved.derived[0]).toMatchObject({
+      key: 'lightning_spell_damage',
+      sourceKey: 'lightning_resistance',
+      ratio: 0.2,
+    });
+    expect(resolved.reports[0]?.status).toBe('supported');
+    expect(resolved.contributions).toHaveLength(0);
+  });
+
+  it('treats the Jeweled Crown jewel-doubling line as supported', () => {
+    const resolved = resolveModifierLines(
+      ['{grey}(Doubled for Jewels socketed in the Crown itself)'],
+      {
+        sourceKind: 'item',
+        sourceId: 'crown',
+        label: 'Jeweled Crown',
+        characterLevel: 150,
+      }
+    );
+    expect(resolved.reports[0]?.status).toBe('supported');
+    expect(resolved.reports[0]?.reason).toBe('derived-stat-modifier');
+  });
+});

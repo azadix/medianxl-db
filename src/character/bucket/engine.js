@@ -12,6 +12,7 @@
  */
 
 import { applyClassSources, applyDerivedSources, applyManualStats } from './sources/class.js';
+import { applyItemDerivedSources } from './sources/item-derived.js';
 import { applyItemSources } from './sources/items.js';
 import { applyImportedStats } from './sources/imports.js';
 import { applySkillSources } from './sources/skills.js';
@@ -54,11 +55,14 @@ export function applyCharacterSources(bucket, input) {
   });
 
   let itemSources = 0;
+  /** @type {object[]} */
+  let itemDerived = [];
   if (input.includeItems !== false && input.itemsStore) {    const items = applyItemSources(bucket, {
       itemsStore: input.itemsStore,
       character,
     });
     itemSources = items.sources;
+    itemDerived = Array.isArray(items.derived) ? items.derived : [];
   }
 
   bucket.commit();
@@ -77,6 +81,30 @@ export function applyCharacterSources(bucket, input) {
     effectiveLevel: input.effectiveLevel,
   });
   bucket.commit();
+
+  // Item conversions (`X% of <source> added as <target>`) read the finished item /
+  // derived stats, then feed the second derived pass because they can change vitality.
+  // Rules can chain (minion life -> bonus defense -> vitality), so iterate until the
+  // stats they read stop moving (bounded; the supported set converges in 2 passes).
+  if (itemDerived.length > 0) {
+    const sourceKeys = [...new Set(itemDerived.map((rule) => rule.sourceKey))];
+    let previousSignature = '';
+    for (let pass = 0; pass < 3; pass += 1) {
+      applyItemDerivedSources(bucket, { rules: itemDerived });
+      bucket.commit();
+      const values = bucket.getSnapshot().values;
+      const signature = sourceKeys
+        .map((key) => Math.round((Number(values[key]) || 0) * 1000))
+        .join('|');
+      if (signature === previousSignature) break;
+      previousSignature = signature;
+    }
+    derived = applyDerivedSources(bucket, {
+      character,
+      effectiveLevel: input.effectiveLevel,
+    });
+    bucket.commit();
+  }
 
   let skillSources = 0;
   if (input.includeSkills !== false) {

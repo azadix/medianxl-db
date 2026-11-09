@@ -1202,6 +1202,66 @@
     color: #eee;
 }
 
+.tooltip-damage {
+    margin-top: 4px;
+    padding-top: 4px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tooltip-damage-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 14px;
+    font-size: 0.9rem;
+    line-height: 1.55;
+    font-variant-numeric: tabular-nums;
+}
+
+.tooltip-damage-row.is-total {
+    margin-top: 2px;
+    padding-top: 2px;
+    border-top: 1px dashed rgba(255, 255, 255, 0.16);
+    font-weight: 600;
+}
+
+.tooltip-damage-type {
+    color: #cfcfd8;
+}
+
+.tooltip-damage-type.is-physical {
+    color: #d9c58f;
+}
+
+.tooltip-damage-type.is-fire {
+    color: #ff8a65;
+}
+
+.tooltip-damage-type.is-cold {
+    color: #82c8ff;
+}
+
+.tooltip-damage-type.is-lightning {
+    color: #ffe066;
+}
+
+.tooltip-damage-type.is-poison {
+    color: #9be07a;
+}
+
+.tooltip-damage-type.is-magic {
+    color: #c9a7ff;
+}
+
+.tooltip-damage-value {
+    color: #fff;
+}
+
+.tooltip-damage-dot {
+    color: #9a9aa8;
+    font-size: 0.8em;
+}
+
 .subskill-inline-block {
     margin: 10px 0 6px;
     padding: 4px 6px 6px;

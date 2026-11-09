@@ -8,6 +8,12 @@
 
 import { EQUIPMENT_SLOTS } from '@/items/item-types.js';
 import {
+  countEquippedJewels,
+  countJewelsInSocketables,
+  doublesOwnJewelCount,
+  hasEquippedShield,
+} from '@/items/equipment-scan.js';
+import {
   resolveItemModifiers,
   resolveModifierLines,
 } from '@/items/item-modifier-resolver.js';
@@ -121,6 +127,7 @@ function collectWornSources(itemsStore, character) {
       def,
       rolls: itemsStore.getRollsForInstance?.(instanceId) ?? null,
       options: instanceOptions(itemsStore, character, instanceId),
+      socketables: itemsStore.instances?.[instanceId]?.socketables || [],
     });
   }
 
@@ -140,6 +147,7 @@ function collectWornSources(itemsStore, character) {
         className,
         characterLevel,
       },
+      socketables: itemsStore.instances?.[instanceId]?.socketables || [],
     });
   }
 
@@ -161,6 +169,29 @@ function collectWornSources(itemsStore, character) {
 }
 
 /**
+ * Resolve derived-rule metadata that depends on the equipped gear: shield requirements
+ * and "for each Jewel in your gear" counts.
+ *
+ * @param {object[]} rules
+ * @param {object} itemsStore
+ * @returns {object[]}
+ */
+export function resolveDerivedRuleConditions(rules, itemsStore) {
+  /** @type {object[]} */
+  const out = [];
+  for (const rule of rules) {
+    if (rule?.requires === 'shield' && !hasEquippedShield(itemsStore)) continue;
+    let ratio = Number(rule?.ratio) || 0;
+    if (rule?.count === 'jewels') {
+      ratio *= countEquippedJewels(itemsStore) + (Number(rule?.ownJewels) || 0);
+    }
+    if (!Number.isFinite(ratio) || ratio === 0) continue;
+    out.push({ ...rule, ratio });
+  }
+  return out;
+}
+
+/**
  * @param {object} bucket
  * @param {{
  *   itemsStore: object,
@@ -171,6 +202,7 @@ function collectWornSources(itemsStore, character) {
  *   contributions: number,
  *   reports: number,
  *   uniqueMods: number,
+ *   derived: object[],
  * }}
  */
 export function applyItemSources(bucket, input) {
@@ -186,6 +218,8 @@ export function applyItemSources(bucket, input) {
   let contributionCount = 0;
   let reportCount = 0;
   let uniqueCount = 0;
+  /** @type {object[]} */
+  const derivedRules = [];
 
   for (const source of sources) {
     const resolved = resolveItemModifiers(source.def, source.rolls, source.options, {
@@ -205,6 +239,16 @@ export function applyItemSources(bucket, input) {
     }
     contributionCount += resolved.contributions.length;
     reportCount += resolved.reports.length;
+    if (Array.isArray(resolved.derived) && resolved.derived.length) {
+      // "(Doubled for Jewels socketed in the Crown itself)" counts the item's own
+      // socketed jewels a second time.
+      const ownJewels = doublesOwnJewelCount(source.def)
+        ? countJewelsInSocketables(source.socketables)
+        : 0;
+      derivedRules.push(
+        ...resolved.derived.map((rule) => (ownJewels > 0 ? { ...rule, ownJewels } : rule))
+      );
+    }
   }
 
   const equippedDefs = itemsStore.activeEquippedDefs || [];
@@ -231,6 +275,9 @@ export function applyItemSources(bucket, input) {
       });
       contributionCount += resolved.contributions.length;
       reportCount += resolved.reports.length;
+      if (Array.isArray(resolved.derived) && resolved.derived.length) {
+        derivedRules.push(...resolved.derived);
+      }
     }
   }
 
@@ -239,6 +286,7 @@ export function applyItemSources(bucket, input) {
     contributions: contributionCount,
     reports: reportCount,
     uniqueMods: uniqueCount,
+    derived: resolveDerivedRuleConditions(derivedRules, itemsStore),
   };
 }
 

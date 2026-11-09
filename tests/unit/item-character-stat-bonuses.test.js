@@ -666,3 +666,97 @@ describe('recomputePlannerStatsFromItems', () => {
 
 });
 
+
+describe('added-as damage conversions', () => {
+  const cases = [
+    ['36% added as Weapon Physical Damage (Max +150%)', { enhanced_weapon_damage: 36 }],
+    ['8% added as Innate Elemental Damage (Max +25%)', { innate_elemental_damage: 8 }],
+    [
+      '18% added as Cold and Poison Spell Damage (Max +40%)',
+      { cold_spell_damage: 18, poison_spell_damage: 18 },
+    ],
+    [
+      '18% added as Fire and Lightning Spell Damage (Max +40%)',
+      { fire_spell_damage: 18, lightning_spell_damage: 18 },
+    ],
+    [
+      '18% added as Physical and Magic Spell Damage (Max +40%)',
+      { physical_magic_spell_damage: 18 },
+    ],
+    ['12% added as Magic Find (Max +100%)', { magic_find: 12 }],
+    ['15% added as Physical/Magic Spell Damage', { physical_magic_spell_damage: 15 }],
+    ['5% added as Fire Spell Damage', { fire_spell_damage: 5 }],
+  ];
+
+  for (const [line, expected] of cases) {
+    it(`maps "${line}"`, () => {
+      const bonuses = parseCharacterStatBonusesFromModifierLine(line);
+      expect(Object.fromEntries(bonuses.map((b) => [b.key, b.amount]))).toEqual(expected);
+    });
+  }
+
+  it('clamps the line value to its Max cap', () => {
+    const bonuses = parseCharacterStatBonusesFromModifierLine(
+      '60% added as Weapon Physical Damage (Max +40%)'
+    );
+    expect(bonuses).toEqual([{ key: 'enhanced_weapon_damage', amount: 40 }]);
+  });
+
+  it('does not swallow ordinary spell-damage lines', () => {
+    const bonuses = parseCharacterStatBonusesFromModifierLine('+18% to Cold Spell Damage');
+    expect(bonuses).toEqual([{ key: 'cold_spell_damage', amount: 18 }]);
+  });
+});
+
+describe('derived stat conversions', () => {
+  const cases = [
+    [
+      '20% of Lightning Resistance Added as Lightning Spell Damage',
+      [{ key: 'lightning_spell_damage', sourceKey: 'lightning_resistance', ratio: 0.2 }],
+    ],
+    [
+      '10% of Minion Damage Increases Added as Deadly Strike',
+      [{ key: 'deadly_strike', sourceKey: 'summoned_minion_damage', ratio: 0.1 }],
+    ],
+    [
+      '65% of Minion Life Increases Added as Bonus to Defense',
+      [{ key: 'enhanced_defense', sourceKey: 'summoned_minion_life', ratio: 0.65 }],
+    ],
+    [
+      '50% of Your Bonus to Defense Added as Vitality',
+      [{ key: 'vitality', sourceKey: 'enhanced_defense', ratio: 0.5 }],
+    ],
+    [
+      '100% of Vitality Added as Cold Damage to Weapon',
+      [
+        { key: 'minimum_cold_damage', sourceKey: 'vitality', ratio: 1 },
+        { key: 'maximum_cold_damage', sourceKey: 'vitality', ratio: 1 },
+      ],
+    ],
+    [
+      '2% of Maximum Life added as Physical Damage while holding a shield',
+      [{ key: 'damage', sourceKey: 'life', ratio: 0.02, requires: 'shield' }],
+    ],
+    [
+      '1% of total Vitality added as Energy for each Jewel in your gear',
+      [{ key: 'energy', sourceKey: 'vitality', ratio: 0.01, count: 'jewels' }],
+    ],
+  ];
+
+  for (const [line, expected] of cases) {
+    it(`maps "${line}"`, () => {
+      const result = classifyCharacterStatModifierLine(line);
+      expect(result.kind).toBe('derived');
+      expect(result.derived).toEqual(expected);
+    });
+  }
+
+  it('still rejects conversions whose stats we do not model', () => {
+    for (const line of [
+      '15% of Dexterity added as Weapon Physical Damage',
+      '5% of Missing Life added as Flat Physical Damage Reduction',
+    ]) {
+      expect(classifyCharacterStatModifierLine(line).kind).not.toBe('derived');
+    }
+  });
+});

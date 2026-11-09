@@ -299,3 +299,120 @@ export function buildSkillTooltipScalingBlockHtml(lines) {
   html += '</div>';
   return html;
 }
+
+/** Damage types with a dedicated tooltip colour. */
+const TOOLTIP_DAMAGE_TYPES = new Set([
+  'physical',
+  'fire',
+  'cold',
+  'lightning',
+  'magic',
+  'poison',
+]);
+
+/**
+ * @param {unknown} value
+ * @returns {string}
+ */
+function escapeTooltipText(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+/**
+ * Thousands-separated integer (locale-independent so tests stay stable).
+ * @param {unknown} value
+ * @returns {string}
+ */
+function formatDamageAmount(value) {
+  const rounded = Math.round(Number(value) || 0);
+  return String(rounded).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+/**
+ * @param {unknown} min
+ * @param {unknown} max
+ * @returns {string}
+ */
+function formatDamageRange(min, max) {
+  const a = Math.round(Number(min) || 0);
+  const b = Math.round(Number(max) || 0);
+  const low = Math.min(a, b);
+  const high = Math.max(a, b);
+  return low === high
+    ? formatDamageAmount(low)
+    : `${formatDamageAmount(low)} – ${formatDamageAmount(high)}`;
+}
+
+/**
+ * Damage-over-time length is stored in frames (25 per second).
+ * @param {unknown} frames
+ * @returns {string}
+ */
+function formatDamageDuration(frames) {
+  const count = Number(frames) || 0;
+  return count > 0 ? `${(count / 25).toFixed(1)}s` : 'over time';
+}
+
+/**
+ * Compact per-hit damage summary for a skill tooltip.
+ *
+ * The description already shows each `{{damage}}` placeholder, so this block adds what
+ * it cannot: the combined per-hit total, DoT duration and weapon-damage share.
+ * Returns '' when the skill deals no damage.
+ *
+ * @param {{ components?: object[], weaponDamagePercent?: number }|null|undefined} damage
+ * @returns {string}
+ */
+export function buildSkillTooltipDamageBlockHtml(damage) {
+  if (!damage || typeof damage !== 'object') return '';
+  const components = (Array.isArray(damage.components) ? damage.components : []).filter(
+    (component) => component && (Number(component.max) > 0 || Number(component.min) > 0)
+  );
+  const weaponPercent = Number(damage.weaponDamagePercent) || 0;
+  if (components.length === 0 && weaponPercent <= 0) return '';
+
+  const rows = components.map((component) => {
+    const type = TOOLTIP_DAMAGE_TYPES.has(String(component.type))
+      ? String(component.type)
+      : 'physical';
+    const suffix = component.dot
+      ? ` <span class="tooltip-damage-dot">(${escapeTooltipText(
+          formatDamageDuration(component.durationFrames)
+        )})</span>`
+      : '';
+    return `<div class="tooltip-damage-row"><span class="tooltip-damage-type is-${type}">${escapeTooltipText(
+      component.label
+    )}${suffix}</span><span class="tooltip-damage-value">${formatDamageRange(
+      component.min,
+      component.max
+    )}</span></div>`;
+  });
+
+  // A single damage type already shows its range above; a total only adds information
+  // when several types hit together. DoTs never count as per-hit damage.
+  const perHit = components.filter((component) => !component.dot);
+  if (perHit.length > 1) {
+    const totalMin = perHit.reduce((sum, component) => sum + (Number(component.min) || 0), 0);
+    const totalMax = perHit.reduce((sum, component) => sum + (Number(component.max) || 0), 0);
+    rows.push(
+      `<div class="tooltip-damage-row is-total"><span class="tooltip-damage-type">Total / hit</span><span class="tooltip-damage-value">${formatDamageRange(
+        totalMin,
+        totalMax
+      )}</span></div>`
+    );
+  }
+
+  if (weaponPercent > 0) {
+    rows.push(
+      `<div class="tooltip-damage-row"><span class="tooltip-damage-type">Weapon damage</span><span class="tooltip-damage-value">${formatDamageAmount(
+        weaponPercent
+      )}%</span></div>`
+    );
+  }
+
+  return `<div class="tooltip-damage">${rows.join('')}</div>`;
+}

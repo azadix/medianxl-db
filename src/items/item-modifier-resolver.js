@@ -34,7 +34,7 @@ export { isFlavorItemLine };
 
 const MAX_CACHE_ENTRIES = 2000;
 
-/** @type {Map<string, { contributions: object[], reports: object[], uniqueMods: object[], lines: string[] }>} */
+/** @type {Map<string, { contributions: object[], reports: object[], uniqueMods: object[], derived: object[], lines: string[] }>} */
 const _resolvedCache = new Map();
 
 /**
@@ -149,7 +149,7 @@ export function getItemLineSupport(def, rolls, options = {}) {
  *   slot?: string,
  *   characterLevel?: number|null,
  * }} context
- * @returns {{ contributions: object[], reports: object[], uniqueMods: object[] }}
+ * @returns {{ contributions: object[], reports: object[], uniqueMods: object[], derived: object[] }}
  */
 export function resolveModifierLines(lines, context) {
   /** @type {object[]} */
@@ -158,6 +158,9 @@ export function resolveModifierLines(lines, context) {
   const reports = [];
   /** @type {object[]} */
   const uniqueMods = [];
+  /** Rules evaluated later against the finished stat snapshot (share of another stat). */
+  /** @type {object[]} */
+  const derived = [];
   let insideUnique = false;
 
   const list = Array.isArray(lines) ? lines : [];
@@ -194,6 +197,20 @@ export function resolveModifierLines(lines, context) {
       insideUnique = false;
       continue;
     }
+    // "(Doubled for Jewels socketed in the Crown itself)" modifies the sibling
+    // conversion; the item source applies it, so it is supported rather than unsupported.
+    if (/^\(?\s*doubled for jewels socketed/i.test(plainText)) {
+      reports.push(
+        supportedReport({
+          id: `${lineId}:jewel-doubling`,
+          text,
+          source,
+          reason: 'derived-stat-modifier',
+          conditions,
+        })
+      );
+      continue;
+    }
     // Ethereal is a supported item state flag, not an unknown stat.
     if (/^ethereal$/i.test(plainText)) {
       reports.push(
@@ -206,6 +223,35 @@ export function resolveModifierLines(lines, context) {
         })
       );
       insideUnique = false;
+      continue;
+    }
+
+    const classified = template.classified;
+    // Derived conversions are mechanics we model, whatever their display colour: the
+    // Jeweled Crown's "1% of total Vitality added as Energy" line is orange.
+    if (classified.kind === 'derived' && Array.isArray(classified.derived)) {
+      for (const rule of classified.derived) {
+        derived.push({
+          key: rule.key,
+          sourceKey: rule.sourceKey,
+          ratio: rule.ratio,
+          requires: rule.requires,
+          count: rule.count,
+          text,
+          sourceId: context.sourceId,
+          label: context.label,
+        });
+      }
+      reports.push(
+        supportedReport({
+          id: `${lineId}:derived`,
+          text,
+          source,
+          stat: classified.derived[0]?.key,
+          reason: 'derived-stat',
+          conditions,
+        })
+      );
       continue;
     }
 
@@ -238,7 +284,6 @@ export function resolveModifierLines(lines, context) {
     }
     insideUnique = false;
 
-    const classified = template.classified;
     if (classified.kind === 'parsed' && classified.bonuses.length > 0) {
       for (const bonus of classified.bonuses) {
         contributions.push(
@@ -313,7 +358,7 @@ export function resolveModifierLines(lines, context) {
       })
     );
   }
-  return { contributions, reports, uniqueMods };
+  return { contributions, reports, uniqueMods, derived };
 }
 
 /**
@@ -322,7 +367,7 @@ export function resolveModifierLines(lines, context) {
  * @param {Record<string, number>|null|undefined} rolls
  * @param {object} options
  * @param {{ sourceKind?: 'item'|'set', sourceId: string, label: string, slot?: string, characterLevel?: number|null }} context
- * @returns {{ contributions: object[], reports: object[], uniqueMods: object[], lines: string[], signature: string }}
+ * @returns {{ contributions: object[], reports: object[], uniqueMods: object[], derived: object[], lines: string[], signature: string }}
  */
 export function resolveItemModifiers(def, rolls, options, context) {
   const signature = itemModifierSignature(def, rolls, options, context);
