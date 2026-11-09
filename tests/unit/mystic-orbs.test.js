@@ -29,6 +29,7 @@ import {
   getItemStatSections,
 } from '@/items/item-stats.js';
 import { loadSocketablesCatalog } from '@/items/socketables.js';
+import { buildItemTooltipHtml } from '@/items/item-tooltip.js';
 
 const mysticOrbsCatalog = JSON.parse(
   readFileSync(resolve('public/items/2_14/mystic-orbs.json'), 'utf8')
@@ -332,5 +333,51 @@ describe('mystic-orbs', () => {
       'Requirements +50%',
       '-10 Required Level',
     ]);
+  });
+});
+
+describe('mystic orb effect multipliers', () => {
+  const baseDef = {
+    id: 'aqv',
+    name: 'Arrow Quiver',
+    rarity: 'magic',
+    customQuality: 'magic',
+    modifiers: [],
+  };
+
+  it('has the orb row', () => {
+    expect(getMysticOrbBonusLines('MO - Strength', 1)).toEqual(['+5 to Strength']);
+  });
+
+  it('doubles applied orb bonuses on an item with the doubled state flag', () => {
+    const def = {
+      ...baseDef,
+      modifiers: ['Orb Effects Applied to this Item are Doubled'],
+    };
+    expect(
+      extrasWithAppliedItemBonuses([], def, { mysticOrbs: [[1, 'MO - Strength']] })
+    ).toContain('+10 to Strength');
+  });
+
+  it('quadruples applied orb bonuses on an item with the quadrupled state flag', () => {
+    const def = {
+      ...baseDef,
+      modifiers: ['Orb Effects Applied to this Item are Quadrupled'],
+    };
+    expect(
+      extrasWithAppliedItemBonuses([], def, { mysticOrbs: [[1, 'MO - Strength']] })
+    ).toContain('+20 to Strength');
+  });
+
+  it("applies Craftsman's Brand double to other orbs on a magic quiver", () => {
+    const mysticOrbs = [
+      [1, "Craftsman's Brand"],
+      [1, 'MO - Strength'],
+    ];
+    expect(extrasWithAppliedItemBonuses([], baseDef, { mysticOrbs })).toContain('+10 to Strength');
+    const sections = getItemStatSections(baseDef, null, { mysticOrbs });
+    expect(sections.base).toContain('{darkgreen}Orb Effects Applied to this Item are Doubled');
+    const tooltip = buildItemTooltipHtml(baseDef, null, null, { mysticOrbs });
+    expect(tooltip).toContain('Orb Effects Applied to this Item are Doubled');
   });
 });

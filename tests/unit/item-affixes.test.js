@@ -13,6 +13,13 @@ import {
   loadItemAffixes,
 } from '@/items/item-affixes.js';
 import { applyCustomOverlayToDef } from '@/items/custom-items.js';
+import {
+  formatAffixIdLine,
+  formatAffixLabel,
+  listAffixCategories,
+  listAffixTemplates,
+  loadAffixTemplates,
+} from '@/items/affix-templates.js';
 import { parseAffixesWiki } from '../../tools/item_generation/parse-affixes-wiki.mjs';
 
 const SAMPLE = `
@@ -186,5 +193,18 @@ describe('catalog smoke', () => {
       false
     );
     expect(canPickItemAffix(ed, sacredHelm, 99, { prefixes: [], suffixes: [] }, 'rare')).toBe(true);
+  });
+});
+
+describe('affix templates', () => {
+  loadAffixTemplates(
+    JSON.parse(readFileSync(resolve('public/items/2_14/affix-templates.json'), 'utf8'))
+  );
+
+  it('loads categories and formats x placeholders', () => {
+    expect(listAffixTemplates().length).toBeGreaterThan(100);
+    expect(listAffixCategories()).toContain('offense');
+    expect(formatAffixLabel('+x% Enhanced Damage', 20)).toBe('+20% Enhanced Damage');
+    expect(formatAffixIdLine('edmg', 15)).toBe('+15% Enhanced Damage');
   });
 });

@@ -2,6 +2,7 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { createApp, nextTick } from 'vue';
 import SkillCard from '@/components/skills/SkillCard.vue';
+import { canAddPoints } from '@/tree/skill-point-guard.js';
 import {
   createCharacterInstance,
   setCharacterInstance,
@@ -63,5 +64,11 @@ describe('SkillCard plus guard', () => {
     });
     expect(host.textContent).toContain('5 / 20');
     app.unmount();
+  });
+
+  it('guards allocation against disabled and maxed skills', () => {
+    expect(canAddPoints(true, 5, 20)).toBe(true);
+    expect(canAddPoints(false, 5, 20)).toBe(false);
+    expect(canAddPoints(true, 20, 20)).toBe(false);
   });
 });

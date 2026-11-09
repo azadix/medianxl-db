@@ -1,17 +1,32 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { describe, expect, it, beforeEach } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, beforeEach } from 'vitest';
 import { buildItemTooltipHtml } from '@/items/item-tooltip.js';
 import { loadMysticOrbsCatalog } from '@/items/mystic-orbs.js';
 import { loadOilsCatalog } from '@/items/oils.js';
 import { loadSocketablesCatalog } from '@/items/socketables.js';
 import { getItemStatSections } from '@/items/item-stats.js';
+import { initSkillDataStore, resetSkillDataStoreForTests } from '@/shared/skill-data-store.js';
+import { installTreeDataFetchMock } from '../helpers/mock-fetch-tree-data.js';
 
 const mysticOrbsCatalog = JSON.parse(
   readFileSync(resolve('public/items/2_14/mystic-orbs.json'), 'utf8')
 );
 
 describe('buildItemTooltipHtml', () => {
+  let restoreFetch;
+
+  beforeAll(async () => {
+    restoreFetch = installTreeDataFetchMock();
+    resetSkillDataStoreForTests();
+    await initSkillDataStore();
+  });
+
+  afterAll(() => {
+    resetSkillDataStoreForTests();
+    restoreFetch?.();
+  });
+
   beforeEach(() => {
     loadMysticOrbsCatalog(mysticOrbsCatalog);
   });
@@ -379,6 +394,34 @@ describe('buildItemTooltipHtml', () => {
       html.indexOf('item-tooltip-set-bonuses')
     );
   });
+
+  it('badges unique mechanics and unknown lines but not supported stats', () => {
+    const html = buildItemTooltipHtml(
+      {
+        id: 'badge-test',
+        name: 'Badge Test',
+        rarity: 'unique',
+        type: 'torso',
+        category: 'armor',
+        baseName: 'Ancient Armor',
+        sockets: 0,
+        modifiers: [
+          '+40 to Vitality',
+          '{orange}Miasma: Haunt Duration Increased by 4 seconds',
+          'Nonsense 123',
+        ],
+      },
+      null,
+      null,
+      {}
+    );
+    expect(html).toContain('+40 to Vitality');
+    expect(html).toContain('Miasma: Haunt Duration Increased by 4 seconds');
+    expect(html).toContain('Not supported');
+    expect(html).toContain('mod-support-badge');
+    expect(html).toContain('title="unique-mechanic"');
+    expect(html).toContain('title="unknown-stat"');
+  });
 });
 
 describe('getItemStatSections', () => {
@@ -523,4 +566,5 @@ describe('getItemStatSections', () => {
     expect(sections.mods).not.toContain('Innate Fire Damage: (80.0% of Strength)');
     expect(sections.mods).not.toContain('Socketed (6)');
   });
+
 });

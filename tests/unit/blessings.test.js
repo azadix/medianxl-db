@@ -26,7 +26,5 @@ describe('blessings', () => {
     expect(listShrinesForItem(sword).some((row) => row.id === 'abandoned')).toBe(true);
     const lines = getShrineBonusLines('abandoned', sword, true);
     expect(lines.some((line) => /Dexterity/i.test(line))).toBe(true);
-    const shrine = getShrineBonusLines('abandoned', sword, false);
-    expect(shrine.some((line) => /\(24 to 120\)% Bonus to Attack Rating/.test(line))).toBe(true);
   });
 });

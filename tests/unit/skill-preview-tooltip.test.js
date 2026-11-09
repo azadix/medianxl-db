@@ -1,8 +1,10 @@
 /** @vitest-environment jsdom */
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { buildSkillPreviewPlayButtonHtml } from '@/shared/tooltip-html.js';
 import { destroyTooltipPinning, listPinnedHosts } from '@/shared/tooltip-pinning.js';
 import {
+  ensureSkillPreviewManifest,
+  hasSkillPreview,
   resetSkillPreviewCatalogForTests,
   setSkillPreviewIdsForTests,
 } from '@/skills/skill-preview-catalog.js';
@@ -32,6 +34,7 @@ describe('skill preview tooltip', () => {
     destroySkillPreviewTooltip();
     destroyTooltipPinning();
     resetSkillPreviewCatalogForTests();
+    vi.unstubAllGlobals();
     document.body.innerHTML = '';
   });
 
@@ -83,5 +86,20 @@ describe('skill preview tooltip', () => {
     expect(portal.style.display).toBe('none');
     expect(listPinnedHosts()).toHaveLength(1);
     expect(listPinnedHosts()[0].el.querySelector('img')).toBeTruthy();
+  });
+
+  it('loads preview ids from the manifest', async () => {
+    resetSkillPreviewCatalogForTests();
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => ({
+        ok: true,
+        json: async () => ({ ids: ['frozen_crown', 'blizzard'] }),
+      }))
+    );
+    await ensureSkillPreviewManifest();
+    expect(hasSkillPreview('frozen_crown')).toBe(true);
+    expect(hasSkillPreview('blizzard')).toBe(true);
+    expect(hasSkillPreview('missing')).toBe(false);
   });
 });

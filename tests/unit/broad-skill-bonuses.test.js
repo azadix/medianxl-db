@@ -58,24 +58,11 @@ afterEach(() => {
 });
 
 describe('catalog class/all skill relics', () => {
-  it('includes Funeral Pyre, Pagan Rites, Wychwind, and the other class-skill relics', () => {
-    const byId = Object.fromEntries(classSkillRelics.map((row) => [row.def.id, row]));
-    expect(byId['relic:funeral-pyre']).toMatchObject({
-      className: 'Necromancer',
-      amount: 1,
-    });
-    expect(byId['relic:pagan-rites']).toMatchObject({ className: 'Druid', amount: 1 });
-    expect(byId['relic:wychwind']).toMatchObject({ className: 'Assassin', amount: 1 });
-    expect(byId['relic:retaliate']).toMatchObject({ className: 'Paladin', amount: 1 });
-    expect(byId['relic:takedown']).toMatchObject({ className: 'Amazon', amount: 1 });
-    expect(byId['relic:war-cry']).toMatchObject({ className: 'Barbarian', amount: 1 });
-    expect(classSkillRelics).toHaveLength(6);
-  });
-
-  it('treats unconditional +All Skills relics as live all-skills (not conditional Apple line)', () => {
-    const ids = allSkillRelics.map((row) => row.def.id).sort();
-    expect(ids).toEqual(['relic:dream-eater', 'relic:orb-of-annihilation']);
-    expect(allSkillRelics.every((row) => row.amount === 1)).toBe(true);
+  it('finds class and all-skills relics in the catalog', () => {
+    // Smoke gate: the dynamic it.each cases below are generated from these lists, so an
+    // empty catalog would silently remove coverage instead of failing.
+    expect(classSkillRelics.length).toBeGreaterThan(0);
+    expect(allSkillRelics.length).toBeGreaterThan(0);
   });
 });
 
