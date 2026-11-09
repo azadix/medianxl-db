@@ -1,0 +1,5355 @@
+{
+    "ok": true,
+    "api_version": 1,
+    "meta": {
+        "realm": "TSW",
+        "cached": true,
+        "generated_at": "2026-10-30T12:13:08Z",
+        "marker_warmed_at": null
+    },
+    "build": {
+        "name": "haha_pal",
+        "version": "2.14",
+        "class": "Paladin",
+        "level": 140,
+        "skillPoints": {
+            "Absolution": 1,
+            "Arbiter": 15,
+            "Blessed Life": 15,
+            "Chemistry": 5,
+            "Divine Apparition": 10,
+            "Elemental Wisdom": 1,
+            "Endurance": 10,
+            "Freedom": 5,
+            "Life and Death": 1,
+            "Reverence": 1,
+            "Sentence": 1,
+            "Solstice and Equinox": 1,
+            "Spark of Hope": 25,
+            "Valiance": 10,
+            "Veneration of Justice": 25,
+            "Vessel of Judgement": 1,
+            "Vessel of Retribution": 1,
+            "Ward of Fate": 25
+        },
+        "oSkills": {
+            "Arcane Blast": 50,
+            "Bloodlust": 8,
+            "Holybolt": 50,
+            "Jitan's Gate": 1,
+            "Mind Control": 1,
+            "Summon Edyrem": 1,
+            "Teleport": 3
+        },
+        "allSkillsBonus": 9,
+        "stats": "{{life}}=12849\n{{mana}}=3966\n{{strength}}=25\n{{dexterity}}=20\n{{vitality}}=1150\n{{energy}}=15\n{{fire_resistance}}=311\n{{cold_resistance}}=313\n{{lightning_resistance}}=312\n{{poison_resistance}}=317\n{{physical_resistance}}=55\n{{magic_resistance}}=0\n{{maximum_life}}=12\n{{movement_speed}}=30\n{{hit_recovery}}=125\n{{block_speed}}=125\n{{fire_spell_damage}}=20\n{{lightning_spell_damage}}=20\n{{cold_spell_damage}}=20\n{{enemy_fire_resistance}}=8\n{{enemy_lightning_resistance}}=8\n{{enemy_cold_resistance}}=8",
+        "questsCompleted": {
+            "den_of_evil": {
+                "normal": true,
+                "nightmare": true,
+                "hell": true
+            },
+            "radament": {
+                "normal": true,
+                "nightmare": true,
+                "hell": true
+            },
+            "izual": {
+                "normal": true,
+                "nightmare": true,
+                "hell": true
+            },
+            "lam_essen's_tome": {
+                "normal": true,
+                "nightmare": true,
+                "hell": true
+            },
+            "golden_bird": {
+                "normal": true,
+                "nightmare": true,
+                "hell": true
+            }
+        },
+        "savedAt": "2026-10-31T16:17:43.000Z"
+    },
+    "items": [
+        {
+            "item": "The Butcher's Tooth",
+            "display_name": "The Butcher's Tooth",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "a60",
+            "image": "invfang",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 3,
+            "col": 14,
+            "locid": 37262,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "The Butcher's Tooth",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 100",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "+10 to all Attributes",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+20% Magic Find",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+1 to Light Radius",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Horror Under Tristram (Heroic)",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Difficulty Level: 125",
+                        5
+                    ]
+                ],
+                [
+                    [
+                        "Transmute with an Urt rune to receive two quest entrance scrolls",
+                        5
+                    ]
+                ],
+                [
+                    [
+                        "Reward can be used to upgrade Paragon's Hammer",
+                        5
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Optical Detector",
+            "display_name": "Optical Detector",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "a55",
+            "image": "inveye",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 4,
+            "col": 14,
+            "locid": 37390,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "Optical Detector",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 100",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Unlocks Mastery Skill: Tenacity",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "+5% to Summon Elemental Resistances",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Elemental Resists +15%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Infernal Machine (Heroic)",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Difficulty Level: 125",
+                        5
+                    ]
+                ],
+                [
+                    [
+                        "Transmute with a Xith rune to receive two quest entrance scrolls",
+                        5
+                    ]
+                ],
+                [
+                    [
+                        "Reward can be used to upgrade Paragon's Hammer",
+                        5
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Six Angel Bag",
+            "display_name": "Six Angel Bag",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "yq2",
+            "image": "angelbag1",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": true,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 5,
+            "col": 14,
+            "locid": 37518,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "Six Angel Bag",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 105",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "+5% Innate Elemental Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "-3% to Enemy Elemental Resistances",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+3% Chance of Crushing Blow",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Fire Resist +23%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Lightning Resist +24%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Cold Resist +25%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+4 to Light Radius",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": {
+                "#% Innate Elemental Damage": [
+                    3,
+                    5
+                ],
+                "Cold Resist +#%": [
+                    21,
+                    25
+                ],
+                "Fire Resist +#%": [
+                    21,
+                    25
+                ],
+                "Lightning Resist +#%": [
+                    21,
+                    25
+                ]
+            },
+            "charm_ranges": {
+                "Innate Elemental Damage": "3 to 5",
+                "Fire Resist": "21 to 25",
+                "Lightning Resist": "21 to 25",
+                "Cold Resist": "21 to 25"
+            }
+        },
+        {
+            "item": "Visions of Akarat",
+            "display_name": "Visions of Akarat",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "a57",
+            "image": "akaratbook",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 7,
+            "col": 13,
+            "locid": 37773,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "Visions of Akarat",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 110",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "+245 Defense",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+24 to all Attributes",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": {
+                "+# Defense": [
+                    201,
+                    250
+                ],
+                "+# to all Attributes": [
+                    21,
+                    25
+                ]
+            },
+            "charm_ranges": {
+                "Defense": "201 to 250",
+                "to all Attributes": "21 to 25"
+            }
+        },
+        {
+            "item": "Horazon's Focus",
+            "display_name": "Horazon's Focus",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "a68",
+            "image": "invhorazon",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 3,
+            "col": 13,
+            "locid": 37261,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "Horazon's Focus",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 100",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "+5% Life stolen per Hit",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "-50 Defense",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+25 to all Attributes",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": {
+                "#% Life stolen per Hit": [
+                    3,
+                    5
+                ],
+                "+# to all Attributes": [
+                    21,
+                    25
+                ]
+            },
+            "charm_ranges": {
+                "Life stolen per Hit": "3 to 5",
+                "to all Attributes": "21 to 25"
+            }
+        },
+        {
+            "item": "Moon of the Spider",
+            "display_name": "Moon of the Spider",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "yqe",
+            "image": "invhscr2",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 3,
+            "col": 12,
+            "locid": 37260,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "Moon of the Spider",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "By Richard Knaak",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 110",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "+25 Spell Focus",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+1 to Jitan's Gate",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Half Freeze Duration",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": {
+                "+# Spell Focus": [
+                    21,
+                    25
+                ]
+            },
+            "charm_ranges": {
+                "Spell Focus": "21 to 25"
+            }
+        },
+        {
+            "item": "Scroll of Kings",
+            "display_name": "Scroll of Kings",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "a58",
+            "image": "invscb2",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 6,
+            "col": 13,
+            "locid": 37645,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "Scroll of Kings",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 115",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "+10% to Spell Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+20% to All Attributes",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Eternal Bone Pile",
+            "display_name": "Eternal Bone Pile",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "x0x",
+            "image": "invbonr3",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 8,
+            "col": 13,
+            "locid": 37901,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "Eternal Bone Pile",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 120",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "+1 to Assassin Skill Levels",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+2 to Druid Skill Levels",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+2 to Barbarian Skill Levels",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+2 to Paladin Skill Levels",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+1 to Necromancer Skill Levels",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+2 to Sorceress Skill Levels",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+1 to Amazon Skill Levels",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+10% Movement Speed",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": {
+                "+# to Amazon Skill Levels": [
+                    1,
+                    2
+                ],
+                "+# to Assassin Skill Levels": [
+                    1,
+                    2
+                ],
+                "+# to Barbarian Skill Levels": [
+                    1,
+                    2
+                ],
+                "+# to Druid Skill Levels": [
+                    1,
+                    2
+                ],
+                "+# to Necromancer Skill Levels": [
+                    1,
+                    2
+                ],
+                "+# to Paladin Skill Levels": [
+                    1,
+                    2
+                ],
+                "+# to Sorceress Skill Levels": [
+                    1,
+                    2
+                ]
+            },
+            "charm_ranges": {
+                "to Sorceress Skill Levels": "1 to 2",
+                "to Paladin Skill Levels": "1 to 2",
+                "to Necromancer Skill Levels": "1 to 2",
+                "to Druid Skill Levels": "1 to 2",
+                "to Barbarian Skill Levels": "1 to 2",
+                "to Assassin Skill Levels": "1 to 2",
+                "to Amazon Skill Levels": "1 to 2"
+            }
+        },
+        {
+            "item": "Laser Focus Crystal",
+            "display_name": "Laser Focus Crystal",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "a59",
+            "image": "invdss",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 1,
+            "col": 13,
+            "locid": 37005,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "Laser Focus Crystal",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 100",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Maximum Life +3%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Maximum Mana +10%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+10% to Experience Gained",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Death Projector (Heroic)",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Difficulty Level: 125",
+                        5
+                    ]
+                ],
+                [
+                    [
+                        "Transmute with a Thal rune to receive two quest entrance scrolls",
+                        5
+                    ]
+                ],
+                [
+                    [
+                        "Reward can be used to upgrade Paragon's Hammer",
+                        5
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Bone Chimes",
+            "display_name": "Bone Chimes",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "ir76",
+            "image": "bonechimes",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 5,
+            "col": 12,
+            "locid": 37516,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "Bone Chimes",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 120",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Gives stats based on the sum of your bonus damage to Undead and Demons",
+                        8
+                    ]
+                ],
+                [
+                    [
+                        "18% added as Physical and Magic Spell Damage (Max +40%)",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Current Bonus: +128%",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Crystalline Flame Medallion",
+            "display_name": "Crystalline Flame Medallion",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "lok",
+            "image": "invvip",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": true,
+            "has_trophy": true,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 9,
+            "col": 14,
+            "locid": 38030,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "Crystalline Flame Medallion",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "(Paladin Only)",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 120",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "+1 to All Skills",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+1 to Summon Edyrem",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+5% to All Attributes",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+40 to all Attributes",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Fire Absorb +5%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Lightning Absorb +5%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Cold Absorb +5%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "- Divine Mandate -",
+                        5
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Lylia's Curse",
+            "display_name": "Lylia's Curse",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "|ld",
+            "image": "lyliascharm",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 7,
+            "col": 12,
+            "locid": 37772,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "Lylia's Curse",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 120",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "+23% Bonus to Summoned Edyrem Life",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+20 Life Regenerated per Second",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Maximum Cold Resist +1%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Elemental Resists +10%",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": {
+                "+#% Bonus to Summoned Edyrem Life": [
+                    11,
+                    25
+                ]
+            },
+            "charm_ranges": {
+                "Bonus to Summoned Edyrem Life": "11 to 25"
+            }
+        },
+        {
+            "item": "Eye of Divinity",
+            "display_name": "Eye of Divinity",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "x06",
+            "image": "ccpal",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": true,
+            "is_rw": false,
+            "is_upgraded": true,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 1,
+            "col": 14,
+            "locid": 37006,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "Eye of Divinity",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "(Paladin Challenge Item)",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "(Paladin Only)",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 90",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Unlocks your Ennead Skill",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "+3 to Paladin Skill Levels",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Physical Resist +5%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Physical Damage Taken Reduced by 5",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+30% Bonus to Defense",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Astrogha's Venom Stinger",
+            "display_name": "Astrogha's Venom Stinger",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "ab!",
+            "image": "invtail",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 8,
+            "col": 12,
+            "locid": 37900,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "Astrogha's Venom Stinger",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 125",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "+1 to All Skills",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Jitan's Gate Cooldown Reduced by 1 second ",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+229 to Life",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Poison Length Reduction +50%",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": {
+                "+# to Life": [
+                    200,
+                    500
+                ]
+            },
+            "charm_ranges": {
+                "to Life": "200 to 500"
+            }
+        },
+        {
+            "item": "Arcana",
+            "display_name": "Arcana",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "eby",
+            "image": "dimensionalkey",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 0,
+            "col": 12,
+            "locid": 36876,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "Arcana",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Dimensional Key",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 130",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Trial of Discovery",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Explore every level of the Labyrinth",
+                        5
+                    ]
+                ],
+                [
+                    [
+                        "Transmute charm once with each Riftstone",
+                        5
+                    ]
+                ],
+                [
+                    [
+                        "(must be done in ascending order)",
+                        5
+                    ]
+                ],
+                [
+                    [
+                        "Trial of Purity",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Defeat the monster Heroes, Champions and Sovereigns roaming the Labyrinth",
+                        5
+                    ]
+                ],
+                [
+                    [
+                        "Transmute charm once with each Star Chart piece and Dream Fragment",
+                        5
+                    ]
+                ],
+                [
+                    [
+                        "(these items are rare drops from Labyrinth mini bosses)",
+                        5
+                    ]
+                ],
+                [
+                    [
+                        "End the Invasion",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Defeat Deimoss the Fleshweaver in the Labyrinth depths",
+                        5
+                    ]
+                ],
+                [
+                    [
+                        "Transmute charm after boss death",
+                        5
+                    ]
+                ],
+                [
+                    [
+                        "Trial of the Nephalem",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Complete all of the above Labyrinth Quests",
+                        5
+                    ]
+                ],
+                [
+                    [
+                        "Transmute the charm with a Celestial Wind effigy",
+                        5
+                    ]
+                ],
+                [
+                    [
+                        "+7% Magic Find",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Idol of Vanity",
+            "display_name": "Idol of Vanity",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "a66",
+            "image": "invgbi",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 2,
+            "col": 11,
+            "locid": 37131,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "Idol of Vanity",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 115",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Unlocks Mastery Skill: Continuity",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "+15% Combat Speeds",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Legacy of Blood",
+            "display_name": "Legacy of Blood",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "adi",
+            "image": "invlegacy",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": true,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 6,
+            "col": 11,
+            "locid": 37643,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "Legacy of Blood",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "By Richard Knaak",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "(Paladin Only)",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 115",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Unlocks Mastery Skill: Endurance",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "+3% Life stolen per Hit",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+20% Bonus to Defense",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "- Curse of the Warlord -",
+                        5
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": {
+                "#% Life stolen per Hit": [
+                    3,
+                    5
+                ]
+            },
+            "charm_ranges": {
+                "Life stolen per Hit": "3 to 5"
+            }
+        },
+        {
+            "item": "Sacred Worldstone Key",
+            "display_name": "Sacred Worldstone Key",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "a61",
+            "image": "invworldkey",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 8,
+            "col": 11,
+            "locid": 37899,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "Sacred Worldstone Key",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 100",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Weapon Physical Damage +27%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+25% Bonus to Defense",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": {
+                "#% Bonus to Defense": [
+                    21,
+                    30
+                ],
+                "Weapon Physical Damage +#%": [
+                    25,
+                    30
+                ]
+            },
+            "charm_ranges": {
+                "Weapon Physical Damage": "25 to 30",
+                "Bonus to Defense": "21 to 30"
+            }
+        },
+        {
+            "item": "Silver Seal of Ureh",
+            "display_name": "Silver Seal of Ureh",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "aq!",
+            "image": "invrin",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 9,
+            "col": 13,
+            "locid": 38029,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "Silver Seal of Ureh",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 120",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "+1 to All Skills",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+28 Spell Focus",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+12% to Summon Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+13% to Summon Elemental Resistances",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+14 to Strength",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+17 to Dexterity",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+18 to Vitality",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+11 to Energy",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": {
+                "+# Spell Focus": [
+                    21,
+                    30
+                ],
+                "+# to Dexterity": [
+                    11,
+                    20
+                ],
+                "+# to Energy": [
+                    11,
+                    20
+                ],
+                "+# to Strength": [
+                    11,
+                    20
+                ],
+                "+# to Vitality": [
+                    11,
+                    20
+                ],
+                "+#% to Summon Damage": [
+                    11,
+                    13
+                ],
+                "+#% to Summon Elemental Resistances": [
+                    11,
+                    15
+                ]
+            },
+            "charm_ranges": {
+                "Spell Focus": "21 to 30",
+                "to Summon Damage": "11 to 13",
+                "to Summon Elemental Resistances": "11 to 15",
+                "to Strength": "11 to 20",
+                "to Dexterity": "11 to 20",
+                "to Vitality": "11 to 20",
+                "to Energy": "11 to 20"
+            }
+        },
+        {
+            "item": "Umbaru Treasure",
+            "display_name": "Umbaru Treasure",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "trc",
+            "image": "foolsbox",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": true,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 3,
+            "col": 10,
+            "locid": 37258,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "Umbaru Treasure",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 120",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "+1 to All Skills",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+10% to Spell Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+13 to Strength",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+45 to Dexterity",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+29 to Vitality",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+31 to Energy",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Cold Fusion Schematics",
+            "display_name": "Cold Fusion Schematics",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "w@w",
+            "image": "coldfusion",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 5,
+            "col": 10,
+            "locid": 37514,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "Cold Fusion Schematics",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 125",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "1% Chance to cast level 10 Time Strike on Striking",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+23 to Strength",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+27 to Dexterity",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+29 to Vitality",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+20 to Energy",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": {
+                "+# to Dexterity": [
+                    16,
+                    30
+                ],
+                "+# to Energy": [
+                    16,
+                    30
+                ],
+                "+# to Strength": [
+                    16,
+                    30
+                ],
+                "+# to Vitality": [
+                    16,
+                    30
+                ]
+            },
+            "charm_ranges": {
+                "to Strength": "16 to 30",
+                "to Dexterity": "16 to 30",
+                "to Vitality": "16 to 30",
+                "to Energy": "16 to 30"
+            }
+        },
+        {
+            "item": "Azmodan's Heart",
+            "display_name": "Azmodan's Heart",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "a56",
+            "image": "invhrt",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": true,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 2,
+            "col": 14,
+            "locid": 37134,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "Azmodan's Heart",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "(Paladin Only)",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 115",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "+150 to Life",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+75 to Mana",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Maximum Elemental Resists +2%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Elemental Resists +18%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "-5% to All Vendor Prices",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "- Vile Dissolution -",
+                        5
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": {
+                "Elemental Resists +#%": [
+                    11,
+                    20
+                ]
+            },
+            "charm_ranges": {
+                "Elemental Resists": "11 to 20"
+            }
+        },
+        {
+            "item": "The Black Road",
+            "display_name": "The Black Road",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "tbr",
+            "image": "invsbk3",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": true,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 9,
+            "col": 12,
+            "locid": 38028,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "The Black Road",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 115",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Unlocks your Black Road Skill",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "+150 to Life",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+75 to Mana",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Right click to open Time Rift",
+                        0
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Soul of Kabraxis",
+            "display_name": "Soul of Kabraxis",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "bxa",
+            "image": "braxwhorl",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": true,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 4,
+            "col": 13,
+            "locid": 37389,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "Soul of Kabraxis",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "(Paladin Only)",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 120",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "+1 to All Skills",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Adds 5-10 Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Maximum Fire Resist +2%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Maximum Lightning Resist +3%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Maximum Cold Resist +3%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Maximum Poison Resist +3%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "- Shadow's Embrace -",
+                        5
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": {
+                "Maximum Cold Resist +#%": [
+                    2,
+                    3
+                ],
+                "Maximum Fire Resist +#%": [
+                    2,
+                    3
+                ],
+                "Maximum Lightning Resist +#%": [
+                    2,
+                    3
+                ],
+                "Maximum Poison Resist +#%": [
+                    2,
+                    3
+                ]
+            },
+            "charm_ranges": {
+                "Maximum Fire Resist": "2 to 3",
+                "Maximum Lightning Resist": "2 to 3",
+                "Maximum Cold Resist": "2 to 3",
+                "Maximum Poison Resist": "2 to 3"
+            }
+        },
+        {
+            "item": "Demonsbane",
+            "display_name": "Demonsbane",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "t@t",
+            "image": "demonsbanez",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 8,
+            "col": 14,
+            "locid": 37902,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "Demonsbane",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "By Robert Marks",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 120",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "+2 to Barbarian Skill Levels",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+2 to Paladin Skill Levels",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+2 to Necromancer Skill Levels",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+2 to Sorceress Skill Levels",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+2 to Amazon Skill Levels",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+15 Life Regenerated per Second",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Heroic Duncraig",
+                        8
+                    ]
+                ],
+                [
+                    [
+                        "Rewards: Assur's Bane upgrades, Sacred Unique Crafting, Exclusive Uniques",
+                        11
+                    ]
+                ],
+                [
+                    [
+                        "Cube charm with 5 Sacred Uniques to create a Mark of Sanctity",
+                        5
+                    ]
+                ],
+                [
+                    [
+                        "Learn the Paragon of Sanctity skill",
+                        5
+                    ]
+                ],
+                [
+                    [
+                        "Transmute in the cube to obtain a Pearl of Wisdom on this topic",
+                        8
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": {
+                "+# to Amazon Skill Levels": [
+                    0,
+                    2
+                ],
+                "+# to Assassin Skill Levels": [
+                    0,
+                    2
+                ],
+                "+# to Barbarian Skill Levels": [
+                    0,
+                    2
+                ],
+                "+# to Druid Skill Levels": [
+                    0,
+                    2
+                ],
+                "+# to Necromancer Skill Levels": [
+                    0,
+                    2
+                ],
+                "+# to Paladin Skill Levels": [
+                    0,
+                    2
+                ],
+                "+# to Sorceress Skill Levels": [
+                    0,
+                    2
+                ]
+            },
+            "charm_ranges": {
+                "to Sorceress Skill Levels": "0 to 2",
+                "to Paladin Skill Levels": "0 to 2",
+                "to Necromancer Skill Levels": "0 to 2",
+                "to Druid Skill Levels": "0 to 2",
+                "to Barbarian Skill Levels": "0 to 2",
+                "to Assassin Skill Levels": "0 to 2",
+                "to Amazon Skill Levels": "0 to 2"
+            }
+        },
+        {
+            "item": "Dragon Claw",
+            "display_name": "Dragon Claw",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "|dc",
+            "image": "invhorn",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": true,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 5,
+            "col": 11,
+            "locid": 37515,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "Dragon Claw",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "(Paladin Only)",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 125",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Unlocks Mastery Skill: Chemistry",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "+127 to Life",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+27 to Mana",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+5% Chance to Avoid Damage",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": {
+                "+# to Life": [
+                    50,
+                    150
+                ],
+                "+# to Mana": [
+                    25,
+                    75
+                ]
+            },
+            "charm_ranges": {
+                "to Life": "50 to 150",
+                "to Mana": "25 to 75"
+            }
+        },
+        {
+            "item": "The Book of Lies",
+            "display_name": "The Book of Lies",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "k@k",
+            "image": "invsbk2",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": true,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 6,
+            "col": 10,
+            "locid": 37642,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "The Book of Lies",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "(Paladin Only)",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 125",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Weapon Physical Damage +20%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+421 to Life",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+105 to Mana",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "- Demonic Forgery -",
+                        5
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": {
+                "+# to Life": [
+                    100,
+                    500
+                ],
+                "+# to Mana": [
+                    50,
+                    250
+                ]
+            },
+            "charm_ranges": {
+                "to Life": "100 to 500",
+                "to Mana": "50 to 250"
+            }
+        },
+        {
+            "item": "Sunstone of the Twin Seas",
+            "display_name": "Sunstone of the Twin Seas",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "twi",
+            "image": "invgmg",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": true,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 0,
+            "col": 14,
+            "locid": 36878,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "Sunstone of the Twin Seas",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 50",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "+2 to All Skills",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+10% Combat Speeds",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "-5% to Enemy Fire Resistance",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "-5% to Enemy Lightning Resistance",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "-5% to Enemy Cold Resistance",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+10% to All Attributes",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Elemental Resists +40%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+5% to Experience Gained",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Spirit of Creation",
+            "display_name": "Spirit of Creation",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "blol",
+            "image": "vine",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 7,
+            "col": 10,
+            "locid": 37770,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "Spirit of Creation",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 125",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Unlocks Mastery Skill: Specialization",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "+25 to Strength",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Maximum Mana +5%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Regenerate Mana +10%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Elemental Resists +5%",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": {
+                "Elemental Resists +#%": [
+                    1,
+                    10
+                ],
+                "Maximum Mana +#%": [
+                    1,
+                    5
+                ]
+            },
+            "charm_ranges": {
+                "Maximum Mana": "1 to 5",
+                "Elemental Resists": "1 to 10"
+            }
+        },
+        {
+            "item": "Zakarum's Ear",
+            "display_name": "Zakarum's Ear",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "yq8",
+            "image": "invear",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 5,
+            "col": 13,
+            "locid": 37517,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "Zakarum's Ear",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 115",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "+10% to All Attributes",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+10% to Experience Gained",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Heroic Library of Fate",
+                        8
+                    ]
+                ],
+                [
+                    [
+                        "Rewards: Angelic Items, Crafting Rares, Crafting Exclusive Uniques",
+                        11
+                    ]
+                ],
+                [
+                    [
+                        "Tramsmute with a Perfect Gem and 50,000 gold to open with Area Level 130",
+                        5
+                    ]
+                ],
+                [
+                    [
+                        "Further progress requires the Paragon of Fate mastery and a Mark of Fate",
+                        5
+                    ]
+                ],
+                [
+                    [
+                        "Transmute in the cube to obtain a Pearl of Wisdom on this topic",
+                        0
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": {
+                "#% to All Attributes": [
+                    6,
+                    10
+                ],
+                "+#% to Experience Gained": [
+                    6,
+                    15
+                ]
+            },
+            "charm_ranges": []
+        },
+        {
+            "item": "Tome of Possession",
+            "display_name": "Tome of Possession",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "\\\\7",
+            "image": "invbbb",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 0,
+            "col": 10,
+            "locid": 36874,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "Tome of Possession",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Quest Item",
+                        0
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 120",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "+1 to Mind Control",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Corrupted Wormhole",
+            "display_name": "Corrupted Wormhole",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "\\\\8",
+            "image": "invlucion",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 2,
+            "col": 9,
+            "locid": 37129,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "Corrupted Wormhole",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 100",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Books of Kalan",
+            "display_name": "Books of Kalan",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "voXX",
+            "image": "invkalan",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 3,
+            "col": 9,
+            "locid": 37257,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "Books of Kalan",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 130",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "+1 to All Skills",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+3 to Teleport",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+25 to Life",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+50 to Mana",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Disenchant to open a portal to Inarius in the Void",
+                        8
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": {
+                "+# to Teleport": [
+                    3,
+                    15
+                ]
+            },
+            "charm_ranges": {
+                "to Teleport": "3 to 15"
+            }
+        },
+        {
+            "item": "Shamanka",
+            "display_name": "Shamanka",
+            "type": "Long Staff (SU) [eth]",
+            "quality": "Unique",
+            "code": "53@",
+            "image": "invlst",
+            "name_color": 4,
+            "eth": true,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 105,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "RightHandAlternate",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "SU",
+            "description_lines": [
+                [
+                    [
+                        "Shamanka",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Long Staff (Sacred)",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Two-Hand Damage: 70 to 72",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 100",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Dexterity: 193",
+                        1
+                    ]
+                ],
+                [
+                    [
+                        "Ethereal",
+                        5
+                    ]
+                ],
+                [
+                    [
+                        "+3 to Sorceress Skill Levels",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+45% Cast Speed",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+45% Hit Recovery",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+25% to Fire Spell Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+25% to Cold Spell Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+25% to Poison Spell Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+8 to Bloodlust",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Maximum Life +11%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Fire Resist +54%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Lightning Resist +53%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+50% Damage to Undead",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Socketed (0/4)",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": {
+                "+# to Bloodlust": [
+                    6,
+                    16
+                ],
+                "+# to Sorceress Skill Levels": [
+                    3,
+                    6
+                ],
+                "+#% to Cold Spell Damage": [
+                    21,
+                    25
+                ],
+                "+#% to Fire Spell Damage": [
+                    21,
+                    25
+                ],
+                "+#% to Poison Spell Damage": [
+                    21,
+                    25
+                ],
+                "Fire Resist +#%": [
+                    50,
+                    70
+                ],
+                "Lightning Resist +#%": [
+                    50,
+                    70
+                ],
+                "Maximum Life +#%": [
+                    10,
+                    13
+                ]
+            },
+            "charm_ranges": []
+        },
+        {
+            "item": "Riftwalker's Eye",
+            "display_name": "Riftwalker's Eye",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "ktzx",
+            "image": "evileye",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 2,
+            "col": 13,
+            "locid": 37133,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "Riftwalker's Eye",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 100",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "+1 to All Skills",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+15% to Experience Gained",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Bonus Quest I",
+                        7
+                    ]
+                ],
+                [
+                    [
+                        "(cube charm by itself on completion)",
+                        0
+                    ]
+                ],
+                [
+                    [
+                        "Defeat the Greater Riftwalker",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "- without taking damage from the Rift Storm",
+                        5
+                    ]
+                ],
+                [
+                    [
+                        "Bonus Quest II",
+                        7
+                    ]
+                ],
+                [
+                    [
+                        "(cube charm by itself on completion)",
+                        0
+                    ]
+                ],
+                [
+                    [
+                        "Defeat the Ascendant Riftwalker",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "- with at least one Frozen Shambler alive",
+                        5
+                    ]
+                ],
+                [
+                    [
+                        "- without taking damage from the Rift Storm",
+                        5
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Sunstone of the Gods",
+            "display_name": "Sunstone of the Gods",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "x4x",
+            "image": "invgmv",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 0,
+            "col": 13,
+            "locid": 36877,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "Sunstone of the Gods",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 115",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "+5% Innate Elemental Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Maximum Life +4%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Maximum Mana +11%",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": {
+                "#% Innate Elemental Damage": [
+                    3,
+                    5
+                ],
+                "Maximum Life +#%": [
+                    3,
+                    5
+                ],
+                "Maximum Mana +#%": [
+                    11,
+                    15
+                ]
+            },
+            "charm_ranges": {
+                "Innate Elemental Damage": "3 to 5",
+                "Maximum Life": "3 to 5",
+                "Maximum Mana": "11 to 15"
+            }
+        },
+        {
+            "item": "The Sleep",
+            "display_name": "The Sleep",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "ths",
+            "image": "jewelabc",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": true,
+            "has_trophy": true,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 1,
+            "col": 12,
+            "locid": 37004,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "The Sleep",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 125",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Cube After Completing a Trophy Challenge to Awaken",
+                        8
+                    ]
+                ],
+                [
+                    [
+                        "Disenchant to open a portal to the World Nexus",
+                        8
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "+100 Life Regenerated per Second",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Maximum Life +5%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Maximum Fire Resist +1%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Maximum Poison Resist +1%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Cannot Be Frozen",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": {
+                "Maximum Cold Resist +#%": [
+                    0,
+                    1
+                ],
+                "Maximum Fire Resist +#%": [
+                    0,
+                    1
+                ],
+                "Maximum Lightning Resist +#%": [
+                    0,
+                    1
+                ],
+                "Maximum Poison Resist +#%": [
+                    0,
+                    1
+                ]
+            },
+            "charm_ranges": {
+                "Maximum Fire Resist": "0 to 1",
+                "Maximum Lightning Resist": "0 to 1",
+                "Maximum Cold Resist": "0 to 1",
+                "Maximum Poison Resist": "0 to 1"
+            }
+        },
+        {
+            "item": "Horazon's Guard",
+            "display_name": "Horazon's Guard",
+            "type": "Mage's Plate",
+            "quality": "Set",
+            "code": "Ysh4",
+            "image": "lab_armor",
+            "name_color": 2,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": null,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "Torso",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "Set",
+            "description_lines": [
+                [
+                    [
+                        "Horazon's Guard",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Mage's Plate",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Defense: 3043",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 120",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Requirements -100%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+50 to Arcane Blast",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "+50 to Holybolt",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Maximum Elemental Resists +15%",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Elemental Resists +400%",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Physical Resist +50%",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Total Defense = 0",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Brotherhood of the Vizjerei",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "(Valthek Quest Set)",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Horazon's Guard",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Valthek's Blade",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Nor Tiraj's Safeguard",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Quov Tsin's Crown",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Bartuc's Blood",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Tal Rasha's Talisman",
+                        2
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Zoltun's Gauntlets",
+            "display_name": "Zoltun's Gauntlets",
+            "type": "Warkeepers",
+            "quality": "Set",
+            "code": "Ysh8",
+            "image": "lab_gloves",
+            "name_color": 2,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": null,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "Hands",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "Set",
+            "description_lines": [
+                [
+                    [
+                        "Zoltun's Gauntlets",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Warkeepers",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Defense: 621",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 120",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Requirements -100%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+100% Combat Speeds",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "+1000 to Life",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Elemental Resists -200%",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Slain Monsters Rest in Peace",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Brotherhood of the Horadrim",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "(Valthek Quest Set)",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Zoltun's Gauntlets",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Radament's Greaves",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Jered Cain's Diamond",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Deckard Cain's Gem",
+                        2
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Quov Tsin's Crown",
+            "display_name": "Quov Tsin's Crown",
+            "type": "Sorcerer's Mask",
+            "quality": "Set",
+            "code": "Ysh6",
+            "image": "lab_helm",
+            "name_color": 2,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": null,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "Head",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "Set",
+            "description_lines": [
+                [
+                    [
+                        "Quov Tsin's Crown",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Sorcerer's Mask",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Defense: 1546",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 120",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Requirements -100%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+50 to Arcane Blast",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "+50 to Holybolt",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Maximum Elemental Resists +15%",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Elemental Resists +400%",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Physical Resist +50%",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Total Defense = 0",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Brotherhood of the Vizjerei",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "(Valthek Quest Set)",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Horazon's Guard",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Valthek's Blade",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Nor Tiraj's Safeguard",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Quov Tsin's Crown",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Bartuc's Blood",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Tal Rasha's Talisman",
+                        2
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Deckard Cain's Gem",
+            "display_name": "Deckard Cain's Gem",
+            "type": "Arcane Seal",
+            "quality": "Set",
+            "code": "Ysh1",
+            "image": "lab_rn2",
+            "name_color": 2,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": null,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "RightFinger",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "Set",
+            "description_lines": [
+                [
+                    [
+                        "Deckard Cain's Gem",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Arcane Seal",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 120",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "+100% Combat Speeds",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "+1000 to Life",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Elemental Resists -200%",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Slain Monsters Rest in Peace",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Brotherhood of the Horadrim",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "(Valthek Quest Set)",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Zoltun's Gauntlets",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Radament's Greaves",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Jered Cain's Diamond",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Deckard Cain's Gem",
+                        2
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Radament's Greaves",
+            "display_name": "Radament's Greaves",
+            "type": "Winged Feet",
+            "quality": "Set",
+            "code": "Ysh9",
+            "image": "lab_boots",
+            "name_color": 2,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": null,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "Feet",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "Set",
+            "description_lines": [
+                [
+                    [
+                        "Radament's Greaves",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Winged Feet",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Defense: 831",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 120",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "+20% Movement Speed",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Requirements -100%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+100% Combat Speeds",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "+1000 to Life",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Elemental Resists -200%",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Slain Monsters Rest in Peace",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Brotherhood of the Horadrim",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "(Valthek Quest Set)",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Zoltun's Gauntlets",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Radament's Greaves",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Jered Cain's Diamond",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Deckard Cain's Gem",
+                        2
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Tal Rasha's Talisman",
+            "display_name": "Tal Rasha's Talisman",
+            "type": "Necklace",
+            "quality": "Set",
+            "code": "Ysh2",
+            "image": "lab_amu",
+            "name_color": 2,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": null,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "Neck",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "Set",
+            "description_lines": [
+                [
+                    [
+                        "Tal Rasha's Talisman",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Necklace",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 120",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "+50 to Arcane Blast",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "+50 to Holybolt",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Maximum Elemental Resists +15%",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Elemental Resists +400%",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Physical Resist +50%",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Total Defense = 0",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Brotherhood of the Vizjerei",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "(Valthek Quest Set)",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Horazon's Guard",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Valthek's Blade",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Nor Tiraj's Safeguard",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Quov Tsin's Crown",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Bartuc's Blood",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Tal Rasha's Talisman",
+                        2
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Jered Cain's Diamond",
+            "display_name": "Jered Cain's Diamond",
+            "type": "Arcane Seal",
+            "quality": "Set",
+            "code": "Ysh1",
+            "image": "lab_rn1",
+            "name_color": 2,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": null,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "LeftFinger",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "Set",
+            "description_lines": [
+                [
+                    [
+                        "Jered Cain's Diamond",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Arcane Seal",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 120",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "+100% Combat Speeds",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "+1000 to Life",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Elemental Resists -200%",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Slain Monsters Rest in Peace",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Brotherhood of the Horadrim",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "(Valthek Quest Set)",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Zoltun's Gauntlets",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Radament's Greaves",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Jered Cain's Diamond",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Deckard Cain's Gem",
+                        2
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Bartuc's Blood",
+            "display_name": "Bartuc's Blood",
+            "type": "Mana Belt",
+            "quality": "Set",
+            "code": "Ysh7",
+            "image": "lab_belt",
+            "name_color": 2,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": null,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "Waist",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "Set",
+            "description_lines": [
+                [
+                    [
+                        "Bartuc's Blood",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Mana Belt",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Defense: 1397",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 120",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Requirements -100%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+50 to Arcane Blast",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "+50 to Holybolt",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Maximum Elemental Resists +15%",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Elemental Resists +400%",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Physical Resist +50%",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Total Defense = 0",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Brotherhood of the Vizjerei",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "(Valthek Quest Set)",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Horazon's Guard",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Valthek's Blade",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Nor Tiraj's Safeguard",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Quov Tsin's Crown",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Bartuc's Blood",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Tal Rasha's Talisman",
+                        2
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Xazax's Illusion",
+            "display_name": "Xazax's Illusion",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "|\\#",
+            "image": "maggotlairfag",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 4,
+            "col": 12,
+            "locid": 37388,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "Xazax's Illusion",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 125",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "+1 to Assassin Skill Levels",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+1 to Druid Skill Levels",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+1 to Barbarian Skill Levels",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+2 to Paladin Skill Levels",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+2 to Necromancer Skill Levels",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+2 to Sorceress Skill Levels",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+1 to Amazon Skill Levels",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+24 Life Regenerated per Second",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Poison Resist +29%",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": {
+                "+# Life Regenerated per Second": [
+                    10,
+                    25
+                ],
+                "+# to Amazon Skill Levels": [
+                    0,
+                    2
+                ],
+                "+# to Assassin Skill Levels": [
+                    0,
+                    2
+                ],
+                "+# to Barbarian Skill Levels": [
+                    0,
+                    2
+                ],
+                "+# to Druid Skill Levels": [
+                    0,
+                    2
+                ],
+                "+# to Necromancer Skill Levels": [
+                    0,
+                    2
+                ],
+                "+# to Paladin Skill Levels": [
+                    0,
+                    2
+                ],
+                "+# to Sorceress Skill Levels": [
+                    0,
+                    2
+                ],
+                "Poison Resist +#%": [
+                    26,
+                    50
+                ]
+            },
+            "charm_ranges": {
+                "to Necromancer Skill Levels": "0 to 2",
+                "to Paladin Skill Levels": "0 to 2",
+                "to Sorceress Skill Levels": "0 to 2",
+                "to Barbarian Skill Levels": "0 to 2",
+                "to Druid Skill Levels": "0 to 2",
+                "to Amazon Skill Levels": "0 to 2",
+                "to Assassin Skill Levels": "0 to 2",
+                "Life Regenerated per Second": "10 to 25",
+                "Poison Resist": "26 to 50"
+            }
+        },
+        {
+            "item": "Spirit Trance Herb",
+            "display_name": "Spirit Trance Herb",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "yqx",
+            "image": "invhrb",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 4,
+            "col": 11,
+            "locid": 37387,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "Spirit Trance Herb",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 115",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "+10% Attack Speed",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+10% Cast Speed",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+87% Bonus to Attack Rating",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+22 Life Regenerated per Second",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": {
+                "#% Bonus to Attack Rating": [
+                    21,
+                    150
+                ],
+                "+# Life Regenerated per Second": [
+                    10,
+                    25
+                ]
+            },
+            "charm_ranges": {
+                "Bonus to Attack Rating": "21 to 150",
+                "Life Regenerated per Second": "10 to 25"
+            }
+        },
+        {
+            "item": "Valthek's Blade",
+            "display_name": "Valthek's Blade",
+            "type": "Mystical Blade",
+            "quality": "Set",
+            "code": "Ysh3",
+            "image": "lab_sword",
+            "name_color": 2,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": null,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "RightHandMain",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "Set",
+            "description_lines": [
+                [
+                    [
+                        "Valthek's Blade",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Mystical Blade",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "One-Hand Damage: 25 to 38",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 120",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Requirements -100%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+50 to Arcane Blast",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "+50 to Holybolt",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Maximum Elemental Resists +15%",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Elemental Resists +400%",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Physical Resist +50%",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Total Defense = 0",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Brotherhood of the Vizjerei",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "(Valthek Quest Set)",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Horazon's Guard",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Valthek's Blade",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Nor Tiraj's Safeguard",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Quov Tsin's Crown",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Bartuc's Blood",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Tal Rasha's Talisman",
+                        2
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Nor Tiraj's Safeguard",
+            "display_name": "Nor Tiraj's Safeguard",
+            "type": "Divine Guard",
+            "quality": "Set",
+            "code": "Ysh5",
+            "image": "lab_shield",
+            "name_color": 2,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": null,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "LeftHandMain",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "Set",
+            "description_lines": [
+                [
+                    [
+                        "Nor Tiraj's Safeguard",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Divine Guard",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Defense: 1204",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 120",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Requirements -100%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+50 to Arcane Blast",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "+50 to Holybolt",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Maximum Elemental Resists +15%",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Elemental Resists +400%",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Physical Resist +50%",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Total Defense = 0",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Brotherhood of the Vizjerei",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "(Valthek Quest Set)",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Horazon's Guard",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Valthek's Blade",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Nor Tiraj's Safeguard",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Quov Tsin's Crown",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Bartuc's Blood",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Tal Rasha's Talisman",
+                        2
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        }
+    ]
+}

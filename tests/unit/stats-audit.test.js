@@ -1,4 +1,3 @@
-import { readdirSync } from 'node:fs';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
 import { useItemsStore } from '@/stores/items.js';
@@ -17,10 +16,14 @@ import { setImportedStatsSource, invalidateCharacterStats } from '@/character/st
 import { refreshCharacterStatsSnapshot } from '@/character/stats-provider.js';
 import { parseImportedStatsText } from '@/character/bucket/sources/imports.js';
 import { initSkillDataStore, resetSkillDataStoreForTests } from '@/shared/skill-data-store.js';
-import { hasBuildFixtures, loadBuildFixture, loadPlannerCatalog } from '../helpers/planner-catalog.js';
+import {
+  hasBuildFixtures,
+  listBuildFixtures,
+  loadBuildFixture,
+  loadPlannerCatalog,
+} from '../helpers/planner-catalog.js';
 import { installTreeDataFetchMock } from '../helpers/mock-fetch-tree-data.js';
 
-const FIXTURES = new URL('../fixtures/tsw-builds/', import.meta.url);
 const SKIP = new Set(['current_life', 'current_mana', 'strength', 'dexterity', 'vitality', 'energy']);
 // The full dump corpus is large and each build rebuilds items+skills. Keep the default
 // audit bounded; set STATS_AUDIT_ALL=1 to walk every fixture.
@@ -45,9 +48,7 @@ describe.skipIf(!hasBuildFixtures())('stats audit (all TSW builds)', () => {
     restoreFetch = installTreeDataFetchMock();
     resetSkillDataStoreForTests();
     await initSkillDataStore();
-    files = readdirSync(FIXTURES)
-      .filter((name) => name.toLowerCase().endsWith('.json'))
-      .sort();
+    files = listBuildFixtures();
     if (process.env.STATS_AUDIT_ALL !== '1') {
       files = files.filter((name) => AUDIT_FILES.includes(name));
     }

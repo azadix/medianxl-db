@@ -1,0 +1,310 @@
+{
+    "ok": true,
+    "api_version": 1,
+    "meta": {
+        "realm": "TSW",
+        "cached": true,
+        "generated_at": "2026-10-11T08:05:59Z",
+        "marker_warmed_at": null
+    },
+    "build": {
+        "name": "Xiaochou",
+        "version": "2.14",
+        "class": "Necromancer",
+        "level": 150,
+        "skillPoints": {
+            "Abyss Knight": 1,
+            "Alchemical Preparation": 1,
+            "Angel of Death": 1,
+            "Blood Skeleton": 1,
+            "Carnage": 17,
+            "Catapult Shot": 1,
+            "Chemistry": 5,
+            "Continuity": 6,
+            "Death Pact": 1,
+            "Death Ward": 25,
+            "Deathlord": 1,
+            "Debilitating Concoction": 1,
+            "Demonic Commune": 6,
+            "Embalming": 17,
+            "Famine": 15,
+            "Flameburst Shot": 1,
+            "Iron Golem": 1,
+            "Life From Death": 20,
+            "Night Hawks": 1,
+            "Ominous Vigor": 5,
+            "Onslaught": 4,
+            "Paragon of Fate": 1,
+            "Parasite": 1,
+            "Purity": 4,
+            "Rathma's Chosen": 15,
+            "Resurgence": 10,
+            "Sacrifices": 1
+        },
+        "oSkills": [],
+        "allSkillsBonus": 3,
+        "stats": "{{life}}=8191\n{{mana}}=1956\n{{strength}}=1190\n{{dexterity}}=25\n{{vitality}}=20\n{{energy}}=25\n{{fire_resistance}}=40\n{{cold_resistance}}=40\n{{lightning_resistance}}=40\n{{poison_resistance}}=40\n{{physical_resistance}}=0\n{{magic_resistance}}=0\n{{maximum_life}}=0\n{{movement_speed}}=0\n{{hit_recovery}}=10\n{{block_speed}}=10\n{{fire_spell_damage}}=0\n{{lightning_spell_damage}}=0\n{{cold_spell_damage}}=0\n{{enemy_fire_resistance}}=5\n{{enemy_lightning_resistance}}=5\n{{enemy_cold_resistance}}=5",
+        "questsCompleted": {
+            "den_of_evil": {
+                "normal": true,
+                "nightmare": true,
+                "hell": true
+            },
+            "radament": {
+                "normal": true,
+                "nightmare": true,
+                "hell": true
+            },
+            "izual": {
+                "normal": true,
+                "nightmare": true,
+                "hell": true
+            },
+            "lam_essen's_tome": {
+                "normal": true,
+                "nightmare": true,
+                "hell": true
+            },
+            "golden_bird": {
+                "normal": true,
+                "nightmare": true,
+                "hell": true
+            }
+        },
+        "savedAt": "2026-10-13T16:00:14.000Z"
+    },
+    "items": [
+        {
+            "item": "Sunstone of the Twin Seas",
+            "display_name": "Sunstone of the Twin Seas",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "twi",
+            "image": "invgmg",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": true,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 9,
+            "col": 3,
+            "locid": 38019,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "Sunstone of the Twin Seas",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 50",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "+2 to All Skills",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+10% Combat Speeds",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "-5% to Enemy Fire Resistance",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "-5% to Enemy Lightning Resistance",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "-5% to Enemy Cold Resistance",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+10% to All Attributes",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Elemental Resists +40%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+5% to Experience Gained",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Paragon's Hammer",
+            "display_name": "Paragon's Hammer",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "0u1",
+            "image": "invhmr",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": true,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 6,
+            "col": 2,
+            "locid": 37634,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "Paragon's Hammer",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 115",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Unlocks Mastery Skill: Paragon of Fate",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "(Keep in inventory to gain bonus)",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Level 133",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Transmute: Paragon's Hammer + Heavenly Soul + 50,000 gold = Library of Fate 133 scroll",
+                        0
+                    ]
+                ],
+                [
+                    [
+                        "Level 136",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Transmute: Paragon's Hammer + 2 Heavenly Souls + 100,000 gold = Library of Fate 136 scroll",
+                        0
+                    ]
+                ],
+                [
+                    [
+                        "Level 139",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Transmute: Paragon's Hammer + 3 Heavenly Souls + 200,000 gold = Library of Fate 139 scroll",
+                        0
+                    ]
+                ],
+                [
+                    [
+                        "+1 to All Skills",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+1% Maximum Mana per Character Level above 130",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Regenerate Mana +2% per Character Level above 130",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+3% Magic Find per Character Level above 130",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+2 to All Attributes per Character Level above 130",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        }
+    ]
+}

@@ -1,0 +1,2642 @@
+{
+    "ok": true,
+    "api_version": 1,
+    "meta": {
+        "realm": "TSW",
+        "cached": true,
+        "generated_at": "2026-10-13T17:46:02Z",
+        "marker_warmed_at": null
+    },
+    "build": {
+        "name": "PETUH-XSF",
+        "version": "2.14",
+        "class": "Druid",
+        "level": 103,
+        "skillPoints": {
+            "Ancestral Protection": 5,
+            "Barkskin": 4,
+            "Bear Companion": 25,
+            "Bestial Potency": 1,
+            "Cascade": 1,
+            "Erupting Strike": 1,
+            "Growth": 7,
+            "Harvest": 1,
+            "Harvesters": 1,
+            "Heartseeker": 1,
+            "Hunger": 1,
+            "Idol of Scosglen": 10,
+            "Melee Devotion": 1,
+            "Primal Bond": 8,
+            "Primal Dominance": 3,
+            "Ravage": 1,
+            "Rend": 1,
+            "Steady Shot": 1,
+            "Vine Companion": 14,
+            "Werebear Morph": 25
+        },
+        "oSkills": {
+            "Blink": 3
+        },
+        "allSkillsBonus": 5,
+        "stats": "{{life}}=5426\n{{mana}}=1261\n{{strength}}=555\n{{dexterity}}=20\n{{vitality}}=15\n{{energy}}=25\n{{fire_resistance}}=155\n{{cold_resistance}}=155\n{{lightning_resistance}}=155\n{{poison_resistance}}=155\n{{physical_resistance}}=7\n{{magic_resistance}}=0\n{{maximum_life}}=0\n{{movement_speed}}=20\n{{hit_recovery}}=35\n{{block_speed}}=30\n{{fire_spell_damage}}=5\n{{lightning_spell_damage}}=5\n{{cold_spell_damage}}=15\n{{enemy_fire_resistance}}=22\n{{enemy_lightning_resistance}}=5\n{{enemy_cold_resistance}}=5",
+        "questsCompleted": {
+            "den_of_evil": {
+                "normal": true,
+                "nightmare": true,
+                "hell": true
+            },
+            "radament": {
+                "normal": true,
+                "nightmare": true,
+                "hell": true
+            },
+            "izual": {
+                "normal": true,
+                "nightmare": true,
+                "hell": false
+            },
+            "lam_essen's_tome": {
+                "normal": true,
+                "nightmare": true,
+                "hell": false
+            },
+            "golden_bird": {
+                "normal": true,
+                "nightmare": true,
+                "hell": false
+            }
+        },
+        "savedAt": "2026-10-13T17:46:37.000Z"
+    },
+    "items": [
+        {
+            "item": "Ra",
+            "display_name": "Ra",
+            "type": "Superior Cap (2)",
+            "quality": "RW",
+            "code": "707",
+            "image": "invcap",
+            "name_color": 5,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": true,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 49,
+            "ilvl_original": null,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "Head",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "RW",
+            "description_lines": [
+                [
+                    [
+                        "Ra",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Superior Cap (2)",
+                        5
+                    ]
+                ],
+                [
+                    [
+                        "ShaelThul",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Defense: ",
+                        -1
+                    ],
+                    [
+                        "134",
+                        3
+                    ],
+                    [
+                        " (94)",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 35",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Strength: 50",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Living Flame Gives +1% Fire Spell Damage per 8 Character Levels",
+                        8
+                    ]
+                ],
+                [
+                    [
+                        "+1 to All Skills",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+10% Bonus to Poison Skill Duration",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+35% Cast Speed",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "-9% to Enemy Fire Resistance",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "-9% to Enemy Poison Resistance",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Attacker Flees after Striking +15%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+43% Enhanced Defense",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Cold Resist +25%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Poison Resist +25%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+10% Gold Find",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+7% Magic Find",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Socketed (2/2)",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [
+                {
+                    "slot": 1,
+                    "name": "Shael Rune (13)",
+                    "type": "Rune",
+                    "quality": "",
+                    "code": "r13",
+                    "image": "invrshae",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "Shael Rune",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 35",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "+10% Bonus to Poison Skill Duration",
+                                3
+                            ]
+                        ]
+                    ]
+                },
+                {
+                    "slot": 2,
+                    "name": "Thul Rune (10)",
+                    "type": "Rune",
+                    "quality": "",
+                    "code": "r10",
+                    "image": "invrthul",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "Thul Rune",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 28",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "Cold Resist +25%",
+                                3
+                            ]
+                        ]
+                    ]
+                }
+            ],
+            "mystic_orbs": [],
+            "stat_ranges": {
+                "#% Gold Find": [
+                    7,
+                    13
+                ],
+                "-#% to Enemy Fire Resistance": [
+                    7,
+                    10
+                ],
+                "-#% to Enemy Poison Resistance": [
+                    7,
+                    10
+                ],
+                "Attacker Flees after Striking #%": [
+                    11,
+                    15
+                ]
+            },
+            "charm_ranges": []
+        },
+        {
+            "item": "Ring of Regha",
+            "display_name": "Ring of Regha",
+            "type": "Ring (TU)",
+            "quality": "Unique",
+            "code": "rin",
+            "image": "invrin5",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 55,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "LeftFinger",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "TU",
+            "description_lines": [
+                [
+                    [
+                        "Ring of Regha",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Ring",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Adds 3-5 Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+5% to Spell Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+9 to Strength",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+12 to Dexterity",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Elemental Resists +10%",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": {
+                "+# to Dexterity": [
+                    5,
+                    15
+                ],
+                "+# to Strength": [
+                    5,
+                    15
+                ]
+            },
+            "charm_ranges": []
+        },
+        {
+            "item": "Ring",
+            "display_name": "Ring",
+            "type": "Ring",
+            "quality": "Rare",
+            "code": "rin",
+            "image": "invrin1",
+            "name_color": 9,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 55,
+            "ilvl_original": null,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "RightFinger",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "Rare",
+            "description_lines": [
+                [
+                    [
+                        "Ring",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "Prefixes: 3",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "Suffixes: 2",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "+1 to All Skills",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+6% to Physical/Magic Spell Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+6 Life after each Kill",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+7% Gold Find",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+12% Magic Find",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Wormtongue",
+            "display_name": "Wormtongue",
+            "type": "Light Belt (4)",
+            "quality": "Unique",
+            "code": "858",
+            "image": "invvbl",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 77,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "Waist",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "TU",
+            "description_lines": [
+                [
+                    [
+                        "Wormtongue",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Light Belt (4)",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "KoKo",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Defense: ",
+                        -1
+                    ],
+                    [
+                        "1008",
+                        3
+                    ],
+                    [
+                        " (542)",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 68",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Strength: 384",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Already Upgraded",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "+136% Bonus to Attack Rating",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Adds 109-204 Poison Damage over 2 seconds",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+17% Life stolen per Hit",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+10% to Summon Elemental Resistances",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+86% Enhanced Defense",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+10% to Strength",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+36 to Dexterity",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+20 Required Level",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Socketed (2/2)",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [
+                {
+                    "slot": 1,
+                    "name": "Ko Rune (18)",
+                    "type": "Rune",
+                    "quality": "",
+                    "code": "r18",
+                    "image": "invrko",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "Ko Rune",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 48",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "+5% to Strength",
+                                3
+                            ]
+                        ]
+                    ]
+                },
+                {
+                    "slot": 2,
+                    "name": "Ko Rune (18)",
+                    "type": "Rune",
+                    "quality": "",
+                    "code": "r18",
+                    "image": "invrko",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "Ko Rune",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 48",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "+5% to Strength",
+                                3
+                            ]
+                        ]
+                    ]
+                }
+            ],
+            "mystic_orbs": [
+                [
+                    5,
+                    "MO - Summon Resists"
+                ]
+            ],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Caoi Dulra Fruit",
+            "display_name": "Caoi Dulra Fruit",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "x04",
+            "image": "ccdru",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": true,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 1,
+            "col": 14,
+            "locid": 37006,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "Caoi Dulra Fruit",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "(Druid Challenge Item)",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "(Druid Only)",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 90",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Unlocks your Ennead Skill",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "+2 to Druid Skill Levels",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Elemental Resists +30%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+25% Bonus to Defense",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Sunstone of the Twin Seas",
+            "display_name": "Sunstone of the Twin Seas",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "twi",
+            "image": "invgmg",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": true,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 0,
+            "col": 14,
+            "locid": 36878,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "Sunstone of the Twin Seas",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 50",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "+2 to All Skills",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+10% Combat Speeds",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "-5% to Enemy Fire Resistance",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "-5% to Enemy Lightning Resistance",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "-5% to Enemy Cold Resistance",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+10% to All Attributes",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Elemental Resists +30%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+5% to Experience Gained",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Werecat",
+            "display_name": "Werecat",
+            "type": "Breast Plate (4)",
+            "quality": "Unique",
+            "code": "837",
+            "image": "invbrs",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 85,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "Torso",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "TU",
+            "description_lines": [
+                [
+                    [
+                        "Werecat",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Breast Plate (4)",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "RalOrtAmnRalOrt",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Defense: ",
+                        -1
+                    ],
+                    [
+                        "4014",
+                        3
+                    ],
+                    [
+                        " (1703)",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 90",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Strength: 420",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Already Upgraded",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "8% Chance to cast level 16 Tornado on Melee Attack",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+60% Attack Speed",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+10% Life stolen per Hit",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+10% to Summon Elemental Resistances",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+125% Enhanced Defense",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+183 Defense",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+50 to all Attributes",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Fire Resist +50%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Lightning Resist +50%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Poison Resist +25%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Physical Resist +7%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+15% Magic Find",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+40 Required Level",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Socketed (5/6)",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [
+                {
+                    "slot": 1,
+                    "name": "Ral Rune (8)",
+                    "type": "Rune",
+                    "quality": "",
+                    "code": "r08",
+                    "image": "invrral",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "Ral Rune",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 23",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "Fire Resist +25%",
+                                3
+                            ]
+                        ]
+                    ]
+                },
+                {
+                    "slot": 2,
+                    "name": "Ort Rune (9)",
+                    "type": "Rune",
+                    "quality": "",
+                    "code": "r09",
+                    "image": "invrort",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "Ort Rune",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 25",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "Lightning Resist +25%",
+                                3
+                            ]
+                        ]
+                    ]
+                },
+                {
+                    "slot": 3,
+                    "name": "Amn Rune (11)",
+                    "type": "Rune",
+                    "quality": "",
+                    "code": "r11",
+                    "image": "invramn",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "Amn Rune",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 30",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "Poison Resist +25%",
+                                3
+                            ]
+                        ]
+                    ]
+                },
+                {
+                    "slot": 4,
+                    "name": "Ral Rune (8)",
+                    "type": "Rune",
+                    "quality": "",
+                    "code": "r08",
+                    "image": "invrral",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "Ral Rune",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 23",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "Fire Resist +25%",
+                                3
+                            ]
+                        ]
+                    ]
+                },
+                {
+                    "slot": 5,
+                    "name": "Ort Rune (9)",
+                    "type": "Rune",
+                    "quality": "",
+                    "code": "r09",
+                    "image": "invrort",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "Ort Rune",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 25",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "Lightning Resist +25%",
+                                3
+                            ]
+                        ]
+                    ]
+                }
+            ],
+            "mystic_orbs": [
+                [
+                    5,
+                    "MO - Summon Resists"
+                ],
+                [
+                    5,
+                    "MO - Magic Find"
+                ]
+            ],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Death Spur",
+            "display_name": "Death Spur",
+            "type": "Heavy Boots (4)",
+            "quality": "Unique",
+            "code": "868",
+            "image": "invvbt",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 77,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "Feet",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "TU",
+            "description_lines": [
+                [
+                    [
+                        "Death Spur",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Heavy Boots (4)",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Defense: 357",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 66",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Strength: 386",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Already Upgraded",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "+20% Movement Speed",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "1% Chance to cast level 16 Spike Nova on Kill",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+25 to Maximum Damage (Based on Character Level)",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+10% to Summon Elemental Resistances",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+40 to Strength",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+39 to Dexterity",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Maximum Elemental Resists +1%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Elemental Resists +20%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+20 Required Level",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Socketed (4/4)",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [
+                {
+                    "slot": 1,
+                    "name": "Perfect Bloodstone",
+                    "type": "Gem",
+                    "quality": "",
+                    "code": "9$e",
+                    "image": "invgsce",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "Perfect Bloodstone",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 18",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "Maximum Fire Resist +1%",
+                                3
+                            ]
+                        ],
+                        [
+                            [
+                                "Fire Resist +20%",
+                                3
+                            ]
+                        ]
+                    ]
+                },
+                {
+                    "slot": 2,
+                    "name": "Perfect Onyx",
+                    "type": "Gem",
+                    "quality": "",
+                    "code": "g$e",
+                    "image": "invgsoe",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "Perfect Onyx",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 18",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "Maximum Cold Resist +1%",
+                                3
+                            ]
+                        ],
+                        [
+                            [
+                                "Cold Resist +20%",
+                                3
+                            ]
+                        ]
+                    ]
+                },
+                {
+                    "slot": 3,
+                    "name": "Perfect Amber",
+                    "type": "Gem",
+                    "quality": "",
+                    "code": "5$e",
+                    "image": "invgsae",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "Perfect Amber",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 18",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "Maximum Lightning Resist +1%",
+                                3
+                            ]
+                        ],
+                        [
+                            [
+                                "Lightning Resist +20%",
+                                3
+                            ]
+                        ]
+                    ]
+                },
+                {
+                    "slot": 4,
+                    "name": "Perfect Turquoise",
+                    "type": "Gem",
+                    "quality": "",
+                    "code": "7$e",
+                    "image": "invgste",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "Perfect Turquoise",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 18",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "Maximum Poison Resist +1%",
+                                3
+                            ]
+                        ],
+                        [
+                            [
+                                "Poison Resist +20%",
+                                3
+                            ]
+                        ]
+                    ]
+                }
+            ],
+            "mystic_orbs": [
+                [
+                    5,
+                    "MO - Summon Resists"
+                ]
+            ],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Visegrip",
+            "display_name": "Visegrip",
+            "type": "Light Gauntlets (4)",
+            "quality": "Unique",
+            "code": "865",
+            "image": "invtgl",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 77,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "Hands",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "TU",
+            "description_lines": [
+                [
+                    [
+                        "Visegrip",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Light Gauntlets (4)",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "KoKoKoKo",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Defense: ",
+                        -1
+                    ],
+                    [
+                        "627",
+                        3
+                    ],
+                    [
+                        " (523)",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 82",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Strength: 420",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Already Upgraded",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "8% Chance to cast level 30 Crucify on Melee Attack",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+10 to Maximum Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+150% Bonus to Attack Rating",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+10% to Summon Elemental Resistances",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+20% Enhanced Defense",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+34% to Strength",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+10% to Dexterity",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+9% Magic Find",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+32 Required Level",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Socketed (4/4)",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [
+                {
+                    "slot": 1,
+                    "name": "Ko Rune (18)",
+                    "type": "Rune",
+                    "quality": "",
+                    "code": "r18",
+                    "image": "invrko",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "Ko Rune",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 48",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "+5% to Strength",
+                                3
+                            ]
+                        ]
+                    ]
+                },
+                {
+                    "slot": 2,
+                    "name": "Ko Rune (18)",
+                    "type": "Rune",
+                    "quality": "",
+                    "code": "r18",
+                    "image": "invrko",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "Ko Rune",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 48",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "+5% to Strength",
+                                3
+                            ]
+                        ]
+                    ]
+                },
+                {
+                    "slot": 3,
+                    "name": "Ko Rune (18)",
+                    "type": "Rune",
+                    "quality": "",
+                    "code": "r18",
+                    "image": "invrko",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "Ko Rune",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 48",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "+5% to Strength",
+                                3
+                            ]
+                        ]
+                    ]
+                },
+                {
+                    "slot": 4,
+                    "name": "Ko Rune (18)",
+                    "type": "Rune",
+                    "quality": "",
+                    "code": "r18",
+                    "image": "invrko",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "Ko Rune",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 48",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "+5% to Strength",
+                                3
+                            ]
+                        ]
+                    ]
+                }
+            ],
+            "mystic_orbs": [
+                [
+                    5,
+                    "MO - Summon Resists"
+                ],
+                [
+                    3,
+                    "MO - Magic Find"
+                ]
+            ],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Amulet",
+            "display_name": "Amulet",
+            "type": "Amulet",
+            "quality": "Rare",
+            "code": "amu",
+            "image": "invamu2",
+            "name_color": 9,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": null,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "Neck",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "Rare",
+            "description_lines": [
+                [
+                    [
+                        "Amulet",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "Prefixes: 3",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "Suffixes: 1",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "+20% Block Speed",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "-8% to Enemy Fire Resistance",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+10% to Cold Spell Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+306 to Life",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "The Butcher's Tooth",
+            "display_name": "The Butcher's Tooth",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "a60",
+            "image": "invfang",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 2,
+            "col": 14,
+            "locid": 37134,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "The Butcher's Tooth",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 100",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "+10 to all Attributes",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+20% Magic Find",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+1 to Light Radius",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Horror Under Tristram (Heroic)",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Difficulty Level: 125",
+                        5
+                    ]
+                ],
+                [
+                    [
+                        "Transmute with an Urt rune to receive two quest entrance scrolls",
+                        5
+                    ]
+                ],
+                [
+                    [
+                        "Reward can be used to upgrade Paragon's Hammer",
+                        5
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Optical Detector",
+            "display_name": "Optical Detector",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "a55",
+            "image": "inveye",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 3,
+            "col": 14,
+            "locid": 37262,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "Optical Detector",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 100",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Unlocks Mastery Skill: Tenacity",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "+5% to Summon Elemental Resistances",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Elemental Resists +15%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Infernal Machine (Heroic)",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Difficulty Level: 125",
+                        5
+                    ]
+                ],
+                [
+                    [
+                        "Transmute with a Xith rune to receive two quest entrance scrolls",
+                        5
+                    ]
+                ],
+                [
+                    [
+                        "Reward can be used to upgrade Paragon's Hammer",
+                        5
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Pax Mystica",
+            "display_name": "Pax Mystica",
+            "type": "Short Staff (1)",
+            "quality": "RW",
+            "code": "151",
+            "image": "invsst",
+            "name_color": 5,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": true,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 6,
+            "ilvl_original": null,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "RightHandAlternate",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "RW",
+            "description_lines": [
+                [
+                    [
+                        "Pax Mystica",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Short Staff (1)",
+                        5
+                    ]
+                ],
+                [
+                    [
+                        "Tir",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Two-Hand Damage: 4 to 5",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 10",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "+1 to All Skills",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+7% to Spell Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+3 to Blink",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Elemental Resists +13%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+13% Magic Find",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+50% Damage to Undead",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Socketed (1/1)",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [
+                {
+                    "slot": 1,
+                    "name": "Tir Rune (3)",
+                    "type": "Rune",
+                    "quality": "",
+                    "code": "r03",
+                    "image": "invrtir",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "Tir Rune",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 10",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "+3% to Fire Spell Damage",
+                                3
+                            ]
+                        ]
+                    ]
+                }
+            ],
+            "mystic_orbs": [],
+            "stat_ranges": {
+                "#% Magic Find": [
+                    11,
+                    13
+                ],
+                "+# to Blink": [
+                    2,
+                    5
+                ],
+                "Elemental Resists +#%": [
+                    11,
+                    15
+                ]
+            },
+            "charm_ranges": []
+        },
+        {
+            "item": "The Prospector's Pick",
+            "display_name": "The Prospector's Pick",
+            "type": "Military Pick (4)",
+            "quality": "Unique",
+            "code": "457",
+            "image": "invmpi",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 85,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "RightHandMain",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "TU",
+            "description_lines": [
+                [
+                    [
+                        "The Prospector's Pick",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Military Pick (4)",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "One-Hand Damage: 96 to 180",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 89",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Strength: 400",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Already Upgraded",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "+50% Attack Speed",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+220% Enhanced Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+36 to Maximum Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+450% Bonus to Attack Rating",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+56 to Strength",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+54 to Dexterity",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "-20% Mana Cost of Skills",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+18% Gold Find",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+40% Magic Find",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+36 Required Level",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Socketed (6/6)",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [
+                {
+                    "slot": 1,
+                    "name": "Perfect Amethyst",
+                    "type": "Gem",
+                    "quality": "",
+                    "code": "gpv",
+                    "image": "invgsve",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "Perfect Amethyst",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 18",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "+50% Bonus to Attack Rating",
+                                3
+                            ]
+                        ]
+                    ]
+                },
+                {
+                    "slot": 2,
+                    "name": "Perfect Skull",
+                    "type": "Gem",
+                    "quality": "",
+                    "code": "skz",
+                    "image": "invskz",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "Perfect Skull",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 18",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "+10% Enhanced Damage",
+                                3
+                            ]
+                        ]
+                    ]
+                },
+                {
+                    "slot": 3,
+                    "name": "Perfect Skull",
+                    "type": "Gem",
+                    "quality": "",
+                    "code": "skz",
+                    "image": "invskz",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "Perfect Skull",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 18",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "+10% Enhanced Damage",
+                                3
+                            ]
+                        ]
+                    ]
+                },
+                {
+                    "slot": 4,
+                    "name": "Perfect Amethyst",
+                    "type": "Gem",
+                    "quality": "",
+                    "code": "gpv",
+                    "image": "invgsve",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "Perfect Amethyst",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 18",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "+50% Bonus to Attack Rating",
+                                3
+                            ]
+                        ]
+                    ]
+                },
+                {
+                    "slot": 5,
+                    "name": "Perfect Amethyst",
+                    "type": "Gem",
+                    "quality": "",
+                    "code": "gpv",
+                    "image": "invgsve",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "Perfect Amethyst",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 18",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "+50% Bonus to Attack Rating",
+                                3
+                            ]
+                        ]
+                    ]
+                },
+                {
+                    "slot": 6,
+                    "name": "Perfect Amethyst",
+                    "type": "Gem",
+                    "quality": "",
+                    "code": "gpv",
+                    "image": "invgsve",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "Perfect Amethyst",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 18",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "+50% Bonus to Attack Rating",
+                                3
+                            ]
+                        ]
+                    ]
+                }
+            ],
+            "mystic_orbs": [
+                [
+                    5,
+                    "MO - Attack Rating"
+                ],
+                [
+                    4,
+                    "MO - Enhanced Damage"
+                ]
+            ],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Stone",
+            "display_name": "Stone",
+            "type": "Buckler (1)",
+            "quality": "RW",
+            "code": "621",
+            "image": "invbuc",
+            "name_color": 5,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": true,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 6,
+            "ilvl_original": null,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "LeftHandMain",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "RW",
+            "description_lines": [
+                [
+                    [
+                        "Stone",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Buckler (1)",
+                        5
+                    ]
+                ],
+                [
+                    [
+                        "Thul",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Defense: 24",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 28",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Strength: 10",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Dexterity: 17",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "+1 to All Skills",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+25% Hit Recovery",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+4 to Maximum Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+5% to All Attributes",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+34 to Life",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Cold Resist +25%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Cannot Be Frozen",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Socketed (1/1)",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [
+                {
+                    "slot": 1,
+                    "name": "Thul Rune (10)",
+                    "type": "Rune",
+                    "quality": "",
+                    "code": "r10",
+                    "image": "invrthul",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "Thul Rune",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 28",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "Cold Resist +25%",
+                                3
+                            ]
+                        ]
+                    ]
+                }
+            ],
+            "mystic_orbs": [],
+            "stat_ranges": {
+                "+# to Life": [
+                    30,
+                    40
+                ],
+                "+# to Maximum Damage": [
+                    3,
+                    5
+                ]
+            },
+            "charm_ranges": []
+        }
+    ]
+}

@@ -30,10 +30,15 @@ import { useItemsStore } from '@/stores/items.js';
 import { createCharacterInstance, setCharacterInstance } from '@/character/planner-instance.js';
 import { setPlannerAutoMatchHighestStatRequirements } from '@/planner/planner-options.js';
 import { initSkillDataStore } from '@/shared/skill-data-store.js';
+import {
+  listBuildFixtures,
+  resolveBuildFixturePath,
+} from '../helpers/planner-catalog.js';
 import { installTreeDataFetchMock } from '../helpers/mock-fetch-tree-data.js';
 
 const ROOT = resolve(import.meta.dirname, '../..');
-const BUILDS_DIR = process.env.TSW_BUILDS_DIR || resolve(ROOT, 'tests/fixtures/tsw-builds');
+/** Explicit override; otherwise audit the local + committed fixture folders. */
+const BUILDS_DIR = process.env.TSW_BUILDS_DIR || '';
 
 const REQ_LEVEL_RE = /^Required Level:\s*(\d+)\s*$/i;
 const REQ_STR_RE = /^Required Strength:\s*(\d+)\s*$/i;
@@ -94,7 +99,9 @@ function tswRequiredStats(row) {
  * @returns {string[]}
  */
 function auditBuildFile(catalog, file, sets = []) {
-  const raw = JSON.parse(readFileSync(resolve(BUILDS_DIR, file), 'utf8'));
+  const rawPath = BUILDS_DIR ? resolve(BUILDS_DIR, file) : resolveBuildFixturePath(file);
+  if (!rawPath) throw new Error(`Missing build fixture: ${file}`);
+  const raw = JSON.parse(readFileSync(rawPath, 'utf8'));
   const { build, tswItems } = unwrapTswOrNativeBuild(raw);
   setActivePinia(createPinia());
   const store = useItemsStore();
@@ -180,11 +187,13 @@ function auditBuildFile(catalog, file, sets = []) {
   return problems;
 }
 
-const files = existsSync(BUILDS_DIR)
-  ? readdirSync(BUILDS_DIR)
-      .filter((name) => name.toLowerCase().endsWith('.json'))
-      .sort()
-  : [];
+const files = BUILDS_DIR
+  ? existsSync(BUILDS_DIR)
+    ? readdirSync(BUILDS_DIR)
+        .filter((name) => name.toLowerCase().endsWith('.json'))
+        .sort()
+    : []
+  : listBuildFixtures();
 
 describe('TSW build audit', () => {
   it('runs dump audits when at least one local json dump exists', () => {

@@ -1,0 +1,72 @@
+{
+    "ok": true,
+    "api_version": 1,
+    "meta": {
+        "realm": "TSW",
+        "cached": true,
+        "generated_at": "2026-10-09T21:10:37Z",
+        "marker_warmed_at": null
+    },
+    "build": {
+        "name": "buu",
+        "version": "2.14",
+        "class": "Assassin",
+        "level": 150,
+        "skillPoints": {
+            "Anathema": 1,
+            "Blink": 1,
+            "Chemistry": 5,
+            "Cognition": 1,
+            "Endurance": 10,
+            "Energize": 2,
+            "Mind Ripple": 1,
+            "Paragon of Fate": 1,
+            "Perfect Being": 20,
+            "Pinnacle": 30,
+            "Prismatic Cloak": 15,
+            "Psionic Scream": 30,
+            "Psionic Storm": 1,
+            "Queen of Blades": 9,
+            "Shadow Refuge": 1,
+            "Shadowrush": 6,
+            "Shuriken Flurry": 1,
+            "Specialization": 10,
+            "Way of the Gryphon": 1,
+            "Way of the Phoenix": 1,
+            "Way of the Raven": 15,
+            "Way of the Spider": 1
+        },
+        "oSkills": [],
+        "allSkillsBonus": 0,
+        "stats": "{{life}}=7738\n{{mana}}=2032\n{{strength}}=20\n{{dexterity}}=35\n{{vitality}}=790\n{{energy}}=415\n{{fire_resistance}}=0\n{{cold_resistance}}=0\n{{lightning_resistance}}=0\n{{poison_resistance}}=0\n{{physical_resistance}}=0\n{{magic_resistance}}=0\n{{maximum_life}}=0\n{{movement_speed}}=0\n{{hit_recovery}}=0\n{{block_speed}}=0\n{{fire_spell_damage}}=0\n{{lightning_spell_damage}}=0\n{{cold_spell_damage}}=0\n{{enemy_fire_resistance}}=0\n{{enemy_lightning_resistance}}=0\n{{enemy_cold_resistance}}=0",
+        "questsCompleted": {
+            "den_of_evil": {
+                "normal": true,
+                "nightmare": true,
+                "hell": true
+            },
+            "radament": {
+                "normal": true,
+                "nightmare": true,
+                "hell": true
+            },
+            "izual": {
+                "normal": true,
+                "nightmare": true,
+                "hell": true
+            },
+            "lam_essen's_tome": {
+                "normal": true,
+                "nightmare": true,
+                "hell": true
+            },
+            "golden_bird": {
+                "normal": true,
+                "nightmare": true,
+                "hell": true
+            }
+        },
+        "savedAt": "2026-10-13T16:09:20.000Z"
+    },
+    "items": []
+}

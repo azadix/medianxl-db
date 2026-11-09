@@ -1,0 +1,2471 @@
+{
+    "ok": true,
+    "api_version": 1,
+    "meta": {
+        "realm": "TSW",
+        "cached": true,
+        "generated_at": "2026-10-28T12:15:01Z",
+        "marker_warmed_at": null
+    },
+    "build": {
+        "name": "METST_Kriek",
+        "version": "2.14",
+        "class": "Assassin",
+        "level": 91,
+        "skillPoints": {
+            "Artifice Mastery": 4,
+            "Beacon": 15,
+            "Blink": 1,
+            "Deadly Constructs": 10,
+            "Forger's Hegemony": 1,
+            "Incineration Trap": 25,
+            "Meditation": 3,
+            "Perfect Being": 20,
+            "Shadow Refuge": 1,
+            "Shadowrush": 1,
+            "Subterfuge": 15
+        },
+        "oSkills": [],
+        "allSkillsBonus": 6,
+        "stats": "{{life}}=4074\n{{mana}}=1963\n{{strength}}=199\n{{dexterity}}=261\n{{vitality}}=30\n{{energy}}=15\n{{fire_resistance}}=116\n{{cold_resistance}}=115\n{{lightning_resistance}}=118\n{{poison_resistance}}=115\n{{physical_resistance}}=1\n{{magic_resistance}}=0\n{{maximum_life}}=3\n{{movement_speed}}=25\n{{hit_recovery}}=65\n{{block_speed}}=30\n{{fire_spell_damage}}=90\n{{lightning_spell_damage}}=76\n{{cold_spell_damage}}=5\n{{enemy_fire_resistance}}=9\n{{enemy_lightning_resistance}}=10\n{{enemy_cold_resistance}}=12",
+        "questsCompleted": {
+            "den_of_evil": {
+                "normal": true,
+                "nightmare": true,
+                "hell": false
+            },
+            "radament": {
+                "normal": true,
+                "nightmare": true,
+                "hell": false
+            },
+            "izual": {
+                "normal": true,
+                "nightmare": false,
+                "hell": false
+            },
+            "lam_essen's_tome": {
+                "normal": true,
+                "nightmare": true,
+                "hell": false
+            },
+            "golden_bird": {
+                "normal": true,
+                "nightmare": true,
+                "hell": false
+            }
+        },
+        "savedAt": "2026-10-28T16:22:12.000Z"
+    },
+    "items": [
+        {
+            "item": "Wake of Destruction",
+            "display_name": "Wake of Destruction",
+            "type": "Greaves (2)",
+            "quality": "Unique",
+            "code": "733",
+            "image": "invhbt",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 36,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "Feet",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "TU",
+            "description_lines": [
+                [
+                    [
+                        "Wake of Destruction",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Greaves (2)",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Defense: ",
+                        -1
+                    ],
+                    [
+                        "482",
+                        3
+                    ],
+                    [
+                        " (294)",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 27",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Strength: 34",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "+25% Movement Speed",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+8% Bonus to Spell Focus",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+15% to Physical/Magic Spell Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+10% to Fire Spell Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+12% to Poison Spell Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+64% Enhanced Defense",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+26 to Energy",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Maximum Cold Resist +1%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Maximum Poison Resist +1%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Cold Resist +20%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Poison Resist +20%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Requirements -25%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Socketed (2/2)",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [
+                {
+                    "slot": 1,
+                    "name": "Perfect Turquoise",
+                    "type": "Gem",
+                    "quality": "",
+                    "code": "7$e",
+                    "image": "invgste",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "Perfect Turquoise",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 18",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "Maximum Poison Resist +1%",
+                                3
+                            ]
+                        ],
+                        [
+                            [
+                                "Poison Resist +20%",
+                                3
+                            ]
+                        ]
+                    ]
+                },
+                {
+                    "slot": 2,
+                    "name": "Perfect Onyx",
+                    "type": "Gem",
+                    "quality": "",
+                    "code": "g$e",
+                    "image": "invgsoe",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "Perfect Onyx",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 18",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "Maximum Cold Resist +1%",
+                                3
+                            ]
+                        ],
+                        [
+                            [
+                                "Cold Resist +20%",
+                                3
+                            ]
+                        ]
+                    ]
+                }
+            ],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Sunstone of the Twin Seas",
+            "display_name": "Sunstone of the Twin Seas",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "twi",
+            "image": "invgmg",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": true,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 0,
+            "col": 2,
+            "locid": 36866,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "Sunstone of the Twin Seas",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 50",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "+2 to All Skills",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+10% Combat Speeds",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "-5% to Enemy Fire Resistance",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "-5% to Enemy Lightning Resistance",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "-5% to Enemy Cold Resistance",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+10% to All Attributes",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Elemental Resists +20%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+5% to Experience Gained",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Empyrean Band",
+            "display_name": "Empyrean Band",
+            "type": "Ring (TU)",
+            "quality": "Unique",
+            "code": "rin",
+            "image": "invrin4",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 30,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "LeftFinger",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "TU",
+            "description_lines": [
+                [
+                    [
+                        "Empyrean Band",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Ring",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 30",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "1% Chance to cast level 18 Singularity on Death Blow",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+3% to All Attributes",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Maximum Life +3%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Maximum Mana +10%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+5% Gold Find",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": {
+                "#% Gold Find": [
+                    5,
+                    15
+                ],
+                "#% to All Attributes": [
+                    3,
+                    5
+                ]
+            },
+            "charm_ranges": []
+        },
+        {
+            "item": "Light Gauntlets (1)",
+            "display_name": "Light Gauntlets (1)",
+            "type": "Light Gauntlets (1)",
+            "quality": "Rare",
+            "code": "635",
+            "image": "invtgl",
+            "name_color": 9,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 44,
+            "ilvl_original": null,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "Hands",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "Rare",
+            "description_lines": [
+                [
+                    [
+                        "Light Gauntlets (1)",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "Defense: ",
+                        -1
+                    ],
+                    [
+                        "111",
+                        3
+                    ],
+                    [
+                        " (57)",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Strength: 30",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Prefixes: 2",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "Suffixes: 3",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "-4% to Enemy Fire Resistance",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+96% Enhanced Defense",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+12 to Dexterity",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Fire Resist +15%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Poison Length Reduction +18%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Socketed (0/1)",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Rainbow",
+            "display_name": "Rainbow",
+            "type": "Superior Belt (3)",
+            "quality": "RW",
+            "code": "813",
+            "image": "invmbl",
+            "name_color": 5,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": true,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 57,
+            "ilvl_original": null,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "Waist",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "RW",
+            "description_lines": [
+                [
+                    [
+                        "Rainbow",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Superior Belt (3)",
+                        5
+                    ]
+                ],
+                [
+                    [
+                        "Eth",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Defense: ",
+                        -1
+                    ],
+                    [
+                        "819",
+                        3
+                    ],
+                    [
+                        " (573)",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 20",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Strength: 201",
+                        1
+                    ]
+                ],
+                [
+                    [
+                        "+5% Hit Recovery",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+5% to Spell Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+6% to Summon Elemental Resistances",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+43% Enhanced Defense",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Regenerate Mana +8%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Elemental Resists +15%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Physical Resist +1%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+8% Magic Find",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+2 to Light Radius",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Socketed (2/2)",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [
+                {
+                    "slot": 1,
+                    "name": "Jewel",
+                    "type": "Jewel",
+                    "quality": "Magic",
+                    "code": "jew",
+                    "image": "invjw3",
+                    "name_color": 3,
+                    "description_lines": [
+                        [
+                            [
+                                "Jewel",
+                                3
+                            ]
+                        ],
+                        [
+                            [
+                                "+5% Hit Recovery",
+                                3
+                            ]
+                        ]
+                    ]
+                },
+                {
+                    "slot": 2,
+                    "name": "Eth Rune (5)",
+                    "type": "Rune",
+                    "quality": "",
+                    "code": "r05",
+                    "image": "invreth",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "Eth Rune",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 15",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "+3% to Cold Spell Damage",
+                                3
+                            ]
+                        ]
+                    ]
+                }
+            ],
+            "mystic_orbs": [],
+            "stat_ranges": {
+                "#% Magic Find": [
+                    6,
+                    8
+                ],
+                "+#% to Summon Elemental Resistances": [
+                    6,
+                    10
+                ],
+                "Elemental Resists +#%": [
+                    10,
+                    15
+                ],
+                "Regenerate Mana +#%": [
+                    5,
+                    10
+                ]
+            },
+            "charm_ranges": []
+        },
+        {
+            "item": "Amulet",
+            "display_name": "Amulet",
+            "type": "Amulet",
+            "quality": "Rare",
+            "code": "amu",
+            "image": "invamu2",
+            "name_color": 9,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": null,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "Neck",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "Rare",
+            "description_lines": [
+                [
+                    [
+                        "Amulet",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "Prefixes: 3",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "Suffixes: 2",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "+3 to All Skills",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+9% to Fire Spell Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "-7% to Enemy Cold Resistance",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+29 to Dexterity",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+355 to Life",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Ring",
+            "display_name": "Ring",
+            "type": "Ring",
+            "quality": "Rare",
+            "code": "rin",
+            "image": "invrin3",
+            "name_color": 9,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": null,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "RightFinger",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "Rare",
+            "description_lines": [
+                [
+                    [
+                        "Ring",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "Prefixes: 3",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "Suffixes: 3",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "+1 to All Skills",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+14% to Fire Spell Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "-5% to Enemy Lightning Resistance",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Lightning Resist +23%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+2 Life on Striking",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+14 Life after each Kill",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Vizjun's Foresight",
+            "display_name": "Vizjun's Foresight",
+            "type": "Great Helm (Set)",
+            "quality": "Set",
+            "code": "@20",
+            "image": "invghm",
+            "name_color": 2,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": null,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "Head",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "Set",
+            "description_lines": [
+                [
+                    [
+                        "Vizjun's Foresight",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Great Helm (Sacred)",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Defense: ",
+                        -1
+                    ],
+                    [
+                        "3616",
+                        3
+                    ],
+                    [
+                        " (1552)",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 80",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Strength: 250",
+                        1
+                    ]
+                ],
+                [
+                    [
+                        "+20% Cast Speed",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+25% Hit Recovery",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+2 to Minimum Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+15% to Fire Spell Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+13% to Lightning Spell Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+133% Enhanced Defense",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+14% to Energy",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Requirements -60%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Socketed (2/4)",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+8 to Assassin Skill Levels",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+50% Cast Speed",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+150 to Vitality",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+250 to Energy",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+200 Life Regenerated per Second",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Regenerate Mana +50%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Maximum Elemental Resists +1%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Elemental Resists +40%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "4% Reanimate as: ",
+                        4
+                    ],
+                    [
+                        "Undead Scout",
+                        0
+                    ]
+                ],
+                [
+                    [
+                        "Vizjun's Devices",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "(Assassin Trap Set)",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Vizjun's Engine",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Vizjun's Foresight",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Vizjun's Monitor",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Vizjun's Science",
+                        2
+                    ]
+                ]
+            ],
+            "socketables": [
+                {
+                    "slot": 1,
+                    "name": "Jewel",
+                    "type": "Jewel",
+                    "quality": "Magic",
+                    "code": "jew",
+                    "image": "invjw3",
+                    "name_color": 3,
+                    "description_lines": [
+                        [
+                            [
+                                "Jewel",
+                                3
+                            ]
+                        ],
+                        [
+                            [
+                                "+2 to Minimum Damage",
+                                3
+                            ]
+                        ],
+                        [
+                            [
+                                "Requirements -10%",
+                                3
+                            ]
+                        ]
+                    ]
+                },
+                {
+                    "slot": 2,
+                    "name": "Jewel",
+                    "type": "Jewel",
+                    "quality": "Magic",
+                    "code": "jew",
+                    "image": "invjw3",
+                    "name_color": 3,
+                    "description_lines": [
+                        [
+                            [
+                                "Jewel",
+                                3
+                            ]
+                        ],
+                        [
+                            [
+                                "Requirements -10%",
+                                3
+                            ]
+                        ]
+                    ]
+                }
+            ],
+            "mystic_orbs": [],
+            "stat_ranges": {
+                "#% to Energy": [
+                    11,
+                    15
+                ],
+                "+#% Enhanced Defense": [
+                    100,
+                    150
+                ],
+                "+#% to Fire Spell Damage": [
+                    11,
+                    15
+                ],
+                "+#% to Lightning Spell Damage": [
+                    11,
+                    15
+                ]
+            },
+            "charm_ranges": []
+        },
+        {
+            "item": "Vizjun's Engine",
+            "display_name": "Vizjun's Engine",
+            "type": "Hard Leather Armor (Set)",
+            "quality": "Set",
+            "code": "@03",
+            "image": "invhla",
+            "name_color": 2,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": null,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "Torso",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "Set",
+            "description_lines": [
+                [
+                    [
+                        "Vizjun's Engine",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Hard Leather Armor (Sacred)",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Defense: ",
+                        -1
+                    ],
+                    [
+                        "5943",
+                        3
+                    ],
+                    [
+                        " (2508)",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 80",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Strength: 275",
+                        1
+                    ]
+                ],
+                [
+                    [
+                        "+1 to Assassin Skill Levels",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+30% Cast Speed",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+22% Bonus to Attack Rating",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+20% to Fire Spell Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+19% to Lightning Spell Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+137% Enhanced Defense",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Maximum Elemental Resists +1%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Fire Resist +26%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Lightning Resist +20%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Cold Resist +20%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Poison Resist +20%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Requirements -50%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Socketed (5/6)",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+8 to Assassin Skill Levels",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+50% Cast Speed",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+150 to Vitality",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+250 to Energy",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+200 Life Regenerated per Second",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Regenerate Mana +50%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Maximum Elemental Resists +1%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Elemental Resists +40%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "4% Reanimate as: ",
+                        4
+                    ],
+                    [
+                        "Undead Scout",
+                        0
+                    ]
+                ],
+                [
+                    [
+                        "Vizjun's Devices",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "(Assassin Trap Set)",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Vizjun's Engine",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Vizjun's Foresight",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Vizjun's Monitor",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Vizjun's Science",
+                        2
+                    ]
+                ]
+            ],
+            "socketables": [
+                {
+                    "slot": 1,
+                    "name": "Jewel",
+                    "type": "Jewel",
+                    "quality": "Rare",
+                    "code": "jew",
+                    "image": "invjw5",
+                    "name_color": 9,
+                    "description_lines": [
+                        [
+                            [
+                                "Jewel",
+                                9
+                            ]
+                        ],
+                        [
+                            [
+                                "+22% Bonus to Attack Rating",
+                                3
+                            ]
+                        ],
+                        [
+                            [
+                                "Fire Resist +6%",
+                                3
+                            ]
+                        ],
+                        [
+                            [
+                                "Requirements -10%",
+                                3
+                            ]
+                        ]
+                    ]
+                },
+                {
+                    "slot": 2,
+                    "name": "Perfect Turquoise",
+                    "type": "Gem",
+                    "quality": "",
+                    "code": "7$e",
+                    "image": "invgste",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "Perfect Turquoise",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 18",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "Maximum Poison Resist +1%",
+                                3
+                            ]
+                        ],
+                        [
+                            [
+                                "Poison Resist +20%",
+                                3
+                            ]
+                        ]
+                    ]
+                },
+                {
+                    "slot": 3,
+                    "name": "Perfect Onyx",
+                    "type": "Gem",
+                    "quality": "",
+                    "code": "g$e",
+                    "image": "invgsoe",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "Perfect Onyx",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 18",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "Maximum Cold Resist +1%",
+                                3
+                            ]
+                        ],
+                        [
+                            [
+                                "Cold Resist +20%",
+                                3
+                            ]
+                        ]
+                    ]
+                },
+                {
+                    "slot": 4,
+                    "name": "Perfect Bloodstone",
+                    "type": "Gem",
+                    "quality": "",
+                    "code": "9$e",
+                    "image": "invgsce",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "Perfect Bloodstone",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 18",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "Maximum Fire Resist +1%",
+                                3
+                            ]
+                        ],
+                        [
+                            [
+                                "Fire Resist +20%",
+                                3
+                            ]
+                        ]
+                    ]
+                },
+                {
+                    "slot": 5,
+                    "name": "Perfect Amber",
+                    "type": "Gem",
+                    "quality": "",
+                    "code": "5$e",
+                    "image": "invgsae",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "Perfect Amber",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 18",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "Maximum Lightning Resist +1%",
+                                3
+                            ]
+                        ],
+                        [
+                            [
+                                "Lightning Resist +20%",
+                                3
+                            ]
+                        ]
+                    ]
+                }
+            ],
+            "mystic_orbs": [],
+            "stat_ranges": {
+                "+# to Assassin Skill Levels": [
+                    1,
+                    2
+                ],
+                "+#% Enhanced Defense": [
+                    100,
+                    150
+                ],
+                "+#% to Fire Spell Damage": [
+                    16,
+                    20
+                ],
+                "+#% to Lightning Spell Damage": [
+                    16,
+                    20
+                ]
+            },
+            "charm_ranges": []
+        },
+        {
+            "item": "Hatchet Hands (1)",
+            "display_name": "Hatchet Hands (1)",
+            "type": "Hatchet Hands (1)",
+            "quality": "Rare",
+            "code": "j22",
+            "image": "invaxf",
+            "name_color": 9,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 36,
+            "ilvl_original": null,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "RightHandAlternate",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "Rare",
+            "description_lines": [
+                [
+                    [
+                        "Hatchet Hands (1)",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "One-Hand Damage: 9 to 10",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "(Assassin Only)",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Dexterity: 29",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Prefixes: 2",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "Suffixes: 2",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "+2 to Assassin Skill Levels",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+81% Enhanced Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Adds 7-16 Fire Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Fire Resist +23%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Socketed (0/1)",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Bone Shield (1)",
+            "display_name": "Bone Shield (1)",
+            "type": "Bone Shield (1)",
+            "quality": "Rare",
+            "code": "642",
+            "image": "invbsh",
+            "name_color": 9,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 17,
+            "ilvl_original": null,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "LeftHandAlternate",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "Rare",
+            "description_lines": [
+                [
+                    [
+                        "Bone Shield (1)",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "Defense: ",
+                        -1
+                    ],
+                    [
+                        "165",
+                        3
+                    ],
+                    [
+                        " (115)",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Dexterity: 44",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Prefixes: 3",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "Suffixes: 3",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "+44% Enhanced Defense",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+8 to Vitality",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+3 Life Regenerated per Second",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+22 to Life",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Fire Resist +19%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Cold Resist +18%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Socketed (0/1)",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Shadow Vortex",
+            "display_name": "Shadow Vortex",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "x02",
+            "image": "ccasn",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": true,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 1,
+            "col": 2,
+            "locid": 36994,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "Shadow Vortex",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "(Assassin Challenge Item)",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "(Assassin Only)",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 90",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Unlocks your Ennead Skill",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "+2 to Assassin Skill Levels",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Weapon Physical Damage +50%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+5% Chance to Avoid Damage",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Vizjun's Monitor",
+            "display_name": "Vizjun's Monitor",
+            "type": "Katar (Set)",
+            "quality": "Set",
+            "code": "90@",
+            "image": "invktr",
+            "name_color": 2,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": null,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "RightHandMain",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "Set",
+            "description_lines": [
+                [
+                    [
+                        "Vizjun's Monitor",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Katar (Sacred)",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "One-Hand Damage: 36 to 37",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "(Assassin Only)",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 80",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Dexterity: 333",
+                        1
+                    ]
+                ],
+                [
+                    [
+                        "+4 to Assassin Skill Levels",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+25% Hit Recovery",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+22% to Lightning Spell Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+50 to Strength",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+23% to Vitality",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+25% to Energy",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Socketed (0/3)",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+8 to Assassin Skill Levels",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+50% Cast Speed",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+150 to Vitality",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+250 to Energy",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+200 Life Regenerated per Second",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Regenerate Mana +50%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Maximum Elemental Resists +1%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Elemental Resists +40%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "4% Reanimate as: ",
+                        4
+                    ],
+                    [
+                        "Undead Scout",
+                        0
+                    ]
+                ],
+                [
+                    [
+                        "Vizjun's Devices",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "(Assassin Trap Set)",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Vizjun's Engine",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Vizjun's Foresight",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Vizjun's Monitor",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Vizjun's Science",
+                        2
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": {
+                "#% to Energy": [
+                    20,
+                    25
+                ],
+                "#% to Vitality": [
+                    20,
+                    25
+                ],
+                "+#% to Lightning Spell Damage": [
+                    21,
+                    25
+                ]
+            },
+            "charm_ranges": []
+        },
+        {
+            "item": "Vizjun's Science",
+            "display_name": "Vizjun's Science",
+            "type": "Wrist Blade (Set)",
+            "quality": "Set",
+            "code": "91@",
+            "image": "invktr",
+            "name_color": 2,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": null,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "LeftHandMain",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "Set",
+            "description_lines": [
+                [
+                    [
+                        "Vizjun's Science",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Wrist Blade (Sacred)",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Throw Damage: 1 to 2",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "(Assassin Only)",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 80",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Dexterity: 341",
+                        1
+                    ]
+                ],
+                [
+                    [
+                        "Innate Lightning Damage: ",
+                        0
+                    ],
+                    [
+                        "161 ",
+                        9
+                    ],
+                    [
+                        "(62.0% of Dexterity)",
+                        0
+                    ]
+                ],
+                [
+                    [
+                        "+4 to Assassin Skill Levels",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+40% Cast Speed",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+20% Block Speed",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Adds 160-250 Lightning Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+17% to Fire Spell Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+17% to Lightning Spell Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+47 to Vitality",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+35 to Energy",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Socketed (0/3)",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+8 to Assassin Skill Levels",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+50% Cast Speed",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+150 to Vitality",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+250 to Energy",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+200 Life Regenerated per Second",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Regenerate Mana +50%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Maximum Elemental Resists +1%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Elemental Resists +40%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "4% Reanimate as: ",
+                        4
+                    ],
+                    [
+                        "Undead Scout",
+                        0
+                    ]
+                ],
+                [
+                    [
+                        "Vizjun's Devices",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "(Assassin Trap Set)",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Vizjun's Engine",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Vizjun's Foresight",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Vizjun's Monitor",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "Vizjun's Science",
+                        2
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": {
+                "+# to Energy": [
+                    31,
+                    50
+                ],
+                "+# to Vitality": [
+                    31,
+                    50
+                ],
+                "+#% to Fire Spell Damage": [
+                    16,
+                    20
+                ],
+                "+#% to Lightning Spell Damage": [
+                    16,
+                    20
+                ]
+            },
+            "charm_ranges": []
+        }
+    ]
+}

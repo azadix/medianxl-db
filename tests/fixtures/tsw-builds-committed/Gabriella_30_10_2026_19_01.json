@@ -1,0 +1,2615 @@
+{
+    "ok": true,
+    "api_version": 1,
+    "meta": {
+        "realm": "TSW",
+        "cached": true,
+        "generated_at": "2026-10-30T18:01:43Z",
+        "marker_warmed_at": null
+    },
+    "build": {
+        "name": "Gabriella",
+        "version": "2.14",
+        "class": "Amazon",
+        "level": 68,
+        "skillPoints": {
+            "Balance": 12,
+            "Barrage": 3,
+            "Decoy": 10,
+            "Defensive Harmony": 5,
+            "Dragonlore": 1,
+            "Elemental Command": 1,
+            "Fire at Will": 10,
+            "Freedom": 2,
+            "Keen Sight": 8,
+            "Meditation": 3,
+            "Purity": 4,
+            "Trinity Arrow": 1,
+            "Wild and Free": 2,
+            "Wyrmshot": 7
+        },
+        "oSkills": {
+            "Arrow Swarm": 18
+        },
+        "allSkillsBonus": 6,
+        "stats": "{{life}}=2457\n{{mana}}=892\n{{strength}}=173\n{{dexterity}}=207\n{{vitality}}=20\n{{energy}}=15\n{{fire_resistance}}=104\n{{cold_resistance}}=104\n{{lightning_resistance}}=117\n{{poison_resistance}}=104\n{{physical_resistance}}=1\n{{magic_resistance}}=0\n{{maximum_life}}=0\n{{movement_speed}}=35\n{{hit_recovery}}=20\n{{block_speed}}=20\n{{fire_spell_damage}}=5\n{{lightning_spell_damage}}=5\n{{cold_spell_damage}}=5\n{{enemy_fire_resistance}}=5\n{{enemy_lightning_resistance}}=12\n{{enemy_cold_resistance}}=5",
+        "questsCompleted": {
+            "den_of_evil": {
+                "normal": true,
+                "nightmare": true,
+                "hell": false
+            },
+            "radament": {
+                "normal": true,
+                "nightmare": false,
+                "hell": false
+            },
+            "izual": {
+                "normal": true,
+                "nightmare": false,
+                "hell": false
+            },
+            "lam_essen's_tome": {
+                "normal": true,
+                "nightmare": false,
+                "hell": false
+            },
+            "golden_bird": {
+                "normal": true,
+                "nightmare": false,
+                "hell": false
+            }
+        },
+        "savedAt": "2026-10-30T18:01:54.000Z"
+    },
+    "items": [
+        {
+            "item": "Ring of Regha",
+            "display_name": "Ring of Regha",
+            "type": "Ring (TU)",
+            "quality": "Unique",
+            "code": "rin",
+            "image": "invrin4",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 25,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "LeftFinger",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "TU",
+            "description_lines": [
+                [
+                    [
+                        "Ring of Regha",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Ring",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 28",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Adds 3-5 Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+5% to Spell Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+5 to Strength",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+14 to Dexterity",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Fire Resist +10%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Lightning Resist +17%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Cold Resist +10%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Poison Resist +17%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Physical Damage Taken Reduced by 25",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+28 Required Level",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [
+                [
+                    5,
+                    "MO - Damage Reduced"
+                ],
+                [
+                    1,
+                    "MO - Lightning Res"
+                ],
+                [
+                    1,
+                    "MO - Poison Res"
+                ]
+            ],
+            "stat_ranges": {
+                "+# to Dexterity": [
+                    5,
+                    15
+                ],
+                "+# to Strength": [
+                    5,
+                    15
+                ]
+            },
+            "charm_ranges": []
+        },
+        {
+            "item": "The War Cloak",
+            "display_name": "The War Cloak",
+            "type": "Quilted Armor (3)",
+            "quality": "Unique",
+            "code": "784",
+            "image": "invqlt",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 51,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "Torso",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "TU",
+            "description_lines": [
+                [
+                    [
+                        "The War Cloak",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Quilted Armor (3)",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "ElElElElEl",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Defense: ",
+                        -1
+                    ],
+                    [
+                        "631",
+                        3
+                    ],
+                    [
+                        " (351)",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 63",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Strength: 175",
+                        1
+                    ]
+                ],
+                [
+                    [
+                        "Adds 15-18 Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+4% Life stolen per Hit",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Weapon Physical Damage +39%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+80% Enhanced Defense",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+15 to Strength",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+20 to Dexterity",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+15 to Vitality",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+15 to Energy",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+60 Life Regenerated per Second",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Elemental Resists +15%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+28 Required Level",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Socketed (5/5)",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [
+                {
+                    "slot": 1,
+                    "name": "El Rune (1)",
+                    "type": "Rune",
+                    "quality": "",
+                    "code": "r01",
+                    "image": "invrel",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "El Rune",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 6",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "+3 to all Attributes",
+                                3
+                            ]
+                        ]
+                    ]
+                },
+                {
+                    "slot": 2,
+                    "name": "El Rune (1)",
+                    "type": "Rune",
+                    "quality": "",
+                    "code": "r01",
+                    "image": "invrel",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "El Rune",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 6",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "+3 to all Attributes",
+                                3
+                            ]
+                        ]
+                    ]
+                },
+                {
+                    "slot": 3,
+                    "name": "El Rune (1)",
+                    "type": "Rune",
+                    "quality": "",
+                    "code": "r01",
+                    "image": "invrel",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "El Rune",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 6",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "+3 to all Attributes",
+                                3
+                            ]
+                        ]
+                    ]
+                },
+                {
+                    "slot": 4,
+                    "name": "El Rune (1)",
+                    "type": "Rune",
+                    "quality": "",
+                    "code": "r01",
+                    "image": "invrel",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "El Rune",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 6",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "+3 to all Attributes",
+                                3
+                            ]
+                        ]
+                    ]
+                },
+                {
+                    "slot": 5,
+                    "name": "El Rune (1)",
+                    "type": "Rune",
+                    "quality": "",
+                    "code": "r01",
+                    "image": "invrel",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "El Rune",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 6",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "+3 to all Attributes",
+                                3
+                            ]
+                        ]
+                    ]
+                }
+            ],
+            "mystic_orbs": [
+                [
+                    1,
+                    "MO - Dex"
+                ],
+                [
+                    1,
+                    "MO - Enhanced Defense"
+                ],
+                [
+                    5,
+                    "MO - Allres"
+                ]
+            ],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Ring",
+            "display_name": "Ring",
+            "type": "Ring",
+            "quality": "Magic",
+            "code": "rin",
+            "image": "invrin4",
+            "name_color": 3,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 23,
+            "ilvl_original": null,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "RightFinger",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "Magic",
+            "description_lines": [
+                [
+                    [
+                        "Ring",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Prefixes: 1",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "Suffixes: 1",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "Fire Resist +21%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Lightning Resist +14%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Cold Resist +14%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Poison Resist +14%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Physical Damage Taken Reduced by 15",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "-5% Mana Cost of Skills",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+2 Life after each Kill",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+48 Required Level",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [
+                [
+                    3,
+                    "MO - Damage Reduced"
+                ],
+                [
+                    3,
+                    "MO - Fire Res"
+                ],
+                [
+                    2,
+                    "MO - Cold Res"
+                ],
+                [
+                    2,
+                    "MO - Lightning Res"
+                ],
+                [
+                    2,
+                    "MO - Poison Res"
+                ]
+            ],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Amulet",
+            "display_name": "Amulet",
+            "type": "Amulet",
+            "quality": "Magic",
+            "code": "amu",
+            "image": "invamu3",
+            "name_color": 3,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 16,
+            "ilvl_original": null,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "Neck",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "Magic",
+            "description_lines": [
+                [
+                    [
+                        "Amulet",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Prefixes: 1",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "Suffixes: 1",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "Already Upgraded",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "+1 to All Skills",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+10% Attack Speed",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+5 to all Attributes",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Fire Resist +14%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Lightning Resist +7%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Cold Resist +21%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Poison Resist +14%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Physical Damage Taken Reduced by 25",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+52 Required Level",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [
+                [
+                    5,
+                    "MO - Damage Reduced"
+                ],
+                [
+                    2,
+                    "MO - Fire Res"
+                ],
+                [
+                    3,
+                    "MO - Cold Res"
+                ],
+                [
+                    1,
+                    "MO - Lightning Res"
+                ],
+                [
+                    2,
+                    "MO - Poison Res"
+                ]
+            ],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Lionpaw",
+            "display_name": "Lionpaw",
+            "type": "Chain Boots (3)",
+            "quality": "Unique",
+            "code": "823",
+            "image": "invmbt",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 51,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "Feet",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "TU",
+            "description_lines": [
+                [
+                    [
+                        "Lionpaw",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Chain Boots (3)",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "ElEl",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Defense: ",
+                        -1
+                    ],
+                    [
+                        "760",
+                        3
+                    ],
+                    [
+                        " (409)",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 63",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Strength: 202",
+                        1
+                    ]
+                ],
+                [
+                    [
+                        "Already Upgraded",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "+35% Movement Speed",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+53 to Attack Rating",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+86% Enhanced Defense",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+42 to Strength",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+40 to Dexterity",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+35 to Vitality",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+35 to Energy",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+12 Life Regenerated per Second",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+120 to Life",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+59 to Mana",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Elemental Resists +6%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+17% Bonus to Defense",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+20% Gold Find",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+24 Required Level",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Socketed (3/3)",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [
+                {
+                    "slot": 1,
+                    "name": "Jewel",
+                    "type": "Jewel",
+                    "quality": "Magic",
+                    "code": "jew",
+                    "image": "invjw5",
+                    "name_color": 3,
+                    "description_lines": [
+                        [
+                            [
+                                "Jewel",
+                                3
+                            ]
+                        ],
+                        [
+                            [
+                                "Already Upgraded",
+                                2
+                            ]
+                        ],
+                        [
+                            [
+                                "+53 to Attack Rating",
+                                3
+                            ]
+                        ],
+                        [
+                            [
+                                "+5 to Strength",
+                                3
+                            ]
+                        ],
+                        [
+                            [
+                                "+3 to Dexterity",
+                                3
+                            ]
+                        ],
+                        [
+                            [
+                                "+3 to Vitality",
+                                3
+                            ]
+                        ],
+                        [
+                            [
+                                "+3 to Energy",
+                                3
+                            ]
+                        ]
+                    ]
+                },
+                {
+                    "slot": 2,
+                    "name": "El Rune (1)",
+                    "type": "Rune",
+                    "quality": "",
+                    "code": "r01",
+                    "image": "invrel",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "El Rune",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 6",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "+3 to all Attributes",
+                                3
+                            ]
+                        ]
+                    ]
+                },
+                {
+                    "slot": 3,
+                    "name": "El Rune (1)",
+                    "type": "Rune",
+                    "quality": "",
+                    "code": "r01",
+                    "image": "invrel",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "El Rune",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 6",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "+3 to all Attributes",
+                                3
+                            ]
+                        ]
+                    ]
+                }
+            ],
+            "mystic_orbs": [
+                [
+                    1,
+                    "MO - Strength"
+                ],
+                [
+                    1,
+                    "MO - Dex"
+                ],
+                [
+                    1,
+                    "MO - Enhanced Defense"
+                ],
+                [
+                    2,
+                    "MO - Allres"
+                ],
+                [
+                    1,
+                    "MO - HP Regen"
+                ]
+            ],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Enlightenment",
+            "display_name": "Enlightenment",
+            "type": "Superior Gauntlets (2)",
+            "quality": "RW",
+            "code": "728",
+            "image": "invhgl",
+            "name_color": 5,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": true,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 60,
+            "ilvl_original": null,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "Hands",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "RW",
+            "description_lines": [
+                [
+                    [
+                        "Enlightenment",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Superior Gauntlets (2)",
+                        5
+                    ]
+                ],
+                [
+                    [
+                        "El",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Defense: ",
+                        -1
+                    ],
+                    [
+                        "296",
+                        3
+                    ],
+                    [
+                        " (212)",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 49",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Strength: 62",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Already Upgraded",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "+10% Combat Speeds",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+2 to Maximum Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+2% Life stolen per Hit",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+40% Enhanced Defense",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+35 to Strength",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+15 to Dexterity",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+5 to Vitality",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+5 to Energy",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+15 Life Regenerated per Second",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Fire Resist +3%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Lightning Resist +23%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Cold Resist +3%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Poison Resist +3%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Physical Resist +1%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "-10% Mana Cost of Skills",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+4 to Light Radius",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+36 Required Level",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Socketed (2/2)",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [
+                {
+                    "slot": 1,
+                    "name": "Jewel",
+                    "type": "Jewel",
+                    "quality": "Rare",
+                    "code": "jew",
+                    "image": "invjw3",
+                    "name_color": 9,
+                    "description_lines": [
+                        [
+                            [
+                                "Jewel",
+                                9
+                            ]
+                        ],
+                        [
+                            [
+                                "Already Upgraded",
+                                2
+                            ]
+                        ],
+                        [
+                            [
+                                "+2 to Maximum Damage",
+                                3
+                            ]
+                        ],
+                        [
+                            [
+                                "+5 to Strength",
+                                3
+                            ]
+                        ],
+                        [
+                            [
+                                "Lightning Resist +5%",
+                                3
+                            ]
+                        ]
+                    ]
+                },
+                {
+                    "slot": 2,
+                    "name": "El Rune (1)",
+                    "type": "Rune",
+                    "quality": "",
+                    "code": "r01",
+                    "image": "invrel",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "El Rune",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 6",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "+3 to all Attributes",
+                                3
+                            ]
+                        ]
+                    ]
+                }
+            ],
+            "mystic_orbs": [
+                [
+                    5,
+                    "MO - Strength"
+                ],
+                [
+                    2,
+                    "MO - Dex"
+                ],
+                [
+                    1,
+                    "MO - Allres"
+                ],
+                [
+                    1,
+                    "MO - HP Regen"
+                ]
+            ],
+            "stat_ranges": {
+                "+# Life Regenerated per Second": [
+                    3,
+                    5
+                ],
+                "+# to Light Radius": [
+                    4,
+                    6
+                ]
+            },
+            "charm_ranges": []
+        },
+        {
+            "item": "Wormtongue",
+            "display_name": "Wormtongue",
+            "type": "Light Belt (3)",
+            "quality": "Unique",
+            "code": "812",
+            "image": "invvbl",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 51,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "Waist",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "TU",
+            "description_lines": [
+                [
+                    [
+                        "Wormtongue",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Light Belt (3)",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "ElEl",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Defense: ",
+                        -1
+                    ],
+                    [
+                        "744",
+                        3
+                    ],
+                    [
+                        " (398)",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 58",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Strength: 192",
+                        1
+                    ]
+                ],
+                [
+                    [
+                        "+121% Bonus to Attack Rating",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Adds 91-112 Poison Damage over 2 seconds",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+16% Life stolen per Hit",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+87% Enhanced Defense",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+6 to Strength",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+40 to Dexterity",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+6 to Vitality",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+6 to Energy",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+12 Life Regenerated per Second",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Elemental Resists +9%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+20 Required Level",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Socketed (2/2)",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [
+                {
+                    "slot": 1,
+                    "name": "El Rune (1)",
+                    "type": "Rune",
+                    "quality": "",
+                    "code": "r01",
+                    "image": "invrel",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "El Rune",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 6",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "+3 to all Attributes",
+                                3
+                            ]
+                        ]
+                    ]
+                },
+                {
+                    "slot": 2,
+                    "name": "El Rune (1)",
+                    "type": "Rune",
+                    "quality": "",
+                    "code": "r01",
+                    "image": "invrel",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "El Rune",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 6",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "+3 to all Attributes",
+                                3
+                            ]
+                        ]
+                    ]
+                }
+            ],
+            "mystic_orbs": [
+                [
+                    1,
+                    "MO - Enhanced Defense"
+                ],
+                [
+                    3,
+                    "MO - Allres"
+                ],
+                [
+                    1,
+                    "MO - HP Regen"
+                ]
+            ],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "The Allseeing Eye",
+            "display_name": "The Allseeing Eye",
+            "type": "Coronet (4)",
+            "quality": "Unique",
+            "code": "k22",
+            "image": "invci1",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 77,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "Head",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "TU",
+            "description_lines": [
+                [
+                    [
+                        "The Allseeing Eye",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Coronet (4)",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "ElElElEl",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Defense: ",
+                        -1
+                    ],
+                    [
+                        "423",
+                        3
+                    ],
+                    [
+                        " (288)",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 61",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Dexterity: 183",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "+2 to All Skills",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+25% to Physical/Magic Spell Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+135 Defense",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+15% to Strength",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+12 to Strength",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+17 to Dexterity",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+12 to Vitality",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+12 to Energy",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Elemental Resists +6%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+10 Mana after each Kill",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+12 Required Level",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Socketed (4/4)",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [
+                {
+                    "slot": 1,
+                    "name": "El Rune (1)",
+                    "type": "Rune",
+                    "quality": "",
+                    "code": "r01",
+                    "image": "invrel",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "El Rune",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 6",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "+3 to all Attributes",
+                                3
+                            ]
+                        ]
+                    ]
+                },
+                {
+                    "slot": 2,
+                    "name": "El Rune (1)",
+                    "type": "Rune",
+                    "quality": "",
+                    "code": "r01",
+                    "image": "invrel",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "El Rune",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 6",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "+3 to all Attributes",
+                                3
+                            ]
+                        ]
+                    ]
+                },
+                {
+                    "slot": 3,
+                    "name": "El Rune (1)",
+                    "type": "Rune",
+                    "quality": "",
+                    "code": "r01",
+                    "image": "invrel",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "El Rune",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 6",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "+3 to all Attributes",
+                                3
+                            ]
+                        ]
+                    ]
+                },
+                {
+                    "slot": 4,
+                    "name": "El Rune (1)",
+                    "type": "Rune",
+                    "quality": "",
+                    "code": "r01",
+                    "image": "invrel",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "El Rune",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 6",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "+3 to all Attributes",
+                                3
+                            ]
+                        ]
+                    ]
+                }
+            ],
+            "mystic_orbs": [
+                [
+                    1,
+                    "MO - Dex"
+                ],
+                [
+                    2,
+                    "MO - Allres"
+                ]
+            ],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Stag Bow (1)",
+            "display_name": "Stag Bow (1)",
+            "type": "Stag Bow (1)",
+            "quality": "Rare",
+            "code": "j15",
+            "image": "invam1",
+            "name_color": 9,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 25,
+            "ilvl_original": null,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "RightHandAlternate",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "Rare",
+            "description_lines": [
+                [
+                    [
+                        "Stag Bow (1)",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "Throw Damage: 1 to 2",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "(Amazon Only)",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Dexterity: 78",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Innate Tri-Elemental Damage: ",
+                        0
+                    ],
+                    [
+                        "33 ",
+                        8
+                    ],
+                    [
+                        "(16.0% of Dexterity)",
+                        0
+                    ]
+                ],
+                [
+                    [
+                        "Prefixes: 1",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "Suffixes: 3",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "+1 to All Skills",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Adds 2-3 Fire Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Adds 2-3 Lightning Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Adds 2-3 Cold Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "-7% to Enemy Lightning Resistance",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+6 to all Attributes",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+8 Mana after each Kill",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Socketed (0/2)",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Locust Hive",
+            "display_name": "Locust Hive",
+            "type": "Arrow Quiver (TU)",
+            "quality": "Unique",
+            "code": "aqv",
+            "image": "invqvr",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 15,
+            "ilvl_original": 1,
+            "quantity": 500,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "LeftHandAlternate",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "TU",
+            "description_lines": [
+                [
+                    [
+                        "Locust Hive",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Arrow Quiver",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Quantity: 500",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 5",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Already Upgraded",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "4% Chance to cast level 1 Arrow on Striking",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Adds 3-8 Magic Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+5% Life stolen per Hit",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Sunstone of the Twin Seas",
+            "display_name": "Sunstone of the Twin Seas",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "twi",
+            "image": "invgmg",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": true,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 6,
+            "col": 4,
+            "locid": 37636,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "Sunstone of the Twin Seas",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 50",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "+2 to All Skills",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+10% Combat Speeds",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "-5% to Enemy Fire Resistance",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "-5% to Enemy Lightning Resistance",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "-5% to Enemy Cold Resistance",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+10% to All Attributes",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Elemental Resists +20%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+5% to Experience Gained",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Deadly Hunter",
+            "display_name": "Deadly Hunter",
+            "type": "Hunter's Bow (4)",
+            "quality": "Unique",
+            "code": "501",
+            "image": "invhbw",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 77,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "RightHandMain",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "TU",
+            "description_lines": [
+                [
+                    [
+                        "Deadly Hunter",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Hunter's Bow (4)",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "ElElElElElEl",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Original Owner: ",
+                        -1
+                    ],
+                    [
+                        "Gabriella",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Two-Hand Damage: 56 to 166",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 48",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Dexterity: 221",
+                        1
+                    ]
+                ],
+                [
+                    [
+                        "+100% Attack Speed",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+123% Enhanced Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+179% Damage to Demons",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+18 to Arrow Swarm",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Adds 1-100 Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+25% Deadly Strike",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+18 to all Attributes",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+50 Life Regenerated per Second",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Socketed (6/6)",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [
+                {
+                    "slot": 1,
+                    "name": "El Rune (1)",
+                    "type": "Rune",
+                    "quality": "",
+                    "code": "r01",
+                    "image": "invrel",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "El Rune",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 6",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "+3 to all Attributes",
+                                3
+                            ]
+                        ]
+                    ]
+                },
+                {
+                    "slot": 2,
+                    "name": "El Rune (1)",
+                    "type": "Rune",
+                    "quality": "",
+                    "code": "r01",
+                    "image": "invrel",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "El Rune",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 6",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "+3 to all Attributes",
+                                3
+                            ]
+                        ]
+                    ]
+                },
+                {
+                    "slot": 3,
+                    "name": "El Rune (1)",
+                    "type": "Rune",
+                    "quality": "",
+                    "code": "r01",
+                    "image": "invrel",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "El Rune",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 6",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "+3 to all Attributes",
+                                3
+                            ]
+                        ]
+                    ]
+                },
+                {
+                    "slot": 4,
+                    "name": "El Rune (1)",
+                    "type": "Rune",
+                    "quality": "",
+                    "code": "r01",
+                    "image": "invrel",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "El Rune",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 6",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "+3 to all Attributes",
+                                3
+                            ]
+                        ]
+                    ]
+                },
+                {
+                    "slot": 5,
+                    "name": "El Rune (1)",
+                    "type": "Rune",
+                    "quality": "",
+                    "code": "r01",
+                    "image": "invrel",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "El Rune",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 6",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "+3 to all Attributes",
+                                3
+                            ]
+                        ]
+                    ]
+                },
+                {
+                    "slot": 6,
+                    "name": "El Rune (1)",
+                    "type": "Rune",
+                    "quality": "",
+                    "code": "r01",
+                    "image": "invrel",
+                    "name_color": 11,
+                    "description_lines": [
+                        [
+                            [
+                                "El Rune",
+                                11
+                            ]
+                        ],
+                        [
+                            [
+                                "Required Level: 6",
+                                -1
+                            ]
+                        ],
+                        [
+                            [
+                                "+3 to all Attributes",
+                                3
+                            ]
+                        ]
+                    ]
+                }
+            ],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Arrow Quiver",
+            "display_name": "Arrow Quiver",
+            "type": "Arrow Quiver",
+            "quality": "Rare",
+            "code": "aqv",
+            "image": "invqvr",
+            "name_color": 9,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 15,
+            "ilvl_original": null,
+            "quantity": 500,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "LeftHandMain",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "Rare",
+            "description_lines": [
+                [
+                    [
+                        "Arrow Quiver",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "Quantity: 500",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Prefixes: 2",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "Suffixes: 3",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "Already Upgraded",
+                        2
+                    ]
+                ],
+                [
+                    [
+                        "+10% Attack Speed",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+15% Bonus to Attack Rating",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+34 Defense",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+8 to Strength",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+50 to Life",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Physical Damage Taken Reduced by 25",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "-10% Mana Cost of Skills",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+28 Required Level",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [
+                [
+                    5,
+                    "MO - Damage Reduced"
+                ],
+                [
+                    2,
+                    "MO - HP"
+                ]
+            ],
+            "stat_ranges": [],
+            "charm_ranges": []
+        }
+    ]
+}

@@ -12,7 +12,46 @@ import {
 } from '@/items/socketables.js';
 
 const REPO_ROOT = resolve(import.meta.dirname, '../..');
+/** Local, git-ignored drop zone for TSW dumps. */
 const BUILD_FIXTURE_DIR = resolve(REPO_ROOT, 'tests/fixtures/tsw-builds');
+/** Small set of builds committed to git so CI can run the fixture tests. */
+const COMMITTED_BUILD_FIXTURE_DIR = resolve(REPO_ROOT, 'tests/fixtures/tsw-builds-committed');
+
+/**
+ * Directories that may contain build fixtures, local first (it wins on name clashes).
+ * @returns {string[]}
+ */
+export function buildFixtureDirs() {
+  return [BUILD_FIXTURE_DIR, COMMITTED_BUILD_FIXTURE_DIR];
+}
+
+/**
+ * Build fixture file names across the local and committed directories.
+ * @returns {string[]}
+ */
+export function listBuildFixtures() {
+  /** @type {Set<string>} */
+  const names = new Set();
+  for (const dir of buildFixtureDirs()) {
+    if (!existsSync(dir)) continue;
+    for (const name of readdirSync(dir)) {
+      if (name.toLowerCase().endsWith('.json')) names.add(name);
+    }
+  }
+  return [...names].sort();
+}
+
+/**
+ * @param {string} file
+ * @returns {string|null}
+ */
+export function resolveBuildFixturePath(file) {
+  for (const dir of buildFixtureDirs()) {
+    const path = resolve(dir, file);
+    if (existsSync(path)) return path;
+  }
+  return null;
+}
 
 /**
  * @param {string} [version]
@@ -56,15 +95,14 @@ export function loadPlannerCatalog(version = '2_14') {
  * @returns {boolean}
  */
 export function hasBuildFixture(file) {
-  return existsSync(resolve(BUILD_FIXTURE_DIR, file));
+  return resolveBuildFixturePath(file) != null;
 }
 
 /**
  * @returns {boolean}
  */
 export function hasBuildFixtures() {
-  if (!existsSync(BUILD_FIXTURE_DIR)) return false;
-  return readdirSync(BUILD_FIXTURE_DIR).some((name) => name.endsWith('.json'));
+  return listBuildFixtures().length > 0;
 }
 
 /**
@@ -72,7 +110,7 @@ export function hasBuildFixtures() {
  * @returns {object}
  */
 export function loadBuildFixture(file) {
-  return JSON.parse(
-    readFileSync(resolve(REPO_ROOT, 'tests/fixtures/tsw-builds', file), 'utf8')
-  );
+  const path = resolveBuildFixturePath(file);
+  if (!path) throw new Error(`Missing build fixture: ${file}`);
+  return JSON.parse(readFileSync(path, 'utf8'));
 }

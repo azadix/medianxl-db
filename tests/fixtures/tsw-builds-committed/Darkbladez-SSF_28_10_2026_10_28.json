@@ -1,0 +1,1420 @@
+{
+    "ok": true,
+    "api_version": 1,
+    "meta": {
+        "realm": "TSW",
+        "cached": true,
+        "generated_at": "2026-10-28T09:25:18Z",
+        "marker_warmed_at": null
+    },
+    "build": {
+        "name": "Darkbladez-SSF",
+        "version": "2.14",
+        "class": "Paladin",
+        "level": 65,
+        "skillPoints": {
+            "Blood Thorns": 15,
+            "Elemental Wisdom": 1,
+            "Grim Presence": 1,
+            "Lemures": 14,
+            "Melee Devotion": 1,
+            "Mind Flay": 1,
+            "Possession": 6,
+            "Rite of the Restless": 1,
+            "Sanguine Covenant": 2,
+            "Spark of Hope": 10,
+            "Stormlord": 14,
+            "Veneration of Justice": 1
+        },
+        "oSkills": [],
+        "allSkillsBonus": 4,
+        "stats": "{{life}}=3281\n{{mana}}=637\n{{strength}}=85\n{{dexterity}}=73\n{{vitality}}=200\n{{energy}}=50\n{{fire_resistance}}=63\n{{cold_resistance}}=46\n{{lightning_resistance}}=23\n{{poison_resistance}}=38\n{{physical_resistance}}=0\n{{magic_resistance}}=0\n{{maximum_life}}=0\n{{movement_speed}}=30\n{{hit_recovery}}=50\n{{block_speed}}=25\n{{fire_spell_damage}}=6\n{{lightning_spell_damage}}=0\n{{cold_spell_damage}}=0\n{{enemy_fire_resistance}}=12\n{{enemy_lightning_resistance}}=5\n{{enemy_cold_resistance}}=5",
+        "questsCompleted": {
+            "den_of_evil": {
+                "normal": true,
+                "nightmare": true,
+                "hell": false
+            },
+            "radament": {
+                "normal": true,
+                "nightmare": false,
+                "hell": false
+            },
+            "izual": {
+                "normal": true,
+                "nightmare": false,
+                "hell": false
+            },
+            "lam_essen's_tome": {
+                "normal": true,
+                "nightmare": false,
+                "hell": false
+            },
+            "golden_bird": {
+                "normal": true,
+                "nightmare": false,
+                "hell": false
+            }
+        },
+        "savedAt": "2026-10-28T09:28:35.000Z"
+    },
+    "items": [
+        {
+            "item": "Heavy Belt (2)",
+            "display_name": "Heavy Belt (2)",
+            "type": "Heavy Belt (2)",
+            "quality": "Rare",
+            "code": "722",
+            "image": "invtbl",
+            "name_color": 9,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 37,
+            "ilvl_original": null,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "Waist",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "Rare",
+            "description_lines": [
+                [
+                    [
+                        "Heavy Belt (2)",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "Defense: ",
+                        -1
+                    ],
+                    [
+                        "556",
+                        3
+                    ],
+                    [
+                        " (366)",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Strength: 62",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Prefixes: 3",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "Suffixes: 2",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "+1% Life stolen per Hit",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "-3% to Enemy Fire Resistance",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+52% Enhanced Defense",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+18 to Mana",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+3 Mana on Melee Attack",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Socketed (0/2)",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Blackguard Helm (1)",
+            "display_name": "Blackguard Helm (1)",
+            "type": "Blackguard Helm (1)",
+            "quality": "Rare",
+            "code": "50!",
+            "image": "invbhmu",
+            "name_color": 9,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 25,
+            "ilvl_original": null,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "Head",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "Rare",
+            "description_lines": [
+                [
+                    [
+                        "Blackguard Helm (1)",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "Defense: ",
+                        -1
+                    ],
+                    [
+                        "98",
+                        3
+                    ],
+                    [
+                        " (62)",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "(Paladin Only)",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Dexterity: 29",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Prefixes: 3",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "Suffixes: 3",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "+2 to Paladin Skill Levels",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+7 Spell Focus",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+4 to Minimum Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "-4% to Enemy Fire Resistance",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+59% Enhanced Defense",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+9 to all Attributes",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+16 to Mana",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Elemental Resists +3%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+2 Mana after each Kill",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Socketed (2/2)",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [
+                {
+                    "slot": 1,
+                    "name": "Jewel",
+                    "type": "Jewel",
+                    "quality": "Magic",
+                    "code": "jew",
+                    "image": "invjw3",
+                    "name_color": 3,
+                    "description_lines": [
+                        [
+                            [
+                                "Jewel",
+                                3
+                            ]
+                        ],
+                        [
+                            [
+                                "+1 to Minimum Damage",
+                                3
+                            ]
+                        ],
+                        [
+                            [
+                                "+3 to all Attributes",
+                                3
+                            ]
+                        ]
+                    ]
+                },
+                {
+                    "slot": 2,
+                    "name": "Jewel",
+                    "type": "Jewel",
+                    "quality": "Crafted",
+                    "code": "jew",
+                    "image": "invjw1",
+                    "name_color": 8,
+                    "description_lines": [
+                        [
+                            [
+                                "Jewel",
+                                8
+                            ]
+                        ],
+                        [
+                            [
+                                "+7 Spell Focus",
+                                3
+                            ]
+                        ],
+                        [
+                            [
+                                "+16 to Mana",
+                                3
+                            ]
+                        ],
+                        [
+                            [
+                                "Elemental Resists +3%",
+                                3
+                            ]
+                        ]
+                    ]
+                }
+            ],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Ring",
+            "display_name": "Ring",
+            "type": "Ring",
+            "quality": "Rare",
+            "code": "rin",
+            "image": "invrin3",
+            "name_color": 9,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 27,
+            "ilvl_original": null,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "LeftFinger",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "Rare",
+            "description_lines": [
+                [
+                    [
+                        "Ring",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "Prefixes: 3",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "Suffixes: 3",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "+25 Spell Focus",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+10% Cast Speed",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+5% to Summon Life",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+19 Defense",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+4 to Dexterity",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+30 to Life",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Steel Golem",
+            "display_name": "Steel Golem",
+            "type": "Gothic Plate (1)",
+            "quality": "Unique",
+            "code": "612",
+            "image": "invgth",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 42,
+            "ilvl_original": 19,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "Torso",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "TU",
+            "description_lines": [
+                [
+                    [
+                        "Steel Golem",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Gothic Plate (1)",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Defense: ",
+                        -1
+                    ],
+                    [
+                        "686",
+                        3
+                    ],
+                    [
+                        " (467)",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 9",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Strength: 37",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "+25% Hit Recovery",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Stun Attack",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+5% Chance of Crushing Blow",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+47% Enhanced Defense",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+10% to Strength",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+10% to Vitality",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Requirements +10%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Socketed (0/2)",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Amulet",
+            "display_name": "Amulet",
+            "type": "Amulet",
+            "quality": "Rare",
+            "code": "amu",
+            "image": "invamu3",
+            "name_color": 9,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 45,
+            "ilvl_original": null,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "Neck",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "Rare",
+            "description_lines": [
+                [
+                    [
+                        "Amulet",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "Prefixes: 3",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "Suffixes: 3",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "+1 to All Skills",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+15% Block Speed",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+6% to Fire Spell Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Fire Resist +23%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+5 Mana after each Kill",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+5% to Experience Gained",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Greaves (1)",
+            "display_name": "Greaves (1)",
+            "type": "Greaves (1)",
+            "quality": "Rare",
+            "code": "641",
+            "image": "invhbt",
+            "name_color": 9,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 60,
+            "ilvl_original": null,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "Feet",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "Rare",
+            "description_lines": [
+                [
+                    [
+                        "Greaves (1)",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "Defense: ",
+                        -1
+                    ],
+                    [
+                        "223",
+                        3
+                    ],
+                    [
+                        " (110)",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Strength: 22",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Prefixes: 3",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "Suffixes: 3",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "+30% Movement Speed",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+15% Hit Recovery",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+103% Enhanced Defense",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+12 to Vitality",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+51 to Life",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Cold Resist +23%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+3% to Experience Gained",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Socketed (0/1)",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Chain Gloves (2)",
+            "display_name": "Chain Gloves (2)",
+            "type": "Chain Gloves (2)",
+            "quality": "Rare",
+            "code": "726",
+            "image": "invmgl",
+            "name_color": 9,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 60,
+            "ilvl_original": null,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "Hands",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "Rare",
+            "description_lines": [
+                [
+                    [
+                        "Chain Gloves (2)",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "Defense: ",
+                        -1
+                    ],
+                    [
+                        "217",
+                        3
+                    ],
+                    [
+                        " (145)",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Strength: 57",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Prefixes: 2",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "Suffixes: 3",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "+27% Bonus to Attack Rating",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+50% Enhanced Defense",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+6 to all Attributes",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+53 to Life",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Poison Resist +15%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Socketed (0/2)",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Holy Lance (2)",
+            "display_name": "Holy Lance (2)",
+            "type": "Holy Lance (2)",
+            "quality": "Rare",
+            "code": "!86",
+            "image": "invtriu",
+            "name_color": 9,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 42,
+            "ilvl_original": null,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "RightHandAlternate",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "Rare",
+            "description_lines": [
+                [
+                    [
+                        "Holy Lance (2)",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "Two-Hand Damage: 11 to 23",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "(Paladin Only)",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Strength: 64",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Prefixes: 3",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "Suffixes: 3",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "Amazing Grace",
+                        8
+                    ]
+                ],
+                [
+                    [
+                        "+2 to Paladin Skill Levels",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+75 Poison Damage over 1 seconds",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+5% Life stolen per Hit",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+6 to all Attributes",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+70 to Life",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Fire Resist +17%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Socketed (0/4)",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Sunstone of the Twin Seas",
+            "display_name": "Sunstone of the Twin Seas",
+            "type": "Charm",
+            "quality": "Unique",
+            "code": "twi",
+            "image": "invgmg",
+            "name_color": 4,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": true,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": true,
+            "has_trophy": false,
+            "ilvl": 99,
+            "ilvl_original": 1,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Inventory",
+            "slot": null,
+            "storage": 1,
+            "row": 8,
+            "col": 14,
+            "locid": 37902,
+            "display_quality": "Charm",
+            "description_lines": [
+                [
+                    [
+                        "Sunstone of the Twin Seas",
+                        4
+                    ]
+                ],
+                [
+                    [
+                        "Required Level: 50",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Keep in Inventory to Gain Bonus",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "+2 to All Skills",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+10% Combat Speeds",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "-5% to Enemy Fire Resistance",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "-5% to Enemy Lightning Resistance",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "-5% to Enemy Cold Resistance",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+10% to All Attributes",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Elemental Resists +20%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+5% to Experience Gained",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Ring",
+            "display_name": "Ring",
+            "type": "Ring",
+            "quality": "Magic",
+            "code": "rin",
+            "image": "invrin1",
+            "name_color": 3,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 52,
+            "ilvl_original": null,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "RightFinger",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "Magic",
+            "description_lines": [
+                [
+                    [
+                        "Ring",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Prefixes: 1",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "+1 to All Skills",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Crystal Sword (1)",
+            "display_name": "Crystal Sword (1)",
+            "type": "Crystal Sword (1)",
+            "quality": "Rare",
+            "code": "113",
+            "image": "invcrs",
+            "name_color": 9,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 42,
+            "ilvl_original": null,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "RightHandMain",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "Rare",
+            "description_lines": [
+                [
+                    [
+                        "Crystal Sword (1)",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "Throw Damage: 1 to 2",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Dexterity: 73",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Innate Cold Damage: ",
+                        0
+                    ],
+                    [
+                        "7 ",
+                        3
+                    ],
+                    [
+                        "(10.0% of Dexterity)",
+                        0
+                    ]
+                ],
+                [
+                    [
+                        "Prefixes: 3",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "Suffixes: 2",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "+2 to All Skills",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+40% Bonus to Attack Rating",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Adds 5-6 Cold Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+7% to Physical/Magic Spell Damage",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Lightning Resist +15%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Physical Resist +1%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Socketed (0/2)",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        },
+        {
+            "item": "Gothic Shield (2)",
+            "display_name": "Gothic Shield (2)",
+            "type": "Gothic Shield (2)",
+            "quality": "Rare",
+            "code": "718",
+            "image": "invgts",
+            "name_color": 9,
+            "eth": false,
+            "corrupted": false,
+            "is_charm": false,
+            "is_trophy": false,
+            "is_class_charm": false,
+            "is_rw": false,
+            "is_upgraded": false,
+            "has_trophy": false,
+            "ilvl": 42,
+            "ilvl_original": null,
+            "quantity": null,
+            "compactable": false,
+            "area": "character",
+            "location": "Gear",
+            "slot": "LeftHandMain",
+            "storage": null,
+            "row": null,
+            "col": null,
+            "locid": null,
+            "display_quality": "Rare",
+            "description_lines": [
+                [
+                    [
+                        "Gothic Shield (2)",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "Defense: ",
+                        -1
+                    ],
+                    [
+                        "1296",
+                        3
+                    ],
+                    [
+                        " (810)",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Strength: 60",
+                        -1
+                    ]
+                ],
+                [
+                    [
+                        "Required Dexterity: 128",
+                        1
+                    ]
+                ],
+                [
+                    [
+                        "Prefixes: 3",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "Suffixes: 3",
+                        9
+                    ]
+                ],
+                [
+                    [
+                        "+1 to Paladin Skill Levels",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+1% Base Block Chance",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+60% Enhanced Defense",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "+29 to Life",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Cold Resist +20%",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Physical Damage Taken Reduced by 8",
+                        3
+                    ]
+                ],
+                [
+                    [
+                        "Socketed (0/3)",
+                        3
+                    ]
+                ]
+            ],
+            "socketables": [],
+            "mystic_orbs": [],
+            "stat_ranges": [],
+            "charm_ranges": []
+        }
+    ]
+}

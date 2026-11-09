@@ -1,4 +1,3 @@
-import { readdirSync } from 'node:fs';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
 import { useItemsStore } from '@/stores/items.js';
@@ -18,10 +17,14 @@ import { createCharacterBucket, createStatRegistry } from '@/character/bucket/in
 import { getPlannerCharacterStatDefs } from '@/character/planner-stats-config.js';
 import { applyCharacterSources } from '@/character/bucket/engine.js';
 import { parseImportedStatsText } from '@/character/bucket/sources/imports.js';
-import { hasBuildFixtures, loadBuildFixture, loadPlannerCatalog } from '../helpers/planner-catalog.js';
+import {
+  hasBuildFixtures,
+  listBuildFixtures,
+  loadBuildFixture,
+  loadPlannerCatalog,
+} from '../helpers/planner-catalog.js';
 import { installTreeDataFetchMock } from '../helpers/mock-fetch-tree-data.js';
 
-const FIXTURES = new URL('../fixtures/tsw-builds/', import.meta.url);
 /**
  * Builds whose stats blob holds FINAL character totals (TSW flavour). Complete-text
  * (d2s) dumps store base pools instead and are skipped by the comparison below, so
@@ -112,9 +115,7 @@ describe.skipIf(!hasBuildFixtures())('computed stats audit', () => {
     restoreFetch = installTreeDataFetchMock();
     resetSkillDataStoreForTests();
     await initSkillDataStore();
-    files = readdirSync(FIXTURES)
-      .filter((name) => name.toLowerCase().endsWith('.json'))
-      .sort();
+    files = listBuildFixtures();
     if (process.env.STATS_COMPUTED_ALL !== '1') {
       files = files.filter((name) => DEFAULT_FILES.includes(name));
     }

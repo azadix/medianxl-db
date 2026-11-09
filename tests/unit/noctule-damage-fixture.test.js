@@ -19,7 +19,11 @@ import { applyCharacterSources } from '@/character/bucket/engine.js';
 import { parseImportedStatsText } from '@/character/bucket/sources/imports.js';
 import { getEquippedWeaponProfile } from '@/items/equipped-weapon.js';
 import { collectSkillDamage } from '@/skills/domain/skill-damage.js';
-import { loadBuildFixture, loadPlannerCatalog } from '../helpers/planner-catalog.js';
+import {
+  hasBuildFixture,
+  loadBuildFixture,
+  loadPlannerCatalog,
+} from '../helpers/planner-catalog.js';
 import { installTreeDataFetchMock } from '../helpers/mock-fetch-tree-data.js';
 
 /**
@@ -27,7 +31,9 @@ import { installTreeDataFetchMock } from '../helpers/mock-fetch-tree-data.js';
  * innate lightning, plus "Adds 6-8 Damage" and elemental damage from the cowl/charms.
  * The Noctule tooltip must show every element, not just the skill's magic damage.
  */
-describe('Noctule damage from the Miss_Peeled build', () => {
+const FIXTURE = 'Miss_Peeled_04_11_2026_10_45.json';
+
+describe.skipIf(!hasBuildFixture(FIXTURE))('Noctule damage from the Miss_Peeled build', () => {
   let restoreFetch;
   let stats;
   let profile;
@@ -39,7 +45,7 @@ describe('Noctule damage from the Miss_Peeled build', () => {
     await initSkillDataStore();
 
     const planner = loadPlannerCatalog();
-    const raw = loadBuildFixture('Miss_Peeled_04_11_2026_10_45.json');
+    const raw = loadBuildFixture(FIXTURE);
     const { build, tswItems } = unwrapTswOrNativeBuild(raw);
 
     setActivePinia(createPinia());
